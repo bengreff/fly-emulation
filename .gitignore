@@ -26,3 +26,6 @@ outputs/
 .DS_Store
 .vscode/
 .idea/
+
+# External reference repos (pinned by commit in data/MANIFEST.yaml)
+external/

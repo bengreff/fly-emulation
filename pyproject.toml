@@ -1,0 +1,23 @@
+[project]
+name = "fly-emulation"
+version = "0.0.1"
+description = "Biologically constrained Drosophila brain-body simulation"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "numpy>=2.0",
+    "scipy>=1.14",
+    "pandas>=2.2",
+    "h5py>=3.11",
+    "pyarrow>=17",
+    "matplotlib>=3.9",
+    "jax>=0.4.35",
+    "pytest>=8",
+    "pyyaml>=6",
+    "requests>=2.32",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

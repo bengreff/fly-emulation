@@ -1,0 +1,20 @@
+# Dataset and external-code manifest. Raw data lives outside git.
+# Every entry: what it is, where it came from, exact version, license status, where it sits locally.
+
+external_code:
+  - name: Pugliese_cpg_2025
+    url: https://github.com/smpuglie/Pugliese_cpg_2025
+    commit: faee4b06869855ae0164cbf217fb6ec28ef3521b
+    fetched: 2026-09-14
+    local_path: external/Pugliese_cpg_2025
+    license: UNVERIFIED (check LICENSE file before redistribution)
+    contents_of_note: >
+      JAX VNC simulation code plus bundled connectivity matrices (~409 MB):
+      MANC full VNC W (20251006, 20260522 allSynapses), MANC T1 DN-to-MN (20250813),
+      MANC T1L minicircuit (20241118), BANC T1 premotor (20251217, 20260217),
+      FANC T1L BDN2-to-MN (20250107), iMAC T1 (20251110, 20260210). Dates in
+      file names are extraction dates, not dataset release versions; map each
+      to the underlying connectome version before use.
+    role: reference calculation (ROADMAP first session step 3); comparison fixture
+
+datasets: []
