@@ -34,3 +34,20 @@ Measured 14 September 2026 by direct inspection. Corrects the README, which list
 - Primary numerical backend candidates (JAX+CUDA, Brian2, MuJoCo/FlyGym) should be installed in WSL Ubuntu with a pinned Python 3.11/3.12 environment.
 - Mac-side work uses a CPU-only environment for tests and analysis.
 - Raw datasets live under WSL (fast ext4 disk), outside git, with checksums in a manifest.
+
+## Additions from session 1
+
+- **PC environment built offline.** backhouse's internet stayed blocked at the
+  eero router all session. Its Python environment was assembled from wheels
+  downloaded on the Mac and copied over the Tailscale SSH link. See
+  `docs/RUNNING.md`. CUDA was deliberately skipped: this workload parallelises
+  across cores, the PC has 28, and CPU throughput there matches the Mac's.
+- **Cross-machine numerical agreement verified.** The same simulation on Apple
+  arm64 with JAX 0.11.1 and on x86_64 with JAX 0.6.2 returned identical readouts
+  to three decimal places (97 active neurons, 3 active motor neurons, rhythm
+  0.813, 9.47 Hz). Architecture and JAX version are not a source of drift here.
+- **Body platform resolved.** `flygym` 2.1.0 bundles NeuroMechFly, the
+  Turaga-lab flybody and a musculoskeletal model, with MuJoCo Warp GPU support,
+  so the roadmap's open question about picking a body is largely closed. Its
+  mesh assets download on demand and were not fetched. See finding F6 for what
+  the muscle model does and does not cover.
