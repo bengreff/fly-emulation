@@ -28,3 +28,9 @@ Short records of user decisions and major implementation choices. Newest last.
 - **Reimplemented the rate equation rather than patching the external repo.** Keeps the
   pinned upstream clone clean for provenance. The reimplementation was verified to
   reproduce the external solver path exactly at matched settings before use.
+- **Glutamate sweep stopped after four of six points.** 0.03, 0.02, 0.01 and 0.0 complete
+  at eight draws, which already show the monotonic collapse; the excitatory points run in a
+  hyperactive regime and are very slow, and they were blocking the transmitter-uncertainty
+  experiment, which is the more important one. The -0.03 row is a single draw.
+- **Two sweeps at a time on the laptop, not three.** Three concurrent sweeps drove load to
+  25 on ten cores and slowed everything proportionally.

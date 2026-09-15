@@ -324,13 +324,22 @@ of the postsynaptic receptor, not of the transmitter**, and the connectome does
 not contain receptor identity. `docs/ARCHITECTURE.md` states this requirement;
 the model in hand cannot meet it.
 
-The result depends on the assumption almost completely. Flipping glutamate to
-excitatory, one parameter, single draw, relaxed tolerances:
+The result depends on the assumption almost completely. Sweeping the glutamate
+multiplier from fully inhibitory through silent to excitatory, eight draws per
+point at paper tolerances except where noted:
 
-| Glutamate treated as | Rhythmicity | Active motor neurons | Median peak rate |
-|---|---|---|---|
-| Inhibitory (published) | 0.836 | 2.6 | 2.3 Hz |
-| Excitatory | 0.003 | 137 of 144 | 198.6 Hz |
+| Glutamate multiplier | Meaning | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|---|
+| 0.03 | inhibitory, as published | 0.828 +/- 0.138 | 3.0 | 2.0 Hz |
+| 0.02 | weaker inhibition | 0.829 +/- 0.175 | 2.8 | 2.9 Hz |
+| 0.01 | weaker still | 0.764 +/- 0.152 | 3.1 | 3.2 Hz |
+| 0.00 | silenced | **0.323 +/- 0.354** | 54.5 | 37.8 Hz |
+| -0.03 | excitatory (single draw) | **0.003** | 137 of 144 | 198.6 Hz |
+
+The rhythm tolerates glutamate inhibition being weakened by two thirds, then
+falls apart once those cells stop inhibiting. With the sign reversed the network
+runs away and nearly every motor neuron saturates. Points at -0.01 and -0.03
+were abandoned at eight draws for capacity; the -0.03 row is a single draw.
 
 With the sign flipped the network runs away: nearly every motor neuron saturates
 and the rhythm is gone. Given that the network sits at E:I balance of 1.02, this
