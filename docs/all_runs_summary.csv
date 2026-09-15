@@ -1,0 +1,23 @@
+family,run,reps,oscillation_score_mn,oscillation_freq_hz_mn,n_active_mn,n_active,mn_peak_rate_median_hz,mn_peak_rate_max_hz
+condition,pugliese-baseline-n1-papertol-pccheck,1,0.813,9.47,3.0,97.0,2.33,4.508
+condition,pugliese-baseline-n16-papertol,16,0.836,10.045,2.625,92.312,2.253,4.374
+condition,pugliese-baseline-n8-papertol-I100,8,0.0,0.0,0.0,1.0,0.0,0.0
+condition,pugliese-dna02-n16-papertol,16,0.004,8.171,8.0,82.188,6.394,29.433
+condition,pugliese-no_stim-n16-papertol,16,0.0,0.0,0.0,0.0,0.0,0.0
+condition,pugliese-shuffle-n16-papertol,16,0.139,1.776,83.5,1880.562,48.829,211.946
+condition,pugliese-silence_i1i2-n16-papertol,16,0.547,9.302,4.25,112.812,2.521,7.921
+drive: proprioceptors,pugliese-baseline-n8-papertol-S0,8,0.828,10.286,3.0,93.25,2.012,4.419
+drive: proprioceptors,pugliese-baseline-n8-papertol-S0.5,8,0.828,10.286,3.0,96.25,2.011,4.419
+drive: proprioceptors,pugliese-baseline-n8-papertol-S1,5,0.773,10.566,3.2,101.6,1.601,4.493
+drive: proprioceptors,pugliese-baseline-n8-papertol-S12.5,8,0.041,1.441,68.875,1423.875,81.351,211.76
+drive: proprioceptors,pugliese-baseline-n8-papertol-S25,8,0.055,1.32,59.25,1440.0,61.747,209.907
+drive: proprioceptors,pugliese-baseline-n8-papertol-S5,8,0.095,1.431,76.625,1501.5,93.419,212.29
+drive: random interneurons,pugliese-baseline-n8-papertol-S5-rand0,4,0.798,10.669,3.25,116.0,1.422,4.651
+glutamate sign,pugliese-baseline-n8-papertol-glu0.02,7,0.816,10.675,2.714,95.429,2.866,6.042
+glutamate sign,pugliese-baseline-n8-papertol-glu0.03,8,0.828,10.286,3.0,93.25,2.012,4.419
+phasic sensory,phasic-A12.5-phasic10Hz-g2-n1,1,0.055,1.96,70.0,1532.0,82.387,224.918
+phasic sensory,phasic-A12.5-phasic10Hz-n1,1,0.049,2.094,65.0,1472.0,92.082,224.923
+phasic sensory,phasic-A200-tonic-n1,1,0.281,4.064,67.0,1220.0,82.632,214.919
+synaptic scale,pugliese-baseline-n8-papertol-e0.015i0.015,8,0.0,0.0,0.0,12.25,0.0,0.0
+synaptic scale,pugliese-baseline-n8-papertol-e0.01i0.01,8,0.0,0.0,0.0,2.125,0.0,0.0
+synaptic scale,pugliese-baseline-n8-papertol-e0.02i0.02,8,0.0,0.0,0.0,22.5,0.0,0.0

@@ -250,7 +250,14 @@ Three candidate explanations, in the order I would test them:
 The discriminating experiment is Milestone A4: body-generated, phase-locked
 proprioceptive feedback. This session can only approximate it open loop.
 
-## F8. The rhythm is fragile to added excitation from any source, not to sensory input specifically (2026-09-14)
+## F8. CORRECTED BELOW — see F8a. The rhythm is fragile to added excitation from any source, not to sensory input specifically (2026-09-14)
+
+> **This finding was wrong and is superseded by F8a.** It was written from a
+> single replicate at one amplitude. The replicated eight-draw run at a lower
+> amplitude shows the opposite: the proprioceptive pathway is specifically
+> potent, and matched drive into random interneurons leaves the rhythm intact.
+> The original text is kept below so the error is visible rather than quietly
+> edited away.
 
 F7 showed that switching the silent proprioceptors on destroys the rhythm. The
 obvious reading is that the model is deafferented and sensory feedback is the
