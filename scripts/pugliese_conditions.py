@@ -213,6 +213,13 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--threshold-matched", action="store_true",
+                    help="scale each driven neuron's current by its own spike "
+                         "threshold, so every driven cell is pushed the same "
+                         "fraction above threshold. Without this, a flat current "
+                         "is a much larger perturbation to small cells: the model "
+                         "scales threshold with soma size, and proprioceptors are "
+                         "0.44x the median size, giving them a 2.1x lower threshold.")
     ap.add_argument("--proprio-cholinergic", action="store_true",
                     help="force leg proprioceptors excitatory. The EM classifier "
                          "labels 69%% of chordotonal-organ neurons glutamate at "
@@ -250,6 +257,8 @@ def main() -> None:
     if args.exc_mult is not None or args.inh_mult is not None:
         mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
         mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.threshold_matched:
+        mult_tag += "-thrmatch"
     if args.proprio_cholinergic:
         mult_tag += "-propACh"
     if args.sample_transmitters:
@@ -371,6 +380,21 @@ def main() -> None:
             "evidence": "FeCO reported as ~150 excitatory cholinergic neurons",
         }
         print(f"  forced {flipped}/{len(prop_rows)} proprioceptors excitatory")
+
+    if args.threshold_matched and args.sensory_amp is not None:
+        thr = np.asarray(neuronParams.threshold)          # (replicates, neurons)
+        med_thr = float(np.median(thr))
+        ic = np.array(neuronParams.input_currents, copy=True)  # (stim, rep, neurons)
+        driven = np.asarray(prop, dtype=int)
+        scale = thr[:, driven] / med_thr                  # (rep, n_driven)
+        ic[0][:, driven] = ic[0][:, driven] * scale
+        neuronParams = neuronParams._replace(input_currents=jnp.asarray(ic))
+        rec.rec["threshold_matched"] = {
+            "median_network_threshold": med_thr,
+            "median_scale_applied_to_driven": float(np.median(scale)),
+        }
+        print(f"  threshold-matched drive: median scale "
+              f"{float(np.median(scale)):.3f} applied to {len(driven)} cells")
 
     W_base = neuronParams.W
     # Sign implied by the most likely transmitter, as the published model uses it.
