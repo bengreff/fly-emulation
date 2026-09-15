@@ -21,6 +21,7 @@ established, so corrections sit after the claims they overturn. Read the index.
 | F11 | Excitability is derived from a volume that measures a whole cell for some classes and only an axon arbor for others | stands |
 | F12 | Rhythmic sensory drive does not rescue the rhythm at any frequency, and the motor output does not even entrain to it | stands, open loop only |
 | F13 | Respecting the transmitter classifier's own uncertainty destroys the rhythm in a third of draws; every draw that flipped one of four core neurons lost it | stands |
+| F14 | The whole-CNS male connectome is the better primary specimen: 94% traced against 23%, the brain included, 1454 proprioceptors, and a 95% motor-neuron cross-reference back to MANC | stands |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
@@ -698,3 +699,44 @@ excitatory/inhibitory mapping is the same blanket one the model uses, so F9's
 objection to treating all glutamate as inhibitory applies here too. And the
 comparison is against the 16-draw baseline rather than a fresh matched
 fixed-label run, which was dropped for capacity.
+
+## F14. The primary-specimen question has a clear answer, and it is not the dataset this session used (2026-09-14)
+
+`docs/ROADMAP.md` leaves the choice of primary connectome open and asks for a
+comparison of anatomical coverage, motor mappings, body compatibility and actual
+access. This session inherited MANC by using the Pugliese model. Queried
+directly, the comparison is not close.
+
+| | MANC v1.2.1 | male-cns v1.0 |
+|---|---|---|
+| Coverage | nerve cord only | **whole central nervous system** |
+| Neuron nodes | 102,158 | 176,422 |
+| Status `Traced` | 23,665 (**23%**) | 165,122 (**94%**) |
+| Nerve-cord motor neurons | 731 with a named target muscle | 708 (`superclass = vnc_motor`) |
+| Motor neurons named by muscle | yes, in a `target` field | yes, in the `type` field |
+| Cross-reference to MANC | n/a | **673 of 708 motor neurons carry a `mancBodyid`** |
+| Proprioceptive sensory neurons | 102 in the T1 subset used here | **1,454** labelled `mechanosensory_proprioceptive` |
+| Descending neurons | 1,328 | 1,314 |
+| Brain | absent | present, with olfactory, gustatory and visual classes |
+
+**male-cns is the better primary specimen on every axis that matters here**, and
+the 95% motor-neuron cross-reference means the work built on MANC transfers
+rather than being thrown away. Front-leg motor neurons are named by the same
+muscle vocabulary: `Acc. ti flexor MN`, `Ti flexor MN`, `Fe reductor MN`,
+`Ta depressor MN` and so on.
+
+Two practical notes. First, the annotation lives in different fields in the two
+datasets: MANC puts the muscle in `target` and the class in `class`, while
+male-cns puts the muscle in `type` and uses `superclass = vnc_motor`. A first
+query against male-cns for `class = 'motor neuron'` returns nothing, which is
+easy to mistake for the annotation being absent. It is not; it is elsewhere.
+Second, the traced fractions are not comparable as quality scores without
+checking each dataset's inclusion policy, which is exactly the caution
+`CLAUDE.md` gives about neuron counts.
+
+**Recommendation.** Move to male-cns as the primary graph, carrying the MANC
+work across by `mancBodyid`, before building anything further on the nerve cord
+alone. The immediate gains are the brain, a far larger and better-traced
+proprioceptor population, and descending neurons with their cell bodies in the
+same volume as their arbors, which is directly relevant to the excitability
+problem in F11.
