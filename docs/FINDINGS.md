@@ -374,3 +374,36 @@ act on immediately.
 **Note on scope.** This T1 network contains 36 chordotonal-organ neurons; the
 real organ has about 150. The simulated network is a connectivity-filtered subset
 of the leg's sensory apparatus, not the whole of it.
+
+## F8a. CORRECTS F8. The proprioceptive pathway is a privileged lever on this circuit (2026-09-14)
+
+Replicated at eight draws per condition, paper tolerances, drive amplitude 5 per
+neuron into 102 neurons:
+
+| Drive target | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|
+| Nothing (baseline) | 0.836 +/- 0.119 | 2.6 | 2.3 Hz |
+| 102 leg proprioceptors | **0.095 +/- 0.070** | 76.6 | 93.4 Hz |
+| 102 random intrinsic neurons | **0.830 +/- 0.124** | 3.0 | 2.0 Hz |
+
+Driving random interneurons at this amplitude does **essentially nothing**: the
+rhythm, the motor recruitment and the firing rates are all indistinguishable
+from the undriven baseline. The identical drive delivered through the
+proprioceptors collapses the rhythm and recruits 77 motor neurons at
+physiological rates.
+
+This is not explained by how much signal each population injects. The random
+interneurons have roughly **twice** the outgoing synapse budget (90,101 against
+46,691 synapses), **2.7 times** as many synapses directly onto motor neurons,
+and a nearly identical excitatory fraction (45% against 44%). The proprioceptors
+do more with less because of **where they project**, not how much they project.
+
+> **Why F8 said the opposite.** F8 rested on a single replicate at amplitude
+> 12.5, where both targets happen to have collapsed the rhythm. At that
+> amplitude everything saturates and the dissociation is invisible. The lesson
+> is the obvious one: one replicate at one operating point is not a control.
+
+**This makes the sensory pathway more important, not less.** Combined with F10,
+which shows the model inverts the sign of most of those same afferents, the
+position is that the single most influential input to the leg motor circuit is
+the one the model most likely gets backwards.
