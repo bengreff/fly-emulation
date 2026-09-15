@@ -180,3 +180,40 @@ Adopted into `docs/PLAN.md`:
 - **Cloud budget reasoning corrected.** Hours of simulated time does not itself demand
   more resident memory than seconds; runtime, retained recordings and differentiating
   through long trajectories are the separate costs.
+
+## 2026-09-15 Session 2: sanity review of the plan, seven changes
+
+Reviewed the plan for soundness rather than re-reading it approvingly. Seven problems,
+all fixed.
+
+- **The circularity was unaddressed.** `model_use` cannot be filled without choosing
+  equations, and the equations determine the requirement list. Added step 0: declare
+  the model family M explicitly, with its omissions listed, before enumerating. The
+  inventory is indexed by M, which is why the output form is always "for model family
+  M and assay set A".
+- **The horizon was untiered and unaffordable.** Queried the real graph:
+  `male-cns:v1.0` has 25,862,574 neuron-to-neuron edges over 125,024,863 synapses. At
+  a generous 10^10 edge-updates/s that is ~2.6 wall-hours per simulated hour at 1 ms
+  and ~26 at the 0.1 ms a 200 Hz wingbeat needs. A single long demonstration is
+  affordable; a replicate-heavy sweep at that horizon is not. Now tiered: seconds with
+  hundreds of replicates for sensitivity, minutes for assays, hours once or twice.
+- **The measured-only control cannot run, and the plan promised it anyway.** With over
+  80% of type-specific physiology unresolved there are no time constants, thresholds or
+  efficacies to integrate. Redefined as three controls reported together: C0 strict
+  refuses to run and the row list it refuses on is the result; C1 fills one declared
+  default per subsystem; C2 uses what the precedents assume. C0 against C1 measures how
+  much of the model is convention.
+- **The scaffold step conflated two jobs.** Split into 5a, instantiate and let it fail
+  loudly with no integration, which is cheap and is the actual completeness test, and
+  5b, integrate once 5a passes.
+- **Sensitivity was a hope, not a step.** Ten tier-A sensitivity experiments are now
+  budgeted against the top of the ranking, with results written back into the
+  uncertainty column.
+- **Five subsystems were missing from the table.** Glia, which are annotated in the
+  primary graph, absent from every model here, and do potassium buffering plus sleep
+  and circadian roles that sit inside the chosen boundary. Also humoral and hemolymph
+  signalling, sensory organ mechanics as distinct from transduction, wing hinge
+  mechanics, and efferent modulation of sense organs.
+- **The type count needed a policy, not a number.** 11,751 distinct `type` labels over
+  164,506 typed neurons. Any grouping below that is an assumption and now requires a
+  recorded rationale. Step 0b.
