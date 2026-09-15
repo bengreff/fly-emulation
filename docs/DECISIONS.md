@@ -14,3 +14,17 @@ Short records of user decisions and major implementation choices. Newest last.
 - **Cadence:** run autonomously to a first measured result, then report with a run command and the next discriminating test.
 - **Git identity:** Ben Greff <ben@thegreffs.com>; applied to new commits only; the first four commits keep the earlier author.
 - **Reference code licensing:** Pugliese repo declares MIT in pyproject.toml but ships no LICENSE file; treat as MIT-intended, do not redistribute its bundled data until confirmed.
+
+## 2026-09-14 Session 1, during work
+
+- **CUDA skipped on the PC.** The workload parallelises across cores and the PC has 28.
+  Measured CPU throughput there matches the Mac. Building CUDA offline would have added
+  ~2.5 GB of transfers and version risk for no gain on this experiment class.
+- **High synaptic-scale runs stopped early.** Scales 0.13, 0.2 and 0.3 were killed
+  mid-sweep. The trend across 0.03, 0.045 and 0.09 already showed the transition to
+  hyperactive and arrhythmic, those runs cost 500+ s per replicate and rising, and they
+  were starving the phasic-versus-tonic experiment, which is the discriminating one.
+  Rerun them if the transition point itself becomes the question.
+- **Reimplemented the rate equation rather than patching the external repo.** Keeps the
+  pinned upstream clone clean for provenance. The reimplementation was verified to
+  reproduce the external solver path exactly at matched settings before use.

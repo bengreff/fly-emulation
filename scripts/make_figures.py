@@ -146,6 +146,43 @@ def fig_sweep(df: pd.DataFrame) -> None:
     plt.close(fig)
 
 
+def load_phasic(d: Path) -> pd.DataFrame:
+    rows = []
+    for r in sorted(d.glob("phasic-A*-n*")):
+        m = r / "metrics.csv"
+        if m.exists():
+            rows.append(pd.read_csv(m))
+    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+
+
+def fig_phasic(df: pd.DataFrame) -> None:
+    """The decisive comparison: same mean sensory drive, different timing."""
+    if df.empty:
+        return
+    g = df.groupby("freq_hz")
+    x = np.array(sorted(df.freq_hz.unique()))
+    tonic = df[df.freq_hz == 0]
+    fig, axes = plt.subplots(1, 2, figsize=(6.6, 2.5))
+    for ax, (col, label, ref) in zip(axes, [
+            ("oscillation_score_mn", "motor-neuron rhythmicity", None),
+            ("mn_peak_rate_median_hz", "median peak motor-neuron rate (Hz)", SLOW_MN_REST_HZ)]):
+        mu, sd = g[col].mean().reindex(x), g[col].std(ddof=1).reindex(x).fillna(0)
+        ph = x > 0
+        ax.plot(x[ph], mu[ph], "-o", ms=3.5, lw=1.3, color="#267655", label="phasic")
+        ax.fill_between(x[ph], (mu - sd)[ph], (mu + sd)[ph], color="#267655", alpha=0.18, lw=0)
+        if len(tonic):
+            ax.axhline(tonic[col].mean(), ls="--", lw=1.1, color="#8b2f5f", label="tonic, same mean")
+        if ref is not None:
+            ax.axhline(ref, ls=":", lw=1.0, color="#c0392b", label="measured slow MN at rest")
+        ax.set_xlabel("sensory modulation frequency (Hz)")
+        ax.set_title(label, fontsize=8)
+        ax.legend(frameon=False, fontsize=6)
+    fig.suptitle("Does the timing of sensory drive matter? Matched mean amplitude",
+                 fontsize=9, y=1.05)
+    fig.savefig(FIGS / "phasic.png")
+    plt.close(fig)
+
+
 def main() -> None:
     sweep_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else RUNS
     cond = load_conditions()
@@ -177,6 +214,19 @@ def main() -> None:
         ).round(3)
         s.to_csv(REPO / "docs" / "sweep_summary.csv")
         print("\n" + s.to_string())
+    ph = load_phasic(sweep_dir)
+    if not ph.empty:
+        fig_phasic(ph)
+        t = ph.groupby("freq_hz").agg(
+            reps=("replicate", "count"),
+            rhythmicity=("oscillation_score_mn", "mean"),
+            rhythmicity_sd=("oscillation_score_mn", "std"),
+            mn_rate_hz=("mn_peak_rate_median_hz", "mean"),
+            active_mn=("n_active_mn", "mean"),
+            freq_out_hz=("oscillation_freq_hz_mn", "mean"),
+        ).round(3)
+        t.to_csv(REPO / "docs" / "phasic_summary.csv")
+        print("\nPHASIC vs TONIC\n" + t.to_string())
     print("\nfigures ->", FIGS)
 
 
