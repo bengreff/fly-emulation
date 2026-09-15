@@ -249,3 +249,73 @@ Three candidate explanations, in the order I would test them:
 
 The discriminating experiment is Milestone A4: body-generated, phase-locked
 proprioceptive feedback. This session can only approximate it open loop.
+
+## F8. The rhythm is fragile to added excitation from any source, not to sensory input specifically (2026-09-14)
+
+F7 showed that switching the silent proprioceptors on destroys the rhythm. The
+obvious reading is that the model is deafferented and sensory feedback is the
+missing ingredient. That reading is wrong, and the control that shows it is
+cheap.
+
+Driving **102 randomly chosen intrinsic neurons** with the same per-neuron
+amplitude, rather than the 102 proprioceptors, collapses the rhythm just as
+thoroughly:
+
+| Drive target, amplitude 12.5 | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|
+| Nothing (baseline) | 0.836 | 2.6 | 2.3 Hz |
+| 102 proprioceptors | 0.041 | 68.9 | 81.4 Hz |
+| 102 random intrinsic neurons | 0.092 | 54.0 | 64.7 Hz |
+
+So it is not the sensory pathway. It is **total added excitation**, wherever it
+enters. The rhythmic state exists only in a narrow low-activity regime and is
+destroyed by roughly any additional drive.
+
+Both framings of the amplitude should be stated, because they sound different:
+per neuron, 12.5 is 5% of the 250 injected into the descending neuron; summed
+over 102 afferents it is 1275, which is **5.1 times** the total descending
+drive. The honest summary is that the rhythm requires the proprioceptors to be
+close to silent, and nobody knows whether real afferent drive sits above or
+below that threshold, because the rate calibration does not exist (F5).
+
+## F9. Forty-one percent of the model's inhibition rests on an assumption the connectome cannot settle (2026-09-14)
+
+Composition of the 4604-neuron network, from the bundled annotation table:
+
+| Predicted transmitter | Neurons | Outgoing synapses | Sign in the model |
+|---|---|---|---|
+| Acetylcholine | 2419 | 2,015,846 | excitatory |
+| GABA | 1077 | 1,067,547 | inhibitory |
+| Glutamate | 1095 | 734,379 | inhibitory |
+
+Glutamatergic cells are **23.8%** of the network and supply **40.8%** of its
+inhibitory synapse budget. Excitation and inhibition are very nearly balanced:
+the ratio of excitatory to inhibitory synapses onto motor neurons is **1.02**.
+
+Treating glutamate as inhibitory is a modelling convention, not a measurement of
+these cells. In *Drosophila*, glutamate is inhibitory where the glutamate-gated
+chloride channel GluCl is expressed postsynaptically, which was demonstrated in
+the olfactory system, and excitatory where it is not. **The sign is a property
+of the postsynaptic receptor, not of the transmitter**, and the connectome does
+not contain receptor identity. `docs/ARCHITECTURE.md` states this requirement;
+the model in hand cannot meet it.
+
+The result depends on the assumption almost completely. Flipping glutamate to
+excitatory, one parameter, single draw, relaxed tolerances:
+
+| Glutamate treated as | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|
+| Inhibitory (published) | 0.836 | 2.6 | 2.3 Hz |
+| Excitatory | 0.003 | 137 of 144 | 198.6 Hz |
+
+With the sign flipped the network runs away: nearly every motor neuron saturates
+and the rhythm is gone. Given that the network sits at E:I balance of 1.02, this
+is not surprising, and that is the point. A load-bearing assumption sits under
+the headline result, and it is an assumption about receptors that has not been
+measured for these cells.
+
+**The constructive next step** is to constrain it with expression data. The Fly
+Cell Atlas carries adult single-cell transcriptomes; GluCl expression in VNC
+motor neurons and premotor interneurons would turn a convention into a prior
+with real uncertainty. That is a well-defined piece of work and it was not
+attempted tonight.
