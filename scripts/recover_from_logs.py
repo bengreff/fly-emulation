@@ -29,7 +29,14 @@ def parse(path: Path, **extra) -> list[dict]:
                              mn_peak_rate_median_hz=float(m[5]), **extra))
     return rows
 
+USAGE = ("usage: recover_from_logs.py <out.csv> <log dir> "
+         "[glob, default 'sweep_*.log'] [key, default 'scale']")
+
+
 def main() -> None:
+    if len(sys.argv) < 3 or sys.argv[1] in ("-h", "--help"):
+        print(__doc__.strip() + "\n\n" + USAGE)
+        raise SystemExit(0 if len(sys.argv) > 1 and sys.argv[1] in ("-h", "--help") else 2)
     out, rows = Path(sys.argv[1]), []
     root = Path(sys.argv[2])
     pattern = sys.argv[3] if len(sys.argv) > 3 else "sweep_*.log"

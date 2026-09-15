@@ -37,7 +37,12 @@ def transmitter_probs(wt: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
 
 
 def main() -> None:
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+        print(__doc__.strip())
+        raise SystemExit(0 if len(sys.argv) > 1 else 2)
     run = Path(sys.argv[1])
+    if not run.exists():
+        raise SystemExit(f"no such run directory: {run}")
     m = run / "metrics.csv"
     if not m.exists():
         m = run / "metrics_partial.csv"
