@@ -16,6 +16,13 @@ third is load-bearing (F9).
 
 ## Do these first
 
+0. **Move to the whole-CNS connectome (F14).** 94% traced against 23%, the brain
+   included, 1454 proprioceptors against the 102 in the subset used here, and 673
+   of 708 motor neurons carry a cross-reference back to MANC so nothing is lost.
+   The annotations live in different fields: muscle in `type`, not `target`, and
+   `superclass = vnc_motor`, not `class = 'motor neuron'`. A query using the MANC
+   field names returns nothing and looks like missing annotation.
+
 1. **Re-run everything with the corrections on.** `--proprio-cholinergic` and
    `--size-norm class` are implemented. Correcting excitability alone leaves the
    published stimulus unable to drive the network, because the published
@@ -33,8 +40,13 @@ third is load-bearing (F9).
 
 ## Known gaps, stated plainly
 
-- **No descending-stimulus amplitude sweep.** F7 has three of four knobs swept.
-  The fourth was started and abandoned for capacity.
+- **No descending-stimulus amplitude sweep on the uncorrected model.** It was
+  started and abandoned for capacity. The corrected model was swept instead
+  (F15), which is the more informative version.
+- **The rhythm/rate exclusion (F15) is empirical, not proved.** 303 simulations
+  across every setting tried, with none in the region a walking leg needs. The
+  parameter space is not exhausted, and the exclusion is a property of this model
+  class, not a claim about the fly.
 - **The shuffle null is not strict.** It preserves out-degree exactly but
   reassigns in-degree patterns within a class. A both-degree-preserving null
   should be run before F4 is quoted as a headline.

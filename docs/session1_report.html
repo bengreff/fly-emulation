@@ -140,7 +140,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   <h1>What the connectome doesn't contain</h1>
   <p class="standfirst">The published rhythm reproduces cleanly, and the anatomy checks out against independent electrophysiology. Then the night turned into an audit. The wiring diagram tells you which neurons talk to which. It does not tell you whether a connection excites or inhibits, how strong it is, or how excitable a cell is, and in this model all three are supplied by convention. Several of those conventions turn out to be load-bearing, and at least one is simply wrong.</p>
   <div class="meta">
-    <span><b>Runs</b> 47, 270 simulations</span>
+    <span><b>Runs</b> 54, 303 simulations</span>
     <span><b>Machines</b> M2 Pro + RTX box, 38 cores</span>
     <span><b>Checks</b> 10 passing</span>
     <span><b>Corrections</b> 1 finding retracted twice</span>
@@ -149,7 +149,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
 
 <div class="verdict">
   <div><dt>Reproduced</dt><dd><span class="big">10.0 Hz</span>rhythmic motor output, robust across all 16 parameter draws</dd></div>
-  <div><dt>But it is</dt><dd><span class="big">13× too weak</span>to drive a muscle: 2.3 Hz peak against a measured 30 Hz at rest</dd></div>
+  <div><dt>Out of 303 runs</dt><dd><span class="big">none</span>produced both a rhythm and motor rates strong enough to move a leg</dd></div>
   <div><dt>Rests on</dt><dd><span class="big">4 neurons</span>whose excitatory or inhibitory identity is predicted, at about 90% confidence each</dd></div>
   <div><dt>Fails in</dt><dd><span class="big">1 in 3</span>sign assignments the classifier itself considers admissible</dd></div>
 </div>
@@ -173,6 +173,17 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
     <dt>Rhythmicity</dt><dd>A 0–1 score for how periodic activity is. 0.8 is a clean oscillation; 0.1 is noise.</dd>
   </dl>
 </div>
+
+<h2>The headline</h2>
+
+<p>Two things matter about this model's output: <strong>how rhythmic it is</strong>, and <strong>how hard the motor neurons actually fire</strong>. A leg needs both. Over the night I varied synaptic strength, sensory drive, which command neuron is stimulated, where current is injected, how synaptic sign is assigned, and how excitability is computed. Then I pooled every simulation and plotted both readouts together.</p>
+
+<figure class="bleed">
+  <img src="all_simulations.png" alt="Scatter of motor-neuron rhythmicity against median peak motor-neuron rate on a log axis, for 303 simulations. Rhythmic points all sit below about 10 Hz. Points above 30 Hz all have rhythmicity below 0.31. The upper right region, rhythmic and fast, is shaded and completely empty.">
+  <figcaption><b>Every replicate simulation of the session, one point each.</b> The shaded region is what a walking leg needs: a rhythm, and motor neurons firing at least as hard as a real one does at rest. Nothing reaches it. Rhythmic draws top out at 8.5 Hz. Draws above 20 Hz never exceed 0.31 rhythmicity, and the single one that came closest was the scrambled-connectome control.</figcaption>
+</figure>
+
+<p>This is not a defect in someone's code. It is a property of the model class: a nerve cord cut off from its body, driven by a constant injected current, with one global number converting synapse counts into strength, sign guessed from a transmitter prediction, and excitability derived from cell size. Knowing precisely where that class breaks, and which of those conventions is responsible, is the useful thing. The rest of this report is that.</p>
 
 <p class="part">Part one — what holds up</p>
 <h2>The result reproduces, and the anatomy is sound</h2>
@@ -371,6 +382,35 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   </table></div>
   <p><strong>Every draw that flipped a core neuron lost the rhythm, four out of four.</strong> The classifier's confidence in those four cells is 0.90, 0.92, 0.95 and 0.96, giving a 21% chance that at least one flips on any draw. Observed: 17%.</p>
   <p>This is not a criticism of the classifier, which reports its uncertainty honestly. It is a statement about what the model inherits. The constructive response is to report a distribution over admissible sign assignments rather than a single run, and to spend measurement effort on the handful of cells the answer actually depends on. Those four are named in the findings file. Determining their transmitters experimentally is a small, well-posed piece of work with a large payoff.</p>
+</div>
+
+<div class="finding">
+  <div class="fhead"><span class="fid">F14</span><h3>The primary-specimen question has a clear answer, and it is not the dataset I used</h3></div>
+  <p>The project documents leave the choice of connectome open. This session inherited the male nerve cord by using the published model. Queried directly, the comparison is not close.</p>
+  <div class="tablewrap"><table>
+    <caption>Candidate primary connectomes, queried live</caption>
+    <thead><tr><th>&nbsp;</th><th>Nerve cord only</th><th>Whole central nervous system</th></tr></thead>
+    <tbody>
+      <tr><td>Neuron nodes</td><td class="num">102,158</td><td class="num">176,422</td></tr>
+      <tr class="highlight"><td>Traced</td><td class="num">23,665 (23%)</td><td class="num">165,122 (94%)</td></tr>
+      <tr><td>Leg motor neurons named by muscle</td><td>yes</td><td>yes, in a different field</td></tr>
+      <tr><td>Cross-reference to the other dataset</td><td>n/a</td><td class="num">673 of 708 motor neurons</td></tr>
+      <tr><td>Proprioceptive sensory neurons</td><td class="num">102 in the subset used</td><td class="num">1,454</td></tr>
+      <tr><td>Brain</td><td>absent</td><td>present</td></tr>
+    </tbody>
+  </table></div>
+  <p>The whole-CNS dataset wins on every axis, and the 95% motor-neuron cross-reference means work built on the nerve cord transfers rather than being discarded. One trap worth recording: the annotations live in different fields, so a first query for motor neurons against the whole-CNS dataset returns nothing and looks like the annotation is missing. It is not, it is elsewhere.</p>
+</div>
+
+<div class="finding">
+  <div class="fhead bad"><span class="fid bad">F15</span><h3>Correcting the excitability rule moves the operating point and keeps both regimes</h3></div>
+  <p>The most direct test of whether the problems above are fixable. Normalise excitability within cell class, correcting the F11 artefact, then re-sweep the descending stimulus to find the corrected model's own working point.</p>
+  <figure class="bleed">
+    <img src="corrected_model.png" alt="Two stacked panels against descending stimulus amplitude. Top, motor-neuron rhythmicity per draw: zero at 250, a split between about 0.5 and about 0.1 at 300, mostly low above that. Bottom, median peak motor rate on a log axis: about 1 Hz at 250, splitting between 3 Hz and 50 to 90 Hz at 300, then all above 40 Hz.">
+    <figcaption><b>Every draw plotted, because the means mislead here.</b> At stimulus 300 the mean rhythmicity is 0.405 with 25 Hz motor output, which reads as a useful compromise. The individual draws are four at roughly 0.5 rhythmicity and 1 to 4 Hz, and two at roughly 0.1 and 48 to 92 Hz. The mean describes no simulation that ran.</figcaption>
+  </figure>
+  <p>The corrected model has the same two states as the uncorrected one, at a different stimulus: <strong>rhythmic and weak</strong>, or <strong>strong and arrhythmic</strong>. Nothing in between.</p>
+  <div class="note caution"><b>This was nearly reported as a positive result.</b> The mean at stimulus 300 would have been the most encouraging finding of the night: rhythm retained, eleven times the motor output. Looking at the per-draw values took two minutes and reversed it. The session summary tool now flags any group whose values separate into two bands, which is how the same trap was then found lurking in three other runs.</div>
 </div>
 
 <h2>What I think is going on</h2>
