@@ -1,7 +1,24 @@
 # Findings
 
-Measured results with their conditions and limits. Newest last. Every entry must
-be reproducible from a provenance JSON in `runs/`.
+Measured results with their conditions and limits. Every entry is reproducible
+from a provenance record in `runs/`. Entries are appended in the order they were
+established, so corrections sit after the claims they overturn. Read the index.
+
+| # | Claim | Status |
+|---|---|---|
+| F1 | The external frequency metric returns cycles per sample, not hertz | stands |
+| F2 | All 144 motor neurons join to muscle targets; tibia flexor pool is 15/side, matching independent electrophysiology | stands |
+| F3 | The ~10 Hz rhythm reproduces, but peak motor output is ~13x below a measured resting rate | stands |
+| F4 | The specific wiring, not its degree structure, keeps the network sparse and rhythmic | stands, with a caveat on the null |
+| F5 | The full front-leg sensory apparatus is present and entirely undriven; no rate calibration exists for it | stands |
+| F6 | The best available body model can receive 68% of front-leg motor output and cannot resolve motor units | stands |
+| F7 | Rhythm and motor recruitment trade off across every manipulation tried | stands |
+| F8 | "Any added excitation breaks the rhythm, not the sensory pathway" | **retracted** — one replicate, one amplitude |
+| F8a | "The proprioceptive pathway is privileged" | **superseded by F8b** — confounded by cell size |
+| F8b | The apparent pathway specificity is an artefact of size-scaled excitability | stands |
+| F9 | 40.8% of the model's inhibition rests on treating glutamate as inhibitory, which is a receptor property the connectome does not contain | stands |
+| F10 | The model assigns an inhibitory sign to most of the fly's main leg proprioceptor, against published physiology | stands |
+| F11 | Excitability is derived from a volume that measures a whole cell for some classes and only an axon arbor for others | stands |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
@@ -375,7 +392,14 @@ act on immediately.
 real organ has about 150. The simulated network is a connectivity-filtered subset
 of the leg's sensory apparatus, not the whole of it.
 
-## F8a. CORRECTS F8. The proprioceptive pathway is a privileged lever on this circuit (2026-09-14)
+## F8a. CORRECTS F8, AND IS ITSELF SUPERSEDED BY F8b. The proprioceptive pathway is a privileged lever on this circuit (2026-09-14)
+
+> **The dissociation reported here is real as measured but misattributed.** It is
+> explained by the model's size-scaled excitability (F11), not by pathway
+> privilege: proprioceptors are 0.44x the median cell size and therefore have a
+> 2.1x lower spike threshold, so identical injected current is a much larger
+> perturbation to them. With drive matched to each cell's own threshold the
+> difference largely disappears. See F8b. Text kept as written.
 
 Replicated at eight draws per condition, paper tolerances, drive amplitude 5 per
 neuron into 102 neurons:
