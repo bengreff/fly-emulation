@@ -49,3 +49,39 @@ Short records of user decisions and major implementation choices. Newest last.
   rule (F11), so driving it hard makes the network so active that the adaptive solver
   crawls. The A=5 bristle condition completed and already answers the question
   (rhythmicity 0.039). The intractability is itself a symptom of F11.
+
+## 2026-09-14 Strategy questions, decided by me
+
+Ben asked six framing questions before the session and then said to work from my own
+judgement. These are the answers I acted on, recorded so they can be overridden.
+
+1. **Evidence ranking: interventions first, then neural recordings, then behaviour.**
+   Acted on throughout. The session spent its compute on controls and perturbations, not
+   on making anything look good. The degree-matched shuffle, the drive-target control and
+   the threshold-matched control are all intervention-style evidence.
+2. **Specimen: the male nerve cord (MANC), by inheritance.** Chosen because the strongest
+   executable precedent uses it and because its motor-neuron muscle annotations are the
+   best available. Not a considered cross-specimen decision; revisit when the brain is
+   needed, since the best brain data is female.
+3. **Grain: rate-based, single-compartment, as published.** Kept deliberately. Nothing
+   found tonight implicates the neuron model. The problems are sign, strength and
+   excitability, which sit above the choice of neuron equation.
+4. **Behavioural fitting: not reached, and not needed yet.** There is no behaviour to fit
+   to until a leg moves. The physiology-only path has not been exhausted.
+5. **End state: unchanged.** Not a live question until a leg works.
+6. **Explainers: written.** The session report defines every fly-specific term on first
+   use and leads with what each result means for the milestone.
+
+The hypotheses I stated before starting, and what happened to them:
+
+| Hypothesis | Outcome |
+|---|---|
+| Count-weighted synapses reproduce the rhythm under descending drive | **Confirmed** (F3), robust across 16 draws |
+| That rhythm, through muscles with feedback, produces a step | **Untested.** F3 and F6 show the motor output is roughly 13x too weak and a third of it has no muscle to drive |
+| Synapse count alone is insufficient; cell-type-specific gains are needed | **Supported indirectly.** F9 and F13 show the result turns on sign assignments, which is the same class of missing parameter |
+| A physiology-only model predicts new interventions | **Untested** |
+| Dopamine-gated plasticity produces odour learning | **Untested**, belongs to a later milestone |
+
+The prediction I made about the workflow was that the biggest risks would fail early and
+visibly on one leg. That is what happened, though not where expected: the failures were in
+the model's parameter conventions rather than in the biomechanics.
