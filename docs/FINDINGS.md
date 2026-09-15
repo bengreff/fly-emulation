@@ -763,6 +763,28 @@ One simulation in 303 cleared rhythmicity 0.3 with rates above 20 Hz. It came
 from the **degree-matched shuffle**, that is, from a deliberately scrambled
 connectome used as a negative control, not from any model of the fly.
 
+### The boundary is sharp, and does not depend on where the thresholds are drawn
+
+Pooling all 305 simulations with both readouts and asking, for each floor on one
+axis, the best value any simulation reached on the other:
+
+| Motor-rate floor | Simulations above it | Best rhythmicity reached |
+|---|---|---|
+| > 2 Hz | 230 | 0.966 |
+| > 5 Hz | 139 | 0.949 |
+| **> 10 Hz** | 123 | **0.308** (the shuffled control) |
+| > 30 Hz | 121 | 0.308 (the same control) |
+
+| Rhythmicity floor | Simulations above it | Best motor rate reached |
+|---|---|---|
+| > 0.3 | 133 | 69.2 Hz (the shuffled control) |
+| **> 0.4** | 129 | **8.50 Hz** |
+| > 0.8 | 74 | 5.45 Hz |
+
+The wall sits between 8.5 and 10 Hz on the rate axis and between 0.31 and 0.4 on
+the rhythmicity axis, and the only thing that ever crossed it was a scrambled
+connectome. Move either threshold and the conclusion does not move.
+
 ### Fixing the excitability artefact does not create a middle ground
 
 The most direct test. Correcting the F11 size artefact by normalising
