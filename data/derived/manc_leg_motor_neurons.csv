@@ -1,0 +1,397 @@
+bodyId,type,systematicType,leg,muscle,somaSide,neuromere,status,synweight,pre,post
+11813,MNhl02,MNhl02,hl,hind leg,LHS,T3,Traced,13535,132,12635
+12585,Ti flexor MN,MNhl40,hl,Ti flexor,LHS,T3,Traced,1420,16,1330
+12759,Acc. ti flexor MN,MNhl25,hl,Acc. ti flexor,LHS,T3,Traced,919,27,727
+13095,MNhl66,MNhl66,hl,hind leg,LHS,T3,Traced,2370,59,1929
+13192,Ti flexor MN,MNhl21,hl,Ti flexor,LHS,T3,Traced,771,17,659
+13311,Ti flexor MN,MNhl21,hl,Ti flexor,LHS,T3,Traced,661,9,613
+14226,Acc. ti flexor MN,MNhl24,hl,Acc. ti flexor,LHS,T3,Traced,1201,56,827
+14339,MNhl68,MNhl68,hl,hind leg,LHS,T3,Traced,557,33,325
+14343,ltm2-femur MN,MNhl15,hl,ltm2-femur,LHS,T3,Traced,961,38,712
+14468,Ti flexor MN,MNhl40,hl,Ti flexor,LHS,T3,Traced,1158,37,900
+15038,Acc. ti flexor MN,MNhl26,hl,Acc. ti flexor,LHS,T3,Traced,403,5,379
+15893,ltm MN,MNhl23,hl,ltm,LHS,T3,Traced,464,20,342
+17018,Acc. ti flexor MN,MNhl27,hl,Acc. ti flexor,LHS,T3,Traced,1150,2,1130
+19480,MNhl65,MNhl65,hl,hind leg,LHS,T3,Traced,1348,12,1276
+22487,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,LHS,T3,Traced,398,36,164
+23016,ltm MN,MNhl04,hl,ltm,LHS,T3,Traced,911,6,875
+24668,Tr flexor MN,MNhl12,hl,Tr flexor,LHS,T3,Traced,243,16,169
+25599,MNhl63,MNhl63,hl,hind leg,LHS,T3,Traced,418,10,347
+25885,Acc. ti flexor MN,MNhl25,hl,Acc. ti flexor,LHS,T3,Traced,343,1,333
+27479,MNhl62,MNhl62,hl,hind leg,LHS,T3,Traced,2777,36,2516
+27733,ltm MN,MNhl04,hl,ltm,LHS,T3,Traced,140,6,86
+27757,MNhl61,MNhl61,hl,hind leg,LHS,T3,Traced,220,0,220
+29474,MNhl64,MNhl64,hl,hind leg,LHS,T3,Traced,975,8,931
+29483,Sternal adductor MN,MNhl16,hl,Sternal adductor,LHS,T3,Traced,504,5,468
+35407,MNhl70,MNhl70,hl,hind leg,LHS,T3,Traced,1477,35,1275
+100824,MNhl69,MNhl69,hl,hind leg,LHS,T3,Traced,416,12,341
+157709,MNhl60,MNhl60,hl,hind leg,LHS,T3,Traced,638,4,610
+159762,Tergotr. MN,MNhl18,hl,Tergotr.,LHS,T3,Traced,3663,37,3429
+162912,Tr extensor MN,MNhl37,hl,Tr extensor,LHS,T3,Traced,2575,42,2332
+162913,Tr flexor MN,MNhl07,hl,Tr flexor,LHS,T3,Traced,155,4,132
+163009,MNhl73,MNhl73,hl,hind leg,LHS,T3,Traced,1154,74,662
+176866,Acc. ti flexor MN,MNhl28,hl,Acc. ti flexor,LHS,T3,Traced,1965,19,1869
+221983,MNhl01,MNhl01,hl,hind leg,LHS,T3,Traced,1939,33,1727
+11657,Ti extensor MN,MNfl41,fl,Ti extensor,LHS,T1,Traced,5133,39,4841
+12134,Ti flexor MN,MNfl30,fl,Ti flexor,LHS,T1,Traced,2932,18,2815
+13397,Acc. ti flexor MN,MNfl24,fl,Acc. ti flexor,LHS,T1,Traced,2498,13,2430
+15023,Acc. ti flexor MN,MNfl43,fl,Acc. ti flexor,LHS,T1,Traced,960,30,733
+15321,Ti flexor MN,MNfl21,fl,Ti flexor,LHS,T1,Traced,1451,9,1381
+15791,Acc. ti flexor MN,MNfl26,fl,Acc. ti flexor,LHS,T1,Traced,347,6,315
+16632,Acc. ti flexor MN,MNfl27,fl,Acc. ti flexor,LHS,T1,Traced,1210,23,1037
+17133,Ti flexor MN,MNfl40,fl,Ti flexor,LHS,T1,Traced,717,9,674
+17885,Acc. ti flexor MN,MNfl28,fl,Acc. ti flexor,LHS,T1,Traced,483,15,350
+18554,Acc. ti flexor MN,MNfl42,fl,Acc. ti flexor,LHS,T1,Traced,348,5,322
+19092,ltm MN,MNfl23,fl,ltm,LHS,T1,Traced,519,4,489
+19468,Ta depressor MN,MNfl48,fl,Ta depressor,LHS,T1,Traced,704,4,666
+19929,Tr extensor MN,MNfl09,fl,Tr extensor,LHS,T1,Traced,454,27,253
+21749,Ta depressor MN,MNfl50,fl,Ta depressor,LHS,T1,Traced,1034,18,862
+22358,Ta levator MN,MNfl51,fl,Ta levator,LHS,T1,Traced,1268,1,1259
+23698,Acc. ti flexor MN,MNfl25,fl,Acc. ti flexor,LHS,T1,Traced,424,4,398
+24139,ltm MN,MNfl04,fl,ltm,LHS,T1,Traced,636,0,636
+25674,Ta depressor MN,MNfl47,fl,Ta depressor,LHS,T1,Traced,1209,2,1195
+26613,Tr flexor MN,MNfl58,fl,Tr flexor,LHS,T1,Traced,94,6,55
+29487,Ta depressor MN,MNfl49,fl,Ta depressor,LHS,T1,Traced,339,1,335
+29554,Ta depressor MN,MNfl46,fl,Ta depressor,LHS,T1,Traced,165,7,114
+47642,ltm MN,MNfl04,fl,ltm,LHS,T1,Traced,244,0,244
+101043,Acc. ti flexor MN,MNfl27,fl,Acc. ti flexor,LHS,T1,Traced,2397,34,2176
+157320,Ta levator MN,MNfl52,fl,Ta levator,LHS,T1,Traced,743,2,731
+173560,Tr extensor MN,MNfl37,fl,Tr extensor,LHS,T1,Traced,853,47,561
+219894,Fe reductor MN,MNfl03,fl,Fe reductor,LHS,T1,Traced,112,2,99
+226276,Fe reductor MN,MNfl03,fl,Fe reductor,LHS,T1,Traced,321,5,307
+13283,Ti flexor MN,MNfl21,fl,Ti flexor,RHS,T1,Traced,3475,30,3249
+13399,Ti flexor MN,MNfl21,fl,Ti flexor,RHS,T1,Traced,3171,26,2988
+15367,Acc. ti flexor MN,MNfl27,fl,Acc. ti flexor,RHS,T1,Traced,2507,13,2412
+16346,Ta levator MN,MNfl51,fl,Ta levator,RHS,T1,Traced,3423,0,3423
+16492,Ta depressor MN,MNfl49,fl,Ta depressor,RHS,T1,Traced,668,12,586
+16658,ltm MN,MNfl23,fl,ltm,RHS,T1,Traced,621,33,419
+16897,Ta depressor MN,MNfl48,fl,Ta depressor,RHS,T1,Traced,1067,3,1052
+18440,Tr flexor MN,MNfl07,fl,Tr flexor,RHS,T1,Traced,6443,27,6305
+19048,Acc. ti flexor MN,MNfl26,fl,Acc. ti flexor,RHS,T1,Traced,1832,36,1582
+19443,Tergotr. MN,MNfl18,fl,Tergotr.,RHS,T1,Traced,396,16,315
+19751,Ta levator MN,MNfl52,fl,Ta levator,RHS,T1,Traced,2538,6,2507
+20373,Acc. ti flexor MN,MNfl43,fl,Acc. ti flexor,RHS,T1,Traced,677,15,586
+20615,Sternotrochanter MN,MNfl22,fl,Sternotrochanter,RHS,T1,Traced,816,37,602
+23318,Tergotr. MN,MNfl57,fl,Tergotr.,RHS,T1,Traced,462,30,289
+26658,Acc. ti flexor MN,MNfl42,fl,Acc. ti flexor,RHS,T1,Traced,580,2,576
+26777,Acc. ti flexor MN,MNfl42,fl,Acc. ti flexor,RHS,T1,Traced,222,0,222
+27028,Tr extensor MN,MNfl09,fl,Tr extensor,RHS,T1,Traced,545,31,340
+28884,Fe reductor MN,MNfl03,fl,Fe reductor,RHS,T1,Traced,384,2,372
+29484,Fe reductor MN,MNfl03,fl,Fe reductor,RHS,T1,Traced,423,4,399
+154803,ltm MN,MNfl04,fl,ltm,RHS,T1,Traced,908,1,905
+159822,Tr flexor MN,MNfl11,fl,Tr flexor,RHS,T1,Traced,185,5,160
+12758,Acc. ti flexor MN,MNhl26,hl,Acc. ti flexor,RHS,T3,Traced,1774,30,1522
+12800,MNhl66,MNhl66,hl,hind leg,RHS,T3,Traced,2393,33,2229
+13434,Tergotr. MN,MNhl18,hl,Tergotr.,RHS,T3,Traced,8680,33,8473
+13512,MNhl68,MNhl68,hl,hind leg,RHS,T3,Traced,1788,19,1689
+14622,MNhl75,MNhl75,hl,hind leg,RHS,T3,Traced,1406,5,1385
+15550,MNhl63,MNhl63,hl,hind leg,RHS,T3,Traced,1686,14,1590
+16633,Fe reductor MN,MNhl13,hl,Fe reductor,RHS,T3,Traced,2661,4,2635
+17137,Tr flexor MN,MNhl11,hl,Tr flexor,RHS,T3,Traced,827,5,799
+17970,MNhl62,MNhl62,hl,hind leg,RHS,T3,Traced,9415,22,9300
+19744,MNhl61,MNhl61,hl,hind leg,RHS,T3,Traced,793,3,769
+20593,Acc. ti flexor MN,MNhl27,hl,Acc. ti flexor,RHS,T3,Traced,1117,4,1094
+23390,ltm MN,MNhl04,hl,ltm,RHS,T3,Traced,939,5,917
+27205,MNhl60,MNhl60,hl,hind leg,RHS,T3,Traced,1538,0,1538
+28997,Tr flexor MN,MNhl12,hl,Tr flexor,RHS,T3,Traced,2167,17,2044
+41439,Tr flexor MN,MNhl07,hl,Tr flexor,RHS,T3,Traced,977,26,774
+14665,Acc. ti flexor MN,MNml27,ml,Acc. ti flexor,LHS,T2,Traced,569,14,480
+14775,Acc. ti flexor MN,MNml27,ml,Acc. ti flexor,LHS,T2,Traced,726,18,624
+15623,Ti flexor MN,MNml21,ml,Ti flexor,LHS,T2,Traced,2016,32,1777
+16635,Ti flexor MN,MNml30,ml,Ti flexor,LHS,T2,Traced,1038,22,893
+17419,ltm2-femur MN,MNml15,ml,ltm2-femur,LHS,T2,Traced,471,20,355
+166393,ltm MN,MNhl04,hl,ltm,RHS,T3,Traced,492,2,484
+20378,MNml10,MNml10,ml,middle leg,LHS,T2,Traced,2828,261,629
+21262,Acc. ti flexor MN,MNml28,ml,Acc. ti flexor,LHS,T2,Traced,442,12,350
+24828,Acc. ti flexor MN,MNml25,ml,Acc. ti flexor,LHS,T2,Traced,626,19,503
+25212,Acc. ti flexor MN,MNml26,ml,Acc. ti flexor,LHS,T2,Traced,864,21,718
+100707,Ti flexor MN,MNml40,ml,Ti flexor,LHS,T2,Traced,418,16,329
+103416,MNml77,MNml77,ml,middle leg,LHS,T2,Traced,564,3,547
+153335,Ti flexor MN,MNml21,ml,Ti flexor,LHS,T2,Traced,764,20,655
+155216,Acc. tr flexor MN,MNml14,ml,Acc. tr flexor,LHS,T2,Traced,306,4,284
+155218,Tr flexor MN,MNml12,ml,Tr flexor,LHS,T2,Traced,1873,41,1611
+156180,Acc. tr flexor MN,MNml14,ml,Acc. tr flexor,LHS,T2,Traced,637,16,523
+156233,Tr flexor MN,MNml07,ml,Tr flexor,LHS,T2,Traced,660,23,519
+158681,Fe reductor MN,MNml03,ml,Fe reductor,LHS,T2,Traced,637,4,623
+162825,MNml76,MNml76,ml,middle leg,LHS,T2,Traced,98,4,68
+13280,Ti flexor MN,MNml40,ml,Ti flexor,RHS,T2,Traced,2862,35,2640
+14849,Acc. ti flexor MN,MNml28,ml,Acc. ti flexor,RHS,T2,Traced,636,18,536
+16017,MNml85,MNml85,ml,middle leg,RHS,T2,Traced,962,40,708
+16497,MNml84,MNml84,ml,middle leg,RHS,T2,Traced,667,10,605
+29509,MNml10,MNml10,ml,middle leg,RHS,T2,Traced,3129,255,947
+30781,MNml78,MNml78,ml,middle leg,RHS,T2,Traced,104,1,98
+32253,MNml79,MNml79,ml,middle leg,RHS,T2,Traced,1017,5,979
+35735,ltm MN,MNml04,ml,ltm,RHS,T2,Traced,628,4,586
+39941,MNml78,MNml78,ml,middle leg,RHS,T2,Traced,155,1,150
+42738,Fe reductor MN,MNml03,ml,Fe reductor,RHS,T2,Traced,386,4,366
+48865,ltm MN,MNml04,ml,ltm,RHS,T2,Traced,517,1,513
+162827,MNml86,MNml86,ml,middle leg,RHS,T2,Traced,825,24,643
+166397,Acc. ti flexor MN,MNml25,ml,Acc. ti flexor,RHS,T2,Traced,153,6,108
+192299,Ti flexor MN,MNml21,ml,Ti flexor,RHS,T2,Traced,862,13,765
+200065,MNml77,MNml77,ml,middle leg,RHS,T2,Traced,812,10,751
+218885,Tr flexor MN,MNml07,ml,Tr flexor,RHS,T2,Traced,856,16,754
+18483,MNfl10,MNfl10,fl,front leg,RHS,T1,Traced,2547,256,641
+12704,Ti extensor MN,MNfl39,fl,Ti extensor,LHS,T1,Traced,5018,52,4646
+14798,Ti flexor MN,MNfl40,fl,Ti flexor,LHS,T1,Traced,794,7,751
+15149,Ti flexor MN,MNfl21,fl,Ti flexor,LHS,T1,Traced,1357,40,1080
+17664,MNfl10,MNfl10,fl,front leg,LHS,T1,Traced,5066,469,1495
+10968,MNhl68,MNhl68,hl,hind leg,RHS,T3,Traced,14558,61,14245
+13819,Acc. ti flexor MN,MNfl27,fl,Acc. ti flexor,RHS,T1,Traced,4143,27,4008
+14536,Tr extensor MN,MNfl37,fl,Tr extensor,RHS,T1,Traced,4002,112,3305
+14783,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,RHS,T1,Traced,4654,52,4332
+14824,Acc. ti flexor MN,MNfl25,fl,Acc. ti flexor,RHS,T1,Traced,1868,14,1773
+15434,Ta depressor MN,MNfl50,fl,Ta depressor,RHS,T1,Traced,3235,26,3093
+15446,Ta levator MN,MNfl52,fl,Ta levator,RHS,T1,Traced,3428,18,3307
+16419,Pleural remotor/abductor MN,MNfl31,fl,Pleural remotor/abductor,RHS,T1,Traced,2797,55,2532
+18963,Acc. ti flexor MN,MNfl28,fl,Acc. ti flexor,RHS,T1,Traced,2394,75,1927
+20605,Acc. ti flexor MN,MNfl25,fl,Acc. ti flexor,RHS,T1,Traced,1767,9,1716
+22729,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,RHS,T1,Traced,1748,28,1554
+27078,ltm MN,MNfl04,fl,ltm,RHS,T1,Traced,493,1,489
+41933,Tr flexor MN,MNfl12,fl,Tr flexor,RHS,T1,Traced,1310,23,1190
+154804,Ta depressor MN,MNfl47,fl,Ta depressor,RHS,T1,Traced,1217,5,1193
+10462,Ti extensor MN,MNhl41,hl,Ti extensor,RHS,T3,Traced,24858,78,24452
+11274,MNhl02,MNhl02,hl,hind leg,RHS,T3,Traced,13405,22,13283
+11400,Sternal posterior rotator MN,MNhl34,hl,Sternal posterior rotator,RHS,T3,Traced,11823,51,11515
+11480,MNhl67,MNhl67,hl,hind leg,RHS,T3,Traced,8460,35,8217
+12113,Fe reductor MN,MNhl35,hl,Fe reductor,RHS,T3,Traced,8873,49,8644
+12504,MNhl67,MNhl67,hl,hind leg,RHS,T3,Traced,4845,34,4614
+12725,Acc. ti flexor MN,MNhl27,hl,Acc. ti flexor,RHS,T3,Traced,4429,21,4330
+13144,MNhl65,MNhl65,hl,hind leg,RHS,T3,Traced,7032,11,6974
+13170,Acc. ti flexor MN,MNhl24,hl,Acc. ti flexor,RHS,T3,Traced,5288,39,5087
+13740,MNhl64,MNhl64,hl,hind leg,RHS,T3,Traced,3237,46,2952
+14596,Pleural remotor/abductor MN,MNhl31,hl,Pleural remotor/abductor,RHS,T3,Traced,6313,37,6105
+14649,MNhl29,MNhl29,hl,hind leg,RHS,T3,Traced,3713,47,3440
+15262,Pleural remotor/abductor MN,MNhl17,hl,Pleural remotor/abductor,RHS,T3,Traced,12735,67,12386
+15380,ltm MN,MNhl32,hl,ltm,RHS,T3,Traced,1702,33,1492
+15735,MNhl01,MNhl01,hl,hind leg,RHS,T3,Traced,8161,48,7895
+16228,Acc. ti flexor MN,MNhl25,hl,Acc. ti flexor,RHS,T3,Traced,2756,10,2696
+16356,ltm2-femur MN,MNhl15,hl,ltm2-femur,RHS,T3,Traced,1737,38,1510
+16903,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,RHS,T3,Traced,5422,21,5307
+17693,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,RHS,T3,Traced,2543,12,2477
+17947,Sternal posterior rotator MN,MNhl34,hl,Sternal posterior rotator,RHS,T3,Traced,6146,38,5953
+18491,Ti flexor MN,MNhl40,hl,Ti flexor,RHS,T3,Traced,7489,24,7354
+19260,Acc. ti flexor MN,MNhl25,hl,Acc. ti flexor,RHS,T3,Traced,1650,10,1584
+19613,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,RHS,T3,Traced,1569,7,1522
+20667,Sternal adductor MN,MNhl16,hl,Sternal adductor,RHS,T3,Traced,2086,2,2073
+21991,Ti flexor MN,MNhl21,hl,Ti flexor,RHS,T3,Traced,3584,24,3422
+22465,Tr flexor MN,MNhl12,hl,Tr flexor,RHS,T3,Traced,4089,17,3991
+26883,Tr flexor MN,MNhl12,hl,Tr flexor,RHS,T3,Traced,3841,26,3662
+28219,Sternal posterior rotator MN,MNhl33,hl,Sternal posterior rotator,RHS,T3,Traced,3117,19,3005
+10347,Ti extensor MN,MNhl41,hl,Ti extensor,LHS,T3,Traced,7340,97,6733
+14020,Fe reductor MN,MNhl35,hl,Fe reductor,LHS,T3,Traced,5273,44,5067
+14168,Pleural remotor/abductor MN,MNhl17,hl,Pleural remotor/abductor,LHS,T3,Traced,4519,30,4325
+14449,Sternal posterior rotator MN,MNhl34,hl,Sternal posterior rotator,LHS,T3,Traced,463,31,296
+15278,Sternal posterior rotator MN,MNhl34,hl,Sternal posterior rotator,LHS,T3,Traced,885,21,772
+15879,MNhl74,MNhl74,hl,hind leg,LHS,T3,Traced,473,10,411
+18286,Pleural remotor/abductor MN,MNhl31,hl,Pleural remotor/abductor,LHS,T3,Traced,7498,53,7219
+21186,Tr flexor MN,MNhl07,hl,Tr flexor,LHS,T3,Traced,276,10,241
+21665,Fe reductor MN,MNhl13,hl,Fe reductor,LHS,T3,Traced,2025,6,1987
+23117,Tr flexor MN,MNhl05,hl,Tr flexor,LHS,T3,Traced,719,31,503
+23974,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,LHS,T3,Traced,562,33,302
+27258,Sternal posterior rotator MN,MNhl33,hl,Sternal posterior rotator,LHS,T3,Traced,283,10,209
+34004,Acc. tr flexor MN,MNhl14,hl,Acc. tr flexor,LHS,T3,Traced,268,8,223
+37741,MNhl72,MNhl72,hl,hind leg,LHS,T3,Traced,302,24,145
+100826,Tr extensor MN,MNhl09,hl,Tr extensor,LHS,T3,Traced,890,38,645
+102123,MNhl29,MNhl29,hl,hind leg,LHS,T3,Traced,1990,19,1895
+152642,Sternotrochanter MN,MNhl08,hl,Sternotrochanter,LHS,T3,Traced,6447,64,6037
+13746,Acc. ti flexor MN,MNml27,ml,Acc. ti flexor,RHS,T2,Traced,3119,26,2953
+15616,MNml80,MNml80,ml,middle leg,RHS,T2,Traced,1526,32,1307
+16552,Fe reductor MN,MNml35,ml,Fe reductor,RHS,T2,Traced,3161,80,2474
+18448,Ti flexor MN,MNml40,ml,Ti flexor,RHS,T2,Traced,1669,18,1526
+19094,Sternotrochanter MN,MNml08,ml,Sternotrochanter,RHS,T2,Traced,1755,46,1414
+19983,Tr flexor MN,MNml11,ml,Tr flexor,RHS,T2,Traced,995,18,861
+24443,Acc. ti flexor MN,MNml25,ml,Acc. ti flexor,RHS,T2,Traced,1740,19,1639
+34115,Tr flexor MN,MNml07,ml,Tr flexor,RHS,T2,Traced,1770,18,1639
+35432,Fe reductor MN,MNml03,ml,Fe reductor,RHS,T2,Traced,615,5,597
+41482,Pleural remotor/abductor MN,MNml31,ml,Pleural remotor/abductor,RHS,T2,Traced,1742,23,1635
+20551,MNml78,MNml78,ml,middle leg,LHS,T2,Traced,415,6,371
+167919,MNml78,MNml78,ml,middle leg,LHS,T2,Traced,220,3,202
+26370,Acc. tr flexor MN,MNml14,ml,Acc. tr flexor,RHS,T2,Traced,1057,14,974
+156505,MNml76,MNml76,ml,middle leg,RHS,T2,Traced,166,3,151
+15317,ltm2-femur MN,MNfl15,fl,ltm2-femur,RHS,T1,Traced,925,14,845
+13490,Tergopleural/Pleural promotor MN,MNfl53,fl,Tergopleural/Pleural promotor,LHS,T1,Traced,5710,6,5682
+14949,Fe reductor MN,MNfl13,fl,Fe reductor,LHS,T1,Traced,5253,20,5124
+29689,Sternal posterior rotator MN,MNfl06,fl,Sternal posterior rotator,LHS,T1,Traced,1781,51,1443
+166374,Acc. ti flexor MN,MNfl42,fl,Acc. ti flexor,LHS,T1,Traced,128,3,107
+11115,Ti extensor MN,MNml41,ml,Ti extensor,LHS,T2,Traced,2825,39,2555
+13784,Acc. ti flexor MN,MNml24,ml,Acc. ti flexor,LHS,T2,Traced,1907,22,1747
+17964,MNml79,MNml79,ml,middle leg,LHS,T2,Traced,3508,4,3489
+101909,MNml82,MNml82,ml,middle leg,LHS,T2,Traced,3026,36,2800
+26809,ltm MN,MNml32,ml,ltm,RHS,T2,Traced,255,1,251
+13075,Ti extensor MN,MNhl39,hl,Ti extensor,LHS,T3,Traced,3338,46,3057
+164741,Sternal anterior rotator MN,MNhl36,hl,Sternal anterior rotator,LHS,T3,Traced,3842,36,3592
+14773,ltm2-femur MN,MNhl15,hl,ltm2-femur,RHS,T3,Traced,1212,15,1127
+21963,ltm MN,MNhl32,hl,ltm,LHS,T3,Traced,399,10,339
+29950,ltm MN,MNhl23,hl,ltm,RHS,T3,Traced,1688,11,1626
+61001,ltm1-tibia MN,MNhl19,hl,ltm1-tibia,LHS,T3,Traced,1050,25,899
+15873,ltm1-tibia MN,MNml38,ml,ltm1-tibia,LHS,T2,Traced,2146,17,2052
+101736,ltm1-tibia MN,MNml19,ml,ltm1-tibia,LHS,T2,Traced,475,8,427
+10461,Ti extensor MN,MNml41,ml,Ti extensor,RHS,T2,Traced,17768,64,17418
+11489,Ti extensor MN,MNml39,ml,Ti extensor,RHS,T2,Traced,11284,61,10883
+26566,Sternal anterior rotator MN,MNfl36,fl,Sternal anterior rotator,LHS,T1,Traced,6659,53,6405
+10866,Tr extensor MN,MNhl37,hl,Tr extensor,RHS,T3,Traced,7423,38,7213
+11562,Sternal anterior rotator MN,MNhl36,hl,Sternal anterior rotator,RHS,T3,Traced,9826,74,9458
+12474,Acc. ti flexor MN,MNhl28,hl,Acc. ti flexor,RHS,T3,Traced,8967,42,8731
+165340,Tr extensor MN,MNhl09,hl,Tr extensor,RHS,T3,Traced,6283,54,6006
+15857,MNhl87,MNhl87,hl,hind leg,RHS,T3,Traced,2184,5,2160
+24747,Sternal posterior rotator MN,MNfl33,fl,Sternal posterior rotator,LHS,T1,Traced,323,8,275
+13300,Sternal anterior rotator MN,MNfl36,fl,Sternal anterior rotator,RHS,T1,Traced,6037,24,5878
+23553,Tergotr. MN,MNfl57,fl,Tergotr.,RHS,T1,Traced,493,20,357
+16295,Sternal anterior rotator MN,MNml36,ml,Sternal anterior rotator,LHS,T2,Traced,2099,41,1858
+20119,Sternal anterior rotator MN,MNml36,ml,Sternal anterior rotator,LHS,T2,Traced,5224,68,4831
+49886,Sternal posterior rotator MN,MNml34,ml,Sternal posterior rotator,LHS,T2,Traced,4816,52,4488
+166392,Sternotrochanter MN,MNml22,ml,Sternotrochanter,LHS,T2,Traced,3278,105,2627
+17905,MNhl88,MNhl88,hl,hind leg,LHS,T3,Traced,1899,9,1853
+15712,ltm1-tibia MN,MNhl38,hl,ltm1-tibia,LHS,T3,Traced,2194,18,2102
+13952,ltm1-tibia MN,MNfl38,fl,ltm1-tibia,LHS,T1,Traced,1426,9,1356
+20612,ltm1-tibia MN,MNfl19,fl,ltm1-tibia,LHS,T1,Traced,724,23,569
+12761,Acc. ti flexor MN,MNfl24,fl,Acc. ti flexor,RHS,T1,Traced,3719,14,3653
+13563,Ti flexor MN,MNfl30,fl,Ti flexor,RHS,T1,Traced,2153,68,1692
+12396,Tergopleural/Pleural promotor MN,MNfl56,fl,Tergopleural/Pleural promotor,LHS,T1,Traced,3735,50,3355
+16711,ltm2-femur MN,MNfl15,fl,ltm2-femur,LHS,T1,Traced,586,25,410
+12686,Tergopleural/Pleural promotor MN,MNfl54,fl,Tergopleural/Pleural promotor,LHS,T1,Traced,13103,87,12599
+19319,Tergopleural/Pleural promotor MN,MNfl55,fl,Tergopleural/Pleural promotor,LHS,T1,Traced,5775,59,5332
+10811,ltm1-tibia MN,MNhl38,hl,ltm1-tibia,RHS,T3,Traced,10451,20,10342
+18471,Sternal anterior rotator MN,MNhl36,hl,Sternal anterior rotator,LHS,T3,Traced,5237,47,4935
+12628,Tergopleural/Pleural promotor MN,MNfl55,fl,Tergopleural/Pleural promotor,RHS,T1,Traced,8024,63,7737
+16250,Tergopleural/Pleural promotor MN,MNfl54,fl,Tergopleural/Pleural promotor,RHS,T1,Traced,3995,46,3809
+25447,ltm MN,MNml23,ml,ltm,LHS,T2,Traced,507,7,464
+165511,Ta depressor MN,MNfl46,fl,Ta depressor,RHS,T1,Traced,292,2,278
+15107,Tergotr. MN,MNml18,ml,Tergotr.,LHS,T2,Traced,1736,57,1420
+13033,ltm MN,MNml23,ml,ltm,RHS,T2,Traced,4086,25,3906
+17550,ltm2-femur MN,MNml15,ml,ltm2-femur,RHS,T2,Traced,864,20,747
+19758,ltm1-tibia MN,MNml38,ml,ltm1-tibia,RHS,T2,Traced,4865,33,4658
+28532466490,ltm2-femur MN,MNml15,ml,ltm2-femur,RHS,T2,Traced,838,24,676
+19704,Tr flexor MN,MNml12,ml,Tr flexor,LHS,T2,Traced,2377,25,2210
+30306,Tr extensor MN,MNml09,ml,Tr extensor,LHS,T2,Traced,705,24,565
+219796,Sternal anterior rotator MN,MNml36,ml,Sternal anterior rotator,RHS,T2,Traced,1525,48,1233
+16400,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,RHS,T1,Traced,1468,19,1363
+21612,Tr flexor MN,MNfl05,fl,Tr flexor,RHS,T1,Traced,741,21,615
+11226,Fe reductor MN,MNfl35,fl,Fe reductor,RHS,T1,Traced,10173,57,9844
+18983,Fe reductor MN,MNfl35,fl,Fe reductor,RHS,T1,Traced,5494,71,5121
+102786,Sternal posterior rotator MN,MNml34,ml,Sternal posterior rotator,RHS,T2,Traced,5457,53,5163
+104697,Sternal posterior rotator MN,MNml06,ml,Sternal posterior rotator,RHS,T2,Traced,2288,35,2085
+162833,Tr extensor MN,MNml37,ml,Tr extensor,RHS,T2,Traced,2155,47,1858
+171055,Sternal adductor MN,MNml16,ml,Sternal adductor,RHS,T2,Traced,3763,76,3220
+11706,Ti extensor MN,MNfl39,fl,Ti extensor,RHS,T1,Traced,14887,62,14544
+13163,Ti flexor MN,MNfl40,fl,Ti flexor,RHS,T1,Traced,6074,50,5769
+13883,MNhl88,MNhl88,hl,hind leg,RHS,T3,Traced,3125,6,3105
+12196,MNml29,MNml29,ml,middle leg,RHS,T2,Traced,6936,16,6851
+13628,Pleural remotor/abductor MN,MNfl17,fl,Pleural remotor/abductor,LHS,T1,Traced,4611,47,4332
+155853,Sternal adductor MN,MNfl16,fl,Sternal adductor,LHS,T1,Traced,2149,22,2004
+24725,ltm2-femur MN,MNml15,ml,ltm2-femur,LHS,T2,Traced,724,31,490
+12693,ltm MN,MNml32,ml,ltm,LHS,T2,Traced,2377,47,2074
+17176,Sternal anterior rotator MN,MNfl36,fl,Sternal anterior rotator,LHS,T1,Traced,3597,177,2245
+17036,MNml83,MNml83,ml,middle leg,LHS,T2,Traced,1668,3,1645
+30709,MNml78,MNml78,ml,middle leg,LHS,T2,Traced,162,1,157
+19652,Tergotr. MN,MNfl20,fl,Tergotr.,LHS,T1,Traced,3397,45,3083
+155633,Tergotr. MN,MNfl18,fl,Tergotr.,LHS,T1,Traced,2921,128,1988
+23299,Tr flexor MN,MNfl05,fl,Tr flexor,LHS,T1,Traced,2391,73,1855
+13464,Tergopleural/Pleural promotor MN,MNfl53,fl,Tergopleural/Pleural promotor,RHS,T1,Traced,4892,14,4828
+18006,Sternotrochanter MN,MNfl08,fl,Sternotrochanter,RHS,T1,Traced,1203,42,986
+17091,Pleural remotor/abductor MN,MNml17,ml,Pleural remotor/abductor,LHS,T2,Traced,4019,21,3928
+10737,Ti extensor MN,MNml39,ml,Ti extensor,LHS,T2,Traced,3080,71,2588
+26132,Sternotrochanter MN,MNml08,ml,Sternotrochanter,LHS,T2,Traced,1675,69,1354
+11786,ltm MN,MNfl32,fl,ltm,RHS,T1,Traced,3879,40,3641
+20572,Tr flexor MN,MNfl07,fl,Tr flexor,RHS,T1,Traced,430,24,296
+19074,Acc. ti flexor MN,MNhl27,hl,Acc. ti flexor,LHS,T3,Traced,1628,10,1572
+15006,Tr flexor MN,MNml12,ml,Tr flexor,RHS,T2,Traced,12350,93,11710
+16035,Sternal posterior rotator MN,MNml34,ml,Sternal posterior rotator,RHS,T2,Traced,5155,64,4792
+18664,Acc. ti flexor MN,MNml27,ml,Acc. ti flexor,RHS,T2,Traced,774,11,708
+18716,Sternotrochanter MN,MNml22,ml,Sternotrochanter,RHS,T2,Traced,4278,58,3933
+19206,Pleural remotor/abductor MN,MNml17,ml,Pleural remotor/abductor,RHS,T2,Traced,7073,34,6908
+24669,Sternal anterior rotator MN,MNml36,ml,Sternal anterior rotator,RHS,T2,Traced,2981,36,2771
+35950,MNml78,MNml78,ml,middle leg,RHS,T2,Traced,599,13,501
+166337,Pleural remotor/abductor MN,MNml31,ml,Pleural remotor/abductor,RHS,T2,Traced,1887,35,1697
+171948,Tr flexor MN,MNml12,ml,Tr flexor,RHS,T2,Traced,6798,35,6597
+175327,Tergotr. MN,MNml18,ml,Tergotr.,RHS,T2,Traced,1567,21,1451
+14069,ltm MN,MNfl32,fl,ltm,LHS,T1,Traced,934,24,781
+15818,ltm2-femur MN,MNfl15,fl,ltm2-femur,LHS,T1,Traced,640,36,411
+13036,MNml81,MNml81,ml,middle leg,LHS,T2,Traced,4684,13,4619
+13920,Fe reductor MN,MNfl44,fl,Fe reductor,LHS,T1,Traced,5053,32,4830
+20386,Tergopleural/Pleural promotor MN,MNfl56,fl,Tergopleural/Pleural promotor,RHS,T1,Traced,5077,57,4795
+157503,Sternotrochanter MN,MNhl08,hl,Sternotrochanter,LHS,T3,Traced,2270,28,2122
+13241,ltm1-tibia MN,MNhl19,hl,ltm1-tibia,RHS,T3,Traced,3473,23,3345
+14346,Pleural remotor/abductor MN,MNfl17,fl,Pleural remotor/abductor,RHS,T1,Traced,3203,49,2971
+21718,Sternal adductor MN,MNfl16,fl,Sternal adductor,RHS,T1,Traced,3766,51,3539
+17930,Tr extensor MN,MNml09,ml,Tr extensor,RHS,T2,Traced,3157,85,2625
+17050,ltm2-femur MN,MNfl15,fl,ltm2-femur,RHS,T1,Traced,1012,32,832
+102019,Acc. tr flexor MN,MNml14,ml,Acc. tr flexor,RHS,T2,Traced,2498,42,2232
+157207,Tr flexor MN,MNml05,ml,Tr flexor,RHS,T2,Traced,2201,66,1729
+158769,Tr flexor MN,MNml12,ml,Tr flexor,RHS,T2,Traced,2104,34,1879
+167438,Ti flexor MN,MNml30,ml,Ti flexor,RHS,T2,Traced,741,21,621
+157432,Sternotrochanter MN,MNhl22,hl,Sternotrochanter,LHS,T3,Traced,5718,53,5414
+158889,ltm2-femur MN,MNhl15,hl,ltm2-femur,LHS,T3,Traced,945,76,415
+166171,Tr flexor MN,MNhl11,hl,Tr flexor,LHS,T3,Traced,121,6,83
+192364,MNhl71,MNhl71,hl,hind leg,LHS,T3,Traced,359,32,151
+11162403133,Sternal posterior rotator MN,MNhl06,hl,Sternal posterior rotator,LHS,T3,Traced,580,30,400
+10710,Ti flexor MN,MNml40,ml,Ti flexor,LHS,T2,Traced,1586,74,1128
+15883,Sternal posterior rotator MN,MNml34,ml,Sternal posterior rotator,LHS,T2,Traced,3393,45,3121
+17070,Acc. ti flexor MN,MNml25,ml,Acc. ti flexor,LHS,T2,Traced,491,18,387
+17697,MNml80,MNml80,ml,middle leg,LHS,T2,Traced,639,10,578
+21255,Pleural remotor/abductor MN,MNml31,ml,Pleural remotor/abductor,LHS,T2,Traced,2842,20,2742
+22718,Tr flexor MN,MNml07,ml,Tr flexor,LHS,T2,Traced,416,12,345
+23364,Tr flexor MN,MNml05,ml,Tr flexor,LHS,T2,Traced,1211,37,973
+29187,Fe reductor MN,MNml35,ml,Fe reductor,LHS,T2,Traced,2406,17,2286
+45494,Fe reductor MN,MNml03,ml,Fe reductor,LHS,T2,Traced,305,1,299
+153315,Tr flexor MN,MNml12,ml,Tr flexor,LHS,T2,Traced,1515,14,1435
+154769,Sternal posterior rotator MN,MNml06,ml,Sternal posterior rotator,LHS,T2,Traced,1225,26,1047
+167442,Tr flexor MN,MNml11,ml,Tr flexor,LHS,T2,Traced,707,8,658
+172408,Sternal posterior rotator MN,MNml33,ml,Sternal posterior rotator,LHS,T2,Traced,775,7,730
+219853,Pleural remotor/abductor MN,MNml31,ml,Pleural remotor/abductor,LHS,T2,Traced,2055,22,1929
+17761,MNhl87,MNhl87,hl,hind leg,LHS,T3,Traced,2466,4,2444
+37220,Ti flexor MN,MNhl40,hl,Ti flexor,RHS,T3,Traced,1074,23,926
+40443,Tr flexor MN,MNhl07,hl,Tr flexor,RHS,T3,Traced,1524,16,1421
+154133,Sternal posterior rotator MN,MNhl06,hl,Sternal posterior rotator,RHS,T3,Traced,10394,61,10050
+158694,Tr flexor MN,MNfl11,fl,Tr flexor,LHS,T1,Traced,331,16,250
+13156,ltm MN,MNfl45,fl,ltm,LHS,T1,Traced,773,19,643
+18412,Acc. ti flexor MN,MNfl25,fl,Acc. ti flexor,LHS,T1,Traced,1736,6,1706
+21944,Fe reductor MN,MNfl35,fl,Fe reductor,LHS,T1,Traced,5289,33,5116
+23048,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,LHS,T1,Traced,495,14,396
+25475,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,LHS,T1,Traced,671,20,550
+26588,Acc. tr flexor MN,MNfl14,fl,Acc. tr flexor,LHS,T1,Traced,250,5,220
+156857,Fe reductor MN,MNfl35,fl,Fe reductor,LHS,T1,Traced,7783,16,7702
+14828,MNml81,MNml81,ml,middle leg,RHS,T2,Traced,3264,15,3182
+13543,MNhl59,MNhl59,hl,hind leg,RHS,T3,Traced,3178,29,3025
+162830,ltm1-tibia MN,MNml19,ml,ltm1-tibia,RHS,T2,Traced,1552,23,1415
+13942,Sternal posterior rotator MN,MNfl34,fl,Sternal posterior rotator,RHS,T1,Traced,1258,33,1074
+19886,Tr flexor MN,MNfl12,fl,Tr flexor,RHS,T1,Traced,5003,37,4788
+20673,Tr flexor MN,MNfl12,fl,Tr flexor,RHS,T1,Traced,1159,38,936
+21241,Sternal posterior rotator MN,MNfl06,fl,Sternal posterior rotator,RHS,T1,Traced,2382,30,2222
+25892,Sternal posterior rotator MN,MNfl33,fl,Sternal posterior rotator,RHS,T1,Traced,721,16,629
+153142,Tr flexor MN,MNfl07,fl,Tr flexor,LHS,T1,Traced,489,19,401
+25767,Sternal posterior rotator MN,MNfl34,fl,Sternal posterior rotator,RHS,T1,Traced,1238,43,1008
+162868,Acc. ti flexor MN,MNml24,ml,Acc. ti flexor,RHS,T2,Traced,3403,47,3053
+22126,Tergotr. MN,MNfl20,fl,Tergotr.,RHS,T1,Traced,1134,25,1007
+11022,Sternal anterior rotator MN,MNhl36,hl,Sternal anterior rotator,RHS,T3,Traced,13895,88,13360
+13006,Ti extensor MN,MNhl39,hl,Ti extensor,RHS,T3,Traced,21039,93,20502
+13904,Tr extensor MN,MNml37,ml,Tr extensor,LHS,T2,Traced,3764,34,3583
+25956,MNml80,MNml80,ml,middle leg,LHS,T2,Traced,2451,15,2365
+13069,Sternotrochanter MN,MNhl22,hl,Sternotrochanter,RHS,T3,Traced,11141,106,10361
+96565,Tr flexor MN,MNhl05,hl,Tr flexor,RHS,T3,Traced,4257,68,3809
+152620,Sternotrochanter MN,MNhl08,hl,Sternotrochanter,RHS,T3,Traced,18728,138,17835
+152621,Sternotrochanter MN,MNhl08,hl,Sternotrochanter,RHS,T3,Traced,12938,74,12537
+15720,ltm1-tibia MN,MNfl19,fl,ltm1-tibia,RHS,T1,Traced,1736,21,1613
+24050,Fe reductor MN,MNfl13,fl,Fe reductor,RHS,T1,Traced,2528,28,2392
+12096,Pleural remotor/abductor MN,MNfl31,fl,Pleural remotor/abductor,LHS,T1,Traced,2091,36,1815
+16963,Tr flexor MN,MNfl12,fl,Tr flexor,LHS,T1,Traced,1586,31,1448
+17226,Tr flexor MN,MNfl12,fl,Tr flexor,LHS,T1,Traced,738,32,585
+19667,Sternal posterior rotator MN,MNfl34,fl,Sternal posterior rotator,LHS,T1,Traced,1698,22,1570
+19771,Tr flexor MN,MNfl12,fl,Tr flexor,LHS,T1,Traced,1481,16,1411
+163719,Sternal posterior rotator MN,MNfl34,fl,Sternal posterior rotator,LHS,T1,Traced,741,24,619
+11529,Sternal posterior rotator MN,MNml33,ml,Sternal posterior rotator,RHS,T2,Traced,12073,59,11752
+18579,Sternotrochanter MN,MNfl08,fl,Sternotrochanter,LHS,T1,Traced,2193,48,1916
+21753,Tergotr. MN,MNfl57,fl,Tergotr.,LHS,T1,Traced,980,20,860
+100515,Sternotrochanter MN,MNfl22,fl,Sternotrochanter,LHS,T1,Traced,2043,59,1730
+163686,Tr flexor MN,MNfl07,fl,Tr flexor,LHS,T1,Traced,665,23,532
+166309,Tergotr. MN,MNfl57,fl,Tergotr.,LHS,T1,Traced,1770,54,1506
+13817,Sternal adductor MN,MNml16,ml,Sternal adductor,LHS,T2,Traced,3169,4,3153
+19773,MNml29,MNml29,ml,middle leg,LHS,T2,Traced,3189,26,3034
+12891,Fe reductor MN,MNfl44,fl,Fe reductor,RHS,T1,Traced,5093,27,4942
+22215,Sternal anterior rotator MN,MNfl36,fl,Sternal anterior rotator,RHS,T1,Traced,5483,69,5037
+16495,Acc. ti flexor MN,MNml26,ml,Acc. ti flexor,RHS,T2,Traced,3588,33,3391
+13115,Ti extensor MN,MNfl41,fl,Ti extensor,RHS,T1,Traced,9650,97,9094
+41353,Tr flexor MN,MNfl58,fl,Tr flexor,RHS,T1,Traced,47,3,33
+14848,Ti flexor MN,MNfl40,fl,Ti flexor,RHS,T1,Traced,2603,29,2452
+166385,ltm1-tibia MN,MNfl38,fl,ltm1-tibia,RHS,T1,Traced,3353,41,3134
+11809,MNhl59,MNhl59,hl,hind leg,LHS,T3,Traced,3576,41,3325
