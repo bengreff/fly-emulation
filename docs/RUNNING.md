@@ -65,6 +65,12 @@ uv run python scripts/pugliese_conditions.py --condition baseline --replicates 2
 uv run python scripts/make_figures.py
 uv run python scripts/make_figures2.py
 uv run python scripts/summarize_session.py
+
+# the headline claim, checked against every run present
+uv run python scripts/rhythm_rate_exclusion.py
+
+# which sign flips broke the rhythm, reconstructed from seeds, no re-simulation
+uv run python scripts/analyze_sign_flips.py runs/pugliese-baseline-n24-papertol-ntsample
 ```
 
 Batch scripts, each writing one log under `runs/`:
@@ -80,6 +86,8 @@ Batch scripts, each writing one log under `runs/`:
 | `run_corrected_model.sh` | does the model have a working point once F11 is fixed |
 | `run_ei_balance.sh` | can stronger inhibition hold a high-rate rhythm |
 | `phasic_sensory.py` | does the timing of sensory drive matter |
+| `run_corrected_window.sh` | where the corrected model's working point is |
+| `run_fully_corrected.sh` | every correction at once, plus sensory drive |
 
 If a run is killed, `metrics_partial.csv` keeps the completed replicates, and
 `scripts/recover_from_logs.py <out.csv> <dir> "<glob>" <key>` recovers older
