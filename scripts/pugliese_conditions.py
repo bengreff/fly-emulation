@@ -213,6 +213,13 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--drive-target", default="proprioceptors",
+                    choices=["proprioceptors", "random_interneurons", "bristles"],
+                    help="which population --sensory-amp drives. "
+                         "random_interneurons is the control for 'is it the "
+                         "sensory pathway, or just more total current?'")
+    ap.add_argument("--drive-seed", type=int, default=0,
+                    help="seed for random_interneurons target selection")
     ap.add_argument("--sensory-amp", type=float, default=None,
                     help="tonic current applied to leg proprioceptors "
                          "(chordotonal organ, hair plate, campaniform sensilla). "
@@ -229,6 +236,8 @@ def main() -> None:
         mult_tag += f"-I{args.stim_amp:g}"
     if args.sensory_amp is not None:
         mult_tag += f"-S{args.sensory_amp:g}"
+        if args.drive_target != "proprioceptors":
+            mult_tag += f"-{args.drive_target[:4]}{args.drive_seed}"
     run_id = f"pugliese-{args.condition}-n{args.replicates}-{tol_tag}{mult_tag}{args.tag}"
     out_dir = Path(args.out) / run_id
     rec = RunRecord(run_id, out_dir,
@@ -251,10 +260,25 @@ def main() -> None:
         cfg.experiment.stimI = [[args.stim_amp] * len(cfg.experiment.stimNeurons[0])]
         notes["stim_amp_override"] = args.stim_amp
     if args.sensory_amp is not None:
-        prop = wTable.loc[
+        prop_idx = wTable.loc[
             wTable["subclass"].isin(["chordotonal organ", "hair plate",
                                      "campaniform sensilla"])
         ].index.tolist()
+        n_target = len(prop_idx)
+        if args.drive_target == "proprioceptors":
+            prop = prop_idx
+        elif args.drive_target == "bristles":
+            pool = wTable.loc[
+                wTable["subclass"] == "mechanosensory bristle"].index.tolist()
+            prop = list(np.random.default_rng(args.drive_seed).choice(
+                pool, size=min(n_target, len(pool)), replace=False))
+        else:
+            pool = wTable.loc[wTable["class"] == "intrinsic neuron"].index.tolist()
+            prop = list(np.random.default_rng(args.drive_seed).choice(
+                pool, size=n_target, replace=False))
+        prop = [int(i) for i in prop]
+        notes["drive_target"] = args.drive_target
+        notes["aggregate_drive"] = args.sensory_amp * len(prop)
         cfg.experiment.stimNeurons = [list(cfg.experiment.stimNeurons[0]) + prop]
         cfg.experiment.stimI = [list(cfg.experiment.stimI[0])
                                 + [args.sensory_amp] * len(prop)]
