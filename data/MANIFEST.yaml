@@ -17,4 +17,62 @@ external_code:
       to the underlying connectome version before use.
     role: reference calculation (ROADMAP first session step 3); comparison fixture
 
-datasets: []
+datasets:
+  - name: MANC leg motor neurons
+    source: neuPrint, dataset manc:v1.2.1, server neuprint.janelia.org
+    access: token-based API query, no bulk download
+    query: >
+      Neuron nodes with class 'motor neuron' and subclass in (fl, ml, hl),
+      returning bodyId, type, systematicType, subclass, target muscle, somaSide,
+      somaNeuromere, status, synweight, pre, post.
+    fetched: 2026-09-14
+    local_path: data/derived/manc_leg_motor_neurons.csv
+    rows: 396
+    role: >
+      Anatomical identity join for finding F2. All 144 front-leg motor neurons
+      matched the bundled Pugliese T1 table on exact integer bodyId. The tibia
+      flexor pool is 15 per side, matching the ~15 reported independently by
+      Azevedo et al. 2020 (eLife 56754).
+    caveats: >
+      Muscle targets are annotations with their own confidence, not measurements.
+      Counts depend on the inclusion policy: this dataset holds 23,665 Traced
+      neurons alongside 75,643 nodes with no status, so any quoted neuron count
+      must state which policy it used.
+
+  - name: Synaptic scale sweep, recovered
+    source: derived from this project's own runs
+    local_path: data/derived/scale_sweep.csv
+    role: finding F7; recovered from run logs after the sweep was stopped early
+  - name: Phasic sensory sweep, recovered
+    source: derived from this project's own runs on backhouse
+    local_path: data/derived/phasic_sweep.csv
+    role: finding F12
+
+literature_values_used:
+  - quantity: slow tibia-flexor motor-neuron resting firing rate
+    value: ~30 Hz
+    source: Azevedo et al. 2020, eLife 56754, Figure 3D
+    note: >
+      A description of one neuron's resting rate, not a population mean with a
+      dispersion. Used as an order-of-magnitude reference only.
+  - quantity: force per spike, tibia flexor motor units
+    value: slow <0.1 uN, intermediate ~1 uN, fast ~10 uN
+    source: Azevedo et al. 2020, eLife 56754
+    note: fast unit is roughly one fly body weight per spike
+  - quantity: tibia flexor motor neuron count
+    value: ~15
+    source: Azevedo et al. 2020, eLife 56754, Discussion
+    note: independently matched by the connectome annotation (finding F2)
+  - quantity: femoral chordotonal organ transmitter
+    value: excitatory, cholinergic, ~150 neurons
+    source: Drosophila leg proprioception literature
+    note: >
+      Contradicts the EM classifier labels used in the model, which call 69% of
+      chordotonal-organ neurons glutamatergic at mean confidence 0.69
+      (finding F10).
+  - quantity: glutamate sign in the Drosophila CNS
+    value: inhibitory where GluCl is expressed postsynaptically, otherwise excitatory
+    source: Liu and Wilson 2013, PNAS, and subsequent connectome-era commentary
+    note: >
+      A receptor property, not a transmitter property. The connectome does not
+      contain receptor identity (finding F9).
