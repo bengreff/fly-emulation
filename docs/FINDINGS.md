@@ -577,15 +577,21 @@ this model.
 threshold, so every driven cell is pushed the same fraction above it, eight draws
 per condition at amplitude 5:
 
-| Condition | Rhythmicity | Active motor neurons |
-|---|---|---|
-| Undriven baseline | 0.836 +/- 0.119 | 2.6 |
-| Proprioceptors, flat current | 0.095 +/- 0.070 | 76.6 |
-| Proprioceptors, threshold-matched | **0.828 +/- 0.138** | 3.0 |
-| Random interneurons, threshold-matched | **0.828 +/- 0.138** | 3.0 |
+| Amplitude | Condition | Rhythmicity | Active motor neurons |
+|---|---|---|---|
+| - | Undriven baseline | 0.836 +/- 0.119 | 2.6 |
+| 5 | Proprioceptors, flat current | 0.095 +/- 0.070 | 76.6 |
+| 5 | Random interneurons, flat current | 0.830 +/- 0.124 | 3.0 |
+| 5 | Proprioceptors, threshold-matched | **0.828 +/- 0.138** | 3.0 |
+| 5 | Random interneurons, threshold-matched | **0.828 +/- 0.138** | 3.0 |
+| 12.5 | Proprioceptors, threshold-matched | **0.104 +/- 0.078** | 79.8 |
+| 12.5 | Random interneurons, threshold-matched | **0.040 +/- 0.018** | 58.6 |
 
-The dissociation disappears. Both matched conditions return the undriven result
-exactly.
+The dissociation disappears in both directions. At amplitude 5 both matched
+conditions return the undriven result exactly. At 12.5 both collapse the rhythm,
+and if anything the proprioceptors now look slightly *less* disruptive than the
+interneurons, the reverse of the flat-current picture. There is no residual
+pathway effect to explain once excitability is controlled.
 
 ### The honest caveat on this correction
 
