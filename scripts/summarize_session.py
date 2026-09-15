@@ -5,6 +5,7 @@ import json
 import re
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
@@ -53,6 +54,41 @@ def tag(run: str) -> str:
     return "condition"
 
 
+def regime_flag(values, min_n: int = 4, gap_frac: float = 0.30,
+                min_abs_gap: float = 0.20) -> str:
+    """Flag a group whose mean averages across two separated regimes.
+
+    Learned the hard way twice. First: a corrected-model run reported mean
+    rhythmicity 0.405, which looked like a useful compromise between rhythm and
+    motor output; the per-draw values were four draws near 0.5 and two near 0.1,
+    the circuit falling into one of two regimes rather than a middle ground.
+    Second: a naive "some low and some high" test also flagged a run whose values
+    ran smoothly from 0.30 to 0.94, which is a broad unimodal spread and not two
+    regimes at all.
+
+    So the test looks for an actual empty band: the largest gap between
+    consecutive sorted values, located away from the extremes, must span at
+    least `gap_frac` of the full range AND be at least `min_abs_gap` wide on the
+    0-1 rhythmicity scale. The absolute floor matters because in a tight
+    distribution any modest gap is a large fraction of a small range.
+    """
+    v = np.sort(np.asarray(list(values), dtype=float))
+    v = v[np.isfinite(v)]
+    if len(v) < min_n:
+        return ""
+    rng = v[-1] - v[0]
+    if rng <= 0:
+        return ""
+    gaps = np.diff(v)
+    # ignore gaps that only separate a single extreme point
+    interior = slice(1, len(gaps) - 1) if len(gaps) > 2 else slice(0, len(gaps))
+    if gaps[interior].size == 0:
+        return ""
+    biggest = float(gaps[interior].max())
+    return ("BIMODAL" if biggest >= min_abs_gap and biggest / rng >= gap_frac
+            else "")
+
+
 def main() -> None:
     df = load_all(REPO / "runs", REPO / "runs_pc" / "runs")
     if df.empty:
@@ -66,12 +102,16 @@ def main() -> None:
               .agg(reps=("replicate", "count"),
                    **{c: (c, "mean") for c in have})
               .round(3).reset_index())
+    if "oscillation_score_mn" in paper.columns:
+        flags = (paper.groupby(["family", "run"])["oscillation_score_mn"]
+                      .apply(regime_flag).rename("regime").reset_index())
+        g = g.merge(flags, on=["family", "run"], how="left")
     out = REPO / "docs" / "all_runs_summary.csv"
     g.to_csv(out, index=False)
     for fam, sub in g.groupby("family"):
         print(f"\n=== {fam} ===")
         cols = ["run", "reps", "oscillation_score_mn", "oscillation_freq_hz_mn",
-                "n_active_mn", "mn_peak_rate_median_hz"]
+                "n_active_mn", "mn_peak_rate_median_hz", "regime"]
         cols = [c for c in cols if c in sub.columns]
         print(sub[cols].to_string(index=False))
     print(f"\n{len(df)} replicate rows across {df.run.nunique()} runs -> {out}")

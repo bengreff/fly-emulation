@@ -1,31 +1,33 @@
-family,run,reps,oscillation_score_mn,oscillation_freq_hz_mn,n_active_mn,n_active,mn_peak_rate_median_hz,mn_peak_rate_max_hz
-condition,pugliese-baseline-n16-papertol,16,0.836,10.045,2.625,92.312,2.253,4.374
-condition,pugliese-baseline-n6-papertol-sizecls-I250,6,0.0,,2.667,40.833,0.969,1.652
-condition,pugliese-baseline-n6-papertol-sizecls-I300,2,0.283,4.347,45.0,793.0,24.817,114.751
-condition,pugliese-baseline-n6-papertol-sizecls-I500,5,0.079,2.087,81.4,1547.0,76.33,218.92
-condition,pugliese-dna02-n16-papertol,16,0.004,8.171,8.0,82.188,6.394,29.433
-condition,pugliese-no_stim-n16-papertol,16,0.0,0.0,0.0,0.0,0.0,0.0
-condition,pugliese-shuffle-n16-papertol,16,0.139,1.776,83.5,1880.562,48.829,211.946
-condition,pugliese-silence_i1i2-n16-papertol,16,0.547,9.302,4.25,112.812,2.521,7.921
-drive: bristles,pugliese-baseline-n8-papertol-S5-bris0,8,0.039,1.669,57.375,1063.5,81.875,212.345
-drive: proprioceptors,pugliese-baseline-n8-papertol-S0,8,0.828,10.286,3.0,93.25,2.012,4.419
-drive: proprioceptors,pugliese-baseline-n8-papertol-S0.5,8,0.828,10.286,3.0,96.25,2.011,4.419
-drive: proprioceptors,pugliese-baseline-n8-papertol-S1,5,0.773,10.566,3.2,101.6,1.601,4.493
-drive: proprioceptors,pugliese-baseline-n8-papertol-S12.5,8,0.041,1.441,68.875,1423.875,81.351,211.76
-drive: proprioceptors,pugliese-baseline-n8-papertol-S25,8,0.055,1.32,59.25,1440.0,61.747,209.907
-drive: proprioceptors,pugliese-baseline-n8-papertol-S5,8,0.095,1.431,76.625,1501.5,93.419,212.29
-drive: proprioceptors,pugliese-baseline-n8-papertol-thrmatch-S12.5,7,0.113,1.428,81.429,1559.429,93.031,212.951
-drive: proprioceptors,pugliese-baseline-n8-papertol-thrmatch-S5,8,0.828,10.286,3.0,93.25,2.012,4.419
-drive: random interneurons,pugliese-baseline-n8-papertol-S12.5-rand0,8,0.102,1.002,51.75,1064.375,66.14,211.466
-drive: random interneurons,pugliese-baseline-n8-papertol-S5-rand0,8,0.83,10.457,3.0,117.5,1.983,4.361
-drive: random interneurons,pugliese-baseline-n8-papertol-thrmatch-S5-rand0,8,0.828,10.286,3.0,93.625,2.012,4.419
-glutamate sign,pugliese-baseline-n8-papertol-glu-0.01,7,0.021,1.653,111.429,2047.0,167.69,219.443
-glutamate sign,pugliese-baseline-n8-papertol-glu0,8,0.323,4.936,54.5,959.375,37.833,115.513
-glutamate sign,pugliese-baseline-n8-papertol-glu0.01,8,0.764,10.643,3.125,104.5,3.216,7.622
-glutamate sign,pugliese-baseline-n8-papertol-glu0.02,8,0.829,10.7,2.75,96.875,2.923,6.0
-glutamate sign,pugliese-baseline-n8-papertol-glu0.03,8,0.828,10.286,3.0,93.25,2.012,4.419
-phasic sensory,phasic-A12.5-phasic10Hz-g2-n1,1,0.055,1.96,70.0,1532.0,82.387,224.918
-phasic sensory,phasic-A12.5-phasic10Hz-n1,1,0.049,2.094,65.0,1472.0,92.082,224.923
-phasic sensory,phasic-A200-tonic-n1,1,0.281,4.064,67.0,1220.0,82.632,214.919
-phasic sensory,phasic-A5-phasic10Hz-propACh-n1,1,0.111,0.863,52.0,1180.0,86.11,217.777
-transmitter resampled,pugliese-baseline-n24-papertol-ntsample,22,0.579,8.402,2.682,78.409,2.89,5.169
+family,run,reps,oscillation_score_mn,oscillation_freq_hz_mn,n_active_mn,n_active,mn_peak_rate_median_hz,mn_peak_rate_max_hz,regime
+condition,pugliese-baseline-n16-papertol,16,0.836,10.045,2.625,92.312,2.253,4.374,
+condition,pugliese-baseline-n6-papertol-sizecls-I250,6,0.0,,2.667,40.833,0.969,1.652,
+condition,pugliese-baseline-n6-papertol-sizecls-I300,6,0.405,5.62,35.167,593.333,25.291,80.605,BIMODAL
+condition,pugliese-baseline-n6-papertol-sizecls-I350,2,0.026,2.568,74.5,1399.5,53.466,218.207,
+condition,pugliese-baseline-n6-papertol-sizecls-I500,5,0.079,2.087,81.4,1547.0,76.33,218.92,
+condition,pugliese-dna02-n16-papertol,16,0.004,8.171,8.0,82.188,6.394,29.433,
+condition,pugliese-no_stim-n16-papertol,16,0.0,0.0,0.0,0.0,0.0,0.0,
+condition,pugliese-shuffle-n16-papertol,16,0.139,1.776,83.5,1880.562,48.829,211.946,
+condition,pugliese-silence_i1i2-n16-papertol,16,0.547,9.302,4.25,112.812,2.521,7.921,
+drive: bristles,pugliese-baseline-n8-papertol-S5-bris0,8,0.039,1.669,57.375,1063.5,81.875,212.345,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S0,8,0.828,10.286,3.0,93.25,2.012,4.419,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S0.5,8,0.828,10.286,3.0,96.25,2.011,4.419,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S1,5,0.773,10.566,3.2,101.6,1.601,4.493,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S12.5,8,0.041,1.441,68.875,1423.875,81.351,211.76,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S25,8,0.055,1.32,59.25,1440.0,61.747,209.907,
+drive: proprioceptors,pugliese-baseline-n8-papertol-S5,8,0.095,1.431,76.625,1501.5,93.419,212.29,
+drive: proprioceptors,pugliese-baseline-n8-papertol-thrmatch-S12.5,8,0.104,1.396,79.75,1553.875,87.449,211.941,
+drive: proprioceptors,pugliese-baseline-n8-papertol-thrmatch-S5,8,0.828,10.286,3.0,93.25,2.012,4.419,
+drive: random interneurons,pugliese-baseline-n8-papertol-S12.5-rand0,8,0.102,1.002,51.75,1064.375,66.14,211.466,
+drive: random interneurons,pugliese-baseline-n8-papertol-S5-rand0,8,0.83,10.457,3.0,117.5,1.983,4.361,
+drive: random interneurons,pugliese-baseline-n8-papertol-thrmatch-S12.5-rand0,8,0.04,1.572,58.625,1091.125,48.448,214.904,
+drive: random interneurons,pugliese-baseline-n8-papertol-thrmatch-S5-rand0,8,0.828,10.286,3.0,93.625,2.012,4.419,
+glutamate sign,pugliese-baseline-n8-papertol-glu-0.01,7,0.021,1.653,111.429,2047.0,167.69,219.443,
+glutamate sign,pugliese-baseline-n8-papertol-glu0,8,0.323,4.936,54.5,959.375,37.833,115.513,BIMODAL
+glutamate sign,pugliese-baseline-n8-papertol-glu0.01,8,0.764,10.643,3.125,104.5,3.216,7.622,
+glutamate sign,pugliese-baseline-n8-papertol-glu0.02,8,0.829,10.7,2.75,96.875,2.923,6.0,BIMODAL
+glutamate sign,pugliese-baseline-n8-papertol-glu0.03,8,0.828,10.286,3.0,93.25,2.012,4.419,
+phasic sensory,phasic-A12.5-phasic10Hz-g2-n1,1,0.055,1.96,70.0,1532.0,82.387,224.918,
+phasic sensory,phasic-A12.5-phasic10Hz-n1,1,0.049,2.094,65.0,1472.0,92.082,224.923,
+phasic sensory,phasic-A200-tonic-n1,1,0.281,4.064,67.0,1220.0,82.632,214.919,
+phasic sensory,phasic-A5-phasic10Hz-propACh-n1,1,0.111,0.863,52.0,1180.0,86.11,217.777,
+transmitter resampled,pugliese-baseline-n24-papertol-ntsample,24,0.555,8.237,5.208,129.458,5.191,13.309,
