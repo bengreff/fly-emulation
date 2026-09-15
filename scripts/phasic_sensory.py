@@ -54,6 +54,7 @@ def rate_equation(t, R, args):
     (dn_in, sens_mask, sens_amp, sens_freq, sens_phase, pulse_start, pulse_end,
      tau, W, threshold, a, fr_cap) = args
     on = (t >= pulse_start) & (t <= pulse_end)
+    # sens_phase is per neuron, so antagonist groups can be driven in antiphase
     modulation = jnp.where(
         sens_freq > 0,
         1.0 + jnp.sin(2 * jnp.pi * sens_freq * t + sens_phase),
@@ -94,6 +95,12 @@ def main() -> None:
     ap.add_argument("--sensory-amp", type=float, required=True)
     ap.add_argument("--freq", type=float, required=True,
                     help="sensory modulation frequency in Hz; 0 means tonic")
+    ap.add_argument("--phase-groups", type=int, default=1,
+                    help="split the proprioceptors into K groups with phases "
+                         "evenly spaced over one cycle. K=1 drives them all "
+                         "together, which is unrealistic; K=2 puts antagonist "
+                         "groups in antiphase, as flexion- and extension-tuned "
+                         "position sensors actually are.")
     ap.add_argument("--phase", type=float, default=0.0)
     ap.add_argument("--replicates", type=int, default=8)
     ap.add_argument("--rtol", type=float, default=2e-6)
@@ -103,6 +110,8 @@ def main() -> None:
     args = ap.parse_args()
 
     kind = "tonic" if args.freq == 0 else f"phasic{args.freq:g}Hz"
+    if args.phase_groups > 1:
+        kind += f"-g{args.phase_groups}"
     run_id = f"phasic-A{args.sensory_amp:g}-{kind}-n{args.replicates}"
     out_dir = Path(args.out) / run_id
     rec = RunRecord(run_id, out_dir,
@@ -122,6 +131,7 @@ def main() -> None:
     rec.rec["condition_notes"] = {
         "sensory_amp_mean": args.sensory_amp,
         "modulation": kind,
+        "phase_groups": args.phase_groups,
         "proprioceptors_driven": int(len(prop)),
         "breakdown": wTable.loc[prop, "subclass"].value_counts().to_dict(),
     }
@@ -141,6 +151,11 @@ def main() -> None:
     sp = prepare_sim_params(cfg, 1, n)
     mn_idx = np.asarray(np_.mn_idxs)
     sens_mask = jnp.zeros(n).at[jnp.asarray(prop)].set(1.0)
+    # per-neuron phase: group g of K gets phase 2*pi*g/K
+    grp = np.arange(len(prop)) % max(1, args.phase_groups)
+    phase_vec = np.zeros(n)
+    phase_vec[prop] = args.phase + 2 * np.pi * grp / max(1, args.phase_groups)
+    phase_vec = jnp.asarray(phase_vec)
     Wr = reweight_connectivity(np_.W, sp.exc_multiplier, sp.inh_multiplier)
 
     rows = []
@@ -148,7 +163,7 @@ def main() -> None:
         t0 = time.time()
         R = simulate(Wr, np_.tau[i], np_.a[i], np_.threshold[i], np_.fr_cap[i],
                      np_.input_currents[0][i], sens_mask, args.sensory_amp,
-                     args.freq, args.phase, sp)
+                     args.freq, phase_vec, sp)
         R.block_until_ready()
         Rn = np.asarray(R)
         m = metrics_for(Rn, wTable, mn_idx, sp.t_axis)
@@ -167,6 +182,7 @@ def main() -> None:
     df = pd.DataFrame(rows)
     df["sensory_amp"] = args.sensory_amp
     df["freq_hz"] = args.freq
+    df["phase_groups"] = args.phase_groups
     df.to_csv(out_dir / "metrics.csv", index=False)
     for c in ("oscillation_score_mn", "oscillation_freq_hz_mn", "n_active_mn",
               "mn_peak_rate_median_hz", "mn_peak_rate_max_hz"):
