@@ -240,6 +240,15 @@ motor-neuron rate from 2.3 Hz to 82.6 Hz, above the measured 30 Hz resting rate
 of a slow tibia flexor unit, and raises active motor neurons from 3 to 67. The
 rhythm falls from 0.836 to 0.281 and its frequency from 10.0 Hz to 4.1 Hz.
 
+> **Read the amplitude with F11 in hand.** Proprioceptors are small cells, so the
+> model's size-derived threshold makes a nominal current of 5 into a
+> proprioceptor roughly as potent as a much larger current elsewhere: the driven
+> cells reach 14.4 Hz where random interneurons reach 0.79 Hz on the same input
+> (F8b). The direction of this manipulation is real, and its *nominal* amplitude
+> badly understates how hard the population is being pushed. Nothing here says
+> what a physiologically realistic afferent drive would be, because no rate
+> calibration exists (F5).
+
 **Manipulation 3: a different descending neuron.** Stimulating DNa02, a turning
 command neuron, instead of DNg100 gives 8 active motor neurons with peak rates
 to 44.8 Hz, above the physiological reference, and **no rhythm at all**
