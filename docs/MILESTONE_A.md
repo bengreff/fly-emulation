@@ -43,6 +43,36 @@ well constrained.
    tibia flexor unit (F3). Tonic proprioceptive drive raises rates into range but
    costs the rhythm, which is the tension the sweep in progress is measuring.
 
+## Prerequisite, added after session 1
+
+Three findings from the first session sit upstream of everything below and
+should be settled before any of it is built on.
+
+**P1. Fix the afferent signs.** The model assigns an inhibitory sign to most leg
+proprioceptors, against published physiology describing them as excitatory and
+cholinergic (F10). Steps A3 and A4 are meaningless until this is corrected.
+`--proprio-cholinergic` implements the literature-based override; the real fix is
+receptor evidence.
+
+**P2. Fix or replace the excitability rule.** Gain and threshold are set from a
+segmentation volume that measures a whole cell for nerve-cord neurons and only an
+axon arbor for sensory and descending neurons, handing the sensory population an
+order-of-magnitude excitability advantage (F11). Any perturbation experiment,
+including every one in the first session and the descending-neuron screen in the
+source paper, is hard to interpret until this is normalised. `--size-norm class`
+implements one option.
+
+**P3. Recalibrate after fixing them.** Correcting excitability alone leaves the
+published stimulus unable to drive the network at all, because the synaptic scale
+and stimulus amplitude were both tuned with the artefact present. The parameters
+are entangled with the defect, so they move together or not at all.
+
+**What this means for the milestone.** The leg interface is still the right first
+target and the evidence table below still holds. But the first work is not muscle
+modelling. It is establishing that the circuit feeding the muscles has the right
+signs and a defensible excitability rule, because otherwise A4 measures the
+artefact rather than the biology.
+
 ## Plan, in dependency order
 
 **A1. Resolve the tibia flexor motor pool.** Replace the single
@@ -61,14 +91,18 @@ forbids placing a muscle where it is convenient rather than where it is.
 **Falsified if** passive joint mechanics no longer match measured passive
 stiffness after the additions.
 
-**A3. Build afferent transducers with declared uncertainty.** Map joint angle,
+**A3. Build afferent transducers with declared uncertainty.** *(Blocked on P1: the
+afferent signs must be right before their dynamics matter.)* Map joint angle,
 angular velocity and vibration onto firing rates for the claw, hook and club
 subgroups, using the measured encoding roles and angle ranges, with the overall
 rate scale left as a fitted parameter carrying explicit bounds. Record it as
 fitted, never as measured. **Falsified if** no rate scale reproduces both the
 directional selectivity and the position tuning reported in the imaging data.
 
-**A4. Close the loop and test what the open loop could not.** With A1 to A3 in
+**A4. Close the loop and test what the open loop could not.** *(Blocked on P1-P3.
+Note also that prescribed open-loop sensory modulation does not rescue the rhythm
+at any frequency (F12), so this step is now the only remaining version of the
+hypothesis, and it should be preregistered as such.)* With A1 to A3 in
 place, run the circuit against the body and ask the question this session could
 only pose: does phase-locked, body-generated proprioceptive feedback produce
 both physiological motor-neuron rates and a stable rhythm, where uniform tonic
