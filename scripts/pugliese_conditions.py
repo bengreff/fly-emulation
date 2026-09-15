@@ -213,6 +213,15 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--size-norm", default="network",
+                    choices=["network", "class"],
+                    help="how soma size is normalised before it sets gain and "
+                         "threshold. 'network' is the published rule and mis-scales "
+                         "classes whose somata sit outside the imaged volume "
+                         "(finding F11). 'class' centres each cell class on the "
+                         "network median first, so excitability differences within "
+                         "a class are kept and the artefactual between-class "
+                         "offset is removed.")
     ap.add_argument("--threshold-matched", action="store_true",
                     help="scale each driven neuron's current by its own spike "
                          "threshold, so every driven cell is pushed the same "
@@ -257,6 +266,8 @@ def main() -> None:
     if args.exc_mult is not None or args.inh_mult is not None:
         mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
         mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.size_norm == "class":
+        mult_tag += "-sizecls"
     if args.threshold_matched:
         mult_tag += "-thrmatch"
     if args.proprio_cholinergic:
@@ -290,7 +301,21 @@ def main() -> None:
         cfg.neuron_params.inhibitoryMultiplier = args.inh_mult
 
     wTable = load_wTable(cfg.experiment.dfPath)
+    if args.size_norm == "class":
+        sizes = wTable["size"].astype(float).copy()
+        overall = float(np.nanmedian(sizes.values))
+        for cls, idx in wTable.groupby("class").groups.items():
+            med = float(np.nanmedian(sizes.loc[idx].values))
+            if np.isfinite(med) and med > 0:
+                sizes.loc[idx] = sizes.loc[idx] / med * overall
+        wTable = wTable.copy()
+        wTable["size"] = sizes
+        notes_size = {c: round(float(np.nanmedian(sizes[wTable["class"] == c])) / overall, 3)
+                      for c in wTable["class"].dropna().unique()[:8]}
     cfg, notes = apply_condition(cfg, wTable, args.condition)
+    if args.size_norm == "class":
+        notes["size_norm"] = "class"
+        notes["class_median_relative_after_norm"] = notes_size
     if args.stim_amp is not None:
         cfg.experiment.stimI = [[args.stim_amp] * len(cfg.experiment.stimNeurons[0])]
         notes["stim_amp_override"] = args.stim_amp
@@ -353,6 +378,11 @@ def main() -> None:
             "Leg proprioceptor signs overridden to excitatory on published "
             "physiology rather than the EM classifier. This is a literature-based "
             "correction, not a measurement of these specific cells.")
+    if args.size_norm == "class":
+        rec.declare_scaffold(
+            "Soma size normalised within cell class before setting gain and "
+            "threshold, correcting the artefact in finding F11. This is a "
+            "modelling choice, not a measurement of excitability.")
     rec.declare_scaffold(
         "Synaptic sign taken from EM transmitter prediction; weight is synapse count "
         "times a single global multiplier. Not measured physiological efficacy."
