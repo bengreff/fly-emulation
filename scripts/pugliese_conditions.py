@@ -213,6 +213,11 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--sample-transmitters", action="store_true",
+                    help="resample each neuron's transmitter from its predicted "
+                         "probabilities per replicate, instead of taking the most "
+                         "likely label. Propagates EM classifier uncertainty into "
+                         "the result: 33%% of neurons have confidence below 0.8.")
     ap.add_argument("--glu-mult", type=float, default=None,
                     help="multiplier for glutamatergic neurons. The default "
                          "model treats glutamate as inhibitory (same magnitude "
@@ -238,6 +243,8 @@ def main() -> None:
     if args.exc_mult is not None or args.inh_mult is not None:
         mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
         mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.sample_transmitters:
+        mult_tag += "-ntsample"
     if args.glu_mult is not None:
         mult_tag += f"-glu{args.glu_mult:g}"
     if args.stim_amp is not None:
@@ -318,6 +325,11 @@ def main() -> None:
             f"Glutamatergic neurons rescaled to {args.glu_mult}. Their sign is "
             f"an assumption about receptor type, not a measurement, and they "
             f"carry 41% of the model's inhibitory synapse budget.")
+    if args.sample_transmitters:
+        rec.declare_scaffold(
+            "Synaptic sign resampled per replicate from EM classifier "
+            "probabilities. Spread across replicates is an uncertainty estimate "
+            "for the sign assignment only, not for weights or physiology.")
     rec.declare_scaffold(
         "Synaptic sign taken from EM transmitter prediction; weight is synapse count "
         "times a single global multiplier. Not measured physiological efficacy."
@@ -333,10 +345,30 @@ def main() -> None:
           f"setup {time.time()-t0:.1f}s", flush=True)
 
     W_base = neuronParams.W
+    # Sign implied by the most likely transmitter, as the published model uses it.
+    nt_cols = ["ntAcetylcholineProb", "ntGabaProb", "ntGlutamateProb"]
+    if args.sample_transmitters:
+        P = wTable[nt_cols].to_numpy(dtype=float)
+        P = np.where(np.isfinite(P), P, 0.0)
+        rowsum = P.sum(axis=1, keepdims=True)
+        P = np.where(rowsum > 0, P / np.maximum(rowsum, 1e-12), 
+                     np.array([1.0, 0.0, 0.0]))
+        argmax_exc = P.argmax(axis=1) == 0          # acetylcholine -> excitatory
+        rec.rec["transmitter_uncertainty"] = {
+            "neurons_below_0.8_confidence": int((P.max(axis=1) < 0.8).sum()),
+            "note": "sign resampled per replicate from these probabilities",
+        }
+
     rows = []
     for i in range(args.replicates):
         t1 = time.time()
         W = W_base * neuronParams.W_mask[i]
+        if args.sample_transmitters:
+            rng = np.random.default_rng(10_000 + i)
+            draw = (rng.random((P.shape[0], 1)) < P.cumsum(axis=1)).argmax(axis=1)
+            sampled_exc = draw == 0
+            flip = np.where(sampled_exc != argmax_exc, -1.0, 1.0)
+            W = W * jnp.asarray(flip)[:, None]
         if args.condition == "shuffle":
             W = full_shuffle(
                 W, jax.random.PRNGKey(1000 + i),
