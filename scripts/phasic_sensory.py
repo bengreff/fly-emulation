@@ -95,6 +95,9 @@ def main() -> None:
     ap.add_argument("--sensory-amp", type=float, required=True)
     ap.add_argument("--freq", type=float, required=True,
                     help="sensory modulation frequency in Hz; 0 means tonic")
+    ap.add_argument("--proprio-cholinergic", action="store_true",
+                    help="force proprioceptors excitatory, per published "
+                         "physiology; see finding F10")
     ap.add_argument("--phase-groups", type=int, default=1,
                     help="split the proprioceptors into K groups with phases "
                          "evenly spaced over one cycle. K=1 drives them all "
@@ -112,6 +115,8 @@ def main() -> None:
     kind = "tonic" if args.freq == 0 else f"phasic{args.freq:g}Hz"
     if args.phase_groups > 1:
         kind += f"-g{args.phase_groups}"
+    if args.proprio_cholinergic:
+        kind += "-propACh"
     run_id = f"phasic-A{args.sensory_amp:g}-{kind}-n{args.replicates}"
     out_dir = Path(args.out) / run_id
     rec = RunRecord(run_id, out_dir,
@@ -147,6 +152,16 @@ def main() -> None:
         "sign from EM transmitter prediction. Not measured efficacy.")
 
     np_ = prepare_neuron_params(cfg, wTable)
+    if args.proprio_cholinergic:
+        Wn = np.array(np_.W, copy=True)
+        flipped = int((Wn[prop, :] < 0).any(axis=1).sum())
+        Wn[prop, :] = np.abs(Wn[prop, :])
+        np_ = np_._replace(W=jnp.asarray(Wn))
+        rec.rec["proprio_cholinergic"] = {"neurons_flipped": flipped}
+        rec.declare_scaffold(
+            "Proprioceptor signs overridden to excitatory on published "
+            "physiology rather than the EM classifier (finding F10).")
+        print(f"  forced {flipped}/{len(prop)} proprioceptors excitatory")
     n = int(np_.W.shape[0])
     sp = prepare_sim_params(cfg, 1, n)
     mn_idx = np.asarray(np_.mn_idxs)
