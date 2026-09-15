@@ -213,6 +213,10 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--experiment", default="DNg100_Stim",
+                    help="which experiment YAML from the upstream configs to load; "
+                         "DNg100_Stim_CoreCPG keeps only the four-neuron core plus "
+                         "motor neurons")
     ap.add_argument("--size-norm", default="network",
                     choices=["network", "class"],
                     help="how soma size is normalised before it sets gain and "
@@ -282,13 +286,14 @@ def main() -> None:
         mult_tag += f"-S{args.sensory_amp:g}"
         if args.drive_target != "proprioceptors":
             mult_tag += f"-{args.drive_target[:4]}{args.drive_seed}"
-    run_id = f"pugliese-{args.condition}-n{args.replicates}-{tol_tag}{mult_tag}{args.tag}"
+    exp_tag = "" if args.experiment == "DNg100_Stim" else f"-{args.experiment}"
+    run_id = f"pugliese-{args.condition}{exp_tag}-n{args.replicates}-{tol_tag}{mult_tag}{args.tag}"
     out_dir = Path(args.out) / run_id
     rec = RunRecord(run_id, out_dir,
                     description=f"Pugliese MANC T1 VNC rate model, condition={args.condition}")
     rec.add_code("pugliese_repo", EXT)
 
-    cfg = build_config()
+    cfg = build_config(args.experiment)
     cfg.experiment.n_replicates = args.replicates
     cfg.experiment.seed = args.seed
     cfg.sim.rtol = args.rtol
