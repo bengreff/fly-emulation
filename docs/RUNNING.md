@@ -69,6 +69,9 @@ uv run python scripts/summarize_session.py
 # the headline claim, checked against every run present
 uv run python scripts/rhythm_rate_exclusion.py
 
+# every run record complete: commit, input hashes, environment, scaffolds
+uv run python scripts/audit_provenance.py
+
 # which sign flips broke the rhythm, reconstructed from seeds, no re-simulation
 uv run python scripts/analyze_sign_flips.py runs/pugliese-baseline-n24-papertol-ntsample
 ```
