@@ -94,3 +94,93 @@ magnitude, and if it does not, the synaptic scaling assumption is implicated.
 **What this result cannot claim.** Rhythmic motor-neuron activity under imposed
 tonic descending drive is not walking, not stepping, and not spontaneous
 behavior. It reproduces an optogenetic stimulation experiment.
+
+## F4. The specific connectome, not its degree structure, holds the network in a rhythmic low-activity regime (2026-09-14)
+
+Control demanded by `docs/VALIDATION.md`: compare the anatomical wiring against a
+carefully matched alternative rather than a crippled one. The external
+`full_shuffle` permutes postsynaptic targets **within** transmitter and class
+groups, so every presynaptic neuron keeps its exact out-degree and weight
+multiset and the excitatory/inhibitory composition of each class is preserved.
+Only the identity of the postsynaptic partner changes.
+
+Identical stimulus, 16 parameter draws each, paper tolerances:
+
+| Readout | Real connectome | Degree-matched shuffle |
+|---|---|---|
+| Active neurons | 97 | 1760-2029 |
+| Active motor neurons (of 144) | 2.6 | 77-101 |
+| Motor-neuron rhythmicity | 0.836 +/- 0.119 | 0.03-0.28 |
+| Rhythm frequency | 10.0 Hz | 1.2-2.5 Hz |
+
+Shuffling produces a network that is simultaneously **hyperactive and
+arrhythmic**: roughly twenty times more neurons active and the rhythm largely
+destroyed. The specific pattern of connections, not merely how many connections
+each cell has or the balance of transmitters, is what keeps this circuit sparse
+and oscillating. This is the strongest evidence in this session that the
+anatomy is carrying real functional information.
+
+Caveat: this shuffle preserves out-degree exactly but reassigns in-degree
+patterns across cells of a class, so it is not a perfect degree-preserving null.
+A stricter null that preserves both in- and out-degree should be run before this
+is quoted as a headline number.
+
+## F5. The network contains the full front-leg sensory apparatus and drives none of it (2026-09-14)
+
+The 4604-neuron T1 network includes 285 sensory neurons:
+
+| Sensory class | Count | What it measures |
+|---|---|---|
+| Mechanosensory bristle | 146 | cuticle touch |
+| Hair plate | 61 | joint angle at limb joints |
+| Chordotonal organ | 36 | tibia position, movement, vibration |
+| Campaniform sensilla | 5 | cuticular load and strain |
+
+All four classes that report leg state are present, and **every one of them
+receives zero input** in the published stimulation protocol. 102 of these are
+proprioceptors, the afferents whose firing during stepping is the main sensory
+drive to leg motor circuits in insects. The model as published is a deafferented
+preparation with its sensory periphery intact but silent.
+
+**A data gap found while trying to drive them.** Mamiya, Gurung and Tuthill
+(PMC6481666) characterise these afferents with calcium imaging and report which
+subgroup encodes position, direction and vibration, along with joint-angle
+ranges (roughly 18 to 180 degrees) and vibration tuning. They report no spike
+rates. `docs/ARCHITECTURE.md` already warns that a calcium trace is not a spike
+train. There is therefore **no published firing-rate calibration** with which to
+drive these neurons. Any sensory input amplitude used here is a swept unknown,
+not a measurement, and is declared as a scaffold in every run record.
+
+## F6. The best available fly body can receive only two thirds of the connectome's front-leg motor output (2026-09-14)
+
+Verified against `flygym` 2.1.0, which now bundles NeuroMechFly, the Turaga-lab
+flybody, and a musculoskeletal model, with MuJoCo Warp GPU support. This
+supersedes the roadmap's open question about which body platform to adopt: one
+package now carries the walking body, the flight body and muscles.
+
+The musculoskeletal model exposes **15 tendon actuators on the left front leg
+only**, with the right leg's joints locked, that is, a tethered single-leg
+preparation. This independently confirms the caveat recorded in
+`docs/RESEARCH.md` against the current release.
+
+Mapping the 72 left front-leg motor neurons in MANC onto those actuators:
+
+| | Motor neurons |
+|---|---|
+| Have a corresponding actuator | 49 of 72 (68%) |
+| Have no actuator at all | 23 of 72 (32%) |
+| Mean motor neurons per actuator | 3.3 |
+
+Entirely absent from the body model: the **femur reductor** (6 motor neurons),
+**all tarsus muscles** (7 motor neurons, so no active foot control), and the
+**long tendon muscles** (9 motor neurons). Additionally the tibia flexor and
+accessory tibia flexor, the 15-motor-neuron pool whose slow-to-fast gradient
+Azevedo et al. measured, **collapse onto a single actuator**, so the size
+principle that governs force recruitment cannot be expressed at all.
+
+**Consequence for Milestone A.** Closing the leg loop is not a matter of wiring
+existing components together. A third of the front-leg motor output has nowhere
+to go, and the one muscle group with good published physiology cannot resolve
+its own motor units in the available body. Extending the muscle model is
+prerequisite work, and the tibia flexor is the right place to start because it
+is the only pool with measured per-unit forces.
