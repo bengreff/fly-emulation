@@ -96,6 +96,15 @@ and it survives independent reimplementation of the analysis.
 that the slow tibia-flexor motor neuron sits at approximately **30 Hz at rest**,
 before any movement, and that force per spike is <0.1 uN for slow units, ~1 uN
 for intermediate and ~10 uN for fast units, the last roughly one fly body weight.
+
+> **Provenance of the 30 Hz reference.** This is the paper's description of the
+> slow neuron's resting rate, quoted from its Figure 3D, not a population mean
+> with a dispersion. It is used here as an order-of-magnitude reference for what
+> a real leg motor neuron does when the animal is doing nothing, which is the
+> comparison the model fails by a factor of thirteen. It should not be treated
+> as a fitting target or a tolerance. The fast and intermediate units, which
+> produce the force that moves a leg, are reported as silent at rest, so there
+> is no resting-rate reference for them at all.
 The model's *peak* motor-neuron rate, 2.25 Hz median, is about **13x below the
 resting rate of a real slow motor neuron**, and the fast and intermediate units
 that generate usable force never approach their recruitment thresholds.
