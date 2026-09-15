@@ -166,11 +166,61 @@ def fig_phasic_sweep() -> None:
     plt.close(fig)
 
 
+def fig_corrected_model() -> None:
+    """F14: with excitability corrected, is there a working point at all?
+
+    Plots every draw, not just the mean, because at the boundary the model is
+    bistable and the mean describes no actual simulation.
+    """
+    import re as _re
+    rows = []
+    for d in sorted(RUNS.glob("pugliese-baseline-n*-papertol-sizecls-I*")):
+        for name in ("metrics.csv", "metrics_partial.csv"):
+            f = d / name
+            if f.exists():
+                x = pd.read_csv(f)
+                m = _re.search(r"-I(\d+)", d.name)
+                if m:
+                    x["stim"] = int(m.group(1))
+                    rows.append(x)
+                break
+    if not rows:
+        return
+    df = pd.concat(rows, ignore_index=True)
+    fig, axes = plt.subplots(2, 1, figsize=(5.4, 4.2), sharex=True,
+                             gridspec_kw={"hspace": 0.22})
+    ax, ax2 = axes
+    for stim, g in df.groupby("stim"):
+        j = np.random.default_rng(int(stim)).normal(0, 4, len(g))
+        ax.scatter(g.stim + j, g.oscillation_score_mn, s=18, color=GREEN,
+                   alpha=.85, edgecolors="none", zorder=3)
+        ax2.scatter(g.stim + j, np.maximum(g.mn_peak_rate_median_hz, 0.05),
+                    s=18, marker="s", color=PLUM, alpha=.7, edgecolors="none", zorder=3)
+    ax.axhline(0.836, ls="--", lw=1.0, color="#888")
+    ax.text(df.stim.min() - 6, 0.855, "uncorrected model", fontsize=6.5, color="#666")
+    ax.set_ylim(-.05, 1.02)
+    ax.set_ylabel("motor-neuron\nrhythmicity", color=GREEN, fontsize=8)
+    ax.tick_params(axis="y", labelcolor=GREEN)
+    ax2.axhline(SLOW_MN_REST_HZ, ls=":", lw=1.2, color=RED)
+    ax2.text(df.stim.max(), SLOW_MN_REST_HZ * 1.3, "measured slow MN at rest",
+             fontsize=6.5, color=RED, ha="right")
+    ax2.set_yscale("log")
+    ax2.set_ylim(0.04, 400)
+    ax2.set_ylabel("median peak\nmotor rate (Hz)", color=PLUM, fontsize=8)
+    ax2.tick_params(axis="y", labelcolor=PLUM)
+    ax2.set_xlabel("descending stimulus amplitude")
+    ax.set_title("Excitability corrected: every draw plotted.\nAt the boundary the "
+                 "model is bistable, not intermediate.", fontsize=8.5)
+    fig.savefig(FIGS / "corrected_model.png")
+    plt.close(fig)
+
+
 def main() -> None:
     fig_drive_targets()
     fig_glutamate()
     fig_nt_uncertainty()
     fig_phasic_sweep()
+    fig_corrected_model()
     print("figures ->", FIGS)
     for p in sorted(FIGS.glob("*.png")):
         print("  ", p.name)
