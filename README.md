@@ -5,16 +5,27 @@
 > **Report:** https://claude.ai/code/artifact/c4a39baf-e4a2-4034-9098-fb8c4ffac864
 >
 > The published connectome nerve-cord rhythm reproduces robustly and the anatomy
-> joins cleanly to independent electrophysiology. Beyond that, the session became
-> an audit, and it found several load-bearing problems: the motor output is far
-> too weak to drive a muscle, rhythm and firing rate trade off against each
-> other, 41% of the model's inhibition rests on a contested sign convention, the
-> fly's main leg proprioceptor is modelled with the wrong sign, and excitability
-> is derived from a volume that means different things for different cell classes.
+> joins cleanly to independent electrophysiology. Beyond that the session became
+> an audit.
+>
+> **Headline:** across **317 simulations** spanning every knob available, not one
+> produced both a rhythm and motor output strong enough to move a leg. Rhythmic
+> runs top out at 8.5 Hz against a measured 30 Hz resting rate; runs that reach
+> physiological rates never exceed 0.31 rhythmicity, and the only one that came
+> close was the scrambled-connectome control.
+>
+> **Why, so far:** 41% of the model's inhibition rests on a contested sign
+> convention; the fly's main leg proprioceptor is modelled with the wrong sign;
+> excitability is derived from a volume that means different things for different
+> cell classes; and the result survives only two thirds of the sign assignments
+> the transmitter classifier itself considers admissible, with the failures
+> tracing to four identified neurons. Correcting the excitability rule moves the
+> operating point and keeps both regimes.
 >
 > | Read this | For |
 > |---|---|
-> | [Findings](docs/FINDINGS.md) | every measured result, F1-F11, with its conditions and limits |
+> | [Findings](docs/FINDINGS.md) | every measured result, F1-F15, with its conditions and limits |
+> | [Next session](docs/NEXT_SESSION.md) | state, priorities and known gaps |
 > | [Milestone A](docs/MILESTONE_A.md) | the grounded plan for a causal leg interface |
 > | [Running](docs/RUNNING.md) | how to reproduce any of it |
 > | [Environment](docs/ENVIRONMENT.md) | measured hardware and the two-machine setup |
