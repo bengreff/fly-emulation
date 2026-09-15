@@ -183,6 +183,22 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   <figcaption><b>Every replicate simulation of the session, one point each.</b> The shaded region is what a walking leg needs: a rhythm, and motor neurons firing at least as hard as a real one does at rest. Nothing reaches it. Rhythmic draws top out at 8.5 Hz. Draws above 20 Hz never exceed 0.31 rhythmicity, and the single one that came closest was the scrambled-connectome control.</figcaption>
 </figure>
 
+<p>The boundary is sharp, and it does not depend on where I draw the thresholds. Asking, for each floor on one axis, the best value any simulation reached on the other:</p>
+
+<div class="tablewrap"><table>
+  <caption>305 simulations, pooled</caption>
+  <thead><tr><th>Constraint</th><th class="num">Simulations</th><th class="num">Best the other readout reached</th></tr></thead>
+  <tbody>
+    <tr><td>Motor rate above 5 Hz</td><td class="num">139</td><td class="num">rhythmicity 0.949</td></tr>
+    <tr class="alarm"><td>Motor rate above 10 Hz</td><td class="num">123</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
+    <tr><td>Motor rate above 30 Hz</td><td class="num">121</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
+    <tr class="alarm"><td>Rhythmicity above 0.4</td><td class="num">129</td><td class="num">8.50 Hz</td></tr>
+    <tr><td>Rhythmicity above 0.8</td><td class="num">74</td><td class="num">5.45 Hz</td></tr>
+  </tbody>
+</table></div>
+
+<p>The wall sits between 8.5 and 10 Hz on one axis and between 0.31 and 0.4 on the other. The only thing that ever crossed it was the scrambled connectome.</p>
+
 <p>This is not a defect in someone's code. It is a property of the model class: a nerve cord cut off from its body, driven by a constant injected current, with one global number converting synapse counts into strength, sign guessed from a transmitter prediction, and excitability derived from cell size. Knowing precisely where that class breaks, and which of those conventions is responsible, is the useful thing. The rest of this report is that.</p>
 
 <p class="part">Part one — what holds up</p>
