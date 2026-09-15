@@ -22,6 +22,7 @@ established, so corrections sit after the claims they overturn. Read the index.
 | F12 | Rhythmic sensory drive does not rescue the rhythm at any frequency, and the motor output does not even entrain to it | stands, open loop only |
 | F13 | Respecting the transmitter classifier's own uncertainty destroys the rhythm in a third of draws; every draw that flipped one of four core neurons lost it | stands |
 | F14 | The whole-CNS male connectome is the better primary specimen: 94% traced against 23%, the brain included, 1454 proprioceptors, and a 95% motor-neuron cross-reference back to MANC | stands |
+| F15 | Across all 299 simulations of the session, none produced both a rhythm and physiological motor rates; correcting excitability moves the operating point but keeps the same two regimes | stands, for this model class |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
@@ -740,3 +741,70 @@ alone. The immediate gains are the brain, a far larger and better-traced
 proprioceptor population, and descending neurons with their cell bodies in the
 same volume as their arbors, which is directly relevant to the excitability
 problem in F11.
+
+## F15. Across 299 simulations, not one produced both a rhythm and physiological motor rates (2026-09-14)
+
+The strongest single statement this session can make, and it needed the whole
+night's runs to make it.
+
+Pooling **every replicate simulation of the session**, 299 in total, across all
+five conditions, the synaptic-scale sweep, the sensory-drive sweeps, the
+drive-target controls, the threshold-matched controls, the glutamate sweep, the
+transmitter-resampling draws, the phasic sweeps and the corrected-excitability
+sweep:
+
+| Selection | n | The other readout |
+|---|---|---|
+| Draws that were rhythmic (score > 0.5) | 121 | median peak motor rate **2.28 Hz**, maximum **8.50 Hz** |
+| Draws with physiological rates (> 20 Hz) | 117 | median rhythmicity **0.051**, maximum **0.308** |
+| Draws with **both** rhythmicity > 0.5 and peak rate > 10 Hz | **0** | — |
+
+One simulation in 299 cleared rhythmicity 0.3 with rates above 20 Hz. It came
+from the **degree-matched shuffle**, that is, from a deliberately scrambled
+connectome used as a negative control, not from any model of the fly.
+
+### Fixing the excitability artefact does not create a middle ground
+
+The most direct test. Correcting the F11 size artefact by normalising
+excitability within cell class and re-sweeping the descending stimulus, six
+draws per point:
+
+| Stimulus | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|
+| 250 (the published value) | 0.000 | 2.7 | 1.0 Hz |
+| 300 | 0.405 +/- 0.251 | 35.2 | 25.3 Hz |
+| 350 | 0.144 +/- 0.234 | 66.3 | 47.8 Hz |
+| 400 | 0.046 +/- 0.021 | 76.8 | 63.3 Hz |
+
+The 300 row looks like a useful compromise. It is not. Per draw:
+
+| Stimulus | Rhythmicity, each draw | Median peak rate, each draw |
+|---|---|---|
+| 300 | 0.055, 0.127, **0.509, 0.511, 0.564, 0.664** | 48.2, 92.1, **2.7, 1.4, 4.0, 3.4** |
+| 350 | 0.020, 0.032, 0.050, 0.054, 0.090, **0.618** | 49.3, 57.6, 62.0, 59.5, 55.2, **3.1** |
+
+Every individual simulation lands in one of two states: **rhythmic and weak**,
+at 1 to 4 Hz, or **strong and arrhythmic**, at 39 to 92 Hz. The mean of 0.405
+with 25 Hz describes no simulation that actually ran. The corrected model has
+the same two regimes as the uncontrolled one, only at a different stimulus.
+
+> **Methodological note.** This was nearly reported as a positive result. The
+> mean at stimulus 300 reads as a rhythm-preserving regime with eleven times the
+> motor output, which would have been the most encouraging finding of the
+> session. Looking at the per-draw values took two minutes and reversed it. The
+> session summary tool now flags any group whose values separate into two bands.
+
+### What this licenses
+
+For **this model class**, a deafferented connectome network with rate-based
+units, weight proportional to synapse count times a global scale, sign from a
+transmitter prediction and excitability from soma size: rhythm and physiological
+motor output are mutually exclusive across every setting tried. That is 299
+simulations, not a proof, and the space is not exhausted.
+
+It does **not** license a claim about the fly, or about connectome-constrained
+modelling in general. What it does is locate the problem. Since F12 rules out
+sensory timing as the fix and F15 rules out excitability recalibration, the
+remaining candidates are the ones F9, F11 and F13 point at: **the synaptic
+weight rule and the sign assignment**, neither of which is measured, both of
+which the connectome cannot supply.
