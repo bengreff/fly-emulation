@@ -60,7 +60,7 @@ def build_config(experiment: str = "DNg100_Stim") -> OmegaConf:
         ("sim", "default"),
         ("neuron_params", "default"),
     ):
-        part = OmegaConf.load(EXT / "configs" / group / f"{name}.yaml")
+        part = OmegaConf.load(str(EXT / "configs" / group / f"{name}.yaml"))
         cfg = OmegaConf.merge(cfg, OmegaConf.create({group: part}))
     return cfg
 
@@ -199,10 +199,29 @@ def main() -> None:
     ap.add_argument("--tag", default="", help="suffix for the run id")
     ap.add_argument("--save-traces", action="store_true",
                     help="store the full rate matrix for replicate 0")
+    ap.add_argument("--exc-mult", type=float, default=None,
+                    help="override excitatory synaptic multiplier (default 0.03)")
+    ap.add_argument("--inh-mult", type=float, default=None,
+                    help="override inhibitory synaptic multiplier (default 0.03)")
+    ap.add_argument("--stim-amp", type=float, default=None,
+                    help="override stimulus current amplitude")
+    ap.add_argument("--sensory-amp", type=float, default=None,
+                    help="tonic current applied to leg proprioceptors "
+                         "(chordotonal organ, hair plate, campaniform sensilla). "
+                         "A swept unknown, not a measured value: no published "
+                         "spike-rate calibration exists for these afferents.")
     args = ap.parse_args()
 
     tol_tag = "papertol" if args.rtol <= 2e-6 else f"rtol{args.rtol:g}"
-    run_id = f"pugliese-{args.condition}-n{args.replicates}-{tol_tag}{args.tag}"
+    mult_tag = ""
+    if args.exc_mult is not None or args.inh_mult is not None:
+        mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
+        mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.stim_amp is not None:
+        mult_tag += f"-I{args.stim_amp:g}"
+    if args.sensory_amp is not None:
+        mult_tag += f"-S{args.sensory_amp:g}"
+    run_id = f"pugliese-{args.condition}-n{args.replicates}-{tol_tag}{mult_tag}{args.tag}"
     out_dir = Path(args.out) / run_id
     rec = RunRecord(run_id, out_dir,
                     description=f"Pugliese MANC T1 VNC rate model, condition={args.condition}")
@@ -213,9 +232,28 @@ def main() -> None:
     cfg.experiment.seed = args.seed
     cfg.sim.rtol = args.rtol
     cfg.sim.atol = args.atol
+    if args.exc_mult is not None:
+        cfg.neuron_params.excitatoryMultiplier = args.exc_mult
+    if args.inh_mult is not None:
+        cfg.neuron_params.inhibitoryMultiplier = args.inh_mult
 
     wTable = load_wTable(cfg.experiment.dfPath)
     cfg, notes = apply_condition(cfg, wTable, args.condition)
+    if args.stim_amp is not None:
+        cfg.experiment.stimI = [[args.stim_amp] * len(cfg.experiment.stimNeurons[0])]
+        notes["stim_amp_override"] = args.stim_amp
+    if args.sensory_amp is not None:
+        prop = wTable.loc[
+            wTable["subclass"].isin(["chordotonal organ", "hair plate",
+                                     "campaniform sensilla"])
+        ].index.tolist()
+        cfg.experiment.stimNeurons = [list(cfg.experiment.stimNeurons[0]) + prop]
+        cfg.experiment.stimI = [list(cfg.experiment.stimI[0])
+                                + [args.sensory_amp] * len(prop)]
+        notes["proprioceptors_driven"] = len(prop)
+        notes["sensory_amp"] = args.sensory_amp
+        notes["proprioceptor_breakdown"] = (
+            wTable.loc[prop, "subclass"].value_counts().to_dict())
 
     rec.add_input("W", cfg.experiment.wPath, "MANC T1 DN-to-MN connectivity, signed by predicted transmitter")
     rec.add_input("wTable", cfg.experiment.dfPath, "neuron annotation table with motor module assignments")
@@ -226,6 +264,13 @@ def main() -> None:
         "Tonic current injected directly into a descending neuron; no sensory input, "
         "no body, no muscles. Reproduces an optogenetic experiment, not spontaneous behavior."
     )
+    if args.sensory_amp is not None:
+        rec.declare_scaffold(
+            f"Proprioceptive afferents driven by an imposed tonic current of "
+            f"{args.sensory_amp}, not by a body. No measured spike-rate "
+            f"calibration exists for these neurons; this is a swept unknown "
+            f"used to ask how much sensory drive would be required."
+        )
     rec.declare_scaffold(
         "Synaptic sign taken from EM transmitter prediction; weight is synapse count "
         "times a single global multiplier. Not measured physiological efficacy."
