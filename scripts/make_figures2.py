@@ -120,15 +120,15 @@ def fig_glutamate() -> None:
 
 def fig_nt_uncertainty() -> None:
     res = load("pugliese-baseline-n24-papertol-ntsample*")
-    fix = load("pugliese-baseline-n24-papertol-nt24*")
+    fix = load("pugliese-baseline-n16-papertol")
     if res.empty or fix.empty:
         return
     fig, ax = plt.subplots(figsize=(4.4, 2.7))
     bins = np.linspace(0, 1, 21)
     ax.hist(fix["oscillation_score_mn"], bins=bins, color=GREEN, alpha=.75,
-            label=f"most-likely labels (n={len(fix)})")
+            label=f"most-likely labels, as published (n={len(fix)})")
     ax.hist(res["oscillation_score_mn"], bins=bins, color=PLUM, alpha=.65,
-            label=f"sign resampled from classifier (n={len(res)})")
+            label=f"sign resampled from the classifier (n={len(res)})")
     ax.set_xlabel("motor-neuron rhythmicity")
     ax.set_ylabel("replicates")
     ax.legend(frameon=False, fontsize=6.5)

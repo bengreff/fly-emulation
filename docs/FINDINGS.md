@@ -20,6 +20,7 @@ established, so corrections sit after the claims they overturn. Read the index.
 | F10 | The model assigns an inhibitory sign to most of the fly's main leg proprioceptor, against published physiology | stands |
 | F11 | Excitability is derived from a volume that measures a whole cell for some classes and only an axon arbor for others | stands |
 | F12 | Rhythmic sensory drive does not rescue the rhythm at any frequency, and the motor output does not even entrain to it | stands, open loop only |
+| F13 | Respecting the transmitter classifier's own uncertainty destroys the rhythm in a third of draws; every draw that flipped one of four core neurons lost it | stands |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
@@ -607,3 +608,73 @@ first. The first answer was right by accident, the second was wrong for a reason
 that looked like biology and was arithmetic, and the third is a control. Any
 perturbation result in this model class needs the same treatment before it is
 believed, including the ones in the paper this session started from.
+
+## F13. One third of admissible sign assignments destroy the rhythm, and the failures trace to four neurons (2026-09-14)
+
+The electron-microscope transmitter classifier does not output a label, it
+outputs a probability per neuron. The published model takes the most likely one.
+This asks what happens if you respect the classifier's own uncertainty: on each
+replicate, redraw every neuron's transmitter from its reported probabilities,
+map acetylcholine to excitatory and everything else to inhibitory, and run the
+same experiment.
+
+Redrawing flips the excitatory or inhibitory sign of **436 neurons on average,
+9.5% of the network**, per draw.
+
+| | Draws | Rhythmicity | Active motor neurons |
+|---|---|---|---|
+| Most-likely labels, as published | 16 | **0.836 +/- 0.119** | 2.6 |
+| Sign redrawn from the classifier | 24 | **0.555 +/- 0.406** | 5.2 |
+
+The mean is not the story; the shape is. The published labels give a tight
+distribution, every draw rhythmic. Redrawing gives a **bimodal** one: 15 of 24
+draws above 0.5, and **6 of 24 with no rhythm at all**, the circuit simply
+failing to produce oscillating motor output. Eight of 24 fall below 0.3.
+
+### The failures trace to four cells
+
+The source paper's own configuration names a minimal core circuit: the
+stimulated descending neuron DNg100 plus three interneurons, indices 31, 277,
+617 and 1167. Running that configuration alone, with everything else masked,
+does reproduce a rhythm (0.430 at 9.9 Hz, 3 draws), so the core is load-bearing.
+
+Reconstructing each draw from its seed and asking whether any of those four
+flipped:
+
+| | Rhythm lost | Rhythm survived |
+|---|---|---|
+| A core neuron flipped | **4** | **0** |
+| No core neuron flipped | 4 | 16 |
+
+**Every draw that flipped a core neuron lost the rhythm, four out of four.** The
+classifier's confidence in those four cells is 0.90, 0.92, 0.95 and 0.96, which
+gives a 20.8% chance that at least one flips on any given draw. Observed: 4 of
+24, or 17%.
+
+Core flips explain half the failures. The other four came from elsewhere in the
+436 flipped cells, so the circuit has more than one fragile point.
+
+### What this means
+
+The headline result of a connectome-constrained model rests on the excitatory or
+inhibitory identity of roughly four neurons, assigned by a classifier that is
+about 90% confident in each. That is not a criticism of the classifier, which
+reports its uncertainty honestly. It is a statement about what the model
+inherits: **sign is not in the connectome**, it is predicted, and the prediction
+carries enough uncertainty to change the qualitative outcome a third of the time.
+
+The constructive response is not to distrust the result but to report it as a
+distribution over admissible sign assignments rather than a single run, and to
+spend measurement effort on the handful of cells the outcome actually depends
+on. Those four are identified and named. Determining their transmitters
+experimentally is a small, well-posed piece of work with a large payoff.
+
+### Caveats
+
+The annotation table exposes only three of the classifier's transmitter classes.
+They sum to about 0.98 on average and as little as 0.49, so resampling
+renormalises over three and redistributes the missing mass proportionally. The
+excitatory/inhibitory mapping is the same blanket one the model uses, so F9's
+objection to treating all glutamate as inhibitory applies here too. And the
+comparison is against the 16-draw baseline rather than a fresh matched
+fixed-label run, which was dropped for capacity.
