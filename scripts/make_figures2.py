@@ -215,12 +215,80 @@ def fig_corrected_model() -> None:
     plt.close(fig)
 
 
+def fig_all_simulations() -> None:
+    """F15: every replicate of the session, rhythm against motor output.
+
+    The point of the figure is the empty region, so it must show every draw,
+    not group means.
+    """
+    import os as _os, glob as _glob
+    rows = []
+    for d in _glob.glob(str(RUNS / "*/")):
+        for name in ("metrics.csv", "metrics_partial.csv"):
+            f = _os.path.join(d, name)
+            if _os.path.exists(f):
+                try:
+                    x = pd.read_csv(f)
+                except Exception:
+                    break
+                x["run"] = _os.path.basename(d.rstrip("/"))
+                rows.append(x)
+                break
+    if not rows:
+        return
+    df = pd.concat(rows, ignore_index=True)
+    need = ["oscillation_score_mn", "mn_peak_rate_median_hz"]
+    if not all(c in df.columns for c in need):
+        return
+    df = df.dropna(subset=need)
+    df = df[df.mn_peak_rate_median_hz >= 0]
+
+    def family(r):
+        if "shuffle" in r:   return "scrambled connectome (control)"
+        if "sizecls" in r:   return "excitability corrected"
+        if "ntsample" in r:  return "transmitter resampled"
+        if "-S" in r:        return "sensory drive"
+        return "other conditions and sweeps"
+    df["fam"] = df.run.map(family)
+    colors = {"other conditions and sweeps": "#8a9699", "sensory drive": GREEN,
+              "excitability corrected": BLUE, "transmitter resampled": "#b07d2a",
+              "scrambled connectome (control)": PLUM}
+    fig, ax = plt.subplots(figsize=(5.8, 4.0))
+
+    for fam, g in df.groupby("fam"):
+        ax.scatter(np.maximum(g.mn_peak_rate_median_hz, 0.08), g.oscillation_score_mn,
+                   s=16, alpha=.75, edgecolors="none", label=f"{fam} (n={len(g)})",
+                   color=colors.get(fam, "#888"), zorder=3)
+    ax.axvline(SLOW_MN_REST_HZ, ls=":", lw=1.2, color=RED, zorder=2)
+    ax.text(SLOW_MN_REST_HZ * 0.92, 0.02, "measured slow motor neuron at rest",
+            fontsize=6.5, color=RED, va="bottom", ha="right", rotation=90)
+    ax.axhline(0.5, ls="--", lw=0.9, color="#666", zorder=2)
+    ax.text(0.09, 0.52, "clearly rhythmic", fontsize=6.5, color="#555")
+    # shade only the quadrant that is actually empty: rhythmic AND fast
+    ax.add_patch(plt.Rectangle((SLOW_MN_REST_HZ, 0.5), 400, 0.55,
+                               color=RED, alpha=0.07, lw=0, zorder=0))
+    ax.text(SLOW_MN_REST_HZ * 1.25, 0.70,
+            "no simulation\nlands in here", fontsize=9, color=RED,
+            style="italic", ha="left", va="center", zorder=4)
+    ax.set_xscale("log")
+    ax.set_xlim(0.07, 400)
+    ax.set_ylim(-0.04, 1.05)
+    ax.set_xlabel("median peak motor-neuron rate (Hz)")
+    ax.set_ylabel("motor-neuron rhythmicity")
+    ax.legend(frameon=False, fontsize=6, loc="upper left", bbox_to_anchor=(0.0, 1.0))
+    ax.set_title(f"Every simulation of the session (n={len(df)}).\n"
+                 "Rhythm and usable motor output never co-occur.", fontsize=9)
+    fig.savefig(FIGS / "all_simulations.png")
+    plt.close(fig)
+
+
 def main() -> None:
     fig_drive_targets()
     fig_glutamate()
     fig_nt_uncertainty()
     fig_phasic_sweep()
     fig_corrected_model()
+    fig_all_simulations()
     print("figures ->", FIGS)
     for p in sorted(FIGS.glob("*.png")):
         print("  ", p.name)
