@@ -213,6 +213,13 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--proprio-cholinergic", action="store_true",
+                    help="force leg proprioceptors excitatory. The EM classifier "
+                         "labels 69%% of chordotonal-organ neurons glutamate at "
+                         "mean confidence 0.69, which this model renders as "
+                         "inhibitory. Published physiology states the femoral "
+                         "chordotonal organ is ~150 excitatory cholinergic "
+                         "neurons, so the modelled sign is wrong for most of them.")
     ap.add_argument("--sample-transmitters", action="store_true",
                     help="resample each neuron's transmitter from its predicted "
                          "probabilities per replicate, instead of taking the most "
@@ -243,6 +250,8 @@ def main() -> None:
     if args.exc_mult is not None or args.inh_mult is not None:
         mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
         mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.proprio_cholinergic:
+        mult_tag += "-propACh"
     if args.sample_transmitters:
         mult_tag += "-ntsample"
     if args.glu_mult is not None:
@@ -330,6 +339,11 @@ def main() -> None:
             "Synaptic sign resampled per replicate from EM classifier "
             "probabilities. Spread across replicates is an uncertainty estimate "
             "for the sign assignment only, not for weights or physiology.")
+    if args.proprio_cholinergic:
+        rec.declare_scaffold(
+            "Leg proprioceptor signs overridden to excitatory on published "
+            "physiology rather than the EM classifier. This is a literature-based "
+            "correction, not a measurement of these specific cells.")
     rec.declare_scaffold(
         "Synaptic sign taken from EM transmitter prediction; weight is synapse count "
         "times a single global multiplier. Not measured physiological efficacy."
@@ -343,6 +357,20 @@ def main() -> None:
     mn_idx = np.asarray(neuronParams.mn_idxs)
     print(f"  {nNeurons} neurons, {len(mn_idx)} motor neurons, "
           f"setup {time.time()-t0:.1f}s", flush=True)
+
+    if args.proprio_cholinergic:
+        prop_rows = wTable.loc[wTable["subclass"].isin(
+            ["chordotonal organ", "hair plate", "campaniform sensilla"])].index.values
+        Wn = np.array(neuronParams.W, copy=True)
+        flipped = int((Wn[prop_rows, :] < 0).any(axis=1).sum())
+        Wn[prop_rows, :] = np.abs(Wn[prop_rows, :])
+        neuronParams = neuronParams._replace(W=jnp.asarray(Wn))
+        rec.rec["proprio_cholinergic"] = {
+            "neurons_flipped_to_excitatory": flipped,
+            "of_total_proprioceptors": int(len(prop_rows)),
+            "evidence": "FeCO reported as ~150 excitatory cholinergic neurons",
+        }
+        print(f"  forced {flipped}/{len(prop_rows)} proprioceptors excitatory")
 
     W_base = neuronParams.W
     # Sign implied by the most likely transmitter, as the published model uses it.
