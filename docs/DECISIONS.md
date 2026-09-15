@@ -85,3 +85,42 @@ The hypotheses I stated before starting, and what happened to them:
 The prediction I made about the workflow was that the biggest risks would fail early and
 visibly on one leg. That is what happened, though not where expected: the failures were in
 the model's parameter conventions rather than in the biomechanics.
+
+## 2026-09-15 Session 2: the approach inverted
+
+Ben rejected the session-1 strategy. His argument, which I accept: this is emergent
+complexity, not incremental software. You either replicate the organism or you tack
+fixes onto an incomplete brain, and an isolated sensorimotor loop is the latter. You
+cannot isolate the part of a brain that walks forward, because walking is under
+voluntary control and continuously corrected by systems that are not the walking
+circuit. A fly is simpler, not different in kind.
+
+This also explains session 1's central negative result better than session 1 did. The
+fragment could not set its own operating point because descending drive, sensory
+context and neuromodulator state were all absent. Finding F-FRAG has had its scope
+narrowed accordingly, and the session-1 report's headline was over-claimed.
+
+- **New first task: a whole-organism field inventory.** Enumerate every quantity the
+  organism needs and mark its provenance, before simulating anything. Plan in
+  `docs/PLAN.md`.
+- **Grain:** per cell type for physiology, per neuron for structure. Roughly 9,000
+  annotated types against 176,000 neurons. Chosen because measurements are published
+  per type, so rows are fillable and rankable.
+- **Boundary:** core loop plus neuromodulator systems, energy and hunger state, and
+  circadian and arousal. All four, not a subset.
+- **Counting:** one row per shared parameter group with an instance count, and the
+  sharing itself recorded as a challengeable assumption. Per-instance counting was
+  rejected as unrankable at millions of rows.
+- **Run horizon:** hours. This makes every slow-state field load-bearing rather than
+  optional, and most of those rows will be empty.
+- **Primary graph moves to the whole-CNS male connectome** (F-DATA-2), carrying
+  nerve-cord work across by `mancBodyid`.
+- **Codebase cleaned.** About 40 fragment-specific files deleted: the runner, eleven
+  sweep scripts, the figure and analysis scripts, the fragment result tables, the
+  isolated-leg milestone plan and the session-1 report. All in git history at
+  `1f7f5a4` or earlier. Kept: the provenance recorder and audit, data-validation
+  tests, the queried motor-neuron extraction, the data manifest, and the findings
+  restated at field level. Tracked files went from 61 to 21.
+- **`runs/` retained on disk though untracked.** It holds the 53 provenance records
+  that are the evidence for the surviving findings. Deleting the code that made them
+  is fine; deleting the evidence is not.

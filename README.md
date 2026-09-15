@@ -1,38 +1,41 @@
 # Biologically constrained fly emulation
 
-> ## Session 1 results, 14 September 2026
+> ## Current state, 15 September 2026
 >
-> **Report:** https://claude.ai/code/artifact/c4a39baf-e4a2-4034-9098-fb8c4ffac864
+> **Read [docs/PLAN.md](docs/PLAN.md) first.** It is the plan for the next
+> session and it supersedes the milestone sequence in `docs/ROADMAP.md`.
 >
-> The published connectome nerve-cord rhythm reproduces robustly and the anatomy
-> joins cleanly to independent electrophysiology. Beyond that the session became
-> an audit.
+> **The approach changed after session 1.** That session built and audited one
+> isolated subsystem, the front-leg premotor network of the nerve cord. It could
+> not produce both a rhythm and usable motor force across 333 simulations, and
+> that was reported as a property of the approach. It was not. The fragment was
+> deafferented and open-loop, so everything that normally sets a premotor
+> circuit's operating point was missing: descending drive, sensory context,
+> neuromodulator state. A part was being asked to do the whole animal's job.
 >
-> **Headline:** across **333 simulations** spanning every knob available, not one
-> produced both a rhythm and motor output strong enough to move a leg. Rhythmic
-> runs top out at 8.5 Hz against a measured 30 Hz resting rate; runs that reach
-> physiological rates never exceed 0.31 rhythmicity, and the only one that came
-> close was the scrambled-connectome control.
+> **The new first task is a whole-organism field inventory.** Enumerate every
+> quantity the organism needs, at per-cell-type grain for physiology and
+> per-neuron for structure, and mark each one measured, derived, fitted, assumed
+> or empty. Find out how much of a fly we actually have before simulating any of
+> it. Then build a scaffold whose only job is to fail loudly on missing fields,
+> and a control that runs on measured values alone.
 >
-> **Why, so far:** 41% of the model's inhibition rests on a contested sign
-> convention; the fly's main leg proprioceptor is modelled with the wrong sign;
-> excitability is derived from a volume that means different things for different
-> cell classes; and the result survives only two thirds of the sign assignments
-> the transmitter classifier itself considers admissible, with the failures
-> tracing to four identified neurons. Correcting the excitability rule moves the
-> operating point and keeps both regimes.
+> **What session 1 did establish**, restated at field level in
+> [docs/FINDINGS.md](docs/FINDINGS.md): the motor-neuron to muscle mapping is
+> complete and independently corroborated; 41% of modelled inhibition rests on a
+> sign convention the connectome cannot settle; the sign field is wrong for most
+> leg proprioceptors; excitability is derived from a volume that is invalid for
+> input populations; afferent firing rates have no published calibration at all;
+> and the whole-CNS connectome is a far better source than the nerve cord alone,
+> 94% traced against 23%.
 >
 > | Read this | For |
 > |---|---|
-> | [Findings](docs/FINDINGS.md) | every measured result, F1-F15, with its conditions and limits |
-> | [Next session](docs/NEXT_SESSION.md) | state, priorities and known gaps |
-> | [Milestone A](docs/MILESTONE_A.md) | the grounded plan for a causal leg interface |
-> | [Running](docs/RUNNING.md) | how to reproduce any of it |
-> | [Environment](docs/ENVIRONMENT.md) | measured hardware and the two-machine setup |
+> | [Plan](docs/PLAN.md) | what to do next and why the approach changed |
+> | [Findings](docs/FINDINGS.md) | which fields are filled, wrong, or empty |
 > | [Decisions](docs/DECISIONS.md) | what was chosen and why |
->
-> One finding, F8, was published wrong and then corrected twice as controls were
-> added. That sequence is left visible in the findings file on purpose.
+> | [Environment](docs/ENVIRONMENT.md) | measured hardware, two-machine setup |
+> | [Running](docs/RUNNING.md) | how to reproduce what remains |
 
 ---
 
