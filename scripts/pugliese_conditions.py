@@ -454,6 +454,7 @@ def main() -> None:
             draw = (rng.random((P.shape[0], 1)) < P.cumsum(axis=1)).argmax(axis=1)
             sampled_exc = draw == 0
             flip = np.where(sampled_exc != argmax_exc, -1.0, 1.0)
+            n_flipped = int((flip < 0).sum())
             W = W * jnp.asarray(flip)[:, None]
         if args.condition == "shuffle":
             W = full_shuffle(
@@ -477,6 +478,9 @@ def main() -> None:
         # comparison across populations is uninterpretable: the same injected
         # current produces very different output depending on cell size
         # (finding F11), so "matched drive" must be defined and reported.
+        if args.sample_transmitters:
+            m["n_sign_flips"] = n_flipped
+            m["frac_sign_flips"] = round(n_flipped / len(flip), 4)
         if args.sensory_amp is not None:
             drv = np.asarray(prop, dtype=int)
             m["driven_mean_rate_hz"] = float(Rn[drv].mean())
