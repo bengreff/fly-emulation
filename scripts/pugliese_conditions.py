@@ -350,13 +350,17 @@ def main() -> None:
     if args.sample_transmitters:
         P = wTable[nt_cols].to_numpy(dtype=float)
         P = np.where(np.isfinite(P), P, 0.0)
+        # The table exposes only three classes; the rows sum to ~0.98 on average
+        # and as low as 0.49, so renormalising over three is an approximation
+        # that redistributes the missing mass proportionally. Declared, not hidden.
         rowsum = P.sum(axis=1, keepdims=True)
         P = np.where(rowsum > 0, P / np.maximum(rowsum, 1e-12), 
                      np.array([1.0, 0.0, 0.0]))
         argmax_exc = P.argmax(axis=1) == 0          # acetylcholine -> excitatory
         rec.rec["transmitter_uncertainty"] = {
             "neurons_below_0.8_confidence": int((P.max(axis=1) < 0.8).sum()),
-            "note": "sign resampled per replicate from these probabilities",
+            "note": "sign resampled per replicate from these probabilities; "
+                    "renormalised over three exposed classes, mean row sum 0.98",
         }
 
     rows = []

@@ -117,3 +117,50 @@ def test_simulation_is_deterministic_for_a_fixed_seed():
     r2 = np.asarray(run_single_simulation(Wr, key=k, **args))
     assert np.array_equal(r1, r2)
     assert np.isfinite(r1).all()
+
+
+def test_dale_principle_holds_in_the_weight_matrix():
+    """Every neuron's outgoing connections share one sign.
+
+    Required for the glutamate sign-flip test (finding F9) to be a well-defined
+    manipulation rather than a partial one.
+    """
+    from src.utils.sim_utils import load_W
+
+    W = np.asarray(load_W(str(DATA / "W_20250813_DNtoMN_unsorted.csv")))
+    has_pos = (W > 0).any(axis=1)
+    has_neg = (W < 0).any(axis=1)
+    assert not (has_pos & has_neg).any(), "a neuron has both signs outgoing"
+
+
+def test_glutamate_carries_a_large_share_of_inhibition():
+    """Finding F9. If this share drops, the sign assumption matters less and the
+    finding should be re-stated with the new number."""
+    from src.utils.sim_utils import load_W
+
+    W = np.asarray(load_W(str(DATA / "W_20250813_DNtoMN_unsorted.csv")))
+    wt = pd.read_csv(WTABLE, index_col=0, low_memory=False)
+    glu = wt.index[wt["predictedNt"] == "glutamate"].values
+    total_inh = -W[W < 0].sum()
+    share = np.abs(W[glu, :]).sum() / total_inh
+    assert 0.35 < share < 0.45, f"glutamate share of inhibition is {share:.3f}"
+
+
+def test_transmitter_confidence_is_reported_and_often_low():
+    """Finding F9/F10. A third of neurons are below 0.8 confidence, which is why
+    the pipeline can resample sign from the classifier's probabilities."""
+    wt = pd.read_csv(WTABLE, index_col=0, low_memory=False)
+    frac_low = (wt["predictedNtProb"] < 0.8).mean()
+    assert 0.25 < frac_low < 0.40, f"fraction below 0.8 is {frac_low:.3f}"
+    # The table exposes only three of the classifier's transmitter classes, so
+    # the three columns do not always sum to 1. Mean is about 0.98 and the
+    # minimum near 0.49, meaning half the probability mass for the most
+    # uncertain cells sits on transmitters not represented here. Resampling
+    # renormalises over the three, which is an approximation, recorded in
+    # docs/FINDINGS.md rather than hidden.
+    probs = wt[["ntAcetylcholineProb", "ntGabaProb", "ntGlutamateProb"]].to_numpy(float)
+    finite = np.isfinite(probs).all(axis=1)
+    sums = probs[finite].sum(axis=1)
+    assert sums.max() <= 1.001
+    assert sums.mean() > 0.95
+    assert (sums < 0.95).mean() < 0.15
