@@ -138,10 +138,39 @@ def fig_nt_uncertainty() -> None:
     plt.close(fig)
 
 
+def fig_phasic_sweep() -> None:
+    """F12: does the timing of sensory drive matter? Built from the recovered CSV."""
+    f = REPO / "data" / "derived" / "phasic_sweep.csv"
+    if not f.exists():
+        return
+    df = pd.read_csv(f)
+    g = df.groupby("freq_hz")
+    x = np.array(sorted(df.freq_hz.unique()))
+    mu = g["oscillation_score_mn"].mean().reindex(x)
+    sd = g["oscillation_score_mn"].std(ddof=1).reindex(x).fillna(0)
+    fig, ax = plt.subplots(figsize=(4.8, 2.8))
+    ph = x > 0
+    ax.plot(x[ph], mu[ph], "-o", ms=4, lw=1.4, color=GREEN, label="rhythmic sensory drive")
+    ax.fill_between(x[ph], (mu - sd)[ph], (mu + sd)[ph], color=GREEN, alpha=.18, lw=0)
+    if (x == 0).any():
+        ax.axhline(float(mu[x == 0].iloc[0]), ls="-.", lw=1.1, color=PLUM,
+                   label="tonic drive, same mean")
+    ax.axhline(0.836, ls="--", lw=1.1, color="#666", label="undriven baseline")
+    ax.set_ylim(-.05, 1.0)
+    ax.set_xlabel("sensory modulation frequency (Hz)")
+    ax.set_ylabel("motor-neuron rhythmicity")
+    ax.legend(frameon=False, fontsize=6.5, loc="center right")
+    ax.set_title("Matched mean drive, different timing.\nNo frequency restores the rhythm.",
+                 fontsize=8.5)
+    fig.savefig(FIGS / "phasic_sweep.png")
+    plt.close(fig)
+
+
 def main() -> None:
     fig_drive_targets()
     fig_glutamate()
     fig_nt_uncertainty()
+    fig_phasic_sweep()
     print("figures ->", FIGS)
     for p in sorted(FIGS.glob("*.png")):
         print("  ", p.name)

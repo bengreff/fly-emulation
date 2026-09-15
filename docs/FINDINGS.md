@@ -512,14 +512,14 @@ per neuron into the 102 proprioceptors and varying only the modulation:
 | Sensory modulation | Draws | Rhythmicity | Active motor neurons | Motor output frequency |
 |---|---|---|---|---|
 | none (undriven baseline) | 16 | **0.836** | 2.6 | 10.0 Hz |
-| tonic, same mean | 7 | 0.042 | 69.1 | 1.5 Hz |
-| 2 Hz | 5 | 0.068 | 60.2 | 1.4 Hz |
-| 5 Hz | 5 | 0.059 | 72.8 | 2.4 Hz |
-| 8 Hz | 5 | 0.059 | 70.0 | 2.1 Hz |
-| 10 Hz | 5 | 0.049 | 70.6 | 1.9 Hz |
-| 12 Hz | 5 | 0.048 | 71.4 | 2.0 Hz |
-| 15 Hz | 6 | 0.039 | 67.2 | 1.9 Hz |
-| 20 Hz | 6 | 0.040 | 69.0 | 1.9 Hz |
+| tonic, same mean | 8 | 0.041 | 68.9 | 1.5 Hz |
+| 2 Hz | 7 | 0.088 | 63.1 | 1.3 Hz |
+| 5 Hz | 7 | 0.061 | 72.0 | 2.3 Hz |
+| 8 Hz | 7 | 0.059 | 70.3 | 2.0 Hz |
+| 10 Hz | 8 | 0.050 | 69.5 | 2.0 Hz |
+| 12 Hz | 8 | 0.045 | 70.0 | 1.8 Hz |
+| 15 Hz | 8 | 0.040 | 66.9 | 1.7 Hz |
+| 20 Hz | 8 | 0.042 | 68.3 | 1.7 Hz |
 
 No modulation frequency restores the rhythm. Driving at 10 Hz, the network's own
 preferred frequency, does not help either. Two further variants change nothing:
