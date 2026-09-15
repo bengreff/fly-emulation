@@ -1,5 +1,32 @@
 # Biologically constrained fly emulation
 
+> ## Session 1 results, 14 September 2026
+>
+> **Report:** https://claude.ai/code/artifact/c4a39baf-e4a2-4034-9098-fb8c4ffac864
+>
+> The published connectome nerve-cord rhythm reproduces robustly and the anatomy
+> joins cleanly to independent electrophysiology. Beyond that, the session became
+> an audit, and it found several load-bearing problems: the motor output is far
+> too weak to drive a muscle, rhythm and firing rate trade off against each
+> other, 41% of the model's inhibition rests on a contested sign convention, the
+> fly's main leg proprioceptor is modelled with the wrong sign, and excitability
+> is derived from a volume that means different things for different cell classes.
+>
+> | Read this | For |
+> |---|---|
+> | [Findings](docs/FINDINGS.md) | every measured result, F1-F11, with its conditions and limits |
+> | [Milestone A](docs/MILESTONE_A.md) | the grounded plan for a causal leg interface |
+> | [Running](docs/RUNNING.md) | how to reproduce any of it |
+> | [Environment](docs/ENVIRONMENT.md) | measured hardware and the two-machine setup |
+> | [Decisions](docs/DECISIONS.md) | what was chosen and why |
+>
+> One finding, F8, was published wrong and then corrected twice as controls were
+> added. That sequence is left visible in the findings file on purpose.
+
+---
+
+# Original handoff brief
+
 Repository starter brief • research compiled 14 September 2026
 
 Build an increasingly faithful simulation of the Drosophila brain, body and environment, constrained by anatomical measurements, physiological research and observed behavior. The long-term aim is an organism able to live a fly-like life: sense, move, select behaviors, adapt, learn and retain memories. Walking is the first whole-body milestone; flight follows. Agreement with actual biological data is the main success criterion.
