@@ -44,3 +44,8 @@ Short records of user decisions and major implementation choices. Newest last.
   released for capacity. The sign question is already answered qualitatively by F10 and
   F12; the E/I question is largely superseded by the corrected-model sweep, which varies
   excitability rather than the excitation/inhibition ratio.
+- **Bristle drive at amplitude 12.5 abandoned.** No replicate completed in 24 minutes. The
+  mechanosensory bristle population carries a 12.9x gain multiplier under the model's size
+  rule (F11), so driving it hard makes the network so active that the adaptive solver
+  crawls. The A=5 bristle condition completed and already answers the question
+  (rhythmicity 0.039). The intractability is itself a symptom of F11.
