@@ -8,7 +8,7 @@
 > joins cleanly to independent electrophysiology. Beyond that the session became
 > an audit.
 >
-> **Headline:** across **317 simulations** spanning every knob available, not one
+> **Headline:** across **333 simulations** spanning every knob available, not one
 > produced both a rhythm and motor output strong enough to move a leg. Rhythmic
 > runs top out at 8.5 Hz against a measured 30 Hz resting rate; runs that reach
 > physiological rates never exceed 0.31 rhythmicity, and the only one that came

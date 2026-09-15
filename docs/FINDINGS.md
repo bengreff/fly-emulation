@@ -22,7 +22,7 @@ established, so corrections sit after the claims they overturn. Read the index.
 | F12 | Rhythmic sensory drive does not rescue the rhythm at any frequency, and the motor output does not even entrain to it | stands, open loop only |
 | F13 | Respecting the transmitter classifier's own uncertainty destroys the rhythm in a third of draws; every draw that flipped one of four core neurons lost it | stands |
 | F14 | The whole-CNS male connectome is the better primary specimen: 94% traced against 23%, the brain included, 1454 proprioceptors, and a 95% motor-neuron cross-reference back to MANC | stands |
-| F15 | Across all 303 simulations of the session, none produced both a rhythm and physiological motor rates; correcting excitability moves the operating point but keeps the same two regimes | stands, for this model class |
+| F15 | Across all 333 simulations of the session, none produced both a rhythm and physiological motor rates; correcting excitability moves the operating point but keeps the same two regimes | stands, for this model class |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
@@ -742,12 +742,12 @@ proprioceptor population, and descending neurons with their cell bodies in the
 same volume as their arbors, which is directly relevant to the excitability
 problem in F11.
 
-## F15. Across 303 simulations, not one produced both a rhythm and physiological motor rates (2026-09-14)
+## F15. Across 333 simulations, not one produced both a rhythm and physiological motor rates (2026-09-14)
 
 The strongest single statement this session can make, and it needed the whole
 night's runs to make it.
 
-Pooling **every replicate simulation of the session**, 303 in total, across all
+Pooling **every replicate simulation of the session**, 333 in total, across all
 five conditions, the synaptic-scale sweep, the sensory-drive sweeps, the
 drive-target controls, the threshold-matched controls, the glutamate sweep, the
 transmitter-resampling draws, the phasic sweeps and the corrected-excitability
@@ -759,7 +759,7 @@ sweep:
 | Draws with physiological rates (> 20 Hz) | 121 | median rhythmicity **0.051**, maximum **0.308** |
 | Draws with **both** rhythmicity > 0.5 and peak rate > 10 Hz | **0** | — |
 
-One simulation in 303 cleared rhythmicity 0.3 with rates above 20 Hz. It came
+One simulation in 333 cleared rhythmicity 0.3 with rates above 20 Hz. It came
 from the **degree-matched shuffle**, that is, from a deliberately scrambled
 connectome used as a negative control, not from any model of the fly.
 
@@ -817,12 +817,39 @@ the same two regimes as the uncontrolled one, only at a different stimulus.
 > session. Looking at the per-draw values took two minutes and reversed it. The
 > session summary tool now flags any group whose values separate into two bands.
 
+### Applying every correction at once does not help either
+
+The final test. Excitability normalised within cell class (F11), leg afferents
+forced excitatory per published physiology (F10), stimulus set to the corrected
+model's own working point rather than the published value, and then sensory
+drive added on top. Six draws per level:
+
+| Sensory drive | Rhythmicity | Active motor neurons | Median peak rate |
+|---|---|---|---|
+| 0 | 0.405 +/- 0.251 | 35.2 | 25.3 Hz |
+| 1 | 0.405 +/- 0.251 | 35.2 | 25.3 Hz |
+| 2 | 0.405 +/- 0.251 | 35.2 | 25.3 Hz |
+| 5 | 0.404 +/- 0.252 | 35.2 | 25.3 Hz |
+| 10 | 0.125 +/- 0.070 | 86.2 | 118.1 Hz |
+
+Two things to read here. First, drives of 1, 2 and 5 produce **bit-identical**
+results to no drive at all, because correcting excitability raises the
+afferents' thresholds by roughly nine-fold and puts those drives entirely below
+threshold. The parameters are entangled: fixing one convention silently
+rescales what counts as a meaningful input everywhere else.
+
+Second, the drive that *is* above threshold pushes the network straight into the
+arrhythmic regime, at 118 Hz. The best individual draw across the whole
+fully-corrected sweep reached rhythmicity **0.23 at 136 Hz**, the closest any
+non-scrambled model came to the excluded region all night, and still well short
+of it.
+
 ### What this licenses
 
 For **this model class**, a deafferented connectome network with rate-based
 units, weight proportional to synapse count times a global scale, sign from a
 transmitter prediction and excitability from soma size: rhythm and physiological
-motor output are mutually exclusive across every setting tried. That is 303
+motor output are mutually exclusive across every setting tried. That is 333
 simulations, not a proof, and the space is not exhausted.
 
 It does **not** license a claim about the fly, or about connectome-constrained

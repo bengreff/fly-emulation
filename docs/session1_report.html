@@ -140,7 +140,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   <h1>What the connectome doesn't contain</h1>
   <p class="standfirst">The published rhythm reproduces cleanly, and the anatomy checks out against independent electrophysiology. Then the night turned into an audit. The wiring diagram tells you which neurons talk to which. It does not tell you whether a connection excites or inhibits, how strong it is, or how excitable a cell is, and in this model all three are supplied by convention. Several of those conventions turn out to be load-bearing, and at least one is simply wrong.</p>
   <div class="meta">
-    <span><b>Runs</b> 54, 303 simulations</span>
+    <span><b>Runs</b> 56, 333 simulations</span>
     <span><b>Machines</b> M2 Pro + RTX box, 38 cores</span>
     <span><b>Checks</b> 10 passing</span>
     <span><b>Corrections</b> 1 finding retracted twice</span>
@@ -149,7 +149,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
 
 <div class="verdict">
   <div><dt>Reproduced</dt><dd><span class="big">10.0 Hz</span>rhythmic motor output, robust across all 16 parameter draws</dd></div>
-  <div><dt>Out of 303 runs</dt><dd><span class="big">none</span>produced both a rhythm and motor rates strong enough to move a leg</dd></div>
+  <div><dt>Out of 333 runs</dt><dd><span class="big">none</span>produced both a rhythm and motor rates strong enough to move a leg</dd></div>
   <div><dt>Rests on</dt><dd><span class="big">4 neurons</span>whose excitatory or inhibitory identity is predicted, at about 90% confidence each</dd></div>
   <div><dt>Fails in</dt><dd><span class="big">1 in 3</span>sign assignments the classifier itself considers admissible</dd></div>
 </div>
@@ -179,20 +179,20 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
 <p>Two things matter about this model's output: <strong>how rhythmic it is</strong>, and <strong>how hard the motor neurons actually fire</strong>. A leg needs both. Over the night I varied synaptic strength, sensory drive, which command neuron is stimulated, where current is injected, how synaptic sign is assigned, and how excitability is computed. Then I pooled every simulation and plotted both readouts together.</p>
 
 <figure class="bleed">
-  <img src="all_simulations.png" alt="Scatter of motor-neuron rhythmicity against median peak motor-neuron rate on a log axis, for 303 simulations. Rhythmic points all sit below about 10 Hz. Points above 30 Hz all have rhythmicity below 0.31. The upper right region, rhythmic and fast, is shaded and completely empty.">
+  <img src="all_simulations.png" alt="Scatter of motor-neuron rhythmicity against median peak motor-neuron rate on a log axis, for 333 simulations. Rhythmic points all sit below about 10 Hz. Points above 30 Hz all have rhythmicity below 0.31. The upper right region, rhythmic and fast, is shaded and completely empty.">
   <figcaption><b>Every replicate simulation of the session, one point each.</b> The shaded region is what a walking leg needs: a rhythm, and motor neurons firing at least as hard as a real one does at rest. Nothing reaches it. Rhythmic draws top out at 8.5 Hz. Draws above 20 Hz never exceed 0.31 rhythmicity, and the single one that came closest was the scrambled-connectome control.</figcaption>
 </figure>
 
 <p>The boundary is sharp, and it does not depend on where I draw the thresholds. Asking, for each floor on one axis, the best value any simulation reached on the other:</p>
 
 <div class="tablewrap"><table>
-  <caption>305 simulations, pooled</caption>
+  <caption>333 simulations, pooled</caption>
   <thead><tr><th>Constraint</th><th class="num">Simulations</th><th class="num">Best the other readout reached</th></tr></thead>
   <tbody>
-    <tr><td>Motor rate above 5 Hz</td><td class="num">139</td><td class="num">rhythmicity 0.949</td></tr>
-    <tr class="alarm"><td>Motor rate above 10 Hz</td><td class="num">123</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
-    <tr><td>Motor rate above 30 Hz</td><td class="num">121</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
-    <tr class="alarm"><td>Rhythmicity above 0.4</td><td class="num">129</td><td class="num">8.50 Hz</td></tr>
+    <tr><td>Motor rate above 5 Hz</td><td class="num">152</td><td class="num">rhythmicity 0.949</td></tr>
+    <tr class="alarm"><td>Motor rate above 10 Hz</td><td class="num">136</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
+    <tr><td>Motor rate above 30 Hz</td><td class="num">130</td><td class="num">rhythmicity 0.308 <span class="pill bad">control</span></td></tr>
+    <tr class="alarm"><td>Rhythmicity above 0.4</td><td class="num">144</td><td class="num">8.50 Hz</td></tr>
     <tr><td>Rhythmicity above 0.8</td><td class="num">74</td><td class="num">5.45 Hz</td></tr>
   </tbody>
 </table></div>
@@ -426,6 +426,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
     <figcaption><b>Every draw plotted, because the means mislead here.</b> At stimulus 300 the mean rhythmicity is 0.405 with 25 Hz motor output, which reads as a useful compromise. The individual draws are four at roughly 0.5 rhythmicity and 1 to 4 Hz, and two at roughly 0.1 and 48 to 92 Hz. The mean describes no simulation that ran.</figcaption>
   </figure>
   <p>The corrected model has the same two states as the uncorrected one, at a different stimulus: <strong>rhythmic and weak</strong>, or <strong>strong and arrhythmic</strong>. Nothing in between.</p>
+  <p>Applying <em>every</em> correction at once is no better. Excitability normalised within class, leg afferents forced excitatory, stimulus at the corrected model's own working point, then sensory drive on top: drives of 1, 2 and 5 give <strong>bit-identical</strong> results to no drive at all, because correcting excitability raises the afferents' thresholds ninefold and puts those drives below threshold. The drive that is above threshold sends the network straight to 118 Hz and rhythmicity 0.125. The best single draw anywhere in that sweep reached 0.23 at 136 Hz, the closest any non-scrambled model came all night.</p>
   <div class="note caution"><b>This was nearly reported as a positive result.</b> The mean at stimulus 300 would have been the most encouraging finding of the night: rhythm retained, eleven times the motor output. Looking at the per-draw values took two minutes and reversed it. The session summary tool now flags any group whose values separate into two bands, which is how the same trap was then found lurking in three other runs.</div>
 </div>
 

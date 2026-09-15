@@ -1,19 +1,19 @@
-317 replicate simulations with both readouts, across 54 runs
+333 replicate simulations with both readouts, across 56 runs
 
 For each motor-rate floor, the best rhythmicity any simulation reached:
-  rate >  2 Hz : n=240  best rhythmicity 0.966
-  rate >  5 Hz : n=143  best rhythmicity 0.949
-  rate > 10 Hz : n=127  best rhythmicity 0.308 <- scrambled-connectome CONTROL
-  rate > 15 Hz : n=126  best rhythmicity 0.308 <- scrambled-connectome CONTROL
-  rate > 20 Hz : n=126  best rhythmicity 0.308 <- scrambled-connectome CONTROL
-  rate > 30 Hz : n=125  best rhythmicity 0.308 <- scrambled-connectome CONTROL
-  rate > 50 Hz : n= 98  best rhythmicity 0.308 <- scrambled-connectome CONTROL
+  rate >  2 Hz : n=255  best rhythmicity 0.966
+  rate >  5 Hz : n=152  best rhythmicity 0.949
+  rate > 10 Hz : n=136  best rhythmicity 0.308 <- scrambled-connectome CONTROL
+  rate > 15 Hz : n=135  best rhythmicity 0.308 <- scrambled-connectome CONTROL
+  rate > 20 Hz : n=135  best rhythmicity 0.308 <- scrambled-connectome CONTROL
+  rate > 30 Hz : n=134  best rhythmicity 0.308 <- scrambled-connectome CONTROL
+  rate > 50 Hz : n=106  best rhythmicity 0.308 <- scrambled-connectome CONTROL
 
 For each rhythmicity floor, the best motor rate any simulation reached:
-  rhythmicity > 0.3 : n=141  best rate  69.24 Hz <- scrambled-connectome CONTROL
-  rhythmicity > 0.4 : n=137  best rate   8.50 Hz
-  rhythmicity > 0.5 : n=130  best rate   8.50 Hz
-  rhythmicity > 0.6 : n=108  best rate   8.50 Hz
+  rhythmicity > 0.3 : n=148  best rate  69.24 Hz <- scrambled-connectome CONTROL
+  rhythmicity > 0.4 : n=144  best rate   8.50 Hz
+  rhythmicity > 0.5 : n=137  best rate   8.50 Hz
+  rhythmicity > 0.6 : n=110  best rate   8.50 Hz
   rhythmicity > 0.8 : n= 74  best rate   5.45 Hz
 
 Simulations that are clearly rhythmic (> 0.5) AND fire above 10 Hz: 0
