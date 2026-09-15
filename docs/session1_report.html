@@ -455,7 +455,8 @@ uv run python scripts/make_figures.py</code></pre>
 <h2>What I would do next</h2>
 
 <ol>
-  <li><strong>Fix sign and excitability before anything else.</strong> Force leg afferents cholinergic on the published physiology, normalise the size rule within class, and re-run every result above. Some will move. That is the point.</li>
+  <li><strong>Move to the whole-CNS connectome.</strong> Four times the traced neurons, the brain included, fourteen times the proprioceptors, and a 95% cross-reference so nothing built on the nerve cord is lost. This should happen before anything else is built on the current graph.</li>
+  <li><strong>Fix sign and excitability.</strong> Force leg afferents cholinergic on the published physiology, normalise the size rule within class, and re-run every result above. Some will move. That is the point. Note that correcting excitability alone leaves the published stimulus unable to drive the network at all, because the operating point was calibrated with the artefact present: these parameters move together or not at all.</li>
   <li><strong>Constrain the glutamate sign with expression data.</strong> Single-cell transcriptomes for the adult fly exist. Chloride-channel expression in nerve-cord motor and premotor neurons would turn a convention into a prior with real uncertainty. Well-defined work, not attempted tonight.</li>
   <li><strong>Then Milestone A</strong>, in dependency order: resolve the tibia flexor into its 15 motor units anchored to measured per-spike forces; add the missing muscles; build afferent transducers with the rate scale declared as fitted; close the loop. One published perturbation stays untouched by any fitting step, as the first real test of causal organisation.</li>
 </ol>
