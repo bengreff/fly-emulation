@@ -1,361 +1,224 @@
-<title>The Rate–Rhythm Tradeoff</title>
+<title>What the Connectome Doesn't Contain</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --ground:#f4f6f6;
-  --surface:#ffffff;
-  --surface-sunk:#eceff0;
-  --ink:#11171a;
-  --ink-soft:#3d4a50;
-  --muted:#65727a;
-  --rule:#d5dcde;
-  --rule-strong:#b6c1c4;
-  --motor:#1f6349;
-  --motor-soft:#e2efe9;
-  --measured:#b23a2b;
-  --measured-soft:#f7e7e4;
-  --shuffle:#7d2b55;
-  --shuffle-soft:#f3e4ec;
-  --warn:#8a6206;
+  --ground:#f4f6f6; --surface:#ffffff; --surface-sunk:#eceff0;
+  --ink:#11171a; --ink-soft:#3d4a50; --muted:#65727a;
+  --rule:#d5dcde; --rule-strong:#b6c1c4;
+  --motor:#1f6349; --motor-soft:#e2efe9;
+  --measured:#b23a2b; --measured-soft:#f7e7e4;
+  --shuffle:#7d2b55; --shuffle-soft:#f3e4ec;
+  --warn:#8a6206; --warn-soft:#f7efd9;
   --maxw:69ch;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --ground:#0d1214;
-    --surface:#141b1e;
-    --surface-sunk:#101619;
-    --ink:#e6eceb;
-    --ink-soft:#bcc7c6;
-    --muted:#8b9a9c;
-    --rule:#263135;
-    --rule-strong:#3a484c;
-    --motor:#5fbf95;
-    --motor-soft:#152c24;
-    --measured:#e8836f;
-    --measured-soft:#2e1a17;
-    --shuffle:#d788ac;
-    --shuffle-soft:#2b1722;
-  }
-}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0d1214; --surface:#141b1e; --surface-sunk:#101619;
+  --ink:#e6eceb; --ink-soft:#bcc7c6; --muted:#8b9a9c;
+  --rule:#263135; --rule-strong:#3a484c;
+  --motor:#5fbf95; --motor-soft:#152c24;
+  --measured:#e8836f; --measured-soft:#2e1a17;
+  --shuffle:#d788ac; --shuffle-soft:#2b1722;
+  --warn:#d6ac4f; --warn-soft:#2a2214;
+}}
 :root[data-theme="dark"]{
-  --ground:#0d1214;
-  --surface:#141b1e;
-  --surface-sunk:#101619;
-  --ink:#e6eceb;
-  --ink-soft:#bcc7c6;
-  --muted:#8b9a9c;
-  --rule:#263135;
-  --rule-strong:#3a484c;
-  --motor:#5fbf95;
-  --motor-soft:#152c24;
-  --measured:#e8836f;
-  --measured-soft:#2e1a17;
-  --shuffle:#d788ac;
-  --shuffle-soft:#2b1722;
+  --ground:#0d1214; --surface:#141b1e; --surface-sunk:#101619;
+  --ink:#e6eceb; --ink-soft:#bcc7c6; --muted:#8b9a9c;
+  --rule:#263135; --rule-strong:#3a484c;
+  --motor:#5fbf95; --motor-soft:#152c24;
+  --measured:#e8836f; --measured-soft:#2e1a17;
+  --shuffle:#d788ac; --shuffle-soft:#2b1722;
+  --warn:#d6ac4f; --warn-soft:#2a2214;
 }
-
 *{box-sizing:border-box}
-body{
-  background:var(--ground);
-  color:var(--ink);
+body{background:var(--ground);color:var(--ink);
   font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
-  font-size:16px;
-  line-height:1.62;
-  margin:0;
-  padding:0 1.25rem 6rem;
-  -webkit-font-smoothing:antialiased;
-}
+  font-size:16px;line-height:1.62;margin:0;padding:0 1.25rem 6rem;-webkit-font-smoothing:antialiased}
 .wrap{max-width:var(--maxw);margin:0 auto}
 .bleed{max-width:min(1060px,100%);margin-left:auto;margin-right:auto}
-
-/* ---- masthead ---- */
-header.top{
-  max-width:min(1060px,100%);
-  margin:0 auto;
-  padding:3.5rem 0 1.75rem;
-  border-bottom:2px solid var(--ink);
-}
-.kicker{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 1.1rem;
-}
-h1{
-  font-family:"IBM Plex Serif",Georgia,serif;
-  font-weight:600;font-size:clamp(2rem,5.2vw,3.05rem);
-  line-height:1.08;letter-spacing:-.018em;margin:0 0 .85rem;
-  text-wrap:balance;max-width:20ch;
-}
-.standfirst{
-  font-family:"IBM Plex Serif",Georgia,serif;
-  font-size:1.14rem;line-height:1.55;color:var(--ink-soft);
-  margin:0;max-width:60ch;
-}
-.meta{
-  display:flex;flex-wrap:wrap;gap:.45rem 1.5rem;
-  margin-top:1.7rem;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.72rem;color:var(--muted);
-}
+header.top{max-width:min(1060px,100%);margin:0 auto;padding:3.5rem 0 1.75rem;border-bottom:2px solid var(--ink)}
+.kicker{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 1.1rem}
+h1{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:clamp(2rem,5.2vw,3.05rem);
+  line-height:1.08;letter-spacing:-.018em;margin:0 0 .85rem;text-wrap:balance;max-width:22ch}
+.standfirst{font-family:"IBM Plex Serif",Georgia,serif;font-size:1.14rem;line-height:1.55;
+  color:var(--ink-soft);margin:0;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:.45rem 1.5rem;margin-top:1.7rem;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;color:var(--muted)}
 .meta b{color:var(--ink-soft);font-weight:500}
-
-/* ---- verdict strip ---- */
-.verdict{
-  max-width:min(1060px,100%);margin:2.25rem auto 0;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
-  border:1px solid var(--rule);border-radius:3px;background:var(--surface);
-  overflow:hidden;
-}
+.verdict{max-width:min(1060px,100%);margin:2.25rem auto 0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  border:1px solid var(--rule);border-radius:3px;background:var(--surface);overflow:hidden}
 .verdict div{padding:1rem 1.15rem;border-right:1px solid var(--rule)}
 .verdict div:last-child{border-right:none}
-.verdict dt{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.66rem;letter-spacing:.11em;text-transform:uppercase;
-  color:var(--muted);margin:0 0 .4rem;
-}
-.verdict dd{margin:0;font-size:.895rem;line-height:1.45;color:var(--ink-soft)}
-.verdict .big{
-  font-family:"IBM Plex Serif",Georgia,serif;
-  font-size:1.55rem;color:var(--ink);display:block;line-height:1.1;margin-bottom:.2rem;
-  font-variant-numeric:tabular-nums;
-}
-
-/* ---- typography ---- */
-h2{
-  font-family:"IBM Plex Serif",Georgia,serif;
-  font-weight:600;font-size:1.62rem;line-height:1.2;letter-spacing:-.011em;
-  margin:3.4rem 0 .9rem;text-wrap:balance;
-}
-h3{
-  font-size:1.03rem;font-weight:600;margin:2.1rem 0 .55rem;
-  letter-spacing:-.005em;
-}
+.verdict dt{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--muted);margin:0 0 .4rem}
+.verdict dd{margin:0;font-size:.875rem;line-height:1.45;color:var(--ink-soft)}
+.verdict .big{font-family:"IBM Plex Serif",Georgia,serif;font-size:1.5rem;color:var(--ink);
+  display:block;line-height:1.1;margin-bottom:.2rem;font-variant-numeric:tabular-nums}
+h2{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;font-size:1.62rem;line-height:1.2;
+  letter-spacing:-.011em;margin:3.4rem 0 .9rem;text-wrap:balance}
+.part{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--motor);margin:3.6rem 0 -.6rem;
+  padding-top:1.2rem;border-top:2px solid var(--motor)}
+h3{font-size:1.03rem;font-weight:600;margin:2.1rem 0 .55rem;letter-spacing:-.005em}
 p{margin:0 0 1.05rem}
 a{color:var(--motor);text-decoration-thickness:1px;text-underline-offset:2px}
 strong{font-weight:600;color:var(--ink)}
-em.term{font-style:normal;border-bottom:1px dotted var(--rule-strong);cursor:help}
-
 .lede{font-size:1.06rem;color:var(--ink-soft)}
-
-/* finding blocks — numbered because they are a referenced ledger */
 .finding{margin:2.6rem 0}
-.finding > .fhead{
-  display:flex;gap:.85rem;align-items:baseline;
-  border-top:1px solid var(--rule-strong);padding-top:.8rem;margin-bottom:.35rem;
-}
-.fid{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.75rem;font-weight:500;color:var(--motor);
-  letter-spacing:.06em;flex:none;padding-top:.28rem;
-}
+.finding>.fhead{display:flex;gap:.85rem;align-items:baseline;border-top:1px solid var(--rule-strong);
+  padding-top:.8rem;margin-bottom:.35rem}
+.fid{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.75rem;font-weight:500;
+  color:var(--motor);letter-spacing:.06em;flex:none;padding-top:.28rem}
+.fid.bad{color:var(--measured)}
 .finding h3{margin:0;font-size:1.13rem;font-family:"IBM Plex Serif",Georgia,serif;font-weight:600}
-
-/* callouts */
-.note{
-  border-left:2px solid var(--rule-strong);
-  padding:.15rem 0 .15rem 1.1rem;
-  margin:1.4rem 0;color:var(--ink-soft);font-size:.94rem;
-}
+.note{border-left:2px solid var(--rule-strong);padding:.15rem 0 .15rem 1.1rem;margin:1.4rem 0;
+  color:var(--ink-soft);font-size:.94rem}
 .note.caution{border-left-color:var(--measured)}
 .note.caution b{color:var(--measured)}
 .note.scaffold{border-left-color:var(--warn)}
 .note.scaffold b{color:var(--warn)}
-
-/* tables */
 .tablewrap{overflow-x:auto;margin:1.5rem 0;border:1px solid var(--rule);border-radius:3px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.855rem}
-caption{
-  caption-side:top;text-align:left;padding:.8rem 1rem .1rem;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
-}
+caption{caption-side:top;text-align:left;padding:.8rem 1rem .1rem;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
 th,td{padding:.5rem .95rem;text-align:left;border-bottom:1px solid var(--rule)}
-thead th{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--muted);font-weight:500;white-space:nowrap;
-  border-bottom:1px solid var(--rule-strong);
-}
-td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.82rem}
+thead th{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;white-space:nowrap;
+  border-bottom:1px solid var(--rule-strong)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.82rem}
 tbody tr:last-child td{border-bottom:none}
 tr.highlight td{background:var(--motor-soft)}
 tr.highlight td:first-child{font-weight:600}
+tr.alarm td{background:var(--measured-soft)}
 td.zero{color:var(--muted)}
-.pill{
-  display:inline-block;padding:.08rem .45rem;border-radius:2px;
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;
-}
+.pill{display:inline-block;padding:.08rem .45rem;border-radius:2px;
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem}
 .pill.ok{background:var(--motor-soft);color:var(--motor)}
 .pill.bad{background:var(--shuffle-soft);color:var(--shuffle)}
 .pill.ref{background:var(--measured-soft);color:var(--measured)}
-
-/* figures */
 figure{margin:2rem 0;padding:0}
 figure img{width:100%;height:auto;display:block;border:1px solid var(--rule);border-radius:3px;background:#fff}
-figcaption{
-  margin-top:.65rem;font-size:.83rem;color:var(--muted);line-height:1.5;max-width:75ch;
-}
+figcaption{margin-top:.65rem;font-size:.83rem;color:var(--muted);line-height:1.5;max-width:75ch}
 figcaption b{color:var(--ink-soft);font-weight:500}
-
-/* code */
-code{
-  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.845em;
-  background:var(--surface-sunk);padding:.08em .32em;border-radius:2px;
-}
-pre{
-  background:var(--surface-sunk);border:1px solid var(--rule);border-radius:3px;
-  padding:.9rem 1.05rem;overflow-x:auto;font-size:.8rem;line-height:1.55;margin:1.3rem 0;
-}
+code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.845em;
+  background:var(--surface-sunk);padding:.08em .32em;border-radius:2px}
+pre{background:var(--surface-sunk);border:1px solid var(--rule);border-radius:3px;
+  padding:.9rem 1.05rem;overflow-x:auto;font-size:.8rem;line-height:1.55;margin:1.3rem 0}
 pre code{background:none;padding:0}
-
 ul,ol{margin:0 0 1.1rem;padding-left:1.35rem}
 li{margin-bottom:.5rem}
 li::marker{color:var(--muted)}
-
-/* glossary */
-.glossary{
-  background:var(--surface);border:1px solid var(--rule);border-radius:3px;
-  padding:1.2rem 1.35rem;margin:2rem 0;
-}
+.glossary{background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+  padding:1.2rem 1.35rem;margin:2rem 0}
 .glossary h3{margin-top:0}
 .glossary dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:.45rem 1.1rem;font-size:.88rem}
 .glossary dt{font-weight:600;color:var(--ink);white-space:nowrap}
 .glossary dd{margin:0;color:var(--ink-soft)}
-@media(max-width:560px){
-  .glossary dl{grid-template-columns:1fr;gap:.1rem}
-  .glossary dd{margin-bottom:.6rem}
-}
-
-footer{
-  max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;
-  border-top:1px solid var(--rule);
-  font-family:"IBM Plex Mono",ui-monospace,monospace;
-  font-size:.72rem;color:var(--muted);line-height:1.7;
-}
+@media(max-width:560px){.glossary dl{grid-template-columns:1fr;gap:.1rem}.glossary dd{margin-bottom:.6rem}}
+.correction{background:var(--warn-soft);border:1px solid var(--warn);border-radius:3px;
+  padding:1.1rem 1.3rem;margin:2rem 0}
+.correction h3{margin-top:0;color:var(--warn)}
+.chain{display:flex;flex-wrap:wrap;gap:.5rem;align-items:stretch;margin:1.2rem 0;font-size:.82rem}
+.chain>div{flex:1 1 180px;background:var(--surface);border:1px solid var(--rule);
+  border-radius:3px;padding:.7rem .85rem}
+.chain b{display:block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.7rem;
+  letter-spacing:.06em;margin-bottom:.3rem}
+.chain .s1 b{color:var(--muted)} .chain .s2 b{color:var(--measured)} .chain .s3 b{color:var(--motor)}
+footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border-top:1px solid var(--rule);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.72rem;color:var(--muted);line-height:1.7}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 :focus-visible{outline:2px solid var(--motor);outline-offset:2px}
 </style>
 
 <header class="top">
   <p class="kicker">Fly emulation · Session 1 · 14 September 2026</p>
-  <h1>Every route to real firing rates costs the rhythm</h1>
-  <p class="standfirst">An overnight grounding pass on the connectome-constrained fly nerve cord. The published result reproduces cleanly. Then four independent attempts to push its motor output into the range a real muscle needs each destroyed the very rhythm the model was built to show.</p>
+  <h1>What the connectome doesn't contain</h1>
+  <p class="standfirst">The published rhythm reproduces cleanly, and the anatomy checks out against independent electrophysiology. Then the night turned into an audit. The wiring diagram tells you which neurons talk to which. It does not tell you whether a connection excites or inhibits, how strong it is, or how excitable a cell is, and in this model all three are supplied by convention. Several of those conventions turn out to be load-bearing, and at least one is simply wrong.</p>
   <div class="meta">
-    <span><b>Runs</b> 5 conditions + 3 sweeps, 16 draws each</span>
-    <span><b>Machines</b> M2 Pro + RTX box, 28 cores</span>
-    <span><b>Checks</b> 7 passing</span>
-    <span><b>Repo</b> bengreff/fly-emulation</span>
+    <span><b>Runs</b> 33 recorded, 5 conditions + 7 sweeps</span>
+    <span><b>Machines</b> M2 Pro + RTX box, 38 cores</span>
+    <span><b>Checks</b> 10 passing</span>
+    <span><b>Corrections</b> 1 finding retracted twice</span>
   </div>
 </header>
 
 <div class="verdict">
-  <div>
-    <dt>Reproduced</dt>
-    <dd><span class="big">10.0 Hz</span>rhythmic motor output, robust across all 16 parameter draws</dd>
-  </div>
-  <div>
-    <dt>But the output is</dt>
-    <dd><span class="big">13× too weak</span>peak 2.3 Hz against a measured 30 Hz resting rate</dd>
-  </div>
-  <div>
-    <dt>Body coverage</dt>
-    <dd><span class="big">68%</span>of front-leg motor neurons have a muscle to drive</dd>
-  </div>
-  <div>
-    <dt>Blocking gap</dt>
-    <dd><span class="big">102</span>leg proprioceptors present in the wiring, all silent</dd>
-  </div>
+  <div><dt>Reproduced</dt><dd><span class="big">10.0 Hz</span>rhythmic motor output, robust across all 16 parameter draws</dd></div>
+  <div><dt>But it is</dt><dd><span class="big">13× too weak</span>to drive a muscle: 2.3 Hz peak against a measured 30 Hz at rest</dd></div>
+  <div><dt>Rests on</dt><dd><span class="big">41%</span>of inhibition coming from a contested sign convention</dd></div>
+  <div><dt>Gets wrong</dt><dd><span class="big">57 of 102</span>leg proprioceptors, modelled inhibitory when physiology says excitatory</dd></div>
 </div>
 
 <div class="wrap">
 
 <h2>What this was</h2>
 
-<p class="lede">You asked for grounding. So rather than build infrastructure, I took the strongest existing connectome-constrained simulation of the fly's motor system, reproduced it independently, and then attacked it with the controls the project's own documents demand. The aim was one honest measured result and a clear view of what actually blocks walking.</p>
+<p class="lede">You asked for grounding. So instead of building infrastructure I took the strongest published connectome-constrained simulation of the fly's motor system, reproduced it independently, and then attacked it with the controls this project's own documents demand. What I did not expect was how much of the night would be spent finding that my own first answers were wrong.</p>
 
-<p>The subject is the <em class="term">ventral nerve cord</em>, the fly's equivalent of a spinal cord, which drives the legs. A recent study built a 4,604-neuron model of its front-leg circuitry directly from the wiring diagram, stimulated a single descending command neuron, and reported rhythmic motor output resembling a stepping pattern generator. That is the strongest published precedent for this project and the right thing to stand on.</p>
+<p>The subject is the <em>ventral nerve cord</em>, the fly's spinal-cord equivalent, which drives the legs. A recent study built a 4,604-neuron model of its front-leg circuitry directly from the wiring diagram, stimulated one descending command neuron, and reported rhythmic motor output resembling a stepping pattern generator. That is the right thing to stand on, and the first thing to check.</p>
 
 <div class="glossary">
   <h3>Terms used below</h3>
   <dl>
-    <dt>Connectome</dt><dd>A complete electron-microscope wiring diagram: every neuron and every synapse between them, in one individual animal.</dd>
-    <dt>Ventral nerve cord</dt><dd>The fly's spinal-cord equivalent. Contains the circuits that drive the legs and wings.</dd>
-    <dt>Descending neuron</dt><dd>A neuron carrying commands from the brain down into the nerve cord. DNg100 and DNa02 are two named ones.</dd>
-    <dt>Motor neuron</dt><dd>The final output cell. Its spikes contract one muscle. The front leg has 144 of them.</dd>
-    <dt>Proprioceptor</dt><dd>A sensor reporting the limb's own position, movement or load back to the nervous system.</dd>
-    <dt>Rhythmicity</dt><dd>A 0–1 score for how periodic a cell's activity is. 0.8 is a clean oscillation; 0.1 is noise.</dd>
+    <dt>Connectome</dt><dd>A complete electron-microscope wiring diagram: every neuron and every synapse, in one individual animal.</dd>
+    <dt>Ventral nerve cord</dt><dd>The fly's spinal-cord equivalent. Contains the circuits driving legs and wings.</dd>
+    <dt>Descending neuron</dt><dd>Carries commands from brain to nerve cord. DNg100 and DNa02 are two named ones.</dd>
+    <dt>Motor neuron</dt><dd>The output cell. Its spikes contract one muscle. The front leg has 144.</dd>
+    <dt>Proprioceptor</dt><dd>A sensor reporting the limb's own position, movement or load.</dd>
+    <dt>Rhythmicity</dt><dd>A 0–1 score for how periodic activity is. 0.8 is a clean oscillation; 0.1 is noise.</dd>
   </dl>
 </div>
 
-<h2>The headline</h2>
-
-<p>The model has two knobs that matter and a couple of other ways in. Every one of them trades the same two things against each other: <strong>how rhythmic the motor output is</strong>, and <strong>how hard the motor neurons actually fire</strong>. The published parameter setting sits at one extreme, with a beautiful rhythm and almost no motor output.</p>
-
-<figure class="bleed">
-  <img src="scale_tradeoff.png" alt="Two curves against global synaptic scale on a log axis. Motor-neuron rhythmicity in green peaks at 0.81 exactly at the published value of 0.03 and falls to 0.15 by 0.09. Active motor neurons in purple rises from zero to 83 over the same range. The curves cross.">
-  <figcaption><b>Turning up synaptic strength recruits motor neurons and destroys the rhythm.</b> The dotted line is the value used in the published work. Below it the network is silent; above it the network is loud and arrhythmic. There is no setting that gives both. Eight parameter draws per point.</figcaption>
-</figure>
-
-<p>This is not a defect I found in someone's code. It is a property of the model class: a nerve cord cut off from its body, driven by a constant injected current, with a single global number converting synapse counts into synaptic strength. Knowing exactly where that class breaks is the useful thing.</p>
-
-<h2>The evidence, in order</h2>
+<p class="part">Part one — what holds up</p>
+<h2>The result reproduces, and the anatomy is sound</h2>
 
 <div class="finding">
   <div class="fhead"><span class="fid">F1</span><h3>A units bug in the published analysis code</h3></div>
-  <p>The oscillation-frequency function in the reference repository builds its time axis from sample indices, so what it returns is <strong>cycles per sample, not hertz</strong>. At the default 1 ms timestep the number must be multiplied by 1000. I caught it because a visibly ten-times-per-second rhythm was being reported as 0.01 Hz.</p>
-  <div class="tablewrap"><table>
-    <caption>Three estimators on the same traces, 0.5–1.9 s</caption>
-    <thead><tr><th>Estimator</th><th class="num">Frequency</th></tr></thead>
-    <tbody>
-      <tr><td>Library value × sampling rate</td><td class="num">9.47 Hz</td></tr>
-      <tr><td>Periodogram peak</td><td class="num">11.43 Hz</td></tr>
-      <tr><td>Threshold crossings</td><td class="num">10.7–11.4 Hz</td></tr>
-    </tbody>
-  </table></div>
-  <p>An independent periodogram estimate now runs alongside every frequency the pipeline reports, and a unit test pins a synthetic 20 Hz signal. The residual 5–15% spread between estimators is genuine estimator disagreement on a short window, and is carried as uncertainty rather than hidden.</p>
+  <p>The oscillation-frequency function in the reference repository builds its time axis from sample indices, so it returns <strong>cycles per sample, not hertz</strong>. At the default 1 ms step the value needs multiplying by 1000. Caught because a visibly ten-per-second rhythm was reported as 0.01 Hz. A periodogram estimate now runs alongside every frequency the pipeline reports, and a test pins a synthetic 20 Hz signal.</p>
 </div>
 
 <div class="finding">
-  <div class="fhead"><span class="fid">F2</span><h3>The anatomy joins cleanly, and an outside measurement agrees</h3></div>
-  <p>Every one of the 144 motor neurons in the simulated network matched a nerve-cord annotation on exact integer identifier, with a named target muscle and traced status. No silent losses, no fuzzy name matching.</p>
-  <p>The useful part is the corroboration. The <strong>tibia flexor</strong> pool, the muscle group that bends the lower leg, contains exactly <strong>15 motor neurons per side</strong> in the wiring diagram. An electrophysiology study that never touched this connectome reports that tibia flexion is controlled by "approximately 15 motor neurons." Two entirely independent methods agree on the size of the pool, and cell body size across that pool spans 13-fold, matching the size gradient the same study describes.</p>
-  <p>That is the anatomical bridge Milestone A needs, and it holds.</p>
+  <div class="fhead"><span class="fid">F2</span><h3>The anatomy joins cleanly, and outside measurement agrees</h3></div>
+  <p>All 144 motor neurons in the simulated network matched a nerve-cord annotation on exact integer identifier, each with a named target muscle and traced status. No silent losses.</p>
+  <p>The corroboration is the valuable part. The <strong>tibia flexor</strong> pool, which bends the lower leg, contains exactly <strong>15 motor neurons per side</strong> in the wiring diagram. An electrophysiology study that never touched this connectome reports tibia flexion controlled by "approximately 15 motor neurons". Two independent methods agree, and cell body size across the pool spans 13-fold, matching the size gradient that study describes.</p>
 </div>
 
 <div class="finding">
   <div class="fhead"><span class="fid">F3</span><h3>The rhythm reproduces. The amplitude does not.</h3></div>
-  <p>Sixteen independent draws of the unmeasured biophysical parameters, solver tolerances as published. A strong rhythm near 10 Hz appeared in every single one.</p>
   <div class="tablewrap"><table>
-    <caption>Baseline, left DNg100 driven, 16 draws</caption>
+    <caption>Baseline, left DNg100 driven, 16 parameter draws, published tolerances</caption>
     <thead><tr><th>Readout</th><th class="num">Value</th></tr></thead>
     <tbody>
       <tr><td>Motor-neuron rhythmicity</td><td class="num">0.836 ± 0.119</td></tr>
       <tr><td>Rhythm frequency</td><td class="num">10.04 Hz</td></tr>
       <tr><td>Active motor neurons</td><td class="num">2.6 of 144</td></tr>
       <tr><td>Peak motor-neuron rate, median</td><td class="num">2.25 Hz</td></tr>
-      <tr><td class="pillrow">Measured slow motor neuron, <em>at rest</em></td><td class="num"><span class="pill ref">30 Hz</span></td></tr>
+      <tr class="alarm"><td>Measured slow motor neuron, <em>at rest</em></td><td class="num"><span class="pill ref">30 Hz</span></td></tr>
     </tbody>
   </table></div>
-  <p>The model's <em>peak</em> is roughly thirteen times below the <em>resting</em> rate of the one leg motor neuron whose rate has actually been measured. The units that produce usable force, which generate about one fly body weight per spike, never come near threshold. Only three motor neurons fire at all, all of them serving hip muscles on one side. The entire lower leg stays silent.</p>
-  <div class="note caution"><b>What this is not.</b> It is not evidence the model is wrong. It is evidence about what the model <em>is</em>: a preparation with its sensory nerves cut. Which leads directly to the next finding.</div>
+  <p>A strong rhythm near 10 Hz appeared in every draw. But the model's <em>peak</em> is thirteen times below the <em>resting</em> rate of the one leg motor neuron whose rate has been measured. The units that make usable force, roughly one fly body weight per spike, never approach threshold. Only three motor neurons fire at all, all serving hip muscles on one side. The entire lower leg stays silent.</p>
 </div>
 
 <div class="finding">
   <div class="fhead"><span class="fid">F4</span><h3>The specific wiring is doing real work</h3></div>
-  <p>The control the project documents demand: compare the real connectome against a <em>carefully matched</em> alternative, not a crippled one. The shuffle preserves every neuron's outgoing connection count and weights exactly, and preserves the excitatory–inhibitory composition of each cell class. Only <em>which</em> cell receives each connection changes.</p>
+  <p>The control the project documents demand: compare against a <em>carefully matched</em> alternative. The shuffle preserves every neuron's outgoing connection count and weights exactly, and the excitatory–inhibitory composition of each class. Only which cell receives each connection changes.</p>
   <figure class="bleed">
     <img src="traces.png" alt="Two panels of stacked motor neuron traces from 0.3 to 1.2 seconds. Left, real connectome: three clean oscillations at about ten per second, scale bar 2 Hz. Right, shuffled wiring: twelve nearly flat saturated traces, scale bar 200 Hz.">
-    <figcaption><b>Same stimulus, same statistics, different wiring.</b> Note the scale bars differ a hundredfold. The real connectome produces a small, clean rhythm in three cells. The degree-matched shuffle produces a large, flat, arrhythmic response in a hundred.</figcaption>
+    <figcaption><b>Same stimulus, same statistics, different wiring.</b> The scale bars differ a hundredfold. The real connectome gives a small clean rhythm in three cells; the degree-matched shuffle gives a large flat arrhythmic response in a hundred.</figcaption>
   </figure>
-  <p>Shuffling makes the network simultaneously <strong>hyperactive and arrhythmic</strong>: about twenty times more neurons active, and the rhythm largely gone. The pattern of connections, not merely how many each cell has, is what holds this circuit in a sparse oscillating regime. This is the strongest evidence from the session that the anatomy carries real functional information.</p>
-  <div class="note"><b>Caveat I would fix before quoting this.</b> The shuffle preserves outgoing degree exactly but reassigns incoming patterns across cells of a class, so it is not a perfect degree-preserving null. A stricter null should be run.</div>
+  <p>Shuffling makes the network both <strong>hyperactive and arrhythmic</strong>: twenty times more cells active, rhythm largely gone. The pattern of connections, not merely how many each cell has, holds this circuit in a sparse oscillating regime. This is the strongest evidence of the night that the anatomy carries real functional information.</p>
 </div>
 
+<p class="part">Part two — what blocks a walking leg</p>
+<h2>The pieces do not meet</h2>
+
 <div class="finding">
-  <div class="fhead"><span class="fid">F5</span><h3>The full sensory apparatus is in the model, and none of it is switched on</h3></div>
-  <p>The network contains 285 sensory neurons. Every class that reports leg state is present.</p>
+  <div class="fhead"><span class="fid">F5</span><h3>The full sensory apparatus is present and none of it is switched on</h3></div>
   <div class="tablewrap"><table>
     <caption>Sensory neurons in the front-leg network</caption>
     <thead><tr><th>Class</th><th class="num">Count</th><th>What it measures</th><th class="num">Driven</th></tr></thead>
@@ -366,13 +229,12 @@ footer{
       <tr><td>Campaniform sensilla</td><td class="num">5</td><td>load and strain</td><td class="num zero">0</td></tr>
     </tbody>
   </table></div>
-  <p>102 of these are proprioceptors, the afferents whose firing during stepping is the main sensory drive to insect leg circuits. In the published protocol all of them sit at exactly zero.</p>
-  <div class="note caution"><b>A data gap found by trying to fix it.</b> The definitive study of the fly's main leg proprioceptor characterises it with calcium imaging. It reports which subgroup encodes position, direction and vibration, and over what joint-angle range. It reports <b>no firing rates</b>. There is no published rate calibration with which to drive these neurons. Any sensory amplitude used here is a swept unknown, recorded as such in every run record, never as a measurement.</div>
+  <div class="note caution"><b>A data gap found by trying to fix it.</b> The definitive study of the fly's main leg proprioceptor uses calcium imaging. It reports which subgroup encodes position, direction and vibration, and over what joint-angle range. It reports <b>no firing rates</b>. There is no published rate calibration with which to drive these neurons. Every sensory amplitude used tonight is a swept unknown, recorded as a scaffold in the run record, never as a measurement.</div>
 </div>
 
 <div class="finding">
   <div class="fhead"><span class="fid">F6</span><h3>The best available fly body can receive two thirds of the motor output</h3></div>
-  <p>The body-platform question the roadmap left open is largely closed: one package now ships the walking body, the flight body, a musculoskeletal model and GPU physics. But the muscle model exposes <strong>15 actuators on the left front leg only</strong>, with the other leg's joints locked. Mapping the connectome's motor neurons onto it:</p>
+  <p>The body-platform question is largely closed: one package now ships the walking body, the flight body, a musculoskeletal model and GPU physics. But the muscle model exposes <strong>15 actuators on the left front leg only</strong>, with the other leg locked.</p>
   <div class="tablewrap"><table>
     <caption>Left front-leg motor neurons versus available actuators</caption>
     <thead><tr><th>&nbsp;</th><th class="num">Motor neurons</th></tr></thead>
@@ -382,71 +244,142 @@ footer{
       <tr><td>Mean motor neurons per actuator</td><td class="num">3.3</td></tr>
     </tbody>
   </table></div>
-  <p>Absent entirely: the femur reductor, <strong>all tarsus muscles</strong>, meaning no active foot, and the long tendon muscles. Worse for our purposes, the 15-neuron tibia flexor pool, the one group with excellent published physiology, <strong>collapses onto a single actuator</strong>. The size principle that the fly actually uses to grade force cannot be expressed at all.</p>
-  <p>So closing the leg loop is not a wiring-up exercise. A third of the motor output has nowhere to go, and the best-measured muscle in the animal cannot resolve its own motor units. Extending the muscle model is prerequisite work.</p>
+  <p>Absent entirely: the femur reductor, <strong>all tarsus muscles</strong>, meaning no active foot, and the long tendon muscles. Worse, the 15-neuron tibia flexor pool, the one group with excellent physiology, <strong>collapses onto a single actuator</strong>, so the size principle the fly uses to grade force cannot be expressed. Extending the muscle model is prerequisite work, not a detail.</p>
 </div>
 
+<p class="part">Part three — what undermines the foundations</p>
+<h2>Sign, strength and excitability are not in the data</h2>
+
 <div class="finding">
-  <div class="fhead"><span class="fid">F7</span><h3>The tradeoff, across four unrelated manipulations</h3></div>
-  <p>Four different ways of pushing toward physiological firing rates. All four cost the rhythm.</p>
+  <div class="fhead"><span class="fid">F7</span><h3>Rhythm and motor recruitment trade off, across every manipulation</h3></div>
   <figure class="bleed">
-    <img src="conditions.png" alt="Four dot plots across five conditions. Rhythmicity is high only for DNg100 at 0.84 and partly for silencing at 0.55, near zero for shuffled wiring and DNa02. Active motor neurons is low for DNg100 at 2.6 and high for shuffled at 83. Peak rate shows DNg100 and silencing below the measured 30 Hz reference line, shuffled and DNa02 above it. No stimulus is silent throughout.">
-    <figcaption><b>Sixteen parameter draws per condition, horizontal bars are means.</b> Read the last panel against the dashed line: only the conditions that lost the rhythm reach the measured resting rate of a real slow motor neuron.</figcaption>
+    <img src="scale_tradeoff.png" alt="Two curves against global synaptic scale on a log axis. Motor-neuron rhythmicity in green peaks at 0.81 exactly at the published value of 0.03 and falls to 0.15 by 0.09. Active motor neurons in purple rises from zero to 83 over the same range. The curves cross.">
+    <figcaption><b>Turning up synaptic strength recruits motor neurons and destroys the rhythm.</b> The dotted line is the published value. Below it the network is silent, above it loud and arrhythmic. No setting gives both.</figcaption>
   </figure>
   <div class="tablewrap"><table>
     <caption>All five conditions, 16 draws each</caption>
-    <thead><tr><th>Condition</th><th class="num">Rhythmicity</th><th class="num">Freq</th><th class="num">Active MNs</th><th class="num">Peak rate</th></tr></thead>
+    <thead><tr><th>Condition</th><th class="num">Rhythmicity</th><th class="num">Active MNs</th><th class="num">Peak rate</th></tr></thead>
     <tbody>
-      <tr class="highlight"><td>DNg100 (published)</td><td class="num">0.836 ± 0.119</td><td class="num">10.0 Hz</td><td class="num">2.6</td><td class="num">6.5 Hz</td></tr>
-      <tr><td>Silence interneurons I1+I2</td><td class="num">0.547 ± 0.167</td><td class="num">9.3 Hz</td><td class="num">4.3</td><td class="num">13.2 Hz</td></tr>
-      <tr><td>DNa02 (turning neuron)</td><td class="num">0.004 ± 0.008</td><td class="num">8.2 Hz</td><td class="num">8.0</td><td class="num">44.8 Hz</td></tr>
-      <tr><td>Shuffled wiring</td><td class="num">0.139 ± 0.084</td><td class="num">1.8 Hz</td><td class="num">83.5</td><td class="num">224.3 Hz</td></tr>
-      <tr><td>No stimulus</td><td class="num zero">0.000</td><td class="num zero">—</td><td class="num zero">0</td><td class="num zero">silent</td></tr>
+      <tr class="highlight"><td>DNg100 (published)</td><td class="num">0.836 ± 0.119</td><td class="num">2.6</td><td class="num">6.5 Hz</td></tr>
+      <tr><td>Silence interneurons I1+I2</td><td class="num">0.547 ± 0.167</td><td class="num">4.3</td><td class="num">13.2 Hz</td></tr>
+      <tr><td>DNa02 (turning neuron)</td><td class="num">0.004 ± 0.008</td><td class="num">8.0</td><td class="num">44.8 Hz</td></tr>
+      <tr><td>Shuffled wiring</td><td class="num">0.139 ± 0.084</td><td class="num">83.5</td><td class="num">224.3 Hz</td></tr>
+      <tr><td>No stimulus</td><td class="num zero">0.000</td><td class="num zero">0</td><td class="num zero">silent</td></tr>
     </tbody>
   </table></div>
-  <p>Add the fifth route, switching the silent proprioceptors on: median peak motor-neuron rate rises from 2.3 Hz to <strong>82.6 Hz</strong>, comfortably physiological, and active motor neurons from 3 to 67 — while rhythmicity falls from 0.836 to 0.281 and the frequency drops to 4 Hz.</p>
-  <p>One more thing worth noticing in that table. With no stimulus the network is <em>exactly</em> silent, all 4,604 cells at zero. Real nervous systems are never silent. Whatever supplies that baseline in the animal is simply absent here, and it is plausibly part of what sets resting motor-neuron rates in the first place.</p>
+  <p>Notice the last row. With no stimulus the network is <em>exactly</em> silent, all 4,604 cells at zero. Real nervous systems never are. Whatever supplies that baseline in the animal is absent here, and it is plausibly part of what sets resting motor-neuron rates in the first place.</p>
+</div>
+
+<div class="correction">
+  <h3>An interlude: how I got this wrong, twice</h3>
+  <p>The most useful thing that happened tonight was a finding that survived neither of its own follow-ups. It is worth showing because it is exactly the failure mode this project needs to be protected against.</p>
+  <div class="chain">
+    <div class="s1"><b>First answer</b>Switching the silent proprioceptors on destroys the rhythm. So does driving random interneurons. Conclusion: it is total excitation, not the sensory pathway. <em>Evidence: one replicate, one amplitude.</em></div>
+    <div class="s2"><b>Contradicted</b>Replicated at eight draws and a lower amplitude, driving random interneurons does <em>nothing</em> (0.830 against a 0.836 baseline) while the same drive into proprioceptors collapses the rhythm to 0.095. Conclusion reversed: the sensory pathway is privileged.</div>
+    <div class="s3"><b>Explained away</b>The model scales spike threshold with cell size. Proprioceptors are 0.44× median size, bristles 0.078×. The same current is a far bigger push. Matching drive to each cell's own threshold, the difference disappears.</div>
+  </div>
+  <p>The first answer was right by accident, the second was wrong for a reason that looked like biology and was arithmetic, and only the third is a control. All three are kept in the findings file with the retraction visible, rather than quietly edited.</p>
+</div>
+
+<div class="finding">
+  <div class="fhead"><span class="fid">F8b</span><h3>Apparent pathway specificity was an excitability artefact</h3></div>
+  <figure class="bleed">
+    <img src="drive_targets.png" alt="Dot plots of motor-neuron rhythmicity by drive target at two amplitudes. With flat current, proprioceptors and bristles collapse the rhythm to near zero while random interneurons stay at the undriven baseline of 0.83. With threshold-matched current the difference largely disappears.">
+    <figcaption><b>Flat current is not a matched perturbation.</b> Left, identical injected current by target population. Right, each cell's current scaled by its own spike threshold so every driven cell is pushed the same fraction above it.</figcaption>
+  </figure>
+</div>
+
+<div class="finding">
+  <div class="fhead"><span class="fid">F9</span><h3>Forty-one percent of the inhibition rests on a convention</h3></div>
+  <div class="tablewrap"><table>
+    <caption>Transmitter composition and how the model signs it</caption>
+    <thead><tr><th>Predicted transmitter</th><th class="num">Neurons</th><th class="num">Outgoing synapses</th><th>Sign in model</th></tr></thead>
+    <tbody>
+      <tr><td>Acetylcholine</td><td class="num">2419</td><td class="num">2,015,846</td><td>excitatory</td></tr>
+      <tr><td>GABA</td><td class="num">1077</td><td class="num">1,067,547</td><td>inhibitory</td></tr>
+      <tr class="alarm"><td>Glutamate</td><td class="num">1095</td><td class="num">734,379</td><td>inhibitory <em>by assumption</em></td></tr>
+    </tbody>
+  </table></div>
+  <p>Glutamatergic cells are 23.8% of the network and supply <strong>40.8% of its inhibition</strong>. Excitation and inhibition onto motor neurons are nearly balanced, a ratio of <strong>1.02</strong>. And in <em>Drosophila</em>, glutamate is inhibitory where a glutamate-gated chloride channel is expressed postsynaptically and excitatory where it is not. <strong>The sign is a property of the receptor, not the transmitter</strong>, and the connectome does not contain receptor identity.</p>
+  <figure class="bleed">
+    <img src="glutamate.png" alt="Motor-neuron rhythmicity against the glutamate multiplier. Rhythmicity holds near 0.83 while glutamate stays inhibitory, falls to 0.32 when glutamate is silenced, and collapses toward zero as it becomes excitatory.">
+    <figcaption><b>The headline result holds only while glutamate is inhibitory.</b> Silencing those cells halves the rhythm; making them excitatory ends it, saturating 137 of 144 motor neurons.</figcaption>
+  </figure>
+</div>
+
+<div class="finding">
+  <div class="fhead bad"><span class="fid bad">F10</span><h3>The model gives the fly's main leg proprioceptor the wrong sign</h3></div>
+  <p>Following the drive-target control led to something specific and checkable. The transmitter classifier is markedly less sure about sensory neurons than about anything else, and on those uncertain calls it labels most leg afferents glutamatergic, which this model renders inhibitory.</p>
+  <div class="tablewrap"><table>
+    <caption>Classifier confidence and glutamate labelling by population</caption>
+    <thead><tr><th>Population</th><th class="num">n</th><th class="num">Mean confidence</th><th class="num">Below 0.8</th><th class="num">Labelled glutamate</th></tr></thead>
+    <tbody>
+      <tr class="alarm"><td>Chordotonal organ</td><td class="num">36</td><td class="num">0.691</td><td class="num">—</td><td class="num">69%</td></tr>
+      <tr><td>Hair plate</td><td class="num">61</td><td class="num">0.705</td><td class="num">—</td><td class="num">46%</td></tr>
+      <tr><td>Mechanosensory bristle</td><td class="num">146</td><td class="num">0.658</td><td class="num">—</td><td class="num">68%</td></tr>
+      <tr><td>All sensory</td><td class="num">285</td><td class="num">0.674</td><td class="num">81%</td><td class="num">—</td></tr>
+      <tr><td>Everything else</td><td class="num">4319</td><td class="num">0.826</td><td class="num">30%</td><td class="num">—</td></tr>
+    </tbody>
+  </table></div>
+  <p>The primary literature describes the femoral chordotonal organ, the fly's principal leg proprioceptor, as roughly 150 <strong>excitatory cholinergic</strong> neurons, in claw, hook and club subtypes encoding position, movement direction and vibration. Insect mechanosensory afferents are cholinergic as a class.</p>
+  <p>So the model assigns an inhibitory sign to the majority of the neurons that should be the excitatory sensory drive into the leg motor circuit, on classifier calls whose own confidence is below 0.7. An override now forces them excitatory on the published evidence. It does not by itself restore the rhythm, so this is not the explanation for F7. It is a separate defect, and it is the one a reader can act on tomorrow.</p>
+</div>
+
+<div class="finding">
+  <div class="fhead bad"><span class="fid bad">F11</span><h3>Excitability comes from a volume that means different things for different cells</h3></div>
+  <p>The model scales each neuron's gain and threshold by its soma size, normalised to the network median. That is a defensible heuristic. But <code>size</code> is a segmentation volume measured <em>inside the nerve cord</em>, and not every class has its cell body there.</p>
+  <div class="tablewrap"><table>
+    <caption>Relative size, resulting excitability, and where the cell body actually sits</caption>
+    <thead><tr><th>Class</th><th class="num">n</th><th class="num">Rel. size</th><th class="num">Gain</th><th>Soma location</th></tr></thead>
+    <tbody>
+      <tr class="alarm"><td>Sensory neuron</td><td class="num">283</td><td class="num">0.108</td><td class="num">×9.24</td><td>in the leg — only the axon arbor is in this volume</td></tr>
+      <tr><td>Descending neuron</td><td class="num">1318</td><td class="num">0.751</td><td class="num">×1.33</td><td>in the brain — only the axon arbor is in this volume</td></tr>
+      <tr><td>Intrinsic neuron</td><td class="num">2471</td><td class="num">1.031</td><td class="num">×0.97</td><td>in the nerve cord</td></tr>
+      <tr><td>Motor neuron</td><td class="num">144</td><td class="num">1.668</td><td class="num">×0.60</td><td>in the nerve cord</td></tr>
+      <tr><td>Ascending neuron</td><td class="num">375</td><td class="num">2.885</td><td class="num">×0.35</td><td>in the nerve cord</td></tr>
+    </tbody>
+  </table></div>
+  <p>By subclass it is starker: mechanosensory bristles land at 0.078 of the median, a <strong>12.9× gain multiplier</strong>. The two populations carrying input into this circuit, sensory afferents and descending neurons, are exactly the two whose measured volume is an arbor rather than a cell. They are handed an order-of-magnitude excitability advantage that is an artefact of where the microscope volume was cropped.</p>
+  <p>This is not a calibration detail. It means a flat injected current is a wildly different perturbation depending on which class receives it, which makes any perturbation experiment in this model hard to read. F8b is a worked example of the trap. The fix is to normalise within class, use a quantity that means the same thing everywhere, or drop size scaling and fit excitability per cell type against physiology.</p>
 </div>
 
 <h2>What I think is going on</h2>
 
-<p>Three candidate explanations, in the order I would spend effort on them.</p>
+<p>The findings converge on one structural claim. <strong>The connectome constrains which neurons talk to which. It does not constrain whether a connection excites or inhibits, how strong it is, or how excitable a cell is.</strong> Those three quantities determine function, all three are supplied here by convention, and tonight two of those conventions turned out to be wrong or unsupported while a third proved load-bearing enough to carry the entire result.</p>
 
-<ol>
-  <li><strong>Sensory feedback is not tonic, and I tested it as if it were.</strong> Real proprioceptors are modulated by the leg's own movement; that is the entire point of them. Driving all 102 with a constant current is the worst possible caricature of that input. The controlled version — same mean drive, rhythmically modulated instead of constant — is running now.</li>
-  <li><strong>One global synaptic scale is too crude.</strong> Setting strength proportional to synapse count times a single multiplier is the field's standard starting assumption, not a measurement. Cell-type-specific gains fitted against physiology are the next move if the first explanation fails.</li>
-  <li><strong>There is no background activity.</strong> See the exact zeros above.</li>
-</ol>
+<p>That reframes what limits this project. It is not compute: the whole thing runs on a laptop in seconds per simulation, and the two machines agreed to three decimal places. It is not connectome availability: the wiring is there, it joins cleanly, and it is demonstrably doing work. It is not body physics: a good musculoskeletal fly now ships in one package. The limit is that <strong>the parameters which turn structure into behaviour are measurements that mostly do not exist yet for these cells</strong>, and the stand-ins in current use do not survive being poked.</p>
 
-<div class="note scaffold"><b>Every result above rests on scaffolds, and they are recorded.</b> A current is injected directly into a command neuron, which reproduces an optogenetics experiment and is not spontaneous behaviour. Synaptic weight is synapse count times a global constant with sign guessed from a transmitter prediction, which is not measured efficacy. Sensory drive, where used, is imposed rather than generated by a body. Each run's provenance file lists these explicitly so no later reader has to reconstruct them.</div>
+<div class="note scaffold"><b>Every result above rests on scaffolds, and all 33 run records list them.</b> Current is injected directly into a command neuron, which reproduces an optogenetics experiment and is not spontaneous behaviour. Synaptic weight is synapse count times a global constant, with sign guessed from a transmitter prediction. Sensory drive, where used, is imposed rather than generated by a body. No later reader has to reconstruct any of this.</div>
 
 <h2>What was built</h2>
 
-<p>Small and executable, per the project's own instruction to avoid platform-building. Every run writes a provenance record: code commits for this repo and the pinned upstream, SHA-256 of every input file, resolved configuration, environment, wall time, peak memory, and the explicit list of scaffolds.</p>
+<p>Small and executable, per the project's own instruction to avoid platform-building. Every run writes a provenance record: commits for this repo and the pinned upstream, SHA-256 of every input, resolved config, environment, wall time, peak memory, and the explicit scaffold list. All 33 records are complete.</p>
 
-<pre><code>uv run pytest tests -q                      # 7 checks pass
-./scripts/run_condition_set.sh 16           # the five conditions
+<pre><code>uv run pytest tests -q                       # 10 checks pass
+./scripts/run_condition_set.sh 16            # the five conditions
 uv run python scripts/pugliese_conditions.py --condition baseline \
-    --replicates 8 --sensory-amp 200        # switch the proprioceptors on
-uv run python scripts/phasic_sensory.py --sensory-amp 200 --freq 10
+    --replicates 8 --sensory-amp 5 --threshold-matched \
+    --drive-target proprioceptors --proprio-cholinergic
 uv run python scripts/make_figures.py</code></pre>
 
-<p>The tests pin the things that quietly ruin this kind of work: frequency units, the anatomical identity join being total and exact, the tibia flexor pool matching the independent count, the weight matrix being signed and integer-valued, and solver determinism under a fixed seed.</p>
+<p>The tests pin what quietly ruins this kind of work: frequency units, the identity join being total and exact, the tibia flexor pool matching the independent count, the weight matrix being signed and integer-valued, every neuron having one outgoing sign, and solver determinism under a fixed seed.</p>
 
-<p>Both machines were used. The Windows box's internet is blocked at your router, so its Python environment was built from wheels downloaded on the laptop and shipped over the Tailscale link. Worth recording: the same simulation on Apple silicon with one JAX version and on x86 with a different one returned <strong>identical readouts to three decimal places</strong>. Architecture and library version are not a source of drift here.</p>
+<p>Both machines were used. The Windows box's internet is blocked at your router, so its Python environment was built from wheels downloaded on the laptop and shipped over the Tailscale link. Worth recording: the same simulation on Apple silicon and on x86, with different JAX versions, returned <strong>identical readouts to three decimal places</strong>.</p>
 
-<h2>The next experiment</h2>
+<h2>What I would do next</h2>
 
-<p>Running now: phasic versus tonic proprioceptive drive at <em>matched mean amplitude</em>. If the rhythm survives rhythmic sensory input but dies under constant input of the same average strength, then the timing of sensory feedback is what matters, and an embodied loop is <em>required</em> rather than merely desirable. That would be the cleanest possible argument for the direction this project is already pointed.</p>
+<ol>
+  <li><strong>Fix sign and excitability before anything else.</strong> Force leg afferents cholinergic on the published physiology, normalise the size rule within class, and re-run every result above. Some will move. That is the point.</li>
+  <li><strong>Constrain the glutamate sign with expression data.</strong> Single-cell transcriptomes for the adult fly exist. Chloride-channel expression in nerve-cord motor and premotor neurons would turn a convention into a prior with real uncertainty. Well-defined work, not attempted tonight.</li>
+  <li><strong>Then Milestone A</strong>, in dependency order: resolve the tibia flexor into its 15 motor units anchored to measured per-spike forces; add the missing muscles; build afferent transducers with the rate scale declared as fitted; close the loop. One published perturbation stays untouched by any fitting step, as the first real test of causal organisation.</li>
+</ol>
 
-<p>After that, Milestone A in dependency order: resolve the tibia flexor into its 15 motor units anchored to the measured per-spike forces; add the missing muscles; build afferent transducers with the rate scale declared as fitted; then close the loop and ask the question this session could only pose. One published perturbation stays untouched by any fitting step, as the first real test of causal organisation.</p>
-
-<div class="note caution"><b>What would make me change route.</b> If body-generated feedback still cannot produce both physiological rates and a stable rhythm, the synapse-count weight assumption is the prime suspect, and the work moves from body engineering to fitting per-cell-type synaptic gains against physiology.</div>
+<div class="note caution"><b>What I did not get to.</b> A descending-stimulus amplitude sweep, which would complete the picture in F7. A stricter degree-preserving null for F4. And the phasic-versus-tonic sensory experiment, which is running as this is written: early replicates show no frequency restores the rhythm, including with antagonist groups driven in antiphase, but it is not finished and should not be quoted yet.</div>
 
 </div>
 
 <footer>
-  Session 1 · 14 September 2026 · all numbers reproducible from provenance records in <code>runs/</code><br>
+  Session 1 · 14 September 2026 · every number reproducible from provenance records in <code>runs/</code><br>
   Reference data queried live from the male nerve-cord connectome; simulation code pinned at its upstream commit.<br>
-  Findings F1–F7 and the full method are in the repository under <code>docs/</code>.
+  Findings F1–F11, including the retracted F8 and its two corrections, are in <code>docs/FINDINGS.md</code>.
 </footer>
