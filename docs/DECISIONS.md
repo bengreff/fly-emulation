@@ -124,3 +124,59 @@ narrowed accordingly, and the session-1 report's headline was over-claimed.
 - **`runs/` retained on disk though untracked.** It holds the 53 provenance records
   that are the evidence for the surviving findings. Deleting the code that made them
   is fine; deleting the evidence is not.
+
+## 2026-09-15 Session 2: the pack author's response, and three corrections to me
+
+The agent that wrote the starter pack answered the questions in full. It accepted the
+ordering error and supplied the precise version of it, plus corrections to three of my
+own claims. The plan was rewritten around its schema.
+
+- **F-RETRACTED-1. There was no frequency units bug.** I reported one, made it the
+  opening finding and the opening of the session-1 report. The helper returns cycles
+  per sample by design and the published notebooks convert correctly: I verified
+  `mnFreq/overallParams.sim.dt` in Extended Data Figures 3 and 9 and Figure 2, and
+  `freq = 1/period * fps` in the behavioural notebook, at commit `faee4b0`. I called
+  their helper without reading their callers, got a nonsensical number, fixed my own
+  code, and published my error as their defect. Withdrawn in full.
+- **The traced-percentage framing is withdrawn.** "94% against 23%" is the fraction of
+  `:Neuron` nodes whose `status` reads `Traced`, and `:Neuron` is itself a
+  threshold-based inclusion. The dominant nerve-cord category is status *absent*,
+  75,643 nodes, which is a different statement. Segment counts differ fourfold on
+  imaged volume. Verified directly. The practical case for the whole-CNS graph stands
+  on the brain, 1,454 proprioceptors and 673 of 708 cross-references.
+- **Sensitivity is not correctness.** Flipping the glutamate population's sign and
+  watching activity collapse shows leverage, not that either uniform assignment is
+  right. Session 1's framing implied otherwise. Resolving it needs postsynaptic
+  receptor evidence.
+- **Electron microscopy is not categorically unable to resolve gap junctions.** The
+  limitation is that these chemical-connectome releases provide no comparable
+  electrical reconstruction. Unknown electrical coupling must not become measured
+  absence.
+- **Type count corrected to 11,751** distinct `type` labels in `male-cns:v1.0`, over
+  164,506 typed neurons, verified by query. My "~9,000" was recalled, not checked.
+  Any grouping below that number now needs a recorded rationale.
+- **The Melis finding is a limitation for causal reuse, not a defect in its original
+  science.** Future fluorescence can legitimately inform retrospective reconstruction.
+
+Adopted into `docs/PLAN.md`:
+
+- **Requirement schema of eight columns** with seven status values, replacing my five.
+  Observations and model parameters are separate objects; partially constrained is not
+  filled; shared inference dependencies are counted as rows, or propagating one assumed
+  conductance to 5,000 neurons makes the inventory look complete while adding nothing.
+- **Identifiability as the governing frame.** Some quantities are recoverable only in
+  combination, so the inventory must record which rows are only jointly identifiable
+  under a stated observation set.
+- **Competing causal hypotheses before parameter changes**, each naming a distinguishing
+  observation. Missing context masquerades as missing physiology, which is precisely
+  session 1's error.
+- **A minimum behaviour set of six capability rows** defining which fields are required,
+  with courtship, reproduction and sleep behaviour marked later scope rather than
+  omitted.
+- **Separate replication from endorsement**, and **"not implemented" never means
+  "biologically inactive."**
+- **Five meaning-based sanity checks** now in `tests/test_source_data.py`, since
+  ordinary tests encode the same assumptions as the implementation. Twelve tests pass.
+- **Cloud budget reasoning corrected.** Hours of simulated time does not itself demand
+  more resident memory than seconds; runtime, retained recordings and differentiating
+  through long trajectories are the separate costs.

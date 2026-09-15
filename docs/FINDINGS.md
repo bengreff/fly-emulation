@@ -15,8 +15,9 @@ earlier.
 
 | ID | What it says about a field | Status |
 |---|---|---|
+| **F-RETRACTED-1** | **"A units bug in the published analysis code"** | **withdrawn; the error was mine** |
 | F-DATA-1 | Motor-neuron to muscle mapping exists and is complete for the legs | stands |
-| F-DATA-2 | The whole-CNS connectome is the better source: 94% traced against 23% | stands |
+| F-DATA-2 | The whole-CNS connectome is the better primary graph: brain included, 1,454 proprioceptors, 673 of 708 motor neurons cross-referenced | stands; the traced-percentage framing is withdrawn |
 | F-SIGN-1 | 40.8% of modelled inhibition rests on a convention the connectome cannot settle | stands |
 | F-SIGN-2 | The sign field is wrong for most leg proprioceptors | stands |
 | F-SIGN-3 | The sign field's uncertainty is large enough to flip the outcome, and four cells dominate | stands |
@@ -24,6 +25,30 @@ earlier.
 | F-GAP-1 | Afferent firing rates have no published calibration at all | stands |
 | F-BODY-1 | The best body model can receive 68% of one leg's motor output and resolves no motor units | stands |
 | F-FRAG-* | Results from an isolated open-loop fragment | **scope narrowed, see below** |
+
+---
+
+## F-RETRACTED-1. There was no units bug. The error was mine.
+
+Session 1 reported that the reference repository's oscillation-frequency helper
+returns cycles per sample rather than hertz, and presented this as a defect in
+published analysis code. It was the opening finding and the opening of the
+report.
+
+**It is wrong.** The helper returns cycles per sample by design, and the
+published notebooks convert correctly. `Extended Data Figure 3`,
+`Extended Data Figure 9` and `Figure 2` all divide by `overallParams.sim.dt`
+before plotting; the behavioural notebook computes `freq = 1/period * fps`. I
+verified this directly in the clone at commit `faee4b0`.
+
+What actually happened: I called the helper from my own runner without reading
+how its authors call it, got a nonsensical 0.01 "Hz", corrected my own code, and
+then wrote my mistake up as their defect. Nobody's published result was affected.
+
+The lesson is precisely the one I was claiming to enforce on everyone else. I
+published a claim about someone else's work without checking the caller. A
+verification discipline that does not apply to my own accusations is not a
+discipline. Every finding below has been re-read against this standard.
 
 ---
 
@@ -46,12 +71,32 @@ are *filled* fields with independent support. 20 distinct front-leg muscles.
 
 | | Nerve cord only | Whole central nervous system |
 |---|---|---|
-| Neuron nodes | 102,158 | 176,422 |
-| Status `Traced` | 23,665 (**23%**) | 165,122 (**94%**) |
+| `:Neuron` nodes | 102,158 | 176,422 |
+| Of those, status `Traced` | 23,665 | 165,122 |
+| Of those, status absent entirely | **75,643** | 4,214 |
+| `:Segment` nodes in the volume | 21,455,359 | 88,404,403 |
+| Distinct `type` labels | 4,076 | **11,751** |
 | Nerve-cord motor neurons | 731 with a named target | 708, `superclass = vnc_motor` |
 | Cross-reference | n/a | **673 of 708 carry a `mancBodyid`** |
 | Proprioceptive sensory neurons | 102 in the subset used | **1,454** |
 | Brain | absent | present |
+
+**Read those fractions carefully.** Session 1 quoted "94% traced against 23%" as
+though it were anatomical completeness. It is not. It is the fraction of nodes
+carrying the `:Neuron` label whose `status` field reads `Traced`, and the
+`:Neuron` label is itself a threshold-based inclusion decision. The dominant
+category in the nerve-cord dataset is not "untraced" but **status absent**,
+75,643 nodes with no value in the field at all, which is a different statement.
+The segment counts differ fourfold, reflecting the imaged volume rather than
+reconstruction quality. Annotation-status fractions must not silently become
+completeness percentages.
+
+What does survive without interpretation is the practical case: the whole-CNS
+dataset carries the brain, has 1,454 neurons labelled
+`mechanosensory_proprioceptive` against 102 in the subset used, and 673 of its
+708 `vnc_motor` neurons carry a `mancBodyid` cross-reference. That is enough to
+make it the default primary graph. It does not settle whole-CNS against BANC,
+which was never compared.
 
 A trap worth recording: the annotations live in different fields. Muscle is in
 `type`, not `target`, and the class marker is `superclass = vnc_motor`, not
@@ -89,9 +134,22 @@ Measured sensitivity, sweeping the glutamate multiplier:
 | Silenced | 0.323 | 54.5 | 37.8 Hz |
 | Excitatory (single draw) | 0.003 | 137 of 144 | 198.6 Hz |
 
+**What this does and does not show.** It shows the result is highly sensitive to
+the assumption. It does **not** show that either uniform sign assignment is
+biologically correct, and session 1's framing implied otherwise. Flipping a large
+population's sign and watching activity collapse demonstrates leverage, not
+error. Resolving which sign is right requires postsynaptic receptor evidence,
+which no connectome contains.
+
+The 23.8% and 40.8% figures are my own computation over the bundled nerve-cord
+extract and have not been independently reproduced.
+
 **For the inventory:** the sign field for every glutamatergic cell type is an
-*assumption*, not a measurement. Receptor expression is the field that would
-settle it, and single-cell transcriptomes exist.
+*assumption* with a large instance count and demonstrated leverage. Receptor
+expression is the field that would settle it, and single-cell transcriptomes
+exist. Note that transcriptomic evidence would establish receptor *presence*
+while leaving density, localisation, conductance and modulation unresolved, so
+it moves these rows to partially constrained, not filled.
 
 ## F-SIGN-2. The sign field is wrong for most leg proprioceptors
 
