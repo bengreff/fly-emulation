@@ -407,3 +407,42 @@ do more with less because of **where they project**, not how much they project.
 which shows the model inverts the sign of most of those same afferents, the
 position is that the single most influential input to the leg motor circuit is
 the one the model most likely gets backwards.
+
+## F11. The model derives excitability from a volume that does not mean the same thing for every cell class (2026-09-14)
+
+The model scales each neuron's gain and spike threshold by its soma size,
+normalised to the network median: `gain = gain / size`, `threshold = threshold *
+size`. Larger cells therefore need more input and respond less steeply, which is
+a defensible heuristic for current injected into a larger membrane.
+
+The `size` column is a **segmentation volume measured inside the nerve cord**.
+That is not the same quantity for every class, because not every class has its
+cell body there:
+
+| Class | n | Relative size | Threshold | Gain | Where the soma actually is |
+|---|---|---|---|---|---|
+| Sensory neuron | 283 | 0.108 | x0.11 | **x9.24** | in the leg, only the axon arbor is in this volume |
+| Descending neuron | 1318 | 0.751 | x0.75 | x1.33 | in the brain, only the axon arbor is in this volume |
+| Intrinsic neuron | 2471 | 1.031 | x1.03 | x0.97 | in the nerve cord |
+| Motor neuron | 144 | 1.668 | x1.67 | x0.60 | in the nerve cord |
+| Ascending neuron | 375 | 2.885 | x2.89 | x0.35 | in the nerve cord |
+
+By sensory subclass the effect is more extreme still: mechanosensory bristles
+come out at 0.078 of the median, a **12.9x gain multiplier**, and chordotonal
+organ neurons at 0.213, a **4.7x multiplier**.
+
+So the two populations that carry input into this circuit, sensory afferents and
+descending neurons, are exactly the two whose measured volume is an axon arbor
+rather than a cell. Using it as a proxy for electrical size hands the sensory
+population an order-of-magnitude excitability advantage that is an artefact of
+where the electron-microscope volume was cropped.
+
+**This is not a minor calibration issue.** It means a flat injected current is a
+wildly different perturbation depending on which class you inject into, which
+makes any perturbation experiment in this model class hard to interpret unless
+the drive is normalised. Finding F8b is a worked example of exactly that trap.
+
+**Fix.** Either normalise size within class, or use a quantity that means the
+same thing everywhere, such as the neuron's synapse count inside the volume, or
+drop the size scaling and fit gain and threshold per cell type against
+physiology. All three are defensible; the current rule is not.
