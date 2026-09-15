@@ -15,10 +15,11 @@ established, so corrections sit after the claims they overturn. Read the index.
 | F7 | Rhythm and motor recruitment trade off across every manipulation tried | stands |
 | F8 | "Any added excitation breaks the rhythm, not the sensory pathway" | **retracted** — one replicate, one amplitude |
 | F8a | "The proprioceptive pathway is privileged" | **superseded by F8b** — confounded by cell size |
-| F8b | The apparent pathway specificity is an artefact of size-scaled excitability | stands |
+| F8b | The apparent pathway specificity is an artefact of size-scaled excitability; the same current makes proprioceptors emit 18x more output | stands, with the matching definition stated |
 | F9 | 40.8% of the model's inhibition rests on treating glutamate as inhibitory, which is a receptor property the connectome does not contain | stands |
 | F10 | The model assigns an inhibitory sign to most of the fly's main leg proprioceptor, against published physiology | stands |
 | F11 | Excitability is derived from a volume that measures a whole cell for some classes and only an axon arbor for others | stands |
+| F12 | Rhythmic sensory drive does not rescue the rhythm at any frequency, and the motor output does not even entrain to it | stands, open loop only |
 
 ## F1. Units bug in the external oscillation-frequency metric (2026-09-14)
 
