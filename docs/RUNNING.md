@@ -49,9 +49,41 @@ uv run python scripts/pugliese_conditions.py --condition baseline \
 # phasic versus tonic sensory drive at matched mean amplitude
 uv run python scripts/phasic_sensory.py --sensory-amp 200 --freq 10 --replicates 8
 
+# the corrections found in F10 and F11
+uv run python scripts/pugliese_conditions.py --condition baseline --replicates 8 \
+    --proprio-cholinergic          # leg afferents excitatory, per published physiology
+uv run python scripts/pugliese_conditions.py --condition baseline --replicates 8 \
+    --size-norm class              # excitability normalised within cell class
+
+# controls that matter for any drive experiment
+uv run python scripts/pugliese_conditions.py --condition baseline --replicates 8 \
+    --sensory-amp 5 --drive-target random_interneurons --threshold-matched
+uv run python scripts/pugliese_conditions.py --condition baseline --replicates 24 \
+    --sample-transmitters          # propagate the EM classifier's own uncertainty
+
 # aggregate everything present and render the figures
 uv run python scripts/make_figures.py
+uv run python scripts/make_figures2.py
+uv run python scripts/summarize_session.py
 ```
+
+Batch scripts, each writing one log under `runs/`:
+
+| Script | Question |
+|---|---|
+| `run_condition_set.sh` | the five conditions and controls |
+| `run_sensory_sweep.sh`, `run_fine_sensory.sh` | how much proprioceptive drive breaks the rhythm |
+| `run_drive_control.sh` | does the sensory pathway matter, or just added current |
+| `run_threshold_matched.sh` | the same question with drive matched to each cell's threshold |
+| `run_glutamate_sweep.sh` | how much rests on glutamate being inhibitory |
+| `run_nt_uncertainty.sh` | does the result survive the classifier's own uncertainty |
+| `run_corrected_model.sh` | does the model have a working point once F11 is fixed |
+| `run_ei_balance.sh` | can stronger inhibition hold a high-rate rhythm |
+| `phasic_sensory.py` | does the timing of sensory drive matter |
+
+If a run is killed, `metrics_partial.csv` keeps the completed replicates, and
+`scripts/recover_from_logs.py <out.csv> <dir> "<glob>" <key>` recovers older
+runs from their logs.
 
 Conditions are `baseline`, `silence_i1i2`, `shuffle`, `dna02`, `no_stim`.
 Tolerances `--rtol 2e-6 --atol 5e-9` are the published values; `1e-4 / 1e-7`
