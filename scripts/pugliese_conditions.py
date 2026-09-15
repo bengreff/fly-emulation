@@ -213,6 +213,12 @@ def main() -> None:
                     help="override inhibitory synaptic multiplier (default 0.03)")
     ap.add_argument("--stim-amp", type=float, default=None,
                     help="override stimulus current amplitude")
+    ap.add_argument("--glu-mult", type=float, default=None,
+                    help="multiplier for glutamatergic neurons. The default "
+                         "model treats glutamate as inhibitory (same magnitude "
+                         "as GABA). Glutamate supplies 41%% of the inhibitory "
+                         "synapse budget, so this is a load-bearing assumption. "
+                         "Negative values make glutamate excitatory; 0 silences it.")
     ap.add_argument("--drive-target", default="proprioceptors",
                     choices=["proprioceptors", "random_interneurons", "bristles"],
                     help="which population --sensory-amp drives. "
@@ -232,6 +238,8 @@ def main() -> None:
     if args.exc_mult is not None or args.inh_mult is not None:
         mult_tag = f"-e{args.exc_mult if args.exc_mult is not None else 0.03:g}"
         mult_tag += f"i{args.inh_mult if args.inh_mult is not None else 0.03:g}"
+    if args.glu_mult is not None:
+        mult_tag += f"-glu{args.glu_mult:g}"
     if args.stim_amp is not None:
         mult_tag += f"-I{args.stim_amp:g}"
     if args.sensory_amp is not None:
@@ -249,6 +257,8 @@ def main() -> None:
     cfg.experiment.seed = args.seed
     cfg.sim.rtol = args.rtol
     cfg.sim.atol = args.atol
+    if args.glu_mult is not None:
+        cfg.neuron_params.glutamateMultiplier = args.glu_mult
     if args.exc_mult is not None:
         cfg.neuron_params.excitatoryMultiplier = args.exc_mult
     if args.inh_mult is not None:
@@ -303,6 +313,11 @@ def main() -> None:
             f"calibration exists for these neurons; this is a swept unknown "
             f"used to ask how much sensory drive would be required."
         )
+    if args.glu_mult is not None:
+        rec.declare_scaffold(
+            f"Glutamatergic neurons rescaled to {args.glu_mult}. Their sign is "
+            f"an assumption about receptor type, not a measurement, and they "
+            f"carry 41% of the model's inhibitory synapse budget.")
     rec.declare_scaffold(
         "Synaptic sign taken from EM transmitter prediction; weight is synapse count "
         "times a single global multiplier. Not measured physiological efficacy."
