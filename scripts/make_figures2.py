@@ -43,10 +43,12 @@ def load(pattern: str) -> pd.DataFrame:
 
 def fig_drive_targets() -> None:
     """Unmatched versus threshold-matched drive, by target population."""
-    df = load("pugliese-baseline-n8-papertol-S*")
+    df = load("pugliese-baseline-n8-papertol-*S*")
     if df.empty:
         return
-    df = df[~df.run.str.contains("probe|test")]
+    df = df[df.run.str.contains("papertol") & ~df.run.str.contains("probe|test|tm1|tm2")]
+    if df.empty:
+        return
     def parse(r):
         amp = float(re.search(r"-S([\d.]+)", r).group(1))
         tgt = "random interneurons" if "rand" in r else (
