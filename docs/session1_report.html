@@ -140,7 +140,7 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   <h1>What the connectome doesn't contain</h1>
   <p class="standfirst">The published rhythm reproduces cleanly, and the anatomy checks out against independent electrophysiology. Then the night turned into an audit. The wiring diagram tells you which neurons talk to which. It does not tell you whether a connection excites or inhibits, how strong it is, or how excitable a cell is, and in this model all three are supplied by convention. Several of those conventions turn out to be load-bearing, and at least one is simply wrong.</p>
   <div class="meta">
-    <span><b>Runs</b> 33 recorded, 5 conditions + 7 sweeps</span>
+    <span><b>Runs</b> 47, 270 simulations</span>
     <span><b>Machines</b> M2 Pro + RTX box, 38 cores</span>
     <span><b>Checks</b> 10 passing</span>
     <span><b>Corrections</b> 1 finding retracted twice</span>
@@ -150,8 +150,8 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
 <div class="verdict">
   <div><dt>Reproduced</dt><dd><span class="big">10.0 Hz</span>rhythmic motor output, robust across all 16 parameter draws</dd></div>
   <div><dt>But it is</dt><dd><span class="big">13× too weak</span>to drive a muscle: 2.3 Hz peak against a measured 30 Hz at rest</dd></div>
-  <div><dt>Rests on</dt><dd><span class="big">41%</span>of inhibition coming from a contested sign convention</dd></div>
-  <div><dt>Gets wrong</dt><dd><span class="big">57 of 102</span>leg proprioceptors, modelled inhibitory when physiology says excitatory</dd></div>
+  <div><dt>Rests on</dt><dd><span class="big">4 neurons</span>whose excitatory or inhibitory identity is predicted, at about 90% confidence each</dd></div>
+  <div><dt>Fails in</dt><dd><span class="big">1 in 3</span>sign assignments the classifier itself considers admissible</dd></div>
 </div>
 
 <div class="wrap">
@@ -343,9 +343,39 @@ footer{max-width:min(1060px,100%);margin:4.5rem auto 0;padding-top:1.4rem;border
   <p>This is not a calibration detail. It means a flat injected current is a wildly different perturbation depending on which class receives it, which makes any perturbation experiment in this model hard to read. F8b is a worked example of the trap. The fix is to normalise within class, use a quantity that means the same thing everywhere, or drop size scaling and fit excitability per cell type against physiology.</p>
 </div>
 
+<div class="finding">
+  <div class="fhead"><span class="fid">F12</span><h3>Rhythmic sensory drive does not rescue it, at any frequency</h3></div>
+  <p>This was designed to be the discriminator, and it came back negative, which is the useful kind. If the rhythm dies under sensory drive because constant input is an unrealistic caricature of what a moving leg supplies, then giving the same <em>mean</em> drive a temporal structure should help.</p>
+  <figure class="bleed">
+    <img src="phasic_sweep.png" alt="Motor-neuron rhythmicity against sensory modulation frequency from 2 to 20 Hz. The curve sits flat near 0.05, indistinguishable from the tonic-drive line, and far below the undriven baseline of 0.84.">
+    <figcaption><b>Same mean drive, different timing, 7 to 8 draws per point.</b> No modulation frequency restores the rhythm, including 10 Hz, the network's own preferred frequency. Splitting the afferents into antiphase groups, as flexion- and extension-tuned position sensors actually are, changes nothing, and neither does applying the sign correction from F10.</figcaption>
+  </figure>
+  <p>The motor output does not even <strong>entrain</strong> to the drive: it sits near 1.5 to 2.4 Hz whether the input is modulated at 2 Hz or 20 Hz. This rules out the simplest version of "add sensory input and the rhythm will hold". It does not rule out a genuinely embodied loop, because every variant here shares one prescribed waveform across all sensors with no feedback from motor output. That remains the open question, and it is now the only surviving form of the hypothesis.</p>
+</div>
+
+<div class="finding">
+  <div class="fhead bad"><span class="fid bad">F13</span><h3>The result survives only two thirds of the sign assignments the data allows</h3></div>
+  <p>The transmitter classifier does not output a label, it outputs a probability per neuron. The published model takes the most likely one. So: on each replicate, redraw every neuron's transmitter from its own reported probabilities and run the same experiment. Redrawing flips the excitatory or inhibitory sign of <strong>436 neurons, 9.5% of the network</strong>, per draw.</p>
+  <figure class="bleed">
+    <img src="nt_uncertainty.png" alt="Histogram of motor-neuron rhythmicity. The published most-likely labels cluster tightly between 0.6 and 1.0. The resampled version is bimodal, with seven draws at exactly zero and the rest spread from 0.15 to 1.0.">
+    <figcaption><b>The mean is not the story, the shape is.</b> Published labels give a tight rhythmic distribution. Respecting the classifier's own uncertainty gives a bimodal one: 6 of 24 draws produce no rhythm at all.</figcaption>
+  </figure>
+  <p>And the failures are traceable. The source paper's own configuration names a minimal core: the stimulated descending neuron plus three interneurons. Run alone with everything else masked, those four do reproduce a rhythm, so they are load-bearing. Reconstructing each draw and asking whether any of the four flipped:</p>
+  <div class="tablewrap"><table>
+    <caption>Core sign flips against whether the rhythm survived, 24 draws</caption>
+    <thead><tr><th>&nbsp;</th><th class="num">Rhythm lost</th><th class="num">Rhythm survived</th></tr></thead>
+    <tbody>
+      <tr class="alarm"><td>A core neuron flipped</td><td class="num">4</td><td class="num">0</td></tr>
+      <tr><td>No core neuron flipped</td><td class="num">4</td><td class="num">16</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>Every draw that flipped a core neuron lost the rhythm, four out of four.</strong> The classifier's confidence in those four cells is 0.90, 0.92, 0.95 and 0.96, giving a 21% chance that at least one flips on any draw. Observed: 17%.</p>
+  <p>This is not a criticism of the classifier, which reports its uncertainty honestly. It is a statement about what the model inherits. The constructive response is to report a distribution over admissible sign assignments rather than a single run, and to spend measurement effort on the handful of cells the answer actually depends on. Those four are named in the findings file. Determining their transmitters experimentally is a small, well-posed piece of work with a large payoff.</p>
+</div>
+
 <h2>What I think is going on</h2>
 
-<p>The findings converge on one structural claim. <strong>The connectome constrains which neurons talk to which. It does not constrain whether a connection excites or inhibits, how strong it is, or how excitable a cell is.</strong> Those three quantities determine function, all three are supplied here by convention, and tonight two of those conventions turned out to be wrong or unsupported while a third proved load-bearing enough to carry the entire result.</p>
+<p>The findings converge on one structural claim. <strong>The connectome constrains which neurons talk to which. It does not constrain whether a connection excites or inhibits, how strong it is, or how excitable a cell is.</strong> Those three quantities determine function, all three are supplied here by convention, and tonight two of those conventions turned out to be wrong, a third proved load-bearing enough to carry the entire result, and the fourth turns out to hinge on four cells.</p>
 
 <p>That reframes what limits this project. It is not compute: the whole thing runs on a laptop in seconds per simulation, and the two machines agreed to three decimal places. It is not connectome availability: the wiring is there, it joins cleanly, and it is demonstrably doing work. It is not body physics: a good musculoskeletal fly now ships in one package. The limit is that <strong>the parameters which turn structure into behaviour are measurements that mostly do not exist yet for these cells</strong>, and the stand-ins in current use do not survive being poked.</p>
 
@@ -374,7 +404,7 @@ uv run python scripts/make_figures.py</code></pre>
   <li><strong>Then Milestone A</strong>, in dependency order: resolve the tibia flexor into its 15 motor units anchored to measured per-spike forces; add the missing muscles; build afferent transducers with the rate scale declared as fitted; close the loop. One published perturbation stays untouched by any fitting step, as the first real test of causal organisation.</li>
 </ol>
 
-<div class="note caution"><b>What I did not get to.</b> A descending-stimulus amplitude sweep, which would complete the picture in F7. A stricter degree-preserving null for F4. And the phasic-versus-tonic sensory experiment, which is running as this is written: early replicates show no frequency restores the rhythm, including with antagonist groups driven in antiphase, but it is not finished and should not be quoted yet.</div>
+<div class="note caution"><b>What I did not get to.</b> A descending-stimulus amplitude sweep on the uncorrected model, which would complete the picture in F7. A stricter degree-preserving null for F4. A matched fixed-label control for F13, which was dropped for capacity in favour of the corrected-model sweep. And an excitation-inhibition balance sweep, which is largely superseded by correcting excitability directly.</div>
 
 </div>
 
