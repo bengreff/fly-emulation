@@ -531,3 +531,60 @@ should transfer to embodiment only with that caveat stated.
 **Shifts weight toward** the second candidate explanation in F7: the synaptic
 weight and excitability model, rather than the sensory input, is where the
 problem lives. Findings F9, F10 and F11 all point the same way.
+
+## F8b. CORRECTS F8a. The apparent pathway specificity is an excitability artefact (2026-09-14)
+
+F8a reported that identical injected current collapses the rhythm through the
+proprioceptors and does nothing through random interneurons, and attributed it
+to where the sensory pathway projects. That attribution is wrong. The two
+conditions were never delivering the same perturbation.
+
+**The driven populations do not respond alike to the same current.** Measuring
+what the driven cells themselves emit, at injected current 5:
+
+| Driven population | Cells firing | Mean output rate |
+|---|---|---|
+| 102 leg proprioceptors | 67 of 102 | **14.42 Hz** |
+| 102 random intrinsic neurons | 28 of 102 | **0.79 Hz** |
+
+An eighteen-fold difference in emitted output for the same input. The cause is
+finding F11: the model sets spike threshold from soma size, proprioceptors are
+0.44x the median size and bristles 0.078x, so the same current pushes them far
+harder. A comparison at equal input current is not a controlled comparison in
+this model.
+
+**Matching the drive removes the effect.** Scaling each cell's current by its own
+threshold, so every driven cell is pushed the same fraction above it, eight draws
+per condition at amplitude 5:
+
+| Condition | Rhythmicity | Active motor neurons |
+|---|---|---|
+| Undriven baseline | 0.836 +/- 0.119 | 2.6 |
+| Proprioceptors, flat current | 0.095 +/- 0.070 | 76.6 |
+| Proprioceptors, threshold-matched | **0.828 +/- 0.138** | 3.0 |
+| Random interneurons, threshold-matched | **0.828 +/- 0.138** | 3.0 |
+
+The dissociation disappears. Both matched conditions return the undriven result
+exactly.
+
+### The honest caveat on this correction
+
+Threshold matching is one definition of "same perturbation" and it is not
+obviously the best one. It gives low-threshold cells *less* current, so at
+amplitude 5 the proprioceptors end up receiving very little and the null result
+partly reflects that. The cleaner functional match is to equalise the **output
+rate of the driven population** and compare downstream effects from there. The
+metric to do that is now recorded on every run; the experiment was not run.
+
+So the defensible claim is narrow and worth stating precisely: **the F8a
+dissociation is not evidence of pathway specificity, because the comparison was
+confounded by a large excitability difference.** Whether the proprioceptive
+pathway is genuinely privileged once that is controlled remains open.
+
+### Why this sequence is in the record
+
+Three passes, two retractions, on a question that looked settled after the
+first. The first answer was right by accident, the second was wrong for a reason
+that looked like biology and was arithmetic, and the third is a control. Any
+perturbation result in this model class needs the same treatment before it is
+believed, including the ones in the paper this session started from.

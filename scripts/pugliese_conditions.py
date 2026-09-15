@@ -473,6 +473,15 @@ def main() -> None:
         R.block_until_ready()
         Rn = np.asarray(R)
         m = metrics_for(Rn, wTable, mn_idx, simParams.t_axis)
+        # How hard the DRIVEN population itself fires. Without this, a drive
+        # comparison across populations is uninterpretable: the same injected
+        # current produces very different output depending on cell size
+        # (finding F11), so "matched drive" must be defined and reported.
+        if args.sensory_amp is not None:
+            drv = np.asarray(prop, dtype=int)
+            m["driven_mean_rate_hz"] = float(Rn[drv].mean())
+            m["driven_peak_rate_median_hz"] = float(np.median(Rn[drv].max(axis=1)))
+            m["driven_n_active"] = int((Rn[drv].max(axis=1) > 0).sum())
         m["replicate"] = i
         m["sim_seconds"] = round(time.time() - t1, 2)
         rows.append(m)
