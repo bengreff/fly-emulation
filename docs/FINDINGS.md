@@ -184,3 +184,68 @@ to go, and the one muscle group with good published physiology cannot resolve
 its own motor units in the available body. Extending the muscle model is
 prerequisite work, and the tibia flexor is the right place to start because it
 is the only pool with measured per-unit forces.
+
+## F7. Rhythm and motor recruitment trade off against each other, across four independent manipulations (2026-09-14)
+
+The central result of this session. Four unrelated ways of pushing the model
+toward physiological firing rates all cost the rhythm, and the published
+parameter setting sits at the rhythmic extreme with almost no motor output.
+
+**Manipulation 1: global synaptic scale.** Both excitatory and inhibitory
+multipliers scaled together, 8 draws per point, paper tolerances.
+
+| Synaptic scale | Active neurons | Active motor neurons | Rhythmicity | Frequency |
+|---|---|---|---|---|
+| 0.010 | 2 | 0 | 0.000 | silent |
+| 0.015 | 12 | 0 | 0.000 | silent |
+| 0.020 | 23 | 0 | 0.000 | silent |
+| **0.030 (published)** | 93 | 3.3 | **0.807** | 10.4 Hz |
+| 0.045 | 176 | 8.0 | 0.563 | 10.1 Hz |
+| 0.090 | 1740 | 83 | 0.153 | 0.77 Hz |
+
+Rhythmicity peaks at the published value and decays monotonically as motor
+recruitment rises. Points at 0.13, 0.2 and 0.3 were abandoned, see
+`docs/DECISIONS.md`.
+
+**Manipulation 2: tonic proprioceptive drive.** Driving the 102 leg
+proprioceptors that the published protocol leaves silent lifts median peak
+motor-neuron rate from 2.3 Hz to 82.6 Hz, above the measured 30 Hz resting rate
+of a slow tibia flexor unit, and raises active motor neurons from 3 to 67. The
+rhythm falls from 0.836 to 0.281 and its frequency from 10.0 Hz to 4.1 Hz.
+
+**Manipulation 3: a different descending neuron.** Stimulating DNa02, a turning
+command neuron, instead of DNg100 gives 8 active motor neurons with peak rates
+to 44.8 Hz, above the physiological reference, and **no rhythm at all**
+(0.004 +/- 0.008).
+
+**Manipulation 4: destroying the wiring.** The degree-matched shuffle gives 83.5
+active motor neurons at peak rates to 224 Hz with rhythmicity 0.139 (F4).
+
+Plotted together, every route to physiological firing rates lands in the
+arrhythmic regime, and the only strongly rhythmic condition produces motor
+output roughly an order of magnitude too weak to drive a muscle.
+
+### What this does and does not license
+
+It is **not** a claim that the fly cannot do both, nor that this model is
+refuted. It is a measured property of this model class, a deafferented
+connectome network driven by a constant current with one global synaptic scale,
+and it is a sharp constraint on what has to change next.
+
+Three candidate explanations, in the order I would test them:
+
+1. **Sensory feedback is not tonic.** Real proprioceptors are modulated by the
+   leg's own movement. Uniform tonic drive is the worst possible caricature of
+   that input. The phasic-versus-tonic experiment, matched for mean amplitude,
+   tests this directly and is the cheapest discriminator available without a body.
+2. **One global synaptic scale is too crude.** Weight equal to synapse count
+   times a single multiplier is the field's standard starting assumption, not a
+   measurement. Cell-type-specific gains fitted against physiology are the next
+   step if explanation 1 fails.
+3. **The network has no background activity.** With no stimulus the model is
+   *exactly* silent, all 4604 neurons at zero. Real nervous systems are not.
+   Whatever supplies that baseline in the animal is absent here, and it is
+   plausibly part of what sets resting motor-neuron rates.
+
+The discriminating experiment is Milestone A4: body-generated, phase-locked
+proprioceptive feedback. This session can only approximate it open loop.

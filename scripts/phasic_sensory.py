@@ -81,6 +81,14 @@ def simulate(W, tau, a, threshold, fr_cap, dn_in, sens_mask, sens_amp,
     return jnp.clip(R, 0.0, 1000.0)
 
 
+
+def _append_row(out_dir: Path, row: dict) -> None:
+    """Write each replicate as it finishes so a killed run keeps its results."""
+    f = out_dir / "metrics_partial.csv"
+    df = pd.DataFrame([row])
+    df.to_csv(f, mode="a", header=not f.exists(), index=False)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sensory-amp", type=float, required=True)
@@ -147,6 +155,7 @@ def main() -> None:
         m["replicate"] = i
         m["sim_seconds"] = round(time.time() - t0, 2)
         rows.append(m)
+        _append_row(out_dir, m)
         print(f"  rep {i}: activeMN={m['n_active_mn']:3d} osc={m['oscillation_score_mn']:.3f} "
               f"f={m['oscillation_freq_hz_mn']:.2f}Hz peakMN={m['mn_peak_rate_median_hz']:.1f}Hz "
               f"({m['sim_seconds']}s)", flush=True)

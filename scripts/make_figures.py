@@ -143,6 +143,38 @@ def fig_traces() -> None:
     plt.close(fig)
 
 
+def fig_scale_tradeoff() -> None:
+    """Rate against rhythm along the global synaptic scale axis."""
+    f = REPO / "data" / "derived" / "scale_sweep.csv"
+    if not f.exists():
+        return
+    df = pd.read_csv(f)
+    g = df.groupby("scale")
+    x = np.array(sorted(df.scale.unique()))
+    rh = g["oscillation_score_mn"].mean().reindex(x)
+    mn = g["n_active_mn"].mean().reindex(x)
+    fig, ax = plt.subplots(figsize=(4.6, 2.8))
+    ax.plot(x, rh, "-o", ms=4, lw=1.4, color="#267655")
+    ax.set_xscale("log")
+    ax.set_xlabel("global synaptic scale")
+    ax.set_ylabel("motor-neuron rhythmicity", color="#267655")
+    ax.tick_params(axis="y", labelcolor="#267655")
+    ax.set_ylim(-0.03, 1.0)
+    ax2 = ax.twinx()
+    ax2.plot(x, mn, "-s", ms=4, lw=1.4, color="#8b2f5f")
+    ax2.set_yscale("symlog", linthresh=1)
+    ax2.set_ylabel("active motor neurons (of 144)", color="#8b2f5f")
+    ax2.tick_params(axis="y", labelcolor="#8b2f5f")
+    ax2.spines["right"].set_visible(True)
+    ax.axvline(0.03, ls=":", lw=1.0, color="k")
+    ax.annotate("published value", xy=(0.03, 0.95), xytext=(0.032, 0.95),
+                fontsize=6.5, va="top")
+    ax.set_title("Rhythm and motor output trade off\nalong the synaptic scale axis",
+                 fontsize=8.5)
+    fig.savefig(FIGS / "scale_tradeoff.png")
+    plt.close(fig)
+
+
 def fig_sweep(df: pd.DataFrame) -> None:
     if df.empty:
         return
@@ -226,6 +258,7 @@ def main() -> None:
         summary.to_csv(REPO / "docs" / "conditions_summary.csv")
         print(summary.to_string())
     fig_traces()
+    fig_scale_tradeoff()
     sw = load_sweep(sweep_dir)
     if not sw.empty:
         fig_sweep(sw)
