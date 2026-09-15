@@ -523,11 +523,25 @@ per neuron into the 102 proprioceptors and varying only the modulation:
 | 20 Hz | 8 | 0.042 | 68.3 | 1.7 Hz |
 
 No modulation frequency restores the rhythm. Driving at 10 Hz, the network's own
-preferred frequency, does not help either. Two further variants change nothing:
-splitting the afferents into antagonist groups driven in **antiphase**, as
-flexion- and extension-tuned position sensors actually are (0.055 against 0.049
-in phase), and applying the F10 sign correction so the afferents are excitatory
-(0.111 at the same settings).
+preferred frequency, does not help either. Two further variants change nothing.
+
+Splitting the afferents into antagonist groups driven in **antiphase**, as
+flexion- and extension-tuned position sensors actually are, gives 0.055 against
+0.049 in phase.
+
+Applying the F10 sign correction, so that 57 of the 102 afferents become
+excitatory as published physiology says they should be, also changes nothing.
+Re-running the sweep at drive amplitude 5 with the correction applied, 3 draws
+per point:
+
+| Sensory modulation, signs corrected | Rhythmicity | Active motor neurons |
+|---|---|---|
+| tonic | 0.072 | 54.7 |
+| 5 Hz | 0.057 | 46.7 |
+| 10 Hz | 0.083 | 50.3 |
+| 20 Hz | 0.054 | 50.7 |
+
+So the negative result is not an artefact of the inverted afferent signs either.
 
 Note the last column. The motor output does not even **entrain** to the sensory
 drive: it sits near 1.5-2.4 Hz regardless of whether the input is modulated at 2
