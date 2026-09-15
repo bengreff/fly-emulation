@@ -1,0 +1,6 @@
+condition,reps,rhythmicity,rhythmicity_sd,freq_hz,active_mn,active_all,mn_peak_hz
+baseline,16,0.836,0.119,10.045,2.625,92.312,6.521
+dna02,16,0.004,0.008,8.171,8.0,82.188,44.792
+no_stim,16,0.0,0.0,0.0,0.0,0.0,0.0
+shuffle,16,0.139,0.084,1.776,83.5,1880.562,224.337
+silence_i1i2,16,0.547,0.167,9.302,4.25,112.812,13.218

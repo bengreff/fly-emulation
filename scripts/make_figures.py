@@ -65,7 +65,8 @@ def fig_conditions(df: pd.DataFrame) -> None:
         ("n_active_mn", "active motor neurons (of 144)", None),
         ("mn_peak_rate_max_hz", "peak motor-neuron rate (Hz)", SLOW_MN_REST_HZ),
     ]
-    fig, axes = plt.subplots(1, 4, figsize=(9.2, 2.3))
+    fig, axes = plt.subplots(1, 4, figsize=(11.0, 2.7))
+    fig.subplots_adjust(wspace=0.42)
     for ax, (col, label, ref) in zip(axes, metrics):
         vals = [df.loc[df.condition == c, col].dropna().values for c in order]
         for i, (c, v) in enumerate(zip(order, vals)):
@@ -76,18 +77,29 @@ def fig_conditions(df: pd.DataFrame) -> None:
             ax.hlines(np.mean(v), i - 0.28, i + 0.28, color=C.get(c, "k"), lw=1.8, zorder=4)
         if ref is not None:
             ax.axhline(ref, ls="--", lw=0.9, color="#c0392b", zorder=2)
-            ax.text(len(order) - 0.45, ref * 1.06, "slow MN at rest, measured",
-                    color="#c0392b", fontsize=6, ha="right")
+            ax.text(-0.35, ref * 1.12, "slow MN at rest, measured",
+                    color="#c0392b", fontsize=6, ha="left")
             ax.set_yscale("log")
+            ax.set_ylim(1.0, 500)
+            for i, (c, v) in enumerate(zip(order, vals)):
+                if len(v) and np.all(v == 0):
+                    ax.text(i, 1.15, "silent", fontsize=6, ha="center",
+                            color=C.get(c, "k"), rotation=90)
         ax.set_xticks(range(len(order)))
-        ax.set_xticklabels([o.replace("silence_i1i2", "silence\nI1+I2").replace("_", "\n")
-                            for o in order], fontsize=6.5)
+        ax.set_xticklabels([
+            {"baseline": "DNg100", "silence_i1i2": "silence I1+I2",
+             "shuffle": "shuffled", "dna02": "DNa02",
+             "no_stim": "no stimulus"}.get(o, o) for o in order],
+            fontsize=6.5, rotation=30, ha="right", rotation_mode="anchor")
         ax.set_title(label, fontsize=8)
-        ax.margins(x=0.12)
+        ax.margins(x=0.18)
     fig.suptitle("Connectome VNC model under descending stimulation: conditions and controls",
                  fontsize=9, y=1.06)
     fig.savefig(FIGS / "conditions.png")
     plt.close(fig)
+
+
+SHARED_SCALE = 50.0  # Hz, one vertical scale for every trace panel
 
 
 def fig_traces() -> None:
@@ -103,16 +115,30 @@ def fig_traces() -> None:
         R, t, mn = d["R"], d["t"], d["mn_idx"]
         act = mn[R[mn].max(1) > 0]
         order = act[np.argsort(-R[act].max(1))][:12]
+        # Per-panel scale, stated on each panel: shape stays legible and the
+        # amplitude difference is read off the two scale bars.
+        pk = float(R[order].max())
+        scale = 10 ** np.floor(np.log10(pk))
+        if pk / scale >= 5: scale *= 5
+        elif pk / scale >= 2: scale *= 2
+        step = 1.25 * pk
         for k, i in enumerate(order):
-            ax.plot(t, R[i] + k * 1.2 * max(1.0, R[order].max()), lw=0.7,
-                    color=C[name], alpha=0.9)
+            ax.plot(t, R[i] + k * step, lw=0.7, color=C[name], alpha=0.9)
         ax.set_xlim(0.3, 1.2)
+        ax.set_ylim(-0.1 * step, (len(order) + 0.4) * step)
         ax.set_xlabel("time (s)")
         ax.set_yticks([])
-        ax.set_title(f"{name}: {len(act)} active motor neurons, "
-                     f"peak {R[act].max():.1f} Hz" if len(act) else name, fontsize=8)
-    fig.suptitle("Motor-neuron output. Real connectome (left) versus degree-matched shuffle (right)",
-                 fontsize=9, y=1.04)
+        # scale bar
+        ax.plot([0.322, 0.322], [0.15 * step, 0.15 * step + scale], lw=1.8,
+                color="#333", solid_capstyle="butt", clip_on=False)
+        ax.text(0.336, 0.15 * step + scale / 2, f"{scale:g} Hz",
+                fontsize=6.5, va="center", color="#333")
+        title = {"baseline": "real connectome, DNg100 driven",
+                 "shuffle": "degree-matched shuffle, same stimulus"}.get(name, name)
+        ax.set_title(f"{title}\n{len(act)} active motor neurons, peak "
+                     f"{R[act].max():.1f} Hz" if len(act) else title, fontsize=8)
+    fig.suptitle("Motor-neuron output, top 12 units. Note the two scale bars differ 50-fold",
+                 fontsize=9, y=1.08)
     fig.savefig(FIGS / "traces.png")
     plt.close(fig)
 
