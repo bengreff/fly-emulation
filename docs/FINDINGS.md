@@ -533,15 +533,15 @@ flexion- and extension-tuned position sensors actually are, gives 0.055 against
 
 Applying the F10 sign correction, so that 57 of the 102 afferents become
 excitatory as published physiology says they should be, also changes nothing.
-Re-running the sweep at drive amplitude 5 with the correction applied, 3 draws
+Re-running the sweep at drive amplitude 5 with the correction applied, 8 draws
 per point:
 
 | Sensory modulation, signs corrected | Rhythmicity | Active motor neurons |
 |---|---|---|
-| tonic | 0.072 | 54.7 |
-| 5 Hz | 0.057 | 46.7 |
-| 10 Hz | 0.083 | 50.3 |
-| 20 Hz | 0.054 | 50.7 |
+| tonic | 0.049 | 53.1 |
+| 5 Hz | 0.086 | 47.4 |
+| 10 Hz | 0.060 | 49.3 |
+| 20 Hz | 0.051 | 50.9 |
 
 So the negative result is not an artefact of the inverted afferent signs either.
 
