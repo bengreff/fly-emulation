@@ -326,3 +326,51 @@ Cell Atlas carries adult single-cell transcriptomes; GluCl expression in VNC
 motor neurons and premotor interneurons would turn a convention into a prior
 with real uncertainty. That is a well-defined piece of work and it was not
 attempted tonight.
+
+## F10. The model gives the fly's main leg proprioceptor the wrong sign (2026-09-14)
+
+Following the drive-target control led to a specific, checkable error.
+
+The EM transmitter classifier is markedly less confident about sensory neurons
+than about the rest of the network:
+
+| Population | Mean confidence | Below 0.8 | Below 0.6 |
+|---|---|---|---|
+| Leg proprioceptors (102) | 0.695 | 71% | 25% |
+| All sensory neurons (285) | 0.674 | 81% | 29% |
+| Non-sensory (4319) | 0.826 | 30% | 11% |
+
+And on those low-confidence calls it labels most leg afferents glutamatergic,
+which this model renders as **inhibitory**:
+
+| Subclass | n | Predicted glutamate | Mean confidence |
+|---|---|---|---|
+| Chordotonal organ | 36 | 69% | 0.691 |
+| Hair plate | 61 | 46% | 0.705 |
+| Campaniform sensilla | 5 | 80% | 0.600 |
+| Mechanosensory bristle | 146 | 68% | 0.658 |
+
+**Published physiology disagrees.** The femoral chordotonal organ, the fly's
+principal leg proprioceptor, is described in the primary literature as roughly
+150 **excitatory cholinergic** sensory neurons, separable into claw, hook and
+club subtypes encoding tibia position, movement direction and vibration. Insect
+mechanosensory afferents are cholinergic as a class.
+
+So the model assigns an inhibitory sign to the majority of the very neurons that
+should be the excitatory sensory drive into the leg motor circuit. It does so on
+classifier calls whose own confidence is below 0.7.
+
+**Consequence.** Every sensory-drive result in this session, and any future work
+that switches these afferents on, runs through signs that are probably inverted
+for most of the population. A `--proprio-cholinergic` override now forces them
+excitatory on the published evidence, recorded as a literature-based correction
+rather than a measurement of these specific cells, and the comparison is running.
+
+A first probe at drive amplitude 12.5 shows the correction does **not** by itself
+restore the rhythm (0.021 corrected against 0.041 uncorrected), so this is not
+the explanation for F7. It is a separate defect, and it is the one a reader can
+act on immediately.
+
+**Note on scope.** This T1 network contains 36 chordotonal-organ neurons; the
+real organ has about 150. The simulated network is a connectivity-filtered subset
+of the leg's sensory apparatus, not the whole of it.
