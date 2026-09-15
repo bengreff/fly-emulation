@@ -34,3 +34,13 @@ Short records of user decisions and major implementation choices. Newest last.
   experiment, which is the more important one. The -0.03 row is a single draw.
 - **Two sweeps at a time on the laptop, not three.** Three concurrent sweeps drove load to
   25 on ten cores and slowed everything proportionally.
+- **Matched fixed-label control for the transmitter experiment dropped.** The resampled
+  24 draws are compared against the existing 16-draw baseline (0.836 +/- 0.119) rather
+  than a fresh 24-draw fixed-label run. The comparison is between a bimodal distribution
+  and a tight one, so the extra draws would not have changed the conclusion, and the
+  capacity went to the corrected-model window sweep, which was producing the more
+  interesting result.
+- **Proprioceptor-sign comparison and E/I balance sweep not run.** Both were queued and
+  released for capacity. The sign question is already answered qualitatively by F10 and
+  F12; the E/I question is largely superseded by the corrected-model sweep, which varies
+  excitability rather than the excitation/inhibition ratio.
