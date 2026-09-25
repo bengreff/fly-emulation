@@ -81,16 +81,37 @@ def build(
     neurons: pd.DataFrame | None = None,
     edges: pd.DataFrame | None = None,
     min_synapses: int = 1,
+    statuses: tuple[str, ...] | None = ("Traced",),
+    keep_typed: bool = True,
 ) -> Connectome:
-    """Assemble the network. Records every non-anatomical quantity it needs."""
+    """Assemble the network. Records every non-anatomical quantity it needs.
+
+    `statuses` filters :Neuron nodes by proofreading status; None keeps all.
+    `keep_typed` also keeps any body with a cell-type label whatever its
+    status. The default is therefore 165,122 `Traced` bodies plus 1,989 typed
+    ones, 1,983 of them R1-R6 photoreceptors with no status set. The 9,311
+    dropped are untyped fragments - median 23 presynapses against 145 for
+    traced neurons - and simulating each as a whole neuron with its own
+    threshold would be wrong (F-COUNT-2).
+    """
     if neurons is None or edges is None:
         neurons, edges = load_tables()
+    n_all = len(neurons)
+    if statuses is not None:
+        keep = neurons.status.isin(statuses)
+        if keep_typed:
+            keep |= neurons.type.notna()
+        neurons = neurons[keep]
 
     # --- inclusion policy, stated rather than assumed ------------------------
     reg.provide(
         "graph:male-cns",
         "inclusion_policy",
-        f"all :Neuron nodes; edges with weight >= {min_synapses}",
+        (f"status in {list(statuses)}"
+         + (" or typed" if keep_typed else "") if statuses is not None
+         else "all :Neuron nodes")
+        + f" ({len(neurons):,} of {n_all:,}); edges with weight >= "
+          f"{min_synapses} between included nodes",
         units="dimensionless",
         model_use="which neurons and connections exist in the model at all",
         status=Status.DERIVED,

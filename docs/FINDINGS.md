@@ -940,3 +940,33 @@ this is the largest single change to what the network is doing.
 M v1's standing falsehood applies here and is worth restating: fly
 photoreceptors are **graded, not spiking**. Making them spike is wrong for the
 optic lobe, which is half the animal's neurons.
+
+---
+
+# Session 4
+
+## F-COUNT-2. 9,311 of the simulated "neurons" were fragments
+
+`male-cns:v1.0` returns 176,422 `:Neuron` nodes. The Cell paper (Berg et al.,
+2026) reports 166,691 neurons. The difference is proofreading status, which the
+loader read but never used:
+
+| status | bodies | median presynapses |
+|---|---|---|
+| Traced | 165,122 | 145 |
+| Orphan / Anchor / Assign / unset | 11,300 | 23 |
+
+Of the 11,300, 9,311 have no cell type at all; they are unattached fragments,
+and each was being simulated as a whole neuron with its own soma threshold and
+noise. The other 1,989 are typed, and 1,983 of those are R1-R6 photoreceptors
+with no status set, so a status-only filter would silently have cut the
+retina's R1-R6 from 3,377 to 1,394.
+
+**Policy now:** `Traced` or typed. **167,111 neurons, 25,578,757 edges,
+124,162,592 synapses** (0.7% of synapses dropped). The 420-neuron gap to the
+published count remains unexplained and is recorded, not closed.
+`test_fragments_are_not_simulated_as_neurons` pins both halves: untyped
+non-traced bodies out, every R1-R6 in.
+
+Earlier counts in this file (176,422; 25,862,574 edges; the F-COUNT-1 instance
+counts) were under the old all-nodes policy and are left as recorded.

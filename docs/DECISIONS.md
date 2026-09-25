@@ -416,3 +416,9 @@ adducts. The resolver picks the axis with the largest component, which means the
 sternal adductor and the pleural promotor currently share an axis and a sign.
 The better treatment is to project each muscle's action across all three axes by
 least squares, giving genuinely multi-axis muscles. Not done.
+
+## Session 4 (24 September 2026)
+
+- **Inclusion policy: `Traced` or typed** (F-COUNT-2). `connectome.build(statuses=None)` restores all nodes for comparison.
+- **Promote "predict a published result" ahead of per-type biophysics.** Per-type values exist for few of the 11,751 types; differentiating the rest would multiply guesses without adding anatomy. The discriminating test for F-GAIN-1 is whether noise-free, sensory-driven activity follows identified pathways, scored against published interventions (Shiu et al. 2024; flybench task set). See `docs/PLAN_NEXT.md`.
+- **Community reproductions are evidence, not ground truth.** Several unreviewed GitHub projects run Shiu-style LIF on MaleCNS in closed loop with flybody. Use their reported numbers only as cross-checks we re-derive.

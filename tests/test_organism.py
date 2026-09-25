@@ -91,6 +91,26 @@ def test_one_shared_guess_is_one_row_not_millions():
     assert measured.empty, "an assumed default was recorded as measured"
 
 
+@needs_graph
+def test_fragments_are_not_simulated_as_neurons():
+    """An untyped orphan fragment is not a cell and must not get a threshold.
+
+    The neuPrint :Neuron label includes ~9,300 untyped, unproofread fragments.
+    Each would otherwise become a whole LIF neuron. Typed photoreceptors with
+    no status set are real identified cells and must stay (F-COUNT-2).
+    """
+    from flyemu import connectome
+    from flyemu.registry import Policy, Registry
+
+    n, _ = connectome.load_tables()
+    conn = connectome.build(Registry(Policy.MINIMAL))
+    kept = n.bodyId.isin(conn.neurons.bodyId)
+    assert not (kept & (n.status != "Traced") & n.type.isna()).any()
+    r16 = n.type == "R1-R6"
+    assert kept[r16].all(), "identified photoreceptors were dropped"
+    assert (n.status == "Traced").sum() <= conn.n < len(n)
+
+
 def test_an_overridden_value_is_never_measured():
     """Sweeping a parameter must not promote it to evidence."""
     from flyemu.registry import Policy, Registry, Status
