@@ -477,3 +477,14 @@ Not yet acted on: the rhythmicity metric needs ISI-shuffled surrogates and antag
 - Scale: the same return-to-rest rule (stop at the first failure), on m1.
 - Scored on a fixed set declared now: our 11 assays (all seen, reported as such), plus flybench tasks 07-31 as run for m1 in F-FB-1 (also seen for m1). There is no fresh held-out set left for this family, so this comparison is **exploratory**, not confirmatory.
 - Considered an improvement if, at its calibrated scale, it passes water→MN9 or JO-F→aDN (both failing everywhere so far) without losing sugar→MN9, JO-C/E→aDN or LPLC2→GF, and does not fall below m1's flybench pass count.
+
+**Result:** STD rejected (F-STD-1).
+
+### Calibration rule v2 (session 4)
+
+Return to rest after sugar alone did not guarantee stability for other inputs (F-TYPE-1). v2 requires return to rest after each of: sugar GRNs, and 4 random populations of 40 sensory neurons drawn (fixed seed) from sensory types used in **no** assay (JO, LB, LPLC2 and GRN types excluded). It stays non-behavioural, and no assay stimulus is used except sugar. Chosen scale: the last passing one before the first failure.
+
+### Pre-registration: conductance-based synapses (session 4, before scoring)
+
+- tau_m dV/dt = -(V - V_rest) - g_e (V - E_e) - g_i (V - E_i). g_e and g_i are dimensionless (relative to leak) and decay with tau_s. An excitatory synapse adds eff/(E_e - V_rest), an inhibitory one |eff|/(V_rest - E_i), so a single PSP at rest matches the current-based model. E_e = 0 mV, E_i = -70 mV (chloride-type GABA_A/GluCl; assumed, not per type). Everything else as m1.
+- Compared with m1, both under calibration rule v2, on the 11-assay battery with 2 type shuffles and 1 global shuffle. All assays are seen, so this is **exploratory**. An improvement means more assays passing (criteria as in F-SENS-1/F-GAIN-2) with none lost.

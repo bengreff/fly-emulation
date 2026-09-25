@@ -47,6 +47,9 @@ class LIFParams:
     reset_syn: bool = False  # zero the synaptic current on a spike (Shiu 2024)
     adapt_mv: float = 0.0    # adaptation increment per spike, mV
     std_u: float = 0.0       # short-term depression: fraction of resource per spike
+    cond: bool = False       # conductance-based synapses
+    e_exc: float = 0.0       # mV
+    e_inh: float = -70.0     # mV
     std_tau_rec: float = 500.0  # ms, recovery of the resource
     tau_adapt: float = 200.0  # adaptation decay, ms
 
@@ -127,13 +130,20 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                 0.0, "declared default: no short-term depression")
     std_tau = one("std_tau_rec", "ms", "short-term depression",
                   500.0, "declared default recovery; inert while U is zero")
+    cond = one("conductance_based", "boolean", "synapse model",
+               0.0, "declared default: current-based synapses (M v1)")
+    e_exc = one("e_exc", "mV", "excitatory reversal (conductance mode)",
+                0.0, "declared default cation reversal")
+    e_inh = one("e_inh", "mV", "inhibitory reversal (conductance mode)",
+                -70.0, "declared default chloride reversal")
     return LIFParams(
         tau_m=full(tau_m), v_rest=full(v_rest), v_th=full(v_th),
         v_reset=full(v_reset), t_ref=full(t_ref), tau_s=tau_s,
         delay_steps=max(1, int(round(delay_ms / timestep_ms))), noise_mv=noise,
         reset_syn=bool(reset_syn), adapt_mv=float(adapt),
         tau_adapt=float(tau_adapt), std_u=float(std_u),
-        std_tau_rec=float(std_tau),
+        std_tau_rec=float(std_tau), cond=bool(cond), e_exc=float(e_exc),
+        e_inh=float(e_inh),
     )
 
 
@@ -165,6 +175,15 @@ class Network:
                   * self.conn.weight_syn).astype(np.float32)
         # Delay line: contributions landing on future steps.
         self.delay = np.zeros((p.delay_steps, n), dtype=np.float32)
+        if p.cond:
+            # Same PSP at rest: excitatory w -> w/(E_e - V_rest) of leak
+            # conductance, inhibitory |w| -> |w|/(V_rest - E_i).
+            vr = float(p.v_rest[0])
+            pos = self.w > 0
+            self.w = np.where(pos, self.w / (p.e_exc - vr),
+                              self.w / (vr - p.e_inh)).astype(np.float32)
+            self.delay_i = np.zeros((p.delay_steps, n), dtype=np.float32)
+            self.g_i = np.zeros(n, dtype=np.float32)
         self.delay_head = 0
         self.decay_v = float(np.exp(-self.timestep_ms / p.tau_m[0]))
         self.decay_s = float(np.exp(-self.timestep_ms / p.tau_s))
@@ -198,6 +217,10 @@ class Network:
         arriving = self.delay[self.delay_head]
         self.i_syn = self.i_syn * self.decay_s + arriving
         arriving.fill(0.0)
+        if p.cond:
+            arr_i = self.delay_i[self.delay_head]
+            self.g_i = self.g_i * self.decay_s + arr_i
+            arr_i.fill(0.0)
 
         drive = self.i_syn
         if external_mv is not None:
@@ -206,11 +229,20 @@ class Network:
             self.adapt *= self.decay_a
             drive = drive - self.adapt
 
-        # Exponential Euler on the deterministic part: `drive` is the
-        # steady-state depolarisation it would hold the neuron at, in mV.
-        self.v = p.v_rest + (self.v - p.v_rest) * self.decay_v + drive * (
-            1.0 - self.decay_v
-        )
+        if p.cond:
+            # i_syn holds g_e (>= 0 in this mode, as inhibition goes to g_i);
+            # external drive and adaptation stay current-like offsets.
+            g_e = self.i_syn
+            G = 1.0 + g_e + self.g_i
+            extra = drive - self.i_syn
+            v_inf = (p.v_rest + extra + g_e * p.e_exc + self.g_i * p.e_inh) / G
+            self.v = v_inf + (self.v - v_inf) * np.exp(-self.timestep_ms * G / p.tau_m)
+        else:
+            # Exponential Euler on the deterministic part: `drive` is the
+            # steady-state depolarisation it would hold the neuron at, in mV.
+            self.v = p.v_rest + (self.v - p.v_rest) * self.decay_v + drive * (
+                1.0 - self.decay_v
+            )
         # Noise enters as an increment on the membrane, not as a steady-state
         # offset, so its amplitude is mV per sqrt(ms) and the leak filters it.
         # Stationary std is then noise_mv * sqrt(tau_m / 2).
@@ -237,6 +269,8 @@ class Network:
             self.v[spiked] = p.v_reset[spiked]
             if p.reset_syn:
                 self.i_syn[spiked] = 0.0
+                if p.cond:
+                    self.g_i[spiked] = 0.0
             if p.adapt_mv:
                 self.adapt[spiked] += p.adapt_mv
             self.ref_until[spiked] = self.t_ms + p.t_ref[spiked]
@@ -269,7 +303,12 @@ class Network:
         if self.params.std_u:
             w = w * np.repeat(self.x_res[spiked], counts)
             self.x_res[spiked] *= (1.0 - self.params.std_u)
-        np.add.at(self.delay[target_slot], indices[sel], w)
+        if self.params.cond:
+            ex = w > 0
+            np.add.at(self.delay[target_slot], indices[sel][ex], w[ex])
+            np.add.at(self.delay_i[target_slot], indices[sel][~ex], -w[~ex])
+        else:
+            np.add.at(self.delay[target_slot], indices[sel], w)
 
     # --- readout -------------------------------------------------------------
 

@@ -34,6 +34,9 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, default=2)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--generic", type=int, default=0,
+                    help="rule v2: also require return to rest after this many "
+                         "random 40-cell sensory populations outside every assay")
     ap.add_argument("--graph", default="real", choices=["real", "shuffled", "typeshuf"],
                     help="calibrate a control graph by the same rule")
     args = ap.parse_args()
@@ -56,12 +59,24 @@ def main() -> None:
     params = lif.default_params(reg, conn, timestep_ms=0.1)
     nrn = conn.neurons
     stim = select(nrn, ["LB3b", "LB3c"])
+    stims = [("sugar", stim)]
+    if args.generic:
+        t = nrn.type.fillna("")
+        pool = np.flatnonzero((nrn.superclass.fillna("").str.contains("sensory")
+                               & ~t.str.match(r"^(JO-|LB|LPLC2|Lg|PhG|WG|claw_|dorsal_tp)")
+                               & (t != "")).to_numpy())
+        grng = np.random.default_rng(12345)
+        for k in range(args.generic):
+            stims.append((f"generic{k}", grng.choice(pool, 40, replace=False)))
     mn9 = select(nrn, ["MN9"])
     base_w = None
     rows = []
     for scale in [float(s) for s in args.scales.split(",")]:
-        for rate in [float(r) for r in args.rates.split(",")]:
-            for seed in range(args.seeds):
+        for (sname, stim), rate, seed in [
+                (st, float(r), sd) for st in stims
+                for r in args.rates.split(",") for sd in range(args.seeds)
+                if st[0] == "sugar" or float(r) == max(map(float, args.rates.split(",")))]:
+            if True:
                 net = lif.Network(conn, params, 0.1, rng=np.random.default_rng(seed))
                 if base_w is None:
                     base_w = net.w.copy()
@@ -76,7 +91,7 @@ def main() -> None:
                         on[spk] += 1
                     elif s >= 6000:
                         late[spk] += 1
-                row = dict(scale=scale, stim_hz=rate, seed=seed,
+                row = dict(scale=scale, stim=sname, stim_hz=rate, seed=seed,
                            mn9_hz=float(on[mn9].mean() / 0.4),
                            active_on=int((on > 0).sum()),
                            active_600_800=int((late > 0).sum()),
@@ -93,7 +108,7 @@ def main() -> None:
         if not passed:
             break
         chosen = float(sc)
-    print(df.groupby(["scale", "stim_hz"]).mean(numeric_only=True).round(2).to_string())
+    print(df.groupby(["scale", "stim", "stim_hz"]).mean(numeric_only=True).round(2).to_string())
     print("scale meeting return-to-rest:", chosen)
     rec.result("chosen_scale", chosen)
     base_mv = float(conn.psp_mv)

@@ -544,3 +544,25 @@ def test_depression_weakens_repeated_spikes_and_recovers():
     assert second < 0.7 * first
     for _ in range(30000): net.step()
     assert net.x_res[0] > 0.99
+
+
+def test_conductance_mode_matches_a_single_psp_at_rest():
+    """Near rest, one EPSP and one IPSP match the current-based model."""
+    from flyemu.connectome import Connectome
+    from flyemu.lif import LIFParams, Network
+    import pandas as pd
+    for sgn in (1.0, -1.0):
+        c = Connectome(pd.DataFrame({"bodyId": [0, 1]}), np.array([0, 1, 1]),
+                       np.array([1], np.int32), np.array([1.0], np.float32),
+                       np.array([sgn, 1.0], np.float32), np.array([0.5], np.float32))
+        full = lambda v: np.full(2, v, np.float32)
+        peaks = []
+        for cond in (False, True):
+            p = LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0), full(2.2),
+                          5.0, 1, 0.0, True, cond=cond)
+            net = Network(c, p, 0.1)
+            net.step(kick=(np.array([0]), 100.0))
+            vs = [net.step() is not None and float(net.v[1]) for _ in range(400)]
+            peaks.append(max(vs) if sgn > 0 else min(vs))
+        dev = [x + 52.0 for x in peaks]
+        assert abs(dev[0]) > 0.05 and abs(dev[1] - dev[0]) < 0.05 * abs(dev[0])
