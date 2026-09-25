@@ -42,6 +42,20 @@ class Status(str, Enum):
     INAPPLICABLE = "inapplicable"  # required by M but meaningless for this entity
 
 
+# The project's top-level evidence label (user requirement, 2026-09-25): every
+# value is explicitly measured, derived or inferred. `status` keeps the finer
+# distinction inside "inferred" (fitted to data vs assumed/borrowed).
+BASIS = {
+    Status.MEASURED: "measured",
+    Status.DERIVED: "derived",
+    Status.FITTED: "inferred",
+    Status.ASSUMED: "inferred",
+    Status.UNRESOLVED: "unknown",
+    Status.CONFLICTING: "unknown",
+    Status.INAPPLICABLE: "inapplicable",
+}
+
+
 class Policy(str, Enum):
     STRICT = "strict"
     MINIMAL = "minimal"
@@ -81,6 +95,10 @@ class Requirement:
     def key(self) -> str:
         return f"{self.entity}|{self.property}"
 
+    @property
+    def basis(self) -> str:
+        return BASIS[self.status]
+
     def to_row(self) -> dict[str, Any]:
         return {
             "subsystem": self.subsystem,
@@ -88,6 +106,7 @@ class Requirement:
             "property": self.property,
             "units": self.units,
             "model_use": self.model_use,
+            "basis": self.basis,
             "status": self.status.value,
             "value": _scalar_repr(self.value),
             "instances": self.instances,

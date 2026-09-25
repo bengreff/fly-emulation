@@ -566,3 +566,18 @@ def test_conductance_mode_matches_a_single_psp_at_rest():
             peaks.append(max(vs) if sgn > 0 else min(vs))
         dev = [x + 52.0 for x in peaks]
         assert abs(dev[0]) > 0.05 and abs(dev[1] - dev[0]) < 0.05 * abs(dev[0])
+
+
+def test_every_value_is_labelled_measured_derived_or_inferred():
+    """Project rule: each quantity says whether it was measured, derived or inferred."""
+    from flyemu.registry import Policy, Registry, Status
+    reg = Registry(Policy.MINIMAL)
+    reg.provide("a", "x", 1.0, units="mV", model_use="t", status=Status.MEASURED)
+    reg.provide("b", "x", 1.0, units="mV", model_use="t", status=Status.DERIVED)
+    reg.require("c", "x", units="mV", model_use="t", minimal=1.0)          # assumed
+    reg.provide("d", "x", 1.0, units="mV", model_use="t", status=Status.FITTED)
+    reg.overrides["e|x"] = 2.0
+    reg.require("e", "x", units="mV", model_use="t", minimal=1.0)          # override
+    inv = reg.inventory().set_index("entity")
+    assert inv.basis.to_dict() == {"a": "measured", "b": "derived", "c": "inferred",
+                                   "d": "inferred", "e": "inferred"}

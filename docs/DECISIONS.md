@@ -516,3 +516,8 @@ Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), no
 - Adopt m2 if rule v2 is satisfiable at a scale where sugar→MN9_L > 5 Hz, and mean graded score on 08/17/18/26/27 does not fall below m1's.
 
 **Result:** m2 meets both criteria. Rule v2 is satisfied at 0.165 mV, with sugar→MN9_L 7.5/93.5 Hz. Mean graded score on flybench 08/17/18/26/27 is 0.80 vs m1's 0.54, with two new passes. **m2 adopted** (F-AL-1). Input-count normalisation rejected (F-NORM-1). GF electrical synapses kept as an option (F-GAP-1).
+
+## Session 5 (25 September 2026)
+
+- **Evidence labelling rule (user requirement):** every quantity, in code, inventory and reports, is labelled **measured**, **derived** or **inferred** (plus **unknown** when no value exists). The registry's `basis` column implements it. Measured means observed directly. Derived means computed from measurements by a stated transformation. Inferred covers fitted values, assumed guesses, borrowed precedents and priors; `status` keeps that finer distinction. Reports label numbers the same way.
+- **Strategy (agreed):** constrained ensemble fitting at cell-type grain with hierarchical priors, against a frozen, split library of measurements; the type-preserving null is a standard control. See PLAN_NEXT.
