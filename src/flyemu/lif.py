@@ -44,6 +44,7 @@ class LIFParams:
     tau_s: float            # ms, synaptic decay
     delay_steps: int        # conduction delay in timesteps
     noise_mv: float         # mV per sqrt(ms), background drive
+    reset_syn: bool = False  # zero the synaptic current on a spike (Shiu 2024)
 
 
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
@@ -80,6 +81,9 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     noise = one("background_noise", "mV/sqrt(ms)", "stochastic membrane drive",
                 1.5, "declared default background noise amplitude, standing in "
                      "for all unmodelled input to the CNS")
+    reset_syn = one("syn_reset_on_spike", "boolean", "LIF reset",
+                    0.0, "declared default: a spike resets the membrane only, "
+                         "leaving synaptic current to decay")
 
     reg.require(
         "state:all_neurons", "initial_condition",
@@ -114,6 +118,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         tau_m=full(tau_m), v_rest=full(v_rest), v_th=full(v_th),
         v_reset=full(v_reset), t_ref=full(t_ref), tau_s=tau_s,
         delay_steps=max(1, int(round(delay_ms / timestep_ms))), noise_mv=noise,
+        reset_syn=bool(reset_syn),
     )
 
 
@@ -152,8 +157,21 @@ class Network:
 
     # --- one timestep --------------------------------------------------------
 
-    def step(self, external_mv: np.ndarray | None = None) -> np.ndarray:
-        """Advance by one timestep. Returns the indices of neurons that spiked."""
+    def silence(self, idx: np.ndarray) -> None:
+        """Remove all output of these neurons, as Shiu 2024 silences cells."""
+        for i in np.asarray(idx):
+            self.w[self.conn.indptr[i]:self.conn.indptr[i + 1]] = 0.0
+
+    def step(
+        self,
+        external_mv: np.ndarray | None = None,
+        kick: tuple[np.ndarray, float] | None = None,
+    ) -> np.ndarray:
+        """Advance by one timestep. Returns the indices of neurons that spiked.
+
+        `kick` is (indices, mV): an instantaneous membrane increment, which is
+        how Shiu 2024 delivers Poisson input to stimulated neurons.
+        """
         p = self.params
         n = self.conn.n
 
@@ -178,12 +196,17 @@ class Network:
                 0.0, p.noise_mv * np.sqrt(self.timestep_ms), n
             ).astype(np.float32)
 
+        if kick is not None and len(kick[0]):
+            self.v[kick[0]] += kick[1]
+
         free = self.t_ms >= self.ref_until
         self.v = np.where(free, self.v, p.v_reset)
         spiked = np.flatnonzero(free & (self.v >= p.v_th))
 
         if spiked.size:
             self.v[spiked] = p.v_reset[spiked]
+            if p.reset_syn:
+                self.i_syn[spiked] = 0.0
             self.ref_until[spiked] = self.t_ms + p.t_ref[spiked]
             self._propagate(spiked)
             self.spike_count += spiked.size

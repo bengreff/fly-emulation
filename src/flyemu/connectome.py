@@ -222,3 +222,19 @@ def build(
         neurons=neurons, indptr=indptr, indices=post.astype(np.int32),
         weight_syn=w, sign=sign, efficacy_mv=efficacy,
     )
+
+
+def shuffled(conn: Connectome, rng: np.random.Generator) -> Connectome:
+    """Degree-preserving rewiring control.
+
+    Permutes the postsynaptic end of every edge across the whole graph. Each
+    neuron keeps its out-degree, its outgoing synapse counts and its sign; each
+    keeps its in-degree. Only who-connects-to-whom is destroyed, which is the
+    part of the anatomy a pathway result should depend on.
+    """
+    return Connectome(
+        neurons=conn.neurons, indptr=conn.indptr,
+        indices=rng.permutation(conn.indices),
+        weight_syn=conn.weight_syn, sign=conn.sign,
+        efficacy_mv=conn.efficacy_mv,
+    )

@@ -134,6 +134,9 @@ class Registry:
         # "entity|property". Recorded as assumed with the override noted, so a
         # swept value can never read back as a measurement.
         self.overrides: dict[str, float] = {}
+        # Optional provenance for an override, e.g. the paper a borrowed
+        # fitted value came from. Still recorded as assumed.
+        self.override_notes: dict[str, str] = {}
         self._reqs: OrderedDict[str, Requirement] = OrderedDict()
         self._refusals: list[Requirement] = []
 
@@ -196,7 +199,8 @@ class Registry:
                 entity=entity, property=property, units=units,
                 model_use=model_use, status=Status.ASSUMED,
                 value=self.overrides[key],
-                evidence="explicit override supplied for this run",
+                evidence=self.override_notes.get(
+                    key, "explicit override supplied for this run"),
                 subsystem=subsystem, instances=instances,
                 uncertainty=uncertainty, shared_with=shared_with,
             )

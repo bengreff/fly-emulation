@@ -1,0 +1,87 @@
+"""Calibrate the one global synaptic scale by a physiological criterion.
+
+Criterion, declared before any pathway assay is scored: after a 400 ms sugar
+GRN stimulus ends, activity must return to rest within 200 ms, as it does in
+the animal. The chosen scale is the largest tested value that meets it. Only
+sugar GRNs are used; every other assay stays held out.
+
+    uv run python scripts/calibrate_gain.py
+"""
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import numpy as np
+import pandas as pd
+
+from assay_pathways import select
+from flyemu import connectome, lif, profiles
+from flyemu.provenance import RunRecord
+from flyemu.registry import Policy, Registry
+
+REPO = Path(__file__).resolve().parents[1]
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--scales", default="0.3,0.4,0.5,0.6,0.7,0.8,1.0")
+    ap.add_argument("--rates", default="50,150")
+    ap.add_argument("--seeds", type=int, default=2)
+    args = ap.parse_args()
+    out = REPO / "runs" / "calibrate-gain-shiu2024"
+    out.mkdir(parents=True, exist_ok=True)
+    rec = RunRecord(out.name, out, description="global synaptic scale by "
+                    "return-to-rest after sugar GRN stimulation")
+    rec.add_config(vars(args))
+
+    reg = Registry(Policy.MINIMAL)
+    prof = profiles.apply(reg, "shiu2024")
+    conn = connectome.build(reg, min_synapses=5)
+    params = lif.default_params(reg, conn, timestep_ms=0.1)
+    nrn = conn.neurons
+    stim = select(nrn, ["LB3b", "LB3c"])
+    mn9 = select(nrn, ["MN9"])
+    base_w = None
+    rows = []
+    for scale in [float(s) for s in args.scales.split(",")]:
+        for rate in [float(r) for r in args.rates.split(",")]:
+            for seed in range(args.seeds):
+                net = lif.Network(conn, params, 0.1, rng=np.random.default_rng(seed))
+                if base_w is None:
+                    base_w = net.w.copy()
+                net.w = base_w * scale
+                rng = np.random.default_rng(seed + 10_000)
+                on = np.zeros(conn.n); late = np.zeros(conn.n)
+                for s in range(8000):          # 0-400 on, 400-600 grace, 600-800 test
+                    k = (stim[rng.random(len(stim)) < rate * 1e-4],
+                         prof["kick_mv"]) if s < 4000 else None
+                    spk = net.step(kick=k)
+                    if s < 4000:
+                        on[spk] += 1
+                    elif s >= 6000:
+                        late[spk] += 1
+                row = dict(scale=scale, stim_hz=rate, seed=seed,
+                           mn9_hz=float(on[mn9].mean() / 0.4),
+                           active_on=int((on > 0).sum()),
+                           active_600_800=int((late > 0).sum()),
+                           mean_hz_on=float(on.mean() / 0.4))
+                rows.append(row)
+                print(row, flush=True)
+    df = pd.DataFrame(rows)
+    df.to_csv(out / "calibration.csv", index=False)
+    ok = df.groupby("scale").active_600_800.max() == 0
+    chosen = float(ok[ok].index.max()) if ok.any() else None
+    print(df.groupby(["scale", "stim_hz"]).mean(numeric_only=True).round(2).to_string())
+    print("scale meeting return-to-rest:", chosen)
+    rec.result("chosen_scale", chosen)
+    rec.result("chosen_efficacy_mv", None if chosen is None else 0.275 * chosen)
+    rec.finish()
+
+
+if __name__ == "__main__":
+    main()

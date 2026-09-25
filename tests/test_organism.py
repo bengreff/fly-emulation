@@ -398,3 +398,39 @@ def test_vision_does_not_pretend_to_have_retinotopy():
         assert np.allclose(drive[left_yellow], drive[left_yellow][0]), (
             "photoreceptors differ without a retinotopic map to justify it"
         )
+
+
+def test_a_borrowed_profile_is_assumed_and_cites_its_source():
+    """A value fitted in another paper to another specimen is not measured."""
+    from flyemu import profiles
+    from flyemu.registry import Policy, Registry, Status
+
+    reg = Registry(Policy.MINIMAL)
+    profiles.apply(reg, "shiu2024")
+    v = reg.require("cell_type:all", "v_rest", units="mV", model_use="x",
+                    instances=10, minimal=-60.0)
+    assert v == -52.0
+    row = reg.inventory().iloc[0]
+    assert row.status == Status.ASSUMED.value
+    assert "Shiu" in row.evidence
+
+
+def test_shuffled_control_preserves_degrees_and_destroys_wiring():
+    """The control must differ from the real graph only in who targets whom."""
+    from flyemu.connectome import Connectome, shuffled
+    import pandas as pd
+
+    rng = np.random.default_rng(0)
+    n, e = 200, 4000
+    pre = np.sort(rng.integers(0, n, e))
+    post = rng.integers(0, n, e).astype(np.int32)
+    indptr = np.zeros(n + 1, dtype=np.int64)
+    np.cumsum(np.bincount(pre, minlength=n), out=indptr[1:])
+    w = rng.integers(1, 20, e).astype(np.float32)
+    c = Connectome(pd.DataFrame({"bodyId": np.arange(n)}), indptr, post, w,
+                   np.ones(n, np.float32), np.full(e, 0.1, np.float32))
+    s = shuffled(c, np.random.default_rng(1))
+    assert np.array_equal(np.bincount(s.indices, minlength=n),
+                          np.bincount(c.indices, minlength=n))
+    assert np.array_equal(s.indptr, c.indptr)
+    assert (s.indices != c.indices).mean() > 0.9
