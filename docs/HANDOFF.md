@@ -6,6 +6,10 @@ Written at the end of session 3, 16 September 2026. **Updated in session 4
 off before differentiating biophysics. Session 4 also committed session 3's
 work, excluded 9,311 untyped fragments from the graph (F-COUNT-2: 167,111
 neurons now), and mapped the non-leg motor neurons (`docs/MOTOR_TARGETS.md`).
+Then it ran the pathway battery: F-GAIN-2 (the anatomy is load-bearing but
+ignites), F-SFA-1 (uniform adaptation fails), F-SENS-1 (profile `m1`, fresh
+held-out 2/5). The current open list is at the top of PLAN_NEXT session 5.
+backhouse became reachable again on 24 Sept, but nothing is deployed there yet.
 
 ## What this project is
 

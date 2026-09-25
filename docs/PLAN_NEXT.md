@@ -71,6 +71,13 @@ published outcomes, and a new F-GAIN-2 finding.
 
 ## Session 5: the neuron model, changed only where an assay fails
 
+**Progress 24 Sept (F-SFA-1, F-SENS-1):** uniform adaptation failed its pre-registration. Dropping input onto sensory terminals was adopted (profile `m1`). Fresh held-out score 2/5. Open, ranked:
+1. **JO-C/E → MDN fires at 59 Hz and should not.** Trace the pIP1 route. Test whether a per-connection efficacy that is not uniform (e.g. normalising by postsynaptic input total, which is a size/input-resistance proxy as in Pugliese) fixes it without breaking the two passes. Pre-register first.
+2. **Central ignition above 0.6x.** Its hub is lLN1_bc (sign uncertain) and it survives adaptation. Candidates: graded APL, or input normalisation (as in 1).
+3. **Gap junctions** for GF→TTMn/PSI, the one failure with a known mechanism.
+4. **Water → MN9 = 0** across every configuration. Check LB3a reconstruction completeness (the male-CNS taste paper flags LB3a/LB3b tracing problems) before blaming the model.
+5. **No DNg100 rhythm.**
+
 Rank candidates by the failures seen in session 4. Current priors:
 
 - **Spike-frequency adaptation** (flybench evidence; biologically ubiquitous).

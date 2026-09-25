@@ -43,6 +43,19 @@ PROFILES: dict[str, dict] = {
     },
 }
 
+PROFILES["m1"] = {
+    "values": {
+        **PROFILES["shiu2024"]["values"],
+        # fitted here, by return-to-rest on sugar GRNs only (F-GAIN-2)
+        "connection_class:all|efficacy_per_synapse": 0.165,
+        # structural: no spikes from input onto sensory terminals (F-SENS-1)
+        "connection_class:onto_sensory_terminals|included": 0.0,
+    },
+    "note": SHIU + "; efficacy refitted to 0.165 mV by return-to-rest "
+            "(F-GAIN-2); synapses onto sensory terminals dropped (F-SENS-1)",
+    "kick_mv": PROFILES["shiu2024"]["kick_mv"],
+}
+
 
 def apply(reg: Registry, name: str) -> dict:
     prof = PROFILES[name]

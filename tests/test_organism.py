@@ -434,3 +434,29 @@ def test_shuffled_control_preserves_degrees_and_destroys_wiring():
                           np.bincount(c.indices, minlength=n))
     assert np.array_equal(s.indptr, c.indptr)
     assert (s.indices != c.indices).mean() > 0.9
+
+
+def test_adaptation_slows_a_constantly_driven_neuron():
+    """With adaptation on, late firing under constant drive is slower than early."""
+    from flyemu.connectome import Connectome
+    from flyemu.lif import LIFParams, Network
+    import pandas as pd
+
+    n = 1
+    c = Connectome(pd.DataFrame({"bodyId": [0]}), np.zeros(2, np.int64),
+                   np.zeros(0, np.int32), np.zeros(0, np.float32),
+                   np.ones(1, np.float32), np.zeros(0, np.float32))
+    full = lambda v: np.full(n, v, np.float32)
+    counts = {}
+    for a in (0.0, 2.0):
+        p = LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0),
+                      full(2.2), 5.0, 18, 0.0, True, a, 200.0)
+        net = Network(c, p, 0.1)
+        early = late = 0
+        for s in range(10000):
+            k = net.step(external_mv=np.array([12.0], np.float32)).size
+            early += k if s < 1000 else 0
+            late += k if s >= 9000 else 0
+        counts[a] = (early, late)
+    assert counts[0.0][0] == counts[0.0][1] > 0
+    assert counts[2.0][1] < counts[2.0][0]

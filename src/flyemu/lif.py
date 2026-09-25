@@ -45,6 +45,8 @@ class LIFParams:
     delay_steps: int        # conduction delay in timesteps
     noise_mv: float         # mV per sqrt(ms), background drive
     reset_syn: bool = False  # zero the synaptic current on a spike (Shiu 2024)
+    adapt_mv: float = 0.0    # adaptation increment per spike, mV
+    tau_adapt: float = 200.0  # adaptation decay, ms
 
 
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
@@ -114,11 +116,17 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     )
 
     full = lambda v: np.full(n, v, dtype=np.float32)
+    adapt = one("adaptation_increment", "mV", "spike-frequency adaptation",
+                0.0, "declared default: no adaptation (M v1 omission)")
+    tau_adapt = one("adaptation_tau", "ms", "spike-frequency adaptation",
+                    200.0, "declared default adaptation decay; inert while "
+                           "the increment is zero")
     return LIFParams(
         tau_m=full(tau_m), v_rest=full(v_rest), v_th=full(v_th),
         v_reset=full(v_reset), t_ref=full(t_ref), tau_s=tau_s,
         delay_steps=max(1, int(round(delay_ms / timestep_ms))), noise_mv=noise,
-        reset_syn=bool(reset_syn),
+        reset_syn=bool(reset_syn), adapt_mv=float(adapt),
+        tau_adapt=float(tau_adapt),
     )
 
 
@@ -154,6 +162,8 @@ class Network:
         self.decay_v = float(np.exp(-self.timestep_ms / p.tau_m[0]))
         self.decay_s = float(np.exp(-self.timestep_ms / p.tau_s))
         self.spike_count = 0
+        self.adapt = np.zeros(n, dtype=np.float32)
+        self.decay_a = float(np.exp(-self.timestep_ms / p.tau_adapt))
 
     # --- one timestep --------------------------------------------------------
 
@@ -182,6 +192,9 @@ class Network:
         drive = self.i_syn
         if external_mv is not None:
             drive = drive + external_mv
+        if p.adapt_mv:
+            self.adapt *= self.decay_a
+            drive = drive - self.adapt
 
         # Exponential Euler on the deterministic part: `drive` is the
         # steady-state depolarisation it would hold the neuron at, in mV.
@@ -207,6 +220,8 @@ class Network:
             self.v[spiked] = p.v_reset[spiked]
             if p.reset_syn:
                 self.i_syn[spiked] = 0.0
+            if p.adapt_mv:
+                self.adapt[spiked] += p.adapt_mv
             self.ref_until[spiked] = self.t_ms + p.t_ref[spiked]
             self._propagate(spiked)
             self.spike_count += spiked.size

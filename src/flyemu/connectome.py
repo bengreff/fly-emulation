@@ -218,6 +218,24 @@ def build(
     )
     efficacy = np.full(len(w), psp, dtype=np.float32)
 
+    # --- synapses onto sensory axon terminals --------------------------------
+    sensory = neurons.superclass.fillna("").str.contains("sensory").to_numpy()
+    onto = sensory[post]
+    keep_onto = reg.require(
+        "connection_class:onto_sensory_terminals", "included",
+        units="boolean",
+        model_use="whether central synapses onto sensory neurons drive them",
+        subsystem="synaptic_efficacy", instances=int(onto.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="declared default: treated like any other synapse",
+        uncertainty="sensory spikes start in the periphery; input onto "
+                    "their central terminals is presynaptic modulation, "
+                    "which a single compartment cannot represent. 0 drops "
+                    "these edges' effect (F-SENS-1)",
+    )
+    if not keep_onto:
+        efficacy[onto] = 0.0
+
     return Connectome(
         neurons=neurons, indptr=indptr, indices=post.astype(np.int32),
         weight_syn=w, sign=sign, efficacy_mv=efficacy,

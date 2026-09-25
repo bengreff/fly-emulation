@@ -62,6 +62,32 @@ ASSAYS = {
                  "(Pugliese et al. 2025, bioRxiv 10.1101/2025.09.12.675944); "
                  "walking step frequency ~7-15 Hz",
     ),
+    # Fresh held-out assays, pre-registered in DECISIONS.md (F-SENS-1).
+    "joce_adn": dict(
+        stim=["^JO-(C|E)"], readout=["DNg62", "DNge078"],
+        evidence="JO-C/E activation elicits antennal grooming via aBN1 -> "
+                 "aDN1/aDN2 (Hampel 2015, 2020); expect > 5 Hz",
+    ),
+    "jof_adn": dict(
+        stim=["^JO-F"], readout=["DNg62", "DNge078"],
+        evidence="JO-F activation also elicits antennal grooming (Hampel "
+                 "2020); expect > 5 Hz",
+    ),
+    "jof_mdn": dict(
+        stim=["^JO-F"], readout=["MDN"],
+        evidence="JO-F activation elicits backward walking, attributed to MDN "
+                 "(Hampel 2020; Bidaye 2014); inferred readout; expect > 5 Hz",
+    ),
+    "joce_mdn": dict(
+        stim=["^JO-(C|E)"], readout=["MDN"],
+        evidence="null: JO-C/E gives grooming, no backward walking (Hampel "
+                 "2020); expect < 2 Hz",
+    ),
+    "lplc2_gf": dict(
+        stim=["LPLC2"], readout=["DNp01"],
+        evidence="LPLC2 looming detectors drive the giant fibre (Ache et al. "
+                 "2019); expect > 5 Hz",
+    ),
     "gf_ttm": dict(
         stim=["DNp01"], readout=["TTMn"],
         evidence="DNp01 is the giant fibre; GF -> TTMn is the escape jump "
@@ -71,7 +97,13 @@ ASSAYS = {
 
 
 def select(neurons: pd.DataFrame, types: list[str]) -> np.ndarray:
-    return np.flatnonzero(neurons.type.isin(types).to_numpy())
+    """Cells whose `type` is in `types`; an entry starting '^' is a regex."""
+    t = neurons.type.fillna("")
+    m = t.isin([x for x in types if not x.startswith("^")])
+    for x in types:
+        if x.startswith("^"):
+            m |= t.str.match(x)
+    return np.flatnonzero(m.to_numpy())
 
 
 def rhythmicity(raster: np.ndarray, dt_ms: float) -> tuple[float, float]:

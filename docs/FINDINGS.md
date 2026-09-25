@@ -1032,3 +1032,53 @@ declared before scoring, then the same held-out battery at the scale re-set by
 the same return-to-rest rule. If adaptation lets the gain rise without
 ignition, and water→MN9 and bitter suppression appear, the omission was the
 cause. Reproducible probes: `scripts/probes/`.
+
+## F-SFA-1. Uniform adaptation does not stop ignition
+
+Pre-registered in DECISIONS.md: every neuron adds 2 mV per spike to an
+adaptation variable decaying over 200 ms (flybench's values, borrowed). The
+return-to-rest scale rose one grid step (0.6x → 0.7x); at 0.8x one of four
+calibration trials still self-sustained. At 0.7x: sugar→MN9 weaker (6 Hz at
+200 Hz), water→MN9 still 0, bitter still ignites ~9,000 neurons and now drives
+MN9 at 5.6 Hz. **Failed its criteria; not adopted.** Adaptation does act
+(`scripts/probes/sfa_check.py`: persisting cells 11,716 → 39 in one trial),
+but near the tipping point outcomes vary between trials.
+
+## F-SENS-1. Sensory neurons were being fired from inside the brain
+
+Tracing recruitment during bitter ignition (`scripts/probes/ignition_route.py`)
+showed other *sensory* neurons (pharyngeal PhG13/14/16, LB1e, LgAG3) firing
+within 20 ms, driven by central synapses onto their axon terminals. The
+ignition hub lLN1_bc is only reached at 75 ms. Sensory spikes start in the
+periphery; central input onto sensory terminals is presynaptic modulation. A
+single compartment cannot represent that, so it wrongly made the terminal
+fire. Dropping these edges (17,896 neurons, 1.4% of synapses;
+`connection_class:onto_sensory_terminals|included = 0`) removes bitter-evoked
+ignition at 0.6x (9,325 active → 167, none persisting) and leaves sugar→MN9
+unchanged. It does not stop ignition at 1.0x, where central loops suffice.
+Return-to-rest scale unchanged at 0.6x.
+
+Pre-registered fresh held-out assays, 100 Hz, 3 trials, 2 shuffles
+(`runs/assay-*-shiu2024-sens06`):
+
+| Assay | Criterion | Real | Shuffled | |
+|---|---|---|---|---|
+| JO-C/E → aDN (DNg62, DNge078) | > 5 Hz | 136.8 | 0 | pass |
+| JO-F → aDN | > 5 Hz | 0 | 0 | fail |
+| JO-F → MDN | > 5 Hz | 0 | 0 | fail |
+| JO-C/E → MDN (null) | < 2 Hz | 58.6 | 0 | fail |
+| LPLC2 → DNp01 | > 5 Hz | 282.7 | 0 | pass (saturated) |
+
+**2 of 5.** All positive responses are wiring-specific. The JO-C/E → MDN
+failure was flagged in advance by flybench: in male-cns the JO-C/E → pIP1
+route is ~3x stronger than in FlyWire. So this is either a real
+specimen/sex difference or evidence against uniform efficacy. It is the
+sharpest discriminating question the battery has produced. JO-F reaches ~600
+neurons but neither readout; only 78 JO-F neurons exist in this graph.
+
+Seen assays under the change: bitter ignites only at 200 Hz (was ≥ 50);
+sugar 100 Hz + bitter 50 Hz drives MN9 2.0 → 0 Hz (right direction, tiny
+baseline); water→MN9 still 0; GF→TTMn and DNg100 unchanged.
+
+Adopted as profile `m1` = Shiu 2024 values + 0.165 mV + no input onto sensory
+terminals. Every element is recorded `assumed`.

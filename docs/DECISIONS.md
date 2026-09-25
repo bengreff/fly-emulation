@@ -422,3 +422,20 @@ least squares, giving genuinely multi-axis muscles. Not done.
 - **Inclusion policy: `Traced` or typed** (F-COUNT-2). `connectome.build(statuses=None)` restores all nodes for comparison.
 - **Promote "predict a published result" ahead of per-type biophysics.** Per-type values exist for few of the 11,751 types; differentiating the rest would multiply guesses without adding anatomy. The discriminating test for F-GAIN-1 is whether noise-free, sensory-driven activity follows identified pathways, scored against published interventions (Shiu et al. 2024; flybench task set). See `docs/PLAN_NEXT.md`.
 - **Community reproductions are evidence, not ground truth.** Several unreviewed GitHub projects run Shiu-style LIF on MaleCNS in closed loop with flybody. Use their reported numbers only as cross-checks we re-derive.
+
+### Pre-registration: adaptation test (session 4, before any scoring)
+
+- Mechanism: spike-triggered adaptation current, identical for every neuron. Each spike adds `a` mV to an adaptation variable that decays with `tau_a` and is subtracted from the membrane's steady-state drive.
+- Values: `a = 2 mV`, `tau_a = 200 ms`, borrowed unchanged from flybench's adaptation model (recorded `assumed`; not tuned here). Fly neurons show adaptation on ~100 ms-1 s scales, but no per-type measurement is used.
+- Scale: re-set by the same return-to-rest rule (`scripts/calibrate_gain.py`, sugar GRNs only, largest passing scale on the same grid plus 1.2, 1.5, 2.0).
+- Scored held out, unchanged from F-GAIN-2: water→MN9, bitter→MN9 (and whether it ignites), sugar+bitter suppression, GF→TTMn, DNg100→leg rhythm.
+- Success means: no ignition in any held-out assay at the calibrated scale, and water→MN9 and bitter suppression appear. GF→TTMn is expected to still fail (gap junction).
+
+**Result (session 4):** adaptation test failed its pre-registered criteria (bitter still ignites ~9,000 neurons at the calibrated 0.7x; water→MN9 still 0; bitter now drives MN9 at 5.6 Hz). Not adopted. Recorded as F-SFA-1.
+
+### Pre-registration: sensory terminals do not generate spikes (session 4, before scoring)
+
+- Change: synapses onto sensory neurons (every `superclass` containing "sensory"; 17,896 neurons, 1.4% of synapses) get zero efficacy. Rationale: sensory spikes start in the periphery; central synapses onto sensory axon terminals are presynaptic modulation, which a single-compartment neuron cannot represent without wrongly making the terminal fire. Registry key `connection_class:onto_sensory_terminals|included` (1 = old behaviour). Adaptation off.
+- Found by a diagnostic probe on bitter ignition, so bitter-, sugar-, water-, GF- and DNg100-assay outcomes are **no longer held out** and are reported as "seen".
+- Scale: re-set by the same return-to-rest rule on sugar GRNs.
+- Fresh held-out assays, never run before this entry: JO-C/E→aDN (DNg62, DNge078) >5 Hz; JO-F→aDN >5 Hz; JO-F→MDN >5 Hz (inferred from behaviour); JO-C/E→MDN <2 Hz (null); LPLC2→DNp01 >5 Hz. Sources: Hampel et al. 2015, 2020; Bidaye et al. 2014; Ache et al. 2019. Thresholds follow flybench conventions. Stimulus 100 Hz. Each also runs on shuffled graphs.

@@ -32,14 +32,19 @@ def main() -> None:
     ap.add_argument("--scales", default="0.3,0.4,0.5,0.6,0.7,0.8,1.0")
     ap.add_argument("--rates", default="50,150")
     ap.add_argument("--seeds", type=int, default=2)
+    ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
+    ap.add_argument("--tag", default="")
     args = ap.parse_args()
-    out = REPO / "runs" / "calibrate-gain-shiu2024"
+    out = REPO / "runs" / ("calibrate-gain-shiu2024" + (f"-{args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
     rec = RunRecord(out.name, out, description="global synaptic scale by "
                     "return-to-rest after sugar GRN stimulation")
     rec.add_config(vars(args))
 
     reg = Registry(Policy.MINIMAL)
+    for item in args.set:
+        k, v = item.split("=")
+        reg.overrides[k] = float(v)
     prof = profiles.apply(reg, "shiu2024")
     conn = connectome.build(reg, min_synapses=5)
     params = lif.default_params(reg, conn, timestep_ms=0.1)
