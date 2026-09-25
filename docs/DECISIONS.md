@@ -505,3 +505,12 @@ Return to rest after sugar alone did not guarantee stability for other inputs (F
 - Efficacy onto neuron j multiplied by `(median N / N_j)^beta`, where N_j is j's total input synapse count in the modelled graph (>= 5-synapse edges). This is homeostatic scaling, the reviewer's alternative to volume. Primary beta = 1; no clipping. Registry `cell_type:all|input_normalisation_exponent`.
 - Written expectation, before running: it will fail like F-SIZE-1, because N_j correlates with size (factors: pIP1 ~0.02, GF ~0.02, MN9_L ~0.06).
 - Calibration rule v1 (sugar return-to-rest, first failure); battery: sugar→MN9, JO-C/E→aDN, LPLC2→GF, JO-C/E→MDN, water→MN9, JO-F→aDN, GF→DLMn (electrical on). Adopt only if it keeps sugar, JO-C/E→aDN and LPLC2→GF and newly passes at least one of water, JO-F, GF→DLMn or the JO-C/E→MDN null.
+
+### Pre-registration: m2, antennal-lobe corrections (session 4, before scoring)
+
+Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), not from any olfactory physiology assay:
+- (i) Chemical output of cholinergic AL local neurons onto PNs and onto other cholinergic AL LNs set to 0. eLN→PN is electrical in the animal (Yaksi & Wilson 2010); eLN→eLN is unmeasured. Their output onto other LNs is kept.
+- (ii) AL local neurons whose predicted NT is 'unclear' (89 of 420) are treated as inhibitory. Literature: AL LNs are predominantly GABAergic or glutamatergic (Chou et al. 2010; Das et al. 2011). Shiu's default was unknown → excitatory.
+- m2 = m1 + (i) + (ii). Scale by calibration rule v2 (odour-containing generic populations included).
+- Scored: rule v2 passes at all (m1: fails everywhere). flybench olfactory physiology tasks 08, 17, 18, 26, 27 (graded, vs m1 in F-FB-1). The full 11-assay battery, reported as seen.
+- Adopt m2 if rule v2 is satisfiable at a scale where sugar→MN9_L > 5 Hz, and mean graded score on 08/17/18/26/27 does not fall below m1's.

@@ -34,13 +34,14 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, default=2)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--profile", default="shiu2024")
     ap.add_argument("--generic", type=int, default=0,
                     help="rule v2: also require return to rest after this many "
                          "random 40-cell sensory populations outside every assay")
     ap.add_argument("--graph", default="real", choices=["real", "shuffled", "typeshuf"],
                     help="calibrate a control graph by the same rule")
     args = ap.parse_args()
-    out = REPO / "runs" / ("calibrate-gain-shiu2024" + (f"-{args.tag}" if args.tag else ""))
+    out = REPO / "runs" / (f"calibrate-gain-{args.profile}" + (f"-{args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
     rec = RunRecord(out.name, out, description="global synaptic scale by "
                     "return-to-rest after sugar GRN stimulation")
@@ -50,7 +51,7 @@ def main() -> None:
     for item in args.set:
         k, v = item.split("=")
         reg.overrides[k] = float(v)
-    prof = profiles.apply(reg, "shiu2024")
+    prof = profiles.apply(reg, args.profile)
     conn = connectome.build(reg, min_synapses=5)
     if args.graph == "shuffled":
         conn = connectome.shuffled(conn, np.random.default_rng(100))

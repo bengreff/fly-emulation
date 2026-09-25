@@ -56,6 +56,18 @@ PROFILES["m1"] = {
     "kick_mv": PROFILES["shiu2024"]["kick_mv"],
 }
 
+PROFILES["m2"] = {
+    "values": {
+        **PROFILES["m1"]["values"],
+        "connection_class:cholinergic_AL_LN_to_PN_and_eLN|included": 0.0,
+        "transmitter:unclear_in_AL_local_neurons|sign": -1.0,
+    },
+    "note": PROFILES["m1"]["note"] + "; cholinergic AL LN chemical output to "
+            "PNs/eLNs dropped (Yaksi & Wilson 2010) and unclear-NT AL LNs "
+            "inhibitory (F-LN-2)",
+    "kick_mv": PROFILES["shiu2024"]["kick_mv"],
+}
+
 
 def apply(reg: Registry, name: str) -> dict:
     prof = PROFILES[name]

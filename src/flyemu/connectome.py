@@ -206,6 +206,21 @@ def build(
                 shared_with=("transmitter:glutamate|sign",),
             )
 
+    # --- AL local neurons with unclear transmitter (m2, ii) ------------------
+    alln = neurons["class"].fillna("").eq("ALLN").to_numpy()
+    al_unclear = alln & (nt == "unclear")
+    al_sign = reg.require(
+        "transmitter:unclear_in_AL_local_neurons", "sign",
+        units="dimensionless", model_use="sign of AL LNs with unclear NT",
+        subsystem="sign", instances=int(al_unclear.sum()),
+        minimal=float(sign[al_unclear][0]) if al_unclear.any() else 0.0,
+        conventional=float(sign[al_unclear][0]) if al_unclear.any() else 0.0,
+        minimal_note="declared default: whatever 'unclear' gets globally",
+        uncertainty="AL LNs are predominantly GABAergic/glutamatergic "
+                    "(Chou et al. 2010; Das et al. 2011); per-cell unknown",
+    )
+    sign[al_unclear] = al_sign
+
     # --- efficacy: one number standing in for every synapse in the animal ----
     psp = reg.require(
         "connection_class:all",
@@ -271,6 +286,23 @@ def build(
         med_in = np.median(n_in[n_in > 0])
         post_gain *= np.where(n_in > 0, (med_in / np.maximum(n_in, 1)) ** beta, 1.0).astype(np.float32)
     efficacy = (psp * post_gain[post]).astype(np.float32)
+
+    # --- cholinergic AL LN chemical output onto PNs / each other (m2, i) -----
+    ach_ln = alln & (nt == "acetylcholine")
+    pn = neurons["class"].fillna("").eq("ALPN").to_numpy()
+    eln_mask = ach_ln[pre] & (pn[post] | ach_ln[post])
+    keep_eln = reg.require(
+        "connection_class:cholinergic_AL_LN_to_PN_and_eLN", "included",
+        units="boolean", model_use="chemical efficacy of these edges",
+        subsystem="synaptic_efficacy", instances=int(eln_mask.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="declared default: chemical excitation as for any ACh synapse",
+        uncertainty="eLN->PN transmission is electrical, unaffected by chemical "
+                    "block, abolished by shakB (Yaksi & Wilson 2010); eLN->eLN "
+                    "unmeasured (F-LN-1)",
+    )
+    if not keep_eln:
+        efficacy[eln_mask] = 0.0
 
     return Connectome(
         neurons=neurons, indptr=indptr, indices=post.astype(np.int32),
