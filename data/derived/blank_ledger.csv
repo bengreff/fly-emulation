@@ -25,9 +25,9 @@ sensory,transduction: angle tuning,per sensory group,6,3,inferred,family chosen 
 sensory,transduction: angle/velocity tuning,per sensory group,110,405,inferred,family chosen from literature; values not set,22 groups x 5 params
 sensory,transduction: band-pass deflection,per sensory group,36,94,inferred,family chosen from literature; values not set,9 groups x 4 params
 sensory,transduction: deflection tuning,per sensory group,100,578,inferred,family chosen from literature; values not set,25 groups x 4 params
-sensory,transduction: dry/moist opponent cells,per sensory group,12,66,inferred,family chosen from literature; values not set,4 groups x 3 params
+sensory,transduction: dry/moist opponent cells,per sensory group,12,69,inferred,family chosen from literature; values not set,4 groups x 3 params
 sensory,transduction: graded phototransduction,per sensory group,40,6091,inferred,family chosen from literature; values not set,10 groups x 4 params
-sensory,transduction: hot/cold phasic-tonic cells,per sensory group,16,25,inferred,family chosen from literature; values not set,4 groups x 4 params
+sensory,transduction: hot/cold phasic-tonic cells,per sensory group,16,22,inferred,family chosen from literature; values not set,4 groups x 4 params
 sensory,transduction: phase-locked strain,per sensory group,56,232,inferred,family chosen from literature; values not set,14 groups x 4 params
 sensory,transduction: phasic deflection,per sensory group,237,4117,inferred,family chosen from literature; values not set,79 groups x 3 params
 sensory,transduction: receptor dose-response,per sensory group,3,55,inferred,family chosen from literature; values not set,1 groups x 3 params
@@ -36,7 +36,9 @@ sensory,transduction: strain transduction,per sensory group,156,426,inferred,fam
 sensory,transduction: threshold deflection,per sensory group,9,131,inferred,family chosen from literature; values not set,3 groups x 3 params
 sensory,transduction: unknown,per sensory group,248,1666,unknown,none,62 groups x 4 params
 sensory,sensed physical variable,per sensory group,41,1220,unknown,none,modality not identifiable from annotation
-sensory,odour tuning vector,per ORN type,53,2584,unknown,none,DoOR / Hallem-Carlson would make these measured
+sensory,odour tuning vector (relative),per ORN type,48,2334,measured,DoOR 2.0 consensus (normalised 0-1),data/derived/orn_tuning_door.csv
+sensory,odour tuning vector,per ORN type,5,301,unknown,none,"ORN_DA1, ORN_VA7m, ORN_VM6m, ORN_VM6v, ORN_VM6l"
+sensory,"odour response absolute scale (SFR, Rmax)",per ORN type,106,2635,inferred,not set; Hallem & Carlson 2006 gives spikes/s for 24 receptors (heterologous),
 motor,motor neuron -> muscle target,per motor neuron,467,467,unknown,none,"348 leg MNs mapped (derived, F-DATA-1); see MOTOR_TARGETS.md"
 motor,motor neuron -> muscle target (mapped),per motor neuron,348,348,derived,MANC mapping transferred to male-cns,
 motor,"force per spike, twitch rise, twitch decay",per motor neuron,2445,815,inferred,one shared guess (force_per_spike),

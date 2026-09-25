@@ -109,3 +109,14 @@ literature_values_used:
     note: >
       A receptor property, not a transmitter property. The connectome does not
       contain receptor identity (finding F9).
+
+# Added session 5 (2026-09-25)
+door:
+  name: DoOR.data (Database of Odorant Responses)
+  version: 2.0.1.9001 (github ropensci/DoOR.data, master, fetched 2026-09-25)
+  license: CC BY-SA 4.0 (DESCRIPTION file; paper says CC BY 4.0)
+  paper: Münch & Galizia 2016, Sci Rep 6:21841, 10.1038/srep21841
+  local: data/raw/door/
+  files: [door_response_matrix.csv, door_response_matrix_non_normalized.csv, door_mappings.csv, door_dataset_info.csv, DESCRIPTION]
+  sha256_prefix_response_matrix: bc2aa5414ff54d3a
+  basis: measured (consensus responses normalised 0-1, not spikes/s)

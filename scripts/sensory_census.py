@@ -54,6 +54,14 @@ RULES = [
     (dict(cls="olfactory"), ("olfaction", "antenna / maxillary palp ORN",
      "odorant concentrations (receptor-specific)", "receptor tuning + adaptation",
      "DoOR; Hallem & Carlson 2006; Nagel & Wilson 2011", "none", "derived")),
+    # male-cns class labels for these two are the reverse of their putative
+    # modalities (Marin et al. 2020; docs/SENSORS_CHEMO.md)
+    (dict(typ=r"^HRN_VP1l$"), ("thermosensation", "sacculus VP1l (cooling, putative)",
+     "temperature decrease", "hot/cold phasic-tonic cells", "Marin 2020",
+     "none", "inferred")),
+    (dict(typ=r"^TRN_VP1m$"), ("hygrosensation", "VP1m (humid, putative)",
+     "relative humidity", "dry/moist opponent cells", "Marin 2020",
+     "none", "inferred")),
     (dict(cls="hygrosensory"), ("hygrosensation", "sacculus / arista",
      "relative humidity", "dry/moist opponent cells", "Enjin 2016; Knecht 2016",
      "none", "derived")),

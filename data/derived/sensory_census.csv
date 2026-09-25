@@ -7,7 +7,7 @@ untyped:chemosensory/?,1,sensory_ascending,chemosensory,,,?1,chemosensation,body
 HRN_VP4,28,cb_sensory,hygrosensory,,AN,?28,hygrosensation,sacculus / arista,relative humidity,dry/moist opponent cells,Enjin 2016; Knecht 2016,none,derived,inferred
 HRN_VP1d,18,cb_sensory,hygrosensory,,AN,?18,hygrosensation,sacculus / arista,relative humidity,dry/moist opponent cells,Enjin 2016; Knecht 2016,none,derived,inferred
 HRN_VP5,12,cb_sensory,hygrosensory,,AN,?12,hygrosensation,sacculus / arista,relative humidity,dry/moist opponent cells,Enjin 2016; Knecht 2016,none,derived,inferred
-HRN_VP1l,8,cb_sensory,hygrosensory,,AN,?8,hygrosensation,sacculus / arista,relative humidity,dry/moist opponent cells,Enjin 2016; Knecht 2016,none,derived,inferred
+TRN_VP1m,11,cb_sensory,thermosensory,,AN,?11,hygrosensation,"VP1m (humid, putative)",relative humidity,dry/moist opponent cells,Marin 2020,none,inferred,inferred
 JO-unclear,102,cb_sensory,mechanosensory,wind_gravity,AN,?102,mechanosensation,Johnston's organ C/E,"antennal a2-a3 sustained deflection (wind, gravity)",deflection tuning,Kamikouchi 2009; Yorozu 2009,none,derived,inferred
 JO-FV,70,cb_sensory,mechanosensory,wind_gravity,AN,?70,mechanosensation,Johnston's organ C/E,"antennal a2-a3 sustained deflection (wind, gravity)",deflection tuning,Kamikouchi 2009; Yorozu 2009,none,derived,inferred
 JO-EV1,50,cb_sensory,mechanosensory,wind_gravity,AN,?50,mechanosensation,Johnston's organ C/E,"antennal a2-a3 sustained deflection (wind, gravity)",deflection tuning,Kamikouchi 2009; Yorozu 2009,none,derived,inferred
@@ -255,7 +255,7 @@ PhG5,2,cb_sensory,gustatory,pharyngeal sensillum,aPhN,?2,taste,labellum / pharyn
 PhG6,2,cb_sensory,gustatory,pharyngeal sensillum,aPhN,?2,taste,labellum / pharynx,tastant concentrations at contact,GRN class dose-response,LB/PhG types by receptor line (Cell 2026),none,derived,inferred
 untyped:gustatory/labellar bristle,2,cb_sensory,gustatory,labellar bristle,MxLbN,?2,taste,labellum / pharynx,tastant concentrations at contact,GRN class dose-response,LB/PhG types by receptor line (Cell 2026),none,derived,inferred
 LB3,1,cb_sensory,gustatory,labellar bristle,MxLbN,?1,taste,labellum / pharynx,tastant concentrations at contact,GRN class dose-response,LB/PhG types by receptor line (Cell 2026),none,derived,inferred
-TRN_VP1m,11,cb_sensory,thermosensory,,AN,?11,thermosensation,arista / sacculus,temperature and its rate of change,hot/cold phasic-tonic cells,Gallio 2011; Budelli 2019,none,derived,inferred
+HRN_VP1l,8,cb_sensory,hygrosensory,,AN,?8,thermosensation,"sacculus VP1l (cooling, putative)",temperature decrease,hot/cold phasic-tonic cells,Marin 2020,none,inferred,inferred
 TRN_VP2,7,cb_sensory,thermosensory,,AN,?7,thermosensation,arista / sacculus,temperature and its rate of change,hot/cold phasic-tonic cells,Gallio 2011; Budelli 2019,none,derived,inferred
 TRN_VP3a,6,cb_sensory,thermosensory,,AN,?6,thermosensation,arista / sacculus,temperature and its rate of change,hot/cold phasic-tonic cells,Gallio 2011; Budelli 2019,none,derived,inferred
 TRN_VP3b,1,cb_sensory,thermosensory,,AN,?1,thermosensation,arista / sacculus,temperature and its rate of change,hot/cold phasic-tonic cells,Gallio 2011; Budelli 2019,none,derived,inferred

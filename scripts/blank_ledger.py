@@ -133,9 +133,16 @@ def main() -> None:
     unk = cen[cen.variable_basis == "unknown"]
     add("sensory", "sensed physical variable", "per sensory group", len(unk),
         unk.n_cells.sum(), "unknown", "none", "modality not identifiable from annotation")
-    orn = cen[cen.transduction_family == "receptor tuning + adaptation"]
-    add("sensory", "odour tuning vector", "per ORN type", len(orn), orn.n_cells.sum(),
-        "unknown", "none", "DoOR / Hallem-Carlson would make these measured")
+    cov = pd.read_csv(D / "orn_tuning_coverage.csv")
+    have = cov[cov.n_units > 0]; miss = cov[cov.n_units == 0]
+    add("sensory", "odour tuning vector (relative)", "per ORN type", len(have),
+        have.cells.sum(), "measured", "DoOR 2.0 consensus (normalised 0-1)",
+        "data/derived/orn_tuning_door.csv")
+    add("sensory", "odour tuning vector", "per ORN type", len(miss), miss.cells.sum(),
+        "unknown", "none", ", ".join(miss.orn_type))
+    add("sensory", "odour response absolute scale (SFR, Rmax)", "per ORN type",
+        2 * len(cov), cov.cells.sum(), "inferred",
+        "not set; Hallem & Carlson 2006 gives spikes/s for 24 receptors (heterologous)")
 
     # --- motor -----------------------------------------------------------------
     mn = n[n.superclass.isin(["vnc_motor", "cb_motor"])]
