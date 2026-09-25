@@ -1,0 +1,46 @@
+subsystem,parameter,grain,slots,instances,basis,filled_by,note
+structure,chemical connectivity (synapse counts),per edge,6241231,6241231,measured,male-cns:v1.0,
+structure,cell identity and type,per neuron,167111,167111,measured,male-cns annotation,
+structure,"transmitter sign (ACh, GABA, histamine)",per presynaptic type,10207,117293,derived,predicted NT + standard pharmacology,
+neuron,tau_m,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,v_rest,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,v_th,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,v_reset,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,t_ref,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,tau_syn,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,spiking vs graded,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,adaptation increment,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+neuron,adaptation tau,per cell type,14356,167111,inferred,one shared default (Shiu 2024 / declared),
+synapse,release strength,per presynaptic type,14356,6241231,inferred,"one shared value, fitted by return-to-rest (0.165 mV)",
+synapse,postsynaptic input gain,per postsynaptic type,14356,6241231,inferred,one shared value (with m1/m2 masks),
+synapse,glutamate response sign (GluCl vs iGluR),per postsynaptic type,12196,1045963,inferred,"all inhibitory (convention, F-SIGN-1)",
+synapse,sign of 'unclear'-transmitter cells,per presynaptic type,1985,16753,inferred,excitatory by Shiu convention; AL LNs inhibitory (m2),
+synapse,conduction delay,per presynaptic type,14356,6241231,inferred,one shared 1.8 ms,derivable from skeleton path length
+synapse,"short-term plasticity (U, tau_rec)",per presynaptic type,28712,6241231,unknown,absent,
+synapse,"monoamine action (targets, receptor, effect, timescale)",per modulatory type,1020,5010,unknown,treated as fast excitation (Shiu convention),
+synapse,"electrical coupling (partners, conductance)",per cell type,28712,167111,unknown,"absent except 3 GF pairs (option, off)",
+synapse,long-term plasticity rule,per synapse class (KC>MBON etc.),1,1,unknown,absent,slot count to be refined when Tier 2 starts
+sensory,transduction: GRN class dose-response,per sensory group,183,1423,inferred,family chosen from literature; values not set,61 groups x 3 params
+sensory,transduction: angle tuning,per sensory group,6,3,inferred,family chosen from literature; values not set,2 groups x 3 params
+sensory,transduction: angle/velocity tuning,per sensory group,110,405,inferred,family chosen from literature; values not set,22 groups x 5 params
+sensory,transduction: band-pass deflection,per sensory group,36,94,inferred,family chosen from literature; values not set,9 groups x 4 params
+sensory,transduction: deflection tuning,per sensory group,100,578,inferred,family chosen from literature; values not set,25 groups x 4 params
+sensory,transduction: dry/moist opponent cells,per sensory group,12,66,inferred,family chosen from literature; values not set,4 groups x 3 params
+sensory,transduction: graded phototransduction,per sensory group,40,6091,inferred,family chosen from literature; values not set,10 groups x 4 params
+sensory,transduction: hot/cold phasic-tonic cells,per sensory group,16,25,inferred,family chosen from literature; values not set,4 groups x 4 params
+sensory,transduction: phase-locked strain,per sensory group,56,232,inferred,family chosen from literature; values not set,14 groups x 4 params
+sensory,transduction: phasic deflection,per sensory group,237,4117,inferred,family chosen from literature; values not set,79 groups x 3 params
+sensory,transduction: receptor dose-response,per sensory group,3,55,inferred,family chosen from literature; values not set,1 groups x 3 params
+sensory,transduction: receptor tuning + adaptation,per sensory group,212,2584,inferred,family chosen from literature; values not set,53 groups x 4 params
+sensory,transduction: strain transduction,per sensory group,156,426,inferred,family chosen from literature; values not set,39 groups x 4 params
+sensory,transduction: threshold deflection,per sensory group,9,131,inferred,family chosen from literature; values not set,3 groups x 3 params
+sensory,transduction: unknown,per sensory group,248,1666,unknown,none,62 groups x 4 params
+sensory,sensed physical variable,per sensory group,41,1220,unknown,none,modality not identifiable from annotation
+sensory,odour tuning vector,per ORN type,53,2584,unknown,none,DoOR / Hallem-Carlson would make these measured
+motor,motor neuron -> muscle target,per motor neuron,467,467,unknown,none,"348 leg MNs mapped (derived, F-DATA-1); see MOTOR_TARGETS.md"
+motor,motor neuron -> muscle target (mapped),per motor neuron,348,348,derived,MANC mapping transferred to male-cns,
+motor,"force per spike, twitch rise, twitch decay",per motor neuron,2445,815,inferred,one shared guess (force_per_spike),
+motor,"muscle mechanics (Hill: Fmax, l0, vmax, tau_act, passive)",per muscle,960,192,inferred,"torque motors, one activation tau",muscle count: 22 leg-muscle labels x 6 legs + ~60 non-leg (inferred)
+body,segment masses and inertias,per segment,70,70,derived,flybody + 52 weighed flies (F-MASS-1),
+body,joint ranges,per joint,103,103,derived,F-BODY-3,
+body,passive joint stiffness and damping,per joint,206,103,inferred,documented guesses (F-STIFF-1),

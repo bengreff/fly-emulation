@@ -1331,3 +1331,61 @@ Caveats:
 - No electrical eLN-PN coupling was added to replace the removed chemical
   excitation, so lateral excitation is currently absent. That is a known
   omission and a likely cause of the saturated PN transfer function.
+
+---
+
+# Session 5
+
+## F-CENSUS-1. Every sensory neuron assigned; 768 taste neurons were being driven as touch
+
+`scripts/sensory_census.py` → `data/derived/sensory_census.csv`: all
+**17,896** sensory neurons of the modelled graph, in 388 groups (cell types,
+or class/subclass for untyped cells). Each group has a modality, organ,
+sensed physical variable, transduction model family and parameter source.
+Assignments come from male-cns annotation by a rule table (derived), from
+naming or homology (inferred), or not at all (unknown).
+
+| Modality | Cells | Driven now |
+|---|---|---|
+| vision | 6,091 | 6,091 (luminance only, non-retinotopic) |
+| touch | 4,057 | 2,153 (leg/body bristles; head BM_* not) |
+| olfaction | 2,639 | 0 |
+| proprioception | 1,448 | 962 (tanh-of-angle placeholders) |
+| taste | 1,423 | 0 |
+| unknown | 1,220 | 0 |
+| other mechanosensation (JO, TPMN, pharyngeal) | 801 | 0 |
+| chemo / hygro / thermo | 126 / 66 / 25 | 0 |
+
+Basis of the sensed-variable assignment, in cells: derived 16,266, inferred
+410, unknown 1,220. Most of the unknowns are the abdominal SNxx types (~1,040)
+plus about 170 cells with no class or subclass at all.
+
+**Bug found and fixed.** `sensory.py` drove the subclass "leg bristle" as a
+contact (touch) sensor. In male-cns that subclass is class *gustatory*: 768
+LgLG/LgAG leg taste neurons. They are no longer driven. Leg touch comes from
+"mechanosensory bristle" (2,130 cells), which is unchanged.
+
+## F-LEDGER-1. A definite count: ~250,000 blank slots
+
+`scripts/blank_ledger.py` → `data/derived/blank_ledger.csv`. It counts every
+parameter a complete possible fly needs, at declared grains (see the script
+docstring): cell type for neurons (14,356 including untyped singletons);
+factorised pre/post type for synaptic strength; postsynaptic type for
+glutamate sign; sensory group; motor neuron; muscle; joint.
+
+| Subsystem | Measured | Derived | Inferred | Unknown |
+|---|---|---|---|---|
+| structure | 6,408,342 | 10,207 | 0 | 0 |
+| neuron biophysics | 0 | 0 | 129,204 | 0 |
+| synapse | 0 | 0 | 57,249 | 58,445 |
+| sensory | 0 | 0 | 1,176 | 342 |
+| motor | 0 | 348 | 3,405 | 467 |
+| body | 0 | 173 | 206 | 0 |
+
+**Blank slots: 250,494** (inferred 191,240, unknown 59,254). Filled by data:
+6.42 million, almost all measured connectivity. The biggest blanks are
+per-type biophysics (9 x 14,356), per-type release strength and input gain,
+short-term plasticity, and electrical coupling (both unknown per type). This
+number depends on the declared grain and is recomputed by the script. It
+falls as data are attached and as justified sharing collapses slots, and the
+ledger records which.

@@ -16,7 +16,7 @@ Classes wired here, per leg:
   chordotonal organ      femoral chordotonal organ: joint angle and velocity
   hair plate             joint angle near its limit
   campaniform sensilla   cuticular load, read as foot contact force
-  leg bristle            contact
+  mechanosensory bristle contact
 
 Everything else the fly senses - vision, olfaction, taste, wind, gravity,
 audition, temperature - has receptors in this graph and no transduction model
@@ -44,7 +44,9 @@ ENCODES = {
     "chordotonal organ": "joint_angle_velocity",
     "hair plate": "joint_angle",
     "campaniform sensilla": "load",
-    "leg bristle": "contact",
+    # "leg bristle" is NOT here: in male-cns that subclass is class
+    # gustatory (768 LgLG/LgAG taste neurons). It was driven as touch until
+    # session 5 (F-CENSUS-1).
     "mechanosensory bristle": "contact",
 }
 
