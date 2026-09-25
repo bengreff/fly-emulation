@@ -362,6 +362,7 @@ code { font-family: var(--mono); font-size: .91em; color: var(--ink); }
     var V = new Float32Array(buf, 0, index.vertex_bytes / 4);
     var F = new Uint32Array(buf, index.vertex_bytes, index.n_triangles * 3);
 
+    var unmatched = [];
     for (var b = 0; b < NB; b++) {
       bodyGroups[b] = new THREE.Group();
       scene.add(bodyGroups[b]);
@@ -386,12 +387,22 @@ code { font-family: var(--mono); font-size: .91em; color: var(--ink); }
       mesh.position.fromArray(gd.pos);
       var q = gd.quat_wxyz;   // MuJoCo is (w,x,y,z); three.js is (x,y,z,w)
       mesh.quaternion.set(q[1], q[2], q[3], q[0]);
-      (bodyGroups[gd.body] || scene).add(mesh);
+      // Bind by body NAME, not index: the geometry export and the recording
+      // can come from builds with different body lists (e.g. eye cameras).
+      var bname = index.body_names ? index.body_names[gd.body] : null;
+      var bi = bname && R.body_names ? R.body_names.indexOf(bname) : gd.body;
+      if (bi < 0) { unmatched.push(bname); }
+      (bi >= 0 ? bodyGroups[bi] : scene).add(mesh);
 
       if (/_tarsus/.test(gd.name || "")) {
         var L = legOf(gd.name);
         if (L >= 0) tintTargets.push({ mat: mat, leg: L, base: mat.color.clone() });
       }
+    }
+    if (unmatched.length) {
+      document.getElementById("geomnote").textContent =
+        unmatched.length + " geometry bodies not in this recording; re-run export_geometry.py";
+      console.warn("unmatched bodies", unmatched);
     }
     ready = true;
   }

@@ -48,6 +48,9 @@ def main() -> int:
     ap.add_argument("--web-hz", type=float, default=200.0,
                     help="pose sample rate for the browser visualiser")
     ap.add_argument("--tag", default="replay")
+    ap.add_argument("--profile", default=None,
+                    help="borrowed parameter profile, e.g. shiu2024")
+    ap.add_argument("--min-synapses", type=int, default=1)
     args = ap.parse_args()
 
     overrides = {}
@@ -68,7 +71,8 @@ def main() -> int:
         "that choice, not behaviour"
     )
 
-    org = Organism(policy="minimal", seed=args.seed, overrides=overrides)
+    org = Organism(policy="minimal", seed=args.seed, overrides=overrides,
+                   profile=args.profile, min_synapses=args.min_synapses)
     # Rebuild the body with a tracking camera so the same recording can be
     # rendered to video without re-running.
     org.body = Body(model=org.body.model,

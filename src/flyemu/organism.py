@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, interface, lif, neuromuscular, sensory, vision
+from . import connectome, interface, lif, neuromuscular, profiles, sensory, vision
 from .body import Body
 from .registry import Policy, Registry, Requirement
 
@@ -42,6 +42,7 @@ class Organism:
     seed: int = 0
     min_synapses: int = 1
     overrides: dict = field(default_factory=dict)
+    profile: str | None = None   # a named borrowed parameter set (profiles.py)
 
     reg: Registry = field(init=False)
     body: Body = field(init=False)
@@ -53,6 +54,9 @@ class Organism:
     def __post_init__(self) -> None:
         self.reg = Registry(self.policy)
         self.reg.overrides.update(self.overrides)
+        self.kick_mv = None
+        if self.profile:
+            self.kick_mv = profiles.apply(self.reg, self.profile)["kick_mv"]
         self.body = Body(timestep=self.timestep_ms / 1000.0)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
