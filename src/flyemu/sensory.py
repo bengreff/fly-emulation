@@ -166,8 +166,10 @@ def build(reg: Registry, conn, body) -> Afferents:
             f"afferent:{subclass}", "encoded_variable", ENCODES[subclass],
             units="dimensionless",
             model_use="which body signal this afferent class reads",
-            status=Status.ASSUMED,
-            evidence="published response selectivity for this organ class",
+            status=Status.INFERRED, method="literature, organ class",
+            evidence="published response selectivity for this organ class "
+                     "(docs/SENSORS_MECHANO.md: Mamiya 2018/2023, Dinges 2020, "
+                     "Pratt 2026, Walker 2000)",
             subsystem="sensory_transduction", instances=int(len(grp)),
             uncertainty="selectivity is documented; the mapping onto this "
                         "body model's coordinates is a guess",
@@ -179,6 +181,8 @@ def build(reg: Registry, conn, body) -> Afferents:
             evidence="male-cns:v1.0 subclass annotation, leg assigned by "
                      "dominant LegNp neuropil",
             subsystem="sensory_transduction", instances=int(len(grp)),
+            uncertainty="count of reconstructed axons under the Traced-or-typed "
+                        "policy; incomplete for front-leg FeCO (SENSORS_MECHANO)",
         )
 
     reg.provide(

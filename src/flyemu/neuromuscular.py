@@ -266,6 +266,7 @@ def build(
         status=Status.MEASURED,
         evidence="male-cns:v1.0 superclass = vnc_motor",
         subsystem="neuromuscular", instances=int(len(mn)),
+        uncertainty="dataset annotation; excludes brain motor neurons (cb_motor, 107)",
     )
 
     cal = load_calibration(model)

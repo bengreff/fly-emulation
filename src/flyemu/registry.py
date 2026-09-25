@@ -31,28 +31,52 @@ import pandas as pd
 
 
 class Status(str, Enum):
-    """Where a value came from. Ordered from strongest to weakest evidence."""
+    """Where a value came from (project rule, 2026-09-25). Strongest first.
 
-    MEASURED = "measured"          # directly measured in this preparation
-    DERIVED = "derived"            # computed from a measurement, with assumptions
-    FITTED = "fitted"              # optimised against observations
-    ASSUMED = "assumed"            # a declared guess or a precedent's convention
-    UNRESOLVED = "unresolved"      # required, no value available
+    measured  directly observed; must cite its source (dataset or paper) and
+              give conditions/uncertainty.
+    derived   computed from measured inputs by a stated procedure; must name
+              the inputs and the method.
+    inferred  estimated from evidence that is not a direct measurement of
+              this quantity (fitted to data, borrowed from another model or
+              specimen, homology, other species, class-level prior); must
+              state its justification and uncertainty.
+    guessed   a placeholder with no specific evidence; must say why this
+              value, and is automatically flagged for iteration.
+    unknown   required, no value available (a blank without a default).
+    absent    a mechanism the model does not simulate at all.
+    """
+
+    MEASURED = "measured"
+    DERIVED = "derived"
+    INFERRED = "inferred"
+    FITTED = "inferred"            # alias: fitting is one kind of inference
+    GUESSED = "guessed"
+    ASSUMED = "guessed"            # alias kept for older call sites
+    UNRESOLVED = "unknown"
+    ABSENT = "absent"
     CONFLICTING = "conflicting"    # sources disagree
     INAPPLICABLE = "inapplicable"  # required by M but meaningless for this entity
 
 
-# The project's top-level evidence label (user requirement, 2026-09-25): every
-# value is explicitly measured, derived or inferred. `status` keeps the finer
-# distinction inside "inferred" (fitted to data vs assumed/borrowed).
+# Top-level evidence label: the status itself, with no-value states collapsed.
 BASIS = {
     Status.MEASURED: "measured",
     Status.DERIVED: "derived",
-    Status.FITTED: "inferred",
-    Status.ASSUMED: "inferred",
+    Status.INFERRED: "inferred",
+    Status.GUESSED: "guessed",
     Status.UNRESOLVED: "unknown",
+    Status.ABSENT: "absent",
     Status.CONFLICTING: "unknown",
     Status.INAPPLICABLE: "inapplicable",
+}
+
+# Fields each basis must carry (Registry.validate).
+REQUIRED_FIELDS = {
+    "measured": ("evidence", "uncertainty"),
+    "derived": ("evidence",),
+    "inferred": ("evidence", "uncertainty"),
+    "guessed": ("evidence",),
 }
 
 
@@ -90,6 +114,7 @@ class Requirement:
     instances: int = 1          # how many model elements this value fills
     shared_with: tuple[str, ...] = ()   # rows sharing one inference
     subsystem: str = "unassigned"
+    method: str | None = None   # derived: procedure; inferred: kind of inference
 
     @property
     def key(self) -> str:
@@ -108,6 +133,8 @@ class Requirement:
             "model_use": self.model_use,
             "basis": self.basis,
             "status": self.status.value,
+            "method": self.method,
+            "iterate": self.basis in ("guessed", "unknown", "absent"),
             "value": _scalar_repr(self.value),
             "instances": self.instances,
             "evidence": self.evidence,
@@ -177,6 +204,7 @@ class Registry:
         uncertainty: str | None = None,
         transfer: str | None = None,
         shared_with: tuple[str, ...] = (),
+        method: str | None = None,
     ) -> Any:
         """Record a quantity that has a value, and return it."""
         if status in (Status.UNRESOLVED, Status.INAPPLICABLE) and value is not None:
@@ -186,6 +214,7 @@ class Registry:
             status=status, value=value, evidence=evidence, subsystem=subsystem,
             instances=instances, conditions=conditions or {},
             uncertainty=uncertainty, transfer=transfer, shared_with=shared_with,
+            method=method,
         )
         self._reqs[req.key] = req
         return value
@@ -205,8 +234,13 @@ class Registry:
         conventional_note: str | None = None,
         uncertainty: str | None = None,
         shared_with: tuple[str, ...] = (),
+        justification: str | None = None,
+        method: str | None = None,
     ) -> Any:
         """Ask for a quantity with no measured value available.
+
+        The default is recorded as `guessed` unless `justification` is given,
+        which makes it `inferred` (the justification is its evidence).
 
         Under STRICT this raises. Under MINIMAL or CONVENTIONAL it returns the
         corresponding declared default, recorded as `assumed` - never as a
@@ -214,14 +248,22 @@ class Registry:
         """
         key = f"{entity}|{property}"
         if key in self.overrides:
+            note = self.override_notes.get(key)
+            if isinstance(note, tuple):              # (status, justification)
+                ov_status, ov_evidence = note
+            elif note:
+                ov_status, ov_evidence = Status.INFERRED, note
+            else:
+                ov_status, ov_evidence = Status.GUESSED, "explicit override supplied for this run"
             req = Requirement(
                 entity=entity, property=property, units=units,
-                model_use=model_use, status=Status.ASSUMED,
-                value=self.overrides[key],
-                evidence=self.override_notes.get(
-                    key, "explicit override supplied for this run"),
+                model_use=model_use, status=ov_status,
+                value=self.overrides[key], evidence=ov_evidence,
                 subsystem=subsystem, instances=instances,
-                uncertainty=uncertainty, shared_with=shared_with,
+                uncertainty=uncertainty or (
+                    "not a measurement of this fly" if ov_status is Status.INFERRED else None),
+                shared_with=shared_with,
+                method="profile" if note else "run override",
             )
             self._reqs[req.key] = req
             return self.overrides[key]
@@ -263,12 +305,23 @@ class Registry:
 
         req = Requirement(
             entity=entity, property=property, units=units, model_use=model_use,
-            status=Status.ASSUMED, value=value, evidence=note,
+            status=Status.INFERRED if justification else Status.GUESSED,
+            value=value, evidence=justification or note,
             subsystem=subsystem, instances=instances, uncertainty=uncertainty,
-            shared_with=shared_with,
+            shared_with=shared_with, method=method,
         )
         self._reqs[req.key] = req
         return value
+
+    def validate(self) -> list[str]:
+        """Every row must carry the fields its basis requires."""
+        problems = []
+        for r in self._reqs.values():
+            need = REQUIRED_FIELDS.get(r.basis, ())
+            for f in need:
+                if not getattr(r, f):
+                    problems.append(f"{r.key} [{r.basis}] missing {f}")
+        return problems
 
     # --- reading the inventory back ------------------------------------------
 

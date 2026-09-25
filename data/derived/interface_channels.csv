@@ -1,43 +1,43 @@
 channel,direction,physical_variable_or_target,lit_count,lit_source_note,male_cns_count,male_cns_query,implemented,note
-leg_motor,efferent,joint torque at leg joints,392,"MANC T1 142/T2 119/T3 131; Cheong et al. eLife 2024",381,"vnc_motor subclass in fl/ml/hl",partial,"328 of 381 mapped; 28 signs measurably inverted (F-SIGN-4)"
-wing_power_motor,efferent,"DLM/DVM asynchronous muscles driving ~200 Hz thorax resonance",12,"MANC wing premotor paper PMC10312520",,"included in wm",no,"no wing actuation of any kind"
-wing_steering_motor,efferent,"b1-b3,i1-i2,iii1/3/4,hg1-3 direct; tp1/2/N,ps1,tt indirect",26,"MANC; ~16 of 21 identified",67,"vnc_motor subclass wm",no,"male-cns 67 vs MANC 26: factor 2.6 unreconciled"
-neck_motor,efferent,neck muscles for gaze stabilisation and head saccades,24,"MANC 12 pairs; only 3 matched to a muscle",24,"vnc_motor subclass nm",no,"counts agree exactly; muscle targets unknown even in the connectome"
-haltere_motor,efferent,haltere stroke plane and gyroscope gain,14,"MANC 7 pairs; a female VNC dataset reportedly 32",16,"vnc_motor subclass hm",no,"dataset counts disagree"
-abdominal_motor,efferent,"body wall, oviduct/uterus, male reproductive tract",150,"MANC; targets largely unidentified",214,"vnc_motor subclass ad",no,"targets unidentified in the source data"
-proboscis_pharyngeal_motor,efferent,"proboscis extension; pharyngeal pump m.11/m.12",25,"16 proboscis + 9 pharyngeal; eLife 2016 / PMC13545389",107,"cb_motor superclass",no,"feeding apparatus entirely absent"
-neurosecretory,efferent,"DILPs, AKH, PTTH, ETH, bursicon, CCAP, DH44 into hemolymph",14,"IPCs 12-16 depending on paper",94,"cb_endocrine 72 + vnc_endocrine 22",no,"no humoral channel exists; carries hunger and hormonal state"
-enteric_visceral,efferent,"foregut, midgut, hindgut, crop, Malpighian tubules, heart",,"anatomical description only; Copenhaver 2007",50,"ENS superclass",no,"no gut or heart in the body model"
-spiracle_tracheal,efferent,spiracular occluder muscles,,"not located",,,no,"count not located in the literature"
-other_vnc_efferent,efferent,unclassified peripheral targets,,"not located",98,"vnc_efferent 94 + cb_efferent 4",no,"target tissue unknown"
-photoreceptors,afferent,"photon flux UV to green; R1-6 feed motion detection",12800,"~800 ommatidia x 8 per eye x 2; agent arithmetic not a cited total",6098,"ol_sensory superclass",partial,"per-eye luminance only: NO RETINOTOPY is available in male-cns or optic-lobe, so there is no spatial vision, no motion and no looming. Graph holds 6098 vs ~12800 expected"
-ocelli,afferent,ambient light and horizon,3,"3 ocelli; per-ocellus neuron count not located",,,no,
-antennal_orn,afferent,odorant identity and concentration,1200,"per antenna, ~52 types; Couto/Fishilevich/Vosshall",,"inside cb_sensory",no,
-maxillary_palp_orn,afferent,odorant for short and long range attraction,120,"~60 sensilla; eLife 2016",,"inside cb_sensory",no,
-gustatory,afferent,"sugar, bitter, water, salt, contact pheromone",,"4 GRNs + 1 mechanosensor per sensillum; whole-animal total not located",380,"taste bristle 70 + taste peg 60 + pharyngeal 87 + labellar 163",no,
-femoral_chordotonal,afferent,"claw: angle; hook: angular velocity/direction; club: vibration",152,"Mamiya/Tuthill Neuron 2018 & 2023",425,"subclass chordotonal organ",partial,"one tanh(angle)+0.1tanh(velocity) channel; claw/hook/club not distinguished"
-campaniform_sensilla,afferent,cuticular strain,1200,"body-wide estimate; haltere base ~140 or ~400, discrepant",426,"subclass campaniform sensilla",partial,"driven by contact force, which is NOT strain; wrong physical variable"
-hair_plates,afferent,joint angle near its limit,,"not located",113,"subclass hair plate",partial,"tanh(angle) only"
-bristles,afferent,bristle deflection and contact,,"not located",3359,"mechanosensory 2206 + leg 768 + wing 385",partial,"leg bristles only, driven by contact force"
-wing_proprioceptors,afferent,"wing bending, twisting, load at 200-250 Hz",67,"~36 proximal + ~17 distal CS + 14-neuron tegula chordotonal; PMC12975126",46,"subclass wing",no,
-johnstons_organ,afferent,"antennal receiver deflection: JO-A/B near-field sound, JO-C/E wind and gravity",480,"Kamikouchi 2009 Nature; Yorozu 2009 Nature",589,"auditory 114 + wind_gravity 475",no,"hearing, wind and gravity all absent"
-haltere_campaniform,afferent,"Coriolis force i.e. body angular velocity, as strain during ~200 Hz beat",,"5 distinct campaniform clusters",205,"subclass haltere",no,"the fly's gyroscope; flight is unstable without it"
-arista_thermo,afferent,temperature and rate of change,6,"3 hot + 3 cold cells",,,no,
-sacculus_cold,afferent,cooling,18,"15-20 cooling-responsive receptors",,,no,
-hygroreceptors,afferent,"humidity; moist and dry cells opposed",,"3 per triad sensillum; total not located",,,no,
-co2_receptor,afferent,airborne CO2,,"one ab1C ORN class per ab1 sensillum",,,no,
-nociceptors,afferent,"noxious mechanical (localised poking) and thermal",,"adult count not located",,,no,
-gut_pharyngeal_sensory,afferent,food presence and flow; stretch suspected,,"UNKNOWN IN THE ANIMAL: gut stretch receptors 'remain to be established' in Drosophila",1143,"subclass abdomen",no,"gap in fly science, not only in this model"
+leg_motor,efferent,joint torque at leg joints,392.0,MANC T1 142/T2 119/T3 131; Cheong et al. eLife 2024,381.0,vnc_motor subclass in fl/ml/hl,partial,328 of 381 mapped; 28 signs measurably inverted (F-SIGN-4)
+wing_power_motor,efferent,DLM/DVM asynchronous muscles driving ~200 Hz thorax resonance,12.0,MANC wing premotor paper PMC10312520,,included in wm,no,no wing actuation of any kind
+wing_steering_motor,efferent,"b1-b3,i1-i2,iii1/3/4,hg1-3 direct; tp1/2/N,ps1,tt indirect",26.0,MANC; ~16 of 21 identified,67.0,vnc_motor subclass wm,no,male-cns 67 vs MANC 26: factor 2.6 unreconciled
+neck_motor,efferent,neck muscles for gaze stabilisation and head saccades,24.0,MANC 12 pairs; only 3 matched to a muscle,24.0,vnc_motor subclass nm,no,counts agree exactly; muscle targets unknown even in the connectome
+haltere_motor,efferent,haltere stroke plane and gyroscope gain,14.0,MANC 7 pairs; a female VNC dataset reportedly 32,16.0,vnc_motor subclass hm,no,dataset counts disagree
+abdominal_motor,efferent,"body wall, oviduct/uterus, male reproductive tract",150.0,MANC; targets largely unidentified,214.0,vnc_motor subclass ad,no,targets unidentified in the source data
+proboscis_pharyngeal_motor,efferent,proboscis extension; pharyngeal pump m.11/m.12,25.0,16 proboscis + 9 pharyngeal; eLife 2016 / PMC13545389,107.0,cb_motor superclass,no,feeding apparatus entirely absent
+neurosecretory,efferent,"DILPs, AKH, PTTH, ETH, bursicon, CCAP, DH44 into hemolymph",14.0,IPCs 12-16 depending on paper,94.0,cb_endocrine 72 + vnc_endocrine 22,no,no humoral channel exists; carries hunger and hormonal state
+enteric_visceral,efferent,"foregut, midgut, hindgut, crop, Malpighian tubules, heart",,anatomical description only; Copenhaver 2007,50.0,ENS superclass,no,no gut or heart in the body model
+spiracle_tracheal,efferent,spiracular occluder muscles,,not located,,,no,count not located in the literature
+other_vnc_efferent,efferent,unclassified peripheral targets,,not located,98.0,vnc_efferent 94 + cb_efferent 4,no,target tissue unknown
+photoreceptors,afferent,photon flux UV to green; R1-6 feed motion detection,12800.0,~800 ommatidia x 8 per eye x 2; agent arithmetic not a cited total,6098.0,ol_sensory superclass,partial,"retinotopic from derived terminal geometry (F-VISION-2); luminance only, no opsin spectra, graded phototransduction not modelled"
+ocelli,afferent,ambient light and horizon,3.0,3 ocelli; per-ocellus neuron count not located,,,no,
+antennal_orn,afferent,odorant identity and concentration,1200.0,"per antenna, ~52 types; Couto/Fishilevich/Vosshall",,inside cb_sensory,partial,"DoOR relative tuning (measured, 48/53 types) x antenna concentration (F-OLF-1); static, no adaptation; absolute scale guessed"
+maxillary_palp_orn,afferent,odorant for short and long range attraction,120.0,~60 sensilla; eLife 2016,,inside cb_sensory,partial,as antennal ORNs; palp position read from the antenna body (inferred)
+gustatory,afferent,"sugar, bitter, water, salt, contact pheromone",,4 GRNs + 1 mechanosensor per sensillum; whole-animal total not located,380.0,taste bristle 70 + taste peg 60 + pharyngeal 87 + labellar 163,no,
+femoral_chordotonal,afferent,claw: angle; hook: angular velocity/direction; club: vibration,152.0,Mamiya/Tuthill Neuron 2018 & 2023,425.0,subclass chordotonal organ,partial,one tanh(angle)+0.1tanh(velocity) channel; claw/hook/club not distinguished
+campaniform_sensilla,afferent,cuticular strain,1200.0,"body-wide estimate; haltere base ~140 or ~400, discrepant",426.0,subclass campaniform sensilla,partial,"driven by contact force, which is NOT strain; wrong physical variable"
+hair_plates,afferent,joint angle near its limit,,not located,113.0,subclass hair plate,partial,tanh(angle) only
+bristles,afferent,bristle deflection and contact,,not located,3359.0,mechanosensory 2206 + leg 768 + wing 385,partial,leg and body mechanosensory bristles driven by contact force; head BM_* bristles not driven
+wing_proprioceptors,afferent,"wing bending, twisting, load at 200-250 Hz",67.0,~36 proximal + ~17 distal CS + 14-neuron tegula chordotonal; PMC12975126,46.0,subclass wing,no,
+johnstons_organ,afferent,"antennal receiver deflection: JO-A/B near-field sound, JO-C/E wind and gravity",480.0,Kamikouchi 2009 Nature; Yorozu 2009 Nature,589.0,auditory 114 + wind_gravity 475,no,"hearing, wind and gravity all absent"
+haltere_campaniform,afferent,"Coriolis force i.e. body angular velocity, as strain during ~200 Hz beat",,5 distinct campaniform clusters,205.0,subclass haltere,no,the fly's gyroscope; flight is unstable without it
+arista_thermo,afferent,temperature and rate of change,6.0,3 hot + 3 cold cells,,,no,
+sacculus_cold,afferent,cooling,18.0,15-20 cooling-responsive receptors,,,no,
+hygroreceptors,afferent,humidity; moist and dry cells opposed,,3 per triad sensillum; total not located,,,partial,tonic dry/moist drive from World RH (F-OLF-1)
+co2_receptor,afferent,airborne CO2,,one ab1C ORN class per ab1 sensillum,,,partial,"World CO2 fraction, K=5% (derived from qualitative dose-response)"
+nociceptors,afferent,noxious mechanical (localised poking) and thermal,,adult count not located,,,no,
+gut_pharyngeal_sensory,afferent,food presence and flow; stretch suspected,,UNKNOWN IN THE ANIMAL: gut stretch receptors 'remain to be established' in Drosophila,1143.0,subclass abdomen,no,"gap in fly science, not only in this model"
 enteroendocrine_nutrient,afferent,dietary sugar and amino acid concentration,,"not quantified; humoral not neural, needs a different channel type",,,no,
-oxygen_sensing,afferent,internal O2,,"not located as a discrete system",,,no,"gap in fly science"
-efferent_sense_organ_control,efferent,"octopaminergic gain modulation of vision in flight; actively tuned haltere gain",,"Suver/Mamiya/Dickinson Curr Biol 2012; Curr Biol 2024",,,no,"omitting it means the model over-reacts to self-generated motion"
-tarsal_adhesion,physics,claw interlocking and wet adhesion via tarsal fluid,,"no citable Drosophila-specific primary source located",,,no,"wall and ceiling walking not reproducible without it"
-unsteady_aerodynamics,physics,"delayed stall, rotational circulation, wake capture at Re~100",,"Sane JEB 2003; Wang Annu Rev Fluid Mech 2005",,,no,"prerequisite for flight"
-air_flow_field,physics,wind velocity at the antenna,,"van Breugel et al.",,,no,
-acoustic_near_field,physics,"air particle velocity, not pressure",,"near-field audition literature, not re-verified",,,no,"a pressure-audio model would be the wrong physics"
-light_transport,physics,per-ommatidium irradiance weighted by opsin curves,,"Rh1, Rh3-Rh6 spectral sensitivities measured",,,partial,"the body model renders 721 ommatidia per eye in two channels; opsin spectral weighting is not applied"
-odour_plume_transport,physics,turbulent scalar advection and diffusion,,"flies respond to filament intermittency not mean gradient",,,no,
-humoral_transport,physics,hormone concentration in open hemolymph,,"compartmental model",,,no,
-tracheal_gas_exchange,physics,reaction-diffusion through a branching tree,,"PMC5972413",,,no,
-cuticle_deformation,physics,cuticular strain field,,"Royal Society Interface 2025 FEM leg model; PMC12975126",,,no,"STRUCTURAL: strain is what campaniform sensilla transduce"
-joint_limits,physics,anatomical range of motion per joint,,"pending the joint-range research",,,no,"0 of 127 joints limited; see F-BODY-3"
+oxygen_sensing,afferent,internal O2,,not located as a discrete system,,,no,gap in fly science
+efferent_sense_organ_control,efferent,octopaminergic gain modulation of vision in flight; actively tuned haltere gain,,Suver/Mamiya/Dickinson Curr Biol 2012; Curr Biol 2024,,,no,omitting it means the model over-reacts to self-generated motion
+tarsal_adhesion,physics,claw interlocking and wet adhesion via tarsal fluid,,no citable Drosophila-specific primary source located,,,no,wall and ceiling walking not reproducible without it
+unsteady_aerodynamics,physics,"delayed stall, rotational circulation, wake capture at Re~100",,Sane JEB 2003; Wang Annu Rev Fluid Mech 2005,,,no,prerequisite for flight
+air_flow_field,physics,wind velocity at the antenna,,van Breugel et al.,,,no,
+acoustic_near_field,physics,"air particle velocity, not pressure",,"near-field audition literature, not re-verified",,,no,a pressure-audio model would be the wrong physics
+light_transport,physics,per-ommatidium irradiance weighted by opsin curves,,"Rh1, Rh3-Rh6 spectral sensitivities measured",,,partial,the body model renders 721 ommatidia per eye in two channels; opsin spectral weighting is not applied
+odour_plume_transport,physics,turbulent scalar advection and diffusion,,flies respond to filament intermittency not mean gradient,,,partial,static Gaussian plumes (world.py); no turbulence or intermittency
+humoral_transport,physics,hormone concentration in open hemolymph,,compartmental model,,,no,
+tracheal_gas_exchange,physics,reaction-diffusion through a branching tree,,PMC5972413,,,no,
+cuticle_deformation,physics,cuticular strain field,,Royal Society Interface 2025 FEM leg model; PMC12975126,,,no,STRUCTURAL: strain is what campaniform sensilla transduce
+joint_limits,physics,anatomical range of motion per joint,,pending the joint-range research,,,no,0 of 127 joints limited; see F-BODY-3

@@ -63,7 +63,9 @@ def register(reg: Registry) -> pd.DataFrame:
                 f"interface:{name}", "channel", None,
                 units="dimensionless",
                 model_use=f"{ch.direction}: {ch.physical_variable_or_target}",
-                status=Status.UNRESOLVED,
+                # unknown in the animal (a gap in fly science) vs simply not
+                # simulated here: different labels, never conflated
+                status=Status.UNRESOLVED if in_animal else Status.ABSENT,
                 evidence=(
                     f"NO CHANNEL. {'Unknown in the animal: ' if in_animal else ''}"
                     f"{evidence or 'no source recorded'}"
@@ -83,7 +85,7 @@ def register(reg: Registry) -> pd.DataFrame:
                 f"interface:{name}", "channel", ch.implemented,
                 units="dimensionless",
                 model_use=f"{ch.direction}: {ch.physical_variable_or_target}",
-                status=Status.ASSUMED,
+                status=Status.GUESSED, method="transduction placeholder",
                 evidence=f"{ch.implemented} channel. {note or ''}".strip(),
                 subsystem=f"interface_{ch.direction}",
                 instances=instances,

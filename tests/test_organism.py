@@ -142,7 +142,7 @@ def test_missing_and_absent_stay_distinguishable():
                 model_use="a real zero", status=Status.MEASURED,
                 evidence="measured and found absent")
     inv = reg.inventory().set_index("property")
-    assert inv.loc["electrical_coupling", "status"] == "unresolved"
+    assert inv.loc["electrical_coupling", "status"] == "unknown"
     assert inv.loc["measured_zero", "status"] == "measured"
     # An unresolved row carries no value and a measured zero carries 0.0. Note
     # that the exported value column cannot by itself carry this distinction:
@@ -189,7 +189,7 @@ def test_unreceivable_motor_output_is_recorded_not_dropped():
     assert len(org.nm.unmapped) > 0
     inv = org.reg.inventory()
     unmapped_rows = inv[
-        inv.entity.str.contains("unmapped") & (inv.status == "unresolved")
+        inv.entity.str.contains("unmapped") & (inv.status == "unknown")
     ]
     assert not unmapped_rows.empty
     assert unmapped_rows.instances.sum() == len(org.nm.unmapped)
@@ -213,7 +213,7 @@ def test_absent_interface_channels_are_registered_not_silent():
     inv = reg.inventory()
 
     assert len(inv) == len(channels), "a channel went unrecorded"
-    absent = inv[inv.status == "unresolved"]
+    absent = inv[inv.status.isin(["absent", "unknown"])]
     assert len(absent) >= 30, "far too few channels recorded as absent"
 
     named = set(inv.entity)
@@ -239,8 +239,8 @@ def test_unknown_in_the_animal_is_not_measured_absence():
 
     animal_gap = inv.loc["interface:gut_pharyngeal_sensory"]
     model_gap = inv.loc["interface:wing_power_motor"]
-    assert animal_gap.status == "unresolved"
-    assert model_gap.status == "unresolved"
+    assert animal_gap.status == "unknown"
+    assert model_gap.status == "absent"
     assert "Unknown in the animal" in animal_gap.evidence
     assert "Unknown in the animal" not in model_gap.evidence
     assert "not measured absence" in animal_gap.uncertainty
@@ -408,7 +408,7 @@ def test_a_borrowed_profile_is_assumed_and_cites_its_source():
                     instances=10, minimal=-60.0)
     assert v == -52.0
     row = reg.inventory().iloc[0]
-    assert row.status == Status.ASSUMED.value
+    assert row.status == Status.INFERRED.value      # borrowed, never measured
     assert "Shiu" in row.evidence
 
 
@@ -576,8 +576,10 @@ def test_every_value_is_labelled_measured_derived_or_inferred():
     reg.overrides["e|x"] = 2.0
     reg.require("e", "x", units="mV", model_use="t", minimal=1.0)          # override
     inv = reg.inventory().set_index("entity")
-    assert inv.basis.to_dict() == {"a": "measured", "b": "derived", "c": "inferred",
-                                   "d": "inferred", "e": "inferred"}
+    assert inv.basis.to_dict() == {"a": "measured", "b": "derived", "c": "guessed",
+                                   "d": "inferred", "e": "guessed"}
+    assert inv.iterate.to_dict() == {"a": False, "b": False,
+                                                         "c": True, "d": False, "e": True}
 
 
 def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
@@ -601,4 +603,15 @@ def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
     assert d[left & (r > 0.5)].mean() > d[right & (r > 0.5)].mean()
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("orn:all", "odour_tuning")].basis == "measured"
-    assert inv.loc[("orn:all", "max_drive")].basis == "inferred"
+    assert inv.loc[("orn:all", "max_drive")].basis == "guessed"
+
+
+def test_the_whole_organism_carries_required_evidence_fields():
+    """Measured cites a source; derived states inputs; inferred justifies; guessed says why."""
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    assert org.reg.validate() == []
+    inv = org.reg.inventory()
+    assert set(inv.basis) <= {"measured", "derived", "inferred", "guessed",
+                              "unknown", "absent", "inapplicable"}
+    assert inv[inv.basis == "guessed"].iterate.all()
