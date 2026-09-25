@@ -19,6 +19,13 @@ grain, `scripts/blank_ledger.py`), sensory census (F-CENSUS-1, all 17,896 sensor
 neurons classified), derived retinotopy (F-VISION-2), olfaction/CO2/humidity wired
 to `world.py` (F-OLF-1). 66% of sensory neurons driven. Every inventory value has a
 `basis` label: measured / derived / inferred / unknown.
+**Session 5, later:** strict evidence labels (measured / derived / inferred /
+guessed / unknown / absent; `Registry.validate()` tested), complete ontology of
+measurable fly biology (`data/ontology/fly_information.yaml`, F-LEDGER-2/3),
+model family M2 with per-type table `data/params/cell_types.csv`, graded
+transmission, neuromodulator pools, Q10, every sensory neuron transduced
+(F-SENSE-ALL), 756/815 motor neurons mapped (`data/params/motor_targets.csv`,
+F-MOTOR-2). Filling a blank = adding a labelled row to a params table.
 **Current working model: profile `m2` (F-AL-1)**, 0.165 mV per synapse, calibration
 rule v2 satisfied. flybench also runs locally (`external/flybench/.venv`).
 backhouse dropped off the network again at ~22:30 on 24 Sept; the m2 jobs that
