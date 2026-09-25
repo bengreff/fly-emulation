@@ -46,10 +46,12 @@ def variant(name: str, alpha: float) -> None:
     W = (W @ sp.diags(col.astype(np.float32))).tocsr()
     W.eliminate_zeros()
     c = copy.copy(base)
-    c.W, c.name = W, name
+    # Named "malecns" so dataset-specific tasks apply; the directory name
+    # and meta carry the variant identity.
+    c.W, c.name = W, "malecns"
     c.meta = {**base.meta, "flyemu_variant": name, "size_alpha": alpha}
     c.save(CACHE / name)
     print(name, f"nnz {W.nnz:,}")
 
-variant("malecns_m1", 0.0)
-variant("malecns_m1_size1", 1.0)
+variant("malecns_m1n", 0.0)
+variant("malecns_m1n_size1", 1.0)

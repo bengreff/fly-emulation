@@ -1094,3 +1094,38 @@ removes real presynaptic inhibition at sensory terminals. Keep it as an
 option, not as settled. The shuffled columns in this finding were computed
 with the rewired-efficacy bug (DECISIONS, "Independent review") and are
 superseded by the fixed-code runs.
+
+## F-SIZE-1. Volume-scaled input resistance: rejected by its pre-registration
+
+Efficacy x (median size / postsynaptic size), alpha = 1 (Pugliese-style, but
+efficacy-only; see DECISIONS). Return-to-rest calibration: alpha = 1 at 2.0x
+Shiu (0.55 mV), alpha = 0.5 at 1.0x. At the calibrated scales sugar→MN9 is
+0 Hz and fewer than 100 neurons respond, and one grid step higher the network
+ignites. The factor spans 0.002x (giant fibre) to 2,896x. The reviewer found
+that 1,472 of the 1,580 non-sensory cells with factor > 3 are optic-lobe
+columnar types (L4, L5, Dm2, T5, Tm9), so scaling moves the ignition core into
+the optic lobe rather than taming it.
+
+Pre-registered criteria:
+- (a) More flybench passes than m1 on the unseen task set: **4 vs 1 of 15**
+  (crosstalk, looming DN ensemble, flash ≠ loom, wiring robustness), graded
+  0.69 vs 0.65. On the three male-CNS-only tasks m1 is better (song chain
+  0.88 vs 0.25).
+- (b) Keep JO-C/E→aDN and LPLC2→GF: **lost both** (0 Hz each at 100 and
+  200 Hz; `runs/assay-*-m1-size1g2`).
+
+**Not adopted.** Its flybench advantage comes from tasks that reward
+quiescence, which a model that barely transmits passes by default.
+
+## F-FB-1. m1 on flybench: 1 of 18 unseen tasks, graded 0.65
+
+flybench v0.2.1's reference LIF, on our export of male-cns (fingerprint does
+not match flybench's pin; unpinned), with m1's graph changes applied
+(`scripts/flybench_variants.py`), gain 0.6 (`runs/flybench/` on backhouse).
+Pass: flash ≠ loom. Near-misses: LC→DN matrix 0.94 (LPLC1 also reaches
+MDN), courtship song chain 0.88 (pIP10 also drives leg MNs), DA1 sparseness
+0.78, crosstalk 0.75 (loom reaches MN9). Worst: EPG ring attractor 0.29 (no
+held bump), steering DNa02/DNa01 0.17, leg MN size principle 0.33, optic
+flow 0.67. flybench's simulator has no synaptic reset on spike, so it runs
+hotter than ours at equal gain. Its per-task numbers are an independent
+implementation's, which is a useful cross-check on ours.
