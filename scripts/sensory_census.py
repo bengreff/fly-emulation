@@ -50,10 +50,11 @@ RULES = [
     # --- olfaction and chemical senses
     (dict(cls="olfactory", typ=r"^ORN_V$"), ("olfaction", "antenna ab1C",
      "CO2 concentration", "receptor dose-response", "Jones 2007; Suh 2004",
-     "none", "derived")),
+     "driven: World CO2, K=5% (olfaction.py)", "derived")),
     (dict(cls="olfactory"), ("olfaction", "antenna / maxillary palp ORN",
      "odorant concentrations (receptor-specific)", "receptor tuning + adaptation",
-     "DoOR; Hallem & Carlson 2006; Nagel & Wilson 2011", "none", "derived")),
+     "DoOR; Hallem & Carlson 2006; Nagel & Wilson 2011",
+     "driven: DoOR tuning x antenna concentration (static)", "derived")),
     # male-cns class labels for these two are the reverse of their putative
     # modalities (Marin et al. 2020; docs/SENSORS_CHEMO.md)
     (dict(typ=r"^HRN_VP1l$"), ("thermosensation", "sacculus VP1l (cooling, putative)",
@@ -64,7 +65,7 @@ RULES = [
      "none", "inferred")),
     (dict(cls="hygrosensory"), ("hygrosensation", "sacculus / arista",
      "relative humidity", "dry/moist opponent cells", "Enjin 2016; Knecht 2016",
-     "none", "derived")),
+     "driven: World RH, tonic", "derived")),
     (dict(cls="thermosensory"), ("thermosensation", "arista / sacculus",
      "temperature and its rate of change", "hot/cold phasic-tonic cells",
      "Gallio 2011; Budelli 2019", "none", "derived")),
@@ -173,8 +174,8 @@ def main() -> None:
             impl = f"driven as {ENCODES[sub]}"
             if modality not in ("touch", "proprioception"):
                 impl = f"WRONG: {modality} cells driven as {ENCODES[sub]}"
-        else:
-            impl = "none" if not impl.startswith("partial") or modality != "vision" else impl
+        elif not (impl.startswith("driven") or (impl.startswith("partial") and modality == "vision")):
+            impl = "none"
         rows.append(dict(
             group=g, n_cells=len(grp), superclass=r0.superclass, cls=r0["class"],
             subclass=r0.subclass, entry_nerves=";".join(sorted(grp.entryNerve.dropna().unique())[:4]),

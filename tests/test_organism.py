@@ -578,3 +578,27 @@ def test_every_value_is_labelled_measured_derived_or_inferred():
     inv = reg.inventory().set_index("entity")
     assert inv.basis.to_dict() == {"a": "measured", "b": "derived", "c": "inferred",
                                    "d": "inferred", "e": "inferred"}
+
+
+def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
+    """Olfactory drive comes from measured tuning and the antenna's own position."""
+    from flyemu.organism import Organism
+    from flyemu.world import OdourSource
+    import numpy as np
+
+    org = Organism(policy="minimal")
+    xpos = org.body.sim.mj_data.xpos
+    la, ra = org.chem.antenna_bodies
+    tun = org.chem.tuning
+    odour = tun.columns[tun.astype(bool).sum().argmax()]      # widely tested odour
+    org.world.odours = [OdourSource(odour, xpos[la] + np.array([0, 3.0, 0]), 1e-2, 1.0)]
+    d = org.chem.drive(org.world, xpos)[org.chem.rows]
+    r = tun[odour].to_numpy()
+    orn = org.chem.kind == "orn"
+    left, right = orn & (org.chem.side == 0), orn & (org.chem.side == 1)
+    # untuned receptors get nothing; the near (left) antenna gets more
+    assert np.all(d[orn & (r == 0)] == org.chem.baseline)
+    assert d[left & (r > 0.5)].mean() > d[right & (r > 0.5)].mean()
+    inv = org.reg.inventory().set_index(["entity", "property"])
+    assert inv.loc[("orn:all", "odour_tuning")].basis == "measured"
+    assert inv.loc[("orn:all", "max_drive")].basis == "inferred"

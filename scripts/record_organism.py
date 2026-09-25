@@ -31,7 +31,7 @@ import numpy as np
 from flyemu.body import Body
 from flyemu.organism import Organism
 from flyemu.provenance import RunRecord
-from flyemu import neuromuscular, sensory
+from flyemu import olfaction, neuromuscular, sensory
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -83,6 +83,7 @@ def main() -> int:
         model=org.body.model,
     )
     org.aff = sensory.build(org.reg, org.conn, org.body)
+    org.chem = olfaction.build(org.reg, org.conn, org.body)
 
     m, d = org.body.sim.mj_model, org.body.sim.mj_data
     n_steps = int(round(args.duration_ms / org.timestep_ms))
@@ -105,7 +106,7 @@ def main() -> int:
 
     for step in range(n_steps):
         obs = org.body.observe()
-        spiked = org.net.step(external_mv=org.aff.drive(obs))
+        spiked = org.net.step(external_mv=org.sense(step, obs))
         torque = org.nm.step(spiked, org.timestep_ms)
         org.body.actuate(torque)
         org.body.set_adhesion(org.nm.grip)

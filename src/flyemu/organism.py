@@ -18,7 +18,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, interface, lif, neuromuscular, profiles, sensory, vision
+from . import connectome, interface, lif, neuromuscular, olfaction, profiles, sensory, vision
+from .world import World
 from .body import Body
 from .registry import Policy, Registry, Requirement
 
@@ -43,6 +44,7 @@ class Organism:
     min_synapses: int = 1
     overrides: dict = field(default_factory=dict)
     profile: str | None = None   # a named borrowed parameter set (profiles.py)
+    world: World = field(default_factory=World)
 
     reg: Registry = field(init=False)
     body: Body = field(init=False)
@@ -79,10 +81,31 @@ class Organism:
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
             if self.body.vision else None
         )
+        self.chem = olfaction.build(self.reg, self.conn, self.body)
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness
         # rather than only the parts that happen to be wired.
         self.channels = interface.register(self.reg)
+
+    # --- sensing -------------------------------------------------------------
+
+    def sense(self, step: int, obs: dict) -> np.ndarray:
+        """All afferent drive for this step: body senses, eyes, chemosenses.
+
+        The single place where the world and body reach the network, used by
+        run() and by the recording scripts alike.
+        """
+        drive = self.aff.drive(obs)
+        if self.vis is not None:
+            # The eyes are rendered at their own rate; between renders the
+            # photoreceptors hold their last drive.
+            if step % self.vis.sample_every == 0:
+                drive = drive + self.vis.drive(np.asarray(
+                    self.body.sim.get_ommatidia_readouts(self.body.fly.name)))
+            else:
+                drive = drive + self.vis.last()
+        drive = drive + self.chem.drive(self.world, self.body.sim.mj_data.xpos)
+        return drive
 
     # --- running -------------------------------------------------------------
 
@@ -103,17 +126,7 @@ class Organism:
 
         for step in range(n_steps):
             obs = self.body.observe()
-            drive = self.aff.drive(obs)
-            if self.vis is not None:
-                # The eyes are rendered at their own rate; between renders the
-                # photoreceptors hold their last drive.
-                if step % self.vis.sample_every == 0:
-                    drive = drive + self.vis.drive(
-                        np.asarray(self.body.sim.get_ommatidia_readouts(
-                            self.body.fly.name))
-                    )
-                else:
-                    drive = drive + self.vis.last()
+            drive = self.sense(step, obs)
             spiked = self.net.step(external_mv=drive)
             if spike_cap_per_step is not None and spiked.size > spike_cap_per_step:
                 raise RuntimeError(

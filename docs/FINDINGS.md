@@ -1421,3 +1421,27 @@ luminance, so the eyes carry spatial information. The registry records
 retinotopy as **derived**, with the alignment caveat. Spectral matching is
 still coarse (the renderer's pale/yellow mask is its own). The R7/R8
 assignments could now set that mask from the connectome.
+
+## F-OLF-1. Smell, CO2 and humidity wired to a world; recordings had been blind
+
+`src/flyemu/world.py`: a minimal environment with static Gaussian odour
+plumes, temperature, humidity and CO2. All scenario choices, inferred.
+`src/flyemu/olfaction.py`: 2,592 ORNs are driven by concentration at their
+own antenna (derived from body pose) x DoOR relative tuning (measured, 48 of
+53 types) x an inferred saturating dose-response. ORN_V reads CO2 with K = 5%
+(derived from qualitative dose-response). Dry and moist hygroreceptors are
+tonic in RH. Temperature cells are phasic (dT/dt), so a static world leaves
+them at baseline. ORN adaptation dynamics are recorded as unresolved. The
+absolute scale (max drive 15 mV, K = 10^-3) is inferred.
+
+Closed-loop check (m2, 300 ms; `scripts/probes/odour_closed_loop.py`):
+ethyl acetate (10^-2 at the antenna) raises active PNs from 20 to 36 and PN
+mean rate from 0.46 to 1.28 Hz. Whole-brain rate goes 0.95 → 1.00 Hz; no
+ignition. KCs are not recruited in 300 ms.
+
+**Bug fixed:** `record_organism.py` had its own copy of the loop that never
+added visual drive, so every viewer recording so far was of a blind fly.
+Sensing now goes through one method, `Organism.sense()`, used by both.
+
+Census: 11,903 of 17,896 sensory neurons driven (66%). Before this session it
+was ~9,300, of which 768 were wrong.
