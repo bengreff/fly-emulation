@@ -33,9 +33,20 @@ hist = (a.nt_type == "HIST").to_numpy()
 sens = a.super_class.fillna("").str.contains("sensory").to_numpy()
 print(f"fragments {frag.sum():,}  histamine {hist.sum():,}  sensory {sens.sum():,}")
 
-def variant(name: str, alpha: float) -> None:
+alln = (a["class"] == "ALLN").to_numpy()
+alpn = (a["class"] == "ALPN").to_numpy()
+ach = (a.nt_type == "ACH").to_numpy()
+unclear = ~a.nt_type.isin(["ACH", "GABA", "GLUT", "DA", "OCT", "SER", "HIST"]).to_numpy()
+print(f"ALLN {alln.sum()}  ALPN {alpn.sum()}  ACh ALLN {(alln & ach).sum()}  unclear ALLN {(alln & unclear).sum()}")
+
+
+def variant(name: str, alpha: float, m2: bool = False) -> None:
     W = base.W.tocsr().astype(np.float32)
     row = np.where(frag, 0.0, np.where(hist, -1.0, 1.0)).astype(np.float32)
+    if m2:
+        # (ii) unclear-NT AL LNs inhibitory: W entries are signed counts, and
+        # flybench signs unknown +1, so flip those rows
+        row = np.where(alln & unclear, -1.0, row).astype(np.float32)
     # flybench signs HIST +1 (unknown -> excitatory); flip to -1 by row factor
     W = sp.diags(row) @ W
     col = np.where(frag | sens, 0.0, 1.0)
@@ -44,6 +55,11 @@ def variant(name: str, alpha: float) -> None:
         f = np.where(np.isfinite(size) & (size > 0), (med / size) ** alpha, 1.0)
         col = col * f
     W = (W @ sp.diags(col.astype(np.float32))).tocsr()
+    if m2:
+        # (i) cholinergic AL LN chemical output onto PNs and onto each other
+        sub = (sp.diags((alln & ach).astype(np.float32)) @ W
+               @ sp.diags((alpn | (alln & ach)).astype(np.float32)))
+        W = (W - sub).tocsr()
     W.eliminate_zeros()
     c = copy.copy(base)
     # Named "malecns" so dataset-specific tasks apply; the directory name
@@ -53,5 +69,9 @@ def variant(name: str, alpha: float) -> None:
     c.save(CACHE / name)
     print(name, f"nnz {W.nnz:,}")
 
-variant("malecns_m1n", 0.0)
-variant("malecns_m1n_size1", 1.0)
+import sys as _sys
+if "m2" in _sys.argv:
+    variant("malecns_m2n", 0.0, m2=True)
+else:
+    variant("malecns_m1n", 0.0)
+    variant("malecns_m1n_size1", 1.0)

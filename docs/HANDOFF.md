@@ -14,6 +14,10 @@ shows results are type-level; three uniform mechanisms were rejected by
 pre-registration. backhouse is deployed: `~/fly-emulation` (code synced by
 `scripts/sync_backhouse.sh`), flybench in `external/flybench/.venv`, and jobs run
 in tmux under a keep-alive SSH session (WSL shuts down otherwise).
+**Current working model: profile `m2` (F-AL-1)**, 0.165 mV per synapse, calibration
+rule v2 satisfied. flybench also runs locally (`external/flybench/.venv`).
+backhouse dropped off the network again at ~22:30 on 24 Sept; the m2 jobs that
+were running there are lost, and were redone on the Mac.
 
 ## What this project is
 

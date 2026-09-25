@@ -1278,3 +1278,56 @@ up to 4x (1.1 mV), with sugar→MN9 at 0 Hz; ignition at 6-8x. It fails the
 adoption rule at calibration, so the battery was not run. Normalising by any
 quantity that grows with cell size suppresses exactly the large integrating
 neurons (MN9, GF, DNs, pIP1) that the known pathways end on. Rejected.
+
+## F-AL-1. m2: two antennal-lobe corrections make the model stable and improve olfactory physiology
+
+Pre-registered (DECISIONS, "m2"). The changes come from the ignition
+diagnostics and literature only:
+- (i) no chemical output from cholinergic AL LNs onto PNs or other
+  cholinergic AL LNs (eLN→PN is electrical; Yaksi & Wilson 2010);
+- (ii) AL LNs with unclear predicted NT treated as inhibitory.
+
+**Calibration rule v2 is satisfiable for the first time.** Every stimulus,
+including random populations containing ORNs, returns to rest up to 1.0x
+m1's scale (0.165 mV). m1 failed at every scale.
+
+**Held-out olfactory physiology** (flybench v0.2.1's own simulator, gain 0.6
+= 0.165 mV, tasks never used in design; `runs/flybench/{m1n,m2n}_g06_olf.json`):
+
+| Task (graded) | m1 | m2 |
+|---|---|---|
+| 08 olfactory sparse coding | 0.57 | 0.83 |
+| 17 PN transfer function | 0.45 | 0.75 |
+| 18 DA1 sparseness | 0.64 | **0.95 pass** |
+| 26 KC sparseness / APL | 0.46 | **0.89 pass** |
+| 27 CO2 specificity | 0.57 | 0.60 |
+| mean | 0.54 | **0.80** |
+
+Remaining olfactory failures: the CVA odour still reaches too many cells;
+the PN response at 100 vs 30 Hz ORN drive is less than doubled (too
+saturated); CO2 does not reach its own PNs (PNm1 < 5 Hz).
+
+**The battery at 0.165 mV** (`runs/assay-*-m2-v2mac`, 2 trials, 1 global and
+1 type shuffle; GF→TTMn, DNg100 and JO-F→MDN not rerun):
+- No ignition anywhere. Bitter recruits 789 cells (m1: ~9,000-11,000).
+- Sugar→MN9_L 7.5 / 93.5 Hz at 100 / 200 Hz (type-shuffled 1.5 / 43;
+  global 0).
+- **Bitter suppression is now clean:** sugar 100 Hz alone 7.5 Hz; with bitter
+  0 Hz; bitter alone 0 Hz, without ignition. This is its first
+  interpretable pass.
+- JO-C/E→aDN 139 Hz and LPLC2→GF 296 Hz, as before; type-shuffled nearly
+  identical (F-TYPE-1 holds).
+- Still failing: water→MN9 0, JO-F→aDN 0, and the JO-C/E→MDN null
+  (56 Hz).
+
+**Adopted as the working model (profile `m2`).** The closed-loop body run
+(`runs/organism-record-3000ms-m2`, in the viewer) stays at 0.10-0.26 Hz
+whole-brain with 4,992 motor spikes in 3 s.
+
+Caveats:
+- (ii) is a class-level prior applied to 89 cells whose individual
+  transmitters are unknown.
+- (i) extends a measurement for eLN→PN to eLN→eLN, which is unmeasured.
+- No electrical eLN-PN coupling was added to replace the removed chemical
+  excitation, so lateral excitation is currently absent. That is a known
+  omission and a likely cause of the saturated PN transfer function.

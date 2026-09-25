@@ -80,7 +80,12 @@ published outcomes, and a new F-GAIN-2 finding.
 - flybench (independent simulator) scores m1 at 1/18 unseen tasks, graded 0.65.
 
 **The central conflict:** at any single synaptic scale, the model either transmits the weaker known pathways (water, JO-F) or stays stable. The real animal does both. Uniform single-mechanism fixes have so far failed. Conductance-based synapses were tested: sugar-stable to 0.8x, but they still fail rule v2. **F-LN-2 locates the conflict in the antennal lobe:** odour input ignites the model at every usable scale. Ranked next:
-0. **Antennal lobe physiology, fitted to AL recordings only.**
+0. **Done (F-AL-1): m2 adopted.** The AL corrections make the model stable under odour input and raise held-out olfactory physiology from 0.54 to 0.80. Next inside the AL:
+   - add eLN-PN gap junctions to restore lateral excitation (Yaksi & Wilson 2010);
+   - check the PN transfer function saturation;
+   - find why CO2 does not reach PNm1.
+
+   Then **re-run the full flybench suite and the fresh-assay battery on m2**, and re-open the remaining failures: water→MN9, JO-F, JO-C/E→MDN, and PSI→DLMn (subthreshold chemical synapse). Superseded plan for this item, kept for the record: **Antennal lobe physiology, fitted to AL recordings only.**
    - eLN→PN as gap junctions instead of chemical synapses (Yaksi & Wilson 2010).
    - ORN presynaptic inhibition as a divisive gain on ORN output (Olsen & Wilson 2008).
    - An AL-specific synaptic scale fitted to the PN transfer function (Olsen et al. 2010; flybench task 17), never to behaviour.

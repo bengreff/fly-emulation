@@ -514,3 +514,5 @@ Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), no
 - m2 = m1 + (i) + (ii). Scale by calibration rule v2 (odour-containing generic populations included).
 - Scored: rule v2 passes at all (m1: fails everywhere). flybench olfactory physiology tasks 08, 17, 18, 26, 27 (graded, vs m1 in F-FB-1). The full 11-assay battery, reported as seen.
 - Adopt m2 if rule v2 is satisfiable at a scale where sugar→MN9_L > 5 Hz, and mean graded score on 08/17/18/26/27 does not fall below m1's.
+
+**Result:** m2 meets both criteria. Rule v2 is satisfied at 0.165 mV, with sugar→MN9_L 7.5/93.5 Hz. Mean graded score on flybench 08/17/18/26/27 is 0.80 vs m1's 0.54, with two new passes. **m2 adopted** (F-AL-1). Input-count normalisation rejected (F-NORM-1). GF electrical synapses kept as an option (F-GAP-1).
