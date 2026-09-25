@@ -28,6 +28,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+import pandas as pd
+from pathlib import Path
 
 from .registry import Registry, Status
 
@@ -59,6 +61,7 @@ class Vision:
     baseline_mv: float
     n_neurons: int
     sample_every: int           # timesteps between eye renders
+    ommatidium: np.ndarray | None = None   # derived retinotopy, -1 if none
     _last: np.ndarray | None = None
 
     def drive(self, readouts: np.ndarray) -> np.ndarray:
@@ -91,6 +94,13 @@ class Vision:
                     out[self.rows[sel]] = (
                         self.baseline_mv + self.gain_mv * per_eye[(e, ch)]
                     )
+        if self.ommatidium is not None:
+            # Retinotopic cells read their own ommatidium's luminance (the
+            # renderer fills one of the two spectral channels per ommatidium).
+            hit = self.ommatidium >= 0
+            lum = readouts.sum(axis=2)
+            out[self.rows[hit]] = self.baseline_mv + self.gain_mv * lum[
+                self.eye[hit], self.ommatidium[hit]]
         self._last = out
         return out
 
@@ -139,7 +149,30 @@ def build(reg: Registry, conn, *, timestep_ms: float, sample_hz: float = 100.0
     )
 
     # --- what this channel is not -------------------------------------------
-    reg.provide(
+    om_idx = None
+    ret_path = Path(__file__).resolve().parents[2] / "data" / "derived" / "retinotopy.csv"
+    if ret_path.exists():
+        rt = pd.read_csv(ret_path).set_index("bodyId")
+        bids = ol_keep.bodyId.to_numpy()[ok]
+        om_idx = rt.ommatidium.reindex(bids).fillna(-1).astype(np.int64).to_numpy()
+        eye_rt = rt.eye.reindex(bids).map({"L": 0, "R": 1})
+        eye_keep = np.where(eye_rt.notna(), eye_rt.fillna(0).astype(int), eye_keep)
+        reg.provide(
+            "photoreceptor:all", "retinotopy", "data/derived/retinotopy.csv",
+            units="ommatidium index",
+            model_use="which ommatidium each photoreceptor looks through",
+            status=Status.DERIVED,
+            evidence="terminal presynapse centroids in lamina/medulla, oriented "
+                     "by derived anatomical axes, one-to-one R7/R8 assignment "
+                     "(F-VISION-2); R7/R8 subtype concordance 0.73 vs 0.52 chance",
+            subsystem="sensory_transduction", instances=int((om_idx >= 0).sum()),
+            uncertainty="global alignment inferred (smooth axis-aligned map, "
+                        "no local distortion); median mismatch ~9 deg in medulla, "
+                        "~4 deg lamina; medulla A-P flip from the optic chiasm "
+                        "is standard anatomy, not measured here",
+        )
+    else:
+      reg.provide(
         "photoreceptor:all", "retinotopy", None,
         units="ommatidium index",
         model_use="which ommatidium each photoreceptor looks through",
@@ -203,5 +236,5 @@ def build(reg: Registry, conn, *, timestep_ms: float, sample_hz: float = 100.0
     return Vision(
         rows=rows.astype(np.int64), eye=eye_keep.astype(np.int64),
         channel=channel, gain_mv=gain, baseline_mv=baseline,
-        n_neurons=conn.n, sample_every=every,
+        n_neurons=conn.n, sample_every=every, ommatidium=om_idx,
     )

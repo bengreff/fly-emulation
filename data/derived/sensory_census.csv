@@ -377,13 +377,13 @@ GNG655,2,cb_sensory,unknown_sensory,,MxLbN,?2,unknown,"sensory, modality unknown
 LN-DN1,2,sensory_descending,unknown_sensory,,MxLbN,?2,unknown,"sensory, modality unknown",unknown,unknown,none,none,unknown,unknown
 SNxx09,2,vnc_sensory,unknown_sensory,abdomen,AbNT,?2,unknown,abdominal sensory,"unknown (candidates: stretch, chemical, reproductive)",unknown,none,none,unknown,unknown
 untyped:unknown_sensory/neck,1,vnc_sensory,unknown_sensory,neck,PrN,?1,unknown,"sensory, modality unknown",unknown,unknown,none,none,unknown,unknown
-R1-R6,3377,ol_sensory,visual,,,?3364;R9;L4,vision,compound eye R1-R6,"irradiance per ommatidium, Rh1 spectrum",graded phototransduction,opsin spectra; Juusola/Hardie recordings,"partial: luminance, non-retinotopic",derived,inferred
-R7y,482,ol_sensory,visual,,,?482,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R8y,481,ol_sensory,visual,,,?476;L5,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R8_unclear,442,ol_sensory,visual,,,?440;L2,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R7_unclear,404,ol_sensory,visual,,,?402;R1;L1,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R7p,332,ol_sensory,visual,,,?332,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R8p,330,ol_sensory,visual,,,?327;L3,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
-R7R8_unclear,85,ol_sensory,visual,,,?85,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, non-retinotopic",derived,inferred
+R1-R6,3377,ol_sensory,visual,,,?3364;R9;L4,vision,compound eye R1-R6,"irradiance per ommatidium, Rh1 spectrum",graded phototransduction,opsin spectra; Juusola/Hardie recordings,"partial: luminance, retinotopic (derived)",derived,inferred
+R7y,482,ol_sensory,visual,,,?482,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R8y,481,ol_sensory,visual,,,?476;L5,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R8_unclear,442,ol_sensory,visual,,,?440;L2,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R7_unclear,404,ol_sensory,visual,,,?402;R1;L1,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R7p,332,ol_sensory,visual,,,?332,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R8p,330,ol_sensory,visual,,,?327;L3,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
+R7R8_unclear,85,ol_sensory,visual,,,?85,vision,compound eye R7/R8,"irradiance per ommatidium, Rh3-Rh6 spectra",graded phototransduction,opsin spectra,"partial: luminance, retinotopic (derived)",derived,inferred
 R7d,82,ol_sensory,visual,,,?82,vision,dorsal rim R7/R8,"polarised skylight, UV/blue",graded phototransduction,Weir/Wernet recordings,partial: luminance only,derived,inferred
 R8d,76,ol_sensory,visual,,,?72;L4,vision,dorsal rim R7/R8,"polarised skylight, UV/blue",graded phototransduction,Weir/Wernet recordings,partial: luminance only,derived,inferred

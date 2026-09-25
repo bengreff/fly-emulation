@@ -367,37 +367,34 @@ def test_campaniform_afferents_read_load_not_ground_contact():
 
 
 @needs_graph
-def test_vision_does_not_pretend_to_have_retinotopy():
-    """Per-eye luminance is not spatial vision, and must not read as it.
+def test_retinotopy_is_derived_and_actually_spatial():
+    """Retinotopy is labelled derived (not measured), and it really is spatial.
 
-    male-cns gives photoreceptors no column or hex coordinate, and optic-lobe
-    carries none either, so which ommatidium a photoreceptor looks through
-    cannot be established. Assigning them arbitrarily would give the network
-    structured input through a scrambled map - which would look like working
-    vision while being nothing of the kind.
+    Session 5 derived each photoreceptor's ommatidium from terminal positions
+    (F-VISION-2). The failure mode guarded against earlier, a scrambled map
+    that looks like vision, is now guarded by the R7/R8 concordance check in
+    scripts/retinotopy.py; here we check labelling and that a local light
+    spot drives only the cells mapped to it.
     """
     from flyemu.organism import Organism
+    import numpy as np
 
     org = Organism(policy="minimal")
     assert org.vis is not None and org.vis.rows.size > 1000
-
     inv = org.reg.inventory().set_index(["entity", "property"])
     row = inv.loc[("photoreceptor:all", "retinotopy")]
-    assert row.status == "unresolved"
-    assert "no spatial vision" in (row.uncertainty or "")
+    assert row.status == "derived" and row.basis == "derived"
+    assert "inferred" in (row.uncertainty or "")
 
-    # Every photoreceptor in one eye and channel must receive the SAME drive,
-    # because there is no map to distinguish them.
-    import numpy as np
-
+    om = org.vis.ommatidium
+    assert om is not None and (om >= 0).mean() > 0.9
     readouts = np.zeros((2, 721, 2), dtype=np.float32)
-    readouts[0, :, 0] = 0.8          # left eye, yellow channel, bright
+    readouts[0, 100, 0] = 1.0            # one bright ommatidium, left eye
     drive = org.vis.drive(readouts)
-    left_yellow = org.vis.rows[(org.vis.eye == 0) & (org.vis.channel == "yellow")]
-    if left_yellow.size > 1:
-        assert np.allclose(drive[left_yellow], drive[left_yellow][0]), (
-            "photoreceptors differ without a retinotopic map to justify it"
-        )
+    lit = (org.vis.eye == 0) & (om == 100)
+    dark = (org.vis.eye == 0) & (om >= 0) & (om != 100)
+    if lit.any():
+        assert drive[org.vis.rows[lit]].min() > drive[org.vis.rows[dark]].max()
 
 
 def test_a_borrowed_profile_is_assumed_and_cites_its_source():

@@ -1389,3 +1389,35 @@ short-term plasticity, and electrical coupling (both unknown per type). This
 number depends on the declared grain and is recomputed by the script. It
 falls as data are attached and as justified sharing collapses slots, and the
 ledger records which.
+
+## F-VISION-2. Retinotopy derived from the connectome: every photoreceptor has an ommatidium
+
+F-VISION-1 said retinotopy "cannot be established from these releases". It
+can, from geometry. `scripts/retinotopy.py` → `data/derived/retinotopy.csv`,
+6,026 photoreceptors:
+- terminal presynapse centroids (neuPrint);
+- volume axes derived from landmarks: anterior = -z (antennal lobe vs calyx),
+  dorsal = -y (dorsal-rim terminals sit 15,000 voxels dorsal in both eyes),
+  fly's left = larger x (median soma x of somaSide-L cells 74,016 vs R 22,662);
+- each eye's lamina and medulla sheet in its own plane, with the medulla's
+  A-P flipped at the first optic chiasm (standard anatomy, inferred);
+- ommatidium viewing directions from flygym's retina map and the eye camera
+  poses (derived);
+- a moment-matched global alignment (inferred);
+- one-to-one R7→ommatidium and R8→ommatidium assignment (one of each per
+  ommatidium is measured biology).
+
+**Independent check:** within an assigned ommatidium, R7 and R8 pale/yellow
+subtypes agree **0.73** of the time, against 0.52 by chance. The raw 3D
+nearest-neighbour agreement is 0.77, the ceiling for this data. The first
+attempt (volume-axis projection, many-to-one) scored 0.54, no better than
+chance, and was replaced. Dorsal-rim cells land at +62° elevation. Median
+mismatch to the assigned ommatidium: ~9° in the medulla, ~4° in the lamina.
+The alignment has no local distortion model, which is the remaining inferred
+step.
+
+`vision.py` now drives each photoreceptor from its own ommatidium's
+luminance, so the eyes carry spatial information. The registry records
+retinotopy as **derived**, with the alignment caveat. Spectral matching is
+still coarse (the renderer's pale/yellow mask is its own). The R7/R8
+assignments could now set that mask from the connectome.
