@@ -257,6 +257,19 @@ def build(
         med = np.nanmedian(size)
         factor = np.where(np.isfinite(size) & (size > 0), (med / size) ** alpha, 1.0)
         post_gain *= factor.astype(np.float32)
+    beta = reg.require(
+        "cell_type:all", "input_normalisation_exponent",
+        units="dimensionless",
+        model_use="efficacy onto a neuron x (median input count / its input count)^beta",
+        subsystem="synaptic_efficacy", instances=len(neurons),
+        minimal=0.0, conventional=0.0,
+        minimal_note="declared default: no input normalisation",
+        uncertainty="homeostatic-scaling hypothesis; beta assumed",
+    )
+    if beta:
+        n_in = np.bincount(post, weights=w, minlength=len(neurons))
+        med_in = np.median(n_in[n_in > 0])
+        post_gain *= np.where(n_in > 0, (med_in / np.maximum(n_in, 1)) ** beta, 1.0).astype(np.float32)
     efficacy = (psp * post_gain[post]).astype(np.float32)
 
     return Connectome(

@@ -497,3 +497,11 @@ Return to rest after sugar alone did not guarantee stability for other inputs (F
 - Pairs: DNp01 (GF) → TTMn and DNp01 → PSI (Tanouye & Wyman 1980; Phelan et al. 1996; Allen et al. 2006). Each GF couples to the TTMn and the PSI it makes most chemical contacts with.
 - `k = 20 mV` (a coupling coefficient of ~0.25 times an ~80 mV spike), assumed. Chosen so a single GF spike fires TTMn, which the animal does 1:1. So GF→TTMn is now a **fitted** assay, not a test.
 - Held out: GF→PSI→DLMn. PSI→DLMn is chemical, ~225 synapses per PSI, sign by Shiu profile. Published: GF activation drives DLMn at short latency, following 1:1 at low rates. Pass: DLMn mean rate ≥ 50% of GF rate at 50 Hz GF drive, and > 5 Hz at 100 Hz.
+
+**Result:** held-out GF→DLMn failed (F-GAP-1). The electrical step works; PSI→DLMn chemical efficacy is subthreshold. Kept as an option, default off.
+
+### Pre-registration: input-count normalisation (session 4, before scoring)
+
+- Efficacy onto neuron j multiplied by `(median N / N_j)^beta`, where N_j is j's total input synapse count in the modelled graph (>= 5-synapse edges). This is homeostatic scaling, the reviewer's alternative to volume. Primary beta = 1; no clipping. Registry `cell_type:all|input_normalisation_exponent`.
+- Written expectation, before running: it will fail like F-SIZE-1, because N_j correlates with size (factors: pIP1 ~0.02, GF ~0.02, MN9_L ~0.06).
+- Calibration rule v1 (sugar return-to-rest, first failure); battery: sugar→MN9, JO-C/E→aDN, LPLC2→GF, JO-C/E→MDN, water→MN9, JO-F→aDN, GF→DLMn (electrical on). Adopt only if it keeps sugar, JO-C/E→aDN and LPLC2→GF and newly passes at least one of water, JO-F, GF→DLMn or the JO-C/E→MDN null.
