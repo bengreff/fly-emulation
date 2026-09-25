@@ -66,7 +66,7 @@
 - {domain: metabolism, quantity: neuronal and muscle energy use (ATP), grain: tissue class, count: 4, per: 2, measure_by: metabolic imaging, model: absent, basis: unknown}
 
 - {domain: sensory, quantity: sensed physical variable per sensory group, grain: sensory group, count: n_sensory_groups, per: 1, measure_by: physiology, model: simulated, basis: mixed, note: census (F-CENSUS-1); 41 groups unknown}
-- {domain: sensory, quantity: transduction model parameters (gain, tuning, adaptation), grain: sensory group, count: n_sensory_groups, per: 4, measure_by: physiology, model: default, basis: guessed, note: "tanh / static placeholders; ORN tuning measured (relative)"}
+- {domain: sensory, quantity: transduction model parameters (gain, tuning, adaptation), grain: sensory group, count: n_sensory_groups, per: 4, measure_by: physiology, model: default, basis: guessed, note: "every sensory neuron has a transduction (sensory.py, vision.py, olfaction.py, extrasenses.py); gains guessed; 1,561 cells of unknown modality at explicit zero drive"}
 - {domain: sensory, quantity: odour tuning per ORN type, grain: ORN type, count: n_orn_types, per: 1, measure_by: single-sensillum recording, model: simulated, basis: measured, note: DoOR 2.0, 48/53}
 - {domain: sensory, quantity: spontaneous rate per sensory type, grain: sensory group, count: n_sensory_groups, per: 1, measure_by: recording, model: default, basis: guessed, note: Hallem-Carlson rates for 24 receptors not yet used}
 - {domain: sensory, quantity: photoreceptor spectral sensitivity, grain: photoreceptor type, count: 9, per: 1, measure_by: electroretinogram / opsin spectra, model: absent, basis: measured, note: literature exists; renderer has 2 channels only}

@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, interface, lif, neuromuscular, olfaction, profiles, sensory, vision
+from . import connectome, extrasenses, interface, lif, neuromuscular, olfaction, profiles, sensory, vision
 from .world import World
 from .body import Body
 from .registry import Policy, Registry, Requirement
@@ -82,6 +82,7 @@ class Organism:
             if self.body.vision else None
         )
         self.chem = olfaction.build(self.reg, self.conn, self.body)
+        self.extra = extrasenses.build(self.reg, self.conn, self.body)
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness
         # rather than only the parts that happen to be wired.
@@ -105,6 +106,7 @@ class Organism:
             else:
                 drive = drive + self.vis.last()
         drive = drive + self.chem.drive(self.world, self.body.sim.mj_data.xpos)
+        drive = drive + self.extra.drive(self.world, self.body, obs, self.timestep_ms)
         return drive
 
     # --- running -------------------------------------------------------------

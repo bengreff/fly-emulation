@@ -31,7 +31,7 @@ import numpy as np
 from flyemu.body import Body
 from flyemu.organism import Organism
 from flyemu.provenance import RunRecord
-from flyemu import olfaction, neuromuscular, sensory
+from flyemu import extrasenses, olfaction, neuromuscular, sensory
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -84,6 +84,7 @@ def main() -> int:
     )
     org.aff = sensory.build(org.reg, org.conn, org.body)
     org.chem = olfaction.build(org.reg, org.conn, org.body)
+    org.extra = extrasenses.build(org.reg, org.conn, org.body)
 
     m, d = org.body.sim.mj_model, org.body.sim.mj_data
     n_steps = int(round(args.duration_ms / org.timestep_ms))

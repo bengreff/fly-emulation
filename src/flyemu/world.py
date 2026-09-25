@@ -31,6 +31,8 @@ class World:
     temperature_c: float = 25.0
     humidity_rh: float = 0.5
     co2_fraction: float = 0.0004     # ambient air
+    wind_mm_s: np.ndarray = field(default_factory=lambda: np.zeros(3))
+    food: list = field(default_factory=list)   # extrasenses.FoodPatch
 
     def odour_concentrations(self, pos: np.ndarray) -> dict[str, np.ndarray]:
         """Concentration of each odour at positions (n, 3); static plumes."""

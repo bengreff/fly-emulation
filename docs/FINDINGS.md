@@ -1502,3 +1502,30 @@ Result: **756 of 815 motor neurons** drive an actuator (was 434), and 95 of
 the body), 12 thorax-tension (no thorax DOF), 9 leg MNs with no action. Front
 coxa pitch (both sides) and haustellum yaw have no motor neuron candidate
 (unknown). Closed loop is stable (0.14-0.30 Hz whole-brain).
+
+## F-SENSE-ALL. Every sensory neuron has a transduction model
+
+`src/flyemu/extrasenses.py` adds taste (food patches in the world, contact
+at the labellum and tarsi), head touch (MuJoCo contact forces on head-region
+bodies), leg touch bristles outside the sensory.py subclass, Johnston's organ
+(gravity/wind along the head axis as an a3 proxy, since the body has no a2-a3
+joint), wing/haltere campaniforms (joint-velocity proxy), trunk
+proprioceptors, and phasic thermoreceptors (dT/dt). Channels are selected by
+census organ, so census and wiring cannot drift apart.
+
+Census: 16,335 of 17,896 sensory neurons driven by a physical variable. 1,561
+are simulated with an explicit guessed zero drive because their modality
+cannot be identified (1,220 unknown, 185 leg proprioceptors of unknown organ,
+126 unknown chemosensors, 30 unassigned mechanosensors).
+
+Labels:
+- inferred: labellar taste modality per type (receptor-line matching), head
+  and leg touch, thermo form;
+- guessed: leg-taste modality (weak response to every tastant), JO push/pull
+  per type, the JO/CS mechanical proxies, and every gain.
+
+Closed-loop check with a sugar patch
+(`scripts/probes/sugar_patch_closed_loop.py`): tarsal taste neurons receive
+2.7 mV on contact, below threshold, because the leg-taste weight is a weak
+guess. Correctly wired, not yet correctly scaled. Closed loop with all senses
+is stable.

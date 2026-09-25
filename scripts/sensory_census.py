@@ -140,6 +140,33 @@ RULES = [
 ]
 
 
+# Organs driven by src/flyemu/extrasenses.py (session 5)
+EXTRA_DRIVEN = {
+    "labellum / pharynx": "driven: food-patch contact x modality (extrasenses)",
+    "leg / wing taste bristle": "driven: tarsal contact x weak all-tastant (guessed)",
+    "head bristle (BM_*: interommatidial, vibrissae, palp, haustellum, occipital)": "driven: head contact force (extrasenses)",
+    "grooming-relevant bristles (head)": "driven: head contact force (extrasenses)",
+    "taste peg mechanosensory neuron": "driven: head contact force (extrasenses)",
+    "pharyngeal mechanosensor": "driven: head contact force (extrasenses)",
+    "Johnston's organ C/E": "driven: gravity/wind a3 proxy (extrasenses, guessed)",
+    "Johnston's organ": "driven: gravity/wind a3 proxy (extrasenses, guessed)",
+    "Johnston's organ A/B": "driven: no sound source (zero, guessed)",
+    "wing campaniforms / tegula": "driven: wing joint velocity proxy (guessed)",
+    "haltere campaniforms": "driven: haltere joint velocity proxy (guessed)",
+    "abdominal proprioceptor": "driven: abdomen joint angles (guessed)",
+    "neck / notum proprioceptor": "driven: neck joint angles (guessed)",
+    "arista / sacculus": "driven: dT/dt of world temperature (extrasenses)",
+    "sacculus VP1l (cooling, putative)": "driven: dT/dt of world temperature (extrasenses)",
+    "VP1m (humid, putative)": "driven: World RH, tonic (olfaction.py)",
+    "abdominal sensory": "simulated, zero drive: modality unknown (guessed)",
+    "sensory, modality unknown": "simulated, zero drive: modality unknown (guessed)",
+    "unassigned": "simulated, zero drive: modality unknown (guessed)",
+    "body chemosensor": "simulated, zero drive: modality unknown (guessed)",
+    "mechanosensor, organ unassigned": "simulated, zero drive: modality unknown (guessed)",
+    "leg proprioceptor, organ unassigned": "simulated, zero drive: organ unknown (guessed)",
+}
+
+
 def match(row, spec) -> bool:
     cls = row["class"] if isinstance(row["class"], str) else ""
     sub = row.subclass if isinstance(row.subclass, str) else ""
@@ -174,6 +201,10 @@ def main() -> None:
             impl = f"driven as {ENCODES[sub]}"
             if modality not in ("touch", "proprioception"):
                 impl = f"WRONG: {modality} cells driven as {ENCODES[sub]}"
+        elif organ in EXTRA_DRIVEN:
+            impl = EXTRA_DRIVEN[organ]
+        elif organ == "mechanosensory bristle":
+            impl = "driven: own-leg contact force (extrasenses)"
         elif not (impl.startswith("driven") or (impl.startswith("partial") and modality == "vision")):
             impl = "none"
         rows.append(dict(
@@ -192,7 +223,9 @@ def main() -> None:
     cells = df.n_cells.sum()
     print(f"{cells:,} sensory neurons in {len(df):,} groups -> {out.relative_to(REPO)}")
     by = df.groupby("modality").agg(groups=("group", "size"), cells=("n_cells", "sum"))
-    by["implemented_cells"] = df[~df.implemented.isin(["none"]) & ~df.implemented.str.startswith("WRONG")].groupby("modality").n_cells.sum()
+    by["implemented_cells"] = df[~df.implemented.isin(["none"]) & ~df.implemented.str.startswith("WRONG")
+                                  & ~df.implemented.str.startswith("simulated, zero")].groupby("modality").n_cells.sum()
+    by["zero_drive"] = df[df.implemented.str.startswith("simulated, zero")].groupby("modality").n_cells.sum()
     by["wrongly_driven"] = df[df.implemented.str.startswith("WRONG")].groupby("modality").n_cells.sum()
     print(by.fillna(0).astype(int).sort_values("cells", ascending=False).to_string())
     print("\nvariable assignment basis (cells):")
