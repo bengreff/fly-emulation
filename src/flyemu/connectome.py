@@ -53,6 +53,11 @@ class Connectome:
     weight_syn: np.ndarray    # anatomical synapse count per edge (measured)
     sign: np.ndarray          # per-presynaptic-neuron sign, +1/-1/0
     efficacy_mv: np.ndarray   # per-edge PSP amplitude, mV (assumed)
+    # Efficacy factored as psp_mv * post_gain[post]: every postsynaptic-side
+    # adjustment lives in post_gain, so a rewired control recomputes it for
+    # the NEW target instead of carrying the old target's factor.
+    psp_mv: float = 0.0
+    post_gain: np.ndarray | None = None
 
     @property
     def n(self) -> int:
@@ -216,7 +221,7 @@ def build(
         uncertainty="a single shared scalar propagated to every edge in the "
                     "model; this is one inference, not 25 million",
     )
-    efficacy = np.full(len(w), psp, dtype=np.float32)
+    post_gain = np.ones(len(neurons), dtype=np.float32)
 
     # --- synapses onto sensory axon terminals --------------------------------
     sensory = neurons.superclass.fillna("").str.contains("sensory").to_numpy()
@@ -234,25 +239,79 @@ def build(
                     "these edges' effect (F-SENS-1)",
     )
     if not keep_onto:
-        efficacy[onto] = 0.0
+        post_gain[sensory] = 0.0
+
+    # --- input resistance falling with cell size ------------------------------
+    alpha = reg.require(
+        "cell_type:all", "size_scaling_exponent",
+        units="dimensionless",
+        model_use="efficacy onto a neuron x (median size / its size)^alpha",
+        subsystem="neuron_biophysics", instances=len(neurons),
+        minimal=0.0, conventional=0.0,
+        minimal_note="declared default: no size dependence",
+        uncertainty="volume as an input-resistance proxy, following "
+                    "Pugliese 2025; alpha=1 is their choice, not a measurement",
+    )
+    if alpha:
+        size = neurons["size"].to_numpy(dtype=np.float64)
+        med = np.nanmedian(size)
+        factor = np.where(np.isfinite(size) & (size > 0), (med / size) ** alpha, 1.0)
+        post_gain *= factor.astype(np.float32)
+    efficacy = (psp * post_gain[post]).astype(np.float32)
 
     return Connectome(
         neurons=neurons, indptr=indptr, indices=post.astype(np.int32),
         weight_syn=w, sign=sign, efficacy_mv=efficacy,
+        psp_mv=float(psp), post_gain=post_gain,
+    )
+
+
+def _with_targets(conn: Connectome, indices: np.ndarray) -> Connectome:
+    if conn.post_gain is not None:
+        eff = (conn.psp_mv * conn.post_gain[indices]).astype(np.float32)
+    else:
+        eff = conn.efficacy_mv
+    return Connectome(
+        neurons=conn.neurons, indptr=conn.indptr, indices=indices,
+        weight_syn=conn.weight_syn, sign=conn.sign, efficacy_mv=eff,
+        psp_mv=conn.psp_mv, post_gain=conn.post_gain,
     )
 
 
 def shuffled(conn: Connectome, rng: np.random.Generator) -> Connectome:
-    """Degree-preserving rewiring control.
+    """Global rewiring control.
 
-    Permutes the postsynaptic end of every edge across the whole graph. Each
-    neuron keeps its out-degree, its outgoing synapse counts and its sign; each
-    keeps its in-degree. Only who-connects-to-whom is destroyed, which is the
-    part of the anatomy a pathway result should depend on.
+    Permutes the postsynaptic end of every edge across the whole graph, then
+    recomputes postsynaptic-side efficacy for the new targets. Kept: each
+    neuron's out-degree, outgoing synapse counts and sign, and its in-degree.
+    Not kept: per-neuron input synapse totals and E/I input balance; self-
+    loops and multi-edges can appear. Destroys locality, reciprocity and
+    type structure, so failing it shows only that SOME wiring structure matters.
     """
-    return Connectome(
-        neurons=conn.neurons, indptr=conn.indptr,
-        indices=rng.permutation(conn.indices),
-        weight_syn=conn.weight_syn, sign=conn.sign,
-        efficacy_mv=conn.efficacy_mv,
-    )
+    return _with_targets(conn, rng.permutation(conn.indices))
+
+
+def type_shuffled(conn: Connectome, rng: np.random.Generator) -> Connectome:
+    """Cell-type block-preserving null.
+
+    Within every (presynaptic type, postsynaptic type) block, permutes which
+    postsynaptic neuron each edge lands on. Kept exactly: type-to-type edge
+    counts and synapse counts, every neuron's out-degree and outgoing synapse
+    counts, every neuron's in-degree within each block. Destroyed: which
+    individual neuron of a type connects to which. Untyped neurons are their
+    own type, so their edges do not move. Passing it means the result needs
+    only type-level wiring.
+    """
+    t = conn.neurons.type.fillna("").to_numpy()
+    uid = np.where(t == "", "#" + conn.neurons.bodyId.astype(str).to_numpy(), t)
+    codes = pd.factorize(uid)[0].astype(np.int64)
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    post = conn.indices.astype(np.int64)
+    block = codes[pre] * (codes.max() + 1) + codes[post]
+    # Both orderings group edges by block; the second is random within each
+    # block, so pairing them position-by-position permutes within blocks.
+    order = np.argsort(block, kind="stable")
+    perm = np.lexsort((rng.random(len(block)), block))
+    new = post.copy()
+    new[order] = post[perm]
+    return _with_targets(conn, new.astype(conn.indices.dtype))

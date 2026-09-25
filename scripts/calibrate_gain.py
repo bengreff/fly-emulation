@@ -34,6 +34,8 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, default=2)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--graph", default="real", choices=["real", "shuffled", "typeshuf"],
+                    help="calibrate a control graph by the same rule")
     args = ap.parse_args()
     out = REPO / "runs" / ("calibrate-gain-shiu2024" + (f"-{args.tag}" if args.tag else ""))
     out.mkdir(parents=True, exist_ok=True)
@@ -47,6 +49,10 @@ def main() -> None:
         reg.overrides[k] = float(v)
     prof = profiles.apply(reg, "shiu2024")
     conn = connectome.build(reg, min_synapses=5)
+    if args.graph == "shuffled":
+        conn = connectome.shuffled(conn, np.random.default_rng(100))
+    elif args.graph == "typeshuf":
+        conn = connectome.type_shuffled(conn, np.random.default_rng(200))
     params = lif.default_params(reg, conn, timestep_ms=0.1)
     nrn = conn.neurons
     stim = select(nrn, ["LB3b", "LB3c"])
@@ -79,12 +85,20 @@ def main() -> None:
                 print(row, flush=True)
     df = pd.DataFrame(rows)
     df.to_csv(out / "calibration.csv", index=False)
-    ok = df.groupby("scale").active_600_800.max() == 0
-    chosen = float(ok[ok].index.max()) if ok.any() else None
+    # The last passing scale BEFORE the first failure: a noisy pass above a
+    # failure near the tipping point is not accepted.
+    ok = (df.groupby("scale").active_600_800.max() == 0).sort_index()
+    chosen = None
+    for sc, passed in ok.items():
+        if not passed:
+            break
+        chosen = float(sc)
     print(df.groupby(["scale", "stim_hz"]).mean(numeric_only=True).round(2).to_string())
     print("scale meeting return-to-rest:", chosen)
     rec.result("chosen_scale", chosen)
-    rec.result("chosen_efficacy_mv", None if chosen is None else 0.275 * chosen)
+    base_mv = float(conn.psp_mv)
+    rec.result("chosen_efficacy_mv", None if chosen is None else base_mv * chosen)
+    print("chosen efficacy mV:", None if chosen is None else round(base_mv * chosen, 4))
     rec.finish()
 
 

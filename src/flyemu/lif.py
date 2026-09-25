@@ -163,6 +163,7 @@ class Network:
         self.decay_s = float(np.exp(-self.timestep_ms / p.tau_s))
         self.spike_count = 0
         self.adapt = np.zeros(n, dtype=np.float32)
+        self.kick_held = np.zeros(n, dtype=np.float32)
         self.decay_a = float(np.exp(-self.timestep_ms / p.tau_adapt))
 
     # --- one timestep --------------------------------------------------------
@@ -209,11 +210,16 @@ class Network:
                 0.0, p.noise_mv * np.sqrt(self.timestep_ms), n
             ).astype(np.float32)
 
-        if kick is not None and len(kick[0]):
-            self.v[kick[0]] += kick[1]
-
         free = self.t_ms >= self.ref_until
         self.v = np.where(free, self.v, p.v_reset)
+        # As Brian2's PoissonInput does, a kick during refractory is not
+        # lost: it is held and lands on the first free step.
+        if kick is not None and len(kick[0]):
+            self.kick_held[kick[0]] += kick[1]
+        if self.kick_held.any():
+            land = free & (self.kick_held > 0)
+            self.v[land] += self.kick_held[land]
+            self.kick_held[land] = 0.0
         spiked = np.flatnonzero(free & (self.v >= p.v_th))
 
         if spiked.size:
@@ -244,7 +250,10 @@ class Network:
             np.cumsum(counts) - counts, counts
         )
         sel = offsets + within
-        target_slot = (self.delay_head + self.params.delay_steps - 1) % self.params.delay_steps
+        # The head slot was consumed and zeroed earlier in this step, and is
+        # next read delay_steps steps from now: a delay of exactly
+        # delay_steps (was delay_steps - 1 before session 4's review).
+        target_slot = self.delay_head
         np.add.at(self.delay[target_slot], indices[sel], self.w[sel])
 
     # --- readout -------------------------------------------------------------

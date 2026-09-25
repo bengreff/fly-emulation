@@ -439,3 +439,31 @@ least squares, giving genuinely multi-axis muscles. Not done.
 - Found by a diagnostic probe on bitter ignition, so bitter-, sugar-, water-, GF- and DNg100-assay outcomes are **no longer held out** and are reported as "seen".
 - Scale: re-set by the same return-to-rest rule on sugar GRNs.
 - Fresh held-out assays, never run before this entry: JO-C/E→aDN (DNg62, DNge078) >5 Hz; JO-F→aDN >5 Hz; JO-F→MDN >5 Hz (inferred from behaviour); JO-C/E→MDN <2 Hz (null); LPLC2→DNp01 >5 Hz. Sources: Hampel et al. 2015, 2020; Bidaye et al. 2014; Ache et al. 2019. Thresholds follow flybench conventions. Stimulus 100 Hz. Each also runs on shuffled graphs.
+
+**Result:** fresh held-out 2/5 (F-SENS-1). Adopted as profile `m1`.
+
+### Pre-registration: size-scaled input resistance (session 4, before scoring)
+
+- Change: each synapse's efficacy is multiplied by `(median size / postsynaptic size)^alpha`, with size the neuPrint voxel volume of the traced body. This stands in for input resistance falling with cell size. Primary alpha = 1, following Pugliese et al. 2025 (gain divided by and threshold multiplied by median-normalised size). alpha = 0.5 is exploratory only. No clipping. Registry key `cell_type:all|size_scaling_exponent` (0 = m1).
+- Motivation seen before scoring: pIP1 (125x median size, 21k inputs) carries JO-C/E→MDN. That null is therefore no longer blind and is reported as "seen".
+- Scale: the same return-to-rest rule.
+- Primary held-out scorer: flybench v0.2.1 (MIT, commit 3052ce5) on its own male-cns build (neuPrint, >= 5 synapses), with our changes applied inside an adapter. Scored tasks are those this project has **not** examined: 07, 08, 09, 10, 11, 13, 14, 16, 17, 18, 21, 22, 23, 24, 26, 27, 28, 29, 30, 31. m1 and m1+size are each scored at their own calibrated gain.
+- Adopt size scaling if it passes more of those tasks than m1 and does not lose JO-C/E→aDN or LPLC2→GF. Report per-task results either way.
+
+### Independent review (session 4) and resulting fixes
+
+A read-only reviewer agent audited session 4. Accepted and fixed:
+- **Bug: rewired controls carried the old target's postsynaptic efficacy.** Since F-SENS-1, shuffled graphs gave sensory neurons central input again (and would have mis-applied size factors). Efficacy is now `psp_mv * post_gain[post]` and every control recomputes it. All earlier m1 "shuffled" columns are superseded.
+- Delay was D-1 steps (1.7 ms, not 1.8). Now exactly D, with a test.
+- A Poisson kick during refractory was dropped; it is now held and lands on the first free step, as Brian2 PoissonInput does.
+- Calibration now takes the last passing scale before the first failure, not the largest passing one.
+- Findings text overstated "load-bearing": a global shuffle shows only that SOME wiring structure matters.
+
+Not yet acted on: the rhythmicity metric needs ISI-shuffled surrogates and antagonist cross-correlation. Removing input onto sensory terminals also removes real presynaptic inhibition (e.g. GABAergic suppression of sugar GRNs, Chu et al. 2014); a multiplicative output-gain treatment would be better. Size scaling as implemented scales efficacy only, not Pugliese's threshold form, and it mostly amplifies optic-lobe columnar cells.
+
+### Pre-registration: type-level vs neuron-level wiring (session 4)
+
+- Nulls: global rewiring and cell-type block-preserving rewiring (`connectome.type_shuffled`), each recalibrated by the same return-to-rest rule, plus each at the real graph's scale.
+- Readouts: the full 11-assay battery under m1 (fixed code).
+- If type-shuffled graphs reproduce the real graph's passes (JO-C/E→aDN, LPLC2→GF, sugar→MN9) and its failures (JO-C/E→MDN, ignition), the claim is "type-level wiring is load-bearing" and neuron-level identity is not yet tested by these assays. If they do not, neuron-level anatomy matters for that assay.
+- Also scored: the five F-SENS-1 fresh assays on the pre-change model (sensory input kept, same scale), to test whether the change helped at all.

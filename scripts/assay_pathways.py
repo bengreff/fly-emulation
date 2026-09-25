@@ -169,7 +169,10 @@ def main() -> None:
     ap.add_argument("--duration-ms", type=float, default=1000.0)
     ap.add_argument("--timestep-ms", type=float, default=0.1)
     ap.add_argument("--trials", type=int, default=3)
-    ap.add_argument("--shuffles", type=int, default=1)
+    ap.add_argument("--shuffles", type=int, default=1,
+                    help="number of global rewired controls")
+    ap.add_argument("--type-shuffles", type=int, default=0,
+                    help="number of cell-type block-preserving controls")
     ap.add_argument("--min-synapses", type=int, default=5)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
@@ -217,6 +220,9 @@ def main() -> None:
     graphs = [("real", conn)] + [
         (f"shuffled{k}", connectome.shuffled(conn, np.random.default_rng(100 + k)))
         for k in range(args.shuffles)
+    ] + [
+        (f"typeshuf{k}", connectome.type_shuffled(conn, np.random.default_rng(200 + k)))
+        for k in range(args.type_shuffles)
     ]
     rows, rate_store = [], {}
     for gname, g in graphs:

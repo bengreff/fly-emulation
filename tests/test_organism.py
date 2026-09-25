@@ -460,3 +460,65 @@ def test_adaptation_slows_a_constantly_driven_neuron():
         counts[a] = (early, late)
     assert counts[0.0][0] == counts[0.0][1] > 0
     assert counts[2.0][1] < counts[2.0][0]
+
+
+def _toy_conn(n=300, e=6000, seed=0):
+    from flyemu.connectome import Connectome
+    import pandas as pd
+    rng = np.random.default_rng(seed)
+    pre = np.sort(rng.integers(0, n, e))
+    post = rng.integers(0, n, e).astype(np.int32)
+    indptr = np.zeros(n + 1, dtype=np.int64)
+    np.cumsum(np.bincount(pre, minlength=n), out=indptr[1:])
+    types = np.array([f"T{i % 7}" for i in range(n)], dtype=object)
+    types[:5] = None
+    gain = rng.uniform(0, 2, n).astype(np.float32)
+    nrn = pd.DataFrame({"bodyId": np.arange(n), "type": types})
+    return Connectome(nrn, indptr, post, rng.integers(1, 9, e).astype(np.float32),
+                      np.ones(n, np.float32), (0.1 * gain[post]).astype(np.float32),
+                      psp_mv=0.1, post_gain=gain), pre
+
+
+def test_rewired_controls_recompute_postsynaptic_efficacy():
+    """Postsynaptic factors (sensory mask, size) must follow the NEW target."""
+    from flyemu.connectome import shuffled, type_shuffled
+    c, _ = _toy_conn()
+    for f in (shuffled, type_shuffled):
+        s = f(c, np.random.default_rng(3))
+        assert np.allclose(s.efficacy_mv, 0.1 * c.post_gain[s.indices])
+
+
+def test_type_shuffle_preserves_type_blocks_and_moves_neurons():
+    from flyemu.connectome import type_shuffled
+    import pandas as pd
+    c, pre = _toy_conn()
+    s = type_shuffled(c, np.random.default_rng(4))
+    t = c.neurons.type.fillna("#").to_numpy()
+    key = lambda post: pd.Series(1, index=pd.MultiIndex.from_arrays(
+        [t[pre], t[post]])).groupby(level=[0, 1]).size().sort_index()
+    assert key(c.indices).equals(key(s.indices))
+    assert np.array_equal(np.bincount(s.indices, minlength=c.n),
+                          np.bincount(c.indices, minlength=c.n))
+    assert (s.indices != c.indices).mean() > 0.5
+
+
+def test_a_spike_arrives_exactly_one_delay_later():
+    """Delay semantics: a spike at step t reaches its target's current at t + D."""
+    from flyemu.connectome import Connectome
+    from flyemu.lif import LIFParams, Network
+    import pandas as pd
+
+    c = Connectome(pd.DataFrame({"bodyId": [0, 1]}), np.array([0, 1, 1]),
+                   np.array([1], np.int32), np.array([1.0], np.float32),
+                   np.ones(2, np.float32), np.array([1.0], np.float32))
+    full = lambda v: np.full(2, v, np.float32)
+    D = 18
+    net = Network(c, LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0),
+                               full(2.2), 5.0, D, 0.0, True), 0.1)
+    net.step(kick=(np.array([0]), 100.0))          # neuron 0 fires at step 0
+    arrive = None
+    for s in range(1, 40):
+        net.step()
+        if arrive is None and net.i_syn[1] > 0:
+            arrive = s
+    assert arrive == D
