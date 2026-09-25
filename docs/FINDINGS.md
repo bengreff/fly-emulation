@@ -1207,3 +1207,11 @@ sign error. Next discriminating experiment, to pre-register:
 
 Score (a) on whether ignition disappears under calibration rule v2 and
 whether the stable scale then rises high enough for water→MN9 and JO-F→aDN.
+
+Diagnostic (`scripts/probes/eln_outputs.py`): zeroing eLN→PN (34.5% of
+eLN output) and eLN→eLN (40.6%) together does not stop ignition (9,885 →
+6,923 persisting). Silencing all eLN output does (→ 121). The remaining 25%,
+mostly onto other AL LN types, is enough to sustain it. So hypothesis (a)
+alone will not fix it; the loop runs through eLN→LN→… partners. The next
+step is to trace that loop. Also, at 0.1925 mV sugar at 150 Hz ignites on
+this seed: 0.7x sits on the edge.
