@@ -415,6 +415,14 @@ def build(
         subsystem="muscle_mechanics", instances=len(set(acts)),
     )
 
+    # --- non-leg motor neurons: data/params/motor_targets.csv ----------------
+    extra = _map_non_leg(reg, conn, n, unmapped, act_lookup, cal)
+    mapped_ids = set()
+    for net_i, a, sgn, bid in extra:
+        rows.append(net_i); acts.append(a); signs.append(sgn)
+        muscles.append("non-leg"); legs_of_row.append(None); mapped_ids.add(bid)
+    unmapped = [u for u in unmapped if u["bodyId"] not in mapped_ids]
+
     un = pd.DataFrame(unmapped)
     if not un.empty:
         for reason, grp in un.groupby("reason"):
@@ -449,6 +457,16 @@ def build(
             uncertainty="a substitute mechanism, not the animal's own",
         )
 
+    undriven = sorted(set(range(len(actuator_names))) - set(acts))
+    if undriven:
+        reg.provide(
+            "actuator:undriven", "motor_neuron_source", None, units="dimensionless",
+            model_use="body actuators no motor neuron reaches",
+            status=Status.UNRESOLVED, subsystem="neuromuscular", instances=len(undriven),
+            evidence="no identified or candidate motor neuron: " + ", ".join(
+                actuator_names[i].split("/")[-1] for i in undriven),
+        )
+
     return Neuromuscular(
         adhesion_index=np.asarray(adh_idx, dtype=np.int64),
         adhesion_rows=np.asarray(adh_rows, dtype=np.int64),
@@ -461,3 +479,90 @@ def build(
         tau_act_ms=tau_act,
         unmapped=un,
     )
+
+
+MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"
+
+
+def _abdomen_joint(neuromere: str) -> str:
+    """Abdominal joint for a segmental MN: A1 at thorax-A1, Ak at A(k-1)-Ak."""
+    if not isinstance(neuromere, str) or not neuromere.startswith("A"):
+        return "c_thorax-c_abdomen1-pitch"
+    k = min(int(neuromere[1:]), 7)
+    return "c_thorax-c_abdomen1-pitch" if k <= 1 else f"c_abdomen{k - 1}-c_abdomen{k}-pitch"
+
+
+def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
+    """Map motor neurons the leg pass could not, from the labelled table."""
+    if not MOTOR_TABLE.exists():
+        return []
+    table = pd.read_csv(MOTOR_TABLE, comment="#")
+    unmapped_ids = {u["bodyId"] for u in unmapped}
+    cand = n[(n.superclass == "cb_motor") | n.bodyId.isin(unmapped_ids)].copy()
+    cand["side"] = cand.instance.fillna("").str.extract(r"_([LR])$")[0].map({"L": "l", "R": "r"})
+    idx = conn.index_of(cand.bodyId.to_numpy())
+    out = []
+    for row in table.itertuples(index=False):
+        sel = cand.type.fillna("").str.contains(row.type_regex, regex=True).to_numpy() & (idx >= 0)
+        if not sel.any():
+            continue
+        hit = cand[sel]; hit_idx = idx[sel]
+        if str(row.target).startswith("NONE:"):
+            for bid in hit.bodyId:
+                for u in unmapped:
+                    if u["bodyId"] == bid:
+                        u["reason"] = str(row.target)[5:]
+            if cal is not None:
+                missing = set(hit.bodyId) - unmapped_ids
+                unmapped.extend({"bodyId": b, "type": t, "subclass": sc, "neuromere": nm,
+                                 "reason": str(row.target)[5:]}
+                                for b, t, sc, nm in hit[hit.bodyId.isin(missing)][
+                                    ["bodyId", "type", "subclass", "somaNeuromere"]].itertuples(index=False))
+            continue
+        types_sorted = sorted(hit.type.dropna().unique())
+        n_ok = 0
+        for (bid, t, side, nm), net_i in zip(hit[["bodyId", "type", "side", "somaNeuromere"]].itertuples(index=False), hit_idx):
+            tgt, sgn = str(row.target), float(row.sign)
+            if tgt.startswith("LEG:"):
+                if cal is None or not isinstance(side, str):
+                    continue
+                _, leg, group, action = tgt.split(":")
+                res = resolve_sign(cal, f"{side}{leg}", group, action)
+                if res is None:
+                    continue
+                tgt, sgn = res
+            elif tgt == "ABDOMEN":
+                tgt = _abdomen_joint(nm)
+                # alternate types between pitch and yaw (guessed); yaw pulls
+                # toward the neuron's own side
+                if t in types_sorted and types_sorted.index(t) % 2 == 1:
+                    tgt = tgt.replace("-pitch", "-yaw")
+                    sgn = sgn * (1.0 if side == "l" else -1.0)
+            elif tgt.startswith("LEGCYCLE:"):
+                seg = NEUROMERE_TO_LEG.get(nm) if isinstance(nm, str) else None
+                if seg is None or not isinstance(side, str):
+                    continue
+                opts = tgt[9:].split("|")
+                tgt = opts[types_sorted.index(t) % len(opts)].replace("{leg}", f"{side}{seg}")
+            elif tgt.startswith("CYCLE:"):
+                opts = tgt[6:].split("|")
+                tgt = opts[types_sorted.index(t) % len(opts)] if t in types_sorted else opts[0]
+            if "{s}" in tgt:
+                if not isinstance(side, str):
+                    continue
+                tgt = tgt.replace("{s}", side)
+            a = act_lookup.get(tgt)
+            if a is None:
+                continue
+            out.append((int(net_i), a, sgn, bid)); n_ok += 1
+        if n_ok:
+            status = Status(row.target_basis)
+            reg.provide(
+                f"motor_map:{row.type_regex}", "actuator_and_sign", f"{row.target} x {row.sign}",
+                units="dimensionless", model_use="non-leg motor neuron to body actuator",
+                status=status, subsystem="neuromuscular", instances=n_ok,
+                evidence=f"{row.source}: {row.justification}",
+                uncertainty=f"target {row.target_basis}; sign {row.sign_basis}",
+                method="data/params/motor_targets.csv",
+            )
+    return out

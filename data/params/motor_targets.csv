@@ -1,0 +1,31 @@
+# Non-leg motor neuron -> body actuator. {s} = the neuron's own side (l/r from instance suffix).
+# target LEG:<leg>:<group>:<action> reuses the leg system's MEASURED sign calibration.
+# target NONE:<reason> = the body has no structure for this muscle (recorded unmapped).
+# target ABDOMEN = the abdominal joint of the neuron's own segment (somaNeuromere).
+# target CYCLE:a|b|c = arbitrary assignment across actuators by type order (guessed, for iteration).
+type_regex,target,sign,target_basis,sign_basis,source,justification
+^MN9$,c_head-c_rostrum-pitch,1,inferred,guessed,McKellar et al. 2020 eLife 9:e54978,"MN9 drives m9, the rostrum protractor (driver-line identified); muscle->DOF inferred; direction of +pitch not calibrated"
+^MN1$|^MN2Da$|^MN2Db$|^MN2V$,c_head-c_rostrum-pitch,-1,inferred,inferred,McKellar et al. 2020,"m1/m2 retract the rostrum: opposite sign to the protractor MN9 (antagonist, inferred)"
+^MN3L$|^MN3M$,c_rostrum-c_haustellum-pitch,1,inferred,guessed,McKellar et al. 2020,"m3 flexes the haustellum"
+^MN4a$|^MN4b$,c_rostrum-c_haustellum-pitch,-1,inferred,inferred,McKellar et al. 2020,"m4 extends the haustellum: antagonist of m3"
+^MN6$|^MN7$,c_haustellum-{s}_labrum-pitch,1,inferred,guessed,McKellar et al. 2020,"m6/m7 extend and spread the labellum; mapped to the labrum hinge of the same side"
+^MN5$|^MN8$|^MN10$|^MN11D$|^MN11V$|^MN12D$|^MN13$|^CEM$|^MNx0,NONE:no pharyngeal pump or salivary structure in the body model,0,unknown,unknown,McKellar et al. 2020,"pharyngeal pump / salivary valve / unassigned proboscis MNs: no body DOF"
+^TTMn$|^STTMm$,LEG:m:CTr:depression,0,inferred,measured,Cheong et al. 2024; King & Wyman 1980,"TTM and STTM extend the mesothoracic trochanter (the jump); sign from the measured leg calibration"
+^b1 MN$|^b2 MN$|^b3 MN$,c_thorax-{s}_wing-roll,1,inferred,guessed,Cheong et al. 2024; Lindsay et al. 2017,"basalar muscles modulate stroke amplitude; mapped to wing roll (stroke) in flybody's hinge"
+^i1 MN$|^i2 MN$,c_thorax-{s}_wing-yaw,1,inferred,guessed,Cheong et al. 2024; Lindsay et al. 2017,"first axillary muscles set stroke position; mapped to wing yaw"
+^iii1 MN$|^iii3 MN$|^MNwm35$,c_thorax-{s}_wing-pitch,1,inferred,guessed,Cheong et al. 2024,"third axillary muscles retract/rotate the wing; mapped to wing pitch"
+^hg1 MN$|^hg2 MN$|^hg3 MN$|^hg4 MN$,c_thorax-{s}_wing-pitch,-1,inferred,guessed,Cheong et al. 2024,"fourth axillary muscles control deviation/rotation; mapped to wing pitch, sign opposite to iii (guessed)"
+^DLMn,c_thorax-{s}_wing-roll,-1,inferred,guessed,Dickinson & Tu 1997 (indirect power muscles),"DLM depresses the wing via thorax deformation (asynchronous, stretch-activated in the animal); here a direct torque on stroke"
+^DVMn,c_thorax-{s}_wing-roll,1,inferred,guessed,Dickinson & Tu 1997,"DVM elevates the wing; antagonist of DLM"
+^tp1 MN$|^tp2 MN$|^tpn MN$|^ps1 MN$|^ps2 MN$|^MNwm36$,NONE:no thorax-tension DOF in the body model,0,unknown,unknown,Cheong et al. 2024; O'Sullivan et al. 2018,"tergopleural / pleurosternal tension muscles act on thorax stiffness"
+^hDVM MN$,c_thorax-{s}_haltere-pitch,1,inferred,guessed,Dickerson et al. 2019,"haltere power muscle drives the haltere beat"
+^hi1 MN$|^hi2 MN$|^hiii2 MN$|^MNhm42$|^MNhm43$|^MNhm03$,c_thorax-{s}_haltere-pitch,-1,inferred,guessed,Dickerson et al. 2019,"haltere steering muscles; single haltere DOF available"
+^ADNM2 MN$,c_thorax-c_head-yaw,1,inferred,guessed,Sturner et al. 2025; Strausfeld et al. 1987,"TH2 turns the head (yaw), by homology with Calliphora"
+^FNM2$,c_thorax-c_head-pitch,1,inferred,guessed,Sturner et al. 2025,"neck adductor, head pitch, by homology"
+^ADNM1 MN$|^MNnm|^CvN|^GNG276$|^GNG283$|^GNG641$|^GNG648$|^GNG650$|^GNG653$,CYCLE:c_thorax-c_head-yaw|c_thorax-c_head-roll|c_thorax-c_head-pitch,1,guessed,guessed,MOTOR_TARGETS.md,"neck MN targets unidentified in Drosophila; arbitrary assignment across the three head DOFs so they act on the head at all; FOR ITERATION"
+^GNG133$|^GNG649$|^GNG651$|^GNG652$|^GNG668$|^PS348$,c_head-{s}_antenna-pitch,1,inferred,guessed,Ozdil et al. 2026; Suver et al. 2023,"antennal motor neurons move the scape; only antenna pitch is actuated"
+^GNG314$|^GNG647$|^PS349$,CYCLE:c_thorax-c_head-yaw|c_thorax-c_head-roll|c_thorax-c_head-pitch,1,guessed,guessed,MOTOR_TARGETS.md,"cb_motor 'rm' subclass, target unknown; arbitrary head assignment FOR ITERATION"
+^MNad,ABDOMEN,1,inferred,guessed,Cheong et al. 2024 (segmental abdominal MNs),"abdominal MN drives the abdominal joint of its own segment (somaNeuromere, inferred); types alternate pitch/yaw, yaw toward own side (guessed); true targets (body wall, genitalia) unidentified"
+^MNxm,CYCLE:c_thorax-c_abdomen1-pitch|c_thorax-c_abdomen1-yaw,1,guessed,guessed,MOTOR_TARGETS.md,"unclassified VNC MNs; arbitrary FOR ITERATION"
+^Fe reductor MN$,LEGCYCLE:{leg}_coxa-{leg}_trochanterfemur-roll,1,guessed,guessed,Azevedo et al. 2024 Table A1 (action 'Unknown'); Frantsevich & Wang 2009,"function unknown and the trochanter-femur joint is thought fused; mapped to the only DOF at that location so the pool acts at all; FOR ITERATION (was deliberately unmapped before session 5)"
+^MNfl[0-9]|^MNml[0-9]|^MNhl[0-9],LEGCYCLE:c_thorax-{leg}_coxa-pitch|{leg}_coxa-{leg}_trochanterfemur-roll|{leg}_tibia-{leg}_tarsus1-pitch,1,guessed,guessed,MANC systematic types without a named muscle,"leg MN of known leg and side (derived from neuromere and side) but unidentified muscle; arbitrary assignment across that leg's otherwise undriven DOFs; FOR ITERATION"

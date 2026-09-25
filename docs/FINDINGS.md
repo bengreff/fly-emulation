@@ -1474,3 +1474,31 @@ partners plus 29k conductances), neuromodulation (59k), and co-transmitters
 The labelling itself was made strict (DECISIONS, session 5):
 measured / derived / inferred / guessed / unknown / absent, with required
 fields enforced by `Registry.validate()` and tested on the whole organism.
+
+## F-MOTOR-2. Every body articulation with a candidate motor neuron is driven
+
+`data/params/motor_targets.csv` maps the non-leg and unnamed-muscle motor
+neurons to body actuators. Each row carries separate labels for the target
+and the sign, plus source and justification. Applied by
+`neuromuscular._map_non_leg`:
+- proboscis (MN9 protractor; MN1/2 retractors, opposite sign; MN3/MN4
+  haustellum flexor/extensor; MN6/7 labellum): target inferred (McKellar 2020),
+  signs guessed except where an antagonist pair fixes the relative sign;
+- jump muscles TTMn/STTMm → mesothoracic trochanter depression, reusing the
+  **measured** leg sign calibration;
+- wing steering (b, i, iii, hg) → wing roll/yaw/pitch and power muscles
+  (DLM, DVM) → wing roll: inferred mapping, guessed signs;
+- haltere power/steering → haltere pitch; identified neck MNs (ADNM2, FNM2)
+  → head yaw/pitch; antennal MNs → antenna pitch; abdominal MNs → the joint
+  of their own segment (derived from neuromere), axis alternating pitch/yaw
+  (guessed);
+- unidentified neck, rm, xm and numbered leg MNs, plus the femur reductor
+  (function unknown, joint thought fused), are assigned **arbitrarily**
+  across the undriven DOFs of their own leg or the head. Labelled
+  guessed-for-iteration, so they act on the body at all.
+
+Result: **756 of 815 motor neurons** drive an actuator (was 434), and 95 of
+98 actuators are driven. Still unmapped: 37 pharyngeal/salivary (no pump in
+the body), 12 thorax-tension (no thorax DOF), 9 leg MNs with no action. Front
+coxa pitch (both sides) and haustellum yaw have no motor neuron candidate
+(unknown). Closed loop is stable (0.14-0.30 Hz whole-brain).
