@@ -522,3 +522,25 @@ def test_a_spike_arrives_exactly_one_delay_later():
         if arrive is None and net.i_syn[1] > 0:
             arrive = s
     assert arrive == D
+
+
+def test_depression_weakens_repeated_spikes_and_recovers():
+    from flyemu.connectome import Connectome
+    from flyemu.lif import LIFParams, Network
+    import pandas as pd
+    c = Connectome(pd.DataFrame({"bodyId": [0, 1]}), np.array([0, 1, 1]),
+                   np.array([1], np.int32), np.array([1.0], np.float32),
+                   np.ones(2, np.float32), np.array([1.0], np.float32))
+    full = lambda v: np.full(2, v, np.float32)
+    p = LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0), full(2.2),
+                  5.0, 1, 0.0, True, 0.0, 200.0, 0.5, 500.0)
+    net = Network(c, p, 0.1)
+    net.step(kick=(np.array([0]), 100.0)); net.step()
+    first = float(net.i_syn[1])
+    for _ in range(30): net.step()
+    net.i_syn[:] = 0
+    net.step(kick=(np.array([0]), 100.0)); net.step()
+    second = float(net.i_syn[1])
+    assert second < 0.7 * first
+    for _ in range(30000): net.step()
+    assert net.x_res[0] > 0.99

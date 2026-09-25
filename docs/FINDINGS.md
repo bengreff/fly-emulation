@@ -1129,3 +1129,52 @@ held bump), steering DNa02/DNa01 0.17, leg MN size principle 0.33, optic
 flow 0.67. flybench's simulator has no synaptic reset on spike, so it runs
 hotter than ours at equal gain. Its per-task numbers are an independent
 implementation's, which is a useful cross-check on ours.
+
+## F-TYPE-1. The pathway results are carried by type-level wiring
+
+Fixed code (DECISIONS, "Independent review"), m1 recalibrated by
+return-to-rest: 0.7x → **0.1925 mV** (was 0.6x; the delay fix and held kicks
+shifted it). Battery at that scale on backhouse, 3 trials, 2 global shuffles,
+2 cell-type block-preserving shuffles (`runs/assay-*-m1-fixA`). Readout
+excludes MN9_R (F-DATA-3). Stimulus 100 Hz (200 Hz in brackets):
+
+| Assay | Real | Type-shuffled | Globally shuffled |
+|---|---|---|---|
+| JO-C/E → aDN | 126 (138) | 104 (135) | 0 (0) |
+| LPLC2 → DNp01 | 310 (354) | 304 (353) | 5 (11) |
+| DNp01 → TTMn | 7.3 (21) | 7.4 (21) | 0 (0) |
+| JO-C/E → MDN (null) | 7.5 (3.8) | 7.9 (4.9) | 0.2 (2.0) |
+| **sugar → MN9_L** | **63 (131)** | **16.5 (54)** | 0 (0) |
+| water → MN9_L, JO-F → aDN/MDN | 0 | 0 | 0 |
+| bitter, sugar+bitter, DNg100 | ignite ~8-11k | ignite ~7-11k | ≤ 800 active |
+
+Calibration agrees: the type-shuffled graph returns to rest up to 0.6x and
+ignites at 0.65-0.7x, like the real graph. The global shuffle stays quiet to
+1.3x.
+
+**Conclusion.** Rewiring individual neurons within their types leaves almost
+every result intact, including the ignition and the failures. So these
+assays test **type-level connectivity**, not the scanned individual's
+neuron-level wiring. Sugar→MN9 is the exception: real wiring drives MN9_L
+2.4-3.8x harder than its type-shuffled versions, so it carries some
+neuron-level information. "The anatomy is load-bearing" (F-GAIN-2) should
+read "type-level wiring is load-bearing; neuron-level identity mostly is
+not yet probed". Also, at the recalibrated 0.7x most non-sugar stimuli
+ignite: the sugar-only calibration does not guarantee stability for other
+inputs. DNg100: the ISI-surrogate rhythm excess is 0.00-0.01 everywhere,
+so there is no rhythm.
+
+## F-STD-1. Uniform short-term depression trades transmission for stability
+
+Pre-registered (DECISIONS): U = 0.5, tau_rec = 500 ms per presynaptic neuron.
+Return-to-rest now holds up to 1.6x (0.44 mV; without STD, 0.7x). At that
+scale (`runs/assay-*-m1-std16`, 2 trials, 1 shuffle): water→MN9_L 4.5 Hz
+(first non-zero, still below 5), JO-F→aDN 4.1 Hz at 200 Hz (below 5),
+sugar→MN9_L 2.0 Hz and JO-C/E→aDN 4.3 Hz (**both passes lost**),
+LPLC2→GF 82 Hz, JO-C/E→MDN 4.4 Hz (null still fails). Broad transient
+recruitment of 5,000-13,000 neurons. **Criteria not met; not adopted.**
+Sustained 150 Hz sensory input depletes the sensory synapses themselves
+(steady-state x ≈ 1/(1 + U·r·tau) ≈ 0.03), so depression silences exactly
+the feedforward drive it was meant to spare. A depression confined to
+recurrent central synapses, or a weaker U, would be a different, new
+hypothesis.

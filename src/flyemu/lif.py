@@ -46,6 +46,8 @@ class LIFParams:
     noise_mv: float         # mV per sqrt(ms), background drive
     reset_syn: bool = False  # zero the synaptic current on a spike (Shiu 2024)
     adapt_mv: float = 0.0    # adaptation increment per spike, mV
+    std_u: float = 0.0       # short-term depression: fraction of resource per spike
+    std_tau_rec: float = 500.0  # ms, recovery of the resource
     tau_adapt: float = 200.0  # adaptation decay, ms
 
 
@@ -121,12 +123,17 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     tau_adapt = one("adaptation_tau", "ms", "spike-frequency adaptation",
                     200.0, "declared default adaptation decay; inert while "
                            "the increment is zero")
+    std_u = one("std_release_fraction", "dimensionless", "short-term depression",
+                0.0, "declared default: no short-term depression")
+    std_tau = one("std_tau_rec", "ms", "short-term depression",
+                  500.0, "declared default recovery; inert while U is zero")
     return LIFParams(
         tau_m=full(tau_m), v_rest=full(v_rest), v_th=full(v_th),
         v_reset=full(v_reset), t_ref=full(t_ref), tau_s=tau_s,
         delay_steps=max(1, int(round(delay_ms / timestep_ms))), noise_mv=noise,
         reset_syn=bool(reset_syn), adapt_mv=float(adapt),
-        tau_adapt=float(tau_adapt),
+        tau_adapt=float(tau_adapt), std_u=float(std_u),
+        std_tau_rec=float(std_tau),
     )
 
 
@@ -164,6 +171,8 @@ class Network:
         self.spike_count = 0
         self.adapt = np.zeros(n, dtype=np.float32)
         self.kick_held = np.zeros(n, dtype=np.float32)
+        self.x_res = np.ones(n, dtype=np.float32)      # STD resource per presynaptic neuron
+        self.rec_step = float(1.0 - np.exp(-self.timestep_ms / p.std_tau_rec))
         self.decay_a = float(np.exp(-self.timestep_ms / p.tau_adapt))
 
     # --- one timestep --------------------------------------------------------
@@ -222,6 +231,8 @@ class Network:
             self.kick_held[land] = 0.0
         spiked = np.flatnonzero(free & (self.v >= p.v_th))
 
+        if p.std_u:
+            self.x_res += (1.0 - self.x_res) * self.rec_step
         if spiked.size:
             self.v[spiked] = p.v_reset[spiked]
             if p.reset_syn:
@@ -254,7 +265,11 @@ class Network:
         # next read delay_steps steps from now: a delay of exactly
         # delay_steps (was delay_steps - 1 before session 4's review).
         target_slot = self.delay_head
-        np.add.at(self.delay[target_slot], indices[sel], self.w[sel])
+        w = self.w[sel]
+        if self.params.std_u:
+            w = w * np.repeat(self.x_res[spiked], counts)
+            self.x_res[spiked] *= (1.0 - self.params.std_u)
+        np.add.at(self.delay[target_slot], indices[sel], w)
 
     # --- readout -------------------------------------------------------------
 

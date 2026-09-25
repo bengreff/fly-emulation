@@ -467,3 +467,13 @@ Not yet acted on: the rhythmicity metric needs ISI-shuffled surrogates and antag
 - Readouts: the full 11-assay battery under m1 (fixed code).
 - If type-shuffled graphs reproduce the real graph's passes (JO-C/E→aDN, LPLC2→GF, sugar→MN9) and its failures (JO-C/E→MDN, ignition), the claim is "type-level wiring is load-bearing" and neuron-level identity is not yet tested by these assays. If they do not, neuron-level anatomy matters for that assay.
 - Also scored: the five F-SENS-1 fresh assays on the pre-change model (sensory input kept, same scale), to test whether the change helped at all.
+
+**Results:** size scaling rejected (F-SIZE-1). Type-block null behaves like the real graph in calibration (sugar→MN9 survives, ignition at the same scale); the full battery is running.
+
+### Pre-registration: short-term synaptic depression (session 4, before scoring)
+
+- Mechanism: Tsodyks-Markram depression per presynaptic neuron (all its output synapses share one resource `x`). A spike's efficacy is multiplied by `x`, then `x -= U*x`; `x` recovers toward 1 with `tau_rec`. A rested synapse has its old efficacy, so feedforward onset is unchanged and sustained high-rate firing is attenuated.
+- Values: `U = 0.5`, `tau_rec = 500 ms`, uniform, recorded `assumed`. Motivation: strong depression at fly ORN→PN synapses (Kazama & Wilson 2008) on 100 ms-1 s recovery scales; not a per-synapse measurement, not tuned here.
+- Scale: the same return-to-rest rule (stop at the first failure), on m1.
+- Scored on a fixed set declared now: our 11 assays (all seen, reported as such), plus flybench tasks 07-31 as run for m1 in F-FB-1 (also seen for m1). There is no fresh held-out set left for this family, so this comparison is **exploratory**, not confirmatory.
+- Considered an improvement if, at its calibrated scale, it passes water→MN9 or JO-F→aDN (both failing everywhere so far) without losing sugar→MN9, JO-C/E→aDN or LPLC2→GF, and does not fall below m1's flybench pass count.
