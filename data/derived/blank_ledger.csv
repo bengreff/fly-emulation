@@ -10,28 +10,28 @@ connectome,glial cells (type,glial cell,16711,3,50133,absent,unknown,EM,inferred
 neuron,passive membrane (capacitance,cell type,14356,3,43068,default,inferred,whole-cell patch,measured,one value for all (Shiu 2024 borrowed),parameter
 neuron,resting potential,cell type,14356,1,14356,default,inferred,patch,measured,-52 mV for all,parameter
 neuron,spike threshold,cell type,14356,3,43068,default,inferred,patch,measured,shared,parameter
-neuron,spiking vs graded signalling,cell type,14356,1,14356,default,guessed,patch,measured,all spike; photoreceptors,parameter
+neuron,spiking vs graded signalling,cell type,14356,1,14356,simulated,mixed,patch,measured,"per-type table: photoreceptors graded (measured), L1-L3 and APL graded (inferred); all others spiking (guessed default)",parameter
 neuron,spike-frequency adaptation (increment,cell type,14356,2,28712,default,guessed,patch,measured,mechanism present,parameter
 neuron,ion-channel complement and densities,cell type,14356,12,172272,absent,unknown,"patch + pharmacology, scRNA-seq priors",measured,"~12 major conductance classes (Nav, Kv1-4, Cav, KCa, HCN, leak)",parameter
 neuron,intrinsic bursting or pacemaking,cell type,14356,1,14356,absent,unknown,patch,measured,e.g. clock neurons,parameter
-neuron,spontaneous firing rate,cell type,14356,1,14356,default,guessed,extracellular/patch,measured,no noise; spontaneous activity only from sensory drive,parameter
-neuron,axonal conduction velocity / delay,cell type,14356,1,14356,default,inferred,"patch, morphology (derivable)",measured,1.8 ms for all edges,parameter
+neuron,spontaneous firing rate,cell type,14356,1,14356,default,guessed,extracellular/patch,measured,per-type tonic drive simulated; 0 mV default,parameter
+neuron,axonal conduction velocity / delay,cell type,14356,1,14356,default,inferred,"patch, morphology (derivable)",measured,per-presynaptic-type delay mechanism; all 1.8 ms until filled (derivable from skeletons),parameter
 neuron,dendritic integration (compartment electrotonus),cell type,14356,3,43068,absent,unknown,"multi-site recording, morphology",measured,single compartment,parameter
 neuron,temperature dependence (Q10),cell type,14356,1,14356,absent,unknown,patch at temperatures,measured,world temperature does not affect neurons,parameter
 synapse,transmitter identity,presynaptic type,14356,1,14356,simulated,mixed,"immunostaining, EM classifier",measured,predicted NT (derived from EM classifier); a few immuno-confirmed (measured),parameter
 synapse,co-transmitters and neuropeptides released,presynaptic type,14356,1,14356,absent,unknown,"immuno, scRNA-seq",measured,~50 neuropeptide genes in Drosophila,parameter
 synapse,postsynaptic receptor subtypes (nAChR,postsynaptic type,14356,4,57424,absent,unknown,"scRNA-seq, pharmacology",measured,sets sign and kinetics; glutamate sign guessed inhibitory,parameter
-synapse,synaptic strength (quantal size x release sites),presynaptic type,14356,2,28712,default,inferred,paired recordings,measured,one fitted value 0.165 mV x synapse count (F-GAIN-2),parameter
-synapse,postsynaptic gain / input sensitivity,postsynaptic type,14356,1,14356,default,inferred,paired recordings,measured,shared; masks from m1/m2,parameter
+synapse,synaptic strength (quantal size x release sites),presynaptic type,14356,2,28712,default,inferred,paired recordings,measured,per-presynaptic-type release gain simulated; all 1.0 x fitted 0.165 mV,parameter
+synapse,postsynaptic gain / input sensitivity,postsynaptic type,14356,1,14356,default,inferred,paired recordings,measured,per-postsynaptic-type input gain simulated; all 1.0 plus m1/m2 masks,parameter
 synapse,sign of each transmitter onto each target class,transmitter x postsynaptic type,14356,1,14356,default,mixed,paired recordings + pharmacology,measured,ACh/GABA derived; glutamate inferred; monoamine/unclear guessed,parameter
 synapse,kinetics (rise,synapse class,14356,2,28712,default,inferred,patch,measured,tau_s 5 ms for all,parameter
-synapse,release probability and short-term plasticity,presynaptic type,14356,3,43068,default,guessed,paired-pulse recordings,measured,mechanism present,parameter
+synapse,release probability and short-term plasticity,presynaptic type,14356,3,43068,default,guessed,paired-pulse recordings,measured,per-type mechanism simulated; U = 0 default (F-STD-1),parameter
 synapse,presynaptic inhibition/facilitation at terminals,presynaptic type,14356,1,14356,absent,unknown,terminal imaging,measured,removed for sensory terminals (F-SENS-1),parameter
 synapse,long-term plasticity rules (e.g. DAN-gated KC>MBON),synapse class,15,4,60,absent,unknown,explant plasticity experiments,inferred,Hige 2015 and others; Tier 2,parameter
 synapse,electrical synapse conductance and rectification,electrical pair class,14356,2,28712,absent,unknown,paired recordings,measured,3 GF pairs optional (F-GAP-1),parameter
-neuromodulation,modulator receptors per target type (DA,cell type,14356,4,57424,absent,unknown,"scRNA-seq, pharmacology",measured,modulators currently act as fast excitation (guessed),parameter
-neuromodulation,modulatory effects (gain,modulatory type,255,4,1020,absent,unknown,imaging + physiology,measured,,parameter
-neuromodulation,volume transmission / diffusion range,modulatory type,255,1,255,absent,unknown,sensors (GRAB),measured,,parameter
+neuromodulation,modulator receptors per target type (DA,cell type,14356,4,57424,default,guessed,"scRNA-seq, pharmacology",measured,per-type sensitivities to DA/OA/5-HT pools simulated; all 0 (inert) until filled,parameter
+neuromodulation,modulatory effects (gain,modulatory type,255,4,1020,default,guessed,imaging + physiology,measured,gain effect simulated via pools; excitability and plasticity gating absent,parameter
+neuromodulation,volume transmission / diffusion range,modulatory type,255,1,255,default,guessed,sensors (GRAB),measured,"one global pool per modulator, tau 1 s (guessed)",parameter
 neuroendocrine,neuropeptide/hormone release (insulin,peptide,50,3,150,absent,unknown,"hemolymph assays, imaging",inferred,,parameter
 neuroendocrine,hormone receptors and actions per target type,peptide x target type class,50,5,250,absent,unknown,scRNA-seq + physiology,inferred: ~50 neuropeptide genes (Nässel & Zandawala 2019),,parameter
 internal state,circadian clock (molecular oscillator in ~150 clock neurons),clock neuron type,9,6,54,absent,unknown,"imaging, gene expression",inferred,,parameter
