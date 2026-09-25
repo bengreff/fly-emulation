@@ -14,6 +14,11 @@ shows results are type-level; three uniform mechanisms were rejected by
 pre-registration. backhouse is deployed: `~/fly-emulation` (code synced by
 `scripts/sync_backhouse.sh`), flybench in `external/flybench/.venv`, and jobs run
 in tmux under a keep-alive SSH session (WSL shuts down otherwise).
+**Session 5 (25 Sept):** blank ledger (F-LEDGER-1, ~250k blank slots at declared
+grain, `scripts/blank_ledger.py`), sensory census (F-CENSUS-1, all 17,896 sensory
+neurons classified), derived retinotopy (F-VISION-2), olfaction/CO2/humidity wired
+to `world.py` (F-OLF-1). 66% of sensory neurons driven. Every inventory value has a
+`basis` label: measured / derived / inferred / unknown.
 **Current working model: profile `m2` (F-AL-1)**, 0.165 mV per synapse, calibration
 rule v2 satisfied. flybench also runs locally (`external/flybench/.venv`).
 backhouse dropped off the network again at ~22:30 on 24 Sept; the m2 jobs that
