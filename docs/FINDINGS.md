@@ -1445,3 +1445,32 @@ Sensing now goes through one method, `Organism.sense()`, used by both.
 
 Census: 11,903 of 17,896 sensory neurons driven (66%). Before this session it
 was ~9,300, of which 768 were wrong.
+
+## F-LEDGER-2. The complete blank ontology: 79 measurable quantities, 824,230 parameter slots
+
+`data/ontology/fly_information.yaml` lists everything about a fly that could
+in principle be measured, across 16 domains: connectome, neuron, synapse,
+neuromodulation, neuroendocrine, internal state, glia, molecular,
+metabolism, sensory, motor, muscle, body, other organs, environment. Each
+entry has its grain, how to measure it, whether the model simulates it (with
+evidence), runs it on a default, or omits it, and its basis label.
+Estimated instance counts are labelled with their source.
+`scripts/blank_ledger.py` counts:
+
+| Scale | Slots | Filled (measured/derived) | Blank, on a default | Blank, mechanism absent |
+|---|---|---|---|---|
+| parameters | 824,230 | 548 | 306,761 | 501,334 |
+| per-element structural data | 366.5 M | 96.9 M | 0 | 269.6 M |
+
+The per-element blanks are mostly synapse ultrastructure (unknown, 3 per
+synapse) and synapse locations. The locations are measured but unused by
+point neurons. **Of the parameter blanks, 61% have no default because the
+mechanism is not simulated.** The largest absent mechanisms: ion-channel
+complement (172k), per-target receptor subtypes (57k), dendritic
+integration, short-term plasticity (43k), electrical coupling (29k per-type
+partners plus 29k conductances), neuromodulation (59k), and co-transmitters
+(14k). That is the work list for "everything simulated, even if guessed".
+
+The labelling itself was made strict (DECISIONS, session 5):
+measured / derived / inferred / guessed / unknown / absent, with required
+fields enforced by `Registry.validate()` and tested on the whole organism.

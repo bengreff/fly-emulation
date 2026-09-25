@@ -1,0 +1,109 @@
+# Everything about a fly's biology that could in principle be measured, and
+# what the model does with it. The blank ledger (scripts/blank_ledger.py)
+# counts slots from this file. A "slot" is one quantity at its grain.
+#
+# Fields
+#   domain       organ system or level
+#   quantity     what would be measured
+#   grain        what one instance is
+#   count        expression over the counts in blank_ledger.py (see COUNTS)
+#   per          quantities per instance
+#   measure_by   how the animal's value could be obtained
+#   model        simulated | default | absent
+#                  simulated: the model uses a value with evidence
+#                  default:   the model runs on a guessed/placeholder value
+#                  absent:    the mechanism is not in the model at all
+#   basis        current label of the value(s): measured | derived |
+#                inferred | guessed | unknown | absent | mixed
+#   note         source, justification or gap
+#
+# Counts whose own basis is not measured say so in `count_basis`.
+
+- {domain: connectome, quantity: neuron identity and cell type, grain: neuron, count: n_cells, per: 1, measure_by: EM reconstruction, model: simulated, basis: measured, note: male-cns v1.0 (Traced or typed)}
+- {domain: connectome, quantity: chemical synapse count per connection, grain: edge, count: n_edges, per: 1, measure_by: EM synapse detection, model: simulated, basis: measured, note: ">=5 synapses per edge used; weaker edges present in the data"}
+- {domain: connectome, quantity: synapse locations on the neuron (compartment), grain: synapse, count: n_syn, per: 1, measure_by: EM, model: absent, basis: measured, note: available in neuPrint, unused by point neurons}
+- {domain: connectome, quantity: neuron morphology (skeleton, calibre, path lengths), grain: neuron, count: n_cells, per: 1, measure_by: EM, model: absent, basis: measured, note: available; would give conduction delays and compartments}
+- {domain: connectome, quantity: synapse ultrastructure (T-bar size, vesicle pool, PSD area), grain: synapse, count: n_syn, per: 3, measure_by: EM image analysis, model: absent, basis: unknown, note: not in the release; proxy for strength}
+- {domain: connectome, quantity: electrical synapse partners (innexin gap junctions), grain: cell type, count: n_types, per: 1, measure_by: "EM at gap-junction resolution, innexin expression, dye coupling", model: absent, basis: unknown, note: only 3 GF pairs identified in the literature are optional here}
+- {domain: connectome, quantity: soma position, grain: neuron, count: n_cells, per: 3, measure_by: EM, model: simulated, basis: measured, note: used for side assignment (F-VISION-2)}
+- {domain: connectome, quantity: glial cells (type, count, contacts), grain: glial cell, count: n_glia, count_basis: inferred, per: 3, measure_by: EM, model: absent, basis: unknown, note: annotated in male-cns but not in the Neuron table used; count is an estimate}
+
+- {domain: neuron, quantity: passive membrane (capacitance, input resistance, time constant), grain: cell type, count: n_types, per: 3, measure_by: whole-cell patch, model: default, basis: inferred, note: one value for all (Shiu 2024 borrowed)}
+- {domain: neuron, quantity: resting potential, grain: cell type, count: n_types, per: 1, measure_by: patch, model: default, basis: inferred, note: -52 mV for all}
+- {domain: neuron, quantity: spike threshold, reset, refractory period, grain: cell type, count: n_types, per: 3, measure_by: patch, model: default, basis: inferred, note: shared}
+- {domain: neuron, quantity: spiking vs graded signalling, grain: cell type, count: n_types, per: 1, measure_by: patch, model: default, basis: guessed, note: all spike; photoreceptors, many optic-lobe cells and APL are graded in the animal}
+- {domain: neuron, quantity: spike-frequency adaptation (increment, time constant), grain: cell type, count: n_types, per: 2, measure_by: patch, model: default, basis: guessed, note: mechanism present, set to zero (F-SFA-1)}
+- {domain: neuron, quantity: ion-channel complement and densities, grain: cell type, count: n_types, per: 12, measure_by: "patch + pharmacology, scRNA-seq priors", model: absent, basis: unknown, note: "~12 major conductance classes (Nav, Kv1-4, Cav, KCa, HCN, leak)"}
+- {domain: neuron, quantity: intrinsic bursting or pacemaking, grain: cell type, count: n_types, per: 1, measure_by: patch, model: absent, basis: unknown, note: e.g. clock neurons, CPG candidates}
+- {domain: neuron, quantity: spontaneous firing rate, grain: cell type, count: n_types, per: 1, measure_by: extracellular/patch, model: default, basis: guessed, note: no noise; spontaneous activity only from sensory drive}
+- {domain: neuron, quantity: axonal conduction velocity / delay, grain: cell type, count: n_types, per: 1, measure_by: "patch, morphology (derivable)", model: default, basis: inferred, note: 1.8 ms for all edges}
+- {domain: neuron, quantity: dendritic integration (compartment electrotonus), grain: cell type, count: n_types, per: 3, measure_by: "multi-site recording, morphology", model: absent, basis: unknown, note: single compartment}
+- {domain: neuron, quantity: temperature dependence (Q10), grain: cell type, count: n_types, per: 1, measure_by: patch at temperatures, model: absent, basis: unknown, note: world temperature does not affect neurons}
+
+- {domain: synapse, quantity: transmitter identity, grain: presynaptic type, count: n_types, per: 1, measure_by: "immunostaining, EM classifier", model: simulated, basis: mixed, note: "predicted NT (derived from EM classifier); a few immuno-confirmed (measured)"}
+- {domain: synapse, quantity: co-transmitters and neuropeptides released, grain: presynaptic type, count: n_types, per: 1, measure_by: "immuno, scRNA-seq", model: absent, basis: unknown, note: "~50 neuropeptide genes in Drosophila"}
+- {domain: synapse, quantity: postsynaptic receptor subtypes (nAChR, GABA-A/B, GluCl vs iGluR, mAChR...), grain: postsynaptic type, count: n_types, per: 4, measure_by: "scRNA-seq, pharmacology", model: absent, basis: unknown, note: sets sign and kinetics; glutamate sign guessed inhibitory}
+- {domain: synapse, quantity: synaptic strength (quantal size x release sites), grain: presynaptic type, count: n_types, per: 2, measure_by: paired recordings, model: default, basis: inferred, note: one fitted value 0.165 mV x synapse count (F-GAIN-2)}
+- {domain: synapse, quantity: postsynaptic gain / input sensitivity, grain: postsynaptic type, count: n_types, per: 1, measure_by: paired recordings, model: default, basis: inferred, note: shared; masks from m1/m2}
+- {domain: synapse, quantity: sign of each transmitter onto each target class, grain: transmitter x postsynaptic type, count: n_types, per: 1, measure_by: paired recordings + pharmacology, model: default, basis: mixed, note: ACh/GABA derived; glutamate inferred; monoamine/unclear guessed}
+- {domain: synapse, quantity: kinetics (rise, decay), grain: synapse class, count: n_types, per: 2, measure_by: patch, model: default, basis: inferred, note: tau_s 5 ms for all}
+- {domain: synapse, quantity: release probability and short-term plasticity, grain: presynaptic type, count: n_types, per: 3, measure_by: paired-pulse recordings, model: default, basis: guessed, note: mechanism present, off (F-STD-1)}
+- {domain: synapse, quantity: presynaptic inhibition/facilitation at terminals, grain: presynaptic type, count: n_types, per: 1, measure_by: terminal imaging, model: absent, basis: unknown, note: removed for sensory terminals (F-SENS-1)}
+- {domain: synapse, quantity: long-term plasticity rules (e.g. DAN-gated KC>MBON), grain: synapse class, count: n_plastic_classes, count_basis: inferred, per: 4, measure_by: explant plasticity experiments, model: absent, basis: unknown, note: Hige 2015 and others; Tier 2}
+- {domain: synapse, quantity: electrical synapse conductance and rectification, grain: electrical pair class, count: n_types, per: 2, measure_by: paired recordings, model: absent, basis: unknown, note: 3 GF pairs optional (F-GAP-1)}
+
+- {domain: neuromodulation, quantity: modulator receptors per target type (DA, OA, 5-HT, TA receptors), grain: cell type, count: n_types, per: 4, measure_by: "scRNA-seq, pharmacology", model: absent, basis: unknown, note: modulators currently act as fast excitation (guessed)}
+- {domain: neuromodulation, quantity: modulatory effects (gain, excitability, plasticity gating) and timescales, grain: modulatory type, count: n_mod_types, per: 4, measure_by: imaging + physiology, model: absent, basis: unknown}
+- {domain: neuromodulation, quantity: volume transmission / diffusion range, grain: modulatory type, count: n_mod_types, per: 1, measure_by: sensors (GRAB), model: absent, basis: unknown}
+
+- {domain: neuroendocrine, quantity: neuropeptide/hormone release (insulin, AKH, sNPF, PTTH, ETH, ...), grain: peptide, count: n_peptides, count_basis: inferred, per: 3, measure_by: "hemolymph assays, imaging", model: absent, basis: unknown}
+- {domain: neuroendocrine, quantity: hormone receptors and actions per target type, grain: peptide x target type class, count: n_peptides, per: 5, measure_by: scRNA-seq + physiology, model: absent, basis: unknown}
+- {domain: internal state, quantity: circadian clock (molecular oscillator in ~150 clock neurons), grain: clock neuron type, count: n_clock_types, count_basis: inferred, per: 6, measure_by: "imaging, gene expression", model: absent, basis: unknown}
+- {domain: internal state, quantity: hunger/satiety (hemolymph sugar, fat stores), grain: organism, count: 1, per: 4, measure_by: metabolite assays, model: absent, basis: unknown}
+- {domain: internal state, quantity: thirst, sleep pressure, arousal, mating drive, grain: organism, count: 1, per: 4, measure_by: behavioural and physiological assays, model: absent, basis: unknown}
+- {domain: glia, quantity: glial functions (K+ buffering, transmitter uptake, blood-brain barrier), grain: glial type, count: n_glia_types, count_basis: inferred, per: 3, measure_by: physiology, model: absent, basis: unknown}
+- {domain: molecular, quantity: gene expression per cell type (transcriptome), grain: cell type, count: n_types, per: 1, measure_by: scRNA-seq (Fly Cell Atlas), model: absent, basis: unknown, note: a source of priors, not model state; one slot per type}
+- {domain: metabolism, quantity: neuronal and muscle energy use (ATP), grain: tissue class, count: 4, per: 2, measure_by: metabolic imaging, model: absent, basis: unknown}
+
+- {domain: sensory, quantity: sensed physical variable per sensory group, grain: sensory group, count: n_sensory_groups, per: 1, measure_by: physiology, model: simulated, basis: mixed, note: census (F-CENSUS-1); 41 groups unknown}
+- {domain: sensory, quantity: transduction model parameters (gain, tuning, adaptation), grain: sensory group, count: n_sensory_groups, per: 4, measure_by: physiology, model: default, basis: guessed, note: "tanh / static placeholders; ORN tuning measured (relative)"}
+- {domain: sensory, quantity: odour tuning per ORN type, grain: ORN type, count: n_orn_types, per: 1, measure_by: single-sensillum recording, model: simulated, basis: measured, note: DoOR 2.0, 48/53}
+- {domain: sensory, quantity: spontaneous rate per sensory type, grain: sensory group, count: n_sensory_groups, per: 1, measure_by: recording, model: default, basis: guessed, note: Hallem-Carlson rates for 24 receptors not yet used}
+- {domain: sensory, quantity: photoreceptor spectral sensitivity, grain: photoreceptor type, count: 9, per: 1, measure_by: electroretinogram / opsin spectra, model: absent, basis: measured, note: literature exists; renderer has 2 channels only}
+- {domain: sensory, quantity: photoreceptor dynamics (graded response, adaptation), grain: photoreceptor type, count: 9, per: 4, measure_by: intracellular recording, model: default, basis: guessed}
+- {domain: sensory, quantity: retinotopy (ommatidium per photoreceptor), grain: photoreceptor, count: n_photoreceptors, per: 1, measure_by: EM geometry, model: simulated, basis: derived, note: F-VISION-2}
+- {domain: sensory, quantity: eye optics (interommatidial and acceptance angles), grain: eye region, count: 2, per: 2, measure_by: optics, model: simulated, basis: inferred, note: flygym renderer's hex model}
+- {domain: sensory, quantity: sense-organ mechanics (antenna a2-a3 stiffness, FeCO tendon, bristle stiffness, campaniform orientation), grain: organ type, count: n_mech_organs, count_basis: inferred, per: 3, measure_by: biomechanics, model: absent, basis: unknown, note: body has no a2-a3 joint}
+- {domain: sensory, quantity: efferent control of sense organs (e.g. octopamine gain of vision in flight), grain: organ type, count: n_mech_organs, per: 1, measure_by: physiology, model: absent, basis: unknown}
+
+- {domain: motor, quantity: motor neuron to muscle target, grain: motor neuron, count: n_motor, per: 1, measure_by: "driver lines, EM of nerves", model: simulated, basis: mixed, note: 348 derived (leg), rest unknown (MOTOR_TARGETS.md)}
+- {domain: motor, quantity: motor unit force per spike and twitch kinetics, grain: motor neuron, count: n_motor, per: 3, measure_by: force recording (Azevedo 2020), model: default, basis: guessed, note: one shared force_per_spike}
+- {domain: motor, quantity: neuromuscular junction facilitation/depression, grain: motor neuron, count: n_motor, per: 2, measure_by: muscle recording, model: absent, basis: unknown}
+- {domain: muscle, quantity: muscle anatomy (origin, insertion, fibre direction, cross-section), grain: muscle, count: n_muscles, count_basis: inferred, per: 4, measure_by: micro-CT (Özdil 2025), model: absent, basis: unknown, note: torque motors at joints instead}
+- {domain: muscle, quantity: Hill mechanics (Fmax, optimal length, max velocity, passive stiffness), grain: muscle, count: n_muscles, per: 4, measure_by: muscle physiology, model: absent, basis: unknown}
+- {domain: muscle, quantity: activation/deactivation kinetics, grain: muscle, count: n_muscles, per: 2, measure_by: muscle physiology, model: default, basis: guessed, note: one 30 ms activation tau}
+- {domain: muscle, quantity: asynchronous (stretch-activated) flight muscle dynamics, grain: power muscle, count: 26, per: 3, measure_by: work-loop experiments, model: absent, basis: unknown}
+- {domain: muscle, quantity: tendons and apodemes (compliance, routing), grain: tendon, count: 12, count_basis: inferred, per: 2, measure_by: micro-CT, model: simulated, basis: inferred, note: 8 MuJoCo tendons (tarsal chain)}
+
+- {domain: body, quantity: segment geometry, mass and inertia, grain: segment, count: n_segments, per: 4, measure_by: micro-CT + weighing, model: simulated, basis: derived, note: flybody + 52 weighed flies}
+- {domain: body, quantity: joint axes and ranges, grain: joint, count: n_joints, per: 2, measure_by: kinematics, model: simulated, basis: derived, note: F-BODY-3}
+- {domain: body, quantity: passive joint stiffness and damping, grain: joint, count: n_joints, per: 2, measure_by: passive mechanics, model: default, basis: guessed, note: F-STIFF-1}
+- {domain: body, quantity: missing articulations (antenna a2-a3, wing hinge sclerites, haltere drive), grain: articulation, count: 8, count_basis: inferred, per: 3, measure_by: anatomy + mechanics, model: absent, basis: unknown}
+- {domain: body, quantity: cuticle elasticity and strain field, grain: segment, count: n_segments, per: 2, measure_by: FEM + material tests, model: absent, basis: unknown}
+- {domain: body, quantity: wing structure (venation, stiffness, mass distribution), grain: wing, count: 2, per: 4, measure_by: micro-CT + mechanics, model: default, basis: inferred, note: rigid flybody wing}
+- {domain: body, quantity: tarsal adhesion (claws, pulvilli, fluid), grain: leg, count: 6, per: 3, measure_by: adhesion force measurement, model: default, basis: guessed, note: MuJoCo adhesion actuators}
+- {domain: body, quantity: ground contact friction, grain: contact pair, count: 6, per: 2, measure_by: friction measurement, model: default, basis: guessed}
+- {domain: body, quantity: aerodynamic force model (unsteady effects), grain: wing, count: 2, per: 5, measure_by: robotic wing / flow experiments, model: default, basis: inferred, note: quasi-steady MuJoCo fluid model only}
+
+- {domain: other organs, quantity: heart and hemolymph circulation, grain: organism, count: 1, per: 4, measure_by: imaging, model: absent, basis: unknown}
+- {domain: other organs, quantity: tracheal system and spiracles (gas exchange), grain: organism, count: 1, per: 5, measure_by: anatomy + physiology, model: absent, basis: unknown}
+- {domain: other organs, quantity: gut (pharyngeal pump, crop, peristalsis, nutrient absorption), grain: organism, count: 1, per: 6, measure_by: physiology, model: absent, basis: unknown}
+- {domain: other organs, quantity: Malpighian tubules / excretion, grain: organism, count: 1, per: 3, measure_by: physiology, model: absent, basis: unknown}
+- {domain: other organs, quantity: fat body (energy stores, endocrine), grain: organism, count: 1, per: 3, measure_by: assays, model: absent, basis: unknown}
+- {domain: other organs, quantity: reproductive system and pheromone production (male, cVA), grain: organism, count: 1, per: 4, measure_by: physiology, model: absent, basis: unknown}
+- {domain: other organs, quantity: thermoregulation and body temperature, grain: organism, count: 1, per: 2, measure_by: thermography, model: absent, basis: unknown}
+
+- {domain: environment, quantity: odour plume physics (turbulence, intermittency), grain: world, count: 1, per: 3, measure_by: plume measurements, model: default, basis: guessed, note: static Gaussian plumes}
+- {domain: environment, quantity: visual scene (light, spectrum, polarisation), grain: world, count: 1, per: 3, measure_by: scene choice, model: default, basis: guessed, note: MuJoCo render, no polarisation}
+- {domain: environment, quantity: temperature, humidity, CO2, wind, grain: world, count: 1, per: 4, measure_by: scene choice, model: default, basis: guessed, note: constants; no wind}
+- {domain: environment, quantity: food and substrate chemistry (tastants), grain: world, count: 1, per: 3, measure_by: scene choice, model: absent, basis: absent}
