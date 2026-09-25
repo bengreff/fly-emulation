@@ -1215,3 +1215,38 @@ mostly onto other AL LN types, is enough to sustain it. So hypothesis (a)
 alone will not fix it; the loop runs through eLN→LN→… partners. The next
 step is to trace that loop. Also, at 0.1925 mV sugar at 150 Hz ignites on
 this seed: 0.7x sits on the edge.
+
+## F-LN-2. Odour input ignites the model at every usable scale
+
+Calibration rule v2 (sugar plus 4 random 40-cell sensory populations outside
+every assay) **fails at every scale tested**, for both m1 (from 0.3x, i.e.
+0.083 mV) and the conductance-based variant (from 0.4x). Sugar alone returns
+to rest up to 0.7x (current-based) and 0.8x (conductance). The failing
+populations are the ones containing ORNs. A single glomerulus (ORN_DM4, 32
+cells, 150 Hz for 400 ms) leaves ~2,240 cells firing 200-400 ms after the
+stimulus at 0.083 mV, and ~8,000 at 0.165 mV. It also drives MN9_L to
+120-145 Hz through the ignited state.
+
+Probes (`scripts/probes/orn_*.py`, `aln_*.py`, `runs/probes/*.csv`):
+- Silencing all 131 cholinergic AL local neurons (30 types; lLN1_bc
+  immuno-confirmed cholinergic, the rest predicted) abolishes odour ignition at
+  0.083 mV and cuts it to 1,342 cells at 0.1925 mV.
+- Removing only their chemical output onto PNs and onto each other (70% of
+  their output, per the measured electrical eLN→PN coupling; Yaksi & Wilson
+  2010) raises the ignition-free ceiling from < 0.05 to ~0.08-0.1 mV of m1's
+  scale. sugar→MN9 needs ~0.165 mV, so a ~2x gap remains.
+- Restoring central input onto ORN terminals (presynaptic inhibition,
+  Olsen & Wilson 2008) changes nothing. As an additive current it cannot
+  compete with a 69 mV kick, and the persistence outlives the ORN drive.
+
+**This is now the blocking problem.** Under this model family, the antennal
+lobe cannot be both stable to odour input and transmissive for gustatory
+pathways at any single synaptic scale. The measured physiology the model gets
+wrong is concentrated there: eLN→PN is electrical, LN transmitter
+predictions are unreliable, and gain control is presynaptic and divisive.
+Neither conductance synapses nor uniform adaptation or depression close the
+gap. Also, since F-TYPE-1 found type-level wiring suffices, per-region
+synaptic scales (at least AL vs rest) would not destroy what the anatomy
+currently carries. That makes them a legitimate next hypothesis, provided
+they are fitted to AL physiology (PN transfer function, Olsen et al. 2010;
+flybench task 17) and not to behaviour.

@@ -79,8 +79,12 @@ published outcomes, and a new F-GAIN-2 finding.
 - F-DATA-3: MN9_R and other pharyngeal MNs are "Hard to trace"; readouts now exclude flagged cells.
 - flybench (independent simulator) scores m1 at 1/18 unseen tasks, graded 0.65.
 
-**The central conflict:** at any single synaptic scale, the model either transmits the weaker known pathways (water, JO-F) or stays stable. The real animal does both. Uniform single-mechanism fixes have so far failed. Ranked next:
-1. **Conductance-based synapses** (pre-registered; calibration rule v2 in progress on backhouse).
+**The central conflict:** at any single synaptic scale, the model either transmits the weaker known pathways (water, JO-F) or stays stable. The real animal does both. Uniform single-mechanism fixes have so far failed. Conductance-based synapses were tested: sugar-stable to 0.8x, but they still fail rule v2. **F-LN-2 locates the conflict in the antennal lobe:** odour input ignites the model at every usable scale. Ranked next:
+0. **Antennal lobe physiology, fitted to AL recordings only.**
+   - eLN→PN as gap junctions instead of chemical synapses (Yaksi & Wilson 2010).
+   - ORN presynaptic inhibition as a divisive gain on ORN output (Olsen & Wilson 2008).
+   - An AL-specific synaptic scale fitted to the PN transfer function (Olsen et al. 2010; flybench task 17), never to behaviour.
+   - Then rule v2 again. Pre-register before building.
 2. **The ignition cores are type-level cliques** (lLN1_bc; the KC/CX recruits). Find the minimal self-sustaining set under rule v2 and ask what the animal has that the model lacks there: graded APL, a GABAergic LN partner, gap junctions to PNs (eLNs are electrically coupled, Yaksi & Wilson 2010).
 3. **Assays that need neuron-level wiring.** F-TYPE-1 says the current battery cannot distinguish the scanned individual from its type-level average. Add assays whose published result depends on identified single cells (e.g. left/right-specific steering, DNa02 vs DNa01; retinotopic LC→DN) and score them against the type null.
 4. Gap junctions for GF→TTMn/PSI.
