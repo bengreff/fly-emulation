@@ -1269,3 +1269,12 @@ uniform per-synapse efficacy is wrong at this connection. Also, only 3 of 4
 pairs were made: GF_R has no ≥ 5-synapse chemical contact with either PSI, so
 the contact proxy for apposition fails there (GF→PSI chemical counts are
 2, 3, 2 and 9). Kept as an option, default off; not validated.
+
+## F-NORM-1. Input-count normalisation fails like size scaling, as predicted
+
+Pre-registered (DECISIONS), with the expected failure written down first.
+Efficacy x (median input count / N_j), beta = 1. Rule v1 calibration: stable
+up to 4x (1.1 mV), with sugar→MN9 at 0 Hz; ignition at 6-8x. It fails the
+adoption rule at calibration, so the battery was not run. Normalising by any
+quantity that grows with cell size suppresses exactly the large integrating
+neurons (MN9, GF, DNs, pIP1) that the known pathways end on. Rejected.
