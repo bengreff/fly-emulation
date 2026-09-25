@@ -1082,3 +1082,15 @@ baseline); water→MN9 still 0; GF→TTMn and DNg100 unchanged.
 
 Adopted as profile `m1` = Shiu 2024 values + 0.165 mV + no input onto sensory
 terminals. Every element is recorded `assumed`.
+
+**Addendum after independent review.** The five fresh assays run on the
+pre-change model (input onto sensory terminals kept, same 0.165 mV) give the
+same outcomes: JO-C/E→aDN 139 Hz, JO-F→aDN 0, JO-F→MDN 0, JO-C/E→MDN 56 Hz,
+LPLC2→GF 296 Hz (`runs/assay-*-shiu2024-presens06`). **So F-SENS-1 did not
+change any held-out result.** Its only measured benefit, removing
+bitter-evoked ignition at moderate rates, is on an assay seen before the
+change. It was adopted without a pre-registered adoption rule. It also
+removes real presynaptic inhibition at sensory terminals. Keep it as an
+option, not as settled. The shuffled columns in this finding were computed
+with the rewired-efficacy bug (DECISIONS, "Independent review") and are
+superseded by the fixed-code runs.

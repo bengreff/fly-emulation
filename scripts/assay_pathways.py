@@ -106,6 +106,30 @@ def select(neurons: pd.DataFrame, types: list[str]) -> np.ndarray:
     return np.flatnonzero(m.to_numpy())
 
 
+def rhythm_excess(raster: np.ndarray, dt_ms: float, n_surr: int = 10,
+                  seed: int = 0) -> tuple[float, float, float]:
+    """Rhythmicity above ISI-shuffled surrogates of the same train.
+
+    Shuffling inter-spike intervals keeps the rate and ISI distribution
+    (so tonic regular firing keeps its harmonics) but destroys slow
+    periodic modulation. Returns (score - surrogate mean, surrogate sd,
+    frequency of the real peak).
+    """
+    sc, hz = rhythmicity(raster, dt_ms)
+    t = np.flatnonzero(raster)
+    if len(t) < 5:
+        return 0.0, 0.0, np.nan
+    isi = np.diff(t)
+    rng = np.random.default_rng(seed)
+    surr = []
+    for _ in range(n_surr):
+        tt = t[0] + np.r_[0, np.cumsum(rng.permutation(isi))]
+        r = np.zeros_like(raster)
+        r[tt[tt < len(r)]] = True
+        surr.append(rhythmicity(r, dt_ms)[0])
+    return sc - float(np.mean(surr)), float(np.std(surr)), hz
+
+
 def rhythmicity(raster: np.ndarray, dt_ms: float) -> tuple[float, float]:
     """Autocorrelation rhythm score of one spike train, and its frequency.
 
@@ -248,8 +272,10 @@ def main() -> None:
                 if want_rhythm:
                     act = np.flatnonzero(c[read_idx] >= 5)
                     sc = [rhythmicity(raster[:, j], args.timestep_ms) for j in act]
+                    ex = [rhythm_excess(raster[:, j], args.timestep_ms) for j in act]
                     row["n_readout_active"] = len(act)
                     row["rhythmicity_median"] = float(np.median([x[0] for x in sc])) if sc else 0.0
+                    row["rhythm_excess_median"] = float(np.median([x[0] for x in ex])) if ex else 0.0
                     row["rhythm_hz_median"] = float(np.nanmedian([x[1] for x in sc])) if sc else np.nan
                     row["readout_active_median_hz"] = float(np.median(hz[read_idx][act])) if len(act) else 0.0
                 else:
