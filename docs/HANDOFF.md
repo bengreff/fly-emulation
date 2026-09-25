@@ -1,6 +1,11 @@
 # Handoff
 
-Written at the end of session 3, 16 September 2026, for a fresh session.
+Written at the end of session 3, 16 September 2026. **Updated in session 4
+(24 September): the next work is now `docs/PLAN_NEXT.md`**, which reorders the
+"immediate next task" below: reproduce published pathway results with noise
+off before differentiating biophysics. Session 4 also committed session 3's
+work, excluded 9,311 untyped fragments from the graph (F-COUNT-2: 167,111
+neurons now), and mapped the non-leg motor neurons (`docs/MOTOR_TARGETS.md`).
 
 ## What this project is
 
@@ -122,7 +127,7 @@ them fanned out to 22 live agents in three minutes in this session. Use
 ## Commands
 
 ```bash
-uv run pytest tests -q                      # 26 tests
+uv run pytest tests -q                      # 27 tests
 
 uv run python scripts/fetch_male_cns.py     # cache the graph, ~4 min, once
 uv run python scripts/run_organism.py --policy strict  --duration-ms 100  # C0

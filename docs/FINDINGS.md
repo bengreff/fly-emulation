@@ -947,7 +947,7 @@ optic lobe, which is half the animal's neurons.
 
 ## F-COUNT-2. 9,311 of the simulated "neurons" were fragments
 
-`male-cns:v1.0` returns 176,422 `:Neuron` nodes. The Cell paper (Berg et al.,
+`male-cns:v1.0` returns 176,422 `:Neuron` nodes. The male CNS paper (Cell, September
 2026) reports 166,691 neurons. The difference is proofreading status, which the
 loader read but never used:
 
