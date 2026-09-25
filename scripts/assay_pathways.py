@@ -230,6 +230,18 @@ def main() -> None:
     else:
         read_idx = select(nrn, a["readout"])
     want_rhythm = "readout_sel" in a
+    # Readout cells the reconstructors flag as incompletely traced are
+    # dropped and listed (F-DATA-3: MN9_R has 633 inputs vs MN9_L's 6,358).
+    extra = REPO / "data" / "cache" / "male_cns_extra.parquet"
+    if extra.exists():
+        lab = (pd.read_parquet(extra, columns=["bodyId", "statusLabel"])
+               .set_index("bodyId").statusLabel.reindex(nrn.bodyId).fillna("").to_numpy())
+        bad = np.array(["Hard to trace" in x or "Partially" in x for x in lab[read_idx]], bool)
+        if bad.any():
+            dropped = [str(nrn.instance.iat[i]) for i in read_idx[bad]]
+            print("readout excludes incompletely traced:", dropped)
+            rec.add_config({"readout_excluded_incomplete": dropped})
+            read_idx = read_idx[~bad]
     co = None
     if "co_stim" in a:
         co = (select(nrn, a["co_stim"][0]), a["co_stim"][1])
