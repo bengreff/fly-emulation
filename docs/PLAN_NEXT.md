@@ -71,12 +71,21 @@ published outcomes, and a new F-GAIN-2 finding.
 
 ## Session 5: the neuron model, changed only where an assay fails
 
-**Progress 24 Sept (F-SFA-1, F-SENS-1):** uniform adaptation failed its pre-registration. Dropping input onto sensory terminals was adopted (profile `m1`). Fresh held-out score 2/5. Open, ranked:
-1. **JO-C/E → MDN fires at 59 Hz and should not.** Trace the pIP1 route. Test whether a per-connection efficacy that is not uniform (e.g. normalising by postsynaptic input total, which is a size/input-resistance proxy as in Pugliese) fixes it without breaking the two passes. Pre-register first.
-2. **Central ignition above 0.6x.** Its hub is lLN1_bc (sign uncertain) and it survives adaptation. Candidates: graded APL, or input normalisation (as in 1).
-3. **Gap junctions** for GF→TTMn/PSI, the one failure with a known mechanism.
-4. **Water → MN9 = 0** across every configuration. Check LB3a reconstruction completeness (the male-CNS taste paper flags LB3a/LB3b tracing problems) before blaming the model.
-5. **No DNg100 rhythm.**
+**Progress 24 Sept, evening (F-SFA-1 … F-STD-1, reviewed by an independent agent):**
+- Rejected by pre-registration: uniform adaptation, volume-scaled input resistance, uniform short-term depression.
+- Input onto sensory terminals was dropped (m1); it changed no held-out result.
+- Bugs fixed after review: rewired-control efficacy, 1-step delay error, lost refractory kicks, calibration rule.
+- **F-TYPE-1:** a cell-type block-preserving shuffle reproduces nearly every result; only sugar→MN9 shows neuron-level dependence.
+- F-DATA-3: MN9_R and other pharyngeal MNs are "Hard to trace"; readouts now exclude flagged cells.
+- flybench (independent simulator) scores m1 at 1/18 unseen tasks, graded 0.65.
+
+**The central conflict:** at any single synaptic scale, the model either transmits the weaker known pathways (water, JO-F) or stays stable. The real animal does both. Uniform single-mechanism fixes have so far failed. Ranked next:
+1. **Conductance-based synapses** (pre-registered; calibration rule v2 in progress on backhouse).
+2. **The ignition cores are type-level cliques** (lLN1_bc; the KC/CX recruits). Find the minimal self-sustaining set under rule v2 and ask what the animal has that the model lacks there: graded APL, a GABAergic LN partner, gap junctions to PNs (eLNs are electrically coupled, Yaksi & Wilson 2010).
+3. **Assays that need neuron-level wiring.** F-TYPE-1 says the current battery cannot distinguish the scanned individual from its type-level average. Add assays whose published result depends on identified single cells (e.g. left/right-specific steering, DNa02 vs DNa01; retinotopic LC→DN) and score them against the type null.
+4. Gap junctions for GF→TTMn/PSI.
+5. Presynaptic inhibition at sensory terminals as a divisive output gain (restores what m1 removed).
+
 
 Rank candidates by the failures seen in session 4. Current priors:
 

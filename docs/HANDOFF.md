@@ -9,7 +9,11 @@ neurons now), and mapped the non-leg motor neurons (`docs/MOTOR_TARGETS.md`).
 Then it ran the pathway battery: F-GAIN-2 (the anatomy is load-bearing but
 ignites), F-SFA-1 (uniform adaptation fails), F-SENS-1 (profile `m1`, fresh
 held-out 2/5). The current open list is at the top of PLAN_NEXT session 5.
-backhouse became reachable again on 24 Sept, but nothing is deployed there yet.
+Later that evening: an independent review found and fixed a control bug; F-TYPE-1
+shows results are type-level; three uniform mechanisms were rejected by
+pre-registration. backhouse is deployed: `~/fly-emulation` (code synced by
+`scripts/sync_backhouse.sh`), flybench in `external/flybench/.venv`, and jobs run
+in tmux under a keep-alive SSH session (WSL shuts down otherwise).
 
 ## What this project is
 
