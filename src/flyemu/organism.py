@@ -66,6 +66,20 @@ class Organism:
         params = lif.default_params(
             self.reg, self.conn, timestep_ms=self.timestep_ms
         )
+        # temperature dependence: time constants scale by Q10^((T - Tref)/10)
+        q10 = self.reg.require(
+            "cell_type:all", "q10", units="dimensionless",
+            model_use="temperature scaling of membrane, synaptic and refractory times",
+            subsystem="neuron_biophysics", instances=self.conn.n, minimal=2.0,
+            justification="Q10 of 2-3 is typical for insect neuronal and channel kinetics "
+                          "(e.g. Hille; Robertson & Money 2012 review of insect thermal "
+                          "effects); 2 taken, one value for all types",
+            uncertainty="per-type Q10 unmeasured; reference 25 degC is the world default")
+        f = q10 ** ((self.world.temperature_c - 25.0) / 10.0)
+        if f != 1.0:
+            params.tau_m = params.tau_m / f
+            params.tau_s = np.asarray(params.tau_s) / f
+            params.t_ref = params.t_ref / f
         self.net = lif.Network(
             self.conn, params, self.timestep_ms,
             rng=np.random.default_rng(self.seed),

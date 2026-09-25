@@ -1529,3 +1529,42 @@ Closed-loop check with a sugar patch
 2.7 mV on contact, below threshold, because the leg-taste weight is a weak
 guess. Correctly wired, not yet correctly scaled. Closed loop with all senses
 is stable.
+
+## F-LEDGER-3. Where the blanks stand after session 5
+
+Ledger v2 (`scripts/blank_ledger.py`), parameter scale, 824,230 slots:
+
+| | Start of session 5 | Now |
+|---|---|---|
+| filled by data (measured/derived) | 548 | 548 |
+| running on a labelled default | 306,761 | 408,528 |
+| mechanism absent | 501,334 | 385,211 |
+
+Filled this session (mechanism now simulated on labelled values):
+- per-type neuron biophysics, delays, release and input gains, tonic drive;
+- graded transmission;
+- neuromodulator pools with per-type sensitivities;
+- per-type short-term plasticity;
+- electrical-coupling framework;
+- Q10 temperature scaling;
+- every sensory transduction;
+- 756/815 motor neurons mapped.
+
+Remaining absent, largest first:
+1. explicit ion-channel complement (172k; the reduced model stands in with
+   effective parameters);
+2. postsynaptic receptor subtypes per target type (57k);
+3. dendritic compartments (43k);
+4. glia (50k);
+5. co-transmitters/neuropeptides (14k);
+6. presynaptic inhibition (14k);
+7. intrinsic bursting (14k);
+8. transcriptome priors (14k);
+9. muscle mechanics per muscle (2.5k);
+10. NMJ dynamics (1.6k);
+11. neuroendocrine, internal-state, glial-function and other-organ systems
+    (a few hundred, each a whole missing subsystem).
+
+Filled-by-data is unchanged. This session turned absent mechanisms into
+simulated ones with labelled guesses; it did not add measurements. That is
+the next phase (the measurement library and fitting).

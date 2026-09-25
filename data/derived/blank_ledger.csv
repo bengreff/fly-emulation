@@ -4,7 +4,7 @@ connectome,chemical synapse count per connection,edge,6241231,1,6241231,simulate
 connectome,synapse locations on the neuron (compartment),synapse,89851184,1,89851184,absent,measured,EM,measured,available in neuPrint,per-element
 connectome,neuron morphology (skeleton,neuron,167111,1,167111,absent,measured,EM,measured,available; would give conduction delays and compartments,per-element
 connectome,synapse ultrastructure (T-bar size,synapse,89851184,3,269553552,absent,unknown,EM image analysis,measured,not in the release; proxy for strength,per-element
-connectome,electrical synapse partners (innexin gap junctions),cell type,14356,1,14356,absent,unknown,"EM at gap-junction resolution, innexin expression, dye coupling",measured,only 3 GF pairs identified in the literature are optional here,parameter
+connectome,electrical synapse partners (innexin gap junctions),cell type,14356,1,14356,default,guessed,"EM at gap-junction resolution, innexin expression, dye coupling",measured,"guessed none, except identified GF pairs (electrical.py, optional); mechanism simulated",parameter
 connectome,soma position,neuron,167111,3,501333,simulated,measured,EM,measured,used for side assignment (F-VISION-2),per-element
 connectome,glial cells (type,glial cell,16711,3,50133,absent,unknown,EM,inferred,annotated in male-cns but not in the Neuron table used; count is an estimate,parameter
 neuron,passive membrane (capacitance,cell type,14356,3,43068,default,inferred,whole-cell patch,measured,one value for all (Shiu 2024 borrowed),parameter
@@ -17,7 +17,7 @@ neuron,intrinsic bursting or pacemaking,cell type,14356,1,14356,absent,unknown,p
 neuron,spontaneous firing rate,cell type,14356,1,14356,default,guessed,extracellular/patch,measured,per-type tonic drive simulated; 0 mV default,parameter
 neuron,axonal conduction velocity / delay,cell type,14356,1,14356,default,inferred,"patch, morphology (derivable)",measured,per-presynaptic-type delay mechanism; all 1.8 ms until filled (derivable from skeletons),parameter
 neuron,dendritic integration (compartment electrotonus),cell type,14356,3,43068,absent,unknown,"multi-site recording, morphology",measured,single compartment,parameter
-neuron,temperature dependence (Q10),cell type,14356,1,14356,absent,unknown,patch at temperatures,measured,world temperature does not affect neurons,parameter
+neuron,temperature dependence (Q10),cell type,14356,1,14356,default,inferred,patch at temperatures,measured,"Q10 = 2 for all types, scales tau_m, tau_s, t_ref with world temperature",parameter
 synapse,transmitter identity,presynaptic type,14356,1,14356,simulated,mixed,"immunostaining, EM classifier",measured,predicted NT (derived from EM classifier); a few immuno-confirmed (measured),parameter
 synapse,co-transmitters and neuropeptides released,presynaptic type,14356,1,14356,absent,unknown,"immuno, scRNA-seq",measured,~50 neuropeptide genes in Drosophila,parameter
 synapse,postsynaptic receptor subtypes (nAChR,postsynaptic type,14356,4,57424,absent,unknown,"scRNA-seq, pharmacology",measured,sets sign and kinetics; glutamate sign guessed inhibitory,parameter
@@ -28,7 +28,7 @@ synapse,kinetics (rise,synapse class,14356,2,28712,default,inferred,patch,measur
 synapse,release probability and short-term plasticity,presynaptic type,14356,3,43068,default,guessed,paired-pulse recordings,measured,per-type mechanism simulated; U = 0 default (F-STD-1),parameter
 synapse,presynaptic inhibition/facilitation at terminals,presynaptic type,14356,1,14356,absent,unknown,terminal imaging,measured,removed for sensory terminals (F-SENS-1),parameter
 synapse,long-term plasticity rules (e.g. DAN-gated KC>MBON),synapse class,15,4,60,absent,unknown,explant plasticity experiments,inferred,Hige 2015 and others; Tier 2,parameter
-synapse,electrical synapse conductance and rectification,electrical pair class,14356,2,28712,absent,unknown,paired recordings,measured,3 GF pairs optional (F-GAP-1),parameter
+synapse,electrical synapse conductance and rectification,electrical pair class,14356,2,28712,default,guessed,paired recordings,measured,"spike-coupling kick mechanism; GF pairs 20 mV (guessed), others none",parameter
 neuromodulation,modulator receptors per target type (DA,cell type,14356,4,57424,default,guessed,"scRNA-seq, pharmacology",measured,per-type sensitivities to DA/OA/5-HT pools simulated; all 0 (inert) until filled,parameter
 neuromodulation,modulatory effects (gain,modulatory type,255,4,1020,default,guessed,imaging + physiology,measured,gain effect simulated via pools; excitability and plasticity gating absent,parameter
 neuromodulation,volume transmission / diffusion range,modulatory type,255,1,255,default,guessed,sensors (GRAB),measured,"one global pool per modulator, tau 1 s (guessed)",parameter
@@ -41,7 +41,7 @@ glia,glial functions (K+ buffering,glial type,6,3,18,absent,unknown,physiology,i
 molecular,gene expression per cell type (transcriptome),cell type,14356,1,14356,absent,unknown,scRNA-seq (Fly Cell Atlas),measured,a source of priors,parameter
 metabolism,neuronal and muscle energy use (ATP),tissue class,4,2,8,absent,unknown,metabolic imaging,measured,,parameter
 sensory,sensed physical variable per sensory group,sensory group,388,1,388,simulated,mixed,physiology,derived,census (F-CENSUS-1); 41 groups unknown,parameter
-sensory,transduction model parameters (gain,sensory group,388,4,1552,default,guessed,physiology,derived,tanh / static placeholders; ORN tuning measured (relative),parameter
+sensory,transduction model parameters (gain,sensory group,388,4,1552,default,guessed,physiology,derived,"every sensory neuron has a transduction (sensory.py, vision.py, olfaction.py, extrasenses.py); gains guessed; 1,561 cells of unknown modality at explicit zero drive",parameter
 sensory,odour tuning per ORN type,ORN type,53,1,53,simulated,measured,single-sensillum recording,measured,DoOR 2.0,parameter
 sensory,spontaneous rate per sensory type,sensory group,388,1,388,default,guessed,recording,derived,Hallem-Carlson rates for 24 receptors not yet used,parameter
 sensory,photoreceptor spectral sensitivity,photoreceptor type,9,1,9,absent,measured,electroretinogram / opsin spectra,measured,literature exists; renderer has 2 channels only,parameter
