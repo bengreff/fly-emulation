@@ -1,0 +1,702 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Whole-CNS Fly Replay</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root {
+  --ground: #E9EBE6;
+  --panel: #F5F7F2;
+  --panel-2: #DFE3DA;
+  --ink: #191C19;
+  --ink-2: #4A5248;
+  --ink-3: #7A8377;
+  --rule: #C7CDC1;
+  --motor: #D64500;
+  --sensory: #1E6E9C;
+  --unresolved: #7B4B94;
+  --grid: #D3D8CC;
+  --shadow: 0 1px 2px rgba(25, 28, 25, .07);
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #101312;
+    --panel: #191D1B;
+    --panel-2: #222724;
+    --ink: #E4E8E1;
+    --ink-2: #A8B1A5;
+    --ink-3: #757E73;
+    --rule: #2D3330;
+    --motor: #FF6A2B;
+    --sensory: #5AA9D8;
+    --unresolved: #B98ED0;
+    --grid: #262B28;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #101312;
+  --panel: #191D1B;
+  --panel-2: #222724;
+  --ink: #E4E8E1;
+  --ink-2: #A8B1A5;
+  --ink-3: #757E73;
+  --rule: #2D3330;
+  --motor: #FF6A2B;
+  --sensory: #5AA9D8;
+  --unresolved: #B98ED0;
+  --grid: #262B28;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1480px; margin: 0 auto; padding: 20px 20px 40px; }
+
+/* ---- header ---- */
+header { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: flex-end;
+  padding-bottom: 14px; border-bottom: 1px solid var(--rule); margin-bottom: 18px; }
+h1 { font-size: 21px; font-weight: 700; letter-spacing: -.01em; margin: 0 0 3px;
+  text-wrap: balance; }
+.sub { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3);
+  letter-spacing: .01em; }
+.facts { display: flex; flex-wrap: wrap; gap: 0 26px; margin-left: auto; }
+.fact { display: flex; flex-direction: column; gap: 1px; }
+.fact b { font-family: var(--mono); font-size: 15px; font-weight: 600;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.fact span { font-family: var(--mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--ink-3); }
+
+/* ---- layout ---- */
+.rig { display: grid; grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr);
+  gap: 16px; align-items: start; }
+@media (max-width: 1020px) { .rig { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 3px; box-shadow: var(--shadow); }
+.phead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+.phead h2 { font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .1em; margin: 0; }
+.phead .note { font-family: var(--mono); font-size: 10.5px; color: var(--ink-3);
+  margin-left: auto; }
+
+/* ---- viewport ---- */
+#view { display: block; width: 100%; height: 424px; background: transparent;
+  cursor: grab; touch-action: none; }
+#view:active { cursor: grabbing; }
+.viewfoot { display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+  padding: 8px 12px; border-top: 1px solid var(--rule);
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-3); }
+.key { display: inline-flex; align-items: center; gap: 5px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+/* ---- transport ---- */
+.transport { margin-top: 16px; padding: 12px; display: flex; flex-wrap: wrap;
+  gap: 14px 18px; align-items: center; }
+button {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--ink);
+  background: var(--panel-2); border: 1px solid var(--rule); border-radius: 2px;
+  padding: 6px 11px; cursor: pointer; letter-spacing: .02em;
+}
+button:hover { border-color: var(--ink-3); }
+button:focus-visible { outline: 2px solid var(--motor); outline-offset: 1px; }
+#play { min-width: 74px; font-weight: 600; }
+.chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.chips button[aria-pressed="true"] {
+  background: var(--motor); border-color: var(--motor); color: #fff;
+}
+.label { font-family: var(--mono); font-size: 9.5px; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--ink-3); }
+.scrubline { flex: 1 1 320px; display: flex; align-items: center; gap: 11px; }
+input[type=range] { flex: 1; accent-color: var(--motor); min-width: 140px; }
+#clock { font-family: var(--mono); font-size: 14px; font-weight: 600;
+  font-variant-numeric: tabular-nums; white-space: nowrap; }
+#clock small { font-weight: 400; color: var(--ink-3); font-size: 11px; }
+
+/* ---- traces ---- */
+.trace { position: relative; }
+.trace canvas { display: block; width: 100%; }
+.playhead { position: absolute; top: 0; bottom: 0; width: 1px;
+  background: var(--motor); pointer-events: none; }
+.axis { display: flex; justify-content: space-between; padding: 3px 12px 7px;
+  font-family: var(--mono); font-size: 9.5px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.rowlab { position: absolute; left: 6px; font-family: var(--mono); font-size: 9px;
+  color: var(--ink-3); letter-spacing: .04em; pointer-events: none;
+  background: color-mix(in srgb, var(--panel) 78%, transparent); padding: 0 3px; }
+
+/* ---- footer ---- */
+.caveats { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--rule);
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+  gap: 14px 26px; }
+.caveat h3 { font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .1em; margin: 0 0 4px; color: var(--ink-2); }
+.caveat p { margin: 0; font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+.caveat p b { color: var(--ink); font-weight: 600; }
+code { font-family: var(--mono); font-size: .91em; color: var(--ink); }
+.u { color: var(--unresolved); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div>
+    <h1>Whole-CNS Fly Replay</h1>
+    <div class="sub" id="runid">loading recording&hellip;</div>
+  </div>
+  <div class="facts" id="facts"></div>
+</header>
+
+<div class="rig">
+  <div>
+    <div class="panel">
+      <div class="phead">
+        <h2>Body</h2>
+        <span class="note" id="geomnote">loading geometry&hellip;</span>
+      </div>
+      <canvas id="view"></canvas>
+      <div class="viewfoot">
+        <span class="key"><i class="dot" style="background:var(--motor)"></i>tarsus bearing load</span>
+        <span class="key">drag to orbit &middot; scroll to zoom</span>
+        <span class="key" id="camkey"></span>
+        <button id="camtoggle" style="margin-left:auto">camera: follow</button>
+      </div>
+    </div>
+
+    <div class="panel transport">
+      <button id="play">Pause</button>
+      <div>
+        <div class="label" style="margin-bottom:4px">Replay speed</div>
+        <div class="chips" id="speeds"></div>
+      </div>
+      <div class="scrubline">
+        <div>
+          <div class="label" style="margin-bottom:4px">Position</div>
+          <div id="clock">0.0 <small>/ 3000 ms</small></div>
+        </div>
+        <input type="range" id="scrub" min="0" max="599" value="0" step="1"
+               aria-label="replay position">
+      </div>
+    </div>
+  </div>
+
+  <div class="stack">
+    <div class="panel">
+      <div class="phead">
+        <h2>Motor neuron spikes</h2>
+        <span class="note">708 rows &middot; 1 ms bins</span>
+      </div>
+      <div class="trace">
+        <canvas id="raster" height="300"></canvas>
+        <div class="playhead" id="ph1"></div>
+        <div class="rowlab" id="lab-mapped">328 reach a muscle</div>
+        <div class="rowlab" id="lab-unmapped">380 drive nothing</div>
+      </div>
+      <div class="axis"><span>0 ms</span><span>1500</span><span>3000 ms</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <h2>Joint torque</h2>
+        <span class="note">126 DOF &middot; &plusmn;30 &micro;N&middot;mm limit</span>
+      </div>
+      <div class="trace">
+        <canvas id="torque" height="190"></canvas>
+        <div class="playhead" id="ph2"></div>
+        <div class="rowlab" id="lab-tq-a"></div>
+        <div class="rowlab" id="lab-tq-b"></div>
+        <div class="rowlab" id="lab-tq-c"></div>
+      </div>
+      <div class="axis">
+        <span style="color:var(--sensory)">&minus; flexion side</span>
+        <span id="tqsat"></span>
+        <span style="color:var(--motor)">extension side +</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <h2>Whole-CNS firing rate</h2>
+        <span class="note" id="ratenote"></span>
+      </div>
+      <div class="trace">
+        <canvas id="rate" height="104"></canvas>
+        <div class="playhead" id="ph3"></div>
+      </div>
+      <div class="axis"><span>0 ms</span><span>Hz, all 176,422 neurons</span><span>3000 ms</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="caveats">
+  <div class="caveat">
+    <h3>What drives the legs</h3>
+    <p>Nothing is scripted. Motor neurons in the connectome fire, the muscles
+    they are mapped to pull, and MuJoCo resolves the rest. There is no gait, no
+    controller and no descending command.</p>
+  </div>
+  <div class="caveat">
+    <h3>The parameters are guesses</h3>
+    <p>Every neuron shares one membrane time constant, one threshold and one
+    synaptic strength. The model is short of <b>19 distinct inferences</b>,
+    propagated to <b>27.5 million</b> model elements.</p>
+  </div>
+  <div class="caveat">
+    <h3>How the state was filled</h3>
+    <p>All 176,422 neurons start exactly at rest with no synaptic history; the
+    body starts at its neutral pose 2 mm up. The opening fall and the first
+    activity are <span class="u">transients of that choice</span>, not behaviour.</p>
+  </div>
+  <div class="caveat">
+    <h3>Two disclosures</h3>
+    <p>Torque per spike was set to <code>10&#8239;&micro;N&middot;mm</code> to make the
+    motion visible, and the command <b>clips against the body&rsquo;s
+    &plusmn;30 limit</b>. Over half the motor output &mdash; wing, abdominal,
+    neck, haltere &mdash; has no actuator to drive.</p>
+  </div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="replay_data.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = window.REPLAY;
+  if (!R) { document.getElementById("runid").textContent = "recording not found"; return; }
+  var M = R.meta;
+
+  function f32(b64) {
+    var s = atob(b64), n = s.length, u = new Uint8Array(n);
+    for (var i = 0; i < n; i++) u[i] = s.charCodeAt(i);
+    return new Float32Array(u.buffer);
+  }
+  function i32(b64) {
+    var s = atob(b64), n = s.length, u = new Uint8Array(n);
+    for (var i = 0; i < n; i++) u[i] = s.charCodeAt(i);
+    return new Int32Array(u.buffer);
+  }
+
+  var NB = M.n_bodies, NF = M.n_frames, NU = M.n_actuators;
+  var xpos = f32(R.xpos), xquat = f32(R.xquat);
+  var torque = f32(R.torque), contact = f32(R.contact);
+  var rate = f32(R.pop_rate), spikes = i32(R.motor_spikes);
+  var NC = R.contact_names.length;
+  var frameMs = 1000 / M.web_hz;
+
+  /* ---------- header facts ---------- */
+  function fmt(n) { return n.toLocaleString("en-US"); }
+  var facts = [
+    [fmt(M.n_neurons), "neurons"],
+    [(M.n_edges / 1e6).toFixed(1) + "M", "edges"],
+    [(M.n_synapses / 1e6).toFixed(0) + "M", "synapses"],
+    [String(NU), "joint DOF"],
+    [M.mean_hz.toFixed(2), "Hz mean"],
+    [(M.duration_ms / 1000).toFixed(1) + "s", "recorded"]
+  ];
+  document.getElementById("facts").innerHTML = facts.map(function (f) {
+    return '<div class="fact"><b>' + f[0] + "</b><span>" + f[1] + "</span></div>";
+  }).join("");
+  document.getElementById("runid").textContent =
+    "male-cns:v1.0 → NeuroMechFly · closed loop at " +
+    M.timestep_ms + " ms · replayed from " + fmt(Math.round(M.duration_ms / M.timestep_ms)) +
+    " recorded steps · " + R.meta.run_id;
+  document.getElementById("ratenote").textContent =
+    "peak " + Math.max.apply(null, Array.prototype.slice.call(rate)).toFixed(2) + " Hz";
+
+  /* ---------- 3D body ---------- */
+  var canvas = document.getElementById("view");
+  var css = getComputedStyle(document.documentElement);
+  function tok(name) { return css.getPropertyValue(name).trim(); }
+
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(32, 1, 0.05, 400);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x606060, 0.72));
+  var key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(4, -6, 9);
+  scene.add(key);
+  var fill = new THREE.DirectionalLight(0xffffff, 0.3);
+  fill.position.set(-5, 4, 2);
+  scene.add(fill);
+
+  var grid = new THREE.GridHelper(40, 40, tok("--grid"), tok("--grid"));
+  grid.material.opacity = 0.55;
+  grid.material.transparent = true;
+  grid.rotation.x = Math.PI / 2;
+  scene.add(grid);
+
+  var LEGS = ["lf", "lm", "lh", "rf", "rm", "rh"];
+
+  /* ---------- real geometry ----------
+     Vertices, per-geom offsets and material colours come from the compiled
+     MuJoCo model, so this draws the same body the physics integrates rather
+     than an approximation of it. */
+  var bodyGroups = new Array(NB);
+  var tintTargets = [];      // tarsal materials, tinted by that leg's load
+  var legLoad = new Float32Array(LEGS.length);
+  var ready = false;
+
+  function legOf(name) {
+    for (var L = 0; L < LEGS.length; L++) {
+      if (name && name.indexOf("/" + LEGS[L] + "_") >= 0) return L;
+    }
+    return -1;
+  }
+
+  function buildBody(index, buf) {
+    var V = new Float32Array(buf, 0, index.vertex_bytes / 4);
+    var F = new Uint32Array(buf, index.vertex_bytes, index.n_triangles * 3);
+
+    for (var b = 0; b < NB; b++) {
+      bodyGroups[b] = new THREE.Group();
+      scene.add(bodyGroups[b]);
+    }
+    for (var i = 0; i < index.geoms.length; i++) {
+      var gd = index.geoms[i];
+      var geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(
+        V.slice(gd.vert_offset * 3, (gd.vert_offset + gd.vert_count) * 3), 3));
+      geo.setIndex(new THREE.BufferAttribute(
+        F.slice(gd.face_offset * 3, (gd.face_offset + gd.face_count) * 3), 1));
+      geo.computeVertexNormals();
+
+      var rgba = gd.rgba;
+      var mat = new THREE.MeshPhongMaterial({
+        color: new THREE.Color(rgba[0], rgba[1], rgba[2]),
+        opacity: rgba[3], transparent: rgba[3] < 0.99,
+        shininess: 18, specular: 0x222222,
+        side: rgba[3] < 0.99 ? THREE.DoubleSide : THREE.FrontSide
+      });
+      var mesh = new THREE.Mesh(geo, mat);
+      mesh.position.fromArray(gd.pos);
+      var q = gd.quat_wxyz;   // MuJoCo is (w,x,y,z); three.js is (x,y,z,w)
+      mesh.quaternion.set(q[1], q[2], q[3], q[0]);
+      (bodyGroups[gd.body] || scene).add(mesh);
+
+      if (/_tarsus/.test(gd.name || "")) {
+        var L = legOf(gd.name);
+        if (L >= 0) tintTargets.push({ mat: mat, leg: L, base: mat.color.clone() });
+      }
+    }
+    ready = true;
+  }
+
+  var COL_LOAD = new THREE.Color(tok("--motor"));
+
+  function poseAt(frame) {
+    if (!ready) return;
+    var off = frame * NB * 3, qoff = frame * NB * 4;
+    for (var b = 1; b < NB; b++) {
+      var g = bodyGroups[b];
+      g.position.set(xpos[off + b * 3], xpos[off + b * 3 + 1], xpos[off + b * 3 + 2]);
+      g.quaternion.set(xquat[qoff + b * 4 + 1], xquat[qoff + b * 4 + 2],
+                       xquat[qoff + b * 4 + 3], xquat[qoff + b * 4]);
+    }
+    // Per-leg load, summed over that leg's five tarsal segments, shown as a
+    // tint on the foot itself so the rest of the fly keeps its own colouring.
+    var coff = frame * NC;
+    for (var L = 0; L < LEGS.length; L++) legLoad[L] = 0;
+    for (var k = 0; k < NC; k++) {
+      var nmk = R.contact_names[k];
+      for (var L2 = 0; L2 < LEGS.length; L2++) {
+        if (nmk.indexOf(LEGS[L2]) === 0) { legLoad[L2] += contact[coff + k]; break; }
+      }
+    }
+    for (var t = 0; t < tintTargets.length; t++) {
+      var tt = tintTargets[t];
+      tt.mat.color.copy(tt.base).lerp(COL_LOAD, Math.min(1, legLoad[tt.leg] / 10));
+    }
+  }
+
+  /* camera: orbit around either the thorax or the world origin */
+  var follow = true, az = -0.7, el = 0.34, dist = 5.0;
+  var target = new THREE.Vector3();
+  function placeCamera(frame) {
+    if (follow) {
+      var off = frame * NB * 3;
+      target.set(xpos[off + 3], xpos[off + 4], Math.max(xpos[off + 5], 0.6));
+    } else {
+      target.set(0, 0, 1.2);
+    }
+    camera.position.set(
+      target.x + dist * Math.cos(el) * Math.cos(az),
+      target.y + dist * Math.cos(el) * Math.sin(az),
+      target.z + dist * Math.sin(el)
+    );
+    camera.up.set(0, 0, 1);
+    camera.lookAt(target);
+  }
+
+  var drag = null;
+  canvas.addEventListener("pointerdown", function (e) {
+    drag = { x: e.clientX, y: e.clientY }; canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    az -= (e.clientX - drag.x) * 0.008;
+    el = Math.max(-1.3, Math.min(1.45, el + (e.clientY - drag.y) * 0.006));
+    drag.x = e.clientX; drag.y = e.clientY;
+  });
+  canvas.addEventListener("pointerup", function () { drag = null; });
+  canvas.addEventListener("wheel", function (e) {
+    e.preventDefault();
+    dist = Math.max(2.2, Math.min(50, dist * (1 + Math.sign(e.deltaY) * 0.09)));
+  }, { passive: false });
+
+  var camBtn = document.getElementById("camtoggle");
+  camBtn.addEventListener("click", function () {
+    follow = !follow;
+    camBtn.textContent = "camera: " + (follow ? "follow" : "fixed");
+  });
+
+  function resize() {
+    var w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / Math.max(h, 1);
+    camera.updateProjectionMatrix();
+  }
+  addEventListener("resize", function () { resize(); drawTraces(); });
+
+  /* ---------- traces ---------- */
+  var NBINS = R.n_spike_bins;
+  var mapped = R.motor_mapped || [];
+  // Reorder rows so the motor neurons that reach a muscle sit together at the
+  // top and the ones with nowhere to go sit below: the split is the point.
+  var order = [], nMapped = 0;
+  for (var q = 0; q < mapped.length; q++) if (mapped[q]) { order.push(q); nMapped++; }
+  var rowOf = new Int32Array(mapped.length);
+  for (var q2 = 0; q2 < mapped.length; q2++) if (!mapped[q2]) order.push(q2);
+  for (var r2 = 0; r2 < order.length; r2++) rowOf[order[r2]] = r2;
+  var NROW = Math.max(order.length, 1);
+
+  // The height attribute is the intended CSS height, but sizing the canvas
+  // overwrites it with device pixels, so remember it before the first resize
+  // or every later resize compounds.
+  var cssHeights = {};
+  function sizeFor(cv) {
+    if (!(cv.id in cssHeights)) {
+      cssHeights[cv.id] = parseInt(cv.getAttribute("height"), 10);
+    }
+    var dpr = Math.min(devicePixelRatio, 2);
+    var w = cv.clientWidth || 420, h = cssHeights[cv.id];
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    cv.style.height = h + "px";
+    var g = cv.getContext("2d");
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { g: g, w: w, h: h, dpr: dpr };
+  }
+
+  function drawRaster() {
+    var c = sizeFor(document.getElementById("raster")), g = c.g;
+    g.clearRect(0, 0, c.w, c.h);
+    var split = c.h * nMapped / NROW;
+    g.fillStyle = tok("--panel-2");
+    g.globalAlpha = 0.5;
+    g.fillRect(0, split, c.w, c.h - split);
+    g.globalAlpha = 1;
+    g.strokeStyle = tok("--rule");
+    g.beginPath(); g.moveTo(0, split); g.lineTo(c.w, split); g.stroke();
+
+    var colMapped = tok("--motor"), colDead = tok("--ink-3");
+    for (var s = 0; s < spikes.length; s += 2) {
+      var row = rowOf[spikes[s + 1]];
+      var x = spikes[s] / NBINS * c.w, y = row / NROW * c.h;
+      g.fillStyle = row < nMapped ? colMapped : colDead;
+      g.fillRect(x, y, 1.15, 1.4);
+    }
+    document.getElementById("lab-mapped").style.top = "4px";
+    document.getElementById("lab-unmapped").style.top = (split + 4) + "px";
+  }
+
+  function drawTorque() {
+    var cv = document.getElementById("torque");
+    var c = sizeFor(cv), g = c.g;
+    // putImageData writes device pixels and ignores the dpr transform, so the
+    // buffer has to be the canvas's real backing size, not its CSS size.
+    var W = cv.width, H = cv.height;
+    var img = g.createImageData(W, H);
+    var d = img.data;
+    var mo = hex(tok("--motor")), se = hex(tok("--sensory")), bg = hex(tok("--panel"));
+    var sat = 0;
+    for (var py = 0; py < H; py++) {
+      var u = Math.floor(py / H * NU);
+      for (var px = 0; px < W; px++) {
+        var fr = Math.min(NF - 1, Math.floor(px / W * NF));
+        var v = torque[fr * NU + u];
+        var a = Math.min(1, Math.abs(v) / 30);
+        var col = v >= 0 ? mo : se;
+        var o = (py * W + px) * 4;
+        d[o] = bg[0] + (col[0] - bg[0]) * a;
+        d[o + 1] = bg[1] + (col[1] - bg[1]) * a;
+        d[o + 2] = bg[2] + (col[2] - bg[2]) * a;
+        d[o + 3] = 255;
+        if (Math.abs(v) > 30) { d[o] = 255; d[o + 1] = 255; d[o + 2] = 255; }
+      }
+    }
+    g.putImageData(img, 0, 0);
+
+    // The blank band is not a drawing fault: those degrees of freedom have no
+    // motor neuron mapped to them, so they receive nothing. Find the runs of
+    // leg and non-leg actuators as they actually occur and label each one.
+    var legRe = /(^|-)[lr][fmh]_/;
+    var runs = [], prev = null;
+    for (var a = 0; a < NU; a++) {
+      var isLeg = legRe.test(R.actuator_names[a]);
+      if (isLeg !== prev) { runs.push({ start: a, leg: isLeg, n: 0 }); prev = isLeg; }
+      runs[runs.length - 1].n++;
+    }
+    var labs = ["lab-tq-a", "lab-tq-b", "lab-tq-c"];
+    for (var li = 0; li < labs.length; li++) {
+      var el2 = document.getElementById(labs[li]), run = runs[li];
+      if (!run) { el2.textContent = ""; el2.style.display = "none"; continue; }
+      el2.style.display = "";
+      el2.textContent = run.n + " DOF · " + (run.leg
+        ? "legs, the only joints receiving motor output"
+        : "head, proboscis, eyes, antennae, abdomen, wings, halteres — nothing mapped");
+      el2.style.top = (run.start / NU * c.h + 3) + "px";
+    }
+
+    for (var k = 0; k < torque.length; k++) if (Math.abs(torque[k]) > 30) sat++;
+    document.getElementById("tqsat").textContent =
+      (100 * sat / torque.length).toFixed(1) + "% of commands clipped (white)";
+  }
+
+  function hex(s) {
+    s = s.replace("#", "");
+    if (s.length === 3) s = s[0] + s[0] + s[1] + s[1] + s[2] + s[2];
+    return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
+  }
+
+  function drawRate() {
+    var c = sizeFor(document.getElementById("rate")), g = c.g;
+    g.clearRect(0, 0, c.w, c.h);
+    var pad = 8, hi = 0;
+    for (var i2 = 0; i2 < rate.length; i2++) hi = Math.max(hi, rate[i2]);
+    hi = hi || 1;
+    g.strokeStyle = tok("--rule"); g.lineWidth = 1;
+    for (var t2 = 0; t2 <= 2; t2++) {
+      var yy = pad + (c.h - 2 * pad) * t2 / 2;
+      g.beginPath(); g.moveTo(0, yy); g.lineTo(c.w, yy); g.stroke();
+    }
+    g.beginPath();
+    for (var i3 = 0; i3 < rate.length; i3++) {
+      var x = i3 / (rate.length - 1) * c.w;
+      var y = c.h - pad - (rate[i3] / hi) * (c.h - 2 * pad);
+      i3 ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.lineTo(c.w, c.h); g.lineTo(0, c.h); g.closePath();
+    g.fillStyle = tok("--motor"); g.globalAlpha = 0.14; g.fill();
+    g.globalAlpha = 1;
+    g.beginPath();
+    for (var i4 = 0; i4 < rate.length; i4++) {
+      var x2 = i4 / (rate.length - 1) * c.w;
+      var y2 = c.h - pad - (rate[i4] / hi) * (c.h - 2 * pad);
+      i4 ? g.lineTo(x2, y2) : g.moveTo(x2, y2);
+    }
+    g.strokeStyle = tok("--motor"); g.lineWidth = 1.3; g.stroke();
+  }
+
+  function drawTraces() { drawRaster(); drawTorque(); drawRate(); }
+
+  /* ---------- transport ---------- */
+  var SPEEDS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 1];
+  var speed = 0.05, playing = true, frame = 0;
+  var scrub = document.getElementById("scrub");
+  scrub.max = String(NF - 1);
+
+  document.getElementById("speeds").innerHTML = SPEEDS.map(function (s) {
+    return '<button data-s="' + s + '" aria-pressed="' + (s === speed) + '">' +
+      (s === 1 ? "1× real" : s + "×") + "</button>";
+  }).join("");
+  document.getElementById("speeds").addEventListener("click", function (e) {
+    var b = e.target.closest("button[data-s]");
+    if (!b) return;
+    speed = parseFloat(b.dataset.s);
+    Array.prototype.forEach.call(this.querySelectorAll("button"), function (x) {
+      x.setAttribute("aria-pressed", String(parseFloat(x.dataset.s) === speed));
+    });
+  });
+
+  var playBtn = document.getElementById("play");
+  playBtn.addEventListener("click", function () {
+    playing = !playing;
+    playBtn.textContent = playing ? "Pause" : "Play";
+  });
+  scrub.addEventListener("input", function () {
+    frame = parseInt(scrub.value, 10);
+    playing = false; playBtn.textContent = "Play";
+  });
+  addEventListener("keydown", function (e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+    if (e.key === " ") { e.preventDefault(); playBtn.click(); }
+    if (e.key === "ArrowRight") { frame = Math.min(NF - 1, frame + 1); playing = false; }
+    if (e.key === "ArrowLeft") { frame = Math.max(0, frame - 1); playing = false; }
+  });
+
+  var heads = [document.getElementById("ph1"), document.getElementById("ph2"),
+               document.getElementById("ph3")];
+  function updateChrome() {
+    frame = Math.max(0, Math.min(NF - 1, frame));
+    var ms = frame * frameMs;
+    document.getElementById("clock").innerHTML =
+      ms.toFixed(1) + ' <small>/ ' + M.duration_ms.toFixed(0) + " ms</small>";
+    scrub.value = String(frame);
+    var pct = (frame / Math.max(NF - 1, 1)) * 100;
+    for (var h = 0; h < heads.length; h++) heads[h].style.left = pct + "%";
+    document.getElementById("camkey").textContent =
+      "thorax " + xpos[frame * NB * 3 + 5].toFixed(2) + " mm up";
+  }
+
+  /* ---------- loop ---------- */
+  var last = performance.now(), carry = 0;
+  function tick(now) {
+    // The first requestAnimationFrame timestamp can precede the baseline taken
+    // during setup, which would make dt negative and walk the frame index
+    // backwards past zero. Clamp at both ends.
+    var dt = Math.max(0, Math.min(now - last, 120)); last = now;
+    if (playing) {
+      carry += dt * speed;
+      var adv = Math.floor(carry / frameMs);
+      if (adv) { carry -= adv * frameMs; frame = ((frame + adv) % NF + NF) % NF; }
+    }
+    poseAt(frame);
+    placeCamera(frame);
+    renderer.render(scene, camera);
+    updateChrome();
+    requestAnimationFrame(tick);
+  }
+
+  resize();
+  drawTraces();
+  requestAnimationFrame(tick);
+
+  // Geometry is a separate fetch so the page is not carrying 2 MB of base64.
+  Promise.all([
+    fetch("geometry.json").then(function (r) { return r.json(); }),
+    fetch("geometry.bin").then(function (r) { return r.arrayBuffer(); })
+  ]).then(function (res) {
+    buildBody(res[0], res[1]);
+    document.getElementById("geomnote").textContent =
+      res[0].n_triangles.toLocaleString("en-US") + " triangles · " +
+      res[0].n_geoms + " meshes";
+  }).catch(function (e) {
+    document.getElementById("geomnote").textContent = "geometry failed to load";
+    console.error(e);
+  });
+})();
+</script>

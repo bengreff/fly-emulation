@@ -1,41 +1,46 @@
 # Biologically constrained fly emulation
 
-> ## Current state, 15 September 2026
+> ## Current state, 16 September 2026
 >
-> **Read [docs/PLAN.md](docs/PLAN.md) first.** It is the plan for the next
-> session and it supersedes the milestone sequence in `docs/ROADMAP.md`.
+> **Read [docs/HANDOFF.md](docs/HANDOFF.md) first.** It is the entry point for
+> a new session and says what to do next and why.
 >
-> **The approach changed after session 1.** That session built and audited one
-> isolated subsystem, the front-leg premotor network of the nerve cord. It could
-> not produce both a rhythm and usable motor force across 333 simulations, and
-> that was reported as a property of the approach. It was not. The fragment was
-> deafferented and open-loop, so everything that normally sets a premotor
-> circuit's operating point was missing: descending drive, sensory context,
-> neuromodulator state. A part was being asked to do the whole animal's job.
+> **There is a whole organism and it runs.** 176,422 neurons and 25,862,574
+> connectome edges from `male-cns:v1.0` drive a MuJoCo fly body in a closed
+> loop at a 0.1 ms timestep. Joint angles, foot contact, transmitted load and
+> per-eye luminance come back in through the real afferent populations. No
+> controller, no prescribed gait, no descending command. It falls over and
+> thrashes, which is the expected result with guessed parameters.
 >
-> **The new first task is a whole-organism field inventory.** Enumerate every
-> quantity the organism needs, at per-cell-type grain for physiology and
-> per-neuron for structure, and mark each one measured, derived, fitted, assumed
-> or empty. Find out how much of a fly we actually have before simulating any of
-> it. Then build a scaffold whose only job is to fail loudly on missing fields,
-> and a control that runs on measured values alone.
+> **The body is now measured, not assumed.** The body model is **flybody**,
+> chosen on evidence (see `docs/DECISIONS.md`): masses from 52 weighed flies,
+> 102 joint ranges fitted to real poses, differentiated passive joint
+> parameters, self-collision, tarsal adhesion, tendons and quasi-steady
+> aerodynamics. 0.985 mg, 98 torque actuators, 963 us per step.
 >
-> **What session 1 did establish**, restated at field level in
-> [docs/FINDINGS.md](docs/FINDINGS.md): the motor-neuron to muscle mapping is
-> complete and independently corroborated; 41% of modelled inhibition rests on a
-> sign convention the connectome cannot settle; the sign field is wrong for most
-> leg proprioceptors; excitability is derived from a volume that is invalid for
-> input populations; afferent firing rates have no published calibration at all;
-> and the whole-CNS connectome is a far better source than the nerve cord alone,
-> 94% traced against 23%.
+> **The gate, and the most important fact in the project.** A 16x change in
+> every synapse in the animal moves the firing rate less than 4x. A 2.5x change
+> in the background noise term moves it 400x. **The connectome is not yet doing
+> the work** - the term standing in for everything the model omits is. Until
+> that changes, nothing downstream is evidence, and an optimiser pointed at
+> behaviour would tune a parameter with no biological referent. See F-GAIN-1.
+>
+> **The parameters are guesses, and the model says so itself.** Every
+> biological quantity is read through a registry recording what it is, which
+> equation needs it, its units, its provenance and how many model elements it
+> fills. The inventory is emitted by a run rather than maintained beside it.
+> **19 distinct inferences fill 27.5 million model elements**; every neuron in
+> the brain shares one membrane time constant.
 >
 > | Read this | For |
 > |---|---|
-> | [Plan](docs/PLAN.md) | what to do next and why the approach changed |
-> | [Findings](docs/FINDINGS.md) | which fields are filled, wrong, or empty |
+> | [Handoff](docs/HANDOFF.md) | what to do next |
+> | [Model family M](docs/MODEL_M.md) | the equations, the grain, what M omits |
+> | [Findings](docs/FINDINGS.md) | every result, newest at the bottom |
+> | [Interface](docs/INTERFACE.md) | the brain-body channel inventory |
 > | [Decisions](docs/DECISIONS.md) | what was chosen and why |
+> | [Running](docs/RUNNING.md) | how to run everything |
 > | [Environment](docs/ENVIRONMENT.md) | measured hardware, two-machine setup |
-> | [Running](docs/RUNNING.md) | how to reproduce what remains |
 
 ---
 

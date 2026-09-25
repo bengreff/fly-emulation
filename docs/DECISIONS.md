@@ -217,3 +217,202 @@ all fixed.
 - **The type count needed a policy, not a number.** 11,751 distinct `type` labels over
   164,506 typed neurons. Any grouping below that is an assumption and now requires a
   recorded rationale. Step 0b.
+
+## 2026-09-15 Session 3: build the simulation, emit the inventory from it
+
+Ben rejected the plan's ordering a second time, and more sharply: *"I do not
+understand. You should be building a simulation of a fly, just with currently
+unknown parameters. If that is how you build a simulation, do it."* Then, on the
+goal: *"a fly in a full MuJoCo sim with mostly guessed parameters, probably
+randomly flailing around."*
+
+That settles a question two sessions had circled. The deliverable is a running
+embodied organism; unknown parameters are simply unknown, and flailing is the
+expected outcome rather than a failure. The hand-written requirement skeleton
+(plan steps 1-3) is not a prerequisite for it and was not built.
+
+- **The inventory is emitted by the model, not maintained beside it.** Every
+  biological quantity is read through `flyemu.registry`, which records entity,
+  property, units, the equation that needs it, status, evidence and instance
+  count. The requirement list is a byproduct of a run, so it cannot be
+  incomplete relative to the code. This replaces plan step 1 and makes step 5a
+  ("fail loudly on missing fields") the default rather than a later check.
+- **Model family M v1 declared** in `docs/MODEL_M.md` before anything was
+  built, with its omissions listed explicitly. Spiking LIF, single compartment,
+  current-based synapses, per-neuron structure, per-cell-type physiology.
+- **Neuron model: spiking LIF**, chosen by Ben over rate-based. It makes
+  membrane time constants and thresholds explicit required fields instead of
+  hiding them in a gain, which is the field F-EXCITE-1 showed being set by an
+  artefact.
+- **Primary graph: `male-cns:v1.0`**, whole CNS, male. Cached locally by
+  chunked live query: 176,422 neurons, 25,862,574 edges, 125,024,863 synapses,
+  reproducing the numbers `docs/PLAN.md` derived independently.
+- **Register for FlyWire/CAVE.** Agreed with Ben, not yet done; it is what
+  unblocks the female datasets for physiology transfer and a BANC comparison.
+  Not blocking, so session 3 did not wait on it.
+- **Body: NeuroMechFly via flygym 2.1.0**, all 126 joint degrees of freedom,
+  **torque actuators rather than position servos**, because a position servo is
+  a controller the fly does not have. Ground-contact sensors are disabled: in
+  flygym 2.1.0 they are emitted with unprefixed object names and the model fails
+  to compile. Contact is read per body segment instead.
+- **Model units established by measurement, not assumption:** mm, s, g, so
+  force is µN and torque µN·mm. A test pins it, because every torque number in
+  the project is meaningless if this drifts.
+- **Three fill policies, not one model.** C0 strict enumerates every unresolved
+  requirement and refuses to integrate; C1 fills one declared default per
+  subsystem; C2 should use published precedents. Strict was changed to enumerate
+  all refusals rather than raise on the first, since the refusal list is the
+  result.
+- **C2 was not populated.** Its values currently equal C1's, so the two runs are
+  identical and C1-versus-C2 says nothing. Recorded as an open item rather than
+  presented as a control.
+- **Swept parameters are recorded as `assumed` with the override noted**, never
+  promoted to evidence. A test enforces it.
+- **Fetch stalled once and was rewritten.** A single query over a wide bodyId
+  range hung for 65 minutes with no data and 1.3 s of CPU. bodyIds are strongly
+  skewed (90% below 8.1e5, then a jump to 1.5e9), so chunks are now by quantile
+  with per-chunk parquet checkpoints and retries. The whole graph then arrived in
+  205 s.
+
+## 2026-09-15 Session 3: fidelity direction set
+
+Ben, after seeing a ball-and-stick render: *"First goal is full body biological
+fidelity, both visual and underlying."* Then, as standing direction:
+*"In general, tend towards a higher fidelity model, including all relevant
+physics, the brain body interface must be complete."*
+
+This settles three things that were previously open.
+
+- **Default to higher fidelity.** Where a choice exists between a cheaper
+  abstraction and a more faithful mechanism, take the faithful one and record
+  the cost. Reductions are still allowed but each now needs a reason beyond
+  convenience. This reverses the implicit bias of M v1, which chose the cheapest
+  defensible option at nearly every point.
+- **All relevant physics is in scope.** Rigid-body contact alone is not the
+  target. Tarsal adhesion and claw mechanics, unsteady aerodynamics, air flow
+  for wind sensing, acoustic near-field for hearing, light transport for vision,
+  odour advection and diffusion, and humoral transport are all inside the
+  boundary, to be added or explicitly deferred with a recorded gap. "Not
+  implemented" still never means "biologically inactive".
+- **The brain-body interface must be COMPLETE.** Completeness here means every
+  channel the animal has is either implemented or recorded as a known gap with
+  its instance count. The current state is far from that: 328 of 708 motor
+  neurons drive anything, 3,246 of roughly 20,000 sensory neurons receive
+  anything, and vision, olfaction, taste, hearing, wind, gravity, temperature
+  and all hormonal signalling have no channel at all.
+
+Also decided:
+
+- **Agent discipline.** Ben: *"NO SUB SUB AGENTS! max 3 agents!"* I had launched
+  four `general-purpose` research agents, which fanned out to 22 live agents in
+  three minutes. All were killed; none of their output was used. The limit is
+  now in `CLAUDE.md`: at most three subagents, counted recursively, and never an
+  agent type that can spawn its own. `Explore` cannot spawn and is the default
+  choice. Ben then authorised one additional agent specifically for the
+  brain-body interface enumeration, making four Explore agents for this round.
+
+### Body-model defects found while fixing the render
+
+- **`colorize()` was never called**, so all 70 geoms carried MuJoCo's default
+  grey in the physics model, not merely in the viewer. Now applied: 13 materials,
+  graded cuticle browns per leg segment, dark red eyes, translucent wings.
+  NeuroMechFly stores these colours in procedural *textures* with material rgba
+  left at [1,1,1,a], so reading `mat_rgba` alone yields a uniform grey fly; the
+  exporter averages the texture and multiplies it in.
+- **Eye joints are actuated.** The `ALL_BIOLOGICAL` joint preset plus
+  `ActuatedDOFPreset.ALL` gives 126 powered degrees of freedom including three
+  per compound eye. Fly compound eyes do not articulate on the head capsule, so
+  those are rigging artifacts turned into muscles. Pending the joint audit,
+  several others are suspect: the individual tarsal joints and the
+  funiculus-arista joint. Every such DOF lets the model move in a way no fly can.
+
+## 2026-09-15 Session 3: body model switched to flybody, and the physics filled in
+
+Ben asked whether the body's physics were realistic and implemented, and
+observed legs clipping through the body and each other in the visualiser. They
+were not, and he was right about the cause.
+
+**Verified, not assumed:** every one of the 70 geoms had `contype=0` and
+`conaffinity=0`, and the only contacts in the model were 55 explicit pairs, all
+of them with the ground plane. There was no leg-to-leg, leg-to-body or
+wing-to-body collision of any kind.
+
+### Body model: flybody, decided on measurement
+
+Ben declined to pick and asked for a careful decision, noting NeuroMechFly might
+hold more brain-body interface data. Checked directly; it does not.
+
+| | NeuroMechFly | flybody |
+|---|---|---|
+| Segment masses | another lab's fractions x an assumed 1 mg | 52 flies weighed part by part |
+| `boundmass` floor | yes: 32 of 69 bodies floored, 2.45% of mass is solver artefact | none |
+| Joint ranges | **0 of 127** | **102**, fitted to real annotated poses |
+| Passive joint parameters | one global stiffness and damping for every joint | 8 differentiated groups |
+| Actuator parameters | one global force range | per-class force ranges and affine gains |
+| Aerodynamics | absent | quasi-steady fluid model, air density and viscosity set |
+| Adhesion | absent | 8 adhesion actuators |
+| Tendons | none | 8 |
+| Vision config | 721 ommatidia per eye | **identical file** |
+| Non-joints in the rigging | eyes, arista, 3-axis halteres | **none of them** |
+
+The last row decided it. flybody's rigging independently omits exactly the
+degrees of freedom the joint audit identified as not being joints, from a
+different method: it has no eye DOF, no arista DOF and one haltere axis. Two
+approaches reaching the same answer is better evidence than either alone.
+
+The port was cheap because **leg joint names are identical between the models**,
+so the muscle map and the sign calibration carried across. NeuroMechFly remains
+selectable as `Body(model="neuromechfly")` for comparison.
+
+Measured after the switch: 0.9846 mg total, none of it a solver floor; 98 motor
+actuators; 8 tendons; 6 adhesion; 103 joints all with ranges; 1.3x slower than
+real time WITH self-collision enabled.
+
+### Signs are now derived from measurement, per body model
+
+The switch exposed a latent error in the design: `FTi pitch +` FLEXES the leg in
+NeuroMechFly and EXTENDS it in flybody. Hard-coded signs invert silently the
+moment the body changes.
+
+So the muscle table now declares the anatomical ACTION (flexion, levation,
+protraction, adduction, rotation), from Azevedo et al. 2024 Table A1, and the
+SIGN is resolved at build time against `data/derived/joint_signs_<model>.csv`,
+measured by `scripts/calibrate_joint_signs.py`. 16 of 18 muscle rows are now
+`derived` rather than `assumed`; the two remaining assumptions are the rotation
+directions, which the sources genuinely do not settle.
+
+### Physics implemented
+
+- **Self-collision.** Two bugs had to be fixed to get it working. Setting geom
+  `contype`/`conaffinity` alone changes nothing, because **MuJoCo prunes
+  candidate pairs at the BODY level first** using masks aggregated at compile
+  time, which were zero. And colliding everything creates permanent contacts
+  between segments that nest at their joints - a convex hull of the rostrum
+  overlaps the haustellum it sits in - which fight their own joints. Resolved
+  with one collision bit per anatomical region, colliding across regions and
+  not within them. `spec.add_exclude` was tried first and hard-crashed the
+  compiler with no traceback.
+- **Adhesion**, driven by the long tendon motor pool, since that muscle's real
+  target is the pretarsal claw. Declared as a scaffold: adhesion is a substitute
+  mechanism, not claw and pulvillus mechanics.
+- **Aerodynamics**, MuJoCo's quasi-steady fluid model in air (1.204e-6 g/mm^3,
+  1.825e-5 g/mm/s) with ellipsoid fluid interaction on wings and halteres.
+  Recorded for what it is: it does NOT capture delayed stall and the
+  leading-edge vortex, rotational circulation, or wake capture, which dominate
+  insect flight at Reynolds number ~100.
+- **Cuticular strain proxy.** Campaniform afferents now read the load
+  transmitted through each leg segment (`cfrc_int`) instead of ground contact
+  force. A loaded leg need not touch the ground at all, so contact force was
+  the wrong physical quantity. The segments are still rigid, so this is a proxy
+  and not a strain field; that limitation stays in the inventory.
+- **Tendons**, real MuJoCo tendons for the tarsal chain, replacing the emulated
+  coupling.
+
+### Known limitation introduced, recorded rather than hidden
+
+flybody's thorax-coxa Euler axes are not aligned with the anatomical action
+axes, so one actuator can serve two actions: positive roll both protracts and
+adducts. The resolver picks the axis with the largest component, which means the
+sternal adductor and the pleural promotor currently share an axis and a sign.
+The better treatment is to project each muscle's action across all three axes by
+least squares, giving genuinely multi-axis muscles. Not done.

@@ -43,6 +43,102 @@ ssh backhouse "wsl -d Ubuntu -- bash /mnt/c/flyemu/<script>.sh"
 Do not run more than two simulation sweeps at once on the laptop. Three
 oversubscribes ten cores and slows everything by roughly the factor you added.
 
+## The whole-organism model
+
+```bash
+# cache the graph: 176,422 neurons, 25.8M edges, ~26 MB of parquet, ~4 min
+uv run python scripts/fetch_male_cns.py
+
+# C0: refuses to integrate and enumerates every unresolved requirement
+uv run python scripts/run_organism.py --policy strict --duration-ms 100 --tag c0
+
+# C1: one declared default per subsystem; runs, flails
+uv run python scripts/run_organism.py --policy minimal --duration-ms 200 --tag c1
+
+# tier-A sensitivity over the two guesses with the largest reach
+uv run python scripts/sweep_defaults.py --duration-ms 50
+uv run python scripts/sweep_motor_gain.py --duration-ms 200
+
+# watch it
+uv run python scripts/render_organism.py --duration-ms 500 \
+    --set 'motor_unit:all|force_per_spike=10'
+```
+
+Any assumed scalar can be overridden by its registry key, which is
+`entity|property` as it appears in the emitted `inventory.csv`:
+
+```bash
+uv run python scripts/run_organism.py --policy minimal \
+    --set 'connection_class:all|efficacy_per_synapse=0.4' \
+    --set 'cell_type:all|background_noise=2.5'
+```
+
+Overrides are recorded as `assumed` with the override noted. They never read
+back as measurements.
+
+Cost on the M2 Pro: about 2 s of compute per 50 ms of simulated fly, peak
+2.0 GB. `data/cache/` is untracked; `runs/<run_id>/` holds the provenance
+record, the trace, the population rates and the inventory the run emitted.
+
+## The body
+
+The default body is **flybody**; `Body(model="neuromechfly")` selects the other
+for comparison. First construction downloads ~140 MB of assets once, then takes
+about 0.1 s.
+
+```python
+from flyemu.body import Body
+b = Body()                      # self-collision, adhesion, aero, tendons, vision
+b.summary()
+```
+
+Measured costs on the M2 Pro: 155 us per step bare, 963 us with self-collision,
+11.5 ms per eye readout (rendered at 100 Hz by default).
+
+```bash
+# which sign of each actuator produces which anatomical action
+uv run python scripts/calibrate_joint_signs.py --model flybody
+```
+
+The muscle map reads that calibration to resolve signs, so **re-run it after
+any change to the body model or its axis order**, or the muscle signs silently
+become wrong.
+
+## Watching a run
+
+Two visualisers, both replaying a pre-recorded run. Neither simulates anything,
+so neither can diverge from what was recorded.
+
+```bash
+# record once: full-rate qpos plus the neural and motor signals, ~2 min for 3 s
+uv run python scripts/record_organism.py --duration-ms 3000 \
+    --set 'motor_unit:all|force_per_spike=10' \
+    --set 'cell_type:all|background_noise=2.5'
+
+# browser visualiser on localhost: body, motor raster, joint torque, CNS rate
+uv run python scripts/export_geometry.py      # once: writes viz/geometry.* (untracked)
+uv run python scripts/serve_viz.py              # newest recording, opens a tab
+uv run python scripts/serve_viz.py --list
+uv run python scripts/serve_viz.py --run runs/organism-record-3000ms-replay
+
+# MuJoCo's own viewer: real geometry, full camera control
+uv run python scripts/replay_mujoco.py runs/organism-record-3000ms-replay
+#   space play/pause   . faster   , slower   [ ] step   r restart
+```
+
+A recording is two files. `recording.npz` holds `qpos` every timestep, which is
+all MuJoCo needs to reconstruct every body pose: 133 floats per step, 14.6 MB
+for 3 s. `replay_data.js` holds the same run downsampled to 200 Hz, plus the
+motor spikes, joint torques and contact forces, for the browser page in `viz/`.
+At 2.3 MB it loads as a plain `<script>`, so the page needs no build step and
+no fetch.
+
+The browser page shows the coupling rather than just the motion: the motor-
+neuron raster is split so the 328 neurons that reach a muscle sit above the 380
+that drive nothing, and the joint-torque panel is banded so the 60 degrees of
+freedom with no motor neuron mapped to them are visibly empty rather than
+looking like a drawing fault.
+
 ## What remains
 
 ```bash

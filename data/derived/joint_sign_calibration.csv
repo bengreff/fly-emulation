@@ -1,0 +1,127 @@
+actuator,leg,dq_deg,q_start_deg,foot_fore_mm,foot_lateral_mm,foot_up_mm,leg_len_change_mm,leg_len_start_mm,dominant_action,length_action
+c_thorax-c_head-pitch,,12.018,0.0,,,,,,,
+c_thorax-c_head-roll,,12.018,0.0,,,,,,,
+c_thorax-c_head-yaw,,12.018,0.0,,,,,,,
+c_head-c_rostrum-pitch,,12.018,0.0,,,,,,,
+c_head-c_rostrum-roll,,12.018,0.0,,,,,,,
+c_head-c_rostrum-yaw,,12.018,0.0,,,,,,,
+c_rostrum-c_haustellum-pitch,,12.018,0.0,,,,,,,
+c_rostrum-c_haustellum-roll,,12.018,0.0,,,,,,,
+c_rostrum-c_haustellum-yaw,,12.018,0.0,,,,,,,
+c_head-l_eye-pitch,,12.018,0.0,,,,,,,
+c_head-l_eye-roll,,12.018,0.0,,,,,,,
+c_head-l_eye-yaw,,12.018,0.0,,,,,,,
+c_head-r_eye-pitch,,12.018,0.0,,,,,,,
+c_head-r_eye-roll,,12.018,0.0,,,,,,,
+c_head-r_eye-yaw,,12.018,0.0,,,,,,,
+c_head-l_pedicel-pitch,,12.018,0.0,,,,,,,
+c_head-l_pedicel-roll,,12.018,0.0,,,,,,,
+c_head-l_pedicel-yaw,,12.018,0.0,,,,,,,
+l_pedicel-l_funiculus-pitch,,12.018,0.0,,,,,,,
+l_pedicel-l_funiculus-roll,,12.018,0.0,,,,,,,
+l_pedicel-l_funiculus-yaw,,12.018,0.0,,,,,,,
+l_funiculus-l_arista-pitch,,12.018,0.0,,,,,,,
+l_funiculus-l_arista-roll,,12.018,0.0,,,,,,,
+l_funiculus-l_arista-yaw,,12.018,0.0,,,,,,,
+c_head-r_pedicel-pitch,,12.018,0.0,,,,,,,
+c_head-r_pedicel-roll,,12.018,0.0,,,,,,,
+c_head-r_pedicel-yaw,,12.018,0.0,,,,,,,
+r_pedicel-r_funiculus-pitch,,12.018,0.0,,,,,,,
+r_pedicel-r_funiculus-roll,,12.018,0.0,,,,,,,
+r_pedicel-r_funiculus-yaw,,12.018,0.0,,,,,,,
+r_funiculus-r_arista-pitch,,12.018,0.0,,,,,,,
+r_funiculus-r_arista-roll,,12.018,0.0,,,,,,,
+r_funiculus-r_arista-yaw,,12.018,0.0,,,,,,,
+c_thorax-c_abdomen12-pitch,,12.02,0.0,,,,,,,
+c_thorax-c_abdomen12-roll,,12.02,0.0,,,,,,,
+c_thorax-c_abdomen12-yaw,,12.019,0.0,,,,,,,
+c_abdomen12-c_abdomen3-pitch,,12.019,0.0,,,,,,,
+c_abdomen12-c_abdomen3-roll,,12.019,0.0,,,,,,,
+c_abdomen12-c_abdomen3-yaw,,12.019,0.0,,,,,,,
+c_abdomen3-c_abdomen4-pitch,,12.019,0.0,,,,,,,
+c_abdomen3-c_abdomen4-roll,,12.019,0.0,,,,,,,
+c_abdomen3-c_abdomen4-yaw,,12.019,0.0,,,,,,,
+c_abdomen4-c_abdomen5-pitch,,12.018,0.0,,,,,,,
+c_abdomen4-c_abdomen5-roll,,12.018,0.0,,,,,,,
+c_abdomen4-c_abdomen5-yaw,,12.018,0.0,,,,,,,
+c_abdomen5-c_abdomen6-pitch,,12.018,0.0,,,,,,,
+c_abdomen5-c_abdomen6-roll,,12.018,0.0,,,,,,,
+c_abdomen5-c_abdomen6-yaw,,12.018,0.0,,,,,,,
+c_thorax-l_wing-pitch,,12.018,0.0,,,,,,,
+c_thorax-l_wing-roll,,12.018,0.0,,,,,,,
+c_thorax-l_wing-yaw,,12.018,0.0,,,,,,,
+c_thorax-r_wing-pitch,,12.018,0.0,,,,,,,
+c_thorax-r_wing-roll,,12.018,0.0,,,,,,,
+c_thorax-r_wing-yaw,,12.018,0.0,,,,,,,
+c_thorax-l_haltere-pitch,,12.018,0.0,,,,,,,
+c_thorax-l_haltere-roll,,12.018,0.0,,,,,,,
+c_thorax-l_haltere-yaw,,12.018,0.0,,,,,,,
+c_thorax-r_haltere-pitch,,12.018,0.0,,,,,,,
+c_thorax-r_haltere-roll,,12.018,0.0,,,,,,,
+c_thorax-r_haltere-yaw,,12.018,0.0,,,,,,,
+c_thorax-lf_coxa-pitch,lf,12.018,28.0,-0.1936,-0.0,-0.1899,0.0,1.54,retraction (foot backward),no length change
+c_thorax-lf_coxa-roll,lf,12.018,26.0,-0.1773,0.246,0.0943,0.0,1.54,abduction (foot outward),no length change
+c_thorax-lf_coxa-yaw,lf,12.018,-18.0,0.002,0.0448,0.0503,-0.0,1.54,levation (foot up),no length change
+lf_coxa-lf_trochanterfemur-pitch,lf,12.018,-139.0,-0.1007,-0.0865,-0.2885,0.0735,1.54,depression (foot down),extension (leg lengthens)
+lf_coxa-lf_trochanterfemur-roll,lf,12.018,-15.0,0.1245,-0.1818,-0.0127,0.0053,1.54,adduction (foot inward),extension (leg lengthens)
+lf_trochanterfemur-lf_tibia-pitch,lf,12.018,78.0,-0.1595,-0.0899,-0.1498,-0.0546,1.54,retraction (foot backward),flexion (leg shortens)
+lf_tibia-lf_tarsus1-pitch,lf,12.018,-10.0,-0.0795,-0.0404,-0.096,-0.0165,1.54,depression (foot down),flexion (leg shortens)
+lf_tarsus1-lf_tarsus2-pitch,lf,12.018,-5.0,-0.048,-0.0228,-0.0657,-0.006,1.54,depression (foot down),flexion (leg shortens)
+lf_tarsus2-lf_tarsus3-pitch,lf,12.018,-5.0,-0.0278,-0.0122,-0.0429,-0.0008,1.54,depression (foot down),no length change
+lf_tarsus3-lf_tarsus4-pitch,lf,12.018,-5.0,-0.016,-0.0065,-0.0271,0.001,1.54,depression (foot down),no length change
+lf_tarsus4-lf_tarsus5-pitch,lf,12.018,-5.0,-0.0064,-0.0024,-0.0121,0.0011,1.54,depression (foot down),extension (leg lengthens)
+c_thorax-lm_coxa-pitch,lm,12.018,-106.0,-0.1564,-0.0,-0.0571,-0.0,1.553,retraction (foot backward),no length change
+c_thorax-lm_coxa-roll,lm,12.018,101.0,0.0718,-0.1922,-0.2503,0.0,1.553,depression (foot down),no length change
+c_thorax-lm_coxa-yaw,lm,12.018,113.0,-0.1011,-0.0034,-0.047,-0.0,1.553,retraction (foot backward),no length change
+lm_coxa-lm_trochanterfemur-pitch,lm,12.018,-139.0,-0.042,-0.1325,-0.2763,0.0344,1.553,depression (foot down),extension (leg lengthens)
+lm_coxa-lm_trochanterfemur-roll,lm,12.018,15.0,0.2562,-0.079,0.0455,-0.0074,1.553,protraction (foot forward),flexion (leg shortens)
+lm_trochanterfemur-lm_tibia-pitch,lm,12.018,103.0,-0.0415,-0.2272,-0.1432,-0.1194,1.553,adduction (foot inward),flexion (leg shortens)
+lm_tibia-lm_tarsus1-pitch,lm,12.018,-20.0,-0.0146,-0.0982,-0.0974,-0.037,1.553,adduction (foot inward),flexion (leg shortens)
+lm_tarsus1-lm_tarsus2-pitch,lm,12.018,-5.0,-0.0069,-0.0514,-0.0588,-0.0168,1.553,depression (foot down),flexion (leg shortens)
+lm_tarsus2-lm_tarsus3-pitch,lm,12.018,-5.0,-0.0034,-0.0276,-0.0356,-0.0075,1.553,depression (foot down),flexion (leg shortens)
+lm_tarsus3-lm_tarsus4-pitch,lm,12.018,-5.0,-0.0017,-0.0152,-0.0212,-0.0035,1.553,depression (foot down),flexion (leg shortens)
+lm_tarsus4-lm_tarsus5-pitch,lm,12.018,-5.0,-0.0009,-0.0076,-0.0104,-0.0019,1.553,depression (foot down),flexion (leg shortens)
+c_thorax-lh_coxa-pitch,lh,12.018,-154.0,-0.1499,-0.0,0.2631,0.0,1.726,levation (foot up),no length change
+c_thorax-lh_coxa-roll,lh,12.018,45.0,0.1896,0.1223,-0.0925,0.0,1.726,protraction (foot forward),no length change
+c_thorax-lh_coxa-yaw,lh,12.018,176.0,-0.1752,-0.1902,0.0747,-0.0,1.726,adduction (foot inward),no length change
+lh_coxa-lh_trochanterfemur-pitch,lh,12.018,-111.0,0.0746,-0.1667,-0.2759,0.0247,1.726,depression (foot down),extension (leg lengthens)
+lh_coxa-lh_trochanterfemur-roll,lh,12.018,4.0,0.2255,0.1927,-0.0353,-0.0054,1.726,protraction (foot forward),flexion (leg shortens)
+lh_trochanterfemur-lh_tibia-pitch,lh,12.018,101.0,0.1671,-0.2105,-0.1342,-0.1427,1.726,adduction (foot inward),flexion (leg shortens)
+lh_tibia-lh_tarsus1-pitch,lh,12.018,-5.0,0.0822,-0.108,-0.0815,-0.0692,1.726,adduction (foot inward),flexion (leg shortens)
+lh_tarsus1-lh_tarsus2-pitch,lh,12.018,-5.0,0.0412,-0.0562,-0.0485,-0.0332,1.726,adduction (foot inward),flexion (leg shortens)
+lh_tarsus2-lh_tarsus3-pitch,lh,12.018,-5.0,0.0223,-0.0313,-0.0294,-0.0173,1.726,adduction (foot inward),flexion (leg shortens)
+lh_tarsus3-lh_tarsus4-pitch,lh,12.018,-5.0,0.0127,-0.0181,-0.0174,-0.0098,1.726,adduction (foot inward),flexion (leg shortens)
+lh_tarsus4-lh_tarsus5-pitch,lh,12.018,-5.0,0.0063,-0.0086,-0.0073,-0.0053,1.726,adduction (foot inward),flexion (leg shortens)
+c_thorax-rf_coxa-pitch,rf,12.018,28.0,-0.1936,-0.0,-0.1899,0.0,1.54,retraction (foot backward),no length change
+c_thorax-rf_coxa-roll,rf,12.018,26.0,-0.1773,0.246,0.0943,0.0,1.54,abduction (foot outward),no length change
+c_thorax-rf_coxa-yaw,rf,12.018,-18.0,0.002,0.0448,0.0503,-0.0,1.54,levation (foot up),no length change
+rf_coxa-rf_trochanterfemur-pitch,rf,12.018,-139.0,-0.1007,-0.0865,-0.2885,0.0735,1.54,depression (foot down),extension (leg lengthens)
+rf_coxa-rf_trochanterfemur-roll,rf,12.018,-15.0,0.1245,-0.1818,-0.0127,0.0053,1.54,adduction (foot inward),extension (leg lengthens)
+rf_trochanterfemur-rf_tibia-pitch,rf,12.018,78.0,-0.1595,-0.0899,-0.1498,-0.0546,1.54,retraction (foot backward),flexion (leg shortens)
+rf_tibia-rf_tarsus1-pitch,rf,12.018,-10.0,-0.0795,-0.0404,-0.096,-0.0165,1.54,depression (foot down),flexion (leg shortens)
+rf_tarsus1-rf_tarsus2-pitch,rf,12.018,-5.0,-0.048,-0.0228,-0.0657,-0.006,1.54,depression (foot down),flexion (leg shortens)
+rf_tarsus2-rf_tarsus3-pitch,rf,12.018,-5.0,-0.0278,-0.0122,-0.0429,-0.0008,1.54,depression (foot down),no length change
+rf_tarsus3-rf_tarsus4-pitch,rf,12.018,-5.0,-0.016,-0.0065,-0.0271,0.001,1.54,depression (foot down),no length change
+rf_tarsus4-rf_tarsus5-pitch,rf,12.018,-5.0,-0.0064,-0.0024,-0.0121,0.0011,1.54,depression (foot down),extension (leg lengthens)
+c_thorax-rm_coxa-pitch,rm,12.018,-106.0,-0.1564,-0.0,-0.0571,-0.0,1.553,retraction (foot backward),no length change
+c_thorax-rm_coxa-roll,rm,12.018,101.0,0.0718,-0.1922,-0.2503,0.0,1.553,depression (foot down),no length change
+c_thorax-rm_coxa-yaw,rm,12.018,113.0,-0.1011,-0.0034,-0.047,-0.0,1.553,retraction (foot backward),no length change
+rm_coxa-rm_trochanterfemur-pitch,rm,12.018,-139.0,-0.042,-0.1325,-0.2763,0.0344,1.553,depression (foot down),extension (leg lengthens)
+rm_coxa-rm_trochanterfemur-roll,rm,12.018,15.0,0.2562,-0.079,0.0455,-0.0074,1.553,protraction (foot forward),flexion (leg shortens)
+rm_trochanterfemur-rm_tibia-pitch,rm,12.018,103.0,-0.0415,-0.2272,-0.1432,-0.1194,1.553,adduction (foot inward),flexion (leg shortens)
+rm_tibia-rm_tarsus1-pitch,rm,12.018,-20.0,-0.0146,-0.0982,-0.0974,-0.037,1.553,adduction (foot inward),flexion (leg shortens)
+rm_tarsus1-rm_tarsus2-pitch,rm,12.018,-5.0,-0.0069,-0.0514,-0.0588,-0.0168,1.553,depression (foot down),flexion (leg shortens)
+rm_tarsus2-rm_tarsus3-pitch,rm,12.018,-5.0,-0.0034,-0.0276,-0.0356,-0.0075,1.553,depression (foot down),flexion (leg shortens)
+rm_tarsus3-rm_tarsus4-pitch,rm,12.018,-5.0,-0.0017,-0.0152,-0.0212,-0.0035,1.553,depression (foot down),flexion (leg shortens)
+rm_tarsus4-rm_tarsus5-pitch,rm,12.018,-5.0,-0.0009,-0.0076,-0.0104,-0.0019,1.553,depression (foot down),flexion (leg shortens)
+c_thorax-rh_coxa-pitch,rh,12.018,-154.0,-0.1499,-0.0,0.2631,0.0,1.726,levation (foot up),no length change
+c_thorax-rh_coxa-roll,rh,12.018,45.0,0.1896,0.1223,-0.0925,0.0,1.726,protraction (foot forward),no length change
+c_thorax-rh_coxa-yaw,rh,12.018,176.0,-0.1752,-0.1902,0.0747,-0.0,1.726,adduction (foot inward),no length change
+rh_coxa-rh_trochanterfemur-pitch,rh,12.018,-111.0,0.0746,-0.1667,-0.2759,0.0247,1.726,depression (foot down),extension (leg lengthens)
+rh_coxa-rh_trochanterfemur-roll,rh,12.018,4.0,0.2255,0.1927,-0.0353,-0.0054,1.726,protraction (foot forward),flexion (leg shortens)
+rh_trochanterfemur-rh_tibia-pitch,rh,12.018,101.0,0.1671,-0.2105,-0.1342,-0.1427,1.726,adduction (foot inward),flexion (leg shortens)
+rh_tibia-rh_tarsus1-pitch,rh,12.018,-5.0,0.0822,-0.108,-0.0815,-0.0692,1.726,adduction (foot inward),flexion (leg shortens)
+rh_tarsus1-rh_tarsus2-pitch,rh,12.018,-5.0,0.0412,-0.0562,-0.0485,-0.0332,1.726,adduction (foot inward),flexion (leg shortens)
+rh_tarsus2-rh_tarsus3-pitch,rh,12.018,-5.0,0.0223,-0.0313,-0.0294,-0.0173,1.726,adduction (foot inward),flexion (leg shortens)
+rh_tarsus3-rh_tarsus4-pitch,rh,12.018,-5.0,0.0127,-0.0181,-0.0174,-0.0098,1.726,adduction (foot inward),flexion (leg shortens)
+rh_tarsus4-rh_tarsus5-pitch,rh,12.018,-5.0,0.0063,-0.0086,-0.0073,-0.0053,1.726,adduction (foot inward),flexion (leg shortens)

@@ -48,6 +48,39 @@ datasets:
     local_path: data/derived/phasic_sweep.csv
     role: finding F12
 
+  - name: male-cns whole CNS graph
+    source: neuPrint, dataset male-cns:v1.0, server neuprint.janelia.org
+    access: token-based API query, chunked by bodyId quantile; no bulk download
+    fetched: 2026-09-15
+    local_path: data/cache/   # untracked
+    files:
+      - male_cns_neurons.parquet   # 176,422 rows, identity and predicted transmitter
+      - male_cns_edges.parquet     # 25,862,574 edges, 125,024,863 synapses
+      - male_cns_sensorimotor_roiinfo.parquet  # 7,651 rows, for leg assignment
+    role: >
+      Primary structural graph for the whole-organism model (finding F-DATA-2).
+      Edge counts reproduce the independent figures in docs/PLAN.md exactly.
+    caveats: >
+      Per-neuron transmitter probabilities are NOT exposed in this dataset: the
+      achProb/gabaProb/glutProb fields are all null, and only predictedNt plus
+      a cell-type-level confidence are available. So the per-neuron transmitter
+      resampling of finding F-SIGN-3 cannot be reproduced on male-cns without
+      another source. Motor-neuron muscle target is in `type`, not `target`,
+      which is null throughout. Sensory neurons carry no somaNeuromere, so leg
+      identity comes from the dominant LegNp(T*) neuropil in roiInfo.
+
+  - name: NeuroMechFly body
+    source: flygym 2.1.0 bundled assets
+    access: pip package
+    role: body, 70 segments and 126 actuated joint degrees of freedom
+    caveats: >
+      Joint stiffness, damping and force limits are the body model's defaults,
+      not measured fly mechanics, and the passive stiffness sets the scale of
+      what counts as a motor command (finding F-TORQUE-1). Model units are
+      mm/s/g, so force is uN and joint torque uN*mm; verified by test rather
+      than assumed. Ground-contact sensors in this version are emitted with
+      unprefixed object names and fail to compile.
+
 literature_values_used:
   - quantity: slow tibia-flexor motor-neuron resting firing rate
     value: ~30 Hz

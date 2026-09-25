@@ -1,0 +1,380 @@
+"""Meaning-based checks on the whole-organism model.
+
+These are not coverage tests. Each one encodes a way the model could look
+correct while being wrong, of the kind that cost session 1 two reversed
+conclusions.
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+CACHE = REPO / "data" / "cache"
+HAVE_GRAPH = (CACHE / "male_cns_edges.parquet").exists() and (
+    CACHE / "male_cns_neurons.parquet"
+).exists()
+needs_graph = pytest.mark.skipif(
+    not HAVE_GRAPH, reason="run scripts/fetch_male_cns.py first"
+)
+
+
+# --- body units ----------------------------------------------------------
+
+def test_the_fly_weighs_about_ten_micronewtons():
+    """Model units must be mm/s/g, or every torque number is meaningless.
+
+    The body model is unit-agnostic, so nothing in it declares that a torque of
+    1.0 means 1 uN*mm. This pins it: a real fly is about 1 mg, so its weight in
+    the model's own force unit has to come out near 10.
+    """
+    from flyemu.body import Body
+
+    b = Body()
+    m = b.sim.mj_model
+    mass = float(m.body_mass.sum())
+    g = abs(float(m.opt.gravity[2]))
+    weight = mass * g
+    assert 0.5 < mass * 1e3 < 2.0, f"fly mass is {mass * 1e3:.2f} mg, expected ~1"
+    assert 5.0 < weight < 20.0, f"fly weight is {weight:.1f} force units, expected ~10"
+
+
+def test_a_silent_network_produces_no_torque():
+    """Muscle activation must come only from spikes.
+
+    If the motor interface leaked any resting drive, the body would move on its
+    own and every behavioural result would be measuring the leak.
+    """
+    from flyemu.neuromuscular import Neuromuscular
+
+    nm = Neuromuscular(
+        adhesion_index=np.array([], dtype=np.int64),
+        adhesion_rows=np.array([], dtype=np.int64),
+        n_adhesion=0,
+        mn_index=np.array([0, 1]), actuator_index=np.array([0, 1]),
+        drive_sign=np.array([1.0, -1.0], dtype=np.float32),
+        force_per_spike=np.array([1.0, 1.0], dtype=np.float32),
+        n_actuators=4, tau_act_ms=30.0,
+        unmapped=__import__("pandas").DataFrame(),
+    )
+    for _ in range(1000):
+        torque = nm.step(np.array([], dtype=np.int64), 0.1)
+    assert np.all(torque == 0.0), "torque appeared with no spikes"
+
+
+# --- the registry cannot launder a guess ---------------------------------
+
+def test_one_shared_guess_is_one_row_not_millions():
+    """A single assumed conductance propagated to every edge adds no evidence.
+
+    The failure this guards against is an inventory that looks nearly complete
+    because one guess filled 25 million slots. The guess must stay one row, with
+    its reach recorded as an instance count rather than as independent support.
+    """
+    from flyemu.registry import Policy, Registry, Status
+
+    reg = Registry(Policy.MINIMAL)
+    reg.require("connection_class:all", "efficacy_per_synapse", units="mV",
+                model_use="synaptic current", subsystem="synaptic_efficacy",
+                instances=25_862_574, minimal=0.1)
+    inv = reg.inventory()
+    assert len(inv) == 1
+    row = inv.iloc[0]
+    assert row.status == Status.ASSUMED.value
+    assert row.instances == 25_862_574
+    measured = inv[inv.status == Status.MEASURED.value]
+    assert measured.empty, "an assumed default was recorded as measured"
+
+
+def test_an_overridden_value_is_never_measured():
+    """Sweeping a parameter must not promote it to evidence."""
+    from flyemu.registry import Policy, Registry, Status
+
+    reg = Registry(Policy.MINIMAL)
+    reg.overrides["motor_unit:all|force_per_spike"] = 10.0
+    v = reg.require("motor_unit:all", "force_per_spike", units="uN*mm",
+                    model_use="motor torque", subsystem="neuromuscular",
+                    instances=328, minimal=1.0)
+    assert v == 10.0
+    row = reg.inventory().iloc[0]
+    assert row.status == Status.ASSUMED.value
+    assert "override" in row.evidence
+
+
+def test_missing_and_absent_stay_distinguishable():
+    """`unresolved` and a real zero are different claims.
+
+    Unknown gap-junction coupling must not become measured absence, which is a
+    correction the pack author made to session 1's framing.
+    """
+    from flyemu.registry import Policy, Registry, Status
+
+    reg = Registry(Policy.MINIMAL)
+    reg.provide("graph:x", "electrical_coupling", None, units="nS",
+                model_use="omitted", status=Status.UNRESOLVED,
+                evidence="no electrical reconstruction in these releases")
+    reg.provide("graph:x", "measured_zero", 0.0, units="nS",
+                model_use="a real zero", status=Status.MEASURED,
+                evidence="measured and found absent")
+    inv = reg.inventory().set_index("property")
+    assert inv.loc["electrical_coupling", "status"] == "unresolved"
+    assert inv.loc["measured_zero", "status"] == "measured"
+    # An unresolved row carries no value and a measured zero carries 0.0. Note
+    # that the exported value column cannot by itself carry this distinction:
+    # pandas renders a missing value as NaN, which a measurement could also be.
+    # `status` is the authoritative field, and any consumer of the inventory
+    # must read it rather than inferring from an empty value.
+    import pandas as pd
+
+    assert pd.isna(inv.loc["electrical_coupling", "value"])
+    assert inv.loc["measured_zero", "value"] == 0.0
+
+
+# --- the model as built ---------------------------------------------------
+
+@needs_graph
+def test_strict_refuses_and_names_what_it_lacks():
+    """C0 must not run, and its refusal list is the result.
+
+    A model that quietly substitutes a default for a missing biological
+    quantity is the specific failure this project is built to avoid.
+    """
+    from flyemu.organism import Organism, StrictRefusal
+
+    org = Organism(policy="strict")
+    with pytest.raises(StrictRefusal) as exc:
+        org.run(1.0)
+    refusals = exc.value.refusals
+    assert len(refusals) > 5
+    named = {f"{r.entity}.{r.property}" for r in refusals}
+    assert "connection_class:all.efficacy_per_synapse" in named
+    assert "transmitter:glutamate.sign" in named
+
+
+@needs_graph
+def test_unreceivable_motor_output_is_recorded_not_dropped():
+    """Motor neurons the body cannot receive must appear as unresolved rows.
+
+    Silently discarding them would make the neuromuscular interface look
+    complete while a third of the motor output went nowhere (F-BODY-1).
+    """
+    from flyemu.organism import Organism
+
+    org = Organism(policy="minimal")
+    assert len(org.nm.unmapped) > 0
+    inv = org.reg.inventory()
+    unmapped_rows = inv[
+        inv.entity.str.contains("unmapped") & (inv.status == "unresolved")
+    ]
+    assert not unmapped_rows.empty
+    assert unmapped_rows.instances.sum() == len(org.nm.unmapped)
+
+
+# --- interface completeness ------------------------------------------------
+
+def test_absent_interface_channels_are_registered_not_silent():
+    """A channel with no implementation must appear as an unresolved row.
+
+    The failure this guards against is the one Ben named: an interface that
+    looks complete because the parts that are missing are simply not mentioned.
+    Vision, olfaction, hearing and the wing motor system are absent; the
+    inventory has to say so, with counts.
+    """
+    from flyemu import interface
+    from flyemu.registry import Policy, Registry
+
+    reg = Registry(Policy.MINIMAL)
+    channels = interface.register(reg)
+    inv = reg.inventory()
+
+    assert len(inv) == len(channels), "a channel went unrecorded"
+    absent = inv[inv.status == "unresolved"]
+    assert len(absent) >= 30, "far too few channels recorded as absent"
+
+    named = set(inv.entity)
+    for required in ["interface:wing_power_motor", "interface:photoreceptors",
+                     "interface:johnstons_organ", "interface:unsteady_aerodynamics",
+                     "interface:cuticle_deformation"]:
+        assert required in named, f"{required} is not in the channel table"
+
+
+def test_unknown_in_the_animal_is_not_measured_absence():
+    """Two kinds of absence must stay distinguishable.
+
+    Gut stretch receptors are unestablished in Drosophila itself; the wing motor
+    system is well characterised and merely unimplemented here. Recording both
+    the same way would turn a gap in science into a claim about the animal.
+    """
+    from flyemu import interface
+    from flyemu.registry import Policy, Registry
+
+    reg = Registry(Policy.MINIMAL)
+    interface.register(reg)
+    inv = reg.inventory().set_index("entity")
+
+    animal_gap = inv.loc["interface:gut_pharyngeal_sensory"]
+    model_gap = inv.loc["interface:wing_power_motor"]
+    assert animal_gap.status == "unresolved"
+    assert model_gap.status == "unresolved"
+    assert "Unknown in the animal" in animal_gap.evidence
+    assert "Unknown in the animal" not in model_gap.evidence
+    assert "not measured absence" in animal_gap.uncertainty
+
+
+def test_partial_channels_are_not_counted_as_working():
+    """A channel reading the wrong physical variable is not an implementation.
+
+    Campaniform sensilla transduce cuticular strain. This model drives them from
+    rigid-body contact force, which is a different quantity, so the row must
+    carry that rather than pass as done.
+    """
+    from flyemu import interface
+
+    ch = interface.load().set_index("channel")
+    cs = ch.loc["campaniform_sensilla"]
+    assert cs.implemented == "partial"
+    assert "NOT strain" in cs.note
+
+
+# --- the physics that was missing ------------------------------------------
+
+@needs_graph
+def test_the_fly_can_collide_with_itself():
+    """Legs must not pass through each other or through the thorax.
+
+    Both body models ship with every geom at contype=0 and conaffinity=0, so
+    nothing collides except through explicit ground pairs. MuJoCo also prunes
+    candidate pairs at the BODY level first, so enabling the geom masks alone
+    changes nothing - which is exactly the bug this guards against.
+    """
+    import mujoco as mj
+
+    from flyemu.body import Body
+
+    b = Body(self_collision=True)
+    m = b.sim.mj_model
+    prefix = f"{b.fly.name}/"
+
+    colliding = {
+        (mj.mj_id2name(m, mj.mjtObj.mjOBJ_GEOM, g) or "").removeprefix(prefix)
+        for g in range(m.ngeom)
+        if (mj.mj_id2name(m, mj.mjtObj.mjOBJ_GEOM, g) or "").startswith(prefix)
+        and m.geom_contype[g]
+    }
+    assert colliding, "nothing collides"
+
+    # Every body must have a collision surface. The bug this guards against
+    # chose geoms by name suffix, which silently dropped the WINGS and all six
+    # FEET - the surfaces that matter most - because their geoms are named
+    # `_membrane` and `_brown` rather than `_body`.
+    bodies_with_collision = {
+        int(m.geom_bodyid[g]) for g in range(m.ngeom)
+        if (mj.mj_id2name(m, mj.mjtObj.mjOBJ_GEOM, g) or "").startswith(prefix)
+        and m.geom_contype[g]
+    }
+    fly_bodies = {
+        int(m.geom_bodyid[g]) for g in range(m.ngeom)
+        if (mj.mj_id2name(m, mj.mjtObj.mjOBJ_GEOM, g) or "").startswith(prefix)
+    }
+    assert bodies_with_collision == fly_bodies, (
+        "some body has no collision surface at all"
+    )
+    for required in ["l_wing_membrane", "r_wing_membrane",
+                     "lf_tarsus5_brown", "rh_tarsus5_brown"]:
+        assert required in colliding, f"{required} must collide"
+
+    # Colour overlays occupy the same space as the segment they decorate, so
+    # colliding them duplicates every contact. Measured cost of getting this
+    # wrong: 5073 us per step against 963.
+    for overlay in ["c_head_red", "c_head_black", "c_thorax_black",
+                    "l_wing_brown"]:
+        assert overlay not in colliding, f"{overlay} should not collide"
+
+    # MuJoCo prunes candidate pairs at the BODY level before it reaches the
+    # geoms, so the body masks have to be set too.
+    assert all(m.body_contype[b_] for b_ in fly_bodies), (
+        "body-level masks not set; MuJoCo prunes before reaching the geoms"
+    )
+
+
+def test_nested_segments_do_not_collide_with_each_other():
+    """Segments that nest at their joints must not fight their own joints.
+
+    A convex hull of the rostrum overlaps the haustellum it sits inside, so
+    colliding them would generate permanent contact. Collision is enabled
+    across anatomical regions, not within them.
+    """
+    from flyemu.body import _ALL_REGION_BITS, _region_index
+
+    # Within one region the masks must not admit a contact.
+    for name_a, name_b in [("c_rostrum_body", "c_haustellum_body"),
+                           ("lf_tarsus1_body", "lf_tibia_body")]:
+        ia, ib = _region_index(name_a), _region_index(name_b)
+        assert ia == ib, f"{name_a} and {name_b} should share a region"
+        ct_a, ca_b = 1 << ia, _ALL_REGION_BITS & ~(1 << ib)
+        assert not (ct_a & ca_b), "nested segments would collide"
+
+    # Across regions it must admit one.
+    ia, ib = _region_index("lf_tibia_body"), _region_index("c_thorax_body")
+    assert ia != ib
+    assert (1 << ia) & (_ALL_REGION_BITS & ~(1 << ib)), (
+        "a leg must be able to collide with the thorax"
+    )
+
+
+@needs_graph
+def test_campaniform_afferents_read_load_not_ground_contact():
+    """Campaniform sensilla transduce cuticular strain.
+
+    A leg can be loaded with no ground contact at all - pushed by another leg,
+    or bearing the body through a different foot. Driving these afferents from
+    ground contact force is a different physical quantity.
+    """
+    from flyemu.organism import Organism
+
+    org = Organism(policy="minimal")
+    inv = org.reg.inventory().set_index(["entity", "property"])
+    row = inv.loc[("afferent:campaniform sensilla", "transduced_variable")]
+    assert "cfrc_int" in row.evidence or "transmitted" in row.evidence
+    assert "RIGID" in (row.uncertainty or ""), (
+        "the rigid-segment limitation must stay recorded"
+    )
+
+
+@needs_graph
+def test_vision_does_not_pretend_to_have_retinotopy():
+    """Per-eye luminance is not spatial vision, and must not read as it.
+
+    male-cns gives photoreceptors no column or hex coordinate, and optic-lobe
+    carries none either, so which ommatidium a photoreceptor looks through
+    cannot be established. Assigning them arbitrarily would give the network
+    structured input through a scrambled map - which would look like working
+    vision while being nothing of the kind.
+    """
+    from flyemu.organism import Organism
+
+    org = Organism(policy="minimal")
+    assert org.vis is not None and org.vis.rows.size > 1000
+
+    inv = org.reg.inventory().set_index(["entity", "property"])
+    row = inv.loc[("photoreceptor:all", "retinotopy")]
+    assert row.status == "unresolved"
+    assert "no spatial vision" in (row.uncertainty or "")
+
+    # Every photoreceptor in one eye and channel must receive the SAME drive,
+    # because there is no map to distinguish them.
+    import numpy as np
+
+    readouts = np.zeros((2, 721, 2), dtype=np.float32)
+    readouts[0, :, 0] = 0.8          # left eye, yellow channel, bright
+    drive = org.vis.drive(readouts)
+    left_yellow = org.vis.rows[(org.vis.eye == 0) & (org.vis.channel == "yellow")]
+    if left_yellow.size > 1:
+        assert np.allclose(drive[left_yellow], drive[left_yellow][0]), (
+            "photoreceptors differ without a retinotopic map to justify it"
+        )
