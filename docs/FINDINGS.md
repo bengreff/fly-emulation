@@ -970,3 +970,65 @@ non-traced bodies out, every R1-R6 in.
 
 Earlier counts in this file (176,422; 25,862,574 edges; the F-COUNT-1 instance
 counts) were under the old all-nodes policy and are left as recorded.
+
+## F-GAIN-2. The anatomy is load-bearing, and it ignites
+
+Answers F-GAIN-1. Open loop, brain only, noise off, Shiu 2024 parameters
+borrowed as `assumed` (`--profile shiu2024`), edges with >= 5 synapses (6.24M
+edges), Poisson kicks into identified sensory types. Each assay is also run on
+three degree-preserving shuffled graphs. Runs: `runs/assay-*-shiu2024*`,
+`runs/calibrate-gain-shiu2024`.
+
+**1. At Shiu's own synaptic scale the real brain ignites; shuffled brains never do.**
+Any sugar input from 25 Hz recruits ~16,000 neurons at ~6 Hz mean, and the
+state outlives the stimulus: 14,401 neurons still active 200-600 ms after it
+ends. Shuffled graphs at the same scale recruit 70-460 neurons and never drive
+MN9. So the network's behaviour is now set by *who connects to whom*, which is
+what F-GAIN-1 could not show, but the real wiring contains self-sustaining
+excitatory loops that the model does not contain.
+
+**2. Calibration by return to rest.** Criterion declared before any held-out
+assay was scored: activity must be gone 200-400 ms after a 400 ms sugar
+stimulus. The transition is sharp: 0.6x Shiu passes, 0.7x fails. Chosen
+**0.165 mV per synapse** (fitted, not measured), close to flybench's
+independently reported 0.40-0.45x window. At 0.6x, sugar at 150 Hz recruits
+~420-670 neurons, in the range of Shiu's 431 on FlyWire. That count was not
+the calibration target.
+
+**3. Held-out battery at 0.6x** (4 trials, 3 shuffles; readout mean Hz):
+
+| Assay | Real | Shuffled | Published expectation | Verdict |
+|---|---|---|---|---|
+| sugar (LB3b/c) → MN9, 50/100/150/200 Hz | 0.1 / 1.6 / 15.9 / 30.0 | 0 | dose-dependent activation (Shiu 2024) | pass, but weak (Shiu ~90 Hz); calibration assay, not held out |
+| water (LB3a) → MN9 | 0 at all rates | 0 | activates MN9 (Shiu 2024) | **fail** |
+| bitter (LB1a-d) → MN9 | 0 | 0 | no activation | right answer, wrong reason: ≥50 Hz ignites ~9,400 neurons |
+| sugar 100 Hz + bitter → MN9 | 1.9 → 0 | 0 | suppression | uninterpretable: baseline tiny, and suppression coincides with ignition |
+| DNp01 (giant fibre) → TTMn | 0.1 / 3 / 6 / 10 | 0 | ~1:1 short-latency following | **fail**, as predicted by M v1: GF→TTMn is predominantly electrical (shakB), and M has no gap junctions. Chemical GF→TTMn is 70 synapses right, 20 left |
+| DNg100 → front-leg MNs | 3-9 of 135 active, rhythmicity 0.21-0.29 | none active | 7-15 Hz rhythm (Pugliese 2025) | recruitment specific; **no rhythm** (Poisson floor of the metric is 0.21) |
+
+MN9 responses are strongly left/right asymmetric (e.g. 25 vs 0 Hz) under
+bilateral stimulation; unexplained.
+
+**4. The ignition core.** In the bitter-evoked state (KCs, the whole EPG/PEN/
+Delta7 ring, APL at ~750 Hz), silencing all 4,064 KCs or the 434-cell CX ring
+barely changes it (9,325 → 8,382 / 8,696 active). Silencing **30 lLN1_bc**
+antennal-lobe local neurons collapses it to 827. These are predicted
+cholinergic (type confidence 0.75) and make 86,864 synapses onto each other,
+40% of their output: a self-exciting clique. Removing KC→KC edges (21.5% of
+KC output, likely axo-axonic) did not stop ignition either.
+
+Sensitivity only, **not adopted**: making lLN1_bc inhibitory removes the
+bitter storm at 0.6x (9,263 → 831) but 554 neurons still self-sustain, and at
+1.0x ignition persists. There are several such loops; lLN1_bc is the most
+excitable. Their transmitter is genuinely uncertain (Schlegel 2021 calls
+lineage-based assignment "far from definitive").
+
+**What this means.** The model's failure is now specific: excitatory
+recurrent cliques with nothing to stop them. The animal limits these with
+mechanisms M v1 omits: spike-frequency adaptation, synaptic depression,
+graded transmission (APL is non-spiking in the animal) and electrical coupling.
+The next discriminating experiment is adaptation, applied uniformly and
+declared before scoring, then the same held-out battery at the scale re-set by
+the same return-to-rest rule. If adaptation lets the gain rise without
+ignition, and water→MN9 and bitter suppression appear, the omission was the
+cause. Reproducible probes: `scripts/probes/`.

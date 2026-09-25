@@ -40,6 +40,8 @@ behaviour can hide a wrong layer underneath.
 
 ## Session 4: make the anatomy load-bearing, and prove it
 
+**Done 24 Sept, see F-GAIN-2.** The anatomy is load-bearing (real graph ≠ shuffled everywhere), but it ignites through self-exciting cliques; calibrated scale 0.165 mV. Held out: sugar weak pass, water fail, GF→TTMn fail (gap junctions), DNg100 recruits but no rhythm. Session 5 therefore starts with adaptation, then gap junctions for identified pairs.
+
 1. **Add a borrowed parameter profile.** Load Shiu's values (V_rest −52,
    V_th −45, V_reset −52, τ_m 20 ms, τ_s 5 ms, t_ref 2.2 ms, delay 1.8 ms,
    0.275 mV per synapse) as `--profile shiu2024`. Every value is recorded
