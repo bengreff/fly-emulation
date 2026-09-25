@@ -1178,3 +1178,32 @@ Sustained 150 Hz sensory input depletes the sensory synapses themselves
 the feedforward drive it was meant to spare. A depression confined to
 recurrent central synapses, or a weaker U, would be a different, new
 hypothesis.
+
+## F-LN-1. The ignition core is the antennal lobe's excitatory LNs
+
+Screen at m1, 0.1925 mV (`scripts/probes/ignition_core_screen.py`,
+`runs/probes/ignition_core_screen.csv`): bitter GRNs at 100 Hz leave 9,885
+cells firing 200-400 ms after the stimulus. Silencing each of the 28 most
+common persisting types one at a time: **only lLN1_bc matters** (30 cells;
+9,885 → 121). Every other type, including all KC classes, EPG, PEN,
+Delta7 and PAM, changes it by < 5%.
+
+lLN1_bc's transmitter is **measured, not only predicted**. FlyWire v783
+annotations give `known_nt = acetylcholine` from immunostaining (Shang et
+al. 2007), so the +1 sign is right. They are the excitatory LNs (eLNs).
+Their physiology is also measured: eLN→PN transmission is unaffected by
+blocking chemical transmission and abolished by a shakB gap-junction mutation
+(Yaksi & Wilson 2010, Neuron 67:1034). Their lateral excitation of PNs is
+**electrical**, and eLNs also drive inhibitory LNs. The connectome shows
+86,864 eLN→eLN chemical synapses (40% of their output). Whether those act
+as excitation is not measured.
+
+So the model's runaway comes from converting a measured-electrical,
+possibly weak chemical output into strong chemical excitation. It is not a
+sign error. Next discriminating experiment, to pre-register:
+- (a) eLN→PN chemical efficacy 0, as measured, with eLN-PN gap junctions
+  added (conductance unknown, assumed) so lateral excitation is kept;
+- (b) eLN→eLN treated as the same unknown, tested both ways.
+
+Score (a) on whether ignition disappears under calibration rule v2 and
+whether the stable scale then rises high enough for water→MN9 and JO-F→aDN.
