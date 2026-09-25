@@ -190,6 +190,7 @@ class Network:
         self.spike_count = 0
         self.adapt = np.zeros(n, dtype=np.float32)
         self.kick_held = np.zeros(n, dtype=np.float32)
+        self.elec = None   # (pre, post, kick_mv): identified electrical synapses
         self.x_res = np.ones(n, dtype=np.float32)      # STD resource per presynaptic neuron
         self.rec_step = float(1.0 - np.exp(-self.timestep_ms / p.std_tau_rec))
         self.decay_a = float(np.exp(-self.timestep_ms / p.tau_adapt))
@@ -273,6 +274,10 @@ class Network:
                     self.g_i[spiked] = 0.0
             if p.adapt_mv:
                 self.adapt[spiked] += p.adapt_mv
+            if self.elec is not None and len(self.elec[0]):
+                hit = np.isin(self.elec[0], spiked)
+                if hit.any():
+                    np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + p.t_ref[spiked]
             self._propagate(spiked)
             self.spike_count += spiked.size

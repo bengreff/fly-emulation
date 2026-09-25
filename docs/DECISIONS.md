@@ -488,3 +488,12 @@ Return to rest after sugar alone did not guarantee stability for other inputs (F
 
 - tau_m dV/dt = -(V - V_rest) - g_e (V - E_e) - g_i (V - E_i). g_e and g_i are dimensionless (relative to leak) and decay with tau_s. An excitatory synapse adds eff/(E_e - V_rest), an inhibitory one |eff|/(V_rest - E_i), so a single PSP at rest matches the current-based model. E_e = 0 mV, E_i = -70 mV (chloride-type GABA_A/GluCl; assumed, not per type). Everything else as m1.
 - Compared with m1, both under calibration rule v2, on the 11-assay battery with 2 type shuffles and 1 global shuffle. All assays are seen, so this is **exploratory**. An improvement means more assays passing (criteria as in F-SENS-1/F-GAIN-2) with none lost.
+
+**Results:** rule v2 fails at every scale for current- and conductance-based m1 (F-LN-2). The conductance variant is not adopted: sugar-stable to 0.8x, but no calibratable scale under v2.
+
+### Pre-registration: identified electrical synapses of the giant fibre system (session 4)
+
+- Mechanism: spike-triggered, rectifying electrical transmission. A presynaptic spike adds `k` mV to the postsynaptic membrane on the next step (held through refractory). There is no subthreshold coupling. It stands in for shakB gap junctions, which carry the presynaptic action potential that a LIF model does not represent.
+- Pairs: DNp01 (GF) → TTMn and DNp01 → PSI (Tanouye & Wyman 1980; Phelan et al. 1996; Allen et al. 2006). Each GF couples to the TTMn and the PSI it makes most chemical contacts with.
+- `k = 20 mV` (a coupling coefficient of ~0.25 times an ~80 mV spike), assumed. Chosen so a single GF spike fires TTMn, which the animal does 1:1. So GF→TTMn is now a **fitted** assay, not a test.
+- Held out: GF→PSI→DLMn. PSI→DLMn is chemical, ~225 synapses per PSI, sign by Shiu profile. Published: GF activation drives DLMn at short latency, following 1:1 at low rates. Pass: DLMn mean rate ≥ 50% of GF rate at 50 Hz GF drive, and > 5 Hz at 100 Hz.

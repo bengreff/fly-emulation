@@ -1250,3 +1250,22 @@ synaptic scales (at least AL vs rest) would not destroy what the anatomy
 currently carries. That makes them a legitimate next hypothesis, provided
 they are fitted to AL physiology (PN transfer function, Olsen et al. 2010;
 flybench task 17) and not to behaviour.
+
+## F-GAP-1. GF electrical synapses: the electrical link works, the chemical one after it fails
+
+Pre-registered (DECISIONS): spike-triggered rectifying kick k = 20 mV for
+GF→TTMn and GF→PSI (`src/flyemu/electrical.py`), m1 at 0.1925 mV,
+`runs/assay-gf_*-m1-elec{0,20}`.
+- GF→TTMn (**fitted**, not held out): 0.0/1.2/7.3 Hz → 20/45/93 Hz at
+  25/50/100 Hz GF drive. It now follows ~1:1.
+- GF→DLMn (held out): 0.47 Hz at 50 Hz (criterion ≥ 25) and 2.9 Hz at
+  100 Hz (criterion > 5). **Fail.**
+
+Mechanism: PSI_L follows GF_L exactly (49/49 Hz, 91/91 Hz), so the electrical
+step works. The failing step is chemical: each PSI's ~225 synapses are split
+across 5 DLMn (~45 each), which at uniform 0.1925 mV per synapse is
+subthreshold per spike. In the animal PSI→DLMn transmits reliably, so
+uniform per-synapse efficacy is wrong at this connection. Also, only 3 of 4
+pairs were made: GF_R has no ≥ 5-synapse chemical contact with either PSI, so
+the contact proxy for apposition fails there (GF→PSI chemical counts are
+2, 3, 2 and 9). Kept as an option, default off; not validated.

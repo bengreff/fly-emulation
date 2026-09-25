@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import numpy as np
 import pandas as pd
 
-from flyemu import connectome, lif, profiles
+from flyemu import connectome, electrical, lif, profiles
 from flyemu.provenance import RunRecord
 from flyemu.registry import Policy, Registry
 
@@ -87,6 +87,12 @@ ASSAYS = {
         stim=["LPLC2"], readout=["DNp01"],
         evidence="LPLC2 looming detectors drive the giant fibre (Ache et al. "
                  "2019); expect > 5 Hz",
+    ),
+    "gf_dlm": dict(
+        stim=["DNp01"], readout=["^DLMn"],
+        evidence="held out for the GF electrical pre-registration: GF -> PSI "
+                 "(electrical) -> DLMn (chemical); DLMn follows GF at low rates "
+                 "(Tanouye & Wyman 1980)",
     ),
     "gf_ttm": dict(
         stim=["DNp01"], readout=["TTMn"],
@@ -153,9 +159,13 @@ def rhythmicity(raster: np.ndarray, dt_ms: float) -> tuple[float, float]:
     return float(max(seg[k] - trough, 0.0)), 1000.0 / (40 + k)
 
 
+ELEC: dict = {}
+
+
 def run_trial(conn, params, dt, stim_idx, rate_hz, kick_mv, duration_ms,
               seed, silence_idx=None, co=None, record=None):
     net = lif.Network(conn, params, dt, rng=np.random.default_rng(seed))
+    net.elec = ELEC.get(id(conn))
     if silence_idx is not None and len(silence_idx):
         net.silence(silence_idx)
     rng = np.random.default_rng(seed + 10_000)
@@ -260,6 +270,14 @@ def main() -> None:
         (f"typeshuf{k}", connectome.type_shuffled(conn, np.random.default_rng(200 + k)))
         for k in range(args.type_shuffles)
     ]
+    # Identified electrical pairs are fixed by identity, so every control keeps
+    # them (they are not part of the rewired chemical graph).
+    el = electrical.build(reg, conn)
+    for _, g in graphs:
+        ELEC[id(g)] = el if len(el[0]) else None
+    if len(el[0]):
+        print(f"electrical pairs: {len(el[0])}")
+    reg.write(out / "inventory.csv")
     rows, rate_store = [], {}
     for gname, g in graphs:
         for r in rates:
