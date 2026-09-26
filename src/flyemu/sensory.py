@@ -26,7 +26,7 @@ mistaken for "not sensing".
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -90,6 +90,52 @@ class Afferents:
     contact_cols: dict[str, np.ndarray]   # leg -> indices into contact array
     load_bodies: dict[str, np.ndarray]    # leg -> body indices for strain
     n_neurons: int
+    # measured-form proprioception (session 6); None = session-5 tanh placeholders
+    subtype: np.ndarray | None = None     # per afferent: claw|hook_flex|hook_ext|club|hairplate_*|''
+    theta50: np.ndarray | None = None     # claw half-activation angle, deg
+    fti_bodies: dict | None = None        # leg -> (femur, tibia, tarsus1) body ids
+    hp_joint: dict | None = None          # (leg, subtype) -> (dof index, lo, hi, sign toward limit)
+    dt_ms: float = 0.1
+    claw_width_deg: float = 10.0
+    hook_w0_dps: float = 200.0
+    _prev: dict = field(default_factory=dict)
+    _omega: dict = field(default_factory=dict)
+
+    def fti_angle_deg(self, xpos: np.ndarray, leg: str) -> float:
+        """Anatomical femur-tibia angle: 180 deg = straight, small = flexed."""
+        f, t, ta = self.fti_bodies[leg]
+        u, v = xpos[t] - xpos[f], xpos[ta] - xpos[t]
+        c = np.dot(-u, v) / (np.linalg.norm(u) * np.linalg.norm(v) + 1e-12)
+        return float(np.degrees(np.arccos(np.clip(c, -1.0, 1.0))))
+
+    def _proprio(self, obs, leg, sel) -> np.ndarray:
+        st = self.subtype[sel]
+        out = np.zeros(int(sel.sum()), dtype=np.float32)
+        th = self.fti_angle_deg(obs["xpos"], leg)
+        prev = self._prev.get(leg, th)
+        w_raw = (th - prev) / (self.dt_ms / 1000.0)
+        a = self.dt_ms / 2.0                      # 2 ms low-pass on angular velocity
+        w = self._omega.get(leg, 0.0) + (w_raw - self._omega.get(leg, 0.0)) * min(a, 1.0)
+        self._prev[leg], self._omega[leg] = th, w
+        t50 = self.theta50[sel]
+        cw = self.claw_width_deg
+        flex = (st == "claw") & (t50 < 85.0)
+        ext = (st == "claw") & (t50 >= 85.0)
+        out[flex] = 1.0 / (1.0 + np.exp((th - t50[flex]) / cw))
+        out[ext] = 1.0 / (1.0 + np.exp((t50[ext] - th) / cw))
+        out[st == "hook_flex"] = np.clip(-w / self.hook_w0_dps, 0.0, 1.0)
+        out[st == "hook_ext"] = np.clip(w / self.hook_w0_dps, 0.0, 1.0)
+        out[st == "club"] = np.tanh(abs(w) / (2 * self.hook_w0_dps))
+        for key in ("hairplate_ThC_protraction", "hairplate_ThC_retraction",
+                    "hairplate_CTr_levation", "hairplate_CTr_depression"):
+            m = st == key
+            if m.any() and (leg, key) in self.hp_joint:
+                j, lo, hi, sgn = self.hp_joint[(leg, key)]
+                q = float(obs["joint_angles"][j])
+                p = (q - lo) / (hi - lo) if hi > lo else 0.5
+                p = p if sgn > 0 else 1.0 - p            # 1 = at the limit this plate reads
+                out[m] = 1.0 / (1.0 + np.exp(-(p - 0.85) / 0.05))
+        return out
 
     def drive(self, obs: dict[str, np.ndarray]) -> np.ndarray:
         """Turn one body observation into a per-neuron current, in mV."""
@@ -116,8 +162,12 @@ class Afferents:
             signal = np.zeros(int(sel.sum()), dtype=np.float32)
             ch = self.channel[sel]
             # Normalised, dimensionless, then scaled by an assumed gain.
-            signal[ch == "joint_angle"] = np.tanh(a)
-            signal[ch == "joint_angle_velocity"] = np.tanh(a) + 0.1 * np.tanh(v)
+            if self.subtype is None:
+                signal[ch == "joint_angle"] = np.tanh(a)
+                signal[ch == "joint_angle_velocity"] = np.tanh(a) + 0.1 * np.tanh(v)
+            else:
+                pr = np.isin(ch, ["joint_angle", "joint_angle_velocity"])
+                signal[pr] = self._proprio(obs, leg, sel)[pr]
             lb = self.load_bodies.get(leg)
             strain = float(seg_load[lb].sum()) if lb is not None else 0.0
             signal[ch == "load"] = np.tanh(strain)
@@ -215,14 +265,16 @@ def build(reg: Registry, conn, body) -> Afferents:
         )
 
     # Body column lookups.
-    dof = [d for d in body.actuator_names]
+    # joint_angles are ordered by the fly's jointdofs, NOT by actuator: there
+    # are 102 dofs and 98 actuators. Until session 6 this looked the FTi joint
+    # up by actuator index and so read thorax-coxa roll (4 dofs earlier).
+    dof = [f"{d.parent.name}-{d.child.name}-{d.axis.value}"
+           for d in body.fly.get_jointdofs_order()]
     joint_cols: dict[str, int] = {}
     for leg in ["lf", "lm", "lh", "rf", "rm", "rh"]:
         want = f"{leg}_trochanterfemur-{leg}_tibia-pitch"
-        for i, a in enumerate(dof):
-            if a.endswith(want + "-motor"):
-                joint_cols[leg] = i
-                break
+        if want in dof:
+            joint_cols[leg] = dof.index(want)
     contact_names = getattr(body, "contact_names", None) or [
         s if isinstance(s, str) else s.name for s in body.contact_segments
     ]
@@ -244,7 +296,9 @@ def build(reg: Registry, conn, body) -> Afferents:
                 ids.append(b)
         load_bodies[leg] = np.array(ids, dtype=np.int64)
 
+    prop = _measured_form(reg, body, sens, dof, joint_cols)
     return Afferents(
+        **prop,
         rows=rows.astype(np.int64),
         leg=sens.leg.to_numpy(),
         channel=np.array([ENCODES[s] for s in sens.subclass]),
@@ -255,3 +309,98 @@ def build(reg: Registry, conn, body) -> Afferents:
         load_bodies=load_bodies,
         n_neurons=conn.n,
     )
+
+
+PROPRIO_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "proprio_assignment.csv"
+
+
+def _measured_form(reg: Registry, body, sens: pd.DataFrame, dof: list[str],
+                   joint_cols: dict) -> dict:
+    """Measured-form leg proprioception (session 6), per docs/SENSORS_MECHANO.md.
+
+    claw: tonic sigmoid of the anatomical femur-tibia angle. Flexion-tuned cells
+      have half-activation angles spread evenly over 20-80 deg, extension-tuned
+      over 90-170 deg (Mamiya et al. 2018, 2023; measured ranges, calcium).
+      Width 10 deg, guessed. Hysteresis omitted.
+    hook: rectified angular velocity of the preferred direction, saturating at
+      200 deg/s (guessed; direction selectivity measured, DSI 0.81).
+    club: |angular velocity| (movement, bidirectional; vibration not simulated).
+    hair plates: tonic sigmoid near the ThC or CTr joint limit (Pratt et al. 2026),
+      half-activation at 85% of the range toward that limit (guessed).
+    Subtype per cell type: data/params/proprio_assignment.csv, all guessed.
+    """
+    import mujoco as mj
+    on = reg.require(
+        "afferent:leg_proprioceptors", "measured_form", units="boolean",
+        model_use="claw/hook/club/hair-plate transduction instead of tanh(angle)",
+        subsystem="sensory_transduction", instances=int(len(sens)), minimal=1.0,
+        minimal_note="modelling choice (session 6); 0 restores the session-5 tanh placeholders")
+    if not on or not PROPRIO_TABLE.exists():
+        return {}
+    tab = pd.read_csv(PROPRIO_TABLE, comment="#").set_index("type")
+    st = sens.type.fillna("").map(tab.subtype).fillna("").to_numpy(dtype=object)
+    st[~sens.subclass.isin(["chordotonal organ", "hair plate"]).to_numpy()] = ""
+    direction = sens.type.fillna("").map(tab.direction).fillna("").to_numpy(dtype=object)
+    theta = np.full(len(sens), np.nan)
+    legs = sens.leg.to_numpy()
+    for leg in np.unique(legs):
+        # flexion-tuned claw cells: theta50 spread over 20-80 deg; extension-tuned 90-170
+        for d, lo, hi in (("flexion", 20, 80), ("extension", 90, 170)):
+            c = np.flatnonzero((legs == leg) & (st == "claw") & (direction == d))
+            theta[c] = np.linspace(lo, hi, len(c)) if len(c) > 1 else (lo + hi) / 2
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    bid = lambda nm: mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, pre + nm)  # noqa: E731
+    fti = {leg: (bid(f"{leg}_trochanterfemur"), bid(f"{leg}_tibia"), bid(f"{leg}_tarsus1"))
+           for leg in joint_cols}
+    from .neuromuscular import load_calibration
+    cal = load_calibration("flybody")
+    hp = {}
+    for leg in joint_cols:
+        for key, frag, col, want in (
+                ("hairplate_ThC_protraction", f"c_thorax-{leg}_coxa-", "foot_fore_mm", +1),
+                ("hairplate_ThC_retraction", f"c_thorax-{leg}_coxa-", "foot_fore_mm", -1),
+                ("hairplate_CTr_levation", f"{leg}_coxa-{leg}_trochanterfemur-", "foot_up_mm", +1),
+                ("hairplate_CTr_depression", f"{leg}_coxa-{leg}_trochanterfemur-", "foot_up_mm", -1)):
+            rows = cal[cal.actuator.str.startswith(frag)] if cal is not None else None
+            if rows is None or rows.empty:
+                continue
+            pick = rows.loc[rows[col].abs().idxmax()]
+            name = pick.actuator
+            if name not in dof:
+                continue
+            j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + name)
+            lo, hi = (float(x) for x in m.jnt_range[j]) if j >= 0 else (-1.0, 1.0)
+            hp[(leg, key)] = (dof.index(name), lo, hi, want * np.sign(pick[col]))
+    n_claw = int((st == "claw").sum())
+    reg.provide("afferent:FeCO claw", "angle_tuning", "sigmoid, theta50 spread 20-80 / 90-170 deg",
+                units="deg", model_use="tonic position encoding", status=Status.INFERRED,
+                subsystem="sensory_transduction", instances=n_claw,
+                evidence="Mamiya et al. 2018 Neuron; 2023 Neuron (goniotopic map, calcium)",
+                uncertainty="ranges measured by calcium imaging; per-cell theta50 placement, "
+                            "width 10 deg and absence of hysteresis are guesses")
+    reg.provide("afferent:leg_proprioceptors", "subtype_assignment",
+                "data/params/proprio_assignment.csv", units="category",
+                model_use="claw/hook/club/hair-plate identity per type", status=Status.GUESSED,
+                subsystem="sensory_transduction", instances=int((st != "").sum()),
+                evidence="no SNpp-to-claw/hook/club crosswalk exists; types assigned to match "
+                         "measured FeCO proportions (Mamiya 2023)")
+    reg.provide("afferent:claw_hook_hairplate", "preferred_direction",
+                "data/params/proprio_assignment.csv (direction)", units="category",
+                model_use="flexion/extension tuning and which joint limit",
+                status=Status.INFERRED, subsystem="sensory_transduction",
+                instances=int(np.isin(st, ["claw", "hook_flex", "hook_ext"]).sum()
+                              + np.char.startswith(st.astype(str), "hairplate").sum()),
+                evidence="net signed drive onto antagonist MN pools (connectome) under a "
+                         "resistance-reflex prior (scripts/proprio_direction.py)",
+                uncertainty="post-hoc (after a failed standing run); types with near-zero net "
+                            "drive are unconstrained by this rule")
+    reg.provide("afferent:hook_club_hairplate", "gains_and_widths",
+                "hook/club 200 deg/s; hair plate 85% +/- 5% of range", units="various",
+                model_use="velocity and limit transduction", status=Status.GUESSED,
+                subsystem="sensory_transduction",
+                instances=int(((st != "") & (st != "claw")).sum()),
+                evidence="guessed: direction selectivity and limit tuning are measured in form "
+                         "only (calcium imaging; Pratt 2026)")
+    return dict(subtype=st, theta50=theta, fti_bodies=fti, hp_joint=hp,
+                dt_ms=float(body.timestep * 1000.0))

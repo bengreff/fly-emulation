@@ -546,3 +546,32 @@ Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), no
    - uniglomerular PN mean rate in clean air lies within 1–20 Hz. The range is inferred from PN spontaneous rates of a few Hz (Wilson et al. 2004; Bhandawat et al. 2007).
 
 A change that fails a criterion stays in the code as an option but is turned off by default, and the failure is reported.
+
+### Pre-registration: standing (session 6, before any scoring)
+
+**Reference heights, derived from the body model.**
+- Neutral pose (flygym FLYBODY_NEUTRAL spring rest, legs rigid): thorax 1.235 mm above the tarsal tips.
+- Limp body (zero torque): 0.665–0.708 mm over 0.1–1 s, still sinking.
+- Session-6 closed loop at `force_per_spike=10`: 0.64–0.70 mm, indistinguishable from limp.
+
+**"Stands"** means all four of the following. The fly is dropped from the spawn pose and lands at about 0.1 s.
+1. Thorax z ≥ 0.90 mm throughout t = 0.5–1.5 s. 0.90 mm is about 73% of the neutral-pose height and 0.2 mm above limp.
+2. With all motor output silenced (motor-neuron spikes not delivered), the same run falls below 0.80 mm. This rules out passive support.
+3. The body is upright: thorax roll and pitch magnitudes < 45°.
+4. No self-sustaining network state (the closed-loop criterion 2 above).
+
+**Resistance reflex test, reported separately and not part of "stands".**
+- Stimulus: impose a 30° flexion of one middle-leg femur-tibia joint for 200 ms by an external torque, with the fly standing or not.
+- Readout: the summed signed torque from that leg's FTi motor units during the push, compared with no push.
+- Resistance means the torque opposes the imposed movement, i.e. is extensor for a flexion push.
+
+**Changes to be tried in this order.** Each is scored on the criteria above and reported whether it passes or fails.
+- (a) Measured-form proprioceptors, following SENSORS_MECHANO:
+  - claw cells: position sigmoids with thresholds spread across the measured ranges;
+  - hook cells: direction;
+  - club cells: movement;
+  - hair plates: ThC/CTr limits.
+  The claw/hook/club assignment of cells is guessed.
+- (b) Slow tibia-flexor MNs given their measured resting rate, ~30 Hz (Azevedo 2020 Fig 3D), as tonic drive.
+
+No parameter is tuned against the standing criterion. If it fails, the report names the failing layer.

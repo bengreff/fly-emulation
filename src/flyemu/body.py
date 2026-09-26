@@ -274,12 +274,48 @@ class Body:
             elif rule.range_deg is not None:
                 lo, hi = rule.range_deg
                 if rule.measured and lo > 0:
-                    # An absolute joint angle, e.g. femur-tibia 18 to 180 deg.
-                    m.jnt_range[j] = (np.deg2rad(lo), np.deg2rad(hi))
+                    # An absolute ANATOMICAL angle, e.g. femur-tibia 18 to 180
+                    # deg. The joint coordinate q is not that angle: in flybody
+                    # q = 18 deg is a geometric 113 deg. Until session 6 the
+                    # range was applied to q directly, so the femur-tibia joint
+                    # could not flex below its neutral pose (~113 deg) and
+                    # "extended" past straight. Map through the geometry.
+                    m.jnt_range[j] = self._anatomical_range(j, lo, hi)
                 else:
                     q0 = float(d.qpos[m.jnt_qposadr[j]])
                     m.jnt_range[j] = (q0 + np.deg2rad(lo), q0 + np.deg2rad(hi))
                 m.jnt_limited[j] = 1
+
+    def _anatomical_range(self, j: int, lo_deg: float, hi_deg: float) -> tuple[float, float]:
+        """q range realising an anatomical inter-segment angle range for a hinge
+        between parent (femur) and child (tibia): the angle between the parent
+        segment and the child segment (180 = straight), measured on the
+        kinematics at two probe values of q."""
+        m = self.sim.mj_model
+        d = mj.MjData(m)
+        d.qpos[:] = self.sim.mj_data.qpos
+        child = m.jnt_bodyid[j]
+        parent = m.body_parentid[child]
+        grand = next((b for b in range(m.nbody) if m.body_parentid[b] == child), None)
+        adr = m.jnt_qposadr[j]
+
+        def angle(q: float) -> float:
+            d.qpos[adr] = q
+            mj.mj_kinematics(m, d)
+            u = d.xpos[child] - d.xpos[parent]
+            v = d.xpos[grand] - d.xpos[child]
+            c = np.dot(-u, v) / (np.linalg.norm(u) * np.linalg.norm(v))
+            return float(np.degrees(np.arccos(np.clip(c, -1, 1))))
+
+        q0 = float(self.sim.mj_data.qpos[adr])
+        a0, a1 = angle(q0), angle(q0 + np.deg2rad(5.0))
+        slope = (a1 - a0) / 5.0                      # anatomical deg per q deg
+        s = 1.0 if slope > 0 else -1.0
+        qa = q0 + np.deg2rad((lo_deg - a0) * s)
+        qb = q0 + np.deg2rad((hi_deg - a0) * s)
+        self.anatomical_map = getattr(self, "anatomical_map", {})
+        self.anatomical_map[mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j)] = (q0, a0, slope)
+        return (min(qa, qb), max(qa, qb))
 
     def _cap_collision_hulls(self, owner) -> None:
         """Limit the vertex count of each mesh's COLLISION convex hull.
@@ -445,6 +481,7 @@ class Body:
             ),
             "body_positions": np.asarray(self.sim.get_body_positions(n)),
             "segment_load": np.asarray(d.cfrc_int).copy(),
+            "xpos": np.asarray(d.xpos).copy(),
             "n_contacts": int(d.ncon),
         }
 

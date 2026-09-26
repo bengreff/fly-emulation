@@ -6,7 +6,7 @@
     type,param,value,units,basis,source,justification
 
 A type matches by exact `type` label, or by regex when `type` starts with
-'^'. Every type without a row takes the shared default recorded in the
+'^', or lists individual cells as `bodyId:<id>;<id>;...`. Every type without a row takes the shared default recorded in the
 registry (itself labelled). So every slot in the model has a value, and each
 value says where it came from. Filling a blank means adding a row.
 """
@@ -44,10 +44,16 @@ def per_neuron(reg: Registry, conn, param: str, default: float, *, units: str,
     table = load() if table is None else table
     arr = np.full(conn.n, float(default), dtype=np.float32)
     types = conn.neurons.type.fillna("").reset_index(drop=True)
+    bids = conn.neurons.bodyId.reset_index(drop=True)
     rows = table[table.param == param]
     for r in rows.itertuples(index=False):
-        m = (types.str.match(r.type) if str(r.type).startswith("^")
-             else types.eq(r.type)).to_numpy()
+        if str(r.type).startswith("bodyId:"):
+            # individual cells, e.g. motor units classed within a type
+            want = {int(x) for x in str(r.type)[7:].split(";") if x}
+            m = bids.isin(want).to_numpy()
+        else:
+            m = (types.str.match(r.type) if str(r.type).startswith("^")
+                 else types.eq(r.type)).to_numpy()
         if not m.any():
             continue
         arr[m] = float(r.value)
