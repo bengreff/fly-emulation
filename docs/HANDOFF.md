@@ -48,6 +48,11 @@ were running there are lost, and were redone on the Mac.
   - reflex gain measured against Azevedo's protocol: slow MNs are position-blind (F-REFLEX-1);
   - DNg100 closed-loop stimulation: no stepping (F-WALK-0).
   - Viewer recording: `runs/organism-record-3000ms-s6`.
+- **Session 6b (26 Sept morning):**
+  - First raw MN recording analysed: Azevedo Dryad cell 180111_F2_C1 (F-AZ-1).
+  - The slow flexor MN is fitted to its intrinsic data (adopted).
+  - The held-out reflex fails at the premotor operating point (F-AZ-2); three post-hoc repairs were not adopted. **Do not fit further on cell 180111; use a fresh cell.**
+  - Silent PNs diagnosed (F-AL-2).
 
 ## What this project is
 

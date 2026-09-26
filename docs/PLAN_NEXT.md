@@ -1,6 +1,15 @@
 # Plan for sessions 4 to 8
 
-## After session 6: the next discriminating experiments (read first)
+## After session 6b (26 Sept morning): the next discriminating experiments (read first)
+
+0. **The VNC operating point (F-AZ-2).** This is the current bottleneck for every leg behaviour.
+   - The held-out reflex of Azevedo cell 180111_F2_C1 fails because the excitatory premotor interneurons (IN03A004, IN21A004, IN21A006) sit 5–10 mV below threshold under tonic GABA, mainly from IN13A005.
+   - The reflex signal has the right sign but is rectified away. Only 8% of T2 interneurons fire at rest.
+   - Constrain the resting activity of VNC interneurons from recordings (Agrawal 2020 and others; see LIT notes). Consider nonspiking/graded premotor interneurons (Burrows) only if evidence supports it for Drosophila.
+   - Then re-run `scripts/probes/azevedo_reflex.py` **unchanged**. All conditions of this cell have now been seen at least once, so a second recorded slow cell (e.g. Dryad 181021_F1_C1) is the fresh held-out set. Do not fit further on 180111.
+1. **AL spontaneous state (F-AL-2).** Test presynaptic/GABA-B LN inhibition against measured PN spontaneous rates.
+
+## After session 6: the next discriminating experiments
 
 1. **The sensorimotor gain (F-STAND-1, F-REFLEX-1).** The leg reflex arc has the right sign but too little gain, and slow flexor MNs are position-blind. A single VNC efficacy scale cannot fix this (sweep ×1–3).
    - Next, give leg MNs per-class biophysics from Azevedo 2020 Fig 3, together: Vrest −48/−60/−68 mV and Rin 700/300/150 MΩ, with the 30 Hz rest rate emerging rather than imposed.
