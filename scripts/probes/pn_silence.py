@@ -12,7 +12,8 @@ import pandas as pd
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
 
-org = Organism(policy="minimal", profile="m2", min_synapses=5)
+ov = {k: float(v) for k, v in (a.split("=") for a in sys.argv[1:])}
+org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov)
 n = org.conn.neurons
 t = n.type.fillna("").to_numpy().astype(str)
 cnt = np.zeros(org.conn.n)
@@ -37,6 +38,7 @@ for c in upn:
                      exc_mV=contrib[contrib > 0].sum(), inh_mV=contrib[contrib < 0].sum(),
                      orn_mV=contrib[orn].sum()))
 df = pd.DataFrame(rows)
+print("overrides", ov)
 print(f"{len(df)} uPNs; active {(df.hz > 0.5).mean():.2f}; rate median {df.hz.median():.1f}, mean {df.hz.mean():.1f}")
 df["active"] = df.hz > 0.5
 print(df.groupby("active")[["orn_syn", "orn_hz", "orn_mV", "exc_mV", "inh_mV", "hz"]].median().round(2))

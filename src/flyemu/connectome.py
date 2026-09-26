@@ -304,6 +304,22 @@ def build(
     if vnc_scale != 1.0:
         efficacy[vnc_sm] *= np.float32(vnc_scale)
 
+    # --- inhibitory AL LN -> PN postsynaptic share (session 6c) ---------------
+    inh_ln = alln & np.isin(nt, ["gaba", "glutamate", "unclear"])   # m2: unclear AL LNs inhibitory
+    pn_all = neurons["class"].fillna("").eq("ALPN").to_numpy()
+    ln_pn = inh_ln[pre] & pn_all[post]
+    ln_pn_scale = reg.require(
+        "connection_class:inhibitory_AL_LN_to_PN", "postsynaptic_scale",
+        units="dimensionless", model_use="efficacy multiplier of GABA/Glu AL LN -> PN edges",
+        subsystem="synaptic_efficacy", instances=int(ln_pn.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="neutral default: all LN inhibition of PNs acts postsynaptically",
+        uncertainty="much LN inhibition is presynaptic on ORN terminals (Olsen & Wilson 2008); "
+                    "the split is unmeasured per LN type (F-AL-2)",
+    )
+    if ln_pn_scale != 1.0:
+        efficacy[ln_pn] *= np.float32(ln_pn_scale)
+
     # --- cholinergic AL LN chemical output onto PNs / each other (m2, i) -----
     ach_ln = alln & (nt == "acetylcholine")
     pn = neurons["class"].fillna("").eq("ALPN").to_numpy()
