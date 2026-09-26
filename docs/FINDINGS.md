@@ -1883,3 +1883,14 @@ With correct subtypes, the unchanged wiring rule yields opposite-tuned pairs, a 
 Stability holds over 3 seeds (0.31–0.39 Hz). Tests pass.
 
 The sensor layer is now data-based. The bottleneck is confirmed at the premotor operating point (F-AZ-2, F-VNC-1).
+
+## F-AL-3. Moving LN inhibition presynaptic does not wake the silent PNs
+
+Pre-registered target: PN spontaneous rates of 1–5 Hz (Kazama & Wilson 2009). The grid rescaled postsynaptic LN→PN inhibition (1, 0.5, 0.25) and added divisive presynaptic inhibition of ORN terminals (0, 0.1).
+
+- The uPN median rate stays 0 Hz at every point, with 25–45% of PNs active.
+- The mean rises to 14 Hz as inhibition is removed.
+
+**Fail.** The silent 70% lack excitation (~5 mV of ORN drive, below threshold), not disinhibition.
+
+The measured next constraint is ORN→PN synaptic strength and spontaneous EPSC rate (Kazama & Wilson 2008, 2009): 75 Hz spontaneous EPSCs per DM4 PN. The model gives ORN→PN the single brain-wide 0.165 mV per synapse.

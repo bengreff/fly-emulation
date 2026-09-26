@@ -786,3 +786,17 @@ Odour-response tasks (flybench 08/17/18/26/27) are the proper held-out test; the
 - every Δ is within ±3 Hz. H2 and H3 fail.
 
 **The sealed cell 181021 stays sealed.** The subtype correction is adopted as data. With correct sensor identities the failure remains at the premotor operating point (F-AZ-2).
+
+**Result, AL grid (11:22).** Fail. Over s ∈ {1, 0.5, 0.25} × k ∈ {0, 0.1}:
+- the uPN median rate is 0 Hz at every point;
+- the active fraction is 0.25–0.45;
+- the mean rises from 4.9 to 14.1 Hz as postsynaptic inhibition is removed, because already-active PNs fire harder.
+
+Nothing adopted; the knob stays at neutral 1.
+
+Silent PNs are under-excited rather than over-inhibited. Their ORN input is ~5 mV against a 7 mV threshold, in a noise-free LIF.
+
+Next, a measured constraint on ORN→PN transmission:
+- the spontaneous EPSC rate of 74.9 ± 8.6 Hz per DM4 PN (Kazama & Wilson 2009);
+- unitary ORN→PN EPSP amplitude and reliability (Kazama & Wilson 2008);
+- then an AL-specific efficacy fitted to those, with odour responses held out.
