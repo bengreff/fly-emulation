@@ -24,7 +24,8 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 ## Session-specific rules
 
-- Stop new work at 4h40m, then wrap up (WORKFLOW §2).
+- Stop new work at 4h40m, then wrap up (WORKFLOW §2). Ben prefers stopping at a natural end over starting multi-hour items that cannot finish.
+- **Stability criterion (Ben's decision, DECISIONS s7):** CX ring types (declare the list in the pre-registration) are scored by the bump test, not by "0 spikes after silencing". Every other cell must still go quiet.
 - **Agents:** at most one Explore subagent at a time.
 - **Candidate rows:** use `FLYEMU_EXTRA_PARAMS` / `FLYEMU_PROPRIO_ASSIGNMENT`. Do not edit the live tables until a change is adopted.
 - **Reflex scoring:** always pass `--kp 100 --kd 0.133`.
@@ -53,7 +54,7 @@ T = `afferent:leg_proprioceptors|rate_mode_max_hz=200`, `connection_class:leg_pr
 
 ### 3. Extension pathway
 
-If Ben has provided FANC CAVE access (see HANDOFF), join the FANC T1L FeCO labels in `data/raw/lee2025/` to BANC/male-cns and derive the claw/hook directions. Otherwise try NBLAST bridging.
+A CAVE token is at `~/.config/flyemu/cave_token` (never print or commit it). As of s7 it grants only `FANC_sandbox` and `banc_public`, and FANC production returns 403. First re-check access with `curl -H "Authorization: Bearer $(cat ~/.config/flyemu/cave_token)" https://global.daf-apis.com/info/api/v2/datastack/full/fanc_production_mar2021`. If it returns 200, join the FANC T1L FeCO labels in `data/raw/lee2025/` to BANC/male-cns and derive the claw/hook directions. Otherwise try NBLAST bridging.
 Relabel the directions if evidence is found. The reflex target is over its post-hoc budget: no further fitting on 180111.
 
 ### 4. As time allows

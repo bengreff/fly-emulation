@@ -1314,3 +1314,10 @@ Abdominal and wing MNs use the guessed force_per_spike = 10 and guessed pitch/ya
 - **Default:** the guessed abdominal and wing motor layer lowers the fly and makes it roll.
 - **T:** removing it destabilises balance.
 - The abdominal and wing motor layer (guessed force 10, guessed pitch/yaw alternation) is a real confound for standing. It must be given data (abdominal MN forces, sign calibration) before standing results are read as VNC evidence. Not a model change.
+
+### Decisions by Ben after session 7 (16:15)
+
+1. **Priority:** the navigation (CX) ring comes first; abdomen/wing calibration follows.
+2. **Stability criterion, changed by Ben.** The CX heading ring is scored by its own bump test: EPG active fraction 15–40%, persisting ≥ 200 ms without input, and PEN < 50 Hz after a full-ring kick. Persistence there is not a stability failure. **Every other cell must still go quiet** after sensory silencing (0 non-tonic spikes in the last 100 ms, CX ring types excluded). Applies from session 8, with the CX type list declared in the pre-registration.
+3. **FANC access.** Ben provided a CAVE token, stored at `~/.config/flyemu/cave_token` (mode 600, never committed). It authenticates, but grants only `FANC_sandbox` and `banc_public` view. The `fanc_production_mar2021` and `brain_and_nerve_cord` datastacks return 403. The Lee et al. 2025 labels need FANC production access, which Ben must request.
+4. **Session length:** unattended sessions stop at a natural end rather than starting multi-hour items they cannot finish.
