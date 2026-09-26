@@ -1,0 +1,4 @@
+# exploratory CX screen
+type,param,value,units,basis,source,justification
+^EPG|^PEN_|^PEG|^Delta7,std_release_fraction,0.22,dimensionless,guessed,session 7 exploratory CX screen,probe bump vs saturation (DECISIONS s7)
+^EPG|^PEN_|^PEG|^Delta7,std_tau_rec,893,ms,guessed,session 7 exploratory CX screen,probe bump vs saturation (DECISIONS s7)

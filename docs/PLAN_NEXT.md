@@ -13,25 +13,42 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
 | Body | mass-, range- and collision-checked |
 | Behaviour | kinematics match measured data under the same stimulus protocol |
 
+## Where session 7 left things
+
+- Measured first-order synaptic strength (T) moves the embodied behaviour toward biology: reflex sign, standing height, and the DNg100 forward shift.
+- It is blocked by the **CX ring**, which is bistable (silent or saturated) instead of holding a bump.
+- The reflex's missing piece is extension→flexor excitation. It is cancelled by glutamatergic IN21A006.
+- The AL target's post-hoc budget is spent. The measured values stay as options.
+
 ## Ranked next steps
 
-1. **AL transmission from measurements (F-AL-3).** Set an ORN→uPN efficacy from the measured unitary PSP, EPSC rate and reliability (Kazama & Wilson 2008, 2009).
-   - Target: PN spontaneous 1–5 Hz, ≥ 70% active.
-   - Held out: flybench olfactory tasks.
-2. **Leg VNC operating point (F-AZ-2, F-VNC-1/2).**
-   - Identify 13Bα/10Bα among male-cns IN13B/IN10B types, in T2/T3.
-   - Make them graded, with an operating point fitted to the 13Bα Vm–angle tuning.
-   - Hold out the 10Bα/9Aα data.
-   - Then run `scripts/score_reflex.py` on the dev cell, and on the sealed cell only after a dev pass.
-3. **Replace the slow MN's intrinsic tonic drive with synaptic drive** once premotor excitation exists. Azevedo: the rest rate is synaptically set.
-4. **Standing, then walking,** once the reflex passes. Criteria are pre-registered in DECISIONS: thorax ≥ 0.90 mm over 0.5–1.5 s; the DNg100/MDN command experiments.
+1. **Central-complex ring operating point (F-STAB-1).** Pre-register the targets before any change:
+   - (i) a local EPG kick leaves a persistent bump, with ≤ 1/4 of EPGs active for ≥ 200 ms after input stops;
+   - (ii) a full-ring kick does not saturate (PEN < 50 Hz);
+   - (iii) the resting PEN rate, held out: 3.9 ± 2.6 Hz (Turner-Evans 2017).
+
+   Tools: `scripts/probes/cx_kick.py`; `cx_hz` in `closed_loop_check.py`.
+
+   Candidates to screen first, then pre-register one:
+   - ring depression (removes saturation, 2/3 seeds stable under T);
+   - adaptation;
+   - measured PEN input resistance, through per-type input gain;
+   - wedge-structured Delta7 inhibition. Uniform Delta7 ×8 was not enough.
+
+   Read Turner-Evans et al. 2017 and 2020 for measured ring physiology first.
+2. **Re-test T with a working ring, on fresh held-out data.**
+   - Standing (≥ 0.90 mm, 3 seeds) and stability (the CX scored by the new criterion).
+   - The command direction on fresh seeds, **plus a gait criterion** (alternating tarsal stepping).
+   - The reflex on a **sealed spare** (180621 or 181127), only after a dev H1 + H2 pass. The dev target itself is over budget and cannot gate by itself.
+3. **Extension pathway (F-XFER-1).** Settle claw and hook directions from data: Lesser et al. 2024 FANC FeCO classes via FANC↔male-cns matches. Look for any physiology of IN21A→MN glutamate. Then re-derive, rather than fit.
+4. **Per-class operating points from the targets table.** Resting potentials of −55 to −68 mV; KC gap 21.5 mV; MN rests −48 / −60 / −68 mV. Apply them one class at a time with the regression checks, never globally: a global measured strength (E1) is unstable.
 5. **Background:**
-   - re-score flybench with Hallem rates on;
-   - find measured resting potentials for central neurons to replace the borrowed −52 mV;
-   - least-squares multi-axis muscle action (hind-leg thorax-coxa signs are fragile).
+   - M0 recalibration: monoamines as fast excitation is wrong but load-bearing;
+   - flybench re-score with Hallem rates (needs a port into flybench's LIF);
+   - multi-axis muscle action; muscle co-contraction stiffness, since the torque actuators have none.
 
 ## Later milestones (dependency order)
 
 - Flight: needs a wing hinge driven by steering muscles, and power-muscle and thorax dynamics.
-- Neuromodulation and internal state: pools exist but are inert; receptor data per type is needed.
+- Neuromodulation and internal state: pools exist but are inert; receptor data per type is needed. M0 shows the fast-sign placeholder must go first.
 - Learning: KC→MBON depression exists, off. Needs an odour-shock assay held out from all fitting.

@@ -67,6 +67,13 @@ sign_i × efficacy × n_syn(ij) × release_gain_i × input_gain_j
 | GF electrical synapses | `electrical.py` | off (F-GJ-1) |
 | VNC sensorimotor efficacy scale | `connection_class:vnc_sensorimotor\|efficacy_scale` | 1 |
 | Inhibitory AL LN → PN postsynaptic scale | `connection_class:inhibitory_AL_LN_to_PN\|postsynaptic_scale` | 1 |
+| ORN → uPN efficacy scale (s7; 10.9 = measured uEPSP) | `connection_class:ORN_to_uPN\|efficacy_scale` | 1 (F-AL-4) |
+| ORN → uPN homeostatic matching (s7) | `connection_class:ORN_to_uPN\|homeostatic_matching` | 0 |
+| ORN output depression, Nagel 2015 (s7) | `afferent:ORN\|measured_depression` | 0 |
+| Leg proprioceptor output scale (s7; config T) | `connection_class:leg_proprioceptor_output\|efficacy_scale` | 1 (F-XFER-1) |
+| Leg proprioceptor depression (s7; config T) | `afferent:leg_proprioceptors\|transferred_depression` | 0 |
+
+Candidate per-type rows are tested without editing live tables: `FLYEMU_EXTRA_PARAMS=<csv>` appends rows to `cell_types.csv` (later rows win), and `FLYEMU_PROPRIO_ASSIGNMENT=<csv>` replaces the proprioceptor assignment table. Session-7 candidates are `data/params/candidates_s7_*.csv`; none is live.
 
 Every switch that is off or neutral was tested and not adopted, or is waiting for data. The results are in `docs/FINDINGS.md`.
 

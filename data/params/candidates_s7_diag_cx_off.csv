@@ -1,0 +1,3 @@
+# Candidate rows (not live): session 7 DIAGNOSTIC ONLY - removes CX ring output; never a model
+type,param,value,units,basis,source,justification
+^EPG|^PEN_|^PEG|^Delta7|^PFNv|^EL$|^GLNO|^FR1,release_gain,0.0,dimensionless,guessed,session 7 diagnostic,isolate whether the CX ring attractor is the only persistent state under T

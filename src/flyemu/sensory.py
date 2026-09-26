@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+import os
 from pathlib import Path
 
 import numpy as np
@@ -359,9 +360,10 @@ def _measured_form(reg: Registry, body, sens: pd.DataFrame, dof: list[str],
         model_use="claw/hook/club/hair-plate transduction instead of tanh(angle)",
         subsystem="sensory_transduction", instances=int(len(sens)), minimal=1.0,
         minimal_note="modelling choice (session 6); 0 restores the session-5 tanh placeholders")
-    if not on or not PROPRIO_TABLE.exists():
+    table = Path(os.environ.get("FLYEMU_PROPRIO_ASSIGNMENT", PROPRIO_TABLE))  # candidate table (session 7)
+    if not on or not table.exists():
         return {}
-    tab = pd.read_csv(PROPRIO_TABLE, comment="#").set_index("type")
+    tab = pd.read_csv(table, comment="#").set_index("type")
     st = sens.type.fillna("").map(tab.subtype).fillna("").to_numpy(dtype=object)
     st[~sens.subclass.isin(["chordotonal organ", "hair plate"]).to_numpy()] = ""
     direction = sens.type.fillna("").map(tab.direction).fillna("").to_numpy(dtype=object)

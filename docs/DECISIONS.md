@@ -1142,3 +1142,59 @@ Differences from no-stim (mean; sign count):
 - The seed-0 MDN "backward" result was noise; the no-stim drift has an SD of ~0.5 mm.
 - Under the transferred leg-afferent synapse, the forward command DNg100 moves the fly forward on every seed. The working model does not.
 - This is displacement, not a gait. T is not adoptable (stability; F-STAB-1).
+
+**Diagnostic (14:45): T without CX ring output is stable.** Ring types (EPG, PEN, PEG, Delta7, PFNv, EL, GLNO, FR1) had release gain 0 (diagnostic only). T gives 0 non-tonic spikes/ms after silencing on 3 seeds (brain 0.55–0.72 Hz), and T + M0 the same. The serotonergic loop was being driven through the ring. **The only stability blocker for T is the CX saturated attractor.**
+
+### Exploratory CX screen (14:45)
+
+Ring types (EPG, PEN, PEG, Delta7) are given, each separately:
+- (a) Nagel depression;
+- (b) adaptation of 3 mV per spike, τ 300 ms;
+- (c) threshold gap 21.5 mV (the Kenyon-cell measurement, transferred).
+
+Each gets a full-ring kick and a local 6-EPG kick. The criterion is as above. All guessed; these screen for what to pre-register next session.
+
+**Result, CX screen (14:51).**
+- Local kicks: nothing persists under any variant; no bump.
+- Full-ring kicks: saturation is removed by all three variants.
+- T stability:
+  - with (c), the threshold gap: 3/3 seeds stable, but only because the ring **never fires** (rates identical to the ring-silenced diagnostic);
+  - with (a), depression: 2/3 stable; seed 2 holds the serotonergic loop, 6.8 spikes/ms.
+- **CX resting rates** (closed loop, seed 0):
+
+| Config | EPG | PEN | PEG | Delta7 |
+|---|---|---|---|---|
+| default | 0 | 0 | 0 | 0 |
+| default + (a) | 0 | 0 | 0 | 0 |
+| default + (b) | 0 | 0 | 0 | 0 |
+| T | 77 Hz | 189 Hz | 30 Hz | 39 Hz |
+
+Measured: PEN spontaneous 3.9 ± 2.6 Hz while standing, and a persistent EPG bump. **The model ring has two states, silent and saturated, and the real ring's operating state is neither.** A CX ring model is a prerequisite for adopting any change that raises ascending drive.
+
+### Exploratory (over the post-hoc budget, not adoptable): swapped claw directions (14:52)
+
+**Foundation under test.** The flexion vs extension tuning of claw types is inferred from a wiring rule with a resistance prior. BANC has no direction field; checked this session.
+
+**Candidate.** `candidates_s7_claw_swapped.csv`: SNpp46/48/49/50/51 directions flipped; loaded via `FLYEMU_PROPRIO_ASSIGNMENT`, a new env override analogous to `FLYEMU_EXTRA_PARAMS`.
+
+**Run.** The dev reflex under T′ (stiff probe). A large extension response would name this as the foundation to settle with data, for example the morphological claw-extension/flexion classes of Lesser et al. 2024 via FANC↔male-cns matching.
+
+**Result, claw swap (15:00).** H1 **0.10**: nearly every sign inverts (8° extension −5.7, ramps −4 to −8 Hz; flexion +2.6 to +4.7). H3 passes. Standing under T + swap: min z 0.51 / 0.51 / 0.69 mm, and the fly rolls over (90–142°). On the seen dev data, the inferred claw directions are strongly favoured over their mirror image, and the claw pathway dominates the reflex sign. This is supporting evidence for the inferred foundation, not a measurement.
+
+**Check (15:01): ORN→uPN crosstalk is not the cause.** 93% of ORN→uPN synapses (87% of edges) are cognate; the median non-cognate edge has 10 synapses, against 24 for cognate. DM4 PNs receive 30–32 cognate ORNs, against 17.4 per antenna × 2 in KW2009. One DM4 PN (body 10613) has 37 non-cognate edges (833 synapses); possibly an annotation issue.
+
+### Pre-registration: post-hoc repair 2 of 2 for the AL target, PN threshold gap from the one measured central gap (15:01)
+
+**Motivation (post-hoc).** With measured uEPSP, depression and convergence, the predicted mean PN depolarisation is ~9 mV with SD ~4 mV. That is inconsistent with spontaneous firing of a few Hz unless threshold − rest ≫ 7 mV. The only measured central gap is 21.5 ± 5.6 mV in Kenyon cells (Turner, Bazhenov & Laurent 2008, Fig 3G, n = 17).
+
+**Change.** On top of PR / MR (rest −57.8): uPN `v_th` = −36.3 mV, a gap of 21.5 mV. Label inferred (cross-class transfer); nothing fitted.
+
+**Criteria.** A0–A2 unchanged, 3 seeds.
+
+**Expectation.** The high-rate tail is suppressed (mean ≤ 10 Hz likely), but the active fraction falls further and A1 fails. This is the last repair for the AL target in this form.
+
+**Result, AL repair 2 (15:04). Fail; not adopted.**
+- PRG: active 0.53 / 0.54 / 0.53; median 1 / 2 / 2 Hz (A0 passes); mean 13.1 / 12.9 / 13.1. A1 and A2 fail.
+- MRG: active 0.50 / 0.48 / 0.49; median 0 Hz; mean ~12.8.
+- The high-rate tail survives even a 21.5 mV gap, so it is driven by convergence and the operating point does not explain it.
+- **Post-hoc budget for the AL target: 2 of 2 used. Stop fitting this target.** The measured transmission values stay as options, all off.

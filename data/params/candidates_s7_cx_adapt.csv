@@ -1,0 +1,4 @@
+# exploratory CX screen
+type,param,value,units,basis,source,justification
+^EPG|^PEN_|^PEG|^Delta7,adaptation_increment,3,mV,guessed,session 7 exploratory CX screen,probe bump vs saturation (DECISIONS s7)
+^EPG|^PEN_|^PEG|^Delta7,adaptation_tau,300,ms,guessed,session 7 exploratory CX screen,probe bump vs saturation (DECISIONS s7)
