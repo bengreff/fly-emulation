@@ -157,3 +157,9 @@ azevedo2020_cell_181021_F1_C1:
   sha256_prefix_zip: 54c77cf90a911d69
   basis: measured
   held_out: reflex (Piezo*) trials reserved as the fresh held-out test (DECISIONS 6b); only intrinsic trials analysed so far
+banc_meta:
+  name: BANC v888 per-neuron metadata (cell_sub_class, reviewed cross-dataset matches incl. male-cns)
+  version: Harvard Dataverse doi:10.7910/DVN/7WTH1N version 3, banc_888_meta.feather (file id 14033740), fetched 2026-09-26
+  license: CC BY 4.0
+  local: data/raw/banc/
+  basis: measured annotation (EM morphology + reviewed matching); used to derive data/derived/banc_proprio_crosswalk.csv

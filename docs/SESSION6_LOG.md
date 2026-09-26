@@ -88,3 +88,4 @@ New measured targets: slow MN (F-AZ-1), VNC interneurons (F-VNC-1/2). Key diagno
 firing); real premotor/interneurons are depolarised and graded; front-leg claw afferents missing from male-cns.
 - 10:45 Session 6c start (Ben present). Stopped stale serve_viz (16 h old, idle); hot process was ~/sunscatter game (not ours, untouched). Second slow cell 181021_F1_C1 downloaded; reflex trials sealed.
 - 10:50 Stopped runaway ~/sunscatter game (pid 12756) at Ben's request. score_reflex.py built (model first, then cell); validated on cell 1 baseline (H1 0.50, fail). Cell 2 reflex still sealed.
+- 11:02-11:19 BANC crosswalk (Dataverse, CC BY) replaced guessed FeCO subtypes (F-SENSE-2); dev scoring on cell 1 failed in both configs -> sealed cell 2 not opened. Other sessions' python processes (lightsadersCode/BIOBUZZ) running, untouched.

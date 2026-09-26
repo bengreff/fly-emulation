@@ -742,3 +742,47 @@ Cell 181021_F1_C1 is a second R35C09 slow tibia flexor MN. Its Piezo (reflex) tr
 - P3: f-I at −55/−28/+27/+54/+105 pA, measured 0/0.6/62.6/80.8/106.7 Hz against predicted 0/0/51.5/69.4/95.3 Hz, all within tolerance. The model is systematically ~11 Hz low above rest.
 
 Cell 2 has Rin 617 MΩ against cell 1's 1,041, so input resistance varies 1.7× within the class. Class transfer of the point fit is supported, with the caveat that Rin is not in the LIF: synaptic mV are not scaled by it.
+
+### Pre-registration: leg proprioceptor subtypes from the BANC crosswalk (11:02)
+
+**Data.** BANC v888 metadata (Harvard Dataverse doi:10.7910/DVN/7WTH1N, CC BY 4.0, `banc_888_meta.feather`) gives, per neuron:
+- `cell_sub_class`: leg claw, hook or club chordotonal; leg hair plate; neck chordotonal; prosternal hair plate;
+- a reviewed `malecns_cell_type` match. Rows prefixed "auto:" are NBLAST matches of lower confidence.
+
+Each male-cns type takes the majority subclass over reviewed matches. Auto matches are used only where no reviewed match exists. Label: **derived** (annotation plus cross-dataset match).
+
+This replaces the session-6 guessed assignment, which was wrong for SNpp47 (club, not claw), SNpp51 (claw, not hook), SNpp39/41 (hook, not club), SNpp56–60 (club, not hook), SNpp19 (prosternal hair plate) and SNpp17/18/22 (neck chordotonal). Non-leg types stop being driven as leg afferents.
+
+**Direction.** Flexion vs extension tuning is not in BANC. It is re-derived with the unchanged wiring rule (`scripts/proprio_direction.py`, resistance-reflex prior) on the corrected subtypes. Still inferred.
+
+**Protocol.**
+1. Dev: score the candidate on the already-seen cell 180111 with `score_reflex.py`, in two configurations: defaults, and rate mode 200 Hz (the earlier grid best, not refit).
+2. The sealed cell 181021 is opened only if a configuration passes H1 and H2 on the dev cell. That configuration is then scored once on 181021, and the result decides adoption.
+3. The subtype correction itself is adopted regardless, because it replaces guesses with data. Standing and stability are re-run and reported.
+
+### Pre-registration: AL spontaneous state vs measured PN rates (11:06)
+
+**Target (measured).** "In the absence of odors, PNs fire spontaneously (typically 1–5 spikes/sec)" (Kazama & Wilson 2009 Nat Neurosci, Discussion; DOI unverified).
+
+**Current model (F-AL-2):** uPN median 0 Hz, mean 6 Hz, 30% active.
+
+**Mechanism.** Much LN inhibition is presynaptic on ORN terminals (GABA-B, Olsen & Wilson 2008), with an unmeasured postsynaptic share. Knobs:
+- `connection_class:inhibitory_AL_LN_to_PN|postsynaptic_scale` s ∈ {1, 0.5, 0.25};
+- `presynaptic_inhibition_gain` k ∈ {0, 0.1}.
+
+**Fit statistic:** the uPN median rate. Pick the grid point with median in [1, 5] Hz and the largest active fraction. That point is **fitted**.
+
+**Criteria and held-out checks:**
+- A1: ≥ 70% of uPNs active (> 0.5 Hz).
+- A2: mean uPN rate ≤ 10 Hz.
+- Stability over 3 seeds.
+- sugar→MN9_L > 5 Hz.
+
+Odour-response tasks (flybench 08/17/18/26/27) are the proper held-out test; they are too slow for this session and are deferred. Until then, adoption is **provisional**, labelled "fitted to spontaneous rate only".
+
+**Result, BANC subtypes (11:13).** On the dev cell 180111, both configurations fail:
+- defaults: H1 0.50;
+- rate mode 200 Hz: H1 0.40;
+- every Δ is within ±3 Hz. H2 and H3 fail.
+
+**The sealed cell 181021 stays sealed.** The subtype correction is adopted as data. With correct sensor identities the failure remains at the premotor operating point (F-AZ-2).

@@ -1856,3 +1856,30 @@ Cell 181021_F1_C1 (R35C09) was analysed on intrinsic data only; its reflex trial
 The LIF fitted on cell 1 predicts every point within the pre-registered tolerance (predicted 0 / 0 / 51.5 / 69.4 / 95.3). **Pass.** This supports using one fitted point for the 60-cell slow class.
 
 A bug was found and fixed on the way: `azevedo_slow_mn.py` assumed 10 kHz, and this cell is 50 kHz. The script now reads each trial's rate; cell-1 outputs are unchanged, bit for bit.
+
+## F-SENSE-2. Leg proprioceptor identities from BANC replace guesses; the reflex still fails at the premotor layer
+
+BANC v888 metadata (Dataverse 7WTH1N, CC BY 4.0) annotates each leg chordotonal neuron as claw, hook or club, and matches it to male-cns types. `data/derived/banc_proprio_crosswalk.csv` uses reviewed matches, with agreement 0.91–1.0 for the leg types.
+
+The session-6 guess was wrong for most types:
+
+| male-cns type | BANC identity |
+|---|---|
+| SNpp50, SNpp51 | **claw** |
+| SNpp39, SNpp41, SNpp44 | **hook** |
+| SNpp40/42/43/47/56–60, SApp23 | **club** |
+| SNpp45, SNpp52 | leg hair plates |
+| SNpp19 | *prosternal* hair plate |
+| SNpp17/18/22 | *neck* chordotonal |
+
+The last two (SNpp19; SNpp17/18/22) are no longer driven as leg afferents. SNpp48/49 are leg chordotonal of unspecified subtype, and remain guessed claw.
+
+With correct subtypes, the unchanged wiring rule yields opposite-tuned pairs, a consistency check the old assignment could not pass:
+- claw SNpp50 flexion (+1,779) and SNpp51 extension (−1,363);
+- hook SNpp41 flexion (+153) and SNpp39 extension (−820).
+
+**Dev scoring on the seen cell 180111:** H1 0.50 (defaults) and 0.40 (rate mode 200 Hz); every Δ within ±3 Hz. Fail. Per protocol, the sealed held-out cell 181021 was **not** opened.
+
+Stability holds over 3 seeds (0.31–0.39 Hz). Tests pass.
+
+The sensor layer is now data-based. The bottleneck is confirmed at the premotor operating point (F-AZ-2, F-VNC-1).

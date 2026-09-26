@@ -41,6 +41,8 @@ def main() -> None:
              "ThC": (["Pleural remotor/abductor MN"], ["Tergopleural/Pleural promotor MN"])}
     path = ROOT / "data/params/proprio_assignment.csv"
     t = pd.read_csv(path, comment="#")
+    t["subtype"] = t.subtype.fillna("")
+    t = t.drop(columns=[c for c in ("direction", "net_drive_ext_minus_flex", "direction_basis") if c in t.columns])
     out = []
     for r in t.itertuples():
         rec = r._asdict(); rec.pop("Index")
@@ -68,8 +70,8 @@ def main() -> None:
     df = pd.DataFrame(out)
     df["direction_basis"] = np.where(df.direction != "", "inferred", "")
     with open(path, "w") as fh:
-        fh.write("# Leg proprioceptor subtype per male-cns type. Subtype guessed; direction inferred from\n"
-                 "# wiring under a resistance-reflex prior (scripts/proprio_direction.py).\n")
+        fh.write("# Leg proprioceptor subtype per male-cns type. Subtype from the BANC crosswalk (basis column);\n"
+                 "# direction inferred from wiring under a resistance-reflex prior (scripts/proprio_direction.py).\n")
         df.to_csv(fh, index=False)
     print(df[["type", "subtype", "direction", "net_drive_ext_minus_flex", "cells"]].to_string())
 
