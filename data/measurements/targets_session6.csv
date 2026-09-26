@@ -1,0 +1,29 @@
+# Measurement library (session 6): observations for fitting and held-out validation.
+# `use` = where the value already enters the model (then it is not a test), or `held-out` (reserved for scoring).
+# `verified` = read in the source text by an agent this session (text) or only in a figure/secondary source.
+quantity,cell_or_system,value,units,uncertainty,source,location,verified,use
+resting potential,slow tibia flexor MN,-48,mV,n.r.,Azevedo et al. 2020 eLife 9:e56754,Fig 3C-D,text,held-out
+resting potential,intermediate tibia flexor MN,-60,mV,n.r.,Azevedo et al. 2020,Fig 3C-D,text,held-out
+resting potential,fast tibia flexor MN,-68,mV,n.r.,Azevedo et al. 2020,Fig 3C-D,text,held-out
+input resistance,slow tibia flexor MN,700,MOhm,n.r.,Azevedo et al. 2020,Fig 3,text,held-out
+input resistance,intermediate tibia flexor MN,300,MOhm,n.r.,Azevedo et al. 2020,Fig 3,text,held-out
+input resistance,fast tibia flexor MN,150,MOhm,n.r.,Azevedo et al. 2020,Fig 3,text,held-out
+rest firing rate,slow tibia flexor MN,30,Hz,approximate,Azevedo et al. 2020,Fig 3D,text,used (derived tonic drive)
+rest firing rate,fast and intermediate tibia flexor MN,0,Hz,silent at rest,Azevedo et al. 2020,Fig 3,text,held-out
+force per spike,fast tibia flexor unit,10,uN,approximate,Azevedo et al. 2020,Fig 4,text,used (motor_forces.csv)
+force per spike,intermediate tibia flexor unit,1,uN,approximate,Azevedo et al. 2020,Fig 4,text,used
+force per spike,slow tibia flexor unit,<0.1,uN,upper bound,Azevedo et al. 2020,Fig 4,text,used (0.05)
+twitch time to half-max,fast and intermediate units,8.5,ms,approximate,Azevedo et al. 2020,Results,text,held-out
+co-activation force,tibia flexor (all),~100,uN,approximate,Azevedo et al. 2020,Results,text,held-out
+resistance reflex sign,tibia flexor MNs,passive extension excites (EPSP),sign,qualitative,Azevedo et al. 2020,Fig 6C-D,text,held-out
+resistance reflex sensitivity,slow tibia flexor MN,significant rate change at <1 deg,deg,qualitative,Azevedo et al. 2020,Fig 6F,text,held-out
+EPSP per extension,intermediate MN (one cell),8 mV per 8 deg,mV,single trial,Azevedo et al. 2020,Fig 6 supplement,text,held-out
+feedback spikes,fast MN,never observed,qualitative,,Azevedo et al. 2020,Results,text,held-out
+conduction velocity,giant fibre (24 h adult),2.07,m/s,+/-0.21 SEM,Kadas Duch & Consoulas 2019 eNeuro (DOI unverified),Fig 1C,text,used (delay)
+axon conduction time,giant fibre (24 h adult),0.29,ms,+/-0.03,Kadas et al. 2019,Table,text,held-out (model 0.27)
+stimulus-to-muscle latency,GF -> TTM (young),0.93,ms,n.r.,Augustin et al. 2017/2019 (unverified),text,secondary,held-out
+stimulus-to-muscle latency,GF -> DLM (young),1.44,ms,+/-0.03,Augustin et al. 2019 (unverified),text,secondary,held-out
+FeCO cell count,femoral chordotonal organ,152 (club 66; hook-ext+claw 58; hook-flex 28),cells,one reconstruction,Mamiya et al. 2023 Neuron,Fig 1A,text,used (proportions)
+claw half-activation range,flexion-tuned claw cells,20-80,deg,graphical,Mamiya et al. 2023,graphical abstract / Fig 5C,figure,used (theta50 spread)
+FeCO -> 13Balpha interneuron,tonic extension encoding,qualitative,,,Agrawal et al. 2020 eLife 9:e60299,Fig 2E,text,held-out
+PN spontaneous rate,uniglomerular PNs,a few Hz (all PNs active),Hz,to be extracted,Wilson et al. 2004; Bhandawat et al. 2007,,secondary,held-out (model: median 0 - discrepancy)
