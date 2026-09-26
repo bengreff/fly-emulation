@@ -42,3 +42,6 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
 - 22:24 Wrap-up checks: sugar→MN9_L 26.3 / 84.3 Hz (100/200 Hz); closed loop stable (0.34 Hz, 0 non-tonic
   spikes after silencing); 42 tests pass; Registry.validate() [] (tested); ledger + census re-run.
   Ledger delta (parameter scale): filled 548 → 13,325; default 408,528 → 439,573; absent 385,211 → 342,083.
+- 22:31 F-ORN-2 re-examined: attractor absent under the post-fix model (seeds 0-5); pre-registered fresh-seed
+  re-test 6-11 → 6/6 pass → ORN Hallem rates ON by default (F-ORN-3). Rule v2 re-run under delays: 0.165 mV
+  still the calibrated scale (F-CAL-3).

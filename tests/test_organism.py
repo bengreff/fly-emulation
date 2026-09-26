@@ -610,8 +610,8 @@ def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("orn:all", "odour_tuning")].basis == "measured"
     assert inv.loc[("orn:all", "max_drive")].basis == "guessed"
-    # the default (rate calibration off) keeps the session-5 mV drive
-    org0 = Organism(policy="minimal")
+    # rate calibration off restores the session-5 mV drive
+    org0 = Organism(policy="minimal", overrides={"orn:all|rate_calibration": 0.0})
     assert org0.chem.sfr_hz is None
 
 

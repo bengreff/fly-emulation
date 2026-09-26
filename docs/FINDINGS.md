@@ -1682,3 +1682,23 @@ At parameter scale, 825,148 slots:
 
 - The fill is mostly derived delays (11,750). The rest: pale/yellow ommatidia 898, flexor motor units 84, Hallem ORN rates 48 (available but off by default), opsins 5, slow-MN rest rate 1.
 - Mechanisms that moved from absent to simulated-on-default: glutamate sign and GABA-B share per target (28,712), presynaptic inhibition (14,356), KC→MBON plasticity rules (60).
+
+## F-CAL-3. The efficacy scale survives morphological delays
+
+Calibration rule v2 (`calibrate_gain.py --profile m2 --generic 4`, run `runs/calibrate-gain-m2-delays-s6`) was re-run with the delays on:
+- scale 0.8 and 1.0 pass all five populations;
+- scale 1.2 ignites (about 3,100–3,500 cells still active 200–400 ms after the stimulus);
+- **0.165 mV stands.** Sugar→MN9 at 150 Hz is 29 Hz at scale 1.0.
+
+The rule now excludes cells with intrinsic tonic drive (slow MNs) from "still active".
+
+## F-ORN-3. Hallem ORN rates re-enabled after a fresh-seed re-test
+
+After the body and proprioceptor fixes, the F-ORN-2 attractor no longer appears:
+- seeds 0–5 (seen) and fresh seeds 6–11 (pre-registered) all return to rest after sensory silencing;
+- whole brain excluding ORNs: 0.33–0.44 Hz;
+- uPN mean: 5.95–6.39 Hz.
+
+ORN rate mode is **on by default**. Why the attractor disappeared was not isolated. Its core had included leg MNs and optic-lobe cells, and the loop through the wrong-joint proprioceptors is the leading suspect. The PN median is still 0, with 30% of PNs active; that is the next olfactory discrepancy.
+
+Standing with ORNs on: z_min 0.745 mm, z_mean 0.80 mm, roll up to 38°. Still a fail.

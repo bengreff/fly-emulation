@@ -47,7 +47,7 @@ metabolism,neuronal and muscle energy use (ATP),tissue class,4,2,8,absent,unknow
 sensory,sensed physical variable per sensory group,sensory group,388,1,388,simulated,mixed,physiology,derived,census (F-CENSUS-1); 41 groups unknown,parameter
 sensory,transduction model parameters (gain,sensory group,388,4,1552,default,guessed,physiology,derived,"every sensory neuron has a transduction (sensory.py, vision.py, olfaction.py, extrasenses.py); gains guessed; 1,561 cells of unknown modality at explicit zero drive",parameter
 sensory,odour tuning per ORN type,ORN type,53,1,53,simulated,measured,single-sensillum recording,measured,DoOR 2.0,parameter
-sensory,spontaneous and max rate (Hallem ORN types),sensory group,24,2,48,default,measured,single-sensillum recording,derived,session 6: Hallem & Carlson 2006 via DoOR (heterologous); ORN rate mode OFF by default after F-ORN-2,parameter
+sensory,spontaneous and max rate (Hallem ORN types),sensory group,24,2,48,simulated,measured,single-sensillum recording,derived,session 6: Hallem & Carlson 2006 via DoOR (heterologous); on by default after the F-ORN-3 re-test,parameter
 sensory,spontaneous rate per sensory type,sensory group,364,1,364,default,guessed,recording,measured,,parameter
 sensory,photoreceptor spectral sensitivity (opsin lambda max),photoreceptor type,5,1,5,absent,measured,electroretinogram / opsin spectra,derived,"session 6: data/params/opsin_spectra.csv (Salcedo 1999); renderer RGB, not yet used",parameter
 sensory,pale/yellow ommatidium identity,ommatidium,898,1,898,simulated,derived,EM (R7/R8 subtype) + retinotopy,derived,session 6: renderer mask from connectome; 544 unassigned ommatidia keep flygym canonical mask,parameter

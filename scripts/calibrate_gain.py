@@ -92,6 +92,9 @@ def main() -> None:
                         on[spk] += 1
                     elif s >= 6000:
                         late[spk] += 1
+                # cells with intrinsic tonic drive (e.g. slow MNs at their
+                # measured rest rate) fire without input by design
+                late[np.broadcast_to(np.asarray(params.spont_mv), (conn.n,)) > 0] = 0
                 row = dict(scale=scale, stim=sname, stim_hz=rate, seed=seed,
                            mn9_hz=float(on[mn9].mean() / 0.4),
                            active_on=int((on > 0).sum()),

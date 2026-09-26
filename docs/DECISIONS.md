@@ -575,3 +575,18 @@ A change that fails a criterion stays in the code as an option but is turned off
 - (b) Slow tibia-flexor MNs given their measured resting rate, ~30 Hz (Azevedo 2020 Fig 3D), as tonic drive.
 
 No parameter is tuned against the standing criterion. If it fails, the report names the failing layer.
+
+### Pre-registration: re-test of Hallem ORN rates under the post-fix model (session 6, 22:31)
+
+The model has changed since F-ORN-2 failed:
+- the joint range and proprioceptor index are fixed;
+- measured-form proprioceptors are in;
+- slow MNs fire tonically;
+- the joint signs were re-measured.
+
+Seeds 0–5 have been seen: all six return to rest with ORN rates on. **Fresh seeds 6–11** are scored on the unchanged criterion 2:
+- non-tonic spikes in the last 100 ms after sensory silencing = 0 in every seed;
+- whole brain excluding ORNs < 1 Hz;
+- uPN mean 1–20 Hz.
+
+`orn:all|rate_calibration` becomes default 1 only if all 6 pass.
