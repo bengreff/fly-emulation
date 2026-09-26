@@ -11,7 +11,10 @@ Outputs data/derived/azevedo2020_slow_mn_180111.csv (one row per condition)
 and a JSON summary. All values measured (single cell); derived where a
 transformation is stated (deg from V; Rin from dV/dI).
 
-    uv run python scripts/azevedo_slow_mn.py
+    uv run python scripts/azevedo_slow_mn.py [--cell 181021_F1_C1]
+
+The cell's zip must be unpacked in data/raw/azevedo2020/<cell>/ or directly in
+data/raw/azevedo2020/ (the session-6b layout for 180111_F2_C1).
 """
 import glob
 import json
@@ -27,9 +30,13 @@ FS = 1e4
 DEG_PER_V = 0.8
 
 
+CELL = "180111_F2_C1"
+
+
 def load(pattern):
     out = []
-    for f in sorted(glob.glob(str(RAW / pattern))):
+    base = RAW / CELL if (RAW / CELL).is_dir() else RAW
+    for f in sorted(glob.glob(str(base / pattern.replace("*.mat", f"{CELL}_*.mat")))):
         d = sio.loadmat(f, squeeze_me=True, struct_as_record=False)
         if d.get("excluded", 0):
             continue
@@ -43,6 +50,11 @@ def rate(spk, a, b):
 
 
 def main():
+    import argparse
+    global CELL
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--cell", default=CELL)
+    CELL = ap.parse_args().cell
     rows = []
     spont = []
     # --- steps: pre 1.0 s, step 0.5 s, post 1.0 s ---------------------------
@@ -89,15 +101,16 @@ def main():
     fic = fi.groupby("step_pA").agg(n=("rate_on", "size"), dI_pA=("dI_pA", "mean"),
                                      rate_pre=("rate_pre", "mean"), rate_on=("rate_on", "mean"),
                                      sd=("rate_on", "std")).reset_index()
-    out = ROOT / "data/derived/azevedo2020_slow_mn_180111.csv"
+    tag = CELL.split("_")[0]
+    out = ROOT / f"data/derived/azevedo2020_slow_mn_{tag}.csv"
     cond.round(3).to_csv(out, index=False)
     summary = {
-        "cell": "180111_F2_C1 (R35C09 slow tibia flexor MN)",
+        "cell": f"{CELL} (R35C09 slow tibia flexor MN)",
         "spontaneous_hz": [round(float(np.mean(spont)), 1), round(float(np.std(spont)), 1), len(spont)],
         "input_resistance_MOhm": [round(float(np.median(rin)), 0), round(float(np.std(rin)), 0), len(rin)],
         "f_I": fic.round(2).to_dict("records"),
     }
-    (ROOT / "data/derived/azevedo2020_slow_mn_180111.json").write_text(json.dumps(summary, indent=1))
+    (ROOT / f"data/derived/azevedo2020_slow_mn_{tag}.json").write_text(json.dumps(summary, indent=1))
     pd.set_option("display.width", 200)
     print(cond.round(1).to_string(index=False))
     print(json.dumps(summary, indent=1))
