@@ -96,6 +96,8 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-XFER-1 | Session 7 | Transferring the measured first-order synapse to leg afferents: right-signed flexion reflex, best standing, unstable network |  |
 | F-PROBE-1 | Session 7 | The reflex probe was too soft once legs made torque; scorer now refuses invalid stimuli |  |
 | F-STAB-1 | Session 7 | The calibrated network has latent self-sustaining states; the monoamine fast-excitation convention is wrong but load-bearing |  |
+| F-CX-1 | Session 7 | The CX ring is bistable (silent or saturated), never a bump; wiring and measured targets |  |
+| F-AZ-4 | Session 7 | Slow-MN fit on 4 cells: τm transfers, the rest rate and near-rest f-I do not |  |
 
 ### Session 1 status table (historical)
 
@@ -2090,3 +2092,52 @@ Any reflex claim made with a probe that yields to the leg would have been wrong.
 - corrected central resting potentials sit at −55 to −68 mV (PNs −57.8; DN AX −59; medulla −50 to −60; MNs −48 / −60 / −68), not −52;
 - the only measured threshold is the Kenyon cell's, 21.5 ± 5.6 mV above rest, against the borrowed 7 mV;
 - spontaneous rates: PN 4.6 ± 4.2 Hz (n = 37); P-EN 3.9 Hz; KC 0.1 Hz.
+
+## F-CX-1. The CX ring is bistable (silent or saturated), never a bump
+
+**Measured targets** (agent, full text):
+- EPG bump FWHM ~100° (Turner-Evans 2017);
+- the bump persists in darkness, sometimes for > 30 s (Seelig & Jayaraman 2015);
+- PENs spike at rest; rate modulation 5.6 ± 3.7 Hz;
+- Delta7 inhibits EPG, picrotoxin-sensitive (Franconville 2018);
+- Delta7 block lowers bump amplitude but does not widen it, so other inhibition shapes the bump (Turner-Evans 2020).
+
+**Model.** Default closed loop: EPG, PEN, PEG, Delta7 and ER all at 0 Hz. A full-ring kick leaves a saturated state (EPG 40/50 at 75 Hz, PEN 187 Hz), and so does config T.
+
+**Wiring** (synapses per postsynaptic cell):
+- Delta7→Delta7 626 against Delta7→EPG 86: the inhibitors mostly inhibit each other;
+- PEN→EPG 517, PEN→PEN 420, EPG→EPG 233: strong recurrent excitation;
+- EPGs get 147k synapses from GABAergic ER ring neurons, which are silent in the model.
+
+**Screen** (all guessed):
+
+| Change | Local-kick bump | Full-kick saturation |
+|---|---|---|
+| Delta7 ×2 / ×4 / ×8 | none | persists |
+| ER tonic 5 / 7.5 / 10 mV | none | persists (PEN ~190 Hz) |
+| Ring depression | none | removed (T 2/3 stable) |
+| Adaptation | none | removed |
+| 21.5 mV gap | none | removed, but only because the ring never fires |
+
+**Diagnostic.** With ring output removed, T is fully stable on 3 seeds. The ring is the only stability blocker for the transferred-afferent configuration.
+
+**Lead.** EPGs express NMDA receptors. Slow recurrent excitation would need per-receptor synaptic kinetics.
+
+## F-AZ-4. Slow-MN fit on 4 cells: τm transfers, the rest rate and near-rest f-I do not
+
+Intrinsic trials of the spare cells only; the Piezo trials remain sealed.
+
+| Cell | Spontaneous | τm | Rin | Point-fit transfer |
+|---|---|---|---|---|
+| 180621 | 20.1 Hz | 16.3 ms | 532 MΩ | fails at ±29 pA |
+| 181127 | **46.5 Hz** | 16.6 ms | 1,021 MΩ | fails P1 and the near-rest f-I |
+| 181021 (6c) | 23.5 Hz | 15.5 ms | 617 MΩ | passes |
+| 180111 (fit) | 24.8 Hz | 16 ms | 1,041 MΩ | fit cell |
+
+τm is a class property. The resting drive and threshold vary per cell, so the class needs a distribution. The "~30 Hz" class mean in Azevedo 2020 matches these cells.
+
+## Also session 7 (in DECISIONS)
+
+- **M0 recalibration.** Rule v2 passes at every scale under M0 (it is open-loop). M0 at 0.165 is stable on 4 of 6 closed-loop seeds. At 0.9× it is stable, but sugar→MN9_L falls to 0.3 Hz.
+- **Command direction** (seeds 1–4): under T, DNg100 shifts the fly forward on 4/4 seeds (+0.65 mm against no-stim). MDN fails in both models. The default passes neither. The seed-0 MDN "backward walk" was noise.
+- **Claw direction.** No publication maps flexion or extension to SNpp types. FANC labels exist (Lee et al. 2025) but need CAVE access to join.

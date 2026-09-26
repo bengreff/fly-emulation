@@ -29,7 +29,7 @@ def main():
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
     t = org.conn.neurons.type.fillna("").to_numpy().astype(str)
-    groups = {g: np.flatnonzero(np.char.startswith(t, g)) for g in ("EPG", "PEN_", "Delta7", "PEG")}
+    groups = {g: np.flatnonzero(np.char.startswith(t, g)) for g in ("EPG", "PEN_", "Delta7", "PEG", "ER")}
     epg = groups["EPG"]
     target = epg[: a.n] if a.targets == "EPG" else np.flatnonzero(
         np.any([np.char.startswith(t, g) for g in a.targets.split(",")], axis=0))

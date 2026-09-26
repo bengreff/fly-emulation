@@ -68,7 +68,7 @@ def main():
         "upn_frac_active": round(float((hz[upn] > 0).mean()), 2),
         "motor_hz": round(float(hz[mn].mean()), 2),
         "cx_hz": {g: round(float(hz[np.char.startswith(t.astype(str), g)].mean()), 2)
-                  for g in ("EPG", "PEN_", "PEG", "Delta7")},
+                  for g in ("EPG", "PEN_", "PEG", "Delta7", "ER")},
         "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,

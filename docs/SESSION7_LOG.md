@@ -27,3 +27,7 @@ Pre-session Q&A with Ben (attended, 13:10):
 - 14:42 Command direction (seeds 1-4): T DNg100 forward PASS (+0.65, 4/4); MDN fails both; default fails both.
 - 15:04 AL repair 2 fails; AL budget 2/2 spent. Claw swap: H1 0.10 (inferred directions favoured). Starting wrap-up regression on backhouse.
 - 15:08 Checkpoint: HANDOFF, PLAN_NEXT, NEXT_SESSION_PROMPT (s8), MODEL switches written; final regression identical; 57 tests pass. Continuing with CX ring work.
+- 15:10 CX: D7->D7 626 syn/cell; ER ring neurons silent (0 Hz) in default. Waiting for ring physiology agent.
+- 15:13 ER tonic screen: no fix (PEN->PEN core saturates at 190 Hz). CX conclusion recorded.
+- 15:22 Spare-cell intrinsic transfer: tau transfers (4 cells); point fit fails (181127 spont 46.5 Hz). Piezo still sealed.
+- 15:23 Docs updated (HANDOFF, FINDINGS F-CX-1/F-AZ-4, prompt).

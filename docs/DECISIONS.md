@@ -1198,3 +1198,95 @@ Measured: PEN spontaneous 3.9 ± 2.6 Hz while standing, and a persistent EPG bum
 - MRG: active 0.50 / 0.48 / 0.49; median 0 Hz; mean ~12.8.
 - The high-rate tail survives even a 21.5 mV gap, so it is driven by convergence and the operating point does not explain it.
 - **Post-hoc budget for the AL target: 2 of 2 used. Stop fitting this target.** The measured transmission values stay as options, all off.
+
+**CX wiring analysis (15:10, male-cns, edges ≥ 5).** Synapses per postsynaptic cell:
+- **Delta7→Delta7 626**, Delta7→EPG 86, Delta7→PEN 165, EPG→Delta7 448;
+- PEN→EPG 517, PEN→PEN 420, EPG→PEN 287, EPG→EPG 233.
+
+Two consequences:
+- Under inhibitory glutamate, Delta7s mainly inhibit each other, which weakens the ring's global inhibition.
+- EPGs get 147k synapses from outside the ring, mostly GABAergic ER ring neurons (ER4m, ER2_c, ER4d, ER3w_b).
+
+**ER rates in closed loop:** default 0 Hz; T 11 Hz. Real ER neurons are visually and tonically driven. Their silence in the model removes the EPGs' main external inhibition, which is a candidate cause of the saturated state.
+
+**Measured ring physiology (agent, full text; 15:11):**
+- EPG bump FWHM ~100° (Turner-Evans 2017, n = 5 + 6 flies);
+- the bump persists in darkness, sometimes for > 30 s (Seelig & Jayaraman 2015);
+- P-ENs spike at rest; rate modulation 5.6 ± 3.7 Hz (n = 12);
+- Delta7 activation inhibits EPG, picrotoxin-sensitive (Franconville 2018);
+- Delta7 block lowers bump amplitude without widening it: "other sources of inhibition must act to shape the E-PG activity into one bump" (Turner-Evans 2020);
+- no intrinsic properties or PSPs for ring cells found.
+
+The bump criterion is set from these: an EPG active fraction of 15–40% (~100° of 360°), persisting ≥ 200 ms.
+
+### Exploratory screen: tonic ER ring-neuron activity (15:11)
+
+ER types get `spontaneous_drive` d ∈ {5, 7.5, 10} mV (guessed; ER spontaneous rates not found). Runs: local and full-ring kicks, plus T stability. Screening only.
+
+**Result, ER screen (15:13).** Tonic ER drive of 5 / 7.5 / 10 mV gives ER at 0–18 Hz.
+- Full-ring kicks still saturate: EPG 40–44/50 at 51–65 Hz; PEN 190–192 Hz.
+- Local kicks: nothing persists.
+- T stability still fails (64–72 spikes/ms).
+
+ER inhibition acts on EPGs, but the runaway core is the PENs:
+- PEN→PEN is 420 synapses per cell (ACh), plus PEN↔EPG;
+- PENs are refractory-limited at ~190 Hz under every ring manipulation tried (Delta7 ×8, ER tonic).
+
+**Lead for next session.** EPGs express Nmdar1/2 (Turner-Evans 2020 RNA-seq). Slow NMDA-type recurrent excitation is the standard route to a persistent low-rate bump. That needs per-receptor synaptic kinetics (`tau_s` is per postsynaptic type now), plus a check of whether PEN→PEN contacts are real or an artefact of within-PB proximity.
+
+Session-7 CX conclusion: measured targets exist (bump FWHM ~100°, persistence in darkness, PENs spike at rest). No single-knob change screened (Delta7 gain, ring depression, adaptation, threshold gap, ER tonic) gives a bump. Saturation can be removed only by silencing or damping the ring.
+
+### Pre-registration: recalibrate the global efficacy under M0, rule v2 (15:14)
+
+**Motivation.** M0 (monoamines not fast transmitters; receptor genomics) is biologically correct but destabilises the default at 0.165 mV. The existing calibration rule decides whether a lower efficacy restores stability.
+
+**Procedure.** `calibrate_gain.py --generic 4` (rule v2: return to rest after sugar and after 4 fixed random sensory populations) with M0, at scales {0.7, 0.8, 0.9, 1.0} × 0.165 mV. The chosen scale is the last passing before the first failure.
+
+**Adoption (M0 + recalibrated efficacy as the new working model).** All of the following, at the chosen scale:
+- closed-loop stability on 3 **fresh** seeds (3, 4, 5): 0 non-tonic spikes after silencing;
+- sugar→MN9_L > 5 Hz at 100 and 200 Hz;
+- the brain rate excluding ORNs < 1 Hz.
+
+A change of this size is reported with the regression-reference move. The flybench olfactory held-out is deferred and must be run before any AL claim.
+
+**Rule v2 under M0 (15:17).** Every tested scale passes (0.7–1.0; no activity at 600–800 ms). Chosen: 1.0, i.e. 0.165 mV unchanged. Rule v2 is open-loop and does not detect the closed-loop persistence M0 showed. Adoption test per the pre-registration: M0 at 0.165 mV on fresh seeds 3–5. Declared now, before results: scales 0.9 and 0.8 are also run on seeds 3–5 as exploratory information only.
+
+**Result, M0 adoption test (15:19).** At 0.165 mV on fresh seeds 3 / 4 / 5: 0 / 0 / 0 non-tonic spikes; brain excluding ORNs 0.43 / 0.29 / 0.35 Hz. Sugar was already > 5 Hz. **The pre-registered letter is met. M0 is still not adopted.** Seeds 0 and 1 (seen earlier) hold a persistent state, so M0 is stable on 4 of 6 seeds. The pre-registration was flawed in counting only fresh seeds when failures were already known. The default is stable on seeds 0–2 and 6–11 (F-ORN-3).
+
+Exploratory: 0.9 and 0.8 × 0.165 are stable on seeds 3–5 (brain 0.37–0.43 and 0.21–0.24 Hz).
+
+Next session: pre-register M0 at a scale ≤ 0.9, with **all** seeds 0–5 plus 3 fresh, the olfactory held-out, and the full battery.
+
+**Claw/hook direction search (15:20).** No publication maps flexion or extension onto male-cns / MANC SNpp types. Ground truth exists only as FANC T1L root-ID labels (Lee, Azevedo et al. 2025 Nat Commun; github sagrawal/Lee_2024, now in `data/raw/lee2025/`): claw_flx 13, claw_ext 8, hook_flx 13, hook_ext 9. BANC's `fanc_match` uses short FANC ids, so the join needs FANC CAVE access (an account; Ben) or NBLAST bridging.
+
+The agent also reports that VFB types MANC SNpp39 as club and SNpp41 as claw, against our BANC-derived "hook". The BANC reviewed matches (agreement 0.91 / 1.0) remain the basis; the conflict is recorded as an open question. Directions stay **inferred**.
+
+**M0 at lower scales, exploratory (15:22).**
+- Seeds 0 and 1, which failed at 1.0, are stable at 0.9× and 0.8× (brain 0.32–0.38 and 0.21–0.24 Hz).
+- **Sugar→MN9_L at 0.9× under M0: 0.3 Hz at 100 Hz** (fails > 5) and 32 Hz at 200 Hz.
+- The monoamine fast-excitation placeholder both creates latent persistent loops and carries real pathway transmission. No scalar recalibration restores both. A proper fix needs the neuromodulator pools to take over the monoamines' function (receptor data per type). Not adopted.
+
+### Pre-registration: slow-MN parameter transfer to spare cells 180621 and 181127, intrinsic trials only (15:22)
+
+This repeats the session-6c protocol exactly: CurrentStep trials only, via `azevedo_slow_mn.py --intrinsic-only`. **The Piezo trials stay sealed.**
+
+Predictions from the 180111 fit (θ 32.62 mV, t_ref 4.27 ms, drive 36.45 mV, τ 16 ms), per cell:
+- P1: spontaneous rate within ±30% of 24.8 Hz;
+- P2: τm within ±30% of 16 ms;
+- P3: at each tested current, the LIF with this cell's measured Rin predicts the rate within max(30%, 5 Hz).
+
+Pass means P1–P3 for a cell. If both pass, class transfer is supported on 4 cells. A failure means the class needs a distribution.
+
+**Result, spare-cell transfer (15:22). Fail for the point fit; τm transfers.** The scorer reproduces the 6c numbers for 181021 exactly.
+
+| Cell | P1 spontaneous | P2 τm | P3 f-I | Rin |
+|---|---|---|---|---|
+| 180621 | 20.1 Hz ✓ | 16.3 ms ✓ | ✗ (−29 pA: 5.1 measured vs 0 predicted; +29 pA: 34.7 vs 49.6) | 532 MΩ |
+| 181127 | **46.5 Hz ✗** | 16.6 ms ✓ | ✗ (−23 pA: 12.4 vs 0) | 1,021 MΩ |
+
+Across the 4 recorded R35C09 slow MNs:
+- τm is 15.5–16.6 ms (**transfers**);
+- the resting rate is 20–47 Hz, consistent with Azevedo's class mean of ~30 Hz;
+- Rin is 532–1,041 MΩ.
+
+**Decision.** Keep the point fit as the class default for now, but record it as one draw. The next MN refit should use the across-cell distribution (drive and θ per cell). The Piezo trials of both spares remain sealed; only `--intrinsic-only` was run. Data: `data/derived/azevedo2020_slow_mn_{180621,181127}_intrinsic.*`.

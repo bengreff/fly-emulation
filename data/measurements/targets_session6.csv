@@ -55,3 +55,6 @@ P-EN input resistance,P-EN central complex,1.9,GOhm,SD 0.8,Turner-Evans et al. 2
 P-EN spontaneous rate (standing),P-EN central complex,3.9,Hz,SD 2.6,Turner-Evans et al. 2017 eLife,Methods (loose patch),text,held-out
 descending neuron AX resting potential,DN AX,-59,mV,n=3; LJP n.s.,Schnell et al. 2017 Curr Biol (PMC6309624),Fig 3 legend,text,none
 Mi1/Tm1/Tm2/Tm4 physiological rest range,medulla neurons,-50 to -60,mV,authors' statement,Behnia et al. 2014 Nature (PMC4243710),Methods,text,none
+spontaneous rate,slow tibia flexor MN cell 180621_F1_C1,20.1,Hz,n trials in json,Azevedo et al. 2020 Dryad raw (derived by scripts/azevedo_slow_mn.py --intrinsic-only),CurrentStep pre-windows,text (raw data),held-out (spent s7 transfer test)
+spontaneous rate,slow tibia flexor MN cell 181127_F1_C1,46.5,Hz,n trials in json,Azevedo et al. 2020 Dryad raw (derived),CurrentStep pre-windows,text (raw data),held-out (spent s7 transfer test)
+membrane time constant,slow tibia flexor MN (4 cells),15.5-16.6,ms,range over cells 181021/180621/181127 (+180111 16),Azevedo et al. 2020 Dryad raw (derived),hyperpolarising steps,text (raw data),seen

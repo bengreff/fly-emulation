@@ -36,7 +36,7 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 The default ring is bistable: silent (0 Hz) at rest, and saturated (EPG ~75, PEN ~187 Hz) after a strong kick or under config T. It never holds a bump. Config T is otherwise stable (ring-silenced diagnostic), so this is the gate for the embodied work.
 
-a. Look up measured ring physiology with one Explore agent: Turner-Evans et al. 2017 eLife, 2020 Neuron; Seelig & Jayaraman 2015. Record in `data/measurements/targets_session6.csv` with a `use` status.
+a. Measured ring physiology was gathered in s7 (F-CX-1): bump FWHM ~100°; persistence in darkness; PENs spike at rest; EPGs express NMDA receptors. Add these to `data/measurements/targets_session6.csv` with a `use` status. The single-knob screens in F-CX-1 all failed. Consider slow (NMDA-like) recurrent excitation, which needs per-receptor synaptic kinetics.
 b. Pre-register the criteria:
    - a local 6-EPG kick leaves a bump (≤ 1/4 EPGs active) for ≥ 200 ms;
    - a full-ring kick (`--targets EPG,PEN_ --kick-ms 200 --mv 15`) gives PEN < 50 Hz;
@@ -53,12 +53,14 @@ T = `afferent:leg_proprioceptors|rate_mode_max_hz=200`, `connection_class:leg_pr
 
 ### 3. Extension pathway
 
-Settle claw/hook direction from data, via the Lesser et al. 2024 FANC FeCO classes and FANC↔male-cns matches (BANC `fanc_cell_type` is empty for these types; try MANC/FANC tables). Relabel the directions if evidence is found. The reflex target is over its post-hoc budget: no further fitting on 180111.
+If Ben has provided FANC CAVE access (see HANDOFF), join the FANC T1L FeCO labels in `data/raw/lee2025/` to BANC/male-cns and derive the claw/hook directions. Otherwise try NBLAST bridging.
+Relabel the directions if evidence is found. The reflex target is over its post-hoc budget: no further fitting on 180111.
 
 ### 4. As time allows
 
 - Per-class resting potentials from the targets table, one class at a time.
-- An M0 recalibration plan.
+- An M0 plan: monoamine fast sign 0 needs the modulator pools to carry the monoamines' function. A scalar recalibration fails: at 0.9× sugar→MN9 falls to 0.3 Hz.
+- A slow-MN class distribution: refit drive and θ per cell for 4 cells (F-AZ-4), with τm fixed at 16 ms.
 
 ## Wrap-up
 

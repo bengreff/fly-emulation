@@ -59,14 +59,14 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 |---|---|---|
 | Efficacy 0.165 mV for every synapse class | inferred (brain stability fit). **Contradicted for ORN→PN** (measured ≈ 11×) | per-class unitary PSPs; the CX ring model (F-STAB-1) |
 | V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed). Literature now says rests of −55 to −68 mV and a KC gap of 21.5 mV (targets table) | per-class values in the targets table; apply class by class |
-| Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing: removing it (M0) destabilises the default | a recalibration pre-registered with M0 |
-| CX ring parameters (uniform) | inferred (defaults) | a bump criterion; PEN 3.9 Hz and Rin 1.9 GΩ (Turner-Evans 2017) |
+| Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing. M0 at 0.165 is stable on 4/6 seeds; at 0.9× stable, but sugar→MN9 falls to 0.3 Hz | the neuromodulator pools must take over the monoamines' function |
+| CX ring parameters (uniform) | inferred (defaults). Delta7→Delta7 626 syn/cell; PEN→PEN 420; ER ring neurons silent | measured targets: bump FWHM ~100°, persistence in darkness, PENs spike at rest; EPGs express NMDA receptors (slow excitation is a candidate) |
 | No background activity | guessed | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
-| Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test | Lesser et al. 2024 FANC claw-ext/flex classes via FANC↔male-cns matches |
+| Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test. No publication maps it to SNpp types | FANC T1L labels (Lee et al. 2025; `data/raw/lee2025/`) joined to male-cns. **Needs FANC CAVE access (Ben)** or NBLAST bridging. VFB types MANC SNpp39 as club and SNpp41 as claw (conflict) |
 | Glutamate inhibitory at leg MNs | inferred (GluCl transcripts, Lesser 2024); excitatory would help the reflex (+0.6 → +3.4 Hz) but is insufficient | electrophysiology of IN21A→MN |
 | Leg proprioceptor rates (mV mode / r_max 200) | guessed | FeCO spike rates (none for adults). Depression makes static tuning pass only at low rates |
 | Leg afferent strength ×10.9 (T) | inferred (cross-class transfer) | a unitary PSP at any leg afferent synapse (not found) |
-| Slow-MN intrinsic drive 36.45 mV | inferred (fit). Azevedo (hand-verified): the rest rate is nicotinic-synaptic | cholinergic premotor tone, once the premotor circuit works |
+| Slow-MN intrinsic drive 36.45 mV, θ 32.6 | inferred (one-cell fit). Transfers to 1 of 3 further cells. Rest rates 20–47 Hz across 4 cells; τm 15.5–16.6 ms everywhere. Azevedo (hand-verified): the rest rate is nicotinic-synaptic | per-cell distribution refit; cholinergic premotor tone |
 | force_per_spike = 10 for non-leg MNs | guessed | force recordings |
 | Motor-unit size scaling F ∝ V^5.1 | inferred | per-muscle force data |
 
@@ -77,7 +77,8 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 | Azevedo cell 180111_F2_C1 (slow MN) | **seen** (fit and dev) | dev only; the dev target is over the post-hoc budget |
 | Azevedo cell 181021_F1_C1, Piezo trials | **sealed** (still unopened) | open only via `scripts/score_reflex.py` after a dev pass (H1 + H2); the scorer now also refuses if the clamp misses by > 1.5° |
 | Azevedo cell 181021_F1_C1, CurrentStep trials | seen (transfer test passed) | none |
-| Azevedo cells 180621_F1_C1, 181127_F1_C1 | **sealed spares**, unpacked (sizes verified, in MANIFEST); only the Acquisition metadata was read (both R35C09) | as above |
+| Azevedo cells 180621_F1_C1, 181127_F1_C1, Piezo trials | **sealed spares** (unpacked, sizes verified, in MANIFEST; both R35C09) | as above |
+| Azevedo cells 180621 / 181127, CurrentStep trials | seen (s7 transfer test: τm transfers; the point fit fails) | none |
 | Agrawal 2020 13Bα static tuning | seen (fit target; also the held-out layer check in s7) | none |
 | Agrawal 2020 10Bα / 9Aα recordings | held out; not extracted | none |
 | PN spontaneous rate (KW2009 "1–5 Hz"; Turner 2008 4.6 ± 4.2 Hz) | **spent** in s7 (AL P/M/PR/MR/PRG/MRG) | none |

@@ -1,0 +1,3 @@
+# exploratory CX screen
+type,param,value,units,basis,source,justification
+^ER,spontaneous_drive,5,mV,guessed,session 7 exploratory CX screen,tonic ring-neuron (ER) activity as the extra EPG inhibition implied by Turner-Evans 2020 (Delta7 block leaves one bump)

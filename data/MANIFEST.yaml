@@ -173,6 +173,14 @@ azevedo2020_cell_181127_F1_C1:
   sha256_prefix_zip: 9645a52092a3a074
   basis: measured
   held_out: SEALED spare; only the Acquisition metadata file has been read. Piezo* trials open only via scripts/score_reflex.py after a dev pass
+lee2025_feco_annotation:
+  name: Lee, Azevedo et al. 2025 FANC T1L FeCO subtype labels (claw_flx/claw_ext/hook_flx/hook_ext/club), 99 rows
+  version: github sagrawal/Lee_2024 main (pushed 2025-01-28), synapse_tables/feco_annotation_table.csv, 11313 bytes
+  license: none stated (all rights reserved); local analysis only, do not redistribute
+  local: data/raw/lee2025/
+  sha256_prefix: 478eece92cc641b0
+  basis: measured annotation (light-level driver-line morphology matched in FANC)
+  use: route to settle claw/hook direction; FANC root ids do not join BANC fanc_match (short FANC ids) without FANC CAVE access
 banc_meta:
   name: BANC v888 per-neuron metadata (cell_sub_class, reviewed cross-dataset matches incl. male-cns)
   version: Harvard Dataverse doi:10.7910/DVN/7WTH1N version 3, banc_888_meta.feather (file id 14033740), fetched 2026-09-26
