@@ -157,6 +157,22 @@ azevedo2020_cell_181021_F1_C1:
   sha256_prefix_zip: 54c77cf90a911d69
   basis: measured
   held_out: reflex (Piezo*) trials reserved as the fresh held-out test (DECISIONS 6b); only intrinsic trials analysed so far
+azevedo2020_cell_180621_F1_C1:
+  name: Azevedo et al. 2020 raw ephys, slow tibia flexor MN (genotype pJFRC7;35C09 per Acquisition file), sealed spare
+  version: Dryad 10.5061/dryad.76hdr7stb, file 180621_F1_C1.zip (1091311819 bytes, size verified), downloaded by Ben 2026-09-26
+  license: CC0-1.0
+  local: data/raw/azevedo2020/180621_F1_C1/ (728 files, unzipped flat)
+  sha256_prefix_zip: 8ab91ef82aae5509
+  basis: measured
+  held_out: SEALED spare; only the Acquisition metadata file has been read. Piezo* trials open only via scripts/score_reflex.py after a dev pass
+azevedo2020_cell_181127_F1_C1:
+  name: Azevedo et al. 2020 raw ephys, slow tibia flexor MN (genotype pJFRC7;35C09 per Acquisition file), sealed spare
+  version: Dryad 10.5061/dryad.76hdr7stb, file 181127_F1_C1.zip (1160638264 bytes, size verified), downloaded by Ben 2026-09-26
+  license: CC0-1.0
+  local: data/raw/azevedo2020/181127_F1_C1/ (819 files, unzipped flat)
+  sha256_prefix_zip: 9645a52092a3a074
+  basis: measured
+  held_out: SEALED spare; only the Acquisition metadata file has been read. Piezo* trials open only via scripts/score_reflex.py after a dev pass
 banc_meta:
   name: BANC v888 per-neuron metadata (cell_sub_class, reviewed cross-dataset matches incl. male-cns)
   version: Harvard Dataverse doi:10.7910/DVN/7WTH1N version 3, banc_888_meta.feather (file id 14033740), fetched 2026-09-26

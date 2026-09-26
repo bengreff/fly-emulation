@@ -172,6 +172,28 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                 0.0, "declared default: no short-term depression (guessed zero; F-STD-1)")
     std_tau = per("std_tau_rec", "ms", "short-term depression",
                   500.0, "declared default recovery")
+    # ORN output depression (session 7): Nagel, Hong & Wilson 2015 Nat Neurosci
+    # 18:56, single-component fit to 10 Hz antennal-nerve trains, DM6/VM2 PNs
+    # (n=19): amplitude x f=0.78 per spike, recovery tau 893 ms. Applied to all
+    # ORN output synapses (ORN->LN unmeasured; the model's resource is per cell).
+    if reg.require("afferent:ORN", "measured_depression", units="boolean",
+                   model_use="ORN presynaptic short-term depression, U=0.22, tau_rec=893 ms",
+                   subsystem="synaptic_efficacy", instances=n, minimal=0.0, conventional=0.0,
+                   minimal_note="off: ORN synapses do not depress",
+                   uncertainty="fitted by Nagel 2015 on ORN->PN (inferred for other targets)"):
+        orn = conn.neurons.type.fillna("").str.startswith("ORN_").to_numpy()
+        std_u = std_u.copy(); std_tau = std_tau.copy()
+        std_u[orn], std_tau[orn] = 0.22, 893.0
+        for prop, val, u in (("std_release_fraction", 0.22, "dimensionless"),
+                             ("std_tau_rec", 893.0, "ms")):
+            reg.provide("cell_type:^ORN_", prop, val, units=u,
+                        model_use="ORN output depression (afferent:ORN|measured_depression)",
+                        status=Status.INFERRED,
+                        evidence="Nagel, Hong & Wilson 2015 Nat Neurosci 18:56, Fig 1c "
+                                 "(f=0.78, tau=893 ms), fitted to ORN->PN EPSC trains",
+                        subsystem="neuron_biophysics", instances=int(orn.sum()),
+                        uncertainty="fitted in DM6/VM2 only; KW2008 report ~40% depression at 7 Hz",
+                        method="published fit")
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     rmax = one("graded_rmax", "Hz", "graded rate-equivalent at threshold", 100.0,

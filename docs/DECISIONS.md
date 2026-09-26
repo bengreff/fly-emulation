@@ -825,3 +825,116 @@ Next, a measured constraint on ORN→PN transmission:
 - "Result, BANC subtypes (11:13)" sits under the AL pre-registration heading. It belongs to "Pre-registration: leg proprioceptor subtypes from the BANC crosswalk (11:02)".
 - "Pre-registration: glutamate onto tibia flexor MNs is excitatory (06:58)" has no result line. Its result: fit-target Δhold −0.3 Hz against +20.3; not adopted. The row is in `data/params/hypotheses_not_adopted.csv` (F-AZ-2). Later evidence also argues against it: GluCl dominates in MNs (Lesser 2024).
 - In session 4, "Results: size scaling rejected (F-SIZE-1)" sits under the type-level pre-registration. It belongs to "Pre-registration: size-scaled input resistance".
+
+## Session 7 (26 September 2026)
+
+### Pre-registration: ORN→uPN transmission set from measured unitary EPSP and depression (13:28)
+
+**Change.** Two measured constraints, neither fitted to PN firing rates:
+1. `connection_class:ORN_to_uPN|efficacy_scale` = **10.9**. The measured unitary EPSP is 6.19 ± 0.45 mV (Kazama & Wilson 2008 Neuron 58:401, Results, n = 23 PNs, minimal nerve stimulation at 0.033 Hz, so undepressed). The male-cns median ORN→uPN connection (edges ≥ 5 synapses) has 22 synapses, matching Tobin et al. 2017 EM (~23). The model PSP kernel (τm 20, τs 5 ms; peak 0.156 × weight) gives 0.57 mV there at efficacy 0.165 mV/synapse. 6.19 / 0.57 = 10.9. Label **inferred**: the input is measured, but the kernel is borrowed.
+2. `afferent:ORN|measured_depression` = 1. Every ORN output synapse depresses to 0.78× per spike and recovers with τ = 893 ms (Nagel, Hong & Wilson 2015, Fig 1c single-component fit, DM6/VM2). The model's depression rule has the same form. Label **inferred** (a published fit, applied to all ORN targets).
+
+Variant **M** adds `connection_class:ORN_to_uPN|homeostatic_matching` = 1. It normalises each uPN's ORN edges so that its median ORN connection has the same uEPSP, because KW2008 Fig 4B finds uEPSP similar across glomeruli (p > 0.43) although uEPSC differs.
+
+**Motivation.** F-AL-3: silent PNs are under-excited (ORN input ~5 mV against a 7 mV threshold). The measured unitary EPSP is 11× the model's.
+
+**Fit set.** None for PN rates. The values come from the uEPSP (KW2008) and the depression fit (Nagel 2015), which are not PN spontaneous rates.
+
+**Held out.**
+- The uPN spontaneous rate: "typically 1–5 spikes/s" (KW2009 Discussion, qualitative), plus the F-AL-2 target of ≥ 70% active.
+- flybench olfactory tasks 08/17/18/26/27, run only if the rate criteria pass (m2 baseline 0.80).
+
+**Criteria (probe `pn_silence.py`, clean air, 2 s runs, rates over 1–2 s, 3 seeds):**
+- A0 (median uPN rate in 1–5 Hz): primary.
+- A1: ≥ 70% of uPNs > 0.5 Hz.
+- A2: mean ≤ 10 Hz.
+- Stability over 3 seeds; sugar→MN9_L > 5 Hz.
+
+**Adoption.** The configuration (base or M) that passes A0–A2 and the regression checks becomes the default. If both pass, M is adopted, because it is supported by the Fig 4B measurement. If neither passes, both stay as options, off.
+
+**Expectation (written now).** PNs are **over**-driven. At Hallem SFR (median ~12 Hz), steady-state depression leaves ~20–40% of the resource. The mean ORN drive is then ~2–4× the threshold gap for most uPNs, and the median rate is > 10 Hz. If so, the borrowed operating point (V_rest −52, threshold −45) becomes the suspect. GW2009 estimates rest with ORN input at −55 to −60 mV. The next unverified item would be PN threshold or rest, not the synapse.
+
+**Seed-0 result (13:33, provisional; seeds 1–2 running).**
+
+| Config | active | median | mean |
+|---|---|---|---|
+| base | 0.32 | 0 Hz | 6.3 |
+| P | 0.68 | 9.0 Hz | 23.3 |
+| M | 0.64 | 5.0 Hz | 28.5 |
+
+In P, silent uPNs have a median of 99 ORN synapses, against 1,414 for active ones: they have little ORN input. Well-innervated PNs are overdriven, as expected.
+
+### Pre-registration: post-hoc repair 1 of 2 for the AL target, uPN resting potential (13:34)
+
+**Motivation (post-hoc, from the seed-0 overdrive).** A shot-noise estimate from measured quantities:
+- the DM4 ORN rate is 3.4 Hz (KW2009);
+- depressed EPSPs are ~4 mV at that rate (Nagel 2015 parameters);
+- the EPSC rate is ~75 Hz.
+
+These give a mean PN depolarisation of ~9 mV with SD ~3.7 mV. Firing at 1–5 Hz then needs threshold − rest ≈ 15 mV, but the borrowed gap is 7 mV. Gouwens & Wilson 2009 (J Neurosci; PMC2709801, Discussion) measured whole-cell rest at −47.8 ± 1.6 mV (n = 12, antennae removed). They estimate that −57.8 mV is needed to match cell-attached firing, i.e. the seal-leak-corrected rest.
+
+**Change.** uPN `v_rest` = `v_reset` = −57.8 mV. Label **inferred** (a model-based correction by GW2009 of a measured value). `v_th` stays at −45 (borrowed), so the gap is 12.8 mV. Tested through a candidate-rows file (`FLYEMU_EXTRA_PARAMS`), not the live table.
+
+**Configs:** P and M, each with the rest change. The criteria (A0–A2, 3 seeds) and the adoption rule are unchanged. Nothing is tuned: −57.8 is used as published.
+
+**Result, P and M (3 seeds, 13:37). Fail; neither adopted.**
+- P: active 0.68 / 0.67 / 0.64; median 9 / 10 / 8 Hz; mean 23.3 / 23.0 / 23.2. Fails A0, A1 and A2.
+- M: active 0.64 / 0.62 / 0.63; median 5 / 5 / 5 Hz (A0 passes at the boundary); mean 28.5 / 28.3 / 28.6. Fails A1 and A2.
+- The expectation of overdrive was right for the mean. The median rose less than predicted (9 rather than > 10 Hz).
+
+### Pre-registration: VNC premotor operating point from the synaptically set MN rest rate (13:37)
+
+**Motivation.**
+- Azevedo 2020: the slow flexor MN's ~25 Hz resting rate is set synaptically, so the real premotor network is tonically active at rest.
+- Agrawal 2020: 13Bα rest in a graded range of −57 to −39 mV.
+- The model's premotor cells are silent (F-AZ-2), and the slow MN fires only because of a fitted intrinsic drive (36.45 mV; unverified-foundations list).
+- The rest rate belongs to the network. Moving it there sets the premotor operating point from a measurement rather than a guess.
+
+**Change.**
+1. Slow flexor MN `spontaneous_drive` = 0 (its intrinsic drive is removed).
+2. VNC intrinsic neurons (type regex `^IN`; 12,775 cells) get one tonic `spontaneous_drive` d (mV), standing for unmodelled tonic input (descending, background). Label **inferred** (fitted).
+3. Leg proprioceptors are in rate mode at r_max = 200 Hz (the session-6b grid best, not refit). In mV mode the afferents are silent near 90°, so no reflex is possible.
+
+**Fit set.** The resting rate of the left-middle slow MNs at θ0 = 90°, tethered, equals the Azevedo cell-1 spontaneous rate of 24.8 Hz (seen). Grid d ∈ {2, 3, 4, 5, 6} mV; pick the value closest to 24.8. If none is within ±50%, stop: the mechanism cannot set the rest rate.
+
+**Dev test (no held-out claim).** `score_reflex.py --cell 180111_F2_C1` with H1 and H2 as before.
+
+**Sealed test.** Only if H1 and H2 pass on dev: score 181021_F1_C1 **once**; this decides adoption.
+
+**Also required for adoption:** closed-loop stability over 3 seeds (0 non-tonic spikes after silencing, with the tonic population excluded from "non-tonic") and sugar→MN9_L > 5 Hz.
+
+**Expectation.** The whole-VNC drive either leaves the MN below 24.8 Hz at every d ≤ 6, or tips the VNC into runaway near threshold (d ≈ 5–7). If a d fits, the reflex gain rises but its sign is uncertain: the net premotor input is inhibitory-dominated (F-AZ-2), so H1 is likely to fail.
+
+**Result, AL repair 1 (3 seeds, 13:38). Fail; not adopted.** The rows stay in `data/params/candidates_s7_pn_rest.csv` (not live).
+- PR (P + rest −57.8): active 0.60 / 0.60 / 0.59; median 7 / 6 / 6 Hz; mean 18.0 / 17.7 / 18.1.
+- MR (M + rest −57.8): active 0.60 / 0.59 / 0.59; median 3 / 2 / 3 Hz (A0 passes); mean 20.0 / 19.9 / 20.0.
+- A1 and A2 fail in both. The population is bimodal: silent PNs receive ~−21 mV of mean LN inhibition, while active ones fire at ~20 Hz.
+- **Structural ceiling found after scoring:** 67 of 329 uPNs have fewer than 100 ORN synapses (40 are thermo- or hygrosensory PNs, driven by HRN/TRN). No ORN-side change can activate more than ~80%.
+
+Post-hoc budget for this target: 1 of 2 used.
+
+**Result, VNC operating point (13:40). Stop rule met; not adopted.** Left-middle slow MN rest rate (step:-8 pre-window) with the intrinsic drive removed:
+
+| d (mV) | 0 (control) | 2 | 3 | 4 | 6 |
+|---|---|---|---|---|---|
+| MN rate (Hz) | 0 | 0 | 0 | 0 | 0 |
+| MN mean synaptic input (mV) | −0.2 | −0.3 | −1.1 | −1.0 | −2.2 |
+
+Raising VNC excitability recruits inhibitory premotor cells first: IN13A005/009 (GABA) at 30–56 Hz, and glutamatergic IN21A002 at 60 Hz by d = 6. Cholinergic premotor cells (IN21A004, IN03A004) stay near silent. No d is within ±50% of 24.8 Hz, so the net premotor input to the slow MN is inhibitory at every operating point. Depolarising the whole VNC uniformly cannot produce the synaptically set rest rate. Candidate rows stay in `data/params/candidates_s7_vnc_d*.csv` (not live).
+
+**Identification (2a), derived from male-cns wiring plus BANC.**
+- 13Bα candidate: **IN13B013**. It has the largest claw share of input among T2/T3 IN13B types (8.6%) and the BANC `cell_function` "proprioception"; it is GABAergic, 1 cell per hemisegment. It projects to interneurons (IN14A005, IN23B009, ...), not to MNs.
+- 10Bα candidates: **IN10B041 / IN10B058** (club input 26% / 21%; IN10B058 is BANC-proprioception).
+- Label: inferred. Agrawal's genetic lines are not matched to male-cns types in any source found.
+
+### Pre-registration: 13Bα static tuning, layer check (13:40)
+
+**Question.** Does the model's IN13B013 (T2L) reproduce the 13Bα Vm–angle slope? This is a check of the sensor→interneuron layer; nothing is fitted.
+
+**Protocol.** `azevedo_reflex.py` with the tethered PD hold at θ0 ∈ {50, 90, 130}°. Readout: IN13B013 T2L ΔVm from rest in the pre window. Two configs: default (mV-mode sensors) and rate mode r_max 200.
+
+**Criterion.** A least-squares slope over the 3 angles of +0.012 to +0.083 mV/deg (the measured 13Bα range, depolarising with extension; median 0.046).
+
+**Also reported, not scored:** IN10B041 / IN10B058 slopes. The 10Bα data are not yet extracted, so no comparison is made.
+
+**If the check fails,** fitting a graded operating point (2b) cannot fix the slope. The failing layer is then afferent→IN transmission.

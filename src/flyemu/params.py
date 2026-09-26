@@ -12,6 +12,7 @@ value says where it came from. Filling a blank means adding a row.
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -24,10 +25,17 @@ BASES = {"measured", "derived", "inferred", "guessed"}
 
 
 def load(path: Path = TABLE) -> pd.DataFrame:
+    """The live table, plus candidate rows from `$FLYEMU_EXTRA_PARAMS` if set.
+
+    The extra CSV (same columns) is how a pre-registered hypothesis row is
+    tested without entering the live table; later rows win."""
     if not path.exists():
         return pd.DataFrame(columns=["type", "param", "value", "units", "basis",
                                      "source", "justification"])
     t = pd.read_csv(path, comment="#")
+    extra = os.environ.get("FLYEMU_EXTRA_PARAMS")
+    if extra:
+        t = pd.concat([t, pd.read_csv(extra, comment="#")], ignore_index=True)
     bad = t[~t.basis.isin(BASES)]
     if len(bad):
         raise ValueError(f"cell_types.csv rows with invalid basis: {bad.to_dict('records')}")

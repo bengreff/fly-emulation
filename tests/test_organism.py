@@ -782,3 +782,47 @@ def test_slow_flexor_mn_reproduces_its_measured_f_i_curve():
     for row in meas["f_I"]:
         got = rate(row["dI_pA"] * rin_mohm / 1000.0)
         assert abs(got - row["rate_on"]) < max(0.15 * row["rate_on"], 3.0), (row, got)
+
+
+@needs_graph
+def test_orn_to_upn_scale_touches_only_orn_to_upn_edges():
+    """The session-7 ORN->uPN efficacy scale must change those edges and no
+    others, and matching must equalise each uPN's median ORN connection."""
+    from flyemu import connectome
+    from flyemu.registry import Policy, Registry
+
+    base = connectome.build(Registry(Policy.MINIMAL), min_synapses=5)
+    reg = Registry(Policy.MINIMAL)
+    reg.overrides["connection_class:ORN_to_uPN|efficacy_scale"] = 10.9
+    scaled = connectome.build(reg, min_synapses=5)
+    t = base.neurons.type.fillna("").to_numpy().astype(str)
+    pre = np.repeat(np.arange(base.n), np.diff(base.indptr))
+    upn = (base.neurons["class"].fillna("") == "ALPN").to_numpy() & np.char.endswith(t, "PN")
+    m = np.char.startswith(t, "ORN_")[pre] & upn[base.indices]
+    assert m.sum() > 10_000
+    np.testing.assert_allclose(scaled.efficacy_mv[m], base.efficacy_mv[m] * 10.9, rtol=1e-5)
+    np.testing.assert_array_equal(scaled.efficacy_mv[~m], base.efficacy_mv[~m])
+
+    reg = Registry(Policy.MINIMAL)
+    reg.overrides["connection_class:ORN_to_uPN|homeostatic_matching"] = 1.0
+    matched = connectome.build(reg, min_synapses=5)
+    w = matched.weight_syn * matched.efficacy_mv
+    idx = np.flatnonzero(m)
+    import pandas as pd
+    med = pd.Series(w[idx]).groupby(base.indices[idx]).median()
+    np.testing.assert_allclose(med.to_numpy(), med.iloc[0], rtol=1e-4)
+
+
+def test_extra_parameter_rows_are_opt_in(monkeypatch, tmp_path):
+    """Candidate rows load only through FLYEMU_EXTRA_PARAMS and win over live rows."""
+    from flyemu import params
+
+    live = params.load()
+    f = tmp_path / "cand.csv"
+    f.write_text("type,param,value,units,basis,source,justification\n"
+                 "^ORN_,v_th,-40,mV,guessed,test,test row\n")
+    monkeypatch.delenv("FLYEMU_EXTRA_PARAMS", raising=False)
+    assert len(params.load()) == len(live)
+    monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(f))
+    t = params.load()
+    assert len(t) == len(live) + 1 and t.iloc[-1].type == "^ORN_"

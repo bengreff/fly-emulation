@@ -320,6 +320,39 @@ def build(
     if ln_pn_scale != 1.0:
         efficacy[ln_pn] *= np.float32(ln_pn_scale)
 
+    # --- ORN -> uniglomerular PN transmission (session 7) ---------------------
+    # uPN as in scripts/probes/pn_silence.py: class ALPN, type ending "PN".
+    ctype = neurons.type.fillna("").to_numpy().astype(str)
+    upn = pn_all & np.char.endswith(ctype, "PN")
+    orn_upn = np.char.startswith(ctype, "ORN_")[pre] & upn[post]
+    orn_scale = reg.require(
+        "connection_class:ORN_to_uPN", "efficacy_scale",
+        units="dimensionless", model_use="efficacy multiplier of ORN -> uPN edges",
+        subsystem="synaptic_efficacy", instances=int(orn_upn.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="neutral default: the brain-calibrated efficacy applies",
+        uncertainty="measured unitary EPSP 6.19 +/- 0.45 mV (Kazama & Wilson 2008, n=23) "
+                    "implies ~10.9 at the median 22-synapse connection (session 7)",
+    )
+    matching = reg.require(
+        "connection_class:ORN_to_uPN", "homeostatic_matching",
+        units="boolean", model_use="normalise each uPN's ORN edges so its median "
+                                   "ORN connection has the same unitary EPSP",
+        subsystem="synaptic_efficacy", instances=int(upn.sum()),
+        minimal=0.0, conventional=0.0,
+        minimal_note="off: unitary EPSP proportional to synapse count",
+        uncertainty="uEPSP similar across glomeruli despite different uEPSCs "
+                    "(Kazama & Wilson 2008 Fig 4); mechanism is PN input resistance",
+    )
+    if orn_scale != 1.0 or matching:
+        f = np.full(len(w), orn_scale, dtype=np.float64)
+        if matching:
+            idx = np.flatnonzero(orn_upn)
+            s = pd.Series(w[idx].astype(np.float64)).groupby(post[idx]).median()
+            ref = float(np.median(w[idx]))
+            f[idx] *= ref / s.reindex(post[idx]).to_numpy()
+        efficacy[orn_upn] = (efficacy[orn_upn] * f[orn_upn]).astype(np.float32)
+
     # --- cholinergic AL LN chemical output onto PNs / each other (m2, i) -----
     ach_ln = alln & (nt == "acetylcholine")
     pn = neurons["class"].fillna("").eq("ALPN").to_numpy()
