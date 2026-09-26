@@ -238,3 +238,75 @@ def build(reg: Registry, conn, *, timestep_ms: float, sample_hz: float = 100.0
         channel=channel, gain_mv=gain, baseline_mv=baseline,
         n_neurons=conn.n, sample_every=every, ommatidium=om_idx,
     )
+
+
+# --- spectral identity --------------------------------------------------------
+
+OPSIN_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "opsin_spectra.csv"
+
+
+def opsin_sensitivity(wavelength_nm: np.ndarray, lambda_max: float) -> np.ndarray:
+    """Govardovskii et al. 2000 A1 alpha-band template, peak-normalised.
+
+    Only lambda_max comes from data (opsin_spectra.csv, measured); the template
+    shape is a published fit to vertebrate and invertebrate pigments (derived).
+    The beta-band is omitted."""
+    x = lambda_max / np.asarray(wavelength_nm, dtype=float)
+    a, b, c = 0.8795 + 0.0459 * np.exp(-((lambda_max - 300.0) ** 2) / 11940.0), 0.922, 1.104
+    return 1.0 / (np.exp(69.7 * (a - x)) + np.exp(28.0 * (b - x)) + np.exp(-14.9 * (c - x)) + 0.674)
+
+
+def connectome_pale_masks(default_mask: np.ndarray) -> tuple[np.ndarray, np.ndarray, int]:
+    """Per-eye pale(1)/yellow(0) mask from the derived R7/R8 subtype assignment.
+
+    An ommatidium's type is the majority of its assigned R7p/R8p (pale) vs
+    R7y/R8y (yellow) cells; ties and unassigned ommatidia keep the renderer's
+    canonical mask. Returns (left, right, n_assigned)."""
+    r = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "derived" / "retinotopy.csv")
+    r = r[r.type.isin(["R7p", "R8p", "R7y", "R8y"]) & (r.ommatidium >= 0)]
+    r = r.assign(p=r.type.str.endswith("p").astype(int) * 2 - 1)
+    out, n = [], 0
+    for eye in ("L", "R"):
+        m = default_mask.copy()
+        vote = r[r.eye == eye].groupby("ommatidium").p.sum()
+        vote = vote[(vote != 0) & (vote.index < len(m))]
+        m[vote.index.to_numpy()] = (vote.to_numpy() > 0).astype(m.dtype)
+        n += len(vote)
+        out.append(m)
+    return out[0], out[1], n
+
+
+def install_connectome_mask(reg: Registry, sim) -> None:
+    """Give the renderer per-eye pale/yellow masks derived from the connectome."""
+    from flygym.vision.retina import Retina
+
+    class PerEyeRetina(Retina):
+        """flygym renders the eyes in (left, right) order each call; the mask
+        alternates accordingly."""
+
+        def __init__(self, masks):
+            super().__init__()
+            self._masks, self._k = masks, 0
+
+        def raw_image_to_hex_pxls(self, raw_img):
+            mask = self._masks[self._k % 2]
+            self._k += 1
+            return self._raw_image_to_hex_pxls(raw_img, self.ommatidia_id_map,
+                                               self.num_pixels_per_ommatidia, mask)
+
+    base = Retina().pale_type_mask
+    left, right, n = connectome_pale_masks(base)
+    sim.retina = PerEyeRetina((left, right))
+    reg.provide("ommatidium:assigned", "pale_yellow_type", "data/derived/retinotopy.csv",
+                units="category", model_use="renderer spectral channel per ommatidium",
+                status=Status.DERIVED, subsystem="sensory_transduction", instances=n,
+                method="majority of R7p/R8p vs R7y/R8y cells assigned to the ommatidium",
+                evidence="F-VISION-2 retinotopy; R7/R8 agreement 0.73 vs 0.52 chance",
+                uncertainty="assignment error ~27% within ommatidia; left/right eye order "
+                            "follows flygym's camera order")
+    reg.provide("ommatidium:unassigned", "pale_yellow_type", "flygym canonical mask",
+                units="category", model_use="renderer spectral channel per ommatidium",
+                status=Status.INFERRED, subsystem="sensory_transduction",
+                instances=int(2 * len(base) - n),
+                evidence="flygym's stochastic ~30:70 pale:yellow mask (not this animal)",
+                uncertainty="each unassigned ommatidium is pale with probability ~0.3")

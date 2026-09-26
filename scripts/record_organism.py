@@ -31,7 +31,7 @@ import numpy as np
 from flyemu.body import Body
 from flyemu.organism import Organism
 from flyemu.provenance import RunRecord
-from flyemu import extrasenses, olfaction, neuromuscular, sensory
+from flyemu import vision, extrasenses, olfaction, neuromuscular, sensory
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -83,6 +83,8 @@ def main() -> int:
         model=org.body.model,
     )
     org.aff = sensory.build(org.reg, org.conn, org.body)
+    if org.vis is not None:
+        vision.install_connectome_mask(org.reg, org.body.sim)
     org.chem = olfaction.build(org.reg, org.conn, org.body, org.net.params,
                                timestep_ms=org.timestep_ms, seed=args.seed)
     org.extra = extrasenses.build(org.reg, org.conn, org.body)

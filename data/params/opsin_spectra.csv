@@ -1,0 +1,9 @@
+# Photoreceptor opsin peak sensitivities. Stored for later spectral rendering; the renderer is RGB.
+# Template for full curves: Govardovskii et al. 2000 Vis Neurosci 17:509 A1 template (derived from lambda_max).
+opsin,cells,lambda_max_nm,units,basis,source,justification
+Rh1,R1-R6,478,nm,measured,"Salcedo et al. 1999 J Neurosci 19:10716 (Fig 5 legend), 10.1523/JNEUROSCI.19-24-10716.1999","ERG spectral sensitivity with the opsin expressed in R1-R6; Sharkey et al. 2020 give 485-490 nm (in vivo, single-opsin rescue); uncertainty ~ +/-10 nm"
+Rh3,R7p,345,nm,measured,"Salcedo et al. 1999 (Fig 5 legend)","ERG with Rh3 in R1-R6; Sharkey 2020: 330 nm; UV opsin of pale R7"
+Rh4,R7y,375,nm,measured,"Salcedo et al. 1999 (Fig 5 legend)","ERG with Rh4 in R1-R6; Sharkey 2020: 355 nm; UV opsin of yellow R7"
+Rh5,R8p,437,nm,measured,"Salcedo et al. 1999 (Fig 5 legend); pigment absorbance 442 nm","blue opsin of pale R8; Sharkey 2020: 435 nm"
+Rh6,R8y,508,nm,measured,"Salcedo et al. 1999 (Fig 5 legend); pigment absorbance 515 nm","green opsin of yellow R8; in vivo value is shifted by screening pigment in red-eyed flies (Sharkey 2020)"
+Rh3,R7d|R8d,345,nm,inferred,"Salcedo et al. 1999; dorsal-rim R7/R8 both express Rh3 (Fortini & Rubin 1990)","dorsal-rim polarisation cells are UV (Rh3) in both R7 and R8; expression from literature, peak from the Rh3 measurement"

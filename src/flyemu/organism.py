@@ -95,6 +95,8 @@ class Organism:
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
             if self.body.vision else None
         )
+        if self.vis is not None:
+            vision.install_connectome_mask(self.reg, self.body.sim)
         self.chem = olfaction.build(self.reg, self.conn, self.body, params,
                                     timestep_ms=self.timestep_ms, seed=self.seed)
         self.extra = extrasenses.build(self.reg, self.conn, self.body)

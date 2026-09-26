@@ -20,3 +20,5 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
   state (~1,700 cells: optic-lobe Mi18/Lawf2/Pm/Dm, DNg12/DNge019) that survives silencing all senses. The
   session-5 baseline and delays-only never do (deterministic). The earlier seed-0 pass was luck.
   Per pre-registration: ORN rate calibration kept as option, **off by default**. Delays + forces pass.
+- 1d: data/params/opsin_spectra.csv (Salcedo 1999 ERG λmax, measured; Govardovskii template in vision.py);
+  renderer gets per-eye pale/yellow masks from the derived R7/R8 assignment (PerEyeRetina).

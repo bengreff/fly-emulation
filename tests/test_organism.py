@@ -684,3 +684,31 @@ def test_leg_motor_units_carry_azevedo_forces_and_size_order():
     got = fps.reindex(flex.bodyId).dropna()
     assert len(got) >= 0.9 * len(flex)
     assert np.allclose(got.to_numpy(), flex.set_index("bodyId").torque_uNmm.reindex(got.index), rtol=1e-4)
+
+
+def test_renderer_pale_yellow_mask_comes_from_the_connectome():
+    """Per-eye masks follow R7/R8 subtype votes; the opsin template peaks at lambda_max."""
+    import numpy as np
+    import pandas as pd
+    from flyemu import vision
+    from flyemu.organism import Organism
+
+    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    ret = org.body.sim.retina
+    assert type(ret).__name__ == "PerEyeRetina"
+    left, right = ret._masks
+    r = pd.read_csv("data/derived/retinotopy.csv")
+    r = r[(r.eye == "L") & r.type.isin(["R7p", "R8p"]) & (r.ommatidium >= 0)]
+    only_pale = r.groupby("ommatidium").size().index
+    y = pd.read_csv("data/derived/retinotopy.csv")
+    y = y[(y.eye == "L") & y.type.isin(["R7y", "R8y"])].ommatidium.unique()
+    pure = [o for o in only_pale if o not in set(y) and o < len(left)]
+    assert len(pure) > 50 and np.all(left[pure] == 1)
+    assert not np.array_equal(left, right)
+    ops = pd.read_csv("data/params/opsin_spectra.csv", comment="#")
+    lam = np.arange(300, 700)
+    for lmax in ops.lambda_max_nm:
+        s = vision.opsin_sensitivity(lam, lmax)
+        assert abs(lam[np.argmax(s)] - lmax) <= 3
+    inv = org.reg.inventory().set_index(["entity", "property"])
+    assert inv.loc[("ommatidium:assigned", "pale_yellow_type")].basis == "derived"
