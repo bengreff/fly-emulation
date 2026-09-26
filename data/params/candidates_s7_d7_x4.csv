@@ -1,0 +1,3 @@
+# Candidate rows (not live): session 7 exploratory CX
+type,param,value,units,basis,source,justification
+^Delta7,release_gain,4,dimensionless,guessed,session 7 exploratory grid,probe whether stronger ring inhibition converts the saturated attractor into a bump

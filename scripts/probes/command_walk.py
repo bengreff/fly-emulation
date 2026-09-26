@@ -26,9 +26,10 @@ def main():
     ap.add_argument("--type", default="DNg100")
     ap.add_argument("--hz", type=float, default=100.0)
     ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
+    ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov)
+    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
     dt = org.timestep_ms
     n = org.conn.neurons
     stim = np.flatnonzero(n.type.fillna("").eq(a.type).to_numpy())

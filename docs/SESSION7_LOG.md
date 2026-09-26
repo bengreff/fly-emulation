@@ -24,3 +24,4 @@ Pre-session Q&A with Ben (attended, 13:10):
 - 14:15 Found DNg33<->5-HT fast-excitation loop; pre-reg M0 (monoamine fast sign 0); 10 runs on backhouse
 - 14:18 M0 fails (stability 2/3 seeds default). T+M0 standing seed 2 = 0.92 (first height pass; unstable config). Rest-potential lit added to targets.
 - 14:25 glu+ exploratory: Tp ext +3.4 Hz (5x short), H1 .7. Not sufficient.
+- 14:42 Command direction (seeds 1-4): T DNg100 forward PASS (+0.65, 4/4); MDN fails both; default fails both.

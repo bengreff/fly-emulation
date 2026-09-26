@@ -23,23 +23,26 @@ def main():
     ap.add_argument("--mv", type=float, default=3.0, help="kick per step while stimulated")
     ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--targets", default="EPG", help="comma-separated type prefixes to kick (all cells)")
+    ap.add_argument("--kick-ms", type=float, default=50.0)
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
     t = org.conn.neurons.type.fillna("").to_numpy().astype(str)
     groups = {g: np.flatnonzero(np.char.startswith(t, g)) for g in ("EPG", "PEN_", "Delta7", "PEG")}
     epg = groups["EPG"]
-    target = epg[: a.n]
+    target = epg[: a.n] if a.targets == "EPG" else np.flatnonzero(
+        np.any([np.char.startswith(t, g) for g in a.targets.split(",")], axis=0))
     dt = org.timestep_ms
     cnt = np.zeros(org.conn.n)
-    for s in range(int(750 / dt)):
+    for s in range(int((700 + a.kick_ms) / dt)):
         obs = org.body.observe()
         ms = s * dt
-        ext = org.sense(s, obs) if ms < 350 else np.zeros(org.conn.n, np.float32)
-        if 300 <= ms < 350:
+        ext = org.sense(s, obs) if ms < 300 + a.kick_ms else np.zeros(org.conn.n, np.float32)
+        if 300 <= ms < 300 + a.kick_ms:
             ext = ext.copy(); ext[target] += a.mv
         sp = org.net.step(external_mv=ext)
-        if ms >= 550:
+        if ms >= 500 + a.kick_ms:
             cnt[sp] += 1
         org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
     hz = cnt / 0.2

@@ -1082,3 +1082,63 @@ The row is the session-6b hypothesis (`hypotheses_not_adopted.csv`), loaded via 
 - **T′ + glu+:** H1 0.70. The 8° extension hold is **+3.4 Hz** (was +0.6), ramps +2.2 to +4.7, against +20 to +28 measured; flexion hold −1.9 against −4.1. The response moves in the right direction but stays about 5× short.
 - **T + glu+:** H1 0.70; all holds within ±2 Hz.
 - The glutamate sign at the flexor MN is not sufficient by itself. Not carried forward as a candidate without new evidence; Lesser 2024 argues against it.
+
+**Result, E2b (14:29): the default CX ring is bistable.** Kicking all EPG and PEN cells (15 mV, 200 ms) and then silencing all sensory input leaves, at 200–400 ms:
+- EPG 40/50 active at 75 Hz;
+- PEN 42/42 at 187 Hz;
+- Delta7 27/42 at 40 Hz.
+
+This is a saturated attractor, not a bump. A 6-EPG, 50 ms kick does not trigger it (E2). The persistent state that fails T, T′ and T + M0 is this attractor, entered when ascending drive is high.
+
+### Exploratory: Delta7 release gain ×2 / ×4 / ×8 (14:29)
+
+Does stronger global ring inhibition turn saturation into a bump? Runs: a full-ring kick, and a local 6-EPG 200 ms kick, per gain, plus the ×1 local control. Rows are in `candidates_s7_d7_x*.csv` (guessed; not adoptable). The criterion for a future pre-registration is written here: after a local kick, a persistent bump with ≤ 1/4 of EPGs active; after a full-ring kick, no saturation.
+
+**Result, Delta7 grid (14:30).**
+- Local 6-EPG kicks leave nothing persistent at any gain, including ×1: no bump forms.
+- Full-ring kicks still saturate:
+
+| Delta7 gain | EPG active | PEN rate | Delta7 active |
+|---|---|---|---|
+| ×2 | 38/50 | 184 Hz | 20/42 |
+| ×4 | 33/50 | 173 Hz | 14/42 |
+| ×8 | 28/50 | 166 Hz | 8/42 |
+
+- Delta7 self-inhibition silences the inhibitors themselves. The attractor lives in the PEN↔EPG excitatory loop; PENs are refractory-limited against a measured spontaneous rate of 3.9 Hz (Turner-Evans 2017).
+- Not a one-knob fix. It is a CX modelling task for a future session, with the bump criterion above.
+
+### Pre-registration: descending-command direction, MDN backward and DNg100 forward (14:35)
+
+**Seen (exploratory, seed 0).** Thorax dx over the stimulation run:
+- default: no stim +0.08, MDN −0.37, DNg100 +0.26 mm;
+- T: no stim −0.29, MDN 50 Hz −0.56, MDN 100 Hz −0.87, DNg100 −0.16 mm.
+
+**Biology.**
+- MDN activation drives backward walking (Bah et al. 2014 / Bidaye et al. 2014, "moonwalker").
+- DNg100 (BDN2) activation drives forward walking (Bidaye et al. 2020; Sapkal et al. 2024).
+
+**Test.** `command_walk.py` at 100 Hz on fresh **seeds 1–4**, conditions no-stim / MDN / DNg100, for the default model and for T.
+
+**Criteria, per model, paired by seed:**
+- **C-MDN:** mean(dx_MDN − dx_nostim) < −0.2 mm, and negative in ≥ 3 of 4 seeds.
+- **C-DNg:** mean(dx_DNg100 − dx_nostim) > +0.2 mm, and positive in ≥ 3 of 4 seeds.
+
+Displacement direction only; this is not a claim of stepping (no gait criterion). Nothing is tuned. The default model is the working model; T is not adoptable (stability).
+
+**Result (14:42), seeds 1–4.** Thorax dx (mm) per seed:
+
+| Model | no stim | MDN | DNg100 |
+|---|---|---|---|
+| default | −0.72 / 0.00 / −0.04 / +0.15 | +0.17 / +1.06 / −0.36 / +0.17 | −0.47 / −0.09 / −0.04 / +0.10 |
+| T | −0.22 / −1.31 / −0.23 / −1.02 | −0.28 / −1.30 / −1.03 / −0.12 | +0.40 / −0.44 / −0.13 / −0.01 |
+
+Differences from no-stim (mean; sign count):
+
+| Model | C-MDN | C-DNg |
+|---|---|---|
+| default | +0.41; 1/4 negative. **Fail** (wrong direction) | +0.03; 1/4 positive. **Fail** |
+| T | +0.01; 2/4 negative. **Fail** | **+0.65; 4/4 positive. Pass** |
+
+- The seed-0 MDN "backward" result was noise; the no-stim drift has an SD of ~0.5 mm.
+- Under the transferred leg-afferent synapse, the forward command DNg100 moves the fly forward on every seed. The working model does not.
+- This is displacement, not a gait. T is not adoptable (stability; F-STAB-1).
