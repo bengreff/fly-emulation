@@ -185,9 +185,10 @@ def build(reg: Registry, conn, body, params=None, timestep_ms: float = 0.1,
     if params is not None and reg.require(
             "orn:all", "rate_calibration", units="boolean",
             model_use="drive ORNs to absolute rates (Hallem 2006) instead of a mV scale",
-            subsystem="sensory_transduction", instances=n_orn, minimal=1.0,
-            minimal_note="guessed modelling choice: absolute rates replace the "
-                         "arbitrary 15 mV scale for ORNs; 0 restores session-5 behaviour"):
+            subsystem="sensory_transduction", instances=n_orn, minimal=0.0,
+            minimal_note="off by default: with Hallem spontaneous rates the m2 network "
+                         "enters a self-sustaining state in about half of seeds (F-ORN-2, "
+                         "pre-registered criterion failed); 1 enables absolute ORN rates"):
         rt = pd.read_csv(REPO / "data" / "params" / "orn_rates.csv", comment="#").set_index("orn_type")
         med = rt[rt.sfr_basis == "measured"][["sfr_hz", "rmax_hz"]].median()
         sfr = rt.sfr_hz.reindex(types).fillna(med.sfr_hz).to_numpy(float).copy()

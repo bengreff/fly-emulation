@@ -588,7 +588,7 @@ def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
     from flyemu.world import OdourSource
     import numpy as np
 
-    org = Organism(policy="minimal")
+    org = Organism(policy="minimal", overrides={"orn:all|rate_calibration": 1.0})
     xpos = org.body.sim.mj_data.xpos
     la, ra = org.chem.antenna_bodies
     tun = org.chem.tuning
@@ -610,6 +610,9 @@ def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("orn:all", "odour_tuning")].basis == "measured"
     assert inv.loc[("orn:all", "max_drive")].basis == "guessed"
+    # the default (rate calibration off) keeps the session-5 mV drive
+    org0 = Organism(policy="minimal")
+    assert org0.chem.sfr_hz is None
 
 
 def test_the_whole_organism_carries_required_evidence_fields():
@@ -629,7 +632,8 @@ def test_orn_drive_reproduces_hallem_rates_in_the_network():
     import numpy as np
     import pandas as pd
 
-    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    org = Organism(policy="minimal", profile="m2", min_synapses=5,
+                   overrides={"orn:all|rate_calibration": 1.0})
     ch = org.chem
     orn = np.flatnonzero(ch.kind == "orn")
     rt = pd.read_csv("data/params/orn_rates.csv", comment="#").set_index("orn_type")
@@ -659,3 +663,24 @@ def test_orn_drive_reproduces_hallem_rates_in_the_network():
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("orn:hallem_types", "spontaneous_rate")].basis == "measured"
     assert inv.loc[("orn:other_types", "spontaneous_and_max_rate")].basis == "inferred"
+
+
+def test_leg_motor_units_carry_azevedo_forces_and_size_order():
+    """Tibia flexor units: fast > intermediate > slow torque, largest cell fastest."""
+    import numpy as np
+    import pandas as pd
+    from flyemu.organism import Organism
+
+    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    t = pd.read_csv("data/params/motor_forces.csv", comment="#")
+    flex = t[t.unit_class != ""].dropna(subset=["unit_class"])
+    for (leg), g in flex.groupby("leg"):
+        by = g.groupby("unit_class").torque_uNmm.median()
+        assert by["fast"] > by["intermediate"] > by["slow"]
+        assert g.loc[g.size_vox.idxmax(), "unit_class"] == "fast"
+    # the model uses them: per-neuron torque differs within the flexor pool
+    bid = org.conn.neurons.bodyId.to_numpy()[org.nm.mn_index]
+    fps = pd.Series(org.nm.force_per_spike, index=bid).groupby(level=0).first()
+    got = fps.reindex(flex.bodyId).dropna()
+    assert len(got) >= 0.9 * len(flex)
+    assert np.allclose(got.to_numpy(), flex.set_index("bodyId").torque_uNmm.reindex(got.index), rtol=1e-4)

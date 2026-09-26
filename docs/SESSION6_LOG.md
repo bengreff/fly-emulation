@@ -13,3 +13,10 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
   (a noise-free LIF cannot fire at 1-2 Hz from constant drive: found while testing).
 - Regression (pre-registered): sugar→MN9_L 26.3/86.3 Hz (was 7.5/93.5; passes >5 Hz); closed loop stable,
   whole brain excl. ORN 0.24 Hz, uPN mean 5.9 Hz but median 0 (only 33% of PNs active). Adopted.
+- 1c: per-MN torque per spike for 308 leg MNs (data/params/motor_forces.csv). Tibia flexor (Ti flexor +
+  Acc. ti flexor, ~13/leg) classed fast/intermediate/slow by EM-volume rank; Azevedo 2020 forces × tibia
+  length (derived). Others size-scaled (F ∝ V^5.1, inferred). Per-MN twitch tau (30/100 ms, guessed).
+- **Regression failure found (F-ORN-2):** with Hallem ORN spontaneous rates, 3/6 seeds enter a self-sustaining
+  state (~1,700 cells: optic-lobe Mi18/Lawf2/Pm/Dm, DNg12/DNge019) that survives silencing all senses. The
+  session-5 baseline and delays-only never do (deterministic). The earlier seed-0 pass was luck.
+  Per pre-registration: ORN rate calibration kept as option, **off by default**. Delays + forces pass.

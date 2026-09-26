@@ -163,6 +163,7 @@ class Neuromuscular:
     n_actuators: int
     tau_act_ms: float
     unmapped: pd.DataFrame          # motor neurons with no actuator
+    tau_mn: np.ndarray | None = None  # per mapped motor neuron twitch decay, ms
     activation: np.ndarray = field(init=False)
 
     def __post_init__(self) -> None:
@@ -171,20 +172,25 @@ class Neuromuscular:
         self._decay: float | None = None
 
     def step(self, spiked: np.ndarray, timestep_ms: float) -> np.ndarray:
-        """Advance muscle activation and return torque per actuator."""
+        """Advance muscle activation and return torque per actuator.
+
+        Each mapped motor neuron has its own motor-unit state: a spike adds its
+        torque per spike, which decays with its own twitch time constant. The
+        actuator's torque is the signed sum over its motor units."""
         if self._decay is None:
             self._decay = float(np.exp(-timestep_ms / self.tau_act_ms))
-        self.activation *= self._decay
+            tau = self.tau_mn if self.tau_mn is not None else np.full(
+                len(self.mn_index), self.tau_act_ms)
+            self._decay_mn = np.exp(-timestep_ms / tau).astype(np.float32)
+            self.unit = np.zeros(len(self.mn_index), dtype=np.float32)
+            self._w = (self.drive_sign * self.force_per_spike).astype(np.float32)
+        self.unit *= self._decay_mn
         if spiked.size:
             hits = np.isin(self.mn_index, spiked, assume_unique=False)
             if hits.any():
-                np.add.at(
-                    self.activation,
-                    self.actuator_index[hits],
-                    (self.drive_sign[hits] * self.force_per_spike[hits]).astype(
-                        np.float32
-                    ),
-                )
+                self.unit[hits] += self._w[hits]
+        self.activation = np.bincount(self.actuator_index, weights=self.unit,
+                                      minlength=self.n_actuators).astype(np.float32)
         # Grip decays on the same muscle time constant and saturates at 1.
         self.grip *= self._decay
         if spiked.size and self.adhesion_rows.size:
@@ -467,6 +473,7 @@ def build(
                 actuator_names[i].split("/")[-1] for i in undriven),
         )
 
+    fps, tau_mn = _per_neuron_forces(reg, conn, rows, float(force_per_spike), float(tau_act))
     return Neuromuscular(
         adhesion_index=np.asarray(adh_idx, dtype=np.int64),
         adhesion_rows=np.asarray(adh_rows, dtype=np.int64),
@@ -474,11 +481,58 @@ def build(
         mn_index=np.asarray(rows, dtype=np.int64),
         actuator_index=np.asarray(acts, dtype=np.int64),
         drive_sign=np.asarray(signs, dtype=np.float32),
-        force_per_spike=np.full(len(rows), force_per_spike, dtype=np.float32),
+        force_per_spike=fps,
         n_actuators=len(actuator_names),
         tau_act_ms=tau_act,
         unmapped=un,
+        tau_mn=tau_mn,
     )
+
+
+FORCE_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_forces.csv"
+
+
+def _per_neuron_forces(reg, conn, rows, default_fps: float, default_tau: float):
+    """Torque per spike and twitch tau per mapped motor neuron: table rows
+    (data/params/motor_forces.csv) where they exist, the shared default elsewhere."""
+    fps = np.full(len(rows), default_fps, dtype=np.float32)
+    tau = np.full(len(rows), default_tau, dtype=np.float32)
+    on = reg.require(
+        "motor_unit:all", "per_neuron_forces", units="boolean",
+        model_use="use per-motor-neuron torque per spike (Azevedo 2020 anchored)",
+        subsystem="neuromuscular", instances=len(rows), minimal=1.0,
+        minimal_note="modelling choice (session 6): table rows replace the shared "
+                     "force_per_spike for leg motor neurons; 0 = shared value for all")
+    if not on or not FORCE_TABLE.exists() or not len(rows):
+        return fps, tau
+    t = pd.read_csv(FORCE_TABLE, comment="#").set_index("bodyId")
+    bids = conn.neurons.bodyId.to_numpy()[np.asarray(rows)]
+    hit = pd.Series(bids).isin(t.index).to_numpy()
+    fps[hit] = t.torque_uNmm.reindex(bids[hit]).to_numpy(np.float32)
+    tau[hit] = t.twitch_tau_ms.reindex(bids[hit]).to_numpy(np.float32)
+    sel = t.reindex(bids[hit])
+    flex = int((sel.unit_class.fillna("") != "").sum())
+    reg.provide("motor_unit:tibia_flexor", "torque_per_spike", "data/params/motor_forces.csv",
+                units="uN*mm", model_use="joint torque added by one motor spike",
+                status=Status.DERIVED, subsystem="neuromuscular", instances=flex,
+                method="measured class force (fast 10, intermediate 1, slow 0.05 uN) x tibia "
+                       "length from the body model; class by EM-volume rank (inferred)",
+                evidence="Azevedo et al. 2020 eLife 9:e56754 Fig 4",
+                uncertainty="class matching by size rank; force measured at the tibia, lever "
+                            "taken as full tibia length; slow value is '<0.1 uN'")
+    reg.provide("motor_unit:other_leg", "torque_per_spike", "data/params/motor_forces.csv",
+                units="uN*mm", model_use="joint torque added by one motor spike",
+                status=Status.INFERRED, subsystem="neuromuscular", instances=int(hit.sum()) - flex,
+                evidence="power law in EM volume fitted to the three flexor classes; lever = "
+                         "moved segment length (derived from body)",
+                uncertainty="steep fitted exponent (~5); different muscles, fibre types and "
+                            "moment arms are not modelled; clipped 0.05-10 uN")
+    reg.provide("motor_unit:leg", "twitch_tau", "data/params/motor_forces.csv",
+                units="ms", model_use="per-unit activation decay", status=Status.GUESSED,
+                subsystem="muscle_mechanics", instances=int(hit.sum()),
+                evidence="guessed: 30 ms fast/intermediate (rise ~8.5 ms measured, decay "
+                         "not reported), 100 ms slow (slow units summate over >500 ms)")
+    return fps, tau
 
 
 MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"

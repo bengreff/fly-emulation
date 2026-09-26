@@ -47,12 +47,14 @@ def main():
     dur = (a.ms - 200) / 1000
     hz = cnt / dur
     silent = []
+    scnt = np.zeros(org.conn.n)
     for s in range(int(a.silent_ms / org.timestep_ms)):
         obs = org.body.observe()
         sp = org.net.step(external_mv=np.zeros(org.conn.n, np.float32))
         tq = org.nm.step(sp, org.timestep_ms)
         org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
         silent.append(sp.size)
+        scnt[sp] += 1
     last = np.array(silent[-int(100 / org.timestep_ms):])
     out = {
         "whole_brain_hz": round(float(hz.mean()), 3),
@@ -67,6 +69,13 @@ def main():
         "wall_s": round(time.time() - t0), "overrides": ov,
     }
     print(json.dumps(out))
+    if last.sum() > 0:
+        import pandas as pd
+        df = pd.DataFrame({"type": n.type.fillna("untyped"), "sc": n.superclass.fillna(""),
+                           "nt": n.predictedNt.fillna(""), "spk": scnt})
+        g = df[df.spk > 0].groupby(["type", "sc", "nt"]).agg(cells=("spk", "size"), spikes=("spk", "sum"))
+        print("SUSTAINED", int((scnt > 0).sum()), "cells")
+        print(g.sort_values("spikes", ascending=False).head(25).to_string())
 
 
 if __name__ == "__main__":
