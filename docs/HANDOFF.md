@@ -53,6 +53,10 @@ were running there are lost, and were redone on the Mac.
   - The slow flexor MN is fitted to its intrinsic data (adopted).
   - The held-out reflex fails at the premotor operating point (F-AZ-2); three post-hoc repairs were not adopted. **Do not fit further on cell 180111; use a fresh cell.**
   - Silent PNs diagnosed (F-AL-2).
+- **Session 6c (26 Sept late morning):**
+  - A second slow MN (181021_F1_C1) was downloaded. The intrinsic fit transfers to it (F-AZ-3).
+  - **Its reflex trials are sealed** as the fresh held-out test. Score any VNC candidate with `scripts/score_reflex.py --cell 181021_F1_C1 --tag <name>`, which runs the model before opening the cell.
+  - Cell-1 baseline: H1 0.50, fail.
 
 ## What this project is
 
