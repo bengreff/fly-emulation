@@ -82,7 +82,7 @@ def main() -> int:
         fly_name=org.body.fly.name, adhesion_names=org.body.adhesion_names,
         model=org.body.model,
     )
-    org.aff = sensory.build(org.reg, org.conn, org.body)
+    org.aff = sensory.build(org.reg, org.conn, org.body, org.net.params)
     if org.vis is not None:
         vision.install_connectome_mask(org.reg, org.body.sim)
     org.chem = olfaction.build(org.reg, org.conn, org.body, org.net.params,

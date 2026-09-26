@@ -590,3 +590,100 @@ Seeds 0–5 have been seen: all six return to rest with ORN rates on. **Fresh se
 - uPN mean 1–20 Hz.
 
 `orn:all|rate_calibration` becomes default 1 only if all 6 pass.
+
+## Session 6b (26 September 2026)
+
+### Pre-registration: slow flexor MN fitted to intrinsic data, reflex held out
+
+**Data.** Azevedo et al. 2020 Dryad cell 180111_F2_C1: an R35C09 slow tibia flexor MN in whole-cell current clamp (`scripts/azevedo_slow_mn.py`). Only the authors' spike detections are used, and only non-excluded trials.
+
+**Fit set: intrinsic properties only.**
+- Spontaneous rate: 24.8 ± 7.7 Hz.
+- Rin: 1,041 MΩ (measured).
+- τm: 16 ms (fit to hyperpolarising steps; measured).
+- f-I: −31.6 / 0 / +31.6 / +62.9 pA gives 0.5 / 24.8 / 69.2 / 95.8 Hz.
+
+With injected current converted to mV by Rin, an LIF with reset = rest fits all four points:
+- θ (threshold − reset) = 32.6 mV;
+- t_ref = 4.27 ms;
+- tonic drive = 36.45 mV.
+
+All three are fitted (inferred). They are applied to the 60 flexor MNs classed slow by size rank (inferred matching). τm is transferred from one cell to the class, also inferred.
+
+**Held out: the leg-movement responses of the same cell.** None of these data were used in the fit. The model protocol is `scripts/probes/reflex_gain.py`, extended as follows:
+- the thorax is tethered;
+- the left middle FTi is held by the PD probe at θ0 = 90° anatomical (Azevedo: tibia about 90° to the femur at rest);
+- flexion steps of 0.8, 2.4 and 8° start at θ0;
+- extension steps start at θ0 − 8° (the measured 8° flexed offset) and move by 0.8, 2.4 and 8°;
+- 8° extension ramps run at 40, 80 and 120°/s;
+- the readout is the mean rate of the model's left-middle slow flexor MNs (7 cells), with windows as in the data.
+
+**Criteria.**
+- C1, sign: Δhold > +5 Hz for the 8° and 2.4° extension steps, and Δhold ≤ 0 for the 8° flexion step.
+- C2, magnitude: Δhold for the 8° extension step lies within [10, 40] Hz. The measured value is +20.3.
+- C3, velocity: the extension-ramp transient Δ rises from 40 to 120°/s. The measured values are +36 → +49.
+- Pass = C1 and C2. C3 is reported either way.
+
+**Written expectation.** The fitted cell responds about 1.35 Hz per mV, against about 7 for the old guessed cell. Unless the circuit delivers about 15 mV of net depolarisation for 8° of extension, C2 fails. Nothing in the reflex arc is tuned on these data.
+
+**Result, 06:40.** Fail. For the 8° extension step, Δhold is +1.0 Hz against +20.3 measured; all conditions fall within ±3 Hz. The fitted resting rate of 24 Hz is reproduced, and the clamp is within 1°.
+
+**Diagnosis.** Every left-middle claw and hook afferent fires at 0 Hz, both at 82–90° and after the step. The guessed mV transduction (2 mV baseline + 8 mV × signal against a 7 mV threshold) leaves the whole population subthreshold near the resting knee angle. The motor neuron's synaptic input changes by less than 0.3 mV.
+
+### Pre-registration: rate-coded leg proprioceptors, one scale fitted, fresh split (06:45)
+
+**Change.** Leg chordotonal and hair-plate afferents become Poisson rate generators, as the ORNs are:
+- rate = r_max × signal, with signal ∈ [0, 1] from the existing claw/hook/club/hair-plate forms (unchanged);
+- dead time equals the cell's t_ref;
+- r_max is one scalar for all of these cells: **fitted** (inferred).
+
+No FeCO spike rates exist for the adult fly. Registry switch: `afferent:leg_proprioceptors|rate_mode`.
+
+**Fit set:** the 8° extension-step Δhold of cell 180111_F2_C1 (+20.3 Hz) only. Grid: r_max ∈ {50, 100, 200, 400} Hz. Pick the value closest to 20.3.
+
+**Held out, fixed now:**
+- extension steps of 2.4° (+20.0) and 0.8° (+3.1);
+- flexion steps of 0.8° (−5.9), 2.4° (−9.3) and 8° (−4.1);
+- extension ramps at 40/80/120°/s (transient Δ +36/+46/+49; hold +22/+28/+27);
+- flexion ramps (transient about −8).
+
+**Criteria:**
+- H1: sign right in ≥ 6 of 8 step and ramp hold values, excluding the 0.8° conditions, which lie within the measured noise;
+- H2: 2.4° extension step Δhold within a factor of 2 of +20;
+- H3: extension-ramp transient > extension-ramp hold at every speed. This is the measured phasic component.
+
+**Also reported:** closed-loop stability over 6 seeds, and standing (secondary, not a criterion).
+
+**Result, 06:49.** The fit fails. The 8° extension Δhold at r_max 50/100/200/400 is −0.6/+0.6/+1.6/−1.4 Hz, against +20.3 Hz. Afferents now fire and respond: at 200 Hz, flexion-claw cells go from 18.9 to 10.5 Hz and hook cells respond. But the MN's synaptic input changes by ≤ 0.3 mV. Not adopted as it stands, and the held-out set was not run. The limiting layer is now afferent→MN transmission.
+
+### Pre-registration: VNC sensorimotor efficacy, fitted on the same single target (06:51)
+
+r_max is fixed at the grid-best 200 Hz. Fit `connection_class:vnc_sensorimotor|efficacy_scale` ∈ {1.5, 2, 3, 5, 8} on the 8° extension-step Δhold (+20.3 Hz) only. Pick the value closest to 20.3.
+
+This is a second parameter fitted after a failure, recorded as such. Held-out set and criteria H1–H3 are unchanged from above.
+
+**Adoption** as the default requires all of:
+- H1 and H2 pass;
+- stability holds over 6 seeds;
+- sugar→MN9_L stays > 5 Hz (the brain edges are untouched, so this is expected).
+
+**Result, 06:54.** The fit fails. The MN's net synaptic input at the pre-step position is −0.3, −3.4, −19.5, −46 and −94 mV at scales 1.5, 2, 3, 5 and 8. Slow MNs are silenced from 3× up, and Δhold never exceeds +1 Hz. Scaling the VNC uniformly amplifies a tonic net inhibition, not the reflex. Not adopted.
+
+### Pre-registration: glutamate onto tibia flexor MNs is excitatory (hypothesis; 06:58)
+
+**Motivation (post-hoc, from anatomy after the failures above).**
+- 453 of 1,568 input synapses onto the left-middle slow flexor MNs are glutamatergic.
+- The largest inputs are IN21A002 (168) and IN21A006 (~90 per cell). IN21A006 receives mainly extension-direction afferents.
+- Under the uniform inhibitory-glutamate convention, passive extension then inhibits the flexor, which is the wrong sign for the measured resistance reflex.
+- Glutamate's sign is set by the postsynaptic receptor (GluCl vs iGluR). No measurement for these MNs was found. Label: **guessed hypothesis**.
+
+**Change.** `glutamate_receptor_sign` = +1 for postsynaptic types "Ti flexor MN" and "Acc. ti flexor MN" (cell_types.csv rows). Everything else as in the last fit: r_max 200 Hz, VNC scale 1.
+
+**Test.** Held-out set and criteria H1–H3 unchanged. The fit-set value (8° extension Δhold) is reported, but not tuned.
+
+**Adoption requires:**
+- H1 and H2;
+- stability over 6 seeds;
+- sugar→MN9_L > 5 Hz.
+
+Otherwise the row stays in the table with a scope switch off, and the result is reported.

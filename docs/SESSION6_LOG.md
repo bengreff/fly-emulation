@@ -62,3 +62,9 @@ proprioceptors, slow-MN rest rate, reflex probes; 3 four absent mechanisms simul
 342,083 (−43,128 moved to simulated-on-default); default 408,528 → 439,573.
 **Blocked:** Azevedo 2020 raw data (Dryad API requires a bearer token); 1e (per-type measured electrophysiology)
 not started. backhouse was reachable but not needed (all runs fit on the Mac).
+
+# Session 6b (26 Sept, Ben present at start; 2 h budget)
+Start 06:32 CDT. Ben downloaded Azevedo 2020 Dryad cell 180111_F2_C1 (slow MN, R35C09, PiezoRamp2T at 5 offsets).
+- 06:40 Extracted targets from 180111_F2_C1 (scripts/azevedo_slow_mn.py; derived CSV/JSON). Fitted slow-MN LIF to
+  intrinsic data (tau 16 ms measured; theta 32.6 mV, t_ref 4.27 ms, drive 36.45 mV fitted). Pre-registered
+  held-out reflex test (DECISIONS 6b).

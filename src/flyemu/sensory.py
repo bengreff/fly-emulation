@@ -98,6 +98,10 @@ class Afferents:
     dt_ms: float = 0.1
     claw_width_deg: float = 10.0
     hook_w0_dps: float = 200.0
+    rate_max_hz: float = 0.0              # >0: proprioceptors are Poisson rate generators
+    pulse_mv: np.ndarray | None = None    # per afferent: one-step suprathreshold drive
+    t_ref_ms: np.ndarray | None = None
+    rng: np.random.Generator = field(default_factory=lambda: np.random.default_rng(3))
     _prev: dict = field(default_factory=dict)
     _omega: dict = field(default_factory=dict)
 
@@ -172,13 +176,20 @@ class Afferents:
             strain = float(seg_load[lb].sum()) if lb is not None else 0.0
             signal[ch == "load"] = np.tanh(strain)
             signal[ch == "contact"] = np.tanh(load)
-            out[self.rows[sel]] = (
-                self.baseline_mv[sel] + self.gain_mv[sel] * signal
-            )
+            val = self.baseline_mv[sel] + self.gain_mv[sel] * signal
+            if self.rate_max_hz > 0 and self.subtype is not None:
+                # rate-coded proprioceptors: Poisson with dead time at r_max * signal
+                pr = self.subtype[sel] != ""
+                hz = self.rate_max_hz * signal[pr]
+                tr = self.t_ref_ms[sel][pr] / 1000.0
+                lam = hz / np.maximum(1.0 - hz * tr, 0.05)
+                fire = self.rng.random(hz.shape) < lam * self.dt_ms / 1000.0
+                val[pr] = np.where(fire, self.pulse_mv[sel][pr], 0.0)
+            out[self.rows[sel]] = val
         return out
 
 
-def build(reg: Registry, conn, body) -> Afferents:
+def build(reg: Registry, conn, body, params=None) -> Afferents:
     n = conn.neurons
     roi = pd.read_parquet(CACHE / "male_cns_sensorimotor_roiinfo.parquet")
     roi_lut = dict(zip(roi.bodyId, roi.roiInfo))
@@ -297,6 +308,19 @@ def build(reg: Registry, conn, body) -> Afferents:
         load_bodies[leg] = np.array(ids, dtype=np.int64)
 
     prop = _measured_form(reg, body, sens, dof, joint_cols)
+    if prop and params is not None:
+        rmax = reg.require(
+            "afferent:leg_proprioceptors", "rate_mode_max_hz", units="Hz",
+            model_use="Poisson rate at full signal for FeCO and hair-plate afferents; 0 = mV mode",
+            subsystem="sensory_transduction", instances=int((prop["subtype"] != "").sum()),
+            minimal=0.0, minimal_note="0: session-6 mV transduction (2 mV + 8 mV x signal)")
+        if rmax > 0:
+            rws = conn.index_of(sens.bodyId.to_numpy())
+            pick = lambda a: np.broadcast_to(np.asarray(a, dtype=float), (conn.n,))[rws]  # noqa: E731
+            v_th, v_rest, tau, t_ref = (pick(getattr(params, k)) for k in ("v_th", "v_rest", "tau_m", "t_ref"))
+            dt = float(body.timestep * 1000.0)
+            prop.update(rate_max_hz=float(rmax), t_ref_ms=t_ref,
+                        pulse_mv=1.5 * (v_th - v_rest) / (1.0 - np.exp(-dt / tau)))
     return Afferents(
         **prop,
         rows=rows.astype(np.int64),

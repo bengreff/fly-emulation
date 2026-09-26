@@ -747,3 +747,38 @@ def test_session6_mechanisms_are_inert_by_default_and_act_when_enabled():
         m.step(kick=(np.r_[dan, kc[:400]], 50.0))
     assert m.w[m.kc_edge].sum() < 0.99 * w0.sum()
     assert m.i_slow.min() < 0                                       # slow inhibition arrived
+
+
+def test_slow_flexor_mn_reproduces_its_measured_f_i_curve():
+    """Azevedo 2020 cell 180111_F2_C1: fitted LIF matches the recorded f-I and rest rate."""
+    import json
+    import numpy as np
+    import pandas as pd
+    from flyemu.organism import Organism
+
+    meas = json.load(open("data/derived/azevedo2020_slow_mn_180111.json"))
+    rin_mohm = meas["input_resistance_MOhm"][0]
+    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    mf = pd.read_csv("data/params/motor_forces.csv", comment="#")
+    i = int(np.flatnonzero(org.conn.neurons.bodyId.isin(mf[mf.unit_class == "slow"].bodyId))[0])
+    net = org.net
+    tau, vr, vth, tref, d0 = (float(x[i]) for x in (net.tau_m, net.v_rest, net.v_th, net.t_ref, net.spont))
+    assert abs(tau - 16.0) < 1e-3 and abs(vth - vr - 32.62) < 0.05
+    dt = 0.1
+
+    def rate(extra_mv, ms=2000.0):
+        v, ref, n = vr, -1.0, 0
+        dec = np.exp(-dt / tau)
+        for k in range(int(ms / dt)):
+            t = k * dt
+            v = vr + (v - vr) * dec + (d0 + extra_mv) * (1 - dec)
+            if t < ref:
+                v = vr
+            elif v >= vth:
+                n += 1; v = vr; ref = t + tref
+        return n / (ms / 1000)
+
+    assert abs(rate(0.0) - meas["spontaneous_hz"][0]) < 3.0
+    for row in meas["f_I"]:
+        got = rate(row["dI_pA"] * rin_mohm / 1000.0)
+        assert abs(got - row["rate_on"]) < max(0.15 * row["rate_on"], 3.0), (row, got)

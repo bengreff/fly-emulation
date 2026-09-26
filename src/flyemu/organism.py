@@ -90,7 +90,7 @@ class Organism:
             adhesion_names=self.body.adhesion_names,
             model=self.body.model,
         )
-        self.aff = sensory.build(self.reg, self.conn, self.body)
+        self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
             if self.body.vision else None

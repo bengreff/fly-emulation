@@ -134,3 +134,11 @@ male_cns_skeletons_reduced:
   version: neuPrint male-cns:v1.0, fetched 2026-09-25 (scripts/skeleton_lengths.py)
   local: data/derived/skeleton_lengths.csv (raw skeletons not stored)
   basis: derived
+azevedo2020_cell_180111_F2_C1:
+  name: Azevedo et al. 2020 raw ephys, one slow tibia flexor MN (R35C09), whole-cell, 10 kHz
+  version: Dryad 10.5061/dryad.76hdr7stb (published 2021-02-18), file 180111_F2_C1.zip, downloaded by Ben 2026-09-26
+  license: CC0-1.0
+  local: data/raw/azevedo2020/ (zip + 228 unpacked .mat files)
+  sha256_prefix_zip: 59efa2e5a071d561
+  basis: measured (authors' spike detections used as-is)
+  cell_identity_source: authors' analysis scripts, Zenodo 4527659 (MIT), Dataset2_SlowInterFast_SensoryFeedback.m
