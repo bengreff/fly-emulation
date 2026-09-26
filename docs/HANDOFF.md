@@ -61,7 +61,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 | V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed). Literature now says rests of −55 to −68 mV and a KC gap of 21.5 mV (targets table) | per-class values in the targets table; apply class by class |
 | Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing. M0 at 0.165 is stable on 4/6 seeds; at 0.9× stable, but sugar→MN9 falls to 0.3 Hz | the neuromodulator pools must take over the monoamines' function |
 | CX ring parameters (uniform) | inferred (defaults). Delta7→Delta7 626 syn/cell; PEN→PEN 420; ER ring neurons silent | measured targets: bump FWHM ~100°, persistence in darkness, PENs spike at rest; EPGs express NMDA receptors (slow excitation is a candidate) |
-| No background activity | guessed | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
+| No background activity; exact-rest start | guessed. s8: a warm start (noise + ramped senses) does not rescue the ring and lowers its ignition threshold (F-WARM-1) | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
 | Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test. No publication maps it to SNpp types | FANC T1L labels (Lee et al. 2025; `data/raw/lee2025/`) joined to male-cns. CAVE token at `~/.config/flyemu/cave_token` authenticates, but FANC production returns 403 (**Ben: request FANC production access**); otherwise NBLAST bridging. VFB types MANC SNpp39 as club and SNpp41 as claw (conflict) |
 | Glutamate inhibitory at leg MNs | inferred (GluCl transcripts, Lesser 2024); excitatory would help the reflex (+0.6 → +3.4 Hz) but is insufficient | electrophysiology of IN21A→MN |
 | Leg proprioceptor rates (mV mode / r_max 200) | guessed | FeCO spike rates (none for adults). Depression makes static tuning pass only at low rates |
@@ -82,7 +82,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 | Agrawal 2020 13Bα static tuning | seen (fit target; also the held-out layer check in s7) | none |
 | Agrawal 2020 10Bα / 9Aα recordings | held out; not extracted | none |
 | PN spontaneous rate (KW2009 "1–5 Hz"; Turner 2008 4.6 ± 4.2 Hz) | **spent** in s7 (AL P/M/PR/MR/PRG/MRG) | none |
-| PEN spontaneous 3.9 Hz; KC 0.1 Hz (targets table) | held out | for the CX / MB work |
+| PEN spontaneous 3.9 Hz; KC 0.1 Hz (targets table) | **spent** in s8 warm-start test (PEN fail, KC within 1 SD) | none |
 | flybench olfactory tasks 08/17/18/26/27 | held out for AL changes (m2 baseline 0.80); not run | none |
 | Command direction (MDN back, DNg100 forward) | spent on seeds 1–4 in s7 | use new seeds and a gait criterion next time |
 

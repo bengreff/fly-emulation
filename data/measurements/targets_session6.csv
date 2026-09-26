@@ -49,10 +49,10 @@ MN resting potential fast/intermediate/slow,tibia flexor MNs,-68/-60/-48,mV,n=15
 MN input resistance fast/intermediate/slow,tibia flexor MNs,150/300/700,MOhm,n=15/11/14,Azevedo et al. 2020,Fig 3E,secondary (fetch summary),none
 PN spontaneous rate,antennal PN,4.6,Hz,SD 4.2 (n=37),Turner Bazhenov & Laurent 2008 J Neurophysiol,Fig 3F,text (PDF),held-out
 Kenyon cell threshold minus rest,Kenyon cell,21.5,mV,SD 5.6 (n=17),Turner Bazhenov & Laurent 2008 J Neurophysiol,Fig 3G,text (PDF),none
-Kenyon cell spontaneous rate,Kenyon cell,0.1,Hz,SD 0.4 (n=71),Turner Bazhenov & Laurent 2008,Results,text (PDF),held-out
+Kenyon cell spontaneous rate,Kenyon cell,0.1,Hz,SD 0.4 (n=71),Turner Bazhenov & Laurent 2008,Results,text (PDF),held-out (spent session 8 warm start: within 1 SD)
 Kenyon cell input resistance,Kenyon cell,>10,GOhm,n.r.,Turner Bazhenov & Laurent 2008,Results,text (PDF),none
 P-EN input resistance,P-EN central complex,1.9,GOhm,SD 0.8,Turner-Evans et al. 2017 eLife (PMC5440168),Methods,text,none
-P-EN spontaneous rate (standing),P-EN central complex,3.9,Hz,SD 2.6,Turner-Evans et al. 2017 eLife,Methods (loose patch),text,held-out
+P-EN spontaneous rate (standing),P-EN central complex,3.9,Hz,SD 2.6,Turner-Evans et al. 2017 eLife,Methods (loose patch),text,held-out (spent session 8 warm start: fail)
 descending neuron AX resting potential,DN AX,-59,mV,n=3; LJP n.s.,Schnell et al. 2017 Curr Biol (PMC6309624),Fig 3 legend,text,none
 Mi1/Tm1/Tm2/Tm4 physiological rest range,medulla neurons,-50 to -60,mV,authors' statement,Behnia et al. 2014 Nature (PMC4243710),Methods,text,none
 spontaneous rate,slow tibia flexor MN cell 180621_F1_C1,20.1,Hz,n trials in json,Azevedo et al. 2020 Dryad raw (derived by scripts/azevedo_slow_mn.py --intrinsic-only),CurrentStep pre-windows,text (raw data),held-out (spent s7 transfer test)

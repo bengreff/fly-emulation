@@ -1321,3 +1321,47 @@ Abdominal and wing MNs use the guessed force_per_spike = 10 and guessed pitch/ya
 2. **Stability criterion, changed by Ben.** The CX heading ring is scored by its own bump test: EPG active fraction 15–40%, persisting ≥ 200 ms without input, and PEN < 50 Hz after a full-ring kick. Persistence there is not a stability failure. **Every other cell must still go quiet** after sensory silencing (0 non-tonic spikes in the last 100 ms, CX ring types excluded). Applies from session 8, with the CX type list declared in the pre-registration.
 3. **FANC access.** Ben provided a CAVE token, stored at `~/.config/flyemu/cave_token` (mode 600, never committed). It authenticates, but grants only `FANC_sandbox` and `banc_public` view. The `fanc_production_mar2021` and `brain_and_nerve_cord` datastacks return 403. The Lee et al. 2025 labels need FANC production access, which Ben must request.
 4. **Session length:** unattended sessions stop at a natural end rather than starting multi-hour items they cannot finish.
+
+## Session 8 (26 September 2026, attended)
+
+### Pre-registration: warm start ("not from brain death") and the CX bump test (16:47)
+
+**Change (option, off by default).** Every run so far starts the CNS exactly at rest, noise-free, with every sense switched on as a step at t = 0 (`state:all_neurons|initial_condition`, still the minimal placeholder). Ben's question: is the ring's bistability an artefact of starting the fly from brain death? The warm-start protocol W, identical for every run and never tuned per episode:
+- background membrane noise σ (`cell_type:all|background_noise`, mV/√ms) on every neuron, standing in for unmodelled ongoing input (guessed; a single scalar);
+- noise and all senses ramp linearly from 0 to 1 over 500 ms; scoring starts after 1,000 ms;
+- then a 50 ms, 10 mV EPG kick: **local** (EPGs within ±45° of a heading drawn from the seed; heading from the PB glomerulus, inferred, ±22.5°) or **full** (all 50 EPGs); then all afferent drive is removed for 500 ms (noise stays on).
+
+Probe: `scripts/probes/warm_start.py`. **Correction to s7:** `cx_kick.py` kicked the first N EPGs in table order (glomeruli L3, L5, L5, L3, R3, R7), which is not a local kick. The s7 "local kick leaves no bump" rows are therefore not bump tests.
+
+**Motivation.** Ben's question (not post-hoc from a failed run). Mechanistic lead: the 147k GABAergic ER→EPG synapses come from ring neurons that are silent in the noise-free model, so the ring has no ongoing inhibition.
+
+**Fit set: σ.** A sweep σ ∈ {0.25, 0.5, 0.75, 1.0, 1.5}, default config, senses on, no kick, seed 0. σ is *admissible* if, in the warm window (500–1,000 ms): no runaway; uPN mean ≤ 8.8 Hz (Turner 2008, 4.6 + 1 SD, seen/spent); non-CX brain mean ≤ 5 Hz (guessed ceiling). σ is not fitted to any CX quantity.
+
+**CX ring types (Ben's decision 2, declared list):** EPG, EPGt, PEN_a, PEN_b, PEG, Delta7, ER*, EL*. PFNs count as ordinary cells.
+
+**Criteria, per config (default, T), at each admissible σ, seeds 1, 2, 3:**
+- B1 local kick → in the window 200–500 ms after the kick ends, EPG active fraction (≥ 10 Hz) 15–40%, population-vector strength ≥ 0.5, and the bump within 45° of the kicked heading;
+- B2 full kick → PEN mean < 50 Hz in the same window;
+- Q every other cell goes quiet → the non-CX, non-tonic rate in the last 100 ms is ≤ 1.2 × the rate of a matched control (same σ and seed, senses off throughout, no kick) + 0.05 Hz.
+A config passes if B1, B2 and Q hold on 3/3 seeds.
+
+**Held out (reported only at admissible σ; not used to choose it):** resting PEN rate 3.9 ± 2.6 Hz (Turner-Evans 2017) in the warm window; KC 0.1 ± 0.4 Hz (Turner 2008).
+
+**Adoption.** If a config passes, W becomes the default initial condition for scored runs, σ is registered as guessed with this entry as its basis, and T is re-tested on the embodied criteria (PLAN_NEXT 2). Otherwise W stays an option, off, and the brain-death hypothesis is rejected for the ring at these σ.
+
+**Expectation.** Noise will activate ER ring neurons and Delta7, which may remove full-kick saturation (B2). I expect no persistent local bump (B1) at σ ≤ 1, because the ring's recurrent excitation is uniform rather than wedge-structured. I would be glad to be wrong.
+
+**Result, warm start (17:05). Fail: 0/3 seeds in every condition. The brain-death hypothesis is rejected for the ring.** Data: `runs/s8_warm/{sweep,batch_default,batch_T}.jsonl`; scorer `scripts/probes/score_warm.py`.
+
+| Config | σ 0.25 | σ 0.5 | σ 0.75 |
+|---|---|---|---|
+| default | ring silent; local and full kicks both die (B1 ✗, B2 ✓ trivially) | 2 seeds as at 0.25; seed 1 **ignites by itself** during warm-up (PEN 112 Hz) | ring saturated before any kick (PEN 176–186 Hz) |
+| T | **saturated during the gentle ramp**, before any kick (PEN 188–189 Hz) | the same | the same |
+
+- The ring has no intermediate state under any start: PEN is ~0 or 110–190 Hz. A properly localised 12-EPG kick never leaves a bump (EPG active fraction 0 or 0.76–0.78; vector strength ≤ 0.36).
+- Background activity **lowers** the ignition threshold rather than stabilising the ring. The ER and Delta7 inhibition it recruits (ER 7–17 Hz, Delta7 23–39 Hz) does not hold EPGs back.
+- Under T, the ring is ignited by the steady leg-afferent drive itself, not by the t = 0 step: ramping senses over 500 ms makes no difference.
+- Q (every other cell goes quiet) fails only where the ring is saturated at σ ≤ 0.5, which is the ring's output driving the rest of the brain. At σ 0.75 everything (control included) sits at the same ~1.25 Hz, so Q passes.
+- **Held out, now spent:** resting PEN 3.9 ± 2.6 Hz → model 0 or 112–190 Hz (fail). KC 0.1 ± 0.4 Hz → 0–0.45 Hz (within 1 SD at every admissible σ).
+
+**Decision.** W stays an option (`scripts/probes/warm_start.py`), off; σ is not registered. The initial condition is not the cause of the bistability. It is intrinsic to the ring's parameters: strong uniform recurrent excitation with no working wedge-structured inhibition. This moves the next CX step to a structural mechanism (slow NMDA-like EPG excitation and/or wedge-structured inhibition), tested with the corrected local-kick probe.

@@ -98,6 +98,7 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-STAB-1 | Session 7 | The calibrated network has latent self-sustaining states; the monoamine fast-excitation convention is wrong but load-bearing |  |
 | F-CX-1 | Session 7 | The CX ring is bistable (silent or saturated), never a bump; wiring and measured targets |  |
 | F-AZ-4 | Session 7 | Slow-MN fit on 4 cells: τm transfers, the rest rate and near-rest f-I do not |  |
+| F-WARM-1 | Session 8 | Starting from a living state instead of exact rest does not give the CX ring a bump; background activity lowers its ignition threshold |  |
 
 ### Session 1 status table (historical)
 
@@ -2158,3 +2159,22 @@ Noisy-LIF check (θ 32.6 and t_ref 4.27 fixed; mean drive μ and noise σ fitted
 - noise (σ 1–3 mV/√ms) reproduces the near-rest firing of 180621 and 181127, but no single (θ, t_ref) fits all four cells.
 
 The class differs in gain as well as drive. Next: fit θ per cell together with σ, or model the synaptic barrage explicitly.
+
+# Session 8
+
+## F-WARM-1. Starting the fly from a living state instead of "brain death" does not give the CX ring a bump
+
+**Question (Ben).** Every run starts every neuron exactly at rest, noise-free, and switches all senses on at t = 0. Is the ring's bistability an artefact of that start?
+
+**Test.** Warm start W (DECISIONS s8): background noise σ plus senses ramped over 500 ms, scored after 1 s; then a localised EPG kick (heading from the PB glomerulus) or a full-ring kick; then senses removed. Default and T; σ 0.25 / 0.5 / 0.75 (admissible by the uPN and brain-rate limits); seeds 1–3; 54 runs.
+
+**Result: 0/3 seeds in every condition.**
+- The ring is a **threshold switch in background drive**, with nothing in between: silent at σ ≤ 0.5 (1 of 3 seeds self-ignites at 0.5), saturated at 0.75 (PEN 176–190 Hz). Its inhibitors fire (ER 7–17, Delta7 23–39 Hz) but do not hold it.
+- Under T the ring saturates during the gentle ramp, before any kick, at every σ. The t = 0 step is not what ignites it; the steady leg drive is.
+- A localised 12-EPG kick never leaves a bump.
+- Held-out resting rates (now spent): PEN 3.9 Hz → 0 or 112–190 Hz (fail); KC 0.1 Hz → 0–0.45 Hz (pass).
+- **Correction to F-CX-1:** the s7 "local kick" hit EPGs scattered around the ring (table order). The s7 single-knob screens' "local-kick bump: none" column was not a bump test. Their full-kick column stands.
+
+**Meaning.** The missing bump is a property of the ring's parameters, not of how the simulation starts. Uniform recurrent excitation (PEN→EPG 517, PEN→PEN 420, EPG→EPG 233 synapses per cell) at one shared efficacy, with inhibition that cannot localise it, has only "off" and "on". The warm-start protocol remains useful as the physiological initial condition once the ring works, and it is kept as an option.
+
+**Next discriminating experiment.** Re-screen the structural candidates with the corrected local kick. Slow (NMDA-like) EPG excitation and wedge-structured inhibition can make a bump; a uniform global knob cannot.
