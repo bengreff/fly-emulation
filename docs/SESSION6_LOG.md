@@ -34,3 +34,6 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
   a 34° imposed flexion raises lm claw 6→18 Hz and hook-flex 0→25 Hz, but Ti extensor stays 0 Hz and flexor
   18→19 Hz. Open loop the wiring does resist (claw-flex 40 Hz → extensor 0→4 Hz, flexor 12→9 Hz). Failing layer:
   afferent→premotor→MN gain (efficacy 0.165 mV global; FeCO absolute rates unmeasured).
+- Re-measured joint-sign calibration for the corrected body (neutral no longer at the FTi limit): 5 secondary
+  components flip (hind ThC/CTr fore-aft, rf coxa lateral); 12/66 dominant actions change. Adopted.
+  With it the fly tips (roll 52°, z_min 0.64). Standing outcome is sensitive to hind-leg ThC sign; fails either way.
