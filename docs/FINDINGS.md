@@ -1797,3 +1797,27 @@ The model's VNC is therefore a quiet, inhibition-dominated network in which refl
 - 44 PNs have no ORN synapse at the ≥5-synapse cut; these are non-olfactory or thermo/hygro glomeruli.
 - The model applies all LN inhibition postsynaptically and uniformly. Much of the animal's LN inhibition is presynaptic onto ORN terminals and GABA-B-mediated (Olsen & Wilson 2008). The mechanisms now exist, off by default (F-MECH-1).
 - The discriminating experiment is a pre-registered test against measured spontaneous PN rates (Wilson et al. 2004; Bhandawat et al. 2007): does moving LN inhibition to presynaptic/GABA-B bring ≥ 80% of PNs to 1–20 Hz?
+
+## F-VNC-1. Real leg interneurons rest depolarised and code position in graded Vm; the model's are pinned at rest
+
+Data: Agrawal et al. 2020 raw recordings (Zenodo 4307018, CC0). Individual archive members were fetched by range requests (`scripts/fetch/zenodo_zip_members.py`) and analysed by `scripts/agrawal_vnc_ins.py` → `data/derived/agrawal2020_vnc_interneurons.csv`. Measured values below are corrected for the 12 mV liquid junction potential.
+
+| Class | Cells | Median Vm | Graded tracking of tibia angle |
+|---|---|---|---|
+| 13Bα (GABAergic, nonspiking) | 5 | −40 to −51 mV | depolarises 4–10 mV from flexed (0–60°) to extended (150–180°), in every cell |
+| 10Bα (cholinergic, effectively nonspiking) | 3 | −49 to −52 mV | a few mV of modulation |
+| 9Aα (GABAergic, spiking per the paper) | 2 | −45 and −53 mV | yes |
+
+My crude spike detector (>1 mV events) finds essentially none, even in 9Aα. Spikes in these somatic recordings are small, so spike rates are not reported.
+
+**Model at rest** (`scripts/probes/vnc_rest_state.py`), T1 cells of the same hemilineages plus 13A/21A/3A:
+- mean V is −51.7 to −52.2 mV, which is the borrowed V_rest;
+- p10–p90 spread across cells is ~1 mV;
+- 0–2% fire.
+
+Real leg interneurons sit continuously modulated in a graded operating range. The model's sit at rest and can only pass input that crosses a 7 mV threshold. That is the mechanism behind F-AZ-2.
+
+These data give a measured, non-behavioural calibration target for the VNC: the 13Bα Vm–angle tuning. The ramp-and-hold set is being fetched. The next model change should be pre-registered against these data, with a second slow MN cell as the fresh held-out reflex test:
+- which leg interneuron types are graded (13Bα and 10Bα are measured nonspiking);
+- their tonic release at rest (Burrows);
+- their operating point.

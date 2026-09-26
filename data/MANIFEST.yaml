@@ -142,3 +142,10 @@ azevedo2020_cell_180111_F2_C1:
   sha256_prefix_zip: 59efa2e5a071d561
   basis: measured (authors' spike detections used as-is)
   cell_identity_source: authors' analysis scripts, Zenodo 4527659 (MIT), Dataset2_SlowInterFast_SensoryFeedback.m
+agrawal2020_ephys_members:
+  name: Agrawal et al. 2020 eLife 9:e60299 whole-cell VNC interneuron recordings (selected members only)
+  version: Zenodo 4307018 (mirror of Dryad 10.5061/dryad.k3j9kd55t), Ephys_data.zip 7,496,404,627 bytes
+  license: CC0-1.0
+  local: data/raw/agrawal2020/ (10Balpha_preATR_swings, 13Balpha_RMP_swings, 9Aalpha_preTTX_swings, 13Balpha_extfirst_rampandhold, ephys_data_description.txt)
+  fetch: scripts/fetch/zenodo_zip_members.py (range requests; each member's uncompressed size checked against the central directory)
+  basis: measured (Vm not LJP-corrected in raw files; paper subtracts 12 mV)
