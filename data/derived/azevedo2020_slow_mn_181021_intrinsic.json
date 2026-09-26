@@ -1,0 +1,60 @@
+{
+ "cell": "181021_F1_C1 (R35C09 slow tibia flexor MN)",
+ "spontaneous_hz": [
+  23.5,
+  3.2,
+  54
+ ],
+ "spontaneous_source": "current-step pre-windows",
+ "tau_m_ms": [
+  15.5,
+  21
+ ],
+ "input_resistance_MOhm": [
+  617.0,
+  32.0,
+  21
+ ],
+ "f_I": [
+  {
+   "step_pA": -50.0,
+   "n": 10,
+   "dI_pA": -55.44,
+   "rate_pre": 22.8,
+   "rate_on": 0.0,
+   "sd": 0.0
+  },
+  {
+   "step_pA": -25.0,
+   "n": 11,
+   "dI_pA": -27.62,
+   "rate_pre": 24.91,
+   "rate_on": 0.61,
+   "sd": 2.01
+  },
+  {
+   "step_pA": 25.0,
+   "n": 11,
+   "dI_pA": 27.32,
+   "rate_pre": 23.82,
+   "rate_on": 62.63,
+   "sd": 2.59
+  },
+  {
+   "step_pA": 50.0,
+   "n": 11,
+   "dI_pA": 53.57,
+   "rate_pre": 23.09,
+   "rate_on": 80.81,
+   "sd": 4.25
+  },
+  {
+   "step_pA": 100.0,
+   "n": 11,
+   "dI_pA": 104.93,
+   "rate_pre": 22.73,
+   "rate_on": 106.67,
+   "sd": 10.09
+  }
+ ]
+}

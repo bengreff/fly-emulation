@@ -722,3 +722,23 @@ The Azevedo cell 180111 reflex is reported but is not a test (seen).
 - r_max 200 with VNC ×2: 46%, but of both signs, with p10/p90 ±0.3 mV/deg (too steep).
 
 Measured 13Bα is uniformly positive, 0.012–0.083.
+
+## Session 6c (26 September 2026, late morning)
+
+### Pre-registration: do the slow-MN parameters transfer to a second cell? (intrinsic data only)
+
+Cell 181021_F1_C1 is a second R35C09 slow tibia flexor MN. Its Piezo (reflex) trials are **sealed** as the fresh held-out reflex test; only CurrentStep trials are analysed here.
+
+**Predictions** from the 180111 fit (θ 32.62 mV, t_ref 4.27 ms, drive 36.45 mV, τ 16 ms):
+- P1: spontaneous rate within ±30% of 24.8 Hz, i.e. 17.4–32.2 Hz.
+- P2: τm within ±30% of 16 ms.
+- P3: f-I. At each tested current, the LIF with the fitted θ, t_ref and drive, and current converted by **this cell's measured Rin**, predicts its rate within max(30%, 5 Hz).
+
+**Pass** = P1–P3. A pass supports transferring one cell's fit to the 60-cell class. A fail means the class needs a distribution, not a point value.
+
+**Result.** Pass on all three.
+- P1: spontaneous rate 23.5 ± 3.2 Hz.
+- P2: τ 15.5 ms.
+- P3: f-I at −55/−28/+27/+54/+105 pA, measured 0/0.6/62.6/80.8/106.7 Hz against predicted 0/0/51.5/69.4/95.3 Hz, all within tolerance. The model is systematically ~11 Hz low above rest.
+
+Cell 2 has Rin 617 MΩ against cell 1's 1,041, so input resistance varies 1.7× within the class. Class transfer of the point fit is supported, with the caveat that Rin is not in the LIF: synaptic mV are not scaled by it.

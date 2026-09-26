@@ -1840,3 +1840,19 @@ Model, same protocol (`scripts/probes/vnc_angle_tuning.py`: tethered, front-leg 
 - adding VNC ×2: 46% tuned, but with both signs and too steep (±0.3 mV/deg).
 
 The pathway exists where the afferents are reconstructed. What is missing is identifying which model 13B cells are 13Bα (cell matching), and a transmission gain fitted to them.
+
+---
+
+# Session 6c (26 September 2026, late morning)
+
+## F-AZ-3. The slow-MN fit transfers to a second recorded cell
+
+Cell 181021_F1_C1 (R35C09) was analysed on intrinsic data only; its reflex trials are sealed as the fresh held-out set. Measured:
+- spontaneous rate 23.5 ± 3.2 Hz;
+- τm 15.5 ms;
+- Rin 617 ± 32 MΩ (cell 1: 1,041);
+- f-I 0 / 0.6 / 62.6 / 80.8 / 106.7 Hz at −55 / −28 / +27 / +54 / +105 pA.
+
+The LIF fitted on cell 1 predicts every point within the pre-registered tolerance (predicted 0 / 0 / 51.5 / 69.4 / 95.3). **Pass.** This supports using one fitted point for the 60-cell slow class.
+
+A bug was found and fixed on the way: `azevedo_slow_mn.py` assumed 10 kHz, and this cell is 50 kHz. The script now reads each trial's rate; cell-1 outputs are unchanged, bit for bit.

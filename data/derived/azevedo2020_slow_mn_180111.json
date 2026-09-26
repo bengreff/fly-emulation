@@ -5,6 +5,11 @@
   7.7,
   86
  ],
+ "spontaneous_source": "piezo pre-windows",
+ "tau_m_ms": [
+  15.6,
+  18
+ ],
  "input_resistance_MOhm": [
   1041.0,
   90.0,

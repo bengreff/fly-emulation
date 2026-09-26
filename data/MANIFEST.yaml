@@ -149,3 +149,11 @@ agrawal2020_ephys_members:
   local: data/raw/agrawal2020/ (10Balpha_preATR_swings, 13Balpha_RMP_swings, 9Aalpha_preTTX_swings, 13Balpha_extfirst_rampandhold, ephys_data_description.txt)
   fetch: scripts/fetch/zenodo_zip_members.py (range requests; each member's uncompressed size checked against the central directory)
   basis: measured (Vm not LJP-corrected in raw files; paper subtracts 12 mV)
+azevedo2020_cell_181021_F1_C1:
+  name: Azevedo et al. 2020 raw ephys, second slow tibia flexor MN (R35C09, PiezoRamp2T at 5 offsets per authors' scripts)
+  version: Dryad 10.5061/dryad.76hdr7stb, file 181021_F1_C1.zip, downloaded by Ben 2026-09-26
+  license: CC0-1.0
+  local: data/raw/azevedo2020/181021_F1_C1/
+  sha256_prefix_zip: 54c77cf90a911d69
+  basis: measured
+  held_out: reflex (Piezo*) trials reserved as the fresh held-out test (DECISIONS 6b); only intrinsic trials analysed so far
