@@ -1443,3 +1443,16 @@ At m2 / ≥ 5 synapses: 14.9k more inhibitory and 16.4k fewer excitatory edges. 
 - `WORKING_PROFILE` is now m3 (`FLYEMU_PROFILE=m2` reproduces sessions 5–8). The probes use `WORKING_PROFILE`, and m3 through the profile reproduces the scan (seed 0: 0.358).
 - **New regression references (m3):** sugar→MN9_L 6.3 / 96.7 Hz; closed loop seeds 0–2: 0 non-tonic spikes, brain excluding ORNs 0.21–0.36 Hz.
 - **The sugar pathway is now marginal** (6.3 Hz at 100 Hz stimulation). Any further change that lowers it below 5 Hz must be reported as a regression failure.
+
+**Result, ring-normalisation screen (18:40; m3, σ 0.5, `runs/s8_norm/`).** 0/3 everywhere.
+- m3 baseline: as m2 (default silent; T saturated, PEN ~180 Hz).
+- Per-cell normalisation of ring-internal input: no change (T EPG 82% active, PEN ~180 Hz).
+- Normalisation + Delta7 +1: as Delta7 +1 alone (localised, EPG 0.36–0.40 active, vector 0.62–0.64 on 2 seeds; the bump misplaced).
+- Count heterogeneity in total input is not what places the bump. Under Delta7 +1 with T, a localised state **persists after the senses are removed**; only its position fails B1.
+- Open question: pinned by wiring, or a weak kick? **Exploratory follow-up:** kick 20 mV for 200 ms at headings 0/90/180/270°, T + Delta7 +1, seeds 1–3.
+
+**Result, bump-move test (18:45; `runs/s8_move/move.jsonl`, 12 runs). The bump is pinned.**
+- With a 20 mV, 200 ms kick under T + Delta7 +1, the state after the kick sits near **~350°** or **~60–85°** whatever the kicked heading.
+- Kicks at 0° land on target (errors 4–5°). Kicks at 180° and 270° end 78–169° away.
+- The localised states persist in darkness (EPG 0.30–0.46 active, vector 0.5–0.73, when at ~350°), but with PEN 80–106 Hz and Delta7 ~190–200 Hz.
+- **Reading.** The ring has two preferred locations set by its effective wiring and input, not a continuous attractor. Per-cell input normalisation does not remove them. Next: find the source of the asymmetry (per-glomerulus PEN→EPG / EPG→PEN offset structure, ER/ExR input distribution) before any adoption. Delta7 +1 stays a candidate.

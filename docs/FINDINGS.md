@@ -102,6 +102,7 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-RCPT-1 | Session 8 | Transcripts fill glutamate sign for 20 types; wiring cannot predict sign-critical receptors |  |
 | F-NT-1 | Session 8 | The model's transmitter labels call every KC dopaminergic and wire ~3.3k inhibitory cells as excitatory; the curated labels destabilise the current calibration |  |
 | F-DELAY-2 | Session 8 | Inferred delays for untyped cells replace a borrowed 1.8 ms default |  |
+| F-CX-2 | Session 8 | Excitatory glutamate onto Delta7 (iGluR co-expressed) gives the ring a persistent localised state, pinned at two headings |  |
 
 ### Session 1 status table (historical)
 
@@ -2215,3 +2216,14 @@ The class differs in gain as well as drive. Next: fit θ per cell together with 
 - 10,809 untyped cells used the borrowed 1.8 ms default.
 - A ridge model of path length on volume, synapse counts and superclass has a CV delay error of 0.14 ms (median), against 0.84 ms for the default. It is adopted (`cell_type:untyped|inferred_conduction_delay`).
 - Sugar→MN9 at 100 Hz moves 26.3 → 20.3 Hz (trial spread 10–26); closed loop is unchanged.
+
+## F-CX-2. Excitatory glutamate onto Delta7 gives the ring a persistent but pinned localised state
+
+- Delta7 co-expresses GluClα and iGluR (F-RCPT-1), so the model's all-inhibitory Delta7→Delta7 (626 synapses/cell) is unsupported.
+- With Delta7's glutamate input set to +1 under T, the ring stops saturating uniformly:
+  - 28–46% of EPGs stay active in darkness, vector strength 0.5–0.83;
+  - PEN 80–110 Hz;
+  - Delta7 ~200 Hz, acting as a global inhibitor.
+- **The state is pinned** to ~350° or ~60–85°. Kicks of 20 mV for 200 ms at 180° and 270° do not move it (errors 78–169°).
+- Normalising each ring cell's total ring input changes nothing, so the pinning comes from structured asymmetry (offsets or input distribution), not count noise.
+- A continuous heading attractor is not yet present.

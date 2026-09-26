@@ -1,55 +1,58 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of the end of session 7, 26 September 2026. History is in `docs/FINDINGS.md`, `docs/DECISIONS.md` and `docs/archive/`. The procedure is in `docs/WORKFLOW.md`, the model in `docs/MODEL.md`, the commands in `docs/RUNNING.md`.
+**Rewritten each session; do not append.** State as of the end of session 8 (attended), 26 September 2026. History is in `docs/FINDINGS.md`, `docs/DECISIONS.md` and `docs/archive/`. The procedure is in `docs/WORKFLOW.md`, the model in `docs/MODEL.md`, the commands in `docs/RUNNING.md`.
 
 ## One paragraph
 
-- A male-CNS connectome (167,111 neurons) drives a flybody MuJoCo fly in closed loop, with no controller. **The working model is unchanged this session**; all new mechanisms are options, off by default.
-- Session 7 replaced guesses with **measured synaptic physiology**:
-  - the measured ORN→PN unitary EPSP is **11× the model's** brain-wide efficacy;
-  - its measured depression (Nagel 2015) has the same form as the model's rule.
-- Wiring these measured values into the model shows why the fly does not stand. Transferring the measured first-order synapse to leg afferents (config **T/T′**):
-  - gives the first right-signed flexion reflex on dev (H1 0.80);
-  - gives the best standing yet (min z up to 0.87–0.92 mm, against 0.90 needed);
-  - makes the forward command DNg100 move the fly forward on 4/4 fresh seeds.
-- It cannot be adopted: it trips a **bistable central-complex ring**. The default model's ring is either silent (0 Hz) or saturated (EPG 77, PEN 189 Hz), never the measured bump state (PEN ~3.9 Hz).
-- With the ring's output removed, T is fully stable. **The CX ring is now the gate to the embodied milestones.**
+- A male-CNS connectome (167,111 neurons) drives a flybody MuJoCo fly in closed loop, with no controller.
+- **The working model changed this session: profile m3.**
+  - Transmitter identity now comes from the curated `consensusNt`. The EM classifier had labelled every Kenyon cell dopaminergic and wired ~3.3k GABA/glutamate cells as excitatory.
+  - Efficacy was recalibrated to 0.15675 mV by a closed-loop rule (v3).
+  - `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
+- **Blanks filled from data:**
+  - transcript-based receptor calls for 69 types (Davis 2020), including EPG and Delta7;
+  - glutamate sign for 20 types;
+  - inferred delays for 10,809 untyped cells.
+- **Inference algorithm result:** wiring cannot predict sign-critical receptors (leave-one-type-out at chance).
+- **CX ring:**
+  - starting the fly from a living state instead of "brain death" does not fix it (F-WARM-1);
+  - the NMDA lead was withdrawn;
+  - making Delta7's glutamate input excitatory (supported by its iGluR expression) gives the first **localised persistent state** under T, but at a fixed heading.
 
-## Working model (unchanged)
+## Working model (m3)
 
-- Profile **m2**, edges ≥ 5 synapses, efficacy 0.165 mV, noise-free.
-- Morphological delays on; Hallem ORN rates on; per-MN leg forces; fitted slow MNs; BANC proprioceptor subtypes.
+- Profile **m3** = m2 + `connectome:all|nt_source_consensus=1` + efficacy 0.15675 mV. Edges ≥ 5 synapses, noise-free.
+- Morphological delays (typed: skeleton; untyped: inferred); Hallem ORN rates; per-MN leg forces; fitted slow MNs; BANC proprioceptor subtypes; transcript-based glutamate sign rows (20 types).
 - Runs set `motor_unit:all|force_per_spike=10` (non-leg MNs).
-- Regression (start = end, bit-identical): sugar→MN9_L 26.3 / 87.3 Hz; closed loop 0 non-tonic spikes, brain 0.27–0.39 Hz.
+- Regression (end of s8): sugar→MN9_L **6.3 ± 2.1 / 96.7 Hz** (marginal; > 5 required); closed loop seeds 0–2: 0 non-tonic spikes, brain excluding ORNs 0.21–0.36 Hz.
 
-## New options (all off; see MODEL.md "session 7 switches")
+## Options (off unless stated)
 
 | Key | Meaning | Status |
 |---|---|---|
-| `connection_class:ORN_to_uPN\|efficacy_scale` | ×10.9 = measured uEPSP 6.19 mV at the median 22-synapse connection | tested, fails the PN rate criteria (F-AL-4) |
-| `connection_class:ORN_to_uPN\|homeostatic_matching` | equal median uEPSP per PN (KW2008 Fig 4B) | tested, fails |
-| `afferent:ORN\|measured_depression` | U 0.22, τ_rec 893 ms (Nagel 2015, hand-verified) | tested with the above |
-| `connection_class:leg_proprioceptor_output\|efficacy_scale` | the ORN→PN strength transferred to leg afferents | config T / T′ (F-XFER-1) |
-| `afferent:leg_proprioceptors\|transferred_depression` | Nagel depression on leg afferents | on in T, off in T′ |
-| `FLYEMU_EXTRA_PARAMS=<csv>` | candidate cell-type rows, appended to `cell_types.csv` | the mechanism for testing rows without touching live tables |
-| `FLYEMU_PROPRIO_ASSIGNMENT=<csv>` | candidate proprioceptor assignment table | used for the claw-swap test |
+| `connectome:all\|nt_source_consensus` | consensusNt transmitters | **on in m3** |
+| `cell_type:untyped\|inferred_conduction_delay` | inferred untyped-cell delays | **on** |
+| `cell_type:all\|background_noise` + `scripts/probes/warm_start.py` | warm start (noise, ramped senses) | tested, does not rescue the ring (F-WARM-1) |
+| `candidates_s8_d7_glu_pos.csv` | Delta7 glutamate input excitatory | localised but pinned bump under T |
+| `candidates_s8_ring_norm*.csv` | per-cell ring input normalisation | no effect |
+| s7 options (ORN→PN ×10.9, depression, leg afferent ×10.9 = config T) | see MODEL.md | unchanged |
+| `FLYEMU_EXTRA_PARAMS`, `FLYEMU_PROPRIO_ASSIGNMENT`, `FLYEMU_PROFILE` | candidate rows / assignment / profile | mechanisms |
 
 - **T** = `rate_mode_max_hz=200` + `leg_proprioceptor_output|efficacy_scale=10.9` + `transferred_depression=1`.
-- **T′** = the same without depression. T′ fails stability.
-- Candidate row files are `data/params/candidates_s7_*.csv`. None is live.
 
 ## Status by layer
 
 | Layer | Status | Evidence |
 |---|---|---|
-| Body | mass, ranges, collisions checked; one net torque actuator per DOF (no co-contraction stiffness) | F-BUG-7, F-MASS-1 |
-| Motor units | leg forces from Azevedo (derived); slow MN fitted, transfers to a 2nd cell | F-MOTOR-3, F-AZ-2/3 |
-| Leg sensors | BANC subtypes (derived); claw directions inferred, favoured over their mirror on dev (H1 0.80 vs 0.10) | F-SENSE-2, s7 claw swap |
-| Leg VNC | default silent; under T, the reflex is right-signed for flexion; extension excitation is 20× short because glutamatergic IN21A006 cancels it | F-XFER-1 |
-| AL | measured ORN→PN strength over-drives PNs into a bimodal population; post-hoc budget spent | F-AL-4 |
-| Central complex | **bistable: silent or saturated; no bump** | F-STAB-1 |
-| Brain pathways | sugar→MN9 passes; stability holds over seeds (default) | F-CAL-3 |
-| Standing / walking | default fails; T reaches 0.75–0.92 mm and DNg100 moves forward, but T is unstable | F-XFER-1 |
+| Body | mass, ranges, collisions checked; one net torque actuator per DOF | F-BUG-7, F-MASS-1 |
+| Motor units | leg forces from Azevedo (derived); slow MN fitted | F-MOTOR-3, F-AZ-2/3/4 |
+| Leg sensors | BANC subtypes (derived); claw directions inferred | F-SENSE-2 |
+| Leg VNC | default silent; under T right-signed flexion reflex; extension cancelled by glutamatergic IN21A006 | F-XFER-1 |
+| AL | measured ORN→PN strength over-drives PNs; budget spent | F-AL-4 |
+| Transmitters / receptors | consensusNt (m3); receptor calls for 69 types; glutamate sign for 20 | F-NT-1, F-RCPT-1 |
+| Central complex | default silent; T saturates; with Delta7 +1 a localised state that persists in darkness but is **pinned** to ~350° or ~70° (a strong kick cannot move it) | F-CX-1, F-WARM-1, DECISIONS s8 |
+| Brain pathways | sugar→MN9 passes, marginally, under m3 | DECISIONS s8 rule v3 |
+| Standing / walking | not re-tested under m3 | F-XFER-1 (m2) |
 
 ## Unverified foundations
 
@@ -57,12 +60,15 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 
 | Item | Label | What would settle it |
 |---|---|---|
-| Efficacy 0.165 mV for every synapse class | inferred (brain stability fit). **Contradicted for ORN→PN** (measured ≈ 11×) | per-class unitary PSPs; the CX ring model (F-STAB-1) |
+| Efficacy 0.15675 mV for every synapse class (m3) | inferred (closed-loop stability fit, rule v3; 3 seeds, non-monotonic in scale). **Contradicted for ORN→PN** (measured ≈ 11×) | per-class unitary PSPs; more seeds; the CX ring model |
 | V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed). Literature now says rests of −55 to −68 mV and a KC gap of 21.5 mV (targets table) | per-class values in the targets table; apply class by class |
-| Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing. M0 at 0.165 is stable on 4/6 seeds; at 0.9× stable, but sugar→MN9 falls to 0.3 Hz | the neuromodulator pools must take over the monoamines' function |
-| CX ring parameters (uniform) | inferred (defaults). Delta7→Delta7 626 syn/cell; PEN→PEN 420; ER ring neurons silent | measured targets: bump FWHM ~100°, persistence in darkness, PENs spike at rest; EPGs express NMDA receptors (slow excitation is a candidate) |
+| Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing. The s7 M0 test is **confounded**: under predictedNt it also silenced every KC (F-NT-1); redo under m3 | the neuromodulator pools must take over the monoamines' function |
+| CX ring parameters (uniform); Delta7→Delta7 inhibitory | inferred. Transcripts: EPG GluCl-only, Delta7 **GluCl + iGluR** (mixed). Delta7 +1 gives a localised, persistent but misplaced bump under T (s8). NMDA lead withdrawn (recurrent excitation is cholinergic) | Delta7 synaptic physiology; the bump-move test (s8, below) |
 | No background activity; exact-rest start | guessed. s8: a warm start (noise + ramped senses) does not rescue the ring and lowers its ignition threshold (F-WARM-1) | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
 | Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test. No publication maps it to SNpp types | FANC T1L labels (Lee et al. 2025; `data/raw/lee2025/`) joined to male-cns. CAVE token at `~/.config/flyemu/cave_token` authenticates, but FANC production returns 403 (**Ben: request FANC production access**); otherwise NBLAST bridging. VFB types MANC SNpp39 as club and SNpp41 as claw (conflict) |
+| Glutamate sign per target (all but 20 types) | guessed −1 (GluCl). Transcripts: 18 types GluCl-only, Dm9/T1 iGluR-only (rows live), 36 types mixed; wiring cannot predict it (F-RCPT-1) | transcriptomes matched to connectome types (FCA, T2 snRNA-seq) |
+| Transmitter identity | derived: consensusNt (m3). predictedNt was wrong for all KCs and ~3.3k GABA/Glu cells (F-NT-1) | 62/68 types agree with transcripts; Lai and T1 disagree |
+| Untyped-cell delays | inferred (F-DELAY-2; CV error 0.14 ms) | skeletons for untyped cells |
 | Glutamate inhibitory at leg MNs | inferred (GluCl transcripts, Lesser 2024); excitatory would help the reflex (+0.6 → +3.4 Hz) but is insufficient | electrophysiology of IN21A→MN |
 | Leg proprioceptor rates (mV mode / r_max 200) | guessed | FeCO spike rates (none for adults). Depression makes static tuning pass only at low rates |
 | Leg afferent strength ×10.9 (T) | inferred (cross-class transfer) | a unitary PSP at any leg afferent synapse (not found) |
@@ -88,6 +94,11 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 
 ## Things that will bite you
 
+- **The working profile is m3 now.** Numbers from sessions 5–8 were m2; compare like with like (`FLYEMU_PROFILE=m2`).
+- **Sugar→MN9 is marginal under m3** (6.3 Hz at 100 Hz). Report any change that takes it below 5 Hz.
+- **s7's `cx_kick.py` "local" kick was not local** (the first N EPGs in table order). Use `warm_start.py` (heading from the PB glomerulus; `--heading`).
+- **The blank ledger does not see per-type rows** (it reads static labels from `data/ontology/fly_information.yaml`), so s8 fills don't move its totals. It needs to count `cell_types.csv` rows.
+- **backhouse via ssh → cmd.exe mangles `|` and nested quotes.** Put jobs in a file and run `xargs -L 1 env < jobs` in tmux, or use a runner script.
 - **Probe stiffness.** Once the legs make torque, the default reflex probe (kp 3) is pushed off target. Use `--kp 100 --kd 0.133`; `score_reflex.py` refuses invalid runs.
 - **zsh does not word-split `$VAR`.** Use `${=VAR}` for override lists on the Mac. bash on backhouse is fine.
 - **backhouse RAM.** WSL has 31 GB and each model process ~1.4 GB, so run at most ~14 at once. `scripts/sync_backhouse.sh` now also ships `data/params`, `data/derived` and `data/measurements`; raw data stays on the Mac, so run `score_reflex.py` on the Mac.

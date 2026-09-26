@@ -13,40 +13,28 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
 | Body | mass-, range- and collision-checked |
 | Behaviour | kinematics match measured data under the same stimulus protocol |
 
-## Where session 7 left things
+## Where session 8 left things
 
-- Measured first-order synaptic strength (T) moves the embodied behaviour toward biology: reflex sign, standing height, and the DNg100 forward shift.
-- It is blocked by the **CX ring**, which is bistable (silent or saturated) instead of holding a bump.
-- The reflex's missing piece is extension→flexor excitation. It is cancelled by glutamatergic IN21A006.
-- The AL target's post-hoc budget is spent. The measured values stay as options.
+- Working model m3: curated transmitters (consensusNt) + efficacy recalibrated by a closed-loop rule. Sugar→MN9 is marginal (6.3 Hz).
+- Receptor transcripts (Davis 2020) exist for 69 types, including EPG and Delta7. Wiring cannot predict sign-critical receptors.
+- CX ring: warm start fails; NMDA lead withdrawn; Delta7 +1 gives a localised persistent state under T, but at a fixed heading.
 
 ## Ranked next steps
 
-1. **Central-complex ring operating point (F-STAB-1).** Pre-register the targets before any change:
-   - (i) a local EPG kick leaves a persistent bump, with ≤ 1/4 of EPGs active for ≥ 200 ms after input stops;
-   - (ii) a full-ring kick does not saturate (PEN < 50 Hz);
-   - (iii) the resting PEN rate, held out: 3.9 ± 2.6 Hz (Turner-Evans 2017).
+1. **CX ring: movable bump.** The s8 bump-move test shows that the Delta7 +1 bump is **pinned** to ~350° or ~70°. Find the asymmetry:
+   - per-glomerulus PEN→EPG and EPG→PEN offset structure;
+   - the distribution of ER/ExR input around the ring. The ER neurons that give EPG 61% of its input are silent in the model.
 
-   Tools: `scripts/probes/cx_kick.py`; `cx_hz` in `closed_loop_check.py`.
-
-   Candidates to screen first, then pre-register one:
-   - ring depression (removes saturation, 2/3 seeds stable under T);
-   - adaptation;
-   - measured PEN input resistance, through per-type input gain;
-   - wedge-structured Delta7 inhibition. Uniform Delta7 ×8 was not enough.
-
-   Measured ring targets are gathered (F-CX-1). The single-knob screens failed. Next candidate: slow (NMDA-like) recurrent excitation, since EPGs express NMDA receptors.
-2. **Re-test T with a working ring, on fresh held-out data.**
-   - Standing (≥ 0.90 mm, 3 seeds) and stability (the CX scored by the new criterion).
-   - The command direction on fresh seeds, **plus a gait criterion** (alternating tarsal stepping).
-   - The reflex on a **sealed spare** (180621 or 181127), only after a dev H1 + H2 pass. The dev target itself is over budget and cannot gate by itself.
-3. **Extension pathway (F-XFER-1).** Settle claw and hook directions from data: the FANC T1L labels of Lee et al. 2025 (`data/raw/lee2025/`), joined to male-cns through FANC CAVE (needs an account from Ben) or NBLAST bridging. Look for any physiology of IN21A→MN glutamate. Then re-derive, rather than fit.
-4. **Per-class operating points from the targets table.** Resting potentials of −55 to −68 mV; KC gap 21.5 mV; MN rests −48 / −60 / −68 mV. Apply them one class at a time with the regression checks, never globally: a global measured strength (E1) is unstable.
-5. **Abdomen and wing motor layer** (s7 diagnostic): in the video the abdomen curls dorsally. Zeroing its torque raises the default fly but tips T over. Calibrate abdominal MN signs and forces, as for the legs, before reading standing as VNC evidence.
-6. **Background:**
-   - M0 recalibration: monoamines as fast excitation is wrong but load-bearing;
-   - flybench re-score with Hallem rates (needs a port into flybench's LIF);
-   - multi-axis muscle action; muscle co-contraction stiffness, since the torque actuators have none.
+   Then pre-register on fresh seeds, with the bump criteria plus "the bump follows the kick".
+2. **Recheck m3 consequences:**
+   - redo M0 (monoamines as sign 0) under m3, since the s7 result was confounded by KCs;
+   - re-test T under m3 (standing, stability, command direction on fresh seeds with a gait criterion);
+   - check the marginal sugar pathway over more trials.
+3. **Fill blanks with transcriptomes matched to types.** Wiring cannot infer receptor signs (F-RCPT-1). Candidate sources: the Fly Cell Atlas head, T2-lineage snRNA-seq (Epiney 2025, CX), and VNC atlases (Allen 2020). The algorithm is a type-matching step (marker genes ↔ connectome type, with confidence), then receptor calls → glutamate sign, GABA-B share, and modulator receptors (the 57k guessed slots).
+4. **Make the ledger count per-type rows** so fills show in the totals.
+5. **Extension pathway (F-XFER-1):** FANC production access (Ben) or NBLAST bridging.
+6. **Per-class operating points** (resting potentials −55 to −68 mV, KC gap), one class at a time.
+7. **Abdomen and wing motor calibration.**
 
 ## Later milestones (dependency order)
 

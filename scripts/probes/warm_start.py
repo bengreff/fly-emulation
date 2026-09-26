@@ -58,6 +58,7 @@ def main():
     ap.add_argument("--post-ms", type=float, default=500.0)
     ap.add_argument("--senses", choices=("on", "off"), default="on")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--heading", type=float, default=None, help="kick heading, deg (default: drawn from the seed)")
     ap.add_argument("--set", action="append", default=[])
     ap.add_argument("--out", default=None, help="append the JSON line to this file")
     a = ap.parse_args()
@@ -82,7 +83,7 @@ def main():
     tonic = np.broadcast_to(np.asarray(net.params.spont_mv), (N,)) > 0
     epg = grp["EPG"]
     ang = epg_heading(nr.instance.to_numpy()[epg])
-    h = float(np.random.default_rng(1000 + a.seed).uniform(0, 360))
+    h = float(np.random.default_rng(1000 + a.seed).uniform(0, 360)) if a.heading is None else a.heading % 360
     d = np.abs((ang - h + 180) % 360 - 180)
     target = {"local": epg[d <= a.half_width], "full": epg, "none": epg[:0]}[a.kick]
 

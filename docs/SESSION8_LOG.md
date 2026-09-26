@@ -4,3 +4,18 @@
 - 16:47 pre-registered warm start W (DECISIONS s8). Smoke test (cold start, proper local kick, seed 0): EPG 0 Hz after kick, as in s7.
 - 16:51 σ sweep (fit, default, seed 0, no kick; runs/s8_warm/sweep.jsonl). Non-CX brain 0.74 / 1.05 / 2.1 / 3.9 / 9.8 Hz and uPN 6.3 / 6.8 / 7.7 / 9.3 / 14.4 Hz at σ 0.25 / 0.5 / 0.75 / 1.0 / 1.5. Admissible: 0.25, 0.5, 0.75. **The ring is a threshold switch in background drive:** silent at ≤ 0.5 (EPG 1.3 Hz, PEN 0.1 Hz at 0.5), and at 0.75 it ignites by itself (EPG 61, PEN 161 Hz) and stays saturated after senses are removed. No σ gives PENs near their measured ~4 Hz. Main batch (54 runs) launched on backhouse.
 - 17:05 batch scored (54 runs, 0 errors): **0/3 in every condition**. Default ring silent or self-igniting; T ring saturates during the gentle ramp. PEN never between ~0 and 110 Hz. Held-out PEN rest spent (fail); KC rest within range. Warm start stays an option. Recorded in DECISIONS s8.
+- 17:55 Ben: continue for up to 2 h; main task is filling blanks and devising algorithms to infer data. Listed the defined tasks (PLAN_NEXT 1–6) and the blank ledger's placeholder parameters.
+- 17:57 Found Davis & Nern 2020 TAPIN-seq (GEO GSE116969): 77 populations incl. EPG (PB_2) and Delta7 (PB_1). Downloaded dataTable7a/7b + Supp file 1 (2.6 MB total; MANIFEST).
+- 18:00 `scripts/infer_receptors.py`: 69 male-cns types x 33 receptor genes. LOO inference from wiring: sign-critical receptors at chance. 18 GluCl-only types -> glutamate sign -1 (live; 0 weights change).
+- 18:05 NMDA lead withdrawn (EPG recurrent excitation is cholinergic; EPG input 61% GABA / 26% ACh / 10% Glu). Launched Delta7 glutamate-sign screen (72 runs, backhouse).
+- 18:06 Dm9/T1 iGluR rows: regression passes (sugar 26.3/87.3; closed loop 3/3) -> adopted.
+- 18:08 `scripts/infer_delays.py`: untyped-cell delays (CV error 0.14 vs 0.84 ms for the 1.8 ms default); adopted. Sugar at 100 Hz moves 26.3 -> 20.3 Hz (reported). Updated one test whose assumption no longer held.
+- 18:12 Transmitter check vs transcripts: every KC is predictedNt dopamine (consensusNt ACh; transcripts ChAT+). 20,169 neurons disagree; ~3.3k GABA/Glu cells were wired excitatory as "unclear". Added `connectome:all|nt_source_consensus`.
+- 18:15 consensusNt at 0.165 mV: seed 0 unstable (Mi18/DNge019/DNg12 loop, as s7 M0) -> fail. Pre-registered rule v3 (closed-loop return to rest, 3 seeds).
+- 18:20 Delta7 screen: +1 localises the ring under T but the bump is pinned (~348 deg) whatever the kick; ~0 intermediate.
+- 18:22 Rule v3: 0.95x passes (3/3; sugar 6.3 Hz, marginal); 0.85x fails seed 1 (non-monotonic). Adopted as profile m3; WORKING_PROFILE = m3; scripts use it.
+- 18:26 Launched ring-normalisation screen under m3 (54 runs). Ledger/census run: the ledger does not see per-type table rows (tooling gap).
+- Note: entries between 18:01 and 18:26 carry approximate times, interpolated between `date` checks at 18:00, 18:01, 18:06, 18:10, 18:14, 18:17, 18:24, 18:26 and 18:27.
+- 18:40 Ring-normalisation screen (m3): no effect; norm + Delta7 +1 as Delta7 +1. Launched bump-move test (20 mV/200 ms kicks at 0/90/180/270°).
+- 18:44 Bump-move: pinned (~350° or ~70°). Wrap-up.
+- 18:45 End. Tests 57/57 (last full run after m3 adoption; since then only the probe and docs changed, hygiene 12/12). Regression under m3: sugar 6.3/96.7 Hz; closed loop 3/3. Processes stopped (viewer, backhouse keep-alive); backhouse idle.

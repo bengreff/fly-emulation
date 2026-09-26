@@ -1,4 +1,4 @@
-# Session 8 prompt: unattended, 5 hours maximum
+# Session 9 prompt: unattended, 5 hours maximum
 
 Paste everything below the line into a fresh Claude Code session in `/Users/ben/fly-emulation`.
 
@@ -8,12 +8,12 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 ## Before anything else
 
-1. Run `date`; create `docs/SESSION8_LOG.md` with the start time. Use `date` for every timestamp; never guess the time.
+1. Run `date`; create `docs/SESSION9_LOG.md` with the start time. Use `date` for every timestamp; never guess the time.
 2. Follow `docs/WORKFLOW.md`:
    - lifecycle; evidence labels; pre-registration;
    - fit / dev / held-out / sealed splits; the post-hoc budget of 2;
    - the unverified-foundations rule; ≥ 3 seeds; process hygiene; git.
-3. Read `docs/HANDOFF.md`, `docs/PLAN_NEXT.md`, `docs/MODEL.md` (session-7 switches), `docs/RUNNING.md`, FINDINGS "# Session 7", and DECISIONS "## Session 7".
+3. Read `docs/HANDOFF.md`, `docs/PLAN_NEXT.md`, `docs/MODEL.md` (session-7 switches), `docs/RUNNING.md`, FINDINGS "# Session 8", and DECISIONS "## Session 8".
 4. Run `uv run pytest tests -q`; it must pass.
 5. Check backhouse: `ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`. If up:
    - keep a `sleep infinity` keep-alive attached;
@@ -33,35 +33,14 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 ## Priorities (in order)
 
-### 1. Central-complex ring operating point (F-STAB-1)
+Work the ranked list in `docs/PLAN_NEXT.md` ("Ranked next steps"). In short:
 
-The default ring is bistable: silent (0 Hz) at rest, and saturated (EPG ~75, PEN ~187 Hz) after a strong kick or under config T. It never holds a bump. Config T is otherwise stable (ring-silenced diagnostic), so this is the gate for the embodied work.
+1. **CX ring: movable bump.** Read the s8 bump-move result in DECISIONS first. Pre-register any adoption on fresh seeds; the ring's criteria are Ben's bump test, plus "the bump follows the kick".
+2. **m3 consequences:** redo M0 under m3; re-test T under m3 (standing, stability, command direction on fresh seeds with a gait criterion); run more trials of the marginal sugar pathway.
+3. **Filling blanks** (Ben's main task): transcriptomes matched to connectome types, used for receptor signs and kinetics. Wiring alone cannot infer them (F-RCPT-1). Make the ledger count per-type rows.
+4. As time allows: extension pathway; per-class operating points; abdomen/wing calibration.
 
-a. Measured ring physiology was gathered in s7 (F-CX-1): bump FWHM ~100°; persistence in darkness; PENs spike at rest; EPGs express NMDA receptors. Add these to `data/measurements/targets_session6.csv` with a `use` status. The single-knob screens in F-CX-1 all failed. Consider slow (NMDA-like) recurrent excitation, which needs per-receptor synaptic kinetics.
-b. Pre-register the criteria:
-   - a local 6-EPG kick leaves a bump (≤ 1/4 EPGs active) for ≥ 200 ms;
-   - a full-ring kick (`--targets EPG,PEN_ --kick-ms 200 --mv 15`) gives PEN < 50 Hz;
-   - the resting PEN rate is held out: 3.9 ± 2.6 Hz.
-c. Screen mechanisms (`candidates_s7_cx_*.csv` are guessed starting points). Pre-register one, fit at most one parameter on the bump criterion, and hold out the PEN rate.
-d. Adopt as the default only if the regression checks pass (sugar→MN9, 3-seed stability with CX rates reported).
-
-### 2. Re-test config T with the working ring
-
-T = `afferent:leg_proprioceptors|rate_mode_max_hz=200`, `connection_class:leg_proprioceptor_output|efficacy_scale=10.9`, `afferent:leg_proprioceptors|transferred_depression=1`.
-- Stability on 3 fresh seeds; standing on 3 seeds (≥ 0.90 mm).
-- Command direction (DNg100 forward, MDN backward) on **new seeds 5–8**, **plus a gait criterion** pre-registered first (alternating tarsal stepping).
-- Reflex: dev first. A sealed spare (180621 or 181127) only after a dev H1 + H2 pass, scored once; update the register.
-
-### 3. Extension pathway
-
-A CAVE token is at `~/.config/flyemu/cave_token` (never print or commit it). As of s7 it grants only `FANC_sandbox` and `banc_public`, and FANC production returns 403. First re-check access with `curl -H "Authorization: Bearer $(cat ~/.config/flyemu/cave_token)" https://global.daf-apis.com/info/api/v2/datastack/full/fanc_production_mar2021`. If it returns 200, join the FANC T1L FeCO labels in `data/raw/lee2025/` to BANC/male-cns and derive the claw/hook directions. Otherwise try NBLAST bridging.
-Relabel the directions if evidence is found. The reflex target is over its post-hoc budget: no further fitting on 180111.
-
-### 4. As time allows
-
-- Per-class resting potentials from the targets table, one class at a time.
-- An M0 plan: monoamine fast sign 0 needs the modulator pools to carry the monoamines' function. A scalar recalibration fails: at 0.9× sugar→MN9 falls to 0.3 Hz.
-- A slow-MN class distribution: refit drive and θ per cell for 4 cells (F-AZ-4), with τm fixed at 16 ms.
+The working profile is **m3** (`FLYEMU_PROFILE=m2` for the old model). Sugar→MN9 is marginal (6.3 Hz); report any change that takes it below 5 Hz.
 
 ## Wrap-up
 
