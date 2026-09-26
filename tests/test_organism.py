@@ -712,3 +712,38 @@ def test_renderer_pale_yellow_mask_comes_from_the_connectome():
         assert abs(lam[np.argmax(s)] - lmax) <= 3
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("ommatidium:assigned", "pale_yellow_type")].basis == "derived"
+
+
+def test_session6_mechanisms_are_inert_by_default_and_act_when_enabled():
+    """Glutamate sign per target, GABA-B, presynaptic inhibition, KC->MBON LTD."""
+    import numpy as np
+    from flyemu.organism import Organism
+
+    base = Organism(policy="minimal", profile="m2", min_synapses=5)
+    net = base.net
+    assert net.w_slow is None and net.w_pi is None and net.kc_edge is None
+    inv = base.reg.inventory().set_index(["entity", "property"])
+    for prop in ("glutamate_receptor_sign", "gabab_fraction", "presynaptic_inhibition_gain",
+                 "kc_mbon_ltd_rate"):
+        assert ("cell_type:all", prop) in inv.index
+
+    on = Organism(policy="minimal", profile="m2", min_synapses=5, overrides={
+        "cell_type:all|glutamate_receptor_sign": 1.0, "cell_type:all|gabab_fraction": 0.5,
+        "cell_type:all|presynaptic_inhibition_gain": 1.0, "cell_type:all|kc_mbon_ltd_rate": 0.2})
+    m = on.net
+    nt = on.conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
+    pre = np.repeat(np.arange(on.conn.n), np.diff(on.conn.indptr))
+    glu = (nt[pre] == "glutamate") & (net.w != 0)
+    assert (net.w[glu] < 0).all() and (m.w[glu] > 0).all()        # sign flipped by target rule
+    gaba = (nt[pre] == "gaba") & ~m.graded[pre]
+    assert np.allclose(m.w_slow[gaba], m.w[gaba], atol=1e-5)      # half fast, half slow
+    assert m.w_pi is not None and (m.w_pi > 0).sum() > 1000
+    # KC->MBON depression: DANs and KCs active together depress KC->MBON weights
+    t = on.conn.neurons.type.fillna("")
+    dan = np.flatnonzero(t.str.match(r"^(PAM|PPL1)").to_numpy())
+    kc = np.flatnonzero((on.conn.neurons["class"] == "Kenyon_Cell").to_numpy())
+    w0 = m.w[m.kc_edge].copy()
+    for _ in range(300):
+        m.step(kick=(np.r_[dan, kc[:400]], 50.0))
+    assert m.w[m.kc_edge].sum() < 0.99 * w0.sum()
+    assert m.i_slow.min() < 0                                       # slow inhibition arrived

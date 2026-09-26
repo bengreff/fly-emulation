@@ -37,6 +37,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
+import pandas as pd
 import scipy.sparse as sp
 
 from . import params as ptable
@@ -79,6 +80,13 @@ class LIFParams:
     mod_sensitivity: np.ndarray | None = None  # (n, 3)
     mod_tau_ms: float = 1000.0
     mod_increment: float = 0.01
+    # session 6: absent mechanisms, simulated with neutral defaults
+    glu_sign_post: float | np.ndarray = 0.0    # per postsynaptic cell; 0 = transmitter default
+    gabab_fraction: float | np.ndarray = 0.0   # per postsynaptic cell
+    gabab_tau_ms: float = 150.0
+    presyn_inh_gain: float = 0.0               # per mV of inhibitory input onto a sensory terminal
+    kc_mbon_eta: float = 0.0                   # DAN-gated KC->MBON depression rate
+    dan_tau_ms: float = 500.0
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -181,6 +189,32 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     e_inh = one("e_inh", "mV", "inhibitory reversal (conductance mode)",
                 -70.0, "declared default chloride reversal")
 
+    # --- session 6: absent mechanisms now simulated, defaults neutral ---------
+    glu_sign = per("glutamate_receptor_sign", "sign", "sign of glutamatergic input onto this type",
+                   0.0, "neutral default 0: use the transmitter-level glutamate sign "
+                        "(profile); +1 = excitatory (iGluR), -1 = inhibitory (GluCl) per "
+                        "postsynaptic type via cell_types.csv rows")
+    gabab = per("gabab_fraction", "dimensionless", "share of GABAergic input that is slow (GABA-B)",
+                0.0, "neutral default 0: all GABA fast (GABA-A-like, tau_s); GABA-B slow "
+                     "inhibition exists in AL PNs (Wilson & Laurent 2005) but per-type shares "
+                     "are unmeasured")
+    gabab_tau = one("gabab_tau", "ms", "slow GABA-B inhibitory current decay", 150.0,
+                    "guessed: GABA-B IPSPs in fly PNs last hundreds of ms (Wilson & Laurent "
+                    "2005, J Neurosci 25:9069); one value for all")
+    pi_gain = one("presynaptic_inhibition_gain", "per mV",
+                  "divisive output gain on sensory terminals: release x 1/(1 + k I_inh)", 0.0,
+                  "neutral default 0 (off): restores what m1 removed (GABAergic "
+                  "presynaptic inhibition of sensory terminals, e.g. sugar GRNs, Chu et al. "
+                  "2014) as a gain rather than a spike-generating input; k unmeasured")
+    kc_eta = one("kc_mbon_ltd_rate", "per unit DAN trace per KC spike",
+                 "DAN-gated KC->MBON synaptic depression", 0.0,
+                 "off by default: KC->MBON depression when KC activity coincides with "
+                 "dopamine in the MBON's compartment (Hige et al. 2015 Neuron 88:985); "
+                 "mechanism in place, rate guessed when enabled; no potentiation or "
+                 "recovery modelled")
+    dan_tau = one("dan_trace_tau", "ms", "dopamine trace decay per DAN", 500.0,
+                  "guessed: seconds-scale coincidence window (Handler et al. 2019)")
+
     # --- neuromodulation -----------------------------------------------------
     nt = conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
     mod_release = np.full(n, -1, dtype=np.int8)
@@ -240,6 +274,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         input_gain=inp, mod_release=mod_release, mod_sensitivity=sens,
         mod_tau_ms=float(mod_tau),
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
+        glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
+        presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
     )
 
 
@@ -286,6 +322,7 @@ class Network:
         rel = _arr(p.release_gain, n)
         self.w = (self.conn.sign[pre] * self.conn.efficacy_mv * self.conn.weight_syn
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
+        self._session6_mechanisms(pre, rel)
         self.delay = np.zeros((self.D, n), dtype=np.float32)
         if p.cond:
             vr = self.v_rest[self.conn.indices]
@@ -363,6 +400,15 @@ class Network:
             arr_i.fill(0.0)
 
         drive = self.i_syn
+        if self.w_slow is not None:
+            h = self.delay_head % self.delay_slow.shape[0]
+            self.i_slow = self.i_slow * self.decay_slow + self.delay_slow[h]
+            self.delay_slow[h].fill(0.0)
+            drive = drive + self.i_slow
+        if self.w_pi is not None:
+            self.p_inh *= self.decay_s
+        if self.kc_edge is not None:
+            self.dan_trace *= self.dan_decay
         if external_mv is not None:
             drive = drive + external_mv
         if self._any_spont:
@@ -426,12 +472,59 @@ class Network:
                 if hit.any():
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
+            if self.kc_edge is not None:
+                self.dan_trace[spiked[self.is_dan[spiked]]] += 1.0
             self._propagate(spiked)
             self.spike_count += spiked.size
 
         self.delay_head = (self.delay_head + 1) % self.D
         self.t_ms += self.timestep_ms
         return spiked
+
+    def _session6_mechanisms(self, pre: np.ndarray, rel: np.ndarray) -> None:
+        """Glutamate sign per target, GABA-B, presynaptic inhibition, KC->MBON LTD.
+
+        Each is inert at its default (weights and dynamics bit-identical)."""
+        p, n, dt = self.params, self.conn.n, self.timestep_ms
+        post = self.conn.indices
+        gs = _arr(p.glu_sign_post, n)
+        f = _arr(p.gabab_fraction, n)
+        self.w_slow = self.w_pi = self.kc_edge = None
+        if not (np.any(gs != 0) or np.any(f > 0) or p.presyn_inh_gain > 0 or p.kc_mbon_eta > 0):
+            return
+        nt = self.conn.neurons.get("predictedNt", pd.Series([""] * n)).fillna("").str.lower().to_numpy()
+        is_glu, is_gaba = nt == "glutamate", nt == "gaba"
+        if np.any(gs != 0):
+            m = is_glu[pre] & (gs[post] != 0)
+            self.w[m] = (np.abs(self.w[m]) * gs[post][m]).astype(np.float32)
+        if np.any(f > 0):
+            # graded (non-spiking) presynaptic cells transmit through W_graded,
+            # built from the fast weights; they keep all-fast GABA (limitation)
+            ws = np.where(is_gaba[pre] & ~self.graded[pre], self.w * f[post], 0.0).astype(np.float32)
+            self.w = (self.w - ws).astype(np.float32)
+            self.w_slow = ws
+            self.delay_slow = np.zeros((int(_arr(p.delay_steps, n, np.int64).max()), n), np.float32)
+            self.i_slow = np.zeros(n, dtype=np.float32)
+            self.decay_slow = np.float32(np.exp(-dt / p.gabab_tau_ms))
+        if p.presyn_inh_gain > 0:
+            sens = self.conn.neurons.superclass.fillna("").str.contains("sensory").to_numpy()
+            onto = sens[post] & (is_gaba | is_glu)[pre]
+            self.w_pi = np.where(onto, self.conn.psp_mv * self.conn.weight_syn * rel[pre],
+                                 0.0).astype(np.float32)
+            self.p_inh = np.zeros(n, dtype=np.float32)
+            self.is_sensory = sens
+        if p.kc_mbon_eta > 0:
+            t = self.conn.neurons.type.fillna("")
+            kc = (self.conn.neurons["class"].fillna("") == "Kenyon_Cell").to_numpy()
+            mbon = t.str.startswith("MBON").to_numpy()
+            dan = t.str.match(r"^(PAM|PPL1)").to_numpy()
+            self.kc_edge = kc[pre] & mbon[post]
+            de = dan[pre] & mbon[post]         # DAN->MBON contacts: compartment proxy
+            self.M_da = sp.csr_matrix((self.conn.weight_syn[de].astype(np.float32),
+                                       (post[de], pre[de])), shape=(n, n))
+            self.dan_trace = np.zeros(n, dtype=np.float32)
+            self.is_dan = dan
+            self.dan_decay = np.float32(np.exp(-dt / p.dan_tau_ms))
 
     def _propagate(self, spiked: np.ndarray) -> None:
         """Scatter each spike's weights onto its targets, after its own delay."""
@@ -445,6 +538,17 @@ class Network:
         within = np.arange(total) - np.repeat(np.cumsum(counts) - counts, counts)
         sel = offsets + within
         w = self.w[sel]
+        if self.w_pi is not None:
+            # divisive presynaptic inhibition of sensory terminals' release
+            g = np.where(self.is_sensory[spiked],
+                         1.0 / (1.0 + self.params.presyn_inh_gain * self.p_inh[spiked]), 1.0)
+            w = w * np.repeat(g.astype(np.float32), counts)
+            np.add.at(self.p_inh, indices[sel], self.w_pi[sel])
+        if self.kc_edge is not None:
+            e = sel[self.kc_edge[sel]]
+            if e.size:
+                da = self.M_da @ self.dan_trace
+                self.w[e] *= np.clip(1.0 - self.params.kc_mbon_eta * da[indices[e]], 0.0, 1.0)
         if self._any_std:
             w = w * np.repeat(self.x_res[spiked], counts)
             self.x_res[spiked] *= (1.0 - self.std_u[spiked])
@@ -459,6 +563,11 @@ class Network:
             np.add.at(self.delay_i, (slot[~ex], tgt[~ex]), -w[~ex])
         else:
             np.add.at(self.delay, (slot, tgt), w)
+        if self.w_slow is not None:
+            ws = self.w_slow[sel]
+            if self._any_std:
+                ws = ws * np.repeat(self.x_res[spiked] / np.maximum(1.0 - self.std_u[spiked], 1e-6), counts)
+            np.add.at(self.delay_slow, (slot % self.delay_slow.shape[0], tgt), ws)
 
     # --- readout -------------------------------------------------------------
 
