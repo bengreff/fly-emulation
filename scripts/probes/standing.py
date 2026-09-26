@@ -27,6 +27,7 @@ def main():
     ap.add_argument("--push-torque", type=float, default=20.0, help="uN*mm")
     ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--zero-joints", default="", help="diagnostic: regex of actuators whose torque is zeroed")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
@@ -35,6 +36,8 @@ def main():
     cal = load_calibration("flybody")
     name, flex_sign = resolve_sign(cal, "lm", "FTi", "flexion")
     j_act = acts.index(name)
+    import re
+    zero = [i for i, x in enumerate(acts) if a.zero_joints and re.search(a.zero_joints, x)]
     unit_on_j = org.nm.actuator_index == j_act
     n = org.conn.neurons
     aff = org.aff
@@ -69,6 +72,8 @@ def main():
             push_tq.append(signed)
         elif t0 - 200 <= t < t0:
             pre_tq.append(signed)
+        if zero:
+            tq[zero] = 0.0
         org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
         if s % 50 == 0:
             z.append((t, float(obs["body_positions"][0, 2])))

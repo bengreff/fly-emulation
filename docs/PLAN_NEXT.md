@@ -35,14 +35,15 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
    - measured PEN input resistance, through per-type input gain;
    - wedge-structured Delta7 inhibition. Uniform Delta7 ×8 was not enough.
 
-   Read Turner-Evans et al. 2017 and 2020 for measured ring physiology first.
+   Measured ring targets are gathered (F-CX-1). The single-knob screens failed. Next candidate: slow (NMDA-like) recurrent excitation, since EPGs express NMDA receptors.
 2. **Re-test T with a working ring, on fresh held-out data.**
    - Standing (≥ 0.90 mm, 3 seeds) and stability (the CX scored by the new criterion).
    - The command direction on fresh seeds, **plus a gait criterion** (alternating tarsal stepping).
    - The reflex on a **sealed spare** (180621 or 181127), only after a dev H1 + H2 pass. The dev target itself is over budget and cannot gate by itself.
-3. **Extension pathway (F-XFER-1).** Settle claw and hook directions from data: Lesser et al. 2024 FANC FeCO classes via FANC↔male-cns matches. Look for any physiology of IN21A→MN glutamate. Then re-derive, rather than fit.
+3. **Extension pathway (F-XFER-1).** Settle claw and hook directions from data: the FANC T1L labels of Lee et al. 2025 (`data/raw/lee2025/`), joined to male-cns through FANC CAVE (needs an account from Ben) or NBLAST bridging. Look for any physiology of IN21A→MN glutamate. Then re-derive, rather than fit.
 4. **Per-class operating points from the targets table.** Resting potentials of −55 to −68 mV; KC gap 21.5 mV; MN rests −48 / −60 / −68 mV. Apply them one class at a time with the regression checks, never globally: a global measured strength (E1) is unstable.
-5. **Background:**
+5. **Abdomen and wing motor layer** (s7 diagnostic): in the video the abdomen curls dorsally. Zeroing its torque raises the default fly but tips T over. Calibrate abdominal MN signs and forces, as for the legs, before reading standing as VNC evidence.
+6. **Background:**
    - M0 recalibration: monoamines as fast excitation is wrong but load-bearing;
    - flybench re-score with Hallem rates (needs a port into flybench's LIF);
    - multi-axis muscle action; muscle co-contraction stiffness, since the torque actuators have none.

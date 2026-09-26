@@ -67,7 +67,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 | Leg proprioceptor rates (mV mode / r_max 200) | guessed | FeCO spike rates (none for adults). Depression makes static tuning pass only at low rates |
 | Leg afferent strength ×10.9 (T) | inferred (cross-class transfer) | a unitary PSP at any leg afferent synapse (not found) |
 | Slow-MN intrinsic drive 36.45 mV, θ 32.6 | inferred (one-cell fit). Transfers to 1 of 3 further cells. Rest rates 20–47 Hz across 4 cells; τm 15.5–16.6 ms everywhere. Azevedo (hand-verified): the rest rate is nicotinic-synaptic | per-cell distribution refit; cholinergic premotor tone |
-| force_per_spike = 10 for non-leg MNs | guessed | force recordings |
+| force_per_spike = 10 for non-leg MNs; abdomen pitch/yaw alternation | guessed. **Confounds standing**: in the video the abdomen curls up; zeroing it raises the default fly (min z +0.1–0.24 mm) but tips T over | abdominal MN force and sign data; calibrate the abdomen like the legs |
 | Motor-unit size scaling F ∝ V^5.1 | inferred | per-muscle force data |
 
 ## Sealed and held-out data register
@@ -91,6 +91,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 - **Probe stiffness.** Once the legs make torque, the default reflex probe (kp 3) is pushed off target. Use `--kp 100 --kd 0.133`; `score_reflex.py` refuses invalid runs.
 - **zsh does not word-split `$VAR`.** Use `${=VAR}` for override lists on the Mac. bash on backhouse is fine.
 - **backhouse RAM.** WSL has 31 GB and each model process ~1.4 GB, so run at most ~14 at once. `scripts/sync_backhouse.sh` now also ships `data/params`, `data/derived` and `data/measurements`; raw data stays on the Mac, so run `score_reflex.py` on the Mac.
+- **`render_organism.py` was stale** (1-synapse edges, no profile, no adhesion) and is fixed. Videos: `runs/s7_video/{default,T}_seed2.mp4`; a frame comparison is in `runs/s7_video/compare.png`.
 - **External input is a steady depolarisation, not a kick.** A value below 7 mV never fires a cell (cx_kick first run).
 - `obs["joint_angles"]` is ordered by joint DOF (102), not by actuator (98). Look joints up by name (F-BUG-6).
 - Re-run `scripts/calibrate_joint_signs.py` after any body change.

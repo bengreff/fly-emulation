@@ -31,3 +31,23 @@ Pre-session Q&A with Ben (attended, 13:10):
 - 15:13 ER tonic screen: no fix (PEN->PEN core saturates at 190 Hz). CX conclusion recorded.
 - 15:22 Spare-cell intrinsic transfer: tau transfers (4 cells); point fit fails (181127 spont 46.5 Hz). Piezo still sealed.
 - 15:23 Docs updated (HANDOFF, FINDINGS F-CX-1/F-AZ-4, prompt).
+- 15:32 Render script fixed (stale model config); videos in runs/s7_video. Abdomen diagnostic: guessed abdominal/wing layer confounds standing.
+
+## Post-hoc budget used per target (this session)
+- AL PN spontaneous-rate target: 2 / 2 (repair 1: PN rest -57.8; repair 2: KC gap 21.5). **Exhausted.**
+- 13Balpha static-tuning target: 1 / 2 (T' = transfer without depression).
+- Reflex dev cell 180111: over budget since 6b; s7 runs on it were a protocol re-score (stiff probe) plus explicitly exploratory runs (glu+, claw swap). No gating use.
+- VNC operating point (slow-MN rest rate): stop rule met at the first test; no repairs.
+
+## Files Ben must provide / decisions for Ben
+- **FANC CAVE access** (account/token), to join Lee et al. 2025 FANC FeCO direction labels to male-cns. This settles the claw/hook direction foundation.
+- A decision: should the stability criterion score the CX ring separately (bump metric) rather than "0 non-tonic spikes"? Proposed in F-STAB-1; not changed unilaterally.
+- Lee_2024 GitHub data has no licence: used locally only.
+
+## Deviations from the prompt (judgement calls, per Ben's mandate)
+- Priority 2b (graded 13Balpha operating-point fit) was skipped. The layer check showed the slope ~10x short, which an operating point cannot fix. The measured-synapse transfer (T) was tested instead.
+- Priority 3 (standing and walking) was run although priorities 1 and 2 failed: the stability and CX findings made it informative, and all such runs are labelled.
+- Added the CX ring investigation, the monoamine (M0) test, and the spare-cell intrinsic transfer. None was in the prompt; each followed from evidence in the session.
+- flybench with Hallem rates: not done (it needs a port into flybench's own LIF).
+
+End: Sat 26 Sep 2026 15:34 CDT. No project processes left on either machine; the backhouse keep-alive has been stopped. Full tests pass (57). Final regression is identical to the start.

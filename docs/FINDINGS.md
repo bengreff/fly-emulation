@@ -2141,3 +2141,20 @@ Intrinsic trials of the spare cells only; the Piezo trials remain sealed.
 - **M0 recalibration.** Rule v2 passes at every scale under M0 (it is open-loop). M0 at 0.165 is stable on 4 of 6 closed-loop seeds. At 0.9× it is stable, but sugar→MN9_L falls to 0.3 Hz.
 - **Command direction** (seeds 1–4): under T, DNg100 shifts the fly forward on 4/4 seeds (+0.65 mm against no-stim). MDN fails in both models. The default passes neither. The seed-0 MDN "backward walk" was noise.
 - **Claw direction.** No publication maps flexion or extension to SNpp types. FANC labels exist (Lee et al. 2025) but need CAVE access to join.
+
+**F-AZ-4 addendum (15:24): per-cell fits.** Each cell's LIF (θ, t_ref, drive) was fitted to spontaneous + f-I with its own τm and Rin:
+
+| Cell | θ (mV) | t_ref (ms) | drive (mV) | rms (Hz) |
+|---|---|---|---|---|
+| 180111 | 33.8 | 4.2 | 37.5 | 0.2 |
+| 181021 | 18.5 | 5.6 | 20.4 | 0.7 |
+| 180621 | 51.4 | 1.0 (bound) | 53.0 | 4.1 |
+| 181127 | 51.9 | 1.0 (bound) | 72.5 | 5.1 |
+
+The last two are not captured by a deterministic LIF: 181127 fires 12 Hz at −23 pA, a smooth near-rest f-I. Since the rest rate is synaptic (MLA-sensitive), the better class model is a **fluctuating synaptic drive** (mean plus noise, i.e. an escape-noise f-I), not a fixed tonic drive. θ and drive are unidentifiable without it.
+
+Noisy-LIF check (θ 32.6 and t_ref 4.27 fixed; mean drive μ and noise σ fitted per cell by simulation):
+- rms 0.5 / 6.1 / 5.0 / 7.9 Hz for 180111 / 181021 / 180621 / 181127;
+- noise (σ 1–3 mV/√ms) reproduces the near-rest firing of 180621 and 181127, but no single (θ, t_ref) fits all four cells.
+
+The class differs in gain as well as drive. Next: fit θ per cell together with σ, or model the synaptic barrage explicitly.

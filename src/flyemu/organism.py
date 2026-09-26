@@ -45,6 +45,7 @@ class Organism:
     overrides: dict = field(default_factory=dict)
     profile: str | None = None   # a named borrowed parameter set (profiles.py)
     world: World = field(default_factory=World)
+    with_camera: bool = False    # attach the tracking camera (for rendering only)
 
     reg: Registry = field(init=False)
     body: Body = field(init=False)
@@ -59,7 +60,7 @@ class Organism:
         self.kick_mv = None
         if self.profile:
             self.kick_mv = profiles.apply(self.reg, self.profile)["kick_mv"]
-        self.body = Body(timestep=self.timestep_ms / 1000.0)
+        self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
         )

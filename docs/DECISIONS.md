@@ -1290,3 +1290,27 @@ Across the 4 recorded R35C09 slow MNs:
 - Rin is 532–1,041 MΩ.
 
 **Decision.** Keep the point fit as the class default for now, but record it as one draw. The next MN refit should use the across-cell distribution (drive and θ per cell). The Piezo trials of both spares remain sealed; only `--intrinsic-only` was run. Data: `data/derived/azevedo2020_slow_mn_{180621,181127}_intrinsic.*`.
+
+### Diagnostic: is the curled abdomen holding standing down? (15:28)
+
+**Observation (video, after fixing `render_organism.py`).** The render had used 1-synapse edges, no profile, rebuilt interfaces and no adhesion. After the fix:
+- the default fly slumps;
+- the T fly stays up on its legs;
+- in both, the abdomen curls dorsally like a scorpion's, and the wings sit open.
+
+Abdominal and wing MNs use the guessed force_per_spike = 10 and guessed pitch/yaw signs.
+
+**Test.** `standing.py --zero-joints 'abdomen|wing'` zeroes abdominal and wing actuator torque (diagnostic only), for default and T, seeds 0–2. Reported against the same seeds without zeroing.
+
+**Reading.** If min z rises substantially, the guessed abdominal and wing motor layer is a standing confound to fix before the VNC is judged.
+
+**Result (15:31).** min z 0.5–1.5 s (mm), seeds 0 / 1 / 2:
+
+| Config | normal | abdomen + wing zeroed |
+|---|---|---|
+| default | 0.54 / 0.48 / 0.46 (roll 76–90°) | **0.64 / 0.55 / 0.70** (roll 25–60°) |
+| T | 0.75 / 0.78 / 0.87 | 0.49 / 0.77 / 0.49 (2/3 roll over, 178°) |
+
+- **Default:** the guessed abdominal and wing motor layer lowers the fly and makes it roll.
+- **T:** removing it destabilises balance.
+- The abdominal and wing motor layer (guessed force 10, guessed pitch/yaw alternation) is a real confound for standing. It must be given data (abdominal MN forces, sign calibration) before standing results are read as VNC evidence. Not a model change.

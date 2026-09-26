@@ -3,7 +3,9 @@
     uv run python scripts/render_organism.py --duration-ms 500 \
         --set 'motor_unit:all|force_per_spike=10'
 
-Every override is printed and recorded. A video is a communication artifact,
+Uses the working model (profiles.WORKING_PROFILE, WORKING_MIN_SYNAPSES) and
+the same step loop as the probes (session 7 fix: it had used 1-synapse edges,
+no profile, rebuilt interfaces and no adhesion). Every override is printed. A video is a communication artifact,
 not evidence (docs/VALIDATION.md); the numbers come from the run records.
 """
 from __future__ import annotations
@@ -37,14 +39,9 @@ def main() -> int:
     for k, v in overrides.items():
         print(f"override: {k} = {v}")
 
-    org = Organism(policy="minimal", seed=args.seed, overrides=overrides)
-    org.body.with_camera = True
-    # Rebuild the body with a camera attached, then re-point the interfaces.
-    from flyemu.body import Body
-    from flyemu import neuromuscular, sensory
-    org.body = Body(timestep=org.timestep_ms / 1000.0, with_camera=True)
-    org.nm = neuromuscular.build(org.reg, org.conn, org.body.actuator_names)
-    org.aff = sensory.build(org.reg, org.conn, org.body)
+    from flyemu import profiles
+    org = Organism(policy="minimal", seed=args.seed, overrides=overrides, with_camera=True,
+                   profile=profiles.WORKING_PROFILE, min_synapses=profiles.WORKING_MIN_SYNAPSES)
 
     renderer = org.body.sim.set_renderer(
         f"{org.body.fly.name}/trackcam", camera_res=(480, 640), playback_speed=args.playback_speed,
@@ -56,8 +53,9 @@ def main() -> int:
     n_steps = int(round(args.duration_ms / org.timestep_ms))
     for step in range(n_steps):
         obs = org.body.observe()
-        spiked = org.net.step(external_mv=org.aff.drive(obs))
+        spiked = org.net.step(external_mv=org.sense(step, obs))
         org.body.actuate(org.nm.step(spiked, org.timestep_ms))
+        org.body.set_adhesion(org.nm.grip)
         org.body.step()
         org.body.sim.render_as_needed()
 
