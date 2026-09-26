@@ -194,6 +194,15 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                         subsystem="neuron_biophysics", instances=int(orn.sum()),
                         uncertainty="fitted in DM6/VM2 only; KW2008 report ~40% depression at 7 Hz",
                         method="published fit")
+    if reg.require("afferent:leg_proprioceptors", "transferred_depression", units="boolean",
+                   model_use="leg proprioceptor output depression, U=0.22, tau_rec=893 ms",
+                   subsystem="synaptic_efficacy", instances=n, minimal=0.0, conventional=0.0,
+                   minimal_note="off: leg afferent synapses do not depress",
+                   uncertainty="ORN->PN values (Nagel 2015) transferred; no leg-afferent data"):
+        from .connectome import leg_proprioceptor_types
+        leg = conn.neurons.type.fillna("").isin(leg_proprioceptor_types()).to_numpy()
+        std_u = std_u.copy(); std_tau = std_tau.copy()
+        std_u[leg], std_tau[leg] = 0.22, 893.0
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     rmax = one("graded_rmax", "Hz", "graded rate-equivalent at threshold", 100.0,

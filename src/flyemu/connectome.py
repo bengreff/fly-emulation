@@ -353,6 +353,22 @@ def build(
             f[idx] *= ref / s.reindex(post[idx]).to_numpy()
         efficacy[orn_upn] = (efficacy[orn_upn] * f[orn_upn]).astype(np.float32)
 
+    # --- leg proprioceptor output: transferred first-order synapse (session 7) --
+    leg_types = leg_proprioceptor_types()
+    leg_out = np.isin(ctype, leg_types)[pre]
+    leg_scale = reg.require(
+        "connection_class:leg_proprioceptor_output", "efficacy_scale",
+        units="dimensionless", model_use="efficacy multiplier of all output edges of "
+                                         "driven leg proprioceptor types",
+        subsystem="synaptic_efficacy", instances=int(leg_out.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="neutral default: the brain-calibrated efficacy applies",
+        uncertainty="no adult leg-afferent unitary PSP found; 10.9 transfers the measured "
+                    "ORN->PN first-order synapse (session 7, inferred)",
+    )
+    if leg_scale != 1.0:
+        efficacy[leg_out] *= np.float32(leg_scale)
+
     # --- cholinergic AL LN chemical output onto PNs / each other (m2, i) -----
     ach_ln = alln & (nt == "acetylcholine")
     pn = neurons["class"].fillna("").eq("ALPN").to_numpy()
@@ -375,6 +391,13 @@ def build(
         weight_syn=w, sign=sign, efficacy_mv=efficacy,
         psp_mv=float(psp), post_gain=post_gain,
     )
+
+
+def leg_proprioceptor_types() -> list[str]:
+    """Leg proprioceptor types the sensory model drives (non-empty subtype)."""
+    t = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "params" / "proprio_assignment.csv",
+                    comment="#")
+    return sorted(t[t.subtype.fillna("") != "" ].type.astype(str))
 
 
 def _with_targets(conn: Connectome, indices: np.ndarray) -> Connectome:

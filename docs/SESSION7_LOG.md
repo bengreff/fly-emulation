@@ -13,3 +13,9 @@ Pre-session Q&A with Ben (attended, 13:10):
 - 13:37 AL P/M fail (3 seeds). Repair 1 (PN rest -57.8) running. VNC operating-point pre-reg; grid d=2..6 on backhouse, d=0 control on Mac.
 - 13:38 AL repair 1 fails (3 seeds). Post-hoc budget AL: 1/2 used.
 - 13:40 VNC operating point: stop rule (MN 0 Hz at all d). 13Ba=IN13B013 candidate; tuning layer check launched on backhouse.
+- 13:43 13Ba check fails; transfer config T pre-registered; 13Ba check (backhouse) + dev reflex (Mac) launched
+- 13:49 T fails (13Ba + dev H1 0.70). Tp (no depression) launched: 13Ba on backhouse, dev on Mac.
+- 13:50 Regression (default model, backhouse): sugar 26.3/87.3 Hz; closed loop seeds 0-2: 0 non-tonic spikes, brain excl ORN 0.39/0.37/0.27 Hz. PASS.
+- 13:56 Protocol flaw: leg beats soft probe (T, Tp). score_reflex clamp gate added (cell unopened if >1.5 deg); kp=100. Re-scoring T, Tp on dev (Mac, sequential).
+- 14:02 Standing 1 seed: default zmin .54; T .75 (zmean .98, best yet); Tp .64; Tp silenced .68. Tp stability FAIL (70 spikes/ms after silencing). T dev (kp100) H1 .6 fail. Launched T stability + standing seeds.
+- 14:08 CX ring = sustained cells in T/Tp. Exploratory E1 (global 1.8 mV + depression) and E2 (EPG kick) on backhouse.

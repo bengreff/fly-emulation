@@ -938,3 +938,97 @@ Raising VNC excitability recruits inhibitory premotor cells first: IN13A005/009 
 **Also reported, not scored:** IN10B041 / IN10B058 slopes. The 10Bα data are not yet extracted, so no comparison is made.
 
 **If the check fails,** fitting a graded operating point (2b) cannot fix the slope. The failing layer is then afferent→IN transmission.
+
+**Result, 13Bα layer check (13:42). Fail.** IN13B013 T2L ΔVm at 50 / 90 / 130°:
+- mV mode: −0.57 / −0.50 / −0.51 mV, slope +0.001 mV/deg;
+- rate mode 200: +1.44 / +1.89 / +1.73 mV (at 56 / 91 / 127°), slope +0.004.
+
+Measured 13Bα: 0.012–0.083. Claw afferents do respond in rate mode (79–94 Hz at their preferred extreme), but the interneuron moves ~0.3 mV over 70°, about 10× short. That is the same shortfall as ORN→PN. Graded operating-point fitting (2b) cannot fix a slope, so it is not attempted.
+
+### Pre-registration: transfer the measured first-order sensory synapse to leg proprioceptors (13:43)
+
+**Motivation.** Both first-order sensory synapses tested this session fall short by the same factor:
+- ORN→PN: measured unitary EPSP 11× the model's;
+- claw→13Bα: tuning slope ~10× too small.
+
+No leg-afferent unitary PSP was found. The one measured first-order synapse in the fly CNS is transferred, **not fitted**.
+
+**Change (config T).**
+- `connection_class:leg_proprioceptor_output|efficacy_scale` = 10.9, applied to all output edges of the 21 driven leg-proprioceptor types (`proprio_assignment.csv`, non-empty subtype).
+- `afferent:leg_proprioceptors|transferred_depression` = 1 (U 0.22, τ_rec 893 ms).
+- Rate mode r_max 200 Hz. This was not refit; it is the session-6b grid point, labelled inferred. In mV mode the afferents are silent.
+- Labels: inferred (cross-class transfer). Nothing is tuned on any leg datum.
+
+**Tests, criteria fixed now.**
+1. **Held out:** 13Bα layer check, the same protocol; IN13B013 T2L slope in [+0.012, +0.083] mV/deg.
+2. **Dev:** `score_reflex.py --cell 180111_F2_C1 --tag s7-transfer`, H1 and H2.
+3. **Sealed:** only if 2 passes, score 181021_F1_C1 once.
+4. **Adoption** needs 1 and 3, plus stability (3 seeds) and sugar→MN9_L > 5 Hz.
+
+**Expectation.** 13Bα may reach the range, since the slope scales roughly with efficacy. The reflex is less likely to pass: amplified afferents also drive the inhibitory premotor cells (VNC result above), so the sign is uncertain.
+
+**Result, config T (13:49). Fail; not adopted; the sealed cell stays sealed.**
+- **Held-out 13Bα check:** IN13B013 T2L +1.15 / +2.10 / +0.99 mV at 55 / 91 / 128°. Non-monotonic, slope ≈ −0.002 mV/deg; fail.
+- **Dev reflex:** H1 sign agreement 0.70 (the best so far; 0.40–0.50 before), H1 fails at < 0.75. Hold Δ is within ±1.3 Hz against +20 Hz measured, so H2 fails. H3 fails.
+- **Diagnosis (arithmetic, after scoring).** With U 0.22 and τ 893 ms, steady-state delivered drive ∝ r/(1 + U·r·τ). It saturates at 1/(U·τ) ≈ 5 spikes/s once r ≫ 5 Hz. Rate-mode claw cells run at 80–95 Hz at their preferred angles, so a depressing synapse there transmits **changes, not static position**. The static 13Bα tuning therefore needs one of: low tonic afferent rates (≲ 5–10 Hz), non-depressing afferent synapses, or a non-synaptic route. In the model these are unconstrained, because leg-afferent rates and depression are both unmeasured.
+
+### Pre-registration: post-hoc repair 1 of 2 for the 13Bα target, transfer the efficacy without depression (13:49)
+
+**Change (config T′).** As config T, with `afferent:leg_proprioceptors|transferred_depression` = 0. Motivation: the saturation diagnosis above (post-hoc).
+
+**Criterion (unchanged).** IN13B013 T2L slope in [+0.012, +0.083] mV/deg over 50 / 90 / 130°.
+
+**Also run:** the dev reflex, **reported only**. The dev target has had more than two post-hoc attempts across sessions 6b–7, so it no longer gates anything by itself. The sealed cell is opened only if the 13Bα check passes **and** H1 and H2 pass on dev.
+
+**Result, config T′ (13:58). 13Bα check fails:** IN13B013 −2.73 / −6.66 / −3.61 mV at 68 / 90 / 114°, non-monotonic. **The probe also failed to hold:** 50° and 130° became 68° and 114°. Dev reflex H1 = 0.40, but the stimulus was not delivered (next entry). Post-hoc budget for the 13Bα target: 1 of 2 used.
+
+### Protocol correction: the reflex probe must deliver the stimulus (13:56)
+
+In T′ (and partly in T), the leg generated enough torque to beat the PD probe (kp 3 µN·mm/deg):
+- T′ starts at 87.5° instead of 82°;
+- T at 85.5°;
+- holds drift back toward 89°.
+
+Azevedo's piezo imposes the position. Earlier configs held within 0.5° only because the leg produced almost no torque. A probe that yields to the leg changes the stimulus, so these scores are not valid tests.
+
+**Changes.**
+1. `score_reflex.py` now refuses to score, **with the cell unopened**, if any condition misses its start or end angle by > 1.5°.
+2. The probe stiffness for all scoring from now on is kp = 100, kd = 0.133. A gain test under T′ gave errors of 3.0 / 1.1 / 0.3° at kp 10 / 30 / 100, with no instability.
+
+This is a stimulus correction, not a model change. T and T′ are re-scored on dev with the stiff probe; their 13Bα checks are unaffected (static holds, reported as achieved). The criteria (H1, H2) are unchanged.
+
+**Results with the stiff probe, standing and stability (14:08).**
+
+Dev reflex, kp 100 (clamp error ≤ 0.5°):
+
+| Config | H1 | H2 | H3 | Notes |
+|---|---|---|---|---|
+| T | 0.60 (fail) | fail | fail | extension holds +1.1 to +2.1 Hz: right sign, 10× small |
+| T′ | **0.80 (pass)** | fail | pass | flexion close to measured (8° −4.0 vs −4.1; ramps −3.7 to −5.7); extension +0.6 / +1.0 vs +20 Hz |
+
+Neither passes H2, so **181021 stays sealed**. The dev target is exhausted for fitting: across sessions 6b–7 it has had more than 2 post-hoc attempts.
+
+Standing (session-6 criterion: min z ≥ 0.90 mm over 0.5–1.5 s):
+
+| Config | min z by seed (mm) | mean z (mm) | motor silenced |
+|---|---|---|---|
+| default | 0.54 | 0.64 (roll 76°) | |
+| T | 0.75 / 0.78 / 0.87 | 0.98 / 0.80 / 1.06 | 0.68 |
+| T′ | 0.64 | | 0.68 |
+
+T is the highest the model has stood (previous best: min 0.77, mean 0.79). Still **fail**.
+
+Stability (0 non-tonic spikes in the last 100 ms after sensory silencing): **T and T′ both fail**, with 64–78 spikes/ms on 3 seeds each. The sustained cells are mainly the **central-complex head-direction ring**: EPG (37–40 cells, ~100 Hz), PEN_a/b, Delta7, PFNv, EL. Accessory tibia flexor MNs also persist. Extra ascending leg activity kicks the ring into a saturated, whole-ring persistent state. The real ring holds a localised bump that persists in darkness (Seelig & Jayaraman 2015), not a saturated ring.
+
+**Consequences.**
+1. T and T′ are not adopted.
+2. The stability criterion cannot tell legitimate persistence (a bump) from runaway (a saturated ring). A future criterion should score the CX separately: bump width, fraction of EPGs active.
+3. **Hypothesis:** the brain-wide efficacy ceiling (0.165 mV, "largest stable") is set by the CX ring's saturation threshold. Tested next, exploratory.
+
+### Exploratory (no adoption possible): CX ring kick; global measured strength with depression (14:08, written at launch)
+
+**E2, the CX kick** (`scripts/probes/cx_kick.py`, default model). Kick the first 2 or 6 EPGs by 3 mV per step for 50 ms, silence all sensory input, and count ring activity 200–400 ms later. A no-kick control runs alongside. The prediction under the hypothesis: the kick leaves a saturated ring (most EPGs active), not a bump (≤ ~1/4 of EPGs).
+
+**E1, global strength.** Every synapse at 1.8 mV (the 0.165 × 10.9 ORN→PN transfer) with the Nagel depression (U 0.22, τ 893 ms) on every presynaptic cell. The question is whether measured-strength synapses plus measured-form depression give a stable brain with a working sugar→MN9 path.
+- Readouts: closed-loop stability (2 seeds) and sugar→MN9_L at 100 and 200 Hz.
+- This is a feasibility probe, so there are no criteria. Transfer of one synapse class's depression to all classes is a guess.
