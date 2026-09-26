@@ -1737,3 +1737,49 @@ No scale gives slow flexor MNs the measured fine position sensitivity. The posit
 - the thorax moves 0.04 mm forward and 0.84 mm sideways.
 
 No walking. This matches the leg-reflex result: descending drive reaches the leg MNs only weakly at this efficacy.
+
+---
+
+# Session 6b (26 September 2026, morning)
+
+## F-AZ-1. First raw motor-neuron recording in the project: slow tibia flexor, cell 180111_F2_C1
+
+Ben downloaded Dryad file 180111_F2_C1.zip: Azevedo et al. 2020, CC0, sha256 prefix in MANIFEST. The cell is a R35C09 slow tibia flexor MN. Its identity comes from the authors' analysis scripts (Zenodo 4527659). `scripts/azevedo_slow_mn.py` uses the authors' own spike detections and only non-excluded trials.
+
+Units: 1 V of piezo command is 6 µm, or 0.8°; + means flexion. Measured, single cell:
+
+| Quantity | Value |
+|---|---|
+| Spontaneous rate | 24.8 ± 7.7 Hz (86 windows) |
+| Input resistance | 1,041 ± 90 MΩ (18 steps) |
+| τm | 16.0 ms (IQR 14.6–18.0, 19 steps) |
+| f-I at −31.6 / +31.6 / +62.9 pA | 0.5 / 69.2 / 95.8 Hz |
+| Extension steps 0.8 / 2.4 / 8°, Δhold | +3.1 / +20.0 / +20.3 Hz (8° transient +48.8) |
+| Flexion steps 0.8 / 2.4 / 8°, Δhold | −5.9 / −9.3 / −4.1 Hz |
+| 8° extension ramps at 40 / 80 / 120°/s, transient | +36 / +46 / +49 Hz (hold +22 / +28 / +27) |
+| 8° flexion ramps, transient | about −8 Hz |
+
+This is a resistance reflex: phasic and tonic, saturating by 2.4°, and asymmetric (extension excites strongly, flexion inhibits weakly). The table is saved as `data/derived/azevedo2020_slow_mn_180111.{csv,json}`.
+
+## F-AZ-2. The slow MN is fitted to its intrinsic data; the reflex, held out, fails
+
+**Fit (DECISIONS 6b).** The fit uses only the intrinsic data: f-I, spontaneous rate, Rin and τm. The result is an LIF with threshold 32.6 mV above reset, t_ref 4.27 ms, tonic drive 36.45 mV and τ 16 ms, fitted and labelled inferred. It reproduces all four f-I points to within 0.5 Hz (test added). It is applied to the 60 slow-classed flexor MNs. **Adopted:** it replaces the session-6 guess of 8.87 mV under a 7 mV threshold.
+
+**Held-out reflex test** (`scripts/probes/azevedo_reflex.py`: tethered, PD probe, same windows as the data). For the 8° extension step, Δhold is +1.0 Hz against +20.3 measured, and every condition falls within ±3 Hz. **Fail**, as the written expectation predicted.
+
+Three post-hoc repairs were each tried on the 8° extension-step fit target only, each pre-registered, and none adopted:
+1. **Rate-coded proprioceptors** (Poisson at r_max × signal, r_max ∈ 50–400 Hz). Afferents now respond (flexion-claw 19.7 → 10.6 Hz, hooks phasic), but Δhold stays within ±1.6 Hz.
+2. **Plus a uniform VNC sensorimotor efficacy scale** of 1.5–8×. Net tonic inhibition onto the slow MNs grows (−3 to −94 mV) and silences them; there is no reflex.
+3. **Glutamate excitatory onto tibia flexor MNs.** The hypothesis came from wiring: the IN21A glutamatergic premotor cells carry extension signals. Δhold −0.3 Hz. The row is moved to `data/params/hypotheses_not_adopted.csv`.
+
+**The failing layer is the premotor operating point** (`scripts/probes/premotor_inputs.py`):
+- The excitatory interneurons that carry extension signals to the slow flexors (IN03A004 and IN21A004, cholinergic; IN21A006, glutamatergic) sit silent or near-silent, 5–10 mV below threshold.
+- Extension depolarises them in the right direction, by 1–3 mV, but not to threshold, so the modulation is rectified away.
+- Their dominant inhibitor is **IN13A005**: GABAergic, 34 Hz at rest, driven by flexion-claw afferents, giving 1.1–2.4 mV of inhibition to each.
+- Only 8% of the 4,491 middle-segment VNC interneurons fire at rest.
+
+The model's VNC is therefore a quiet, inhibition-dominated network in which reflex signals of the right sign exist but never cross threshold. The single brain-calibrated efficacy cannot fix this by scaling, because it scales the inhibition too.
+
+**Standing** with the fitted slow MNs: z_min 0.68 mm, roll up to 43°. Still a fail.
+
+**Stability** over seeds 0–5 holds: whole brain 0.26–0.37 Hz, no sustained activity. Sugar→MN9_L is 26.5 / 88 Hz.

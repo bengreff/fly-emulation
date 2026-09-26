@@ -68,3 +68,7 @@ Start 06:32 CDT. Ben downloaded Azevedo 2020 Dryad cell 180111_F2_C1 (slow MN, R
 - 06:40 Extracted targets from 180111_F2_C1 (scripts/azevedo_slow_mn.py; derived CSV/JSON). Fitted slow-MN LIF to
   intrinsic data (tau 16 ms measured; theta 32.6 mV, t_ref 4.27 ms, drive 36.45 mV fitted). Pre-registered
   held-out reflex test (DECISIONS 6b).
+- 06:40-07:10 Held-out reflex test failed (+1 vs +20.3 Hz). Three pre-registered post-hoc repairs (afferent rate mode,
+  VNC scale, glutamate sign on flexor MNs) each failed on the fit target; none adopted. Diagnosis: premotor
+  excitatory INs silent, 5-10 mV below threshold, under tonic GABA from IN13A005 (F-AZ-2). Stopped fitting on this
+  target (three post-hoc attempts). Slow-MN intrinsic fit adopted (reproduces measured f-I). Stability 6/6.
