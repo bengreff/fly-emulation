@@ -3,11 +3,12 @@ and whole-brain rate with vs without the odour."""
 import sys; sys.path.insert(0, 'src')
 import numpy as np, pandas as pd
 from flyemu.organism import Organism
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 from flyemu.world import OdourSource
 
 res = {}
 for label in ("clean air", "odour"):
-    org = Organism(policy="minimal", profile="m2", min_synapses=5,
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5,
                    overrides={"motor_unit:all|force_per_spike": 10.0})
     if label == "odour":
         tun = org.chem.tuning

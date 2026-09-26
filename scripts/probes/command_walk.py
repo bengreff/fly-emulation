@@ -17,6 +17,7 @@ import numpy as np
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 LEGS = ["lf", "lm", "lh", "rf", "rm", "rh"]
 
@@ -29,7 +30,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     dt = org.timestep_ms
     n = org.conn.neurons
     stim = np.flatnonzero(n.type.fillna("").eq(a.type).to_numpy())

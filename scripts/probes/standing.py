@@ -16,6 +16,7 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 from flyemu.neuromuscular import load_calibration, resolve_sign  # noqa: E402
 
 
@@ -30,7 +31,7 @@ def main():
     ap.add_argument("--zero-joints", default="", help="diagnostic: regex of actuators whose torque is zeroed")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     dt = org.timestep_ms
     acts = [x.removeprefix(org.body.fly.name + "/").removesuffix("-motor") for x in org.body.actuator_names]
     cal = load_calibration("flybody")

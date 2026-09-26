@@ -14,6 +14,7 @@ import numpy as np
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     ap.add_argument("--silence", default="")
     a = ap.parse_args()
     ov = {"motor_unit:all|force_per_spike": 10.0, "orn:all|rate_calibration": 1.0}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     dt = org.timestep_ms
     tonic = np.broadcast_to(np.asarray(org.net.params.spont_mv), (org.conn.n,)) > 0
     t = org.conn.neurons.type.fillna("")

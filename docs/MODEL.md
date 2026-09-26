@@ -4,8 +4,8 @@ What the simulator computes today, with the default of every mechanism. Values c
 
 **Names.**
 - **M2** is the model family: the equations below, implemented in `src/flyemu/lif.py`.
-- **m2** is a parameter profile, `src/flyemu/profiles.py`.
-- The **working model** is family M2 with profile m2 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it.
+- **m3** is the parameter profile in use (session 8), `src/flyemu/profiles.py`: m2 plus transmitter identity from `consensusNt` and efficacy 0.15675 mV. m2 is kept; `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
+- The **working model** is family M2 with profile m3 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it.
 - ("M2 Pro" in `docs/ENVIRONMENT.md` is the Mac, unrelated.)
 
 ## Loop
@@ -28,7 +28,7 @@ tau_s dI_syn/dt = -I_syn + sum of arriving weights
 spike at V >= V_th, reset to V_reset, refractory t_ref
 ```
 
-- The shared defaults come from profile m2: V_rest −52, V_th −45, V_reset −52 mV, τm 20 ms, t_ref 2.2 ms, τs 5 ms, no membrane noise, synaptic current reset on spike. These are borrowed from Shiu et al. 2024: inferred.
+- The shared defaults come from profile m2 (inherited by m3): V_rest −52, V_th −45, V_reset −52 mV, τm 20 ms, t_ref 2.2 ms, τs 5 ms, no membrane noise, synaptic current reset on spike. These are borrowed from Shiu et al. 2024: inferred.
 - Per-type rows in `data/params/cell_types.csv` override them:
   - photoreceptors are graded (measured); L1–L3 and APL are graded (inferred);
   - the 60 slow tibia-flexor MNs are fitted to Azevedo 2020 raw recordings: τ 16 ms, threshold +32.6 mV, t_ref 4.27 ms, tonic drive 36.45 mV (inferred; F-AZ-2, F-AZ-3).
@@ -40,15 +40,18 @@ spike at V >= V_th, reset to V_reset, refractory t_ref
 sign_i × efficacy × n_syn(ij) × release_gain_i × input_gain_j
 ```
 
-- efficacy = **0.165 mV per synapse** everywhere: inferred, fitted by calibration rule v2 (F-AL-1; F-CAL-3 re-confirmed it under delays).
-- Sign by predicted transmitter:
+- efficacy = **0.15675 mV per synapse** everywhere (m3): inferred, fitted by calibration rule v3 (closed-loop return to rest on 3 seeds under consensusNt; DECISIONS s8). m2 used 0.165 mV (rule v2).
+- Sign by transmitter. m3 takes the call from the curated `consensusNt` (F-NT-1; `connectome:all|nt_source_consensus`), m2 from the EM classifier `predictedNt`:
   - ACh +; GABA −; glutamate −; histamine −;
   - dopamine, serotonin and octopamine + (placeholders);
   - unclear + (but AL local neurons with unclear transmitter −).
 - Two profile rules:
   - m1: no chemical input onto sensory terminals (F-SENS-1);
   - m2: no chemical output from cholinergic AL LNs onto PNs or eLNs (F-LN-1).
-- **Delay** per presynaptic type = 0.5 ms + path length / velocity. The path length is measured on the type's skeleton; v = 0.5 m/s (inferred), or 2.07 m/s for the giant fibre (measured). F-DELAY-1, `data/params/conduction_delays.csv`.
+- Glutamate sign per postsynaptic type from transcripts for 20 types (−1 for 18 GluCl-only types, +1 for Dm9 and T1; Davis 2020; F-RCPT-1).
+- **Delay** per presynaptic type = 0.5 ms + path length / velocity.
+  - untyped cells: path length predicted from volume, synapse counts and superclass (F-DELAY-2; `cell_type:untyped|inferred_conduction_delay`).
+  - typed cells: the path length is measured on the type's skeleton; v = 0.5 m/s (inferred), or 2.07 m/s for the giant fibre (measured). F-DELAY-1, `data/params/conduction_delays.csv`.
 
 **Mechanisms, and their switches at their defaults** (registry keys, `entity|property`):
 

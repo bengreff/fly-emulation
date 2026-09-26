@@ -1395,3 +1395,51 @@ Delta7 expresses both GluClα and iGluR (measured), and most glutamate onto Delt
 **Adopted** as `cell_type:untyped|inferred_conduction_delay = 1` (0 restores the default). **Regression moves (reported):** sugar→MN9_L 20.3 ± 9.0 Hz at 100 Hz (trials 26 / 25 / 10; was 26.3 ± 1.5) and 89.3 Hz at 200 Hz (was 87.3). Both pass (> 5 Hz), but the 100 Hz trial spread grew: the sugar pathway runs through untyped cells whose delays fell from 1.8 to ~0.7 ms. Closed loop seeds 0–2: 0 non-tonic spikes; brain excluding ORNs 0.387 / 0.393 / 0.282 Hz.
 
 **Test change.** `test_session6_mechanisms_are_inert_by_default_and_act_when_enabled` assumed that no type had its own glutamate-sign row. It now excludes the targets with transcript rows from the global-override check and asserts that those rows win.
+
+### Pre-registration: transmitter identity from consensusNt (18:14)
+
+**Finding that motivates it** (not post-hoc from a failed run). The model takes transmitter identity from `predictedNt`, the per-neuron EM classifier call. The dataset's curated `consensusNt` (98.7% coverage) disagrees on 20,169 neurons:
+- all 4,058 Kenyon cells are predictedNt dopamine but consensusNt acetylcholine. Davis 2020 transcripts agree with consensus: KCs are ChAT+ and lack ple. Transcripts agree with the consensus/type call on 62 of 68 crosswalked types (`data/derived/nt_transcript_vs_em.csv`);
+- 1,827 "unclear" cells are glutamate and 1,490 are GABA in consensus. The model currently wires them as excitatory ("unclear" placeholder +1);
+- 5,822 "unclear" are histamine (mostly photoreceptors).
+
+At m2 / ≥ 5 synapses: 14.9k more inhibitory and 16.4k fewer excitatory edges. **Consequence for s7 M0:** monoamines at sign 0 also silenced every KC, so the M0 result is confounded.
+
+**Change.** `connectome:all|nt_source_consensus = 1` (option; 0 = old behaviour). Basis of each transmitter call: derived (dataset consensus).
+**Criteria.** Sugar→MN9_L > 5 Hz at 100 Hz stimulation; closed loop seeds 0, 1, 2: 0 non-tonic spikes in the last 100 ms after silencing (CX ring types excluded per Ben's s7 decision; the list is in `warm_start.py`).
+**Adoption.** It is a data-quality correction (a curated call replacing a classifier call), not a fit, so it is adopted as the default if both criteria hold. Report every regression number that moves.
+**Secondary (exploratory, not gating).** The warm-start ring screen under C.
+
+**Result, consensusNt (18:17). Fail on stability (2/3 seeds); not adopted, kept as an option.**
+- Sugar→MN9_L 16.7 ± 5.0 Hz at 100 Hz (pass > 5) and 128.7 Hz at 200 Hz (was 87–89).
+- Closed loop: seed 0 **fails** (53.5 non-tonic spikes/ms after silencing, 1,488 cells: Mi18, Lawf2, DNge019, DNg12_a/c/e, Pm8/12, leg MNs). Seeds 1 and 2 pass (0; brain excluding ORNs 0.238 / 0.316 Hz).
+- The persistent state is the **same Mi18 / DNge019 / DNg12 loop that M0 exposed in s7**. With transmitter labels closer to the data, the global efficacy (0.165 mV, fitted for stability under the *old* labels) no longer keeps this latent loop closed on every seed.
+- **Reading.** The calibration is entangled with wrong transmitter labels. The correct next step is not a post-hoc tweak: recalibrate efficacy under consensusNt with calibration rule v2, as a model-construction step, then re-run the regression. Until then, all results carry the known label errors (KCs as dopamine; ~3.3k inhibitory cells wired excitatory).
+
+### Pre-registration: efficacy recalibration under consensusNt (calibration rule v3) (18:18)
+
+**Why.** The efficacy 0.165 mV was fitted for stability under the wrong transmitter labels (F-NT-1). Rule v2 is open-loop and cannot see the closed-loop latent loop (s7 M0).
+**Rule v3** (construction, not a test): with `nt_source_consensus = 1` and the s8 live rows (delays, glutamate signs), scan the efficacy scale ∈ {0.95, 0.9, 0.85} × 0.165 mV (plus the 1.0 result above). Take the largest scale at which closed loop (`closed_loop_check.py`, 1 s senses + 300 ms silenced) has 0 non-tonic spikes in the last 100 ms on seeds 0, 1 and 2 (CX ring types excluded; the default ring is silent anyway).
+**Checks at the chosen scale (not used to choose it).** Sugar→MN9_L > 5 Hz at 100 Hz stimulation (the M0 lesson: 0.9× gave 0.3 Hz). The old-label reference is 20–26 Hz.
+**Adoption.** If a scale passes v3 and the sugar check, consensusNt plus that efficacy become the working model (profile m3), and all reference numbers are re-reported. Otherwise both stay options and the entanglement is recorded.
+
+**Result, Delta7 glutamate-sign screen (18:20; `runs/s8_warm/d7_{pos,zero}.jsonl`).** 0/3 in every condition, but qualitatively informative:
+- **+1 (Delta7→Delta7 excitatory), config T:** the ring stops saturating uniformly and forms a **localised bump**: EPG active fraction 0.28–0.36, vector strength 0.62–0.83, PEN ~100 Hz (was 190). But the bump is **pinned**: it sits at ~348° (or ~103°) whatever the kicked heading and seed (errors 74–153°). Delta7 runs at ~200+ Hz as a self-exciting global inhibitor.
+- **≈0:** intermediate (EPG ~60% active, vector ≤ 0.37, PEN ~178 Hz).
+- Default config: the ring stays silent at σ 0, as before.
+- **Reading.** Strong global inhibition plus raw synapse-count heterogeneity gives a pinned attractor. A movable bump needs near rotational symmetry of the effective ring weights, which raw counts do not have. The next ring candidate is per-connection normalisation of the ring (inferred), not another global knob. Delta7's measured iGluR co-expression makes the all-inhibitory Delta7→Delta7 an open question, not a supported value.
+
+**Result, rule v3 (18:24; `runs/s8_v3/`). Adopted: profile m3 = m2 + consensusNt + efficacy 0.15675 mV (0.95 × 0.165).**
+
+| Scale | seed 0 | seed 1 | seed 2 | sugar→MN9_L at 100 / 200 Hz |
+|---|---|---|---|---|
+| 1.0 | **53.5** | 0 | 0 | 16.7 / 128.7 |
+| 0.95 | 0 (brain ex-ORN 0.358) | 0 (0.213) | 0 (0.309) | **6.3 ± 2.1** / 96.7 |
+| 0.9 | 0 | 0 | 0 | 2.7 / 78.3 (fails the check) |
+| 0.85 | 0 | **32.2** | 0 | 0.3 / 51.7 |
+
+- 0.95 is the largest scale with 3/3 return to rest, and it passes the sugar check (> 5 Hz), but only just.
+- **Stability is not monotonic in scale** (0.85 fails on seed 1). The latent loop is partly a seed lottery, and three seeds are the minimum evidence, not proof.
+- `WORKING_PROFILE` is now m3 (`FLYEMU_PROFILE=m2` reproduces sessions 5–8). The probes use `WORKING_PROFILE`, and m3 through the profile reproduces the scan (seed 0: 0.358).
+- **New regression references (m3):** sugar→MN9_L 6.3 / 96.7 Hz; closed loop seeds 0–2: 0 non-tonic spikes, brain excluding ORNs 0.21–0.36 Hz.
+- **The sugar pathway is now marginal** (6.3 Hz at 100 Hz stimulation). Any further change that lowers it below 5 Hz must be reported as a regression failure.

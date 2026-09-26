@@ -21,6 +21,7 @@ import pandas as pd
 
 from assay_pathways import select
 from flyemu import connectome, lif, profiles
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 from flyemu.provenance import RunRecord
 from flyemu.registry import Policy, Registry
 
@@ -34,7 +35,7 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, default=2)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
-    ap.add_argument("--profile", default="m2")
+    ap.add_argument("--profile", default=WORKING_PROFILE)
     ap.add_argument("--generic", type=int, default=0,
                     help="rule v2: also require return to rest after this many "
                          "random 40-cell sensory populations outside every assay")

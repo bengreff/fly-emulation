@@ -14,6 +14,7 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 from flyemu.neuromuscular import load_calibration, resolve_sign  # noqa: E402
 
 
@@ -24,7 +25,7 @@ def main():
     ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov)
     dt, d, n = org.timestep_ms, org.body.sim.mj_data, org.conn.neurons
     acts = [x.removeprefix(org.body.fly.name + "/").removesuffix("-motor") for x in org.body.actuator_names]
     name, fs = resolve_sign(load_calibration("flybody"), "lm", "FTi", "flexion")

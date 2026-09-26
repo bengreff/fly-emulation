@@ -2,9 +2,10 @@
 import sys; sys.path.insert(0, 'src')
 import numpy as np
 from flyemu.organism import Organism
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 from flyemu.extrasenses import FoodPatch
 for label, food in (("no food", []), ("sugar patch", [FoodPatch(np.zeros(3), 100.0, {"sugar": 0.5})])):
-    org = Organism(policy="minimal", profile="m2", min_synapses=5,
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5,
                    overrides={"motor_unit:all|force_per_spike": 10.0})
     org.world.food = food
     n = org.conn.neurons; mn9 = np.flatnonzero(n.instance.eq("MN9_L").to_numpy())

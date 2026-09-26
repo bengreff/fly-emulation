@@ -29,6 +29,7 @@ import numpy as np
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 # Declared CX ring type list (pre-registration, session 8): scored by the bump
 # test, excluded from the "every other cell goes quiet" criterion.
@@ -63,7 +64,7 @@ def main():
     ov = {"motor_unit:all|force_per_spike": 10.0}
     ov.update({k: float(v) for k, v in (s.split("=") for s in a.set)})
     ov["cell_type:all|background_noise"] = a.noise
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     net, dt, N = org.net, org.timestep_ms, org.conn.n
     nr = org.conn.neurons
     t = nr.type.fillna("").to_numpy().astype(str)

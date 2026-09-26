@@ -15,6 +15,7 @@ import numpy as np
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 
 def main():
@@ -27,7 +28,7 @@ def main():
     ap.add_argument("--kick-ms", type=float, default=50.0)
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     t = org.conn.neurons.type.fillna("").to_numpy().astype(str)
     groups = {g: np.flatnonzero(np.char.startswith(t, g)) for g in ("EPG", "PEN_", "Delta7", "PEG", "ER")}
     epg = groups["EPG"]

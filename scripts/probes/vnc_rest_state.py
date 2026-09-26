@@ -11,8 +11,9 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
-org = Organism(policy="minimal", profile="m2", min_synapses=5)
+org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5)
 n = org.conn.neurons
 t = n.type.fillna("")
 groups = {h: np.flatnonzero((t.str.startswith(h) & (n.somaNeuromere == "T1")).to_numpy())

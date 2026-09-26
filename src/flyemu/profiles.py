@@ -9,6 +9,8 @@ another model is ever recorded as measured. Values enter through
 """
 from __future__ import annotations
 
+import os
+
 from .registry import Registry, Status
 
 SHIU = "Shiu et al. 2024, Nature 634:210 (github.com/philshiu/Drosophila_brain_model)"
@@ -61,17 +63,28 @@ M2 = {
         "class-level prior for 89 cells of unknown transmitter (F-LN-2)"),
 }
 
+M3 = {
+    **M2,
+    "connectome:all|nt_source_consensus": (1.0, _I, "session 8 (F-NT-1): transmitter identity from "
+        "the male-cns curated consensusNt instead of the EM classifier predictedNt; every KC was "
+        "'dopamine' and ~3.3k GABA/glutamate cells 'unclear' (excitatory placeholder)"),
+    "connection_class:all|efficacy_per_synapse": (0.15675, _I, "fitted in this project: calibration "
+        "rule v3 (DECISIONS s8), largest of 1.0/0.95/0.9/0.85 x 0.165 mV with closed-loop return to "
+        "rest on seeds 0-2 under consensusNt; sugar->MN9_L 6.3 Hz at 100 Hz (check > 5)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = "m2"
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m3")   # FLYEMU_PROFILE=m2 reproduces sessions 5-8
 WORKING_MIN_SYNAPSES = 5
 
 PROFILES: dict[str, dict] = {
     "shiu2024": {"values": SHIU2024, "kick_mv": KICK},
     "m1": {"values": M1, "kick_mv": KICK},
     "m2": {"values": M2, "kick_mv": KICK},
+    "m3": {"values": M3, "kick_mv": KICK},
 }
 
 

@@ -99,6 +99,9 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-CX-1 | Session 7 | The CX ring is bistable (silent or saturated), never a bump; wiring and measured targets |  |
 | F-AZ-4 | Session 7 | Slow-MN fit on 4 cells: τm transfers, the rest rate and near-rest f-I do not |  |
 | F-WARM-1 | Session 8 | Starting from a living state instead of exact rest does not give the CX ring a bump; background activity lowers its ignition threshold |  |
+| F-RCPT-1 | Session 8 | Transcripts fill glutamate sign for 20 types; wiring cannot predict sign-critical receptors |  |
+| F-NT-1 | Session 8 | The model's transmitter labels call every KC dopaminergic and wire ~3.3k inhibitory cells as excitatory; the curated labels destabilise the current calibration |  |
+| F-DELAY-2 | Session 8 | Inferred delays for untyped cells replace a borrowed 1.8 ms default |  |
 
 ### Session 1 status table (historical)
 
@@ -2178,3 +2181,37 @@ The class differs in gain as well as drive. Next: fit θ per cell together with 
 **Meaning.** The missing bump is a property of the ring's parameters, not of how the simulation starts. Uniform recurrent excitation (PEN→EPG 517, PEN→PEN 420, EPG→EPG 233 synapses per cell) at one shared efficacy, with inhibition that cannot localise it, has only "off" and "on". The warm-start protocol remains useful as the physiological initial condition once the ring works, and it is kept as an option.
 
 **Next discriminating experiment.** Re-screen the structural candidates with the corrected local kick. Slow (NMDA-like) EPG excitation and wedge-structured inhibition can make a bump; a uniform global knob cannot.
+
+## F-RCPT-1. Transcripts fill the glutamate sign for 20 types; wiring cannot predict the sign-critical receptors
+
+**Data.** Davis, Nern et al. 2020 TAPIN-seq (GEO GSE116969), crosswalked to 69 male-cns types, including **EPG and Delta7** (Wolff & Rubin driver names). Transmitter genes validate the crosswalk (EPG ChAT+, Delta7 VGlut+, PAM ple+).
+
+**Ring cells, measured.**
+- **EPG:** GluClα (10,283 TPM), Rdl (14,890) and GABA-B-R1/2/3 all expressed; Nmdar1 the highest of all 77 populations; no AMPA-like iGluR.
+- **Delta7:** GluClα *and* GluRIA/B.
+- **EPG input composition:** 61% GABA (ER ring neurons), 26% ACh, 10% glutamate (ExR5/6, Delta7). The recurrent excitation is cholinergic, so the s7 "NMDA slow recurrent excitation" lead is mechanistically wrong.
+
+**Fills.**
+- Glutamate sign −1 for 18 GluCl-only types (0 weights change).
+- +1 for Dm9 and T1 (iGluR only; regression passes).
+- 36 types are mixed and get no row.
+
+**Inference test.** Leave-one-type-out logistic regression from connectome features (input-transmitter shares, own transmitter, superclass, input count): the sign-critical genes (GluRIA/B, Nmdar1, GABA-B-R3, 5-HT1A, Dop1R2) are at chance (balanced accuracy 0.47–0.62). The histamine receptors are predictable (0.78–0.87). **Receptor signs for the ~14k unprofiled types need transcriptomes matched to connectome types; wiring will not supply them.**
+
+## F-NT-1. The model's transmitter labels: every KC is "dopamine", ~3.3k inhibitory cells are "unclear"→excitatory
+
+- The model uses `predictedNt` (EM classifier). The curated `consensusNt` disagrees on 20,169 neurons:
+  - all 4,058 KCs dopamine → acetylcholine;
+  - unclear → histamine 5,822, → ACh 5,025, → glutamate 1,827, → GABA 1,490.
+- Transcripts agree with the type-level call on 62 of 68 types. The disagreements are the KCs (transcripts back consensus), Lai and T1.
+- Using consensusNt (option `connectome:all|nt_source_consensus`):
+  - sugar→MN9 16.7 / 128.7 Hz;
+  - closed loop fails on seed 0: the same Mi18 / DNge019 / DNg12 loop as s7 M0.
+- The s7 M0 result is confounded: sign-0 monoamines silenced every KC.
+- **The global efficacy was calibrated on wrong labels.** Recalibrating under consensusNt is a construction step for next session.
+
+## F-DELAY-2. Inferred delays for untyped cells
+
+- 10,809 untyped cells used the borrowed 1.8 ms default.
+- A ridge model of path length on volume, synapse counts and superclass has a CV delay error of 0.14 ms (median), against 0.84 ms for the default. It is adopted (`cell_type:untyped|inferred_conduction_delay`).
+- Sugar→MN9 at 100 Hz moves 26.3 → 20.3 Hz (trial spread 10–26); closed loop is unchanged.

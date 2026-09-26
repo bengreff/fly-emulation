@@ -13,11 +13,12 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 ov = {k: float(v) for k, v in (a.split("=") for a in sys.argv[1:])}
 dur = int(ov.pop("dur_ms", 600)); seed = int(ov.pop("seed", 0))
 steps = int(round(dur / 0.1)); start = 2000 if dur == 600 else steps // 2
-org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=seed)
+org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=seed)
 n = org.conn.neurons
 t = n.type.fillna("").to_numpy().astype(str)
 cnt = np.zeros(org.conn.n)

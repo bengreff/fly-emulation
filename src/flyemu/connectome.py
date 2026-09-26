@@ -128,6 +128,24 @@ def build(
     )
 
     neurons = neurons.reset_index(drop=True).copy()
+
+    # --- transmitter source (session 8) ---------------------------------------
+    # predictedNt is the per-neuron EM classifier call; consensusNt is the
+    # dataset's curated call. They disagree on ~20k neurons, e.g. every Kenyon
+    # cell is predictedNt "dopamine" but consensusNt "acetylcholine" (Davis 2020
+    # transcripts: ChAT+, no ple), and ~3.3k "unclear" cells are GABA or glutamate.
+    if reg.require(
+            "connectome:all", "nt_source_consensus", units="boolean",
+            model_use="which transmitter call sets synaptic sign and modulator release",
+            subsystem="sign", instances=len(neurons), minimal=0.0, conventional=0.0,
+            minimal_note="0: EM classifier predictedNt (sessions 1-7); 1: male-cns consensusNt",
+            uncertainty="consensusNt disagrees with predictedNt on 20,169 neurons; "
+                        "transcripts (69 types) agree with consensus for KCs") and (
+            CACHE / "male_cns_extra.parquet").exists():
+        extra = pd.read_parquet(CACHE / "male_cns_extra.parquet", columns=["bodyId", "consensusNt"])
+        cons = neurons.bodyId.map(extra.set_index("bodyId").consensusNt)
+        neurons["predictedNt_em"] = neurons.predictedNt
+        neurons["predictedNt"] = cons.where(cons.notna(), neurons.predictedNt)
     pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
 
     e = edges[edges.weight >= min_synapses]

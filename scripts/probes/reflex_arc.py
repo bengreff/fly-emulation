@@ -12,6 +12,7 @@ import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
+from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
 
 def main():
@@ -23,7 +24,7 @@ def main():
     ap.add_argument("--which", default="claw_flexion")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov)
+    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov)
     aff, n = org.aff, org.conn.neurons
     tab = pd.read_csv("data/params/proprio_assignment.csv", comment="#").set_index("type")
     typ = n.type.fillna("").to_numpy()[aff.rows]
