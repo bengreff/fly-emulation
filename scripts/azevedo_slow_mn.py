@@ -65,23 +65,25 @@ def main():
         p, s = d["params"], d["spikes"]
         fs = float(p.sampratein)
         r_ = lambda a, b: rate(s, a, b, fs)  # noqa: E731
-        pre = r_(0.5, 1.0); spont.append(r_(0.0, 1.0))
+        t0, st = float(p.preDurInSec), float(p.stimDurInSec)     # step onset, duration
+        pre = r_(t0 - 0.5, t0); spont.append(r_(0.0, t0))
         rows.append(dict(protocol="step", disp_deg=float(p.displacement) * DEG_PER_V,
                          start_deg=float(p.displacementOffset) * DEG_PER_V, speed_dps=np.nan,
-                         pre_hz=pre, transient_hz=r_(1.0, 1.1), hold_hz=r_(1.1, 1.5),
-                         post_hz=r_(1.6, 2.0)))
+                         pre_hz=pre, transient_hz=r_(t0, t0 + 0.1), hold_hz=r_(t0 + 0.1, t0 + st),
+                         post_hz=r_(t0 + st + 0.1, t0 + st + 0.5)))
     # --- ramps: pre 0.5, stim 0.5 (ramp then hold), post 0.5 ----------------
     for d in ([] if args.intrinsic_only else load("PiezoRamp2T_Raw_*.mat")):
         p, s = d["params"], d["spikes"]
         fs = float(p.sampratein)
         r_ = lambda a, b: rate(s, a, b, fs)  # noqa: E731
         dur = abs(float(p.displacement)) / float(p.speed)       # s
-        spont.append(r_(0.0, 0.5))
+        t0, st = float(p.preDurInSec), float(p.stimDurInSec)
+        spont.append(r_(0.0, t0))
         rows.append(dict(protocol="ramp", disp_deg=float(p.displacement) * DEG_PER_V,
                          start_deg=float(p.displacementOffset) * DEG_PER_V,
-                         speed_dps=float(p.speed) * DEG_PER_V, pre_hz=r_(0.25, 0.5),
-                         transient_hz=r_(0.5, 0.5 + max(dur, 0.05)),
-                         hold_hz=r_(0.5 + dur + 0.05, 1.0), post_hz=r_(1.1, 1.5)))
+                         speed_dps=float(p.speed) * DEG_PER_V, pre_hz=r_(t0 - 0.25, t0),
+                         transient_hz=r_(t0, t0 + max(dur, 0.05)),
+                         hold_hz=r_(t0 + dur + 0.05, t0 + st), post_hz=r_(t0 + st + 0.1, t0 + st + 0.5)))
     df = pd.DataFrame(rows, columns=["protocol", "disp_deg", "start_deg", "speed_dps", "pre_hz",
                                      "transient_hz", "hold_hz", "post_hz"])
     cond = (df.groupby(["protocol", "disp_deg", "start_deg", "speed_dps"], dropna=False)
