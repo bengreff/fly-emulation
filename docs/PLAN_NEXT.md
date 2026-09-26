@@ -5,7 +5,9 @@
 0. **The VNC operating point (F-AZ-2).** This is the current bottleneck for every leg behaviour.
    - The held-out reflex of Azevedo cell 180111_F2_C1 fails because the excitatory premotor interneurons (IN03A004, IN21A004, IN21A006) sit 5–10 mV below threshold under tonic GABA, mainly from IN13A005.
    - The reflex signal has the right sign but is rectified away. Only 8% of T2 interneurons fire at rest.
-   - Constrain the resting activity of VNC interneurons from recordings (Agrawal 2020 and others; see LIT notes). Consider nonspiking/graded premotor interneurons (Burrows) only if evidence supports it for Drosophila.
+   - Constrain the resting activity of VNC interneurons from recordings. Agrawal 2020 raw data are now local (F-VNC-1; fetch more with `scripts/fetch/zenodo_zip_members.py`).
+   - 13Bα and 10Bα are measured nonspiking. Fit graded operating ranges to the 13Bα Vm-angle tuning (the ramp-and-hold set), pre-registered, with no reflex data.
+   - The slow MN's tonic drive should then move from intrinsic to synaptic (Azevedo: its rest rate is synaptically set).
    - Then re-run `scripts/probes/azevedo_reflex.py` **unchanged**. All conditions of this cell have now been seen at least once, so a second recorded slow cell (e.g. Dryad 181021_F1_C1) is the fresh held-out set. Do not fit further on 180111.
 1. **AL spontaneous state (F-AL-2).** Test presynaptic/GABA-B LN inhibition against measured PN spontaneous rates.
 

@@ -72,3 +72,7 @@ Start 06:32 CDT. Ben downloaded Azevedo 2020 Dryad cell 180111_F2_C1 (slow MN, R
   VNC scale, glutamate sign on flexor MNs) each failed on the fit target; none adopted. Diagnosis: premotor
   excitatory INs silent, 5-10 mV below threshold, under tonic GABA from IN13A005 (F-AZ-2). Stopped fitting on this
   target (three post-hoc attempts). Slow-MN intrinsic fit adopted (reproduces measured f-I). Stability 6/6.
+- 07:10-07:30 Third Explore agent: slow-MN spontaneous rate is synaptically driven (Azevedo); GluCl dominant in MNs
+  (Lesser 2024) — consistent with rejecting the glutamate hypothesis. Agrawal 2020 raw data found on Zenodo (CC0,
+  7.5 GB, throttled <1 MB/s): fetched selected members by HTTP range requests (scripts/fetch/zenodo_zip_members.py).
+  F-VNC-1: real 13B/10B/9A interneurons rest at -40..-53 mV with graded angle coding; model VNC pinned at V_rest.
