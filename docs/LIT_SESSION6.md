@@ -46,3 +46,19 @@ The tibia flexor has about 15 motor neurons.
 
 - No absolute standing thorax height was found in the literature. Body length is 2.04 mm (Pratt et al. 2024).
 - Femur-tibia range during walking: front 97°, middle 22°, hind 84° (Haustein et al. 2024).
+
+## VNC interneurons and motor-neuron inputs (third agent, session 6b; leads)
+
+- **Azevedo 2020:** "Spontaneous firing rate in slow motor neurons is set by excitatory synaptic input." LJP correction −13 mV.
+- **Agrawal et al. 2020, eLife 9:e60299.** Whole-cell recordings from T1; LJP 12 mV subtracted.
+  - 13Bα: GABAergic and **nonspiking**; graded, tonic, non-adapting position coding that rises past ~90°; example Vm −44 to −61 mV.
+  - 9Aα: GABAergic and spiking, up to ~250–300 Hz evoked. Picrotoxin depolarises it at rest, so it receives tonic GABA.
+  - 10Bα: cholinergic and effectively nonspiking.
+  - Raw data: Dryad 10.5061/dryad.k3j9kd55t; open Zenodo mirror 4307018 (CC0), Ephys_data.zip 7.5 GB.
+- **Lesser et al. 2024, Nature:** "GluCl is the most highly expressed glutamate receptor in MNs" (GluRIA/IB lower). This is evidence against the excitatory-glutamate hypothesis rejected in F-AZ-2.
+- **Gowda et al. 2018, PNAS:** Rdl knockdown in leg MNs impairs walking; preliminary GluCl knockdown too.
+- **Locust prior** (Burrows & Siegler 1978; Laurent 1991): premotor local interneurons are nonspiking.
+  - Some release transmitter tonically at rest.
+  - A 2 mV depolarisation suffices for release in others.
+  - Vm swings up to 15 mV; resting Vm about −58 mV.
+- No recordings were found of 13A, 19A, 21A, 3A, 8A or 14A interneurons.
