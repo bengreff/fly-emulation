@@ -1,0 +1,3 @@
+# Candidate rows (not live): session 7 exploratory; copied from hypotheses_not_adopted.csv
+type,param,value,units,basis,source,justification
+^Ti flexor MN$|^Acc. ti flexor MN$,glutamate_receptor_sign,1.0,sign,guessed,hypothesis (DECISIONS 6b): Azevedo 2020 resistance-reflex sign + male-cns wiring (IN21A glutamatergic premotor input carries extension signals),glutamate sign is receptor-dependent (GluCl vs iGluR); no measurement for leg MNs located; tested against held-out reflex data of cell 180111_F2_C1

@@ -1032,3 +1032,53 @@ Stability (0 non-tonic spikes in the last 100 ms after sensory silencing): **T a
 **E1, global strength.** Every synapse at 1.8 mV (the 0.165 × 10.9 ORN→PN transfer) with the Nagel depression (U 0.22, τ 893 ms) on every presynaptic cell. The question is whether measured-strength synapses plus measured-form depression give a stable brain with a working sugar→MN9 path.
 - Readouts: closed-loop stability (2 seeds) and sugar→MN9_L at 100 and 200 Hz.
 - This is a feasibility probe, so there are no criteria. Transfer of one synapse class's depression to all classes is a guess.
+
+**Result, E1 and E2 (14:10).**
+- **E1, global 1.8 mV plus depression: unstable.**
+  - Whole brain 9.5 Hz; uPN mean 47 Hz (87% active); MNs 32 Hz.
+  - 350–560 non-tonic spikes/ms persist after silencing (2 seeds). The persistence is carried mainly by optic-lobe recurrent loops (Tm1/2/4, T1, Dm15).
+  - Sugar→MN9_L still works: 52 / 45 / 37 Hz at 100 Hz, 57 Hz at 200 Hz.
+  - Measured-strength synapses with ORN-type depression everywhere are not viable. Stability at measured strength needs cell-class-specific inhibition, thresholds or depression that the model does not have.
+- **E2, EPG kick (default model).** After 6 or 2 EPGs were kicked (15 mV, 50 ms) and all sensory input silenced, 0 of 50 EPGs were active at 200–400 ms; the no-kick control is the same. Under E1 the same kick saturates the ring: 50/50 EPG at 27 Hz, PEN at 84 Hz.
+- **Conclusion.** The hypothesis is not supported. At default efficacy the ring cannot sustain itself. In T and T′ the persistent state must be started by the heavy leg-afferent drive and held by VNC and ascending loops (accessory flexor MNs and IN09A005 persist). The default network has latent self-sustaining states that strong activity can enter; compare F-ORN-2.
+
+**Diagnostic (14:14): why extension does not excite the flexor under T′.** An 8° extension step (82→90°, stiff probe), left-middle premotor rates pre→hold:
+- IN21A004 (ACh) 0→30 Hz;
+- IN13A005 (GABA) 116→25 Hz, i.e. disinhibition;
+- **IN21A006 (glutamate) 4→55 Hz.** It is the second-largest input to the slow MNs (93 synapses).
+
+Under uniform inhibitory glutamate, IN21A006 cancels the cholinergic excitation and the disinhibition; the MN changes by −0.9 Hz. The reflex sign therefore hinges on two unverified foundations: glutamate's sign at leg MNs, and the inferred direction tuning of the afferents that drive IN21A006.
+
+### Exploratory (over the post-hoc budget, not adoptable): glutamate excitatory onto tibia flexor MNs, under T′ and T (14:14)
+
+The row is the session-6b hypothesis (`hypotheses_not_adopted.csv`), loaded via `candidates_s7_glu_flexor.csv`. The run is the dev reflex with the stiff probe. The dev target is over budget, so a "pass" here can **only** motivate a pre-registered test on a fresh sealed cell next session. Lesser 2024 (transcriptomic; GluCl dominant in MNs) argues against the hypothesis.
+
+### Pre-registration: monoamines are not fast transmitters (14:15)
+
+**Finding (post-hoc, from the T persistent state).** DNg33 (ACh) drives the serotonergic AN09A005, IN09A005 and AN27X013 (2,939 / 1,321 / 1,619 synapses). They project back onto DNg33 (69 / 113 / 62) and onto themselves (AN09A005→AN09A005, 52). m2 signs serotonin, octopamine and dopamine as **fast excitation**, a guessed placeholder (Shiu convention; `profiles.py`), which makes this a positive-feedback loop. The EL ring neurons (octopaminergic) also persist.
+
+**Evidence.** Every Drosophila receptor for serotonin (5-HT1A, 1B, 2A, 2B, 7), octopamine (OAMB/Octα1R, Octα2R, Octβ1–3R) and dopamine (Dop1R1, Dop1R2, DopEcR, D2R) is a GPCR. No ionotropic 5-HT3-type receptor is known in insects. Label **inferred**, from receptor genomics; no fast monoaminergic synaptic current has been measured centrally.
+
+**Change (config M0).** `transmitter:{serotonin,octopamine,dopamine}|sign` = 0. Monoaminergic cells then act only through the neuromodulator pools (unchanged, currently inert).
+
+**Tests.**
+1. Default + M0:
+   - sugar→MN9_L > 5 Hz at 100 and 200 Hz;
+   - closed-loop stability, 3 seeds (0 non-tonic spikes);
+   - the brain rate is reported.
+2. T + M0:
+   - stability, 3 seeds;
+   - standing, 3 seeds (≥ 0.90 mm criterion);
+   - the stiff-probe dev reflex, reported.
+
+**Adoption.** M0 becomes the default if test 1 passes. It is a correction of a guessed convention toward receptor evidence, not a fit, so passing its regression checks suffices. M0's effect on the flybench olfactory tasks is deferred (held out).
+
+**Result, M0 (14:18). Fails test 1; not adopted.** The rows stay as overrides only.
+- **Default + M0.** Stability fails on 2 of 3 seeds: 49.7 and 51.7 non-tonic spikes/ms (optic-lobe Mi18, DNge019, DNg12_c); seed 2 gives 0. Sugar→MN9_L 7.7 Hz at 100 Hz (26.3 without M0) and 69.7 Hz at 200 Hz. Brain excluding ORNs: 0.32–0.41 Hz. Removing placeholder monoamine excitation unmasks other latent loops, so the placeholder had been part of what kept the calibrated brain quiet.
+- **T + M0.** Stability fails (31–33 spikes/ms; the CX ring persists, while the serotonergic loop is gone). Standing min z 0.78 / 0.69 / **0.92** mm; seed 2 meets the height criterion, the **first run ever to do so**, but in an unstable, non-adoptable configuration.
+- **Reading.** The monoamine fast-sign convention is biologically wrong (GPCR-only receptors), but the network's calibration depends on it. Correcting it needs a recalibration, pre-registered with fresh seeds, not a swap.
+
+**Result, exploratory glutamate+ (14:25). Stiff probe valid.**
+- **T′ + glu+:** H1 0.70. The 8° extension hold is **+3.4 Hz** (was +0.6), ramps +2.2 to +4.7, against +20 to +28 measured; flexion hold −1.9 against −4.1. The response moves in the right direction but stays about 5× short.
+- **T + glu+:** H1 0.70; all holds within ±2 Hz.
+- The glutamate sign at the flexor MN is not sufficient by itself. Not carried forward as a candidate without new evidence; Lesser 2024 argues against it.

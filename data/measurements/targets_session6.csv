@@ -32,18 +32,26 @@ f-I curve,slow tibia flexor MN (180111_F2_C1),0.5/24.8/69.2/95.8 Hz at -31.6/0/3
 resistance reflex step/ramp responses,slow tibia flexor MN (180111_F2_C1),see csv,Hz,n=5-10 per condition,Azevedo 2020 Dryad raw,data/derived/azevedo2020_slow_mn_180111.csv,raw data,seen (do not fit further; use a fresh cell)
 static Vm-angle slope,13Balpha (T1),0.046 median (0.012-0.083),mV/deg,15 cells,Agrawal 2020 Zenodo raw,data/derived/agrawal2020_13Balpha_static_tuning.csv,raw data,fit target (failed grid; see F-VNC-2)
 resting Vm (LJP-corrected),13Balpha/10Balpha/9Aalpha,"-40..-51 / -49..-52 / -45,-53",mV,5/3/2 cells,Agrawal 2020 Zenodo raw,data/derived/agrawal2020_vnc_interneurons.csv,raw data,held-out
-unitary EPSP (ORN->PN),antennal uPN,6.19,mV,SEM 0.45 (n=23),Kazama & Wilson 2008 Neuron 58:401 (PMC2429849),Results minimal stimulation,text,fit (sets connection_class:ORN_to_uPN|efficacy_scale in session 7 candidates)
-unitary EPSC (ORN->PN),antennal uPN,29.0,pA,SEM 2.6 (n=45),Kazama & Wilson 2008 Neuron 58:401,Results,text,none
-release probability ORN->PN,antennal uPN,0.79,dimensionless,n=22 cells,Kazama & Wilson 2008,Fig 7C variance-mean,text,none
+unitary EPSP (ORN->PN),antennal uPN,6.19,mV,SEM 0.45 (n=23),Kazama & Wilson 2008 Neuron 58:401 (PMC2429849),Results minimal stimulation,text (hand-verified in source, session 7),fit (sets connection_class:ORN_to_uPN|efficacy_scale in session 7 candidates)
+unitary EPSC (ORN->PN),antennal uPN,29.0,pA,SEM 2.6 (n=45),Kazama & Wilson 2008 Neuron 58:401,Results,text (hand-verified in source, session 7),none
+release probability ORN->PN,antennal uPN,0.79,dimensionless,n=22 cells,Kazama & Wilson 2008,Fig 7C variance-mean,text (hand-verified in source, session 7),none
 spontaneous EPSC rate,DM4 uPN (one antenna removed),74.9,Hz,SEM 8.6 (n=8),Kazama & Wilson 2009 Nat Neurosci,Results 'Divergent receptor neuron connectivity',text,none
 ORN spontaneous rate,DM4 ORN,3.44,Hz,SEM 0.16 (n=11),Kazama & Wilson 2009,Results,text,none
 PN input resistance,antennal PN (antennae removed),598,MOhm,SEM 69.3 (n=14),Gouwens & Wilson 2009 J Neurosci (PMC2709801),Results,text,none
 PN resting potential (seal-corrected estimate),antennal PN,-57.8,mV,model-based estimate; whole-cell -47.8+/-1.6 (n=12),Gouwens & Wilson 2009,Discussion,text,tested (session 7 AL repair 1; not adopted)
-ORN->PN depression per spike,DM6/VM2 PN,0.78,dimensionless (amplitude factor),fit to 10 Hz trains (n=19),Nagel Hong & Wilson 2015 Nat Neurosci (PMC4289142),Fig 1c,text,fit (afferent:ORN|measured_depression candidate)
-ORN->PN depression recovery tau,DM6/VM2 PN,893,ms,fit (n=19),Nagel Hong & Wilson 2015,Fig 1c,text,fit (afferent:ORN|measured_depression candidate)
+ORN->PN depression per spike,DM6/VM2 PN,0.78,dimensionless (amplitude factor),fit to 10 Hz trains (n=19),Nagel Hong & Wilson 2015 Nat Neurosci (PMC4289142),Fig 1c,text (hand-verified in source, session 7),fit (afferent:ORN|measured_depression candidate)
+ORN->PN depression recovery tau,DM6/VM2 PN,893,ms,fit (n=19),Nagel Hong & Wilson 2015,Fig 1c,text (hand-verified in source, session 7),fit (afferent:ORN|measured_depression candidate)
 PN spontaneous rate,antennal uPN,1-5,Hz,qualitative 'typically',Kazama & Wilson 2009 Nat Neurosci,Discussion,text,held-out (spent session 7: AL P/M/PR/MR)
-13Balpha spiking,13Balpha VNC IN,non-spiking,categorical,'All 13Balpha cells lacked detectable action potentials',Agrawal et al. 2020 eLife 9:e60299 (PMC7752136),Results,secondary (fetch summary),none
+13Balpha spiking,13Balpha VNC IN,non-spiking,categorical,'All 13Balpha cells lacked detectable action potentials',Agrawal et al. 2020 eLife 9:e60299 (PMC7752136),Results,text (hand-verified in source, session 7),none
 10Balpha spiking,10Balpha VNC IN,graded,categorical,occasional spike-like events,Agrawal et al. 2020 eLife 9:e60299,Results,secondary (fetch summary),none
-slow MN rest firing is synaptic (nicotinic),slow tibia flexor MN,MLA 1 uM lowers rate and resting force ~1.5 uN,categorical,n=9,Azevedo et al. 2020 eLife 9:e56754 (PMC7347388),Results + Fig 4C legend,secondary (fetch summary),none
+slow MN rest firing is synaptic (nicotinic),slow tibia flexor MN,MLA 1 uM lowers rate and resting force ~1.5 uN,categorical,n=9,Azevedo et al. 2020 eLife 9:e56754 (PMC7347388),Results + Fig 4C legend,text (hand-verified in source, session 7),none
 MN resting potential fast/intermediate/slow,tibia flexor MNs,-68/-60/-48,mV,n=15/11/14,Azevedo et al. 2020,Fig 3C,secondary (fetch summary),none
 MN input resistance fast/intermediate/slow,tibia flexor MNs,150/300/700,MOhm,n=15/11/14,Azevedo et al. 2020,Fig 3E,secondary (fetch summary),none
+PN spontaneous rate,antennal PN,4.6,Hz,SD 4.2 (n=37),Turner Bazhenov & Laurent 2008 J Neurophysiol,Fig 3F,text (PDF),held-out
+Kenyon cell threshold minus rest,Kenyon cell,21.5,mV,SD 5.6 (n=17),Turner Bazhenov & Laurent 2008 J Neurophysiol,Fig 3G,text (PDF),none
+Kenyon cell spontaneous rate,Kenyon cell,0.1,Hz,SD 0.4 (n=71),Turner Bazhenov & Laurent 2008,Results,text (PDF),held-out
+Kenyon cell input resistance,Kenyon cell,>10,GOhm,n.r.,Turner Bazhenov & Laurent 2008,Results,text (PDF),none
+P-EN input resistance,P-EN central complex,1.9,GOhm,SD 0.8,Turner-Evans et al. 2017 eLife (PMC5440168),Methods,text,none
+P-EN spontaneous rate (standing),P-EN central complex,3.9,Hz,SD 2.6,Turner-Evans et al. 2017 eLife,Methods (loose patch),text,held-out
+descending neuron AX resting potential,DN AX,-59,mV,n=3; LJP n.s.,Schnell et al. 2017 Curr Biol (PMC6309624),Fig 3 legend,text,none
+Mi1/Tm1/Tm2/Tm4 physiological rest range,medulla neurons,-50 to -60,mV,authors' statement,Behnia et al. 2014 Nature (PMC4243710),Methods,text,none

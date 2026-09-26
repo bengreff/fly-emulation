@@ -91,6 +91,11 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-AZ-3 | Session 6c | The slow-MN fit transfers to a second recorded cell |  |
 | F-SENSE-2 | Session 6c | Leg proprioceptor identities from BANC replace guesses; the reflex still fails at the premotor  |  |
 | F-AL-3 | Session 6c | Moving LN inhibition presynaptic does not wake the silent PNs |  |
+| F-AL-4 | Session 7 | The measured ORN→PN synapse is 11× the model's; with it, PNs are overdriven and bimodal |  |
+| F-VNC-3 | Session 7 | 13Bα = IN13B013 (inferred); its position tuning fails at the afferent→IN layer |  |
+| F-XFER-1 | Session 7 | Transferring the measured first-order synapse to leg afferents: right-signed flexion reflex, best standing, unstable network |  |
+| F-PROBE-1 | Session 7 | The reflex probe was too soft once legs made torque; scorer now refuses invalid stimuli |  |
+| F-STAB-1 | Session 7 | The calibrated network has latent self-sustaining states; the monoamine fast-excitation convention is wrong but load-bearing |  |
 
 ### Session 1 status table (historical)
 
@@ -1975,3 +1980,113 @@ Pre-registered target: PN spontaneous rates of 1–5 Hz (Kazama & Wilson 2009). 
 **Fail.** The silent 70% lack excitation (~5 mV of ORN drive, below threshold), not disinhibition.
 
 The measured next constraint is ORN→PN synaptic strength and spontaneous EPSC rate (Kazama & Wilson 2008, 2009): 75 Hz spontaneous EPSCs per DM4 PN. The model gives ORN→PN the single brain-wide 0.165 mV per synapse.
+
+# Session 7 (26 September 2026, unattended with a judgement-call mandate)
+
+## F-AL-4. The measured ORN→PN synapse is 11× the model's; with it, PNs are overdriven and bimodal
+
+**Measured constraints**, read in PMC full text by an agent (leads, not yet re-read by hand):
+
+| Quantity | Value | n | Source |
+|---|---|---|---|
+| Unitary EPSP | 6.19 ± 0.45 mV | 23 | Kazama & Wilson 2008, Neuron 58:401 |
+| Unitary EPSC | 29 ± 2.6 pA | 45 | same |
+| Release probability | 0.79 | | same |
+| Spontaneous EPSC rate, DM4 | 74.9 ± 8.6 Hz | | Kazama & Wilson 2009 |
+| Depression per spike | f = 0.78 | | Nagel, Hong & Wilson 2015 |
+| Depression recovery | τ = 893 ms | | same |
+| PN input resistance | 598 MΩ | | Gouwens & Wilson 2009 |
+| Seal-corrected PN rest | −57.8 mV | | same |
+
+**Connectome side.** The median ORN→uPN connection has 22 synapses, matching Tobin et al. 2017 EM (~23). At 0.165 mV/synapse, the model's unitary EPSP there is 0.57 mV, **10.9× below measurement**. A per-synapse PSP of ~0.28 mV is implied.
+
+**Tests.** Nothing was fitted to PN rates. Held out: KW2009 "1–5 Hz"; ≥ 70% active; mean ≤ 10 Hz. Three seeds each:
+
+| Config | active | median | mean |
+|---|---|---|---|
+| baseline | 0.32 | 0 Hz | 6 Hz |
+| P: ×10.9 + depression | 0.64–0.68 | 8–10 Hz | 23 Hz |
+| M: + homeostatic matching (KW2008 Fig 4B) | 0.62–0.64 | 5 Hz | 28 Hz |
+| PR / MR: + seal-corrected PN rest −57.8 mV (post-hoc repair 1) | 0.59–0.60 | 6–7 / 2–3 Hz | 18–20 Hz |
+
+**All fail.**
+- The population is **bimodal**: silent PNs sit under ~−21 mV of LN inhibition while active PNs fire at ~20+ Hz.
+- **Structural ceiling:** 67 of 329 uPNs have fewer than 100 ORN synapses (40 are thermo- or hygrosensory PNs). ORN-side changes cannot activate more than ~80%, so the ≥ 70% criterion needs nearly every ORN-driven PN.
+- **Implication for the whole model:** one measured central synapse is an order of magnitude stronger than the brain-wide efficacy, which was fitted for stability (see F-STAB-1).
+
+## F-VNC-3. 13Bα = IN13B013 (inferred); its position tuning fails at the afferent→IN layer
+
+**Identification.**
+- **IN13B013** has the largest claw share of any T2/T3 IN13B type (8.6%) and BANC "proprioception"; GABAergic, 1 per hemisegment. It targets interneurons, not MNs.
+- **IN10B041 / IN10B058** (club share 26% / 21%) are 10Bα candidates.
+- Agrawal 2020 (via PMC summary): 13Bα is **non-spiking**, 10Bα graded, 9Aα spiking.
+
+**Layer check** (tethered holds, T2L IN13B013 ΔVm):
+
+| Config | slope (mV/deg) |
+|---|---|
+| mV-mode sensors | +0.001 |
+| rate mode 200 Hz | +0.004 |
+| measured 13Bα | +0.012 to +0.083 |
+
+About 10× short, like ORN→PN, so fitting an operating point cannot fix the slope. Transferring ORN→PN strength (F-XFER-1) did not fix it either: the result was non-monotonic.
+
+**Depression arithmetic.** With the Nagel depression, steady-state drive ∝ r/(1 + U·r·τ). It saturates near 5 spikes/s, so a depressing synapse transmits position only if afferent rates are low. Adult FeCO spike rates remain unmeasured.
+
+## F-XFER-1. Transferring the measured first-order synapse to leg afferents
+
+**Configs** (inferred transfer, nothing fitted):
+- **T:** all driven leg-proprioceptor output edges ×10.9, with Nagel depression; rate mode 200 Hz.
+- **T′:** the same without depression.
+
+**Dev reflex** (cell 180111, stiff probe; F-PROBE-1):
+- T′ passes **H1 (0.80)** and H3 for the first time. Flexion responses are near measured: 8° −4.0 vs −4.1 Hz.
+- Extension excitation of the slow flexor is ~20× short: +0.6 vs +20.3 Hz. **H2 fails**, so the sealed cell stays sealed.
+- T: H1 0.60.
+
+**Why extension fails, under T′.** An 8° extension:
+- raises cholinergic IN21A004 by 0 → 30 Hz;
+- lowers GABAergic IN13A005 by 116 → 25 Hz (disinhibition);
+- but also raises glutamatergic **IN21A006** by 4 → 55 Hz. It is the second-largest input to the slow MN and cancels the other two under inhibitory glutamate.
+
+Making glutamate excitatory at flexor MNs (exploratory, over the post-hoc budget) raises the 8° extension response only to +3.4 Hz. It is not sufficient.
+
+**Standing** (min z 0.5–1.5 s; criterion 0.90 mm):
+- default 0.54;
+- **T: 0.75 / 0.78 / 0.87** (mean 0.80–1.06); motor silenced 0.68;
+- T + M0: 0.78 / 0.69 / **0.92**. That is the first height pass, 1 of 3 seeds, in an unstable config.
+
+**Stability.** T and T′ both fail (64–78 non-tonic spikes/ms after silencing) through the persistent states in F-STAB-1. Nothing is adopted.
+
+## F-PROBE-1. The reflex probe was too soft once legs made torque
+
+At kp = 3 µN·mm/deg, T′ legs pushed the probe off target: start at 87.5° instead of 82°; holds drifted about 5°. Earlier configs held within 0.5° only because the legs produced little torque.
+
+**Changes.**
+- `score_reflex.py` now refuses, **with the cell unopened**, if any start or end angle misses by > 1.5°.
+- Scoring uses kp = 100 (error ≤ 0.5°, stable).
+
+**Re-scored with the stiff probe:**
+- T′: H1 0.40 → 0.80;
+- T: H1 0.70 → 0.60.
+
+Any reflex claim made with a probe that yields to the leg would have been wrong.
+
+## F-STAB-1. The calibrated network has latent self-sustaining states; the monoamine fast-excitation convention is wrong but load-bearing
+
+- **What persists under T / T′ after silencing:**
+  - the central-complex ring: EPG (37–40 of 50 at ~100 Hz), PEN_a/b, Delta7, PFNv, EL. This is a saturated ring, not a bump;
+  - a loop of **DNg33 (ACh) ↔ serotonergic AN09A005 / IN09A005 / AN27X013** (fast-excitation placeholder).
+- **E2:** kicking EPGs in the default model leaves nothing persistent. The ring does not sustain itself at 0.165 mV, so it is not what caps the efficacy.
+- **E1:** every synapse at the measured 1.8 mV plus ORN-type depression is unstable. It gives a 9.5 Hz brain, and optic-lobe loops (Tm1/2/4, T1) persist, although sugar→MN9 still works (37–57 Hz).
+- **M0:** monoamines take sign 0 for fast transmission, since all Drosophila 5-HT, OA and DA receptors are GPCRs.
+  - This is biologically motivated but **destabilises the default model**: 2 of 3 seeds persist, through Mi18 and DNge019 / DNg12_c.
+  - Sugar→MN9_L falls from 26 to 7.7 Hz.
+  - The wrong convention is load-bearing for the current calibration. Not adopted.
+- **Criterion gap:** "0 non-tonic spikes after silencing" cannot tell a legitimate persistent bump from a runaway. A CX-specific metric (fraction of EPGs active, bump width) is needed.
+- **Consequence for the project:** measured synapse strengths (F-AL-4) and stability cannot currently coexist. The missing ingredient is cell-class-specific: thresholds and rests (literature below), inhibition, or depression. It is not one global scalar.
+
+**Literature gathered this session**, now in `data/measurements/targets_session6.csv`:
+- corrected central resting potentials sit at −55 to −68 mV (PNs −57.8; DN AX −59; medulla −50 to −60; MNs −48 / −60 / −68), not −52;
+- the only measured threshold is the Kenyon cell's, 21.5 ± 5.6 mV above rest, against the borrowed 7 mV;
+- spontaneous rates: PN 4.6 ± 4.2 Hz (n = 37); P-EN 3.9 Hz; KC 0.1 Hz.

@@ -19,3 +19,8 @@ Pre-session Q&A with Ben (attended, 13:10):
 - 13:56 Protocol flaw: leg beats soft probe (T, Tp). score_reflex clamp gate added (cell unopened if >1.5 deg); kp=100. Re-scoring T, Tp on dev (Mac, sequential).
 - 14:02 Standing 1 seed: default zmin .54; T .75 (zmean .98, best yet); Tp .64; Tp silenced .68. Tp stability FAIL (70 spikes/ms after silencing). T dev (kp100) H1 .6 fail. Launched T stability + standing seeds.
 - 14:08 CX ring = sustained cells in T/Tp. Exploratory E1 (global 1.8 mV + depression) and E2 (EPG kick) on backhouse.
+- 14:10 E1 unstable (optic lobe loops); E2 default ring does not persist after kick. Hypothesis (ring sets efficacy ceiling) not supported.
+- 14:14 Diagnostic: IN21A006 (Glu) cancels extension excitation under Tp. Exploratory glu+ runs (Tp, T) on Mac.
+- 14:15 Found DNg33<->5-HT fast-excitation loop; pre-reg M0 (monoamine fast sign 0); 10 runs on backhouse
+- 14:18 M0 fails (stability 2/3 seeds default). T+M0 standing seed 2 = 0.92 (first height pass; unstable config). Rest-potential lit added to targets.
+- 14:25 glu+ exploratory: Tp ext +3.4 Hz (5x short), H1 .7. Not sufficient.
