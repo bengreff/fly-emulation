@@ -14,7 +14,7 @@ neuron,spiking vs graded signalling,cell type,14356,1,14356,simulated,mixed,patc
 neuron,spike-frequency adaptation (increment,cell type,14356,2,28712,default,guessed,patch,measured,mechanism present,parameter
 neuron,ion-channel complement and densities,cell type,14356,12,172272,absent,unknown,"patch + pharmacology, scRNA-seq priors",measured,"~12 major conductance classes (Nav, Kv1-4, Cav, KCa, HCN, leak)",parameter
 neuron,intrinsic bursting or pacemaking,cell type,14356,1,14356,absent,unknown,patch,measured,e.g. clock neurons,parameter
-neuron,spontaneous firing rate (slow tibia flexor MN class),cell type,1,1,1,simulated,derived,patch (Azevedo 2020),derived,30 Hz measured -> tonic drive derived through the m2 LIF; 60 cells classed by size rank (inferred),parameter
+neuron,intrinsic properties of the slow tibia flexor MN class (tau_m,cell type,1,4,4,simulated,inferred,whole-cell (Azevedo 2020 raw data),derived,"session 6b: fitted to one recorded cell's f-I, spontaneous rate (24.8 Hz), Rin (1041 MOhm) and tau (16 ms); transferred to 60 size-classed cells",parameter
 neuron,spontaneous firing rate,cell type,14355,1,14355,default,guessed,extracellular/patch,measured,per-type tonic drive simulated; 0 mV default,parameter
 neuron,axonal conduction delay (types with skeleton),cell type,11750,1,11750,simulated,derived,morphology + velocity,derived,"session 6: 0.5 ms + L/v, L from skeleton (derived), v 0.5 m/s inferred, GF 2.07 m/s measured",parameter
 neuron,axonal conduction delay (untyped cells),cell type,2606,1,2606,default,inferred,morphology,derived,shared 1.8 ms default (Shiu),parameter

@@ -1783,3 +1783,17 @@ The model's VNC is therefore a quiet, inhibition-dominated network in which refl
 **Standing** with the fitted slow MNs: z_min 0.68 mm, roll up to 43°. Still a fail.
 
 **Stability** over seeds 0–5 holds: whole brain 0.26–0.37 Hz, no sustained activity. Sugar→MN9_L is 26.5 / 88 Hz.
+
+## F-AL-2. Why 70% of uniglomerular PNs are silent with Hallem ORN input
+
+`scripts/probes/pn_silence.py`, 400 ms at rest with Hallem SFR: 329 uPNs, 30% active, median rate 0, mean 6 Hz.
+
+|  | ORN synapses | Excitation from ORNs | Inhibition |
+|---|---|---|---|
+| Silent PNs | 646 | 5.3 mV | −14.1 mV |
+| Active PNs | 1,490 | 17.6 mV | −12.9 mV |
+
+- The inhibition is mostly GABAergic local neurons. Mean contribution per silent PN: il3LN6 −7.5 mV, v2LN30 −5.3, lLN2F_b −3.3, v2LN36 −2.1.
+- 44 PNs have no ORN synapse at the ≥5-synapse cut; these are non-olfactory or thermo/hygro glomeruli.
+- The model applies all LN inhibition postsynaptically and uniformly. Much of the animal's LN inhibition is presynaptic onto ORN terminals and GABA-B-mediated (Olsen & Wilson 2008). The mechanisms now exist, off by default (F-MECH-1).
+- The discriminating experiment is a pre-registered test against measured spontaneous PN rates (Wilson et al. 2004; Bhandawat et al. 2007): does moving LN inhibition to presynaptic/GABA-B bring ≥ 80% of PNs to 1–20 Hz?
