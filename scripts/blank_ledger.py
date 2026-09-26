@@ -56,7 +56,7 @@ ESTIMATES = {
 
 def counts() -> tuple[dict, dict]:
     reg = Registry(Policy.MINIMAL)
-    profiles.apply(reg, "m2")
+    profiles.apply(reg, profiles.WORKING_PROFILE)
     conn = connectome.build(reg, min_synapses=5)
     n = conn.neurons
     t = n.type.fillna("")
@@ -81,6 +81,17 @@ def counts() -> tuple[dict, dict]:
     return c, basis
 
 
+def filled_types(f: dict) -> int:
+    """Distinct types (or cells, for bodyId-keyed files) with a row in a fill table."""
+    t = pd.read_csv(REPO / f["file"], comment="#")
+    if "param" in f:
+        t = t[t.param == f["param"]]
+    for col in ("male_cns_type", "type", "bodyId"):
+        if col in t:
+            return int(t[col].nunique())
+    return len(t)
+
+
 def main() -> None:
     c, cbasis = counts()
     onto = yaml.safe_load((REPO / "data" / "ontology" / "fly_information.yaml").read_text())
@@ -88,12 +99,19 @@ def main() -> None:
     for e in onto:
         n_inst = int(eval(str(e["count"]), {}, c))
         cb = e.get("count_basis") or cbasis.get(str(e["count"]), "measured")
-        rows.append(dict(
-            domain=e["domain"], quantity=e["quantity"], grain=e["grain"],
-            instances=n_inst, per=int(e["per"]), slots=n_inst * int(e["per"]),
-            model=e["model"], basis=e["basis"], measure_by=e.get("measure_by"),
-            count_basis=cb, note=e.get("note"),
-        ))
+        base = dict(domain=e["domain"], quantity=e["quantity"], grain=e["grain"],
+                    per=int(e["per"]), model=e["model"], basis=e["basis"],
+                    measure_by=e.get("measure_by"), count_basis=cb, note=e.get("note"))
+        # per-type fills (session 8): {file, param?, basis, model?} -> split the entry
+        left = n_inst
+        for f in e.get("fills", []):
+            k = min(filled_types(f), left)
+            if k:
+                rows.append({**base, "quantity": base["quantity"] + f" [filled: {Path(f['file']).name}]",
+                             "instances": k, "slots": k * base["per"], "basis": f["basis"],
+                             "model": f.get("model", base["model"]), "count_basis": "derived"})
+                left -= k
+        rows.append({**base, "instances": left, "slots": left * base["per"]})
     df = pd.DataFrame(rows)
     # per-synapse / per-neuron / per-edge quantities are structural data
     # (measurable from EM in principle); everything else is a parameter slot

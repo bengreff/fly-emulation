@@ -1456,3 +1456,17 @@ At m2 / ≥ 5 synapses: 14.9k more inhibitory and 16.4k fewer excitatory edges. 
 - Kicks at 0° land on target (errors 4–5°). Kicks at 180° and 270° end 78–169° away.
 - The localised states persist in darkness (EPG 0.30–0.46 active, vector 0.5–0.73, when at ~350°), but with PEN 80–106 Hz and Delta7 ~190–200 Hz.
 - **Reading.** The ring has two preferred locations set by its effective wiring and input, not a continuous attractor. Per-cell input normalisation does not remove them. Next: find the source of the asymmetry (per-glomerulus PEN→EPG / EPG→PEN offset structure, ER/ExR input distribution) before any adoption. Delta7 +1 stays a candidate.
+
+### Pre-registration: m3 consequences (18:51)
+
+1. **M0 under m3** (`transmitter:{dopamine,serotonin,octopamine}|sign = 0`). Under m3 this touches only the ~540 consensus monoamine cells, no longer the KCs. Same test as s7 M0 test 1: closed loop seeds 0–2 with 0 non-tonic spikes, and sugar→MN9_L > 5 Hz at 100 Hz (10 trials). Adoption as in s7: if both pass, M0 becomes the default (profile m3 + M0 = m4).
+2. **Sugar under m3, 10 trials** (characterisation of the marginal pathway; no criterion).
+3. **Standing under m3**, default and T, seeds 0–2 (`standing.py`), plus closed loop T seeds 0–2. Characterisation only: T stays blocked by the ring (F-CX-2).
+
+### Correction: EPG heading map (18:54)
+
+`warm_start.py` gave L_k and R_k the same heading (+22.5° on the right). A connectivity embedding (`scripts/infer_epg_heading.py`: spectral embedding of each EPG's input+output profile; inferred) shows **L1→L8 and R1→R8 run in opposite directions round the ring**, with R_k near L_(9−k) (e.g. L3 102°, R6 111°; L6 242°, R3 252°; spread within a glomerulus 1–9°).
+
+Under the old map, one true bump reads as two clusters, and "local" kicks hit cells on opposite sides of the true ring. **Therefore the bump-position results of s8 are unreliable:** the B1 location/vector numbers in the warm-start batch, the Delta7 screen, the normalisation screen, the bump-move test and F-CX-2's "pinned at two headings".
+
+Results that do not depend on position stand: silent vs saturated; PEN rates; the persistence of activity; Q. The probe now defaults to `--heading-map embed` and records per-EPG rates, so runs can be re-analysed later. The key conditions are being re-run.

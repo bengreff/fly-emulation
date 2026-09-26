@@ -60,6 +60,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--heading", type=float, default=None, help="kick heading, deg (default: drawn from the seed)")
     ap.add_argument("--set", action="append", default=[])
+    ap.add_argument("--heading-map", choices=("embed", "glomerulus"), default="embed")
     ap.add_argument("--out", default=None, help="append the JSON line to this file")
     a = ap.parse_args()
     ov = {"motor_unit:all|force_per_spike": 10.0}
@@ -82,7 +83,13 @@ def main():
     cx = sw(*CX_RING)
     tonic = np.broadcast_to(np.asarray(net.params.spont_mv), (N,)) > 0
     epg = grp["EPG"]
-    ang = epg_heading(nr.instance.to_numpy()[epg])
+    if a.heading_map == "embed":   # inferred from connectivity (scripts/infer_epg_heading.py)
+        import pandas as pd
+        hm = pd.read_csv("data/derived/epg_heading_embedding.csv").set_index("bodyId").heading_deg
+        ang = nr.bodyId.to_numpy()[epg]
+        ang = pd.Series(ang).map(hm).to_numpy(float)
+    else:                         # s8 first version: L_k and R_k share a heading (wrong; see DECISIONS s8)
+        ang = epg_heading(nr.instance.to_numpy()[epg])
     h = float(np.random.default_rng(1000 + a.seed).uniform(0, 360)) if a.heading is None else a.heading % 360
     d = np.abs((ang - h + 180) % 360 - 180)
     target = {"local": epg[d <= a.half_width], "full": epg, "none": epg[:0]}[a.kick]
@@ -139,7 +146,8 @@ def main():
         "epg_vector_strength": round(float(abs(vec)), 3),
         "bump_deg": round(bump_deg, 1), "kick_heading_deg": round(h, 1),
         "bump_error_deg": round(float(abs((bump_deg - h + 180) % 360 - 180)), 1),
-        "n_kicked": int(len(target)),
+        "n_kicked": int(len(target)), "heading_map": a.heading_map,
+        "epg_post_hz_by_heading": [[round(float(x), 1), round(float(y), 1)] for x, y in sorted(zip(ang, r))],
         "last100_noncx_hz": round(last_noncx / (~cx & ~tonic).sum() / 0.1, 4),
         "post_noncx_hz": round(float(hp[~cx & ~tonic].mean()), 4),
         "epg_spikes_per_10ms_after_kick": epg_ts[::5],

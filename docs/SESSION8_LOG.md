@@ -19,3 +19,4 @@
 - 18:40 Ring-normalisation screen (m3): no effect; norm + Delta7 +1 as Delta7 +1. Launched bump-move test (20 mV/200 ms kicks at 0/90/180/270°).
 - 18:44 Bump-move: pinned (~350° or ~70°). Wrap-up.
 - 18:45 End. Tests 57/57 (last full run after m3 adoption; since then only the probe and docs changed, hygiene 12/12). Regression under m3: sugar 6.3/96.7 Hz; closed loop 3/3. Processes stopped (viewer, backhouse keep-alive); backhouse idle.
+- 18:50 Ben: continue at least 2 more hours; multi-hour jobs authorised; 1–2 agents. Plan: (1) find the CX ring asymmetry that pins the bump; (2) m3 consequences (M0 redo, T re-test, sugar trials); (3) an agent surveys transcriptomic atlases matched to connectome types; (4) ledger counts per-type rows.
