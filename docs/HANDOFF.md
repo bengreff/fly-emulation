@@ -31,6 +31,18 @@ rule v2 satisfied. flybench also runs locally (`external/flybench/.venv`).
 backhouse dropped off the network again at ~22:30 on 24 Sept; the m2 jobs that
 were running there are lost, and were redone on the Mac.
 
+**Session 6 (25 Sept, unattended; see FINDINGS "Session 6" and docs/SESSION6_LOG.md):**
+- **Data attached:**
+  - per-type conduction delays from 11,751 skeletons (derived, default on);
+  - Hallem ORN rates (measured; off by default after F-ORN-2);
+  - Azevedo leg motor-unit forces (derived/inferred);
+  - opsin λmax (measured);
+  - a connectome pale/yellow eye mask.
+- **Two interface bugs fixed:** proprioceptors read thorax-coxa roll instead of femur-tibia, and the knee range was applied to the wrong coordinate.
+- **Standing attempted and failed (F-STAND-1).** Afferents respond correctly and the wiring resists open-loop, but afferent→MN gain is too low to change motor output.
+- **Four absent mechanisms now simulated, neutral by default:** glutamate sign per target, GABA-B, presynaptic inhibition, KC→MBON LTD.
+- **Ledger, parameter scale:** filled 548 → 13,325; absent 385k → 342k.
+
 ## What this project is
 
 A biologically constrained *Drosophila* brain-body simulation. The structure is
@@ -122,6 +134,14 @@ neuromodulation and plasticity, both entirely absent.
 
 ## Things that will bite you
 
+- **`obs["joint_angles"]` is ordered by the fly's jointdofs (102), not by
+  actuator (98).** Look joints up by name (`body.fly.get_jointdofs_order()`).
+  Indexing by actuator position read the wrong joint for four sessions (F-BUG-6).
+- **Joint ranges in anatomical angles must be mapped through geometry**
+  (`Body._anatomical_range`); flybody's q is not the anatomical angle (F-BUG-7).
+- **Check stability over several seeds** whenever anything stochastic is in the
+  loop; one seed hid a self-sustaining state (F-ORN-2).
+
 - **Re-run `scripts/calibrate_joint_signs.py` after any change to the body model
   or its axis order.** Muscle signs are resolved against that measured table.
   `FTi pitch +` flexes the leg in NeuroMechFly and extends it in flybody; a
@@ -151,7 +171,9 @@ them fanned out to 22 live agents in three minutes in this session. Use
 ## Commands
 
 ```bash
-uv run pytest tests -q                      # 27 tests
+uv run pytest tests -q                      # 42 tests
+uv run python scripts/probes/standing.py --push --push-torque 1.5   # standing + reflex
+uv run python scripts/probes/closed_loop_check.py --seed 0          # stability
 
 uv run python scripts/fetch_male_cns.py     # cache the graph, ~4 min, once
 uv run python scripts/run_organism.py --policy strict  --duration-ms 100  # C0

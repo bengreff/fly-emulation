@@ -1,5 +1,17 @@
 # Plan for sessions 4 to 8
 
+## After session 6: the next discriminating experiments (read first)
+
+1. **The sensorimotor gain (F-STAND-1).** The leg reflex arc has the right sign but too little gain.
+   - Find measured VNC numbers: FeCO→premotor→MN EPSP sizes and afferent spike rates. Candidates are Agrawal et al. 2020, Dallmann et al. 2025 (unverified), and locust and stick-insect FeCO spike rates as priors.
+   - Set a VNC-specific efficacy or afferent rate scale from those numbers only.
+   - Pre-register, then re-score "stands" and the resistance reflex. Do not tune on standing.
+2. **Re-derive the efficacy scale under morphological delays.** Calibration rule v2 was not re-run after F-DELAY-1, and sugar→MN9 at 100 Hz went from 7.5 to 26 Hz.
+3. **F-ORN-2 attractor.** Find the minimal self-sustaining set (Mi18, Lawf2, Pm, Dm, DNg12) and its route from the ORNs. Candidates: Lawf2's unclear transmitter, which is treated as excitatory, and missing adaptation. Then re-enable Hallem rates. Stability must be scored across ≥ 6 seeds.
+4. **Hind-leg thorax-coxa signs.** Standing flips between tipping and not tipping with the re-measured calibration. Least-squares multi-axis muscle action is the session-3 known limitation.
+5. **Walking (stretch).** Only after 1 passes: DNg100/DNp09 stimulation in closed loop (Session 7 below).
+
+
 Written 24 September 2026. Replaces the "immediate next task" in
 `docs/HANDOFF.md`. `docs/PLAN.md` stays as the session-2 record.
 

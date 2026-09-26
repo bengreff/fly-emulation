@@ -1568,3 +1568,117 @@ Remaining absent, largest first:
 Filled-by-data is unchanged. This session turned absent mechanisms into
 simulated ones with labelled guesses; it did not add measurements. That is
 the next phase (the measurement library and fitting).
+
+---
+
+# Session 6 (25 September 2026, unattended)
+
+## F-DELAY-1. Conduction delays derived from 11,751 skeletons
+
+`scripts/skeleton_lengths.py` fetched one neuPrint skeleton per cell type plus 300 random presynaptic sites of that cell. It computed the median geodesic path from the soma to the cell's own presynapses (derived). The result is `data/params/conduction_delays.csv`, with `delay = 0.5 ms + L/v`:
+- v = 0.5 m/s, inferred by √d scaling from the giant fibre and from larval axons;
+- giant fibre v = 2.07 m/s, measured by Kadas et al. 2019;
+- t_syn = 0.5 ms, inferred.
+
+Median delay by superclass:
+- brain intrinsic 0.95 ms;
+- VNC intrinsic 0.96 ms;
+- descending 1.96 ms (up to 4.1 ms);
+- ascending 1.33 ms;
+- sensory 0.7–0.8 ms, peripheral segment omitted.
+
+**Check:** the GF skeleton gives L = 549 µm, so 0.27 ms of conduction at the measured velocity. Kadas et al. measured 0.29 ms, which implies about 600 µm. This checks path length only, since velocity and time come from the same paper.
+
+**Regression (pre-registered):**
+- sugar→MN9_L is 26.3 Hz at 100 Hz stimulation (was 7.5) and 84–86 Hz at 200 Hz (was 93.5). This passes the >5 Hz criterion, but the 100 Hz response rose 3.5×. The shorter mean delay (about 1 ms, against a uniform 1.8 ms) strengthens temporal summation.
+- The closed loop is stable.
+- **Adopted as default.** The calibrated efficacy (0.165 mV, rule v2) was not re-derived under the new delays. That is the next check.
+
+## F-ORN-1 / F-ORN-2. Hallem ORN rates attached; the network cannot take them
+
+`data/params/orn_rates.csv` holds values for 24 receptors from Hallem & Carlson 2006, via the DoOR unit files:
+- spontaneous rate (SFR), 1–47 Hz: measured, heterologous;
+- Rmax, 71–300 Hz: derived;
+- the other 28 ORN types take the median, 12 / 253 Hz: inferred.
+
+ORNs now fire as Poisson processes with dead-time compensation. A noise-free LIF cannot produce 1–2 Hz from a constant drive; this was found while testing.
+
+**F-ORN-2 (failure).** With spontaneous ORN input:
+- ORNs fire at 13.8 Hz and PNs average 5.9 Hz, but the median PN rate is 0 and only a third of PNs fire;
+- in 3 of 6 seeds, the m2 brain enters a self-sustaining state of about 1,700 cells that outlives silencing all senses. The cells are optic-lobe Mi18, Lawf2 (transmitter unclear, so treated as excitatory), Pm, Dm and DNg12/DNge019.
+
+The session-5 baseline is deterministic and never enters this state. The earlier "no self-sustaining state" regression rested on one seed. Per the pre-registration, ORN rate mode is **off by default**: `orn:all|rate_calibration=1` turns it on.
+
+Reading: realistic tonic sensory input exposes a latent attractor that calibration rule v2 (brief pulses on 40-cell populations) never probed. The candidates are the unclear-transmitter cells treated as excitatory, and missing adaptation or inhibition.
+
+## F-MOTOR-3. Per-motor-neuron leg forces (Azevedo 2020)
+
+`data/params/motor_forces.csv` covers 308 leg MNs:
+- **Tibia flexor pool** (Ti flexor + Acc. ti flexor, about 13 per leg): cells ranked by EM volume are classed 1 fast / 3 intermediate / rest slow (inferred matching). Measured class forces of 10, 1 and 0.05 µN are multiplied by tibia length taken from the body, 0.51–0.72 mm (derived).
+- **Other leg MNs:** a power law in volume fitted to the three classes, F ∝ V^5.1 (inferred; steep), clipped to 0.05–10 µN.
+- Each motor unit now has its own activation state and twitch decay: 30 ms fast/intermediate, 100 ms slow (guessed).
+
+## F-VISION-3. Spectral identity
+
+- `data/params/opsin_spectra.csv` stores λmax for Rh1/3/4/5/6: 478/345/375/437/508 nm, ERG, Salcedo et al. 1999 (measured). A Govardovskii template is in `vision.py`, not yet used by the RGB renderer.
+- The renderer's pale/yellow mask is now set per eye from the derived R7/R8 assignment for 898 of 1,442 ommatidia. The remainder keep flygym's canonical mask (inferred).
+
+## F-BUG-6/7. Two long-standing bugs in the body-brain interface
+
+1. **Proprioceptors read the wrong joint.** `sensory.py` indexed `joint_angles` (102 jointdofs) by actuator position (98 actuators), so every leg's "femur-tibia" afferents read **thorax-coxa roll**. Every earlier closed-loop proprioceptive result is affected.
+2. **The femur-tibia range was applied to the wrong coordinate.** The anatomical 18–180° range (Mamiya 2018) was set on joint q. In flybody, q = 18° is a geometric 113°, so knees could not flex below their neutral pose and could "extend" past straight. The range is now mapped through the measured geometry (neutral = 86–95° anatomical). The joint sign calibration was re-measured for the corrected body: 12 of 66 dominant actions changed, in hind thorax-coxa and coxa-trochanter components.
+
+## F-STAND-1. The fly does not stand; the failing layer is afferent→MN gain
+
+Pre-registered: thorax ≥ 0.90 mm throughout 0.5–1.5 s. Heights over that window:
+
+| Condition | z min (mm) | z mean (mm) |
+|---|---|---|
+| limp body (zero torque) | 0.665–0.708 over 0.1–1 s | |
+| motor output silenced | 0.675 | 0.705 |
+| session-5 proprioceptors, wrong joint | 0.68 | 0.69 |
+| measured-form proprioceptors, guessed directions | 0.51, rolls 50° | |
+| + directions inferred from wiring, + slow MNs at measured 30 Hz, + range fix | 0.774 | 0.79 |
+| + re-measured sign calibration | 0.642, rolls 52° | 0.69 |
+
+Neutral-pose height is 1.235 mm. **Standing: fail.**
+
+What was built:
+- claw cells: tonic sigmoids of the anatomical FTi angle, half-activation spread over 20–80° (flexion) or 90–170° (extension);
+- hook cells: rectified direction;
+- club cells: movement;
+- hair plates: sigmoids near ThC/CTr limits.
+
+The subtype per SNpp type is guessed (proportions from Mamiya 2023). The preferred direction was first guessed. That formed positive feedback (promotor MNs at 88 Hz, the fly tipped over), so directions are now **inferred from wiring**: each type's net signed drive onto antagonist MN pools, under a resistance-reflex prior (`scripts/proprio_direction.py`). This was post-hoc, after the failure. Examples:
+- SNpp52 → trochanter depressor (946 direct synapses), read as the levation-limit hair plate;
+- SNpp50 → tibia extensor excitation with flexor inhibition two hops away, read as flexion-sensing.
+
+**Resistance reflex, closed loop:** a 34° imposed flexion of the left middle FTi (58.6 → 24.5°):
+- claw cells rise from 6.4 to 17.9 Hz and hook-flexion cells from 0 to 25 Hz;
+- tibia extensor MNs stay at 0 Hz, and flexors go from 18.2 to 19.1 Hz;
+- **no reflex.**
+
+**Open loop:** Poisson drive of the 28 left-middle flexion-claw cells at 40 Hz moves the extensor from 0 to 4 Hz and the flexor pools from 12 to 9.2 Hz and 25 to 21.3 Hz. Driving all 97 FeCO cells moves the extensor to 21 Hz. The wiring carries a resistance reflex of the right sign, but at the current afferent rates and efficacy it is too weak to change motor output in closed loop.
+
+**Failing layer: sensorimotor transmission gain.** Two things set it: afferent absolute rates (FeCO data are calcium only) and the single efficacy of 0.165 mV, calibrated for brain stability rather than VNC reflexes. The body and the afferent tuning are no longer the bottleneck. The standing outcome is also sensitive to the hind-leg ThC sign calibration.
+
+## F-MECH-1. Four absent mechanisms now simulated, all neutral by default
+
+All four are tested for inertness at default and for effect when enabled:
+- glutamate sign per postsynaptic type: 0 means the transmitter default;
+- GABA-B slow share per target (τ = 150 ms, guessed; graded presynaptic cells excluded);
+- divisive presynaptic inhibition of sensory terminals, k = 0 (restores what m1 removed, as a gain);
+- DAN-gated KC→MBON depression (Hige 2015 form; compartment approximated by DAN→MBON contacts), η = 0.
+
+## F-LEDGER-4. Ledger after session 6
+
+At parameter scale, 825,148 slots:
+
+| | Before | After |
+|---|---|---|
+| Filled by data (measured/derived) | 548 | 13,325 |
+| Running on a labelled default | 408,528 | 439,573 |
+| Mechanism absent | 385,211 | 342,083 |
+
+- The fill is mostly derived delays (11,750). The rest: pale/yellow ommatidia 898, flexor motor units 84, Hallem ORN rates 48 (available but off by default), opsins 5, slow-MN rest rate 1.
+- Mechanisms that moved from absent to simulated-on-default: glutamate sign and GABA-B share per target (28,712), presynaptic inhibition (14,356), KC→MBON plasticity rules (60).

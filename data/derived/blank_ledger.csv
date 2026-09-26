@@ -2,7 +2,7 @@ domain,quantity,grain,instances,per,slots,model,basis,measure_by,count_basis,not
 connectome,neuron identity and cell type,neuron,167111,1,167111,simulated,measured,EM reconstruction,measured,male-cns v1.0 (Traced or typed),per-element
 connectome,chemical synapse count per connection,edge,6241231,1,6241231,simulated,measured,EM synapse detection,measured,>=5 synapses per edge used; weaker edges present in the data,per-element
 connectome,synapse locations on the neuron (compartment),synapse,89851184,1,89851184,absent,measured,EM,measured,available in neuPrint,per-element
-connectome,neuron morphology (skeleton,neuron,167111,1,167111,absent,measured,EM,measured,available; would give conduction delays and compartments,per-element
+connectome,neuron morphology (skeleton,neuron,167111,1,167111,simulated,measured,EM,measured,"session 6: one skeleton per type (11,751) reduced to soma-to-presynapse path length for delays; other uses (compartments) absent",per-element
 connectome,synapse ultrastructure (T-bar size,synapse,89851184,3,269553552,absent,unknown,EM image analysis,measured,not in the release; proxy for strength,per-element
 connectome,electrical synapse partners (innexin gap junctions),cell type,14356,1,14356,default,guessed,"EM at gap-junction resolution, innexin expression, dye coupling",measured,"guessed none, except identified GF pairs (electrical.py, optional); mechanism simulated",parameter
 connectome,soma position,neuron,167111,3,501333,simulated,measured,EM,measured,used for side assignment (F-VISION-2),per-element
@@ -14,20 +14,24 @@ neuron,spiking vs graded signalling,cell type,14356,1,14356,simulated,mixed,patc
 neuron,spike-frequency adaptation (increment,cell type,14356,2,28712,default,guessed,patch,measured,mechanism present,parameter
 neuron,ion-channel complement and densities,cell type,14356,12,172272,absent,unknown,"patch + pharmacology, scRNA-seq priors",measured,"~12 major conductance classes (Nav, Kv1-4, Cav, KCa, HCN, leak)",parameter
 neuron,intrinsic bursting or pacemaking,cell type,14356,1,14356,absent,unknown,patch,measured,e.g. clock neurons,parameter
-neuron,spontaneous firing rate,cell type,14356,1,14356,default,guessed,extracellular/patch,measured,per-type tonic drive simulated; 0 mV default,parameter
-neuron,axonal conduction velocity / delay,cell type,14356,1,14356,default,inferred,"patch, morphology (derivable)",measured,per-presynaptic-type delay mechanism; all 1.8 ms until filled (derivable from skeletons),parameter
+neuron,spontaneous firing rate (slow tibia flexor MN class),cell type,1,1,1,simulated,derived,patch (Azevedo 2020),derived,30 Hz measured -> tonic drive derived through the m2 LIF; 60 cells classed by size rank (inferred),parameter
+neuron,spontaneous firing rate,cell type,14355,1,14355,default,guessed,extracellular/patch,measured,per-type tonic drive simulated; 0 mV default,parameter
+neuron,axonal conduction delay (types with skeleton),cell type,11750,1,11750,simulated,derived,morphology + velocity,derived,"session 6: 0.5 ms + L/v, L from skeleton (derived), v 0.5 m/s inferred, GF 2.07 m/s measured",parameter
+neuron,axonal conduction delay (untyped cells),cell type,2606,1,2606,default,inferred,morphology,derived,shared 1.8 ms default (Shiu),parameter
 neuron,dendritic integration (compartment electrotonus),cell type,14356,3,43068,absent,unknown,"multi-site recording, morphology",measured,single compartment,parameter
 neuron,temperature dependence (Q10),cell type,14356,1,14356,default,inferred,patch at temperatures,measured,"Q10 = 2 for all types, scales tau_m, tau_s, t_ref with world temperature",parameter
 synapse,transmitter identity,presynaptic type,14356,1,14356,simulated,mixed,"immunostaining, EM classifier",measured,predicted NT (derived from EM classifier); a few immuno-confirmed (measured),parameter
 synapse,co-transmitters and neuropeptides released,presynaptic type,14356,1,14356,absent,unknown,"immuno, scRNA-seq",measured,~50 neuropeptide genes in Drosophila,parameter
-synapse,postsynaptic receptor subtypes (nAChR,postsynaptic type,14356,4,57424,absent,unknown,"scRNA-seq, pharmacology",measured,sets sign and kinetics; glutamate sign guessed inhibitory,parameter
+synapse,glutamate receptor sign per target (GluCl vs iGluR),postsynaptic type,14356,1,14356,default,guessed,"scRNA-seq, pharmacology",measured,session 6: per-target sign simulated; default = transmitter-level inhibitory (profile),parameter
+synapse,GABA-A vs GABA-B share per target,postsynaptic type,14356,1,14356,default,guessed,pharmacology,measured,session 6: slow GABA-B current simulated (tau 150 ms guessed); share 0 default,parameter
+synapse,other postsynaptic receptor subtypes (nAChR subunits,postsynaptic type,14356,2,28712,absent,unknown,"scRNA-seq, pharmacology",measured,sets kinetics and slow cholinergic effects,parameter
 synapse,synaptic strength (quantal size x release sites),presynaptic type,14356,2,28712,default,inferred,paired recordings,measured,per-presynaptic-type release gain simulated; all 1.0 x fitted 0.165 mV,parameter
 synapse,postsynaptic gain / input sensitivity,postsynaptic type,14356,1,14356,default,inferred,paired recordings,measured,per-postsynaptic-type input gain simulated; all 1.0 plus m1/m2 masks,parameter
 synapse,sign of each transmitter onto each target class,transmitter x postsynaptic type,14356,1,14356,default,mixed,paired recordings + pharmacology,measured,ACh/GABA derived; glutamate inferred; monoamine/unclear guessed,parameter
 synapse,kinetics (rise,synapse class,14356,2,28712,default,inferred,patch,measured,tau_s 5 ms for all,parameter
 synapse,release probability and short-term plasticity,presynaptic type,14356,3,43068,default,guessed,paired-pulse recordings,measured,per-type mechanism simulated; U = 0 default (F-STD-1),parameter
-synapse,presynaptic inhibition/facilitation at terminals,presynaptic type,14356,1,14356,absent,unknown,terminal imaging,measured,removed for sensory terminals (F-SENS-1),parameter
-synapse,long-term plasticity rules (e.g. DAN-gated KC>MBON),synapse class,15,4,60,absent,unknown,explant plasticity experiments,inferred,Hige 2015 and others; Tier 2,parameter
+synapse,presynaptic inhibition/facilitation at terminals,presynaptic type,14356,1,14356,default,guessed,terminal imaging,measured,"session 6: divisive output gain on sensory terminals simulated, k = 0 default; non-sensory terminals absent",parameter
+synapse,long-term plasticity rules (e.g. DAN-gated KC>MBON),synapse class,15,4,60,default,guessed,explant plasticity experiments,inferred,"session 6: KC>MBON LTD gated by DAN trace (compartment by DAN>MBON contacts) simulated, off by default; potentiation/recovery absent",parameter
 synapse,electrical synapse conductance and rectification,electrical pair class,14356,2,28712,default,guessed,paired recordings,measured,"spike-coupling kick mechanism; GF pairs 20 mV (guessed), others none",parameter
 neuromodulation,modulator receptors per target type (DA,cell type,14356,4,57424,default,guessed,"scRNA-seq, pharmacology",measured,per-type sensitivities to DA/OA/5-HT pools simulated; all 0 (inert) until filled,parameter
 neuromodulation,modulatory effects (gain,modulatory type,255,4,1020,default,guessed,imaging + physiology,measured,gain effect simulated via pools; excitability and plasticity gating absent,parameter
@@ -43,15 +47,20 @@ metabolism,neuronal and muscle energy use (ATP),tissue class,4,2,8,absent,unknow
 sensory,sensed physical variable per sensory group,sensory group,388,1,388,simulated,mixed,physiology,derived,census (F-CENSUS-1); 41 groups unknown,parameter
 sensory,transduction model parameters (gain,sensory group,388,4,1552,default,guessed,physiology,derived,"every sensory neuron has a transduction (sensory.py, vision.py, olfaction.py, extrasenses.py); gains guessed; 1,561 cells of unknown modality at explicit zero drive",parameter
 sensory,odour tuning per ORN type,ORN type,53,1,53,simulated,measured,single-sensillum recording,measured,DoOR 2.0,parameter
-sensory,spontaneous rate per sensory type,sensory group,388,1,388,default,guessed,recording,derived,Hallem-Carlson rates for 24 receptors not yet used,parameter
-sensory,photoreceptor spectral sensitivity,photoreceptor type,9,1,9,absent,measured,electroretinogram / opsin spectra,measured,literature exists; renderer has 2 channels only,parameter
+sensory,spontaneous and max rate (Hallem ORN types),sensory group,24,2,48,default,measured,single-sensillum recording,derived,session 6: Hallem & Carlson 2006 via DoOR (heterologous); ORN rate mode OFF by default after F-ORN-2,parameter
+sensory,spontaneous rate per sensory type,sensory group,364,1,364,default,guessed,recording,measured,,parameter
+sensory,photoreceptor spectral sensitivity (opsin lambda max),photoreceptor type,5,1,5,absent,measured,electroretinogram / opsin spectra,derived,"session 6: data/params/opsin_spectra.csv (Salcedo 1999); renderer RGB, not yet used",parameter
+sensory,pale/yellow ommatidium identity,ommatidium,898,1,898,simulated,derived,EM (R7/R8 subtype) + retinotopy,derived,session 6: renderer mask from connectome; 544 unassigned ommatidia keep flygym canonical mask,parameter
 sensory,photoreceptor dynamics (graded response,photoreceptor type,9,4,36,default,guessed,intracellular recording,measured,,parameter
 sensory,retinotopy (ommatidium per photoreceptor),photoreceptor,6026,1,6026,simulated,derived,EM geometry,derived,F-VISION-2,per-element
 sensory,eye optics (interommatidial and acceptance angles),eye region,2,2,4,simulated,inferred,optics,measured,flygym renderer's hex model,parameter
 sensory,sense-organ mechanics (antenna a2-a3 stiffness,organ type,10,3,30,absent,unknown,biomechanics,inferred,body has no a2-a3 joint,parameter
 sensory,efferent control of sense organs (e.g. octopamine gain of vision in flight),organ type,10,1,10,absent,unknown,physiology,"inferred: JO, FeCO, campaniform fields, hair plates, bristles, haltere, wing, neck, abdominal stretch, pharyngeal",,parameter
 motor,motor neuron to muscle target,motor neuron,815,1,815,simulated,mixed,"driver lines, EM of nerves",measured,348 derived (leg),parameter
-motor,motor unit force per spike and twitch kinetics,motor neuron,815,3,2445,default,guessed,force recording (Azevedo 2020),measured,one shared force_per_spike,parameter
+motor,motor unit torque per spike (tibia flexor,motor neuron,84,1,84,simulated,derived,force recording (Azevedo 2020),derived,measured class force x tibia length; class by size rank inferred,parameter
+motor,motor unit torque per spike (other leg MNs),motor neuron,224,1,224,simulated,inferred,force recording,derived,size-scaled from flexor classes,parameter
+motor,motor unit torque per spike (non-leg MNs),motor neuron,507,1,507,default,guessed,force recording,measured,one shared force_per_spike,parameter
+motor,twitch kinetics (rise,motor neuron,815,2,1630,default,guessed,force recording,measured,per-unit decay 30/100 ms guessed for leg MNs; rise instantaneous,parameter
 motor,neuromuscular junction facilitation/depression,motor neuron,815,2,1630,absent,unknown,muscle recording,measured,,parameter
 muscle,muscle anatomy (origin,muscle,300,4,1200,absent,unknown,micro-CT (Özdil 2025),inferred,torque motors at joints instead,parameter
 muscle,Hill mechanics (Fmax,muscle,300,4,1200,absent,unknown,muscle physiology,"inferred: legs ~100, flight ~60 (power + steering, both sides), neck ~16, haltere ~14, abdomen ~80, head/proboscis ~30; to be replaced by a per-muscle list",,parameter

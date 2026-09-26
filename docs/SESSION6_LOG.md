@@ -37,3 +37,8 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
 - Re-measured joint-sign calibration for the corrected body (neutral no longer at the FTi limit): 5 secondary
   components flip (hind ThC/CTr fore-aft, rf coxa lateral); 12/66 dominant actions change. Adopted.
   With it the fly tips (roll 52°, z_min 0.64). Standing outcome is sensitive to hind-leg ThC sign; fails either way.
+- 22:15 Priority 3: glutamate sign per target, GABA-B share, presynaptic inhibition (sensory terminals),
+  DAN-gated KC→MBON LTD — all simulated, neutral/off by default, tested.
+- 22:24 Wrap-up checks: sugar→MN9_L 26.3 / 84.3 Hz (100/200 Hz); closed loop stable (0.34 Hz, 0 non-tonic
+  spikes after silencing); 42 tests pass; Registry.validate() [] (tested); ledger + census re-run.
+  Ledger delta (parameter scale): filled 548 → 13,325; default 408,528 → 439,573; absent 385,211 → 342,083.
