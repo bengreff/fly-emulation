@@ -522,3 +522,27 @@ Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), no
 - **Evidence labelling rule (user requirement):** every quantity, in code, inventory and reports, is labelled **measured**, **derived** or **inferred** (plus **unknown** when no value exists). The registry's `basis` column implements it. Measured means observed directly. Derived means computed from measurements by a stated transformation. Inferred covers fitted values, assumed guesses, borrowed precedents and priors; `status` keeps that finer distinction. Reports label numbers the same way.
 - **Strategy (agreed):** constrained ensemble fitting at cell-type grain with hierarchical priors, against a frozen, split library of measurements; the type-preserving null is a standard control. See PLAN_NEXT.
 - **Blank-ledger grain (declared):** see `scripts/blank_ledger.py`. Neuron biophysics per cell type; synaptic strength factorised as presynaptic release x postsynaptic gain (not per type pair, which would be ~millions of slots with no constraining data); glutamate sign per postsynaptic type; monoamine action per modulatory type; transduction per sensory group. Changing a grain is a recorded decision.
+
+## Session 6 (25 September 2026)
+
+### Pre-registration: morphological conduction delays and Hallem ORN rates (before any scoring)
+
+**Delays (1a).** Per presynaptic cell type: `delay = t_syn + L / v`.
+- `L` is the median geodesic distance from the soma to the cell's own presynaptic sites. It is sampled (300 sites) on one neuPrint skeleton per type (`scripts/skeleton_lengths.py` → `data/derived/skeleton_lengths.csv`). Derived.
+- `v = 0.5 m/s` for all types except the giant fibre. Inferred: central axons are 0.3–1 µm across. Scaling √d from the GF (7 µm, 2.07 m/s; Kadas et al. 2019) gives 0.4–0.8 m/s; larval axons (0.4 µm) give 0.2 m/s (Kottmeier 2020).
+- Giant fibre (DNp01): `v = 2.07 m/s`, measured in adults 24 h after eclosion.
+- `t_syn = 0.5 ms`. Inferred: a typical chemical synaptic delay; a model estimate for the GF NMJ is 0.35 ms. No central fly measurement was found.
+- Types without a skeleton (untyped cells) keep the shared default.
+- The switch is `cell_type:all|morphological_delays` (1 = on).
+- Peripheral conduction of sensory axons outside the CNS volume is not included. It is recorded as absent.
+
+**ORN rates (1b).** ORNs fire as Poisson processes at SFR in clean air and at up to Rmax with odour. Values are from Hallem & Carlson 2006, heterologous (`data/params/orn_rates.csv`). This replaces the 15 mV scale.
+
+**Criteria, fixed now. These are regression checks, not tests of a biological hypothesis; no held-out assay is involved.**
+1. `sugar_mn9 --profile m2 --rates 100,200`: MN9_L > 5 Hz at 100 Hz and at 200 Hz. The old values were 7.5 and 93.5 Hz; the new values are reported whatever they are.
+2. Closed loop, 1 s at `force_per_spike=10`:
+   - no runaway, and the brain is quiet again within 300 ms of silencing all sensory input;
+   - excluding ORNs, the whole-brain mean stays < ~1 Hz;
+   - uniglomerular PN mean rate in clean air lies within 1–20 Hz. The range is inferred from PN spontaneous rates of a few Hz (Wilson et al. 2004; Bhandawat et al. 2007).
+
+A change that fails a criterion stays in the code as an option but is turned off by default, and the failure is reported.

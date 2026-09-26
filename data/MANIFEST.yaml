@@ -120,3 +120,17 @@ door:
   files: [door_response_matrix.csv, door_response_matrix_non_normalized.csv, door_mappings.csv, door_dataset_info.csv, DESCRIPTION]
   sha256_prefix_response_matrix: bc2aa5414ff54d3a
   basis: measured (consensus responses normalised 0-1, not spikes/s)
+
+# Added session 6 (2026-09-25)
+door_units:
+  name: DoOR.data per-receptor unit files (per-study raw responses, incl. Hallem.2006.EN SFR rows)
+  version: github ropensci/DoOR.data commit db323a496577c4b4a72b5c2fcd1859e07521ffb5
+  license: CC BY-SA 4.0 (DoOR.data DESCRIPTION)
+  local: data/raw/door/units/ (78 csv, ';'-separated)
+  sha256_prefix_concat_sorted: 7942866b3dbbac58
+  basis: measured (Hallem & Carlson 2006 spike rates, SFR-subtracted responses; heterologous)
+male_cns_skeletons_reduced:
+  name: per-type skeleton path statistics (one neuron per type) + 300 sampled presynapse locations
+  version: neuPrint male-cns:v1.0, fetched 2026-09-25 (scripts/skeleton_lengths.py)
+  local: data/derived/skeleton_lengths.csv (raw skeletons not stored)
+  basis: derived

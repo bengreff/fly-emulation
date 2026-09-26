@@ -12,6 +12,23 @@ For each olfactory receptor neuron (ORN_<glomerulus>):
   suffix; unknown-side cells average both). **Derived** from World.
 - K, max_drive: **inferred** (no absolute calibration: DoOR is relative and
   Hallem & Carlson rates are heterologous).
+
+Absolute rate calibration (session 6, default on when the network's LIF
+parameters are passed): each ORN type gets a target rate
+
+    rate = SFR + A * sum_o r(type, o) * c_o / (c_o + K),   A = (Rmax - SFR) / (1e-2 / (1e-2 + K))
+
+with SFR and Rmax per type from Hallem & Carlson 2006 (data/params/orn_rates.csv;
+SFR measured, Rmax derived, both heterologous, empty-neuron recordings; the
+median for types without a Hallem receptor, inferred). A matches Rmax at the
+10^-2 dilution Hallem used. ORN spikes are then generated as a Poisson
+process with dead time: each step a cell receives, with probability
+lambda*dt, a one-step pulse that crosses its threshold, where
+lambda = rate / (1 - rate * t_ref) so that pulses lost in refractory are
+compensated. So the ORN rate, not a mV drive, is the calibrated quantity, and
+spontaneous firing is irregular, as recorded (a noise-free LIF cannot fire at
+1-2 Hz from a constant drive). Spike generation is thereby a rate model at the
+receptor; the ORN's own LIF only supplies refractoriness.
 - ORN adaptation dynamics (Nagel & Wilson 2011; Gorur-Shandilya 2017) are
   omitted: a static transduction, recorded as unresolved.
 
@@ -25,7 +42,7 @@ baseline.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import numpy as np
@@ -50,6 +67,21 @@ class Chemosenses:
     baseline: float
     antenna_bodies: tuple[int, int]
     n_neurons: int
+    sfr_hz: np.ndarray | None = None      # per row; rate mode when set
+    amp_hz: np.ndarray | None = None
+    t_ref_ms: np.ndarray | None = None    # per row
+    pulse_mv: np.ndarray | None = None    # per row: one-step drive that crosses threshold
+    dt_ms: float = 0.1
+    rng: np.random.Generator = field(default_factory=lambda: np.random.default_rng(0))
+    last_rate_hz: np.ndarray | None = None
+
+    def rate_to_pulses(self, hz: np.ndarray, sel=slice(None)) -> np.ndarray:
+        """Poisson-with-dead-time pulses realising rate `hz` (rows `sel`)."""
+        hz = np.clip(np.asarray(hz, dtype=float), 0.0, None)
+        tr = self.t_ref_ms[sel] / 1000.0
+        lam = hz / np.maximum(1.0 - hz * tr, 0.05)
+        fire = self.rng.random(hz.shape) < lam * self.dt_ms / 1000.0
+        return np.where(fire, self.pulse_mv[sel], 0.0).astype(np.float32)
 
     def drive(self, world: World, xpos: np.ndarray) -> np.ndarray:
         out = np.zeros(self.n_neurons, dtype=np.float32)
@@ -64,7 +96,14 @@ class Chemosenses:
                     continue
                 c_side = np.where(self.side == 0, c[0], np.where(self.side == 1, c[1], c.mean()))
                 acc += self.tuning[odour].to_numpy() * c_side / (c_side + self.half_sat)
-            val[orn] += self.max_drive * acc[orn]
+            if self.sfr_hz is None:
+                val[orn] += self.max_drive * acc[orn]
+            else:
+                val[orn] = acc[orn]            # response fraction, converted below
+        if self.sfr_hz is not None:
+            resp = val[orn] if (conc and orn.any()) else np.zeros(int(orn.sum()))
+            self.last_rate_hz = self.sfr_hz[orn] + self.amp_hz[orn] * resp
+            val[orn] = self.rate_to_pulses(self.last_rate_hz, orn)
         co2 = self.kind == "co2"
         if co2.any():
             r = self.tuning.get(CO2_KEY, pd.Series(1.0, index=self.tuning.index)).to_numpy()
@@ -76,7 +115,10 @@ class Chemosenses:
         return out
 
 
-def build(reg: Registry, conn, body) -> Chemosenses:
+def build(reg: Registry, conn, body, params=None, timestep_ms: float = 0.1,
+          seed: int = 0) -> Chemosenses:
+    """`params`: the network's LIFParams. When given (and the registry keeps
+    orn:all|rate_calibration = 1), ORNs are driven to Hallem-calibrated rates."""
     n = conn.neurons
     t = n.type.fillna("")
     sel = t.str.match(r"^(ORN_|HRN_|TRN_)").to_numpy()
@@ -139,7 +181,48 @@ def build(reg: Registry, conn, body) -> Chemosenses:
                 evidence="cooling/heating cells are phasic (Budelli 2019); static world")
 
     rows = conn.index_of(n.bodyId.to_numpy()[idx])
+    sfr = amp = None
+    if params is not None and reg.require(
+            "orn:all", "rate_calibration", units="boolean",
+            model_use="drive ORNs to absolute rates (Hallem 2006) instead of a mV scale",
+            subsystem="sensory_transduction", instances=n_orn, minimal=1.0,
+            minimal_note="guessed modelling choice: absolute rates replace the "
+                         "arbitrary 15 mV scale for ORNs; 0 restores session-5 behaviour"):
+        rt = pd.read_csv(REPO / "data" / "params" / "orn_rates.csv", comment="#").set_index("orn_type")
+        med = rt[rt.sfr_basis == "measured"][["sfr_hz", "rmax_hz"]].median()
+        sfr = rt.sfr_hz.reindex(types).fillna(med.sfr_hz).to_numpy(float).copy()
+        rmax = rt.rmax_hz.reindex(types).fillna(med.rmax_hz).to_numpy(float)
+        sfr[kind != "orn"] = 0.0
+        amp = (rmax - sfr) / (1e-2 / (1e-2 + float(half)))
+        pick = lambda a: np.broadcast_to(np.asarray(a, dtype=float), (conn.n,))[rows]  # noqa: E731
+        v_th, v_rest, tau, t_ref = (pick(getattr(params, k)) for k in ("v_th", "v_rest", "tau_m", "t_ref"))
+        # from anywhere at or above rest, one step of this drive crosses threshold
+        pulse = 1.5 * (v_th - v_rest) / (1.0 - np.exp(-timestep_ms / tau))
+        orn_types = pd.Series(types[kind == "orn"])
+        meas = orn_types.isin(rt.index[rt.sfr_basis == "measured"])
+        reg.provide("orn:hallem_types", "spontaneous_rate", "data/params/orn_rates.csv",
+                    units="Hz", model_use="ORN rate in clean air", status=Status.MEASURED,
+                    subsystem="sensory_transduction", instances=int(meas.sum()),
+                    evidence="Hallem & Carlson 2006 Cell 125:143 SFR, via DoOR.data Hallem.2006.EN",
+                    uncertainty="heterologous (Or expressed in the ab3A empty neuron); one "
+                                "recording set; native SFR may differ")
+        reg.provide("orn:hallem_types", "max_rate", "data/params/orn_rates.csv",
+                    units="Hz", model_use="ORN rate at the strongest tested odour, 1e-2",
+                    status=Status.DERIVED, subsystem="sensory_transduction",
+                    instances=int(meas.sum()), method="SFR + max SFR-subtracted response "
+                    "over 110 odours; mapped to DoOR tuning 1 at 1e-2 dilution",
+                    evidence="Hallem & Carlson 2006 via DoOR.data",
+                    uncertainty="heterologous; DoOR consensus max need not be the Hallem max odour")
+        reg.provide("orn:other_types", "spontaneous_and_max_rate", "data/params/orn_rates.csv",
+                    units="Hz", model_use="ORN rates for types without a Hallem receptor",
+                    status=Status.INFERRED, subsystem="sensory_transduction",
+                    instances=int((~meas).sum()),
+                    evidence="median over Hallem-covered types",
+                    uncertainty="types differ (Hallem SFR 1-47 Hz, Rmax 71-300 Hz)")
     return Chemosenses(rows=rows.astype(np.int64), side=side, tuning=tuning, kind=kind,
                        max_drive=float(max_drive), half_sat=float(half),
                        co2_half_sat=float(co2k), baseline=float(base),
-                       antenna_bodies=ab, n_neurons=conn.n)
+                       antenna_bodies=ab, n_neurons=conn.n,
+                       sfr_hz=sfr, amp_hz=amp,
+                       t_ref_ms=None if sfr is None else t_ref, pulse_mv=None if sfr is None else pulse,
+                       dt_ms=timestep_ms, rng=np.random.default_rng(seed + 7))

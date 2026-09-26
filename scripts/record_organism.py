@@ -83,7 +83,8 @@ def main() -> int:
         model=org.body.model,
     )
     org.aff = sensory.build(org.reg, org.conn, org.body)
-    org.chem = olfaction.build(org.reg, org.conn, org.body)
+    org.chem = olfaction.build(org.reg, org.conn, org.body, org.net.params,
+                               timestep_ms=org.timestep_ms, seed=args.seed)
     org.extra = extrasenses.build(org.reg, org.conn, org.body)
 
     m, d = org.body.sim.mj_model, org.body.sim.mj_data

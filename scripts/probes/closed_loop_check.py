@@ -1,0 +1,73 @@
+"""Closed-loop regression check (DECISIONS session 6, criterion 2).
+
+Runs the organism for --ms with all senses, then --silent-ms with all
+afferent drive removed, and reports rates by group and the return to rest.
+
+    uv run python scripts/probes/closed_loop_check.py [--set K=V ...] [--ms 1000]
+"""
+import argparse
+import json
+import sys
+import time
+
+import numpy as np
+
+sys.path.insert(0, "src")
+from flyemu.organism import Organism  # noqa: E402
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ms", type=float, default=1000.0)
+    ap.add_argument("--silent-ms", type=float, default=300.0)
+    ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
+    ap.add_argument("--seed", type=int, default=0)
+    a = ap.parse_args()
+    ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
+    org = Organism(policy="minimal", profile="m2", min_synapses=5, overrides=ov, seed=a.seed)
+    n = org.conn.neurons
+    t = n.type.fillna("").to_numpy()
+    orn = np.char.startswith(t.astype(str), "ORN_")
+    upn = (n["class"].fillna("") == "ALPN").to_numpy() & np.char.endswith(t.astype(str), "PN")
+    mn = (n.superclass.fillna("") == "vnc_motor").to_numpy()
+    steps = int(a.ms / org.timestep_ms)
+    cnt = np.zeros(org.conn.n)
+    z, t0 = [], time.time()
+    for s in range(steps):
+        obs = org.body.observe()
+        sp = org.net.step(external_mv=org.sense(s, obs))
+        if s * org.timestep_ms >= 200:          # skip the opening transient
+            cnt[sp] += 1
+        tq = org.nm.step(sp, org.timestep_ms)
+        org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+        if s % 100 == 0:
+            z.append(float(obs["body_positions"][0, 2]))
+        if sp.size > 20000:
+            print(json.dumps({"runaway_at_ms": s * org.timestep_ms})); return
+    dur = (a.ms - 200) / 1000
+    hz = cnt / dur
+    silent = []
+    for s in range(int(a.silent_ms / org.timestep_ms)):
+        obs = org.body.observe()
+        sp = org.net.step(external_mv=np.zeros(org.conn.n, np.float32))
+        tq = org.nm.step(sp, org.timestep_ms)
+        org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+        silent.append(sp.size)
+    last = np.array(silent[-int(100 / org.timestep_ms):])
+    out = {
+        "whole_brain_hz": round(float(hz.mean()), 3),
+        "whole_brain_excl_orn_hz": round(float(hz[~orn].mean()), 3),
+        "orn_hz": round(float(hz[orn].mean()), 2),
+        "upn_hz_mean": round(float(hz[upn].mean()), 2),
+        "upn_hz_median": round(float(np.median(hz[upn])), 2),
+        "upn_frac_active": round(float((hz[upn] > 0).mean()), 2),
+        "motor_hz": round(float(hz[mn].mean()), 2),
+        "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
+        "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
+        "wall_s": round(time.time() - t0), "overrides": ov,
+    }
+    print(json.dumps(out))
+
+
+if __name__ == "__main__":
+    main()

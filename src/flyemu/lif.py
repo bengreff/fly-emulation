@@ -81,6 +81,36 @@ class LIFParams:
     mod_increment: float = 0.01
 
 
+def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
+    from pathlib import Path
+    import pandas as pd
+    path = Path(__file__).resolve().parents[2] / "data" / "params" / "conduction_delays.csv"
+    if not path.exists():
+        return delay_ms
+    t = pd.read_csv(path, comment="#").set_index("type")
+    types = conn.neurons.type.to_numpy()
+    d = pd.Series(types).map(t.delay_ms).to_numpy(float)
+    has = np.isfinite(d)
+    out = np.where(has, d, delay_ms).astype(np.float32)
+    gf = types == "DNp01"
+    reg.provide("cell_type:with_skeleton", "conduction_delay", "data/params/conduction_delays.csv",
+                units="ms", model_use="spike arrival time per presynaptic type",
+                status=Status.DERIVED, subsystem="neuron_biophysics", instances=int(has.sum()),
+                method="0.5 ms + L/v; L = median soma->presynapse geodesic path on one "
+                       "neuPrint skeleton per type; v = 0.5 m/s (inferred), GF 2.07 m/s (measured)",
+                evidence="male-cns v1.0 skeletons; Kadas et al. 2019 eNeuro (GF velocity); "
+                         "sqrt(d) scaling to central axons 0.3-1 um (inferred)",
+                uncertainty="v uncertain ~0.2-1 m/s per type (calibre not resolved by skeleton "
+                            "radii); t_syn unmeasured centrally; one skeleton per type; sensory "
+                            "peripheral segment outside the volume omitted")
+    reg.provide("sensory:peripheral_axon", "conduction_delay", None, units="ms",
+                model_use="omitted: sensor-to-CNS conduction outside the imaged volume",
+                status=Status.UNRESOLVED, subsystem="neuron_biophysics",
+                instances=int(conn.neurons.superclass.fillna("").str.contains("sensory").sum()),
+                evidence="peripheral nerve lengths not in the connectome")
+    return out
+
+
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
     """Shared defaults (registry-labelled) overwritten by per-type table rows."""
     n = conn.n
@@ -116,6 +146,10 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     delay_ms = per("conduction_delay", "ms", "spike arrival time", 1.0,
                    "declared default conduction delay for every connection; "
                    "real delays depend on path length and calibre")
+    if one("morphological_delays", "boolean", "per-type delay from skeleton path length",
+           1.0, "modelling choice (session 6): delay = 0.5 ms + L/v per presynaptic type, "
+                "data/params/conduction_delays.csv; 0 keeps the shared default"):
+        delay_ms = _morph_delays(reg, conn, delay_ms)
     noise = one("background_noise", "mV/sqrt(ms)", "stochastic membrane drive",
                 1.5, "declared default background noise amplitude, standing in "
                      "for all unmodelled input to the CNS")

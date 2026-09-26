@@ -95,7 +95,8 @@ class Organism:
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
             if self.body.vision else None
         )
-        self.chem = olfaction.build(self.reg, self.conn, self.body)
+        self.chem = olfaction.build(self.reg, self.conn, self.body, params,
+                                    timestep_ms=self.timestep_ms, seed=self.seed)
         self.extra = extrasenses.build(self.reg, self.conn, self.body)
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness

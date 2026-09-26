@@ -593,14 +593,20 @@ def test_an_odour_drives_only_receptors_tuned_to_it_on_the_near_antenna():
     la, ra = org.chem.antenna_bodies
     tun = org.chem.tuning
     odour = tun.columns[tun.astype(bool).sum().argmax()]      # widely tested odour
-    org.world.odours = [OdourSource(odour, xpos[la] + np.array([0, 3.0, 0]), 1e-2, 1.0)]
+    org.world.odours = [OdourSource(odour, xpos[la] + np.array([0, 3.0, 0]), 1e-4, 1.0)]
     d = org.chem.drive(org.world, xpos)[org.chem.rows]
     r = tun[odour].to_numpy()
     orn = org.chem.kind == "orn"
     left, right = orn & (org.chem.side == 0), orn & (org.chem.side == 1)
-    # untuned receptors get nothing; the near (left) antenna gets more
-    assert np.all(d[orn & (r == 0)] == org.chem.baseline)
-    assert d[left & (r > 0.5)].mean() > d[right & (r > 0.5)].mean()
+    # untuned receptors get only their clean-air (spontaneous) drive; the
+    # near (left) antenna gets more
+    rates = np.zeros(len(r)); rates[orn] = org.chem.last_rate_hz
+    assert np.allclose(rates[orn & (r == 0)], org.chem.sfr_hz[orn & (r == 0)])
+    typ = org.conn.neurons.type.to_numpy()[org.chem.rows]
+    diffs = [rates[left & (typ == t)].mean() - rates[right & (typ == t)].mean()
+             for t in np.unique(typ[orn & (r > 0.5)])
+             if (left & (typ == t)).any() and (right & (typ == t)).any()]
+    assert diffs and min(diffs) >= 0 and np.mean(diffs) > 0
     inv = org.reg.inventory().set_index(["entity", "property"])
     assert inv.loc[("orn:all", "odour_tuning")].basis == "measured"
     assert inv.loc[("orn:all", "max_drive")].basis == "guessed"
@@ -615,3 +621,41 @@ def test_the_whole_organism_carries_required_evidence_fields():
     assert set(inv.basis) <= {"measured", "derived", "inferred", "guessed",
                               "unknown", "absent", "inapplicable"}
     assert inv[inv.basis == "guessed"].iterate.all()
+
+
+def test_orn_drive_reproduces_hallem_rates_in_the_network():
+    """ORNs fire at Hallem SFR in clean air (Poisson), inside the real network."""
+    from flyemu.organism import Organism
+    import numpy as np
+    import pandas as pd
+
+    org = Organism(policy="minimal", profile="m2", min_synapses=5)
+    ch = org.chem
+    orn = np.flatnonzero(ch.kind == "orn")
+    rt = pd.read_csv("data/params/orn_rates.csv", comment="#").set_index("orn_type")
+    types = org.conn.neurons.type.to_numpy()[ch.rows[orn]]
+    assert np.allclose(ch.sfr_hz[orn], rt.sfr_hz.reindex(types).to_numpy())
+    rows = ch.rows[orn]
+    n = np.zeros(orn.size)
+    steps = int(1000 / org.timestep_ms)
+    for _ in range(steps):
+        spk = org.net.step(external_mv=ch.drive(org.world, org.body.sim.mj_data.xpos))
+        n += np.isin(rows, spk)
+    # pooled per type: Poisson count over 1 s, tolerance 4 sd + 1
+    df = pd.DataFrame({"t": types, "n": n, "sfr": ch.sfr_hz[orn]}).groupby("t")
+    got, want, k = df.n.sum(), df.sfr.first() * df.size(), df.size()
+    assert np.all(np.abs(got - want) <= 4 * np.sqrt(want) + 1 + 0.03 * want)
+    # pulses realise high rates too (Rmax at 1e-2), dead time compensated
+    top = np.full(2000, 250.0)
+    ch2 = type(ch)(**{**ch.__dict__, "t_ref_ms": np.full(2000, 2.2),
+                      "pulse_mv": np.full(2000, 1e4)})
+    v_ref, cnt = np.zeros(2000), np.zeros(2000)
+    for s in range(steps):
+        t = s * org.timestep_ms
+        fire = (ch2.rate_to_pulses(top) > 0) & (t >= v_ref)
+        cnt += fire
+        v_ref[fire] = t + 2.2
+    assert abs(cnt.mean() - 250) < 10
+    inv = org.reg.inventory().set_index(["entity", "property"])
+    assert inv.loc[("orn:hallem_types", "spontaneous_rate")].basis == "measured"
+    assert inv.loc[("orn:other_types", "spontaneous_and_max_rate")].basis == "inferred"
