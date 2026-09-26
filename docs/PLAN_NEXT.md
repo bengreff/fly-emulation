@@ -9,6 +9,7 @@
    - 13Bα and 10Bα are measured nonspiking. Fit graded operating ranges to the 13Bα Vm-angle tuning (the ramp-and-hold set), pre-registered, with no reflex data.
    - The slow MN's tonic drive should then move from intrinsic to synaptic (Azevedo: its rest rate is synaptically set).
    - Then re-run `scripts/probes/azevedo_reflex.py` **unchanged**. All conditions of this cell have now been seen at least once, so a second recorded slow cell (e.g. Dryad 181021_F1_C1) is the fresh held-out set. Do not fit further on 180111.
+   - **Match 13Bα among the model's 13B cells** by morphology/connectivity, using T2/T3 (front-leg claw axons are missing from male-cns). Then fit afferent rate × VNC gain to the 13Bα tuning (F-VNC-2), and test on 10Bα/9Aα plus a second slow MN cell.
 1. **AL spontaneous state (F-AL-2).** Test presynaptic/GABA-B LN inhibition against measured PN spontaneous rates.
 
 ## After session 6: the next discriminating experiments

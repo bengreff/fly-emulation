@@ -56,5 +56,36 @@ def main():
     print(df.drop(columns=["file"]).to_string(index=False))
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and len(__import__("sys").argv) == 1:
     main()
+
+
+def static_tuning(pattern="13Balpha_extfirst_rampandhold.mat", out_name="agrawal2020_13Balpha_static_tuning.csv"):
+    """Vm (LJP-corrected, raw - 12 mV) while the tibia is held still
+    (|d angle/dt| < 10 deg/s over 200 ms), in 20-deg bins, per cell."""
+    rows = []
+    for f in sorted(glob.glob(str(ROOT / "data/raw/agrawal2020" / pattern))):
+        d = sio.loadmat(f, squeeze_me=True, struct_as_record=False)
+        for k in range(len(np.atleast_1d(d["fly"]))):
+            v = np.asarray(d["VoltageData"][k], float)
+            fr = np.asarray(d["FrametoSample"][k]); ang = np.asarray(d["LegAngles"][k], float)
+            m = min(len(fr), len(ang)); fr, ang = fr[:m], ang[:m]
+            rate = float(np.atleast_1d(d["framerate"])[k])
+            w = max(1, int(0.2 * rate))
+            vel = np.abs(np.gradient(ang) * rate)
+            still = pd.Series(vel).rolling(w, center=True).max().to_numpy() < 10
+            vm = v[np.clip(fr, 0, len(v) - 1)] - 12.0
+            for lo in range(0, 180, 20):
+                sel = still & (ang >= lo) & (ang < lo + 20)
+                if sel.sum() >= w:
+                    rows.append(dict(cell=k, angle_bin=lo + 10, vm_corr=float(np.median(vm[sel])), frames=int(sel.sum())))
+    df = pd.DataFrame(rows)
+    df.to_csv(ROOT / "data/derived" / out_name, index=False)
+    return df
+
+
+if __name__ == "__main__" and len(__import__("sys").argv) > 1 and __import__("sys").argv[1] == "--tuning":
+    t = static_tuning()
+    print(t.pivot_table(index="angle_bin", columns="cell", values="vm_corr").round(1))
+    s = t.groupby("cell").apply(lambda g: np.polyfit(g.angle_bin, g.vm_corr, 1)[0] if len(g) > 2 else np.nan)
+    print("slope mV/deg per cell:", s.round(3).to_dict())

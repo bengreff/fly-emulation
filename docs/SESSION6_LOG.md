@@ -76,3 +76,13 @@ Start 06:32 CDT. Ben downloaded Azevedo 2020 Dryad cell 180111_F2_C1 (slow MN, R
   (Lesser 2024) — consistent with rejecting the glutamate hypothesis. Agrawal 2020 raw data found on Zenodo (CC0,
   7.5 GB, throttled <1 MB/s): fetched selected members by HTTP range requests (scripts/fetch/zenodo_zip_members.py).
   F-VNC-1: real 13B/10B/9A interneurons rest at -40..-53 mV with graded angle coding; model VNC pinned at V_rest.
+- 07:30-08:02 13Balpha ramp-and-hold fetched; static tuning extracted (15 cells, 0.046 mV/deg). Model 13B flat (T1).
+  Pre-registered grid fit failed; confound: male-cns front legs have 2-3 claw axons (vs 25-32). Exploratory T2: tuning
+  appears with rate-coded afferents but mixed-sign (F-VNC-2). Note: one commit ("Log and plan: VNC data route") went
+  out without the Co-Authored-By line; history not rewritten per project rules.
+
+## End 6b
+End: Sat 26 Sep 2026 ~08:05 CDT. Adopted: slow-MN intrinsic fit (Azevedo raw data). Not adopted (failed, pre-registered):
+afferent rate mode, VNC efficacy scale, excitatory glutamate onto flexor MNs, VNC grid fit to 13Balpha tuning.
+New measured targets: slow MN (F-AZ-1), VNC interneurons (F-VNC-1/2). Key diagnosis: model VNC sits at rest (1-2%
+firing); real premotor/interneurons are depolarised and graded; front-leg claw afferents missing from male-cns.

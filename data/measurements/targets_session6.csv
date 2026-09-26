@@ -27,3 +27,8 @@ FeCO cell count,femoral chordotonal organ,152 (club 66; hook-ext+claw 58; hook-f
 claw half-activation range,flexion-tuned claw cells,20-80,deg,graphical,Mamiya et al. 2023,graphical abstract / Fig 5C,figure,used (theta50 spread)
 FeCO -> 13Balpha interneuron,tonic extension encoding,qualitative,,,Agrawal et al. 2020 eLife 9:e60299,Fig 2E,text,held-out
 PN spontaneous rate,uniglomerular PNs,a few Hz (all PNs active),Hz,to be extracted,Wilson et al. 2004; Bhandawat et al. 2007,,secondary,held-out (model: median 0 - discrepancy)
+spontaneous rate,slow tibia flexor MN (cell 180111_F2_C1),24.8,Hz,+/-7.7 (86 windows),Azevedo 2020 Dryad raw,data/derived/azevedo2020_slow_mn_180111.json,raw data,used (fit)
+f-I curve,slow tibia flexor MN (180111_F2_C1),0.5/24.8/69.2/95.8 Hz at -31.6/0/31.6/62.9 pA,Hz,sd in json,Azevedo 2020 Dryad raw,json,raw data,used (fit)
+resistance reflex step/ramp responses,slow tibia flexor MN (180111_F2_C1),see csv,Hz,n=5-10 per condition,Azevedo 2020 Dryad raw,data/derived/azevedo2020_slow_mn_180111.csv,raw data,seen (do not fit further; use a fresh cell)
+static Vm-angle slope,13Balpha (T1),0.046 median (0.012-0.083),mV/deg,15 cells,Agrawal 2020 Zenodo raw,data/derived/agrawal2020_13Balpha_static_tuning.csv,raw data,fit target (failed grid; see F-VNC-2)
+resting Vm (LJP-corrected),13Balpha/10Balpha/9Aalpha,"-40..-51 / -49..-52 / -45,-53",mV,5/3/2 cells,Agrawal 2020 Zenodo raw,data/derived/agrawal2020_vnc_interneurons.csv,raw data,held-out

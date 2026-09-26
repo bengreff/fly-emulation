@@ -1821,3 +1821,22 @@ These data give a measured, non-behavioural calibration target for the VNC: the 
 - which leg interneuron types are graded (13Bα and 10Bα are measured nonspiking);
 - their tonic release at rest (Burrows);
 - their operating point.
+
+## F-VNC-2. 13Bα position tuning: a measured VNC target the model misses, and a connectome gap
+
+`scripts/agrawal_vnc_ins.py --tuning` extracts the 13Bα static tuning from Agrawal 2020 ramp-and-hold data: 15 cells, tibia held still, LJP-corrected.
+- Vm rises monotonically with extension.
+- Slope 0.012–0.083 mV/deg, median about 0.046.
+- Range −57 to −39 mV.
+
+Output: `data/derived/agrawal2020_13Balpha_static_tuning.csv`. **Measured; a VNC calibration target that involves no behaviour.**
+
+Model, same protocol (`scripts/probes/vnc_angle_tuning.py`: tethered, front-leg PD clamp 30–170°). The 73 T1-left IN13B cells show median slope 0.000 mV/deg, and none is tuned. The pre-registered grid fit of afferent rate × VNC efficacy failed at every point. Nothing adopted.
+
+**Confound.** male-cns has only 2–3 claw axons per front leg, against 25–32 on the middle and hind legs, and front-leg 13B cells receive no claw input at all. The front-leg (T1) recordings cannot be matched to this connectome's T1.
+
+**Exploratory, middle leg** (72 IN13B cells):
+- rate-coded afferents at 200 Hz: 11% tuned above 0.012 mV/deg;
+- adding VNC ×2: 46% tuned, but with both signs and too steep (±0.3 mV/deg).
+
+The pathway exists where the afferents are reconstructed. What is missing is identifying which model 13B cells are 13Bα (cell matching), and a transmission gain fitted to them.

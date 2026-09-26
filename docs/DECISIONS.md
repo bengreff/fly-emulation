@@ -687,3 +687,38 @@ This is a second parameter fitted after a failure, recorded as such. Held-out se
 - sugar→MN9_L > 5 Hz.
 
 Otherwise the row stays in the table with a scope switch off, and the result is reported.
+
+### Pre-registration: VNC transmission fitted to interneuron position tuning (07:40)
+
+**Seen held-out comparison (F-VNC-2).** Across 73 model T1-left IN13B cells, the median Vm-angle slope is 0.000 mV/deg (p90 0.0013). Agrawal 13Bα, 15 cells: 0.012–0.083, median 0.046.
+
+**Fit set:** the 13Bα static-tuning median slope, 0.046 mV/deg. The model statistic is the median slope over all T1-left IN13B cells. This is conservative, since 13Bα is a subset of 13B.
+
+**Grid:**
+- afferent rate mode r_max ∈ {0 (mV mode), 200, 400} Hz;
+- VNC sensorimotor efficacy scale ∈ {1, 2, 3}.
+
+Pick the grid point closest to 0.046 in log ratio.
+
+**Held out:**
+- the same slope for T1-left IN10B cells, measured slopes to be extracted from 10Bα swings by the same binning, after the fit is chosen;
+- 6-seed stability;
+- sugar→MN9_L > 5 Hz.
+
+The Azevedo cell 180111 reflex is reported but is not a test (seen).
+
+**Adopt only if** all hold:
+- the fitted slope is within a factor of 2 of 0.046;
+- the IN10B slope sign matches;
+- stability and sugar pass.
+
+**Result, 07:57.** Fail. The T1-left IN13B median slope is −0.0005 to 0.000 mV/deg at every grid point (r_max 0/200/400 × VNC scale 1/2/3). Nothing is adopted, and the held-out 10Bα slope was not extracted.
+
+**Confound found after scoring.** male-cns reconstructs only 3 (left) and 2 (right) claw axons for the front legs, against 25–32 per middle and hind leg. T1-left 13B cells receive no claw synapses; 408 of 24,149 input synapses come from FeCO or hair plates. The recorded preparation (T1) therefore cannot be matched in this connectome.
+
+**Exploratory addendum, not pre-registered.** Left-middle-leg 13B cells (72), fraction with slope > 0.012 mV/deg:
+- mV mode: 3%;
+- r_max 200: 11%;
+- r_max 200 with VNC ×2: 46%, but of both signs, with p10/p90 ±0.3 mV/deg (too steep).
+
+Measured 13Bα is uniformly positive, 0.012–0.083.
