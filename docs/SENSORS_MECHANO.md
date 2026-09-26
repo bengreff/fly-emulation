@@ -24,10 +24,10 @@ independently verified line by line. Labels: **M** measured, **D** derived,
 
 ## Gaps that stay open
 
-- **No SNpp-to-claw/hook/club crosswalk exists.** Subtypes were identified in FANC (Lee et al. 2025), not MANC or male-cns; assigning them needs morphological matching (I).
+- ~~No SNpp-to-claw/hook/club crosswalk exists.~~ **Superseded (session 6c):** BANC v888 metadata provides one via reviewed male-cns matches; see `data/derived/banc_proprio_crosswalk.csv` and F-SENSE-2.
 - **Every FeCO and hair-plate result is calcium.** Absolute firing rates cannot be calibrated from them; rate gains stay inferred (F-GAP-1).
 - Coverage in male-cns (D): the front leg has far fewer chordotonal axons (~60) than the ~150 per leg expected, so the front-leg FeCO reconstruction is incomplete. Only 86 of 426 campaniform neurons map to a leg ROI.
-- **403 "leg" mechanosensory neurons are not driven** (proprioceptive/leg 190, tactile/leg 213).
+- ~~403 "leg" mechanosensory neurons are not driven~~ **Superseded:** every sensory neuron now has a transduction model or an explicit zero drive (F-SENSE-ALL).
 
 ## Recommended transduction models (all I unless stated)
 

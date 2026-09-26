@@ -4,6 +4,8 @@ Produced by one read-only Explore agent, 25 Sept 2026. **These are leads.** A
 DOI marked (unverified) was not confirmed by loading its page. A value enters
 a params table only with the label its use justifies.
 
+> **Update (session 6b/6c):** the raw recordings of two slow MNs were analysed. Measured Rin 1,041 and 617 MΩ; spontaneous rate 24.8 and 23.5 Hz (F-AZ-1, F-AZ-3). Those supersede the class values quoted below for model use.
+
 ## Leg motor units: Azevedo et al. 2020, eLife 9:e56754, 10.7554/eLife.56754 (unverified DOI; text read at PMC7347388)
 
 The tibia flexor has about 15 motor neurons.

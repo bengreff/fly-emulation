@@ -60,24 +60,19 @@ def peak_rss_gb() -> float:
 
 
 def environment() -> dict[str, Any]:
-    import jax
-    import numpy
+    """Interpreter, platform and the versions of the packages the model uses."""
+    from importlib import metadata
     env = {
         "python": sys.version.split()[0],
         "platform": platform.platform(),
         "machine": platform.machine(),
         "hostname": platform.node(),
-        "numpy": numpy.__version__,
-        "jax": jax.__version__,
-        "jax_devices": [str(d) for d in jax.devices()],
-        "jax_default_backend": jax.default_backend(),
-        "x64_enabled": bool(jax.config.read("jax_enable_x64")),
     }
-    try:
-        import diffrax
-        env["diffrax"] = diffrax.__version__
-    except Exception:
-        pass
+    for pkg in ("numpy", "scipy", "pandas", "mujoco", "flygym", "neuprint-python"):
+        try:
+            env[pkg] = metadata.version(pkg)
+        except metadata.PackageNotFoundError:
+            env[pkg] = None
     return env
 
 

@@ -498,7 +498,7 @@ Return to rest after sugar alone did not guarantee stability for other inputs (F
 - `k = 20 mV` (a coupling coefficient of ~0.25 times an ~80 mV spike), assumed. Chosen so a single GF spike fires TTMn, which the animal does 1:1. So GF→TTMn is now a **fitted** assay, not a test.
 - Held out: GF→PSI→DLMn. PSI→DLMn is chemical, ~225 synapses per PSI, sign by Shiu profile. Published: GF activation drives DLMn at short latency, following 1:1 at low rates. Pass: DLMn mean rate ≥ 50% of GF rate at 50 Hz GF drive, and > 5 Hz at 100 Hz.
 
-**Result:** held-out GF→DLMn failed (F-GAP-1). The electrical step works; PSI→DLMn chemical efficacy is subthreshold. Kept as an option, default off.
+**Result:** held-out GF→DLMn failed (F-GJ-1; originally cited as F-GAP-1). The electrical step works; PSI→DLMn chemical efficacy is subthreshold. Kept as an option, default off.
 
 ### Pre-registration: input-count normalisation (session 4, before scoring)
 
@@ -515,7 +515,7 @@ Derived from ignition diagnostics (F-LN-1, F-LN-2, `scripts/probes/al_*.py`), no
 - Scored: rule v2 passes at all (m1: fails everywhere). flybench olfactory physiology tasks 08, 17, 18, 26, 27 (graded, vs m1 in F-FB-1). The full 11-assay battery, reported as seen.
 - Adopt m2 if rule v2 is satisfiable at a scale where sugar→MN9_L > 5 Hz, and mean graded score on 08/17/18/26/27 does not fall below m1's.
 
-**Result:** m2 meets both criteria. Rule v2 is satisfied at 0.165 mV, with sugar→MN9_L 7.5/93.5 Hz. Mean graded score on flybench 08/17/18/26/27 is 0.80 vs m1's 0.54, with two new passes. **m2 adopted** (F-AL-1). Input-count normalisation rejected (F-NORM-1). GF electrical synapses kept as an option (F-GAP-1).
+**Result:** m2 meets both criteria. Rule v2 is satisfied at 0.165 mV, with sugar→MN9_L 7.5/93.5 Hz. Mean graded score on flybench 08/17/18/26/27 is 0.80 vs m1's 0.54, with two new passes. **m2 adopted** (F-AL-1). Input-count normalisation rejected (F-NORM-1). GF electrical synapses kept as an option (F-GJ-1).
 
 ## Session 5 (25 September 2026)
 
@@ -800,3 +800,28 @@ Next, a measured constraint on ORN→PN transmission:
 - the spontaneous EPSC rate of 74.9 ± 8.6 Hz per DM4 PN (Kazama & Wilson 2009);
 - unitary ORN→PN EPSP amplitude and reliability (Kazama & Wilson 2008);
 - then an AL-specific efficacy fitted to those, with odour responses held out.
+
+## Session 6d (26 September 2026): workflow and documentation
+
+- **Procedure is written down.** `docs/WORKFLOW.md` owns the procedure:
+  - session lifecycle; evidence labels; the pre-registration template;
+  - fit / dev / held-out / sealed data splits; a post-hoc budget of 2 repairs per target;
+  - the unverified-foundations rule; controls; data acquisition; process hygiene;
+  - which document owns which content; Ben's review checklist.
+- **The six evidence labels, recorded retrospectively.** measured / derived / inferred / guessed / unknown / absent. Fitted, borrowed and cross-cell-transferred values are inferred. This scheme has been in force since session 5 (enforced by `Registry.validate()`), but no DECISIONS entry stated it. The session-5 bullet above lists only four labels.
+- **Model family M2, recorded retrospectively.** Per-type LIF from `data/params/cell_types.csv`, with graded transmission, neuromodulator pools, short-term plasticity, Q10 and the session-6 switches. It was adopted in session 5 (F-LEDGER-3) without an entry here.
+  - This superseded the session-4 bullet "promote predicting a published result ahead of per-type biophysics". The per-type machinery was built, but it is filled only where data exists.
+  - `docs/MODEL.md` now documents M2.
+  - Naming: M2 is the family, m2 the profile. The working model is `profiles.WORKING_PROFILE` / `WORKING_MIN_SYNAPSES`, and the run scripts default to it (they previously defaulted to no profile and 1-synapse edges).
+- **Documentation restructure.**
+  - Superseded plans, the original brief, the multi-session handoff and the session-6 log moved to `docs/archive/`.
+  - HANDOFF and PLAN_NEXT are rewritten each session rather than appended to.
+  - The FINDINGS index was added.
+  - The duplicate ID F-GAP-1 was split: the GF electrical-synapse finding is now F-GJ-1.
+- **Unused dependencies removed** (jax, diffrax, hydra, omegaconf, sparse, seaborn, scikit-learn, natsort, tqdm, psutil, jupyter). Provenance now records the versions of the packages actually used. The removal broke `RunRecord` while the suite stayed green; a test now covers it.
+
+### Corrections to the record (entries above are not edited)
+
+- "Result, BANC subtypes (11:13)" sits under the AL pre-registration heading. It belongs to "Pre-registration: leg proprioceptor subtypes from the BANC crosswalk (11:02)".
+- "Pre-registration: glutamate onto tibia flexor MNs is excitatory (06:58)" has no result line. Its result: fit-target Δhold −0.3 Hz against +20.3; not adopted. The row is in `data/params/hypotheses_not_adopted.csv` (F-AZ-2). Later evidence also argues against it: GluCl dominates in MNs (Lesser 2024).
+- In session 4, "Results: size scaling rejected (F-SIZE-1)" sits under the type-level pre-registration. It belongs to "Pre-registration: size-scaled input resistance".

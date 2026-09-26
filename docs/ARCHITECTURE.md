@@ -1,68 +1,76 @@
-# Model and inference architecture
+# Architecture (as built)
 
-This is a proposed design, not a tested implementation. Choose numerical detail through component evidence and benchmark results.
+How the code and data are organised. The model's equations are in `docs/MODEL.md`. The original pack's proposed design (JAX, HMC, sbi) was never built; it is kept in `docs/archive/ARCHITECTURE_original_pack.md`.
 
-## State and modules
+## Principles
 
-Represent the organism using anatomy G, biological parameters theta, dynamic state x, and an environment. With structural plasticity, G can itself evolve under specified mechanisms. State includes membrane/channel variables, synaptic resources, modulators, learned changes, muscle activation and body pose/velocity. A fixed random seed makes stochastic implementations reproducible; biological noise should not be removed merely to make trajectories deterministic.
+- **Every value goes through the registry.** Code asks for a quantity with `reg.require(...)` or declares one with `reg.provide(...)`, and gives it a label and its evidence. Each run writes `inventory.csv`, so the list of what is guessed cannot drift from the code.
+- **Filling a blank means adding a labelled row to a table**, never editing a constant in code. Tables live in `data/params/`.
+- **One path from world to network:** `Organism.sense()`. One path from network to body: motor units → torque.
+- **Scripts are thin; `src/flyemu` holds the model.** Probes are diagnostics that use the model but never change it.
 
-| Module | Inputs | State/output | Evidence needed |
-|---|---|---|---|
-| Receptors | Light, odor concentration, local strain, joint motion, contact, other supported stimuli | Receptor voltage/spikes and adaptation | Receptor identities, geometry, causal response measurements |
-| CNS | Sensory input, recurrent neural signals, modulatory input | Voltage, spikes/graded release, channel/adaptation states | Connectivity, physiology, receptor/sign evidence, delays |
-| Synapses/modulation | Presynaptic activity, postsynaptic state, relevant modulators | Conductances, short-term resources, persistent changes | Release/receptor dynamics and plasticity measurements |
-| Neuromuscular system | Identified motor-neuron signals | Muscle activation and force | MN-to-muscle identities and measured dynamics |
-| Body/environment | Muscle forces and external loads | Pose, velocity, strain, contacts, sensory scene | Morphology, mechanics, aerodynamics and environment models |
-| Slow internal state | Relevant physiological inputs/history | State-dependent effects on the above | Evidence for the modeled hunger/arousal/circadian/etc. mechanisms |
+## Source (`src/flyemu/`)
 
-Every interface needs units, coordinate conventions, timing, anatomical identity, uncertainty and operating range. A low-dimensional interface is acceptable when it is an evidence-supported reduction of a biological component. A DN-to-“walk” decoder substituting for unmodeled motor circuitry is a scaffold, not the main scientific model.
+| Module | Role |
+|---|---|
+| `registry.py` | `Registry`: `require` / `provide` / overrides, evidence labels (`Status`), `validate()`, inventory output |
+| `profiles.py` | named parameter profiles (`shiu2024`, `m1`, `m2`) with labels; `WORKING_PROFILE`, `WORKING_MIN_SYNAPSES` |
+| `params.py` | expands `data/params/cell_types.csv` rows (type, regex or `bodyId:` lists) into per-neuron arrays |
+| `connectome.py` | builds the signed, weighted CSR graph from the neuPrint cache; sign rules; efficacy and class scales; shuffled controls |
+| `lif.py` | `default_params` (per-type LIF parameters and mechanism switches) and `Network.step` (the M2 dynamics) |
+| `electrical.py` | identified electrical synapses (GF) |
+| `body.py`, `joints.py` | the flybody MuJoCo body, joint audit and ranges, observation |
+| `sensory.py` | leg afferents (proprioceptors, campaniforms, bristles) |
+| `vision.py` | photoreceptor drive, retinotopy, per-eye pale/yellow mask, opsin template |
+| `olfaction.py` | ORN (Hallem rates, DoOR tuning), CO2, humidity, temperature |
+| `extrasenses.py` | taste, head touch, JO, wing/haltere, trunk |
+| `world.py` | odour plumes, food patches, temperature, humidity |
+| `neuromuscular.py` | MN→actuator map, per-MN motor units, grip |
+| `interface.py` | brain-body channel inventory |
+| `organism.py` | assembles the above; the closed loop |
+| `provenance.py` | `RunRecord`: environment, git state, inputs and results for each run |
 
-## Neural detail
+## Data (`data/`)
 
-Begin with reduced conductance-based models or justified graded/spiking formulations. Use Shiu/Pugliese models as reproduction references, not universal physiology. Increase detail for specific failed physiological tests: dendritic compartments, channel dynamics, receptor kinetics, electrical coupling or modulation. Support histaminergic visual transmission explicitly where relevant; a six-class transmitter table is not a complete synaptic model.
-
-Do not equate anatomical contact count with exact functional weight. A useful initialization is a contact-count-dependent prior with transmitter/receptor and cell-type structure. The fitted mapping and deviations need evidence and regularization.
-
-Import chemical and electrical connectivity separately. Record unobserved versus observed-absent connections. Keep original dataset IDs as exact integers/strings and maintain stable internal identities. Do not infer conservation merely from matching names.
-
-## Fitting methods
-
-The objective combines physiological observations, behavioral observations and priors, with trusted constraints enforced explicitly. Store separate loss components; a good total can hide catastrophic failure of one modality.
-
-| Method | Intended use | Limitation |
+| Path | Contents | In git |
 |---|---|---|
-| JAX/Jaxley automatic differentiation with Adam; optional L-BFGS refinement | Cell and circuit parameter fitting; appropriate differentiable portions of the coupled model | Memory, stiffness, nonconvexity, recurrent credit assignment and contact discontinuities |
-| Multiple shooting with continuity constraints | Estimate latent states in short observation windows and shared dynamics, then enforce consistent continuation | Independent window initial states must not become hidden assistance in final rollouts |
-| CMA-ES or related evolutionary fitting | Modest-dimensional nonsmooth parameter groups or alternative component hypotheses | Poor fit for brute-force search over millions of unrelated synapses |
-| Block-coordinate and curriculum fitting | Fit components, alternate unresolved parameter blocks, then jointly reconcile and lengthen trials | Local fits can become incompatible in the closed loop |
-| HMC/NUTS on tractable differentiable subsystems | Explore data-compatible parameter uncertainty | Not proposed as a full-brain million-dimensional posterior solution |
-| Sequential neural posterior estimation via sbi | Reduced parameter groups with expensive or likelihood-free observations | Requires many simulations and careful posterior checks; no automatic whole-organism solution |
-| Sensitivity/Jacobian analysis; expected information gain | Find influential ambiguities and discriminating existing/synthetic tests | Local sensitivity is not global identifiability |
+| `data/raw/` | downloaded source data (DoOR, Azevedo 2020 cells, Agrawal 2020 members, BANC metadata), each in `data/MANIFEST.yaml` | no |
+| `data/cache/` | neuPrint pulls: neurons, edges, ROI info, landmarks | no |
+| `data/params/` | **the tables the model reads**: `cell_types.csv`, `motor_forces.csv`, `motor_targets.csv`, `orn_rates.csv`, `conduction_delays.csv`, `proprio_assignment.csv`, `opsin_spectra.csv`; `hypotheses_not_adopted.csv` is rejected rows, never loaded | yes |
+| `data/derived/` | outputs of scripts from raw data: skeleton lengths, retinotopy, census, ledger, crosswalks, extracted recordings | yes |
+| `data/measurements/` | measured targets for fitting and testing, with a `use` column (fit / held-out / seen) | yes |
+| `data/ontology/fly_information.yaml` | every measurable quantity of a fly, which the ledger counts | yes |
 
-Start with the smallest method that answers the current inference question. Compare a few scientifically distinct model families, not thousands of arbitrary mechanisms. Hierarchical parameter sharing can shrink the search but is itself an assumption. Allow cell-specific deviations when justified.
+Tables are regenerated by their scripts, and each file's header names its generator:
+- `scripts/conduction_delays.py`, `scripts/skeleton_lengths.py`;
+- `scripts/motor_forces.py`;
+- `scripts/orn_rates.py`;
+- `scripts/proprio_direction.py`;
+- `scripts/azevedo_slow_mn.py`, `scripts/agrawal_vnc_ins.py`.
 
-Use explicit observation models: a calcium trace is not voltage or a spike train; fluorescence delay and filtering affect inference. Fit measurement noise and preparation effects where necessary. Compare spontaneous behavior using appropriate distributions and temporal structure; require aligned timing for controlled perturbation trials. Do not let time-warped fits conceal incorrect latency.
+## Scripts (`scripts/`)
 
-## Learning
+- **Run and record:** `run_organism.py`, `record_organism.py`, `render_organism.py`, `replay_mujoco.py`, `serve_viz.py` (with `viz/index.html`).
+- **Assays and scoring:**
+  - `assay_pathways.py`, the open-loop pathway battery (sugar→MN9 etc.);
+  - `calibrate_gain.py`, calibration rule v2;
+  - `score_reflex.py`, which scores the model against a recorded slow MN, running the model before opening the cell;
+  - `flybench_variants.py` and `export_flybench.py`.
+- **Building data:** the table generators above, plus `fetch_male_cns.py`, `retinotopy.py`, `orn_tuning.py`, `calibrate_joint_signs.py`, `export_geometry.py`, and `fetch/zenodo_zip_members.py`.
+- **Bookkeeping:** `blank_ledger.py`, `sensory_census.py`, `audit_provenance.py`.
+- **Probes** (`scripts/probes/`): diagnostics. `scripts/probes/README.md` marks which are current and which are historical.
+- **backhouse:** `sync_backhouse.sh`.
 
-Introduce plasticity based on the circuit and experimental evidence, not a universal reward rule applied everywhere. Fit its timing, sign, dependence on modulators and retention against actual protocols. The biological learning mechanism operates during the lifetime; the outer optimizer is absent during held-out learning evaluation. Save both transient and long-lived states in checkpoints.
+## Tests (`tests/`)
 
-Initially use published circuit physiology to choose candidate learning mechanisms. Explicitly model the sensory routes for reward/punishment. Artificially stimulating identified modulatory neurons can reproduce an experimental intervention, but is not equivalent to natural sensory transduction.
+| File | Covers |
+|---|---|
+| `test_source_data.py` | the source data itself: Dale's principle, identity joins, units, cross-checks against independent measurements |
+| `test_organism.py` | the model: registry and labels, delays, mechanisms, senses, motor units, body, fitted cells |
+| `test_repo_hygiene.py` | tables labelled and resolvable; crosswalk consistency; rejected rows not loaded; scripts compile; paths in living docs exist; provenance builds; scripts default to the working model |
 
-## Flight implementation
+Run with `uv run pytest tests -q`. It takes about 2 min and needs `data/cache/`.
 
-Inspect flybody assets and current FlyGym muscle/sensory components before selecting one final body. Keep walking as milestone one but audit flight early. The power-muscle/thorax oscillator, steering hinge, aerodynamic forces and fast mechanosensory feedback are separate coupled components.
+## Outputs
 
-Distinguish replayed-wing debugging, supported airborne steering, autonomous stabilization, and takeoff/landing. Prescribing wing frequency or supplying stabilization is allowed for isolated tests but must be disclosed and removed for stronger claims. A myogenic oscillator derived from muscle/thorax biology is legitimate; it is not a neural policy.
-
-The Melis wing-hinge CNN requires a causal audit before live use (see RESEARCH.md). Its retrospective calcium window must not give the simulator access to future activity. Refit causal dynamics or a justified latent activation/measurement model, and quantify the unresolved spike-phase information.
-
-## Numerical and resource plan
-
-Inspect GPU memory, RAM, disk, driver and backend compatibility. Use Windows/WSL2 or another supported NVIDIA environment if warranted; Mac is useful for orchestration and small CPU work. Do not assume a package works on a given OS without checking its current documentation.
-
-Benchmark import, neural forward simulation, gradients, mechanics, rendering and synchronization separately and together. Forward memory fit is not gradient memory fit. Checkpointing and multirate integration may help, but fast pathways and causality must be preserved. Test step-size convergence against physical readouts. For scale, a 0.1 ms interval corresponds to 7.2 degrees at an illustrative 200 Hz wingbeat.
-
-Avoid raw-EM download initially. Fetch metadata and relevant physiology subsets first. Keep raw data outside git, with checksums, versions and licenses. Render sparse diagnostics, not full videos for every candidate. Do not schedule dozens of full-graph jobs simultaneously on one consumer GPU.
-
-No fixed architecture promises 1–10 GB or real-time operation at the required fidelity. Measure candidate costs and select scientifically defensible reductions before optimizing kernels.
+`runs/<run_id>/` holds each run's provenance JSON, `inventory.csv` and outputs. It is not in git. `score_reflex.py` writes `runs/reflex-<cell>-<tag>/`.

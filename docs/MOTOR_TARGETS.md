@@ -56,6 +56,8 @@ read through a summary. Check against its Table 1 before wiring m1/m2/m6/m7/m8.
 
 ## Consequences for the interface
 
+> **Status (session 6c):** implemented in `data/params/motor_targets.csv` (F-MOTOR-2): 756 of 815 motor neurons now drive an actuator. The notes below are the original analysis.
+
 - **Wire now, direct evidence:** TTMn/STTMm to T2 leg actuators (the giant
   fibre escape output); MN9 and the proboscis pool to `rostrum`/`haustellum`/
   `labrum` (the sugar→MN9 assay output).

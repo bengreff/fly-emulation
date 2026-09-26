@@ -1,3 +1,5 @@
+> **Historical — do not act on this file.** Kept for the record. The current state is in `docs/HANDOFF.md`; the procedure is in `docs/WORKFLOW.md`.
+
 # Session 6 log
 
 Start: Fri 25 Sep 2026 21:11 CDT (Mac `date`). Stop new work at 23:56; wrap-up by 00:11.

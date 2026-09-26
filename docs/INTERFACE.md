@@ -13,10 +13,17 @@ reach behind paywalls; those flags are preserved. Treat every citation here as a
 lead to check before any number becomes a model parameter. Several sources it
 reported were explicitly "title-level only" because full text returned 403.
 
-## Current state, for contrast
+## Current state (session 6c)
 
-| | Implemented | Exists |
-|---|---|---|
+| | Implemented | Exists | Owner of the current numbers |
+|---|---|---|---|
+| Efferent | 756 of 815 motor neurons drive an actuator (F-MOTOR-2); leg MNs have per-unit torque (F-MOTOR-3) | 815 motor neurons under the working inclusion policy | `docs/MODEL.md`, the run's `inventory.csv` |
+| Afferent | 16,335 of 17,896 sensory neurons driven by a physical variable (F-SENSE-ALL); leg proprioceptor subtypes from BANC (F-SENSE-2) | 17,896 sensory neurons (Traced-or-typed policy; F-CENSUS-1) | `data/derived/sensory_census.csv` |
+| Physics | rigid-body contact, gravity, tarsal adhesion, tendons, quasi-steady aerodynamics (flybody) | see Part C | `docs/MODEL.md` |
+
+**The "Implemented" column in the tables below was written in session 3 and is not maintained.** The literature and count columns remain useful as leads. For what is implemented now, use the census and `docs/MODEL.md`.
+
+---|---|---|
 | Efferent | 328 motor neurons driving joint torques | 708 `vnc_motor` plus endocrine, enteric and efferent classes |
 | Afferent | 3,246 leg mechanosensory afferents | 17,937 sensory neurons in `male-cns` |
 | Physics | rigid-body contact, gravity | see Part C |

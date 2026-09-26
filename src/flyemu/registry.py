@@ -7,7 +7,7 @@ equation needs it, what units it is in, and where it came from - and the list of
 requirements is a byproduct of running the model rather than a document
 maintained beside it.
 
-Three fill policies, run and reported together (docs/PLAN.md step 6):
+Three fill policies, run and reported together (docs/archive/PLAN_sessions2-3.md step 6):
 
     STRICT        unresolved quantities raise. The model does not start, and the
                   list it refuses on is the result.
@@ -99,7 +99,7 @@ class Unresolved(Exception):
 
 @dataclass
 class Requirement:
-    """One row of the inventory. Schema from docs/PLAN.md."""
+    """One row of the inventory. Schema from docs/archive/PLAN_sessions2-3.md."""
 
     entity: str                 # 'cell_type:Ti flexor MN', 'muscle:Ti flexor'
     property: str               # 'tau_m', 'sign', 'g_syn'

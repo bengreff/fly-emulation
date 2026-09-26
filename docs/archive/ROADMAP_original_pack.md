@@ -1,3 +1,5 @@
+> **Historical — do not act on this file.** Kept for the record. The current state is in `docs/HANDOFF.md`; the procedure is in `docs/WORKFLOW.md`.
+
 # Initial work and progressive milestones
 
 This is a starting sequence, not a year-long promise. Walking precedes flight as the first whole-body outcome. Audit flight feasibility early so locomotion infrastructure does not prevent the later objective.

@@ -13,6 +13,87 @@ untracked but retained on disk. The code that produced them was deleted in the
 session-2 cleanup and is recoverable from git history at commit `1f7f5a4` or
 earlier.
 
+**Scope note (session 6c):** the paragraph above about deleted code applies to session 1 only. Later findings name the script that produced them, which is in the repository.
+
+## Index of findings
+
+Generated in session 6c from the headings below; the status column marks findings a later one supersedes. Findings are never edited to match the present (`docs/WORKFLOW.md` §9); read the superseding entry.
+
+| ID | Session | Finding | Status |
+|---|---|---|---|
+| F-RETRACTED-1 | Session 1 | There was no units bug. The error was mine. | withdrawn |
+| F-DATA-1 | Session 1 | The motor-neuron to muscle mapping is complete and externally corroborated |  |
+| F-DATA-2 | Session 1 | The whole-CNS connectome should be the source, not the nerve cord alone |  |
+| F-SIGN-1 | Session 1 | Two fifths of modelled inhibition rests on a convention |  |
+| F-SIGN-2 | Session 1 | The sign field is wrong for most leg proprioceptors |  |
+| F-SIGN-3 | Session 1 | The sign field's uncertainty flips the outcome, and four cells dominate |  |
+| F-EXCITE-1 | Session 1 | Excitability is derived from a proxy that is invalid for input populations |  |
+| F-GAP-1 | Session 1 | Afferent firing rates have no published calibration |  |
+| F-BODY-1 | Session 1 | The best available body receives two thirds of one leg's motor output |  |
+| F-FRAG | Session 1 | Results from the isolated fragment, with their scope narrowed |  |
+| F-LOOP-1 | Session 3 | The loop closes, and the fly flails |  |
+| F-COUNT-1 | Session 3 | Eighteen numbers, twenty-seven million places |  |
+| F-GAIN-1 | Session 3 | Activity is set by background drive, not by synaptic efficacy | superseded by F-GAIN-2 (anatomy is load-bearing once noise is off) |
+| F-TORQUE-1 | Session 3 | The torque this body needs is the torque a real fly delivers |  |
+| F-BODY-2 | Session 3 | Over half the motor output has nowhere to go | largely resolved by F-MOTOR-2 |
+| F-NOISE-1 | Session 3 | A dimensional error silenced the entire brain | fixed at the time |
+| F-C2-1 | Session 3 | C1 and C2 are the same run, so C2 is not a control yet |  |
+| F-BODY-3 | Session 3 | The body model has no joint limits, and one passive stiffness for every joint | superseded (ranges added, F-JOINT-1; knee range fixed, F-BUG-6/7) |
+| F-SIGN-4 | Session 3 | Measured actuator-to-foot calibration overturns several muscle sign assignments |  |
+| F-JOINT-1 | Session 3, part 2 | A third of the powered joints were not joints |  |
+| F-MASS-1 | Session 3, part 2 | The fly's mass is a fraction table on an assumed total, and 2.45% of it is a solver floor |  |
+| F-STIFF-1 | Session 3, part 2 | The passive joint parameters are documented guesses |  |
+| F-SIGN-5 | Session 3, part 2 | Anatomy plus calibration: five corrections, two muscles unmapped |  |
+| F-LTM-1 | Session 3, part 2 | The long tendon muscle is one muscle, one tendon, four joints |  |
+| F-COLLIDE-1 | Session 3, part 3 | The fly could pass through itself, and two separate bugs hid it |  |
+| F-PHYS-1 | Session 3, part 3 | What is now implemented, and what each approximation costs |  |
+| F-AXIS-1 | Session 3, part 3 | A body swap silently inverts hard-coded signs |  |
+| F-COLLIDE-2 | Session 3, part 3 | The collision fix had dropped the feet |  |
+| F-VISION-1 | Session 3, part 3 | The graph has photoreceptors and no map for them | superseded by F-VISION-2 (retinotopy derived) |
+| F-COUNT-2 | Session 4 | 9,311 of the simulated "neurons" were fragments |  |
+| F-GAIN-2 | Session 4 | The anatomy is load-bearing, and it ignites |  |
+| F-SFA-1 | Session 4 | Uniform adaptation does not stop ignition |  |
+| F-SENS-1 | Session 4 | Sensory neurons were being fired from inside the brain |  |
+| F-SIZE-1 | Session 4 | Volume-scaled input resistance: rejected by its pre-registration |  |
+| F-FB-1 | Session 4 | m1 on flybench: 1 of 18 unseen tasks, graded 0.65 |  |
+| F-TYPE-1 | Session 4 | The pathway results are carried by type-level wiring |  |
+| F-STD-1 | Session 4 | Uniform short-term depression trades transmission for stability |  |
+| F-LN-1 | Session 4 | The ignition core is the antennal lobe's excitatory LNs |  |
+| F-LN-2 | Session 4 | Odour input ignites the model at every usable scale |  |
+| F-GJ-1 | Session 4 | GF electrical synapses: the electrical link works, the chemical one after it fails |  |
+| F-NORM-1 | Session 4 | Input-count normalisation fails like size scaling, as predicted |  |
+| F-AL-1 | Session 4 | m2: two antennal-lobe corrections make the model stable and improve olfactory physiology |  |
+| F-CENSUS-1 | Session 5 | Every sensory neuron assigned; 768 taste neurons were being driven as touch |  |
+| F-LEDGER-1 | Session 5 | A definite count: ~250,000 blank slots | superseded by F-LEDGER-2/3/4 |
+| F-VISION-2 | Session 5 | Retinotopy derived from the connectome: every photoreceptor has an ommatidium |  |
+| F-OLF-1 | Session 5 | Smell, CO2 and humidity wired to a world; recordings had been blind |  |
+| F-LEDGER-2 | Session 5 | The complete blank ontology: 79 measurable quantities, 824,230 parameter slots | superseded by F-LEDGER-3/4 |
+| F-MOTOR-2 | Session 5 | Every body articulation with a candidate motor neuron is driven |  |
+| F-SENSE-ALL | Session 5 | Every sensory neuron has a transduction model |  |
+| F-LEDGER-3 | Session 5 | Where the blanks stand after session 5 | superseded by F-LEDGER-4 |
+| F-DELAY-1 | Session 6 | Conduction delays derived from 11,751 skeletons | calibration caveat resolved by F-CAL-3 |
+| F-ORN-1 / F-ORN-2 | Session 6 | Hallem ORN rates attached; the network cannot take them | F-ORN-2 reversed by F-ORN-3 (rates on) |
+| F-MOTOR-3 | Session 6 | Per-motor-neuron leg forces (Azevedo 2020) |  |
+| F-VISION-3 | Session 6 | Spectral identity |  |
+| F-BUG-6/7 | Session 6 | Two long-standing bugs in the body-brain interface |  |
+| F-STAND-1 | Session 6 | The fly does not stand; the failing layer is afferent→MN gain | sensor subtypes replaced by F-SENSE-2; diagnosis refined by F-AZ-2 |
+| F-MECH-1 | Session 6 | Four absent mechanisms now simulated, all neutral by default |  |
+| F-LEDGER-4 | Session 6 | Ledger after session 6 |  |
+| F-CAL-3 | Session 6 | The efficacy scale survives morphological delays |  |
+| F-ORN-3 | Session 6 | Hallem ORN rates re-enabled after a fresh-seed re-test |  |
+| F-REFLEX-1 | Session 6 | Reflex gain against Azevedo 2020: the model's slow flexor MNs are position-blind | "blocked" data obtained (F-AZ-1); subtypes replaced (F-SENSE-2) |
+| F-WALK-0 | Session 6 | DNg100 activation in closed loop: no stepping (exploratory) |  |
+| F-AZ-1 | Session 6b | First raw motor-neuron recording in the project: slow tibia flexor, cell 180111_F2_C1 |  |
+| F-AZ-2 | Session 6b | The slow MN is fitted to its intrinsic data; the reflex, held out, fails |  |
+| F-AL-2 | Session 6b | Why 70% of uniglomerular PNs are silent with Hallem ORN input |  |
+| F-VNC-1 | Session 6b | Real leg interneurons rest depolarised and code position in graded Vm; the model's are pinned a |  |
+| F-VNC-2 | Session 6b | 13Bα position tuning: a measured VNC target the model misses, and a connectome gap |  |
+| F-AZ-3 | Session 6c | The slow-MN fit transfers to a second recorded cell |  |
+| F-SENSE-2 | Session 6c | Leg proprioceptor identities from BANC replace guesses; the reflex still fails at the premotor  |  |
+| F-AL-3 | Session 6c | Moving LN inhibition presynaptic does not wake the silent PNs |  |
+
+### Session 1 status table (historical)
+
 | ID | What it says about a field | Status |
 |---|---|---|
 | **F-RETRACTED-1** | **"A units bug in the published analysis code"** | **withdrawn; the error was mine** |
@@ -1251,7 +1332,7 @@ currently carries. That makes them a legitimate next hypothesis, provided
 they are fitted to AL physiology (PN transfer function, Olsen et al. 2010;
 flybench task 17) and not to behaviour.
 
-## F-GAP-1. GF electrical synapses: the electrical link works, the chemical one after it fails
+## F-GJ-1 (formerly a second "F-GAP-1"; renamed session 6c). GF electrical synapses: the electrical link works, the chemical one after it fails
 
 Pre-registered (DECISIONS): spike-triggered rectifying kick k = 20 mV for
 GF→TTMn and GF→PSI (`src/flyemu/electrical.py`), m1 at 0.1925 mV,

@@ -197,7 +197,7 @@ def run_trial(conn, params, dt, stim_idx, rate_hz, kick_mv, duration_ms,
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--assay", default="sugar_mn9", choices=sorted(ASSAYS))
-    ap.add_argument("--profile", default="shiu2024",
+    ap.add_argument("--profile", default=profiles.WORKING_PROFILE,
                     choices=sorted(profiles.PROFILES))
     ap.add_argument("--rates", default="0,100")
     ap.add_argument("--duration-ms", type=float, default=1000.0)
@@ -207,7 +207,7 @@ def main() -> None:
                     help="number of global rewired controls")
     ap.add_argument("--type-shuffles", type=int, default=0,
                     help="number of cell-type block-preserving controls")
-    ap.add_argument("--min-synapses", type=int, default=5)
+    ap.add_argument("--min-synapses", type=int, default=profiles.WORKING_MIN_SYNAPSES)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
     args = ap.parse_args()

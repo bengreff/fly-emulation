@@ -1,3 +1,5 @@
+> **Historical — do not act on this file.** Kept for the record. The current state is in `docs/HANDOFF.md`; the procedure is in `docs/WORKFLOW.md`.
+
 # Plan: whole-organism requirement inventory first
 
 Written at the end of session 2, revised after the pack author's response.

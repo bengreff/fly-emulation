@@ -29,6 +29,7 @@ import mujoco as mj
 import numpy as np
 
 from flyemu.body import Body
+from flyemu import profiles
 from flyemu.organism import Organism
 from flyemu.provenance import RunRecord
 from flyemu import vision, extrasenses, olfaction, neuromuscular, sensory
@@ -48,9 +49,9 @@ def main() -> int:
     ap.add_argument("--web-hz", type=float, default=200.0,
                     help="pose sample rate for the browser visualiser")
     ap.add_argument("--tag", default="replay")
-    ap.add_argument("--profile", default=None,
-                    help="borrowed parameter profile, e.g. shiu2024")
-    ap.add_argument("--min-synapses", type=int, default=1)
+    ap.add_argument("--profile", default=profiles.WORKING_PROFILE,
+                    help="parameter profile (default: the working model); 'none' for bare defaults")
+    ap.add_argument("--min-synapses", type=int, default=profiles.WORKING_MIN_SYNAPSES)
     args = ap.parse_args()
 
     overrides = {}
@@ -72,7 +73,8 @@ def main() -> int:
     )
 
     org = Organism(policy="minimal", seed=args.seed, overrides=overrides,
-                   profile=args.profile, min_synapses=args.min_synapses)
+                   profile=None if args.profile in ("none", "") else args.profile,
+                   min_synapses=args.min_synapses)
     # Rebuild the body with a tracking camera so the same recording can be
     # rendered to video without re-running.
     org.body = Body(model=org.body.model,

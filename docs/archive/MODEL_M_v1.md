@@ -1,3 +1,5 @@
+> **Historical — do not act on this file.** Kept for the record. The current state is in `docs/HANDOFF.md`; the procedure is in `docs/WORKFLOW.md`.
+
 # Model family M v1
 
 Declared before enumerating anything, because the requirement list follows from

@@ -16,6 +16,8 @@ import pandas as pd
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+import sys  # noqa: E402
+sys.path.insert(0, str(ROOT / "src"))
 BASES = {"measured", "derived", "inferred", "guessed"}
 
 
@@ -130,7 +132,8 @@ def test_paths_mentioned_in_living_docs_exist():
     what was true then."""
     living = ["README.md", "CLAUDE.md", "docs/HANDOFF.md", "docs/WORKFLOW.md",
               "docs/ARCHITECTURE.md", "docs/RUNNING.md", "docs/PLAN_NEXT.md",
-              "docs/NEXT_SESSION_PROMPT.md", "docs/MODEL_M.md", "docs/INTERFACE.md",
+              "docs/NEXT_SESSION_PROMPT.md", "docs/MODEL.md", "docs/INTERFACE.md",
+              "docs/ENVIRONMENT.md", "docs/VALIDATION.md", "docs/PROJECT.md",
               "scripts/probes/README.md"]
     missing = []
     for doc in living:
@@ -146,3 +149,32 @@ def test_paths_mentioned_in_living_docs_exist():
             if not (ROOT / ref).exists():
                 missing.append(f"{doc}: {ref}")
     assert not missing, "\n".join(missing)
+
+
+def test_run_records_capture_the_environment(tmp_path):
+    """Provenance must build with the declared dependencies only (a removed
+    dependency once broke every run script while the suite stayed green)."""
+    from flyemu.provenance import RunRecord, environment
+    env = environment()
+    assert env["numpy"] and env["mujoco"]
+    RunRecord("hygiene-test", tmp_path)
+
+
+def test_scripts_default_to_the_working_model():
+    import subprocess
+    import sys
+    from flyemu import profiles
+    for script in ("run_organism.py", "record_organism.py", "assay_pathways.py"):
+        out = subprocess.run([sys.executable, str(ROOT / "scripts" / script), "--help"],
+                             capture_output=True, text=True, cwd=ROOT).stdout
+        assert "--min-synapses" in out and "--profile" in out, script
+    assert profiles.WORKING_PROFILE in profiles.PROFILES
+
+
+def test_docs_cited_in_code_exist():
+    missing = set()
+    for f in list((ROOT / "src").rglob("*.py")) + list((ROOT / "scripts").rglob("*.py")):
+        for ref in re.findall(r"docs/[A-Za-z0-9_/\-]+\.md", f.read_text()):
+            if not (ROOT / ref).exists() and not re.fullmatch(r"docs/SESSION\d+[a-z]?_LOG\.md", ref):
+                missing.add(f"{f.relative_to(ROOT)}: {ref}")
+    assert not missing, "\n".join(sorted(missing))

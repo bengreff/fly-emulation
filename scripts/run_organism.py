@@ -2,7 +2,7 @@
 
     uv run python scripts/run_organism.py --policy minimal --duration-ms 200
 
-Policies (docs/PLAN.md step 6), reported together:
+Policies (docs/archive/PLAN_sessions2-3.md step 6), reported together:
 
     strict        refuses to run; the requirements it refuses on are the result
     minimal       one declared default per subsystem
@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 
+from flyemu import profiles
 from flyemu.organism import Organism, StrictRefusal
 from flyemu.provenance import RunRecord
 from flyemu.registry import Policy, Unresolved
@@ -36,7 +37,9 @@ def main() -> int:
     ap.add_argument("--duration-ms", type=float, default=200.0)
     ap.add_argument("--timestep-ms", type=float, default=0.1)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--min-synapses", type=int, default=1)
+    ap.add_argument("--profile", default=profiles.WORKING_PROFILE,
+                    help="parameter profile (default: the working model); 'none' for bare defaults")
+    ap.add_argument("--min-synapses", type=int, default=profiles.WORKING_MIN_SYNAPSES)
     ap.add_argument("--tag", default="")
     ap.add_argument("--spike-cap", type=int, default=None,
                     help="abort if more than this many neurons spike in a step")
@@ -75,6 +78,7 @@ def main() -> int:
         org = Organism(
             timestep_ms=args.timestep_ms, policy=args.policy, seed=args.seed,
             min_synapses=args.min_synapses, overrides=overrides,
+            profile=None if args.profile in ("none", "") else args.profile,
         )
     except Unresolved as exc:
         req = exc.requirement

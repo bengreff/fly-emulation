@@ -1,209 +1,74 @@
-# Handoff
+# Handoff: current state
 
-Written at the end of session 3, 16 September 2026. **Updated in session 4
-(24 September): the next work is now `docs/PLAN_NEXT.md`**, which reorders the
-"immediate next task" below: reproduce published pathway results with noise
-off before differentiating biophysics. Session 4 also committed session 3's
-work, excluded 9,311 untyped fragments from the graph (F-COUNT-2: 167,111
-neurons now), and mapped the non-leg motor neurons (`docs/MOTOR_TARGETS.md`).
-Then it ran the pathway battery: F-GAIN-2 (the anatomy is load-bearing but
-ignites), F-SFA-1 (uniform adaptation fails), F-SENS-1 (profile `m1`, fresh
-held-out 2/5). The current open list is at the top of PLAN_NEXT session 5.
-Later that evening: an independent review found and fixed a control bug; F-TYPE-1
-shows results are type-level; three uniform mechanisms were rejected by
-pre-registration. backhouse is deployed: `~/fly-emulation` (code synced by
-`scripts/sync_backhouse.sh`), flybench in `external/flybench/.venv`, and jobs run
-in tmux under a keep-alive SSH session (WSL shuts down otherwise).
-**Session 5 (25 Sept):** blank ledger (F-LEDGER-1, ~250k blank slots at declared
-grain, `scripts/blank_ledger.py`), sensory census (F-CENSUS-1, all 17,896 sensory
-neurons classified), derived retinotopy (F-VISION-2), olfaction/CO2/humidity wired
-to `world.py` (F-OLF-1). 66% of sensory neurons driven. Every inventory value has a
-`basis` label: measured / derived / inferred / unknown.
-**Session 5, later:** strict evidence labels (measured / derived / inferred /
-guessed / unknown / absent; `Registry.validate()` tested), complete ontology of
-measurable fly biology (`data/ontology/fly_information.yaml`, F-LEDGER-2/3),
-model family M2 with per-type table `data/params/cell_types.csv`, graded
-transmission, neuromodulator pools, Q10, every sensory neuron transduced
-(F-SENSE-ALL), 756/815 motor neurons mapped (`data/params/motor_targets.csv`,
-F-MOTOR-2). Filling a blank = adding a labelled row to a params table.
-**Current working model: profile `m2` (F-AL-1)**, 0.165 mV per synapse, calibration
-rule v2 satisfied. flybench also runs locally (`external/flybench/.venv`).
-backhouse dropped off the network again at ~22:30 on 24 Sept; the m2 jobs that
-were running there are lost, and were redone on the Mac.
+**Rewritten each session; do not append.** State as of the end of session 6c, 26 September 2026. History is in `docs/FINDINGS.md`, `docs/DECISIONS.md` and `docs/archive/`. The procedure is in `docs/WORKFLOW.md`, the model in `docs/MODEL.md`, the commands in `docs/RUNNING.md`.
 
-**Session 6 (25 Sept, unattended; see FINDINGS "Session 6" and docs/SESSION6_LOG.md):**
-- **Data attached:**
-  - per-type conduction delays from 11,751 skeletons (derived, default on);
-  - Hallem ORN rates (measured; off by default after F-ORN-2);
-  - Azevedo leg motor-unit forces (derived/inferred);
-  - opsin λmax (measured);
-  - a connectome pale/yellow eye mask.
-- **Two interface bugs fixed:** proprioceptors read thorax-coxa roll instead of femur-tibia, and the knee range was applied to the wrong coordinate.
-- **Standing attempted and failed (F-STAND-1).** Afferents respond correctly and the wiring resists open-loop, but afferent→MN gain is too low to change motor output.
-- **Four absent mechanisms now simulated, neutral by default:** glutamate sign per target, GABA-B, presynaptic inhibition, KC→MBON LTD.
-- **Ledger, parameter scale:** filled 548 → 13,325; absent 385k → 342k.
-- **Later the same night:**
-  - Hallem ORN rates re-enabled after a fresh-seed re-test (F-ORN-3);
-  - rule v2 re-confirmed 0.165 mV under the new delays (F-CAL-3);
-  - reflex gain measured against Azevedo's protocol: slow MNs are position-blind (F-REFLEX-1);
-  - DNg100 closed-loop stimulation: no stepping (F-WALK-0).
-  - Viewer recording: `runs/organism-record-3000ms-s6`.
-- **Session 6b (26 Sept morning):**
-  - First raw MN recording analysed: Azevedo Dryad cell 180111_F2_C1 (F-AZ-1).
-  - The slow flexor MN is fitted to its intrinsic data (adopted).
-  - The held-out reflex fails at the premotor operating point (F-AZ-2); three post-hoc repairs were not adopted. **Do not fit further on cell 180111; use a fresh cell.**
-  - Silent PNs diagnosed (F-AL-2).
-- **Session 6c (26 Sept late morning):**
-  - A second slow MN (181021_F1_C1) was downloaded. The intrinsic fit transfers to it (F-AZ-3).
-  - **Its reflex trials are sealed** as the fresh held-out test. Score any VNC candidate with `scripts/score_reflex.py --cell 181021_F1_C1 --tag <name>`, which runs the model before opening the cell.
-  - Cell-1 baseline: H1 0.50, fail.
+## One paragraph
 
-## What this project is
+- A male-CNS connectome (167,111 neurons) drives a flybody MuJoCo fly in closed loop, with no controller.
+- The body, senses and motor units are increasingly set from data:
+  - morphological delays;
+  - Hallem ORN rates;
+  - Azevedo motor-unit forces;
+  - a slow flexor MN fitted to raw recordings, and shown to transfer to a second cell;
+  - leg proprioceptor identities from BANC.
+- The fly **does not stand**, and its leg **resistance reflex is absent**.
+- In both the leg VNC and the antennal lobe, signals of the right sign reach relay cells that sit **silent below threshold**. The cause: one brain-wide synaptic efficacy (0.165 mV), borrowed resting potentials, and no background activity. Real cells there rest partly active (graded 13Bα/10Bα; PNs at 1–5 Hz).
+- **Next:** set transmission and operating points from measurements, one circuit at a time (`docs/PLAN_NEXT.md`).
 
-A biologically constrained *Drosophila* brain-body simulation. The structure is
-a real connectome, the body is a real scanned fly in MuJoCo, and the physiology
-is guessed - but every guess is recorded, counted, and reported as a guess.
+## Working model
 
-Three nested goals, in dependency order:
+- Profile **m2**, edges ≥ 5 synapses, efficacy 0.165 mV, noise-free.
+- Morphological delays on; Hallem ORN rates on; per-MN leg forces; fitted slow MNs; BANC proprioceptor subtypes.
+- Runs set `motor_unit:all|force_per_spike=10` (non-leg MNs).
+- Details and switches: `docs/MODEL.md`.
 
-1. **The instrument.** A whole organism that runs with every guess recorded.
-   Essentially built.
-2. **The science.** Which properties of a working fly are forced by the
-   measurements, which depend on assumptions, and which stay interchangeable
-   even after validation. This is the near-term output.
-3. **The aspiration.** An organism that lives a fly-like life: walking, then
-   flight, then internal state and learning.
+## Status by layer
 
-## Where it stands
+| Layer | Status | Evidence |
+|---|---|---|
+| Body | mass, ranges, collisions, knee range fixed (geometry-mapped) | F-BUG-7, F-MASS-1 |
+| Motor units | leg forces from Azevedo (derived); slow MN fitted, transfers to a 2nd cell | F-MOTOR-3, F-AZ-2/3 |
+| Leg sensors | BANC subtypes (derived); tuning form inferred; rates guessed; silent near 90° in mV mode | F-SENSE-2 |
+| Leg VNC | premotor cells silent; reflex absent on the dev cell | F-AZ-2, F-VNC-1/2 |
+| AL | 70% of uPNs silent; not fixed by moving LN inhibition | F-AL-2/3 |
+| Brain pathways | sugar→MN9 passes; stability holds over seeds | F-CAL-3, F-ORN-3 |
+| Standing / walking | fail / no stepping | F-STAND-1, F-WALK-0 |
 
-**Runs end to end.** 176,422 neurons, 25,862,574 edges, 125,024,863 synapses
-from `male-cns:v1.0`, driving a flybody MuJoCo fly at a 0.1 ms timestep. It
-falls over and thrashes. That is the expected result.
+## Unverified foundations
 
-**The body is good.** 0.985 mg from 52 weighed flies, 103 joints all with
-ranges, 98 torque actuators on real articulations only, self-collision, tarsal
-adhesion, 8 tendons, quasi-steady aerodynamics. 963 us per step.
+Guessed or inferred items that later work depends on. Review every session (`docs/WORKFLOW.md` §4.4).
 
-**The physiology is one guess repeated.** 19 distinct unresolved inferences fill
-27.5 million model elements. Every neuron in the brain shares one membrane time
-constant, one threshold, one synaptic strength.
+| Item | Label | What would settle it |
+|---|---|---|
+| Efficacy 0.165 mV for every synapse class | inferred (brain stability fit) | measured unitary PSPs per class, e.g. ORN→PN (Kazama & Wilson 2008) |
+| V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed from Shiu 2024) | per-class recordings (Agrawal 2020 raw; others) |
+| No background activity | guessed | resting-rate data for central and VNC neurons |
+| Flexion vs extension tuning of claw/hook types | inferred (wiring rule + resistance prior) | functional identity in BANC/FANC papers; imaging of the types |
+| Leg proprioceptor rates (2 + 8 mV × signal) | guessed | FeCO spike rates (not found for adults) |
+| Slow-MN intrinsic tonic drive 36.45 mV | inferred (fitted); Azevedo says the rate is synaptically set | model tonic premotor excitation, then refit |
+| Glutamate inhibitory everywhere | inferred (GluCl dominant in MNs, Lesser 2024) | per-target receptor data |
+| force_per_spike = 10 for non-leg MNs | guessed | force recordings for those muscles |
+| Motor-unit size scaling F ∝ V^5.1 (non-flexor leg MNs) | inferred | per-muscle force data |
 
-**The interface is a third wired.** 434 of 708 motor neurons drive something;
-3,033 neurons in the graph still have no channel at all. Of 42 brain-body
-channels, 35 are absent.
+## Sealed and held-out data register
 
-## The gate: read F-GAIN-1 before planning anything
-
-A 16x change in every synapse in the animal moves the mean firing rate less
-than 4x. A 2.5x change in the background noise term moves it 400x.
-
-**The connectome is not yet doing the work.** The term standing in for
-everything the model omits is. Two consequences:
-
-- Nothing downstream is evidence until this changes.
-- An optimiser pointed at behaviour today would tune the noise term, which has
-  no biological referent, and produce a walking fly that had learned nothing
-  about flies.
-
-So the target is not walking. The target is **making the anatomy load-bearing**,
-and walking is what should fall out if it is.
-
-## The immediate next task
-
-**Differentiate the neural biophysics by cell type**, then re-run the
-efficacy-versus-noise sweep and see whether the ratio flips.
-
-`src/flyemu/lif.py` currently assigns one `tau_m`, `v_rest`, `v_th`, `v_reset`,
-`t_ref` and `tau_s` to all 176,422 neurons, through `default_params`. The graph
-carries 11,751 distinct `type` labels. Differentiating them tests the two
-competing explanations for F-GAIN-1:
-
-- the per-synapse efficacy default is far too small for the anatomy to matter, or
-- uniform biophysics suppresses recurrent gain regardless of efficacy.
-
-```bash
-uv run python scripts/sweep_defaults.py --duration-ms 50
-```
-
-Either answer is worth having. If the connectome still does not matter with
-per-type biophysics, that is a result about the model family and a reason to
-change M - toward conductance-based synapses, or graded transmission, which we
-already know is outright wrong for the optic lobe.
-
-After that, in order: find the smallest published result this model could
-*predict* rather than merely produce; finish the interface; then behaviour
-validated against measured kinematics; then Tier 2 learning, which needs
-neuromodulation and plasticity, both entirely absent.
-
-## Read in this order
-
-1. `CLAUDE.md` - working instructions, including the agent limit.
-2. This file.
-3. `docs/MODEL_M.md` - the declared model family and what it omits.
-4. `docs/FINDINGS.md` - **newest at the bottom**; sessions 1, 2 and 3 in order.
-   The session-3 sections are the current state.
-5. `docs/INTERFACE.md` - the brain-body channel inventory and its gaps.
-6. `docs/DECISIONS.md` - newest last.
-7. `docs/PLAN.md` - **partly superseded**. Its steps 0, 5a, 5b and 6 were done;
-   steps 1 to 4 were replaced by emitting the inventory from the running model.
+| Data | Status | Rule |
+|---|---|---|
+| Azevedo cell 180111_F2_C1 (slow MN) | **seen** (fit and dev cell) | used for dev scoring only |
+| Azevedo cell 181021_F1_C1, Piezo trials | **sealed** | open only via `scripts/score_reflex.py`, after a dev pass |
+| Azevedo cell 181021_F1_C1, CurrentStep trials | seen (transfer test, passed) | none |
+| Azevedo cells 180621_F1_C1, 181127_F1_C1 | downloads started by Ben on 26 Sep; **sealed spares** once unpacked | check exact size, add to MANIFEST |
+| Agrawal 2020 13Bα static tuning | seen (fit target; grid fit failed) | none |
+| Agrawal 2020 10Bα / 9Aα recordings | held out for VNC changes | none |
+| flybench olfactory tasks 08/17/18/26/27 | held out for AL changes (m2 baseline 0.80) | none |
 
 ## Things that will bite you
 
-- **`obs["joint_angles"]` is ordered by the fly's jointdofs (102), not by
-  actuator (98).** Look joints up by name (`body.fly.get_jointdofs_order()`).
-  Indexing by actuator position read the wrong joint for four sessions (F-BUG-6).
-- **Joint ranges in anatomical angles must be mapped through geometry**
-  (`Body._anatomical_range`); flybody's q is not the anatomical angle (F-BUG-7).
-- **Check stability over several seeds** whenever anything stochastic is in the
-  loop; one seed hid a self-sustaining state (F-ORN-2).
-
-- **Re-run `scripts/calibrate_joint_signs.py` after any change to the body model
-  or its axis order.** Muscle signs are resolved against that measured table.
-  `FTi pitch +` flexes the leg in NeuroMechFly and extends it in flybody; a
-  hard-coded sign inverts silently across a body swap (F-AXIS-1).
-- **MuJoCo prunes collisions at the body level** before it reaches geoms.
-  Setting `geom_contype` alone does nothing (F-COLLIDE-1).
-- **Checking a value's distribution, not its mean**, has reversed two confident
-  conclusions in this project. See the session-1 methodological lessons.
-- **Unknown must never become measured absence.** Gut stretch receptors and
-  oxygen sensing are unknown *in the animal*; the wing motor system is merely
-  unimplemented here. A test enforces the distinction.
-- `runs/` and `data/cache/` are untracked and hold the evidence. Do not delete.
-- **backhouse (the GPU box) was unreachable all of session 3.** Everything ran
-  on the Mac. Check `ssh backhouse` before planning GPU work.
-- A research task is still outstanding: **the non-leg motor neuron targets**
-  (neck, haltere, abdominal, proboscis, wing steering), which is what would let
-  ~400 currently idle motor neurons drive something. An agent attempting it
-  stalled and returned nothing.
-
-## Agent discipline, which is a hard rule
-
-At most **three subagents at a time, counted recursively**, and never an agent
-type that can spawn its own. `general-purpose` inherits the Agent tool: four of
-them fanned out to 22 live agents in three minutes in this session. Use
-`Explore`, which cannot spawn. Verify with `ListAgents` after dispatching.
-
-## Commands
-
-```bash
-uv run pytest tests -q                      # 42 tests
-uv run python scripts/probes/standing.py --push --push-torque 1.5   # standing + reflex
-uv run python scripts/probes/closed_loop_check.py --seed 0          # stability
-
-uv run python scripts/fetch_male_cns.py     # cache the graph, ~4 min, once
-uv run python scripts/run_organism.py --policy strict  --duration-ms 100  # C0
-uv run python scripts/run_organism.py --policy minimal --duration-ms 200  # C1
-
-uv run python scripts/sweep_defaults.py --duration-ms 50
-uv run python scripts/calibrate_joint_signs.py --model flybody
-
-uv run python scripts/record_organism.py --duration-ms 3000 \
-    --set 'motor_unit:all|force_per_spike=10'
-uv run python scripts/serve_viz.py          # browser replay on localhost
-uv run python scripts/replay_mujoco.py runs/organism-record-3000ms-replay
-```
-
-Any assumed scalar can be overridden by its registry key, which is
-`entity|property` as it appears in the emitted `inventory.csv`. Overrides are
-recorded as `assumed` with the override noted; they never read back as
-measurements.
+- `obs["joint_angles"]` is ordered by joint DOF (102), not by actuator (98). Look joints up by name (F-BUG-6).
+- Re-run `scripts/calibrate_joint_signs.py` after any body change; muscle signs depend on it.
+- Recordings differ in sampling rate (10 vs 50 kHz). Read it per trial.
+- Stability needs ≥ 3 seeds; one seed once hid a self-sustaining state (F-ORN-2).
+- Ben's Mac overheats. Stop your processes, and never touch other projects' processes (`docs/WORKFLOW.md` §7).
+- Dryad needs a login (Ben downloads). Zenodo is slow; fetch single zip members.
+- Front-leg claw axons are mostly missing from male-cns (2–3 per leg). Use the T2/T3 legs for VNC comparisons.
+- `runs/` and `data/cache/` are untracked and hold evidence. Do not delete them.

@@ -34,7 +34,7 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, default=2)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
-    ap.add_argument("--profile", default="shiu2024")
+    ap.add_argument("--profile", default="m2")
     ap.add_argument("--generic", type=int, default=0,
                     help="rule v2: also require return to rest after this many "
                          "random 40-cell sensory populations outside every assay")

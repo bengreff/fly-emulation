@@ -1,5 +1,13 @@
 # Environment survey
 
+> **Current (session 6c):**
+> - The Mac runs everything with uv (Python 3.12 pinned by `uv.lock`).
+> - Raw data used so far lives on the Mac in `data/raw/` (DoOR, Azevedo cells, Agrawal members, BANC metadata).
+> - The body is flybody via flygym, not NeuroMechFly.
+> - backhouse is reachable and optional. Its current procedure is in `docs/RUNNING.md`.
+>
+> The survey below is from 14 September and kept for the hardware facts.
+
 Measured 14 September 2026 by direct inspection. Corrects the README, which lists an "RTX 4070 Super"; the installed card is an **RTX 4070 Ti SUPER (16 GB)**.
 
 ## Mac (orchestration; this repository's checkout)

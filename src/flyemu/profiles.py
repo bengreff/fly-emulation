@@ -63,6 +63,11 @@ M2 = {
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
+# The current working model (docs/MODEL.md). Scripts default to it; pass
+# --profile none --min-synapses 1 for the session-3 baseline.
+WORKING_PROFILE = "m2"
+WORKING_MIN_SYNAPSES = 5
+
 PROFILES: dict[str, dict] = {
     "shiu2024": {"values": SHIU2024, "kick_mv": KICK},
     "m1": {"values": M1, "kick_mv": KICK},

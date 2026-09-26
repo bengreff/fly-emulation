@@ -8,7 +8,7 @@ Each model quantity or shared parameter group needs a machine-readable record. S
 |---|---|
 | Identity | Quantity, biological cell/type/component, source specimen IDs and model IDs |
 | Provenance | Paper/dataset URL or DOI, version, file, relevant figure/table/protocol, license |
-| Evidence category | Direct observation; derived measurement; fitted parameter; cross-cell/specimen inference; assumption; unresolved |
+| Evidence category | measured / derived / inferred / guessed / unknown / absent, as defined in `docs/WORKFLOW.md` §3 (fitted and cross-cell values are inferred) |
 | Conditions | Species, sex, genotype, age/stage, temperature, preparation, stimulus and state where known |
 | Representation | Units, coordinate system, equation/observation model, sampling and alignment |
 | Uncertainty | Bounds/distribution, uncertainty type, dependencies/covariance, plausible alternatives |
