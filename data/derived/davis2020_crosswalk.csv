@@ -1,0 +1,70 @@
+davis_cell,male_cns_type,basis,note
+C2,C2,derived,identical type name (optic lobe)
+C3,C3,derived,identical type name (optic lobe)
+Dm1,Dm1,derived,identical type name (optic lobe)
+Dm10,Dm10,derived,identical type name (optic lobe)
+Dm11,Dm11,derived,identical type name (optic lobe)
+Dm12,Dm12,derived,identical type name (optic lobe)
+Dm4,Dm4,derived,identical type name (optic lobe)
+Dm9,Dm9,derived,identical type name (optic lobe)
+L1,L1,derived,identical type name (optic lobe)
+L2,L2,derived,identical type name (optic lobe)
+L3,L3,derived,identical type name (optic lobe)
+L4,L4,derived,identical type name (optic lobe)
+L5,L5,derived,identical type name (optic lobe)
+Lai,Lai,derived,identical type name (optic lobe)
+Lawf1,Lawf1,derived,identical type name (optic lobe)
+Lawf2,Lawf2,derived,identical type name (optic lobe)
+LC10a,LC10a,derived,identical type name (optic lobe)
+LC10b,LC10b,derived,identical type name (optic lobe)
+LC16,LC16,derived,identical type name (optic lobe)
+LC4,LC4,derived,identical type name (optic lobe)
+LC6,LC6,derived,identical type name (optic lobe)
+LLPC1,LLPC1,derived,identical type name (optic lobe)
+LPC1,LPC1,derived,identical type name (optic lobe)
+LPLC1,LPLC1,derived,identical type name (optic lobe)
+LPLC2,LPLC2,derived,identical type name (optic lobe)
+Mi1,Mi1,derived,identical type name (optic lobe)
+Mi15,Mi15,derived,identical type name (optic lobe)
+Mi4,Mi4,derived,identical type name (optic lobe)
+Mi9,Mi9,derived,identical type name (optic lobe)
+Pm3,Pm3,derived,identical type name (optic lobe)
+Pm4,Pm4,derived,identical type name (optic lobe)
+T1,T1,derived,identical type name (optic lobe)
+Tm1,Tm1,derived,identical type name (optic lobe)
+Tm2,Tm2,derived,identical type name (optic lobe)
+Tm20,Tm20,derived,identical type name (optic lobe)
+Tm29,Tm29,derived,identical type name (optic lobe)
+Tm3,Tm3,derived,identical type name (optic lobe)
+Tm4,Tm4,derived,identical type name (optic lobe)
+Tm9,Tm9,derived,identical type name (optic lobe)
+TmY3,TmY3,derived,identical type name (optic lobe)
+TmY5a,TmY5a,derived,identical type name (optic lobe)
+Dm3,Dm3a,inferred,Dm3 later split into 3 subtypes
+Dm3,Dm3b,inferred,Dm3 later split into 3 subtypes
+Dm3,Dm3c,inferred,Dm3 later split into 3 subtypes
+Dm8,Dm8a,inferred,Dm8 later split into 2 subtypes
+Dm8,Dm8b,inferred,Dm8 later split into 2 subtypes
+T4,T4a,derived,all T4 subtypes profiled together
+T4,T4b,derived,all T4 subtypes profiled together
+T4,T4c,derived,all T4 subtypes profiled together
+T4,T4d,derived,all T4 subtypes profiled together
+T5,T5a,derived,all T5 subtypes profiled together
+T5,T5b,derived,all T5 subtypes profiled together
+T5,T5c,derived,all T5 subtypes profiled together
+T5,T5d,derived,all T5 subtypes profiled together
+R1-6,R1-R6,derived,outer photoreceptors
+R8_Rh5,R8p,inferred,Rh5 = pale R8
+R8_Rh6,R8y,inferred,Rh6 = yellow R8
+KC_ab_c,KCab-c,derived,"MB594B, Aso 2014"
+KC_ab_p,KCab-p,derived,"MB371B, Aso 2014"
+KC_ab_s,KCab-s,derived,"MB185B, Aso 2014"
+KC_gd,KCg-d,derived,"MB419B/MB607B, Aso 2014"
+PAM_1,PAM02,inferred,PAM-b'2a (MB109B); hemibrain PAM numbering
+PAM_3,PAM04,inferred,PAM-b1 + PAM-b2 pooled (MB213B)
+PAM_3,PAM10,inferred,PAM-b1 + PAM-b2 pooled (MB213B)
+PAM_4,PAM07,inferred,PAM-g4 + g4<g1g2 pooled (MB312B)
+PAM_4,PAM08,inferred,PAM-g4 + g4<g1g2 pooled (MB312B)
+PB_1,Delta7,inferred,PB18.s-GxD7Gy.b (SS00116); Wolff & Rubin 2018 name in Davis 2020 Supp file 1A
+PB_2,EPG,inferred,PBG1-8.b-EBw.s-D/Vgall.b (SS00090); Wolff & Rubin 2018 name in Davis 2020 Supp file 1A
+PB_3,PEN_a(PEN1),contaminated,PBG2-9.s-EBt.b-NO1.b (SS02268); Wolff & Rubin 2018 name in Davis 2020 Supp file 1A; OL cells outnumber PB cells

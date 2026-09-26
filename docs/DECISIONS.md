@@ -1365,3 +1365,33 @@ A config passes if B1, B2 and Q hold on 3/3 seeds.
 - **Held out, now spent:** resting PEN 3.9 ± 2.6 Hz → model 0 or 112–190 Hz (fail). KC 0.1 ± 0.4 Hz → 0–0.45 Hz (within 1 SD at every admissible σ).
 
 **Decision.** W stays an option (`scripts/probes/warm_start.py`), off; σ is not registered. The initial condition is not the cause of the bistability. It is intrinsic to the ring's parameters: strong uniform recurrent excitation with no working wedge-structured inhibition. This moves the next CX step to a structural mechanism (slow NMDA-like EPG excitation and/or wedge-structured inhibition), tested with the corrected local-kick probe.
+
+### Fill: receptor calls from transcriptomes; glutamate sign for 18 types (18:03)
+
+**Data.** Davis, Nern et al. 2020 (GEO GSE116969), per-cell-type expression probabilities for 77 genetically targeted populations. Crosswalked to 69 male-cns types (`scripts/infer_receptors.py`, `data/derived/davis2020_crosswalk.csv`). Identities of the CX drivers come from Wolff & Rubin names in Davis Supp file 1A: PB_2 = EPG (SS00090), PB_1 = Delta7 (SS00116), PB_3 = PEN_a (SS02268; contaminated, recorded only). Transmitter genes validate the crosswalk: EPG ChAT+, Delta7 VGlut+, PAM ple+, L1 VGlut+.
+
+**Adopted (live, `cell_types.csv`).** `glutamate_receptor_sign = −1` for the 18 types that express GluClα and no AMPA-like iGluR (EPG, PAM02/04/07/08/10, Dm4, Dm8a/b, Dm11, L2, LPC1, Lawf1/2, Tm1/2/3/29). Basis **inferred** (mRNA presence, not synaptic localisation). This agrees with the transmitter default, so it converts guesses into data-backed values: **0 of 6,241,231 weights change** (checked by building both networks).
+
+**Candidate, not live.** Dm9 and T1 express iGluR and not GluClα → +1 (`data/params/candidates_s8_glu_igluR.csv`). This changes behaviour and needs the regression checks first.
+
+**Ambiguous, no row.** 36 types express both (Delta7, KCs, Mi1, T4/T5, LCs…); 5 express neither (photoreceptors, L1, Tm9).
+
+**Inference algorithm test.** Can wiring predict receptors for the ~14k unprofiled types? Leave-one-type-out logistic regression on connectome features (input-transmitter shares, own transmitter, superclass, log input count), 57 training populations (9 central). It is usable only where the balanced accuracy is ≥ 0.70 and ≥ baseline + 0.15. **The sign-critical genes are at chance:** GluRIA 0.48, GluRIB 0.52, Nmdar1 0.62, GABA-B-R3 0.50, 5-HT1A 0.47, Dop1R2 0.59. Usable: HisCl1 0.87, ort 0.78 (histamine input), plus near-universal genes (Rdl, Lcch3, Nmdar2) and Oamb, 5-HT2A/2B/7 (0.72–0.79). **Conclusion:** synapse signs and receptor kinetics for unprofiled types cannot be inferred from wiring. They need a transcriptomic atlas matched to connectome types. No connectome-predicted values are written to live tables.
+
+**NMDA lead withdrawn.** EPG expresses Nmdar1 at the highest level of all profiled cells (126 TPM). But EPG's input is 61% GABA (ER ring neurons), 26% ACh and 10% glutamate (ExR6, ExR5, Delta7). The ring's recurrent excitation is cholinergic, so EPG NMDA receptors cannot supply slow recurrent excitation. The s7 lead ("EPGs express NMDA → slow recurrent excitation") is mechanistically wrong, and no NMDA test was run.
+
+### Screen (exploratory): Delta7 glutamate sign (18:03)
+
+Delta7 expresses both GluClα and iGluR (measured), and most glutamate onto Delta7 comes from Delta7 (626 synapses/cell), so the model's all-inhibitory Delta7→Delta7 is not supported by the data. Two candidates: +1 (`candidates_s8_d7_glu_pos.csv`) and ≈0 (`candidates_s8_d7_glu_zero.csv`). Screen with `warm_start.py`: σ 0 and 0.5, default and T, seeds 1–3, local/full/control. Scored with the s8 bump criteria, but as a screen only; any adoption needs a fresh pre-registration on new seeds.
+
+**Dm9 / T1 iGluR rows: adopted (18:06).** Regression with the rows: sugar→MN9_L 26.3 / 87.3 Hz (unchanged); closed loop seeds 0–2: 0 non-tonic spikes after silencing; brain excluding ORNs 0.412 / 0.414 / 0.292 Hz (baseline 0.389 / 0.388 / 0.314). Appended to `cell_types.csv` (basis inferred); `candidates_s8_glu_igluR.csv` kept as the record. 20 of ~14k types now have a transcript-based glutamate sign.
+
+### Fill: conduction delay for untyped cells (18:13)
+
+**Blank.** 11,916 untyped cells (no `type`, so no skeleton-derived delay) used the borrowed shared default of 1.8 ms (Shiu 2024). That is inconsistent with the rule for typed cells: 0.5 ms + L / 0.5 m/s, median ≈ 1.0 ms.
+
+**Algorithm** (`scripts/infer_delays.py`). Ridge regression of log L (median soma→presynapse path) on log volume, log pre/post synapse counts and superclass, trained on 11,711 skeletons. Predictions are clipped to the training 5–95% range, because untyped cells are often fragments (a distribution shift). **10-fold CV delay error (median / p90):** model 0.136 / 0.382 ms; median-L baseline 0.129 / 0.440 ms; **borrowed 1.8 ms default 0.838 / 1.076 ms**. Morphology explains little (R² 0.17), but any L-based value is ~6× closer than the default. Written for 10,809 cells (median 0.70 ms, range 0.56–1.65 ms) to `data/params/conduction_delays_untyped.csv`, basis inferred.
+
+**Adopted** as `cell_type:untyped|inferred_conduction_delay = 1` (0 restores the default). **Regression moves (reported):** sugar→MN9_L 20.3 ± 9.0 Hz at 100 Hz (trials 26 / 25 / 10; was 26.3 ± 1.5) and 89.3 Hz at 200 Hz (was 87.3). Both pass (> 5 Hz), but the 100 Hz trial spread grew: the sugar pathway runs through untyped cells whose delays fell from 1.8 to ~0.7 ms. Closed loop seeds 0–2: 0 non-tonic spikes; brain excluding ORNs 0.387 / 0.393 / 0.282 Hz.
+
+**Test change.** `test_session6_mechanisms_are_inert_by_default_and_act_when_enabled` assumed that no type had its own glutamate-sign row. It now excludes the targets with transcript rows from the global-override check and asserts that those rows win.

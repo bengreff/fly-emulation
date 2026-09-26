@@ -1,0 +1,3 @@
+type,param,value,units,basis,source,justification
+Dm9,glutamate_receptor_sign,1.0,sign,inferred,"Davis & Nern et al. 2020 eLife 9:e50901, GEO GSE116969 dataTable7b (p_expression >= 0.5)","iGluR (GluRIA/GluRIB) expressed, GluClalpha not: glutamatergic input excitatory; mRNA presence, not synaptic localisation"
+T1,glutamate_receptor_sign,1.0,sign,inferred,"Davis & Nern et al. 2020 eLife 9:e50901, GEO GSE116969 dataTable7b (p_expression >= 0.5)","iGluR (GluRIA/GluRIB) expressed, GluClalpha not: glutamatergic input excitatory; mRNA presence, not synaptic localisation"

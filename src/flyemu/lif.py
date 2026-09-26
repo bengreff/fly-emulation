@@ -98,6 +98,22 @@ def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.n
     t = pd.read_csv(path, comment="#").set_index("type")
     types = conn.neurons.type.to_numpy()
     d = pd.Series(types).map(t.delay_ms).to_numpy(float)
+    # untyped cells: per-cell inferred delay (scripts/infer_delays.py, session 8)
+    upath = path.with_name("conduction_delays_untyped.csv")
+    n_untyped = 0
+    if upath.exists() and reg.require(
+            "cell_type:untyped", "inferred_conduction_delay", units="boolean",
+            model_use="per-cell delay for untyped cells from predicted path length",
+            subsystem="neuron_biophysics", instances=conn.n, minimal=1.0, conventional=1.0,
+            minimal_note="on (session 8): 0.5 ms + L/v with L predicted from volume, synapse "
+                         "counts and superclass; 0 restores the borrowed shared default",
+            uncertainty="10-fold CV delay error median 0.14 ms, p90 0.38 ms on typed cells; "
+                        "untyped cells are often fragments (distribution shift)"):
+        u = pd.read_csv(upath, comment="#").set_index("bodyId").delay_ms
+        du = conn.neurons.bodyId.map(u).to_numpy(float)
+        take = ~np.isfinite(d) & np.isfinite(du)
+        d = np.where(take, du, d)
+        n_untyped = int(take.sum())
     has = np.isfinite(d)
     out = np.where(has, d, delay_ms).astype(np.float32)
     gf = types == "DNp01"

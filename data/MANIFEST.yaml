@@ -187,3 +187,11 @@ banc_meta:
   license: CC BY 4.0
   local: data/raw/banc/
   basis: measured annotation (EM morphology + reviewed matching); used to derive data/derived/banc_proprio_crosswalk.csv
+davis2020_tapinseq:
+  name: Davis, Nern et al. 2020 eLife 9:e50901 TAPIN-seq cell-type transcriptomes (77 populations; optic lobe, KC, PAM, PB/CX)
+  version: GEO GSE116969 supplementary dataTable7a (TPM, 1997850 bytes) and dataTable7b (p_expression, 600566 bytes), README; eLife supplementary file 1 v2 (driver identities, 57861 bytes); fetched 2026-09-26
+  license: GEO public data; eLife CC BY 4.0
+  local: data/raw/davis2020/
+  sha256_prefix: 7a 88f3b2168214fa7f, 7b 8f827bdd4c64b208, README fbd0e7cbf91f42ad
+  basis: measured (nuclear RNA of genetically targeted populations); expression calls are the authors' bimodal-model probabilities
+  use: receptor calls per male-cns type (scripts/infer_receptors.py -> data/derived/receptor_calls_davis2020.csv); PB_3 (PEN_a) driver contaminated by OL cells, recorded but never used to fill

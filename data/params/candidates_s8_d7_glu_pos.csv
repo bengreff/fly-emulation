@@ -1,0 +1,2 @@
+type,param,value,units,basis,source,justification
+Delta7,glutamate_receptor_sign,1.0,sign,guessed,"Davis & Nern et al. 2020 GSE116969: Delta7 (PB_1) expresses GluClalpha and GluRIA/GluRIB (mixed)","s8 screen: glutamatergic input onto Delta7 (mostly Delta7->Delta7) excitatory via iGluR"

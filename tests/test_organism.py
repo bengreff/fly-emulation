@@ -733,8 +733,17 @@ def test_session6_mechanisms_are_inert_by_default_and_act_when_enabled():
     m = on.net
     nt = on.conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
     pre = np.repeat(np.arange(on.conn.n), np.diff(on.conn.indptr))
+    # targets with their own transcript-based sign row (session 8) keep it under a global override
+    from flyemu import params as ptable
+    tab = ptable.load()
+    rows = tab[tab.param == "glutamate_receptor_sign"].set_index("type").value.astype(float)
+    tsign = on.conn.neurons.type.map(rows).to_numpy(float)
+    own = np.isfinite(tsign)[on.conn.indices]
     glu = (nt[pre] == "glutamate") & (net.w != 0)
-    assert (net.w[glu] < 0).all() and (m.w[glu] > 0).all()        # sign flipped by target rule
+    assert (net.w[glu & ~own] < 0).all() and (m.w[glu & ~own] > 0).all()   # sign flipped by target rule
+    for s in (-1.0, 1.0):                                                   # per-type rows win
+        k = glu & (tsign[on.conn.indices] == s)
+        assert k.any() and (np.sign(net.w[k]) == s).all() and (np.sign(m.w[k]) == s).all()
     gaba = (nt[pre] == "gaba") & ~m.graded[pre]
     assert np.allclose(m.w_slow[gaba], m.w[gaba], atol=1e-5)      # half fast, half slow
     assert m.w_pi is not None and (m.w_pi > 0).sum() > 1000

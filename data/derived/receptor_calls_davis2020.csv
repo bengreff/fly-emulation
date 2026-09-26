@@ -1,0 +1,2278 @@
+male_cns_type,davis_cell,gene,p_expressed,tpm,call,crosswalk_basis,role
+C2,C2,GluClalpha,1.0,1630.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+C2,C2,GluRIA,1.0,33.3,1,derived,AMPA-like iGluR: excitatory glutamate
+C2,C2,GluRIB,1.0,122.0,1,derived,AMPA-like iGluR
+C2,C2,Nmdar1,0.88,23.1,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+C2,C2,Nmdar2,1.0,234.9,1,derived,NMDA subunit
+C2,C2,mGluR,0.0,13.4,0,derived,metabotropic glutamate
+C2,C2,Rdl,1.0,1022.9,1,derived,GABA-A (fast inhibition)
+C2,C2,Lcch3,1.0,130.3,1,derived,GABA-A-like
+C2,C2,Grd,0.0,3.3,0,derived,GABA-gated (cation?)
+C2,C2,GABA-B-R1,1.0,76.7,1,derived,GABA-B (slow inhibition)
+C2,C2,GABA-B-R2,1.0,45.2,1,derived,GABA-B
+C2,C2,GABA-B-R3,0.99,134.6,1,derived,GABA-B
+C2,C2,nAChRalpha1,1.0,169.7,1,derived,nicotinic
+C2,C2,nAChRalpha5,1.0,550.7,1,derived,nicotinic
+C2,C2,nAChRalpha6,0.0,57.2,0,derived,nicotinic
+C2,C2,nAChRalpha7,1.0,1002.4,1,derived,nicotinic
+C2,C2,mAChR-A,1.0,166.9,1,derived,muscarinic (Gq)
+C2,C2,mAChR-B,0.0,5.1,0,derived,muscarinic (Gi)
+C2,C2,Dop1R1,1.0,3.7,1,derived,"D1-like, Gs"
+C2,C2,Dop1R2,0.0,9.5,0,derived,"D1-like, Gs/Gq"
+C2,C2,Dop2R,0.99,138.0,1,derived,"D2-like, Gi"
+C2,C2,DopEcR,1.0,1244.3,1,derived,DA/ecdysone
+C2,C2,Oamb,0.64,24.8,1,derived,"OA alpha1-like, Gq"
+C2,C2,Octbeta1R,1.0,427.9,1,derived,"OA beta, Gs"
+C2,C2,Octbeta2R,1.0,266.3,1,derived,"OA beta, Gs"
+C2,C2,Octbeta3R,0.22,14.4,0,derived,"OA beta, Gs"
+C2,C2,5-HT1A,1.0,96.2,1,derived,Gi
+C2,C2,5-HT1B,0.99,31.5,1,derived,Gi
+C2,C2,5-HT2A,0.06,16.6,0,derived,Gq
+C2,C2,5-HT2B,0.09,15.1,0,derived,Gq
+C2,C2,5-HT7,1.0,186.7,1,derived,Gs
+C2,C2,HisCl1,0.0,8.2,0,derived,histamine-gated Cl
+C2,C2,ort,0.0,11.7,0,derived,histamine-gated Cl
+C3,C3,GluClalpha,1.0,703.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+C3,C3,GluRIA,1.0,136.7,1,derived,AMPA-like iGluR: excitatory glutamate
+C3,C3,GluRIB,1.0,131.0,1,derived,AMPA-like iGluR
+C3,C3,Nmdar1,0.02,7.2,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+C3,C3,Nmdar2,1.0,133.6,1,derived,NMDA subunit
+C3,C3,mGluR,0.0,43.0,0,derived,metabotropic glutamate
+C3,C3,Rdl,1.0,984.2,1,derived,GABA-A (fast inhibition)
+C3,C3,Lcch3,1.0,203.3,1,derived,GABA-A-like
+C3,C3,Grd,0.0,0.6,0,derived,GABA-gated (cation?)
+C3,C3,GABA-B-R1,1.0,258.2,1,derived,GABA-B (slow inhibition)
+C3,C3,GABA-B-R2,1.0,104.0,1,derived,GABA-B
+C3,C3,GABA-B-R3,0.01,13.7,0,derived,GABA-B
+C3,C3,nAChRalpha1,0.0,32.0,0,derived,nicotinic
+C3,C3,nAChRalpha5,1.0,740.2,1,derived,nicotinic
+C3,C3,nAChRalpha6,0.0,9.0,0,derived,nicotinic
+C3,C3,nAChRalpha7,1.0,773.0,1,derived,nicotinic
+C3,C3,mAChR-A,1.0,172.6,1,derived,muscarinic (Gq)
+C3,C3,mAChR-B,0.0,0.9,0,derived,muscarinic (Gi)
+C3,C3,Dop1R1,1.0,1.2,1,derived,"D1-like, Gs"
+C3,C3,Dop1R2,0.0,5.1,0,derived,"D1-like, Gs/Gq"
+C3,C3,Dop2R,0.81,74.9,1,derived,"D2-like, Gi"
+C3,C3,DopEcR,1.0,2530.4,1,derived,DA/ecdysone
+C3,C3,Oamb,0.85,31.5,1,derived,"OA alpha1-like, Gq"
+C3,C3,Octbeta1R,1.0,2352.4,1,derived,"OA beta, Gs"
+C3,C3,Octbeta2R,1.0,300.5,1,derived,"OA beta, Gs"
+C3,C3,Octbeta3R,1.0,45.7,1,derived,"OA beta, Gs"
+C3,C3,5-HT1A,0.0,10.4,0,derived,Gi
+C3,C3,5-HT1B,0.98,25.1,1,derived,Gi
+C3,C3,5-HT2A,1.0,87.9,1,derived,Gq
+C3,C3,5-HT2B,0.0,2.2,0,derived,Gq
+C3,C3,5-HT7,1.0,99.5,1,derived,Gs
+C3,C3,HisCl1,0.0,29.3,0,derived,histamine-gated Cl
+C3,C3,ort,0.0,11.3,0,derived,histamine-gated Cl
+Dm1,Dm1,GluClalpha,1.0,1886.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+Dm1,Dm1,GluRIA,1.0,41.4,1,derived,AMPA-like iGluR: excitatory glutamate
+Dm1,Dm1,GluRIB,0.99,33.8,1,derived,AMPA-like iGluR
+Dm1,Dm1,Nmdar1,0.01,6.3,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm1,Dm1,Nmdar2,1.0,397.8,1,derived,NMDA subunit
+Dm1,Dm1,mGluR,0.0,48.3,0,derived,metabotropic glutamate
+Dm1,Dm1,Rdl,1.0,2245.8,1,derived,GABA-A (fast inhibition)
+Dm1,Dm1,Lcch3,1.0,93.9,1,derived,GABA-A-like
+Dm1,Dm1,Grd,0.0,1.9,0,derived,GABA-gated (cation?)
+Dm1,Dm1,GABA-B-R1,1.0,79.5,1,derived,GABA-B (slow inhibition)
+Dm1,Dm1,GABA-B-R2,1.0,60.0,1,derived,GABA-B
+Dm1,Dm1,GABA-B-R3,0.23,36.6,0,derived,GABA-B
+Dm1,Dm1,nAChRalpha1,1.0,470.6,1,derived,nicotinic
+Dm1,Dm1,nAChRalpha5,1.0,1493.2,1,derived,nicotinic
+Dm1,Dm1,nAChRalpha6,1.0,4568.7,1,derived,nicotinic
+Dm1,Dm1,nAChRalpha7,1.0,2900.2,1,derived,nicotinic
+Dm1,Dm1,mAChR-A,1.0,348.4,1,derived,muscarinic (Gq)
+Dm1,Dm1,mAChR-B,0.0,3.6,0,derived,muscarinic (Gi)
+Dm1,Dm1,Dop1R1,1.0,11.2,1,derived,"D1-like, Gs"
+Dm1,Dm1,Dop1R2,0.0,2.4,0,derived,"D1-like, Gs/Gq"
+Dm1,Dm1,Dop2R,1.0,783.2,1,derived,"D2-like, Gi"
+Dm1,Dm1,DopEcR,1.0,5405.8,1,derived,DA/ecdysone
+Dm1,Dm1,Oamb,0.24,17.6,0,derived,"OA alpha1-like, Gq"
+Dm1,Dm1,Octbeta1R,1.0,496.5,1,derived,"OA beta, Gs"
+Dm1,Dm1,Octbeta2R,1.0,407.5,1,derived,"OA beta, Gs"
+Dm1,Dm1,Octbeta3R,1.0,46.5,1,derived,"OA beta, Gs"
+Dm1,Dm1,5-HT1A,1.0,85.2,1,derived,Gi
+Dm1,Dm1,5-HT1B,1.0,105.2,1,derived,Gi
+Dm1,Dm1,5-HT2A,1.0,693.0,1,derived,Gq
+Dm1,Dm1,5-HT2B,0.0,3.0,0,derived,Gq
+Dm1,Dm1,5-HT7,1.0,214.4,1,derived,Gs
+Dm1,Dm1,HisCl1,1.0,226.2,1,derived,histamine-gated Cl
+Dm1,Dm1,ort,0.0,2.9,0,derived,histamine-gated Cl
+Dm10,Dm10,GluClalpha,1.0,953.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+Dm10,Dm10,GluRIA,1.0,98.9,1,derived,AMPA-like iGluR: excitatory glutamate
+Dm10,Dm10,GluRIB,1.0,121.1,1,derived,AMPA-like iGluR
+Dm10,Dm10,Nmdar1,0.99,37.1,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm10,Dm10,Nmdar2,1.0,825.2,1,derived,NMDA subunit
+Dm10,Dm10,mGluR,0.0,8.2,0,derived,metabotropic glutamate
+Dm10,Dm10,Rdl,1.0,2948.5,1,derived,GABA-A (fast inhibition)
+Dm10,Dm10,Lcch3,1.0,164.5,1,derived,GABA-A-like
+Dm10,Dm10,Grd,1.0,58.4,1,derived,GABA-gated (cation?)
+Dm10,Dm10,GABA-B-R1,1.0,82.5,1,derived,GABA-B (slow inhibition)
+Dm10,Dm10,GABA-B-R2,1.0,72.8,1,derived,GABA-B
+Dm10,Dm10,GABA-B-R3,0.58,51.4,1,derived,GABA-B
+Dm10,Dm10,nAChRalpha1,0.23,52.8,0,derived,nicotinic
+Dm10,Dm10,nAChRalpha5,1.0,2167.1,1,derived,nicotinic
+Dm10,Dm10,nAChRalpha6,1.0,2755.3,1,derived,nicotinic
+Dm10,Dm10,nAChRalpha7,1.0,939.0,1,derived,nicotinic
+Dm10,Dm10,mAChR-A,1.0,320.6,1,derived,muscarinic (Gq)
+Dm10,Dm10,mAChR-B,0.0,9.1,0,derived,muscarinic (Gi)
+Dm10,Dm10,Dop1R1,1.0,5.8,1,derived,"D1-like, Gs"
+Dm10,Dm10,Dop1R2,1.0,99.7,1,derived,"D1-like, Gs/Gq"
+Dm10,Dm10,Dop2R,0.0,16.1,0,derived,"D2-like, Gi"
+Dm10,Dm10,DopEcR,1.0,3198.4,1,derived,DA/ecdysone
+Dm10,Dm10,Oamb,0.0,1.6,0,derived,"OA alpha1-like, Gq"
+Dm10,Dm10,Octbeta1R,0.0,5.3,0,derived,"OA beta, Gs"
+Dm10,Dm10,Octbeta2R,1.0,197.0,1,derived,"OA beta, Gs"
+Dm10,Dm10,Octbeta3R,1.0,35.5,1,derived,"OA beta, Gs"
+Dm10,Dm10,5-HT1A,1.0,345.9,1,derived,Gi
+Dm10,Dm10,5-HT1B,1.0,572.8,1,derived,Gi
+Dm10,Dm10,5-HT2A,1.0,97.8,1,derived,Gq
+Dm10,Dm10,5-HT2B,0.0,4.2,0,derived,Gq
+Dm10,Dm10,5-HT7,1.0,178.2,1,derived,Gs
+Dm10,Dm10,HisCl1,0.0,35.1,0,derived,histamine-gated Cl
+Dm10,Dm10,ort,0.0,10.7,0,derived,histamine-gated Cl
+Dm11,Dm11,GluClalpha,1.0,487.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+Dm11,Dm11,GluRIA,0.0,4.2,0,derived,AMPA-like iGluR: excitatory glutamate
+Dm11,Dm11,GluRIB,0.0,5.5,0,derived,AMPA-like iGluR
+Dm11,Dm11,Nmdar1,1.0,73.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm11,Dm11,Nmdar2,1.0,288.0,1,derived,NMDA subunit
+Dm11,Dm11,mGluR,0.0,18.9,0,derived,metabotropic glutamate
+Dm11,Dm11,Rdl,0.81,329.8,1,derived,GABA-A (fast inhibition)
+Dm11,Dm11,Lcch3,1.0,153.3,1,derived,GABA-A-like
+Dm11,Dm11,Grd,1.0,300.4,1,derived,GABA-gated (cation?)
+Dm11,Dm11,GABA-B-R1,1.0,161.2,1,derived,GABA-B (slow inhibition)
+Dm11,Dm11,GABA-B-R2,1.0,100.3,1,derived,GABA-B
+Dm11,Dm11,GABA-B-R3,0.83,69.1,1,derived,GABA-B
+Dm11,Dm11,nAChRalpha1,1.0,168.5,1,derived,nicotinic
+Dm11,Dm11,nAChRalpha5,1.0,501.4,1,derived,nicotinic
+Dm11,Dm11,nAChRalpha6,1.0,606.7,1,derived,nicotinic
+Dm11,Dm11,nAChRalpha7,1.0,613.0,1,derived,nicotinic
+Dm11,Dm11,mAChR-A,1.0,409.8,1,derived,muscarinic (Gq)
+Dm11,Dm11,mAChR-B,0.0,10.4,0,derived,muscarinic (Gi)
+Dm11,Dm11,Dop1R1,1.0,12.9,1,derived,"D1-like, Gs"
+Dm11,Dm11,Dop1R2,0.0,7.7,0,derived,"D1-like, Gs/Gq"
+Dm11,Dm11,Dop2R,0.01,27.3,0,derived,"D2-like, Gi"
+Dm11,Dm11,DopEcR,1.0,3144.6,1,derived,DA/ecdysone
+Dm11,Dm11,Oamb,0.57,23.5,1,derived,"OA alpha1-like, Gq"
+Dm11,Dm11,Octbeta1R,0.01,30.2,0,derived,"OA beta, Gs"
+Dm11,Dm11,Octbeta2R,1.0,225.0,1,derived,"OA beta, Gs"
+Dm11,Dm11,Octbeta3R,0.88,22.1,1,derived,"OA beta, Gs"
+Dm11,Dm11,5-HT1A,0.0,8.3,0,derived,Gi
+Dm11,Dm11,5-HT1B,0.72,11.8,1,derived,Gi
+Dm11,Dm11,5-HT2A,0.95,44.9,1,derived,Gq
+Dm11,Dm11,5-HT2B,0.0,3.3,0,derived,Gq
+Dm11,Dm11,5-HT7,0.0,8.1,0,derived,Gs
+Dm11,Dm11,HisCl1,0.0,22.0,0,derived,histamine-gated Cl
+Dm11,Dm11,ort,1.0,210.2,1,derived,histamine-gated Cl
+Dm12,Dm12,GluClalpha,1.0,1208.2,1,derived,glutamate-gated chloride: inhibitory glutamate
+Dm12,Dm12,GluRIA,1.0,69.0,1,derived,AMPA-like iGluR: excitatory glutamate
+Dm12,Dm12,GluRIB,1.0,95.4,1,derived,AMPA-like iGluR
+Dm12,Dm12,Nmdar1,0.99,30.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm12,Dm12,Nmdar2,1.0,299.7,1,derived,NMDA subunit
+Dm12,Dm12,mGluR,0.0,38.7,0,derived,metabotropic glutamate
+Dm12,Dm12,Rdl,1.0,4018.1,1,derived,GABA-A (fast inhibition)
+Dm12,Dm12,Lcch3,1.0,132.6,1,derived,GABA-A-like
+Dm12,Dm12,Grd,0.0,7.9,0,derived,GABA-gated (cation?)
+Dm12,Dm12,GABA-B-R1,1.0,743.0,1,derived,GABA-B (slow inhibition)
+Dm12,Dm12,GABA-B-R2,1.0,70.7,1,derived,GABA-B
+Dm12,Dm12,GABA-B-R3,0.85,64.2,1,derived,GABA-B
+Dm12,Dm12,nAChRalpha1,0.0,33.0,0,derived,nicotinic
+Dm12,Dm12,nAChRalpha5,1.0,774.0,1,derived,nicotinic
+Dm12,Dm12,nAChRalpha6,1.0,993.2,1,derived,nicotinic
+Dm12,Dm12,nAChRalpha7,1.0,1526.4,1,derived,nicotinic
+Dm12,Dm12,mAChR-A,1.0,306.8,1,derived,muscarinic (Gq)
+Dm12,Dm12,mAChR-B,0.0,8.1,0,derived,muscarinic (Gi)
+Dm12,Dm12,Dop1R1,1.0,203.5,1,derived,"D1-like, Gs"
+Dm12,Dm12,Dop1R2,1.0,212.0,1,derived,"D1-like, Gs/Gq"
+Dm12,Dm12,Dop2R,1.0,513.7,1,derived,"D2-like, Gi"
+Dm12,Dm12,DopEcR,1.0,2664.1,1,derived,DA/ecdysone
+Dm12,Dm12,Oamb,1.0,268.6,1,derived,"OA alpha1-like, Gq"
+Dm12,Dm12,Octbeta1R,0.0,25.4,0,derived,"OA beta, Gs"
+Dm12,Dm12,Octbeta2R,0.03,68.0,0,derived,"OA beta, Gs"
+Dm12,Dm12,Octbeta3R,0.02,17.2,0,derived,"OA beta, Gs"
+Dm12,Dm12,5-HT1A,1.0,173.9,1,derived,Gi
+Dm12,Dm12,5-HT1B,1.0,85.3,1,derived,Gi
+Dm12,Dm12,5-HT2A,1.0,126.5,1,derived,Gq
+Dm12,Dm12,5-HT2B,0.0,7.2,0,derived,Gq
+Dm12,Dm12,5-HT7,1.0,329.0,1,derived,Gs
+Dm12,Dm12,HisCl1,0.0,22.4,0,derived,histamine-gated Cl
+Dm12,Dm12,ort,0.0,1.5,0,derived,histamine-gated Cl
+Dm4,Dm4,GluClalpha,1.0,1241.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+Dm4,Dm4,GluRIA,0.0,0.9,0,derived,AMPA-like iGluR: excitatory glutamate
+Dm4,Dm4,GluRIB,0.0,4.6,0,derived,AMPA-like iGluR
+Dm4,Dm4,Nmdar1,0.0,6.2,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm4,Dm4,Nmdar2,1.0,402.7,1,derived,NMDA subunit
+Dm4,Dm4,mGluR,0.0,33.9,0,derived,metabotropic glutamate
+Dm4,Dm4,Rdl,1.0,1964.5,1,derived,GABA-A (fast inhibition)
+Dm4,Dm4,Lcch3,1.0,278.4,1,derived,GABA-A-like
+Dm4,Dm4,Grd,1.0,132.9,1,derived,GABA-gated (cation?)
+Dm4,Dm4,GABA-B-R1,0.0,39.0,0,derived,GABA-B (slow inhibition)
+Dm4,Dm4,GABA-B-R2,1.0,66.0,1,derived,GABA-B
+Dm4,Dm4,GABA-B-R3,0.0,13.0,0,derived,GABA-B
+Dm4,Dm4,nAChRalpha1,0.0,41.2,0,derived,nicotinic
+Dm4,Dm4,nAChRalpha5,1.0,334.9,1,derived,nicotinic
+Dm4,Dm4,nAChRalpha6,0.0,164.6,0,derived,nicotinic
+Dm4,Dm4,nAChRalpha7,1.0,775.5,1,derived,nicotinic
+Dm4,Dm4,mAChR-A,1.0,187.3,1,derived,muscarinic (Gq)
+Dm4,Dm4,mAChR-B,0.0,3.4,0,derived,muscarinic (Gi)
+Dm4,Dm4,Dop1R1,1.0,9.6,1,derived,"D1-like, Gs"
+Dm4,Dm4,Dop1R2,0.0,2.0,0,derived,"D1-like, Gs/Gq"
+Dm4,Dm4,Dop2R,0.0,11.9,0,derived,"D2-like, Gi"
+Dm4,Dm4,DopEcR,1.0,4364.8,1,derived,DA/ecdysone
+Dm4,Dm4,Oamb,1.0,53.3,1,derived,"OA alpha1-like, Gq"
+Dm4,Dm4,Octbeta1R,0.0,11.0,0,derived,"OA beta, Gs"
+Dm4,Dm4,Octbeta2R,1.0,722.6,1,derived,"OA beta, Gs"
+Dm4,Dm4,Octbeta3R,1.0,322.0,1,derived,"OA beta, Gs"
+Dm4,Dm4,5-HT1A,1.0,312.2,1,derived,Gi
+Dm4,Dm4,5-HT1B,1.0,45.9,1,derived,Gi
+Dm4,Dm4,5-HT2A,1.0,403.4,1,derived,Gq
+Dm4,Dm4,5-HT2B,1.0,59.8,1,derived,Gq
+Dm4,Dm4,5-HT7,0.0,9.9,0,derived,Gs
+Dm4,Dm4,HisCl1,0.0,14.3,0,derived,histamine-gated Cl
+Dm4,Dm4,ort,0.0,0.1,0,derived,histamine-gated Cl
+Dm9,Dm9,GluClalpha,0.11,184.1,0,derived,glutamate-gated chloride: inhibitory glutamate
+Dm9,Dm9,GluRIA,1.0,242.4,1,derived,AMPA-like iGluR: excitatory glutamate
+Dm9,Dm9,GluRIB,1.0,293.5,1,derived,AMPA-like iGluR
+Dm9,Dm9,Nmdar1,1.0,48.1,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm9,Dm9,Nmdar2,1.0,448.1,1,derived,NMDA subunit
+Dm9,Dm9,mGluR,0.0,49.5,0,derived,metabotropic glutamate
+Dm9,Dm9,Rdl,1.0,1147.8,1,derived,GABA-A (fast inhibition)
+Dm9,Dm9,Lcch3,1.0,127.7,1,derived,GABA-A-like
+Dm9,Dm9,Grd,0.0,1.1,0,derived,GABA-gated (cation?)
+Dm9,Dm9,GABA-B-R1,1.0,138.0,1,derived,GABA-B (slow inhibition)
+Dm9,Dm9,GABA-B-R2,1.0,118.8,1,derived,GABA-B
+Dm9,Dm9,GABA-B-R3,1.0,172.1,1,derived,GABA-B
+Dm9,Dm9,nAChRalpha1,0.09,47.1,0,derived,nicotinic
+Dm9,Dm9,nAChRalpha5,1.0,357.1,1,derived,nicotinic
+Dm9,Dm9,nAChRalpha6,0.93,382.3,1,derived,nicotinic
+Dm9,Dm9,nAChRalpha7,1.0,1979.4,1,derived,nicotinic
+Dm9,Dm9,mAChR-A,1.0,354.1,1,derived,muscarinic (Gq)
+Dm9,Dm9,mAChR-B,0.0,6.3,0,derived,muscarinic (Gi)
+Dm9,Dm9,Dop1R1,1.0,768.6,1,derived,"D1-like, Gs"
+Dm9,Dm9,Dop1R2,0.0,5.6,0,derived,"D1-like, Gs/Gq"
+Dm9,Dm9,Dop2R,0.0,18.0,0,derived,"D2-like, Gi"
+Dm9,Dm9,DopEcR,1.0,1727.0,1,derived,DA/ecdysone
+Dm9,Dm9,Oamb,1.0,854.6,1,derived,"OA alpha1-like, Gq"
+Dm9,Dm9,Octbeta1R,1.0,798.1,1,derived,"OA beta, Gs"
+Dm9,Dm9,Octbeta2R,0.0,30.1,0,derived,"OA beta, Gs"
+Dm9,Dm9,Octbeta3R,0.01,8.7,0,derived,"OA beta, Gs"
+Dm9,Dm9,5-HT1A,0.01,13.1,0,derived,Gi
+Dm9,Dm9,5-HT1B,0.58,9.9,1,derived,Gi
+Dm9,Dm9,5-HT2A,1.0,65.9,1,derived,Gq
+Dm9,Dm9,5-HT2B,0.0,3.4,0,derived,Gq
+Dm9,Dm9,5-HT7,0.99,49.7,1,derived,Gs
+Dm9,Dm9,HisCl1,0.0,10.7,0,derived,histamine-gated Cl
+Dm9,Dm9,ort,1.0,424.5,1,derived,histamine-gated Cl
+L1,L1,GluClalpha,0.0,52.4,0,derived,glutamate-gated chloride: inhibitory glutamate
+L1,L1,GluRIA,0.0,1.9,0,derived,AMPA-like iGluR: excitatory glutamate
+L1,L1,GluRIB,0.0,2.3,0,derived,AMPA-like iGluR
+L1,L1,Nmdar1,0.0,3.9,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+L1,L1,Nmdar2,1.0,132.0,1,derived,NMDA subunit
+L1,L1,mGluR,0.0,16.9,0,derived,metabotropic glutamate
+L1,L1,Rdl,0.0,23.9,0,derived,GABA-A (fast inhibition)
+L1,L1,Lcch3,1.0,222.1,1,derived,GABA-A-like
+L1,L1,Grd,1.0,375.3,1,derived,GABA-gated (cation?)
+L1,L1,GABA-B-R1,1.0,67.8,1,derived,GABA-B (slow inhibition)
+L1,L1,GABA-B-R2,1.0,88.0,1,derived,GABA-B
+L1,L1,GABA-B-R3,0.0,12.9,0,derived,GABA-B
+L1,L1,nAChRalpha1,1.0,135.2,1,derived,nicotinic
+L1,L1,nAChRalpha5,0.0,8.6,0,derived,nicotinic
+L1,L1,nAChRalpha6,0.0,8.2,0,derived,nicotinic
+L1,L1,nAChRalpha7,1.0,280.8,1,derived,nicotinic
+L1,L1,mAChR-A,1.0,511.0,1,derived,muscarinic (Gq)
+L1,L1,mAChR-B,0.0,1.9,0,derived,muscarinic (Gi)
+L1,L1,Dop1R1,1.0,3.0,1,derived,"D1-like, Gs"
+L1,L1,Dop1R2,0.0,3.0,0,derived,"D1-like, Gs/Gq"
+L1,L1,Dop2R,0.0,6.3,0,derived,"D2-like, Gi"
+L1,L1,DopEcR,1.0,2179.7,1,derived,DA/ecdysone
+L1,L1,Oamb,0.0,1.2,0,derived,"OA alpha1-like, Gq"
+L1,L1,Octbeta1R,0.0,5.9,0,derived,"OA beta, Gs"
+L1,L1,Octbeta2R,1.0,1069.4,1,derived,"OA beta, Gs"
+L1,L1,Octbeta3R,1.0,362.6,1,derived,"OA beta, Gs"
+L1,L1,5-HT1A,0.0,2.0,0,derived,Gi
+L1,L1,5-HT1B,0.29,10.2,0,derived,Gi
+L1,L1,5-HT2A,0.0,15.8,0,derived,Gq
+L1,L1,5-HT2B,0.0,6.5,0,derived,Gq
+L1,L1,5-HT7,0.0,5.8,0,derived,Gs
+L1,L1,HisCl1,0.0,37.1,0,derived,histamine-gated Cl
+L1,L1,ort,1.0,647.0,1,derived,histamine-gated Cl
+L2,L2,GluClalpha,1.0,1576.5,1,derived,glutamate-gated chloride: inhibitory glutamate
+L2,L2,GluRIA,0.0,1.2,0,derived,AMPA-like iGluR: excitatory glutamate
+L2,L2,GluRIB,0.0,9.1,0,derived,AMPA-like iGluR
+L2,L2,Nmdar1,0.0,2.5,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+L2,L2,Nmdar2,1.0,102.0,1,derived,NMDA subunit
+L2,L2,mGluR,0.0,17.5,0,derived,metabotropic glutamate
+L2,L2,Rdl,0.0,11.9,0,derived,GABA-A (fast inhibition)
+L2,L2,Lcch3,1.0,180.3,1,derived,GABA-A-like
+L2,L2,Grd,1.0,469.2,1,derived,GABA-gated (cation?)
+L2,L2,GABA-B-R1,0.61,45.4,1,derived,GABA-B (slow inhibition)
+L2,L2,GABA-B-R2,1.0,84.4,1,derived,GABA-B
+L2,L2,GABA-B-R3,1.0,253.2,1,derived,GABA-B
+L2,L2,nAChRalpha1,1.0,207.1,1,derived,nicotinic
+L2,L2,nAChRalpha5,0.0,3.3,0,derived,nicotinic
+L2,L2,nAChRalpha6,0.0,74.0,0,derived,nicotinic
+L2,L2,nAChRalpha7,1.0,422.0,1,derived,nicotinic
+L2,L2,mAChR-A,0.0,4.2,0,derived,muscarinic (Gq)
+L2,L2,mAChR-B,0.0,0.8,0,derived,muscarinic (Gi)
+L2,L2,Dop1R1,1.0,8.6,1,derived,"D1-like, Gs"
+L2,L2,Dop1R2,0.0,1.3,0,derived,"D1-like, Gs/Gq"
+L2,L2,Dop2R,0.0,14.1,0,derived,"D2-like, Gi"
+L2,L2,DopEcR,1.0,1422.2,1,derived,DA/ecdysone
+L2,L2,Oamb,0.0,1.5,0,derived,"OA alpha1-like, Gq"
+L2,L2,Octbeta1R,0.0,1.1,0,derived,"OA beta, Gs"
+L2,L2,Octbeta2R,1.0,326.4,1,derived,"OA beta, Gs"
+L2,L2,Octbeta3R,1.0,340.0,1,derived,"OA beta, Gs"
+L2,L2,5-HT1A,0.0,0.4,0,derived,Gi
+L2,L2,5-HT1B,0.56,9.8,1,derived,Gi
+L2,L2,5-HT2A,0.0,1.4,0,derived,Gq
+L2,L2,5-HT2B,1.0,300.4,1,derived,Gq
+L2,L2,5-HT7,0.0,2.1,0,derived,Gs
+L2,L2,HisCl1,0.04,54.3,0,derived,histamine-gated Cl
+L2,L2,ort,1.0,411.8,1,derived,histamine-gated Cl
+L3,L3,GluClalpha,1.0,577.5,1,derived,glutamate-gated chloride: inhibitory glutamate
+L3,L3,GluRIA,1.0,276.6,1,derived,AMPA-like iGluR: excitatory glutamate
+L3,L3,GluRIB,1.0,63.1,1,derived,AMPA-like iGluR
+L3,L3,Nmdar1,0.31,13.4,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+L3,L3,Nmdar2,1.0,646.9,1,derived,NMDA subunit
+L3,L3,mGluR,0.0,6.4,0,derived,metabotropic glutamate
+L3,L3,Rdl,0.74,315.2,1,derived,GABA-A (fast inhibition)
+L3,L3,Lcch3,1.0,96.8,1,derived,GABA-A-like
+L3,L3,Grd,1.0,108.6,1,derived,GABA-gated (cation?)
+L3,L3,GABA-B-R1,1.0,151.8,1,derived,GABA-B (slow inhibition)
+L3,L3,GABA-B-R2,1.0,96.8,1,derived,GABA-B
+L3,L3,GABA-B-R3,0.0,11.5,0,derived,GABA-B
+L3,L3,nAChRalpha1,0.98,90.4,1,derived,nicotinic
+L3,L3,nAChRalpha5,0.0,14.8,0,derived,nicotinic
+L3,L3,nAChRalpha6,0.0,9.4,0,derived,nicotinic
+L3,L3,nAChRalpha7,1.0,413.2,1,derived,nicotinic
+L3,L3,mAChR-A,1.0,440.3,1,derived,muscarinic (Gq)
+L3,L3,mAChR-B,0.0,1.5,0,derived,muscarinic (Gi)
+L3,L3,Dop1R1,1.0,15.3,1,derived,"D1-like, Gs"
+L3,L3,Dop1R2,0.0,0.6,0,derived,"D1-like, Gs/Gq"
+L3,L3,Dop2R,0.96,97.4,1,derived,"D2-like, Gi"
+L3,L3,DopEcR,0.0,97.8,0,derived,DA/ecdysone
+L3,L3,Oamb,0.68,25.7,1,derived,"OA alpha1-like, Gq"
+L3,L3,Octbeta1R,0.0,0.8,0,derived,"OA beta, Gs"
+L3,L3,Octbeta2R,1.0,887.0,1,derived,"OA beta, Gs"
+L3,L3,Octbeta3R,0.0,7.4,0,derived,"OA beta, Gs"
+L3,L3,5-HT1A,0.79,32.3,1,derived,Gi
+L3,L3,5-HT1B,1.0,52.7,1,derived,Gi
+L3,L3,5-HT2A,0.99,61.3,1,derived,Gq
+L3,L3,5-HT2B,1.0,382.4,1,derived,Gq
+L3,L3,5-HT7,0.0,3.4,0,derived,Gs
+L3,L3,HisCl1,0.0,30.6,0,derived,histamine-gated Cl
+L3,L3,ort,1.0,513.8,1,derived,histamine-gated Cl
+L4,L4,GluClalpha,0.58,247.7,1,derived,glutamate-gated chloride: inhibitory glutamate
+L4,L4,GluRIA,1.0,38.2,1,derived,AMPA-like iGluR: excitatory glutamate
+L4,L4,GluRIB,1.0,68.7,1,derived,AMPA-like iGluR
+L4,L4,Nmdar1,0.0,3.4,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+L4,L4,Nmdar2,1.0,341.0,1,derived,NMDA subunit
+L4,L4,mGluR,0.0,12.8,0,derived,metabotropic glutamate
+L4,L4,Rdl,1.0,547.9,1,derived,GABA-A (fast inhibition)
+L4,L4,Lcch3,1.0,130.6,1,derived,GABA-A-like
+L4,L4,Grd,0.28,22.2,0,derived,GABA-gated (cation?)
+L4,L4,GABA-B-R1,1.0,80.8,1,derived,GABA-B (slow inhibition)
+L4,L4,GABA-B-R2,1.0,48.7,1,derived,GABA-B
+L4,L4,GABA-B-R3,0.95,98.2,1,derived,GABA-B
+L4,L4,nAChRalpha1,1.0,109.8,1,derived,nicotinic
+L4,L4,nAChRalpha5,0.0,8.6,0,derived,nicotinic
+L4,L4,nAChRalpha6,1.0,767.1,1,derived,nicotinic
+L4,L4,nAChRalpha7,0.99,221.0,1,derived,nicotinic
+L4,L4,mAChR-A,1.0,180.9,1,derived,muscarinic (Gq)
+L4,L4,mAChR-B,0.05,17.3,0,derived,muscarinic (Gi)
+L4,L4,Dop1R1,1.0,1.6,1,derived,"D1-like, Gs"
+L4,L4,Dop1R2,0.0,3.1,0,derived,"D1-like, Gs/Gq"
+L4,L4,Dop2R,0.98,107.5,1,derived,"D2-like, Gi"
+L4,L4,DopEcR,1.0,2130.7,1,derived,DA/ecdysone
+L4,L4,Oamb,0.0,5.8,0,derived,"OA alpha1-like, Gq"
+L4,L4,Octbeta1R,0.01,31.5,0,derived,"OA beta, Gs"
+L4,L4,Octbeta2R,1.0,402.8,1,derived,"OA beta, Gs"
+L4,L4,Octbeta3R,1.0,204.4,1,derived,"OA beta, Gs"
+L4,L4,5-HT1A,0.0,5.4,0,derived,Gi
+L4,L4,5-HT1B,0.99,29.1,1,derived,Gi
+L4,L4,5-HT2A,0.01,11.9,0,derived,Gq
+L4,L4,5-HT2B,0.08,14.9,0,derived,Gq
+L4,L4,5-HT7,1.0,214.8,1,derived,Gs
+L4,L4,HisCl1,0.0,23.5,0,derived,histamine-gated Cl
+L4,L4,ort,0.0,14.8,0,derived,histamine-gated Cl
+L5,L5,GluClalpha,1.0,547.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+L5,L5,GluRIA,1.0,76.1,1,derived,AMPA-like iGluR: excitatory glutamate
+L5,L5,GluRIB,1.0,117.5,1,derived,AMPA-like iGluR
+L5,L5,Nmdar1,0.09,9.7,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+L5,L5,Nmdar2,1.0,184.5,1,derived,NMDA subunit
+L5,L5,mGluR,0.0,17.1,0,derived,metabotropic glutamate
+L5,L5,Rdl,1.0,727.7,1,derived,GABA-A (fast inhibition)
+L5,L5,Lcch3,1.0,137.1,1,derived,GABA-A-like
+L5,L5,Grd,0.0,2.0,0,derived,GABA-gated (cation?)
+L5,L5,GABA-B-R1,1.0,140.2,1,derived,GABA-B (slow inhibition)
+L5,L5,GABA-B-R2,1.0,105.9,1,derived,GABA-B
+L5,L5,GABA-B-R3,1.0,295.0,1,derived,GABA-B
+L5,L5,nAChRalpha1,0.0,27.9,0,derived,nicotinic
+L5,L5,nAChRalpha5,0.0,11.3,0,derived,nicotinic
+L5,L5,nAChRalpha6,1.0,1150.5,1,derived,nicotinic
+L5,L5,nAChRalpha7,1.0,312.7,1,derived,nicotinic
+L5,L5,mAChR-A,1.0,457.6,1,derived,muscarinic (Gq)
+L5,L5,mAChR-B,0.0,2.2,0,derived,muscarinic (Gi)
+L5,L5,Dop1R1,1.0,3.2,1,derived,"D1-like, Gs"
+L5,L5,Dop1R2,0.0,5.3,0,derived,"D1-like, Gs/Gq"
+L5,L5,Dop2R,0.0,21.5,0,derived,"D2-like, Gi"
+L5,L5,DopEcR,1.0,2316.3,1,derived,DA/ecdysone
+L5,L5,Oamb,1.0,178.0,1,derived,"OA alpha1-like, Gq"
+L5,L5,Octbeta1R,1.0,1189.0,1,derived,"OA beta, Gs"
+L5,L5,Octbeta2R,1.0,269.0,1,derived,"OA beta, Gs"
+L5,L5,Octbeta3R,1.0,522.6,1,derived,"OA beta, Gs"
+L5,L5,5-HT1A,0.0,1.4,0,derived,Gi
+L5,L5,5-HT1B,0.09,4.7,0,derived,Gi
+L5,L5,5-HT2A,0.0,2.8,0,derived,Gq
+L5,L5,5-HT2B,1.0,188.4,1,derived,Gq
+L5,L5,5-HT7,1.0,197.9,1,derived,Gs
+L5,L5,HisCl1,0.0,29.3,0,derived,histamine-gated Cl
+L5,L5,ort,0.0,3.1,0,derived,histamine-gated Cl
+Lai,Lai,GluClalpha,0.99,408.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+Lai,Lai,GluRIA,1.0,486.9,1,derived,AMPA-like iGluR: excitatory glutamate
+Lai,Lai,GluRIB,1.0,550.2,1,derived,AMPA-like iGluR
+Lai,Lai,Nmdar1,1.0,79.8,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Lai,Lai,Nmdar2,1.0,103.4,1,derived,NMDA subunit
+Lai,Lai,mGluR,1.0,823.3,1,derived,metabotropic glutamate
+Lai,Lai,Rdl,1.0,3076.3,1,derived,GABA-A (fast inhibition)
+Lai,Lai,Lcch3,1.0,184.5,1,derived,GABA-A-like
+Lai,Lai,Grd,0.0,1.1,0,derived,GABA-gated (cation?)
+Lai,Lai,GABA-B-R1,1.0,913.2,1,derived,GABA-B (slow inhibition)
+Lai,Lai,GABA-B-R2,1.0,119.4,1,derived,GABA-B
+Lai,Lai,GABA-B-R3,0.0,9.4,0,derived,GABA-B
+Lai,Lai,nAChRalpha1,1.0,191.4,1,derived,nicotinic
+Lai,Lai,nAChRalpha5,0.42,135.7,0,derived,nicotinic
+Lai,Lai,nAChRalpha6,1.0,1225.1,1,derived,nicotinic
+Lai,Lai,nAChRalpha7,1.0,7118.9,1,derived,nicotinic
+Lai,Lai,mAChR-A,1.0,181.2,1,derived,muscarinic (Gq)
+Lai,Lai,mAChR-B,0.0,2.0,0,derived,muscarinic (Gi)
+Lai,Lai,Dop1R1,1.0,9.6,1,derived,"D1-like, Gs"
+Lai,Lai,Dop1R2,0.0,2.5,0,derived,"D1-like, Gs/Gq"
+Lai,Lai,Dop2R,0.0,16.6,0,derived,"D2-like, Gi"
+Lai,Lai,DopEcR,1.0,1161.0,1,derived,DA/ecdysone
+Lai,Lai,Oamb,0.01,7.6,0,derived,"OA alpha1-like, Gq"
+Lai,Lai,Octbeta1R,1.0,637.1,1,derived,"OA beta, Gs"
+Lai,Lai,Octbeta2R,0.99,122.2,1,derived,"OA beta, Gs"
+Lai,Lai,Octbeta3R,0.0,4.5,0,derived,"OA beta, Gs"
+Lai,Lai,5-HT1A,0.0,6.5,0,derived,Gi
+Lai,Lai,5-HT1B,0.06,4.1,0,derived,Gi
+Lai,Lai,5-HT2A,0.07,17.8,0,derived,Gq
+Lai,Lai,5-HT2B,0.0,2.9,0,derived,Gq
+Lai,Lai,5-HT7,0.0,3.9,0,derived,Gs
+Lai,Lai,HisCl1,0.01,47.5,0,derived,histamine-gated Cl
+Lai,Lai,ort,1.0,211.9,1,derived,histamine-gated Cl
+Lawf1,Lawf1,GluClalpha,1.0,1845.8,1,derived,glutamate-gated chloride: inhibitory glutamate
+Lawf1,Lawf1,GluRIA,0.0,2.8,0,derived,AMPA-like iGluR: excitatory glutamate
+Lawf1,Lawf1,GluRIB,0.0,7.1,0,derived,AMPA-like iGluR
+Lawf1,Lawf1,Nmdar1,1.0,94.7,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Lawf1,Lawf1,Nmdar2,1.0,432.3,1,derived,NMDA subunit
+Lawf1,Lawf1,mGluR,1.0,522.4,1,derived,metabotropic glutamate
+Lawf1,Lawf1,Rdl,1.0,3038.1,1,derived,GABA-A (fast inhibition)
+Lawf1,Lawf1,Lcch3,1.0,101.0,1,derived,GABA-A-like
+Lawf1,Lawf1,Grd,0.0,2.6,0,derived,GABA-gated (cation?)
+Lawf1,Lawf1,GABA-B-R1,1.0,168.7,1,derived,GABA-B (slow inhibition)
+Lawf1,Lawf1,GABA-B-R2,1.0,74.1,1,derived,GABA-B
+Lawf1,Lawf1,GABA-B-R3,1.0,200.2,1,derived,GABA-B
+Lawf1,Lawf1,nAChRalpha1,1.0,804.7,1,derived,nicotinic
+Lawf1,Lawf1,nAChRalpha5,1.0,777.8,1,derived,nicotinic
+Lawf1,Lawf1,nAChRalpha6,0.0,26.6,0,derived,nicotinic
+Lawf1,Lawf1,nAChRalpha7,1.0,755.7,1,derived,nicotinic
+Lawf1,Lawf1,mAChR-A,1.0,987.2,1,derived,muscarinic (Gq)
+Lawf1,Lawf1,mAChR-B,0.0,5.9,0,derived,muscarinic (Gi)
+Lawf1,Lawf1,Dop1R1,1.0,38.9,1,derived,"D1-like, Gs"
+Lawf1,Lawf1,Dop1R2,1.0,62.7,1,derived,"D1-like, Gs/Gq"
+Lawf1,Lawf1,Dop2R,0.24,91.3,0,derived,"D2-like, Gi"
+Lawf1,Lawf1,DopEcR,1.0,4240.9,1,derived,DA/ecdysone
+Lawf1,Lawf1,Oamb,1.0,537.4,1,derived,"OA alpha1-like, Gq"
+Lawf1,Lawf1,Octbeta1R,0.0,16.3,0,derived,"OA beta, Gs"
+Lawf1,Lawf1,Octbeta2R,0.0,42.5,0,derived,"OA beta, Gs"
+Lawf1,Lawf1,Octbeta3R,1.0,56.5,1,derived,"OA beta, Gs"
+Lawf1,Lawf1,5-HT1A,0.0,3.2,0,derived,Gi
+Lawf1,Lawf1,5-HT1B,0.4,12.7,0,derived,Gi
+Lawf1,Lawf1,5-HT2A,0.0,5.4,0,derived,Gq
+Lawf1,Lawf1,5-HT2B,0.0,3.6,0,derived,Gq
+Lawf1,Lawf1,5-HT7,1.0,78.9,1,derived,Gs
+Lawf1,Lawf1,HisCl1,0.0,24.0,0,derived,histamine-gated Cl
+Lawf1,Lawf1,ort,0.0,2.5,0,derived,histamine-gated Cl
+Lawf2,Lawf2,GluClalpha,1.0,682.0,1,derived,glutamate-gated chloride: inhibitory glutamate
+Lawf2,Lawf2,GluRIA,0.01,6.0,0,derived,AMPA-like iGluR: excitatory glutamate
+Lawf2,Lawf2,GluRIB,0.0,10.6,0,derived,AMPA-like iGluR
+Lawf2,Lawf2,Nmdar1,1.0,57.8,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Lawf2,Lawf2,Nmdar2,1.0,257.9,1,derived,NMDA subunit
+Lawf2,Lawf2,mGluR,0.0,18.2,0,derived,metabotropic glutamate
+Lawf2,Lawf2,Rdl,1.0,673.3,1,derived,GABA-A (fast inhibition)
+Lawf2,Lawf2,Lcch3,1.0,118.5,1,derived,GABA-A-like
+Lawf2,Lawf2,Grd,0.0,1.4,0,derived,GABA-gated (cation?)
+Lawf2,Lawf2,GABA-B-R1,1.0,120.7,1,derived,GABA-B (slow inhibition)
+Lawf2,Lawf2,GABA-B-R2,1.0,63.1,1,derived,GABA-B
+Lawf2,Lawf2,GABA-B-R3,0.99,143.0,1,derived,GABA-B
+Lawf2,Lawf2,nAChRalpha1,1.0,235.0,1,derived,nicotinic
+Lawf2,Lawf2,nAChRalpha5,1.0,507.1,1,derived,nicotinic
+Lawf2,Lawf2,nAChRalpha6,0.98,454.5,1,derived,nicotinic
+Lawf2,Lawf2,nAChRalpha7,1.0,481.5,1,derived,nicotinic
+Lawf2,Lawf2,mAChR-A,1.0,440.1,1,derived,muscarinic (Gq)
+Lawf2,Lawf2,mAChR-B,0.0,4.1,0,derived,muscarinic (Gi)
+Lawf2,Lawf2,Dop1R1,1.0,25.0,1,derived,"D1-like, Gs"
+Lawf2,Lawf2,Dop1R2,0.0,1.5,0,derived,"D1-like, Gs/Gq"
+Lawf2,Lawf2,Dop2R,0.0,17.7,0,derived,"D2-like, Gi"
+Lawf2,Lawf2,DopEcR,1.0,2839.5,1,derived,DA/ecdysone
+Lawf2,Lawf2,Oamb,1.0,217.0,1,derived,"OA alpha1-like, Gq"
+Lawf2,Lawf2,Octbeta1R,0.01,29.1,0,derived,"OA beta, Gs"
+Lawf2,Lawf2,Octbeta2R,1.0,542.1,1,derived,"OA beta, Gs"
+Lawf2,Lawf2,Octbeta3R,1.0,47.1,1,derived,"OA beta, Gs"
+Lawf2,Lawf2,5-HT1A,0.82,33.5,1,derived,Gi
+Lawf2,Lawf2,5-HT1B,1.0,54.9,1,derived,Gi
+Lawf2,Lawf2,5-HT2A,0.0,8.4,0,derived,Gq
+Lawf2,Lawf2,5-HT2B,0.0,1.0,0,derived,Gq
+Lawf2,Lawf2,5-HT7,0.0,2.0,0,derived,Gs
+Lawf2,Lawf2,HisCl1,0.0,34.3,0,derived,histamine-gated Cl
+Lawf2,Lawf2,ort,0.0,7.9,0,derived,histamine-gated Cl
+LC10a,LC10a,GluClalpha,1.0,3580.5,1,derived,glutamate-gated chloride: inhibitory glutamate
+LC10a,LC10a,GluRIA,0.05,8.5,0,derived,AMPA-like iGluR: excitatory glutamate
+LC10a,LC10a,GluRIB,0.6,21.4,1,derived,AMPA-like iGluR
+LC10a,LC10a,Nmdar1,1.0,102.0,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LC10a,LC10a,Nmdar2,1.0,499.6,1,derived,NMDA subunit
+LC10a,LC10a,mGluR,1.0,366.0,1,derived,metabotropic glutamate
+LC10a,LC10a,Rdl,1.0,4796.2,1,derived,GABA-A (fast inhibition)
+LC10a,LC10a,Lcch3,1.0,119.6,1,derived,GABA-A-like
+LC10a,LC10a,Grd,0.0,2.2,0,derived,GABA-gated (cation?)
+LC10a,LC10a,GABA-B-R1,1.0,326.0,1,derived,GABA-B (slow inhibition)
+LC10a,LC10a,GABA-B-R2,1.0,157.5,1,derived,GABA-B
+LC10a,LC10a,GABA-B-R3,1.0,1505.8,1,derived,GABA-B
+LC10a,LC10a,nAChRalpha1,1.0,446.8,1,derived,nicotinic
+LC10a,LC10a,nAChRalpha5,1.0,1284.7,1,derived,nicotinic
+LC10a,LC10a,nAChRalpha6,1.0,765.6,1,derived,nicotinic
+LC10a,LC10a,nAChRalpha7,1.0,1123.1,1,derived,nicotinic
+LC10a,LC10a,mAChR-A,1.0,691.9,1,derived,muscarinic (Gq)
+LC10a,LC10a,mAChR-B,0.01,13.9,0,derived,muscarinic (Gi)
+LC10a,LC10a,Dop1R1,1.0,117.0,1,derived,"D1-like, Gs"
+LC10a,LC10a,Dop1R2,1.0,64.2,1,derived,"D1-like, Gs/Gq"
+LC10a,LC10a,Dop2R,1.0,179.6,1,derived,"D2-like, Gi"
+LC10a,LC10a,DopEcR,1.0,3243.9,1,derived,DA/ecdysone
+LC10a,LC10a,Oamb,0.79,29.0,1,derived,"OA alpha1-like, Gq"
+LC10a,LC10a,Octbeta1R,0.0,6.5,0,derived,"OA beta, Gs"
+LC10a,LC10a,Octbeta2R,1.0,334.4,1,derived,"OA beta, Gs"
+LC10a,LC10a,Octbeta3R,1.0,474.1,1,derived,"OA beta, Gs"
+LC10a,LC10a,5-HT1A,1.0,159.1,1,derived,Gi
+LC10a,LC10a,5-HT1B,1.0,107.0,1,derived,Gi
+LC10a,LC10a,5-HT2A,0.0,4.7,0,derived,Gq
+LC10a,LC10a,5-HT2B,0.0,3.5,0,derived,Gq
+LC10a,LC10a,5-HT7,0.87,34.0,1,derived,Gs
+LC10a,LC10a,HisCl1,0.0,15.8,0,derived,histamine-gated Cl
+LC10a,LC10a,ort,0.0,0.0,0,derived,histamine-gated Cl
+LC10b,LC10b,GluClalpha,1.0,2966.0,1,derived,glutamate-gated chloride: inhibitory glutamate
+LC10b,LC10b,GluRIA,1.0,133.9,1,derived,AMPA-like iGluR: excitatory glutamate
+LC10b,LC10b,GluRIB,1.0,140.9,1,derived,AMPA-like iGluR
+LC10b,LC10b,Nmdar1,1.0,99.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LC10b,LC10b,Nmdar2,1.0,544.5,1,derived,NMDA subunit
+LC10b,LC10b,mGluR,1.0,507.1,1,derived,metabotropic glutamate
+LC10b,LC10b,Rdl,1.0,5548.9,1,derived,GABA-A (fast inhibition)
+LC10b,LC10b,Lcch3,1.0,67.8,1,derived,GABA-A-like
+LC10b,LC10b,Grd,0.0,1.1,0,derived,GABA-gated (cation?)
+LC10b,LC10b,GABA-B-R1,1.0,254.1,1,derived,GABA-B (slow inhibition)
+LC10b,LC10b,GABA-B-R2,1.0,106.8,1,derived,GABA-B
+LC10b,LC10b,GABA-B-R3,1.0,575.6,1,derived,GABA-B
+LC10b,LC10b,nAChRalpha1,1.0,739.9,1,derived,nicotinic
+LC10b,LC10b,nAChRalpha5,1.0,1274.1,1,derived,nicotinic
+LC10b,LC10b,nAChRalpha6,1.0,1207.2,1,derived,nicotinic
+LC10b,LC10b,nAChRalpha7,1.0,1171.5,1,derived,nicotinic
+LC10b,LC10b,mAChR-A,1.0,246.8,1,derived,muscarinic (Gq)
+LC10b,LC10b,mAChR-B,0.9,35.4,1,derived,muscarinic (Gi)
+LC10b,LC10b,Dop1R1,1.0,122.4,1,derived,"D1-like, Gs"
+LC10b,LC10b,Dop1R2,1.0,78.6,1,derived,"D1-like, Gs/Gq"
+LC10b,LC10b,Dop2R,1.0,800.0,1,derived,"D2-like, Gi"
+LC10b,LC10b,DopEcR,1.0,2808.7,1,derived,DA/ecdysone
+LC10b,LC10b,Oamb,1.0,113.8,1,derived,"OA alpha1-like, Gq"
+LC10b,LC10b,Octbeta1R,0.0,22.7,0,derived,"OA beta, Gs"
+LC10b,LC10b,Octbeta2R,1.0,974.4,1,derived,"OA beta, Gs"
+LC10b,LC10b,Octbeta3R,1.0,194.7,1,derived,"OA beta, Gs"
+LC10b,LC10b,5-HT1A,1.0,143.8,1,derived,Gi
+LC10b,LC10b,5-HT1B,1.0,139.8,1,derived,Gi
+LC10b,LC10b,5-HT2A,0.0,10.3,0,derived,Gq
+LC10b,LC10b,5-HT2B,0.9,32.4,1,derived,Gq
+LC10b,LC10b,5-HT7,0.01,14.2,0,derived,Gs
+LC10b,LC10b,HisCl1,0.0,4.3,0,derived,histamine-gated Cl
+LC10b,LC10b,ort,0.0,0.1,0,derived,histamine-gated Cl
+LC16,LC16,GluClalpha,1.0,4401.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+LC16,LC16,GluRIA,1.0,30.8,1,derived,AMPA-like iGluR: excitatory glutamate
+LC16,LC16,GluRIB,1.0,76.9,1,derived,AMPA-like iGluR
+LC16,LC16,Nmdar1,1.0,48.5,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LC16,LC16,Nmdar2,1.0,425.7,1,derived,NMDA subunit
+LC16,LC16,mGluR,1.0,546.0,1,derived,metabotropic glutamate
+LC16,LC16,Rdl,1.0,2041.9,1,derived,GABA-A (fast inhibition)
+LC16,LC16,Lcch3,1.0,114.0,1,derived,GABA-A-like
+LC16,LC16,Grd,0.0,0.5,0,derived,GABA-gated (cation?)
+LC16,LC16,GABA-B-R1,1.0,184.9,1,derived,GABA-B (slow inhibition)
+LC16,LC16,GABA-B-R2,1.0,68.3,1,derived,GABA-B
+LC16,LC16,GABA-B-R3,0.0,22.1,0,derived,GABA-B
+LC16,LC16,nAChRalpha1,1.0,307.7,1,derived,nicotinic
+LC16,LC16,nAChRalpha5,1.0,1297.1,1,derived,nicotinic
+LC16,LC16,nAChRalpha6,1.0,717.2,1,derived,nicotinic
+LC16,LC16,nAChRalpha7,1.0,1514.2,1,derived,nicotinic
+LC16,LC16,mAChR-A,1.0,524.5,1,derived,muscarinic (Gq)
+LC16,LC16,mAChR-B,0.94,30.8,1,derived,muscarinic (Gi)
+LC16,LC16,Dop1R1,1.0,130.2,1,derived,"D1-like, Gs"
+LC16,LC16,Dop1R2,1.0,108.8,1,derived,"D1-like, Gs/Gq"
+LC16,LC16,Dop2R,1.0,364.4,1,derived,"D2-like, Gi"
+LC16,LC16,DopEcR,1.0,4495.9,1,derived,DA/ecdysone
+LC16,LC16,Oamb,0.99,39.7,1,derived,"OA alpha1-like, Gq"
+LC16,LC16,Octbeta1R,0.0,26.0,0,derived,"OA beta, Gs"
+LC16,LC16,Octbeta2R,1.0,162.1,1,derived,"OA beta, Gs"
+LC16,LC16,Octbeta3R,1.0,88.3,1,derived,"OA beta, Gs"
+LC16,LC16,5-HT1A,1.0,452.0,1,derived,Gi
+LC16,LC16,5-HT1B,1.0,198.9,1,derived,Gi
+LC16,LC16,5-HT2A,0.0,2.0,0,derived,Gq
+LC16,LC16,5-HT2B,0.19,18.5,0,derived,Gq
+LC16,LC16,5-HT7,0.99,40.3,1,derived,Gs
+LC16,LC16,HisCl1,0.0,15.5,0,derived,histamine-gated Cl
+LC16,LC16,ort,0.0,0.7,0,derived,histamine-gated Cl
+LC4,LC4,GluClalpha,1.0,3237.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+LC4,LC4,GluRIA,0.04,8.4,0,derived,AMPA-like iGluR: excitatory glutamate
+LC4,LC4,GluRIB,1.0,62.9,1,derived,AMPA-like iGluR
+LC4,LC4,Nmdar1,1.0,47.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LC4,LC4,Nmdar2,1.0,926.0,1,derived,NMDA subunit
+LC4,LC4,mGluR,0.79,129.4,1,derived,metabotropic glutamate
+LC4,LC4,Rdl,1.0,19515.6,1,derived,GABA-A (fast inhibition)
+LC4,LC4,Lcch3,1.0,52.7,1,derived,GABA-A-like
+LC4,LC4,Grd,0.0,1.1,0,derived,GABA-gated (cation?)
+LC4,LC4,GABA-B-R1,1.0,750.0,1,derived,GABA-B (slow inhibition)
+LC4,LC4,GABA-B-R2,1.0,48.5,1,derived,GABA-B
+LC4,LC4,GABA-B-R3,0.0,7.1,0,derived,GABA-B
+LC4,LC4,nAChRalpha1,1.0,428.3,1,derived,nicotinic
+LC4,LC4,nAChRalpha5,1.0,19922.6,1,derived,nicotinic
+LC4,LC4,nAChRalpha6,1.0,2004.9,1,derived,nicotinic
+LC4,LC4,nAChRalpha7,1.0,6655.0,1,derived,nicotinic
+LC4,LC4,mAChR-A,1.0,186.6,1,derived,muscarinic (Gq)
+LC4,LC4,mAChR-B,1.0,114.4,1,derived,muscarinic (Gi)
+LC4,LC4,Dop1R1,1.0,8.8,1,derived,"D1-like, Gs"
+LC4,LC4,Dop1R2,0.0,5.2,0,derived,"D1-like, Gs/Gq"
+LC4,LC4,Dop2R,0.0,4.6,0,derived,"D2-like, Gi"
+LC4,LC4,DopEcR,1.0,8423.0,1,derived,DA/ecdysone
+LC4,LC4,Oamb,1.0,263.6,1,derived,"OA alpha1-like, Gq"
+LC4,LC4,Octbeta1R,0.0,5.5,0,derived,"OA beta, Gs"
+LC4,LC4,Octbeta2R,1.0,254.4,1,derived,"OA beta, Gs"
+LC4,LC4,Octbeta3R,0.99,32.5,1,derived,"OA beta, Gs"
+LC4,LC4,5-HT1A,0.0,3.2,0,derived,Gi
+LC4,LC4,5-HT1B,0.97,23.2,1,derived,Gi
+LC4,LC4,5-HT2A,0.0,2.0,0,derived,Gq
+LC4,LC4,5-HT2B,0.0,0.6,0,derived,Gq
+LC4,LC4,5-HT7,0.0,6.3,0,derived,Gs
+LC4,LC4,HisCl1,0.0,2.4,0,derived,histamine-gated Cl
+LC4,LC4,ort,0.0,0.1,0,derived,histamine-gated Cl
+LC6,LC6,GluClalpha,1.0,4082.7,1,derived,glutamate-gated chloride: inhibitory glutamate
+LC6,LC6,GluRIA,1.0,59.6,1,derived,AMPA-like iGluR: excitatory glutamate
+LC6,LC6,GluRIB,1.0,166.3,1,derived,AMPA-like iGluR
+LC6,LC6,Nmdar1,1.0,45.7,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LC6,LC6,Nmdar2,1.0,536.9,1,derived,NMDA subunit
+LC6,LC6,mGluR,1.0,578.2,1,derived,metabotropic glutamate
+LC6,LC6,Rdl,1.0,3870.3,1,derived,GABA-A (fast inhibition)
+LC6,LC6,Lcch3,1.0,96.5,1,derived,GABA-A-like
+LC6,LC6,Grd,0.0,0.5,0,derived,GABA-gated (cation?)
+LC6,LC6,GABA-B-R1,1.0,244.2,1,derived,GABA-B (slow inhibition)
+LC6,LC6,GABA-B-R2,1.0,50.4,1,derived,GABA-B
+LC6,LC6,GABA-B-R3,0.0,52.0,0,derived,GABA-B
+LC6,LC6,nAChRalpha1,1.0,949.0,1,derived,nicotinic
+LC6,LC6,nAChRalpha5,1.0,2055.4,1,derived,nicotinic
+LC6,LC6,nAChRalpha6,1.0,2265.7,1,derived,nicotinic
+LC6,LC6,nAChRalpha7,1.0,1325.9,1,derived,nicotinic
+LC6,LC6,mAChR-A,1.0,350.1,1,derived,muscarinic (Gq)
+LC6,LC6,mAChR-B,0.09,24.9,0,derived,muscarinic (Gi)
+LC6,LC6,Dop1R1,1.0,67.9,1,derived,"D1-like, Gs"
+LC6,LC6,Dop1R2,0.0,13.3,0,derived,"D1-like, Gs/Gq"
+LC6,LC6,Dop2R,1.0,136.7,1,derived,"D2-like, Gi"
+LC6,LC6,DopEcR,1.0,5976.2,1,derived,DA/ecdysone
+LC6,LC6,Oamb,1.0,78.3,1,derived,"OA alpha1-like, Gq"
+LC6,LC6,Octbeta1R,0.0,14.8,0,derived,"OA beta, Gs"
+LC6,LC6,Octbeta2R,1.0,382.6,1,derived,"OA beta, Gs"
+LC6,LC6,Octbeta3R,1.0,107.3,1,derived,"OA beta, Gs"
+LC6,LC6,5-HT1A,1.0,262.6,1,derived,Gi
+LC6,LC6,5-HT1B,1.0,68.9,1,derived,Gi
+LC6,LC6,5-HT2A,0.0,22.8,0,derived,Gq
+LC6,LC6,5-HT2B,0.03,16.3,0,derived,Gq
+LC6,LC6,5-HT7,1.0,156.5,1,derived,Gs
+LC6,LC6,HisCl1,0.0,9.2,0,derived,histamine-gated Cl
+LC6,LC6,ort,0.0,0.3,0,derived,histamine-gated Cl
+LLPC1,LLPC1,GluClalpha,1.0,2753.0,1,derived,glutamate-gated chloride: inhibitory glutamate
+LLPC1,LLPC1,GluRIA,1.0,59.4,1,derived,AMPA-like iGluR: excitatory glutamate
+LLPC1,LLPC1,GluRIB,1.0,78.3,1,derived,AMPA-like iGluR
+LLPC1,LLPC1,Nmdar1,1.0,106.9,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LLPC1,LLPC1,Nmdar2,1.0,397.3,1,derived,NMDA subunit
+LLPC1,LLPC1,mGluR,0.16,103.6,0,derived,metabotropic glutamate
+LLPC1,LLPC1,Rdl,1.0,2945.4,1,derived,GABA-A (fast inhibition)
+LLPC1,LLPC1,Lcch3,1.0,122.9,1,derived,GABA-A-like
+LLPC1,LLPC1,Grd,0.0,2.8,0,derived,GABA-gated (cation?)
+LLPC1,LLPC1,GABA-B-R1,1.0,345.8,1,derived,GABA-B (slow inhibition)
+LLPC1,LLPC1,GABA-B-R2,1.0,119.1,1,derived,GABA-B
+LLPC1,LLPC1,GABA-B-R3,0.66,54.9,1,derived,GABA-B
+LLPC1,LLPC1,nAChRalpha1,1.0,624.8,1,derived,nicotinic
+LLPC1,LLPC1,nAChRalpha5,1.0,1305.8,1,derived,nicotinic
+LLPC1,LLPC1,nAChRalpha6,1.0,2131.9,1,derived,nicotinic
+LLPC1,LLPC1,nAChRalpha7,1.0,1331.1,1,derived,nicotinic
+LLPC1,LLPC1,mAChR-A,1.0,243.8,1,derived,muscarinic (Gq)
+LLPC1,LLPC1,mAChR-B,0.89,34.9,1,derived,muscarinic (Gi)
+LLPC1,LLPC1,Dop1R1,1.0,142.2,1,derived,"D1-like, Gs"
+LLPC1,LLPC1,Dop1R2,0.92,29.5,1,derived,"D1-like, Gs/Gq"
+LLPC1,LLPC1,Dop2R,1.0,279.1,1,derived,"D2-like, Gi"
+LLPC1,LLPC1,DopEcR,1.0,3776.8,1,derived,DA/ecdysone
+LLPC1,LLPC1,Oamb,1.0,64.3,1,derived,"OA alpha1-like, Gq"
+LLPC1,LLPC1,Octbeta1R,0.0,19.6,0,derived,"OA beta, Gs"
+LLPC1,LLPC1,Octbeta2R,1.0,328.0,1,derived,"OA beta, Gs"
+LLPC1,LLPC1,Octbeta3R,1.0,179.9,1,derived,"OA beta, Gs"
+LLPC1,LLPC1,5-HT1A,0.39,25.3,0,derived,Gi
+LLPC1,LLPC1,5-HT1B,1.0,59.1,1,derived,Gi
+LLPC1,LLPC1,5-HT2A,0.0,9.2,0,derived,Gq
+LLPC1,LLPC1,5-HT2B,0.0,8.2,0,derived,Gq
+LLPC1,LLPC1,5-HT7,0.0,7.6,0,derived,Gs
+LLPC1,LLPC1,HisCl1,0.0,16.8,0,derived,histamine-gated Cl
+LLPC1,LLPC1,ort,0.0,13.2,0,derived,histamine-gated Cl
+LPC1,LPC1,GluClalpha,1.0,1260.7,1,derived,glutamate-gated chloride: inhibitory glutamate
+LPC1,LPC1,GluRIA,0.0,6.5,0,derived,AMPA-like iGluR: excitatory glutamate
+LPC1,LPC1,GluRIB,0.0,7.0,0,derived,AMPA-like iGluR
+LPC1,LPC1,Nmdar1,1.0,42.9,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LPC1,LPC1,Nmdar2,1.0,367.9,1,derived,NMDA subunit
+LPC1,LPC1,mGluR,0.0,51.1,0,derived,metabotropic glutamate
+LPC1,LPC1,Rdl,1.0,3548.6,1,derived,GABA-A (fast inhibition)
+LPC1,LPC1,Lcch3,1.0,95.1,1,derived,GABA-A-like
+LPC1,LPC1,Grd,0.0,0.3,0,derived,GABA-gated (cation?)
+LPC1,LPC1,GABA-B-R1,1.0,228.7,1,derived,GABA-B (slow inhibition)
+LPC1,LPC1,GABA-B-R2,1.0,60.9,1,derived,GABA-B
+LPC1,LPC1,GABA-B-R3,1.0,108.3,1,derived,GABA-B
+LPC1,LPC1,nAChRalpha1,1.0,503.5,1,derived,nicotinic
+LPC1,LPC1,nAChRalpha5,1.0,1244.4,1,derived,nicotinic
+LPC1,LPC1,nAChRalpha6,1.0,1627.7,1,derived,nicotinic
+LPC1,LPC1,nAChRalpha7,1.0,1338.4,1,derived,nicotinic
+LPC1,LPC1,mAChR-A,1.0,430.9,1,derived,muscarinic (Gq)
+LPC1,LPC1,mAChR-B,1.0,90.5,1,derived,muscarinic (Gi)
+LPC1,LPC1,Dop1R1,1.0,44.0,1,derived,"D1-like, Gs"
+LPC1,LPC1,Dop1R2,0.78,25.3,1,derived,"D1-like, Gs/Gq"
+LPC1,LPC1,Dop2R,1.0,293.2,1,derived,"D2-like, Gi"
+LPC1,LPC1,DopEcR,1.0,7653.8,1,derived,DA/ecdysone
+LPC1,LPC1,Oamb,1.0,65.5,1,derived,"OA alpha1-like, Gq"
+LPC1,LPC1,Octbeta1R,0.01,43.5,0,derived,"OA beta, Gs"
+LPC1,LPC1,Octbeta2R,1.0,334.5,1,derived,"OA beta, Gs"
+LPC1,LPC1,Octbeta3R,1.0,98.0,1,derived,"OA beta, Gs"
+LPC1,LPC1,5-HT1A,0.0,13.7,0,derived,Gi
+LPC1,LPC1,5-HT1B,1.0,26.5,1,derived,Gi
+LPC1,LPC1,5-HT2A,0.0,3.6,0,derived,Gq
+LPC1,LPC1,5-HT2B,0.0,3.3,0,derived,Gq
+LPC1,LPC1,5-HT7,1.0,38.7,1,derived,Gs
+LPC1,LPC1,HisCl1,0.0,17.9,0,derived,histamine-gated Cl
+LPC1,LPC1,ort,0.0,0.2,0,derived,histamine-gated Cl
+LPLC1,LPLC1,GluClalpha,1.0,5136.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+LPLC1,LPLC1,GluRIA,0.01,7.5,0,derived,AMPA-like iGluR: excitatory glutamate
+LPLC1,LPLC1,GluRIB,1.0,45.9,1,derived,AMPA-like iGluR
+LPLC1,LPLC1,Nmdar1,1.0,84.1,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LPLC1,LPLC1,Nmdar2,1.0,715.9,1,derived,NMDA subunit
+LPLC1,LPLC1,mGluR,0.0,58.3,0,derived,metabotropic glutamate
+LPLC1,LPLC1,Rdl,1.0,3606.1,1,derived,GABA-A (fast inhibition)
+LPLC1,LPLC1,Lcch3,1.0,68.0,1,derived,GABA-A-like
+LPLC1,LPLC1,Grd,0.0,4.2,0,derived,GABA-gated (cation?)
+LPLC1,LPLC1,GABA-B-R1,1.0,280.0,1,derived,GABA-B (slow inhibition)
+LPLC1,LPLC1,GABA-B-R2,1.0,128.5,1,derived,GABA-B
+LPLC1,LPLC1,GABA-B-R3,0.26,37.4,0,derived,GABA-B
+LPLC1,LPLC1,nAChRalpha1,1.0,591.6,1,derived,nicotinic
+LPLC1,LPLC1,nAChRalpha5,1.0,1682.5,1,derived,nicotinic
+LPLC1,LPLC1,nAChRalpha6,1.0,2112.2,1,derived,nicotinic
+LPLC1,LPLC1,nAChRalpha7,1.0,1450.8,1,derived,nicotinic
+LPLC1,LPLC1,mAChR-A,1.0,429.9,1,derived,muscarinic (Gq)
+LPLC1,LPLC1,mAChR-B,0.99,46.9,1,derived,muscarinic (Gi)
+LPLC1,LPLC1,Dop1R1,1.0,124.7,1,derived,"D1-like, Gs"
+LPLC1,LPLC1,Dop1R2,0.01,12.8,0,derived,"D1-like, Gs/Gq"
+LPLC1,LPLC1,Dop2R,0.55,61.4,1,derived,"D2-like, Gi"
+LPLC1,LPLC1,DopEcR,1.0,5133.8,1,derived,DA/ecdysone
+LPLC1,LPLC1,Oamb,1.0,77.7,1,derived,"OA alpha1-like, Gq"
+LPLC1,LPLC1,Octbeta1R,0.01,31.6,0,derived,"OA beta, Gs"
+LPLC1,LPLC1,Octbeta2R,1.0,373.3,1,derived,"OA beta, Gs"
+LPLC1,LPLC1,Octbeta3R,1.0,83.2,1,derived,"OA beta, Gs"
+LPLC1,LPLC1,5-HT1A,1.0,554.9,1,derived,Gi
+LPLC1,LPLC1,5-HT1B,1.0,331.2,1,derived,Gi
+LPLC1,LPLC1,5-HT2A,0.0,10.8,0,derived,Gq
+LPLC1,LPLC1,5-HT2B,0.3,20.4,0,derived,Gq
+LPLC1,LPLC1,5-HT7,0.08,21.2,0,derived,Gs
+LPLC1,LPLC1,HisCl1,0.0,22.3,0,derived,histamine-gated Cl
+LPLC1,LPLC1,ort,0.0,0.6,0,derived,histamine-gated Cl
+LPLC2,LPLC2,GluClalpha,1.0,3791.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+LPLC2,LPLC2,GluRIA,1.0,66.5,1,derived,AMPA-like iGluR: excitatory glutamate
+LPLC2,LPLC2,GluRIB,1.0,169.5,1,derived,AMPA-like iGluR
+LPLC2,LPLC2,Nmdar1,1.0,92.9,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+LPLC2,LPLC2,Nmdar2,1.0,556.7,1,derived,NMDA subunit
+LPLC2,LPLC2,mGluR,1.0,401.9,1,derived,metabotropic glutamate
+LPLC2,LPLC2,Rdl,1.0,3219.3,1,derived,GABA-A (fast inhibition)
+LPLC2,LPLC2,Lcch3,1.0,142.9,1,derived,GABA-A-like
+LPLC2,LPLC2,Grd,0.0,2.4,0,derived,GABA-gated (cation?)
+LPLC2,LPLC2,GABA-B-R1,1.0,247.5,1,derived,GABA-B (slow inhibition)
+LPLC2,LPLC2,GABA-B-R2,1.0,187.3,1,derived,GABA-B
+LPLC2,LPLC2,GABA-B-R3,0.0,7.4,0,derived,GABA-B
+LPLC2,LPLC2,nAChRalpha1,1.0,575.9,1,derived,nicotinic
+LPLC2,LPLC2,nAChRalpha5,1.0,1779.8,1,derived,nicotinic
+LPLC2,LPLC2,nAChRalpha6,1.0,1429.0,1,derived,nicotinic
+LPLC2,LPLC2,nAChRalpha7,1.0,1696.2,1,derived,nicotinic
+LPLC2,LPLC2,mAChR-A,1.0,355.9,1,derived,muscarinic (Gq)
+LPLC2,LPLC2,mAChR-B,1.0,103.5,1,derived,muscarinic (Gi)
+LPLC2,LPLC2,Dop1R1,1.0,174.8,1,derived,"D1-like, Gs"
+LPLC2,LPLC2,Dop1R2,1.0,194.4,1,derived,"D1-like, Gs/Gq"
+LPLC2,LPLC2,Dop2R,0.0,20.0,0,derived,"D2-like, Gi"
+LPLC2,LPLC2,DopEcR,1.0,3393.8,1,derived,DA/ecdysone
+LPLC2,LPLC2,Oamb,1.0,92.6,1,derived,"OA alpha1-like, Gq"
+LPLC2,LPLC2,Octbeta1R,0.0,4.0,0,derived,"OA beta, Gs"
+LPLC2,LPLC2,Octbeta2R,1.0,258.8,1,derived,"OA beta, Gs"
+LPLC2,LPLC2,Octbeta3R,1.0,108.6,1,derived,"OA beta, Gs"
+LPLC2,LPLC2,5-HT1A,0.0,4.5,0,derived,Gi
+LPLC2,LPLC2,5-HT1B,0.82,13.9,1,derived,Gi
+LPLC2,LPLC2,5-HT2A,0.0,2.6,0,derived,Gq
+LPLC2,LPLC2,5-HT2B,1.0,235.2,1,derived,Gq
+LPLC2,LPLC2,5-HT7,0.24,23.5,0,derived,Gs
+LPLC2,LPLC2,HisCl1,0.0,11.3,0,derived,histamine-gated Cl
+LPLC2,LPLC2,ort,0.0,2.4,0,derived,histamine-gated Cl
+Mi1,Mi1,GluClalpha,1.0,1235.0,1,derived,glutamate-gated chloride: inhibitory glutamate
+Mi1,Mi1,GluRIA,1.0,160.5,1,derived,AMPA-like iGluR: excitatory glutamate
+Mi1,Mi1,GluRIB,1.0,104.4,1,derived,AMPA-like iGluR
+Mi1,Mi1,Nmdar1,0.0,5.1,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Mi1,Mi1,Nmdar2,1.0,540.1,1,derived,NMDA subunit
+Mi1,Mi1,mGluR,1.0,631.1,1,derived,metabotropic glutamate
+Mi1,Mi1,Rdl,1.0,1265.4,1,derived,GABA-A (fast inhibition)
+Mi1,Mi1,Lcch3,1.0,90.2,1,derived,GABA-A-like
+Mi1,Mi1,Grd,0.0,0.5,0,derived,GABA-gated (cation?)
+Mi1,Mi1,GABA-B-R1,1.0,355.8,1,derived,GABA-B (slow inhibition)
+Mi1,Mi1,GABA-B-R2,1.0,87.9,1,derived,GABA-B
+Mi1,Mi1,GABA-B-R3,1.0,206.4,1,derived,GABA-B
+Mi1,Mi1,nAChRalpha1,0.87,73.2,1,derived,nicotinic
+Mi1,Mi1,nAChRalpha5,1.0,374.2,1,derived,nicotinic
+Mi1,Mi1,nAChRalpha6,1.0,1724.9,1,derived,nicotinic
+Mi1,Mi1,nAChRalpha7,0.0,70.0,0,derived,nicotinic
+Mi1,Mi1,mAChR-A,1.0,476.5,1,derived,muscarinic (Gq)
+Mi1,Mi1,mAChR-B,0.0,1.3,0,derived,muscarinic (Gi)
+Mi1,Mi1,Dop1R1,1.0,3.2,1,derived,"D1-like, Gs"
+Mi1,Mi1,Dop1R2,0.93,30.4,1,derived,"D1-like, Gs/Gq"
+Mi1,Mi1,Dop2R,0.0,14.2,0,derived,"D2-like, Gi"
+Mi1,Mi1,DopEcR,1.0,1576.4,1,derived,DA/ecdysone
+Mi1,Mi1,Oamb,1.0,69.8,1,derived,"OA alpha1-like, Gq"
+Mi1,Mi1,Octbeta1R,1.0,269.8,1,derived,"OA beta, Gs"
+Mi1,Mi1,Octbeta2R,1.0,186.7,1,derived,"OA beta, Gs"
+Mi1,Mi1,Octbeta3R,1.0,363.2,1,derived,"OA beta, Gs"
+Mi1,Mi1,5-HT1A,0.1,18.0,0,derived,Gi
+Mi1,Mi1,5-HT1B,1.0,40.9,1,derived,Gi
+Mi1,Mi1,5-HT2A,1.0,182.8,1,derived,Gq
+Mi1,Mi1,5-HT2B,1.0,89.4,1,derived,Gq
+Mi1,Mi1,5-HT7,1.0,414.1,1,derived,Gs
+Mi1,Mi1,HisCl1,0.0,31.6,0,derived,histamine-gated Cl
+Mi1,Mi1,ort,0.0,0.8,0,derived,histamine-gated Cl
+Mi15,Mi15,GluClalpha,1.0,1149.0,1,derived,glutamate-gated chloride: inhibitory glutamate
+Mi15,Mi15,GluRIA,1.0,73.2,1,derived,AMPA-like iGluR: excitatory glutamate
+Mi15,Mi15,GluRIB,1.0,133.7,1,derived,AMPA-like iGluR
+Mi15,Mi15,Nmdar1,1.0,29.2,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Mi15,Mi15,Nmdar2,1.0,264.6,1,derived,NMDA subunit
+Mi15,Mi15,mGluR,1.0,754.6,1,derived,metabotropic glutamate
+Mi15,Mi15,Rdl,1.0,2328.8,1,derived,GABA-A (fast inhibition)
+Mi15,Mi15,Lcch3,1.0,276.0,1,derived,GABA-A-like
+Mi15,Mi15,Grd,1.0,136.6,1,derived,GABA-gated (cation?)
+Mi15,Mi15,GABA-B-R1,1.0,288.1,1,derived,GABA-B (slow inhibition)
+Mi15,Mi15,GABA-B-R2,1.0,63.6,1,derived,GABA-B
+Mi15,Mi15,GABA-B-R3,1.0,502.2,1,derived,GABA-B
+Mi15,Mi15,nAChRalpha1,1.0,221.5,1,derived,nicotinic
+Mi15,Mi15,nAChRalpha5,1.0,1231.0,1,derived,nicotinic
+Mi15,Mi15,nAChRalpha6,1.0,516.5,1,derived,nicotinic
+Mi15,Mi15,nAChRalpha7,1.0,413.8,1,derived,nicotinic
+Mi15,Mi15,mAChR-A,1.0,382.3,1,derived,muscarinic (Gq)
+Mi15,Mi15,mAChR-B,0.44,25.1,0,derived,muscarinic (Gi)
+Mi15,Mi15,Dop1R1,1.0,6.9,1,derived,"D1-like, Gs"
+Mi15,Mi15,Dop1R2,0.0,6.8,0,derived,"D1-like, Gs/Gq"
+Mi15,Mi15,Dop2R,0.37,57.9,0,derived,"D2-like, Gi"
+Mi15,Mi15,DopEcR,1.0,4322.2,1,derived,DA/ecdysone
+Mi15,Mi15,Oamb,1.0,95.8,1,derived,"OA alpha1-like, Gq"
+Mi15,Mi15,Octbeta1R,0.0,2.6,0,derived,"OA beta, Gs"
+Mi15,Mi15,Octbeta2R,0.93,86.3,1,derived,"OA beta, Gs"
+Mi15,Mi15,Octbeta3R,1.0,79.5,1,derived,"OA beta, Gs"
+Mi15,Mi15,5-HT1A,0.0,4.7,0,derived,Gi
+Mi15,Mi15,5-HT1B,0.95,17.5,1,derived,Gi
+Mi15,Mi15,5-HT2A,0.99,40.7,1,derived,Gq
+Mi15,Mi15,5-HT2B,1.0,47.2,1,derived,Gq
+Mi15,Mi15,5-HT7,1.0,55.3,1,derived,Gs
+Mi15,Mi15,HisCl1,0.0,13.1,0,derived,histamine-gated Cl
+Mi15,Mi15,ort,0.0,1.6,0,derived,histamine-gated Cl
+Mi4,Mi4,GluClalpha,1.0,820.7,1,derived,glutamate-gated chloride: inhibitory glutamate
+Mi4,Mi4,GluRIA,1.0,73.9,1,derived,AMPA-like iGluR: excitatory glutamate
+Mi4,Mi4,GluRIB,1.0,267.3,1,derived,AMPA-like iGluR
+Mi4,Mi4,Nmdar1,0.97,30.4,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Mi4,Mi4,Nmdar2,1.0,300.9,1,derived,NMDA subunit
+Mi4,Mi4,mGluR,0.07,97.6,0,derived,metabotropic glutamate
+Mi4,Mi4,Rdl,1.0,1431.0,1,derived,GABA-A (fast inhibition)
+Mi4,Mi4,Lcch3,1.0,164.7,1,derived,GABA-A-like
+Mi4,Mi4,Grd,0.98,36.3,1,derived,GABA-gated (cation?)
+Mi4,Mi4,GABA-B-R1,0.01,29.3,0,derived,GABA-B (slow inhibition)
+Mi4,Mi4,GABA-B-R2,1.0,109.6,1,derived,GABA-B
+Mi4,Mi4,GABA-B-R3,1.0,349.4,1,derived,GABA-B
+Mi4,Mi4,nAChRalpha1,1.0,204.5,1,derived,nicotinic
+Mi4,Mi4,nAChRalpha5,1.0,1441.5,1,derived,nicotinic
+Mi4,Mi4,nAChRalpha6,1.0,1064.4,1,derived,nicotinic
+Mi4,Mi4,nAChRalpha7,0.98,212.3,1,derived,nicotinic
+Mi4,Mi4,mAChR-A,1.0,246.0,1,derived,muscarinic (Gq)
+Mi4,Mi4,mAChR-B,1.0,182.2,1,derived,muscarinic (Gi)
+Mi4,Mi4,Dop1R1,1.0,14.2,1,derived,"D1-like, Gs"
+Mi4,Mi4,Dop1R2,0.0,3.2,0,derived,"D1-like, Gs/Gq"
+Mi4,Mi4,Dop2R,0.15,44.4,0,derived,"D2-like, Gi"
+Mi4,Mi4,DopEcR,1.0,1831.3,1,derived,DA/ecdysone
+Mi4,Mi4,Oamb,1.0,239.6,1,derived,"OA alpha1-like, Gq"
+Mi4,Mi4,Octbeta1R,0.0,11.4,0,derived,"OA beta, Gs"
+Mi4,Mi4,Octbeta2R,1.0,352.6,1,derived,"OA beta, Gs"
+Mi4,Mi4,Octbeta3R,1.0,69.5,1,derived,"OA beta, Gs"
+Mi4,Mi4,5-HT1A,0.94,41.0,1,derived,Gi
+Mi4,Mi4,5-HT1B,1.0,129.6,1,derived,Gi
+Mi4,Mi4,5-HT2A,0.97,47.8,1,derived,Gq
+Mi4,Mi4,5-HT2B,0.27,18.8,0,derived,Gq
+Mi4,Mi4,5-HT7,1.0,214.5,1,derived,Gs
+Mi4,Mi4,HisCl1,0.0,35.0,0,derived,histamine-gated Cl
+Mi4,Mi4,ort,0.0,6.3,0,derived,histamine-gated Cl
+Mi9,Mi9,GluClalpha,1.0,1729.3,1,derived,glutamate-gated chloride: inhibitory glutamate
+Mi9,Mi9,GluRIA,0.0,7.5,0,derived,AMPA-like iGluR: excitatory glutamate
+Mi9,Mi9,GluRIB,0.93,29.9,1,derived,AMPA-like iGluR
+Mi9,Mi9,Nmdar1,1.0,39.6,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Mi9,Mi9,Nmdar2,1.0,772.1,1,derived,NMDA subunit
+Mi9,Mi9,mGluR,0.0,14.7,0,derived,metabotropic glutamate
+Mi9,Mi9,Rdl,1.0,5582.5,1,derived,GABA-A (fast inhibition)
+Mi9,Mi9,Lcch3,1.0,97.2,1,derived,GABA-A-like
+Mi9,Mi9,Grd,0.0,8.4,0,derived,GABA-gated (cation?)
+Mi9,Mi9,GABA-B-R1,1.0,363.0,1,derived,GABA-B (slow inhibition)
+Mi9,Mi9,GABA-B-R2,1.0,50.1,1,derived,GABA-B
+Mi9,Mi9,GABA-B-R3,1.0,168.9,1,derived,GABA-B
+Mi9,Mi9,nAChRalpha1,1.0,700.0,1,derived,nicotinic
+Mi9,Mi9,nAChRalpha5,1.0,591.7,1,derived,nicotinic
+Mi9,Mi9,nAChRalpha6,0.97,394.9,1,derived,nicotinic
+Mi9,Mi9,nAChRalpha7,1.0,999.1,1,derived,nicotinic
+Mi9,Mi9,mAChR-A,1.0,215.6,1,derived,muscarinic (Gq)
+Mi9,Mi9,mAChR-B,1.0,126.7,1,derived,muscarinic (Gi)
+Mi9,Mi9,Dop1R1,1.0,27.4,1,derived,"D1-like, Gs"
+Mi9,Mi9,Dop1R2,0.0,0.6,0,derived,"D1-like, Gs/Gq"
+Mi9,Mi9,Dop2R,1.0,412.0,1,derived,"D2-like, Gi"
+Mi9,Mi9,DopEcR,1.0,5057.1,1,derived,DA/ecdysone
+Mi9,Mi9,Oamb,1.0,343.0,1,derived,"OA alpha1-like, Gq"
+Mi9,Mi9,Octbeta1R,0.0,3.4,0,derived,"OA beta, Gs"
+Mi9,Mi9,Octbeta2R,1.0,737.8,1,derived,"OA beta, Gs"
+Mi9,Mi9,Octbeta3R,1.0,35.1,1,derived,"OA beta, Gs"
+Mi9,Mi9,5-HT1A,1.0,55.1,1,derived,Gi
+Mi9,Mi9,5-HT1B,1.0,116.8,1,derived,Gi
+Mi9,Mi9,5-HT2A,1.0,95.8,1,derived,Gq
+Mi9,Mi9,5-HT2B,1.0,116.3,1,derived,Gq
+Mi9,Mi9,5-HT7,1.0,390.4,1,derived,Gs
+Mi9,Mi9,HisCl1,0.0,10.4,0,derived,histamine-gated Cl
+Mi9,Mi9,ort,0.0,5.0,0,derived,histamine-gated Cl
+Pm3,Pm3,GluClalpha,1.0,4121.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+Pm3,Pm3,GluRIA,1.0,45.4,1,derived,AMPA-like iGluR: excitatory glutamate
+Pm3,Pm3,GluRIB,1.0,59.0,1,derived,AMPA-like iGluR
+Pm3,Pm3,Nmdar1,1.0,98.0,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Pm3,Pm3,Nmdar2,1.0,860.2,1,derived,NMDA subunit
+Pm3,Pm3,mGluR,1.0,654.8,1,derived,metabotropic glutamate
+Pm3,Pm3,Rdl,1.0,4726.6,1,derived,GABA-A (fast inhibition)
+Pm3,Pm3,Lcch3,1.0,133.8,1,derived,GABA-A-like
+Pm3,Pm3,Grd,0.0,0.8,0,derived,GABA-gated (cation?)
+Pm3,Pm3,GABA-B-R1,1.0,197.7,1,derived,GABA-B (slow inhibition)
+Pm3,Pm3,GABA-B-R2,1.0,32.5,1,derived,GABA-B
+Pm3,Pm3,GABA-B-R3,0.89,78.7,1,derived,GABA-B
+Pm3,Pm3,nAChRalpha1,1.0,127.0,1,derived,nicotinic
+Pm3,Pm3,nAChRalpha5,1.0,3634.5,1,derived,nicotinic
+Pm3,Pm3,nAChRalpha6,1.0,3776.5,1,derived,nicotinic
+Pm3,Pm3,nAChRalpha7,1.0,437.1,1,derived,nicotinic
+Pm3,Pm3,mAChR-A,1.0,799.7,1,derived,muscarinic (Gq)
+Pm3,Pm3,mAChR-B,1.0,77.1,1,derived,muscarinic (Gi)
+Pm3,Pm3,Dop1R1,1.0,25.2,1,derived,"D1-like, Gs"
+Pm3,Pm3,Dop1R2,0.06,15.3,0,derived,"D1-like, Gs/Gq"
+Pm3,Pm3,Dop2R,0.99,132.3,1,derived,"D2-like, Gi"
+Pm3,Pm3,DopEcR,1.0,3540.5,1,derived,DA/ecdysone
+Pm3,Pm3,Oamb,0.06,13.1,0,derived,"OA alpha1-like, Gq"
+Pm3,Pm3,Octbeta1R,0.02,34.9,0,derived,"OA beta, Gs"
+Pm3,Pm3,Octbeta2R,1.0,367.1,1,derived,"OA beta, Gs"
+Pm3,Pm3,Octbeta3R,1.0,103.0,1,derived,"OA beta, Gs"
+Pm3,Pm3,5-HT1A,0.15,19.9,0,derived,Gi
+Pm3,Pm3,5-HT1B,1.0,38.0,1,derived,Gi
+Pm3,Pm3,5-HT2A,0.02,14.5,0,derived,Gq
+Pm3,Pm3,5-HT2B,0.0,3.2,0,derived,Gq
+Pm3,Pm3,5-HT7,1.0,270.7,1,derived,Gs
+Pm3,Pm3,HisCl1,0.0,17.1,0,derived,histamine-gated Cl
+Pm3,Pm3,ort,0.0,2.0,0,derived,histamine-gated Cl
+Pm4,Pm4,GluClalpha,1.0,2833.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+Pm4,Pm4,GluRIA,0.86,18.7,1,derived,AMPA-like iGluR: excitatory glutamate
+Pm4,Pm4,GluRIB,0.04,15.5,0,derived,AMPA-like iGluR
+Pm4,Pm4,Nmdar1,0.06,9.4,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Pm4,Pm4,Nmdar2,1.0,466.8,1,derived,NMDA subunit
+Pm4,Pm4,mGluR,1.0,889.9,1,derived,metabotropic glutamate
+Pm4,Pm4,Rdl,1.0,5394.3,1,derived,GABA-A (fast inhibition)
+Pm4,Pm4,Lcch3,1.0,105.8,1,derived,GABA-A-like
+Pm4,Pm4,Grd,0.0,4.0,0,derived,GABA-gated (cation?)
+Pm4,Pm4,GABA-B-R1,1.0,194.9,1,derived,GABA-B (slow inhibition)
+Pm4,Pm4,GABA-B-R2,1.0,83.9,1,derived,GABA-B
+Pm4,Pm4,GABA-B-R3,1.0,2544.9,1,derived,GABA-B
+Pm4,Pm4,nAChRalpha1,1.0,531.7,1,derived,nicotinic
+Pm4,Pm4,nAChRalpha5,1.0,1961.1,1,derived,nicotinic
+Pm4,Pm4,nAChRalpha6,0.0,44.5,0,derived,nicotinic
+Pm4,Pm4,nAChRalpha7,1.0,5042.9,1,derived,nicotinic
+Pm4,Pm4,mAChR-A,1.0,119.2,1,derived,muscarinic (Gq)
+Pm4,Pm4,mAChR-B,0.0,2.3,0,derived,muscarinic (Gi)
+Pm4,Pm4,Dop1R1,1.0,930.8,1,derived,"D1-like, Gs"
+Pm4,Pm4,Dop1R2,1.0,234.4,1,derived,"D1-like, Gs/Gq"
+Pm4,Pm4,Dop2R,1.0,265.5,1,derived,"D2-like, Gi"
+Pm4,Pm4,DopEcR,1.0,2395.4,1,derived,DA/ecdysone
+Pm4,Pm4,Oamb,1.0,373.6,1,derived,"OA alpha1-like, Gq"
+Pm4,Pm4,Octbeta1R,1.0,269.4,1,derived,"OA beta, Gs"
+Pm4,Pm4,Octbeta2R,1.0,582.4,1,derived,"OA beta, Gs"
+Pm4,Pm4,Octbeta3R,1.0,207.8,1,derived,"OA beta, Gs"
+Pm4,Pm4,5-HT1A,1.0,117.7,1,derived,Gi
+Pm4,Pm4,5-HT1B,1.0,53.0,1,derived,Gi
+Pm4,Pm4,5-HT2A,0.0,1.4,0,derived,Gq
+Pm4,Pm4,5-HT2B,0.0,4.8,0,derived,Gq
+Pm4,Pm4,5-HT7,1.0,184.8,1,derived,Gs
+Pm4,Pm4,HisCl1,0.0,36.0,0,derived,histamine-gated Cl
+Pm4,Pm4,ort,0.0,1.2,0,derived,histamine-gated Cl
+T1,T1,GluClalpha,0.0,13.6,0,derived,glutamate-gated chloride: inhibitory glutamate
+T1,T1,GluRIA,0.69,14.8,1,derived,AMPA-like iGluR: excitatory glutamate
+T1,T1,GluRIB,0.0,7.0,0,derived,AMPA-like iGluR
+T1,T1,Nmdar1,0.37,14.1,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T1,T1,Nmdar2,1.0,122.4,1,derived,NMDA subunit
+T1,T1,mGluR,0.0,9.4,0,derived,metabotropic glutamate
+T1,T1,Rdl,1.0,517.8,1,derived,GABA-A (fast inhibition)
+T1,T1,Lcch3,1.0,168.1,1,derived,GABA-A-like
+T1,T1,Grd,0.0,0.5,0,derived,GABA-gated (cation?)
+T1,T1,GABA-B-R1,1.0,185.4,1,derived,GABA-B (slow inhibition)
+T1,T1,GABA-B-R2,1.0,47.3,1,derived,GABA-B
+T1,T1,GABA-B-R3,0.05,23.3,0,derived,GABA-B
+T1,T1,nAChRalpha1,0.0,27.8,0,derived,nicotinic
+T1,T1,nAChRalpha5,1.0,406.6,1,derived,nicotinic
+T1,T1,nAChRalpha6,0.0,34.0,0,derived,nicotinic
+T1,T1,nAChRalpha7,1.0,1641.0,1,derived,nicotinic
+T1,T1,mAChR-A,1.0,330.0,1,derived,muscarinic (Gq)
+T1,T1,mAChR-B,0.0,4.3,0,derived,muscarinic (Gi)
+T1,T1,Dop1R1,1.0,2.5,1,derived,"D1-like, Gs"
+T1,T1,Dop1R2,0.0,0.7,0,derived,"D1-like, Gs/Gq"
+T1,T1,Dop2R,0.0,4.2,0,derived,"D2-like, Gi"
+T1,T1,DopEcR,0.99,1025.4,1,derived,DA/ecdysone
+T1,T1,Oamb,0.0,3.0,0,derived,"OA alpha1-like, Gq"
+T1,T1,Octbeta1R,0.0,2.0,0,derived,"OA beta, Gs"
+T1,T1,Octbeta2R,1.0,1737.4,1,derived,"OA beta, Gs"
+T1,T1,Octbeta3R,0.77,19.9,1,derived,"OA beta, Gs"
+T1,T1,5-HT1A,1.0,208.4,1,derived,Gi
+T1,T1,5-HT1B,1.0,47.8,1,derived,Gi
+T1,T1,5-HT2A,0.0,4.5,0,derived,Gq
+T1,T1,5-HT2B,0.0,0.5,0,derived,Gq
+T1,T1,5-HT7,0.0,1.0,0,derived,Gs
+T1,T1,HisCl1,0.0,26.2,0,derived,histamine-gated Cl
+T1,T1,ort,1.0,217.1,1,derived,histamine-gated Cl
+Tm1,Tm1,GluClalpha,1.0,2283.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm1,Tm1,GluRIA,0.0,5.7,0,derived,AMPA-like iGluR: excitatory glutamate
+Tm1,Tm1,GluRIB,0.0,9.3,0,derived,AMPA-like iGluR
+Tm1,Tm1,Nmdar1,0.95,28.4,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm1,Tm1,Nmdar2,1.0,454.8,1,derived,NMDA subunit
+Tm1,Tm1,mGluR,1.0,762.8,1,derived,metabotropic glutamate
+Tm1,Tm1,Rdl,1.0,4566.3,1,derived,GABA-A (fast inhibition)
+Tm1,Tm1,Lcch3,1.0,136.9,1,derived,GABA-A-like
+Tm1,Tm1,Grd,0.0,4.6,0,derived,GABA-gated (cation?)
+Tm1,Tm1,GABA-B-R1,1.0,1201.0,1,derived,GABA-B (slow inhibition)
+Tm1,Tm1,GABA-B-R2,1.0,115.0,1,derived,GABA-B
+Tm1,Tm1,GABA-B-R3,1.0,595.9,1,derived,GABA-B
+Tm1,Tm1,nAChRalpha1,1.0,187.4,1,derived,nicotinic
+Tm1,Tm1,nAChRalpha5,0.0,59.7,0,derived,nicotinic
+Tm1,Tm1,nAChRalpha6,0.0,80.3,0,derived,nicotinic
+Tm1,Tm1,nAChRalpha7,1.0,1513.9,1,derived,nicotinic
+Tm1,Tm1,mAChR-A,0.9,76.3,1,derived,muscarinic (Gq)
+Tm1,Tm1,mAChR-B,0.0,2.9,0,derived,muscarinic (Gi)
+Tm1,Tm1,Dop1R1,1.0,30.8,1,derived,"D1-like, Gs"
+Tm1,Tm1,Dop1R2,0.0,3.3,0,derived,"D1-like, Gs/Gq"
+Tm1,Tm1,Dop2R,1.0,243.4,1,derived,"D2-like, Gi"
+Tm1,Tm1,DopEcR,1.0,2380.0,1,derived,DA/ecdysone
+Tm1,Tm1,Oamb,1.0,118.8,1,derived,"OA alpha1-like, Gq"
+Tm1,Tm1,Octbeta1R,1.0,437.6,1,derived,"OA beta, Gs"
+Tm1,Tm1,Octbeta2R,1.0,607.5,1,derived,"OA beta, Gs"
+Tm1,Tm1,Octbeta3R,1.0,106.5,1,derived,"OA beta, Gs"
+Tm1,Tm1,5-HT1A,1.0,130.2,1,derived,Gi
+Tm1,Tm1,5-HT1B,1.0,68.2,1,derived,Gi
+Tm1,Tm1,5-HT2A,0.1,18.4,0,derived,Gq
+Tm1,Tm1,5-HT2B,1.0,139.5,1,derived,Gq
+Tm1,Tm1,5-HT7,1.0,177.3,1,derived,Gs
+Tm1,Tm1,HisCl1,0.0,28.8,0,derived,histamine-gated Cl
+Tm1,Tm1,ort,0.0,4.8,0,derived,histamine-gated Cl
+Tm2,Tm2,GluClalpha,1.0,1622.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm2,Tm2,GluRIA,0.0,5.1,0,derived,AMPA-like iGluR: excitatory glutamate
+Tm2,Tm2,GluRIB,0.0,7.0,0,derived,AMPA-like iGluR
+Tm2,Tm2,Nmdar1,0.1,10.1,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm2,Tm2,Nmdar2,1.0,259.1,1,derived,NMDA subunit
+Tm2,Tm2,mGluR,0.02,89.0,0,derived,metabotropic glutamate
+Tm2,Tm2,Rdl,1.0,1074.3,1,derived,GABA-A (fast inhibition)
+Tm2,Tm2,Lcch3,1.0,114.3,1,derived,GABA-A-like
+Tm2,Tm2,Grd,0.0,9.9,0,derived,GABA-gated (cation?)
+Tm2,Tm2,GABA-B-R1,1.0,158.1,1,derived,GABA-B (slow inhibition)
+Tm2,Tm2,GABA-B-R2,1.0,61.1,1,derived,GABA-B
+Tm2,Tm2,GABA-B-R3,1.0,206.0,1,derived,GABA-B
+Tm2,Tm2,nAChRalpha1,1.0,241.1,1,derived,nicotinic
+Tm2,Tm2,nAChRalpha5,0.0,56.3,0,derived,nicotinic
+Tm2,Tm2,nAChRalpha6,1.0,1085.6,1,derived,nicotinic
+Tm2,Tm2,nAChRalpha7,1.0,1310.6,1,derived,nicotinic
+Tm2,Tm2,mAChR-A,0.0,35.3,0,derived,muscarinic (Gq)
+Tm2,Tm2,mAChR-B,0.76,30.8,1,derived,muscarinic (Gi)
+Tm2,Tm2,Dop1R1,1.0,40.3,1,derived,"D1-like, Gs"
+Tm2,Tm2,Dop1R2,0.0,7.2,0,derived,"D1-like, Gs/Gq"
+Tm2,Tm2,Dop2R,0.65,65.7,1,derived,"D2-like, Gi"
+Tm2,Tm2,DopEcR,1.0,1799.9,1,derived,DA/ecdysone
+Tm2,Tm2,Oamb,1.0,212.0,1,derived,"OA alpha1-like, Gq"
+Tm2,Tm2,Octbeta1R,0.0,25.2,0,derived,"OA beta, Gs"
+Tm2,Tm2,Octbeta2R,1.0,191.5,1,derived,"OA beta, Gs"
+Tm2,Tm2,Octbeta3R,1.0,147.2,1,derived,"OA beta, Gs"
+Tm2,Tm2,5-HT1A,0.26,21.9,0,derived,Gi
+Tm2,Tm2,5-HT1B,0.99,31.7,1,derived,Gi
+Tm2,Tm2,5-HT2A,0.98,51.1,1,derived,Gq
+Tm2,Tm2,5-HT2B,0.07,14.4,0,derived,Gq
+Tm2,Tm2,5-HT7,1.0,148.6,1,derived,Gs
+Tm2,Tm2,HisCl1,0.0,24.1,0,derived,histamine-gated Cl
+Tm2,Tm2,ort,1.0,77.5,1,derived,histamine-gated Cl
+Tm20,Tm20,GluClalpha,1.0,826.5,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm20,Tm20,GluRIA,0.96,20.9,1,derived,AMPA-like iGluR: excitatory glutamate
+Tm20,Tm20,GluRIB,0.0,5.8,0,derived,AMPA-like iGluR
+Tm20,Tm20,Nmdar1,0.88,23.1,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm20,Tm20,Nmdar2,1.0,231.6,1,derived,NMDA subunit
+Tm20,Tm20,mGluR,0.0,52.3,0,derived,metabotropic glutamate
+Tm20,Tm20,Rdl,1.0,3204.7,1,derived,GABA-A (fast inhibition)
+Tm20,Tm20,Lcch3,1.0,123.3,1,derived,GABA-A-like
+Tm20,Tm20,Grd,0.0,2.6,0,derived,GABA-gated (cation?)
+Tm20,Tm20,GABA-B-R1,1.0,590.0,1,derived,GABA-B (slow inhibition)
+Tm20,Tm20,GABA-B-R2,1.0,32.8,1,derived,GABA-B
+Tm20,Tm20,GABA-B-R3,0.0,10.9,0,derived,GABA-B
+Tm20,Tm20,nAChRalpha1,1.0,226.2,1,derived,nicotinic
+Tm20,Tm20,nAChRalpha5,1.0,1459.0,1,derived,nicotinic
+Tm20,Tm20,nAChRalpha6,0.04,159.3,0,derived,nicotinic
+Tm20,Tm20,nAChRalpha7,1.0,1607.4,1,derived,nicotinic
+Tm20,Tm20,mAChR-A,1.0,121.1,1,derived,muscarinic (Gq)
+Tm20,Tm20,mAChR-B,0.0,5.5,0,derived,muscarinic (Gi)
+Tm20,Tm20,Dop1R1,1.0,54.8,1,derived,"D1-like, Gs"
+Tm20,Tm20,Dop1R2,0.12,17.0,0,derived,"D1-like, Gs/Gq"
+Tm20,Tm20,Dop2R,1.0,186.9,1,derived,"D2-like, Gi"
+Tm20,Tm20,DopEcR,1.0,3497.3,1,derived,DA/ecdysone
+Tm20,Tm20,Oamb,0.11,14.7,0,derived,"OA alpha1-like, Gq"
+Tm20,Tm20,Octbeta1R,0.0,10.8,0,derived,"OA beta, Gs"
+Tm20,Tm20,Octbeta2R,1.0,1725.5,1,derived,"OA beta, Gs"
+Tm20,Tm20,Octbeta3R,1.0,38.2,1,derived,"OA beta, Gs"
+Tm20,Tm20,5-HT1A,1.0,166.7,1,derived,Gi
+Tm20,Tm20,5-HT1B,1.0,95.1,1,derived,Gi
+Tm20,Tm20,5-HT2A,1.0,618.1,1,derived,Gq
+Tm20,Tm20,5-HT2B,0.0,3.3,0,derived,Gq
+Tm20,Tm20,5-HT7,0.01,15.0,0,derived,Gs
+Tm20,Tm20,HisCl1,0.35,73.8,0,derived,histamine-gated Cl
+Tm20,Tm20,ort,1.0,329.3,1,derived,histamine-gated Cl
+Tm29,Tm29,GluClalpha,1.0,1683.5,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm29,Tm29,GluRIA,0.0,4.0,0,derived,AMPA-like iGluR: excitatory glutamate
+Tm29,Tm29,GluRIB,0.0,2.8,0,derived,AMPA-like iGluR
+Tm29,Tm29,Nmdar1,1.0,44.6,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm29,Tm29,Nmdar2,1.0,402.0,1,derived,NMDA subunit
+Tm29,Tm29,mGluR,0.0,27.6,0,derived,metabotropic glutamate
+Tm29,Tm29,Rdl,1.0,5235.5,1,derived,GABA-A (fast inhibition)
+Tm29,Tm29,Lcch3,1.0,108.7,1,derived,GABA-A-like
+Tm29,Tm29,Grd,0.0,2.9,0,derived,GABA-gated (cation?)
+Tm29,Tm29,GABA-B-R1,1.0,352.1,1,derived,GABA-B (slow inhibition)
+Tm29,Tm29,GABA-B-R2,0.99,17.5,1,derived,GABA-B
+Tm29,Tm29,GABA-B-R3,1.0,271.3,1,derived,GABA-B
+Tm29,Tm29,nAChRalpha1,1.0,333.9,1,derived,nicotinic
+Tm29,Tm29,nAChRalpha5,1.0,2028.8,1,derived,nicotinic
+Tm29,Tm29,nAChRalpha6,1.0,5882.0,1,derived,nicotinic
+Tm29,Tm29,nAChRalpha7,1.0,1500.7,1,derived,nicotinic
+Tm29,Tm29,mAChR-A,1.0,454.8,1,derived,muscarinic (Gq)
+Tm29,Tm29,mAChR-B,0.0,12.4,0,derived,muscarinic (Gi)
+Tm29,Tm29,Dop1R1,1.0,179.8,1,derived,"D1-like, Gs"
+Tm29,Tm29,Dop1R2,1.0,46.7,1,derived,"D1-like, Gs/Gq"
+Tm29,Tm29,Dop2R,0.99,124.4,1,derived,"D2-like, Gi"
+Tm29,Tm29,DopEcR,1.0,5851.6,1,derived,DA/ecdysone
+Tm29,Tm29,Oamb,0.0,3.3,0,derived,"OA alpha1-like, Gq"
+Tm29,Tm29,Octbeta1R,0.25,55.8,0,derived,"OA beta, Gs"
+Tm29,Tm29,Octbeta2R,1.0,317.7,1,derived,"OA beta, Gs"
+Tm29,Tm29,Octbeta3R,1.0,43.3,1,derived,"OA beta, Gs"
+Tm29,Tm29,5-HT1A,0.17,20.1,0,derived,Gi
+Tm29,Tm29,5-HT1B,1.0,39.1,1,derived,Gi
+Tm29,Tm29,5-HT2A,0.7,31.6,1,derived,Gq
+Tm29,Tm29,5-HT2B,0.0,3.4,0,derived,Gq
+Tm29,Tm29,5-HT7,0.97,40.9,1,derived,Gs
+Tm29,Tm29,HisCl1,0.0,8.4,0,derived,histamine-gated Cl
+Tm29,Tm29,ort,0.0,1.7,0,derived,histamine-gated Cl
+Tm3,Tm3,GluClalpha,1.0,1445.4,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm3,Tm3,GluRIA,0.11,9.7,0,derived,AMPA-like iGluR: excitatory glutamate
+Tm3,Tm3,GluRIB,0.0,4.0,0,derived,AMPA-like iGluR
+Tm3,Tm3,Nmdar1,0.77,19.7,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm3,Tm3,Nmdar2,1.0,254.7,1,derived,NMDA subunit
+Tm3,Tm3,mGluR,0.0,22.9,0,derived,metabotropic glutamate
+Tm3,Tm3,Rdl,1.0,1093.7,1,derived,GABA-A (fast inhibition)
+Tm3,Tm3,Lcch3,1.0,106.4,1,derived,GABA-A-like
+Tm3,Tm3,Grd,0.0,5.3,0,derived,GABA-gated (cation?)
+Tm3,Tm3,GABA-B-R1,1.0,184.9,1,derived,GABA-B (slow inhibition)
+Tm3,Tm3,GABA-B-R2,1.0,72.3,1,derived,GABA-B
+Tm3,Tm3,GABA-B-R3,1.0,186.9,1,derived,GABA-B
+Tm3,Tm3,nAChRalpha1,1.0,202.2,1,derived,nicotinic
+Tm3,Tm3,nAChRalpha5,0.01,90.4,0,derived,nicotinic
+Tm3,Tm3,nAChRalpha6,0.92,377.7,1,derived,nicotinic
+Tm3,Tm3,nAChRalpha7,1.0,479.6,1,derived,nicotinic
+Tm3,Tm3,mAChR-A,1.0,193.3,1,derived,muscarinic (Gq)
+Tm3,Tm3,mAChR-B,0.0,2.8,0,derived,muscarinic (Gi)
+Tm3,Tm3,Dop1R1,1.0,6.3,1,derived,"D1-like, Gs"
+Tm3,Tm3,Dop1R2,0.02,13.3,0,derived,"D1-like, Gs/Gq"
+Tm3,Tm3,Dop2R,1.0,652.8,1,derived,"D2-like, Gi"
+Tm3,Tm3,DopEcR,1.0,2301.4,1,derived,DA/ecdysone
+Tm3,Tm3,Oamb,1.0,243.6,1,derived,"OA alpha1-like, Gq"
+Tm3,Tm3,Octbeta1R,0.0,26.5,0,derived,"OA beta, Gs"
+Tm3,Tm3,Octbeta2R,1.0,236.6,1,derived,"OA beta, Gs"
+Tm3,Tm3,Octbeta3R,1.0,45.2,1,derived,"OA beta, Gs"
+Tm3,Tm3,5-HT1A,0.0,4.0,0,derived,Gi
+Tm3,Tm3,5-HT1B,0.69,11.5,1,derived,Gi
+Tm3,Tm3,5-HT2A,1.0,86.6,1,derived,Gq
+Tm3,Tm3,5-HT2B,1.0,109.4,1,derived,Gq
+Tm3,Tm3,5-HT7,1.0,165.7,1,derived,Gs
+Tm3,Tm3,HisCl1,0.0,26.2,0,derived,histamine-gated Cl
+Tm3,Tm3,ort,0.0,1.2,0,derived,histamine-gated Cl
+Tm4,Tm4,GluClalpha,1.0,544.8,1,derived,glutamate-gated chloride: inhibitory glutamate
+Tm4,Tm4,GluRIA,0.53,13.7,1,derived,AMPA-like iGluR: excitatory glutamate
+Tm4,Tm4,GluRIB,0.02,13.9,0,derived,AMPA-like iGluR
+Tm4,Tm4,Nmdar1,0.34,13.9,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm4,Tm4,Nmdar2,1.0,199.1,1,derived,NMDA subunit
+Tm4,Tm4,mGluR,1.0,322.4,1,derived,metabotropic glutamate
+Tm4,Tm4,Rdl,1.0,1217.7,1,derived,GABA-A (fast inhibition)
+Tm4,Tm4,Lcch3,1.0,137.6,1,derived,GABA-A-like
+Tm4,Tm4,Grd,0.0,6.0,0,derived,GABA-gated (cation?)
+Tm4,Tm4,GABA-B-R1,1.0,332.2,1,derived,GABA-B (slow inhibition)
+Tm4,Tm4,GABA-B-R2,1.0,61.8,1,derived,GABA-B
+Tm4,Tm4,GABA-B-R3,1.0,213.7,1,derived,GABA-B
+Tm4,Tm4,nAChRalpha1,1.0,232.0,1,derived,nicotinic
+Tm4,Tm4,nAChRalpha5,0.06,105.4,0,derived,nicotinic
+Tm4,Tm4,nAChRalpha6,0.96,411.7,1,derived,nicotinic
+Tm4,Tm4,nAChRalpha7,0.99,216.7,1,derived,nicotinic
+Tm4,Tm4,mAChR-A,0.04,53.9,0,derived,muscarinic (Gq)
+Tm4,Tm4,mAChR-B,0.93,37.3,1,derived,muscarinic (Gi)
+Tm4,Tm4,Dop1R1,1.0,24.1,1,derived,"D1-like, Gs"
+Tm4,Tm4,Dop1R2,0.85,28.5,1,derived,"D1-like, Gs/Gq"
+Tm4,Tm4,Dop2R,1.0,301.3,1,derived,"D2-like, Gi"
+Tm4,Tm4,DopEcR,1.0,1634.6,1,derived,DA/ecdysone
+Tm4,Tm4,Oamb,1.0,108.8,1,derived,"OA alpha1-like, Gq"
+Tm4,Tm4,Octbeta1R,1.0,187.3,1,derived,"OA beta, Gs"
+Tm4,Tm4,Octbeta2R,1.0,164.6,1,derived,"OA beta, Gs"
+Tm4,Tm4,Octbeta3R,1.0,57.6,1,derived,"OA beta, Gs"
+Tm4,Tm4,5-HT1A,1.0,75.9,1,derived,Gi
+Tm4,Tm4,5-HT1B,1.0,48.1,1,derived,Gi
+Tm4,Tm4,5-HT2A,1.0,88.0,1,derived,Gq
+Tm4,Tm4,5-HT2B,0.0,5.7,0,derived,Gq
+Tm4,Tm4,5-HT7,1.0,191.3,1,derived,Gs
+Tm4,Tm4,HisCl1,0.0,20.6,0,derived,histamine-gated Cl
+Tm4,Tm4,ort,0.0,6.5,0,derived,histamine-gated Cl
+Tm9,Tm9,GluClalpha,0.04,160.3,0,derived,glutamate-gated chloride: inhibitory glutamate
+Tm9,Tm9,GluRIA,0.0,2.5,0,derived,AMPA-like iGluR: excitatory glutamate
+Tm9,Tm9,GluRIB,0.0,3.4,0,derived,AMPA-like iGluR
+Tm9,Tm9,Nmdar1,0.33,13.6,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Tm9,Tm9,Nmdar2,1.0,256.1,1,derived,NMDA subunit
+Tm9,Tm9,mGluR,0.0,25.6,0,derived,metabotropic glutamate
+Tm9,Tm9,Rdl,1.0,532.6,1,derived,GABA-A (fast inhibition)
+Tm9,Tm9,Lcch3,1.0,144.1,1,derived,GABA-A-like
+Tm9,Tm9,Grd,0.0,1.8,0,derived,GABA-gated (cation?)
+Tm9,Tm9,GABA-B-R1,1.0,110.8,1,derived,GABA-B (slow inhibition)
+Tm9,Tm9,GABA-B-R2,1.0,46.0,1,derived,GABA-B
+Tm9,Tm9,GABA-B-R3,0.01,17.0,0,derived,GABA-B
+Tm9,Tm9,nAChRalpha1,1.0,187.6,1,derived,nicotinic
+Tm9,Tm9,nAChRalpha5,0.99,217.0,1,derived,nicotinic
+Tm9,Tm9,nAChRalpha6,0.0,85.5,0,derived,nicotinic
+Tm9,Tm9,nAChRalpha7,1.0,961.6,1,derived,nicotinic
+Tm9,Tm9,mAChR-A,1.0,305.4,1,derived,muscarinic (Gq)
+Tm9,Tm9,mAChR-B,0.0,6.3,0,derived,muscarinic (Gi)
+Tm9,Tm9,Dop1R1,1.0,3.2,1,derived,"D1-like, Gs"
+Tm9,Tm9,Dop1R2,0.0,4.4,0,derived,"D1-like, Gs/Gq"
+Tm9,Tm9,Dop2R,0.92,88.0,1,derived,"D2-like, Gi"
+Tm9,Tm9,DopEcR,1.0,2325.1,1,derived,DA/ecdysone
+Tm9,Tm9,Oamb,0.01,9.1,0,derived,"OA alpha1-like, Gq"
+Tm9,Tm9,Octbeta1R,0.0,11.4,0,derived,"OA beta, Gs"
+Tm9,Tm9,Octbeta2R,1.0,688.9,1,derived,"OA beta, Gs"
+Tm9,Tm9,Octbeta3R,1.0,206.6,1,derived,"OA beta, Gs"
+Tm9,Tm9,5-HT1A,0.96,43.9,1,derived,Gi
+Tm9,Tm9,5-HT1B,0.97,23.0,1,derived,Gi
+Tm9,Tm9,5-HT2A,1.0,117.0,1,derived,Gq
+Tm9,Tm9,5-HT2B,0.9,31.7,1,derived,Gq
+Tm9,Tm9,5-HT7,0.03,17.3,0,derived,Gs
+Tm9,Tm9,HisCl1,0.0,26.7,0,derived,histamine-gated Cl
+Tm9,Tm9,ort,0.02,21.4,0,derived,histamine-gated Cl
+TmY3,TmY3,GluClalpha,1.0,3222.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+TmY3,TmY3,GluRIA,1.0,39.1,1,derived,AMPA-like iGluR: excitatory glutamate
+TmY3,TmY3,GluRIB,1.0,91.8,1,derived,AMPA-like iGluR
+TmY3,TmY3,Nmdar1,1.0,57.2,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+TmY3,TmY3,Nmdar2,1.0,1073.2,1,derived,NMDA subunit
+TmY3,TmY3,mGluR,0.0,11.9,0,derived,metabotropic glutamate
+TmY3,TmY3,Rdl,1.0,3462.3,1,derived,GABA-A (fast inhibition)
+TmY3,TmY3,Lcch3,1.0,92.1,1,derived,GABA-A-like
+TmY3,TmY3,Grd,1.0,97.4,1,derived,GABA-gated (cation?)
+TmY3,TmY3,GABA-B-R1,1.0,177.7,1,derived,GABA-B (slow inhibition)
+TmY3,TmY3,GABA-B-R2,1.0,116.9,1,derived,GABA-B
+TmY3,TmY3,GABA-B-R3,0.85,71.2,1,derived,GABA-B
+TmY3,TmY3,nAChRalpha1,1.0,395.5,1,derived,nicotinic
+TmY3,TmY3,nAChRalpha5,1.0,2399.2,1,derived,nicotinic
+TmY3,TmY3,nAChRalpha6,1.0,6242.6,1,derived,nicotinic
+TmY3,TmY3,nAChRalpha7,1.0,4638.0,1,derived,nicotinic
+TmY3,TmY3,mAChR-A,1.0,196.6,1,derived,muscarinic (Gq)
+TmY3,TmY3,mAChR-B,0.04,16.7,0,derived,muscarinic (Gi)
+TmY3,TmY3,Dop1R1,1.0,5.2,1,derived,"D1-like, Gs"
+TmY3,TmY3,Dop1R2,0.0,5.7,0,derived,"D1-like, Gs/Gq"
+TmY3,TmY3,Dop2R,0.97,102.8,1,derived,"D2-like, Gi"
+TmY3,TmY3,DopEcR,1.0,3689.1,1,derived,DA/ecdysone
+TmY3,TmY3,Oamb,1.0,309.5,1,derived,"OA alpha1-like, Gq"
+TmY3,TmY3,Octbeta1R,0.0,3.0,0,derived,"OA beta, Gs"
+TmY3,TmY3,Octbeta2R,1.0,289.8,1,derived,"OA beta, Gs"
+TmY3,TmY3,Octbeta3R,0.0,3.9,0,derived,"OA beta, Gs"
+TmY3,TmY3,5-HT1A,1.0,531.8,1,derived,Gi
+TmY3,TmY3,5-HT1B,1.0,143.6,1,derived,Gi
+TmY3,TmY3,5-HT2A,1.0,116.1,1,derived,Gq
+TmY3,TmY3,5-HT2B,0.0,0.7,0,derived,Gq
+TmY3,TmY3,5-HT7,1.0,110.3,1,derived,Gs
+TmY3,TmY3,HisCl1,0.0,22.6,0,derived,histamine-gated Cl
+TmY3,TmY3,ort,0.0,1.6,0,derived,histamine-gated Cl
+TmY5a,TmY5a,GluClalpha,1.0,1995.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+TmY5a,TmY5a,GluRIA,0.99,25.5,1,derived,AMPA-like iGluR: excitatory glutamate
+TmY5a,TmY5a,GluRIB,1.0,46.4,1,derived,AMPA-like iGluR
+TmY5a,TmY5a,Nmdar1,1.0,61.2,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+TmY5a,TmY5a,Nmdar2,1.0,452.8,1,derived,NMDA subunit
+TmY5a,TmY5a,mGluR,0.0,37.5,0,derived,metabotropic glutamate
+TmY5a,TmY5a,Rdl,1.0,2548.7,1,derived,GABA-A (fast inhibition)
+TmY5a,TmY5a,Lcch3,1.0,130.0,1,derived,GABA-A-like
+TmY5a,TmY5a,Grd,0.0,0.7,0,derived,GABA-gated (cation?)
+TmY5a,TmY5a,GABA-B-R1,1.0,390.5,1,derived,GABA-B (slow inhibition)
+TmY5a,TmY5a,GABA-B-R2,1.0,91.1,1,derived,GABA-B
+TmY5a,TmY5a,GABA-B-R3,0.06,25.2,0,derived,GABA-B
+TmY5a,TmY5a,nAChRalpha1,1.0,616.4,1,derived,nicotinic
+TmY5a,TmY5a,nAChRalpha5,1.0,1087.3,1,derived,nicotinic
+TmY5a,TmY5a,nAChRalpha6,0.99,559.1,1,derived,nicotinic
+TmY5a,TmY5a,nAChRalpha7,1.0,903.8,1,derived,nicotinic
+TmY5a,TmY5a,mAChR-A,1.0,368.1,1,derived,muscarinic (Gq)
+TmY5a,TmY5a,mAChR-B,0.15,20.4,0,derived,muscarinic (Gi)
+TmY5a,TmY5a,Dop1R1,1.0,415.9,1,derived,"D1-like, Gs"
+TmY5a,TmY5a,Dop1R2,0.0,5.4,0,derived,"D1-like, Gs/Gq"
+TmY5a,TmY5a,Dop2R,1.0,226.6,1,derived,"D2-like, Gi"
+TmY5a,TmY5a,DopEcR,1.0,5869.2,1,derived,DA/ecdysone
+TmY5a,TmY5a,Oamb,0.0,1.7,0,derived,"OA alpha1-like, Gq"
+TmY5a,TmY5a,Octbeta1R,0.0,15.5,0,derived,"OA beta, Gs"
+TmY5a,TmY5a,Octbeta2R,1.0,180.2,1,derived,"OA beta, Gs"
+TmY5a,TmY5a,Octbeta3R,1.0,66.6,1,derived,"OA beta, Gs"
+TmY5a,TmY5a,5-HT1A,0.0,7.5,0,derived,Gi
+TmY5a,TmY5a,5-HT1B,0.99,33.0,1,derived,Gi
+TmY5a,TmY5a,5-HT2A,1.0,82.9,1,derived,Gq
+TmY5a,TmY5a,5-HT2B,0.0,0.4,0,derived,Gq
+TmY5a,TmY5a,5-HT7,0.99,50.4,1,derived,Gs
+TmY5a,TmY5a,HisCl1,0.0,20.7,0,derived,histamine-gated Cl
+TmY5a,TmY5a,ort,0.0,0.2,0,derived,histamine-gated Cl
+Dm3a,Dm3,GluClalpha,1.0,1652.8,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Dm3a,Dm3,GluRIA,1.0,44.5,1,inferred,AMPA-like iGluR: excitatory glutamate
+Dm3a,Dm3,GluRIB,1.0,78.5,1,inferred,AMPA-like iGluR
+Dm3a,Dm3,Nmdar1,0.03,7.6,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm3a,Dm3,Nmdar2,1.0,187.1,1,inferred,NMDA subunit
+Dm3a,Dm3,mGluR,1.0,471.0,1,inferred,metabotropic glutamate
+Dm3a,Dm3,Rdl,1.0,2474.4,1,inferred,GABA-A (fast inhibition)
+Dm3a,Dm3,Lcch3,1.0,86.4,1,inferred,GABA-A-like
+Dm3a,Dm3,Grd,0.0,0.9,0,inferred,GABA-gated (cation?)
+Dm3a,Dm3,GABA-B-R1,1.0,163.2,1,inferred,GABA-B (slow inhibition)
+Dm3a,Dm3,GABA-B-R2,0.6,13.5,1,inferred,GABA-B
+Dm3a,Dm3,GABA-B-R3,1.0,353.1,1,inferred,GABA-B
+Dm3a,Dm3,nAChRalpha1,1.0,1854.2,1,inferred,nicotinic
+Dm3a,Dm3,nAChRalpha5,1.0,1438.0,1,inferred,nicotinic
+Dm3a,Dm3,nAChRalpha6,0.96,420.4,1,inferred,nicotinic
+Dm3a,Dm3,nAChRalpha7,1.0,665.3,1,inferred,nicotinic
+Dm3a,Dm3,mAChR-A,1.0,242.7,1,inferred,muscarinic (Gq)
+Dm3a,Dm3,mAChR-B,1.0,137.5,1,inferred,muscarinic (Gi)
+Dm3a,Dm3,Dop1R1,1.0,6.1,1,inferred,"D1-like, Gs"
+Dm3a,Dm3,Dop1R2,0.0,7.5,0,inferred,"D1-like, Gs/Gq"
+Dm3a,Dm3,Dop2R,0.6,63.4,1,inferred,"D2-like, Gi"
+Dm3a,Dm3,DopEcR,1.0,12716.2,1,inferred,DA/ecdysone
+Dm3a,Dm3,Oamb,0.0,6.7,0,inferred,"OA alpha1-like, Gq"
+Dm3a,Dm3,Octbeta1R,1.0,219.8,1,inferred,"OA beta, Gs"
+Dm3a,Dm3,Octbeta2R,1.0,382.0,1,inferred,"OA beta, Gs"
+Dm3a,Dm3,Octbeta3R,1.0,117.9,1,inferred,"OA beta, Gs"
+Dm3a,Dm3,5-HT1A,0.17,20.0,0,inferred,Gi
+Dm3a,Dm3,5-HT1B,1.0,46.6,1,inferred,Gi
+Dm3a,Dm3,5-HT2A,1.0,106.5,1,inferred,Gq
+Dm3a,Dm3,5-HT2B,0.0,1.6,0,inferred,Gq
+Dm3a,Dm3,5-HT7,0.0,5.3,0,inferred,Gs
+Dm3a,Dm3,HisCl1,0.0,20.5,0,inferred,histamine-gated Cl
+Dm3a,Dm3,ort,0.0,8.9,0,inferred,histamine-gated Cl
+Dm3b,Dm3,GluClalpha,1.0,1652.8,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Dm3b,Dm3,GluRIA,1.0,44.5,1,inferred,AMPA-like iGluR: excitatory glutamate
+Dm3b,Dm3,GluRIB,1.0,78.5,1,inferred,AMPA-like iGluR
+Dm3b,Dm3,Nmdar1,0.03,7.6,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm3b,Dm3,Nmdar2,1.0,187.1,1,inferred,NMDA subunit
+Dm3b,Dm3,mGluR,1.0,471.0,1,inferred,metabotropic glutamate
+Dm3b,Dm3,Rdl,1.0,2474.4,1,inferred,GABA-A (fast inhibition)
+Dm3b,Dm3,Lcch3,1.0,86.4,1,inferred,GABA-A-like
+Dm3b,Dm3,Grd,0.0,0.9,0,inferred,GABA-gated (cation?)
+Dm3b,Dm3,GABA-B-R1,1.0,163.2,1,inferred,GABA-B (slow inhibition)
+Dm3b,Dm3,GABA-B-R2,0.6,13.5,1,inferred,GABA-B
+Dm3b,Dm3,GABA-B-R3,1.0,353.1,1,inferred,GABA-B
+Dm3b,Dm3,nAChRalpha1,1.0,1854.2,1,inferred,nicotinic
+Dm3b,Dm3,nAChRalpha5,1.0,1438.0,1,inferred,nicotinic
+Dm3b,Dm3,nAChRalpha6,0.96,420.4,1,inferred,nicotinic
+Dm3b,Dm3,nAChRalpha7,1.0,665.3,1,inferred,nicotinic
+Dm3b,Dm3,mAChR-A,1.0,242.7,1,inferred,muscarinic (Gq)
+Dm3b,Dm3,mAChR-B,1.0,137.5,1,inferred,muscarinic (Gi)
+Dm3b,Dm3,Dop1R1,1.0,6.1,1,inferred,"D1-like, Gs"
+Dm3b,Dm3,Dop1R2,0.0,7.5,0,inferred,"D1-like, Gs/Gq"
+Dm3b,Dm3,Dop2R,0.6,63.4,1,inferred,"D2-like, Gi"
+Dm3b,Dm3,DopEcR,1.0,12716.2,1,inferred,DA/ecdysone
+Dm3b,Dm3,Oamb,0.0,6.7,0,inferred,"OA alpha1-like, Gq"
+Dm3b,Dm3,Octbeta1R,1.0,219.8,1,inferred,"OA beta, Gs"
+Dm3b,Dm3,Octbeta2R,1.0,382.0,1,inferred,"OA beta, Gs"
+Dm3b,Dm3,Octbeta3R,1.0,117.9,1,inferred,"OA beta, Gs"
+Dm3b,Dm3,5-HT1A,0.17,20.0,0,inferred,Gi
+Dm3b,Dm3,5-HT1B,1.0,46.6,1,inferred,Gi
+Dm3b,Dm3,5-HT2A,1.0,106.5,1,inferred,Gq
+Dm3b,Dm3,5-HT2B,0.0,1.6,0,inferred,Gq
+Dm3b,Dm3,5-HT7,0.0,5.3,0,inferred,Gs
+Dm3b,Dm3,HisCl1,0.0,20.5,0,inferred,histamine-gated Cl
+Dm3b,Dm3,ort,0.0,8.9,0,inferred,histamine-gated Cl
+Dm3c,Dm3,GluClalpha,1.0,1652.8,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Dm3c,Dm3,GluRIA,1.0,44.5,1,inferred,AMPA-like iGluR: excitatory glutamate
+Dm3c,Dm3,GluRIB,1.0,78.5,1,inferred,AMPA-like iGluR
+Dm3c,Dm3,Nmdar1,0.03,7.6,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm3c,Dm3,Nmdar2,1.0,187.1,1,inferred,NMDA subunit
+Dm3c,Dm3,mGluR,1.0,471.0,1,inferred,metabotropic glutamate
+Dm3c,Dm3,Rdl,1.0,2474.4,1,inferred,GABA-A (fast inhibition)
+Dm3c,Dm3,Lcch3,1.0,86.4,1,inferred,GABA-A-like
+Dm3c,Dm3,Grd,0.0,0.9,0,inferred,GABA-gated (cation?)
+Dm3c,Dm3,GABA-B-R1,1.0,163.2,1,inferred,GABA-B (slow inhibition)
+Dm3c,Dm3,GABA-B-R2,0.6,13.5,1,inferred,GABA-B
+Dm3c,Dm3,GABA-B-R3,1.0,353.1,1,inferred,GABA-B
+Dm3c,Dm3,nAChRalpha1,1.0,1854.2,1,inferred,nicotinic
+Dm3c,Dm3,nAChRalpha5,1.0,1438.0,1,inferred,nicotinic
+Dm3c,Dm3,nAChRalpha6,0.96,420.4,1,inferred,nicotinic
+Dm3c,Dm3,nAChRalpha7,1.0,665.3,1,inferred,nicotinic
+Dm3c,Dm3,mAChR-A,1.0,242.7,1,inferred,muscarinic (Gq)
+Dm3c,Dm3,mAChR-B,1.0,137.5,1,inferred,muscarinic (Gi)
+Dm3c,Dm3,Dop1R1,1.0,6.1,1,inferred,"D1-like, Gs"
+Dm3c,Dm3,Dop1R2,0.0,7.5,0,inferred,"D1-like, Gs/Gq"
+Dm3c,Dm3,Dop2R,0.6,63.4,1,inferred,"D2-like, Gi"
+Dm3c,Dm3,DopEcR,1.0,12716.2,1,inferred,DA/ecdysone
+Dm3c,Dm3,Oamb,0.0,6.7,0,inferred,"OA alpha1-like, Gq"
+Dm3c,Dm3,Octbeta1R,1.0,219.8,1,inferred,"OA beta, Gs"
+Dm3c,Dm3,Octbeta2R,1.0,382.0,1,inferred,"OA beta, Gs"
+Dm3c,Dm3,Octbeta3R,1.0,117.9,1,inferred,"OA beta, Gs"
+Dm3c,Dm3,5-HT1A,0.17,20.0,0,inferred,Gi
+Dm3c,Dm3,5-HT1B,1.0,46.6,1,inferred,Gi
+Dm3c,Dm3,5-HT2A,1.0,106.5,1,inferred,Gq
+Dm3c,Dm3,5-HT2B,0.0,1.6,0,inferred,Gq
+Dm3c,Dm3,5-HT7,0.0,5.3,0,inferred,Gs
+Dm3c,Dm3,HisCl1,0.0,20.5,0,inferred,histamine-gated Cl
+Dm3c,Dm3,ort,0.0,8.9,0,inferred,histamine-gated Cl
+Dm8a,Dm8,GluClalpha,0.91,318.9,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Dm8a,Dm8,GluRIA,0.0,2.2,0,inferred,AMPA-like iGluR: excitatory glutamate
+Dm8a,Dm8,GluRIB,0.0,1.1,0,inferred,AMPA-like iGluR
+Dm8a,Dm8,Nmdar1,0.29,13.0,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm8a,Dm8,Nmdar2,1.0,218.1,1,inferred,NMDA subunit
+Dm8a,Dm8,mGluR,0.0,16.5,0,inferred,metabotropic glutamate
+Dm8a,Dm8,Rdl,1.0,576.8,1,inferred,GABA-A (fast inhibition)
+Dm8a,Dm8,Lcch3,1.0,130.0,1,inferred,GABA-A-like
+Dm8a,Dm8,Grd,1.0,164.5,1,inferred,GABA-gated (cation?)
+Dm8a,Dm8,GABA-B-R1,1.0,161.6,1,inferred,GABA-B (slow inhibition)
+Dm8a,Dm8,GABA-B-R2,0.98,16.8,1,inferred,GABA-B
+Dm8a,Dm8,GABA-B-R3,0.98,117.6,1,inferred,GABA-B
+Dm8a,Dm8,nAChRalpha1,1.0,812.4,1,inferred,nicotinic
+Dm8a,Dm8,nAChRalpha5,1.0,1942.4,1,inferred,nicotinic
+Dm8a,Dm8,nAChRalpha6,1.0,2548.4,1,inferred,nicotinic
+Dm8a,Dm8,nAChRalpha7,1.0,1228.5,1,inferred,nicotinic
+Dm8a,Dm8,mAChR-A,1.0,399.6,1,inferred,muscarinic (Gq)
+Dm8a,Dm8,mAChR-B,0.29,22.9,0,inferred,muscarinic (Gi)
+Dm8a,Dm8,Dop1R1,1.0,3.3,1,inferred,"D1-like, Gs"
+Dm8a,Dm8,Dop1R2,1.0,104.9,1,inferred,"D1-like, Gs/Gq"
+Dm8a,Dm8,Dop2R,0.12,43.0,0,inferred,"D2-like, Gi"
+Dm8a,Dm8,DopEcR,1.0,10007.2,1,inferred,DA/ecdysone
+Dm8a,Dm8,Oamb,0.14,16.4,0,inferred,"OA alpha1-like, Gq"
+Dm8a,Dm8,Octbeta1R,1.0,188.7,1,inferred,"OA beta, Gs"
+Dm8a,Dm8,Octbeta2R,1.0,419.7,1,inferred,"OA beta, Gs"
+Dm8a,Dm8,Octbeta3R,1.0,41.3,1,inferred,"OA beta, Gs"
+Dm8a,Dm8,5-HT1A,0.0,0.9,0,inferred,Gi
+Dm8a,Dm8,5-HT1B,0.01,2.8,0,inferred,Gi
+Dm8a,Dm8,5-HT2A,1.0,72.4,1,inferred,Gq
+Dm8a,Dm8,5-HT2B,0.0,0.5,0,inferred,Gq
+Dm8a,Dm8,5-HT7,1.0,95.8,1,inferred,Gs
+Dm8a,Dm8,HisCl1,0.0,8.4,0,inferred,histamine-gated Cl
+Dm8a,Dm8,ort,1.0,203.4,1,inferred,histamine-gated Cl
+Dm8b,Dm8,GluClalpha,0.91,318.9,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Dm8b,Dm8,GluRIA,0.0,2.2,0,inferred,AMPA-like iGluR: excitatory glutamate
+Dm8b,Dm8,GluRIB,0.0,1.1,0,inferred,AMPA-like iGluR
+Dm8b,Dm8,Nmdar1,0.29,13.0,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Dm8b,Dm8,Nmdar2,1.0,218.1,1,inferred,NMDA subunit
+Dm8b,Dm8,mGluR,0.0,16.5,0,inferred,metabotropic glutamate
+Dm8b,Dm8,Rdl,1.0,576.8,1,inferred,GABA-A (fast inhibition)
+Dm8b,Dm8,Lcch3,1.0,130.0,1,inferred,GABA-A-like
+Dm8b,Dm8,Grd,1.0,164.5,1,inferred,GABA-gated (cation?)
+Dm8b,Dm8,GABA-B-R1,1.0,161.6,1,inferred,GABA-B (slow inhibition)
+Dm8b,Dm8,GABA-B-R2,0.98,16.8,1,inferred,GABA-B
+Dm8b,Dm8,GABA-B-R3,0.98,117.6,1,inferred,GABA-B
+Dm8b,Dm8,nAChRalpha1,1.0,812.4,1,inferred,nicotinic
+Dm8b,Dm8,nAChRalpha5,1.0,1942.4,1,inferred,nicotinic
+Dm8b,Dm8,nAChRalpha6,1.0,2548.4,1,inferred,nicotinic
+Dm8b,Dm8,nAChRalpha7,1.0,1228.5,1,inferred,nicotinic
+Dm8b,Dm8,mAChR-A,1.0,399.6,1,inferred,muscarinic (Gq)
+Dm8b,Dm8,mAChR-B,0.29,22.9,0,inferred,muscarinic (Gi)
+Dm8b,Dm8,Dop1R1,1.0,3.3,1,inferred,"D1-like, Gs"
+Dm8b,Dm8,Dop1R2,1.0,104.9,1,inferred,"D1-like, Gs/Gq"
+Dm8b,Dm8,Dop2R,0.12,43.0,0,inferred,"D2-like, Gi"
+Dm8b,Dm8,DopEcR,1.0,10007.2,1,inferred,DA/ecdysone
+Dm8b,Dm8,Oamb,0.14,16.4,0,inferred,"OA alpha1-like, Gq"
+Dm8b,Dm8,Octbeta1R,1.0,188.7,1,inferred,"OA beta, Gs"
+Dm8b,Dm8,Octbeta2R,1.0,419.7,1,inferred,"OA beta, Gs"
+Dm8b,Dm8,Octbeta3R,1.0,41.3,1,inferred,"OA beta, Gs"
+Dm8b,Dm8,5-HT1A,0.0,0.9,0,inferred,Gi
+Dm8b,Dm8,5-HT1B,0.01,2.8,0,inferred,Gi
+Dm8b,Dm8,5-HT2A,1.0,72.4,1,inferred,Gq
+Dm8b,Dm8,5-HT2B,0.0,0.5,0,inferred,Gq
+Dm8b,Dm8,5-HT7,1.0,95.8,1,inferred,Gs
+Dm8b,Dm8,HisCl1,0.0,8.4,0,inferred,histamine-gated Cl
+Dm8b,Dm8,ort,1.0,203.4,1,inferred,histamine-gated Cl
+T4a,T4,GluClalpha,1.0,2192.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T4a,T4,GluRIA,0.0,6.3,0,derived,AMPA-like iGluR: excitatory glutamate
+T4a,T4,GluRIB,1.0,68.1,1,derived,AMPA-like iGluR
+T4a,T4,Nmdar1,0.77,18.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T4a,T4,Nmdar2,1.0,208.9,1,derived,NMDA subunit
+T4a,T4,mGluR,0.0,43.2,0,derived,metabotropic glutamate
+T4a,T4,Rdl,1.0,2257.5,1,derived,GABA-A (fast inhibition)
+T4a,T4,Lcch3,1.0,97.8,1,derived,GABA-A-like
+T4a,T4,Grd,0.0,8.5,0,derived,GABA-gated (cation?)
+T4a,T4,GABA-B-R1,1.0,426.2,1,derived,GABA-B (slow inhibition)
+T4a,T4,GABA-B-R2,1.0,44.6,1,derived,GABA-B
+T4a,T4,GABA-B-R3,0.02,29.3,0,derived,GABA-B
+T4a,T4,nAChRalpha1,1.0,333.7,1,derived,nicotinic
+T4a,T4,nAChRalpha5,1.0,1850.3,1,derived,nicotinic
+T4a,T4,nAChRalpha6,0.0,93.6,0,derived,nicotinic
+T4a,T4,nAChRalpha7,1.0,530.2,1,derived,nicotinic
+T4a,T4,mAChR-A,1.0,255.7,1,derived,muscarinic (Gq)
+T4a,T4,mAChR-B,1.0,211.0,1,derived,muscarinic (Gi)
+T4a,T4,Dop1R1,1.0,144.3,1,derived,"D1-like, Gs"
+T4a,T4,Dop1R2,0.0,0.9,0,derived,"D1-like, Gs/Gq"
+T4a,T4,Dop2R,0.0,28.4,0,derived,"D2-like, Gi"
+T4a,T4,DopEcR,1.0,9000.7,1,derived,DA/ecdysone
+T4a,T4,Oamb,1.0,119.4,1,derived,"OA alpha1-like, Gq"
+T4a,T4,Octbeta1R,0.0,13.1,0,derived,"OA beta, Gs"
+T4a,T4,Octbeta2R,1.0,527.7,1,derived,"OA beta, Gs"
+T4a,T4,Octbeta3R,1.0,78.0,1,derived,"OA beta, Gs"
+T4a,T4,5-HT1A,0.9,31.9,1,derived,Gi
+T4a,T4,5-HT1B,1.0,42.6,1,derived,Gi
+T4a,T4,5-HT2A,1.0,99.1,1,derived,Gq
+T4a,T4,5-HT2B,0.0,2.5,0,derived,Gq
+T4a,T4,5-HT7,1.0,66.5,1,derived,Gs
+T4a,T4,HisCl1,0.0,24.0,0,derived,histamine-gated Cl
+T4a,T4,ort,0.0,2.6,0,derived,histamine-gated Cl
+T4b,T4,GluClalpha,1.0,2192.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T4b,T4,GluRIA,0.0,6.3,0,derived,AMPA-like iGluR: excitatory glutamate
+T4b,T4,GluRIB,1.0,68.1,1,derived,AMPA-like iGluR
+T4b,T4,Nmdar1,0.77,18.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T4b,T4,Nmdar2,1.0,208.9,1,derived,NMDA subunit
+T4b,T4,mGluR,0.0,43.2,0,derived,metabotropic glutamate
+T4b,T4,Rdl,1.0,2257.5,1,derived,GABA-A (fast inhibition)
+T4b,T4,Lcch3,1.0,97.8,1,derived,GABA-A-like
+T4b,T4,Grd,0.0,8.5,0,derived,GABA-gated (cation?)
+T4b,T4,GABA-B-R1,1.0,426.2,1,derived,GABA-B (slow inhibition)
+T4b,T4,GABA-B-R2,1.0,44.6,1,derived,GABA-B
+T4b,T4,GABA-B-R3,0.02,29.3,0,derived,GABA-B
+T4b,T4,nAChRalpha1,1.0,333.7,1,derived,nicotinic
+T4b,T4,nAChRalpha5,1.0,1850.3,1,derived,nicotinic
+T4b,T4,nAChRalpha6,0.0,93.6,0,derived,nicotinic
+T4b,T4,nAChRalpha7,1.0,530.2,1,derived,nicotinic
+T4b,T4,mAChR-A,1.0,255.7,1,derived,muscarinic (Gq)
+T4b,T4,mAChR-B,1.0,211.0,1,derived,muscarinic (Gi)
+T4b,T4,Dop1R1,1.0,144.3,1,derived,"D1-like, Gs"
+T4b,T4,Dop1R2,0.0,0.9,0,derived,"D1-like, Gs/Gq"
+T4b,T4,Dop2R,0.0,28.4,0,derived,"D2-like, Gi"
+T4b,T4,DopEcR,1.0,9000.7,1,derived,DA/ecdysone
+T4b,T4,Oamb,1.0,119.4,1,derived,"OA alpha1-like, Gq"
+T4b,T4,Octbeta1R,0.0,13.1,0,derived,"OA beta, Gs"
+T4b,T4,Octbeta2R,1.0,527.7,1,derived,"OA beta, Gs"
+T4b,T4,Octbeta3R,1.0,78.0,1,derived,"OA beta, Gs"
+T4b,T4,5-HT1A,0.9,31.9,1,derived,Gi
+T4b,T4,5-HT1B,1.0,42.6,1,derived,Gi
+T4b,T4,5-HT2A,1.0,99.1,1,derived,Gq
+T4b,T4,5-HT2B,0.0,2.5,0,derived,Gq
+T4b,T4,5-HT7,1.0,66.5,1,derived,Gs
+T4b,T4,HisCl1,0.0,24.0,0,derived,histamine-gated Cl
+T4b,T4,ort,0.0,2.6,0,derived,histamine-gated Cl
+T4c,T4,GluClalpha,1.0,2192.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T4c,T4,GluRIA,0.0,6.3,0,derived,AMPA-like iGluR: excitatory glutamate
+T4c,T4,GluRIB,1.0,68.1,1,derived,AMPA-like iGluR
+T4c,T4,Nmdar1,0.77,18.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T4c,T4,Nmdar2,1.0,208.9,1,derived,NMDA subunit
+T4c,T4,mGluR,0.0,43.2,0,derived,metabotropic glutamate
+T4c,T4,Rdl,1.0,2257.5,1,derived,GABA-A (fast inhibition)
+T4c,T4,Lcch3,1.0,97.8,1,derived,GABA-A-like
+T4c,T4,Grd,0.0,8.5,0,derived,GABA-gated (cation?)
+T4c,T4,GABA-B-R1,1.0,426.2,1,derived,GABA-B (slow inhibition)
+T4c,T4,GABA-B-R2,1.0,44.6,1,derived,GABA-B
+T4c,T4,GABA-B-R3,0.02,29.3,0,derived,GABA-B
+T4c,T4,nAChRalpha1,1.0,333.7,1,derived,nicotinic
+T4c,T4,nAChRalpha5,1.0,1850.3,1,derived,nicotinic
+T4c,T4,nAChRalpha6,0.0,93.6,0,derived,nicotinic
+T4c,T4,nAChRalpha7,1.0,530.2,1,derived,nicotinic
+T4c,T4,mAChR-A,1.0,255.7,1,derived,muscarinic (Gq)
+T4c,T4,mAChR-B,1.0,211.0,1,derived,muscarinic (Gi)
+T4c,T4,Dop1R1,1.0,144.3,1,derived,"D1-like, Gs"
+T4c,T4,Dop1R2,0.0,0.9,0,derived,"D1-like, Gs/Gq"
+T4c,T4,Dop2R,0.0,28.4,0,derived,"D2-like, Gi"
+T4c,T4,DopEcR,1.0,9000.7,1,derived,DA/ecdysone
+T4c,T4,Oamb,1.0,119.4,1,derived,"OA alpha1-like, Gq"
+T4c,T4,Octbeta1R,0.0,13.1,0,derived,"OA beta, Gs"
+T4c,T4,Octbeta2R,1.0,527.7,1,derived,"OA beta, Gs"
+T4c,T4,Octbeta3R,1.0,78.0,1,derived,"OA beta, Gs"
+T4c,T4,5-HT1A,0.9,31.9,1,derived,Gi
+T4c,T4,5-HT1B,1.0,42.6,1,derived,Gi
+T4c,T4,5-HT2A,1.0,99.1,1,derived,Gq
+T4c,T4,5-HT2B,0.0,2.5,0,derived,Gq
+T4c,T4,5-HT7,1.0,66.5,1,derived,Gs
+T4c,T4,HisCl1,0.0,24.0,0,derived,histamine-gated Cl
+T4c,T4,ort,0.0,2.6,0,derived,histamine-gated Cl
+T4d,T4,GluClalpha,1.0,2192.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T4d,T4,GluRIA,0.0,6.3,0,derived,AMPA-like iGluR: excitatory glutamate
+T4d,T4,GluRIB,1.0,68.1,1,derived,AMPA-like iGluR
+T4d,T4,Nmdar1,0.77,18.3,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T4d,T4,Nmdar2,1.0,208.9,1,derived,NMDA subunit
+T4d,T4,mGluR,0.0,43.2,0,derived,metabotropic glutamate
+T4d,T4,Rdl,1.0,2257.5,1,derived,GABA-A (fast inhibition)
+T4d,T4,Lcch3,1.0,97.8,1,derived,GABA-A-like
+T4d,T4,Grd,0.0,8.5,0,derived,GABA-gated (cation?)
+T4d,T4,GABA-B-R1,1.0,426.2,1,derived,GABA-B (slow inhibition)
+T4d,T4,GABA-B-R2,1.0,44.6,1,derived,GABA-B
+T4d,T4,GABA-B-R3,0.02,29.3,0,derived,GABA-B
+T4d,T4,nAChRalpha1,1.0,333.7,1,derived,nicotinic
+T4d,T4,nAChRalpha5,1.0,1850.3,1,derived,nicotinic
+T4d,T4,nAChRalpha6,0.0,93.6,0,derived,nicotinic
+T4d,T4,nAChRalpha7,1.0,530.2,1,derived,nicotinic
+T4d,T4,mAChR-A,1.0,255.7,1,derived,muscarinic (Gq)
+T4d,T4,mAChR-B,1.0,211.0,1,derived,muscarinic (Gi)
+T4d,T4,Dop1R1,1.0,144.3,1,derived,"D1-like, Gs"
+T4d,T4,Dop1R2,0.0,0.9,0,derived,"D1-like, Gs/Gq"
+T4d,T4,Dop2R,0.0,28.4,0,derived,"D2-like, Gi"
+T4d,T4,DopEcR,1.0,9000.7,1,derived,DA/ecdysone
+T4d,T4,Oamb,1.0,119.4,1,derived,"OA alpha1-like, Gq"
+T4d,T4,Octbeta1R,0.0,13.1,0,derived,"OA beta, Gs"
+T4d,T4,Octbeta2R,1.0,527.7,1,derived,"OA beta, Gs"
+T4d,T4,Octbeta3R,1.0,78.0,1,derived,"OA beta, Gs"
+T4d,T4,5-HT1A,0.9,31.9,1,derived,Gi
+T4d,T4,5-HT1B,1.0,42.6,1,derived,Gi
+T4d,T4,5-HT2A,1.0,99.1,1,derived,Gq
+T4d,T4,5-HT2B,0.0,2.5,0,derived,Gq
+T4d,T4,5-HT7,1.0,66.5,1,derived,Gs
+T4d,T4,HisCl1,0.0,24.0,0,derived,histamine-gated Cl
+T4d,T4,ort,0.0,2.6,0,derived,histamine-gated Cl
+T5a,T5,GluClalpha,1.0,2781.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T5a,T5,GluRIA,1.0,24.7,1,derived,AMPA-like iGluR: excitatory glutamate
+T5a,T5,GluRIB,1.0,114.2,1,derived,AMPA-like iGluR
+T5a,T5,Nmdar1,0.32,16.6,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T5a,T5,Nmdar2,1.0,263.7,1,derived,NMDA subunit
+T5a,T5,mGluR,0.0,58.4,0,derived,metabotropic glutamate
+T5a,T5,Rdl,1.0,2403.5,1,derived,GABA-A (fast inhibition)
+T5a,T5,Lcch3,1.0,137.1,1,derived,GABA-A-like
+T5a,T5,Grd,0.0,1.2,0,derived,GABA-gated (cation?)
+T5a,T5,GABA-B-R1,1.0,414.6,1,derived,GABA-B (slow inhibition)
+T5a,T5,GABA-B-R2,1.0,65.5,1,derived,GABA-B
+T5a,T5,GABA-B-R3,0.0,26.4,0,derived,GABA-B
+T5a,T5,nAChRalpha1,1.0,426.6,1,derived,nicotinic
+T5a,T5,nAChRalpha5,1.0,3100.0,1,derived,nicotinic
+T5a,T5,nAChRalpha6,0.0,170.2,0,derived,nicotinic
+T5a,T5,nAChRalpha7,1.0,534.8,1,derived,nicotinic
+T5a,T5,mAChR-A,1.0,225.0,1,derived,muscarinic (Gq)
+T5a,T5,mAChR-B,1.0,243.3,1,derived,muscarinic (Gi)
+T5a,T5,Dop1R1,1.0,267.5,1,derived,"D1-like, Gs"
+T5a,T5,Dop1R2,0.0,3.3,0,derived,"D1-like, Gs/Gq"
+T5a,T5,Dop2R,0.0,27.2,0,derived,"D2-like, Gi"
+T5a,T5,DopEcR,1.0,6680.5,1,derived,DA/ecdysone
+T5a,T5,Oamb,1.0,182.8,1,derived,"OA alpha1-like, Gq"
+T5a,T5,Octbeta1R,0.0,21.4,0,derived,"OA beta, Gs"
+T5a,T5,Octbeta2R,1.0,887.2,1,derived,"OA beta, Gs"
+T5a,T5,Octbeta3R,1.0,100.8,1,derived,"OA beta, Gs"
+T5a,T5,5-HT1A,1.0,208.1,1,derived,Gi
+T5a,T5,5-HT1B,1.0,71.6,1,derived,Gi
+T5a,T5,5-HT2A,1.0,172.2,1,derived,Gq
+T5a,T5,5-HT2B,0.0,5.9,0,derived,Gq
+T5a,T5,5-HT7,0.0,18.4,0,derived,Gs
+T5a,T5,HisCl1,0.0,18.3,0,derived,histamine-gated Cl
+T5a,T5,ort,0.0,17.5,0,derived,histamine-gated Cl
+T5b,T5,GluClalpha,1.0,2781.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T5b,T5,GluRIA,1.0,24.7,1,derived,AMPA-like iGluR: excitatory glutamate
+T5b,T5,GluRIB,1.0,114.2,1,derived,AMPA-like iGluR
+T5b,T5,Nmdar1,0.32,16.6,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T5b,T5,Nmdar2,1.0,263.7,1,derived,NMDA subunit
+T5b,T5,mGluR,0.0,58.4,0,derived,metabotropic glutamate
+T5b,T5,Rdl,1.0,2403.5,1,derived,GABA-A (fast inhibition)
+T5b,T5,Lcch3,1.0,137.1,1,derived,GABA-A-like
+T5b,T5,Grd,0.0,1.2,0,derived,GABA-gated (cation?)
+T5b,T5,GABA-B-R1,1.0,414.6,1,derived,GABA-B (slow inhibition)
+T5b,T5,GABA-B-R2,1.0,65.5,1,derived,GABA-B
+T5b,T5,GABA-B-R3,0.0,26.4,0,derived,GABA-B
+T5b,T5,nAChRalpha1,1.0,426.6,1,derived,nicotinic
+T5b,T5,nAChRalpha5,1.0,3100.0,1,derived,nicotinic
+T5b,T5,nAChRalpha6,0.0,170.2,0,derived,nicotinic
+T5b,T5,nAChRalpha7,1.0,534.8,1,derived,nicotinic
+T5b,T5,mAChR-A,1.0,225.0,1,derived,muscarinic (Gq)
+T5b,T5,mAChR-B,1.0,243.3,1,derived,muscarinic (Gi)
+T5b,T5,Dop1R1,1.0,267.5,1,derived,"D1-like, Gs"
+T5b,T5,Dop1R2,0.0,3.3,0,derived,"D1-like, Gs/Gq"
+T5b,T5,Dop2R,0.0,27.2,0,derived,"D2-like, Gi"
+T5b,T5,DopEcR,1.0,6680.5,1,derived,DA/ecdysone
+T5b,T5,Oamb,1.0,182.8,1,derived,"OA alpha1-like, Gq"
+T5b,T5,Octbeta1R,0.0,21.4,0,derived,"OA beta, Gs"
+T5b,T5,Octbeta2R,1.0,887.2,1,derived,"OA beta, Gs"
+T5b,T5,Octbeta3R,1.0,100.8,1,derived,"OA beta, Gs"
+T5b,T5,5-HT1A,1.0,208.1,1,derived,Gi
+T5b,T5,5-HT1B,1.0,71.6,1,derived,Gi
+T5b,T5,5-HT2A,1.0,172.2,1,derived,Gq
+T5b,T5,5-HT2B,0.0,5.9,0,derived,Gq
+T5b,T5,5-HT7,0.0,18.4,0,derived,Gs
+T5b,T5,HisCl1,0.0,18.3,0,derived,histamine-gated Cl
+T5b,T5,ort,0.0,17.5,0,derived,histamine-gated Cl
+T5c,T5,GluClalpha,1.0,2781.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T5c,T5,GluRIA,1.0,24.7,1,derived,AMPA-like iGluR: excitatory glutamate
+T5c,T5,GluRIB,1.0,114.2,1,derived,AMPA-like iGluR
+T5c,T5,Nmdar1,0.32,16.6,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T5c,T5,Nmdar2,1.0,263.7,1,derived,NMDA subunit
+T5c,T5,mGluR,0.0,58.4,0,derived,metabotropic glutamate
+T5c,T5,Rdl,1.0,2403.5,1,derived,GABA-A (fast inhibition)
+T5c,T5,Lcch3,1.0,137.1,1,derived,GABA-A-like
+T5c,T5,Grd,0.0,1.2,0,derived,GABA-gated (cation?)
+T5c,T5,GABA-B-R1,1.0,414.6,1,derived,GABA-B (slow inhibition)
+T5c,T5,GABA-B-R2,1.0,65.5,1,derived,GABA-B
+T5c,T5,GABA-B-R3,0.0,26.4,0,derived,GABA-B
+T5c,T5,nAChRalpha1,1.0,426.6,1,derived,nicotinic
+T5c,T5,nAChRalpha5,1.0,3100.0,1,derived,nicotinic
+T5c,T5,nAChRalpha6,0.0,170.2,0,derived,nicotinic
+T5c,T5,nAChRalpha7,1.0,534.8,1,derived,nicotinic
+T5c,T5,mAChR-A,1.0,225.0,1,derived,muscarinic (Gq)
+T5c,T5,mAChR-B,1.0,243.3,1,derived,muscarinic (Gi)
+T5c,T5,Dop1R1,1.0,267.5,1,derived,"D1-like, Gs"
+T5c,T5,Dop1R2,0.0,3.3,0,derived,"D1-like, Gs/Gq"
+T5c,T5,Dop2R,0.0,27.2,0,derived,"D2-like, Gi"
+T5c,T5,DopEcR,1.0,6680.5,1,derived,DA/ecdysone
+T5c,T5,Oamb,1.0,182.8,1,derived,"OA alpha1-like, Gq"
+T5c,T5,Octbeta1R,0.0,21.4,0,derived,"OA beta, Gs"
+T5c,T5,Octbeta2R,1.0,887.2,1,derived,"OA beta, Gs"
+T5c,T5,Octbeta3R,1.0,100.8,1,derived,"OA beta, Gs"
+T5c,T5,5-HT1A,1.0,208.1,1,derived,Gi
+T5c,T5,5-HT1B,1.0,71.6,1,derived,Gi
+T5c,T5,5-HT2A,1.0,172.2,1,derived,Gq
+T5c,T5,5-HT2B,0.0,5.9,0,derived,Gq
+T5c,T5,5-HT7,0.0,18.4,0,derived,Gs
+T5c,T5,HisCl1,0.0,18.3,0,derived,histamine-gated Cl
+T5c,T5,ort,0.0,17.5,0,derived,histamine-gated Cl
+T5d,T5,GluClalpha,1.0,2781.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+T5d,T5,GluRIA,1.0,24.7,1,derived,AMPA-like iGluR: excitatory glutamate
+T5d,T5,GluRIB,1.0,114.2,1,derived,AMPA-like iGluR
+T5d,T5,Nmdar1,0.32,16.6,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+T5d,T5,Nmdar2,1.0,263.7,1,derived,NMDA subunit
+T5d,T5,mGluR,0.0,58.4,0,derived,metabotropic glutamate
+T5d,T5,Rdl,1.0,2403.5,1,derived,GABA-A (fast inhibition)
+T5d,T5,Lcch3,1.0,137.1,1,derived,GABA-A-like
+T5d,T5,Grd,0.0,1.2,0,derived,GABA-gated (cation?)
+T5d,T5,GABA-B-R1,1.0,414.6,1,derived,GABA-B (slow inhibition)
+T5d,T5,GABA-B-R2,1.0,65.5,1,derived,GABA-B
+T5d,T5,GABA-B-R3,0.0,26.4,0,derived,GABA-B
+T5d,T5,nAChRalpha1,1.0,426.6,1,derived,nicotinic
+T5d,T5,nAChRalpha5,1.0,3100.0,1,derived,nicotinic
+T5d,T5,nAChRalpha6,0.0,170.2,0,derived,nicotinic
+T5d,T5,nAChRalpha7,1.0,534.8,1,derived,nicotinic
+T5d,T5,mAChR-A,1.0,225.0,1,derived,muscarinic (Gq)
+T5d,T5,mAChR-B,1.0,243.3,1,derived,muscarinic (Gi)
+T5d,T5,Dop1R1,1.0,267.5,1,derived,"D1-like, Gs"
+T5d,T5,Dop1R2,0.0,3.3,0,derived,"D1-like, Gs/Gq"
+T5d,T5,Dop2R,0.0,27.2,0,derived,"D2-like, Gi"
+T5d,T5,DopEcR,1.0,6680.5,1,derived,DA/ecdysone
+T5d,T5,Oamb,1.0,182.8,1,derived,"OA alpha1-like, Gq"
+T5d,T5,Octbeta1R,0.0,21.4,0,derived,"OA beta, Gs"
+T5d,T5,Octbeta2R,1.0,887.2,1,derived,"OA beta, Gs"
+T5d,T5,Octbeta3R,1.0,100.8,1,derived,"OA beta, Gs"
+T5d,T5,5-HT1A,1.0,208.1,1,derived,Gi
+T5d,T5,5-HT1B,1.0,71.6,1,derived,Gi
+T5d,T5,5-HT2A,1.0,172.2,1,derived,Gq
+T5d,T5,5-HT2B,0.0,5.9,0,derived,Gq
+T5d,T5,5-HT7,0.0,18.4,0,derived,Gs
+T5d,T5,HisCl1,0.0,18.3,0,derived,histamine-gated Cl
+T5d,T5,ort,0.0,17.5,0,derived,histamine-gated Cl
+R1-R6,R1-6,GluClalpha,0.0,223.7,0,derived,glutamate-gated chloride: inhibitory glutamate
+R1-R6,R1-6,GluRIA,0.0,6.7,0,derived,AMPA-like iGluR: excitatory glutamate
+R1-R6,R1-6,GluRIB,0.0,17.1,0,derived,AMPA-like iGluR
+R1-R6,R1-6,Nmdar1,0.0,6.8,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+R1-R6,R1-6,Nmdar2,0.0,35.4,0,derived,NMDA subunit
+R1-R6,R1-6,mGluR,0.0,23.9,0,derived,metabotropic glutamate
+R1-R6,R1-6,Rdl,0.0,277.6,0,derived,GABA-A (fast inhibition)
+R1-R6,R1-6,Lcch3,0.0,21.3,0,derived,GABA-A-like
+R1-R6,R1-6,Grd,0.0,2.9,0,derived,GABA-gated (cation?)
+R1-R6,R1-6,GABA-B-R1,0.0,27.0,0,derived,GABA-B (slow inhibition)
+R1-R6,R1-6,GABA-B-R2,0.0,8.5,0,derived,GABA-B
+R1-R6,R1-6,GABA-B-R3,0.0,16.7,0,derived,GABA-B
+R1-R6,R1-6,nAChRalpha1,0.0,30.1,0,derived,nicotinic
+R1-R6,R1-6,nAChRalpha5,0.0,99.6,0,derived,nicotinic
+R1-R6,R1-6,nAChRalpha6,0.0,115.2,0,derived,nicotinic
+R1-R6,R1-6,nAChRalpha7,0.0,112.2,0,derived,nicotinic
+R1-R6,R1-6,mAChR-A,0.0,50.1,0,derived,muscarinic (Gq)
+R1-R6,R1-6,mAChR-B,0.0,10.7,0,derived,muscarinic (Gi)
+R1-R6,R1-6,Dop1R1,1.0,34.1,1,derived,"D1-like, Gs"
+R1-R6,R1-6,Dop1R2,0.0,5.2,0,derived,"D1-like, Gs/Gq"
+R1-R6,R1-6,Dop2R,0.0,27.9,0,derived,"D2-like, Gi"
+R1-R6,R1-6,DopEcR,1.0,2957.0,1,derived,DA/ecdysone
+R1-R6,R1-6,Oamb,0.0,15.1,0,derived,"OA alpha1-like, Gq"
+R1-R6,R1-6,Octbeta1R,0.0,20.0,0,derived,"OA beta, Gs"
+R1-R6,R1-6,Octbeta2R,0.0,55.3,0,derived,"OA beta, Gs"
+R1-R6,R1-6,Octbeta3R,0.01,17.0,0,derived,"OA beta, Gs"
+R1-R6,R1-6,5-HT1A,0.0,13.0,0,derived,Gi
+R1-R6,R1-6,5-HT1B,0.32,10.7,0,derived,Gi
+R1-R6,R1-6,5-HT2A,0.54,38.8,1,derived,Gq
+R1-R6,R1-6,5-HT2B,0.0,5.9,0,derived,Gq
+R1-R6,R1-6,5-HT7,0.0,35.1,0,derived,Gs
+R1-R6,R1-6,HisCl1,1.0,178.4,1,derived,histamine-gated Cl
+R1-R6,R1-6,ort,0.0,2.0,0,derived,histamine-gated Cl
+R8p,R8_Rh5,GluClalpha,0.0,27.9,0,inferred,glutamate-gated chloride: inhibitory glutamate
+R8p,R8_Rh5,GluRIA,0.0,0.9,0,inferred,AMPA-like iGluR: excitatory glutamate
+R8p,R8_Rh5,GluRIB,0.0,5.6,0,inferred,AMPA-like iGluR
+R8p,R8_Rh5,Nmdar1,0.03,7.5,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+R8p,R8_Rh5,Nmdar2,0.0,5.3,0,inferred,NMDA subunit
+R8p,R8_Rh5,mGluR,0.0,8.4,0,inferred,metabotropic glutamate
+R8p,R8_Rh5,Rdl,0.0,34.9,0,inferred,GABA-A (fast inhibition)
+R8p,R8_Rh5,Lcch3,0.0,11.1,0,inferred,GABA-A-like
+R8p,R8_Rh5,Grd,0.0,0.8,0,inferred,GABA-gated (cation?)
+R8p,R8_Rh5,GABA-B-R1,0.0,6.6,0,inferred,GABA-B (slow inhibition)
+R8p,R8_Rh5,GABA-B-R2,1.0,20.3,1,inferred,GABA-B
+R8p,R8_Rh5,GABA-B-R3,0.0,1.8,0,inferred,GABA-B
+R8p,R8_Rh5,nAChRalpha1,0.0,3.8,0,inferred,nicotinic
+R8p,R8_Rh5,nAChRalpha5,0.0,14.3,0,inferred,nicotinic
+R8p,R8_Rh5,nAChRalpha6,0.0,32.1,0,inferred,nicotinic
+R8p,R8_Rh5,nAChRalpha7,0.0,18.0,0,inferred,nicotinic
+R8p,R8_Rh5,mAChR-A,0.0,16.4,0,inferred,muscarinic (Gq)
+R8p,R8_Rh5,mAChR-B,0.0,1.9,0,inferred,muscarinic (Gi)
+R8p,R8_Rh5,Dop1R1,1.0,3.2,1,inferred,"D1-like, Gs"
+R8p,R8_Rh5,Dop1R2,0.0,0.6,0,inferred,"D1-like, Gs/Gq"
+R8p,R8_Rh5,Dop2R,0.0,7.1,0,inferred,"D2-like, Gi"
+R8p,R8_Rh5,DopEcR,1.0,3312.8,1,inferred,DA/ecdysone
+R8p,R8_Rh5,Oamb,0.11,15.0,0,inferred,"OA alpha1-like, Gq"
+R8p,R8_Rh5,Octbeta1R,0.0,3.7,0,inferred,"OA beta, Gs"
+R8p,R8_Rh5,Octbeta2R,0.0,9.0,0,inferred,"OA beta, Gs"
+R8p,R8_Rh5,Octbeta3R,0.0,5.2,0,inferred,"OA beta, Gs"
+R8p,R8_Rh5,5-HT1A,0.0,2.0,0,inferred,Gi
+R8p,R8_Rh5,5-HT1B,0.99,35.4,1,inferred,Gi
+R8p,R8_Rh5,5-HT2A,0.0,6.8,0,inferred,Gq
+R8p,R8_Rh5,5-HT2B,0.0,1.7,0,inferred,Gq
+R8p,R8_Rh5,5-HT7,0.0,5.0,0,inferred,Gs
+R8p,R8_Rh5,HisCl1,1.0,229.7,1,inferred,histamine-gated Cl
+R8p,R8_Rh5,ort,0.0,2.1,0,inferred,histamine-gated Cl
+R8y,R8_Rh6,GluClalpha,0.0,23.9,0,inferred,glutamate-gated chloride: inhibitory glutamate
+R8y,R8_Rh6,GluRIA,0.0,0.4,0,inferred,AMPA-like iGluR: excitatory glutamate
+R8y,R8_Rh6,GluRIB,0.0,2.1,0,inferred,AMPA-like iGluR
+R8y,R8_Rh6,Nmdar1,0.0,3.7,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+R8y,R8_Rh6,Nmdar2,0.0,8.0,0,inferred,NMDA subunit
+R8y,R8_Rh6,mGluR,0.0,5.5,0,inferred,metabotropic glutamate
+R8y,R8_Rh6,Rdl,0.0,17.5,0,inferred,GABA-A (fast inhibition)
+R8y,R8_Rh6,Lcch3,0.0,14.2,0,inferred,GABA-A-like
+R8y,R8_Rh6,Grd,0.0,0.5,0,inferred,GABA-gated (cation?)
+R8y,R8_Rh6,GABA-B-R1,0.0,1.8,0,inferred,GABA-B (slow inhibition)
+R8y,R8_Rh6,GABA-B-R2,1.0,28.1,1,inferred,GABA-B
+R8y,R8_Rh6,GABA-B-R3,0.0,1.8,0,inferred,GABA-B
+R8y,R8_Rh6,nAChRalpha1,0.0,4.4,0,inferred,nicotinic
+R8y,R8_Rh6,nAChRalpha5,0.0,10.6,0,inferred,nicotinic
+R8y,R8_Rh6,nAChRalpha6,0.01,118.4,0,inferred,nicotinic
+R8y,R8_Rh6,nAChRalpha7,0.0,14.6,0,inferred,nicotinic
+R8y,R8_Rh6,mAChR-A,0.0,14.6,0,inferred,muscarinic (Gq)
+R8y,R8_Rh6,mAChR-B,0.0,1.2,0,inferred,muscarinic (Gi)
+R8y,R8_Rh6,Dop1R1,1.0,13.2,1,inferred,"D1-like, Gs"
+R8y,R8_Rh6,Dop1R2,0.0,0.8,0,inferred,"D1-like, Gs/Gq"
+R8y,R8_Rh6,Dop2R,0.0,3.6,0,inferred,"D2-like, Gi"
+R8y,R8_Rh6,DopEcR,1.0,2721.5,1,inferred,DA/ecdysone
+R8y,R8_Rh6,Oamb,0.0,2.4,0,inferred,"OA alpha1-like, Gq"
+R8y,R8_Rh6,Octbeta1R,0.0,0.9,0,inferred,"OA beta, Gs"
+R8y,R8_Rh6,Octbeta2R,0.0,10.2,0,inferred,"OA beta, Gs"
+R8y,R8_Rh6,Octbeta3R,0.0,2.1,0,inferred,"OA beta, Gs"
+R8y,R8_Rh6,5-HT1A,0.0,1.1,0,inferred,Gi
+R8y,R8_Rh6,5-HT1B,1.0,37.0,1,inferred,Gi
+R8y,R8_Rh6,5-HT2A,0.0,2.5,0,inferred,Gq
+R8y,R8_Rh6,5-HT2B,0.0,1.8,0,inferred,Gq
+R8y,R8_Rh6,5-HT7,0.01,14.3,0,inferred,Gs
+R8y,R8_Rh6,HisCl1,1.0,294.7,1,inferred,histamine-gated Cl
+R8y,R8_Rh6,ort,0.0,0.8,0,inferred,histamine-gated Cl
+KCab-c,KC_ab_c,GluClalpha,1.0,1573.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+KCab-c,KC_ab_c,GluRIA,1.0,53.3,1,derived,AMPA-like iGluR: excitatory glutamate
+KCab-c,KC_ab_c,GluRIB,1.0,131.8,1,derived,AMPA-like iGluR
+KCab-c,KC_ab_c,Nmdar1,0.04,8.1,0,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+KCab-c,KC_ab_c,Nmdar2,1.0,247.1,1,derived,NMDA subunit
+KCab-c,KC_ab_c,mGluR,0.0,24.9,0,derived,metabotropic glutamate
+KCab-c,KC_ab_c,Rdl,1.0,8513.8,1,derived,GABA-A (fast inhibition)
+KCab-c,KC_ab_c,Lcch3,1.0,61.5,1,derived,GABA-A-like
+KCab-c,KC_ab_c,Grd,0.0,0.3,0,derived,GABA-gated (cation?)
+KCab-c,KC_ab_c,GABA-B-R1,1.0,339.1,1,derived,GABA-B (slow inhibition)
+KCab-c,KC_ab_c,GABA-B-R2,0.63,11.8,1,derived,GABA-B
+KCab-c,KC_ab_c,GABA-B-R3,0.0,2.8,0,derived,GABA-B
+KCab-c,KC_ab_c,nAChRalpha1,1.0,580.6,1,derived,nicotinic
+KCab-c,KC_ab_c,nAChRalpha5,1.0,3256.7,1,derived,nicotinic
+KCab-c,KC_ab_c,nAChRalpha6,1.0,3671.8,1,derived,nicotinic
+KCab-c,KC_ab_c,nAChRalpha7,1.0,736.7,1,derived,nicotinic
+KCab-c,KC_ab_c,mAChR-A,1.0,739.4,1,derived,muscarinic (Gq)
+KCab-c,KC_ab_c,mAChR-B,1.0,199.7,1,derived,muscarinic (Gi)
+KCab-c,KC_ab_c,Dop1R1,1.0,311.4,1,derived,"D1-like, Gs"
+KCab-c,KC_ab_c,Dop1R2,1.0,197.5,1,derived,"D1-like, Gs/Gq"
+KCab-c,KC_ab_c,Dop2R,1.0,392.0,1,derived,"D2-like, Gi"
+KCab-c,KC_ab_c,DopEcR,1.0,6665.2,1,derived,DA/ecdysone
+KCab-c,KC_ab_c,Oamb,1.0,135.8,1,derived,"OA alpha1-like, Gq"
+KCab-c,KC_ab_c,Octbeta1R,1.0,224.3,1,derived,"OA beta, Gs"
+KCab-c,KC_ab_c,Octbeta2R,0.0,15.6,0,derived,"OA beta, Gs"
+KCab-c,KC_ab_c,Octbeta3R,1.0,54.4,1,derived,"OA beta, Gs"
+KCab-c,KC_ab_c,5-HT1A,1.0,278.3,1,derived,Gi
+KCab-c,KC_ab_c,5-HT1B,1.0,38.3,1,derived,Gi
+KCab-c,KC_ab_c,5-HT2A,0.21,21.4,0,derived,Gq
+KCab-c,KC_ab_c,5-HT2B,0.0,1.5,0,derived,Gq
+KCab-c,KC_ab_c,5-HT7,0.0,4.9,0,derived,Gs
+KCab-c,KC_ab_c,HisCl1,0.0,10.3,0,derived,histamine-gated Cl
+KCab-c,KC_ab_c,ort,0.0,0.0,0,derived,histamine-gated Cl
+KCab-p,KC_ab_p,GluClalpha,1.0,569.1,1,derived,glutamate-gated chloride: inhibitory glutamate
+KCab-p,KC_ab_p,GluRIA,1.0,51.2,1,derived,AMPA-like iGluR: excitatory glutamate
+KCab-p,KC_ab_p,GluRIB,1.0,109.0,1,derived,AMPA-like iGluR
+KCab-p,KC_ab_p,Nmdar1,0.98,32.7,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+KCab-p,KC_ab_p,Nmdar2,1.0,173.3,1,derived,NMDA subunit
+KCab-p,KC_ab_p,mGluR,0.0,74.0,0,derived,metabotropic glutamate
+KCab-p,KC_ab_p,Rdl,1.0,5703.3,1,derived,GABA-A (fast inhibition)
+KCab-p,KC_ab_p,Lcch3,1.0,111.5,1,derived,GABA-A-like
+KCab-p,KC_ab_p,Grd,0.0,0.2,0,derived,GABA-gated (cation?)
+KCab-p,KC_ab_p,GABA-B-R1,1.0,296.5,1,derived,GABA-B (slow inhibition)
+KCab-p,KC_ab_p,GABA-B-R2,1.0,63.4,1,derived,GABA-B
+KCab-p,KC_ab_p,GABA-B-R3,0.16,33.3,0,derived,GABA-B
+KCab-p,KC_ab_p,nAChRalpha1,1.0,295.6,1,derived,nicotinic
+KCab-p,KC_ab_p,nAChRalpha5,1.0,1422.0,1,derived,nicotinic
+KCab-p,KC_ab_p,nAChRalpha6,1.0,1773.6,1,derived,nicotinic
+KCab-p,KC_ab_p,nAChRalpha7,1.0,1017.9,1,derived,nicotinic
+KCab-p,KC_ab_p,mAChR-A,1.0,738.8,1,derived,muscarinic (Gq)
+KCab-p,KC_ab_p,mAChR-B,1.0,237.2,1,derived,muscarinic (Gi)
+KCab-p,KC_ab_p,Dop1R1,1.0,1018.0,1,derived,"D1-like, Gs"
+KCab-p,KC_ab_p,Dop1R2,1.0,282.4,1,derived,"D1-like, Gs/Gq"
+KCab-p,KC_ab_p,Dop2R,1.0,634.4,1,derived,"D2-like, Gi"
+KCab-p,KC_ab_p,DopEcR,1.0,3460.0,1,derived,DA/ecdysone
+KCab-p,KC_ab_p,Oamb,1.0,213.7,1,derived,"OA alpha1-like, Gq"
+KCab-p,KC_ab_p,Octbeta1R,1.0,369.5,1,derived,"OA beta, Gs"
+KCab-p,KC_ab_p,Octbeta2R,0.01,33.8,0,derived,"OA beta, Gs"
+KCab-p,KC_ab_p,Octbeta3R,1.0,121.9,1,derived,"OA beta, Gs"
+KCab-p,KC_ab_p,5-HT1A,1.0,785.4,1,derived,Gi
+KCab-p,KC_ab_p,5-HT1B,1.0,253.3,1,derived,Gi
+KCab-p,KC_ab_p,5-HT2A,0.03,14.6,0,derived,Gq
+KCab-p,KC_ab_p,5-HT2B,0.2,17.7,0,derived,Gq
+KCab-p,KC_ab_p,5-HT7,0.0,12.9,0,derived,Gs
+KCab-p,KC_ab_p,HisCl1,0.0,26.5,0,derived,histamine-gated Cl
+KCab-p,KC_ab_p,ort,0.0,0.0,0,derived,histamine-gated Cl
+KCab-s,KC_ab_s,GluClalpha,1.0,1125.2,1,derived,glutamate-gated chloride: inhibitory glutamate
+KCab-s,KC_ab_s,GluRIA,1.0,42.4,1,derived,AMPA-like iGluR: excitatory glutamate
+KCab-s,KC_ab_s,GluRIB,1.0,124.4,1,derived,AMPA-like iGluR
+KCab-s,KC_ab_s,Nmdar1,0.81,20.9,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+KCab-s,KC_ab_s,Nmdar2,1.0,159.2,1,derived,NMDA subunit
+KCab-s,KC_ab_s,mGluR,0.0,14.7,0,derived,metabotropic glutamate
+KCab-s,KC_ab_s,Rdl,1.0,9473.9,1,derived,GABA-A (fast inhibition)
+KCab-s,KC_ab_s,Lcch3,1.0,57.1,1,derived,GABA-A-like
+KCab-s,KC_ab_s,Grd,0.0,0.1,0,derived,GABA-gated (cation?)
+KCab-s,KC_ab_s,GABA-B-R1,1.0,315.8,1,derived,GABA-B (slow inhibition)
+KCab-s,KC_ab_s,GABA-B-R2,0.94,15.6,1,derived,GABA-B
+KCab-s,KC_ab_s,GABA-B-R3,0.0,1.8,0,derived,GABA-B
+KCab-s,KC_ab_s,nAChRalpha1,1.0,664.2,1,derived,nicotinic
+KCab-s,KC_ab_s,nAChRalpha5,1.0,3534.1,1,derived,nicotinic
+KCab-s,KC_ab_s,nAChRalpha6,1.0,3445.0,1,derived,nicotinic
+KCab-s,KC_ab_s,nAChRalpha7,1.0,1069.9,1,derived,nicotinic
+KCab-s,KC_ab_s,mAChR-A,1.0,705.6,1,derived,muscarinic (Gq)
+KCab-s,KC_ab_s,mAChR-B,1.0,224.5,1,derived,muscarinic (Gi)
+KCab-s,KC_ab_s,Dop1R1,1.0,339.7,1,derived,"D1-like, Gs"
+KCab-s,KC_ab_s,Dop1R2,1.0,203.3,1,derived,"D1-like, Gs/Gq"
+KCab-s,KC_ab_s,Dop2R,1.0,322.0,1,derived,"D2-like, Gi"
+KCab-s,KC_ab_s,DopEcR,1.0,9180.4,1,derived,DA/ecdysone
+KCab-s,KC_ab_s,Oamb,1.0,166.7,1,derived,"OA alpha1-like, Gq"
+KCab-s,KC_ab_s,Octbeta1R,1.0,354.9,1,derived,"OA beta, Gs"
+KCab-s,KC_ab_s,Octbeta2R,0.0,11.3,0,derived,"OA beta, Gs"
+KCab-s,KC_ab_s,Octbeta3R,1.0,79.6,1,derived,"OA beta, Gs"
+KCab-s,KC_ab_s,5-HT1A,1.0,350.3,1,derived,Gi
+KCab-s,KC_ab_s,5-HT1B,0.99,36.4,1,derived,Gi
+KCab-s,KC_ab_s,5-HT2A,0.0,9.0,0,derived,Gq
+KCab-s,KC_ab_s,5-HT2B,0.0,2.1,0,derived,Gq
+KCab-s,KC_ab_s,5-HT7,0.0,1.2,0,derived,Gs
+KCab-s,KC_ab_s,HisCl1,0.0,17.0,0,derived,histamine-gated Cl
+KCab-s,KC_ab_s,ort,0.0,0.0,0,derived,histamine-gated Cl
+KCg-d,KC_gd,GluClalpha,1.0,1150.9,1,derived,glutamate-gated chloride: inhibitory glutamate
+KCg-d,KC_gd,GluRIA,1.0,73.5,1,derived,AMPA-like iGluR: excitatory glutamate
+KCg-d,KC_gd,GluRIB,1.0,104.7,1,derived,AMPA-like iGluR
+KCg-d,KC_gd,Nmdar1,0.99,35.9,1,derived,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+KCg-d,KC_gd,Nmdar2,1.0,304.2,1,derived,NMDA subunit
+KCg-d,KC_gd,mGluR,1.0,620.8,1,derived,metabotropic glutamate
+KCg-d,KC_gd,Rdl,1.0,4943.4,1,derived,GABA-A (fast inhibition)
+KCg-d,KC_gd,Lcch3,1.0,63.4,1,derived,GABA-A-like
+KCg-d,KC_gd,Grd,0.0,2.0,0,derived,GABA-gated (cation?)
+KCg-d,KC_gd,GABA-B-R1,1.0,257.7,1,derived,GABA-B (slow inhibition)
+KCg-d,KC_gd,GABA-B-R2,1.0,35.8,1,derived,GABA-B
+KCg-d,KC_gd,GABA-B-R3,0.0,47.5,0,derived,GABA-B
+KCg-d,KC_gd,nAChRalpha1,1.0,512.0,1,derived,nicotinic
+KCg-d,KC_gd,nAChRalpha5,1.0,2653.7,1,derived,nicotinic
+KCg-d,KC_gd,nAChRalpha6,1.0,3107.3,1,derived,nicotinic
+KCg-d,KC_gd,nAChRalpha7,1.0,1634.9,1,derived,nicotinic
+KCg-d,KC_gd,mAChR-A,1.0,404.9,1,derived,muscarinic (Gq)
+KCg-d,KC_gd,mAChR-B,1.0,57.9,1,derived,muscarinic (Gi)
+KCg-d,KC_gd,Dop1R1,1.0,939.9,1,derived,"D1-like, Gs"
+KCg-d,KC_gd,Dop1R2,1.0,317.1,1,derived,"D1-like, Gs/Gq"
+KCg-d,KC_gd,Dop2R,1.0,649.9,1,derived,"D2-like, Gi"
+KCg-d,KC_gd,DopEcR,1.0,8567.7,1,derived,DA/ecdysone
+KCg-d,KC_gd,Oamb,1.0,102.7,1,derived,"OA alpha1-like, Gq"
+KCg-d,KC_gd,Octbeta1R,1.0,206.8,1,derived,"OA beta, Gs"
+KCg-d,KC_gd,Octbeta2R,1.0,234.0,1,derived,"OA beta, Gs"
+KCg-d,KC_gd,Octbeta3R,1.0,46.2,1,derived,"OA beta, Gs"
+KCg-d,KC_gd,5-HT1A,1.0,82.9,1,derived,Gi
+KCg-d,KC_gd,5-HT1B,1.0,183.5,1,derived,Gi
+KCg-d,KC_gd,5-HT2A,0.0,15.4,0,derived,Gq
+KCg-d,KC_gd,5-HT2B,0.0,8.8,0,derived,Gq
+KCg-d,KC_gd,5-HT7,0.0,31.7,0,derived,Gs
+KCg-d,KC_gd,HisCl1,0.0,28.4,0,derived,histamine-gated Cl
+KCg-d,KC_gd,ort,0.0,2.2,0,derived,histamine-gated Cl
+PAM02,PAM_1,GluClalpha,1.0,2645.9,1,inferred,glutamate-gated chloride: inhibitory glutamate
+PAM02,PAM_1,GluRIA,0.0,0.2,0,inferred,AMPA-like iGluR: excitatory glutamate
+PAM02,PAM_1,GluRIB,0.0,2.4,0,inferred,AMPA-like iGluR
+PAM02,PAM_1,Nmdar1,1.0,57.5,1,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PAM02,PAM_1,Nmdar2,1.0,768.6,1,inferred,NMDA subunit
+PAM02,PAM_1,mGluR,0.0,22.4,0,inferred,metabotropic glutamate
+PAM02,PAM_1,Rdl,1.0,5076.7,1,inferred,GABA-A (fast inhibition)
+PAM02,PAM_1,Lcch3,1.0,153.5,1,inferred,GABA-A-like
+PAM02,PAM_1,Grd,0.0,0.7,0,inferred,GABA-gated (cation?)
+PAM02,PAM_1,GABA-B-R1,1.0,256.3,1,inferred,GABA-B (slow inhibition)
+PAM02,PAM_1,GABA-B-R2,1.0,74.5,1,inferred,GABA-B
+PAM02,PAM_1,GABA-B-R3,1.0,345.8,1,inferred,GABA-B
+PAM02,PAM_1,nAChRalpha1,1.0,751.5,1,inferred,nicotinic
+PAM02,PAM_1,nAChRalpha5,1.0,1390.2,1,inferred,nicotinic
+PAM02,PAM_1,nAChRalpha6,1.0,1298.7,1,inferred,nicotinic
+PAM02,PAM_1,nAChRalpha7,0.86,162.5,1,inferred,nicotinic
+PAM02,PAM_1,mAChR-A,1.0,186.1,1,inferred,muscarinic (Gq)
+PAM02,PAM_1,mAChR-B,0.03,16.9,0,inferred,muscarinic (Gi)
+PAM02,PAM_1,Dop1R1,1.0,360.4,1,inferred,"D1-like, Gs"
+PAM02,PAM_1,Dop1R2,0.0,4.1,0,inferred,"D1-like, Gs/Gq"
+PAM02,PAM_1,Dop2R,1.0,719.4,1,inferred,"D2-like, Gi"
+PAM02,PAM_1,DopEcR,1.0,1751.2,1,inferred,DA/ecdysone
+PAM02,PAM_1,Oamb,1.0,422.2,1,inferred,"OA alpha1-like, Gq"
+PAM02,PAM_1,Octbeta1R,1.0,169.9,1,inferred,"OA beta, Gs"
+PAM02,PAM_1,Octbeta2R,0.21,53.9,0,inferred,"OA beta, Gs"
+PAM02,PAM_1,Octbeta3R,1.0,61.1,1,inferred,"OA beta, Gs"
+PAM02,PAM_1,5-HT1A,1.0,207.0,1,inferred,Gi
+PAM02,PAM_1,5-HT1B,1.0,154.3,1,inferred,Gi
+PAM02,PAM_1,5-HT2A,1.0,120.6,1,inferred,Gq
+PAM02,PAM_1,5-HT2B,0.1,15.5,0,inferred,Gq
+PAM02,PAM_1,5-HT7,1.0,180.5,1,inferred,Gs
+PAM02,PAM_1,HisCl1,0.0,4.3,0,inferred,histamine-gated Cl
+PAM02,PAM_1,ort,0.0,2.1,0,inferred,histamine-gated Cl
+PAM04,PAM_3,GluClalpha,1.0,2257.1,1,inferred,glutamate-gated chloride: inhibitory glutamate
+PAM04,PAM_3,GluRIA,0.01,9.0,0,inferred,AMPA-like iGluR: excitatory glutamate
+PAM04,PAM_3,GluRIB,0.21,18.2,0,inferred,AMPA-like iGluR
+PAM04,PAM_3,Nmdar1,1.0,70.9,1,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PAM04,PAM_3,Nmdar2,1.0,938.2,1,inferred,NMDA subunit
+PAM04,PAM_3,mGluR,0.0,16.4,0,inferred,metabotropic glutamate
+PAM04,PAM_3,Rdl,1.0,3589.5,1,inferred,GABA-A (fast inhibition)
+PAM04,PAM_3,Lcch3,1.0,73.0,1,inferred,GABA-A-like
+PAM04,PAM_3,Grd,0.0,0.9,0,inferred,GABA-gated (cation?)
+PAM04,PAM_3,GABA-B-R1,1.0,242.0,1,inferred,GABA-B (slow inhibition)
+PAM04,PAM_3,GABA-B-R2,1.0,33.3,1,inferred,GABA-B
+PAM04,PAM_3,GABA-B-R3,0.12,29.8,0,inferred,GABA-B
+PAM04,PAM_3,nAChRalpha1,1.0,886.2,1,inferred,nicotinic
+PAM04,PAM_3,nAChRalpha5,1.0,2013.0,1,inferred,nicotinic
+PAM04,PAM_3,nAChRalpha6,1.0,3565.9,1,inferred,nicotinic
+PAM04,PAM_3,nAChRalpha7,1.0,905.6,1,inferred,nicotinic
+PAM04,PAM_3,mAChR-A,1.0,312.9,1,inferred,muscarinic (Gq)
+PAM04,PAM_3,mAChR-B,0.0,4.0,0,inferred,muscarinic (Gi)
+PAM04,PAM_3,Dop1R1,1.0,1163.4,1,inferred,"D1-like, Gs"
+PAM04,PAM_3,Dop1R2,0.0,7.2,0,inferred,"D1-like, Gs/Gq"
+PAM04,PAM_3,Dop2R,1.0,652.4,1,inferred,"D2-like, Gi"
+PAM04,PAM_3,DopEcR,0.0,381.6,0,inferred,DA/ecdysone
+PAM04,PAM_3,Oamb,0.03,11.8,0,inferred,"OA alpha1-like, Gq"
+PAM04,PAM_3,Octbeta1R,0.53,68.5,1,inferred,"OA beta, Gs"
+PAM04,PAM_3,Octbeta2R,1.0,141.9,1,inferred,"OA beta, Gs"
+PAM04,PAM_3,Octbeta3R,1.0,150.3,1,inferred,"OA beta, Gs"
+PAM04,PAM_3,5-HT1A,1.0,183.7,1,inferred,Gi
+PAM04,PAM_3,5-HT1B,1.0,194.5,1,inferred,Gi
+PAM04,PAM_3,5-HT2A,0.78,33.5,1,inferred,Gq
+PAM04,PAM_3,5-HT2B,1.0,81.0,1,inferred,Gq
+PAM04,PAM_3,5-HT7,0.0,8.9,0,inferred,Gs
+PAM04,PAM_3,HisCl1,0.0,2.0,0,inferred,histamine-gated Cl
+PAM04,PAM_3,ort,0.0,0.5,0,inferred,histamine-gated Cl
+PAM10,PAM_3,GluClalpha,1.0,2257.1,1,inferred,glutamate-gated chloride: inhibitory glutamate
+PAM10,PAM_3,GluRIA,0.01,9.0,0,inferred,AMPA-like iGluR: excitatory glutamate
+PAM10,PAM_3,GluRIB,0.21,18.2,0,inferred,AMPA-like iGluR
+PAM10,PAM_3,Nmdar1,1.0,70.9,1,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PAM10,PAM_3,Nmdar2,1.0,938.2,1,inferred,NMDA subunit
+PAM10,PAM_3,mGluR,0.0,16.4,0,inferred,metabotropic glutamate
+PAM10,PAM_3,Rdl,1.0,3589.5,1,inferred,GABA-A (fast inhibition)
+PAM10,PAM_3,Lcch3,1.0,73.0,1,inferred,GABA-A-like
+PAM10,PAM_3,Grd,0.0,0.9,0,inferred,GABA-gated (cation?)
+PAM10,PAM_3,GABA-B-R1,1.0,242.0,1,inferred,GABA-B (slow inhibition)
+PAM10,PAM_3,GABA-B-R2,1.0,33.3,1,inferred,GABA-B
+PAM10,PAM_3,GABA-B-R3,0.12,29.8,0,inferred,GABA-B
+PAM10,PAM_3,nAChRalpha1,1.0,886.2,1,inferred,nicotinic
+PAM10,PAM_3,nAChRalpha5,1.0,2013.0,1,inferred,nicotinic
+PAM10,PAM_3,nAChRalpha6,1.0,3565.9,1,inferred,nicotinic
+PAM10,PAM_3,nAChRalpha7,1.0,905.6,1,inferred,nicotinic
+PAM10,PAM_3,mAChR-A,1.0,312.9,1,inferred,muscarinic (Gq)
+PAM10,PAM_3,mAChR-B,0.0,4.0,0,inferred,muscarinic (Gi)
+PAM10,PAM_3,Dop1R1,1.0,1163.4,1,inferred,"D1-like, Gs"
+PAM10,PAM_3,Dop1R2,0.0,7.2,0,inferred,"D1-like, Gs/Gq"
+PAM10,PAM_3,Dop2R,1.0,652.4,1,inferred,"D2-like, Gi"
+PAM10,PAM_3,DopEcR,0.0,381.6,0,inferred,DA/ecdysone
+PAM10,PAM_3,Oamb,0.03,11.8,0,inferred,"OA alpha1-like, Gq"
+PAM10,PAM_3,Octbeta1R,0.53,68.5,1,inferred,"OA beta, Gs"
+PAM10,PAM_3,Octbeta2R,1.0,141.9,1,inferred,"OA beta, Gs"
+PAM10,PAM_3,Octbeta3R,1.0,150.3,1,inferred,"OA beta, Gs"
+PAM10,PAM_3,5-HT1A,1.0,183.7,1,inferred,Gi
+PAM10,PAM_3,5-HT1B,1.0,194.5,1,inferred,Gi
+PAM10,PAM_3,5-HT2A,0.78,33.5,1,inferred,Gq
+PAM10,PAM_3,5-HT2B,1.0,81.0,1,inferred,Gq
+PAM10,PAM_3,5-HT7,0.0,8.9,0,inferred,Gs
+PAM10,PAM_3,HisCl1,0.0,2.0,0,inferred,histamine-gated Cl
+PAM10,PAM_3,ort,0.0,0.5,0,inferred,histamine-gated Cl
+PAM07,PAM_4,GluClalpha,1.0,570.6,1,inferred,glutamate-gated chloride: inhibitory glutamate
+PAM07,PAM_4,GluRIA,0.0,1.1,0,inferred,AMPA-like iGluR: excitatory glutamate
+PAM07,PAM_4,GluRIB,0.0,1.1,0,inferred,AMPA-like iGluR
+PAM07,PAM_4,Nmdar1,0.05,8.7,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PAM07,PAM_4,Nmdar2,1.0,244.1,1,inferred,NMDA subunit
+PAM07,PAM_4,mGluR,0.0,10.3,0,inferred,metabotropic glutamate
+PAM07,PAM_4,Rdl,1.0,1423.2,1,inferred,GABA-A (fast inhibition)
+PAM07,PAM_4,Lcch3,0.44,33.0,0,inferred,GABA-A-like
+PAM07,PAM_4,Grd,0.0,5.3,0,inferred,GABA-gated (cation?)
+PAM07,PAM_4,GABA-B-R1,0.88,54.0,1,inferred,GABA-B (slow inhibition)
+PAM07,PAM_4,GABA-B-R2,0.0,4.9,0,inferred,GABA-B
+PAM07,PAM_4,GABA-B-R3,0.96,104.1,1,inferred,GABA-B
+PAM07,PAM_4,nAChRalpha1,1.0,193.0,1,inferred,nicotinic
+PAM07,PAM_4,nAChRalpha5,1.0,264.6,1,inferred,nicotinic
+PAM07,PAM_4,nAChRalpha6,1.0,1403.4,1,inferred,nicotinic
+PAM07,PAM_4,nAChRalpha7,0.99,221.6,1,inferred,nicotinic
+PAM07,PAM_4,mAChR-A,0.92,78.9,1,inferred,muscarinic (Gq)
+PAM07,PAM_4,mAChR-B,0.0,2.2,0,inferred,muscarinic (Gi)
+PAM07,PAM_4,Dop1R1,1.0,98.4,1,inferred,"D1-like, Gs"
+PAM07,PAM_4,Dop1R2,0.0,1.6,0,inferred,"D1-like, Gs/Gq"
+PAM07,PAM_4,Dop2R,0.99,118.6,1,inferred,"D2-like, Gi"
+PAM07,PAM_4,DopEcR,0.0,147.9,0,inferred,DA/ecdysone
+PAM07,PAM_4,Oamb,1.0,98.3,1,inferred,"OA alpha1-like, Gq"
+PAM07,PAM_4,Octbeta1R,0.0,10.5,0,inferred,"OA beta, Gs"
+PAM07,PAM_4,Octbeta2R,0.06,46.6,0,inferred,"OA beta, Gs"
+PAM07,PAM_4,Octbeta3R,0.0,2.1,0,inferred,"OA beta, Gs"
+PAM07,PAM_4,5-HT1A,0.0,3.4,0,inferred,Gi
+PAM07,PAM_4,5-HT1B,0.68,11.3,1,inferred,Gi
+PAM07,PAM_4,5-HT2A,0.98,52.9,1,inferred,Gq
+PAM07,PAM_4,5-HT2B,0.0,3.5,0,inferred,Gq
+PAM07,PAM_4,5-HT7,1.0,90.8,1,inferred,Gs
+PAM07,PAM_4,HisCl1,0.0,4.8,0,inferred,histamine-gated Cl
+PAM07,PAM_4,ort,0.0,3.0,0,inferred,histamine-gated Cl
+PAM08,PAM_4,GluClalpha,1.0,570.6,1,inferred,glutamate-gated chloride: inhibitory glutamate
+PAM08,PAM_4,GluRIA,0.0,1.1,0,inferred,AMPA-like iGluR: excitatory glutamate
+PAM08,PAM_4,GluRIB,0.0,1.1,0,inferred,AMPA-like iGluR
+PAM08,PAM_4,Nmdar1,0.05,8.7,0,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PAM08,PAM_4,Nmdar2,1.0,244.1,1,inferred,NMDA subunit
+PAM08,PAM_4,mGluR,0.0,10.3,0,inferred,metabotropic glutamate
+PAM08,PAM_4,Rdl,1.0,1423.2,1,inferred,GABA-A (fast inhibition)
+PAM08,PAM_4,Lcch3,0.44,33.0,0,inferred,GABA-A-like
+PAM08,PAM_4,Grd,0.0,5.3,0,inferred,GABA-gated (cation?)
+PAM08,PAM_4,GABA-B-R1,0.88,54.0,1,inferred,GABA-B (slow inhibition)
+PAM08,PAM_4,GABA-B-R2,0.0,4.9,0,inferred,GABA-B
+PAM08,PAM_4,GABA-B-R3,0.96,104.1,1,inferred,GABA-B
+PAM08,PAM_4,nAChRalpha1,1.0,193.0,1,inferred,nicotinic
+PAM08,PAM_4,nAChRalpha5,1.0,264.6,1,inferred,nicotinic
+PAM08,PAM_4,nAChRalpha6,1.0,1403.4,1,inferred,nicotinic
+PAM08,PAM_4,nAChRalpha7,0.99,221.6,1,inferred,nicotinic
+PAM08,PAM_4,mAChR-A,0.92,78.9,1,inferred,muscarinic (Gq)
+PAM08,PAM_4,mAChR-B,0.0,2.2,0,inferred,muscarinic (Gi)
+PAM08,PAM_4,Dop1R1,1.0,98.4,1,inferred,"D1-like, Gs"
+PAM08,PAM_4,Dop1R2,0.0,1.6,0,inferred,"D1-like, Gs/Gq"
+PAM08,PAM_4,Dop2R,0.99,118.6,1,inferred,"D2-like, Gi"
+PAM08,PAM_4,DopEcR,0.0,147.9,0,inferred,DA/ecdysone
+PAM08,PAM_4,Oamb,1.0,98.3,1,inferred,"OA alpha1-like, Gq"
+PAM08,PAM_4,Octbeta1R,0.0,10.5,0,inferred,"OA beta, Gs"
+PAM08,PAM_4,Octbeta2R,0.06,46.6,0,inferred,"OA beta, Gs"
+PAM08,PAM_4,Octbeta3R,0.0,2.1,0,inferred,"OA beta, Gs"
+PAM08,PAM_4,5-HT1A,0.0,3.4,0,inferred,Gi
+PAM08,PAM_4,5-HT1B,0.68,11.3,1,inferred,Gi
+PAM08,PAM_4,5-HT2A,0.98,52.9,1,inferred,Gq
+PAM08,PAM_4,5-HT2B,0.0,3.5,0,inferred,Gq
+PAM08,PAM_4,5-HT7,1.0,90.8,1,inferred,Gs
+PAM08,PAM_4,HisCl1,0.0,4.8,0,inferred,histamine-gated Cl
+PAM08,PAM_4,ort,0.0,3.0,0,inferred,histamine-gated Cl
+Delta7,PB_1,GluClalpha,1.0,2255.3,1,inferred,glutamate-gated chloride: inhibitory glutamate
+Delta7,PB_1,GluRIA,1.0,35.6,1,inferred,AMPA-like iGluR: excitatory glutamate
+Delta7,PB_1,GluRIB,0.99,31.6,1,inferred,AMPA-like iGluR
+Delta7,PB_1,Nmdar1,1.0,52.2,1,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+Delta7,PB_1,Nmdar2,1.0,206.6,1,inferred,NMDA subunit
+Delta7,PB_1,mGluR,0.0,25.1,0,inferred,metabotropic glutamate
+Delta7,PB_1,Rdl,1.0,2929.3,1,inferred,GABA-A (fast inhibition)
+Delta7,PB_1,Lcch3,1.0,149.7,1,inferred,GABA-A-like
+Delta7,PB_1,Grd,0.0,0.0,0,inferred,GABA-gated (cation?)
+Delta7,PB_1,GABA-B-R1,1.0,297.1,1,inferred,GABA-B (slow inhibition)
+Delta7,PB_1,GABA-B-R2,1.0,38.7,1,inferred,GABA-B
+Delta7,PB_1,GABA-B-R3,0.0,2.5,0,inferred,GABA-B
+Delta7,PB_1,nAChRalpha1,0.0,14.8,0,inferred,nicotinic
+Delta7,PB_1,nAChRalpha5,1.0,3070.2,1,inferred,nicotinic
+Delta7,PB_1,nAChRalpha6,0.98,458.0,1,inferred,nicotinic
+Delta7,PB_1,nAChRalpha7,1.0,2091.9,1,inferred,nicotinic
+Delta7,PB_1,mAChR-A,1.0,490.1,1,inferred,muscarinic (Gq)
+Delta7,PB_1,mAChR-B,1.0,158.2,1,inferred,muscarinic (Gi)
+Delta7,PB_1,Dop1R1,1.0,10.7,1,inferred,"D1-like, Gs"
+Delta7,PB_1,Dop1R2,0.0,0.6,0,inferred,"D1-like, Gs/Gq"
+Delta7,PB_1,Dop2R,0.0,4.1,0,inferred,"D2-like, Gi"
+Delta7,PB_1,DopEcR,0.0,176.9,0,inferred,DA/ecdysone
+Delta7,PB_1,Oamb,0.0,6.5,0,inferred,"OA alpha1-like, Gq"
+Delta7,PB_1,Octbeta1R,0.99,144.8,1,inferred,"OA beta, Gs"
+Delta7,PB_1,Octbeta2R,1.0,245.9,1,inferred,"OA beta, Gs"
+Delta7,PB_1,Octbeta3R,1.0,287.7,1,inferred,"OA beta, Gs"
+Delta7,PB_1,5-HT1A,0.01,12.9,0,inferred,Gi
+Delta7,PB_1,5-HT1B,0.37,8.0,0,inferred,Gi
+Delta7,PB_1,5-HT2A,0.0,5.1,0,inferred,Gq
+Delta7,PB_1,5-HT2B,0.84,29.1,1,inferred,Gq
+Delta7,PB_1,5-HT7,1.0,195.1,1,inferred,Gs
+Delta7,PB_1,HisCl1,0.0,25.3,0,inferred,histamine-gated Cl
+Delta7,PB_1,ort,0.0,1.0,0,inferred,histamine-gated Cl
+EPG,PB_2,GluClalpha,1.0,10282.6,1,inferred,glutamate-gated chloride: inhibitory glutamate
+EPG,PB_2,GluRIA,0.0,0.9,0,inferred,AMPA-like iGluR: excitatory glutamate
+EPG,PB_2,GluRIB,0.0,2.4,0,inferred,AMPA-like iGluR
+EPG,PB_2,Nmdar1,1.0,126.1,1,inferred,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+EPG,PB_2,Nmdar2,1.0,784.4,1,inferred,NMDA subunit
+EPG,PB_2,mGluR,0.0,17.6,0,inferred,metabotropic glutamate
+EPG,PB_2,Rdl,1.0,14889.5,1,inferred,GABA-A (fast inhibition)
+EPG,PB_2,Lcch3,1.0,141.9,1,inferred,GABA-A-like
+EPG,PB_2,Grd,0.0,0.4,0,inferred,GABA-gated (cation?)
+EPG,PB_2,GABA-B-R1,1.0,294.2,1,inferred,GABA-B (slow inhibition)
+EPG,PB_2,GABA-B-R2,1.0,58.3,1,inferred,GABA-B
+EPG,PB_2,GABA-B-R3,1.0,333.6,1,inferred,GABA-B
+EPG,PB_2,nAChRalpha1,1.0,185.7,1,inferred,nicotinic
+EPG,PB_2,nAChRalpha5,1.0,2429.0,1,inferred,nicotinic
+EPG,PB_2,nAChRalpha6,1.0,1751.2,1,inferred,nicotinic
+EPG,PB_2,nAChRalpha7,1.0,890.0,1,inferred,nicotinic
+EPG,PB_2,mAChR-A,0.99,95.2,1,inferred,muscarinic (Gq)
+EPG,PB_2,mAChR-B,1.0,591.0,1,inferred,muscarinic (Gi)
+EPG,PB_2,Dop1R1,1.0,533.8,1,inferred,"D1-like, Gs"
+EPG,PB_2,Dop1R2,1.0,392.0,1,inferred,"D1-like, Gs/Gq"
+EPG,PB_2,Dop2R,0.0,24.1,0,inferred,"D2-like, Gi"
+EPG,PB_2,DopEcR,1.0,6270.8,1,inferred,DA/ecdysone
+EPG,PB_2,Oamb,0.0,1.3,0,inferred,"OA alpha1-like, Gq"
+EPG,PB_2,Octbeta1R,1.0,371.0,1,inferred,"OA beta, Gs"
+EPG,PB_2,Octbeta2R,1.0,138.6,1,inferred,"OA beta, Gs"
+EPG,PB_2,Octbeta3R,0.0,3.2,0,inferred,"OA beta, Gs"
+EPG,PB_2,5-HT1A,0.0,3.5,0,inferred,Gi
+EPG,PB_2,5-HT1B,1.0,84.9,1,inferred,Gi
+EPG,PB_2,5-HT2A,0.0,1.4,0,inferred,Gq
+EPG,PB_2,5-HT2B,0.94,34.4,1,inferred,Gq
+EPG,PB_2,5-HT7,1.0,66.5,1,inferred,Gs
+EPG,PB_2,HisCl1,0.0,16.1,0,inferred,histamine-gated Cl
+EPG,PB_2,ort,0.0,0.1,0,inferred,histamine-gated Cl
+PEN_a(PEN1),PB_3,GluClalpha,1.0,4517.2,1,contaminated,glutamate-gated chloride: inhibitory glutamate
+PEN_a(PEN1),PB_3,GluRIA,1.0,41.2,1,contaminated,AMPA-like iGluR: excitatory glutamate
+PEN_a(PEN1),PB_3,GluRIB,1.0,56.7,1,contaminated,AMPA-like iGluR
+PEN_a(PEN1),PB_3,Nmdar1,0.35,13.9,0,contaminated,"NMDA obligatory subunit: slow, voltage-dependent excitation"
+PEN_a(PEN1),PB_3,Nmdar2,1.0,557.8,1,contaminated,NMDA subunit
+PEN_a(PEN1),PB_3,mGluR,1.0,795.6,1,contaminated,metabotropic glutamate
+PEN_a(PEN1),PB_3,Rdl,1.0,7956.2,1,contaminated,GABA-A (fast inhibition)
+PEN_a(PEN1),PB_3,Lcch3,1.0,54.9,1,contaminated,GABA-A-like
+PEN_a(PEN1),PB_3,Grd,0.0,0.9,0,contaminated,GABA-gated (cation?)
+PEN_a(PEN1),PB_3,GABA-B-R1,1.0,442.5,1,contaminated,GABA-B (slow inhibition)
+PEN_a(PEN1),PB_3,GABA-B-R2,1.0,24.5,1,contaminated,GABA-B
+PEN_a(PEN1),PB_3,GABA-B-R3,0.98,115.8,1,contaminated,GABA-B
+PEN_a(PEN1),PB_3,nAChRalpha1,1.0,280.7,1,contaminated,nicotinic
+PEN_a(PEN1),PB_3,nAChRalpha5,1.0,3194.0,1,contaminated,nicotinic
+PEN_a(PEN1),PB_3,nAChRalpha6,1.0,5122.6,1,contaminated,nicotinic
+PEN_a(PEN1),PB_3,nAChRalpha7,1.0,392.7,1,contaminated,nicotinic
+PEN_a(PEN1),PB_3,mAChR-A,1.0,335.4,1,contaminated,muscarinic (Gq)
+PEN_a(PEN1),PB_3,mAChR-B,0.0,9.7,0,contaminated,muscarinic (Gi)
+PEN_a(PEN1),PB_3,Dop1R1,1.0,27.1,1,contaminated,"D1-like, Gs"
+PEN_a(PEN1),PB_3,Dop1R2,0.21,18.8,0,contaminated,"D1-like, Gs/Gq"
+PEN_a(PEN1),PB_3,Dop2R,0.03,35.0,0,contaminated,"D2-like, Gi"
+PEN_a(PEN1),PB_3,DopEcR,1.0,6033.5,1,contaminated,DA/ecdysone
+PEN_a(PEN1),PB_3,Oamb,1.0,71.2,1,contaminated,"OA alpha1-like, Gq"
+PEN_a(PEN1),PB_3,Octbeta1R,1.0,548.0,1,contaminated,"OA beta, Gs"
+PEN_a(PEN1),PB_3,Octbeta2R,1.0,486.7,1,contaminated,"OA beta, Gs"
+PEN_a(PEN1),PB_3,Octbeta3R,1.0,108.7,1,contaminated,"OA beta, Gs"
+PEN_a(PEN1),PB_3,5-HT1A,1.0,145.7,1,contaminated,Gi
+PEN_a(PEN1),PB_3,5-HT1B,1.0,79.4,1,contaminated,Gi
+PEN_a(PEN1),PB_3,5-HT2A,1.0,102.9,1,contaminated,Gq
+PEN_a(PEN1),PB_3,5-HT2B,0.73,26.6,1,contaminated,Gq
+PEN_a(PEN1),PB_3,5-HT7,1.0,138.8,1,contaminated,Gs
+PEN_a(PEN1),PB_3,HisCl1,0.0,8.2,0,contaminated,histamine-gated Cl
+PEN_a(PEN1),PB_3,ort,0.0,5.7,0,contaminated,histamine-gated Cl
