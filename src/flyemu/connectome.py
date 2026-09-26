@@ -287,6 +287,23 @@ def build(
         post_gain *= np.where(n_in > 0, (med_in / np.maximum(n_in, 1)) ** beta, 1.0).astype(np.float32)
     efficacy = (psp * post_gain[post]).astype(np.float32)
 
+    # --- VNC sensorimotor efficacy (session 6) --------------------------------
+    sc = neurons.superclass.fillna("").to_numpy()
+    vnc_sm = (np.isin(sc[pre], ["vnc_sensory", "vnc_intrinsic"])
+              & np.isin(sc[post], ["vnc_intrinsic", "vnc_motor"]))
+    vnc_scale = reg.require(
+        "connection_class:vnc_sensorimotor", "efficacy_scale",
+        units="dimensionless",
+        model_use="multiplies efficacy of VNC sensory/intrinsic -> VNC intrinsic/motor edges",
+        subsystem="synaptic_efficacy", instances=int(vnc_sm.sum()),
+        minimal=1.0, conventional=1.0,
+        minimal_note="neutral default: the brain-calibrated efficacy applies in the VNC too",
+        uncertainty="the single efficacy was calibrated on brain stability (rule v2); VNC "
+                    "reflex transmission is unconstrained by it (F-STAND-1)",
+    )
+    if vnc_scale != 1.0:
+        efficacy[vnc_sm] *= np.float32(vnc_scale)
+
     # --- cholinergic AL LN chemical output onto PNs / each other (m2, i) -----
     ach_ln = alln & (nt == "acetylcholine")
     pn = neurons["class"].fillna("").eq("ALPN").to_numpy()

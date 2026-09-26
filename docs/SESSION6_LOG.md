@@ -45,3 +45,20 @@ foundation." Order: priority 1 (measurements), 2 (standing), 3 (absent mechanism
 - 22:31 F-ORN-2 re-examined: attractor absent under the post-fix model (seeds 0-5); pre-registered fresh-seed
   re-test 6-11 → 6/6 pass → ORN Hallem rates ON by default (F-ORN-3). Rule v2 re-run under delays: 0.165 mV
   still the calibrated scale (F-CAL-3).
+- 22:37 Second Explore agent: Azevedo 2020 reflex numbers exist only in figures. Dryad raw data blocked (API needs a
+  bearer token; no account created). Reflex-gain protocol built (tethered, PD probe); VNC efficacy scale added
+  (neutral default); sweep ×1.5–3 does not reproduce slow-MN position sensitivity — not adopted (F-REFLEX-1).
+- 22:47 Exploratory DNg100 closed-loop stimulation: no stepping (F-WALK-0).
+
+## End
+End of work: Fri 25 Sep 2026 22:49 CDT. All wrap-up steps done; everything committed and pushed.
+
+**Done:** 1a delays (derived, 11,751 types); 1b Hallem ORN rates (measured, on after re-test); 1c Azevedo
+motor-unit forces (derived/inferred); 1d opsin λmax + connectome eye mask; 2 standing attempted with measured-form
+proprioceptors, slow-MN rest rate, reflex probes; 3 four absent mechanisms simulated (neutral defaults).
+**Failed:** standing (0.745–0.79 mm vs 0.90 criterion); closed-loop resistance reflex absent; DNg100 → no stepping.
+**Bugs fixed:** FTi proprioceptors read the wrong joint; femur-tibia range applied to the wrong coordinate.
+**Ledger delta (parameter scale):** filled by data 548 → 13,325 (+12,777, mostly derived delays); absent 385,211 →
+342,083 (−43,128 moved to simulated-on-default); default 408,528 → 439,573.
+**Blocked:** Azevedo 2020 raw data (Dryad API requires a bearer token); 1e (per-type measured electrophysiology)
+not started. backhouse was reachable but not needed (all runs fit on the Mac).

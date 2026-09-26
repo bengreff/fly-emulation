@@ -2,7 +2,10 @@
 
 ## After session 6: the next discriminating experiments (read first)
 
-1. **The sensorimotor gain (F-STAND-1).** The leg reflex arc has the right sign but too little gain.
+1. **The sensorimotor gain (F-STAND-1, F-REFLEX-1).** The leg reflex arc has the right sign but too little gain, and slow flexor MNs are position-blind. A single VNC efficacy scale cannot fix this (sweep ×1–3).
+   - Next, give leg MNs per-class biophysics from Azevedo 2020 Fig 3, together: Vrest −48/−60/−68 mV and Rin 700/300/150 MΩ, with the 30 Hz rest rate emerging rather than imposed.
+   - Then score `scripts/probes/reflex_gain.py` against Fig 6.
+   - **Ben:** the Dryad raw data (10.5061/dryad.76hdr7stb, CC0) needs a logged-in download. One slow-MN cell zip (~200–500 MB) would give Hz/deg directly.
    - Find measured VNC numbers: FeCO→premotor→MN EPSP sizes and afferent spike rates. Candidates are Agrawal et al. 2020, Dallmann et al. 2025 (unverified), and locust and stick-insect FeCO spike rates as priors.
    - Set a VNC-specific efficacy or afferent rate scale from those numbers only.
    - Pre-register, then re-score "stands" and the resistance reflex. Do not tune on standing.

@@ -1702,3 +1702,38 @@ After the body and proprioceptor fixes, the F-ORN-2 attractor no longer appears:
 ORN rate mode is **on by default**. Why the attractor disappeared was not isolated. Its core had included leg MNs and optic-lobe cells, and the loop through the wrong-joint proprioceptors is the leading suspect. The PN median is still 0, with 30% of PNs active; that is the next olfactory discrepancy.
 
 Standing with ORNs on: z_min 0.745 mm, z_mean 0.80 mm, roll up to 38°. Still a fail.
+
+## F-REFLEX-1. Reflex gain against Azevedo 2020: the model's slow flexor MNs are position-blind
+
+Protocol after Azevedo et al. 2020 (`scripts/probes/reflex_gain.py`):
+- thorax tethered;
+- left middle FTi held by an external PD "probe" at 120→40→120° in 20° steps, 250 ms each;
+- the clamp tracks within ~2°.
+
+Measured targets, from the text (docs/LIT_SESSION6.md, second agent report):
+- passive extension excites flexor MNs, a resistance reflex, largest in slow MNs;
+- slow-MN firing changes significantly with < 1° movements;
+- the responses are velocity-dependent;
+- one intermediate MN gives ~8 mV per 8°.
+
+Hz/deg exists only in the figures (Fig 6D/F). The raw data are on Dryad 10.5061/dryad.76hdr7stb (CC0, 48.8 GB), but API download now requires a Dryad bearer token. **Blocked:** no account was created. The Zenodo mirror 4527659 holds only the MIT analysis scripts.
+
+Model slopes against the VNC sensorimotor efficacy scale (`connection_class:vnc_sensorimotor|efficacy_scale`, new, default 1). Diagnostic only, **not adopted**:
+
+| Scale | Slow flexor (Hz/deg) | Extensor (Hz/deg) | Notes |
+|---|---|---|---|
+| 1.0 | 0.011 (~29 Hz flat) | -0.024 | |
+| 1.5 | 0.047 | -0.168 | resistance sign, extensor only |
+| 2.0 | 0.006 | -0.147 | |
+| 3.0 | slow MNs silenced | | |
+
+No scale gives slow flexor MNs the measured fine position sensitivity. The positive slope (more flexor firing when extended) has the right sign but is ~0. The likely cause is that tonic firing here comes from a fixed drive, while the animal's slow MNs sit near threshold at −48 mV with 700 MΩ input resistance. The next step is per-class MN biophysics from Azevedo Fig 3: Vrest, Rin and the rest rate together. A single scale cannot supply that.
+
+## F-WALK-0. DNg100 activation in closed loop: no stepping (exploratory)
+
+`scripts/probes/command_walk.py`, not pre-registered. Kicking both DNg100 cells at 93 Hz for 1 s:
+- leg MN mean 5.7 Hz, against 4.9 Hz without stimulation;
+- tarsal-tip fore-aft motion has no rhythmic peak (the 3–25 Hz band share is 0.08–0.35, with peaks at the 3 Hz band edge);
+- the thorax moves 0.04 mm forward and 0.84 mm sideways.
+
+No walking. This matches the leg-reflex result: descending drive reaches the leg MNs only weakly at this efficacy.

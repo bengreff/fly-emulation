@@ -42,6 +42,12 @@ were running there are lost, and were redone on the Mac.
 - **Standing attempted and failed (F-STAND-1).** Afferents respond correctly and the wiring resists open-loop, but afferent→MN gain is too low to change motor output.
 - **Four absent mechanisms now simulated, neutral by default:** glutamate sign per target, GABA-B, presynaptic inhibition, KC→MBON LTD.
 - **Ledger, parameter scale:** filled 548 → 13,325; absent 385k → 342k.
+- **Later the same night:**
+  - Hallem ORN rates re-enabled after a fresh-seed re-test (F-ORN-3);
+  - rule v2 re-confirmed 0.165 mV under the new delays (F-CAL-3);
+  - reflex gain measured against Azevedo's protocol: slow MNs are position-blind (F-REFLEX-1);
+  - DNg100 closed-loop stimulation: no stepping (F-WALK-0).
+  - Viewer recording: `runs/organism-record-3000ms-s6`.
 
 ## What this project is
 
