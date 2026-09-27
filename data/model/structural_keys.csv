@@ -1,0 +1,59 @@
+# Registry keys that are data, discrete assignments, policies, switches or registered absences rather than numeric unknowns.
+# key_pattern: entity|property with * as the only wildcard. kind: data | assignment | policy | switch | absent.
+# Numeric unknowns live in parameters.csv. tests/test_model_data.py requires every key of the live m4 organism to match one of the two files.
+key_pattern,mechanism_id,kind,note
+graph:male-cns|chemical_connectivity,X1,data,male-cns v1.0 synapse counts (measured)
+graph:male-cns|inclusion_policy,X1,policy,traced or typed; edges >= 5
+cell_type:all|type_grouping_policy,X1,policy,type labels used as-is
+state:all_neurons|initial_condition,X1,policy,start at rest
+graph:male-cns|electrical_coupling,N12,absent,no gap-junction connectome
+interface:*|channel,X2,policy,body-brain interface channel register (interface.py)
+muscle:all|force_length_velocity,B4,absent,no F-L-V (net torque per DOF)
+neuromodulation:pools|releasing_cells,N19,data,pool source cells from transmitter identity
+population:vnc_motor|count,B5,data,motor neuron count
+muscle:*|joint_and_sign,B5,assignment,MN->muscle->joint map (F-DATA-1)
+motor_map:*|actuator_and_sign,B5,assignment,non-leg MN->actuator map
+population:vnc_motor unmapped*|actuator_target,B5,absent,MNs without a body target
+muscle:long tendon|adhesion_coupling,B7,assignment,ltm MNs drive tarsal adhesion
+actuator:undriven|motor_neuron_source,B5,absent,actuators with no MN
+motor_unit:all|per_neuron_forces,B5,switch,per-MN force table on/off
+cell_type:all|morphological_delays,N13,switch,
+cell_type:untyped|inferred_conduction_delay,N13,switch,
+cell_type:with_skeleton|conduction_delay,N13,data,per-type skeleton path length (derived)
+sensory:peripheral_axon|conduction_delay,N13,absent,peripheral axon delay not simulated
+cell_type:*|graded,N1,switch,graded mode per type (N1 switch)
+cell_type:*|glutamate_receptor_sign,N6,assignment,transcript-derived sign per postsynaptic type
+connectome:all|nt_source_consensus,N6,switch,
+transmitter:*|sign,N6,assignment,sign per transmitter
+cell_type:all|conductance_based,N9,switch,
+cell_type:all|syn_reset_on_spike,N1,switch,numerical convention of LIF
+cell_type:cx_ring|class_input_normalisation,N5,switch,screened s8; off
+connection_class:*|included,N6,policy,profile rules m1/m2 excluding connection classes
+connection_class:ORN_to_uPN|homeostatic_matching,N5,switch,
+afferent:ORN|measured_depression,N10,switch,
+afferent:leg_proprioceptors|transferred_depression,N10,switch,
+photoreceptor:HBeyelet|transduction_model,N26,absent,HB eyelet (circadian light input) not transduced
+afferent:*|encoded_variable,B21,assignment,
+afferent:*|count,B21,data,
+afferent:campaniform sensilla|transduced_variable,B21,assignment,
+population:*|transduction_model,N15,absent,sensory populations without a transducer
+afferent:leg_proprioceptors|measured_form,B21,switch,
+afferent:FeCO claw|angle_tuning,B21,assignment,
+afferent:leg_proprioceptors|subtype_assignment,B21,assignment,BANC subtypes (F-SENSE-2)
+afferent:claw_hook_hairplate|preferred_direction,B21,assignment,
+photoreceptor:all|retinotopy,B19,data,connectome-derived (F-VISION-2)
+photoreceptor:dorsal rim|polarisation_sensitivity,B19,absent,
+photoreceptor:all|count,B19,data,
+ommatidium:*|pale_yellow_type,B19,assignment,
+orn:all|odour_tuning,N15,data,DoOR/Hallem tuning (measured)
+orn:all|adaptation_dynamics,N15,absent,two-stage ORN adaptation not built
+orn:ORN_V|co2_half_saturation,N15,data,
+thermo:all|dT_dt_transduction,N15,absent,
+orn:all|rate_calibration,N15,switch,
+orn:hallem_types|spontaneous_rate,N15,data,Hallem & Carlson 2006
+orn:hallem_types|max_rate,N15,data,
+orn:other_types|spontaneous_and_max_rate,N15,data,
+sense:*|transduction,N15,assignment,transducer form per modality (extrasenses.py)
+afferent:hook_club_hairplate|gains_and_widths,B21,assignment,tuning shape (string); numeric split pending
+motor_unit:tibia_flexor|torque_per_spike,B5,data,Azevedo 2020 per-MN force (derived)
+motor_unit:other_leg|torque_per_spike,B5,data,size-scaled from tibia flexors (inferred)

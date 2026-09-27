@@ -1,0 +1,112 @@
+"""The construction data model (data/model/, src/flyemu/model_data.py).
+
+CONSTRUCTION.md task 1: every unknown has bounds, a basis, a prior, a label and
+one mechanism; no orphan mechanisms; no registry key the model reads without a
+row; the existing profile is a view of the table (its values lie inside the
+bounds and equal the table's current_m4 column).
+"""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import pytest
+
+REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO / "src"))
+
+from flyemu import model_data as M  # noqa: E402
+
+HAVE_GRAPH = (REPO / "data/cache/male_cns_edges.parquet").exists()
+
+
+@pytest.fixture(scope="module")
+def md():
+    return M.load()
+
+
+@pytest.fixture(scope="module")
+def live_inventory():
+    if not HAVE_GRAPH:
+        pytest.skip("run scripts/fetch_male_cns.py first")
+    from flyemu import profiles
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=profiles.WORKING_MIN_SYNAPSES)
+    return org.reg.inventory()
+
+
+def test_the_tables_are_valid(md):
+    assert M.validate(md) == []
+
+
+def test_the_validator_catches_what_it_claims(md):
+    p = md.parameters.copy()
+    i = p.index[p.param_id == "n2_v_rest"][0]
+    p.loc[i, "current_m4"] = -80.0           # outside [-70, -45]
+    p.loc[i, "bound_source"] = ""
+    j = p.index[p.param_id == "n5_efficacy"][0]
+    p.loc[j, "mechanism_id"] = "Z9"
+    bad = M.validate(M.ModelData(md.mechanisms, p, md.structural))
+    assert any("n2_v_rest: current_m4 -80.0 outside" in b for b in bad)
+    assert any("n2_v_rest: bound without a source" in b for b in bad)
+    assert any("n5_efficacy: unknown mechanism 'Z9'" in b for b in bad)
+    assert any("N5: orphan mechanism" in b for b in bad) is False  # N5 still owns other rows
+    m = md.mechanisms.copy()
+    m.loc[m.id == "S1", "absent_reason"] = None
+    assert any("S1: tier C absent without absent_reason" in b
+               for b in M.validate(M.ModelData(m, md.parameters, md.structural)))
+
+
+def test_the_template_has_56_mechanisms(md):
+    assert (~md.mechanisms.infrastructure).sum() == 56
+
+
+def test_every_key_the_model_reads_has_exactly_one_owner(md, live_inventory):
+    keys = (live_inventory.entity + "|" + live_inventory.property).unique()
+    cov = M.coverage(md, keys)
+    assert cov[cov.n_rows == 0].key.tolist() == []
+    assert M.ambiguous_keys(md, keys) == []
+
+
+def test_the_m4_profile_is_a_view_of_the_table(md, live_inventory):
+    """For every row with one concrete registry key, the live m4 value equals
+    current_m4 (so current_m4 inside the bounds means m4 is inside them)."""
+    live = {f"{r.entity}|{r.property}": r.value for r in live_inventory.itertuples()}
+    checked = 0
+    for r in md.parameters.itertuples():
+        k = r.registry_key
+        if not k or "*" in k or pd.isna(r.current_m4):
+            continue
+        assert k in live, f"{r.param_id}: {k} not read by the model"
+        try:
+            v = float(live[k])
+        except (TypeError, ValueError):     # table-valued key (e.g. per-MN twitch tau)
+            continue
+        assert v == pytest.approx(r.current_m4, rel=1e-9), r.param_id
+        checked += 1
+    assert checked >= 40
+
+
+def test_samples_stay_in_bounds_and_are_reproducible(md):
+    p = md.parameters.set_index("param_id")
+    for seed in range(10):
+        s = M.sample(md, seed, stage=2)
+        assert ((s >= p.bio_min) & (s <= p.bio_max)).all(), s[(s < p.bio_min) | (s > p.bio_max)]
+    assert M.sample(md, 3, 2).equals(M.sample(md, 3, 2))
+    assert not M.sample(md, 3, 2).equals(M.sample(md, 4, 2))
+
+
+def test_stage_zero_is_the_current_model(md):
+    """Neutral equivalence of the sampler: stage 0 releases nothing, so every
+    wired value is the model's current value."""
+    s0 = M.sample(md, 0, stage=0)
+    p = md.parameters.set_index("param_id")
+    cur = p.current_m4.dropna()
+    assert np.allclose(s0[cur.index], cur)
+    ov = M.registry_overrides(md, s0)
+    for k, v in ov.items():
+        row = p[p.registry_key == k].iloc[0]
+        if not pd.isna(row.current_m4):
+            assert v == row.current_m4

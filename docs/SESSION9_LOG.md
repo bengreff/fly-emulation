@@ -1,0 +1,5 @@
+# Session 9 log
+
+- 12:24 CDT Sun 27 Sep 2026: start. Ben (present at start) set: unattended; **~2 h budget** (wrap-up from ~14:10); B4 muscles as antagonist Hill pairs on flybody (FlyMimic parameters where joints correspond); leave backhouse PID 523. Deviation from prompt: 5 h → 2 h, so target tasks 1–3.
+- 12:26 tests: 57 passed. backhouse: ssh timed out (100.81.254.12:22); tasks 1–3 are Mac-only.
+- 12:34 **Task 1 done** (data model skeleton): data/model/{mechanisms.yaml (56 + 2 infrastructure), parameters.csv (104 unknowns), structural_keys.csv}, src/flyemu/model_data.py (load, validate, coverage, sample, registry_overrides, construction_state), tests/test_model_data.py (7 pass: validity; validator mutation test; every live m4 registry key owned by exactly one mechanism; m4 values equal current_m4 and lie inside bounds; 10 seeds of samples in bounds; stage 0 = current model), ledger prints the construction state. scripts/model_keys.py dumps the live inventory. Bounds: 47 of 104 have a data basis but only 9 sources have been read (the rest are leads, bound_verified=unverified). classes.csv is task 2.

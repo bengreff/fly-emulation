@@ -25,7 +25,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from flyemu import connectome, profiles
+from flyemu import connectome, model_data, profiles
 from flyemu.registry import Policy, Registry
 
 REPO = Path(__file__).resolve().parents[1]
@@ -140,5 +140,22 @@ def main() -> None:
     print(blanks.groupby(["domain", "model"]).slots.sum().unstack(fill_value=0).to_string())
 
 
+def construction_report() -> None:
+    """The construction state (CONSTRUCTION.md task 14) from data/model/."""
+    md = model_data.load()
+    bad = model_data.validate(md)
+    st = model_data.construction_state(md)
+    print("\n=== construction state (data/model/) ===")
+    print(f"mechanisms: {st['n_mechanisms']} (have/partial/absent per tier)")
+    print(st["mechanisms"].to_string())
+    print(f"unknowns: {st['n_unknowns']}; bounds from data {st['bounded_by_data']} "
+          f"(source read: {st['bounds_verified']}), guessed {st['n_unknowns'] - st['bounded_by_data']}; "
+          f"fixed by measurement {st['fixed_by_measurement']}; wired to the model {st['wired']}")
+    print("released by stage: " + ", ".join(f"{k}: {v}" for k, v in st["by_stage"].items()))
+    print("prior labels: " + ", ".join(f"{k}: {v}" for k, v in st["by_label"].items()))
+    print(f"validation problems: {len(bad)}" + ("" if not bad else "\n  " + "\n  ".join(bad)))
+
+
 if __name__ == "__main__":
     main()
+    construction_report()

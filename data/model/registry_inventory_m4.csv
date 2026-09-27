@@ -1,0 +1,281 @@
+subsystem,entity,property,units,basis,value,instances
+identity,graph:male-cns,inclusion_policy,dimensionless,derived,"status in ['Traced'] or typed (167,111 of 176,422); edges with weight >= 5 between included nodes",167111
+sign,connectome:all,nt_source_consensus,boolean,inferred,1.0,167111
+connectivity,graph:male-cns,chemical_connectivity,synapses,measured,89851184.0,6241231
+electrical,graph:male-cns,electrical_coupling,nS,unknown,,167111
+sign,transmitter:acetylcholine,sign,dimensionless,derived,1.0,103719
+sign,transmitter:gaba,sign,dimensionless,derived,-1.0,22056
+sign,transmitter:glutamate,sign,dimensionless,inferred,-1.0,29299
+sign,transmitter:histamine,sign,dimensionless,derived,-1.0,7894
+sign,transmitter:dopamine,sign,dimensionless,inferred,0.0,392
+sign,transmitter:serotonin,sign,dimensionless,inferred,0.0,48
+sign,transmitter:octopamine,sign,dimensionless,inferred,0.0,101
+sign,transmitter:unclear,sign,dimensionless,guessed,1.0,3602
+sign,transmitter:unclear_in_AL_local_neurons,sign,dimensionless,inferred,-1.0,67
+synaptic_efficacy,connection_class:all,efficacy_per_synapse,mV,inferred,0.15675,6241231
+synaptic_efficacy,connection_class:onto_sensory_terminals,included,boolean,inferred,0.0,98326
+neuron_biophysics,cell_type:all,size_scaling_exponent,dimensionless,guessed,0.0,167111
+synaptic_efficacy,cell_type:all,input_normalisation_exponent,dimensionless,guessed,0.0,167111
+synaptic_efficacy,connection_class:vnc_sensorimotor,efficacy_scale,dimensionless,guessed,1.0,673049
+synaptic_efficacy,connection_class:inhibitory_AL_LN_to_PN,postsynaptic_scale,dimensionless,guessed,1.0,9612
+synaptic_efficacy,connection_class:ORN_to_uPN,efficacy_scale,dimensionless,guessed,1.0,12764
+synaptic_efficacy,connection_class:ORN_to_uPN,homeostatic_matching,boolean,guessed,0.0,329
+synaptic_efficacy,connection_class:leg_proprioceptor_output,efficacy_scale,dimensionless,guessed,1.0,16790
+synaptic_efficacy,connection_class:cholinergic_AL_LN_to_PN_and_eLN,included,boolean,inferred,0.0,14646
+neuron_biophysics,cell_type:all,tau_m,ms,inferred,20.0,167111
+neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,tau_m,ms,inferred,16.0,60
+neuron_biophysics,cell_type:all,v_rest,mV,inferred,-52.0,167111
+neuron_biophysics,cell_type:all,v_th,mV,inferred,-45.0,167111
+neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,v_th,mV,inferred,-19.38,60
+neuron_biophysics,cell_type:all,v_reset,mV,inferred,-52.0,167111
+neuron_biophysics,cell_type:all,t_ref,ms,inferred,2.2,167111
+neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,t_ref,ms,inferred,4.27,60
+neuron_biophysics,cell_type:all,tau_s,ms,inferred,5.0,167111
+neuron_biophysics,cell_type:all,conduction_delay,ms,inferred,1.8,167111
+neuron_biophysics,cell_type:all,morphological_delays,boolean,guessed,1.0,167111
+neuron_biophysics,cell_type:untyped,inferred_conduction_delay,boolean,guessed,1.0,167111
+neuron_biophysics,cell_type:with_skeleton,conduction_delay,ms,derived,data/params/conduction_delays.csv,166910
+neuron_biophysics,sensory:peripheral_axon,conduction_delay,ms,unknown,,17896
+neuron_biophysics,cell_type:all,background_noise,mV/sqrt(ms),guessed,0.0,167111
+neuron_biophysics,cell_type:all,syn_reset_on_spike,boolean,guessed,1.0,167111
+neuron_biophysics,cell_type:all,adaptation_increment,mV,guessed,0.0,167111
+neuron_biophysics,cell_type:all,adaptation_tau,ms,guessed,200.0,167111
+neuron_biophysics,cell_type:all,std_release_fraction,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,std_tau_rec,ms,guessed,500.0,167111
+synaptic_efficacy,afferent:ORN,measured_depression,boolean,guessed,0.0,167111
+synaptic_efficacy,afferent:leg_proprioceptors,transferred_depression,boolean,guessed,0.0,167111
+neuron_biophysics,cell_type:all,graded,boolean,guessed,0.0,167111
+neuron_biophysics,cell_type:^R1-R6$|^R7|^R8,graded,boolean,measured,1.0,6091
+neuron_biophysics,cell_type:^L1$|^L2$|^L3$,graded,boolean,inferred,1.0,5327
+neuron_biophysics,cell_type:APL,graded,boolean,inferred,1.0,2
+neuron_biophysics,cell_type:all,graded_rmax,Hz,guessed,100.0,167111
+neuron_biophysics,cell_type:all,spontaneous_drive,mV,guessed,0.0,167111
+neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,spontaneous_drive,mV,inferred,36.45,60
+neuron_biophysics,cell_type:all,release_gain,dimensionless,guessed,1.0,167111
+neuron_biophysics,cell_type:all,input_gain,dimensionless,guessed,1.0,167111
+neuron_biophysics,cell_type:all,conductance_based,boolean,guessed,0.0,167111
+neuron_biophysics,cell_type:all,e_exc,mV,guessed,0.0,167111
+neuron_biophysics,cell_type:all,e_inh,mV,guessed,-70.0,167111
+neuron_biophysics,cell_type:all,glutamate_receptor_sign,sign,guessed,0.0,167111
+neuron_biophysics,cell_type:C2,glutamate_receptor_sign,sign,inferred,-1.0,1745
+neuron_biophysics,cell_type:Delta7,glutamate_receptor_sign,sign,inferred,-1.0,42
+neuron_biophysics,cell_type:Dm1,glutamate_receptor_sign,sign,inferred,-1.0,80
+neuron_biophysics,cell_type:Dm11,glutamate_receptor_sign,sign,inferred,-1.0,158
+neuron_biophysics,cell_type:Dm3a,glutamate_receptor_sign,sign,inferred,-1.0,1204
+neuron_biophysics,cell_type:Dm3b,glutamate_receptor_sign,sign,inferred,-1.0,1137
+neuron_biophysics,cell_type:Dm3c,glutamate_receptor_sign,sign,inferred,-1.0,787
+neuron_biophysics,cell_type:Dm4,glutamate_receptor_sign,sign,inferred,-1.0,99
+neuron_biophysics,cell_type:Dm8a,glutamate_receptor_sign,sign,inferred,-1.0,572
+neuron_biophysics,cell_type:Dm8b,glutamate_receptor_sign,sign,inferred,-1.0,532
+neuron_biophysics,cell_type:EPG,glutamate_receptor_sign,sign,inferred,-1.0,46
+neuron_biophysics,cell_type:L2,glutamate_receptor_sign,sign,inferred,-1.0,1779
+neuron_biophysics,cell_type:LC10a,glutamate_receptor_sign,sign,inferred,-1.0,275
+neuron_biophysics,cell_type:LC10b,glutamate_receptor_sign,sign,inferred,-1.0,95
+neuron_biophysics,cell_type:LC16,glutamate_receptor_sign,sign,inferred,-1.0,182
+neuron_biophysics,cell_type:LC4,glutamate_receptor_sign,sign,inferred,-1.0,126
+neuron_biophysics,cell_type:LC6,glutamate_receptor_sign,sign,inferred,-1.0,124
+neuron_biophysics,cell_type:LLPC1,glutamate_receptor_sign,sign,inferred,-1.0,285
+neuron_biophysics,cell_type:LPC1,glutamate_receptor_sign,sign,inferred,-1.0,224
+neuron_biophysics,cell_type:LPLC1,glutamate_receptor_sign,sign,inferred,-1.0,134
+neuron_biophysics,cell_type:LPLC2,glutamate_receptor_sign,sign,inferred,-1.0,185
+neuron_biophysics,cell_type:Lawf1,glutamate_receptor_sign,sign,inferred,-1.0,361
+neuron_biophysics,cell_type:Lawf2,glutamate_receptor_sign,sign,inferred,-1.0,383
+neuron_biophysics,cell_type:Mi9,glutamate_receptor_sign,sign,inferred,-1.0,1775
+neuron_biophysics,cell_type:PAM02,glutamate_receptor_sign,sign,inferred,-1.0,17
+neuron_biophysics,cell_type:PAM04,glutamate_receptor_sign,sign,inferred,-1.0,32
+neuron_biophysics,cell_type:PAM07,glutamate_receptor_sign,sign,inferred,-1.0,14
+neuron_biophysics,cell_type:PAM08,glutamate_receptor_sign,sign,inferred,-1.0,50
+neuron_biophysics,cell_type:PAM10,glutamate_receptor_sign,sign,inferred,-1.0,15
+neuron_biophysics,cell_type:Pm3,glutamate_receptor_sign,sign,inferred,-1.0,69
+neuron_biophysics,cell_type:Pm4,glutamate_receptor_sign,sign,inferred,-1.0,168
+neuron_biophysics,cell_type:T4a,glutamate_receptor_sign,sign,inferred,-1.0,1684
+neuron_biophysics,cell_type:T4b,glutamate_receptor_sign,sign,inferred,-1.0,1690
+neuron_biophysics,cell_type:T4c,glutamate_receptor_sign,sign,inferred,-1.0,1778
+neuron_biophysics,cell_type:T4d,glutamate_receptor_sign,sign,inferred,-1.0,1709
+neuron_biophysics,cell_type:T5a,glutamate_receptor_sign,sign,inferred,-1.0,1664
+neuron_biophysics,cell_type:T5b,glutamate_receptor_sign,sign,inferred,-1.0,1715
+neuron_biophysics,cell_type:T5c,glutamate_receptor_sign,sign,inferred,-1.0,1720
+neuron_biophysics,cell_type:T5d,glutamate_receptor_sign,sign,inferred,-1.0,1620
+neuron_biophysics,cell_type:Tm1,glutamate_receptor_sign,sign,inferred,-1.0,1777
+neuron_biophysics,cell_type:Tm2,glutamate_receptor_sign,sign,inferred,-1.0,1766
+neuron_biophysics,cell_type:Tm20,glutamate_receptor_sign,sign,inferred,-1.0,1762
+neuron_biophysics,cell_type:Tm29,glutamate_receptor_sign,sign,inferred,-1.0,544
+neuron_biophysics,cell_type:Tm3,glutamate_receptor_sign,sign,inferred,-1.0,2054
+neuron_biophysics,cell_type:Tm4,glutamate_receptor_sign,sign,inferred,-1.0,1670
+neuron_biophysics,cell_type:TmY3,glutamate_receptor_sign,sign,inferred,-1.0,824
+neuron_biophysics,cell_type:TmY5a,glutamate_receptor_sign,sign,inferred,-1.0,1364
+neuron_biophysics,cell_type:PEN_b(PEN2),glutamate_receptor_sign,sign,inferred,-1.0,22
+neuron_biophysics,cell_type:PEG,glutamate_receptor_sign,sign,inferred,-1.0,18
+neuron_biophysics,cell_type:Dm9,glutamate_receptor_sign,sign,inferred,1.0,273
+neuron_biophysics,cell_type:T1,glutamate_receptor_sign,sign,inferred,1.0,1777
+neuron_biophysics,cell_type:vDeltaC,glutamate_receptor_sign,sign,inferred,-1.0,27
+neuron_biophysics,cell_type:vDeltaE,glutamate_receptor_sign,sign,inferred,-1.0,18
+neuron_biophysics,cell_type:hDeltaE,glutamate_receptor_sign,sign,inferred,-1.0,8
+neuron_biophysics,cell_type:all,gabab_fraction,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,gabab_tau,ms,guessed,150.0,167111
+neuron_biophysics,cell_type:all,presynaptic_inhibition_gain,per mV,guessed,0.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_ltd_rate,per unit DAN trace per KC spike,guessed,0.0,167111
+neuron_biophysics,cell_type:all,dan_trace_tau,ms,guessed,500.0,167111
+synaptic_efficacy,cell_type:cx_ring,class_input_normalisation,boolean,guessed,0.0,167111
+neuron_biophysics,cell_type:all,mod_sensitivity_dopamine,per unit level,guessed,0.0,167111
+neuron_biophysics,cell_type:all,mod_sensitivity_octopamine,per unit level,guessed,0.0,167111
+neuron_biophysics,cell_type:all,mod_sensitivity_serotonin,per unit level,guessed,0.0,167111
+neuron_biophysics,cell_type:all,mod_tau,ms,guessed,1000.0,167111
+neuron_biophysics,cell_type:all,mod_increment,level per spike (per 1000 releasing cells),guessed,1.0,167111
+neuromodulation,neuromodulation:pools,releasing_cells,neurons,derived,dict(n=3),541
+physiological_initialisation,state:all_neurons,initial_condition,mV,guessed,-52.0,167111
+identity,cell_type:all,type_grouping_policy,dimensionless,guessed,11752 distinct `type` labels used as-is; no collapsing,167111
+neuron_biophysics,cell_type:all,q10,dimensionless,inferred,2.0,167111
+neuromuscular,population:vnc_motor,count,neurons,measured,708,708
+neuromuscular,muscle:Acc. ti flexor,joint_and_sign,dimensionless,derived,rm_trochanterfemur-rm_tibia-pitch x -1,47
+neuromuscular,muscle:Acc. tr flexor,joint_and_sign,dimensionless,derived,rf_coxa-rf_trochanterfemur-pitch x -1,22
+neuromuscular,muscle:Pleural remotor/abductor,joint_and_sign,dimensionless,derived,c_thorax-lm_coxa-roll x -1,14
+neuromuscular,muscle:Sternal adductor,joint_and_sign,dimensionless,derived,c_thorax-rf_coxa-roll x +1,6
+neuromuscular,muscle:Sternal anterior rotator,joint_and_sign,dimensionless,guessed,c_thorax-lm_coxa-yaw x -1,12
+neuromuscular,muscle:Sternal posterior rotator,joint_and_sign,dimensionless,guessed,c_thorax-lf_coxa-yaw x +1,22
+neuromuscular,muscle:Sternotrochanter,joint_and_sign,dimensionless,derived,rf_coxa-rf_trochanterfemur-pitch x +1,14
+neuromuscular,muscle:Ta depressor,joint_and_sign,dimensionless,derived,lf_tibia-lf_tarsus1-pitch x +1,9
+neuromuscular,muscle:Ta levator,joint_and_sign,dimensionless,derived,rf_tibia-rf_tarsus1-pitch x -1,5
+neuromuscular,muscle:Tergopleural/Pleural promotor,joint_and_sign,dimensionless,derived,c_thorax-rf_coxa-roll x +1,8
+neuromuscular,muscle:Tergotr.,joint_and_sign,dimensionless,derived,rf_coxa-rf_trochanterfemur-pitch x +1,12
+neuromuscular,muscle:Ti extensor,joint_and_sign,dimensionless,derived,rh_trochanterfemur-rh_tibia-pitch x +1,12
+neuromuscular,muscle:Ti flexor,joint_and_sign,dimensionless,derived,rm_trochanterfemur-rm_tibia-pitch x -1,37
+neuromuscular,muscle:Tr extensor,joint_and_sign,dimensionless,derived,lm_coxa-lm_trochanterfemur-pitch x +1,11
+neuromuscular,muscle:Tr flexor,joint_and_sign,dimensionless,derived,rm_coxa-rm_trochanterfemur-pitch x -1,35
+neuromuscular,muscle:ltm,joint_and_sign,dimensionless,derived,4 tarsal joints coupled x +1,84
+neuromuscular,muscle:ltm1-tibia,joint_and_sign,dimensionless,derived,4 tarsal joints coupled x +1,36
+neuromuscular,muscle:ltm2-femur,joint_and_sign,dimensionless,derived,4 tarsal joints coupled x +1,48
+neuromuscular,motor_unit:all,force_per_spike,uN*mm,guessed,1.0,434
+muscle_mechanics,muscle:all,activation_tau,ms,guessed,30.0,50
+muscle_mechanics,muscle:all,force_length_velocity,dimensionless,unknown,,50
+neuromuscular,motor_map:^MN9$,actuator_and_sign,dimensionless,inferred,c_head-c_rostrum-pitch x 1,2
+neuromuscular,motor_map:^MN1$|^MN2Da$|^MN2Db$|^MN2V$,actuator_and_sign,dimensionless,inferred,c_head-c_rostrum-pitch x -1,10
+neuromuscular,motor_map:^MN3L$|^MN3M$,actuator_and_sign,dimensionless,inferred,c_rostrum-c_haustellum-pitch x 1,6
+neuromuscular,motor_map:^MN4a$|^MN4b$,actuator_and_sign,dimensionless,inferred,c_rostrum-c_haustellum-pitch x -1,6
+neuromuscular,motor_map:^MN6$|^MN7$,actuator_and_sign,dimensionless,inferred,c_haustellum-{s}_labrum-pitch x 1,6
+neuromuscular,motor_map:^TTMn$|^STTMm$,actuator_and_sign,dimensionless,inferred,LEG:m:CTr:depression x 0,6
+neuromuscular,motor_map:^b1 MN$|^b2 MN$|^b3 MN$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-roll x 1,6
+neuromuscular,motor_map:^i1 MN$|^i2 MN$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-yaw x 1,4
+neuromuscular,motor_map:^iii1 MN$|^iii3 MN$|^MNwm35$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-pitch x 1,6
+neuromuscular,motor_map:^hg1 MN$|^hg2 MN$|^hg3 MN$|^hg4 MN$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-pitch x -1,8
+neuromuscular,motor_map:^DLMn,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-roll x -1,10
+neuromuscular,motor_map:^DVMn,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_wing-roll x 1,14
+neuromuscular,motor_map:^hDVM MN$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_haltere-pitch x 1,2
+neuromuscular,motor_map:^hi1 MN$|^hi2 MN$|^hiii2 MN$|^MNhm42$|^MNhm43$|^MNhm03$,actuator_and_sign,dimensionless,inferred,c_thorax-{s}_haltere-pitch x -1,14
+neuromuscular,motor_map:^ADNM2 MN$,actuator_and_sign,dimensionless,inferred,c_thorax-c_head-yaw x 1,2
+neuromuscular,motor_map:^FNM2$,actuator_and_sign,dimensionless,inferred,c_thorax-c_head-pitch x 1,2
+neuromuscular,motor_map:^ADNM1 MN$|^MNnm|^CvN|^GNG276$|^GNG283$|^GNG641$|^GNG648$|^GNG650$|^GNG653$,actuator_and_sign,dimensionless,guessed,CYCLE:c_thorax-c_head-yaw|c_thorax-c_head-roll|c_thorax-c_head-pitch x 1,40
+neuromuscular,motor_map:^GNG133$|^GNG649$|^GNG651$|^GNG652$|^GNG668$|^PS348$,actuator_and_sign,dimensionless,inferred,c_head-{s}_antenna-pitch x 1,12
+neuromuscular,motor_map:^GNG314$|^GNG647$|^PS349$,actuator_and_sign,dimensionless,guessed,CYCLE:c_thorax-c_head-yaw|c_thorax-c_head-roll|c_thorax-c_head-pitch x 1,7
+neuromuscular,motor_map:^MNad,actuator_and_sign,dimensionless,inferred,ABDOMEN x 1,214
+neuromuscular,motor_map:^MNxm,actuator_and_sign,dimensionless,guessed,CYCLE:c_thorax-c_abdomen1-pitch|c_thorax-c_abdomen1-yaw x 1,6
+neuromuscular,motor_map:^Fe reductor MN$,actuator_and_sign,dimensionless,guessed,LEGCYCLE:{leg}_coxa-{leg}_trochanterfemur-roll x 1,20
+neuromuscular,motor_map:^MNfl[0-9]|^MNml[0-9]|^MNhl[0-9],actuator_and_sign,dimensionless,guessed,LEGCYCLE:c_thorax-{leg}_coxa-pitch|{leg}_coxa-{leg}_trochanterfemur-roll|{leg}_tibia-{leg}_tarsus1-pitch x 1,45
+neuromuscular,population:vnc_motor unmapped (no muscle action declared),actuator_target,dimensionless,unknown,,9
+neuromuscular,population:vnc_motor unmapped (no pharyngeal pump or salivary structure in the body model),actuator_target,dimensionless,unknown,,37
+neuromuscular,population:vnc_motor unmapped (no thorax-tension DOF in the body model),actuator_target,dimensionless,unknown,,12
+neuromuscular,muscle:long tendon,adhesion_coupling,dimensionless,guessed,42 motor neurons drive 6 tarsal adhesion actuators,42
+neuromuscular,actuator:undriven,motor_neuron_source,dimensionless,unknown,,3
+neuromuscular,motor_unit:all,per_neuron_forces,boolean,guessed,1.0,882
+neuromuscular,motor_unit:tibia_flexor,torque_per_spike,uN*mm,derived,data/params/motor_forces.csv,84
+neuromuscular,motor_unit:other_leg,torque_per_spike,uN*mm,inferred,data/params/motor_forces.csv,350
+muscle_mechanics,motor_unit:leg,twitch_tau,ms,guessed,data/params/motor_forces.csv,434
+sensory_transduction,afferent:all,rate_gain,mV per normalised stimulus,guessed,8.0,2482
+sensory_transduction,afferent:all,resting_drive,mV,guessed,2.0,2482
+sensory_transduction,afferent:campaniform sensilla,encoded_variable,dimensionless,inferred,load,86
+sensory_transduction,afferent:campaniform sensilla,count,neurons,measured,86,86
+sensory_transduction,afferent:chordotonal organ,encoded_variable,dimensionless,inferred,joint_angle_velocity,409
+sensory_transduction,afferent:chordotonal organ,count,neurons,measured,409,409
+sensory_transduction,afferent:hair plate,encoded_variable,dimensionless,inferred,joint_angle,113
+sensory_transduction,afferent:hair plate,count,neurons,measured,113,113
+sensory_transduction,afferent:mechanosensory bristle,encoded_variable,dimensionless,inferred,contact,1874
+sensory_transduction,afferent:mechanosensory bristle,count,neurons,measured,1874,1874
+sensory_transduction,afferent:campaniform sensilla,transduced_variable,uN and uN*mm,derived,load transmitted through the leg segment,426
+sensory_transduction,population:ol_sensory,transduction_model,dimensionless,unknown,,6098
+sensory_transduction,population:cb_sensory,transduction_model,dimensionless,unknown,,4868
+sensory_transduction,afferent:leg_proprioceptors,measured_form,boolean,guessed,1.0,2482
+sensory_transduction,afferent:FeCO claw,angle_tuning,deg,inferred,"sigmoid, theta50 spread 20-80 / 90-170 deg",107
+sensory_transduction,afferent:leg_proprioceptors,subtype_assignment,category,guessed,data/params/proprio_assignment.csv,457
+sensory_transduction,afferent:claw_hook_hairplate,preferred_direction,category,inferred,data/params/proprio_assignment.csv (direction),250
+sensory_transduction,afferent:hook_club_hairplate,gains_and_widths,various,guessed,hook/club 200 deg/s; hair plate 85% +/- 5% of range,350
+sensory_transduction,afferent:leg_proprioceptors,rate_mode_max_hz,Hz,guessed,0.0,457
+sensory_transduction,photoreceptor:all,luminance_gain,mV per unit luminance,guessed,10.0,6091
+sensory_transduction,photoreceptor:all,dark_drive,mV,guessed,1.0,6091
+sensory_transduction,photoreceptor:all,retinotopy,ommatidium index,derived,data/derived/retinotopy.csv,6026
+sensory_transduction,photoreceptor:dorsal rim,polarisation_sensitivity,dimensionless,unknown,,158
+circadian,photoreceptor:HBeyelet,transduction_model,dimensionless,unknown,,7
+sensory_transduction,photoreceptor:all,count,neurons,measured,6091,6091
+sensory_transduction,photoreceptor:all,sampling_rate,Hz,guessed,100.0,6091
+sensory_transduction,ommatidium:assigned,pale_yellow_type,category,derived,data/derived/retinotopy.csv,898
+sensory_transduction,ommatidium:unassigned,pale_yellow_type,category,inferred,flygym canonical mask,544
+sensory_transduction,orn:all,odour_tuning,relative 0-1,measured,data/derived/orn_tuning_door.csv,2279
+sensory_transduction,orn:all,max_drive,mV,guessed,15.0,2726
+sensory_transduction,orn:all,half_saturation,dilution fraction,guessed,0.001,2580
+sensory_transduction,orn:ORN_V,co2_half_saturation,volume fraction,derived,0.05,55
+sensory_transduction,chemosense:all,baseline_drive,mV,guessed,0.0,2726
+sensory_transduction,orn:all,adaptation_dynamics,dimensionless,unknown,,2580
+sensory_transduction,thermo:all,dT_dt_transduction,mV per degC/s,unknown,,40
+sensory_transduction,orn:all,rate_calibration,boolean,guessed,1.0,2580
+sensory_transduction,orn:hallem_types,spontaneous_rate,Hz,measured,data/params/orn_rates.csv,1282
+sensory_transduction,orn:hallem_types,max_rate,Hz,derived,data/params/orn_rates.csv,1282
+sensory_transduction,orn:other_types,spontaneous_and_max_rate,Hz,inferred,data/params/orn_rates.csv,1298
+sensory_transduction,sense:taste,gain,mV,guessed,15.0,1
+sensory_transduction,sense:taste_K,gain,M,guessed,0.05,1
+sensory_transduction,sense:mechano_extra,gain,mV,guessed,8.0,1
+sensory_transduction,sense:jo_gravity,gain,rad per g,guessed,0.3,1
+sensory_transduction,sense:jo_wind,gain,rad per mm/s,guessed,0.0001,1
+sensory_transduction,sense:cs_omega,gain,rad/s,guessed,50.0,1
+sensory_transduction,sense:thermo,gain,mV per degC/s,guessed,5.0,1
+sensory_transduction,sense:taste_labellar,transduction,dimensionless,inferred,extrasenses.py,267
+sensory_transduction,sense:taste_leg,transduction,dimensionless,guessed,extrasenses.py,1156
+sensory_transduction,sense:leg_touch,transduction,dimensionless,inferred,extrasenses.py,919
+sensory_transduction,sense:head_touch,transduction,dimensionless,inferred,extrasenses.py,1031
+sensory_transduction,sense:jo,transduction,dimensionless,guessed,extrasenses.py,578
+sensory_transduction,sense:wing_cs,transduction,dimensionless,guessed,extrasenses.py,19
+sensory_transduction,sense:haltere_cs,transduction,dimensionless,guessed,extrasenses.py,213
+sensory_transduction,sense:abdomen_proprio,transduction,dimensionless,guessed,extrasenses.py,66
+sensory_transduction,sense:neck_proprio,transduction,dimensionless,guessed,extrasenses.py,3
+sensory_transduction,sense:thermo,transduction,dimensionless,inferred,extrasenses.py,40
+sensory_transduction,sense:unknown_modality,drive,mV,guessed,0.0,3228
+interface_efferent,interface:leg_motor,channel,dimensionless,guessed,partial,381
+interface_efferent,interface:wing_power_motor,channel,dimensionless,absent,,12
+interface_efferent,interface:wing_steering_motor,channel,dimensionless,absent,,67
+interface_efferent,interface:neck_motor,channel,dimensionless,absent,,24
+interface_efferent,interface:haltere_motor,channel,dimensionless,absent,,16
+interface_efferent,interface:abdominal_motor,channel,dimensionless,absent,,214
+interface_efferent,interface:proboscis_pharyngeal_motor,channel,dimensionless,absent,,107
+interface_efferent,interface:neurosecretory,channel,dimensionless,absent,,94
+interface_efferent,interface:enteric_visceral,channel,dimensionless,absent,,50
+interface_efferent,interface:spiracle_tracheal,channel,dimensionless,absent,,0
+interface_efferent,interface:other_vnc_efferent,channel,dimensionless,absent,,98
+interface_afferent,interface:photoreceptors,channel,dimensionless,guessed,partial,6098
+interface_afferent,interface:ocelli,channel,dimensionless,absent,,3
+interface_afferent,interface:antennal_orn,channel,dimensionless,guessed,partial,1200
+interface_afferent,interface:maxillary_palp_orn,channel,dimensionless,guessed,partial,120
+interface_afferent,interface:gustatory,channel,dimensionless,absent,,380
+interface_afferent,interface:femoral_chordotonal,channel,dimensionless,guessed,partial,425
+interface_afferent,interface:campaniform_sensilla,channel,dimensionless,guessed,partial,426
+interface_afferent,interface:hair_plates,channel,dimensionless,guessed,partial,113
+interface_afferent,interface:bristles,channel,dimensionless,guessed,partial,3359
+interface_afferent,interface:wing_proprioceptors,channel,dimensionless,absent,,46
+interface_afferent,interface:johnstons_organ,channel,dimensionless,absent,,589
+interface_afferent,interface:haltere_campaniform,channel,dimensionless,absent,,205
+interface_afferent,interface:arista_thermo,channel,dimensionless,absent,,6
+interface_afferent,interface:sacculus_cold,channel,dimensionless,absent,,18
+interface_afferent,interface:hygroreceptors,channel,dimensionless,guessed,partial,0
+interface_afferent,interface:co2_receptor,channel,dimensionless,guessed,partial,0
+interface_afferent,interface:nociceptors,channel,dimensionless,absent,,0
+interface_afferent,interface:gut_pharyngeal_sensory,channel,dimensionless,unknown,,1143
+interface_afferent,interface:enteroendocrine_nutrient,channel,dimensionless,absent,,0
+interface_afferent,interface:oxygen_sensing,channel,dimensionless,unknown,,0
+interface_efferent,interface:efferent_sense_organ_control,channel,dimensionless,absent,,0
+interface_physics,interface:tarsal_adhesion,channel,dimensionless,unknown,,0
+interface_physics,interface:unsteady_aerodynamics,channel,dimensionless,absent,,0
+interface_physics,interface:air_flow_field,channel,dimensionless,absent,,0
+interface_physics,interface:acoustic_near_field,channel,dimensionless,absent,,0
+interface_physics,interface:light_transport,channel,dimensionless,guessed,partial,0
+interface_physics,interface:odour_plume_transport,channel,dimensionless,guessed,partial,0
+interface_physics,interface:humoral_transport,channel,dimensionless,absent,,0
+interface_physics,interface:tracheal_gas_exchange,channel,dimensionless,absent,,0
+interface_physics,interface:cuticle_deformation,channel,dimensionless,absent,,0
+interface_physics,interface:joint_limits,channel,dimensionless,absent,,0
