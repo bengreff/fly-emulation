@@ -1511,3 +1511,15 @@ s7's CX screens judged the local-kick bump with EPGs in table order (not local),
   - PEG (0.39 vs ~0.05) and PAM/DOPA (0.73 vs ~0 in Davis) do not.
 - snRNA ratios are biased upward (ambient RNA or doublets), so the bulk threshold does not transfer. Only ratio < 0.1 is used (conservative): **vDeltaC, vDeltaE and hDeltaE → −1** (inert rows, matching the default). The other ~25 CX identities sit at 0.12–1.7, recorded, no row.
 - Total transcript-based glutamate sign rows: 54.
+
+### Pre-registration: receptor-based neuromodulator sensitivities (MS) (19:20)
+
+**Why.** In m4 the monoamines act only through the pools, and every pool sensitivity is 0, so dopamine, octopamine and serotonin currently have no effect.
+**Change.** `candidates_s8_modsens.csv`: 149 rows for 68 Davis-profiled types. Each sign comes from the G-protein coupling of the expressed receptors: Dop1R1/2, Octβ1–3R, Oamb, 5-HT7 and 5-HT2A/B count +; Dop2R, Octα2R and 5-HT1A/B count −. s = 0.2 × net (magnitude guessed). Other types stay at 0.
+**Criteria (Mac; m4 baseline run alongside):** closed loop seeds 0–2 with 0 non-tonic spikes; sugar→MN9_L > 5 Hz (10 trials).
+**Adoption.** If both pass, the rows go live (basis guessed for magnitude, inferred for sign). Report the change in rates.
+
+**Result, MS (19:25; Mac). Passes; adopted (149 rows live).**
+- Closed loop seeds 0–2: 0 non-tonic spikes. Brain excluding ORNs 0.383 / 0.223 / 0.192 Hz (m4 baseline on the Mac: 0.380 / 0.223 / 0.297).
+- Sugar→MN9_L 8.9 ± 5.9 / 96.3 ± 3.5 Hz; active cells at 200 Hz 1,070 (vs 850 on backhouse m4 + M0).
+- The monoamines now act in the model: 68 types gain receptor-signed pool sensitivities. The other ~14k types stay at 0 (guessed). Magnitude 0.2 is a guess.
