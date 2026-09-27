@@ -48,7 +48,7 @@ The search is allowed by `CLAUDE.md`, which says to fit unknown parameters again
    - stage 2: gradient refinement with surrogate spike gradients in JAX, per-type parameters regularised toward their class;
    - output: an **ensemble** of brains that satisfy the fit set. Their spread is our uncertainty. Report where the ensemble agrees and where it disagrees.
 
-**The body is the behavioural testbed, not the thing being fitted.** Unknown actuators must not fake behaviour:
+**The body must be physically a fly before the search starts** (Ben, end of s8: fidelity and clean unknowns come first; see `docs/research/FIDELITY.md`). Unknown actuators must not fake behaviour:
 - **wing, abdomen, head and haltere actuators become passive** (with the motor layer labelled absent), because they currently pin joints (wings 82% of the time at a range limit);
 - flygym's musculoskeletal model and MuJoCo Warp GPU are the later route to real muscles and a batched body.
 
@@ -76,57 +76,46 @@ The search is allowed by `CLAUDE.md`, which says to fit unknown parameters again
 
 ## Priorities
 
-### 1. Passive non-leg body (≤ 40 min)
+Read `docs/research/FIDELITY.md` first. It sets the mechanism budget: ~49 mechanisms, of which Tier A is 13 body + 10 neural. Principle: **build the mechanisms first; the search fills parameters, never missing physics.** A search run against a body with net-torque joints would teach neural weights to fake muscle stiffness. This session makes the fly physical and assigns the unknowns. The GPU engine and search follow in session 10.
 
-- Add `body:non_leg_actuators|mode` (`neural` | `passive`; passive = zero neural torque on wing, abdomen, head/neck, haltere and mouthpart actuators, with passive stiffness and damping to flybody's default folded pose; motor layer labelled absent).
-- Add a joint-limit occupancy metric per joint family.
-- Pre-register: wing and abdomen at-limit < 10%; neural regression unchanged; standing for default and T on fresh seeds 3–5.
-- Adopt if it passes. Record a browser replay and describe the frames honestly.
+### 1. Assign every unknown cleanly (≤ 45 min)
 
-### 2. GPU batched brain simulator (the core build, ~2 h)
+- Extend `data/ontology/fly_information.yaml`: each entry gets `tier` (A/B/C), `required_level` (from FIDELITY.md) and `grain`.
+- Add the mechanisms it lacks:
+  - per-class background drive;
+  - antagonist muscle pairs;
+  - wingbeat oscillator;
+  - steering→wing-kinematics hinge map;
+  - haltere Coriolis signal;
+  - bristle-field contact map;
+  - cibarial pump and crop.
+- Extend `scripts/blank_ledger.py` to report per tier: mechanisms built / partial / absent, and parameters data-constrained / free. Commit the ledger as the build plan.
 
-- **Enable CUDA JAX on backhouse** (`uv add "jax[cuda12]"` or the matching extra for JAX 0.11.x; verify `jax.devices()` shows the GPU). Record versions in `docs/ENVIRONMENT.md`.
-- **`src/flyemu/gpu/`: a batched LIF matching `lif.py`'s equations for the m4 mechanisms that matter first.** Those are exponential synapses, refractoriness, per-type thresholds/rests/tonic drive, delays per presynaptic type (bucketed), graded cells, adaptation and STD. Everything else raises `NotImplementedError` rather than being silently dropped.
-  - **Class-decomposed weights:** w = Σ_k s_k · W_k, with W_k sparse (BCOO/segment ops) per parameter class. A batch of B brains then shares one sparse structure, and each brain carries its own scale vector s.
-  - Delays: a spike-history ring buffer and one sparse product per delay bucket.
-- **Equivalence tests against the CPU reference,** in `tests/`:
-  - bit-level on a small random network (same spikes);
-  - on the full brain, open-loop, a pre-registered tolerance on sugar→MN9 rate and the active-cell count;
-  - a return-to-rest check.
-- **Benchmark:** simulated seconds per wall second at B = 1, 16, 64 against the CPU simulator (≈ 50 s wall per simulated second). Record in `docs/ENVIRONMENT.md`. The GPU path is used only if it passes the tests.
+### 2. Tier A body, made physical (~2.5 h)
 
-### 3. Target library v1 and objective (~45 min, partly by the agent)
+In this order, each with a pre-registration and a test of what it claims:
 
-- **Agent task:** extract quantitative, per-cell-type physiology targets into `data/measurements/` with `use` = fit / held-out / sealed. This means resting and evoked rates or Vm, with conditions, n, uncertainty, source figure and table. Priority: CX (EPG, PEN, Delta7, ER), AL (ORN, PN, LN), MB (KC, MBON, DAN), optic lobe (T4/T5, Mi/Tm), descending neurons, leg premotor and MN. Assign held-out **by dataset**, keeping at least a third of datasets held out. Agent reports are leads; spot-check sources before labelling anything as measured.
-- **Objective v1 (open-loop, GPU-evaluable):**
-  - stability after sensory pulses (rule v2 populations);
-  - sugar→MN9 in range;
-  - resting-rate terms for the fit-set classes;
-  - the CX bump from a strong local kick (12 nearest EPGs, inferred headings, 4 headings; B1/B2);
-  - PN responses to Hallem-rate input.
+1. **Passive non-leg joints:** wing, abdomen, head/neck, haltere and mouthpart neural torque off (motor layer labelled absent), passive stiffness and damping to flybody's folded pose. Add the joint-limit occupancy metric (s8: wings at a limit 82% of the time).
+2. **Passive leg joint mechanics:** per-joint stiffness, damping and rest angle. Search the literature first (one agent): Drosophila or insect passive joint torque, e.g. Hooper 2009 locust scaling, Azevedo 2020 passive tibia forces, FlyMimic. Label every value measured / inferred (scaled) / guessed.
+3. **Antagonist Hill-type muscles per leg DOF,** using MuJoCo's built-in muscle actuators (activation dynamics, F–L–V). Parameters from the FlyMimic front-leg model where available (fitted), size-scaled for the other legs (inferred). Motor units map onto their muscle (flexor vs extensor), not onto a signed net torque; the calibrated joint signs become muscle identities. Keep the torque path as an option for comparison.
+4. **Twitch kinetics per unit class:** slow units rise slowly (Azevedo 2020: slow twitches do not peak within 500 ms), with saturation.
+5. **Adhesion detachment by load and shear** instead of a pure neural switch.
 
-  Each term has a declared scale. Pre-register the objective, parameter space and splits in DECISIONS **before** the search.
+Each step is verified by: leg posture at rest vs measured resting angles (where available); the resistance reflex sign (dev cell only; sealed cells stay sealed); standing (default and T, fresh seeds 3–5); neural regression unchanged. Record a browser replay after the last step and describe the frames honestly.
 
-### 4. First class-level search (remaining time; may continue after wrap-up if checkpointed)
+### 3. Tier A neural mechanisms (~1 h, if time)
 
-- CMA-ES (or a batched evolutionary search) over ~50–150 class-level parameters:
-  - efficacy per transmitter × region;
-  - per-class threshold/rest offsets;
-  - per-class adaptation and STD;
-  - Delta7/ER output gains;
-  - leg-afferent scale;
-  - neuromodulator pool gain.
+- **Graded mode per class for the VNC local interneurons and the optic-lobe front end.** Evidence for which classes are non-spiking goes in a table first, labelled.
+- **A per-class background-drive term** (a mechanism with a default of 0, ready for the search).
+- Do not fit these yet.
 
-  Bounds and priors come from data. Batch on GPU; checkpoint every generation to `runs/s9_search/`; log every evaluation.
-- Re-score the top candidates on the CPU reference, open-loop and then closed-loop in the body (default and T, 3 seeds): stability, standing, command direction and gait on fresh seeds.
-- **Report:**
-  - the objective trace;
-  - how far each parameter moved from its prior;
-  - which targets conflict (a Pareto view);
-  - the ensemble spread;
-  - held-out scores only for candidates that pass the pre-registered fit criteria.
+### Deferred to session 10
 
-  A persistent conflict localises the missing biology, and that is a result.
+- CUDA JAX on backhouse; a batched GPU LIF with class-decomposed weights and delay buckets, equivalence-tested against `lif.py`; a benchmark.
+- Target library v1, split by dataset.
+- The pre-registered class-level CMA-ES search.
+
+These are specified in `docs/PLAN_NEXT.md` (stages 1–3).
 
 ## Wrap-up
 

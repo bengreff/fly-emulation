@@ -28,10 +28,10 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
 
 | Stage | Session(s) | Deliverable | Success measure |
 |---|---|---|---|
-| 0 | 9 | passive non-leg body; joint-limit metric | wings/abdomen < 10% at limit |
-| 1 | 9 | CUDA JAX; batched GPU LIF with class-decomposed weights and delay buckets; equivalence tests vs `lif.py`; benchmark | tests pass; ≥ 10× brains per wall-second vs CPU |
-| 2 | 9–10 | target library v1 (per-type physiology, split by dataset); pre-registered objective | ≥ 100 quantitative targets, ≥ 1/3 of datasets held out |
-| 3 | 9–10 | class-level CMA-ES search (~50–150 params); CPU and body re-scoring of the best | fit-set terms met without stability loss; held-out score reported |
+| 0 | 9 | **mechanisms before search** (docs/research/FIDELITY.md): ontology tiers and grains with clean unknowns; Tier A body (passive non-leg joints, passive leg mechanics with rest angles, antagonist Hill muscles, twitch kinetics, adhesion detachment); Tier A neural (graded classes, background drive) | ledger per tier; wings/abdomen < 10% at limit; right-signed resistance reflex; standing on fresh seeds |
+| 1 | 10 | CUDA JAX; batched GPU LIF with class-decomposed weights and delay buckets; equivalence tests vs `lif.py`; benchmark | tests pass; ≥ 10× brains per wall-second vs CPU |
+| 2 | 10 | target library v1 (per-type physiology, split by dataset); pre-registered objective | ≥ 100 quantitative targets, ≥ 1/3 of datasets held out |
+| 3 | 10–11 | class-level CMA-ES search (~50–150 params); CPU and body re-scoring of the best | fit-set terms met without stability loss; held-out score reported |
 | 4 | 10–11 | closed-loop evaluation at scale (CPU pool now; MuJoCo Warp GPU body later); behavioural targets (standing, command direction, gait) | fresh-seed held-out behaviour |
 | 5 | 11–12 | gradient refinement (surrogate spike gradients) of per-type parameters regularised to class; an ensemble of brains | ensemble spread and held-out prediction reported per target |
 | 6 | 12+ | musculoskeletal body (flygym muscle model) replaces torque actuators; flight hinge later | behaviour without passive-actuator abstractions |
