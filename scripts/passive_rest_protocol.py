@@ -33,40 +33,22 @@ from scipy.optimize import least_squares, minimize
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from flyemu import passive  # noqa: E402
+from flyemu.legangles import paper_angles  # noqa: E402,F401
 from flyemu.body import Body  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 MEASURED = {"rf": (115, 40, 50, 115), "rm": (110, 90, 60, 120), "rh": (85, 130, 100, 135)}
+# the fly is taken as mirror-symmetric: left legs get the same targets
+MEASURED.update({"l" + k[1:]: v for k, v in list(MEASURED.items())})
 WEIGHT_MG = 0.19
 BODY_ANGLES = (-30, -15, 0, 15, 30)
 G = 9810.0                                  # mm/s^2
 
 
-def paper_angles(pF_ctr, pF_fti, pT_titA, right: bool = True) -> np.ndarray:
-    """theta, phi, psi, gamma (deg) in the thorax frame (x fwd, y left, z up)."""
-    xp = np.array([0.0, -1.0, 0.0]) if right else np.array([0.0, 1.0, 0.0])  # toward the leg's side
-    yp = np.array([1.0, 0.0, 0.0])
-    zp = np.array([0.0, 0.0, 1.0])
-    rF = pF_fti - pF_ctr
-    rF /= np.linalg.norm(rF)
-    rT = pT_titA - pF_fti
-    rT /= np.linalg.norm(rT)
-    xz = rF - (rF @ yp) * yp
-    theta = np.degrees(np.arccos(np.clip(xz @ zp / np.linalg.norm(xz), -1, 1)))
-    xy = rF - (rF @ zp) * zp
-    phi = np.degrees(np.arccos(np.clip(xy @ yp / np.linalg.norm(xy), -1, 1)))
-    psi = np.degrees(np.arccos(np.clip(rF @ rT, -1, 1)))
-    z2 = rF
-    y2 = np.cross(z2, zp)
-    y2 /= np.linalg.norm(y2)
-    x2 = np.cross(y2, z2)
-    gamma = np.degrees(np.arctan2(rT @ y2, rT @ x2)) % 360
-    return np.array([theta, phi, psi, gamma])
-
-
 class Leg:
     def __init__(self, body: Body, leg: str):
         self.m, self.d = body.sim.mj_model, body.sim.mj_data
+        self.right = leg.startswith("r")
         m = self.m
         pre = body.fly.name + "/"
         self.j = [j for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE
@@ -82,12 +64,21 @@ class Leg:
                        if (mj.mj_id2name(m, mj.mjtObj.mjOBJ_BODY, i) or "").startswith(pre + leg + "_")]
         self.q0 = self.d.qpos[self.adr].copy()
         self.ref = m.qpos_spring[self.adr].copy()
+        # coupled springs (passive.CoupledSprings) on a subset of this leg's hinges
+        self.Kc, self.ci = None, None
+        for h in getattr(body, "passive_hooks", ()):
+            if hasattr(h, "K") and leg in h.K:
+                self.Kc = h.K[leg]
+                self.ci = np.array([list(self.adr).index(a) for a in h.qadr[leg]])
 
     def energy(self, q, gvec):
         d = self.d
         d.qpos[self.adr] = q
         mj.mj_kinematics(self.m, d)
         e = 0.5 * np.sum(self.k * (q - self.ref) ** 2)
+        if self.Kc is not None:
+            dq = (q - self.ref)[self.ci]
+            e += 0.5 * dq @ self.Kc @ dq
         e -= np.sum(self.m.body_mass[self.bodies][:, None] * d.xipos[self.bodies] * gvec)
         e -= WEIGHT_MG * 1e-3 * (d.xpos[self.b_tip] @ gvec)
         return e
@@ -95,12 +86,16 @@ class Leg:
     def equilibrium(self, body_angle_deg: float) -> np.ndarray:
         a = np.radians(body_angle_deg)
         gvec = G * np.array([0.0, np.sin(a), -np.cos(a)])      # roll about the long axis
-        r = minimize(self.energy, self.q0.copy(), args=(gvec,), method="L-BFGS-B",
-                     bounds=list(zip(self.lo, self.hi)), options=dict(maxiter=500))
+        # energies are ~1e-3 (uN*mm); scale so the optimiser's tolerances bite
+        r = minimize(lambda q: 1e4 * self.energy(q, gvec), self.q0.copy(), method="L-BFGS-B",
+                     bounds=list(zip(self.lo, self.hi)),
+                     options=dict(maxiter=2000, ftol=1e-14, gtol=1e-10))
+        self.last_converged = bool(r.success)
         self.d.qpos[self.adr] = r.x
         mj.mj_kinematics(self.m, self.d)
         d = self.d
-        return paper_angles(d.xpos[self.b_ctr], d.xpos[self.b_fti], d.xpos[self.b_tita])
+        return paper_angles(d.xpos[self.b_ctr], d.xpos[self.b_fti], d.xpos[self.b_tita],
+                            right=self.right)
 
     def median_angles(self) -> np.ndarray:
         return np.median([self.equilibrium(a) for a in BODY_ANGLES], axis=0)
@@ -120,13 +115,17 @@ FIT_ANGLES = [0, 1, 2]                      # theta, phi, psi
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fit", action="store_true")
-    ap.add_argument("--source", type=int, default=1, help="passive stiffness source (1 = measured)")
+    ap.add_argument("--source", type=int, default=2,
+                    help="passive stiffness source (1 = name mapping, 2 = coupled projection)")
     a = ap.parse_args()
     body = Body(vision=False)
-    passive.apply(body, a.source)
+    if a.source == 2:
+        passive.apply_coupled(body)
+    else:
+        passive.apply(body, a.source)
     body.reset()
     mj.mj_forward(body.sim.mj_model, body.sim.mj_data)
-    out = {}
+    out, solved = {}, {}
     for L, meas in MEASURED.items():
         leg = Leg(body, L)
         before = leg.median_angles()
@@ -141,8 +140,16 @@ def main() -> None:
                 leg.ref[idx] = x
                 return np.concatenate([(leg.median_angles() - np.array(meas))[FIT_ANGLES],
                                        REG * np.degrees(x - ref0[idx])])
-            r = least_squares(resid, ref0[idx], bounds=(leg.lo[idx], leg.hi[idx]),
-                              diff_step=0.02, max_nfev=60)
+            # multi-start: neutral, and (left legs) the mirror leg's solution;
+            # an equilibrium on a joint limit has no gradient, so one start can stick
+            starts = [ref0[idx]]
+            mirror = "r" + L[1:]
+            if L.startswith("l") and mirror in solved:
+                starts.append(np.clip(solved[mirror], leg.lo[idx] + 1e-6, leg.hi[idx] - 1e-6))
+            fits = [least_squares(resid, x0, bounds=(leg.lo[idx], leg.hi[idx]),
+                                  diff_step=0.02, max_nfev=60) for x0 in starts]
+            r = min(fits, key=lambda f: f.cost)
+            solved[L] = r.x
             leg.ref = ref0.copy()
             leg.ref[idx] = r.x
             after = leg.median_angles()

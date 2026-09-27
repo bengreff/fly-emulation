@@ -97,3 +97,53 @@ def test_measured_table_maps_onto_real_joints():
     k = passive.apply(Body(vision=False), 1)
     assert len(k) == 2 * 3 * 7                       # 2 sides x 3 legs x 7 hinges
     assert min(k.values()) > 0.1 and max(k.values()) < 3.3
+
+
+def test_coupled_springs_reduce_to_mujocos_springs_when_diagonal():
+    """Neutral equivalence for the coupled-spring hook (F-PASSIVE-2)."""
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    m, d = b.sim.mj_model, b.sim.mj_data
+    passive.apply(b, 1)
+    b.reset()
+    names = ["c_thorax-rf_coxa-yaw", "c_thorax-rf_coxa-roll", "rf_trochanterfemur-rf_tibia-pitch"]
+    js = [mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, "flybody/" + n) for n in names]
+    dofs = np.array([m.jnt_dofadr[j] for j in js])
+    qa = np.array([m.jnt_qposadr[j] for j in js])
+    cs = passive.CoupledSprings(b, {"rf": np.diag(m.jnt_stiffness[js])}, {"rf": dofs},
+                                {"rf": qa}, {"rf": m.qpos_spring[qa].copy()})
+    d.qpos[qa] += np.array([0.1, -0.2, 0.3])
+    mj.mj_forward(m, d)
+    cs(d)
+    assert np.allclose(d.qfrc_applied[dofs], d.qfrc_spring[dofs])
+
+
+def test_coupled_springs_are_positive_definite_and_seventy_times_too_weak():
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    sp = passive.apply_coupled(b)
+    assert all(np.linalg.eigvalsh(K).min() > 0 for K in sp.K.values())    # no springless direction
+    s1 = deadfly.score(deadfly.run(duration_ms=300, body=b))
+    assert s1["valid_run"]["verdict"] == "pass" and s1["collapse"]["verdict"] == "pass"
+    assert s1["energy"]["max_rise_10ms"] <= 0                               # hook energy counted
+    b = Body(vision=False)
+    passive.apply_coupled(b, scale=100)
+    s100 = deadfly.score(deadfly.run(duration_ms=300, body=b))
+    assert not s100["collapse"]["trunk_on_ground_at_end"]
+
+
+def test_fitted_rest_angles_reach_both_mujoco_and_the_coupled_springs():
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    sp = passive.apply_coupled(b)
+    before = {L: q.copy() for L, q in sp.qref.items()}
+    n = passive.set_rest_angles(b)
+    assert n == 30                                                   # 6 legs x 5 joints
+    assert any(not np.allclose(sp.qref[L], before[L]) for L in sp.qref)
+    m = b.sim.mj_model
+    j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, "flybody/rh_coxa-rh_trochanterfemur-pitch")
+    k = list(sp.qadr["rh"]).index(m.jnt_qposadr[j])
+    assert np.isclose(sp.qref["rh"][k], m.qpos_spring[m.jnt_qposadr[j]])

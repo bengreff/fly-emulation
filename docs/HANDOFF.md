@@ -7,7 +7,7 @@
 - **Direction** (unchanged): build the complete fly, with every unknown biologically bounded in one data model and the body validated with the brain dead. Then construct the brain by search.
 - **Construction tasks:**
   - done: 1 (data model), 2 (class taxonomy), 3 (dead-fly harness);
-  - partial: 4 (passive joints; leg rest angles remain), 5 (muscles; see below);
+  - partial: 4 (passive joints; built as switches, open items below), 5 (muscles; see below);
   - not started: 6–14.
 - **Data model** (`data/model/`, `src/flyemu/model_data.py`):
   - 56 mechanisms (11 have, 24 partial, 21 absent);
@@ -21,13 +21,20 @@
 - **Template body switches.** All are 0 in m4, 1 for the template, and none adopted into the working default:
   - `joint:leg|passive_stiffness_source` (B3, measured eLife 2025, F-PASSIVE-1);
   - `joint:wing|spring_reference` (B14);
-  - `muscle:leg|model` (B4/B5: antagonist Hill pairs, class twitch kinetics, saturation, NMJ facilitation).
+  - `muscle:leg|model` (B4/B5: antagonist Hill pairs, class twitch kinetics, saturation, NMJ facilitation);
+  - `joint:leg|passive_stiffness_source=2` (coupled projected springs) and `joint:leg|spring_reference=1` (fitted rest angles), added in the extension hour.
   - With the m4 brain, the template body is stable on seeds 0–2 (pre-registered, DECISIONS). The first reading of that test bypassed Hill mode (F-HARNESS-2) and was corrected. With the muscles really on, the brain excluding ORNs runs at 0.11–0.12 Hz, below the m4 range.
 - **Working model m4:** unchanged. Regressions this session (Mac): sugar→MN9_L 8.9 ± 5.9 Hz over 10 trials (identical to reference); closed loop seeds 0–2 give 0 spikes in the silent window, brain excluding ORNs 0.38/0.22/0.30 Hz. 85 tests pass.
 
 ## What remains in tasks 4 and 5
 
-- **B3 rest angles.**
+- **B3 is built as switches:** coupled projected stiffness (`joint:leg|passive_stiffness_source=2`) and fitted rest angles (`joint:leg|spring_reference=1`; F-PASSIVE-2, F-REST-2). The template dead fly passes every criterion. Remaining:
+  - the middle-leg fit presses the assumed coxa envelopes (fix joints.py coxa labels and ranges by function, F-COXA-1);
+  - the front coxa yaw/roll split is not unique;
+  - the gamma convention is unverified;
+  - leg damping is still the flybody default (FlyMimic uses c/k 0.05 s; no measurement found);
+  - the posture criterion needs a sharper test (e.g. the paper's free-standing fall heights and times).
+- **Template stability (F-STAB-2):** with every body switch on, seeds 0 and 2 ignite the known Mi18/DNge019/DNg12 loop. The brain needs its class-level mechanisms (task 11) before the full template is stable.
   - The eLife Figure 3C medians are loaded equilibria (weights on the tarsi), not rest angles; see F-PASSIVE-1.
   - Next: replicate the tethered, weighted protocol in the model and fit spring references to the measured equilibria. Their angle definitions (θ, φ, ψ, γ) are in the paper's methods (Eqs. 5–11); the full text is fetched via EuropePMC `PMC12324252/fullTextXML`.
   - Damping is still the flybody default (guessed).
@@ -46,8 +53,9 @@
 
 | Item | Label | What would settle it |
 |---|---|---|
-| Spring rest angles = flybody neutral pose (legs) | guessed | model replication of the eLife weighted protocol |
-| DOF mapping of the eLife axes onto flybody joints | inferred (axis geometry) | the replication above; FlyMimic joint correspondence |
+| Spring rest angles = flybody neutral pose (legs) | guessed (fit exists, not wired) | coupled stiffness first; verify left/right mirroring; the rotation axis of their body roll |
+| DOF mapping of the eLife axes onto flybody joints | questioned (F-PASSIVE-2): valid for FTi only | use the J^T K J projection |
+| joints.py coxa labels and range envelopes | assumed; labels contradict geometry (F-COXA-1) | measured coxa excursions mapped by function, not name |
 | Hill mode: coxa and femur-roll muscle directions | guessed | FANC/MANC MN→muscle atlas; FlyMimic moment arms on matched axes |
 | Legacy MN map: promotor → coxa roll, rotators → coxa yaw | as recorded (legacy) | same |
 | Twitch kinetics by unit class (Hill mode) | inferred from Azevedo 2020 (read) | per-class twitch recordings for non-tibia muscles |

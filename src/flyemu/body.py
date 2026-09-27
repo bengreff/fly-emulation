@@ -499,7 +499,16 @@ class Body:
         self.sim.set_leg_adhesion_states(self.fly.name, states)
 
     def step(self) -> None:
+        # passive force hooks (e.g. coupled leg springs, passive.CoupledSprings)
+        # write qfrc_applied before each physics step
+        for hook in getattr(self, "passive_hooks", ()):
+            hook(self.sim.mj_data)
         self.sim.step()
+
+    def extra_potential(self) -> float:
+        """Potential energy stored by passive hooks (not in MuJoCo's d.energy)."""
+        return float(sum(getattr(h, "energy", lambda d: 0.0)(self.sim.mj_data)
+                         for h in getattr(self, "passive_hooks", ())))
 
     def reset(self) -> None:
         self.sim.reset()

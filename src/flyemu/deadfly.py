@@ -110,8 +110,10 @@ def run(duration_ms: float = 1000.0, sample_ms: float = 1.0,
                     gc = True
                 elif c.geom2 in floor and m.geom_bodyid[c.geom1] in trunk:
                     gc = True
+            en = d.energy.copy()
+            en[0] += b.extra_potential()                 # coupled springs etc.
             rows.append((k * dt_ms, d.xpos[thorax, 2], d.qpos[hadr].copy(),
-                         d.qvel[vadr].copy(), d.energy.copy(), gc))
+                         d.qvel[vadr].copy(), en, gc))
         if k == n_steps:
             break
         if activation is not None:
@@ -120,6 +122,11 @@ def run(duration_ms: float = 1000.0, sample_ms: float = 1.0,
             b.actuate(zero)
         b.step()
     t, z, qp, qv, e, gc = zip(*rows)
+    from .legangles import paper_angles
+    bid = lambda n: mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{b.fly.name}/{n}")  # noqa: E731
+    phi_end = {L: float(paper_angles(d.xpos[bid(f"{L}_trochanterfemur")], d.xpos[bid(f"{L}_tibia")],
+                                     d.xpos[bid(f"{L}_tarsus1")], right=L.startswith("r"))[1])
+               for L in ("lf", "lm", "lh", "rf", "rm", "rh")}
     # MuJoCo resets the state silently when it diverges; a reset run is invalid
     names_w = [n for n in dir(mj.mjtWarning) if n.startswith("mjWARN_")]
     warn = {n: int(d.warning[int(getattr(mj.mjtWarning, n))].number) for n in names_w
@@ -127,7 +134,7 @@ def run(duration_ms: float = 1000.0, sample_ms: float = 1.0,
     return Trace(np.array(t), np.array(z), np.array(qp), np.array(qv), np.array(e),
                  np.array(gc), names, m.jnt_range[hj].copy(), q0,
                  info=dict(ctrl_max=float(np.abs(d.ctrl).max()), timestep_ms=dt_ms,
-                           mujoco_warnings=warn))
+                           mujoco_warnings=warn, phi_end=phi_end))
 
 
 def limit_occupancy(q: np.ndarray, rng: np.ndarray, band: float = LIMIT_BAND) -> np.ndarray:
@@ -197,12 +204,12 @@ def score(tr: Trace) -> dict:
     at_rest = all(not v["at_limit"] and v["max_abs_change_deg"] < 20 for v in posture.values())
     out["non_leg_at_rest"] = dict(**posture, verdict="pass" if at_rest else "fail",
                                   criterion="wings, head, abdomen, halteres stay near their rest pose (< 20 deg, off limits)")
-    legs = {}
-    for leg in ("lf", "lm", "lh", "rf", "rm", "rh"):
-        idx = [i for i, n in enumerate(tr.hinge_names) if n.startswith(f"c_thorax-{leg}_coxa")
-               or f"-{leg}_coxa-" in n]
-        legs[leg] = {tr.hinge_names[i].split("-")[-2] + "-" + tr.hinge_names[i].split("-")[-1]:
-                     round(float(np.degrees(dq[i])), 1) for i in idx}
-    out["leg_rest_posture"] = dict(coxa_change_deg=legs, verdict="pending",
-                                   criterion="settles to the measured passive rest posture (task 4 enters the data)")
+    # rest posture (eLife 2025): prothoracic more protracted and metathoracic
+    # more retracted than mesothoracic, i.e. phi front < middle < hind
+    phi = tr.info.get("phi_end", {})
+    order = all(phi[f"{s}f"] < phi[f"{s}m"] < phi[f"{s}h"] for s in "lr") if phi else None
+    out["leg_rest_posture"] = dict(
+        phi_end_deg={k: round(v, 1) for k, v in phi.items()},
+        verdict="pending" if order is None else ("pass" if order else "fail"),
+        criterion="phi (protraction angle, eLife definition) front < middle < hind on both sides")
     return out

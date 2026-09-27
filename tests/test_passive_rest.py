@@ -26,3 +26,22 @@ def test_levation_protraction_and_flexion_angles():
     assert np.isclose(ph, 180)
     th, ph, _, _ = paper_angles(O, right, right * 2)            # femur out to the right side
     assert np.isclose(th, 90) and np.isclose(ph, 90)
+
+
+def test_equilibrium_moves_with_the_spring_reference():
+    """Probe check: the static solver must respond to the spring reference
+    (an early-stopping optimiser once returned the start pose)."""
+    import mujoco as mj
+    from flyemu import passive
+    from flyemu.body import Body
+    from passive_rest_protocol import Leg
+    b = Body(vision=False)
+    passive.apply_coupled(b)
+    b.reset()
+    mj.mj_forward(b.sim.mj_model, b.sim.mj_data)
+    leg = Leg(b, "rf")
+    a0 = leg.equilibrium(0.0)
+    i = leg.names.index("rf_trochanterfemur-rf_tibia-pitch")
+    leg.ref[i] += 0.3
+    a1 = leg.equilibrium(0.0)
+    assert abs(a1[2] - a0[2]) > 5.0                       # psi follows a 17 deg FTi reference shift

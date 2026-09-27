@@ -57,8 +57,9 @@ sense:*|transduction,N15,assignment,transducer form per modality (extrasenses.py
 afferent:hook_club_hairplate|gains_and_widths,B21,assignment,tuning shape (string); numeric split pending
 motor_unit:tibia_flexor|torque_per_spike,B5,data,Azevedo 2020 per-MN force (derived)
 motor_unit:other_leg|torque_per_spike,B5,data,size-scaled from tibia flexors (inferred)
-joint:leg|passive_stiffness_source,B3,switch,0 flybody defaults (m4) / 1 measured eLife 2025
+joint:leg|passive_stiffness_source,B3,switch,0 flybody defaults (m4) / 1 measured by name mapping / 2 measured projected and coupled J^T K J (F-PASSIVE-2; preferred)
 joint:leg|passive_stiffness,B3,data,data/params/passive_leg_stiffness.csv (measured; per DOF rows b3_k_*)
 joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral pose
 muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (muscles.py)
 motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz
+joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1)

@@ -63,6 +63,7 @@ class Organism:
         self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
         # B3/B14 passive mechanics (session 9): switches default to the legacy body
         passive.register(self.reg, self.body)
+        passive.register_rest(self.reg, self.body)
         passive.register_wings(self.reg, self.body)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
