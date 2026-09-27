@@ -104,6 +104,8 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-DELAY-2 | Session 8 | Inferred delays for untyped cells replace a borrowed 1.8 ms default |  |
 | F-M0-2 | Session 8 | Without the KC mislabel, monoamines without fast sign are stable (m4) |  |
 | F-STAND-2 | Session 8 | Under m3, T stands on 2/3 seeds; only the ring blocks it |  |
+| F-RCPT-2 | Session 8 | Three transcriptome datasets agree that the ring's glutamate targets are GluCl-dominated; snRNA ratios are biased upward; 54 sign rows filled; modulator sensitivities reverted (unstable under T) |  |
+| F-CX-3 | Session 8 | With correct EPG headings, single-knob ring candidates trade saturation for silence; none holds a kicked bump |  |
 | F-CX-2 | Session 8 | Excitatory glutamate onto Delta7 gives the ring a persistent localised state, pinned at two headings | **withdrawn** (wrong heading map; Delta7 GluCl-dominated) |
 
 ### Session 1 status table (historical)
@@ -2248,3 +2250,23 @@ The class differs in gain as well as drive. Next: fit θ per cell together with 
 - Min z 1.03 / 0.74 / 0.97 mm (criterion 0.90), roll ≤ 29° on the passing seeds.
 - Default: 0.59–0.68 mm.
 - T's only stability failure is the saturated CX ring (EPG 72, PEN 180 Hz).
+
+## F-RCPT-2. Receptor fills from three transcriptome datasets
+
+- **Datasets:** Davis 2020 (TAPIN-seq, 69 types), Turner-Evans 2020 (sorted CX bulk/low-cell), Epiney 2025 (T2-lineage snRNA-seq; ~35 identities after marker validation).
+- **Agreement:** EPG is GluCl-only in all three. Delta7, PEN_b and PEG are GluCl-dominated in bulk data.
+- **Bias:** snRNA iGluR/GluCl ratios are biased upward (PAM ~0 in Davis vs DOPA 0.73 in Epiney), so a bulk threshold does not transfer.
+- **Fills:**
+  - glutamate sign rows for 54 types (−1 for 52; +1 for Dm9 and T1);
+  - receptor-signed neuromodulator sensitivities for 68 types. They passed the pre-registered default-config test, but **under T they sustain a ~9 Hz brain after silencing**, so they were reverted to a candidate. Monoamines are currently inert in m4.
+- **Tooling lesson:** the per-step modulator gain was a dense matvec. On Linux OpenBLAS threaded it (~169 threads/process) and stalled backhouse. It is now elementwise.
+
+## F-CX-3. Ring candidates with correct headings
+
+- All position-dependent s7/s8 ring results used wrong EPG positions (scattered kicks; L/R glomeruli mis-mapped). EPG headings are now inferred from connectivity.
+- **Re-screen under m4, config T** (σ 0.5, seeds 1–3):
+  - depression, adaptation and their combinations with Delta7 ×4 remove saturation (PEN 0–20 Hz; STD 1–7 Hz), and adaptation + Delta7 ×4 passes B2 and Q on 3/3;
+  - Delta7 ×4 alone and ER tonic stay saturated;
+  - per-class input normalisation stays saturated.
+- **No candidate holds activity after a 10 mV / 50 ms kick of 12 neighbouring EPGs.** Strong kicks and Delta7-output-only scaling: see DECISIONS s8.
+- ER ring neurons get 73% of their input from other ER neurons (GABA) and ~5% from TuBu. Delta7 sends 626 synapses per cell to other Delta7s vs 86 to EPG. Both inhibitory populations mostly inhibit themselves, which uniform efficacy turns into silence.

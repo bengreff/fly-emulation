@@ -24,11 +24,13 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
 
 ## Ranked next steps
 
-1. **CX ring.** Read the s8 re-screen of s7 candidates (depression, adaptation, Delta7 ×4, ER tonic, gap, and combinations) first.
-   - If any candidate holds a localised state: pre-register on fresh seeds with the bump criteria plus "the bump follows the kick" (strong kick at 4 headings, 12 nearest EPGs).
-   - If none does: the ring's missing ingredient is probably ER ring-neuron input (61% of EPG input, GABAergic, silent or ~10 Hz in the model). Trace why the visual pathway (TuBu → ER) is silent.
+1. **CX ring: from discrete to continuous.** Under T, adaptation + Delta7 ×4 (candidate files `candidates_s8_adapt_d7x4.csv`) gives a persistent localised bump at physiological PEN rates, but it lands in ~3 preferred positions. Next:
+   - find what sets the basins (per-heading input asymmetry near the ring seam; EPGt; uneven heading spacing);
+   - combine with per-class normalisation or Delta7-output scaling (s8 ring6 results in DECISIONS);
+   - then pre-register on fresh seeds (4–6): bump criteria plus "bump within 45° of a strong kick at 4 headings".
+   - Also test in the default config: the default ring is silent, and a bump needs a living ring without T's drive.
 2. **T with a working ring:** standing (3 seeds, fresh), stability, command direction with a gait criterion, and the reflex on a sealed spare after a dev pass.
-3. **Neuromodulator pools** now carry all monoamine function (m4), but every sensitivity is 0. Fill the sign per type from receptor coupling (Gs vs Gi: Dop1R1/2, Octβ, 5-HT7 +; Dop2R, 5-HT1A/B, Octα2R −) for the ~95 profiled types; magnitude is a declared guess. Pre-register against sugar and stability.
+3. **Neuromodulator pools:** the receptor-signed sensitivities (`candidates_s8_modsens.csv`, 68 types) pass in the default config but sustain a ~9 Hz brain under T. Calibrate the pool magnitude (`mod_increment`, sensitivity 0.2, τ 1 s: all guessed) against stability under both configs before re-adopting. Also re-test adaptation + Delta7 ×4 under T without MS (its B1 passes happened with MS on).
 4. **More transcriptome-matched types:** VNC (Allen 2020 / Cachero 2026 hemilineage-level); MB (Crocker 2016). See `docs/research/transcriptome_sources_s8.md`.
 5. **Extension pathway (F-XFER-1):** FANC production access (Ben) or NBLAST bridging.
 6. **Per-class operating points** (resting potentials −55 to −68 mV, KC gap), one class at a time.

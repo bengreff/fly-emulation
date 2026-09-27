@@ -62,7 +62,7 @@ sign_i × efficacy × n_syn(ij) × release_gain_i × input_gain_j
 | Graded transmission | `graded` rows in `cell_types.csv` | listed types only |
 | Conductance-based synapses | `cell_type:all\|conductance_based` | 0 |
 | Morphological delays | `cell_type:all\|morphological_delays` | **1 (on)** |
-| Neuromodulator pools (DA, OA, 5-HT) | `mod_sensitivity_*` per type | pools run; **68 types have receptor-signed sensitivities (±0.2 × net coupling; s8 MS)**, the rest 0 |
+| Neuromodulator pools (DA, OA, 5-HT) | `mod_sensitivity_*` per type | pools run; sensitivities 0 (inert). Receptor-signed candidate for 68 types: `candidates_s8_modsens.csv` (adopted, then reverted in s8: sustains a ~9 Hz brain under T) |
 | Glutamate sign per target type | `cell_type:all\|glutamate_receptor_sign` | 0 = transmitter default; **54 types have transcript rows** (F-RCPT-1) |
 | GABA-B slow share | `cell_type:all\|gabab_fraction` | 0 |
 | Presynaptic inhibition of sensory terminals | `cell_type:all\|presynaptic_inhibition_gain` | 0 |

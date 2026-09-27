@@ -1533,3 +1533,18 @@ s7's CX screens judged the local-kick bump with EPGs in table order (not local),
 ### Screen: Delta7 output-only strengthening (19:49)
 
 "Delta7 release ×4" also strengthens Delta7→Delta7 (626 synapses/cell), so the added inhibition mostly silences Delta7 itself. The new candidate-only mechanism `FLYEMU_EDGE_SCALES` (CSV of pre regex, post regex, scale) scales only Delta7→EPG/PEN/PEG (715 edges): ×4, ×8, and ×4 + ring STD. Config T under m4 + MS, σ 0.5, seeds 1–3, standard and strong (20 mV, 200 ms, headings 0/180°) kicks. Screen only.
+
+**Result, strong-kick and Delta7-output screens (21:14; `runs/s8_ring5/`, `runs/s8_ring6/`; m4 + MS; config T).**
+- **Adaptation + Delta7 ×4:** after a 20 mV / 200 ms kick of the 12 nearest EPGs and removal of senses, a **persistent localised bump** (EPG 16–44% active, vector 0.81–0.98, PEN 1–8 Hz, Delta7 13–23 Hz). It lands in one of ~3 basins (~62°, ~120–128°, ~217–231°). A 90° kick goes to ~123° on 3/3 seeds; other headings are partly kick-selected. Errors 32–150°.
+- **Ring STD:** broad (92% active, vector ~0.15). Not a bump.
+- **Delta7→EPG/PEN/PEG ×4 or ×8:** localised (vector 0.79–0.94) but pinned at ~43–61° or ~285°. PEN 36–57 Hz. **Q fails** (non-ring cells ~9 Hz after silencing). ×4 + STD is broad.
+- **Reading.** A bump in darkness is possible in this connectome with adaptation plus stronger global inhibition. Its positions are quantised into a few basins, so the effective ring is not rotation-symmetric. Every setting in these candidates is guessed; none is adopted.
+- Open: the ×4/×8 Q failures ran with MS live. The adaptation + Delta7 ×4 standard test is being re-run under MS to separate the two.
+
+**Result, adaptation + Delta7 ×4 under T with MS live (21:18; `runs/s8_ring7/`).**
+- **B1 passes on seeds 1 and 2** (bump within 10° and 9° of the kick; vector 0.97 / 0.88; 22–40% active). Seed 3: 60° off. **B2 passes 3/3** (PEN 1.4–7.9 Hz after a full kick).
+- **Q fails 3/3:** non-ring cells stay at ~9.1–9.6 Hz after silencing (control 0.02). Before MS (ring4) the same candidate passed Q.
+- **MS reverted to candidate (off).** The receptor-signed pool sensitivities passed their pre-registered test in the default configuration. Under T's drive, they (likely the pool → gain → activity loop with 1 s pool decay and guessed magnitudes) sustain a ~9 Hz brain after sensory silencing. This confounds the ring work.
+- The 149 rows stay in `candidates_s8_modsens.csv`. Re-adoption needs a pool-magnitude calibration and stability under T as well as default.
+- m4 regression on the Mac after revert: seed 0 brain excluding ORNs back to the pre-MS value (below).
+- **Also:** the B1 passes above happened with MS on, so they are not evidence for adaptation + Delta7 ×4 alone. Re-test without MS next session.

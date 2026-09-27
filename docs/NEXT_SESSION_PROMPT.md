@@ -36,11 +36,16 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 Work the ranked list in `docs/PLAN_NEXT.md` ("Ranked next steps"). In short:
 
 1. **CX ring: movable bump.** Read the s8 bump-move result in DECISIONS first. Pre-register any adoption on fresh seeds; the ring's criteria are Ben's bump test, plus "the bump follows the kick".
-2. **m3 consequences:** redo M0 under m3; re-test T under m3 (standing, stability, command direction on fresh seeds with a gait criterion); run more trials of the marginal sugar pathway.
+2. **T under m4 with a working ring:** T stands on 2/3 seeds under m3 and fails only through the ring. Re-test standing, stability and command direction (fresh seeds, gait criterion) once the ring holds.
 3. **Filling blanks** (Ben's main task): transcriptomes matched to connectome types, used for receptor signs and kinetics. Wiring alone cannot infer them (F-RCPT-1). Make the ledger count per-type rows.
 4. As time allows: extension pathway; per-class operating points; abdomen/wing calibration.
 
-The working profile is **m3** (`FLYEMU_PROFILE=m2` for the old model). Sugar→MN9 is marginal (6.3 Hz); report any change that takes it below 5 Hz.
+The working profile is **m4** (`FLYEMU_PROFILE=m2` for the old model). Sugar→MN9 is marginal (8.9 ± 5.9 Hz over 10 trials); report any change that takes it below 5 Hz.
+
+- **backhouse:** each model process is ~2.6–3.2 GB, so run ≤ 8 in parallel.
+- **Job lists:** use one bash script per job (`runs/mkjobs.py` pattern), never quoted `xargs` lines.
+- **Ring probe:** `scripts/probes/warm_start.py`, with inferred EPG headings (default) and a 12-nearest-cell kick.
+- **Candidate edge scaling:** `FLYEMU_EDGE_SCALES`.
 
 ## Wrap-up
 

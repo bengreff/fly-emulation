@@ -53,7 +53,7 @@
 | Leg VNC | default silent; under T right-signed flexion reflex; extension cancelled by glutamatergic IN21A006 | F-XFER-1 |
 | AL | measured ORN→PN strength over-drives PNs; budget spent | F-AL-4 |
 | Transmitters / receptors | consensusNt (m3); receptor calls for 69 types; glutamate sign for 20 | F-NT-1, F-RCPT-1 |
-| Central complex | default silent; T saturates. s8 bump-position results before the heading correction are unreliable; Delta7 +1 is unsupported by receptor levels | F-CX-1, F-WARM-1, DECISIONS s8 |
+| Central complex | default silent; T saturates. With ring adaptation + Delta7 ×4 (guessed candidate) under T: a **persistent, localised bump in darkness** (vector 0.8–0.98, PEN 1–8 Hz). With a strong kick it lands in ~3 preferred positions. With MS on, B1 passed on 2/3 seeds (within 10°), but the rest of the brain did not go quiet. Not adopted | F-CX-3, DECISIONS s8 |
 | Brain pathways | sugar→MN9 passes, marginally, under m3 | DECISIONS s8 rule v3 |
 | Standing / walking | m3: default fails (0.59–0.68 mm); **T stands on 2/3 seeds (1.03, 0.97 mm)** but is unstable only through the ring | DECISIONS s8 |
 
@@ -65,7 +65,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 |---|---|---|
 | Efficacy 0.15675 mV for every synapse class (m3) | inferred (closed-loop stability fit, rule v3; 3 seeds, non-monotonic in scale). **Contradicted for ORN→PN** (measured ≈ 11×) | per-class unitary PSPs; more seeds; the CX ring model |
 | V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed). Literature now says rests of −55 to −68 mV and a KC gap of 21.5 mV (targets table) | per-class values in the targets table; apply class by class |
-| Monoamines without fast sign (m4) | inferred (GPCR-only receptors); passed M0 under m3. Their action now rests entirely on the neuromodulator pools, which are inert (sensitivities 0) | per-type receptor data (transcripts, F-RCPT-1) to set pool sensitivities | the neuromodulator pools must take over the monoamines' function |
+| Monoamines without fast sign (m4) | inferred (GPCR-only receptors); passed M0 under m3. Their action rests entirely on the neuromodulator pools, which are inert. Receptor-signed sensitivities (68 types) sustain a ~9 Hz brain under T, so reverted | per-type receptor data (transcripts, F-RCPT-1) to set pool sensitivities | the neuromodulator pools must take over the monoamines' function |
 | CX ring parameters (uniform counts); ring headings | inferred. Delta7, EPG, PEN_b, PEG are GluCl-dominated (Davis + Turner-Evans), so Delta7→Delta7 inhibition is supported. EPG headings are inferred from connectivity (`infer_epg_heading.py`; L/R glomeruli run opposite ways). NMDA lead withdrawn | ring synaptic physiology; ER ring-neuron activity |
 | No background activity; exact-rest start | guessed. s8: a warm start (noise + ramped senses) does not rescue the ring and lowers its ignition threshold (F-WARM-1) | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
 | Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test. No publication maps it to SNpp types | FANC T1L labels (Lee et al. 2025; `data/raw/lee2025/`) joined to male-cns. CAVE token at `~/.config/flyemu/cave_token` authenticates, but FANC production returns 403 (**Ben: request FANC production access**); otherwise NBLAST bridging. VFB types MANC SNpp39 as club and SNpp41 as claw (conflict) |
