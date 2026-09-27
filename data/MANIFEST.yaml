@@ -68,6 +68,13 @@ datasets:
       another source. Motor-neuron muscle target is in `type`, not `target`,
       which is null throughout. Sensory neurons carry no somaNeuromere, so leg
       identity comes from the dominant LegNp(T*) neuropil in roiInfo.
+    additions:
+      - file: male_cns_hemilineage.parquet   # fetched 2026-09-27 (session 9), 1.7 MB
+        query: "MATCH (n:Neuron) RETURN bodyId, itoleeHl, trumanHl, supertype, group, hemibrainType, subclass"
+        rows: 176422   # itoleeHl 37,754 non-null (brain); trumanHl 19,753 (VNC)
+        use: hemilineage per type in data/model/classes.csv (scripts/build_classes.py);
+          the older male_cns_extra2.hemilineage column is empty
+        license: neuPrint male-cns v1.0 terms (same as the graph)
 
   - name: NeuroMechFly body
     source: flygym 2.1.0 bundled assets

@@ -110,3 +110,24 @@ def test_stage_zero_is_the_current_model(md):
         row = p[p.registry_key == k].iloc[0]
         if not pd.isna(row.current_m4):
             assert v == row.current_m4
+
+
+def test_classes_cover_the_modelled_graph_and_agree_with_the_model(md):
+    c = pd.read_csv(REPO / "data/model/classes.csv", keep_default_na=False)
+    assert c.n_cells.sum() == 167_111                    # male-cns, traced or typed (F-COUNT-2)
+    assert not c.type.duplicated().any()
+    assert set(c["mode"]) <= {"spiking", "graded", "unknown"}
+    assert (c.mode_label != "").all() and (c.mode_source != "").all()
+    # every unknown mode has a prior row in parameters.csv
+    params = set(md.parameters.param_id)
+    unk = c[c["mode"] == "unknown"]
+    assert (unk.mode_param != "").all() and set(unk.mode_param) <= params
+    # the types the model already runs graded are graded here
+    for t in ("R1-R6", "R7", "R8", "L1", "L2", "L3", "APL"):
+        rows = c[c.type.str.match(rf"^{t}") if t != "R1-R6" else c.type.str.match(r"^R[1-6]")]
+        assert len(rows) and (rows["mode"] == "graded").all(), t
+    # identities the construction depends on (LESSONS: ring cells, commands)
+    cc = c.set_index("type").circuit_class
+    assert cc["EPG"] == "cx_ring" and cc["Delta7"] == "cx_ring"
+    assert cc["MDN"] == "DN" and cc["DNg100"] == "DN"
+    assert cc["T4a"] == "T4T5"

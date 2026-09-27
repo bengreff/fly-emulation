@@ -38,7 +38,7 @@ STATUSES = {"have", "partial", "absent"}
 BOUND_BASES = {"measured_this_class", "measured_related", "insect_wide",
                "physical_limit", "guessed"}
 BOUND_FROM_DATA = BOUND_BASES - {"guessed"}
-PRIOR_DISTS = {"uniform", "loguniform", "normal", "lognormal", "fixed"}
+PRIOR_DISTS = {"uniform", "loguniform", "normal", "lognormal", "fixed", "bernoulli"}
 LABELS = {"measured", "derived", "inferred", "guessed"}
 STRUCT_KINDS = {"data", "assignment", "policy", "switch", "absent"}
 GRAINS = {"global", "region", "class", "type", "cell", "joint", "muscle", "compartment"}
@@ -151,6 +151,9 @@ def validate(md: ModelData) -> list[str]:
             bad.append(f"{w} prior_dist {r.prior_dist!r}")
         if r.prior_dist in ("normal", "lognormal") and (pd.isna(r.prior_a) or pd.isna(r.prior_b)):
             bad.append(f"{w} {r.prior_dist} prior needs prior_a and prior_b")
+        if r.prior_dist == "bernoulli" and not (r.bio_min == 0 and r.bio_max == 1
+                                                 and 0 <= r.prior_a <= 1):
+            bad.append(f"{w} bernoulli needs bounds [0, 1] and prior_a = P(1) in [0, 1]")
         if r.prior_dist == "fixed" and pd.isna(r.prior_a):
             bad.append(f"{w} fixed prior needs prior_a")
         if r.prior_dist == "loguniform" and r.bio_min <= 0:
@@ -196,6 +199,8 @@ def _draw(rng: np.random.Generator, r, n_try: int = 1000) -> float:
         return float(r.prior_a)
     if d == "uniform":
         return float(rng.uniform(lo, hi))
+    if d == "bernoulli":                       # a discrete unknown (e.g. graded mode)
+        return float(rng.random() < r.prior_a)
     if d == "loguniform":
         return float(np.exp(rng.uniform(np.log(lo), np.log(hi))))
     for _ in range(n_try):                    # truncated to the bounds by rejection
