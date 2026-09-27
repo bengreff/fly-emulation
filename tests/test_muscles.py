@@ -164,3 +164,25 @@ def test_motor_step_extra_torque_is_added_after_the_muscles():
     t0 = org.motor_step(none)
     t1 = org.motor_step(none, extra={3: 2.5})
     assert t1[3] - t0[3] == pytest.approx(2.5) and np.allclose(np.delete(t1, 3), np.delete(t0, 3))
+
+
+def test_rotators_drive_protraction_and_retraction_in_hill_mode():
+    """Cheong et al. (read s9): anterior rotator = forward swing, posterior = backward."""
+    import pytest
+    if not (REPO / "data/cache/male_cns_edges.parquet").exists():
+        pytest.skip("graph not fetched")
+    from flyemu import neuromuscular
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5, overrides={"muscle:leg|model": 1.0})
+    h = org.hill
+    cal = neuromuscular.load_calibration("flybody")
+    t = org.conn.neurons.type.fillna("").to_numpy()[org.nm.mn_index]
+    ant = np.where(t == "Sternal anterior rotator MN")[0]
+    post = np.where(t == "Sternal posterior rotator MN")[0]
+    assert len(ant) and len(post)
+    for k in list(ant) + list(post):
+        mm = h.mn_muscle[k]
+        assert mm >= 0
+        row = cal[cal.actuator == h.p.joint[mm]].iloc[0]
+        fore = row.foot_fore_mm * h.p.direction[mm]
+        assert (fore > 0) if k in ant else (fore < 0)

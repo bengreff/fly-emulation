@@ -159,7 +159,8 @@ class HillLegDrive:
     torque; all other actuators keep the legacy torque."""
 
     def __init__(self, nm, body, fused: float = 5.0, pairs: MusclePairs | None = None,
-                 unit_class: np.ndarray | None = None, units_kw: dict | None = None):
+                 unit_class: np.ndarray | None = None, units_kw: dict | None = None,
+                 remap: dict[int, tuple[str, float]] | None = None):
         import mujoco as mj
         m = body.sim.mj_model
         prefix = f"{body.fly.name}/"
@@ -180,6 +181,9 @@ class HillLegDrive:
         key = {(j, d): i for i, (j, d) in enumerate(zip(self.p.joint, self.p.direction))}
         mn_act = [short[i] for i in nm.actuator_index]
         self.mn_muscle = np.array([key.get((a, float(s)), -1) for a, s in zip(mn_act, nm.drive_sign)])
+        # per-MN re-assignment by anatomical action (e.g. the sternal rotators)
+        for k, (joint, direction) in (remap or {}).items():
+            self.mn_muscle[k] = key.get((joint, float(direction)), -1)
         ok = self.mn_muscle >= 0
         self.ok = ok
         self.w = np.abs(np.asarray(nm.force_per_spike, float))

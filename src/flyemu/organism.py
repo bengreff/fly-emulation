@@ -110,7 +110,26 @@ class Organism:
             fb = pd.read_csv(neuromuscular.FORCE_TABLE, comment="#").set_index("bodyId").unit_class
             bid = self.conn.neurons.bodyId.to_numpy()[self.nm.mn_index]
             ucls = fb.reindex(bid).fillna("intermediate").to_numpy()
-            self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls,
+            remap = {}
+            if int(self.reg.require(
+                    "muscle:leg", "rotator_map", units="enum",
+                    model_use="sternal rotator MNs: 0 legacy rule (least-foot-motion coxa joint, assumed sign), "
+                              "1 by action (anterior = protraction, posterior = retraction)",
+                    subsystem="muscle_mechanics", minimal=1,
+                    justification="Cheong et al. eLife PMC13384506 (read s9): anterior rotator MNs 'rotate the "
+                                  "leg forwards during the swing phase'; posterior rotator MNs 'rotate the coxa "
+                                  "posteriorly' (stance); joint and sign from the calibrated foot action")):
+                cal = neuromuscular.load_calibration(self.body.model)
+                short = [a.split("/")[-1].removesuffix("-motor") for a in self.body.actuator_names]
+                mtypes = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index]
+                acts = {"Sternal anterior rotator MN": "protraction", "Sternal posterior rotator MN": "retraction"}
+                for k, (t, ai) in enumerate(zip(mtypes, self.nm.actuator_index)):
+                    if t in acts:
+                        leg = short[ai].split("-")[1].split("_")[0]
+                        r = neuromuscular.resolve_sign(cal, leg, "ThC", acts[t])
+                        if r is not None:
+                            remap[k] = (r[0], float(r[1]))
+            self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls, remap=remap,
                                              units_kw={"fused_hz": float(fused)})
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)

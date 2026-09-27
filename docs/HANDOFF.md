@@ -39,7 +39,7 @@
   - Next: replicate the tethered, weighted protocol in the model and fit spring references to the measured equilibria. Their angle definitions (θ, φ, ψ, γ) are in the paper's methods (Eqs. 5–11); the full text is fetched via EuropePMC `PMC12324252/fullTextXML`.
   - Damping is still the flybody default (guessed).
 - **B4.**
-  - 20 of 84 antagonist muscles get no motor neuron under the legacy map (F-MUSCLE-1).
+  - Muscles without an MN: 20 of 84 under the legacy rule; 30 of 84 with the rotators mapped by action (`muscle:leg|rotator_map=1`, default in Hill mode; F-MUSCLE-2). Front/middle coxa yaw and ThC coxa pitch have no muscle. Either make them passive, or give coxa muscles moment arms on all three axes.
   - The legacy coxa assignments are functional (calibrated foot action), which is sound. Only the two sternal rotators are placed by a rule with an assumed sign. The literature gives them swing/stance roles (anterior = forward, posterior = backward; agent-read), so re-map them by action in Hill mode. The orphan coxa-pitch directions (ThC foot up/down) have no named muscle; the DOF may be largely passive.
   - Mid/hind muscle parameters are copies of the front leg (guessed); the tibia-tarsus pair is a placeholder.
   - Next: resolve MN→muscle→DOF for the coxa and femur-roll pools from the FANC/MANC atlas.

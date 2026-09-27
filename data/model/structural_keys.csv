@@ -63,3 +63,4 @@ joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral 
 muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (muscles.py)
 motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz
 joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1)
+muscle:leg|rotator_map,B5,switch,Hill mode: sternal rotators by action (1; Cheong 2024 read) or legacy rule (0)
