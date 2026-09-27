@@ -4,8 +4,8 @@ What the simulator computes today, with the default of every mechanism. Values c
 
 **Names.**
 - **M2** is the model family: the equations below, implemented in `src/flyemu/lif.py`.
-- **m3** is the parameter profile in use (session 8), `src/flyemu/profiles.py`: m2 plus transmitter identity from `consensusNt` and efficacy 0.15675 mV. m2 is kept; `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
-- The **working model** is family M2 with profile m3 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it.
+- **m4** is the parameter profile in use (session 8), `src/flyemu/profiles.py`: m2 plus transmitter identity from `consensusNt`, efficacy 0.15675 mV (m3), and monoamines with no fast sign (M0). m2 and m3 are kept; `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
+- The **working model** is family M2 with profile m4 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it.
 - ("M2 Pro" in `docs/ENVIRONMENT.md` is the Mac, unrelated.)
 
 ## Loop
@@ -43,12 +43,12 @@ sign_i × efficacy × n_syn(ij) × release_gain_i × input_gain_j
 - efficacy = **0.15675 mV per synapse** everywhere (m3): inferred, fitted by calibration rule v3 (closed-loop return to rest on 3 seeds under consensusNt; DECISIONS s8). m2 used 0.165 mV (rule v2).
 - Sign by transmitter. m3 takes the call from the curated `consensusNt` (F-NT-1; `connectome:all|nt_source_consensus`), m2 from the EM classifier `predictedNt`:
   - ACh +; GABA −; glutamate −; histamine −;
-  - dopamine, serotonin and octopamine + (placeholders);
+  - dopamine, serotonin and octopamine: 0 in m4 (they act only through the neuromodulator pools); + in m2/m3 (placeholder);
   - unclear + (but AL local neurons with unclear transmitter −).
 - Two profile rules:
   - m1: no chemical input onto sensory terminals (F-SENS-1);
   - m2: no chemical output from cholinergic AL LNs onto PNs or eLNs (F-LN-1).
-- Glutamate sign per postsynaptic type from transcripts for 20 types (−1 for 18 GluCl-only types, +1 for Dm9 and T1; Davis 2020; F-RCPT-1).
+- Glutamate sign per postsynaptic type from transcripts for 51 types (−1 for 49 GluCl-dominated types, iGluR/GluClα TPM ratio < 0.1; +1 for Dm9 and T1; Davis 2020, Turner-Evans 2020; F-RCPT-1).
 - **Delay** per presynaptic type = 0.5 ms + path length / velocity.
   - untyped cells: path length predicted from volume, synapse counts and superclass (F-DELAY-2; `cell_type:untyped|inferred_conduction_delay`).
   - typed cells: the path length is measured on the type's skeleton; v = 0.5 m/s (inferred), or 2.07 m/s for the giant fibre (measured). F-DELAY-1, `data/params/conduction_delays.csv`.

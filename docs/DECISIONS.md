@@ -1482,3 +1482,11 @@ The first rule ("GluCl only" = −1; "both expressed" = no row) treated any dete
 **Result:** 49 types at −1 (Delta7, EPG, PAMs, most OL types; plus PEN_b and PEG from Turner-Evans) and Dm9/T1 at +1. The 14 truly mixed types (KCs, Mi1, L3–L5, …; ratio 0.12–2.5) get no row. Only Dm9/T1 change behaviour, and they were adopted earlier.
 
 **Consequence.** The Delta7 +1 ring candidate is **not supported** by receptor levels. Together with the heading-map error, F-CX-2 is withdrawn. Research report: `docs/research/transcriptome_sources_s8.md`.
+
+**Result, m3 consequences (19:07; `runs/s8_m3c/`).**
+1. **M0 under m3: passes; adopted as profile m4** (= m3 + monoamine fast sign 0). Closed loop seeds 0–2: 0 non-tonic spikes (brain excluding ORNs 0.349 / 0.223 / 0.297 Hz). Sugar→MN9_L over 10 trials: 8.9 ± 5.9 Hz at 100 Hz and 96.0 at 200 Hz. The s7 failure of M0 came from the KC mislabel and the old calibration. `WORKING_PROFILE` = m4.
+2. **Sugar under m3, 10 trials:** 8.9 ± 5.9 / 97.7 ± 5.0 Hz. The 3-trial 6.3 Hz was a noisy estimate. Individual trials can fall below 5 Hz.
+3. **Standing under m3** (min z 0.5–1.5 s, mm; criterion 0.90):
+   - default 0.59 / 0.68 / 0.67;
+   - **T 1.03 / 0.74 / 0.97**, which meets the height criterion on 2 of 3 seeds (roll ≤ 29° on those).
+   - Closed loop T: 55–58 spikes/ms after silencing, all in the saturated ring (EPG 72, PEN 180 Hz). T stays blocked by the ring alone.

@@ -102,7 +102,9 @@ Generated in session 6c from the headings below; the status column marks finding
 | F-RCPT-1 | Session 8 | Transcripts fill glutamate sign for 20 types; wiring cannot predict sign-critical receptors |  |
 | F-NT-1 | Session 8 | The model's transmitter labels call every KC dopaminergic and wire ~3.3k inhibitory cells as excitatory; the curated labels destabilise the current calibration |  |
 | F-DELAY-2 | Session 8 | Inferred delays for untyped cells replace a borrowed 1.8 ms default |  |
-| F-CX-2 | Session 8 | Excitatory glutamate onto Delta7 (iGluR co-expressed) gives the ring a persistent localised state, pinned at two headings |  |
+| F-M0-2 | Session 8 | Without the KC mislabel, monoamines without fast sign are stable (m4) |  |
+| F-STAND-2 | Session 8 | Under m3, T stands on 2/3 seeds; only the ring blocks it |  |
+| F-CX-2 | Session 8 | Excitatory glutamate onto Delta7 gives the ring a persistent localised state, pinned at two headings | **withdrawn** (wrong heading map; Delta7 GluCl-dominated) |
 
 ### Session 1 status table (historical)
 
@@ -2219,6 +2221,11 @@ The class differs in gain as well as drive. Next: fit θ per cell together with 
 
 ## F-CX-2. Excitatory glutamate onto Delta7 gives the ring a persistent but pinned localised state
 
+**Withdrawn (same session).**
+- (1) The heading map behind every position number was wrong: L_k and R_k do not share a heading; they run opposite ways round the ring (`scripts/infer_epg_heading.py`). With inferred headings, the Delta7 +1 post-kick state has vector strength 0.11–0.48 and does not follow the kick.
+- (2) By expression level, Delta7 is GluCl-dominated in Davis 2020 (iGluR/GluClα 0.03) and Turner-Evans 2020, so the premise is unsupported.
+- The text below is kept as the record.
+
 - Delta7 co-expresses GluClα and iGluR (F-RCPT-1), so the model's all-inhibitory Delta7→Delta7 (626 synapses/cell) is unsupported.
 - With Delta7's glutamate input set to +1 under T, the ring stops saturating uniformly:
   - 28–46% of EPGs stay active in darkness, vector strength 0.5–0.83;
@@ -2227,3 +2234,17 @@ The class differs in gain as well as drive. Next: fit θ per cell together with 
 - **The state is pinned** to ~350° or ~60–85°. Kicks of 20 mV for 200 ms at 180° and 270° do not move it (errors 78–169°).
 - Normalising each ring cell's total ring input changes nothing, so the pinning comes from structured asymmetry (offsets or input distribution), not count noise.
 - A continuous heading attractor is not yet present.
+
+## F-M0-2. Without the KC mislabel, monoamines without a fast sign are stable (profile m4)
+
+- Under m3, setting dopamine, serotonin and octopamine to sign 0 passes the s7 M0 test:
+  - closed loop 0 non-tonic spikes on 3/3 seeds;
+  - sugar→MN9 8.9 ± 5.9 Hz over 10 trials.
+- The s7 failure came from the classifier labelling every KC dopaminergic (F-NT-1).
+- Adopted as m4. The guessed "monoamines as fast excitation" placeholder is gone. Monoamine function now rests on the neuromodulator pools, which are still inert.
+
+## F-STAND-2. Under m3, config T stands on 2 of 3 seeds
+
+- Min z 1.03 / 0.74 / 0.97 mm (criterion 0.90), roll ≤ 29° on the passing seeds.
+- Default: 0.59–0.68 mm.
+- T's only stability failure is the saturated CX ring (EPG 72, PEN 180 Hz).

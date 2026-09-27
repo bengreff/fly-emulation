@@ -73,11 +73,20 @@ M3 = {
         "rest on seeds 0-2 under consensusNt; sugar->MN9_L 6.3 Hz at 100 Hz (check > 5)"),
 }
 
+M4 = {
+    **M3,
+    "transmitter:dopamine|sign": (0.0, _I, "session 8: monoamines act only through the "
+        "neuromodulator pools; all Drosophila DA, 5-HT and OA receptors are GPCRs. Passed the "
+        "pre-registered M0 test under m3 (DECISIONS s8)"),
+    "transmitter:serotonin|sign": (0.0, _I, "as dopamine (GPCRs only)"),
+    "transmitter:octopamine|sign": (0.0, _I, "as dopamine (GPCRs only)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m3")   # FLYEMU_PROFILE=m2 reproduces sessions 5-8
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m4")   # FLYEMU_PROFILE=m2 reproduces sessions 5-8
 WORKING_MIN_SYNAPSES = 5
 
 PROFILES: dict[str, dict] = {
@@ -85,6 +94,7 @@ PROFILES: dict[str, dict] = {
     "m1": {"values": M1, "kick_mv": KICK},
     "m2": {"values": M2, "kick_mv": KICK},
     "m3": {"values": M3, "kick_mv": KICK},
+    "m4": {"values": M4, "kick_mv": KICK},
 }
 
 

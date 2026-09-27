@@ -5,26 +5,28 @@
 ## One paragraph
 
 - A male-CNS connectome (167,111 neurons) drives a flybody MuJoCo fly in closed loop, with no controller.
-- **The working model changed this session: profile m3.**
+- **The working model changed this session: profile m4** (m3 = curated transmitters + recalibrated efficacy; m4 = m3 + monoamines without fast sign).
   - Transmitter identity now comes from the curated `consensusNt`. The EM classifier had labelled every Kenyon cell dopaminergic and wired ~3.3k GABA/glutamate cells as excitatory.
   - Efficacy was recalibrated to 0.15675 mV by a closed-loop rule (v3).
   - `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
 - **Blanks filled from data:**
   - transcript-based receptor calls for 69 types (Davis 2020), including EPG and Delta7;
-  - glutamate sign for 20 types;
+  - glutamate sign for 51 types (receptor balance; Davis 2020 + Turner-Evans 2020);
   - inferred delays for 10,809 untyped cells.
 - **Inference algorithm result:** wiring cannot predict sign-critical receptors (leave-one-type-out at chance).
 - **CX ring:**
   - starting the fly from a living state instead of "brain death" does not fix it (F-WARM-1);
   - the NMDA lead was withdrawn;
-  - making Delta7's glutamate input excitatory (supported by its iGluR expression) gives the first **localised persistent state** under T, but at a fixed heading.
+  - my first EPG heading map was wrong (L/R glomeruli run opposite ways round the ring). Headings are now inferred from connectivity, and all earlier s8 bump-position results are unreliable;
+  - Delta7's glutamate input is GluCl-dominated in two datasets, so the model's inhibitory Delta7→Delta7 is supported.
+- **m3/m4 consequences:** M0 (monoamines without fast sign) now passes and is adopted (m4). Config T stands on 2/3 seeds and is blocked only by the ring.
 
-## Working model (m3)
+## Working model (m4)
 
-- Profile **m3** = m2 + `connectome:all|nt_source_consensus=1` + efficacy 0.15675 mV. Edges ≥ 5 synapses, noise-free.
-- Morphological delays (typed: skeleton; untyped: inferred); Hallem ORN rates; per-MN leg forces; fitted slow MNs; BANC proprioceptor subtypes; transcript-based glutamate sign rows (20 types).
+- Profile **m4** = m2 + `connectome:all|nt_source_consensus=1` + efficacy 0.15675 mV + `transmitter:{dopamine,serotonin,octopamine}|sign=0`. Edges ≥ 5 synapses, noise-free.
+- Morphological delays (typed: skeleton; untyped: inferred); Hallem ORN rates; per-MN leg forces; fitted slow MNs; BANC proprioceptor subtypes; transcript-based glutamate sign rows (51 types).
 - Runs set `motor_unit:all|force_per_spike=10` (non-leg MNs).
-- Regression (end of s8): sugar→MN9_L **6.3 ± 2.1 / 96.7 Hz** (marginal; > 5 required); closed loop seeds 0–2: 0 non-tonic spikes, brain excluding ORNs 0.21–0.36 Hz.
+- Regression (end of s8, m4): sugar→MN9_L **8.9 ± 5.9 / 96.0 Hz** over 10 trials (marginal; > 5 required); closed loop seeds 0–2: 0 non-tonic spikes, brain excluding ORNs 0.22–0.38 Hz. Exact values differ between the Mac and backhouse (float order; each reproducible).
 
 ## Options (off unless stated)
 
@@ -33,8 +35,9 @@
 | `connectome:all\|nt_source_consensus` | consensusNt transmitters | **on in m3** |
 | `cell_type:untyped\|inferred_conduction_delay` | inferred untyped-cell delays | **on** |
 | `cell_type:all\|background_noise` + `scripts/probes/warm_start.py` | warm start (noise, ramped senses) | tested, does not rescue the ring (F-WARM-1) |
-| `candidates_s8_d7_glu_pos.csv` | Delta7 glutamate input excitatory | localised but pinned bump under T |
-| `candidates_s8_ring_norm*.csv` | per-cell ring input normalisation | no effect |
+| `candidates_s8_d7_glu_pos.csv` | Delta7 glutamate input excitatory | not supported by receptor levels; its bump results were read with the wrong heading map |
+| `candidates_s8_ring_norm*.csv` | per-cell total ring input normalisation | no effect |
+| `cell_type:cx_ring\|class_input_normalisation` | per-class ring input normalisation (inferred homeostasis) | screened in s8 (see DECISIONS) |
 | s7 options (ORN→PN ×10.9, depression, leg afferent ×10.9 = config T) | see MODEL.md | unchanged |
 | `FLYEMU_EXTRA_PARAMS`, `FLYEMU_PROPRIO_ASSIGNMENT`, `FLYEMU_PROFILE` | candidate rows / assignment / profile | mechanisms |
 
@@ -50,9 +53,9 @@
 | Leg VNC | default silent; under T right-signed flexion reflex; extension cancelled by glutamatergic IN21A006 | F-XFER-1 |
 | AL | measured ORN→PN strength over-drives PNs; budget spent | F-AL-4 |
 | Transmitters / receptors | consensusNt (m3); receptor calls for 69 types; glutamate sign for 20 | F-NT-1, F-RCPT-1 |
-| Central complex | default silent; T saturates; with Delta7 +1 a localised state that persists in darkness but is **pinned** to ~350° or ~70° (a strong kick cannot move it) | F-CX-1, F-WARM-1, DECISIONS s8 |
+| Central complex | default silent; T saturates. s8 bump-position results before the heading correction are unreliable; Delta7 +1 is unsupported by receptor levels | F-CX-1, F-WARM-1, DECISIONS s8 |
 | Brain pathways | sugar→MN9 passes, marginally, under m3 | DECISIONS s8 rule v3 |
-| Standing / walking | not re-tested under m3 | F-XFER-1 (m2) |
+| Standing / walking | m3: default fails (0.59–0.68 mm); **T stands on 2/3 seeds (1.03, 0.97 mm)** but is unstable only through the ring | DECISIONS s8 |
 
 ## Unverified foundations
 
@@ -62,8 +65,8 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 |---|---|---|
 | Efficacy 0.15675 mV for every synapse class (m3) | inferred (closed-loop stability fit, rule v3; 3 seeds, non-monotonic in scale). **Contradicted for ORN→PN** (measured ≈ 11×) | per-class unitary PSPs; more seeds; the CX ring model |
 | V_rest −52 / V_th −45 mV for all non-fitted types | inferred (borrowed). Literature now says rests of −55 to −68 mV and a KC gap of 21.5 mV (targets table) | per-class values in the targets table; apply class by class |
-| Monoamines as fast excitation | **guessed and biologically wrong** (all receptors are GPCRs), but load-bearing. The s7 M0 test is **confounded**: under predictedNt it also silenced every KC (F-NT-1); redo under m3 | the neuromodulator pools must take over the monoamines' function |
-| CX ring parameters (uniform); Delta7→Delta7 inhibitory | inferred. Transcripts: EPG GluCl-only, Delta7 **GluCl + iGluR** (mixed). Delta7 +1 gives a localised, persistent but misplaced bump under T (s8). NMDA lead withdrawn (recurrent excitation is cholinergic) | Delta7 synaptic physiology; the bump-move test (s8, below) |
+| Monoamines without fast sign (m4) | inferred (GPCR-only receptors); passed M0 under m3. Their action now rests entirely on the neuromodulator pools, which are inert (sensitivities 0) | per-type receptor data (transcripts, F-RCPT-1) to set pool sensitivities | the neuromodulator pools must take over the monoamines' function |
+| CX ring parameters (uniform counts); ring headings | inferred. Delta7, EPG, PEN_b, PEG are GluCl-dominated (Davis + Turner-Evans), so Delta7→Delta7 inhibition is supported. EPG headings are inferred from connectivity (`infer_epg_heading.py`; L/R glomeruli run opposite ways). NMDA lead withdrawn | ring synaptic physiology; ER ring-neuron activity |
 | No background activity; exact-rest start | guessed. s8: a warm start (noise + ramped senses) does not rescue the ring and lowers its ignition threshold (F-WARM-1) | resting-rate data; VNC tonic drive failed (it recruits inhibition) |
 | Claw/hook flexion vs extension | inferred (wiring rule); supported on dev by the swap test. No publication maps it to SNpp types | FANC T1L labels (Lee et al. 2025; `data/raw/lee2025/`) joined to male-cns. CAVE token at `~/.config/flyemu/cave_token` authenticates, but FANC production returns 403 (**Ben: request FANC production access**); otherwise NBLAST bridging. VFB types MANC SNpp39 as club and SNpp41 as claw (conflict) |
 | Glutamate sign per target (all but 20 types) | guessed −1 (GluCl). Transcripts: 18 types GluCl-only, Dm9/T1 iGluR-only (rows live), 36 types mixed; wiring cannot predict it (F-RCPT-1) | transcriptomes matched to connectome types (FCA, T2 snRNA-seq) |
@@ -94,8 +97,8 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 
 ## Things that will bite you
 
-- **The working profile is m3 now.** Numbers from sessions 5–8 were m2; compare like with like (`FLYEMU_PROFILE=m2`).
-- **Sugar→MN9 is marginal under m3** (6.3 Hz at 100 Hz). Report any change that takes it below 5 Hz.
+- **The working profile is m4 now.** Numbers from sessions 5–8 were m2; compare like with like (`FLYEMU_PROFILE=m2`). Exact regression numbers differ between the Mac and backhouse.
+- **Sugar→MN9 is marginal under m4** (8.9 ± 5.9 Hz at 100 Hz; single trials below 5). Report any change that takes it below 5 Hz.
 - **s7's `cx_kick.py` "local" kick was not local** (the first N EPGs in table order). Use `warm_start.py` (heading from the PB glomerulus; `--heading`).
 - **The blank ledger does not see per-type rows** (it reads static labels from `data/ontology/fly_information.yaml`), so s8 fills don't move its totals. It needs to count `cell_types.csv` rows.
 - **backhouse via ssh → cmd.exe mangles `|` and nested quotes.** Put jobs in a file and run `xargs -L 1 env < jobs` in tmux, or use a runner script.

@@ -130,8 +130,8 @@ Access routes:
 
 | Check | Command | Current reference |
 |---|---|---|
-| Sugar → MN9_L | `uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100,200 --shuffles 0` | m3: 6.3 / 96.7 Hz (marginal; > 5 Hz required). m2 was 26.5 / 88 |
-| Closed-loop stability | `uv run python scripts/probes/closed_loop_check.py --seed N`, N = 0, 1, 2 | 0 non-tonic spikes after silencing; brain excluding ORNs 0.21–0.36 Hz (m3) |
+| Sugar → MN9_L | `uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100,200 --shuffles 0` | m4: 8.9 ± 5.9 / 96.0 Hz over 10 trials (marginal; > 5 Hz required; single trials can fall below). m2 was 26.5 / 88 |
+| Closed-loop stability | `uv run python scripts/probes/closed_loop_check.py --seed N`, N = 0, 1, 2 | 0 non-tonic spikes after silencing; brain excluding ORNs 0.22–0.38 Hz (m4). Exact values differ between the Mac and backhouse |
 | Tests | `uv run pytest tests -q` | all pass |
 
 A change may move the reference numbers. Report the move; do not hide it.
