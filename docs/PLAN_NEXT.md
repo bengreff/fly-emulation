@@ -22,18 +22,22 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
   - snRNA iGluR/GluCl ratios are biased upward relative to bulk.
 - **EPG headings are inferred from connectivity.** All ring position results before that fix are unreliable, including s7's single-knob screens. Those were re-screened under m4 (DECISIONS s8).
 
-## Ranked next steps
+## Ranked next steps: the construction programme
 
-The strategy is set out in `docs/NEXT_SESSION_PROMPT.md` and the reassessment at the end of `docs/SESSION8_LOG.md`.
+**Ben's direction (end of s8):** construct the brain by systematic search over the parameters the connectome does not fix. Constraints: data-derived priors, a growing target library, and held-out datasets as judge. The session prompt (`docs/NEXT_SESSION_PROMPT.md`) has the detail.
 
-1. **Honest body at rest:** passive, not guessed, wing/abdomen/head/haltere/mouthpart actuators, labelled absent. Joint-limit occupancy as a metric.
-2. **Scoped locomotion configuration L** = T + passive non-leg actuators + CX ring output clamped (labelled). Stability, standing over 0.5–3 s, DNg100/MDN command direction and a gait criterion on fresh seeds.
-3. **Calibration engine:** CMA-ES over ≤ 20 interpretable class-level parameters against a declared fit-set battery; held-out data judged only after dev criteria pass; resumable on backhouse. It replaces one-knob hand-tuning.
-4. **Keep filling blanks with type-matched data:**
-   - transcriptomes (VNC, MB);
-   - FANC access for leg sensors;
-   - neuromodulator pool magnitudes (MS rows stable under default but not under T).
-5. Re-test adaptation + Delta7 ×4 without MS; check whether VNC premotor classes should be graded.
+| Stage | Session(s) | Deliverable | Success measure |
+|---|---|---|---|
+| 0 | 9 | passive non-leg body; joint-limit metric | wings/abdomen < 10% at limit |
+| 1 | 9 | CUDA JAX; batched GPU LIF with class-decomposed weights and delay buckets; equivalence tests vs `lif.py`; benchmark | tests pass; ≥ 10× brains per wall-second vs CPU |
+| 2 | 9–10 | target library v1 (per-type physiology, split by dataset); pre-registered objective | ≥ 100 quantitative targets, ≥ 1/3 of datasets held out |
+| 3 | 9–10 | class-level CMA-ES search (~50–150 params); CPU and body re-scoring of the best | fit-set terms met without stability loss; held-out score reported |
+| 4 | 10–11 | closed-loop evaluation at scale (CPU pool now; MuJoCo Warp GPU body later); behavioural targets (standing, command direction, gait) | fresh-seed held-out behaviour |
+| 5 | 11–12 | gradient refinement (surrogate spike gradients) of per-type parameters regularised to class; an ensemble of brains | ensemble spread and held-out prediction reported per target |
+| 6 | 12+ | musculoskeletal body (flygym muscle model) replaces torque actuators; flight hinge later | behaviour without passive-actuator abstractions |
+| 7 | 13+ | lifetime plasticity (KC→MBON, DAN-gated) and internal states (neuromodulator pools fitted) | held-out learning and state-dependent behaviour |
+
+In parallel, keep filling blanks with type-matched data (transcriptomes, FANC access for leg sensors). Each fill fixes or tightly bounds a parameter, which shrinks the search.
 
 ## Later milestones (dependency order)
 

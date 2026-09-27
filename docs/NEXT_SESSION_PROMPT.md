@@ -6,118 +6,133 @@ Paste everything below the line into a fresh Claude Code session in `/Users/ben/
 
 You are continuing the fly-emulation project **unattended**. Ben will not answer questions. You have Ben's standing authority to act as a creative scientific researcher and make judgement calls. Record every deviation and its reason; the guardrails below still hold.
 
-## Why this session is different
+## The research programme from now on: construct the brain by search
 
-Eight sessions have tuned one mechanism at a time: 36 pre-registered tests, about 8 passes, and mostly stability checks. The session-8 reassessment (end of `docs/SESSION8_LOG.md`, DECISIONS s8) found three structural reasons.
+**Ben's direction (end of s8):** be ambitious. The project is to **construct a brain**. The connectome fixes who connects to whom. Everything it does not fix (synaptic strength and sign per class, receptor kinetics, thresholds and resting potentials, adaptation, short-term plasticity, neuromodulatory gains, tonic drive) is found by **systematic search over parameters**, constrained by every measurement we can collect, and judged on held-out experiments.
 
-1. **The body lies.** In the best recording (m4, config T, seed 0), wing joints sit at a range limit 82% of the time, abdomen joints 62% (every pitch joint 100%), head and neck 47%, legs 18%.
-   - Only the leg motor units have measured forces and signs. Wing, abdomen and head actuators use a guessed force per spike and guessed signs, with one net torque per joint and no antagonist stiffness, so any tonic motor-neuron firing pins them.
-   - A real fly's wings fold through hinge and passive mechanics, not through motor-neuron torque. Every embodied result so far is confounded by this layer.
-2. **One global synapse strength cannot be both stable and functional.** Stability forces it low (0.157 mV), and function then fails everywhere it was tested: AL, leg reflex, CX ring. Inhibitory populations (Delta7, ER) mostly inhibit each other and fall silent. Biology gets stability from class-specific properties that the model lacks. Hand-tuning one knob at a time does not converge in a recurrent system: each fix breaks another target, and the post-hoc budget then stops the work.
-3. **Unverified tools cost whole sessions.** KC transmitter labels, a non-local ring kick and a mirrored EPG heading map each invalidated conclusions.
+That replaces eight sessions of one-knob hand-tuning: 36 pre-registered tests, about 8 passes. The evidence that hand-tuning cannot converge is in the reassessment at the end of `docs/SESSION8_LOG.md`.
+- A single global efficacy cannot be both stable and functional.
+- Inhibitory populations (Delta7, ER) mostly inhibit each other and fall silent.
+- Every local fix breaks another target.
 
-The strategy, in order:
-1. an **honest body** (unknown actuators passive, not guessed);
-2. an **honest scoped configuration for locomotion** (the CX ring clamped and labelled, so walking work is not blocked by the compass);
-3. a **calibration engine**: derivative-free optimisation of a small, interpretable, class-level parameter vector against a battery of fit-set physiology targets, judged only on held-out data.
+The search is allowed by `CLAUDE.md`, which says to fit unknown parameters against physiology and behaviour. The constraints:
+- fitting happens **between runs** (construction), never within an episode;
+- no decoder stands in for missing circuitry;
+- priors come from data (transcripts, synapse counts, physiology);
+- **held-out interventions and datasets** judge the result, never the fit set.
 
-This replaces hand-tuning as the main way forward.
+**The programme has four pillars:**
+
+1. **A fast, batched simulator.** Evaluate many candidate brains at once on the RTX 4070 Ti SUPER (JAX + CUDA). The CPU simulator (`src/flyemu/lif.py`) stays the reference: the GPU path must reproduce it before it is trusted (`CLAUDE.md`: select GPU implementations by measured accuracy and throughput).
+2. **A structured parameter space.** The connectome's topology is fixed. Parameters sit in a hierarchy with data-derived priors:
+   - global;
+   - transmitter × region (brain, optic lobe, VNC);
+   - cell class (≈ hundreds: superclass/class/lineage groups, ring types, PN/LN/KC/MBON, premotor, MN classes);
+   - later, per type (≈ 14k) with a penalty toward the class value.
+
+   Transcript-based signs (54 types) and measured values are fixed or tightly bounded, never free.
+3. **A target library.** Every quantitative observation we can get, each tagged fit / held-out / sealed by *dataset*:
+   - resting rates;
+   - pathway activations (sugar→MN9 and the Shiu-style activation screens);
+   - PN and ORN responses;
+   - T4/T5 direction selectivity;
+   - the CX bump (Ben's criteria);
+   - slow-MN reflex tuning;
+   - 13Bα tuning;
+   - stability after sensory pulses;
+   - command direction and gait in the body.
+
+   Existing tables: `data/measurements/targets_session6.csv` and the flybench tasks.
+4. **Search:**
+   - stage 1: population-based (CMA-ES, batched on GPU) over ~50–150 class-level parameters;
+   - stage 2: gradient refinement with surrogate spike gradients in JAX, per-type parameters regularised toward their class;
+   - output: an **ensemble** of brains that satisfy the fit set. Their spread is our uncertainty. Report where the ensemble agrees and where it disagrees.
+
+**The body is the behavioural testbed, not the thing being fitted.** Unknown actuators must not fake behaviour:
+- **wing, abdomen, head and haltere actuators become passive** (with the motor layer labelled absent), because they currently pin joints (wings 82% of the time at a range limit);
+- flygym's musculoskeletal model and MuJoCo Warp GPU are the later route to real muscles and a batched body.
 
 ## Before anything else
 
 1. Run `date`; create `docs/SESSION9_LOG.md` with the start time. Use `date` for every timestamp.
-2. Follow `docs/WORKFLOW.md`: evidence labels; pre-registration; fit / dev / held-out / sealed; the post-hoc budget of 2; ≥ 3 seeds; process hygiene; git.
+2. Follow `docs/WORKFLOW.md`: evidence labels; pre-registration; fit / dev / held-out / sealed; ≥ 3 seeds; process hygiene; git. The post-hoc budget of 2 applies to hand repairs. A declared search over a declared parameter space against a declared fit set is not a post-hoc repair, but **the parameter space, objective and splits must be pre-registered before the search runs**.
 3. Read `docs/HANDOFF.md`, `docs/PLAN_NEXT.md`, `docs/MODEL.md`, FINDINGS "# Session 8" and DECISIONS "## Session 8".
 4. Run `uv run pytest tests -q`; it must pass.
 5. **backhouse** (`ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`):
-   - keep one `sleep infinity` keep-alive attached, and kill it at the end (s8 left three orphans);
+   - keep one `sleep infinity` keep-alive and kill it at the end;
    - run `scripts/sync_backhouse.sh`;
-   - **≤ 8 model processes at once** (each peaks at 2.6–3.2 GB; 12 thrashed);
-   - build job lists with `scripts/mkjobs.py` (one bash script per job, BLAS pinned to one thread); never put quoted command lines through `xargs` or `ssh "..."`;
-   - JAX with the RTX 4070 Ti SUPER (16 GB) is installed there, not on the Mac.
-6. An old `sleep infinity` (PID 523) in backhouse WSL predates session 8. Leave it and mention it to Ben.
+   - ≤ 8 CPU model processes at once (2.6–3.2 GB each);
+   - build job lists with `scripts/mkjobs.py`; never put quoted command lines through `xargs` or `ssh "..."`;
+   - old `sleep infinity` PID 523 predates s8: leave it and mention it.
 
 ## Session rules
 
-- Stop starting new work at 4h40m, then wrap up. Prefer a natural end over starting something that cannot finish.
-- **Working profile m4.** Exact regression values differ between the Mac and backhouse, so compare like with like. Sugar→MN9 is marginal (8.9 ± 5.9 Hz over 10 trials); report any change that takes it below 5 Hz.
-- **Stability criterion (Ben, s7):** CX ring types (EPG, PEN_a/b, PEG, Delta7, ER*, EL*) are scored by the bump test. Every other cell must go quiet after silencing (Q in `scripts/probes/score_warm.py`).
-- **Every candidate that touches dynamics** gets stability under **both** default and T. The s8 MS rows passed default and then sustained a 9 Hz brain under T.
-- Candidate rows: `FLYEMU_EXTRA_PARAMS`; candidate edge scaling: `FLYEMU_EDGE_SCALES`. Do not edit live tables until adopted.
-- Reflex scoring always uses `--kp 100 --kd 0.133`. zsh on the Mac: `${=VAR}`.
-- **Agents:** at most one subagent at a time, of a type that cannot spawn agents.
-- **Verification first:** any new probe gets a unit test of what it claims (e.g. "the kick is local": kicked cells are contiguous in inferred heading) before its results are interpreted.
+- Stop starting new work at 4h40m, then wrap up. Long searches must checkpoint and resume, so a run left going at the end is fine if it is recorded and Ben knows how to stop it.
+- **Working profile m4.** Mac and backhouse differ in exact values. Sugar→MN9 is marginal (8.9 ± 5.9 Hz / 10 trials).
+- **Stability (Ben, s7):** CX ring types (EPG, PEN_a/b, PEG, Delta7, ER*, EL*) are scored by the bump test; every other cell must go quiet after silencing. A candidate that touches dynamics must be stable under **both** default and T.
+- **Verification first.** Every new tool gets a test of what it claims before its results are read. s8 lost results to a non-local kick, a mirrored heading map and wrong KC transmitter labels.
+- **Agents:** at most one at a time, of a type that cannot spawn agents. Use it for target extraction (below).
+- Candidate rows: `FLYEMU_EXTRA_PARAMS`; candidate edge scaling: `FLYEMU_EDGE_SCALES`.
 
 ## Priorities
 
-### 1. Honest body at rest (target ≤ 75 min)
+### 1. Passive non-leg body (≤ 40 min)
 
-- Add a body option `body:non_leg_actuators|mode`: `neural` (today) or `passive`.
-  - `passive` gives zero neural torque to every wing, abdomen, head/neck, haltere and mouthpart actuator, with passive stiffness and damping toward flybody's default (folded) pose. Use flybody's own passive groups where they exist; otherwise declare a guessed stiffness.
-  - Label it as an abstraction: these motor layers are **absent**, not simulated. That is more honest than guessed-and-wrong.
-- Add a probe metric: the fraction of time each joint family sits within 3% of a range limit (see the s8 analysis in SESSION8_LOG).
-- Pre-register the adoption criteria:
-  - wing and abdomen at-limit fraction < 10%;
-  - neural regression unchanged (the brain is untouched; motor spikes of non-leg MNs are still recorded);
-  - standing (min z 0.5–1.5 s and 0.5–3.0 s) reported for default and T on **fresh seeds 3, 4, 5**.
-- Record a 3 s browser replay of the best configuration (`scripts/record_organism.py`) and look at frames. Describe what is visible, honestly.
+- Add `body:non_leg_actuators|mode` (`neural` | `passive`; passive = zero neural torque on wing, abdomen, head/neck, haltere and mouthpart actuators, with passive stiffness and damping to flybody's default folded pose; motor layer labelled absent).
+- Add a joint-limit occupancy metric per joint family.
+- Pre-register: wing and abdomen at-limit < 10%; neural regression unchanged; standing for default and T on fresh seeds 3–5.
+- Adopt if it passes. Record a browser replay and describe the frames honestly.
 
-### 2. Scoped locomotion configuration L (target ≤ 60 min)
+### 2. GPU batched brain simulator (the core build, ~2 h)
 
-- **L = T + passive non-leg actuators + CX ring output clamped.** Implement it as a candidate edge scale of 0 on ring → non-ring edges, or silencing of the ring types. It is **visibly labelled** in every output as "CX clamped; not a biological-emulation result for navigation". s7 showed T is stable with ring output removed; re-verify under m4.
-- Pre-register, on fresh seeds:
-  - stability (Q) 3/3;
-  - standing ≥ 0.90 mm over 0.5–3.0 s;
-  - DNg100 stimulation → forward displacement vs no-stim control;
-  - a **gait criterion**: alternating tarsal stance/swing in at least one leg pair, from tarsus contact or height traces;
-  - MDN → backward, as a second command.
-- The command-direction data from s7 (seeds 1–4) are spent; use seeds 5–8.
+- **Enable CUDA JAX on backhouse** (`uv add "jax[cuda12]"` or the matching extra for JAX 0.11.x; verify `jax.devices()` shows the GPU). Record versions in `docs/ENVIRONMENT.md`.
+- **`src/flyemu/gpu/`: a batched LIF matching `lif.py`'s equations for the m4 mechanisms that matter first.** Those are exponential synapses, refractoriness, per-type thresholds/rests/tonic drive, delays per presynaptic type (bucketed), graded cells, adaptation and STD. Everything else raises `NotImplementedError` rather than being silently dropped.
+  - **Class-decomposed weights:** w = Σ_k s_k · W_k, with W_k sparse (BCOO/segment ops) per parameter class. A batch of B brains then shares one sparse structure, and each brain carries its own scale vector s.
+  - Delays: a spike-history ring buffer and one sparse product per delay bucket.
+- **Equivalence tests against the CPU reference,** in `tests/`:
+  - bit-level on a small random network (same spikes);
+  - on the full brain, open-loop, a pre-registered tolerance on sugar→MN9 rate and the active-cell count;
+  - a return-to-rest check.
+- **Benchmark:** simulated seconds per wall second at B = 1, 16, 64 against the CPU simulator (≈ 50 s wall per simulated second). Record in `docs/ENVIRONMENT.md`. The GPU path is used only if it passes the tests.
 
-### 3. The calibration engine (the main work, ≥ 2.5 h)
+### 3. Target library v1 and objective (~45 min, partly by the agent)
 
-**Goal.** A reusable, resumable harness that fits a small vector of interpretable, class-level parameters against a fit-set battery. Deliver a first run and an honest report. Adoption is optional this session; the engine is the deliverable.
-
-- **Optimiser.** CMA-ES (`uv add cma`, or a minimal numpy implementation) on backhouse, 8 parallel evaluations, with a checkpoint every generation so it can resume. Derivative-free, because the objective is a closed-loop spiking simulation: gradients through it are not available, and a rate-model surrogate would add a second, unvalidated model.
-- **Parameters.** ≤ 20, each with bounds, a prior and a biological interpretation. For example:
-  - efficacy scales per transmitter class and region (ACh / GABA / Glu × brain / VNC);
-  - leg-afferent output scale (T's ×10.9 becomes a fitted value with that prior);
-  - CX ring adaptation increment and Delta7 output gain (the s8 bump candidates);
-  - ER tonic drive;
-  - VNC premotor input gain;
-  - slow-MN drive.
-
-  Parameters without any data constraint must not be added.
-- **Objective (fit set only; say in the pre-registration which data each term uses):**
-  - stability Q under default and T (a hard penalty);
+- **Agent task:** extract quantitative, per-cell-type physiology targets into `data/measurements/` with `use` = fit / held-out / sealed. This means resting and evoked rates or Vm, with conditions, n, uncertainty, source figure and table. Priority: CX (EPG, PEN, Delta7, ER), AL (ORN, PN, LN), MB (KC, MBON, DAN), optic lobe (T4/T5, Mi/Tm), descending neurons, leg premotor and MN. Assign held-out **by dataset**, keeping at least a third of datasets held out. Agent reports are leads; spot-check sources before labelling anything as measured.
+- **Objective v1 (open-loop, GPU-evaluable):**
+  - stability after sensory pulses (rule v2 populations);
   - sugar→MN9 in range;
-  - PN spontaneous rate (spent/seen) in 1–5 Hz;
-  - 13Bα static tuning slope (Agrawal, seen);
-  - slow-MN reflex on the dev cell 180111 (seen; over budget as a gate, usable as a fit term);
-  - Ben's CX bump criteria (B1/B2 with the strong kick at 4 headings, 12 nearest EPGs);
-  - PEN resting rate (spent) in range;
-  - under L: standing height.
+  - resting-rate terms for the fit-set classes;
+  - the CX bump from a strong local kick (12 nearest EPGs, inferred headings, 4 headings; B1/B2);
+  - PN responses to Hallem-rate input.
 
-  Keep each term's scale explicit, so the weights are declared, not tuned post hoc.
-- **Held out, never in the objective:**
-  - the sealed Azevedo spare cells (180621, 181127; open only via `score_reflex.py` after a dev pass);
-  - flybench olfactory tasks 08/17/18/26/27;
-  - command direction and gait on fresh seeds;
-  - KC rest rate (spent, but not fitted).
-- **Budget per evaluation.** Keep one evaluation ≤ 3–4 min of wall time on 8 cores (short windows; 1 seed during search, 3 seeds for re-scoring the best). Plan roughly 150–300 evaluations this session. Write the trace to `runs/s9_cmaes/` and a registry of each evaluation.
-- **Report:** the best vector with its terms, how far every parameter moved from its prior, which terms conflict (a Pareto view), and a held-out score only if the pre-registered dev criteria pass.
-- A conflict the optimiser cannot resolve is a result. For example: stability and a functional AL cannot coexist with any class-level setting. Such a conflict localises the missing biology.
+  Each term has a declared scale. Pre-register the objective, parameter space and splits in DECISIONS **before** the search.
 
-### 4. If time remains
+### 4. First class-level search (remaining time; may continue after wrap-up if checkpointed)
 
-- Re-test adaptation + Delta7 ×4 under T **without** MS (its s8 B1 passes had MS on), fresh seeds.
-- Check whether VNC premotor interneuron classes in the model should be graded (non-spiking): list the evidence found, do not change anything.
+- CMA-ES (or a batched evolutionary search) over ~50–150 class-level parameters:
+  - efficacy per transmitter × region;
+  - per-class threshold/rest offsets;
+  - per-class adaptation and STD;
+  - Delta7/ER output gains;
+  - leg-afferent scale;
+  - neuromodulator pool gain.
+
+  Bounds and priors come from data. Batch on GPU; checkpoint every generation to `runs/s9_search/`; log every evaluation.
+- Re-score the top candidates on the CPU reference, open-loop and then closed-loop in the body (default and T, 3 seeds): stability, standing, command direction and gait on fresh seeds.
+- **Report:**
+  - the objective trace;
+  - how far each parameter moved from its prior;
+  - which targets conflict (a Pareto view);
+  - the ensemble spread;
+  - held-out scores only for candidates that pass the pre-registered fit criteria.
+
+  A persistent conflict localises the missing biology, and that is a result.
 
 ## Wrap-up
 
 Follow WORKFLOW §2 "End":
 - run the full tests, regressions, ledger and census;
-- stop every process on both machines;
-- write the FINDINGS section; rewrite HANDOFF (unverified foundations, sealed register) and PLAN_NEXT; write the session-10 prompt;
-- log the post-hoc budget use per target;
+- stop every process on both machines, or document a checkpointed search left running and how to stop it;
+- write the FINDINGS section; rewrite HANDOFF and PLAN_NEXT with the construction roadmap status; write the session-10 prompt;
 - commit and push;
-- end with a plain-language summary for Ben (an engineer, not a neuroscientist): what changed, what it means, what is next.
+- end with a plain-language summary for Ben.

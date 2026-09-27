@@ -51,3 +51,15 @@
 1. honest passive body for unknown actuators;
 2. scoped, labelled locomotion configuration with the CX clamped;
 3. a derivative-free calibration engine (CMA-ES on ≤ 20 interpretable class-level parameters, fit-set battery, held-out judged).
+
+### Revision (Ben): be more ambitious; construct the brain by search
+
+Ben rejected the scoped plan. The project's research programme is now to **construct a brain**: a systematic search over every parameter the connectome does not fix, constrained by data-derived priors and a growing target library, and judged on held-out datasets.
+
+The pillars are:
+1. a batched GPU simulator (JAX + CUDA on the 4070 Ti), validated against `lif.py`;
+2. a hierarchical parameter space (global → transmitter × region → class → type);
+3. a target library split by dataset;
+4. staged search (CMA-ES over class parameters, then gradient refinement per type), producing an ensemble.
+
+The body is the behavioural testbed: passive where unknown; musculoskeletal and MuJoCo Warp later. Facts checked: JAX on backhouse is CPU-only (CUDA was skipped in s1 for lack of internet, which now works); flygym ships MuJoCo Warp GPU support and a musculoskeletal model. The session 9 prompt and the PLAN_NEXT roadmap (stages 0–7) are rewritten accordingly.
