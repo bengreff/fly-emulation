@@ -29,3 +29,25 @@
 - 20:49 Slow backhouse runs traced to thread oversubscription: the MS rows activated a per-step dense matvec that OpenBLAS threads (~169 threads/process, load 138). Replaced by elementwise arithmetic (Mac regression unchanged, 0.383); job scripts pin BLAS to 1 thread. Relaunched ring5+6 at 9 parallel.
 - 20:53 **First persistent localised ring state:** adaptation + Delta7 x4 under T, strong kick (20 mV/200 ms, 12 nearest EPGs): after senses off, EPG 16-44% active, vector 0.81-0.98, PEN 1-8 Hz. Final positions cluster at ~62/123/225 deg; the kick selects the nearest basin (90 -> 123 on 3/3 seeds). Discrete multistability, not yet a continuous attractor.
 - 21:21 Wrap-up: MS reverted to candidate (sustains ~9 Hz brain under T); m4 Mac regression back to 0.380; tests 57/57; ledger run. Stopped this session's keep-alives (Mac ssh + 3 orphaned WSL sleep infinity). One older WSL 'sleep infinity' (PID 523, ~7.5 h old, likely session 7) left for Ben to judge. End.
+
+## Strategic reassessment (end of session 8, at Ben's request)
+
+**What the recording shows** (m4, config T, seed 0, 0.5–3 s): wings at a joint range limit 82% of the time, abdomen 62% (every pitch joint 100%), head/neck 47%, legs 18%. The non-leg motor layer (guessed force per spike and signs; one net torque per joint; no antagonist stiffness) pins joints under tonic MN firing. The visible "convulsing under maximum strain" is this layer, not the brain.
+
+**Scorecard** (definitions matter; measures, not completeness claims):
+- ledger parameter slots filled with data: 1.7% (13,806 / 824k); on placeholder 52.9%; mechanism absent 41.5%;
+- pre-registered tests: ~8 of 36 passed, mostly stability checks;
+- held-out biology: ~4 of ~12;
+- standing (≥ 0.90 mm, 0.5–1.5 s): default 0/3, T 2/3 (sinks by 3 s; brain unstable);
+- movable compass bump, walking, flight, learning, internal state: none.
+
+**Structural diagnosis:**
+1. The body's non-leg motor layer is fabricated.
+2. One global synaptic scale cannot be both stable and functional; hand-tuning one mechanism at a time does not converge.
+3. Tool and label errors went undetected for sessions.
+4. Locomotion is needlessly blocked by the CX ring.
+
+**Strategy for session 9** (NEXT_SESSION_PROMPT):
+1. honest passive body for unknown actuators;
+2. scoped, labelled locomotion configuration with the CX clamped;
+3. a derivative-free calibration engine (CMA-ES on ≤ 20 interpretable class-level parameters, fit-set battery, held-out judged).

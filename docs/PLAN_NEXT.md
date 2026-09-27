@@ -24,17 +24,16 @@ The male-CNS connectome controls an accurately simulated fly body. Each layer is
 
 ## Ranked next steps
 
-1. **CX ring: from discrete to continuous.** Under T, adaptation + Delta7 ×4 (candidate files `candidates_s8_adapt_d7x4.csv`) gives a persistent localised bump at physiological PEN rates, but it lands in ~3 preferred positions. Next:
-   - find what sets the basins (per-heading input asymmetry near the ring seam; EPGt; uneven heading spacing);
-   - combine with per-class normalisation or Delta7-output scaling (s8 ring6 results in DECISIONS);
-   - then pre-register on fresh seeds (4–6): bump criteria plus "bump within 45° of a strong kick at 4 headings".
-   - Also test in the default config: the default ring is silent, and a bump needs a living ring without T's drive.
-2. **T with a working ring:** standing (3 seeds, fresh), stability, command direction with a gait criterion, and the reflex on a sealed spare after a dev pass.
-3. **Neuromodulator pools:** the receptor-signed sensitivities (`candidates_s8_modsens.csv`, 68 types) pass in the default config but sustain a ~9 Hz brain under T. Calibrate the pool magnitude (`mod_increment`, sensitivity 0.2, τ 1 s: all guessed) against stability under both configs before re-adopting. Also re-test adaptation + Delta7 ×4 under T without MS (its B1 passes happened with MS on).
-4. **More transcriptome-matched types:** VNC (Allen 2020 / Cachero 2026 hemilineage-level); MB (Crocker 2016). See `docs/research/transcriptome_sources_s8.md`.
-5. **Extension pathway (F-XFER-1):** FANC production access (Ben) or NBLAST bridging.
-6. **Per-class operating points** (resting potentials −55 to −68 mV, KC gap), one class at a time.
-7. **Abdomen and wing motor calibration.**
+The strategy is set out in `docs/NEXT_SESSION_PROMPT.md` and the reassessment at the end of `docs/SESSION8_LOG.md`.
+
+1. **Honest body at rest:** passive, not guessed, wing/abdomen/head/haltere/mouthpart actuators, labelled absent. Joint-limit occupancy as a metric.
+2. **Scoped locomotion configuration L** = T + passive non-leg actuators + CX ring output clamped (labelled). Stability, standing over 0.5–3 s, DNg100/MDN command direction and a gait criterion on fresh seeds.
+3. **Calibration engine:** CMA-ES over ≤ 20 interpretable class-level parameters against a declared fit-set battery; held-out data judged only after dev criteria pass; resumable on backhouse. It replaces one-knob hand-tuning.
+4. **Keep filling blanks with type-matched data:**
+   - transcriptomes (VNC, MB);
+   - FANC access for leg sensors;
+   - neuromodulator pool magnitudes (MS rows stable under default but not under T).
+5. Re-test adaptation + Delta7 ×4 without MS; check whether VNC premotor classes should be graded.
 
 ## Later milestones (dependency order)
 
