@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, extrasenses, interface, lif, muscles, neuromuscular, olfaction, passive, profiles, sensory, vision
+from . import adhesion, connectome, extrasenses, interface, lif, muscles, neuromuscular, olfaction, passive, profiles, sensory, vision
 from .world import World
 from .body import Body
 from .registry import Policy, Registry, Requirement
@@ -95,6 +95,12 @@ class Organism:
             adhesion_names=self.body.adhesion_names,
             model=self.body.model,
         )
+        # B7 adhesion gate (session 9): grip needs surface contact, released by shear
+        self.adhesion_gate = bool(int(self.reg.require(
+            "adhesion:leg", "detachment", units="enum",
+            model_use="0 neural grip only (legacy m4), 1 gated by tarsal load and shear (adhesion.py)",
+            subsystem="body_mechanics", minimal=0,
+            minimal_note="legacy m4; the load/shear gate is a template option")))
         # B4/B5 antagonist Hill muscles on the legs (session 9); 0 = legacy net torque
         self.hill = None
         if int(self.reg.require(
@@ -155,6 +161,7 @@ class Organism:
         The single place where the world and body reach the network, used by
         run() and by the recording scripts alike.
         """
+        self._last_obs = obs
         drive = self.aff.drive(obs)
         if self.vis is not None:
             # The eyes are rendered at their own rate; between renders the
@@ -187,7 +194,10 @@ class Organism:
             for j, v in extra.items():
                 torque[j] += v
         self.body.actuate(torque)
-        self.body.set_adhesion(self.nm.grip)
+        grip = self.nm.grip
+        if self.adhesion_gate and getattr(self, "_last_obs", None) is not None:
+            grip = grip * adhesion.gate(self._last_obs["contact_forces"])
+        self.body.set_adhesion(grip)
         self.body.step()
         return torque
 

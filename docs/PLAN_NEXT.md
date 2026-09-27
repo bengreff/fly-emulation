@@ -13,7 +13,7 @@
    - Fatigue for fast/intermediate units (force per spike saturates by ~10 spikes).
    - Give `standing.py` a Hill-mode readout (it still reads legacy unit torques).
    - Compute a standing drive from the Hill model and run the decaying-activation dead-fly variant (τ ≈ 100 ms) against the measured fall.
-3. **Task 6 (B7 adhesion)** with load/shear detachment.
+3. **Task 6 (B7 adhesion):** the gate exists (`adhesion.py`, switch `adhesion:leg|detachment`). Constrain the peel ratio (stance shear/normal ~0.8 sits near the guess) and test it in stance and swing.
 4. **Task 7:** dead fly passes with the template body; body physical battery for the legs.
 5. Tasks 8–14 as listed in CONSTRUCTION.md: flight apparatus, jump, feeding/grooming/antenna, neural mechanisms, state and learning, `sample_fly` with acceptance tests, ledger report.
 

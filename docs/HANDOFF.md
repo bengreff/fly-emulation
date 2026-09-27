@@ -8,7 +8,8 @@
 - **Construction tasks:**
   - done: 1 (data model), 2 (class taxonomy), 3 (dead-fly harness);
   - partial: 4 (passive joints; built as switches, open items below), 5 (muscles; see below);
-  - not started: 6–14.
+  - started: 6 (adhesion load/shear gate as a switch; untested in behaviour);
+  - not started: 7–14.
 - **Data model** (`data/model/`, `src/flyemu/model_data.py`):
   - 56 mechanisms (11 have, 24 partial, 21 absent);
   - 126 numeric unknowns with bounds, basis, prior, label and release stage;
