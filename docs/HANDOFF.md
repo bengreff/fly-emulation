@@ -40,7 +40,7 @@
   - Damping is still the flybody default (guessed).
 - **B4.**
   - 20 of 84 antagonist muscles get no motor neuron under the legacy map (F-MUSCLE-1).
-  - The legacy coxa assignments disagree with axis geometry: promotors go to roll, rotators to yaw.
+  - The legacy coxa assignments are functional (calibrated foot action), which is sound. Only the two sternal rotators are placed by a rule with an assumed sign. The literature gives them swing/stance roles (anterior = forward, posterior = backward; agent-read), so re-map them by action in Hill mode. The orphan coxa-pitch directions (ThC foot up/down) have no named muscle; the DOF may be largely passive.
   - Mid/hind muscle parameters are copies of the front leg (guessed); the tibia-tarsus pair is a placeholder.
   - Next: resolve MN→muscle→DOF for the coxa and femur-roll pools from the FANC/MANC atlas.
 - **B5.**
@@ -57,7 +57,7 @@
 | DOF mapping of the eLife axes onto flybody joints | questioned (F-PASSIVE-2): valid for FTi only | use the J^T K J projection |
 | joints.py coxa labels and range envelopes | assumed; labels contradict geometry (F-COXA-1) | measured coxa excursions mapped by function, not name |
 | Hill mode: coxa and femur-roll muscle directions | guessed | FANC/MANC MN→muscle atlas; FlyMimic moment arms on matched axes |
-| Legacy MN map: promotor → coxa roll, rotators → coxa yaw | as recorded (legacy) | same |
+| Legacy MN map: sternal rotators on the least-foot-motion coxa joint with an assumed sign | assumed | Cheong 2024 roles (anterior = forward swing, posterior = backward): verify the quotes, re-map by action |
 | Twitch kinetics by unit class (Hill mode) | inferred from Azevedo 2020 (read) | per-class twitch recordings for non-tibia muscles |
 | Spiking vs graded mode for 86,541 cells | unknown (Bernoulli priors) | per-class physiology; search + ablation |
 | 62 of 126 bounds with a data basis; only 22 sources read | leads | read each source (bound_verified column) |
