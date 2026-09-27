@@ -35,7 +35,7 @@
   - the gamma convention is unverified;
   - leg damping is still the flybody default (FlyMimic uses c/k 0.05 s; no measurement found);
   - the posture criterion needs a sharper test (e.g. the paper's free-standing fall heights and times).
-- **Template stability (F-STAB-2):** with every body switch on, seeds 0 and 2 ignite the known Mi18/DNge019/DNg12 loop. The brain needs its class-level mechanisms (task 11) before the full template is stable.
+- **Template stability (F-STAB-2):** with every body switch on, seeds 0 and 2 ignite the known Mi18/DNge019/DNg12 loop. The brain needs its class-level mechanisms (task 11) before the full template is stable. Uniform adaptation at 1 mV silences the loop but kills sugar->MN9 (0.7 Hz; F-STAB-3), so a global knob is not the answer.
   - The eLife Figure 3C medians are loaded equilibria (weights on the tarsi), not rest angles; see F-PASSIVE-1.
   - Next: replicate the tethered, weighted protocol in the model and fit spring references to the measured equilibria. Their angle definitions (θ, φ, ψ, γ) are in the paper's methods (Eqs. 5–11); the full text is fetched via EuropePMC `PMC12324252/fullTextXML`.
   - Damping is still the flybody default (guessed).

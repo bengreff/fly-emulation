@@ -20,3 +20,4 @@
 - 14:28 Correction: the legacy MN map is functional (calibration-based), not wrong; only the sternal rotators use a least-motion rule with an assumed sign; literature (agent-read) suggests swing/stance roles. Orphan coxa-pitch directions have no named ThC muscle. FINDINGS F-MUSCLE-1 and HANDOFF corrected.
 - 14:30 Rotators re-mapped by action in Hill mode (Cheong 2024 quotes verified in full text; switch muscle:leg|rotator_map, default 1 in Hill mode; test). Undriven muscles 20 -> 30 of 84 (F-MUSCLE-2).
 - 14:39 Task 6 started: adhesion load/shear gate (adhesion.py; switch adhesion:leg|detachment; bounded thresholds; tests). Full suite 93 passed; m4 closed loop seed 0 unchanged (0.38 Hz, silent). End of extension hour work.
+- 14:42 F-STAB-3: adaptation 1 mV silences the template loop on 3/3 seeds but sugar->MN9 falls to 0.7 +- 1.1 Hz. Not adopted. Stopped here at a natural end (~35 min of the extra hour used by date); nothing running.
