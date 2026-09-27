@@ -102,11 +102,16 @@ class Organism:
                 subsystem="muscle_mechanics", minimal=0,
                 minimal_note="legacy m4; Hill pairs are an option until adopted")):
             fused = self.reg.require(
-                "motor_unit:leg", "fused_ratio", units="dimensionless",
-                model_use="unit twitch state at fused tetanus / per-spike impulse (B5 saturation)",
-                subsystem="muscle_mechanics", minimal=5.0,
-                minimal_note="guessed; bounded in data/model/parameters.csv (b5_fused_ratio)")
-            self.hill = muscles.HillLegDrive(self.nm, self.body, fused=float(fused))
+                "motor_unit:leg", "fused_rate", units="Hz",
+                model_use="unit firing rate at which its force saturates (B5)",
+                subsystem="muscle_mechanics", minimal=100.0,
+                minimal_note="guessed; bounded in data/model/parameters.csv (b5_fused_hz)")
+            fb = pd.read_csv(neuromuscular.FORCE_TABLE, comment="#").set_index("bodyId").unit_class
+            bid = self.conn.neurons.bodyId.to_numpy()[self.nm.mn_index]
+            ucls = fb.reindex(bid).fillna("intermediate").to_numpy()
+            self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls,
+                                             units_kw={"fused_hz": float(fused)})
+            self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
@@ -145,6 +150,21 @@ class Organism:
 
     # --- running -------------------------------------------------------------
 
+    def motor_step(self, spiked: np.ndarray) -> np.ndarray:
+        """Motor spikes -> muscles -> body, then advance the body one step.
+        The single motor path: probes that step the loop themselves must call
+        this, or they silently bypass mechanisms such as Hill mode (s9)."""
+        self.nm.bypass_forbidden = False
+        torque = self.nm.step(spiked, self.timestep_ms)
+        self.nm.bypass_forbidden = self.hill is not None
+        if self.hill is not None:
+            self.hill.step(spiked, self.timestep_ms)
+            torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
+        self.body.actuate(torque)
+        self.body.set_adhesion(self.nm.grip)
+        self.body.step()
+        return torque
+
     def run(
         self,
         duration_ms: float,
@@ -170,12 +190,7 @@ class Organism:
                     f"step at t={step * self.timestep_ms:.1f} ms"
                 )
             spike_counts[spiked] += 1
-            torque = self.nm.step(spiked, self.timestep_ms)
-            if self.hill is not None:
-                torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
-            self.body.actuate(torque)
-            self.body.set_adhesion(self.nm.grip)
-            self.body.step()
+            torque = self.motor_step(spiked)
 
             if step % record_every == 0:
                 trace.append({

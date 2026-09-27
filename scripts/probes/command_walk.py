@@ -51,7 +51,7 @@ def main():
         sp = org.net.step(external_mv=org.sense(s, obs), kick=kick)
         if 300 <= t < 1300:
             cnt[sp] += 1
-        org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
         if s % 10 == 0:                      # 1 kHz sampling
             R = d.xmat[th].reshape(3, 3)
             rel = (d.xpos[tips] - d.xpos[th]) @ R   # body frame

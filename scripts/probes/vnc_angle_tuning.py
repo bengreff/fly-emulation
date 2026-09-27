@@ -37,7 +37,7 @@ def main():
                             & (n.somaSide == a.leg[0].upper())).to_numpy())
     for s in range(3000):
         obs = org.body.observe(); sp = org.net.step(external_mv=org.sense(s, obs))
-        org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
     q = d.qpos[:7].copy(); prev = None; s = 3000
     vm, th_ach = [], []
     for target in ANG:

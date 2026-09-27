@@ -113,10 +113,7 @@ def main() -> int:
     for step in range(n_steps):
         obs = org.body.observe()
         spiked = org.net.step(external_mv=org.sense(step, obs))
-        torque = org.nm.step(spiked, org.timestep_ms)
-        org.body.actuate(torque)
-        org.body.set_adhesion(org.nm.grip)
-        org.body.step()
+        torque = org.motor_step(spiked)
 
         qpos[step] = d.qpos
         ms_spikes += int(spiked.size)

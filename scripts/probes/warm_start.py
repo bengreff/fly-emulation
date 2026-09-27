@@ -128,7 +128,7 @@ def main():
             last_noncx += int((~cx[sp] & ~tonic[sp]).sum())
         if ms >= k_end and s % 100 == 0:       # EPG activity every 10 ms after the kick
             epg_ts.append(int(np.isin(sp, epg).sum()))
-        org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
         if s % 100 == 0:
             z.append(float(obs["body_positions"][0, 2]))
     hw = c_warm / ((w_warm[1] - w_warm[0]) / 1000)

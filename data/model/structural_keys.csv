@@ -61,4 +61,4 @@ joint:leg|passive_stiffness_source,B3,switch,0 flybody defaults (m4) / 1 measure
 joint:leg|passive_stiffness,B3,data,data/params/passive_leg_stiffness.csv (measured; per DOF rows b3_k_*)
 joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral pose
 muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (muscles.py)
-motor_unit:leg|fused_ratio,B5,switch,read only in Hill mode; value row b5_fused_ratio
+motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz

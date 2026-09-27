@@ -25,7 +25,7 @@ cnt = np.zeros(org.conn.n)
 for s in range(steps):
     obs = org.body.observe()
     sp = org.net.step(external_mv=org.sense(s, obs))
-    org.body.actuate(org.nm.step(sp, 0.1)); org.body.set_adhesion(org.nm.grip); org.body.step()
+    org.motor_step(sp)
     if s >= start:
         cnt[sp] += 1
 hz = cnt / ((steps - start) * 1e-4)

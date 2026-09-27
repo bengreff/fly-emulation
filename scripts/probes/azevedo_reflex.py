@@ -62,7 +62,7 @@ def main():
     for s in range(3000):          # settle free for 300 ms
         obs = org.body.observe()
         sp = org.net.step(external_mv=org.sense(s, obs))
-        org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
     state["s"] = 3000
     q_tether = d.qpos[:7].copy()
 

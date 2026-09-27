@@ -32,7 +32,7 @@ def main():
     j = acts.index(name)
     for s in range(3000):
         obs = org.body.observe(); sp = org.net.step(external_mv=org.sense(s, obs))
-        org.body.actuate(org.nm.step(sp, dt)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
     q = d.qpos[:7].copy(); cnt = np.zeros(org.conn.n); prev = None
     for i in range(8000):
         d.qpos[:7] = q; d.qvel[:6] = 0

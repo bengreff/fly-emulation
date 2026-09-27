@@ -15,7 +15,7 @@ for label, food in (("no food", []), ("sugar patch", [FoodPatch(np.zeros(3), 100
         obs = org.body.observe(); d = org.sense(step, obs)
         drv_leg = max(drv_leg, float(d[tl].max()))
         spk = org.net.step(external_mv=d); counts[spk] += 1
-        org.body.actuate(org.nm.step(spk, org.timestep_ms)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(spk)
     hz = counts / 0.5
     print(f"{label:12s} leg-GRN max drive {drv_leg:5.1f} mV, leg GRN mean {hz[tl].mean():.2f} Hz, "
           f"labellar {hz[lab].mean():.2f} Hz, MN9_L {hz[mn9].mean():.1f} Hz, brain {hz.mean():.2f} Hz")

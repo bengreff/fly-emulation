@@ -54,9 +54,7 @@ def main() -> int:
     for step in range(n_steps):
         obs = org.body.observe()
         spiked = org.net.step(external_mv=org.sense(step, obs))
-        org.body.actuate(org.nm.step(spiked, org.timestep_ms))
-        org.body.set_adhesion(org.nm.grip)
-        org.body.step()
+        org.motor_step(spiked)
         org.body.sim.render_as_needed()
 
     out = REPO / args.out

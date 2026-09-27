@@ -39,8 +39,7 @@ def main():
         sp = org.net.step(external_mv=org.sense(s, obs))
         if s * org.timestep_ms >= 200:          # skip the opening transient
             cnt[sp] += 1
-        tq = org.nm.step(sp, org.timestep_ms)
-        org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
         if s % 100 == 0:
             z.append(float(obs["body_positions"][0, 2]))
         if sp.size > 20000:
@@ -55,8 +54,7 @@ def main():
     for s in range(int(a.silent_ms / org.timestep_ms)):
         obs = org.body.observe()
         sp = org.net.step(external_mv=np.zeros(org.conn.n, np.float32))
-        tq = org.nm.step(sp, org.timestep_ms)
-        org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp)
         silent.append(int((~tonic[sp]).sum()))
         scnt[sp] += 1
     last = np.array(silent[-int(100 / org.timestep_ms):])

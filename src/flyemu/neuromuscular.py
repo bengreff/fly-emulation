@@ -177,6 +177,9 @@ class Neuromuscular:
         Each mapped motor neuron has its own motor-unit state: a spike adds its
         torque per spike, which decays with its own twitch time constant. The
         actuator's torque is the signed sum over its motor units."""
+        if getattr(self, "bypass_forbidden", False):
+            raise RuntimeError("Hill mode is on: step the motor path with Organism.motor_step, "
+                               "not Neuromuscular.step, or the muscles are silently bypassed")
         if self._decay is None:
             self._decay = float(np.exp(-timestep_ms / self.tau_act_ms))
             tau = self.tau_mn if self.tau_mn is not None else np.full(

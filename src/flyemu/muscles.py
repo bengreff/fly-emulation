@@ -104,6 +104,46 @@ def activation_from_units(unit_state: np.ndarray, per_spike: np.ndarray,
     return np.clip(unit_state / (np.maximum(per_spike, 1e-12) * fused), 0.0, 1.0)
 
 
+# B5 motor-unit twitch kinetics by class (ms): rise and decay of a
+# difference-of-exponentials twitch. Guessed within bounds (parameters.csv
+# b5_twitch_*); lead: slow tibia-flexor twitches do not peak within 500 ms
+# (Azevedo 2020 via the s9 fidelity note, not yet read).
+TWITCH_MS = {"fast": (3.0, 15.0), "intermediate": (8.0, 40.0), "slow": (400.0, 700.0)}
+FUSED_HZ = 100.0          # firing rate at which a unit's force saturates (guessed)
+FACIL_DELTA = 0.3         # NMJ facilitation increment per spike (guessed)
+FACIL_TAU_MS = 50.0       # facilitation decay (guessed)
+
+
+class MotorUnits:
+    """B5 per-unit state: spike -> facilitated impulse -> rise filter ->
+    decay; activation = state / (fused rate x decay tau), clipped to [0, 1].
+    facil_delta = 0 is the neutral (no facilitation) setting."""
+
+    def __init__(self, unit_class: np.ndarray, fused_hz: float = FUSED_HZ,
+                 facil_delta: float = FACIL_DELTA, facil_tau_ms: float = FACIL_TAU_MS,
+                 twitch_ms: dict | None = None):
+        tw = twitch_ms or TWITCH_MS
+        cls = np.array([c if c in tw else "intermediate" for c in unit_class])
+        self.tau_r = np.array([tw[c][0] for c in cls])
+        self.tau_d = np.array([tw[c][1] for c in cls])
+        self.fused = fused_hz * self.tau_d / 1000.0     # decay-state level at fused tetanus
+        self.facil_delta, self.facil_tau = facil_delta, facil_tau_ms
+        n = len(cls)
+        self.u = np.zeros(n)       # decaying spike state
+        self.r = np.zeros(n)       # rise-filtered state
+        self.f = np.ones(n)        # facilitation factor
+
+    def step(self, hit: np.ndarray, dt_ms: float) -> None:
+        self.f = 1.0 + (self.f - 1.0) * np.exp(-dt_ms / self.facil_tau)
+        self.u *= np.exp(-dt_ms / self.tau_d)
+        self.u[hit] += self.f[hit]
+        self.f[hit] += self.facil_delta
+        self.r += (self.u - self.r) * (1.0 - np.exp(-dt_ms / self.tau_r))
+
+    def activation(self) -> np.ndarray:
+        return np.clip(self.r / self.fused, 0.0, 1.0)
+
+
 class HillLegDrive:
     """Motor units -> antagonist leg muscles -> joint torque (B4 + B5).
 
@@ -114,7 +154,8 @@ class HillLegDrive:
     (recruitment + summation). Leg actuators with muscles receive the muscle
     torque; all other actuators keep the legacy torque."""
 
-    def __init__(self, nm, body, fused: float = 5.0, pairs: MusclePairs | None = None):
+    def __init__(self, nm, body, fused: float = 5.0, pairs: MusclePairs | None = None,
+                 unit_class: np.ndarray | None = None, units_kw: dict | None = None):
         import mujoco as mj
         m = body.sim.mj_model
         prefix = f"{body.fly.name}/"
@@ -140,11 +181,16 @@ class HillLegDrive:
         self.w = np.abs(np.asarray(nm.force_per_spike, float))
         self.W = np.bincount(self.mn_muscle[ok], weights=self.w[ok], minlength=len(self.p.F0))
         self.n_actuators = nm.n_actuators
+        self.mn_rows = np.asarray(nm.mn_index)
+        self.units = MotorUnits(unit_class if unit_class is not None
+                                else np.full(len(self.mn_rows), "intermediate"), **(units_kw or {}))
 
-    def activation(self, nm) -> np.ndarray:
-        if getattr(nm, "unit", None) is None:
-            return np.zeros(len(self.p.F0))
-        a_unit = activation_from_units(np.abs(nm.unit), self.w, self.fused)
+    def step(self, spiked: np.ndarray, dt_ms: float) -> None:
+        hit = np.isin(self.mn_rows, spiked) if spiked.size else np.zeros(len(self.mn_rows), bool)
+        self.units.step(hit, dt_ms)
+
+    def activation(self, nm=None) -> np.ndarray:
+        a_unit = self.units.activation()
         num = np.bincount(self.mn_muscle[self.ok], weights=(self.w * a_unit)[self.ok],
                           minlength=len(self.p.F0))
         return np.divide(num, self.W, out=np.zeros_like(num), where=self.W > 0)

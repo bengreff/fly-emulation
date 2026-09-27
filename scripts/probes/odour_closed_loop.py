@@ -21,7 +21,7 @@ for label in ("clean air", "odour"):
         obs = org.body.observe()
         spk = org.net.step(external_mv=org.sense(step, obs))
         counts[spk] += 1
-        org.body.actuate(org.nm.step(spk, org.timestep_ms)); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(spk)
     n = org.conn.neurons; cls = n['class'].fillna('')
     hz = counts / 0.3
     res[label] = dict(mean_hz=hz.mean(), orn_hz=hz[org.chem.rows][org.chem.kind == 'orn'].mean(),

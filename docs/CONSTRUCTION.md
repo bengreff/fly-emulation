@@ -32,9 +32,9 @@ Required fidelity per mechanism follows `docs/research/FIDELITY.md`. Where that 
 |---|---|---|---|
 | B1 | Rigid skeleton, measured mass/inertia (mm, g, s; torque µN·mm) | flybody | have |
 | B2 | Leg DOFs; compliant passive tarsal chain | flybody; check tarsal compliance | partial |
-| B3 | Passive mechanics at every joint: stiffness, damping, **rest angle** | legs: *Passive muscle forces in Drosophila are large but insufficient to support a fly's weight* (eLife 2025, [PMC12324252](https://pmc.ncbi.nlm.nih.gov/articles/PMC12324252/)): linear springs per joint per leg, ~2-fold range across flies, rest posture after MN silencing. Other joints: bounded guesses | partial (1 µN·mm/rad everywhere) |
-| B4 | Leg muscles: antagonist Hill-type muscle–tendon units (activation dynamics, F–L–V, rigid tendon acceptable) | FlyMimic ([arXiv 2509.06426](https://arxiv.org/abs/2509.06426), CC-BY): 15 fitted MTUs per front leg; 7/8 anatomical MTUs mid/hind (unfitted); in FlyGym (`flygym.compose.fly.musculoskeletal`). MuJoCo muscle actuators | absent (net torque per DOF) |
-| B5 | Motor units → muscles: MN→muscle identity, per-unit force, twitch rise/decay by unit class, summation/saturation, NMJ facilitation | MN→muscle map (F-DATA-1; Azevedo 2024 FANC atlas); forces Azevedo 2020; slow twitches do not peak within 500 ms | partial |
+| B3 | Passive mechanics at every joint: stiffness, damping, **rest angle** | legs: *Passive muscle forces in Drosophila are large but insufficient to support a fly's weight* (eLife 2025, [PMC12324252](https://pmc.ncbi.nlm.nih.gov/articles/PMC12324252/)): linear springs per joint per leg, ~2-fold range across flies, rest posture after MN silencing. Other joints: bounded guesses | partial (s9: measured leg stiffness as switch `joint:leg\|passive_stiffness_source`; rest angles and damping still guessed) |
+| B4 | Leg muscles: antagonist Hill-type muscle–tendon units (activation dynamics, F–L–V, rigid tendon acceptable) | FlyMimic ([arXiv 2509.06426](https://arxiv.org/abs/2509.06426), CC-BY): 15 fitted MTUs per front leg; 7/8 anatomical MTUs mid/hind (unfitted); in FlyGym (`flygym.compose.fly.musculoskeletal`). MuJoCo muscle actuators | partial (s9: antagonist Hill pairs per leg DOF, switch `muscle:leg\|model`; front leg from FlyMimic, mid/hind guessed) |
+| B5 | Motor units → muscles: MN→muscle identity, per-unit force, twitch rise/decay by unit class, summation/saturation, NMJ facilitation | MN→muscle map (F-DATA-1; Azevedo 2024 FANC atlas); forces Azevedo 2020; slow twitches do not peak within 500 ms | partial (s9: class twitch rise/decay, saturation, NMJ facilitation in Hill mode; 20 of 84 muscles lack MNs) |
 | B6 | Contact and friction | MuJoCo soft contact | have (untuned) |
 | B7 | Adhesion (claws, pulvilli): on in stance, released by load/shear | flybody adhesion actuators + detachment rule | partial (neural switch) |
 | B8 | Neck: 3 DOF with neck muscles/MNs | flybody joints; MN map | partial (guessed drive) |
@@ -43,7 +43,7 @@ Required fidelity per mechanism follows `docs/research/FIDELITY.md`. Where that 
 | B11 | Wing hinge: steering-muscle activity → per-stroke wing kinematics (b1–b3, i1–i2, iii1–iii4, hg1–4, tp) | Melis, Siwanowicz & Dickinson 2024 Nature; code [FlyRanch/mscode-melis-siwanowicz-dickinson](https://github.com/FlyRanch/mscode-melis-siwanowicz-dickinson) (`wing-hinge-cnn`) | absent |
 | B12 | Aerodynamics: quasi-steady | flybody fluid model | have |
 | B13 | Halteres: antiphase beating; Coriolis-driven strain → campaniform (dF2) signal, phase-locked; electrical synapse to b1 MN | analytic proxy; ~110 sensilla to b1 in published models | absent |
-| B14 | Wings folded at rest (passive) | passive wing joints | absent (pinned by guessed torque) |
+| B14 | Wings folded at rest (passive) | passive wing joints | have (s9: spring reference folded, switch `joint:wing\|spring_reference`) |
 | B15 | Jump: TTM fast high-force extensor; GF-timed | jump myofibril tension 19.8 ± 10.5 mN/mm²; takeoff kinematics (JEB 2004) | absent (torque cap ±30 µN·mm) |
 | B16 | Proboscis: rostrum/haustellum/labella + labellar spread; MN map | flybody joints; MN9/MN2/MN6/MN8 identities | partial |
 | B17 | Ingestion: cibarial pump, crop/gut fill | lumped hydraulic | absent |
@@ -97,7 +97,7 @@ Required fidelity per mechanism follows `docs/research/FIDELITY.md`. Where that 
 | N27 | Glia, lumped | absent |
 | N28 | Temperature dependence (Q10) | have |
 
-**Totals:** 56 mechanisms. At the end of session 8, about 10 are in place, about 25 partial, about 21 absent.
+**Totals:** 56 mechanisms. At the end of session 8, about 10 are in place, about 25 partial, about 21 absent. The authoritative status is now `data/model/mechanisms.yaml` (end of session 9: 11 have, 24 partial, 21 absent; `scripts/blank_ledger.py`).
 
 ## The data model
 
@@ -180,11 +180,11 @@ A variant sets muscle activation decaying with τ ≈ 100 ms from a standing dri
 
 The tasks are not divided into sessions. Work them in order, as far as possible; later ones depend on earlier ones. Mark each done only when its tests pass.
 
-1. **Data model skeleton:** `data/model/{mechanisms.yaml, classes.csv, parameters.csv}`, loaders, validation tests (every param has bounds, prior, label and mechanism; no orphan mechanisms), and ledger integration.
-2. **Class taxonomy:** fetch hemilineage and any missing annotations (neuPrint token in `~/.config/flyemu/`); build `classes.csv` with labelled mode assignments; the evidence table for spiking vs graded.
-3. **Dead-fly test harness,** before any body change: brain silenced, spawn standing, metrics above. Record the current body's failures as the baseline.
-4. **B3 passive joints:** reconcile units; enter measured leg stiffness and rest angles with bounds; other joints get bounded guesses. The wings, abdomen and head become passive at rest (B14, B9, B8 at rest).
-5. **B4/B5 muscles:** import FlyMimic MTUs (front leg), anatomical mid/hind MTUs with scaled parameters (labelled), and antagonist pairs for every leg DOF not covered. Remap motor units to muscles (not signed torques). Twitch kinetics by unit class; saturation; NMJ facilitation. Keep the torque path as a comparison option.
+1. [done s9] **Data model skeleton:** `data/model/{mechanisms.yaml, classes.csv, parameters.csv}`, loaders, validation tests (every param has bounds, prior, label and mechanism; no orphan mechanisms), and ledger integration.
+2. [done s9] **Class taxonomy:** fetch hemilineage and any missing annotations (neuPrint token in `~/.config/flyemu/`); build `classes.csv` with labelled mode assignments; the evidence table for spiking vs graded.
+3. [done s9] **Dead-fly test harness,** before any body change: brain silenced, spawn standing, metrics above. Record the current body's failures as the baseline.
+4. [partial s9: leg rest angles remain] **B3 passive joints:** reconcile units; enter measured leg stiffness and rest angles with bounds; other joints get bounded guesses. The wings, abdomen and head become passive at rest (B14, B9, B8 at rest).
+5. [partial s9: see HANDOFF] **B4/B5 muscles:** import FlyMimic MTUs (front leg), anatomical mid/hind MTUs with scaled parameters (labelled), and antagonist pairs for every leg DOF not covered. Remap motor units to muscles (not signed torques). Twitch kinetics by unit class; saturation; NMJ facilitation. Keep the torque path as a comparison option.
 6. **B7 adhesion** with load/shear detachment.
 7. **Dead fly passes;** the body physical battery (legs) passes or failures are recorded.
 8. **Flight apparatus:**

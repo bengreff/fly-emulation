@@ -89,14 +89,55 @@ def test_hill_mode_on_the_organism_is_silent_at_rest_and_flexes_with_flexor_unit
     h, d = org.hill, org.body.sim.mj_data
     z = np.zeros(org.nm.n_actuators)
     assert np.abs(h.torque(org.nm, d, z)[h.leg_actuators]).max() == 0.0
-    org.nm.step(np.array([], dtype=int), 0.1)
     fl = [i for i, mm in enumerate(h.mn_muscle)
           if mm >= 0 and "tibia-pitch" in h.p.joint[mm] and h.p.direction[mm] == -1]
     assert len(fl) > 0
-    org.nm.unit[:] = 0
-    org.nm.unit[fl] = h.w[fl] * h.fused * np.sign(org.nm._w[fl])
+    h.units.r[fl] = h.units.fused[fl]                         # these units fully active
     t = h.torque(org.nm, d, z)
     tib = [i for i in h.leg_actuators if org.body.actuator_names[i].endswith("_tibia-pitch-motor")]
     assert len(tib) == 6 and np.all(t[tib] < 0)
     other = [i for i in h.leg_actuators if i not in tib]
     assert np.all(t[other] == 0)
+
+
+def test_slow_units_twitch_late_and_fast_units_early():
+    u = muscles.MotorUnits(np.array(["fast", "slow"]), facil_delta=0.0)
+    trace = []
+    for k in range(10000):                                    # 1 s at 0.1 ms, one spike at t=0
+        u.step(np.array([k == 0, k == 0]), 0.1)
+        trace.append(u.r.copy())
+    peak_ms = np.argmax(np.array(trace), axis=0) * 0.1
+    assert peak_ms[0] < 20 and peak_ms[1] > 500
+
+
+def test_tetanus_saturates_and_facilitation_grows_the_second_spike():
+    u = muscles.MotorUnits(np.array(["fast"]), fused_hz=100.0, facil_delta=0.0)
+    for k in range(5000):                                     # 400 Hz for 0.5 s
+        u.step(np.array([k % 25 == 0]), 0.1)
+    assert u.activation()[0] == 1.0
+    def second_increment(delta):
+        v = muscles.MotorUnits(np.array(["fast"]), facil_delta=delta)
+        v.step(np.array([True]), 0.1)
+        for _ in range(49):
+            v.step(np.array([False]), 0.1)
+        before = v.u[0] * np.exp(-0.1 / v.tau_d[0])
+        v.step(np.array([True]), 0.1)
+        return v.u[0] - before
+    assert np.isclose(second_increment(0.0), 1.0)             # neutral: equal increments
+    assert second_increment(0.3) > 1.2
+
+
+def test_bypassing_the_motor_path_in_hill_mode_raises():
+    """s9: a probe with its own loop called Neuromuscular.step directly and
+    silently ran without muscles. Under Hill mode that must fail loudly."""
+    import pytest
+    if not (REPO / "data/cache/male_cns_edges.parquet").exists():
+        pytest.skip("graph not fetched")
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5,
+                   overrides={"muscle:leg|model": 1.0})
+    with pytest.raises(RuntimeError, match="motor_step"):
+        org.nm.step(np.array([], dtype=int), 0.1)
+    org.motor_step(np.array([], dtype=int))                     # the sanctioned path works
+    with pytest.raises(RuntimeError):
+        org.nm.step(np.array([], dtype=int), 0.1)               # and re-arms the guard
