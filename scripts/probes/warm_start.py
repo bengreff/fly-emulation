@@ -55,6 +55,7 @@ def main():
     ap.add_argument("--kick-ms", type=float, default=50.0)
     ap.add_argument("--kick-mv", type=float, default=10.0, help="steady depolarisation while kicked")
     ap.add_argument("--half-width", type=float, default=45.0, help="local kick half-width, deg")
+    ap.add_argument("--kick-n", type=int, default=12, help="local kick: the N EPGs nearest the heading (0: use --half-width)")
     ap.add_argument("--post-ms", type=float, default=500.0)
     ap.add_argument("--senses", choices=("on", "off"), default="on")
     ap.add_argument("--seed", type=int, default=0)
@@ -92,7 +93,8 @@ def main():
         ang = epg_heading(nr.instance.to_numpy()[epg])
     h = float(np.random.default_rng(1000 + a.seed).uniform(0, 360)) if a.heading is None else a.heading % 360
     d = np.abs((ang - h + 180) % 360 - 180)
-    target = {"local": epg[d <= a.half_width], "full": epg, "none": epg[:0]}[a.kick]
+    near = epg[np.argsort(d)[:a.kick_n]] if a.kick_n > 0 else epg[d <= a.half_width]
+    target = {"local": near, "full": epg, "none": epg[:0]}[a.kick]
 
     warm, k_end = a.warm_ms, a.warm_ms + a.kick_ms
     total = k_end + a.post_ms

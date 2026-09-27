@@ -203,3 +203,10 @@ turnerevans2020_cx_rnaseq:
   sha256_prefix: bulk b06932fdc5f0ba9c, lowcell 9b4eec023155fa9e
   basis: measured (RNA of sorted populations)
   use: cross-check of Davis 2020 glutamate-receptor balance (Delta7, EPG); PEN_b and PEG glutamate sign rows. Flags - bulk PEN2 r1 shows Gad1 (contamination); SS00238 is labelled Delta7 in one bulk replicate but the low-cell SS00238 profile is GABAergic (ER4d)
+epiney2025_t2_atlas:
+  name: Epiney et al. 2025 eLife, type-2 neuroblast lineage snRNA-seq atlas (neurons), central complex
+  version: GEO GSE294658 GSE294658_T2.atlas.neurons.rds (9985654022 bytes, on backhouse only); cluster identities from github dgepiney/2023_Doe_Drosophila_Central_Brain_RNAseq Data/sup tables, Supplemental Table 12 (1418 bytes) and Table 6 (17699679 bytes), fetched 2026-09-26
+  license: GEO public data; GitHub repository licence not checked
+  local: data/raw/epiney2025/ (tables; the .rds stays on backhouse ~/fly-emulation/data/raw/epiney2025/)
+  basis: measured (single-nucleus RNA); cluster->type identities by the authors (confidence varies by method)
+  use: data/derived/epiney2025_cluster_receptors.csv (per-cluster receptor fraction and cp10k, 51 genes, 161 clusters); marker sanity checked (DOPA ple+, SER SerT+, OCTA Tbh+, EPG ChAT+). iGluR/GluCl ratios are biased upward versus bulk (PAM ~0 in Davis vs DOPA 0.73 here)

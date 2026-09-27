@@ -1490,3 +1490,24 @@ The first rule ("GluCl only" = −1; "both expressed" = no row) treated any dete
    - default 0.59 / 0.68 / 0.67;
    - **T 1.03 / 0.74 / 0.97**, which meets the height criterion on 2 of 3 seeds (roll ≤ 29° on those).
    - Closed loop T: 55–58 spikes/ms after silencing, all in the saturated ring (EPG 72, PEN 180 Hz). T stays blocked by the ring alone.
+
+### Screen: s7 ring candidates re-tested with correct headings, under m4 (19:17)
+
+s7's CX screens judged the local-kick bump with EPGs in table order (not local), and s8's with a wrong heading map. So "no bump" was never tested properly for any single-knob candidate. Re-screen under m4, σ 0.5, local kick = the 12 EPGs nearest a seeded heading (inferred map), 10 mV for 50 ms.
+- **Candidates:** ring STD (U 0.22, τ 893 ms); ring adaptation (3 mV, 300 ms); Delta7 release ×4; ER tonic 10 mV; ring gap 21.5 mV; STD + Delta7 ×4; adaptation + Delta7 ×4.
+- **Configs:** default, T. Seeds 1–3.
+- **Scoring:** the s8 bump criteria (B1, B2, Q).
+- **Status:** a screen, not an adoption test. A candidate that passes gets a fresh pre-registration on new seeds, plus a bump-follows-kick test.
+
+**Result, per-class ring normalisation (`runs/s8_ring3/`).** T stays saturated (EPG 62–78% active, PEN ~175 Hz, Delta7 ~34 Hz) with a weak tilt to ~22° that kicks do not move. Default stays silent. Not useful.
+
+### Fill: Epiney 2025 CX snRNA-seq (19:19)
+
+- Downloaded the 10 GB T2-lineage neuron atlas (GSE294658) on backhouse. Micromamba R + SeuratObject extracted per-cluster receptor fraction and cp10k for 51 genes and 161 clusters (`data/derived/epiney2025_cluster_receptors.csv`).
+- Authors' identities (Supp Table 12) are validated by transmitter markers: DOPA ple+, SER SerT+, OCTA Tbh+, EPG ChAT+.
+- **Cross-dataset check of the iGluR/GluClα ratio:**
+  - EPG agrees in all three datasets (0.007);
+  - PEN agrees with Turner-Evans (0.12 vs 0.13);
+  - PEG (0.39 vs ~0.05) and PAM/DOPA (0.73 vs ~0 in Davis) do not.
+- snRNA ratios are biased upward (ambient RNA or doublets), so the bulk threshold does not transfer. Only ratio < 0.1 is used (conservative): **vDeltaC, vDeltaE and hDeltaE → −1** (inert rows, matching the default). The other ~25 CX identities sit at 0.12–1.7, recorded, no row.
+- Total transcript-based glutamate sign rows: 54.
