@@ -11,6 +11,8 @@ Append-only, newest last. Each result is one section: ID, the claim, the numbers
 | F-PASSIVE-1 | 9 | eLife 2025 leg stiffness is in mN*m/deg (0.11-3.2 uN*mm/rad); in our body the legs must be ~50-70x stiffer to stand, matching the paper's "70x" | verified |
 | F-HARNESS-2 | 9 | Probes with their own stepping loop silently bypassed Hill mode; the recorded stability pass was for the passive changes only (corrected) | verified |
 | F-TWITCH-1 | 9 | Leg motor-unit kinetics from Azevedo 2020 (read): fast/intermediate half-max ~8.5 ms; slow rate steps unpeaked at 500 ms; 2 spikes ~1.6x 1 spike (little facilitation) | verified (source); inferred (model constants) |
+| F-REST-1 | 9 | Replicating the eLife weighted protocol, neutral spring references miss the loaded leg equilibria by up to 52 deg; a fit reaches <=13 deg but the middle leg needs rest angles beyond the assumed coxa-pitch and CTr envelopes | inferred |
+| F-COXA-1 | 9 | flybody's coxa axes do not map one-to-one onto anatomical actions: the calibrated foot action of coxa yaw/roll differs between legs, and joints.py labels (yaw = long-axis rotation) contradict the axis geometry (roll = long axis) | derived |
 | F-MUSCLE-1 | 9 | FlyMimic front-leg muscles are in uN (F0 10.6-304) with 8-114 um arms; 20 of 84 flybody antagonist muscles get no MN under the legacy map, whose coxa assignments disagree with axis geometry | derived |
 
 ## Session 9 (27 September 2026): construction tasks 1-5
@@ -44,3 +46,39 @@ Azevedo et al. 2020 eLife 9:e56754 (PMC7347388, full text read):
 - hyperpolarising slow units took ~100 ms to take full effect.
 
 The s9 fidelity note's "slow twitches do not peak within 500 ms" misreads this: the statement is about rate steps, not single twitches. Model constants chosen to satisfy the measurements (inferred): fast/intermediate rise 15 ms and decay 40 ms (force half-max 5.2 ms, leaving ~3 ms for conduction and mechanics); slow rise 200 ms and decay 100 ms (a 50 Hz step reaches 85% of steady state at 500 ms). NMJ facilitation defaults to 0 and is bounded at 0.5. A linear twitch model cannot give the slow units both a >500 ms rise and a ~100 ms relaxation; the paper leaves the cause of the relaxation open.
+
+### F-REST-1: the eLife weighted protocol in the model
+`scripts/passive_rest_protocol.py` reproduces the eLife setup:
+- dead fly, thorax fixed;
+- 0.19 mg weight at the distal tarsus (their wire);
+- body rolled through -30, -15, 0, 15, 30 deg (rotation axis not stated; roll assumed);
+- static equilibrium by minimising spring + gravity + weight potential, with measured stiffness;
+- leg measured with the paper's angle definitions (tested on known geometry).
+
+Against the Fig 3C medians (right legs, digitised by eye, +-10 deg; theta/phi/psi), the neutral spring references miss by:
+- front 10/25/21 deg;
+- middle 29/-6/4 deg;
+- hind 52/19/-22 deg.
+
+gamma is off by 50-75 deg on every leg, which suggests a convention mismatch in my reading of Eq. 11; it is not fitted.
+
+Fitting the spring references of the three coxa joints, CTr and FTi (penalised toward neutral) gives residuals of:
+- front 10/5/7 deg;
+- middle 13/-1/8 deg;
+- hind 1/0/1 deg.
+
+The fit wants CTr references 39-100 deg from neutral. The middle leg presses two assumed range envelopes (coxa pitch +45 deg, CTr -100 deg): the envelopes, the DOF mapping or the roll assumption is wrong, not only the rest angles. The fit is stored (`data/params/passive_leg_rest_fit.csv`, inferred) but not wired: left-leg sign mirroring is unverified, and the fit set is the only data (no held-out check). Extra measured numbers read in the paper: on the tether, active forces take ~350 ms to decay; ~80x stiffer springs match normal standing height and 40x "barely" holds the body up (read). MN inactivation 52-114 ms plus a ~40 ms muscle delay (agent report; not found in my copy; unverified).
+
+### F-COXA-1: coxa joint actions are coupled and leg-dependent
+The joint-sign calibration (`data/derived/joint_signs_flybody.csv`) gives the dominant foot action of each coxa joint:
+- coxa roll: protraction in the middle and hind legs, adduction in the front leg;
+- coxa yaw: protraction in the middle leg, retraction in the front, adduction in the hind;
+- coxa pitch: levation in all legs.
+
+`joints.py` labels the coxa DOFs by NeuroMechFly conventions (yaw = long-axis rotation, pitch = promotion/remotion, roll = ad/abduction), but in flybody roll is the long axis. The range envelopes are therefore attached to the wrong motions (all labelled assumed). The literature agrees that the coxa motions are coupled (subagent report, read in Cheong et al. eLife PMC13384506, Azevedo 2024 PMC11348827 and Lesser 2024 PMC11356479):
+- the promotors and the sternal anterior rotator are anterior/swing muscles;
+- the pleural remotor/abductor and sternal posterior rotator are posterior/stance muscles;
+- the rotators "rotate the leg forwards" and "rotate the coxa posteriorly";
+- the femur reductor's function is unknown.
+
+The legacy MN map (promotor -> roll, rotators -> yaw) and the s9 axis-geometry mapping of the eLife stiffness (ret-pro -> yaw, pro-sup -> roll) are both inferences that this questions. A principled fix projects the measured stiffness through the Jacobian of the paper's angles with respect to the flybody joints (K_joint = J^T K J). The FlyMimic middle/hind MTUs are not public; only the 15 front-leg muscles are in the repo (github.com/gizemozd/FlyMimic). FlyMimic's passive damping is c/k = 0.05 s (a model choice). No measured Drosophila leg damping was found.

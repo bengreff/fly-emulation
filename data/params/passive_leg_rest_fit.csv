@@ -1,0 +1,17 @@
+# Leg spring reference angles (B3) fitted so the dead, tethered model with a 0.19 mg tarsal weight, body rolled -30..+30 deg, reproduces eLife 2025 Fig 3C median equilibria (theta/phi/psi; digitised by eye +-10 deg; gamma excluded, convention unverified). scripts/passive_rest_protocol.py --fit (measured stiffness, REG 0.1). Right legs only; left-leg sign mirroring unverified, so NOT wired into the body (s9). Fit residuals (deg, theta/phi/psi): rf 10.3/4.9/7.4, rm 12.7/-0.6/7.7, rh 0.8/0.1/0.7. Label inferred. The middle-leg fit presses two ASSUMED range envelopes (coxa pitch +45 deg, CTr -100 deg): a finding, not a result (F-REST-1).
+leg,joint,spring_ref_rad,change_from_neutral_deg,label
+rf,c_thorax-rf_coxa-yaw,-0.1197,-6.9,inferred
+rf,c_thorax-rf_coxa-roll,-0.0903,-5.2,inferred
+rf,c_thorax-rf_coxa-pitch,-0.0195,-1.1,inferred
+rf,rf_coxa-rf_trochanterfemur-pitch,-1.1301,-64.7,inferred
+rf,rf_trochanterfemur-rf_tibia-pitch,0.7367,42.2,inferred
+rm,c_thorax-rm_coxa-yaw,-0.1328,-7.6,inferred
+rm,c_thorax-rm_coxa-roll,-0.3074,-17.6,inferred
+rm,c_thorax-rm_coxa-pitch,0.7854,45.0,inferred
+rm,rm_coxa-rm_trochanterfemur-pitch,-1.7451,-100.0,inferred
+rm,rm_trochanterfemur-rm_tibia-pitch,0.1958,11.2,inferred
+rh,c_thorax-rh_coxa-yaw,0.1064,6.1,inferred
+rh,c_thorax-rh_coxa-roll,-0.0079,-0.5,inferred
+rh,c_thorax-rh_coxa-pitch,0.5336,30.6,inferred
+rh,rh_coxa-rh_trochanterfemur-pitch,-0.6808,-39.0,inferred
+rh,rh_trochanterfemur-rh_tibia-pitch,-0.0283,-1.6,inferred
