@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, extrasenses, interface, lif, neuromuscular, olfaction, passive, profiles, sensory, vision
+from . import connectome, extrasenses, interface, lif, muscles, neuromuscular, olfaction, passive, profiles, sensory, vision
 from .world import World
 from .body import Body
 from .registry import Policy, Registry, Requirement
@@ -94,6 +94,19 @@ class Organism:
             adhesion_names=self.body.adhesion_names,
             model=self.body.model,
         )
+        # B4/B5 antagonist Hill muscles on the legs (session 9); 0 = legacy net torque
+        self.hill = None
+        if int(self.reg.require(
+                "muscle:leg", "model", units="enum",
+                model_use="0 net torque per DOF (legacy m4), 1 antagonist Hill muscle pairs",
+                subsystem="muscle_mechanics", minimal=0,
+                minimal_note="legacy m4; Hill pairs are an option until adopted")):
+            fused = self.reg.require(
+                "motor_unit:leg", "fused_ratio", units="dimensionless",
+                model_use="unit twitch state at fused tetanus / per-spike impulse (B5 saturation)",
+                subsystem="muscle_mechanics", minimal=5.0,
+                minimal_note="guessed; bounded in data/model/parameters.csv (b5_fused_ratio)")
+            self.hill = muscles.HillLegDrive(self.nm, self.body, fused=float(fused))
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (
             vision.build(self.reg, self.conn, timestep_ms=self.timestep_ms)
@@ -158,6 +171,8 @@ class Organism:
                 )
             spike_counts[spiked] += 1
             torque = self.nm.step(spiked, self.timestep_ms)
+            if self.hill is not None:
+                torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
             self.body.actuate(torque)
             self.body.set_adhesion(self.nm.grip)
             self.body.step()
