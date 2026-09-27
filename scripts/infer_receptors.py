@@ -148,28 +148,38 @@ def main():
     calls.to_csv(OUT / "receptor_calls_davis2020.csv", index=False)
     print(f"receptor calls: {calls.male_cns_type.nunique()} male-cns types x {len(genes)} genes")
 
-    # --- glutamate sign per postsynaptic type from GluCl vs iGluR calls ------------
-    # GluClalpha only -> -1 (agrees with the transmitter default; live, no behaviour change)
-    # iGluR (GluRIA/GluRIB) only -> +1 (changes behaviour: candidate file, not live)
-    # both / neither -> no row (ambiguous; transmitter default stands)
+    # --- glutamate sign per postsynaptic type from GluCl vs iGluR ------------------
+    # Rule (session 8, v2): GluClalpha expressed and AMPA-like iGluR (GluRIA+GluRIB) TPM
+    # < 0.1 x GluClalpha TPM -> -1 (GluCl-dominated; agrees with the transmitter default,
+    # live, no behaviour change). GluClalpha not expressed and iGluR expressed -> +1.
+    # Otherwise (mixed or neither) no row. The 0.1 ratio is a declared threshold (guessed).
+    # Cross-check: Turner-Evans et al. 2020 (GSE155329) bulk RNA-seq agrees for Delta7, EPG,
+    # and adds PEN_b and PEG (GluCl-dominated), below.
     w = calls[calls.crosswalk_basis != "contaminated"].pivot_table(
         index="male_cns_type", columns="gene", values="call", aggfunc="first")
+    tp = calls[calls.crosswalk_basis != "contaminated"].pivot_table(
+        index="male_cns_type", columns="gene", values="tpm", aggfunc="first")
+    ratio = (tp.GluRIA + tp.GluRIB) / tp.GluClalpha.clip(lower=1e-9)
     igl = (w.GluRIA == 1) | (w.GluRIB == 1)
-    src = "Davis & Nern et al. 2020 eLife 9:e50901, GEO GSE116969 dataTable7b (p_expression >= 0.5)"
+    src = "Davis & Nern et al. 2020 eLife 9:e50901, GEO GSE116969 dataTable7a/7b"
     rows_live, rows_cand = [], []
     for t in w.index:
-        if w.at[t, "GluClalpha"] == 1 and not igl[t]:
-            rows_live.append((t, -1.0, "GluClalpha expressed, no AMPA-like iGluR (GluRIA/GluRIB): "
-                              "glutamatergic input inhibitory; mRNA presence, not synaptic localisation"))
+        if w.at[t, "GluClalpha"] == 1 and ratio[t] < 0.1:
+            rows_live.append((t, -1.0, src, f"GluCl-dominated (iGluR/GluClalpha TPM ratio {ratio[t]:.3f} "
+                              "< 0.1): glutamatergic input inhibitory; mRNA, not synaptic localisation"))
         elif w.at[t, "GluClalpha"] == 0 and igl[t]:
-            rows_cand.append((t, 1.0, "iGluR (GluRIA/GluRIB) expressed, GluClalpha not: glutamatergic "
+            rows_cand.append((t, 1.0, src, "iGluR (GluRIA/GluRIB) expressed, GluClalpha not: glutamatergic "
                               "input excitatory; mRNA presence, not synaptic localisation"))
+    te = "Turner-Evans et al. 2020 Neuron, GEO GSE155329 bulk/low-cell RNA-seq (data/derived/turnerevans2020_bulk_receptors.csv)"
+    for t, why in (("PEN_b(PEN2)", "low-cell median CPM GluClalpha 558 vs GluRIA+B 74 (ratio 0.13; bulk replicate 2 ratio 0.02)"),
+                   ("PEG", "bulk TPM GluClalpha 47-79 vs GluRIA+B 3-4 (ratio ~0.05)")):
+        rows_live.append((t, -1.0, te, f"GluCl-dominated: {why}; mRNA, not synaptic localisation"))
     for rows, path in ((rows_live, OUT / "glutamate_sign_transcript_live_rows.csv"),
                        (rows_cand, REPO / "data/params/candidates_s8_glu_igluR.csv")):
         pd.DataFrame([{"type": t, "param": "glutamate_receptor_sign", "value": v, "units": "sign",
-                       "basis": "inferred", "source": src, "justification": j} for t, v, j in rows]
+                       "basis": "inferred", "source": sr, "justification": j} for t, v, sr, j in rows]
                      ).to_csv(path, index=False)
-    print(f"glutamate sign: {len(rows_live)} types GluCl-only (-1), {len(rows_cand)} iGluR-only (+1, candidate)")
+    print(f"glutamate sign: {len(rows_live)} types GluCl-dominated (-1), {len(rows_cand)} iGluR-only (+1)")
 
     # --- inference test: one row per Davis cell (types sharing a cell are pooled) ----
     use = cw[cw.basis != "contaminated"]

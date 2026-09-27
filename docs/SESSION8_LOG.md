@@ -20,3 +20,6 @@
 - 18:44 Bump-move: pinned (~350° or ~70°). Wrap-up.
 - 18:45 End. Tests 57/57 (last full run after m3 adoption; since then only the probe and docs changed, hygiene 12/12). Regression under m3: sugar 6.3/96.7 Hz; closed loop 3/3. Processes stopped (viewer, backhouse keep-alive); backhouse idle.
 - 18:50 Ben: continue at least 2 more hours; multi-hour jobs authorised; 1–2 agents. Plan: (1) find the CX ring asymmetry that pins the bump; (2) m3 consequences (M0 redo, T re-test, sugar trials); (3) an agent surveys transcriptomic atlases matched to connectome types; (4) ledger counts per-type rows.
+- 19:02 Agent report: Turner-Evans 2020 (GSE155329) has sorted CX transcriptomes (EPG, Delta7, PEG, PEN_b, ER4d); downloaded bulk + low-cell (4.4 MB). Delta7 is GluCl-dominated in both datasets (Davis iGluR/GluCl TPM ratio 0.03), so the Delta7 +1 candidate is not supported quantitatively. Sign rule revised to a TPM ratio (< 0.1): 49 types -1 (incl. Delta7, PEN_b, PEG), Dm9/T1 +1; 0 behaviour change except Dm9/T1.
+- Heading-map error found (L/R glomeruli run opposite ways; `infer_epg_heading.py`); all s8 bump-position results unreliable; probe fixed; ring re-run queued. Per-class ring normalisation implemented (option).
+- m3 consequences: M0 stable 3/3 (s7 failure was the KC mislabel); T stands on 2/3 seeds (min z 1.03 / 0.97 mm) but fails stability via the ring.

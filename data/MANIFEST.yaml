@@ -195,3 +195,11 @@ davis2020_tapinseq:
   sha256_prefix: 7a 88f3b2168214fa7f, 7b 8f827bdd4c64b208, README fbd0e7cbf91f42ad
   basis: measured (nuclear RNA of genetically targeted populations); expression calls are the authors' bimodal-model probabilities
   use: receptor calls per male-cns type (scripts/infer_receptors.py -> data/derived/receptor_calls_davis2020.csv); PB_3 (PEN_a) driver contaminated by OL cells, recorded but never used to fill
+turnerevans2020_cx_rnaseq:
+  name: Turner-Evans et al. 2020 Neuron, central-complex split-GAL4 bulk and low-cell RNA-seq (Delta7, EPG, PEG, PEN2, ER4d)
+  version: GEO GSE155329 supplementary GSE155329_Turner-Evans_BulkRNASeq_updated.xlsx (1456909 bytes) and _LowCellRNASeq_updated.xlsx (2960713 bytes), fetched 2026-09-26
+  license: GEO public data
+  local: data/raw/turnerevans2020/
+  sha256_prefix: bulk b06932fdc5f0ba9c, lowcell 9b4eec023155fa9e
+  basis: measured (RNA of sorted populations)
+  use: cross-check of Davis 2020 glutamate-receptor balance (Delta7, EPG); PEN_b and PEG glutamate sign rows. Flags - bulk PEN2 r1 shows Gad1 (contamination); SS00238 is labelled Delta7 in one bulk replicate but the low-cell SS00238 profile is GABAergic (ER4d)

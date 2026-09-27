@@ -87,6 +87,7 @@ class LIFParams:
     presyn_inh_gain: float = 0.0               # per mV of inhibitory input onto a sensory terminal
     kc_mbon_eta: float = 0.0                   # DAN-gated KC->MBON depression rate
     dan_tau_ms: float = 500.0
+    ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -261,6 +262,14 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                  "recovery modelled")
     dan_tau = one("dan_trace_tau", "ms", "dopamine trace decay per DAN", 500.0,
                   "guessed: seconds-scale coincidence window (Handler et al. 2019)")
+    ring_norm = reg.require(
+        "cell_type:cx_ring", "class_input_normalisation", units="boolean",
+        model_use="each EPG/PEN/PEG/Delta7 receives its type-mean summed weight from each "
+                  "presynaptic ring class (topology kept, count heterogeneity removed)",
+        subsystem="synaptic_efficacy", instances=conn.n, minimal=0.0, conventional=0.0,
+        minimal_note="off: raw synapse counts",
+        uncertainty="homeostatic equalisation is an inferred mechanism (session 8); "
+                    "the real ring's per-cell drive is unmeasured")
 
     # --- neuromodulation -----------------------------------------------------
     nt = conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
@@ -323,6 +332,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
         glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
+        ring_class_norm=bool(ring_norm),
     )
 
 
@@ -370,6 +380,8 @@ class Network:
         self.w = (self.conn.sign[pre] * self.conn.efficacy_mv * self.conn.weight_syn
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
+        if p.ring_class_norm:
+            self._ring_class_norm(pre)
         self.delay = np.zeros((self.D, n), dtype=np.float32)
         if p.cond:
             vr = self.v_rest[self.conn.indices]
@@ -572,6 +584,20 @@ class Network:
             self.dan_trace = np.zeros(n, dtype=np.float32)
             self.is_dan = dan
             self.dan_decay = np.float32(np.exp(-dt / p.dan_tau_ms))
+
+    def _ring_class_norm(self, pre: np.ndarray) -> None:
+        """Scale ring-internal edges so each post cell gets its type-mean summed weight per pre class."""
+        t = self.conn.neurons.type.fillna("").str.replace("EPGt", "EPG", regex=False).to_numpy()
+        ring = np.isin(t, ["EPG", "PEN_a(PEN1)", "PEN_b(PEN2)", "PEG", "Delta7"])
+        post = self.conn.indices
+        m = ring[pre] & ring[post] & (self.w != 0)
+        df = pd.DataFrame({"i": np.flatnonzero(m), "pre_t": t[pre[m]], "post": post[m],
+                           "post_t": t[post[m]], "w": self.w[m]})
+        tot = df.groupby(["post", "pre_t", "post_t"]).w.sum().rename("tot").reset_index()
+        tot["target"] = tot.groupby(["pre_t", "post_t"]).tot.transform("mean")
+        tot["scale"] = (tot.target / tot.tot).where(tot.tot != 0, 1.0)
+        df = df.merge(tot[["post", "pre_t", "scale"]], on=["post", "pre_t"])
+        self.w[df.i.to_numpy()] = (df.w * df.scale).to_numpy(np.float32)
 
     def _propagate(self, spiked: np.ndarray) -> None:
         """Scatter each spike's weights onto its targets, after its own delay."""

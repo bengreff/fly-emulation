@@ -1470,3 +1470,15 @@ At m2 / ≥ 5 synapses: 14.9k more inhibitory and 16.4k fewer excitatory edges. 
 Under the old map, one true bump reads as two clusters, and "local" kicks hit cells on opposite sides of the true ring. **Therefore the bump-position results of s8 are unreliable:** the B1 location/vector numbers in the warm-start batch, the Delta7 screen, the normalisation screen, the bump-move test and F-CX-2's "pinned at two headings".
 
 Results that do not depend on position stand: silent vs saturated; PEN rates; the persistence of activity; Q. The probe now defaults to `--heading-map embed` and records per-EPG rates, so runs can be re-analysed later. The key conditions are being re-run.
+
+### Fill revision: glutamate sign by receptor balance (19:02)
+
+The first rule ("GluCl only" = −1; "both expressed" = no row) treated any detectable iGluR as "mixed". By level, Delta7 is **GluCl-dominated in both datasets**:
+- Davis: GluClα 2,255 TPM against GluRIA+B 67 (ratio 0.03);
+- Turner-Evans 2020 (GSE155329, sorted CX populations): GluClα 64–110 against iGluR at or below the whole-brain level.
+
+**Rule v2.** GluClα expressed and (GluRIA+GluRIB)/GluClα TPM < 0.1 → −1. GluClα absent and iGluR present → +1. Otherwise no row. The 0.1 threshold is guessed.
+
+**Result:** 49 types at −1 (Delta7, EPG, PAMs, most OL types; plus PEN_b and PEG from Turner-Evans) and Dm9/T1 at +1. The 14 truly mixed types (KCs, Mi1, L3–L5, …; ratio 0.12–2.5) get no row. Only Dm9/T1 change behaviour, and they were adopted earlier.
+
+**Consequence.** The Delta7 +1 ring candidate is **not supported** by receptor levels. Together with the heading-map error, F-CX-2 is withdrawn. Research report: `docs/research/transcriptome_sources_s8.md`.
