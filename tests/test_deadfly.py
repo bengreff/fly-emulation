@@ -65,3 +65,35 @@ def test_a_diverged_run_is_flagged_invalid():
 def test_energy_never_rises_in_the_dead_fly(baseline):
     tr, s = baseline
     assert s["energy"]["max_rise_10ms"] <= 0
+
+
+def test_measured_leg_springs_are_about_seventy_times_too_weak():
+    """F-PASSIVE-1: the unit reading mN*m/deg is the one under which the fly
+    falls with measured springs and stands only when they are scaled ~70x,
+    as the paper states. (N*m/deg would be 1000x stiffer and stand.)"""
+    from flyemu import passive
+    from flyemu.body import Body
+    res = {}
+    for scale in (1, 10, 100):
+        b = Body(vision=False)
+        passive.apply(b, 1, scale=scale)
+        res[scale] = deadfly.score(deadfly.run(duration_ms=300, body=b))["collapse"]
+    assert res[1]["verdict"] == "pass" and res[10]["verdict"] == "pass"
+    assert res[100]["onset_ms"] is None
+
+
+def test_folded_wings_leave_no_spring_outside_its_range():
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    assert passive.springs_outside_range(b) == ["c_thorax-l_wing-yaw", "c_thorax-r_wing-yaw"]
+    passive.fold_wings(b)
+    assert passive.springs_outside_range(b) == []
+
+
+def test_measured_table_maps_onto_real_joints():
+    from flyemu import passive
+    from flyemu.body import Body
+    k = passive.apply(Body(vision=False), 1)
+    assert len(k) == 2 * 3 * 7                       # 2 sides x 3 legs x 7 hinges
+    assert min(k.values()) > 0.1 and max(k.values()) < 3.3

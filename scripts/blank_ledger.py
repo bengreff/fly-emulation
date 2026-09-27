@@ -153,6 +153,7 @@ def construction_report() -> None:
           f"fixed by measurement {st['fixed_by_measurement']}; wired to the model {st['wired']}")
     print("released by stage: " + ", ".join(f"{k}: {v}" for k, v in st["by_stage"].items()))
     print("prior labels: " + ", ".join(f"{k}: {v}" for k, v in st["by_label"].items()))
+    print(f"legacy m4 body values outside biological bounds: {st['legacy_outside_bounds']}")
     print(f"validation problems: {len(bad)}" + ("" if not bad else "\n  " + "\n  ".join(bad)))
 
 

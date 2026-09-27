@@ -164,8 +164,12 @@ def validate(md: ModelData) -> list[str]:
             bad.append(f"{w} label {r.label!r}")
         if r.release_stage not in (0, 1, 2):
             bad.append(f"{w} release_stage {r.release_stage!r}")
+        # current_m4 must lie inside the bounds where the table governs the value
+        # (wired rows); legacy values of unwired rows are reported by
+        # legacy_outside_bounds() instead, never hidden by widening a bound
+        cur = r.current_m4 if r.registry_key else None
         for name, v in (("prior centre", _prior_centre(r)), ("value_fixed", r.value_fixed),
-                        ("current_m4", r.current_m4)):
+                        ("current_m4", cur)):
             if v is not None and not pd.isna(v) and not r.bio_min <= v <= r.bio_max:
                 bad.append(f"{w} {name} {v} outside [{r.bio_min}, {r.bio_max}]")
         if not pd.isna(r.value_fixed) and r.label not in ("measured", "derived"):
@@ -182,6 +186,16 @@ def validate(md: ModelData) -> list[str]:
         if r.id not in owned:
             bad.append(f"{r.id}: orphan mechanism (no parameter, structural key or switch)")
     return bad
+
+
+def legacy_outside_bounds(md: ModelData) -> list[str]:
+    """Unwired rows whose legacy (m4) body value lies outside the biological
+    bounds: places where the legacy model is known to be unbiological."""
+    p = md.parameters
+    bad = p[(p.registry_key == "") & p.current_m4.notna()
+            & ((p.current_m4 < p.bio_min) | (p.current_m4 > p.bio_max))]
+    return [f"{r.param_id}: m4 {r.current_m4} outside [{r.bio_min}, {r.bio_max}]"
+            for r in bad.itertuples()]
 
 
 def ambiguous_keys(md: ModelData, keys) -> list[str]:
@@ -255,6 +269,7 @@ def construction_state(md: ModelData) -> dict:
         bounds_verified=int((p.bound_verified == "verified").sum()),
         fixed_by_measurement=int(p.value_fixed.notna().sum()),
         wired=int((p.registry_key != "").sum()),
+        legacy_outside_bounds=legacy_outside_bounds(md),
         by_stage=p.release_stage.value_counts().sort_index(),
         by_label=p.label.value_counts(),
         absent_c_without_reason=[r.id for r in m.itertuples() if r.tier == "C"

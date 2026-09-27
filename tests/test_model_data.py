@@ -131,3 +131,8 @@ def test_classes_cover_the_modelled_graph_and_agree_with_the_model(md):
     assert cc["EPG"] == "cx_ring" and cc["Delta7"] == "cx_ring"
     assert cc["MDN"] == "DN" and cc["DNg100"] == "DN"
     assert cc["T4a"] == "T4T5"
+
+
+def test_legacy_values_outside_bounds_are_reported_not_hidden(md):
+    v = M.legacy_outside_bounds(md)
+    assert any(x.startswith("b3_k_pro_retpro") for x in v)    # m4 1.0 vs measured 0.109

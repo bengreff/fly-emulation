@@ -217,3 +217,11 @@ epiney2025_t2_atlas:
   local: data/raw/epiney2025/ (tables; the .rds stays on backhouse ~/fly-emulation/data/raw/epiney2025/)
   basis: measured (single-nucleus RNA); cluster->type identities by the authors (confidence varies by method)
   use: data/derived/epiney2025_cluster_receptors.csv (per-cluster receptor fraction and cp10k, 51 genes, 161 clusters); marker sanity checked (DOPA ple+, SER SerT+, OCTA Tbh+, EPG ChAT+). iGluR/GluCl ratios are biased upward versus bulk (PAM ~0 in Davis vs DOPA 0.73 here)
+
+  - name: FlyMimic front-leg musculoskeletal model (via flygym)
+    source: flygym 2.1.0 bundled asset assets/model/musculoskeletal/best_combined_arm_damping_stiff_cvt3.xml (49,670 bytes)
+    paper: Ozdil et al., Musculoskeletal simulation of limb movement biomechanics in Drosophila melanogaster, arXiv 2509.06426 (CC-BY)
+    license: model file header says Apache 2.0 (MyoConverter conversion from OpenSim)
+    fetched: already installed; extracted 2026-09-27 (session 9)
+    local_path: data/params/flymimic_mtu.csv (15 left-front-leg MTUs; F0 in uN, file units g/mm/s)
+    role: B4 muscle parameters for the flybody antagonist pairs (task 5); label inferred (fitted to kinematics)

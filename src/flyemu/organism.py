@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import connectome, extrasenses, interface, lif, neuromuscular, olfaction, profiles, sensory, vision
+from . import connectome, extrasenses, interface, lif, neuromuscular, olfaction, passive, profiles, sensory, vision
 from .world import World
 from .body import Body
 from .registry import Policy, Registry, Requirement
@@ -61,6 +61,9 @@ class Organism:
         if self.profile:
             self.kick_mv = profiles.apply(self.reg, self.profile)["kick_mv"]
         self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
+        # B3/B14 passive mechanics (session 9): switches default to the legacy body
+        passive.register(self.reg, self.body)
+        passive.register_wings(self.reg, self.body)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
         )

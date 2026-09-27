@@ -1,0 +1,16 @@
+# Passive leg joint stiffness, median per leg and DOF: Wang et al. 2025 eLife "Passive muscle forces in Drosophila are large but insufficient to support a fly's weight" (PMC12324252), Table 1 (right legs; MN silencing with VGlut>GtACR1; ~9-12 trials per DOF; IQR ~2-fold across flies). Read from the full text 2026-09-27 [verified].
+# Unit reconciliation (session 9): Table 1 prints "mN/deg", methods "mN*m/deg", discussion "Nm/deg". Only mN*m/deg is consistent with the paper's statement that passive torques are ~70x too weak to hold the fly (N*m/deg would give ~570 uN*mm/rad, enough to stand; see FINDINGS s9 F-PASSIVE-1). Methods quotes mesothoracic values 8.614e-9/1.01e-8/1.202e-8/9.873e-8 that differ from Table 1 for ext-flex (2.5e-8) and pro-sup (1e-8); Table 1 medians are used.
+# DOF mapping to flybody is inferred from joint-axis geometry (coxa roll = coxa long axis; coxa yaw = fore-aft swing; CTr = coxa-trochanterfemur pitch; FTi = trochanterfemur-tibia pitch). Right-leg values are applied to both sides (inferred).
+leg,dof,flybody_joint,paper_axis,value_as_printed,unit_interpreted,stiffness_uNmm_per_rad,label
+pro,levdep,coxa-trochanterfemur-pitch,CTr levation-depression,1.5e-08,mN*m/deg,0.8594,measured
+pro,retpro,thorax-coxa-yaw,ThC protraction-retraction,1.9e-09,mN*m/deg,0.1089,measured
+pro,extflex,trochanterfemur-tibia-pitch,FTi extension-flexion,1.7e-08,mN*m/deg,0.974,measured
+pro,prosup,thorax-coxa-roll,ThC pronation-supination,1.5e-08,mN*m/deg,0.8594,measured
+meso,levdep,coxa-trochanterfemur-pitch,CTr levation-depression,8.6e-09,mN*m/deg,0.4927,measured
+meso,retpro,thorax-coxa-yaw,ThC protraction-retraction,1.1e-08,mN*m/deg,0.6303,measured
+meso,extflex,trochanterfemur-tibia-pitch,FTi extension-flexion,2.5e-08,mN*m/deg,1.4324,measured
+meso,prosup,thorax-coxa-roll,ThC pronation-supination,1e-08,mN*m/deg,0.573,measured
+meta,levdep,coxa-trochanterfemur-pitch,CTr levation-depression,2.7e-08,mN*m/deg,1.547,measured
+meta,retpro,thorax-coxa-yaw,ThC protraction-retraction,5.6e-08,mN*m/deg,3.2086,measured
+meta,extflex,trochanterfemur-tibia-pitch,FTi extension-flexion,1.7e-08,mN*m/deg,0.974,measured
+meta,prosup,thorax-coxa-roll,ThC pronation-supination,4.7e-08,mN*m/deg,2.6929,measured
