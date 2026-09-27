@@ -382,6 +382,7 @@ class Network:
         self._session6_mechanisms(pre, rel)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
+        self._edge_scales(pre)
         self.delay = np.zeros((self.D, n), dtype=np.float32)
         if p.cond:
             vr = self.v_rest[self.conn.indices]
@@ -584,6 +585,22 @@ class Network:
             self.dan_trace = np.zeros(n, dtype=np.float32)
             self.is_dan = dan
             self.dan_decay = np.float32(np.exp(-dt / p.dan_tau_ms))
+
+    def _edge_scales(self, pre: np.ndarray) -> None:
+        """Candidate-only edge-class scaling (session 8): $FLYEMU_EDGE_SCALES is a CSV of
+        pre_type_regex, post_type_regex, scale, justification. Never used by default; like
+        FLYEMU_EXTRA_PARAMS it tests a hypothesis without touching live tables."""
+        import os
+        path = os.environ.get("FLYEMU_EDGE_SCALES")
+        if not path:
+            return
+        t = self.conn.neurons.type.fillna("")
+        for r in pd.read_csv(path, comment="#").itertuples(index=False):
+            a = t.str.match(r.pre_type_regex).to_numpy()
+            b = t.str.match(r.post_type_regex).to_numpy()
+            m = a[pre] & b[self.conn.indices]
+            self.w[m] = (self.w[m] * float(r.scale)).astype(np.float32)
+            print(f"edge scale x{r.scale}: {int(m.sum())} edges {r.pre_type_regex} -> {r.post_type_regex}")
 
     def _ring_class_norm(self, pre: np.ndarray) -> None:
         """Scale ring-internal edges so each post cell gets its type-mean summed weight per pre class."""

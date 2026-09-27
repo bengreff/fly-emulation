@@ -1523,3 +1523,13 @@ s7's CX screens judged the local-kick bump with EPGs in table order (not local),
 - Closed loop seeds 0–2: 0 non-tonic spikes. Brain excluding ORNs 0.383 / 0.223 / 0.192 Hz (m4 baseline on the Mac: 0.380 / 0.223 / 0.297).
 - Sugar→MN9_L 8.9 ± 5.9 / 96.3 ± 3.5 Hz; active cells at 200 Hz 1,070 (vs 850 on backhouse m4 + M0).
 - The monoamines now act in the model: 68 types gain receptor-signed pool sensitivities. The other ~14k types stay at 0 (guessed). Magnitude 0.2 is a guess.
+
+**Result, s7-candidate re-screen (19:48; m4 without MS, `runs/s8_ring4/`, 126 runs).** 0/3 everywhere on B1. Default: the ring is silent under every candidate.
+- **Under T:** depression, adaptation and their combinations with Delta7 ×4 remove saturation (PEN at rest 0–20 Hz; STD 1–7 Hz). **Adaptation + Delta7 ×4 passes B2 and Q on 3/3 seeds**, but no candidate holds activity after the kick (EPG active ≤ 4%).
+- Delta7 ×4 alone and ER tonic 10 mV stay saturated (PEN 166–186 Hz). The gap is mostly silent.
+- **Reading.** With correct headings, s7's conclusion holds: the single knobs trade saturation for silence, and no persistent localised state appears. Next check: whether a stronger kick (20 mV, 200 ms, 12 cells) can start a bump in the adaptation + Delta7 ×4 and STD rings.
+- ER ring neurons get 73% of their input from other ER neurons (GABA) and ~5% from TuBu. As with Delta7, uniform efficacy lets their mutual inhibition silence them.
+
+### Screen: Delta7 output-only strengthening (19:49)
+
+"Delta7 release ×4" also strengthens Delta7→Delta7 (626 synapses/cell), so the added inhibition mostly silences Delta7 itself. The new candidate-only mechanism `FLYEMU_EDGE_SCALES` (CSV of pre regex, post regex, scale) scales only Delta7→EPG/PEN/PEG (715 edges): ×4, ×8, and ×4 + ring STD. Config T under m4 + MS, σ 0.5, seeds 1–3, standard and strong (20 mV, 200 ms, headings 0/180°) kicks. Screen only.

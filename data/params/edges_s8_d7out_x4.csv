@@ -1,0 +1,2 @@
+pre_type_regex,post_type_regex,scale,justification
+^Delta7,^(EPG|PEN_|PEG),4,"s8 screen: stronger Delta7 inhibition of the ring outputs, Delta7->Delta7 unchanged"

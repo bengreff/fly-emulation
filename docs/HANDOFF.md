@@ -104,7 +104,7 @@ Guessed or inferred items that later work depends on. Review every session (`doc
 - **backhouse via ssh → cmd.exe mangles `|` and nested quotes.** Put jobs in a file and run `xargs -L 1 env < jobs` in tmux, or use a runner script.
 - **Probe stiffness.** Once the legs make torque, the default reflex probe (kp 3) is pushed off target. Use `--kp 100 --kd 0.133`; `score_reflex.py` refuses invalid runs.
 - **zsh does not word-split `$VAR`.** Use `${=VAR}` for override lists on the Mac. bash on backhouse is fine.
-- **backhouse RAM.** WSL has 31 GB and each model process ~1.4 GB, so run at most ~14 at once. `scripts/sync_backhouse.sh` now also ships `data/params`, `data/derived` and `data/measurements`; raw data stays on the Mac, so run `score_reflex.py` on the Mac.
+- **backhouse RAM.** WSL has 31 GB and each model process peaks at ~2.6–3.2 GB RSS (measured s8; the old ~1.4 GB figure was stale, not caused by any one change), so run at most ~8 at once (12 thrashed in s8). `scripts/sync_backhouse.sh` now also ships `data/params`, `data/derived` and `data/measurements`; raw data stays on the Mac, so run `score_reflex.py` on the Mac.
 - **`render_organism.py` was stale** (1-synapse edges, no profile, no adhesion) and is fixed. Videos: `runs/s7_video/{default,T}_seed2.mp4`; a frame comparison is in `runs/s7_video/compare.png`.
 - **External input is a steady depolarisation, not a kick.** A value below 7 mV never fires a cell (cx_kick first run).
 - `obs["joint_angles"]` is ordered by joint DOF (102), not by actuator (98). Look joints up by name (F-BUG-6).
