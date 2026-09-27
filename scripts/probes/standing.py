@@ -60,6 +60,8 @@ def main():
         sp = org.net.step(external_mv=org.sense(s, obs))
         if t >= 500:
             cnt[sp] += 1
+        # legacy torque path only: reads per-unit torque states (org.nm.unit), which
+        # Hill mode does not use; under Hill mode Neuromuscular.step raises (F-HARNESS-2)
         tq = org.nm.step(sp, dt)
         if a.silence_motor:
             tq = np.zeros_like(tq)

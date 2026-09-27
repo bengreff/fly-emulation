@@ -100,14 +100,25 @@ def test_hill_mode_on_the_organism_is_silent_at_rest_and_flexes_with_flexor_unit
     assert np.all(t[other] == 0)
 
 
-def test_slow_units_twitch_late_and_fast_units_early():
-    u = muscles.MotorUnits(np.array(["fast", "slow"]), facil_delta=0.0)
+def test_twitch_kinetics_meet_azevedo_2020():
+    """Fast/intermediate: half-max force before the measured 8.5 ms half-max of
+    probe displacement (which includes delays). Slow: a rate step has not
+    reached steady force by 500 ms."""
+    u = muscles.MotorUnits(np.array(["fast", "intermediate"]), facil_delta=0.0)
     trace = []
-    for k in range(10000):                                    # 1 s at 0.1 ms, one spike at t=0
+    for k in range(3000):
         u.step(np.array([k == 0, k == 0]), 0.1)
         trace.append(u.r.copy())
-    peak_ms = np.argmax(np.array(trace), axis=0) * 0.1
-    assert peak_ms[0] < 20 and peak_ms[1] > 500
+    tr = np.array(trace)
+    half = np.argmax(tr >= tr.max(axis=0) / 2, axis=0) * 0.1
+    assert np.all((half > 2.0) & (half < 8.5))
+    s = muscles.MotorUnits(np.array(["slow"]), facil_delta=0.0, fused_hz=1e6)
+    out = []
+    for k in range(15000):                                    # 50 Hz for 1.5 s
+        s.step(np.array([k % 200 == 0]), 0.1)
+        out.append(s.r[0])
+    out = np.array(out)
+    assert out[5000] < 0.9 * out[-2000:].mean()
 
 
 def test_tetanus_saturates_and_facilitation_grows_the_second_spike():
@@ -141,3 +152,15 @@ def test_bypassing_the_motor_path_in_hill_mode_raises():
     org.motor_step(np.array([], dtype=int))                     # the sanctioned path works
     with pytest.raises(RuntimeError):
         org.nm.step(np.array([], dtype=int), 0.1)               # and re-arms the guard
+
+
+def test_motor_step_extra_torque_is_added_after_the_muscles():
+    import pytest
+    if not (REPO / "data/cache/male_cns_edges.parquet").exists():
+        pytest.skip("graph not fetched")
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5)
+    none = np.array([], dtype=int)
+    t0 = org.motor_step(none)
+    t1 = org.motor_step(none, extra={3: 2.5})
+    assert t1[3] - t0[3] == pytest.approx(2.5) and np.allclose(np.delete(t1, 3), np.delete(t0, 3))

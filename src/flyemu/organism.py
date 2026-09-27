@@ -150,16 +150,22 @@ class Organism:
 
     # --- running -------------------------------------------------------------
 
-    def motor_step(self, spiked: np.ndarray) -> np.ndarray:
+    def motor_step(self, spiked: np.ndarray, extra: dict[int, float] | None = None) -> np.ndarray:
         """Motor spikes -> muscles -> body, then advance the body one step.
         The single motor path: probes that step the loop themselves must call
-        this, or they silently bypass mechanisms such as Hill mode (s9)."""
+        this, or they silently bypass mechanisms such as Hill mode (s9).
+        `extra` adds an external (probe) torque per actuator index, e.g. a
+        joint clamp; it is not a muscle and is applied after them."""
         self.nm.bypass_forbidden = False
         torque = self.nm.step(spiked, self.timestep_ms)
         self.nm.bypass_forbidden = self.hill is not None
         if self.hill is not None:
             self.hill.step(spiked, self.timestep_ms)
             torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
+        if extra:
+            torque = np.array(torque, dtype=np.float32, copy=True)
+            for j, v in extra.items():
+                torque[j] += v
         self.body.actuate(torque)
         self.body.set_adhesion(self.nm.grip)
         self.body.step()

@@ -105,12 +105,16 @@ def activation_from_units(unit_state: np.ndarray, per_spike: np.ndarray,
 
 
 # B5 motor-unit twitch kinetics by class (ms): rise and decay of a
-# difference-of-exponentials twitch. Guessed within bounds (parameters.csv
-# b5_twitch_*); lead: slow tibia-flexor twitches do not peak within 500 ms
-# (Azevedo 2020 via the s9 fidelity note, not yet read).
-TWITCH_MS = {"fast": (3.0, 15.0), "intermediate": (8.0, 40.0), "slow": (400.0, 700.0)}
+# difference-of-exponentials twitch. Azevedo et al. 2020 eLife 9:e56754
+# (read s9): a fast/intermediate spike reaches half-maximal probe displacement
+# in ~8.5 ms (includes conduction and leg mechanics, so force is faster);
+# a slow-unit rate increase "did not reach its peak within 500 ms", and
+# hyperpolarising slow units took ~100 ms to take full effect. Values below
+# are inferred to satisfy those (twitch half-max 5.2 ms; slow rate step at
+# 85% of steady state at 500 ms); bounds in parameters.csv (b5_twitch_*).
+TWITCH_MS = {"fast": (15.0, 40.0), "intermediate": (15.0, 40.0), "slow": (200.0, 100.0)}
 FUSED_HZ = 100.0          # firing rate at which a unit's force saturates (guessed)
-FACIL_DELTA = 0.3         # NMJ facilitation increment per spike (guessed)
+FACIL_DELTA = 0.0         # NMJ facilitation per spike: two spikes give only ~1.6x one (Azevedo 2020)
 FACIL_TAU_MS = 50.0       # facilitation decay (guessed)
 
 

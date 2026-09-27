@@ -76,9 +76,7 @@ def main():
             w = 0.0 if state["prev"] is None else (th - state["prev"]) / (dt / 1000)
             state["prev"] = th
             sp = org.net.step(external_mv=org.sense(state["s"], obs))
-            tq = org.nm.step(sp, dt).copy()
-            tq[j] += flex_sign * (a.kp * (th - target_fn(i * dt)) + a.kd * w)
-            org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+            org.motor_step(sp, extra={j: flex_sign * (a.kp * (th - target_fn(i * dt)) + a.kd * w)})
             state["s"] += 1
             spikes.append(np.isin(slow, sp).sum()); ang.append(th)
             rec["isyn"].append(float(org.net.i_syn[slow].mean()))

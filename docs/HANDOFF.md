@@ -22,8 +22,8 @@
   - `joint:leg|passive_stiffness_source` (B3, measured eLife 2025, F-PASSIVE-1);
   - `joint:wing|spring_reference` (B14);
   - `muscle:leg|model` (B4/B5: antagonist Hill pairs, class twitch kinetics, saturation, NMJ facilitation).
-  - With the m4 brain, the template body is stable on seeds 0–2 (pre-registered, DECISIONS).
-- **Working model m4:** unchanged. Regressions this session (Mac): sugar→MN9_L 8.9 ± 5.9 Hz over 10 trials (identical to reference); closed loop seeds 0–2 give 0 spikes in the silent window, brain excluding ORNs 0.38/0.22/0.30 Hz. 81+ tests pass.
+  - With the m4 brain, the template body is stable on seeds 0–2 (pre-registered, DECISIONS). The first reading of that test bypassed Hill mode (F-HARNESS-2) and was corrected. With the muscles really on, the brain excluding ORNs runs at 0.11–0.12 Hz, below the m4 range.
+- **Working model m4:** unchanged. Regressions this session (Mac): sugar→MN9_L 8.9 ± 5.9 Hz over 10 trials (identical to reference); closed loop seeds 0–2 give 0 spikes in the silent window, brain excluding ORNs 0.38/0.22/0.30 Hz. 85 tests pass.
 
 ## What remains in tasks 4 and 5
 
@@ -37,8 +37,8 @@
   - Mid/hind muscle parameters are copies of the front leg (guessed); the tibia-tarsus pair is a placeholder.
   - Next: resolve MN→muscle→DOF for the coxa and femur-roll pools from the FANC/MANC atlas.
 - **B5.**
-  - Twitch rise/decay per class are guessed within bounds; the lead "slow twitches don't peak within 500 ms" is unread.
-  - Next: read Azevedo 2020 twitch kinetics.
+  - Twitch rise/decay per class are now inferred from Azevedo 2020 (read; F-TWITCH-1).
+  - Still guessed: fused rate (100 Hz), facilitation (0; bounded by the 1.6x two-spike ratio), fatigue (absent; force per spike saturates at ~10 spikes in fast/intermediate units).
   - The decaying-activation dead-fly variant (τ ≈ 100 ms from a standing drive) needs a standing drive. The Hill model can now supply one: find activations that hold the neutral pose.
 - **Body physical battery (task 7):** not started.
 
@@ -50,14 +50,14 @@
 | DOF mapping of the eLife axes onto flybody joints | inferred (axis geometry) | the replication above; FlyMimic joint correspondence |
 | Hill mode: coxa and femur-roll muscle directions | guessed | FANC/MANC MN→muscle atlas; FlyMimic moment arms on matched axes |
 | Legacy MN map: promotor → coxa roll, rotators → coxa yaw | as recorded (legacy) | same |
-| Twitch kinetics by unit class (Hill mode) | guessed | Azevedo 2020 twitch data |
+| Twitch kinetics by unit class (Hill mode) | inferred from Azevedo 2020 (read) | per-class twitch recordings for non-tibia muscles |
 | Spiking vs graded mode for 86,541 cells | unknown (Bernoulli priors) | per-class physiology; search + ablation |
 | 62 of 126 bounds with a data basis; only 22 sources read | leads | read each source (bound_verified column) |
 | Everything in `docs/LESSONS.md` labelled guessed/inferred | as recorded | see the entries |
 
 ## Sealed and held-out data register
 
-Unchanged this session; nothing was opened.
+No sealed data was opened. Two published results were used to set values (last two rows).
 
 | Data | Status | Rule |
 |---|---|---|
@@ -73,9 +73,11 @@ Unchanged this session; nothing was opened.
 | flybench olfactory tasks 08/17/18/26/27 | held out for AL changes (m2 baseline 0.80); not run | none |
 | Command direction (MDN back, DNg100 forward) | spent on seeds 1–4 in s7 | use new seeds and a gait criterion |
 | eLife 2025 passive stiffness (Table 1) and fall onset (~40 ms; OpenSim ~20 ms) | **seen** (s9: used to set B3 and as dead-fly criteria) | its rest-posture data (Fig 3C) is still unused |
+| Azevedo 2020 paper text/figures on twitch kinetics (Fig 4D/E/H; slow-unit rate steps) | **seen** (s9: used to set B5 constants) | the raw recordings above keep their own status |
 
 ## Things that will bite you
 
+- **Probes must step the motor path with `Organism.motor_step()`.** A private loop calling `Neuromuscular.step` bypasses Hill mode; it now raises under Hill mode (F-HARNESS-2). Clamp probes pass their clamp torque as `motor_step(sp, extra={actuator: torque})` (premotor_inputs, vnc_angle_tuning and azevedo_reflex are ported). `standing.py` reads legacy per-unit torque states and is legacy-only.
 - **MuJoCo silently resets a diverging state.** A probe that ignores `d.warning` reads the spawn pose as a result (F-HARNESS-1). `deadfly.score()` checks it; do the same in new probes.
 - **eLife stiffness units.** The values are mN·m/°; ×1e6 × 57.3 gives µN·mm/rad. Table 1's "mN/°" and the discussion's "Nm/°" are typos (F-PASSIVE-1).
 - **FlyMimic** is in g, mm, s, so F0 is in µN. Its MJCF needs its meshes removed to compile (`scripts/build_leg_muscles.py`).

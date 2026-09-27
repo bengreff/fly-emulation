@@ -39,8 +39,7 @@ def main():
         obs = org.body.observe(); th = org.aff.fti_angle_deg(obs["xpos"], "lm")
         w = 0 if prev is None else (th - prev) / (dt / 1000); prev = th
         sp = org.net.step(external_mv=org.sense(3000 + i, obs))
-        tq = org.nm.step(sp, dt).copy(); tq[j] += fs * (3.0 * (th - a.theta) + 0.004 * w)
-        org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+        org.motor_step(sp, extra={j: fs * (3.0 * (th - a.theta) + 0.004 * w)})
         if i >= 3000:
             cnt[sp] += 1
     hz = cnt / 0.5

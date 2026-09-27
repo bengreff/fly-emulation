@@ -57,3 +57,10 @@ The directly applicable scientific findings, extracted from the full records. Se
 - **Single seeds are anecdotes** (the MDN "backward walk"). A result from one configuration can hide instability in another (MS rows).
 - **Exact numbers differ between the Mac and backhouse;** each machine reproduces itself.
 - **Hand-tuning one mechanism at a time did not converge:** ~8 of 36 pre-registered tests passed. This is the reason for the construction programme.
+
+## Added in session 9
+
+- **A probe must step the same motor path as the model.** A private loop that called `Neuromuscular.step` silently ran without the new muscles; the bypass showed up only because a re-run after a change reproduced every digit (F-HARNESS-2). `Organism.motor_step()` is now the single path.
+- **MuJoCo resets a diverging state silently.** Check `d.warning` in every probe (F-HARNESS-1).
+- **Reconcile units against a physical consequence the paper states.** The eLife stiffness units were settled by the "70x too weak" claim, reproduced in our own body (F-PASSIVE-1).
+- **Read what a figure measures before using it.** eLife Fig 3C shows loaded equilibria, not rest angles. Azevedo's "not within 500 ms" concerns rate steps, not single twitches (F-TWITCH-1).

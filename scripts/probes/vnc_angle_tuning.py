@@ -47,8 +47,7 @@ def main():
             obs = org.body.observe(); th = org.aff.fti_angle_deg(obs["xpos"], a.leg)
             w = 0 if prev is None else (th - prev) / (dt / 1000); prev = th
             sp = org.net.step(external_mv=org.sense(s, obs)); s += 1
-            tq = org.nm.step(sp, dt).copy(); tq[j] += fs * (3.0 * (th - target) + 0.004 * w)
-            org.body.actuate(tq); org.body.set_adhesion(org.nm.grip); org.body.step()
+            org.motor_step(sp, extra={j: fs * (3.0 * (th - target) + 0.004 * w)})
             if i >= 1500 and i % 10 == 0:
                 acc.append(org.net.v[cells].copy()); ths.append(th)
         vm.append(np.mean(acc, axis=0)); th_ach.append(np.mean(ths))
