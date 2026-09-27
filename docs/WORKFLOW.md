@@ -96,6 +96,8 @@ After a pre-registered test fails, at most **two** post-hoc repairs may be tried
 
 The log records how many post-hoc attempts each target has used.
 
+**Declared searches** (the construction programme) are not post-hoc repairs, provided the parameter space with its biological bounds, the objective and the data splits are pre-registered before the search runs. Re-running a search after changing its objective or bounds in response to its own results *is* a post-hoc repair, and counts against the budget.
+
 ### 4.4 Do not build on unverified foundations
 
 Before inferring anything from a value or assignment labelled guessed or inferred, spend a bounded search on data that could settle it:
@@ -166,6 +168,9 @@ Each fact lives in one place. Other files link to it rather than restating it.
 | `docs/WORKFLOW.md` | procedure (this file) | stable |
 | `README.md` | what the project is, quick start, doc map | stable |
 | `docs/PROJECT.md` | objective and scope | stable |
+| `docs/CONSTRUCTION.md` | the construction programme: principles, template inventory, data model, acceptance tests, task list | living |
+| `docs/LESSONS.md` | applicable findings of sessions 1–8 | reference |
+| `docs/research/` | fidelity research and data-source surveys | reference |
 | `docs/ARCHITECTURE.md` | code structure and data flow | living, current state |
 | `docs/MODEL.md` | model equations and mechanisms, with defaults | living, current state |
 | `docs/INTERFACE.md` | brain-body channels | living, current state |
@@ -176,8 +181,8 @@ Each fact lives in one place. Other files link to it rather than restating it.
 | `docs/FINDINGS.md` | results, append-only, newest last | historical |
 | `docs/DECISIONS.md` | decisions and pre-registrations with results, append-only | historical |
 | `docs/SESSION<N>_LOG.md` | timeline of one session | historical |
-| `docs/SENSORS_*.md`, `docs/MOTOR_TARGETS.md`, `docs/RESEARCH.md`, `docs/VALIDATION.md`, `docs/LIT_*.md` | reference material and literature leads | reference |
-| `docs/archive/` | superseded plans | historical |
+| `docs/SENSORS_*.md`, `docs/MOTOR_TARGETS.md`, `docs/RESEARCH.md`, `docs/VALIDATION.md` | reference material and literature leads | reference |
+| `docs/archive/` | superseded plans; sessions 1–8 FINDINGS, DECISIONS and logs | historical |
 | `scripts/probes/README.md` | which probes are current | living |
 
 Historical files are never edited to match the present; they record what was believed then. Living files must be true now. `tests/test_repo_hygiene.py` checks that every path a living doc mentions exists.

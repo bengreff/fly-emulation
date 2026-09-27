@@ -14,6 +14,17 @@ This is a gradient of demonstrated capabilities rather than a binary checklist. 
 
 These are project definitions, not standard neuroscientific tiers. Define concrete assays, operating conditions and tolerances as each capability is undertaken. Do not call a handful of demonstrations “full Tier 1+2.” Also do not require every conceivable fly behavior before recognizing progress.
 
+## The construction programme (from 27 September 2026)
+
+The route to Tier 1–2 is to **construct** the fly, as set out in `docs/CONSTRUCTION.md`:
+- build every mechanism that plausibly matters for behaviour, always on;
+- represent every quantity the connectome does not fix as an explicit unknown, with hard bounds set by what fly biology allows;
+- validate the body on its own, first with the brain dead;
+- search within the bounds for flies that reproduce measured physiology;
+- judge them on held-out data, and measure by ablation which mechanisms behaviour actually needs.
+
+We simulate more rather than less, because no one has run this experiment and sufficiency cannot be assumed.
+
 ## Optimization and evidence
 
 Behavioral optimization is authorized. It must seek a realistic biological reconstruction consistent with anatomy, physiology, muscle mechanics and other research—not simply a task-solving network constrained by an adjacency matrix.

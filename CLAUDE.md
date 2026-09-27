@@ -1,6 +1,6 @@
 # Working instructions
 
-Read `docs/WORKFLOW.md` (the procedure) and `docs/HANDOFF.md` (the current state), then the newest sections of `docs/FINDINGS.md` and `docs/DECISIONS.md`. Consult `docs/MODEL.md`, `docs/ARCHITECTURE.md`, `docs/RUNNING.md`, `docs/PROJECT.md`, `docs/RESEARCH.md` and `docs/VALIDATION.md` as work requires. `README.md` has the full documentation map. User instructions in the active session take precedence.
+Read `docs/CONSTRUCTION.md` (the programme and plan), `docs/WORKFLOW.md` (the procedure) and `docs/HANDOFF.md` (the current state), then `docs/LESSONS.md` and the newest sections of `docs/FINDINGS.md` and `docs/DECISIONS.md`. Consult `docs/MODEL.md`, `docs/ARCHITECTURE.md`, `docs/RUNNING.md`, `docs/PROJECT.md`, `docs/RESEARCH.md` and `docs/VALIDATION.md` as work requires. `README.md` has the full documentation map. User instructions in the active session take precedence.
 
 ## Objective
 

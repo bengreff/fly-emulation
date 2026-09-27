@@ -175,7 +175,7 @@ def main():
                    ("PEG", "bulk TPM GluClalpha 47-79 vs GluRIA+B 3-4 (ratio ~0.05)")):
         rows_live.append((t, -1.0, te, f"GluCl-dominated: {why}; mRNA, not synaptic localisation"))
     for rows, path in ((rows_live, OUT / "glutamate_sign_transcript_live_rows.csv"),
-                       (rows_cand, REPO / "data/params/candidates_s8_glu_igluR.csv")):
+                       (rows_cand, REPO / "data/params/candidates/candidates_s8_glu_igluR.csv")):
         pd.DataFrame([{"type": t, "param": "glutamate_receptor_sign", "value": v, "units": "sign",
                        "basis": "inferred", "source": sr, "justification": j} for t, v, sr, j in rows]
                      ).to_csv(path, index=False)
