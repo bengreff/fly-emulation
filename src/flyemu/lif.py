@@ -451,7 +451,10 @@ class Network:
 
         arriving = self.delay[self.delay_head]
         if self._mod_active:
-            arriving = arriving * (1.0 + self.mod_sens @ self.mod_level)
+            # elementwise, not a BLAS matvec: a threaded gemv per step oversubscribes CPUs (s8)
+            gain = 1.0 + (self.mod_sens[:, 0] * self.mod_level[0] + self.mod_sens[:, 1] * self.mod_level[1]
+                          + self.mod_sens[:, 2] * self.mod_level[2])
+            arriving = arriving * gain
         self.i_syn = self.i_syn * self.decay_s + arriving
         self.delay[self.delay_head].fill(0.0)
         if p.cond:
