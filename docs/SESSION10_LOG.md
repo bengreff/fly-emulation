@@ -31,3 +31,5 @@ Stop new work at ~01:17; wrap up by 01:37.
 - 23:35 m6 = m5 + latency adopted (seeds 0-11 silent).
 - 23:36 CORRECTION to the step profile: the 3.77 ms/step vision average was the one-off first render (1.8 s); steady state 13-20 ms per render (every 100 steps) = ~0.2 ms/step. Body side ~2.5 ms/step. The k=1 GPU loop at B=12 spends ~24 ms/step, so its cost is per-step overhead (a (B, n) drive transfer each step, dispatch, pipes): next step is sensory-rows-only transfer (ext_rows) and fewer round trips.
 - 23:36 Process-limit breach: the two B=12 GPU closed-loop runs used 12 body workers (limit 8 model processes on backhouse). No harm observed (load, memory fine); future runs <= 8 workers.
+- 00:00 rows-only transfer: 23.5 s per member-s (B=8, m6, k=1), no gain; overhead is per-step python/dispatch/pipes. Natural end: wrap-up started.
+- 00:08 wrap-up: 147 tests pass; census and ledger run (56 mechanisms: 17 have / 39 partial / 0 absent; 655 unknowns, 79 bounds from data); backhouse clean (PID 523 untouched); keep-alive stopped. End.

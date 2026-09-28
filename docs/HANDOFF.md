@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 27 September 2026, after session 10 (unattended, ~3 h of a 5 h budget used; Ben: "Complete the brain-body model and start on GPU porting if you have time"; three subagents, at most two at once). The plan is `docs/CONSTRUCTION.md`; carried-over results are `docs/LESSONS.md`; session 10 results are in `docs/FINDINGS.md` and `docs/DECISIONS.md`; the log is `docs/SESSION10_LOG.md`.
+**Rewritten each session; do not append.** State as of 27 September 2026, after session 10 (unattended, ~3 h 40 m of a 5 h budget used, stopped at a natural end; Ben: "Complete the brain-body model and start on GPU porting if you have time"; three subagents, at most two at once). The plan is `docs/CONSTRUCTION.md`; carried-over results are `docs/LESSONS.md`; session 10 results are in `docs/FINDINGS.md` and `docs/DECISIONS.md`; the log is `docs/SESSION10_LOG.md`.
 
 ## Where the project stands
 
@@ -18,7 +18,7 @@
 ## Regressions (backhouse, session 10 end)
 
 - m4: sugar->MN9_L 8.9 ± 5.9 Hz (10 trials); closed loop seeds 0-2 silent, brain excl. ORNs 0.349 / 0.223 / 0.297 Hz; m2 seed 0 silent.
-- Tests: 145 passed (full suite, ~8 min) before the last few additions; the final full run is recorded in the log.
+- Tests: 147 passed (full suite, 7 m 45 s, Mac) at the end of the session.
 
 ## Open items (carried)
 

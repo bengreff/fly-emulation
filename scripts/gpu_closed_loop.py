@@ -195,7 +195,8 @@ def run_parallel(a, orgs, mem, specs, t0):
     pipes, procs = [], []
     for g in groups:
         p1, p2 = ctx.Pipe()
-        pr = ctx.Process(target=worker, args=(p2, orgs, g, se.name, sr.name, B, n, nb, a.k, steps, dt))
+        pr = ctx.Process(target=worker, args=(p2, orgs, g, se.name, sr.name, B, n, nb, a.k, steps, dt),
+                         daemon=True)       # die with the parent if it fails
         pr.start(); pipes.append(p1); procs.append(pr)
     from flyemu.gpu.batched import BatchedNetwork
     bn = BatchedNetwork(orgs[0].net, B=B, member=mem)
@@ -203,7 +204,7 @@ def run_parallel(a, orgs, mem, specs, t0):
     # only rows that sensing can drive cross the bus (sensory cells + internal-state
     # populations); checked every window, full transfer as the fallback
     nrn = orgs[0].conn.neurons
-    S = nrn.superclass.fillna("").str.contains("sensory").to_numpy()
+    S = nrn.superclass.fillna("").str.contains("sensory").to_numpy().copy()
     for o in orgs:
         if getattr(o, "organs", None) is not None:
             for r in o.organs.rows.values():
