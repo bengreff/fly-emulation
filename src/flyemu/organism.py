@@ -197,6 +197,22 @@ class Organism:
             from . import flight
             self.flight = flight.FlightMotor(self.reg, self.conn, self.body, self.timestep_ms,
                                              force_on=mode == 2)
+        # B15 jump muscle (session 10): 0 = TTMn through the legacy capped torque (m4)
+        self.ttm = None
+        if int(self.reg.require(
+                "jump:ttm", "model", units="enum",
+                model_use="0 TTMn via the legacy capped actuator (m4), 1 fast uncapped TTM twitch (jump.py)",
+                subsystem="muscle_mechanics", minimal=0, minimal_note="legacy m4")):
+            from . import jump
+            g = lambda prop, u, v, note: float(self.reg.require(  # noqa: E731
+                "jump:ttm", prop, units=u, model_use="B15 TTM twitch", subsystem="muscle_mechanics",
+                minimal=v, minimal_note=note))
+            self.ttm = jump.TTM(self.body, self.conn, neuromuscular.load_calibration(self.body.model),
+                                g("peak_torque", "uN*mm", 100.0, "guessed: ~100 uN ground force per leg over a ~1 mm lever"),
+                                g("tau_rise_ms", "ms", 1.0, "guessed: fast twitch"),
+                                g("tau_decay_ms", "ms", 5.0, "guessed: take-off within ~5 ms"),
+                                self.timestep_ms)
+            self.body.passive_hooks = list(getattr(self.body, "passive_hooks", ())) + [self.ttm]
         if int(self.reg.require(
                 "joint:wing", "range_by_function", units="enum",
                 model_use="0 joints.py wing envelopes (pitch = stroke; wrong for flybody), 1 envelopes by "
@@ -246,6 +262,8 @@ class Organism:
             torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
         if self.flight is not None:
             torque = self.flight.step(spiked, torque)
+        if self.ttm is not None:          # B15 jump muscle (its own hook, uncapped)
+            self.ttm.spikes(spiked)
         if extra:
             torque = np.array(torque, dtype=np.float32, copy=True)
             for j, v in extra.items():
