@@ -1,3 +1,5 @@
 # Parameter rows tested and NOT adopted (not loaded by the model). Same columns as cell_types.csv plus result.
 type,param,value,units,basis,source,justification,result
 ^Ti flexor MN$|^Acc. ti flexor MN$,glutamate_receptor_sign,1.0,sign,guessed,hypothesis (DECISIONS 6b): Azevedo 2020 resistance-reflex sign + male-cns wiring (IN21A glutamatergic premotor input carries extension signals),glutamate sign is receptor-dependent (GluCl vs iGluR); no measurement for leg MNs located; tested against held-out reflex data of cell 180111_F2_C1,DECISIONS 6b: fit target 8deg ext hold -0.3 Hz vs +20.3 measured; premotor INs silent; not adopted
+class:DN,release_scale,0.70,dimensionless,inferred,s10 declared class-level search (DECISIONS s10),best of 80 candidates on template seeds 0-2 silence + sugar->MN9 > 5 Hz (fit set),held out: template seeds 3-5 and m4 seeds 0-2 silent; bitter->MN9 0 Hz pass; water->MN9 0 Hz FAIL (> 0 required); not adopted
+class:MN_other,input_scale,1.30,dimensionless,inferred,s10 declared class-level search (DECISIONS s10),paired with class:DN release_scale 0.70,as above
