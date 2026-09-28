@@ -69,3 +69,5 @@ muscle:leg|coxa_model,B4,switch,Hill mode: 0 per-DOF coxa pairs (s9) / 1 anatomi
 motor_unit:leg|fatigue_fraction,B5,switch,read only in Hill mode; value row b5_fatigue_fraction (0 = no fatigue)
 motor_unit:leg|fatigue_tau_ms,B5,switch,read only in Hill mode with fatigue_fraction > 0; value row b5_fatigue_tau_ms
 sense:antenna|oscillator,B20,switch,0 static a3 proxy (m4); 1 damped rotational oscillator with JO-A/B vibration drive (s10)
+flight:wings|generator,B10,switch,0 legacy wing torques (m4); 1 wingbeat generator driven by power MNs; 2 forced on (probes) (s10)
+joint:wing|range_by_function,B14,switch,0 joints.py wing envelopes (mislabelled for flybody); 1 by function (F-WING-1) (s10)

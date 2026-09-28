@@ -25,7 +25,7 @@ def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev
     flight.apply_wing_ranges(b)
     kin = flight.WingKinematics(f_hz=f, stroke_amp_deg=amp, rot_sign=rot_sign, rot_amp_deg=rot_amp,
                                 dev_amp_deg=dev)
-    wb = flight.WingBeat(b, kin, bandwidth_hz=bw)
+    wb = flight.WingBeat(b, kin, bandwidth_hz=bw, ramp_ms=0.0)
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
     mj.mj_forward(m, d)

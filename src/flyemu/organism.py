@@ -135,8 +135,30 @@ class Organism:
                         r = neuromuscular.resolve_sign(cal, leg, "ThC", acts[t])
                         if r is not None:
                             remap[k] = (r[0], float(r[1]))
+            # s10: anatomical coxa muscles with moment-arm vectors (0 = s9 per-DOF pairs)
+            coxa_model = int(self.reg.require(
+                "muscle:leg", "coxa_model", units="enum",
+                model_use="coxa muscles: 0 one antagonist pair per flybody coxa hinge (s9), 1 anatomical "
+                          "FlyMimic coxa muscles with moment-arm vectors over all three hinges, MNs joined by type",
+                subsystem="muscle_mechanics", minimal=0,
+                minimal_note="s9 behaviour; 1 is an option (scripts/build_coxa_muscles.py, F-MUSCLE-3)"))
+            units_kw = {"fused_hz": float(fused)}
+            fat = float(self.reg.require(
+                "motor_unit:leg", "fatigue_fraction", units="dimensionless",
+                model_use="fraction of a fast/intermediate unit's resource used per spike (B5 fatigue)",
+                subsystem="muscle_mechanics", minimal=0.0,
+                minimal_note="neutral: no fatigue; bounded in parameters.csv (b5_fatigue_fraction)"))
+            if fat > 0.0:
+                units_kw["fatigue_fraction"] = fat
+                units_kw["fatigue_tau_ms"] = float(self.reg.require(
+                    "motor_unit:leg", "fatigue_tau_ms", units="ms",
+                    model_use="recovery time constant of the fatigue resource (B5)",
+                    subsystem="muscle_mechanics", minimal=muscles.FATIGUE_TAU_MS,
+                    minimal_note="guessed; bounded in parameters.csv (b5_fatigue_tau_ms)"))
+            mn_types = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index]
             self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls, remap=remap,
-                                             units_kw={"fused_hz": float(fused)})
+                                             units_kw=units_kw, coxa_model=coxa_model,
+                                             mn_types=mn_types)
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (
@@ -152,6 +174,25 @@ class Organism:
         # implementation, so the inventory measures interface completeness
         # rather than only the parts that happen to be wired.
         self.channels = interface.register(self.reg)
+        # B10/B13 flight motor (session 10): 0 = legacy wing torques (m4)
+        self.flight = None
+        mode = int(self.reg.require(
+            "flight:wings", "generator", units="enum",
+            model_use="0 legacy direct wing torques (m4), 1 wingbeat generator driven by power MNs "
+                      "(flight.py), 2 generator forced on (tethered-flight probes)",
+            subsystem="muscle_mechanics", minimal=0,
+            minimal_note="legacy m4; the generator needs timestep <= 0.05 ms"))
+        if mode:
+            from . import flight
+            self.flight = flight.FlightMotor(self.reg, self.conn, self.body, self.timestep_ms,
+                                             force_on=mode == 2)
+        if int(self.reg.require(
+                "joint:wing", "range_by_function", units="enum",
+                model_use="0 joints.py wing envelopes (pitch = stroke; wrong for flybody), 1 envelopes by "
+                          "function: yaw = stroke, roll = deviation, pitch = rotation (F-WING-1)",
+                subsystem="body_mechanics", minimal=0, minimal_note="legacy m4 envelopes")):
+            from . import flight
+            flight.apply_wing_ranges(self.body)
 
     # --- sensing -------------------------------------------------------------
 
@@ -189,6 +230,8 @@ class Organism:
         if self.hill is not None:
             self.hill.step(spiked, self.timestep_ms)
             torque = self.hill.torque(self.nm, self.body.sim.mj_data, torque)
+        if self.flight is not None:
+            torque = self.flight.step(spiked, torque)
         if extra:
             torque = np.array(torque, dtype=np.float32, copy=True)
             for j, v in extra.items():

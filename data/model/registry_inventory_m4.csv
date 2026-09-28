@@ -716,3 +716,5 @@ interface_physics,interface:humoral_transport,channel,dimensionless,absent,,0
 interface_physics,interface:tracheal_gas_exchange,channel,dimensionless,absent,,0
 interface_physics,interface:cuticle_deformation,channel,dimensionless,absent,,0
 interface_physics,interface:joint_limits,channel,dimensionless,absent,,0
+muscle_mechanics,flight:wings,generator,enum,guessed,0,1
+body_mechanics,joint:wing,range_by_function,enum,guessed,0,1
