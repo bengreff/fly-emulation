@@ -18,3 +18,15 @@ def test_adaptation_is_phasic_tonic_and_neutral_at_zero():
     assert abs(last[1] - 2.0) < 0.05            # sustained: (1 - k) of onset
     assert first[3] == last[3] == 10.0          # k = 0: unchanged
     assert last[0] == 0.0
+
+
+def test_latency_delays_by_whole_steps_and_is_neutral_at_zero():
+    from flyemu.transducers import Delay
+    dl = Delay(np.array([0, 2]), np.array([3, 0]))
+    outs = []
+    for k in range(6):
+        d = np.full(4, float(k), np.float32)
+        outs.append(dl.apply(d))
+    assert [o[0] for o in outs] == [0.0, 0.0, 0.0, 0.0, 1.0, 2.0]    # 3 steps late (zeros before)
+    assert [o[2] for o in outs] == [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]    # d = 0: unchanged
+    assert [o[1] for o in outs] == [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]    # rows outside: untouched

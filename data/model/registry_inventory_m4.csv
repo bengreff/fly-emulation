@@ -587,6 +587,13 @@ sensory_transduction,transducer:sensory_proprioceptive,adapt_fraction,dimensionl
 sensory_transduction,transducer:sensory_proprioceptive,adapt_tau_ms,ms,guessed,500.0,1375
 sensory_transduction,transducer:sensory_other,adapt_fraction,dimensionless,guessed,0.0,2095
 sensory_transduction,transducer:sensory_other,adapt_tau_ms,ms,guessed,500.0,2095
+sensory_transduction,transducer:photoreceptor,latency_ms,ms,guessed,0.0,6091
+sensory_transduction,transducer:ocellar_photoreceptor,latency_ms,ms,guessed,0.0,22
+sensory_transduction,transducer:sensory_olfactory,latency_ms,ms,guessed,0.0,2635
+sensory_transduction,transducer:sensory_gustatory,latency_ms,ms,guessed,0.0,1420
+sensory_transduction,transducer:sensory_mechano,latency_ms,ms,guessed,0.0,4280
+sensory_transduction,transducer:sensory_proprioceptive,latency_ms,ms,guessed,0.0,1375
+sensory_transduction,transducer:sensory_other,latency_ms,ms,guessed,0.0,2095
 electrical,electrical:DNp01->TTMn,spike_coupling,mV,guessed,0.0,2
 electrical,electrical:DNp01->PSI,spike_coupling,mV,guessed,0.0,2
 electrical,electrical:JO-B1_a->DNp01,spike_coupling,mV,guessed,0.0,17
@@ -758,5 +765,6 @@ interface_physics,interface:tracheal_gas_exchange,channel,dimensionless,absent,,
 interface_physics,interface:cuticle_deformation,channel,dimensionless,absent,,0
 interface_physics,interface:joint_limits,channel,dimensionless,absent,,0
 muscle_mechanics,flight:wings,generator,enum,guessed,0,1
+body_mechanics,aero:wing,membrane_only,enum,guessed,0,1
 muscle_mechanics,jump:ttm,model,enum,guessed,0,1
 body_mechanics,joint:wing,range_by_function,enum,guessed,0,1

@@ -40,7 +40,59 @@ class Adaptation:
         return out
 
 
-def build(reg, conn, dt_ms: float) -> Adaptation | None:
+class Delay:
+    """N15 (s10): transduction latency per sensory class, as a pure delay of the
+    class's drive by d_c steps (ring buffer). d = 0 for every class is neutral."""
+
+    def __init__(self, idx: np.ndarray, d_steps: np.ndarray):
+        self.idx, self.d = idx, d_steps.astype(np.int64)
+        self.D = int(self.d.max()) + 1
+        self.buf = np.zeros((self.D, idx.size), np.float32)
+        self.head = 0
+
+    def apply(self, drive: np.ndarray) -> np.ndarray:
+        self.buf[self.head] = drive[self.idx]
+        out = drive.copy()
+        out[self.idx] = self.buf[(self.head - self.d) % self.D, np.arange(self.idx.size)]
+        self.head = (self.head + 1) % self.D
+        return out
+
+
+class Chain:
+    def __init__(self, stages):
+        self.stages = stages
+
+    def apply(self, drive):
+        for s in self.stages:
+            drive = s.apply(drive)
+        return drive
+
+
+def build(reg, conn, dt_ms: float):
+    """Adaptation then latency; None when both are neutral (m4)."""
+    stages = [x for x in (_build_adapt(reg, conn, dt_ms), _build_delay(reg, conn, dt_ms)) if x is not None]
+    return None if not stages else (stages[0] if len(stages) == 1 else Chain(stages))
+
+
+def _build_delay(reg, conn, dt_ms: float):
+    from .lif import circuit_classes
+    cls = circuit_classes(conn)
+    idx, ds = [], []
+    for c in SENSORY_CLASSES:
+        m = np.flatnonzero(cls == c)
+        v = float(reg.require(f"transducer:{c}", "latency_ms", units="ms",
+                              model_use="N15: transduction latency (stimulus to receptor drive)",
+                              subsystem="sensory_transduction", instances=int(m.size), minimal=0.0,
+                              minimal_note="neutral 0: drive reaches the receptor the same step (m4)"))
+        d = int(round(v / dt_ms))
+        if d > 0 and m.size:
+            idx.append(m); ds.append(np.full(m.size, d))
+    if not idx:
+        return None
+    return Delay(np.concatenate(idx), np.concatenate(ds))
+
+
+def _build_adapt(reg, conn, dt_ms: float) -> Adaptation | None:
     from .lif import circuit_classes
     cls = circuit_classes(conn)
     idx, ks, taus = [], [], []
