@@ -71,3 +71,4 @@ motor_unit:leg|fatigue_tau_ms,B5,switch,read only in Hill mode with fatigue_frac
 sense:antenna|oscillator,B20,switch,0 static a3 proxy (m4); 1 damped rotational oscillator with JO-A/B vibration drive (s10)
 flight:wings|generator,B10,switch,0 legacy wing torques (m4); 1 wingbeat generator driven by power MNs; 2 forced on (probes) (s10)
 joint:wing|range_by_function,B14,switch,0 joints.py wing envelopes (mislabelled for flybody); 1 by function (F-WING-1) (s10)
+cell_type:all|kc_mbon_forgetting,N22,switch,0 no forgetting (m4); 1 KC->MBON weights relax to baseline with n22_memory_tau (s10)

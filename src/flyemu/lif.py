@@ -86,6 +86,12 @@ class LIFParams:
     gabab_tau_ms: float = 150.0
     presyn_inh_gain: float = 0.0               # per mV of inhibitory input onto a sensory terminal
     kc_mbon_eta: float = 0.0                   # DAN-gated KC->MBON depression rate
+    # s10 N21/N22: timing-dependent, bidirectional KC->MBON plasticity and forgetting
+    kc_ltd_timing: float = 0.0     # depression per DAN spike x KC eligibility (KC before DA)
+    kc_ltp_timing: float = 0.0     # potentiation per KC spike x DA trace (DA before KC)
+    kc_elig_tau_ms: float = 1000.0 # KC eligibility trace decay
+    kc_w_cap: float = 2.0          # potentiation ceiling, x baseline weight
+    kc_recovery_tau_ms: float = 0.0  # N22: relaxation to baseline (0 = none)
     dan_tau_ms: float = 500.0
     ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
     noise_class_mv: np.ndarray | None = None  # s10 N3: per-neuron extra noise (class grain); None = none
@@ -340,6 +346,21 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                  "dopamine in the MBON's compartment (Hige et al. 2015 Neuron 88:985); "
                  "mechanism in place, rate guessed when enabled; no potentiation or "
                  "recovery modelled")
+    kc_ltd_t = one("kc_mbon_ltd_timing_rate", "per DAN spike per unit KC eligibility",
+                   "N21: KC->MBON depression when KC activity precedes dopamine", 0.0,
+                   "neutral 0; forward pairing depresses (Hige et al. 2015; Handler et al. 2019)")
+    kc_ltp_t = one("kc_mbon_ltp_timing_rate", "per KC spike per unit DAN trace",
+                   "N21: KC->MBON potentiation when dopamine precedes KC activity", 0.0,
+                   "neutral 0; backward pairing potentiates (Handler et al. 2019 Cell)")
+    kc_elig = one("kc_eligibility_tau", "ms", "N21: KC eligibility trace decay", 1000.0,
+                  "guessed: seconds-scale plasticity window (Handler et al. 2019)")
+    kc_cap = one("kc_mbon_weight_cap", "x baseline", "N21: potentiation ceiling", 2.0,
+                 "guessed")
+    kc_forget = one("kc_mbon_forgetting", "boolean", "N22: KC->MBON weights relax to "
+                    "baseline (forgetting)", 0.0, "off in m4")
+    kc_mem_h = one("kc_mbon_memory_tau_h", "h", "N22: relaxation time constant", 3.0,
+                   "guessed within the n22_memory_tau bounds (aversive STM decays over hours)")
+    kc_rec = float(kc_mem_h) * 3.6e6 if kc_forget else 0.0
     dan_tau = one("dan_trace_tau", "ms", "dopamine trace decay per DAN", 500.0,
                   "guessed: seconds-scale coincidence window (Handler et al. 2019)")
     ring_norm = reg.require(
@@ -412,6 +433,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
         glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
+        kc_ltd_timing=float(kc_ltd_t), kc_ltp_timing=float(kc_ltp_t), kc_elig_tau_ms=float(kc_elig),
+        kc_w_cap=float(kc_cap), kc_recovery_tau_ms=float(kc_rec),
         ring_class_norm=bool(ring_norm), noise_class_mv=noise_class,
         tonic_class_mv=tonic_class,
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
@@ -570,6 +593,10 @@ class Network:
             self.p_inh *= self.decay_s
         if self.kc_edge is not None:
             self.dan_trace *= self.dan_decay
+            self.kc_elig *= self.kc_elig_decay
+            if p.kc_recovery_tau_ms > 0 and int(round(self.t_ms / self.timestep_ms)) % 100 == 0:
+                k = 1.0 - np.exp(-100 * self.timestep_ms / p.kc_recovery_tau_ms)
+                self.w[self.kc_e] += ((self.kc_w0 - self.w[self.kc_e]) * k).astype(np.float32)
         if external_mv is not None:
             drive = drive + external_mv
         if self._any_spont:
@@ -637,7 +664,17 @@ class Network:
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
             if self.kc_edge is not None:
-                self.dan_trace[spiked[self.is_dan[spiked]]] += 1.0
+                ds = spiked[self.is_dan[spiked]]
+                self.dan_trace[ds] += 1.0
+                self.kc_elig[spiked[self.is_kc[spiked]]] += 1.0
+                if ds.size and p.kc_ltd_timing > 0:
+                    # KC-before-DA: depress KC->MBON edges in the spiking DANs' compartments
+                    comp = np.asarray(self.M_da[:, ds].sum(axis=1)).ravel() > 0
+                    hit = comp[self.kc_post]
+                    if hit.any():
+                        e = self.kc_e[hit]
+                        self.w[e] *= np.clip(1.0 - p.kc_ltd_timing * self.kc_elig[self.kc_pre[hit]],
+                                             0.0, 1.0).astype(np.float32)
             self._propagate(spiked)
             self.spike_count += spiked.size
 
@@ -654,7 +691,8 @@ class Network:
         gs = _arr(p.glu_sign_post, n)
         f = _arr(p.gabab_fraction, n)
         self.w_slow = self.w_pi = self.kc_edge = None
-        if not (np.any(gs != 0) or np.any(f > 0) or p.presyn_inh_gain > 0 or p.kc_mbon_eta > 0):
+        kc_on = p.kc_mbon_eta > 0 or p.kc_ltd_timing > 0 or p.kc_ltp_timing > 0
+        if not (np.any(gs != 0) or np.any(f > 0) or p.presyn_inh_gain > 0 or kc_on):
             return
         nt = self.conn.neurons.get("predictedNt", pd.Series([""] * n)).fillna("").str.lower().to_numpy()
         is_glu, is_gaba = nt == "glutamate", nt == "gaba"
@@ -677,7 +715,7 @@ class Network:
                                  0.0).astype(np.float32)
             self.p_inh = np.zeros(n, dtype=np.float32)
             self.is_sensory = sens
-        if p.kc_mbon_eta > 0:
+        if kc_on:
             t = self.conn.neurons.type.fillna("")
             kc = (self.conn.neurons["class"].fillna("") == "Kenyon_Cell").to_numpy()
             mbon = t.str.startswith("MBON").to_numpy()
@@ -689,6 +727,17 @@ class Network:
             self.dan_trace = np.zeros(n, dtype=np.float32)
             self.is_dan = dan
             self.dan_decay = np.float32(np.exp(-dt / p.dan_tau_ms))
+            # s10 N21/N22 state: baseline weights, KC eligibility, edge index lists
+            self.kc_e = np.flatnonzero(self.kc_edge)
+            self.kc_w0 = self.w[self.kc_e].copy()
+            self.kc_pre, self.kc_post = pre[self.kc_e], post[self.kc_e]
+            self.kc_elig = np.zeros(n, dtype=np.float32)
+            self.kc_elig_decay = np.float32(np.exp(-dt / p.kc_elig_tau_ms))
+            self.is_kc = kc
+
+    def w0_of(self, e: np.ndarray) -> np.ndarray:
+        """Baseline weight of KC->MBON edges `e` (global edge indices)."""
+        return self.kc_w0[np.searchsorted(self.kc_e, e)]
 
     def _slow_channels(self, pre: np.ndarray) -> None:
         """N7/N8 (s10): mGluR, mAChR and NMDA-type components. Each moves a
@@ -769,7 +818,12 @@ class Network:
             e = sel[self.kc_edge[sel]]
             if e.size:
                 da = self.M_da @ self.dan_trace
-                self.w[e] *= np.clip(1.0 - self.params.kc_mbon_eta * da[indices[e]], 0.0, 1.0)
+                if self.params.kc_mbon_eta > 0:
+                    self.w[e] *= np.clip(1.0 - self.params.kc_mbon_eta * da[indices[e]], 0.0, 1.0)
+                if self.params.kc_ltp_timing > 0:   # DA-before-KC: potentiate toward the cap
+                    w0 = self.w0_of(e)
+                    k = np.clip(self.params.kc_ltp_timing * da[indices[e]], 0.0, 1.0)
+                    self.w[e] += (k * (self.params.kc_w_cap * w0 - self.w[e])).astype(np.float32)
         if self._any_std:
             w = w * np.repeat(self.x_res[spiked], counts)
             self.x_res[spiked] *= (1.0 - self.std_u[spiked])

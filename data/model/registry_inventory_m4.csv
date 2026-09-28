@@ -545,6 +545,12 @@ neuron_biophysics,cell_type:all,gabab_fraction,dimensionless,guessed,0.0,167111
 neuron_biophysics,cell_type:all,gabab_tau,ms,guessed,150.0,167111
 neuron_biophysics,cell_type:all,presynaptic_inhibition_gain,per mV,guessed,0.0,167111
 neuron_biophysics,cell_type:all,kc_mbon_ltd_rate,per unit DAN trace per KC spike,guessed,0.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_ltd_timing_rate,per DAN spike per unit KC eligibility,guessed,0.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_ltp_timing_rate,per KC spike per unit DAN trace,guessed,0.0,167111
+neuron_biophysics,cell_type:all,kc_eligibility_tau,ms,guessed,1000.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_weight_cap,x baseline,guessed,2.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_forgetting,boolean,guessed,0.0,167111
+neuron_biophysics,cell_type:all,kc_mbon_memory_tau_h,h,guessed,3.0,167111
 neuron_biophysics,cell_type:all,dan_trace_tau,ms,guessed,500.0,167111
 synaptic_efficacy,cell_type:cx_ring,class_input_normalisation,boolean,guessed,0.0,167111
 neuron_biophysics,cell_type:all,mod_sensitivity_dopamine,per unit level,guessed,0.0,167111

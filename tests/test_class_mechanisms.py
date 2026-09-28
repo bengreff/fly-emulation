@@ -109,3 +109,41 @@ def test_slow_channels_are_inert_at_neutral_and_act_when_enabled():
     # Mg block: B(V) small at rest (-52 mV), larger when depolarised
     b = lambda v: 1 / (1 + 1.0 / 3.57 * np.exp(-0.062 * v))
     assert b(-52.0) < 0.2 < 0.5 < b(0.0)
+
+
+@needs_graph
+def test_kc_mbon_plasticity_is_timing_dependent_and_forgets():
+    """N21: KC before DA depresses, DA before KC potentiates (Handler et al. 2019);
+    N22: weights relax back to baseline with the recovery tau. Off by default."""
+    base = _org()
+    assert base.net.kc_edge is None
+    ov = {"cell_type:all|kc_mbon_ltd_timing_rate": 0.05, "cell_type:all|kc_mbon_ltp_timing_rate": 0.002}
+
+    def run(order, extra=None):
+        o = _org(**{**ov, **(extra or {})})
+        n = o.net
+        t = o.conn.neurons.type.fillna("")
+        dan = np.flatnonzero(t.str.match(r"^PAM").to_numpy())
+        kc = np.flatnonzero(n.is_kc)[:600]
+        seq = [kc, dan] if order == "kc_first" else [dan, kc]
+        for grp in seq:
+            for _ in range(30):
+                n.step(kick=(grp, 50.0))
+        for _ in range(50):
+            n.step()
+        return n, n.w[n.kc_e] / np.where(n.kc_w0 != 0, n.kc_w0, 1)
+
+    n1, r1 = run("kc_first")
+    n2, r2 = run("da_first")
+    cap = n1.params.kc_w_cap
+    for r in (r1, r2):
+        assert r.min() >= -1e-6 and r.max() <= cap + 1e-5      # bounded, sign kept
+    ch1, ch2 = r1[np.abs(r1 - 1) > 1e-4], r2[np.abs(r2 - 1) > 1e-4]
+    assert ch1.size > 100 and np.median(ch1) < 1.0            # KC first: net depression
+    assert ch2.size > 100 and np.median(ch2) > 1.0            # DA first: net potentiation
+    n3, r3 = run("kc_first", {"cell_type:all|kc_mbon_forgetting": 1.0,
+                                 "cell_type:all|kc_mbon_memory_tau_h": 20.0 / 3.6e6})
+    for _ in range(2000):                                     # 200 ms >> 20 ms
+        n3.step()
+    r3b = n3.w[n3.kc_e] / np.where(n3.kc_w0 != 0, n3.kc_w0, 1)
+    assert np.abs(r3b - 1).max() < np.abs(r3 - 1).max() * 0.1
