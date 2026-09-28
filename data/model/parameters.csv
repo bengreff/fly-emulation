@@ -81,20 +81,14 @@ b17_pump_volume,B17,global,cibarial pump,nL per cycle,,0.001,1,guessed,no data: 
 b18_bristle_threshold,B18,class,mechanosensory bristles,uN,,0.01,10,guessed,no data: wide placeholder bound,unverified,loguniform,,,guessed,,,,2,guessed,no bristle map yet
 b22_odour_diffusivity,B22,global,odour transport in air,mm^2/s,,1,30,physical_limit,molecular diffusivity of small odorants in air about 5-10 mm^2/s,unverified,lognormal,7,0.3,inferred,,,,0,inferred,world property not an animal unknown
 b23_timestep,B23,global,integration step,ms,,0.01,0.1,physical_limit,walking 0.1 ms; flight <= 0.05 ms (CONSTRUCTION.md),unverified,fixed,0.1,,guessed,compute budget,,0.1,0,guessed,numerical; convergence test decides
-s1_trehalose,S1,global,hemolymph trehalose,mM,,1,100,measured_this_class,hemolymph trehalose tens of mM in fed flies,unverified,lognormal,25,0.5,guessed,,,,2,guessed,mechanism absent
-s2_fat_tau,S2,global,fat body energy store depletion,h,,6,120,measured_this_class,starvation survival about 1-4 days,unverified,lognormal,40,0.5,guessed,,,,2,guessed,mechanism absent
-s3_crop_capacity,S3,global,crop volume,nL,,10,1000,guessed,no data: wide placeholder bound,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
 s4_water_tau,S4,global,desiccation water loss,h,,3,60,measured_this_class,desiccation survival about 10-30 h,unverified,lognormal,15,0.5,guessed,,,,2,guessed,mechanism absent
 s5_thermal_tau,S5,global,body temperature equilibration,s,,0.5,60,physical_limit,a 1 mg body equilibrates with air in seconds,unverified,loguniform,,,guessed,,,,2,guessed,no body heat balance
 n16_haltere_phase,N16,class,haltere campaniform afferents,rad,,0,6.2832,physical_limit,preferred firing phase in the wingbeat cycle,verified,uniform,,,guessed,,,,2,guessed,mechanism absent
 n17_steer_phase,N17,class,steering motor neurons,rad,,0,6.2832,physical_limit,firing phase in the wingbeat cycle,verified,uniform,,,guessed,,,,2,guessed,mechanism absent
 n18_gf_gj,N18,cell,GF->TTMn/PSI gap junction,nS,,0.1,100,guessed,no data: wide placeholder bound,unverified,loguniform,,,guessed,,,,1,guessed,electrical.py off (F-GJ-1)
-n20_peptide_tau,N20,class,peptide/hormone clearance,s,,10,7200,insect_wide,neuropeptide and hormone actions last seconds to hours,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
 n22_memory_tau,N22,compartment,short-term memory decay,h,cell_type:all|kc_mbon_memory_tau_h,0.2,72,measured_this_class,aversive STM decays over hours; LTM lasts days,unverified,loguniform,,,guessed,,,3,2,guessed,mechanism absent
 n23_apl_local,N23,compartment,APL compartmental coupling,dimensionless,,0,1,physical_limit,0 fully local to 1 global inhibition,verified,uniform,,,guessed,,,,2,guessed,mechanism absent
 n24_ring_epg_rate,N24,class,ring neuron -> EPG plasticity,per s,,0,10,guessed,remapping within minutes (Kim et al. 2019; Fisher et al. 2019; not yet read),unverified,uniform,,,guessed,,,,2,guessed,mechanism absent
-n25_sleep_tau,N25,global,sleep pressure build-up,h,,1,48,guessed,sleep rebound after hours of deprivation,unverified,lognormal,12,0.5,guessed,,,,2,guessed,mechanism absent
-n26_clock_period,N26,global,circadian free-running period,h,,22,26,measured_this_class,wild-type free-running period about 23.5-24.5 h,unverified,normal,24,0.5,inferred,,,,2,inferred,mechanism absent
 n27_glia_tau,N27,global,glial calcium integration,s,,1,3600,guessed,no data: wide placeholder bound,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
 n1_p_graded_optic_columnar,N1,class,optic columnar cells incl. T4/T5 (classes.csv mode_param),graded=1 spiking=0,mode:n1_p_graded_optic_columnar|graded,0,1,guessed,Lappalainen 2024 graded front end [verified]; Mi1/Tm3 spiking contested [unverified],unverified,bernoulli,0.7,,guessed,graded front end favoured,,0,1,guessed,one draw per class; classes.csv lists the member types
 n1_p_graded_al_ln,N1,class,AL local neurons (classes.csv mode_param),graded=1 spiking=0,mode:n1_p_graded_al_ln|graded,0,1,guessed,a subset of AL LNs is non-spiking (Seki et al. 2010) [unverified],unverified,bernoulli,0.3,,guessed,most AL LNs spike,,0,1,guessed,

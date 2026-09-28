@@ -1,0 +1,7 @@
+param_id,mechanism_id,grain,applies_to,unit,registry_key,bio_min,bio_max,bound_basis,bound_source,bound_verified,prior_dist,prior_a,prior_b,prior_basis,prior_source,value_fixed,current_m4,release_stage,label,notes
+s1_trehalose,S1,global,hemolymph trehalose,mM,,1,100,measured_this_class,hemolymph trehalose tens of mM in fed flies,unverified,lognormal,25,0.5,guessed,,,,2,guessed,mechanism absent
+s2_fat_tau,S2,global,fat body energy store depletion,h,,6,120,measured_this_class,starvation survival about 1-4 days,unverified,lognormal,40,0.5,guessed,,,,2,guessed,mechanism absent
+s3_crop_capacity,S3,global,crop volume,nL,,10,1000,guessed,no data: wide placeholder bound,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
+n20_peptide_tau,N20,class,peptide/hormone clearance,s,,10,7200,insect_wide,neuropeptide and hormone actions last seconds to hours,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
+n25_sleep_tau,N25,global,sleep pressure build-up,h,,1,48,guessed,sleep rebound after hours of deprivation,unverified,lognormal,12,0.5,guessed,,,,2,guessed,mechanism absent
+n26_clock_period,N26,global,circadian free-running period,h,,22,26,measured_this_class,wild-type free-running period about 23.5-24.5 h,unverified,normal,24,0.5,inferred,,,,2,inferred,mechanism absent
