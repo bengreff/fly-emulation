@@ -5,3 +5,4 @@ s3_crop_capacity,S3,global,crop volume,nL,,10,1000,guessed,no data: wide placeho
 n20_peptide_tau,N20,class,peptide/hormone clearance,s,,10,7200,insect_wide,neuropeptide and hormone actions last seconds to hours,unverified,loguniform,,,guessed,,,,2,guessed,mechanism absent
 n25_sleep_tau,N25,global,sleep pressure build-up,h,,1,48,guessed,sleep rebound after hours of deprivation,unverified,lognormal,12,0.5,guessed,,,,2,guessed,mechanism absent
 n26_clock_period,N26,global,circadian free-running period,h,,22,26,measured_this_class,wild-type free-running period about 23.5-24.5 h,unverified,normal,24,0.5,inferred,,,,2,inferred,mechanism absent
+n23_apl_local,N23,compartment,APL compartmental coupling,dimensionless,,0,1,physical_limit,0 fully local to 1 global inhibition,verified,uniform,,,guessed,,,,2,guessed,mechanism absent
