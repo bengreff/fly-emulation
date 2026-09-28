@@ -292,12 +292,14 @@ class Organs:
             self._step(float(dt_s) / n, **inputs)
 
     def _step(self, dt: float, *, activity: float = 0.0, food_sugar_M: float = 0.0,
-              touching_food: bool = False, light_lux: float = 0.0,
+              touching_food: bool = False, light_lux: float = 0.0, pump: float = 1.0,
               temperature_c: float = 25.0, humidity_rh: float = 0.5) -> None:
         p = self.p
         act = float(np.clip(activity, 0, 1))
         # S3 ingestion and crop/gut transit (exact exponential transfer per step)
-        ing = p["ingest_nl_s"] * max(0.0, 1 - self.crop_nl / p["crop_max_nl"]) * dt if touching_food else 0.0
+        # B17 (s10): the cibarial pump's activity (0-1) scales ingestion; 1 = ungated (s10 agent default)
+        ing = (p["ingest_nl_s"] * pump * max(0.0, 1 - self.crop_nl / p["crop_max_nl"]) * dt
+               if touching_food else 0.0)
         self.crop_nl += ing
         self.crop_sugar += ing * food_sugar_M          # M x nL = nmol
         fc = 1 - np.exp(-dt / p["tau_crop_s"])
@@ -375,6 +377,8 @@ class InternalState:
         self.update_ms = update_ms
         self._acc_ms = 0.0
         self._tonic = np.zeros(n_neurons, dtype=np.float32)
+        self.pump_cells = None            # B17: set by build() when pump gating is on
+        self.pump_rate = 0.0
         self._refresh()
 
     def _refresh(self) -> None:
@@ -411,11 +415,18 @@ class InternalState:
         update_ms from what the body and world provide (motor activation of the
         previous step, labellum contact with food, world light/temperature/RH)."""
         self._acc_ms += dt_ms
+        if self.pump_cells is not None:   # B17: pump MN rate (Hz per cell), ~100 ms estimate
+            sp = getattr(org, "_last_spiked", None)
+            n = int(np.isin(self.pump_cells, sp).sum()) if sp is not None and len(sp) else 0
+            a = np.exp(-dt_ms / 100.0)
+            self.pump_rate = self.pump_rate * a + n / max(len(self.pump_cells), 1) * 10.0
         if self._acc_ms >= self.update_ms - 1e-9:
             dt_s, self._acc_ms = self._acc_ms / 1000.0, 0.0
             act = float(np.tanh(np.abs(np.asarray(org.nm.activation)).mean() / self.p["act_scale"]))
             touching, sugar = labellum_food(org)
-            self.advance(dt_s, activity=act, touching_food=touching, food_sugar_M=sugar,
+            pump = (1.0 if self.pump_cells is None
+                    else float(np.clip(self.pump_rate / self.pump_full_hz, 0.0, 1.0)))
+            self.advance(dt_s, activity=act, touching_food=touching, food_sugar_M=sugar, pump=pump,
                          light_lux=float(getattr(org.world, "light_lux", 0.0)),
                          temperature_c=org.world.temperature_c, humidity_rh=org.world.humidity_rh)
         return self._tonic + self.taste_extra(base)
@@ -475,4 +486,16 @@ def build(reg: Registry, conn) -> InternalState | None:
                 model_use="identified populations not coupled", status=Status.ABSENT,
                 subsystem="internal_state", instances=len(NOT_COUPLED),
                 evidence="; ".join(f"{k}: {v}" for k, v in NOT_COUPLED.items()))
-    return InternalState(p, conn.n, rows)
+    st = InternalState(p, conn.n, rows)
+    # B17 (s10): ingestion gated by the cibarial pump MNs (MN11D/MN12D innervate the
+    # cibarial dilator muscles; Manzo et al. 2012 PNAS, lead, not read)
+    if int(reg.require("state:crop", "pump_gated", units="enum",
+                       model_use="0 ingestion on contact alone; 1 scaled by cibarial pump MN activity",
+                       subsystem="internal_state", minimal=0, minimal_note="ungated")):
+        types = conn.neurons.type.fillna("").to_numpy()
+        st.pump_cells = np.flatnonzero(np.isin(types, ["MN11D", "MN11V", "MN12D"]))
+        st.pump_full_hz = float(reg.require(
+            "state:crop", "pump_full_rate_hz", units="Hz", model_use="pump MN rate for full ingestion",
+            subsystem="internal_state", minimal=10.0,
+            minimal_note="guessed: cibarial pumping ~6-8 Hz (lead), one spike burst per cycle"))
+    return st

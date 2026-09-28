@@ -254,6 +254,7 @@ class Organism:
         this, or they silently bypass mechanisms such as Hill mode (s9).
         `extra` adds an external (probe) torque per actuator index, e.g. a
         joint clamp; it is not a muscle and is applied after them."""
+        self._last_spiked = spiked          # read by internal_state (B17 pump) next step
         self.nm.bypass_forbidden = False
         torque = self.nm.step(spiked, self.timestep_ms)
         self.nm.bypass_forbidden = self.hill is not None

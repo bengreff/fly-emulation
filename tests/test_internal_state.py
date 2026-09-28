@@ -211,3 +211,25 @@ def test_each_population_gets_drive_only_when_its_state_says_so(orgs):
     for s in range(int(st.update_ms / org.timestep_ms) + 1):
         org.sense(s, obs)
     assert o.t_s > t0 and o.crop_nl == 0.0
+
+
+def test_pump_activity_scales_ingestion():
+    """B17 (s10): ingestion = pump activity x contact; pump 0 -> nothing swallowed."""
+    a, b, c = Organs(P), Organs(P), Organs(P)
+    for o, pump in ((a, 1.0), (b, 0.5), (c, 0.0)):
+        run(o, 30 / 3600, dt=1.0, food_sugar_M=0.2, touching_food=True, pump=pump)
+    assert c.crop_nl == 0.0 and 0.4 < b.crop_nl / a.crop_nl < 0.6
+
+
+@pytest.mark.skipif(not HAVE_GRAPH, reason="no graph cache")
+def test_pump_gating_reads_the_pump_mns():
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5,
+                   overrides={"state:organs|model": 1.0, "state:crop|pump_gated": 1.0})
+    st = org.organs
+    t = org.conn.neurons.type.fillna("").to_numpy()
+    assert set(t[st.pump_cells]) == {"MN11D", "MN11V", "MN12D"}
+    for s in range(1000):                       # 100 ms, pump MNs at 100 Hz
+        org._last_spiked = st.pump_cells if s % 100 == 0 else np.zeros(0, np.int64)
+        st.drive(org, org.timestep_ms, np.zeros(org.conn.n, np.float32))
+    assert st.pump_rate > 5.0
