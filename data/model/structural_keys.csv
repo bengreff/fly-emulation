@@ -65,3 +65,7 @@ motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_h
 joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1)
 muscle:leg|rotator_map,B5,switch,Hill mode: sternal rotators by action (1; Cheong 2024 read) or legacy rule (0)
 adhesion:leg|detachment,B7,switch,0 neural grip only (m4) / 1 load and shear gate (adhesion.py)
+muscle:leg|coxa_model,B4,switch,Hill mode: 0 per-DOF coxa pairs (s9) / 1 anatomical coxa muscles with moment-arm vectors over the three coxa hinges (data/params/coxa_muscles.csv; s10)
+motor_unit:leg|fatigue_fraction,B5,switch,read only in Hill mode; value row b5_fatigue_fraction (0 = no fatigue)
+motor_unit:leg|fatigue_tau_ms,B5,switch,read only in Hill mode with fatigue_fraction > 0; value row b5_fatigue_tau_ms
+sense:antenna|oscillator,B20,switch,0 static a3 proxy (m4); 1 damped rotational oscillator with JO-A/B vibration drive (s10)

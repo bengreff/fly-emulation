@@ -33,6 +33,11 @@ class World:
     co2_fraction: float = 0.0004     # ambient air
     wind_mm_s: np.ndarray = field(default_factory=lambda: np.zeros(3))
     food: list = field(default_factory=list)   # extrasenses.FoodPatch
+    # s10 B20: near-field sound as air particle velocity (mm/s amplitude, Hz), along
+    # a world direction; read only by the antenna oscillator (extrasenses.py)
+    sound_mm_s: float = 0.0
+    sound_hz: float = 0.0
+    sound_dir: np.ndarray = field(default_factory=lambda: np.array([1.0, 0.0, 0.0]))
 
     def odour_concentrations(self, pos: np.ndarray) -> dict[str, np.ndarray]:
         """Concentration of each odour at positions (n, 3); static plumes."""

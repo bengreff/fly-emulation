@@ -658,6 +658,11 @@ sensory_transduction,sense:jo_gravity,gain,rad per g,guessed,0.3,1
 sensory_transduction,sense:jo_wind,gain,rad per mm/s,guessed,0.0001,1
 sensory_transduction,sense:cs_omega,gain,rad/s,guessed,50.0,1
 sensory_transduction,sense:thermo,gain,mV per degC/s,guessed,5.0,1
+sensory_transduction,sense:jo_sound,gain,rad per mm/s,guessed,0.002,1
+sensory_transduction,sense:jo_ab_scale,gain,rad,guessed,0.001,1
+sensory_transduction,sense:antenna,oscillator,enum,guessed,0,1
+sensory_transduction,antenna:a3,resonance_hz,Hz,guessed,250.0,1
+sensory_transduction,antenna:a3,quality_factor,dimensionless,guessed,1.5,1
 sensory_transduction,sense:taste_labellar,transduction,dimensionless,inferred,extrasenses.py,267
 sensory_transduction,sense:taste_leg,transduction,dimensionless,guessed,extrasenses.py,1156
 sensory_transduction,sense:leg_touch,transduction,dimensionless,inferred,extrasenses.py,919

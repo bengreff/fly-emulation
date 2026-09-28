@@ -69,6 +69,34 @@ class Channel:
     extra: np.ndarray | None = None
 
 
+class Antenna:
+    """B20 (s10): the a3 segment/arista as a damped rotational oscillator,
+    theta'' + (w0/Q) theta' + w0^2 theta = w0^2 theta_in(t), where theta_in is the
+    static deflection the legacy proxy computed (gravity, wind) plus sound. Static
+    inputs reach the same steady deflection; sound near w0 is amplified ~Q.
+    Integrated by semi-implicit Euler with sub-steps (w0 dt_sub <= 0.1). `hp` is
+    theta minus its 50 ms low-pass: the vibration component JO-A/B read."""
+
+    def __init__(self, f0_hz: float, q: float):
+        self.w0, self.q = 2 * np.pi * f0_hz, q
+        self.th = None
+        self.om = 0.0
+        self.slow = None
+
+    def step(self, th_in: float, dt_ms: float) -> tuple[float, float]:
+        if self.th is None:                # start at rest at the static deflection
+            self.th, self.slow = th_in, th_in
+        dt = dt_ms / 1000.0
+        n = max(1, int(np.ceil(self.w0 * dt / 0.1)))
+        h = dt / n
+        for _ in range(n):
+            acc = self.w0 ** 2 * (th_in - self.th) - self.w0 / self.q * self.om
+            self.om += h * acc
+            self.th += h * self.om
+        self.slow += (self.th - self.slow) * (1 - np.exp(-dt_ms / 50.0))
+        return self.th, self.th - self.slow
+
+
 @dataclass
 class ExtraSenses:
     channels: dict
@@ -77,6 +105,8 @@ class ExtraSenses:
     joint_ids: dict
     n_neurons: int
     _last_temp: float | None = field(default=None, init=False)
+    antenna: "Antenna | None" = None
+    _t_s: float = field(default=0.0, init=False)
 
     def _head_contact(self, m, d) -> dict:
         f = {k: 0.0 for k in HEAD_BODIES}
@@ -146,14 +176,23 @@ class ExtraSenses:
             put(ch, self.gain["mech"] * np.tanh(np.full(len(ch.rows), tot)))
 
         # --- Johnston's organ ---------------------------------------------------
-        if "jo" in self.channels:
-            ch = self.channels["jo"]
+        self._t_s += timestep_ms / 1000.0
+        if "jo" in self.channels or "jo_ab" in self.channels:
             R = d.xmat[self.body_ids["c_head"]].reshape(3, 3)
             fwd = R[:, 0]
             g = np.array([0, 0, -1.0])
             theta = self.gain["jo_gravity"] * float(g @ fwd) + \
                 self.gain["jo_wind"] * float(np.asarray(world.wind_mm_s) @ fwd)
-            put(ch, self.gain["mech"] * np.tanh(ch.weight * theta))
+            if self.antenna is not None:       # B20: a3 as a damped rotational oscillator
+                snd = world.sound_mm_s * np.sin(2 * np.pi * world.sound_hz * self._t_s) * float(
+                    np.asarray(world.sound_dir, float) @ fwd)
+                theta, hp = self.antenna.step(theta + self.gain["jo_sound"] * snd, timestep_ms)
+            if "jo" in self.channels:
+                ch = self.channels["jo"]
+                put(ch, self.gain["mech"] * np.tanh(ch.weight * theta))
+            if "jo_ab" in self.channels and self.antenna is not None:
+                ch = self.channels["jo_ab"]
+                put(ch, self.gain["mech"] * np.tanh(np.full(len(ch.rows), abs(hp) / self.gain["jo_ab_scale"])))
 
         # --- wing / haltere campaniforms ---------------------------------------
         jv = obs["joint_velocities"]
@@ -216,7 +255,26 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
         jo_wind=g("jo_wind", "rad per mm/s", 1e-4, "guessed a3 deflection per unit wind"),
         cs_omega=g("cs_omega", "rad/s", 50.0, "guessed velocity scale of wing/haltere strain"),
         thermo=g("thermo", "mV per degC/s", 5.0, "guessed phasic temperature gain"),
+        jo_sound=g("jo_sound", "rad per mm/s", 2e-3, "guessed a3 deflection per unit particle "
+                   "velocity (B20; used only with the antenna oscillator)"),
+        jo_ab_scale=g("jo_ab_scale", "rad", 1e-3, "guessed vibration amplitude that half-"
+                      "saturates JO-A/B drive (B20)"),
     )
+    antenna = None
+    osc = reg.require("sense:antenna", "oscillator", units="enum",
+                      model_use="0 static a3 deflection proxy (legacy m4), 1 damped rotational "
+                                "oscillator (B20) with JO-A/B vibration drive",
+                      subsystem="sensory_transduction", minimal=0,
+                      minimal_note="legacy static proxy")
+    f0 = reg.require("antenna:a3", "resonance_hz", units="Hz", model_use="a3 natural frequency",
+                     subsystem="sensory_transduction", minimal=250.0,
+                     minimal_note="guessed: leads Goepfert & Robert 2002/2003 report a "
+                                  "few-hundred-Hz mechanical best frequency (not read)")
+    q = reg.require("antenna:a3", "quality_factor", units="dimensionless",
+                    model_use="a3 resonance sharpness", subsystem="sensory_transduction",
+                    minimal=1.5, minimal_note="guessed: broadly tuned, heavily damped receiver")
+    if osc:
+        antenna = Antenna(float(f0), float(q))
 
     channels, joint_ids = {}, {}
 
@@ -311,5 +369,9 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
                 evidence="no identifiable stimulus: simulated as neurons with zero sensory "
                          "drive; FOR ITERATION when their modality is identified")
 
+    if antenna is not None:
+        add("jo_ab", organ == "Johnston's organ A/B", basis=Status.GUESSED,
+            why="JO-A/B are vibration (sound) receptors (Kamikouchi 2009); drive from the "
+                "high-passed a3 deflection of the oscillator (B20), gain guessed")
     return ExtraSenses(channels=channels, gain=gain, body_ids=bid, joint_ids=joint_ids,
-                       n_neurons=conn.n)
+                       n_neurons=conn.n, antenna=antenna)
