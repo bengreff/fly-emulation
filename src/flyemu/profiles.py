@@ -82,11 +82,37 @@ M4 = {
     "transmitter:octopamine|sign": (0.0, _I, "as dopamine (GPCRs only)"),
 }
 
+# m5 (session 10): the construction template adopted as the working model by the
+# pre-registered rule (DECISIONS s10, "repair 1 of the template-adoption test"):
+# m4 + every walking-template body/state switch + the two class values found by the
+# declared class-level search. m4 is frozen as the regression reference.
+_T = "template body/state switch adopted s10 (model_data.TEMPLATE_SWITCHES; DECISIONS s10)"
+M5 = {
+    **M4,
+    "joint:leg|passive_stiffness_source": (2.0, _I, _T + ": measured eLife 2025 springs, projected J^T K J"),
+    "joint:leg|spring_reference": (1.0, _I, _T + ": rest angles fitted to the eLife weighted protocol"),
+    "joint:wing|spring_reference": (1.0, _I, _T + ": folded wings"),
+    "muscle:leg|model": (1.0, _I, _T + ": antagonist Hill muscles"),
+    "adhesion:leg|detachment": (1.0, _G, _T + ": load/shear adhesion gate (thresholds guessed)"),
+    "muscle:leg|coxa_model": (1.0, _I, _T + ": anatomical coxa muscles, 3-axis moment arms"),
+    "joint:wing|range_by_function": (1.0, _I, _T + ": wing envelopes by function (F-WING-1)"),
+    "sense:antenna|oscillator": (1.0, _G, _T + ": antenna oscillator (f0, Q guessed)"),
+    "jump:ttm|model": (1.0, _G, _T + ": TTM jump twitch (guessed)"),
+    "state:organs|model": (1.0, _G, _T + ": lumped organs, clock, sleep homeostat (guessed)"),
+    "state:crop|pump_gated": (1.0, _G, _T + ": ingestion gated by pump MNs"),
+    "class:DN|release_scale": (0.70, _I, "declared class-level search s10 (fit: template seeds 0-2 "
+                               "silent + sugar->MN9 > 5 Hz); held out: template seeds 3-8 and m4-body seeds "
+                               "0-5 silent, bitter suppression and sugar dose response kept; water->MN9 fails "
+                               "as in m4 (F-STAB-4)"),
+    "class:MN_other|input_scale": (1.30, _I, "as class:DN|release_scale (paired value)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m4")   # FLYEMU_PROFILE=m2 reproduces sessions 5-8
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m5")   # s10: m5 adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
 PROFILES: dict[str, dict] = {
@@ -95,6 +121,7 @@ PROFILES: dict[str, dict] = {
     "m2": {"values": M2, "kick_mv": KICK},
     "m3": {"values": M3, "kick_mv": KICK},
     "m4": {"values": M4, "kick_mv": KICK},
+    "m5": {"values": M5, "kick_mv": KICK},
 }
 
 

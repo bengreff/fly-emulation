@@ -19,7 +19,7 @@ from flyemu.organism import Organism
 REPO = Path(__file__).resolve().parents[1]
 
 if __name__ == "__main__":
-    org = Organism(policy="minimal", profile=profiles.WORKING_PROFILE,
+    org = Organism(policy="minimal", profile="m4",
                    min_synapses=profiles.WORKING_MIN_SYNAPSES)
     inv = org.reg.inventory()
     cols = ["subsystem", "entity", "property", "units", "basis", "value", "instances"]
