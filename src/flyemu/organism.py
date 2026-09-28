@@ -89,6 +89,8 @@ class Organism:
             self.conn, params, self.timestep_ms,
             rng=np.random.default_rng(self.seed),
         )
+        from . import transducers
+        self.adapt = transducers.build(self.reg, self.conn, self.timestep_ms)
         # N12 identified electrical synapses (s10: wired into the organism; strength 0 = absent in m4)
         from . import electrical
         el = electrical.build(self.reg, self.conn)
@@ -223,6 +225,8 @@ class Organism:
                 drive = drive + self.vis.last()
         drive = drive + self.chem.drive(self.world, self.body.sim.mj_data.xpos)
         drive = drive + self.extra.drive(self.world, self.body, obs, self.timestep_ms)
+        if self.adapt is not None:      # N15 transducer adaptation (s10); None = static (m4)
+            drive = self.adapt.apply(drive)
         drive = drive if self.organs is None else drive + self.organs.drive(self, self.timestep_ms, drive)
         return drive
 
