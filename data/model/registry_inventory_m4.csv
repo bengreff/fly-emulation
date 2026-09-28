@@ -336,6 +336,13 @@ neuron_biophysics,class:vnc_local_23B,noise,mV/sqrt(ms),guessed,0.0,436
 neuron_biophysics,class:vnc_local_26X,noise,mV/sqrt(ms),guessed,0.0,16
 neuron_biophysics,class:vnc_local_27X,noise,mV/sqrt(ms),guessed,0.0,18
 neuron_biophysics,class:vnc_local_TBD,noise,mV/sqrt(ms),guessed,0.0,1003
+neuron_biophysics,cell_type:all,mglur_fraction,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,mglur_tau,ms,guessed,300.0,167111
+neuron_biophysics,cell_type:all,machr_fraction,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,machr_tau,ms,guessed,300.0,167111
+neuron_biophysics,cell_type:all,nmda_fraction,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,nmda_tau,ms,guessed,80.0,167111
+neuron_biophysics,cell_type:all,nmda_mg,mM,guessed,1.0,167111
 neuron_biophysics,cell_type:all,conductance_based,boolean,guessed,0.0,167111
 neuron_biophysics,cell_type:all,e_exc,mV,guessed,0.0,167111
 neuron_biophysics,cell_type:all,e_inh,mV,guessed,-70.0,167111

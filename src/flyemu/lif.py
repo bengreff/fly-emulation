@@ -90,6 +90,15 @@ class LIFParams:
     ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
     noise_class_mv: np.ndarray | None = None  # s10 N3: per-neuron extra noise (class grain); None = none
     tonic_class_mv: np.ndarray | None = None  # s10 N3: the class part of spont_mv (already included)
+    # s10 N7/N8: extra slow kinetic components per postsynaptic cell (fraction of the
+    # fast weight moved to a slow current with its own decay); 0 = neutral
+    mglur_fraction: float | np.ndarray = 0.0    # of glutamatergic input (metabotropic)
+    mglur_tau_ms: float = 300.0
+    machr_fraction: float | np.ndarray = 0.0    # of cholinergic input (muscarinic)
+    machr_tau_ms: float = 300.0
+    nmda_fraction: float | np.ndarray = 0.0     # of excitatory glutamatergic input, Mg-blocked
+    nmda_tau_ms: float = 80.0
+    nmda_mg_mM: float = 1.0
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -278,6 +287,25 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
               1.0, "declared default: every type receives the shared efficacy")
     # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
     rel, inp, spont, noise_class, tonic_class = _class_scales(reg, conn, rel, inp, spont)
+    # --- session 10: N7 metabotropic components and N8 NMDA-type excitation ----
+    mglur = per("mglur_fraction", "dimensionless", "share of glutamatergic input that is slow "
+                "(metabotropic)", 0.0, "neutral 0: DmGluRA is expressed centrally but per-type "
+                "shares are unmeasured")
+    mglur_tau = one("mglur_tau", "ms", "slow metabotropic glutamate current decay", 300.0,
+                    "guessed: GPCR currents last hundreds of ms")
+    machr = per("machr_fraction", "dimensionless", "share of cholinergic input that is slow "
+                "(muscarinic)", 0.0, "neutral 0: mAChR-A/B expressed in fly central neurons; "
+                "per-type shares unmeasured")
+    machr_tau = one("machr_tau", "ms", "slow muscarinic current decay", 300.0,
+                    "guessed: GPCR currents last hundreds of ms")
+    nmda = per("nmda_fraction", "dimensionless", "share of excitatory glutamatergic input carried "
+               "by NMDA-type receptors (voltage-dependent Mg block)", 0.0,
+               "neutral 0: Nmdar1/2 expressed in fly central neurons; per-type shares unmeasured")
+    nmda_tau = one("nmda_tau", "ms", "NMDA-type current decay", 80.0,
+                   "guessed: vertebrate NMDA decay 50-150 ms; fly unmeasured")
+    nmda_mg = one("nmda_mg", "mM", "extracellular Mg for the NMDA block", 1.0,
+                  "guessed: insect saline 4-20 mM Mg; block constants borrowed from vertebrate "
+                  "(Jahr & Stevens 1990)")
     cond = one("conductance_based", "boolean", "synapse model",
                0.0, "declared default: current-based synapses")
     e_exc = one("e_exc", "mV", "excitatory reversal (conductance mode)",
@@ -382,6 +410,9 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
         ring_class_norm=bool(ring_norm), noise_class_mv=noise_class,
         tonic_class_mv=tonic_class,
+        mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
+        machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
+        nmda_mg_mM=float(nmda_mg),
     )
 
 
@@ -429,6 +460,7 @@ class Network:
         self.w = (self.conn.sign[pre] * self.conn.efficacy_mv * self.conn.weight_syn
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
+        self._slow_channels(pre)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
         self._edge_scales(pre)
@@ -481,6 +513,10 @@ class Network:
         """Remove all output of these neurons, as Shiu 2024 silences cells."""
         for i in np.asarray(idx):
             self.w[self.conn.indptr[i]:self.conn.indptr[i + 1]] = 0.0
+            for c in self.chan:
+                c["w"][self.conn.indptr[i]:self.conn.indptr[i + 1]] = 0.0
+            if self.w_slow is not None:   # s10 fix: silencing also removes slow GABA-B output
+                self.w_slow[self.conn.indptr[i]:self.conn.indptr[i + 1]] = 0.0
         if self.W_graded is not None:
             keep = ~np.isin(self.g_idx, idx)
             self.W_graded = (self.W_graded @ sp.diags(keep.astype(np.float32))).tocsr()
@@ -517,6 +553,15 @@ class Network:
             self.i_slow = self.i_slow * self.decay_slow + self.delay_slow[h]
             self.delay_slow[h].fill(0.0)
             drive = drive + self.i_slow
+        for c in self.chan:
+            h = self.delay_head
+            c["i"] = c["i"] * c["decay"] + c["buf"][h]
+            c["buf"][h].fill(0.0)
+            if c["vdep"]:
+                blk = 1.0 / (1.0 + p.nmda_mg_mM / 3.57 * np.exp(-0.062 * self.v))
+                drive = drive + c["i"] * blk.astype(np.float32)
+            else:
+                drive = drive + c["i"]
         if self.w_pi is not None:
             self.p_inh *= self.decay_s
         if self.kc_edge is not None:
@@ -641,6 +686,33 @@ class Network:
             self.is_dan = dan
             self.dan_decay = np.float32(np.exp(-dt / p.dan_tau_ms))
 
+    def _slow_channels(self, pre: np.ndarray) -> None:
+        """N7/N8 (s10): mGluR, mAChR and NMDA-type components. Each moves a
+        fraction (per postsynaptic cell) of a transmitter's spiking edges' fast
+        weight to its own slow current; NMDA is scaled by the Mg block
+        B(V) = 1 / (1 + [Mg]/3.57 exp(-0.062 V)). None active = bit-identical."""
+        p, n, dt = self.params, self.conn.n, self.timestep_ms
+        post = self.conn.indices
+        self.chan = []
+        spec = [("mglur", p.mglur_fraction, p.mglur_tau_ms, "glutamate", False),
+                ("machr", p.machr_fraction, p.machr_tau_ms, "acetylcholine", False),
+                ("nmda", p.nmda_fraction, p.nmda_tau_ms, "glutamate", True)]
+        if not any(np.any(_arr(f, n) > 0) for _, f, *_ in spec):
+            return
+        nt = self.conn.neurons.get("predictedNt", pd.Series([""] * n)).fillna("").str.lower().to_numpy()
+        for name, f, tau, trans, vdep in spec:
+            f = _arr(f, n)
+            if not np.any(f > 0):
+                continue
+            m = (nt[pre] == trans) & ~self.graded[pre]
+            if vdep:
+                m &= self.w > 0
+            ws = np.where(m, self.w * f[post], 0.0).astype(np.float32)
+            self.w = (self.w - ws).astype(np.float32)
+            self.chan.append(dict(name=name, w=ws, buf=np.zeros((self.D, n), np.float32),
+                                  i=np.zeros(n, np.float32), vdep=vdep,
+                                  decay=np.float32(np.exp(-dt / tau))))
+
     def _edge_scales(self, pre: np.ndarray) -> None:
         """Candidate-only edge-class scaling (session 8): $FLYEMU_EDGE_SCALES is a CSV of
         pre_type_regex, post_type_regex, scale, justification. Never used by default; like
@@ -708,6 +780,11 @@ class Network:
             np.add.at(self.delay_i, (slot[~ex], tgt[~ex]), -w[~ex])
         else:
             np.add.at(self.delay, (slot, tgt), w)
+        for c in self.chan:
+            wc = c["w"][sel]
+            if self._any_std:
+                wc = wc * np.repeat(self.x_res[spiked] / np.maximum(1.0 - self.std_u[spiked], 1e-6), counts)
+            np.add.at(c["buf"], (slot, tgt), wc)
         if self.w_slow is not None:
             ws = self.w_slow[sel]
             if self._any_std:

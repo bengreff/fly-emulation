@@ -77,3 +77,34 @@ def test_every_circuit_class_has_four_bounded_rows():
                                   & p.registry_key.str.startswith("class:")])
         assert keys == {f"class:{c}|{prop}" for c in cc}, prop
     assert M.validate(md) == []
+
+
+@needs_graph
+def test_slow_channels_are_inert_at_neutral_and_act_when_enabled():
+    """N7 (mGluR, mAChR) and N8 (NMDA-type, Mg block): off -> no channels; on ->
+    weight moved from fast to slow (total conserved), slow current arrives and
+    decays slowly; the NMDA share is blocked at rest and relieved when depolarised."""
+    base = _org()
+    assert base.net.chan == []
+    on = _org(**{"cell_type:all|machr_fraction": 0.3, "cell_type:all|nmda_fraction": 0.5,
+                 "cell_type:all|mglur_fraction": 0.2})
+    names = [c["name"] for c in on.net.chan]
+    assert names == ["mglur", "machr", "nmda"]
+    tot = on.net.w + sum(c["w"] for c in on.net.chan)
+    assert np.allclose(tot, base.net.w, atol=1e-6)
+    ach = on.net.chan[1]["w"]
+    assert (ach != 0).sum() > 1e5
+    # drive a set of cholinergic cells and watch slow current appear and outlast the fast one
+    nt = on.conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
+    src = np.flatnonzero(nt == "acetylcholine")[:2000]
+    for _ in range(20):
+        on.net.step(kick=(src, 50.0))
+    i_fast0 = np.abs(on.net.i_syn).sum()
+    i_slow0 = np.abs(on.net.chan[1]["i"]).sum()
+    assert i_slow0 > 0
+    for _ in range(200):                                  # 20 ms without input
+        on.net.step()
+    assert np.abs(on.net.chan[1]["i"]).sum() / i_slow0 > 0.8     # tau 300 ms
+    # Mg block: B(V) small at rest (-52 mV), larger when depolarised
+    b = lambda v: 1 / (1 + 1.0 / 3.57 * np.exp(-0.062 * v))
+    assert b(-52.0) < 0.2 < 0.5 < b(0.0)

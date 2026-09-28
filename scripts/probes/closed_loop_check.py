@@ -25,6 +25,7 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--template", action="store_true",
                     help="all construction-template body switches on (model_data.TEMPLATE_SWITCHES)")
+    ap.add_argument("--out", default="", help="also write the result (with per-class silent spikes) to this JSON")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     if a.template:
@@ -81,7 +82,14 @@ def main():
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,
     }
+    from flyemu.lif import circuit_classes
+    cls = circuit_classes(org.conn)
+    ns = (scnt * ~tonic)
+    out["silent_spikes_by_class"] = {c: int(ns[cls == c].sum()) for c in np.unique(cls[ns > 0])}
     print(json.dumps(out))
+    if a.out:
+        with open(a.out, "w") as f:
+            json.dump(out, f)
     if last.sum() > 0:
         import pandas as pd
         df = pd.DataFrame({"type": n.type.fillna("untyped"), "sc": n.superclass.fillna(""),

@@ -47,3 +47,19 @@ Result: **pass** on stability: seeds 0/1/2 all silent (0 spikes/ms), brain exclu
 4. **Adoption rule for the template body.** The body switches (`model_data.TEMPLATE_SWITCHES`) become the working default when the full template is silent after input removal on 3/3 seeds *and* sugar->MN9_L stays > 5 Hz over 10 trials. m4 is then frozen as the regression reference.
 5. **backhouse.** If it is unreachable, work Mac-only (≤ 3 heavy processes), as session 9 did.
 6. **Sharper fall test** (the paper's fall onset vs standing height, with active force decaying at ~100 ms): after item 1, as part of task 7.
+
+## Session 10 decisions (27 September 2026)
+
+**Budget and agents.** Ben: "Complete the brain-body model and start on GPU porting if you have time"; 5 h; 1-2 subagents. backhouse is reachable. Subagent 1 builds the batched GPU simulator (the first search item after construction), subagent 2 the task 5 remainder (coxa muscles with three-axis moment arms, fatigue). Both are general-purpose agents told not to launch agents; files are partitioned. This runs the body items in parallel with the brain items rather than after them (deviation from PLAN_NEXT's order, for throughput).
+
+**N3/N5 at class grain.** Per circuit class (70 classes from `classes.csv`): release scale, input scale (N5, bounds 0.1-20, prior lognormal(1, 0.5)), tonic drive (N3, -10 to 20 mV, prior normal(0, 2)) and extra noise (N3, 0-3 mV/sqrt(ms), stage 2). All guessed bounds. Neutral values are bit-identical to m4 (test). The class tonic drive counts as network activity in the closed-loop criterion (only per-type tonic cells, e.g. the slow MNs, are excluded), so a search cannot pass the silence criterion by relabelling activity as tonic.
+
+### Pre-registration: class-level search for a stable template brain (declared search, 27 Sep 2026 ~21:10, before reading the baseline diagnostics)
+Change: per-class N5 release/input scale and N3 tonic drive (rows n5c_rel_*, n5c_inp_*, n3c_drive_*), inside their bounds.
+Search space, fixed by rule now: the circuit classes that carry >= 5% of the silent-window spikes on any failing seed of the baseline template run (backhouse, seeds 0-2), plus the classes of the sugar->MN9 readout (MN9's circuit class) and stimulus (LB3b/c's). For each such class: release_scale, input_scale, tonic_drive. Bounds as in parameters.csv; no bound may be widened.
+Objective (a MAP-style constrained search): minimise the departure from the prior, sum over parameters of ((log x)/0.5)^2 for scales and (x/2)^2 for drives, subject to (i) 0 non-tonic spikes in the last 100 ms of the silent window on template seeds 0, 1, 2 and (ii) sugar->MN9_L > 5 Hz (100 Hz stimulus, 10 trials, mean). Violations are penalised: 10 x log1p(silent spikes/ms) per seed + 10 x max(0, 5.5 - MN9 Hz).
+Method: one-at-a-time screen (each parameter at 2 values toward quenching), then a small random/CMA search over the parameters the screen shows active, on backhouse CPU, <= 6 processes.
+Fit set: template seeds 0-2 closed loop; sugar->MN9_L 10 trials (both seen).
+Held out (unseen, run once on the best candidate): template seeds 3, 4, 5 closed loop (silent-window criterion); m4-body closed loop seeds 0-2 (regression criterion, 0 non-tonic spikes); bitter->MN9 at 100 Hz (must stay < 2 Hz: bitter alone should not drive MN9, Shiu 2024); water->MN9 > 0 Hz (drives MN9 in Shiu 2024).
+Adoption: if the best candidate meets the fit constraints and all held-out criteria, its class values become the template's brain values (`model_data.TEMPLATE_BRAIN`), and, with the body switches, the template becomes the working default per the session 9 adoption rule; m4 is frozen as the regression reference. A bound hit is reported as a finding. Otherwise the values are recorded in `data/params/hypotheses_not_adopted.csv`.
+Expectation: input scale of the DN or MN class below 1 quenches the loop; the risk is the MN9 pathway, which passes through DN-free gustatory/SEZ circuitry.
