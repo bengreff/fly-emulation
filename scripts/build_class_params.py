@@ -33,12 +33,20 @@ SPEC = {
     "noise": ("N3", "n3c_noise", "mV/sqrt(ms)", 0, 3, "guessed",
               "as the global row n14_noise: membrane noise of a few mV rms", "normal", 0, 0.5, 2,
               "neutral (m4): noiseless, as Shiu 2024"),
+    "threshold_offset": ("N2", "n2c_vth", "mV", -5, 15, "guessed",
+                         "spike threshold 5-25 mV above rest in insect central neurons (row "
+                         "n2_v_th); m4 gap is 7 mV, so -5 keeps a >= 2 mV gap", "normal", 0, 2, 1,
+                         "neutral (m4): the shared Shiu 2024 threshold"),
+    "tau_m_scale": ("N2", "n2c_taum", "dimensionless", 0.25, 2.5, "guessed",
+                    "tau_m 5-50 ms around the 20 ms default (measured 15.5-16.6 ms in slow MNs, "
+                    "F-AZ-2; central neurons ~10-30 ms)", "lognormal", 1, 0.4, 1,
+                    "neutral (m4): the shared 20 ms"),
 }
 
 
 def main():
     par = pd.read_csv(PAR, dtype=str, keep_default_na=False)
-    par = par[~par.param_id.str.match(r"^(n3c|n5c)_")]
+    par = par[~par.param_id.str.match(r"^(n2c|n3c|n5c)_")]
     cls = pd.read_csv(CLS, keep_default_na=False)
     cc = cls.groupby("circuit_class").n_cells.sum()
     rows = []

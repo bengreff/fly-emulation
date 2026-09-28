@@ -152,6 +152,8 @@ CLASS_PROPS = (  # (property, units, neutral, model use)
     ("input_scale", "dimensionless", 1.0, "N5: postsynaptic gain of every cell in the class"),
     ("tonic_drive", "mV", 0.0, "N3: tonic depolarisation (unmodelled background input) per class"),
     ("noise", "mV/sqrt(ms)", 0.0, "N3: class background noise, added in quadrature to the global noise"),
+    ("threshold_offset", "mV", 0.0, "N2: spike threshold shift of every cell in the class"),
+    ("tau_m_scale", "dimensionless", 1.0, "N2: membrane time constant scale of every cell in the class"),
 )
 
 
@@ -188,7 +190,7 @@ def _class_scales(reg: Registry, conn: Connectome, rel, inp, spont):
     spont = np.asarray(spont, np.float32) + vals["tonic_drive"]
     noise = vals["noise"] if vals["noise"].any() else None
     tonic = vals["tonic_drive"] if vals["tonic_drive"].any() else None
-    return rel, inp, spont, noise, tonic
+    return rel, inp, spont, noise, tonic, vals["threshold_offset"], vals["tau_m_scale"]
 
 
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
@@ -286,7 +288,9 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     inp = per("input_gain", "dimensionless", "postsynaptic input sensitivity",
               1.0, "declared default: every type receives the shared efficacy")
     # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
-    rel, inp, spont, noise_class, tonic_class = _class_scales(reg, conn, rel, inp, spont)
+    rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
+    v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
+    tau_m = (np.asarray(tau_m, np.float32) * tm_scale).astype(np.float32)
     # --- session 10: N7 metabotropic components and N8 NMDA-type excitation ----
     mglur = per("mglur_fraction", "dimensionless", "share of glutamatergic input that is slow "
                 "(metabotropic)", 0.0, "neutral 0: DmGluRA is expressed centrally but per-type "

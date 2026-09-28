@@ -29,7 +29,7 @@ def test_class_mechanisms_are_bit_identical_at_neutral(monkeypatch):
     from flyemu import lif
     a = _org()
     monkeypatch.setattr(lif, "_class_scales",
-                        lambda reg, conn, rel, inp, spont: (rel, inp, spont, None, None))
+                        lambda reg, conn, rel, inp, spont: (rel, inp, spont, None, None, 0.0, 1.0))
     b = _org()
     assert np.array_equal(a.net.w, b.net.w)
     assert np.array_equal(np.broadcast_to(a.net.spont, (a.conn.n,)),
@@ -66,13 +66,14 @@ def test_a_class_value_acts_on_that_class_only():
     assert nc is not None and np.all(nc[kc] == 1.0) and not nc[~kc].any()
 
 
-def test_every_circuit_class_has_four_bounded_rows():
+def test_every_circuit_class_has_its_bounded_rows():
     import pandas as pd
     from flyemu import model_data as M
     md = M.load()
     cc = set(pd.read_csv(REPO / "data/model/classes.csv", keep_default_na=False).circuit_class)
     p = md.parameters
-    for prop in ("release_scale", "input_scale", "tonic_drive", "noise"):
+    for prop in ("release_scale", "input_scale", "tonic_drive", "noise", "threshold_offset",
+                 "tau_m_scale"):
         keys = set(p.registry_key[p.registry_key.str.endswith(f"|{prop}")
                                   & p.registry_key.str.startswith("class:")])
         assert keys == {f"class:{c}|{prop}" for c in cc}, prop
