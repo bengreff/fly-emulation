@@ -592,7 +592,8 @@ electrical,electrical:DNp01->PSI,spike_coupling,mV,guessed,0.0,2
 electrical,electrical:JO-B1_a->DNp01,spike_coupling,mV,guessed,0.0,17
 electrical,electrical:JO-B1_c->DNp01,spike_coupling,mV,guessed,0.0,10
 electrical,electrical:VS->VS,spike_coupling,mV,guessed,0.0,18
-electrical,electrical:SNpp28->b1 MN,spike_coupling,mV,guessed,0.0,17
+electrical,electrical:SNpp25->b1 MN,spike_coupling,mV,guessed,0.0,7
+electrical,electrical:SNpp34->b1 MN,spike_coupling,mV,guessed,0.0,8
 neuromuscular,population:vnc_motor,count,neurons,measured,708,708
 neuromuscular,muscle:Acc. ti flexor,joint_and_sign,dimensionless,derived,rm_trochanterfemur-rm_tibia-pitch x -1,47
 neuromuscular,muscle:Acc. tr flexor,joint_and_sign,dimensionless,derived,rf_coxa-rf_trochanterfemur-pitch x -1,22
@@ -694,6 +695,8 @@ sensory_transduction,sense:mechano_extra,gain,mV,guessed,8.0,1
 sensory_transduction,sense:jo_gravity,gain,rad per g,guessed,0.3,1
 sensory_transduction,sense:jo_wind,gain,rad per mm/s,guessed,0.0001,1
 sensory_transduction,sense:cs_omega,gain,rad/s,guessed,50.0,1
+sensory_transduction,sense:cs_coriolis,gain,per rad/s,guessed,0.0,1
+sensory_transduction,sense:haltere_tilt,gain,deg,guessed,30.0,1
 sensory_transduction,sense:thermo,gain,mV per degC/s,guessed,5.0,1
 sensory_transduction,sense:jo_sound,gain,rad per mm/s,guessed,0.002,1
 sensory_transduction,sense:jo_ab_scale,gain,rad,guessed,0.001,1

@@ -201,7 +201,19 @@ class ExtraSenses:
                 ch = self.channels[name]
                 jl, jr = self.joint_ids[name]
                 v = np.where(ch.side == 1, abs(jv[jr]), abs(jv[jl]))
-                put(ch, self.gain["mech"] * np.tanh(v / self.gain["cs_omega"]))
+                val = self.gain["mech"] * np.tanh(v / self.gain["cs_omega"])
+                if name == "haltere_cs" and self.gain["cs_coriolis"]:
+                    # N16/B13 (s10): Coriolis strain ~ body rotation x haltere velocity, a
+                    # separate signed component: it flips with the beat direction (so the
+                    # rotation is carried by the phase of the drive) and between sides
+                    w = d.qvel[3:6]                      # thorax angular velocity (body frame)
+                    b = np.radians(self.gain["haltere_tilt_deg"])
+                    w_eff = w[2] * np.cos(b) + w[0] * np.sin(b)
+                    vs = np.where(ch.side == 1, jv[jr], jv[jl])
+                    sgn = np.where(ch.side == 1, -1.0, 1.0)
+                    val = val + self.gain["mech"] * np.tanh(
+                        self.gain["cs_coriolis"] * sgn * w_eff * vs / self.gain["cs_omega"])
+                put(ch, val)
 
         # --- trunk proprioception ----------------------------------------------
         ja = obs["joint_angles"]
@@ -254,6 +266,10 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
         jo_gravity=g("jo_gravity", "rad per g", 0.3, "guessed a3 sag per unit gravity along the head axis"),
         jo_wind=g("jo_wind", "rad per mm/s", 1e-4, "guessed a3 deflection per unit wind"),
         cs_omega=g("cs_omega", "rad/s", 50.0, "guessed velocity scale of wing/haltere strain"),
+        cs_coriolis=g("cs_coriolis", "per rad/s", 0.0, "N16/B13 (s10): Coriolis strain per unit body "
+                      "rotation rate, relative to the beat strain; 0 = off (m4)"),
+        haltere_tilt_deg=g("haltere_tilt", "deg", 30.0, "guessed: haltere beat plane tilt mixing yaw "
+                           "and roll sensitivity (Nalbach 1993 lead)"),
         thermo=g("thermo", "mV per degC/s", 5.0, "guessed phasic temperature gain"),
         jo_sound=g("jo_sound", "rad per mm/s", 2e-3, "guessed a3 deflection per unit particle "
                    "velocity (B20; used only with the antenna oscillator)"),

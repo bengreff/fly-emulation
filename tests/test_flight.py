@@ -73,3 +73,40 @@ def test_steering_mns_change_their_wing_only():
     for s in range(2000):                         # 100 ms of 200 Hz b2_L firing
         fm.step(b2L if s % 100 == 0 else np.zeros(0, np.int64), np.zeros(org.body.n_actuators))
     assert fm.wing.mod[0, 0] > 1.0 and fm.wing.mod[1, 0] == 0.0     # left amplitude up only
+
+
+@needs_graph
+def test_haltere_coriolis_signal_is_linear_in_rotation_rate_and_side_antisymmetric():
+    """Battery item: 'haltere signal linear in body rotation rate' (B13/N16), read as a
+    phase-locked afferent would: the drive demodulated by the haltere stroke direction."""
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5, timestep_ms=0.05,
+                   overrides={"flight:wings|generator": 2.0, "joint:wing|range_by_function": 1.0,
+                              "sense:cs_coriolis|gain": 0.001})
+    ch = org.extra.channels["haltere_cs"]
+    jl, jr = org.extra.joint_ids["haltere_cs"]
+    d = org.body.sim.mj_data
+    for _ in range(600):                                  # beat up to speed
+        org.motor_step(np.zeros(0, np.int64))
+    # evaluate on identical body states: rewind is not available, so compare at the same
+    # states by computing all rates at each state
+    res = {}
+    for yaw in (0.0, 1.0, 2.0, -1.0):
+        res[yaw] = []
+    for _ in range(4):
+        for _k in range(23):
+            org.motor_step(np.zeros(0, np.int64))
+        obs = org.body.observe()
+        keep = d.qvel[3:6].copy()
+        jv = obs["joint_velocities"]
+        for yaw in res:
+            d.qvel[3:6] = [0.0, 0.0, yaw]
+            dr = org.extra.drive(org.world, org.body, obs, org.timestep_ms)[ch.rows]
+            res[yaw].append([dr[ch.side == 0].mean() * np.sign(jv[jl]),
+                             dr[ch.side == 1].mean() * np.sign(jv[jr])])
+        d.qvel[3:6] = keep
+    r = {k: np.array(v).mean(0) for k, v in res.items()}
+    e1, e2, em = r[1.0] - r[0.0], r[2.0] - r[0.0], r[-1.0] - r[0.0]
+    assert abs(e1[0]) > 1e-3 and np.sign(e1[0]) == -np.sign(e1[1])     # sides antisymmetric
+    assert np.allclose(e2, 2 * e1, rtol=0.2)                            # linear in rate
+    assert np.allclose(em, -e1, rtol=0.2)                               # odd in rate

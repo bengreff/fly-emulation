@@ -33,9 +33,10 @@ CURATED_PAIRS = [
     ("JO-B1_c", "DNp01", "as JO-B1_a (138 synapses)"),
     ("VS", "VS", "neighbouring VS lobula plate tangential cells are electrically coupled "
                  "(Haag & Borst 2004 Nat Neurosci; Cuntz et al. 2003; leads, not read)"),
-    ("SNpp28", "b1 MN", "haltere campaniform afferents -> b1 steering MN electrical synapse "
-                        "(Fayyazuddin & Dickinson 1996, Calliphora; lead); SNpp28 is b1 MN's "
-                        "largest sensory input (1120 synapses), identity as haltere afferent inferred"),
+    ("SNpp25", "b1 MN", "haltere campaniform afferents -> b1 steering MN electrical synapse "
+                        "(Fayyazuddin & Dickinson 1996, Calliphora; lead); SNpp25 is a haltere "
+                        "campaniform type (sensory census) with 191 synapses onto b1 MN"),
+    ("SNpp34", "b1 MN", "as SNpp25 (haltere campaniform, 185 synapses onto b1 MN)"),
 ]
 
 
