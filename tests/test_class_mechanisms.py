@@ -174,3 +174,22 @@ def test_curated_gap_junctions_wire_into_the_organism():
     t = on.conn.neurons.type.fillna("").to_numpy()
     assert set(t[pre]) == {"JO-B1_a", "VS"} and set(t[post]) == {"DNp01", "VS"}
     assert (pre != post).all() and set(np.unique(k)) == {2.0, 5.0}
+
+
+@needs_graph
+def test_ring_plasticity_and_glia_are_inert_by_default_and_act_when_set():
+    base = _org()
+    assert base.net.ring_e is None and base.net.glia_k is None
+    on = _org(**{"cell_type:all|ring_epg_plasticity_rate": 0.05, "cell_type:all|glia_k_gain": 2.0})
+    n = on.net
+    t = on.conn.neurons.type.fillna("")
+    er = np.flatnonzero(t.str.match(r"^ER\d").to_numpy())
+    epg = np.flatnonzero(t.isin(["EPG", "EPGt"]).to_numpy())
+    assert n.ring_e.size > 100
+    w0 = np.abs(n.w[n.ring_e]).sum()
+    for _ in range(100):
+        n.step(kick=(np.r_[er, epg], 50.0))
+    w1 = np.abs(n.w[n.ring_e])
+    assert w1.sum() < 0.95 * w0                                  # coactivity weakens ER->EPG
+    assert (w1 >= n.params.ring_floor * np.abs(n.ring_w0) - 1e-6).all()
+    assert n.glia_k.max() > 0                                    # activity loads the glial pool

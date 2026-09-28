@@ -92,6 +92,13 @@ class LIFParams:
     kc_elig_tau_ms: float = 1000.0 # KC eligibility trace decay
     kc_w_cap: float = 2.0          # potentiation ceiling, x baseline weight
     kc_recovery_tau_ms: float = 0.0  # N22: relaxation to baseline (0 = none)
+    # s10 N24: ER (ring neuron) -> EPG inhibitory plasticity; N27: lumped glial K+ buffer
+    ring_eta: float = 0.0           # depression per ER spike x EPG activity trace
+    ring_trace_tau_ms: float = 100.0
+    ring_recovery_tau_ms: float = 60000.0
+    ring_floor: float = 0.2         # weights never fall below this x baseline
+    glia_gain_mv: float = 0.0       # depolarisation per unit class K+ load
+    glia_tau_ms: float = 2000.0     # glial clearance
     dan_tau_ms: float = 500.0
     ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
     noise_class_mv: np.ndarray | None = None  # s10 N3: per-neuron extra noise (class grain); None = none
@@ -385,6 +392,16 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     kc_mem_h = one("kc_mbon_memory_tau_h", "h", "N22: relaxation time constant", 3.0,
                    "guessed within the n22_memory_tau bounds (aversive STM decays over hours)")
     kc_rec = float(kc_mem_h) * 3.6e6 if kc_forget else 0.0
+    ring_eta = one("ring_epg_plasticity_rate", "per ER spike per unit EPG trace",
+                   "N24: coactive ER->EPG inhibitory synapses weaken (visual map learning)", 0.0,
+                   "neutral 0: Fisher et al. 2019 Nature; Kim et al. 2019 Nature (leads, not read)")
+    ring_tt = one("ring_epg_trace_tau", "ms", "N24: EPG activity trace", 100.0, "guessed")
+    ring_rec = one("ring_epg_recovery_tau", "ms", "N24: relaxation to baseline", 60000.0, "guessed")
+    ring_floor = one("ring_epg_floor", "x baseline", "N24: minimum weight", 0.2, "guessed")
+    glia_g = one("glia_k_gain", "mV per unit load", "N27: depolarisation by extracellular K+ "
+                 "load per circuit class (lumped glia)", 0.0, "neutral 0: glial K+ buffering "
+                 "(lumped; no fly measurement read)")
+    glia_tau = one("glia_k_tau", "ms", "N27: glial K+ clearance", 2000.0, "guessed: seconds")
     dan_tau = one("dan_trace_tau", "ms", "dopamine trace decay per DAN", 500.0,
                   "guessed: seconds-scale coincidence window (Handler et al. 2019)")
     ring_norm = reg.require(
@@ -459,6 +476,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
         kc_ltd_timing=float(kc_ltd_t), kc_ltp_timing=float(kc_ltp_t), kc_elig_tau_ms=float(kc_elig),
         kc_w_cap=float(kc_cap), kc_recovery_tau_ms=float(kc_rec),
+        ring_eta=float(ring_eta), ring_trace_tau_ms=float(ring_tt), ring_recovery_tau_ms=float(ring_rec),
+        ring_floor=float(ring_floor), glia_gain_mv=float(glia_g), glia_tau_ms=float(glia_tau),
         ring_class_norm=bool(ring_norm), noise_class_mv=noise_class,
         tonic_class_mv=tonic_class,
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
@@ -512,6 +531,7 @@ class Network:
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
         self._slow_channels(pre)
+        self._s10_ring_glia(pre)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
         self._edge_scales(pre)
@@ -613,6 +633,14 @@ class Network:
                 drive = drive + c["i"] * blk.astype(np.float32)
             else:
                 drive = drive + c["i"]
+        if self.ring_e is not None:
+            self.epg_trace *= self.ring_decay
+            if int(round(self.t_ms / self.timestep_ms)) % 100 == 0:
+                k = 1.0 - np.exp(-100 * self.timestep_ms / p.ring_recovery_tau_ms)
+                self.w[self.ring_e] += ((self.ring_w0 - self.w[self.ring_e]) * k).astype(np.float32)
+        if self.glia_k is not None:
+            self.glia_k *= self.glia_decay
+            drive = drive + (p.glia_gain_mv * self.glia_k)[self.glia_idx]
         if self.w_pi is not None:
             self.p_inh *= self.decay_s
         if self.kc_edge is not None:
@@ -687,6 +715,8 @@ class Network:
                 if hit.any():
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
+            if self.ring_e is not None or self.glia_k is not None:
+                self._s10_spikes(spiked)
             if self.kc_edge is not None:
                 ds = spiked[self.is_dan[spiked]]
                 self.dan_trace[ds] += 1.0
@@ -762,6 +792,45 @@ class Network:
     def w0_of(self, e: np.ndarray) -> np.ndarray:
         """Baseline weight of KC->MBON edges `e` (global edge indices)."""
         return self.kc_w0[np.searchsorted(self.kc_e, e)]
+
+    def _s10_ring_glia(self, pre: np.ndarray) -> None:
+        """N24 ER->EPG plasticity and N27 lumped glia (s10); inert at defaults."""
+        p, n, dt = self.params, self.conn.n, self.timestep_ms
+        self.ring_e = None
+        self.glia_k = None
+        if p.ring_eta > 0:
+            t = self.conn.neurons.type.fillna("")
+            er = t.str.match(r"^ER\d").to_numpy()
+            epg = t.isin(["EPG", "EPGt"]).to_numpy()
+            post = self.conn.indices
+            self.ring_e = np.flatnonzero(er[pre] & epg[post] & (self.w != 0))
+            self.ring_pre, self.ring_post = pre[self.ring_e], post[self.ring_e]
+            self.ring_w0 = self.w[self.ring_e].copy()
+            self.is_er, self.is_epg = er, epg
+            self.epg_trace = np.zeros(n, np.float32)
+            self.ring_decay = np.float32(np.exp(-dt / p.ring_trace_tau_ms))
+        if p.glia_gain_mv > 0:
+            from pathlib import Path   # noqa: F401
+            cls = circuit_classes(self.conn)
+            _, self.glia_idx = np.unique(cls, return_inverse=True)
+            self.glia_n = np.bincount(self.glia_idx).astype(np.float32)
+            self.glia_k = np.zeros(len(self.glia_n), np.float32)
+            self.glia_decay = np.float32(np.exp(-dt / p.glia_tau_ms))
+
+    def _s10_spikes(self, spiked: np.ndarray) -> None:
+        p = self.params
+        if self.ring_e is not None:
+            self.epg_trace[spiked[self.is_epg[spiked]]] += 1.0
+            s_er = spiked[self.is_er[spiked]]
+            if s_er.size:
+                hit = np.isin(self.ring_pre, s_er)
+                if hit.any():
+                    e = self.ring_e[hit]
+                    f = np.clip(1.0 - p.ring_eta * self.epg_trace[self.ring_post[hit]], p.ring_floor, 1.0)
+                    self.w[e] = np.where(np.abs(self.w[e] * f) >= p.ring_floor * np.abs(self.ring_w0[hit]),
+                                         self.w[e] * f, p.ring_floor * self.ring_w0[hit]).astype(np.float32)
+        if self.glia_k is not None:
+            self.glia_k += np.bincount(self.glia_idx[spiked], minlength=len(self.glia_k)) / self.glia_n
 
     def _slow_channels(self, pre: np.ndarray) -> None:
         """N7/N8 (s10): mGluR, mAChR and NMDA-type components. Each moves a

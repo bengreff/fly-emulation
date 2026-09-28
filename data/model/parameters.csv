@@ -635,3 +635,9 @@ b11_tp_dev,B11,muscle,tp1 MN;tp2 MN -> wing dev,deg/Hz,flight:steer_tp_dev|gain,
 b15_ttm_peak_torque,B15,muscle,"TTM, middle legs",uN*mm,jump:ttm|peak_torque,10,400,guessed,take-off needs ~10x body weight of ground force per leg (~100 uN) over a ~1 mm lever; jump myofibril tension 19.8 +- 10.5 mN/mm2 (lead),unverified,lognormal,100,0.6,guessed,as bound,,,1,guessed,s10; read only with jump:ttm|model=1
 b15_ttm_tau_rise,B15,muscle,TTM twitch,ms,jump:ttm|tau_rise_ms,0.2,5,guessed,fast twitch; take-off within ~5 ms of GF spike (Card & Dickinson 2008 lead),unverified,lognormal,1,0.5,guessed,none,,,1,guessed,s10
 b15_ttm_tau_decay,B15,muscle,TTM twitch,ms,jump:ttm|tau_decay_ms,1,30,guessed,as rise,unverified,lognormal,5,0.5,guessed,none,,,1,guessed,s10
+n24_ring_eta,N24,class,ER->EPG,per ER spike per unit EPG trace,cell_type:all|ring_epg_plasticity_rate,0,0.5,guessed,per-event fraction of weight,unverified,uniform,,,guessed,0 in m4,,0,1,guessed,s10; Fisher 2019 / Kim 2019 (leads)
+n24_ring_trace_tau,N24,global,EPG activity trace,ms,cell_type:all|ring_epg_trace_tau,10,1000,guessed,coincidence window,unverified,lognormal,100,0.6,guessed,none,,100,2,guessed,
+n24_ring_recovery_tau,N24,global,ER->EPG,ms,cell_type:all|ring_epg_recovery_tau,1000,3600000,guessed,map persists minutes (lead),unverified,loguniform,,,guessed,none,,60000,2,guessed,
+n24_ring_floor,N24,global,ER->EPG,x baseline,cell_type:all|ring_epg_floor,0,1,physical_limit,fraction,unverified,uniform,,,guessed,none,,0.2,2,guessed,
+n27_glia_gain,N27,class,all neurons by circuit class,mV per unit load,cell_type:all|glia_k_gain,0,10,guessed,extracellular K+ rise of a few mM depolarises by a few mV,unverified,uniform,,,guessed,0 in m4,,0,1,guessed,s10 lumped glia
+n27_glia_k_tau,N27,global,glial K+ clearance,ms,cell_type:all|glia_k_tau,200,30000,guessed,seconds-scale K+ clearance,unverified,lognormal,2000,0.7,guessed,none,,2000,2,guessed,
