@@ -1,54 +1,52 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 27 September 2026, after session 9 (construction tasks 1–5; a ~2 h session set by Ben). The plan is `docs/CONSTRUCTION.md`; carried-over results are `docs/LESSONS.md`; session 9 results are in `docs/FINDINGS.md` and `docs/DECISIONS.md`; the log is `docs/SESSION9_LOG.md`.
+**Rewritten each session; do not append.** State as of 27 September 2026, after session 9 (a ~2 h session set by Ben, plus a 1 h extension with two literature subagents). The plan is `docs/CONSTRUCTION.md`; carried-over results are `docs/LESSONS.md`; session 9 results are in `docs/FINDINGS.md` and `docs/DECISIONS.md`; the log is `docs/SESSION9_LOG.md`.
 
 ## Where the project stands
 
 - **Direction** (unchanged): build the complete fly, with every unknown biologically bounded in one data model and the body validated with the brain dead. Then construct the brain by search.
 - **Construction tasks:**
   - done: 1 (data model), 2 (class taxonomy), 3 (dead-fly harness);
-  - partial: 4 (passive joints; built as switches, open items below), 5 (muscles; see below);
-  - started: 6 (adhesion load/shear gate as a switch; untested in behaviour);
+  - built as switches with open items: 4 (passive joints), 5 (muscles);
+  - started: 6 (adhesion gate);
   - not started: 7–14.
+- **Next session's order** (DECISIONS, end-of-session judgement calls): task 11's per-class background drive and synaptic strength first, then the body open items. See `docs/PLAN_NEXT.md`.
 - **Data model** (`data/model/`, `src/flyemu/model_data.py`):
   - 56 mechanisms (11 have, 24 partial, 21 absent);
-  - 126 numeric unknowns with bounds, basis, prior, label and release stage;
-  - 11,770 class rows;
-  - `scripts/blank_ledger.py` prints the construction state.
-  - Every registry key the m4 organism reads is owned by exactly one mechanism (tested live). `sample(seed, stage)` draws within bounds; stage 0 equals the current model.
-- **Dead fly** (`src/flyemu/deadfly.py`, `scripts/dead_fly.py`):
-  - current m4 body: collapses like a real fly (onset 19 ms) but pins its wings on a stop (spring reference outside the range);
-  - template body (measured leg springs, folded wings): passes everything except the pending leg rest posture.
-- **Template body switches.** All are 0 in m4, 1 for the template, and none adopted into the working default:
-  - `joint:leg|passive_stiffness_source` (B3, measured eLife 2025, F-PASSIVE-1);
-  - `joint:wing|spring_reference` (B14);
-  - `muscle:leg|model` (B4/B5: antagonist Hill pairs, class twitch kinetics, saturation, NMJ facilitation);
-  - `joint:leg|passive_stiffness_source=2` (coupled projected springs) and `joint:leg|spring_reference=1` (fitted rest angles), added in the extension hour.
-  - With the m4 brain, the template body is stable on seeds 0–2 (pre-registered, DECISIONS). The first reading of that test bypassed Hill mode (F-HARNESS-2) and was corrected. With the muscles really on, the brain excluding ORNs runs at 0.11–0.12 Hz, below the m4 range.
-- **Working model m4:** unchanged. Regressions this session (Mac): sugar→MN9_L 8.9 ± 5.9 Hz over 10 trials (identical to reference); closed loop seeds 0–2 give 0 spikes in the silent window, brain excluding ORNs 0.38/0.22/0.30 Hz. 85 tests pass.
+  - 128 numeric unknowns: 70 with a data basis (29 sources read), 58 guessed;
+  - 11,770 class rows.
+  - Every registry key the m4 organism reads is owned by exactly one mechanism (tested live). `sample(seed, stage)` draws within bounds; stage 0 equals m4. `scripts/blank_ledger.py` prints the construction state.
+  - The ledger's "legacy m4 outside bounds" line for front/hind protraction comes from the name-mapped stiffness rows. F-PASSIVE-2 shows that mapping is wrong for coxa joints, so treat that line as stale.
+- **Template body** = `model_data.TEMPLATE_SWITCHES` (all 0 in m4); use `closed_loop_check.py --template`:
+  - `joint:leg|passive_stiffness_source=2`: coupled projected leg springs, J^T K J (F-PASSIVE-2);
+  - `joint:leg|spring_reference=1`: rest angles fitted to the eLife weighted protocol (F-REST-2);
+  - `joint:wing|spring_reference=1`: folded wings (B14);
+  - `muscle:leg|model=1`: antagonist Hill pairs, class twitch kinetics, saturation; rotators mapped by action (`muscle:leg|rotator_map`, default 1 in Hill mode);
+  - `adhesion:leg|detachment=1`: load/shear gate (untested in behaviour).
+- **Dead fly:**
+  - m4 body: falls like a real fly (onset 19 ms), but the wings are pinned on a stop.
+  - Template body: passes every criterion (onset 11 ms; the posture criterion is weak, since m4 passes it too).
+- **Session 9 end baseline, `closed_loop_check.py --template` (Mac):** silent-window spikes/ms seed 0/1/2 = 0.0 / 45.37 / 3.12; brain excluding ORNs 0.103 / 0.197 / 0.135 Hz; final thorax 0.57 / 0.52 / 0.60 mm. Without the adhesion gate the failing seeds were 0 and 2, so the loop is marginal and seed-dependent.
+- **Brain with the template body:** unstable. Seeds 0 and 2 ignite the Mi18/DNge019/DNg12 loop (F-STAB-2). Uniform adaptation at 1 mV silences it but drops sugar→MN9 to 0.7 Hz (F-STAB-3). Adoption rule (DECISIONS): the template body becomes the default when it is silent on 3/3 seeds and sugar→MN9 > 5 Hz.
+- **Working model m4:** unchanged. Regressions (Mac): sugar→MN9_L 8.9 ± 5.9 Hz over 10 trials; closed loop seeds 0–2 silent, brain excluding ORNs 0.38/0.22/0.30 Hz. 94 tests pass.
 
-## What remains in tasks 4 and 5
+## Open items in tasks 4–6
 
-- **B3 is built as switches:** coupled projected stiffness (`joint:leg|passive_stiffness_source=2`) and fitted rest angles (`joint:leg|spring_reference=1`; F-PASSIVE-2, F-REST-2). The template dead fly passes every criterion. Remaining:
-  - the middle-leg fit presses the assumed coxa envelopes (fix joints.py coxa labels and ranges by function, F-COXA-1);
-  - the front coxa yaw/roll split is not unique;
-  - the gamma convention is unverified;
-  - leg damping is still the flybody default (FlyMimic uses c/k 0.05 s; no measurement found);
-  - the posture criterion needs a sharper test (e.g. the paper's free-standing fall heights and times).
-- **Template stability (F-STAB-2):** with every body switch on, seeds 0 and 2 ignite the known Mi18/DNge019/DNg12 loop. The brain needs its class-level mechanisms (task 11) before the full template is stable. Uniform adaptation at 1 mV silences the loop but kills sugar->MN9 (0.7 Hz; F-STAB-3), so a global knob is not the answer.
-  - The eLife Figure 3C medians are loaded equilibria (weights on the tarsi), not rest angles; see F-PASSIVE-1.
-  - Next: replicate the tethered, weighted protocol in the model and fit spring references to the measured equilibria. Their angle definitions (θ, φ, ψ, γ) are in the paper's methods (Eqs. 5–11); the full text is fetched via EuropePMC `PMC12324252/fullTextXML`.
-  - Damping is still the flybody default (guessed).
-- **B4.**
-  - Muscles without an MN: 20 of 84 under the legacy rule; 30 of 84 with the rotators mapped by action (`muscle:leg|rotator_map=1`, default in Hill mode; F-MUSCLE-2). Front/middle coxa yaw and ThC coxa pitch have no muscle. Either make them passive, or give coxa muscles moment arms on all three axes.
-  - The legacy coxa assignments are functional (calibrated foot action), which is sound. Only the two sternal rotators are placed by a rule with an assumed sign. The literature gives them swing/stance roles (anterior = forward, posterior = backward; agent-read), so re-map them by action in Hill mode. The orphan coxa-pitch directions (ThC foot up/down) have no named muscle; the DOF may be largely passive.
-  - Mid/hind muscle parameters are copies of the front leg (guessed); the tibia-tarsus pair is a placeholder.
-  - Next: resolve MN→muscle→DOF for the coxa and femur-roll pools from the FANC/MANC atlas.
-- **B5.**
-  - Twitch rise/decay per class are now inferred from Azevedo 2020 (read; F-TWITCH-1).
-  - Still guessed: fused rate (100 Hz), facilitation (0; bounded by the 1.6x two-spike ratio), fatigue (absent; force per spike saturates at ~10 spikes in fast/intermediate units).
-  - The decaying-activation dead-fly variant (τ ≈ 100 ms from a standing drive) needs a standing drive. The Hill model can now supply one: find activations that hold the neutral pose.
-- **Body physical battery (task 7):** not started.
+- **B3:**
+  - The middle-leg rest fit presses the assumed coxa envelopes; relabel joints.py coxa DOFs and ranges by function (F-COXA-1).
+  - The front coxa yaw/roll split is not unique.
+  - The gamma convention is unverified.
+  - Damping is the flybody default (FlyMimic c/k 0.05 s; no measurement found).
+- **B4:**
+  - 30 of 84 antagonist muscles have no MN (F-MUSCLE-2): front/middle coxa yaw and ThC coxa pitch. Next: coxa muscles with moment arms on all three axes.
+  - Middle/hind parameters are copies of the front leg (FlyMimic middle/hind MTUs are not public); the tibia-tarsus pair is a placeholder.
+- **B5:**
+  - Twitch kinetics are from Azevedo 2020 (read; F-TWITCH-1).
+  - Still guessed: fused rate 100 Hz, facilitation 0 (bounded by the 1.6x two-spike ratio).
+  - Fatigue is absent.
+  - The standing drive and the decaying-activation dead-fly variant are not done.
+- **B7:** gate thresholds guessed; stance shear/normal (~0.8) is near the peel ratio.
+- **For Ben (optional, outward-facing):** raw data would replace figure-digitised or missing values: the eLife per-trial equilibrium angles (Bhandawat lab) and FlyMimic's middle/hind MTUs (Özdil / Ramdya lab).
 
 ## Unverified foundations
 

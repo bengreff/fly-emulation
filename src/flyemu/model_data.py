@@ -33,6 +33,17 @@ import yaml
 
 MODEL = Path(__file__).resolve().parents[2] / "data" / "model"
 
+# The construction template's body configuration: every body switch built so
+# far, on. m4 keeps them all at 0 (legacy). One definition, used by probes
+# (`closed_loop_check.py --template`) so the set cannot be mistyped.
+TEMPLATE_SWITCHES = {
+    "joint:leg|passive_stiffness_source": 2.0,   # B3 coupled projected springs (F-PASSIVE-2)
+    "joint:leg|spring_reference": 1.0,           # B3 fitted rest angles (F-REST-2)
+    "joint:wing|spring_reference": 1.0,          # B14 folded wings
+    "muscle:leg|model": 1.0,                     # B4/B5 Hill pairs (rotators by action)
+    "adhesion:leg|detachment": 1.0,              # B7 load/shear gate
+}
+
 TIERS = {"A", "B", "C"}
 STATUSES = {"have", "partial", "absent"}
 BOUND_BASES = {"measured_this_class", "measured_related", "insect_wide",

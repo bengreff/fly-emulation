@@ -136,3 +136,9 @@ def test_classes_cover_the_modelled_graph_and_agree_with_the_model(md):
 def test_legacy_values_outside_bounds_are_reported_not_hidden(md):
     v = M.legacy_outside_bounds(md)
     assert any(x.startswith("b3_k_pro_retpro") for x in v)    # m4 1.0 vs measured 0.109
+
+
+def test_template_switches_are_real_owned_switches(md):
+    for k in M.TEMPLATE_SWITCHES:
+        owners = M.owners(md, k)
+        assert owners and all(src in ("structural", "switch") for src, *_ in owners), k

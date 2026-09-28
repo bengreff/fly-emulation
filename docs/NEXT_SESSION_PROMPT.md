@@ -8,14 +8,19 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 ## Your job
 
-Continue the **complete fly template**, the task list in `docs/CONSTRUCTION.md`. Session 9 finished tasks 1–3 and part of 4 and 5; `docs/PLAN_NEXT.md` says exactly what remains. Work in this order:
-1. finish task 4: B3 rest angles, by replicating the eLife weighted protocol in the model;
-2. finish task 5: MN map for the coxa and femur-roll pools, mid/hind muscles, fatigue, a Hill-mode readout for standing.py, a standing drive and the decaying-activation dead-fly variant;
-3. task 6 (adhesion);
-4. task 7 (dead fly with the template body and the leg battery);
-5. then onward.
+Continue the **complete fly template** (`docs/CONSTRUCTION.md`), in the order set in `docs/PLAN_NEXT.md`. Session 9 decided to change the task order (DECISIONS, "End-of-session judgement calls").
 
-Do not skip ahead or leave a task half-built. Mark a task done only when its tests pass; otherwise record exactly what remains.
+1. **First, the brain mechanisms the template body needs.** Per-class background drive (N3) and per-class synaptic strength (N5):
+   - data-model rows with bounds;
+   - neutral-equivalence tests (at prior = m4 exactly);
+   - switched on at their priors.
+
+   Then a pre-registered, bounded, class-level search whose target is the adoption rule: the full template (`scripts/probes/closed_loop_check.py --template`) silent after input removal on seeds 0–2, **and** sugar→MN9_L > 5 Hz (10 trials) under the same settings. Global adaptation is ruled out (F-STAB-3). If the rule passes, adopt the template body as the working default and freeze m4 as the regression reference.
+2. **Then the task 5 remainder:** coxa muscles with moment arms on all three axes, fatigue, a standing drive, and the decaying-activation dead-fly variant.
+3. **Then the task 4 remainder:** coxa labels and ranges by function, then the rest refit.
+4. **Then task 6** (test the adhesion gate), **task 7** (template dead fly, leg battery, fall-vs-height test), and onward.
+
+Mark a task done only when its tests pass; otherwise record exactly what remains.
 
 Read first, in this order:
 1. `CLAUDE.md`;
@@ -44,7 +49,7 @@ Read first, in this order:
 
 1. Run `date`; create `docs/SESSION10_LOG.md` with the start time. Use `date` for every timestamp.
 2. Run `uv run pytest tests -q`; it must pass.
-3. **backhouse** (`ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`; unreachable all of session 9):
+3. **backhouse** (`ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`; unreachable all of session 9; if still down, work Mac-only with ≤ 3 heavy processes):
    - if it is up, keep one `sleep infinity` keep-alive and kill it at the end;
    - run `scripts/sync_backhouse.sh`;
    - ≤ 8 model processes at once;
@@ -59,7 +64,7 @@ Read first, in this order:
   - sugar→MN9_L 8.9 ± 5.9 Hz (10 trials, m4);
   - closed loop seeds 0–2: 0 non-tonic spikes (CX ring types excluded).
 
-  Also run the template body (the three switches on) on seeds 0–2 and report any move.
+  Also run the template body (`closed_loop_check.py --template`, seeds 0–2) and report any move against the session 9 end baseline in HANDOFF.
 - Stop starting new work at 4h40m, then wrap up (WORKFLOW §2): tests, regression, ledger (construction state per tier), stop all processes, FINDINGS/DECISIONS entries, HANDOFF rewrite, session-11 prompt, commit and push.
 - End with a plain-language summary for Ben (an engineer, not a neuroscientist):
   - which tasks are done;

@@ -1,23 +1,28 @@
 # Plan: next work
 
-**Forward-looking only; rewritten each session.** The plan is the construction programme, `docs/CONSTRUCTION.md`. State after session 9 is in `docs/HANDOFF.md`.
+**Forward-looking only; rewritten each session.** The plan is the construction programme, `docs/CONSTRUCTION.md`. State after session 9 is in `docs/HANDOFF.md`. The order below deliberately pulls part of task 11 forward (DECISIONS, "End-of-session judgement calls").
 
-1. **Finish task 4 (B3).**
-   - Relabel the joints.py coxa DOFs and range envelopes by function (F-COXA-1), then redo the rest fit (`scripts/passive_rest_protocol.py --fit`) so the middle leg stops pressing envelopes.
+1. **Brain mechanisms needed for a stable template (task 11, first part).** The target is to make the full template (`closed_loop_check.py --template`) silent after input removal on 3/3 seeds, with sugar→MN9_L > 5 Hz (the adoption rule).
+   - **N3 per-class background drive:** rows per circuit class (`data/model/classes.csv`) with bounds, prior at 0 (neutral) or at a measured spontaneous rate where one exists.
+   - **N5 per-class synaptic strength:** release/postsynaptic gain per circuit class, bounds 0.1–10, prior 1 (neutral); include the ORN→uPN measured 10.9x as that class's prior.
+   - Each gets a neutral-equivalence test (all at prior = m4, exactly).
+   - Diagnose which classes carry the Mi18/DNge019/DNg12 loop (F-STAB-2); record which bounded class parameters could quench it without touching sugar→MN9. That is a declared, pre-registered search, not hand-tuning (WORKFLOW §4.3).
+   - Global adaptation is ruled out as the fix (F-STAB-3).
+2. **Task 5 remainder.**
+   - Coxa muscles with moment arms on all three coxa axes (FlyMimic-style vectors; F-MUSCLE-2, F-COXA-1), so no coxa direction is muscle-less.
+   - Fatigue for fast/intermediate units (force per spike saturates by ~10 spikes).
+   - A Hill-mode readout for `standing.py`.
+   - A standing drive from the Hill model, then the decaying-activation dead-fly variant (τ ≈ 100 ms).
+3. **Task 4 remainder.**
+   - Relabel the joints.py coxa DOFs and range envelopes by function (F-COXA-1), then redo the rest fit so the middle leg stops pressing envelopes.
    - Pin down the gamma convention.
    - Constrain leg damping.
-   - Add a sharper posture test: the paper's free-standing fall heights and times.
-2. **Finish task 5 (B4/B5).**
-   - Resolve the MN→muscle→DOF map for the coxa and femur-roll pools, so no antagonist muscle is orphaned. The s9 literature read (FINDINGS F-COXA-1) says the coxa muscles act on coupled motions: define coxa muscles by their action on the paper's angles (via the Jacobian), not by joint name. FlyMimic mid/hind MTUs are not public; ask the authors or build them from anatomy.
-   - Mid/hind muscle parameters: FlyMimic anatomical MTUs, scaled and labelled.
-   - Fatigue for fast/intermediate units (force per spike saturates by ~10 spikes).
-   - Give `standing.py` a Hill-mode readout (it still reads legacy unit torques).
-   - Compute a standing drive from the Hill model and run the decaying-activation dead-fly variant (τ ≈ 100 ms) against the measured fall.
-3. **Task 6 (B7 adhesion):** the gate exists (`adhesion.py`, switch `adhesion:leg|detachment`). Constrain the peel ratio (stance shear/normal ~0.8 sits near the guess) and test it in stance and swing.
-4. **Task 7:** dead fly passes with the template body; body physical battery for the legs.
-5. Tasks 8–14 as listed in CONSTRUCTION.md: flight apparatus, jump, feeding/grooming/antenna, neural mechanisms, state and learning, `sample_fly` with acceptance tests, ledger report.
-
-Note F-STAB-2: the full template body ignites the Mi18/DNge019/DNg12 loop on 2 of 3 seeds. Task 11's class-level strengths, background drive and adaptation are needed for the template to be stable. Consider moving part of task 11 earlier if it blocks body work.
+4. **Task 6:** test the adhesion gate in stance and swing; constrain the peel ratio (stance shear/normal ~0.8 is near the guess).
+5. **Task 7:**
+   - dead fly and leg battery with the template body;
+   - the sharper fall test (fall onset vs standing height, eLife Fig 5/6);
+   - adopt the template body as the working default if the adoption rule passes.
+6. Tasks 8–14 as listed in CONSTRUCTION.md.
 
 Then the search: GPU simulator, target library, class-level search within bounds, gradient refinement, ensembles, held-out judgement, mechanism ablation.
 

@@ -23,8 +23,13 @@ def main():
     ap.add_argument("--silent-ms", type=float, default=300.0)
     ap.add_argument("--set", action="append", default=["motor_unit:all|force_per_spike=10"])
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--template", action="store_true",
+                    help="all construction-template body switches on (model_data.TEMPLATE_SWITCHES)")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
+    if a.template:
+        from flyemu.model_data import TEMPLATE_SWITCHES
+        ov = {**TEMPLATE_SWITCHES, **ov}
     org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     n = org.conn.neurons
     t = n.type.fillna("").to_numpy()
