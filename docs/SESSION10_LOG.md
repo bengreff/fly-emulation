@@ -29,3 +29,5 @@ Stop new work at ~01:17; wrap up by 01:37.
 - 23:32 GPU k=1 exact closed loop, B=12, 12 workers: 20 s wall per member-sim-s (3.5x CPU); k=10: 10 s (7x). (Run used a short 100 ms silent window: throughput only.) Launched m6 latency check seeds 6-11 (s10_lat2).
 - 23:33 step profile (Mac, m5): vision 3.77 ms/step avg (render every 100 steps), aff 0.75, motor 1.09, net 1.25, chem 0.24, extra 0.21, organs 0.07, observe 0.07 -> vision is the closed-loop bottleneck.
 - 23:35 m6 = m5 + latency adopted (seeds 0-11 silent).
+- 23:36 CORRECTION to the step profile: the 3.77 ms/step vision average was the one-off first render (1.8 s); steady state 13-20 ms per render (every 100 steps) = ~0.2 ms/step. Body side ~2.5 ms/step. The k=1 GPU loop at B=12 spends ~24 ms/step, so its cost is per-step overhead (a (B, n) drive transfer each step, dispatch, pipes): next step is sensory-rows-only transfer (ext_rows) and fewer round trips.
+- 23:36 Process-limit breach: the two B=12 GPU closed-loop runs used 12 body workers (limit 8 model processes on backhouse). No harm observed (load, memory fine); future runs <= 8 workers.

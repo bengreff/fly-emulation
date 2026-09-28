@@ -106,6 +106,7 @@ def main():
     ap.add_argument("--template", action="store_true")
     ap.add_argument("--out", default="")
     ap.add_argument("--workers", type=int, default=0, help="body worker processes (0 = in-process)")
+    ap.add_argument("--full-transfer", action="store_true", help="send the whole (B, n) drive each window")
     a = ap.parse_args()
     specs = json.loads(Path(a.members).read_text())      # [{"seed": s, "overrides": {...}}, ...]
     connectome.build = shared_build
@@ -199,6 +200,16 @@ def run_parallel(a, orgs, mem, specs, t0):
     from flyemu.gpu.batched import BatchedNetwork
     bn = BatchedNetwork(orgs[0].net, B=B, member=mem)
     build_s = time.time() - t0
+    # only rows that sensing can drive cross the bus (sensory cells + internal-state
+    # populations); checked every window, full transfer as the fallback
+    nrn = orgs[0].conn.neurons
+    S = nrn.superclass.fillna("").str.contains("sensory").to_numpy()
+    for o in orgs:
+        if getattr(o, "organs", None) is not None:
+            for r in o.organs.rows.values():
+                S[np.asarray(r, np.int64)] = True
+    S_idx = np.flatnonzero(S)
+    fallbacks = 0
     t1 = time.time()
     s = 0
     while s < steps + sil_steps:
@@ -208,10 +219,14 @@ def run_parallel(a, orgs, mem, specs, t0):
                 p.send(("sense", s))
             for p in pipes:
                 p.recv()
-            e = ext.copy()
+            if a.full_transfer or np.any(ext[:, ~S]):
+                fallbacks += 1
+                out = bn.run(k, external_mv=ext.copy(), record="packed")
+            else:
+                out = bn.run(k, external_mv=ext[:, S_idx].copy(), ext_rows=S_idx, record="packed")
         else:
-            e = np.zeros((B, n), np.float32)
-        out = bn.run(k, external_mv=e, record="packed")
+            out = bn.run(k, external_mv=np.zeros((B, S_idx.size), np.float32), ext_rows=S_idx,
+                         record="packed")
         ras[:k] = out["raster"]
         for p in pipes:
             p.send(("replay", s, k))
@@ -240,7 +255,8 @@ def run_parallel(a, orgs, mem, specs, t0):
                     "motor_hz": round(float(hz[mn].mean()), 2),
                     "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
                     "thorax_z_mm_final": round(tal[b]["z"][-1], 3), "mujoco_warnings": tal[b]["warn"]})
-    summary = {"B": B, "k": a.k, "workers": a.workers, "build_s": round(build_s), "run_s": round(run_s),
+    summary = {"B": B, "k": a.k, "workers": a.workers, "sensory_rows": int(S_idx.size),
+               "full_transfer_fallbacks": fallbacks, "build_s": round(build_s), "run_s": round(run_s),
                "wall_s_per_sim_s_per_member": round(run_s / ((a.ms + a.silent_ms) / 1000) / B, 2),
                "members": res}
     print(json.dumps(summary))
