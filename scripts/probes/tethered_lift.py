@@ -19,10 +19,13 @@ from flyemu import flight  # noqa: E402
 from flyemu.body import Body  # noqa: E402
 
 
-def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev=8.0, kinematic=False, bw=1500.0):
+def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev=8.0, kinematic=False, bw=1500.0,
+        kutta=None):
     b = Body(vision=False, timestep=dt_ms / 1000.0, spawn_height=5.0)
     m, d = b.sim.mj_model, b.sim.mj_data
     flight.apply_wing_ranges(b)
+    if kutta is not None:            # F-FLIGHT-2: membrane-only aero with this lift coefficient
+        flight.apply_aero(b, kutta)
     kin = flight.WingKinematics(f_hz=f, stroke_amp_deg=amp, rot_sign=rot_sign, rot_amp_deg=rot_amp,
                                 dev_amp_deg=dev)
     wb = flight.WingBeat(b, kin, bandwidth_hz=bw, ramp_ms=0.0)
@@ -62,5 +65,6 @@ if __name__ == "__main__":
     ap.add_argument("--rot-amp", type=float, default=45.0)
     ap.add_argument("--kinematic", action="store_true")
     ap.add_argument("--bw", type=float, default=1500.0)
+    ap.add_argument("--kutta", type=float, default=None, help="membrane-only aero with this Kutta coefficient")
     a = ap.parse_args()
-    print(json.dumps(run(a.dt_ms, a.beats, a.rot_sign, a.amp, rot_amp=a.rot_amp, kinematic=a.kinematic, bw=a.bw)))
+    print(json.dumps(run(a.dt_ms, a.beats, a.rot_sign, a.amp, rot_amp=a.rot_amp, kinematic=a.kinematic, bw=a.bw, kutta=a.kutta)))

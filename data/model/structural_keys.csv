@@ -76,3 +76,4 @@ state:organs|model,S1,switch,"0 no internal state (m4); 1 lumped organs S1-S4, A
 state:population_*|*,N20,data,"internal-state coupled populations by male-cns type, recorded when state:organs|model = 1"
 jump:ttm|model,B15,switch,0 TTMn through the legacy capped actuator (m4); 1 fast uncapped TTM twitch (jump.py) (s10)
 state:crop|pump_gated,B17,switch,0 ingestion on contact alone; 1 scaled by cibarial pump MN activity (s10)
+aero:wing|membrane_only,B12,switch,0 fluid forces on membrane and vein meshes (legacy; doubles area); 1 membrane only with b12_kutta_lift (s10)

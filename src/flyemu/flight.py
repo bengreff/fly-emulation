@@ -239,3 +239,19 @@ class FlightMotor:
         if p.max() > 0:
             torque[self.haltere_act] = 0.0
         return torque
+
+
+def apply_aero(body, kutta: float) -> list[str]:
+    """B12 (F-FLIGHT-2): fluid forces on the wing membrane only (flybody's vein mesh
+    overlaps it and doubled the lifting area) with a Kutta lift coefficient
+    `kutta` (inferred: ~3.1 makes hover kinematics lift ~ body weight)."""
+    m = body.sim.mj_model
+    done = []
+    for g in list(getattr(body, "fluid_geoms", [])):
+        gi = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, g)
+        if g.endswith("_wing_brown"):
+            m.geom_fluid[gi][0] = 0.0
+        elif g.endswith("_wing_membrane"):
+            m.geom_fluid[gi][4] = kutta           # [enable, blunt, slender, angular, kutta, magnus]
+            done.append(g)
+    return done

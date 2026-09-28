@@ -110,3 +110,17 @@ def test_haltere_coriolis_signal_is_linear_in_rotation_rate_and_side_antisymmetr
     assert abs(e1[0]) > 1e-3 and np.sign(e1[0]) == -np.sign(e1[1])     # sides antisymmetric
     assert np.allclose(e2, 2 * e1, rtol=0.2)                            # linear in rate
     assert np.allclose(em, -e1, rtol=0.2)                               # odd in rate
+
+
+def test_membrane_only_aero_removes_the_overlapping_vein_mesh():
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    b = Body(vision=False)
+    m = b.sim.mj_model
+    gid = lambda n: mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, f"{b.fly.name}/{n}")  # noqa: E731
+    assert m.geom_fluid[gid("l_wing_brown")][0] == 1.0           # legacy: both meshes lift
+    done = flight.apply_aero(b, 3.1)
+    assert sorted(done) == [f"{b.fly.name}/l_wing_membrane", f"{b.fly.name}/r_wing_membrane"]
+    assert m.geom_fluid[gid("l_wing_brown")][0] == 0.0 and m.geom_fluid[gid("r_wing_brown")][0] == 0.0
+    assert m.geom_fluid[gid("l_wing_membrane")][4] == 3.1
