@@ -141,7 +141,7 @@ class Organism:
                 model_use="coxa muscles: 0 one antagonist pair per flybody coxa hinge (s9), 1 anatomical "
                           "FlyMimic coxa muscles with moment-arm vectors over all three hinges, MNs joined by type",
                 subsystem="muscle_mechanics", minimal=0,
-                minimal_note="s9 behaviour; 1 is an option (scripts/build_coxa_muscles.py, F-MUSCLE-3)"))
+                minimal_note="s9 behaviour; 1 is an option (scripts/build_coxa_muscles.py; s10)"))
             units_kw = {"fused_hz": float(fused)}
             fat = float(self.reg.require(
                 "motor_unit:leg", "fatigue_fraction", units="dimensionless",

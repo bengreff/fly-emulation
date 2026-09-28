@@ -25,12 +25,18 @@ def main():
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--template", action="store_true",
                     help="all construction-template body switches on (model_data.TEMPLATE_SWITCHES)")
+    ap.add_argument("--sample-fly", type=int, default=None, metavar="SEED",
+                    help="task 13: a complete template fly drawn by model_data.sample_fly(SEED, --stage)")
+    ap.add_argument("--stage", type=int, default=1)
     ap.add_argument("--out", default="", help="also write the result (with per-class silent spikes) to this JSON")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     if a.template:
         from flyemu.model_data import TEMPLATE_SWITCHES
         ov = {**TEMPLATE_SWITCHES, **ov}
+    if a.sample_fly is not None:
+        from flyemu import model_data as M
+        ov = {**M.sample_fly(M.load(), a.sample_fly, a.stage), **ov}
     org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
     n = org.conn.neurons
     t = n.type.fillna("").to_numpy()
@@ -49,7 +55,12 @@ def main():
         if s % 100 == 0:
             z.append(float(obs["body_positions"][0, 2]))
         if sp.size > 20000:
-            print(json.dumps({"runaway_at_ms": s * org.timestep_ms})); return
+            r = {"runaway_at_ms": s * org.timestep_ms, "overrides": ov}
+            print(json.dumps(r))
+            if a.out:
+                with open(a.out, "w") as f:
+                    json.dump(r, f)
+            return
     dur = (a.ms - 200) / 1000
     hz = cnt / dur
     silent = []
@@ -81,6 +92,9 @@ def main():
         "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,
+        "mujoco_warnings": int(sum(w.number for w in org.body.sim.mj_data.warning)),
+        "nan_state": bool(not np.isfinite(org.body.sim.mj_data.qpos).all()
+                          or not np.isfinite(org.net.v).all()),
     }
     from flyemu.lif import circuit_classes
     cls = circuit_classes(org.conn)

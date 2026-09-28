@@ -72,7 +72,7 @@ def collect(batch: str) -> list[dict]:
             res[i]["mn9"] = sum(vals) / len(vals) if vals else None
     running = "RUNNING" in out
     for i, r in enumerate(res):
-        r["silent"] = {s: v["silent_last100ms_spikes_per_ms"] for s, v in r["cl"].items()}
+        r["silent"] = {s: v.get("silent_last100ms_spikes_per_ms", 1e3) for s, v in r["cl"].items()}
         r["J"] = objective(r)
     (REPO / "runs" / batch / "results.json").write_text(json.dumps(res, indent=1))
     print(f"{batch}: running={running}")

@@ -266,6 +266,27 @@ def registry_overrides(md: ModelData, values: pd.Series) -> dict[str, float]:
             if p.at[i, "registry_key"] and "*" not in p.at[i, "registry_key"]}
 
 
+# joint constraints between parameters that the per-row bounds cannot express
+# (s10): a threshold must lie above rest, the reset at or below threshold
+JOINT_CONSTRAINTS = (
+    ("n2_v_th", "n2_v_rest", 2.0),        # v_th - v_rest >= 2 mV
+    ("n2_v_th", "n2_v_reset", 0.5),       # v_th - v_reset >= 0.5 mV
+)
+
+
+def sample_fly(md: ModelData, seed: int, stage: int = 1, max_tries: int = 1000) -> dict[str, float]:
+    """Task 13: one complete template fly. The template body switches plus every
+    released parameter drawn from its prior inside its bounds (rejection on the
+    joint constraints), as registry overrides. stage 0 = the template body with
+    the m4 brain."""
+    ids = set(md.parameters.param_id)
+    for k in range(max_tries):
+        v = sample(md, seed * 100_003 + k if k else seed, stage)
+        if all(a not in ids or b not in ids or v[a] - v[b] >= gap for a, b, gap in JOINT_CONSTRAINTS):
+            return {**TEMPLATE_SWITCHES, **registry_overrides(md, v)}
+    raise RuntimeError(f"seed {seed}: no draw satisfies the joint constraints")
+
+
 # --- ledger --------------------------------------------------------------------
 
 def construction_state(md: ModelData) -> dict:
