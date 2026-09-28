@@ -54,7 +54,11 @@ def main():
     silent = []
     # cells with intrinsic tonic drive (e.g. slow MNs at their measured rest rate)
     # fire without input by design; the criterion concerns the network
-    tonic = np.broadcast_to(np.asarray(org.net.params.spont_mv), (org.conn.n,)) > 0
+    # (per-type rows only: a class tonic drive (N3, s10) is part of the network under test)
+    spont = np.broadcast_to(np.asarray(org.net.params.spont_mv, np.float32), (org.conn.n,))
+    if org.net.params.tonic_class_mv is not None:
+        spont = spont - org.net.params.tonic_class_mv
+    tonic = spont > 0
     scnt = np.zeros(org.conn.n)
     for s in range(int(a.silent_ms / org.timestep_ms)):
         obs = org.body.observe()

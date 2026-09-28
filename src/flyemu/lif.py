@@ -88,6 +88,8 @@ class LIFParams:
     kc_mbon_eta: float = 0.0                   # DAN-gated KC->MBON depression rate
     dan_tau_ms: float = 500.0
     ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
+    noise_class_mv: np.ndarray | None = None  # s10 N3: per-neuron extra noise (class grain); None = none
+    tonic_class_mv: np.ndarray | None = None  # s10 N3: the class part of spont_mv (already included)
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -134,6 +136,50 @@ def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.n
                 instances=int(conn.neurons.superclass.fillna("").str.contains("sensory").sum()),
                 evidence="peripheral nerve lengths not in the connectome")
     return out
+
+
+CLASS_PROPS = (  # (property, units, neutral, model use)
+    ("release_scale", "dimensionless", 1.0, "N5: presynaptic release strength of every cell in the class"),
+    ("input_scale", "dimensionless", 1.0, "N5: postsynaptic gain of every cell in the class"),
+    ("tonic_drive", "mV", 0.0, "N3: tonic depolarisation (unmodelled background input) per class"),
+    ("noise", "mV/sqrt(ms)", 0.0, "N3: class background noise, added in quadrature to the global noise"),
+)
+
+
+def circuit_classes(conn: Connectome) -> np.ndarray:
+    """Per-neuron circuit class from data/model/classes.csv (untyped cells as
+    `untyped:<superclass>`, the key build_classes.py uses)."""
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[2] / "data" / "model" / "classes.csv"
+    c = pd.read_csv(path, keep_default_na=False).set_index("type").circuit_class
+    n = conn.neurons
+    key = np.where(n.type.notna(), n.type, "untyped:" + n.superclass.fillna("none"))
+    out = pd.Series(key).map(c)
+    return out.fillna("unassigned").to_numpy(str)
+
+
+def _class_scales(reg: Registry, conn: Connectome, rel, inp, spont):
+    """N3/N5 at class grain: one registry value per (circuit class, property),
+    owned by rows in data/model/parameters.csv. Neutral values (1, 1, 0, 0) leave
+    the per-type arrays bit-identical (x*1.0 and x+0.0 are exact in float32)."""
+    cls = circuit_classes(conn)
+    names, idx = np.unique(cls, return_inverse=True)
+    vals = {}
+    for prop, units, neutral, use in CLASS_PROPS:
+        v = np.array([reg.require(
+            f"class:{c}", prop, units=units, model_use=use, subsystem="neuron_biophysics",
+            instances=int((idx == k).sum()), minimal=neutral, conventional=neutral,
+            minimal_note=f"neutral ({neutral}): the class adds nothing to the per-type values",
+            uncertainty="class grain from data/model/classes.csv circuit_class; value is a "
+                        "search parameter bounded in data/model/parameters.csv")
+            for k, c in enumerate(names)], dtype=np.float32)
+        vals[prop] = v[idx]
+    rel = np.asarray(rel, np.float32) * vals["release_scale"]
+    inp = np.asarray(inp, np.float32) * vals["input_scale"]
+    spont = np.asarray(spont, np.float32) + vals["tonic_drive"]
+    noise = vals["noise"] if vals["noise"].any() else None
+    tonic = vals["tonic_drive"] if vals["tonic_drive"].any() else None
+    return rel, inp, spont, noise, tonic
 
 
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
@@ -230,6 +276,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
               1.0, "declared default: every type releases the shared efficacy")
     inp = per("input_gain", "dimensionless", "postsynaptic input sensitivity",
               1.0, "declared default: every type receives the shared efficacy")
+    # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
+    rel, inp, spont, noise_class, tonic_class = _class_scales(reg, conn, rel, inp, spont)
     cond = one("conductance_based", "boolean", "synapse model",
                0.0, "declared default: current-based synapses")
     e_exc = one("e_exc", "mV", "excitatory reversal (conductance mode)",
@@ -332,7 +380,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
         glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
-        ring_class_norm=bool(ring_norm),
+        ring_class_norm=bool(ring_norm), noise_class_mv=noise_class,
+        tonic_class_mv=tonic_class,
     )
 
 
@@ -493,6 +542,9 @@ class Network:
         if p.noise_mv:
             self.v += self.rng.normal(0.0, p.noise_mv * np.sqrt(self.timestep_ms), n
                                       ).astype(np.float32)
+        if p.noise_class_mv is not None:   # N3 class noise (s10); separate draw keeps m4 exact
+            self.v += (self.rng.standard_normal(n).astype(np.float32)
+                       * (p.noise_class_mv * np.float32(np.sqrt(self.timestep_ms))))
 
         free = self.t_ms >= self.ref_until
         self.v = np.where(free, self.v, self.v_reset)
