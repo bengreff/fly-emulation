@@ -560,6 +560,8 @@ neuron_biophysics,cell_type:all,ring_epg_recovery_tau,ms,guessed,60000.0,167111
 neuron_biophysics,cell_type:all,ring_epg_floor,x baseline,guessed,0.2,167111
 neuron_biophysics,cell_type:all,glia_k_gain,mV per unit load,guessed,0.0,167111
 neuron_biophysics,cell_type:all,glia_k_tau,ms,guessed,2000.0,167111
+neuron_biophysics,cell_type:all,apl_compartmental,dimensionless,guessed,0.0,167111
+neuron_biophysics,cell_type:all,apl_local_tau,ms,guessed,50.0,167111
 neuron_biophysics,cell_type:all,dan_trace_tau,ms,guessed,500.0,167111
 synaptic_efficacy,cell_type:cx_ring,class_input_normalisation,boolean,guessed,0.0,167111
 neuron_biophysics,cell_type:all,mod_sensitivity_dopamine,per unit level,guessed,0.0,167111

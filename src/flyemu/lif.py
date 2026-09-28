@@ -99,6 +99,8 @@ class LIFParams:
     ring_floor: float = 0.2         # weights never fall below this x baseline
     glia_gain_mv: float = 0.0       # depolarisation per unit class K+ load
     glia_tau_ms: float = 2000.0     # glial clearance
+    apl_local: float = 0.0          # N23: 0 point APL (m4) .. 1 fully compartmental
+    apl_local_tau_ms: float = 50.0
     dan_tau_ms: float = 500.0
     ring_class_norm: bool = False             # session 8: per-class input normalisation in the CX ring
     noise_class_mv: np.ndarray | None = None  # s10 N3: per-neuron extra noise (class grain); None = none
@@ -402,6 +404,11 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                  "load per circuit class (lumped glia)", 0.0, "neutral 0: glial K+ buffering "
                  "(lumped; no fly measurement read)")
     glia_tau = one("glia_k_tau", "ms", "N27: glial K+ clearance", 2000.0, "guessed: seconds")
+    apl_loc = one("apl_compartmental", "dimensionless", "N23: APL->KC inhibition follows the "
+                  "local (KC-subtype lobe) activity instead of whole-APL depolarisation", 0.0,
+                  "neutral 0 (point APL, m4); APL Ca2+ is compartmentalised (Amin et al. 2020 "
+                  "Neuron, lead); lobe = KC subtype (ab, g, a'b') is a proxy for locality")
+    apl_tau = one("apl_local_tau", "ms", "N23: local KC activity estimate", 50.0, "guessed")
     dan_tau = one("dan_trace_tau", "ms", "dopamine trace decay per DAN", 500.0,
                   "guessed: seconds-scale coincidence window (Handler et al. 2019)")
     ring_norm = reg.require(
@@ -478,6 +485,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         kc_w_cap=float(kc_cap), kc_recovery_tau_ms=float(kc_rec),
         ring_eta=float(ring_eta), ring_trace_tau_ms=float(ring_tt), ring_recovery_tau_ms=float(ring_rec),
         ring_floor=float(ring_floor), glia_gain_mv=float(glia_g), glia_tau_ms=float(glia_tau),
+        apl_local=float(apl_loc), apl_local_tau_ms=float(apl_tau),
         ring_class_norm=bool(ring_norm), noise_class_mv=noise_class,
         tonic_class_mv=tonic_class,
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
@@ -531,7 +539,6 @@ class Network:
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
         self._slow_channels(pre)
-        self._s10_ring_glia(pre)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
         self._edge_scales(pre)
@@ -577,6 +584,7 @@ class Network:
         self.mod_level = np.zeros(len(MODULATORS), np.float32)
         self.mod_decay = float(np.exp(-dt / p.mod_tau_ms))
         self._mod_active = bool(self.mod_sens.any())
+        self._s10_ring_glia(pre)          # after W_graded exists (N23 edits it)
 
     # --- one timestep --------------------------------------------------------
 
@@ -638,6 +646,12 @@ class Network:
             if int(round(self.t_ms / self.timestep_ms)) % 100 == 0:
                 k = 1.0 - np.exp(-100 * self.timestep_ms / p.ring_recovery_tau_ms)
                 self.w[self.ring_e] += ((self.ring_w0 - self.w[self.ring_e]) * k).astype(np.float32)
+        if self.apl_mask is not None:
+            self.kc_sub_rate *= self.apl_decay
+            if int(round(self.t_ms / self.timestep_ms)) % 10 == 0:
+                r = self.kc_sub_rate
+                f = (1 - p.apl_local) + p.apl_local * (r / r.mean() if r.mean() > 0 else np.ones(3))
+                self.W_graded.data[self.apl_mask] = (self.apl_base * f[self.apl_sub]).astype(np.float32)
         if self.glia_k is not None:
             self.glia_k *= self.glia_decay
             drive = drive + (p.glia_gain_mv * self.glia_k)[self.glia_idx]
@@ -715,7 +729,7 @@ class Network:
                 if hit.any():
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
-            if self.ring_e is not None or self.glia_k is not None:
+            if self.ring_e is not None or self.glia_k is not None or self.apl_mask is not None:
                 self._s10_spikes(spiked)
             if self.kc_edge is not None:
                 ds = spiked[self.is_dan[spiked]]
@@ -809,6 +823,23 @@ class Network:
             self.is_er, self.is_epg = er, epg
             self.epg_trace = np.zeros(n, np.float32)
             self.ring_decay = np.float32(np.exp(-dt / p.ring_trace_tau_ms))
+        self.apl_mask = None
+        if p.apl_local > 0 and self.W_graded is not None:
+            t = self.conn.neurons.type.fillna("")
+            apl_cols = np.flatnonzero(t.to_numpy()[self.g_idx] == "APL")
+            kc = (self.conn.neurons["class"].fillna("") == "Kenyon_Cell").to_numpy()
+            sub = t.str.extract(r"^(KCab|KCg|KCa'b')")[0].fillna("")
+            names = ["KCab", "KCg", "KCa'b'"]
+            self.kc_sub = np.array([names.index(x) if x in names else -1 for x in sub])
+            W = self.W_graded
+            rows = np.repeat(np.arange(W.shape[0]), np.diff(W.indptr))
+            m = np.isin(W.indices, apl_cols) & kc[rows] & (self.kc_sub[rows] >= 0)
+            self.apl_mask = np.flatnonzero(m)
+            self.apl_base = W.data[self.apl_mask].copy()
+            self.apl_sub = self.kc_sub[rows[self.apl_mask]]
+            self.kc_sub_n = np.maximum(np.bincount(self.kc_sub[self.kc_sub >= 0], minlength=3), 1)
+            self.kc_sub_rate = np.zeros(3)
+            self.apl_decay = float(np.exp(-dt / p.apl_local_tau_ms))
         if p.glia_gain_mv > 0:
             from pathlib import Path   # noqa: F401
             cls = circuit_classes(self.conn)
@@ -829,6 +860,9 @@ class Network:
                     f = np.clip(1.0 - p.ring_eta * self.epg_trace[self.ring_post[hit]], p.ring_floor, 1.0)
                     self.w[e] = np.where(np.abs(self.w[e] * f) >= p.ring_floor * np.abs(self.ring_w0[hit]),
                                          self.w[e] * f, p.ring_floor * self.ring_w0[hit]).astype(np.float32)
+        if self.apl_mask is not None:
+            k = self.kc_sub[spiked]
+            self.kc_sub_rate += np.bincount(k[k >= 0], minlength=3) / self.kc_sub_n
         if self.glia_k is not None:
             self.glia_k += np.bincount(self.glia_idx[spiked], minlength=len(self.glia_k)) / self.glia_n
 

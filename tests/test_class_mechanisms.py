@@ -193,3 +193,17 @@ def test_ring_plasticity_and_glia_are_inert_by_default_and_act_when_set():
     assert w1.sum() < 0.95 * w0                                  # coactivity weakens ER->EPG
     assert (w1 >= n.params.ring_floor * np.abs(n.ring_w0) - 1e-6).all()
     assert n.glia_k.max() > 0                                    # activity loads the glial pool
+
+
+@needs_graph
+def test_compartmental_apl_inhibits_the_active_lobe_more():
+    base = _org()
+    assert base.net.apl_mask is None
+    on = _org(**{"cell_type:all|apl_compartmental": 1.0})
+    n = on.net
+    assert n.apl_mask.size > 3000
+    g = np.flatnonzero(n.kc_sub == 1)[:800]               # drive gamma KCs only
+    for _ in range(100):
+        n.step(kick=(g, 50.0))
+    d = n.W_graded.data[n.apl_mask] / n.apl_base
+    assert d[n.apl_sub == 1].mean() > 1.5 and d[n.apl_sub == 0].mean() < 0.5
