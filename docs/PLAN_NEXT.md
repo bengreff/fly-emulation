@@ -1,29 +1,16 @@
 # Plan: next work
 
-**Forward-looking only; rewritten each session.** The plan is the construction programme, `docs/CONSTRUCTION.md`. State after session 9 is in `docs/HANDOFF.md`. The order below deliberately pulls part of task 11 forward (DECISIONS, "End-of-session judgement calls").
+**Forward-looking only; rewritten each session.** The plan is `docs/CONSTRUCTION.md`; the state after session 10 is in `docs/HANDOFF.md`.
 
-1. **Brain mechanisms needed for a stable template (task 11, first part).** The target is to make the full template (`closed_loop_check.py --template`) silent after input removal on 3/3 seeds, with sugar→MN9_L > 5 Hz (the adoption rule).
-   - **N3 per-class background drive:** rows per circuit class (`data/model/classes.csv`) with bounds, prior at 0 (neutral) or at a measured spontaneous rate where one exists.
-   - **N5 per-class synaptic strength:** release/postsynaptic gain per circuit class, bounds 0.1–10, prior 1 (neutral); include the ORN→uPN measured 10.9x as that class's prior.
-   - Each gets a neutral-equivalence test (all at prior = m4, exactly).
-   - Diagnose which classes carry the Mi18/DNge019/DNg12 loop (F-STAB-2); record which bounded class parameters could quench it without touching sugar→MN9. That is a declared, pre-registered search, not hand-tuning (WORKFLOW §4.3).
-   - Global adaptation is ruled out as the fix (F-STAB-3).
-2. **Task 5 remainder.**
-   - Coxa muscles with moment arms on all three coxa axes (FlyMimic-style vectors; F-MUSCLE-2, F-COXA-1), so no coxa direction is muscle-less.
-   - Fatigue for fast/intermediate units (force per spike saturates by ~10 spikes).
-   - A Hill-mode readout for `standing.py`.
-   - A standing drive from the Hill model, then the decaying-activation dead-fly variant (τ ≈ 100 ms).
-3. **Task 4 remainder.**
-   - Relabel the joints.py coxa DOFs and range envelopes by function (F-COXA-1), then redo the rest fit so the middle leg stops pressing envelopes.
-   - Pin down the gamma convention.
-   - Constrain leg damping.
-4. **Task 6:** test the adhesion gate in stance and swing; constrain the peel ratio (stance shear/normal ~0.8 is near the guess).
-5. **Task 7:**
-   - dead fly and leg battery with the template body;
-   - the sharper fall test (fall onset vs standing height, eLife Fig 5/6);
-   - adopt the template body as the working default if the adoption rule passes.
-6. Tasks 8–14 as listed in CONSTRUCTION.md.
+Every mechanism in the inventory now exists (0 absent), and the working model is m5 (the template body with two searched class values). The programme moves from construction to **search**, with the remaining construction items done where they block a target.
 
-Then the search: GPU simulator, target library, class-level search within bounds, gradient refinement, ensembles, held-out judgement, mechanism ablation.
+1. **Search engine v1 on the GPU (the priority).**
+   - Exact closed loop: `scripts/gpu_closed_loop.py --k 1` with worker bodies; measure throughput at B = 12-24 and make it the evaluator (k > 1 changes the dynamics, F-STAB-5).
+   - Target library v1, split by dataset, each target baseline-checked on m4/m5 before it is registered: stability (silence after input removal, seeds), sugar->MN9 and its dose response, bitter suppression, water->MN9 (currently 0 Hz in m4 and m5: a fit target, not a held-out one), PN/KC spontaneous rates (spent: dev only), Azevedo slow-MN rest rate (seen), flybench olfactory tasks (held out for AL changes).
+   - Pre-registered class-level CMA-ES over N5 release/input scales of all 70 classes (140 dims) plus N3 tonic drive, within bounds; brain-only targets on `gpu_assay.py`, closed-loop targets on the GPU loop. Report bound hits and margins.
+2. **Switch on the neutral mechanisms at their priors, one group at a time, re-testing m5 each time:** N15 latency (passes stability at prior centres, DECISIONS s10), N15 adaptation, N7/N8 slow components, N12 gap junctions, N21-N24 plasticity, N27 glia. Principle 2 says "mechanisms always on at their prior"; m5 still has them at neutral.
+3. **Body battery (task 7):** leg isometric force per unit class vs Azevedo 2020; leg resistance to imposed movement vs eLife stiffness; fall onset vs standing height with decaying activation (`deadfly.run(activation=..., activation_tau_ms=100)` needs a standing torque vector first); adhesion gate in stance and swing.
+4. **Flight:** fluid coefficients as fitted unknowns (Kutta 3.1 inferred); body pitch; free (untethered) hover attempt at 0.05 ms; b1 locking one spike per cycle (currently ~0.55 vector strength); wing campaniform proxy should read the stroke (yaw), not deviation.
+5. **Open items carried:** coxa DOF labels by function and the rest refit (F-COXA-1), mid/hind muscle parameters, B18 bristle map, N19 receptor maps live, peptide receptor tables, eLN->PN gap junctions (types unidentified).
 
-The session prompt is `docs/NEXT_SESSION_PROMPT.md`. Completed plans are in `docs/archive/`.
+The session prompt is `docs/NEXT_SESSION_PROMPT.md`.

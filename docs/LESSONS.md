@@ -64,3 +64,12 @@ The directly applicable scientific findings, extracted from the full records. Se
 - **MuJoCo resets a diverging state silently.** Check `d.warning` in every probe (F-HARNESS-1).
 - **Reconcile units against a physical consequence the paper states.** The eLife stiffness units were settled by the "70x too weak" claim, reproduced in our own body (F-PASSIVE-1).
 - **Read what a figure measures before using it.** eLife Fig 3C shows loaded equilibria, not rest angles. Azevedo's "not within 500 ms" concerns rate steps, not single twitches (F-TWITCH-1).
+
+## Added in session 10
+
+- **Check a held-out criterion on the base model before registering it.** Water->MN9 was 0 Hz in m4 already, so its failure said nothing about the candidate and cost a post-hoc attempt (F-STAB-4).
+- **Stability found by search can be narrow.** DN release 0.70 is silent on 12/12 seeds, 0.72 fails on all three fit seeds, and a 1 ms sample-and-hold of the senses breaks it on 5/12. Report margins, not only passes.
+- **Neutral values need exactness, not closeness.** Every new mechanism entered at a value where the network is bit-identical to m4 (x*1.0, x+0.0 in float32; separate RNG draws only when on). This made eleven brain mechanisms addable in one session without moving a regression.
+- **A GPU port is only trusted when it reproduces spike rasters exactly.** The batched simulator matched lif.py spike for spike on the whole CNS, and then the real search's 70 CPU scores to 0.1 Hz; that is what licenses using it.
+- **Look at the geometry the physics uses.** The wing had two fluid geoms (membrane and vein mesh), doubling lift (F-FLIGHT-2), and the wing joints were mislabelled (F-WING-1); both were found by printing the model, not by reading names.
+- **Placeholder rows collide with real ones.** Old unwired rows (N23, N27, S1-S4) had the ids and opposite conventions of the new ones; retire them explicitly (data/params/retired_placeholder_rows_s10.csv).

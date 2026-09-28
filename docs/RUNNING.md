@@ -1,6 +1,6 @@
 # Running
 
-Every command here runs the **working model** (profile m2, edges ≥ 5 synapses; `docs/MODEL.md`) unless it says otherwise. The procedure around these commands (pre-registration, splits, hygiene) is in `docs/WORKFLOW.md`.
+Every command here runs the **working model** (profile m5 since session 10, edges ≥ 5 synapses; `docs/MODEL.md`) unless it says otherwise. The regression reference is `FLYEMU_PROFILE=m4`. The procedure around these commands (pre-registration, splits, hygiene) is in `docs/WORKFLOW.md`.
 
 ## Setup (Mac)
 
@@ -27,11 +27,29 @@ uv run python scripts/replay_mujoco.py runs/organism-record-3000ms-mytag
 
 ## Regression checks (report every session)
 
-| Check | Command | Reference (session 6c) |
+| Check | Command | Reference (session 10, backhouse) |
 |---|---|---|
-| Sugar → MN9_L | `uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100,200 --shuffles 0` | 26.5 / 88 Hz |
-| Stability | `uv run python scripts/probes/closed_loop_check.py --seed N` for N = 0, 1, 2 | 0 non-tonic spikes after silencing; brain 0.3–0.4 Hz |
-| Tests | `uv run pytest tests -q` | all pass |
+| Sugar → MN9_L (m4) | `FLYEMU_PROFILE=m4 uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 --trials 10` | 8.9 ± 5.9 Hz (> 5 required) |
+| Stability (m4) | `FLYEMU_PROFILE=m4 uv run python scripts/probes/closed_loop_check.py --seed N`, N = 0, 1, 2 | 0 non-tonic spikes after silencing; brain excl. ORNs 0.35/0.22/0.30 Hz |
+| Stability (m5, working) | `uv run python scripts/probes/closed_loop_check.py --seed N`, N = 0-11 | 0 spikes after silencing on 12/12 seeds; brain excl. ORNs ~0.09-0.15 Hz |
+| Sugar → MN9_L (m5) | `uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 --trials 10` | 7.3 Hz |
+| Tests | `uv run pytest tests -q` | all pass (~8 min) |
+
+Before session 10 the default profile was m4; `closed_loop_check.py --template` adds the template switches to whatever profile runs.
+
+## GPU (backhouse, session 10)
+
+```bash
+# brain-only, many parameter sets at once (exactly the CPU assay's inputs)
+~/fly-emulation/.venv-gpu/bin/python scripts/gpu_assay.py cands.json --assay sugar_mn9 --trials 10
+# closed loop: B organisms, brain on the GPU, bodies in worker processes; exchange every k steps
+~/fly-emulation/.venv-gpu/bin/python scripts/gpu_closed_loop.py members.json --k 1 --workers 12
+~/fly-emulation/.venv-gpu/bin/python scripts/gpu_bench.py equiv --ms 500 --stim broad
+```
+
+- `.venv-gpu` has JAX + CUDA 12 and sees the main venv through `zz_main_venv.pth` (same numpy 2.5.3).
+- k > 1 holds the sensory drive for k steps: an approximation that changes the dynamics (F-STAB-5); k = 1 is exact.
+- The GPU is shared with another process (~2 GB, ~50% use); XLA prints out-of-memory retries when it preallocates, then continues.
 
 ## Assays and scoring
 

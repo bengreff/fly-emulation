@@ -183,26 +183,26 @@ The tasks are not divided into sessions. Work them in order, as far as possible;
 1. [done s9] **Data model skeleton:** `data/model/{mechanisms.yaml, classes.csv, parameters.csv}`, loaders, validation tests (every param has bounds, prior, label and mechanism; no orphan mechanisms), and ledger integration.
 2. [done s9] **Class taxonomy:** fetch hemilineage and any missing annotations (neuPrint token in `~/.config/flyemu/`); build `classes.csv` with labelled mode assignments; the evidence table for spiking vs graded.
 3. [done s9] **Dead-fly test harness,** before any body change: brain silenced, spawn standing, metrics above. Record the current body's failures as the baseline.
-4. [partial s9: leg rest angles remain] **B3 passive joints:** reconcile units; enter measured leg stiffness and rest angles with bounds; other joints get bounded guesses. The wings, abdomen and head become passive at rest (B14, B9, B8 at rest).
-5. [partial s9: see HANDOFF] **B4/B5 muscles:** import FlyMimic MTUs (front leg), anatomical mid/hind MTUs with scaled parameters (labelled), and antagonist pairs for every leg DOF not covered. Remap motor units to muscles (not signed torques). Twitch kinetics by unit class; saturation; NMJ facilitation. Keep the torque path as a comparison option.
-6. **B7 adhesion** with load/shear detachment.
-7. **Dead fly passes;** the body physical battery (legs) passes or failures are recorded.
-8. **Flight apparatus:**
+4. [partial s9; s10: wing envelopes by function (F-WING-1); coxa relabel and damping remain] **B3 passive joints:** reconcile units; enter measured leg stiffness and rest angles with bounds; other joints get bounded guesses. The wings, abdomen and head become passive at rest (B14, B9, B8 at rest).
+5. [s10: anatomical coxa muscles with 3-axis moment arms, fatigue; mid/hind parameters still copies; standing drive not done] **B4/B5 muscles:** import FlyMimic MTUs (front leg), anatomical mid/hind MTUs with scaled parameters (labelled), and antagonist pairs for every leg DOF not covered. Remap motor units to muscles (not signed torques). Twitch kinetics by unit class; saturation; NMJ facilitation. Keep the torque path as a comparison option.
+6. [partial: gate built s9, in m5; not yet tested in stance/swing] **B7 adhesion** with load/shear detachment.
+7. [s10: template dead fly passes every criterion; convergence passes; leg battery and fall-vs-height not done] **Dead fly passes;** the body physical battery (legs) passes or failures are recorded.
+8. [partial s10: generator, halteres, steering map, Coriolis, membrane aero with hover lift ~ weight (F-FLIGHT-1/2); free flight not attempted] **Flight apparatus:**
    - B10 WPG oscillator driven by power-muscle MNs (DLM/DVM);
    - B11 hinge map from steering MN activity (Melis code or a fitted phenomenological map, labelled);
    - B13 halteres with the Coriolis signal;
    - N16/N17 phase-locked sensing and steering-MN locking;
    - ≤ 0.05 ms flight step with a convergence test;
    - wingbeat and lift tests.
-9. **B15 jump muscle** with a raised force cap; GF→TTMn timing test.
-10. **B16/B17/S3 proboscis, pump, crop;** B18 bristle map; B20 antenna oscillator; B21/N15 transducer dynamics.
-11. **Neural mechanisms N1–N3, N5–N8, N12, N14:** per-class modes, intrinsics, background drive, strengths, receptor classes and NMDA, gap-junction site list. Each gets parameter rows with bounds and priors, is neutral-equivalence tested, and is **switched on at its prior**.
-12. **State and learning N19–N27, S1–S4:** neuromodulator receptor maps (transcripts where available, else priors); peptide release/receptor tables (extend `scripts/infer_receptors.py` to peptide receptors and channel genes); plasticity rules; decay; APL; CX plasticity; sleep homeostat; circadian oscillator; glia; metabolic organs.
-13. **`sample_fly(seed, stage)` and the template acceptance tests,** 10 seeds.
-14. **Ledger report:** the construction state per tier.
+9. [s10: TTM twitch uncapped; GF->TTMn timing test passes] **B15 jump muscle** with a raised force cap; GF→TTMn timing test.
+10. [partial s10: pump-gated ingestion, crop (organs), antenna oscillator, per-class adaptation and latency; bristle map not done] **B16/B17/S3 proboscis, pump, crop;** B18 bristle map; B20 antenna oscillator; B21/N15 transducer dynamics.
+11. [s10: all built, neutral-tested; class-level values in parameters.csv] **Neural mechanisms N1–N3, N5–N8, N12, N14:** per-class modes, intrinsics, background drive, strengths, receptor classes and NMDA, gap-junction site list. Each gets parameter rows with bounds and priors, is neutral-equivalence tested, and is **switched on at its prior**.
+12. [partial s10: every item built at a lumped level; receptor maps (N19) and peptide receptor tables still minimal] **State and learning N19–N27, S1–S4:** neuromodulator receptor maps (transcripts where available, else priors); peptide release/receptor tables (extend `scripts/infer_receptors.py` to peptide receptors and channel genes); plasticity rules; decay; APL; CX plasticity; sleep homeostat; circadian oscillator; glia; metabolic organs.
+13. [s10: sample_fly with joint constraints; 10-seed acceptance: no runaway/NaN/divergence on the seeds scored (F-SAMPLE-1)] **`sample_fly(seed, stage)` and the template acceptance tests,** 10 seeds.
+14. [s10: 0 absent mechanisms; per-tier report in blank_ledger.py] **Ledger report:** the construction state per tier.
 
 **Afterwards (search), in order:**
-- a batched GPU simulator (JAX + CUDA on backhouse; class-decomposed weights, delay buckets), equivalence-tested against `lif.py`;
+- [s10 done: exact spike equivalence, 30-90x per member; closed loop with worker bodies, k-step exchange] a batched GPU simulator (JAX + CUDA on backhouse; class-decomposed weights, delay buckets), equivalence-tested against `lif.py`;
 - target library v1, split by dataset;
 - a pre-registered class-level CMA-ES search within bounds;
 - CPU and body re-scoring of the best;

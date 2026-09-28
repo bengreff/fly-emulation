@@ -1,4 +1,4 @@
-# Session 10 prompt: continue building the complete fly (unattended, 5 hours maximum)
+# Session 11 prompt: from construction to search (unattended, 5 hours maximum)
 
 Paste everything below the line into a fresh Claude Code session in `/Users/ben/fly-emulation`.
 
@@ -8,67 +8,32 @@ You are continuing the fly-emulation project **unattended**. Ben will not answer
 
 ## Your job
 
-Continue the **complete fly template** (`docs/CONSTRUCTION.md`), in the order set in `docs/PLAN_NEXT.md`. Session 9 decided to change the task order (DECISIONS, "End-of-session judgement calls").
+Session 10 finished construction to the point where every mechanism exists (0 absent), adopted **m5** (the template body plus two searched class values) as the working model, and ported the brain to the GPU with exact equivalence. Session 11 builds the **search engine** and runs the first broad, pre-registered class-level search. Follow `docs/PLAN_NEXT.md`:
 
-1. **First, the brain mechanisms the template body needs.** Per-class background drive (N3) and per-class synaptic strength (N5):
-   - data-model rows with bounds;
-   - neutral-equivalence tests (at prior = m4 exactly);
-   - switched on at their priors.
+1. Make the exact GPU closed loop (`scripts/gpu_closed_loop.py --k 1 --workers N`) the evaluator; measure its throughput; keep k = 1 (k > 1 changes the dynamics, F-STAB-5).
+2. Target library v1: register each target only after checking it on m4 and m5 (session 10 lost a post-hoc attempt to an unchecked criterion, F-STAB-4). Split fit / dev / held out; the sealed register in HANDOFF applies.
+3. Pre-registered CMA-ES over class-level N5 (release, input) and N3 (tonic drive) within bounds; brain-only targets via `scripts/gpu_assay.py`. Report margins and bound hits.
+4. Then switch neutral mechanisms on at their priors one group at a time (N15 latency first: it already passed stability), re-testing m5.
+5. Body battery and flight items as time allows.
 
-   Then a pre-registered, bounded, class-level search whose target is the adoption rule: the full template (`scripts/probes/closed_loop_check.py --template`) silent after input removal on seeds 0–2, **and** sugar→MN9_L > 5 Hz (10 trials) under the same settings. Global adaptation is ruled out (F-STAB-3). If the rule passes, adopt the template body as the working default and freeze m4 as the regression reference.
-2. **Then the task 5 remainder:** coxa muscles with moment arms on all three axes, fatigue, a standing drive, and the decaying-activation dead-fly variant.
-3. **Then the task 4 remainder:** coxa labels and ranges by function, then the rest refit.
-4. **Then task 6** (test the adhesion gate), **task 7** (template dead fly, leg battery, fall-vs-height test), and onward.
-
-Mark a task done only when its tests pass; otherwise record exactly what remains.
-
-Read first, in this order:
-1. `CLAUDE.md`;
-2. `docs/HANDOFF.md`;
-3. `docs/CONSTRUCTION.md`;
-4. the session 9 sections of `docs/FINDINGS.md` and `docs/DECISIONS.md`;
-5. `docs/LESSONS.md`;
-6. `docs/WORKFLOW.md`;
-7. `docs/RUNNING.md`.
+Read first, in this order: `CLAUDE.md`; `docs/HANDOFF.md`; `docs/PLAN_NEXT.md`; the session 10 sections of `docs/FINDINGS.md` and `docs/DECISIONS.md`; `docs/LESSONS.md`; `docs/WORKFLOW.md`; `docs/RUNNING.md` (GPU section); `docs/GPU.md`.
 
 ## Principles that override convenience
 
-- **Complete before search; simulate more rather than less.** Mechanisms always on at their prior (in the template); parameters released gradually.
-- **Biological bounds on every row** of `data/model/parameters.csv`, with basis and source. Never set outside them, and never widen one to rescue a fit.
-- **Labels never upgrade.**
-  - Mark a bound `verified` only after reading its source.
-  - Figure values under different conditions (e.g. loaded equilibria) are not the quantity you want.
-- **Verification first:**
-  - every new probe steps the motor path through `Organism.motor_step()` and checks MuJoCo warnings;
-  - a run that reproduces a previous result to every digit after a change is a red flag (F-HARNESS-2);
-  - every mechanism gets a neutral-equivalence test and a test of what it claims.
-- **Every body change is measured against the dead-fly test** (`scripts/dead_fly.py`).
-- **Units:** mm, g, s, so torque is in µN·mm. The eLife stiffness is mN·m/° (F-PASSIVE-1); FlyMimic is in g, mm, s.
+- Biological bounds on every row of `data/model/parameters.csv`; never widen one to rescue a fit; a bound hit is a finding.
+- Labels never upgrade. Fitted values are inferred.
+- Pre-register before scoring; check every criterion on the base model first; at most two post-hoc repairs per target (the template-adoption target used one in session 10).
+- Verification first: new probes step `Organism.motor_step()` and check MuJoCo warnings; the GPU evaluator must reproduce CPU results exactly before its numbers are used.
+- Units: mm, g, s (torque µN·mm).
 
 ## Setup
 
-1. Run `date`; create `docs/SESSION10_LOG.md` with the start time. Use `date` for every timestamp.
-2. Run `uv run pytest tests -q`; it must pass.
-3. **backhouse** (`ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`; unreachable all of session 9; if still down, work Mac-only with ≤ 3 heavy processes):
-   - if it is up, keep one `sleep infinity` keep-alive and kill it at the end;
-   - run `scripts/sync_backhouse.sh`;
-   - ≤ 8 model processes at once;
-   - build job lists with `scripts/mkjobs.py`;
-   - leave the old PID 523 alone and report it.
-4. **Agents:** at most one at a time, of a type that cannot spawn agents, for bounded literature extraction. Spot-check what it returns.
+1. `date`; create `docs/SESSION11_LOG.md`.
+2. `uv run pytest tests -q` (~8 min) must pass.
+3. backhouse: `ssh -o ConnectTimeout=8 backhouse 'wsl -d Ubuntu -- echo ok'`; keep one `sleep infinity` keep-alive and kill it at the end; `scripts/sync_backhouse.sh`; ≤ 8 model processes (a GPU loop with W workers counts as W); leave PID 523 and the other GPU user alone.
+4. Agents: at most two at a time, types that cannot spawn agents, or general-purpose told not to; partition files.
 
 ## Guardrails
 
-- **Keep the legacy model runnable.** m4 and `FLYEMU_PROFILE=m2` must reproduce their regressions. New mechanisms enter as registry switches owned by the data model (`tests/test_model_data.py` enforces coverage).
-- **Regression checks** (Mac and backhouse differ in exact values):
-  - sugar→MN9_L 8.9 ± 5.9 Hz (10 trials, m4);
-  - closed loop seeds 0–2: 0 non-tonic spikes (CX ring types excluded).
-
-  Also run the template body (`closed_loop_check.py --template`, seeds 0–2) and report any move against the session 9 end baseline in HANDOFF.
-- Stop starting new work at 4h40m, then wrap up (WORKFLOW §2): tests, regression, ledger (construction state per tier), stop all processes, FINDINGS/DECISIONS entries, HANDOFF rewrite, session-11 prompt, commit and push.
-- End with a plain-language summary for Ben (an engineer, not a neuroscientist):
-  - which tasks are done;
-  - what the dead fly does compared with a real one;
-  - how many mechanisms are have/partial/absent;
-  - how many unknowns exist, with how many bounded by data;
-  - what remains.
+- Regression: `FLYEMU_PROFILE=m4` sugar->MN9_L 8.9 ± 5.9 Hz (10 trials) and closed loop seeds 0-2 silent; m5 closed loop seeds 0-2 silent and sugar->MN9_L 7.3 Hz.
+- Stop starting new work at 4 h 40 m, then wrap up (WORKFLOW §2), including a plain-language summary for Ben.

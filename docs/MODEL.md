@@ -5,7 +5,9 @@ What the simulator computes today, with the default of every mechanism. Values c
 **Names.**
 - **M2** is the model family: the equations below, implemented in `src/flyemu/lif.py`.
 - **m4** is the parameter profile in use (session 8), `src/flyemu/profiles.py`: m2 plus transmitter identity from `consensusNt`, efficacy 0.15675 mV (m3), and monoamines with no fast sign (M0). m2 and m3 are kept; `FLYEMU_PROFILE=m2` reproduces sessions 5–8.
-- The **working model** is family M2 with profile m4 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it.
+- **m5** (session 10) is the **working model**: m4 plus every walking-template body/state switch (`model_data.TEMPLATE_SWITCHES`: coupled measured leg springs, fitted rest angles, folded wings, Hill leg muscles with anatomical coxa muscles, adhesion gate, wing ranges by function, antenna oscillator, TTM jump, internal state organs with pump-gated ingestion) and two class values from the declared class-level search (`class:DN|release_scale` 0.70, `class:MN_other|input_scale` 1.30; DECISIONS s10). Adopted by the pre-registered rule after a held-out test (F-STAB-4).
+- **m4** is frozen as the regression reference: `FLYEMU_PROFILE=m4`.
+- The working model is family M2 with profile m5 and edges of ≥ 5 synapses (`profiles.WORKING_PROFILE`, `WORKING_MIN_SYNAPSES`). Scripts default to it. Every session-10 mechanism not in m5 (N1-N3 class values other than the two above, N7/N8, N12 strengths, N15 adaptation and latency, N21-N24, N27, flight generator, membrane-only aero) is present at its neutral value; `docs/FINDINGS.md` (session 10) lists them. The flight configuration is m5 + `flight:wings|generator` + `aero:wing|membrane_only` at a 0.05 ms step.
 - ("M2 Pro" in `docs/ENVIRONMENT.md` is the Mac, unrelated.)
 
 ## Loop
