@@ -1,0 +1,11 @@
+# B11 steering map (session 10): wing steering MN group -> per-wing kinematic change, deg per Hz of the group's mean firing rate (flight.FlightMotor).
+# Phenomenological stand-in for the Melis, Siwanowicz & Dickinson 2024 hinge model (not yet used). Coefficients GUESSED; signs from qualitative roles (leads, not read): b1/b2 increase stroke amplitude (b2 phasically in turns), i1/iii1/iii3 decrease amplitude and shift the stroke, hg muscles change wing rotation/deviation. Bounds in data/model/parameters.csv (b11_*).
+group,types,target,coef,basis,evidence
+b1_amp,b1 MN,amp,0.3,guessed,b1 firing correlates with larger stroke amplitude (Tu & Dickinson 1996 lead)
+b2_amp,b2 MN,amp,0.5,guessed,b2 recruited during turns to increase ipsilateral amplitude (Heide lead)
+b3_amp,b3 MN,amp,-0.2,guessed,b3 role uncertain (sign unknown)
+i1_amp,i1 MN,amp,-0.3,guessed,first axillary i1 reduces amplitude (lead)
+i2_mean,i2 MN,mean,0.2,guessed,i2 shifts stroke position (lead; sign unknown)
+iii_amp,iii1 MN;iii3 MN,amp,-0.4,guessed,third axillary muscles decrease amplitude / pull wing back (lead)
+hg_rot,hg1 MN;hg2 MN;hg3 MN;hg4 MN,rot,0.2,guessed,fourth axillary muscles change wing rotation (lead; sign unknown)
+tp_dev,tp1 MN;tp2 MN,dev,0.2,guessed,pleurosternal/tergopleural steering of deviation (lead; sign unknown)

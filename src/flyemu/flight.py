@@ -63,19 +63,23 @@ class WingKinematics:
     rot_sharp: float = 3.0         # rotation flip sharpness (guessed)
     rot_sign: float = 1.0          # set by the lift calibration (derived)
 
-    def targets(self, t_s: float, power: float = 1.0) -> tuple[np.ndarray, np.ndarray]:
-        """(q, qdot) targets in rad for (stroke, deviation, rotation) of one wing."""
+    def targets(self, t_s: float, power: float = 1.0, mod: np.ndarray | None = None
+                ) -> tuple[np.ndarray, np.ndarray]:
+        """(q, qdot) targets in rad for (stroke, deviation, rotation) of one wing.
+        mod (B11 steering, per wing): (d amplitude deg, d stroke mean deg,
+        d deviation mean deg, d rotation mean deg), added to the generator."""
         w = 2 * np.pi * self.f_hz
         ph = w * t_s
-        A = np.radians(self.stroke_amp_deg) * power
+        m = np.zeros(4) if mod is None else np.asarray(mod, float)
+        A = np.radians(max(self.stroke_amp_deg + m[0], 0.0)) * power
         D = np.radians(self.dev_amp_deg) * power
         R = np.radians(self.rot_amp_deg) * power * self.rot_sign
         k = self.rot_sharp
         s = np.sin(ph)
         # the mean pose also scales with the drive: drive 0 = folded wing (all 0)
-        q = np.array([np.radians(self.stroke_mean_deg) * power + A * np.cos(ph),
-                      np.radians(self.dev_mean_deg) * power + D * np.sin(2 * ph),
-                      np.radians(self.rot_mean_deg) * power + R * np.tanh(k * s) / np.tanh(k)])
+        q = np.array([np.radians(self.stroke_mean_deg + m[1]) * power + A * np.cos(ph),
+                      np.radians(self.dev_mean_deg + m[2]) * power + D * np.sin(2 * ph),
+                      np.radians(self.rot_mean_deg + m[3]) * power + R * np.tanh(k * s) / np.tanh(k)])
         qd = np.array([-A * w * s, 2 * D * w * np.cos(2 * ph),
                        R * k * w * np.cos(ph) / np.cosh(k * s) ** 2 / np.tanh(k)])
         return q, qd
@@ -102,6 +106,7 @@ class WingBeat:
         inertia = np.diag(M)[self.v_adr]
         wn = 2 * np.pi * bandwidth_hz
         self.kp, self.kd = inertia * wn ** 2, 2 * zeta * inertia * wn
+        self.mod = np.zeros((2, 4))     # B11 steering modifiers per wing
         self.power = np.zeros(2)        # commanded drive per wing
         self.level = np.zeros(2)        # applied drive: slews toward power over ramp_ms
         self.ramp = ramp_ms / 1000.0    # (unfolding and spin-up of the thoracic oscillator; guessed)
@@ -117,7 +122,7 @@ class WingBeat:
         else:
             q, qd = [], []
             for i in range(2):
-                a, b = self.kin.targets(self.t_s, float(self.level[i]))
+                a, b = self.kin.targets(self.t_s, float(self.level[i]), self.mod[i])
                 q.append(a); qd.append(b)
             q, qd = np.concatenate(q), np.concatenate(qd)
             self.torque = self.kp * (q - d.qpos[self.q_adr]) + self.kd * (qd - d.qvel[self.v_adr])
@@ -187,6 +192,24 @@ class FlightMotor:
         self.cells = [np.flatnonzero(pw & (side == k)) for k in (0, 1)]
         self.rate = np.zeros(2)
         self.force_on = force_on
+        # B11 steering map: male-cns steering MN groups -> per-wing kinematic change
+        # (deg per Hz of group mean rate), data/params/steering_map.csv
+        import pandas as pd
+        from pathlib import Path
+        tab = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "params" / "steering_map.csv",
+                          comment="#")
+        self.steer_cells, self.steer_coef = [], []
+        for r in tab.itertuples():
+            gain = float(reg.require(f"flight:steer_{r.group}", "gain", units="deg/Hz",
+                                     model_use=f"B11: {r.group} MN rate -> {r.target}",
+                                     subsystem="muscle_mechanics", minimal=float(r.coef),
+                                     minimal_note=f"guessed ({r.basis}): {r.evidence}"))
+            sel = np.isin(t, r.types.split(";"))
+            col = ["amp", "mean", "dev", "rot"].index(r.target)
+            for k in (0, 1):
+                self.steer_cells.append((k, col, np.flatnonzero(sel & (side == k))))
+                self.steer_coef.append(gain)
+        self.steer_rate = np.zeros(len(self.steer_cells))
         self.dt = timestep_ms
         self.wing = WingBeat(body, bandwidth_hz=3000.0)
         self.haltere = HaltereBeat(body, self.wing)
@@ -202,6 +225,12 @@ class FlightMotor:
             self.rate[k] = self.rate[k] * a + n / max(len(self.cells[k]), 1) * (1000.0 / self.tau)
         p = np.ones(2) if self.force_on else np.clip(self.rate / self.full_rate, 0.0, 1.0)
         self.wing.power[:] = p
+        mod = np.zeros((2, 4))
+        for j, ((k, col, cells), c) in enumerate(zip(self.steer_cells, self.steer_coef)):
+            n = np.isin(cells, spiked).sum() if (spiked.size and cells.size) else 0
+            self.steer_rate[j] = self.steer_rate[j] * a + n / max(cells.size, 1) * (1000.0 / self.tau)
+            mod[k, col] += c * self.steer_rate[j]
+        self.wing.mod[:] = mod
         torque = np.array(torque, dtype=np.float32, copy=True)
         p = np.maximum(p, self.wing.level)          # still beating while ramping down
         for k in (0, 1):

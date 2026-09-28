@@ -58,3 +58,18 @@ def test_generator_off_leaves_m4_untouched():
     names = [org.body.sim.mj_model.joint(j).name for j in range(org.body.sim.mj_model.njnt)]
     j = names.index(f"{org.body.fly.name}/c_thorax-l_wing-yaw")
     assert np.allclose(np.degrees(r[j]), (-15.0, 15.0))
+
+
+@needs_graph
+def test_steering_mns_change_their_wing_only():
+    from flyemu.organism import Organism
+    org = Organism(policy="minimal", profile="m4", min_synapses=5, timestep_ms=0.05,
+                   overrides={"flight:wings|generator": 2.0, "joint:wing|range_by_function": 1.0})
+    fm = org.flight
+    t = org.conn.neurons.type.fillna("").to_numpy()
+    inst = org.conn.neurons.instance.fillna("").to_numpy()
+    b2L = np.flatnonzero((t == "b2 MN") & np.char.endswith(inst.astype(str), "_L"))
+    assert b2L.size
+    for s in range(2000):                         # 100 ms of 200 Hz b2_L firing
+        fm.step(b2L if s % 100 == 0 else np.zeros(0, np.int64), np.zeros(org.body.n_actuators))
+    assert fm.wing.mod[0, 0] > 1.0 and fm.wing.mod[1, 0] == 0.0     # left amplitude up only
