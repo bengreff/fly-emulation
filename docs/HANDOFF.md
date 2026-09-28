@@ -7,13 +7,13 @@
 - **Direction** (unchanged): build the complete fly with every unknown bounded, validate the body with the brain dead, then construct the brain by search. Construction is now essentially complete at a first level; the next phase is the search.
 - **Mechanisms** (`data/model/mechanisms.yaml`): 56; **17 have, 39 partial, 0 absent** (session start 11 / 24 / 21). Tier A 13/15/0, B 3/9/0, C 1/15/0. "Partial" mostly means a lumped or guessed version exists.
 - **Unknowns** (`data/model/parameters.csv`): 655 rows; 79 bounds from data (29 sources read), 576 guessed; 593 wired to registry keys; released 14 / 502 / 139 at stages 0 / 1 / 2.
-- **Working model: m5** (`profiles.M5`, the default) = m4 + every walking-template body/state switch (`model_data.TEMPLATE_SWITCHES`) + `class:DN|release_scale` 0.70 + `class:MN_other|input_scale` 1.30. Adopted by the pre-registered rule after a held-out test (DECISIONS s10, F-STAB-4). **m4 is frozen as the regression reference** (`FLYEMU_PROFILE=m4`).
+- **Working model: m6** (`profiles.M6`, the default) = m5 + N15 sensory latency at its prior centres (adopted at the end, pre-registered; closed loop silent on seeds 0-11). **m5** = m4 + every walking-template body/state switch (`model_data.TEMPLATE_SWITCHES`) + `class:DN|release_scale` 0.70 + `class:MN_other|input_scale` 1.30. Adopted by the pre-registered rule after a held-out test (DECISIONS s10, F-STAB-4). **m4 is frozen as the regression reference** (`FLYEMU_PROFILE=m4`).
   - m5 closed loop: silent after input removal on seeds 0-11 (exact coupling); brain excl. ORNs ~0.09-0.15 Hz; sugar->MN9_L 7.3 Hz (100 Hz), 96.4 Hz (200 Hz); bitter suppresses it fully; water->MN9 0 Hz (as in m4).
   - Margin is narrow: DN release 0.72 fails; a 1 ms sample-and-hold of the senses breaks silence on 5/12 seeds (F-STAB-5); realistic pure latency does not (6/6 silent).
-  - Everything else built this session sits at its neutral value in m5 (see FINDINGS F-CONSTRUCT-1); principle 2 ("always on at prior") is not yet met for them.
+  - Everything else built this session (except latency, in m6) sits at its neutral value (see FINDINGS F-CONSTRUCT-1); principle 2 ("always on at prior") is not yet met for them.
 - **Template dead fly** (`scripts/dead_fly.py --template`): passes every criterion (collapse onset 11 ms, no joint at a limit, wings/head/abdomen at rest, energy decays). Timestep convergence passes (B23).
 - **Flight configuration** (not in m5): `flight:wings|generator` (needs 0.05 ms), `aero:wing|membrane_only` with Kutta lift 3.1 (inferred): tethered hover lift 0.99 of weight with exact kinematics, 0.89 with the PD-driven generator.
-- **GPU** (`src/flyemu/gpu/`, backhouse `.venv-gpu`): the batched brain reproduces `lif.Network` spike for spike on the whole CNS; 0.37-0.45 s wall per simulated second per member at B = 32-64 (CPU 11-39 s). `scripts/gpu_assay.py` runs brain-only assays for many parameter sets (810 trials in 6 min, equal to the CPU search values). `scripts/gpu_closed_loop.py` runs B organisms (brain on GPU, bodies in worker processes): equal to the CPU loop with the same k-step hold; B = 12, k = 10: 10 s wall per member-second (7x CPU). k = 1 throughput: see the log (run launched at the end).
+- **GPU** (`src/flyemu/gpu/`, backhouse `.venv-gpu`): the batched brain reproduces `lif.Network` spike for spike on the whole CNS; 0.37-0.45 s wall per simulated second per member at B = 32-64 (CPU 11-39 s). `scripts/gpu_assay.py` runs brain-only assays for many parameter sets (810 trials in 6 min, equal to the CPU search values). `scripts/gpu_closed_loop.py` runs B organisms (brain on GPU, bodies in worker processes): equal to the CPU loop with the same k-step hold; B = 12, k = 10: 10 s wall per member-second (7x CPU). k = 1 (exact): 20 s wall per member-second at B = 12 (3.5x CPU); bodies dominate.
 
 ## Regressions (backhouse, session 10 end)
 
@@ -66,7 +66,7 @@ No sealed data was opened. Used this session as held out (now spent for the m5 c
 
 ## Things that will bite you
 
-- **The default profile is now m5.** Regression commands need `FLYEMU_PROFILE=m4`. `standing.py` reads legacy per-unit torque states and fails under Hill mode: run it with m4. `scripts/model_keys.py` always dumps the m4 inventory.
+- **The default profile is now m6** (m5 + latency). Regression commands need `FLYEMU_PROFILE=m4`. `standing.py` reads legacy per-unit torque states and fails under Hill mode: run it with m4. `scripts/model_keys.py` always dumps the m4 inventory.
 - **Probes must step the motor path with `Organism.motor_step()`** and check `d.warning` (F-HARNESS-1/2).
 - **closed_loop_check's "tonic" exclusion** uses per-type spontaneous drive; a sampled global drive makes every cell tonic (F-SAMPLE-1). Class tonic drive is counted as network activity.
 - **GPU:** `.venv-gpu` sees the main venv through a `.pth`; XLA prints out-of-memory retries at start (shared GPU) and continues; runs are not bitwise reproducible in busy regimes; plasticity mechanisms (N21-N24, N27 glia, conductance, presynaptic inhibition) are refused, not ported; k > 1 in the closed loop is an approximation.

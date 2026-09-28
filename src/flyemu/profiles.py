@@ -107,11 +107,25 @@ M5 = {
     "class:MN_other|input_scale": (1.30, _I, "as class:DN|release_scale (paired value)"),
 }
 
+# m6 (session 10): m5 + N15 transduction latency at its prior centres (DECISIONS s10,
+# "switch N15 latency on"; closed loop silent on seeds 0-11). m5 is kept.
+_L = "N15 latency at the prior centre (guessed; leads not read); adopted s10 (DECISIONS)"
+M6 = {
+    **M5,
+    "transducer:photoreceptor|latency_ms": (12.0, _G, _L),
+    "transducer:ocellar_photoreceptor|latency_ms": (12.0, _G, _L),
+    "transducer:sensory_olfactory|latency_ms": (25.0, _G, _L),
+    "transducer:sensory_gustatory|latency_ms": (20.0, _G, _L),
+    "transducer:sensory_mechano|latency_ms": (1.0, _G, _L),
+    "transducer:sensory_proprioceptive|latency_ms": (1.0, _G, _L),
+    "transducer:sensory_other|latency_ms": (5.0, _G, _L),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m5")   # s10: m5 adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m6")   # s10: m5 then m6 (+ latency) adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -122,6 +136,7 @@ PROFILES: dict[str, dict] = {
     "m3": {"values": M3, "kick_mv": KICK},
     "m4": {"values": M4, "kick_mv": KICK},
     "m5": {"values": M5, "kick_mv": KICK},
+    "m6": {"values": M6, "kick_mv": KICK},
 }
 
 
