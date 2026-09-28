@@ -89,6 +89,11 @@ class Organism:
             self.conn, params, self.timestep_ms,
             rng=np.random.default_rng(self.seed),
         )
+        # N12 identified electrical synapses (s10: wired into the organism; strength 0 = absent in m4)
+        from . import electrical
+        el = electrical.build(self.reg, self.conn)
+        if len(el[0]):
+            self.net.elec = el
         self.nm = neuromuscular.build(
             self.reg, self.conn, self.body.actuator_names,
             fly_name=self.body.fly.name,
@@ -170,6 +175,10 @@ class Organism:
         self.chem = olfaction.build(self.reg, self.conn, self.body, params,
                                     timestep_ms=self.timestep_ms, seed=self.seed)
         self.extra = extrasenses.build(self.reg, self.conn, self.body)
+        # --- S1-S4, N20, N25, N26 internal state (task 12); state:organs|model 0 = off (m4) ---
+        from . import internal_state
+        self.organs = internal_state.build(self.reg, self.conn)
+        # --- end internal state ---
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness
         # rather than only the parts that happen to be wired.
@@ -214,6 +223,7 @@ class Organism:
                 drive = drive + self.vis.last()
         drive = drive + self.chem.drive(self.world, self.body.sim.mj_data.xpos)
         drive = drive + self.extra.drive(self.world, self.body, obs, self.timestep_ms)
+        drive = drive if self.organs is None else drive + self.organs.drive(self, self.timestep_ms, drive)
         return drive
 
     # --- running -------------------------------------------------------------

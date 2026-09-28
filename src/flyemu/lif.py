@@ -199,6 +199,29 @@ def _class_scales(reg: Registry, conn: Connectome, rel, inp, spont):
     return rel, inp, spont, noise, tonic, vals["threshold_offset"], vals["tau_m_scale"]
 
 
+def _class_modes(reg: Registry, conn: Connectome, graded: np.ndarray) -> np.ndarray:
+    """N1 (s10): the spiking/graded mode of classes whose mode is unknown
+    (classes.csv mode = unknown) is one Bernoulli unknown per group (mode_param
+    rows in parameters.csv). Registry key `mode:<param>|graded`: 0 spiking (m4), 1 graded.
+    Types with a measured/inferred mode row in cell_types.csv are not changed."""
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[2] / "data" / "model" / "classes.csv"
+    c = pd.read_csv(path, keep_default_na=False)
+    unk = c[c["mode"] == "unknown"]
+    n = conn.neurons
+    key = pd.Series(np.where(n.type.notna(), n.type, "untyped:" + n.superclass.fillna("none")))
+    out = np.asarray(graded, bool).copy()
+    for prm, grp in unk.groupby("mode_param"):
+        m = key.isin(set(grp.type)).to_numpy()
+        v = reg.require(f"mode:{prm}", "graded", units="boolean",
+                        model_use="N1: graded (1) or spiking (0) transmission for this class group",
+                        subsystem="neuron_biophysics", instances=int(m.sum()), minimal=0.0,
+                        minimal_note="spiking, as in m4; the mode is a Bernoulli unknown (parameters.csv)")
+        if v:
+            out[m] = True
+    return out
+
+
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
     """Shared defaults (registry-labelled) overwritten by per-type table rows."""
     n = conn.n
@@ -285,6 +308,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         std_u[leg], std_tau[leg] = 0.22, 893.0
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
+    graded = _class_modes(reg, conn, graded)
     rmax = one("graded_rmax", "Hz", "graded rate-equivalent at threshold", 100.0,
                "guessed: maps graded depolarisation to spike-equivalent transmission")
     spont = per("spontaneous_drive", "mV", "tonic drive (spontaneous activity)",

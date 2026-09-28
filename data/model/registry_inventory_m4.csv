@@ -51,6 +51,9 @@ neuron_biophysics,cell_type:all,graded,boolean,guessed,0.0,167111
 neuron_biophysics,cell_type:^R1-R6$|^R7|^R8,graded,boolean,measured,1.0,6091
 neuron_biophysics,cell_type:^L1$|^L2$|^L3$,graded,boolean,inferred,1.0,5327
 neuron_biophysics,cell_type:APL,graded,boolean,inferred,1.0,2
+neuron_biophysics,mode:n1_p_graded_al_ln,graded,boolean,guessed,0.0,1279
+neuron_biophysics,mode:n1_p_graded_optic_columnar,graded,boolean,guessed,0.0,72134
+neuron_biophysics,mode:n1_p_graded_vnc_local,graded,boolean,guessed,0.0,13128
 neuron_biophysics,cell_type:all,graded_rmax,Hz,guessed,100.0,167111
 neuron_biophysics,cell_type:all,spontaneous_drive,mV,guessed,0.0,167111
 neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,spontaneous_drive,mV,inferred,36.45,60
@@ -562,6 +565,12 @@ neuromodulation,neuromodulation:pools,releasing_cells,neurons,derived,dict(n=3),
 physiological_initialisation,state:all_neurons,initial_condition,mV,guessed,-52.0,167111
 identity,cell_type:all,type_grouping_policy,dimensionless,guessed,11752 distinct `type` labels used as-is; no collapsing,167111
 neuron_biophysics,cell_type:all,q10,dimensionless,inferred,2.0,167111
+electrical,electrical:DNp01->TTMn,spike_coupling,mV,guessed,0.0,2
+electrical,electrical:DNp01->PSI,spike_coupling,mV,guessed,0.0,2
+electrical,electrical:JO-B1_a->DNp01,spike_coupling,mV,guessed,0.0,17
+electrical,electrical:JO-B1_c->DNp01,spike_coupling,mV,guessed,0.0,10
+electrical,electrical:VS->VS,spike_coupling,mV,guessed,0.0,18
+electrical,electrical:SNpp28->b1 MN,spike_coupling,mV,guessed,0.0,17
 neuromuscular,population:vnc_motor,count,neurons,measured,708,708
 neuromuscular,muscle:Acc. ti flexor,joint_and_sign,dimensionless,derived,rm_trochanterfemur-rm_tibia-pitch x -1,47
 neuromuscular,muscle:Acc. tr flexor,joint_and_sign,dimensionless,derived,rf_coxa-rf_trochanterfemur-pitch x -1,22
@@ -680,6 +689,7 @@ sensory_transduction,sense:abdomen_proprio,transduction,dimensionless,guessed,ex
 sensory_transduction,sense:neck_proprio,transduction,dimensionless,guessed,extrasenses.py,3
 sensory_transduction,sense:thermo,transduction,dimensionless,inferred,extrasenses.py,40
 sensory_transduction,sense:unknown_modality,drive,mV,guessed,0.0,3228
+internal_state,state:organs,model,enum,guessed,0,1
 interface_efferent,interface:leg_motor,channel,dimensionless,guessed,partial,381
 interface_efferent,interface:wing_power_motor,channel,dimensionless,absent,,12
 interface_efferent,interface:wing_steering_motor,channel,dimensionless,absent,,67

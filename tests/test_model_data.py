@@ -54,8 +54,8 @@ def test_the_validator_catches_what_it_claims(md):
     assert any("n5_efficacy: unknown mechanism 'Z9'" in b for b in bad)
     assert any("N5: orphan mechanism" in b for b in bad) is False  # N5 still owns other rows
     m = md.mechanisms.copy()
-    m.loc[m.id == "S1", "absent_reason"] = None
-    assert any("S1: tier C absent without absent_reason" in b
+    m.loc[m.id == "N27", "absent_reason"] = None     # s10: S1 is partial now; N27 is still absent
+    assert any("N27: tier C absent without absent_reason" in b
                for b in M.validate(M.ModelData(m, md.parameters, md.structural)))
 
 

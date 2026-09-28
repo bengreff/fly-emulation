@@ -147,3 +147,30 @@ def test_kc_mbon_plasticity_is_timing_dependent_and_forgets():
         n3.step()
     r3b = n3.w[n3.kc_e] / np.where(n3.kc_w0 != 0, n3.kc_w0, 1)
     assert np.abs(r3b - 1).max() < np.abs(r3 - 1).max() * 0.1
+
+
+@needs_graph
+def test_unknown_mode_groups_switch_to_graded_only_when_set():
+    base = _org()
+    on = _org(**{"mode:n1_p_graded_al_ln|graded": 1.0})
+    import pandas as pd
+    c = pd.read_csv(REPO / "data/model/classes.csv", keep_default_na=False)
+    ln = set(c[c.mode_param == "n1_p_graded_al_ln"].type)
+    nn = on.conn.neurons
+    key = pd.Series(np.where(nn.type.notna(), nn.type, "untyped:" + nn.superclass.fillna("none")))
+    m = key.isin(ln).to_numpy()
+    assert m.sum() > 300
+    assert not base.net.graded[m].any() and on.net.graded[m].all()
+    assert np.array_equal(base.net.graded[~m], on.net.graded[~m])
+
+
+@needs_graph
+def test_curated_gap_junctions_wire_into_the_organism():
+    base = _org()
+    assert base.net.elec is None
+    on = _org(**{"electrical:JO-B1_a->DNp01|spike_coupling": 5.0,
+                 "electrical:VS->VS|spike_coupling": 2.0})
+    pre, post, k = on.net.elec
+    t = on.conn.neurons.type.fillna("").to_numpy()
+    assert set(t[pre]) == {"JO-B1_a", "VS"} and set(t[post]) == {"DNp01", "VS"}
+    assert (pre != post).all() and set(np.unique(k)) == {2.0, 5.0}

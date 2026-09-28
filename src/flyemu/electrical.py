@@ -24,7 +24,22 @@ GF_PAIRS = [
 ]
 
 
-def build(reg: Registry, conn, pairs=GF_PAIRS) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+# s10 N12 curated sites beyond the GF (strength 0 = absent, as for the GF pairs in m4).
+# Partner types from male-cns wiring (largest contacts); electrical evidence cited per pair.
+CURATED_PAIRS = [
+    ("JO-B1_a", "DNp01", "JO-B afferents -> giant fibre mixed synapses, shakB-dependent "
+                         "(Pezier et al. 2014 J Neurosci; Lehnert et al. 2013; leads, not read); "
+                         "JO-B1_a is DNp01's largest JO input (541 synapses, male-cns)"),
+    ("JO-B1_c", "DNp01", "as JO-B1_a (138 synapses)"),
+    ("VS", "VS", "neighbouring VS lobula plate tangential cells are electrically coupled "
+                 "(Haag & Borst 2004 Nat Neurosci; Cuntz et al. 2003; leads, not read)"),
+    ("SNpp28", "b1 MN", "haltere campaniform afferents -> b1 steering MN electrical synapse "
+                        "(Fayyazuddin & Dickinson 1996, Calliphora; lead); SNpp28 is b1 MN's "
+                        "largest sensory input (1120 synapses), identity as haltere afferent inferred"),
+]
+
+
+def build(reg: Registry, conn, pairs=GF_PAIRS + CURATED_PAIRS) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return (pre_idx, post_idx, kick_mv) for identified electrical pairs.
 
     Each presynaptic cell couples to the postsynaptic cell of the given type

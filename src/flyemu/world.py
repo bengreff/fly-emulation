@@ -38,6 +38,9 @@ class World:
     sound_mm_s: float = 0.0
     sound_hz: float = 0.0
     sound_dir: np.ndarray = field(default_factory=lambda: np.array([1.0, 0.0, 0.0]))
+    # s10 N26: ambient light (lux) for the circadian oscillator's light input only
+    # (internal_state.py); a scenario may change it over time. 0 = darkness.
+    light_lux: float = 0.0
 
     def odour_concentrations(self, pos: np.ndarray) -> dict[str, np.ndarray]:
         """Concentration of each odour at positions (n, 3); static plumes."""
