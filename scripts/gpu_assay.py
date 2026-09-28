@@ -73,6 +73,10 @@ if __name__ == "__main__":
     read = read[~np.array(["Hard to trace" in x or "Partially" in x for x in lab[read]], bool)]
     T = int(round(a.ms / 0.1))
     prob = np.full(stim.size, a.rate * 0.1 / 1000.0)
+    if "co_stim" in A:                               # same concatenation order as run_trial
+        co = AP.select(nrn, A["co_stim"][0])
+        stim = np.concatenate([stim, co])
+        prob = np.concatenate([prob, np.full(co.size, A["co_stim"][1] * 0.1 / 1000.0)])
     masks = []
     for t in range(a.trials):                       # the CPU assay's kick draws, trial by trial
         rng = np.random.default_rng(t + 10_000)
@@ -91,7 +95,7 @@ if __name__ == "__main__":
         cnt = out["raster"].sum(0)                                  # (B, r)
         for j, (c, t) in enumerate(part):
             hz[c, t] = cnt[j].mean() / (a.ms / 1000.0)
-    res = {"assay": a.assay, "wall_s": round(time.time() - t0, 1),
+    res = {"assay": a.assay, "rate": a.rate, "wall_s": round(time.time() - t0, 1),
            "members": len(jobs), "mean_hz": hz.mean(1).tolist(), "trials_hz": hz.tolist()}
     print(json.dumps({k: v for k, v in res.items() if k != "trials_hz"}))
     if a.out:

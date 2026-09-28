@@ -21,8 +21,28 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", default="deadfly")
     ap.add_argument("--ms", type=float, default=1000.0)
+    ap.add_argument("--template", action="store_true",
+                    help="the construction-template body (model_data.TEMPLATE_SWITCHES body keys)")
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=V")
     a = ap.parse_args()
-    tr = deadfly.run(duration_ms=a.ms)
+    body = None
+    if a.template or a.set:
+        from flyemu import model_data, passive
+        from flyemu.body import Body
+        from flyemu.registry import Registry
+        reg = Registry("minimal")
+        if a.template:
+            reg.overrides.update(model_data.TEMPLATE_SWITCHES)
+        reg.overrides.update({k: float(v) for k, v in (x.split("=") for x in a.set)})
+        body = Body(vision=False)
+        passive.register(reg, body)
+        passive.register_rest(reg, body)
+        passive.register_wings(reg, body)
+        if int(reg.require("joint:wing", "range_by_function", units="enum", model_use="",
+                           minimal=0)):
+            from flyemu import flight
+            flight.apply_wing_ranges(body)
+    tr = deadfly.run(duration_ms=a.ms, body=body)
     s = deadfly.score(tr)
     out = REPO / "runs" / a.label
     out.mkdir(parents=True, exist_ok=True)

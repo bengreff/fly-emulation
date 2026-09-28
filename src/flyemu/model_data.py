@@ -42,7 +42,16 @@ TEMPLATE_SWITCHES = {
     "joint:wing|spring_reference": 1.0,          # B14 folded wings
     "muscle:leg|model": 1.0,                     # B4/B5 Hill pairs (rotators by action)
     "adhesion:leg|detachment": 1.0,              # B7 load/shear gate
+    # session 10
+    "muscle:leg|coxa_model": 1.0,                # B4 anatomical coxa muscles, 3-axis moment arms
+    "joint:wing|range_by_function": 1.0,         # B14 wing envelopes by function (F-WING-1)
+    "sense:antenna|oscillator": 1.0,             # B20 antenna oscillator + JO-A/B
+    "jump:ttm|model": 1.0,                       # B15 TTM jump twitch
+    "state:organs|model": 1.0,                   # S1-S4, N20, N25, N26 internal state
+    "state:crop|pump_gated": 1.0,                # B17 ingestion gated by the pump MNs
 }
+# Not in the walking template: flight:wings|generator (needs timestep <= 0.05 ms;
+# flight is run as its own configuration, tethered_lift.py / phase_lock.py).
 
 TIERS = {"A", "B", "C"}
 STATUSES = {"have", "partial", "absent"}

@@ -28,6 +28,8 @@ def main():
     ap.add_argument("--sample-fly", type=int, default=None, metavar="SEED",
                     help="task 13: a complete template fly drawn by model_data.sample_fly(SEED, --stage)")
     ap.add_argument("--stage", type=int, default=1)
+    ap.add_argument("--hold-k", type=int, default=1,
+                    help="sense every k steps and hold the drive in between (GPU closed-loop scheme, docs/GPU.md)")
     ap.add_argument("--out", default="", help="also write the result (with per-class silent spikes) to this JSON")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
@@ -46,9 +48,12 @@ def main():
     steps = int(a.ms / org.timestep_ms)
     cnt = np.zeros(org.conn.n)
     z, t0 = [], time.time()
+    ext = None
     for s in range(steps):
         obs = org.body.observe()
-        sp = org.net.step(external_mv=org.sense(s, obs))
+        if s % a.hold_k == 0 or ext is None:
+            ext = org.sense(s, obs)
+        sp = org.net.step(external_mv=ext)
         if s * org.timestep_ms >= 200:          # skip the opening transient
             cnt[sp] += 1
         org.motor_step(sp)
