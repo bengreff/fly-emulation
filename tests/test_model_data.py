@@ -154,3 +154,15 @@ def test_every_key_the_working_model_m6_reads_has_exactly_one_owner(md):
     cov = M.coverage(md, keys)
     assert cov[cov.n_rows == 0].key.tolist() == []
     assert M.ambiguous_keys(md, keys) == []
+
+
+def test_ledger_rows_name_a_real_mechanism_and_a_consistent_fidelity(md):
+    """Ledger v3 (session 11): every measurable quantity names the mechanism that
+    carries it, and 'not simulated' agrees between model state and fidelity."""
+    import yaml
+    onto = yaml.safe_load((REPO / "data" / "ontology" / "fly_information.yaml").read_text())
+    ids = set(md.mechanisms.id)
+    for e in onto:
+        assert e["mech"] in ids | {"none"}, e["quantity"]
+        assert e["fidelity"] in {"element", "type", "class", "global", "none"}, e["quantity"]
+        assert (e["fidelity"] == "none") == (e["model"] == "absent"), e["quantity"]

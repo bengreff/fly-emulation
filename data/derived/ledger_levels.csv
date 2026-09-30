@@ -1,0 +1,30 @@
+grain_group,level,slots
+body part,absent,50351
+body part,derived,1384
+body part,guessed,654
+body part,mixed,2606
+body part,prior,18
+body part,rule,24
+cell,derived,6110
+cell,guessed,505100
+cell,measured,835555
+cell,mixed,815
+cell,prior,334222
+cell,rule,224
+class,absent,10
+class,guessed,29228
+class,prior,28716
+edge,measured,6241231
+edge,prior,6241231
+organism/world,absent,18
+organism/world,guessed,30
+synapse,absent,269553552
+synapse,measured (unused),89851184
+type,absent,258408
+type,derived,11750
+type,guessed,231713
+type,measured,583
+type,measured (unused),5
+type,mixed,43388
+type,prior,157916
+type,rule,2664
