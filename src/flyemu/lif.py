@@ -330,6 +330,11 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
     tau_m = (np.asarray(tau_m, np.float32) * tm_scale).astype(np.float32)
+    # --- session 11: per-cell input gain from within-type size/input rules (percell.py)
+    from . import percell
+    f_cell = percell.input_gain_factors(reg, conn)
+    if f_cell is not None:
+        inp = (np.asarray(inp, np.float32) * f_cell).astype(np.float32)
     # --- session 10: N7 metabotropic components and N8 NMDA-type excitation ----
     mglur = per("mglur_fraction", "dimensionless", "share of glutamatergic input that is slow "
                 "(metabotropic)", 0.0, "neutral 0: DmGluRA is expressed centrally but per-type "

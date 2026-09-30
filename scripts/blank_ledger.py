@@ -88,15 +88,15 @@ def counts() -> tuple[dict, dict]:
     return c, basis
 
 
-def filled_types(f: dict) -> int:
+def filled_types(f: dict) -> set:
     """Distinct types (or cells, for bodyId-keyed files) with a row in a fill table."""
     t = pd.read_csv(REPO / f["file"], comment="#")
     if "param" in f:
         t = t[t.param == f["param"]]
     for col in ("male_cns_type", "type", "bodyId"):
         if col in t:
-            return int(t[col].nunique())
-    return len(t)
+            return set(t[col].dropna().astype(str))
+    return set(map(str, range(len(t))))
 
 
 LEVELS = ["measured", "derived", "rule", "prior", "mixed", "guessed", "absent",
@@ -139,9 +139,11 @@ def main() -> None:
                     measure_by=e.get("measure_by"), count_basis=cb, note=e.get("note"),
                     mech=e["mech"], fidelity=e["fidelity"])
         # per-type fills (session 8): {file, param?, basis, model?} -> split the entry
-        left = n_inst
+        left, seen = n_inst, set()
         for f in e.get("fills", []):
-            k = min(filled_types(f), left)
+            keys = filled_types(f) - seen      # a type filled by an earlier table counts once
+            seen |= keys
+            k = min(len(keys), left)
             if k:
                 rows.append({**base, "quantity": base["quantity"] + f" [filled: {Path(f['file']).name}]",
                              "instances": k, "slots": k * base["per"], "basis": f["basis"],

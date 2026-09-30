@@ -146,6 +146,23 @@ def build(
         cons = neurons.bodyId.map(extra.set_index("bodyId").consensusNt)
         neurons["predictedNt_em"] = neurons.predictedNt
         neurons["predictedNt"] = cons.where(cons.notna(), neurons.predictedNt)
+        # session 11: fast transmitter of consensus-"unclear" cells from development
+        # (hemilineage majority, leave-one-type-out accuracy 0.989 at purity >= 0.9;
+        # VNC motor neurons glutamate by class): scripts/infer_nt_hemilineage.py
+        fill_path = CACHE.parent / "derived" / "nt_hemilineage_fill.csv"
+        if reg.require(
+                "connectome:unclear", "nt_by_development", units="boolean",
+                model_use="fast transmitter of unclear cells from hemilineage / motor class",
+                subsystem="sign", instances=int(neurons.predictedNt.eq("unclear").sum()),
+                minimal=0.0, conventional=0.0,
+                minimal_note="neutral 0: unclear cells keep sign 0 (they transmit nothing)",
+                uncertainty="hemilineage rule (Lacin 2019, VNC; lead for the brain) tested "
+                            "leave-one-type-out on male-cns; per-cell calls are inferred") \
+                and fill_path.exists():
+            f = pd.read_csv(fill_path).set_index("bodyId").nt
+            new = neurons.bodyId.map(f)
+            m = new.notna() & neurons.predictedNt.fillna("unclear").eq("unclear")
+            neurons.loc[m, "predictedNt"] = new[m]
     pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
 
     e = edges[edges.weight >= min_synapses]

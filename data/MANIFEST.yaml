@@ -210,6 +210,14 @@ turnerevans2020_cx_rnaseq:
   sha256_prefix: bulk b06932fdc5f0ba9c, lowcell 9b4eec023155fa9e
   basis: measured (RNA of sorted populations)
   use: cross-check of Davis 2020 glutamate-receptor balance (Delta7, EPG); PEN_b and PEG glutamate sign rows. Flags - bulk PEN2 r1 shows Gad1 (contamination); SS00238 is labelled Delta7 in one bulk replicate but the low-cell SS00238 profile is GABAergic (ER4d)
+ozel2021_optic_lobe_atlas:
+  name: Özel, Simon et al. 2021 Nature 589:88, optic lobe developmental scRNA-seq atlas (adult + pupal)
+  version: GEO GSE142787 supplementary GSE142787_Mixture_modeling.xlsx (48796225 bytes) and GSE142787_Log_normalized_average_expression.xlsx (145820714 bytes), FTP mirror; Nature Supplementary Table 1 41586_2020_2879_MOESM4_ESM.xlsx (35904 bytes, cluster annotation); fetched 2026-09-30
+  license: GEO public data; Nature supplementary information
+  local: data/raw/ozel2021/
+  sha256_prefix: mixture 76deacac9b65d022, average 44999534dd706c2c
+  basis: measured (single-cell RNA, 10x); per-cluster ON probability from the authors' bimodal mixture model; cluster names by the authors ('*' less confident)
+  use: data/derived/receptor_calls_ozel2021.csv (65 male-cns types, 33 receptor genes, sheet Adult_MM_final) and 12 GluCl-dominated glutamate-sign rows in data/params/cell_types.csv (scripts/receptors_ozel2021.py). ON calls are much sparser than Davis 2020 TAPIN-seq (agreement 0.56 over 52 shared types; 758 Davis-on/Ozel-off vs 4 the reverse): ON/OFF thresholds do not transfer across platforms
 epiney2025_t2_atlas:
   name: Epiney et al. 2025 eLife, type-2 neuroblast lineage snRNA-seq atlas (neurons), central complex
   version: GEO GSE294658 GSE294658_T2.atlas.neurons.rds (9985654022 bytes, on backhouse only); cluster identities from github dgepiney/2023_Doe_Drosophila_Central_Brain_RNAseq Data/sup tables, Supplemental Table 12 (1418 bytes) and Table 6 (17699679 bytes), fetched 2026-09-26

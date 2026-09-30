@@ -121,6 +121,17 @@ M6 = {
     "transducer:sensory_other|latency_ms": (5.0, _G, _L),
 }
 
+# m7 (session 11, candidate until its pre-registered guardrails pass): m6 + the
+# within-type per-cell size rule (percell.py; DECISIONS s11).
+_R = ("per-cell rule s11: input gain x (type geometric-mean volume / cell volume)^alpha")
+M7 = {
+    **M6,
+    # the central rule (cell_type:all|within_type_size_exponent 1.0) failed sugar->MN9 on
+    # the s10 class values (DECISIONS s11); repair 2 keeps the motor pools only
+    "cell_type:motor|within_type_size_exponent": (1.49, _I, _R + "; fitted to Azevedo 2020 Rin vs "
+                                                 "EM volume of the flexor classes (inferred)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -137,6 +148,7 @@ PROFILES: dict[str, dict] = {
     "m4": {"values": M4, "kick_mv": KICK},
     "m5": {"values": M5, "kick_mv": KICK},
     "m6": {"values": M6, "kick_mv": KICK},
+    "m7": {"values": M7, "kick_mv": KICK},
 }
 
 

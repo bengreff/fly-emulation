@@ -1,0 +1,818 @@
+bodyId,type,superclass,hl,consensusNt,nt,purity,rule
+75647,,cb_intrinsic,12A,,acetylcholine,0.9961538461538462,hemilineage
+1052226847,,vnc_intrinsic,14A,,glutamate,0.9881656804733728,hemilineage
+940330,,,14A,,glutamate,0.9881656804733728,hemilineage
+1056972208,IN01B088,vnc_intrinsic,01B,unclear,gaba,0.9879032258064516,hemilineage
+1051013755,IN13A073,vnc_intrinsic,13A,unclear,gaba,1.0,hemilineage
+810702,,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+1053544434,,vnc_intrinsic,13A,unclear,gaba,1.0,hemilineage
+823945,,vnc_intrinsic,03A,unclear,acetylcholine,1.0,hemilineage
+1050025102,,,13A,,gaba,1.0,hemilineage
+925445,,,13B,,gaba,1.0,hemilineage
+1060830137,,,01B,,gaba,0.9879032258064516,hemilineage
+1051084308,,,13B,,gaba,1.0,hemilineage
+1051975179,,,13B,,gaba,1.0,hemilineage
+1050153873,,,10B,unclear,acetylcholine,1.0,hemilineage
+63242,PRW015,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+581384,,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+40966,CB2463,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+51205,CB2463,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+29736,AVLP548_c,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+119402,AVLP548_b,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+809690,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+811060,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+811139,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+812208,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+44644,CB2463,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+36613,AVLP548_b,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+1056109656,,vnc_intrinsic,20A.22A,unclear,acetylcholine,1.0,hemilineage
+39257,CB2463,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+807292,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+46973,GNG372,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+56724,GNG425,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+73937,GNG372,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+75277,GNG425,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+80888,GNG372,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+82965,GNG425,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+35438,AVLP548_c,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+17189,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+21177,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+29248,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+30855,LHAV4e1_b,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+31847,CB1275,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+33922,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+35798,CB2861,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+41684,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+41754,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+42698,CB3109,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+44568,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+44975,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+45840,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+52645,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+57110,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+58140,CB3109,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+82571,LHAV4e4,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+90770,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+117878,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+141353,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+143477,CB3729,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+149493,CB2958,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+527461,LHAV4e4,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+531245,CB1275,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+580637,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+583768,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+27594,LHAV4e4,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+28968,LHAV4e4,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+29232,CB1275,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+34533,LHAV4e1_a,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+34717,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+41571,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+48521,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+48614,CB2889,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+49558,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+50176,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+51401,CB3109,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+51932,CB3729,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+56825,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+58166,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+58484,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+59884,CB2958,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+59961,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+60910,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+76878,LHAV4g4_b,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+78555,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+83886,LHAV4d1,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+89524,CB3729,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+165087,,cb_intrinsic,LHd2,unclear,glutamate,0.9880952380952381,hemilineage
+854511,,vnc_intrinsic,10B,unclear,acetylcholine,1.0,hemilineage
+802580,IN00A017,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+804492,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+805380,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+807435,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+812767,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+817391,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+909139,IN00A017,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+936810,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+14555,AVLP548_g1,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+811295,IN14A029,vnc_intrinsic,14A,unclear,glutamate,0.9881656804733728,hemilineage
+904624,IN00A017,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+41194,PRW015,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+42722,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+53143,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+112641,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+38102,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+38904,GNG356,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+44993,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+57139,PRW024,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+16049,GNG157,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+512794,GNG157,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+33974,LHAV4e1_a,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+51878,LHAV4e1_b,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+516092,CB3729,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+77304,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+586891,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+807979,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+908830,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+51020,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+73177,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+1051033086,,,23B,unclear,acetylcholine,1.0,hemilineage
+303686,,cb_intrinsic,MX3,unclear,gaba,0.9259259259259259,hemilineage
+52113,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+116093,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+120921,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+129084,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+552328,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+804403,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+52556,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+80902,CB2185,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+88995,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+807346,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+58435,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+68165,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+32771,LHAV4e1_b,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+13195,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+17672,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+25758,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+56318,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+58126,SMP730,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+100317,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+104115,SMP732,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+122933,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+161867,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+199167,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+333775,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+521089,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+521617,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+34762,SMP735,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+49617,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+55413,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+63995,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+112997,,cb_intrinsic,17A_put3,unclear,acetylcholine,1.0,hemilineage
+514369,SMP735,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+554167,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+55788,CB2292,cb_intrinsic,SLPpl3,unclear,glutamate,1.0,hemilineage
+96751,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+98888,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+99050,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+99102,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+521299,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+49049,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+61152,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+63861,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+513583,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+800968,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+803865,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+169861,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+524993,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+61294,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+65572,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+804411,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+807007,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+46746,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+65305,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+73909,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+80556,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+87403,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+122638,SMP730,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+818551,IN03B045,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+38805,CB2861,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+37787,GNG356,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+46093,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+42183,SLP058,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+161188,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+51477,LHAV4e1_b,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+810954,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+817945,INXXX290,vnc_intrinsic,13B,unclear,gaba,1.0,hemilineage
+65879,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+73931,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+125311,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+128125,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+141623,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+14838,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+28374,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+31647,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+40049,CB1858,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+100241,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+100407,SMP305,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+54904,CB3729,cb_intrinsic,LHl4_dorsal,unclear,gaba,0.9759036144578314,hemilineage
+126649,CB2185,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+33230,SMP305,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+537038,SMP305,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+12917,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+23191,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+163695,,cb_intrinsic,17A_put3,unclear,acetylcholine,1.0,hemilineage
+516859,,cb_intrinsic,17A_put3,unclear,acetylcholine,1.0,hemilineage
+30888,SMP305,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+17047,SMP738,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+14395,AVLP548_g1,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+21961,AVLP548_b,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+30425,AVLP548_a,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+557994,AVLP548_c,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+43847,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+10505,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+14967,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+539353,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+805185,IN00A017,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+23608,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+52893,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+26340,AVLP548_c,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+28924,AVLP548_g2,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+35752,AVLP548_a,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+38771,CB2495,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+151552,SMP167,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+19504,SMP732,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+77645,SMP737,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+165466,,cb_intrinsic,17A_put3,unclear,acetylcholine,1.0,hemilineage
+17102,CB1858,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+21311,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+27561,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+42277,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+570708,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+61177,CB2185,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+65604,LHPV2c2,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+108133,CB2185,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+81718,,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+195816,,cb_intrinsic,DM3_CX_p,unclear,acetylcholine,1.0,hemilineage
+36080,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+518869,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+125369,FB6L,cb_intrinsic,DM6_dorso_medial,unclear,glutamate,1.0,hemilineage
+163602,FB6L,cb_intrinsic,DM6_dorso_medial,unclear,glutamate,1.0,hemilineage
+32100,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+37415,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+29037,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+106308,,cb_intrinsic,17A_put3,unclear,acetylcholine,1.0,hemilineage
+109712,LHPV2c5,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+521113,CB3691,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+55817,CB2495,cb_intrinsic,VLPp&l1_anterior,unclear,gaba,1.0,hemilineage
+14591,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+32057,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+43388,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+40629,AVLP604,cb_intrinsic,VLPl&d1_lateral,unclear,acetylcholine,1.0,hemilineage
+22850,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+36331,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+91454,AVLP548_g2,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+81697,,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+802399,IN03B008,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+802891,IN03B008,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+515193,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+90574,PFR_a,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+526085,PFR_a,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+28817,AVLP548_a,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+29292,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+258547,LAL043_a,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+27285,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+34771,CB1949,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+47969,LAL043_a,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+137570,LAL043_b,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+42753,,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+17797,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+23702,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+112667,CB4156,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+41254,CB1510,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+57490,CB1510,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+20800,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+37803,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+45208,PRW007,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+202457,SMP730,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+40140,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+14881,GLNO,cb_intrinsic,02A_put2,unclear,glutamate,1.0,hemilineage
+21580,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+26250,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+20875,SMP712m,cb_intrinsic,CREl1,unclear,acetylcholine,1.0,hemilineage
+48846,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+514375,CB1510,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+27789,AVLP548_a,cb_intrinsic,VLPp1,unclear,glutamate,0.9797979797979798,hemilineage
+104924,CB1510,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+20831,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+121114,CB2993,cb_intrinsic,23B_put1,unclear,acetylcholine,1.0,hemilineage
+518541,GNG141,cb_intrinsic,05B_put2,unclear,gaba,1.0,hemilineage
+15519,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+803566,IN00A001,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+18586,PFR_a,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+18434,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+41688,,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+58394,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+64627,LAL043_a,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+20539,AN12B006,ascending_neuron,12B,unclear,gaba,1.0,hemilineage
+59288,PFR_a,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+574357,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+74917,PFR_a,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+402239,DNpe048,descending_neuron,17A_put3,unclear,acetylcholine,1.0,hemilineage
+88014,PFR_a,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+89529,LAL043_a,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+63707,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+127432,LAL043_b,cb_intrinsic,AOTUv1_medial,unclear,gaba,1.0,hemilineage
+556286,DNp32,descending_neuron,17A_put2,unclear,acetylcholine,0.9864864864864865,hemilineage
+32451,PFR_a,cb_intrinsic,DM4_CX_d2,unclear,acetylcholine,1.0,hemilineage
+64017,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+201407,,cb_intrinsic,SLPad1_anterior,unclear,acetylcholine,1.0,hemilineage
+511846,PFR_a,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+60685,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+19466,CB1949,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+19198,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+268363,AN06A027,ascending_neuron,06A,unclear,gaba,0.9761499148211243,hemilineage
+106192,,cb_intrinsic,SIPa1_ventral,unclear,glutamate,0.9894736842105263,hemilineage
+805932,IN03B012,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+144998,,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+19244,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+539328,PFGs,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+800500,IN03B005,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+53755,PFR_a,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+801974,IN03B005,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+144505,DNg65,descending_neuron,MX3,unclear,gaba,0.9259259259259259,hemilineage
+541755,PFR_a,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+44124,CB1949,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+805678,IN03B012,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+222777,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+30218,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+52041,PFGs,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+813076,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+48314,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+27150,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+515773,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+800809,IN00A001,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+35912,PFGs,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+524429,DNg65,descending_neuron,MX3,unclear,gaba,0.9259259259259259,hemilineage
+16197,SMP741,cb_intrinsic,TRdm,unclear,gaba,1.0,hemilineage
+36780,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+32176,SMP735,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+56688,,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+106862,CB2993,cb_intrinsic,23B_put1,unclear,acetylcholine,1.0,hemilineage
+25482,CB4125,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+23180,PFGs,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+130172,CB4156,cb_intrinsic,EBa1,unclear,gaba,1.0,hemilineage
+526864,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+19367,PFGs,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+524761,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+44256,PFGs,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+910004,IN03B012,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+812884,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+63671,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+511828,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+25939,GLNO,cb_intrinsic,02A_put2,unclear,glutamate,1.0,hemilineage
+57384,PFR_a,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+26209,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+512179,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+66982,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+808183,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+19443,PFR_a,cb_intrinsic,DM4_CX_d1,unclear,acetylcholine,1.0,hemilineage
+69064,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+28146,PFR_a,cb_intrinsic,DM4_CX_d1,unclear,acetylcholine,1.0,hemilineage
+513518,PFR_a,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+30653,PFGs,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+524351,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+31155,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+38388,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+235061,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+174420,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+43649,AN26X004,ascending_neuron,26X,unclear,gaba,1.0,hemilineage
+28107,AVLP604,cb_intrinsic,VLPl&d1_lateral,unclear,acetylcholine,1.0,hemilineage
+59703,AN26X004,ascending_neuron,26X,unclear,gaba,1.0,hemilineage
+531755,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+912677,IN03B045,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+814115,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+33293,PFR_a,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+58561,PFGs,cb_intrinsic,DM4_CX_d2,unclear,acetylcholine,1.0,hemilineage
+103420,,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+521776,DNpe048,descending_neuron,17A_put3,unclear,acetylcholine,1.0,hemilineage
+16303,PFR_a,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+145920,FB6L,cb_intrinsic,DM6_dorso_medial,unclear,glutamate,1.0,hemilineage
+522993,PFGs,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+59108,PFR_a,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+12104,GLNO,cb_intrinsic,02A_put2,unclear,glutamate,1.0,hemilineage
+527475,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+127437,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+28248,PFGs,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+49288,PFR_a,cb_intrinsic,DM2_CX_d1,unclear,acetylcholine,1.0,hemilineage
+31404,SMP307,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+819096,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+511823,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+20781,PFGs,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+77709,PLP042_c,cb_intrinsic,SLPa&l1_lateral,unclear,glutamate,0.9910313901345291,hemilineage
+28919,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+43881,PFR_a,cb_intrinsic,DM3_CX_d1,unclear,acetylcholine,1.0,hemilineage
+521637,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+30612,SAD078,cb_intrinsic,DM1_antero_ventral,unclear,glutamate,1.0,hemilineage
+70651,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+33552,PFR_a,cb_intrinsic,DM4_CX_d2,unclear,acetylcholine,1.0,hemilineage
+801199,INXXX034,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+37030,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+18051,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+553381,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+50406,PLP028,cb_intrinsic,WEDa2,unclear,gaba,0.9384615384615385,hemilineage
+16800,PFGs,cb_intrinsic,DM2_CX_d2,unclear,acetylcholine,1.0,hemilineage
+802124,IN00A017,vnc_intrinsic,00A,unclear,gaba,1.0,hemilineage
+19564,PFGs,cb_intrinsic,DM3_CX_d2,unclear,acetylcholine,1.0,hemilineage
+25875,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+16338,AN12B006,ascending_neuron,12B,unclear,gaba,1.0,hemilineage
+549630,CB4127,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+813104,IN09A005,vnc_intrinsic,09A,unclear,gaba,1.0,hemilineage
+28767,PFGs,cb_intrinsic,DM4_CX_d2,unclear,acetylcholine,1.0,hemilineage
+30560,CB4128,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+22657,PFGs,cb_intrinsic,DM4_CX_d3,unclear,acetylcholine,1.0,hemilineage
+524654,PFGs,cb_intrinsic,DM4_CX_d1,unclear,acetylcholine,1.0,hemilineage
+42374,CB3691,cb_intrinsic,WEDd2,unclear,gaba,0.9076923076923077,hemilineage
+63310,,cb_intrinsic,DM2_central,unclear,gaba,0.9848484848484849,hemilineage
+526288,AN06A027,ascending_neuron,06A,unclear,gaba,0.9761499148211243,hemilineage
+195264,AN09A005,ascending_neuron,09A,unclear,gaba,1.0,hemilineage
+524998,SMP712m,cb_intrinsic,CREl1,unclear,acetylcholine,1.0,hemilineage
+23779,PFGs,cb_intrinsic,DM4_CX_d2,unclear,acetylcholine,1.0,hemilineage
+525061,PFGs,cb_intrinsic,DM4_CX_d1,unclear,acetylcholine,1.0,hemilineage
+36319,SMP730,cb_intrinsic,FLAa2,unclear,acetylcholine,0.9753086419753086,hemilineage
+23325,GLNO,cb_intrinsic,02A_put2,unclear,glutamate,1.0,hemilineage
+61553,PFR_a,cb_intrinsic,DM1_CX_d2,unclear,acetylcholine,1.0,hemilineage
+109653,,cb_intrinsic,00A,unclear,gaba,1.0,hemilineage
+524968,DNp32,descending_neuron,17A_put2,unclear,acetylcholine,0.9864864864864865,hemilineage
+516643,GNG141,cb_intrinsic,05B_put2,unclear,gaba,1.0,hemilineage
+910225,IN03B012,vnc_intrinsic,03B,unclear,gaba,0.959731543624161,hemilineage
+20725,SLP058,cb_intrinsic,LHl1,unclear,gaba,0.9820359281437125,hemilineage
+804866,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800636,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+911134,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1051236875,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050730563,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+816501,MNhl02,vnc_motor,TBD,unclear,glutamate,,motor class
+818399,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+822252,MNhl64,vnc_motor,TBD,unclear,glutamate,,motor class
+876504,,vnc_motor,TBD,unclear,glutamate,,motor class
+1050038433,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050272154,,vnc_motor,,unclear,glutamate,,motor class
+1050274189,MNhl60,vnc_motor,TBD,unclear,glutamate,,motor class
+1051680335,,vnc_motor,,unclear,glutamate,,motor class
+800358,MNhl64,vnc_motor,TBD,unclear,glutamate,,motor class
+801932,,vnc_motor,,unclear,glutamate,,motor class
+815958,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+852881,,vnc_motor,,unclear,glutamate,,motor class
+927828,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+814106,"MNad04,MNad48",vnc_motor,TBD,unclear,glutamate,,motor class
+802552,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+821291,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+909618,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+804257,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+805410,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+800479,MNad49,vnc_motor,TBD,unclear,glutamate,,motor class
+800659,MNad22,vnc_motor,TBD,unclear,glutamate,,motor class
+801491,MNad19,vnc_motor,06A,unclear,glutamate,,motor class
+802003,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+802164,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+802405,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+803342,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+803562,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+803690,MNad22,vnc_motor,TBD,unclear,glutamate,,motor class
+803904,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+804195,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+804625,MNad22,vnc_motor,TBD,unclear,glutamate,,motor class
+805067,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+805647,MNad23,vnc_motor,TBD,unclear,glutamate,,motor class
+805776,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+805881,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+805980,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+806008,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+806061,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+806094,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+806355,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+806643,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+806671,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+806679,MNad12,vnc_motor,TBD,unclear,glutamate,,motor class
+806779,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+807010,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+807144,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+807594,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+807681,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+807694,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+807713,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+808101,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+808208,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+808532,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+808820,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+808926,"MNad04,MNad48",vnc_motor,TBD,unclear,glutamate,,motor class
+809238,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+809397,"MNad04,MNad48",vnc_motor,TBD,unclear,glutamate,,motor class
+809492,"MNad04,MNad48",vnc_motor,TBD,unclear,glutamate,,motor class
+809862,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+810069,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+810241,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+810372,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+812354,MNad43,vnc_motor,TBD,unclear,glutamate,,motor class
+812503,MNad49,vnc_motor,TBD,unclear,glutamate,,motor class
+814206,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+815281,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+819492,MNad12,vnc_motor,TBD,unclear,glutamate,,motor class
+819549,MNad12,vnc_motor,TBD,unclear,glutamate,,motor class
+820983,MNad12,vnc_motor,TBD,unclear,glutamate,,motor class
+905709,MNad55,vnc_motor,TBD,unclear,glutamate,,motor class
+908285,MNad50,vnc_motor,,unclear,glutamate,,motor class
+911338,MNad69,vnc_motor,TBD,unclear,glutamate,,motor class
+935161,"MNad04,MNad48",vnc_motor,TBD,unclear,glutamate,,motor class
+809604,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+812953,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+821154,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+896719,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1052407897,,vnc_motor,09A,unclear,glutamate,,motor class
+1050340850,,vnc_motor,15B,,glutamate,,motor class
+903642,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+905586,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+939950,MNhl60,vnc_motor,TBD,unclear,glutamate,,motor class
+1050102118,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801020,MNad20,vnc_motor,TBD,unclear,glutamate,,motor class
+802114,MNad66,vnc_motor,TBD,unclear,glutamate,,motor class
+802579,MNad65,vnc_motor,TBD,unclear,glutamate,,motor class
+804023,MNad61,vnc_motor,TBD,unclear,glutamate,,motor class
+804514,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+1050239701,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+818996,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+800608,MNad19,vnc_motor,06A,unclear,glutamate,,motor class
+802907,MNad23,vnc_motor,TBD,unclear,glutamate,,motor class
+803241,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+803709,MNad15,vnc_motor,TBD,unclear,glutamate,,motor class
+803732,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+803912,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+804173,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+804445,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+805634,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+806037,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+806124,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+806144,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+806281,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+806427,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+806689,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+807075,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+807401,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+807649,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+807899,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+811554,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+811999,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+812186,MNad09,vnc_motor,TBD,unclear,glutamate,,motor class
+812385,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+814989,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+1050074465,MNad15,vnc_motor,TBD,unclear,glutamate,,motor class
+800316,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+914852,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050493413,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+867926,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+902310,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050139141,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+804966,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+805974,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+807870,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+808621,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+800248,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+803070,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+803524,MNad15,vnc_motor,TBD,unclear,glutamate,,motor class
+806817,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+810086,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+812718,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+814430,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+801553,MNad05,vnc_motor,TBD,unclear,glutamate,,motor class
+809304,MNad45,vnc_motor,03B,unclear,glutamate,,motor class
+1050306082,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800541,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803704,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+821375,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1051054875,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+801234,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+802954,MNad53,vnc_motor,TBD,unclear,glutamate,,motor class
+808250,MNad53,vnc_motor,TBD,unclear,glutamate,,motor class
+808572,MNad57,vnc_motor,TBD,unclear,glutamate,,motor class
+904990,MNad62,vnc_motor,TBD,unclear,glutamate,,motor class
+800478,MNad68,vnc_motor,TBD,unclear,glutamate,,motor class
+800577,MNad61,vnc_motor,TBD,unclear,glutamate,,motor class
+801434,MNad19,vnc_motor,06A,unclear,glutamate,,motor class
+802137,MNad19,vnc_motor,06A,unclear,glutamate,,motor class
+802240,MNad62,vnc_motor,TBD,unclear,glutamate,,motor class
+802413,MNad53,vnc_motor,TBD,unclear,glutamate,,motor class
+803047,MNad15,vnc_motor,TBD,unclear,glutamate,,motor class
+804119,MNad53,vnc_motor,TBD,unclear,glutamate,,motor class
+804371,MNad22,vnc_motor,TBD,unclear,glutamate,,motor class
+804775,MNad20,vnc_motor,TBD,unclear,glutamate,,motor class
+808464,MNad57,vnc_motor,TBD,unclear,glutamate,,motor class
+812193,MNad55,vnc_motor,TBD,unclear,glutamate,,motor class
+905421,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803717,MNad35,vnc_motor,03B,unclear,glutamate,,motor class
+809935,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+818842,Tr extensor MN,vnc_motor,19A,unclear,glutamate,,motor class
+802587,MNad20,vnc_motor,TBD,unclear,glutamate,,motor class
+906111,MNad20,vnc_motor,TBD,unclear,glutamate,,motor class
+800621,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803451,MNad35,vnc_motor,03B,unclear,glutamate,,motor class
+804326,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+805255,MNad32,vnc_motor,03B,unclear,glutamate,,motor class
+803314,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+805313,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+808011,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+828238,,vnc_motor,,unclear,glutamate,,motor class
+905661,Tr extensor MN,vnc_motor,19A,unclear,glutamate,,motor class
+928579,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+806601,MNad69,vnc_motor,TBD,unclear,glutamate,,motor class
+803698,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+817347,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+838321,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803412,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+815678,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050349786,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803804,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+804398,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+802116,MNad65,vnc_motor,TBD,unclear,glutamate,,motor class
+802201,MNad68,vnc_motor,TBD,unclear,glutamate,,motor class
+903679,MNad67,vnc_motor,TBD,unclear,glutamate,,motor class
+905584,MNad66,vnc_motor,TBD,unclear,glutamate,,motor class
+924716,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+1050335829,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+805790,MNad46,vnc_motor,TBD,unclear,glutamate,,motor class
+806302,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+807312,MNad56,vnc_motor,TBD,unclear,glutamate,,motor class
+807838,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+808720,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+811952,MNad07,vnc_motor,TBD,unclear,glutamate,,motor class
+815205,MNad03,vnc_motor,TBD,unclear,glutamate,,motor class
+800553,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801090,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+812988,MNxm03,vnc_motor,TBD,unclear,glutamate,,motor class
+800911,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+806754,MNad31,vnc_motor,03B,unclear,glutamate,,motor class
+806837,MNad47,vnc_motor,03B,unclear,glutamate,,motor class
+817458,MNad54,vnc_motor,TBD,unclear,glutamate,,motor class
+817999,MNad54,vnc_motor,TBD,unclear,glutamate,,motor class
+801970,"DLMn a, b",vnc_motor,18X,unclear,glutamate,,motor class
+801998,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+803048,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+1050014552,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+800175,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801492,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+801715,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+802215,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+802964,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+828978,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+840981,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+802130,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+805107,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+806253,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+806902,MNad44,vnc_motor,TBD,unclear,glutamate,,motor class
+808134,MNad01,vnc_motor,TBD,unclear,glutamate,,motor class
+820803,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+801394,MNad67,vnc_motor,TBD,unclear,glutamate,,motor class
+800290,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801148,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+801375,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+808453,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+903643,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+806620,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+801477,MNml81,vnc_motor,TBD,unclear,glutamate,,motor class
+806204,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+840530,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800504,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+800851,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+801548,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801761,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+802521,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+830514,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803946,MNad10,vnc_motor,06A,unclear,glutamate,,motor class
+803992,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+805757,MNad11,vnc_motor,TBD,unclear,glutamate,,motor class
+805842,MNad44,vnc_motor,TBD,unclear,glutamate,,motor class
+807837,MNad43,vnc_motor,TBD,unclear,glutamate,,motor class
+808640,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+813755,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+803107,MNad08,vnc_motor,TBD,unclear,glutamate,,motor class
+814942,Tr extensor MN,vnc_motor,19A,unclear,glutamate,,motor class
+800718,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+800890,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+801895,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+803013,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+801685,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803237,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+806923,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+806943,MNad47,vnc_motor,03B,unclear,glutamate,,motor class
+817835,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+802864,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+800962,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+801813,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+810720,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803499,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+902719,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+804992,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+809401,MNad25,vnc_motor,TBD,unclear,glutamate,,motor class
+817927,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+800875,MNad33,vnc_motor,03B,unclear,glutamate,,motor class
+802251,MNad34,vnc_motor,03B,unclear,glutamate,,motor class
+803813,MNad36,vnc_motor,03B,unclear,glutamate,,motor class
+806014,MNad46,vnc_motor,TBD,unclear,glutamate,,motor class
+805477,Tr extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+903508,MNml81,vnc_motor,TBD,unclear,glutamate,,motor class
+932321,"DVMn 3a, b",vnc_motor,03B,unclear,glutamate,,motor class
+801918,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+818387,MNad54,vnc_motor,TBD,unclear,glutamate,,motor class
+818428,MNad54,vnc_motor,TBD,unclear,glutamate,,motor class
+802980,MNad63,vnc_motor,TBD,unclear,glutamate,,motor class
+807813,MNad45,vnc_motor,03B,unclear,glutamate,,motor class
+801915,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+802509,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803803,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+919509,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801946,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+805797,MNad06,vnc_motor,TBD,unclear,glutamate,,motor class
+807396,MNad56,vnc_motor,TBD,unclear,glutamate,,motor class
+808888,MNad16,vnc_motor,06A,unclear,glutamate,,motor class
+801768,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+803226,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+832490,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801295,"DLMn a, b",vnc_motor,18X,unclear,glutamate,,motor class
+856359,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+924167,STTMm,vnc_motor,TBD,unclear,glutamate,,motor class
+802252,MNad34,vnc_motor,03B,unclear,glutamate,,motor class
+803684,MNad36,vnc_motor,03B,unclear,glutamate,,motor class
+805511,MNad33,vnc_motor,03B,unclear,glutamate,,motor class
+801267,MNhl02,vnc_motor,TBD,unclear,glutamate,,motor class
+903090,MNhl62,vnc_motor,TBD,unclear,glutamate,,motor class
+802937,MNad63,vnc_motor,TBD,unclear,glutamate,,motor class
+805326,MNad32,vnc_motor,03B,unclear,glutamate,,motor class
+806561,MNad24,vnc_motor,TBD,unclear,glutamate,,motor class
+805165,"DVMn 3a, b",vnc_motor,03B,unclear,glutamate,,motor class
+906612,"DVMn 3a, b",vnc_motor,03B,unclear,glutamate,,motor class
+805741,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800762,MNad41,vnc_motor,03B,unclear,glutamate,,motor class
+906520,MNad40,vnc_motor,03B,unclear,glutamate,,motor class
+807873,Acc. tr flexor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+807160,MNhl01,vnc_motor,TBD,unclear,glutamate,,motor class
+801304,MNad42,vnc_motor,TBD,unclear,glutamate,,motor class
+907256,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+806161,MNad24,vnc_motor,TBD,unclear,glutamate,,motor class
+809484,MNad30,vnc_motor,TBD,unclear,glutamate,,motor class
+816810,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+833211,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+811137,MNhl87,vnc_motor,06A,unclear,glutamate,,motor class
+803982,"DVMn 2a, b",vnc_motor,03B,unclear,glutamate,,motor class
+807799,"DVMn 2a, b",vnc_motor,03B,unclear,glutamate,,motor class
+801899,MNad42,vnc_motor,TBD,unclear,glutamate,,motor class
+802500,MNad40,vnc_motor,03B,unclear,glutamate,,motor class
+801469,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+803100,iii1 MN,vnc_motor,03B,unclear,glutamate,,motor class
+804180,MNad14,vnc_motor,TBD,unclear,glutamate,,motor class
+807906,Tr extensor MN,vnc_motor,19A,unclear,glutamate,,motor class
+803599,"DVMn 2a, b",vnc_motor,03B,unclear,glutamate,,motor class
+807924,"DVMn 2a, b",vnc_motor,03B,unclear,glutamate,,motor class
+819796,MNad25,vnc_motor,TBD,unclear,glutamate,,motor class
+805577,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+802690,MNad30,vnc_motor,TBD,unclear,glutamate,,motor class
+807464,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+800776,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+802835,iii1 MN,vnc_motor,03B,unclear,glutamate,,motor class
+802544,DLMn c-f,vnc_motor,03B,unclear,glutamate,,motor class
+1050045395,"DVMn 3a, b",vnc_motor,03B,unclear,glutamate,,motor class
+812899,MNhl87,vnc_motor,06A,unclear,glutamate,,motor class
+905849,Tergotr. MN,vnc_motor,17X,unclear,glutamate,,motor class
+818563,MNad25,vnc_motor,TBD,unclear,glutamate,,motor class
+811395,MNxm02,vnc_motor,TBD,unclear,glutamate,,motor class
+905792,MNhl01,vnc_motor,TBD,unclear,glutamate,,motor class
+800743,ps1 MN,vnc_motor,06A,unclear,glutamate,,motor class
+801678,ADNM1 MN,vnc_motor,TBD,unclear,glutamate,,motor class
+801391,STTMm,vnc_motor,TBD,unclear,glutamate,,motor class
+802407,Sternotrochanter MN,vnc_motor,TBD,unclear,glutamate,,motor class
+805690,MNad26,vnc_motor,TBD,unclear,glutamate,,motor class
+804847,MNhl88,vnc_motor,TBD,unclear,glutamate,,motor class
+904657,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+824223,STTMm,vnc_motor,TBD,unclear,glutamate,,motor class
+825991,MNad21,vnc_motor,TBD,unclear,glutamate,,motor class
+811400,MNxm02,vnc_motor,TBD,unclear,glutamate,,motor class
+813696,ADNM2 MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800190,MNwm35,vnc_motor,03B,unclear,glutamate,,motor class
+800847,hg4 MN,vnc_motor,03B,unclear,glutamate,,motor class
+802731,MNhl59,vnc_motor,TBD,unclear,glutamate,,motor class
+906235,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+913939,MNad21,vnc_motor,TBD,unclear,glutamate,,motor class
+813291,MNad25,vnc_motor,TBD,unclear,glutamate,,motor class
+802361,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+815209,MNad29,vnc_motor,TBD,unclear,glutamate,,motor class
+815682,MNad29,vnc_motor,TBD,unclear,glutamate,,motor class
+801736,MNhl62,vnc_motor,TBD,unclear,glutamate,,motor class
+801362,MNad41,vnc_motor,03B,unclear,glutamate,,motor class
+164190,MNad21,vnc_motor,TBD,unclear,glutamate,,motor class
+909078,Tr extensor MN,vnc_motor,19A,unclear,glutamate,,motor class
+804465,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+802327,iii3 MN,vnc_motor,03B,unclear,glutamate,,motor class
+903152,ADNM1 MN,vnc_motor,TBD,unclear,glutamate,,motor class
+818098,MNxm01,vnc_motor,03B,unclear,glutamate,,motor class
+903689,Sternal anterior rotator MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800606,MNwm35,vnc_motor,03B,unclear,glutamate,,motor class
+812752,MNxm03,vnc_motor,TBD,unclear,glutamate,,motor class
+804860,MNad26,vnc_motor,TBD,unclear,glutamate,,motor class
+804343,ADNM2 MN,vnc_motor,TBD,unclear,glutamate,,motor class
+807569,MNad31,vnc_motor,03B,unclear,glutamate,,motor class
+804851,Sternal posterior rotator MN,vnc_motor,20B.21B.22B,unclear,glutamate,,motor class
+817026,MNxm01,vnc_motor,03B,unclear,glutamate,,motor class
+813633,MNad21,vnc_motor,TBD,unclear,glutamate,,motor class
+807987,,vnc_motor,,unclear,glutamate,,motor class
+801335,MNhl59,vnc_motor,TBD,unclear,glutamate,,motor class
+809055,MNhl88,vnc_motor,TBD,unclear,glutamate,,motor class
+909521,Tergotr. MN,vnc_motor,TBD,unclear,glutamate,,motor class
+818077,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+807638,MNad02,vnc_motor,TBD,unclear,glutamate,,motor class
+801079,Sternotrochanter MN,vnc_motor,17X,unclear,glutamate,,motor class
+800906,hg4 MN,vnc_motor,03B,unclear,glutamate,,motor class
+817133,"MNad18,MNad27",vnc_motor,TBD,unclear,glutamate,,motor class
+815344,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+800928,ps1 MN,vnc_motor,06A,unclear,glutamate,,motor class
+830847,STTMm,vnc_motor,TBD,unclear,glutamate,,motor class
+902492,Pleural remotor/abductor MN,vnc_motor,TBD,unclear,glutamate,,motor class
+804107,iii3 MN,vnc_motor,03B,unclear,glutamate,,motor class
+800158,Ti extensor MN,vnc_motor,TBD,unclear,glutamate,,motor class
