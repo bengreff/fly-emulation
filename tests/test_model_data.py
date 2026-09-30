@@ -144,12 +144,13 @@ def test_template_switches_are_real_owned_switches(md):
         assert owners and all(src in ("structural", "switch") for src, *_ in owners), k
 
 
-def test_every_key_the_working_model_m6_reads_has_exactly_one_owner(md):
-    """s10: m5 and m6 (the adopted templates) read keys that m4 never does."""
+def test_every_key_the_working_model_reads_has_exactly_one_owner(md):
+    """s10: m5 and m6 (the adopted templates) read keys that m4 never does; s11: m7 is working."""
     if not HAVE_GRAPH:
         pytest.skip("run scripts/fetch_male_cns.py first")
+    from flyemu import profiles
     from flyemu.organism import Organism
-    inv = Organism(policy="minimal", profile="m6", min_synapses=5).reg.inventory()
+    inv = Organism(policy="minimal", profile=profiles.WORKING_PROFILE, min_synapses=5).reg.inventory()
     keys = (inv.entity + "|" + inv.property).unique()
     cov = M.coverage(md, keys)
     assert cov[cov.n_rows == 0].key.tolist() == []

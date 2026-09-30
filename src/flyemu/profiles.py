@@ -136,7 +136,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m6")   # s10: m5 then m6 (+ latency) adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m7")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
