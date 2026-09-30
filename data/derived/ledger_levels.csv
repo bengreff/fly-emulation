@@ -9,8 +9,8 @@ cell,derived,6110
 cell,guessed,505100
 cell,measured,835555
 cell,mixed,815
-cell,prior,334222
-cell,rule,224
+cell,prior,333864
+cell,rule,582
 class,absent,10
 class,guessed,29228
 class,prior,28716
@@ -22,9 +22,9 @@ synapse,absent,269553552
 synapse,measured (unused),89851184
 type,absent,258408
 type,derived,11750
-type,guessed,231713
-type,measured,583
-type,measured (unused),5
+type,guessed,231623
+type,measured,169
+type,measured (unused),497
 type,mixed,43388
 type,prior,157916
-type,rule,2664
+type,rule,2676

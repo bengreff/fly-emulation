@@ -217,7 +217,7 @@ ozel2021_optic_lobe_atlas:
   local: data/raw/ozel2021/
   sha256_prefix: mixture 76deacac9b65d022, average 44999534dd706c2c
   basis: measured (single-cell RNA, 10x); per-cluster ON probability from the authors' bimodal mixture model; cluster names by the authors ('*' less confident)
-  use: data/derived/receptor_calls_ozel2021.csv (65 male-cns types, 33 receptor genes, sheet Adult_MM_final) and 12 GluCl-dominated glutamate-sign rows in data/params/cell_types.csv (scripts/receptors_ozel2021.py). ON calls are much sparser than Davis 2020 TAPIN-seq (agreement 0.56 over 52 shared types; 758 Davis-on/Ozel-off vs 4 the reverse): ON/OFF thresholds do not transfer across platforms
+  use: "data/derived/receptor_calls_ozel2021.csv (65 male-cns types, 33 receptor genes, sheet Adult_MM_final) and 12 GluCl-dominated glutamate-sign rows in data/params/cell_types.csv (scripts/receptors_ozel2021.py). ON calls are much sparser than Davis 2020 TAPIN-seq (agreement 0.56 over 52 shared types; 758 Davis-on/Ozel-off vs 4 the reverse): ON/OFF thresholds do not transfer across platforms"
 epiney2025_t2_atlas:
   name: Epiney et al. 2025 eLife, type-2 neuroblast lineage snRNA-seq atlas (neurons), central complex
   version: GEO GSE294658 GSE294658_T2.atlas.neurons.rds (9985654022 bytes, on backhouse only); cluster identities from github dgepiney/2023_Doe_Drosophila_Central_Brain_RNAseq Data/sup tables, Supplemental Table 12 (1418 bytes) and Table 6 (17699679 bytes), fetched 2026-09-26
@@ -225,11 +225,20 @@ epiney2025_t2_atlas:
   local: data/raw/epiney2025/ (tables; the .rds stays on backhouse ~/fly-emulation/data/raw/epiney2025/)
   basis: measured (single-nucleus RNA); cluster->type identities by the authors (confidence varies by method)
   use: data/derived/epiney2025_cluster_receptors.csv (per-cluster receptor fraction and cp10k, 51 genes, 161 clusters); marker sanity checked (DOPA ple+, SER SerT+, OCTA Tbh+, EPG ChAT+). iGluR/GluCl ratios are biased upward versus bulk (PAM ~0 in Davis vs DOPA 0.73 here)
+allen2020_vnc_atlas:
+  name: Allen, Neville et al. 2020 eLife 9:e54074, adult VNC scRNA-seq atlas (26,768 high-quality cells reported; Drop-seq-style 10x, 111 neuronal + 12 non-neuronal clusters)
+  version: GEO GSE141807 GSE141807_RAW.tar (70584320 bytes; 4 samples GSM4213596-99, female/male x 2 reps, genes x top-30000-barcode DGE matrices); eLife fig1-data1-v1.xlsx (459067 bytes, per-cluster Seurat FindAllMarkers output, clusters 0-119) and fig1-data2-v1.xlsx (17114 bytes, per-cluster cell number/neurotransmitter/"Predicted hemilineage"); fetched 2026-09-30
+  license: GEO public data; eLife CC BY 4.0
+  local: data/raw/allen2020_vnc/ (cache/ holds derived per-cell QC stats and extracted marker/receptor-gene rows, awk qc_and_extract.awk; GSM*.txt.gz decompress to ~750-850 MB each, not kept decompressed)
+  sha256_prefix: RAW.tar bda31982a53a432b, fig1-data1 6cf8f8841383739c, fig1-data2 05053fb9a967e1ce
+  basis: measured (single-cell RNA, raw UMI counts); GEO/eLife did NOT deposit the authors' per-cell cluster labels (checked GEO suppl, all eLife fig-data tables, and the authors' github aaron-allen/VNC_scRNAseq -- Seurat v2.3.4 R scripts only, no label checkpoint), so cluster/hemilineage assignment here is a marker-based label-transfer proxy (basis inferred) -- QC-passed cells (26,777 vs 26,768 published, using the same nGene/nUMI/mito cutoffs as the authors' R_preprocessing.R) are scored against each published cluster's top-12 markers and assigned to the highest-z cluster; validated against published per-cluster cell counts (Pearson r=0.72, Spearman r=0.68 over 120 clusters) but not a reproduction of the authors' CCA-integrated clustering
+  use: data/derived/receptor_calls_allen2020_vnc.csv (21 Allen hemilineages x 33 receptor genes, fraction expressed and mean CP10K, 20/30/50% ON-call sensitivity) and data/derived/glutamate_sign_by_hemilineage_allen2020.csv (crosswalked to male-cns trumanHl, 24 rows) via scripts/receptors_allen2020_vnc.py. At the declared 30% threshold every one of the 21 hemilineages is "mixed" (GluClalpha and an iGluR both clear 30%) -- hemilineages pool many transcriptomically distinct cell types, so this does not resolve per-cell-type sign the way Davis 2020 (per-type TAPIN-seq) or Ozel 2021 (per-cluster) do; at 50% threshold 6 hemilineages call GluCl-dominated and 4 call iGluR-only
 
-  - name: FlyMimic front-leg musculoskeletal model (via flygym)
-    source: flygym 2.1.0 bundled asset assets/model/musculoskeletal/best_combined_arm_damping_stiff_cvt3.xml (49,670 bytes)
-    paper: Ozdil et al., Musculoskeletal simulation of limb movement biomechanics in Drosophila melanogaster, arXiv 2509.06426 (CC-BY)
-    license: model file header says Apache 2.0 (MyoConverter conversion from OpenSim)
-    fetched: already installed; extracted 2026-09-27 (session 9)
-    local_path: data/params/flymimic_mtu.csv (15 left-front-leg MTUs; F0 in uN, file units g/mm/s)
-    role: B4 muscle parameters for the flybody antagonist pairs (task 5); label inferred (fitted to kinematics)
+flymimic_front_leg:
+  name: FlyMimic front-leg musculoskeletal model (via flygym)
+  source: flygym 2.1.0 bundled asset assets/model/musculoskeletal/best_combined_arm_damping_stiff_cvt3.xml (49,670 bytes)
+  paper: Ozdil et al., Musculoskeletal simulation of limb movement biomechanics in Drosophila melanogaster, arXiv 2509.06426 (CC-BY)
+  license: model file header says Apache 2.0 (MyoConverter conversion from OpenSim)
+  fetched: already installed; extracted 2026-09-27 (session 9)
+  local_path: data/params/flymimic_mtu.csv (15 left-front-leg MTUs; F0 in uN, file units g/mm/s)
+  role: B4 muscle parameters for the flybody antagonist pairs (task 5); label inferred (fitted to kinematics)

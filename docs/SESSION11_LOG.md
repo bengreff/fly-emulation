@@ -14,4 +14,5 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 17:20 repair 1 (completeness guard) pre-registered; 17:30 dev fail 1.8 Hz. 17:34 attribution: general alpha alone 1.8 Hz, motor alpha alone 6.9 Hz.
 - 17:37 repair 2 (motor alpha only) pre-registered. Director interrupt killed the runs; relaunched 17:37.
 - 17:45 VNC rhythm probe pre-registered (DNg100, spiking vs graded vnc_local). Route note drafted (docs/ROUTE_TO_BEHAVIOUR.md). Sonnet agent: Allen 2020 VNC atlas glutamate-receptor calls by hemilineage.
-- 17:55 repair 2 passes; m7 adopted (commit 5b22c0e). 18:10 rhythm probe: no rhythm in spiking or graded arms (excess < 0.05).
+- 17:47 repair 2 passes; m7 adopted (commit 5b22c0e). 17:52 rhythm probe: no rhythm in spiking or graded arms (excess < 0.05).
+- 17:57 rhythm arm (c) graded + adaptation 3 mV/150 ms: no driven rhythm (excess <= 0.06).
