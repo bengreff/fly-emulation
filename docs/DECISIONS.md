@@ -386,3 +386,20 @@ The search ends at 42 of 60 candidates. Best overall is phase 2's (DN 0.85, MN_o
 - Silence held on every one of the 42 candidates.
 - The size exponent stays at 1.0, so the central rule survives on m8.
 - Held out: launched once on this candidate at 00:04 (`runs/s11_rs_heldout/`).
+
+### Result: joint re-search held out; m9 = m8 + re-searched class gains adopted (00:27, 2026-10-01)
+Held out, run once on the best fit candidate (`runs/s11_rs_heldout/` on backhouse, m8 + `--set`). All four pass:
+
+| Test | Criterion | Measured | Verdict |
+|---|---|---|---|
+| Closed loop seeds 17/18/19 | 0 spikes, last 100 ms | 0 / 0 / 0 (brain 0.23 Hz, motor 2.4-2.5 Hz, no MuJoCo warnings) | pass |
+| Bitter suppression | sugar+bitter 100 ≤ 50% of bitter 0 | 0.0 vs 4.8 ± 1.7 Hz | pass |
+| Sugar dose response | 200 Hz > 2 × 100 Hz | 15.7 ± 1.6 vs 5.7 ± 1.4 Hz | pass |
+| Bitter alone | MN9_L < 2 Hz at 100 Hz | 0.0 Hz | pass |
+
+- m9 = M8 + DN release 0.85, MN_other input 1.6, gustatory release 1.25, central size exponent 1.0 (MN_other release stays at 1.0). It is now `WORKING_PROFILE`.
+- The size exponent did not end at 0, so there is no finding against the central rule.
+- Checks:
+  - Full suite: 164 passed under m9.
+  - `--profile m9` without overrides reproduces the held-out sugar trials exactly (7, 6, 7 Hz for trials 0-2, on backhouse).
+- Caveat (F-RS-1): the sugar fit bar is crossed on a noisy slope. A 10-trial replicate inside the bitter assay gave 4.8 Hz.

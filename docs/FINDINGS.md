@@ -232,3 +232,15 @@ Fit of the rung-1 spike-triggered channels to 3 Azevedo 2020 slow flexor MNs (cu
 - Held-out cell 181127: 3% rel RMS. Weak evidence: LIF only also gets 10%.
 - With these values in the whole CNS (m8): G1 silence passes, sugar -> MN9_L 2.7 Hz (m7 6.9), GPU equals CPU per cell.
 - Next discriminating data: recordings with stronger adaptation, or Ca imaging during trains, to pin SK/Ca; central-neuron current steps (none found in machine-readable form, inferred from MNs for now).
+
+### F-RS-1: on the rung-1 membrane, silence no longer needs DN suppression, and MN_other input gain sets the sugar-to-MN9 rate
+Joint re-search of the class gains on m8: 42 candidates, fit seeds 14-16 plus sugar (DECISIONS 2026-09-30 22:01 pre-registration; result 2026-10-01 00:27).
+- All 42 candidates were silent in the closed loop, including DN release at 1.0 (m5 needed 0.70). The rung-1 channels (strong BK, fitted threshold) supply the stability that the DN gain used to provide.
+- MN_other input gain is the dominant lever on sugar -> MN9_L. Gustatory release adds about 1 Hz per 0.25. MN_other release does nothing on this readout.
+- The central size rule (exponent 1.0, its prior centre) survives. The MN9 rate is insensitive to it, since motor neurons use their own fitted exponent.
+- The chosen point (DN 0.85, MN_other input 1.6, gust 1.25) passed all four held-out tests:
+  - silence on seeds 17-19;
+  - sugar+bitter 0.0 Hz vs sugar 4.8 ± 1.7;
+  - sugar 200 Hz 15.7 vs 100 Hz 5.7;
+  - bitter 0.0.
+- Caveat: the fit bar (5 Hz) sits on a noisy slope. The trial SD is about 1.5-2 Hz, and the sugar-at-100 replicate inside the bitter assay gave 4.8. The class gains are inferred fit values, not measurements.

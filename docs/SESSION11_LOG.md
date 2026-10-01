@@ -37,3 +37,6 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 21:3x GPU port of the channels: toy exact; whole CNS m8 300 ms on backhouse equal per cell (sugar and broad).
 - 21:47 G1 seeds 12-13 silent (m8 and m7); sugar -> MN9_L 2.7 Hz (m7 re-run 6.9); m8 adopted as working profile. Full suite 164 passed.
 - 22:01 joint re-search of class gains + central size rule pre-registered (fit seeds 14-16, held out 17-19).
+- 22:47 screen (12 candidates) collected: all silent; best combined candidate MN9 11.4 Hz, J 3.09.
+- 23:35 phase 2 (14) and 00:04 phase 3 (8) collected: 42 candidates in total, all silent; best DN 0.85, MN_other input 1.6, gust 1.25, exponent 1.0 (MN9 5.7 Hz, J 1.19).
+- 00:27 held out on that candidate: seeds 17-19 silent, bitter suppression, dose response and bitter alone all pass; m9 adopted as working profile. Suite 164 passed; m9 reproduces the held-out trials exactly.

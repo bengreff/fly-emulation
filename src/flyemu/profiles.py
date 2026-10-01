@@ -157,11 +157,23 @@ M8 = {
     "channel:NaP|gbar": (round(0.02 / _SLOW_F["NaP"], 5), _G, "prior held in the fit, slow-MN normalised"),
 }
 
+# m9 (session 11, adopted 00:27 after all four held-out tests passed): m8 + the class gains
+# re-searched on the rung-1 membrane (DECISIONS s11 "joint re-search"; 42 candidates, fit seeds
+# 14-16 + sugar->MN9_L; held out seeds 17-19 silent, bitter suppression, dose response, bitter alone).
+_RS = "declared class-level re-search s11 on m8 (fit: seeds 14-16 silent + sugar->MN9_L > 5 Hz; DECISIONS)"
+M9 = {
+    **M8,
+    "class:DN|release_scale": (0.85, _I, _RS),
+    "class:MN_other|input_scale": (1.6, _I, _RS),
+    "class:sensory_gustatory|release_scale": (1.25, _I, _RS),
+    "cell_type:all|within_type_size_exponent": (1.0, _I, _RS + "; prior centre, central size rule on"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m8")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -175,6 +187,7 @@ PROFILES: dict[str, dict] = {
     "m6": {"values": M6, "kick_mv": KICK},
     "m7": {"values": M7, "kick_mv": KICK},
     "m8": {"values": M8, "kick_mv": KICK},
+    "m9": {"values": M9, "kick_mv": KICK},
 }
 
 

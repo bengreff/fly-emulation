@@ -14,10 +14,13 @@ Per-cell and per-synapse properties are in scope. They cannot be measured one by
 
 ## Order (see `docs/PLAN_NEXT.md` and `docs/FIDELITY_LADDER.md`)
 
-0. First, after session 11: run the two pre-registered rung-1 repairs in DECISIONS 2026-09-30 21:12.
-   - Fit the SK/Ca coupling to Azevedo 2020 current-step f-I and adaptation, plus literature central-neuron current steps. Never use sugar or any behaviour in the fit.
-   - Cut the channel cost to ≤ 2x by tables or the GPU, with an equivalence test.
-   - Then score M1/G1/G2 as pre-registered. If rung 1 is adopted, it becomes m8; then continue down the ladder (rung 2, synapse dynamics per receptor).
+0. Session 11 finished rung 1. m8 = rung-1 channels fitted to Azevedo 2020 current steps. m9 = m8 + class gains re-searched on that membrane, and it is now working (DECISIONS 2026-10-01 00:27). Next is **rung 2, synapse dynamics per receptor**. Pre-register it first. The inventory of what exists is in SESSION11_LOG and the gaps are:
+   - a GPU port of the conductance-based synapse switch (`cell_type:all|conductance_based`, which the GPU refuses);
+   - per-type receptor fractions read from `data/derived/receptor_calls_{davis2020,ozel2021,allen2020_vnc}.csv`, which src/ does not yet read;
+   - per-receptor rise and decay (no rise time exists; tau_s is a global 5 ms);
+   - facilitation and release probability (STD exists without facilitation);
+   - turning on ORN/leg depression.
+   Each gap enters neutral with an equivalence test. Then an m10 candidate is scored against the guardrails below.
 
 1. Ledger by source level and grain (small, first), reconciled with `data/model/mechanisms.yaml`.
 2. Per-cell and per-synapse filling from biology and transcriptomes, each rule with a neutral-equivalence test, a test against a measured within-type gradient where one exists, and labelled evidence. Download the atlases you need to backhouse (≤ ~200 GB approved).
@@ -33,7 +36,7 @@ Read first, in this order: `CLAUDE.md`; `docs/HANDOFF.md`; `docs/PLAN_NEXT.md`; 
 
 - Biological bounds on every row of `data/model/parameters.csv`; never widen one to rescue a fit; a bound hit is a finding.
 - Labels never upgrade. A value from a rule is inferred; a fitted value is inferred; a literature number is measured only after reading its source.
-- Every new mechanism or rule enters at a neutral setting with a bit-identical neutral-equivalence test, then is switched on as a pre-registered change to the working model (m7), checked against the guardrails.
+- Every new mechanism or rule enters at a neutral setting with a bit-identical neutral-equivalence test, then is switched on as a pre-registered change to the working model (m9), checked against the guardrails.
 - Pre-register before scoring; check every criterion on the base model first; at most two post-hoc repairs per target.
 - Probes step `Organism.motor_step()` and check MuJoCo warnings; the GPU must reproduce CPU results exactly before its numbers are used.
 - Units: mm, g, s (torque µN·mm).
@@ -47,5 +50,6 @@ Read first, in this order: `CLAUDE.md`; `docs/HANDOFF.md`; `docs/PLAN_NEXT.md`; 
 ## Guardrails (not objectives)
 
 - `FLYEMU_PROFILE=m4`: sugar->MN9_L 8.9 ± 5.9 Hz (10 trials); closed loop seeds 0-2 silent.
-- m7 (default): closed loop seeds 0-2 silent; sugar->MN9_L 6.9 ± 2.3 Hz; template dead fly passes.
+- m7: closed loop seeds 0-2 silent; sugar->MN9_L 6.9 ± 2.3 Hz; template dead fly passes.
+- m9 (default): closed loop seeds 12-19 silent; sugar->MN9_L 5.7 ± 1.4 Hz at 100 Hz, 15.7 at 200 Hz; sugar+bitter 0 Hz; bitter 0 Hz. Fresh seeds for new fits start at 20.
 - Stop starting new work at 4 h 40 m, then wrap up (WORKFLOW §2), including the ledger before/after and a plain-language summary for Ben.

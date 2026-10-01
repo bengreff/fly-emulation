@@ -29,7 +29,8 @@ Compute baseline (measured): the whole-CNS LIF closed loop costs ~50 s of wall t
 **Status (2026-09-30 21:12):**
 - Done: items 1-4.
 - Item 5 measured: 8.9x the LIF step on the Mac, and sugar -> MN9_L 1.7 Hz, so rung 1 is **not adopted** (switch neutral).
-- **21:47: adopted as m8** after repair 1 (SK/BK/Kv2/Ih/Ca fitted to Azevedo 2020 slow-MN current steps; F-RUNG1-2), GPU port with CPU equivalence, G1 silent on seeds 12-13. Sugar -> MN9_L 2.7 Hz; joint gain re-search pre-registered (DECISIONS 22:01). Rung 2 (synapse dynamics per receptor) follows.
+- **21:47: adopted as m8** after repair 1 (SK/BK/Kv2/Ih/Ca fitted to Azevedo 2020 slow-MN current steps; F-RUNG1-2), GPU port with CPU equivalence, G1 silent on seeds 12-13. Sugar -> MN9_L 2.7 Hz; joint gain re-search pre-registered (DECISIONS 22:01).
+- **00:27: m9** = m8 + the re-searched class gains; all held-out tests pass (F-RS-1). Next is rung 2 (synapse dynamics per receptor).
 - Cause: the guessed spike-to-SK coupling (F-RUNG1-1).
 - Next, in order (pre-registered in DECISIONS 21:12):
   - constrain the spike-triggered channels by recorded current-step f-I and adaptation;
