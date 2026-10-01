@@ -353,3 +353,36 @@ Motivation (Ben's answer 3): mechanisms stay on; the class gains fitted on the l
   - sugar dose response: 200 Hz > 2x the 100 Hz rate;
   - bitter -> MN9_L < 2 Hz at 100 Hz.
 - **Adoption.** All pass: m9 = m8 + the values becomes the working profile. A size exponent ending at 0 is reported as a finding against the central rule. Any fail: the values go to `data/params/hypotheses_not_adopted.csv`, with at most two pre-registered repairs. m8 stays working meanwhile.
+Search record, screen (22:47; `runs/s11_rs_screen/` on backhouse, 12 candidates × seeds 14-16 + sugar).
+- Every candidate is silent on all 3 fit seeds, including DN release 0.85 and 1.0. On the m8 membrane, DN suppression is no longer needed for silence.
+- Sugar -> MN9_L by lever (Hz):
+  - m8 values: 2.5.
+  - Size exponent 0.5 / 1.0: 2.8 / 2.1.
+  - MN_other input 2.0 / 3.0: 5.5 / 5.6.
+  - Gustatory release 1.5 / 2.5: 7.0 / 27.1.
+  - MN_other release 1.5 / 2.5: 2.5 / 2.5 (inactive).
+  - DN 0.85 / 1.0: 1.7 / 2.1.
+- Best: DN 0.7, MN_other input 2.0, gustatory 1.5, exponent 1.0, giving 11.4 Hz (J 3.09).
+- Phase 2, a grid that lowers the prior cost: DN {0.85, 1.0} × MN_other input {1.0, 1.3, 1.6} × gustatory {1.25, 1.5}, exponent 1.0; plus exponent 0.75 and 1.25 at (1.0, 1.3, 1.5). 14 candidates; MN_other release fixed at 1.
+Search record, phase 2 (23:35; `runs/s11_rs_p2/`, 14 candidates, all silent on seeds 14-16). MN_other release and size exponent are 1.0 throughout unless stated. Sugar -> MN9_L (Hz) and J:
+
+| DN \ MN_other input, gust | 1.0, 1.25 | 1.0, 1.5 | 1.3, 1.25 | 1.3, 1.5 | 1.6, 1.25 | 1.6, 1.5 |
+|---|---|---|---|---|---|---|
+| 0.85 | 0.1 / 54.3 | 0.7 / 48.8 | 3.4 / 21.6 | 3.7 / 19.0 | **5.7 / 1.19** | 7.0 / 1.65 |
+| 1.0 | 0.7 / 48.2 | 0.5 / 50.7 | 1.8 / 37.5 | 2.7 / 28.9 | 3.8 / 18.1 | 5.2 / 4.54 |
+
+- At (DN 1.0, MN_other input 1.3, gust 1.5), size exponents 0.75 and 1.25 both give 2.7 Hz (J 29.9). The trials differ, but the MN9 rate is insensitive to the central exponent, because motor neurons use their own fitted exponent.
+- MN_other input is the dominant lever. Gustatory release adds about 1 Hz per 0.25.
+- Refinement (phase 3, 8 candidates): DN {0.85, 1.0} × MN_other input {1.45, 1.75} × gust {1.0, 1.25}. The total stays within the 60-candidate budget (34 used).
+Search record, phase 3 (00:04; `runs/s11_rs_p3/`, all silent on seeds 14-16). MN9_L Hz / J:
+
+| DN \ MN_other input, gust | 1.45, 1.0 | 1.45, 1.25 | 1.75, 1.0 | 1.75, 1.25 |
+|---|---|---|---|---|
+| 0.85 | 1.7 / 38.7 | 4.3 / 12.9 | 2.6 / 30.4 | 6.4 / 1.56 |
+| 1.0 | 2.1 / 34.6 | 3.0 / 25.8 | 3.1 / 25.3 | 4.3 / 13.5 |
+
+The search ends at 42 of 60 candidates. Best overall is phase 2's (DN 0.85, MN_other input 1.6, gust 1.25, MN_other release 1.0, exponent 1.0): MN9_L 5.7 Hz, J 1.19.
+- This sits just above the 5.5 bar. The trial SD is about 2 Hz, and neighbours at 1.45 and 1.75 give 4.3 and 6.4, so the bar is crossed on a noisy slope.
+- Silence held on every one of the 42 candidates.
+- The size exponent stays at 1.0, so the central rule survives on m8.
+- Held out: launched once on this candidate at 00:04 (`runs/s11_rs_heldout/`).

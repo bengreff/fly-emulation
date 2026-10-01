@@ -29,16 +29,32 @@ def sets(c: dict) -> str:
     return " ".join(f"--set '{k}={v:.6g}'" for k, v in c.items())
 
 
-def launch(batch: str, cands: list[dict], par: int, seeds, sugar: bool, extra: str = "") -> None:
+def launch(batch: str, cands: list[dict], par: int, seeds, sugar: bool, extra: str = "",
+           profile: str | None = None, assays: tuple = ()) -> None:
+    """profile None: the s10 form (--template on m4 assays). With a profile (s11, m8 on):
+    FLYEMU_PROFILE=<profile>, no --template, and every job is skipped if its output exists
+    (resumable: relaunching a batch reruns only the missing runs)."""
     lines = []
+    env = f"FLYEMU_PROFILE={profile} " if profile else ""
+    tmpl = "" if profile else "--template "
+    aprof = profile or "m4"
     for i, c in enumerate(cands):
         for s in seeds:
-            lines.append(f"uv run python scripts/probes/closed_loop_check.py --template --seed {s} {sets(c)} {extra} "
-                         f"--out runs/{batch}/c{i:03d}_cl{s}.json > runs/{batch}/c{i:03d}_cl{s}.log 2>&1")
+            out = f"runs/{batch}/c{i:03d}_cl{s}.json"
+            lines.append(f"[ -f {out} ] || {env}uv run python scripts/probes/closed_loop_check.py {tmpl}--seed {s} "
+                         f"{sets(c)} {extra} --out {out} > runs/{batch}/c{i:03d}_cl{s}.log 2>&1")
         if sugar:
-            lines.append(f"uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 "
-                         f"--trials 10 {sets(c)} --tag {batch}_c{i:03d} > runs/{batch}/c{i:03d}_sugar.log 2>&1 "
-                         f"&& cp runs/assay-sugar_mn9-m4-{batch}_c{i:03d}/trials.csv runs/{batch}/c{i:03d}_sugar.csv")
+            out = f"runs/{batch}/c{i:03d}_sugar.csv"
+            lines.append(f"[ -f {out} ] || {{ {env}uv run python scripts/assay_pathways.py --assay sugar_mn9 --rates 100 "
+                         f"--shuffles 0 --trials 10 {'--profile ' + profile + ' ' if profile else ''}{sets(c)} "
+                         f"--tag {batch}_c{i:03d} > runs/{batch}/c{i:03d}_sugar.log 2>&1 "
+                         f"&& cp runs/assay-sugar_mn9-{aprof}-{batch}_c{i:03d}/trials.csv {out}; }}")
+        for name, rates in assays:   # held-out assays: c<i>_<name>.csv, 10 trials per rate
+            out = f"runs/{batch}/c{i:03d}_{name}.csv"
+            lines.append(f"[ -f {out} ] || {{ {env}uv run python scripts/assay_pathways.py --assay {name} --rates {rates} "
+                         f"--shuffles 0 --trials 10 --profile {aprof} {sets(c)} --tag {batch}_c{i:03d} "
+                         f"> runs/{batch}/c{i:03d}_{name}.log 2>&1 "
+                         f"&& cp runs/assay-{name}-{aprof}-{batch}_c{i:03d}/trials.csv {out}; }}")
     (REPO / "runs" / batch).mkdir(parents=True, exist_ok=True)
     (REPO / "runs" / batch / "cands.json").write_text(json.dumps(cands, indent=1))
     body = "\n".join(lines)
@@ -86,10 +102,15 @@ def prior_cost(c: dict) -> float:
             cost += (math.log(v) / 0.5) ** 2
         elif k.endswith("tonic_drive"):
             cost += (v / 2.0) ** 2
+        elif k == "cell_type:all|within_type_size_exponent":   # declared prior normal(1.0, 0.25)
+            cost += ((v - 1.0) / 0.25) ** 2
     return cost
 
 
-def objective(r: dict, seeds=(0, 1, 2)) -> float | None:
+def objective(r: dict, seeds=None) -> float | None:
+    seeds = tuple(sorted(r["silent"])) if seeds is None else seeds
+    if len(seeds) < 3:
+        return None
     if any(s not in r["silent"] for s in seeds):
         return None
     pen = sum(10 * math.log1p(r["silent"][s]) for s in seeds)
@@ -106,10 +127,15 @@ if __name__ == "__main__":
     ap.add_argument("--par", type=int, default=6)
     ap.add_argument("--seeds", default="0,1,2")
     ap.add_argument("--no-sugar", action="store_true")
+    ap.add_argument("--profile", default=None, help="s11: run under this profile, resumable, no --template")
+    ap.add_argument("--heldout", action="store_true",
+                    help="add the s11 held-out assays (sugar 100,200; bitter 0,100; sugar+bitter 0,100)")
     a = ap.parse_args()
     if a.cmd == "launch":
         launch(a.batch, json.loads(Path(a.cands).read_text()), a.par,
-               [int(s) for s in a.seeds.split(",")], not a.no_sugar)
+               [int(s) for s in a.seeds.split(",")], not a.no_sugar, profile=a.profile,
+               assays=(("sugar_mn9", "100,200"), ("bitter_mn9", "0,100"), ("sugar_bitter_mn9", "0,100"))
+               if a.heldout else ())
     else:
         for i, r in enumerate(collect(a.batch)):
             print(i, r["cand"], r["silent"], None if r["mn9"] is None else round(r["mn9"], 2),
