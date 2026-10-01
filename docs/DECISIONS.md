@@ -574,3 +574,17 @@ Cause: the muscarinic share. The model's slow pools copy a share of the fast *pe
 - With the recorded chloride reversal, repair 2 recovers part of the sugar pathway (m10p 0 Hz; m9 + cond 1 Hz).
 - The F1 and F3 fills stay in the tables as information, neutral by default (`cell_type:all|rest_from_recordings`, e_inh only in m10q).
 - Both rung-2 repairs are spent. Pre-registered next step: a class-gain re-search on m10q, with inhibitory release in the box, on fresh fit seeds from 29.
+
+### Pre-registration: class-gain search on m10q with an inhibitory gain (03:23, before any run)
+- **New lever:** `cell_type:all|inh_cond_scale`, the inhibitory conductance per unit fitted weight in conductance mode. Neutral 1, bounds 0.25-1.5, prior lognormal(1, 0.5), guessed. There is no transmitter-level inhibitory gain otherwise, and the class efficacies were fitted with current synapses.
+- **Candidates:** 24, as a log-uniform Latin hypercube (numpy seed 29) over:
+  - inh_cond_scale 0.3-1.2;
+  - `class:DN|release_scale` 0.85-2;
+  - `class:MN_other|input_scale` 1.6-4;
+  - `class:sensory_gustatory|release_scale` 1.25-3;
+  - `class:central_other|release_scale` 0.8-1.3.
+- **Staged on backhouse**, within free memory (4 jobs at a time, about 8 GB), resumable:
+  1. Sugar to MN9_L at 100 Hz, 10 trials, for every candidate.
+  2. Candidates at or above 5.5 Hz get the closed loop on fresh seeds 29-31.
+- **Score:** the s11 objective. Pick the lowest J among candidates that are silent on all three seeds with MN9 at least 5.5. That candidate goes once to the held-out test (seeds 23-25 plus the held-out assays). If it passes, m10 is adopted.
+- Whatever is unfinished at 04:45 stays running detached for the next session, which must not re-run finished jobs.

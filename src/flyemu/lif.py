@@ -75,7 +75,8 @@ class LIFParams:
     e_inh: float = -70.0     # mV
     tau_s_inh: float | np.ndarray = 0.0   # s11 rung 2: inhibitory conductance decay (cond); 0 = tau_s
     slow_share_basis: float = 0.0
-    cond_reference: float = 0.0     # rung 2 repair 2: 0 = weights keep the PSP at rest, 1 = at threshold   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
+    cond_reference: float = 0.0     # rung 2 repair 2: 0 = weights keep the PSP at rest, 1 = at threshold
+    inh_cond_scale: float = 1.0     # s11 search: inhibitory conductance per unit fitted weight (cond)   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
     graded: np.ndarray | None = None       # bool per neuron
     graded_rmax_hz: float = 100.0          # rate-equivalent at threshold
     spont_mv: float | np.ndarray = 0.0     # tonic drive
@@ -388,6 +389,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     cond_ref = one("cond_reference", "boolean", "voltage at which conductance weights keep their effect",
                    0.0, "neutral 0: resting PSP preserved; 1 = effect at threshold preserved "
                         "(DECISIONS 2026-10-01 02:49)")
+    inh_scale = one("inh_cond_scale", "dimensionless", "inhibitory conductance per unit fitted weight",
+                    1.0, "neutral 1 (conductance mode only); searched (DECISIONS 2026-10-01 03:23)")
     share_basis = one("slow_share_basis", "boolean", "slow-receptor share basis",
                       0.0, "neutral 0: a slow share f moves f of the fast peak to the slow "
                            "pool (m4-m9); 1 = f of the fast charge (peak f tau_s/tau_slow), "
@@ -515,7 +518,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
 
     return LIFParams(
         tau_m=tau_m, v_rest=v_rest, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
-        tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref,
+        tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref, inh_cond_scale=inh_scale,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
         tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, cond=bool(cond),
@@ -597,7 +600,7 @@ class Network:
             vr = (self.v_th if p.cond_reference else self.v_rest)[self.conn.indices]
             pos = self.w > 0
             self.w = np.where(pos, self.w / (p.e_exc - vr),
-                              self.w / (vr - p.e_inh)).astype(np.float32)
+                              p.inh_cond_scale * self.w / (vr - p.e_inh)).astype(np.float32)
             self.delay_i = np.zeros((self.D, n), dtype=np.float32)
             self.g_i = np.zeros(n, dtype=np.float32)
         self.delay_head = 0
