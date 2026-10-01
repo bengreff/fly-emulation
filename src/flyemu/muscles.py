@@ -74,9 +74,16 @@ class MusclePairs:
     q_ref: np.ndarray         # rad, joint angle where L = 1 (neutral pose; guessed)
 
     @classmethod
-    def load(cls, q_ref: dict[str, float] | None = None, table: Path = TABLE) -> "MusclePairs":
+    def load(cls, q_ref: dict[str, float] | None = None, table: Path = TABLE,
+             optimum: bool = False) -> "MusclePairs":
+        """optimum: take q_ref per (joint, direction) from OPTIMUM_TABLE where
+        listed (anatomical join, s11); otherwise the joint's zero pose."""
         t = pd.read_csv(table, comment="#")
         qr = np.array([(q_ref or {}).get(j, 0.0) for j in t.joint])
+        if optimum:
+            o = pd.read_csv(OPTIMUM_TABLE, comment="#")
+            qo = {(j, float(dr)): q for j, dr, q in zip(o.joint, o.direction, o.q_opt_rad)}
+            qr = np.array([qo.get((j, float(dr)), q) for j, dr, q in zip(t.joint, t.direction, qr)])
         return cls(t.joint.to_numpy(), t.direction.to_numpy(float), t.F0_uN.to_numpy(float),
                    t.r_mm.to_numpy(float), t.L0_mm.to_numpy(float), t.lmin.to_numpy(float),
                    t.lmax.to_numpy(float), t.vmax.to_numpy(float), t.fvmax.to_numpy(float), qr)
@@ -100,6 +107,8 @@ class MusclePairs:
 
 
 COXA_TABLE = TABLE.parent / "coxa_muscles.csv"
+# s11: per-muscle optimum angle joined from FlyMimic by interior segment angle
+OPTIMUM_TABLE = TABLE.parents[1] / "derived" / "leg_muscle_optimum_join.csv"
 COXA_AXES = ("yaw", "roll", "pitch")
 
 
@@ -247,8 +256,10 @@ class HillLegDrive:
     def __init__(self, nm, body, fused: float = 5.0, pairs: MusclePairs | None = None,
                  unit_class: np.ndarray | None = None, units_kw: dict | None = None,
                  remap: dict[int, tuple[str, float]] | None = None, coxa_model: int = 0,
-                 mn_types: np.ndarray | None = None, coxa: CoxaMuscles | None = None):
-        """coxa_model 0: per-DOF antagonist pairs on the coxa (session 9);
+                 mn_types: np.ndarray | None = None, coxa: CoxaMuscles | None = None,
+                 optimum_join: int = 0, ft_flexor_scale: float = 1.0):
+        """ft_flexor_scale multiplies the femur-tibia flexor (-1) F0 on every leg (s11).
+        coxa_model 0: per-DOF antagonist pairs on the coxa (session 9);
         1: anatomical coxa muscles with moment-arm vectors (CoxaMuscles), joined
         to MNs by male-cns type and leg (`mn_types` required)."""
         import mujoco as mj
@@ -262,7 +273,10 @@ class HillLegDrive:
                 jadr[name] = (m.jnt_qposadr[j], m.jnt_dofadr[j])
         t = pd.read_csv(TABLE, comment="#")
         q_ref = {j: float(m.qpos0[jadr[j][0]]) for j in t.joint.unique()}
-        self.p = pairs or MusclePairs.load(q_ref)
+        self.p = pairs or MusclePairs.load(q_ref, optimum=bool(optimum_join))
+        if ft_flexor_scale != 1.0:
+            ft = np.array([("_trochanterfemur-" in j) and j.endswith("_tibia-pitch") for j in self.p.joint])
+            self.p.F0 = np.where(ft & (self.p.direction < 0), self.p.F0 * ft_flexor_scale, self.p.F0)
         self.coxa = None
         if coxa_model == 1:
             self.p = self.p.subset(np.array([not is_coxa_joint(j) for j in self.p.joint]))

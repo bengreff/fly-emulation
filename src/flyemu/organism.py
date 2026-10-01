@@ -149,6 +149,20 @@ class Organism:
                           "FlyMimic coxa muscles with moment-arm vectors over all three hinges, MNs joined by type",
                 subsystem="muscle_mechanics", minimal=0,
                 minimal_note="s9 behaviour; 1 is an option (scripts/build_coxa_muscles.py; s10)"))
+            # s11: where each leg muscle's force-length optimum sits
+            optimum_join = int(self.reg.require(
+                "muscle:leg", "optimum_join", units="enum",
+                model_use="leg muscle optimum angle: 0 flybody zero pose (s9), 1 FlyMimic optimum joined by "
+                          "interior segment angle for coxa-trochanter and femur-tibia pitch "
+                          "(data/derived/leg_muscle_optimum_join.csv)",
+                subsystem="muscle_mechanics", minimal=0,
+                minimal_note="s9 behaviour; 1 corrects a joint-coordinate join (DECISIONS s11)"))
+            ft_flexor_scale = float(self.reg.require(
+                "muscle:leg", "ft_flexor_scale", units="dimensionless",
+                model_use="multiplier on the femur-tibia flexor F0 of every leg",
+                subsystem="muscle_mechanics", minimal=1.0,
+                minimal_note="1 = FlyMimic as shipped (1.04 uN*mm); Azevedo 2020 implies >= 40 "
+                             "(parameters.csv b4_ft_flexor_scale; s11)"))
             units_kw = {"fused_hz": float(fused)}
             fat = float(self.reg.require(
                 "motor_unit:leg", "fatigue_fraction", units="dimensionless",
@@ -165,7 +179,8 @@ class Organism:
             mn_types = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index]
             self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls, remap=remap,
                                              units_kw=units_kw, coxa_model=coxa_model,
-                                             mn_types=mn_types)
+                                             mn_types=mn_types, optimum_join=optimum_join,
+                                             ft_flexor_scale=ft_flexor_scale)
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (

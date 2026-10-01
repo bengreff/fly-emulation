@@ -19,4 +19,13 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 18:02 walking failure localisation pre-registered (recruitment, afferents off, synthetic tripod replay). 18:13 result: two layers fail (DNg100 adds only +0.7 Hz to leg MNs; replayed bursts give no stepping at 10/20 Hz, partial at 5 Hz). Allen agent finished: all 21 hemilineages mixed (committed 81868f5).
 - 18:19-18:43 tethered diagnostics: joint share at the drive frequency 0.82 at 2 Hz, 0.057 at 10 Hz, 0.056 fast units only; torque share at 10 Hz 0.54. The body low-passes a delivered 10 Hz torque.
 - 18:44 m8 leg damping 0.043 (FlyMimic c/k 0.05 s) pre-registered; 18:47 mechanism check fails (0.094), not adopted; key `joint:leg|damping` wired, neutral 0.
-- 18:55 joint-limit occupancy and force-velocity-off diagnostics pre-registered; 18:58 band-limited (3-50 Hz) share added before any run finished.
+- 18:49 joint-limit occupancy and force-velocity-off diagnostics pre-registered; 18:50 band-limited (3-50 Hz) share added before any run finished.
+- 18:55-19:02 damping 0.043 (+/- force-velocity) raises the 10 Hz amplitude 1.7x / 2.6x (under 3x); 5 mm tether shows ground contact is not the clamp. Key `joint:leg|damping` redefined as a multiplier, neutral 1 (full suite had failed on the 0 sentinel).
+- 19:05-19:10 body-only probe (`scripts/probes/joint_impedance.py`): the bare body follows 10 Hz once damping is low (femur-tibia 1.8 rad p2p at 1.5 µN·mm).
+- 19:12-19:15 activation-depth arms (twitch decay 15 ms 2.0x, fused rate 300 Hz 1.15x): neither reaches 3x.
+- 19:22-19:26 per-pair readout: coxa-trochanter front/hind swing at stepping scale; femur-tibia extensor works at force-length gain 0.1-0.3. Cause found: s9 placed every muscle optimum at the flybody zero pose.
+- 19:28 optimum join by interior segment angle built (`muscle:leg|optimum_join`, neutral 0). 19:29 m8 = m7 + join pre-registered (the name m8 reused: the 18:44 damping candidate was not adopted).
+- 19:32 m8 fails (torque 1.12x vs 2x; extensor FL 0.44 vs 0.5); not adopted. Readout: tonic co-activation ~0.65 on both femur-tibia muscles, flexor wins, joint sits 0.5-0.97 rad past the extensor optimum. Diagnostic replays at 40 Hz MN rate running.
+- 19:42 corrected reading: the +1 (FlyMimic extensor) muscle wins, 10:1 capacity. Azevedo 2020 read: flexor ~100 µN at a 417 µm lever, >= 42 µN·mm vs the model's 1.04. Key `muscle:leg|ft_flexor_scale` (row b4_ft_flexor_scale, neutral 1).
+- 19:48 m8 = m7 + flexor scale 40 pre-registered; 19:56 fails (swing 0.098 vs 0.10; joint pins at flexion). Closed loop seed 0 silent.
+- 19:56 size-ordered replay pre-registered; 20:01 no help: the joint runs to the stronger muscle's end under any comparable drive. Next: the resistance reflex in the closed loop.
