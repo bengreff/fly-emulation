@@ -12,7 +12,7 @@
   - Mac step cost 8.9x;
   - sugar -> MN9_L 1.7 Hz;
   - VNC motor output silent.
-  The cause is the guessed spike-to-SK coupling (F-RUNG1-1). Two repairs are pre-registered (DECISIONS 2026-09-30 21:15) and are the next step:
+  The cause is the guessed spike-to-SK coupling (F-RUNG1-1). Two repairs are pre-registered (DECISIONS 2026-09-30 21:12) and are the next step:
   - fit SK/Ca to recorded current steps;
   - cut the cost.
 - **Receptor data:** Özel 2021 optic-lobe calls (+12 glutamate-sign rows, F-RNA-2); Allen 2020 VNC atlas: every hemilineage co-expresses GluCl and iGluR, so VNC glutamate cannot be signed by lineage (F-RNA-3).

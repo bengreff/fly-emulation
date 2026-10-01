@@ -217,7 +217,7 @@ Milestone criteria (all must hold):
 - G1 stability: `closed_loop_check.py --seed 12` and `--seed 13` (fresh seeds, spent here): 0 non-tonic spikes after silencing; brain rate excl. ORNs within 0.5-2x of m7 on the same seeds.
 - G2 sugar -> MN9_L (100 Hz, 10 trials): > 5 Hz (the standing regression bar). Bitter not run (Mac time).
 Adoption if all pass: m8 = m7 + rung 1 becomes the working profile. If any fails, the switch stays neutral in the working model, the failure is diagnosed by channel (which current moves which class), and at most two pre-registered repairs follow; gbar values are never tuned to a behaviour.
-Result (21:15): **rung 1 fails M1 and G2; not adopted. `cell_type:all|intrinsic_channels` stays 0 in the working model (m7 unchanged).**
+Result (21:12): **rung 1 fails M1 and G2; not adopted. `cell_type:all|intrinsic_channels` stays 0 in the working model (m7 unchanged).**
 - M1 (measured, `runs/s11/rung1/cost.json`, brain only, 3000 steps): 5.92 ms vs 0.667 ms per step = **8.9x** (bar 2.0x). No resting conductance was capped (n_capped 0).
 - G2 (measured, `runs/assay-sugar_mn9-m7-rung1/`): sugar -> MN9_L **1.7 ± 1.1 Hz** over 10 trials (bar > 5; m7 6.9 ± 2.3).
 - Same stimulus, brain-only spikes over 300 ms: vnc_motor 421 -> 0, descending 156 -> 26, central intrinsic 783 -> 256; sensory unchanged (985).
@@ -228,7 +228,7 @@ Diagnosis by channel (derived, no fitting):
 - The guessed Ca pool explains the size (derived): 1 unit per spike, tau 80 ms, K_d 2 means the pool reaches 0.8 at 10 Hz, so SK is ~30% open. At 40 Hz the pool reaches 3.2 and SK is ~60% open: about 0.3x leak of K conductance, far from E_K. A 3-4x rate cut per cell compounds over the 3-4 synapses from GRN to MN9.
 Reading (inferred): rung 1's failure is a single unconstrained guess, the spike-to-SK coupling, not the transcriptome densities or the subthreshold set. The fix must come from recorded physiology, not from the sugar rate.
 
-### Pre-registration: rung-1 repairs (21:15, before any run; at most two)
+### Pre-registration: rung-1 repairs (21:12, before any run; at most two)
 1. **Spike-triggered channels constrained by recorded single-cell physiology.**
    - Data: Azevedo 2020 current-step trials (cells 181021, 180621, 181127; status seen, not sealed), giving f-I gain and adaptation ratio (last/first ISI) per step amplitude. Add Drosophila central-neuron current-step recordings from the literature, extracted and labelled per class (PN, LN, KC where available).
    - Fit: the SK gbar, Ca per spike, Ca tau and BK/Kv2 increments, at the class prior, within the parameters.csv bounds (0-10x prior), by least squares to those f-I and adaptation curves with the single-cell model at each recorded cell's own measured rest and threshold. MN-derived values are transferred to central cells as inferred.

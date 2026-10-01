@@ -14,7 +14,7 @@ Per-cell and per-synapse properties are in scope. They cannot be measured one by
 
 ## Order (see `docs/PLAN_NEXT.md` and `docs/FIDELITY_LADDER.md`)
 
-0. First, after session 11: run the two pre-registered rung-1 repairs in DECISIONS 2026-09-30 21:15.
+0. First, after session 11: run the two pre-registered rung-1 repairs in DECISIONS 2026-09-30 21:12.
    - Fit the SK/Ca coupling to Azevedo 2020 current-step f-I and adaptation, plus literature central-neuron current steps. Never use sugar or any behaviour in the fit.
    - Cut the channel cost to ≤ 2x by tables or the GPU, with an equivalence test.
    - Then score M1/G1/G2 as pre-registered. If rung 1 is adopted, it becomes m8; then continue down the ladder (rung 2, synapse dynamics per receptor).

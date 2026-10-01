@@ -214,7 +214,7 @@ Reading (inferred): mRNA level is a weak proxy for functional density; the rung-
 
 ### F-RUNG1-1: intrinsic conductances at guessed priors silence the motor output; the cause is the spike-to-SK coupling, not the transcriptome densities
 
-Rung 1 (`src/flyemu/channels.py`, all channels at priors, densities from F-RNA-4) is not adopted (DECISIONS 2026-09-30 21:15).
+Rung 1 (`src/flyemu/channels.py`, all channels at priors, densities from F-RNA-4) is not adopted (DECISIONS 2026-09-30 21:12).
 - Measured in the model:
   - sugar -> MN9_L falls to 1.7 ± 1.1 Hz (m7 6.9);
   - VNC motor spikes fall from 421 to 0 under the same brain-only sugar stimulus;
