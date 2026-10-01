@@ -403,3 +403,105 @@ Held out, run once on the best fit candidate (`runs/s11_rs_heldout/` on backhous
   - Full suite: 164 passed under m9.
   - `--profile m9` without overrides reproduces the held-out sugar trials exactly (7, 6, 7 Hz for trials 0-2, on backhouse).
 - Caveat (F-RS-1): the sugar fit bar is crossed on a noisy slope. A 10-trial replicate inside the bitter assay gave 4.8 Hz.
+
+### Pre-registration: rung 2, synapse receptor mix and kinetics per postsynaptic type (00:45, 2026-10-01, before any run)
+Director instruction: pre-register; port the conductance-synapse switch to the GPU with CPU equivalence; fill per-type receptor composition from the receptor tables (labelled); switch it on at priors; re-search the class gains as with rung 1. m9 stays working until the gates below pass.
+
+**Mechanisms.** Each enters neutral, with a bit-identical neutral test.
+- **R2a. Conductance synapses** (`cell_type:all|conductance_based`, which exists on the CPU).
+  - Fast excitatory and inhibitory conductances with reversals e_exc 0 and e_inh -70 mV (the N9 priors).
+  - Weights are scaled so the PSP at rest is unchanged.
+  - GPU port in `gpu/batched.py`, replacing the refusal.
+- **R2b. Receptor shares per postsynaptic cell from transcriptomes** (`src/flyemu/receptors.py`; switch `cell_type:all|receptor_shares_from_rna`, neutral 0). The probability that a cell expresses gene X, p(X), is taken from the first source that has it:
+  1. per type, Davis 2020 / Özel 2021 `p_expressed` (mean of the two where both exist);
+  2. the VNC hemilineage `frac_expressed` (Allen 2020);
+  3. otherwise the mean over profiled types (population prior).
+  Labels: inferred in every case, with the source recorded per cell. The slow share of each transmitter's input is then f = s·p_slow / (s·p_slow + p_fast), where:
+  - GABA: p_slow = p(GABA-B-R1)·p(GABA-B-R2), the obligate heterodimer; p_fast = p(Rdl). This gives `gabab_fraction`.
+  - ACh: p_slow = max(p(mAChR-A), p(mAChR-B)); p_fast = max over nAChRα1/5/6/7. This gives `machr_fraction`.
+  - Glutamate: p_slow = p(mGluR); p_fast = max(GluClα, GluRIA, GluRIB). This gives `mglur_fraction`.
+  - NMDA, of excitatory glutamate: p_slow = p(Nmdar1)·p(Nmdar2); p_fast = max(GluRIA, GluRIB). This gives `nmda_fraction`.
+  - s is one rule parameter per receptor family (`receptor:<family>|slow_peak_ratio`): the peak of the slow current relative to the fast at equal expression. It is guessed at a prior of 0.05, with bounds 0-0.3. The model's slow pools copy a share of the fast peak, so even small shares carry large charge (tau 150-300 vs 5 ms).
+  - The glutamate sign per type is already filled (66 rows) and is not changed.
+- **R2c. A separate decay for the fast inhibitory conductance** (`cell_type:all|tau_s_inh`). It is neutral when equal to tau_s (5 ms); guessed prior 10 ms (GABA-A/GluCl IPSCs decay more slowly than nicotinic EPSCs; fly values unread, so the prior is guessed). It is only active when R2a is on.
+- **Not in this rung** (stated gaps): a rise time per receptor; facilitation and release probability; ORN and leg depression on.
+
+**Gates**
+- **A. Mechanism.**
+  - The neutral switches are bit-identical, checked by tests.
+  - GPU equals CPU:
+    - toy networks: exact, with cond, cond+channels and cond+slow pools;
+    - whole CNS, m9 + R2a/b/c at priors, 300 ms sugar and broad stimuli: total spikes within 0.1%, and at least 99.9% of cells with identical counts.
+- **B. Candidate at priors** (m10p = m9 + R2a + R2b + R2c, all at priors):
+  - closed loop fit seeds 20, 21, 22 silent (closed_loop_check, last 100 ms);
+  - sugar -> MN9_L (100 Hz, 10 trials) measured.
+  If silent and MN9_L > 5.5 Hz, it goes straight to held out. Otherwise the class gains are re-searched.
+- **C. Re-search** (as s11 rung 1). Same objective and prior as DECISIONS 22:01. The levers are DN release, MN_other input, gustatory release and MN_other release, starting from m9's values. The receptor rule parameters stay at their priors. At most 30 candidates, on fit seeds 20-22 plus sugar, on backhouse.
+- **D. Held out, run once on the best:**
+  - closed loop seeds 23, 24, 25 silent;
+  - sugar+bitter 100 Hz ≤ 50% of bitter 0;
+  - sugar 200 Hz > 2 × 100 Hz;
+  - bitter alone < 2 Hz.
+  All pass: m10 is adopted as working. Any fail: record in hypotheses_not_adopted.csv; m9 stays.
+- **Cost.** A Mac per-step brain cost above 1.5x m9 is reported, not gating. The GPU is the throughput path.
+- **Not targets.** Walking and recorded behaviour are guardrails only, per Ben.
+
+### Result: rung 2 gates A and B, and repair 1 pre-registered (01:06)
+**Gate A: passes.**
+- The neutral switches are bit-identical (2 new tests).
+- Toy GPU vs CPU is exact: cond 488/488 spikes, cond+channels+slow 881/881, cond+adapt+std+gabab+mod 405/405.
+- Whole CNS, m10p, 300 ms on backhouse:
+  - sugar: exact, 2,299 = 2,299 spikes;
+  - broad: 34,273 = 34,273 spikes over 5,990 active cells, with identical counts in every cell (36 steps carry a one-step shift).
+- Full suite: 169 passed. Mac brain step cost: 6.03 ms (m10p) vs 4.90 ms (m9), i.e. 1.23x.
+- Receptor-share coverage: 73,253 cells from type mRNA, 10,492 from VNC hemilineage, 83,366 from the population prior.
+- Mean shares: GABA-B 0.045, mAChR 0.033, mGluR 0.013, NMDA 0.062.
+  - 3,555 cells have GABA-B > 0.5, and 8,215 have NMDA > 0.5. These lack Rdl or GluRIA/B mRNA.
+
+**Gate B (m10p at priors): fails silence.** Closed loop seeds 20/21/22 give 94.7 / 80.8 / 97.6 spikes/ms in the last 100 ms. No MuJoCo warnings; brain 0.36-0.39 Hz.
+
+**Diagnosis** (seed 20, diagnostic only, not scored):
+
+| Variant | Silent spikes/ms |
+|---|---|
+| Shares off (cond + tau_s_inh) | 0.0 |
+| mAChR ratio 0, rest on | 0.0 |
+| Cond off, mAChR 0 | 0.0 |
+
+Cause: the muscarinic share. The model's slow pools copy a share of the fast *peak* into a 300 ms current. A mean mAChR share of 0.033 therefore adds about 0.033 × 300/5 ≈ 2x the fast cholinergic charge. Since ACh is the dominant transmitter, cholinergic excitation roughly triples. The pre-registration noted this ("small shares carry large charge"). The class gains cannot sensibly remove a brain-wide 3x cholinergic increase.
+
+**Repair 1** (pre-registered now, before any run of it): define the slow share by **charge**, not peak.
+- New switch `cell_type:all|slow_share_basis`: 0 = peak (m4-m9 meaning, neutral), 1 = charge. With charge, a share f moves f of the synapse's fast charge to the slow receptor:
+  - the fast peak is scaled by (1 - f);
+  - the slow peak is f × tau_s / tau_slow.
+  The per-cell tau_s (excitatory fast decay) is used for every family. This is an approximation for inhibitory families, where tau_s_inh differs.
+- Reason: the rule's s is meant as the slow receptor's share of transmission at equal expression. On a peak basis, a 5% prior silently means 300% of the charge. The prior s stays 0.05, now read as a charge share (guessed).
+- Repair 1 is scored exactly as gate B, on fit seeds 20-22 plus sugar. Then gates C and D follow unchanged (held-out seeds 23-25 are still unseen). One repair remains.
+
+### Result: repair 1 at priors, and Gate C pre-registered (01:18)
+**Repair 1 (m10p = m9 + cond + receptor shares + tau_s_inh 10 + charge basis), fit seeds:**
+- Closed loop seeds 20/21/22: 0.0 / 0.0 / 0.0 spikes/ms. Silence passes; the brain runs at 0.25 Hz.
+- Sugar to MN9_L at 100 Hz: 0.0 Hz in 10 trials, with about 157 cells active.
+  - Peak basis (before repair 1): 149 Hz, with the loop not silent.
+  - m9: 5.7 Hz.
+- Gate B fails on sugar, so Gate C runs.
+- Diagnostic only: with cond off and shares on (peak basis), seed 20 gave 370 spikes/ms. The conductance synapses were limiting the runaway, not causing it.
+
+**Gate C** (pre-registered now; before any candidate is run). Profile m10p.
+- Up to 30 candidates on fit seeds 20-22 plus sugar 100 Hz, scored with the s11 objective (prior cost + 10 log1p(silent) per seed + 10 max(0, 5.5 - MN9)).
+- Candidates: a log-uniform Latin hypercube (numpy seed 11) over:
+  - `class:DN|release_scale` 0.85-2.5;
+  - `class:MN_other|input_scale` 1.6-4;
+  - `class:sensory_gustatory|release_scale` 1.25-4;
+  - `class:MN_other|release_scale` 0.7-1.5.
+- The lower bounds sit at the m9 values (MN_other release at its neutral 1, with a range to 0.7), because the change removed sugar drive.
+- At most one refinement batch, of up to 10 candidates around the best, if no candidate passes.
+- The best candidate with J below 5 (silent on all three seeds and MN9 at least 5.5 Hz, within prior cost 5) goes once to Gate D, on held-out seeds 23-25 plus the held-out assays.
+- If nothing reaches J below 5, rung 2 is not adopted this session; m9 stays the working profile, and the result is recorded in hypotheses_not_adopted.csv.
+
+**Gate C amendment (01:34, before any candidate result exists): staged evaluation on the Mac.**
+- The first launch on backhouse (16 parallel) was killed by the out-of-memory killer. No candidate result exists.
+- The WSL VM's 31 GB is about 95% used by another project's distro. Running more there risks killing their processes, so the screen moves to the Mac, which only has the compute for a staged evaluation:
+  1. **Sugar screen.** All 30 pre-registered candidates (unchanged), at 3 trials each instead of 10, 2 in parallel.
+  2. **Full scoring.** Only candidates with a screen mean of at least 4.0 Hz get it: sugar at 10 trials, plus closed loop on seeds 20-22. Below 4 Hz a candidate cannot plausibly reach the J < 5 bar, which needs MN9 above 5.
+- The objective, bounds, pass bar and Gate D are unchanged. If the screen's cut-off excludes a candidate that the full protocol would have passed, the pass bar is not loosened to compensate.

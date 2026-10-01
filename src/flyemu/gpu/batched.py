@@ -38,8 +38,9 @@ short-term depression (Tsodyks-Markram resource, incl. ORN/leg depression),
 GABA-B slow path, neuromodulator pools, identified electrical synapses
 (net.elec kicks), membrane noise (own RNG: statistical equivalence only).
 
-Not supported (raise NotImplementedError): conductance-based synapses
-(params.cond), presynaptic inhibition of sensory terminals (presyn_inh_gain > 0),
+Conductance synapses (params.cond, s11 rung 2): fast excitatory and inhibitory
+conductances in separate edge columns, as lif.py. Not supported (raise
+NotImplementedError): presynaptic inhibition of sensory terminals (presyn_inh_gain > 0),
 DAN-gated KC->MBON depression (kc_mbon_eta > 0; structural plasticity of W).
 Static edge transforms (glutamate sign per target, CX ring class normalisation,
 FLYEMU_EDGE_SCALES) are inherited from the reference network's weights.
@@ -92,6 +93,9 @@ class Cfg(NamedTuple):
     tiers: tuple    # event-path capacities ((K, E), ...) ascending: K active presynaptic
                     # cells (any member), E expanded edges; () = dense every step
     ich: tuple = ()  # rung-1 intrinsic channels present (channels.Intrinsic.on order)
+    cond: bool = False   # s11 rung 2: conductance synapses (edge column 1 = inhibitory)
+    e_exc: float = 0.0
+    e_inh: float = -70.0
 
 
 def _f32(x, n):
@@ -111,8 +115,6 @@ class BatchedNetwork:
     def __init__(self, net: lif.Network, B: int = 1, member: dict | None = None,
                  seed: int = 0, tiers=None) -> None:
         p = net.params
-        if p.cond:
-            raise NotImplementedError("conductance-based synapses (params.cond) are not ported")
         if net.w_pi is not None:
             raise NotImplementedError("presynaptic inhibition (presyn_inh_gain > 0) is not ported")
         if net.kc_edge is not None:
@@ -149,14 +151,23 @@ class BatchedNetwork:
             chans.append((net.w_slow, np.float32(net.decay_slow), False))
         for ch in getattr(net, "chan", []):
             chans.append((ch["w"], np.float32(ch["decay"]), bool(ch["vdep"])))
-        cols = [net.w] + [w_ for w_, _, _ in chans]
+        cond = bool(p.cond)
+        if cond:   # lif.py splits by sign: excitatory into delay, -w into delay_i
+            cols = [np.where(net.w > 0, net.w, 0).astype(np.float32),
+                    np.where(net.w < 0, -net.w, 0).astype(np.float32)] + [w_ for w_, _, _ in chans]
+        else:
+            cols = [net.w] + [w_ for w_, _, _ in chans]
         pre, post = pre0, post0
-        if net.W_graded is not None:
-            g = net.W_graded.tocoo()   # (n_post, n_graded); graded cells have no slow channels
+        gmats = []
+        if net.W_graded is not None:   # (n_post, n_graded); graded cells have no slow channels
+            gmats.append((0, net.W_graded.tocoo()))
+            if cond and getattr(net, "W_graded_i", None) is not None:
+                gmats.append((1, net.W_graded_i.tocoo()))
+        for col, g in gmats:
             pre = np.concatenate([pre, net.g_idx[g.col]])
             post = np.concatenate([post, g.row.astype(np.int64)])
-            cols = [np.concatenate([cols[0], g.data.astype(np.float32)])] + [
-                np.concatenate([x, np.zeros(g.nnz, np.float32)]) for x in cols[1:]]
+            cols = [np.concatenate([x, g.data.astype(np.float32) if k == col
+                                    else np.zeros(g.nnz, np.float32)]) for k, x in enumerate(cols)]
         W = np.stack(cols, 1).astype(np.float32)       # (edges, 1 + n_channels)
         keep = np.any(W != 0, axis=1)
         pre, post, W = pre[keep], post[keep], W[keep]
@@ -218,7 +229,8 @@ class BatchedNetwork:
             noise=float(p.noise_mv), dt=dt,
             graded_scale=float(p.graded_rmax_hz * dt / 1000.0),
             mod_increment=float(p.mod_increment),
-            ich=() if ich is None else tuple(ich.on))
+            ich=() if ich is None else tuple(ich.on),
+            cond=cond, e_exc=float(p.e_exc), e_inh=float(p.e_inh))
         c = dict(
             e_pre=e_pre, e_post=e_post, e_w=e_w, dly=dly, graded=graded,
             p_indptr=p_indptr.astype(np.int32), p_rowlen=rowlen.astype(np.int32),
@@ -238,8 +250,12 @@ class BatchedNetwork:
         )
         if chans:
             c.update(ch_decay=np.array([d for _, d, _ in chans], np.float32))
+        if cond:
+            c.update(decay_si=np.asarray(net.decay_si, np.float32)[:, None])
+        if cond or ich is not None:
+            c.update(tau_m=val["tau_m"])
         if ich is not None:   # rung 1: the reference network's initialised Intrinsic
-            c.update(tau_m=val["tau_m"], ca_per_spike=np.asarray(ich.ca_per_spike, np.float32)[:, None],
+            c.update(ca_per_spike=np.asarray(ich.ca_per_spike, np.float32)[:, None],
                      ich_d=np.array([ich.d[k] for k in _GATES] + [ich.d_kv2, ich.d_bk, ich.d_ca],
                                     np.float32))
             for ch in ich.on:
@@ -271,7 +287,7 @@ class BatchedNetwork:
             k=jnp.int32(0), H=jnp.zeros((D, n, B), jnp.float32),
             v=jnp.broadcast_to(self.c["v_rest"], (n, B)).astype(jnp.float32),
             i_syn=z, ref_until=z, kick_held=z, adapt=z, x_res=jnp.ones((n, B), jnp.float32),
-            i_ch=tuple(z for _ in self.cfg.ch_vdep), mod_level=jnp.zeros((3, B), jnp.float32),
+            g_i=z, i_ch=tuple(z for _ in self.cfg.ch_vdep), mod_level=jnp.zeros((3, B), jnp.float32),
             counts=jnp.zeros((n, B), jnp.int32), key=self.key,
             ich={} if not self.cfg.ich else dict(
                 **{k: jnp.broadcast_to(jnp.asarray(v, jnp.float32)[:, None], (n, B))
@@ -376,7 +392,7 @@ def _dense_input(cfg: Cfg, c: dict, z):
     zz = z[c["e_pre"]]
     seg = lambda k: jax.ops.segment_sum(c["e_w"][:, k, None] * zz, c["e_post"],
                                         num_segments=cfg.n, indices_are_sorted=True)
-    return tuple(seg(k) for k in range(1 + len(cfg.ch_vdep)))
+    return tuple(seg(k) for k in range(1 + cfg.cond + len(cfg.ch_vdep)))
 
 
 def _event_input(cfg: Cfg, c: dict, z, act, nnz, total, K: int, E: int):
@@ -398,7 +414,7 @@ def _event_input(cfg: Cfg, c: dict, z, act, nnz, total, K: int, E: int):
 
     def add(k):
         return jnp.zeros_like(z).at[tgt].add(c["p_w"][edge, k][:, None] * zj)
-    return tuple(add(k) for k in range(1 + len(cfg.ch_vdep)))
+    return tuple(add(k) for k in range(1 + cfg.cond + len(cfg.ch_vdep)))
 
 
 def _input(cfg: Cfg, c: dict, z):
@@ -424,12 +440,20 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
     slot = (k - c["dly"]) % D
     z = s["H"][slot, jnp.arange(n)]                                  # (n, B)
     arr, *a_ch = _input(cfg, c, z)
+    if cfg.cond:
+        arr_i, *a_ch = a_ch
+        arr_i = arr_i * c["inp"]
     arr = arr * c["inp"]
     if cfg.mod:
         gain = 1.0 + (c["mod_sens"][:, 0:1] * s["mod_level"][0] + c["mod_sens"][:, 1:2]
                       * s["mod_level"][1] + c["mod_sens"][:, 2:3] * s["mod_level"][2])
         arr = arr * gain
+        if cfg.cond:
+            arr_i = arr_i * gain
     i_syn = s["i_syn"] * c["decay_s"] + arr
+    g_i = s["g_i"]
+    if cfg.cond:
+        g_i = g_i * c["decay_si"] + arr_i
     drive = i_syn
     i_ch = []
     for ci, vdep in enumerate(cfg.ch_vdep):
@@ -449,7 +473,15 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
         drive = drive - adapt
     v_rest = c["v_rest"]
     gates = s["ich"]
-    if cfg.ich:   # rung 1: leak + intrinsic conductances, exponential Euler (lif.py)
+    if cfg.cond:   # rung 2: conductance synapses (lif.py p.cond), exponential Euler
+        G = 1.0 + i_syn + g_i
+        num = v_rest + (drive - i_syn) + i_syn * jnp.float32(cfg.e_exc) + g_i * jnp.float32(cfg.e_inh)
+        if cfg.ich:
+            gates, dG, dGE = _ich_step(cfg, c, gates, s["v"])
+            G, num = G + dG, num + dGE
+        v_inf = num / G
+        v = v_inf + (s["v"] - v_inf) * jnp.exp(-jnp.float32(cfg.dt) * G / c["tau_m"])
+    elif cfg.ich:   # rung 1: leak + intrinsic conductances, exponential Euler (lif.py)
         gates, dG, dGE = _ich_step(cfg, c, gates, s["v"])
         G = 1.0 + dG
         v_inf = (v_rest + drive + dGE) / G
@@ -486,6 +518,8 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
     v = jnp.where(spk, c["v_reset"], v)
     if cfg.reset_syn:
         i_syn = jnp.where(spk, 0.0, i_syn)
+        if cfg.cond:
+            g_i = jnp.where(spk, 0.0, g_i)
     if cfg.adapt:
         adapt = adapt + jnp.where(spk, c["adapt_mv"], 0.0)
     if cfg.mod:
@@ -510,7 +544,7 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
         x_res = jnp.where(spk, x_res * (1.0 - c["std_u"]), x_res)
     y = jnp.where(graded, y_g, y_s) * c["rel"]
     H = s["H"].at[k % D].set(y)
-    ns = dict(k=k + 1, H=H, v=v, i_syn=i_syn, ref_until=ref_until, kick_held=kick_held,
+    ns = dict(k=k + 1, H=H, v=v, i_syn=i_syn, g_i=g_i, ref_until=ref_until, kick_held=kick_held,
               adapt=adapt, x_res=x_res, i_ch=tuple(i_ch), mod_level=mod_level,
               counts=s["counts"] + spk, key=key, ich=gates)
     return ns, spk

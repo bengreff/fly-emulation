@@ -73,6 +73,8 @@ class LIFParams:
     cond: bool = False       # conductance-based synapses
     e_exc: float = 0.0       # mV
     e_inh: float = -70.0     # mV
+    tau_s_inh: float | np.ndarray = 0.0   # s11 rung 2: inhibitory conductance decay (cond); 0 = tau_s
+    slow_share_basis: float = 0.0   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
     graded: np.ndarray | None = None       # bool per neuron
     graded_rmax_hz: float = 100.0          # rate-equivalent at threshold
     spont_mv: float | np.ndarray = 0.0     # tonic drive
@@ -373,6 +375,12 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                 0.0, "declared default cation reversal")
     e_inh = one("e_inh", "mV", "inhibitory reversal (conductance mode)",
                 -70.0, "declared default chloride reversal")
+    tau_s_inh = per("tau_s_inh", "ms", "fast inhibitory conductance decay (conductance mode)",
+                    0.0, "neutral 0: decays with tau_s, as the excitatory conductance")
+    share_basis = one("slow_share_basis", "boolean", "slow-receptor share basis",
+                      0.0, "neutral 0: a slow share f moves f of the fast peak to the slow "
+                           "pool (m4-m9); 1 = f of the fast charge (peak f tau_s/tau_slow), "
+                           "DECISIONS 2026-10-01 01:06")
 
     # --- session 6: absent mechanisms now simulated, defaults neutral ---------
     glu_sign = per("glutamate_receptor_sign", "sign", "sign of glutamatergic input onto this type",
@@ -486,9 +494,17 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         subsystem="identity", instances=n,
     )
 
+    # --- session 11 rung 2: slow-receptor shares per cell from receptor mRNA (receptors.py)
+    from . import receptors
+    rr = receptors.from_registry(reg, conn)
+    if rr is not None:
+        sh, _src = rr
+        gabab, mglur, machr, nmda = (sh["gabab_fraction"], sh["mglur_fraction"],
+                                     sh["machr_fraction"], sh["nmda_fraction"])
+
     return LIFParams(
         tau_m=tau_m, v_rest=v_rest, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
-        tau_s=tau_s,
+        tau_s=tau_s, slow_share_basis=share_basis,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
         tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, cond=bool(cond),
@@ -509,7 +525,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
-        intrinsic=intrinsic,
+        intrinsic=intrinsic, tau_s_inh=tau_s_inh,
     )
 
 
@@ -575,6 +591,9 @@ class Network:
         self.delay_head = 0
         self.decay_v = np.exp(-dt / self.tau_m).astype(np.float32)
         self.decay_s = np.exp(-dt / _arr(p.tau_s, n)).astype(np.float32)
+        tsi = _arr(p.tau_s_inh, n)
+        self.decay_si = np.where(tsi > 0, np.exp(-dt / np.where(tsi > 0, tsi, 1.0)),
+                                 self.decay_s).astype(np.float32)
         self.decay_a = np.exp(-dt / _arr(p.tau_adapt, n)).astype(np.float32)
         self.rec_step = (1.0 - np.exp(-dt / _arr(p.std_tau_rec, n))).astype(np.float32)
         self.spike_count = 0
@@ -595,6 +614,15 @@ class Network:
             gpre = np.repeat(np.arange(self.g_idx.size), [len(r) for r in rows])
             self.W_graded = sp.csr_matrix(
                 (self.w[sel], (gpre, self.conn.indices[sel])), shape=(self.g_idx.size, n)).T.tocsr()
+            self.W_graded_i = None
+            if p.cond:   # rung 2: graded inhibition is an inhibitory conductance, as spiking
+                neg = self.W_graded.copy()
+                neg.data = np.where(neg.data < 0, -neg.data, 0.0).astype(np.float32)
+                neg.eliminate_zeros()
+                self.W_graded.data = np.where(self.W_graded.data > 0, self.W_graded.data,
+                                              0.0).astype(np.float32)
+                self.W_graded.eliminate_zeros()
+                self.W_graded_i = neg
             self.w[sel] = 0.0   # graded cells do not also spike-transmit
             self.graded_scale = p.graded_rmax_hz * dt / 1000.0   # spike-equivalents per step
 
@@ -621,6 +649,8 @@ class Network:
         if self.W_graded is not None:
             keep = ~np.isin(self.g_idx, idx)
             self.W_graded = (self.W_graded @ sp.diags(keep.astype(np.float32))).tocsr()
+            if getattr(self, "W_graded_i", None) is not None:
+                self.W_graded_i = (self.W_graded_i @ sp.diags(keep.astype(np.float32))).tocsr()
 
     def step(
         self,
@@ -645,8 +675,10 @@ class Network:
         self.delay[self.delay_head].fill(0.0)
         if p.cond:
             arr_i = self.delay_i[self.delay_head]
-            self.g_i = self.g_i * self.decay_s + arr_i
-            arr_i.fill(0.0)
+            if self._mod_active:
+                arr_i = arr_i * gain
+            self.g_i = self.g_i * self.decay_si + arr_i
+            self.delay_i[self.delay_head].fill(0.0)
 
         drive = self.i_syn
         if self.w_slow is not None:
@@ -738,6 +770,9 @@ class Network:
             if r.any():
                 self.delay[(self.delay_head + 1) % self.D] += (
                     self.W_graded @ (r * self.graded_scale)).astype(np.float32)
+                if p.cond and self.W_graded_i is not None:
+                    self.delay_i[(self.delay_head + 1) % self.D] += (
+                        self.W_graded_i @ (r * self.graded_scale)).astype(np.float32)
 
         if self._any_std:
             self.x_res += (1.0 - self.x_res) * self.rec_step
@@ -806,7 +841,7 @@ class Network:
             # built from the fast weights; they keep all-fast GABA (limitation)
             ws = np.where(is_gaba[pre] & ~self.graded[pre], self.w * f[post], 0.0).astype(np.float32)
             self.w = (self.w - ws).astype(np.float32)
-            self.w_slow = ws
+            self.w_slow = self._charge_basis(ws, post, p.gabab_tau_ms)
             self.delay_slow = np.zeros((int(_arr(p.delay_steps, n, np.int64).max()), n), np.float32)
             self.i_slow = np.zeros(n, dtype=np.float32)
             self.decay_slow = np.float32(np.exp(-dt / p.gabab_tau_ms))
@@ -858,6 +893,9 @@ class Network:
             self.epg_trace = np.zeros(n, np.float32)
             self.ring_decay = np.float32(np.exp(-dt / p.ring_trace_tau_ms))
         self.apl_mask = None
+        if p.apl_local > 0 and p.cond:
+            raise NotImplementedError("N23 compartmental APL with conductance synapses (APL "
+                                      "inhibition sits in W_graded_i, which N23 does not edit)")
         if p.apl_local > 0 and self.W_graded is not None:
             t = self.conn.neurons.type.fillna("")
             apl_cols = np.flatnonzero(t.to_numpy()[self.g_idx] == "APL")
@@ -900,6 +938,14 @@ class Network:
         if self.glia_k is not None:
             self.glia_k += np.bincount(self.glia_idx[spiked], minlength=len(self.glia_k)) / self.glia_n
 
+    def _charge_basis(self, ws: np.ndarray, post: np.ndarray, tau_slow: float) -> np.ndarray:
+        """Rung 2 repair 1: with slow_share_basis on, the slow pool carries the moved
+        fast charge (peak x tau_s / tau_slow) rather than the moved fast peak."""
+        if not self.params.slow_share_basis:
+            return ws
+        k = _arr(self.params.tau_s, self.conn.n)[post] / np.float32(tau_slow)
+        return (ws * k).astype(np.float32)
+
     def _slow_channels(self, pre: np.ndarray) -> None:
         """N7/N8 (s10): mGluR, mAChR and NMDA-type components. Each moves a
         fraction (per postsynaptic cell) of a transmitter's spiking edges' fast
@@ -923,6 +969,7 @@ class Network:
                 m &= self.w > 0
             ws = np.where(m, self.w * f[post], 0.0).astype(np.float32)
             self.w = (self.w - ws).astype(np.float32)
+            ws = self._charge_basis(ws, post, tau)
             self.chan.append(dict(name=name, w=ws, buf=np.zeros((self.D, n), np.float32),
                                   i=np.zeros(n, np.float32), vdep=vdep,
                                   decay=np.float32(np.exp(-dt / tau))))

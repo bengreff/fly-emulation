@@ -73,14 +73,18 @@ def _ich():
 
 
 ICH = _ich()
+# s11 rung 2: conductance synapses, a separate inhibitory decay per cell
+COND = {"cond": True, "tau_s_inh": np.where(np.arange(N) % 3, 10.0, 0.0).astype(np.float32)}
 
 
 @pytest.mark.parametrize("extra,path", [
     ({}, {}), ({}, {"tiers": ()}), ({}, {"tiers": ((2, 16), (4, 64))}),
     (ALL, {}), (SLOW, {}), (ICH, {}), ({**ICH, **ALL}, {"tiers": ()}),
+    (COND, {}), ({**COND, **ICH, **SLOW}, {}), ({**COND, **ALL}, {"tiers": ()}),
 ], ids=["m4-like-event", "m4-like-dense", "m4-like-event-overflow-to-dense",
         "adapt+std+gabab+mod-event", "mglur+machr+nmda-event", "rung1-channels-event",
-        "rung1-channels+adapt+std+gabab+mod-dense"])
+        "rung1-channels+adapt+std+gabab+mod-dense", "rung2-cond-event",
+        "rung2-cond+channels+slow-event", "rung2-cond+adapt+std+gabab+mod-dense"])
 def test_member_matches_cpu_reference(extra, path):
     c, p = _toy(**extra)
     idx, mask, ext = _stim()
@@ -167,3 +171,41 @@ def test_rung1_channels_refuse_per_member_v_rest():
     c, p = _toy(**ICH)
     with pytest.raises(NotImplementedError):
         BatchedNetwork(lif.Network(c, p, 0.1), B=2, member={"v_rest": np.float32(-50.0)})
+
+
+def test_rung2_neutral_switches_are_bit_identical():
+    """cond off: tau_s_inh is unused; receptor shares off: fractions untouched (lif.py)."""
+    c, p = _toy()
+    idx, mask, ext = _stim()
+    a = cpu_run(lif.Network(c, p, 0.1), 600, ext, (idx, mask[:600], 68.75))[0]
+    from dataclasses import replace
+    b = cpu_run(lif.Network(c, replace(p, tau_s_inh=np.full(N, 9.0, np.float32)), 0.1), 600, ext,
+                (idx, mask[:600], 68.75))[0]
+    assert all(np.array_equal(x, y) for x, y in zip(a, b))
+
+
+def test_rung2_cond_with_tau_s_inh_equal_is_identical_to_default():
+    c, p = _toy(cond=True)
+    idx, mask, ext = _stim()
+    from dataclasses import replace
+    a = cpu_run(lif.Network(c, p, 0.1), 600, ext, (idx, mask[:600], 68.75))[0]
+    b = cpu_run(lif.Network(c, replace(p, tau_s_inh=np.full(N, 5.0, np.float32)), 0.1), 600, ext,
+                (idx, mask[:600], 68.75))[0]
+    assert all(np.array_equal(x, y) for x, y in zip(a, b))
+
+
+def test_rung2_charge_basis_scales_slow_peak_by_tau_ratio():
+    """Repair 1: the fast weight loses f w either way; the slow pool gets f w tau_s/tau_slow."""
+    from dataclasses import replace
+    c, p = _toy(**SLOW)
+    a = lif.Network(c, p, 0.1)
+    b = lif.Network(c, replace(p, slow_share_basis=1.0), 0.1)
+    assert np.array_equal(a.w, b.w)
+    for ca, cb in zip(a.chan, b.chan):
+        tau = {"mglur": p.mglur_tau_ms, "machr": p.machr_tau_ms, "nmda": p.nmda_tau_ms}[ca["name"]]
+        assert np.allclose(cb["w"], ca["w"] * 5.0 / tau, rtol=1e-6)
+    idx, mask, ext = _stim()
+    ref = cpu_run(b, T, ext, (idx, mask, 68.75))[0]
+    g = BatchedNetwork(lif.Network(c, replace(p, slow_share_basis=1.0), 0.1), B=1)
+    r = g.run(T, external_mv=ext, kicks=(idx, mask, 68.75), record="packed")
+    assert compare(ref, unpack(r["raster"], N, 0), N, 0.1)["rate_corr_active"] > 0.98

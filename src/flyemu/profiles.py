@@ -169,6 +169,18 @@ M9 = {
     "cell_type:all|within_type_size_exponent": (1.0, _I, _RS + "; prior centre, central size rule on"),
 }
 
+# m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
+# m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
+_R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
+M10P = {
+    **M9,
+    "cell_type:all|conductance_based": (1.0, _G, _R2 + "; reversals at the N9 priors"),
+    "cell_type:all|receptor_shares_from_rna": (1.0, _I, _R2 + "; shares inferred from mRNA (receptors.py)"),
+    "cell_type:all|tau_s_inh": (10.0, _G, _R2 + "; GABA-A/GluCl IPSCs slower than nicotinic EPSCs"),
+    "cell_type:all|slow_share_basis": (1.0, _G, _R2 + " repair 1; share s read as share of charge, "
+                                       "peak basis tripled cholinergic charge (seed-20 ablation)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -188,6 +200,7 @@ PROFILES: dict[str, dict] = {
     "m7": {"values": M7, "kick_mv": KICK},
     "m8": {"values": M8, "kick_mv": KICK},
     "m9": {"values": M9, "kick_mv": KICK},
+    "m10p": {"values": M10P, "kick_mv": KICK},
 }
 
 
