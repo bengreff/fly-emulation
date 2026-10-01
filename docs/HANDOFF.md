@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 1 October 2026, 03:15, end of session 11.
+**Rewritten each session; do not append.** State as of 1 October 2026, 03:20, end of session 11.
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
