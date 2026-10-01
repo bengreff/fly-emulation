@@ -1,34 +1,31 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 27 September 2026, after session 10 (unattended, ~3 h 40 m of a 5 h budget used, stopped at a natural end; Ben: "Complete the brain-body model and start on GPU porting if you have time"; three subagents, at most two at once). The plan is `docs/CONSTRUCTION.md`; carried-over results are `docs/LESSONS.md`; session 10 results are in `docs/FINDINGS.md` and `docs/DECISIONS.md`; the log is `docs/SESSION10_LOG.md`.
+**Rewritten each session; do not append.** State as of 30 September 2026, after session 11 (Director-run, Mac only: backhouse offline; ~17:00 to ~21:00). Session 11 results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
 ## Where the project stands
 
-- **Direction (Ben, 28 Sep, after the session):** fill in 100% of the fly's information at the highest fidelity that could plausibly matter; finish the entire brain-body build; run many copies in parallel; run experiments that fill in data. Never tune toward a bit of behaviour: stability/behaviour checks are guardrails. Per-cell and per-synapse properties are in scope, inferred from biology (morphology, position, development, transcriptomes), not left at type means (F-VAR-1). The progress metric is the ledger: today 96.9 M of 367 M per-element slots filled by data (26%), 13.8 k of 824 k parameter slots, 655 data-model unknowns (79 bounded by data). Plan: `docs/PLAN_NEXT.md`.
-- **Mechanisms** (`data/model/mechanisms.yaml`): 56; **17 have, 39 partial, 0 absent** (session start 11 / 24 / 21). Tier A 13/15/0, B 3/9/0, C 1/15/0. "Partial" mostly means a lumped or guessed version exists.
-- **Unknowns** (`data/model/parameters.csv`): 655 rows; 79 bounds from data (29 sources read), 576 guessed; 593 wired to registry keys; released 14 / 502 / 139 at stages 0 / 1 / 2.
-- **Working model: m6** (`profiles.M6`, the default) = m5 + N15 sensory latency at its prior centres (adopted at the end, pre-registered; closed loop silent on seeds 0-11). **m5** = m4 + every walking-template body/state switch (`model_data.TEMPLATE_SWITCHES`) + `class:DN|release_scale` 0.70 + `class:MN_other|input_scale` 1.30. Adopted by the pre-registered rule after a held-out test (DECISIONS s10, F-STAB-4). **m4 is frozen as the regression reference** (`FLYEMU_PROFILE=m4`).
-  - m5 closed loop: silent after input removal on seeds 0-11 (exact coupling); brain excl. ORNs ~0.09-0.15 Hz; sugar->MN9_L 7.3 Hz (100 Hz), 96.4 Hz (200 Hz); bitter suppresses it fully; water->MN9 0 Hz (as in m4).
-  - Margin is narrow: DN release 0.72 fails; a 1 ms sample-and-hold of the senses breaks silence on 5/12 seeds (F-STAB-5); realistic pure latency does not (6/6 silent).
-  - Everything else built this session (except latency, in m6) sits at its neutral value (see FINDINGS F-CONSTRUCT-1); principle 2 ("always on at prior") is not yet met for them.
-- **Template dead fly** (`scripts/dead_fly.py --template`): passes every criterion (collapse onset 11 ms, no joint at a limit, wings/head/abdomen at rest, energy decays). Timestep convergence passes (B23).
-- **Flight configuration** (not in m5): `flight:wings|generator` (needs 0.05 ms), `aero:wing|membrane_only` with Kutta lift 3.1 (inferred): tethered hover lift 0.99 of weight with exact kinematics, 0.89 with the PD-driven generator.
-- **GPU** (`src/flyemu/gpu/`, backhouse `.venv-gpu`): the batched brain reproduces `lif.Network` spike for spike on the whole CNS; 0.37-0.45 s wall per simulated second per member at B = 32-64 (CPU 11-39 s). `scripts/gpu_assay.py` runs brain-only assays for many parameter sets (810 trials in 6 min, equal to the CPU search values). `scripts/gpu_closed_loop.py` runs B organisms (brain on GPU, bodies in worker processes): equal to the CPU loop with the same k-step hold; B = 12, k = 10: 10 s wall per member-second (7x CPU). k = 1 (exact): 20 s wall per member-second at B = 12 (3.5x CPU); per-step overhead dominates (a full-size drive transfer every step; bodies take ~2.5 ms per step), so sending sensory rows only is the next speed-up.
+- **Direction (Ben, locked 2026-09-28, re-stated 2026-09-30):** fill 100% of the fly's information at the highest plausible fidelity; the ledger fill fraction is the metric. Missing data is inferred with development models (size rule, lineage/hemilineage, birth order, wiring compensation, segment/side) and transcriptome tables, every built mechanism runs at its prior, then the bounded search of CONSTRUCTION.md / PLAN_NEXT.md. Behaviour and stability are guardrails, never objectives: do not fit to recorded walking or tune for walking (that was tried; see DECISIONS 2026-09-30 20:35).
+- **Working model: m7** (`profiles.M7`, the default) = m6 + the motor size principle: per-cell input gain x (type geometric-mean volume / cell volume)^1.49 for 757 motor neurons (`src/flyemu/percell.py`, table `data/derived/percell_motor_factors.csv`). Adopted after a pre-registered held-out test: seeds 9-11 silent, bitter and sugar+bitter -> MN9_L 0 Hz, sugar -> MN9_L 6.9 ± 2.3 Hz. The same rule for central neurons (alpha 1.0) is built but neutral: it cuts sugar -> MN9 to 1.8 Hz because the m5 class values were fitted on the old gains (F-PERCELL-1).
+- **Ledger v3** (`scripts/blank_ledger.py`, per source level): data used for 1.9% of 374 M slots; outside per-synapse grain 47% measured, 45% class prior (F-LEDGER-3). Rule-filled slots 3,282 after m7 (`runs/s11/ledger_after_m7.txt`).
+- **Built, neutral, awaiting pre-registration:** hemilineage transmitter rule for 817 unclear cells (`connectome:unclear|nt_by_development`, LOTO 0.989, F-NT-2); leg joint damping (`joint:leg|damping`, neutral 1; 0.043 failed its mechanism check); muscle optimum join (`muscle:leg|optimum_join`, neutral 0) and femur-tibia flexor scale (`muscle:leg|ft_flexor_scale`, neutral 1), both failed their mechanism checks.
+- **Receptor data:** Özel 2021 optic-lobe calls (+12 glutamate-sign rows, F-RNA-2); Allen 2020 VNC atlas: every hemilineage co-expresses GluCl and iGluR, so VNC glutamate cannot be signed by lineage (F-RNA-3).
+- **Session 11 diagnostics, kept as findings, all switches neutral** (F-RHYTHM-1, F-WALK-1, F-BODY-1, F-REFLEX-1): no VNC rhythm with spiking, graded or adapting local cells; DNg100 at 92 Hz adds ~0.7 Hz to leg MNs; joints follow imposed torque at 2 Hz but not 10 Hz (damping); FlyMimic femur-tibia extensor:flexor F0·r is 10:1 against Azevedo's measured flexor force; no femur-tibia resistance reflex (front-leg FeCO under-assigned, tibia pools under tonic VNC inhibition). These are information gaps for the ledger, not targets.
+- **Template dead fly, flight configuration, GPU brain:** unchanged from session 10 (dead fly passes; tethered hover lift 0.99 with exact kinematics; batched GPU brain 0.37-0.45 s per member-second). Backhouse was not reachable this session.
 
-## Regressions (backhouse, session 10 end)
+## Regressions (Mac, session 11 end)
 
-- m4: sugar->MN9_L 8.9 ± 5.9 Hz (10 trials); closed loop seeds 0-2 silent, brain excl. ORNs 0.349 / 0.223 / 0.297 Hz; m2 seed 0 silent.
-- Tests: 147 passed (full suite, 7 m 45 s, Mac) at the end of the session.
+- Tests: full suite 154 passed, 1 failed (repo hygiene: HANDOFF named an untracked outside doc; reference removed, hygiene test re-run below). m4 sugar and closed-loop regressions were not re-run; m7's guardrails (seeds 0-11 silent, sugar/bitter) passed at adoption.
 
 ## Open items (carried)
 
-- **B3/B4:** coxa DOF labels and envelopes by function, then the rest refit (F-COXA-1); mid/hind muscle parameters are copies; the 12 mid/hind promotors have no MN (male-cns has promotor MNs on the front legs only); leg damping unmeasured.
-- **B5:** fused rate and facilitation guessed; fatigue built (guessed); standing drive and the decaying-activation fall test not done.
-- **B7:** gate thresholds guessed; untested in stance/swing.
-- **Flight:** fluid coefficients fitted to one condition; body pitch untuned; b1 locks at vector strength ~0.55, not one spike per cycle; the wing campaniform proxy reads deviation (roll), not stroke (yaw).
-- **Brain:** m5 carries two searched class values only; N19 receptor maps inert; peptide receptor tables minimal; eLN->PN gap junctions absent (types unidentified); N2 V_rest/reset/refractory per class not yet.
-- **State:** organ and clock parameters mostly guessed; the ingestion path through the organism was not exercised (the proboscis never touched food in the tests).
-- **For Ben (optional, outward-facing):** raw data requests remain as in session 9 (eLife per-trial angles; FlyMimic mid/hind MTUs).
+- **Information gaps from session 11:** front-leg FeCO afferent assignment; FeCO rate model; resting activity of tonic VNC inhibitors; VNC glutamate sign per type (needs per-cell Allen labels); FlyMimic passive flexor element (dropped from leg_muscles.csv).
+- **Per-cell rules:** the central size rule needs a joint class re-search (GPU); the hemilineage transmitter rule needs its own pre-registration.
+- **B3/B4:** coxa DOF labels and envelopes (F-COXA-1); mid/hind muscle parameters are copies; leg damping unmeasured (FlyMimic c/k 0.05 s is a fit).
+- **B5:** fused rate and facilitation guessed; fatigue built (guessed).
+- **Flight:** fluid coefficients fitted to one condition; body pitch untuned.
+- **Brain:** peptide receptor tables minimal; eLN->PN gap junctions absent.
+- **State:** organ and clock parameters mostly guessed; ingestion path never exercised.
+- **For Ben (optional, outward-facing):** raw data requests as in session 9 (eLife per-trial angles; FlyMimic mid/hind MTUs); per-cell cluster labels for Allen 2020 would let VNC glutamate be signed by cell type.
 
 ## Unverified foundations
 
@@ -42,11 +39,13 @@
 | Internal-state couplings (ISN, IPC, clock, dFB types) | inferred / guessed | per-population physiology |
 | Haltere afferent identity SNpp25/SNpp34 (census) | inferred | haltere nerve labels (FANC/BANC) |
 | Spiking vs graded mode for 2,969 unknown types | Bernoulli priors | per-class physiology |
+| Motor size exponent 1.49 (Rin vs volume, 3 classes) | inferred | per-cell Rin and volume in one pool |
+| Allen 2020 cluster assignment by marker scoring | inferred (proxy, r 0.72) | deposited per-cell labels |
 | Everything in LESSONS labelled guessed/inferred | as recorded | see entries |
 
 ## Sealed and held-out data register
 
-No sealed data was opened. Used this session as held out (now spent for the m5 candidate): template seeds 3-8, m4-body seeds 0-5 with the candidate, bitter->MN9, sugar+bitter suppression, sugar dose response at 200 Hz, water->MN9 (fails in m4 too).
+No sealed data was opened in session 11. Spent as held out for m7: closed-loop seeds 9-11, bitter->MN9_L, sugar+bitter (these had been spent in s10 for m5 too; seeds 9-11 were new). Seeds 12+ are fresh.
 
 | Data | Status | Rule |
 |---|---|---|
@@ -66,12 +65,14 @@ No sealed data was opened. Used this session as held out (now spent for the m5 c
 
 ## Things that will bite you
 
-- **The default profile is now m6** (m5 + latency). Regression commands need `FLYEMU_PROFILE=m4`. `standing.py` reads legacy per-unit torque states and fails under Hill mode: run it with m4. `scripts/model_keys.py` always dumps the m4 inventory.
+- **The default profile is now m7** (m6 + motor size principle). Regression commands need `FLYEMU_PROFILE=m4`. `standing.py` reads legacy per-unit torque states and fails under Hill mode: run it with m4. `scripts/model_keys.py` always dumps the m4 inventory.
 - **Probes must step the motor path with `Organism.motor_step()`** and check `d.warning` (F-HARNESS-1/2).
 - **closed_loop_check's "tonic" exclusion** uses per-type spontaneous drive; a sampled global drive makes every cell tonic (F-SAMPLE-1). Class tonic drive is counted as network activity.
 - **GPU:** `.venv-gpu` sees the main venv through a `.pth`; XLA prints out-of-memory retries at start (shared GPU) and continues; runs are not bitwise reproducible in busy regimes; plasticity mechanisms (N21-N24, N27 glia, conductance, presynaptic inhibition) are refused, not ported; k > 1 in the closed loop is an approximation.
 - **Flight needs a 0.05 ms step** (FlightMotor raises otherwise); halteres and wings are PD-imposed at 3 kHz bandwidth (5 kHz diverges).
 - **parameters.csv:** append rows or rewrite with pandas `dtype=str, keep_default_na=False`; `build_class_params.py` rewrites the class rows (n2c_/n3c_/n5c_) and keeps the others. Retired placeholders are in `data/params/retired_placeholder_rows_s10.csv`.
-- **backhouse is unreachable** (no ssh, no ping) since ~00:30 on 28 Sep, after dropping ssh twice around 22:50. It may be asleep or off the network: Ben may need to wake it. A sync can fail silently inside a compound command: check `synced` before launching jobs.
+- **backhouse was offline for session 11** (Director's note); it may need waking. A sync can fail silently inside a compound command: check `synced` before launching jobs.
 - **GPU physics:** MJX 3.9 refuses this fly (mesh-contact margins on 69 adhesion pairs; body-transmission adhesion actuators); mujoco-warp needs MuJoCo 3.14 while flygym pins 3.9 (F-GPU-3). Body time is 30% physics, 70% our Python.
 - From earlier sessions, still true: eLife stiffness units mN·m/° (F-PASSIVE-1); FlyMimic in g, mm, s; Hill mode replaces leg torques only; `date` is the only clock; `runs/` and `data/cache/` hold evidence (untracked); ≤ 8 model processes on backhouse; re-run `calibrate_joint_signs.py` after an adopted body change (not re-run for m5; the signs should depend on joint geometry, not on the springs m5 changes, but that is unverified).
+- **Diagnostic probes** (`scripts/probes/command_walk.py`, `resistance_reflex.py`, `feco_paths.py`) measure; they are not objectives. In command_walk the whole-spectrum joint share includes the slow posture shift at replay onset, so read the 3-50 Hz share.
+- **`FLYEMU_EXTRA_PARAMS`** adds candidate per-type rows for probes without editing cell_types.csv.

@@ -13,7 +13,7 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 17:13 m7 pre-registered (general alpha 1.0 + motor 1.49). 17:16 fail: sugar->MN9_L 0.5 Hz; MN9_R under-traced (633 vs 6,358 inputs) lowered MN9_L's gain.
 - 17:20 repair 1 (completeness guard) pre-registered; 17:30 dev fail 1.8 Hz. 17:34 attribution: general alpha alone 1.8 Hz, motor alpha alone 6.9 Hz.
 - 17:37 repair 2 (motor alpha only) pre-registered. Director interrupt killed the runs; relaunched 17:37.
-- 17:45 VNC rhythm probe pre-registered (DNg100, spiking vs graded vnc_local). Route note drafted (docs/ROUTE_TO_BEHAVIOUR.md). Sonnet agent: Allen 2020 VNC atlas glutamate-receptor calls by hemilineage.
+- 17:45 VNC rhythm probe pre-registered (DNg100, spiking vs graded vnc_local). Sonnet agent: Allen 2020 VNC atlas glutamate-receptor calls by hemilineage.
 - 17:47 repair 2 passes; m7 adopted (commit 5b22c0e). 17:52 rhythm probe: no rhythm in spiking or graded arms (excess < 0.05).
 - 17:57 rhythm arm (c) graded + adaptation 3 mV/150 ms: no driven rhythm (excess <= 0.06).
 - 18:02 walking failure localisation pre-registered (recruitment, afferents off, synthetic tripod replay). 18:13 result: two layers fail (DNg100 adds only +0.7 Hz to leg MNs; replayed bursts give no stepping at 10/20 Hz, partial at 5 Hz). Allen agent finished: all 21 hemilineages mixed (committed 81868f5).
@@ -28,4 +28,5 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 19:32 m8 fails (torque 1.12x vs 2x; extensor FL 0.44 vs 0.5); not adopted. Readout: tonic co-activation ~0.65 on both femur-tibia muscles, flexor wins, joint sits 0.5-0.97 rad past the extensor optimum. Diagnostic replays at 40 Hz MN rate running.
 - 19:42 corrected reading: the +1 (FlyMimic extensor) muscle wins, 10:1 capacity. Azevedo 2020 read: flexor ~100 µN at a 417 µm lever, >= 42 µN·mm vs the model's 1.04. Key `muscle:leg|ft_flexor_scale` (row b4_ft_flexor_scale, neutral 1).
 - 19:48 m8 = m7 + flexor scale 40 pre-registered; 19:56 fails (swing 0.098 vs 0.10; joint pins at flexion). Closed loop seed 0 silent.
-- 19:56 size-ordered replay pre-registered; 20:01 no help: the joint runs to the stronger muscle's end under any comparable drive. Next: the resistance reflex in the closed loop.
+- 19:56 size-ordered replay pre-registered; 20:01 no help: the joint runs to the stronger muscle's end under any comparable drive. Then a resistance-reflex physiology probe.
+- 20:35 Director correction: walking diagnostics closed (findings kept, switches neutral); ROUTE_TO_BEHAVIOUR removed; direction re-locked to the 09-28 ledger/fill plan; FIDELITY_LADDER next.

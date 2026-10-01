@@ -1,6 +1,6 @@
 # Plan: next work
 
-**Forward-looking only; rewritten each session.** The programme is `docs/CONSTRUCTION.md`; the state after session 10 is in `docs/HANDOFF.md`.
+**Forward-looking only; rewritten each session.** The programme is `docs/CONSTRUCTION.md`; the state after session 11 is in `docs/HANDOFF.md`; ranked fidelity upgrades are in `docs/FIDELITY_LADDER.md`.
 
 ## The goal (Ben, 28 September 2026)
 
