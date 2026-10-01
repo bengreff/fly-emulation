@@ -23,7 +23,10 @@ Per-cell and per-synapse properties are in scope. They cannot be measured one by
    - The blocker: conductance synapses cut sugar -> MN9_L to about 1 Hz. The block sits at GNG108, two synapses in, and the inferred cause is inhibitory shunting.
    - Next, in order:
      - Done at 03:01: the recorded e_inh (-56) and threshold-referenced weights (m10q) give silence and sugar 2.4 Hz (DECISIONS 2026-10-01 03:01).
-     - (a) Pre-register a class-gain re-search on m10q whose box includes inhibitory release. Fit on fresh seeds from 29; seeds 20-22 and 26-28 are used, and held-out seeds 23-25 are still unseen.
+     - (a) Done in part: the class-gain re-search on m10q was pre-registered at 03:23. 12 of 24 candidates are scored and c008 leads (J 3.68). c012-c023 are running detached on backhouse.
+       - First, collect them (HANDOFF gives the commands) and run their closed loops.
+       - Then run the held-out test once on the overall best (seeds 23-25 plus the held-out assays).
+       - Seeds 29-31 are now used, so new fits start at 32.
      - (b) Extend the resting-potential fill as type matches are confirmed (DN AX -59, Schnell 2017, needs a type match). The Azevedo and Agrawal rests are held out.
    - The other rung-2 gaps remain:
      - per-receptor rise times;
@@ -59,5 +62,5 @@ Read first, in this order: `CLAUDE.md`; `docs/HANDOFF.md`; `docs/PLAN_NEXT.md`; 
 
 - `FLYEMU_PROFILE=m4`: sugar->MN9_L 8.9 ± 5.9 Hz (10 trials); closed loop seeds 0-2 silent.
 - m7: closed loop seeds 0-2 silent; sugar->MN9_L 6.9 ± 2.3 Hz; template dead fly passes.
-- m9 (default): closed loop seeds 12-19 silent; sugar->MN9_L 5.7 ± 1.4 Hz at 100 Hz, 15.7 at 200 Hz; sugar+bitter 0 Hz; bitter 0 Hz. Fresh seeds for new fits start at 29 (20-22 and 26-28 used by rung 2 fits; 23-25 reserved, unseen, for the rung-2 held-out test).
+- m9 (default): closed loop seeds 12-19 silent; sugar->MN9_L 5.7 ± 1.4 Hz at 100 Hz, 15.7 at 200 Hz; sugar+bitter 0 Hz; bitter 0 Hz. Fresh seeds for new fits start at 32 (20-22, 26-28 and 29-31 used by rung 2 fits; 23-25 reserved, unseen, for the rung-2 held-out test).
 - Stop starting new work at 4 h 40 m, then wrap up (WORKFLOW §2), including the ledger before/after and a plain-language summary for Ben.

@@ -588,3 +588,28 @@ Cause: the muscarinic share. The model's slow pools copy a share of the fast *pe
   2. Candidates at or above 5.5 Hz get the closed loop on fresh seeds 29-31.
 - **Score:** the s11 objective. Pick the lowest J among candidates that are silent on all three seeds with MN9 at least 5.5. That candidate goes once to the held-out test (seeds 23-25 plus the held-out assays). If it passes, m10 is adopted.
 - Whatever is unfinished at 04:45 stays running detached for the next session, which must not re-run finished jobs.
+
+### Amendment: closed-loop stage runs on the Mac (03:47, after the first 4 sugar results, before any closed loop was scored)
+- The backhouse is full with 4 sugar jobs (7 GB free), so the closed loops for candidates that pass the sugar bar run on the Mac instead. Same script, same seeds 29-31, same profile and overrides, results in `runs/s11_m10q_gs_cl/`. The scoring is unchanged.
+- An observation, not a scoring change: the pre-registered objective has no upper bar on MN9. Round 1 gave 100, 178, 10.4 and 214 Hz. Rates above 100 Hz are probably beyond what the real MN9 does (inferred; no recorded MN9 sugar rate is in the tables). A future objective should take a two-sided band from a recording.
+
+### Result (partial): 12 of 24 search candidates scored; c008 leads; search continues detached (04:33)
+Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes/ms in the last 100 ms). J is the s11 objective.
+
+| cand | MN9 Hz | silence 29/30/31 | J |
+|---|---|---|---|
+| c008 | 8.1 | 0 / 0 / 0 | **3.68** |
+| c002 | 10.4 | 0 / 0 / 0 | 5.92 |
+| c001 | 178.3 | 0 / 0 / 0 | 14.12 |
+| c005 | 108.4 | 0 / 3.0 / 0 | 20.65 |
+| c011 | 9.5 | 0 / 7.6 / 0 | 27.14 |
+| the other 7 | 20-215 | fail on 2-3 seeds | 50-150 |
+
+- **Leader c008:**
+  - inh_cond_scale 1.107;
+  - DN release 1.193;
+  - MN_other input 1.792;
+  - gustatory release 2.049;
+  - central_other release 1.163.
+- Every one of the 12 clears the sugar bar. Silence is the binding gate: a high MN9 rate goes with runaway (5 of 6 candidates above 100 Hz fail at least one seed). The candidates that pass sit near the bar, at 8-10 Hz, except c001. With these boxes, inhibitory release alone does not decide sugar transmission (c008 has 1.1, c002 0.71, c001 0.32).
+- **Not yet decided:** the pre-registered pick is across all 24. Candidates c012-c023 are running detached on backhouse (tmux `s11_m10q_gs`, sugar stage). The Mac closed-loop results are copied into `runs/s11_m10q_gs/`, so `collect` sees them. Held-out seeds 23-25 and the held-out assays are still unseen.

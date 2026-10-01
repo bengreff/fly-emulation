@@ -48,3 +48,4 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 02:37: Gate C done, 30 candidates, best 0.7 Hz. Rung 2 not adopted.
 - 02:44: diagnostics. Conductance synapses block sugar at GNG108, hop 2 (F-R2-1). Recording `docs/media/m9_closed_loop.mp4`, 3 s.
 - 02:49: fill from recordings pre-registered (e_inh -56, threshold reference, medulla rests). 03:01: m10q silent on seeds 26-28, sugar 2.4 Hz; not adopted. Suite 171 passed.
+- 03:23: m10q class-gain search pre-registered (24 candidates, inh_cond_scale added). 03:47: closed loops moved to the Mac (backhouse full). 04:33: 12 of 24 scored; 3 silent on seeds 29-31; c008 leads (J 3.68, MN9 8.1 Hz); c012-c023 running detached on backhouse.
