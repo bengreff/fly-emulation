@@ -505,3 +505,38 @@ Cause: the muscarinic share. The model's slow pools copy a share of the fast *pe
   1. **Sugar screen.** All 30 pre-registered candidates (unchanged), at 3 trials each instead of 10, 2 in parallel.
   2. **Full scoring.** Only candidates with a screen mean of at least 4.0 Hz get it: sugar at 10 trials, plus closed loop on seeds 20-22. Below 4 Hz a candidate cannot plausibly reach the J < 5 bar, which needs MN9 above 5.
 - The objective, bounds, pass bar and Gate D are unchanged. If the screen's cut-off excludes a candidate that the full protocol would have passed, the pass bar is not loosened to compensate.
+
+### Result: Gate C fails; rung 2 not adopted; m9 stays the working profile (02:44)
+**Sugar screen** (profile m10p, 30 pre-registered candidates, 3 trials each, Mac; `runs/s11_r2_gc/screen_summary.csv`):
+- 29 candidates give MN9_L 0.0 Hz. The best, c009 (DN 2.20, MN_other input 3.53, gust 1.36, MN_other release 0.91), gives 0.7 Hz.
+- None reaches the 4.0 Hz screen bar, so none was fully scored.
+- The optional refinement batch was not run: around a 0.7 Hz best it cannot reach the bar.
+- Rung 2 is not adopted. The rows are added to `data/params/hypotheses_not_adopted.csv`, and Gate D (held-out seeds 23-25) stays unseen.
+
+**Diagnostics** (sugar 100 Hz, 3 trials each, Mac; not scored, recorded to aim the next step):
+
+| Profile | MN9_L Hz (3 trials) |
+|---|---|
+| m9 | 7, 6, 7 |
+| m9 + cond | 2, 0, 1 |
+| m10p with cond off (shares, charge basis) | 6, 3, 5 |
+| m10p with receptor shares off | 0, 0, 0 |
+| m10p with tau_s_inh 0 | 1, 1, 0 |
+| m9 + cond, e_inh -55 | 0, 0, 0 |
+| m9 + cond, e_exc +10 | 0, 0, 0 |
+
+- **Conductance synapses are what remove the sugar response.** The receptor shares with charge basis are close to neutral on it.
+- Per-cell trace (`scripts/probes/sugar_cond_trace.py`, m9 vs m9 + cond):
+  - The loss sits 1-2 synapses from the sugar neurons.
+  - MN9_L's main excitatory input, GNG108 (348 synapses), falls from 11 to 1.3 Hz.
+  - 14 cells above 1 Hz go silent, 11 of them at hop 2 (GNG second-order neurons, DNge098/101/106).
+- Inferred mechanism, not proven: inhibition grows under conductance synapses.
+  - With v_rest -52 and e_inh -70, the weight-to-conductance scaling gives inhibitory synapses about 3x the conductance per mV of resting PSP that excitatory ones get (1/18 vs 1/52).
+  - Their drive also grows about 1.4x between rest and threshold (-45).
+  - Moving e_inh to -55 (about 6x more inhibitory conductance) also gives 0 Hz.
+  - The e_exc +10 result is within noise of m9 + cond.
+- **Next discriminating experiment.** Record GNG108's excitatory and inhibitory input currents in m9 vs m9 + cond to separate shunting from driving force. Then pre-register a re-search whose box includes the levers that actually act on inhibition:
+  - `class:*` GABA/glutamate release;
+  - per-type v_rest from measured rest potentials (currently one borrowed value, -52);
+  - e_inh within its bounds;
+  - rather than the pathway-end gains used in this Gate C.

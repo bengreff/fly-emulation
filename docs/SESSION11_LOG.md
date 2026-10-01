@@ -40,3 +40,10 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 22:47 screen (12 candidates) collected: all silent; best combined candidate MN9 11.4 Hz, J 3.09.
 - 23:35 phase 2 (14) and 00:04 phase 3 (8) collected: 42 candidates in total, all silent; best DN 0.85, MN_other input 1.6, gust 1.25, exponent 1.0 (MN9 5.7 Hz, J 1.19).
 - 00:27 held out on that candidate: seeds 17-19 silent, bitter suppression, dose response and bitter alone all pass; m9 adopted as working profile. Suite 164 passed; m9 reproduces the held-out trials exactly.
+- 00:45: rung 2 pre-registered.
+- 01:00: Gate A passed (whole CNS: GPU equals CPU on m10p). Gate B at priors failed: not silent, 81-98 spikes/ms. Ablation traced it to the mAChR peak share.
+- 01:06: repair 1 (charge basis) pre-registered.
+- 01:18: under repair 1, seeds 20-22 silent but sugar 0 Hz; Gate C pre-registered.
+- 01:30: first Gate C launch OOM-killed on backhouse (WSL VM full from another distro); moved to a staged Mac screen (amendment at 01:34).
+- 02:37: Gate C done, 30 candidates, best 0.7 Hz. Rung 2 not adopted.
+- 02:44: diagnostics. Conductance synapses block sugar at GNG108, hop 2 (F-R2-1). Recording `docs/media/m9_closed_loop.mp4`, 3 s.
