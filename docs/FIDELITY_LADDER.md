@@ -23,3 +23,12 @@ Compute baseline (measured): the whole-CNS LIF closed loop costs ~50 s of wall t
 3. Switch `cell_type:all|intrinsic_channels` (neutral 0 = current model, bit-identical), densities = per-gene class gbar (registry, guessed, bounded) x the type's expression call; cells without transcriptome data use a class prior (labelled).
 4. Single-cell tests: Ih gives sag and rebound; A-type delays the first spike; SK and BK give adaptation; T-type gives a rebound burst.
 5. The full CNS with every channel on at its prior: time per step on the Mac (measured); guardrails: no runaway, closed-loop seeds silent.
+
+**Status (2026-09-30 21:15):**
+- Done: items 1-4.
+- Item 5 measured: 8.9x the LIF step on the Mac, and sugar -> MN9_L 1.7 Hz, so rung 1 is **not adopted** (switch neutral).
+- Cause: the guessed spike-to-SK coupling (F-RUNG1-1).
+- Next, in order (pre-registered in DECISIONS 21:15):
+  - constrain the spike-triggered channels by recorded current-step f-I and adaptation;
+  - cut the cost (tables or the GPU);
+  - re-score.

@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 30 September 2026, after session 11 (Director-run, Mac only: backhouse offline; ~17:00 to ~21:00). Session 11 results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
+**Rewritten each session; do not append.** State as of 30 September 2026, after session 11 (Director-run, Mac only: backhouse offline; ~17:00 to ~21:20). Session 11 results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
 ## Where the project stands
 
@@ -8,13 +8,20 @@
 - **Working model: m7** (`profiles.M7`, the default) = m6 + the motor size principle: per-cell input gain x (type geometric-mean volume / cell volume)^1.49 for 757 motor neurons (`src/flyemu/percell.py`, table `data/derived/percell_motor_factors.csv`). Adopted after a pre-registered held-out test: seeds 9-11 silent, bitter and sugar+bitter -> MN9_L 0 Hz, sugar -> MN9_L 6.9 ± 2.3 Hz. The same rule for central neurons (alpha 1.0) is built but neutral: it cuts sugar -> MN9 to 1.8 Hz because the m5 class values were fitted on the old gains (F-PERCELL-1).
 - **Ledger v3** (`scripts/blank_ledger.py`, per source level): data used for 1.9% of 374 M slots; outside per-synapse grain 47% measured, 45% class prior (F-LEDGER-3). Rule-filled slots 3,282 after m7 (`runs/s11/ledger_after_m7.txt`).
 - **Built, neutral, awaiting pre-registration:** hemilineage transmitter rule for 817 unclear cells (`connectome:unclear|nt_by_development`, LOTO 0.989, F-NT-2); leg joint damping (`joint:leg|damping`, neutral 1; 0.043 failed its mechanism check); muscle optimum join (`muscle:leg|optimum_join`, neutral 0) and femur-tibia flexor scale (`muscle:leg|ft_flexor_scale`, neutral 1), both failed their mechanism checks.
+- **Fidelity rung 1 (intrinsic conductances per type): built, not adopted** (`src/flyemu/channels.py`, switch `cell_type:all|intrinsic_channels`, neutral 0, 6 single-cell tests). Channel and innexin mRNA per type: Davis + Özel (82 types, 73,253 neurons) and Allen VNC hemilineages (10,498 neurons); the rest take the class prior (F-RNA-4). At the guessed priors:
+  - Mac step cost 8.9x;
+  - sugar -> MN9_L 1.7 Hz;
+  - VNC motor output silent.
+  The cause is the guessed spike-to-SK coupling (F-RUNG1-1). Two repairs are pre-registered (DECISIONS 2026-09-30 21:15) and are the next step:
+  - fit SK/Ca to recorded current steps;
+  - cut the cost.
 - **Receptor data:** Özel 2021 optic-lobe calls (+12 glutamate-sign rows, F-RNA-2); Allen 2020 VNC atlas: every hemilineage co-expresses GluCl and iGluR, so VNC glutamate cannot be signed by lineage (F-RNA-3).
 - **Session 11 diagnostics, kept as findings, all switches neutral** (F-RHYTHM-1, F-WALK-1, F-BODY-1, F-REFLEX-1): no VNC rhythm with spiking, graded or adapting local cells; DNg100 at 92 Hz adds ~0.7 Hz to leg MNs; joints follow imposed torque at 2 Hz but not 10 Hz (damping); FlyMimic femur-tibia extensor:flexor F0·r is 10:1 against Azevedo's measured flexor force; no femur-tibia resistance reflex (front-leg FeCO under-assigned, tibia pools under tonic VNC inhibition). These are information gaps for the ledger, not targets.
 - **Template dead fly, flight configuration, GPU brain:** unchanged from session 10 (dead fly passes; tethered hover lift 0.99 with exact kinematics; batched GPU brain 0.37-0.45 s per member-second). Backhouse was not reachable this session.
 
 ## Regressions (Mac, session 11 end)
 
-- Tests: full suite 154 passed, 1 failed (repo hygiene: HANDOFF named an untracked outside doc; reference removed, hygiene test re-run below). m4 sugar and closed-loop regressions were not re-run; m7's guardrails (seeds 0-11 silent, sugar/bitter) passed at adoption.
+- Tests: full suite 154 passed, 1 failed (repo hygiene: HANDOFF named an untracked outside doc; since fixed, hygiene 12 passed). After rung 1: model data + channels + class mechanisms tests 27 passed; the full suite was not re-run after 745ef6e. m4 sugar and closed-loop regressions were not re-run; m7's guardrails (seeds 0-11 silent, sugar/bitter) passed at adoption.
 
 ## Open items (carried)
 
@@ -45,7 +52,7 @@
 
 ## Sealed and held-out data register
 
-No sealed data was opened in session 11. Spent as held out for m7: closed-loop seeds 9-11, bitter->MN9_L, sugar+bitter (these had been spent in s10 for m5 too; seeds 9-11 were new). Seeds 12+ are fresh.
+No sealed data was opened in session 11. Spent as held out for m7: closed-loop seeds 9-11, bitter->MN9_L, sugar+bitter (these had been spent in s10 for m5 too; seeds 9-11 were new). Seeds 12+ are fresh (12-13 reserved for the rung-1 G1 check, still unspent).
 
 | Data | Status | Rule |
 |---|---|---|
