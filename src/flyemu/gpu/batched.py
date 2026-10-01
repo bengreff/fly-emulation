@@ -59,6 +59,7 @@ except ImportError as e:  # pragma: no cover
     raise ImportError("flyemu.gpu needs JAX (CPU: `uv pip install jax`; GPU: "
                       "`uv pip install 'jax[cuda12]'`, see docs/GPU.md)") from e
 
+from .. import channels as ichan
 from .. import lif
 
 # per-neuron parameters that may differ between batch members
@@ -90,6 +91,7 @@ class Cfg(NamedTuple):
     mod_increment: float
     tiers: tuple    # event-path capacities ((K, E), ...) ascending: K active presynaptic
                     # cells (any member), E expanded edges; () = dense every step
+    ich: tuple = ()  # rung-1 intrinsic channels present (channels.Intrinsic.on order)
 
 
 def _f32(x, n):
@@ -122,8 +124,12 @@ class BatchedNetwork:
             raise NotImplementedError("N27 lumped glia is not ported")
         if getattr(net, "apl_mask", None) is not None:
             raise NotImplementedError("N23 compartmental APL is not ported")
-        if getattr(net, "ich", None) is not None:
-            raise NotImplementedError("rung-1 intrinsic conductances (channels.py) are not ported")
+        ich = getattr(net, "ich", None)
+        if ich is not None and "v_rest" in (member or {}) and not np.array_equal(
+                np.broadcast_to(np.asarray(member["v_rest"], np.float32), (B, net.conn.n)),
+                np.broadcast_to(np.asarray(net.v_rest, np.float32), (B, net.conn.n))):
+            raise NotImplementedError("per-member v_rest with rung-1 channels (gate rest "
+                                      "states are set from the reference v_rest)")
         n = net.conn.n
         self.net, self.n, self.B = net, n, B
         self.dt = float(net.timestep_ms)
@@ -211,7 +217,8 @@ class BatchedNetwork:
             elec=net.elec is not None and len(net.elec[0]) > 0,
             noise=float(p.noise_mv), dt=dt,
             graded_scale=float(p.graded_rmax_hz * dt / 1000.0),
-            mod_increment=float(p.mod_increment))
+            mod_increment=float(p.mod_increment),
+            ich=() if ich is None else tuple(ich.on))
         c = dict(
             e_pre=e_pre, e_post=e_post, e_w=e_w, dly=dly, graded=graded,
             p_indptr=p_indptr.astype(np.int32), p_rowlen=rowlen.astype(np.int32),
@@ -231,6 +238,16 @@ class BatchedNetwork:
         )
         if chans:
             c.update(ch_decay=np.array([d for _, d, _ in chans], np.float32))
+        if ich is not None:   # rung 1: the reference network's initialised Intrinsic
+            c.update(tau_m=val["tau_m"], ca_per_spike=np.asarray(ich.ca_per_spike, np.float32)[:, None],
+                     ich_d=np.array([ich.d[k] for k in _GATES] + [ich.d_kv2, ich.d_bk, ich.d_ca],
+                                    np.float32))
+            for ch in ich.on:
+                c[f"g_{ch}"] = np.asarray(ich.g[ch], np.float32)[:, None]
+                c[f"xr_{ch}"] = np.asarray(ich.x_r[ch], np.float32)[:, None]
+            vr = np.asarray(net.v_rest, np.float32)   # gates at rest, as Intrinsic.init
+            self._ich0 = {k: ichan._boltz(vr, *ichan.KINETICS[g][:2]).astype(np.float32)
+                          for k, g in zip(("a", "b", "w", "hh", "th"), _GATES)}
         if self.cfg.noise_class:
             c.update(noise_class=(np.asarray(p.noise_class_mv, np.float32)
                                   * np.float32(np.sqrt(dt)))[:, None])
@@ -255,7 +272,11 @@ class BatchedNetwork:
             v=jnp.broadcast_to(self.c["v_rest"], (n, B)).astype(jnp.float32),
             i_syn=z, ref_until=z, kick_held=z, adapt=z, x_res=jnp.ones((n, B), jnp.float32),
             i_ch=tuple(z for _ in self.cfg.ch_vdep), mod_level=jnp.zeros((3, B), jnp.float32),
-            counts=jnp.zeros((n, B), jnp.int32), key=self.key)
+            counts=jnp.zeros((n, B), jnp.int32), key=self.key,
+            ich={} if not self.cfg.ich else dict(
+                **{k: jnp.broadcast_to(jnp.asarray(v, jnp.float32)[:, None], (n, B))
+                   for k, v in self._ich0.items()},
+                n_kv2=z, n_bk=z, ca=z))
 
     def silence(self, idx, members=None) -> None:
         """Remove all output of these neurons (all members, or the listed ones),
@@ -427,7 +448,14 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
         adapt = adapt * c["decay_a"]
         drive = drive - adapt
     v_rest = c["v_rest"]
-    v = v_rest + (s["v"] - v_rest) * c["decay_v"] + drive * c["one_minus_dv"]
+    gates = s["ich"]
+    if cfg.ich:   # rung 1: leak + intrinsic conductances, exponential Euler (lif.py)
+        gates, dG, dGE = _ich_step(cfg, c, gates, s["v"])
+        G = 1.0 + dG
+        v_inf = (v_rest + drive + dGE) / G
+        v = v_inf + (s["v"] - v_inf) * jnp.exp(-jnp.float32(cfg.dt) * G / c["tau_m"])
+    else:
+        v = v_rest + (s["v"] - v_rest) * c["decay_v"] + drive * c["one_minus_dv"]
     key = s["key"]
     if cfg.noise:
         key, sub = jax.random.split(key)
@@ -467,6 +495,14 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
     if cfg.elec:
         kick_held = kick_held + jax.ops.segment_sum(
             spk[c["el_pre"]] * c["el_mv"][:, None], c["el_post"], num_segments=n)
+    if cfg.ich:   # channels.Intrinsic.on_spike
+        K = ichan.KINETICS
+        gates = dict(gates,
+                     n_kv2=jnp.where(spk, gates["n_kv2"] + (1.0 - gates["n_kv2"]) * jnp.float32(K["Kv2"][0]),
+                                     gates["n_kv2"]),
+                     n_bk=jnp.where(spk, gates["n_bk"] + (1.0 - gates["n_bk"]) * jnp.float32(K["BK"][0]),
+                                    gates["n_bk"]),
+                     ca=jnp.where(spk, gates["ca"] + c["ca_per_spike"], gates["ca"]))
     ref_until = jnp.where(spk, t32 + c["t_ref"], s["ref_until"])
     y_s = spk.astype(jnp.float32)
     if cfg.std:
@@ -476,8 +512,39 @@ def _step(cfg: Cfg, c: dict, s: dict, t32, ext, kick):
     H = s["H"].at[k % D].set(y)
     ns = dict(k=k + 1, H=H, v=v, i_syn=i_syn, ref_until=ref_until, kick_held=kick_held,
               adapt=adapt, x_res=x_res, i_ch=tuple(i_ch), mod_level=mod_level,
-              counts=s["counts"] + spk, key=key)
+              counts=s["counts"] + spk, key=key, ich=gates)
     return ns, spk
+
+
+_GATES = ("A_act", "A_inact", "M_act", "h_act", "T_inact")
+
+
+def _boltz(v, vh, k):
+    return 1.0 / (1.0 + jnp.exp(-(v - jnp.float32(vh)) / jnp.float32(k)))
+
+
+def _ich_step(cfg: Cfg, c: dict, g: dict, v):
+    """channels.Intrinsic.step on device: advance gates at v (pre-update), return
+    (gates, dG, dGE), the conductance change from rest and its reversal-weighted sum."""
+    K, d = ichan.KINETICS, c["ich_d"]
+
+    def relax(x, i, key):
+        inf = _boltz(v, *K[key][:2])
+        return inf + (x - inf) * d[i]
+
+    a, b = relax(g["a"], 0, "A_act"), relax(g["b"], 1, "A_inact")
+    w, hh, th = relax(g["w"], 2, "M_act"), relax(g["hh"], 3, "h_act"), relax(g["th"], 4, "T_inact")
+    n_kv2, n_bk, ca = g["n_kv2"] * d[5], g["n_bk"] * d[6], g["ca"] * d[7]
+    x = {"A": lambda: a ** 3 * b, "M": lambda: w, "h": lambda: hh,
+         "T": lambda: _boltz(v, *K["T_act"][:2]) ** 2 * th, "NaP": lambda: _boltz(v, *K["NaP_act"][:2]),
+         "Kv2": lambda: n_kv2, "BK": lambda: n_bk, "SK": lambda: ca / (ca + jnp.float32(K["SK_kd"]))}
+    dG = jnp.zeros_like(v)
+    dGE = jnp.zeros_like(v)
+    for ch in cfg.ich:
+        gx = c[f"g_{ch}"] * (x[ch]() - c[f"xr_{ch}"])
+        dG = dG + gx
+        dGE = dGE + gx * jnp.float32(ichan.CHANNELS[ch][1])
+    return dict(a=a, b=b, w=w, hh=hh, th=th, n_kv2=n_kv2, n_bk=n_bk, ca=ca), dG, dGE
 
 
 def _run(cfg: Cfg, c, state, t32, ext, kidx, kmask, kmv, krate, rec_idx, *, rec_mode):

@@ -238,3 +238,118 @@ Reading (inferred): rung 1's failure is a single unconstrained guess, the spike-
    - Implementation: gate steady states from tables at 0.1 mV resolution instead of per-step exp; channels updated only on cells with nonzero density; float32 throughout; or the GPU path on backhouse.
    - Equivalence: max |v| difference ≤ 1e-3 mV against the current implementation over 1 s of the single-cell tests and 300 ms of the whole CNS.
    - Bar: M1 ≤ 2.0x.
+
+### 2026-09-30 21:17: Ben's answers (via Director) on rung 1 and the ladder
+1. Finish rung 1, then climb the ladder (rung 2, synapse dynamics per receptor, next): it is a sequence, not a menu. Compute is no reason to cut fidelity. Port the channels to the GPU on backhouse with a CPU equivalence test instead of simplifying them. **Repair 2 is redefined:** the GPU port, gated by equivalence. Mac cost is reported only, no longer a gate.
+2. The spike-triggered channels are fitted to recorded current steps for the classes that have recordings, then scaled per type by channel mRNA (labelled inferred).
+3. **The adoption rule changes for mechanisms that add real biology.** The mechanism is adopted once its parameters are filled from data. The parameters that were fitted on the old membrane are then re-searched. Closed-loop silence after the input is removed stays a hard gate. Sugar -> MN9 and other behaviour readouts are recorded as information; they no longer veto. "Mechanisms always on, parameters released gradually; a guardrail miss after adding real biology means the parameters must be re-found, not that the biology comes out."
+
+### Pre-registration: rung 1 repair 1 and adoption, revised rule (21:17, before any fitting)
+**Data.**
+- Measured: Azevedo 2020 current steps from 4 cells, all R35C09 slow tibia-flexor MNs (180111_F2_C1, 181021_F1_C1, 180621_F1_C1, 181127_F1_C1). The steps are -55 to +110 pA for 0.5 s, recorded at 50 kHz. These trials are "seen", not sealed (the sealed parts are the Piezo trials).
+- Literature: current-step f-I and adaptation for central classes (PN, LN, KC, DN where found), extracted per class with source and conditions.
+- **Held out:** cell 181127_F1_C1's current steps. They are not used in the fit and are scored afterwards.
+
+**Per recorded cell (derived).**
+- Rin from the -25 / -50 pA steps (steady dV/dI).
+- tau_m from the charging curve.
+- Rest and spike threshold measured on the cell.
+- Ih sag ratio from the hyperpolarising steps.
+- f-I curve (rate over 0.5 s per amplitude).
+- Adaptation ratio (last ISI / first ISI).
+
+**Model.**
+- The rung-1 single cell. The recorded rest maps to the model rest (-52 mV) and the threshold keeps its recorded distance from rest.
+- Drive in mV = I x Rin (derived).
+- tau_m is the cell's own.
+
+**Fitted parameters.** All within parameters.csv bounds; no bound is widened.
+- Group S: SK gbar, BK gbar, Kv2 gbar, Ca per spike, Ca tau. Ca per spike and Ca tau get new registry keys and parameters.csv rows, bounds 0.1-10x and 20-500 ms, guessed.
+- Group H: Ih gbar, fitted to the sag ratio, if a sag is present (> 2%).
+- Other channels stay at their priors.
+
+**Objective.** Least squares on f-I (Hz) and adaptation ratio over the 3 fit cells, with equal weights per cell.
+
+**Labels.**
+- Fitted values: derived from measurement for the slow-MN class.
+- The same values applied to other MNs and to central cells without data: inferred. Literature classes, where found, override them.
+- Per-type scaling by mRNA: unchanged (rel_level^beta, inferred).
+
+**Held-out check (reported, not a gate).** Predicted f-I on 181127 within 30% RMS of its recorded rates.
+
+**Adoption (revised rule).** m8 = m7 + rung 1 at the fitted values. Gates:
+- G1 hard: `closed_loop_check.py` seeds 12 and 13 give 0 non-tonic spikes after silencing, with no runaway (no cell class over 200 Hz).
+- GPU equivalence: the batched GPU brain with channels matches the CPU path on a 300 ms whole-CNS run (spike-count correlation per cell ≥ 0.99 and total spikes within 2%, the bar used for earlier ports), measured on backhouse.
+
+**Reported as information:** sugar -> MN9_L, brain rates by class, Mac cost.
+
+**Then** the joint re-search of the m5 class values (DN release, MN_other input) and the central size rule on the new membrane, as in session 10's search (pre-registered separately before it runs).
+Deviation (21:20, before fitting): **the spike threshold cannot be measured in these recordings.** Somatic spikes are 2-5 mV, initiated distally (raw traces in `runs/s11/rung1/azevedo/raw_steps.png`).
+- The slow-MN threshold distance θ is therefore fitted jointly as a class value, bounded 5-35 mV. The session-6 LIF-only fit gave 32.6 mV, θ fitted with t_ref 4.27 ms. Here t_ref is fixed at 2.2 ms (network default).
+- A tonic drive d0 per cell is fitted as a nuisance to that cell's spontaneous rate. It is not transferred.
+- With rung 1 on, the slow-MN class rows (v_th, spontaneous_drive) take the jointly fitted θ and the mean d0, so that the session-6 values, fitted without channels, are not double-counted.
+- Features (`data/derived/azevedo2020_current_step_features.csv`, measured), compared at every step on the fit cells:
+  - spontaneous rate;
+  - rate over 0.55-1.0 s;
+  - late/early rate ratio (0.9-1.0 s over 0.5-0.6 s);
+  - sag fraction on the largest hyperpolarising step.
+- Weights: 10 Hz, 0.1 and 0.05 per unit. Each cell's terms are averaged, then the cells are averaged.
+- Baselines reported alongside: (i) the channel priors with θ and d0 fitted; (ii) LIF only with θ and d0 fitted.
+
+### Result: rung-1 repair 1 fitted; m8 = m7 + rung 1 adopted (21:47)
+**Fit** (`scripts/fit_spike_channels.py`, differential evolution, 4 seeds; `runs/s11/rung1/spike_channel_fit*.json`). Loss by seed (lower is better):
+
+| Seed, gens | Loss | SK | BK | Kv2 | Ca/spike | Ca tau ms | h | θ mV | Held-out rel RMS |
+|---|---|---|---|---|---|---|---|---|---|
+| 0, 60 | 1.254 | 2.82 | 6.84 | 0.30 | 0.11 | 30 | 0.031 | 19.2 | 0.047 |
+| 1, 60 | 1.671 | 0.07 | 8.91 | 0.83 | 1.29 | 39 | 0.001 | 19.5 | 0.054 |
+| 2, 150 | 1.474 | 0.001 | 0.04 | 0.96 | 0.15 | 84 | 0.002 | 34.0 | 0.009 |
+| **3, 150** | **1.028** | **0.027** | **8.69** | **0.27** | **1.24** | **38** | **0.050** | **26.2** | **0.032** |
+
+Baselines (θ and d0 fitted): channel priors loss 2.87-3.79; LIF only 2.14-2.42 (held-out 0.09-0.12).
+- Adopted: seed 3 (lowest loss). Values are derived for the slow-MN class and inferred elsewhere (scaled by each type's channel mRNA).
+- Slow-MN class under rung 1: θ 26.2 mV, t_ref 2.2 ms, tonic drive 35.55 mV (mean of the 3 fitted cells). These are new `*_rung1` rows in `data/params/cell_types.csv`, read only when the channels are on.
+- Profile m8 stores each gbar as the slow-MN value divided by the slow-MN expression factor, so the recorded class gets the fitted value exactly. Checked on the built brain: the 60 slow MNs have BK 8.694, SK 0.0272, Kv2 0.2748, h 0.0502, Ca/spike 1.245, θ 26.2, spont 35.55.
+- Held-out cell 181127 passes (3% rel RMS). But LIF only also passes (10%), so this check is weak.
+
+**GPU port** (`src/flyemu/gpu/batched.py`). Gates advance on the pre-update v, the conductance-form exponential Euler, and on_spike after the reset, as on the CPU. A per-member v_rest is refused.
+- Toy test (`tests/test_gpu_batched.py`, 2 new cases): exact raster match (415 spikes with channels, 516 without).
+- Whole CNS, m8, 300 ms, backhouse RTX 4070 Ti SUPER (`runs/gpu_equiv/{sugar,broad}_300ms_m8.json` there):
+  - sugar: 1,939 vs 1,939 spikes over 179 active cells, per-cell counts identical, 2 steps with a one-step spike shift. Reference member shown; the class-gains member was exact.
+  - broad: 32,947 vs 32,947 spikes over 5,957 active cells, per-cell counts identical.
+  - **Pass** (bar: correlation ≥ 0.99, totals within 2%). GPU 4.0 s for 2 members × 300 ms including compile.
+
+**G1 hard gate** (`runs/s11/rung1/g1/`, closed_loop_check 1 s senses + 300 ms silent):
+
+| | m8 s12 | m8 s13 | m7 s12 | m7 s13 |
+|---|---|---|---|---|
+| Spikes in last 100 ms silent | 0 | 0 | 0 | 0 |
+| Spikes in whole silent window | 154 | 136 | 368 | 34 |
+| Brain Hz (excl. ORN) | 0.244 (0.071) | 0.232 (0.061) | 0.344 (0.126) | 0.330 (0.112) |
+| Motor Hz | 2.40 | 2.38 | 2.99 | 2.85 |
+| Wall s | 123 | 122 | 56 | 55 |
+
+- **Pass**: no NaN, no ongoing activity after silencing. The script does not report a per-class maximum rate. The brain mean of 0.24 Hz over 167k cells bounds any 200 Hz class to under ~200 cells, and the last 100 ms is silent.
+- Information: sugar -> MN9_L (assay_pathways, 100 Hz, 10 trials) m8 **2.7 ± 1.1 Hz**; m7 re-run now 6.9 ± 2.3 Hz (`runs/s11/rung1/g1/m7_sugar.txt`; older m7-tagged files at 0.5-1.8 Hz predate m7's motor-only rule); rung-1 priors 1.7. The fitted membrane recovers part of the loss; the class gains fitted on the leak-only membrane must be re-found (Ben's answer 3). Mac cost per 1 s brain trial: 54.9 s vs 6.5 s (8.4x); whole organism 2.2x. The GPU path now carries the channels.
+
+**Decision:** m8 adopted as the working profile (`profiles.WORKING_PROFILE`). m7 is kept. Next is the separately pre-registered joint re-search of the class values on the new membrane.
+
+### Pre-registration: joint re-search of the class gains and the central size rule on the m8 membrane (22:01, before any run)
+Motivation (Ben's answer 3): mechanisms stay on; the class gains fitted on the leak-only membrane are re-found. Under m8, sugar -> MN9_L is 2.7 Hz (bar 5).
+- **Parameters (5).** All bounds come from parameters.csv; none may be widened.
+  - `class:DN|release_scale` (m8: 0.70) and `class:MN_other|input_scale` (1.30): the m5 pair.
+  - `class:sensory_gustatory|release_scale` and `class:MN_other|release_scale`: the MN9-path levers active in the s10 search.
+  - `cell_type:all|within_type_size_exponent` (central size rule, 0-1.5; m8: 0).
+- **Objective (MAP style, as s10).** Minimise the prior departure: Σ((log x)/0.5)² for the scales, plus ((e - 1.0)/0.25)² for the size exponent (its declared prior normal(1.0, 0.25), so the rule is favoured on). This is subject to:
+  - (i) 0 non-tonic spikes in the last 100 ms of the silent window on **fit seeds 14, 15, 16**. Fresh seeds; closed_loop_check, m8 body.
+  - (ii) sugar -> MN9_L > 5 Hz (100 Hz, 10 trials).
+  - Violations are penalised as in s10: 10 × log1p(silent spikes/ms) per seed, plus 10 × max(0, 5.5 - MN9 Hz).
+- **Method.** Run on backhouse CPU, ≤ 14 processes, resumable: one JSON per run, and collect skips finished runs.
+  - Screen: m8 values; each lever at 2 values toward MN9 drive; exponent at 0.5 and 1.0.
+  - Then random combinations within ±2x of the screen's best levers, then refinements. ≤ 60 candidates in total.
+- **Held out** (run once on the best candidate, never seen):
+  - closed loop seeds 17, 18, 19 silent;
+  - bitter suppression: sugar+bitter 100 Hz gives MN9_L ≤ 50% of bitter 0;
+  - sugar dose response: 200 Hz > 2x the 100 Hz rate;
+  - bitter -> MN9_L < 2 Hz at 100 Hz.
+- **Adoption.** All pass: m9 = m8 + the values becomes the working profile. A size exponent ending at 0 is reported as a finding against the central rule. Any fail: the values go to `data/params/hypotheses_not_adopted.csv`, with at most two pre-registered repairs. m8 stays working meanwhile.

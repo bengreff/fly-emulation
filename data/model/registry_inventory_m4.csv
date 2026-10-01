@@ -61,6 +61,18 @@ neuron_biophysics,cell_type:all,spontaneous_drive,mV,guessed,0.0,167111
 neuron_biophysics,cell_type:bodyId:909713;821635;833140;1050091581;1050268065;837745;1050005026;1050031705;815246;816215;816404;817283;819869;825516;867630;903298;909831;1050115387;1050088257;908762;929376;934519;1050003192;829873;843389;1050123559;1050166426;1050233038;910296;1050013311;1059707690;825485;908094;818295;823739;818057;1050156705;817374;1050100010;1050263576;903363;801637;840740;910178;1050032839;1050303231;1050460102;830480;816222;822013;813629;1050160514;1050202461;819674;1051356801;1050126678;907848;1052521030;812531;805568,spontaneous_drive,mV,inferred,36.45,60
 neuron_biophysics,cell_type:all,release_gain,dimensionless,guessed,1.0,167111
 neuron_biophysics,cell_type:all,input_gain,dimensionless,guessed,1.0,167111
+neuron_biophysics,cell_type:all,intrinsic_channels,boolean,guessed,0.0,167111
+neuron_biophysics,channel:all,expression_exponent,dimensionless,guessed,0.5,167111
+neuron_biophysics,channel:A,gbar,x leak conductance,guessed,3.0,167111
+neuron_biophysics,channel:M,gbar,x leak conductance,guessed,0.3,167111
+neuron_biophysics,channel:h,gbar,x leak conductance,guessed,0.2,167111
+neuron_biophysics,channel:T,gbar,x leak conductance,guessed,0.3,167111
+neuron_biophysics,channel:NaP,gbar,x leak conductance,guessed,0.02,167111
+neuron_biophysics,channel:Kv2,gbar,x leak conductance,guessed,0.5,167111
+neuron_biophysics,channel:BK,gbar,x leak conductance,guessed,1.0,167111
+neuron_biophysics,channel:SK,gbar,x leak conductance,guessed,0.5,167111
+neuron_biophysics,channel:Ca,per_spike,pool units per spike (SK K_d = 2),guessed,1.0,167111
+neuron_biophysics,channel:Ca,tau_ms,ms,guessed,80.0,167111
 neuron_biophysics,class:AL_LN,release_scale,dimensionless,guessed,1.0,1279
 neuron_biophysics,class:AL_PN,release_scale,dimensionless,guessed,1.0,682
 neuron_biophysics,class:AL_other,release_scale,dimensionless,guessed,1.0,38
@@ -589,16 +601,6 @@ neuron_biophysics,cell_type:all,mod_increment,level per spike (per 1000 releasin
 neuromodulation,neuromodulation:pools,releasing_cells,neurons,derived,dict(n=3),541
 physiological_initialisation,state:all_neurons,initial_condition,mV,guessed,-52.0,167111
 identity,cell_type:all,type_grouping_policy,dimensionless,guessed,11752 distinct `type` labels used as-is; no collapsing,167111
-neuron_biophysics,cell_type:all,intrinsic_channels,boolean,guessed,0.0,167111
-neuron_biophysics,channel:all,expression_exponent,dimensionless,guessed,0.5,167111
-neuron_biophysics,channel:A,gbar,x leak conductance,guessed,3.0,167111
-neuron_biophysics,channel:M,gbar,x leak conductance,guessed,0.3,167111
-neuron_biophysics,channel:h,gbar,x leak conductance,guessed,0.2,167111
-neuron_biophysics,channel:T,gbar,x leak conductance,guessed,0.3,167111
-neuron_biophysics,channel:NaP,gbar,x leak conductance,guessed,0.02,167111
-neuron_biophysics,channel:Kv2,gbar,x leak conductance,guessed,0.5,167111
-neuron_biophysics,channel:BK,gbar,x leak conductance,guessed,1.0,167111
-neuron_biophysics,channel:SK,gbar,x leak conductance,guessed,0.5,167111
 neuron_biophysics,cell_type:all,q10,dimensionless,inferred,2.0,167111
 sensory_transduction,transducer:photoreceptor,adapt_fraction,dimensionless,guessed,0.0,6091
 sensory_transduction,transducer:photoreceptor,adapt_tau_ms,ms,guessed,500.0,6091

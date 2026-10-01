@@ -59,7 +59,7 @@ def class_gains(conn, seed: int, spread: float = 0.2):
 
 def cmd_equiv(a):
     from flyemu.gpu.batched import BatchedNetwork
-    reg, conn, params, kick_mv = build_brain({"cell_type:all|background_noise": 0.0})
+    reg, conn, params, kick_mv = build_brain({"cell_type:all|background_noise": 0.0}, profile=a.profile)
     assert params.noise_mv == 0
     T = int(round(a.ms / DT))
     idx, mask, ext = stimulus(conn, a.stim, T)
@@ -93,7 +93,8 @@ def cmd_equiv(a):
         print(name, json.dumps(res), flush=True)
     dest = REPO / "runs" / "gpu_equiv"
     dest.mkdir(parents=True, exist_ok=True)
-    tag = "_det" if "deterministic" in xf else ""
+    tag = ("_det" if "deterministic" in xf else "") + (f"_{a.profile}" if a.profile else "")
+    out["profile"] = a.profile
     (dest / f"{a.stim}_{int(a.ms)}ms{tag}.json").write_text(json.dumps(out, indent=1, default=str))
 
 
@@ -156,6 +157,7 @@ def main():
     e = sub.add_parser("equiv")
     e.add_argument("--ms", type=float, default=500.0)
     e.add_argument("--stim", default="sugar", choices=["sugar", "broad"])
+    e.add_argument("--profile", default=None, help="registry profile (default: the working profile)")
     b = sub.add_parser("bench")
     b.add_argument("--batch", default="1,8,32")
     b.add_argument("--ms", type=float, default=1000.0)

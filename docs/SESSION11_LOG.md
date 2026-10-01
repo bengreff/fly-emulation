@@ -32,3 +32,8 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 20:35 Director correction: walking diagnostics closed (findings kept, switches neutral); ROUTE_TO_BEHAVIOUR removed; direction re-locked to the 09-28 ledger/fill plan; FIDELITY_LADDER next.
 - 20:47 rung 1 built and committed (745ef6e): channels module, expression tables (82 types + 21 hemilineages), single-cell tests; milestone M1/G1/G2 pre-registered.
 - 21:12 rung 1 scored: M1 8.9x (bar 2x), G2 sugar -> MN9_L 1.7 Hz (bar 5); not adopted, switch neutral. Diagnosis: SK via the guessed Ca pool cuts rates 3-4x; subthreshold channels move rheobase only 0.95-1.11x. Two repairs pre-registered (SK coupling from recorded current steps; cost by tables/GPU). Stopped here per the Director (stop after the first implementation milestone).
+- 21:17-21:20 Ben's answers recorded; repair 1 and revised adoption pre-registered; threshold deviation logged before fitting.
+- 21:40 spike-channel fit, 4 seeds: best seed 3 loss 1.03 (LIF only 2.1-2.4, priors 2.9-3.8); BK and θ identified, SK/Ca not (F-RUNG1-2).
+- 21:3x GPU port of the channels: toy exact; whole CNS m8 300 ms on backhouse equal per cell (sugar and broad).
+- 21:47 G1 seeds 12-13 silent (m8 and m7); sugar -> MN9_L 2.7 Hz (m7 re-run 6.9); m8 adopted as working profile. Full suite 164 passed.
+- 22:01 joint re-search of class gains + central size rule pre-registered (fit seeds 14-16, held out 17-19).

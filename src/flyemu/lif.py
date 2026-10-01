@@ -330,6 +330,15 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
               1.0, "declared default: every type releases the shared efficacy")
     inp = per("input_gain", "dimensionless", "postsynaptic input sensitivity",
               1.0, "declared default: every type receives the shared efficacy")
+    intrinsic = ichan.from_registry(reg, conn, timestep_ms=timestep_ms)
+    if intrinsic is not None:
+        # rung 1 (s11): classes refitted with the channels on replace their LIF-only rows
+        # (data/params/cell_types.csv *_rung1; DECISIONS 2026-09-30 21:17 and 21:20)
+        for prop, units, arr in (("v_th", "mV", v_th), ("t_ref", "ms", t_ref),
+                                 ("spontaneous_drive", "mV", spont)):
+            alt = ptable.per_neuron(reg, conn, prop + "_rung1", np.nan, units=units, table=table)
+            fin = np.isfinite(alt)
+            arr[fin] = alt[fin]
     # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
@@ -500,7 +509,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
-        intrinsic=ichan.from_registry(reg, conn, timestep_ms=timestep_ms),
+        intrinsic=intrinsic,
     )
 
 

@@ -145,7 +145,7 @@ def test_template_switches_are_real_owned_switches(md):
 
 
 def test_every_key_the_working_model_reads_has_exactly_one_owner(md):
-    """s10: m5 and m6 (the adopted templates) read keys that m4 never does; s11: m7 is working."""
+    """s10: m5 and m6 (the adopted templates) read keys that m4 never does; s11: m7, then m8 (rung 1), is working."""
     if not HAVE_GRAPH:
         pytest.skip("run scripts/fetch_male_cns.py first")
     from flyemu import profiles

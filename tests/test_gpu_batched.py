@@ -61,11 +61,26 @@ SLOW = {"mglur_fraction": 0.3, "machr_fraction": 0.2, "nmda_fraction": 0.5,
         "glu_sign_post": np.where(np.arange(N) % 2, 1.0, 0.0).astype(np.float32)}
 
 
+
+def _ich():
+    """Rung-1 channels on every toy cell, per-cell densities (m8-like scale)."""
+    from flyemu import channels
+    rng = np.random.default_rng(3)
+    m8 = {"A": 2.8, "M": 0.36, "h": 0.046, "T": 0.25, "NaP": 0.015, "Kv2": 0.22, "BK": 7.9, "SK": 0.5}
+    g = {c: (m8[c] * rng.uniform(0.5, 1.5, N)).astype(np.float32) for c in channels.CHANNELS}
+    return {"intrinsic": channels.Intrinsic(g=g, ca_per_spike=rng.uniform(0.5, 1.5, N).astype(np.float32),
+                                            dt=0.1, ca_tau=37.86)}
+
+
+ICH = _ich()
+
+
 @pytest.mark.parametrize("extra,path", [
     ({}, {}), ({}, {"tiers": ()}), ({}, {"tiers": ((2, 16), (4, 64))}),
-    (ALL, {}), (SLOW, {}),
+    (ALL, {}), (SLOW, {}), (ICH, {}), ({**ICH, **ALL}, {"tiers": ()}),
 ], ids=["m4-like-event", "m4-like-dense", "m4-like-event-overflow-to-dense",
-        "adapt+std+gabab+mod-event", "mglur+machr+nmda-event"])
+        "adapt+std+gabab+mod-event", "mglur+machr+nmda-event", "rung1-channels-event",
+        "rung1-channels+adapt+std+gabab+mod-dense"])
 def test_member_matches_cpu_reference(extra, path):
     c, p = _toy(**extra)
     idx, mask, ext = _stim()
@@ -146,3 +161,9 @@ def test_external_rows_equal_dense_external():
               kicks=(idx, mask[:250], 68.75))
     assert np.array_equal(a.spike_counts(), b.spike_counts())
     assert a.spike_counts().sum() > 0
+
+
+def test_rung1_channels_refuse_per_member_v_rest():
+    c, p = _toy(**ICH)
+    with pytest.raises(NotImplementedError):
+        BatchedNetwork(lif.Network(c, p, 0.1), B=2, member={"v_rest": np.float32(-50.0)})

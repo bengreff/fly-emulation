@@ -132,11 +132,36 @@ M7 = {
                                                  "EM volume of the flexor classes (inferred)"),
 }
 
+# m8 (session 11, adopted 21:47 after G1 and GPU equivalence passed): m7 + rung-1 intrinsic
+# conductances. SK/BK/Kv2/h and the Ca pool fitted to Azevedo 2020 slow-MN current steps
+# (scripts/fit_spike_channels.py seed 3; DECISIONS 2026-09-30 21:17/21:20); A/M/T/NaP kept
+# at the priors used in that fit. Every gbar is the slow-MN value divided by the slow-MN
+# expression factor (hemilineage mRNA, beta 0.5), so the recorded class gets the fitted
+# value exactly and every other type is scaled from it by its own channel mRNA.
+_F = ("fitted to Azevedo 2020 slow-MN current steps (derived at that class); other types "
+      "scaled by channel mRNA (inferred)")
+_SLOW_F = {"A": 1.067, "M": 0.845, "h": 1.085, "T": 1.21, "NaP": 1.298, "Kv2": 1.258,
+           "BK": 1.104, "SK": 1.091, "Ca": 1.246}   # slow flexor MN expression factors
+M8 = {
+    **M7,
+    "cell_type:all|intrinsic_channels": (1.0, _I, "rung 1 on (FIDELITY_LADDER)"),
+    "channel:SK|gbar": (round(0.02724 / _SLOW_F["SK"], 5), _I, _F + "; weakly identified (seeds 0.001-2.8)"),
+    "channel:BK|gbar": (round(8.692 / _SLOW_F["BK"], 4), _I, _F + "; strong in 3 of 4 seeds"),
+    "channel:Kv2|gbar": (round(0.2749 / _SLOW_F["Kv2"], 4), _I, _F),
+    "channel:h|gbar": (round(0.05022 / _SLOW_F["h"], 5), _I, _F + "; sag"),
+    "channel:Ca|per_spike": (round(1.245 / _SLOW_F["Ca"], 4), _I, _F + "; weakly identified"),
+    "channel:Ca|tau_ms": (37.86, _I, _F + "; weakly identified"),
+    "channel:A|gbar": (round(3.0 / _SLOW_F["A"], 4), _G, "prior held in the fit, slow-MN normalised"),
+    "channel:M|gbar": (round(0.3 / _SLOW_F["M"], 4), _G, "prior held in the fit, slow-MN normalised"),
+    "channel:T|gbar": (round(0.3 / _SLOW_F["T"], 4), _G, "prior held in the fit, slow-MN normalised"),
+    "channel:NaP|gbar": (round(0.02 / _SLOW_F["NaP"], 5), _G, "prior held in the fit, slow-MN normalised"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m7")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted; FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m8")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -149,6 +174,7 @@ PROFILES: dict[str, dict] = {
     "m5": {"values": M5, "kick_mv": KICK},
     "m6": {"values": M6, "kick_mv": KICK},
     "m7": {"values": M7, "kick_mv": KICK},
+    "m8": {"values": M8, "kick_mv": KICK},
 }
 
 

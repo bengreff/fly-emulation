@@ -149,6 +149,7 @@ class Intrinsic:
     dt: float
     n_capped: int = 0
     source: np.ndarray | None = None   # per cell: 2 type mRNA, 1 hemilineage mRNA, 0 prior
+    ca_tau: float = KINETICS["Ca"][1]  # ms, decay of the spike Ca pool
 
     def init(self, v_rest: np.ndarray) -> None:
         self.state = {}
@@ -173,7 +174,7 @@ class Intrinsic:
         self.d = {k: np.float32(np.exp(-dt / KINETICS[k][2])) for k in ("A_act", "A_inact", "M_act", "h_act", "T_inact")}
         self.d_kv2 = np.float32(np.exp(-dt / KINETICS["Kv2"][1]))
         self.d_bk = np.float32(np.exp(-dt / KINETICS["BK"][1]))
-        self.d_ca = np.float32(np.exp(-dt / KINETICS["Ca"][1]))
+        self.d_ca = np.float32(np.exp(-dt / self.ca_tau))
         self.on = [c for c in CHANNELS if np.any(self.g[c] > 0)]
 
     @staticmethod
@@ -241,10 +242,17 @@ def from_registry(reg, conn, *, timestep_ms: float) -> Intrinsic | None:
                               model_use=f"{use}; density from {'/'.join(genes)} expression",
                               subsystem="neuron_biophysics", instances=n, minimal=prior, conventional=prior,
                               minimal_note="guessed prior: a moderate effect at the median type")
+    ca_scale = reg.require("channel:Ca", "per_spike", units="pool units per spike (SK K_d = 2)",
+                           model_use="spike Ca entry into the SK pool (x cac rel_level^beta)",
+                           subsystem="neuron_biophysics", instances=n, minimal=KINETICS["Ca"][0],
+                           conventional=KINETICS["Ca"][0], minimal_note="guessed: half-activates SK at ~2 recent spikes")
+    ca_tau = reg.require("channel:Ca", "tau_ms", units="ms", model_use="decay of the spike Ca pool (SK gating)",
+                         subsystem="neuron_biophysics", instances=n, minimal=KINETICS["Ca"][1],
+                         conventional=KINETICS["Ca"][1], minimal_note="guessed: medium AHP time scale")
     if not on:
         return None
     types = conn.neurons.type.fillna("untyped").to_numpy()
     f, src = expression_factors(types, float(beta), conn.neurons.bodyId.to_numpy())
     g = {c: (float(gbar[c]) * f[c]).astype(np.float32) for c in CHANNELS}
-    ca = (KINETICS["Ca"][0] * f["Ca"]).astype(np.float32)
-    return Intrinsic(g=g, ca_per_spike=ca, dt=timestep_ms, source=src)
+    ca = (float(ca_scale) * f["Ca"]).astype(np.float32)
+    return Intrinsic(g=g, ca_per_spike=ca, dt=timestep_ms, source=src, ca_tau=float(ca_tau))
