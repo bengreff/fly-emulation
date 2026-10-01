@@ -4,6 +4,8 @@
 
 ## Mission
 
+**The final question (Ben, 30 September 2026, verbatim):** "is it possible to create an emulation of a biological brain that carries nearly 100% of the behavior of a typical member of that species, a brain upload, with current knowledge of neuroscience and a connectome scan as a starting point? And, if so, what amount of information from the scan do you actually need to reconstruct the ORIGINAL INDIVIDUAL?" The construction programme below addresses the first part. The second part is a planned study (`docs/FIDELITY_LADDER.md`, "Planned study"; `docs/PLAN_NEXT.md` §6).
+
 Build a **complete fly**: every mechanism that plausibly matters for behaviour, from receptors through the CNS to motor units, muscles and body mechanics, and back through the sense organs. Represent every quantity the connectome does not fix as an explicit unknown, bounded by what biology allows. Then **construct the brain by search**: find the flies within those bounds that reproduce measured physiology, and test whether fly behaviour emerges, judged on held-out data.
 
 Nobody has run this experiment. We do not know which mechanisms make behaviour emerge, so **we simulate more rather than less**. Which mechanisms matter is itself a result, measured by ablation in fitted flies.

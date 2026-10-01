@@ -2,6 +2,8 @@
 
 **Forward-looking; revised as rungs are built.** Ranked fidelity upgrades for the simulation, from 30 September 2026 (session 11). Ranking: plausible importance for behaviour emerging from the biology, tending toward simulating more. It is a judgement (inferred), not a measurement. Behaviour stays a guardrail, never the objective a rung is tuned toward (`docs/PLAN_NEXT.md`).
 
+**Why the ladder exists (Ben, 30 September 2026, verbatim):** "is it possible to create an emulation of a biological brain that carries nearly 100% of the behavior of a typical member of that species, a brain upload, with current knowledge of neuroscience and a connectome scan as a starting point? And, if so, what amount of information from the scan do you actually need to reconstruct the ORIGINAL INDIVIDUAL?" The ladder serves the first part: a typical member's behaviour from biology at the highest plausible fidelity. The second part is the planned study at the end of this file.
+
 Compute baseline (measured): the whole-CNS LIF closed loop costs ~50 s of wall time per simulated second on the Mac (M2 Pro, 10 cores, 16 GB; `docs/RUNNING.md`). On backhouse (RTX 4070 Ti SUPER 16 GB, 28 cores; offline in session 11) the batched GPU brain runs 0.37-0.45 s per member-second (F-GPU-1/2). Costs below are estimates (inferred) unless marked measured.
 
 "On" means: the mechanism is built behind a registry switch, equals the current model at neutral (equivalence test), has its per-type values filled from data or a declared rule (labelled), and runs at its prior in the working profile, within bounds the search may explore.
@@ -32,3 +34,30 @@ Compute baseline (measured): the whole-CNS LIF closed loop costs ~50 s of wall t
   - constrain the spike-triggered channels by recorded current-step f-I and adaptation;
   - cut the cost (tables or the GPU);
   - re-score.
+
+## Planned study: how much of the scan reconstructs the original individual (not started)
+
+The second part of Ben's question implies an experiment with a known answer. Status: **planned, not started.**
+- **Prerequisites.**
+  - A working model that carries the species' behaviour, which is the first part of the question.
+  - A model of individual variation: which slots differ between flies and by how much. Derived from cross-specimen data: FAFB vs male-cns vs hemibrain, left vs right homologues, and per-type spread. Labelled inferred.
+- **Ground truth.**
+  - Build a fully specified possible fly: every ledger slot filled. Species values come from the adopted model. The individual layer is drawn within the variation model: per-cell and per-synapse values, channel densities, and a lifetime of plasticity under a recorded rearing history.
+  - Draw several such individuals, "siblings", from the same species distribution.
+  - All of them are synthetic and labelled as such. None is a claim about a real fly.
+- **The scan.** Render from the ground-truth fly what a connectome scan yields:
+  - morphology;
+  - synapse locations and counts, with measured tracing error rates;
+  - transmitter predictions with their confusion rates.
+  Optionally add further modalities: per-cell transcriptome, a few recorded neurons, behaviour logs.
+- **Reconstruction.**
+  - Run the project's own construction pipeline (rules, transcriptome inference, bounded search) on subsets of that information, for example: the connectome alone; plus cell types; plus transcriptomes; plus k recorded cells; synapse weights coarsened or dropped.
+  - The pipeline never sees the hidden values.
+- **Measure.**
+  - Identity is recovered when the reconstruction is closer to its original than the siblings are to each other.
+  - Closeness is measured as distance in a behaviour repertoire: responses to a fixed battery of stimuli and internal states, including learned responses. Internal physiology is measured too.
+  - The result is a curve of information supplied vs identity recovered: the information needed to reconstruct the original individual.
+- **Design rules.**
+  - Pre-register the battery and the identity criterion before any reconstruction is scored.
+  - Generate the ground truth with a separate seed and code path from the reconstruction, so that no hidden value leaks.
+

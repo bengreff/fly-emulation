@@ -40,4 +40,13 @@ Coxa DOFs and ranges by function and the rest refit (F-COXA-1); mid/hind muscle 
 - **Fit remaining unknowns to recorded physiology** (target library v1, each target checked on the base model before registration, split fit / dev / held out). A fitted value is inferred; searching is how unknowns without direct data get filled, bounded by biology, never to tune a behaviour.
 - **Held-out judgement** on physiology and interventions the fit never saw.
 
+## 6. Planned study (later; not started): reconstructing the original individual
+
+Ben's final question, part two (verbatim in `docs/CONSTRUCTION.md`, Mission): how much scan information reconstructs the ORIGINAL INDIVIDUAL? The planned design is in `docs/FIDELITY_LADDER.md`, "Planned study":
+- a fully specified synthetic fly as ground truth, with siblings drawn from an individual-variation model;
+- a simulated scan of it;
+- reconstruction from subsets of that information by our own pipeline;
+- identity recovered when the reconstruction is closer to its original than the siblings are to each other.
+It needs the first part answered first (a model that carries species behaviour) and an individual-variation model from cross-specimen connectome data.
+
 The session prompt is `docs/NEXT_SESSION_PROMPT.md`.
