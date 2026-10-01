@@ -540,3 +540,37 @@ Cause: the muscarinic share. The model's slow pools copy a share of the fast *pe
   - per-type v_rest from measured rest potentials (currently one borrowed value, -52);
   - e_inh within its bounds;
   - rather than the pathway-end gains used in this Gate C.
+
+### Pre-registration: fill reversal and resting potentials from recordings; rung 2 repair 2 (02:49, before any run)
+**F1. Inhibitory reversal e_inh = -56 mV** (measured_related; prior sd 3).
+- GABA currents in larval central neurons reverse at -56 ± 3 mV (Rohrbough & Broadie 2002, J Neurophysiol 88:847).
+- A 1 s GABA pulse holds adult antennal-lobe PNs at -56 ± 2 mV (Wilson & Laurent 2005, J Neurosci 25:9069), a lower bound on E_GABA.
+- This replaces the guessed -70. One value for all cells; GluCl is assumed to share the chloride reversal (inferred).
+
+**F2. Repair 2: the voltage at which conductance weights keep their fitted effect** (`cell_type:all|cond_reference`: 0 = rest, as in m10p; 1 = threshold).
+- With E_Cl only about 4 mV below the -52 rest, keeping the resting PSP needs 4.5x the inhibitory conductance of m10p. That is a shunt the class efficacies were never fitted against.
+- The efficacies were fitted on spiking outcomes, so the reference becomes each cell's threshold: weight / (e_exc - v_th) for excitation and weight / (v_th - e_inh) for inhibition.
+- This is the second and last repair allowed for rung 2.
+
+**F3. Per-type resting potentials from the measurement library.** Only rows not reserved as held out are used.
+- Mi1, Tm1, Tm2 and Tm4 get v_rest = -55 mV (centre of -50 to -60; Behnia et al. 2014, measured_related).
+- v_th and v_reset shift by the same -3 mV, keeping the gap (inferred).
+- Not used:
+  - Azevedo 2020 MN rests and Agrawal 2020 VNC interneuron rests stay held out;
+  - DN AX (-59, Schnell 2017) has no confident male-CNS type match;
+  - the PN estimate is model-based.
+- The global v_rest stays -52, because no measurement covers the bulk.
+
+**Candidate m10q = m10p + F1 + F2 + F3.** No gains are re-searched.
+- Fit: closed loop on fresh seeds 26-28 silent, and sugar to MN9_L at least 5.5 Hz (10 trials).
+- If both pass: the held-out test runs once (seeds 23-25 silent, bitter suppression, sugar dose response, bitter alone), and m10 is adopted if all pass.
+- Otherwise: recorded as not adopted, with m9 kept.
+
+### Result: m10q fit fails the sugar bar; not adopted; m9 stays (03:01)
+**m10q** (m10p + recorded e_inh -56, weights referenced to threshold, Mi1/Tm1/Tm2/Tm4 rest -55), scored on its fit tests:
+- Closed loop seeds 26/27/28: 0.0 / 0.0 / 0.0 spikes/ms. Passes.
+- Sugar to MN9_L at 100 Hz: 2.4 ± 1.6 Hz over 10 trials (2, 0, 4, 3, 3, 0, 5, 1, 3, 3). Fails the 5.5 Hz bar.
+- Held-out seeds 23-25 and the held-out assays remain unseen.
+- With the recorded chloride reversal, repair 2 recovers part of the sugar pathway (m10p 0 Hz; m9 + cond 1 Hz).
+- The F1 and F3 fills stay in the tables as information, neutral by default (`cell_type:all|rest_from_recordings`, e_inh only in m10q).
+- Both rung-2 repairs are spent. Pre-registered next step: a class-gain re-search on m10q, with inhibitory release in the box, on fresh fit seeds from 29.

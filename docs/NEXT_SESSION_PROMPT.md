@@ -22,9 +22,9 @@ Per-cell and per-synapse properties are in scope. They cannot be measured one by
      - a charge-basis slow share.
    - The blocker: conductance synapses cut sugar -> MN9_L to about 1 Hz. The block sits at GNG108, two synapses in, and the inferred cause is inhibitory shunting.
    - Next, in order:
-     - (a) Record GNG108's excitatory and inhibitory input in m9 vs m9 + cond, to separate shunting from driving force.
-     - (b) Fill the information that sets it: per-type resting potential (one borrowed -52 mV today) and the chloride reversal, from recordings where they exist.
-     - (c) Pre-register a re-search whose box includes inhibitory release gains, then score m10p on fresh fit seeds. Seeds 20-22 are used; held-out seeds 23-25 are still unseen.
+     - Done at 03:01: the recorded e_inh (-56) and threshold-referenced weights (m10q) give silence and sugar 2.4 Hz (DECISIONS 2026-10-01 03:01).
+     - (a) Pre-register a class-gain re-search on m10q whose box includes inhibitory release. Fit on fresh seeds from 29; seeds 20-22 and 26-28 are used, and held-out seeds 23-25 are still unseen.
+     - (b) Extend the resting-potential fill as type matches are confirmed (DN AX -59, Schnell 2017, needs a type match). The Azevedo and Agrawal rests are held out.
    - The other rung-2 gaps remain:
      - per-receptor rise times;
      - facilitation;
@@ -59,5 +59,5 @@ Read first, in this order: `CLAUDE.md`; `docs/HANDOFF.md`; `docs/PLAN_NEXT.md`; 
 
 - `FLYEMU_PROFILE=m4`: sugar->MN9_L 8.9 ± 5.9 Hz (10 trials); closed loop seeds 0-2 silent.
 - m7: closed loop seeds 0-2 silent; sugar->MN9_L 6.9 ± 2.3 Hz; template dead fly passes.
-- m9 (default): closed loop seeds 12-19 silent; sugar->MN9_L 5.7 ± 1.4 Hz at 100 Hz, 15.7 at 200 Hz; sugar+bitter 0 Hz; bitter 0 Hz. Fresh seeds for new fits start at 26 (20-22 used by rung 2 fits; 23-25 reserved, unseen, for the rung-2 held-out test).
+- m9 (default): closed loop seeds 12-19 silent; sugar->MN9_L 5.7 ± 1.4 Hz at 100 Hz, 15.7 at 200 Hz; sugar+bitter 0 Hz; bitter 0 Hz. Fresh seeds for new fits start at 29 (20-22 and 26-28 used by rung 2 fits; 23-25 reserved, unseen, for the rung-2 held-out test).
 - Stop starting new work at 4 h 40 m, then wrap up (WORKFLOW §2), including the ledger before/after and a plain-language summary for Ben.

@@ -47,3 +47,4 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 01:30: first Gate C launch OOM-killed on backhouse (WSL VM full from another distro); moved to a staged Mac screen (amendment at 01:34).
 - 02:37: Gate C done, 30 candidates, best 0.7 Hz. Rung 2 not adopted.
 - 02:44: diagnostics. Conductance synapses block sugar at GNG108, hop 2 (F-R2-1). Recording `docs/media/m9_closed_loop.mp4`, 3 s.
+- 02:49: fill from recordings pre-registered (e_inh -56, threshold reference, medulla rests). 03:01: m10q silent on seeds 26-28, sugar 2.4 Hz; not adopted. Suite 171 passed.

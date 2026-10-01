@@ -74,7 +74,8 @@ class LIFParams:
     e_exc: float = 0.0       # mV
     e_inh: float = -70.0     # mV
     tau_s_inh: float | np.ndarray = 0.0   # s11 rung 2: inhibitory conductance decay (cond); 0 = tau_s
-    slow_share_basis: float = 0.0   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
+    slow_share_basis: float = 0.0
+    cond_reference: float = 0.0     # rung 2 repair 2: 0 = weights keep the PSP at rest, 1 = at threshold   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
     graded: np.ndarray | None = None       # bool per neuron
     graded_rmax_hz: float = 100.0          # rate-equivalent at threshold
     spont_mv: float | np.ndarray = 0.0     # tonic drive
@@ -264,6 +265,13 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     v_th = per("v_th", "mV", "LIF spike condition", -45.0,
                "declared default spike threshold, 15 mV above rest")
     v_reset = per("v_reset", "mV", "LIF reset", -60.0, "declared default reset to rest")
+    # s11 fill F3 (DECISIONS 2026-10-01 02:49): recorded resting potentials per type, as a
+    # shift from the global rest applied to rest, threshold and reset alike (gap kept)
+    if one("rest_from_recordings", "boolean", "per-type recorded resting potentials", 0.0,
+           "neutral 0: one resting potential for every neuron"):
+        dv = per("v_rest_shift_rec", "mV", "recorded rest minus the global v_rest", 0.0,
+                 "neutral 0 for types without a recording")
+        v_rest, v_th, v_reset = v_rest + dv, v_th + dv, v_reset + dv
     t_ref = per("t_ref", "ms", "LIF refractory period", 2.0,
                 "declared default absolute refractory period")
     tau_s = per("tau_s", "ms", "synaptic current decay", 5.0,
@@ -377,6 +385,9 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                 -70.0, "declared default chloride reversal")
     tau_s_inh = per("tau_s_inh", "ms", "fast inhibitory conductance decay (conductance mode)",
                     0.0, "neutral 0: decays with tau_s, as the excitatory conductance")
+    cond_ref = one("cond_reference", "boolean", "voltage at which conductance weights keep their effect",
+                   0.0, "neutral 0: resting PSP preserved; 1 = effect at threshold preserved "
+                        "(DECISIONS 2026-10-01 02:49)")
     share_basis = one("slow_share_basis", "boolean", "slow-receptor share basis",
                       0.0, "neutral 0: a slow share f moves f of the fast peak to the slow "
                            "pool (m4-m9); 1 = f of the fast charge (peak f tau_s/tau_slow), "
@@ -504,7 +515,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
 
     return LIFParams(
         tau_m=tau_m, v_rest=v_rest, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
-        tau_s=tau_s, slow_share_basis=share_basis,
+        tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
         tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, cond=bool(cond),
@@ -582,7 +593,8 @@ class Network:
         self._edge_scales(pre)
         self.delay = np.zeros((self.D, n), dtype=np.float32)
         if p.cond:
-            vr = self.v_rest[self.conn.indices]
+            # rung 2 repair 2: the voltage at which a weight keeps its fitted effect
+            vr = (self.v_th if p.cond_reference else self.v_rest)[self.conn.indices]
             pos = self.w > 0
             self.w = np.where(pos, self.w / (p.e_exc - vr),
                               self.w / (vr - p.e_inh)).astype(np.float32)

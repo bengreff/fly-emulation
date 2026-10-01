@@ -181,6 +181,16 @@ M10P = {
                                        "peak basis tripled cholinergic charge (seed-20 ablation)"),
 }
 
+# m10q (s11 fill, DECISIONS 2026-10-01 02:49): m10p + recorded chloride reversal, weights keep
+# their effect at threshold (rung 2 repair 2), per-type recorded resting potentials
+M10Q = {
+    **M10P,
+    "cell_type:all|e_inh": (-56.0, _I, "measured in related preparations: GABA reversal -56 +/- 3 mV, larval central "
+                            "neurons (Rohrbough & Broadie 2002); PN under GABA -56 +/- 2 (Wilson & Laurent 2005)"),
+    "cell_type:all|cond_reference": (1.0, _G, _R2 + " repair 2; efficacies were fitted on spiking outcomes"),
+    "cell_type:all|rest_from_recordings": (1.0, _I, "s11 fill F3; Mi1/Tm1/Tm2/Tm4 at -55 mV (Behnia 2014)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -201,6 +211,7 @@ PROFILES: dict[str, dict] = {
     "m8": {"values": M8, "kick_mv": KICK},
     "m9": {"values": M9, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
+    "m10q": {"values": M10Q, "kick_mv": KICK},
 }
 
 

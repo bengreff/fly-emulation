@@ -209,3 +209,20 @@ def test_rung2_charge_basis_scales_slow_peak_by_tau_ratio():
     g = BatchedNetwork(lif.Network(c, replace(p, slow_share_basis=1.0), 0.1), B=1)
     r = g.run(T, external_mv=ext, kicks=(idx, mask, 68.75), record="packed")
     assert compare(ref, unpack(r["raster"], N, 0), N, 0.1)["rate_corr_active"] > 0.98
+
+
+def test_rung2_cond_reference_threshold_scales_by_threshold_and_gpu_matches():
+    """Repair 2: weights keep their effect at each cell's threshold, not at rest."""
+    from dataclasses import replace
+    c, p = _toy(cond=True, e_inh=-56.0)
+    a = lif.Network(c, replace(p, cond=False), 0.1)
+    b = lif.Network(c, replace(p, cond_reference=1.0), 0.1)
+    vt = np.broadcast_to(p.v_th, (N,))[c.indices]
+    ref = np.where(a.w > 0, a.w / (0.0 - vt), a.w / (vt + 56.0))
+    assert np.allclose(b.w[a.w != 0], ref[a.w != 0], rtol=1e-5)
+    idx, mask, ext = _stim()
+    cpu = cpu_run(b, T, ext, (idx, mask, 68.75))[0]
+    g = BatchedNetwork(lif.Network(c, replace(p, cond_reference=1.0), 0.1), B=1)
+    r = g.run(T, external_mv=ext, kicks=(idx, mask, 68.75), record="packed")
+    res = compare(cpu, unpack(r["raster"], N, 0), N, 0.1)
+    assert res["spikes_cpu"] > 100 and res["rate_corr_active"] > 0.98, res
