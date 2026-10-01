@@ -34,12 +34,14 @@ matrix-vector product each step.
 """
 from __future__ import annotations
 
+import copy
 from dataclasses import dataclass, field
 
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
+from . import channels as ichan
 from . import params as ptable
 from .connectome import Connectome
 from .registry import Registry, Status
@@ -114,6 +116,8 @@ class LIFParams:
     nmda_fraction: float | np.ndarray = 0.0     # of excitatory glutamatergic input, Mg-blocked
     nmda_tau_ms: float = 80.0
     nmda_mg_mM: float = 1.0
+    # s11 ladder rung 1: intrinsic conductances per type (channels.Intrinsic); None = leak-only
+    intrinsic: object | None = None
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -496,6 +500,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
+        intrinsic=ichan.from_registry(reg, conn, timestep_ms=timestep_ms),
     )
 
 
@@ -528,6 +533,9 @@ class Network:
         self.spont = _arr(p.spont_mv, n)
         self.input_gain = _arr(p.input_gain, n)
         self.graded = (np.zeros(n, bool) if p.graded is None else np.asarray(p.graded, bool))
+        self.ich = copy.deepcopy(p.intrinsic)   # per-network gate state
+        if self.ich is not None:
+            self.ich.init(self.v_rest)
         self.delay_steps = _arr(p.delay_steps, n, np.int64)
         self.D = int(self.delay_steps.max())
 
@@ -680,8 +688,18 @@ class Network:
             g_e = self.i_syn
             G = 1.0 + g_e + self.g_i
             extra = drive - self.i_syn
-            v_inf = (self.v_rest + extra + g_e * p.e_exc + self.g_i * p.e_inh) / G
+            num = self.v_rest + extra + g_e * p.e_exc + self.g_i * p.e_inh
+            if self.ich is not None:
+                dG, dGE = self.ich.step(self.v)
+                G, num = G + dG, num + dGE
+            v_inf = num / G
             self.v = v_inf + (self.v - v_inf) * np.exp(-self.timestep_ms * G / self.tau_m)
+        elif self.ich is not None:
+            # rung 1: leak + intrinsic conductances (channels.py), exponential Euler
+            dG, dGE = self.ich.step(self.v)
+            G = 1.0 + dG
+            v_inf = (self.v_rest + drive + dGE) / G
+            self.v = (v_inf + (self.v - v_inf) * np.exp(-self.timestep_ms * G / self.tau_m)).astype(np.float32)
         else:
             # Exponential Euler: `drive` is the steady-state depolarisation
             self.v = self.v_rest + (self.v - self.v_rest) * self.decay_v + drive * (
@@ -734,6 +752,8 @@ class Network:
                 if hit.any():
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
+            if self.ich is not None:
+                self.ich.on_spike(spiked)
             if self.ring_e is not None or self.glia_k is not None or self.apl_mask is not None:
                 self._s10_spikes(spiked)
             if self.kc_edge is not None:

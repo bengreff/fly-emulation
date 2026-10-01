@@ -1,0 +1,639 @@
+allen_hl,gene,n_cells,n_cells_with_gene_data,frac_expressed,mean_cp10k,role,call_20,call_30,call_50,call
+0A,para,658,658,0.9468,15.461,Nav voltage-gated Na,1,1,1,1
+0A,Sh,658,658,0.9802,19.765,Kv1 fast A-type K,1,1,1,1
+0A,Shal,658,658,0.2705,1.041,Kv4 A-type K,1,0,0,0
+0A,Shab,658,658,0.3176,1.282,Kv2 delayed-rectifier K,1,1,0,1
+0A,Shaw,658,658,0.1231,0.444,Kv3 K,0,0,0,0
+0A,KCNQ,658,658,0.0167,0.048,M-type slow K,0,0,0,0
+0A,slo,658,658,0.8511,7.767,BK Ca-activated K,1,1,1,1
+0A,SK,658,658,0.6869,4.28,SK Ca-activated K,1,1,1,1
+0A,Ih,658,658,0.9422,12.392,HCN hyperpolarisation-activated cation,1,1,1,1
+0A,cac,658,658,0.6246,3.999,Cav2 high-voltage Ca,1,1,1,1
+0A,Ca-alpha1D,658,658,0.4529,2.226,Cav1 L-type Ca,1,1,0,1
+0A,Ca-alpha1T,658,658,0.2933,1.477,Cav3 T-type Ca,1,0,0,0
+0A,eag,658,658,0.4362,2.048,Kv10 K,1,1,0,1
+0A,sei,658,658,0.1854,0.661,erg Kv11 K,0,0,0,0
+0A,Irk1,658,658,0.003,0.009,inward-rectifier K,0,0,0,0
+0A,Irk2,658,658,0.0228,0.082,inward-rectifier K,0,0,0,0
+0A,Irk3,658,658,0.003,0.013,inward-rectifier K,0,0,0,0
+0A,Ork1,658,658,0.0,0.0,two-pore leak K,0,0,0,0
+0A,Task6,658,658,0.3784,1.622,two-pore leak K,1,1,0,1
+0A,Task7,658,658,0.2964,1.138,two-pore leak K,1,0,0,0
+0A,Hk,658,658,0.9422,13.609,Kv beta subunit,1,1,1,1
+0A,shakB,658,658,0.8921,10.379,"innexin, gap junction",1,1,1,1
+0A,ogre,658,658,0.041,0.161,"innexin, gap junction",0,0,0,0
+0A,Inx2,658,658,0.0198,0.065,"innexin, gap junction",0,0,0,0
+0A,Inx3,658,658,0.0076,0.033,"innexin, gap junction",0,0,0,0
+0A,Inx5,658,445,0.0,0.0,"innexin, gap junction",0,0,0,0
+0A,Inx6,658,445,0.0,0.0,"innexin, gap junction",0,0,0,0
+0A,Inx7,658,658,0.0,0.0,"innexin, gap junction",0,0,0,0
+0A,zpg,658,445,0.0,0.0,"innexin, gap junction",0,0,0,0
+10B,para,625,625,0.8912,15.685,Nav voltage-gated Na,1,1,1,1
+10B,Sh,625,625,0.9632,18.312,Kv1 fast A-type K,1,1,1,1
+10B,Shal,625,625,0.184,0.965,Kv4 A-type K,0,0,0,0
+10B,Shab,625,625,0.2544,1.246,Kv2 delayed-rectifier K,1,0,0,0
+10B,Shaw,625,625,0.1024,0.496,Kv3 K,0,0,0,0
+10B,KCNQ,625,625,0.0544,0.205,M-type slow K,0,0,0,0
+10B,slo,625,625,0.6944,6.479,BK Ca-activated K,1,1,1,1
+10B,SK,625,625,0.5216,3.707,SK Ca-activated K,1,1,1,1
+10B,Ih,625,625,0.9504,20.613,HCN hyperpolarisation-activated cation,1,1,1,1
+10B,cac,625,625,0.5088,3.773,Cav2 high-voltage Ca,1,1,1,1
+10B,Ca-alpha1D,625,625,0.3584,2.346,Cav1 L-type Ca,1,1,0,1
+10B,Ca-alpha1T,625,625,0.2128,1.263,Cav3 T-type Ca,1,0,0,0
+10B,eag,625,625,0.368,2.52,Kv10 K,1,1,0,1
+10B,sei,625,625,0.1504,0.686,erg Kv11 K,0,0,0,0
+10B,Irk1,625,625,0.0,0.0,inward-rectifier K,0,0,0,0
+10B,Irk2,625,625,0.0368,0.207,inward-rectifier K,0,0,0,0
+10B,Irk3,625,625,0.0,0.0,inward-rectifier K,0,0,0,0
+10B,Ork1,625,625,0.0016,0.012,two-pore leak K,0,0,0,0
+10B,Task6,625,625,0.2768,1.498,two-pore leak K,1,0,0,0
+10B,Task7,625,625,0.2672,1.328,two-pore leak K,1,0,0,0
+10B,Hk,625,625,0.8528,10.728,Kv beta subunit,1,1,1,1
+10B,shakB,625,625,0.8256,11.646,"innexin, gap junction",1,1,1,1
+10B,ogre,625,625,0.0272,0.158,"innexin, gap junction",0,0,0,0
+10B,Inx2,625,625,0.016,0.066,"innexin, gap junction",0,0,0,0
+10B,Inx3,625,625,0.0112,0.047,"innexin, gap junction",0,0,0,0
+10B,Inx5,625,427,0.0,0.0,"innexin, gap junction",0,0,0,0
+10B,Inx6,625,427,0.0,0.0,"innexin, gap junction",0,0,0,0
+10B,Inx7,625,625,0.0,0.0,"innexin, gap junction",0,0,0,0
+10B,zpg,625,427,0.0,0.0,"innexin, gap junction",0,0,0,0
+11B,para,196,196,0.9337,13.318,Nav voltage-gated Na,1,1,1,1
+11B,Sh,196,196,0.9643,17.373,Kv1 fast A-type K,1,1,1,1
+11B,Shal,196,196,0.2143,0.831,Kv4 A-type K,1,0,0,0
+11B,Shab,196,196,0.3316,1.708,Kv2 delayed-rectifier K,1,1,0,1
+11B,Shaw,196,196,0.1276,0.413,Kv3 K,0,0,0,0
+11B,KCNQ,196,196,0.0153,0.064,M-type slow K,0,0,0,0
+11B,slo,196,196,0.8776,7.961,BK Ca-activated K,1,1,1,1
+11B,SK,196,196,0.5204,3.342,SK Ca-activated K,1,1,1,1
+11B,Ih,196,196,0.8929,11.759,HCN hyperpolarisation-activated cation,1,1,1,1
+11B,cac,196,196,0.5204,3.482,Cav2 high-voltage Ca,1,1,1,1
+11B,Ca-alpha1D,196,196,0.3827,2.014,Cav1 L-type Ca,1,1,0,1
+11B,Ca-alpha1T,196,196,0.0663,0.248,Cav3 T-type Ca,0,0,0,0
+11B,eag,196,196,0.3214,1.716,Kv10 K,1,1,0,1
+11B,sei,196,196,0.1582,0.677,erg Kv11 K,0,0,0,0
+11B,Irk1,196,196,0.0,0.0,inward-rectifier K,0,0,0,0
+11B,Irk2,196,196,0.0357,0.142,inward-rectifier K,0,0,0,0
+11B,Irk3,196,196,0.0051,0.03,inward-rectifier K,0,0,0,0
+11B,Ork1,196,196,0.0051,0.022,two-pore leak K,0,0,0,0
+11B,Task6,196,196,0.2296,1.062,two-pore leak K,1,0,0,0
+11B,Task7,196,196,0.3061,1.31,two-pore leak K,1,1,0,1
+11B,Hk,196,196,0.9031,11.381,Kv beta subunit,1,1,1,1
+11B,shakB,196,196,0.898,8.851,"innexin, gap junction",1,1,1,1
+11B,ogre,196,196,0.0612,0.292,"innexin, gap junction",0,0,0,0
+11B,Inx2,196,196,0.0459,0.198,"innexin, gap junction",0,0,0,0
+11B,Inx3,196,196,0.0051,0.024,"innexin, gap junction",0,0,0,0
+11B,Inx5,196,135,0.0,0.0,"innexin, gap junction",0,0,0,0
+11B,Inx6,196,135,0.0,0.0,"innexin, gap junction",0,0,0,0
+11B,Inx7,196,196,0.0,0.0,"innexin, gap junction",0,0,0,0
+11B,zpg,196,135,0.0,0.0,"innexin, gap junction",0,0,0,0
+12B,para,1016,1016,0.8789,11.149,Nav voltage-gated Na,1,1,1,1
+12B,Sh,1016,1016,0.9518,15.557,Kv1 fast A-type K,1,1,1,1
+12B,Shal,1016,1016,0.2411,0.969,Kv4 A-type K,1,0,0,0
+12B,Shab,1016,1016,0.2234,0.985,Kv2 delayed-rectifier K,1,0,0,0
+12B,Shaw,1016,1016,0.0886,0.355,Kv3 K,0,0,0,0
+12B,KCNQ,1016,1016,0.0089,0.026,M-type slow K,0,0,0,0
+12B,slo,1016,1016,0.7815,6.884,BK Ca-activated K,1,1,1,1
+12B,SK,1016,1016,0.5404,3.367,SK Ca-activated K,1,1,1,1
+12B,Ih,1016,1016,0.9242,12.124,HCN hyperpolarisation-activated cation,1,1,1,1
+12B,cac,1016,1016,0.5384,3.326,Cav2 high-voltage Ca,1,1,1,1
+12B,Ca-alpha1D,1016,1016,0.4055,2.104,Cav1 L-type Ca,1,1,0,1
+12B,Ca-alpha1T,1016,1016,0.2116,1.093,Cav3 T-type Ca,1,0,0,0
+12B,eag,1016,1016,0.3278,1.581,Kv10 K,1,1,0,1
+12B,sei,1016,1016,0.189,0.725,erg Kv11 K,0,0,0,0
+12B,Irk1,1016,1016,0.0,0.0,inward-rectifier K,0,0,0,0
+12B,Irk2,1016,1016,0.0354,0.126,inward-rectifier K,0,0,0,0
+12B,Irk3,1016,1016,0.003,0.019,inward-rectifier K,0,0,0,0
+12B,Ork1,1016,1016,0.0,0.0,two-pore leak K,0,0,0,0
+12B,Task6,1016,1016,0.2795,1.223,two-pore leak K,1,0,0,0
+12B,Task7,1016,1016,0.3415,1.524,two-pore leak K,1,1,0,1
+12B,Hk,1016,1016,0.8839,10.339,Kv beta subunit,1,1,1,1
+12B,shakB,1016,1016,0.7933,7.869,"innexin, gap junction",1,1,1,1
+12B,ogre,1016,1016,0.0305,0.153,"innexin, gap junction",0,0,0,0
+12B,Inx2,1016,1016,0.0177,0.066,"innexin, gap junction",0,0,0,0
+12B,Inx3,1016,1016,0.0177,0.076,"innexin, gap junction",0,0,0,0
+12B,Inx5,1016,653,0.0,0.0,"innexin, gap junction",0,0,0,0
+12B,Inx6,1016,653,0.0,0.0,"innexin, gap junction",0,0,0,0
+12B,Inx7,1016,1016,0.0,0.0,"innexin, gap junction",0,0,0,0
+12B,zpg,1016,653,0.0,0.0,"innexin, gap junction",0,0,0,0
+13A/19A,para,1806,1806,0.9341,13.382,Nav voltage-gated Na,1,1,1,1
+13A/19A,Sh,1806,1806,0.9618,17.515,Kv1 fast A-type K,1,1,1,1
+13A/19A,Shal,1806,1806,0.2558,0.907,Kv4 A-type K,1,0,0,0
+13A/19A,Shab,1806,1806,0.309,1.25,Kv2 delayed-rectifier K,1,1,0,1
+13A/19A,Shaw,1806,1806,0.129,0.419,Kv3 K,0,0,0,0
+13A/19A,KCNQ,1806,1806,0.0161,0.05,M-type slow K,0,0,0,0
+13A/19A,slo,1806,1806,0.8583,7.543,BK Ca-activated K,1,1,1,1
+13A/19A,SK,1806,1806,0.6373,3.994,SK Ca-activated K,1,1,1,1
+13A/19A,Ih,1806,1806,0.9446,13.814,HCN hyperpolarisation-activated cation,1,1,1,1
+13A/19A,cac,1806,1806,0.6822,4.514,Cav2 high-voltage Ca,1,1,1,1
+13A/19A,Ca-alpha1D,1806,1806,0.4468,2.144,Cav1 L-type Ca,1,1,0,1
+13A/19A,Ca-alpha1T,1806,1806,0.232,1.164,Cav3 T-type Ca,1,0,0,0
+13A/19A,eag,1806,1806,0.2918,1.215,Kv10 K,1,0,0,0
+13A/19A,sei,1806,1806,0.206,0.74,erg Kv11 K,1,0,0,0
+13A/19A,Irk1,1806,1806,0.0006,0.003,inward-rectifier K,0,0,0,0
+13A/19A,Irk2,1806,1806,0.0282,0.108,inward-rectifier K,0,0,0,0
+13A/19A,Irk3,1806,1806,0.0011,0.003,inward-rectifier K,0,0,0,0
+13A/19A,Ork1,1806,1806,0.0,0.0,two-pore leak K,0,0,0,0
+13A/19A,Task6,1806,1806,0.3056,1.206,two-pore leak K,1,1,0,1
+13A/19A,Task7,1806,1806,0.3666,1.518,two-pore leak K,1,1,0,1
+13A/19A,Hk,1806,1806,0.9048,10.775,Kv beta subunit,1,1,1,1
+13A/19A,shakB,1806,1806,0.763,6.793,"innexin, gap junction",1,1,1,1
+13A/19A,ogre,1806,1806,0.0216,0.096,"innexin, gap junction",0,0,0,0
+13A/19A,Inx2,1806,1806,0.0116,0.043,"innexin, gap junction",0,0,0,0
+13A/19A,Inx3,1806,1806,0.015,0.054,"innexin, gap junction",0,0,0,0
+13A/19A,Inx5,1806,1099,0.0,0.0,"innexin, gap junction",0,0,0,0
+13A/19A,Inx6,1806,1099,0.0,0.0,"innexin, gap junction",0,0,0,0
+13A/19A,Inx7,1806,1806,0.0,0.0,"innexin, gap junction",0,0,0,0
+13A/19A,zpg,1806,1099,0.0,0.0,"innexin, gap junction",0,0,0,0
+13B,para,573,573,0.9162,12.953,Nav voltage-gated Na,1,1,1,1
+13B,Sh,573,573,0.9756,16.947,Kv1 fast A-type K,1,1,1,1
+13B,Shal,573,573,0.3002,1.305,Kv4 A-type K,1,1,0,1
+13B,Shab,573,573,0.2897,1.186,Kv2 delayed-rectifier K,1,0,0,0
+13B,Shaw,573,573,0.1274,0.453,Kv3 K,0,0,0,0
+13B,KCNQ,573,573,0.0105,0.025,M-type slow K,0,0,0,0
+13B,slo,573,573,0.8586,7.972,BK Ca-activated K,1,1,1,1
+13B,SK,573,573,0.5846,3.325,SK Ca-activated K,1,1,1,1
+13B,Ih,573,573,0.9494,12.635,HCN hyperpolarisation-activated cation,1,1,1,1
+13B,cac,573,573,0.5864,3.63,Cav2 high-voltage Ca,1,1,1,1
+13B,Ca-alpha1D,573,573,0.3839,1.694,Cav1 L-type Ca,1,1,0,1
+13B,Ca-alpha1T,573,573,0.1169,0.479,Cav3 T-type Ca,0,0,0,0
+13B,eag,573,573,0.2949,1.233,Kv10 K,1,0,0,0
+13B,sei,573,573,0.2042,0.772,erg Kv11 K,1,0,0,0
+13B,Irk1,573,573,0.0,0.0,inward-rectifier K,0,0,0,0
+13B,Irk2,573,573,0.014,0.048,inward-rectifier K,0,0,0,0
+13B,Irk3,573,573,0.0052,0.026,inward-rectifier K,0,0,0,0
+13B,Ork1,573,573,0.0017,0.005,two-pore leak K,0,0,0,0
+13B,Task6,573,573,0.2845,1.067,two-pore leak K,1,0,0,0
+13B,Task7,573,573,0.363,1.523,two-pore leak K,1,1,0,1
+13B,Hk,573,573,0.9058,10.269,Kv beta subunit,1,1,1,1
+13B,shakB,573,573,0.7731,6.124,"innexin, gap junction",1,1,1,1
+13B,ogre,573,573,0.0297,0.111,"innexin, gap junction",0,0,0,0
+13B,Inx2,573,573,0.0209,0.073,"innexin, gap junction",0,0,0,0
+13B,Inx3,573,573,0.007,0.026,"innexin, gap junction",0,0,0,0
+13B,Inx5,573,380,0.0,0.0,"innexin, gap junction",0,0,0,0
+13B,Inx6,573,380,0.0,0.0,"innexin, gap junction",0,0,0,0
+13B,Inx7,573,573,0.0,0.0,"innexin, gap junction",0,0,0,0
+13B,zpg,573,380,0.0,0.0,"innexin, gap junction",0,0,0,0
+14A,para,785,785,0.8752,11.456,Nav voltage-gated Na,1,1,1,1
+14A,Sh,785,785,0.9567,16.871,Kv1 fast A-type K,1,1,1,1
+14A,Shal,785,785,0.2178,0.921,Kv4 A-type K,1,0,0,0
+14A,Shab,785,785,0.1936,0.843,Kv2 delayed-rectifier K,0,0,0,0
+14A,Shaw,785,785,0.0879,0.359,Kv3 K,0,0,0,0
+14A,KCNQ,785,785,0.0102,0.041,M-type slow K,0,0,0,0
+14A,slo,785,785,0.7567,6.589,BK Ca-activated K,1,1,1,1
+14A,SK,785,785,0.5108,3.176,SK Ca-activated K,1,1,1,1
+14A,Ih,785,785,0.921,14.087,HCN hyperpolarisation-activated cation,1,1,1,1
+14A,cac,785,785,0.535,3.539,Cav2 high-voltage Ca,1,1,1,1
+14A,Ca-alpha1D,785,785,0.3312,1.752,Cav1 L-type Ca,1,1,0,1
+14A,Ca-alpha1T,785,785,0.1682,0.787,Cav3 T-type Ca,0,0,0,0
+14A,eag,785,785,0.2357,1.162,Kv10 K,1,0,0,0
+14A,sei,785,785,0.1962,0.802,erg Kv11 K,0,0,0,0
+14A,Irk1,785,785,0.0013,0.005,inward-rectifier K,0,0,0,0
+14A,Irk2,785,785,0.028,0.123,inward-rectifier K,0,0,0,0
+14A,Irk3,785,785,0.0025,0.011,inward-rectifier K,0,0,0,0
+14A,Ork1,785,785,0.0,0.0,two-pore leak K,0,0,0,0
+14A,Task6,785,785,0.2662,1.137,two-pore leak K,1,0,0,0
+14A,Task7,785,785,0.307,1.419,two-pore leak K,1,1,0,1
+14A,Hk,785,785,0.8854,9.763,Kv beta subunit,1,1,1,1
+14A,shakB,785,785,0.7694,6.71,"innexin, gap junction",1,1,1,1
+14A,ogre,785,785,0.0229,0.121,"innexin, gap junction",0,0,0,0
+14A,Inx2,785,785,0.0382,0.174,"innexin, gap junction",0,0,0,0
+14A,Inx3,785,785,0.0178,0.064,"innexin, gap junction",0,0,0,0
+14A,Inx5,785,572,0.0,0.0,"innexin, gap junction",0,0,0,0
+14A,Inx6,785,572,0.0,0.0,"innexin, gap junction",0,0,0,0
+14A,Inx7,785,785,0.0013,0.01,"innexin, gap junction",0,0,0,0
+14A,zpg,785,572,0.0,0.0,"innexin, gap junction",0,0,0,0
+15B,para,749,749,0.9813,23.628,Nav voltage-gated Na,1,1,1,1
+15B,Sh,749,749,0.98,20.312,Kv1 fast A-type K,1,1,1,1
+15B,Shal,749,749,0.3658,1.122,Kv4 A-type K,1,1,0,1
+15B,Shab,749,749,0.514,2.086,Kv2 delayed-rectifier K,1,1,1,1
+15B,Shaw,749,749,0.1883,0.524,Kv3 K,0,0,0,0
+15B,KCNQ,749,749,0.0227,0.055,M-type slow K,0,0,0,0
+15B,slo,749,749,0.9105,9.118,BK Ca-activated K,1,1,1,1
+15B,SK,749,749,0.7797,4.559,SK Ca-activated K,1,1,1,1
+15B,Ih,749,749,0.9479,16.408,HCN hyperpolarisation-activated cation,1,1,1,1
+15B,cac,749,749,0.8518,6.209,Cav2 high-voltage Ca,1,1,1,1
+15B,Ca-alpha1D,749,749,0.6622,3.462,Cav1 L-type Ca,1,1,1,1
+15B,Ca-alpha1T,749,749,0.3818,1.656,Cav3 T-type Ca,1,1,0,1
+15B,eag,749,749,0.6609,3.218,Kv10 K,1,1,1,1
+15B,sei,749,749,0.3097,0.81,erg Kv11 K,1,1,0,1
+15B,Irk1,749,749,0.0187,0.095,inward-rectifier K,0,0,0,0
+15B,Irk2,749,749,0.0227,0.05,inward-rectifier K,0,0,0,0
+15B,Irk3,749,749,0.0027,0.003,inward-rectifier K,0,0,0,0
+15B,Ork1,749,749,0.0,0.0,two-pore leak K,0,0,0,0
+15B,Task6,749,749,0.3311,1.026,two-pore leak K,1,1,0,1
+15B,Task7,749,749,0.4352,1.167,two-pore leak K,1,1,0,1
+15B,Hk,749,749,0.9346,12.526,Kv beta subunit,1,1,1,1
+15B,shakB,749,749,0.7824,6.43,"innexin, gap junction",1,1,1,1
+15B,ogre,749,749,0.0267,0.105,"innexin, gap junction",0,0,0,0
+15B,Inx2,749,749,0.0307,0.092,"innexin, gap junction",0,0,0,0
+15B,Inx3,749,749,0.0227,0.094,"innexin, gap junction",0,0,0,0
+15B,Inx5,749,381,0.0,0.0,"innexin, gap junction",0,0,0,0
+15B,Inx6,749,381,0.0,0.0,"innexin, gap junction",0,0,0,0
+15B,Inx7,749,749,0.0,0.0,"innexin, gap junction",0,0,0,0
+15B,zpg,749,381,0.0,0.0,"innexin, gap junction",0,0,0,0
+16B,para,762,762,0.9199,13.828,Nav voltage-gated Na,1,1,1,1
+16B,Sh,762,762,0.9488,15.624,Kv1 fast A-type K,1,1,1,1
+16B,Shal,762,762,0.2323,0.991,Kv4 A-type K,1,0,0,0
+16B,Shab,762,762,0.2625,1.183,Kv2 delayed-rectifier K,1,0,0,0
+16B,Shaw,762,762,0.0971,0.376,Kv3 K,0,0,0,0
+16B,KCNQ,762,762,0.0092,0.037,M-type slow K,0,0,0,0
+16B,slo,762,762,0.8346,7.696,BK Ca-activated K,1,1,1,1
+16B,SK,762,762,0.5525,3.561,SK Ca-activated K,1,1,1,1
+16B,Ih,762,762,0.9265,13.399,HCN hyperpolarisation-activated cation,1,1,1,1
+16B,cac,762,762,0.5801,3.648,Cav2 high-voltage Ca,1,1,1,1
+16B,Ca-alpha1D,762,762,0.3661,2.018,Cav1 L-type Ca,1,1,0,1
+16B,Ca-alpha1T,762,762,0.164,0.767,Cav3 T-type Ca,0,0,0,0
+16B,eag,762,762,0.2677,1.211,Kv10 K,1,0,0,0
+16B,sei,762,762,0.2113,0.862,erg Kv11 K,1,0,0,0
+16B,Irk1,762,762,0.0013,0.008,inward-rectifier K,0,0,0,0
+16B,Irk2,762,762,0.0262,0.1,inward-rectifier K,0,0,0,0
+16B,Irk3,762,762,0.0026,0.012,inward-rectifier K,0,0,0,0
+16B,Ork1,762,762,0.0,0.0,two-pore leak K,0,0,0,0
+16B,Task6,762,762,0.2848,1.23,two-pore leak K,1,0,0,0
+16B,Task7,762,762,0.3504,1.503,two-pore leak K,1,1,0,1
+16B,Hk,762,762,0.8924,10.482,Kv beta subunit,1,1,1,1
+16B,shakB,762,762,0.7966,7.275,"innexin, gap junction",1,1,1,1
+16B,ogre,762,762,0.0236,0.089,"innexin, gap junction",0,0,0,0
+16B,Inx2,762,762,0.0184,0.07,"innexin, gap junction",0,0,0,0
+16B,Inx3,762,762,0.0131,0.047,"innexin, gap junction",0,0,0,0
+16B,Inx5,762,475,0.0,0.0,"innexin, gap junction",0,0,0,0
+16B,Inx6,762,475,0.0,0.0,"innexin, gap junction",0,0,0,0
+16B,Inx7,762,762,0.0,0.0,"innexin, gap junction",0,0,0,0
+16B,zpg,762,475,0.0,0.0,"innexin, gap junction",0,0,0,0
+1A,para,395,395,0.9241,14.847,Nav voltage-gated Na,1,1,1,1
+1A,Sh,395,395,0.962,17.48,Kv1 fast A-type K,1,1,1,1
+1A,Shal,395,395,0.2734,1.249,Kv4 A-type K,1,0,0,0
+1A,Shab,395,395,0.2861,1.326,Kv2 delayed-rectifier K,1,0,0,0
+1A,Shaw,395,395,0.1342,0.555,Kv3 K,0,0,0,0
+1A,KCNQ,395,395,0.0228,0.073,M-type slow K,0,0,0,0
+1A,slo,395,395,0.8354,8.234,BK Ca-activated K,1,1,1,1
+1A,SK,395,395,0.6354,4.272,SK Ca-activated K,1,1,1,1
+1A,Ih,395,395,0.9671,15.496,HCN hyperpolarisation-activated cation,1,1,1,1
+1A,cac,395,395,0.5392,3.768,Cav2 high-voltage Ca,1,1,1,1
+1A,Ca-alpha1D,395,395,0.4329,2.253,Cav1 L-type Ca,1,1,0,1
+1A,Ca-alpha1T,395,395,0.1443,0.788,Cav3 T-type Ca,0,0,0,0
+1A,eag,395,395,0.3418,1.802,Kv10 K,1,1,0,1
+1A,sei,395,395,0.1823,0.716,erg Kv11 K,0,0,0,0
+1A,Irk1,395,395,0.0,0.0,inward-rectifier K,0,0,0,0
+1A,Irk2,395,395,0.0329,0.198,inward-rectifier K,0,0,0,0
+1A,Irk3,395,395,0.0025,0.009,inward-rectifier K,0,0,0,0
+1A,Ork1,395,395,0.0,0.0,two-pore leak K,0,0,0,0
+1A,Task6,395,395,0.3089,1.283,two-pore leak K,1,1,0,1
+1A,Task7,395,395,0.3013,1.233,two-pore leak K,1,1,0,1
+1A,Hk,395,395,0.8937,11.078,Kv beta subunit,1,1,1,1
+1A,shakB,395,395,0.8228,8.865,"innexin, gap junction",1,1,1,1
+1A,ogre,395,395,0.0228,0.092,"innexin, gap junction",0,0,0,0
+1A,Inx2,395,395,0.0177,0.075,"innexin, gap junction",0,0,0,0
+1A,Inx3,395,395,0.0152,0.074,"innexin, gap junction",0,0,0,0
+1A,Inx5,395,273,0.0,0.0,"innexin, gap junction",0,0,0,0
+1A,Inx6,395,273,0.0,0.0,"innexin, gap junction",0,0,0,0
+1A,Inx7,395,395,0.0025,0.011,"innexin, gap junction",0,0,0,0
+1A,zpg,395,273,0.0,0.0,"innexin, gap junction",0,0,0,0
+1B,para,534,534,0.8221,9.955,Nav voltage-gated Na,1,1,1,1
+1B,Sh,534,534,0.9607,16.789,Kv1 fast A-type K,1,1,1,1
+1B,Shal,534,534,0.2172,0.963,Kv4 A-type K,1,0,0,0
+1B,Shab,534,534,0.2004,0.906,Kv2 delayed-rectifier K,1,0,0,0
+1B,Shaw,534,534,0.1067,0.466,Kv3 K,0,0,0,0
+1B,KCNQ,534,534,0.0318,0.137,M-type slow K,0,0,0,0
+1B,slo,534,534,0.7734,7.101,BK Ca-activated K,1,1,1,1
+1B,SK,534,534,0.5187,3.323,SK Ca-activated K,1,1,1,1
+1B,Ih,534,534,0.897,12.712,HCN hyperpolarisation-activated cation,1,1,1,1
+1B,cac,534,534,0.4869,3.223,Cav2 high-voltage Ca,1,1,0,1
+1B,Ca-alpha1D,534,534,0.3277,1.735,Cav1 L-type Ca,1,1,0,1
+1B,Ca-alpha1T,534,534,0.1948,1.036,Cav3 T-type Ca,0,0,0,0
+1B,eag,534,534,0.2865,1.488,Kv10 K,1,0,0,0
+1B,sei,534,534,0.1891,0.879,erg Kv11 K,0,0,0,0
+1B,Irk1,534,534,0.0037,0.011,inward-rectifier K,0,0,0,0
+1B,Irk2,534,534,0.0281,0.106,inward-rectifier K,0,0,0,0
+1B,Irk3,534,534,0.0019,0.015,inward-rectifier K,0,0,0,0
+1B,Ork1,534,534,0.0019,0.006,two-pore leak K,0,0,0,0
+1B,Task6,534,534,0.2004,0.897,two-pore leak K,1,0,0,0
+1B,Task7,534,534,0.324,1.596,two-pore leak K,1,1,0,1
+1B,Hk,534,534,0.8352,9.026,Kv beta subunit,1,1,1,1
+1B,shakB,534,534,0.7603,8.112,"innexin, gap junction",1,1,1,1
+1B,ogre,534,534,0.0356,0.196,"innexin, gap junction",0,0,0,0
+1B,Inx2,534,534,0.0225,0.102,"innexin, gap junction",0,0,0,0
+1B,Inx3,534,534,0.0262,0.136,"innexin, gap junction",0,0,0,0
+1B,Inx5,534,422,0.0,0.0,"innexin, gap junction",0,0,0,0
+1B,Inx6,534,422,0.0024,0.015,"innexin, gap junction",0,0,0,0
+1B,Inx7,534,534,0.0,0.0,"innexin, gap junction",0,0,0,0
+1B,zpg,534,422,0.0,0.0,"innexin, gap junction",0,0,0,0
+20A/22A,para,1310,1310,0.916,15.142,Nav voltage-gated Na,1,1,1,1
+20A/22A,Sh,1310,1310,0.9611,18.897,Kv1 fast A-type K,1,1,1,1
+20A/22A,Shal,1310,1310,0.2328,1.072,Kv4 A-type K,1,0,0,0
+20A/22A,Shab,1310,1310,0.2931,1.555,Kv2 delayed-rectifier K,1,0,0,0
+20A/22A,Shaw,1310,1310,0.1443,0.619,Kv3 K,0,0,0,0
+20A/22A,KCNQ,1310,1310,0.0122,0.051,M-type slow K,0,0,0,0
+20A/22A,slo,1310,1310,0.7817,7.998,BK Ca-activated K,1,1,1,1
+20A/22A,SK,1310,1310,0.5992,4.355,SK Ca-activated K,1,1,1,1
+20A/22A,Ih,1310,1310,0.9359,16.3,HCN hyperpolarisation-activated cation,1,1,1,1
+20A/22A,cac,1310,1310,0.584,4.424,Cav2 high-voltage Ca,1,1,1,1
+20A/22A,Ca-alpha1D,1310,1310,0.416,2.396,Cav1 L-type Ca,1,1,0,1
+20A/22A,Ca-alpha1T,1310,1310,0.1802,1.093,Cav3 T-type Ca,0,0,0,0
+20A/22A,eag,1310,1310,0.3206,1.756,Kv10 K,1,1,0,1
+20A/22A,sei,1310,1310,0.1947,0.896,erg Kv11 K,0,0,0,0
+20A/22A,Irk1,1310,1310,0.0008,0.002,inward-rectifier K,0,0,0,0
+20A/22A,Irk2,1310,1310,0.0267,0.118,inward-rectifier K,0,0,0,0
+20A/22A,Irk3,1310,1310,0.0008,0.001,inward-rectifier K,0,0,0,0
+20A/22A,Ork1,1310,1310,0.0,0.0,two-pore leak K,0,0,0,0
+20A/22A,Task6,1310,1310,0.3664,1.952,two-pore leak K,1,1,0,1
+20A/22A,Task7,1310,1310,0.2473,1.162,two-pore leak K,1,0,0,0
+20A/22A,Hk,1310,1310,0.8649,10.678,Kv beta subunit,1,1,1,1
+20A/22A,shakB,1310,1310,0.774,8.585,"innexin, gap junction",1,1,1,1
+20A/22A,ogre,1310,1310,0.0313,0.158,"innexin, gap junction",0,0,0,0
+20A/22A,Inx2,1310,1310,0.0153,0.068,"innexin, gap junction",0,0,0,0
+20A/22A,Inx3,1310,1310,0.0137,0.066,"innexin, gap junction",0,0,0,0
+20A/22A,Inx5,1310,882,0.0,0.0,"innexin, gap junction",0,0,0,0
+20A/22A,Inx6,1310,882,0.0,0.0,"innexin, gap junction",0,0,0,0
+20A/22A,Inx7,1310,1310,0.0,0.0,"innexin, gap junction",0,0,0,0
+20A/22A,zpg,1310,882,0.0,0.0,"innexin, gap junction",0,0,0,0
+21A,para,631,631,0.9255,13.924,Nav voltage-gated Na,1,1,1,1
+21A,Sh,631,631,0.9635,16.415,Kv1 fast A-type K,1,1,1,1
+21A,Shal,631,631,0.2805,1.167,Kv4 A-type K,1,0,0,0
+21A,Shab,631,631,0.3122,1.259,Kv2 delayed-rectifier K,1,1,0,1
+21A,Shaw,631,631,0.1426,0.524,Kv3 K,0,0,0,0
+21A,KCNQ,631,631,0.0269,0.112,M-type slow K,0,0,0,0
+21A,slo,631,631,0.8415,7.722,BK Ca-activated K,1,1,1,1
+21A,SK,631,631,0.6355,4.081,SK Ca-activated K,1,1,1,1
+21A,Ih,631,631,0.9461,14.539,HCN hyperpolarisation-activated cation,1,1,1,1
+21A,cac,631,631,0.6609,4.589,Cav2 high-voltage Ca,1,1,1,1
+21A,Ca-alpha1D,631,631,0.4231,2.129,Cav1 L-type Ca,1,1,0,1
+21A,Ca-alpha1T,631,631,0.1458,0.717,Cav3 T-type Ca,0,0,0,0
+21A,eag,631,631,0.3249,1.317,Kv10 K,1,1,0,1
+21A,sei,631,631,0.2076,0.836,erg Kv11 K,1,0,0,0
+21A,Irk1,631,631,0.0016,0.003,inward-rectifier K,0,0,0,0
+21A,Irk2,631,631,0.0365,0.129,inward-rectifier K,0,0,0,0
+21A,Irk3,631,631,0.0016,0.004,inward-rectifier K,0,0,0,0
+21A,Ork1,631,631,0.0,0.0,two-pore leak K,0,0,0,0
+21A,Task6,631,631,0.3439,1.474,two-pore leak K,1,1,0,1
+21A,Task7,631,631,0.3328,1.362,two-pore leak K,1,1,0,1
+21A,Hk,631,631,0.9065,11.897,Kv beta subunit,1,1,1,1
+21A,shakB,631,631,0.7306,6.548,"innexin, gap junction",1,1,1,1
+21A,ogre,631,631,0.019,0.077,"innexin, gap junction",0,0,0,0
+21A,Inx2,631,631,0.0111,0.041,"innexin, gap junction",0,0,0,0
+21A,Inx3,631,631,0.0143,0.081,"innexin, gap junction",0,0,0,0
+21A,Inx5,631,363,0.0,0.0,"innexin, gap junction",0,0,0,0
+21A,Inx6,631,363,0.0,0.0,"innexin, gap junction",0,0,0,0
+21A,Inx7,631,631,0.0,0.0,"innexin, gap junction",0,0,0,0
+21A,zpg,631,363,0.0,0.0,"innexin, gap junction",0,0,0,0
+23B,para,782,782,0.9079,14.445,Nav voltage-gated Na,1,1,1,1
+23B,Sh,782,782,0.9757,18.768,Kv1 fast A-type K,1,1,1,1
+23B,Shal,782,782,0.1777,0.778,Kv4 A-type K,0,0,0,0
+23B,Shab,782,782,0.3069,1.714,Kv2 delayed-rectifier K,1,1,0,1
+23B,Shaw,782,782,0.1279,0.644,Kv3 K,0,0,0,0
+23B,KCNQ,782,782,0.0345,0.161,M-type slow K,0,0,0,0
+23B,slo,782,782,0.7954,7.67,BK Ca-activated K,1,1,1,1
+23B,SK,782,782,0.5575,3.739,SK Ca-activated K,1,1,1,1
+23B,Ih,782,782,0.9412,16.617,HCN hyperpolarisation-activated cation,1,1,1,1
+23B,cac,782,782,0.5665,4.043,Cav2 high-voltage Ca,1,1,1,1
+23B,Ca-alpha1D,782,782,0.4655,2.975,Cav1 L-type Ca,1,1,0,1
+23B,Ca-alpha1T,782,782,0.3082,1.804,Cav3 T-type Ca,1,1,0,1
+23B,eag,782,782,0.3913,2.323,Kv10 K,1,1,0,1
+23B,sei,782,782,0.1637,0.691,erg Kv11 K,0,0,0,0
+23B,Irk1,782,782,0.0013,0.015,inward-rectifier K,0,0,0,0
+23B,Irk2,782,782,0.0345,0.156,inward-rectifier K,0,0,0,0
+23B,Irk3,782,782,0.0013,0.005,inward-rectifier K,0,0,0,0
+23B,Ork1,782,782,0.0013,0.005,two-pore leak K,0,0,0,0
+23B,Task6,782,782,0.3427,1.766,two-pore leak K,1,1,0,1
+23B,Task7,782,782,0.2775,1.327,two-pore leak K,1,0,0,0
+23B,Hk,782,782,0.8555,9.935,Kv beta subunit,1,1,1,1
+23B,shakB,782,782,0.7468,9.014,"innexin, gap junction",1,1,1,1
+23B,ogre,782,782,0.0243,0.09,"innexin, gap junction",0,0,0,0
+23B,Inx2,782,782,0.0243,0.105,"innexin, gap junction",0,0,0,0
+23B,Inx3,782,782,0.0153,0.062,"innexin, gap junction",0,0,0,0
+23B,Inx5,782,517,0.0,0.0,"innexin, gap junction",0,0,0,0
+23B,Inx6,782,517,0.0,0.0,"innexin, gap junction",0,0,0,0
+23B,Inx7,782,782,0.0013,0.007,"innexin, gap junction",0,0,0,0
+23B,zpg,782,517,0.0,0.0,"innexin, gap junction",0,0,0,0
+4B,para,644,644,0.9286,13.337,Nav voltage-gated Na,1,1,1,1
+4B,Sh,644,644,0.9783,18.384,Kv1 fast A-type K,1,1,1,1
+4B,Shal,644,644,0.2826,1.145,Kv4 A-type K,1,0,0,0
+4B,Shab,644,644,0.2888,1.378,Kv2 delayed-rectifier K,1,0,0,0
+4B,Shaw,644,644,0.1708,0.696,Kv3 K,0,0,0,0
+4B,KCNQ,644,644,0.0124,0.04,M-type slow K,0,0,0,0
+4B,slo,644,644,0.8509,8.308,BK Ca-activated K,1,1,1,1
+4B,SK,644,644,0.6009,4.075,SK Ca-activated K,1,1,1,1
+4B,Ih,644,644,0.913,11.712,HCN hyperpolarisation-activated cation,1,1,1,1
+4B,cac,644,644,0.6211,4.239,Cav2 high-voltage Ca,1,1,1,1
+4B,Ca-alpha1D,644,644,0.4332,2.298,Cav1 L-type Ca,1,1,0,1
+4B,Ca-alpha1T,644,644,0.2143,1.059,Cav3 T-type Ca,1,0,0,0
+4B,eag,644,644,0.3416,1.619,Kv10 K,1,1,0,1
+4B,sei,644,644,0.2096,0.774,erg Kv11 K,1,0,0,0
+4B,Irk1,644,644,0.0,0.0,inward-rectifier K,0,0,0,0
+4B,Irk2,644,644,0.0186,0.075,inward-rectifier K,0,0,0,0
+4B,Irk3,644,644,0.0016,0.013,inward-rectifier K,0,0,0,0
+4B,Ork1,644,644,0.0,0.0,two-pore leak K,0,0,0,0
+4B,Task6,644,644,0.3851,1.805,two-pore leak K,1,1,0,1
+4B,Task7,644,644,0.2981,1.306,two-pore leak K,1,0,0,0
+4B,Hk,644,644,0.8835,10.789,Kv beta subunit,1,1,1,1
+4B,shakB,644,644,0.8416,8.991,"innexin, gap junction",1,1,1,1
+4B,ogre,644,644,0.0217,0.111,"innexin, gap junction",0,0,0,0
+4B,Inx2,644,644,0.0124,0.042,"innexin, gap junction",0,0,0,0
+4B,Inx3,644,644,0.0233,0.093,"innexin, gap junction",0,0,0,0
+4B,Inx5,644,495,0.0,0.0,"innexin, gap junction",0,0,0,0
+4B,Inx6,644,495,0.0,0.0,"innexin, gap junction",0,0,0,0
+4B,Inx7,644,644,0.0,0.0,"innexin, gap junction",0,0,0,0
+4B,zpg,644,495,0.0,0.0,"innexin, gap junction",0,0,0,0
+5B/6B,para,1021,1021,0.9109,11.522,Nav voltage-gated Na,1,1,1,1
+5B/6B,Sh,1021,1021,0.9677,16.939,Kv1 fast A-type K,1,1,1,1
+5B/6B,Shal,1021,1021,0.286,1.062,Kv4 A-type K,1,0,0,0
+5B/6B,Shab,1021,1021,0.3026,1.241,Kv2 delayed-rectifier K,1,1,0,1
+5B/6B,Shaw,1021,1021,0.1469,0.522,Kv3 K,0,0,0,0
+5B/6B,KCNQ,1021,1021,0.0137,0.051,M-type slow K,0,0,0,0
+5B/6B,slo,1021,1021,0.8286,6.831,BK Ca-activated K,1,1,1,1
+5B/6B,SK,1021,1021,0.6004,3.408,SK Ca-activated K,1,1,1,1
+5B/6B,Ih,1021,1021,0.9236,11.615,HCN hyperpolarisation-activated cation,1,1,1,1
+5B/6B,cac,1021,1021,0.6131,3.638,Cav2 high-voltage Ca,1,1,1,1
+5B/6B,Ca-alpha1D,1021,1021,0.43,2.005,Cav1 L-type Ca,1,1,0,1
+5B/6B,Ca-alpha1T,1021,1021,0.2341,1.066,Cav3 T-type Ca,1,0,0,0
+5B/6B,eag,1021,1021,0.3937,1.674,Kv10 K,1,1,0,1
+5B/6B,sei,1021,1021,0.2351,0.856,erg Kv11 K,1,0,0,0
+5B/6B,Irk1,1021,1021,0.001,0.002,inward-rectifier K,0,0,0,0
+5B/6B,Irk2,1021,1021,0.0353,0.119,inward-rectifier K,0,0,0,0
+5B/6B,Irk3,1021,1021,0.001,0.003,inward-rectifier K,0,0,0,0
+5B/6B,Ork1,1021,1021,0.001,0.002,two-pore leak K,0,0,0,0
+5B/6B,Task6,1021,1021,0.2831,1.049,two-pore leak K,1,0,0,0
+5B/6B,Task7,1021,1021,0.3634,1.415,two-pore leak K,1,1,0,1
+5B/6B,Hk,1021,1021,0.9216,10.678,Kv beta subunit,1,1,1,1
+5B/6B,shakB,1021,1021,0.8002,7.085,"innexin, gap junction",1,1,1,1
+5B/6B,ogre,1021,1021,0.0294,0.147,"innexin, gap junction",0,0,0,0
+5B/6B,Inx2,1021,1021,0.0196,0.059,"innexin, gap junction",0,0,0,0
+5B/6B,Inx3,1021,1021,0.0186,0.062,"innexin, gap junction",0,0,0,0
+5B/6B,Inx5,1021,708,0.0,0.0,"innexin, gap junction",0,0,0,0
+5B/6B,Inx6,1021,708,0.0,0.0,"innexin, gap junction",0,0,0,0
+5B/6B,Inx7,1021,1021,0.002,0.006,"innexin, gap junction",0,0,0,0
+5B/6B,zpg,1021,708,0.0,0.0,"innexin, gap junction",0,0,0,0
+6A,para,843,843,0.9609,16.497,Nav voltage-gated Na,1,1,1,1
+6A,Sh,843,843,0.9715,16.792,Kv1 fast A-type K,1,1,1,1
+6A,Shal,843,843,0.2467,0.904,Kv4 A-type K,1,0,0,0
+6A,Shab,843,843,0.2835,1.257,Kv2 delayed-rectifier K,1,0,0,0
+6A,Shaw,843,843,0.1246,0.478,Kv3 K,0,0,0,0
+6A,KCNQ,843,843,0.0261,0.076,M-type slow K,0,0,0,0
+6A,slo,843,843,0.8363,7.939,BK Ca-activated K,1,1,1,1
+6A,SK,843,843,0.6512,4.006,SK Ca-activated K,1,1,1,1
+6A,Ih,843,843,0.9407,13.485,HCN hyperpolarisation-activated cation,1,1,1,1
+6A,cac,843,843,0.5718,3.64,Cav2 high-voltage Ca,1,1,1,1
+6A,Ca-alpha1D,843,843,0.427,2.14,Cav1 L-type Ca,1,1,0,1
+6A,Ca-alpha1T,843,843,0.1696,0.769,Cav3 T-type Ca,0,0,0,0
+6A,eag,843,843,0.3903,1.724,Kv10 K,1,1,0,1
+6A,sei,843,843,0.1922,0.718,erg Kv11 K,0,0,0,0
+6A,Irk1,843,843,0.0012,0.007,inward-rectifier K,0,0,0,0
+6A,Irk2,843,843,0.0261,0.105,inward-rectifier K,0,0,0,0
+6A,Irk3,843,843,0.0,0.0,inward-rectifier K,0,0,0,0
+6A,Ork1,843,843,0.0012,0.008,two-pore leak K,0,0,0,0
+6A,Task6,843,843,0.2835,1.157,two-pore leak K,1,0,0,0
+6A,Task7,843,843,0.2788,1.127,two-pore leak K,1,0,0,0
+6A,Hk,843,843,0.9371,16.729,Kv beta subunit,1,1,1,1
+6A,shakB,843,843,0.8292,8.522,"innexin, gap junction",1,1,1,1
+6A,ogre,843,843,0.0285,0.105,"innexin, gap junction",0,0,0,0
+6A,Inx2,843,843,0.0166,0.063,"innexin, gap junction",0,0,0,0
+6A,Inx3,843,843,0.019,0.083,"innexin, gap junction",0,0,0,0
+6A,Inx5,843,566,0.0,0.0,"innexin, gap junction",0,0,0,0
+6A,Inx6,843,566,0.0,0.0,"innexin, gap junction",0,0,0,0
+6A,Inx7,843,843,0.0,0.0,"innexin, gap junction",0,0,0,0
+6A,zpg,843,566,0.0,0.0,"innexin, gap junction",0,0,0,0
+8A/24B,para,790,790,0.8987,12.212,Nav voltage-gated Na,1,1,1,1
+8A/24B,Sh,790,790,0.943,16.196,Kv1 fast A-type K,1,1,1,1
+8A/24B,Shal,790,790,0.219,0.952,Kv4 A-type K,1,0,0,0
+8A/24B,Shab,790,790,0.2152,1.055,Kv2 delayed-rectifier K,1,0,0,0
+8A/24B,Shaw,790,790,0.1165,0.451,Kv3 K,0,0,0,0
+8A/24B,KCNQ,790,790,0.0228,0.085,M-type slow K,0,0,0,0
+8A/24B,slo,790,790,0.7861,6.642,BK Ca-activated K,1,1,1,1
+8A/24B,SK,790,790,0.5608,3.849,SK Ca-activated K,1,1,1,1
+8A/24B,Ih,790,790,0.8949,11.3,HCN hyperpolarisation-activated cation,1,1,1,1
+8A/24B,cac,790,790,0.5506,3.375,Cav2 high-voltage Ca,1,1,1,1
+8A/24B,Ca-alpha1D,790,790,0.4025,2.197,Cav1 L-type Ca,1,1,0,1
+8A/24B,Ca-alpha1T,790,790,0.1911,1.034,Cav3 T-type Ca,0,0,0,0
+8A/24B,eag,790,790,0.2481,1.082,Kv10 K,1,0,0,0
+8A/24B,sei,790,790,0.1671,0.735,erg Kv11 K,0,0,0,0
+8A/24B,Irk1,790,790,0.0,0.0,inward-rectifier K,0,0,0,0
+8A/24B,Irk2,790,790,0.0278,0.133,inward-rectifier K,0,0,0,0
+8A/24B,Irk3,790,790,0.0013,0.001,inward-rectifier K,0,0,0,0
+8A/24B,Ork1,790,790,0.0,0.0,two-pore leak K,0,0,0,0
+8A/24B,Task6,790,790,0.2722,1.162,two-pore leak K,1,0,0,0
+8A/24B,Task7,790,790,0.3114,1.464,two-pore leak K,1,1,0,1
+8A/24B,Hk,790,790,0.8861,10.461,Kv beta subunit,1,1,1,1
+8A/24B,shakB,790,790,0.7886,7.976,"innexin, gap junction",1,1,1,1
+8A/24B,ogre,790,790,0.0165,0.063,"innexin, gap junction",0,0,0,0
+8A/24B,Inx2,790,790,0.0152,0.079,"innexin, gap junction",0,0,0,0
+8A/24B,Inx3,790,790,0.0165,0.067,"innexin, gap junction",0,0,0,0
+8A/24B,Inx5,790,545,0.0,0.0,"innexin, gap junction",0,0,0,0
+8A/24B,Inx6,790,545,0.0,0.0,"innexin, gap junction",0,0,0,0
+8A/24B,Inx7,790,790,0.0013,0.003,"innexin, gap junction",0,0,0,0
+8A/24B,zpg,790,545,0.0,0.0,"innexin, gap junction",0,0,0,0
+8B,para,1050,1050,0.9505,17.131,Nav voltage-gated Na,1,1,1,1
+8B,Sh,1050,1050,0.9752,19.262,Kv1 fast A-type K,1,1,1,1
+8B,Shal,1050,1050,0.2733,0.974,Kv4 A-type K,1,0,0,0
+8B,Shab,1050,1050,0.38,1.712,Kv2 delayed-rectifier K,1,1,0,1
+8B,Shaw,1050,1050,0.1867,0.598,Kv3 K,0,0,0,0
+8B,KCNQ,1050,1050,0.0467,0.169,M-type slow K,0,0,0,0
+8B,slo,1050,1050,0.8857,8.186,BK Ca-activated K,1,1,1,1
+8B,SK,1050,1050,0.64,4.046,SK Ca-activated K,1,1,1,1
+8B,Ih,1050,1050,0.9552,14.282,HCN hyperpolarisation-activated cation,1,1,1,1
+8B,cac,1050,1050,0.6676,4.339,Cav2 high-voltage Ca,1,1,1,1
+8B,Ca-alpha1D,1050,1050,0.5067,2.492,Cav1 L-type Ca,1,1,1,1
+8B,Ca-alpha1T,1050,1050,0.3448,2.098,Cav3 T-type Ca,1,1,0,1
+8B,eag,1050,1050,0.439,2.088,Kv10 K,1,1,0,1
+8B,sei,1050,1050,0.2457,0.849,erg Kv11 K,1,0,0,0
+8B,Irk1,1050,1050,0.0,0.0,inward-rectifier K,0,0,0,0
+8B,Irk2,1050,1050,0.0276,0.106,inward-rectifier K,0,0,0,0
+8B,Irk3,1050,1050,0.0019,0.003,inward-rectifier K,0,0,0,0
+8B,Ork1,1050,1050,0.001,0.002,two-pore leak K,0,0,0,0
+8B,Task6,1050,1050,0.4162,1.738,two-pore leak K,1,1,0,1
+8B,Task7,1050,1050,0.3457,1.225,two-pore leak K,1,1,0,1
+8B,Hk,1050,1050,0.9105,12.722,Kv beta subunit,1,1,1,1
+8B,shakB,1050,1050,0.8429,9.251,"innexin, gap junction",1,1,1,1
+8B,ogre,1050,1050,0.0295,0.123,"innexin, gap junction",0,0,0,0
+8B,Inx2,1050,1050,0.0324,0.112,"innexin, gap junction",0,0,0,0
+8B,Inx3,1050,1050,0.0162,0.057,"innexin, gap junction",0,0,0,0
+8B,Inx5,1050,733,0.0014,0.004,"innexin, gap junction",0,0,0,0
+8B,Inx6,1050,733,0.0,0.0,"innexin, gap junction",0,0,0,0
+8B,Inx7,1050,1050,0.0,0.0,"innexin, gap junction",0,0,0,0
+8B,zpg,1050,733,0.0,0.0,"innexin, gap junction",0,0,0,0
+9A,para,918,918,0.9052,12.277,Nav voltage-gated Na,1,1,1,1
+9A,Sh,918,918,0.9423,15.703,Kv1 fast A-type K,1,1,1,1
+9A,Shal,918,918,0.2789,1.054,Kv4 A-type K,1,0,0,0
+9A,Shab,918,918,0.3007,1.252,Kv2 delayed-rectifier K,1,1,0,1
+9A,Shaw,918,918,0.11,0.383,Kv3 K,0,0,0,0
+9A,KCNQ,918,918,0.0251,0.102,M-type slow K,0,0,0,0
+9A,slo,918,918,0.7549,5.929,BK Ca-activated K,1,1,1,1
+9A,SK,918,918,0.6187,3.823,SK Ca-activated K,1,1,1,1
+9A,Ih,918,918,0.9346,13.788,HCN hyperpolarisation-activated cation,1,1,1,1
+9A,cac,918,918,0.5882,3.498,Cav2 high-voltage Ca,1,1,1,1
+9A,Ca-alpha1D,918,918,0.3769,1.776,Cav1 L-type Ca,1,1,0,1
+9A,Ca-alpha1T,918,918,0.1841,0.803,Cav3 T-type Ca,0,0,0,0
+9A,eag,918,918,0.3573,1.627,Kv10 K,1,1,0,1
+9A,sei,918,918,0.2059,0.768,erg Kv11 K,1,0,0,0
+9A,Irk1,918,918,0.0,0.0,inward-rectifier K,0,0,0,0
+9A,Irk2,918,918,0.0283,0.112,inward-rectifier K,0,0,0,0
+9A,Irk3,918,918,0.0011,0.007,inward-rectifier K,0,0,0,0
+9A,Ork1,918,918,0.0022,0.014,two-pore leak K,0,0,0,0
+9A,Task6,918,918,0.2789,1.07,two-pore leak K,1,0,0,0
+9A,Task7,918,918,0.3333,1.346,two-pore leak K,1,1,0,1
+9A,Hk,918,918,0.9107,10.249,Kv beta subunit,1,1,1,1
+9A,shakB,918,918,0.793,6.741,"innexin, gap junction",1,1,1,1
+9A,ogre,918,918,0.0229,0.086,"innexin, gap junction",0,0,0,0
+9A,Inx2,918,918,0.0131,0.044,"innexin, gap junction",0,0,0,0
+9A,Inx3,918,918,0.0207,0.08,"innexin, gap junction",0,0,0,0
+9A,Inx5,918,583,0.0,0.0,"innexin, gap junction",0,0,0,0
+9A,Inx6,918,583,0.0,0.0,"innexin, gap junction",0,0,0,0
+9A,Inx7,918,918,0.0,0.0,"innexin, gap junction",0,0,0,0
+9A,zpg,918,583,0.0,0.0,"innexin, gap junction",0,0,0,0
+9B,para,255,255,0.8353,9.099,Nav voltage-gated Na,1,1,1,1
+9B,Sh,255,255,0.9529,16.78,Kv1 fast A-type K,1,1,1,1
+9B,Shal,255,255,0.2118,0.753,Kv4 A-type K,1,0,0,0
+9B,Shab,255,255,0.3216,1.434,Kv2 delayed-rectifier K,1,1,0,1
+9B,Shaw,255,255,0.1176,0.355,Kv3 K,0,0,0,0
+9B,KCNQ,255,255,0.0157,0.041,M-type slow K,0,0,0,0
+9B,slo,255,255,0.8471,6.847,BK Ca-activated K,1,1,1,1
+9B,SK,255,255,0.5137,2.834,SK Ca-activated K,1,1,1,1
+9B,Ih,255,255,0.8588,9.792,HCN hyperpolarisation-activated cation,1,1,1,1
+9B,cac,255,255,0.5529,3.255,Cav2 high-voltage Ca,1,1,1,1
+9B,Ca-alpha1D,255,255,0.4118,2.0,Cav1 L-type Ca,1,1,0,1
+9B,Ca-alpha1T,255,255,0.3373,1.653,Cav3 T-type Ca,1,1,0,1
+9B,eag,255,255,0.2824,1.148,Kv10 K,1,0,0,0
+9B,sei,255,255,0.1765,0.667,erg Kv11 K,0,0,0,0
+9B,Irk1,255,255,0.0039,0.021,inward-rectifier K,0,0,0,0
+9B,Irk2,255,255,0.0667,0.199,inward-rectifier K,0,0,0,0
+9B,Irk3,255,255,0.0,0.0,inward-rectifier K,0,0,0,0
+9B,Ork1,255,255,0.0,0.0,two-pore leak K,0,0,0,0
+9B,Task6,255,255,0.3294,1.262,two-pore leak K,1,1,0,1
+9B,Task7,255,255,0.4196,1.769,two-pore leak K,1,1,0,1
+9B,Hk,255,255,0.8588,9.204,Kv beta subunit,1,1,1,1
+9B,shakB,255,255,0.7804,6.975,"innexin, gap junction",1,1,1,1
+9B,ogre,255,255,0.0235,0.068,"innexin, gap junction",0,0,0,0
+9B,Inx2,255,255,0.0157,0.084,"innexin, gap junction",0,0,0,0
+9B,Inx3,255,255,0.0157,0.062,"innexin, gap junction",0,0,0,0
+9B,Inx5,255,193,0.0,0.0,"innexin, gap junction",0,0,0,0
+9B,Inx6,255,193,0.0,0.0,"innexin, gap junction",0,0,0,0
+9B,Inx7,255,255,0.0,0.0,"innexin, gap junction",0,0,0,0
+9B,zpg,255,193,0.0,0.0,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,para,16343,16343,0.9165,14.031,Nav voltage-gated Na,1,1,1,1
+ALL_NEURONS,Sh,16343,16343,0.9633,17.502,Kv1 fast A-type K,1,1,1,1
+ALL_NEURONS,Shal,16343,16343,0.2529,1.004,Kv4 A-type K,1,0,0,0
+ALL_NEURONS,Shab,16343,16343,0.2951,1.319,Kv2 delayed-rectifier K,1,0,0,0
+ALL_NEURONS,Shaw,16343,16343,0.1299,0.486,Kv3 K,0,0,0,0
+ALL_NEURONS,KCNQ,16343,16343,0.0213,0.077,M-type slow K,0,0,0,0
+ALL_NEURONS,slo,16343,16343,0.8195,7.478,BK Ca-activated K,1,1,1,1
+ALL_NEURONS,SK,16343,16343,0.6017,3.831,SK Ca-activated K,1,1,1,1
+ALL_NEURONS,Ih,16343,16343,0.933,13.932,HCN hyperpolarisation-activated cation,1,1,1,1
+ALL_NEURONS,cac,16343,16343,0.6039,3.997,Cav2 high-voltage Ca,1,1,1,1
+ALL_NEURONS,Ca-alpha1D,16343,16343,0.4266,2.219,Cav1 L-type Ca,1,1,0,1
+ALL_NEURONS,Ca-alpha1T,16343,16343,0.2203,1.132,Cav3 T-type Ca,1,0,0,0
+ALL_NEURONS,eag,16343,16343,0.35,1.683,Kv10 K,1,1,0,1
+ALL_NEURONS,sei,16343,16343,0.2033,0.779,erg Kv11 K,1,0,0,0
+ALL_NEURONS,Irk1,16343,16343,0.0017,0.008,inward-rectifier K,0,0,0,0
+ALL_NEURONS,Irk2,16343,16343,0.0291,0.116,inward-rectifier K,0,0,0,0
+ALL_NEURONS,Irk3,16343,16343,0.0017,0.007,inward-rectifier K,0,0,0,0
+ALL_NEURONS,Ork1,16343,16343,0.0006,0.003,two-pore leak K,0,0,0,0
+ALL_NEURONS,Task6,16343,16343,0.3122,1.343,two-pore leak K,1,1,0,1
+ALL_NEURONS,Task7,16343,16343,0.3265,1.362,two-pore leak K,1,1,0,1
+ALL_NEURONS,Hk,16343,16343,0.8958,11.171,Kv beta subunit,1,1,1,1
+ALL_NEURONS,shakB,16343,16343,0.7946,7.936,"innexin, gap junction",1,1,1,1
+ALL_NEURONS,ogre,16343,16343,0.0268,0.119,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,Inx2,16343,16343,0.0195,0.075,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,Inx3,16343,16343,0.0162,0.066,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,Inx5,16343,10847,0.0001,0.0,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,Inx6,16343,10847,0.0001,0.001,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,Inx7,16343,16343,0.0004,0.002,"innexin, gap junction",0,0,0,0
+ALL_NEURONS,zpg,16343,10847,0.0,0.0,"innexin, gap junction",0,0,0,0

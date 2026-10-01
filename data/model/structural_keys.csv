@@ -80,3 +80,4 @@ jump:ttm|model,B15,switch,0 TTMn through the legacy capped actuator (m4); 1 fast
 state:crop|pump_gated,B17,switch,0 ingestion on contact alone; 1 scaled by cibarial pump MN activity (s10)
 aero:wing|membrane_only,B12,switch,0 fluid forces on membrane and vein meshes (legacy; doubles area); 1 membrane only with b12_kutta_lift (s10)
 connectome:unclear|nt_by_development,N6,switch,"s11: fast transmitter of consensus-unclear cells from hemilineage majority (scripts/infer_nt_hemilineage.py; leave-one-type-out 0.989 at purity >= 0.9) and VNC MN glutamate; neutral 0"
+cell_type:all|intrinsic_channels,N2,switch,s11 ladder rung 1: 0 leak-only LIF (neutral) / 1 intrinsic conductances per type (src/flyemu/channels.py)

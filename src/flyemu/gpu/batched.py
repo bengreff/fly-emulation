@@ -122,6 +122,8 @@ class BatchedNetwork:
             raise NotImplementedError("N27 lumped glia is not ported")
         if getattr(net, "apl_mask", None) is not None:
             raise NotImplementedError("N23 compartmental APL is not ported")
+        if getattr(net, "ich", None) is not None:
+            raise NotImplementedError("rung-1 intrinsic conductances (channels.py) are not ported")
         n = net.conn.n
         self.net, self.n, self.B = net, n, B
         self.dt = float(net.timestep_ms)
