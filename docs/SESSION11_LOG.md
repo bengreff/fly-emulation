@@ -16,3 +16,7 @@ Mode: Mac-only (backhouse unreachable: ssh timed out at 17:00). Heavy processes 
 - 17:45 VNC rhythm probe pre-registered (DNg100, spiking vs graded vnc_local). Route note drafted (docs/ROUTE_TO_BEHAVIOUR.md). Sonnet agent: Allen 2020 VNC atlas glutamate-receptor calls by hemilineage.
 - 17:47 repair 2 passes; m7 adopted (commit 5b22c0e). 17:52 rhythm probe: no rhythm in spiking or graded arms (excess < 0.05).
 - 17:57 rhythm arm (c) graded + adaptation 3 mV/150 ms: no driven rhythm (excess <= 0.06).
+- 18:02 walking failure localisation pre-registered (recruitment, afferents off, synthetic tripod replay). 18:13 result: two layers fail (DNg100 adds only +0.7 Hz to leg MNs; replayed bursts give no stepping at 10/20 Hz, partial at 5 Hz). Allen agent finished: all 21 hemilineages mixed (committed 81868f5).
+- 18:19-18:43 tethered diagnostics: joint share at the drive frequency 0.82 at 2 Hz, 0.057 at 10 Hz, 0.056 fast units only; torque share at 10 Hz 0.54. The body low-passes a delivered 10 Hz torque.
+- 18:44 m8 leg damping 0.043 (FlyMimic c/k 0.05 s) pre-registered; 18:47 mechanism check fails (0.094), not adopted; key `joint:leg|damping` wired, neutral 0.
+- 18:55 joint-limit occupancy and force-velocity-off diagnostics pre-registered; 18:58 band-limited (3-50 Hz) share added before any run finished.

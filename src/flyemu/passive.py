@@ -70,9 +70,35 @@ def apply(body, source: int = 1, scale: float = 1.0) -> dict[str, float]:
     return k
 
 
+def set_leg_damping(body, c: float) -> int:
+    """Leg hinge damping (not the inter-tarsal chain, B2): c (uN*mm*s/rad) is the
+    damping of the DOFs whose flybody default is 1; the others (femur-tibia 0.4)
+    keep their ratio to it, so c = 1 is the unchanged body. Returns the DOFs set."""
+    m = body.sim.mj_model
+    n = 0
+    for j in range(m.njnt):
+        name = mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or ""
+        if m.jnt_type[j] != mj.mjtJoint.mjJNT_HINGE or name.count("tarsus") >= 2:
+            continue
+        if not any(f"{leg}_" in name for leg in ("lf", "lm", "lh", "rf", "rm", "rh")):
+            continue
+        m.dof_damping[m.jnt_dofadr[j]] *= c
+        n += 1
+    return n
+
+
 def register(reg, body) -> dict[str, float]:
     """Organism entry point: read the switch from the registry and apply."""
     from .registry import Status
+    c = reg.require("joint:leg", "damping", units="uN*mm*s/rad",
+                    model_use="viscous damping of every leg hinge DOF (not the tarsal chain)",
+                    subsystem="body_mechanics", minimal=1.0,
+                    minimal_note="1 = unchanged flybody/NMF defaults (1; femur-tibia 0.4 scales "
+                                 "with it); c/k ~1 s against the measured springs; guessed",
+                    uncertainty="unmeasured; FlyMimic (Ozdil et al.) uses c/k = 0.05 s; "
+                                "row b3_d_leg in data/model/parameters.csv")
+    if c != 1.0:
+        set_leg_damping(body, float(c))
     src = reg.require("joint:leg", "passive_stiffness_source", units="enum",
                       model_use="0 flybody defaults (1 uN*mm/rad), 1 measured by name mapping, 2 measured projected and coupled (J^T K J)",
                       subsystem="body_mechanics", minimal=0,
