@@ -2,6 +2,8 @@
 
 **Rewritten each session; do not append.** State as of 1 October 2026, 04:35, end of session 11.
 
+**Session 12 in progress (4 October 2026, from 16:36):** Ben's order is blanks, accurate body, then the ladder to synapse-specific (A, B, C), nothing else. A is done: `docs/BLANKS_AUDIT.md` (143 quantities, every one owned; 14 stubs). Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. The rest of this file is still the session 11 state.
+
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
 ## Where the project stands

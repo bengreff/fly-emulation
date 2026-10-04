@@ -1,0 +1,9 @@
+grain,quantities,slot_before,slot_after,carrier_before,carrier_after,stub_carried_after,simulated_before,simulated_after,own_grain_before,own_grain_after
+synapse,12,2,12,2,12,2,0,6,0,0
+edge,4,2,4,2,4,0,2,3,1,1
+cell,23,13,23,13,23,2,12,17,6,7
+type,40,36,40,33,40,2,30,34,12,12
+class,17,10,17,9,17,6,9,11,0,0
+body part,26,15,26,14,26,3,13,19,5,6
+organism/world,21,13,21,10,21,7,8,12,0,0
+all,143,91,143,83,143,22,74,102,24,26

@@ -60,7 +60,8 @@ def test_the_validator_catches_what_it_claims(md):
 
 
 def test_the_template_has_56_mechanisms(md):
-    assert (~md.mechanisms.infrastructure).sum() == 56
+    # s12 blanks audit added 14 registered stubs (status absent; src/flyemu/stubs.py)
+    assert (~md.mechanisms.infrastructure).sum() == 56 + 14
 
 
 def test_every_key_the_model_reads_has_exactly_one_owner(md, live_inventory):
@@ -164,6 +165,6 @@ def test_ledger_rows_name_a_real_mechanism_and_a_consistent_fidelity(md):
     onto = yaml.safe_load((REPO / "data" / "ontology" / "fly_information.yaml").read_text())
     ids = set(md.mechanisms.id)
     for e in onto:
-        assert e["mech"] in ids | {"none"}, e["quantity"]
+        assert e["mech"] in ids, e["quantity"]           # s12: every row has a carrier
         assert e["fidelity"] in {"element", "type", "class", "global", "none"}, e["quantity"]
         assert (e["fidelity"] == "none") == (e["model"] == "absent"), e["quantity"]

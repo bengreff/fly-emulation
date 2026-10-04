@@ -263,3 +263,11 @@ What was learned:
   - Fly GABA reverses at about -56 mV, only about 4 mV below the model's rest, so fly inhibition is mostly shunting.
   - Keeping resting PSPs equal is then the wrong conversion. Referencing the weights to threshold, plus the recorded reversal, keeps the loop silent (seeds 26-28) and brings sugar -> MN9_L back to 2.4 ± 1.6 Hz (bar 5.5; m9 5.7).
   - The remaining gap is a class-gain question on a now physically grounded membrane, not a missing mechanism.
+
+### F-BLANKS-1: the blanks audit finds 52 unslotted quantities and 5 tier A/B mechanisms with no owner
+Session 12, docs/BLANKS_AUDIT.md (grain-by-grain walk of what is measurable in a fly against the ledger and the inventory).
+- The ledger grows from 91 to 143 measurable quantities. Every quantity now names an owning mechanism; 22 are owned by 14 new registered stubs (status absent, switch read at neutral, any other value refused).
+- Five stubs are tier A or B: N29 per-synapse parameters, N30 multi-compartment neurons, S6 hemolymph ions (A); B24 efferent sense gain, B26 cuticle compliance (B). Session 10's "0 absent mechanisms in tiers A and B" no longer holds. Nothing regressed; the quantities had no owner before.
+- Per synapse (12 quantities), nothing in the model varies at its own grain; 6 run on class or global values. The model holds 0 % measured synapse-grain numbers. 13 % of synapse slots are measured but unused (synapse positions, polyadic structure, weak synapses).
+- The slot total grows from 374.4 M to 1,701.7 M, mostly per-synapse STP and receptor mix. The headline "data in the model" share therefore falls from 1.90 % to 0.42 % with no change to the model. Outside the synapse grain: 50.0 M slots, 14.1 % measured.
+- Ledger corrections: 8 rows had no carrier (`mech: none`); two channel rows were labelled absent although rung 1 simulates them; about 50,000 glial-cell slots were counted as body parts (grain mapping bug); 4 receptor fills were inconsistent.
