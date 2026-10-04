@@ -1,6 +1,6 @@
 """Local server for Fly Workbench (stdlib only, binds 127.0.0.1).
 
-    python app/server/serve.py [--port 8765] [--runs runs/app]
+    python app/server/serve.py [--port 8766] [--runs runs/app] [--open]
 
 Routes:
     /               app/web (the page)
@@ -106,12 +106,17 @@ class Handler(SimpleHTTPRequestHandler):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--port", type=int, default=8765)
+    ap.add_argument("--port", type=int, default=8766)
+    ap.add_argument("--open", action="store_true", help="open the page in the default browser")
     ap.add_argument("--runs", type=Path, default=REPO / "runs" / "app")
     a = ap.parse_args()
     Handler.runs = a.runs.resolve()
     srv = ThreadingHTTPServer(("127.0.0.1", a.port), partial(Handler, directory=str(APP / "web")))
-    print(f"Fly Workbench at http://127.0.0.1:{a.port}/  (recordings from {Handler.runs})", flush=True)
+    url = f"http://127.0.0.1:{a.port}/"
+    print(f"Fly Workbench at {url}  (recordings from {Handler.runs}; Ctrl-C stops it)", flush=True)
+    if a.open:
+        import webbrowser
+        webbrowser.open(url)
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

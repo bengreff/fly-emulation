@@ -1,6 +1,6 @@
 """Headless screenshots of Fly Workbench, plus a contact sheet.
 
-    python app/tools/screenshot.py [--url http://127.0.0.1:8765/] [--out runs/app/shots]
+    python app/tools/screenshot.py [--url http://127.0.0.1:8766/] [--out runs/app/shots]
         [--shot name:query ...] [--width 1600 --height 1000]
 
 Each --shot is a name and a URL query (e.g. "flow:view=flow&t=500"). Starts its

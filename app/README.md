@@ -20,7 +20,7 @@ About 96 s of wall time per simulated second and 2.4 GB of memory on the Mac (me
 
 ## Open it
 
-    .venv/bin/python app/server/serve.py                    # http://127.0.0.1:8765/
+    .venv/bin/python app/server/serve.py --open             # http://127.0.0.1:8766/ in the default browser
 
 The page lists every recording under `runs/app`. URL parameters keep the view: `rec`, `t` (ms),
 `sel` (bodyId), `view` (anatomy, flow, groups), `colour`, `theme`.
