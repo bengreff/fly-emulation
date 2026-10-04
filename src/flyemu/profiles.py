@@ -178,7 +178,7 @@ M9W = {
     "sense:mechano|assign_by_nerve": (1.0, _I, _W + "; leg sensors by census entry nerve (measured), rule inferred"),
 }
 
-# m9n (session 12, candidate until DECISIONS s12 18:28 gate passes): m9w + leg sensors by each
+# m9n (session 12, adopted 18:46 after seeds 12-19 stayed silent; DECISIONS s12 18:28): m9w + leg sensors by each
 # cell's own entry nerve and side (F-SENSE-NERVE-2). Not fitted.
 M9N = {
     **M9W,
@@ -194,6 +194,16 @@ M9M = {
     "muscle:leg|midhind_source": (1.0, _I, _MH + "; front-leg FlyMimic members scaled by flybody segment size"),
     "jump:ttm|peak_torque": (90.0, _I, _MH + "; 27 fibres x 71.2 x 40.7 um x 34.7 mN/mm^2 (Jaramillo 2009, "
                              "Jarvis 2021) x 0.033 mm arm; 5-95% 53-134 uN*mm"),
+}
+
+# m9d (session 12, candidate until DECISIONS s12 18:53 gate passes): m9m + leg damping from the
+# measured stiffness (c = 0.05 s x k; F-DAMP-1) and TTMn out of the Hill pool (counted twice).
+_D = "s12 body fix, not fitted (DECISIONS s12 18:53)"
+M9D = {
+    **M9M,
+    "joint:leg|damping_source": (1.0, _I, _D + "; c = tau x measured stiffness per leg joint"),
+    "joint:leg|damping_tau_s": (0.05, _I, _D + "; inside the bound c/k <= ~0.1 s from Wang et al. 2025 timing"),
+    "jump:ttm|exclude_from_hill": (1.0, _I, _D + "; TTMn drives the TTM hook only"),
 }
 
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
@@ -222,7 +232,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9w")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9n")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -240,6 +250,7 @@ PROFILES: dict[str, dict] = {
     "m9w": {"values": M9W, "kick_mv": KICK},
     "m9n": {"values": M9N, "kick_mv": KICK},
     "m9m": {"values": M9M, "kick_mv": KICK},
+    "m9d": {"values": M9D, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

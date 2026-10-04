@@ -386,7 +386,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 | leg joint angle / velocity | 78 / 379 | 78 / 392 |
 | wing strain / haltere strain | 211 / 288 | 237 / 408 |
 
-- **Silence gate.** It passes on seeds 12-15 so far (0 spikes/ms in the last 100 ms; whole brain 0.24-0.25 Hz; thorax 0.535-0.55 mm; no MuJoCo warnings).
+- **Silence gate.** It passes on all 8 seeds, 12-19: 0 spikes/ms in the last 100 ms, thorax 0.535-0.55 mm, no MuJoCo warnings, no NaN. Adopted as m9n (DECISIONS 18:28).
 - **Load reflex under option 2** (`scripts/probes/load_reflex_paths.py --set ...=2`). Same-leg direct synapses from the campaniforms onto support pools are nearly gone: lh tergotrochanter 7, lh tibia flexor 6, rh tibia flexor 5. Two-hop paths are below 1 synapse-equivalent per pool. The front-leg paths in F-STAND-3 came from misassigned cells, so route (c) of DECISIONS 18:23 has almost no annotated substrate.
 - **The real gap is annotation, not assignment.** Counts in male-cns leg nerves, against the literature (agent report `docs/research/s12_leg_sensor_counts.md`):
   - Campaniforms: 12 annotated (2 per leg). The femoral field alone has 11 numbered sensilla (Saltin 2025, quoting Dinges 2021; secondary). Dinges' per-leg table was not readable. Annotated load sensors are at most about a fifth of the real count.
@@ -394,3 +394,90 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Chordotonal: 372 in the leg nerves, about 62 per leg. Mamiya 2018 counts 135 front-leg FeCO neurons labelled by iav-Gal4, which is 80% of the population (read), so about 170 in one front-leg FeCO (derived).
   - Unlabelled: about 180 leg-nerve cells annotated "leg proprioceptor, organ unassigned" (SNppxx 80, untyped 66, SNpp40 32, SNpp55 7), and 442 "unknown sensory" leg-nerve cells (262 on the front legs). None of them is driven. They are the likely home of the missing campaniforms and chordotonal neurons.
 - **Next discriminating step.** Assign organs to the unlabelled leg-nerve cells by an outside annotation (FANC/BANC leg-sensor labels via the existing crosswalk, `data/derived/banc_proprio_crosswalk.csv`). Keep the match uncertainty explicit. Then re-count the campaniform-to-support-pool paths. Until then the load channel is 2 cells per leg, which is a recorded under-count.
+
+### F-MUSCLE-MH-1: mid and hind leg muscles derived from measured segment size, not copied; the TTM torque from fibre data
+- **Before.** Every mid- and hind-leg Hill muscle was a copy of FlyMimic's front leg (guessed). FlyMimic (arXiv 2509.06426) built mid/hind muscle paths from micro-CT but fitted forces for the front leg only (agent report `docs/research/s12_leg_muscle_anatomy.md`).
+- **Measured input.** `scripts/probes/leg_segment_geometry.py` measures each leg segment of the flybody mesh: length, mid-third cross-section, and the width at the proximal and distal ends (`data/derived/leg_segment_geometry_flybody.csv`). The mesh comes from one confocal-scanned female, so these are one-specimen numbers. Ratios to the front leg (left/right mean):
+
+| ratio to front leg | coxa area | coxa distal width | coxa proximal width | femur area | femur distal width |
+|---|---|---|---|---|---|
+| mid | 0.579 | 1.106 | 1.227 | 0.770 | 1.014 |
+| hind | 0.932 | 1.072 | 1.442 | 1.058 | 1.016 |
+
+- **Rules** (inferred; `scripts/build_midhind_muscles.py`; switch `muscle:leg|midhind_source` 1). Each front-leg FlyMimic member is scaled by the segment that houses it. Force scales with that segment's cross-section, and moment arm and optimal length scale with the width of the joint it works on:
+  - muscles inside the coxa (trochanter flexors and extensor) follow the coxa;
+  - the tibia flexor and extensor inside the femur follow the femur;
+  - the 7 thorax-to-coxa muscles take force × (coxal opening)² and arms × the opening;
+  - the two sterno-tergo-trochanter extensors take force × (coxal opening)², with arms × the coxa distal width.
+  - The assumptions are the same fill fraction, pennation and specific tension as the front leg, and one strain per radian. Tibia-tarsus muscles stay placeholders (guessed).
+  - Kept as bounds in `data/params/leg_muscle_midhind_scale.csv`: the copy (all factors 1) and a volume rule (area × length / width).
+- **Effect on torque capacity** (F0·r, against the copy):
+
+  | joint | mid | hind |
+  |---|---|---|
+  | thorax-coxa | 1.85 | 3.0 |
+  | CTr flexor | 0.64 | 1.0 |
+  | CTr extensor | 1.62 | 2.17 |
+  | femur-tibia | 0.78 | 1.07 |
+
+  The thorax-coxa rule is the weakest assumption: the coxal opening is the only thoracic dimension measured per segment.
+- **TTM (B15).** Peak torque is 90 µN·mm (inferred; 5-95% 53-134), replacing the guessed 100.
+  - Force: 27 fibres (Jaramillo 2009) × 71.2 × 40.7 µm (Jarvis 2021) × 34.7 mN/mm² (Jarvis 2021) = 2.7 mN.
+  - Arm: 0.033 mm, FlyMimic's front sterno-tergo arm × the measured mid/front coxa distal width.
+  - Cross-check: about 60 µN per leg at the tarsus over a 1.5 mm lever, about 120 µN for both legs. Zumstein measured 101 µN and derived 274 µN from kinematics (abstract level).
+  - **Double count, checked** (`scripts/probes/ttm_double_count.py`, measured on m9w). Yes, it was counted twice. TTMn_L and TTMn_R each join the mid CTr-extensor Hill muscle (F0 324 µN, arm 0.027 mm), an 8-MN pool. Their activation-weight shares are 0.042 (L) and 0.055 (R), alongside STTMm, the sternotrochanter, tergotrochanter and Tr extensor MNs.
+  - The hook adds the TTM again. A giant-fibre volley therefore drives both the hook and about 5% of the mid CTr extensor. The second path is small, but it is the same muscle counted twice.
+  - Switch `jump:ttm|exclude_from_hill` 1 removes TTMn from the Hill pool, so the TTM acts only through the hook. Test: `tests/test_ttm_exclusion.py`. It is part of candidate m9d (DECISIONS 18:53).
+- **Standing** (seed 12, m9w, 1.5 s; `runs/s12/standing/standing_midhind_live_s12.png`, viewed). Thorax ends at 0.542 mm, against 0.542 mm with copied muscles. Legs carry 0.3 µN at the end, against 3.6 µN. The trunk is on the floor 97% of the time in both runs. As pre-registered, the muscles do not lift the fly, because at rest only the slow tibia flexors fire (F-STAND-3).
+- **Gate** (m9m = m9n + this switch + TTM 90). Seeds 12-18 pass: 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN, thorax 0.537-0.551 mm, whole brain 0.24-0.26 Hz. Seed 19 is running.
+- **For Ben's list.** Ask the FlyMimic authors for their mid/hind muscle models, the actual values this derivation stands in for.
+
+### F-FTI-2: the measured maximal flexion torque sits at the femur's geometric ceiling; no data fix the flexor:extensor split
+- **Question** (B, extensor:flexor). FlyMimic's front-leg tibia flexor gives 1.04 µN·mm (F0 68.1 µN × arm 0.0152 mm) and its extensor 10.1 µN·mm. Azevedo et al. 2020 measured about 100 µN at a 417 µm lever, so the flexor makes at least 42 µN·mm. Scaling the flexor ×40 and moving the force-length optimum both failed their s11 checks (F-BODY-1). Per the two-fixes rule, this item gets a write-up with new data, not a third fix.
+- **New data** (agent report `docs/research/s12_tibia_flexor_extensor.md`; read unless marked):
+  - The whole front femur has 97 muscle fibres (Kuan et al. 2020, X-ray holographic nano-tomography). The older fluorescence count was 33-40 (Soler 2004, secondary).
+  - Leg muscle fibres are 8-16 µm in diameter (Kuan 2020).
+  - No published adult split of fibres between the flexor (tidm) and the extensor (tilm) was found. Soler 2004 probably has it, but it is paywalled.
+  - **No tibia extensor force has been measured.** Azevedo's authors call it unresolvable with their method.
+  - The flexor motor pool (about 15 MNs) is larger than the extensor's. That is a qualitative constraint only.
+- **The ceiling** (derived):
+  - All 97 fibres at 8-16 µm give 0.0049-0.0195 mm² of fibre cross-section. At 34.7 mN/mm² that is 170-680 µN for every femur muscle together. The specific tension is Jarvis 2021's jump-muscle value, so its use on leg muscle is inferred.
+  - The measured femur cross-section (0.0113 mm², flybody mesh) gives 392 µN at full fill.
+  - To make 42 µN·mm with all of that force needs an arm of at least 0.06-0.11 mm. The femur's distal half-width is 0.059 mm (measured on the mesh).
+  - So Azevedo's flexion torque is reachable only if the flexor takes nearly every femur fibre on an arm of nearly the whole joint radius, or if leg muscle has a higher specific tension than the jump muscle. FlyMimic's arm (0.0152 mm) and flexor force sit about 40× below it.
+- **What is fixed and what is not.** The flexor's torque capacity is bounded, 1-42 µN·mm (inferred), and the measurement sits at the top. The extensor has no measurement, so the ratio is free within the ceiling.
+- **Decision.** No new switch. The FlyMimic split stays, labelled fitted-by-FlyMimic. `muscle:leg|ft_flexor_scale` stays 1, with bounds 1-40 recorded.
+- **Next discriminating data.**
+  - The tidm/tilm fibre split (Soler 2004, or the Kuan 2020 XNH volumes, which are public EM-like data);
+  - the flexor tendon's insertion distance from the femur-tibia joint on the XNH volume;
+  - leg-muscle specific tension.
+  Each would collapse one factor of the 40× range.
+
+### F-DAMP-1: flybody's leg damping is about ten times the bound the data allow, and it was hiding the speed of the collapse
+- **The bound** (inferred). Wang et al. 2025 (eLife, PMC12324252; full text searched) give no damping value. Their motor-silenced standing flies reach the passive posture about 350 ms after light-on. That interval is already taken by MN inactivation (about 30-110 ms), muscle delay (about 40 ms) and active-force decay (τ ≈ 100 ms, their model). So passive relaxation can add at most about 0.1 s: c/k ≲ 0.1 s.
+- **The model.** flybody's damping is 1 µN·mm·s/rad (femur-tibia 0.4), guessed. Against the measured springs that gives c/k ≈ 1.2 s. FlyMimic uses c/k 0.05 s, a model choice.
+- **Option** (`joint:leg|damping_source` 1; `passive.set_damping_from_stiffness`). Each leg joint gets c = τ × its own measured stiffness: the diagonal of J^T K J when the springs are coupled, with off-diagonal damping dropped (inferred). τ = 0.05 s (`joint:leg|damping_tau_s`; bounds 0.005-0.1 s). It is applied as MuJoCo DOF damping, so the integrator treats it implicitly; the tarsal chain is unchanged. Test: `tests/test_leg_damping.py`.
+- **Dead and live fly** (seed 12, 1.5 s; numbers in DECISIONS s12 18:53).
+  - The passive collapse goes from 410 ms to 50 ms for 90% of the drop. The trunk touches the floor at 20 ms instead of 50 ms.
+  - The end height hardly moves: 0.544 → 0.565 mm dead, 0.542 → 0.555 mm live.
+  - Wang's passive-only simulation falls at about 37 mm/s (their model, not a measurement). With option 1 this model falls about 31 mm/s over the first 20 ms (1.32 → 0.70 mm); with flybody damping, 5 mm/s.
+- **Reading.** Damping sets how fast the fly falls, not whether it stands. The old slow sink (hundreds of ms) looked like a real silenced fly's slow fall, but for the wrong reason: viscous creep at a damping the data rule out, where the real fly has decaying active force. With realistic damping the missing resting drive (F-STAND-3) shows as a fast collapse.
+- **Status.** Candidate m9d, gate queued (DECISIONS 18:53).
+
+### F-FLIGHT-3: the fitted wing reproduces hover lift at one condition; against the robotic fly its lift is 1.7× too high and its drag has the wrong shape
+- **Test** (B, flight coefficients beyond one condition). `scripts/probes/wing_coefficients.py` holds the fly still with gravity off and blows a uniform wind (1000 mm/s) over the left wing membrane at angles of attack 0-90°. It reads the fluid force on the wing alone, after subtracting the drag on the rest of the body in the same wind. It then compares the result with the translational coefficients of the dynamically scaled robotic Drosophila wing (Dickinson, Lehmann & Sane 1999, Science 284:1954, Re ≈ 136; measured): CL = 0.225 + 1.58 sin(2.13α − 7.2°), CD = 1.92 − 1.55 cos(2.04α − 9.82°). Area is the membrane planform, π × 0.589 × 1.401 mm = 2.59 mm². Plot: `runs/s12/flight/wing_coefficients.png`, viewed.
+- **Lift.** The model gives exactly CL = C_K sin 2α. At the adopted Kutta coefficient 3.1 (inferred: fitted so hover lift = weight, F-FLIGHT-2), CL peaks at 3.1 at 45°, against the robofly's 1.81. That is 1.72× at every angle. At MuJoCo's default of 1 it is 0.55×.
+- **Drag.** CD is 0.5 at α = 0 and then exactly 1.0 from α ≈ 2° to 90°. The robofly gives 0.39 at low angles, 1.70 at 45° and 3.46 at 90°. Split by coefficient:
+  - The slender term (0.25) gives the 0.5 at α = 0.
+  - The blunt term (0.5) gives 2 × 0.5 = 1.0 at any angle above about 1°. MuJoCo's projected area, π·sqrt(Σ(d_j d_k)⁴v_i² / Σ(d_j d_k)²v_i²), saturates for a plate this thin: by hand at 1° it is 98.5% of the planform, matching the probe's 0.985.
+  - So the model wing has 2.5× the robofly drag at 5-20° and 0.29× at 90°.
+- **Rest of the body.** MuJoCo also applies its inertia-box drag to every body that has no ellipsoid geom. In this wind the rest of the fly takes a force coefficient of 2.7-3.3, on the wing's reference area, which the probe subtracts. In flight the legs, head and thorax therefore carry inertia-box drag. Nothing here checks that drag against data.
+- **Reading.** F-FLIGHT-2 made hover lift match weight at one condition by inflating translational lift. That one number stands in for delayed stall, rotational lift and wake capture. The shape is wrong in ways the hover average hides:
+  - lift-to-drag at 45° is 3.1, against the robofly's 1.06, so aerodynamic power and the drag-based yaw torques are too low by about 3×;
+  - any condition with a different angle of attack (steering, forward flight, a changed stroke) gets the wrong force.
+- **Fix, behind a switch** (next). A blade-element quasi-steady wing:
+  - the robofly's translational coefficients (measured);
+  - rotational lift from Sane & Dickinson 2002, C_rot = π(0.75 − x̂₀), with x̂₀ the measured position of the pitch axis on the chord;
+  - added mass from wing geometry;
+  - MuJoCo fluid forces off on the membrane.
+  - No fitted number. The held-out checks are hover lift against weight at the existing kinematics, and lift against stroke amplitude (Lehmann & Dickinson 1997).

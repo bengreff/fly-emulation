@@ -56,3 +56,12 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
   - agent report (docs/research/s12_leg_muscle_anatomy.md): FlyMimic has mid/hind geometry but no fitted forces; TTM fibre count, size and tension are measured;
   - TTM peak torque derived at 90 µN·mm (guess was 100);
   - pre-registered gate m9m (18:38) queued.
+- 18:46 Option-2 sensor gate: all 8 seeds pass; m9n adopted (WORKING_PROFILE m9n).
+- 18:40-18:57 B, standing, damping, TTM, flight, ladder:
+  - F-DAMP-1: leg damping from measured stiffness (`joint:leg|damping_source` 1, τ 0.05 s inferred, bound c/k ≲ 0.1 s from Wang 2025). The collapse is 8× faster (t90 410 → 50 ms) with the end height unchanged (0.544 → 0.565 mm dead). tests/test_leg_damping.py;
+  - TTMn counted twice (Hill pool share 4-5% plus the B15 hook); switch `jump:ttm|exclude_from_hill`; tests/test_ttm_exclusion.py;
+  - candidate m9d = m9m + both switches, pre-registered 18:53, gate chained after m9m;
+  - F-FTI-2: extensor:flexor written up as a data conflict (97 femur fibres, cross-section ceiling 392 µN); no third fix;
+  - F-FLIGHT-3: the wing against robofly. Lift is 1.72× at Kutta 3.1. Drag is flat at 1.0 (MuJoCo projected area saturates on a thin plate), against robofly 0.39-3.46;
+  - FIDELITY_LADDER: synapse-specific rungs 8-13 (Task C).
+- 18:55 m9m gate: seeds 12-18 pass, 19 running.

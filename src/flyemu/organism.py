@@ -254,6 +254,13 @@ class Organism:
                                 g("tau_decay_ms", "ms", 5.0, "guessed: take-off within ~5 ms"),
                                 self.timestep_ms)
             self.body.passive_hooks = list(getattr(self.body, "passive_hooks", ())) + [self.ttm]
+            if self.hill is not None and int(self.reg.require(
+                    "jump:ttm", "exclude_from_hill", units="enum",
+                    model_use="1 removes TTMn from the mid-leg CTr extensor Hill pool, which the TTM hook "
+                              "already carries (s12: TTMn was counted twice, F-MUSCLE-MH-1)",
+                    subsystem="muscle_mechanics", minimal=0, minimal_note="0 = s10-s12 behaviour (counted twice)")):
+                tt = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index] == "TTMn"
+                self.hill.exclude(np.flatnonzero(tt))
         if int(self.reg.require(
                 "joint:wing", "range_by_function", units="enum",
                 model_use="0 joints.py wing envelopes (pitch = stroke; wrong for flybody), 1 envelopes by "

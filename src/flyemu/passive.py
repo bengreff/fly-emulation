@@ -87,6 +87,49 @@ def set_leg_damping(body, c: float) -> int:
     return n
 
 
+def register_damping_source(reg, body) -> None:
+    """s12: leg damping from the measured stiffness (switch joint:leg|damping_source)."""
+    if not int(reg.require("joint:leg", "damping_source", units="enum",
+                           model_use="0 flybody default damping (x joint:leg|damping), 1 tau x each leg "
+                                     "joint's measured stiffness (Kelvin-Voigt; F-DAMP-1)",
+                           subsystem="body_mechanics", minimal=0,
+                           minimal_note="flybody defaults (c/k ~1 s); 1 is the s12 option")):
+        return
+    tau = float(reg.require("joint:leg", "damping_tau_s", units="s",
+                            model_use="relaxation time c/k of every leg joint",
+                            subsystem="body_mechanics", minimal=0.05,
+                            minimal_note="inferred: Wang et al. 2025 limbs reach the passive posture ~350 ms "
+                                         "after MN silencing, explained by active-force decay (tau 100-150 ms), "
+                                         "so c/k <= ~0.1 s; 0.05 s inside that bound (FlyMimic's choice)",
+                            uncertainty="bounds 0.005-0.1 s (row b3_damping_tau_s)"))
+    set_damping_from_stiffness(body, tau)
+
+
+def set_damping_from_stiffness(body, tau_s: float) -> int:
+    """Leg hinge damping c = tau x the joint's own measured stiffness (Kelvin-Voigt,
+    one relaxation time for every leg joint; s12). Coupled legs use the diagonal of
+    J^T K J (off-diagonal damping dropped; inferred). Applied as MuJoCo dof damping
+    so the integrator treats it implicitly. Not the inter-tarsal chain (B2).
+    Returns the DOFs set."""
+    m = body.sim.mj_model
+    kd = {}
+    for h in getattr(body, "passive_hooks", ()):
+        if isinstance(h, CoupledSprings):
+            for leg, K in h.K.items():
+                kd.update(zip(h.dofs[leg].tolist(), np.diag(K).tolist()))
+    n = 0
+    for j in range(m.njnt):
+        name = mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or ""
+        if m.jnt_type[j] != mj.mjtJoint.mjJNT_HINGE or name.count("tarsus") >= 2:
+            continue
+        if not any(f"{leg}_" in name for leg in ("lf", "lm", "lh", "rf", "rm", "rh")):
+            continue
+        dof = int(m.jnt_dofadr[j])
+        m.dof_damping[dof] = tau_s * kd.get(dof, float(m.jnt_stiffness[j]))
+        n += 1
+    return n
+
+
 def register(reg, body) -> dict[str, float]:
     """Organism entry point: read the switch from the registry and apply."""
     from .registry import Status
@@ -110,8 +153,10 @@ def register(reg, body) -> dict[str, float]:
                     evidence="eLife 2025 Table 1 medians projected through the Jacobian of the paper's leg "
                              "angles at the neutral pose (F-PASSIVE-2); tibia-tarsus = leg median (inferred)",
                     subsystem="body_mechanics", instances=6)
+        register_damping_source(reg, body)
         return {}
     k = apply(body, int(src))
+    register_damping_source(reg, body)
     if k:
         reg.provide("joint:leg", "passive_stiffness", str(TABLE.name), units="uN*mm/rad",
                     model_use="torsional spring per leg DOF", status=Status.MEASURED,

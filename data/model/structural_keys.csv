@@ -63,12 +63,14 @@ joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral 
 muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (muscles.py)
 motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz
 joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1) / 2 refitted within flybody coxa ranges (data/params/passive_leg_rest_fit_coxa_flybody.csv; F-COXA-2)
+joint:leg|damping_source,B3,switch,"0 flybody default leg damping (scaled by joint:leg|damping; c/k ~1 s) / 1 c = joint:leg|damping_tau_s x each leg joint's own measured stiffness (diagonal of J^T K J when coupled; Kelvin-Voigt; F-DAMP-1) (s12)"
 muscle:leg|rotator_map,B5,switch,Hill mode: sternal rotators by action (1; Cheong 2024 read) or legacy rule (0)
 adhesion:leg|detachment,B7,switch,0 neural grip only (m4) / 1 load and shear gate (adhesion.py)
 muscle:leg|coxa_model,B4,switch,Hill mode: 0 per-DOF coxa pairs (s9) / 1 anatomical coxa muscles with moment-arm vectors over the three coxa hinges (data/params/coxa_muscles.csv; s10)
 muscle:leg|optimum_join,B4,switch,Hill mode: leg muscle force-length optimum at the flybody zero pose (0; s9) or FlyMimic optimum joined by interior segment angle (1; data/derived/leg_muscle_optimum_join.csv; s11)
 muscle:leg|ft_flexor_scale,B4,switch,read only in Hill mode; value row b4_ft_flexor_scale (1 = FlyMimic flexor F0 as shipped)
 muscle:leg|midhind_source,B4,switch,"read only in Hill mode; 0 mid/hind muscles copy the front leg (guessed) / 1 front-leg FlyMimic members scaled by measured segment size on the flybody mesh (inferred; data/params/leg_muscle_midhind_scale.csv; F-MUSCLE-MH-1) (s12)"
+jump:ttm|exclude_from_hill,B15,switch,"read only when jump:ttm|model = 1 and Hill mode; 0 TTMn is in the mid CTr extensor Hill pool and drives the TTM hook (counted twice; weight share 4-5%) / 1 TTMn drives the TTM hook only (s12; F-MUSCLE-MH-1)"
 motor_unit:leg|fatigue_fraction,B5,switch,read only in Hill mode; value row b5_fatigue_fraction (0 = no fatigue)
 motor_unit:leg|fatigue_tau_ms,B5,switch,read only in Hill mode with fatigue_fraction > 0; value row b5_fatigue_tau_ms
 sense:antenna|oscillator,B20,switch,0 static a3 proxy (m4); 1 damped rotational oscillator with JO-A/B vibration drive (s10)

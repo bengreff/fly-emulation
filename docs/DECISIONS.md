@@ -668,6 +668,7 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: 0 spikes/ms in the last 100 ms of silence on all 8 seeds, no MuJoCo warnings, no NaN.
   - Sugar to MN9 is brain-only and unaffected.
   - Pass gives m9n = m9w with option 2 as the working profile, and m9w is kept. A failure is recorded with the failing seed and its spiking classes.
+- **Result (18:46): pass.** Seeds 12-19 all show 0 spikes/ms in the last 100 ms, no MuJoCo warnings and no NaN. Final thorax height is 0.535-0.55 mm (`runs/s12/gates/cl_n2_s*.json`). m9n is the working profile; m9w is kept.
 
 ### Pre-registration: mid/hind leg muscles by measured segment size (`muscle:leg|midhind_source` = 1) and the TTM torque from fibre data (18:38)
 - **Why.** Every mid- and hind-leg muscle was a copy of FlyMimic's front leg (guessed). FlyMimic reconstructed mid/hind muscle geometry from micro-CT but fitted no forces, because only one dataset existed for those legs (arXiv 2509.06426, Suppl. A.1; agent report `docs/research/s12_leg_muscle_anatomy.md`). The Director asked for a labelled derivation instead of a copy.
@@ -677,3 +678,24 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
   - Pass gives m9m = m9n with both values as the working profile; m9n is kept.
   - Standing height is reported, not a criterion: at rest only the slow tibia flexors fire (F-STAND-3), so the muscles are not expected to lift the fly.
+
+### Pre-registration: leg damping from the measured stiffness (`joint:leg|damping_source` = 1, τ 0.05 s) and TTMn out of the Hill pool (`jump:ttm|exclude_from_hill` = 1) (18:53)
+- **Why damping.** flybody's leg damping (1 µN·mm·s/rad, femur-tibia 0.4) is guessed. Against the measured springs it gives a relaxation time c/k of about 1.2 s.
+  - Wang et al. 2025 (read) report no damping value. Their motor-silenced flies reach the passive posture about 350 ms after light-on, and their own model explains that with active-force decay (τ ≈ 100 ms). A passive relaxation time longer than about 0.1 s would add visibly to it. So c/k ≲ 0.1 s (inferred bound).
+  - Option 1 sets each leg joint's damping to τ × its own measured stiffness (diagonal of J^T K J), with τ 0.05 s (inferred; FlyMimic's choice, inside the bound). The tarsal chain is unchanged. Test: `tests/test_leg_damping.py`.
+- **Measured before registration** (seed 12, m9w, 1.5 s; `runs/s12/standing/standing_damp_*_s12.*`, viewed):
+
+  | run | 90% of drop | 0-50 ms rate | end height | legs carry |
+  |---|---|---|---|---|
+  | dead, flybody damping | 410 ms | 5.0 mm/s | 0.544 mm | 2.8 µN |
+  | dead, option 1 | 50 ms | 13.7 mm/s | 0.565 mm | 4.5 µN |
+  | live, option 1 | 60 ms | 13.7 mm/s | 0.555 mm | 3.9 µN |
+
+  - The trunk touches the floor at 20 ms instead of 50 ms, and the passive fly rolls.
+  - Damping does not change where the fly comes to rest, only how fast it gets there.
+  - The old slow collapse came from viscous creep in a damping value the data rule out; it was not physiology. The real silenced fly's slow fall (about 1.3 mm/s) needs active force (F-STAND-3), which the model lacks.
+- **Why TTMn.** With the B15 TTM hook on, TTMn_L/R also sit in the mid CTr extensor Hill pool, with a 4-5% weight share (`scripts/probes/ttm_double_count.py`). The TTM is therefore counted twice, and the pool's activation is diluted at rest. Option 1 removes them from the pool. Test: `tests/test_ttm_exclusion.py`.
+- **Adoption test.** Same as m9w, m9n and m9m: `closed_loop_check.py`, seeds 12-19, with m9m's values (m9n's if m9m fails) plus both switches.
+  - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
+  - Pass gives m9d = that profile + both switches as working; the previous profile is kept.
+  - Standing is reported, not a criterion. Walking dynamics change with damping (F-BODY-1: 10 Hz transfer). The next walking measurement reads them on m9d, not tuned.

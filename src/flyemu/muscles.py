@@ -355,6 +355,17 @@ class HillLegDrive:
         self.units = MotorUnits(unit_class if unit_class is not None
                                 else np.full(len(self.mn_rows), "intermediate"), **(units_kw or {}))
 
+    def exclude(self, k: np.ndarray) -> None:
+        """Remove MN rows k from every muscle pool (e.g. TTMn when the B15 TTM hook
+        carries them; s12 F-MUSCLE-MH-1) and recompute the pool weights."""
+        self.mn_muscle[k] = -1
+        self.ok = self.mn_muscle >= 0
+        self.W = np.bincount(self.mn_muscle[self.ok], weights=self.w[self.ok], minlength=len(self.p.F0))
+        if self.coxa is not None:
+            self.mn_group[k] = -1
+            g = self.mn_group >= 0
+            self.gW = np.bincount(self.mn_group[g], weights=self.w[g], minlength=self.n_groups)
+
     def step(self, spiked: np.ndarray, dt_ms: float) -> None:
         hit = np.isin(self.mn_rows, spiked) if spiked.size else np.zeros(len(self.mn_rows), bool)
         self.units.step(hit, dt_ms)
