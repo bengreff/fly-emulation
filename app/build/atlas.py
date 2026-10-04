@@ -235,6 +235,29 @@ def main() -> int:
             gzip.compress(json.dumps(recs, separators=(",", ":")).encode(), 6))
 
     type_counts = np.bincount(typ_c, minlength=len(typ_v))
+    # what is counted: the cache's :Neuron records, split the way connectome.build splits them
+    status = nr.status.fillna("").to_numpy().astype(str)
+    typed = nr.type.notna().to_numpy()
+    traced = status == "Traced"
+
+    def by_status(mask):
+        return {s or "no status": int((mask & (status == s)).sum()) for s in sorted(set(status[mask]))}
+    counts = {
+        "cache": N,
+        "cache_what": "male-cns v1.0 :Neuron records in the project cache (data/cache/male_cns_*.parquet)",
+        "policy": "in the model if status is Traced, or if the body carries a cell type "
+                  "(flyemu.connectome.build defaults: statuses=('Traced',), keep_typed=True)",
+        "in_model": int(in_model.sum()),
+        "in_model_traced": int((traced & (in_model > 0)).sum()),
+        "in_model_untraced_typed": int((~traced & typed).sum()),
+        "in_model_untraced_by_status": by_status(~traced & typed),
+        "in_model_untraced_top_types": {k: int(v) for k, v in nr.type[~traced & typed].value_counts().head(6).items()},
+        "scan_only":int((in_model == 0).sum()),
+        "scan_only_by_status": by_status(in_model == 0),
+        "scan_only_what": "untyped bodies that are not Traced (fragments; F-COUNT-2); drawn, never simulated",
+    }
+    assert counts["in_model_traced"] + counts["in_model_untraced_typed"] == counts["in_model"]
+    assert counts["in_model"] + counts["scan_only"] == N
     atlas = {
         "format": "flyemu-atlas/1", "scan": "male-cns", "version": "v1.0",
         "built": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -246,6 +269,7 @@ def main() -> int:
         "vocab": {"superclass": sup_v, "class": cls_v, "type": typ_v, "side": side_v,
                   "nt": nt_v, "status": stat_v, "pos_basis": BASIS},
         "type_counts": type_counts.tolist(),
+        "counts": counts,
         "coverage": {"pos_basis_counts": dict(zip(BASIS, bc.tolist())),
                      "flow_reached": int(np.isfinite(layer).sum())},
         "layers": {

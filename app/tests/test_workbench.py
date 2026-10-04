@@ -98,6 +98,21 @@ def test_atlas_positions_and_policy(atlas):
     assert list(info["coverage"]["pos_basis_counts"].values()) == counts[:len(info["coverage"]["pos_basis_counts"])].tolist()
 
 
+def test_atlas_counts_reconcile(atlas):
+    """The header's numbers: cache = in model + scan only; in model = traced + untraced-but-typed."""
+    info, arr = atlas
+    c = info["counts"]
+    assert c["cache"] == info["n"] == arr["bodyid"].size
+    assert c["in_model"] == int((arr["in_model"] > 0).sum()) == info["n_in_model_policy"]
+    assert c["in_model"] == c["in_model_traced"] + c["in_model_untraced_typed"]
+    assert c["cache"] == c["in_model"] + c["scan_only"]
+    assert sum(c["in_model_untraced_by_status"].values()) == c["in_model_untraced_typed"]
+    assert sum(c["scan_only_by_status"].values()) == c["scan_only"]
+    for run in native_runs():
+        m = json.loads((run / "manifest.json").read_text())
+        assert m["n_rows"] == c["in_model"], run.name
+
+
 def test_atlas_edges_reciprocal(atlas):
     info, _ = atlas
     index = json.loads((ATLAS / "edges" / "index.json").read_text())

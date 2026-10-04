@@ -80,6 +80,7 @@ async function main() {
 
   wireControls(cat);
   runPanel(rec, atlas, entry);
+  brainCount(rec, atlas);
   window.addEventListener("resize", resize);
   resize();
   const layout = params.get("view");
@@ -98,6 +99,29 @@ async function main() {
 
 function resize() {
   app.body.resize(); app.brain.resize(); app.traces.redraw();
+  $("#legend").style.top = `${$("#brain").parentElement.querySelector(".head").offsetHeight + 14}px`;
+}
+
+// What the map counts, split the way the model's builder splits the scan
+// (atlas.json counts, written by app/build/atlas.py), and how this run joins it.
+function brainCount(rec, atlas) {
+  const c = atlas.info.counts, f = n => n.toLocaleString(), m = rec.manifest;
+  $("#brain-scan").textContent = `${atlas.info.scan} ${atlas.info.version}`;
+  if (!c) { $("#brain-count").textContent = `${f(atlas.n)} neurons in the scan; counts not recorded in this atlas (rebuild it)`; return; }
+  const list = o => Object.entries(o).map(([k, v]) => `${k} ${f(v)}`).join("; ");
+  const ran = m.n_model_neurons || m.n_rows;
+  const joined = app.brain.unjoined ? `${f(app.brain.unjoined)} rows not in the atlas`
+    : m.join ? "every row found in the atlas; bodyIds assigned by table order, type sequence checked" : "every row joined by bodyId";
+  const run = m.n_rows === c.in_model && ran === c.in_model
+    ? `this run simulated all ${f(ran)}; ${joined}`
+    : m.n_rows < ran
+      ? `this run simulated ${f(ran)} and recorded ${f(m.n_rows)}; ${joined}`
+      : `<span class="warn">this run simulated ${f(ran)}, not ${f(c.in_model)}</span>; ${joined}`;
+  $("#brain-count").innerHTML =
+    `<b>${f(c.in_model)} in the model</b> = ${f(c.in_model_traced)} traced + `
+    + `<abbr title="${esc(`kept because they carry a cell type. Status: ${list(c.in_model_untraced_by_status)}. Types: ${list(c.in_model_untraced_top_types || {})}`)}">${f(c.in_model_untraced_typed)} untraced but typed</abbr>`
+    + ` · <abbr title="${esc(`${c.scan_only_what}. Status: ${list(c.scan_only_by_status)}`)}">${f(c.scan_only)} scan only</abbr> (untyped fragments, drawn, never simulated)`
+    + ` · <abbr title="${esc(`${c.cache_what}. Policy: ${c.policy}`)}">${f(c.cache)} in the scan</abbr><br>${run}`;
 }
 
 let last = performance.now();
@@ -156,7 +180,7 @@ function legend() {
   el.innerHTML = b.legend.slice(0, 24).map(e =>
     `<div class="lg ${b.hidden.has(e.name) ? "off" : ""}" data-name="${esc(e.name)}"><i style="background:#${e.colour.toString(16).padStart(6, "0")}"></i>${esc(e.name)} <span>${e.n.toLocaleString()}</span></div>`).join("")
     + (b.legend.length > 24 ? `<div class="dim">+${b.legend.length - 24} more</div>` : "")
-    + `<div class="dim">${b.shown.toLocaleString()} of ${app.atlas.n.toLocaleString()} shown</div>`;
+    + `<div class="dim">${b.shown.toLocaleString()} of ${app.atlas.n.toLocaleString()} drawn</div>`;
 }
 
 function showTab(name) {
