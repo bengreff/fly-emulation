@@ -40,7 +40,15 @@
     "MN9"
    ]
   },
-  "status": "development evidence; the model's leg taste neurons respond weakly to every tastant (guessed weights), so a weak or absent response is expected from its construction"
+  "status": "development evidence; the model's leg taste neurons respond weakly to every tastant (guessed weights), so a weak or absent response is expected from its construction",
+  "criterion": {
+   "metric": "readout_delta_hz",
+   "op": ">=",
+   "value": 5,
+   "units": "Hz",
+   "what": "mean MN9 rate during the stimulus minus the control's",
+   "basis": "guessed threshold, written 4 October 2026 before any library result was viewed"
+  }
  },
  "record": {
   "watch": {

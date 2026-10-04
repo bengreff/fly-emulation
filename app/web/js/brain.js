@@ -22,6 +22,17 @@ const NT = {
 const BASIS = [0x2a7f62, 0x52b8a0, 0xe0a030, 0xd05030, 0xd000d0];
 const SIDE = { L: 0x3070d0, R: 0xd04030, M: 0x40a040, "": 0xa0a0a0 };
 
+// rate change against the control, Hz (display bins, not model quantities)
+const DELTA_BINS = [
+  ["up 20 Hz or more", 0xb2182b], ["up 5 to 20 Hz", 0xe0603a], ["up 1 to 5 Hz", 0xf4a582],
+  ["within 1 Hz", 0xc8c8c8], ["down 1 to 5 Hz", 0x92c5de], ["down 5 Hz or more", 0x2166ac],
+  ["not simulated", 0xe8e8e8],
+];
+function deltaBin(d) {
+  if (!Number.isFinite(d)) return 6;
+  return d >= 20 ? 0 : d >= 5 ? 1 : d >= 1 ? 2 : d > -1 ? 3 : d > -5 ? 4 : 5;
+}
+
 function superclassColour(name) {
   for (const [re, c] of FAMILY) if (re.test(name)) return c;
   return 0x8c8c8c;
@@ -90,6 +101,22 @@ export class BrainView {
     }));
     this.hi.renderOrder = 2;
     this.scene.add(this.hi);
+    // cells a protocol stimulates or silences: hollow rings on top, a hue the
+    // activity glow does not use
+    const ring = document.createElement("canvas");
+    ring.width = ring.height = 64;
+    const rg = ring.getContext("2d");
+    rg.strokeStyle = "#fff"; rg.lineWidth = 10;
+    rg.beginPath(); rg.arc(32, 32, 25, 0, 2 * Math.PI); rg.stroke();
+    this.stimGeo = new THREE.BufferGeometry();
+    this.stimPts = new THREE.Points(this.stimGeo, new THREE.PointsMaterial({
+      size: 14, sizeAttenuation: false, map: new THREE.CanvasTexture(ring), color: 0x0090c0,
+      transparent: true, alphaTest: 0.3, depthTest: false,
+    }));
+    this.stimPts.renderOrder = 3;
+    this.scene.add(this.stimPts);
+    this.stimulated = [];
+    this.delta = null;
     this.lines = new THREE.LineSegments(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({
       vertexColors: true, transparent: true, opacity: 0.7, depthTest: false,
     }));
@@ -110,6 +137,7 @@ export class BrainView {
     this.dark = dark;
     this.scene.background = new THREE.Color(dark ? 0x15171a : 0xf7f6f2);
     this.hi.material.color.set(dark ? 0xffffff : 0x111111);
+    this.stimPts.material.color.set(dark ? 0x40d0ff : 0x0090c0);
     this.uniforms.uHot.value.set(dark ? 0xffb020 : 0xff4a10);
     this.uniforms.uDim.value = dark ? 0.3 : 0.2;
   }
@@ -207,6 +235,7 @@ export class BrainView {
       case "side": return a.side(i) || "(none)";
       case "model": return a.arr.in_model[i] ? "in the model (status policy)" : "not in the model";
       case "layer": { const L = a.arr.layer[i]; return L < 0 ? "not reached" : `layer ${Math.min(8, Math.floor(L))}${L >= 8 ? "+" : ""}`; }
+      case "delta": return DELTA_BINS[deltaBin(this.delta ? this.delta[i] : NaN)][0];
     }
     return "";
   }
@@ -224,6 +253,7 @@ export class BrainView {
         if (L < 0) return 0xb0b0b0;
         return new THREE.Color().setHSL(0.62 - 0.62 * Math.min(1, L / 8), 0.7, 0.45).getHex();
       }
+      case "delta": return DELTA_BINS[deltaBin(this.delta ? this.delta[i] : NaN)][1];
     }
     return 0x888888;
   }
@@ -242,7 +272,9 @@ export class BrainView {
       e.n++;
       legend.set(k, e);
     }
-    this.legend = [...legend.values()].sort((x, y) => mode === "layer" ? x.name.localeCompare(y.name, undefined, { numeric: true }) : y.n - x.n);
+    const rank = name => DELTA_BINS.findIndex(b => b[0] === name);
+    this.legend = [...legend.values()].sort((x, y) => mode === "layer" ? x.name.localeCompare(y.name, undefined, { numeric: true })
+      : mode === "delta" ? rank(x.name) - rank(y.name) : y.n - x.n);
     this.colAttr.needsUpdate = true;
     this.applyFilters();
   }
@@ -295,7 +327,22 @@ export class BrainView {
     this._updateHighlight();
   }
 
+  setStimulated(list) {
+    this.stimulated = Array.from(list);
+    this._updateHighlight();
+  }
+
+  // per-atlas-cell rate change (Hz) against a matched control; NaN = not simulated
+  setDelta(delta) {
+    this.delta = delta;
+    if (this.colourBy === "delta") this.setColour("delta");
+  }
+
   _updateHighlight() {
+    const st = new Float32Array(this.stimulated.length * 3);
+    this.stimulated.forEach((i, k) => st.set(this.pos.subarray(i * 3, i * 3 + 3), k * 3));
+    this.stimGeo.setAttribute("position", new THREE.BufferAttribute(st, 3));
+    this.stimGeo.computeBoundingSphere();
     const arr = new Float32Array(this.highlight.length * 3);
     this.highlight.forEach((i, k) => arr.set(this.pos.subarray(i * 3, i * 3 + 3), k * 3));
     this.hiGeo.setAttribute("position", new THREE.BufferAttribute(arr, 3));

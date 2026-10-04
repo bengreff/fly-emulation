@@ -1,0 +1,53 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Sham: a few forced spikes in one Kenyon cell at 500 ms (noise floor)",
+ "role": "sham",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 12,
+  "min_synapses": 5,
+  "overrides": {
+   "motor_unit:all|force_per_spike": 10
+  }
+ },
+ "duration_ms": 2000,
+ "genotype": [],
+ "events": [
+  {
+   "t_ms": 500,
+   "dur_ms": 3,
+   "effector": "kick",
+   "rate_hz": 1000,
+   "target": {
+    "bodyId": [21879]
+   },
+   "label": "about 3 forced spikes in one KCg-m (bodyId 21879)"
+  }
+ ],
+ "expect": {
+  "text": "A real fly shows nothing measurable. In the model the run departs from the control at the first forced spike; how far it departs is the floor for reading every other comparison in the library.",
+  "source": null,
+  "readout": {
+   "type": [
+    "MN9",
+    "MDN",
+    "DNa02"
+   ]
+  },
+  "status": "sham (noise floor), not a test"
+ },
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "MDN",
+    "DNa02",
+    "DNg100",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ }
+}

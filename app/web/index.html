@@ -79,6 +79,12 @@ footer { display: flex; align-items: center; gap: 10px; padding: 6px 14px; borde
 footer #scrub { flex: 1; padding: 0; }
 #time { font-family: var(--mono); font-size: 12px; min-width: 150px; }
 #status { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.verdict { font: 600 12px var(--mono); padding: 1px 7px; border-radius: 3px; color: #fff; }
+.verdict.pass { background: var(--measured); } .verdict.fail { background: #c0392b; } .verdict.none { background: var(--unknown); }
+.warnline { color: var(--guessed); font-size: 12px; }
+aside td.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
+.stimkey { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #0090c0; background: none !important; vertical-align: -1px; }
+[data-theme="dark"] .stimkey { border-color: #40d0ff; }
 </style>
 </head>
 <body>
@@ -109,6 +115,7 @@ footer #scrub { flex: 1; padding: 0; }
           <option value="superclass">superclass</option><option value="nt">transmitter</option>
           <option value="basis">position basis</option><option value="side">side</option>
           <option value="model">in model</option><option value="layer">flow layer</option>
+          <option value="delta" disabled>rate vs control</option>
         </select></label>
         <label><input type="checkbox" id="activity" checked> activity</label>
         <label><input type="checkbox" id="inmodel"> in model only</label>
@@ -123,13 +130,14 @@ footer #scrub { flex: 1; padding: 0; }
   </section>
   <section id="traces-wrap"><canvas id="traces"></canvas></section>
   <aside>
-    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button></div>
+    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button><button data-tab="compare">Compare</button></div>
     <div id="tab-neuron" class="tab">
       <input id="search" placeholder="type name (e.g. MN9, DNa02) or bodyId" autocomplete="off">
       <div id="results"></div>
       <div id="inspector"></div>
     </div>
     <div id="tab-run" class="tab" hidden></div>
+    <div id="tab-compare" class="tab" hidden></div>
   </aside>
 </main>
 <footer>

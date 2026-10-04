@@ -208,10 +208,17 @@ def test_identical_before_first_event(run, ctrl):
     pre_a = sorted(zip(sa[sa < first].tolist(), ra[sa < first].tolist()))
     pre_b = sorted(zip(sb[sb < first].tolist(), rb[sb < first].tolist()))
     assert pre_a == pre_b and len(pre_a) > 0
-    # and the run does differ once the stimulus is on
-    post_a = set(zip(sa[sa >= first].tolist(), ra[sa >= first].tolist()))
-    post_b = set(zip(sb[sb >= first].tolist(), rb[sb >= first].tolist()))
-    assert post_a != post_b
+    # the stimulus was delivered: an effector acting on cells changes the spikes;
+    # a world change is recorded as applied at its onset (whether the fly senses
+    # it is the result, not a property of the recorder)
+    direct = [e for e in res["events"] if e["effector"] != "world"]
+    if direct:
+        post_a = set(zip(sa[sa >= first].tolist(), ra[sa >= first].tolist()))
+        post_b = set(zip(sb[sb >= first].tolist(), rb[sb >= first].tolist()))
+        assert post_a != post_b
+    worlds = [e for e in res["events"] if e["effector"] == "world"]
+    applied = res.get("world_applied") or []
+    assert len(applied) == len(worlds) and all(w and w["step"] == e["on_step"] for w, e in zip(applied, worlds))
 
 
 @pytest.mark.parametrize("run", [r for base in (LIB, SMOKE) if base.exists() for r in recordings(base)], ids=lambda p: p.name)

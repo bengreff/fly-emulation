@@ -35,6 +35,18 @@ TYPES = {".js": "text/javascript; charset=utf-8", ".html": "text/html; charset=u
 def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict:
     """List recordings, atlases and bodies found on disk."""
     recs = []
+    scores: dict[Path, dict] = {}       # app/tools/score_library.py output, per library folder
+
+    def score_of(run_dir: Path):
+        lib = run_dir.parent
+        if lib not in scores:
+            try:
+                doc = json.loads((lib / "scores.json").read_text())
+                scores[lib] = {s["run"]: s for s in doc.get("scores", [])}
+            except (OSError, json.JSONDecodeError):
+                scores[lib] = {}
+        return scores[lib].get(run_dir.name)
+
     for man in sorted(runs.glob("**/manifest.json")):
         try:
             m = json.loads(man.read_text())
@@ -49,13 +61,28 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
             flags.append(m.get("status", "incomplete"))
         if "not validated" in (m.get("profile_status") or ""):
             flags.append("not validated")
+        pr = m.get("protocol") or {}
         recs.append({
             "id": rel, "path": f"{prefix}/{rel}",
             "title": m.get("title") or f"{cfg.get('profile', '?')} seed {cfg.get('seed', '?')}, "
                                        f"{m.get('duration_ms', 0) / 1000:g} s, {cfg.get('body', '?')}",
             "created": m.get("created"), "duration_ms": m.get("duration_ms"),
             "status": m.get("status"), "config": cfg, "flags": flags,
+            # what the page needs to pair a stimulated run with its control
+            "n_events": len(pr.get("events", [])), "n_genotype": len(pr.get("genotype", [])),
+            "control": bool(pr) and not pr.get("events") and not pr.get("genotype"),
+            "commit": ((m.get("provenance") or {}).get("git") or {}).get("commit"),
+            "expect_status": (pr.get("expect") or {}).get("status"),
+            "role": pr.get("role"),
         })
+        sc = score_of(man.parent)
+        cr = (sc or {}).get("criterion")
+        if cr and cr.get("pass") is not None:
+            # scored against a control recorded with the same configuration; a
+            # result no larger than the sham's is labelled as noise
+            recs[-1]["verdict"] = ("PASS" if cr["pass"] else "FAIL") + (
+                ", no spike changed" if sc.get("first_divergence_step") is None
+                else " within noise" if cr.get("within_sham") else "")
     recs.sort(key=lambda r: (r["status"] != "complete", "legacy" in r["id"], r["id"]))
     atlases = []
     for a in sorted((APP / "data" / "atlas").glob("*/atlas.json")):

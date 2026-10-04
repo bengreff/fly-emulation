@@ -89,15 +89,29 @@ export class Traces {
     });
     this.rates = { supers, rate, nB, cells };
     this.mn = { t: Float32Array.from(mnT), y: Uint16Array.from(mnY), n: ordered.length };
-    // stimulus events from the resolved protocol
-    const ev = (rec.manifest.protocol && rec.manifest.protocol.resolved && rec.manifest.protocol.resolved.events) || [];
-    this.events = ev.map(e => ({ label: e.label || e.kind || "stim", t0: e.on_step * rec.ts, t1: e.off_step * rec.ts, kind: e.kind }));
+    // stimulus: build-time genotype (whole run) and timed events from the resolved protocol
+    const res = (rec.manifest.protocol && rec.manifest.protocol.resolved) || { events: [], genotype: [] };
+    this.events = [
+      ...res.genotype.map(g => ({ label: g.label, t0: 0, t1: rec.duration, effector: g.effector, mv: g.mv, approx: g.approximation })),
+      ...res.events.map(e => ({
+        label: e.label || e.effector, t0: e.on_step * rec.ts, t1: e.off_step * rec.ts, effector: e.effector, mv: e.mv,
+        pulse: e.pulse_steps ? [e.pulse_steps[0] * rec.ts, e.pulse_steps[1] * rec.ts] : null,
+        approx: e.approximation, rows: e.effector === "kick" ? new Set(e.rows) : null, on: e.on_step, off: e.off_step,
+      })),
+    ];
+    for (const e of this.events) if (e.rows) e.kicks = [];
+    const kev = this.events.filter(e => e.rows);
+    for (let k = 0; k < rec.kickStep.length; k++) {
+      const s = rec.kickStep[k], r = rec.kickRow[k];
+      const e = kev.find(e => s >= e.on && s < e.off && e.rows.has(r));
+      if (e) e.kicks.push(s * rec.ts);
+    }
     this._layout();
   }
 
   _layout() {
     const tracks = [];
-    if (this.events.length) tracks.push({ id: "stim", h: 16 + 10 * this.events.length, label: "stimulus" });
+    if (this.events.length) tracks.push({ id: "stim", h: 4 + 22 * this.events.length, label: "stimulus" });
     if (this.sel !== null) tracks.push({ id: "sel", h: 56, label: "selected cell" });
     tracks.push({ id: "rate", h: Math.max(48, 9 * this.rates.supers.length), label: "rate by superclass" });
     tracks.push({ id: "mn", h: 90, label: "motor neurons" });
@@ -111,10 +125,17 @@ export class Traces {
     this.canvas.style.height = this.height + "px";
   }
 
+  // a matched control recording (same rows); its spikes show under the selected cell
+  setControl(ctrl) {
+    this.ctrl = ctrl;
+    if (this.sel !== null) this.select(this.sel, this.selLabel);
+  }
+
   select(row, label) {
     this.sel = row;
     this.selLabel = label;
     this.selSpikes = row === null ? [] : this.rec.spikeTimes(row);
+    this.ctrlSpikes = row === null || !this.ctrl ? null : this.ctrl.spikeTimes(row);
     const w = row === null ? -1 : this.rec.watchIndex(row);
     this.selWatch = w;
     this._layout();
@@ -157,12 +178,31 @@ export class Traces {
     if (sub) { g.fillStyle = this.col.dim; g.fillText(sub, 8, tr.y + 24); }
   }
 
+  // one row per genotype or event: its label (with "approx." when the effector is an
+  // approximation), then a bar; pulses drawn one by one, kicks as ticks
   _stim(g, tr) {
-    this._label(g, tr, "stimulus");
+    this._label(g, tr, "stimulus", "* = approximated");
+    const [a, b] = this.view, xEnd = this.W - 8;
     this.events.forEach((e, k) => {
-      const y = tr.y + 4 + k * 10, x0 = this.tToX(e.t0), x1 = this.tToX(e.t1);
-      g.fillStyle = this.col.stim; g.fillRect(x0, y, Math.max(1, x1 - x0), 7);
-      g.fillStyle = this.col.dim; g.fillText(e.label, Math.max(GUTTER, x0) + 2, y + 16);
+      const y = tr.y + 2 + k * 22, by = y + 13;
+      const x0 = Math.max(GUTTER, this.tToX(e.t0)), x1 = Math.min(xEnd, this.tToX(e.t1));
+      g.fillStyle = this.col.fg;
+      g.fillText(`${e.label}${e.approx ? " *" : ""}`, Math.max(GUTTER, Math.min(x0, xEnd - 200)) + 2, y + 9);
+      if (x1 <= x0) return;
+      const colour = e.mv < 0 ? this.col.cool : e.effector === "world" ? "#30a050" : this.col.stim;
+      g.fillStyle = colour;
+      if (e.kicks) {
+        g.globalAlpha = 0.18; g.fillRect(x0, by, x1 - x0, 7); g.globalAlpha = 1;
+        for (const t of e.kicks) if (t >= a && t <= b) g.fillRect(this.tToX(t), by, 1, 7);
+      } else if (e.pulse && (x1 - x0) / ((e.t1 - e.t0) / e.pulse[0]) >= 3) {
+        for (let t = e.t0; t < e.t1; t += e.pulse[0]) {
+          const p0 = this.tToX(t), p1 = this.tToX(Math.min(e.t1, t + e.pulse[1]));
+          if (p1 >= GUTTER && p0 <= xEnd) g.fillRect(Math.max(GUTTER, p0), by, Math.max(1, p1 - Math.max(GUTTER, p0)), 7);
+        }
+      } else {
+        g.globalAlpha = e.pulse ? 0.5 : e.effector === "TNT" || e.effector === "Kir2.1" ? 0.45 : 1;
+        g.fillRect(x0, by, x1 - x0, 7); g.globalAlpha = 1;
+      }
     });
   }
 
@@ -268,6 +308,11 @@ export class Traces {
     this._label(g, tr, (this.selLabel || "").slice(0, 22), `${this.selSpikes.length} spikes` + (this.selWatch < 0 ? "; v not recorded" : ""));
     g.fillStyle = this.col.hot;
     for (const t of this.selSpikes) g.fillRect(this.tToX(t), tr.y, 1.5, 10);
+    if (this.ctrlSpikes) {
+      g.fillStyle = this.col.dim;
+      for (const t of this.ctrlSpikes) g.fillRect(this.tToX(t), tr.y + 11, 1.5, 6);
+      g.fillText(`control ${this.ctrlSpikes.length} (grey)`, 8, tr.y + 50);
+    }
     if (this.selWatch >= 0) {
       const w = this.selWatch, nW = rec.nWatch, nV = rec.vStep.length;
       let lo = Infinity, hi = -Infinity;

@@ -33,7 +33,15 @@
     "MDN"
    ]
   },
-  "status": "command direction was spent on seeds 1-4 in session 7; seed 12 is a spent seed, so this run is development evidence"
+  "status": "command direction was spent on seeds 1-4 in session 7; seed 12 is a spent seed, so this run is development evidence",
+  "criterion": {
+   "metric": "forward_mm_vs_control",
+   "op": "<=",
+   "value": -0.5,
+   "units": "mm",
+   "what": "thorax displacement along the fly's forward axis during the stimulus, minus the control's",
+   "basis": "guessed threshold, written 4 October 2026 before any library result was viewed"
+  }
  },
  "record": {
   "watch": {

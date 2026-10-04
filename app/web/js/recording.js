@@ -79,6 +79,9 @@ export class Recording {
     this.vStep = cat(get("v_step"), Uint32Array);
     this.eyeStep = cat(get("eye_step"), Uint32Array);
     this.eye = cat(get("eye"), Uint8Array);
+    // Poisson kicks a protocol delivered: the step and model row of each
+    this.kickStep = cat(get("kick_step"), Uint32Array);
+    this.kickRow = cat(get("kick_row"), Uint32Array);
     const c0 = C[0] && C[0].a;
     this.nBodies = c0 && c0.xpos ? c0.xpos.shape[1] : 0;
     this.nAct = c0 && c0.torque ? c0.torque.shape[1] : 0;
@@ -112,6 +115,31 @@ export class Recording {
       this._counts = c;
     }
     return this._counts;
+  }
+
+  // spike count per row with t0 <= t < t1 (ms)
+  countsIn(t0, t1) {
+    const c = new Uint32Array(this.manifest.n_rows), P = this.spikePtr, R = this.spikeRow, S = this.spikeSub;
+    const b0 = Math.max(0, Math.floor(t0 / this.binMs)), b1 = Math.min(this.nBins - 1, Math.floor(t1 / this.binMs));
+    for (let b = b0; b <= b1; b++) {
+      for (let k = P[b]; k < P[b + 1]; k++) {
+        const t = b * this.binMs + S[k] * this.ts;
+        if (t >= t0 && t < t1) c[R[k]]++;
+      }
+    }
+    return c;
+  }
+
+  // every spike as one sortable number, step * n_rows + row
+  spikeKeys() {
+    if (!this._keys) {
+      const n = this.manifest.n_rows, spb = Math.round(this.binMs / this.ts), out = new Float64Array(this.spikeRow.length);
+      const P = this.spikePtr;
+      for (let b = 0; b < this.nBins; b++)
+        for (let k = P[b]; k < P[b + 1]; k++) out[k] = (b * spb + this.spikeSub[k]) * n + this.spikeRow[k];
+      this._keys = out.sort();
+    }
+    return this._keys;
   }
 
   // spike times (ms) of one row

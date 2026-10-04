@@ -34,7 +34,15 @@
     "DNa02"
    ]
   },
-  "status": "development evidence; no registered test"
+  "status": "development evidence; no registered test",
+  "criterion": {
+   "metric": "turn_left_deg_vs_control",
+   "op": ">=",
+   "value": 5,
+   "units": "deg",
+   "what": "heading change toward the left during the stimulus, minus the control's",
+   "basis": "guessed threshold, written 4 October 2026 before any library result was viewed"
+  }
  },
  "record": {
   "watch": {

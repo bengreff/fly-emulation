@@ -30,6 +30,12 @@ export function chip(basis, method) {
   return out;
 }
 
+// an effector that stands in for something it is not (protocol.APPROX)
+export function approxChip(text) {
+  return text ? `<span class="chip guessed" title="${esc(text)}">approximation</span>`
+    : `<span class="chip unknown" title="the protocol declares no approximation for this effector">none declared</span>`;
+}
+
 export class Inspector {
   constructor(el, onSelect, onType) {
     this.el = el;
@@ -106,6 +112,13 @@ export class Inspector {
     const ntSrc = st.nt_source ? NT_SOURCE[st.nt_source[row]] : "";
     const ntUsed = st.nt_used ? rec.manifest.names.nt[st.nt_used[row]] : "";
     h.push(`<tr><td>spikes</td><td>${n} (${(n / dur).toFixed(1)} Hz) <span class="chip measured" title="counted from this recording">this run</span></td></tr>`);
+    for (const e of (this.targets && this.targets.get(row)) || [])
+      h.push(`<tr><td>targeted by</td><td>${esc(e.label)} ${approxChip(e.approximation)}</td></tr>`);
+    const c = this.cmp;
+    if (c) {
+      const s = (c.win.t1 - c.win.t0) / 1000, a = c.during.run[row] / s, b = c.during.ctrl[row] / s;
+      h.push(`<tr><td>vs control</td><td>${a.toFixed(1)} Hz here, ${b.toFixed(1)} Hz in the control during the stimulus (${c.win.t0.toFixed(0)} to ${c.win.t1.toFixed(0)} ms) <span class="chip measured" title="counted from the two recordings">this run</span></td></tr>`);
+    }
     if (graded) h.push(`<tr><td>output</td><td>graded (continuous release; spikes not its output) <span class="chip inferred">model rule</span></td></tr>`);
     if (ntUsed) h.push(`<tr><td>transmitter used</td><td>${esc(ntUsed)} <span class="chip inferred" title="${esc(ntSrc)}">${esc(ntSrc)}</span></td></tr>`);
     if (rec.watchIndex(row) >= 0) h.push(`<tr><td>voltage</td><td>recorded (see trace)</td></tr>`);

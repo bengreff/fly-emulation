@@ -36,7 +36,15 @@
     "MN9"
    ]
   },
-  "status": "development evidence: sugar->MN9 at 100 Hz is in the model's fit set (docs/HANDOFF.md register), not a held-out test"
+  "status": "development evidence: sugar->MN9 at 100 Hz is in the model's fit set (docs/HANDOFF.md register), not a held-out test",
+  "criterion": {
+   "metric": "readout_delta_hz",
+   "op": ">=",
+   "value": 5,
+   "units": "Hz",
+   "what": "mean MN9 rate during the stimulus minus the control's (the proboscis movement itself is not scored)",
+   "basis": "guessed threshold, written 4 October 2026 before any library result was viewed"
+  }
  },
  "record": {
   "watch": {
