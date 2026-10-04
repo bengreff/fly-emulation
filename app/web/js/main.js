@@ -7,7 +7,8 @@ import { BodyView } from "./body.js";
 import { BrainView } from "./brain.js";
 import { Traces } from "./traces.js";
 import { Inspector, esc, chip, approxChip } from "./inspector.js";
-import { controlsFor, compare, stimWindow } from "./compare.js";
+import { controlsFor, compare, stimWindow, sameModel, incompleteReadout, readoutTypes } from "./compare.js";
+import { SessionPanel } from "./session.js";
 
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
@@ -86,6 +87,8 @@ async function main() {
   window.addEventListener("resize", resize);
   resize();
   await setupCompare(cat, entry);
+  app.session = new SessionPanel($("#tab-session"), { rec });
+  if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
   const layout = params.get("view");
   if (layout) { app.brain.setLayout(layout); $(`#layout [data-v="${layout}"]`)?.classList.add("on"); }
@@ -99,6 +102,19 @@ async function main() {
   status("");
   document.body.classList.add("ready");
   requestAnimationFrame(tick);
+}
+
+// a run still recording (a live session, or a run started elsewhere): load new
+// chunks as the recorder writes them
+function followGrowth(atlas, entry) {
+  const step = async () => {
+    let n = 0;
+    try { n = await app.rec.refresh(); } catch { /* manifest mid-write; next time */ }
+    if (n) { protocolTargets(app.rec); legend(); app.traces.redraw(); }
+    if (app.rec.manifest.status === "recording") setTimeout(step, 3000);
+    else runPanel(app.rec, atlas, entry);
+  };
+  setTimeout(step, 3000);
 }
 
 function resize() {
@@ -149,7 +165,7 @@ function tick(now) {
     $("#glabels").innerHTML = gl.map(l => `<span style="left:${l.x}px;top:${l.y - 14}px">${esc(l.text)}</span>`).join("");
   }
   $("#time").textContent = `${state.t.toFixed(1)} / ${rec.duration.toFixed(0)} ms`;
-  $("#scrub").value = String(state.t / rec.duration * 1000);
+  $("#scrub").value = String(rec.duration ? state.t / rec.duration * 1000 : 0);
   $("#bodyinfo").textContent = app.body.thoraxHeight !== undefined ? `thorax ${app.body.thoraxHeight.toFixed(2)} mm` : "";
   requestAnimationFrame(tick);
 }
@@ -207,7 +223,7 @@ async function setupCompare(cat, entry) {
   const el = $("#tab-compare"), rec = app.rec;
   const go = id => { params.set("rec", id); params.delete("sel"); params.delete("ctrl"); location.search = params.toString(); };
   if (entry.control) {
-    const users = cat.recordings.filter(r => !r.control && r.n_events + r.n_genotype > 0 && JSON.stringify(r.config) === JSON.stringify(entry.config));
+    const users = cat.recordings.filter(r => !r.control && r.n_events + r.n_genotype > 0 && sameModel(r.config, entry.config));
     el.innerHTML = `<h2>A control run</h2><div class="sub">No stimulus. These runs share its model, seed and start, and compare themselves against it:</div>
       <table>${users.map(r => `<tr class="link" data-rec="${esc(r.id)}"><td>${esc(r.id)}</td><td>${esc(r.title)}</td></tr>`).join("")}</table>`;
     el.onclick = e => { const d = e.target.closest("[data-rec]"); if (d) go(d.dataset.rec); };
@@ -222,7 +238,8 @@ async function setupCompare(cat, entry) {
   const pick = cands.find(c => c.id === params.get("ctrl")) || cands[0];
   status("loading the control…");
   const ctrl = await Recording.load(pick.path, (k, n) => status(`loading the control: chunk ${k} of ${n}`));
-  const c = compare(rec, ctrl, app.atlas, app.brain.rowToAtlas);
+  const exclude = await incompleteReadout(app.atlas, readoutTypes(rec));
+  const c = compare(rec, ctrl, app.atlas, app.brain.rowToAtlas, { exclude });
   app.ctrl = ctrl;
   app.brain.setDelta(c.atlasDelta);
   $('#colour option[value="delta"]').disabled = false;
@@ -231,12 +248,12 @@ async function setupCompare(cat, entry) {
   // the noise floor: a sham run (a few forced spikes in one unrelated cell) read
   // over this run's window, against this run's rule
   const sham = entry.role === "sham" ? null : cat.recordings.find(r => r.role === "sham" && r.status === "complete"
-    && JSON.stringify(r.config) === JSON.stringify(entry.config));
+    && sameModel(r.config, entry.config));
   let floor = null;
   if (sham) {
     status("loading the sham run…");
     const sr = await Recording.load(sham.path);
-    floor = compare(sr, ctrl, app.atlas, app.brain.rowToAtlas, { win: c.win, criterion: c.criterion, readout: c.readout.map(o => o.type) });
+    floor = compare(sr, ctrl, app.atlas, app.brain.rowToAtlas, { win: c.win, criterion: c.criterion, readout: c.readout.map(o => o.type), exclude });
     floor.entry = sham;
     floor.onset = stimWindow(sr).t0;
   }
@@ -256,9 +273,15 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
   const ex = rec.manifest.protocol.expect || {}, cr = c.criterion, w = c.win;
   const sign = v => (v > 0 ? "+" : "") + f1(v);
   const fc = floor && floor.criterion, fv = fc ? fc.value_measured : null;
-  const inNoise = cr && cr.value_measured !== null && fv !== null && Math.abs(cr.value_measured) <= Math.abs(fv);
+  // the scorer's floor (score_library.py: every sham with this configuration) when there is one
+  const sv = entry.sham_values && entry.sham_values.length > 1 ? entry.sham_values : null;
+  const svMax = sv ? Math.max(...sv.map(Math.abs)) : null;
+  const inNoise = cr && cr.value_measured !== null && (sv ? Math.abs(cr.value_measured) <= svMax
+    : fv !== null && Math.abs(cr.value_measured) <= Math.abs(fv));
   const mv = k => floor ? `<td class="num">${f2(floor.move.run[k] - floor.move.ctrl[k])}</td>` : "";
+  const prep = rec.manifest.preparation;
   return `<h2>Against its control</h2>
+    ${prep && prep.coupling === "brain_only" ? `<div class="warnline">${esc(prep.desc)}</div>` : ""}
     <div class="sub">control <select id="ctrl-pick">${cands.map(x => `<option value="${esc(x.id)}" ${x.id === pick.id ? "selected" : ""}>${esc(x.id)}</option>`).join("")}</select></div>
     ${pick.commit === entry.commit ? "" : `<div class="warnline">control recorded at commit ${esc((pick.commit || "?").slice(0, 7))}, this run at ${esc((entry.commit || "?").slice(0, 7))}; the identity check below is what makes them comparable</div>`}
     <h3>Matched?</h3>
@@ -269,13 +292,14 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
     <div>${esc(ex.text || "not stated")}</div>
     <div class="dim">${esc(ex.source || "no source")}</div>
     <div style="margin:6px 0">${verdictHTML(cr)} ${cr ? `${esc(cr.what)}: <b>${cr.value_measured === null ? "n/a" : f2(cr.value_measured)} ${esc(cr.units)}</b>; pass needs ${esc(cr.op)} ${cr.value} <span class="chip guessed" title="${esc(cr.basis)}">guessed threshold</span>` : ""}</div>
-    ${fc && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">The sham run gives ${fv === null ? "n/a" : f2(fv)} ${esc(cr.units)} on the same measure${inNoise ? ": this result is no larger than the sham's, so it cannot be told from noise (one sham sample)" : " (one sham sample)"}.</div>` : ""}
+    ${sv && cr && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">${sv.length} sham runs give ${sv.map(f2).join(", ")} ${esc(cr.units)} on the same measure (largest size ${f2(svMax)}; scored by score_library.py)${inNoise ? ": this result is no larger, so it cannot be told from noise" : ": this result is larger than every sham"}.</div>`
+    : fc && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">The sham run gives ${fv === null ? "n/a" : f2(fv)} ${esc(cr.units)} on the same measure${inNoise ? ": this result is no larger than the sham's, so it cannot be told from noise (one sham sample)" : " (one sham sample)"}.</div>` : ""}
     <div class="dim">${esc(ex.status || "")}</div>
     <h3>Readout cells <span class="chip measured">this run</span></h3>
     <table><tr><td></td><td class="num">n</td><td class="num">before</td><td class="num">during</td><td class="num">after</td></tr>
     ${c.readout.map(o => o.n ? `<tr><td>${esc(o.type)}${o.targeted ? ` <span class="dim">(${o.targeted} targeted)</span>` : ""}</td><td class="num">${o.n}</td>${["before", "during", "after"].map(p => `<td class="num">${o[p] ? `${f1(o[p].run)} <span class="dim">/ ${f1(o[p].ctrl)}</span>` : "–"}</td>`).join("")}</tr>`
-      : `<tr><td>${esc(o.type)}</td><td colspan="4">not in this model</td></tr>`).join("")}</table>
-    <div class="dim">Mean Hz per cell, this run / control. Stimulus window ${w.t0.toFixed(0)} to ${w.t1.toFixed(0)} ms.</div>
+      : `<tr><td>${esc(o.type)}</td><td colspan="4">${o.excluded.length ? "only incompletely traced cells" : "not in this model"}</td></tr>`).join("")}</table>
+    <div class="dim">Mean Hz per cell, this run / control. Stimulus window ${w.t0.toFixed(0)} to ${w.t1.toFixed(0)} ms.${c.readout.some(o => o.excluded.length) ? ` Excluded as incompletely traced (the model's assay rule, F-DATA-3): ${esc(c.readout.flatMap(o => o.excluded).join(", "))}.` : ""}</div>
     <h3>Body during the stimulus <span class="chip measured">this run</span></h3>
     <table><tr><td></td><td class="num">run</td><td class="num">control</td><td class="num">diff.</td>${floor ? `<td class="num" title="the sham run minus the control, same window">sham</td>` : ""}</tr>
     ${[["forward, mm", "forward"], ["left, mm", "left"], ["turn left, deg", "turn"]].map(([l, k]) =>

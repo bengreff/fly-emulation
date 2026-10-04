@@ -82,6 +82,11 @@ footer #scrub { flex: 1; padding: 0; }
 .verdict { font: 600 12px var(--mono); padding: 1px 7px; border-radius: 3px; color: #fff; }
 .verdict.pass { background: var(--measured); } .verdict.fail { background: #c0392b; } .verdict.none { background: var(--unknown); }
 .warnline { color: var(--guessed); font-size: 12px; }
+#tab-session textarea { width: 100%; box-sizing: border-box; font: 11px var(--mono); background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
+#tab-session .row, #tab-session .stimform { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin: 5px 0; font-size: 12px; }
+#tab-session .stimform input { width: 70px; } #tab-session #ses-target { width: 150px; }
+#tab-session .ok { color: var(--measured); font-size: 12px; }
+#tab-session pre { font-size: 10px; white-space: pre-wrap; }
 aside td.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
 .stimkey { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #0090c0; background: none !important; vertical-align: -1px; }
 [data-theme="dark"] .stimkey { border-color: #40d0ff; }
@@ -130,7 +135,7 @@ aside td.num { text-align: right; font-family: var(--mono); white-space: nowrap;
   </section>
   <section id="traces-wrap"><canvas id="traces"></canvas></section>
   <aside>
-    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button><button data-tab="compare">Compare</button></div>
+    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button><button data-tab="compare">Compare</button><button data-tab="session">Session</button></div>
     <div id="tab-neuron" class="tab">
       <input id="search" placeholder="type name (e.g. MN9, DNa02) or bodyId" autocomplete="off">
       <div id="results"></div>
@@ -138,6 +143,7 @@ aside td.num { text-align: right; font-family: var(--mono); white-space: nowrap;
     </div>
     <div id="tab-run" class="tab" hidden></div>
     <div id="tab-compare" class="tab" hidden></div>
+    <div id="tab-session" class="tab" hidden></div>
   </aside>
 </main>
 <footer>

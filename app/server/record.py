@@ -32,6 +32,7 @@ import mujoco as mj  # noqa: E402
 from flyemu import lif, profiles  # noqa: E402
 from flyemu.organism import Organism  # noqa: E402
 import heldout  # noqa: E402
+import live  # noqa: E402
 import protocol as proto  # noqa: E402
 from recfmt import RecWriter, spikes_to_csr  # noqa: E402
 from caveats import generate  # noqa: E402
@@ -107,6 +108,11 @@ def main() -> int:
     ap.add_argument("--v-hz", type=float, default=1000.0)
     ap.add_argument("--spend-heldout", action="append", default=[],
                     help="held-out item id (or 'seed') this run may spend; see app/server/heldout.py")
+    ap.add_argument("--live", type=Path, metavar="COMMANDS",
+                    help="live session: read pause/resume/stop/stim commands from this JSON-lines "
+                         "file as the run goes (app/server/live.py); duration_ms is then the maximum")
+    ap.add_argument("--poll-ms", type=float, default=10.0, help="live: read commands every this much "
+                    "simulated time")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -161,6 +167,7 @@ def main() -> int:
     for g in res["genotype"]:
         net.silence(np.asarray(g["rows"], np.int64))
     stim = proto.Stimulator(res, n, cfg["seed"], org.kick_mv)
+    brain_only = res["preparation"] == "brain_only"
 
     # The eyes: tap the readout call so the recording holds exactly the values the
     # photoreceptors were driven by, without rendering the eyes a second time.
@@ -223,6 +230,10 @@ def main() -> int:
         "n_edges": int(conn.n_edges),
         "n_synapses": int(conn.weight_syn.sum()),
         "profile_status": profile_status(cfg["profile"], overrides),
+        "preparation": {"coupling": res["preparation"], "kick_rng": res["kick_rng"],
+                        "desc": "open loop, brain only: no senses, no motor output, body not stepped "
+                                "(as scripts/assay_pathways.py)" if brain_only else
+                                "closed loop: senses -> network -> muscles -> body"},
         "names": {
             "bodies": body_names,
             "actuators": [a.removeprefix("nmf/").removesuffix("-motor") for a in body.actuator_names],
@@ -268,21 +279,65 @@ def main() -> int:
     lo, hi, limited = motor_limits(m, body.actuator_names)
     chunk0 = 0
     n_eye = 0
-    for step in range(n_steps):
-        cur_step[0] = step
-        stim.world(step, org)            # world events change what the receptors can sense
+    if brain_only:                       # the body is never stepped: one observation, no torque
         obs = body.observe()
-        drive = org.sense(step, obs)
-        extra = stim.drive(step)
-        if extra is not None:
-            drive = extra if drive is None else drive + extra
+        torque = np.zeros(len(body.actuator_names), np.float32)
+    def flush(s1: int) -> None:
+        nonlocal buf, sp_steps, sp_rows, k_steps, k_rows, chunk0, n_eye
+        s0 = chunk0
+        nb = int(np.ceil((s1 - s0) / steps_per_ms))
+        st = np.concatenate(sp_steps) if sp_steps else np.zeros(0, np.int64)
+        rw = np.concatenate(sp_rows) if sp_rows else np.zeros(0, np.int64)
+        arrays = spikes_to_csr(st, rw, s0, nb, steps_per_ms)
+        for k, v in buf.items():
+            arrays[k] = np.stack(v) if v else np.zeros((0,), np.float32)
+        ef = [(s, f) for s, f in eye_frames if s0 <= s < s1]
+        n_eye += len(ef)
+        if ef:
+            arrays["eye_step"] = np.array([s for s, _ in ef], np.uint32)
+            arrays["eye"] = np.stack([f for _, f in ef])
+        # Frame times are explicit so chunks need not be aligned to the strides.
+        if k_steps:
+            arrays["kick_step"] = np.concatenate(k_steps)
+            arrays["kick_row"] = np.concatenate(k_rows)
+        arrays["frame_step"] = np.arange(s0 + (-s0) % web_stride, s1, web_stride, dtype=np.uint32)
+        arrays["v_step"] = np.arange(s0 + (-s0) % v_stride, s1, v_stride, dtype=np.uint32)
+        w.add_chunk(s0 * ts, s1 * ts, arrays)
+        eye_frames[:] = [(s, f) for s, f in eye_frames if s >= s1]
+        buf = {k: [] for k in buf}
+        sp_steps, sp_rows = [], []
+        k_steps, k_rows = [], []
+        chunk0 = s1
+        el = time.time() - t_run
+        print(f"  {s1 * ts:8.1f} ms  spikes {total:,}  wall {el:6.0f} s "
+              f"({el / (s1 * ts / 1000):.0f} s per sim s)", flush=True)
+
+    session = live.Session(args.live, w, pr, stim, neurons, ts) if args.live else None
+    poll_steps = max(1, int(round(args.poll_ms / ts)))
+    step = 0
+    while step < n_steps:
+        if session is not None and step % poll_steps == 0 and not session.poll(step):
+            if step > chunk0:
+                flush(step)
+            break
+        cur_step[0] = step
+        if brain_only:
+            drive = stim.drive(step)
+        else:
+            stim.world(step, org)        # world events change what the receptors can sense
+            obs = body.observe()
+            drive = org.sense(step, obs)
+            extra = stim.drive(step)
+            if extra is not None:
+                drive = extra if drive is None else drive + extra
         kick = stim.kick(step, ts)
         if kick is not None:
             k_steps.append(np.full(kick[0].size, step, np.uint32))
             k_rows.append(kick[0].astype(np.uint32))
             n_kicks += int(kick[0].size)
         spiked = net.step(external_mv=drive, kick=kick)
-        torque = org.motor_step(spiked)
+        if not brain_only:
+            torque = org.motor_step(spiked)
         if spiked.size:
             sp_steps.append(np.full(spiked.size, step, np.int64))
             sp_rows.append(np.asarray(spiked, np.int64))
@@ -300,42 +355,25 @@ def main() -> int:
         if step % v_stride == 0:
             buf["v"].append(np.asarray(net.v, np.float32)[watch])
 
-        if (step + 1) % chunk_steps == 0 or step + 1 == n_steps:
-            s0, s1 = chunk0, step + 1
-            nb = int(np.ceil((s1 - s0) / steps_per_ms))
-            st = np.concatenate(sp_steps) if sp_steps else np.zeros(0, np.int64)
-            rw = np.concatenate(sp_rows) if sp_rows else np.zeros(0, np.int64)
-            arrays = spikes_to_csr(st, rw, s0, nb, steps_per_ms)
-            for k, v in buf.items():
-                arrays[k] = np.stack(v) if v else np.zeros((0,), np.float32)
-            ef = [(s, f) for s, f in eye_frames if s0 <= s < s1]
-            n_eye += len(ef)
-            if ef:
-                arrays["eye_step"] = np.array([s for s, _ in ef], np.uint32)
-                arrays["eye"] = np.stack([f for _, f in ef])
-            # Frame times are explicit so chunks need not be aligned to the strides.
-            if k_steps:
-                arrays["kick_step"] = np.concatenate(k_steps)
-                arrays["kick_row"] = np.concatenate(k_rows)
-            arrays["frame_step"] = np.arange(s0 + (-s0) % web_stride, s1, web_stride, dtype=np.uint32)
-            arrays["v_step"] = np.arange(s0 + (-s0) % v_stride, s1, v_stride, dtype=np.uint32)
-            w.add_chunk(s0 * ts, s1 * ts, arrays)
-            eye_frames[:] = [(s, f) for s, f in eye_frames if s >= s1]
-            buf = {k: [] for k in buf}
-            sp_steps, sp_rows = [], []
-            k_steps, k_rows = [], []
-            chunk0 = s1
-            el = time.time() - t_run
-            print(f"  {s1 * ts:8.1f} ms  spikes {total:,}  wall {el:6.0f} s "
-                  f"({el / (s1 * ts / 1000):.0f} s per sim s)", flush=True)
+        step += 1
+        if step % chunk_steps == 0 or step == n_steps:
+            flush(step)
 
     wall = time.time() - t_run
+    if step < n_steps:                   # a live session stopped early: the run is this long
+        duration_ms = step * ts
+        pr["duration_ms"] = duration_ms
+    if session is not None:
+        wall -= session.paused_s         # compute cost excludes time spent paused
+        session.state.update(state="stopped" if session.stopped else "finished",
+                             end_ms=round(step * ts, 3), paused_s=round(session.paused_s, 1))
     try:
         org.write_inventory(out / "inventory.csv")
     except Exception as exc:          # the inventory is evidence, but not worth losing the run
         print(f"inventory not written: {exc}")
-    summary = {"spikes_total": total, "mean_rate_hz": total / n / (duration_ms / 1000.0),
-               "wall_s": round(wall, 1), "wall_s_per_sim_s": round(wall / (duration_ms / 1000.0), 1),
+    sim_s = max(duration_ms, ts) / 1000.0
+    summary = {"spikes_total": total, "mean_rate_hz": total / n / sim_s,
+               "wall_s": round(wall, 1), "wall_s_per_sim_s": round(wall / sim_s, 1),
                "torque_clip_fraction": (clip_hits / max(n_torque, 1)).round(4).tolist(),
                "n_eye_frames": n_eye, "kicks_total": n_kicks}
     w.manifest["protocol"]["resolved"]["world_applied"] = [stim.applied.get(k) for k in range(len(stim.worlds))]

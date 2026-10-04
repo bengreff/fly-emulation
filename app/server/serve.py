@@ -7,6 +7,12 @@ Routes:
     /data/...       app/data (atlases, body geometry)
     /runs/...       recordings (flyemu-rec/1 directories under --runs)
     /catalog.json   built on each request from the manifests on disk
+    /api/sessions   GET: live sessions; POST {"protocol": {...}}: start one (app/server/sessions.py)
+    /api/sessions/<id>  POST {"cmd": "pause"|"resume"|"stop"|"stim", "event": {...}}
+    /api/check      POST {"protocol": {...}}: resolve against the atlas, run the held-out guard
+
+POSTs must carry the header X-Workbench: 1 and a Host of 127.0.0.1 or localhost
+(a page from another site can send neither without the browser asking first).
 
 Files are sent as stored: .gz blobs go out as application/octet-stream with no
 Content-Encoding, and the page decompresses them itself. Nothing is cached, so a
@@ -22,6 +28,9 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from sessions import Sessions, check  # noqa: E402
 
 APP = Path(__file__).resolve().parents[1]
 REPO = APP.parent
@@ -83,6 +92,8 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
             recs[-1]["verdict"] = ("PASS" if cr["pass"] else "FAIL") + (
                 ", no spike changed" if sc.get("first_divergence_step") is None
                 else " within noise" if cr.get("within_sham") else "")
+            if cr.get("sham_values") is not None:     # the scorer's noise floor, every sham
+                recs[-1]["sham_values"] = cr["sham_values"]
     recs.sort(key=lambda r: (r["status"] != "complete", "legacy" in r["id"], r["id"]))
     atlases = []
     for a in sorted((APP / "data" / "atlas").glob("*/atlas.json")):
@@ -96,6 +107,7 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
 
 class Handler(SimpleHTTPRequestHandler):
     runs: Path = REPO / "runs" / "app"
+    sessions: Sessions | None = None
 
     def log_message(self, fmt, *args):
         if args and str(args[1]) not in ("200", "304"):
@@ -119,16 +131,43 @@ class Handler(SimpleHTTPRequestHandler):
             root, rest = APP / "web", parts
         return str(root.joinpath(*rest)) if rest else str(root)
 
+    def _json(self, obj, code: int = 200) -> None:
+        body = json.dumps(obj).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", TYPES[".json"])
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def do_GET(self):
-        if urlsplit(self.path).path == "/catalog.json":
-            body = json.dumps(catalog(self.runs)).encode()
-            self.send_response(200)
-            self.send_header("Content-Type", TYPES[".json"])
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-            return
+        path = urlsplit(self.path).path
+        if path == "/catalog.json":
+            return self._json(catalog(self.runs))
+        if path == "/api/sessions":
+            return self._json({"sessions": self.sessions.status(), "active": self.sessions.active()})
         super().do_GET()
+
+    def do_POST(self):
+        host = (self.headers.get("Host") or "").rsplit(":", 1)[0]
+        if self.headers.get("X-Workbench") != "1" or host not in ("127.0.0.1", "localhost"):
+            return self._json({"ok": False, "error": "refused: local page requests only"}, 403)
+        n = int(self.headers.get("Content-Length") or 0)
+        if not 0 < n <= 1_000_000:
+            return self._json({"ok": False, "error": "body missing or over 1 MB"}, 400)
+        try:
+            body = json.loads(self.rfile.read(n))
+        except json.JSONDecodeError as exc:
+            return self._json({"ok": False, "error": f"not JSON: {exc}"}, 400)
+        path = urlsplit(self.path).path
+        if path == "/api/check":
+            return self._json(check(body.get("protocol") or {}))
+        if path == "/api/sessions":
+            r = self.sessions.start(body.get("protocol") or {})
+            return self._json(r, 200 if r["ok"] else 409)
+        if path.startswith("/api/sessions/"):
+            r = self.sessions.command(path.rsplit("/", 1)[1], body)
+            return self._json(r, 200 if r["ok"] else 409)
+        return self._json({"ok": False, "error": "no such route"}, 404)
 
 
 def main():
@@ -138,6 +177,7 @@ def main():
     ap.add_argument("--runs", type=Path, default=REPO / "runs" / "app")
     a = ap.parse_args()
     Handler.runs = a.runs.resolve()
+    Handler.sessions = Sessions(Handler.runs)
     srv = ThreadingHTTPServer(("127.0.0.1", a.port), partial(Handler, directory=str(APP / "web")))
     url = f"http://127.0.0.1:{a.port}/"
     print(f"Fly Workbench at {url}  (recordings from {Handler.runs}; Ctrl-C stops it)", flush=True)
@@ -148,6 +188,8 @@ def main():
         srv.serve_forever()
     except KeyboardInterrupt:
         pass
+    finally:
+        Handler.sessions.shutdown()      # a live session ends with the server
 
 
 if __name__ == "__main__":

@@ -88,6 +88,7 @@ export class Recording {
     this.nContact = c0 && c0.contact ? c0.contact.shape[1] : 0;
     this.nWatch = c0 && c0.v && c0.v.shape.length > 1 ? c0.v.shape[1] : 0;
     this.duration = this.manifest.duration_ms || this.nBins * this.binMs;
+    this._counts = this._keys = null;      // caches over the whole run; it may have grown
   }
 
   // index of the last sample at or before t (ms) in a step array

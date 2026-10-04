@@ -26,6 +26,14 @@ def generate(manifest: dict, static: dict, org=None) -> list[dict]:
     add("profile", f"Profile {cfg['profile']}: {manifest['profile_status']}."
         + (f" Overrides: {', '.join(f'{k} = {v:g}' for k, v in cfg['overrides'].items())}."
            if cfg["overrides"] else ""), "configuration")
+    prep = manifest.get("preparation", {})
+    if prep.get("coupling") == "brain_only":
+        add("preparation", "Open loop, brain only: the network received only the protocol's "
+            "stimulus; no senses, no motor output, and the body was never stepped, so the fly "
+            "shown does not move. This is the preparation of the model's pathway assays "
+            "(scripts/assay_pathways.py)." + (" Kicks drawn from that script's random stream."
+                                              if prep.get("kick_rng") == "assay" else ""),
+            "configuration")
     add("start", "Every neuron starts at rest with no synaptic history and the body starts "
         "above the ground; the opening fall and the first tens of ms are transients of that "
         "choice, not behaviour.", "configuration")

@@ -73,7 +73,8 @@ def main() -> int:
         target.parent.mkdir(parents=True, exist_ok=True)
         pfile = target.with_name(target.name + ".protocol.json")
         pfile.write_text(json.dumps(pr, indent=1) + "\n")
-        cmd = [sys.executable, str(APP / "server" / "record.py"), "--protocol", str(pfile), "--out", str(target)]
+        cmd = [sys.executable, str(APP / "server" / "record.py"), "--protocol", str(pfile), "--out", str(target),
+               "--chunk-ms", str(m.get("chunk_ms", 250.0))]
         for item in (m["protocol"].get("heldout") or {}).get("spent_here") or []:
             cmd += ["--spend-heldout", item]
         if SLOT.exists():

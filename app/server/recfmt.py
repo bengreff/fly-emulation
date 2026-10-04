@@ -109,6 +109,11 @@ class RecWriter:
         self.manifest["duration_ms"] = t1_ms
         self._flush()
 
+    def note(self, **fields) -> None:
+        """Update manifest fields now (a live session's state) without a chunk."""
+        self.manifest.update(fields)
+        self._flush()
+
     def finish(self, status: str = "complete", **fields) -> None:
         self.manifest.update(fields)
         self.manifest["status"] = status

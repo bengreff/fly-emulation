@@ -26,6 +26,7 @@ from recfmt import RecReader, unpack  # noqa: E402
 ATLAS = APP / "data" / "atlas" / "male-cns-v1.0"
 LIB = REPO / "runs" / "app" / "lib"
 SMOKE = REPO / "runs" / "app" / "smoke"
+ASSAY = REPO / "runs" / "app" / "assay"     # app/protocols/assay recorded at seeds 0-2
 
 NEURONS = pd.DataFrame({
     "bodyId": [11, 12, 13, 14, 15, 16],
@@ -119,6 +120,29 @@ def test_kicks_seeded_windowed_and_at_rate():
         proto.Stimulator(r, len(NEURONS), 12, None)             # kicks need the profile's kick size
 
 
+def test_assay_kick_stream_is_the_assay_scripts():
+    """kick_rng "assay" reproduces scripts/assay_pathways.py run_trial's draws:
+    default_rng(seed + 10000), one uniform per stimulated cell per step from step 0."""
+    r = proto.resolve(doc(config={"seed": 2, "kick_rng": "assay", "preparation": "brain_only"}, duration_ms=100,
+                          events=[{"effector": "kick", "target": {"type": ["MDN", "LB3b"]}, "t_ms": 0,
+                                   "dur_ms": 100, "rate_hz": 100}]), NEURONS, 0.1)["resolved"]
+    assert (r["preparation"], r["kick_rng"]) == ("brain_only", "assay")
+    s = proto.Stimulator(r, len(NEURONS), 2, 68.75)
+    idx, rng = np.array([0, 1, 4]), np.random.default_rng(2 + 10_000)
+    for step in range(1000):
+        want = idx[rng.random(len(idx)) < 100 * 0.1 / 1000.0]
+        got = s.kick(step, 0.1)
+        assert (got[0].tolist() if got else []) == want.tolist()
+
+
+def test_brain_only_refuses_world_events():
+    with pytest.raises(ValueError, match="brain_only"):
+        proto.resolve(doc(config={"seed": 1, "preparation": "brain_only"}, events=[
+            {"effector": "world", "set": {"light_lux": 10}, "t_ms": 0, "dur_ms": 1}]), NEURONS, 0.1)
+    with pytest.raises(ValueError, match="preparation"):
+        proto.resolve(doc(config={"seed": 1, "preparation": "slice"}), NEURONS, 0.1)
+
+
 # held-out guard
 
 def test_guard_flags_giant_fibre_and_fresh_seeds(tmp_path):
@@ -153,7 +177,8 @@ def atlas_neurons():
                          "superclass": col("superclass"), "somaSide": col("side"), "instance": ""})
 
 
-PROTOCOLS = sorted((APP / "protocols").glob("*.json")) + sorted((APP / "tests" / "protocols").glob("*.json"))
+PROTOCOLS = sorted((APP / "protocols").glob("*.json")) + sorted((APP / "protocols" / "assay").glob("*.json")) + sorted(
+    (APP / "tests" / "protocols").glob("*.json"))
 
 
 @pytest.mark.skipif(not (ATLAS / "atlas.json").exists(), reason="atlas not built")
@@ -181,7 +206,7 @@ def recordings(base):
 
 def pairs():
     out = []
-    for base in (LIB, SMOKE):
+    for base in (LIB, SMOKE, ASSAY):
         runs = recordings(base) if base.exists() else []
         ctrl = [r for r in runs if proto.is_control(json.loads((r / "manifest.json").read_text())["protocol"])]
         for r in runs:
@@ -207,7 +232,7 @@ def test_identical_before_first_event(run, ctrl):
     sb = np.round(tb / ts).astype(np.int64)
     pre_a = sorted(zip(sa[sa < first].tolist(), ra[sa < first].tolist()))
     pre_b = sorted(zip(sb[sb < first].tolist(), rb[sb < first].tolist()))
-    assert pre_a == pre_b and len(pre_a) > 0
+    assert pre_a == pre_b and (len(pre_a) > 0 or first == 0)
     # the stimulus was delivered: an effector acting on cells changes the spikes;
     # a world change is recorded as applied at its onset (whether the fly senses
     # it is the result, not a property of the recorder)
@@ -221,7 +246,7 @@ def test_identical_before_first_event(run, ctrl):
     assert len(applied) == len(worlds) and all(w and w["step"] == e["on_step"] for w, e in zip(applied, worlds))
 
 
-@pytest.mark.parametrize("run", [r for base in (LIB, SMOKE) if base.exists() for r in recordings(base)], ids=lambda p: p.name)
+@pytest.mark.parametrize("run", [r for base in (LIB, SMOKE, ASSAY) if base.exists() for r in recordings(base)], ids=lambda p: p.name)
 def test_kicks_recorded_inside_their_events(run):
     r = RecReader(run)
     ev = [e for e in r.manifest["protocol"]["resolved"]["events"] if e["effector"] == "kick"]

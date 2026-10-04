@@ -22,6 +22,14 @@ Every approximation is written into the resolved protocol as `approximation`, so
 the app can show it next to the result. Random kicks use their own generator
 (seeded from the run seed), so a stimulated run and its control share every
 model random draw and are identical before the first event.
+
+Preparation (config.preparation):
+  closed_loop  Organism.sense -> Network.step -> Organism.motor_step (default)
+  brain_only   open loop as in scripts/assay_pathways.py: the network steps on
+               the protocol's drive and kicks alone; no senses, no motor output,
+               the body is built but never stepped
+config.kick_rng "assay" draws kicks from default_rng(seed + 10000) as that script
+does, so its trials can be reproduced spike for spike; the default is the app's own.
 """
 from __future__ import annotations
 
@@ -52,6 +60,8 @@ SELECTORS = ("bodyId", "type", "class", "superclass", "somaSide", "instance")
 WORLD_FIELDS = ("food", "odours", "wind_mm_s", "sound_mm_s", "sound_hz", "sound_dir",
                 "humidity_rh", "co2_fraction", "light_lux")
 MAX_DURATION_MS = 10_000.0
+PREPARATIONS = ("closed_loop", "brain_only")
+KICK_RNGS = ("app", "assay")
 
 
 def resolve_target(target: dict, neurons: pd.DataFrame) -> np.ndarray:
@@ -91,7 +101,13 @@ def resolve(protocol: dict, neurons: pd.DataFrame, timestep_ms: float) -> dict:
     dur = float(protocol.get("duration_ms", 1000.0))
     if not 0 < dur <= MAX_DURATION_MS:
         raise ValueError(f"duration_ms {dur} outside (0, {MAX_DURATION_MS:g}]")
-    out = {"genotype": [], "events": []}
+    cfg = protocol.get("config", {})
+    prep, krng = cfg.get("preparation", "closed_loop"), cfg.get("kick_rng", "app")
+    if prep not in PREPARATIONS or krng not in KICK_RNGS:
+        raise ValueError(f"config.preparation must be one of {PREPARATIONS}, kick_rng one of {KICK_RNGS}")
+    if prep == "brain_only" and any(e.get("effector") == "world" for e in protocol.get("events", [])):
+        raise ValueError("world events need the senses; a brain_only preparation has none")
+    out = {"genotype": [], "events": [], "preparation": prep, "kick_rng": krng}
     for g in protocol.get("genotype", []):
         eff = g["effector"]
         if eff not in ("TNT", "Kir2.1"):
@@ -105,42 +121,53 @@ def resolve(protocol: dict, neurons: pd.DataFrame, timestep_ms: float) -> dict:
             r["mv"] = float(g.get("mv", DEFAULT_MV[eff]))
         out["genotype"].append(r)
     for e in protocol.get("events", []):
-        eff = e.get("effector", "current")
-        if eff not in APPROX or eff in ("TNT", "Kir2.1"):
-            raise ValueError(f"event effector {eff} not available")
-        on, off = _steps(e, timestep_ms)
-        r = {**e, "effector": eff, "on_step": on, "off_step": off, "approximation": APPROX[eff]}
-        if eff == "world":
-            bad = set(e.get("set", {})) - set(WORLD_FIELDS)
-            if not e.get("set") or bad:
-                raise ValueError(f"world event must set some of {WORLD_FIELDS}; got {sorted(e.get('set', {}))}")
-            r["label"] = e.get("label") or "world: " + ", ".join(sorted(e["set"]))
-            r["n"] = 0
-        else:
-            rows = resolve_target(e["target"], neurons)
-            if rows.size == 0:
-                raise ValueError(f"event target {e['target']} matches no neuron")
-            r.update(rows=rows.tolist(), n=int(rows.size))
-            if eff == "kick":
-                r["rate_hz"] = float(e.get("rate_hz", 100.0))
-                if not 0 < r["rate_hz"] <= 1000:
-                    raise ValueError("kick rate_hz outside (0, 1000]")
-                r["label"] = e.get("label") or f"kick {r['rate_hz']:g} Hz: {target_label(e['target'])}"
-            else:
-                r["mv"] = float(e.get("mv", DEFAULT_MV[eff]))
-                if abs(r["mv"]) > 40:
-                    raise ValueError("|mv| above 40")
-                hz, width = float(e.get("pulse_hz", 0) or 0), e.get("pulse_ms")
-                if hz > 0:
-                    width = float(width if width is not None else 0.5 * 1000.0 / hz)
-                    r.update(pulse_hz=hz, pulse_ms=width,
-                             pulse_steps=(int(round(1000.0 / hz / timestep_ms)),
-                                          max(1, int(round(width / timestep_ms)))))
-                r["label"] = e.get("label") or f"{eff} {r['mv']:+g} mV: {target_label(e['target'])}"
-        out["events"].append(r)
+        out["events"].append(resolve_event(e, neurons, timestep_ms, prep))
     w = protocol.get("record", {}).get("watch")
     out["watch"] = sorted(set(resolve_target(w, neurons).tolist())) if w else []
     return {**protocol, "resolved": out}
+
+
+def resolve_event(e: dict, neurons: pd.DataFrame, timestep_ms: float,
+                  preparation: str = "closed_loop") -> dict:
+    """One run-time event: rows, steps and checked values (also used by a live
+    session to resolve an event sent while the run goes)."""
+    eff = e.get("effector", "current")
+    if eff not in APPROX or eff in ("TNT", "Kir2.1"):
+        raise ValueError(f"event effector {eff} not available")
+    if eff == "world" and preparation == "brain_only":
+        raise ValueError("world events need the senses; a brain_only preparation has none")
+    if float(e.get("dur_ms", 0)) <= 0 or float(e.get("t_ms", -1)) < 0:
+        raise ValueError("event needs t_ms >= 0 and dur_ms > 0")
+    on, off = _steps(e, timestep_ms)
+    r = {**e, "effector": eff, "on_step": on, "off_step": off, "approximation": APPROX[eff]}
+    if eff == "world":
+        bad = set(e.get("set", {})) - set(WORLD_FIELDS)
+        if not e.get("set") or bad:
+            raise ValueError(f"world event must set some of {WORLD_FIELDS}; got {sorted(e.get('set', {}))}")
+        r["label"] = e.get("label") or "world: " + ", ".join(sorted(e["set"]))
+        r["n"] = 0
+        return r
+    rows = resolve_target(e.get("target") or {}, neurons)
+    if rows.size == 0:
+        raise ValueError(f"event target {e['target']} matches no neuron")
+    r.update(rows=rows.tolist(), n=int(rows.size))
+    if eff == "kick":
+        r["rate_hz"] = float(e.get("rate_hz", 100.0))
+        if not 0 < r["rate_hz"] <= 1000:
+            raise ValueError("kick rate_hz outside (0, 1000]")
+        r["label"] = e.get("label") or f"kick {r['rate_hz']:g} Hz: {target_label(e['target'])}"
+        return r
+    r["mv"] = float(e.get("mv", DEFAULT_MV[eff]))
+    if abs(r["mv"]) > 40:
+        raise ValueError("|mv| above 40")
+    hz, width = float(e.get("pulse_hz", 0) or 0), e.get("pulse_ms")
+    if hz > 0:
+        width = float(width if width is not None else 0.5 * 1000.0 / hz)
+        r.update(pulse_hz=hz, pulse_ms=width,
+                 pulse_steps=(int(round(1000.0 / hz / timestep_ms)),
+                              max(1, int(round(width / timestep_ms)))))
+    r["label"] = e.get("label") or f"{eff} {r['mv']:+g} mV: {target_label(e['target'])}"
+    return r
 
 
 def is_control(protocol: dict | None) -> bool:
@@ -166,10 +193,25 @@ class Stimulator:
         if self.kicks and not kick_mv:
             raise ValueError("kick events need a profile with kick_mv")
         self.kick_mv = kick_mv
-        self.rng = np.random.default_rng([int(seed), 2024])   # not the model's generator
+        # not the model's generator; "assay" is scripts/assay_pathways.py's stream
+        self.rng = (np.random.default_rng(int(seed) + 10_000) if resolved.get("kick_rng") == "assay"
+                    else np.random.default_rng([int(seed), 2024]))
         self.worlds = [e for e in resolved["events"] if e["effector"] == "world"]
         self._saved: dict[int, dict] = {}
         self.applied: dict[int, dict] = {}
+
+    def add(self, e: dict) -> None:
+        """Add one resolved event during a run (a live session). Appended last, as
+        in the protocol, so a replay of the final protocol draws the same kicks."""
+        if e["effector"] in CURRENT_LIKE:
+            self.cur.append((e["on_step"], e["off_step"], np.asarray(e["rows"], np.int64), e["mv"],
+                             e.get("pulse_steps")))
+        elif e["effector"] == "kick":
+            if not self.kick_mv:
+                raise ValueError("kick events need a profile with kick_mv")
+            self.kicks.append((e["on_step"], e["off_step"], np.asarray(e["rows"], np.int64), e["rate_hz"]))
+        elif e["effector"] == "world":
+            self.worlds.append(e)
 
     def drive(self, step: int) -> np.ndarray | None:
         active = [e for e in self.cur if e[0] <= step < e[1]

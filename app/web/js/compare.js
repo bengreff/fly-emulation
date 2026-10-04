@@ -2,13 +2,15 @@
 // stimulus. Everything here is computed in the page from the two recordings
 // (derived from this recording), never read from the model.
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+// configurations that give the same run without kicks (kick_rng only changes kicks)
+export const sameModel = (a, b) => same({ ...a, kick_rng: undefined }, { ...b, kick_rng: undefined });
 
 // controls in the catalogue that can stand beside this run, best first
 export function controlsFor(cat, entry) {
   if (!entry || entry.control) return [];
   return cat.recordings
     .filter(r => r.control && r.status === "complete" && r.id !== entry.id
-      && same(r.config, entry.config) && (r.duration_ms || 0) >= (entry.duration_ms || 0))
+      && sameModel(r.config, entry.config) && (r.duration_ms || 0) >= (entry.duration_ms || 0))
     .sort((x, y) => (y.commit === entry.commit) - (x.commit === entry.commit)
       || (y.id.split("/")[0] === entry.id.split("/")[0]) - (x.id.split("/")[0] === entry.id.split("/")[0])
       || String(y.created).localeCompare(String(x.created)));
@@ -55,6 +57,24 @@ export function movement(rec, t0, t1) {
   return { forward: c * dx + s * dy, left: -s * dx + c * dy, turn, height0: a.p[2], height1: b.p[2] };
 }
 
+export const readoutTypes = rec => (((rec.manifest.protocol || {}).expect || {}).readout || {}).type || [];
+
+// Readout cells the reconstructors flag as incompletely traced (statusLabel "Hard
+// to trace" or "Partially traced"): atlas index -> instance. scripts/assay_pathways.py
+// drops these from its readouts (F-DATA-3), and so does app/tools/score_library.py.
+export async function incompleteReadout(atlas, types) {
+  const out = new Map();
+  for (const ty of types) {
+    const code = atlas.vocab.type.indexOf(ty);
+    if (code < 0) continue;
+    for (const i of atlas.ofType(code)) {
+      const m = (await atlas.meta(i)) || {};
+      if (/Hard to trace|Partially/.test(m.statusLabel || "")) out.set(i, m.instance || String(atlas.bodyId[i]));
+    }
+  }
+  return out;
+}
+
 // `opts.win` and `opts.criterion` let a sham run be read over another run's
 // window and against another run's rule (the noise floor)
 export function compare(run, ctrl, atlas, rowToAtlas, opts = {}) {
@@ -82,19 +102,23 @@ export function compare(run, ctrl, atlas, rowToAtlas, opts = {}) {
   const top = order.slice(0, 15).map(r => ({ r, i: rowToAtlas[r], run: d.run[r] / d.s, ctrl: d.ctrl[r] / d.s, delta: delta[r], targeted: targeted.has(r) }));
   let up = 0, down = 0;
   for (const r of order) { if (delta[r] >= 1) up++; else if (delta[r] <= -1) down++; }
-  // readout types named by the protocol's expectation
-  const want = new Set(opts.readout || ((run.manifest.protocol.expect || {}).readout || {}).type || []);
-  const byType = new Map();
+  // readout types named by the protocol's expectation; `opts.exclude` (atlas index ->
+  // name) drops cells flagged as incompletely traced, as the model's assays do
+  const want = new Set(opts.readout || readoutTypes(run));
+  const byType = new Map(), dropped = new Map();
   for (let r = 0; r < n; r++) {
     const i = rowToAtlas[r]; if (i < 0) continue;
     const ty = atlas.typeName(i);
-    if (want.has(ty)) { if (!byType.has(ty)) byType.set(ty, []); byType.get(ty).push(r); }
+    if (!want.has(ty)) continue;
+    const m = opts.exclude && opts.exclude.has(i) ? dropped : byType;
+    if (!m.has(ty)) m.set(ty, []);
+    m.get(ty).push(m === dropped ? opts.exclude.get(i) : r);
   }
   const mean = (p, which, rows) => !rate[p] ? null : rows.reduce((s, r) => s + rate[p][which][r], 0) / rows.length / rate[p].s;
   const readout = [...want].map(ty => {
-    const rows = byType.get(ty) || [];
-    if (!rows.length) return { type: ty, n: 0 };
-    const o = { type: ty, n: rows.length, targeted: rows.filter(r => targeted.has(r)).length };
+    const rows = byType.get(ty) || [], excluded = dropped.get(ty) || [];
+    if (!rows.length) return { type: ty, n: 0, excluded };
+    const o = { type: ty, n: rows.length, excluded, targeted: rows.filter(r => targeted.has(r)).length };
     for (const p of ["before", "during", "after"]) o[p] = { run: mean(p, "run", rows), ctrl: mean(p, "ctrl", rows) };
     return o;
   });
