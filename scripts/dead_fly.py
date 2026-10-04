@@ -36,6 +36,7 @@ if __name__ == "__main__":
         reg.overrides.update({k: float(v) for k, v in (x.split("=") for x in a.set)})
         body = Body(vision=False)
         passive.register(reg, body)
+        passive.register_coxa(reg, body)
         passive.register_rest(reg, body)
         passive.register_wings(reg, body)
         if int(reg.require("joint:wing", "range_by_function", units="enum", model_use="",

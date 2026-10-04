@@ -330,3 +330,67 @@ Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`
   - The 110 leg afferents whose type has no census nerve keep the legacy rule.
   - The ProCN chordotonal cells and non-leg bristles now have no drive. They are a recorded gap, not a model of their organ. ProCN's identity is uncertain.
 - **What it costs.** The m9 class gains were fitted under the legacy rule. With both s12 switches on, m9's silence gate still passes on seeds 12-19, so m9w was adopted (DECISIONS s12 17:50). The sugar gate is unaffected: that assay is brain-only with no body.
+
+### F-COXA-2: flybody's leg-specific coxa ranges admit the measured rest angles, but the fly still lies on its belly, alive or dead
+- **The switch.** `joint:coxa|range_source` (neutral 0) replaces the assumed joints.py coxa envelopes (±45/25/30° about the spawn pose, on mislabelled axes; F-COXA-1) with flybody's own leg-specific ranges (`data/params/coxa_ranges_flybody.csv`, flygym 2.1.0 joints.yaml; 18 joints). Label inferred: Vaxenburg et al. 2025 set those ranges to admit grooming inverse kinematics, not from measured joint limits.
+- **Rest angles refitted inside them** (`data/params/passive_leg_rest_fit_coxa_flybody.csv`, `joint:leg|spring_reference` 2), same eLife weighted protocol as F-REST-1/2.
+  - trf stalls at the neutral start (the neutral equilibrium sits on a coxa limit, every step rejected). Adding dogbox and a start from the s9 fit clipped into range fixes it.
+  - Residuals (theta/phi/psi, deg): front 2.5/-10.5/5.2 and 0.0/-12.4/3.0; middle 6.9/0.4/4.9 and 6.8/0.4/4.7; hind under 0.3. Similar to s9.
+  - Middle legs press flybody's coxa yaw and roll lower limits.
+  - The front solution moves coxa pitch to about +90° (s9: -45°) at a similar residual. Three measured angles cannot pin five spring references, so the front split is not unique (as F-REST-2).
+- **Dead-fly test with both** (`runs/s12/s12_deadfly_template_coxa`): all criteria pass. Fall onset 10 ms, thorax 1.32 to 0.77 mm, no joint at a limit, energy falls, wings move 4.8°.
+- **Standing, m9w, seed 12, 1.5 s** (`scripts/probes/standing_rest.py`):
+
+| body | thorax end (mm) | trunk on floor | legs carrying load at the end |
+|---|---|---|---|
+| legacy ranges, live | 0.54 | 96% of the run | rm, lh |
+| legacy ranges, dead | 0.54 | 97% | lm, lh |
+| flybody ranges + refit, live | 0.77 | 97% | lf, rf |
+| flybody ranges + refit, dead | 0.77 | 97% | lf, rf |
+
+- **Reading.** The coxa ranges raise the resting thorax by 0.23 mm, but the trunk still rests on the floor, and live equals dead to 0.2 µm. The contact sheet (`runs/s12/standing/standing_coxa_live_s12.png`) shows the front legs propped forward and up on the +90° coxa solution. That is not a resting posture. The switch stays at 0.
+- **Also found.** flybody's native ranges exist for CTr and FTi too (e.g. CTr pitch about -9° to +115°). The s9 CTr rest angles (-60 to -71°) and the sunk CTr poses (-12 to -41°) lie below that native lower limit. The body uses the joints.py envelopes there, so CTr ranges are a further open item of the same kind.
+
+### F-STAND-3: the fly cannot stand because the model has no resting support drive, and no measurement fixes one
+Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 measure a median standing head height of 0.5 mm above the motor-silenced collapse. For this body that is a thorax origin near 1.0 mm (inferred). Pratt et al. 2024 put the dorsal thorax at 0.51 body lengths, about 1.04 mm, at the slowest walking speed. The model's dorsal thorax is the origin plus 0.54 mm. The model ends at 0.54-0.77 mm with the trunk on the floor.
+
+- **The brain contributes nothing at rest.** On m9w the only leg motor neurons with tonic firing are the slow tibia flexors, 12.6-15.6 Hz per leg. Their spontaneous drive (36.45 mV) is inferred, fitted to a measured 24.8 Hz. ThC, CTr and TiTa motor neurons are silent, so the live and dead runs end within 0.2 µm of each other.
+- **What holding the pose would take** (`scripts/probes/stand_budget.py`, thorax held at spawn by a stiff spring, joint torques read off). Units µN·mm.
+  - CTr needs 0.94-2.90 of hold torque per leg. The passive springs push the wrong way, by -0.42 to -0.83.
+  - ThC pitch needs about 2.0-2.4 on the front and hind legs.
+  - The CTr extensor Hill unit's capacity is r·F0 = 8.9 (F0 324 µN, r 0.027 mm; FlyMimic front leg, copied to mid/hind). Holding therefore needs a resting extensor activation of about 11-32%.
+- **Tonic slow units are two orders short.** Suppose every leg pool got the slow tibia flexor's resting rate (each pool's slow units capped at the slow class's EM-volume maximum). Hill activation is the force-weighted mean of unit activations, and slow units give 0.05 µN each (Azevedo 2020 class value; measured class, model use inferred). The result is about 0.3% activation, against the 11-32% needed.
+- **Real flies use active force at rest** (Wang 2025, read). Silencing the leg motor neurons (e49-Gal4 > GtACR1) makes standing flies fall:
+  - fall onset 40-300 ms after light-on;
+  - median fall rate 1.3 mm/s, against 37 mm/s for their passive-only simulation;
+  - their model reproduces the slow fall only if active force decays with τ ≈ 100 ms (MN inactivation onset about 30 ms, 90% by 52-114 ms, plus about 40 ms muscle delay);
+  - holding the median 0.5 mm stance needs about 90× the passive torque.
+  - Adhesion is not what fails. The silenced flies fall with their feet intact. In the model, the feet slide at the friction limit (traction/normal force 1.0 at μ = 1). That follows the collapse; it does not cause it.
+- **The reflex route is sparse and lopsided.** The leg load sensors (campaniform sensilla; `scripts/probes/load_reflex_paths.py`) number, per leg: lf 6, lm 2, lh 15, rf 2, rm 0, rh 9.
+  - Direct synapses from them onto support motor pools exist only on the front legs: lf sternotrochanter 46 and tergotrochanter 159; rf tergotrochanter 27.
+  - Two-hop paths are below 2 synapse-equivalents per pool.
+  - A left-right asymmetry of 6:2 and 2:0 is an assignment or annotation gap, not anatomy. It ties standing to the sensor-assignment item of B.
+- **The missing value.** The resting firing rate (or recruitment) of the trochanter-depressor pools (tergotrochanter, sternotrochanter) and the coxa promotor/remotor pools. No Drosophila recording of resting rates for these pools was found (subagent search plus own reading). Azevedo 2020 and 2024 record tibia motor neurons only.
+- **What would not be honest.** Filling that value so the fly stands at 1.0 mm would be a behavioural fit, which the Director's instruction rules out. Possible routes are listed in DECISIONS s12 (18:23).
+
+### F-SENSE-NERVE-2: each leg sensor on its own entry nerve; the connectome annotates only 2 load sensors per leg
+- **What option 1 still got wrong** (`sense:mechano|assign_by_nerve` 1, F-SENSE-NERVE-1):
+  - It looked up combined type names whole. "SNpp29,SNpp63" and "SApp06,SApp15" have no census nerve, so 23 wing- and haltere-nerve campaniforms stayed in the leg load channel, and 29 notum- and wing-nerve bristles stayed in leg contact.
+  - It gave each type one leg from its dominant neuropil. For the 12 annotated leg campaniforms (SNpp53) that agrees with the cell's own nerve and side in only 2 of 12. These cells project bilaterally and across segments, so the neuropil rule mislabels them. For the other leg afferents the two rules agree for 98.7%.
+- **Option 2** (`assign_by_nerve` 2; `sensory.entry_nerve_per_cell`): the cell's own male-cns entry nerve and root side (measured) give its leg. ProLN gives front, MesoLN mid and MetaLN hind. The prothoracic DProN, VProN and ProAN nerves, where the front hair plates enter, keep the type rule. Combined names are split into their parts. Test: `tests/test_sense_nerve2.py`.
+
+| channel (seed 0, m9w) | option 1 | option 2 |
+|---|---|---|
+| leg load (campaniform) | 34: lf 6, lm 2, lh 15, rf 2, rm 0, rh 9 | 13: 2 per leg (lh 3); all SNpp53 |
+| leg contact | 1793 | 1764 |
+| leg joint angle / velocity | 78 / 379 | 78 / 392 |
+| wing strain / haltere strain | 211 / 288 | 237 / 408 |
+
+- **Silence gate.** It passes on seeds 12-15 so far (0 spikes/ms in the last 100 ms; whole brain 0.24-0.25 Hz; thorax 0.535-0.55 mm; no MuJoCo warnings).
+- **Load reflex under option 2** (`scripts/probes/load_reflex_paths.py --set ...=2`). Same-leg direct synapses from the campaniforms onto support pools are nearly gone: lh tergotrochanter 7, lh tibia flexor 6, rh tibia flexor 5. Two-hop paths are below 1 synapse-equivalent per pool. The front-leg paths in F-STAND-3 came from misassigned cells, so route (c) of DECISIONS 18:23 has almost no annotated substrate.
+- **The real gap is annotation, not assignment.** Counts in male-cns leg nerves, against the literature (agent report `docs/research/s12_leg_sensor_counts.md`):
+  - Campaniforms: 12 annotated (2 per leg). The femoral field alone has 11 numbered sensilla (Saltin 2025, quoting Dinges 2021; secondary). Dinges' per-leg table was not readable. Annotated load sensors are at most about a fifth of the real count.
+  - Hair plates: 96 in the leg nerves, plus front-leg plates via DProN/VProN. Pratt 2026 counts 214 hair-plate neurons in 42 plates on the six legs (read), about 36 per leg.
+  - Chordotonal: 372 in the leg nerves, about 62 per leg. Mamiya 2018 counts 135 front-leg FeCO neurons labelled by iav-Gal4, which is 80% of the population (read), so about 170 in one front-leg FeCO (derived).
+  - Unlabelled: about 180 leg-nerve cells annotated "leg proprioceptor, organ unassigned" (SNppxx 80, untyped 66, SNpp40 32, SNpp55 7), and 442 "unknown sensory" leg-nerve cells (262 on the front legs). None of them is driven. They are the likely home of the missing campaniforms and chordotonal neurons.
+- **Next discriminating step.** Assign organs to the unlabelled leg-nerve cells by an outside annotation (FANC/BANC leg-sensor labels via the existing crosswalk, `data/derived/banc_proprio_crosswalk.csv`). Keep the match uncertainty explicit. Then re-count the campaniform-to-support-pool paths. Until then the load channel is 2 cells per leg, which is a recorded under-count.

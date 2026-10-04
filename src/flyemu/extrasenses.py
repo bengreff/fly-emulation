@@ -356,11 +356,13 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
     # wing / haltere CS. Under sense:mechano|assign_by_nerve the generic campaniforms of the wing
     # nerve (ADMN) and haltere nerve (DMetaN) join them, and prosternal-nerve (PrN) hair plates
     # join the neck channel; sensory.py stops driving them as leg sensors (F-SENSE-NERVE-1).
-    from .sensory import assign_by_nerve, entry_nerves
+    from .sensory import assign_by_nerve, entry_nerve_per_cell
     extra_cells = {"wing_cs": np.zeros(len(n), bool), "haltere_cs": np.zeros(len(n), bool),
                    "neck_proprio": np.zeros(len(n), bool)}
-    if assign_by_nerve(reg):
-        nv = t.map(entry_nerves()).fillna("").to_numpy()
+    mode = assign_by_nerve(reg)
+    if mode:
+        # option 2 reads each cell's own entry nerve where recorded (F-SENSE-NERVE-2)
+        nv = entry_nerve_per_cell(n.bodyId.to_numpy(), t.to_numpy(), mode)
         sub = n.subclass.fillna("").to_numpy()
         cs = sub == "campaniform sensilla"
         extra_cells["wing_cs"] = cs & (nv == "ADMN")

@@ -75,10 +75,13 @@ class MusclePairs:
 
     @classmethod
     def load(cls, q_ref: dict[str, float] | None = None, table: Path = TABLE,
-             optimum: bool = False) -> "MusclePairs":
+             optimum: bool = False, midhind: bool = False) -> "MusclePairs":
         """optimum: take q_ref per (joint, direction) from OPTIMUM_TABLE where
-        listed (anatomical join, s11); otherwise the joint's zero pose."""
+        listed (anatomical join, s11); otherwise the joint's zero pose.
+        midhind: mid/hind rows from MIDHIND_TABLE (derived by segment size, s12)."""
         t = pd.read_csv(table, comment="#")
+        if midhind:
+            t = _replace_rows(t, pd.read_csv(MIDHIND_TABLE, comment="#"), ["joint", "direction"])
         qr = np.array([(q_ref or {}).get(j, 0.0) for j in t.joint])
         if optimum:
             o = pd.read_csv(OPTIMUM_TABLE, comment="#")
@@ -107,6 +110,22 @@ class MusclePairs:
 
 
 COXA_TABLE = TABLE.parent / "coxa_muscles.csv"
+# s12: mid/hind muscles scaled from the front leg by measured segment size
+# (scripts/build_midhind_muscles.py; switch muscle:leg|midhind_source = 1)
+MIDHIND_TABLE = TABLE.parent / "leg_muscles_midhind.csv"
+COXA_MIDHIND_TABLE = TABLE.parent / "coxa_muscles_midhind.csv"
+MIDHIND_LEG = r"(?:^|-)[lr][mh]_"
+
+
+def _replace_rows(t: pd.DataFrame, new: pd.DataFrame, key: list[str]) -> pd.DataFrame:
+    """t with the rows that `new` lists (by key) replaced in place, order kept."""
+    t = t.set_index(key)
+    new = new.set_index(key)
+    missing = new.index.difference(t.index)
+    if len(missing):
+        raise ValueError(f"derived muscle rows not in the base table: {list(missing)[:3]}")
+    t.loc[new.index, new.columns] = new
+    return t.reset_index()
 # s11: per-muscle optimum angle joined from FlyMimic by interior segment angle
 OPTIMUM_TABLE = TABLE.parents[1] / "derived" / "leg_muscle_optimum_join.csv"
 COXA_AXES = ("yaw", "roll", "pitch")
@@ -141,8 +160,11 @@ class CoxaMuscles:
     q_ref: np.ndarray         # (n, 3) rad
 
     @classmethod
-    def load(cls, q_ref: dict[str, float] | None = None, table: Path = COXA_TABLE) -> "CoxaMuscles":
+    def load(cls, q_ref: dict[str, float] | None = None, table: Path = COXA_TABLE,
+             midhind: bool = False) -> "CoxaMuscles":
         t = pd.read_csv(table, comment="#")
+        if midhind:
+            t = _replace_rows(t, pd.read_csv(COXA_MIDHIND_TABLE, comment="#"), ["leg", "muscle", "joint"])
         first = t.groupby(["leg", "muscle"], sort=False).first().reset_index()
         J, R = [], []
         for r in first.itertuples():
@@ -257,8 +279,10 @@ class HillLegDrive:
                  unit_class: np.ndarray | None = None, units_kw: dict | None = None,
                  remap: dict[int, tuple[str, float]] | None = None, coxa_model: int = 0,
                  mn_types: np.ndarray | None = None, coxa: CoxaMuscles | None = None,
-                 optimum_join: int = 0, ft_flexor_scale: float = 1.0):
+                 optimum_join: int = 0, ft_flexor_scale: float = 1.0, midhind_source: int = 0):
         """ft_flexor_scale multiplies the femur-tibia flexor (-1) F0 on every leg (s11).
+        midhind_source 0: mid/hind muscles copy the front leg; 1: scaled by measured
+        segment size (s12, scripts/build_midhind_muscles.py).
         coxa_model 0: per-DOF antagonist pairs on the coxa (session 9);
         1: anatomical coxa muscles with moment-arm vectors (CoxaMuscles), joined
         to MNs by male-cns type and leg (`mn_types` required)."""
@@ -273,7 +297,9 @@ class HillLegDrive:
                 jadr[name] = (m.jnt_qposadr[j], m.jnt_dofadr[j])
         t = pd.read_csv(TABLE, comment="#")
         q_ref = {j: float(m.qpos0[jadr[j][0]]) for j in t.joint.unique()}
-        self.p = pairs or MusclePairs.load(q_ref, optimum=bool(optimum_join))
+        if midhind_source not in (0, 1):
+            raise ValueError(f"muscle:leg|midhind_source {midhind_source!r} (0 or 1)")
+        self.p = pairs or MusclePairs.load(q_ref, optimum=bool(optimum_join), midhind=bool(midhind_source))
         if ft_flexor_scale != 1.0:
             ft = np.array([("_trochanterfemur-" in j) and j.endswith("_tibia-pitch") for j in self.p.joint])
             self.p.F0 = np.where(ft & (self.p.direction < 0), self.p.F0 * ft_flexor_scale, self.p.F0)
@@ -284,7 +310,7 @@ class HillLegDrive:
                      for a in COXA_AXES}
             for j in names:
                 q_ref.setdefault(j, float(m.qpos0[jadr[j][0]]))
-            self.coxa = coxa or CoxaMuscles.load(q_ref)
+            self.coxa = coxa or CoxaMuscles.load(q_ref, midhind=bool(midhind_source))
         elif coxa_model != 0:
             raise ValueError(f"muscle:leg|coxa_model {coxa_model!r} (0 or 1)")
         self.fused = fused

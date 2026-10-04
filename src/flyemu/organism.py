@@ -66,6 +66,7 @@ class Organism:
         self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
         # B3/B14 passive mechanics (session 9): switches default to the legacy body
         passive.register(self.reg, self.body)
+        passive.register_coxa(self.reg, self.body)      # B2 coxa ranges (s12)
         passive.register_rest(self.reg, self.body)
         passive.register_wings(self.reg, self.body)
         self.conn = connectome.build(
@@ -166,6 +167,14 @@ class Organism:
                 subsystem="muscle_mechanics", minimal=1.0,
                 minimal_note="1 = FlyMimic as shipped (1.04 uN*mm); Azevedo 2020 implies >= 40 "
                              "(parameters.csv b4_ft_flexor_scale; s11)"))
+            # s12: mid/hind leg muscles (FlyMimic fitted only the front leg)
+            midhind_source = int(self.reg.require(
+                "muscle:leg", "midhind_source", units="enum",
+                model_use="mid/hind leg muscles: 0 copies of the front leg (guessed), 1 front-leg FlyMimic "
+                          "members scaled by measured segment size on the flybody mesh (inferred; "
+                          "scripts/build_midhind_muscles.py)",
+                subsystem="muscle_mechanics", minimal=0,
+                minimal_note="copy (s9-s11 behaviour); 1 is the s12 derivation (F-MUSCLE-MH-1)"))
             units_kw = {"fused_hz": float(fused)}
             fat = float(self.reg.require(
                 "motor_unit:leg", "fatigue_fraction", units="dimensionless",
@@ -183,7 +192,8 @@ class Organism:
             self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls, remap=remap,
                                              units_kw=units_kw, coxa_model=coxa_model,
                                              mn_types=mn_types, optimum_join=optimum_join,
-                                             ft_flexor_scale=ft_flexor_scale)
+                                             ft_flexor_scale=ft_flexor_scale,
+                                             midhind_source=midhind_source)
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (

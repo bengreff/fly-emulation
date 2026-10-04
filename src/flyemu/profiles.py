@@ -178,6 +178,24 @@ M9W = {
     "sense:mechano|assign_by_nerve": (1.0, _I, _W + "; leg sensors by census entry nerve (measured), rule inferred"),
 }
 
+# m9n (session 12, candidate until DECISIONS s12 18:28 gate passes): m9w + leg sensors by each
+# cell's own entry nerve and side (F-SENSE-NERVE-2). Not fitted.
+M9N = {
+    **M9W,
+    "sense:mechano|assign_by_nerve": (2.0, _I, "s12 body fix, not fitted (F-SENSE-NERVE-2; DECISIONS s12 18:28); "
+                                      "each cell's own entry nerve and root side (measured), rule inferred"),
+}
+
+# m9m (session 12, candidate until DECISIONS s12 18:38 gate passes): m9n + mid/hind leg muscles
+# scaled by measured segment size and the TTM torque from fibre data (F-MUSCLE-MH-1). Not fitted.
+_MH = "s12 derivation, not fitted (F-MUSCLE-MH-1; DECISIONS s12 18:38)"
+M9M = {
+    **M9N,
+    "muscle:leg|midhind_source": (1.0, _I, _MH + "; front-leg FlyMimic members scaled by flybody segment size"),
+    "jump:ttm|peak_torque": (90.0, _I, _MH + "; 27 fibres x 71.2 x 40.7 um x 34.7 mN/mm^2 (Jaramillo 2009, "
+                             "Jarvis 2021) x 0.033 mm arm; 5-95% 53-134 uN*mm"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -220,6 +238,8 @@ PROFILES: dict[str, dict] = {
     "m8": {"values": M8, "kick_mv": KICK},
     "m9": {"values": M9, "kick_mv": KICK},
     "m9w": {"values": M9W, "kick_mv": KICK},
+    "m9n": {"values": M9N, "kick_mv": KICK},
+    "m9m": {"values": M9M, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

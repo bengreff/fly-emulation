@@ -31,3 +31,28 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
 - 17:43 Full suite: 178 passed in 9 m 9 s (`runs/s12/tests_full_B.txt`). The data-model tests were re-run after the B21 owner fix: 28 passed.
 - 17:33-17:50 m9 silence gate with both switches, seeds 12-19: all 0 spikes/ms. m9w adopted as the working profile; m9 is kept.
 - 17:52 Ledger regenerated: unchanged, validation problems 0.
+- 17:55-18:15 Coxa ranges (B2):
+  - switch `joint:coxa|range_source` built from flygym's leg-specific coxa ranges;
+  - rest angles refitted inside them (trf stalled at neutral; dogbox plus an s9 warm start converged);
+  - the dead fly passes all criteria;
+  - standing on seed 12, live and dead: thorax 0.77 mm (legacy 0.54), trunk on the floor 97% of the run, live = dead;
+  - contact sheet read: front legs propped forward on the +90° coxa solution. Not adopted (F-COXA-2).
+- 18:00-18:20 Standing mechanism (Director: part of B), F-STAND-3:
+  - torque budget: 0.9-2.9 µN·mm CTr hold torque per leg, so 11-32% resting extensor activation;
+  - only the slow tibia flexors are tonic; slow-unit tone in every pool would give about 0.3%;
+  - Wang 2025 read: silenced flies fall, active force decays with τ about 100 ms;
+  - load-sensor paths to the support pools exist only on the front legs (rm has 0 load afferents);
+  - height targets entered as held-out rows (Wang, Pratt).
+  - DECISION NEEDED raised (DECISIONS 18:23).
+- 18:20-18:39 B, sensor assignment (F-SENSE-NERVE-2):
+  - option 2 of `sense:mechano|assign_by_nerve`: each cell's own entry nerve and side; combined type names split;
+  - load channel becomes 2 SNpp53 per leg; wing strain 237, haltere 408;
+  - load-reflex paths under option 2 are about 0, so route (c) for standing has almost no annotated substrate;
+  - agent report (docs/research/s12_leg_sensor_counts.md): campaniforms, hair plates and chordotonal neurons are all under-annotated in male-cns; about 620 leg-nerve cells are unlabelled and undriven;
+  - pre-registered gate (18:28) running; seeds 12-15 silent.
+- 18:25-18:40 B, mid/hind leg muscles (F-MUSCLE-MH-1):
+  - leg segment geometry measured on the flybody mesh (`scripts/probes/leg_segment_geometry.py`);
+  - `scripts/build_midhind_muscles.py`: FlyMimic front-leg members scaled by housing-segment size; switch `muscle:leg|midhind_source`; tests/test_midhind_muscles.py;
+  - agent report (docs/research/s12_leg_muscle_anatomy.md): FlyMimic has mid/hind geometry but no fitted forces; TTM fibre count, size and tension are measured;
+  - TTM peak torque derived at 90 µN·mm (guess was 100);
+  - pre-registered gate m9m (18:38) queued.

@@ -151,11 +151,44 @@ def springs_outside_range(body) -> list[str]:
     return out
 
 
+COXA_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "coxa_ranges_flybody.csv"
+
+
+def apply_coxa_ranges(body) -> list[str]:
+    """B2 (s12): flybody's leg-specific thorax-coxa ranges (absolute, inferred:
+    set to admit grooming IK) in place of the joints.py envelopes (+-45/25/30
+    deg about q0, assumed, on mislabelled axes; F-COXA-1)."""
+    t = pd.read_csv(COXA_TABLE, comment="#")
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    done = []
+    for r in t.itertuples():
+        j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + r.joint)
+        if j < 0:
+            raise KeyError(r.joint)
+        m.jnt_range[j] = (r.lo_rad, r.hi_rad)
+        m.jnt_limited[j] = 1
+        done.append(r.joint)
+    return done
+
+
+def register_coxa(reg, body) -> list[str]:
+    src = reg.require("joint:coxa", "range_source", units="enum",
+                      model_use="0 joints.py envelopes (+-45/25/30 deg, assumed, mislabelled axes), "
+                                "1 flybody leg-specific ranges (data/params/coxa_ranges_flybody.csv; inferred)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="legacy m4 envelopes; flybody ranges are an option (s12)")
+    return apply_coxa_ranges(body) if int(src) else []
+
+
 def register_rest(reg, body) -> int:
     ref = reg.require("joint:leg", "spring_reference", units="enum",
-                      model_use="0 flybody neutral pose, 1 fitted to the eLife weighted protocol (F-REST-1)",
+                      model_use="0 flybody neutral pose, 1 fitted to the eLife weighted protocol (F-REST-1), "
+                                "2 refitted within flybody's coxa ranges (F-COXA-2; use with joint:coxa|range_source 1)",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; fitted references are a template option")
+    if int(ref) == 2:
+        return set_rest_angles(body, REST_TABLE_COXA)
     return set_rest_angles(body) if int(ref) else 0
 
 
@@ -259,13 +292,14 @@ def apply_coupled(body, scale: float = 1.0) -> CoupledSprings:
 
 
 REST_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "passive_leg_rest_fit.csv"
+REST_TABLE_COXA = REST_TABLE.with_name("passive_leg_rest_fit_coxa_flybody.csv")
 
 
-def set_rest_angles(body) -> int:
+def set_rest_angles(body, table: Path = REST_TABLE) -> int:
     """B3 rest angles: spring references fitted to the eLife weighted protocol
     (F-REST-1; inferred). Updates MuJoCo's spring reference and any coupled
     spring hook. Returns the number of joints set."""
-    t = pd.read_csv(REST_TABLE, comment="#")
+    t = pd.read_csv(table, comment="#")
     m = body.sim.mj_model
     pre = f"{body.fly.name}/"
     ref = {}

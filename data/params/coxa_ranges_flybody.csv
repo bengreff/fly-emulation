@@ -1,0 +1,20 @@
+# Thorax-coxa hinge ranges of the flybody leg model as shipped in flygym 2.1.0 (assets/model/flybody/joints.yaml; uv.lock sdist sha256 0670acea...). Radians, absolute joint coordinate (spawn q0 = 0 for all 18). Axes by function (F-COXA-1): pitch = extend (axis x), roll = twist about the coxa long axis (y), yaw = abduct (z). Basis: set by the flybody authors to admit inverse kinematics of tracked grooming flies (Vaxenburg et al. 2025, PMC12310536; read via the s12 agent extraction, not re-read); not measured anatomical limits. Label inferred. Leg-specific and asymmetric; mirror-identical left/right. Replaces the joints.py envelopes (+-45/+-25/+-30 deg about q0, assumed, on mislabelled axes) under joint:coxa|range_source = 1.
+joint,lo_rad,hi_rad,lo_deg,hi_deg,label
+c_thorax-lf_coxa-pitch,-0.2,1.7,-11.5,97.4,inferred
+c_thorax-lf_coxa-roll,-0.8,0.8,-45.8,45.8,inferred
+c_thorax-lf_coxa-yaw,-1.0,0.7,-57.3,40.1,inferred
+c_thorax-lh_coxa-pitch,-0.3,1.3,-17.2,74.5,inferred
+c_thorax-lh_coxa-roll,-0.15,0.8,-8.6,45.8,inferred
+c_thorax-lh_coxa-yaw,-0.9,0.25,-51.6,14.3,inferred
+c_thorax-lm_coxa-pitch,-0.2,0.9,-11.5,51.6,inferred
+c_thorax-lm_coxa-roll,-0.75,0.8,-43.0,45.8,inferred
+c_thorax-lm_coxa-yaw,-0.5,0.3,-28.6,17.2,inferred
+c_thorax-rf_coxa-pitch,-0.2,1.7,-11.5,97.4,inferred
+c_thorax-rf_coxa-roll,-0.8,0.8,-45.8,45.8,inferred
+c_thorax-rf_coxa-yaw,-1.0,0.7,-57.3,40.1,inferred
+c_thorax-rh_coxa-pitch,-0.3,1.3,-17.2,74.5,inferred
+c_thorax-rh_coxa-roll,-0.15,0.8,-8.6,45.8,inferred
+c_thorax-rh_coxa-yaw,-0.9,0.25,-51.6,14.3,inferred
+c_thorax-rm_coxa-pitch,-0.2,0.9,-11.5,51.6,inferred
+c_thorax-rm_coxa-roll,-0.75,0.8,-43.0,45.8,inferred
+c_thorax-rm_coxa-yaw,-0.5,0.3,-28.6,17.2,inferred

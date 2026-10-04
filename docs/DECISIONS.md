@@ -641,3 +641,39 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
 - `profiles.M9W` = m9 + `motor_map:wing|roles` + `sense:mechano|assign_by_nerve`, and it is now the default `WORKING_PROFILE`. m9 is kept (`FLYEMU_PROFILE=m9`).
 - Sugar to MN9 is unchanged by construction: the assay is brain-only.
 - The thorax ends at 0.52-0.55 mm on every seed, and the contact sheets show the fly on its belly. That is m9's leg output and is carried as an open item, not part of this test.
+
+### Coxa ranges kept off; standing needs a resting support drive that no data fix (18:23)
+- **`joint:coxa|range_source` stays at 0.** The flybody ranges and the refit rest angles pass the dead-fly test. However, they leave the trunk on the floor (thorax 0.77 mm against a target near 1.0 mm), and they prop the front legs forward and up on a non-unique +90° coxa solution (F-COXA-2). Live equals dead, so the switch does not change any live result. It is kept, tested, for the next attempt.
+- **One principled refit is left, not run.** Regularise the five references toward flybody's native spring references instead of the spawn pose. That would choose among the equal-residual front solutions by an outside prior, not by standing. If it is tried, it is fix 1 of at most 2, and the dead-fly test and contact sheet decide it.
+- **Standing (F-STAND-3).** Rest angles, ranges, passive stiffness and adhesion do not hold the fly up, and the measured physiology says they should not. Wang 2025 shows real flies stand on active force. The model has none at rest, because no resting rate is measured for the trochanter-depressor or coxa pools.
+
+**DECISION NEEDED (Ben): how to fill the resting support drive.**
+- (a) **Leave it unfilled.** The fly lies down until a resting rate is recorded. This is honest, but every embodied run starts from a collapsed body.
+- (b) **Fit one shared resting drive to the support pools** against the standing height (Wang 0.5 mm head; Pratt 1.04 mm).
+  - The fall after silencing is held out as the test: onset 40-300 ms, about 1.3 mm/s. That curve is set by the muscle force decay (τ ≈ 100 ms), not by the height, so it can falsify the fit.
+  - Labelled fitted, not measured. One number for all pools.
+  - This is a behavioural fit, which the Director's "no tuning toward standing" currently forbids.
+- (c) **Fill it through the load reflex.** Correct the load-sensor assignment first (rm has 0 load afferents; this is B's next item). Then see whether the connectome's own campaniform-to-motor-neuron paths carry support.
+  - No fitting is involved. The paths found are sparse, so (c) may well fail. If it fails, that is informative.
+- Recommendation: (c) now, because it is next in B anyway, then (b) only if (c) fails and Ben approves it, with the fall time course as the held-out check.
+
+### Pre-registration: leg sensors by each cell's own entry nerve (`sense:mechano|assign_by_nerve` = 2) (18:28)
+- **Why.** Option 1 decides by the type's census nerve. That misses combined type names: 23 wing- and haltere-nerve campaniforms (e.g. "SNpp29,SNpp63", "SApp06,SApp15") stayed in the leg load channel, and 29 notum- and wing-nerve bristles stayed in leg contact. It also keeps the dominant-neuropil leg. That agrees with the cell's own nerve for 98.7% of leg afferents but for only 2 of the 12 true leg campaniforms (SNpp53), which project to both sides and to all three segments.
+- **Option 2.** It is anatomy, not a fit.
+  - The cell's own male-cns entry nerve and root side (measured) give its leg.
+  - A cell whose own nerve is a non-leg nerve is not a leg sensor. The exception is the prothoracic nerves DProN, VProN and ProAN, where the front-leg hair plates enter; the type decides there, as under option 1.
+  - Combined type names are split into their parts.
+  - Result (seed 0): load sensors are 2 per leg (12 SNpp53, plus 1 with no recorded nerve). Wing strain grows from 211 to 237 cells and haltere strain from 288 to 408.
+- **Adoption test.** Identical to m9w's (17:35): `closed_loop_check.py`, force per spike 10, wing roles 1, seeds 12-19, plus `assign_by_nerve` 2.
+  - Pass: 0 spikes/ms in the last 100 ms of silence on all 8 seeds, no MuJoCo warnings, no NaN.
+  - Sugar to MN9 is brain-only and unaffected.
+  - Pass gives m9n = m9w with option 2 as the working profile, and m9w is kept. A failure is recorded with the failing seed and its spiking classes.
+
+### Pre-registration: mid/hind leg muscles by measured segment size (`muscle:leg|midhind_source` = 1) and the TTM torque from fibre data (18:38)
+- **Why.** Every mid- and hind-leg muscle was a copy of FlyMimic's front leg (guessed). FlyMimic reconstructed mid/hind muscle geometry from micro-CT but fitted no forces, because only one dataset existed for those legs (arXiv 2509.06426, Suppl. A.1; agent report `docs/research/s12_leg_muscle_anatomy.md`). The Director asked for a labelled derivation instead of a copy.
+- **Option 1** (`scripts/build_midhind_muscles.py`; F-MUSCLE-MH-1). Each front-leg FlyMimic member is scaled by the measured size of the segment that houses it, on the flybody mesh. Force scales with cross-section; moment arm and optimal length scale with the joint width. Thoracic muscles scale with the coxal opening. Labelled inferred, with the assumptions stated in the script and the copy kept as the lower sensitivity bound.
+- **TTM peak torque 90 µN·mm** (inferred; 5-95% 53-134), replacing the guessed 100. Derivation: 27 fibres (Jaramillo 2009, 26-28) × 71.2 × 40.7 µm (Jarvis 2021) × 34.7 mN/mm² (Jarvis 2021) = 2.7 mN, times the mid-leg trochanter-extensor arm 0.033 mm (FlyMimic front arm × measured mid/front coxa width).
+- **Adoption test.** Same as m9w and m9n: `closed_loop_check.py`, force per spike 10, wing roles 1, `assign_by_nerve` 2 (1 if m9n fails), seeds 12-19, plus both values.
+  - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
+  - Pass gives m9m = m9n with both values as the working profile; m9n is kept.
+  - Standing height is reported, not a criterion: at rest only the slow tibia flexors fire (F-STAND-3), so the muscles are not expected to lift the fly.

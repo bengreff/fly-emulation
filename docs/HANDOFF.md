@@ -12,11 +12,19 @@
   - Every script still sets non-leg torque per spike to 10 (guessed), which throws the wings to their stops. A wing value needs a source.
   - The wing-strain proxy reads deviation, not stroke.
   - m9w rests on its belly (thorax 0.54 mm).
+- Coxa ranges: built behind `joint:coxa|range_source` (neutral 0), with rest angles refitted inside them (`joint:leg|spring_reference` 2), tested (`tests/test_coxa_ranges.py`). Not adopted (F-COXA-2, DECISIONS 18:23):
+  - the dead fly passes, and the resting thorax rises from 0.54 to 0.77 mm, but the trunk stays on the floor;
+  - the front legs prop forward on a non-unique +90° coxa solution;
+  - live equals dead.
+- Standing is now part of B (Director). The diagnosis is F-STAND-3:
+  - the fly lacks a resting support drive (11-32% CTr extensor activation needed; tonic slow units give about 0.3%);
+  - Wang 2025 shows real flies stand on active force;
+  - no recording fixes the resting rate of the support pools.
+  - **DECISION NEEDED (Ben)** in DECISIONS 18:23: leave it unfilled, fit one drive against standing height with the silenced fall held out, or try the load reflex first (recommended).
 - Next in B, in the Director's order:
-  1. Coxa ranges. flybody's leg-specific ranges (fitted to grooming IK) sit in flygym's joints.yaml on its own axes: pitch = extend, roll = twist (long axis), yaw = abduct. joints.py overrides them with symmetric envelopes on mislabelled axes (F-COXA-1).
-  2. Sensor assignment, the rest.
-  3. Mid/hind leg muscles as a labelled derivation.
-  4. Leg damping, extensor:flexor, flight coefficients.
+  1. Sensor assignment. The leg load sensors are lopsided (lf 6, lm 2, lh 15, rf 2, rm 0, rh 9), which blocks the load-reflex route to standing.
+  2. Mid/hind leg muscles as a labelled derivation.
+  3. Leg damping, extensor:flexor, flight coefficients. CTr native ranges are also open (F-COXA-2).
 - After B comes C.
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
