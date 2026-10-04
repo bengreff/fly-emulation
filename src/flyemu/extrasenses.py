@@ -353,13 +353,25 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
         why="JO-C/E respond to sustained a3 deflection, anterior vs posterior cells opposite "
             "(Kamikouchi 2009; Yorozu 2009); per-type push/pull unknown (alternating, guessed); "
             "deflection from gravity/wind along head axis (proxy, no a2-a3 joint)")
-    # wing / haltere CS
+    # wing / haltere CS. Under sense:mechano|assign_by_nerve the generic campaniforms of the wing
+    # nerve (ADMN) and haltere nerve (DMetaN) join them, and prosternal-nerve (PrN) hair plates
+    # join the neck channel; sensory.py stops driving them as leg sensors (F-SENSE-NERVE-1).
+    from .sensory import assign_by_nerve, entry_nerves
+    extra_cells = {"wing_cs": np.zeros(len(n), bool), "haltere_cs": np.zeros(len(n), bool),
+                   "neck_proprio": np.zeros(len(n), bool)}
+    if assign_by_nerve(reg):
+        nv = t.map(entry_nerves()).fillna("").to_numpy()
+        sub = n.subclass.fillna("").to_numpy()
+        cs = sub == "campaniform sensilla"
+        extra_cells["wing_cs"] = cs & (nv == "ADMN")
+        extra_cells["haltere_cs"] = cs & (nv == "DMetaN")
+        extra_cells["neck_proprio"] = (sub == "hair plate") & (nv == "PrN")
     for name, org_name, frag in (("wing_cs", "wing campaniforms / tegula", "wing-roll"),
                                  ("haltere_cs", "haltere campaniforms", "haltere-pitch")):
         jl, jr = jidx(f"l_{frag}"), jidx(f"r_{frag}")
         if jl and jr:
             joint_ids[name] = (jl[0], jr[0])
-            add(name, organ == org_name, basis=Status.GUESSED,
+            add(name, (organ == org_name) | extra_cells[name], basis=Status.GUESSED,
                 why="wing/haltere campaniforms encode strain during the beat (Dickinson 1999; "
                     "Dickerson 2014); |joint velocity| proxy guessed")
     for name, org_name, frag in (("abdomen_proprio", "abdominal proprioceptor", "abdomen"),
@@ -367,7 +379,7 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
         ids = jidx(frag)
         if ids:
             joint_ids[name] = ids
-            add(name, organ == org_name, basis=Status.GUESSED,
+            add(name, (organ == org_name) | extra_cells.get(name, False), basis=Status.GUESSED,
                 why="trunk proprioceptors read their region's joint angles (proxy, guessed)")
     thermo = t.isin(["TRN_VP2", "TRN_VP3a", "TRN_VP3b", "HRN_VP1l", "HRN_VP1d"]).to_numpy()
     tw = np.where(t.eq("TRN_VP2").to_numpy(), 1.0, -1.0)

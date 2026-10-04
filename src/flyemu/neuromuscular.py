@@ -539,6 +539,7 @@ def _per_neuron_forces(reg, conn, rows, default_fps: float, default_tau: float):
 
 
 MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"
+WING_ROLES_TABLE = MOTOR_TABLE.with_name("wing_muscle_roles.csv")
 
 
 def _abdomen_joint(neuromere: str) -> str:
@@ -554,6 +555,15 @@ def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
     if not MOTOR_TABLE.exists():
         return []
     table = pd.read_csv(MOTOR_TABLE, comment="#")
+    if int(reg.require(
+            "motor_map:wing", "roles", units="enum",
+            model_use="0 legacy wing MN map (basalars on deviation, iii1 opens, DLM/DVM direct torques); "
+                      "1 anatomical roles, data/params/wing_muscle_roles.csv (F-WING-2)",
+            subsystem="neuromuscular", minimal=0, minimal_note="legacy map")):
+        roles = pd.read_csv(WING_ROLES_TABLE, comment="#", keep_default_na=False)
+        drop = set(r for r in roles.replaces if r)
+        table = pd.concat([table[~table.type_regex.isin(drop)], roles.drop(columns="replaces")],
+                          ignore_index=True)
     unmapped_ids = {u["bodyId"] for u in unmapped}
     cand = n[(n.superclass == "cb_motor") | n.bodyId.isin(unmapped_ids)].copy()
     cand["side"] = cand.instance.fillna("").str.extract(r"_([LR])$")[0].map({"L": "l", "R": "r"})

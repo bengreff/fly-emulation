@@ -613,3 +613,31 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - central_other release 1.163.
 - Every one of the 12 clears the sugar bar. Silence is the binding gate: a high MN9 rate goes with runaway (5 of 6 candidates above 100 Hz fail at least one seed). The candidates that pass sit near the bar, at 8-10 Hz, except c001. With these boxes, inhibitory release alone does not decide sugar transmission (c008 has 1.1, c002 0.71, c001 0.32).
 - **Not yet decided:** the pre-registered pick is across all 24. Candidates c012-c023 are running detached on backhouse (tmux `s11_m10q_gs`, sugar stage). The Mac closed-loop results are copied into `runs/s11_m10q_gs/`, so `collect` sees them. Held-out seeds 23-25 and the held-out assays are still unseen.
+
+## Session 12 decisions (4 October 2026)
+
+### Wings at rest: two switches, adoption gated on m9's silence seeds (pre-registered 17:35, before any gate run was read)
+- **Diagnosis (F-WING-2, F-SENSE-NERVE-1).** On seed 12, the resting wing motor neurons fire because wing-nerve campaniforms were driven as leg load. The legacy wing map also sends the steering muscles to the wrong axes.
+- **Fixes.** Two switches, each with the legacy behaviour as neutral:
+  - `motor_map:wing|roles`: a sourced role table;
+  - `sense:mechano|assign_by_nerve`: census entry nerve.
+  - Neither was fitted. Each follows from anatomy, and seed 12 was used only to find the fault.
+- **Adoption test.** Both switches on, with everything else exactly as at m9's adoption: `closed_loop_check.py`, non-leg torque per spike 10, seeds 12-19.
+  - Pass: `silent_last100ms_spikes_per_ms` is 0 on all 8 seeds, the same criterion as m9.
+  - Sugar to MN9 is not re-run, because `assay_pathways.py` is brain-only and builds no afferents, so neither switch can change it.
+  - If all 8 pass, a profile m9w = m9 + the two switches becomes the working profile. m9 is kept.
+  - If any seed fails, the switches are not adopted, and the failing seed and the classes carrying its spikes are recorded.
+- **Not part of this decision.** The 10× non-leg torque per spike stays in the gate scripts. Changing it would change m9's gate conditions. F-WING-2 records that it throws the wings, and replacing it with a wing value needs a source.
+
+### Result: m9w adopted; seeds 12-19 silent with both switches (17:50)
+- Measured with `closed_loop_check.py`, everything as at m9 adoption plus the two switches. Outputs are in `runs/s12/gates/cl_rn_s{12..19}.json`.
+
+| seed | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
+|---|---|---|---|---|---|---|---|---|
+| spikes/ms, last 100 ms of silence | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| whole-brain Hz with senses on | 0.252 | 0.251 | 0.245 | 0.250 | 0.249 | 0.240 | 0.251 | 0.249 |
+
+- No MuJoCo warnings and no NaN state on any seed. Motor rate is 2.02-2.06 Hz.
+- `profiles.M9W` = m9 + `motor_map:wing|roles` + `sense:mechano|assign_by_nerve`, and it is now the default `WORKING_PROFILE`. m9 is kept (`FLYEMU_PROFILE=m9`).
+- Sugar to MN9 is unchanged by construction: the assay is brain-only.
+- The thorax ends at 0.52-0.55 mm on every seed, and the contact sheets show the fly on its belly. That is m9's leg output and is carried as an open item, not part of this test.

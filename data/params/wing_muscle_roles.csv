@@ -1,0 +1,12 @@
+# Wing motor neurons -> hinge action by anatomical role (switch motor_map:wing|roles=1; session 12, F-WING-2).
+# Rows replace the legacy rows of data/params/motor_targets.csv named in `replaces`; same columns otherwise.
+# Joint functions are measured on the flybody geometry (F-WING-1): wing-yaw = stroke (fore-aft sweep;
+# folded pose yaw 0, fold stop -10 deg, forward sweep +), wing-roll = deviation, wing-pitch = rotation.
+# The legacy map was written when joints.py read roll as the stroke, so it sent the basalar muscles to deviation.
+# Torque per spike is still the shared motor_unit:all|force_per_spike (unmeasured for wing muscles).
+replaces,type_regex,target,sign,target_basis,sign_basis,source,justification
+^b1 MN$|^b2 MN$|^b3 MN$,^b1 MN$|^b2 MN$|^b3 MN$,c_thorax-{s}_wing-yaw,1,inferred,inferred,Whitehead et al. 2022 Sci Adv 8:eabo7461; Tu & Dickinson 1996; Snodgrass 1935,"b1 and b2 act on the basalar sclerite and modulate stroke amplitude (Whitehead 2022, measured); stroke is wing-yaw on this body (F-WING-1, measured); the basalar muscles extend the flexed wing forward (Snodgrass 1935), so +yaw (inferred); b3 grouped with them by sclerite (inferred)"
+^iii1 MN$|^iii3 MN$|^MNwm35$,^iii1 MN$,c_thorax-{s}_wing-yaw,-1,inferred,inferred,"Melis, Siwanowicz & Dickinson 2024 Nature (bioRxiv 10.1101/2023.06.29.547116v3); Snodgrass 1935","iii1 is rarely active in flight and is likely homologous with the ancestral retractor that folds the wing along the body axis (Melis 2024); the third axillary muscle is the wing flexor (Snodgrass 1935); folding is a backward sweep, so -yaw toward the fold stop (sign inferred from the folded pose)"
+,^iii3 MN$|^MNwm35$,c_thorax-{s}_wing-pitch,1,inferred,guessed,Cheong et al. 2024,"unchanged from the legacy map: third axillary muscles (MNwm35 putative iii4) rotate the wing; mapped to wing pitch"
+^DLMn,^DLMn,NONE:indirect power muscle with no wing insertion; acts only through thorax deformation (flight generator B10),0,measured,measured,Dickinson & Tu 1997; Melis et al. 2024,"DLM spans the thorax, not the wing base; its deformation is amplified by the hinge into the stroke (Melis 2024). In the model it drives the B10 generator only, read from the network directly (flight.FlightMotor)"
+^DVMn,^DVMn,NONE:indirect power muscle with no wing insertion; acts only through thorax deformation (flight generator B10),0,measured,measured,Dickinson & Tu 1997; Melis et al. 2024,"DVM spans the thorax, not the wing base; as DLM"

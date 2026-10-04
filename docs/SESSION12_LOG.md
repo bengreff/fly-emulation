@@ -12,3 +12,22 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
 - 16:48 genotype note softened (no source in the repo for the male-cns strain).
 - 16:50-17:00 full suite (slot limiter): 174 passed in 8 m 46 s (runs/s12/tests_full.txt). The MuJoCo "QACC at DOF 40" warning is also in every session 11 test log.
 - 17:01 ledger regenerated after the genotype note; A committed.
+- 17:02 Director approved A. B begins in the Director's order: wings at rest, coxa ranges, sensor assignment. Mid/hind leg muscles are to be a labelled derivation, not a copy. The FlyMimic author request goes on Ben's list, via the Director.
+- 17:04 B, wings at rest: the passive body holds the wings folded (`scripts/probes/wing_rest.py`).
+- 17:08-17:11 m9 seed 12, 1.5 s (`scripts/probes/wing_drive.py`):
+  - the wings end pinned on their stops;
+  - with wing torques zeroed they stay folded, but the left wing MNs fire tonically at 17-23 Hz.
+- 17:21 Trace (`wing_premotor_trace.py`): the drive comes from SNpp30-33 wing-nerve campaniforms, driven as hind-leg load, through IN17A cells to b1, b2, iii1 and MNwm35. The wing map also had basalars on deviation, iii1 opening the wing, and DLM/DVM with direct hinge torque.
+- 17:21-17:32 Switch `motor_map:wing|roles` (`data/params/wing_muscle_roles.csv`) and switch `sense:mechano|assign_by_nerve`:
+  - with both switches, no wing MN is above 5 Hz;
+  - at 10 µN·mm per spike, sporadic spikes still throw the wings to their stops;
+  - at the declared default of 1, the wings stay folded and symmetric (peak 18°);
+  - the legacy arm at 1 holds the left wing raised.
+  - Contact sheets read. F-WING-2 and F-SENSE-NERVE-1 written.
+- 17:33 Nerve counts: 198 of 2,482 leg afferents enter by non-leg nerves. There is no channel overlap.
+  - Tests: `tests/test_wing_rest.py` 4 passed.
+  - Full suite: the first run stopped on unquoted commas in my new structural_keys rows; fixed and re-running.
+- 17:35 Pre-registration for adoption (DECISIONS s12): m9's silence gate on seeds 12-19 with both switches; running one seed at a time through the slot limiter.
+- 17:43 Full suite: 178 passed in 9 m 9 s (`runs/s12/tests_full_B.txt`). The data-model tests were re-run after the B21 owner fix: 28 passed.
+- 17:33-17:50 m9 silence gate with both switches, seeds 12-19: all 0 spikes/ms. m9w adopted as the working profile; m9 is kept.
+- 17:52 Ledger regenerated: unchanged, validation problems 0.

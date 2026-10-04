@@ -169,6 +169,15 @@ M9 = {
     "cell_type:all|within_type_size_exponent": (1.0, _I, _RS + "; prior centre, central size rule on"),
 }
 
+# m9w (session 12, adopted 17:50 after seeds 12-19 stayed silent; DECISIONS s12 17:35): m9 + the
+# wing-muscle role map and nerve-based afferent assignment (F-WING-2, F-SENSE-NERVE-1). Not fitted.
+_W = "s12 body fix, not fitted (F-WING-2, F-SENSE-NERVE-1; DECISIONS s12)"
+M9W = {
+    **M9,
+    "motor_map:wing|roles": (1.0, _I, _W + "; wing MN roles from anatomy (data/params/wing_muscle_roles.csv)"),
+    "sense:mechano|assign_by_nerve": (1.0, _I, _W + "; leg sensors by census entry nerve (measured), rule inferred"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -195,7 +204,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9w")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -210,6 +219,7 @@ PROFILES: dict[str, dict] = {
     "m7": {"values": M7, "kick_mv": KICK},
     "m8": {"values": M8, "kick_mv": KICK},
     "m9": {"values": M9, "kick_mv": KICK},
+    "m9w": {"values": M9W, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

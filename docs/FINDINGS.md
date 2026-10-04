@@ -271,3 +271,62 @@ Session 12, docs/BLANKS_AUDIT.md (grain-by-grain walk of what is measurable in a
 - Per synapse (12 quantities), nothing in the model varies at its own grain; 6 run on class or global values. The model holds 0 % measured synapse-grain numbers. 13 % of synapse slots are measured but unused (synapse positions, polyadic structure, weak synapses).
 - The slot total grows from 374.4 M to 1,701.7 M, mostly per-synapse STP and receptor mix. The headline "data in the model" share therefore falls from 1.90 % to 0.42 % with no change to the model. Outside the synapse grain: 50.0 M slots, 14.1 % measured.
 - Ledger corrections: 8 rows had no carrier (`mech: none`); two channel rows were labelled absent although rung 1 simulates them; about 50,000 glial-cell slots were counted as body parts (grain mapping bug); 4 receptor fills were inconsistent.
+
+### F-WING-2: the resting wings were lifted by body weight read as wing strain, then moved by a wing map written for the mislabelled joints
+Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`; outputs, logs and contact sheets in `runs/s12/wings/`. All numbers are model measurements.
+- **The passive body is not the cause.** With all wing torques zeroed, the wings stay folded (end angles within 7°, peak 11°). The left wing motor neurons still fire tonically at 17-23 Hz (b1, b2, iii1, MNwm35), and the right ones do not.
+- **Source of the drive.** Trace by `scripts/probes/wing_premotor_trace.py`, signed synapses × presynaptic rate, 3 levels up:
+  1. SNpp30-33 are wing-nerve (ADMN) campaniforms with about 4.5 % of their synapses in leg neuropil.
+  2. The legacy rule assigned them to the hind legs and drove them as leg load at 16.7 Hz.
+  3. The drive passes through INXXX038, AN17A003 and AN17A031 to left IN17A039/027/034/035/064, then to the wing motor neurons.
+  4. In short, body weight on the legs was read as wing strain. F-SENSE-NERVE-1 has the general rule.
+- **The wing map was wrong in three places.** The legacy `motor_targets.csv` rows predate F-WING-1.
+  - The basalar muscles b1-b3 drove wing-roll, which is deviation on this body, not stroke.
+  - iii1 drove wing-pitch in the opening direction.
+  - DLM and DVM got direct hinge torques, though they have no wing insertion.
+- **Two fixes, each behind a switch with the legacy behaviour as neutral:**
+  - `motor_map:wing|roles` uses `data/params/wing_muscle_roles.csv`:
+    - basalars on +stroke (yaw), labelled inferred (Whitehead 2022; Tu & Dickinson 1996; Snodgrass 1935);
+    - iii1 on -stroke toward the fold stop, labelled inferred (Melis 2024: likely homolog of the ancestral retractor that folds the wing; Snodgrass 1935);
+    - DLM and DVM act only through the B10 flight generator, labelled measured anatomy (Dickinson & Tu 1997; Melis 2024).
+  - `sense:mechano|assign_by_nerve`, see F-SENSE-NERVE-1.
+
+| arm | non-leg torque/spike (µN·mm) | wing MNs > 5 Hz | end stroke L/R (°) | end rotation L/R (°) | peak \|angle\| (°) |
+|---|---|---|---|---|---|
+| m9 (legacy map and rule) | 10 | 4 | -10/-10 (fold stop) | 40/40 (stop) | 71 (deviation stop) |
+| torques zeroed | 10 | 4 | 5/7 | -7/-6 | 11 |
+| roles only | 10 | 4 | 160/0 | 41/-10 | 178 |
+| roles + nerve | 10 | 0 (max 2.7 Hz) | 140/122 | -131/-83 | 177 |
+| m9, legacy | 1 | 5 | 29/11 | 39/7 | 40 |
+| **roles + nerve** | **1** | **0 (max 2.0 Hz)** | **8/10** | **-7/-3** | **18** |
+
+- **Result.** With both switches at the declared default of 1 µN·mm per spike, the resting wings stay folded over the abdomen and are left-right symmetric. The contact sheet `docs/media/s12_wings_rest_roles_nerve.png` shows them folded throughout. The legacy arm at the same force holds the left wing raised (`docs/media/s12_wings_rest_legacy.png`).
+- **The remaining cause is the 10× torque, not the wiring.**
+  - Every run since session 5 has set the shared non-leg torque per spike to 10. That value is guessed, has no wing basis, and only reaches non-leg motor neurons, because the leg motor neurons use the per-neuron table.
+  - At 10, sporadic 2-3 Hz spikes throw the wings to their stops. Each spike adds 10 µN·mm against a 1 µN·mm/rad hinge spring.
+  - A rough estimate of one steering-muscle twitch is about 1 µN·mm (guessed: cross-section × specific tension × moment arm × twitch fraction).
+  - Bergou 2010 measured the in-flight rotation-axis stiffness at about 5.2 µN·mm/rad, which is stiffer than the 1 µN·mm/rad spring used here.
+  - Open: a wing torque per spike, and the resting stroke-axis stiffness.
+- **Not fixed here.** In both arms m9 lies on its belly at rest. That is m9's live leg output on the template body, a separate open item. The wing-strain proxy still reads wing-roll velocity instead of the stroke (F-WING-1).
+
+### F-SENSE-NERVE-1: 198 afferents that enter by wing, haltere, neck or other non-leg nerves were driven as leg sensors
+- **The legacy rule.** `sensory.leg_from_roiinfo` makes any mechanosensory afferent with leg-neuropil synapses a sensor of its dominant leg.
+- **The census check.** The male-cns census gives each type's entry nerve (`data/derived/sensory_census.csv`; leg nerves ProLN, MesoLN, MetaLN; Court et al. 2020 nerve names). By that census, the m9 organism drove 198 of 2,482 leg afferents that do not enter by a leg nerve (measured on the model, seed 0):
+
+| organ | nerve | cells |
+|---|---|---|
+| campaniform sensilla | ADMN (wing) | 48 |
+| campaniform sensilla | DMetaN (haltere) | 4 |
+| hair plate | PrN (prosternal, neck) | 35 |
+| chordotonal organ (census: leg) | ProCN | 30 |
+| mechanosensory bristle | ADMN / DMetaN / PDMN | 20 / 39 / 22 |
+
+- **Under `sense:mechano|assign_by_nerve`=1:**
+  - A cell is a leg sensor only if its type enters by a leg nerve.
+  - Campaniforms from ADMN join the wing-strain channel, which grows from 19 to 211 cells. This includes ADMN campaniforms that had no drive at all before.
+  - Campaniforms from DMetaN join haltere strain (213 to 288 cells).
+  - PrN hair plates join neck proprioception (3 to 38 cells).
+  - No cell is in two channels.
+  - The 110 leg afferents whose type has no census nerve keep the legacy rule.
+  - The ProCN chordotonal cells and non-leg bristles now have no drive. They are a recorded gap, not a model of their organ. ProCN's identity is uncertain.
+- **What it costs.** The m9 class gains were fitted under the legacy rule. With both s12 switches on, m9's silence gate still passes on seeds 12-19, so m9w was adopted (DECISIONS s12 17:50). The sugar gate is unaffected: that assay is brain-only with no body.

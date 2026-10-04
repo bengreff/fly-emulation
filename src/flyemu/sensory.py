@@ -78,6 +78,38 @@ def leg_from_roiinfo(roi_json: str | None) -> str | None:
     return best
 
 
+# Leg nerves (Court et al. 2020 Neuron 107:1071, VNC nerve nomenclature, as used in male-cns).
+LEG_NERVES = {"ProLN", "MesoLN", "MetaLN"}
+
+
+def entry_nerves() -> dict[str, str]:
+    """Cell type -> entry nerve(s) ';'-joined, from the sensory census (male-cns entry nerve per type)."""
+    cen = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "derived" / "sensory_census.csv")
+    out = {}
+    for g, e in zip(cen.group, cen.entry_nerves):
+        for t in str(g).split(","):
+            out[t] = str(e) if isinstance(e, str) else ""
+    return out
+
+
+def enters_by_leg_nerve(nerves: str) -> bool | None:
+    """True/False when the entry nerve is known, None when it is not."""
+    parts = [x for x in str(nerves).split(";") if x and x != "nan"]
+    if not parts:
+        return None
+    return any(x in LEG_NERVES for x in parts)
+
+
+def assign_by_nerve(reg: Registry) -> bool:
+    return bool(int(reg.require(
+        "sense:mechano", "assign_by_nerve", units="enum",
+        model_use="0 legacy: a mechanosensory afferent is a leg sensor if it has any leg-neuropil "
+                  "synapses (dominant LegNp); 1 only if its type enters by a leg nerve (census entry "
+                  "nerve); wing-nerve (ADMN) and haltere-nerve (DMetaN) campaniforms go to the wing and "
+                  "haltere strain channels, prosternal-nerve hair plates to the neck (F-SENSE-NERVE-1)",
+        subsystem="sensory_transduction", minimal=0, minimal_note="legacy dominant-leg-neuropil rule")))
+
+
 @dataclass
 class Afferents:
     """Which network rows receive which body signal, and with what gain."""
@@ -198,6 +230,19 @@ def build(reg: Registry, conn, body, params=None) -> Afferents:
     sens = n[n.subclass.isin(ENCODES)].copy()
     sens["leg"] = [leg_from_roiinfo(roi_lut.get(b)) for b in sens.bodyId]
     sens = sens[sens.leg.notna()]
+    if assign_by_nerve(reg):
+        nerve = entry_nerves()
+        legn = sens.type.map(lambda t: enters_by_leg_nerve(nerve.get(t, "")) if isinstance(t, str) else None)
+        dropped = sens[legn.eq(False).to_numpy()]
+        reg.provide(
+            "afferent:non_leg_nerve", "excluded_from_leg_drive", int(len(dropped)), units="neurons",
+            model_use="mechanosensory afferents with leg-neuropil synapses whose type enters by a "
+                      "non-leg nerve: no longer driven by leg signals",
+            status=Status.DERIVED, method="male-cns entry nerve per type (sensory census, measured) under the leg-nerve rule",
+            evidence="; ".join(f"{k}: {v}" for k, v in dropped.groupby("subclass").size().items()),
+            subsystem="sensory_transduction", instances=int(len(dropped)),
+            uncertainty="cells whose type has no census entry nerve keep the legacy rule")
+        sens = sens[~legn.eq(False).to_numpy()]
 
     rows = conn.index_of(sens.bodyId.to_numpy())
     ok = rows >= 0

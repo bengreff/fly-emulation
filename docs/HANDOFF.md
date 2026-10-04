@@ -2,14 +2,29 @@
 
 **Rewritten each session; do not append.** State as of 1 October 2026, 04:35, end of session 11.
 
-**Session 12 in progress (4 October 2026, from 16:36):** Ben's order is blanks, accurate body, then the ladder to synapse-specific (A, B, C), nothing else. A is done: `docs/BLANKS_AUDIT.md` (143 quantities, every one owned; 14 stubs). Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. The rest of this file is still the session 11 state.
+**Session 12 in progress (4 October 2026, from 16:36):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this paragraph, the file is still the session 11 state, except the working model, which is now m9w.
+- A is done: `docs/BLANKS_AUDIT.md` (143 quantities, every one owned; 14 stubs).
+- B's first gap, wings at rest, is closed (F-WING-2, F-SENSE-NERVE-1):
+  - Resting wing motor neurons were driven by wing-nerve campaniforms that the model read as hind-leg load, and the wing map had the steering muscles on the wrong axes.
+  - Two sourced switches fix this. With them, m9's silence gate still passes on seeds 12-19, so **m9w = m9 + `motor_map:wing|roles` + `sense:mechano|assign_by_nerve` is the working profile** (DECISIONS s12).
+  - At the declared 1 µN·mm per spike the wings rest folded and symmetric (`docs/media/s12_wings_rest_roles_nerve.png`).
+- Still open from this item:
+  - Every script still sets non-leg torque per spike to 10 (guessed), which throws the wings to their stops. A wing value needs a source.
+  - The wing-strain proxy reads deviation, not stroke.
+  - m9w rests on its belly (thorax 0.54 mm).
+- Next in B, in the Director's order:
+  1. Coxa ranges. flybody's leg-specific ranges (fitted to grooming IK) sit in flygym's joints.yaml on its own axes: pitch = extend, roll = twist (long axis), yaw = abduct. joints.py overrides them with symmetric envelopes on mislabelled axes (F-COXA-1).
+  2. Sensor assignment, the rest.
+  3. Mid/hind leg muscles as a labelled derivation.
+  4. Leg damping, extensor:flexor, flight coefficients.
+- After B comes C.
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
 ## Where the project stands
 
 - **Direction (Ben, locked 2026-09-28, re-stated 2026-09-30):** fill 100% of the fly's information at the highest plausible fidelity; the ledger fill fraction is the metric. Missing data is inferred with development models (size rule, lineage/hemilineage, birth order, wiring compensation, segment/side) and transcriptome tables, every built mechanism runs at its prior, then the bounded search of CONSTRUCTION.md / PLAN_NEXT.md. Behaviour and stability are guardrails, never objectives: do not fit to recorded walking or tune for walking (that was tried; see DECISIONS 2026-09-30 20:35).
-- **Working model: m9** (`profiles.M9`, the default since 2026-10-01 00:27) = m8 + class gains re-searched on the rung-1 membrane (DN release 0.85, MN_other input 1.6, gustatory release 1.25, central size exponent 1.0; held out seeds 17-19 silent, bitter suppression, sugar dose response, bitter alone all pass; sugar -> MN9_L 5.7 Hz; F-RS-1). m8 kept (`FLYEMU_PROFILE=m8`).
+- **Working model: m9w** since 2026-10-04 17:50: m9 plus the two s12 body/sensor switches above, not fitted. Below, **m9** (`profiles.M9`, the default from 2026-10-01 00:27 to 2026-10-04 17:50) = m8 + class gains re-searched on the rung-1 membrane (DN release 0.85, MN_other input 1.6, gustatory release 1.25, central size exponent 1.0; held out seeds 17-19 silent, bitter suppression, sugar dose response, bitter alone all pass; sugar -> MN9_L 5.7 Hz; F-RS-1). m8 kept (`FLYEMU_PROFILE=m8`).
 - **Rung 2 (synapse receptor mix and kinetics): built, tested, not adopted** (F-R2-1; DECISIONS 2026-10-01 00:45 to 02:44).
   - What exists:
     - conductance synapses, with a GPU port equal to the CPU (`gpu/batched.py`; tests in `tests/test_gpu_batched.py`);
