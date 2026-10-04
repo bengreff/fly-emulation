@@ -1,8 +1,9 @@
 # Fly workbench: design
 
-**Status:** design, 4 October 2026 (written 16:45 CDT). Nothing in this file is built yet except
-`app/tools/bench_live_cost.py`. Owner: the app worker (branch `app`). The model is owned by the
-fly worker; the app reads it only through public functions and asks for new ones (section 13).
+**Status:** design written 4 October 2026, 16:45 CDT; Ben's answers recorded and milestone 1 (M1)
+built at 17:20 CDT the same day (section 14 says what M1 contains; `app/README.md` says how to run
+it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
+only through public functions and asks for new ones (section 13, on hold).
 
 ## 1. What it is for
 
@@ -11,6 +12,23 @@ interaction mechanisms etc, to replace our current viewer ... a research tool in
 select and mix and match bodies and brain scans and levels of fidelity". Also a fly's-eye view and
 virtual optogenetics. Standing rules: a local web page or standalone app (not a Claude artifact);
 behaviour realism over pretty graphics; public on GitHub with a static replay mode for GitHub Pages.
+
+Ben's answers (4 October 2026, section 16) set the direction:
+
+- **A research tool first**, dense and labelled, rather than a showcase.
+- **An installable local app**, Mac first, with backhouse (GPU) for long runs. It downloads
+  connectome data on demand; it offers a library of long precomputed recordings ("minutes of fly
+  behaviour that took days to compute") and shareable run configurations, so a user can download a
+  config and run their own test in an arbitrary simulated environment. A browser-only lite
+  simulation is not a goal now.
+- **Everything switchable** on the brain map, and every value carries its **layer**: measured from
+  the scan, inferred by a rule, or completed by search. Layers can be toggled, and alternative
+  completions (other seeds or ensemble members) can be selected, because "our ending complete brain
+  that we build will not be the only possible one" (section 5.1).
+- **Scans:** male CNS and FlyWire (FAFB) at least; comparison across scans now, simulation on other
+  scans when the model supports it.
+- **Failures are shown, labelled.** Honesty over showcase.
+- **Order:** the intervention mechanism next (M2), then the fly's-eye view (M3).
 
 Design principles, in priority order:
 
@@ -35,14 +53,14 @@ Design principles, in priority order:
 
 | Piece | What it does | Keep | Problem |
 |---|---|---|---|
-| `viz/index.html` (single file, three.js r128 from a CDN) | 3D body from the compiled geometry, tarsal load tint, follow camera; motor-neuron raster split into "reach a muscle" and "drive nothing"; joint-torque heat map with clipping marked white; whole-CNS rate trace | body rendering, the mapped/unmapped raster split, clipping disclosure, transport controls | no brain map, no neuron identity, no interaction; caveats hard-coded and now wrong ("every neuron shares one membrane time constant", "male-cns:v1.0 → NeuroMechFly" while the default body is flybody, "176,422 neurons" while the model runs 167,111 at ≥ 5 synapses) |
+| `viz/index.html` (single file, three.js r128 from a CDN) | 3D body from the compiled geometry, tarsal load tint, follow camera; motor-neuron raster split into "reach a muscle" and "drive nothing"; joint-torque heat map with clipping marked white; whole-CNS rate trace | body rendering, the mapped/unmapped raster split, clipping disclosure, transport controls | no brain map, no neuron identity, no interaction; caveats hard-coded and now wrong ("every neuron shares one membrane time constant", "male-cns:v1.0 → NeuroMechFly" while the default body is flybody, "176,422 neurons" while the model runs 167,111 under its status policy: neurons whose status is Traced or that carry a type, with edges of at least 5 synapses) |
 | `scripts/serve_viz.py` | serves the page plus one run's `replay_data.js` on 127.0.0.1 | the idea (no build step, localhost only) | one recording at a time; data as base64 inside a JS file (+33 % size, whole file parsed at once) |
 | `scripts/record_organism.py` | runs the closed loop; writes `recording.npz` (full-rate qpos) and `replay_data.js` (200 Hz poses, torque, contact, MN spikes, whole-CNS rate) | the run loop shape | records motor-neuron spikes only, not the other ~166,000 cells; no eye, no stimuli, no voltages |
 | `scripts/export_geometry.py` | compiled MuJoCo meshes to `viz/geometry.{bin,json}` (flybody: 272,550 triangles, 85 geoms, 13 MB, measured) | yes, generalised per body | written next to the page, one body only |
 | `scripts/render_brain_body.py` | the m9 MP4 (`docs/media/m9_closed_loop.mp4`): body beside five class rate traces | as a video exporter | classes only; offline |
 
-The ten recordings in `runs/organism-record-*` (0.7 to 2 MB each) predate m9; a converter keeps them
-viewable (M1).
+The twelve recordings in `runs/organism-record-*` (counted 4 October) predate m9;
+`app/build/convert_legacy.py` keeps them viewable (M1).
 
 ## 3. Architecture
 
@@ -177,9 +195,34 @@ driver-line preset (a published GAL4/split line resolved to cells with its sourc
 - **Selection.** Click a point, search by type, instance or bodyId, select a whole type, or lasso a
   region. The selection's partners (top inputs and outputs from the edge shards) are drawn as lines;
   all 6.2 M edges are never drawn at once.
-- **Flow layout.** A second, 2D view places cells by side (x) and by synaptic distance from the
-  sensory periphery (y, shortest path, derived), so a pathway such as sugar GRN -> GNG -> MN9 can be
-  watched as a wave. Display-only; the caption says how it was computed.
+- **Flow layout.** A second view places cells by side (x) and by a flow layer, a derived distance
+  from the sensory periphery (y), so a pathway such as sugar GRN -> GNG -> MN9 can be watched as a
+  wave. Built in M1 with the probabilistic traversal of Schlegel et al. 2021 (threshold 0.3, 16 runs,
+  from all sensory neurons; 170,611 of 176,422 cells reached, measured). Display only.
+- **Groups layout.** Blocks of cells by superclass, so rates in small classes stay visible.
+
+As built in M1, positions have five bases (counts measured on the male-cns v1.0 cache): soma
+141,781; photoreceptor terminal centroid 5,998; synapse-weighted mean of partners' positions 26,994;
+class centroid 1,648; none, drawn at the CNS centroid, 1. Region shells are not built yet: there are
+no region meshes in the project cache (M2 or later).
+
+### 5.1 Layers: measured, inferred, completed
+
+Ben, 4 October: "divisions for measured and inferred/completed data, because our ending complete
+brain that we build will not be the only possible one. Max flexibility." Every value the app shows
+carries one of three layers, drawn as a chip:
+
+| Layer | Meaning | Source in the run |
+|---|---|---|
+| measured | read from the scan or a recording (synapse counts, soma positions, annotations) or counted in this run | atlas; recording |
+| inferred | set by a stated rule from measured data (transmitter from the classifier, a parameter from a per-type table, a derived position) | inventory basis "derived" or "inferred" |
+| completed | chosen by search within biological bounds where nothing constrains it (fitted class gains, profile values) | inventory basis "guessed", or method "profile" |
+
+M1 shows the chips in the inspector, can colour the map by position basis (measured or derived),
+and has a "measured positions only" filter that hides derived positions. There is no map colouring
+by parameter layer yet: that needs the inventory resolved per cell. Toggling a whole layer off, and choosing
+between alternative completions (seeds or ensemble members of a search), need completions to be
+recorded side by side; that is planned with the fidelity panel (M4).
 
 ## 6. Selectable configuration: scans, bodies, fidelity
 
@@ -318,9 +361,19 @@ Consequences:
 - Faster interaction comes from backhouse (GPU brain), warm-start snapshots, and later an optional
   in-browser simulation (question 4).
 
-## 11. Static mode (GitHub Pages)
+## 11. Static mode and data distribution
 
-`app/build/site.py` writes a self-contained site: the web app, the male-cns atlas, body bundles and
+Built in M1: `app/build/site.py` copies the page, the data and chosen recordings into one directory
+with a fixed `catalog.json` (two recordings with the male-cns atlas and the flybody body: 70.7 MB,
+measured); it rendered under a plain file server. Nothing is deployed. Ben's answer 4 makes the
+installable app the main product, so the static site is now secondary: the same bundle layout serves
+as the download unit for connectome data and recording libraries.
+
+Generated data stays out of version control: `app/data` (the atlas, 49.8 MB, rebuilt in 10 s from
+the project's neuPrint cache; the body bundle, 13 MB) and every recording. The builders are
+committed.
+
+Original plan for Pages: `app/build/site.py` writes a self-contained site: the web app, the male-cns atlas, body bundles and
 a curated gallery of recordings. GitHub's published limits (as recalled, to check at M7): 1 GB per
 site, 100 MB per file, about 100 GB a month of bandwidth. Recordings are chunked well under those.
 Large data is not committed to git: the Pages workflow downloads a versioned data bundle (a GitHub
@@ -341,7 +394,9 @@ are checked and shown in the site before then.
 
 ## 13. Requests to the fly worker (model API)
 
-None blocks M1. In order of need:
+On hold: Ben ordered fly's blanks, body and ladder work first (4 October). Until then live
+optogenetics uses current injection through the existing `external_mv` input, labelled as an
+approximation. None blocked M1. In order of need:
 
 1. **Body choice in `Organism`**: a `body_model` argument (or registry switch) passed to `Body`, so
    a session can pick flybody or NeuroMechFly without rebuilding parts by hand (record_organism
@@ -363,7 +418,12 @@ None blocks M1. In order of need:
 Each milestone ends with a commit and push of branch `app`, headless screenshots and a contact sheet
 that I look at, and the tests listed.
 
-**M1: replay workbench on the new format (replaces the viewer for replay).**
+**M1: replay workbench on the new format (replaces the viewer for replay).** Built 4 October 2026:
+the recorder, a 2 s m9 recording, the male-cns atlas, the web app (body, brain map in anatomy, flow
+and groups layouts, traces, inspector with layer chips and partners, run panel with generated
+caveats), the local server, the static builder, the legacy converter (12 of 12 converted, motor
+spikes identical to the source files) and 20 passing tests (`app/tests`). Not in M1: region shells
+(no mesh source in the cache) and an eye mosaic (M3). Planned contents:
 - rec/1 writer and reader; `app/server/record.py` records every spike, poses, torque, contact and
   eye readouts through the public loop; a 2 s m9 recording (about 3 minutes of wall time).
 - male-cns atlas/1 with positions and basis codes, vocabularies, edge shards; neuropil shells if a
@@ -394,7 +454,11 @@ population views.
 
 **M7: public release.** Curated gallery, landing page, attributions; Pages enabled by Ben.
 
-**M8 (optional): in-browser simulation.** A WebGPU brain at a declared rung plus MuJoCo's WebAssembly
+**Installable app** (Ben's answer 4; folded into M4 to M6): on-demand download of connectome
+bundles and recording libraries, import and export of run configurations, and environment
+definitions for user runs.
+
+**M8 (dropped for now, Ben's answer 4): in-browser simulation.** A WebGPU brain at a declared rung plus MuJoCo's WebAssembly
 build for the body, admitted only if it matches the CPU reference spike for spike at that rung on
 fixed seeds.
 
@@ -409,7 +473,15 @@ fixed seeds.
 - Cross-specimen simulation (FAFB + MANC) joins two animals of different sex; any result is labelled
   inferred and kept out of claims about one fly.
 
-## 16. Questions for Ben (asked 4 October 2026; defaults in force until answered)
+## 16. Questions for Ben (asked 4 October 2026; answered the same day)
+
+Answers, in order: (1) research tool first; (2) the intervention mechanism first, then the fly's-eye
+view; (3) show failures, labelled; (4) an installable local app with downloadable connectomes,
+recording libraries and run configurations, no browser-only simulation for now; (5) all views
+switchable, male CNS and FAFB at least, layers measured / inferred / completed with alternative
+completions selectable, comparison across scans now; (6) "Fly Workbench" as the working name.
+
+The questions as asked:
 
 1. Research tool first or public showcase first? Default: research tool first (dense, labelled),
    with a guided tour added at M7.
