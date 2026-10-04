@@ -31,6 +31,7 @@ import mujoco as mj  # noqa: E402
 
 from flyemu import lif, profiles  # noqa: E402
 from flyemu.organism import Organism  # noqa: E402
+import heldout  # noqa: E402
 import protocol as proto  # noqa: E402
 from recfmt import RecWriter, spikes_to_csr  # noqa: E402
 from caveats import generate  # noqa: E402
@@ -104,6 +105,8 @@ def main() -> int:
     ap.add_argument("--chunk-ms", type=float, default=250.0)
     ap.add_argument("--web-hz", type=float, default=200.0)
     ap.add_argument("--v-hz", type=float, default=1000.0)
+    ap.add_argument("--spend-heldout", action="append", default=[],
+                    help="held-out item id (or 'seed') this run may spend; see app/server/heldout.py")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -146,6 +149,10 @@ def main() -> int:
     ts = org.timestep_ms
 
     pr = proto.resolve(pr, neurons, ts)
+    pr["heldout"] = heldout.check(pr, neurons)
+    heldout.enforce(pr["heldout"], args.spend_heldout, ROOT / "runs" / "app" / "heldout_spent.jsonl",
+                    pr.get("title") or out.name)
+    pr["heldout"]["spent_here"] = args.spend_heldout
     res = pr["resolved"]
     watch = np.asarray(res["watch"], np.int64)
     if watch.size == 0:   # default: every motor neuron, the cells that move the body
@@ -153,7 +160,7 @@ def main() -> int:
     watch = watch[:2000]
     for g in res["genotype"]:
         net.silence(np.asarray(g["rows"], np.int64))
-    stim = proto.Stimulator(res, n)
+    stim = proto.Stimulator(res, n, cfg["seed"], org.kick_mv)
 
     # The eyes: tap the readout call so the recording holds exactly the values the
     # photoreceptors were driven by, without rendering the eyes a second time.
@@ -206,6 +213,7 @@ def main() -> int:
 
     manifest = {
         "run_id": out.name,
+        "title": pr.get("title"),
         "created": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
         "protocol": pr,
         "config": cfg,
@@ -251,6 +259,8 @@ def main() -> int:
 
     buf = {k: [] for k in ("xpos", "xquat", "qpos", "torque", "contact", "mod_level", "v")}
     sp_steps, sp_rows = [], []
+    k_steps, k_rows = [], []
+    n_kicks = 0
     t_run = time.time()
     total = 0
     clip_hits = np.zeros(len(body.actuator_names), np.int64)
@@ -260,12 +270,18 @@ def main() -> int:
     n_eye = 0
     for step in range(n_steps):
         cur_step[0] = step
+        stim.world(step, org)            # world events change what the receptors can sense
         obs = body.observe()
         drive = org.sense(step, obs)
         extra = stim.drive(step)
         if extra is not None:
             drive = extra if drive is None else drive + extra
-        spiked = net.step(external_mv=drive)
+        kick = stim.kick(step, ts)
+        if kick is not None:
+            k_steps.append(np.full(kick[0].size, step, np.uint32))
+            k_rows.append(kick[0].astype(np.uint32))
+            n_kicks += int(kick[0].size)
+        spiked = net.step(external_mv=drive, kick=kick)
         torque = org.motor_step(spiked)
         if spiked.size:
             sp_steps.append(np.full(spiked.size, step, np.int64))
@@ -298,12 +314,16 @@ def main() -> int:
                 arrays["eye_step"] = np.array([s for s, _ in ef], np.uint32)
                 arrays["eye"] = np.stack([f for _, f in ef])
             # Frame times are explicit so chunks need not be aligned to the strides.
+            if k_steps:
+                arrays["kick_step"] = np.concatenate(k_steps)
+                arrays["kick_row"] = np.concatenate(k_rows)
             arrays["frame_step"] = np.arange(s0 + (-s0) % web_stride, s1, web_stride, dtype=np.uint32)
             arrays["v_step"] = np.arange(s0 + (-s0) % v_stride, s1, v_stride, dtype=np.uint32)
             w.add_chunk(s0 * ts, s1 * ts, arrays)
             eye_frames[:] = [(s, f) for s, f in eye_frames if s >= s1]
             buf = {k: [] for k in buf}
             sp_steps, sp_rows = [], []
+            k_steps, k_rows = [], []
             chunk0 = s1
             el = time.time() - t_run
             print(f"  {s1 * ts:8.1f} ms  spikes {total:,}  wall {el:6.0f} s "
@@ -317,7 +337,8 @@ def main() -> int:
     summary = {"spikes_total": total, "mean_rate_hz": total / n / (duration_ms / 1000.0),
                "wall_s": round(wall, 1), "wall_s_per_sim_s": round(wall / (duration_ms / 1000.0), 1),
                "torque_clip_fraction": (clip_hits / max(n_torque, 1)).round(4).tolist(),
-               "n_eye_frames": n_eye}
+               "n_eye_frames": n_eye, "kicks_total": n_kicks}
+    w.manifest["protocol"]["resolved"]["world_applied"] = [stim.applied.get(k) for k in range(len(stim.worlds))]
     w.manifest["summary"] = summary
     w.finish("complete", caveats=generate(w.manifest, static, org))
     print(json.dumps({"out": str(out), **{k: v for k, v in summary.items() if k != "torque_clip_fraction"}}))

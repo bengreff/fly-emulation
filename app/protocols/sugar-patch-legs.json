@@ -1,0 +1,57 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Sugar patch (1 M) under the legs, 0.5-1.5 s",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 12,
+  "min_synapses": 5,
+  "overrides": {
+   "motor_unit:all|force_per_spike": 10
+  }
+ },
+ "duration_ms": 2000,
+ "genotype": [],
+ "events": [
+  {
+   "t_ms": 500,
+   "dur_ms": 1000,
+   "effector": "world",
+   "set": {
+    "food": [
+     {
+      "at": "fly",
+      "radius_mm": 4.0,
+      "tastants": {
+       "sugar": 1.0
+      }
+     }
+    ]
+   },
+   "label": "1 M sugar patch, 4 mm radius, centred under the fly"
+  }
+ ],
+ "expect": {
+  "text": "Tarsal contact with sugar makes a hungry fly extend its proboscis.",
+  "source": "Dethier 1976, The Hungry Fly (tarsal proboscis extension reflex)",
+  "readout": {
+   "type": [
+    "MN9"
+   ]
+  },
+  "status": "development evidence; the model's leg taste neurons respond weakly to every tastant (guessed weights), so a weak or absent response is expected from its construction"
+ },
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "MDN",
+    "DNa02",
+    "DNg100",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ }
+}
