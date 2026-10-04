@@ -1,8 +1,9 @@
 # Fly workbench: design
 
 **Status:** design written 4 October 2026, 16:45 CDT; Ben's answers recorded and milestone 1 (M1)
-built at 17:20 CDT the same day (section 14 says what M1 contains; `app/README.md` says how to run
-it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
+built at 17:20 CDT the same day, milestone 2 (M2: protocols, labelled optogenetics, replay of
+interventions, a scored library) by 18:10 CDT (section 14 says what each contains, with the
+library's results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
 ## 1. What it is for
@@ -150,30 +151,37 @@ poses to bodies by name, as the current viewer already does.
 
 ### 4.4 Protocol, `flyemu-protocol/1`
 
-One JSON file describes a whole experiment; the app's protocol editor writes it, the live server and
-`run_protocol.py` execute it, and the recording embeds it.
+One JSON file describes a whole experiment. `app/server/record.py --protocol` executes it and the
+recording embeds it, resolved (targets turned into model rows, times into steps, every
+approximation written beside its event, and the held-out check). As built in M2
+(`app/server/protocol.py`; the library is in `app/protocols/`):
 
 ```json
 {
   "format": "flyemu-protocol/1",
-  "config": {"scan": "male-cns:v1.0", "body": "flybody", "profile": "m9",
-             "overrides": {"motor_unit:all|force_per_spike": 10}, "seed": 12,
-             "min_synapses": 5, "start": "rest"},
+  "title": "MDN (moonwalker) CsChrimson as +10 mV current, 0.5-1.5 s",
+  "config": {"scan": "male-cns:v1.0", "body": "flybody", "profile": "m9", "seed": 12,
+             "min_synapses": 5, "overrides": {"motor_unit:all|force_per_spike": 10}},
   "duration_ms": 2000,
-  "genotype": [{"effector": "TNT", "target": {"type": "DNg100"}}],
-  "events": [
-    {"t_ms": 500, "dur_ms": 1000, "kind": "opto", "effector": "CsChrimson",
-     "target": {"type": "MDN"}, "irradiance_mw_mm2": 0.5, "pulse_hz": 0,
-     "expression": {"fraction": 1.0}},
-    {"t_ms": 0, "dur_ms": 2000, "kind": "taste", "site": "labellum", "tastant": "sucrose", "mM": 100}
-  ],
-  "record": {"watch": {"type": ["MDN", "MN9"]}, "eye": true, "web_hz": 200}
+  "genotype": [],
+  "events": [{"t_ms": 500, "dur_ms": 1000, "effector": "CsChrimson", "mv": 10,
+              "target": {"type": "MDN"}, "label": "MDN light on (current approximation)"}],
+  "expect": {"text": "The fly walks backward while MDN is activated.",
+             "source": "Bidaye et al. 2014 Science", "readout": {"type": ["MDN"]},
+             "status": "...seed 12 is a spent seed, so this run is development evidence",
+             "criterion": {"metric": "forward_mm_vs_control", "op": "<=", "value": -0.5,
+                           "units": "mm", "what": "...", "basis": "guessed threshold, written
+                           4 October 2026 before any library result was viewed"}},
+  "record": {"watch": {"type": ["MN9", "MDN", "DNa02"]}}
 }
 ```
 
-Targets: `bodyId` list, `type` (exact or regex), `class`/`superclass`, `side`, `roi`, or a named
-driver-line preset (a published GAL4/split line resolved to cells with its source and an
-"idealised expression" flag). Targets resolve once, at the start, and the resolved rows are saved.
+Targets select model rows by `bodyId` list, `type`, `class`, `superclass`, `somaSide` or `instance`
+(exact, or a regular expression written `re:...`); several keys must all match. Events take
+`pulse_hz` and `pulse_ms` for pulse trains; `kick` events take `rate_hz`; `world` events set
+fields of the organism's World (food patches, odour sources, wind, sound, humidity, CO2, light;
+not temperature, whose effect is applied at build time). A protocol with no events and no genotype
+is a control; `"role": "sham"` marks the noise-floor run. Named driver-line presets are not built.
 
 ## 5. Brain maps
 
@@ -271,7 +279,7 @@ the brain switches.
 | Shiu kick | Poisson input as in Shiu 2024 | `Network.step(kick=...)` | same |
 | CsChrimson | red-light cation channel | depolarising `external_mv` during light (current-based approximation, labelled) | light-gated conductance with reversal ~0 mV and on/off kinetics (request 3) |
 | GtACR1 | green-light anion channel; shunting silencing | hyperpolarising `external_mv` (labelled: not shunting) | anion conductance at the chloride reversal (request 3) |
-| Kir2.1 | constitutive K+ leak; build-time | not available | extra leak conductance per cell (request 3) |
+| Kir2.1 | constitutive K+ leak; build-time | constant hyperpolarising `external_mv` from step 0 (labelled: not a leak conductance) | extra leak conductance per cell (request 3) |
 | TNT | blocks chemical output; build-time | `Network.silence(idx)` before the run | same |
 | shibire-ts | output block above ~29 °C, reversible | not available | reversible output gain per cell (request 4) |
 | Sensory | tastants, odour, touch, wind, temperature, visual objects | world and sense modules (`world.py`, `extrasenses.py`, `olfaction.py`) | visual stimulus objects in the arena (request 5) |
@@ -300,8 +308,14 @@ whole organism (request 2). Until then, sessions start from rest and say so.
 ### 7.4 Held-out guard
 
 Some interventions are held-out tests (HANDOFF register; `data/measurements/targets_session6.csv`
-`use` column). The protocol editor marks a protocol that touches a held-out item, asks for
-confirmation, and logs the run as spending it. The public intervention library contains only
+`use` column). As built in M2 (`app/server/heldout.py`): an index of the register (giant fibre to
+DLM and TTM, LPLC2 to giant fibre, Johnston's organ to grooming DNs and MDN, the sealed tibia
+flexor recordings) and of the spent seeds (0 to 13, 17 to 19). The recorder refuses a protocol
+that stimulates or reads out a listed item, or uses an unspent seed, unless the run names it with
+`--spend-heldout <id>` (or `--spend-heldout seed`); spending is appended to
+`runs/app/heldout_spent.jsonl` and the check is saved in the recording, where the Run tab shows it.
+The index can lag the register, so a hit or a miss is a prompt to check the register, not a ruling.
+A protocol editor that asks for confirmation is not built. The public intervention library contains only
 protocols already run and recorded under the project's procedure, each labelled with the result's
 status and shown beside the published expectation, including when the model does not reproduce it.
 
@@ -439,6 +453,61 @@ spikes identical to the source files) and 20 passing tests (`app/tests`). Not in
 timeline, current-based effectors now and conductance effectors when request 3 lands, held-out
 guard, A/B comparison, a first precomputed intervention library (for example MDN, giant fibre,
 sugar GRNs, DNa02 left vs right), each beside its published expectation.
+
+Built 4 October 2026 (stimulus protocols, labelled optogenetics, replay of interventions; live
+sessions, the protocol editor and conductance effectors are not built):
+- `flyemu-protocol/1` (section 4.4) and its effectors (section 7.1). CsChrimson, GtACR1 and Kir2.1
+  are current injection, and each resolved event carries its approximation text, which the page
+  shows as a "guessed" chip beside the event. Kicks use their own seeded generator so a run and its
+  control share every model random draw; the tests confirm the spike trains are identical up to
+  the first event and differ after it.
+- Held-out guard (section 7.4).
+- Library (`app/protocols`): a control, four tests (sugar GRN kicks, sugar patch under the legs,
+  MDN CsChrimson, DNa02 left current) and a sham (a few forced spikes in one Kenyon cell). All use
+  seed 12, a spent seed, so every result is development evidence, not a held-out test. Each test
+  states what a real fly does, its source and a pass/fail criterion written before any library
+  result was viewed (the thresholds are guessed).
+- Comparison in the page (Compare tab and the "rate vs control" colour): matched control, first
+  step where the runs differ, the criterion's verdict, readout rates before, during and after,
+  thorax movement, cells changed, the largest changes, and the sham read over the same window.
+  The model is chaotic: after the first difference the two runs decorrelate, so many changed
+  cells are noise, and the sham measures how large that noise is. A verdict no larger than the
+  sham's is labelled "within noise". The stimulus track shows each event, pulse and forced spike.
+- `app/tools/score_library.py` recomputes every comparison independently of the page and writes
+  `runs/app/lib/scores.json`, whose verdicts the run picker shows; `app/tools/replay.py` re-runs a
+  recording's embedded protocol and checks every array is identical.
+- Results: see "M2 library results" below.
+
+**M2 library results** (seed 12, 2 s, m9; recorded and scored 4 October 2026; `runs/app/lib/scores.json`).
+Every number is derived from the recordings. Thresholds are guessed, declared before any result
+was viewed. Seed 12 is spent, so these are development evidence, not held-out tests. The sham is
+one sample, read over each test's window (500 to 1500 ms) against the same control.
+
+| Protocol | What was done | Criterion | Measured | Sham, same window | Verdict |
+|---|---|---|---|---|---|
+| sugar-grn-kick | 34 sugar GRNs (LB3b, LB3c) forced at 100 Hz (3,395 kicks) | MN9 rate minus control >= 5 Hz | +0.50 Hz (one extra spike across the 2 MN9 cells) | 0.00 Hz | FAIL |
+| sugar-patch-legs | 1 M sugar patch, 4 mm radius, under the fly | MN9 rate minus control >= 5 Hz | 0.00 Hz; no spike anywhere differs from the control | 0.00 Hz | FAIL, no spike changed |
+| mdn-cschrimson | MDN (4 cells) +10 mV, as current | forward displacement minus control <= -0.5 mm | -0.09 mm (MDN +23 Hz) | -0.06 mm | FAIL |
+| dna02-left | DNa02 left (1 cell) +10 mV | left turn minus control >= +5 deg | -3.6 deg (DNa02 +10.5 Hz) | -5.7 deg | FAIL within noise |
+
+What this shows:
+- The stimuli reach their targets (the driven cells fire 10 to 23 Hz above control; kicks land
+  only inside their windows on their rows), and runs are identical to the control up to the first
+  event and reproducible: two protocols recorded twice gave identical arrays (all 31, including
+  voltages and eye frames), and `replay.py` re-ran sugar-grn-kick from its embedded protocol with
+  all 33 arrays identical, kicks included.
+- None of the four expected behaviours appears in the model. Over the same 1 s window, the sham
+  (three forced spikes in one Kenyon cell) changes 644 cells by 1 Hz or more and turns the fly
+  5.7 deg relative to the control. The tests change 967 to 2,125 cells, 1.5 to 3.3 times the
+  sham, but their body effects are no larger than the sham's.
+- Leg taste cannot respond in this model (derived from `extrasenses.py` constants, not measured):
+  the leg channel's drive is 15 mV x 0.2 x c/(c + 0.05 M), at most 2.9 mV at 1 M, below the
+  7 mV gap between rest and threshold, and `input_gain` scales synaptic input only. So a sugar
+  patch under the legs cannot change any spike. The 0.2 weight and 15 mV gain are labelled
+  guessed in the model.
+- Sugar GRN to MN9 is in the model's fit set (HANDOFF register), yet in this closed-loop run,
+  with the body attached and seed 12, 100 Hz on the sugar GRNs adds one MN9 spike. The fit assay's
+  conditions are not checked here; that comparison is for the model's owner.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
