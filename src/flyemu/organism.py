@@ -60,6 +60,9 @@ class Organism:
         self.kick_mv = None
         if self.profile:
             self.kick_mv = profiles.apply(self.reg, self.profile)["kick_mv"]
+        # s12: registered stubs (absent mechanisms) are read at neutral, refused otherwise
+        from . import stubs
+        stubs.read(self.reg)
         self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
         # B3/B14 passive mechanics (session 9): switches default to the legacy body
         passive.register(self.reg, self.body)

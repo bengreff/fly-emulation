@@ -54,6 +54,12 @@ ESTIMATES = {
     "n_mech_organs": (lambda c: 10, "inferred",
                       "JO, FeCO, campaniform fields, hair plates, bristles, haltere, wing, "
                       "neck, abdominal stretch, pharyngeal"),
+    "n_neuropils": (lambda c: 100, "inferred",
+                    "78 brain neuropils, both sides (FlyWire, Ito et al. 2014 scheme) + ~22 VNC "
+                    "neuropils (MANC/male-cns ROI list: 6 leg, tectulum, mVAC, ovoid, ANm); not "
+                    "counted from the male-cns ROI hierarchy"),
+    "n_glial_terr": (lambda c: round(0.1 * c["n_cells"] / 6), "inferred",
+                     "astrocyte-like glia ~1/6 of glia; one territory each (order of magnitude)"),
     "n_muscles": (lambda c: 300, "inferred",
                   "legs ~100, flight ~60 (power + steering, both sides), neck ~16, "
                   "haltere ~14, abdomen ~80, head/proboscis ~30; to be replaced by a "
@@ -78,10 +84,25 @@ def counts() -> tuple[dict, dict]:
         n_photoreceptors=len(pd.read_csv(D / "retinotopy.csv")),
         n_motor=int(n.superclass.isin(["vnc_motor", "cb_motor"]).sum()),
         n_segments=70, n_joints=103,
+        n_circuit_classes=int(pd.read_csv(REPO / "data" / "model" / "classes.csv").circuit_class.nunique()),
+        n_sensory_cells=int(cen.n_cells.sum()),
+        n_mech_sensilla=int(cen[cen.cls.str.startswith("mechanosensory")].n_cells.sum()),
+        n_proprio=int(cen[cen.cls == "mechanosensory_proprioceptive"].n_cells.sum()),
+        n_gustatory=int(cen[cen.cls == "gustatory"].n_cells.sum()),
     )
+    # s12 blanks audit: connections of 1-4 synapses (excluded by the >= 5 inclusion
+    # policy) between modelled cells, and cells with a hemilineage label
+    e = pd.read_parquet(REPO / "data" / "cache" / "male_cns_edges.parquet")
+    weak = e.pre.isin(n.bodyId) & e.post.isin(n.bodyId) & (e.weight < 5)
+    c["n_edges_weak"], c["n_syn_weak"] = int(weak.sum()), int(e.weight[weak].sum())
+    del e
+    h = pd.read_parquet(REPO / "data" / "cache" / "male_cns_hemilineage.parquet")
+    h = h[h.bodyId.isin(n.bodyId)]
+    c["n_hl_cells"] = int((h.itoleeHl.notna() | h.trumanHl.notna()).sum())
     basis = {k: "measured" for k in c}
     basis.update(n_segments="derived", n_joints="derived", n_photoreceptors="derived",
-                 n_sensory_groups="derived")
+                 n_sensory_groups="derived", n_mech_sensilla="derived: one sensillum per "
+                 "mechanosensory afferent (census); chordotonal scolopidia hold 2-3")
     for k, (f, b, src) in ESTIMATES.items():
         c[k] = f(c)
         basis[k] = f"{b}: {src}"
@@ -110,6 +131,9 @@ GRAIN_GROUP = {
     "synapse class": "class", "electrical pair class": "class", "organ type": "class",
     "glial type": "class", "peptide": "class", "peptide x target type class": "class",
     "tissue class": "class", "eye region": "class",
+    "circuit class": "class", "neuropil": "class", "glial territory": "class",
+    "electrical pair": "edge", "glial cell": "cell", "sensory afferent": "cell",
+    "sensillum": "body part",
     "organism": "organism/world", "world": "organism/world",
 }
 

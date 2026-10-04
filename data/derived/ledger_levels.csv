@@ -1,30 +1,38 @@
 grain_group,level,slots
-body part,absent,50351
+body part,absent,243
 body part,derived,1384
-body part,guessed,654
-body part,mixed,2606
+body part,guessed,18623
+body part,mixed,3315
 body part,prior,18
 body part,rule,24
+cell,absent,1387021
 cell,derived,6110
 cell,guessed,505100
-cell,measured,835555
-cell,mixed,815
-cell,prior,333864
+cell,measured,836370
+cell,measured (unused),166296
+cell,mixed,25895
+cell,prior,1837863
 cell,rule,582
-class,absent,10
-class,guessed,29228
+class,absent,3199
+class,guessed,29928
 class,prior,28716
+edge,guessed,12482462
 edge,measured,6241231
+edge,measured (unused),19337526
 edge,prior,6241231
-organism/world,absent,18
-organism/world,guessed,30
-synapse,absent,269553552
-synapse,measured (unused),89851184
-type,absent,258408
+organism/world,absent,30
+organism/world,guessed,35
+organism/world,measured,2
+organism/world,prior,5
+synapse,absent,449255920
+synapse,guessed,808660656
+synapse,measured (unused),214013768
+synapse,prior,179702368
+type,absent,86232
 type,derived,11750
-type,guessed,231623
+type,guessed,274691
 type,measured,169
 type,measured (unused),497
-type,mixed,43388
-type,prior,157916
+type,mixed,215660
+type,prior,287120
 type,rule,2676

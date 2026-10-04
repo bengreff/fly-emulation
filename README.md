@@ -29,6 +29,7 @@ More commands, regression checks and data rebuilds: [docs/RUNNING.md](docs/RUNNI
 | [docs/PLAN_NEXT.md](docs/PLAN_NEXT.md) | next work (points to CONSTRUCTION.md) | rewritten each session |
 | [docs/NEXT_SESSION_PROMPT.md](docs/NEXT_SESSION_PROMPT.md) | prompt for the next unattended session | rewritten each session |
 | [docs/FIDELITY_LADDER.md](docs/FIDELITY_LADDER.md) | ranked simulation-fidelity upgrades: constraining data, Mac vs backhouse compute, what turns each on | revised as rungs are built |
+| [docs/BLANKS_AUDIT.md](docs/BLANKS_AUDIT.md) | every measurable quantity of a fly mapped to a ledger slot and an owning mechanism (built or stub), coverage per grain | revised when the ledger is |
 | [docs/MODEL.md](docs/MODEL.md) | the model's equations, mechanisms and defaults | living |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | code, data and test layout | living |
 | [docs/RUNNING.md](docs/RUNNING.md) | commands | living |
