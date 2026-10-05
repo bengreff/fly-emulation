@@ -570,6 +570,7 @@ def _nonleg_forces(reg, act_names: list[str], fps: np.ndarray, tau: np.ndarray) 
 
 MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"
 WING_ROLES_TABLE = MOTOR_TABLE.with_name("wing_muscle_roles.csv")
+HEAD_ODD = ("c_thorax-c_head-yaw", "c_thorax-c_head-roll")     # midline axes odd under reflection
 
 
 def _abdomen_joint(neuromere: str) -> str:
@@ -594,6 +595,12 @@ def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
         drop = set(r for r in roles.replaces if r)
         table = pd.concat([table[~table.type_regex.isin(drop)], roles.drop(columns="replaces")],
                           ignore_index=True)
+    mirror = int(reg.require(
+            "motor_map:neck", "mirror_sides", units="enum",
+            model_use="0 every head yaw and roll MN +1 on both sides (guessed); 1 right-side MNs take the "
+                      "opposite yaw and roll sign of their left mirror image (bilateral symmetry, derived; "
+                      "the left sign stays guessed; docs/research/s12_neck_antenna_sources.md)",
+            subsystem="neuromuscular", minimal=0, minimal_note="legacy map: a bilateral pair turns the head one way"))
     unmapped_ids = {u["bodyId"] for u in unmapped}
     cand = n[(n.superclass == "cb_motor") | n.bodyId.isin(unmapped_ids)].copy()
     cand["side"] = cand.instance.fillna("").str.extract(r"_([LR])$")[0].map({"L": "l", "R": "r"})
@@ -648,6 +655,8 @@ def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
                 if not isinstance(side, str):
                     continue
                 tgt = tgt.replace("{s}", side)
+            if mirror and tgt in HEAD_ODD and side == "r":
+                sgn = -sgn     # yaw and roll flip under left-right reflection; pitch does not
             a = act_lookup.get(tgt)
             if a is None:
                 continue

@@ -875,3 +875,47 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - A pass makes m9u = m9t + the switch the working profile, and the battery is rerun.
   - A fail on (2) at unchanged rates points at the resting wing motor drive (wing motor neurons firing at rest; no source says whether real ones do) or at the i1/i2 yaw mapping (+1, guessed). That fail is written up, not tuned.
   - The stiffness is a measurement either way. It stays in the record even if the wings still rise.
+
+- **Result (21:49): primary PASS on both parts, secondary PASS.** Sources: `runs/s12/gates/cl_wk_s*.json` (backhouse); `runs/s12/wing/census_wk_s12.json`, with the m9t census rerun in the same batch, `census_m9t_s12.json`; sheets `census_wk_s12.png` and `census_m9t_s12.png`, both viewed.
+  - **Gate, seeds 12-19:** 0 spikes/ms in the last 100 ms, 0 MuJoCo warnings and no NaN on all 8 seeds.
+    - Brain excluding ORNs: 0.140-0.153 Hz (m9t 0.151-0.154).
+    - Motor: 2.02-2.06 Hz (unchanged).
+    - Thorax: 0.560-0.564 mm (unchanged).
+  - **Reported, not a criterion:** spikes in the first 200 ms of the silent window rose on seeds 14, 16 and 18, to 378, 157 and 475 (m9t 62, 62, 98). They are mostly DN, AN and central cells, and all die out before the last 100 ms.
+  - **Census, seed 12, 200-600 ms, mean wing angles** (m9t, then switched):
+
+    | Wing angle | m9t | switched |
+    |---|---|---|
+    | left yaw | 20.3° | 2.8° |
+    | left pitch | −18.5° | −2.8° |
+    | right yaw | 14.6° | 2.8° |
+    | right pitch | −13.8° | −2.4° |
+
+    - All four are inside the ±10° bound.
+    - Head, rostrum, antennae, abdomen and halteres spend 0% of the time within 1° of a limit, and their angles are within 4° of m9t.
+  - **Against the prediction:** the angles are smaller than predicted (about 7° yaw and −5° pitch), because the prediction assumed unchanged rates. Over 200-600 ms the wing motor neurons did not fire at all; on m9t they averaged 1.25 Hz, with up to 5 Hz per actuator. The cause is examined below the result.
+  - **Sheet:** both wings lie folded flat over the abdomen at 300 and 600 ms. On the m9t sheet from the same batch, they stand in a V over the thorax.
+  - **Adopted per this pre-registration:** `profiles.M9U` = m9t + `joint:wing|stiffness_source` 1; `WORKING_PROFILE` = m9u. m9t is kept. Battery to rerun.
+
+### Pre-registration: mirror-image neck motor neurons on opposite head yaw and roll signs (`motor_map:neck|mirror_sides` 1) as candidate m9v (21:50)
+- **Why.** In `data/params/motor_targets.csv` every head yaw motor neuron (10 left, 10 right) and every head roll motor neuron (7 left, 8 right) maps +1, a guess. So a bilateral pair firing together turns the head one way. Yaw and roll change sign under left-right reflection; pitch does not.
+- **Source** (`docs/research/s12_neck_antenna_sources.md`).
+  - No accessible per-neuron direction table exists: Gorko et al. 2024 and Strausfeld 1987 are paywalled.
+  - Gorko 2024 (via open commentary) shows that a neck motor neuron drives the head toward a target pose, with the direction depending on the starting angle. So any fixed sign is an approximation.
+  - The change rests on bilateral symmetry alone (derived). The absolute direction of each left-side type stays guessed.
+- **Change, behind a switch.** `motor_map:neck|mirror_sides` 1 (`neuromuscular._map_non_leg`, `HEAD_ODD`) gives right-side motor neurons on head yaw and roll the opposite sign. Side comes from the instance suffix, as for `{s}` targets.
+  - Pitch, the antennae (already one joint per side) and everything else are unchanged.
+  - Neutral 0 keeps the guessed map.
+- **Primary.**
+  1. Gate (`closed_loop_check.py`, seeds 12-19, m9u values plus the gate overrides and the switch): 0 spikes/ms in the last 100 ms, no MuJoCo warnings and no NaN on all 8 seeds.
+  2. Census, seeds 12 and 13, 200-600 ms, against m9u in the same batch:
+     - head yaw, roll and pitch each under 50% of the time within 1° of a limit;
+     - the mean |torque| on head yaw and on head roll lower than m9u's on both seeds (left and right drive now cancel).
+- **Secondary.** Contact sheet, seed 12: head upright and centred, wings folded, viewed.
+- **Prediction.**
+  - Yaw and roll torque fall by about the fraction of left-right coincident drive.
+  - Head angles stay within 5° of m9u's: at rest the head already sits mid-range (yaw −1°, roll −5°, pitch 4° on seed 12).
+  - The gate is unchanged.
+- **What follows.**
+  - A pass makes m9v = m9u + the switch the working profile.
+  - A fail on (2), with head torque not falling, means the left and right neck neurons fire at different times, so the drive does not cancel. That would be reported, and the switch kept as the symmetric default only if the gate passes.

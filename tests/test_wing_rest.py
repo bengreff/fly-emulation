@@ -72,3 +72,26 @@ def test_wing_stiffness_switch_sets_the_bergou_value_on_every_wing_hinge():
         m = b.sim.mj_model
         wing = [j for j in range(m.njnt) if "_wing-" in (mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "")]
         assert len(wing) == 6 and np.allclose(m.jnt_stiffness[wing], k)
+
+
+def test_neck_mirror_switch_gives_mirror_image_neurons_opposite_yaw_and_roll_signs():
+    from flyemu.organism import Organism
+    import mujoco as mj
+    signs = {}
+    for k in (0.0, 1.0):
+        org = Organism(policy="minimal", profile="m9t", min_synapses=5, seed=12,
+                       overrides={"motor_map:neck|mirror_sides": k})
+        m, nm = org.body.sim.mj_model, org.nm
+        names = [mj.mj_id2name(m, mj.mjtObj.mjOBJ_ACTUATOR, i) or "" for i in range(m.nu)]
+        motor = [x.split("/")[-1] for x in names if x.endswith("-motor")]
+        inst = org.conn.neurons.instance.fillna("").to_numpy()[nm.mn_index]
+        side = np.array([s[-1] if s[-2:] in ("_L", "_R") else "" for s in inst])
+        act = np.array(motor)[nm.actuator_index]
+        signs[k] = {a: {sd: nm.drive_sign[(act == a) & (side == sd)] for sd in "LR"}
+                    for a in ("c_thorax-c_head-yaw-motor", "c_thorax-c_head-roll-motor", "c_thorax-c_head-pitch-motor")}
+    for a, by in signs[0.0].items():
+        assert (by["L"] > 0).all() and (by["R"] > 0).all()
+    for a, by in signs[1.0].items():
+        assert len(by["L"]) and len(by["R"])
+        assert (by["L"] > 0).all()
+        assert (by["R"] < 0).all() if "pitch" not in a else (by["R"] > 0).all()
