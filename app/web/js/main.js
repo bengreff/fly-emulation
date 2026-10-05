@@ -234,7 +234,7 @@ async function setupCompare(cat, entry) {
   if (!stimWindow(rec)) { el.innerHTML = `<div class="empty">This recording has no protocol, so there is nothing to compare.</div>`; return; }
   const cands = controlsFor(cat, entry);
   if (!cands.length) {
-    el.innerHTML = `<div class="empty">No matched control in the catalogue (a complete run with the same configuration and no stimulus). Record app/protocols/control.json with this run's configuration.</div>`;
+    el.innerHTML = `<div class="empty">No matched control in the catalogue (a complete run with the same configuration and no stimulus). Record app/protocols/control.json with this run's configuration.</div>${trialsHTML(entry)}`;
     return;
   }
   const pick = cands.find(c => c.id === params.get("ctrl")) || cands[0];
@@ -270,6 +270,19 @@ function verdictHTML(cr) {
   return cr.pass ? `<span class="verdict pass">PASS</span>` : `<span class="verdict fail">FAIL</span>`;
 }
 
+// the same protocol recorded at several seeds (score_library.py "trials"): one trial of a
+// threshold pathway can sit far from the mean, so show where this one falls
+function trialsHTML(entry) {
+  const g = entry.trials;
+  if (!g) return "";
+  const seed = entry.config && entry.config.seed;
+  const vals = g.seeds.map((s, i) => s === seed ? `<b>${g.readout_hz[i].toFixed(1)}</b>` : g.readout_hz[i].toFixed(1)).join(", ");
+  const cm = g.criterion_on_mean;
+  return `<h3>This protocol at ${g.seeds.length} seeds <span class="chip measured">score_library.py</span></h3>
+    <div>readout, Hz (this run in bold; seeds ${esc(g.seeds.join(", "))}): ${vals}; mean ${g.readout_hz_mean.toFixed(2)}, SD ${g.readout_hz_sd.toFixed(2)}${g.excluded_incomplete.length ? ` (without ${esc(g.excluded_incomplete.join(", "))}, incompletely traced)` : ""}</div>
+    ${cm ? `<div>${cm.pass ? `<span class="verdict pass">PASS</span>` : `<span class="verdict fail">FAIL</span>`} on the mean, ${cm.value_measured.toFixed(2)} Hz vs control; needs ${esc(cm.op)} ${cm.value} <span class="chip guessed" title="${esc(cm.rule)}">post hoc rule</span></div>` : ""}`;
+}
+
 function compareHTML(c, rec, pick, cands, entry, floor) {
   const f1 = v => v === null || v === undefined ? "–" : v.toFixed(1), f2 = v => v.toFixed(2);
   const ex = rec.manifest.protocol.expect || {}, cr = c.criterion, w = c.win;
@@ -297,6 +310,7 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
     ${sv && cr && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">${sv.length} sham runs give ${sv.map(f2).join(", ")} ${esc(cr.units)} on the same measure (largest size ${f2(svMax)}; scored by score_library.py)${inNoise ? ": this result is no larger, so it cannot be told from noise" : ": this result is larger than every sham"}.</div>`
     : fc && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">The sham run gives ${fv === null ? "n/a" : f2(fv)} ${esc(cr.units)} on the same measure${inNoise ? ": this result is no larger than the sham's, so it cannot be told from noise (one sham sample)" : " (one sham sample)"}.</div>` : ""}
     <div class="dim">${esc(ex.status || "")}</div>
+    ${trialsHTML(entry)}
     <h3>Readout cells <span class="chip measured">this run</span></h3>
     <table><tr><td></td><td class="num">n</td><td class="num">before</td><td class="num">during</td><td class="num">after</td></tr>
     ${c.readout.map(o => o.n ? `<tr><td>${esc(o.type)}${o.targeted ? ` <span class="dim">(${o.targeted} targeted)</span>` : ""}</td><td class="num">${o.n}</td>${["before", "during", "after"].map(p => `<td class="num">${o[p] ? `${f1(o[p].run)} <span class="dim">/ ${f1(o[p].ctrl)}</span>` : "–"}</td>`).join("")}</tr>`

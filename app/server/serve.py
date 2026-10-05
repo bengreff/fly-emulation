@@ -52,6 +52,10 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
             try:
                 doc = json.loads((lib / "scores.json").read_text())
                 scores[lib] = {s["run"]: s for s in doc.get("scores", [])}
+                for g in doc.get("trials", []):     # the same protocol at several seeds
+                    for s in g["seeds"]:
+                        if f"{g['protocol']}-s{s}" in scores[lib]:
+                            scores[lib][f"{g['protocol']}-s{s}"] = {**scores[lib][f"{g['protocol']}-s{s}"], "trials": g}
             except (OSError, json.JSONDecodeError):
                 scores[lib] = {}
         return scores[lib].get(run_dir.name)
@@ -85,6 +89,8 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
             "role": pr.get("role"),
         })
         sc = score_of(man.parent)
+        if sc and sc.get("trials"):
+            recs[-1]["trials"] = sc["trials"]
         cr = (sc or {}).get("criterion")
         if cr and cr.get("pass") is not None:
             # scored against a control recorded with the same configuration; a
