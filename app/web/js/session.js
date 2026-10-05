@@ -87,7 +87,7 @@ export class SessionPanel {
     const p = this.protocol();
     if (!p) return "";
     const s = (p.duration_ms || 1000) / 1000 * (COST[(p.config || {}).preparation || "closed_loop"] || 100);
-    return `${Math.round(s / 60 * 10) / 10} min to run (measured cost on this Mac, plus about 1 min to build)`;
+    return `${Math.round(s / 60 * 10) / 10} min to run (measured cost on this Mac, plus about 15 s to build)`;
   }
 
   async check() {
@@ -156,7 +156,7 @@ export class SessionPanel {
     if (!s) { st.textContent = "none running"; log.innerHTML = ""; return; }
     const lv = s.live || {}, slot = (s.log || []).some(l => l.includes("[slot] waiting"));
     const phase = !s.alive ? (s.returncode === 0 ? `finished (${esc(lv.state || s.status || "")})` : `<span class="warnline">exited ${s.returncode}</span>`)
-      : !s.status ? (slot ? "waiting for a job slot / RAM" : "building the model (about a minute)")
+      : !s.status ? (slot ? "waiting for a job slot / RAM" : "building the model (about 15 s)")
         : esc(lv.state || s.status);
     st.innerHTML = `<b>${esc(s.id)}</b>: ${phase}; ${(s.t_ms || 0).toFixed(0)} ms simulated`
       + (s.status ? ` · <a href="?rec=${encodeURIComponent(s.path.replace(/^runs\//, ""))}&tab=session">open in the viewer</a>` : "");

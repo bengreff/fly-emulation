@@ -3,8 +3,8 @@
 A local research app for the fly emulation: the body, every neuron of the scan on a brain map, the
 recorded activity and the evidence behind each model value. Design and milestones:
 `docs/APP_DESIGN.md`. Milestone 1 replays recordings; milestone 2 adds stimulus protocols, labelled
-current-injection optogenetics and replay of interventions beside a matched control. Live
-sessions are not built yet.
+current-injection optogenetics and replay of interventions beside a matched control; M2b adds
+live sessions (start, pause, stimulate, stop from the page) and the protocol editor.
 
 ## Build the data (once; not kept in version control)
 
@@ -35,7 +35,12 @@ before the run is viewed.
 The recorder refuses a protocol that touches a held-out item or an unspent seed unless the run
 names it with `--spend-heldout <id>` (`app/server/heldout.py`). A library run takes about 3.5
 minutes and 2.4 GB (measured); the runner goes through `~/director/harness/slot.py` when present,
-one run at a time.
+one run at a time. `config.preparation: brain_only` runs the network alone as the model's
+`scripts/assay_pathways.py` does, and `config.kick_rng: assay` draws kicks as it does;
+`app/protocols/assay/` reproduces its sugar to MN9 assay (`--seeds 0 1 2` on `run_library.py`).
+
+    .venv/bin/python app/tools/make_shams.py                # more sham protocols (one Kenyon cell each, fixed draw)
+    .venv/bin/python app/tools/run_library.py --protocols app/protocols/sham --out runs/app/lib-m9
 
 ## Open it
 
@@ -43,10 +48,17 @@ one run at a time.
 
 The page lists every recording under `runs/app`. URL parameters keep the view: `rec`, `t` (ms),
 `sel` (bodyId), `view` (anatomy, flow, groups), `colour` (`delta` is rate vs control), `theme`,
-`tab` (run, cell, compare) and `ctrl` (the control recording's id, when more than one matches).
+`tab` (run, cell, compare, session) and `ctrl` (the control recording's id, when more than one matches).
 A stimulated run's Compare tab shows the matched control, the step where the two first differ,
-the criterion's verdict, the sham run read over the same window (the noise floor) and the cells
+the criterion's verdict, the sham runs read over the same window (the noise floor) and the cells
 that changed most.
+
+The Session tab (`tab=session`) edits a protocol (from the open recording or blank), checks it
+against the atlas and the held-out guard, and starts a live session on this machine through the
+slot limiter: one at a time, about 100 s of wall time per simulated second closed loop. Pause,
+resume, stop and stimulus events take effect within 10 ms of simulated time and are written into
+the recording's protocol, so it replays like any other. The server only accepts these requests
+from a local page (`X-Workbench` header and a local Host).
 
 ## Check it
 
@@ -68,10 +80,11 @@ Nothing is published by these tools.
 | `server/serve.py` | local server and recording catalogue (with library verdicts from `scores.json`) |
 | `server/protocol.py` | `flyemu-protocol/1`: target resolution, effectors and their declared approximations |
 | `server/heldout.py` | held-out guard |
+| `server/live.py`, `server/sessions.py` | live session: the recorder's command reader; the server's session manager and protocol check |
 | `build/atlas.py` | `flyemu-atlas/1`: positions with basis codes, annotations, flow layers, edge shards |
 | `build/convert_legacy.py` | old `replay_data.js` files to rec/1 (motor spikes only, flagged) |
 | `build/site.py` | static bundle |
 | `web/` | the page (ES modules, three.js r170 vendored) |
 | `tests/` | pytest checks |
-| `protocols/` | the intervention library (four tests, a control and a sham) |
+| `protocols/` | the intervention library (four tests, a control and a sham; `sham/` more shams; `assay/` the check against the model's assay) |
 | `tools/` | library runner and scorer, replay check, screenshots, live-cost benchmark |
