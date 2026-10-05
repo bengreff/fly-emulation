@@ -89,7 +89,7 @@ def main() -> None:
     per = int(round(1000.0 / kin.f_hz / a.dt_ms))
     n = per * a.beats
     j70 = int(0.7 * be.alpha.shape[1])
-    rec, ft = [], []
+    rec, ft, pt = [], [], []
     O = 0.5 * (d.xpos[be.bid[0]] + d.xpos[be.bid[1]])            # hinge midpoint (wing body origins)
     for _ in range(n):
         if tabs is None:
@@ -102,6 +102,7 @@ def main() -> None:
         F = sum(d.xfrc_applied[bb, :3] for bb in be.bid)
         M = sum(d.xfrc_applied[bb, 3:] + np.cross(d.xipos[bb] - O, d.xfrc_applied[bb, :3]) for bb in be.bid)
         ft.append(np.r_[F, M])
+        pt.append(be.parts.sum(0).copy())                                  # lift, drag, rotational, added mass (world)
         d.qpos[:7] = q0; d.qvel[:6] = 0.0
         rec.append([wb.t_s * kin.f_hz % 1.0, np.degrees(tq[0]), np.degrees(tq[2]), be.alpha[0, j70],
                     *be.parts.sum(0)[:, 2], be.force.sum(0)[2] + d.qfrc_fluid[2]])
@@ -122,7 +123,9 @@ def main() -> None:
     (out_dir / f"{stem}.json").write_text(json.dumps(out, indent=1))
     fs = np.array(ft[-per:]) * np.array([1, -1, -1, 1, -1, -1]) / np.array([W] * 3 + [W * L] * 3)
     np.savez(out_dir / f"{stem}_series.npz", phase=r[-per:, 0], robot_frame_norm=fs,      # last beat, per step
-             names=np.array(["Fx", "Fy", "Fz", "Mx", "My", "Mz"]))
+             names=np.array(["Fx", "Fy", "Fz", "Mx", "My", "Mz"]),
+             terms_robot_frame_norm=np.array(pt[-per:]) * np.array([1, -1, -1]) / W,     # (step, term, xyz), both wings
+             term_names=np.array(["lift", "drag", "rotational", "added mass"]))
     o = np.argsort(r[:per, 0])
     ph = r[:per, 0][o]
     fig, ax = plt.subplots(3, 1, figsize=(8, 8), sharex=True)

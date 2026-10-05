@@ -660,6 +660,11 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - The model also has sharp Fz dips at both stroke reversals (phase 0.15 and 0.7) that the robot does not show. Its My peaks at 1.5 near phase 0.7, against the robot's 0.3.
     - Both features sit where the rotational and added-mass terms act.
   - **Next discriminating step.** The robofly drag and rotational coefficients (Dickinson 1999, melanogaster wing, Re ≈ 136) applied to the hydei robot wing: is the Fx shortfall the drag coefficient? Split the model's Fx by term and check which term would have to change. Any change must come from a measured coefficient set for this wing, not a fit to Fx.
+  - **Fx split by term (22:20; pitch level 10 and roll level 12; per-term series in `*_series.npz`).**
+    - The drag term carries Fx: its Fx correlates 0.93-0.97 with the robot's, against 0.10-0.16 for lift, 0.44-0.48 for rotational and about 0 for added mass.
+    - A least-squares weighting of the four terms that would reproduce the robot's Fx gives drag 1.47-1.48 at both conditions, with lift 0.82-0.90, rotational 0.96-1.03 and added mass 1.1-2.0, the last poorly constrained. This is a diagnostic; nothing is changed.
+    - Reading: the robofly drag coefficient (Dickinson 1999; melanogaster wing, Re ≈ 136) is about 2/3 of what the hydei robot wing gives. Drag adds little to the mean vertical force (−0.05 to −0.09 W), so the steady-force pass does not test it.
+    - Database S1 holds geometry and scaling only (stroke-plane angle −47.5°, Lwing 2.99 mm, cwing 0.95 mm, AR 3.16), and no coefficient set. A source search for measured coefficients on this wing is running.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
