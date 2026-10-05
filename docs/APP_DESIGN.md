@@ -27,15 +27,22 @@ only through public functions and asks for new ones (section 13, on hold).
   1. **Done 5 October, 02:10 CDT:** the noise rule for the mean, a paired sign-flip test against
      each seed's sham (section 14, "10-seed library"). It replaces the earlier proposal (the mean
      must exceed the largest single-seed sham), for the reason given there.
-  2. **Record the 10-seed library.** The runner goes through the slot limiter by itself, one run at
-     a time. It is resumable: complete runs are skipped, and incomplete ones are moved aside.
+  2. **Record the 10-seed library: launched 5 October, 02:09 CDT, on the Mac** (backhouse
+     offline). It runs detached (nohup, shell pid 92071) and logs to
+     `runs/app/lib-m9-seeds/runner.log`. The runner goes through the slot limiter by itself, one
+     run at a time. It is resumable: complete runs are skipped, and incomplete ones are moved
+     aside, so rerunning the same command after an interruption continues it.
 
-         .venv/bin/python app/tools/run_library.py --seeds 0 1 2 3 4 5 6 7 8 9 --out runs/app/lib-m9-seeds
+         .venv/bin/python app/tools/run_library.py --seeds 0 1 2 3 4 5 6 7 8 9 --only control sham-one-cell sugar-grn-kick mdn-cschrimson dna02-left --out runs/app/lib-m9-seeds
+         .venv/bin/python app/tools/run_library.py --seeds 0 1 2 3 4 5 6 7 8 9 --only sugar-patch-legs --out runs/app/lib-m9-seeds
 
-     - Size: 6 protocols × 10 seeds = 60 runs, at about 3.5 min and 2.4 GB each (measured per
-       run), so about 3.5 h of compute (estimate), more if other projects hold slots.
-     - Run it on backhouse if it is back and has the app data (check first); otherwise on the Mac
-       in the background, with a monitor.
+     - **Order:** the five informative protocols go first, seed by seed (50 runs). Then leg sugar
+       (10 runs), which the model's constants say cannot change a spike.
+     - **Size:** 60 runs, about 4 min and 2.4 GB each (measured for 2 s runs).
+     - **Expected finish (estimate):** the 50 runs by about 05:30 and all 60 by about 06:10, later
+       if other projects hold slots.
+     - The log ends with "runner finished" when both parts are done.
+     - Free RAM was 5.2 GB at launch, so a second runner in parallel would cross the 3 GB floor.
   3. **Score and record:** `.venv/bin/python app/tools/score_library.py --lib runs/app/lib-m9-seeds`.
      Add the per-seed and mean results to the M2b tables in section 14, then commit and push.
   4. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
