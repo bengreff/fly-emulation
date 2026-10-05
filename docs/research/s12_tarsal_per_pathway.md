@@ -75,14 +75,22 @@ the lying posture. Hunger in real flies acts at the GRN terminal (presynaptic ga
 applies only to the labellar sugar GRNs. A presynaptic hunger gain on LgAG2 is a sourced candidate, but
 it would have to carry the signal past layer 2 as well, where leg input is 1-2% of the synapses.
 
-## Next
+## Next (as written 04:39; done)
 
-Test whether the ascending class alone can reach MN9 if its first relay fires: drive LgAG2 only, with a
-hunger-like presynaptic gain on LgAG2 output (bounded by the measured dopamine effect, which the agent
-could not quantify), and read layer 2 and MN9. A pre-registered run, behind a switch.
+The LgAG2 presynaptic gain test was run as a diagnostic (DECISIONS 04:40): MN9_L 3 Hz at ×10 under m2,
+0 Hz under m9r. Disinhibition also failed (DECISIONS 04:50). See F-TASTE-LEG-1.
 
 ## Added 05:02: LgLG3 included (diagnostic, DECISIONS 04:59)
 
 Driving LgLG3 + LgLG4 + LgAG2 (216 cells) at 100 Hz open loop: Dandelion fires at 310-320 Hz under m2;
 MN9_L stays at 0 Hz under m2 and m9r. In the model Dandelion is inhibitory (male-cns GABA prediction).
 Its transmitter is the most discriminating missing fact for this pathway.
+
+## Transmitter evidence for Dandelion (05:04, local metadata lookup)
+
+- Predicted: male-cns GABA (type-level confidence 0.89); BANC GABA (score 0.968 left, 0.956 right).
+- BANC `neurotransmitter_verified` = gaba for both cells. The basis is undocumented locally; the column
+  covers 65,486 of 188,508 BANC cells and gives gaba for 431 of 440 hemilineage-13B cells, and both
+  AN13B002 cells are hemilineage 13B. So it is probably a lineage-level assignment (inferred).
+- Measured for this cell type: none found. BANC cross-matches the left cell to FlyWire AN_GNG_68 and the
+  right to AN_GNG_193.
