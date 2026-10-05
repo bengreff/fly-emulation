@@ -263,11 +263,16 @@ def register_rest(reg, body) -> int:
                                 "3 refitted within the fold-bounded CTr ranges (F-COXA-2; use with joint:ctr|range_source 1)",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; fitted references are a template option")
-    if int(ref) == 2:
-        return set_rest_angles(body, REST_TABLE_COXA)
-    if int(ref) == 3:
-        return set_rest_angles(body, REST_TABLE_CTR)
-    return set_rest_angles(body) if int(ref) else 0
+    mirror = reg.require("joint:leg", "rest_mirror", units="enum",
+                         model_use="0 each leg's fitted reference as fitted; 1 left legs take the right "
+                                   "partner's (the eLife 2025 Fig 3C targets are right legs only; the left "
+                                   "fit is another solution of a non-unique fit; bilateral symmetry inferred; s12)",
+                         subsystem="body_mechanics", minimal=0,
+                         minimal_note="per-side fit as fitted; mirroring is an option (s12)")
+    if not int(ref):
+        return 0
+    table = {2: REST_TABLE_COXA, 3: REST_TABLE_CTR}.get(int(ref), REST_TABLE)
+    return set_rest_angles(body, table, mirror=bool(int(mirror)))
 
 
 # Wing hinge rotational stiffness (s12, joint:wing|stiffness_source 1): 91 +- 9 pN*m/deg
@@ -479,11 +484,24 @@ REST_TABLE_COXA = REST_TABLE.with_name("passive_leg_rest_fit_coxa_flybody.csv")
 REST_TABLE_CTR = REST_TABLE.with_name("passive_leg_rest_fit_ctr.csv")
 
 
-def set_rest_angles(body, table: Path = REST_TABLE) -> int:
+def mirror_rest_table(t: pd.DataFrame) -> pd.DataFrame:
+    """Left-leg rows replaced by their right partner's reference (same sign: every leg joint
+    pair shares the angle convention, scripts/probes/mirror_audit.py)."""
+    right = t[t.leg.str.startswith("r")].copy()
+    left = right.copy()
+    left["leg"] = "l" + left.leg.str[1:]
+    left["joint"] = [j.replace(f"{r}_", f"l{r[1:]}_") for j, r in zip(right.joint, right.leg)]
+    return pd.concat([right, left], ignore_index=True)
+
+
+def set_rest_angles(body, table: Path = REST_TABLE, mirror: bool = False) -> int:
     """B3 rest angles: spring references fitted to the eLife weighted protocol
     (F-REST-1; inferred). Updates MuJoCo's spring reference and any coupled
-    spring hook. Returns the number of joints set."""
+    spring hook. Returns the number of joints set. mirror: left legs take the
+    right legs' values (joint:leg|rest_mirror)."""
     t = pd.read_csv(table, comment="#")
+    if mirror:
+        t = mirror_rest_table(t)
     m = body.sim.mj_model
     pre = f"{body.fly.name}/"
     ref = {}

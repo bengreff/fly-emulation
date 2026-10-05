@@ -142,3 +142,7 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
 - 03:13 Battery rerun: 201 passed, 12 skipped, 1 failed (backhouse-only raw-data path check; passes on the Mac). No regressions against m9v.
 - 03:15 Director note (sent 02:12): backhouse is online; long jobs go there. All s12 runs today were already on backhouse. Dickson damping split by term pre-registered (DECISIONS 03:15); the symmetry argument predicts drag carries it all, which withdraws the earlier rotational-term suspicion.
 - 03:21 Split result: drag −858.0, rotational +1.9, added mass −0.1, lift 0.0 (sum −856.2). The excess is in translational drag; at the robot's larger hinge offset it would be about 1.5× (strip-theory estimate, derived).
+- 03:22 HANDOFF next item 1 corrected: the model's drag polar is already the measured robofly polar (Dickinson 1999), so a Sane & Dickinson polar is not a new test; advance ratio and induced inflow remain.
+- 03:22 lh load afferents: silent because the lh leg carries little transmitted load (strain 0.83 against 1.7-6.4; drive 5.1 mV, under threshold). The dead fly rolls onto its right side starting in mid-air.
+- 03:25 Mirror audit: the fitted leg rest angles differ left from right (front coxa roll 23.2° against 5.0°), a non-unique fit to right-leg-only data. `joint:leg|rest_mirror` pre-registered (DECISIONS 03:25).
+- 03:30 Result: roll at 30 ms −0.2° (was 1.9°); final roll 16.2° (was 25.3°), same side; gate PASS on seeds 12-19. Sheet viewed. Adopted as m9r (03:31). Battery started on backhouse.

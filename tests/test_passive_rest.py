@@ -45,3 +45,22 @@ def test_equilibrium_moves_with_the_spring_reference():
     leg.ref[i] += 0.3
     a1 = leg.equilibrium(0.0)
     assert abs(a1[2] - a0[2]) > 5.0                       # psi follows a 17 deg FTi reference shift
+
+
+def test_rest_mirror_gives_left_legs_the_right_values():
+    """joint:leg|rest_mirror 1: every left joint takes its right partner's fitted reference;
+    the right legs (the measured side) are unchanged."""
+    import re
+
+    import pandas as pd
+    from flyemu.passive import REST_TABLE, REST_TABLE_COXA, REST_TABLE_CTR, mirror_rest_table
+    for f in (REST_TABLE, REST_TABLE_COXA, REST_TABLE_CTR):
+        t = pd.read_csv(f, comment="#")
+        m = mirror_rest_table(t)
+        assert sorted(m.joint) == sorted(t.joint)
+        ref = dict(zip(m.joint, m.spring_ref_rad))
+        right = t[t.leg.str.startswith("r")]
+        assert len(right) * 2 == len(t)
+        for j, v in zip(right.joint, right.spring_ref_rad):
+            assert ref[j] == v
+            assert ref[re.sub(r"(^|-)r([fmh])_", r"\1l\2_", j)] == v
