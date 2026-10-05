@@ -65,3 +65,6 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
   - F-FLIGHT-3: the wing against robofly. Lift is 1.72× at Kutta 3.1. Drag is flat at 1.0 (MuJoCo projected area saturates on a thin plate), against robofly 0.39-3.46;
   - FIDELITY_LADDER: synapse-specific rungs 8-13 (Task C).
 - 18:55 m9m gate: seeds 12-18 pass, 19 running.
+- 19:00-19:10 F-FLIGHT-3 continued: blade-element wing behind `aero:wing|model` (robofly coefficients, rotational lift from model pitch-axis position; tests in tests/test_flight.py). Hover at guessed kinematics: 0.72 W imposed, 0.55 W PD-tracked, no fitted number. Two bugs fixed on the way: COM velocity used as root velocity; total span spin used as rotation rate. Pre-registered measured-kinematics test (DECISIONS 19:08); a source-search agent is running.
+- 19:07 m9m gate: all 8 seeds pass; m9m adopted. m9d gate seeds 12-16 pass so far.
+- 19:10 HANDOFF session-12 block rewritten.

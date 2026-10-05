@@ -1,38 +1,45 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 1 October 2026, 04:35, end of session 11.
+**Rewritten each session; do not append.** State as of 4 October 2026, 19:10, session 12 in progress (session 11 state below the first block).
 
-**Session 12 in progress (4 October 2026, from 16:36):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this paragraph, the file is still the session 11 state, except the working model, which is now m9w.
-- A is done: `docs/BLANKS_AUDIT.md` (143 quantities, every one owned; 14 stubs).
-- B's first gap, wings at rest, is closed (F-WING-2, F-SENSE-NERVE-1):
-  - Resting wing motor neurons were driven by wing-nerve campaniforms that the model read as hind-leg load, and the wing map had the steering muscles on the wrong axes.
-  - Two sourced switches fix this. With them, m9's silence gate still passes on seeds 12-19, so **m9w = m9 + `motor_map:wing|roles` + `sense:mechano|assign_by_nerve` is the working profile** (DECISIONS s12).
-  - At the declared 1 µN·mm per spike the wings rest folded and symmetric (`docs/media/s12_wings_rest_roles_nerve.png`).
-- Still open from this item:
-  - Every script still sets non-leg torque per spike to 10 (guessed), which throws the wings to their stops. A wing value needs a source.
-  - The wing-strain proxy reads deviation, not stroke.
-  - m9w rests on its belly (thorax 0.54 mm).
-- Coxa ranges: built behind `joint:coxa|range_source` (neutral 0), with rest angles refitted inside them (`joint:leg|spring_reference` 2), tested (`tests/test_coxa_ranges.py`). Not adopted (F-COXA-2, DECISIONS 18:23):
-  - the dead fly passes, and the resting thorax rises from 0.54 to 0.77 mm, but the trunk stays on the floor;
-  - the front legs prop forward on a non-unique +90° coxa solution;
-  - live equals dead.
-- Standing is now part of B (Director). The diagnosis is F-STAND-3:
-  - the fly lacks a resting support drive (11-32% CTr extensor activation needed; tonic slow units give about 0.3%);
-  - Wang 2025 shows real flies stand on active force;
-  - no recording fixes the resting rate of the support pools.
-  - **DECISION NEEDED (Ben)** in DECISIONS 18:23: leave it unfilled, fit one drive against standing height with the silenced fall held out, or try the load reflex first (recommended).
-- Next in B, in the Director's order:
-  1. Sensor assignment. The leg load sensors are lopsided (lf 6, lm 2, lh 15, rf 2, rm 0, rh 9), which blocks the load-reflex route to standing.
-  2. Mid/hind leg muscles as a labelled derivation.
-  3. Leg damping, extensor:flexor, flight coefficients. CTr native ranges are also open (F-COXA-2).
-- After B comes C.
+**Session 12 in progress (4 October 2026, from 16:36; this block updated 19:10):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
+- **Working profile: m9m** (adopted 19:07). Its lineage: m9 → m9w (wing motor roles and nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm). Each step passed the silence gate (seeds 12-19; DECISIONS s12).
+- **A** (blanks) is done: `docs/BLANKS_AUDIT.md`.
+- **C** (synapse-specific ladder) is done: `docs/FIDELITY_LADDER.md`, rungs 8-13.
+- **B items done:**
+  - Wings at rest (F-WING-2, F-SENSE-NERVE-1/2).
+  - Sensor assignment by nerve (F-SENSE-NERVE-2).
+  - Mid/hind muscles as a labelled derivation (F-MUSCLE-MH-1). The FlyMimic author request is for Ben's list.
+  - Leg damping (F-DAMP-1). The option: c = 0.05 s × measured stiffness, against a bound of c/k ≲ 0.1 s from Wang 2025.
+  - TTM double count (F-MUSCLE-MH-1).
+  - Extensor:flexor, written up as a data conflict with no further fix (F-FTI-2).
+  - Flight coefficients (F-FLIGHT-3): the fitted Kutta wing is 1.72× the robofly's lift, and its drag is flat at 1.0. A blade-element wing is built behind `aero:wing|model` 1 with robofly coefficients and rotational lift, and no fitted number. It gives 0.72 W at the guessed hover kinematics.
+  - Coxa ranges: built and kept off (F-COXA-2).
+- **Running or to collect:**
+  - m9d gate. m9d = m9m + `joint:leg|damping_source` 1 + `jump:ttm|exclude_from_hill` 1, pre-registered at DECISIONS 18:53.
+    - Seeds 12-16 are done: silent, no warnings, no NaN, whole brain 0.22-0.32 Hz (up from 0.25).
+    - The chain (`runs/s12/gates/md_chain.log`) writes `cl_md_s17..19.json` next.
+    - If all 8 pass: set WORKING_PROFILE "m9d" and write the result under 18:53.
+  - Measured hover kinematics: a source search (Sonnet agent) writes `runs/s12/flight/kinematics_lit.md` and `data/raw/flight_kinematics/`.
+    - Then impose them with `scripts/probes/hover_blade_trace.py`, after adding a table-driven kinematics option.
+    - Test pre-registered at DECISIONS 19:08: lift between 0.8 and 1.2 of weight, aero unchanged.
+- **Open in B:**
+  - **Standing.** F-STAND-3: the model has no resting support drive. **DECISION NEEDED (Ben)** at DECISIONS 18:23.
+    - Damping changes the speed of the collapse, not where the fly ends up (F-DAMP-1).
+    - Mid/hind muscles change nothing at rest.
+  - **CTr ranges.** Two inferred sources conflict.
+    - flybody's native CTr pitch range is −8.6° to 114.6° on the front and mid legs and −40° to 86° on the hind legs, set to admit grooming inverse kinematics.
+    - The s9 rest fit to the measured passive posture needs −60° to −71°.
+    - The discriminating test: map measured 3D walking and grooming joint angles (Anipose / Karashchuk 2021, Haustein 2024) through the same paper-to-hinge mapping. If they fall below −8.6°, flybody's range is too narrow; if they don't, the rest mapping is wrong. Not started.
+  - **Wing size.** The membrane planform is 2.59 mm² over a 2.8 mm span, not checked against measured wing size.
+  - **Non-leg torque per spike** is still 10 (guessed) in every script.
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
 ## Where the project stands
 
 - **Direction (Ben, locked 2026-09-28, re-stated 2026-09-30):** fill 100% of the fly's information at the highest plausible fidelity; the ledger fill fraction is the metric. Missing data is inferred with development models (size rule, lineage/hemilineage, birth order, wiring compensation, segment/side) and transcriptome tables, every built mechanism runs at its prior, then the bounded search of CONSTRUCTION.md / PLAN_NEXT.md. Behaviour and stability are guardrails, never objectives: do not fit to recorded walking or tune for walking (that was tried; see DECISIONS 2026-09-30 20:35).
-- **Working model: m9w** since 2026-10-04 17:50: m9 plus the two s12 body/sensor switches above, not fitted. Below, **m9** (`profiles.M9`, the default from 2026-10-01 00:27 to 2026-10-04 17:50) = m8 + class gains re-searched on the rung-1 membrane (DN release 0.85, MN_other input 1.6, gustatory release 1.25, central size exponent 1.0; held out seeds 17-19 silent, bitter suppression, sugar dose response, bitter alone all pass; sugar -> MN9_L 5.7 Hz; F-RS-1). m8 kept (`FLYEMU_PROFILE=m8`).
+- **Working model: m9m** since 2026-10-04 19:07 (m9w 17:50, m9n 18:46): m9 plus the s12 body and sensor switches above, none of them fitted. Below, **m9** (`profiles.M9`, the default from 2026-10-01 00:27 to 2026-10-04 17:50) = m8 + class gains re-searched on the rung-1 membrane (DN release 0.85, MN_other input 1.6, gustatory release 1.25, central size exponent 1.0; held out seeds 17-19 silent, bitter suppression, sugar dose response, bitter alone all pass; sugar -> MN9_L 5.7 Hz; F-RS-1). m8 kept (`FLYEMU_PROFILE=m8`).
 - **Rung 2 (synapse receptor mix and kinetics): built, tested, not adopted** (F-R2-1; DECISIONS 2026-10-01 00:45 to 02:44).
   - What exists:
     - conductance synapses, with a GPU port equal to the CPU (`gpu/batched.py`; tests in `tests/test_gpu_batched.py`);

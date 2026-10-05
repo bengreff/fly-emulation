@@ -465,7 +465,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Status.** Candidate m9d, gate queued (DECISIONS 18:53).
 
 ### F-FLIGHT-3: the fitted wing reproduces hover lift at one condition; against the robotic fly its lift is 1.7× too high and its drag has the wrong shape
-- **Test** (B, flight coefficients beyond one condition). `scripts/probes/wing_coefficients.py` holds the fly still with gravity off and blows a uniform wind (1000 mm/s) over the left wing membrane at angles of attack 0-90°. It reads the fluid force on the wing alone, after subtracting the drag on the rest of the body in the same wind. It then compares the result with the translational coefficients of the dynamically scaled robotic Drosophila wing (Dickinson, Lehmann & Sane 1999, Science 284:1954, Re ≈ 136; measured): CL = 0.225 + 1.58 sin(2.13α − 7.2°), CD = 1.92 − 1.55 cos(2.04α − 9.82°). Area is the membrane planform, π × 0.589 × 1.401 mm = 2.59 mm². Plot: `runs/s12/flight/wing_coefficients.png`, viewed.
+- **Test** (B, flight coefficients beyond one condition). `scripts/probes/wing_coefficients.py` holds the fly still with gravity off and blows a uniform wind (1000 mm/s) over the left wing membrane at angles of attack 0-90°. It reads the fluid force on the wing alone, after subtracting the drag on the rest of the body in the same wind. It then compares the result with the translational coefficients of the dynamically scaled robotic Drosophila wing (Dickinson, Lehmann & Sane 1999, Science 284:1954, Re ≈ 136; measured): CL = 0.225 + 1.58 sin(2.13α − 7.2°), CD = 1.92 − 1.55 cos(2.04α − 9.82°). Area is the membrane planform, π × 0.589 × 1.401 mm = 2.59 mm². Plot: `docs/media/s12_wing_coefficients.png`, viewed.
 - **Lift.** The model gives exactly CL = C_K sin 2α. At the adopted Kutta coefficient 3.1 (inferred: fitted so hover lift = weight, F-FLIGHT-2), CL peaks at 3.1 at 45°, against the robofly's 1.81. That is 1.72× at every angle. At MuJoCo's default of 1 it is 0.55×.
 - **Drag.** CD is 0.5 at α = 0 and then exactly 1.0 from α ≈ 2° to 90°. The robofly gives 0.39 at low angles, 1.70 at 45° and 3.46 at 90°. Split by coefficient:
   - The slender term (0.25) gives the 0.5 at α = 0.
@@ -484,7 +484,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Not modelled: acceleration added mass, wake capture, pitching moment, flexion.
   - Tests: `tests/test_flight.py` (steady wind equals the robofly to 1e-6; the rotational term follows the pitch joint only).
 - **Bugs found on the way.** `mj_objectVelocity` with a body ID returns the centre-of-mass velocity, not the frame origin's, which gave 2.6 W. The strip width was shared between wings (a 1e-5 area error). Both are fixed and covered by the tests.
-- **Hover, no fitted number** (`scripts/probes/tethered_lift.py --blade`, `scripts/probes/hover_blade_trace.py`; 218 Hz, 140°, rotation −57 ± 55°; `runs/s12/flight/hover_blade_trace.png`, viewed):
+- **Hover, no fitted number** (`scripts/probes/tethered_lift.py --blade`, `scripts/probes/hover_blade_trace.py`; 218 Hz, 140°, rotation −57 ± 55°; `docs/media/s12_hover_blade_trace.png`, viewed):
 
   | aero | imposed kinematics | PD-tracked |
   |---|---|---|
