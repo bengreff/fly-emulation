@@ -49,6 +49,15 @@ TASTANTS = ("sugar", "water", "bitter", "salt", "amino_acid")
 LABELLAR_MODALITY = {"LB3b": "sugar", "LB3c": "sugar", "LB3a": "water",
                      "LB1a": "bitter", "LB1b": "bitter", "LB1c": "bitter", "LB1d": "bitter",
                      "LB3d": "salt", "LB1e": "amino_acid"}
+# Leg and wing taste types matched to receptor lines by projection (bioRxiv
+# 2025.08.25.671814, preprint of the Cell 2026 gustatory connectome; read through
+# a fetch-and-summarise pass, so secondary; docs/research/s12_tarsal_grn_physiology.md):
+# LgLG4 Gr64f+/Ir56b+ (sugar; its low-salt response is not separated from salt here),
+# LgAG2 Gr61a+ (appetitive, a sugar receptor), WG2 "likely to detect sugar",
+# LgAG1 Gr33a+ (bitter). Contact-pheromone types (ppk23/ppk25/fru/Ir52a lines) do not
+# respond to the five modelled tastants. LgLG3, LgAG3-9 and the rest: not found.
+LEG_MODALITY = {"LgLG4": "sugar", "LgAG2": "sugar", "WG2": "sugar", "LgAG1": "bitter"}
+LEG_PHEROMONE = ("LgLG1a", "LgLG1b", "LgLG2", "LgLG5", "LgLG6", "LgLG7", "LgLG8", "WG1", "WG3", "WG4")
 HEAD_BODIES = ("c_head", "l_antenna", "r_antenna", "c_rostrum", "c_haustellum",
                "l_labrum", "r_labrum")
 
@@ -233,6 +242,21 @@ class ExtraSenses:
         return out
 
 
+def leg_taste_weights(types: pd.Series, source: int) -> np.ndarray:
+    """Per-cell weight to each of TASTANTS for leg/wing taste types (see
+    `sense:taste_leg|modality_source`): 0 every cell 0.2 to every tastant; 1 receptor-
+    line matched types 1 for their modality, pheromone types 0, the rest 0.2."""
+    t = types.fillna("")
+    w = np.full((len(t), len(TASTANTS)), 0.2)
+    if source:
+        for ty, mod in LEG_MODALITY.items():
+            sel = t.eq(ty).to_numpy()
+            w[sel] = 0.0
+            w[sel, TASTANTS.index(mod)] = 1.0
+        w[t.isin(LEG_PHEROMONE).to_numpy()] = 0.0
+    return w
+
+
 def build(reg: Registry, conn, body) -> ExtraSenses:
     cen = pd.read_csv(REPO / "data" / "derived" / "sensory_census.csv")
     n = conn.neurons.reset_index(drop=True)
@@ -329,9 +353,21 @@ def build(reg: Registry, conn, body) -> ExtraSenses:
         roi_leg = {}
     legs = ["lf", "lm", "lh", "rf", "rm", "rh"]
     lside = np.array([legs.index(roi_leg[b]) if roi_leg.get(b) in legs else 6 for b in n.bodyId])
-    add("taste_leg", legtaste, extra=np.full((len(n), len(TASTANTS)), 0.2), side=lside,
-        basis=Status.GUESSED, why="leg/wing taste modality per type unknown: weak response to "
-                                  "every tastant; leg from dominant leg neuropil (derived)")
+    leg_src = reg.require("sense:taste_leg", "modality_source", units="enum",
+                          model_use="0 every leg/wing taste type weak (0.2) to every tastant "
+                                    "(guessed, legacy); 1 types matched to receptor lines take "
+                                    "the labellar rule (1 for their modality, 0 otherwise), "
+                                    "contact-pheromone types 0 to every tastant, unmatched "
+                                    "types keep 0.2 (LEG_MODALITY, LEG_PHEROMONE)",
+                          subsystem="sensory_transduction", instances=1, minimal=0,
+                          minimal_note="legacy guess")
+    add("taste_leg", legtaste, extra=leg_taste_weights(t, int(leg_src)), side=lside,
+        basis=Status.INFERRED if int(leg_src) else Status.GUESSED,
+        why=("leg/wing taste modality by receptor-line projection matching (gustatory "
+             "connectome preprint, secondary read); pheromone types 0; unmatched types weak "
+             "to all (guessed); leg from dominant leg neuropil (derived)") if int(leg_src) else
+            "leg/wing taste modality per type unknown: weak response to "
+            "every tastant; leg from dominant leg neuropil (derived)")
     # leg touch bristles in subclass 'leg' (not driven by sensory.py)
     sub = n.subclass.fillna("").to_numpy()
     legtouch = (organ == "mechanosensory bristle") & (sub != "mechanosensory bristle")

@@ -1083,3 +1083,35 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Hinge-angle fitting error 0.0° in every table. The model's hinge half-separation over R is 0.164, against the robot's 0.24. A smaller offset should lower the damping, so it does not explain the excess.
   - Prediction missed: it said 0.6-0.8 for damping, with pa lowest among the actuation slopes. Measured: 1.34 for damping, pv lowest. Extrapolating from the hydei-robot force deficit (22:20) was wrong for this wing and these kinematics.
   - Nothing in the model changes. Next discriminating experiment: split the damping torque by term (translational lift, translational drag, rotational force). The rotational term's coefficient is derived from theory (C_rot = π(0.75 − x̂₀)), not measured on this wing, and it scales with |w|. That makes it the first suspect for an excess that tracks the velocity asymmetry.
+
+### Pre-registration: leg and wing taste modality per type from receptor-line matching (`sense:taste_leg|modality_source` 1) (5 October, 02:57; no run yet)
+
+Problem (flyapp relay): leg taste peaks at about 2.9 mV at 1 M sugar (15 mV x 1/(1+0.05) x 0.2), below the about 7 mV spiking threshold, because every leg/wing taste type carries a guessed weight of 0.2 to every tastant. The weight, not the gain, is the guess that can be replaced from data.
+
+Change behind the switch (0 = legacy, minimal): types matched to receptor lines in the gustatory connectome preprint (bioRxiv 2025.08.25.671814, preprint of Cell 2026; secondary read, `docs/research/s12_tarsal_grn_physiology.md`) take the labellar rule, 1 for their modality and 0 otherwise: LgLG4 (Gr64f+/Ir56b+), LgAG2 (Gr61a+) and WG2 as sugar, LgAG1 (Gr33a+) as bitter. Contact-pheromone types (LgLG1a, LgLG1b, LgLG2, LgLG5-8, WG1, WG3, WG4) get 0 to all five tastants. Unmatched types (LgLG3, LgAG3-9, LB2b, LB2d, SNch05, untyped; 237 cells) keep 0.2 to all (guessed). Basis of the channel becomes inferred. Gain 15 mV and K 0.05 M stay as they are (guessed; no leg dose-response found; Ling 2014 says tarsal and labellar sugar GRN rates are comparable, which supports sharing the labellar gain but does not measure it).
+
+Expected drive (derived): sugar types 10.0 mV at 100 mM and 14.3 mV at 1 M; unmatched types unchanged at 2.0 and 2.9 mV.
+
+Pass criteria, fixed now (probe `scripts/probes/leg_taste_dose.py`, m9f, seed 12, rates over 100-400 ms on a sucrose patch covering the arena):
+1. Held-out rate (Ling et al. 2014, secondary read, about 50-55 Hz at 100 mM sucrose): LgLG4 mean rate at 100 mM within a factor of 2, 25-110 Hz. A weak test: one concentration, read through a summary, and the model's per-type rate depends on how many tarsi touch the patch.
+2. Specificity: LgAG1 (bitter) and the pheromone types below 3 Hz on sucrose (Ling: spontaneous below 3 Hz).
+3. No-food rest unchanged: the switch acts only through a food patch, so the gate (`closed_loop_check`, seeds 12-19) must give the same numbers as m9f.
+If 1 fails the switch stays off and the miss is recorded; nothing is tuned to reach it.
+
+Result (5 October, 03:03; m9f seed 12, rates over 100-400 ms; `runs/s12/legtaste/`):
+
+| Sucrose | Switch | Drive, sugar types | LgLG4 mean | LgLG4 per second of tarsus contact | LgAG1, pheromone types |
+|---|---|---|---|---|---|
+| 0 | 0 and 1 | 0 | 0 Hz | n/a | 0 Hz |
+| 100 mM | 0 | 2.0 mV | 0 Hz | 0 | 0 Hz |
+| 100 mM | 1 | 10.0 mV | 4.5 Hz (max 20) | 18.5 Hz | 0 Hz |
+| 1 M | 0 | 2.86 mV | 0 Hz | 0 | 0 Hz |
+| 1 M | 1 | 14.3 mV | 7.8 Hz (max 33) | 34.0 Hz | 0 Hz |
+
+- Criterion 1 (held-out rate, 25-110 Hz at 100 mM): FAIL, 4.5 Hz. The cause is contact, not transduction. Only two of six tarsi touch the patch: rm 44% and rh 92-97% of the window, the other four 0%. The fly lies down (F-STAND-3 option (a)), so most leg GRNs never meet the sugar. A cell with steady contact at 10 mV would fire 38 Hz and at 14.3 mV 64 Hz (derived from its own LIF constants: tau_m 20 ms, threshold 7 mV above rest, reset at rest, refractory 2.2 ms, no adaptation), which is inside the band. That is a calculation, not the pre-registered measurement, so the criterion stands as failed.
+- Criterion 2 (specificity): PASS. LgAG1 and every pheromone type at 0 Hz on sucrose, and every leg taste type at 0 Hz with no food.
+- Drive now crosses threshold: 14.3 mV at 1 M against 2.86 mV before, as derived. The flyapp relay problem (2.9 mV peak, below threshold) is answered by the weights, not by changing the gain.
+- Side findings: WG2 (wing margin) cells have no leg and take the mean over six legs' contact, so at 1 M they all fire 26.7 Hz from leg contact. Wing taste should come from wing contact; that mapping is guessed and stays open. MN9 (proboscis motor neuron) stays at 0 Hz with leg sugar GRNs firing, so tarsal sugar does not reach proboscis extension in this run. Real flies extend the proboscis to tarsal sugar; not tested further here.
+- Per the rule above the switch stays off in the working profile (m9f unchanged). It is available as `--set 'sense:taste_leg|modality_source=1'`.
+- Criterion 3 (gate unchanged): PASS. Seeds 12-19 with the switch on give the same numbers as m9f in every field except wall time (brain excluding ORNs 0.150-0.153 Hz, motor 2.01-2.07 Hz, thorax 0.560-0.562 mm; `runs/s12/gates/cl_wg_s*.json`).
+- Sheet: `docs/media/s12_leg_taste.png` (viewed).
