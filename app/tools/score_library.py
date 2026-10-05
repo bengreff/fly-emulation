@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import hashlib
 import json
 import math
 import re
@@ -82,6 +83,14 @@ def window(run: Run):
     if ev:
         return min(e["on_step"] for e in ev), max(e["off_step"] for e in ev)
     return 0, int(round(run.m["duration_ms"] / run.ts))
+
+
+def train_hash(run: Run, s0: int, s1: int, skip: np.ndarray) -> str:
+    """Hash of every spike (step, row) in [s0, s1) outside the rows `skip`: equal hashes
+    mean identical spike trains in the rest of the network."""
+    keep = (run.steps >= s0) & (run.steps < s1) & ~np.isin(run.rows, skip)
+    k = np.sort(run.steps[keep] * run.m["n_rows"] + run.rows[keep])
+    return hashlib.sha1(k.tobytes()).hexdigest()
 
 
 def first_divergence(a: Run, b: Run):
@@ -212,6 +221,10 @@ def main() -> int:
                 row["criterion"]["sham_value"] = row["sham"].get(c["metric"])
                 row["criterion"]["sham_values"] = sv
                 row["criterion"]["n_shams"] = len(sv)
+                # shams can fall onto the same trajectory; only distinct ones are separate samples
+                # (outside every sham's own target cells, which differ by construction)
+                tg = np.array([r for s in shams for e in s.pr["resolved"]["events"] for r in e["rows"]], np.int64)
+                row["criterion"]["n_shams_distinct"] = len({train_hash(s, s0, s1, tg) for s in shams})
                 row["criterion"]["sham_max_abs"] = max(map(abs, sv)) if sv else None
                 row["criterion"]["within_sham"] = v is not None and bool(sv) and abs(v) <= max(map(abs, sv))
         out.append(row)
@@ -235,7 +248,7 @@ def main() -> int:
         verdict += "" if not c else " (no spike)" if r["first_divergence_step"] is None else " (noise)" if c.get("within_sham") else ""
         meas = f"{c['value_measured']:.2f}" if c and c["value_measured"] is not None else "-"
         need = f"{c['op']}{c['value']}" if c else "-"
-        sham = f"{c['sham_max_abs']:.2f} n{c['n_shams']}" if c and c.get("sham_max_abs") is not None else "-"
+        sham = f"{c['sham_max_abs']:.2f} n{c['n_shams']}d{c.get('n_shams_distinct', '?')}" if c and c.get("sham_max_abs") is not None else "-"
         sh = r.get("sham", {})
         print(f"{r['run']:20} {verdict:16} {meas:>10} {need:>10} {sham:>12}  {r['first_divergence_step']} / {r['first_event_step']}"
               f"{'' if r['matched'] else ' NOT MATCHED'}   {r['up_1hz']}/{r['down_1hz']} ({sh.get('up_1hz', '-')}/{sh.get('down_1hz', '-')})"

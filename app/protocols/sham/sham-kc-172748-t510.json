@@ -1,0 +1,55 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Sham: a few forced spikes in one Kenyon cell (KCab-c 172748) at 510 ms (noise floor)",
+ "role": "sham",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 12,
+  "min_synapses": 5,
+  "overrides": {}
+ },
+ "duration_ms": 2000,
+ "genotype": [],
+ "events": [
+  {
+   "t_ms": 510.0,
+   "dur_ms": 3,
+   "effector": "kick",
+   "rate_hz": 1000,
+   "target": {
+    "bodyId": [
+     172748
+    ]
+   },
+   "label": "about 3 forced spikes in one KCab-c (bodyId 172748)"
+  }
+ ],
+ "expect": {
+  "text": "A real fly shows nothing measurable. In the model the run departs from the control at the first forced spike; how far it departs is the floor for reading every other comparison in the library.",
+  "source": null,
+  "readout": {
+   "type": [
+    "MN9",
+    "MDN",
+    "DNa02"
+   ]
+  },
+  "status": "sham (noise floor), not a test"
+ },
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "MDN",
+    "DNa02",
+    "DNg100",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ },
+ "config_history": "4 Oct 2026, after the first library was viewed: override motor_unit:all|force_per_spike = 10 removed (copied from docs/RUNNING.md examples, not part of m9), so the library runs the adopted m9 profile as the model owner fits it. The first library (runs/app/lib) was recorded with it.",
+ "sham_rule": "app/tools/make_shams.py: uniform draw from 4055 model Kenyon cells, default_rng(20261005), excluding the original sham cell and earlier shams; onset 500 + 2 x 5 ms"
+}

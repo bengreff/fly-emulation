@@ -100,6 +100,7 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
                 else " within noise" if cr.get("within_sham") else "")
             if cr.get("sham_values") is not None:     # the scorer's noise floor, every sham
                 recs[-1]["sham_values"] = cr["sham_values"]
+                recs[-1]["shams_distinct"] = cr.get("n_shams_distinct")
     recs.sort(key=lambda r: (r["status"] != "complete", "legacy" in r["id"], r["id"]))
     atlases = []
     for a in sorted((APP / "data" / "atlas").glob("*/atlas.json")):

@@ -313,7 +313,7 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
     <div>${esc(ex.text || "not stated")}</div>
     <div class="dim">${esc(ex.source || "no source")}</div>
     <div style="margin:6px 0">${verdictHTML(cr)} ${cr ? `${esc(cr.what)}: <b>${cr.value_measured === null ? "n/a" : f2(cr.value_measured)} ${esc(cr.units)}</b>; pass needs ${esc(cr.op)} ${cr.value} <span class="chip guessed" title="${esc(cr.basis)}">guessed threshold</span>` : ""}</div>
-    ${sv && cr && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">${sv.length} sham runs give ${sv.map(f2).join(", ")} ${esc(cr.units)} on the same measure (largest size ${f2(svMax)}; scored by score_library.py)${inNoise ? ": this result is no larger, so it cannot be told from noise" : ": this result is larger than every sham"}.</div>`
+    ${sv && cr && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">${sv.length} sham runs give ${sv.map(f2).join(", ")} ${esc(cr.units)} on the same measure (largest size ${f2(svMax)}; ${!entry.shams_distinct ? "" : entry.shams_distinct < sv.length ? `only ${entry.shams_distinct} distinct: the others repeat another sham's spike trains exactly, outside the forced cells; ` : "all distinct; "}scored by score_library.py)${inNoise ? ": this result is no larger, so it cannot be told from noise" : ": this result is larger than every sham"}.</div>`
     : fc && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">The sham run gives ${fv === null ? "n/a" : f2(fv)} ${esc(cr.units)} on the same measure${inNoise ? ": this result is no larger than the sham's, so it cannot be told from noise (one sham sample)" : " (one sham sample)"}.</div>` : ""}
     <div class="dim">${esc(ex.status || "")}</div>
     ${trialsHTML(entry)}
