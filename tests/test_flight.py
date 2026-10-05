@@ -124,3 +124,61 @@ def test_membrane_only_aero_removes_the_overlapping_vein_mesh():
     assert sorted(done) == [f"{b.fly.name}/l_wing_membrane", f"{b.fly.name}/r_wing_membrane"]
     assert m.geom_fluid[gid("l_wing_brown")][0] == 0.0 and m.geom_fluid[gid("r_wing_brown")][0] == 0.0
     assert m.geom_fluid[gid("l_wing_membrane")][4] == 3.1
+
+
+def _blade_body():
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    b = Body(vision=False)
+    m, d = b.sim.mj_model, b.sim.mj_data
+    m.opt.gravity[:] = 0.0
+    hook = flight.apply_blade_element(b)
+    mj.mj_forward(m, d)
+    return b, m, d, hook
+
+
+def test_blade_element_reproduces_the_robofly_in_steady_wind():
+    """aero:wing|model 1 (F-FLIGHT-3): in a uniform wind the hook's force on a still
+    wing is the robofly lift and drag on the membrane planform; MuJoCo's own lift and
+    drag on the membrane are off."""
+    import mujoco as mj
+    from flyemu import flight
+    b, m, d, hook = _blade_body()
+    g = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, "flybody/l_wing_membrane")
+    assert m.geom_fluid[g][0] == 1.0 and not m.geom_fluid[g][1:6].any()
+    R, sz = d.geom_xmat[g].reshape(3, 3), m.geom_size[g]
+    o = np.argsort(sz)
+    n, c = R[:, o[0]], R[:, o[1]]
+    U = 1000.0
+    q = 0.5 * m.opt.density * U ** 2 * np.pi * sz[o[1]] * sz[o[2]]
+    for deg in (5.0, 30.0, 45.0, 70.0, 85.0):
+        a = np.radians(deg)
+        u = np.cos(a) * c + np.sin(a) * n
+        m.opt.wind[:] = U * u
+        hook(d)
+        F = hook.force[0]
+        cl, cd = flight.robofly_coefficients(np.array([deg]))
+        assert np.isclose(F @ u / q, cd[0], rtol=1e-6)
+        assert np.isclose(F @ (-np.sin(a) * c + np.cos(a) * n) / q, cl[0], rtol=1e-6)
+        assert hook.parts[0, 2] @ hook.parts[0, 2] == 0.0      # still wing: no rotational force
+
+
+def test_blade_rotational_force_follows_the_pitch_joint_not_the_cone_spin():
+    """The stroke sweeps a cone that spins the wing about its span without changing
+    alpha; only the pitch (rotation) joint rate drives the rotational term."""
+    import mujoco as mj
+    from flyemu import flight
+    b, m, d, hook = _blade_body()
+    jid = {fn: mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"flybody/c_thorax-l_wing-{flight.FN[fn]}")
+           for fn in ("stroke", "deviation", "rotation")}
+    d.qpos[m.jnt_qposadr[jid["stroke"]]] = np.radians(86.0)
+    d.qpos[m.jnt_qposadr[jid["deviation"]]] = np.radians(40.0)
+    d.qpos[m.jnt_qposadr[jid["rotation"]]] = np.radians(-30.0)
+    d.qvel[:] = 0.0
+    d.qvel[m.jnt_dofadr[jid["stroke"]]] = 1500.0
+    hook(d)
+    assert np.linalg.norm(hook.parts[0, 0]) > 0 and not hook.parts[0, 2].any()
+    d.qvel[m.jnt_dofadr[jid["rotation"]]] = 2000.0
+    hook(d)
+    assert np.linalg.norm(hook.parts[0, 2]) > 0

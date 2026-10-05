@@ -255,3 +255,125 @@ def apply_aero(body, kutta: float) -> list[str]:
             m.geom_fluid[gi][4] = kutta           # [enable, blunt, slender, angular, kutta, magnus]
             done.append(g)
     return done
+
+
+def robofly_coefficients(alpha_deg: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Translational lift and drag coefficients of the dynamically scaled
+    Drosophila wing (Dickinson, Lehmann & Sane 1999 Science 284:1954; measured,
+    Re ~136, alpha 0-90 deg)."""
+    a = np.radians(alpha_deg)
+    return (0.225 + 1.58 * np.sin(2.13 * a - np.radians(7.20)),
+            1.92 - 1.55 * np.cos(2.04 * a - np.radians(9.82)))
+
+
+class BladeElementWing:
+    """B12 option (aero:wing|model = 1; F-FLIGHT-3): quasi-steady blade-element
+    forces on each wing membrane, written to xfrc_applied (body.passive_hooks).
+
+    Per spanwise strip of the membrane ellipse (chord c(r), width dr), with w the
+    strip's velocity relative to the air (spanwise part removed) taken on the
+    pitch axis, and alpha in [0, 90] deg the angle between w and the chord plane:
+      translational: drag 1/2 rho |w|^2 CD(alpha) c dr against w; lift 1/2 rho |w|^2
+        CL(alpha) c dr normal to w on the side the plate pushes (robofly CL, CD,
+        measured; the plate is treated as symmetric, so alpha is folded);
+      rotational: C_rot rho |w| dalpha/dt c^2 dr normal to the plate, dalpha/dt the
+        wing's rotation about its span relative to the stroke (the pitch joint rate;
+        the conical stroke itself spins the wing about its span without changing
+        alpha), C_rot =
+        pi (0.75 - x0) (Sane & Dickinson 2002 JEB 205:1087, theory matched by their
+        robofly), x0 the pitch axis' chord position, derived from the model at
+        mid-span (0.20).
+    MuJoCo's own drag, lift and angular drag on the membrane are switched off (they
+    would count the same force twice); its added-mass terms stay. Not modelled:
+    acceleration added mass, wake capture, pitching moment (forces act on the pitch
+    axis), wing flexion. Validity: hovering-like strokes at Re ~ 100-200."""
+
+    def __init__(self, body, n_strips: int = 20):
+        m, d = body.sim.mj_model, body.sim.mj_data
+        self.m = m
+        mj.mj_forward(m, d)
+        self.bid, self.pts, self.span, self.normal, self.c, self.dr, self.x0 = [], [], [], [], [], [], []
+        self.pitch_dof, self.pitch_s = [], []
+        for s in SIDES:
+            g = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, f"{body.fly.name}/{s}_wing_membrane")
+            b = int(m.geom_bodyid[g])
+            Rb, xb = d.xmat[b].reshape(3, 3), d.xpos[b]
+            Rg, sz = d.geom_xmat[g].reshape(3, 3), m.geom_size[g]
+            o = np.argsort(sz)
+            normal, chord, span = (Rb.T @ Rg[:, o[k]] for k in range(3))
+            a, half = sz[o[1]], sz[o[2]]
+            ctr = Rb.T @ (d.geom_xpos[g] - xb)
+            if ctr @ span < 0:
+                span = -span                          # root to tip
+            j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"{body.fly.name}/c_thorax-{s}_wing-{FN['rotation']}")
+            jp, ax = m.jnt_pos[j], m.jnt_axis[j]
+            self.pitch_dof.append(int(m.jnt_dofadr[j])); self.pitch_s.append(float(ax @ span))
+            y = -half + (np.arange(n_strips) + 0.5) * 2 * half / n_strips
+            t = (y + (ctr - jp) @ span) / (ax @ span)
+            pts = jp + t[:, None] * ax                 # strip points on the pitch axis
+            c = 2 * a * np.sqrt(1 - (y / half) ** 2)
+            dr = 2 * half / n_strips
+            c *= np.pi * a * half / (c.sum() * dr)     # planform area exactly pi a b
+            off = abs((jp + (ctr - jp) @ span / (ax @ span) * ax - ctr) @ chord)
+            self.bid.append(b); self.pts.append(pts); self.span.append(span); self.normal.append(normal)
+            self.c.append(c); self.dr.append(dr); self.x0.append(float((a - off) / (2 * a)))
+        self.c_rot = [np.pi * (0.75 - x) for x in self.x0]
+        self.force = np.zeros((2, 3))                  # last total force per wing (world, uN)
+        self.parts = np.zeros((2, 3, 3))               # per wing: lift, drag, rotational (world, uN)
+        self.alpha = np.zeros((2, n_strips))           # last folded angle of attack per strip (deg)
+        self._v = np.zeros(6)
+
+    def __call__(self, d) -> None:
+        m = self.m
+        mj.mj_kinematics(m, d)
+        mj.mj_comPos(m, d)
+        mj.mj_comVel(m, d)
+        for k, b in enumerate(self.bid):
+            R, x = d.xmat[b].reshape(3, 3), d.xpos[b]
+            mj.mj_objectVelocity(m, d, mj.mjtObj.mjOBJ_XBODY, b, self._v, 0)   # at xpos, not the COM
+            om, v0 = self._v[:3], self._v[3:]
+            P = x + self.pts[k] @ R.T
+            sp, n = R @ self.span[k], R @ self.normal[k]
+            W = v0 + np.cross(om, P - x) - m.opt.wind
+            W -= np.outer(W @ sp, sp)
+            U = np.linalg.norm(W, axis=1)
+            if U.max() < 1e-6:
+                d.xfrc_applied[b] = 0.0
+                self.force[k] = 0.0
+                continue
+            u = W / np.maximum(U, 1e-12)[:, None]
+            un = u @ n
+            sgn = np.where(un >= 0, 1.0, -1.0)
+            alpha = np.degrees(np.arcsin(np.clip(np.abs(un), 0.0, 1.0)))
+            CL, CD = robofly_coefficients(alpha)
+            q = 0.5 * self.rho(m) * U ** 2 * self.c[k] * self.dr[k]
+            en = -sgn[:, None] * n                     # side the plate pushes
+            eL = en - (en * u).sum(1)[:, None] * u
+            eL /= np.maximum(np.linalg.norm(eL, axis=1), 1e-12)[:, None]
+            om_s = d.qvel[self.pitch_dof[k]] * self.pitch_s[k]
+            dalpha = sgn * om_s * np.where(u @ np.cross(sp, n) >= 0, 1.0, -1.0)
+            frot = self.c_rot[k] * self.rho(m) * U * dalpha * self.c[k] ** 2 * self.dr[k]
+            parts = (q * CL)[:, None] * eL, -(q * CD)[:, None] * u, frot[:, None] * en
+            F = parts[0] + parts[1] + parts[2]
+            Ft = F.sum(0)
+            self.parts[k] = [x.sum(0) for x in parts]
+            self.alpha[k] = alpha
+            d.xfrc_applied[b, :3] = Ft
+            d.xfrc_applied[b, 3:] = np.cross(P - d.xipos[b], F).sum(0)
+            self.force[k] = Ft
+
+    @staticmethod
+    def rho(m) -> float:
+        return float(m.opt.density)
+
+
+def apply_blade_element(body, n_strips: int = 20) -> BladeElementWing:
+    """Membrane-only aero (apply_aero) with MuJoCo's drag/lift/angular drag off on
+    the membrane, and the blade-element hook appended to body.passive_hooks."""
+    m = body.sim.mj_model
+    for g in apply_aero(body, 0.0):
+        gi = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, g)
+        m.geom_fluid[gi][1:6] = 0.0                    # interaction stays on: added mass
+    hook = BladeElementWing(body, n_strips)
+    body.passive_hooks = list(getattr(body, "passive_hooks", ())) + [hook]
+    return hook

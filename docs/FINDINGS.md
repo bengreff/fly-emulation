@@ -429,7 +429,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The hook adds the TTM again. A giant-fibre volley therefore drives both the hook and about 5% of the mid CTr extensor. The second path is small, but it is the same muscle counted twice.
   - Switch `jump:ttm|exclude_from_hill` 1 removes TTMn from the Hill pool, so the TTM acts only through the hook. Test: `tests/test_ttm_exclusion.py`. It is part of candidate m9d (DECISIONS 18:53).
 - **Standing** (seed 12, m9w, 1.5 s; `runs/s12/standing/standing_midhind_live_s12.png`, viewed). Thorax ends at 0.542 mm, against 0.542 mm with copied muscles. Legs carry 0.3 µN at the end, against 3.6 µN. The trunk is on the floor 97% of the time in both runs. As pre-registered, the muscles do not lift the fly, because at rest only the slow tibia flexors fire (F-STAND-3).
-- **Gate** (m9m = m9n + this switch + TTM 90). Seeds 12-18 pass: 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN, thorax 0.537-0.551 mm, whole brain 0.24-0.26 Hz. Seed 19 is running.
+- **Gate** (m9m = m9n + this switch + TTM 90). All 8 seeds (12-19) pass: 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN, thorax 0.537-0.551 mm, whole brain 0.24-0.26 Hz. Adopted as m9m (DECISIONS 18:38, result 19:07).
 - **For Ben's list.** Ask the FlyMimic authors for their mid/hind muscle models, the actual values this derivation stands in for.
 
 ### F-FTI-2: the measured maximal flexion torque sits at the femur's geometric ceiling; no data fix the flexor:extensor split
@@ -475,9 +475,23 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Reading.** F-FLIGHT-2 made hover lift match weight at one condition by inflating translational lift. That one number stands in for delayed stall, rotational lift and wake capture. The shape is wrong in ways the hover average hides:
   - lift-to-drag at 45° is 3.1, against the robofly's 1.06, so aerodynamic power and the drag-based yaw torques are too low by about 3×;
   - any condition with a different angle of attack (steering, forward flight, a changed stroke) gets the wrong force.
-- **Fix, behind a switch** (next). A blade-element quasi-steady wing:
-  - the robofly's translational coefficients (measured);
-  - rotational lift from Sane & Dickinson 2002, C_rot = π(0.75 − x̂₀), with x̂₀ the measured position of the pitch axis on the chord;
-  - added mass from wing geometry;
-  - MuJoCo fluid forces off on the membrane.
-  - No fitted number. The held-out checks are hover lift against weight at the existing kinematics, and lift against stroke amplitude (Lehmann & Dickinson 1997).
+- **Option, behind a switch** (`aero:wing|model` 1; `flight.BladeElementWing`; read only with `membrane_only` 1). A blade-element quasi-steady wing:
+  - 20 spanwise strips of the membrane ellipse, with velocities taken on the pitch axis;
+  - the robofly's translational coefficients (measured), with α folded to 0-90°;
+  - rotational force C_rot ρ|w| α̇ c² dr with C_rot = π(0.75 − x̂₀) (Sane & Dickinson 2002). x̂₀ = 0.20 is the pitch axis' chord position at mid-span on the model wing (derived), giving C_rot 1.74;
+  - α̇ is the pitch-joint rate. The conical stroke (span 40° out of the stroke plane) spins the wing about its span by about 1000 rad/s without changing α. A first version used the total spin and gave a spurious −0.59 W.
+  - MuJoCo's drag, lift and angular drag on the membrane are off, and its added-mass terms stay.
+  - Not modelled: acceleration added mass, wake capture, pitching moment, flexion.
+  - Tests: `tests/test_flight.py` (steady wind equals the robofly to 1e-6; the rotational term follows the pitch joint only).
+- **Bugs found on the way.** `mj_objectVelocity` with a body ID returns the centre-of-mass velocity, not the frame origin's, which gave 2.6 W. The strip width was shared between wings (a 1e-5 area error). Both are fixed and covered by the tests.
+- **Hover, no fitted number** (`scripts/probes/tethered_lift.py --blade`, `scripts/probes/hover_blade_trace.py`; 218 Hz, 140°, rotation −57 ± 55°; `runs/s12/flight/hover_blade_trace.png`, viewed):
+
+  | aero | imposed kinematics | PD-tracked |
+  |---|---|---|
+  | ellipsoid, Kutta 3.1 (fitted) | 0.99 W | 0.89 W (s10) |
+  | blade element | 0.72 W (translational lift 0.81, rotational −0.10, drag 0.01) | 0.55 W, tracking p95 9.4° |
+
+  - The guessed kinematics give a mid-stroke α at 70% span of 29° on the upstroke and 47° on the downstroke. The rotation mean is guessed, and this asymmetry costs lift.
+  - The PD thorax tracks worse because the wing now carries robofly drag at high α, about 3.5× MuJoCo's.
+  - The hook costs 52 µs per step, about 5% of a body step.
+- **Reading.** With measured force coefficients and no fitted number, the guessed hover kinematics lift 0.72 of the weight. The fitted Kutta number was hiding errors in the kinematics as well as in the aerodynamics. The next test that can tell them apart: impose measured Drosophila hover kinematics (stroke, deviation and rotation over the beat, stroke-plane angle) and compare lift with weight. A source search is running (`runs/s12/flight/kinematics_lit.md`). The model wing is also larger than a typical female wing (2.59 mm² planform, 2.8 mm span ellipse), which is not checked against data yet.

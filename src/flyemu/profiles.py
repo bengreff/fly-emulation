@@ -186,7 +186,7 @@ M9N = {
                                       "each cell's own entry nerve and root side (measured), rule inferred"),
 }
 
-# m9m (session 12, candidate until DECISIONS s12 18:38 gate passes): m9n + mid/hind leg muscles
+# m9m (session 12, adopted 19:07 after the DECISIONS s12 18:38 gate): m9n + mid/hind leg muscles
 # scaled by measured segment size and the TTM torque from fibre data (F-MUSCLE-MH-1). Not fitted.
 _MH = "s12 derivation, not fitted (F-MUSCLE-MH-1; DECISIONS s12 18:38)"
 M9M = {
@@ -232,7 +232,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9n")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9m")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 

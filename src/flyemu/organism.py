@@ -227,17 +227,25 @@ class Organism:
                                              force_on=mode == 2)
         # B12 wing aerodynamics (session 10, F-FLIGHT-2): 0 = legacy (membrane and vein
         # meshes both carry fluid forces, doubling the wing area; MuJoCo default lift)
+        self.blade = None
         if int(self.reg.require(
                 "aero:wing", "membrane_only", units="enum",
                 model_use="0 fluid forces on both wing meshes (legacy), 1 on the membrane only",
                 subsystem="body_mechanics", minimal=0, minimal_note="legacy m4/m5")):
             from . import flight
-            flight.apply_aero(self.body, float(self.reg.require(
-                "aero:wing", "kutta_lift", units="dimensionless",
-                model_use="MuJoCo ellipsoid Kutta lift coefficient on the wing membrane",
-                subsystem="body_mechanics", minimal=3.1,
-                minimal_note="inferred (F-FLIGHT-2): fitted so hover kinematics lift ~ body weight; "
-                             "stands in for unsteady lift the quasi-steady model lacks")))
+            if int(self.reg.require(
+                    "aero:wing", "model", units="enum",
+                    model_use="0 MuJoCo ellipsoid lift/drag with aero:wing|kutta_lift (s10), 1 blade-element "
+                              "quasi-steady wing: robofly coefficients + rotational lift (flight.BladeElementWing)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="s10-s12 behaviour (F-FLIGHT-3)")):
+                self.blade = flight.apply_blade_element(self.body)
+            else:
+                flight.apply_aero(self.body, float(self.reg.require(
+                    "aero:wing", "kutta_lift", units="dimensionless",
+                    model_use="MuJoCo ellipsoid Kutta lift coefficient on the wing membrane",
+                    subsystem="body_mechanics", minimal=3.1,
+                    minimal_note="inferred (F-FLIGHT-2): fitted so hover kinematics lift ~ body weight; "
+                                 "stands in for unsteady lift the quasi-steady model lacks")))
         # B15 jump muscle (session 10): 0 = TTMn through the legacy capped torque (m4)
         self.ttm = None
         if int(self.reg.require(

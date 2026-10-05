@@ -678,6 +678,7 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
   - Pass gives m9m = m9n with both values as the working profile; m9n is kept.
   - Standing height is reported, not a criterion: at rest only the slow tibia flexors fire (F-STAND-3), so the muscles are not expected to lift the fly.
+- **Result (19:07): pass.** All 8 seeds (`runs/s12/gates/cl_mh_s12..19.json`) show 0 spikes/ms in the last 100 ms, no MuJoCo warnings and no NaN. Whole brain 0.24-0.26 Hz, motor 2.01-2.04 Hz, thorax 0.537-0.551 mm. m9m is the working profile; m9n is kept.
 
 ### Pre-registration: leg damping from the measured stiffness (`joint:leg|damping_source` = 1, τ 0.05 s) and TTMn out of the Hill pool (`jump:ttm|exclude_from_hill` = 1) (18:53)
 - **Why damping.** flybody's leg damping (1 µN·mm·s/rad, femur-tibia 0.4) is guessed. Against the measured springs it gives a relaxation time c/k of about 1.2 s.
@@ -699,3 +700,12 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
   - Pass gives m9d = that profile + both switches as working; the previous profile is kept.
   - Standing is reported, not a criterion. Walking dynamics change with damping (F-BODY-1: 10 Hz transfer). The next walking measurement reads them on m9d, not tuned.
+
+### Blade-element wing behind `aero:wing|model` (19:08); pre-registered test with measured kinematics
+- **Why.** F-FLIGHT-3: the fitted Kutta number (3.1) makes hover lift match weight at one condition. Against the robofly it gives 1.72× the lift at every angle and a flat drag of 1.0, where the robofly measures 0.39-3.46. One fitted number was standing in for both aerodynamics and kinematics errors.
+- **Option 1.** A blade-element quasi-steady wing: robofly translational coefficients (measured) and rotational force from Sane & Dickinson 2002, with C_rot from the model's pitch-axis position (derived). No fitted number. It is read only with `aero:wing|membrane_only` 1, and no current profile sets that. So the working closed loop is unchanged, and the switch matters only for flight probes and a future flight profile.
+- **Measured so far.** Guessed hover kinematics give 0.72 W imposed and 0.55 W PD-tracked, against 0.99 W and 0.89 W with the fitted Kutta number.
+- **Pre-registered held-out test.** Impose measured Drosophila hover kinematics (source search running; `runs/s12/flight/kinematics_lit.md`) with no change to the aero model.
+  - Pass: mean lift within 0.8-1.2 of weight, with imposed kinematics. The band covers the robofly-based quasi-steady model's known shortfall without wake capture, and the unchecked wing size.
+  - Pass makes option 1 the B12 default for flight profiles and retires `kutta_lift` to a legacy fixture.
+  - Fail is recorded as the mechanism (wing size, missing wake capture or added mass, stroke-plane geometry), with no coefficient changed.

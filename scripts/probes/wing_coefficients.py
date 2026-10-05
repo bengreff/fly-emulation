@@ -14,7 +14,10 @@ ellipsoid's planform area pi*a*b (the area the MuJoCo model sees).
 F-FLIGHT-2 fixed one number (Kutta lift 3.1) at one condition (hover lift = weight);
 this tests the force shape across angles that the hover average hides.
 
-    uv run python scripts/probes/wing_coefficients.py [--kutta 1 3.1] [--out runs/s12/flight]
+    uv run python scripts/probes/wing_coefficients.py [--kutta 1 3.1] [--blade] [--out runs/s12/flight]
+
+--blade adds the blade-element wing (aero:wing|model 1, flight.BladeElementWing),
+which must reproduce the robofly curves in steady wind by construction.
 """
 from __future__ import annotations
 
@@ -32,6 +35,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
+from flyemu import flight  # noqa: E402
 from flyemu.body import AIR_DENSITY, Body  # noqa: E402
 
 
@@ -84,18 +88,43 @@ def sweep(kutta: float, U: float, alphas: np.ndarray, membrane_only: bool = True
                 semi_axes_mm=[round(float(x), 4) for x in sz[order]])
 
 
+def sweep_blade(U: float, alphas: np.ndarray) -> dict:
+    b = Body(vision=False)
+    m, d = b.sim.mj_model, b.sim.mj_data
+    m.opt.gravity[:] = 0.0
+    hook = flight.apply_blade_element(b)
+    mj.mj_forward(m, d)
+    g = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, "flybody/l_wing_membrane")
+    R, sz = d.geom_xmat[g].reshape(3, 3), m.geom_size[g]
+    o = np.argsort(sz)
+    n_hat, c_hat = R[:, o[0]], R[:, o[1]]
+    q = 0.5 * AIR_DENSITY * U ** 2 * np.pi * sz[o[1]] * sz[o[2]]
+    CL, CD = [], []
+    for a in np.radians(alphas):
+        u = np.cos(a) * c_hat + np.sin(a) * n_hat
+        m.opt.wind[:] = U * u
+        hook(d)
+        F = hook.force[0]
+        CD.append(float(F @ u) / q)
+        CL.append(float(F @ (-np.sin(a) * c_hat + np.cos(a) * n_hat)) / q)
+    return dict(kutta="blade element", U_mm_s=U, CL=CL, CD=CD, x0_hat=[round(x, 3) for x in hook.x0],
+                C_rot=[round(x, 3) for x in hook.c_rot])
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--kutta", type=float, nargs="+", default=[1.0, 3.1])
     ap.add_argument("--U", type=float, default=1000.0, help="mm/s")
+    ap.add_argument("--blade", action="store_true")
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "flight"))
     a = ap.parse_args()
     alphas = np.arange(0, 91, 5.0)
     rl, rd = robofly(alphas)
     res = {"alpha_deg": alphas.tolist(), "robofly_CL": rl.round(3).tolist(), "robofly_CD": rd.round(3).tolist(),
-           "model": [sweep(k, a.U, alphas) for k in a.kutta]}
+           "model": [sweep(k, a.U, alphas) for k in a.kutta] + ([sweep_blade(a.U, alphas)] if a.blade else [])}
     for r in res["model"]:
         cl, cd = np.array(r["CL"]), np.array(r["CD"])
+        r["max_abs_err_vs_robofly"] = round(float(max(abs(cl - rl).max(), abs(cd - rd).max())), 4)
         r["CL_peak"], r["CL_peak_alpha"] = round(float(cl.max()), 3), float(alphas[cl.argmax()])
         r["CD_at_90"], r["CL_at_45_ratio_to_robofly"] = round(float(cd[-1]), 3), round(float(cl[9] / rl[9]), 3)
         r["L_over_D_at_45"] = round(float(cl[9] / cd[9]), 3)
@@ -106,8 +135,8 @@ def main() -> None:
     ax[0].plot(alphas, rl, "k-", lw=2, label="robofly (Dickinson 1999)")
     ax[1].plot(alphas, rd, "k-", lw=2, label="robofly (Dickinson 1999)")
     for r in res["model"]:
-        ax[0].plot(alphas, r["CL"], "o-", ms=3, label=f"model, Kutta {r['kutta']}")
-        ax[1].plot(alphas, r["CD"], "o-", ms=3, label=f"model, Kutta {r['kutta']}")
+        ax[0].plot(alphas, r["CL"], "o-", ms=3, label=f"model, {r['kutta']}" if isinstance(r["kutta"], str) else f"model, Kutta {r['kutta']}")
+        ax[1].plot(alphas, r["CD"], "o-", ms=3, label=f"model, {r['kutta']}" if isinstance(r["kutta"], str) else f"model, Kutta {r['kutta']}")
     for x, t in zip(ax, ("lift coefficient", "drag coefficient")):
         x.set_xlabel("angle of attack (deg)")
         x.set_title(t)
