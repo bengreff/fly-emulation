@@ -48,7 +48,7 @@
   - `deadfly_decay.py` (Wang 2025 protocol);
   - `nonleg_motor_census.py` (per-actuator torque, angle and time near a limit; `--sheet`);
   - `wing_spike_response.py` (body-only spike and burst response of a folded wing).
-  The backhouse battery at 20:30 gave 187 passed and 1 failure, from raw data absent there only.
+  The m9v battery on backhouse (22:08) gave 196 passed, 12 skipped and 1 failure, from raw data absent there only (`runs/s12/pytest_battery_m9v.log`).
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
