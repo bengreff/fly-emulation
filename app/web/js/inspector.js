@@ -45,7 +45,9 @@ export class Inspector {
       const b = e.target.closest("[data-i]");
       if (b) { this.onSelect(Number(b.dataset.i)); return; }
       const t = e.target.closest("[data-type]");
-      if (t) this.onType(Number(t.dataset.type));
+      if (t) { this.onType(Number(t.dataset.type)); return; }
+      const om = e.target.closest("[data-omm]");
+      if (om && this.onOmm) { e.preventDefault(); this.onOmm(...om.dataset.omm.split(",").map(Number)); }
     });
   }
 
@@ -92,7 +94,7 @@ export class Inspector {
       <tr><td>position</td><td>${esc(basis)} <span class="chip ${posLayer}">${posLayer === "measured" ? "measured" : "derived (display)"}</span></td></tr>
       <tr><td>transmitter (atlas)</td><td>${esc(a.vocab.nt[a.arr.nt[i]] || "unknown")} <span class="chip inferred">inferred</span></td></tr>
       <tr><td>in model</td><td>${row !== undefined ? `yes, row ${row}` : a.arr.in_model[i] ? "in policy, not in this run" : "no (status policy excludes it)"}</td></tr>
-      </table>`);
+      ${this._omm(bid)}</table>`);
     if (row !== undefined) h.push(this._model(row, bid));
     h.push(`<div id="insp-meta"></div><div id="insp-edges"><h3>Partners</h3><div class="dim">loading…</div></div>`);
     this.el.innerHTML = h.join("");
@@ -102,6 +104,14 @@ export class Inspector {
     this.el.querySelector("#insp-meta").innerHTML = this._meta(meta);
     this.el.querySelector("#insp-edges").innerHTML = this._edges(edges);
     return edges;
+  }
+
+  // a photoreceptor's ommatidium (set by the Eye tab through this.eyeOf)
+  _omm(bid) {
+    const m = this.eyeOf && this.eyeOf(bid);
+    if (!m) return "";
+    return `<tr><td>ommatidium</td><td><a href="#" data-omm="${m.e},${m.o}">${m.e ? "right" : "left"} eye, ${m.o}</a>
+      <span class="chip inferred">derived topology, inferred alignment</span></td></tr>`;
   }
 
   _model(row, bid) {

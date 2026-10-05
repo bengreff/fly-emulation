@@ -29,11 +29,22 @@ export class EyePanel {
     d.sort((a, b) => a - b);
     this.spacing = d[d.length >> 1];
     this.cells = {};               // eye index -> ommatidium -> [{bodyId, type}]
+    this.ommOf = new Map();        // bodyId -> {e, o}
     ["L", "R"].forEach((k, e) => {
       const p = this.g.photoreceptors[k], m = new Map();
-      if (p) p.ommatidium.forEach((o, j) => { if (!m.has(o)) m.set(o, []); m.get(o).push({ bodyId: p.bodyId[j], type: p.type[j] }); });
+      if (p) p.ommatidium.forEach((o, j) => {
+        if (!m.has(o)) m.set(o, []);
+        m.get(o).push({ bodyId: p.bodyId[j], type: p.type[j] });
+        this.ommOf.set(p.bodyId[j], { e, o });
+      });
       this.cells[e] = m;
     });
+    // R1-R6 per ommatidium in the assignment, against the 6 per cartridge of the real eye
+    const k = [];
+    for (const m of Object.values(this.cells))
+      for (const cs of m.values()) { const r = cs.filter(c => c.type === "R1-R6").length; if (r) k.push(r); }
+    this.r16 = k.length ? { n: k.length, min: Math.min(...k), max: Math.max(...k),
+      mean: k.reduce((a, b) => a + b, 0) / k.length, six: k.filter(v => v === 6).length } : null;
     const nf = rec.eyeStep ? rec.eyeStep.length : 0;
     this.el.innerHTML = `<h2>Fly's-eye view</h2>
       <div class="sub">${nf ? `${nf} eye frames in this run` : "no eye frames in this run"}; 721 ommatidia per eye</div>
@@ -42,6 +53,7 @@ export class EyePanel {
       <label><input type="checkbox" id="eye-pale"> ring pale ommatidia</label>
       <canvas id="eye-canvas"></canvas>
       <div class="dim">Shade: the luminance each ommatidium's photoreceptors were driven by at this time (0 to 1, the renderer's units; the white sky reaches 1, the renderer's ceiling). Positions: centroid of each ommatidium's pixels in flygym's eye map <span class="chip inferred">derived</span>. Pale/yellow: majority of the connectome's R7/R8 subtypes per ommatidium, else flygym's mask <span class="chip inferred">derived</span>. Eyes as rendered (flygym's image frame).</div>
+      ${this.r16 ? `<div class="dim">Assignment check: a real lamina cartridge receives 6 R1-R6 terminals (neural superposition) <span class="chip measured">measured anatomy</span>; this assignment gives ${this.r16.min} to ${this.r16.max} per ommatidium (mean ${this.r16.mean.toFixed(1)}; exactly 6 in ${this.r16.six} of the ${this.r16.n} with any), so one ommatidium's list is uncertain.</div>` : ""}
       <div id="eye-pick"></div>`;
     this.canvas = this.el.querySelector("#eye-canvas");
     this.el.querySelector("#eye-pale").onchange = () => { this.frame = -2; };
@@ -113,6 +125,13 @@ export class EyePanel {
     let best = -1, bd = Infinity;
     for (let o = 0; o < this.n; o++) { const d = Math.hypot(x[o] - ix, y[o] - iy); if (d < bd) { bd = d; best = o; } }
     if (bd > this.spacing) return;
+    this.pickOmm(e, best);
+  }
+
+  // the ommatidium a photoreceptor cell is assigned to, or null
+  ommatidiumOf(bodyId) { return this.g ? this.ommOf.get(bodyId) || null : null; }
+
+  pickOmm(e, best) {
     this.pick = { e, o: best };
     this.frame = -2;
     const cells = this.cells[e].get(best) || [];

@@ -91,6 +91,8 @@ async function main() {
   app.session = new SessionPanel($("#tab-session"), { rec });
   app.eye = new EyePanel($("#tab-eye"), { onSelect: i => select(i), onHighlight: ids => app.brain.setHighlight(ids) });
   if (bodyEntry) await app.eye.load(`${bodyEntry.path}/eye.json`, rec, atlas);
+  app.inspector.eyeOf = bid => app.eye.ommatidiumOf(bid);
+  app.inspector.onOmm = (e, o) => { showTab("eye"); app.eye.pickOmm(e, o); };
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
   const layout = params.get("view");
