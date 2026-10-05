@@ -1214,3 +1214,15 @@ MN9_L, Hz (2 trials, LgAG2 at 100 Hz):
 - (a) 8 on-path inhibitory cells silenced: MN9_L 0, 0 Hz at gain 1 and 0, 0 Hz at gain 3. Active cells unchanged at gain 1 (101, as without silencing). PASS.
 - (b) 51 cells silenced (on-path plus every inhibitory direct input to MN9_L): 0, 0 Hz at 0 Hz input and 0, 0 Hz at 100 Hz input. PASS.
 - Reading: feedforward inhibition is not the block. With every inhibitory input to MN9_L removed, the ascending leg sugar cells at 100 Hz still give 0 Hz, so layer 2 lacks excitation, not disinhibition. With the gain sweep this makes two failed rescues (first-synapse gain, disinhibition); per the working rules the mechanism is written up in F-TASTE-LEG-1 and no further fix is tried this session. Nothing adopted.
+
+## Pre-registration: leg sugar including LgLG3 (5 October, 04:59; diagnostic, nothing adopted)
+
+- **Source.** Tastekin et al. (bioRxiv 10.1101/2025.08.25.671814 v2, Fig 6; secondary read): Dandelion is male-cns AN13B002 (FlyWire AN_GNG_68) and a key partner of labellar sugar GRNs (LB3b); LgLG3 has Dandelion as a top partner, so the authors propose LgLG3 expresses sugar receptors, especially Gr5a (a proposal, not a measurement). Male-cns: LgLG3 is 162 cells (23-31 per leg, all `vnc_sensory`); 8770 of its 58495 output synapses go to AN13B002, against 298 from LgLG4 and 0 from LgAG2. AN13B002 is predicted GABAergic (type confidence 0.89), so the model treats it as inhibitory. The model gives LgLG3 the unmatched weight 0.2.
+- **Run.** `assay_pathways.py --assay legsugar3_mn9`, Poisson 0 and 100 Hz into LgLG3 + LgLG4 + LgAG2 (216 cells), 2 trials, open loop, m2 and m9r.
+- **Predictions.** m2: MN9_L under 5 Hz at 100 Hz (Dandelion is inhibitory in the model, and the 54-cell drive gives 0 Hz). m9r: 0 Hz. If MN9_L reaches 5 Hz or more under m2, LgLG3 carries a leg sugar route the model has been leaving undriven.
+
+### Result (05:02; `runs/s12/legsugar/lg3_*.log`, `runs/assay-legsugar3_mn9-*`, backhouse)
+
+- MN9_L, 216 leg cells at 100 Hz: m2 0, 0 Hz; m9r 0, 0 Hz (0 Hz at rest). Both predictions PASS.
+- Under m2 Dandelion (AN13B002, both cells) fires at 310-320 Hz, and LgLG3's other main partners fire too (AN05B023d 134-159 Hz, DNge153 239-245 Hz, DNpe029 42-72 Hz). So LgLG3 strongly drives the cell the authors tie to feeding, and the model, using the male-cns GABA prediction, makes that cell inhibitory.
+- Reading: in the model, the leg sugar signal reaches Dandelion strongly, and Dandelion's sign decides what it does next. Its transmitter is a prediction from EM, not a measurement. Changing it would be a third rescue after two failures, so none is tried this session. Next evidence: a measured transmitter for Dandelion / AN_GNG_68 (reference [47] of Tastekin et al. names it), and the authors' own LgLG4 → MN9 path analysis read by eye. Nothing adopted.

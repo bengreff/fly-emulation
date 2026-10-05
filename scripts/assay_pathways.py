@@ -51,6 +51,12 @@ ASSAYS = {
                  "that project to the GNG and start feeding (Thoma et al. 2016 Nat Commun 7:10678); "
                  "F-TASTE-LEG-1 (s12)",
     ),
+    "legsugar3_mn9": dict(
+        stim=["LgLG3", "LgLG4", "LgAG2"], readout=["MN9"],
+        evidence="LgLG3 proposed as a sugar (Gr5a) type because its top partner is Dandelion "
+                 "(AN13B002), a key partner of sugar GRNs (Tastekin et al. bioRxiv "
+                 "10.1101/2025.08.25.671814 v2, Fig 6; proposal, secondary read). Diagnostic (s12)",
+    ),
     "legsugar_labsugar_mn9": dict(
         stim=["LgLG4", "LgAG2"], readout=["MN9"],
         co_stim=(["LB3b", "LB3c"], 100.0),

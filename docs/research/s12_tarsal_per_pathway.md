@@ -32,6 +32,16 @@ search snippets are marked so.
    firing rate of a second-order leg taste neuron to tarsal sugar; whether the labellum is needed (one
    unsourced snippet suggests leg stimulation alone spreads the labella).
 
+6. **Dandelion is AN13B002** (Tastekin et al. v2 full text, fetched by me 5 Oct 04:58 through a
+   fetch-and-summarise pass; secondary): "A key downstream partner of WG2 is Dandelion, an AN typed as
+   AN13B002 in the male CNS and as AN_GNG_68 in FAFB – FlyWire [47]. Given that Dandelion is also a key
+   downstream neuron of LB3b GRNs in the labellum ... we propose that the WG2 GRNs are likely to detect
+   sugar and trigger feeding." And: "Similar to WG2, LgLG3 GRNs have Dandelion as one of their top
+   downstream partners. We therefore propose that it is likely to express sugar GRs, especially Gr5a".
+   These are the authors' proposals from wiring, not measured responses. The fetched text gives no
+   transmitter for Dandelion and no LgLG4 → MN9 path analysis; the "sensorimotor arc ... through
+   multiple positive feedforward loops" wording appears only in a search summary.
+
 ## Cross-check in the model connectome (derived; male-cns, `data/cache`, 5 Oct 04:38)
 
 - **The two classes are in male-cns.** LgAG2 (11 cells, superclass `sensory_ascending`) and LgLG4
@@ -45,8 +55,11 @@ search snippets are marked so.
   Thoma describe.
 - **LgAG2's brain partners** (by synapses: GNG266 666, SLP237 493, GNG353 292, GNG564 252, PRW072 114,
   GNG147 103, GNG195 84, PRW046 79, GNG141 70) are 2-4 hops from MN9_L at 5 synapses per edge.
-- **Names.** "Dandelion" and "DNg103" (FlyWire names) have no match in the male-cns type, instance or
-  BANC cross-match columns, so they cannot be placed on the path yet.
+- **Names.** Dandelion is AN13B002 (item 6): 2 cells, predicted GABAergic (male-cns type prediction,
+  confidence 0.89), so the model treats it as inhibitory. It is a layer-1 cell on the model's leg sugar
+  path and fires at 10-30 Hz in the injection and patch runs. LgLG3 (162 cells, 23-31 per leg, all
+  `vnc_sensory`) sends it 8770 of 58495 output synapses; LgLG4 298; LgAG2 none. The model gives LgLG3
+  the unmatched weight 0.2. "DNg103" has no male-cns label match.
 - **Activity** (seed 12 runs, `runs/s12/legsugar/run_inj_all_s12.npz`): with all 54 leg sugar GRNs
   injected at their 1 M drive, every LgAG2 fires at 36.7 Hz. Of its 39 central-brain partners, 4 fire
   (GNG353 17 Hz, GNG141 17 Hz, two GNG266 at 20 Hz). Most others peak at 0.4-0.96 of the way to
@@ -67,3 +80,9 @@ it would have to carry the signal past layer 2 as well, where leg input is 1-2% 
 Test whether the ascending class alone can reach MN9 if its first relay fires: drive LgAG2 only, with a
 hunger-like presynaptic gain on LgAG2 output (bounded by the measured dopamine effect, which the agent
 could not quantify), and read layer 2 and MN9. A pre-registered run, behind a switch.
+
+## Added 05:02: LgLG3 included (diagnostic, DECISIONS 04:59)
+
+Driving LgLG3 + LgLG4 + LgAG2 (216 cells) at 100 Hz open loop: Dandelion fires at 310-320 Hz under m2;
+MN9_L stays at 0 Hz under m2 and m9r. In the model Dandelion is inhibitory (male-cns GABA prediction).
+Its transmitter is the most discriminating missing fact for this pathway.
