@@ -372,7 +372,8 @@ class BladeElementWing:
     axis), wing flexion. Validity: hovering-like strokes at Re ~ 100-200."""
 
     def __init__(self, body, n_strips: int = 20, rot_rate: str = "stroke_frame",
-                 stroke_plane_deg: float = STROKE_PLANE_DEG, length_mm: float | None = None):
+                 stroke_plane_deg: float = STROKE_PLANE_DEG, length_mm: float | None = None,
+                 area_mm2: float | None = None):
         m, d = body.sim.mj_model, body.sim.mj_data
         # aero:wing|size_source 1: strips scaled isometrically about the hinge to a
         # measured wing length; mesh, inertia and MuJoCo added mass keep the scan's size
@@ -407,6 +408,8 @@ class BladeElementWing:
             c *= np.pi * a * half / (c.sum() * dr)     # planform area exactly pi a b
             k = self.length_scale
             pts, c, dr = jp + k * (pts - jp), k * c, k * dr
+            if area_mm2 is not None:                   # chords rescaled to a measured planform (shape kept)
+                c *= area_mm2 / (c.sum() * dr)
             off = abs((jp + (ctr - jp) @ span / (ax @ span) * ax - ctr) @ chord)
             self.bid.append(b); self.pts.append(pts); self.span.append(span); self.normal.append(normal)
             self.c.append(c); self.dr.append(dr); self.x0.append(float((a - off) / (2 * a)))

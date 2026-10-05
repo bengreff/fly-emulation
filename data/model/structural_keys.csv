@@ -93,3 +93,4 @@ afferent:non_leg_nerve|excluded_from_leg_drive,B21,data,count of afferents remov
 afferent:leg_mechano|leg_from_own_nerve_moved,B21,data,count of leg afferents whose own leg nerve and side name a different leg than their dominant leg neuropil (assign_by_nerve 2; s12)
 joint:coxa|range_source,B2,switch,"0 joints.py envelopes (+-45/25/30 deg about q0, assumed, mislabelled axes) / 1 flybody leg-specific ranges (data/params/coxa_ranges_flybody.csv; inferred; F-COXA-2) (s12)"
 joint:ctr|range_source,B2,switch,"0 joints.py envelope (-100..100 deg, assumed) / 1 per leg from the femur-on-coxa fold (derived, geometry) to the measured walking extension (Haustein 2024, figure-read) or the model's straightest reach (hind) (data/params/ctr_ranges.csv; F-COXA-2) (s12)"
+contact:floor|noslip_iterations,B6,switch,"MuJoCo noslip_iterations: 3 flybody arena (not converged at 0.1 ms on m9d legs; resting motion step-dependent) / 0 off, as the MJWarp GPU path (F-DAMP-2) (s12)"

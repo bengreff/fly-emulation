@@ -278,6 +278,19 @@ def register_wings(reg, body) -> list[str]:
     return fold_wings(body) if int(ref) else []
 
 
+def register_noslip(reg, body) -> int:
+    """B6: MuJoCo's noslip pass (a per-step projection that removes contact slip).
+    flybody's arena runs 3 iterations, which do not converge at 0.1 ms on the
+    m9d legs: resting motion then changes with the step by up to 4x (F-DAMP-2).
+    MJWarp, the GPU path for many flies, has no noslip and sets it to 0."""
+    n = reg.require("contact:floor", "noslip_iterations", units="count",
+                    model_use="MuJoCo option noslip_iterations; 3 flybody arena, 0 off (as MJWarp)",
+                    subsystem="body_mechanics", minimal=3,
+                    minimal_note="flybody arena default; not converged at 0.1 ms on m9d (F-DAMP-2)")
+    body.sim.mj_model.opt.noslip_iterations = int(n)
+    return int(n)
+
+
 class CoupledSprings:
     """B3 as a coupled spring per leg (F-PASSIVE-2): torque = -K (q - q_ref),
     K = J^T diag(K_eLife) J, J = d(paper angles)/d(hinge angles) at the

@@ -761,3 +761,34 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Sensitivity, Fry's 2.39 mm: 1.011 W.
   - So R⁴ scaling holds inside the full blade-element model. `size_source` 1 joins the flight-profile candidate set with `aero:wing|model` 1. No profile changes, no coefficient changes.
   - Still not held out: the size was chosen after seeing 1.53 W. The next discriminating test is a second measured condition (a different stroke amplitude or forward speed with measured force), with no further changes.
+
+### Pre-registration: flight force across 13 measured conditions, against the robotic fly (20:31)
+- **Why.** B asks for flight coefficients beyond one condition. The literature agent found no accessible measured force-vs-amplitude regression: Lehmann & Dickinson 1997 and 1998 are paywalled, with abstracts only (`runs/s12/flight/force_vs_amplitude_lit.md`). But Muijres et al. 2014's Database S1 (already downloaded, open) holds `robotForcesTorques.ForceModulations`:
+  - 13 wingbeats built from the measured kinematic change per unit force (SM eq. S3; flies pooled, 719 wingbeats), at F/mg 0.85 to 1.76;
+  - their frequencies, 182.4 to 220.0 Hz (SM: 188.7 + 41.5 (F/mg − 1); the robot time bases agree to 0.1 Hz);
+  - the forces a dynamically scaled robotic wing measured with each beat, converted to fly scale and normalized by weight (measured). Steady level: 1.02 W.
+  - The robot's steady beat equals Table S1 (the beat already imposed) with stroke and rotation signs flipped and deviation unchanged (checked: correlation −1.000, +1.000, −1.000; deviation RMS difference 0.03°). That sign map is applied unchanged to all 13 levels.
+  - Species D. hydei. Database settings: wing length 2.99 mm, mean chord 0.9468 mm, mass 1.8 mg.
+- **Test.** For each level, impose the beat on both wings with the thorax at 47.6° pitch (stroke plane horizontal, as the robot's axes), using the blade-element wing (`aero:wing|model` 1) with no coefficient changed. Read the mean vertical force of the wings alone (lift + drag + rotational; the robot has no body) over the last 2 of 6 beats.
+- **Primary (pass/fail): the ratio.** The model's force at each level divided by its force at the steady level, against the robot's same ratio (robot: 0.91 at the lowest level, 1.99 at the highest). Size cancels. Pass if the two ratios differ by at most 0.10 at every level.
+- **Secondary (pass/fail): the steady level at hydei size.** Strips scaled to R = 2.99 mm, chords scaled so the planform is R × c̄ = 2.83 mm² (both from the database; the flybody ellipse shape kept). Normalized by 1.8 mg × g. Pass if within ±20% of the robot's 1.02 W.
+  - Prediction from the 20:04 result by scaling (span⁴, chord, f²; rotational term with chord²): 0.86 W, 0.85 of the robot's. This part is a scaling consistency check, not new information, because the steady beat is the one already used.
+- **Reported, not pass/fail:**
+  - the free-flying flies' own F/mg at each level (0.85-1.76; the robot overshoots it at the top, 1.99);
+  - the robot's single-angle decompositions (stroke only, rotation only, deviation only, frequency only).
+- **Either way.** No coefficient, kinematics or size changes after the run. A pass makes the blade-element wing the measured-force candidate for flight across force levels. A fail is written up with the levels and terms where it departs.
+
+### Pre-registration: MuJoCo noslip off (`contact:floor|noslip_iterations` 0) as candidate m9s (20:33)
+- **Why.** F-DAMP-2: flybody's arena runs 3 noslip iterations, and at the 0.1 ms step these do not converge on m9d's lightly damped legs. Resting leg speed then changes non-monotonically with the step, by up to 4× (seeds 12-14 agree, so the step sets it, not chaos). With noslip off the closed loop converges (seed 13: 13.6, 12.0, 12.3 deg/s at k = 1, 2, 4); with 20 iterations it nearly does (15.6, 14.5). flygym's GPU path (MJWarp) has no noslip and sets it to 0, so the many-flies runs (task 3) need the CPU reference at 0 to compare like with like.
+- **Choice of 0 over 20.** Both converge; 0 matches the GPU path and costs nothing. Without noslip, MuJoCo's soft contacts allow some creep under shear; that is reported below, not assumed small.
+- **Switch.** `contact:floor|noslip_iterations` (B6), registered by `passive.register_noslip` in the organism, `dead_fly.py` and `deadfly_decay.py`. Neutral 3 keeps every earlier profile unchanged. Test: `tests/test_contact_solver.py`.
+- **Adoption test.** As every s12 adoption: `closed_loop_check.py`, seeds 12-19, with m9d's values plus the switch.
+  - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN. Pass gives m9s = m9d + noslip 0 as working; m9d is kept.
+  - Also required (pass/fail): the template dead-fly test (`dead_fly.py --template`) keeps its verdicts with the switch on, since dead-fly results so far ran at 3.
+  - Reported, not criteria: resting step convergence on two more seeds (k = 1, 2), the head-contact share, thorax height, and foot creep (horizontal drift of the six tarsal tips over 1 s of rest).
+- **Result (20:36): primary FAIL at the top two levels; secondary PASS.** (`runs/s12/flight/robot/`, `summary.json`; plot `docs/media/s12_robot_force_levels.png`, viewed.)
+  - Ratio to the steady level, model against robot: within 0.03 up to F/mg 1.45 (levels 0-8), −0.05 at 1.53, −0.09 at 1.60, **−0.11 at 1.68 and −0.17 at 1.76**. Fails the 0.10 rule at levels 11 and 12.
+  - Steady level at hydei size: 0.865 W (prediction 0.86), 0.85 of the robot's 1.02. Inside ±20%: pass.
+  - Where it departs (diagnostic, after the result): the model's frequency response is f² exactly (top-level angles at the steady frequency give 1.340×, f² arithmetic 1.339×). Angle changes alone agree with the robot: the robot's all-changes/frequency-only quotient at the top is 1.327, the model's angle-only effect 1.340. The whole gap is in the robot's frequency-only record, which rises 1.50× where f² gives 1.36× (an exponent of about 2.65). A quasi-steady wing at fixed angles cannot do that, and the SM does not say how the robot runs were scaled in frequency. Not resolved.
+  - Against the free-flying flies' own F/mg (reported, not pass/fail): the model's ratio rises with slope 1.04 (1.82 at the top against the flies' 1.76); the robot's with 1.18 (1.99).
+  - Per this pre-registration: nothing changes. The blade-element wing is not declared the measured-force candidate across all force levels; it is the candidate up to F/mg ≈ 1.5, with the top of the range open on the robot's frequency scaling.

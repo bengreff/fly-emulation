@@ -188,6 +188,19 @@ def test_measured_wing_length_scales_the_strips_about_the_hinge():
         assert hooks[1].x0[w] == hooks[0].x0[w]                 # pitch-axis chord fraction unchanged
 
 
+def test_measured_planform_area_rescales_only_the_chords():
+    """area_mm2 (s12 robotic-fly test, D. hydei R x mean chord): the planform equals the
+    given area; strip positions and the chord shape are those of the length scaling."""
+    from flyemu import flight
+    from flyemu.body import Body
+    base = flight.apply_blade_element(Body(vision=False), length_mm=2.99)
+    hook = flight.apply_blade_element(Body(vision=False), length_mm=2.99, area_mm2=2.831)
+    for w in range(2):
+        assert np.isclose((hook.c[w] * hook.dr[w]).sum(), 2.831)
+        assert np.allclose(hook.pts[w], base.pts[w])
+        assert np.allclose(hook.c[w] / base.c[w], hook.c[w][0] / base.c[w][0])
+
+
 def _wing_joint_axes(m, d, side):
     import mujoco as mj
     from flyemu import flight

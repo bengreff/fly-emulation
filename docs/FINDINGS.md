@@ -381,6 +381,10 @@ Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`
   - Front and middle CTr references sit on the fold bound (−29 to −30.5° front, −14.5 to −15.5° middle). Coxa yaw (−30°) and roll (±25°) sit on the joints.py limits, which are assumed.
   - Residuals (theta/phi/psi, deg): rf 13.0/−4.2/9.0, lf 10.3/−1.6/7.4, rm 12.0/−0.5/7.2, lm 12.0/−0.6/7.3; hind under 0.3 and unchanged. s9 had rf 6.7/−11/2.0 and rm 8.9/−0.5/5.9.
   - So with the CTr held physical, the eLife equilibria are matched to about the ±10° digitisation, but only by pressing every front and middle leg against three bounds. Two of those bounds are assumed. The fit is consistent with the data, but it does not identify the references.
+- **Dead fly and standing with the CTr switch** (20:13; `runs/s12/deadfly_template_ctr*`, `runs/s12/standing/standing_ctr_{dead,live}_s12.*`; m9d profile with `joint:ctr|range_source` 1 and `joint:leg|spring_reference` 3, seed 12, 1.5 s):
+  - Dead-fly test (template body): range limits fail, lf and lm CTr on the fold bound 50-59% of the time (F-DAMP-2 table). This is by construction: the refit puts those references on the bound.
+  - Standing: thorax ends at 0.635 mm dead and 0.634 mm live, with the trunk on the floor 98% of the run; at the end the load is mostly on rm (about 5.5-6 µN). Contact sheet (`standing_ctr_live_s12.png`, viewed): the fly lies on its belly with the left front leg raised in the air. That is not a resting posture.
+  - The switch stays at 0. The CTr ranges themselves are physical (the fold) and measured (the upper bounds); what fails is that the references refitted inside them do not hold the fly up, as with every other passive configuration (F-STAND-3).
 
 ### F-STAND-3: the fly cannot stand because the model has no resting support drive, and no measurement fixes one
 Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 measure a median standing head height of 0.5 mm above the motor-silenced collapse. For this body that is a thorax origin near 1.0 mm (inferred). Pratt et al. 2024 put the dorsal thorax at 0.51 body lengths, about 1.04 mm, at the slowest walking speed. The model's dorsal thorax is the origin plus 0.54 mm. The model ends at 0.54-0.77 mm with the trunk on the floor.
@@ -493,7 +497,62 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The end height hardly moves: 0.544 → 0.565 mm dead, 0.542 → 0.555 mm live.
   - Wang's passive-only simulation falls at about 37 mm/s (their model, not a measurement). With option 1 this model falls about 31 mm/s over the first 20 ms (1.32 → 0.70 mm); with flybody damping, 5 mm/s.
 - **Reading.** Damping sets how fast the fly falls, not whether it stands. The old slow sink (hundreds of ms) looked like a real silenced fly's slow fall, but for the wrong reason: viscous creep at a damping the data rule out, where the real fly has decaying active force. With realistic damping the missing resting drive (F-STAND-3) shows as a fast collapse.
-- **Status.** Gate passed on all 8 seeds (12-19); adopted as m9d with the TTMn exclusion (DECISIONS 18:53, result 19:13). Whole-brain rate excluding ORNs rose from about 0.08 to 0.14 Hz on 7 of 8 seeds, source not yet identified (DECISIONS 19:13).
+- **Status.** Gate passed on all 8 seeds (12-19); adopted as m9d with the TTMn exclusion (DECISIONS 18:53, result 19:13). Whole-brain rate excluding ORNs rose from about 0.08 to 0.14 Hz on 7 of 8 seeds (DECISIONS 19:13). Source found in F-DAMP-2: the collapsed fly's head lies on the floor instead of on its right front tibia, and the head-bristle channel reads total head contact force. Not leg motion.
+
+### F-DAMP-2: m9d's extra resting motion is MuJoCo's unconverged noslip pass; its brain-rate rise is the head lying on the floor; and under instant release its dead fly lands on range limits
+- **Question** (F-DAMP-1 status line). On m9d the whole-brain rate at rest rose from 0.086 to 0.143 Hz, mostly in the head bristles (summed BM_InOm 3725 → 8381 Hz). The first guess was that they reported more leg motion. Is that motion physical or numerical?
+- **Probe** (`scripts/probes/resting_joint_speed.py`). It runs the gate's closed loop (or the body alone) for 1 s and reports the RMS speed of the leg hinges after 200 ms. `--substeps k` divides the physics step by k and holds the muscle torques over the extra steps. The brain, muscles and sensing stay at 0.1 ms. A physical result does not change with k; a numerical one does.
+- **Results, closed loop, RMS leg speed (deg/s; peak in brackets):**
+
+  | profile, noslip iterations | k = 1 (0.1 ms) | k = 2 | k = 4 | k = 8 |
+  |---|---|---|---|---|
+  | m9m, 3 (flybody) | 14.9 (540) | 15.0 (536) | 16.9 (884) | |
+  | m9d, 3, seeds 12/13/14 | 17.0 / 16.8 / 16.6 | 24.5 / 24.3 / 25.8 | 9.5 / 5.7 / 9.4 | 7.5 (seed 13) |
+  | m9d, 0, seed 13 | 13.6 (142) | 12.0 (142) | 12.3 (131) | |
+  | m9d, 20, seed 13 | 15.6 (724) | 14.5 (440) | | |
+  | m9m, 0, seed 13 | 17.2 (759) | 17.5 (792) | | |
+
+  - With flybody's 3 noslip iterations, m9d's resting motion changes non-monotonically with the step, by up to 4×, with peaks up to 1800 deg/s. The three seeds agree closely at each step, so this is not chaotic divergence; it is set by the step.
+  - With noslip off, the same loop converges: 12-13.6 deg/s, peaks about 140 deg/s.
+  - With 20 iterations it is nearly converged (15.6 against 14.5, a 7% step change).
+  - m9m with noslip off moves more than m9d (17.2-17.5 against 12-13.6 deg/s), with peaks near 780 deg/s; why is not checked (m9m keeps flybody's damping and the TTMn in the Hill pool).
+  - The body alone (no spikes, noslip 3) is quiet on both: m9m 13.2, m9d 3.3-3.6 deg/s.
+- **Reading.** MuJoCo's noslip pass (a per-step projection that removes contact slip, run for a fixed 3 iterations) is not converged at this step when the legs are lightly damped. Its leftover depends on the step. The extra motion under 3 iterations is therefore numerical. With the solver converged (noslip off), m9d's legs move less than m9m's, yet m9d's brain still spikes more (41.5-43k against 33.4k spikes after 200 ms, seed 13). So the rate rise does not come from leg motion. F-DAMP-1's explanation ("lower damping lets the resting body move more and the bristles report it") is withdrawn.
+- **What the head bristles read** (same probe, now also logging head contact; seed 13, closed loop, `runs/s12/head/*.json` on backhouse). The head-touch channel (extrasenses) drives every head bristle, taste-peg and pharyngeal mechanosensor with gain × tanh(total normal contact force on the head, antennae, rostrum, haustellum and labra):
+
+  | profile, noslip | head in contact | mean head force (µN) | main contact partner (share of samples) | spikes after 200 ms |
+  |---|---|---|---|---|
+  | m9m, 3 | 84% | 1.20 | right front tibia 81%, floor 35% | 34.4k |
+  | m9m, 0 | 83% | 1.14 | right front tibia 78%, floor 27% | 33.4k |
+  | m9d, 3 | 92% | 2.37 | floor 92%, right front tibia 9% | 41.4k |
+  | m9d, 0 | 94% | 2.44 | floor 94% | 41.5k |
+
+  - The rate rise is the head resting on the floor. In m9m the collapsed fly's head mostly lies on its own right front tibia; in m9d it lies on the floor with twice the force. The noslip setting does not change this.
+  - A standing fly's head does not touch the floor. Both profiles therefore carry head-bristle drive that exists only because the fly is not standing (F-STAND-3). The resting whole-brain rate is not a clean baseline until it stands.
+  - The channel is coarse: interommatidial bristles fire for contact anywhere on the head region, including the mouthparts. A per-region map would need the bristle field (B18, absent).
+- **Dead fly under m9d's damping** (`scripts/dead_fly.py --template`, 1 s instant release; `runs/s12/deadfly_template_*`):
+
+  | body | end height | range limits | posture order |
+  |---|---|---|---|
+  | template (flybody damping) | 0.549 mm | pass | pass |
+  | + damping from stiffness (m9d's body) | 0.566 | **fail**: lf, rf, lm coxa roll on the assumed ±25° limit 78-95% of the time | pass |
+  | + damping + flybody coxa ranges and refit | 0.588 | **fail**: 7 coxa joints | **fail** |
+  | + CTr ranges and refit (flybody damping) | 0.606 | **fail**: lf, lm CTr on the fold bound 50-59% | pass |
+  | + CTr + damping | 0.635 | **fail**: 6 joints | **fail** |
+
+  - With realistic damping the instant-release fall is fast (peak kinetic energy 1.2-2.9 against 0.05). The legs are thrown against their limits and friction holds them there. The springs alone no longer set where the fly comes to rest.
+  - The CTr failure is built in: the refit puts the front and middle CTr references on the fold (F-COXA-2).
+  - The m9d adoption test (DECISIONS 18:53) did not include the dead-fly test. This failure is new information, not a regression the gate missed. The battery's dead-fly test uses flybody damping.
+- **Reading.** Instant release is not Wang et al.'s protocol. Their silenced flies start standing, and lose active force over about 100 ms (their model; MN inactivation measured). With flybody's damping the two protocols looked alike, because viscous creep slowed the fall. With damping from the measured stiffness they do not.
+- **Wang's protocol as a probe** (`scripts/probes/deadfly_decay.py`; criteria unchanged). The placed fly first gets the joint torques that hold it there (read off stiff instrument springs, as `stand_budget.py`; 32.2 µN·mm summed). Those torques then decay as exp(−t/100 ms). τ is Wang's model value (inferred). The hold torque is not a model quantity: it stands in for the active force the model lacks (F-STAND-3).
+
+  | body | range limits | posture order | 90% of drop |
+  |---|---|---|---|
+  | template (flybody damping) | pass | pass | 458 ms (collapse criterion fails: onset 52 ms) |
+  | + damping from stiffness (m9d's body) | **fail**: lf, rf coxa roll on the assumed limit 87-90% of the time | pass | 98 ms |
+
+  - The slower protocol restores the posture order under m9d's damping, but the front coxa roll still ends on the assumed ±25° joints.py limit (F-COXA-1: assumed envelope, mislabelled axes). So with realistic damping the dead fly's rest pose depends on the path of the fall and on an assumed limit, not on the springs alone.
+  - **Held-out caution.** This run reads the fall time course, which DECISIONS 18:23 reserves as the held-out check for standing option (b). To keep it usable, no switch is chosen on it. The damping choice stays on its own evidence (F-DAMP-1), and the comparison with Wang's measured fall is left for option (b). Register updated: seen in an s12 diagnostic, not used for selection.
 
 ### F-FLIGHT-3: the fitted wing reproduces hover lift at one condition; against the robotic fly its lift is 1.7× too high and its drag has the wrong shape
 - **Test** (B, flight coefficients beyond one condition). `scripts/probes/wing_coefficients.py` holds the fly still with gravity off and blows a uniform wind (1000 mm/s) over the left wing membrane at angles of attack 0-90°. It reads the fluid force on the wing alone, after subtracting the drag on the rest of the body in the same wind. It then compares the result with the translational coefficients of the dynamically scaled robotic Drosophila wing (Dickinson, Lehmann & Sane 1999, Science 284:1954, Re ≈ 136; measured): CL = 0.225 + 1.58 sin(2.13α − 7.2°), CD = 1.92 − 1.55 cos(2.04α − 9.82°). Area is the membrane planform, π × 0.589 × 1.401 mm = 2.59 mm². Plot: `docs/media/s12_wing_coefficients.png`, viewed.
@@ -549,6 +608,21 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Validity: one condition (hover, hydei kinematics on a melanogaster-sized wing), and the length was chosen after seeing the fail. It is a consistency check, not held-out validation.
   - Still open: the mesh and inertia are the scan's, so wing inertial power and the passive pitch response are for the larger wing.
   - Discriminating test: measure the flybody wing against the body it came from (wing length / thorax length against female melanogaster morphometrics). If the wing is oversized, scale the membrane to measured length and area, behind a switch, and rerun this same test unchanged.
+
+- **Second condition: 13 measured force levels against the robotic fly (20:36; DECISIONS s12 20:31 pre-registration and result).**
+  - Data: Muijres et al. 2014 Database S1, `robotForcesTorques.ForceModulations` (open): 13 beats built from the measured kinematic change per unit force (F/mg 0.85-1.76, 182-220 Hz; D. hydei), and the force a dynamically scaled robotic wing measured with each (measured). The robot's steady beat is Table S1 with stroke and rotation negated; that map is applied to all levels (`build_measured_kinematics.py --robot-level`).
+  - Model: blade-element wing, no coefficient changed, scaled to the database's wing (R 2.99 mm, planform R × c̄ = 2.83 mm², flybody ellipse shape kept; `aero:wing|size_source`-style strip scaling plus `area_mm2`), normalized by 1.8 mg.
+
+  | F/mg (flies) | 0.85 | 1.00 | 1.15 | 1.30 | 1.45 | 1.60 | 1.76 |
+  |---|---|---|---|---|---|---|---|
+  | robot, ratio to steady | 0.91 | 1 | 1.14 | 1.30 | 1.48 | 1.71 | 1.99 |
+  | model, ratio to steady | 0.88 | 1 | 1.13 | 1.29 | 1.45 | 1.62 | 1.82 |
+
+  - Pre-registered rule (ratios within 0.10 at every level): fails at the top two levels (−0.11, −0.17). Steady level 0.865 W, 0.85 of the robot's 1.02 (secondary, pass).
+  - Split (`docs/media/s12_robot_force_levels.png`, viewed): the angle changes alone agree with the robot to about 1% (1.34 against 1.33 at the top). The gap is the frequency term. The model scales as f² exactly; the robot's frequency-only record rises 1.50× for a change that gives 1.36× under f². How the robot runs were scaled in frequency is not stated in the SM. Unresolved.
+  - The free-flying flies' own F/mg rises more slowly than the robot's (1.76 against 1.99 at the top). The model sits between, close to the flies (1.82).
+  - Reading: with measured coefficients and no fitted number, the wing's response to measured kinematic changes is right within about 3% up to 1.45 W. Its absolute force at the steady hydei beat is 15% below the robot's. That fits the known shortfall of a quasi-steady model without wake capture or added-mass acceleration terms. The planform shape is flybody's ellipse, not the hydei wing; the database holds the hydei chord distribution (`wing_model.chords_L`, 20 sections), which would remove that difference. Not done.
+  - Next discriminating test: the robot's roll and pitch modulation sets (same database) give left-right and fore-aft force and torque at fixed frequency, so they test the wing without the frequency question.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.

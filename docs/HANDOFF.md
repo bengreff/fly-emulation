@@ -4,7 +4,7 @@
 
 **Session 12 in progress (4 October 2026, from 16:36; this block updated 19:40):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9d** (adopted 19:13). Its lineage: m9 → m9w (wing motor roles and nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool). Each step passed the silence gate (seeds 12-19; DECISIONS s12).
-  - Rate rise on m9d (0.086 → 0.143 Hz excluding ORNs, seed 13): it comes entirely from the damping switch (TTM switch alone: no change). Summed BM_InOm (head bristle) rate goes from 3725 to 8381 Hz. Mechanosensory, DN and proprioceptive classes roughly double (`runs/s12/diag/rate_*.json`). Lower damping lets the resting body move more and the bristles report it.
+  - Rate rise on m9d (0.086 → 0.143 Hz excluding ORNs, seed 13): it comes entirely from the damping switch (TTM switch alone: no change). Summed BM_InOm (head bristle) rate goes from 3725 to 8381 Hz. Mechanosensory, DN and proprioceptive classes roughly double (`runs/s12/diag/rate_*.json`). Source (F-DAMP-2): the collapsed fly's head lies on the floor instead of on its right front tibia, and the head-bristle channel reads head contact force. Not leg motion; the earlier leg-motion reading is withdrawn.
   - Not yet known: whether that motion is physical or numerical jitter. Next: compare the body's resting joint speed, m9m vs m9d.
 - **A** (blanks) is done: `docs/BLANKS_AUDIT.md`.
 - **C** (synapse-specific ladder) is done: `docs/FIDELITY_LADDER.md`, rungs 8-13.
@@ -129,6 +129,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | flybench olfactory tasks 08/17/18/26/27 | held out for AL changes (m2 baseline 0.80); not run | m5 changes no AL class, but check before use |
 | Command direction (MDN back, DNg100 forward) | spent on seeds 1-4 (s7) | new seeds and a gait criterion |
 | eLife 2025 passive stiffness, fall onset | seen (s9) | rest-posture data (Fig 3C) unused |
+| Wang 2025 silenced-fly fall time course (onset 40-300 ms, median 1.3 mm/s) | held out for standing option (b) (DECISIONS s12 18:23); model fall curves computed in an s12 diagnostic (F-DAMP-2), not compared for selection | choose nothing on it before option (b) |
 | Azevedo 2020 twitch-kinetics text/figures | seen (s9) | raw recordings keep their status |
 | Session 10 search fit set: template seeds 0-2, sugar->MN9 100 Hz | seen (fit) | none |
 | Session 10 held out: template seeds 3-8, m4 body seeds 0-5, bitter, sugar+bitter, sugar 200 Hz | spent (m5 candidate) | new candidates need new held-out evidence |

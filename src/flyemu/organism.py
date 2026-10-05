@@ -70,6 +70,7 @@ class Organism:
         passive.register_ctr(self.reg, self.body)       # B2 CTr ranges (s12)
         passive.register_rest(self.reg, self.body)
         passive.register_wings(self.reg, self.body)
+        passive.register_noslip(self.reg, self.body)    # B6 contact solver (s12, F-DAMP-2)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
         )
