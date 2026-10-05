@@ -629,18 +629,18 @@ Built 4 October 2026, evening.
   held-out guard and logged; simulated time stayed at 100 ms through a pause; resume and stop
   worked; the session took 28 s of wall time; `replay.py` re-ran the finished recording from its
   protocol and all 31 arrays were identical.
-- Library on m9 as the model owner fits it, with eight more shams (`runs/app/lib-m9/scores.json`,
+- Library on m9 as the model owner fits it, with 16 more shams (`runs/app/lib-m9/scores.json`,
   recorded and scored 4 October 2026, evening). Same protocols, seed 12, closed loop, the app's
   kicks, thresholds and windows. Three rules changed after the first library was viewed, and are
   labelled so: the override is gone, the readout drops incompletely traced cells, and the trials
   summary judges a mean. Every number is derived from the recordings.
 
-  | Protocol | Criterion | Measured | Driven cells | 9 shams, same window (6 distinct) | Verdict |
+  | Protocol | Criterion | Measured | Driven cells | 17 shams, same window (13 distinct) | Verdict |
   |---|---|---|---|---|---|
   | sugar-grn-kick | MN9_L minus control >= 5 Hz | +7.00 Hz (7 vs 0) | | all 0.00 | PASS |
   | sugar-patch-legs | as above | 0.00; no spike changed | | all 0.00 | FAIL, no spike changed |
-  | mdn-cschrimson | forward minus control <= -0.5 mm | +0.04 mm | the 4 MDN 22 to 23 Hz, control 0 | -0.06 to +0.02 mm | FAIL within noise |
-  | dna02-left | left turn minus control >= +5 deg | -0.15 deg | the left DNa02 19 Hz, control 0 (the right one, not driven, 0) | -1.0 to +2.9 deg | FAIL within noise |
+  | mdn-cschrimson | forward minus control <= -0.5 mm | +0.04 mm | the 4 MDN 22 to 23 Hz, control 0 | -0.06 to +0.05 mm | FAIL within noise |
+  | dna02-left | left turn minus control >= +5 deg | -0.15 deg | the left DNa02 19 Hz, control 0 (the right one, not driven, 0) | -1.2 to +3.8 deg | FAIL within noise |
 
   - Sugar GRNs to MN9 passes on this trial, as in the model's own assay. The first library's
     FAIL came from the override and one low draw (the verification above).
@@ -664,10 +664,18 @@ Built 4 October 2026, evening.
       moves. In 4 of the 9 this is the same DL2d_adPN projection neuron, 0.1 ms later, 8.5 ms
       after the first kick; in the other 5 nothing else changes for 40 ms.
     My reading (inferred, not tested): small voltage differences are erased at each cell's next
-    reset, so different cells funnel into a few trajectories. Across the shams the body moves
-    -0.06 to +0.02 mm forward and turns -1.0 to +2.9 deg, and 786 to 2,604 cells change.
-  - A second set of 8 shams with new cells and onsets 505 to 540 ms (rule added after the first
-    set was seen): queued at 20:31 CDT behind other projects' jobs in the slot limiter; not yet recorded.
+    reset, so different cells funnel into a few trajectories.
+  - A second set of 8 shams, with new cells and onsets 505 to 540 ms (a rule added after the
+    first set was seen), gives 7 distinct trajectories. The 525 ms and 530 ms shams, on different
+    cells, both first move the same DC1_adPN spike by 0.1 ms, 30 to 37 ms after their kicks. In 6
+    of the 8, the first spike to move outside the forced cell is an antennal-lobe projection
+    neuron's, one step (0.1 ms) late. In one it is a lateral horn neuron's (LHPV12a1), one step
+    early. In the other, nothing else moves within 89 ms.
+  - Over the 13 distinct shams the body turns -1.2 to +3.8 deg (mean +1.0, SD 1.5) and moves
+    -0.06 to +0.05 mm forward (SD 0.04), and 727 to 2,736 cells change. The mean turn is not
+    zero because the control is itself one trajectory, so every difference is measured from one
+    draw. The within-noise rule (no larger than the largest sham) now sits at 3.8 deg against
+    DNa02's 5 deg threshold, and at 0.06 mm against MDN's 0.5 mm.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
