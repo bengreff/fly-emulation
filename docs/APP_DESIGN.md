@@ -7,6 +7,33 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
+**State at 21:30 CDT, 4 October 2026 (paused for the usage limit):**
+
+- **Done and pushed** (branch `app`, 2c0a864; 135 tests pass).
+  - The app reproduces the model's sugar to MN9 assay (`scripts/assay_pathways.py`, m9).
+    - On seeds 0 to 2, every cell's spike count matches the model's own run.
+    - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
+      (measured; M2b in section 14).
+  - The first library's +0.5 Hz came from three things: the MN9_R average, a non-m9 override and
+    one low trial. Rerun on plain m9, the library passes sugar at +7 Hz.
+  - **Shams:** 17 recorded, 13 distinct. Turn -1.2 to +3.8 deg, forward -0.06 to +0.05 mm
+    (measured).
+  - The live session and the protocol editor are built and tested end to end (M2b).
+  - The Eye tab is built, with the inspector link and the photoreceptor assignment check (M3,
+    first part).
+- **Asked for on 4 October and already done:** the sham seeds, the live session and the protocol
+  editor. On resume, start from the open items below.
+- **Open:**
+  1. A library at 10 seeds per protocol, judged on the mean. A single trial of sugar to MN9 fails
+     the 5 Hz bar 2 times in 10. That is about 50 runs, roughly 3.5 h on the Mac with shared slots
+     (estimate), so better on backhouse (offline tonight).
+  2. The rest of M3: the column table and the LPTC traces.
+  3. The library pins m9, while the fly worker's working model on main is now m9w.
+- **Blocked:**
+  - MDN and DNa02 cannot pass until the body walks; the m9 body does not walk.
+  - Warm starts and branching wait on model request 2 (section 13, on hold).
+- **Nothing is running:** no background jobs, no server, and the working tree is clean.
+
 ## 1. What it is for
 
 Ben, 2026-10-04: a public viewer "fully fleshed out instead of just a cartoon viewer, brain map and
