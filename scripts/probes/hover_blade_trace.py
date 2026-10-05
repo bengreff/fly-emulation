@@ -50,6 +50,8 @@ def main() -> None:
                     help="scale the blade-element strips about the hinge to this wing length (aero:wing|size_source)")
     ap.add_argument("--area-mm2", type=float, default=None,
                     help="rescale the blade-element chords to this single-wing planform area (shape kept)")
+    ap.add_argument("--planform", default="ellipse", choices=("ellipse", "hydei"),
+                    help="blade-element chord distribution: scan ellipse, or measured D. hydei (Muijres 2014 S1)")
     ap.add_argument("--weight-mg", type=float, default=None,
                     help="normalize by this body mass instead of the model's (e.g. 1.8 mg, Muijres 2014 D. hydei)")
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "flight"))
@@ -73,7 +75,8 @@ def main() -> None:
     wb = flight.WingBeat(b, kin, ramp_ms=0.0)
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
-    be = flight.apply_blade_element(b, rot_rate=a.rot_rate, length_mm=a.wing_length_mm, area_mm2=a.area_mm2)
+    be = flight.apply_blade_element(b, rot_rate=a.rot_rate, length_mm=a.wing_length_mm, area_mm2=a.area_mm2,
+                                    planform=a.planform)
     mj.mj_forward(m, d)
     if pitch:
         qp = np.zeros(4); qn = np.zeros(4)

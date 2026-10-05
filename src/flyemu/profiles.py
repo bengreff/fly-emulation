@@ -215,6 +215,15 @@ M9S = {
                                         "step-converged at rest; as MJWarp"),
 }
 
+# m9t (session 12, adopted 21:21 after the DECISIONS s12 21:12 gate): m9s with each non-leg motor
+# neuron's torque per spike from the leg motor-unit anchor x moved-part length (inferred), not the
+# shared 10 uN*mm guess, which pinned the head, rostrum and antennae at their joint limits.
+M9T = {
+    **M9S,
+    "motor_unit:nonleg|torque_source": (1.0, _I, "s12 body fix, not fitted (DECISIONS s12 21:12); "
+                                        "data/params/nonleg_motor_forces.csv"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -241,7 +250,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9s")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9t")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path), then m9t (+ non-leg torque per spike from the leg anchor); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -261,6 +270,7 @@ PROFILES: dict[str, dict] = {
     "m9m": {"values": M9M, "kick_mv": KICK},
     "m9d": {"values": M9D, "kick_mv": KICK},
     "m9s": {"values": M9S, "kick_mv": KICK},
+    "m9t": {"values": M9T, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

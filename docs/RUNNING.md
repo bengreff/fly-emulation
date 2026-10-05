@@ -93,6 +93,8 @@ ssh backhouse 'wsl -d Ubuntu -- bash -s' < job.sh                      # run scr
 - Kill the keep-alive `ssh` when finished.
 - flybench has its own venv at `external/flybench/.venv` (on both machines).
 - Never touch `/home/greff` outside `~/fly-emulation`.
+- Rendering (contact sheets): EGL fails under WSL and the system has no OSMesa. A user-local copy needs no root: `apt-get download libosmesa6`, `dpkg -x` it into `~/osmesa/root`, add a `libOSMesa.so` symlink beside `libOSMesa.so.8`, then run with `LD_LIBRARY_PATH=$HOME/osmesa/root/usr/lib/x86_64-linux-gnu MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa` (session 12; example in `runs/s12/nonleg/run_sheet.sh` on backhouse).
+- Inside `tmux new-session "..."`, quote override values (`--set 'motor_unit:all|force_per_spike=10'`), or the `|` becomes a shell pipe; a small runner script is safest.
 
 ## Outputs
 

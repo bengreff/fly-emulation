@@ -109,12 +109,20 @@ def main() -> None:
                 "range_deg": [round(float(np.degrees(jlo[i])), 1), round(float(np.degrees(jhi[i])), 1)],
                 "frac_time_within_1deg_of_limit": round(float(at_jlim[i] / n_rec), 3)} for i in acts},
         }
+    legs = np.flatnonzero(grp == "leg")             # the same clip applies to leg (Hill) torques
+    out["leg_force_limit"] = {
+        "n_actuators": int(len(legs)), "force_limit_uNmm": sorted(set(flim[legs].round(3).tolist())),
+        "torque_abs_peak_uNmm": round(float(tq_max[legs].max()), 3),
+        "frac_time_at_force_limit_max": round(float(at_lim[legs].max() / n_rec), 4),
+        "actuators_ever_at_limit": {motor_names[i].split("/")[-1]: round(float(at_lim[i] / n_rec), 4)
+                                    for i in legs if at_lim[i] > 0}}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(out, indent=1))
     if frames:
         from wing_rest import sheet
         sheet(frames, Path(a.out).with_suffix(".png"))
     print(json.dumps({g: {k: v for k, v in r.items() if k != "per_actuator"} for g, r in out["groups"].items()}, indent=1))
+    print(json.dumps(out["leg_force_limit"], indent=1))
 
 
 if __name__ == "__main__":

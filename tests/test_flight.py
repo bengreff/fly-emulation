@@ -201,6 +201,27 @@ def test_measured_planform_area_rescales_only_the_chords():
         assert np.allclose(hook.c[w] / base.c[w], hook.c[w][0] / base.c[w][0])
 
 
+def test_hydei_planform_puts_the_measured_chords_on_the_same_strips():
+    """planform "hydei" (s12, DECISIONS 21:17): Muijres 2014's measured chord/L against
+    r/L on the model's strips; positions unchanged, the area as given, and the second
+    moment of area that of the measured wing (r2/L 0.584; the ellipse's is 0.539)."""
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    base = flight.apply_blade_element(Body(vision=False), length_mm=2.99, area_mm2=2.831)
+    b = Body(vision=False)
+    hook = flight.apply_blade_element(b, length_mm=2.99, area_mm2=2.831, planform="hydei")
+    m = b.sim.mj_model
+    for w, s in enumerate(flight.SIDES):
+        jp = m.jnt_pos[mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"flybody/c_thorax-{s}_wing-{flight.FN['rotation']}")]
+        assert np.allclose(hook.pts[w], base.pts[w])
+        assert np.isclose((hook.c[w] * hook.dr[w]).sum(), 2.831)
+        r = (hook.pts[w] - jp) @ hook.span[w]
+        R = r[-1] + hook.dr[w] / 2
+        r2 = [np.sqrt((h.c[w] * r ** 2).sum() / h.c[w].sum()) / R for h in (hook, base)]
+        assert abs(r2[0] - 0.584) < 0.01 and abs(r2[1] - 0.539) < 0.01
+
+
 def _wing_joint_axes(m, d, side):
     import mujoco as mj
     from flyemu import flight

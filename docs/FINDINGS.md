@@ -633,6 +633,10 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Reading: a quasi-steady wing with measured coefficients gets lift and its symmetric modulation right, but gives about half the measured roll torque for measured asymmetric kinematics. The leading candidate is unsteady terms it lacks (wake capture, added mass), mainly through the rotation component. Plot `docs/media/s12_robot_roll_torque.png` (viewed).
   - Consequence: steering torques from this wing would need about twice the measured kinematic asymmetry. For flight control the wing needs either an unsteady term with measured support or a torque check against a second robot dataset. No coefficient was changed.
   - Next discriminating test: a wake-capture or added-mass term from the literature, behind a switch, scored on this same pre-registered roll set (now not held out) and on the untouched pitch set (21 levels) as the held-out check.
+- **Fourth check: the measured hydei planform (21:21; DECISIONS s12 21:17 pre-registration and result).** Muijres 2014 Database S1 `wing_model.chords_L` gives the robot wing's measured chord in 20 strips (`data/derived/muijres2014_wing_chords.csv`; r2/L 0.584, r3/L 0.622 against the ellipse's 0.539, 0.587). Used in place of the ellipse at the same length and area (`hover_blade_trace.py --planform hydei`):
+  - Steady force 1.011 W, 0.99 of the robot's (ellipse 0.85). The 15% deficit was the planform.
+  - Force ratios and roll are unchanged within 1-3%: still failing at levels 11-12 (frequency term), roll still 0.42-0.54 of the robot's with the sign opposite.
+  - The spanwise shape is ruled out as the cause of the roll gap. Robot comparisons use the hydei planform from now on; the organism keeps the scanned wing.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
@@ -649,3 +653,44 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Test (`test_measured_beat_keeps_each_wing_on_its_side_and_steers`): PD-tracked through `motor_step`, the stroke is 131.6 ± 10° peak-to-peak. Each wing stays on its own side throughout, there are no MuJoCo warnings, and a left b2 burst widens only the left stroke.
   - Contact sheet `docs/media/s12_wing_beat_views.png`, viewed: generator against measured beat, top and front views, thorax level. The measured beat reverses above and behind the hinge at τ 0 and in front and below at τ 0.5. The chord stands near vertical on the upstroke when the thorax is level, as expected for a 47.5° stroke plane.
   - The s10 generator stays as switch value 0 (legacy fixture). `test_s10_generator_crosses_the_wings_and_measured_poses_do_not` pins its crossing.
+
+### F-NONLEG-1: a shared 10 µN·mm per spike pinned the head, rostrum and antennae at their stops; a per-part derivation frees them, and the wings then rise over the back
+- **Census** (`scripts/probes/nonleg_motor_census.py`, m9s gate values, seed 12, 200-600 ms; `runs/s12/nonleg/census_s12.json`). Every non-leg motor neuron used the shared `motor_unit:all|force_per_spike` 10 µN·mm (guessed). Against flybody's non-leg springs (head, antenna, proboscis 3 µN·mm/rad, abdomen 5, wing 1, haltere 400; all unsourced), a few Hz of resting drive held the head yaw, head pitch, rostrum and both antennae within 1° of a joint limit 97-100% of the time. On the contact sheet the head was pitched down onto the floor.
+- **No measurement.** The literature search (`docs/research/s12_nonleg_muscle_sources.md`) found no measured force, cross-section or moment arm for any fly neck, proboscis, antennal, abdominal or wing-steering muscle in open sources. The candidates are paywalled: Strausfeld 1987, Rajashekhar & Singh 1994, Tu & Dickinson 1994/96, Zanker 1988, Chan 1998.
+- **Derivation** (inferred; `scripts/build_nonleg_forces.py` → `data/params/nonleg_motor_forces.csv`; switch `motor_unit:nonleg|torque_source` 1).
+  - Torque per spike = force per motor unit × lever.
+  - Force: 1.035 µN, the mean per unit of the tibia-flexor pool (Azevedo 2020's measured classes, 10/1/0.05 µN × 1/3/9 units; derived).
+  - Lever: the length of the moved part on the flybody mesh, joint to far end (`scripts/probes/nonleg_joint_geometry.py`; derived).
+  - Bounds are the measured unit range, 0.05-10 µN, times the same lever.
+  - Interpretation: one average leg-sized motor unit acting at the far end of the part it moves.
+  - Validity: resting posture and slow movements. The real insertion is nearer the joint, so the lever overstates the torque. The wing is the worst case, because its steering muscles act on the hinge sclerites, not the blade.
+
+  | part | lever (mm) | torque per spike (µN·mm) | upper bound |
+  |---|---|---|---|
+  | head | 0.476 | 0.49 | 4.8 |
+  | rostrum, haustellum, labrum | 0.385, 0.246, 0.20 | 0.40, 0.25, 0.21 | 3.9, 2.5, 2.0 |
+  | antenna | 0.42 | 0.44 | 4.2 |
+  | abdomen 1-7 | 0.42-0.75 | 0.43-0.77 | 4.2-7.5 |
+  | wing | 2.64 | 2.73 | 26 |
+  | haltere | 0.30 | 0.31 | 3.0 |
+
+  The old 10 lies above the upper bound for the head, proboscis, antennae and halteres.
+- **Result** (DECISIONS s12 21:12, result 21:21).
+  - Gate silent on seeds 12-19.
+  - Time within 1° of a limit is now 0 for every head, proboscis and antenna joint.
+  - Mean angles: head yaw −0.4°, head pitch 0.3°, rostrum −12°, antennae 5-6°.
+  - On the sheet the head is upright and the proboscis is off its stop.
+  - Adopted as m9t.
+- **The wings now rise.** Both wings rise in a V over the thorax at 300 ms, and the left at 600 ms.
+  - The wing motor neurons fire about twice as often at rest as on m9s (left yaw 2.5 → 5 Hz, left pitch 7.5 → 15 Hz; the right side now fires too).
+  - The first-axillary neurons (i1, i2) map to wing yaw with sign +1 (guessed, `data/params/motor_targets.csv`).
+  - In flybody's hinge, positive yaw lifts the folded wing over the dorsum (F-WING-3).
+  - So any resting first-axillary drive raises the wing against a 1 µN·mm/rad spring. Steady state: 2.73 µN·mm × 5 Hz × 30 ms ÷ 1 µN·mm/rad = 0.41 rad, about 23°, against the measured mean left yaw of 20.3°.
+  - Three unsourced quantities meet here: the wing lever, the wing spring, and the yaw mapping. They are not changed after this result; the wing rest needs its own pre-registration.
+- **Still copied or guessed in this path** (recorded, not changed):
+  - Neck and antenna drive signs: +1 on both sides with no antagonists. ADNM2 (TH2) turns the head the same way from either side, which is anatomically wrong for a bilateral pair. Gorko et al. 2024 may give per-neuron directions.
+  - The actuator clip of ±30 µN·mm is a NeuroMechFly copy (`body.NMF_FORCERANGE`). It also applies to the Hill leg torques. On m9t it never binds:
+    - At rest (census, seeds 12 and 13, `runs/s12/nonleg/census_m9t_s1{2,3}.json`), the peak leg torque is 0.32 µN·mm and the time at the limit is 0.
+    - At full activation, the largest single-muscle torque F0 × arm is 19.3 µN·mm (hind trochanter-femur). Each coxa hinge sums to at most 10.9 µN·mm across its anatomical muscles. So no leg actuator can reach 30.
+    - It would bind if the femur-tibia flexor took its measured strength. The model's flexor gives 1.04 µN·mm against at least 42 µN·mm measured (F-FTI-2; `muscle:leg|ft_flexor_scale` is off). So the clip has to be sourced or lifted before that flexor is.
+  - The non-leg springs listed above.

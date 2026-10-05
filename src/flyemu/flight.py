@@ -344,6 +344,9 @@ WING_LENGTH_SCAN_MM = 2.65
 # Female D. melanogaster wing length R, Canton-S, n = 27 (measured; Lehmann & Dickinson
 # 1997 J Exp Biol 200:1133, Table 1; same cohort weighed 1.05 mg, 1998)
 WING_LENGTH_FEMALE_MM = 2.47
+# D. hydei chord per spanwise strip (measured; Muijres et al. 2014 Database S1 wing_model;
+# scripts/build_hydei_planform.py)
+HYDEI_CHORDS_CSV = Path(__file__).resolve().parents[2] / "data" / "derived" / "muijres2014_wing_chords.csv"
 
 
 class BladeElementWing:
@@ -366,6 +369,10 @@ class BladeElementWing:
         pi (0.75 - x0) (Sane & Dickinson 2002 JEB 205:1087, theory matched by their
         robofly), x0 the pitch axis' chord position, derived from the model at
         mid-span (0.20).
+    Planform: "ellipse" (default) puts elliptic chords on the scanned membrane's span;
+    "hydei" puts the measured D. hydei chord distribution (Muijres et al. 2014 Database
+    S1, chord/L against r/L) on the same strips and tip radius, for comparison with
+    their robotic wing. area_mm2 then rescales either shape to a planform area.
     MuJoCo's own drag, lift and angular drag on the membrane are switched off (they
     would count the same force twice); its added-mass terms stay. Not modelled:
     acceleration added mass, wake capture, pitching moment (forces act on the pitch
@@ -373,8 +380,13 @@ class BladeElementWing:
 
     def __init__(self, body, n_strips: int = 20, rot_rate: str = "stroke_frame",
                  stroke_plane_deg: float = STROKE_PLANE_DEG, length_mm: float | None = None,
-                 area_mm2: float | None = None):
+                 area_mm2: float | None = None, planform: str = "ellipse"):
         m, d = body.sim.mj_model, body.sim.mj_data
+        assert planform in ("ellipse", "hydei")
+        self.planform = planform
+        if planform == "hydei":                        # measured chord/L against r/L, hinge to tip
+            import pandas as pd
+            hy = pd.read_csv(HYDEI_CHORDS_CSV, comment="#")
         # aero:wing|size_source 1: strips scaled isometrically about the hinge to a
         # measured wing length; mesh, inertia and MuJoCo added mass keep the scan's size
         self.length_scale = 1.0 if length_mm is None else length_mm / WING_LENGTH_SCAN_MM
@@ -408,6 +420,10 @@ class BladeElementWing:
             c *= np.pi * a * half / (c.sum() * dr)     # planform area exactly pi a b
             k = self.length_scale
             pts, c, dr = jp + k * (pts - jp), k * c, k * dr
+            if planform == "hydei":                    # measured shape on the same strips and tip radius
+                r = (pts - jp) @ span
+                R = float(r[-1] + dr / 2)
+                c = R * np.interp(r / R, hy.r_over_L, hy.chord_over_L)
             if area_mm2 is not None:                   # chords rescaled to a measured planform (shape kept)
                 c *= area_mm2 / (c.sum() * dr)
             off = abs((jp + (ctr - jp) @ span / (ax @ span) * ax - ctr) @ chord)
