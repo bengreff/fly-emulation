@@ -1,0 +1,51 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Assay check: closed loop, sugar GRNs 100 Hz from 0 s",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 0,
+  "min_synapses": 5,
+  "overrides": {},
+  "kick_rng": "assay",
+  "preparation": "closed_loop"
+ },
+ "duration_ms": 1000,
+ "genotype": [],
+ "events": [
+  {
+   "t_ms": 0,
+   "dur_ms": 1000,
+   "effector": "kick",
+   "rate_hz": 100,
+   "target": {
+    "type": [
+     "LB3b",
+     "LB3c"
+    ]
+   },
+   "label": "sugar GRNs, Poisson 100 Hz"
+  }
+ ],
+ "note": "one factor changed from the assay: the body and senses are coupled",
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ },
+ "expect": {
+  "text": "Reproduces the model owner's sugar -> MN9 assay through the app.",
+  "source": "scripts/assay_pathways.py --assay sugar_mn9 --profile m9 (open loop, brain only, kicks from t = 0, 1000 ms, seeds 0-2, readout MN9 without incompletely traced cells); fly measured MN9_L 7, 6, 7 Hz, mean 6.67 (runs/assay-sugar_mn9-m9-s11_r2_diag_m9base, 1 Oct 2026; DECISIONS.md: '--profile m9 without overrides reproduces the held-out sugar trials exactly (7, 6, 7 Hz for trials 0-2)')",
+  "readout": {
+   "type": [
+    "MN9"
+   ]
+  },
+  "status": "verification of the app against the model's own assay; sugar->MN9 at 100 Hz is in the fit set"
+ }
+}

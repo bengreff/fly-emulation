@@ -1,0 +1,30 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Assay check: closed loop, no stimulus, with force_per_spike = 10",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 0,
+  "min_synapses": 5,
+  "overrides": {
+   "motor_unit:all|force_per_spike": 10
+  },
+  "kick_rng": "assay",
+  "preparation": "closed_loop"
+ },
+ "duration_ms": 2000,
+ "genotype": [],
+ "events": [],
+ "note": "control for both closed-loop runs",
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ },
+ "role": "control"
+}

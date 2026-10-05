@@ -1,6 +1,6 @@
 {
  "format": "flyemu-protocol/1",
- "title": "Sham: a few forced spikes in one Kenyon cell at 500 ms (noise floor)",
+ "title": "Sham: a few forced spikes in one Kenyon cell (KCg-m 77719) at 500 ms (noise floor)",
  "role": "sham",
  "config": {
   "scan": "male-cns:v1.0",
@@ -20,10 +20,10 @@
    "rate_hz": 1000,
    "target": {
     "bodyId": [
-     21879
+     77719
     ]
    },
-   "label": "about 3 forced spikes in one KCg-m (bodyId 21879)"
+   "label": "about 3 forced spikes in one KCg-m (bodyId 77719)"
   }
  ],
  "expect": {
@@ -50,5 +50,6 @@
    ]
   }
  },
- "config_history": "4 Oct 2026, after the first library was viewed: override motor_unit:all|force_per_spike = 10 removed (copied from docs/RUNNING.md examples, not part of m9), so the library runs the adopted m9 profile as the model owner fits it. The first library (runs/app/lib) was recorded with it."
+ "config_history": "4 Oct 2026, after the first library was viewed: override motor_unit:all|force_per_spike = 10 removed (copied from docs/RUNNING.md examples, not part of m9), so the library runs the adopted m9 profile as the model owner fits it. The first library (runs/app/lib) was recorded with it.",
+ "sham_rule": "app/tools/make_shams.py: uniform draw from 4063 model Kenyon cells, default_rng(20261004), excluding the original sham cell"
 }

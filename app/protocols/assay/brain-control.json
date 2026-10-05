@@ -1,0 +1,28 @@
+{
+ "format": "flyemu-protocol/1",
+ "title": "Assay check: brain only, no stimulus",
+ "config": {
+  "scan": "male-cns:v1.0",
+  "body": "flybody",
+  "profile": "m9",
+  "seed": 0,
+  "min_synapses": 5,
+  "overrides": {},
+  "kick_rng": "assay",
+  "preparation": "brain_only"
+ },
+ "duration_ms": 1000,
+ "genotype": [],
+ "events": [],
+ "note": "the assay's 0 Hz trial",
+ "record": {
+  "watch": {
+   "type": [
+    "MN9",
+    "LB3b",
+    "LB3c"
+   ]
+  }
+ },
+ "role": "control"
+}

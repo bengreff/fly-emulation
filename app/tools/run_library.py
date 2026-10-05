@@ -35,13 +35,17 @@ def main() -> int:
     ap.add_argument("--protocols", type=Path, default=APP / "protocols")
     ap.add_argument("--out", type=Path, default=REPO / "runs" / "app" / "lib")
     ap.add_argument("--only", nargs="*")
+    ap.add_argument("--seeds", type=int, nargs="*", help="record each protocol at these seeds "
+                    "(output <name>-s<seed>) instead of its own")
     ap.add_argument("--timeout-min", type=float, default=40.0, help="per run")
     a = ap.parse_args()
     names = sorted(p.stem for p in a.protocols.glob("*.json"))
-    names.sort(key=lambda n: n != "control")          # the control first
+    names.sort(key=lambda n: "control" not in n)      # controls first
     if a.only:
         names = [n for n in names if n in a.only]
-    for name in names:
+    jobs = [(n, None) for n in names] if not a.seeds else [(n, s) for s in a.seeds for n in names]
+    for proto_name, seed in jobs:
+        name = proto_name if seed is None else f"{proto_name}-s{seed}"
         out = a.out / name
         st = status(out)
         if st == "complete":
@@ -52,7 +56,9 @@ def main() -> int:
             out.rename(aside)
             print(f"{name}: previous attempt ({st}) moved to {aside.name}", flush=True)
         cmd = [sys.executable, str(APP / "server" / "record.py"),
-               "--protocol", str(a.protocols / f"{name}.json"), "--out", str(out)]
+               "--protocol", str(a.protocols / f"{proto_name}.json"), "--out", str(out)]
+        if seed is not None:
+            cmd += ["--seed", str(seed)]
         if SLOT.exists():
             cmd = ["python3", str(SLOT), "run", "--label", f"flyapp: library {name}", "--"] + cmd
         t0 = time.time()

@@ -7,9 +7,7 @@
   "profile": "m9",
   "seed": 12,
   "min_synapses": 5,
-  "overrides": {
-   "motor_unit:all|force_per_spike": 10
-  }
+  "overrides": {}
  },
  "duration_ms": 2000,
  "genotype": [],
@@ -55,5 +53,6 @@
     "LB3c"
    ]
   }
- }
+ },
+ "config_history": "4 Oct 2026, after the first library was viewed: override motor_unit:all|force_per_spike = 10 removed (copied from docs/RUNNING.md examples, not part of m9), so the library runs the adopted m9 profile as the model owner fits it. The first library (runs/app/lib) was recorded with it."
 }

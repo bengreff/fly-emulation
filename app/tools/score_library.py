@@ -1,6 +1,6 @@
 """Score the intervention library: each stimulated run against its matched
-control and its protocol's pre-declared criterion, with the sham run read over
-the same window as a noise floor. An independent implementation of what the
+control and its protocol's pre-declared criterion, with every sham run (same
+configuration) read over the same window as a noise floor. An independent implementation of what the
 page's Compare tab computes (app/web/js/compare.js), so the two can be checked
 against each other.
 
@@ -26,6 +26,18 @@ sys.path.insert(0, str(APP / "server"))
 from recfmt import RecReader, unpack  # noqa: E402
 
 ATLAS = APP / "data" / "atlas" / "male-cns-v1.0"
+CACHE = REPO / "data" / "cache"
+
+
+def incomplete_cells() -> dict[int, str]:
+    """bodyId -> instance of cells the reconstructors flag as incompletely traced.
+    The readout drops them, as scripts/assay_pathways.py does (F-DATA-3: MN9_R has
+    633 inputs against MN9_L's 6,358)."""
+    import pandas as pd
+    lab = pd.read_parquet(CACHE / "male_cns_extra.parquet", columns=["bodyId", "statusLabel"])
+    bad = lab[lab.statusLabel.fillna("").str.contains("Hard to trace|Partially")]
+    inst = pd.read_parquet(CACHE / "male_cns_neurons.parquet", columns=["bodyId", "instance"]).set_index("bodyId").instance
+    return {int(b): str(inst.get(b) or b) for b in bad.bodyId}
 
 
 class Run:
@@ -83,14 +95,22 @@ def first_divergence(a: Run, b: Run):
     return None
 
 
-def measure(run: Run, ctrl: Run, s0: int, s1: int, readout: list[str], types: np.ndarray) -> dict:
+def measure(run: Run, ctrl: Run, s0: int, s1: int, readout: list[str], types: np.ndarray,
+            drop: dict[int, str]) -> dict:
     sec = (s1 - s0) * run.ts / 1000
     ca, cb = run.counts(s0, s1), ctrl.counts(s0, s1)
     delta = (ca - cb) / sec
+    bid = run.r.static()["row_bodyid"]
     rows = np.flatnonzero(np.isin(types, readout))
+    dropped = [drop[int(bid[r])] for r in rows if int(bid[r]) in drop]
+    rows = np.array([r for r in rows if int(bid[r]) not in drop], np.int64)
     mr, mc = run.movement(s0, s1), ctrl.movement(s0, s1)
     return {
         "readout_delta_hz": float(delta[rows].mean()) if rows.size else None,
+        "readout_hz": float(ca[rows].mean() / sec) if rows.size else None,
+        "readout_hz_control": float(cb[rows].mean() / sec) if rows.size else None,
+        "readout_cells": {str(int(bid[r])): [int(ca[r]) / sec, int(cb[r]) / sec] for r in rows},
+        "readout_excluded_incomplete": dropped,
         "forward_mm_vs_control": mr["forward"] - mc["forward"],
         "turn_left_deg_vs_control": mr["turn"] - mc["turn"],
         "move_run": mr, "move_control": mc,
@@ -106,62 +126,86 @@ def main() -> int:
     info = json.loads((ATLAS / "atlas.json").read_text())
     arr = unpack(gzip.open(ATLAS / "neurons.bin.gz").read(), info["arrays"])
     type_of = dict(zip(arr["bodyid"].tolist(), np.asarray(info["vocab"]["type"], object)[arr["type"]].tolist()))
+    drop = incomplete_cells()
     runs = []
     for man in sorted(a.lib.glob("*/manifest.json")):
         m = json.loads(man.read_text())
         if m.get("status") == "complete" and m.get("protocol"):
             runs.append(Run(man.parent))
-    by_cfg = lambda r: json.dumps(r.m["config"], sort_keys=True)
+    # kick_rng only changes kicks, which a control has none of
+    by_cfg = lambda r: json.dumps({k: v for k, v in r.m["config"].items() if k != "kick_rng"}, sort_keys=True)
     out = []
     for run in runs:
         if run.control:
             continue
-        ctrls = [c for c in runs if c.control and by_cfg(c) == by_cfg(run)]
-        if not ctrls:
-            out.append({"run": run.path.name, "error": "no matched control"})
-            continue
-        ctrl = ctrls[0]
+        ctrls = [c for c in runs if c.control and by_cfg(c) == by_cfg(run)
+                 and c.m["duration_ms"] >= run.m["duration_ms"]]
         types = np.array([type_of.get(int(b), "") for b in run.r.static()["row_bodyid"]], object)
         ex = run.pr.get("expect") or {}
         readout = (ex.get("readout") or {}).get("type", [])
         s0, s1 = window(run)
-        res = measure(run, ctrl, s0, s1, readout, types)
+        if not ctrls:
+            # no control to compare with; the run's own readout rate still stands (the
+            # model owner's assay reports absolute rates)
+            res = measure(run, run, s0, s1, readout, types, drop)
+            out.append({"run": run.path.name, "error": "no matched control", "seed": run.m["config"].get("seed"),
+                        "window_ms": [s0 * run.ts, s1 * run.ts],
+                        **{k: res[k] for k in ("readout_hz", "readout_cells", "readout_excluded_incomplete")}})
+            continue
+        ctrl = ctrls[0]
+        res = measure(run, ctrl, s0, s1, readout, types, drop)
         div = first_divergence(run, ctrl)
+        div = None if div is not None and div * run.ts >= run.m["duration_ms"] else div   # control runs longer
         row = {"run": run.path.name, "control": ctrl.path.name, "title": run.pr.get("title"), "role": run.pr.get("role"),
+               "seed": run.m["config"].get("seed"), "preparation": (run.m.get("preparation") or {}).get("coupling", "closed_loop"),
                "window_ms": [s0 * run.ts, s1 * run.ts], "first_divergence_step": div, "first_event_step": s0,
                "matched": div is None or div >= s0, **res}
         shams = [s for s in runs if s.pr.get("role") == "sham" and s is not run and by_cfg(s) == by_cfg(run)]
+        shams.sort(key=lambda s: (s.path.name != "sham-one-cell", s.path.name))    # the original sham first
         if shams:
-            row["sham"] = {"run": shams[0].path.name, **measure(shams[0], ctrl, s0, s1, readout, types)}
+            row["shams"] = [{"run": s.path.name, **measure(s, ctrl, s0, s1, readout, types, drop)} for s in shams]
+            row["sham"] = row["shams"][0]
         c = ex.get("criterion")
         if c:
             v = res.get(c["metric"])
             row["criterion"] = {**c, "value_measured": v,
                                 "pass": None if v is None else (v >= c["value"] if c["op"] == ">=" else v <= c["value"])}
-            if "sham" in row:
-                sv = row["sham"].get(c["metric"])
-                row["criterion"]["sham_value"] = sv
-                row["criterion"]["within_sham"] = v is not None and sv is not None and abs(v) <= abs(sv)
+            if shams:
+                # the noise floor: every sham read on this test's measure over its window;
+                # a result no larger in size than the largest sham's cannot be told from noise
+                sv = [x.get(c["metric"]) for x in row["shams"]]
+                sv = [x for x in sv if x is not None]
+                row["criterion"]["sham_value"] = row["sham"].get(c["metric"])
+                row["criterion"]["sham_values"] = sv
+                row["criterion"]["n_shams"] = len(sv)
+                row["criterion"]["sham_max_abs"] = max(map(abs, sv)) if sv else None
+                row["criterion"]["within_sham"] = v is not None and bool(sv) and abs(v) <= max(map(abs, sv))
         out.append(row)
     commit = {r.path.name: ((r.m.get("provenance") or {}).get("git") or {}).get("commit") for r in runs}
     doc = {"format": "flyemu-scores/1", "lib": str(a.lib.relative_to(REPO)) if a.lib.is_relative_to(REPO) else str(a.lib),
            "basis": "derived from the recordings by app/tools/score_library.py; thresholds guessed and declared in the protocols",
            "commits": commit, "scores": out}
     (a.lib / "scores.json").write_text(json.dumps(doc, indent=1) + "\n")
-    print(f"{'run':20} {'verdict':16} {'measured':>10} {'needed':>10} {'sham':>9}  first diff / onset   cells up/down (sham)")
+    print(f"{'run':20} {'verdict':16} {'measured':>10} {'needed':>10} {'sham max|x|':>12}  first diff / onset   cells up/down (sham)"
+          "   readout Hz run / control")
     for r in out:
         if "error" in r:
-            print(f"{r['run']:20} {r['error']}")
+            ro = "" if r.get("readout_hz") is None else f"; readout {r['readout_hz']:.2f} Hz" + (
+                f" (excl. {', '.join(r['readout_excluded_incomplete'])})" if r["readout_excluded_incomplete"] else "")
+            print(f"{r['run']:20} {r['error']}{ro}")
             continue
+        ro = "-" if r["readout_hz"] is None else f"{r['readout_hz']:.2f} / {r['readout_hz_control']:.2f}"
+        ro += f" (excl. {', '.join(r['readout_excluded_incomplete'])})" if r["readout_excluded_incomplete"] else ""
         c = r.get("criterion")
         verdict = "-" if not c else "n/a" if c["pass"] is None else "PASS" if c["pass"] else "FAIL"
         verdict += "" if not c else " (no spike)" if r["first_divergence_step"] is None else " (noise)" if c.get("within_sham") else ""
         meas = f"{c['value_measured']:.2f}" if c and c["value_measured"] is not None else "-"
         need = f"{c['op']}{c['value']}" if c else "-"
-        sham = f"{c['sham_value']:.2f}" if c and c.get("sham_value") is not None else "-"
+        sham = f"{c['sham_max_abs']:.2f} n{c['n_shams']}" if c and c.get("sham_max_abs") is not None else "-"
         sh = r.get("sham", {})
-        print(f"{r['run']:20} {verdict:16} {meas:>10} {need:>10} {sham:>9}  {r['first_divergence_step']} / {r['first_event_step']}"
-              f"{'' if r['matched'] else ' NOT MATCHED'}   {r['up_1hz']}/{r['down_1hz']} ({sh.get('up_1hz', '-')}/{sh.get('down_1hz', '-')})")
+        print(f"{r['run']:20} {verdict:16} {meas:>10} {need:>10} {sham:>12}  {r['first_divergence_step']} / {r['first_event_step']}"
+              f"{'' if r['matched'] else ' NOT MATCHED'}   {r['up_1hz']}/{r['down_1hz']} ({sh.get('up_1hz', '-')}/{sh.get('down_1hz', '-')})"
+              f"   {ro}")
     return 0
 
 
