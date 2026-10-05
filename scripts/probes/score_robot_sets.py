@@ -12,6 +12,8 @@ vertical force / model steady vertical force).
 
     uv run python scripts/probes/score_robot_sets.py --set roll --dir runs/s12/flight/planform
     uv run python scripts/probes/score_robot_sets.py --set pitch --dir runs/s12/flight/am --prefix _pitch_am
+    uv run python scripts/probes/score_robot_sets.py --set pitch --dir runs/s12/flight/pitch \
+        --arm2 runs/s12/flight/am,_pitch_am --plot docs/media/s12_robot_pitch_torque.png
 """
 from __future__ import annotations
 
@@ -88,14 +90,41 @@ def score(kind: str, dirpath: Path, prefix: str, thr: float = 0.03, tol: float =
     return out
 
 
+def plot(kind: str, arms: list, path: str) -> None:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    key_r, keys_m = ("robot", ("model_hinge", "model_cg")) if kind == "roll" else ("d_robot", ("d_model_hinge", "d_model_cg"))
+    fig, axs = plt.subplots(1, 2, figsize=(11, 4.5))
+    for ax, km in zip(axs, keys_m):
+        rows = arms[0][1]["rows"]
+        lv = [x["level"] for x in rows]
+        rb = np.array([x[key_r] for x in rows])
+        ax.plot(lv, rb, "ko-", label="robot (Database S1)")
+        ax.plot(lv, -rb if arms[0][1][km]["sign"] == "opposite" else rb, "k:", alpha=0.4)
+        for (lab, res), c in zip(arms, ("C0", "C3")):
+            ax.plot(lv, [x[km] for x in res["rows"]], "s--", color=c, ms=4,
+                    label=f"model {lab} (|ratio| {res[km]['abs_ratio_range'][0]}-{res[km]['abs_ratio_range'][1]})")
+        ax.axhspan(-res["threshold"], res["threshold"], color="0.9")
+        ax.set_xlabel(f"{kind} level"); ax.set_title(f"{'d' if kind == 'pitch' else ''}{arms[0][1]['component']} about "
+                                                   f"{'hinge midpoint' if 'hinge' in km else 'Database S1 CoM'}")
+        ax.set_ylabel("torque / (m g l)"); ax.legend(fontsize=7)
+    fig.suptitle(f"Robot {kind} set: force-corrected model torque vs robot (grey band: below the scoring threshold)")
+    fig.tight_layout(); Path(path).parent.mkdir(parents=True, exist_ok=True); fig.savefig(path, dpi=110)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--set", choices=("roll", "pitch"), required=True)
     ap.add_argument("--dir", required=True)
     ap.add_argument("--prefix", default="", help="trace tag before the level number (default _roll / _pitch)")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--arm2", default=None, help="DIR,PREFIX of a second arm to plot alongside")
+    ap.add_argument("--plot", default=None)
     a = ap.parse_args()
     res = score(a.set, Path(a.dir), a.prefix)
+    if a.plot:
+        plot(a.set, [("without added mass", res)] + ([("with added mass", score(a.set, Path(a.arm2.split(",")[0]), a.arm2.split(",")[1]))] if a.arm2 else []), a.plot)
     for km in ("model_hinge", "model_cg", "d_model_hinge", "d_model_cg"):
         if km in res:
             print(km, json.dumps(res[km]))

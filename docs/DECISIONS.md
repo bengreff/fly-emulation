@@ -986,3 +986,37 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
     - wake capture (would need a fitted term);
     - the model's hinge spacing (about 11%).
   - Nothing in the walking model changes.
+- **Result (22:15): roll primary FAIL; held-out pitch primary FAIL in both arms (consistent sign); switch ADOPTED under the rule.** Outputs: `runs/s12/flight/am/` (with added mass), `runs/s12/flight/pitch/` (pitch without), scores `score_*.json`. Plots viewed: `docs/media/s12_robot_pitch_torque.png`, `docs/media/s12_robot_roll_added_mass.png`.
+
+  | set (levels scored) | reference | without added mass | with added mass |
+  |---|---|---|---|
+  | roll Mx (6-12) | hinge midpoint (primary) | 0.425-0.534, median 0.461, opposite sign | 0.464-0.554, median 0.494, opposite sign |
+  | roll Mx (6-12) | Database S1 CoM | 0.496-0.628 | 0.560-0.674 |
+  | pitch ΔMy (0-5, 14-20; 13 levels) | Database S1 CoM (primary) | 0.605-0.691, median abs log ratio 0.413, same sign | 0.615-0.698, 0.402, same sign |
+  | pitch ΔMy (same) | hinge midpoint | 0.713-0.812, 0.256 | 0.667-0.756, 0.327 |
+
+  - Primary 1 (roll): FAIL. Primary 2 (pitch): FAIL, every qualifying level below 0.8 in both arms. The sign is the same as the robot's at all 13 levels, where roll and yaw are opposite.
+  - Adoption rule:
+    - pitch about the CoM: 0.402 against 0.413, not worse;
+    - roll median: 0.494 against 0.461, closer to 1.
+    - Both clauses hold, so `aero:wing|added_mass` 1 is used in robot comparisons and the flight configuration from now on. No walking profile is affected.
+  - Not in the rule, reported:
+    - About the hinge midpoint, added mass makes pitch worse by 0.071.
+    - On the force set it makes the response worse. Steady force rises to 1.11 of the robot's (1.134 against 1.020 W). Ratios to the steady level depart by more than 0.10 at levels 9-12 (−0.13 to −0.29), against 11-12 without it.
+    - The added-mass mean is +0.12 W at the steady level and +0.09 W at the top, so it dilutes the response.
+  - Predictions:
+    - roll moves less than 0.05: met (+0.033);
+    - steady force about 1.11: met (1.11);
+    - pitch ratio 0.5-1.5 with a consistent sign, added mass changes ΔMy less than 20%, the same verdict in both arms: all met;
+    - force set fails only at levels 11-12: **missed** (9-12).
+  - Mechanism (derived): the strip formula keeps only the normal component, −m_a dv_n/dt n. Its cycle mean equals m_a⟨v_n dn/dt⟩, which is not zero. The full inviscid impulse form −d(m_a v_n n)/dt has zero mean over a periodic beat. The in-plane remainder corresponds to leading-edge suction, which separated flow loses. Quasi-steady models in the literature use the normal-only form, so it is kept, labelled.
+  - **Roll: two fixes have now failed (planform at 21:17, added mass here), so no third is attempted.** Both are written up in F-FLIGHT-3:
+    - the torque gap is a near-constant fraction across levels, about 0.5 in roll and 0.65-0.75 in pitch, while forces agree;
+    - a missing unsteady force term would vary with the kinematics, not scale every level alike;
+    - a constant fraction points to geometry or convention: the robot's reference point, its normalization length, or its hinge position.
+    The robot's main text (on Ben's list) or its time-resolved record would discriminate.
+- **Diagnostic after the result (22:18), not a fix: within-beat comparison** (`scripts/probes/robot_torque_reference.py`; F-FLIGHT-3).
+  - The opposite roll and yaw sign is a left-right labelling convention in Database S1 (derived). Fy, Mx and Mz are mirrored at roll level 12 and in every single-angle part. The database's `R` wing has the larger stroke at positive roll, yet the robot reports positive Mx.
+  - No single reference point explains the roll magnitude.
+  - The model's Fx along the stroke is 0.68-0.72 of the robot's at every condition, while Fz agrees.
+  - Next: split the model's Fx by term against a measured coefficient set for this wing.

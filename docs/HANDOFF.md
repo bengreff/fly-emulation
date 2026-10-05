@@ -1,8 +1,8 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 4 October 2026, 21:59, session 12 in progress (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of 4 October 2026, 22:19, session 12 in progress (session 11 state below the first block).
 
-**Session 12 in progress (4 October 2026, from 16:36; this block updated 21:59):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
+**Session 12 in progress (4 October 2026, from 16:36; this block updated 22:19):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9v** (adopted 21:58). Its lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons on opposite head yaw and roll signs; F-NONLEG-2). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted.
   - m9s: flybody's 3 noslip iterations did not converge at the 0.1 ms step on m9d's legs, so resting motion depended on the step (up to 4×). With noslip off the resting loop is step-converged on 3 seeds, the template dead fly is unchanged, and contact matches the MJWarp GPU path, which has no noslip (F-DAMP-2).
   - The resting whole-brain rate rose on m9d (0.086 → 0.143 Hz excluding ORNs) because the collapsed fly's head lies on the floor (92-97% of samples, about 2.4 µN), and the head-bristle channel reads total head contact force. Under m9m it lay on its right front tibia. Resting rates are not a clean baseline until the fly stands (F-DAMP-2).
@@ -27,9 +27,11 @@
     - Force at 13 levels: the response to measured kinematic changes is within 0.03 up to F/mg 1.45. It fails at the top two levels, from the frequency term (the robot rises faster than f²). The steady level is 0.85 of the robot's.
     - Roll torque at 13 levels: FAIL, about half the robot's (0.42-0.54). The sign is opposite, probably the robot's convention. The summed lift agrees; the left-right difference does not.
     - With the measured hydei planform (`--planform hydei`, DECISIONS 21:17): steady force 0.99 of the robot's; force ratios and roll unchanged, so the planform is ruled out as the roll-gap cause.
+    - Flat-plate added mass (`aero:wing|added_mass` 1, DECISIONS 22:08/22:15): roll 0.46-0.55, still FAIL. The held-out pitch set fails in both arms (ΔMy 0.61-0.70 of the robot's, same sign). Adopted for robot comparisons under the registered rule. This is the second failed roll fix, so roll fixes stop here.
+    - Within-beat diagnostic (22:18): the opposite roll and yaw sign is Database S1's left-right labelling, not the model. The magnitude gap is not the reference point. The model's stroke-direction force Fx is about 0.70 of the robot's at every condition while Fz agrees.
   - The s10 generator crosses the wings over the back (F-WING-3). The measured-table drive and the measured wing ranges are built behind switches (`flight:wings|kinematics` 1, `joint:wing|range_by_function` 2); no profile sets them.
 - **Next, in order:**
-  1. An unsteady term with literature support (wake capture or added mass), behind a switch. Score it on the roll set (no longer held out) and on the untouched 21-level pitch set as the held-out check.
+  1. Flight torque: split the model's Fx (stroke-direction force, about 0.70 of the robot's) by term and find which coefficient would have to change. Any change must come from a measured coefficient set for the hydei robot wing, not a fit to Fx. The pitch set is now used, so the next held-out check needs fresh data (Database S1 yaw, if present, or the free-flight responses).
   2. Remaining unsourced wing-rest quantities (F-WING-4):
      - whether any steering motor neuron fires at rest (no source);
      - the folded-hinge, yaw and roll stiffness;
@@ -42,7 +44,8 @@
   - **Standing.** F-STAND-3: the model has no resting support drive. **DECISION NEEDED (Ben)** at DECISIONS 18:23.
   - **For Ben's list:** the FlyMimic author request for mid/hind leg models; access to Lehmann & Dickinson 1997/1998 (paywalled force-vs-kinematics data); the Science 2014 main text (Muijres et al.) for the robot's torque frame and sign; the paywalled non-leg muscle papers (Strausfeld 1987, Rajashekhar & Singh 1994, Tu & Dickinson 1994/96, Zanker 1988, Chan 1998); Gorko et al. 2024 (Nature 628:596) main text and supplement, for per-neuron neck target poses; Lindsay, Sustar & Dickinson 2017 and Beatus & Cohen 2015 (wing steering activity and hinge stiffness).
 - **Tools added in s12:**
-  - `scripts/probes/build_measured_kinematics.py` (`--robot-level`, `--robot-roll`);
+  - `scripts/probes/build_measured_kinematics.py` (`--robot-level`, `--robot-roll`, `--robot-pitch`);
+  - `score_robot_sets.py` (roll and pitch scoring, `--plot`), `robot_torque_reference.py` (within-beat comparison), `added_mass_check.py`;
   - `hover_blade_trace.py` (robot-frame force and torque);
   - `resting_joint_speed.py` (step convergence, head contact, foot creep);
   - `deadfly_decay.py` (Wang 2025 protocol);

@@ -641,6 +641,25 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - If the robot's torques are about the centre of mass, the model's become Mx + 0.262 Fy (normalized). The model's side force agrees with the robot's in sign and size (−0.031 against −0.029 at the top level).
   - The force-corrected ratio then rises from 0.42-0.57 to 0.50-0.67 at levels 3-12. It still fails ±20%, and the side-force term has the model's sign, not the robot's.
   - So the reference point accounts for part of the magnitude gap at most. The sign stays unexplained, and the robot's main text (paywalled) would settle both.
+- **Fifth check: flat-plate added mass (22:15; DECISIONS s12 22:08 pre-registration and result).** `aero:wing|added_mass` 1 adds −ρπc²/4 dr dv_n/dt per strip, at mid-chord, along the normal (Sane & Dickinson 2001; derived, no fitted constant). It matches an independent stroke-frame calculation (correlation 0.97-0.995, RMS 0.91-0.94; `scripts/probes/added_mass_check.py`).
+  - Roll: 0.464-0.554 of the robot's, against 0.425-0.534 without it. Still FAIL. This is the second fix to fail on roll, so no third is tried.
+  - **Held-out pitch set** (21 levels of Database S1 `PitchModulations`; first look, both arms): force-corrected ΔMy about the CoM is 0.61-0.70 of the robot's, with and without added mass, and the sign is the same at all 13 scored levels. FAIL ±20%. About the hinge midpoint: 0.71-0.81 without, 0.67-0.76 with. Plot `docs/media/s12_robot_pitch_torque.png`, viewed.
+  - Steady force is 1.11 of the robot's. The force-level response now departs at levels 9-12 instead of 11-12, because the added-mass mean (+0.12 W at steady, +0.09 W at the top) does not grow with the level.
+  - That mean is non-zero because the strip form keeps only the normal component. The full inviscid impulse, −d(m_a v_n n)/dt, has zero mean over a beat. The in-plane remainder corresponds to leading-edge suction, which separated flow loses. The literature's quasi-steady models use the normal-only form (derived; kept, labelled).
+  - Adopted for robot comparisons and flight under the registered rule. No walking profile uses it.
+- **Diagnostic (22:18): within-beat comparison with the robot's time-resolved record.** Database S1 also stores each robot beat's force and torque over time (1145 samples, filtered and unfiltered). `hover_blade_trace.py` now saves the model's per-step series (`*_series.npz`). Compared at pitch levels 0, 10 and 20 and roll levels 2 and 12 by `scripts/probes/robot_torque_reference.py`; plot `docs/media/s12_robot_torque_series.png`, viewed.
+  - **The opposite roll and yaw sign is a left-right labelling convention in Database S1, not physics (derived).**
+    - At roll level 12, the robot's Fy, Mx and Mz anticorrelate with the model's (r −0.90, −0.74, −0.89; filtered). Its Fx, Fz and My correlate (0.96, 0.96, 0.82). Only a left-right reflection flips exactly Fy, Mx and Mz.
+    - Each single-angle part (stroke, rotation, deviation) is mirrored in Mx.
+    - At positive roll acceleration the database's `R` wing has the larger stroke (150.0° against 145.8°). More stroke on the right wing raises the right side, which is negative Mx in the robot's x-forward, z-down frame if `R` is the fly's right. The robot reports positive Mx. So its labels or its y axis are mirrored relative to that reading, and the model's sign is the physically consistent one.
+    - Robot comparisons should mirror Fy, Mx and Mz (or swap the sides). The magnitudes above are unaffected.
+  - **The magnitude gap is not the reference point.** Fitting the robot's Mx(t) as ±(model Mx) plus d × F_robot gives a lateral offset dy ≈ 0 at the steady roll level and −0.032 l at level 12. No single point satisfies both. For pitch, the best reference point explains under 40% of the within-beat variance (r² −0.26 to 0.39).
+  - **Where the model departs.**
+    - Within the beat, Fz agrees in shape and size: r 0.94-0.98, RMS 0.90-1.11 of the robot's.
+    - Fx agrees in shape (r 0.93-0.98) but its size is 0.68-0.72 of the robot's at all five conditions, filtered or unfiltered. The model's force along the stroke direction is about 30% low, and the steady force hides this.
+    - The model also has sharp Fz dips at both stroke reversals (phase 0.15 and 0.7) that the robot does not show. Its My peaks at 1.5 near phase 0.7, against the robot's 0.3.
+    - Both features sit where the rotational and added-mass terms act.
+  - **Next discriminating step.** The robofly drag and rotational coefficients (Dickinson 1999, melanogaster wing, Re ≈ 136) applied to the hydei robot wing: is the Fx shortfall the drag coefficient? Split the model's Fx by term and check which term would have to change. Any change must come from a measured coefficient set for this wing, not a fit to Fx.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.

@@ -120,6 +120,9 @@ def main() -> None:
     out_dir = Path(a.out); out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"hover_blade_trace{a.tag}"
     (out_dir / f"{stem}.json").write_text(json.dumps(out, indent=1))
+    fs = np.array(ft[-per:]) * np.array([1, -1, -1, 1, -1, -1]) / np.array([W] * 3 + [W * L] * 3)
+    np.savez(out_dir / f"{stem}_series.npz", phase=r[-per:, 0], robot_frame_norm=fs,      # last beat, per step
+             names=np.array(["Fx", "Fy", "Fz", "Mx", "My", "Mz"]))
     o = np.argsort(r[:per, 0])
     ph = r[:per, 0][o]
     fig, ax = plt.subplots(3, 1, figsize=(8, 8), sharex=True)
