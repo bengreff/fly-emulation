@@ -39,6 +39,18 @@ ASSAYS = {
                  "drives the rostrum protractor (McKellar 2020). Predicted and "
                  "confirmed: sugar GRN activation drives MN9 (Shiu 2024 Fig 2)",
     ),
+    "legsugar_mn9": dict(
+        stim=["LgLG4", "LgAG2"], readout=["MN9"],
+        evidence="LgLG4 (Gr64f+/Ir56b+) and LgAG2 (Gr61a+) match tarsal sweet GRN "
+                 "projections (male-CNS taste connectome, bioRxiv 10.1101/2025.08.25.671814); "
+                 "tarsal sugar evokes proboscis extension (Dethier 1976). F-TASTE-LEG-1 trace (s12)",
+    ),
+    "legsugar_labsugar_mn9": dict(
+        stim=["LgLG4", "LgAG2"], readout=["MN9"],
+        co_stim=(["LB3b", "LB3c"], 100.0),
+        evidence="convergence test (s12): does leg sugar add to labellar sugar at MN9? "
+                 "Labellar sugar held at 100 Hz, leg sugar swept; compare with sugar_mn9 at 100 Hz",
+    ),
     "water_mn9": dict(
         stim=["LB3a"], readout=["MN9"],
         evidence="LB3a matches ppk28-GAL4 water lbGRNs; water GRNs also drive "
