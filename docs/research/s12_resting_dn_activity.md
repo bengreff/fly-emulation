@@ -48,3 +48,76 @@ Date: 2026-10-05, about 03:45-03:52. Director leads of 03:00 on F-STAND-3. Web s
 - A Hz resting rate for DNa01, DNa02, the giant fiber, DNp07, DNp10, DNg02, MDN, BPN or P9.
 - Resting activity of coxa, trochanter or femur motor neurons or their premotor interneurons, by imaging or electrophysiology.
 - Spontaneous rates for other central types: none surfaced in this search. The model's parameter table already cites PN 1-5 Hz and KC about 0.1 Hz.
+
+## Neck-position match of the rest-encoding DNs (Director item 2, 5 Oct, 03:56-04:05)
+
+All matches below are **inferred**. Nothing here sets a model drive.
+
+**Data.**
+- BANC neck cross-section, Dataverse doi:10.7910/DVN/8TFGGB, version 8.1.
+  - File `neck_connective_y92500.tab`: file id 11844868, md5 5c0857091b4f153610c108bfe069602e.
+  - Downloaded as the original CSV to `data/raw/banc/dataverse_v8.1/neck_connective_y92500.orig` (430540 bytes; `data/raw/` is not tracked).
+- The table gives one point per axon at BANC plane y = 92500.
+  - 3648 of 3652 points join to `banc_888_meta` through its root-id columns.
+  - 1270 points belong to DN axons.
+- Scripts: `scripts/probes/neck_rest_dn_match.py` and `scripts/probes/rest_dn_reach.py`. Output: `runs/s12/dnrest/neck_rest_match.json` and `rest_dn_reach.json`.
+
+**Geometry** (derived; BANC voxels 4 × 4 × 45 nm).
+- The connective here is 59.8 µm wide and 26.4 µm deep.
+- The giant fibers (DNp01) lie 9.8 µm apart.
+- High z is dorsal. This is inferred from three agreeing checks:
+  - the giant fibers sit near the high-z edge;
+  - Kenyon cell somata have high z;
+  - DNx01 lies 17-18 µm lower than the giant fibers, matching Aymanns' "large-caliber axons in the cervical connective positioned ventral to the giant fiber neurons axons".
+
+**The paper's constraints** (eLife API full text, read 04:01).
+- Positions: rest-encoding DNs "were located medially, close to the giant fibers, as well as in the lateral extremities of the connective (Figure 2e, olive circles)". They "were located in less consistent locations" across flies.
+- Driver: it "lacks expression in the subesophageal zone (SEZ)". DNs with gnathal somata (DNg, DNge, DNxl; male-cns somaNeuromere LB, MX, MD or GNG) were therefore never recorded, so they are excluded.
+- Imaging plane: the thoracic cervical connective, posterior to BANC's y = 92500 plane. Axon positions can shift between the two planes.
+- ROIs: the "75-95 of the most distinct and clearly visible ROIs" per fly, each "likely" an "individual large axon or possibly tightly packed groups of smaller axons".
+
+**Bands** (guessed translations of the words, each run at two widths).
+- Medial: within 5 µm (narrow) or 8 µm (wide) of either giant fiber centre.
+- Lateral: beyond the 90th (narrow) or 80th (wide) percentile of |x − midline| over all neck axons. These cuts are 22.1 µm and 19.3 µm.
+
+**Confidence grades.**
+- **low**: brain soma, in the narrow band, and every cell of the type in the wide band.
+- **very low**: brain soma, in the band only partly or only at the wide width.
+- **excluded**: SEZ soma, not in the driver line.
+
+No match is graded higher than low, for four reasons:
+- the positions are a qualitative, pooled description that the authors call inconsistent;
+- 26 low types compete for what is probably a handful of rest ROIs per fly;
+- the imaging plane differs from the BANC plane;
+- the band widths are guessed.
+
+**Result.**
+
+| Band | Low | Very low | Excluded (SEZ) |
+|---|---|---|---|
+| Medial near GF | 21 types | 61 | 20 |
+| Lateral extremity | 5 types | 21 | 156 |
+
+- The lateral extremities are mostly SEZ axons, which Aymanns could not record. The brain-soma DNs there are few, which narrows that band to five low types.
+- **Low, medial near GF:** DNa07, DNa09, DNa13, DNae002, DNae004, DNae005, DNae006, DNae009, DNae010, DNb01, DNb07, DNbe004, DNp07, DNp13, DNp26, DNp30, DNp51, DNp57, DNp62, DNpe027_ab, MDN.
+- **Low, lateral extremity:** DNa02, DNa06, DNb06, DNp20, DNp33.
+- Very-low types are listed in the JSON.
+
+**Reach to the leg motor neurons** (structure only, m9r connectome).
+- Method: signed synapses, direct and two-hop. Each path is weighted by the DN's share of the interneuron's input, as in `load_reflex_paths.py`.
+- Each type is ranked against all 1318 DNs on |two-hop|. The median DN scores 14.8; the 90th percentile is 146.5.
+- Low candidates above the 90th percentile:
+  - **DNp07**, the landing DN of Ache 2019: 96.5th percentile, 117 direct synapses per cell onto leg MNs.
+  - **DNa02**, a steering DN: 94.5th percentile, 462 direct.
+- Next tier (77th-87th percentile): DNa13 (86.8), DNb06 (79.0), DNa06 (78.5), DNb01 (76.8), DNp26 (76.3), MDN (76.2), DNae005 (76.2) and DNb07 (75.9).
+- Near zero (below the 15th percentile): DNp30, DNp62 and DNp20.
+- DNp51 and DNpe027_ab are not types in the model.
+- **In the model at rest** (seed 12, `dn_rest_s12.json`): every low candidate is at 0 Hz.
+
+**Reading.**
+- The rest-encoding blank now has named candidate locations, mostly brain DNs that sit dorsomedially beside the giant fibers.
+- Two of these candidates have a strong, direct route to the leg pools: DNp07 and DNa02.
+- DNa02 is a conflicting case. It "hyperpolarized whenever the fly stopped walking" (Rayshubskiy 2025). If Aymanns' encoding score is blind to sign, a rest-encoding DNa02 would encode rest by falling silent, which is not a tonic drive. Whether the score is sign-blind was not read.
+- No rate follows from any of this.
+
+**Next discriminating test.** Image or record DNp07 and DNa13 in resting flies with split-GAL4 lines. Both are brain DNs in the medial band with high leg reach.

@@ -433,6 +433,13 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - Where the support drive originates (descending, VNC premotor, or sensory feedback) is unresolved.
     - Side defect found: one head-contact scalar drives all head bristle types, including interommatidial and taste-peg bristles. Head touch has no spatial specificity (recorded, not changed).
   - **Next discriminating experiment:** identify the Aymanns 2022 rest-encoding DNs by their stated positions (medial, near the giant fibers; lateral) against the connectome's DN somata or axon tracts in the neck connective. Then check whether those types reach the support pools within two synapses. If they do, the blank has a named location, though still no rate.
+  - **Done (Director item 2, 03:56-04:05; matches inferred, no drive set):** details in `docs/research/s12_resting_dn_activity.md`, scripts `neck_rest_dn_match.py` and `rest_dn_reach.py`.
+    - Method: every BANC DN axon was placed in the BANC neck cross-section (Dataverse 8.1, plane y = 92500). Types with SEZ somata were excluded because Aymanns' driver "lacks expression in the subesophageal zone".
+    - Candidates graded low (none higher): 21 brain DN types within 5 µm of a giant fiber (for example DNp07, DNa13, MDN, DNb01, DNb07) and 5 at the lateral extremities (DNa02, DNa06, DNb06, DNp20, DNp33). 156 of the 182 lateral types are SEZ cells and drop out.
+    - Leg reach: DNp07 and DNa02 rank above the 90th percentile of all DNs for two-hop reach onto leg motor neurons. Both make over 100 direct synapses per cell onto leg motor neurons.
+    - All low candidates are silent in the model at rest.
+    - Caveat: DNa02 hyperpolarizes when the fly stops (Rayshubskiy 2025), so if it is a rest-encoder its rest signal is a decrease.
+    - The blank now has candidate locations, still no rate.
 
 ### F-SENSE-NERVE-2: each leg sensor on its own entry nerve; the connectome annotates only 2 load sensors per leg
 - **What option 1 still got wrong** (`sense:mechano|assign_by_nerve` 1, F-SENSE-NERVE-1):
