@@ -49,12 +49,10 @@ only through public functions and asks for new ones (section 13, on hold).
        a time, so about 50 min and 19 GB (estimated from this round).
      - Then the Compare tab needs a model selector across libraries (a small app change).
   2. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
-- **Question for the Director:**
-  1. Main's gate runs m9r with `--set 'motor_unit:all|force_per_spike=10'` on top (main's
-     `docs/HANDOFF.md`). Should the m9r library use the profile as named, or as the gate runs it?
-     Options: (a) plain m9r; (b) m9r with the override, labelled "custom" in the app; (c) both.
-     Recommendation: (a), so each library is a named profile and the comparison is clean; add (b)
-     later if the fly worker reports results only with the override.
+- **Decided (Director, after 05:08):** record m9r as named, with no override. Main's gate adds
+  `--set 'motor_unit:all|force_per_spike=10'` on top of m9r. If the gates really use it, the fly
+  worker will fold it into the profile, so "as named" will be what the gates run. Merge `main`
+  into `app` first, and record whatever m9r is on `main` at that point. Parked until tonight.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks; the m9 body does not walk.
   - Warm starts and branching wait on model request 2 (section 13, on hold).
