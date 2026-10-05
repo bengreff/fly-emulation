@@ -665,6 +665,20 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - A least-squares weighting of the four terms that would reproduce the robot's Fx gives drag 1.47-1.48 at both conditions, with lift 0.82-0.90, rotational 0.96-1.03 and added mass 1.1-2.0, the last poorly constrained. This is a diagnostic; nothing is changed.
     - Reading: the robofly drag coefficient (Dickinson 1999; melanogaster wing, Re ≈ 136) is about 2/3 of what the hydei robot wing gives. Drag adds little to the mean vertical force (−0.05 to −0.09 W), so the steady-force pass does not test it.
     - Database S1 holds geometry and scaling only (stroke-plane angle −47.5°, Lwing 2.99 mm, cwing 0.95 mm, AR 3.16), and no coefficient set. A source search for measured coefficients on this wing is running.
+- **Free-flight record, for the next held-out test (22:23; conventions only, no outcome looked at).** Database S1 `wing_data` and `body_data` hold 92 free-flight looming-escape sequences at 7500 fps: per-side stroke, deviation and pitch (rad), body position, velocity, acceleration, quaternion and angular velocity, and each fly's wing length (2.7-3.1 mm). There are 153,101 tracked frames, 403-4321 per sequence.
+  - The robot's steady beat is the mean of the free-flight pre-trigger beats. 3354 beats were cut stroke maximum to stroke maximum, giving r = 1.000 and an RMS difference of 0.3-0.5° on each angle, with no phase shift.
+  - The angle map is robot stroke = −free stroke, robot rotation = 90° − free pitch, deviation unchanged. In this project's convention that is (free stroke, deviation, free pitch − 90°) (derived).
+  - Sides are labelled as in the robot set, so they carry the same left-right mirror question.
+  - Frames (derived from the record itself):
+    - `qbody` is scalar-last and rotates body to world, with world z up. The body axes are x forward, y right and z down. Before the trigger, body x sits 47.3° nose-up (IQR 44.4-50.2°), body y is level (−0.4°) and body z is −41.7°.
+    - `vel` is the time derivative of `pos` (ratio 1.005-1.007), both in m.
+    - `accel` excludes gravity: its pre-trigger mean is under 0.06 m/s² on each axis.
+    - `omega` is in the body frame (inferred): it tracks finite-differenced body-frame rates (r 0.77-0.85) better than world-frame rates (r 0.41-0.56).
+- **Source search for a measured drag coefficient on the hydei robot wing (22:26): none found in open sources.**
+  - The Science 2014 supplementary text cites Dickinson, Lehmann & Sane 1999 for coefficients and gives none of its own.
+  - Its robot reference is Dickson, Polidoro, Tanner & Dickinson 2010 (JEB 213:3047, yaw dynamics of a scaled insect model). That paper is the most likely place for the robot wing's own coefficients but was not reached.
+  - Dickson & Dickinson 2004 (advance ratio) and Lentink & Dickinson 2009 (revolving wings) use melanogaster wings and give no α table for this wing. The Melis 2024 robofly code has analysis only. Kamimizu 2025 is fitted to CFD, not measured.
+  - So the 1999 set stays. The 0.70 drag-direction shortfall stays open.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
