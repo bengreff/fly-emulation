@@ -948,3 +948,41 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Prediction: missed on seed 13 yaw (moved 5.7°, predicted within 5°). Mechanism: on the plain body with zero drive the head yaw stays within 0.3° of 0 for 600 ms, so the −6° comes from the rest of the closed-loop body. Inferred: the fly lies on its belly (F-STAND-3), and gravity on the head about a tilted yaw axis sets it. Under m9u the net one-way yaw drive, 0.33 µN·mm on flybody's 3 µN·mm/rad spring (about 6.3°), happened to offset it.
   - Pitch motor neurons fire a little more under m9v (40 → 47.5-55 Hz summed). This is a trajectory difference; pitch mapping is unchanged.
   - Working profile is now m9v = m9u + `motor_map:neck|mirror_sides` 1.
+
+### Pre-registration: flat-plate added mass on the blade-element wing (`aero:wing|added_mass` 1), scored on the roll set and the held-out pitch set (22:08)
+- **Why.** At measured asymmetric kinematics the blade-element wing gives 0.42-0.54 of the robot's roll torque (F-FLIGHT-3, DECISIONS 20:43, 21:17). Unsteady terms were the leading candidate. Of these, only added mass has a closed form with no fitted constant: the inviscid flat-plate reaction to normal acceleration, Sane & Dickinson 2001 (JEB 204:2607, eq. 2). Wake capture has no accepted closed form; any version would carry a fitted coefficient, so it is not attempted here.
+- **Change, behind a switch.** `BladeElementWing(added_mass=True)` (`aero:wing|added_mass` 1 in the organism; `hover_blade_trace.py --added-mass`). On each strip: −ρπc²/4 dr dv_n/dt along the plate normal, applied at mid-chord. Here v_n is the mid-chord velocity normal to the plate, and dv_n/dt is the backward difference between physics steps.
+  - The robofly coefficients (measured at constant speed) do not contain this term, and neither does the circulatory C_rot.
+  - MuJoCo's ellipsoid model keeps only the velocity-dependent added-mass part. It is not in the scored forces, which come from the hook alone.
+  - Label: derived.
+- **Implementation check (done before this registration; `scripts/probes/added_mass_check.py`, robot level 2; `runs/s12/flight/added_mass/`, plot viewed).** The hook's left-wing added-mass force is compared with an independent calculation from the stroke-frame angles (spline as in the table, central differences, mid-chord points r s − (0.5 − x0) c le):
+  - correlation 0.988 / 0.970 / 0.995 (x, y, z, world);
+  - model RMS 0.91-0.94 of the independent value;
+  - cycle-mean Fz 1.09 µN against 1.18 µN.
+  - Unit test: `test_blade_added_mass_is_the_flat_plate_reaction_to_normal_acceleration`.
+- **Conditions.** As at 21:17: hydei planform, wing length 2.99 mm, area 2.831 mm², weight 1.8 mg, body pitch 47.6°, 0.05 ms step. The scorer is `scripts/probes/score_robot_sets.py`, checked to reproduce the registered roll result on the 21:17 outputs (0.425-0.534).
+- **Sets.**
+  - Roll, 13 levels plus the three single-angle parts at level 12. This is the development set; it is not held out.
+  - Pitch: Database S1 `PitchModulations`, 21 levels at pitch acceleration −2.15 to +2.15 per beat², steady level 10. It is built by `build_measured_kinematics.py --robot-pitch k` (symmetric, same sign map, steady frequency). **Held out: no robot pitch force or torque has been read.** It is run with and without the switch, so this is the first look for both arms.
+  - Force: 13 levels, run with the switch and reported.
+- **Primary.**
+  1. Roll, as registered at 20:43: force-corrected Mx about the hinge midpoint within ±20% of the robot's at levels 6-12. Sign reported, not scored (the convention is unresolved).
+  2. Pitch, held out. Force-corrected change from the steady beat, ΔMy, about the Database S1 centre of mass (`score_robot_sets.py`, hinge offset (0.087, 0, −0.783) mm, derived), within ±20% of the robot's ΔMy at every level where the robot's |ΔMy| ≥ 0.03 m g l (≥ 0.01 if fewer than 3 levels qualify). Sign consistent across those levels: a uniform flip is read as the torque convention, as for roll and yaw; mixed signs fail. The hinge-midpoint version is reported.
+- **Adoption rule for the switch** (robot comparisons and the flight configuration; no walking profile uses the blade-element wing). Adopt if both hold:
+  - on the held-out pitch set, the median |log ratio| with added mass is no worse than without by more than 0.05;
+  - on roll, the median ratio does not move further from 1 by more than 0.05.
+  Added mass is physics the real wing has. If it worsens the fit, that is recorded as evidence about something else (the robot's data reduction, or the quasi-steady terms), not hidden by leaving it out quietly.
+- **Prediction.**
+  - Roll: the ratio moves by less than 0.05, because added mass is nearly left-right symmetric at these kinematics. Primary 1 FAILs again, which rules out added mass as the roll-gap cause.
+  - Steady vertical force rises by about 0.12 W (two wings × 1.09 µN over 17.66 µN): 0.99 → about 1.11 of the robot's.
+  - Pitch, low confidence:
+    - without added mass, the |ΔMy| ratio is 0.5-1.5 with a consistent sign;
+    - added mass changes ΔMy by less than 20%;
+    - so primary 2 passes or fails the same in both arms.
+- **What follows.**
+  - A pitch pass makes the blade-element wing (with whichever arm passes) the pitch-torque candidate for flight control at measured kinematics.
+  - A roll fail with added mass leaves these candidates for the gap:
+    - the robot's torque reference and convention (paywalled main text);
+    - wake capture (would need a fitted term);
+    - the model's hinge spacing (about 11%).
+  - Nothing in the walking model changes.

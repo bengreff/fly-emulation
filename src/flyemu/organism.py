@@ -246,8 +246,13 @@ class Organism:
                               "hinge to the measured female wing length (2.47 mm, Lehmann & Dickinson 1997); "
                               "mesh, inertia and added mass unchanged (F-FLIGHT-3)",
                     subsystem="body_mechanics", minimal=0, minimal_note="scanned wing (s12)"))
+                am = int(self.reg.require(
+                    "aero:wing", "added_mass", units="enum",
+                    model_use="0 none, 1 flat-plate added mass on each blade-element strip, -rho pi c^2/4 dr "
+                              "dv_n/dt at mid-chord (Sane & Dickinson 2001; derived, no fitted constant)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="quasi-steady wing without it (s12)"))
                 self.blade = flight.apply_blade_element(
-                    self.body, length_mm=flight.WING_LENGTH_FEMALE_MM if size else None)
+                    self.body, length_mm=flight.WING_LENGTH_FEMALE_MM if size else None, added_mass=bool(am))
             else:
                 flight.apply_aero(self.body, float(self.reg.require(
                     "aero:wing", "kutta_lift", units="dimensionless",

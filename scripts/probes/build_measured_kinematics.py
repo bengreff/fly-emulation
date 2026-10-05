@@ -24,6 +24,10 @@ rotation negated (checked, DECISIONS s12 20:31); that map is applied to every le
 roll-torque test (DECISIONS s12 20:5x). --roll-part stroke|deviation|rotation keeps
 only that angle's change from the steady beat (level 2), as the robot's
 Mx_norm_<part> series; the other two angles stay at the steady beat.
+
+--robot-pitch k takes the k-th beat (0-20) of PitchModulations (symmetric kinematics
+built from the flies' measured change per unit pitch acceleration; same sign map,
+steady frequency) for the held-out pitch-torque check (DECISIONS s12 22:08).
 """
 from __future__ import annotations
 
@@ -81,6 +85,22 @@ def robot_roll(k: int, part: str = "all", n: int = 100) -> tuple[np.ndarray, dic
     return ph, ang, 1.0 / T, ref
 
 
+def robot_pitch(k: int, n: int = 100) -> tuple[np.ndarray, tuple, float, dict]:
+    """(phase, (stroke, deviation, rotation) in this project's convention (deg), f_hz,
+    robot mean forces/torques {Fx..Mz: value}) for pitch-modulation level k."""
+    import scipy.io as sio
+    pm = sio.loadmat(DB, squeeze_me=True, struct_as_record=False)["robotForcesTorques"].PitchModulations
+    t = np.asarray(pm.t, float)
+    T = t[-1] + (t[1] - t[0])
+    ph = np.arange(n) / n
+    a3 = [np.interp(ph, t / T, np.asarray(getattr(pm, c), float)[:, k], period=1.0)
+          for c in ("stroke", "deviation", "rotation")]
+    ref = {c: float(np.nanmean(np.asarray(getattr(pm, f"{c}_norm_all"), float)[:, k]))
+           for c in ("Fx", "Fy", "Fz", "Mx", "My", "Mz")}
+    ref["pitch_accel_norm"] = float(np.asarray(pm.pitch_accel_norm)[k])
+    return ph, (-a3[0], a3[1], -a3[2]), 1.0 / T, ref
+
+
 open_wing_ranges = flight.open_wing_ranges
 
 
@@ -97,12 +117,17 @@ def main() -> None:
     ap.add_argument("--robot-level", type=int, default=None, help="Database S1 force-modulation beat 0-12")
     ap.add_argument("--robot-roll", type=int, default=None, help="Database S1 roll-modulation beat 0-12")
     ap.add_argument("--roll-part", default="all", choices=("all", "stroke", "deviation", "rotation"))
+    ap.add_argument("--robot-pitch", type=int, default=None, help="Database S1 pitch-modulation beat 0-20")
     a = ap.parse_args()
     extra, sides = {}, None
     if a.robot_roll is not None:
         ph, sides, a.f_hz, ref = robot_roll(a.robot_roll, a.roll_part)
         extra = dict(robot_roll=a.robot_roll, roll_part=a.roll_part,
                      **{f"robot_{c}": v for c, v in ref.items()})
+    elif a.robot_pitch is not None:
+        ph, ang3, a.f_hz, ref = robot_pitch(a.robot_pitch)
+        sides = {sd: ang3 for sd in ("l", "r")}
+        extra = dict(robot_pitch=a.robot_pitch, **{f"robot_{c}": v for c, v in ref.items()})
     elif a.robot_level is not None:
         ph, phi, dev, rot, a.f_hz, fmg, fz = robot_level(a.robot_level)
         extra = dict(robot_level=a.robot_level, fly_force_over_weight=fmg, robot_vertical_over_weight=fz)

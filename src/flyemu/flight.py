@@ -373,15 +373,26 @@ class BladeElementWing:
     "hydei" puts the measured D. hydei chord distribution (Muijres et al. 2014 Database
     S1, chord/L against r/L) on the same strips and tip radius, for comparison with
     their robotic wing. area_mm2 then rescales either shape to a planform area.
+    added_mass (aero:wing|added_mass 1): the acceleration reaction of the air on each
+      strip, -rho pi c^2/4 dr (d v_n/dt) along the plate normal, applied at mid-chord,
+      v_n the mid-chord velocity normal to the plate (inviscid flat-plate added mass per
+      unit span; the strip form of Sane & Dickinson 2001 JEB 204:2607 eq. 2, which has
+      the phi-ddot sin(alpha) + phi-dot alpha-dot cos(alpha) and alpha-ddot terms;
+      derived, no fitted constant). d v_n/dt is the backward difference between
+      successive physics steps, so the force lags one step. The robofly translational
+      coefficients were measured at constant speed and C_rot is circulatory, so neither
+      contains this term.
     MuJoCo's own drag, lift and angular drag on the membrane are switched off (they
-    would count the same force twice); its added-mass terms stay. Not modelled:
-    acceleration added mass, wake capture, pitching moment (forces act on the pitch
-    axis), wing flexion. Validity: hovering-like strokes at Re ~ 100-200."""
+    would count the same force twice); its added-mass terms stay (MuJoCo keeps only the
+    velocity-dependent part, not the acceleration term above). Not modelled: wake
+    capture, pitching moment (forces act on the pitch axis), wing flexion. Validity:
+    hovering-like strokes at Re ~ 100-200."""
 
     def __init__(self, body, n_strips: int = 20, rot_rate: str = "stroke_frame",
                  stroke_plane_deg: float = STROKE_PLANE_DEG, length_mm: float | None = None,
-                 area_mm2: float | None = None, planform: str = "ellipse"):
+                 area_mm2: float | None = None, planform: str = "ellipse", added_mass: bool = False):
         m, d = body.sim.mj_model, body.sim.mj_data
+        self.added_mass = bool(added_mass)
         assert planform in ("ellipse", "hydei")
         self.planform = planform
         if planform == "hydei":                        # measured chord/L against r/L, hinge to tip
@@ -397,6 +408,7 @@ class BladeElementWing:
         self.n_stroke = stroke_normal(stroke_plane_deg)    # thorax frame
         mj.mj_forward(m, d)
         self.bid, self.pts, self.span, self.normal, self.c, self.dr, self.x0 = [], [], [], [], [], [], []
+        self.te = []                                   # chord direction, pitch axis toward trailing edge
         self.pitch_dof, self.pitch_s = [], []
         for s in SIDES:
             g = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, f"{body.fly.name}/{s}_wing_membrane")
@@ -427,11 +439,19 @@ class BladeElementWing:
             if area_mm2 is not None:                   # chords rescaled to a measured planform (shape kept)
                 c *= area_mm2 / (c.sum() * dr)
             off = abs((jp + (ctr - jp) @ span / (ax @ span) * ax - ctr) @ chord)
+            te = chord if (ctr - (jp + (ctr - jp) @ span / (ax @ span) * ax)) @ chord >= 0 else -chord
+            self.te.append(te)
             self.bid.append(b); self.pts.append(pts); self.span.append(span); self.normal.append(normal)
             self.c.append(c); self.dr.append(dr); self.x0.append(float((a - off) / (2 * a)))
         self.c_rot = [np.pi * (0.75 - x) for x in self.x0]
+        # mid-chord point of each strip (body frame): (0.5 - x0) c from the pitch axis toward the
+        # trailing edge, with the pitch axis' chord fraction x0 as in the rotational term
+        self.mid = [p + ((0.5 - x) * c)[:, None] * te for p, x, c, te in zip(self.pts, self.x0, self.c, self.te)]
+        self._vn = [None, None]                        # last mid-chord normal speed per strip (mm/s)
+        self._t = [None, None]
+        self._dvn = [np.zeros(n_strips), np.zeros(n_strips)]
         self.force = np.zeros((2, 3))                  # last total force per wing (world, uN)
-        self.parts = np.zeros((2, 3, 3))               # per wing: lift, drag, rotational (world, uN)
+        self.parts = np.zeros((2, 4, 3))               # per wing: lift, drag, rotational, added mass (world, uN)
         self.alpha = np.zeros((2, n_strips))           # last folded angle of attack per strip (deg)
         self._v = np.zeros(6)
 
@@ -449,12 +469,28 @@ class BladeElementWing:
             om, v0 = self._v[:3], self._v[3:]
             P = x + self.pts[k] @ R.T
             sp, n = R @ self.span[k], R @ self.normal[k]
+            Fam = Mam = 0.0
+            if self.added_mass:
+                Pm = x + self.mid[k] @ R.T
+                vn = (v0 + np.cross(om, Pm - x) - m.opt.wind) @ n
+                t = float(d.time)
+                if self._t[k] is None or t < self._t[k]:
+                    self._dvn[k] = np.zeros_like(vn)
+                elif t > self._t[k]:
+                    self._dvn[k] = (vn - self._vn[k]) / (t - self._t[k])
+                if self._t[k] is None or t != self._t[k]:
+                    self._vn[k], self._t[k] = vn, t
+                fam = -(self.rho(m) * np.pi / 4.0 * self.c[k] ** 2 * self.dr[k] * self._dvn[k])[:, None] * n
+                Fam, Mam = fam.sum(0), np.cross(Pm - d.xipos[b], fam).sum(0)
+                self.parts[k, 3] = Fam
             W = v0 + np.cross(om, P - x) - m.opt.wind
             W -= np.outer(W @ sp, sp)
             U = np.linalg.norm(W, axis=1)
             if U.max() < 1e-6:
-                d.xfrc_applied[b] = 0.0
-                self.force[k] = 0.0
+                d.xfrc_applied[b, :3] = Fam
+                d.xfrc_applied[b, 3:] = Mam
+                self.force[k] = Fam
+                self.parts[k, :3] = 0.0
                 continue
             u = W / np.maximum(U, 1e-12)[:, None]
             un = u @ n
@@ -474,11 +510,11 @@ class BladeElementWing:
             parts = (q * CL)[:, None] * eL, -(q * CD)[:, None] * u, frot[:, None] * en
             F = parts[0] + parts[1] + parts[2]
             Ft = F.sum(0)
-            self.parts[k] = [x.sum(0) for x in parts]
+            self.parts[k, :3] = [x.sum(0) for x in parts]
             self.alpha[k] = alpha
-            d.xfrc_applied[b, :3] = Ft
-            d.xfrc_applied[b, 3:] = np.cross(P - d.xipos[b], F).sum(0)
-            self.force[k] = Ft
+            d.xfrc_applied[b, :3] = Ft + Fam
+            d.xfrc_applied[b, 3:] = np.cross(P - d.xipos[b], F).sum(0) + Mam
+            self.force[k] = Ft + Fam
 
     @staticmethod
     def rho(m) -> float:

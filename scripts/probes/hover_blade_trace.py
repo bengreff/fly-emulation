@@ -52,6 +52,8 @@ def main() -> None:
                     help="rescale the blade-element chords to this single-wing planform area (shape kept)")
     ap.add_argument("--planform", default="ellipse", choices=("ellipse", "hydei"),
                     help="blade-element chord distribution: scan ellipse, or measured D. hydei (Muijres 2014 S1)")
+    ap.add_argument("--added-mass", action="store_true",
+                    help="flat-plate added mass on each strip (aero:wing|added_mass 1, Sane & Dickinson 2001)")
     ap.add_argument("--weight-mg", type=float, default=None,
                     help="normalize by this body mass instead of the model's (e.g. 1.8 mg, Muijres 2014 D. hydei)")
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "flight"))
@@ -76,7 +78,7 @@ def main() -> None:
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
     be = flight.apply_blade_element(b, rot_rate=a.rot_rate, length_mm=a.wing_length_mm, area_mm2=a.area_mm2,
-                                    planform=a.planform)
+                                    planform=a.planform, added_mass=a.added_mass)
     mj.mj_forward(m, d)
     if pitch:
         qp = np.zeros(4); qn = np.zeros(4)
@@ -108,11 +110,11 @@ def main() -> None:
     L = a.wing_length_mm or flight.WING_LENGTH_SCAN_MM
     fm = np.array(ft[-per * 2:]).mean(0) * np.array([1, -1, -1, 1, -1, -1])          # y left/z up -> y right/z down
     robot_frame = {k: round(float(v / (W if k[0] == "F" else W * L)), 4) for k, v in zip(("Fx", "Fy", "Fz", "Mx", "My", "Mz"), fm)}
-    names = ["lift", "drag", "rotational", "total incl. body"]
-    out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch, rot_rate=a.rot_rate, wing_length_mm=a.wing_length_mm or flight.WING_LENGTH_SCAN_MM,
+    names = ["lift", "drag", "rotational", "added mass", "total incl. body"]
+    out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch, rot_rate=a.rot_rate, added_mass=a.added_mass, wing_length_mm=a.wing_length_mm or flight.WING_LENGTH_SCAN_MM,
                rot_amp_deg=None if tabs else a.rot_amp, rot_mean_deg=None if tabs else kin.rot_mean_deg, weight_uN=W,
                mean_over_weight={k: round(float(r[:, 4 + i].mean() / W), 3) for i, k in enumerate(names)},
-               wings_only_over_weight=round(float(r[:, 4:7].sum(1).mean() / W), 4), area_mm2=a.area_mm2,
+               wings_only_over_weight=round(float(r[:, 4:8].sum(1).mean() / W), 4), area_mm2=a.area_mm2,
                f_hz=kin.f_hz, robot_frame_norm=robot_frame, planform_mm2=round(float((be.c[0] * be.dr[0]).sum()), 4),
                alpha70_deg_at_midstroke=[round(float(r[np.argmin(abs(r[:per, 0] - p)), 3]), 1) for p in (0.25, 0.75)])
     out_dir = Path(a.out); out_dir.mkdir(parents=True, exist_ok=True)

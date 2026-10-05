@@ -411,3 +411,34 @@ def test_measured_beat_keeps_each_wing_on_its_side_and_steers():
             ph.append(phis())
     pp2 = np.ptp(np.array(ph), axis=0)
     assert pp2[0] > pp[0] + 2.0 and abs(pp2[1] - pp[1]) < 1.0
+
+
+def test_blade_added_mass_is_the_flat_plate_reaction_to_normal_acceleration():
+    """aero:wing|added_mass 1 (s12): accelerating a wing along its own normal in still
+    air gives -rho pi c^2/4 dr dv_n/dt summed over the strips, along the normal; a
+    second call in the same step keeps it; switched off it is zero."""
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    for on in (True, False):
+        b = Body(vision=False)
+        m, d = b.sim.mj_model, b.sim.mj_data
+        hook = flight.apply_blade_element(b, length_mm=2.99, area_mm2=2.831, planform="hydei", added_mass=on)
+        mj.mj_forward(m, d)
+        n = d.xmat[hook.bid[0]].reshape(3, 3) @ hook.normal[0]
+        dt, v1, v2 = 5e-5, 100.0, 160.0                          # mm/s along the left wing normal
+        d.time, d.qvel[:] = 0.0, 0.0
+        d.qvel[:3] = v1 * n
+        hook(d)
+        d.time = dt
+        d.qvel[:3] = v2 * n
+        hook(d)
+        want = -m.opt.density * np.pi / 4 * (hook.c[0] ** 2 * hook.dr[0]).sum() * (v2 - v1) / dt * n
+        got = hook.parts[0, 3].copy()
+        if on:
+            assert np.allclose(got, want, rtol=1e-6)
+            hook(d)
+            assert np.allclose(hook.parts[0, 3], want, rtol=1e-6)
+            assert np.allclose(hook.force[0], hook.parts[0].sum(0))
+        else:
+            assert not got.any()
