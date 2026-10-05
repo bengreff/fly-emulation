@@ -1,4 +1,4 @@
-"""Session 12 (F-FLIGHT-3, held-out; pre-registered DECISIONS s12 22:40): the
+"""Session 12 (F-FLIGHT-3, held-out; pre-registered DECISIONS 5 Oct 02:45): the
 blade-element wing against the measured yaw damping and yaw actuation of a
 dynamically scaled D. melanogaster wing pair (Dickson, Polidoro, Tanner & Dickinson
 2010 J Exp Biol 213:3047; open, data/raw/flight_kinematics/dickson2010/).

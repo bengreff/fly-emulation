@@ -95,3 +95,45 @@ def test_neck_mirror_switch_gives_mirror_image_neurons_opposite_yaw_and_roll_sig
         assert len(by["L"]) and len(by["R"])
         assert (by["L"] > 0).all()
         assert (by["R"] < 0).all() if "pitch" not in a else (by["R"] > 0).all()
+
+
+def _wing_contacts(on_abdomen: bool):
+    import mujoco as mj
+    from flyemu import flight, passive
+    from flyemu.body import Body
+    from flyemu.deadfly import place_standing
+    b = Body(vision=False)
+    passive.fold_wings(b)
+    if on_abdomen:
+        passive.rest_wings_on_abdomen(b)
+    flight.apply_wing_ranges(b)
+    b.reset()
+    place_standing(b)
+    m, d = b.sim.mj_model, b.sim.mj_data
+    mj.mj_forward(m, d)
+    out = []
+    for i in range(d.ncon):
+        c = d.contact[i]
+        names = (m.geom(c.geom1).name, m.geom(c.geom2).name)
+        if any("_wing" in n for n in names):
+            out.append((names, float(c.dist)))
+    q = {m.joint(j).name.split("/")[-1]: float(d.qpos[m.jnt_qposadr[j]]) for j in range(m.njnt)
+         if "_wing-" in m.joint(j).name}
+    k = {m.joint(j).name.split("/")[-1]: float(m.qpos_spring[m.jnt_qposadr[j]]) for j in range(m.njnt)
+         if "_wing-" in m.joint(j).name}
+    return out, q, k
+
+
+def test_folded_wings_rest_on_the_abdomen_not_inside_it():
+    """F-WING-5: flybody's folded pose puts the wings inside abdominal segments 1-4;
+    joint:wing|folded_pose 1 lifts them onto it, inside the wing ranges, spring there too."""
+    before, q0, _ = _wing_contacts(False)
+    assert any("abdomen" in n[0] + n[1] and dist < -40e-3 for n, dist in before)
+    after, q1, k1 = _wing_contacts(True)
+    assert after == []
+    for n, v in q1.items():
+        assert k1[n] == v                      # spring reference at the start pose
+        ax = n.rsplit("-", 1)[1]
+        lo, hi = np.radians(__import__("flyemu.flight", fromlist=["x"]).WING_RANGE_DEG[ax])
+        assert lo <= v <= hi
+    assert q1["c_thorax-l_wing-yaw"] > q1["c_thorax-r_wing-yaw"] > 0   # left on top, both lifted

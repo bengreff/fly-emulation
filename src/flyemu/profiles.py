@@ -242,6 +242,14 @@ M9V = {
                                     "neuromuscular.HEAD_ODD"),
 }
 
+# m9f (session 12 candidate, DECISIONS 5 Oct 02:31; not adopted until its gate passes): m9v with
+# the folded wings resting on the abdominal tergites instead of 40-150 um inside them (F-WING-5).
+M9F = {
+    **M9V,
+    "joint:wing|folded_pose": (1.0, _I, "s12 body fix, not fitted (DECISIONS 5 Oct 02:31); elevation derived "
+                               "from the scanned body (passive.FOLDED_ELEVATION_DEG), left over right guessed"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -268,7 +276,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9v")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path), then m9t (+ non-leg torque per spike from the leg anchor), then m9u (+ wing hinge stiffness, Bergou 2010), then m9v (+ mirror-image neck signs); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9f")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path), then m9t (+ non-leg torque per spike from the leg anchor), then m9u (+ wing hinge stiffness, Bergou 2010), then m9v (+ mirror-image neck signs), then m9f (+ folded wings resting on the abdomen, not inside it); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -291,6 +299,7 @@ PROFILES: dict[str, dict] = {
     "m9t": {"values": M9T, "kick_mv": KICK},
     "m9u": {"values": M9U, "kick_mv": KICK},
     "m9v": {"values": M9V, "kick_mv": KICK},
+    "m9f": {"values": M9F, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

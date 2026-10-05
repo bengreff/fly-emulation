@@ -6,7 +6,11 @@ force on each leg, every leg hinge's angle, which hinges sit on a range limit,
 and leg MN rates by joint group. `--dead` silences motor output (no MN spike
 reaches a muscle) for the same build: the eLife 2025 dead-fly reference.
 
-    uv run python scripts/probes/standing_rest.py [--ms 1500] [--seed 12] [--set K=V] [--dead] [--tag NAME]
+`--silence-at-ms T` silences motor output from T on (the fall-after-silencing
+test of Wang et al. 2025). Leg load-afferent (campaniform) rates are logged
+per leg, and MN rates are split before and after T.
+
+    uv run python scripts/probes/standing_rest.py [--ms 1500] [--seed 12] [--set K=V] [--dead] [--silence-at-ms T] [--tag NAME]
 """
 from __future__ import annotations
 
@@ -49,11 +53,12 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=12)
     ap.add_argument("--set", action="append", default=[])
     ap.add_argument("--dead", action="store_true")
+    ap.add_argument("--silence-at-ms", type=float, default=-1.0)
     ap.add_argument("--tag", default="")
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "standing"))
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
-    tag = a.tag or ("dead" if a.dead else "live")
+    tag = a.tag or ("dead" if a.dead else f"silence{a.silence_at_ms:g}" if a.silence_at_ms >= 0 else "live")
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov,
                    seed=a.seed, with_camera=True)
@@ -94,9 +99,16 @@ def main() -> None:
               else "TiTa" if "_tibia-" in s else "other")
         grp.setdefault(f"{L}:{jg}", []).append(k)
     mn_cnt = np.zeros(len(mn_idx))
+    mn_cnt_post = np.zeros(len(mn_idx))
+    load_rows = {L: np.asarray(org.aff.rows[(org.aff.leg == L) & (org.aff.channel == "load")]) for L in LEGS}
+    load_cnt = {L: 0 for L in LEGS}
+    s_off = int(round(a.silence_at_ms / org.timestep_ms)) if a.silence_at_ms >= 0 else None
     steps = int(round(a.ms / org.timestep_ms))
     every = int(round(10 / org.timestep_ms))
     snaps = {0, int(100 / org.timestep_ms), int(300 / org.timestep_ms), int(700 / org.timestep_ms), steps - 1}
+    if s_off is not None:
+        snaps = {0, s_off, s_off + int(100 / org.timestep_ms), s_off + int(300 / org.timestep_ms), steps - 1}
+        snaps = {x for x in snaps if x < steps}
     rows, frames, onlim = [], [], np.zeros(len(hj))
     silent = np.array([], dtype=np.int64)
     t0 = time.time()
@@ -105,8 +117,14 @@ def main() -> None:
         ext = org.sense(s, obs)
         sp = org.net.step(external_mv=ext)
         hit = np.isin(mn_idx, sp)
-        mn_cnt += hit
-        org.motor_step(silent if a.dead else sp)
+        off = a.dead or (s_off is not None and s >= s_off)
+        if s_off is not None and s >= s_off:
+            mn_cnt_post += hit
+        else:
+            mn_cnt += hit
+        for L in LEGS:
+            load_cnt[L] += int(np.isin(load_rows[L], sp).sum())
+        org.motor_step(silent if off else sp)
         q = d.qpos[hadr]
         lim = (q - rng[:, 0] < BAND * span) | (rng[:, 1] - q < BAND * span)
         onlim += lim
@@ -134,6 +152,7 @@ def main() -> None:
         if s in snaps:
             frames.append((s * org.timestep_ms, shot(m, d, thorax)))
     wall = time.time() - t0
+    t_pre = a.silence_at_ms if s_off is not None else a.ms
     weight_uN = float(m.body_subtreemass[1] * 9.81e3) if m.opt.gravity[2] else 0.0
     q_end = np.degrees(d.qpos[hadr])
     res = dict(
@@ -145,7 +164,12 @@ def main() -> None:
         leg_fz_end_uN=rows[-1]["leg_fz_uN"],
         at_limit_frac={n: round(float(f), 2) for n, f in zip(hn, onlim / steps) if f / steps > 0.2},
         q_end_deg={n: round(float(v), 1) for n, v in zip(hn, q_end)},
-        mn_hz_by_group={g: round(float(mn_cnt[ix].sum() / len(ix) / (a.ms / 1e3)), 1) for g, ix in sorted(grp.items())},
+        silence_at_ms=a.silence_at_ms if a.silence_at_ms >= 0 else None,
+        mn_hz_by_group={g: round(float(mn_cnt[ix].sum() / len(ix) / (t_pre / 1e3)), 1) for g, ix in sorted(grp.items())},
+        mn_hz_by_group_after_silence=({g: round(float(mn_cnt_post[ix].sum() / len(ix) / ((a.ms - t_pre) / 1e3)), 1)
+                                       for g, ix in sorted(grp.items())} if s_off is not None else None),
+        load_afferents_per_leg={L: int(len(v)) for L, v in load_rows.items()},
+        load_hz_by_leg={L: round(load_cnt[L] / max(len(load_rows[L]), 1) / (a.ms / 1e3), 2) for L in LEGS},
         mujoco_warnings=int(sum(w.number for w in d.warning)),
     )
     (out / f"standing_{tag}_s{a.seed}.json").write_text(json.dumps(dict(summary=res, trace=rows), indent=1))

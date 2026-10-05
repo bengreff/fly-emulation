@@ -407,6 +407,9 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - A left-right asymmetry of 6:2 and 2:0 is an assignment or annotation gap, not anatomy. It ties standing to the sensor-assignment item of B.
 - **The missing value.** The resting firing rate (or recruitment) of the trochanter-depressor pools (tergotrochanter, sternotrochanter) and the coxa promotor/remotor pools. No Drosophila recording of resting rates for these pools was found (subagent search plus own reading). Azevedo 2020 and 2024 record tibia motor neurons only.
 - **What would not be honest.** Filling that value so the fly stands at 1.0 mm would be a behavioural fit, which the Director's instruction rules out. Possible routes are listed in DECISIONS s12 (18:23).
+- **Resolved for now as option (a)** (Director 5 Oct 02:05; DECISIONS 02:41, result 02:50). Option (c), the connectome's own load reflex on m9f with nothing fitted, fails on seeds 12-14. Live and dead both lie down by 40 ms and end within 6 µm of each other. The only tonic leg motor neurons are the slow tibia flexors (12.6-16.1 Hz). The load afferents fire at 21-23 Hz on five legs and are silent on lh. The homolog search found no resting rate for any coxa or trochanter support pool in any insect, so there is nothing to fill. The blank stays open and the fly lies down.
+  - Fall after silencing at 500 ms: 2-4 µm, because there is no standing state to fall from. The model's only fall is passive, from placement at 1.32 mm: onset within 10 ms, 15 mm/s. Real silenced flies fall at 1.3 mm/s after 40-300 ms; Wang's passive-only model falls at 37 mm/s.
+  - Side note: the lh load afferents never fire at rest, while every other leg's fire. The cause (assignment, joint mapping, or that leg's load) is not yet known.
 
 ### F-SENSE-NERVE-2: each leg sensor on its own entry nerve; the connectome annotates only 2 load sensors per leg
 - **What option 1 still got wrong** (`sense:mechano|assign_by_nerve` 1, F-SENSE-NERVE-1):
@@ -679,6 +682,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Its robot reference is Dickson, Polidoro, Tanner & Dickinson 2010 (JEB 213:3047, yaw dynamics of a scaled insect model). That paper is the most likely place for the robot wing's own coefficients but was not reached.
   - Dickson & Dickinson 2004 (advance ratio) and Lentink & Dickinson 2009 (revolving wings) use melanogaster wings and give no α table for this wing. The Melis 2024 robofly code has analysis only. Kamimizu 2025 is fitted to CFD, not measured.
   - So the 1999 set stays. The 0.70 drag-direction shortfall stays open.
+- **Held-out yaw test, Dickson et al. 2010 robot (s12, 5 Oct 02:52; DECISIONS 02:45).** The blade-element wing, with chords rescaled to the robot's c̄/R, on its baseline kinematics. Yaw damping C*_ω is −856 against the robot's −640: right sign, linear, 1.34× too strong, so it fails ±20%. Added mass changes nothing. Actuation magnitudes: pa 1.13 and pd 0.93 pass; pr 1.35 and pv 0.46 fail. The signs of pa, pd and pr are opposite to the robot's, under conventions the probe does not establish. The prediction (0.6-0.8) was wrong in direction. Next: split the damping torque by term; the rotational coefficient is theory-derived and the first suspect.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
@@ -770,3 +774,31 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The per-neuron target pose. Gorko et al. 2024 show that neck motor neurons drive the head toward a pose, so a fixed sign is an approximation. The paper is paywalled and is on Ben's list.
   - The neck spring: flybody's 3 µN·mm/rad, unsourced.
   - The antennal elevator/depressor split (`docs/research/s12_neck_antenna_sources.md`).
+
+### F-WING-5: the folded wings cut 40-150 µm into the abdomen, both on screen and in the contact model; lifting them 12.5° about the hinge line lays them on it (s12, 5 Oct 02:31)
+- **Report.** Ben: the wings visually clip through the body when pointing straight back. Probe `scripts/probes/wing_clip.py` (plain body, standing, m9v wing settings; `runs/s12/wingclip/`).
+- **It was both, visual and physical, with one cause: the folded pose.**
+  - flybody's folded pose (all wing hinge angles 0) holds each wing flat at hinge height. That is 40-150 µm below the dorsal surface of abdominal segments 1-4 (cross-sections, `sections_baseline.png`).
+  - **Visual.** About 24% of the vein-mesh vertices are inside the abdomen meshes, the deepest 123 µm. Seen from above, the abdomen covers the wing bases (`zoom_hinge.png`, top row).
+  - **Physical.** Wing-abdomen contacts are live: the bitmasks allow them, and the abdomen is not the wing's parent body. At t = 0 they penetrate 54-144 µm, plus about 20 µm into each haltere.
+    - flybody's XML excludes the wing-abdomen 1-3 and wing-wing pairs; flygym's port drops those excludes.
+    - The contacts push each wing up about 4°. They leave it 51-80 µm inside after 300 ms, because the spring reference sits inside the abdomen.
+  - **Wing-thorax is never checked.** The wing is a child of the thorax, so MuJoCo's parent-child filter drops the pair. At rest only the root overlaps the thorax mesh, the articulation of a rigid flat wing: vein vertices within 0.24 mm of the hinge, membrane within 0.6 mm.
+    - In motion, only the hinge ranges keep a wing out of the thorax. No contact does.
+- **Change.** `joint:wing|folded_pose` 1 (`passive.rest_wings_on_abdomen`; DECISIONS 5 Oct 02:31). Each wing is rotated about the thorax transverse axis through both hinges.
+  - The right wing by 12.5°: derived, the smallest angle with no wing vertex inside the abdomen and no wing-body contact.
+  - The left wing by 14.0°: derived, so that it clears the right wing by at least 2 µm where they overlap.
+  - Left over right is guessed.
+  - The pose sets the keyframes, the start state and the folded spring reference. qpos0 stays 0, because MuJoCo measures hinge angles from qpos0.
+- **Result, plain body.**
+  - t = 0: no wing vertex inside the abdomen and no wing contact.
+  - After 300 ms passive: the wings sag 0.3-0.6° under their own weight onto the tergites. Contact penetration is 3-12 µm (soft contact) and vein vertices sit up to 19 µm in, against 51-80 µm and 84 µm on flybody's pose.
+  - Sheets (`rest_on_abdomen.png`, `rest_on_abdomen_settled.png`, `zoom_hinge.png`, viewed): from the side the wings rise from the hinge and lie along the top of the abdomen. From above they cover it, with no abdomen showing through.
+- **Result, closed loop and gate** (m9f, DECISIONS 02:31 result).
+  - Gate on seeds 12-19: silent, thorax change under 0.01 mm.
+  - Closed-loop sheet, seed 12 (`organism_m9f_s12.png`, viewed): at most 4 µm of wing-abdomen contact and 9 µm of vein overlap from 150 to 600 ms. The fly lies rolled 15-19° on its belly (F-STAND-3), so in fixed cameras the wings look shifted off the abdomen while still resting on it.
+  - Root inside the thorax mesh: 1400 vein vertices up to 67 µm at rest, and 4256 up to 80 µm when spikes drive the left wing out (yaw 26°, pitch −15°). Not visible on the sheets.
+- **Still open.**
+  - Which wing lies on top.
+  - A real wing base folds along its basal lines; this one is rigid and flat.
+  - The wing-thorax pair stays filtered. A stroke that drives the wing into the thorax would pass through, and nothing reports it.

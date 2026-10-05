@@ -290,11 +290,73 @@ def set_wing_stiffness(body, k: float) -> list[str]:
     return done
 
 
+# Folded wings on the abdomen (s12, joint:wing|folded_pose 1; F-WING-5). flybody's folded
+# pose (all wing hinge angles 0) puts each wing 40-150 um inside abdominal segments 1-4:
+# flybody excludes those contacts, flygym's port does not, so the contact props the wing
+# about 80 um inside the abdomen against its spring. A resting fly's folded wings lie flat
+# on the abdominal tergites, one over the other (qualitative anatomy). Elevation is a
+# rotation about the thorax transverse axis through both hinges:
+#   FOLDED_ELEVATION_DEG  derived: the smallest (0.25 deg grid) with no wing render vertex
+#                         inside the abdomen meshes and no wing-body contact on the scanned
+#                         body (scripts/probes/wing_clip.py; clear from 12.5, touching at 12.25);
+#   FOLDED_STACK_DEG      derived: extra elevation at which the upper wing's render vertices
+#                         clear the lower wing's by >= 2 um where they overlap in plan view;
+#   FOLDED_UPPER          guessed: which wing lies on top (no Drosophila data found).
+FOLDED_ELEVATION_DEG = 12.5
+FOLDED_STACK_DEG = 1.5
+FOLDED_UPPER = "l"
+
+
+def folded_wing_angles(body, elevation_deg: float) -> dict[str, np.ndarray]:
+    """Hinge angles (yaw, roll, pitch; rad) that rotate each folded wing by elevation_deg
+    about the thorax transverse (y) axis; the joint chain is yaw, roll, pitch (intrinsic ZXY)."""
+    from scipy.spatial.transform import Rotation
+    m = body.sim.mj_model
+    out = {}
+    for side in ("l", "r"):
+        b = [i for i in range(m.nbody) if (m.body(i).name or "").endswith(f"/{side}_wing")][0]
+        q = m.body_quat[b]
+        axis = Rotation.from_quat([q[1], q[2], q[3], q[0]]).as_matrix().T @ np.array([0.0, 1.0, 0.0])
+        out[side] = Rotation.from_rotvec(axis * np.radians(elevation_deg)).as_euler("ZXY")
+    return out
+
+
+def rest_wings_on_abdomen(body, elevation_deg: float = FOLDED_ELEVATION_DEG,
+                          stack_deg: float = FOLDED_STACK_DEG, upper: str = FOLDED_UPPER,
+                          spring: bool = True) -> list[str]:
+    """Move the folded pose (every keyframe, the current state and, if spring, the spring
+    reference) to the wings resting on the abdomen. qpos0 stays 0: MuJoCo measures a hinge
+    angle from qpos0, so moving it would move the zero, not the wing."""
+    m, d = body.sim.mj_model, body.sim.mj_data
+    lo = folded_wing_angles(body, elevation_deg)
+    hi = folded_wing_angles(body, elevation_deg + stack_deg)
+    done = []
+    for j in range(m.njnt):
+        n = (m.joint(j).name or "").split("/")[-1]
+        for side in ("l", "r"):
+            for k, ax in enumerate(("yaw", "roll", "pitch")):
+                if n == f"c_thorax-{side}_wing-{ax}":
+                    a = m.jnt_qposadr[j]
+                    v = (hi if side == upper else lo)[side][k]
+                    m.key_qpos[:, a] = v
+                    if spring:
+                        m.qpos_spring[a] = v
+                    d.qpos[a] = v
+                    done.append(n)
+    return done
+
+
 def register_wings(reg, body) -> list[str]:
     ref = reg.require("joint:wing", "spring_reference", units="enum",
                       model_use="0 flybody spread pose (outside the yaw range), 1 folded neutral pose",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; folded reference is an option until adopted")
+    pose = reg.require("joint:wing", "folded_pose", units="enum",
+                       model_use="0 flybody folded pose (hinge angles 0; wings 40-150 um inside the abdomen), "
+                                 "1 wings resting on the abdominal tergites, left over right (passive."
+                                 "FOLDED_ELEVATION_DEG derived from the scanned body; order guessed; F-WING-5)",
+                       subsystem="body_mechanics", minimal=0,
+                       minimal_note="flybody pose; the wings cut into abdominal segments 1-4 (s12)")
     src = reg.require("joint:wing", "stiffness_source", units="enum",
                       model_use="0 flybody 1 uN*mm/rad (unsourced), 1 Bergou et al. 2010 wing-pitch stiffness "
                                 "5.21 uN*mm/rad (fitted, in flight) on all three hinge axes (yaw, roll inferred)",
@@ -302,7 +364,10 @@ def register_wings(reg, body) -> list[str]:
                       minimal_note="flybody value; one spike swings a folded wing 30-40 deg (s12, F-WING-4)")
     if int(src):
         set_wing_stiffness(body, WING_STIFFNESS_BERGOU)
-    return fold_wings(body) if int(ref) else []
+    done = fold_wings(body) if int(ref) else []
+    if int(pose):
+        rest_wings_on_abdomen(body, spring=bool(int(ref)))
+    return done
 
 
 def register_noslip(reg, body) -> int:
