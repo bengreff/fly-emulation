@@ -351,6 +351,23 @@ Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`
 - **Reading.** The coxa ranges raise the resting thorax by 0.23 mm, but the trunk still rests on the floor, and live equals dead to 0.2 µm. The contact sheet (`runs/s12/standing/standing_coxa_live_s12.png`) shows the front legs propped forward and up on the +90° coxa solution. That is not a resting posture. The switch stays at 0.
 - **Also found.** flybody's native ranges exist for CTr and FTi too (e.g. CTr pitch about -9° to +115°). The s9 CTr rest angles (-60 to -71°) and the sunk CTr poses (-12 to -41°) lie below that native lower limit. The body uses the joints.py envelopes there, so CTr ranges are a further open item of the same kind. Both sources are inferred (grooming IK; a passive-posture fit through an assumed paper-to-hinge mapping), so neither overrides the other. Discriminating test, not started: map measured 3D walking and grooming joint angles (Karashchuk et al. 2021 Anipose; Haustein et al. 2024) through the same mapping. Angles below -8.6° mean flybody's range is too narrow; none below it means the rest mapping is wrong.
 
+- **Measured CTr angles (19:39; agent extraction, `runs/s12/body/ctr_angles_lit.md`; table `data/derived/leg_angles_walking_haustein2024_karashchuk2021.csv`; figure-read).**
+  - Source: Haustein et al. 2024 (Front. Bioeng. Biotechnol. 12:1357598), 12 flies walking tethered on a ball. The CxTr flexion angle is from inverse kinematics on motion-captured joint positions: 0° fully flexed, 180° colinear. That is the same definition as `scripts/probes/ctr_flexion_map.py`.
+  - Mean ± SD trajectory envelopes over the step cycle: front 10-160°, middle 70-140°, hind 70-180°. These are not frame-level extremes, and no standing or grooming angles were found. Karashchuk et al. 2021 report coxa and femur rotation, not CTr flexion.
+- **Mapped onto the model's hinge** (physical branch only, hinge above the fold):
+
+  | leg | fold (femur flat on coxa) | measured walking envelope | flybody range |
+  |---|---|---|---|
+  | front | −30° | about −20° to 130° | −8.6° to 114.6° |
+  | middle | −15° | about 55° to 125° | −8.6° to 114.6° |
+  | hind | −67° | about 2° to 129° | −40° to 86° |
+
+  - The upper ends are extrapolated past the map's 120° hinge limit at slope about 1.
+  - The s9 front and middle rest references (−64/−71° and −60/−61°) lie below the fold. There the femur has passed through the coxa: the map's flexion rises again on that branch, to 34-45°. They are unphysical and cannot be rest targets.
+- **Reading.** flybody's lower bounds hold the measured envelope. Its upper bounds cut about 15° (front, middle) and about 40° (hind) of measured walking extension. That is within figure-read uncertainty for front and middle, but not for hind.
+  - Candidate, behind a switch, not built: CTr lower bound at the fold (physical_limit, derived from model geometry); upper bound at the measured envelope (measured_this_class, figure-read); s9 front and middle rest references dropped.
+  - Discriminating test: Haustein's Dataverse tracking data give frame-level extremes. Then rerun the dead-fly and standing checks (F-STAND-3) unchanged.
+
 ### F-STAND-3: the fly cannot stand because the model has no resting support drive, and no measurement fixes one
 Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 measure a median standing head height of 0.5 mm above the motor-silenced collapse. For this body that is a thorax origin near 1.0 mm (inferred). Pratt et al. 2024 put the dorsal thorax at 0.51 body lengths, about 1.04 mm, at the slowest walking speed. The model's dorsal thorax is the origin plus 0.54 mm. The model ends at 0.54-0.77 mm with the trunk on the floor.
 
@@ -495,3 +512,36 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The PD thorax tracks worse because the wing now carries robofly drag at high α, about 3.5× MuJoCo's.
   - The hook costs 52 µs per step, about 5% of a body step.
 - **Reading.** With measured force coefficients and no fitted number, the guessed hover kinematics lift 0.72 of the weight. The fitted Kutta number was hiding errors in the kinematics as well as in the aerodynamics. The next test that can tell them apart: impose measured Drosophila hover kinematics (stroke, deviation and rotation over the beat, stroke-plane angle) and compare lift with weight. A source search is running (`runs/s12/flight/kinematics_lit.md`). The model wing is also larger than a typical female wing (2.59 mm² planform, 2.8 mm span ellipse), which is not checked against data yet.
+
+- **Pre-registered test with measured kinematics (19:35; DECISIONS s12 19:08): FAIL, high.** Muijres et al. 2014 steady-flight kinematics (D. hydei, Table S1; measured) were imposed at 218 Hz with the thorax at 47.6° pitch (`scripts/probes/build_measured_kinematics.py`, `hover_blade_trace.py --table`; pose-fit error 0.0°). Plot: `docs/media/s12_hover_blade_trace_measured.png`, viewed.
+  - Mean vertical force is 1.53 W: translational lift 1.35, drag 0.07, rotational 0.11. The pass band was 0.8-1.2 W.
+  - α at 70% span is 44° at mid-downstroke and 34° at mid-upstroke.
+- **A bug found by this test, fixed before the verdict.** The first run gave 0.29 W, with a rotational term of −1.14 W. The hook used the pitch-joint rate as α̇. That is right only if the other two hinges sweep the stroke frame, and in this model they do not (F-WING-3).
+  - Fix: α̇ is now the wing's spin about its span relative to the stroke frame (span and stroke-plane normal): ω·ŝ minus the frame's own spin (derived; `flight.stroke_frame_spin`).
+  - On the measured beat it equals the measured dα/dt at every phase. For example, at τ 0.2 it is 37 rad/s, where the pitch joint gives 2002 and the measured value is 37.
+  - Tests: a cone about the stroke normal gives zero; the spin equals the stroke-frame rotation rate; rotation that raises α adds force on the lift side.
+  - The old rate is kept as `rot_rate="pitch_joint"` to reproduce the 0.29.
+  - This is a correctness fix (the code did not compute its own documented quantity). No coefficient changed. Both numbers are reported.
+- **Mechanism of the excess (derived estimate, not a run).** At fixed kinematics, force scales roughly as R⁴. The model wing reaches 2.65 mm from hinge to tip, against 2.39 ± 0.08 mm measured in melanogaster free flight (Fry et al. 2005). (2.39/2.65)⁴ = 0.66, which takes 1.53 to 1.01. The model's planform (2.59 mm², ellipse span 2.80 mm) is also larger than typical melanogaster values. Other terms are smaller:
+  - hydei amplitude 131.6° against melanogaster 140° (+13% if melanogaster's were used);
+  - missing wake capture and acceleration added mass;
+  - the stroke-plane and α conventions are inferred.
+- **Reading.** With measured kinematics and no fitted number, the blade-element wing gives the right order of force. The remaining 53% excess is most plausibly the model's wing size. Per the pre-registration, the fail is recorded, nothing is refitted, and option 1 does not become the default.
+  - All guessed-kinematics numbers above (0.72 W, 0.55 W, the Kutta fit) used a generator that crosses the wings (F-WING-3), and are superseded.
+  - Discriminating test: measure the flybody wing against the body it came from (wing length / thorax length against female melanogaster morphometrics). If the wing is oversized, scale the membrane to measured length and area, behind a switch, and rerun this same test unchanged.
+
+### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
+- **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
+- **Result.** At generator pose (stroke 86°, deviation 40°, rotation −12°) the left wing's centre is at y = −0.82 mm, on the right side of the fly (the hinge is at +0.43).
+  - The model's stroke (yaw) hinge axis is (0, 0.74, 0.68) in the thorax frame, which lies in the transverse plane. A stroke plane needs a normal in the sagittal plane, measured at (0.74, 0, 0.68) for a 47.5° tilt.
+  - Positive yaw therefore swings the folded wing up over the dorsum.
+  - `WING_RANGE_DEG` (yaw −10..175°) was sized around this crossed stroke.
+  - The measured hover beat needs yaw −121..37°, roll −62..4° and pitch −60..121° (exact fit with open ranges).
+- **Consequences.** Every s10-s12 generator-driven flight number used crossed wings: the Kutta fit (F-FLIGHT-2), the 0.72/0.55 W blade-element hover, and the PD tracking figures. The rotational-rate proxy in F-FLIGHT-3 also failed because of these axes. Walking profiles are unaffected: the generator is off, and the folded rest pose (F-WING-2) is not part of the stroke.
+- **Fix, built behind switches (19:44; no profile sets them).**
+  - `flight:wings|kinematics` 1 (`flight.StrokeFrameKinematics`) reads the measured beat in stroke-frame angles from `data/derived/muijres2014_hover_kinematics.csv` and fits hinge angles by `wing_pose_ik` at each phase. The build takes 2 s, the fit error is 0.0°, and it matches the npz table exactly.
+  - B11 steering acts on the stroke-frame angles through the pose Jacobian. Amplitude +10° gives +20.2° peak-to-peak, and mean +5° gives +5.0°. That is linear to 1%.
+  - `joint:wing|range_by_function` 2 (`WING_RANGE_MEASURED_DEG`) is the measured hinge envelope plus the folded pose, with a 20° margin (guessed).
+  - Test (`test_measured_beat_keeps_each_wing_on_its_side_and_steers`): PD-tracked through `motor_step`, the stroke is 131.6 ± 10° peak-to-peak. Each wing stays on its own side throughout, there are no MuJoCo warnings, and a left b2 burst widens only the left stroke.
+  - Contact sheet `docs/media/s12_wing_beat_views.png`, viewed: generator against measured beat, top and front views, thorax level. The measured beat reverses above and behind the hinge at τ 0 and in front and below at τ 0.5. The chord stands near vertical on the upstroke when the thorax is level, as expected for a 47.5° stroke plane.
+  - The s10 generator stays as switch value 0 (legacy fixture). `test_s10_generator_crosses_the_wings_and_measured_poses_do_not` pins its crossing.

@@ -712,3 +712,30 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: mean lift within 0.8-1.2 of weight, with imposed kinematics. The band covers the robofly-based quasi-steady model's known shortfall without wake capture, and the unchecked wing size.
   - Pass makes option 1 the B12 default for flight profiles and retires `kutta_lift` to a legacy fixture.
   - Fail is recorded as the mechanism (wing size, missing wake capture or added mass, stroke-plane geometry), with no coefficient changed.
+- **Kinematics fixed before the run (19:22).** Source found by the agent (`runs/s12/flight/kinematics_lit.md`): Muijres, Elzinga, Melis & Dickinson 2014 (Science 344:172), Table S1, Fourier fits to 1603 steady free-flight wingbeats. These are D. hydei (wing 2.99 mm, 1.8 mg), not D. melanogaster. No melanogaster phase table was found; Fry et al. 2005 give only scalar melanogaster values (218 ± 7 Hz, amplitude 140 ± 10°, wing length 2.39 ± 0.08 mm; measured).
+  - Primary run: Muijres angle time courses unchanged (stroke peak-to-peak 131.6°, inside Fry's melanogaster 140 ± 10°), at the melanogaster frequency of 218 Hz. The thorax is held at Muijres's body pitch of 47.6° (measured). The stroke plane is tilted 47.5° nose-up from the body axis, so it is horizontal.
+  - Conventions (inferred, stated here because the main-text figure was not accessible):
+    - α = 0 means the chord is normal to the stroke plane, leading edge up. Muijres's α crosses 0 at both stroke reversals, so it is not measured from the plane.
+    - The leading edge must lead in both half-strokes. That forces φ positive = posterior, and α positive = leading edge toward anterior.
+    - So τ = 0 is the dorsal reversal, and the downstroke (posterior to anterior) takes 54% of the cycle. Fry 2005 measured 53.8%.
+    - Deviation is positive toward the stroke-plane normal (Fry's "upward positive").
+    - Mean vertical force in a horizontal stroke plane is nearly unchanged by a front/back mirror. So the φ-sign inference matters little to the test; the α reference matters a lot.
+  - Hinge angles come from `flight.wing_pose_ik` per phase point (span and leading-edge vectors in the thorax frame). The pose-fit error is reported, and a worst-axis error above 5° voids the run.
+  - Expected sensitivities, reported but not used to pass or fail:
+    - lift ∝ f², so ±7 Hz is ±6%;
+    - lift ∝ Φ², so Fry's 140° would give about +13%;
+    - the model wing is 2.65 mm from hinge to tip against 2.39 ± 0.08 mm (Fry, free flight). At fixed kinematics, lift scales roughly as R⁴.
+- **Result (19:35): FAIL, high.** Mean vertical force is 1.53 W (translational lift 1.35, rotational 0.11, drag 0.07); pose-fit error 0.0°.
+  - The first run gave 0.29 W because the rotational term used the pitch-joint rate, which is not the wing's rotation in the stroke frame for this model's hinge axes (F-WING-3). That is a correctness fix, with no coefficient touched (F-FLIGHT-3), and both numbers are reported.
+  - The excess matches the wing-size sensitivity listed above: (2.39/2.65)⁴ × 1.53 = 1.01.
+  - Per this pre-registration: nothing is refitted, option 1 is not made the default, and `kutta_lift` stays.
+  - Next: check the model wing's size against measured female morphometrics. If oversized, a measured-size membrane goes behind a switch, and this same test is rerun unchanged.
+
+### F-WING-3 fix behind switches (19:44); no profile change
+- **Why.** The s10 joint-space generator and `WING_RANGE_DEG` swing each wing over the dorsum (F-WING-3). Every generator-driven flight number so far used crossed wings.
+- **Built.**
+  - `flight:wings|kinematics` 1: the measured Muijres 2014 beat, given in stroke-frame angles and mapped to the hinges (`flight.StrokeFrameKinematics`), with B11 steering applied to stroke-frame angles.
+  - `joint:wing|range_by_function` 2: the measured hinge envelope plus the folded pose, with a 20° margin (guessed).
+  - Both are off by default. No walking profile reads them, because the generator is off in the walking template. So the working closed loop (m9d) is unchanged and no gate is needed.
+- **Evidence.** Unit and organism tests in `tests/test_flight.py`, and the contact sheet `docs/media/s12_wing_beat_views.png`, viewed.
+- **Next.** A flight profile would combine `generator` 1, `kinematics` 1, ranges 2 and the blade-element wing. That waits on the wing-size check (F-FLIGHT-3), because the pre-registered lift test failed high.

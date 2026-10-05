@@ -1,34 +1,34 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 4 October 2026, 19:15, session 12 in progress (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of 4 October 2026, 19:40, session 12 in progress (session 11 state below the first block).
 
-**Session 12 in progress (4 October 2026, from 16:36; this block updated 19:15):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
+**Session 12 in progress (4 October 2026, from 16:36; this block updated 19:40):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9d** (adopted 19:13). Its lineage: m9 → m9w (wing motor roles and nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool). Each step passed the silence gate (seeds 12-19; DECISIONS s12).
-  - Open on m9d: whole-brain rate excluding ORNs rose from about 0.08 to 0.14 Hz on 7 of 8 seeds, source unknown (DECISIONS 19:13). Next: per-class rates, m9m vs m9d, one seed.
+  - Rate rise on m9d (0.086 → 0.143 Hz excluding ORNs, seed 13): it comes entirely from the damping switch (TTM switch alone: no change). Summed BM_InOm (head bristle) rate goes from 3725 to 8381 Hz. Mechanosensory, DN and proprioceptive classes roughly double (`runs/s12/diag/rate_*.json`). Lower damping lets the resting body move more and the bristles report it.
+  - Not yet known: whether that motion is physical or numerical jitter. Next: compare the body's resting joint speed, m9m vs m9d.
 - **A** (blanks) is done: `docs/BLANKS_AUDIT.md`.
 - **C** (synapse-specific ladder) is done: `docs/FIDELITY_LADDER.md`, rungs 8-13.
 - **B items done:**
   - Wings at rest (F-WING-2, F-SENSE-NERVE-1/2).
   - Sensor assignment by nerve (F-SENSE-NERVE-2).
   - Mid/hind muscles as a labelled derivation (F-MUSCLE-MH-1). The FlyMimic author request is for Ben's list.
-  - Leg damping (F-DAMP-1). The option: c = 0.05 s × measured stiffness, against a bound of c/k ≲ 0.1 s from Wang 2025.
+  - Leg damping (F-DAMP-1).
   - TTM double count (F-MUSCLE-MH-1).
-  - Extensor:flexor, written up as a data conflict with no further fix (F-FTI-2).
-  - Flight coefficients (F-FLIGHT-3): the fitted Kutta wing is 1.72× the robofly's lift, and its drag is flat at 1.0. A blade-element wing is built behind `aero:wing|model` 1 with robofly coefficients and rotational lift, and no fitted number. It gives 0.72 W at the guessed hover kinematics.
+  - Extensor:flexor, as a data conflict (F-FTI-2).
   - Coxa ranges: built and kept off (F-COXA-2).
-- **Running or to collect:**
-  - Measured hover kinematics: a source search (Sonnet agent) writes `runs/s12/flight/kinematics_lit.md` and `data/raw/flight_kinematics/`.
-    - Then impose them with `scripts/probes/hover_blade_trace.py --table <npz>` (option added: per-wing hinge angles from `flight.wing_pose_ik`, body held at the measured pitch).
-    - Test pre-registered at DECISIONS 19:08: lift between 0.8 and 1.2 of weight, aero unchanged.
+  - **Flight coefficients (F-FLIGHT-3)**, with the pre-registered test run at 19:35: FAIL, high.
+    - Measured hover kinematics (Muijres 2014, D. hydei; `data/derived/muijres2014_hover_kinematics.csv`) imposed through `flight.wing_pose_ik` give 1.53 W with the blade-element wing.
+    - The excess matches the wing-size sensitivity: the model wing is 2.65 mm from hinge to tip, against 2.39 mm measured, and (2.39/2.65)⁴ × 1.53 = 1.01.
+    - On the way, the rotational term was fixed: it now uses the spin relative to the stroke frame, which equals the measured dα/dt (0.29 W before the fix). Nothing was refitted, and option 1 is not the default.
+  - **New: F-WING-3.** The s10 joint-space wingbeat generator and `WING_RANGE_DEG` swing each wing over the back to the other side, because the model's stroke hinge axis lies in the transverse plane. All generator-driven flight numbers before 19:30 used crossed wings. Walking profiles are unaffected.
+- **CTr ranges (F-COXA-2, 19:39).** Measured walking CTr flexion (Haustein 2024, figure-read; `data/derived/leg_angles_walking_haustein2024_karashchuk2021.csv`) maps onto the physical branch of the hinge. The s9 front and mid rest references (−60° to −71°) sit past the femur-on-coxa fold, so they are unphysical. flybody's upper bounds cut measured extension, by about 40° on the hind leg.
+- **Next, in order:**
+  1. Wing size: compare the flybody wing with female melanogaster morphometrics. If oversized, a measured-size membrane goes behind a switch, then rerun the 19:08 test unchanged.
+  2. F-WING-3 fix behind a switch: wings driven from the measured table, ranges from the measured envelope plus the folded pose, steering acting on stroke-frame angles.
+  3. CTr switch: lower bound at the fold (physical limit), upper bound at the measured envelope, s9 front/mid rest references dropped. Then the dead-fly and standing checks, unchanged. Frame-level extremes would come from Haustein's Dataverse data.
+  4. Damping jitter check (above).
 - **Open in B:**
   - **Standing.** F-STAND-3: the model has no resting support drive. **DECISION NEEDED (Ben)** at DECISIONS 18:23.
-    - Damping changes the speed of the collapse, not where the fly ends up (F-DAMP-1).
-    - Mid/hind muscles change nothing at rest.
-  - **CTr ranges.** Two inferred sources conflict.
-    - flybody's native CTr pitch range is −8.6° to 114.6° on the front and mid legs and −40° to 86° on the hind legs, set to admit grooming inverse kinematics.
-    - The s9 rest fit to the measured passive posture needs −60° to −71°.
-    - The discriminating test: map measured 3D walking and grooming joint angles (Anipose / Karashchuk 2021, Haustein 2024) through the same paper-to-hinge mapping. If they fall below −8.6°, flybody's range is too narrow; if they don't, the rest mapping is wrong. Not started.
-  - **Wing size.** The membrane planform is 2.59 mm² over a 2.8 mm span, not checked against measured wing size.
   - **Non-leg torque per spike** is still 10 (guessed) in every script.
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.

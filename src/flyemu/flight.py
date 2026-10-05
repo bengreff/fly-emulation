@@ -24,6 +24,7 @@ kinematics; quasi-steady aerodynamics (body.py) only.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import mujoco as mj
 import numpy as np
@@ -38,17 +39,34 @@ FN = {"stroke": "yaw", "deviation": "roll", "rotation": "pitch"}
 WING_RANGE_DEG = {"yaw": (-10.0, 175.0), "roll": (-30.0, 70.0), "pitch": (-130.0, 40.0)}
 
 
-def apply_wing_ranges(body) -> list[str]:
+# Wing envelopes from the measured hover beat (joint:wing|range_by_function = 2; F-WING-3):
+# the hinge angles StrokeFrameKinematics needs for Muijres et al. 2014 steady flight
+# (yaw -120.7..36.9, roll -61.9..4.2, pitch -60.3..120.6 deg; derived by wing_pose_ik
+# from measured kinematics), joined with the folded pose (0, 0, 0), widened by a 20 deg
+# margin on each side (guessed: Fry 2005's +-10 deg amplitude spread plus steering).
+WING_RANGE_MEASURED_DEG = {"yaw": (-140.7, 56.9), "roll": (-81.9, 24.2), "pitch": (-80.3, 140.6)}
+
+
+def apply_wing_ranges(body, ranges: dict | None = None) -> list[str]:
     m = body.sim.mj_model
     done = []
     for j in range(m.njnt):
         n = m.joint(j).name
-        for ax, (lo, hi) in WING_RANGE_DEG.items():
+        for ax, (lo, hi) in (ranges or WING_RANGE_DEG).items():
             if n.endswith(f"_wing-{ax}"):
                 m.jnt_range[j] = np.radians([lo, hi])
                 m.jnt_limited[j] = 1
                 done.append(n)
     return done
+
+
+def open_wing_ranges(body, deg: float = 180.0) -> None:
+    """Wing hinge ranges +-deg (fitting measured poses: WING_RANGE_DEG holds a stroke
+    that crosses the wings over the dorsum, F-WING-3)."""
+    m = body.sim.mj_model
+    for j in range(m.njnt):
+        if any(m.joint(j).name.endswith(f"_wing-{a}") for a in FN.values()):
+            m.jnt_range[j] = np.radians([-deg, deg])
 
 
 @dataclass
@@ -211,7 +229,15 @@ class FlightMotor:
                 self.steer_coef.append(gain)
         self.steer_rate = np.zeros(len(self.steer_cells))
         self.dt = timestep_ms
-        self.wing = WingBeat(body, bandwidth_hz=3000.0)
+        kin = None
+        if int(reg.require(
+                "flight:wings", "kinematics", units="enum",
+                model_use="0 s10 joint-space generator (crosses the wings over the dorsum, F-WING-3; legacy "
+                          "fixture), 1 measured steady-flight beat in stroke-frame angles (Muijres 2014) mapped "
+                          "to the hinges (StrokeFrameKinematics)",
+                subsystem="muscle_mechanics", minimal=0, minimal_note="s10-s12 behaviour")):
+            kin = StrokeFrameKinematics(body)
+        self.wing = WingBeat(body, kin, bandwidth_hz=3000.0)
         self.haltere = HaltereBeat(body, self.wing)
         body.passive_hooks = list(getattr(body, "passive_hooks", ())) + [self.wing, self.haltere]
         short = [a.split("/")[-1] for a in body.actuator_names]
@@ -266,6 +292,52 @@ def robofly_coefficients(alpha_deg: np.ndarray) -> tuple[np.ndarray, np.ndarray]
             1.92 - 1.55 * np.cos(2.04 * a - np.radians(9.82)))
 
 
+# Stroke plane tilted this far nose-up from the body's long axis (deg): Muijres et
+# al. 2014 Science 344:172, Table S1 / SM (D. hydei steady flight, measured, n = 1603
+# wingbeats; their mean body pitch 47.6 +- 0.2). Measured in a related species; the
+# thorax frame x axis is taken as the body axis (assumed).
+STROKE_PLANE_DEG = 47.5
+
+
+def stroke_normal(tilt_deg: float = STROKE_PLANE_DEG) -> np.ndarray:
+    """Stroke-plane normal (dorsal side) in the thorax frame (x head, y left, z up)."""
+    b = np.radians(tilt_deg)
+    return np.array([np.sin(b), 0.0, np.cos(b)])
+
+
+def stroke_frame_vectors(phi, dev, alpha, side: str, tilt_deg: float = STROKE_PLANE_DEG):
+    """Unit span (hinge to tip) and leading-edge vectors in the thorax frame for one
+    wing pose given as stroke-frame angles (deg), in the convention of Muijres et al.
+    2014 (inferred from their SM; DECISIONS s12 19:08): phi stroke, positive
+    posterior; dev deviation, positive toward the stroke-plane normal; alpha rotation
+    about the span, 0 with the chord normal to the stroke plane (leading edge up),
+    positive = leading edge toward anterior."""
+    b = np.radians(tilt_deg)
+    n = stroke_normal(tilt_deg)
+    f = np.array([np.cos(b), 0.0, -np.sin(b)])         # anterior, in the stroke plane
+    lat = np.array([0.0, 1.0 if side == "l" else -1.0, 0.0])
+    p, g, a = np.radians([phi, dev, alpha])
+    span = np.cos(g) * (np.cos(p) * lat - np.sin(p) * f) + np.sin(g) * n
+    t = np.sin(p) * lat + np.cos(p) * f                # stroke tangent toward anterior
+    t -= (t @ span) * span
+    t /= np.linalg.norm(t)
+    up = n - (n @ span) * span
+    up /= np.linalg.norm(up)
+    return span, np.cos(a) * up + np.sin(a) * t
+
+
+def stroke_frame_spin(om_rel: np.ndarray, sp: np.ndarray, n: np.ndarray) -> float:
+    """Wing spin about its span relative to the stroke frame (span, stroke-plane normal
+    n): om_rel . sp minus the frame's own spin about sp, which is
+    -(n.sp)(sp_dot . (sp x e))/|v| with v = n - (n.sp)sp, e = v/|v|, sp_dot =
+    om_rel x sp (derived). A cone swept about n gives 0; for poses built by
+    stroke_frame_vectors it equals +-dalpha/dt (+ left wing, - right)."""
+    v = n - (n @ sp) * sp
+    nv = np.linalg.norm(v)
+    e = v / nv
+    return float(om_rel @ sp + (n @ sp) * (np.cross(om_rel, sp) @ np.cross(sp, e)) / nv)
+
+
 class BladeElementWing:
     """B12 option (aero:wing|model = 1; F-FLIGHT-3): quasi-steady blade-element
     forces on each wing membrane, written to xfrc_applied (body.passive_hooks).
@@ -277,9 +349,12 @@ class BladeElementWing:
         CL(alpha) c dr normal to w on the side the plate pushes (robofly CL, CD,
         measured; the plate is treated as symmetric, so alpha is folded);
       rotational: C_rot rho |w| dalpha/dt c^2 dr normal to the plate, dalpha/dt the
-        wing's rotation about its span relative to the stroke (the pitch joint rate;
-        the conical stroke itself spins the wing about its span without changing
-        alpha), C_rot =
+        wing's rotation about its span relative to the stroke frame (span, stroke-plane
+        normal; STROKE_PLANE_DEG), i.e. the measured rotation-angle rate: the conical
+        stroke spins the wing about its span without changing alpha, so that spin is
+        removed. (s12 first used the pitch joint rate as a proxy, rot_rate="pitch_joint";
+        wrong here because the model's hinge axes are not the stroke frame, F-WING-3),
+        C_rot =
         pi (0.75 - x0) (Sane & Dickinson 2002 JEB 205:1087, theory matched by their
         robofly), x0 the pitch axis' chord position, derived from the model at
         mid-span (0.20).
@@ -288,9 +363,14 @@ class BladeElementWing:
     acceleration added mass, wake capture, pitching moment (forces act on the pitch
     axis), wing flexion. Validity: hovering-like strokes at Re ~ 100-200."""
 
-    def __init__(self, body, n_strips: int = 20):
+    def __init__(self, body, n_strips: int = 20, rot_rate: str = "stroke_frame",
+                 stroke_plane_deg: float = STROKE_PLANE_DEG):
         m, d = body.sim.mj_model, body.sim.mj_data
         self.m = m
+        assert rot_rate in ("stroke_frame", "pitch_joint")
+        self.rot_rate = rot_rate
+        self.thorax = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{body.fly.name}/c_thorax")
+        self.n_stroke = stroke_normal(stroke_plane_deg)    # thorax frame
         mj.mj_forward(m, d)
         self.bid, self.pts, self.span, self.normal, self.c, self.dr, self.x0 = [], [], [], [], [], [], []
         self.pitch_dof, self.pitch_s = [], []
@@ -328,6 +408,9 @@ class BladeElementWing:
         mj.mj_kinematics(m, d)
         mj.mj_comPos(m, d)
         mj.mj_comVel(m, d)
+        mj.mj_objectVelocity(m, d, mj.mjtObj.mjOBJ_XBODY, self.thorax, self._v, 0)
+        om_th = self._v[:3].copy()
+        n_st = d.xmat[self.thorax].reshape(3, 3) @ self.n_stroke
         for k, b in enumerate(self.bid):
             R, x = d.xmat[b].reshape(3, 3), d.xpos[b]
             mj.mj_objectVelocity(m, d, mj.mjtObj.mjOBJ_XBODY, b, self._v, 0)   # at xpos, not the COM
@@ -350,7 +433,10 @@ class BladeElementWing:
             en = -sgn[:, None] * n                     # side the plate pushes
             eL = en - (en * u).sum(1)[:, None] * u
             eL /= np.maximum(np.linalg.norm(eL, axis=1), 1e-12)[:, None]
-            om_s = d.qvel[self.pitch_dof[k]] * self.pitch_s[k]
+            if self.rot_rate == "pitch_joint":
+                om_s = d.qvel[self.pitch_dof[k]] * self.pitch_s[k]
+            else:
+                om_s = stroke_frame_spin(om - om_th, sp, n_st)
             dalpha = sgn * om_s * np.where(u @ np.cross(sp, n) >= 0, 1.0, -1.0)
             frot = self.c_rot[k] * self.rho(m) * U * dalpha * self.c[k] ** 2 * self.dr[k]
             parts = (q * CL)[:, None] * eL, -(q * CD)[:, None] * u, frot[:, None] * en
@@ -367,14 +453,14 @@ class BladeElementWing:
         return float(m.opt.density)
 
 
-def apply_blade_element(body, n_strips: int = 20) -> BladeElementWing:
+def apply_blade_element(body, n_strips: int = 20, **kw) -> BladeElementWing:
     """Membrane-only aero (apply_aero) with MuJoCo's drag/lift/angular drag off on
     the membrane, and the blade-element hook appended to body.passive_hooks."""
     m = body.sim.mj_model
     for g in apply_aero(body, 0.0):
         gi = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, g)
         m.geom_fluid[gi][1:6] = 0.0                    # interaction stays on: added mass
-    hook = BladeElementWing(body, n_strips)
+    hook = BladeElementWing(body, n_strips, **kw)
     body.passive_hooks = list(getattr(body, "passive_hooks", ())) + [hook]
     return hook
 
@@ -395,10 +481,21 @@ def wing_axes(body, side: str) -> tuple[int, int, int, float]:
     return g, int(o[2]), int(o[1]), float(np.sign(r @ Rg[:, o[1]]))
 
 
+def wing_span_sign(body, side: str) -> float:
+    """+1 if the membrane's span column points from the hinge toward the tip, else
+    -1 (the ellipsoid axis sign is arbitrary; rigid, so one pose decides it)."""
+    m = body.sim.mj_model
+    d = mj.MjData(m)
+    mj.mj_kinematics(m, d)
+    g, i_s, _, _ = wing_axes(body, side)
+    j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"{body.fly.name}/c_thorax-{side}_wing-{FN['stroke']}")
+    return float(np.sign(d.geom_xmat[g].reshape(3, 3)[:, i_s] @ (d.geom_xpos[g] - d.xanchor[j])))
+
+
 def wing_pose_ik(body, side: str, span_t: np.ndarray, lead_t: np.ndarray,
                  q_start: np.ndarray | None = None) -> tuple[np.ndarray, float]:
     """Hinge angles (stroke, deviation, rotation) in rad that point the membrane's
-    span along span_t and its leading edge along lead_t (both unit-ish, thorax
+    span (hinge to tip) along span_t and its leading edge along lead_t (both unit-ish, thorax
     frame), by bounded least squares on the wing pose (independent of joint order;
     bounds = the joint ranges). Returns (q, worst axis error in deg)."""
     from scipy.optimize import least_squares
@@ -406,6 +503,7 @@ def wing_pose_ik(body, side: str, span_t: np.ndarray, lead_t: np.ndarray,
     d = mj.MjData(m)
     th = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{body.fly.name}/c_thorax")
     g, i_s, i_c, le = wing_axes(body, side)
+    out = wing_span_sign(body, side)
     jid = [mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"{body.fly.name}/c_thorax-{side}_wing-{FN[fn]}")
            for fn in ("stroke", "deviation", "rotation")]
     adr = [m.jnt_qposadr[j] for j in jid]
@@ -417,7 +515,7 @@ def wing_pose_ik(body, side: str, span_t: np.ndarray, lead_t: np.ndarray,
         d.qpos[adr] = q
         mj.mj_kinematics(m, d)
         Rt, Rg = d.xmat[th].reshape(3, 3), d.geom_xmat[g].reshape(3, 3)
-        return Rt.T @ Rg[:, i_s], le * (Rt.T @ Rg[:, i_c])
+        return out * (Rt.T @ Rg[:, i_s]), le * (Rt.T @ Rg[:, i_c])
 
     starts = [q_start] if q_start is not None else []
     starts += [np.radians([a, b_, c]) for a in (10, 90, 160) for b_ in (0, 40) for c in (-100, -30, 20)]
@@ -433,6 +531,76 @@ def wing_pose_ik(body, side: str, span_t: np.ndarray, lead_t: np.ndarray,
     s_, c_ = axes(best.x)
     err = max(np.degrees(np.arccos(np.clip(s_ @ span_t, -1, 1))), np.degrees(np.arccos(np.clip(c_ @ lead_t, -1, 1))))
     return best.x, float(err)
+
+
+MEASURED_HOVER_CSV = Path(__file__).resolve().parents[2] / "data" / "derived" / "muijres2014_hover_kinematics.csv"
+
+
+class StrokeFrameKinematics:
+    """F-WING-3 fix (flight:wings|kinematics = 1): a measured wingbeat given in
+    stroke-frame angles (stroke phi, deviation gamma, rotation alpha; Muijres et al.
+    2014 Table S1, D. hydei steady flight, measured; convention of stroke_frame_vectors)
+    mapped to hinge angles by wing_pose_ik at each table phase, with ranges opened for
+    the fit and restored after. Left and right hinges are mirror images, so one table
+    serves both wings (checked: < 0.002 deg apart). WingKinematics' targets() interface.
+
+    B11 steering mods (d amplitude, d stroke mean, d deviation, d rotation; deg) act on
+    the stroke-frame angles: the amplitude change scales phi about its mean, the others
+    shift. They reach the hinges through the pose Jacobian dq/d(phi, gamma, alpha) at
+    each phase (linear in the mods; derived by finite differences of wing_pose_ik).
+    power scales the hinge angles toward the folded pose (0), as in WingKinematics."""
+
+    def __init__(self, body, csv: Path | str = MEASURED_HOVER_CSV, f_hz: float = 218.0,
+                 tilt_deg: float = STROKE_PLANE_DEG, side: str = "l", eps_deg: float = 0.5):
+        import pandas as pd
+        from scipy.interpolate import CubicSpline
+        t = pd.read_csv(csv, comment="#")
+        ph = t["phase"].to_numpy(float)
+        ang = t[["stroke_deg", "deviation_deg", "rotation_deg"]].to_numpy(float)
+        if ph[-1] >= 1.0:
+            ph, ang = ph[:-1], ang[:-1]
+        m = body.sim.mj_model
+        keep = (m.jnt_range.copy(), m.jnt_limited.copy())
+        open_wing_ranges(body)
+        try:
+            q, J, qa = [], [], None
+            for a in ang:
+                qa, err = wing_pose_ik(body, side, *stroke_frame_vectors(*a, side, tilt_deg), q_start=qa)
+                if err > 0.5:
+                    raise ValueError(f"measured pose not reachable: {err:.2f} deg")
+                cols = []
+                for i in range(3):
+                    da = a.copy()
+                    da[i] += eps_deg
+                    qb, _ = wing_pose_ik(body, side, *stroke_frame_vectors(*da, side, tilt_deg), q_start=qa)
+                    cols.append((qb - qa) / np.radians(eps_deg))
+                q.append(qa)
+                J.append(np.array(cols).T)
+        finally:
+            m.jnt_range[:], m.jnt_limited[:] = keep
+        q = np.unwrap(np.array(q), axis=0)
+        x = np.append(ph, 1.0)
+        per = lambda v: CubicSpline(x, np.concatenate([v, v[:1]]), bc_type="periodic", axis=0)  # noqa: E731
+        self.f_hz = f_hz
+        self.q, self.J = per(q), per(np.array(J))
+        self.ang = per(np.radians(ang))
+        self.phi_mean = float(np.radians(ang[:, 0]).mean())
+        self.phi_amp = float(np.radians(np.ptp(ang[:, 0])) / 2)
+
+    def targets(self, t_s: float, power: float = 1.0, mod: np.ndarray | None = None
+                ) -> tuple[np.ndarray, np.ndarray]:
+        ph = (t_s * self.f_hz) % 1.0
+        q, qd = self.q(ph), self.q(ph, 1) * self.f_hz
+        if mod is not None and np.any(mod):
+            dA, dm, dg, da = np.radians(np.asarray(mod, float))
+            dA = max(dA, -self.phi_amp)
+            phi, dphi = self.ang(ph)[0], self.ang(ph, 1)[0] * self.f_hz
+            k = dA / self.phi_amp
+            delta = np.array([k * (phi - self.phi_mean) + dm, dg, da])
+            ddelta = np.array([k * dphi, 0.0, 0.0])
+            J, Jd = self.J(ph), self.J(ph, 1) * self.f_hz
+            q, qd = q + J @ delta, qd + Jd @ delta + J @ ddelta
+        return q * power, qd * power
 
 
 class TableKinematics:

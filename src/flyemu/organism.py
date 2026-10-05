@@ -269,13 +269,16 @@ class Organism:
                     subsystem="muscle_mechanics", minimal=0, minimal_note="0 = s10-s12 behaviour (counted twice)")):
                 tt = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index] == "TTMn"
                 self.hill.exclude(np.flatnonzero(tt))
-        if int(self.reg.require(
+        rng = int(self.reg.require(
                 "joint:wing", "range_by_function", units="enum",
                 model_use="0 joints.py wing envelopes (pitch = stroke; wrong for flybody), 1 envelopes by "
-                          "function: yaw = stroke, roll = deviation, pitch = rotation (F-WING-1)",
-                subsystem="body_mechanics", minimal=0, minimal_note="legacy m4 envelopes")):
+                          "function: yaw = stroke, roll = deviation, pitch = rotation (F-WING-1; holds a "
+                          "crossed-wing stroke, F-WING-3), 2 measured hover hinge envelope + folded pose + "
+                          "20 deg margin (F-WING-3)",
+                subsystem="body_mechanics", minimal=0, minimal_note="legacy m4 envelopes"))
+        if rng:
             from . import flight
-            flight.apply_wing_ranges(self.body)
+            flight.apply_wing_ranges(self.body, flight.WING_RANGE_MEASURED_DEG if rng == 2 else None)
 
     # --- sensing -------------------------------------------------------------
 
