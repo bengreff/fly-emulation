@@ -637,6 +637,10 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Steady force 1.011 W, 0.99 of the robot's (ellipse 0.85). The 15% deficit was the planform.
   - Force ratios and roll are unchanged within 1-3%: still failing at levels 11-12 (frequency term), roll still 0.42-0.54 of the robot's with the sign opposite.
   - The spanwise shape is ruled out as the cause of the roll gap. Robot comparisons use the hydei planform from now on; the organism keeps the scanned wing.
+- **Diagnostic after the result (21:40): the torque reference point.** The model's torques are about the hinge midpoint. Database S1 `body_model` puts the hinges 0.636 mm forward of and 0.465 mm above the centre of mass in the body frame, which is 0.087 mm forward and 0.783 mm above in the robot frame (`R_strk`).
+  - If the robot's torques are about the centre of mass, the model's become Mx + 0.262 Fy (normalized). The model's side force agrees with the robot's in sign and size (−0.031 against −0.029 at the top level).
+  - The force-corrected ratio then rises from 0.42-0.57 to 0.50-0.67 at levels 3-12. It still fails ±20%, and the side-force term has the model's sign, not the robot's.
+  - So the reference point accounts for part of the magnitude gap at most. The sign stays unexplained, and the robot's main text (paywalled) would settle both.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
 - **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
