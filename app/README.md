@@ -10,6 +10,7 @@ live sessions (start, pause, stimulate, stop from the page) and the protocol edi
 
     .venv/bin/python app/build/atlas.py                     # male-cns atlas from data/cache (about 10 s, 50 MB)
     .venv/bin/python scripts/export_geometry.py --out app/data/body/flybody   # body meshes (13 MB)
+    .venv/bin/python app/build/eye.py                       # eye mosaic, pale/yellow masks, photoreceptors (M3; 132 kB)
     .venv/bin/python app/build/convert_legacy.py            # old runs/organism-record-* into runs/app/legacy
 
 ## Record a run
@@ -38,6 +39,8 @@ minutes and 2.4 GB (measured); the runner goes through `~/director/harness/slot.
 one run at a time. `config.preparation: brain_only` runs the network alone as the model's
 `scripts/assay_pathways.py` does, and `config.kick_rng: assay` draws kicks as it does;
 `app/protocols/assay/` reproduces its sugar to MN9 assay (`--seeds 0 1 2` on `run_library.py`).
+Runs of one protocol at several seeds are named `<protocol>-s<seed>`; the scorer summarises them
+(readout per seed, mean, SD) and the Compare tab shows where each trial falls.
 
     .venv/bin/python app/tools/make_shams.py                # more sham protocols (one Kenyon cell each, fixed draw)
     .venv/bin/python app/tools/run_library.py --protocols app/protocols/sham --out runs/app/lib-m9
