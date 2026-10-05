@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -47,7 +48,12 @@ def git_state() -> dict:
                                   timeout=10).stdout.strip()
         except Exception:
             return ""
-    return {"commit": run("rev-parse", "HEAD"), "branch": run("rev-parse", "--abbrev-ref", "HEAD"),
+    commit = run("rev-parse", "HEAD")
+    if not commit and os.environ.get("FLYAPP_COMMIT"):
+        # a copy without .git (backhouse gets `git archive` of a commit): the launcher declares it
+        return {"commit": os.environ["FLYAPP_COMMIT"], "branch": os.environ.get("FLYAPP_BRANCH", ""),
+                "dirty_files": None, "source": "declared by the launcher (git archive copy, no .git)"}
+    return {"commit": commit, "branch": run("rev-parse", "--abbrev-ref", "HEAD"),
             "dirty_files": len([x for x in run("status", "--porcelain").splitlines() if x.strip()])}
 
 
