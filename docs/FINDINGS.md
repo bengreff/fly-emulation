@@ -698,3 +698,37 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - At full activation, the largest single-muscle torque F0 × arm is 19.3 µN·mm (hind trochanter-femur). Each coxa hinge sums to at most 10.9 µN·mm across its anatomical muscles. So no leg actuator can reach 30.
     - It would bind if the femur-tibia flexor took its measured strength. The model's flexor gives 1.04 µN·mm against at least 42 µN·mm measured (F-FTI-2; `muscle:leg|ft_flexor_scale` is off). So the clip has to be sourced or lifted before that flexor is.
   - The non-leg springs listed above.
+
+### F-WING-4: with flybody's 1 µN·mm/rad hinge spring a steering spike held the folded wing up; the measured stiffness turns it into a flick (s12, 21:54)
+- **The issue.** On m9t both wings rose in a V at rest (F-NONLEG-1). The plain body under m9t wing settings (`scripts/probes/wing_spike_response.py`) shows why: one 2.73 µN·mm spike with a 30 ms decay lifts the folded left wing to +40° yaw or −41° pitch at 38 ms, and 17° is still left at 100 ms. A 4-spike burst lifts it to +169° yaw, with 149° left at 100 ms. The hinge spring was flybody's 1 µN·mm/rad, unsourced.
+- **The source** (`docs/research/s12_wing_hinge_sources.md`). The one Drosophila hinge stiffness in open sources is the wing-pitch value fitted by Bergou et al. 2010 to free-flight kinematics: 91 ± 9 pN·m/deg = 5.21 µN·mm/rad. No source gives the yaw or roll axis or the folded hinge, so those take the same value (inferred). No source gives a steering-muscle moment arm or force, so the torque per spike is unchanged.
+- **The change** (`joint:wing|stiffness_source` 1, pre-registered DECISIONS 21:44) **passed:**
+  - gate silent on seeds 12-19;
+  - seed-12 mean wing angles within 3° of the fold (m9t: up to 20°);
+  - wings folded on the sheet;
+  - adopted as m9u.
+- **Behaviour now.** A single spike peaks at 15-17° at 16 ms and has 1-6° left at 100 ms. A 4-spike burst peaks at +70° yaw or −72° pitch and is back within 6° by 100 ms. So a resting burst shows as a flick of about 50 ms, not a raised wing.
+- **What the result does not show.**
+  - On seed 12 the wing motor neurons happened not to fire in the scored window. Across 8 seeds their rate is unchanged (0.16 against 0.19 Hz).
+  - How often the wings flick at rest is set by how often the wing motor neurons burst at rest. No source says whether real ones do. A multi-seed census (seeds 14-19, 800 ms) is queued.
+- **Still guessed or inferred:**
+  - yaw and roll stiffness (transfer from pitch);
+  - the folded-hinge stiffness (the real fold may be a separate locked state of the hinge sclerites);
+  - flybody's hinge damping (0.05 µN·mm·s/rad; Bergou's fitted pitch damping is 2.2 × 10⁻³, but with the model's 10⁻⁴ armature it would leave the hinge ringing);
+  - the wing torque per spike (wing-length lever);
+  - the i1/i2 yaw mapping.
+- **Six more seeds** (m9u, seeds 14-19, 200-1000 ms, `runs/s12/wing/census_m9u_s{14..19}.json`): no wing hinge spent any time within 1° of a limit. The right wing sits at the undriven fold (yaw +2.8°, roll −2.8°, pitch −2.4°) on every seed. The left wing, which draws most of the steering spikes (up to 15 Hz summed on pitch), averages at most 4° further out (yaw +6.8°, pitch −6.2° on seed 15). Why the left steering pool fires more than the right is not checked.
+
+### F-NONLEG-2: every neck motor neuron pushed the head one way on both sides; the mirror-image sign makes bilateral yaw drive cancel (s12, 21:58)
+- **Before.** In `data/params/motor_targets.csv`, head yaw (10 left, 10 right) and head roll (7 left, 8 right) motor neurons all mapped +1 (guessed). A pair firing together turned the head one way: about 0.33 µN·mm of standing yaw torque at rest (seeds 12 and 13).
+- **Change.** `motor_map:neck|mirror_sides` 1 (DECISIONS s12 21:50). Right-side neurons take the opposite yaw and roll sign of their mirror image. The basis is bilateral symmetry (derived). Each left-side type's absolute direction stays guessed.
+- **Result** (DECISIONS s12 21:58).
+  - Yaw torque falls about 40-fold (0.33 → 0.008 µN·mm).
+  - Gate silent on 8 seeds.
+  - Head never within 1° of a limit; upright on the sheet.
+- **Not tested.** No roll motor neuron fired at rest on seeds 12 and 13, in either profile.
+- **Side observation.** With its drive cancelled, closed-loop head yaw sits at −6°, while on the plain body with zero drive it stays within 0.3° of zero. So the closed-loop head angle is set by the posture of the body lying on its belly (inferred, F-STAND-3), not by neck drive.
+- **Still unknown.**
+  - The per-neuron target pose. Gorko et al. 2024 show that neck motor neurons drive the head toward a pose, so a fixed sign is an approximation. The paper is paywalled and is on Ben's list.
+  - The neck spring: flybody's 3 µN·mm/rad, unsourced.
+  - The antennal elevator/depressor split (`docs/research/s12_neck_antenna_sources.md`).

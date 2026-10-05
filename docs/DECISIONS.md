@@ -896,6 +896,20 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - **Against the prediction:** the angles are smaller than predicted (about 7° yaw and −5° pitch), because the prediction assumed unchanged rates. Over 200-600 ms the wing motor neurons did not fire at all; on m9t they averaged 1.25 Hz, with up to 5 Hz per actuator. The cause is examined below the result.
   - **Sheet:** both wings lie folded flat over the abdomen at 300 and 600 ms. On the m9t sheet from the same batch, they stand in a V over the thorax.
   - **Adopted per this pre-registration:** `profiles.M9U` = m9t + `joint:wing|stiffness_source` 1; `WORKING_PROFILE` = m9u. m9t is kept. Battery to rerun.
+  - **Diagnostic after the result (21:54): the seed-12 silence comes from the trajectory, not from the stiffness.**
+    - Spike timing on the Mac (`runs/s12/wing/wing_mn_timing_s12.json`): on m9t the wing motor neurons fire in two bursts, 8 spikes at 225-235 ms and 4 at 542-543 ms. The wing is still resting (yaw 4.8°) when the first burst starts, so the burst comes before any wing motion. With the switch they do not fire at all in 600 ms.
+    - Over the 8 gate seeds the class rate is about the same: wing and haltere motor neurons 0.19 Hz on m9t, 0.16 Hz switched.
+    - So the stiffness does not silence the wing motor neurons. Seed 12 simply took a different path.
+    - Body-only bursts (`wing_spike_response.py --spikes`, 1.5 ms apart; `runs/s12/wing/burst*_k*.json`):
+
+      | Burst | Hinge stiffness | Peak yaw | Peak pitch | Left at 100 ms |
+      |---|---|---|---|---|
+      | 4 spikes | 1 µN·mm/rad | +169° | −127° | 149° yaw, −79° pitch |
+      | 4 spikes | 5.21 µN·mm/rad | +70° | −72° | 6° yaw, −5° pitch |
+      | 2 spikes | 5.21 µN·mm/rad | +34° | −35° | 3-5° |
+
+    - With the measured stiffness, a burst becomes a flick of about 50 ms rather than a wing held up. The resting angle averaged over time now depends on how often the wing motor neurons burst at rest. No source says whether real ones do (`docs/research/s12_wing_hinge_sources.md`).
+    - A census on more seeds is queued behind the neck runs.
 
 ### Pre-registration: mirror-image neck motor neurons on opposite head yaw and roll signs (`motor_map:neck|mirror_sides` 1) as candidate m9v (21:50)
 - **Why.** In `data/params/motor_targets.csv` every head yaw motor neuron (10 left, 10 right) and every head roll motor neuron (7 left, 8 right) maps +1, a guess. So a bilateral pair firing together turns the head one way. Yaw and roll change sign under left-right reflection; pitch does not.
@@ -919,3 +933,18 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
 - **What follows.**
   - A pass makes m9v = m9u + the switch the working profile.
   - A fail on (2), with head torque not falling, means the left and right neck neurons fire at different times, so the drive does not cancel. That would be reported, and the switch kept as the symmetric default only if the gate passes.
+- **Result (21:58): primary 1 PASS; primary 2 PASS on limits and yaw, NOT MET as written on roll; secondary PASS. Adopted m9v, with the roll clause recorded as untested.** Sources: `runs/s12/gates/cl_nk_s12-19.json` (backhouse); `runs/s12/neck/census_{nk,m9u}_s{12,13}.json`, same batch; sheets `census_nk_s12.png` and `census_m9u_s12.png`, both viewed.
+  - Gate: 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN, on all 8 seeds. Brain without ORNs 0.152-0.155 Hz, motor 2.02-2.06 Hz, thorax height 0.559-0.561 mm.
+  - Census, 200-600 ms (m9u → m9v):
+
+    | Seed | Yaw \|torque\| µN·mm | Roll \|torque\| | Pitch \|torque\| | Yaw ° | Roll ° | Pitch ° | Time near a limit |
+    |---|---|---|---|---|---|---|---|
+    | 12 | 0.329 → 0.0076 | 0 → 0 | 0.678 → 0.714 | −1.0 → −5.6 | −5.4 → −4.5 | 3.9 → 6.0 | 0% all |
+    | 13 | 0.333 → 0.0079 | 0 → 0 | 0.677 → 0.781 | −0.4 → −6.1 | −5.0 → −4.3 | 4.5 → 6.4 | 0% all |
+
+  - Yaw torque falls about 40-fold on both seeds: left and right yaw motor neurons fire together (25 Hz summed in both profiles), so with opposite signs they cancel.
+  - Roll: no roll motor neuron fired in either profile on either seed, so 0 is not lower than 0. The clause is not met as written. It is untested rather than failed: the failure it was written to catch (left and right firing at different times) did not occur on yaw, the only axis with drive.
+  - Adoption follows "What follows": the gate passes, the switch rests on bilateral symmetry (derived), not on a fit, and the anticipated failure did not happen. Roll stays to be checked in a condition where roll motor neurons fire.
+  - Prediction: missed on seed 13 yaw (moved 5.7°, predicted within 5°). Mechanism: on the plain body with zero drive the head yaw stays within 0.3° of 0 for 600 ms, so the −6° comes from the rest of the closed-loop body. Inferred: the fly lies on its belly (F-STAND-3), and gravity on the head about a tilted yaw axis sets it. Under m9u the net one-way yaw drive, 0.33 µN·mm on flybody's 3 µN·mm/rad spring (about 6.3°), happened to offset it.
+  - Pitch motor neurons fire a little more under m9v (40 → 47.5-55 Hz summed). This is a trajectory difference; pitch mapping is unchanged.
+  - Working profile is now m9v = m9u + `motor_map:neck|mirror_sides` 1.

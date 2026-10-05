@@ -1,6 +1,6 @@
 # Running
 
-Every command here runs the **working model** (profile m9t since session 12; edges ≥ 5 synapses; `docs/MODEL.md`) unless it says otherwise. The regression reference is `FLYEMU_PROFILE=m4`. The procedure around these commands (pre-registration, splits, hygiene) is in `docs/WORKFLOW.md`.
+Every command here runs the **working model** (profile m9v since session 12; edges ≥ 5 synapses; `docs/MODEL.md`) unless it says otherwise. The regression reference is `FLYEMU_PROFILE=m4`. The procedure around these commands (pre-registration, splits, hygiene) is in `docs/WORKFLOW.md`.
 
 ## Setup (Mac)
 

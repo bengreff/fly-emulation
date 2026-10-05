@@ -29,7 +29,7 @@ AXES = ("yaw", "roll", "pitch")
 
 
 def response(axis: str, sign: int, k: float | None, fps: float, tau_ms: float, ranges: int,
-             settle_ms: float = 100.0, ms: float = 500.0) -> dict:
+             settle_ms: float = 100.0, ms: float = 500.0, spikes: int = 1, isi_ms: float = 1.5) -> dict:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         b = Body(vision=False)
@@ -52,12 +52,13 @@ def response(axis: str, sign: int, k: float | None, fps: float, tau_ms: float, r
     q0 = float(d.qpos[qa])
     tr = np.empty(int(ms / dt_ms))
     for s in range(len(tr)):
-        tq = z.copy(); tq[ai] = sign * fps * np.exp(-s * dt_ms / tau_ms)
+        t = s * dt_ms
+        tq = z.copy(); tq[ai] = sign * fps * sum(np.exp(-(t - n * isi_ms) / tau_ms) for n in range(spikes) if t >= n * isi_ms)
         b.actuate(tq); b.step(); tr[s] = d.qpos[qa]
     dq = np.degrees(tr - q0)
     i = int(np.argmax(np.abs(dq)))
     at = lambda t: round(float(dq[min(int(t / dt_ms), len(dq)) - 1]), 2)  # noqa: E731
-    return {"axis": axis, "sign": sign, "rest_deg": round(float(np.degrees(q0)), 2),
+    return {"axis": axis, "sign": sign, "spikes": spikes, "isi_ms": isi_ms, "rest_deg": round(float(np.degrees(q0)), 2),
             "peak_deg": round(float(dq[i]), 2), "peak_ms": round(i * dt_ms, 1),
             "left_100ms": at(100), "left_200ms": at(200), "left_500ms": at(500),
             "stiffness_uNmm_per_rad": float(m.jnt_stiffness[jid[axis]]),
@@ -71,13 +72,18 @@ def main() -> None:
     ap.add_argument("--fps", type=float, default=2.734, help="torque per spike, uN*mm (m9t wing row)")
     ap.add_argument("--tau", type=float, default=30.0, help="motor-unit decay, ms (motor path tau_act)")
     ap.add_argument("--ranges", type=int, default=1, help="joint:wing|range_by_function (0, 1, 2)")
+    ap.add_argument("--spikes", type=int, default=1, help="spikes in the burst")
+    ap.add_argument("--isi", type=float, default=1.5, help="interval between burst spikes, ms")
+    ap.add_argument("--axes", default=",".join(AXES))
     ap.add_argument("--out", default=str(REPO / "runs/s12/wing/spike_response.json"))
     a = ap.parse_args()
-    rows = [response(ax, s, a.k, a.fps, a.tau, a.ranges) for ax in AXES for s in (1, -1)]
+    rows = [response(ax, s, a.k, a.fps, a.tau, a.ranges, spikes=a.spikes, isi_ms=a.isi)
+            for ax in a.axes.split(",") for s in (1, -1)]
     for r in rows:
         print(r)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps({"k": a.k, "fps": a.fps, "tau_ms": a.tau, "ranges": a.ranges,
+                                       "spikes": a.spikes, "isi_ms": a.isi,
                                        "rows": rows}, indent=1))
 
 
