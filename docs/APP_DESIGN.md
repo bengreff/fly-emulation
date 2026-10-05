@@ -2,8 +2,9 @@
 
 **Status:** design written 4 October 2026, 16:45 CDT; Ben's answers recorded and milestone 1 (M1)
 built at 17:20 CDT the same day, milestone 2 (M2: protocols, labelled optogenetics, replay of
-interventions, a scored library) by 18:10 CDT (section 14 says what each contains, with the
-library's results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
+interventions, a scored library) by 18:10 CDT, and M2b (the app checked against the model's own
+sugar assay, live sessions, the protocol editor, a sham distribution) in the evening (section 14
+says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
 ## 1. What it is for
@@ -86,7 +87,7 @@ The twelve recordings in `runs/organism-record-*` (counted 4 October) predate m9
 |---|---|---|---|
 | Replay, brain map, inspector, scan comparison | yes | yes | n/a |
 | Recordings | a curated gallery | every run under `runs/app/` | produced, synced to the Mac |
-| Live session (step, pause, stimulate, branch) | no | yes, one at a time, 39 to 87 s of wall time per simulated second (measured, section 10) | yes over an SSH tunnel (cost not measured) |
+| Live session (step, pause, stimulate, branch) | no | yes, one at a time, about 100 s of wall time per simulated second at m9 (measured, section 10) | yes over an SSH tunnel (cost not measured) |
 | Batch protocols, many flies | no | through the slot limiter | GPU brain, CPU bodies (`scripts/gpu_closed_loop.py` pattern) |
 | Interventions | a precomputed library, labelled as such | any protocol | any protocol |
 
@@ -161,7 +162,7 @@ approximation written beside its event, and the held-out check). As built in M2
   "format": "flyemu-protocol/1",
   "title": "MDN (moonwalker) CsChrimson as +10 mV current, 0.5-1.5 s",
   "config": {"scan": "male-cns:v1.0", "body": "flybody", "profile": "m9", "seed": 12,
-             "min_synapses": 5, "overrides": {"motor_unit:all|force_per_spike": 10}},
+             "min_synapses": 5, "overrides": {}},
   "duration_ms": 2000,
   "genotype": [],
   "events": [{"t_ms": 500, "dur_ms": 1000, "effector": "CsChrimson", "mv": 10,
@@ -182,6 +183,16 @@ Targets select model rows by `bodyId` list, `type`, `class`, `superclass`, `soma
 fields of the organism's World (food patches, odour sources, wind, sound, humidity, CO2, light;
 not temperature, whose effect is applied at build time). A protocol with no events and no genotype
 is a control; `"role": "sham"` marks the noise-floor run. Named driver-line presets are not built.
+Free-text fields (`note`, `config_history`, `sham_rule`) travel into the recording and are not
+read by the resolver. `config.overrides` changes registry values for the run; any override makes
+the profile "custom" in the page header.
+
+`config.preparation` is `closed_loop` (default: senses, network, muscles, body) or `brain_only`
+(open loop as in the model's `scripts/assay_pathways.py`: the network steps on the protocol's
+drive and kicks alone; no senses, no motor output, the body never stepped; world events refused).
+`config.kick_rng` `"assay"` draws kicks from `default_rng(seed + 10000)` as that script does, so
+its trials can be reproduced spike for spike (`app/protocols/assay/`); the default `"app"` stream
+is `default_rng([seed, 2024])`.
 
 ## 5. Brain maps
 
@@ -298,6 +309,35 @@ step boundary and are written into the recording's `stim` stream with the exact 
 session replays identically from its own protocol. The browser plays the newest chunk, with an
 honest speed gauge.
 
+As built (M2b, 4 October 2026), simpler than the plan above: no websocket, no step, snapshot or
+branch (those need request 2).
+- `POST /api/sessions {"protocol": ...}` checks the protocol, then starts `record.py --live`
+  through the slot harness (so it waits for a slot and RAM like any heavy job) and returns an id.
+  One session at a time; the server stops it when the server stops. `GET /api/sessions` gives
+  each session's state, simulated time and command log; `POST /api/sessions/<id>` sends `pause`,
+  `resume`, `stop` or `stim` with an event. POSTs need the header `X-Workbench: 1` and a local
+  Host, so another web page cannot start or steer a run.
+- The server appends commands to `<runs>/live/<id>.commands.jsonl`; the recorder reads it every
+  10 ms of simulated time (`app/server/live.py`). A stim starts at the step it is read, is
+  resolved and checked like a protocol event, is refused if it touches a held-out item, and is
+  appended to the recording's protocol, so the finished recording replays from its protocol
+  alone (tested in `app/tests/test_live.py`: the kicks drawn live equal the kicks a fresh
+  Stimulator draws from the final protocol). Pausing stops the clock, not the model, so pauses
+  leave no trace in the recording; total pause is capped at 30 min. A stop ends the run at the
+  current step and the recording is complete, with the shorter duration.
+- Live runs write 50 ms chunks; the page follows any recording whose status is `recording`,
+  loading new chunks every 3 s. At the measured cost (about 100 s of wall time per simulated
+  second closed loop, 55 s brain only, on the Mac) a chunk arrives about every 5 s; "live" means
+  steerable, about 1 % of real time.
+- `POST /api/check` resolves a protocol on the atlas (the model's rows and order) and runs the
+  held-out guard without building the model; the Session tab uses it before starting.
+- The Session tab is the protocol editor: the protocol as JSON (from the open recording, or a
+  blank one that uses the working profile), check, start, download; a stimulus form (effector,
+  target types or bodyIds, rate or mV, duration) that either adds the event to the protocol at a
+  chosen time or sends it to the running session; the check's result lists each event's cells
+  and approximation and the expected wall time at the measured cost; pause, resume, stop and the
+  session's command log, with a link that opens the growing recording.
+
 ### 7.3 Warm starts and branching
 
 Every run started from rest begins with a transient (the fall onto the legs, lockstep MN volleys;
@@ -315,7 +355,9 @@ that stimulates or reads out a listed item, or uses an unspent seed, unless the 
 `--spend-heldout <id>` (or `--spend-heldout seed`); spending is appended to
 `runs/app/heldout_spent.jsonl` and the check is saved in the recording, where the Run tab shows it.
 The index can lag the register, so a hit or a miss is a prompt to check the register, not a ruling.
-A protocol editor that asks for confirmation is not built. The public intervention library contains only
+The Session tab's protocol editor (M2b) does not spend held-out data: its check and the server
+refuse a held-out item or an unspent seed, and a live stim that touches one is refused and
+logged; spending stays a deliberate command-line act. The public intervention library contains only
 protocols already run and recorded under the project's procedure, each labelled with the result's
 status and shown beside the published expectation, including when the model does not reproduce it.
 
@@ -362,6 +404,10 @@ seed 0, from rest; the network was silent in this window, so active runs cost mo
 | m9 closed loop | 7.9 s | 86.7 | 2.39 GB |
 | m7 closed loop | 7.4 s | 39.1 | 2.28 GB |
 | m9 brain only | 7.5 s | 54.9 | 2.03 GB |
+
+Whole recordings agree (the assay check's manifests, 4 October, with other jobs running): m9
+closed loop 95 to 102 s of wall time per simulated second over 1 to 2 s runs (15 runs), m9 brain
+only 53 to 56 s (6 runs); recorder start and build add about 10 s.
 
 Consequences:
 - **Live on the Mac is slow motion:** one simulated second takes 40 s (m7) to 90 s (m9) or more.
@@ -455,7 +501,7 @@ guard, A/B comparison, a first precomputed intervention library (for example MDN
 sugar GRNs, DNa02 left vs right), each beside its published expectation.
 
 Built 4 October 2026 (stimulus protocols, labelled optogenetics, replay of interventions; live
-sessions, the protocol editor and conductance effectors are not built):
+sessions and the protocol editor followed in M2b, below; conductance effectors are not built):
 - `flyemu-protocol/1` (section 4.4) and its effectors (section 7.1). CsChrimson, GtACR1 and Kir2.1
   are current injection, and each resolved event carries its approximation text, which the page
   shows as a "guessed" chip beside the event. Kicks use their own seeded generator so a run and its
@@ -476,12 +522,75 @@ sessions, the protocol editor and conductance effectors are not built):
 - `app/tools/score_library.py` recomputes every comparison independently of the page and writes
   `runs/app/lib/scores.json`, whose verdicts the run picker shows; `app/tools/replay.py` re-runs a
   recording's embedded protocol and checks every array is identical.
-- Results: see "M2 library results" below.
+- Results: see the verification against the model's assay and the library results below.
 
-**M2 library results** (seed 12, 2 s, m9; recorded and scored 4 October 2026; `runs/app/lib/scores.json`).
-Every number is derived from the recordings. Thresholds are guessed, declared before any result
-was viewed. Seed 12 is spent, so these are development evidence, not held-out tests. The sham is
-one sample, read over each test's window (500 to 1500 ms) against the same control.
+**Verification against the model owner's assay** (4 October 2026, after the first library below
+was viewed; `app/protocols/assay`, `runs/app/assay/scores.json`). The first library's sugar test
+gave +0.5 Hz where the model's own assay gives about 6 Hz, so the app's setup was checked against
+that assay before any failure is read as the model's. The assay (`scripts/assay_pathways.py
+--assay sugar_mn9 --profile m9`): brain only (no senses, no body), the 34 sugar GRNs (LB3b, LB3c)
+kicked at 100 Hz Poisson from 0 to 1000 ms with kicks from `default_rng(seed + 10000)`, trial t
+on seed t, readout MN9_L alone (MN9_R, bodyId 16949, is left out as incompletely traced). The app
+reproduces it through `config.preparation: brain_only` and `config.kick_rng: assay`, then adds
+the library's differences one at a time. App values are derived from recordings; MN9_L was
+silent (0 Hz) in every control.
+
+| Setup | Seeds | MN9_L, Hz |
+|---|---|---|
+| Model owner: assay, m9 (`runs/assay-sugar_mn9-m9-s11_r2_diag_m9base`, 1 October) | 0, 1, 2 | 7, 6, 7 |
+| Model owner: m9 adoption, 10 trials (HANDOFF) | 0-9 | 5.7 ± 1.4 |
+| App: brain only, assay kicks (every one of the 167,111 cells has the same spike count as in the model owner's run) | 0, 1, 2 | 7, 6, 7 |
+| App: brain only, assay kicks | 0-9 | 7, 6, 7, 5, 7, 7, 5, 6, 4, 3 (mean 5.7, SD 1.4) |
+| App: brain only, assay kicks | 12 | 7 |
+| App: brain only, the app's kick stream (same rate, cells and window; another Poisson draw) | 0, 1, 2, 12 | 6, 6, 1, 4 |
+| App: brain only, the app's kick stream | 0-9 | 6, 6, 1, 6, 7, 8, 7, 4, 8, 5 (mean 5.8, SD 2.1) |
+| App: + closed loop (senses, body), 0-1000 ms | 0, 1, 2 | 8, 5, 6 |
+| App: + the library's window, 500-1500 ms | 0, 1, 2 | 9, 6, 9 |
+| App: + the library's override `force_per_spike` = 10 | 0, 1, 2 | 5, 5, 7 |
+| App: + seed 12 (assay kicks) | 12 | 7 |
+| App: as above without the override | 12 | 8 |
+| First library: + the app's kick stream (seed 12, override) | 12 | 1 |
+| Library on m9 without the override (seed 12, app kicks; `runs/app/lib-m9`) | 12 | 7 |
+
+What the table shows (derived from the recordings):
+- The app's setup is not the difference. Run the way the model owner runs the assay, the app
+  gives the same spike count in every one of the 167,111 cells on trials 0 to 2, and the same
+  10-trial result, 5.7 ± 1.4 Hz.
+- The library's +0.5 Hz has three contributors.
+  - Its readout averaged MN9_R with MN9_L. MN9_R (bodyId 16949) is flagged as incompletely
+    traced: 633 input synapses against MN9_L's 6,358 (`docs/FINDINGS.md` F-PERCELL-1; the assay
+    script cites it as F-DATA-3). The assay leaves it out; read that way the library's figure is
+    +1.0 Hz. The scorer and the Compare tab now drop such cells and say so.
+  - The override `force_per_spike` = 10, which is not part of m9.
+  - The kick draw. The library judged one trial, with kicks from the app's stream.
+- At seed 12 with the library's setup (closed loop, 500 to 1500 ms), MN9_L fires at 7 Hz with
+  the override and the assay's draws, 8 Hz with neither, and 7 Hz with the app's draws and no
+  override. Only the combination of the override and the app's draw gives 1 Hz. So the first
+  library's sugar result was one low trial, not a property of the app's setup.
+- The closed loop, the later window and seed 12 do not lower the response (5 to 9 Hz). The
+  override lowered it in all 5 paired closed-loop trials, by 1 to 6 Hz (mean 2.8; n = 5, so the
+  size is uncertain). The pairs share the seed but not the past: the override changes how the
+  body moves before the stimulus, so the network's state at onset differs too.
+- One trial of this pathway ranges from 1 to 9 Hz between perturbations that leave the input
+  rate unchanged: another Poisson draw, the override, the closed loop. The kicks delivered differ
+  by less than 7 % between trials (3,282 to 3,522) and do not predict the count. A criterion on
+  one trial says little; the model owner reports the mean of 10.
+- The app's kick stream is not a bias. On seeds 0 to 9, brain only, it gives 5.8 ± 2.1 Hz
+  against the assay stream's 5.7 ± 1.4 Hz. The difference, 0.1 Hz, is well inside its standard
+  error of about 0.8 Hz. Seed 2's 1 Hz is one low trial; the assay stream's lowest is 3 Hz. The
+  model owner's replicate inside the bitter assay gave 4.8 ± 1.7 Hz (`docs/FINDINGS.md` F-RS-1).
+  So one trial of this pathway at 100 Hz lands anywhere from about 1 to 9 Hz around a mean of 5
+  to 6 Hz. The library's single-trial criterion (at least 5 Hz above control, which is silent)
+  fails on 2 of 10 trials in either stream, even though the model reproduces the assay.
+
+**First library results** (seed 12, 2 s, m9 with the override `motor_unit:all|force_per_spike` =
+10; recorded and scored 4 October 2026; `runs/app/lib/scores.json`). The override was copied from
+example commands in `docs/RUNNING.md`; it is not part of m9 (default 1, guessed), and it made the
+page's header read "custom". Every number is derived from the recordings. Thresholds are guessed,
+declared before any result was viewed. Seed 12 is spent, so these are development evidence, not
+held-out tests. The sham is one sample, read over each test's window (500 to 1500 ms) against the
+same control. The table is as first scored, with MN9 averaged over both cells; read as the model's
+assay reads it (MN9_L alone), the sugar test is +1.0 Hz.
 
 | Protocol | What was done | Criterion | Measured | Sham, same window | Verdict |
 |---|---|---|---|---|---|
@@ -496,7 +605,7 @@ What this shows:
   event and reproducible: two protocols recorded twice gave identical arrays (all 31, including
   voltages and eye frames), and `replay.py` re-ran sugar-grn-kick from its embedded protocol with
   all 33 arrays identical, kicks included.
-- None of the four expected behaviours appears in the model. Over the same 1 s window, the sham
+- None of the four expected behaviours appears in these runs. Over the same 1 s window, the sham
   (three forced spikes in one Kenyon cell) changes 644 cells by 1 Hz or more and turns the fly
   5.7 deg relative to the control. The tests change 967 to 2,125 cells, 1.5 to 3.3 times the
   sham, but their body effects are no larger than the sham's.
@@ -506,11 +615,78 @@ What this shows:
   patch under the legs cannot change any spike. The 0.2 weight and 15 mV gain are labelled
   guessed in the model.
 - Sugar GRN to MN9 is in the model's fit set (HANDOFF register), yet in this closed-loop run,
-  with the body attached and seed 12, 100 Hz on the sugar GRNs adds one MN9 spike. The fit assay's
-  conditions are not checked here; that comparison is for the model's owner.
+  with the body attached and seed 12, 100 Hz on the sugar GRNs adds one MN9 spike. The
+  verification above traces the difference from the model's own assay.
+
+**M2b: the check against the model's assay, live sessions, the editor, a sham distribution.**
+Built 4 October 2026, evening.
+- `config.preparation` (`closed_loop` or `brain_only`) and `config.kick_rng` (`app` or `assay`)
+  let a protocol reproduce the model owner's assays; `app/protocols/assay` holds the ones used
+  above.
+- Live sessions and the Session tab editor as in section 7.2. End-to-end test (measured, 4
+  October, `runs/app/live-e2e.log`): a 220 ms brain-only session through the real server; a
+  sugar GRN kick sent at 60 ms was applied to 34 cells; a giant fibre stim was refused by the
+  held-out guard and logged; simulated time stayed at 100 ms through a pause; resume and stop
+  worked; the session took 28 s of wall time; `replay.py` re-ran the finished recording from its
+  protocol and all 31 arrays were identical.
+- Library on m9 as the model owner fits it, with eight more shams (`runs/app/lib-m9/scores.json`,
+  recorded and scored 4 October 2026, evening). Same protocols, seed 12, closed loop, the app's
+  kicks, thresholds and windows. Three rules changed after the first library was viewed, and are
+  labelled so: the override is gone, the readout drops incompletely traced cells, and the trials
+  summary judges a mean. Every number is derived from the recordings.
+
+  | Protocol | Criterion | Measured | Driven cells | 9 shams, same window (6 distinct) | Verdict |
+  |---|---|---|---|---|---|
+  | sugar-grn-kick | MN9_L minus control >= 5 Hz | +7.00 Hz (7 vs 0) | | all 0.00 | PASS |
+  | sugar-patch-legs | as above | 0.00; no spike changed | | all 0.00 | FAIL, no spike changed |
+  | mdn-cschrimson | forward minus control <= -0.5 mm | +0.04 mm | MDN 22.2 Hz vs 0 | -0.06 to +0.02 mm | FAIL within noise |
+  | dna02-left | left turn minus control >= +5 deg | -0.15 deg | DNa02 9.5 Hz vs 0 | -1.0 to +2.9 deg | FAIL within noise |
+
+  - Sugar GRNs to MN9 passes on this trial, as in the model's own assay. The first library's
+    FAIL came from the override and one low draw (the verification above).
+  - Leg sugar still changes no spike, as the model's constants predict (first library, above).
+  - MDN and DNa02 fire well above control, but the body neither backs up nor turns beyond the
+    shams, because it does not walk at all. In every run of this library the thorax drops from
+    3.34 mm to 0.68 mm by 250 ms, the body rolls to about 28 deg by 1 s, and it stays there.
+    Over the test window the control moves 0.03 mm back and 0.13 mm sideways and turns 0.3
+    deg; a walking fly covers roughly 10 mm/s (guessed, typical). The model owner's own m9
+    closed-loop record says the same: "It does not walk or take off"
+    (`docs/media/m9_closed_loop.md`). So these two tests ask for a behaviour the current body
+    cannot produce. Their FAIL is the model's present state, not evidence against the
+    descending pathways' wiring.
+  - Sham distribution: the 9 shams (the original and 8 drawn Kenyon cells, all at 500 ms) give
+    6 distinct trajectories. Outside the forced cells, three shams repeat one spike train exactly
+    and two repeat another; the scorer now hashes every spike in the window to count this, and
+    the Compare tab reports it. Two causes:
+    - Every sham's forced spikes fall on the same steps, because the app's kick stream depends
+      on the seed and rate, not the target.
+    - A Kenyon cell's few extra spikes change no other spike until one shared downstream spike
+      moves. In 4 of the 9 this is the same DL2d_adPN projection neuron, 0.1 ms later, 8.5 ms
+      after the first kick; in the other 5 nothing else changes for 40 ms.
+    My reading (inferred, not tested): small voltage differences are erased at each cell's next
+    reset, so different cells funnel into a few trajectories. Across the shams the body moves
+    -0.06 to +0.02 mm forward and turns -1.0 to +2.9 deg, and 786 to 2,604 cells change.
+  - A second set of 8 shams with new cells and onsets 505 to 540 ms (rule added after the first
+    set was seen): queued at 20:31 CDT behind other projects' jobs in the slot limiter; not yet recorded.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
+
+First cut built 4 October 2026, evening: `app/build/eye.py` writes each body's eye geometry
+(flyemu-eye/1: the 721 ommatidium centroids per eye from flygym's ommatidia map, the model's
+per-eye pale/yellow masks from `flyemu.vision.connectome_pale_masks`, and 6,026 photoreceptor
+cells with an ommatidium from `data/derived/retinotopy.csv`, all derived). The Eye tab draws both
+mosaics shaded by the recorded readout at the current time; clicking an ommatidium lists its
+photoreceptor cells and highlights them on the brain map. Observed in the first library's
+control at 1 s: the white sky reaches 1.0, the renderer's own ceiling (43 % of readouts in that
+run; the recorder's uint8 scale loses nothing), and the horizon tilts with the fallen body.
+A photoreceptor's inspector row links to its ommatidium. The tab states an assignment check
+(derived from `data/derived/retinotopy.csv`, the fly worker's file): a real lamina cartridge
+receives 6 R1-R6 terminals (neural superposition, measured anatomy), but the assignment gives 1
+to 61 per ommatidium (mean 5.4 over the 629 ommatidia with any; exactly 6 in 19; 202 have one).
+So the counts average out, while single ommatidia are poorly resolved; worth the fly worker's
+attention if retinotopic precision matters for motion vision. Not yet built: the column table,
+LPTC traces.
 
 **M4: fidelity and body selection.** Profiles and switches with labels and status; flybody vs
 NeuroMechFly (request 1); inventory and ledger panel per run.
