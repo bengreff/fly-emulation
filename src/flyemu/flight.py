@@ -452,6 +452,7 @@ class BladeElementWing:
         self._dvn = [np.zeros(n_strips), np.zeros(n_strips)]
         self.force = np.zeros((2, 3))                  # last total force per wing (world, uN)
         self.parts = np.zeros((2, 4, 3))               # per wing: lift, drag, rotational, added mass (world, uN)
+        self.parts_m0 = np.zeros((2, 4, 3))            # the same terms' moments about the world origin (uN*mm); record only
         self.alpha = np.zeros((2, n_strips))           # last folded angle of attack per strip (deg)
         self._v = np.zeros(6)
 
@@ -483,6 +484,7 @@ class BladeElementWing:
                 fam = -(self.rho(m) * np.pi / 4.0 * self.c[k] ** 2 * self.dr[k] * self._dvn[k])[:, None] * n
                 Fam, Mam = fam.sum(0), np.cross(Pm - d.xipos[b], fam).sum(0)
                 self.parts[k, 3] = Fam
+                self.parts_m0[k, 3] = np.cross(Pm, fam).sum(0)
             W = v0 + np.cross(om, P - x) - m.opt.wind
             W -= np.outer(W @ sp, sp)
             U = np.linalg.norm(W, axis=1)
@@ -491,6 +493,7 @@ class BladeElementWing:
                 d.xfrc_applied[b, 3:] = Mam
                 self.force[k] = Fam
                 self.parts[k, :3] = 0.0
+                self.parts_m0[k, :3] = 0.0
                 continue
             u = W / np.maximum(U, 1e-12)[:, None]
             un = u @ n
@@ -511,6 +514,7 @@ class BladeElementWing:
             F = parts[0] + parts[1] + parts[2]
             Ft = F.sum(0)
             self.parts[k, :3] = [x.sum(0) for x in parts]
+            self.parts_m0[k, :3] = [np.cross(P, x).sum(0) for x in parts]
             self.alpha[k] = alpha
             d.xfrc_applied[b, :3] = Ft + Fam
             d.xfrc_applied[b, 3:] = np.cross(P - d.xipos[b], F).sum(0) + Mam

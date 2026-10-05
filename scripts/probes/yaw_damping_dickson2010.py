@@ -48,6 +48,7 @@ sys.path.insert(0, str(REPO / "src"))
 from flyemu import flight  # noqa: E402
 from flyemu.body import Body  # noqa: E402
 
+TERMS = ("lift", "drag", "rotational", "added_mass")
 PHI0, K_PHI, A0, K_A = 70.0, 0.01, 45.0, 1.5             # Dickson 2010 baseline (measured protocol)
 ROBOT = {"R_m": 0.23, "c_m": 0.065, "hinge_sep_m": 0.11, "C_omega": -6.4e2,
          "slope": {"pa": 3.1e3, "pd": 1.3e3, "pr": 1.3e3, "pv": 3.4e3}}
@@ -115,7 +116,7 @@ def run(tab: dict, f_hz: float, omega_star: float, area: float, added_mass: bool
     p0, quat0 = d.qpos[:3].copy(), d.qpos[3:7].copy()
     om = omega_star * f_hz
     per = int(round(1000.0 / f_hz / dt_ms))
-    rec = []
+    rec, tz = [], []
     qz, qq, Rm = np.zeros(4), np.zeros(4), np.zeros(9)
     for i in range(per * beats):
         th = om * i * dt_ms / 1000.0
@@ -133,7 +134,10 @@ def run(tab: dict, f_hz: float, omega_star: float, area: float, added_mass: bool
         F = sum(d.xfrc_applied[bb, :3] for bb in be.bid)
         M = sum(d.xfrc_applied[bb, 3:] + np.cross(d.xipos[bb] - O, d.xfrc_applied[bb, :3]) for bb in be.bid)
         rec.append(np.r_[F, M])
+        # per-term yaw torque about the vertical through O: (moment about origin) - O x F, z component
+        tz.append([(be.parts_m0[:, j].sum(0) - np.cross(O, be.parts[:, j].sum(0)))[2] for j in range(4)])
     r = np.array(rec[-per * avg_beats:])
+    tz = np.array(tz[-per * avg_beats:])
     rho = float(m.opt.density)
     cbar = float((be.c[0] * be.dr[0]).sum()) / tip_radius(be)
     scale = rho * cbar ** 5 * f_hz ** 2
@@ -142,7 +146,8 @@ def run(tab: dict, f_hz: float, omega_star: float, area: float, added_mass: bool
             "Fz_uN": float(mean[2]), "Mz_uN_mm": float(mean[5]), "cbar_mm": cbar, "R_mm": tip_radius(be),
             "hinge_offset_over_R": float(hinge_half / tip_radius(be)), "stroke_normal_world": n_world.round(4).tolist(),
             "per_beat_tau_star": [float(x) for x in np.array(rec[-per * avg_beats:])[:, 5].reshape(avg_beats, per).mean(1) / scale],
-            "steps_per_beat": per}
+            "steps_per_beat": per,
+            "tau_star_by_term": dict(zip(TERMS, (tz.mean(0) / scale).tolist()))}
 
 
 def tip_radius(be) -> float:
@@ -161,6 +166,7 @@ def main() -> None:
     ap.add_argument("--no-added-mass", action="store_true")
     ap.add_argument("--modes", default="omega,pa,pd,pr,pv")
     ap.add_argument("--geometry-only", action="store_true")
+    ap.add_argument("--tag", default="", help="suffix for the output files")
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     b0 = Body(vision=False)
@@ -197,8 +203,11 @@ def main() -> None:
         ref = ROBOT["C_omega"] if mode == "omega" else ROBOT["slope"][mode]
         res["runs"][mode] = {"rows": rows, "slope": float(k), "intercept": float(c0), "r2": float(r2),
                              "robot_slope": ref, "ratio": float(k / ref), "abs_ratio": float(abs(k / ref))}
+        res["runs"][mode]["slope_by_term"] = {
+            t: float(np.linalg.lstsq(A, np.array([r_["tau_star_by_term"][t] for r_ in rows]), rcond=None)[0][0]) for t in TERMS}
+        print(mode, "slope by term", {t: round(v, 1) for t, v in res["runs"][mode]["slope_by_term"].items()}, flush=True)
         print(mode, "slope", round(k, 1), "robot", ref, "ratio", round(k / ref, 3), "r2", round(r2, 4), flush=True)
-    tag = "_noam" if a.no_added_mass else ""
+    tag = ("_noam" if a.no_added_mass else "") + a.tag
     (out / f"dickson2010{tag}.json").write_text(json.dumps(res, indent=1))
     modes = list(res["runs"])
     fig, axs = plt.subplots(1, len(modes), figsize=(3.4 * len(modes), 3.4))

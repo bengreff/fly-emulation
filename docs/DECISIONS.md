@@ -1115,3 +1115,21 @@ Result (5 October, 03:03; m9f seed 12, rates over 100-400 ms; `runs/s12/legtaste
 - Per the rule above the switch stays off in the working profile (m9f unchanged). It is available as `--set 'sense:taste_leg|modality_source=1'`.
 - Criterion 3 (gate unchanged): PASS. Seeds 12-19 with the switch on give the same numbers as m9f in every field except wall time (brain excluding ORNs 0.150-0.153 Hz, motor 2.01-2.07 Hz, thorax 0.560-0.562 mm; `runs/s12/gates/cl_wg_s*.json`).
 - Sheet: `docs/media/s12_leg_taste.png` (viewed).
+
+### Pre-registration: Dickson 2010 yaw damping split by force term (5 October, 03:15; diagnostic, nothing changes in the model)
+
+Record-only change: `BladeElementWing.parts_m0` keeps each term's moment about the world origin. The probe takes each term's yaw torque about the vertical through the hinge midpoint, (moment about the origin) − O × F, and fits a damping slope per term on the same five yaw rates as the 02:45 test (added mass on, dt 0.05 ms, mean of beats 4-6). The four term slopes must add up to the total slope (−856) within 1%.
+
+Prediction, from symmetry, which revises the 02:52 note that named the rotational term first:
+- Lift: about 0. With a horizontal stroke plane, the strip velocity stays horizontal and perpendicular to the span under yaw, so lift stays vertical and has no yaw arm.
+- Rotational: about 0. Yaw adds a speed change that has the same sign through each half-stroke and is nearly even about mid-stroke. dα/dt is odd about mid-stroke, so the first-order change in U·dα/dt cancels over each half-stroke.
+- Added mass: about 0 (a cycle average of a time derivative; the 02:52 runs with and without it gave the same slope).
+- Drag: at least 90% of the total. If so, the 34% excess sits in the drag term: its coefficient, the wing's radial chord distribution (torque scales with (R/c̄)^4 times the third moment of area), or a definition of R or c̄ that differs from the robot's.
+If drag carries less than 90%, the symmetry argument is wrong for this model and the leading term is examined next.
+
+Result (5 October, 03:21; `runs/s12/flight/dickson2010/dickson2010_split.json`): prediction holds. Damping slope by term: drag −858.0, rotational +1.9, added mass −0.1, lift 0.0; the four sum to the total −856.2 exactly. Drag carries 100.2% of the damping.
+- The 02:52 note naming the rotational coefficient as first suspect is withdrawn: its contribution cancels over each half-stroke, as the symmetry argument says.
+- The 34% excess therefore sits in the translational drag term. The model's geometry matches the robot's definitions as far as the paper states them: rotation angle is the chord from vertical with 45° angle of attack at mid-stroke (paper, Fig. 2 legend and text), R is the wing length, c̄ the mean chord, and the model's c̄/R is set to the robot's 0.283. The model's ellipse has r̂2 0.539 and r̂3 0.587 (derived), close to a melanogaster wing; no published r̂ for the robot wing was found in the paper.
+- The hinge offset makes the gap larger, not smaller. A strip-theory estimate (derived) of the drag damping, proportional to ∫ c r (r + h cos φ)² dr averaged over the stroke, gives about 15% more damping at the robot's offset (0.24 R) than at the model's (0.164 R). At equal offset the model's excess would be about 1.5×.
+- Interpretation (inferred, not tested): the quasi-steady drag derivative 2·C_D(45°)·q/U, with the 1999 robofly C_D of about 1.7 at 45°, overstates how much a flapping wing's drag changes with a small change in speed. Candidates: a lower C_D at Re 100 in this robot, or induced flow, which the model leaves out. This runs the opposite way to the hydei-robot comparison, where the model's stroke-direction force is 0.70 of the robot's, so one coefficient scale cannot fix both.
+- Next discriminating experiment: a measured revolving-wing drag polar at Re about 100 (Sane & Dickinson 2001, or Dickson & Dickinson 2004) put through both tests unchanged. If it lowers the damping toward 1.0 without lowering Fx further against the hydei robot, the coefficient is the cause; if both fall, the quasi-steady drag derivative itself is the problem. No model change until then.
