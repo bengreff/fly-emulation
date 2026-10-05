@@ -7,75 +7,60 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 04:00 CDT, 5 October 2026 (the 10-seed library is finishing on backhouse):**
+**State at 05:10 CDT, 5 October 2026 (the 10-seed m9 library is recorded and scored):**
 
 - **Done and pushed** (branch `app`; 144 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
     - On seeds 0 to 2, every cell's spike count matches the model's own run.
     - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
       (measured; M2b in section 14).
-  - **The first library's +0.5 Hz** came from three things: the MN9_R average, a non-m9 override
-    and one low trial. Rerun on plain m9, the library passes sugar at +7 Hz.
-  - **Shams:** 17 recorded, 13 distinct. Turn -1.2 to +3.8 deg, forward -0.06 to +0.05 mm
-    (measured).
-  - **Built:** the live session and the protocol editor, tested end to end (M2b). The Eye tab, with
-    the inspector link and the photoreceptor assignment check (M3, first part).
+  - **Shams:** 17 recorded at seed 12, 13 distinct, plus one per seed in the 10-seed library.
+  - **Built:** the live session and the protocol editor (M2b); the Eye tab, with the inspector
+    link and the photoreceptor assignment check (M3, first part).
   - **The noise rule for the 10-seed mean,** declared at 02:10 CDT before any of its runs: a
     paired sign-flip test against each seed's sham (section 14, "10-seed library").
-  - **Tooling for backhouse:**
-    - `run_library.py --parallel N`.
-    - In a copy without `.git`, `record.py` takes the commit from `FLYAPP_COMMIT`, labelled as
-      declared.
-- **The 10-seed m9 library, part by part:**
-  - **Mac, complete and stopped.**
-    - Seeds 0 to 5 of the five informative protocols (control, one-cell sham, sugar GRN, MDN,
-      DNa02): 30 runs in `runs/app/lib-m9-seeds`.
-    - Each took 190 to 240 s (measured, `runner.log`), not the 14 min estimated at 03:55.
-    - control-s6 was stopped at 03:54 and moved aside as `control-s6.incomplete-20261005-0354`.
-  - **Backhouse, running since 03:56 CDT:** 36 runs, 8 at a time, in tmux session `flyapp-lib`.
-    - **Where:** `~/flyapp`, a `git archive` of 9901167, plus the Mac's `data/cache` (identical by
-      checksum) and its own `.venv` built from the same `uv.lock`.
-    - **Script:** `~/flyapp/bh_lib.sh` (osmesa rendering, one BLAS thread per run,
-      `FLYAPP_COMMIT` set).
-    - **Output:** `~/flyapp/runs/app/lib-m9-seeds-bh`. Its `runner.log` ends with "runner
-      finished".
-    - **Order:** first all six protocols at seeds 6 to 9 (24 runs), then the control and leg sugar
-      at seeds 0 to 5 (12 runs).
-    - **Speed (measured at 03:58):** 194 s of wall time per simulated second, so about 7 min per
-      2 s run. Memory in use was 19 GB of 31, with 11 GB available. Load average was 20 on 28
-      threads, which includes another project's jobs.
-    - **Expected finish (estimate):** about 04:20 for seeds 6 to 9 and about 04:35 for all 36.
-    - **WSL keepalive:** WSL stops when no session is attached, so a Mac-side keepalive keeps it up
-      (`ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`, Mac pid 23400, mine). Stop
-      it once `runner.log` says "runner finished".
-  - **Why every run of a seed stays on one machine:** a test is scored against the control at its
-    own seed, and the scorer requires their spike trains to be identical up to the stimulus. The
-    Mac (arm64, its own GL) and backhouse (x86, osmesa) are not expected to match bit for bit.
-    The backhouse controls at seeds 0 to 5 pair with its leg sugar runs. They also test this
-    expectation: if they match the Mac's controls spike for spike, the machines are
-    interchangeable.
+  - **Tooling for backhouse:** `run_library.py --parallel N`; in a copy without `.git`,
+    `record.py` takes the commit from `FLYAPP_COMMIT`, labelled as declared.
+- **The 10-seed m9 library is complete** (section 14, "10-seed library: results").
+  - **Runs:** 66, all exit 0. Mac: seeds 0 to 5 of the five informative protocols (30, 190 to
+    240 s each). Backhouse: all six protocols at seeds 6 to 9, and the control and leg sugar at
+    seeds 0 to 5 (36, 8 at a time, about 330 s each, finished 04:29 CDT).
+  - **Folders on the Mac:** `runs/app/lib-m9-seeds` holds seeds 0 to 9 of the five informative
+    protocols (the backhouse seeds 6 to 9 were copied in). `runs/app/lib-m9-seeds-bh` is the
+    backhouse folder as collected, and is where leg sugar is scored. The stopped Mac run
+    `control-s6.incomplete-20261005-0354` stays in the first folder; the scorer skips it.
+  - **Result on the mean of 10 seeds** (derived): sugar GRN to MN9 +8.8 Hz (SD 2.2), PASS,
+    p = 0.001 against the shams. MDN -0.015 mm and DNa02 -0.30 deg, FAIL, both within noise
+    (p = 0.66 and 0.53). Leg sugar changes no spike at any seed. All four match the expectations
+    written before the runs.
+  - **Mac against backhouse:** the same control at the same seed runs identically for 244 to
+    972 ms, then drifts apart; at 2 of 6 seeds before the stimulus. Each seed must stay on one
+    machine.
+- **Ben's decision (Director, 05:05):** keep m9 for this round, since it matched the fly worker's
+  assay and was already partly recorded. Next round, record the fly worker's current working
+  profile, m9r, as a second library, so the app can compare models side by side.
 - **Next steps, in order:**
-  1. **Collect at about 05:15:**
-     - Copy the finished backhouse runs to the Mac:
-       `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/flyapp/runs/app && tar -cf - lib-m9-seeds-bh"' | tar -x -C runs/app`.
-     - Copy the backhouse runs at seeds 6 to 9 of the five informative protocols into
-       `runs/app/lib-m9-seeds`. No names clash, and each seed keeps its own machine's control and
-       sham. That folder then holds seeds 0 to 9.
-     - Leg sugar is scored in `runs/app/lib-m9-seeds-bh`, which has it and its controls at all 10
-       seeds.
-  2. **Score both folders**
-     (`.venv/bin/python app/tools/score_library.py --lib runs/app/lib-m9-seeds`, and the same for
-     `-bh`). Compare the Mac and backhouse controls at seeds 0 to 5.
-  3. **Record:** add the per-seed and mean results to section 14, then commit and push.
-  4. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
-- **Question for the Director:** the library pins m9, while the fly worker's working model on main
-  is now m9w. Should the library move to m9w? My recommendation is to keep m9 for this round and
-  rerun on m9w once its body walks.
+  1. **The m9r library.**
+     - m9r exists only on `main` (`src/flyemu/profiles.py`, `"m9r"`; adopted 5 October 03:31 per
+       main's `docs/HANDOFF.md`). Branch `app` does not have it, so merge `main` into `app`
+       first, then rerun the app's tests.
+     - Record the same six protocols at seeds 0 to 9 into `runs/app/lib-m9r-seeds`, on backhouse,
+       with every run of a seed on one machine. Expected: about 66 runs at about 330 s each, 8 at
+       a time, so about 50 min and 19 GB (estimated from this round).
+     - Then the Compare tab needs a model selector across libraries (a small app change).
+  2. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
+- **Question for the Director:**
+  1. Main's gate runs m9r with `--set 'motor_unit:all|force_per_spike=10'` on top (main's
+     `docs/HANDOFF.md`). Should the m9r library use the profile as named, or as the gate runs it?
+     Options: (a) plain m9r; (b) m9r with the override, labelled "custom" in the app; (c) both.
+     Recommendation: (a), so each library is a named profile and the comparison is clean; add (b)
+     later if the fly worker reports results only with the override.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks; the m9 body does not walk.
   - Warm starts and branching wait on model request 2 (section 13, on hold).
-- **Running now:** the backhouse tmux session `flyapp-lib` and the Mac keepalive (pid 23400).
-  Nothing else of mine runs on the Mac.
+- **Running now:** nothing of mine on either machine. The backhouse runner finished at 04:29 and
+  its tmux session closed; the Mac keepalive (pid 23400) was stopped. `~/flyapp` on backhouse
+  (code, data cache, `.venv`, runs) is kept for the m9r round.
 
 ## 1. What it is for
 
@@ -772,6 +757,67 @@ seeds 0 to 9, closed loop, with the app's kicks, into `runs/app/lib-m9-seeds`.
   - Leg sugar should change no spike at any seed.
   - MDN and DNa02 should fail within noise while the body does not walk.
   - These are expectations, not results.
+
+**10-seed library: results** (scored 5 October 2026 at 05:05 CDT; `runs/app/lib-m9-seeds/scores.json`
+and `runs/app/lib-m9-seeds-bh/scores.json`). Every number is derived from the recordings by
+`score_library.py`. Thresholds are guessed and were declared before any run.
+- **Where each seed ran:** seeds 0 to 5 on the Mac (commits f54f3bc and 253ef36), seeds 6 to 9 on
+  backhouse (9901167, declared by the launcher). No file under `src` or `data` differs between
+  these commits. Leg sugar ran on backhouse at all 10 seeds, against backhouse controls.
+- **Matched:** at every seed, every test's spike train is identical to its control's until the
+  stimulus.
+
+Per seed: the test minus the same seed's control, with the same seed's one-cell sham in brackets.
+
+| Seed | Machine | Sugar GRN: MN9, Hz | MDN: forward, mm | DNa02: left turn, deg | Leg sugar: MN9, Hz |
+|---|---|---|---|---|---|
+| 0 | Mac | +10 (0) | -0.01 (-0.04) | -0.92 (+1.47) | 0, no spike changed |
+| 1 | Mac | +10 (0) | -0.01 (-0.01) | -2.59 (-0.87) | 0, no spike changed |
+| 2 | Mac | +8 (0) | -0.05 (-0.01) | -1.74 (-0.42) | 0, no spike changed |
+| 3 | Mac | +7 (0) | +0.05 (-0.03) | +0.29 (+0.25) | 0, no spike changed |
+| 4 | Mac | +9 (0) | -0.06 (-0.01) | -1.31 (+0.51) | 0, no spike changed |
+| 5 | Mac | +8 (0) | -0.01 (-0.07) | -0.59 (-0.62) | 0, no spike changed |
+| 6 | backhouse | +12 (0) | -0.02 (-0.06) | +1.59 (-2.56) | 0, no spike changed |
+| 7 | backhouse | +10 (0) | +0.02 (+0.03) | +1.73 (+0.21) | 0, no spike changed |
+| 8 | backhouse | +10 (0) | -0.06 (0.00) | -0.88 (-1.23) | 0, no spike changed |
+| 9 | backhouse | +4 (0) | -0.00 (-0.02) | +1.48 (+1.11) | 0, no spike changed |
+
+On the mean of the 10 seeds:
+
+| Test | Criterion | Mean (SD) | Sign-flip p vs shams | On the mean | Single trials passing |
+|---|---|---|---|---|---|
+| sugar-grn-kick | MN9 +5 Hz or more | +8.8 Hz (2.2) | 0.001 (1 of 1,024) | PASS | 9 of 10 (seed 9: +4 Hz) |
+| mdn-cschrimson | forward -0.5 mm or less | -0.015 mm (0.033) | 0.66, within noise | FAIL | 0 of 10 |
+| dna02-left | left turn +5 deg or more | -0.30 deg (1.50) | 0.53, within noise | FAIL | 0 of 10 |
+| sugar-patch-legs | MN9 +5 Hz or more | 0.0 Hz (0.0) | 1.0 (4 pairs: backhouse has shams only at seeds 6 to 9) | FAIL, no spike changed | 0 of 10 |
+
+- **The stimulated cells do fire:** DNa02 at 9.7 Hz (SD 0.35) and MDN at 22.3 Hz (SD 0.40), both
+  against 0 Hz in the control. The body does not turn or back up because the m9 body does not walk.
+- **All four results match the expectations written at 02:10.**
+- **The `-bh` folder on its own** (seeds 6 to 9, 4 pairs) cannot pass any test: with 4 pairs the
+  smallest possible p is 1/16 = 0.0625. The 10-seed folder is the result. The sugar test there
+  reads +9.0 Hz with p = 0.0625.
+
+**Mac against backhouse, the same control at the same seed** (seeds 0 to 5; measured by comparing
+the two recordings spike by spike):
+
+| Seed | Spikes, Mac / backhouse | Same (step, cell) spikes | First divergence | Final thorax position difference |
+|---|---|---|---|---|
+| 0 | 91,148 / 92,017 | 67,734 | 799.1 ms | 0.014 mm |
+| 1 | 90,127 / 93,792 | 69,375 | 947.8 ms | 0.046 mm |
+| 2 | 82,981 / 91,303 | 72,245 | 971.6 ms | 0.072 mm |
+| 3 | 91,950 / 91,619 | 69,196 | 243.8 ms | 0.020 mm |
+| 4 | 90,862 / 96,822 | 68,759 | 926.9 ms | 0.044 mm |
+| 5 | 92,000 / 91,797 | 68,693 | 266.0 ms | 0.034 mm |
+
+- The two machines run identically for a while, then drift apart. At seeds 3 and 5 they diverge
+  before the 500 ms stimulus. So a Mac test paired with a backhouse control would have failed the
+  scorer's match check. Keeping each seed on one machine was necessary.
+- After they diverge, the runs differ by as much as two seeds do. Total spikes differ by up to
+  10%, and the body ends within 0.07 mm.
+- Why they diverge is not tested. Candidates (inferred): floating point on arm64 against x86,
+  different numpy and BLAS builds (Python 3.12.14 against 3.12.3), and the renderer (Apple GL
+  against osmesa) if the eyes feed back into the brain in closed loop.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
