@@ -9,6 +9,7 @@ import { Traces } from "./traces.js";
 import { Inspector, esc, chip, approxChip } from "./inspector.js";
 import { controlsFor, compare, stimWindow, sameModel, incompleteReadout, readoutTypes } from "./compare.js";
 import { SessionPanel } from "./session.js";
+import { EyePanel } from "./eye.js";
 
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
@@ -88,6 +89,8 @@ async function main() {
   resize();
   await setupCompare(cat, entry);
   app.session = new SessionPanel($("#tab-session"), { rec });
+  app.eye = new EyePanel($("#tab-eye"), { onSelect: i => select(i), onHighlight: ids => app.brain.setHighlight(ids) });
+  if (bodyEntry) await app.eye.load(`${bodyEntry.path}/eye.json`, rec, atlas);
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
   const layout = params.get("view");
@@ -158,6 +161,7 @@ function tick(now) {
   app.body.render();
   app.brain.render();
   app.traces.draw(state.t);
+  if (app.eye) app.eye.draw(state.t);
   const gl = app.brain.groupLabels();
   const key = gl.map(l => `${l.x | 0},${l.y | 0}`).join();
   if (key !== tick.glKey) {
