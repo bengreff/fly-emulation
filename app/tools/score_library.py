@@ -15,6 +15,7 @@ import argparse
 import gzip
 import json
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -119,6 +120,39 @@ def measure(run: Run, ctrl: Run, s0: int, s1: int, readout: list[str], types: np
     }
 
 
+def trials(rows: list[dict]) -> list[dict]:
+    """Runs of one protocol at several seeds (run_library --seeds names them <protocol>-s<seed>):
+    the readout per trial and its mean and SD, as the model owner reports its assays. A rate
+    criterion judged on the mean over trials is a rule added on 4 October 2026 after the first
+    library was viewed, so it is reported beside the single-trial verdicts, not instead of them."""
+    groups: dict[str, list[dict]] = {}
+    for r in rows:
+        m = re.fullmatch(r"(.+)-s(\d+)", r["run"])
+        if m and r.get("readout_hz") is not None:
+            groups.setdefault(m.group(1), []).append(r)
+    out = []
+    for name, rs in sorted(groups.items()):
+        if len(rs) < 2:
+            continue
+        rs.sort(key=lambda r: r.get("seed") or 0)
+        hz = np.array([r["readout_hz"] for r in rs])
+        d = [r.get("readout_delta_hz") for r in rs if "error" not in r]
+        g = {"protocol": name, "seeds": [r.get("seed") for r in rs], "readout_hz": hz.tolist(),
+             "readout_hz_mean": float(hz.mean()), "readout_hz_sd": float(hz.std(ddof=1)),
+             "excluded_incomplete": rs[0].get("readout_excluded_incomplete", [])}
+        if d and len(d) == len(rs):
+            g["readout_delta_hz"] = d
+            g["readout_delta_hz_mean"] = float(np.mean(d))
+            c = rs[0].get("criterion")
+            if c and c["metric"] == "readout_delta_hz":
+                v = g["readout_delta_hz_mean"]
+                g["criterion_on_mean"] = {"op": c["op"], "value": c["value"], "value_measured": v,
+                                          "pass": v >= c["value"] if c["op"] == ">=" else v <= c["value"],
+                                          "rule": "mean over trials; added 4 Oct 2026 after the first library was viewed"}
+        out.append(g)
+    return out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--lib", type=Path, default=REPO / "runs" / "app" / "lib")
@@ -184,7 +218,7 @@ def main() -> int:
     commit = {r.path.name: ((r.m.get("provenance") or {}).get("git") or {}).get("commit") for r in runs}
     doc = {"format": "flyemu-scores/1", "lib": str(a.lib.relative_to(REPO)) if a.lib.is_relative_to(REPO) else str(a.lib),
            "basis": "derived from the recordings by app/tools/score_library.py; thresholds guessed and declared in the protocols",
-           "commits": commit, "scores": out}
+           "commits": commit, "scores": out, "trials": trials(out)}
     (a.lib / "scores.json").write_text(json.dumps(doc, indent=1) + "\n")
     print(f"{'run':20} {'verdict':16} {'measured':>10} {'needed':>10} {'sham max|x|':>12}  first diff / onset   cells up/down (sham)"
           "   readout Hz run / control")
@@ -206,6 +240,16 @@ def main() -> int:
         print(f"{r['run']:20} {verdict:16} {meas:>10} {need:>10} {sham:>12}  {r['first_divergence_step']} / {r['first_event_step']}"
               f"{'' if r['matched'] else ' NOT MATCHED'}   {r['up_1hz']}/{r['down_1hz']} ({sh.get('up_1hz', '-')}/{sh.get('down_1hz', '-')})"
               f"   {ro}")
+    for g in doc["trials"]:
+        ex = f" (excl. {', '.join(g['excluded_incomplete'])})" if g["excluded_incomplete"] else ""
+        line = (f"trials {g['protocol']}: seeds {g['seeds']}; readout Hz {[round(x, 2) for x in g['readout_hz']]}{ex}; "
+                f"mean {g['readout_hz_mean']:.2f}, SD {g['readout_hz_sd']:.2f}")
+        if "readout_delta_hz_mean" in g:
+            line += f"; vs control mean {g['readout_delta_hz_mean']:+.2f} Hz"
+        if "criterion_on_mean" in g:
+            c = g["criterion_on_mean"]
+            line += f"; on the mean {'PASS' if c['pass'] else 'FAIL'} ({c['op']}{c['value']}, post hoc rule)"
+        print(line)
     return 0
 
 

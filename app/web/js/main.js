@@ -166,7 +166,9 @@ function tick(now) {
   }
   $("#time").textContent = `${state.t.toFixed(1)} / ${rec.duration.toFixed(0)} ms`;
   $("#scrub").value = String(rec.duration ? state.t / rec.duration * 1000 : 0);
-  $("#bodyinfo").textContent = app.body.thoraxHeight !== undefined ? `thorax ${app.body.thoraxHeight.toFixed(2)} mm` : "";
+  $("#bodyinfo").textContent = (rec.manifest.preparation || {}).coupling === "brain_only"
+    ? "brain only: body not stepped, pose is the start pose"
+    : app.body.thoraxHeight !== undefined ? `thorax ${app.body.thoraxHeight.toFixed(2)} mm` : "";
   requestAnimationFrame(tick);
 }
 
