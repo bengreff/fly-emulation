@@ -14,9 +14,11 @@ defaults (1 uN*mm/rad; legacy m4), 1 = measured.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import mujoco as mj
+
 import numpy as np
 import pandas as pd
 
@@ -103,6 +105,34 @@ def register_damping_source(reg, body) -> None:
                                          "so c/k <= ~0.1 s; 0.05 s inside that bound (FlyMimic's choice)",
                             uncertainty="bounds 0.005-0.1 s (row b3_damping_tau_s)"))
     set_damping_from_stiffness(body, tau)
+    if int(reg.require("joint:leg", "damping_mirror", units="enum",
+                       model_use="0 each leg's damping from its own projected stiffness; 1 left legs take "
+                                 "the right partner's (the left/right difference, up to 10%, comes from the "
+                                 "scan's segment geometry, not data; bilateral symmetry inferred; s12)",
+                       subsystem="body_mechanics", minimal=0,
+                       minimal_note="per-leg damping as derived; mirroring is an option (s12)")):
+        mirror_leg_damping(body)
+
+
+def mirror_leg_damping(body) -> int:
+    """Each left leg hinge DOF (not the inter-tarsal chain) takes its right partner's
+    damping (joint:leg|damping_mirror). Returns the DOFs set."""
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    n = 0
+    for j in range(m.njnt):
+        name = (mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "").removeprefix(pre)
+        if m.jnt_type[j] != mj.mjtJoint.mjJNT_HINGE or name.count("tarsus") >= 2:
+            continue
+        if not re.search(r"(^|[_-])l[fmh]_", name):
+            continue
+        rn = re.sub(r"(^|[_-])l([fmh])_", r"\1r\2_", name)
+        r = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + rn)
+        if r < 0:
+            raise KeyError(rn)
+        m.dof_damping[m.jnt_dofadr[j]] = m.dof_damping[m.jnt_dofadr[r]]
+        n += 1
+    return n
 
 
 def set_damping_from_stiffness(body, tau_s: float) -> int:

@@ -64,3 +64,27 @@ def test_rest_mirror_gives_left_legs_the_right_values():
         for j, v in zip(right.joint, right.spring_ref_rad):
             assert ref[j] == v
             assert ref[re.sub(r"(^|-)r([fmh])_", r"\1l\2_", j)] == v
+
+
+def test_damping_mirror_gives_left_legs_the_right_values():
+    """joint:leg|damping_mirror 1: every left leg hinge DOF (not the inter-tarsal chain) takes
+    its right partner's damping; the right legs are unchanged."""
+    import re
+
+    import mujoco as mj
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    passive.apply_coupled(b)
+    passive.set_damping_from_stiffness(b, 0.05)
+    m = b.sim.mj_model
+    pre = f"{b.fly.name}/"
+    names = {(mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "").removeprefix(pre): j for j in range(m.njnt)}
+    before = m.dof_damping.copy()
+    n = passive.mirror_leg_damping(b)
+    left = [k for k in names if re.search(r"(^|[_-])l[fmh]_", k) and k.count("tarsus") < 2]
+    assert n == len(left) == 21
+    for k in left:
+        r = names[re.sub(r"(^|[_-])l([fmh])_", r"\1r\2_", k)]
+        assert m.dof_damping[m.jnt_dofadr[names[k]]] == before[m.jnt_dofadr[r]]
+        assert m.dof_damping[m.jnt_dofadr[r]] == before[m.jnt_dofadr[r]]
