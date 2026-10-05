@@ -105,6 +105,13 @@ def main():
     cls = circuit_classes(org.conn)
     ns = (scnt * ~tonic)
     out["silent_spikes_by_class"] = {c: int(ns[cls == c].sum()) for c in np.unique(cls[ns > 0])}
+    out["hz_by_class"] = {c: round(float(hz[cls == c].mean()), 4) for c in np.unique(cls)}
+    ty = n.type.fillna("untyped").to_numpy().astype(str)
+    tot = {}
+    for t_, h_ in zip(ty, hz):
+        if h_ > 0:
+            tot[t_] = tot.get(t_, 0.0) + float(h_)
+    out["top_types_summed_hz"] = {k: round(v, 1) for k, v in sorted(tot.items(), key=lambda kv: -kv[1])[:15]}
     print(json.dumps(out))
     if a.out:
         with open(a.out, "w") as f:
