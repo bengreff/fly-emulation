@@ -226,14 +226,47 @@ def register_coxa(reg, body) -> list[str]:
     return apply_coxa_ranges(body) if int(src) else []
 
 
+CTR_TABLE = COXA_TABLE.with_name("ctr_ranges.csv")
+
+
+def apply_ctr_ranges(body) -> list[str]:
+    """B2 (s12, F-COXA-2): coxa-trochanter pitch ranges per leg in place of the
+    joints.py envelope (-100..100 deg, assumed). Lower bound at the fold, where the
+    femur lies flat on the coxa (physical limit, derived from the model geometry);
+    upper bound at the measured walking extension (Haustein 2024, figure-read),
+    or the model's straightest reach where it falls short (hind legs)."""
+    t = pd.read_csv(CTR_TABLE, comment="#")
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    for r in t.itertuples():
+        j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + r.joint)
+        if j < 0:
+            raise KeyError(r.joint)
+        m.jnt_range[j] = (r.lo_rad, r.hi_rad)
+        m.jnt_limited[j] = 1
+    return t.joint.tolist()
+
+
+def register_ctr(reg, body) -> list[str]:
+    src = reg.require("joint:ctr", "range_source", units="enum",
+                      model_use="0 joints.py envelope (-100..100 deg, assumed), 1 fold to measured walking "
+                                "extension per leg (data/params/ctr_ranges.csv; derived + figure-read; F-COXA-2)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="legacy envelope; the fold-bounded range is an option (s12)")
+    return apply_ctr_ranges(body) if int(src) else []
+
+
 def register_rest(reg, body) -> int:
     ref = reg.require("joint:leg", "spring_reference", units="enum",
                       model_use="0 flybody neutral pose, 1 fitted to the eLife weighted protocol (F-REST-1), "
-                                "2 refitted within flybody's coxa ranges (F-COXA-2; use with joint:coxa|range_source 1)",
+                                "2 refitted within flybody's coxa ranges (F-COXA-2; use with joint:coxa|range_source 1), "
+                                "3 refitted within the fold-bounded CTr ranges (F-COXA-2; use with joint:ctr|range_source 1)",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; fitted references are a template option")
     if int(ref) == 2:
         return set_rest_angles(body, REST_TABLE_COXA)
+    if int(ref) == 3:
+        return set_rest_angles(body, REST_TABLE_CTR)
     return set_rest_angles(body) if int(ref) else 0
 
 
@@ -338,6 +371,7 @@ def apply_coupled(body, scale: float = 1.0) -> CoupledSprings:
 
 REST_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "passive_leg_rest_fit.csv"
 REST_TABLE_COXA = REST_TABLE.with_name("passive_leg_rest_fit_coxa_flybody.csv")
+REST_TABLE_CTR = REST_TABLE.with_name("passive_leg_rest_fit_ctr.csv")
 
 
 def set_rest_angles(body, table: Path = REST_TABLE) -> int:

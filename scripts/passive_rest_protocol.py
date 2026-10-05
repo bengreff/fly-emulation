@@ -19,6 +19,7 @@ body is not stated in the text; roll about the long axis is assumed.
     uv run python scripts/passive_rest_protocol.py            # compare current springs
     uv run python scripts/passive_rest_protocol.py --fit      # fit spring references
     uv run python scripts/passive_rest_protocol.py --fit --coxa-flybody   # within flybody coxa ranges (s12)
+    uv run python scripts/passive_rest_protocol.py --fit --ctr            # CTr bounded at the fold (s12, F-COXA-2)
 """
 from __future__ import annotations
 
@@ -119,6 +120,8 @@ def main() -> None:
     ap.add_argument("--fit", action="store_true")
     ap.add_argument("--coxa-flybody", action="store_true",
                     help="s12: fit within flybody's leg-specific coxa ranges (passive.apply_coxa_ranges)")
+    ap.add_argument("--ctr", action="store_true",
+                    help="s12: CTr ranges from the fold to measured extension (passive.apply_ctr_ranges)")
     ap.add_argument("--source", type=int, default=2,
                     help="passive stiffness source (1 = name mapping, 2 = coupled projection)")
     a = ap.parse_args()
@@ -129,6 +132,8 @@ def main() -> None:
         passive.apply(body, a.source)
     if a.coxa_flybody:
         passive.apply_coxa_ranges(body)
+    if a.ctr:
+        passive.apply_ctr_ranges(body)
     body.reset()
     mj.mj_forward(body.sim.mj_model, body.sim.mj_data)
     out, solved = {}, {}
@@ -152,7 +157,7 @@ def main() -> None:
             mirror = "r" + L[1:]
             if L.startswith("l") and mirror in solved:
                 starts.append(np.clip(solved[mirror], leg.lo[idx] + 1e-6, leg.hi[idx] - 1e-6))
-            if a.coxa_flybody:                  # s12: also start from the s9 fit, clipped into range
+            if a.coxa_flybody or a.ctr:         # s12: also start from the s9 fit, clipped into range
                 s9 = pd.read_csv(passive.REST_TABLE, comment="#").set_index(["leg", "joint"])
                 x9 = np.array([s9.loc[(L, leg.names[i]), "spring_ref_rad"] for i in idx], dtype=float)
                 starts.append(np.clip(x9, leg.lo[idx] + 1e-6, leg.hi[idx] - 1e-6))
@@ -161,7 +166,7 @@ def main() -> None:
             # so dogbox is tried from every start too and the lower cost is kept
             fits = [least_squares(resid, x0, bounds=(leg.lo[idx], leg.hi[idx]),
                                   diff_step=0.02, max_nfev=60, method=meth)
-                    for x0 in starts for meth in (("trf", "dogbox") if a.coxa_flybody else ("trf",))]
+                    for x0 in starts for meth in (("trf", "dogbox") if a.coxa_flybody or a.ctr else ("trf",))]
             r = min(fits, key=lambda f: f.cost)
             solved[L] = r.x
             leg.ref = ref0.copy()
@@ -176,7 +181,8 @@ def main() -> None:
                                        for v, i in zip(r.x, idx)])
         out[L] = row
         print(L, json.dumps(row))
-    dst = REPO / "runs" / ("s12_passive_rest_coxa_flybody" if a.coxa_flybody else "s9_passive_rest")
+    dst = REPO / "runs" / ("s12_passive_rest_coxa_flybody" if a.coxa_flybody else
+                           "s12_passive_rest_ctr" if a.ctr else "s9_passive_rest")
     dst.mkdir(parents=True, exist_ok=True)
     (dst / ("fit.json" if a.fit else "compare.json")).write_text(json.dumps(out, indent=1))
 

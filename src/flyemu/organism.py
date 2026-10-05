@@ -67,6 +67,7 @@ class Organism:
         # B3/B14 passive mechanics (session 9): switches default to the legacy body
         passive.register(self.reg, self.body)
         passive.register_coxa(self.reg, self.body)      # B2 coxa ranges (s12)
+        passive.register_ctr(self.reg, self.body)       # B2 CTr ranges (s12)
         passive.register_rest(self.reg, self.body)
         passive.register_wings(self.reg, self.body)
         self.conn = connectome.build(

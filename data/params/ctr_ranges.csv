@@ -1,0 +1,8 @@
+# CTr (coxa-trochanterfemur pitch) hinge ranges, absolute joint coordinate (q0 = 0), written by scripts/probes/ctr_flexion_map.py --table (s12, F-COXA-2). Flexion = angle at the CTr anchor between CTr->ThC and CTr->FTi, other joints at q0. Lower bound derived (geometry); upper bound measured_this_class where the envelope sets it, derived where the model cannot extend that far. The envelope is the mean +- SD trajectory over the step cycle, not frame-level extremes.
+joint,lo_rad,hi_rad,lo_deg,hi_deg,lo_basis,hi_basis,envelope_min_hinge_deg
+lf_coxa-lf_trochanterfemur-pitch,-0.5061,2.2829,-29.0,130.8,"derived: fold, femur flat on coxa (flexion minimum 0.2 deg)",measured walking envelope max (Haustein 2024 figure-read) mapped onto the hinge,-19.2
+lm_coxa-lm_trochanterfemur-pitch,-0.2531,2.1869,-14.5,125.3,"derived: fold, femur flat on coxa (flexion minimum 0.2 deg)",measured walking envelope max (Haustein 2024 figure-read) mapped onto the hinge,55.3
+lh_coxa-lh_trochanterfemur-pitch,-1.1868,1.9548,-68.0,112.0,"derived: fold, femur flat on coxa (flexion minimum 9.4 deg)",model's straightest reach (flexion 170.6 deg) below the measured 180 deg,1.9
+rf_coxa-rf_trochanterfemur-pitch,-0.5323,2.2637,-30.5,129.7,"derived: fold, femur flat on coxa (flexion minimum 0.2 deg)",measured walking envelope max (Haustein 2024 figure-read) mapped onto the hinge,-20.3
+rm_coxa-rm_trochanterfemur-pitch,-0.2705,2.1747,-15.5,124.6,"derived: fold, femur flat on coxa (flexion minimum 0.1 deg)",measured walking envelope max (Haustein 2024 figure-read) mapped onto the hinge,54.6
+rh_coxa-rh_trochanterfemur-pitch,-1.1694,1.9722,-67.0,113.0,"derived: fold, femur flat on coxa (flexion minimum 9.0 deg)",model's straightest reach (flexion 171.0 deg) below the measured 180 deg,2.9

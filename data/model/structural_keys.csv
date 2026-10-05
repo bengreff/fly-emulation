@@ -62,7 +62,7 @@ joint:leg|passive_stiffness,B3,data,data/params/passive_leg_stiffness.csv (measu
 joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral pose
 muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (muscles.py)
 motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz
-joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1) / 2 refitted within flybody coxa ranges (data/params/passive_leg_rest_fit_coxa_flybody.csv; F-COXA-2)
+joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1) / 2 refitted within flybody coxa ranges (data/params/passive_leg_rest_fit_coxa_flybody.csv; F-COXA-2) / 3 refitted within the fold-bounded CTr ranges (data/params/passive_leg_rest_fit_ctr.csv; F-COXA-2; s12)
 joint:leg|damping_source,B3,switch,"0 flybody default leg damping (scaled by joint:leg|damping; c/k ~1 s) / 1 c = joint:leg|damping_tau_s x each leg joint's own measured stiffness (diagonal of J^T K J when coupled; Kelvin-Voigt; F-DAMP-1) (s12)"
 muscle:leg|rotator_map,B5,switch,Hill mode: sternal rotators by action (1; Cheong 2024 read) or legacy rule (0)
 adhesion:leg|detachment,B7,switch,0 neural grip only (m4) / 1 load and shear gate (adhesion.py)
@@ -92,3 +92,4 @@ sense:mechano|assign_by_nerve,B21,switch,"0 legacy leg-afferent rule (any leg-ne
 afferent:non_leg_nerve|excluded_from_leg_drive,B21,data,count of afferents removed from leg drive under sense:mechano|assign_by_nerve (s12)
 afferent:leg_mechano|leg_from_own_nerve_moved,B21,data,count of leg afferents whose own leg nerve and side name a different leg than their dominant leg neuropil (assign_by_nerve 2; s12)
 joint:coxa|range_source,B2,switch,"0 joints.py envelopes (+-45/25/30 deg about q0, assumed, mislabelled axes) / 1 flybody leg-specific ranges (data/params/coxa_ranges_flybody.csv; inferred; F-COXA-2) (s12)"
+joint:ctr|range_source,B2,switch,"0 joints.py envelope (-100..100 deg, assumed) / 1 per leg from the femur-on-coxa fold (derived, geometry) to the measured walking extension (Haustein 2024, figure-read) or the model's straightest reach (hind) (data/params/ctr_ranges.csv; F-COXA-2) (s12)"

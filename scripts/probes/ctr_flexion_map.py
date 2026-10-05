@@ -9,7 +9,7 @@ and FTi (trochanterfemur-tibia); flexion = angle at CTr between CTr->ThC and
 CTr->FTi. Only the CTr pitch hinge moves; the other leg joints stay at 0, so the
 angle depends on the hinge alone up to the CTr roll (0 here).
 
-    uv run python scripts/probes/ctr_flexion_map.py [--out runs/s12/body]
+    uv run python scripts/probes/ctr_flexion_map.py [--out runs/s12/body] [--table data/params/ctr_ranges.csv]
 """
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ from pathlib import Path
 
 import mujoco as mj
 import numpy as np
+import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
@@ -48,6 +49,7 @@ def flexion_curve(b: Body, leg: str, q_deg: np.ndarray) -> tuple[np.ndarray, lis
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "body"))
+    ap.add_argument("--table", default="", help="also write the CTr range table (data/params/ctr_ranges.csv)")
     a = ap.parse_args()
     b = Body(vision=False)
     q = np.arange(-100.0, 120.1, 2.0)
@@ -61,6 +63,48 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     (out / "ctr_flexion_map.json").write_text(json.dumps(res))
     print(json.dumps({k: {kk: vv for kk, vv in v.items() if kk != "flexion_deg"} for k, v in res["legs"].items()}, indent=1))
+    if a.table:
+        write_range_table(b, Path(a.table))
+
+
+MEASURED = REPO / "data/derived/leg_angles_walking_haustein2024_karashchuk2021.csv"
+PAIR = {"f": "front", "m": "middle", "h": "hind"}
+
+
+def write_range_table(b: Body, path: Path) -> None:
+    """CTr pitch range per leg (F-COXA-2): lower bound at the fold, where the femur
+    lies flat on the coxa (flexion minimum; physical limit, derived from the model's
+    geometry); upper bound where the physical branch reaches the measured walking
+    envelope's most extended angle (Haustein 2024, figure-read), or the model's
+    straightest reach (flexion maximum) if the envelope goes beyond it."""
+    t = pd.read_csv(MEASURED, comment="#")
+    t = t[t.angle_name.str.startswith("CxTr flexion")].set_index("leg")
+    q = np.arange(-100.0, 180.01, 0.5)
+    rows = []
+    for leg in LEGS:
+        f, _ = flexion_curve(b, leg, q)
+        i0 = int(np.argmin(f))
+        i1 = i0 + int(np.argmax(f[i0:]))
+        qb, fb = q[i0:i1 + 1], f[i0:i1 + 1]
+        env = float(t.loc[PAIR[leg[1]], "max_deg"])
+        if env < fb[-1]:
+            hi, hi_basis = float(np.interp(env, fb, qb)), "measured walking envelope max (Haustein 2024 figure-read) mapped onto the hinge"
+        else:
+            hi, hi_basis = float(qb[-1]), f"model's straightest reach (flexion {fb[-1]:.1f} deg) below the measured {env:.0f} deg"
+        rows.append(dict(joint=f"{leg}_coxa-{leg}_trochanterfemur-pitch", lo_deg=round(float(q[i0]), 1),
+                         hi_deg=round(hi, 1), lo_basis="derived: fold, femur flat on coxa (flexion minimum "
+                         f"{f[i0]:.1f} deg)", hi_basis=hi_basis,
+                         envelope_min_hinge_deg=round(float(np.interp(float(t.loc[PAIR[leg[1]], "min_deg"]), fb, qb)), 1)))
+    df = pd.DataFrame(rows)
+    df.insert(1, "lo_rad", np.radians(df.lo_deg).round(4))
+    df.insert(2, "hi_rad", np.radians(df.hi_deg).round(4))
+    head = ("# CTr (coxa-trochanterfemur pitch) hinge ranges, absolute joint coordinate (q0 = 0), written by "
+            "scripts/probes/ctr_flexion_map.py --table (s12, F-COXA-2). Flexion = angle at the CTr anchor between "
+            "CTr->ThC and CTr->FTi, other joints at q0. Lower bound derived (geometry); upper bound measured_this_class "
+            "where the envelope sets it, derived where the model cannot extend that far. The envelope is the mean +- SD "
+            "trajectory over the step cycle, not frame-level extremes.\n")
+    path.write_text(head + df.to_csv(index=False))
+    print(df.to_string(index=False))
 
 
 if __name__ == "__main__":

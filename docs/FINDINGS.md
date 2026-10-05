@@ -367,6 +367,20 @@ Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`
 - **Reading.** flybody's lower bounds hold the measured envelope. Its upper bounds cut about 15° (front, middle) and about 40° (hind) of measured walking extension. That is within figure-read uncertainty for front and middle, but not for hind.
   - Candidate, behind a switch, not built: CTr lower bound at the fold (physical_limit, derived from model geometry); upper bound at the measured envelope (measured_this_class, figure-read); s9 front and middle rest references dropped.
   - Discriminating test: Haustein's Dataverse tracking data give frame-level extremes. Then rerun the dead-fly and standing checks (F-STAND-3) unchanged.
+- **Built, behind switches (20:09).** `joint:ctr|range_source` 1 (`passive.apply_ctr_ranges`, `data/params/ctr_ranges.csv`, written by `ctr_flexion_map.py --table` on a 0.5° grid):
+
+  | leg | lower bound (fold) | upper bound | basis of the upper bound |
+  |---|---|---|---|
+  | lf / rf | −29.0 / −30.5° | 130.8 / 129.7° | measured envelope max (160°) mapped onto the hinge |
+  | lm / rm | −14.5 / −15.5° | 125.3 / 124.6° | measured envelope max (140°) |
+  | lh / rh | −68.0 / −67.0° | 112.0 / 113.0° | the model's straightest reach (flexion 170.6 / 171.0°), short of the measured 180° |
+
+  - Correction to the table above: the hind upper end is not about 129°. The hind map peaks at a flexion of about 171° at hinge 112-113° and then bends back, so the model's hind leg cannot reach the measured colinear 180°. The linear extrapolation was wrong. The 9° shortfall is within the figure-read uncertainty of an envelope that touches 180°.
+  - Tests (`tests/test_coxa_ranges.py`): switch off keeps −100..100°; the lower bound is a flexion minimum on every leg; the s9 front and middle references lie below it and the hind ones do not; the refit references below lie inside the ranges.
+- **Rest references refitted inside the CTr ranges** (`data/params/passive_leg_rest_fit_ctr.csv`, `joint:leg|spring_reference` 3; `passive_rest_protocol.py --fit --ctr`; coxa ranges left at the joints.py envelopes):
+  - Front and middle CTr references sit on the fold bound (−29 to −30.5° front, −14.5 to −15.5° middle). Coxa yaw (−30°) and roll (±25°) sit on the joints.py limits, which are assumed.
+  - Residuals (theta/phi/psi, deg): rf 13.0/−4.2/9.0, lf 10.3/−1.6/7.4, rm 12.0/−0.5/7.2, lm 12.0/−0.6/7.3; hind under 0.3 and unchanged. s9 had rf 6.7/−11/2.0 and rm 8.9/−0.5/5.9.
+  - So with the CTr held physical, the eLife equilibria are matched to about the ±10° digitisation, but only by pressing every front and middle leg against three bounds. Two of those bounds are assumed. The fit is consistent with the data, but it does not identify the references.
 
 ### F-STAND-3: the fly cannot stand because the model has no resting support drive, and no measurement fixes one
 Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 measure a median standing head height of 0.5 mm above the motor-silenced collapse. For this body that is a thorax origin near 1.0 mm (inferred). Pratt et al. 2024 put the dorsal thorax at 0.51 body lengths, about 1.04 mm, at the slowest walking speed. The model's dorsal thorax is the origin plus 0.54 mm. The model ends at 0.54-0.77 mm with the trunk on the floor.
