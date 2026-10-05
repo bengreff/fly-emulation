@@ -1,9 +1,10 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 4 October 2026, 19:10, session 12 in progress (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of 4 October 2026, 19:15, session 12 in progress (session 11 state below the first block).
 
-**Session 12 in progress (4 October 2026, from 16:36; this block updated 19:10):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
-- **Working profile: m9m** (adopted 19:07). Its lineage: m9 → m9w (wing motor roles and nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm). Each step passed the silence gate (seeds 12-19; DECISIONS s12).
+**Session 12 in progress (4 October 2026, from 16:36; this block updated 19:15):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
+- **Working profile: m9d** (adopted 19:13). Its lineage: m9 → m9w (wing motor roles and nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool). Each step passed the silence gate (seeds 12-19; DECISIONS s12).
+  - Open on m9d: whole-brain rate excluding ORNs rose from about 0.08 to 0.14 Hz on 7 of 8 seeds, source unknown (DECISIONS 19:13). Next: per-class rates, m9m vs m9d, one seed.
 - **A** (blanks) is done: `docs/BLANKS_AUDIT.md`.
 - **C** (synapse-specific ladder) is done: `docs/FIDELITY_LADDER.md`, rungs 8-13.
 - **B items done:**
@@ -16,12 +17,8 @@
   - Flight coefficients (F-FLIGHT-3): the fitted Kutta wing is 1.72× the robofly's lift, and its drag is flat at 1.0. A blade-element wing is built behind `aero:wing|model` 1 with robofly coefficients and rotational lift, and no fitted number. It gives 0.72 W at the guessed hover kinematics.
   - Coxa ranges: built and kept off (F-COXA-2).
 - **Running or to collect:**
-  - m9d gate. m9d = m9m + `joint:leg|damping_source` 1 + `jump:ttm|exclude_from_hill` 1, pre-registered at DECISIONS 18:53.
-    - Seeds 12-16 are done: silent, no warnings, no NaN, whole brain 0.22-0.32 Hz (up from 0.25).
-    - The chain (`runs/s12/gates/md_chain.log`) writes `cl_md_s17..19.json` next.
-    - If all 8 pass: set WORKING_PROFILE "m9d" and write the result under 18:53.
   - Measured hover kinematics: a source search (Sonnet agent) writes `runs/s12/flight/kinematics_lit.md` and `data/raw/flight_kinematics/`.
-    - Then impose them with `scripts/probes/hover_blade_trace.py`, after adding a table-driven kinematics option.
+    - Then impose them with `scripts/probes/hover_blade_trace.py --table <npz>` (option added: per-wing hinge angles from `flight.wing_pose_ik`, body held at the measured pitch).
     - Test pre-registered at DECISIONS 19:08: lift between 0.8 and 1.2 of weight, aero unchanged.
 - **Open in B:**
   - **Standing.** F-STAND-3: the model has no resting support drive. **DECISION NEEDED (Ben)** at DECISIONS 18:23.

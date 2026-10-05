@@ -196,7 +196,7 @@ M9M = {
                              "Jarvis 2021) x 0.033 mm arm; 5-95% 53-134 uN*mm"),
 }
 
-# m9d (session 12, candidate until DECISIONS s12 18:53 gate passes): m9m + leg damping from the
+# m9d (session 12, adopted 19:13 after the DECISIONS s12 18:53 gate): m9m + leg damping from the
 # measured stiffness (c = 0.05 s x k; F-DAMP-1) and TTMn out of the Hill pool (counted twice).
 _D = "s12 body fix, not fitted (DECISIONS s12 18:53)"
 M9D = {
@@ -232,7 +232,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9m")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9d")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 

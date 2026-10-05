@@ -68,3 +68,5 @@ Ben's order: full set of blanks and an accurate body first (A blanks audit, B ac
 - 19:00-19:10 F-FLIGHT-3 continued: blade-element wing behind `aero:wing|model` (robofly coefficients, rotational lift from model pitch-axis position; tests in tests/test_flight.py). Hover at guessed kinematics: 0.72 W imposed, 0.55 W PD-tracked, no fitted number. Two bugs fixed on the way: COM velocity used as root velocity; total span spin used as rotation rate. Pre-registered measured-kinematics test (DECISIONS 19:08); a source-search agent is running.
 - 19:07 m9m gate: all 8 seeds pass; m9m adopted. m9d gate seeds 12-16 pass so far.
 - 19:10 HANDOFF session-12 block rewritten.
+- 19:10 B item wing pose IK (`flight.wing_pose_ik`, bounded, leading-edge matched) and `flight.TableKinematics` committed (982b42e).
+- 19:13 m9d gate: all 8 seeds pass; m9d adopted (WORKING_PROFILE). Whole-brain rate excluding ORNs rose 0.08 → 0.14 Hz on 7 of 8 seeds, source unknown (open). CTr range conflict added to F-COXA-2 with its discriminating test. `hover_blade_trace.py --table` added (generator path reproduces 0.716 W exactly). Full test battery started under slot.

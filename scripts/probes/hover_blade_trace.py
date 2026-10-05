@@ -4,6 +4,12 @@ attack at 70% span and the vertical lift, drag and rotational forces over the
 last wingbeats, against stroke phase.
 
     uv run python scripts/probes/hover_blade_trace.py [--rot-amp 55] [--out runs/s12/flight]
+    uv run python scripts/probes/hover_blade_trace.py --table runs/s12/flight/<table>.npz --tag _measured
+
+--table imposes a measured beat instead of the generator: an npz with phase (n,),
+q_l and q_r (n x 3 hinge angles in rad: stroke, deviation, rotation, from
+flight.wing_pose_ik), f_hz and body_pitch_deg (nose-up body angle the thorax is
+held at, so the vertical force is read in the measured body attitude).
 """
 from __future__ import annotations
 
@@ -32,6 +38,7 @@ def main() -> None:
     ap.add_argument("--beats", type=int, default=6)
     ap.add_argument("--dt-ms", type=float, default=0.05)
     ap.add_argument("--tag", default="")
+    ap.add_argument("--table", default=None)
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "flight"))
     a = ap.parse_args()
     b = Body(vision=False, timestep=a.dt_ms / 1000.0, spawn_height=5.0)
@@ -40,19 +47,33 @@ def main() -> None:
     kin = flight.WingKinematics(rot_amp_deg=a.rot_amp)
     if a.rot_mean is not None:
         kin.rot_mean_deg = a.rot_mean
+    tabs, pitch = None, 0.0
+    if a.table:
+        z = np.load(a.table)
+        tabs = [flight.TableKinematics(z["phase"], z[k], float(z["f_hz"])) for k in ("q_l", "q_r")]
+        kin, pitch = tabs[0], float(z["body_pitch_deg"])
     wb = flight.WingBeat(b, kin, ramp_ms=0.0)
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
     be = flight.apply_blade_element(b)
     mj.mj_forward(m, d)
+    if pitch:
+        qp = np.zeros(4); qn = np.zeros(4)
+        mj.mju_axisAngle2Quat(qp, np.array([0.0, -1.0, 0.0]), np.radians(pitch))   # nose up (x head, z up)
+        mj.mju_mulQuat(qn, qp, d.qpos[3:7].copy()); d.qpos[3:7] = qn
+        mj.mj_forward(m, d)
     q0 = d.qpos[:7].copy()
     per = int(round(1000.0 / kin.f_hz / a.dt_ms))
     n = per * a.beats
     j70 = int(0.7 * be.alpha.shape[1])
     rec = []
     for _ in range(n):
-        tq, tqd = kin.targets(wb.t_s)
-        d.qpos[wb.q_adr] = np.tile(tq, 2); d.qvel[wb.v_adr] = np.tile(tqd, 2)
+        if tabs is None:
+            tq, tqd = kin.targets(wb.t_s)
+            d.qpos[wb.q_adr] = np.tile(tq, 2); d.qvel[wb.v_adr] = np.tile(tqd, 2)
+        else:
+            (tq, tqd), (rq, rqd) = (t.targets(wb.t_s) for t in tabs)
+            d.qpos[wb.q_adr] = np.r_[tq, rq]; d.qvel[wb.v_adr] = np.r_[tqd, rqd]
         b.step()
         d.qpos[:7] = q0; d.qvel[:6] = 0.0
         rec.append([wb.t_s * kin.f_hz % 1.0, np.degrees(tq[0]), np.degrees(tq[2]), be.alpha[0, j70],
@@ -60,7 +81,8 @@ def main() -> None:
     r = np.array(rec[-per * 2:])
     W = mj.mj_getTotalmass(m) * 9810.0
     names = ["lift", "drag", "rotational", "total incl. body"]
-    out = dict(rot_amp_deg=a.rot_amp, rot_mean_deg=kin.rot_mean_deg, weight_uN=W,
+    out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch,
+               rot_amp_deg=None if tabs else a.rot_amp, rot_mean_deg=None if tabs else kin.rot_mean_deg, weight_uN=W,
                mean_over_weight={k: round(float(r[:, 4 + i].mean() / W), 3) for i, k in enumerate(names)},
                alpha70_deg_at_midstroke=[round(float(r[np.argmin(abs(r[:per, 0] - p)), 3]), 1) for p in (0.25, 0.75)])
     out_dir = Path(a.out); out_dir.mkdir(parents=True, exist_ok=True)
@@ -76,7 +98,8 @@ def main() -> None:
         ax[2].plot(ph, r[:per, 4 + i][o] / W, label=f"{k} (mean {out['mean_over_weight'][k]:+.2f})")
     ax[2].axhline(1.0, color="gray", ls=":"); ax[2].set_ylabel("vertical force / weight"); ax[2].legend(fontsize=8)
     ax[2].set_xlabel("wingbeat phase (0 = stroke at max yaw)")
-    fig.suptitle(f"blade-element hover, imposed kinematics, rotation {kin.rot_mean_deg:.0f} +- {a.rot_amp:.0f} deg")
+    fig.suptitle(f"blade-element hover, imposed measured kinematics ({Path(a.table).stem}, body {pitch:.0f} deg)" if tabs else
+                 f"blade-element hover, imposed kinematics, rotation {kin.rot_mean_deg:.0f} +- {a.rot_amp:.0f} deg")
     fig.tight_layout(); fig.savefig(out_dir / f"{stem}.png", dpi=100)
     print(json.dumps(out))
 

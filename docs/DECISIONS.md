@@ -700,6 +700,9 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Pass: 0 spikes/ms in the last 100 ms on all 8 seeds, no MuJoCo warnings, no NaN.
   - Pass gives m9d = that profile + both switches as working; the previous profile is kept.
   - Standing is reported, not a criterion. Walking dynamics change with damping (F-BODY-1: 10 Hz transfer). The next walking measurement reads them on m9d, not tuned.
+- **Result (19:13): pass.** All 8 seeds (12-19) give 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN (`runs/s12/gates/cl_md_s*.json`). m9d is the working profile; m9m is kept.
+  - Thorax ends at 0.508-0.560 mm (m9m: 0.537-0.551). Motor 2.03-2.05 Hz (m9m 2.01-2.04).
+  - Not a criterion, but unexplained: whole-brain rate excluding ORNs rose from 0.067-0.086 Hz (m9m) to 0.140-0.143 Hz on 7 of 8 seeds (seed 15: 0.052). Spikes in the silent window fell (seed 13: DN 37 to 0, AN 19 to 0, central_other 91 to 6, optic_columnar 67 to 30) while AL local neurons and PNs rose (11 to 23, 1 to 11). The gate does not record per-class rates over the run, so which population carries the extra ~0.06 Hz is not known. Open item: per-class rates, m9m vs m9d, one seed.
 
 ### Blade-element wing behind `aero:wing|model` (19:08); pre-registered test with measured kinematics
 - **Why.** F-FLIGHT-3: the fitted Kutta number (3.1) makes hover lift match weight at one condition. Against the robofly it gives 1.72× the lift at every angle and a flat drag of 1.0, where the robofly measures 0.39-3.46. One fitted number was standing in for both aerodynamics and kinematics errors.
