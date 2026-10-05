@@ -477,6 +477,7 @@ def build(
         )
 
     fps, tau_mn = _per_neuron_forces(reg, conn, rows, float(force_per_spike), float(tau_act))
+    _nonleg_forces(reg, [actuator_names[a] for a in acts], fps, tau_mn)
     return Neuromuscular(
         adhesion_index=np.asarray(adh_idx, dtype=np.int64),
         adhesion_rows=np.asarray(adh_rows, dtype=np.int64),
@@ -536,6 +537,35 @@ def _per_neuron_forces(reg, conn, rows, default_fps: float, default_tau: float):
                 evidence="guessed: 30 ms fast/intermediate (rise ~8.5 ms measured, decay "
                          "not reported), 100 ms slow (slow units summate over >500 ms)")
     return fps, tau
+
+
+NONLEG_TABLE = FORCE_TABLE.with_name("nonleg_motor_forces.csv")
+
+
+def _nonleg_forces(reg, act_names: list[str], fps: np.ndarray, tau: np.ndarray) -> None:
+    """Switch motor_unit:nonleg|torque_source 1: torque per spike (and twitch tau where
+    given) per non-leg muscle group from data/params/nonleg_motor_forces.csv, matched
+    on the actuator each motor neuron drives; in place. 0 keeps the shared value."""
+    if not int(reg.require(
+            "motor_unit:nonleg", "torque_source", units="enum",
+            model_use="0 one shared torque per spike (motor_unit:all|force_per_spike) for every "
+                      "non-leg motor neuron; 1 per muscle group, data/params/nonleg_motor_forces.csv (s12 B)",
+            subsystem="neuromuscular", minimal=0, minimal_note="shared value (s1-s12)")):
+        return
+    t = pd.read_csv(NONLEG_TABLE, comment="#", keep_default_na=False)
+    names = pd.Series([a.split("/")[-1] for a in act_names])
+    for row in t.itertuples(index=False):
+        hit = names.str.contains(row.actuator_regex, regex=True).to_numpy()
+        if not hit.any():
+            continue
+        fps[hit] = float(row.torque_uNmm)
+        if str(row.twitch_tau_ms):
+            tau[hit] = float(row.twitch_tau_ms)
+        reg.provide(f"motor_unit:nonleg_{row.group}", "torque_per_spike", float(row.torque_uNmm),
+                    units="uN*mm", model_use="joint torque added by one motor spike",
+                    status=Status(row.basis), subsystem="neuromuscular", instances=int(hit.sum()),
+                    evidence=row.source, method=row.derivation,
+                    uncertainty=f"bounds {row.low}-{row.high} uN*mm; {row.uncertainty}")
 
 
 MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"

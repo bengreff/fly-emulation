@@ -57,6 +57,8 @@ sense:*|transduction,N15,assignment,transducer form per modality (extrasenses.py
 afferent:hook_club_hairplate|gains_and_widths,B21,assignment,tuning shape (string); numeric split pending
 motor_unit:tibia_flexor|torque_per_spike,B5,data,Azevedo 2020 per-MN force (derived)
 motor_unit:other_leg|torque_per_spike,B5,data,size-scaled from tibia flexors (inferred)
+motor_unit:nonleg|torque_source,B5,switch,0 shared force_per_spike for non-leg MNs; 1 per muscle group from data/params/nonleg_motor_forces.csv (s12 B)
+motor_unit:nonleg_*|torque_per_spike,B5,data,per-group non-leg torque per spike; basis per row of data/params/nonleg_motor_forces.csv (s12 B)
 joint:leg|passive_stiffness_source,B3,switch,0 flybody defaults (m4) / 1 measured by name mapping / 2 measured projected and coupled J^T K J (F-PASSIVE-2; preferred)
 joint:leg|passive_stiffness,B3,data,data/params/passive_leg_stiffness.csv (measured; per DOF rows b3_k_*)
 joint:wing|spring_reference,B14,switch,0 flybody spread pose / 1 folded neutral pose
