@@ -238,7 +238,14 @@ class Organism:
                     model_use="0 MuJoCo ellipsoid lift/drag with aero:wing|kutta_lift (s10), 1 blade-element "
                               "quasi-steady wing: robofly coefficients + rotational lift (flight.BladeElementWing)",
                     subsystem="body_mechanics", minimal=0, minimal_note="s10-s12 behaviour (F-FLIGHT-3)")):
-                self.blade = flight.apply_blade_element(self.body)
+                size = int(self.reg.require(
+                    "aero:wing", "size_source", units="enum",
+                    model_use="0 scanned wing (2.65 mm hinge to tip), 1 blade-element strips scaled about the "
+                              "hinge to the measured female wing length (2.47 mm, Lehmann & Dickinson 1997); "
+                              "mesh, inertia and added mass unchanged (F-FLIGHT-3)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="scanned wing (s12)"))
+                self.blade = flight.apply_blade_element(
+                    self.body, length_mm=flight.WING_LENGTH_FEMALE_MM if size else None)
             else:
                 flight.apply_aero(self.body, float(self.reg.require(
                     "aero:wing", "kutta_lift", units="dimensionless",

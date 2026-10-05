@@ -164,6 +164,30 @@ def test_blade_element_reproduces_the_robofly_in_steady_wind():
         assert hook.parts[0, 2] @ hook.parts[0, 2] == 0.0      # still wing: no rotational force
 
 
+def test_measured_wing_length_scales_the_strips_about_the_hinge():
+    """aero:wing|size_source 1 (F-FLIGHT-3): strips, chords and widths scale by
+    R_measured / R_scan about the hinge, so the second moment of area (lift at fixed
+    angular kinematics) scales by k^4 and the planform by k^2."""
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    hooks = []
+    for L in (None, flight.WING_LENGTH_FEMALE_MM):
+        b = Body(vision=False)
+        hooks.append(flight.apply_blade_element(b, length_mm=L))
+    m = b.sim.mj_model
+    k = flight.WING_LENGTH_FEMALE_MM / flight.WING_LENGTH_SCAN_MM
+    for w, s in enumerate(flight.SIDES):
+        j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"flybody/c_thorax-{s}_wing-{flight.FN['rotation']}")
+        jp = m.jnt_pos[j]
+        (a, b_) = (np.linalg.norm(h.pts[w] - jp, axis=1) for h in hooks)
+        assert np.allclose(b_, k * a)
+        S2 = [float((h.c[w] * h.dr[w] * np.linalg.norm(h.pts[w] - jp, axis=1) ** 2).sum()) for h in hooks]
+        assert np.isclose(S2[1] / S2[0], k ** 4)
+        assert np.isclose((hooks[1].c[w] * hooks[1].dr[w]).sum() / (hooks[0].c[w] * hooks[0].dr[w]).sum(), k ** 2)
+        assert hooks[1].x0[w] == hooks[0].x0[w]                 # pitch-axis chord fraction unchanged
+
+
 def _wing_joint_axes(m, d, side):
     import mujoco as mj
     from flyemu import flight

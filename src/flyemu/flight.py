@@ -338,6 +338,14 @@ def stroke_frame_spin(om_rel: np.ndarray, sp: np.ndarray, n: np.ndarray) -> floa
     return float(om_rel @ sp + (n @ sp) * (np.cross(om_rel, sp) @ np.cross(sp, e)) / nv)
 
 
+# Hinge to the farthest membrane vertex of the scanned wing (derived from the flybody
+# mesh; the hinge anchor sits on the thorax surface; runs/s12/diag/wing_root_geometry.py)
+WING_LENGTH_SCAN_MM = 2.65
+# Female D. melanogaster wing length R, Canton-S, n = 27 (measured; Lehmann & Dickinson
+# 1997 J Exp Biol 200:1133, Table 1; same cohort weighed 1.05 mg, 1998)
+WING_LENGTH_FEMALE_MM = 2.47
+
+
 class BladeElementWing:
     """B12 option (aero:wing|model = 1; F-FLIGHT-3): quasi-steady blade-element
     forces on each wing membrane, written to xfrc_applied (body.passive_hooks).
@@ -364,8 +372,11 @@ class BladeElementWing:
     axis), wing flexion. Validity: hovering-like strokes at Re ~ 100-200."""
 
     def __init__(self, body, n_strips: int = 20, rot_rate: str = "stroke_frame",
-                 stroke_plane_deg: float = STROKE_PLANE_DEG):
+                 stroke_plane_deg: float = STROKE_PLANE_DEG, length_mm: float | None = None):
         m, d = body.sim.mj_model, body.sim.mj_data
+        # aero:wing|size_source 1: strips scaled isometrically about the hinge to a
+        # measured wing length; mesh, inertia and MuJoCo added mass keep the scan's size
+        self.length_scale = 1.0 if length_mm is None else length_mm / WING_LENGTH_SCAN_MM
         self.m = m
         assert rot_rate in ("stroke_frame", "pitch_joint")
         self.rot_rate = rot_rate
@@ -394,6 +405,8 @@ class BladeElementWing:
             c = 2 * a * np.sqrt(1 - (y / half) ** 2)
             dr = 2 * half / n_strips
             c *= np.pi * a * half / (c.sum() * dr)     # planform area exactly pi a b
+            k = self.length_scale
+            pts, c, dr = jp + k * (pts - jp), k * c, k * dr
             off = abs((jp + (ctr - jp) @ span / (ax @ span) * ax - ctr) @ chord)
             self.bid.append(b); self.pts.append(pts); self.span.append(span); self.normal.append(normal)
             self.c.append(c); self.dr.append(dr); self.x0.append(float((a - off) / (2 * a)))

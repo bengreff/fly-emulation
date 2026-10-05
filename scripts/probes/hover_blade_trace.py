@@ -41,6 +41,8 @@ def main() -> None:
     ap.add_argument("--table", default=None)
     ap.add_argument("--rot-rate", default="stroke_frame", choices=("stroke_frame", "pitch_joint"),
                     help="rotational-lift rate: spin relative to the stroke frame, or the s12 pitch-joint proxy")
+    ap.add_argument("--wing-length-mm", type=float, default=None,
+                    help="scale the blade-element strips about the hinge to this wing length (aero:wing|size_source)")
     ap.add_argument("--out", default=str(REPO / "runs" / "s12" / "flight"))
     a = ap.parse_args()
     b = Body(vision=False, timestep=a.dt_ms / 1000.0, spawn_height=5.0)
@@ -62,7 +64,7 @@ def main() -> None:
     wb = flight.WingBeat(b, kin, ramp_ms=0.0)
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
-    be = flight.apply_blade_element(b, rot_rate=a.rot_rate)
+    be = flight.apply_blade_element(b, rot_rate=a.rot_rate, length_mm=a.wing_length_mm)
     mj.mj_forward(m, d)
     if pitch:
         qp = np.zeros(4); qn = np.zeros(4)
@@ -88,7 +90,7 @@ def main() -> None:
     r = np.array(rec[-per * 2:])
     W = mj.mj_getTotalmass(m) * 9810.0
     names = ["lift", "drag", "rotational", "total incl. body"]
-    out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch, rot_rate=a.rot_rate,
+    out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch, rot_rate=a.rot_rate, wing_length_mm=a.wing_length_mm or flight.WING_LENGTH_SCAN_MM,
                rot_amp_deg=None if tabs else a.rot_amp, rot_mean_deg=None if tabs else kin.rot_mean_deg, weight_uN=W,
                mean_over_weight={k: round(float(r[:, 4 + i].mean() / W), 3) for i, k in enumerate(names)},
                alpha70_deg_at_midstroke=[round(float(r[np.argmin(abs(r[:per, 0] - p)), 3]), 1) for p in (0.25, 0.75)])

@@ -528,6 +528,12 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - the stroke-plane and α conventions are inferred.
 - **Reading.** With measured kinematics and no fitted number, the blade-element wing gives the right order of force. The remaining 53% excess is most plausibly the model's wing size. Per the pre-registration, the fail is recorded, nothing is refitted, and option 1 does not become the default.
   - All guessed-kinematics numbers above (0.72 W, 0.55 W, the Kutta fit) used a generator that crosses the wings (F-WING-3), and are superseded.
+- **Pre-registered size check (20:04; DECISIONS s12 19:58): PASS.** The blade-element strips were scaled about the hinge to the measured female wing length, 2.47 mm (Lehmann & Dickinson 1997, n = 27, the same cohort weighed 1.05 mg). This is `aero:wing|size_source` 1; mesh, inertia and added mass are unchanged.
+  - Same test as 19:35: 1.153 W (translational lift 1.016, drag 0.056, rotational 0.082), against a predicted 1.15 W and a band of 0.8-1.2 W.
+  - Fry's 2.39 mm gives 1.011 W.
+  - Reading: the 53% excess was the scanned wing's length relative to the measured population mass. With measured kinematics, measured coefficients, measured mass and a measured wing length, hover force is within 15% of weight and nothing is fitted.
+  - Validity: one condition (hover, hydei kinematics on a melanogaster-sized wing), and the length was chosen after seeing the fail. It is a consistency check, not held-out validation.
+  - Still open: the mesh and inertia are the scan's, so wing inertial power and the passive pitch response are for the larger wing.
   - Discriminating test: measure the flybody wing against the body it came from (wing length / thorax length against female melanogaster morphometrics). If the wing is oversized, scale the membrane to measured length and area, behind a switch, and rerun this same test unchanged.
 
 ### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side

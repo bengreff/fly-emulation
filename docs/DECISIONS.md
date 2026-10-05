@@ -739,3 +739,25 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Both are off by default. No walking profile reads them, because the generator is off in the walking template. So the working closed loop (m9d) is unchanged and no gate is needed.
 - **Evidence.** Unit and organism tests in `tests/test_flight.py`, and the contact sheet `docs/media/s12_wing_beat_views.png`, viewed.
 - **Next.** A flight profile would combine `generator` 1, `kinematics` 1, ranges 2 and the blade-element wing. That waits on the wing-size check (F-FLIGHT-3), because the pre-registered lift test failed high.
+
+### Pre-registration: measured-size wing for the 19:08 hover test (19:58)
+- **Why.** The 19:35 result failed high (1.53 W), with wing size as the likely mechanism. Size check (`runs/s12/flight/wing_size_lit.md`, `mass_wing_lit.md`; agent extraction, not all re-read):
+  - Model geometry: the wing hinge sits on the thorax surface (anchor y 0.432 mm, surface 0.439 mm), so hinge-to-tip is comparable with a measured wing length. The membrane reaches 2.65 mm (derived, `runs/s12/diag/wing_root_geometry.py`).
+  - Lehmann & Dickinson 1997: 27 female Canton-S, R = 2.47 mm (measured; the paper's SD of 0.71 mm conflicts with its own 4.6% area SD, probably a misprint). The same cohort weighed 1.05 ± 0.13 mg (1998).
+  - Fry 2005 (page re-read by me): R = 2.39 ± 0.08 mm free flight, n = 6, sex not stated; mass estimated, not weighed.
+  - flybody's 0.983 mg is measured: 52 weighed females, by body part (bioRxiv Methods). That is a different population from the one scanned fly.
+  - So the model pairs a measured population mass with one fly's wing that is 7-11% longer than every measured female mean. Its R⁴/m is about 1.4× both cohorts. The wing is long for the mass, not the mass low for the wing.
+- **Switch.** `aero:wing|size_source`:
+  - 0: scanned wing (2.65 mm).
+  - 1: the blade-element strips scaled isometrically about the hinge to R = 2.47 mm (Lehmann & Dickinson 1997, female, measured).
+  - Mesh, inertia and MuJoCo added mass are unchanged. The validity statement is aero only.
+  - Chosen before the run because those flies are female and weighed. Fry's 2.39 mm is reported as a sensitivity, not used to pass or fail.
+- **Test.** Identical to 19:08/19:35: Muijres beat, 218 Hz, body pitch 47.6°, stroke-frame rotational rate, pass band 0.8-1.2 W.
+  - Prediction from R⁴ scaling: 1.53 × (2.47/2.651)⁴ = 1.15 W (derived). Fry's 2.39 mm would give 1.01 W.
+  - This is a consistency check of the scaling inside the full blade-element model, not held-out validation: the wing length was chosen after seeing the 1.53 W.
+  - Pass: `size_source` 1 joins the flight-profile candidate set with the blade-element wing. Fail: the R⁴ attribution is wrong, and the mechanism is written up. No coefficient changes either way.
+- **Result (20:04): PASS.** With `size_source` 1 (R = 2.47 mm), the mean vertical force is 1.153 W (translational lift 1.016, drag 0.056, rotational 0.082; `runs/s12/flight/hover_blade_trace_muijres2014_R2.47.json`, trace PNG viewed). Prediction 1.15 W.
+  - Scan-wing rerun with the same code: 1.528 W (19:35 gave 1.535).
+  - Sensitivity, Fry's 2.39 mm: 1.011 W.
+  - So R⁴ scaling holds inside the full blade-element model. `size_source` 1 joins the flight-profile candidate set with `aero:wing|model` 1. No profile changes, no coefficient changes.
+  - Still not held out: the size was chosen after seeing 1.53 W. The next discriminating test is a second measured condition (a different stroke amplitude or forward speed with measured force), with no further changes.
