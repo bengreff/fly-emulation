@@ -79,6 +79,7 @@ sense:antenna|oscillator,B20,switch,0 static a3 proxy (m4); 1 damped rotational 
 flight:wings|generator,B10,switch,0 legacy wing torques (m4); 1 wingbeat generator driven by power MNs; 2 forced on (probes) (s10)
 flight:wings|kinematics,B10,switch,0 s10 joint-space generator (crosses the wings over the dorsum; legacy fixture); 1 measured steady-flight beat (Muijres 2014 stroke-frame angles) mapped to the hinges with B11 steering on stroke-frame angles (s12; F-WING-3)
 joint:wing|range_by_function,B14,switch,0 joints.py wing envelopes (mislabelled for flybody); 1 by function (F-WING-1) (s10; holds a stroke that crosses the wings; F-WING-3); 2 measured hover hinge envelope + folded pose + 20 deg margin (s12; F-WING-3)
+joint:wing|stiffness_source,B14,switch,0 flybody 1 uN*mm/rad (unsourced) / 1 Bergou et al. 2010 wing-pitch stiffness 5.21 uN*mm/rad (fitted; yaw and roll inferred) (s12; F-WING-4)
 cell_type:all|kc_mbon_forgetting,N22,switch,0 no forgetting (m4); 1 KC->MBON weights relax to baseline with n22_memory_tau (s10)
 state:organs|model,S1,switch,"0 no internal state (m4); 1 lumped organs S1-S4, AKH/DILP-like levels, circadian oscillator N26, sleep homeostat N25 and N20 tonic couplings (internal_state.py; s10 task 12)"
 state:population_*|*,N20,data,"internal-state coupled populations by male-cns type, recorded when state:organs|model = 1"

@@ -270,11 +270,38 @@ def register_rest(reg, body) -> int:
     return set_rest_angles(body) if int(ref) else 0
 
 
+# Wing hinge rotational stiffness (s12, joint:wing|stiffness_source 1): 91 +- 9 pN*m/deg
+# = 5.21 +- 0.52 uN*mm/rad, FITTED by Bergou, Ristroph, Guckenheimer, Cohen & Wang 2010
+# (PRL 104:148101, Fig. 2a, 3) as a damped torsional spring to the wing-pitch torque from
+# measured free-flight D. melanogaster kinematics. Pitch only and in flight; the yaw
+# (stroke) and roll (deviation) hinges take the same value (inferred transfer: no
+# Drosophila measurement of either, nor of the folded-wing hinge).
+WING_STIFFNESS_BERGOU = 91e-12 * 180.0 / np.pi * 1e9     # pN*m/deg -> uN*mm/rad
+
+
+def set_wing_stiffness(body, k: float) -> list[str]:
+    m = body.sim.mj_model
+    done = []
+    for j in range(m.njnt):
+        name = mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or ""
+        if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE and "_wing-" in name:
+            m.jnt_stiffness[j] = k
+            done.append(name.split("/")[-1])
+    return done
+
+
 def register_wings(reg, body) -> list[str]:
     ref = reg.require("joint:wing", "spring_reference", units="enum",
                       model_use="0 flybody spread pose (outside the yaw range), 1 folded neutral pose",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; folded reference is an option until adopted")
+    src = reg.require("joint:wing", "stiffness_source", units="enum",
+                      model_use="0 flybody 1 uN*mm/rad (unsourced), 1 Bergou et al. 2010 wing-pitch stiffness "
+                                "5.21 uN*mm/rad (fitted, in flight) on all three hinge axes (yaw, roll inferred)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="flybody value; one spike swings a folded wing 30-40 deg (s12, F-WING-4)")
+    if int(src):
+        set_wing_stiffness(body, WING_STIFFNESS_BERGOU)
     return fold_wings(body) if int(ref) else []
 
 

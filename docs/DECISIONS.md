@@ -853,3 +853,25 @@ Measured, m10q, sugar 10 trials at 100 Hz, closed loop on seeds 29/30/31 (spikes
   - Roll, force-corrected Mx over the robot's at levels 6-12: 0.42-0.54 (ellipse 0.42-0.52), sign opposite at every non-steady level. Shares at the top level (stroke, rotation, deviation): 0.67, 0.48, 0.34 against the robot's 0.41, 0.36, 0.11 (ellipse 0.67, 0.45, 0.32).
   - So the spanwise distribution is ruled out as the cause of the roll gap: the measured shape moves it by 1-3%. The unsteady terms (wake capture, added mass, rotational circulation timing) remain the lead, mainly through the rotation component.
   - Per this pre-registration: the hydei planform is used in robot comparisons from now on (`--planform hydei`); it does not enter the organism.
+
+### Pre-registration: measured wing hinge stiffness (`joint:wing|stiffness_source` 1) as candidate m9u (21:44)
+- **Why.** On m9t both wings rise in a V at rest (F-NONLEG-1, 21:21). The plain body under m9t wing settings (`scripts/probes/wing_spike_response.py`, `runs/s12/wing/spike_m9t.json`) shows one wing spike (2.73 µN·mm, 30 ms decay) swinging the folded left wing to +40° yaw, −41° pitch or −28° roll. It peaks at 38 ms, and 17° is still left at 100 ms. The hinge spring is flybody's 1 µN·mm/rad, unsourced.
+- **Source** (`docs/research/s12_wing_hinge_sources.md`). Bergou et al. 2010 (PRL 104:148101) fitted a wing-pitch torsional stiffness of 91 ± 9 pN·m/deg (5.21 µN·mm/rad) to measured D. melanogaster free-flight kinematics. No Drosophila value exists for the yaw or roll axes or for the folded hinge, so those take the same value (inferred transfer).
+- **Change, behind a switch.** `joint:wing|stiffness_source` 1 (`passive.register_wings`, `passive.WING_STIFFNESS_BERGOU`) sets 5.214 µN·mm/rad on all six wing hinges. Neutral 0 keeps flybody's 1. Nothing else changes: flybody damping 0.05, the wing torque per spike, the s10 wing ranges and the wing drive mapping all stay.
+- **Primary.**
+  1. Gate (`closed_loop_check.py`, seeds 12-19, m9t gate values plus the switch): 0 spikes/ms in the last 100 ms, no MuJoCo warnings and no NaN on all 8 seeds.
+  2. Census seed 12, 200-600 ms (`nonleg_motor_census.py`): the mean yaw and pitch angle of each wing lies within ±10° of the fold. On m9t: left yaw 20.3°, left pitch −18.5°, right yaw 14.6°, right pitch −13.8°.
+- **Secondary.**
+  - Contact sheet, seed 12, 300 and 600 ms (`--sheet`): both wings folded back over the abdomen, viewed.
+  - Head, rostrum and antennae still under 50% of the time within 1° of a limit.
+- **Prediction.**
+  - Body-only, at 5.214 (`runs/s12/wing/spike_k5p2.json`): one spike peaks at +15° yaw, −16° pitch and −17° roll at 16 ms, with 1-6° left at 100 ms.
+  - Closed loop, scaling m9t's excursion from rest by 1/5.2 at unchanged rates:
+    - left yaw about 7°, right yaw about 6°;
+    - left and right pitch about −5°;
+    - so primary 2 passes, but yaw sits near the 10° bound.
+  - The gate is unchanged: the network sees the wings only through the wing afferents.
+- **What follows.**
+  - A pass makes m9u = m9t + the switch the working profile, and the battery is rerun.
+  - A fail on (2) at unchanged rates points at the resting wing motor drive (wing motor neurons firing at rest; no source says whether real ones do) or at the i1/i2 yaw mapping (+1, guessed). That fail is written up, not tuned.
+  - The stiffness is a measurement either way. It stays in the record even if the wings still rise.

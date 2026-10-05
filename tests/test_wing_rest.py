@@ -56,3 +56,19 @@ def test_nerve_switch_moves_wing_nerve_campaniforms_from_leg_load_to_wing_strain
     assert np.isin(snpp, org.extra.channels["wing_cs"].rows).all()
     legacy = Organism(policy="minimal", seed=0)
     assert np.isin(snpp, legacy.aff.rows).any()       # the legacy rule drove them as leg load
+
+
+def test_wing_stiffness_switch_sets_the_bergou_value_on_every_wing_hinge():
+    import mujoco as mj
+    from flyemu import passive
+    from flyemu.body import Body
+    from flyemu.registry import Registry
+    assert abs(passive.WING_STIFFNESS_BERGOU - 5.214) < 1e-3     # 91 pN*m/deg in uN*mm/rad
+    for src, k in ((0.0, 1.0), (1.0, passive.WING_STIFFNESS_BERGOU)):
+        reg = Registry("minimal")
+        reg.overrides["joint:wing|stiffness_source"] = src
+        b = Body(vision=False)
+        passive.register_wings(reg, b)
+        m = b.sim.mj_model
+        wing = [j for j in range(m.njnt) if "_wing-" in (mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "")]
+        assert len(wing) == 6 and np.allclose(m.jnt_stiffness[wing], k)
