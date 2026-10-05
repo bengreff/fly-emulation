@@ -639,8 +639,8 @@ Built 4 October 2026, evening.
   |---|---|---|---|---|---|
   | sugar-grn-kick | MN9_L minus control >= 5 Hz | +7.00 Hz (7 vs 0) | | all 0.00 | PASS |
   | sugar-patch-legs | as above | 0.00; no spike changed | | all 0.00 | FAIL, no spike changed |
-  | mdn-cschrimson | forward minus control <= -0.5 mm | +0.04 mm | MDN 22.2 Hz vs 0 | -0.06 to +0.02 mm | FAIL within noise |
-  | dna02-left | left turn minus control >= +5 deg | -0.15 deg | DNa02 9.5 Hz vs 0 | -1.0 to +2.9 deg | FAIL within noise |
+  | mdn-cschrimson | forward minus control <= -0.5 mm | +0.04 mm | the 4 MDN 22 to 23 Hz, control 0 | -0.06 to +0.02 mm | FAIL within noise |
+  | dna02-left | left turn minus control >= +5 deg | -0.15 deg | the left DNa02 19 Hz, control 0 (the right one, not driven, 0) | -1.0 to +2.9 deg | FAIL within noise |
 
   - Sugar GRNs to MN9 passes on this trial, as in the model's own assay. The first library's
     FAIL came from the override and one low draw (the verification above).

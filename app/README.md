@@ -43,7 +43,12 @@ Runs of one protocol at several seeds are named `<protocol>-s<seed>`; the scorer
 (readout per seed, mean, SD) and the Compare tab shows where each trial falls.
 
     .venv/bin/python app/tools/make_shams.py                # more sham protocols (one Kenyon cell each, fixed draw)
+    .venv/bin/python app/tools/make_shams.py --onset-step-ms 5   # a second set: new cells, onsets 505 to 540 ms
     .venv/bin/python app/tools/run_library.py --protocols app/protocols/sham --out runs/app/lib-m9
+
+Shams can land on the same trajectory (at one onset every sham's forced spikes fall on the same
+steps), so the scorer hashes every spike outside the forced cells and reports how many shams are
+distinct; only distinct ones are separate noise samples.
 
 ## Open it
 
@@ -51,7 +56,7 @@ Runs of one protocol at several seeds are named `<protocol>-s<seed>`; the scorer
 
 The page lists every recording under `runs/app`. URL parameters keep the view: `rec`, `t` (ms),
 `sel` (bodyId), `view` (anatomy, flow, groups), `colour` (`delta` is rate vs control), `theme`,
-`tab` (run, cell, compare, session) and `ctrl` (the control recording's id, when more than one matches).
+`tab` (run, neuron, compare, session, eye) and `ctrl` (the control recording's id, when more than one matches).
 A stimulated run's Compare tab shows the matched control, the step where the two first differ,
 the criterion's verdict, the sham runs read over the same window (the noise floor) and the cells
 that changed most.
@@ -85,6 +90,7 @@ Nothing is published by these tools.
 | `server/heldout.py` | held-out guard |
 | `server/live.py`, `server/sessions.py` | live session: the recorder's command reader; the server's session manager and protocol check |
 | `build/atlas.py` | `flyemu-atlas/1`: positions with basis codes, annotations, flow layers, edge shards |
+| `build/eye.py` | `flyemu-eye/1`: ommatidium centroids, pale/yellow masks, photoreceptor assignments |
 | `build/convert_legacy.py` | old `replay_data.js` files to rec/1 (motor spikes only, flagged) |
 | `build/site.py` | static bundle |
 | `web/` | the page (ES modules, three.js r170 vendored) |
