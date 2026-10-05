@@ -206,6 +206,15 @@ M9D = {
     "jump:ttm|exclude_from_hill": (1.0, _I, _D + "; TTMn drives the TTM hook only"),
 }
 
+# m9s (session 12, adopted 20:5x after the DECISIONS s12 20:33 gate): m9d with MuJoCo's noslip pass
+# off. flybody's 3 iterations do not converge at the 0.1 ms step on m9d's legs, so resting motion
+# depended on the step (F-DAMP-2); off, it converges, and it matches the MJWarp GPU path (no noslip).
+M9S = {
+    **M9D,
+    "contact:floor|noslip_iterations": (0.0, _I, "s12 numerical fix, not fitted (DECISIONS s12 20:33); "
+                                        "step-converged at rest; as MJWarp"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -232,7 +241,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9d")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9s")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -251,6 +260,7 @@ PROFILES: dict[str, dict] = {
     "m9n": {"values": M9N, "kick_mv": KICK},
     "m9m": {"values": M9M, "kick_mv": KICK},
     "m9d": {"values": M9D, "kick_mv": KICK},
+    "m9s": {"values": M9S, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

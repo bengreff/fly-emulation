@@ -18,6 +18,12 @@ robotForcesTorques.ForceModulations (F/mg 0.85-1.76, built by the authors from t
 measured kinematic change per unit force, SM eq. S3) at its own frequency (the robot
 time base: 182.4-220.0 Hz). The robot's steady beat is Table S1 with stroke and
 rotation negated (checked, DECISIONS s12 20:31); that map is applied to every level.
+
+--robot-roll k takes the k-th beat (0-12) of RollModulations (roll acceleration
+-0.72 to 3.61 deg per beat^2; per-side angles, same map, steady frequency) for the
+roll-torque test (DECISIONS s12 20:5x). --roll-part stroke|deviation|rotation keeps
+only that angle's change from the steady beat (level 2), as the robot's
+Mx_norm_<part> series; the other two angles stay at the steady beat.
 """
 from __future__ import annotations
 
@@ -53,6 +59,28 @@ def robot_level(k: int, n: int = 100) -> tuple[np.ndarray, ...]:
     return ph, -ang[0], ang[1], -ang[2], float(f_hz), float(np.asarray(fm.force_norm)[k]), fz
 
 
+def robot_roll(k: int, part: str = "all", n: int = 100) -> tuple[np.ndarray, dict, float, dict]:
+    """(phase, {side: (stroke, deviation, rotation)} in this project's convention (deg),
+    f_hz, robot mean forces/torques {Fx..Mz: value}) for roll-modulation level k."""
+    import scipy.io as sio
+    rm = sio.loadmat(DB, squeeze_me=True, struct_as_record=False)["robotForcesTorques"].RollModulations
+    t = np.asarray(rm.t, float)
+    T = t[-1] + (t[1] - t[0])
+    ph = np.arange(n) / n
+    ang = {}
+    for side, S in (("l", "L"), ("r", "R")):
+        a3 = []
+        for c in ("stroke", "deviation", "rotation"):
+            col = np.asarray(getattr(rm, f"{c}_{S}"), float)
+            x = col[:, k] if part in ("all", c) else col[:, 2]
+            a3.append(np.interp(ph, t / T, x, period=1.0))
+        ang[side] = (-a3[0], a3[1], -a3[2])
+    ref = {c: float(np.nanmean(np.asarray(getattr(rm, f"{c}_norm_{part}"), float)[:, k]))
+           for c in ("Fx", "Fy", "Fz", "Mx", "My", "Mz")}
+    ref["roll_accel_norm"] = float(np.asarray(rm.roll_accel_norm)[k])
+    return ph, ang, 1.0 / T, ref
+
+
 open_wing_ranges = flight.open_wing_ranges
 
 
@@ -67,9 +95,15 @@ def main() -> None:
     ap.add_argument("--body-pitch", type=float, default=47.6, help="Muijres 2014 steady flight (measured)")
     ap.add_argument("--out", default=str(REPO / "runs/s12/flight/muijres2014_hover.npz"))
     ap.add_argument("--robot-level", type=int, default=None, help="Database S1 force-modulation beat 0-12")
+    ap.add_argument("--robot-roll", type=int, default=None, help="Database S1 roll-modulation beat 0-12")
+    ap.add_argument("--roll-part", default="all", choices=("all", "stroke", "deviation", "rotation"))
     a = ap.parse_args()
-    extra = {}
-    if a.robot_level is not None:
+    extra, sides = {}, None
+    if a.robot_roll is not None:
+        ph, sides, a.f_hz, ref = robot_roll(a.robot_roll, a.roll_part)
+        extra = dict(robot_roll=a.robot_roll, roll_part=a.roll_part,
+                     **{f"robot_{c}": v for c, v in ref.items()})
+    elif a.robot_level is not None:
         ph, phi, dev, rot, a.f_hz, fmg, fz = robot_level(a.robot_level)
         extra = dict(robot_level=a.robot_level, fly_force_over_weight=fmg, robot_vertical_over_weight=fz)
     else:
@@ -81,10 +115,13 @@ def main() -> None:
     body = Body(vision=False)
     open_wing_ranges(body)          # WING_RANGE_DEG holds a crossed-wing stroke (F-WING-3); fit unbounded
     res, errs = {}, {}
+    if sides is None:
+        sides = {sd: (phi, dev, rot) for sd in ("l", "r")}
     for side in ("l", "r"):
         qs, es, q0 = [], [], None
+        sphi, sdev, srot = sides[side]
         for i in range(len(ph)):
-            s, le = wing_vectors(phi[i], dev[i], rot[i], side)
+            s, le = wing_vectors(sphi[i], sdev[i], srot[i], side)
             q, e = flight.wing_pose_ik(body, side, s, le, q_start=q0)
             qs.append(q); es.append(e); q0 = q
         res[side], errs[side] = np.array(qs), np.array(es)

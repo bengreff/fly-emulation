@@ -10,6 +10,11 @@ last wingbeats, against stroke phase.
 q_l and q_r (n x 3 hinge angles in rad: stroke, deviation, rotation, from
 flight.wing_pose_ik), f_hz and body_pitch_deg (nose-up body angle the thorax is
 held at, so the vertical force is read in the measured body attitude).
+
+Also reported: the wings' mean force and torque in the robot's frame (Muijres 2014
+Database S1: x forward and horizontal at the hover attitude, y right, z down),
+torque about the midpoint of the two wing hinges, normalized by weight and by
+weight x wing length (the robot's torque normalization, inferred: m g l).
 """
 from __future__ import annotations
 
@@ -79,7 +84,8 @@ def main() -> None:
     per = int(round(1000.0 / kin.f_hz / a.dt_ms))
     n = per * a.beats
     j70 = int(0.7 * be.alpha.shape[1])
-    rec = []
+    rec, ft = [], []
+    O = 0.5 * (d.xpos[be.bid[0]] + d.xpos[be.bid[1]])            # hinge midpoint (wing body origins)
     for _ in range(n):
         if tabs is None:
             tq, tqd = kin.targets(wb.t_s)
@@ -88,17 +94,23 @@ def main() -> None:
             (tq, tqd), (rq, rqd) = (t.targets(wb.t_s) for t in tabs)
             d.qpos[wb.q_adr] = np.r_[tq, rq]; d.qvel[wb.v_adr] = np.r_[tqd, rqd]
         b.step()
+        F = sum(d.xfrc_applied[bb, :3] for bb in be.bid)
+        M = sum(d.xfrc_applied[bb, 3:] + np.cross(d.xipos[bb] - O, d.xfrc_applied[bb, :3]) for bb in be.bid)
+        ft.append(np.r_[F, M])
         d.qpos[:7] = q0; d.qvel[:6] = 0.0
         rec.append([wb.t_s * kin.f_hz % 1.0, np.degrees(tq[0]), np.degrees(tq[2]), be.alpha[0, j70],
                     *be.parts.sum(0)[:, 2], be.force.sum(0)[2] + d.qfrc_fluid[2]])
     r = np.array(rec[-per * 2:])
     W = (a.weight_mg * 1e-3 if a.weight_mg else mj.mj_getTotalmass(m)) * 9810.0      # model mass in g; mm/s^2 -> uN
+    L = a.wing_length_mm or flight.WING_LENGTH_SCAN_MM
+    fm = np.array(ft[-per * 2:]).mean(0) * np.array([1, -1, -1, 1, -1, -1])          # y left/z up -> y right/z down
+    robot_frame = {k: round(float(v / (W if k[0] == "F" else W * L)), 4) for k, v in zip(("Fx", "Fy", "Fz", "Mx", "My", "Mz"), fm)}
     names = ["lift", "drag", "rotational", "total incl. body"]
     out = dict(kinematics=a.table or "generator", body_pitch_deg=pitch, rot_rate=a.rot_rate, wing_length_mm=a.wing_length_mm or flight.WING_LENGTH_SCAN_MM,
                rot_amp_deg=None if tabs else a.rot_amp, rot_mean_deg=None if tabs else kin.rot_mean_deg, weight_uN=W,
                mean_over_weight={k: round(float(r[:, 4 + i].mean() / W), 3) for i, k in enumerate(names)},
                wings_only_over_weight=round(float(r[:, 4:7].sum(1).mean() / W), 4), area_mm2=a.area_mm2,
-               f_hz=kin.f_hz, planform_mm2=round(float((be.c[0] * be.dr[0]).sum()), 4),
+               f_hz=kin.f_hz, robot_frame_norm=robot_frame, planform_mm2=round(float((be.c[0] * be.dr[0]).sum()), 4),
                alpha70_deg_at_midstroke=[round(float(r[np.argmin(abs(r[:per, 0] - p)), 3]), 1) for p in (0.25, 0.75)])
     out_dir = Path(a.out); out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"hover_blade_trace{a.tag}"

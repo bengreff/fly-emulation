@@ -10,7 +10,9 @@ the step, settled physical motion does not.
 Reports RMS leg joint speed (deg/s) after 200 ms, and the fraction of speed power
 above 1 kHz (chatter shows as power near the step's Nyquist band). Also the head
 contact that drives the head-touch channel (extrasenses): fraction of samples with
-any head-region contact, mean total normal force, and the contact partners.
+any head-region contact, mean total normal force, and the contact partners. Foot
+creep: horizontal drift of each tarsal tip (tarsus5 body) from 200 ms to the end,
+mm, and whether it was on the floor throughout.
 
     uv run python scripts/probes/resting_joint_speed.py --profile m9d --mode body [--substeps 2]
 """
@@ -56,6 +58,9 @@ def main() -> None:
     from flyemu.extrasenses import HEAD_BODIES
     hb = {mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{org.body.fly.name}/{h}") for h in HEAD_BODIES}
     hb.discard(-1)
+    LEGS = ("lf", "lm", "lh", "rf", "rm", "rh")
+    tip = [mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{org.body.fly.name}/{L}_tarsus5") for L in LEGS]
+    tip0, tip_down = None, np.ones(len(LEGS), bool)
     c6 = np.zeros(6)
     v, nsp, hf, partners = [], 0, [], {}
     for s in range(steps):
@@ -69,6 +74,15 @@ def main() -> None:
             org.body.step()
         if s * org.timestep_ms >= 200:
             v.append(np.degrees(d.qvel[dof]))
+            if tip0 is None:
+                tip0 = d.xpos[tip, :2].copy()
+            down = np.zeros(len(LEGS), bool)
+            for i in range(d.ncon):
+                for g in (d.contact[i].geom1, d.contact[i].geom2):
+                    b = int(m.geom_bodyid[g])
+                    if b in tip:
+                        down[tip.index(b)] = True
+            tip_down &= down
             nsp += sp.size
             f = 0.0
             for i in range(d.ncon):
@@ -96,6 +110,8 @@ def main() -> None:
            "head_contact_frac": round(float((np.array(hf) > 0).mean()), 4),
            "head_force_mean": round(float(np.mean(hf)), 4),
            "head_contact_partners": {k: round(n / len(hf), 4) for k, n in sorted(partners.items(), key=lambda x: -x[1])[:8]},
+           "foot_creep_mm": {L: round(float(np.linalg.norm(d.xpos[t, :2] - tip0[k])), 4) for k, (L, t) in enumerate(zip(LEGS, tip))},
+           "foot_down_throughout": {L: bool(x) for L, x in zip(LEGS, tip_down)},
            "thorax_z_mm": round(float(org.body.observe()["body_positions"][0, 2]), 3), "overrides": ov}
     print(json.dumps(out))
     if a.out:
