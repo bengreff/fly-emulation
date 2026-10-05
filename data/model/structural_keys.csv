@@ -66,6 +66,7 @@ muscle:leg|model,B4,switch,0 net torque per DOF (m4) / 1 antagonist Hill pairs (
 motor_unit:leg|fused_rate,B5,switch,read only in Hill mode; value row b5_fused_hz
 joint:leg|spring_reference,B3,switch,0 flybody neutral (m4) / 1 fitted to the eLife weighted protocol (data/params/passive_leg_rest_fit.csv; F-REST-1) / 2 refitted within flybody coxa ranges (data/params/passive_leg_rest_fit_coxa_flybody.csv; F-COXA-2) / 3 refitted within the fold-bounded CTr ranges (data/params/passive_leg_rest_fit_ctr.csv; F-COXA-2; s12)
 joint:leg|rest_mirror,B3,switch,"0 each leg's fitted rest angles as fitted / 1 left legs take the right partner's fitted rest angles (eLife 2025 Fig 3C targets are right legs only; bilateral symmetry inferred) (s12)"
+joint:leg|damping_mirror,B3,switch,"0 each leg's damping from its own projected stiffness / 1 left legs take the right partner's (diagnostic; the left/right difference is scan geometry; bilateral symmetry inferred) (s12)"
 joint:leg|damping_source,B3,switch,"0 flybody default leg damping (scaled by joint:leg|damping; c/k ~1 s) / 1 c = joint:leg|damping_tau_s x each leg joint's own measured stiffness (diagonal of J^T K J when coupled; Kelvin-Voigt; F-DAMP-1) (s12)"
 muscle:leg|rotator_map,B5,switch,Hill mode: sternal rotators by action (1; Cheong 2024 read) or legacy rule (0)
 adhesion:leg|detachment,B7,switch,0 neural grip only (m4) / 1 load and shear gate (adhesion.py)

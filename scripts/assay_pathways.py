@@ -45,6 +45,12 @@ ASSAYS = {
                  "projections (male-CNS taste connectome, bioRxiv 10.1101/2025.08.25.671814); "
                  "tarsal sugar evokes proboscis extension (Dethier 1976). F-TASTE-LEG-1 trace (s12)",
     ),
+    "ascsugar_mn9": dict(
+        stim=["LgAG2"], readout=["MN9"],
+        evidence="LgAG2 (sensory_ascending, Gr61a+) inferred to be the ascending tarsal sweet GRNs "
+                 "that project to the GNG and start feeding (Thoma et al. 2016 Nat Commun 7:10678); "
+                 "F-TASTE-LEG-1 (s12)",
+    ),
     "legsugar_labsugar_mn9": dict(
         stim=["LgLG4", "LgAG2"], readout=["MN9"],
         co_stim=(["LB3b", "LB3c"], 100.0),
@@ -222,6 +228,10 @@ def main() -> None:
     ap.add_argument("--min-synapses", type=int, default=profiles.WORKING_MIN_SYNAPSES)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--release-gain", action="append", default=[], metavar="TYPE[,TYPE]=G",
+                    help="diagnostic: multiply the presynaptic release gain of these types (s12)")
+    ap.add_argument("--silence-ids", default="", metavar="FILE",
+                    help="diagnostic: silence the output of these bodyIds, one per line (s12)")
     args = ap.parse_args()
 
     a = ASSAYS[args.assay]
@@ -241,6 +251,12 @@ def main() -> None:
     prof = profiles.apply(reg, args.profile)
     conn = connectome.build(reg, min_synapses=args.min_synapses)
     params = lif.default_params(reg, conn, timestep_ms=args.timestep_ms)
+    for s in args.release_gain:
+        tys, g = s.split("=")
+        m = conn.neurons.type.isin(tys.split(",")).to_numpy()
+        params.release_gain = np.broadcast_to(np.asarray(params.release_gain, np.float32), (conn.n,)).copy()
+        params.release_gain[m] *= float(g)
+        print(f"release gain x{float(g):g} on {int(m.sum())} cells ({tys}); diagnostic")
     reg.write(out / "inventory.csv")
 
     nrn = conn.neurons
@@ -264,6 +280,13 @@ def main() -> None:
             print("readout excludes incompletely traced:", dropped)
             rec.add_config({"readout_excluded_incomplete": dropped})
             read_idx = read_idx[~bad]
+    sil = None
+    if args.silence_ids:
+        ids = np.loadtxt(args.silence_ids, dtype=np.int64, ndmin=1)
+        sil = conn.index_of(ids)
+        sil = sil[sil >= 0]
+        print(f"silenced {len(sil)} of {len(ids)} listed cells; diagnostic")
+        rec.add_config({"silenced_bodyids": ids.tolist()})
     co = None
     if "co_stim" in a:
         co = (select(nrn, a["co_stim"][0]), a["co_stim"][1])
@@ -297,7 +320,7 @@ def main() -> None:
                 t0 = time.time()
                 c, raster = run_trial(
                     g, params, args.timestep_ms, stim_idx, r, prof["kick_mv"],
-                    args.duration_ms, seed=t, co=co,
+                    args.duration_ms, seed=t, co=co, silence_idx=sil,
                     record=read_idx if want_rhythm else None)
                 hz = c / (args.duration_ms / 1000.0)
                 rate_store[f"{gname}_{r:g}_{t}"] = hz.astype(np.float32)

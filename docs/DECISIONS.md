@@ -1161,3 +1161,56 @@ Result (5 October, 03:30; `runs/s12/stand3/standing_dead_mirror_s12.json`, `mirr
 - Sheet `docs/media/s12_rest_mirror_dead.png`, viewed: the fly lies closer to level, and its left legs still lift at the end; wings folded with no visible clipping.
 - Adopted per the rule: **m9r** = m9f + `joint:leg|rest_mirror` 1 is the working profile (03:31). Battery started on backhouse.
 - Battery on m9r (backhouse, 03:41, `runs/s12/pytest_battery_m9r.log`): 202 passed, 12 skipped, 1 failed, the known backhouse-only raw-data path check (`data/raw/door/units/`, passes on the Mac). One more test than m9f (the new mirror test). No regressions. The single MuJoCo NaN warning in the log is `test_a_diverged_run_is_flagged_invalid`, which diverges on purpose; it appears in every earlier battery log.
+
+### Pre-registration: mirror the leg damping, dead drop (5 October, 04:13; `joint:leg|damping_mirror`; diagnostic, nothing adopted)
+
+Director item 3. After m9r (rest angles mirrored) the dead fly still lies tipped 16.2° onto its right side. The mirror audit's largest remaining leg difference is damping: up to 10% left against right (lf coxa yaw 0.049 against 0.053 µN·mm·s/rad). Damping is derived per leg as tau × the leg's own projected stiffness (F-DAMP-1), and the stiffness differs 2.5-6.6% because the scanned segment geometry differs (03:34, kept as specimen geometry).
+
+Change: `joint:leg|damping_mirror` 1 gives each left leg hinge DOF (not the inter-tarsal chain) its right partner's damping. Default 0. Only acts with `joint:leg|damping_source` 1 (m9r has it). Inferred bilateral symmetry.
+
+Predictions:
+1. Audit with the switch: no leg pair differs in damping.
+2. Damping sets how the fly moves, not where it can rest, so it cannot remove an instability of the lying pose. Final |roll| stays above 10° (the 03:25 reading: an instability, with the scan's asymmetry picking the side). The side may flip, which would show the damping asymmetry picks it. If |roll| falls under 5°, the damping asymmetry was the cause.
+
+No adoption rule. Mirroring damping alone breaks c = tau × k on the left legs while their stiffness stays unmirrored, so this is a diagnostic. If the side flips or the roll falls under 5°, the next step would be a pre-registered mirror of the whole left leg (stiffness and damping). Sheet: the dead-drop frames, viewed.
+
+Result (5 October, 04:21; `runs/s12/dampmirror/`, backhouse; m9r baseline rerun alongside, same code):
+- Prediction 1: PASS. With the switch, no leg pair differs in damping (16 leg pairs listed before, none now). Left 38 flagged pairs, as before: hinge axes are not exact mirrors (lf coxa 3-4°, lf tarsus chain 13°, other legs under 3.2°; angle from the audit's axis error), FTi ranges under 1°, the wing fold, the labrum. The 03:30 text "sub-1° range and axis differences" understated the axes; the ranges are sub-1°, the axes are not.
+- Prediction 2: the side flips. The m9r baseline reproduces +16.2° (right side down; rm 1.75, rh 1.95, lf 0.57 µN). With mirrored damping the fly ends at −25.5° (left side down; lm 1.62, lh 1.82 µN; right legs in the air). The first 30 ms are nearly the same (roll −0.6, −1.3, −1.7° against −0.6, −1.4, −0.2°); the runs part at 50 ms (−2.9° against +2.2°). |roll| stays above 10° in both.
+- Reading: the lying pose is bistable. The dead fly settles on either side at 16-26°, and which side is decided by left/right differences of a few percent (here leg damping, which changes how it falls but not where it can rest). So the tip-over is not an artefact of one asymmetry, and a perfectly mirrored body would still fall to one side. Whether real dead flies lie tilted is not in the sources used (eLife 2025 used tethered flies), so this is not a defect by any measurement.
+- Sheet `docs/media/s12_damp_mirror_dead.png`, viewed: the fly lies on its left side with the right legs raised; wings folded on the abdomen, no visible clipping, no limp wing.
+- Not adopted (diagnostic, as registered). Switch stays 0. The registered next step if the side flipped was a mirror of the whole left leg; given the bistability that would only choose the side again, so it is not run.
+
+## Pre-registration: ascending leg sugar cells alone, presynaptic gain sweep (5 October, 04:40; diagnostic, nothing adopted)
+
+- **Question.** F-TASTE-LEG-1: leg sugar dies between layer 1 and layer 2. Thoma et al. 2016 put tarsal PER on the ascending sweet GRNs (inferred match: LgAG2, 11 cells, `sensory_ascending`). Hunger in real flies raises sweet GRN presynaptic calcium via dopamine (Marella 2012, Inagaki 2012; summary level, no gain in numbers found). How much presynaptic gain on LgAG2 alone does MN9 need?
+- **Run.** `assay_pathways.py --assay ascsugar_mn9 --release-gain LgAG2=G`, G = 1, 3, 10 (guessed range, a measuring sweep, not a value); Poisson 100 Hz into the 11 LgAG2 (above Ling 2014's 50-55 Hz at 100 mM; secondary), 2 trials, open loop; m2 (Shiu parameters) and m9r. Readout MN9_L.
+- **Predictions.** (1) G = 1: MN9_L 0 Hz under both (the 54-cell drive already fails). (2) G = 3: layer-1 cells near threshold fire, MN9_L still 0 Hz under m9r; under m2 MN9_L under 5 Hz. (3) G = 10: MN9_L fires under m2 (at least 5 Hz), not under m9r. If MN9 stays at 0 Hz at G = 10 under m2, the route from the ascending cells is not a gain problem at the first synapse.
+- **Use.** Diagnostic. The option scales every output synapse of the chosen types; no switch, nothing changes in the working profile.
+
+### Result (04:47; `runs/s12/legsugar/gain_*.log`, `runs/assay-ascsugar_mn9-*`, backhouse)
+
+MN9_L, Hz (2 trials, LgAG2 at 100 Hz):
+
+| gain on LgAG2 | m2 | m9r |
+|---|---|---|
+| 1 | 0, 0 | 0, 0 |
+| 3 | 0, 0 | 0, 0 |
+| 10 | 3, 3 | 0, 0 |
+
+- Prediction 1 PASS. Prediction 2 PASS (under m2, layer-1 cells on the LgAG2 → MN9_L shortest paths that fire: 3 of 16 at gain 1, 10 at gain 3, 15 at gain 10). Prediction 3 FAIL under m2 (3 Hz, below the 5 Hz predicted); PASS under m9r.
+- Layer 2 (26 cells) under m2: 0, 0 and 3 cells fire at gains 1, 3 and 10. So with almost every layer-1 cell recruited, layer 2 stays nearly silent. MN9_L inputs that fire at gain 10 include GABAergic GNG130 (7 Hz), DNg90, DNge051 ×2, as well as cholinergic GNG108, DNge080 ×2, DNge059 and serotonergic GNG002.
+- Post hoc, not pre-registered (m2, 2 trials): LgAG2 at gain 30, 5 and 7 Hz. All 54 leg sugar GRNs at gain 3, 0 Hz; at gain 10, 10 and 13 Hz. For scale, labellar sugar at 100 Hz with no gain gives 21-31 Hz.
+- Reading: a presynaptic gain on the ascending cells recruits their first relay but barely moves layer 2. An order-of-magnitude gain gives a few Hz, far below labellar sugar, and nothing under the working profile. A first-synapse gain such as hunger at the GRN terminal is not enough on its own in the modelled wiring. Nothing adopted.
+
+## Pre-registration: is feedforward inhibition what stops leg sugar at layer 2? (5 October, 04:50; diagnostic, nothing adopted)
+
+- **Question.** 52% of the layer 1 → 2 edges on the leg sugar paths are inhibitory, and at LgAG2 gain 10 the MN9_L inputs that fire include GABAergic cells (GNG130, DNg90, DNge051). Is the block feedforward inhibition rather than weak excitation?
+- **Run.** m2, open loop, `ascsugar_mn9`, Poisson 100 Hz into LgAG2, 2 trials, with `--silence-ids` (new diagnostic option). (a) The 8 inhibitory cells (predicted GABA or glutamate, Shiu's sign rule) on the LgAG2 → MN9_L shortest paths (GNG147 ×3, GNG182, GNG001, GNG088, DNge146, GNG297), at gain 1 and 3. (b) Those plus every inhibitory direct input to MN9_L (51 cells; MN9_L has 93 direct inputs at 5 or more synapses), gain 1, at 0 and 100 Hz.
+- **Predictions.** (a) MN9_L 0 Hz at gain 1, under 5 Hz at gain 3: the excitatory share is too small for disinhibition to matter. (b) Under 2 Hz at 0 Hz input; under 5 Hz at 100 Hz input. If (b) at 100 Hz gives 5 Hz or more against under 2 Hz at 0 Hz, inhibition onto MN9 is a main part of the block.
+
+### Result (04:51; `runs/s12/legsugar/sil_*.log`, backhouse)
+
+- (a) 8 on-path inhibitory cells silenced: MN9_L 0, 0 Hz at gain 1 and 0, 0 Hz at gain 3. Active cells unchanged at gain 1 (101, as without silencing). PASS.
+- (b) 51 cells silenced (on-path plus every inhibitory direct input to MN9_L): 0, 0 Hz at 0 Hz input and 0, 0 Hz at 100 Hz input. PASS.
+- Reading: feedforward inhibition is not the block. With every inhibitory input to MN9_L removed, the ascending leg sugar cells at 100 Hz still give 0 Hz, so layer 2 lacks excitation, not disinhibition. With the gain sweep this makes two failed rescues (first-synapse gain, disinhibition); per the working rules the mechanism is written up in F-TASTE-LEG-1 and no further fix is tried this session. Nothing adopted.
