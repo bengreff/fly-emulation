@@ -182,3 +182,28 @@ def test_blade_rotational_force_follows_the_pitch_joint_not_the_cone_spin():
     d.qvel[m.jnt_dofadr[jid["rotation"]]] = 2000.0
     hook(d)
     assert np.linalg.norm(hook.parts[0, 2]) > 0
+
+
+def test_wing_pose_ik_recovers_generator_poses_on_both_wings():
+    """wing_pose_ik (used to impose measured kinematics) recovers the hinge angles
+    of known wing poses from the membrane's span and leading-edge directions."""
+    import mujoco as mj
+    from flyemu import flight
+    from flyemu.body import Body
+    b = Body(vision=False)
+    flight.apply_wing_ranges(b)
+    m = b.sim.mj_model
+    d = mj.MjData(m)
+    kin = flight.WingKinematics(rot_amp_deg=55.0)
+    th = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, "flybody/c_thorax")
+    for side in flight.SIDES:
+        g, i_s, i_c, le = flight.wing_axes(b, side)
+        adr = [m.jnt_qposadr[mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"flybody/c_thorax-{side}_wing-{flight.FN[f]}")]
+               for f in ("stroke", "deviation", "rotation")]
+        for t in (0.0, 0.0011, 0.0034):
+            q, _ = kin.targets(t)
+            d.qpos[adr] = q
+            mj.mj_kinematics(m, d)
+            Rt, Rg = d.xmat[th].reshape(3, 3), d.geom_xmat[g].reshape(3, 3)
+            qs, err = flight.wing_pose_ik(b, side, Rt.T @ Rg[:, i_s], le * (Rt.T @ Rg[:, i_c]))
+            assert err < 1e-3 and np.allclose(qs, q, atol=1e-5)

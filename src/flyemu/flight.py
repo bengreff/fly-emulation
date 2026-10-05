@@ -377,3 +377,80 @@ def apply_blade_element(body, n_strips: int = 20) -> BladeElementWing:
     hook = BladeElementWing(body, n_strips)
     body.passive_hooks = list(getattr(body, "passive_hooks", ())) + [hook]
     return hook
+
+
+def wing_axes(body, side: str) -> tuple[int, int, int, float]:
+    """(geom id, span column, chord column, leading-edge sign) of a wing membrane
+    ellipsoid. The leading edge is the chord side that holds the pitch (rotation)
+    axis, as in a real wing (derived from the model geometry)."""
+    m = body.sim.mj_model
+    d = mj.MjData(m)
+    mj.mj_kinematics(m, d)
+    g = mj.mj_name2id(m, mj.mjtObj.mjOBJ_GEOM, f"{body.fly.name}/{side}_wing_membrane")
+    o = np.argsort(m.geom_size[g])
+    j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"{body.fly.name}/c_thorax-{side}_wing-{FN['rotation']}")
+    Rg = d.geom_xmat[g].reshape(3, 3)
+    r, ax = d.xanchor[j] - d.geom_xpos[g], d.xaxis[j]
+    r = r - (r @ Rg[:, o[2]]) / (ax @ Rg[:, o[2]]) * ax          # axis point at mid-span
+    return g, int(o[2]), int(o[1]), float(np.sign(r @ Rg[:, o[1]]))
+
+
+def wing_pose_ik(body, side: str, span_t: np.ndarray, lead_t: np.ndarray,
+                 q_start: np.ndarray | None = None) -> tuple[np.ndarray, float]:
+    """Hinge angles (stroke, deviation, rotation) in rad that point the membrane's
+    span along span_t and its leading edge along lead_t (both unit-ish, thorax
+    frame), by bounded least squares on the wing pose (independent of joint order;
+    bounds = the joint ranges). Returns (q, worst axis error in deg)."""
+    from scipy.optimize import least_squares
+    m = body.sim.mj_model
+    d = mj.MjData(m)
+    th = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{body.fly.name}/c_thorax")
+    g, i_s, i_c, le = wing_axes(body, side)
+    jid = [mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, f"{body.fly.name}/c_thorax-{side}_wing-{FN[fn]}")
+           for fn in ("stroke", "deviation", "rotation")]
+    adr = [m.jnt_qposadr[j] for j in jid]
+    lo = np.array([m.jnt_range[j][0] if m.jnt_limited[j] else -np.inf for j in jid])
+    hi = np.array([m.jnt_range[j][1] if m.jnt_limited[j] else np.inf for j in jid])
+    span_t, lead_t = span_t / np.linalg.norm(span_t), lead_t / np.linalg.norm(lead_t)
+
+    def axes(q):
+        d.qpos[adr] = q
+        mj.mj_kinematics(m, d)
+        Rt, Rg = d.xmat[th].reshape(3, 3), d.geom_xmat[g].reshape(3, 3)
+        return Rt.T @ Rg[:, i_s], le * (Rt.T @ Rg[:, i_c])
+
+    starts = [q_start] if q_start is not None else []
+    starts += [np.radians([a, b_, c]) for a in (10, 90, 160) for b_ in (0, 40) for c in (-100, -30, 20)]
+    best = None
+    for q0 in starts:
+        q0 = np.clip(q0, lo + 1e-6, hi - 1e-6)
+        r = least_squares(lambda q: np.concatenate([axes(q)[0] - span_t, axes(q)[1] - lead_t]), q0,
+                          bounds=(lo, hi))
+        if best is None or r.cost < best.cost - 1e-12:
+            best = r
+        if best.cost < 1e-12:
+            break
+    s_, c_ = axes(best.x)
+    err = max(np.degrees(np.arccos(np.clip(s_ @ span_t, -1, 1))), np.degrees(np.arccos(np.clip(c_ @ lead_t, -1, 1))))
+    return best.x, float(err)
+
+
+class TableKinematics:
+    """Wing kinematics from a measured table over one beat (joint angles per phase,
+    periodic cubic spline), with WingKinematics' targets() interface. Built by
+    fitting the hinge angles to a measured wing pose (wing_pose_ik)."""
+
+    def __init__(self, phase: np.ndarray, q: np.ndarray, f_hz: float):
+        from scipy.interpolate import CubicSpline
+        q = np.unwrap(np.asarray(q, float), axis=0)
+        ph = np.asarray(phase, float)
+        if ph[-1] < 1.0:
+            ph, q = np.append(ph, 1.0), np.vstack([q, q[:1]])
+        q[-1] = q[0]
+        self.f_hz = f_hz
+        self.spline = CubicSpline(ph, q, bc_type="periodic", axis=0)
+
+    def targets(self, t_s: float, power: float = 1.0, mod: np.ndarray | None = None
+                ) -> tuple[np.ndarray, np.ndarray]:
+        ph = (t_s * self.f_hz) % 1.0
+        return self.spline(ph) * power, self.spline(ph, 1) * self.f_hz * power
