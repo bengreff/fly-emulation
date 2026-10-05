@@ -23,12 +23,28 @@ only through public functions and asks for new ones (section 13, on hold).
     first part).
 - **Asked for on 4 October and already done:** the sham seeds, the live session and the protocol
   editor. On resume, start from the open items below.
-- **Open:**
-  1. A library at 10 seeds per protocol, judged on the mean. A single trial of sugar to MN9 fails
-     the 5 Hz bar 2 times in 10. That is about 50 runs, roughly 3.5 h on the Mac with shared slots
-     (estimate), so better on backhouse (offline tonight).
-  2. The rest of M3: the column table and the LPTC traces.
-  3. The library pins m9, while the fly worker's working model on main is now m9w.
+- **Next steps, in order** (nothing started):
+  1. **Fix the noise rule for the mean before any run.** At seeds 0 to 9 each seed has one sham
+     (`sham-one-cell-s<seed>`), so the per-seed noise floor is one sample.
+     - Proposal: the mean change passes only if it also exceeds the largest of the 10 per-seed
+       sham changes.
+     - Write the rule into section 14 and `score_library.py` (with a test), then commit.
+  2. **Record the 10-seed library.** The runner goes through the slot limiter by itself, one run at
+     a time. It is resumable: complete runs are skipped, and incomplete ones are moved aside.
+
+         .venv/bin/python app/tools/run_library.py --seeds 0 1 2 3 4 5 6 7 8 9 --out runs/app/lib-m9-seeds
+
+     - Size: 6 protocols × 10 seeds = 60 runs, at about 3.5 min and 2.4 GB each (measured per
+       run), so about 3.5 h of compute (estimate), more if other projects hold slots.
+     - Run it on backhouse if it is back and has the app data (check first); otherwise on the Mac
+       in the background, with a monitor.
+  3. **Score and record:** `.venv/bin/python app/tools/score_library.py --lib runs/app/lib-m9-seeds`.
+     Add the per-seed and mean results to the M2b tables in section 14, then commit and push.
+  4. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
+- **Question for the Director:** the library pins m9, while the fly worker's working model on main
+  is now m9w. Should the library move to m9w? My recommendation is to keep m9 for this round and
+  rerun on m9w once its body walks.
+- **Backhouse jobs:** none (backhouse is offline tonight).
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks; the m9 body does not walk.
   - Warm starts and branching wait on model request 2 (section 13, on hold).
