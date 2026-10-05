@@ -286,7 +286,10 @@ function trialsHTML(entry) {
   const cm = g.criterion_on_mean;
   return `<h3>This protocol at ${g.seeds.length} seeds <span class="chip measured">score_library.py</span></h3>
     <div>readout, Hz (this run in bold; seeds ${esc(g.seeds.join(", "))}): ${vals}; mean ${g.readout_hz_mean.toFixed(2)}, SD ${g.readout_hz_sd.toFixed(2)}${g.excluded_incomplete.length ? ` (without ${esc(g.excluded_incomplete.join(", "))}, incompletely traced)` : ""}</div>
-    ${cm ? `<div>${cm.pass ? `<span class="verdict pass">PASS</span>` : `<span class="verdict fail">FAIL</span>`} on the mean, ${cm.value_measured.toFixed(2)} Hz vs control; needs ${esc(cm.op)} ${cm.value} <span class="chip guessed" title="${esc(cm.rule)}">post hoc rule</span></div>` : ""}`;
+    ${cm ? `<div>${cm.pass ? `<span class="verdict pass">PASS</span>` : `<span class="verdict fail">FAIL</span>`} on the mean: ${esc(cm.what || cm.metric || "")} ${cm.value_measured.toFixed(2)} ${esc(cm.units || "Hz")} vs control (SD ${(cm.sd ?? 0).toFixed(2)}); needs ${esc(cm.op)} ${cm.value}${cm.threshold_met === undefined ? "" : cm.threshold_met ? ", met" : ", not met"} <span class="chip guessed" title="${esc(cm.rule)}">post hoc rule</span></div>
+    ${!cm.values ? "" : `<div class="dim">per seed: ${cm.values.map((v, i) => g.seeds[i] === seed ? `<b>${v.toFixed(2)}</b>` : v.toFixed(2)).join(", ")}${cm.sham_values ? `; the same seed's sham: ${cm.sham_values.map(v => v === null ? "–" : v.toFixed(2)).join(", ")}` : ""}</div>`}
+    ${cm.p_sham === undefined ? "" : cm.p_sham === null ? `<div class="warnline">no sham at these seeds, so the mean is judged on its threshold alone</div>`
+      : `<div class="${cm.within_noise ? "warnline" : "dim"}">against the same seeds' shams (exact sign-flip test, ${cm.n_pairs} pairs): p = ${cm.p_sham.toFixed(3)}${cm.within_noise ? ", so the mean cannot be told from noise" : ", beyond noise"}</div>`}` : ""}`;
 }
 
 function compareHTML(c, rec, pick, cands, entry, floor) {

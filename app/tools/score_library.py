@@ -129,11 +129,30 @@ def measure(run: Run, ctrl: Run, s0: int, s1: int, readout: list[str], types: np
     }
 
 
+NOISE_ALPHA = 0.05
+
+
+def sign_flip_p(d: np.ndarray, op: str) -> float:
+    """One-sided exact sign-flip test: the share of the 2^n sign patterns of the per-seed
+    differences d whose mean is at least as far as the observed mean in the criterion's
+    direction (">=": upward). Each seed's test and sham are read against the same control,
+    so under "the stimulus does no more than a one-cell sham" either sign is equally likely."""
+    n = d.size
+    signs = ((np.arange(2 ** n)[:, None] >> np.arange(n)) & 1) * 2 - 1
+    means, obs = (signs * d).mean(axis=1), d.mean()
+    tol = 1e-12 * max(1.0, float(np.abs(d).max()))
+    return float(np.mean(means >= obs - tol) if op == ">=" else np.mean(means <= obs + tol))
+
+
 def trials(rows: list[dict]) -> list[dict]:
     """Runs of one protocol at several seeds (run_library --seeds names them <protocol>-s<seed>):
-    the readout per trial and its mean and SD, as the model owner reports its assays. A rate
-    criterion judged on the mean over trials is a rule added on 4 October 2026 after the first
-    library was viewed, so it is reported beside the single-trial verdicts, not instead of them."""
+    the readout per trial and its mean and SD, as the model owner reports its assays, and the
+    protocol's criterion judged on the mean over trials. That rule was added on 4 October 2026
+    after the first library was viewed, so it is reported beside the single-trial verdicts, not
+    instead of them. Its noise test was declared on 5 October 2026 before the 10-seed library
+    was recorded: each seed's value minus the same seed's sham value (the first sham, the
+    one-cell sham), and a one-sided exact sign-flip test on those differences; the mean is
+    within noise when p >= NOISE_ALPHA, and passes only if it meets the threshold and is not."""
     groups: dict[str, list[dict]] = {}
     for r in rows:
         m = re.fullmatch(r"(.+)-s(\d+)", r["run"])
@@ -153,11 +172,27 @@ def trials(rows: list[dict]) -> list[dict]:
             g["readout_delta_hz"] = d
             g["readout_delta_hz_mean"] = float(np.mean(d))
             c = rs[0].get("criterion")
-            if c and c["metric"] == "readout_delta_hz":
-                v = g["readout_delta_hz_mean"]
-                g["criterion_on_mean"] = {"op": c["op"], "value": c["value"], "value_measured": v,
-                                          "pass": v >= c["value"] if c["op"] == ">=" else v <= c["value"],
-                                          "rule": "mean over trials; added 4 Oct 2026 after the first library was viewed"}
+            vs = [(r.get("criterion") or {}).get("value_measured") for r in rs]
+            if c and None not in vs:
+                v = float(np.mean(vs))
+                met = bool(v >= c["value"] if c["op"] == ">=" else v <= c["value"])
+                cm = {"metric": c["metric"], "op": c["op"], "value": c["value"], "units": c.get("units"),
+                      "what": c.get("what"), "values": vs, "value_measured": v,
+                      "sd": float(np.std(vs, ddof=1)), "threshold_met": met,
+                      "rule": "mean over trials (added 4 Oct 2026 after the first library was viewed); "
+                              "noise: one-sided exact sign-flip test of each seed's value minus the same "
+                              f"seed's sham, within noise if p >= {NOISE_ALPHA} (declared 5 Oct 2026 before "
+                              "the 10-seed library was recorded)"}
+                sh = [(r.get("criterion") or {}).get("sham_value") for r in rs]
+                pair = [(x, y) for x, y in zip(vs, sh) if y is not None]
+                if len(pair) >= 2:
+                    dd = np.array([x - y for x, y in pair])
+                    p = sign_flip_p(dd, c["op"])
+                    cm.update({"sham_values": sh, "n_pairs": len(pair), "diff_mean": float(dd.mean()),
+                               "p_sham": p, "within_noise": p >= NOISE_ALPHA, "pass": met and p < NOISE_ALPHA})
+                else:   # no sham at these seeds: the threshold alone, flagged
+                    cm.update({"sham_values": None, "n_pairs": 0, "p_sham": None, "within_noise": None, "pass": met})
+                g["criterion_on_mean"] = cm
         out.append(g)
     return out
 
@@ -204,7 +239,8 @@ def main() -> int:
                "window_ms": [s0 * run.ts, s1 * run.ts], "first_divergence_step": div, "first_event_step": s0,
                "matched": div is None or div >= s0, **res}
         shams = [s for s in runs if s.pr.get("role") == "sham" and s is not run and by_cfg(s) == by_cfg(run)]
-        shams.sort(key=lambda s: (s.path.name != "sham-one-cell", s.path.name))    # the original sham first
+        # the original sham first (at any seed: sham-one-cell-s<seed>)
+        shams.sort(key=lambda s: (re.sub(r"-s\d+$", "", s.path.name) != "sham-one-cell", s.path.name))
         if shams:
             row["shams"] = [{"run": s.path.name, **measure(s, ctrl, s0, s1, readout, types, drop)} for s in shams]
             row["sham"] = row["shams"][0]
@@ -261,7 +297,10 @@ def main() -> int:
             line += f"; vs control mean {g['readout_delta_hz_mean']:+.2f} Hz"
         if "criterion_on_mean" in g:
             c = g["criterion_on_mean"]
-            line += f"; on the mean {'PASS' if c['pass'] else 'FAIL'} ({c['op']}{c['value']}, post hoc rule)"
+            noise = ("no sham pairs" if c["p_sham"] is None
+                     else f"vs shams p={c['p_sham']:.3f}, n={c['n_pairs']}" + (", within noise" if c["within_noise"] else ""))
+            line += (f"; {c['metric']} mean {c['value_measured']:+.2f} (SD {c['sd']:.2f}) "
+                     f"on the mean {'PASS' if c['pass'] else 'FAIL'} ({c['op']}{c['value']}; {noise})")
         print(line)
     return 0
 

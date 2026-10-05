@@ -23,12 +23,10 @@ only through public functions and asks for new ones (section 13, on hold).
     first part).
 - **Asked for on 4 October and already done:** the sham seeds, the live session and the protocol
   editor. On resume, start from the open items below.
-- **Next steps, in order** (nothing started):
-  1. **Fix the noise rule for the mean before any run.** At seeds 0 to 9 each seed has one sham
-     (`sham-one-cell-s<seed>`), so the per-seed noise floor is one sample.
-     - Proposal: the mean change passes only if it also exceeds the largest of the 10 per-seed
-       sham changes.
-     - Write the rule into section 14 and `score_library.py` (with a test), then commit.
+- **Next steps, in order:**
+  1. **Done 5 October, 02:10 CDT:** the noise rule for the mean, a paired sign-flip test against
+     each seed's sham (section 14, "10-seed library"). It replaces the earlier proposal (the mean
+     must exceed the largest single-seed sham), for the reason given there.
   2. **Record the 10-seed library.** The runner goes through the slot limiter by itself, one run at
      a time. It is resumable: complete runs are skipped, and incomplete ones are moved aside.
 
@@ -719,6 +717,32 @@ Built 4 October 2026, evening.
     zero because the control is itself one trajectory, so every difference is measured from one
     draw. The within-noise rule (no larger than the largest sham) now sits at 3.8 deg against
     DNa02's 5 deg threshold, and at 0.06 mm against MDN's 0.5 mm.
+
+**10-seed library: the rule, declared 5 October 2026 at 02:10 CDT, before any of its runs was
+recorded.** The same six protocols (the control, the one-cell sham and the four tests) on m9, at
+seeds 0 to 9, closed loop, with the app's kicks, into `runs/app/lib-m9-seeds`.
+- **Each seed is scored as before:** the test against that seed's control, with that seed's
+  one-cell sham as its single noise sample. So the single-trial verdicts keep their old rule.
+- **Each test is judged on the mean of its criterion's measure over the 10 seeds,** against the
+  same threshold. Judging on the mean was added after the first library was viewed. For the
+  movement tests, judging on the mean is new here.
+- **The noise test on the mean, declared now:**
+  - For each seed, take the test's value minus the same seed's sham value. Both are read against
+    the same control.
+  - Run a one-sided exact sign-flip test on those 10 differences, in the criterion's direction.
+    It asks how many of the 1,024 sign patterns give a mean at least as far as the observed one.
+  - The mean is within noise if p ≥ 0.05.
+  - A test passes on the mean only if the mean meets its threshold and p < 0.05.
+  - Code: `score_library.py`, `trials` and `sign_flip_p`, with tests in `app/tests/test_scoring.py`.
+- **Why not the handoff's proposal** (the mean must exceed the largest single-seed sham): a mean of
+  10 varies less than a single trial. A real effect smaller than the noisiest sham trial would
+  then be called noise. The paired test compares like with like.
+- **Expectation, written before the runs:**
+  - Sugar GRN to MN9 should pass. The brain-only assay's mean is 5.7 Hz, and the shams leave MN9
+    silent.
+  - Leg sugar should change no spike at any seed.
+  - MDN and DNa02 should fail within noise while the body does not walk.
+  - These are expectations, not results.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
