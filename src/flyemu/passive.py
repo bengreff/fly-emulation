@@ -306,7 +306,11 @@ def set_wing_stiffness(body, k: float) -> list[str]:
 #                         body (scripts/probes/wing_clip.py; clear from 12.5, touching at 12.25);
 #   FOLDED_STACK_DEG      derived: extra elevation at which the upper wing's render vertices
 #                         clear the lower wing's by >= 2 um where they overlap in plan view;
-#   FOLDED_UPPER          guessed: which wing lies on top (no Drosophila data found).
+#   FOLDED_UPPER          guessed: which wing lies on top. Real flies differ: each has a
+#                         persistent individual preference for one side (Buchanan, Kain &
+#                         de Bivort 2015 PNAS 112:6700; selection lines in Purnell & Thompson
+#                         1973 Heredity 31:401), so left on top is one valid individual; the
+#                         population split was not read.
 FOLDED_ELEVATION_DEG = 12.5
 FOLDED_STACK_DEG = 1.5
 FOLDED_UPPER = "l"
