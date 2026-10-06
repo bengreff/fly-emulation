@@ -1038,3 +1038,20 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - an ort or hdc LMC dark potential (v₀);
     - Laughlin, Howard & Blakeslee 1987's transfer curve (s; an unverified secondary quotes an e-fold of 1.5-1.9 mV, which would contradict the model's 0.61);
     - Pm/Dm1 light responses.
+
+### F-VISION-10: LMC output release reaching zero at the LMC's light-saturated potential lifts Tm3 to 0.62 and Mi1 to 0.27 of recorded, as predicted; Mi1 is now at its tonic-inhibition ceiling (s12, 6 Oct 04:32)
+- **Test** (DECISIONS pre-registration 04:19, result 04:32; figure `docs/media/s12_vision_release_floor.png`, viewed). On the v0 arm (F-VISION-9), L1/L2 release at rest was lowered from 0.5 (guessed, class value) to 0.26 (inferred), so that release reaches zero at the LMC's light-saturated potential, −68 mV. The principle is that a graded synapse uses its presynaptic cell's whole range (Juusola et al. 1996). The new switch is `cell_type:all|release_at_rest_per_type` (off by default, CPU only; battery 229 passed).
+- **Result.** Every pre-registered readout passed:
+  - Tm3 ON +9.3 mV (predicted +7 to +11; recorded +15), up from +4.2.
+  - Mi1 ON +5.5 (predicted +4 to +6.5; recorded +20), up from +2.3.
+  - Tm1/Tm2 OFF +2.8/+3.4 (recorded +17.5), up from +1.6/+1.9. Their ON dips are −8.7/−7.3. T4a ON +2.0.
+  - The lamina is unchanged: L1 dark −43.7, gain 11.8.
+  - Steady-state potentials were within 0.5 mV of the one-compartment predictions.
+- **Mechanism.**
+  - Mi1: L1's inhibition now falls to zero in light. The 0.80 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition left are Mi1's ceiling.
+  - Tm3: 0.27 leak units of tonic inhibition remain. Its no-inhibition ceiling is about 6 mV above its light potential.
+  - Tm1/Tm2: OFF depends on L2's overshoot after light-off, against 0.78 leak units of tonic Pm2a/Pm2b inhibition.
+- **Reading.**
+  - The lamina-to-medulla handoff is now quantitatively understood. The remaining medulla deficit is tonic inhibition from spiking Pm/Dm cells whose modes and light responses are guessed.
+  - r0 0.26 rests on a principle, not on a measured LMC release curve. A recorded LMC→Mi1/Tm3 transfer curve would test it.
+- **Correction to F-VISION-9's DECISIONS entry.** L1 does have a depolarising OFF transient in the v0 arm (connected median +10.7 mV). The 04:11 entry misread the diluted type mean.

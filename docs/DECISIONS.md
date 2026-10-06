@@ -2643,3 +2643,39 @@ No cell may leave [−90, 20] mV.
 **Failure.** If Tm3 ON comes in below +6 or above +12, the one-compartment reading of F-VISION-9 is wrong; write up why, and do not try a second r0.
 
 **Not adoption.** Even a pass leaves r0 0.26 inferred from a principle, and the working profile untouched until the Mi1 block, gate and battery have run.
+
+### Result: LMC output release floor (6 October, 04:32; `runs/s12/vision/flash_v0r_i{0.001,0.01,1}`, `cstate_v0r`, about 10 min on backhouse; figure `docs/media/s12_vision_release_floor.png`, viewed; F-VISION-10; nothing adopted)
+
+| Readout | Role | v0 arm | Prediction | v0r | Recorded |
+|---|---|---|---|---|---|
+| L1 dark | check | −43.7 | −43.7 ± 1 | **−43.7** pass | −43 ± 7.3 |
+| R→L1 gain, i 0.001 | check | 11.8 | 11.8 ± 1 | **11.8** pass | about 13 |
+| L1 release, dark → light | check | 0.59 → 0.32 | 0.40 ± 0.03 → ≤ 0.04 | **0.40 → 0.00** pass | |
+| Tm3 ON, full flash | held | +4.2 | +7 to +11 | **+9.3** pass | +15 |
+| Tm3 dark | held | −54.8 | −52.4 ± 1.5 | **−52.0** pass | |
+| Mi1 ON, full flash | held | +2.3 | +4 to +6.5 | **+5.5** pass | +20 |
+| Mi1 dark | held | −59.0 | −57.2 ± 1.5 | **−57.2** pass | |
+| Tm1 dark | held | −46.4 | −51 ± 2 | **−51.1** pass | |
+| Tm1 / Tm2 OFF | held | +1.6 / +1.9 | larger | **+2.8 / +3.4** pass | +17.5 |
+| L2 dark | check | −50.4 | −50.4 ± 1 | **−49.8** pass | |
+| Tm1 / Tm2 ON dip | extra | −4.4 / −3.7 | | −8.7 / −7.3 | present (Behnia 2014 Fig. 2) |
+| T4a ON | extra | +1.0 | | +2.0 | |
+
+No cell left [−90, 20] mV. Steady-state potentials from the conductance probe landed within 0.5 mV of the one-compartment predictions (Mi1 light −52.1 against −52.1, Tm3 light −43.3 against −43.0, Tm1 light −59.5 against −60.3).
+
+**Reading.**
+- F-VISION-9's Tm3 reading holds: L1's release floor was Tm3's limit. With release reaching zero at the LMC's light-saturated potential, Tm3 carries 0.62 of its recorded ON response, Mi1 0.27.
+- Mi1 is now at the ceiling set by its tonic inhibition: in light, L1's share of its g_i is zero and 0.80 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition remain. More Mi1 needs the Pm/Dm1 modes or the GluClα reversal, not the lamina.
+- Tm3 in light sits at −43.3 with 0.27 leak units of tonic inhibition (Dm1, Pm9, Pm10) against a no-inhibition ceiling of −37.5. At most about 6 mV more is available from that inhibition.
+- Tm1/Tm2 now dip on ON as recorded, but their OFF response is 0.16-0.20 of recorded. Their OFF is driven by L2 rising above its dark release after light-off, against 0.78 leak units of tonic Pm2a/Pm2b inhibition. That is the next OFF-pathway limit (not measured yet).
+
+**Corrections.**
+- The pre-registration said the CPU and GPU paths both read the per-neuron array. The GPU path refuses any nonzero release at rest (`gpu/batched.py` raises NotImplementedError), so the switch is CPU-only like the class value. `structural_keys.csv` says so.
+- The 04:11 result said "L1 has no depolarising OFF transient at light-off in this arm". That is wrong. Connected L1 cells overshoot by a median +10.7 mV after light-off in the v0 arm (+10.6 in v0r, +13.4 at k 30, +1.5 at k 1). I misread it from the type-mean trace, which unconnected cells dilute to +4.7.
+
+**DECISION NEEDED (Ben), extending 04:11.** Should v0r (the v0 rows plus L1/L2 `release_at_rest` 0.26, inferred) become the vision diagnostic base? My recommendation is yes for diagnostics, and no for the working profile until the Mi1 block, gate and battery have run.
+
+**Next (pre-register first).**
+- The T4/T5 grating (V) on v0r, held out since 02:08.
+- The Mi1 block: Pm/Dm1 modes and the GluClα reversal.
+- The Tm1/Tm2 OFF limit: L2's OFF overshoot and Pm2a/Pm2b tonic inhibition.
