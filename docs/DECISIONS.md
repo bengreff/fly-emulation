@@ -2168,4 +2168,39 @@ Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere 
   - CT1, Am1, C2, C3, TmY15, LPi and the LPTCs: no Drosophila recording was read. Schnell et al. 2010 (HS) was blocked.
   - Lawf2 spikes (Tuthill et al. 2014, secondary read). It already spikes in the model, so no row.
 - So R and RT test the recorded types only. T5's other cholinergic inputs, Tm4 (9.9%) and Tm9 (21.0%), and the shared CT1 (8-15%) still spike.
-- No Drosophila LMC amplitude per contrast was found. Rivera-Alba et al. 2011 count 42 photoreceptor synapses onto each of L1 and L2 in one cartridge (read). That checks F-VISION-4: the scan's right-side median where present is 34-36.
+- No Drosophila LMC amplitude per contrast was found. Rivera-Alba et al. 2011 (read): "photoreceptor terminals to L1 and L2 have each 42 synapses", per terminal. A complete cartridge (six R1-R6 terminals) therefore gives L1 and L2 about 250 each, in line with the scan's maximum (about 320). The scan's right-side median where present (34-36) is about one terminal's worth, so even the cartridges with input are mostly partial (F-VISION-4, truncation).
+
+### Result, arms R and RT (6 October, 02:40; per-cell F1; `runs/s12/vision/grating_{R,RT}.json`, `vx_RT.json`; figure `docs/media/s12_vision_grating.png`)
+
+**V fails on all eight subtypes. No gate, battery or adoption is run (the adoption rule applies only to an arm that passes V).** As pre-registered, the next block is the photoreceptor-to-LMC gain, and this write-up is where the block stops.
+
+| Type | R per-cell F1 (max dir) | RT per-cell F1, grating / static | RT static v (mV) | RT static rate (Hz) |
+|---|---|---|---|---|
+| T4a-d | ≤ 0.0001 | 0.20-0.21 / 0.02-0.04 | −53.6 to −55.4 | 0 |
+| T5a-d | ≤ 0.0003 | 0.14-0.15 / 0.04-0.05 | −55.9 to −58.5 | 0 |
+| Mi1 / Tm1 | 0.23 / 0.0005 (= B) | 0.62 / 0.65 | −57.11 / −54.74 | 0 |
+| CT1 | 0.056 | 0.006 / 0.03 | −51.16 | 335.5 |
+| HSN / HSE / HSS | ≤ 0.02 | 0.23 / 0.44 / 0.59 | about −52 | 132.0 / 140.5 / 104.5 |
+| VS | 0.0095 | 0.13 / 0.16 | about −52 | 59.2 |
+| Am1 / H2 / HST | ≤ 0.07 | 4.7 / 1.1 / 0.14 (static 4.3 / 1.3 / 0.27: drifting, not following the grating) | −504.58 / −226.89 / −69.33 | 0 |
+
+- **R as predicted.** Upstream of T4/T5, R is B to four decimals (Mi1 0.2294 mV in both). T4/T5 stay at −52.00 (per-cell F1 ≤ 0.0003 mV). The lamina releases nothing in either arm, so recorded modes alone cannot revive the pathway. CT1, Am1, HS and H2 pick up ≤ 0.07 mV with no spikes. Likely source: rectified release from the newly graded medulla cells (not traced).
+- **RT, V criterion.** The T4 per-cell F1 exceeds static by 0.18-0.19 mV, and T5 by 0.09-0.10 mV. The largest mean shift is ≤ 0.07 mV. The threshold was 0.5 mV, so V fails by a factor of 3-5. T4/T5 now follow the grating faintly. Recorded T4/T5 responses are much larger: Gruntman et al. 2018 and 2019 had to widen a trial-stability criterion to 25 mV for slow bars "due to their strong responses" (Methods; the amplitudes themselves are only in figures, not yet read). DSI is not meaningful at this size.
+- **RT, the static state is wrong.** At mean luminance with no motion, HS cells fire 104-140 Hz, VS 59 Hz and CT1 335 Hz. T4/T5 sit 2-6 mV below rest. The likely causes have not been decomposed. One is CT1 (GABA; 2 cells with 109-138k output synapses each, a median 8-17% of each T4/T5's input). The other is Mi1, which sits 5 mV below rest (L1's tonic glutamate is among its inputs), cutting its release to T4.
+  - Recorded HS cells rest graded, depolarising with some spikelets, not tonic 100+ Hz spiking (from memory; Schnell et al. 2010 is blocked). CT1 is a compartmentalised graded cell (Meier & Borst 2019, from memory, to verify). Both are spiking in the model, which is guessed: the group default plus para.
+- **RT, runaway hyperpolarisation.** vm_extremes (300 ms static, `vx_RT.json`) finds 111 cells in 21 types below −100 mV. All are spiking-mode cells: Pm3 56 of 69 cells, MeLo8 23 of 47, both H1, both H2, both Am1 (minimum −667.6 mV), Nod2-5, LPT21/22/27/49, Li32, Pm13 and others. The first crossing comes 20-90 ms in.
+  - The mechanism is that m9c's current-based synapses have no reversal potential, so tonic inhibitory release drives voltage without bound.
+  - Am1's input is 73% T4b/T5b acetylcholine (low release when they sit hyperpolarised), 9.6% TmY5a glutamate and 5.1% LPi12 GABA. Once excitation falls, the inhibitory share is unopposed.
+  - Real GABA-A and GluCl currents reverse near −70 to −80 mV. Tonic release therefore needs bounded inhibition (the conductance-mode switch, e_inh −70, which m9c leaves off) before it can be adopted for any profile.
+
+**What this says about the blank.**
+1. The release rule is the first block, and is now understood. Graded release starts at rest, and L1/L2 only ever receive histamine inhibition, so they release nothing at any light level. R confirms that recorded modes cannot fix this alone.
+2. Tonic release (T) fixes the sign and passes the modulation to the medulla. It cannot be adopted as is: it breaks the gate's silence convention (seed 12: 16.36 spikes/ms) and, under current-based synapses, drives 111 cells out of range.
+3. **The gain is the remaining block.** At full contrast R1-R6 swing 2.95 mV, L1/L2 about 1.5, and the medulla about 0.6. That leaves T4/T5 at 0.1-0.2 mV. The 7 mV graded range (rest −52, threshold −45) is guessed, and so are the synaptic weights per release unit. No Drosophila LMC amplitude per contrast has been read. Laughlin 1981 (Calliphora) gives the matching principle: LMC gain is set so that the natural contrast distribution fills the response range (inferred for Drosophila).
+4. The r0 = 0.5 for every ol_intrinsic graded cell extrapolates lamina evidence (Juusola et al. 1996, Uusitalo et al. 1995) to the medulla. It is guessed for every cell type downstream of the lamina.
+5. The relay's 13 Hz Am1 rhythm was not reproduced open loop. In RT, Am1 runs away instead of oscillating. The rhythm needs the closed loop (the flyapp m9r control) to diagnose.
+
+**Next discriminating experiment (next block, not started).**
+- Pre-register a photoreceptor-to-LMC gain arm with three parts: a sourced LMC contrast response, bounded inhibition (conductance mode on), and a release rule in which hyperpolarisation increases L1/L2 output to their ON/OFF targets. The last part could be either tonic release with the dark state handled by the gate convention, or a sign-correct histamine-to-LMC transfer.
+- Pass condition: V as above. T4/T5 at least 0.5 mV, CT1/HS not tonic at mean luminance, and no cell below −90 mV.
+- Mode rows for CT1, HS/VS and Am1 need read recordings first: Ben's list.
