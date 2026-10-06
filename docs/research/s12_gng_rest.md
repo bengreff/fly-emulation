@@ -4,7 +4,7 @@ Why: the leg sugar route opens when its 43 cells sit 1 mV below their own rheoba
 model's default rest, 7 mV below threshold (DECISIONS 6 October 00:05 and its result). The measurable
 counterpart is the resting potential against threshold, or the spontaneous rate, of a GNG route cell.
 
-A Sonnet agent searched (5 October about 23:58 to 6 October 00:14). It was read-only, so no texts were
+A Sonnet agent searched (6 October, about 00:06 to 00:22). It was read-only, so no texts were
 saved to `data/raw/gng_rest_s12/`; it read the sources below by fetch. Labels: **agent read** = the
 agent reports reading the full text and I did not re-read it; **I read** = I checked the text myself;
 **unverified** = abstract or search summary only.

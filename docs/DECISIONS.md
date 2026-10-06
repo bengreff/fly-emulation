@@ -1710,3 +1710,51 @@ there is no noise.
   3. A noise version: route cells (or the whole central class) resting at 0.1-1.4 Hz through membrane
      noise instead of a fixed drive. Then the whole-brain question: does a class-level change pass the
      gate?
+
+## Pre-registration: under the `near` arm, is the opened leg sugar route specific, graded and does it stop? (6 October, 00:26; diagnostic, nothing adopted)
+
+**Question.** The `near` arm opens the leg sugar route (result above). Is that a model of tarsal PER or just
+a hair trigger? Three questions:
+- Does the opened route stay silent for bitter?
+- Does it grade with GRN rate, or fire at spontaneous GRN rates?
+- Does it stop when the sugar is removed?
+
+**Setup.** As above: m9c, open loop, 3 trials, 1000 ms per trial, no shuffles. `near` is the m9c profile
+plus `runs/s12/rest/route_near.csv`, the same file. `base` is plain m9c. Backhouse tmux `s12spec_*`; tags
+`rest_base` and `rest_near`.
+
+| Run | Assay | Arms | Rates (Hz) | Pass rule (`near`) | Basis of the rule |
+|---|---|---|---|---|---|
+| S1 | `legbitter_mn9` (LgAG1, 25 tarsal bitter GRNs) | base, near | 0, 100, 200 | MN9_L ≤ 2 Hz at 100 and 200 | expected by analogy with labellar bitter, which does not drive MN9 (Shiu 2024); no leg-specific source this session |
+| S2 | `legsugar_legbitter_mn9` (leg sugar held at 100 Hz; leg bitter swept) | near | 0, 100, 200 | MN9_L at 200 Hz bitter ≤ MN9_L at 0 Hz bitter + 3 Hz (bitter does not raise it) | French et al. 2015: optogenetic Gr66a activation on legs and proboscis reduces PER by 22%, "only a moderate inhibition" (secondary read). The magnitude is reported, not scored: an optogenetic PER fraction does not map to a MN9 rate. |
+| S3 | `bitter_mn9` (labellar LB1a-d) | base, near | 0, 100, 200 | MN9_L ≤ 2 Hz at 200 | Shiu 2024 |
+| S4 | `sugar_mn9` (labellar LB3b/c) | base, near | 0, 100, 200 | MN9_L ≤ 2 Hz at 0 Hz and ≥ 5 Hz at 200 Hz | MN9 drives proboscis extension and labellar sugar drives it (Shiu 2024) |
+| S5 | `sugar_bitter_mn9` (labellar sugar held at 100 Hz; bitter swept) | base, near | 0, 100, 200 | MN9_L at 200 Hz bitter ≤ half its 0 Hz bitter value, or ≤ 2 Hz | bitter suppresses sugar-evoked MN9 (Shiu 2024, predicted and confirmed) |
+| D1 | `legsugar_mn9`, with the new `--off-ms 1000` (1 s with no stimulus after each trial) | near | 3, 10, 25 and 50, 100, 200 (two runs) | MN9_L ≤ 2 Hz at 3 Hz input | tarsal sugar GRNs fire under 3 Hz spontaneously (Ling 2014), so spontaneous GRN activity must not trigger extension |
+
+- **D1 observations:**
+  - the lowest input rate at which MN9_L reaches 5 Hz, against 50-55 Hz for tarsal sugar GRNs at 100 mM
+    sucrose (Ling 2014);
+  - whether MN9_L rises with input rate (graded) or jumps (switch);
+  - MN9_L in the 1 s after the stimulus. If MN9_L is 5 Hz or more after the stimulus ends, the route
+    **latches**: a bistable switch that stays on.
+- **My expectations, written now:**
+  - S1 and S3 pass.
+  - S2 changes MN9_L by less than 5 Hz, because the route switches.
+  - S4 under `near` is higher than under `base`.
+  - S5 fails under `near`: once the cluster ignites, bitter no longer halves MN9_L.
+  - D1: silent at 3 Hz. Switches on somewhere between 10 and 50 Hz, with no grading above that. Latches
+    after 100 and 200 Hz.
+- **Reading rule:**
+  - **The near arm is a credible candidate only if all of these hold:**
+    - S1, S3 and S5 pass;
+    - D1 is silent at 3 Hz;
+    - D1 does not latch.
+    Then a sourced whole-brain version (noise, or a class-level resting potential, behind a switch and
+    gated) is worth building.
+  - **If it fails on specificity or latches,** resting excitability alone is not the missing piece, and
+    the route needs something that keeps it graded:
+    - adaptation, which the model's central cells lack (F-FI-1);
+    - or inhibition that scales with the input.
+    That is the next mechanism to test.
+  - Either way, nothing is adopted from this route-only, 43-cell bracket.

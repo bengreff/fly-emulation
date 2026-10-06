@@ -1,6 +1,6 @@
 """Rates of named cell types across finished assay runs, per stimulus rate (diagnostic, no simulation).
 
-Reads each run's rates.npz (body_id, real_{rate}_{trial}) and the male-cns neuron table, and prints
+Reads each run's rates.npz (body_id, real_{rate}_{trial}, and off_real_{rate}_{trial} with --off-ms) and the male-cns neuron table, and prints
 for every type (or instance name, e.g. MN9_L) the per-cell rate averaged over trials, plus the type mean, at each stimulus rate.
 
     uv run python scripts/probes/route_rates.py --runs runs/assay-legsugar3_mn9-m2-ffi_sil \
@@ -28,6 +28,8 @@ def main() -> None:
     ap.add_argument("--png-rate", default="200")
     ap.add_argument("--labels", default="", help="comma-separated row labels for --png (default: run names)")
     ap.add_argument("--title", default="")
+    ap.add_argument("--window", default="real", choices=["real", "off_real"],
+                    help="off_real: rates in the post-stimulus window (assay_pathways --off-ms)")
     a = ap.parse_args()
     nrn = pd.read_parquet(REPO / "data/cache/male_cns_neurons.parquet", columns=["bodyId", "type", "instance"])
     types = [t for t in a.types.split(",") if t]
@@ -37,7 +39,7 @@ def main() -> None:
         bid = z["body_id"]
         res[run] = {}
         for r in a.rates.split(","):
-            ks = sorted(k for k in z.files if k.startswith(f"real_{r}_"))
+            ks = sorted(k for k in z.files if k.startswith(f"{a.window}_{r}_"))
             if not ks:
                 continue
             mean = pd.Series(np.mean([z[k] for k in ks], axis=0), index=bid)
