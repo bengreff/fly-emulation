@@ -37,6 +37,7 @@ FLASHES = [(500, 200), (2700, 1000)]
 # per-cell peak deflections saved for these (scoring on cells whose cartridge has photoreceptor input)
 CELL_TYPES = ["R1-R6", "L1", "L2", "Mi1", "Tm3", "Tm1", "Tm2", "T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
 TAIL_MS = 1500.0
+BOUNDS = [-90.0, 20.0]          # mV, whole network, sampled every 1 ms during the recorded part (as vm_extremes.py)
 
 
 def main() -> None:
@@ -82,12 +83,17 @@ def main() -> None:
     net = lif.Network(conn, params, DT, rng=np.random.default_rng(a.seed))
     net.elec = el if len(el[0]) else None
     drive = np.zeros(conn.n, np.float32)
+    vmin = np.full(conn.n, np.inf, np.float32)
+    vmax = np.full(conn.n, -np.inf, np.float32)
 
     def run(ms: float, lum_at, record: bool):
         n_steps = int(round(ms / DT))
         trace = np.zeros(((n_steps + rec - 1) // rec, sel.size), np.float32) if record else None   # per cell
         spikes = np.zeros(conn.n, np.int64)
         for s in range(n_steps):
+            if record and s % 10 == 0:                                # whole-network bounds, every 1 ms
+                np.minimum(vmin, net.v, out=vmin)
+                np.maximum(vmax, net.v, out=vmax)
             if s % every == 0:
                 drive[rows] = vis.baseline_mv + vis.gain_mv * lum_at(s * DT)
             if record and s % rec == 0:
@@ -136,9 +142,16 @@ def main() -> None:
         print(f"{ty:6s} base {f['base_mv']:7.2f}  1 s flash: ON {f['on_min']:+6.2f}/{f['on_max']:+6.2f}  "
               f"OFF {f['off_min']:+6.2f}/{f['off_max']:+6.2f}  p90 ON {f['on_max_p90']:+6.2f} "
               f"OFF {f['off_max_p90']:+6.2f}  {res[ty]['rate_hz']:.1f} Hz", flush=True)
+    out_cells = (vmin < BOUNDS[0]) | (vmax > BOUNDS[1])
+    tt_all = conn.neurons.type.fillna("untyped").to_numpy()[out_cells]
+    bounds = {"range_mv": BOUNDS, "n_outside": int(out_cells.sum()), "n": int(conn.n),
+              "types": pd.Series(tt_all).value_counts().head(20).to_dict(),
+              "vmin": round(float(vmin.min()), 2), "vmax": round(float(vmax.max()), 2)}
+    print(f"cells outside {BOUNDS} mV during the flashes: {bounds['n_outside']} of {conn.n}; "
+          f"extremes {bounds['vmin']} / {bounds['vmax']}; {bounds['types']}", flush=True)
     meta = {"profile": a.profile, "set": a.set, "flashes_ms": flashes, "settle_ms": a.settle_ms,
             "sample_hz": a.sample_hz, "record_ms": a.record_ms, "seed": a.seed, "gain_mv": vis.gain_mv, "dark_mv": vis.baseline_mv,
-            "driven": int(has.sum()), "wall_s": round(time.time() - t0)}
+            "driven": int(has.sum()), "wall_s": round(time.time() - t0), "bounds": bounds}
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
         Path(a.out).write_text(json.dumps({"meta": meta, "res": res, "t_ms": tt.tolist(), "trace": traces,
