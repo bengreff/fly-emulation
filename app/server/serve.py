@@ -130,7 +130,9 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
     bodies = [{"id": b.parent.name, "path": f"{data_prefix}/body/{b.parent.name}"}
               for b in sorted((APP / "data" / "body").glob("*/geometry.json"))]
     return {"format": "flyemu-catalog/1", "recordings": recs, "libraries": libraries,
-            "atlases": atlases, "bodies": bodies}
+            "atlases": atlases, "bodies": bodies,
+            # the model's construction tables for the Fidelity tab (app/build/fidelity.py)
+            "model": f"{data_prefix}/model/fidelity.json" if (APP / "data" / "model" / "fidelity.json").exists() else None}
 
 
 class Handler(SimpleHTTPRequestHandler):

@@ -100,6 +100,22 @@ table.coltable td.mode.graded { color: var(--inferred); }
 #eye-traces { width: 100%; display: block; cursor: crosshair; margin: 4px 0; }
 .stimkey { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #0090c0; background: none !important; vertical-align: -1px; }
 [data-theme="dark"] .stimkey { border-color: #40d0ff; }
+.basisbar { display: flex; height: 10px; min-width: 200px; border-radius: 2px; overflow: hidden; background: var(--line); }
+.basisbar i, .basislegend i { display: inline-block; height: 100%; }
+.basislegend { display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px; margin: 4px 0; }
+.basislegend i { width: 9px; height: 9px; margin-right: 3px; border-radius: 2px; vertical-align: -1px; }
+.b-measured { background: var(--measured); } .b-derived { background: color-mix(in srgb, var(--inferred) 55%, var(--measured)); }
+.b-inferred { background: var(--inferred); } .b-guessed { background: var(--guessed); }
+.b-absent { background: #c0392b; } .b-unknown { background: var(--unknown); }
+table.basis td:last-child { width: 60%; }
+#tab-fidelity .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 5px 0; }
+#tab-fidelity #fid-q { flex: 1; min-width: 200px; }
+#tab-fidelity .grp { color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; margin: 8px 0 2px; }
+#tab-fidelity details.mech { border-bottom: 1px solid var(--line); padding: 2px 0; font-size: 12px; }
+#tab-fidelity details.mech summary { cursor: pointer; }
+#tab-fidelity details.mech table { margin: 4px 0 6px 14px; width: calc(100% - 14px); }
+#tab-fidelity tr.on td { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+#tab-fidelity td.wrap { white-space: normal; word-break: normal; overflow-wrap: anywhere; width: 36%; }
 </style>
 </head>
 <body>
@@ -145,7 +161,7 @@ table.coltable td.mode.graded { color: var(--inferred); }
   </section>
   <section id="traces-wrap"><canvas id="traces"></canvas></section>
   <aside>
-    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button><button data-tab="compare">Compare</button><button data-tab="session">Session</button><button data-tab="eye">Eye</button></div>
+    <div id="tabs"><button data-tab="neuron" class="on">Neuron</button><button data-tab="run">Run</button><button data-tab="compare">Compare</button><button data-tab="session">Session</button><button data-tab="eye">Eye</button><button data-tab="fidelity">Fidelity</button></div>
     <div id="tab-neuron" class="tab">
       <input id="search" placeholder="type name (e.g. MN9, DNa02) or bodyId" autocomplete="off">
       <div id="results"></div>
@@ -155,6 +171,7 @@ table.coltable td.mode.graded { color: var(--inferred); }
     <div id="tab-compare" class="tab" hidden></div>
     <div id="tab-session" class="tab" hidden></div>
     <div id="tab-eye" class="tab" hidden></div>
+    <div id="tab-fidelity" class="tab" hidden></div>
   </aside>
 </main>
 <footer>

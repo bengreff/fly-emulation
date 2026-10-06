@@ -11,6 +11,7 @@ import { controlsFor, compare, stimWindow, sameModel, incompleteReadout, readout
 import { modelsHTML, libraryOf, otherRun, inventoryDiffHTML } from "./models.js";
 import { SessionPanel } from "./session.js";
 import { EyePanel } from "./eye.js";
+import { FidelityPanel } from "./fidelity.js";
 
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
@@ -96,6 +97,8 @@ async function main() {
   if (params.get("etype") && app.eye.byName) app.eye.selectType(params.get("etype"));
   app.inspector.eyeOf = bid => app.eye.ommatidiumOf(bid);
   app.inspector.onOmm = (e, o) => { showTab("eye"); app.eye.pickOmm(e, o); };
+  app.fidelity = new FidelityPanel($("#tab-fidelity"));
+  app.fidelity.bind(cat.model ? await fetchJSON(cat.model).catch(() => null) : null, rec);
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
   if (params.get("tab") === "compare" && params.get("cmp")) $("#models")?.scrollIntoView();
@@ -379,8 +382,8 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
 function showTab(name) {
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== `tab-${name}`);
-  // the eye tab's mosaic and column table need a wider side panel
-  const wide = name === "eye";
+  // the eye tab's mosaic and column table, and the fidelity tables, need a wider side panel
+  const wide = name === "eye" || name === "fidelity";
   if ($("main").classList.contains("wide") !== wide) {
     $("main").classList.toggle("wide", wide);
     if (app.body) resize();
