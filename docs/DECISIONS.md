@@ -2185,7 +2185,7 @@ Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere 
 | Am1 / H2 / HST | ≤ 0.07 | 4.7 / 1.1 / 0.14 (static 4.3 / 1.3 / 0.27: drifting, not following the grating) | −504.58 / −226.89 / −69.33 | 0 |
 
 - **R as predicted.** Upstream of T4/T5, R is B to four decimals (Mi1 0.2294 mV in both). T4/T5 stay at −52.00 (per-cell F1 ≤ 0.0003 mV). The lamina releases nothing in either arm, so recorded modes alone cannot revive the pathway. CT1, Am1, HS and H2 pick up ≤ 0.07 mV with no spikes. Likely source: rectified release from the newly graded medulla cells (not traced).
-- **RT, V criterion.** The T4 per-cell F1 exceeds static by 0.18-0.19 mV, and T5 by 0.09-0.10 mV. The largest mean shift is ≤ 0.07 mV. The threshold was 0.5 mV, so V fails by a factor of 3-5. T4/T5 now follow the grating faintly. Recorded T4/T5 responses are much larger: Gruntman et al. 2018 and 2019 had to widen a trial-stability criterion to 25 mV for slow bars "due to their strong responses" (Methods; the amplitudes themselves are only in figures, not yet read). DSI is not meaningful at this size.
+- **RT, V criterion.** The T4 per-cell F1 exceeds static by 0.18-0.19 mV, and T5 by 0.09-0.10 mV. The largest mean shift is ≤ 0.07 mV. The threshold was 0.5 mV, so V fails by a factor of 3-5. T4/T5 now follow the grating faintly. Recorded T4/T5 responses are much larger: Gruntman et al. 2018 and 2019 had to widen a trial-stability criterion to 25 mV for slow bars "due to their strong responses" (Methods). Their Fig. 1D-E (T5, whole-cell, dark bars moving across the receptive field; read, figure estimate against the 10 mV scale bar; `data/raw/vision_mode_s12/elife50706_fig1.jpg`, eLife CC BY): preferred-direction peaks about 5-11 mV, null direction about 2-4 mV, DSI 0.4-0.6. The stimulus is a bar, not a grating, so the numbers are not directly comparable. Still, the model's 0.1-0.15 mV is about two orders of magnitude short. DSI is not meaningful at this size.
 - **RT, the static state is wrong.** At mean luminance with no motion, HS cells fire 104-140 Hz, VS 59 Hz and CT1 335 Hz. T4/T5 sit 2-6 mV below rest. The likely causes have not been decomposed. One is CT1 (GABA; 2 cells with 109-138k output synapses each, a median 8-17% of each T4/T5's input). The other is Mi1, which sits 5 mV below rest (L1's tonic glutamate is among its inputs), cutting its release to T4.
   - Recorded HS cells rest graded, depolarising with some spikelets, not tonic 100+ Hz spiking (from memory; Schnell et al. 2010 is blocked). CT1 is a compartmentalised graded cell (Meier & Borst 2019, from memory, to verify). Both are spiking in the model, which is guessed: the group default plus para.
 - **RT, runaway hyperpolarisation.** vm_extremes (300 ms static, `vx_RT.json`) finds 111 cells in 21 types below −100 mV. All are spiking-mode cells: Pm3 56 of 69 cells, MeLo8 23 of 47, both H1, both H2, both Am1 (minimum −667.6 mV), Nod2-5, LPT21/22/27/49, Li32, Pm13 and others. The first crossing comes 20-90 ms in.
@@ -2197,6 +2197,14 @@ Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere 
 1. The release rule is the first block, and is now understood. Graded release starts at rest, and L1/L2 only ever receive histamine inhibition, so they release nothing at any light level. R confirms that recorded modes cannot fix this alone.
 2. Tonic release (T) fixes the sign and passes the modulation to the medulla. It cannot be adopted as is: it breaks the gate's silence convention (seed 12: 16.36 spikes/ms) and, under current-based synapses, drives 111 cells out of range.
 3. **The gain is the remaining block.** At full contrast R1-R6 swing 2.95 mV, L1/L2 about 1.5, and the medulla about 0.6. That leaves T4/T5 at 0.1-0.2 mV. The 7 mV graded range (rest −52, threshold −45) is guessed, and so are the synaptic weights per release unit. No Drosophila LMC amplitude per contrast has been read. Laughlin 1981 (Calliphora) gives the matching principle: LMC gain is set so that the natural contrast distribution fills the response range (inferred for Drosophila).
+   - **Where the gain is lost** (per-cell F1, 90th percentile against the mean, RT). Cells with full photoreceptor input swing much more than the type mean:
+     - L1/L2: 4.5-4.8 mV against 1.5;
+     - Mi1/Tm1/Tm3: 1.7-1.9 mV;
+     - T4a 0.66 mV, T5a 0.41 mV.
+     Two losses compound. Truncation (F-VISION-4) leaves about half the cartridges without input, which halves the type mean. Each graded synaptic stage after the lamina then passes on about 1/2.6 of its input's swing. The per-stage factor is set by `graded_rmax` (100 Hz equivalent, guessed, bounds 10-500) times the per-synapse efficacy, both unsourced. The 7 mV graded range (v_th − v_rest) is also shared by every optic graded type, and that is guessed too. Recorded responses are larger (read, figure estimates against the 10 mV scale bars):
+     - Behnia et al. 2014 Fig. 2 (`data/raw/vision_mode_s12/behnia2014_fig2.jpg`, PMC author manuscript), full-field flashes from dark to full intensity, mean ± SEM: Mi1 depolarises about 20 mV and Tm3 about 15 mV at light ON; Tm1 and Tm2 dip a few mV at ON and depolarise 15-20 mV at OFF.
+     - T5: 5-11 mV for moving bars (above).
+     So real medulla cells swing at least 15-20 mV, about 3× the model's whole graded range. Each stage in the model ends up about 10× short in mV.
 4. The r0 = 0.5 for every ol_intrinsic graded cell extrapolates lamina evidence (Juusola et al. 1996, Uusitalo et al. 1995) to the medulla. It is guessed for every cell type downstream of the lamina.
 5. The relay's 13 Hz Am1 rhythm was not reproduced open loop. In RT, Am1 runs away instead of oscillating. The rhythm needs the closed loop (the flyapp m9r control) to diagnose.
 
@@ -2204,3 +2212,19 @@ Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere 
 - Pre-register a photoreceptor-to-LMC gain arm with three parts: a sourced LMC contrast response, bounded inhibition (conductance mode on), and a release rule in which hyperpolarisation increases L1/L2 output to their ON/OFF targets. The last part could be either tonic release with the dark state handled by the gate convention, or a sign-correct histamine-to-LMC transfer.
 - Pass condition: V as above. T4/T5 at least 0.5 mV, CT1/HS not tonic at mean luminance, and no cell below −90 mV.
 - Mode rows for CT1, HS/VS and Am1 need read recordings first: Ben's list.
+
+**Diagnostic, 02:43 (mechanism check, not a fix; nothing is adopted from it).** The claim above is that the runaway in RT comes from current-based inhibition. Test: rerun `vm_extremes.py` under RT with conductance mode on (`cell_type:all|conductance_based` 1, e_inh −70 mV, the existing switch, neutral otherwise), threshold −90 mV, everything else as `vx_RT.json`. Predictions:
+- No cell goes below −90 mV. Inhibition then cannot pass −70 mV, and nothing else in m9c drives below it except the intrinsic K channels' reversal, which is guessed.
+- If cells still go below −90 mV, the claim is wrong and the write-up gets corrected.
+
+**Result, 02:44 (`runs/s12/vision/vx_RTc.json`).** 0 of 167,111 cells leave [−90, 20] mV under RT with conductance-mode inhibition, against 111 cells below −100 mV with current-based inhibition. The prediction holds: the runaway was current-based inhibition. (The RT log's overflow warnings in `channels.py` came from the same −500 mV voltages.)
+
+**Arm RTc, pre-registered 02:44, launched before any result.** `motion_grating.py` under RT plus `cell_type:all|conductance_based` 1, same seed and stimulus as RT. It tests which of the RT failures bounded inhibition removes, not a candidate for adoption: conductance mode changes every synapse in the model and needs its own gate and battery.
+
+| Quantity | Prediction |
+|---|---|
+| V (T4/T5 per-cell F1 above static ≥ 0.5 mV) | Fails. The gain is unchanged: conductance weights are scaled to keep their effect at rest. |
+| HS / CT1 at mean luminance | Still tonic. HS's input is 91% T4a/T5a, which release tonically at r0. |
+| Am1, H2 | Within [−90, 20] mV (from vx_RTc) |
+
+If V passes, gain is not the remaining block, and the next block is reconsidered before it is pre-registered.

@@ -932,6 +932,10 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Reading.**
   - The remaining block is gain. Full contrast moves R1-R6 by 2.95 mV, the LMCs by 1.5 mV, the medulla by 0.6 mV and T4/T5 by 0.2 mV, inside a guessed 7 mV graded range.
   - The release rule needs a sign-correct LMC transfer: hyperpolarisation must signal to ON and OFF targets.
+  - The type means hide a skew. The 90th-percentile cell swings 4.5-4.8 mV in L1/L2, 1.7-1.9 mV in Mi1/Tm and 0.4-0.7 mV in T4/T5.
+    - Truncation halves the mean.
+    - Each graded stage after the lamina passes on about 1/2.6 of its input's swing. That factor is set by the guessed `graded_rmax` (100 Hz) and the per-synapse efficacy.
+  - Recorded Mi1, Tm1, Tm2 and Tm3 swing 15-20 mV to full-field flashes (Behnia et al. 2014 Fig. 2, figure estimate), and T5 5-11 mV to moving bars (Gruntman et al. 2019 Fig. 1). That is 3× the model's whole 7 mV graded range (guessed), and about 10× what the model's medulla does.
   - Tonic release cannot be adopted without bounded inhibition (conductance mode).
   - The mode rows still missing are CT1 (2 cells, 109-138k output synapses each, a median 8-17% of each T4/T5's input; physiologically compartmentalised, from memory, to verify), Am1, HS/VS/H2 and the LPi cells.
   - The relay's 13 Hz Am1 rhythm did not appear open loop. In RT, Am1 runs away instead.
