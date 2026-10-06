@@ -2395,3 +2395,44 @@ Prediction (02:48): Mi1/Tm3 ON and Tm1/Tm2 OFF deflections of 0.5-3 mV in RTc, a
 - **HS, VS and CT1 still fire tonically** (HSN 154-192 Hz, VS 86-98 Hz, CT1 409-434 Hz; all spiking by guess).
 
 **Next discriminating step (pre-register before any run).** Make the recorded dark potential a target of the in-network dark state, not the leak reversal, for graded cells with tonic synaptic input. Then a disinhibited cell's light potential is set by its leak reversal and the strength of its tonic inhibition. The prediction to test is that Mi1's input resistance rises in light (several-fold if the inhibition carries the 20 mV). That is a recordable discriminator: Ben's list.
+
+### Correction to the gain block mechanism (6 October, 03:29; `runs/s12/vision/cstate_k{1,10}.json` and `.log`, `scripts/probes/visual_conductance_state.py`, 81 s each on backhouse)
+
+**The mechanism written at 03:14 is wrong in its premise, and its "Next" step targets the wrong limit.**
+- m9c does not set `cell_type:all|rest_from_recordings`; only M10Q does (`profiles.py`). So every Mi1 and Tm cell in the gain block had the global rest and leak reversal of −52 mV, not the recorded −55. The dark baselines (−58.7 to −61.6) are 6.7-9.6 mV below the leak, and the light peaks (−57.2 to −58.5) are 5-6.5 below it.
+- The model therefore never used a recorded dark potential as a leak reversal, so the "double count" was not what happened in these runs.
+
+**What the conductances show.** I measured the conductance state directly. The probe takes cells whose cartridge has photoreceptor input, settles them 600 ms in the dark, then gives 300 ms of full-field light. The base is the gain block's, LMC ×1. Values are medians, with conductances in units of the leak conductance. They are model outputs (derived), not recordings.
+
+| Connected cells | v dark → light (mV) | g_e | g_i dark → light | of which graded (by presynaptic type) | Potential with all inhibition removed (light g_e) |
+|---|---|---|---|---|---|
+| L1 | −46.1 → −60.0 | 0.16 | 0.04 → 1.72 | R1-R6 0.04 → 1.69 | −44.6 |
+| Mi1 | −58.7 → −57.6 | 0.27 | 2.00 → 1.72 | L1 1.27 → 0.94 | −41.0 |
+| Tm3 | −54.4 → −52.3 | 0.33 | 1.30 → 1.04 | L1 1.11 → 0.84 | −38.9 |
+
+- **Modulation depth.** L1's release (r × g_k) falls only 27% in light, from 3.64 to 2.65. Over this window L1 hyperpolarises 14 mV, and with r0 0.5 and a 45 mV span the release falls by only about a third.
+  - L1 cannot hyperpolarise past the inhibitory reversal, −70 mV, which is 24 mV below its dark potential. So even unlimited photoreceptor drive could cut L1's release by at most about half (inferred from the release rule).
+  - Light removes 0.28 of Mi1's 2.00 inhibitory conductance, 14%.
+- **The tonic remainder.** The other 0.73-0.78 of Mi1's g_i comes from inputs that are not graded in this configuration, and light leaves it unchanged. By synapse count the inhibitory ones are Pm1/Pm2a/Pm2b/Pm3 (GABA) and Dm1 and Mi13 (glutamate), 34% of Mi1's input synapses.
+  - Suppose L1's release went to zero and nothing else changed. From the light conductances, Mi1 would sit at (−52 + 0.27·0 + 0.78·(−70)) / 2.05 = −52.0 mV, which is 6.7 mV above its dark potential (derived).
+  - The tonic inhibition from these other inputs roughly cancels the L5/L3 acetylcholine, so that is the real ceiling. It is still short of the recorded 20 mV.
+- **The leak is not the binding limit.** With every inhibitory input removed, Mi1 would sit at −41 mV, 18 mV above dark. Mi1 recovers 1.1 mV of that in the 300 ms window, about 6%.
+- **At LMC ×10** Mi1 is in a high-conductance state: g_i 18.4, G 21.9, dark −61.3, pinned near the −70 mV reversal.
+  - Tm1 and Tm2 sit at −15.7 and −20.2 mV under 7-10 leak conductances of L2's tonic acetylcholine.
+  - L1 sits at −27.2 under L5's acetylcholine (g_e 1.05).
+  - More LMC gain scales the tonic and modulated parts together, so the dark potential falls and the swing stays small.
+
+**Restated mechanism (inferred from the model's conductances).** Mi1's ON swing is the product of two factors:
+- how much of L1's tonic release light removes, which is set by L1's swing, the r0 and span of the release rule (r0 guessed, span inferred from the recorded LMC maximum), and the −70 mV reversal (a declared default);
+- how much of Mi1's inhibition is L1's at all. The rest comes from tonic, non-graded GABA/glutamate inputs whose modes are guessed.
+
+Each factor alone caps the swing far below 20 mV. The 03:14 conclusion that the LMC scale cannot fit Mi1 stands. Its reason is replaced.
+
+**Consequences.**
+- F-VISION-6 is corrected by F-VISION-7.
+- The leak-calibration switch built for the operating-point block (`cell_type:all|leak_from_network_rest`, neutral, CPU-only, with `scripts/probes/visual_rest_calibrate.py`) is kept as tested infrastructure.
+  - It does not address the binding limit.
+  - Its smoke test at input gain 3 (rest targets −52, before this correction) put the Mi1 and Tm2 leaks at the bounds (−25 and −85 mV): Mi1 G 7.7, Tm1 5.2, Tm2 5.3, Tm3 5.8.
+  - The script now requires `rest_from_recordings` so that its targets are the recorded rests.
+- The recording that discriminates these readings is the same one: Mi1's input conductance in dark and light. Both readings predict that it falls in light. This reading predicts a small fall (14% of g_i in the model now). Matching the recordings needs most of the dark conductance to be L1's and removed by light.
+- Ben's list also gets: whether Pm and Dm1 cells are graded or spiking, and their light responses.

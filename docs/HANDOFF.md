@@ -70,15 +70,27 @@
        - Flash baseline (Behnia 2014 Fig. 2 stimulus, `scripts/probes/visual_flash.py`): RTc gets every recorded sign right (Mi1/Tm3 ON, Tm1/Tm2 ON dip and OFF). Stage ratios are within 2× of the recordings, but the photoreceptor swings 7.7 mV against 60, so every stage is 10-100× short.
        - Gain block (pre-registered 03:04): sourced graded spans (`cell_type:all|graded_range_from_recordings`, new switch, neutral, CPU-only), photoreceptor gain 78, LMC output ×1/3/10.
          - Mi1 ON 1.5-3.1 mV against 20, saturating. That is the pre-registered disinhibition ceiling, so the mechanism is written up and nothing is tried further.
-         - Mi1's leak reversal is the recorded dark potential (−55), so a disinhibited Mi1 can never rise above it. The recorded rest must already include tonic inhibition.
          - Side effect: mode 2's tonic release drives Tm1/Tm2 to −18/−23 mV in the dark at ×10.
-     - **Next, pre-register first:** the medulla operating point. Treat recorded dark potentials as targets for the in-network dark state (per-type leak reversal calibrated, fitted, bounded by the potassium reversal) and scale the graded synaptic conductance so that tonic input is comparable to the leak. Train on Mi1 ON; hold out Tm3, Tm1/Tm2 OFF, L1/L2 and the T4/T5 grating. The chloride reversal and medulla rest evidence (agent report, `data/raw/vision_rest_s12/`) comes first. The 13 Hz Am1 rhythm the relay saw did not appear open loop; it needs the closed loop.
+       - **Correction 03:29 (DECISIONS; F-VISION-7, which corrects F-VISION-6).**
+         - The 03:14 mechanism assumed a −55 mV recorded leak. m9c leaves `rest_from_recordings` off, so the leak was −52.
+         - Measured conductances (`scripts/probes/visual_conductance_state.py`, `runs/s12/vision/cstate_k{1,10}.json`) show the limit is modulation depth plus tonic inhibition, not the leak:
+           - Light cuts Mi1's inhibitory conductance by only 14% (2.00 to 1.72 leak units). L1's release falls 27%: L1 swings 14 mV of a 45 mV span with r0 0.5, floored by the −70 mV reversal.
+           - 0.75 of Mi1's g_i is tonic, from non-graded Pm/Dm1/Mi13 inputs (34% of its synapses). Even full L1 shutoff would reach only −52 mV, a 6.7 mV swing.
+           - With no inhibition at all, Mi1 would sit at −41 mV, 18 mV above dark.
+         - The leak-calibration switch (`cell_type:all|leak_from_network_rest`, neutral, CPU-only; `scripts/probes/visual_rest_calibrate.py`) is kept as tested infrastructure. It does not address this limit.
+     - **Next, pre-register first:** the parameters that set Mi1's swing are:
+       - the release rule's r0 (guessed 0.5) and span (inferred, 45 mV for LMCs);
+       - the inhibitory reversal (declared −70; M10Q −56);
+       - the modes of Pm/Dm1/Mi13 (guessed).
+       No single one reaches 20 mV, so a block must test a combination with a declared bound on each, train on Mi1 ON, and hold out Tm3, Tm1/Tm2 OFF, L1/L2 and the T4/T5 grating. The chloride reversal and medulla rest evidence (agent report, `data/raw/vision_rest_s12/`) comes first. The 13 Hz Am1 rhythm the relay saw did not appear open loop; it needs the closed loop.
      - **For Ben's list:**
        - Strother et al. 2017 Neuron full text (whether Mi4/Mi9 were whole-cell recorded);
        - Schnell et al. 2010 J Neurophysiol (HS/VS mode);
        - Serbe et al. 2016 Neuron (Tm4/Tm9);
        - a Drosophila LMC response amplitude per contrast (patch or sharp electrode);
-       - Mi1 input resistance in dark and light, and the GluClα reversal (F-VISION-6);
+       - Mi1 input resistance in dark and light, and the GluClα reversal (F-VISION-6, F-VISION-7);
+       - whether Pm1-3 and Dm1 cells are graded or spiking, and their light responses (F-VISION-7);
+       - the ort reversal in LMCs against the lamina's local extracellular potential (Zheng et al. 2006: lamina space −20 to −40 mV against the retina);
        - CT1 compartment physiology (Meier & Borst 2019);
        - any recording of Am1 or the LPi cells.
   1a. **Done 21:40: force_per_spike 10 folded into m9r** (DECISIONS 21:27). Under m9r it reaches 71 of 732 mapped motor neurons (leg cells without a force-table row). Static arrays identical with and without `--set`; gate seed 12 identical to the archived m9r gate; battery 204 passed, 1 known failure. flyapp's m9r library started at 21:30:45 from its own copy before the fold reached main, so it runs those 71 cells at 1: restart it after merging main, or label it pre-fold (Director's call; not touched). Later fidelity step (B5, behind a switch): per-neuron values for the 71 cells from `scripts/motor_forces.py`'s size rule.

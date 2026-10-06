@@ -942,6 +942,7 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - No change adopted. The next block is a pre-registered photoreceptor-to-LMC gain arm with conductance-mode inhibition.
 
 ### F-VISION-6: the medulla's ON response is capped by disinhibition from a leak reversal set to the recorded dark potential; more LMC gain lowers the dark state instead (s12, 6 Oct 03:14)
+- **Corrected by F-VISION-7 (03:29).** m9c leaves `rest_from_recordings` off, so the leak was −52 mV, not the recorded −55. The measured conductances show that the leak is not the binding limit. The result and the side effect below stand; the mechanism and the reading do not.
 - **Test** (DECISIONS: gain block pre-registered 03:04, result 03:14; figure `docs/media/s12_vision_gain.png`, viewed). Full-field flash from darkness (Behnia et al. 2014 Fig. 2 stimulus), open loop, m9c plus:
   - conductance-mode synapses (bounded inhibition);
   - recorded modes and tonic release at rest (r0 0.5, guessed);
@@ -964,3 +965,21 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Recorded dark potentials then become targets for the in-network dark state. For cells with tonic excitation (Tm1, Tm2), the leak reversal must stay physiological (bounded by the potassium reversal), so a larger conductance there needs a balancing tonic inhibition. 22% of Tm1's input synapses are from Pm2a/b GABAergic cells.
   - Discriminating recordings for Ben's list: Mi1 input resistance (or conductance) in dark and light, and the GluClα reversal in Mi1.
   - Nothing adopted.
+
+### F-VISION-7: Mi1's ON swing is limited by modulation depth and by tonic inhibition from non-graded inputs, not by its leak reversal (s12, 6 Oct 03:29; corrects F-VISION-6)
+- **Test** (DECISIONS, correction at 03:29). `scripts/probes/visual_conductance_state.py` on the gain block base, LMC ×1 and ×10. Connected cells, 600 ms dark then 300 ms of full-field light. Conductances are split by presynaptic type and are model outputs (derived).
+- **Result at LMC ×1.**
+  - Mi1 goes from −58.7 to −57.6 mV. Its inhibitory conductance falls from 2.00 to 1.72 leak units: L1's share from 1.27 to 0.94, while the 0.73-0.78 from non-graded inputs stays put.
+  - With every inhibitory input removed, Mi1 would sit at −41 mV.
+  - L1's release falls 27% because L1 hyperpolarises 14 mV (−46 to −60) of a 45 mV release span with r0 0.5. L1 is floored by the −70 mV reversal, 24 mV below its dark potential.
+- **Mechanism (inferred).** Two factors multiply:
+  - Modulation depth. Light cuts L1's tonic release by a quarter to a third, and at most about half even with unlimited photoreceptor drive.
+  - Tonic inhibition. Mi1's other inhibitory inputs are Pm1/Pm2a/Pm2b/Pm3 (GABA) and Dm1 and Mi13 (glutamate), 34% of its synapses, all non-graded in this configuration. Their tonic inhibition balances the L5/L3 excitation, so a complete L1 shutoff would reach only −52 mV, a 6.7 mV swing.
+  - More LMC gain raises the tonic and modulated conductances together (×10: G 22), so the dark potential falls toward −70 and the swing stays near 3 mV.
+- **Reading.**
+  - The parameters that set Mi1's swing are the release rule's r0 (guessed) and span (inferred), the inhibitory reversal (declared default −70; M10Q has −56), and the modes of the Pm/Dm1/Mi13 inputs (guessed).
+  - The recorded leak or rest is not one of them. Fitting any one of them alone will not reach 20 mV.
+  - Discriminating recordings:
+    - Mi1's input conductance in dark and light;
+    - the light responses and spiking/graded mode of Pm and Dm1 cells;
+    - the ort/HisCl reversal in LMCs, measured against the lamina's local extracellular potential. Zheng et al. 2006 report the lamina intercellular space at −20 to −40 mV relative to the retina, and LMC potentials of −40 to −70 mV on the same reference, so the recorded 45 mV LMC swing includes any light-evoked change in the lamina field and is not directly a transmembrane amplitude (inferred).
