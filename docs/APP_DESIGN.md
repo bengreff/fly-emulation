@@ -7,11 +7,10 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 01:30 CDT, 6 October 2026 (M3 is done: the Eye tab has the column table and the
-motion-sensing traces, checked on a watched control run; nothing of mine is running on either
-machine):**
+**State at 02:05 CDT, 6 October 2026 (M3 and the graded-medulla discriminating run are done;
+nothing of mine is running on either machine):**
 
-- **Done and pushed** (branch `app`; 147 tests pass).
+- **Done and pushed** (branch `app`; 163 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
     - On seeds 0 to 2, every cell's spike count matches the model's own run.
     - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
@@ -89,9 +88,15 @@ machine):**
   signal reaching the photoreceptors and L1 to L3 and stopping at the first spiking stage of the
   medulla. T4 and T5 do not move, and the tangential cells carry only an internal rhythm through
   one inhibitory cell, Am1.
-- **Next step:** M4 (fidelity and body selection), unless the Director prefers the discriminating
-  run first: the same watched control with the optic-columnar graded switch at 1, as a labelled
-  variant.
+- **The discriminating run is done** (section 14, "The discriminating run: graded medulla").
+  With the medulla cells that flies' recordings show as graded made graded, as a labelled variant
+  (measured cell list, 14 runs at seed 0): T4 respond to ON bars and T5 to OFF bars, locally,
+  with peaks of 1.2 to 2.0 mV, but neither is direction-selective (|DSI| at most 0.02 on the
+  peak). Untouched, the model passes no light signal past L1-L3, because its graded rule
+  transmits nothing at or below rest. Three notes for the fly worker (section 13, requests 7 to 9).
+- **Next step:** M4 (fidelity and body selection). Proposed follow-up, not run: the same bars with
+  a delayed copy into the slow inputs, to test whether the missing piece is the inputs' temporal
+  filters.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
@@ -563,6 +568,18 @@ approximation. None blocked M1. In order of need:
    world light source with a spectrum.
 6. Later: **connectome adapters** (BANC; FAFB + MANC joined at the neck) with type crosswalks for
    parameters.
+
+Found by the graded-medulla run (section 14, 6 October); notes for the fly worker, not changes the
+app makes:
+
+7. **Graded release that is tonic at rest.** The graded rule passes nothing at or below rest, so
+   L1-L3, which light hyperpolarises, are silent all run, and the light signal stops at the lamina.
+   In flies the lamina cells release tonically and light lowers the release.
+8. **The measured temporal filters of the T4/T5 inputs** (Mi1, Tm3 fast; Mi4, Mi9, C3 slower;
+   Tm1, Tm2, Tm4, Tm9 for T5). Without them the wiring gives no direction selectivity.
+9. **The variant's graded rows as candidates for `cell_types.csv`:** Mi1, Tm3, Tm1, Tm2, Mi4, Mi9,
+   C3, T4a to T4d and T5a to T5d (`app/protocols/eye/variant_graded_medulla.csv`, each with its
+   whole-cell source).
 
 ## 14. Milestones
 
@@ -1060,10 +1077,14 @@ attention if retinotopic precision matters for motion vision.
     cells hyperpolarise in light, the signs seen in flies); Mi1 -52.7, Mi4 -53.4, Mi9 -52.2,
     C3 -51.9; L4, L5 and Tm1 to Tm9 about -52.0; T4a to T4d -52.00 with no variation at all;
     T5a to T5d -52.01 to -52.03;
-  - each photoreceptor follows its ommatidium's luminance (median correlation 0.51, n = 194), but
-    the patch looks at sky near the renderer's ceiling (mean luminance 0.988), so the luminance
-    varies by a median 0.05 and the voltage by 0.4 mV.
-  - **Reading** (inferred): the light signal enters at the graded photoreceptors and L1 to L3 and
+  - each photoreceptor follows its ommatidium's luminance (median correlation 0.51, n = 194). The
+    patch straddles the horizon after the fall: of its 19 ommatidia, 6 see sky and 11 see floor
+    (mean luminance after 200 ms above 0.8 or below 0.4), and the centre ommatidium varies between
+    0.24 and 0.38. Per photoreceptor, the luminance varies by a median 0.05 and the voltage by
+    0.4 mV. (Corrected at 01:46 CDT: this line first said the patch looks at sky near the renderer's
+    ceiling, mean luminance 0.988; that figure came from the first frame only.)
+  - **Reading** (inferred; corrected below under "The discriminating run": the signal stops one
+    stage earlier, at the L1-L3 output): the light signal enters at the graded photoreceptors and L1 to L3 and
     stops at the first spiking stage. The medulla cells spike by the model's default (guessed),
     and the optic-columnar graded switch is 0 in m9r (guessed); the lamina input moves them by
     under 1.5 mV, far from threshold, so T4 and T5 receive nothing. In flies Mi1, Tm3, Tm1 and Tm2
@@ -1080,11 +1101,116 @@ attention if retinotopic precision matters for motion vision.
     (cholinergic, 396 synapses onto Am1 R), MeVC11 L and Pm11 R. Octopaminergic OA-AL2i1 R (121
     synapses) fires at twice that rate. Where this rhythm starts is not checked. The 0.1 to 0.3 mV
     ripples in C3, Tm2 and other medulla rows look, by eye, to share its period; also not checked.
-  - **Next discriminating experiment** (not run): the same watched control with the
-    optic-columnar graded switch at 1, run as a labelled variant (`--set`, so it is not called
-    m9r), and a second patch at the horizon where the scene has contrast. If the mode is the
+  - **Next discriminating experiment** (proposed at 01:30, run at 01:44; see the next block): the
+    same watched control with the medulla cells graded, run as a labelled variant, and a second
+    patch at the horizon where the scene has contrast. If the mode is the
     block, Mi1, Tm3, Tm1 and Tm2 follow L1 and L2, and T4 and T5 move. Direction selectivity
     needs moving stimuli (request 5, on hold); until then the only image motion is the fly's own.
+
+**The discriminating run: graded medulla (6 October, 01:35 to 02:05 CDT, before M4).** The
+Director asked for it ahead of M4, with the graded cell types taken from recordings, not guessed.
+
+- **Which cells are graded** (`app/protocols/eye/variant_graded_medulla.csv`, every row measured,
+  from whole-cell recordings in Drosophila): Mi1, Tm3, Tm1 and Tm2 (Behnia et al. 2014); Mi4, Mi9
+  and C3 (Groschner et al. 2022); T4 (Gruntman et al. 2018); T5 (Gruntman et al. 2019). 26,276
+  cells across both optic lobes. Tm4 and Tm9 have only calcium imaging (Serbe et al. 2016;
+  Strother et al. 2014 is also imaging), which cannot tell graded from spiking, so they stay
+  spiking. A literature agent compiled the list from abstracts and summaries, not full texts
+  (confidence medium; the rows say so). The rows enter through the model's own
+  `$FLYEMU_EXTRA_PARAMS` (`flyemu.params.load`); `record.py --extra-params` or
+  `config.extra_params` sets it, the manifest keeps the rows and their md5, and the status reads
+  "adopted profile with extra per-type rows: custom, not validated". The Run tab lists the rows.
+  No model file changes.
+- **The horizon patch.** The first patch (ommatidium 298) already straddles the horizon after the
+  fall (6 sky ommatidia, 11 floor; the correction above), and among the patches with at least 5
+  of each it has the most watched cells, so the same patch serves.
+- **A finding from the existing control, before the run** (measured, m9r watched control,
+  200 to 2000 ms): L1, L2 and L3 never rise above rest (-52 mV) in any watched cell (max -52.58,
+  -52.01, -52.25 mV). The model's graded rule transmits at a rate proportional to
+  (V - V_rest)/(V_th - V_rest), clipped to 0 to 1 (`flyemu.lif`), so a graded cell at or below
+  rest transmits nothing. Light hyperpolarises L1-L3 (the sign seen in flies), so their output is
+  zero all run. The light signal therefore stops at the L1-L3 output, one stage before the
+  spiking medulla. In flies the lamina cells release transmitter tonically and light reduces the
+  release (ON cells such as Mi1 respond through that decrease); the rule cannot represent a
+  decrease from zero. This is a model-code question for the fly worker, noted, not changed here.
+- **Runs** (`app/tools/eye_sweep.py`, protocols committed with their predictions at aab8b75 before
+  any run; 14 runs at seed 0, 2 s each, same watch list as the control; backhouse, 7 at a time):
+  - A, the variant control.
+  - A, moving bars injected as current, because the scene has no moving stimulus. An ON bar is
+    +4 mV into Mi1, Tm3, Mi4 and C3 and -4 mV into Mi9 under the bar (the T4 inputs, with the
+    polarity each shows to light: Behnia et al. 2014; Strother et al. 2017, calcium imaging). An OFF bar is +4 mV
+    into Tm1 and Tm2 (T5 inputs). 4 mV is guessed, inside the 7 mV graded range. The bar is 7
+    columns long, steps one column every 50 ms and holds each cell 100 ms, sweeping 11 columns
+    across the patch, twice per run (300 and 1100 ms), in 4 directions. Front-to-back on the left
+    eye is mosaic -x and upward is -y (fit of the retinotopy table's azimuth and elevation near the
+    patch, -10.1 degrees azimuth and -9.2 degrees elevation per column spacing; inferred).
+  - B, the variant with a tonic +7 mV into every L1, L2 and L3 (a guessed operating point, so
+    the lamina output sits mid-range and light can lower it): a probe of the rule above, not a
+    claim about flies. B control, plus a photoreceptor ON bar (+3 mV into R1-R6, R7 and R8 of
+    the ommatidia under the bar, guessed) in 4 directions.
+- **Predictions** (written before the runs, in each protocol's `expect`):
+  - A control: T4/T5 stay flat, because L1-L3 transmit nothing whatever the medulla's mode;
+  - A bars: T4 (ON) and T5 (OFF) depolarise; direction selectivity weak or absent
+    (|DSI| < 0.2), because injected current lacks the inputs' measured temporal filters, which
+    are thought to set direction selectivity in flies;
+  - B: L1-L3 transmit; T4 respond more than T5 to an ON bar; direction selectivity weak or absent.
+- **Analysis** (`app/tools/eye_ds.py`, written before the results): for each watched T4/T5 cell,
+  the response is the change in potential against the arm's own control (which shares every
+  random draw), averaged over both sweeps. DSI = (R_pref - R_null)/(|R_pref| + |R_null|) per
+  cell, with the preferred direction from flies (Maisak et al. 2013: T4a/T5a front-to-back, b
+  back-to-front, c upward, d downward). The test is a two-sided Wilcoxon signed-rank test across
+  the about 18 cells per subtype, Holm-corrected within each set of bars.
+- **Results** (measured unless labelled; numbers in `runs/app/eye/graded-summary.json`; figure
+  `docs/media/app_eye_ds.png`; screenshots `docs/media/app_eye_graded_traces.png`, the Eye tab
+  during an ON sweep, and `docs/media/app_run_variant.png`, the Run tab's variant rows):
+  - **Checks.** All 14 runs completed (about 330 s each). Every bar run is identical to its arm's
+    control before the first bar at 300 ms, in every watched voltage and every spike, so what
+    differs afterwards comes from the bars.
+  - **A control: T4 and T5 stay flat, as predicted.** T4a to T4d and T5a to T5d sit at -52.00 mV,
+    varying by 0.002 to 0.004 mV (SD over time). L1-L3 still transmit nothing. 106,681 spikes
+    (m9r control: 106,287).
+  - **A ON bars: T4 respond, T5 do not.** Under the bar the T4 inputs rise 3.3 to 5.3 mV, and each
+    T4 cell peaks a median 1.7 to 2.0 mV above control (per subtype and direction, 17 or 18 cells
+    per subtype). T5 peak under 0.05 mV.
+  - **A OFF bars: T5 respond, T4 do not.** Tm1 and Tm2 rise 3.1 to 3.4 mV; T5 peak 1.2 to 1.4 mV;
+    T4 under 0.02 mV. The ON and OFF pathways separate as in flies.
+  - **The responses are local.** A cell's peak time follows its position along the sweep
+    (Spearman |rho| 0.90 to 0.96, 71 to 74 T4 or T5 cells per run; Mi1 0.93 to 0.96), so the
+    wiring and the column placement carry the retinotopy.
+  - **A: not direction-selective.** T4, pre-registered DSI (window mean): -0.02 to +0.03 per
+    subtype; the smallest Holm p (0.042, T4c) has the sign opposite to flies. T5: the
+    pre-registered DSI is -0.71 to +0.56, which breaks the prediction for T5a and T5b, but it is a
+    ratio of differences under 0.04 mV between window means near zero (the rise under the bar and
+    the dip after it cancel), and every T5 subtype responds most to downward bars, which points to
+    the stimulus or placement rather than the subtype. On the peak (post hoc) |DSI| is at most 0.02
+    for every T4 and T5 subtype.
+  - **B: L1-L3 transmit, but the ON medulla cells sit below rest.** With +7 mV the lamina output
+    is mid-range (mean output 0.49, 0.21 and 0.47 of maximum for L1, L2, L3). That tonic input holds
+    Mi1 at -55.5 mV, Tm3 -54.0, Mi4 -54.1 and C3 -53.2, below rest, so they pass nothing on; Mi9
+    and Tm4 sit above rest (-50.7). T4 sit 0.8 to 0.9 mV below rest, T5 1.0 to 1.4.
+  - **B photoreceptor ON bars.** Light lowers L1-L3 by a mean 0.24 mV (L3 0.05). Mi1 depolarises
+    (peaks +1.1 to +1.5 mV, retinotopic, |rho| 0.46 to 0.74): the ON sign of flies, through less
+    inhibition from L1. It stays below rest, so it transmits nothing. T4 peak 0.04 to 0.20 mV and
+    T5 0.12 to 0.35 mV (weakly retinotopic, |rho| 0.22 to 0.60), so the prediction that T4 respond
+    more than T5 fails.
+  - **B: not direction-selective.** The window means (0.002 to 0.01 mV) are too small for a ratio.
+    On the peak (post hoc) DSI is -0.20 to +0.15 per subtype and consistent across cells, but all
+    four T4 subtypes prefer the same directions (back-to-front and upward), whichever direction
+    each prefers in flies; T5 the same, weaker. That is a property of the stimulus or placement,
+    not tuning.
+  - **Reading** (inferred): T4 and T5 can respond, locally and with the fly's ON/OFF split, once
+    their inputs are graded and driven. The wiring alone, with inputs that all share the same
+    dynamics, gives no direction selectivity. In flies it is thought to come from the inputs'
+    different temporal filters: fast Mi1 and Tm3 against slower Mi4, Mi9 and C3 (Arenz et al.
+    2017; Groschner et al. 2022; literature, not checked here). The model has no such differences
+    between graded cells. Separately, the graded rule's cut-off at rest blocks the lamina output in
+    the model as it stands, and in B blocks the ON medulla cells. Both are model questions
+    (section 13, requests 7 to 9).
+  - **Next discriminating experiment** (proposed at 02:02, not run): arm A again with the slow
+    inputs (Mi4, Mi9, C3) given a delayed, smoothed copy of the bar (delay 30 to 50 ms, guessed),
+    standing in for their measured filters. If T4 then become direction-selective with each
+    subtype's sign from flies, the wiring carries the direction information and the missing piece
+    is the filters; if not, the wiring or the placement is at fault.
 
 **M4: fidelity and body selection.** Profiles and switches with labels and status; flybody vs
 NeuroMechFly (request 1); inventory and ledger panel per run.

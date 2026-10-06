@@ -473,6 +473,7 @@ function runPanel(rec, atlas, entry) {
     ${m.protocol ? protocolHTML(m.protocol, rec) : ""}
     <h3>Configuration <span class="chip completed">${esc(m.profile_status || "")}</span></h3>
     <table>${Object.entries(m.config).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(typeof v === "object" ? JSON.stringify(v) : v)}</td></tr>`).join("")}</table>
+    ${m.extra_params ? variantHTML(m.extra_params) : ""}
     <h3>Measured in this run <span class="chip measured">this run</span></h3>
     <table>
       <tr><td>duration</td><td>${rec.duration} ms simulated</td></tr>
@@ -496,6 +497,13 @@ function runPanel(rec, atlas, entry) {
     <tr><td>flow layer</td><td>${esc(atlas.info.layers["flow layer"])}</td></tr></table>`;
 }
 
+// a variant: per-type rows added to the model's table for this run only (record.py --extra-params)
+function variantHTML(x) {
+  return `<h3 id="variant-rows">Variant rows <span class="chip guessed">not the profile</span></h3>
+    <div class="dim">${esc(x.basis)}. ${esc(x.path)}, md5 ${esc(x.md5)}</div>
+    <table>${x.rows.map(r => `<tr><td class="mono">${esc(r.type)}</td><td>${esc(r.param)} = ${esc(r.value)} ${chip(r.basis)}<br><span class="dim">${esc(r.source)}: ${esc(r.justification)}</span></td></tr>`).join("")}</table>`;
+}
+
 // the protocol as the recorder resolved it: what was done to which cells, when,
 // with which approximation; what a real fly does; the held-out guard's result
 function protocolHTML(pr, rec) {
@@ -511,7 +519,7 @@ function protocolHTML(pr, rec) {
     <table>${rows.map(e => `<tr><td>${esc(e.when)}</td><td>${esc(e.label)} ${approxChip(e.approximation)}<br><span class="dim">${esc(e.effector)}${e.n ? ` on ${e.n} cells` : ""} · ${esc(detail(e))}</span></td></tr>`).join("")
       || `<tr><td>none</td><td>no stimulus: a control run</td></tr>`}</table>
     ${applied.map(a => `<div class="dim">world change at step ${a.step}, thorax at ${a.fly_xyz.map(v => v.toFixed(2)).join(", ")} mm: ${esc(JSON.stringify(a.set))}</div>`).join("")}
-    <h3>What a real fly does</h3>
+    <h3>${ex.status === "prediction" ? "Prediction (written before the run)" : "What a real fly does"}</h3>
     <div>${esc(ex.text || "not stated")}</div>
     <div class="dim">${esc(ex.source || "no source")}${ex.status ? " · " + esc(ex.status) : ""}</div>
     ${cr ? `<div class="dim">Pass if ${esc(cr.what)} ${esc(cr.op)} ${cr.value} ${esc(cr.units)} (${esc(cr.basis)}). Scored in the Compare tab.</div>` : ""}
