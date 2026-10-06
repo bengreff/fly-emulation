@@ -14,7 +14,10 @@ fly worker and M4 are done; nothing of mine is running on either machine):**
   runs: no `flyapp-*` tmux session and no recorder. `~/flyapp` holds the code at d63adbb (a
   `git archive` copy), `runs/app/t4t5/` (both validation sets, also copied to the Mac) and
   `runs/app/replay/t4t5-m9r-control-merged`, with the scripts `bh_t4t5.sh` and `bh_replay.sh`.
-  The other tmux sessions there (crucible_*, s12vis_*) belong to other projects.
+  The other tmux sessions there (crucible_*, s12vis_*) belong to other projects. A process listed
+  as `tmux new-session -d -s flyapp-graded ...` (PID 93713) is the shared tmux server, which
+  keeps the command line that started it at 01:44; it hosts those sessions and must not be
+  killed.
 - **Since 02:05:**
   - **The T4/T5 direction test** (section 13.1; validation in section 14): one command,
     `app/tools/t4t5_ds.py --profile <rung> [--model-root <checkout>]`, records 17 runs and reports
