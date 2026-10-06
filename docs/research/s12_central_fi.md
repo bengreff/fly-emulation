@@ -55,3 +55,27 @@ Result (5 October 23:40-23:50; DECISIONS 23:34, its result and the m9c addendum;
 - With the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`), DN1p fire about 4 Hz in the
   closed loop. Gate and posture are unchanged from m9r (seeds 12-19).
 - *per*⁰¹ (2-4 Hz with no rhythm) is not matched: the model's clock-less DN1p is silent.
+
+## Second search (5 October 23:30-23:50) and the MBON-α3 check
+
+A second Sonnet search (texts in `data/raw/central_fi_s12/`; every quote below re-found in the saved text)
+added:
+
+| Cell | Quantity | Value | Label | Source |
+|---|---|---|---|---|
+| MBON-α3 | τm, Rm, Cm | 16.06 ± 2.3 ms; 926 ± 55 MΩ; 16.76 ± 1.90 pF (n 4-5, EGFP cells) | read | Hafez et al. 2023 eLife 12:e77578 (PMC10069864) |
+| MBON-α3 | resting potential, spontaneous rate | −56.7 ± 2.0 mV; 12.1 Hz | read | same |
+| MBON-α3 | f-I, 400 ms steps, −26 to +32 pA | onset −6 to +2 pA; 20, 50, 30 Hz at +32 pA (3 cells) | figure estimate (Fig. 1 supp. 1C, image from eLife IIIF, CC BY) | same |
+| MBON-α3 | deflection at −10 pA in the f-I cells | about −17, −17, −25 mV | figure estimate (supp. 1E) | same |
+| MBON-α3 | adaptation | "a spike-frequency adapting neuron" (no ratio) | read | same |
+| l-LNv | Rin, C | 305 ± 30 MΩ, 12 ± 2 pF (n 4) | read | Sheeba et al. 2008 J Neurophysiol 99:976 (PMC2692874) |
+| l-LNv | AHP amplitude | 3-5 ± 1 mV (n 6, 7), no light dependence | read | same |
+| AL local neurons | Rin | 1-4 GΩ (n 7) | read | Wilson & Laurent 2005 J Neurosci 25:9069 |
+| P-EN | Rin; loose-patch rate | 1.9 ± 0.8 GΩ; 3.9 ± 2.6 Hz standing | read | Turner-Evans et al. 2017 eLife (PMC5440168) |
+| PN (model) | steady soma-to-SIZ transfer | "∼40–70% of its original amplitude" | read | Gouwens & Wilson 2009 |
+
+MBON-α3 is the first adult central cell with a current-step f-I in reach. It carries the class prior in
+the model (no transcriptome row), so it tests exactly the BK value at issue. Result (DECISIONS 23:56 and
+its result; F-FI-1): the model's MBON14 is 2-5× steeper than the recording with BK on, and steeper still
+with BK off. So the data argue against removing central BK. The l-LNv AHP (3-5 mV at the soma) is not used:
+soma AHPs in cells with a remote initiation zone are attenuated, and the model has one compartment.

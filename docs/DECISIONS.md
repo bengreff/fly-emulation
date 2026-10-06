@@ -1546,3 +1546,48 @@ the route's cells, and it is the one adult central cell with a published current
   central BK. The leg sugar block then needs another explanation (synaptic drive, state, missing cells).
   If m9c passes, the class prior is consistent with the one central cell measured. Nothing is adopted
   either way: one cell type, ex vivo, a soma recording, and figure estimates.
+
+### Result (23:58; Mac, `runs/s12/ffi/mbon14_fi_m9c{,_lo,_hi}.json`; figure `docs/media/s12_mbon14_fi.png`, viewed)
+
+The model's MBON14 cells carry generic constants: τm 20 ms, rest −52 mV, threshold gap 7 mV, refractory
+period 2.2 ms, no spontaneous drive, class-prior channels (mRNA source 0). All 4 cells are identical.
+
+| Mapping (mV/pA) | Arm | Onset (pA) | Rate at +32 pA (Hz) | Slope (Hz/pA), as registered |
+|---|---|---|---|---|
+| primary, 0.98 | m9c as is | +8 | 77.5 | **3.23 (FAIL high; band 0.35-2.5)** |
+| primary, 0.98 | BK off | +8 | 127.5 | 5.31 |
+| primary, 0.94 | rung 1 off | +8 | 132.5 | 5.52 |
+| low corner, 0.39 | m9c as is | +20 | 30 | 2.50 |
+| low corner, 0.39 | BK off | +20 | 42.5 | 3.54 |
+| high corner, 1.84 | m9c as is | +4 | 132.5 | 4.73 |
+| high corner, 1.84 | BK off | +4 | 200 | 7.14 |
+| measured (3 cells) | | −6 to +2 | 20-50 | 0.67-1.32 |
+
+- **Prediction held: m9c fails high** under the primary mapping, at 3.23 Hz/pA. The predicted figure
+  was about 2.8.
+- **BK off fails high at every corner** (3.5-7.1 Hz/pA against 0.67-1.32), as predicted.
+- **Post hoc** (not registered): at the low corner the registered slope is inflated, because the span
+  above onset is only 12 pA. Matched to onset, the model rises 30 Hz over its first 12 pA with BK
+  (2.5 Hz/pA) and 42.5 Hz without. The recorded cells rise 10-17 Hz (0.8-1.4 Hz/pA). So even under the
+  mapping most favourable to the model, its gain above onset is about 2-3× the recording with BK and
+  3-4× without.
+- **Seen, not scored:**
+  - The model cell does not adapt over 400 ms: the last 100 ms equals the first 100 ms at every
+    current. MBON-α3 "is a spike-frequency adapting neuron" (read). Its traces (supp. 1A-B) show
+    roughly even spike trains at high current, so the adaptation is modest.
+  - The recorded cells start firing at −6 to +2 pA and rise gradually from 0. Hafez also reports
+    spontaneous firing at 12.1 Hz (read, other cells). The model cell needs 4-20 pA and jumps to
+    12-23 Hz at onset, because it sits 7 mV below threshold with no noise.
+- **Reading, as fixed in advance:** the one measured central cell argues against removing central BK.
+  Its gain is already lower than the model's with BK. So BK off is not a biological fix for the leg
+  sugar block. If anything, central gain is too high and adaptation is missing.
+  The mismatch that does point towards the route is resting excitability. The real cell sits at or
+  near threshold at rest and relays small inputs. The model cell sits 7 mV below threshold with a steep
+  onset, which makes it a threshold device. That reasoning about the route is inferred, not tested. It
+  is one cell type, and its spontaneous rate is not shared by every central cell (Frechter 2019:
+  LHONs 0.1 Hz, PNs 1.4 Hz, read).
+- **Next discriminating experiment (not run):** pre-register the leg sugar route with route cells set
+  nearer threshold, as a bracket bounded by measured central resting rates. Keep BK on and the
+  feedforward inhibition intact. Read Roundup and MN9_L. If the route passes there and not at m9c, the
+  block is resting excitability, which has a measurable counterpart: resting rates of GNG cells.
+  Nothing adopted.
