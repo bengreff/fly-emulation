@@ -983,3 +983,31 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - Mi1's input conductance in dark and light;
     - the light responses and spiking/graded mode of Pm and Dm1 cells;
     - the ort/HisCl reversal in LMCs, measured against the lamina's local extracellular potential. Zheng et al. 2006 report the lamina intercellular space at −20 to −40 mV relative to the retina, and LMC potentials of −40 to −70 mV on the same reference, so the recorded 45 mV LMC swing includes any light-evoked change in the lamina field and is not directly a transmembrane amplitude (inferred).
+
+### F-VISION-8: the photoreceptor→LMC synapse is about 10× below the recorded small-signal gain, and in a single-compartment conductance cell no release scale can close it; the limit is driving force times release-curve steepness (s12, 6 Oct 03:59)
+- **Test** (DECISIONS, pre-registration 03:42, addendum 03:53, result 03:59; figure `docs/media/s12_vision_first_synapse.png`, viewed).
+  - Gain block base set; `visual_flash.py` dim flash (500 ms at 0.01 and 0.05 of the full flash) and full flash (1 s).
+  - Photoreceptor release scaled by k 1, 10, 30 on R1-R8 (`class:photoreceptor|release_scale`), then 30 on R1-R6 alone (per-type `release_gain` row, diagnostic).
+  - Conductances from `visual_conductance_state.py`, split by presynaptic type, graded and spiking (split residual about 0).
+- **Result.**
+  - The R1-R6→L1 small-signal gain is 1.24 at k 1 (L2 0.66). Recorded in *Calliphora*: about 13 at a dim background, 1.5-4.5 in bright light (Juusola, Uusitalo & Weckström 1995). Transfer to *Drosophila* is inferred.
+  - The gain saturates at 6.1-6.2 from k 10.
+  - L1's dark potential falls with k (−46.1, then −58.2 at k 30), because tonic dark release scales too. At k 30 it is 2 s.d. below Pantazis et al. 2008 (−43 ± 7.3 mV).
+  - With R1-R8 scaled, Mi1's full-flash ON response vanished (+0.003 mV), because R7/R8 histamine onto Mi1 (595 of 795 connected cells, about 11 synapses each) grew with light. With R1-R6 alone Mi1 returns to +1.13 mV (k 1: +1.51), and its inhibitory conductance falls in light.
+  - Tm1/Tm2 OFF grew from 0.35/0.53 to about 1.8 mV with either arm. Mi1, Tm3 and L1/L2 stay 4-18× short of their recordings.
+- **Mechanism (derived).** In a one-compartment cell with leak, excitation and a histamine-gated chloride conductance g_i (reversal E), let v₀ be the potential with g_i = 0 and a = 1 + g_e. If g_i is proportional to release r(V_R), the small-signal gain is
+  - gain = (E − v₀) · a · g_i / (a + g_i)² · (d ln r / dV_R) ≤ (E − v₀)/(4s),
+  - where 1/s is the release curve's logarithmic slope at the dark potential: the distance to the foot for a linear rule, the e-fold for an exponential one.
+  - In the model, E − v₀ = 25.2 mV (−70 against L1's −44.8) and s ≈ 0.65 mV, so the ceiling is about 9.7. Scaling release only slides g_i along the a·g_i/(a + g_i)² curve, which k 30 already sits on top of (g_i 1.17 against a 1.16).
+- **Sources on the two factors (measured unless marked).**
+  - Release extent: in *Calliphora* photoreceptor release falls steeply about 12 mV below the dark resting potential (Uusitalo et al. 1995, J Neurophysiol, abstract). With a linear rule that foot gives a ceiling near 0.5. So the recorded gain needs a curved release with e-fold s of about 0.5-1 mV (inferred).
+  - Driving force: the lamina space is −20 to −40 mV against the retina in darkness, with LMCs at −40 to −70 on the same reference (Zheng et al. 2006, *Drosophila*). In *Calliphora* the space sits 30 mV below the retina in the dark and depolarises in light (Weckström & Laughlin 2010). The LMC transmembrane dark potential may therefore be 20-30 mV less negative than the recorded one (inferred). The ort reversal against that transmembrane potential is not measured.
+  - At s = 1 mV, 13 needs E − v₀ ≈ 52 mV; at s = 2 mV, about 104 mV (derived).
+- **Reading.**
+  - The first-synapse shortfall is a model-form limit: a linear release rule with a near-zero foot plus a recorded-potential operating point. It is not a missing gain.
+  - The R7/R8 inputs to L1 and Mi1 in the medulla are large enough to reverse Mi1's light response when overdriven, so any photoreceptor-level scale must be per type.
+  - Next discriminating experiment: a curved release rule (bounded s) together with an LMC transmembrane offset from the lamina field (bounded 0-30 mV). Train on the dim gain; hold out L1's dark potential and the full-flash medulla responses.
+  - Recordings that would settle it:
+    - a *Drosophila* R→LMC gain or release curve;
+    - LMC transmembrane potential and ort reversal against the lamina space;
+    - the sign and strength of R8→Mi1.

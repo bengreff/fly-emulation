@@ -2497,3 +2497,36 @@ At k 30 the full flash flipped Mi1 to −1.4 mV, failing the 1.0-2.5 mV predicti
 - L1 is unchanged from the k 30 arm within 0.5 mV.
 
 If Mi1 still flips, the R7/R8 reading is wrong.
+
+### Result: first-synapse gain and the R1-R6 addendum (6 October, 03:59; `runs/s12/vision/flash_kR{10,30}_i0.01`, `flash_kR30_i1`, `flash_R16kR30_i1`, `cstate2_kR{1,30}`, `cstate2_R16kR30`; figure `docs/media/s12_vision_first_synapse.png`, viewed; F-VISION-8; nothing adopted)
+
+Against the 03:42 pre-registration (connected medians; dark potentials from the conductance probe, connected cells):
+
+| Arm | Dim R→L1 gain (pred.) | L1 dark (pred.) | L1 ON full (pred.) | Mi1 ON full (pred.) |
+|---|---|---|---|---|
+| k 1 | 1.24 | −46.1 | −16.6 | +1.51 |
+| k 10 | **6.07** (5-7.5, pass) | all-cell mean −47.4; connected not measured (−51.3 ± 2) | | |
+| k 30, R1-R8 | **6.18** (6-9.6, pass at the low edge) | **−58.2** (−57.6 ± 2, pass) | **−11.5** (−8 to −14, pass) | **+0.003** (1.0-2.5, **fail**) |
+| 30 on R1-R6 only (addendum) | | −57.6 | −12.1 (within 0.5 of k 30: **fail by 0.07 mV**) | **+1.13** (1.0-2.5, pass) |
+
+- **Held out.** L1's dark potential at k 30 is −58.2 (R1-R6 only −57.6) against Pantazis et al. 2008 −43 ± 7.3 mV: 2 s.d. below, as predicted. The arm fails the held-out check.
+- **Addendum.** Mi1 recovers (+1.13 mV), and its inhibitory conductance now falls in light (1.73 to 1.46 leak units; at k 30 on R1-R8 it rose, 1.85 to 2.49). So the k 30 flip was R7/R8 histamine onto Mi1, as the addendum read it.
+  - L1 moved 0.57 mV, just outside the declared 0.5 mV. The cause is that the class switch also scaled R7/R8→L1 synapses in the medulla (F-VISION-4); L1's dark inhibitory conductance drops from 1.28 to 1.17 without them.
+  - The same synapses explain the unconnected L1 cells that responded at k 30 (all-cell median −10.3). With R1-R6 alone the all-cell median is −1.3, so this is R7/R8 input, not lateral spread.
+- **Gain saturation.** The gain saturates at 6.1-6.2 by k 10, below the 13 recorded (*Calliphora*, dim background) and below the 9.6 small-signal estimate.
+  - The derived bound in F-VISION-8 is the general form. In a single-compartment conductance cell, the small-signal R→LMC gain cannot exceed (E_inh − v₀)/(4s), whatever the release scale. Here v₀ is L1's potential with no histamine (−44.8 mV), and s is the release curve's foot or e-fold below the dark potential (model 0.65 mV, effective). The model sits at 25.2/(4 × 0.65) ≈ 9.7.
+  - So a third release gain is not the next step; the remaining levers are the release curve's shape and the driving force.
+- **Correction to the 03:42 pre-registration's interpretation.** It named "the lamina field potential that adds driving force in light (Zheng et al. 2006)". That is not what the sources say.
+  - Zheng et al. 2006 give dark resting values: space −20 to −40 mV against the retina, LMCs −40 to −70 on the same reference.
+  - Weckström & Laughlin 2010 (*Calliphora*) find the cartridge space 30 mV below the retina in the dark, promoting tonic release, and depolarising in light, which backs off the presynaptic drive.
+  - So the field does not add driving force in light. What it may do is set the LMC transmembrane dark potential 20-30 mV less negative than the recorded value (inferred from the same-reference numbers). That would raise ort's driving force at every light level if the histamine-gated chloride reversal holds near −70 mV transmembrane (not measured).
+- **Uusitalo et al. 1995 (J Neurophysiol, *Calliphora*, abstract via Europe PMC).** Transmitter release "decreased dramatically approximately 12 mV below the resting potential" of the photoreceptors. The model's release floor is about 0.65 mV below the dark potential.
+  - A linear rule with a 12 mV foot would cap the gain near 0.5.
+  - The recorded high gain together with release continuing below dark points to a steep, curved (exponential-like) release curve, not a linear one with a high foot (inferred).
+- **Nothing adopted.** The k 30 and R1-R6 arms fail L1's held-out dark potential, and no arm moves Mi1 beyond 1.5 mV.
+
+**Next (pre-register first).** A two-lever block, each lever behind its own switch with declared bounds:
+1. A curved photoreceptor release rule (exponential in V − V_dark, e-fold s bounded 0.5-3 mV, with tonic dark release fixed by the Uusitalo 12 mV extent).
+2. The LMC transmembrane operating point under the lamina field (dark offset 0-30 mV, Zheng 2006 / Weckström & Laughlin 2010).
+
+The derived bound sets the prediction before any run: gain ≤ (E − v₀)/(4s). Train on the dim R→L1 gain. Hold out L1's dark potential (Pantazis) and the full-flash Mi1/Tm3/Tm1/Tm2.
