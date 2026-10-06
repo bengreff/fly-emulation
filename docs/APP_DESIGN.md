@@ -7,7 +7,7 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 05:10 CDT, 5 October 2026 (the 10-seed m9 library is recorded and scored):**
+**State at 21:35 CDT, 5 October 2026 (the m9r libraries are recording on backhouse):**
 
 - **Done and pushed** (branch `app`; 144 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
@@ -39,26 +39,48 @@ only through public functions and asks for new ones (section 13, on hold).
 - **Ben's decision (Director, 05:05):** keep m9 for this round, since it matched the fly worker's
   assay and was already partly recorded. Next round, record the fly worker's current working
   profile, m9r, as a second library, so the app can compare models side by side.
+- **Decided (Director, after 05:08; go at 21:30):** record m9r as named, with no override. Main's
+  gate adds `--set 'motor_unit:all|force_per_spike=10'` on top of m9r. If the gates really use it,
+  the fly worker will fold it into the profile, so "as named" will be what the gates run.
+- **Done tonight:**
+  - `main` (afb666c) merged into `app` with no file overlaps, and 144 app tests pass.
+  - `run_library.py --profile/--set` passes a model to every recording. `record.py` notes what
+    the command line changed (`launched_with`, and a suffix on the title), so an m9 protocol run
+    as m9r is not labelled m9.
+  - A 30 ms m9r smoke run gives the same 292 spikes on the Mac and backhouse, and peaks at
+    3.0 GB on backhouse (measured).
+- **The fold is not on `main` yet.** At 21:27, `main`'s m9r did not contain the force override.
+  `main`'s handoff (1a) recommends folding 10 into m9r before this library: under m9r, 71 leg
+  motor units with no force-table row read the shared value. The fly worker was gating the fold
+  on backhouse at 21:28 (`runs/s12/fpsfold`). So I record two libraries:
+  1. **m9r as named on `main` at afb666c** (the order), into `runs/app/lib-m9r-seeds`.
+  2. **The same with `--set 'motor_unit:all|force_per_spike=10'`**, into
+     `runs/app/lib-m9r-f10-seeds`. The app labels these runs "custom". If the fold lands as that
+     one value, this library is the folded m9r, and the label can be updated with the commit
+     that folds it.
+- **Running now** (backhouse, tmux session `flyapp-m9r`, launched 21:30 CDT):
+  - **Script:** `~/flyapp/bh_m9r.sh`, `P=5` runs at a time, to leave room for the fly worker's
+    gates. Each library is 6 protocols × seeds 0 to 9 = 60 runs. Code: `~/flyapp` holds a
+    `git archive` of ee6bc71, with `FLYAPP_COMMIT` set.
+  - **Log:** `~/flyapp/runs/app/lib-m9r-seeds/runner.log`. It prints "m9r as named finished" and
+    then "runner finished".
+  - **Expected (estimate, from the m9 round with contention):** about 6 to 7 min per run, so
+    about 1 h 20 min per library. That is about 22:50 for m9r and about 00:15 for both. About
+    15 GB on backhouse.
+  - **Mac keepalive** for WSL: pid 41824 (`ssh backhouse ... exec sleep infinity`), mine. Stop it
+    once "runner finished" appears.
 - **Next steps, in order:**
-  1. **The m9r library.**
-     - m9r exists only on `main` (`src/flyemu/profiles.py`, `"m9r"`; adopted 5 October 03:31 per
-       main's `docs/HANDOFF.md`). Branch `app` does not have it, so merge `main` into `app`
-       first, then rerun the app's tests.
-     - Record the same six protocols at seeds 0 to 9 into `runs/app/lib-m9r-seeds`, on backhouse,
-       with every run of a seed on one machine. Expected: about 66 runs at about 330 s each, 8 at
-       a time, so about 50 min and 19 GB (estimated from this round).
-     - Then the Compare tab needs a model selector across libraries (a small app change).
-  2. **The rest of M3:** the column table and the LPTC traces in the Eye tab.
-- **Decided (Director, after 05:08):** record m9r as named, with no override. Main's gate adds
-  `--set 'motor_unit:all|force_per_spike=10'` on top of m9r. If the gates really use it, the fly
-  worker will fold it into the profile, so "as named" will be what the gates run. Merge `main`
-  into `app` first, and record whatever m9r is on `main` at that point. Parked until tonight.
+  1. **Collect:**
+     `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/flyapp/runs/app && tar -cf - lib-m9r-seeds lib-m9r-f10-seeds"' | tar -x -C runs/app`.
+  2. **Score each folder** with `score_library.py --lib`. All runs of a seed are on one machine,
+     so the pairing holds.
+  3. **Compare with m9 in section 14:** per seed and on the mean, the same tests and noise rule.
+  4. **Then:** a model selector across libraries in the Compare tab, then the rest of M3 (the
+     column table, the LPTC traces).
 - **Blocked:**
-  - MDN and DNa02 cannot pass until the body walks; the m9 body does not walk.
+  - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
+    handoff, F-STAND-3).
   - Warm starts and branching wait on model request 2 (section 13, on hold).
-- **Running now:** nothing of mine on either machine. The backhouse runner finished at 04:29 and
-  its tmux session closed; the Mac keepalive (pid 23400) was stopped. `~/flyapp` on backhouse
-  (code, data cache, `.venv`, runs) is kept for the m9r round.
 
 ## 1. What it is for
 
