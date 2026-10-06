@@ -1759,6 +1759,61 @@ plus `runs/s12/rest/route_near.csv`, the same file. `base` is plain m9c. Backhou
     That is the next mechanism to test.
   - Either way, nothing is adopted from this route-only, 43-cell bracket.
 
+### Result (6 October 01:02; S runs complete, D1 at 5 of 9 trials)
+
+MN9_L per trial (Hz). Means of 3 trials for the route cells are in `runs/s12/spec/spec_rates.json`; figure
+`docs/media/s12_route_spec.png` (viewed: rows are runs, columns the route cells and the GABA loop cells,
+panels at 0 and 200 Hz).
+
+| Run | Arm | 0 Hz | 100 Hz | 200 Hz | Rule | Verdict |
+|---|---|---|---|---|---|---|
+| S1 leg bitter | base | 0, 0, 0 | 0, 0, 0 | 0, 0, 0 | | |
+| S1 leg bitter | near | 0, 0, 0 | 9, 7, 6 | 3, 2, 1 | ≤ 2 at 100 and 200 | **FAIL** at 100 |
+| S2 leg sugar 100 + leg bitter | near | 36, 32, 32 | 19, 23, 21 | 8, 10, 9 | 200 ≤ 0 + 3 | pass |
+| S3 labellar bitter | base, near | all 0 | all 0 | all 0 | ≤ 2 at 200 | pass |
+| S4 labellar sugar | base | 0, 0, 0 | 7, 6, 7 | 13, 14, 17 | ≤ 2 at 0, ≥ 5 at 200 | pass |
+| S4 labellar sugar | near | 0, 0, 0 | 56, 57, 57 | 67, 66, 66 | same | pass |
+| S5 labellar sugar 100 + bitter | base | 6, 4, 5 | 0, 0, 0 | 0, 0, 0 | 200 ≤ half of 0 | pass |
+| S5 labellar sugar 100 + bitter | near | 57, 55, 57 | 0, 0, 0 | 0, 0, 0 | same | pass |
+
+D1, leg sugar under `near`, MN9_L during the stimulus and (after the bar) in the 1 s after it:
+
+| Input (Hz) | 3 | 10 | 50 | 100 | 25 and 200 |
+|---|---|---|---|---|---|
+| MN9_L | 17, 13, 14 \| 2, 0, 2 | 23, 22 \| 1, 0 | 33, 31, 30 \| 1, 2, 2 | 36, 35 \| 0, 1 | still running |
+
+- **`near` fails the reading rule** on two counts: leg bitter alone drives MN9_L (S1 at 100 Hz), and 3 Hz
+  of leg sugar, the spontaneous GRN level (Ling 2014), drives it at 13-17 Hz (D1).
+- **It does not latch.** MN9_L falls to 0-2 Hz in the second after every stimulus so far.
+- **It grades, compressively.** MN9_L goes 15, 23, 31, 36 Hz from 3 to 100 Hz input: about 4 Hz per
+  doubling of input across the range (logarithmic). It does not switch.
+- **Labellar specificity holds.** Labellar bitter alone stays at 0 Hz, and labellar bitter at 100 Hz
+  silences labellar sugar under both arms (S5). `near` raises labellar sugar 8-fold at 100 Hz (57 against
+  7 Hz), seen, not scored.
+- **Leg bitter suppresses leg sugar.** At 200 Hz it cuts MN9_L by 73% (33 → 9 Hz). French et al. 2015 report
+  a 22% drop in PER for optogenetic bitter activation (secondary). Reported, not scored, as pre-registered.
+- **Where leg bitter enters** (inferred from the means). Under S1 `near`, AN05B106 fires at 28-41 Hz (21-35
+  under base), and the GNG cluster follows: GNG578, GNG143 and GNG167 at 11-14 Hz, Roundup (GNG108) at 6-9.
+  AN01B004, which gets no leg bitter synapses, fires at about 5 Hz. So the leak runs through AN05B106, the
+  entry cell that gets 316 synapses from leg bitter.
+- **My expectations:**
+  - S1 passing: wrong.
+  - S3 passing: held.
+  - S2 changing by under 5 Hz: wrong (−12 and −24 Hz).
+  - S4 near above base: held.
+  - S5 failing under `near`: wrong.
+  - D1 silent at 3 Hz, switch-like and latching: all wrong.
+- **Why 3 Hz is enough** (`scripts/probes/unitary_psp.py`, 01:00, `runs/s12/margin/unitary_near.json`;
+  derived from the model, not measured).
+  - Under `near` the entry cells rest 1.16 mV (AN01B004) and 1.08 mV (AN05B106) below threshold.
+  - One spike in one sugar GRN gives them 0.12-1.17 mV, about 0.03 mV per synapse.
+  - 12 of 25 tested GRN → AN01B004 connections and 8 of 32 GRN → AN05B106 connections fire the cell from
+    a single GRN spike.
+  - So at a 1 mV margin each entry cell repeats single GRN spikes. No unitary GRN → second-order PSP has
+    been measured in the fly, so this cannot be checked against data.
+- The 00:41 margin sweep (below) asks whether a larger margin fixes both failures. The D1 runs at 25 and
+  200 Hz are added when they finish.
+
 ## Pre-registration: is there a resting margin at which the leg sugar route ignores spontaneous GRN input and leg bitter, but opens at a real sugar rate? (6 October, 00:41; diagnostic, nothing adopted)
 
 **Why now.** The first trials of the 00:26 runs already fail its reading rule, so `near` (1 mV below
