@@ -13,8 +13,9 @@ uv run pytest tests -q                      # ~2 min
 ## Run the organism
 
 ```bash
-uv run python scripts/run_organism.py --duration-ms 200 --set 'motor_unit:all|force_per_spike=10'
-uv run python scripts/record_organism.py --duration-ms 3000 --set 'motor_unit:all|force_per_spike=10' --tag mytag
+uv run python scripts/run_organism.py --duration-ms 200
+uv run python scripts/record_organism.py --duration-ms 3000 --tag mytag
+# m9r (the default) carries force_per_spike 10; older profiles need --set 'motor_unit:all|force_per_spike=10'
 uv run python scripts/serve_viz.py --run runs/organism-record-3000ms-mytag   # browser replay; stop it when done
 uv run python scripts/replay_mujoco.py runs/organism-record-3000ms-mytag
 ```
@@ -94,7 +95,7 @@ ssh backhouse 'wsl -d Ubuntu -- bash -s' < job.sh                      # run scr
 - flybench has its own venv at `external/flybench/.venv` (on both machines).
 - Never touch `/home/greff` outside `~/fly-emulation`.
 - Rendering (contact sheets): EGL fails under WSL and the system has no OSMesa. A user-local copy needs no root: `apt-get download libosmesa6`, `dpkg -x` it into `~/osmesa/root`, add a `libOSMesa.so` symlink beside `libOSMesa.so.8`, then run with `LD_LIBRARY_PATH=$HOME/osmesa/root/usr/lib/x86_64-linux-gnu MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa` (session 12; example in `runs/s12/nonleg/run_sheet.sh` on backhouse).
-- Inside `tmux new-session "..."`, quote override values (`--set 'motor_unit:all|force_per_spike=10'`), or the `|` becomes a shell pipe; a small runner script is safest.
+- Inside `tmux new-session "..."`, quote override values (`--set 'joint:leg|rest_mirror=1'`), or the `|` becomes a shell pipe; a small runner script is safest.
 
 ## Outputs
 

@@ -88,3 +88,19 @@ def test_damping_mirror_gives_left_legs_the_right_values():
         r = names[re.sub(r"(^|[_-])l([fmh])_", r"\1r\2_", k)]
         assert m.dof_damping[m.jnt_dofadr[names[k]]] == before[m.jnt_dofadr[r]]
         assert m.dof_damping[m.jnt_dofadr[r]] == before[m.jnt_dofadr[r]]
+
+
+def test_m9r_carries_the_gate_force_per_spike():
+    """A profile name means one model: m9r holds the force_per_spike every gate ran with (s12)."""
+    from flyemu import profiles
+    from flyemu.registry import Policy, Registry
+
+    reg = Registry(Policy.MINIMAL)
+    profiles.apply(reg, "m9r")
+    v = reg.require("motor_unit:all", "force_per_spike", units="uN*mm", model_use="test",
+                    subsystem="neuromuscular", instances=1, minimal=1.0)
+    assert v == 10.0
+    reg2 = Registry(Policy.MINIMAL)
+    reg2.overrides["motor_unit:all|force_per_spike"] = 3.0      # an explicit --set still wins
+    profiles.apply(reg2, "m9r")
+    assert reg2.overrides["motor_unit:all|force_per_spike"] == 3.0
