@@ -2441,7 +2441,7 @@ Each factor alone caps the swing far below 20 mV. The 03:14 conclusion that the 
 
 **Question.** The gain block base set gives an L1 ON swing of 16.6 mV against R1-R6's 46.8 mV. Is the photoreceptor→LMC synapse itself weak, or is the large flash compressing it?
 
-**Test.** Same base set as the gain block (no LMC scale). One 200 ms flash at intensity 0.01 and 0.05 of the full flash (`visual_flash.py --intensity`). Readout: median over connected cells (`/tmp/s12/dim_gain.py`), cross-checked against the type-mean trace divided by the connected fraction (0.45). The two agree to within 0.05 mV, and L1 has no dark noise (trace s.d. 0.000).
+**Test.** Same base set as the gain block (no LMC scale). One 500 ms flash (onset 300 ms) at intensity 0.01 and 0.05 of the full flash (`visual_flash.py --intensity`). Readout: median over connected cells (`/tmp/s12/dim_gain.py`), cross-checked against the type-mean trace divided by the connected fraction (0.45). The two agree to within 0.05 mV, and L1 has no dark noise (trace s.d. 0.000).
 
 | | i 0.01 | i 0.05 | Recorded (Juusola, Uusitalo & Weckström 1995, J Gen Physiol 105:117, PMC2216927, *Calliphora*) |
 |---|---|---|---|
@@ -2480,3 +2480,20 @@ Each factor alone caps the swing far below 20 mV. The 03:14 conclusion that the 
 - If the dim gain saturates below 13 as predicted, the bound comes from the release rule's tonic dark release scaling with the gain (photoreceptor dark offset `dark_mv` 1.0, guessed).
 - Tonic histamine release in darkness is real (Uusitalo et al. 1995 J Neurophysiol, *Calliphora*; to be read). The candidate next mechanism is a separately sourced dark release, or the lamina field potential that adds driving force in light (Zheng et al. 2006). It is not a third gain.
 - Nothing is adopted from this block.
+
+### Pre-registration addendum: R1-R6 alone (6 October, 03:53, before the run)
+
+At k 30 the full flash flipped Mi1 to −1.4 mV, failing the 1.0-2.5 mV prediction. The conductance split (`visual_conductance_state.py`, now with a spiking split by presynaptic type) shows:
+- L1's inhibition of Mi1 fell by 0.29 in light, while the spiking Pm/Dm1 inhibition stayed flat;
+- 595 of the 795 connected Mi1 cells receive R7/R8 synapses (mean 10.7 per cell). These are spread over R8p, R8y, R8_unclear, R7d and R8d, so every per-type median is 0.
+
+`class:photoreceptor|release_scale` scales R7/R8 too.
+
+**Follow-up.** A per-type `release_gain` row scales R1-R6 alone at 30 (`FLYEMU_EXTRA_PARAMS`, basis guessed, diagnostic).
+
+**Predictions.**
+- Mi1 ON at the full flash 1.0-2.5 mV, as pre-registered.
+- Mi1's light g_i below its dark g_i.
+- L1 is unchanged from the k 30 arm within 0.5 mV.
+
+If Mi1 still flips, the R7/R8 reading is wrong.
