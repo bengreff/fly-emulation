@@ -223,10 +223,11 @@ def test_variant_rows_load_label_and_match(monkeypatch):
 
 def test_record_labels_variants():
     import record
-    assert record.profile_status("m9r", {}) == "adopted (working profile)"
-    assert record.profile_status("m9r", {}, True) == (
+    w = record.profiles.WORKING_PROFILE
+    assert record.profile_status(w, {}) == "adopted (working profile)"
+    assert record.profile_status(w, {}, True) == (
         "adopted profile with extra per-type rows: custom, not validated")
-    assert record.profile_status("m9r", {"a|b": 1}, True) == (
+    assert record.profile_status(w, {"a|b": 1}, True) == (
         "adopted profile with overrides and extra per-type rows: custom, not validated")
     assert record.profile_status("m4", {}) == "regression reference"
     assert record.profile_status("m4", {"a|b": 1}) == (

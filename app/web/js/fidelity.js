@@ -118,6 +118,8 @@ export class FidelityPanel {
       <h3>Configuration</h3>
       <table>
         <tr><td>profile</td><td><b>${esc(cfg.profile || "none")}</b> <span class="chip completed">${esc(m.profile_status || "")}</span>
+          ${prof && /^adopted/.test(m.profile_status || "") !== (cfg.profile === fid.working) ? `<br><span class="dim">status as recorded; in the current
+            tables ${esc(cfg.profile)} is "${esc(prof.status)}" and the working profile is ${esc(fid.working)}</span>` : ""}
           ${Object.keys(cfg.overrides || {}).length ? `<br><span class="warnline">${Object.keys(cfg.overrides).length} override(s): ${esc(JSON.stringify(cfg.overrides))}</span>` : ""}
           ${m.extra_params ? `<br><span class="warnline">${m.extra_params.rows.length} variant row(s) added (Run tab)</span>` : ""}</td></tr>
         <tr><td>scan</td><td>${fid.scans.map(s => s.id === cfg.scan || (s.simulate && cfg.scan === undefined)
