@@ -51,6 +51,8 @@ def main() -> None:
     ap.add_argument("--flash", action="append", default=[],
                     help="onset_ms:dur_ms after the settle, repeatable (default: two Behnia blocks)")
     ap.add_argument("--tail-ms", type=float, default=TAIL_MS, help="dark after the last flash")
+    ap.add_argument("--intensity", type=float, default=1.0,
+                    help="flash intensity, 0-1 (below 1: small-signal gain, as Juusola et al. 1995)")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
     t0 = time.time()
@@ -107,7 +109,7 @@ def main() -> None:
     total = flashes[-1][0] + flashes[-1][1] + a.tail_ms
 
     def lum(t_ms: float) -> float:
-        return 1.0 if any(on <= t_ms < on + d for on, d in flashes) else 0.0
+        return a.intensity if any(on <= t_ms < on + d for on, d in flashes) else 0.0
 
     trace, spikes = run(total, lum, True)
     tt = np.arange(trace.shape[0]) * rec * DT                     # ms after the settle
@@ -150,7 +152,7 @@ def main() -> None:
     print(f"cells outside {BOUNDS} mV during the flashes: {bounds['n_outside']} of {conn.n}; "
           f"extremes {bounds['vmin']} / {bounds['vmax']}; {bounds['types']}", flush=True)
     meta = {"profile": a.profile, "set": a.set, "flashes_ms": flashes, "settle_ms": a.settle_ms,
-            "sample_hz": a.sample_hz, "record_ms": a.record_ms, "seed": a.seed, "gain_mv": vis.gain_mv, "dark_mv": vis.baseline_mv,
+            "sample_hz": a.sample_hz, "record_ms": a.record_ms, "intensity": a.intensity, "seed": a.seed, "gain_mv": vis.gain_mv, "dark_mv": vis.baseline_mv,
             "driven": int(has.sum()), "wall_s": round(time.time() - t0), "bounds": bounds}
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)

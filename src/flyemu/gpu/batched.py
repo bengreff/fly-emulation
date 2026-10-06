@@ -146,6 +146,8 @@ class BatchedNetwork:
             raise NotImplementedError("cell_type:ol_graded|release_at_rest is CPU-only (s12)")
         if getattr(net, "g_range", None) is not None:
             raise NotImplementedError("cell_type:all|graded_range_from_recordings is CPU-only (s12)")
+        if getattr(net, "v_leak", None) is not None and net.v_leak is not net.v_rest:
+            raise NotImplementedError("cell_type:all|leak_from_network_rest is CPU-only (s12)")
 
         # --- edges: spiking rows from net.w, graded rows from net.W_graded ---
         counts = np.diff(net.conn.indptr).astype(np.int64)

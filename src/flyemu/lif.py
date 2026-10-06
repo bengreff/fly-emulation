@@ -82,6 +82,7 @@ class LIFParams:
     graded_r0: np.ndarray | None = None    # release at rest as a fraction of rmax (None: 0, m4)
     graded_range: np.ndarray | None = None  # mV from rest to full release (None: v_th - v_rest)
     graded_k: np.ndarray | None = None      # per-cell release multiplier (None: 1)
+    v_leak: np.ndarray | None = None        # mV, leak reversal where it differs from the rest (None: v_rest)
     spont_mv: float | np.ndarray = 0.0     # tonic drive
     release_gain: float | np.ndarray = 1.0  # presynaptic
     input_gain: float | np.ndarray = 1.0    # postsynaptic
@@ -332,6 +333,15 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         dv = per("v_rest_shift_rec", "mV", "recorded rest minus the global v_rest", 0.0,
                  "neutral 0 for types without a recording")
         v_rest, v_th, v_reset = v_rest + dv, v_th + dv, v_reset + dv
+    # s12 vision (DECISIONS 6 Oct, F-VISION-6): a recorded resting potential is the cell's potential in the
+    # network, tonic synaptic input included, not its leak reversal. 1 shifts the leak reversal alone by the
+    # per-type v_leak_shift_fit rows (fitted in the network, scripts/probes/visual_rest_calibrate.py);
+    # threshold, reset, the graded release reference and the conductance reference stay at the rest
+    v_leak = None
+    if one("leak_from_network_rest", "boolean", "leak reversal fitted so the in-network rest is the recorded one",
+           0.0, "neutral 0: the leak reversal is the resting potential"):
+        dl = ptable.per_neuron(reg, conn, "v_leak_shift_fit", 0.0, units="mV", table=table)
+        v_leak = (np.asarray(v_rest, np.float32) + dl).astype(np.float32)
     t_ref = per("t_ref", "ms", "LIF refractory period", 2.0,
                 "declared default absolute refractory period")
     tau_s = per("tau_s", "ms", "synaptic current decay", 5.0,
@@ -605,7 +615,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                                      sh["machr_fraction"], sh["nmda_fraction"])
 
     return LIFParams(
-        tau_m=tau_m, v_rest=v_rest, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
+        tau_m=tau_m, v_rest=v_rest, v_leak=v_leak, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
         tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref, inh_cond_scale=inh_scale,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
@@ -653,6 +663,7 @@ class Network:
         # per-neuron arrays (scalars broadcast)
         self.tau_m = _arr(p.tau_m, n)
         self.v_rest = _arr(p.v_rest, n)
+        self.v_leak = self.v_rest if p.v_leak is None else _arr(p.v_leak, n)   # membrane equation only
         self.v_th = _arr(p.v_th, n)
         self.v_reset = _arr(p.v_reset, n)
         self.t_ref = _arr(p.t_ref, n)
@@ -848,7 +859,7 @@ class Network:
             g_e = self.i_syn
             G = 1.0 + g_e + self.g_i
             extra = drive - self.i_syn
-            num = self.v_rest + extra + g_e * p.e_exc + self.g_i * p.e_inh
+            num = self.v_leak + extra + g_e * p.e_exc + self.g_i * p.e_inh
             if self.ich is not None:
                 dG, dGE = self.ich.step(self.v)
                 G, num = G + dG, num + dGE
@@ -858,11 +869,11 @@ class Network:
             # rung 1: leak + intrinsic conductances (channels.py), exponential Euler
             dG, dGE = self.ich.step(self.v)
             G = 1.0 + dG
-            v_inf = (self.v_rest + drive + dGE) / G
+            v_inf = (self.v_leak + drive + dGE) / G
             self.v = (v_inf + (self.v - v_inf) * np.exp(-self.timestep_ms * G / self.tau_m)).astype(np.float32)
         else:
             # Exponential Euler: `drive` is the steady-state depolarisation
-            self.v = self.v_rest + (self.v - self.v_rest) * self.decay_v + drive * (
+            self.v = self.v_leak + (self.v - self.v_leak) * self.decay_v + drive * (
                 1.0 - self.decay_v)
         if p.noise_mv:
             self.v += self.rng.normal(0.0, p.noise_mv * np.sqrt(self.timestep_ms), n

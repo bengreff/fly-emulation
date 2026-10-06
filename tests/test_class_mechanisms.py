@@ -251,3 +251,27 @@ def test_graded_range_from_recordings_is_neutral_by_default_and_sets_the_span_wh
     k = _org(**{"cell_type:all|graded_range_from_recordings": 2.0}).net
     assert np.allclose(k.params.graded_k, gr / dflt)
     assert np.allclose(k.params.graded_k[~m], 1.0) and (k.params.graded_k[m] > 1).all()
+
+
+@needs_graph
+def test_leak_from_network_rest_is_neutral_by_default_and_moves_only_the_leak(monkeypatch, tmp_path):
+    base = _org().net
+    assert base.params.v_leak is None and base.v_leak is base.v_rest
+    on0 = _org(**{"cell_type:all|leak_from_network_rest": 1.0}).net   # no rows: same values, own array
+    assert on0.v_leak is not on0.v_rest and np.array_equal(on0.v_leak, on0.v_rest)
+    extra = tmp_path / "rows.csv"
+    extra.write_text("type,param,value,units,basis,source,justification\n"
+                     "Mi1,v_leak_shift_fit,5.0,mV,derived,test,test row\n")
+    monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(extra))
+    on = _org(**{"cell_type:all|leak_from_network_rest": 1.0}).net
+    mi1 = on.conn.neurons.type.eq("Mi1").to_numpy()
+    assert mi1.sum() > 100
+    assert np.allclose(on.v_leak[mi1], on.v_rest[mi1] + 5.0) and np.array_equal(on.v_leak[~mi1], on.v_rest[~mi1])
+    # rest, threshold, reset and weights are untouched
+    for k in ("v_rest", "v_th", "v_reset", "w"):
+        assert np.array_equal(getattr(on, k), getattr(base, k)), k
+    # an isolated Mi1 relaxes to its leak reversal, not to its rest
+    i = int(np.flatnonzero(mi1)[0])
+    for _ in range(3000):
+        on.step()
+    assert abs(on.v[i] - on.v_leak[i]) < 0.5, (on.v[i], on.v_leak[i], on.v_rest[i])
