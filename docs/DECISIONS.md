@@ -1758,3 +1758,76 @@ plus `runs/s12/rest/route_near.csv`, the same file. `base` is plain m9c. Backhou
     - or inhibition that scales with the input.
     That is the next mechanism to test.
   - Either way, nothing is adopted from this route-only, 43-cell bracket.
+
+## Pre-registration: is there a resting margin at which the leg sugar route ignores spontaneous GRN input and leg bitter, but opens at a real sugar rate? (6 October, 00:41; diagnostic, nothing adopted)
+
+**Why now.** The first trials of the 00:26 runs already fail its reading rule, so `near` (1 mV below
+rheobase) is not a candidate:
+- 3 Hz of tarsal sugar GRN input, the spontaneous level, drives MN9_L at 17 and 13 Hz (D1, two trials).
+- Leg bitter alone at 100 Hz drives it at 9 and 7 Hz (S1, two trials).
+
+Its full result is written above once all trials finish. At the m9c default, about 7 mV below rheobase,
+the route stays shut even at 200 Hz. Before turning to a new mechanism, this checks whether both failures
+come only from choosing 1 mV.
+
+**Question.** Is there a margin between 1 and 7 mV at which all of these hold?
+- 3 Hz input stays silent.
+- 50 Hz input opens the route. That is about the tarsal sugar GRN rate at 100 mM sucrose (Ling 2014).
+- Leg bitter stays silent.
+- Labellar bitter still suppresses labellar sugar.
+
+Separately: does the Roundup–DNge059 loop make the hair trigger? GNG108 → DNge059 has 343 synapses and
+DNge059 → GNG108 has 333, both cholinergic (male-cns, edges ≥ 5).
+
+**Setup.**
+- m9c, open loop, 3 trials, 1000 ms, no shuffles.
+- Margin arms: the 43 route cells sit k mV below their own rheobase, for k = 2, 3 and 4.
+  - Files: `runs/s12/rest/route_near{2,3,4}.csv`, which are `route_near.csv` minus 1, 2 and 3 mV.
+  - The margins are guessed and diagnostic. The rheobase is derived, from `route_rest.py`.
+- Loop arm L1: `near` (k = 1) with DNge059's output removed (`--release-gain DNge059=0`).
+- Backhouse tmux `s12margin_*`; logs in `runs/s12/margin/`. The A, B and L runs start first; the S and T
+  runs start when the 00:26 runs free memory.
+
+| Run | Assay | Rates (Hz) | Pass rule (per margin) |
+|---|---|---|---|
+| Ak | `legsugar_mn9` | 3, 10, 25 | MN9_L ≤ 2 Hz at 3 Hz |
+| Bk | `legsugar_mn9` with `--off-ms 1000` | 50, 200 | MN9_L ≥ 5 Hz at 50 Hz, and ≤ 2 Hz in the 1 s after the stimulus |
+| Tk | `legbitter_mn9` (LgAG1) | 100, 200 | MN9_L ≤ 2 Hz at both |
+| Sk | `sugar_bitter_mn9` (labellar sugar held at 100 Hz) | bitter 0, 200 | MN9_L at bitter 200 ≤ half its bitter-0 value, or ≤ 2 Hz |
+| L1 | `legsugar_mn9`, DNge059 silent, k = 1 | 3, 50 | none: a mechanism probe |
+
+- The rules and their sources are those of the 00:26 pre-registration: Ling 2014 for the GRN rates, Shiu
+  2024 for labellar bitter, and the analogy for leg bitter.
+- Labellar bitter alone is dropped: it stayed at 0 Hz under `near`, the most excitable arm.
+- **A margin is a candidate only if Ak, Bk, Tk and Sk all pass.**
+- **L1:** if MN9_L at 3 Hz falls to ≤ 2 Hz with DNge059 silent, the loop makes the hair trigger.
+  Otherwise the trigger is elsewhere.
+
+**Expectations (mine).**
+- k = 2 still fires at 3 Hz.
+- k = 3 is silent at 3 Hz and opens at 50 Hz.
+- k = 4 does not open at 50 Hz.
+- Tk fails wherever the route opens at 50 Hz. Leg bitter enters the route through AN05B106, which gets
+  316 synapses from LgAG1 against 1,029 from leg sugar. Two of its four cells get as much bitter input as
+  sugar input (115 against 260, and 196 against 113; male-cns, derived).
+- Sk passes at every margin.
+- L1 at 3 Hz drops below 5 Hz.
+
+**Reading rule.**
+- **If a margin passes,** that is a one-number fit to one route.
+  - It does not make the margin a model value.
+  - The next step is a whole-brain version behind a switch, with the battery and gate: a class-level
+    resting level, or noise.
+  - That version must fit the MBON-α3 evidence that central rest looks like pacemaking
+    (`docs/research/s12_central_fi.md`).
+- **If no margin passes,** resting excitability alone cannot make the route both sensitive and specific.
+  - If the failure is leg bitter, the gap is in how bitter suppresses sugar.
+    - The model forces every stimulated GRN to spike: each Poisson input is a 68.75 mV kick, as in Shiu
+      2024.
+    - So presynaptic inhibition of sugar GRN terminals cannot act. In the labellum, bitter suppresses
+      sweet GRNs through GABA-B on their terminals (Chu et al. 2014 Curr Biol 24:1978; search summary,
+      unverified).
+    - That is the next mechanism to examine.
+  - If the failure is grading (fires at 3 Hz at one margin, misses 50 Hz at the next), the next
+    mechanism is adaptation or inhibition that scales with input.
+- Nothing is adopted.
