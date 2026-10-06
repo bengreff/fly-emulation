@@ -940,3 +940,27 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The mode rows still missing are CT1 (2 cells, 109-138k output synapses each, a median 8-17% of each T4/T5's input; physiologically compartmentalised, from memory, to verify), Am1, HS/VS/H2 and the LPi cells.
   - The relay's 13 Hz Am1 rhythm did not appear open loop. In RT, Am1 runs away instead.
   - No change adopted. The next block is a pre-registered photoreceptor-to-LMC gain arm with conductance-mode inhibition.
+
+### F-VISION-6: the medulla's ON response is capped by disinhibition from a leak reversal set to the recorded dark potential; more LMC gain lowers the dark state instead (s12, 6 Oct 03:14)
+- **Test** (DECISIONS: gain block pre-registered 03:04, result 03:14; figure `docs/media/s12_vision_gain.png`, viewed). Full-field flash from darkness (Behnia et al. 2014 Fig. 2 stimulus), open loop, m9c plus:
+  - conductance-mode synapses (bounded inhibition);
+  - recorded modes and tonic release at rest (r0 0.5, guessed);
+  - graded spans from recorded amplitudes (`graded_range_from_recordings` 2: R1-R6 60 mV, LMCs 45, Mi1/Tm 20);
+  - photoreceptor gain 78 (fitted by linear scaling).
+  The LMC output scale is 1, 3 and 10. Scores are medians over cells whose cartridge has photoreceptor input (`visual_flash_score.py`).
+- **Result.**
+  - Mi1 ON is +1.5, +2.7 and +3.1 mV against a recorded +20; Tm3 is +2.8 to +3.8 against +15; Tm1/Tm2 OFF is under 0.7 against +15-20.
+  - L1 hyperpolarises 17-23 mV against 45, L2 10-14.
+  - R1-R6 peaks at +46.8 against 60: sublinear, with a sag and an OFF undershoot. These are network effects in the model; their source has not been traced.
+  - No cell leaves [−90, 20] mV.
+- **Mechanism.**
+  - Mi1's ON response is disinhibition: light hyperpolarises L1, which cuts L1's tonic glutamate onto Mi1. A disinhibited cell can only return toward its uninhibited potential.
+  - In the model that potential is the leak reversal, −55 mV, which is the recorded resting potential, plus weak acetylcholine from L5 and L3.
+  - In light, connected Mi1 reaches −57 to −58.5 mV and never −55. Raising the LMC scale tenfold lowers the dark baseline (−58.7 to −61.6) about as much as it raises the light peak.
+  - The recorded response reaches about −35 mV from a dark −55. So the recorded rest is a dark potential held down by tonic inhibition, not a leak reversal. Using it as the leak reversal counts the inhibition twice (inferred).
+- **Side effect.** Mode 2 keeps transfer per mV, so tonic release grows with the span. Tm1/Tm2 depolarise in darkness to −36/−38 mV at LMC ×3 and to −18/−23 at ×10 under L2's tonic acetylcholine. L1 climbs to −26 through L5 → L1 excitation. The dark potentials bound the LMC scale before Mi1 does.
+- **Reading.**
+  - Recorded medulla amplitudes need two things: an uninhibited potential well above the dark potential, and a tonic synaptic conductance comparable to or larger than the leak (about 1.3× leak, derived for Mi1 from a 20 mV swing between −55 and −35 with a −70 mV reversal).
+  - Recorded dark potentials then become targets for the in-network dark state. For cells with tonic excitation (Tm1, Tm2), the leak reversal must stay physiological (bounded by the potassium reversal), so a larger conductance there needs a balancing tonic inhibition. 22% of Tm1's input synapses are from Pm2a/b GABAergic cells.
+  - Discriminating recordings for Ben's list: Mi1 input resistance (or conductance) in dark and light, and the GluClα reversal in Mi1.
+  - Nothing adopted.
