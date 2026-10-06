@@ -2680,7 +2680,7 @@ No cell left [−90, 20] mV. Steady-state potentials from the conductance probe 
 - The Mi1 block: Pm/Dm1 modes and the GluClα reversal.
 - The Tm1/Tm2 OFF limit: L2's OFF overshoot and Pm2a/Pm2b tonic inhibition.
 
-### Pre-registration: T4/T5 grating on the v0r base (6 October, 04:38, before any run)
+### Pre-registration: T4/T5 grating on the v0r base (6 October, 04:33, before any run; launched 04:33:43)
 
 **Question.** The relay's original failure was V: T4/T5 per-cell F1 or mean shift ≥ 0.5 mV in at least one direction for every subtype (DECISIONS 6 Oct, vision blank, with the 02:00 per-cell deviation). RTc gave T4 0.05-0.09 and T5 0.05-0.07 mV. Does v0r pass?
 
