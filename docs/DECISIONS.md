@@ -2228,3 +2228,31 @@ Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere 
 | Am1, H2 | Within [−90, 20] mV (from vx_RTc) |
 
 If V passes, gain is not the remaining block, and the next block is reconsidered before it is pre-registered.
+
+**Flash baseline, 02:48 (measurement, launched before any result).** New probe `scripts/probes/visual_flash.py`. It applies the Behnia et al. 2014 Fig. 2 stimulus (full-field flashes from darkness, 200 ms and 1 s) through the eye's drive rule, open loop with no body, and reports type-mean and 90th-percentile-cell deflections in the ON and OFF windows. It runs under B (m9c) and RTc.
+
+These results become the starting point of the gain block. The fit target and the held-out split will be declared before any gain arm runs, so these are not used as a fit.
+
+Prediction: Mi1/Tm3 ON and Tm1/Tm2 OFF deflections of 0.5-3 mV in RTc, against 15-20 mV recorded (figure estimate), and about 0 in B.
+
+**Photoreceptor amplitude, read 02:49** (Juusola & Hardie 2001 J Gen Physiol 117:3, PMC2232468, in vivo intracellular Drosophila R1-R6 at 25 °C; `data/raw/vision_gain_pr_s12/`):
+- The dark resting potential is "−60 to −75 mV". Included cells had "saturating impulse responses ≥60 mV", sometimes "∼75 mV".
+- Under bright backgrounds, the mean potential "saturates at 25–40 mV above the dark resting potential".
+
+In the model, R1-R6 sit about 1 mV above −52 mV in the dark (`photoreceptor:all|dark_drive` 1 mV, guessed). Full light adds `luminance_gain` 10 mV (guessed), and release saturates 7 mV above rest. The model's photoreceptor swing is therefore about 1/5 to 1/10 of the recorded one (derived). The same compression into a 7 mV graded range runs through every optic graded stage. This is the gain blank stated in measured terms: amplitudes at each stage (R1-R6 60-75 mV, medulla 15-20 mV, T5 5-11 mV) against a single guessed 7 mV range.
+
+**Per-stage wiring for the gain block (male-cns edges at the model's 5-synapse threshold, measured counts; 02:50).**
+
+| Stage | Synapses per postsynaptic cell, median (p90) | Share of the cell's input | Cells with none |
+|---|---|---|---|
+| R1-R6 → L1 / L2 | 0 (200) / 0 (210) | | 55% / 55% |
+| L1 → Mi1, L1 → Tm3 | 82 (99), 68 (93) | 0.29, 0.29 | 0 |
+| L2 → Tm1, L2 → Tm2 | 119 (150), 130 (157) | 0.41, 0.47 | 0 |
+| Mi1 → T4a, Tm3 → T4a | 61 (80), 23 (34) | 0.38, 0.14 | 0, 2% |
+| Tm1 / Tm2 / Tm9 / Tm4 → T5a | 19 / 30 / 23 / 15 | 0.13 / 0.21 / 0.16 / 0.10 | 1-7% |
+| CT1 → T5a / T4a | 24 / 14 | 0.17 / 0.08 | 1% / 4% |
+
+- The medulla wiring is complete: every Mi1, Tm1 and T4 has its main input. The losses are elsewhere:
+  - the lamina truncation (55% of L1/L2 cells get no photoreceptor synapse);
+  - the guessed per-stage gain (efficacy × `graded_rmax`), set alike for every synapse in the brain;
+  - the guessed 7 mV range.
