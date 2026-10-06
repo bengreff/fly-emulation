@@ -63,6 +63,19 @@ ASSAYS = {
         evidence="convergence test (s12): does leg sugar add to labellar sugar at MN9? "
                  "Labellar sugar held at 100 Hz, leg sugar swept; compare with sugar_mn9 at 100 Hz",
     ),
+    "legbitter_mn9": dict(
+        stim=["LgAG1"], readout=["MN9"],
+        evidence="LgAG1 (Gr33a+) matches tarsal bitter GRN projections (male-CNS taste connectome, "
+                 "bioRxiv 10.1101/2025.08.25.671814, secondary read); bitter alone should not drive MN9. "
+                 "Specificity check for the route bracket (s12)",
+    ),
+    "legsugar_legbitter_mn9": dict(
+        stim=["LgAG1"], readout=["MN9"],
+        co_stim=(["LgLG4", "LgAG2"], 100.0),
+        evidence="leg sugar held at 100 Hz, leg bitter swept. Optogenetic activation of Gr66a cells on legs "
+                 "and proboscis reduces PER by 22%, 'only a moderate inhibition' (French et al. 2015 "
+                 "J Neurosci 35:3990, PMC6605581, Fig 3; secondary read). Specificity check (s12)",
+    ),
     "water_mn9": dict(
         stim=["LB3a"], readout=["MN9"],
         evidence="LB3a matches ppk28-GAL4 water lbGRNs; water GRNs also drive "
@@ -187,7 +200,9 @@ ELEC: dict = {}
 
 
 def run_trial(conn, params, dt, stim_idx, rate_hz, kick_mv, duration_ms,
-              seed, silence_idx=None, co=None, record=None):
+              seed, silence_idx=None, co=None, record=None, off_ms=0.0):
+    """Counts during the stimulus; with off_ms > 0 the stimulus (and co_stim) then stops and spikes in the
+    off window are counted separately (third return value). The on-phase draws are unchanged."""
     net = lif.Network(conn, params, dt, rng=np.random.default_rng(seed))
     net.elec = ELEC.get(id(conn))
     if silence_idx is not None and len(silence_idx):
@@ -215,7 +230,12 @@ def run_trial(conn, params, dt, stim_idx, rate_hz, kick_mv, duration_ms,
             if raster is not None:
                 q = pos[spk]
                 raster[step, q[q >= 0]] = True
-    return counts, raster
+    off = np.zeros(conn.n, dtype=np.int32)
+    for _ in range(int(round(off_ms / dt))):
+        spk = net.step()
+        if spk.size:
+            off[spk] += 1
+    return counts, raster, off
 
 
 def main() -> None:
@@ -234,6 +254,8 @@ def main() -> None:
     ap.add_argument("--min-synapses", type=int, default=profiles.WORKING_MIN_SYNAPSES)
     ap.add_argument("--set", action="append", default=[], metavar="ENTITY|PROP=V")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--off-ms", type=float, default=0.0,
+                    help="after the stimulus, run this long with no stimulus and report rates in that window")
     ap.add_argument("--release-gain", action="append", default=[], metavar="TYPE[,TYPE]=G",
                     help="diagnostic: multiply the presynaptic release gain of these types (s12)")
     ap.add_argument("--silence-ids", default="", metavar="FILE",
@@ -333,12 +355,14 @@ def main() -> None:
         for r in rates:
             for t in range(args.trials):
                 t0 = time.time()
-                c, raster = run_trial(
+                c, raster, c_off = run_trial(
                     g, params, args.timestep_ms, stim_idx, r, prof["kick_mv"],
                     args.duration_ms, seed=t, co=co, silence_idx=sil,
-                    record=read_idx if want_rhythm else None)
+                    record=read_idx if want_rhythm else None, off_ms=args.off_ms)
                 hz = c / (args.duration_ms / 1000.0)
                 rate_store[f"{gname}_{r:g}_{t}"] = hz.astype(np.float32)
+                if args.off_ms > 0:
+                    rate_store[f"off_{gname}_{r:g}_{t}"] = (c_off / (args.off_ms / 1000.0)).astype(np.float32)
                 row = dict(
                     graph=gname, stim_hz=r, trial=t,
                     stim_hz_obs=float(hz[stim_idx].mean()),
@@ -361,6 +385,8 @@ def main() -> None:
                 else:
                     for i in read_idx:
                         row[f"hz_{nrn.instance.iat[i] or nrn.bodyId.iat[i]}"] = float(hz[i])
+                if args.off_ms > 0:
+                    row["readout_off_hz"] = float(c_off[read_idx].mean() / (args.off_ms / 1000.0))
                 rows.append(row)
                 print({k: (round(v, 3) if isinstance(v, float) else v)
                        for k, v in row.items()}, flush=True)

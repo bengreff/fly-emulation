@@ -133,6 +133,29 @@ def test_light_entrains_and_shifts_phase():
 
 # --- N25 sleep homeostat -------------------------------------------------------
 
+def test_clock_starts_at_the_registered_phase():
+    """s12: state:clock|initial_ct sets the CT at t = 0 (0 = the m4-m9r convention; m9c uses the
+    male-cns specimen's ZT 1.5), and the tonic clock drive follows it from the first step."""
+    import pandas as pd
+    from flyemu import internal_state
+    from flyemu.connectome import Connectome
+    from flyemu.registry import Policy, Registry
+    nrn = pd.DataFrame({"bodyId": [-1, -2, -3], "type": ["DN1pA", "LNd_b", "other"],
+                        "predictedNt": "acetylcholine", "superclass": "x", "class": "x"})
+    conn = Connectome(nrn, np.zeros(4, np.int64), np.zeros(0, np.int32), np.zeros(0, np.float32),
+                      np.zeros(3, np.float32), np.zeros(0, np.float32))
+    for ct0 in (0.0, 1.5):
+        reg = Registry(Policy.MINIMAL)
+        reg.overrides.update({"state:organs|model": 1.0, "state:clock|initial_ct": ct0,
+                              "state:coupling|clock_gain": 7.75})
+        st = internal_state.build(reg, conn)
+        assert st.organs.ct_h == pytest.approx(ct0, abs=1e-9)
+        t = st.tonic()
+        assert t[0] == pytest.approx(7.75 * np.cos(2 * np.pi * (ct0 - 2.0) / 24), abs=1e-5)    # morning
+        assert t[1] == pytest.approx(7.75 * np.cos(2 * np.pi * (ct0 - 10.0) / 24), abs=1e-5)   # evening
+        assert t[2] == 0
+
+
 def test_sleep_pressure_rises_awake_decays_in_rest_and_switches_with_hysteresis():
     o = Organs(P)
     p0 = o.pressure

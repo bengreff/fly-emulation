@@ -165,6 +165,24 @@ def test_unknown_mode_groups_switch_to_graded_only_when_set():
 
 
 @needs_graph
+def test_recorded_modes_override_the_group_only_for_recorded_types():
+    import pandas as pd
+    base = _org()
+    on = _org(**{"cell_type:all|mode_from_recordings": 1.0})
+    t = pd.read_csv(REPO / "data/params/cell_types.csv", comment="#")
+    rec = t[t.param == "graded_rec"]
+    assert len(rec) and set(rec.basis) <= {"measured", "inferred"}
+    ty = on.conn.neurons.type.fillna("").reset_index(drop=True)
+    want = np.full(on.conn.n, -1)
+    for r in rec.itertuples(index=False):   # later rows win, as in params.per_neuron
+        want[(ty.str.match(r.type) if r.type.startswith("^") else ty.eq(r.type)).to_numpy()] = r.value
+    m = want >= 0
+    assert m.sum() > 1000
+    assert np.array_equal(on.net.graded[m], want[m] > 0.5)
+    assert np.array_equal(base.net.graded[~m], on.net.graded[~m])
+
+
+@needs_graph
 def test_curated_gap_junctions_wire_into_the_organism():
     base = _org()
     assert base.net.elec is None

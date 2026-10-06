@@ -133,3 +133,37 @@ without picrotoxin.
 Running Dandelion as acetylcholine instead of GABA leaves MN9_L at 0 Hz under leg sugar (m2 and m9r),
 changes labellar sugar MN9_L by +5% (m2) and −25% (m9r), and leaves sugar + bitter at 0 Hz. The sign
 changes the activity of 537-782 VNC cells downstream of Dandelion but not PER. Neither sign adopted.
+
+## The paper's route read by eye, and feedforward inhibition at Bract 2 (5 October 22:04-22:45; DECISIONS 22:04)
+
+Item 2 and item 6 above said the fetched text had no LgLG4 → MN9 path. The PDF (v2, `data/raw/tastekin2025/`,
+read by me, Figure 9B and p. 20) has it: LgLG4 → AN01B004 → Bract I and Bract II → Roundup → MN9, with
+AN01B004 → S&S → Roundup and S&S → MN9 alongside, described as "multiple positive feedforward loops", 7 hops to
+maximum effective connectivity against about 5 for most labellar GRNs.
+
+- In male-cns (measured annotation, `synonyms`): Bract 1 = DNge174, Bract 2 = DNge173, Roundup = GNG108. S&S is
+  GNG159 by its edges (inferred). The type-summed weights match the figure (derived; LgLG4 → AN01B004 960
+  against about 925). The model has the paper's route.
+- In the model the route stops at Bract 2: AN01B004 fires, Bract 2 gets almost as much inhibition as excitation,
+  from GNG093 and GNG250 (GABA predicted, not measured), which AN01B004 itself drives.
+- Silencing those 4 cells (diagnostic) lifts Bract 2 to 10-25 Hz. MN9_L reaches 8 Hz mean under m2 only with
+  LgLG3 added (216 GRNs); with the 54 matched sugar GRNs it reaches 1 Hz, and under m9r Roundup stays at
+  0-1.3 Hz. Two blocks, both in guessed or fitted values rather than in the wiring.
+
+Facts that would settle it: whether GNG093 and GNG250 are inhibitory in the animal (transmitter evidence as for
+Dandelion), whether LgLG3 senses sugar (calcium imaging of LgLG3 GRNs to sucrose), and a recording of Bract 2 or
+Roundup under tarsal sugar. The last is the held-out test for any fix.
+
+## Why the working profile blocks the route (5 October 23:14; DECISIONS 23:05 result)
+
+A profile ladder with the feedforward inhibition silenced (m2 → m4 → m7 → m8 → m9r, plus m9r with intrinsic
+currents off) puts the m9r block at rung 1. Roundup passes at 77-82 Hz under m4, m7 and m9r without intrinsic
+currents, and is blocked under m8 (0 Hz) and m9r (1.2 Hz). The intrinsic currents attenuate a cholinergic GNG
+cluster (AN17A002 → GNG588/GNG578 → GNG143/GNG167 → Roundup) at every hop. The feedforward inhibition cells
+also inhibit that cluster (GNG588 430 synapses), so with them left on the route stays shut even without
+intrinsic currents. Two facts would settle it: the transmitter of GNG093 and GNG250, and the rate-current
+curve of one central GNG type (to replace the slow-MN-fitted class prior for central cells).
+
+Channel knockouts (23:26; DECISIONS 23:12 result) put the rung-1 block on BK: BK off alone passes the route
+(Roundup 31.5 Hz, MN9_L 48). Its central value is the slow-MN fit carried over by a class prior. In a
+single cell BK halves the gain above rheobase, and the loss compounds over the route's hops.

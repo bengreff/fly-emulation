@@ -498,4 +498,14 @@ def build(reg: Registry, conn) -> InternalState | None:
             "state:crop", "pump_full_rate_hz", units="Hz", model_use="pump MN rate for full ingestion",
             subsystem="internal_state", minimal=10.0,
             minimal_note="guessed: cibarial pumping ~6-8 Hz (lead), one spike burst per cycle"))
+    # N26 start phase (s12): the clock's CT at t = 0. 0 is the convention of m4-m9r. The male-cns
+    # specimen was raised in 12:12 LD and "dissected 1.5 hours after lights-on" (Nern et al. 2024
+    # bioRxiv Methods, read), so 1.5 starts the clock where the wiring was fixed (entrained, ZT = CT).
+    ct0 = float(reg.require(
+        "state:clock", "initial_ct", units="h", model_use="circadian time of the clock at t = 0",
+        subsystem="internal_state", minimal=0.0,
+        minimal_note="convention: CT 0 at t = 0 (m4-m9r)"))
+    if ct0:
+        st.organs.z = complex(np.exp(1j * 2 * np.pi * ct0 / 24.0))
+        st._refresh()
     return st

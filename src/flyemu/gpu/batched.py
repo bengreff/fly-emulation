@@ -126,6 +126,8 @@ class BatchedNetwork:
             raise NotImplementedError("N27 lumped glia is not ported")
         if getattr(net, "apl_mask", None) is not None:
             raise NotImplementedError("N23 compartmental APL is not ported")
+        if getattr(net, "stp", None) is not None:
+            raise NotImplementedError("N29 per-connection short-term plasticity is not ported")
         ich = getattr(net, "ich", None)
         if ich is not None and "v_rest" in (member or {}) and not np.array_equal(
                 np.broadcast_to(np.asarray(member["v_rest"], np.float32), (B, net.conn.n)),
@@ -139,6 +141,9 @@ class BatchedNetwork:
         bad = set(self.member) - set(MEMBER_PARAMS)
         if bad:
             raise ValueError(f"not per-member parameters: {sorted(bad)}")
+
+        if getattr(net, "g_r0", None) is not None:
+            raise NotImplementedError("cell_type:ol_graded|release_at_rest is CPU-only (s12)")
 
         # --- edges: spiking rows from net.w, graded rows from net.W_graded ---
         counts = np.diff(net.conn.indptr).astype(np.int64)

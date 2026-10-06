@@ -10,9 +10,8 @@ from __future__ import annotations
 
 # key -> (mechanism id, neutral value, what the non-neutral setting would build)
 STUBS = {
-    "synapse:all|per_synapse_parameters": (
-        "N29", 0.0, "per-synapse weight, release probability, STP, receptor mix and latency "
-                    "from synapse-level tables (FIDELITY_LADDER rung 8)"),
+    # N29 synapse:all|per_synapse_parameters left the stubs in s12 (rung 8 STP per connection
+    # class built, lif._stp_connections); its other per-synapse values are refused there
     "cell_type:all|n_compartments": (
         "N30", 1.0, "reduced multi-compartment neurons with synapses placed by position "
                     "(FIDELITY_LADDER rung 6)"),
