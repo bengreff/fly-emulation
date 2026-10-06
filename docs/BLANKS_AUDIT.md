@@ -66,7 +66,9 @@ Director night order item 3: each stub in audit order, data first, every number 
 | N33 | Larval astrocyte Ca oscillates and silences DA neurons via adenosine (Ma 2016); no adult transfer function | absent | same |
 | N34 | Giant-fibre pathway habituation measured (Engel & Wu 1996), the first fit target | absent | same |
 | B25 | Retinal muscle kinematics measured (Fenk 2022); retinal motor neurons not identified in male-cns | absent | same |
-| B27, S7, S8, D1 | not searched (lower priority) | absent with their audit reasons | same |
+| B27 | Spiracle aperture tracks flight power and spiracle closure limits it (Luo ... van Breugel & Tuthill 2026, read). The spiracle motor neurons are in male-cns as ENXXX226 (inferred), with their measured GABAergic interneurons SpINA/SpINB (INXXX204, INXXX472), and are simulated as neurons. Heart rate 3-6 Hz (unverified) | absent; reason corrected; 3-step build plan for when flight runs | `docs/research/s12_b27_s7_s8_d1.md` |
+| S7 | Axenic females walk faster, and octopamine reproduces it (Schretter 2018, read); infection raises male activity and sleep (read) | absent; healthy, conventionally reared fly stated as the assumption; validation data must record rearing and infection | same |
+| S8, D1 | not searched yet (search running 5 October) | absent with their audit reasons | |
 
 Counts after the pass: tier A 15 have, 16 partial, 2 absent (N30, S6); tier B 3 have, 9 partial, 2 absent (B24, B26); tier C 1 have, 15 partial, 9 absent; 72 mechanisms.
 
