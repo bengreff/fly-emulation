@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import json
 import os
 import platform
@@ -90,11 +91,13 @@ def motor_limits(m, names) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     return lo, hi, lim
 
 
-def profile_status(profile: str | None, overrides: dict) -> str:
-    if profile == profiles.WORKING_PROFILE and not overrides:
+def profile_status(profile: str | None, overrides: dict, extra_rows: bool = False) -> str:
+    if profile == profiles.WORKING_PROFILE and not overrides and not extra_rows:
         return "adopted (working profile)"
     if profile == profiles.WORKING_PROFILE:
-        return "adopted profile with overrides: custom, not validated"
+        return ("adopted profile with " + " and ".join(
+            w for w, on in (("overrides", overrides), ("extra per-type rows", extra_rows)) if on)
+            + ": custom, not validated")
     return {"m4": "regression reference", "m10p": "candidate, not adopted",
             "m10q": "candidate, not adopted"}.get(profile or "", "custom, not validated")
 
@@ -107,6 +110,9 @@ def main() -> int:
     ap.add_argument("--profile")
     ap.add_argument("--min-synapses", type=int)
     ap.add_argument("--set", action="append", default=[], help="'entity|property=value'")
+    ap.add_argument("--extra-params", help="CSV of candidate per-type rows (data/params/cell_types.csv "
+                    "columns) added for this run only, through the model's $FLYEMU_EXTRA_PARAMS; "
+                    "the run is labelled a variant (overrides the protocol's config.extra_params)")
     ap.add_argument("--watch-type", action="append", default=[],
                     help="record membrane potential of these cell types (repeatable)")
     ap.add_argument("--chunk-ms", type=float, default=250.0)
@@ -144,6 +150,24 @@ def main() -> int:
         launched[f"overrides.{k}"] = {"protocol": overrides.get(k), "run": float(v)}
         overrides[k] = float(v)
     cfg["overrides"] = overrides
+    # candidate per-type rows (a variant of the profile), read by flyemu.params.load
+    if os.environ.get("FLYEMU_EXTRA_PARAMS"):
+        raise SystemExit("FLYEMU_EXTRA_PARAMS is set in the environment; pass the file with "
+                         "--extra-params (or config.extra_params) so the run is labelled a variant")
+    if args.extra_params and args.extra_params != cfg.get("extra_params"):
+        launched["extra_params"] = {"protocol": cfg.get("extra_params"), "run": args.extra_params}
+        cfg["extra_params"] = args.extra_params
+    variant_rows = None
+    if cfg.get("extra_params"):
+        xp = Path(cfg["extra_params"])
+        xp = xp if xp.is_absolute() else ROOT / xp
+        import pandas as pd
+        variant_rows = {"path": cfg["extra_params"], "md5": hashlib.md5(xp.read_bytes()).hexdigest(),
+                 "rows": pd.read_csv(xp, comment="#").to_dict("records"),
+                 "basis": "candidate rows added to data/params/cell_types.csv for this run only "
+                          "(flyemu.params.load, $FLYEMU_EXTRA_PARAMS; later rows win); the profile "
+                          "is otherwise unchanged"}
+        os.environ["FLYEMU_EXTRA_PARAMS"] = str(xp)
     cfg["start"] = "rest"
     duration_ms = args.duration_ms or pr.get("duration_ms", 1000.0)
     pr = {"format": "flyemu-protocol/1", **pr, "config": cfg, "duration_ms": duration_ms}
@@ -252,7 +276,8 @@ def main() -> int:
         "n_rows": int(n),
         "n_edges": int(conn.n_edges),
         "n_synapses": int(conn.weight_syn.sum()),
-        "profile_status": profile_status(cfg["profile"], overrides),
+        "profile_status": profile_status(cfg["profile"], overrides, variant_rows is not None),
+        "extra_params": variant_rows,
         "preparation": {"coupling": res["preparation"], "kick_rng": res["kick_rng"],
                         "desc": "open loop, brain only: no senses, no motor output, body not stepped "
                                 "(as scripts/assay_pathways.py)" if brain_only else

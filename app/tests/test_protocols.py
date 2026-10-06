@@ -193,6 +193,42 @@ def test_protocol_files_resolve(path):
         assert p.get("expect", {}).get("text"), "library protocols state what a real fly does"
 
 
+@pytest.mark.skipif(not (ATLAS / "atlas.json").exists(), reason="atlas not built")
+def test_variant_rows_load_label_and_match(monkeypatch):
+    """The graded-medulla variant's rows pass the model's own table checks, are labelled
+    measured with a source, and make exactly the intended types graded."""
+    sys.path.insert(0, str(REPO / "src"))
+    from flyemu import params
+    path = APP / "protocols" / "eye" / "variant_graded_medulla.csv"
+    monkeypatch.delenv("FLYEMU_EXTRA_PARAMS", raising=False)
+    n_live = len(params.load())
+    monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(path))
+    rows = pd.read_csv(path, comment="#")
+    assert len(params.load()) == n_live + len(rows)
+    assert (rows.basis == "measured").all() and rows.source.notna().all()
+    types = atlas_neurons()["type"].astype(str)
+    hit = np.zeros(len(types), bool)
+    for rx in rows.type:
+        m = types.str.match(rx).to_numpy()
+        assert m.any(), rx
+        hit |= m
+    assert set(types[hit]) == {"Mi1", "Tm3", "Tm1", "Tm2", "Mi4", "Mi9", "C3"} | {
+        f"T{k}{s}" for k in "45" for s in "abcd"}
+    for p in sorted((APP / "protocols" / "eye").glob("graded-*.json")):
+        d = json.loads(p.read_text())
+        assert d["config"]["extra_params"] == "app/protocols/eye/variant_graded_medulla.csv"
+        assert d["variant"]["name"] and d["expect"]["status"] == "prediction"
+
+
+def test_record_labels_variants():
+    import record
+    assert record.profile_status("m9r", {}) == "adopted (working profile)"
+    assert record.profile_status("m9r", {}, True) == (
+        "adopted profile with extra per-type rows: custom, not validated")
+    assert record.profile_status("m9r", {"a|b": 1}, True) == (
+        "adopted profile with overrides and extra per-type rows: custom, not validated")
+
+
 # recordings: an intervention changes nothing before it starts
 
 def recordings(base):

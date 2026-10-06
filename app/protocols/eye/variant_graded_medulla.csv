@@ -1,0 +1,5 @@
+type,param,value,units,basis,source,justification
+^Mi1$|^Tm3$|^Tm1$|^Tm2$,graded,1.0,boolean,measured,Behnia et al. 2014 Nature 512:427 (doi:10.1038/nature13427),whole-cell recordings in Drosophila: graded depolarisations (Mi1 and Tm3 to light increments; Tm1 and Tm2 to decrements) without action potentials; checked against the abstract and secondary summaries; not the full text
+^Mi4$|^Mi9$|^C3$,graded,1.0,boolean,measured,Groschner et al. 2022 Nature 603:119 (doi:10.1038/s41586-022-04428-3),in vivo whole-cell recordings in Drosophila of T4 and its columnar inputs (Mi1; Tm3; Mi4; Mi9; C3): graded membrane potentials; checked against the abstract and secondary summaries; not the full text
+^T4[abcd]$,graded,1.0,boolean,measured,Gruntman et al. 2018 Nat Neurosci 21:250 (doi:10.1038/s41593-017-0046-4),whole-cell recordings in Drosophila T4: graded depolarisations and hyperpolarisations; no action potentials described
+^T5[abcd]$,graded,1.0,boolean,measured,Gruntman et al. 2019 eLife 8:e50706 (doi:10.7554/eLife.50706),whole-cell recordings in Drosophila T5: graded responses; occasional 1-2 mV fast transients that could not be verified as spikes
