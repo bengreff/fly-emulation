@@ -2679,3 +2679,18 @@ No cell left [−90, 20] mV. Steady-state potentials from the conductance probe 
 - The T4/T5 grating (V) on v0r, held out since 02:08.
 - The Mi1 block: Pm/Dm1 modes and the GluClα reversal.
 - The Tm1/Tm2 OFF limit: L2's OFF overshoot and Pm2a/Pm2b tonic inhibition.
+
+### Pre-registration: T4/T5 grating on the v0r base (6 October, 04:38, before any run)
+
+**Question.** The relay's original failure was V: T4/T5 per-cell F1 or mean shift ≥ 0.5 mV in at least one direction for every subtype (DECISIONS 6 Oct, vision blank, with the 02:00 per-cell deviation). RTc gave T4 0.05-0.09 and T5 0.05-0.07 mV. Does v0r pass?
+
+**Run.** `motion_grating.py`, the same stimulus and seed as RTc (30°, 1 Hz, contrast 1, 1 s per direction after 1 s static), on the v0r set: the gain-block base set, `leak_from_network_rest` 1, `release_at_rest_per_type` 1 and the three diagnostic rows (L1/L2 leak shift 15.1, R1-R6 release ×12.5, L1/L2 release at rest 0.26). There is one confound against RTc: the gain block's photoreceptor gain 78 (RTc 10) and the graded spans.
+
+**Predictions** (coarse; derived from RTc's grating-to-input ratios and v0r's flash amplitudes, not from a model of the grating):
+- Mi1 per-cell F1 1.5-3.5 mV, and Tm3 2.5-5.5 mV (RTc 0.28 / 0.35).
+- T4a-d: per-cell F1 0.4-1.2 mV (RTc T4/Mi1 ratio about 0.3). **V passes for at least three of the four T4 subtypes.**
+- T5a-d: no confident call. The Tm1/Tm2 OFF limit still applies; reported against 0.5.
+- The direction index is reported, not required. The biological pattern is T4a/T4b and T4c/T4d preferring opposite directions.
+- No cell leaves [−90, 20] mV. HS and VS rates are reported (RTc: HSE 149 Hz tonic).
+
+**Failure.** If T4 F1 stays below 0.3 mV, then T4 is limited past Mi1/Tm3 (Mi4/Mi9/C3 inhibition or T4's own leak), and that is the next block. No second try tonight.
