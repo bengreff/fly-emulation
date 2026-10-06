@@ -118,7 +118,7 @@ Every switch that is off or neutral was tested and not adopted, or is waiting fo
 - 756 of 815 motor neurons drive a body actuator. Leg MNs use a measured muscle→joint map with signs from the body calibration (`data/derived/joint_signs_flybody.csv`, re-measure after body changes). Non-leg MNs use `data/params/motor_targets.csv` (F-MOTOR-2).
 - **Motor units:** each MN has its own activation; a spike adds its torque, which decays with its own twitch τ.
   - Leg MNs take torque per spike from `data/params/motor_forces.csv`: tibia flexor classes from Azevedo 2020 (derived); the rest size-scaled (inferred); twitch τ 30/100 ms (guessed). F-MOTOR-3.
-  - Other MNs use `motor_unit:all|force_per_spike`, registry default 1 µN·mm (guessed). **All runs since session 5 set it to 10**, e.g. `--set 'motor_unit:all|force_per_spike=10'`; the probes do this.
+  - Leg MNs without a table row (71 under m9r: trochanter-femur, coxa pitch, tibia-tarsus) use `motor_unit:all|force_per_spike`, registry default 1 µN·mm (guessed). **m9r carries 10** (folded in 5 October 21:40; DECISIONS), the value every gate since session 5 set by `--set`; profiles before m9r still need the `--set`. Non-leg MNs take per-group values under m9t and later (F-NONLEG-1).
 - **Grip:** tarsal adhesion driven by the long-tendon MN pool (a substitute mechanism).
 
 ## Body (`body.py`, `joints.py`)

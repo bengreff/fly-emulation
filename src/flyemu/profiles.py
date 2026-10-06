@@ -257,6 +257,11 @@ M9R = {
     **M9F,
     "joint:leg|rest_mirror": (1.0, _I, "s12 body fix, not fitted (DECISIONS 5 Oct 03:25); left legs take the "
                               "right legs' fitted rest angles, bilateral symmetry inferred"),
+    # Folded in 5 Oct 21:27 (DECISIONS) so the name means the gated model: every gate since s5 set it by
+    # --set. Read only by the 71 leg MNs with no motor_forces.csv row (census 5 Oct 05:11). Profiles
+    # before m9r keep the registry default 1; their gates also ran with 10.
+    "motor_unit:all|force_per_spike": (10.0, _G, "guessed; the value every m9-family gate ran with, bounded by "
+                                       "the fast tibia unit (10 uN, Azevedo et al. 2020) x a lever of order 1 mm"),
 }
 
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
