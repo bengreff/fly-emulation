@@ -3,6 +3,7 @@ another, each through the machine's slot limiter. Resumable: complete
 recordings are skipped, and an interrupted one is moved aside, not deleted.
 
     .venv/bin/python app/tools/run_library.py [--only control sugar-grn-kick] [--out runs/app/lib]
+        [--seeds 0 1 2] [--profile m9r] [--set 'motor_unit:all|force_per_spike=10'] [--parallel 8]
 
 Cost (m9 on the Mac, measured): about 115 s of wall time per simulated second
 plus 15 s to build, 2.4 GB of memory per run; the 2 s library runs take about
@@ -38,6 +39,9 @@ def main() -> int:
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--seeds", type=int, nargs="*", help="record each protocol at these seeds "
                     "(output <name>-s<seed>) instead of its own")
+    ap.add_argument("--profile", help="record every protocol under this model profile instead of its own")
+    ap.add_argument("--set", action="append", default=[], metavar="'entity|property=value'",
+                    help="an override added to every run (the recording labels it custom)")
     ap.add_argument("--timeout-min", type=float, default=40.0, help="per run")
     ap.add_argument("--parallel", type=int, default=1, help="runs at once (default 1). For a machine "
                     "without the slot limiter (backhouse): size it to free memory at 2.4 GB per run")
@@ -65,6 +69,10 @@ def main() -> int:
                "--protocol", str(a.protocols / f"{proto_name}.json"), "--out", str(out)]
         if seed is not None:
             cmd += ["--seed", str(seed)]
+        if a.profile:
+            cmd += ["--profile", a.profile]
+        for item in a.set:
+            cmd += ["--set", item]
         if SLOT.exists():
             cmd = ["python3", str(SLOT), "run", "--label", f"flyapp: library {name}", "--"] + cmd
         t0 = time.time()

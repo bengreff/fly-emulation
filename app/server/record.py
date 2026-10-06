@@ -126,9 +126,14 @@ def main() -> int:
     cfg = dict(pr.get("config", {}))
     cfg.setdefault("scan", "male-cns:v1.0")
     cfg.setdefault("body", "flybody")
+    # what the command line changed in the protocol's own config, so a title that names
+    # the protocol's model or seed is not read as the run's
+    launched = {}
     for k, v in (("profile", args.profile), ("seed", args.seed),
                  ("min_synapses", args.min_synapses)):
         if v is not None:
+            if v != cfg.get(k):
+                launched[k] = {"protocol": cfg.get(k), "run": v}
             cfg[k] = v
     cfg.setdefault("profile", profiles.WORKING_PROFILE)
     cfg.setdefault("seed", 0)
@@ -136,11 +141,16 @@ def main() -> int:
     overrides = dict(cfg.get("overrides", {}))
     for item in args.set:
         k, _, v = item.partition("=")
+        launched[f"overrides.{k}"] = {"protocol": overrides.get(k), "run": float(v)}
         overrides[k] = float(v)
     cfg["overrides"] = overrides
     cfg["start"] = "rest"
     duration_ms = args.duration_ms or pr.get("duration_ms", 1000.0)
     pr = {"format": "flyemu-protocol/1", **pr, "config": cfg, "duration_ms": duration_ms}
+    if launched:
+        pr["launched_with"] = launched
+        if pr.get("title"):
+            pr["title"] += " [run with " + ", ".join(f"{k} {v['run']}" for k, v in launched.items()) + "]"
     if args.watch_type:
         pr.setdefault("record", {})["watch"] = {"type": args.watch_type}
     if cfg["body"] != "flybody":
