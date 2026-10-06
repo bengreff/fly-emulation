@@ -1011,3 +1011,11 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - a *Drosophila* R→LMC gain or release curve;
     - LMC transmembrane potential and ort reversal against the lamina space;
     - the sign and strength of R8→Mi1.
+- **Refinement (04:02; derived from the 03:59 conductance states, `cstate2_kR1`, `cstate2_R16kR30`).** The two factors above are not independent.
+  - With D = v₀ − v_dark, the tonic histamine hyperpolarisation of the dark LMC, and p = D/(E − v₀), the small-signal gain is D(1 − p)/s. So it is below D/s however much driving force there is; driving force helps only through (1 − p), at most 2×.
+  - The model's s is 0.6 mV. That is the photoreceptor's dark offset above the release foot, set by `photoreceptor:all|dark_drive` 1.0 mV (guessed). The release curve is already steep enough; its extent is wrong: zero 0.6 mV below dark, against about 12 mV (Uusitalo).
+  - D is 0.8 mV at k 1 (small-signal gain 1.3) and 12.7 mV at k 30 (small-signal gain 10.6).
+  - The dim flash moves R1-R6 0.64 mV, about one s, so it doubles release. Its gains are large-signal: the conductance arithmetic gives 1.20 and 6.6, against 1.24 and 6.2 measured. The saturation "near 6" is this large-signal value, not the small-signal ceiling.
+  - The binding conflict is between D and L1's dark potential. A gain of 13 at s 0.6 needs D of about 8-13 mV. With L1's histamine-free potential at v₀ −44.8 mV (global leak −52 guessed, plus L5/Mi1/Tm3 excitation), that puts the dark potential at −53 to −58, below Pantazis's −43 ± 7.3.
+  - So the levers are v₀ (L1's leak and non-histamine inputs) together with a release curve that keeps s near 1 mV but extends about 12 mV below dark. The lamina-field driving force is secondary.
+  - The measurement that pins v₀ directly is the LMC dark potential with histamine transmission removed (ort or hdc mutants, or a block).

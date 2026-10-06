@@ -2530,3 +2530,12 @@ Against the 03:42 pre-registration (connected medians; dark potentials from the 
 2. The LMC transmembrane operating point under the lamina field (dark offset 0-30 mV, Zheng 2006 / Weckström & Laughlin 2010).
 
 The derived bound sets the prediction before any run: gain ≤ (E − v₀)/(4s). Train on the dim R→L1 gain. Hold out L1's dark potential (Pantazis) and the full-flash Mi1/Tm3/Tm1/Tm2.
+
+**Refinement to "Next" (04:02; F-VISION-8 refinement, derived).**
+- The small-signal gain is D(1 − p)/s, where D is the tonic histamine hyperpolarisation of the dark LMC. It is capped near D/s, so the driving-force lever buys at most 2×.
+- The model's s is already 0.6 mV (the dark-drive offset above the linear release foot). The 6.2 is the large-signal gain of a flash that doubles release; the small-signal gain at k 30 is 10.6.
+- The two-lever block therefore becomes:
+  1. L1/L2's histamine-free potential v₀, sourced from an LMC dark potential with histamine transmission removed if one exists.
+  2. A curved release rule: s bounded 0.5-3 mV, extent about 12 mV below dark (Uusitalo).
+- The lamina-field offset is held back. The test flash for the small-signal gain must move R1-R6 by much less than s (i ≤ 0.001).
+- A source search for D, s and the LMC chloride reversal is running (04:00).
