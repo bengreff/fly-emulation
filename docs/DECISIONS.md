@@ -2140,3 +2140,32 @@ Route under noDN (open loop, MN9_L per trial, Hz; after the bar, the 1 s after):
 **Deviation, 02:00, before any R or RT result exists.** B finished first, and its photoreceptor type-mean F1 is 0.04 mV even though the drive swings ±5 mV. A 30° grating puts the columns of one type at every phase, so averaging the type before taking the F1 cancels the modulation. The type-mean F1 could never have passed V for any columnar type; the criterion was mis-specified. The probe now also records a per-cell F1 (`f1_cell_mv`, the mean over the type of each cell's F1 at 1 Hz), and the V criterion becomes: for every T4/T5 subtype, the per-cell F1 in at least one direction exceeds the static grating's per-cell F1 by ≥ 0.5 mV, or the mean shift is ≥ 0.5 mV. This makes V easier to pass than the row above, so it is declared here rather than applied silently. B and T were restarted with the fixed probe; the first B output is kept as `grating_m9c_typemeanonly.json`. Its mean potentials are unchanged by the fix: same seed, and the fix only adds recording.
 
 **Correction to s11 fill F3** (1 October, "Per-type resting potentials from the measurement library"): Behnia et al. 2014 recorded Mi1, Tm1, Tm2 and **Tm3**, not Tm4. Their full text names Tm3 about 69 times and Tm4 not at all. The `v_rest_shift_rec` row in `data/params/cell_types.csv` now reads Tm3. Only `cell_type:all|rest_from_recordings` reads these rows (m10p and m10q, rejected rungs), so m9c and every adopted profile are unchanged.
+
+### Result, arms B and T (6 October, 02:08; per-cell F1; `runs/s12/vision/grating_{B,T}.json`, backhouse)
+
+| Type | B v (mV) | B per-cell F1 | T v (mV) | T per-cell F1 |
+|---|---|---|---|---|
+| R1-R6 | −48.62 | 2.95 | −48.62 | 2.95 |
+| L1 / L2 / L3 | −54.17 / −53.77 / −52.72 | 1.61 / 1.50 / 0.45 | −54.16 / −55.30 / −53.22 | 1.62 / 1.50 / 0.43 |
+| Mi1 / Tm3 | −52.38 / −52.00 | 0.23 / 0.00 | −54.05 / −53.82 | 0.56 / 0.38 |
+| Tm1 / Tm2 / Tm4 / Tm9 | −52.00 each | ≤ 0.001 | −50.05 / −51.39 / −50.50 / −51.24 | 0.65 / 0.45 / 0.46 / 0.06 |
+| Mi4 / Mi9 | −52.62 / −52.08 | 0.38 / 0.05 | −53.09 / −50.81 | 0.38 / 0.15 |
+| CT1, T4a-d, T5a-d, Am1, HS, H2, VS, LC4, LPLC2, LC11 | −52.00 | 0 | −52.00 | 0 |
+
+Static per-cell F1 (noise floor) ≤ 0.01 mV for every type; no spikes anywhere in the visual pathway in either arm.
+
+- **B as predicted:** the lamina modulates, nothing below it does. Mi1 and Mi4 move 0.2-0.4 mV in B through inputs other than L1/L2 (L1/L2 release nothing).
+- **T as predicted for the medulla:** with release at rest, L1's tonic glutamate hyperpolarises Mi1 by 1.7 mV and L2's acetylcholine depolarises Tm1 by 2 mV (right signs), and the OFF cells now follow the grating at 0.45-0.65 mV per cell. Every medulla cell stays 5-9 mV below its spike threshold (−45 mV), so T4/T5 get nothing: exactly −52.00 in every direction. This reproduces the relay's "under 1.5 mV".
+- **The gain is small at both stages.** At full contrast L1 swings 1.6 mV and the medulla under 0.7 mV. That is far below the 7 mV graded range, and below the LMC responses in fly recordings (tens of mV in Calliphora, Laughlin; to be sourced for Drosophila). If RT fails, this gain is the next block, as pre-registered.
+- **Gate seed 12 under T (diagnostic, not an adoption step):** silent last 100 ms 16.36 spikes/ms (FAIL; m9c 0.0), and optic_columnar spikes 4,946 times in the silent window (m9c 53). The silence convention makes the eye dark, so L1/L2 depolarise to rest and release r0 = 0.5 tonically, and the OFF columnar cells fire. Thorax 0.550 mm (m9c 0.552), 0 MuJoCo warnings, no NaN. This is the pre-registered conflict between the gate's convention and tonically active synapses: darkness is not silence for a fly's optic lobe. It is not passed.
+
+**The `graded_rec` rows (02:24, before R and RT launch).** Written from the evidence agent's table (`data/raw/vision_mode_s12/`; agent stopped at rate limits), keeping only recordings read in full text:
+- **Measured, graded** (in vivo whole-cell, Drosophila): Mi1, Tm1, Tm2, Tm3 (Behnia et al. 2014; graded light responses, no action potentials mentioned anywhere in the text), T4a-d (Gruntman et al. 2018) and T5a-d (Gruntman et al. 2019). Their authors say the weak 1-2 mV transients "could not be verified as spikes". Para sits on T4/T5 axons (Fendl et al. 2020), so axonal spiking stays open.
+- **Inferred, graded:** L4 and L5. They are lamina monopolar cells like L1-L3, and classes.csv already labels them graded, but cell_types.csv had no row, so every profile spiked them. Their responses have not been measured in Drosophila (Currier et al. 2023 review).
+- **Left in the group (spiking, guessed):**
+  - Mi4 and Mi9: the "whole-cell" claim for Strother et al. 2017 came from a search snippet. The public abstract says calcium imaging, and the full text is paywalled.
+  - Tm4 and Tm9: calcium imaging only (Serbe et al. 2016 and Arenz et al. 2017, not read).
+  - CT1, Am1, C2, C3, TmY15, LPi and the LPTCs: no Drosophila recording was read. Schnell et al. 2010 (HS) was blocked.
+  - Lawf2 spikes (Tuthill et al. 2014, secondary read). It already spikes in the model, so no row.
+- So R and RT test the recorded types only. T5's other cholinergic inputs, Tm4 (9.9%) and Tm9 (21.0%), and the shared CT1 (8-15%) still spike.
+- No Drosophila LMC amplitude per contrast was found. Rivera-Alba et al. 2011 count 42 photoreceptor synapses onto each of L1 and L2 in one cartridge (read). That checks F-VISION-4: the scan's right-side median where present is 34-36.
