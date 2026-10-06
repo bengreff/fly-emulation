@@ -1019,3 +1019,22 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The binding conflict is between D and L1's dark potential. A gain of 13 at s 0.6 needs D of about 8-13 mV. With L1's histamine-free potential at v₀ −44.8 mV (global leak −52 guessed, plus L5/Mi1/Tm3 excitation), that puts the dark potential at −53 to −58, below Pantazis's −43 ± 7.3.
   - So the levers are v₀ (L1's leak and non-histamine inputs) together with a release curve that keeps s near 1 mV but extends about 12 mV below dark. The lamina-field driving force is secondary.
   - The measurement that pins v₀ directly is the LMC dark potential with histamine transmission removed (ort or hdc mutants, or a block).
+
+### F-VISION-9: the photoreceptor→LMC synapse meets the recorded dark potential and small-signal gain together when L1/L2's histamine-free potential is about −32 mV; the medulla deficit then sits in Mi1's tonic inhibition and L1's release floor (s12, 6 Oct 04:11)
+- **Test** (DECISIONS pre-registration 04:05, result 04:11; figure `docs/media/s12_vision_first_synapse.png`, viewed). F-VISION-8's arithmetic was solved for the two targets, L1 dark −43 mV (Pantazis 2008, *Drosophila*) and gain 13 (Juusola 1995, *Calliphora*). The solve gives an L1/L2 leak shift of +15.1 mV (leak −36.9; v₀ −31.8) and R1-R6 release ×12.5, set as diagnostic rows (derived). Dim flashes at 0.001 and 0.01, a full flash, and the conductance state.
+- **Result.**
+  - L1 dark −43.7 mV. Small-signal gain 11.8 (i 0.001), 9.6 at i 0.01.
+  - L1 full-flash ON −25.1 mV (0.56 of the recorded 45; k 1 gave 0.37); L2 −18.2.
+  - Mi1 +2.3 mV (recorded 20), Tm3 +4.2 (15), Tm1/Tm2 OFF +1.6/+1.9 (17.5), T4a +1.0. Every prediction landed within its tolerance.
+- **Mechanism (derived from the conductance state).**
+  - Lamina: one compartment with tonic histamine conductance g_i ≈ 0.49 leak units (p 0.30) and release e-fold s 0.61 mV gives gain D(1 − p)/s with D 11.9 mV.
+  - Mi1: L1's inhibition falls 1.34 → 0.74 in light, while 0.7 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition stays constant. That caps Mi1 at about 7.5 mV.
+  - Tm3: L1 inhibition 1.17 → 0.68, with little else. Tm3 is capped by L1's release floor (r0 0.5), about 12 mV.
+- **Reading.**
+  - The first synapse can be made consistent with both recordings, but only by predicting an LMC histamine-free potential of about −32 mV (unmeasured).
+  - The two other readings are an LMC transmembrane offset from the lamina field, or a steeper release curve. Neither is excluded: s is set by the guessed photoreceptor dark drive.
+  - Downstream, the next limits are named parameters: the Pm/Dm1 modes and the GluClα reversal for Mi1, and L1's release r0 and span for Tm3.
+  - Discriminating recordings:
+    - an ort or hdc LMC dark potential (v₀);
+    - Laughlin, Howard & Blakeslee 1987's transfer curve (s; an unverified secondary quotes an e-fold of 1.5-1.9 mV, which would contradict the model's 0.61);
+    - Pm/Dm1 light responses.

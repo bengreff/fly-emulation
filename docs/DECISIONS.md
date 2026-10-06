@@ -2576,3 +2576,38 @@ The derived bound sets the prediction before any run: gain ≤ (E − v₀)/(4s)
 - If the two training numbers land, the formula is confirmed, and the first synapse can meet both recordings only with v₀ about 12 mV above the model's current −44.8. That is a testable prediction (ort or hdc LMC rest).
 - If they miss by more than the tolerance, the one-compartment reading is wrong and I stop and write up.
 - Nothing is adopted. Adoption needs Ben's call on a fitted LMC leak, plus the gate and battery.
+
+### Result: LMC histamine-free potential plus R1-R6 release (6 October, 04:11; `runs/s12/vision/flash_v0_i{0.001,0.01,1}`, `cstate_v0`, about 4 min on backhouse; figure `docs/media/s12_vision_first_synapse.png`, viewed; F-VISION-9; nothing adopted)
+
+| Readout | Role | Prediction | Model | Recorded |
+|---|---|---|---|---|
+| L1 dark (connected median) | train | −43 ± 2 | **−43.7** pass | −43 ± 7.3 (Pantazis); −38.4 ± 3.2 (Rusanen, *Calliphora*, held: 1.7 s.d. below) |
+| R→L1 gain, i 0.001 | train | 13 ± 2.5 | **11.8** pass | about 13 |
+| R→L1 gain, i 0.01 | check | 9.0 ± 1.5 | **9.6** pass | |
+| L1 ON, full flash | held | −22 to −27 | **−25.1** pass | −45 (0.56 of it; k 1 was 0.37) |
+| L1 release, dark → light | check | 0.60 → 0.31 | 0.60 → 0.33 pass | |
+| Mi1 ON, full flash | held | +2 to +4 | **+2.33** pass (the prediction); FAIL against +20 | +20 |
+| Tm3 ON | held | reported | +4.22 (k 1: 2.76) | +15 |
+| Tm1 / Tm2 OFF | held | reported | +1.58 / +1.89 (k 1: 0.35 / 0.53) | +17.5 |
+| L2 ON / dark | held | reported | −18.2 / −50.4 | −45; L1/2 rest −38.4 ± 3.2 (*Calliphora*) |
+| T4a ON | extra | | +1.02 (k 1: 0.68) | |
+
+No cell left [−90, 20] mV.
+
+**Reading.**
+- The one-compartment arithmetic predicted the first synapse to within 10% (gain) and 0.7 mV (dark potential).
+- Both lamina targets are met together only with L1's histamine-free potential near −32 mV, 13 mV above the model's default. That is a prediction for an ort or hdc LMC recording, not a measurement.
+- The lamina now carries 0.56 of the recorded L1 swing. The deficit moves downstream:
+  - Mi1's L1 inhibition now falls 0.60 leak units in light (k 1: 0.33), but its 0.7 of tonic Pm/Dm1 inhibition is untouched (F-VISION-7). Even total L1 shutoff would leave Mi1 about 7.5 mV above dark (derived).
+  - Tm3 has little tonic inhibition (0.17). Its limit is L1's release modulation, which floors at 0.31 because of r0 0.5 and the 45 mV span; full shutoff would give about 12 mV against 15 recorded (derived).
+- L2's dark potential is 12 mV below its *Calliphora* L1/2 rest, held there by spiking Dm6/Dm17/Dm1 inhibition (0.45 leak units, modes guessed).
+- Seen, not scored: L1 has no depolarising OFF transient at light-off in this arm (k 30 had +5-7 mV). Recorded LMCs have a strong one.
+
+**DECISION NEEDED (Ben).** Should the v0 arm become the vision base for the next blocks? It is a fitted L1/L2 leak (−36.9 mV, derived from two recordings) plus R1-R6 release ×12.5 (derived).
+- My recommendation is yes for vision diagnostics, and no for the working profile until the Mi1 block and the gate and battery have run.
+- Both rows are fitted to one *Drosophila* and one *Calliphora* number. The v₀ they imply is unmeasured.
+
+**Next (pre-register first): the Mi1/Tm3 block on the v0 base.**
+- Mi1: the Pm/Dm1 modes (graded against spiking; their light responses are unknown) and the GluClα reversal (M10Q −56 against −70).
+- Tm3: the r0 and span of L1's release.
+- Hold out Tm1/Tm2 OFF, L2 and the T4/T5 grating.
