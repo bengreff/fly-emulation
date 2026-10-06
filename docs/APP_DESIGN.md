@@ -7,9 +7,14 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 03:00 CDT, 6 October 2026 (M3, the graded-medulla run, the T4/T5 direction test for the
+**State at 03:01 CDT, 6 October 2026 (M3, the graded-medulla run, the T4/T5 direction test for the
 fly worker and M4 are done; nothing of mine is running on either machine):**
 
+- **Parked early** (Director's usage note, 02:55: park by 03:45). On backhouse nothing of mine
+  runs: no `flyapp-*` tmux session and no recorder. `~/flyapp` holds the code at d63adbb (a
+  `git archive` copy), `runs/app/t4t5/` (both validation sets, also copied to the Mac) and
+  `runs/app/replay/t4t5-m9r-control-merged`, with the scripts `bh_t4t5.sh` and `bh_replay.sh`.
+  The other tmux sessions there (crucible_*, s12vis_*) belong to other projects.
 - **Since 02:05:**
   - **The T4/T5 direction test** (section 13.1; validation in section 14): one command,
     `app/tools/t4t5_ds.py --profile <rung> [--model-root <checkout>]`, records 17 runs and reports
@@ -119,8 +124,31 @@ fly worker and M4 are done; nothing of mine is running on either machine):**
   with peaks of 1.2 to 2.0 mV, but neither is direction-selective (|DSI| at most 0.02 on the
   peak). Untouched, the model passes no light signal past L1-L3, because its graded rule
   transmits nothing at or below rest. Three notes for the fly worker (section 13, requests 7 to 9).
-- **Next step:** M5 (other scans' atlases and the cross-specimen comparison). The T4/T5 temporal-dynamics follow-up is the
-  fly worker's (Director, 6 October); the app runs the test when asked.
+- **Next step: M5** (other scans' atlases and the cross-specimen comparison; section 6.1). The
+  T4/T5 temporal-dynamics follow-up is the fly worker's (Director, 6 October); the app runs the
+  test when asked. Exact steps, checked against the local data at 03:05 on 6 October:
+  1. **Fix section 6.1's table first.** The male-cns cache (`data/cache/male_cns_neurons.parquet`,
+     26 columns) holds `mancBodyid` but not `flywireType` or `hemibrainType`. The crosswalk hub
+     is BANC instead: `data/raw/banc/banc_888_meta.feather` (188,508 cells, 81 columns) has
+     `fafb_`, `manc_`, `malecns_`, `hemibrain_` and `fanc_` `cell_type` and `_match` columns, and
+     separate `_nblast_match` columns; reviewed match tables sit beside it
+     (`banc_malecns_reviewed_matches.csv.gz`, `banc_manc_reviewed_matches.csv.gz`).
+  2. **BANC atlas.** Give `app/build/atlas.py` a `--scan banc` path writing
+     `app/data/atlas/banc-888/` in the same flyemu-atlas/1 format, from the feather's
+     `position`/`root_position_nm`, `super_class`, `cell_class`, `cell_type`, `side` and `flow`.
+     Check the coordinate frame and units before drawing; there are no edges, so the atlas is
+     cells only, with `input_connections` and `output_connections` as counts.
+  3. **Crosswalk build** (`app/build/crosswalk.py`, new): per male-cns type, the matched cells in
+     BANC from the reviewed table (derived: a published match), and in FAFB, hemibrain and MANC
+     through BANC's match columns (inferred: two hops). NBLAST-only matches kept apart and
+     labelled inferred. MANC also directly via `mancBodyid` (derived); report where the two
+     MANC routes disagree.
+  4. **Compare view:** a type's cell count in each scan, side by side, with the join basis on
+     every number; the atlas selector in the Brain tab gets the BANC atlas. Partner overlap and
+     synapse-count spread wait for edges (BANC edges are not local; download size to be checked,
+     not assumed).
+  5. **Tests:** atlas counts against the feather; every crosswalk row has a basis; no row joins
+     a cell to two types in the same scan without a flag.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
