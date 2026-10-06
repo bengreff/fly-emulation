@@ -7,7 +7,8 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 22:05 CDT, 5 October 2026 (the folded m9r library is recording on backhouse):**
+**State at 00:50 CDT, 6 October 2026 (the m9r library is collected, scored and compared; nothing
+of mine is running on either machine):**
 
 - **Done and pushed** (branch `app`; 144 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
@@ -62,26 +63,25 @@ only through public functions and asks for new ones (section 13, on hold).
     25 complete runs (all six protocols at seeds 0 to 3, plus control-s4) and 5 stopped ones. In
     those runs, 71 leg motor units used the old shared value, 1. The planned
     `lib-m9r-f10-seeds` library was dropped, since folded m9r is the same model.
-- **Running now** (backhouse, tmux session `flyapp-m9r`, launched 22:01 CDT):
-  - **Script:** `~/flyapp/bh_m9r.sh`, 6 protocols × seeds 0 to 9 = 60 runs, `P=6` at a time.
-    Code: `~/flyapp` holds a `git archive` of 4723e1b, with `FLYAPP_COMMIT` set. Output:
-    `~/flyapp/runs/app/lib-m9r-seeds`.
-  - **Log:** `~/flyapp/runs/app/lib-m9r-seeds/runner.log`, which ends with "runner finished".
-  - **Speed (measured at 22:02):** all 6 first runs reached 250 ms at 142 s of wall time per
-    simulated second, so about 5 min per 2 s run. Memory in use was 15 GB of 31, with 16 GB
-    available; no other project was running.
-  - **Expected finish (estimate):** 10 batches of 6, so about 22:55.
-  - **Mac keepalive** for WSL: pid 50522 (`ssh backhouse ... exec sleep infinity`), mine. Stop it
-    once "runner finished" appears.
+- **The m9r library is complete** (section 14, "m9r library: results").
+  - **Runs:** 60, all exit 0, on backhouse from 22:01 to 22:57 CDT (`~/flyapp/bh_m9r.sh`, 6 at a
+    time, code a `git archive` of 4723e1b). Collected to the Mac at 00:45 as
+    `runs/app/lib-m9r-seeds`. The pre-fold folder was also copied, as
+    `runs/app/lib-m9r-prefold-afb666c`, for the fold check.
+  - **Result on the mean of 10 seeds** (derived): sugar GRN to MN9 +11.1 Hz (SD 1.8), PASS,
+    p = 0.001, 10 of 10 seeds (m9: +8.8 Hz). DNa02 +0.61 deg: left at all 10 seeds and beyond
+    noise (p = 0.001), but an eighth of the 5 deg threshold, so FAIL (m9: within noise). MDN
+    +0.004 mm, within noise. Leg sugar changes no spike.
+  - **m9r is quieter:** a one-cell kick changes about 300 cells against m9's 2,200 (medians), and
+    the resting body moves less.
+  - **The fold changed nothing here** (measured): the pre-fold and folded runs are byte-identical.
+  - **Nothing of mine is running.** The tmux session `flyapp-m9r` ended with the runner, and no
+    keepalive is left on the Mac. The other tmux sessions on backhouse (crucible_*, s12*) belong to
+    other projects.
 - **Next steps, in order:**
-  1. **Collect:**
-     `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/flyapp/runs/app && tar -cf - lib-m9r-seeds"' | tar -x -C runs/app`.
-  2. **Score** with `score_library.py --lib runs/app/lib-m9r-seeds`. All runs of a seed are on
-     one machine, so the pairing holds.
-  3. **Compare with m9 in section 14:** per seed and on the mean, with the same tests and noise
-     rule.
-  4. **Then:** a model selector across libraries in the Compare tab, then the rest of M3 (the
-     column table, the LPTC traces).
+  1. **A model selector across libraries in the Compare tab,** so m9 and m9r show side by side
+     per seed in the app, not only in this document.
+  2. **The rest of M3:** the column table and the LPTC traces.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
@@ -843,6 +843,85 @@ the two recordings spike by spike):
 - Why they diverge is not tested. Candidates (inferred): floating point on arm64 against x86,
   different numpy and BLAS builds (Python 3.12.14 against 3.12.3), and the renderer (Apple GL
   against osmesa) if the eyes feed back into the brain in closed loop.
+
+**m9r library: results** (scored 6 October 2026 at 00:45 CDT; `runs/app/lib-m9r-seeds/scores.json`).
+The same six protocols at seeds 0 to 9, run as the fly worker's working profile m9r, with the noise
+rule declared at 02:10. Every number is derived from the recordings by `score_library.py`.
+- **Provenance:** 60 runs, all exit 0, all on backhouse (6 at a time, 22:01 to 22:57 CDT on 5
+  October), all at commit 4723e1b. Profile m9r as folded at `main` 019dae2, with no override:
+  every manifest records `force_per_spike` 10 (guessed) and profile status "adopted (working
+  profile)".
+- **Matched:** at every seed, every test's spike train is identical to its control's until the
+  stimulus.
+- **No expectations were written for m9r before these runs.** The m9 expectations of 02:10 are the
+  only ones on record, so nothing below is a confirmed prediction.
+
+Per seed: the test minus the same seed's control, with the same seed's one-cell sham in brackets.
+
+| Seed | Machine | Sugar GRN: MN9, Hz | MDN: forward, mm | DNa02: left turn, deg | Leg sugar: MN9, Hz |
+|---|---|---|---|---|---|
+| 0 | backhouse | +13 (0) | +0.008 (0.000) | +0.40 (-0.25) | 0, no spike changed |
+| 1 | backhouse | +12 (0) | +0.005 (+0.007) | +0.25 (-0.61) | 0, no spike changed |
+| 2 | backhouse | +10 (0) | +0.001 (-0.002) | +1.03 (+0.30) | 0, no spike changed |
+| 3 | backhouse | +11 (0) | +0.002 (+0.001) | +0.65 (-0.03) | 0, no spike changed |
+| 4 | backhouse | +13 (0) | +0.007 (0.000) | +0.65 (-0.02) | 0, no spike changed |
+| 5 | backhouse | +9 (0) | +0.001 (+0.001) | +1.16 (0.00) | 0, no spike changed |
+| 6 | backhouse | +10 (0) | +0.005 (+0.005) | +0.68 (-0.18) | 0, no spike changed |
+| 7 | backhouse | +8 (0) | +0.008 (+0.002) | +0.35 (-0.03) | 0, no spike changed |
+| 8 | backhouse | +13 (0) | 0.000 (+0.003) | +0.53 (-0.09) | 0, no spike changed |
+| 9 | backhouse | +12 (0) | +0.003 (+0.002) | +0.35 (-0.56) | 0, no spike changed |
+
+On the mean of the 10 seeds, side by side with m9:
+
+| Test | Criterion | m9r mean (SD) | m9r sign-flip p vs shams | m9r on the mean | m9r single trials | m9 mean (SD), verdict |
+|---|---|---|---|---|---|---|
+| sugar-grn-kick | MN9 +5 Hz or more | +11.1 Hz (1.8) | 0.001 (1 of 1,024) | PASS | 10 of 10 | +8.8 Hz (2.2), PASS, 9 of 10 |
+| mdn-cschrimson | forward -0.5 mm or less | +0.004 mm (0.003) | 0.94, within noise | FAIL | 0 of 10 | -0.015 mm (0.033), FAIL, within noise |
+| dna02-left | left turn +5 deg or more | +0.61 deg (0.30) | 0.001 (1 of 1,024), beyond noise | FAIL, below threshold | 0 of 10 (seeds 1 and 9 within noise) | -0.30 deg (1.50), FAIL, within noise |
+| sugar-patch-legs | MN9 +5 Hz or more | 0.0 Hz (0.0) | 1.0 (10 pairs) | FAIL, no spike changed | 0 of 10 | 0.0 Hz, FAIL, no spike changed |
+
+- **Sugar GRN to MN9 is stronger in m9r:** +11.1 Hz against +8.8 Hz, and it passes at every
+  seed. The shams leave MN9 silent at every seed, as in m9.
+- **DNa02 gives a small, consistent left turn in m9r, far below the threshold.**
+  - All 10 seeds turn left, by +0.25 to +1.16 deg. Test minus sham is positive at all 10 seeds
+    (+0.37 to +1.16 deg), so the mean is not noise by the declared rule.
+  - The mean, +0.61 deg, is an eighth of the 5 deg threshold, so the test fails.
+  - In m9 the same test was within noise (-0.30 deg, SD 1.50).
+  - Why m9r turns at all is not tested. A candidate (inferred): m9r's body moves much less at
+    rest, so a small leg torque from DNa02 shows above a smaller background.
+- **MDN does nothing to the body in either model.** m9r's forward change is +0.004 mm against a
+  0.5 mm backward criterion, within noise.
+- **The stimulated cells fire about as in m9:** DNa02 at 10.0 Hz (SD 0.24; m9 9.7) and MDN at
+  23.5 Hz (SD 0.34; m9 22.3), against 0 Hz in the control.
+- **m9r's network and body are much quieter after a perturbation** (measured: cells whose rate
+  changes by 1 Hz or more from 500 to 1,500 ms, up plus down, over the 10 seeds):
+
+  | | m9r | m9 |
+  |---|---|---|
+  | One-cell sham | 198 to 406 cells | 1,187 to 2,714 cells |
+  | MDN test | 144 to 387 | 635 to 2,702 |
+  | DNa02 test | 166 to 388 | 774 to 2,695 |
+  | Sugar GRN test | 501 to 1,939 (median 655) | 1,460 to 2,956 (median 2,796) |
+  | Control thorax, forward over the window | -0.016 to -0.004 mm | -0.066 to +0.012 mm |
+  | Control turn over the window | -0.52 to +0.41 deg | -1.52 to +0.36 deg |
+
+  The control fires more spikes in the window in m9r (about 54,000 against 45,000 to 52,000), yet a
+  one-cell kick spreads to about a seventh as many cells (medians about 300 against 2,200). This fits m9r's fly lying still at rest
+  (`main`'s F-STAND-3; inferred, not tested), so less body feedback reaches the brain.
+- **m9r against m9 directly** (post hoc, not declared before the runs). The seeds share kick draws
+  but not models or, at seeds 0 to 5, machines. So the 10 runs of each model are treated as two
+  independent samples, with an exact two-sided permutation test over all 184,756 splits:
+  - sugar +2.3 Hz, p = 0.024;
+  - DNa02 +0.90 deg, p = 0.079;
+  - MDN +0.019 mm, p = 0.096.
+  - A seed-paired sign-flip test gives sugar p = 0.043. Only the sugar difference reaches 0.05
+    either way, and it is one of three tests chosen after viewing.
+- **The fold changed nothing in these recordings** (measured). The pre-fold attempt
+  (`lib-m9r-prefold-afb666c`, `force_per_spike` 1 for 71 leg motor neurons) was copied to the
+  Mac and compared, chunk by chunk, with the folded library. 25 complete runs and the first 500 ms
+  of the 5 stopped ones are byte-identical: spikes, voltages, torques and body positions. Over
+  these 2 s runs, none of those 71 leg motor neurons reaches the body (inferred: they do not
+  fire).
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.
