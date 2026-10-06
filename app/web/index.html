@@ -91,6 +91,13 @@ aside td.num { text-align: right; font-family: var(--mono); white-space: nowrap;
 aside td.num.wrap { white-space: normal; }
 table.models td, table.diff td { font-size: 11px; }
 table.diff td:first-child { white-space: normal; overflow-wrap: anywhere; }
+main.wide { grid-template-columns: minmax(0, 1fr) 600px; }
+table.coltable td { font-size: 11px; }
+table.coltable tr.hd td { color: var(--dim); font-weight: 600; }
+table.coltable tr.grp td { color: var(--dim); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 6px; }
+table.coltable tr.on td { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+table.coltable td.mode.graded { color: var(--inferred); }
+#eye-traces { width: 100%; display: block; cursor: crosshair; margin: 4px 0; }
 .stimkey { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #0090c0; background: none !important; vertical-align: -1px; }
 [data-theme="dark"] .stimkey { border-color: #40d0ff; }
 </style>

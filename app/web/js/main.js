@@ -90,13 +90,18 @@ async function main() {
   resize();
   await setupCompare(cat, entry);
   app.session = new SessionPanel($("#tab-session"), { rec });
-  app.eye = new EyePanel($("#tab-eye"), { onSelect: i => select(i), onHighlight: ids => app.brain.setHighlight(ids) });
+  app.eye = new EyePanel($("#tab-eye"), { onSelect: i => select(i), onHighlight: ids => app.brain.setHighlight(ids),
+    onTime: t => { state.t = t; updateURL(); } });
   if (bodyEntry) await app.eye.load(`${bodyEntry.path}/eye.json`, rec, atlas);
+  if (params.get("etype") && app.eye.byName) app.eye.selectType(params.get("etype"));
   app.inspector.eyeOf = bid => app.eye.ommatidiumOf(bid);
   app.inspector.onOmm = (e, o) => { showTab("eye"); app.eye.pickOmm(e, o); };
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
   if (params.get("tab") === "compare" && params.get("cmp")) $("#models")?.scrollIntoView();
+  // after two frames, so canvases sized at first draw (the eye traces) are in the layout
+  if (params.get("scroll")) requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.getElementById(params.get("scroll"))?.scrollIntoView()));
   const layout = params.get("view");
   if (layout) { app.brain.setLayout(layout); $(`#layout [data-v="${layout}"]`)?.classList.add("on"); }
   const colour = params.get("colour");
@@ -374,6 +379,12 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
 function showTab(name) {
   document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
   document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== `tab-${name}`);
+  // the eye tab's mosaic and column table need a wider side panel
+  const wide = name === "eye";
+  if ($("main").classList.contains("wide") !== wide) {
+    $("main").classList.toggle("wide", wide);
+    if (app.body) resize();
+  }
 }
 
 function wireControls() {
