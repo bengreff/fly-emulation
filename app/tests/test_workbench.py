@@ -189,6 +189,28 @@ def test_catalog_lists_runs():
             assert "legacy" in r["flags"] and "not validated" in r["flags"]
 
 
+def test_catalog_lists_scored_libraries(tmp_path):
+    # what the Compare tab sets side by side: a folder with a scores.json holding trials
+    from serve import catalog
+    for lib, prof, host in (("lib-a", "m9r", "backhouse"), ("lib-b", "m9", "mac.local"), ("lib-c", "m9", "mac.local")):
+        for run in ("control-s0", "sugar-s0"):
+            (tmp_path / lib / run).mkdir(parents=True)
+            (tmp_path / lib / run / "manifest.json").write_text(json.dumps({
+                "format": "flyemu-rec/1", "status": "complete", "config": {"profile": prof, "seed": 0},
+                "provenance": {"host": host, "git": {"commit": "abc1234"}}}))
+        trials = [{"protocol": "sugar", "seeds": [0]}] if lib != "lib-c" else []
+        (tmp_path / lib / "scores.json").write_text(json.dumps({"scores": [], "trials": trials, "commits": {"sugar-s0": "abc1234"}}))
+    (tmp_path / "lib-a" / "NOTE.txt").write_text("pre-fold\n")
+    libs = {L["id"]: L for L in catalog(tmp_path)["libraries"]}
+    assert set(libs) == {"lib-a", "lib-b"}            # lib-c has no trials
+    a = libs["lib-a"]
+    assert a["profiles"] == ["m9r"] and a["commits"] == ["abc1234"] and a["note"] == "pre-fold"
+    assert a["hosts"] == {"control-s0": "backhouse", "sugar-s0": "backhouse"} and a["path"] == "runs/lib-a"
+    assert libs["lib-b"]["note"] is None
+    recs = {r["id"]: r for r in catalog(tmp_path)["recordings"]}
+    assert recs["lib-a/sugar-s0"]["library"] == "lib-a"
+
+
 # the page
 
 @pytest.mark.skipif(not (ATLAS / "atlas.json").exists() or not native_runs(), reason="needs the atlas and a recording")

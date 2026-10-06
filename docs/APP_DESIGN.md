@@ -7,10 +7,10 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 00:50 CDT, 6 October 2026 (the m9r library is collected, scored and compared; nothing
-of mine is running on either machine):**
+**State at 01:00 CDT, 6 October 2026 (the m9r library is collected, scored and compared; the
+Compare tab sets m9r and m9 side by side; nothing of mine is running on either machine):**
 
-- **Done and pushed** (branch `app`; 144 tests pass).
+- **Done and pushed** (branch `app`; 145 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
     - On seeds 0 to 2, every cell's spike count matches the model's own run.
     - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
@@ -78,10 +78,11 @@ of mine is running on either machine):**
   - **Nothing of mine is running.** The tmux session `flyapp-m9r` ended with the runner, and no
     keepalive is left on the Mac. The other tmux sessions on backhouse (crucible_*, s12*) belong to
     other projects.
-- **Next steps, in order:**
-  1. **A model selector across libraries in the Compare tab,** so m9 and m9r show side by side
-     per seed in the app, not only in this document.
-  2. **The rest of M3:** the column table and the LPTC traces.
+- **The Compare tab has a model selector** (section 14, "Compare tab: models side by side";
+  screenshot `docs/media/app_compare_m9r_vs_m9.png`). It reads the scores from each library and
+  what differs between the models from the runs' registry inventories: 7 values differ, 35 are
+  only in m9r's build and 3 only in m9's.
+- **Next step:** the rest of M3, the column table and the LPTC traces.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
@@ -922,6 +923,44 @@ On the mean of the 10 seeds, side by side with m9:
   of the 5 stopped ones are byte-identical: spikes, voltages, torques and body positions. Over
   these 2 s runs, none of those 71 leg motor neurons reaches the body (inferred: they do not
   fire).
+
+**Compare tab: models side by side** (built 6 October 2026, 01:00 CDT;
+`app/web/js/models.js`; screenshot `docs/media/app_compare_m9r_vs_m9.png`, sugar GRN seed 0, m9r
+beside m9).
+- **Where it appears:** in the Compare tab of any run in a scored library, under "Across models".
+  A picker sets the run's library beside another library holding the same protocol, other
+  models first. The URL keeps the pick (`cmp=<library>`).
+- **What it shows,** all read from each library's `scores.json` (`score_library.py`) and
+  manifests through the catalogue:
+  - per seed, the test minus control with the sham in brackets, this run's seed in bold;
+  - the mean (SD), the sign-flip p against the shams, the verdict and the seeds meeting the
+    criterion;
+  - the stimulated cells' rate, the machines and the commits;
+  - a library's `NOTE.txt`, as a warning (the pre-fold folder has one).
+- **Computed in the page:** only the difference of the means, with the exact two-sided
+  permutation test, labelled post hoc. For sugar it gives p = 0.024 (4,458 of 184,756 splits),
+  as the Python check did.
+- **What differs between the models** comes from the `inventory.csv` each run wrote, at the same
+  protocol and seed. That is the record of the values the run's build asked for, so it holds for
+  the m9 runs made before `record.py` wrote profile values into manifests. For sugar seed 0
+  (921 values in m9r, 889 in m9), 7 values differ:
+  - `force_per_spike` for all motor units: 10 against 1 (both guessed);
+  - the jump muscle's peak torque: 90 uN*mm (inferred) against 100 (guessed);
+  - the b1 to b3 wing motor neurons: wing yaw against wing roll;
+  - four afferent class counts, all with status measured: campaniform sensilla 13 against 86,
+    chordotonal organ 392 against 409, hair plate 78 against 113, mechanosensory bristle 1,764
+    against 1,874.
+  - 35 values are only in m9r's build. They include torque per spike for the non-leg motor
+    units (abdomen, head, proboscis, wing, haltere, antenna), leg damping and rest mirroring, a
+    folded wing pose, and mechanosensory afferents assigned by nerve (42 moved to their own leg,
+    248 excluded from leg drive). The last may explain the changed afferent counts (inferred,
+    not checked).
+  - 3 values are only in m9's build: the DLMn and DVMn wing roll maps and a combined wing pitch
+    map, which m9r splits.
+- **Limits:**
+  - The diff reads one run per library. Earlier checks found the inventories the same across
+    seeds and protocols within each library.
+  - Only folders with scored trials appear in the picker.
 
 **M3: fly's-eye view.** Eye readouts to the hex mosaic, retinotopic photoreceptors, the derived
 column table for L/Mi/Tm/T4/T5, LPTC traces; visual worlds when request 5 lands.

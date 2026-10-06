@@ -1,6 +1,6 @@
 // Fly Workbench: load a recording and the scan's atlas, then drive the body,
 // brain map, traces and inspector from one clock.
-import { fetchJSON } from "./io.js";
+import { fetchJSON, fetchText, parseCSV } from "./io.js";
 import { Recording } from "./recording.js";
 import { Atlas } from "./atlas.js";
 import { BodyView } from "./body.js";
@@ -8,6 +8,7 @@ import { BrainView } from "./brain.js";
 import { Traces } from "./traces.js";
 import { Inspector, esc, chip, approxChip } from "./inspector.js";
 import { controlsFor, compare, stimWindow, sameModel, incompleteReadout, readoutTypes } from "./compare.js";
+import { modelsHTML, libraryOf, otherRun, inventoryDiffHTML } from "./models.js";
 import { SessionPanel } from "./session.js";
 import { EyePanel } from "./eye.js";
 
@@ -95,6 +96,7 @@ async function main() {
   app.inspector.onOmm = (e, o) => { showTab("eye"); app.eye.pickOmm(e, o); };
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));
+  if (params.get("tab") === "compare" && params.get("cmp")) $("#models")?.scrollIntoView();
   const layout = params.get("view");
   if (layout) { app.brain.setLayout(layout); $(`#layout [data-v="${layout}"]`)?.classList.add("on"); }
   const colour = params.get("colour");
@@ -240,7 +242,8 @@ async function setupCompare(cat, entry) {
   if (!stimWindow(rec)) { el.innerHTML = `<div class="empty">This recording has no protocol, so there is nothing to compare.</div>`; return; }
   const cands = controlsFor(cat, entry);
   if (!cands.length) {
-    el.innerHTML = `<div class="empty">No matched control in the catalogue (a complete run with the same configuration and no stimulus). Record app/protocols/control.json with this run's configuration.</div>${trialsHTML(entry)}`;
+    el.innerHTML = `<div class="empty">No matched control in the catalogue (a complete run with the same configuration and no stimulus). Record app/protocols/control.json with this run's configuration.</div>${trialsHTML(entry)}<div id="models"></div>`;
+    renderModels(cat, entry);
     return;
   }
   const pick = cands.find(c => c.id === params.get("ctrl")) || cands[0];
@@ -268,6 +271,30 @@ async function setupCompare(cat, entry) {
   el.innerHTML = compareHTML(c, rec, pick, cands, entry, floor);
   $("#ctrl-pick").onchange = e => { params.set("ctrl", e.target.value); location.search = params.toString(); };
   el.onclick = e => { const d = e.target.closest("[data-i]"); if (d && Number(d.dataset.i) >= 0) select(Number(d.dataset.i)); };
+  renderModels(cat, entry);
+}
+
+// this protocol in another library (another model), side by side; the scores come
+// from the catalogue, so picking another library needs no reload. What differs between
+// the models is read from the other library's run inventory, fetched after.
+let modelsToken = 0;
+async function renderModels(cat, entry) {
+  const el = $("#models"), token = ++modelsToken;
+  el.innerHTML = modelsHTML(cat, entry, params.get("cmp"));
+  const pick = $("#model-pick"), diff = $("#model-diff");
+  if (pick) pick.onchange = e => { params.set("cmp", e.target.value); history.replaceState(null, "", "?" + params.toString()); renderModels(cat, entry); };
+  if (!pick || !diff) return;
+  const own = libraryOf(cat, entry), other = cat.libraries.find(l => l.id === pick.value);
+  if (!app.rec.inventory) { diff.innerHTML = `<span class="warnline">This run wrote no registry inventory, so the values are not compared.</span>`; return; }
+  const run = otherRun(other, entry.trials.protocol, entry.config.seed);
+  try {
+    const inv = parseCSV(await fetchText(run.url));
+    if (token !== modelsToken) return;          // another library was picked meanwhile
+    diff.className = "";
+    diff.innerHTML = inventoryDiffHTML(own, other, app.rec.inventory, inv, entry.id, run.id);
+  } catch (err) {
+    if (token === modelsToken) diff.innerHTML = `<span class="warnline">Could not read ${esc(run.id)}/inventory.csv: ${esc(String(err.message || err))}</span>`;
+  }
 }
 
 function verdictHTML(cr) {
@@ -320,6 +347,7 @@ function compareHTML(c, rec, pick, cands, entry, floor) {
     : fc && c.div !== null ? `<div class="${inNoise ? "warnline" : "dim"}">The sham run gives ${fv === null ? "n/a" : f2(fv)} ${esc(cr.units)} on the same measure${inNoise ? ": this result is no larger than the sham's, so it cannot be told from noise (one sham sample)" : " (one sham sample)"}.</div>` : ""}
     <div class="dim">${esc(ex.status || "")}</div>
     ${trialsHTML(entry)}
+    <div id="models"></div>
     <h3>Readout cells <span class="chip measured">this run</span></h3>
     <table><tr><td></td><td class="num">n</td><td class="num">before</td><td class="num">during</td><td class="num">after</td></tr>
     ${c.readout.map(o => o.n ? `<tr><td>${esc(o.type)}${o.targeted ? ` <span class="dim">(${o.targeted} targeted)</span>` : ""}</td><td class="num">${o.n}</td>${["before", "during", "after"].map(p => `<td class="num">${o[p] ? `${f1(o[p].run)} <span class="dim">/ ${f1(o[p].ctrl)}</span>` : "–"}</td>`).join("")}</tr>`

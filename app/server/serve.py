@@ -42,15 +42,18 @@ TYPES = {".js": "text/javascript; charset=utf-8", ".html": "text/html; charset=u
 
 
 def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict:
-    """List recordings, atlases and bodies found on disk."""
+    """List recordings, libraries, atlases and bodies found on disk."""
     recs = []
     scores: dict[Path, dict] = {}       # app/tools/score_library.py output, per library folder
+    docs: dict[Path, dict] = {}
+    libs: dict[Path, dict] = {}         # what the Compare tab sets side by side, per scored folder
 
     def score_of(run_dir: Path):
         lib = run_dir.parent
         if lib not in scores:
             try:
                 doc = json.loads((lib / "scores.json").read_text())
+                docs[lib] = doc
                 scores[lib] = {s["run"]: s for s in doc.get("scores", [])}
                 for g in doc.get("trials", []):     # the same protocol at several seeds
                     for s in g["seeds"]:
@@ -89,6 +92,12 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
             "role": pr.get("role"),
         })
         sc = score_of(man.parent)
+        if man.parent.parent in docs:
+            lib = man.parent.parent
+            recs[-1]["library"] = lib.relative_to(runs).as_posix()
+            L = libs.setdefault(lib, {"profiles": set(), "hosts": {}})
+            L["profiles"].add(cfg.get("profile") or "?")
+            L["hosts"][man.parent.name] = (m.get("provenance") or {}).get("host")
         if sc and sc.get("trials"):
             recs[-1]["trials"] = sc["trials"]
         cr = (sc or {}).get("criterion")
@@ -102,6 +111,17 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
                 recs[-1]["sham_values"] = cr["sham_values"]
                 recs[-1]["shams_distinct"] = cr.get("n_shams_distinct")
     recs.sort(key=lambda r: (r["status"] != "complete", "legacy" in r["id"], r["id"]))
+    libraries = []
+    for lib, L in sorted(libs.items()):
+        doc = docs[lib]
+        if not doc.get("trials"):
+            continue
+        note = lib / "NOTE.txt"
+        rel = lib.relative_to(runs).as_posix()
+        libraries.append({
+            "id": rel, "path": f"{prefix}/{rel}", "profiles": sorted(L["profiles"]),
+            "commits": sorted(set((doc.get("commits") or {}).values()) - {None}), "hosts": L["hosts"],
+            "note": note.read_text().strip() if note.exists() else None, "trials": doc["trials"]})
     atlases = []
     for a in sorted((APP / "data" / "atlas").glob("*/atlas.json")):
         info = json.loads(a.read_text())
@@ -109,7 +129,8 @@ def catalog(runs: Path, prefix: str = "runs", data_prefix: str = "data") -> dict
                         "path": f"{data_prefix}/atlas/{a.parent.name}"})
     bodies = [{"id": b.parent.name, "path": f"{data_prefix}/body/{b.parent.name}"}
               for b in sorted((APP / "data" / "body").glob("*/geometry.json"))]
-    return {"format": "flyemu-catalog/1", "recordings": recs, "atlases": atlases, "bodies": bodies}
+    return {"format": "flyemu-catalog/1", "recordings": recs, "libraries": libraries,
+            "atlases": atlases, "bodies": bodies}
 
 
 class Handler(SimpleHTTPRequestHandler):
