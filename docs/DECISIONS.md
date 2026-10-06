@@ -1423,3 +1423,126 @@ Roundup (mean of 2 cells) and MN9_L at 200 Hz, feedforward inhibition silenced, 
 - **Evidence label of the cause.** BK's value is 8.69 × g_L0 at the slow tibia flexor class, fitted to Azevedo 2020 current steps ("strong in 3 of 4 seeds", DECISIONS 2026-09-30 21:17), divided by the slow-MN slo expression factor (1.104). Every cell on this route has no transcriptome row, so it takes that value unscaled (7.87; `runs/s12/ffi/cluster_params_m7_m9r.json`). So the block rests on a value fitted to one motor neuron class and carried to central GNG interneurons by a class prior (inferred). Whether central GNG neurons have a fast AHP this strong is not measured in the project's sources. A search for central-neuron current-step data is running (5 October 23:18).
 - **m3 addendum.** m3 passes (Roundup 84.3, MN9_L 124.7), the same as m4. So the m2 → m4 rise comes from m3 (consensusNt or psp 0.157 mV), not from the monoamine signs. The two are not separated.
 - Nothing in the model changes. The discriminating data, for Ben's list and for the running search: current steps in one central GNG type (or any adult central neuron with a published f-I curve and AHP), to set BK for central cells separately from motor neurons.
+
+## Pre-registration: does the clock drive reproduce DN1p day-night firing? (5 October, 23:34; written before the baseline probe returned)
+
+Data (read, `docs/research/s12_central_fi.md`): wild-type DN1p "fire at ∼10Hz in the morning (Zeitgeber
+Time, ZT0-4) and are nearly silent in the evening (ZT8–12)"; *per*⁰¹ DN1p fire 2.2 ± 1.1 Hz (ZT0-4) and
+3.9 ± 1.5 Hz (ZT8-12) with no rhythm (Flourakis et al. 2015 Cell, brain explant). The model drives
+DN1pA/DN1pB (with s-LNv, l-LNv) by `g_clock_mv` × cos(2π(ct − 2 h)/24), `g_clock_mv` 3 mV (guessed).
+
+- **Probe:** `scripts/probes/clock_phase_rates.py`, brain only, open loop, profile noise, 1 s per phase,
+  clock set to CT 2 (inside ZT0-4) and CT 10 (inside ZT8-12), entrained so ZT = CT. Readout: mean rate of
+  the DN1pA and DN1pB cells.
+- **Pass rule:** DN1p mean 5-20 Hz at CT 2 (about 10 Hz; a factor of 2 either way for the explant-to-model
+  transfer, inferred), and ≤ 1 Hz at CT 10 (my reading of "nearly silent", inferred).
+- **Prediction, written now:** m9r fails. At CT 2 the clock adds 3 mV, under the 7 mV class threshold
+  gap, so DN1p sit below 1 Hz at both phases unless the profile's noise does it.
+- **If it fails, the fit:** one number, `g_clock_mv`, set so the DN1p mean is 10 Hz at CT 2 (the single
+  target), searched on a grid with the same probe. Held-out checks: CT 10 ≤ 1 Hz, and DN1p at
+  `g_clock_mv` 0 (a clock-less cell, a loose stand-in for *per*⁰¹) between the CT 10 and CT 2 rates. The
+  evening group gets the same gain (inferred transfer; no evening-cell rates were read). Adoption only
+  as a new profile with the battery passing and a contact sheet viewed; `peak_morning_h` stays 2 h.
+
+### Result of the probe and the fit (23:40; backhouse, `runs/s12/clock/m9r*.json`; figure `docs/media/s12_clock_dn1p_grid.png`, viewed)
+
+| `g_clock_mv` (mV) | 0 | 3 (m9r) | 6 | 7.0 | 7.25 | 7.5 | 7.75 | 8 | 10 | 12 | 15 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| DN1p at CT 2 (Hz) | 0 | 0 | 0 | 0 | 0 | 1 | 11 | 14 | 23 | 29.8 | 38 |
+| DN1p at CT 10 (Hz) | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+- **Prediction held: m9r fails.** Every clock cell is silent at both phases; the clock drive never reaches
+  spiking in the working model. All 12 DN1p cells fire identically (no noise reaches them, no network
+  input of note), and s-LNv and l-LNv follow the same curve. The onset is steep: 1 Hz at 7.5 mV, 11 Hz at
+  7.75 mV.
+- **Fit:** `g_clock_mv` 7.75 (11 Hz at CT 2; the grid point closest to 10 Hz). Held out: CT 10 is 0 Hz
+  (≤ 1 Hz, **pass**). Clock-less DN1p (gain 0) are silent, which is "between" 0 and 11 Hz only in a
+  degenerate way; *per*⁰¹ DN1p fire 2.2-3.9 Hz, so the model's clock-less cell does not match (recorded as
+  a mismatch: a baseline drive plus a smaller swing would fit all three, a two-number fit not
+  pre-registered here).
+- **Fragility, derived from the grid:** 0.25 mV moves DN1p from 1 to 11 Hz, so the fitted rate holds only
+  while nothing else changes their input. Any later change to central excitability must re-run this probe.
+
+## Addendum: candidate m9c (23:40; before any gate run)
+
+m9c = m9r + `state:coupling|clock_gain` 7.75 (fitted above) + `state:clock|initial_ct` 1.5 (new key,
+default 0 keeps m4-m9r; the male-cns specimen was dissected at ZT 1.5 in 12:12 LD, Nern et al. 2024
+Methods, read; ZT = CT under entrainment, inferred). Why both: with the fit alone, every run starts at
+CT 0, where the morning drive is 7.75 × cos(2π·2/24) = 6.7 mV, under the 7.5 mV onset, so the fit would
+change nothing. At CT 1.5 it is 7.68 mV.
+
+- **Runs (backhouse):** (1) the probe at CT 1.5 with gain 7.75; (2) gate `closed_loop_check.py`, seeds
+  12-19, `FLYEMU_PROFILE=m9c`, against the m9r gate `runs/s12/gates/cl_wm_s*.json`, plus m9r seed 12
+  re-run now as a same-code control; (3) the test battery with `FLYEMU_PROFILE=m9c`; (4) contact sheet,
+  seed 12, viewed.
+- **Predictions:** (1) DN1p 1-11 Hz at CT 1.5. (2) Gate passes on all 8 seeds (silent last 100 ms, no
+  MuJoCo warnings, no NaN); the silent phase removes the clock drive with the senses, so it cannot fail
+  on clock cells. Whole-brain rate within 10% of m9r; the morning types fire; posture (thorax height)
+  within 0.01 mm of m9r. (3) Battery: no new failures beyond the known backhouse raw-data path check.
+- **Adoption rule:** adopt m9c as the working profile only if (2) and (3) pass and the sheet shows no
+  posture change. Otherwise m9c stays a named candidate, written up.
+
+### Result: m9c adopted (23:53; backhouse `runs/s12/clock/m9c.json`, `cl_m9c_s12..19.json`, `cl_m9r_s12.json`, `pytest_battery_m9c.log`; sheets `runs/s12/clock/census_m9{c,r}_s12.png`, both viewed)
+
+- **(1) Probe at CT 1.5:** DN1pA/DN1pB 4.2 Hz, s-LNv and l-LNv 4.0 Hz, evening group 0. Within the
+  predicted 1-11 Hz. At CT 10 the evening group fires (LNd_b 9, LNd_c 11, 5thsLNv_LNd6 8 Hz) and the
+  morning group is silent.
+- **(2) Gate, seeds 12-19: pass on all 8.** Silent last 100 ms 0 spikes/ms, 0 MuJoCo warnings, no NaN.
+  - Whole brain 0.325-0.330 Hz against m9r 0.325-0.329.
+  - uPN 3.67-3.97 and motor 2.02-2.11 Hz, the same ranges as m9r.
+  - Thorax height 0.547-0.552 mm, within 0.001 mm of m9r seed for seed.
+  - The clock class rises from 0 to 0.98-1.25 Hz; that class is 32 cells, 12 of them DN1p, so DN1p fire
+    about 3-4 Hz (derived).
+  - Apart from `clock`, the only class that moves is optic_other (0.036 to 0.040 Hz, seed 12).
+  - The m9r seed 12 control re-run is identical to the archived m9r gate.
+- **(3) Battery, `FLYEMU_PROFILE=m9c`:** 211 passed, 12 skipped, 1 failed. The failure is the known
+  backhouse raw-data path check (`data/raw/door/units/`). No new failures.
+- **(4) Sheet:** m9c and m9r seed 12 look the same, and their census JSONs agree in all 436 values
+  except the profile name. The clock cells reach no motor neuron within 600 ms.
+- **Adopted:** `WORKING_PROFILE` m9c. flyapp's library was started on m9r. It differs only in the clock
+  drive, which changes no motor output in these runs. Whether to relabel or restart it is the Director's
+  call; I have not touched it.
+- **Not done:** *per*⁰¹ (2-4 Hz with no rhythm) is not matched: the model's clock-less DN1p is silent. The
+  fit is fragile: a 0.25 mV change takes DN1p from 1 to 11 Hz, so any later change to central
+  excitability must re-run `clock_phase_rates.py`.
+
+## Pre-registration: does the class-prior BK give a central cell the right f-I gain? MBON-α3 (5 October, 23:56; before any model run of this cell)
+
+Why: the leg sugar route opens only with BK off (23:26), and BK off on central cells could be argued as
+a fix. MBON-α3 (male-cns MBON14, 4 cells, no transcriptome row) carries the same class-prior channels as
+the route's cells, and it is the one adult central cell with a published current-step f-I.
+
+- **Data.**
+  - Hafez et al. 2023 eLife 12:e77578, Fig. 1 supp. 1C, figure estimate (my reading, ±1 Hz, ±1 pA).
+    These are 400 ms steps, −26 to +32 pA in 2 pA increments, ex vivo.
+    - Onset: cell 1 at +2 pA, cell 2 at −6 pA, cell 3 at −2 pA.
+    - Rate at +32 pA: 20, 50 and 30 Hz.
+    - Slope above onset: 0.67, 1.32 and 0.88 Hz/pA.
+  - "spike-frequency adapting neuron" (read).
+  - Soma spikes 4-6 mV (supp. 1D, figure estimate).
+  - Passive values: Rm 926 ± 55 MΩ and τm 16.06 ± 2.3 ms in four other cells (read). The f-I cells' own
+    deflection at −10 pA is about −17, −17 and −25 mV (supp. 1E, figure estimate), i.e. 1.7-2.5 GΩ.
+  - Gouwens & Wilson 2009 (PN model, read): "a voltage step at the soma declines to ∼40–70% of its
+    original amplitude at the predicted spike initiation zone". MBON-α3 soma spikes are as small as PN
+    soma spikes, so a similar transfer is assumed (inferred).
+- **Model mapping, derived.** The model's drive is steady depolarisation at a single compartment, read as
+  the spike initiation zone. Current maps to drive as I × Rin × k.
+  - Primary: Rin 1.7 GΩ (the f-I cells' own) × k 0.55 gives 0.94 mV/pA.
+  - Corners: 0.926 × 0.4 = 0.37 mV/pA up to 2.5 × 0.7 = 1.75 mV/pA. That is a factor of about 1.9
+    either way around the primary.
+  - The model cell is calibrated so that its passive deflection at −10 pA equals −10 pA × the mapping,
+    separately in each arm.
+- **Probe:** `scripts/probes/central_fi.py --cell-type MBON14`. It takes the model's own MBON14 constants
+  under m9c (τm, rest, threshold, reset, refractory period, spontaneous drive) and the profile's channels
+  at their mRNA factor. It applies the paper's protocol with no noise and no synapses.
+  - Arms: m9c as is; BK off; rung 1 off. The cell constants are held fixed in every arm, so each arm
+    is a knockout.
+  - Readout: onset current, rate at +32 pA, and slope (rate at +32 pA over 32 pA minus the onset).
+- **Pass rule:** under the primary mapping the slope lies within 0.35-2.5 Hz/pA. That is the measured
+  0.67-1.32 range widened by the 1.9 mapping factor. Rate at +32 pA is reported, not scored.
+- **Prediction, written now:** m9c as is fails high or sits at the top edge (generic central cell about
+  3 Hz/mV, so about 2.8 Hz/pA). BK off fails high (about 4.7 Hz/pA) at every mapping corner.
+- **Reading, fixed in advance:** if BK off fails high at every corner, the data argue against removing
+  central BK. The leg sugar block then needs another explanation (synaptic drive, state, missing cells).
+  If m9c passes, the class prior is consistent with the one central cell measured. Nothing is adopted
+  either way: one cell type, ex vivo, a soma recording, and figure estimates.

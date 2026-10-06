@@ -87,6 +87,7 @@ state:organs|model,S1,switch,"0 no internal state (m4); 1 lumped organs S1-S4, A
 state:population_*|*,N20,data,"internal-state coupled populations by male-cns type, recorded when state:organs|model = 1"
 jump:ttm|model,B15,switch,0 TTMn through the legacy capped actuator (m4); 1 fast uncapped TTM twitch (jump.py) (s10)
 state:crop|pump_gated,B17,switch,0 ingestion on contact alone; 1 scaled by cibarial pump MN activity (s10)
+state:clock|initial_ct,N26,data,"clock phase at t = 0 in h: 0 = CT 0 convention (m4-m9r); 1.5 = the male-cns specimen's dissection time, ZT 1.5 in 12:12 LD (Nern et al. 2024 Methods, read), entrained ZT = CT (s12)"
 aero:wing|membrane_only,B12,switch,0 fluid forces on membrane and vein meshes (legacy; doubles area); 1 membrane only with b12_kutta_lift (s10)
 aero:wing|model,B12,switch,0 MuJoCo ellipsoid lift and drag with b12_kutta_lift (s10); 1 blade-element quasi-steady wing with robofly translational coefficients (Dickinson 1999; measured) and rotational lift C_rot = pi(0.75 - x0) from model geometry (s12; F-FLIGHT-3); read only with membrane_only = 1
 aero:wing|size_source,B12,switch,"0 scanned wing (2.65 mm hinge to tip, flybody mesh) / 1 blade-element strips scaled isometrically about the hinge to the measured female wing length 2.47 mm (Lehmann & Dickinson 1997); mesh, inertia and added mass unchanged (s12; F-FLIGHT-3)"
