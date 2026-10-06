@@ -48,7 +48,27 @@ Each stub has an inventory entry, a registry switch that the organism reads at b
 | S8 | C | `state:reproductive\|model` (0) | male reproductive state, pheromone production | |
 | D1 | C | `development:all\|model` (0) | lineage, birth order, maturation, rearing (construction time) | |
 
-Consequence: session 10 reported 0 absent mechanisms in tiers A and B. That no longer holds. Tier A now has 3 absent (N29, N30, S6) and tier B has 2 (B24, B26). Nothing got worse; the audit found these quantities had no owner. Inventory: 70 mechanisms. Tier A: 13 have, 15 partial, 3 absent. Tier B: 3 have, 9 partial, 2 absent. Tier C: 1 have, 15 partial, 9 absent. `model_data.validate` reports 0 problems.
+Consequence: session 10 reported 0 absent mechanisms in tiers A and B. That no longer holds. Tier A now has 3 absent (N29, N30, S6) and tier B has 2 (B24, B26) (as of the audit; N29 became partial on 5 October, see the data-first pass below). Nothing got worse; the audit found these quantities had no owner. Inventory: 70 mechanisms. Tier A: 13 have, 15 partial, 3 absent. Tier B: 3 have, 9 partial, 2 absent. Tier C: 1 have, 15 partial, 9 absent. `model_data.validate` reports 0 problems.
+
+## Data-first pass on the stubs (night of 5 October)
+
+Director night order item 3: each stub in audit order, data first, every number labelled. The records hold the sources and how each was read (read by me, agent, or unverified).
+
+| id | data found (label) | decision | record |
+|---|---|---|---|
+| N29 | ORN→PN and ORN→LN Tsodyks-Markram fits to recorded EPSC trains (Nagel 2015; Nagel & Wilson 2016; derived) | **partial**: per-connection STP built behind the switch, off (cut LN and PN rates 67-80% at rest; held-out ordering failed) | DECISIONS 22:20 and result; F-STP-1 |
+| N30 | Cable values fitted for DM1 PNs and HS cells only (Gouwens & Wilson 2009; Cuntz 2013; fitted). Electrotonic length per type derived from skeleton radii that sit at a floor value for 76% of types | absent; build plan and validity range written | `docs/research/s12_compartments.md` |
+| S6 | Adult hemolymph K about 26 mM, Na 26-36 mM (measured by ion-selective electrode; agent read, page blocked for me); brain interstitial ions unmeasured | absent | `docs/research/s12_hemolymph_ions.md` |
+| B24 | No measured efferent to a Drosophila sense organ. Found: presynaptic inhibition of hook axons by 9A (Dallmann 2025, read), octopamine on Mi4 (Strother 2018, read), dopamine on labellar sugar GRNs (Inagaki 2012, read) | absent; content belongs to the connectome, N19 and the hunger gain | `docs/research/s12_b24_b26.md` |
+| B26 | Drosophila thorax stiffness unmeasured; whole middle leg compression 13.1 ± 7.97 µN/mm (Oeftger 2026, read), used as a held-out check: model leg 3-5× softer | absent; the leg result is a B3 tone target | `docs/research/s12_b24_b26.md`; DECISIONS 22:37 and result; F-LEGK-1 |
+| N31 | Wake raises synapse size or number over hours, sleep reverses it (Bushey 2011); no per-synapse rule | absent | `docs/research/s12_tierC_stubs.md` |
+| N32 | Compensation over hours to days (Apostolopoulou & Lin 2020); recorded channel values are already the adapted state | absent | same |
+| N33 | Larval astrocyte Ca oscillates and silences DA neurons via adenosine (Ma 2016); no adult transfer function | absent | same |
+| N34 | Giant-fibre pathway habituation measured (Engel & Wu 1996), the first fit target | absent | same |
+| B25 | Retinal muscle kinematics measured (Fenk 2022); retinal motor neurons not identified in male-cns | absent | same |
+| B27, S7, S8, D1 | not searched (lower priority) | absent with their audit reasons | same |
+
+Counts after the pass: tier A 15 have, 16 partial, 2 absent (N30, S6); tier B 3 have, 9 partial, 2 absent (B24, B26); tier C 1 have, 15 partial, 9 absent; 72 mechanisms.
 
 ## Ben's categories mapped to ledger rows
 

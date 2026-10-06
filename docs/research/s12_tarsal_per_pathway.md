@@ -133,3 +133,23 @@ without picrotoxin.
 Running Dandelion as acetylcholine instead of GABA leaves MN9_L at 0 Hz under leg sugar (m2 and m9r),
 changes labellar sugar MN9_L by +5% (m2) and −25% (m9r), and leaves sugar + bitter at 0 Hz. The sign
 changes the activity of 537-782 VNC cells downstream of Dandelion but not PER. Neither sign adopted.
+
+## The paper's route read by eye, and feedforward inhibition at Bract 2 (5 October 22:04-22:45; DECISIONS 22:04)
+
+Item 2 and item 6 above said the fetched text had no LgLG4 → MN9 path. The PDF (v2, `data/raw/tastekin2025/`,
+read by me, Figure 9B and p. 20) has it: LgLG4 → AN01B004 → Bract I and Bract II → Roundup → MN9, with
+AN01B004 → S&S → Roundup and S&S → MN9 alongside, described as "multiple positive feedforward loops", 7 hops to
+maximum effective connectivity against about 5 for most labellar GRNs.
+
+- In male-cns (measured annotation, `synonyms`): Bract 1 = DNge174, Bract 2 = DNge173, Roundup = GNG108. S&S is
+  GNG159 by its edges (inferred). The type-summed weights match the figure (derived; LgLG4 → AN01B004 960
+  against about 925). The model has the paper's route.
+- In the model the route stops at Bract 2: AN01B004 fires, Bract 2 gets almost as much inhibition as excitation,
+  from GNG093 and GNG250 (GABA predicted, not measured), which AN01B004 itself drives.
+- Silencing those 4 cells (diagnostic) lifts Bract 2 to 10-25 Hz. MN9_L reaches 8 Hz mean under m2 only with
+  LgLG3 added (216 GRNs); with the 54 matched sugar GRNs it reaches 1 Hz, and under m9r Roundup stays at
+  0-1.3 Hz. Two blocks, both in guessed or fitted values rather than in the wiring.
+
+Facts that would settle it: whether GNG093 and GNG250 are inhibitory in the animal (transmitter evidence as for
+Dandelion), whether LgLG3 senses sugar (calcium imaging of LgLG3 GRNs to sucrose), and a recording of Bract 2 or
+Roundup under tarsal sugar. The last is the held-out test for any fix.
