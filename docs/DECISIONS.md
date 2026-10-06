@@ -2362,3 +2362,36 @@ Prediction (02:48): Mi1/Tm3 ON and Tm1/Tm2 OFF deflections of 0.5-3 mV in RTc, a
 **Interpretation rules:**
 - If no LMC scale in the bounds gets Mi1 to 15 mV, the block is the disinhibition ceiling. Mi1's ON response is release of L1's tonic glutamate, so its swing cannot exceed the distance from its inhibited potential to its uninhibited one. That mechanism gets written up rather than fixed by a third change.
 - Nothing is adopted from this block. Conductance mode changes every synapse and needs its own gate and battery, and HS/VS/CT1 modes remain guessed.
+
+### Result, the gain block (6 October, 03:14; `runs/s12/vision/flash_G_k{1,3,10}.json` with `.score.json`, 278-290 s each on backhouse; figure `docs/media/s12_vision_gain.png`, viewed)
+
+**The fit failed, so the interpretation rule applies.** The block hit the disinhibition ceiling. No held-out test is scored, because no fitted scale exists. Nothing is adopted and no third change is tried.
+
+| Connected-cell median (type-mean dark baseline) | LMC ×1 | LMC ×3 | LMC ×10 | Recorded |
+|---|---|---|---|---|
+| R1-R6 ON peak (training) | +46.8 (−51.4) | +46.8 | +46.8 | 60 |
+| Mi1 ON (training) | +1.51 (−58.7) | +2.74 (−59.9) | +3.12 (−61.6) | +20 |
+| L1 ON | −16.6 (−44.7) | −19.7 (−38.0) | −23.2 (−26.0) | −45 |
+| L2 ON | −9.9 (−56.1) | −10.9 (−54.4) | −13.7 (−47.1) | −45 |
+| Tm3 ON | +2.76 (−54.8) | +3.79 (−58.7) | +3.38 (−61.8) | +15 |
+| Tm1 / Tm2 OFF | +0.35 / +0.53 (−47.7 / −46.6) | +0.47 / +0.68 (−35.6 / −37.8) | +0.44 / +0.38 (−18.0 / −22.8) | +15-20 |
+| Tm1 / Tm2 ON dip | −2.5 / −2.0 | −3.9 / −3.2 | −3.7 / −3.4 | dip |
+| T4a ON / T5a OFF | +0.68 / +0.07 | +0.97 / +0.22 | +0.99 / +0.10 | — |
+| Cells outside [−90, 20] mV | 0 | 0 | 0 | — |
+
+**Mechanism (Mi1), read from the numbers above:**
+- Mi1's leak reversal is −55 mV, the recorded resting potential (Behnia et al. 2014, applied by `rest_from_recordings`). In the dark, L1's tonic glutamate pulls Mi1 3.7-6.6 mV below that.
+- In light, connected Mi1 cells reach −57.2, −57.2 and −58.5 mV (dark baseline plus ON median). They never get back to −55.
+- Raising the LMC scale lowers the dark baseline about as much as it raises the light peak. The swing grows by 1.6 mV over a tenfold scale and is saturating.
+- Disinhibition can only return a cell toward its uninhibited potential. The uninhibited potential is the leak reversal, plus excitation from L5 and L3 (acetylcholine, 14% and 7% of Mi1's input synapses). L3 is itself hyperpolarised by light. So Mi1's ON swing is bounded by roughly 4-7 mV, whatever the LMC gain.
+- The recorded ON response reaches about −35 mV from a dark −55. **A disinhibited cell can reach −35 only if its uninhibited potential is −35 or above.** So the recorded "rest" is a dark potential held down by tonic synaptic inhibition, not the cell's leak reversal.
+- The model uses the recorded dark potential as the leak reversal, then adds the tonic inhibition on top. That counts the inhibition twice and leaves no room for an ON response. This is inferred from the model's numbers and the recorded amplitudes. No recording of Mi1's input resistance in dark and light has been read.
+
+**Side findings:**
+- **Mode 2 makes tonic release grow with the span.** In darkness, Tm1/Tm2 sit at −47.7/−46.6 at ×1 and depolarise to −18/−23 mV at ×10, under L2's tonic acetylcholine. L1's dark baseline climbs from −44.7 to −26.0 through LMC → LMC excitation (L5 is 20% of L1's input). Both are unphysiological at ×3 and above. So the LMC scale is bounded by the dark potentials before it is bounded by Mi1.
+- **The photoreceptor is sublinear in conductance mode.** Gain 78 gives a 46.8 mV peak, not the 60 predicted by linear scaling. The peak sags to a +26 mV plateau and undershoots by 11 mV at OFF; these are network effects in the model, whose source has not been traced. The training target was missed (0.78); not refitted, because Mi1 is the binding limit.
+- **The L1 response grows with the LMC scale**, from −16.6 to −23.2 mV, as its dark potential rises away from the −70 mV inhibitory reversal. That is the cap predicted in the pre-registration.
+- **T4a ON doubles over RTc** (+0.68 to +0.99 against about +0.26 type-mean in RTc). This is a flash, not the grating V test, and not scored.
+- **HS, VS and CT1 still fire tonically** (HSN 154-192 Hz, VS 86-98 Hz, CT1 409-434 Hz; all spiking by guess).
+
+**Next discriminating step (pre-register before any run).** Make the recorded dark potential a target of the in-network dark state, not the leak reversal, for graded cells with tonic synaptic input. Then a disinhibited cell's light potential is set by its leak reversal and the strength of its tonic inhibition. The prediction to test is that Mi1's input resistance rises in light (several-fold if the inhibition carries the 20 mV). That is a recordable discriminator: Ben's list.
