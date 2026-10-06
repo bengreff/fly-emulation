@@ -163,3 +163,7 @@ cluster (AN17A002 → GNG588/GNG578 → GNG143/GNG167 → Roundup) at every hop.
 also inhibit that cluster (GNG588 430 synapses), so with them left on the route stays shut even without
 intrinsic currents. Two facts would settle it: the transmitter of GNG093 and GNG250, and the rate-current
 curve of one central GNG type (to replace the slow-MN-fitted class prior for central cells).
+
+Channel knockouts (23:26; DECISIONS 23:12 result) put the rung-1 block on BK: BK off alone passes the route
+(Roundup 31.5 Hz, MN9_L 48). Its central value is the slow-MN fit carried over by a class prior. In a
+single cell BK halves the gain above rheobase, and the loss compounds over the route's hops.
