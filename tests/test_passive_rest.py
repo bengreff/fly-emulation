@@ -45,3 +45,46 @@ def test_equilibrium_moves_with_the_spring_reference():
     leg.ref[i] += 0.3
     a1 = leg.equilibrium(0.0)
     assert abs(a1[2] - a0[2]) > 5.0                       # psi follows a 17 deg FTi reference shift
+
+
+def test_rest_mirror_gives_left_legs_the_right_values():
+    """joint:leg|rest_mirror 1: every left joint takes its right partner's fitted reference;
+    the right legs (the measured side) are unchanged."""
+    import re
+
+    import pandas as pd
+    from flyemu.passive import REST_TABLE, REST_TABLE_COXA, REST_TABLE_CTR, mirror_rest_table
+    for f in (REST_TABLE, REST_TABLE_COXA, REST_TABLE_CTR):
+        t = pd.read_csv(f, comment="#")
+        m = mirror_rest_table(t)
+        assert sorted(m.joint) == sorted(t.joint)
+        ref = dict(zip(m.joint, m.spring_ref_rad))
+        right = t[t.leg.str.startswith("r")]
+        assert len(right) * 2 == len(t)
+        for j, v in zip(right.joint, right.spring_ref_rad):
+            assert ref[j] == v
+            assert ref[re.sub(r"(^|-)r([fmh])_", r"\1l\2_", j)] == v
+
+
+def test_damping_mirror_gives_left_legs_the_right_values():
+    """joint:leg|damping_mirror 1: every left leg hinge DOF (not the inter-tarsal chain) takes
+    its right partner's damping; the right legs are unchanged."""
+    import re
+
+    import mujoco as mj
+    from flyemu import passive
+    from flyemu.body import Body
+    b = Body(vision=False)
+    passive.apply_coupled(b)
+    passive.set_damping_from_stiffness(b, 0.05)
+    m = b.sim.mj_model
+    pre = f"{b.fly.name}/"
+    names = {(mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "").removeprefix(pre): j for j in range(m.njnt)}
+    before = m.dof_damping.copy()
+    n = passive.mirror_leg_damping(b)
+    left = [k for k in names if re.search(r"(^|[_-])l[fmh]_", k) and k.count("tarsus") < 2]
+    assert n == len(left) == 21
+    for k in left:
+        r = names[re.sub(r"(^|[_-])l([fmh])_", r"\1r\2_", k)]
+        assert m.dof_damping[m.jnt_dofadr[names[k]]] == before[m.jnt_dofadr[r]]
+        assert m.dof_damping[m.jnt_dofadr[r]] == before[m.jnt_dofadr[r]]

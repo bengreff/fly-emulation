@@ -66,8 +66,11 @@ class Organism:
         self.body = Body(timestep=self.timestep_ms / 1000.0, with_camera=self.with_camera)
         # B3/B14 passive mechanics (session 9): switches default to the legacy body
         passive.register(self.reg, self.body)
+        passive.register_coxa(self.reg, self.body)      # B2 coxa ranges (s12)
+        passive.register_ctr(self.reg, self.body)       # B2 CTr ranges (s12)
         passive.register_rest(self.reg, self.body)
         passive.register_wings(self.reg, self.body)
+        passive.register_noslip(self.reg, self.body)    # B6 contact solver (s12, F-DAMP-2)
         self.conn = connectome.build(
             self.reg, min_synapses=self.min_synapses
         )
@@ -166,6 +169,14 @@ class Organism:
                 subsystem="muscle_mechanics", minimal=1.0,
                 minimal_note="1 = FlyMimic as shipped (1.04 uN*mm); Azevedo 2020 implies >= 40 "
                              "(parameters.csv b4_ft_flexor_scale; s11)"))
+            # s12: mid/hind leg muscles (FlyMimic fitted only the front leg)
+            midhind_source = int(self.reg.require(
+                "muscle:leg", "midhind_source", units="enum",
+                model_use="mid/hind leg muscles: 0 copies of the front leg (guessed), 1 front-leg FlyMimic "
+                          "members scaled by measured segment size on the flybody mesh (inferred; "
+                          "scripts/build_midhind_muscles.py)",
+                subsystem="muscle_mechanics", minimal=0,
+                minimal_note="copy (s9-s11 behaviour); 1 is the s12 derivation (F-MUSCLE-MH-1)"))
             units_kw = {"fused_hz": float(fused)}
             fat = float(self.reg.require(
                 "motor_unit:leg", "fatigue_fraction", units="dimensionless",
@@ -183,7 +194,8 @@ class Organism:
             self.hill = muscles.HillLegDrive(self.nm, self.body, unit_class=ucls, remap=remap,
                                              units_kw=units_kw, coxa_model=coxa_model,
                                              mn_types=mn_types, optimum_join=optimum_join,
-                                             ft_flexor_scale=ft_flexor_scale)
+                                             ft_flexor_scale=ft_flexor_scale,
+                                             midhind_source=midhind_source)
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (
@@ -217,17 +229,37 @@ class Organism:
                                              force_on=mode == 2)
         # B12 wing aerodynamics (session 10, F-FLIGHT-2): 0 = legacy (membrane and vein
         # meshes both carry fluid forces, doubling the wing area; MuJoCo default lift)
+        self.blade = None
         if int(self.reg.require(
                 "aero:wing", "membrane_only", units="enum",
                 model_use="0 fluid forces on both wing meshes (legacy), 1 on the membrane only",
                 subsystem="body_mechanics", minimal=0, minimal_note="legacy m4/m5")):
             from . import flight
-            flight.apply_aero(self.body, float(self.reg.require(
-                "aero:wing", "kutta_lift", units="dimensionless",
-                model_use="MuJoCo ellipsoid Kutta lift coefficient on the wing membrane",
-                subsystem="body_mechanics", minimal=3.1,
-                minimal_note="inferred (F-FLIGHT-2): fitted so hover kinematics lift ~ body weight; "
-                             "stands in for unsteady lift the quasi-steady model lacks")))
+            if int(self.reg.require(
+                    "aero:wing", "model", units="enum",
+                    model_use="0 MuJoCo ellipsoid lift/drag with aero:wing|kutta_lift (s10), 1 blade-element "
+                              "quasi-steady wing: robofly coefficients + rotational lift (flight.BladeElementWing)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="s10-s12 behaviour (F-FLIGHT-3)")):
+                size = int(self.reg.require(
+                    "aero:wing", "size_source", units="enum",
+                    model_use="0 scanned wing (2.65 mm hinge to tip), 1 blade-element strips scaled about the "
+                              "hinge to the measured female wing length (2.47 mm, Lehmann & Dickinson 1997); "
+                              "mesh, inertia and added mass unchanged (F-FLIGHT-3)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="scanned wing (s12)"))
+                am = int(self.reg.require(
+                    "aero:wing", "added_mass", units="enum",
+                    model_use="0 none, 1 flat-plate added mass on each blade-element strip, -rho pi c^2/4 dr "
+                              "dv_n/dt at mid-chord (Sane & Dickinson 2001; derived, no fitted constant)",
+                    subsystem="body_mechanics", minimal=0, minimal_note="quasi-steady wing without it (s12)"))
+                self.blade = flight.apply_blade_element(
+                    self.body, length_mm=flight.WING_LENGTH_FEMALE_MM if size else None, added_mass=bool(am))
+            else:
+                flight.apply_aero(self.body, float(self.reg.require(
+                    "aero:wing", "kutta_lift", units="dimensionless",
+                    model_use="MuJoCo ellipsoid Kutta lift coefficient on the wing membrane",
+                    subsystem="body_mechanics", minimal=3.1,
+                    minimal_note="inferred (F-FLIGHT-2): fitted so hover kinematics lift ~ body weight; "
+                                 "stands in for unsteady lift the quasi-steady model lacks")))
         # B15 jump muscle (session 10): 0 = TTMn through the legacy capped torque (m4)
         self.ttm = None
         if int(self.reg.require(
@@ -244,13 +276,23 @@ class Organism:
                                 g("tau_decay_ms", "ms", 5.0, "guessed: take-off within ~5 ms"),
                                 self.timestep_ms)
             self.body.passive_hooks = list(getattr(self.body, "passive_hooks", ())) + [self.ttm]
-        if int(self.reg.require(
+            if self.hill is not None and int(self.reg.require(
+                    "jump:ttm", "exclude_from_hill", units="enum",
+                    model_use="1 removes TTMn from the mid-leg CTr extensor Hill pool, which the TTM hook "
+                              "already carries (s12: TTMn was counted twice, F-MUSCLE-MH-1)",
+                    subsystem="muscle_mechanics", minimal=0, minimal_note="0 = s10-s12 behaviour (counted twice)")):
+                tt = self.conn.neurons.type.fillna("").to_numpy()[self.nm.mn_index] == "TTMn"
+                self.hill.exclude(np.flatnonzero(tt))
+        rng = int(self.reg.require(
                 "joint:wing", "range_by_function", units="enum",
                 model_use="0 joints.py wing envelopes (pitch = stroke; wrong for flybody), 1 envelopes by "
-                          "function: yaw = stroke, roll = deviation, pitch = rotation (F-WING-1)",
-                subsystem="body_mechanics", minimal=0, minimal_note="legacy m4 envelopes")):
+                          "function: yaw = stroke, roll = deviation, pitch = rotation (F-WING-1; holds a "
+                          "crossed-wing stroke, F-WING-3), 2 measured hover hinge envelope + folded pose + "
+                          "20 deg margin (F-WING-3)",
+                subsystem="body_mechanics", minimal=0, minimal_note="legacy m4 envelopes"))
+        if rng:
             from . import flight
-            flight.apply_wing_ranges(self.body)
+            flight.apply_wing_ranges(self.body, flight.WING_RANGE_MEASURED_DEG if rng == 2 else None)
 
     # --- sensing -------------------------------------------------------------
 

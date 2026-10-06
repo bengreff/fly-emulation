@@ -14,9 +14,11 @@ defaults (1 uN*mm/rad; legacy m4), 1 = measured.
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import mujoco as mj
+
 import numpy as np
 import pandas as pd
 
@@ -87,6 +89,77 @@ def set_leg_damping(body, c: float) -> int:
     return n
 
 
+def register_damping_source(reg, body) -> None:
+    """s12: leg damping from the measured stiffness (switch joint:leg|damping_source)."""
+    if not int(reg.require("joint:leg", "damping_source", units="enum",
+                           model_use="0 flybody default damping (x joint:leg|damping), 1 tau x each leg "
+                                     "joint's measured stiffness (Kelvin-Voigt; F-DAMP-1)",
+                           subsystem="body_mechanics", minimal=0,
+                           minimal_note="flybody defaults (c/k ~1 s); 1 is the s12 option")):
+        return
+    tau = float(reg.require("joint:leg", "damping_tau_s", units="s",
+                            model_use="relaxation time c/k of every leg joint",
+                            subsystem="body_mechanics", minimal=0.05,
+                            minimal_note="inferred: Wang et al. 2025 limbs reach the passive posture ~350 ms "
+                                         "after MN silencing, explained by active-force decay (tau 100-150 ms), "
+                                         "so c/k <= ~0.1 s; 0.05 s inside that bound (FlyMimic's choice)",
+                            uncertainty="bounds 0.005-0.1 s (row b3_damping_tau_s)"))
+    set_damping_from_stiffness(body, tau)
+    if int(reg.require("joint:leg", "damping_mirror", units="enum",
+                       model_use="0 each leg's damping from its own projected stiffness; 1 left legs take "
+                                 "the right partner's (the left/right difference, up to 10%, comes from the "
+                                 "scan's segment geometry, not data; bilateral symmetry inferred; s12)",
+                       subsystem="body_mechanics", minimal=0,
+                       minimal_note="per-leg damping as derived; mirroring is an option (s12)")):
+        mirror_leg_damping(body)
+
+
+def mirror_leg_damping(body) -> int:
+    """Each left leg hinge DOF (not the inter-tarsal chain) takes its right partner's
+    damping (joint:leg|damping_mirror). Returns the DOFs set."""
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    n = 0
+    for j in range(m.njnt):
+        name = (mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or "").removeprefix(pre)
+        if m.jnt_type[j] != mj.mjtJoint.mjJNT_HINGE or name.count("tarsus") >= 2:
+            continue
+        if not re.search(r"(^|[_-])l[fmh]_", name):
+            continue
+        rn = re.sub(r"(^|[_-])l([fmh])_", r"\1r\2_", name)
+        r = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + rn)
+        if r < 0:
+            raise KeyError(rn)
+        m.dof_damping[m.jnt_dofadr[j]] = m.dof_damping[m.jnt_dofadr[r]]
+        n += 1
+    return n
+
+
+def set_damping_from_stiffness(body, tau_s: float) -> int:
+    """Leg hinge damping c = tau x the joint's own measured stiffness (Kelvin-Voigt,
+    one relaxation time for every leg joint; s12). Coupled legs use the diagonal of
+    J^T K J (off-diagonal damping dropped; inferred). Applied as MuJoCo dof damping
+    so the integrator treats it implicitly. Not the inter-tarsal chain (B2).
+    Returns the DOFs set."""
+    m = body.sim.mj_model
+    kd = {}
+    for h in getattr(body, "passive_hooks", ()):
+        if isinstance(h, CoupledSprings):
+            for leg, K in h.K.items():
+                kd.update(zip(h.dofs[leg].tolist(), np.diag(K).tolist()))
+    n = 0
+    for j in range(m.njnt):
+        name = mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or ""
+        if m.jnt_type[j] != mj.mjtJoint.mjJNT_HINGE or name.count("tarsus") >= 2:
+            continue
+        if not any(f"{leg}_" in name for leg in ("lf", "lm", "lh", "rf", "rm", "rh")):
+            continue
+        dof = int(m.jnt_dofadr[j])
+        m.dof_damping[dof] = tau_s * kd.get(dof, float(m.jnt_stiffness[j]))
+        n += 1
+    return n
+
+
 def register(reg, body) -> dict[str, float]:
     """Organism entry point: read the switch from the registry and apply."""
     from .registry import Status
@@ -110,8 +183,10 @@ def register(reg, body) -> dict[str, float]:
                     evidence="eLife 2025 Table 1 medians projected through the Jacobian of the paper's leg "
                              "angles at the neutral pose (F-PASSIVE-2); tibia-tarsus = leg median (inferred)",
                     subsystem="body_mechanics", instances=6)
+        register_damping_source(reg, body)
         return {}
     k = apply(body, int(src))
+    register_damping_source(reg, body)
     if k:
         reg.provide("joint:leg", "passive_stiffness", str(TABLE.name), units="uN*mm/rad",
                     model_use="torsional spring per leg DOF", status=Status.MEASURED,
@@ -151,12 +226,163 @@ def springs_outside_range(body) -> list[str]:
     return out
 
 
+COXA_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "coxa_ranges_flybody.csv"
+
+
+def apply_coxa_ranges(body) -> list[str]:
+    """B2 (s12): flybody's leg-specific thorax-coxa ranges (absolute, inferred:
+    set to admit grooming IK) in place of the joints.py envelopes (+-45/25/30
+    deg about q0, assumed, on mislabelled axes; F-COXA-1)."""
+    t = pd.read_csv(COXA_TABLE, comment="#")
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    done = []
+    for r in t.itertuples():
+        j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + r.joint)
+        if j < 0:
+            raise KeyError(r.joint)
+        m.jnt_range[j] = (r.lo_rad, r.hi_rad)
+        m.jnt_limited[j] = 1
+        done.append(r.joint)
+    return done
+
+
+def register_coxa(reg, body) -> list[str]:
+    src = reg.require("joint:coxa", "range_source", units="enum",
+                      model_use="0 joints.py envelopes (+-45/25/30 deg, assumed, mislabelled axes), "
+                                "1 flybody leg-specific ranges (data/params/coxa_ranges_flybody.csv; inferred)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="legacy m4 envelopes; flybody ranges are an option (s12)")
+    return apply_coxa_ranges(body) if int(src) else []
+
+
+CTR_TABLE = COXA_TABLE.with_name("ctr_ranges.csv")
+
+
+def apply_ctr_ranges(body) -> list[str]:
+    """B2 (s12, F-COXA-2): coxa-trochanter pitch ranges per leg in place of the
+    joints.py envelope (-100..100 deg, assumed). Lower bound at the fold, where the
+    femur lies flat on the coxa (physical limit, derived from the model geometry);
+    upper bound at the measured walking extension (Haustein 2024, figure-read),
+    or the model's straightest reach where it falls short (hind legs)."""
+    t = pd.read_csv(CTR_TABLE, comment="#")
+    m = body.sim.mj_model
+    pre = f"{body.fly.name}/"
+    for r in t.itertuples():
+        j = mj.mj_name2id(m, mj.mjtObj.mjOBJ_JOINT, pre + r.joint)
+        if j < 0:
+            raise KeyError(r.joint)
+        m.jnt_range[j] = (r.lo_rad, r.hi_rad)
+        m.jnt_limited[j] = 1
+    return t.joint.tolist()
+
+
+def register_ctr(reg, body) -> list[str]:
+    src = reg.require("joint:ctr", "range_source", units="enum",
+                      model_use="0 joints.py envelope (-100..100 deg, assumed), 1 fold to measured walking "
+                                "extension per leg (data/params/ctr_ranges.csv; derived + figure-read; F-COXA-2)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="legacy envelope; the fold-bounded range is an option (s12)")
+    return apply_ctr_ranges(body) if int(src) else []
+
+
 def register_rest(reg, body) -> int:
     ref = reg.require("joint:leg", "spring_reference", units="enum",
-                      model_use="0 flybody neutral pose, 1 fitted to the eLife weighted protocol (F-REST-1)",
+                      model_use="0 flybody neutral pose, 1 fitted to the eLife weighted protocol (F-REST-1), "
+                                "2 refitted within flybody's coxa ranges (F-COXA-2; use with joint:coxa|range_source 1), "
+                                "3 refitted within the fold-bounded CTr ranges (F-COXA-2; use with joint:ctr|range_source 1)",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; fitted references are a template option")
-    return set_rest_angles(body) if int(ref) else 0
+    mirror = reg.require("joint:leg", "rest_mirror", units="enum",
+                         model_use="0 each leg's fitted reference as fitted; 1 left legs take the right "
+                                   "partner's (the eLife 2025 Fig 3C targets are right legs only; the left "
+                                   "fit is another solution of a non-unique fit; bilateral symmetry inferred; s12)",
+                         subsystem="body_mechanics", minimal=0,
+                         minimal_note="per-side fit as fitted; mirroring is an option (s12)")
+    if not int(ref):
+        return 0
+    table = {2: REST_TABLE_COXA, 3: REST_TABLE_CTR}.get(int(ref), REST_TABLE)
+    return set_rest_angles(body, table, mirror=bool(int(mirror)))
+
+
+# Wing hinge rotational stiffness (s12, joint:wing|stiffness_source 1): 91 +- 9 pN*m/deg
+# = 5.21 +- 0.52 uN*mm/rad, FITTED by Bergou, Ristroph, Guckenheimer, Cohen & Wang 2010
+# (PRL 104:148101, Fig. 2a, 3) as a damped torsional spring to the wing-pitch torque from
+# measured free-flight D. melanogaster kinematics. Pitch only and in flight; the yaw
+# (stroke) and roll (deviation) hinges take the same value (inferred transfer: no
+# Drosophila measurement of either, nor of the folded-wing hinge).
+WING_STIFFNESS_BERGOU = 91e-12 * 180.0 / np.pi * 1e9     # pN*m/deg -> uN*mm/rad
+
+
+def set_wing_stiffness(body, k: float) -> list[str]:
+    m = body.sim.mj_model
+    done = []
+    for j in range(m.njnt):
+        name = mj.mj_id2name(m, mj.mjtObj.mjOBJ_JOINT, j) or ""
+        if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE and "_wing-" in name:
+            m.jnt_stiffness[j] = k
+            done.append(name.split("/")[-1])
+    return done
+
+
+# Folded wings on the abdomen (s12, joint:wing|folded_pose 1; F-WING-5). flybody's folded
+# pose (all wing hinge angles 0) puts each wing 40-150 um inside abdominal segments 1-4:
+# flybody excludes those contacts, flygym's port does not, so the contact props the wing
+# about 80 um inside the abdomen against its spring. A resting fly's folded wings lie flat
+# on the abdominal tergites, one over the other (qualitative anatomy). Elevation is a
+# rotation about the thorax transverse axis through both hinges:
+#   FOLDED_ELEVATION_DEG  derived: the smallest (0.25 deg grid) with no wing render vertex
+#                         inside the abdomen meshes and no wing-body contact on the scanned
+#                         body (scripts/probes/wing_clip.py; clear from 12.5, touching at 12.25);
+#   FOLDED_STACK_DEG      derived: extra elevation at which the upper wing's render vertices
+#                         clear the lower wing's by >= 2 um where they overlap in plan view;
+#   FOLDED_UPPER          guessed: which wing lies on top. Real flies differ: each has a
+#                         persistent individual preference for one side (Buchanan, Kain &
+#                         de Bivort 2015 PNAS 112:6700; selection lines in Purnell & Thompson
+#                         1973 Heredity 31:401), so left on top is one valid individual; the
+#                         population split was not read.
+FOLDED_ELEVATION_DEG = 12.5
+FOLDED_STACK_DEG = 1.5
+FOLDED_UPPER = "l"
+
+
+def folded_wing_angles(body, elevation_deg: float) -> dict[str, np.ndarray]:
+    """Hinge angles (yaw, roll, pitch; rad) that rotate each folded wing by elevation_deg
+    about the thorax transverse (y) axis; the joint chain is yaw, roll, pitch (intrinsic ZXY)."""
+    from scipy.spatial.transform import Rotation
+    m = body.sim.mj_model
+    out = {}
+    for side in ("l", "r"):
+        b = [i for i in range(m.nbody) if (m.body(i).name or "").endswith(f"/{side}_wing")][0]
+        q = m.body_quat[b]
+        axis = Rotation.from_quat([q[1], q[2], q[3], q[0]]).as_matrix().T @ np.array([0.0, 1.0, 0.0])
+        out[side] = Rotation.from_rotvec(axis * np.radians(elevation_deg)).as_euler("ZXY")
+    return out
+
+
+def rest_wings_on_abdomen(body, elevation_deg: float = FOLDED_ELEVATION_DEG,
+                          stack_deg: float = FOLDED_STACK_DEG, upper: str = FOLDED_UPPER,
+                          spring: bool = True) -> list[str]:
+    """Move the folded pose (every keyframe, the current state and, if spring, the spring
+    reference) to the wings resting on the abdomen. qpos0 stays 0: MuJoCo measures a hinge
+    angle from qpos0, so moving it would move the zero, not the wing."""
+    m, d = body.sim.mj_model, body.sim.mj_data
+    lo = folded_wing_angles(body, elevation_deg)
+    hi = folded_wing_angles(body, elevation_deg + stack_deg)
+    done = []
+    for j in range(m.njnt):
+        n = (m.joint(j).name or "").split("/")[-1]
+        for side in ("l", "r"):
+            for k, ax in enumerate(("yaw", "roll", "pitch")):
+                if n == f"c_thorax-{side}_wing-{ax}":
+                    a = m.jnt_qposadr[j]
+                    v = (hi if side == upper else lo)[side][k]
+                    m.key_qpos[:, a] = v
+                    if spring:
+                        m.qpos_spring[a] = v
+                    d.qpos[a] = v
+                    done.append(n)
+    return done
 
 
 def register_wings(reg, body) -> list[str]:
@@ -164,7 +390,36 @@ def register_wings(reg, body) -> list[str]:
                       model_use="0 flybody spread pose (outside the yaw range), 1 folded neutral pose",
                       subsystem="body_mechanics", minimal=0,
                       minimal_note="legacy m4 body; folded reference is an option until adopted")
-    return fold_wings(body) if int(ref) else []
+    pose = reg.require("joint:wing", "folded_pose", units="enum",
+                       model_use="0 flybody folded pose (hinge angles 0; wings 40-150 um inside the abdomen), "
+                                 "1 wings resting on the abdominal tergites, left over right (passive."
+                                 "FOLDED_ELEVATION_DEG derived from the scanned body; order guessed; F-WING-5)",
+                       subsystem="body_mechanics", minimal=0,
+                       minimal_note="flybody pose; the wings cut into abdominal segments 1-4 (s12)")
+    src = reg.require("joint:wing", "stiffness_source", units="enum",
+                      model_use="0 flybody 1 uN*mm/rad (unsourced), 1 Bergou et al. 2010 wing-pitch stiffness "
+                                "5.21 uN*mm/rad (fitted, in flight) on all three hinge axes (yaw, roll inferred)",
+                      subsystem="body_mechanics", minimal=0,
+                      minimal_note="flybody value; one spike swings a folded wing 30-40 deg (s12, F-WING-4)")
+    if int(src):
+        set_wing_stiffness(body, WING_STIFFNESS_BERGOU)
+    done = fold_wings(body) if int(ref) else []
+    if int(pose):
+        rest_wings_on_abdomen(body, spring=bool(int(ref)))
+    return done
+
+
+def register_noslip(reg, body) -> int:
+    """B6: MuJoCo's noslip pass (a per-step projection that removes contact slip).
+    flybody's arena runs 3 iterations, which do not converge at 0.1 ms on the
+    m9d legs: resting motion then changes with the step by up to 4x (F-DAMP-2).
+    MJWarp, the GPU path for many flies, has no noslip and sets it to 0."""
+    n = reg.require("contact:floor", "noslip_iterations", units="count",
+                    model_use="MuJoCo option noslip_iterations; 3 flybody arena, 0 off (as MJWarp)",
+                    subsystem="body_mechanics", minimal=3,
+                    minimal_note="flybody arena default; not converged at 0.1 ms on m9d (F-DAMP-2)")
+    body.sim.mj_model.opt.noslip_iterations = int(n)
+    return int(n)
 
 
 class CoupledSprings:
@@ -259,13 +514,28 @@ def apply_coupled(body, scale: float = 1.0) -> CoupledSprings:
 
 
 REST_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "passive_leg_rest_fit.csv"
+REST_TABLE_COXA = REST_TABLE.with_name("passive_leg_rest_fit_coxa_flybody.csv")
+REST_TABLE_CTR = REST_TABLE.with_name("passive_leg_rest_fit_ctr.csv")
 
 
-def set_rest_angles(body) -> int:
+def mirror_rest_table(t: pd.DataFrame) -> pd.DataFrame:
+    """Left-leg rows replaced by their right partner's reference (same sign: every leg joint
+    pair shares the angle convention, scripts/probes/mirror_audit.py)."""
+    right = t[t.leg.str.startswith("r")].copy()
+    left = right.copy()
+    left["leg"] = "l" + left.leg.str[1:]
+    left["joint"] = [j.replace(f"{r}_", f"l{r[1:]}_") for j, r in zip(right.joint, right.leg)]
+    return pd.concat([right, left], ignore_index=True)
+
+
+def set_rest_angles(body, table: Path = REST_TABLE, mirror: bool = False) -> int:
     """B3 rest angles: spring references fitted to the eLife weighted protocol
     (F-REST-1; inferred). Updates MuJoCo's spring reference and any coupled
-    spring hook. Returns the number of joints set."""
-    t = pd.read_csv(REST_TABLE, comment="#")
+    spring hook. Returns the number of joints set. mirror: left legs take the
+    right legs' values (joint:leg|rest_mirror)."""
+    t = pd.read_csv(table, comment="#")
+    if mirror:
+        t = mirror_rest_table(t)
     m = body.sim.mj_model
     pre = f"{body.fly.name}/"
     ref = {}

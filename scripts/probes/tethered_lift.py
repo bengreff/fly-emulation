@@ -20,7 +20,7 @@ from flyemu.body import Body  # noqa: E402
 
 
 def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev=8.0, kinematic=False, bw=1500.0,
-        kutta=None):
+        kutta=None, blade=False):
     b = Body(vision=False, timestep=dt_ms / 1000.0, spawn_height=5.0)
     m, d = b.sim.mj_model, b.sim.mj_data
     flight.apply_wing_ranges(b)
@@ -31,6 +31,7 @@ def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev
     wb = flight.WingBeat(b, kin, bandwidth_hz=bw, ramp_ms=0.0)
     wb.power[:] = 1.0
     b.passive_hooks = [wb]
+    be = flight.apply_blade_element(b) if blade else None   # aero:wing|model 1 (F-FLIGHT-3)
     mj.mj_forward(m, d)
     q0, n = d.qpos[:7].copy(), int(round(beats * 1000.0 / f / dt_ms))
     # start the wings on the generator's trajectory
@@ -43,14 +44,15 @@ def run(dt_ms=0.05, beats=10, rot_sign=1.0, amp=70.0, f=218.0, rot_amp=45.0, dev
             d.qpos[wb.q_adr] = np.tile(tq, 2); d.qvel[wb.v_adr] = np.tile(tqd, 2)
         b.step()
         d.qpos[:7] = q0; d.qvel[:6] = 0.0
-        fz.append(d.qfrc_fluid[2]); fx.append(d.qfrc_fluid[0])
+        fa = d.qfrc_fluid[:3] + (be.force.sum(0) if be is not None else 0.0)
+        fz.append(fa[2]); fx.append(fa[0])
         tq, _ = kin.targets(wb.t_s)
         err.append(np.degrees(np.abs(d.qpos[wb.q_adr[:3]] - tq)).max())
     warn = int(sum(w.number for w in d.warning))
     per = int(round(1000.0 / f / dt_ms))
     last = slice(n - per * (beats // 2), n)      # second half, whole beats
     weight = mj.mj_getTotalmass(m) * 9810.0     # uN
-    return dict(kinematic=kinematic, bandwidth_hz=bw, dt_ms=dt_ms, f_hz=f, stroke_amp_deg=amp, rot_sign=rot_sign, rot_amp_deg=rot_amp,
+    return dict(aero="blade element" if blade else f"ellipsoid kutta {kutta}", kinematic=kinematic, bandwidth_hz=bw, dt_ms=dt_ms, f_hz=f, stroke_amp_deg=amp, rot_sign=rot_sign, rot_amp_deg=rot_amp,
                 lift_uN=float(np.mean(fz[last])), thrust_x_uN=float(np.mean(fx[last])),
                 weight_uN=weight, lift_over_weight=float(np.mean(fz[last]) / weight),
                 track_err_deg_p95=float(np.percentile(err[per:], 95)), mujoco_warnings=warn)
@@ -66,5 +68,7 @@ if __name__ == "__main__":
     ap.add_argument("--kinematic", action="store_true")
     ap.add_argument("--bw", type=float, default=1500.0)
     ap.add_argument("--kutta", type=float, default=None, help="membrane-only aero with this Kutta coefficient")
+    ap.add_argument("--blade", action="store_true", help="blade-element wing (aero:wing|model 1)")
     a = ap.parse_args()
-    print(json.dumps(run(a.dt_ms, a.beats, a.rot_sign, a.amp, rot_amp=a.rot_amp, kinematic=a.kinematic, bw=a.bw, kutta=a.kutta)))
+    print(json.dumps(run(a.dt_ms, a.beats, a.rot_sign, a.amp, rot_amp=a.rot_amp, kinematic=a.kinematic, bw=a.bw, kutta=a.kutta,
+                         blade=a.blade)))

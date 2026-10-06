@@ -477,6 +477,7 @@ def build(
         )
 
     fps, tau_mn = _per_neuron_forces(reg, conn, rows, float(force_per_spike), float(tau_act))
+    _nonleg_forces(reg, [actuator_names[a] for a in acts], fps, tau_mn)
     return Neuromuscular(
         adhesion_index=np.asarray(adh_idx, dtype=np.int64),
         adhesion_rows=np.asarray(adh_rows, dtype=np.int64),
@@ -538,7 +539,38 @@ def _per_neuron_forces(reg, conn, rows, default_fps: float, default_tau: float):
     return fps, tau
 
 
+NONLEG_TABLE = FORCE_TABLE.with_name("nonleg_motor_forces.csv")
+
+
+def _nonleg_forces(reg, act_names: list[str], fps: np.ndarray, tau: np.ndarray) -> None:
+    """Switch motor_unit:nonleg|torque_source 1: torque per spike (and twitch tau where
+    given) per non-leg muscle group from data/params/nonleg_motor_forces.csv, matched
+    on the actuator each motor neuron drives; in place. 0 keeps the shared value."""
+    if not int(reg.require(
+            "motor_unit:nonleg", "torque_source", units="enum",
+            model_use="0 one shared torque per spike (motor_unit:all|force_per_spike) for every "
+                      "non-leg motor neuron; 1 per muscle group, data/params/nonleg_motor_forces.csv (s12 B)",
+            subsystem="neuromuscular", minimal=0, minimal_note="shared value (s1-s12)")):
+        return
+    t = pd.read_csv(NONLEG_TABLE, comment="#", keep_default_na=False)
+    names = pd.Series([a.split("/")[-1] for a in act_names])
+    for row in t.itertuples(index=False):
+        hit = names.str.contains(row.actuator_regex, regex=True).to_numpy()
+        if not hit.any():
+            continue
+        fps[hit] = float(row.torque_uNmm)
+        if str(row.twitch_tau_ms):
+            tau[hit] = float(row.twitch_tau_ms)
+        reg.provide(f"motor_unit:nonleg_{row.group}", "torque_per_spike", float(row.torque_uNmm),
+                    units="uN*mm", model_use="joint torque added by one motor spike",
+                    status=Status(row.basis), subsystem="neuromuscular", instances=int(hit.sum()),
+                    evidence=row.source, method=row.derivation,
+                    uncertainty=f"bounds {row.low}-{row.high} uN*mm; {row.uncertainty}")
+
+
 MOTOR_TABLE = Path(__file__).resolve().parents[2] / "data" / "params" / "motor_targets.csv"
+WING_ROLES_TABLE = MOTOR_TABLE.with_name("wing_muscle_roles.csv")
+HEAD_ODD = ("c_thorax-c_head-yaw", "c_thorax-c_head-roll")     # midline axes odd under reflection
 
 
 def _abdomen_joint(neuromere: str) -> str:
@@ -554,6 +586,21 @@ def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
     if not MOTOR_TABLE.exists():
         return []
     table = pd.read_csv(MOTOR_TABLE, comment="#")
+    if int(reg.require(
+            "motor_map:wing", "roles", units="enum",
+            model_use="0 legacy wing MN map (basalars on deviation, iii1 opens, DLM/DVM direct torques); "
+                      "1 anatomical roles, data/params/wing_muscle_roles.csv (F-WING-2)",
+            subsystem="neuromuscular", minimal=0, minimal_note="legacy map")):
+        roles = pd.read_csv(WING_ROLES_TABLE, comment="#", keep_default_na=False)
+        drop = set(r for r in roles.replaces if r)
+        table = pd.concat([table[~table.type_regex.isin(drop)], roles.drop(columns="replaces")],
+                          ignore_index=True)
+    mirror = int(reg.require(
+            "motor_map:neck", "mirror_sides", units="enum",
+            model_use="0 every head yaw and roll MN +1 on both sides (guessed); 1 right-side MNs take the "
+                      "opposite yaw and roll sign of their left mirror image (bilateral symmetry, derived; "
+                      "the left sign stays guessed; docs/research/s12_neck_antenna_sources.md)",
+            subsystem="neuromuscular", minimal=0, minimal_note="legacy map: a bilateral pair turns the head one way"))
     unmapped_ids = {u["bodyId"] for u in unmapped}
     cand = n[(n.superclass == "cb_motor") | n.bodyId.isin(unmapped_ids)].copy()
     cand["side"] = cand.instance.fillna("").str.extract(r"_([LR])$")[0].map({"L": "l", "R": "r"})
@@ -608,6 +655,8 @@ def _map_non_leg(reg, conn, n, unmapped, act_lookup, cal):
                 if not isinstance(side, str):
                     continue
                 tgt = tgt.replace("{s}", side)
+            if mirror and tgt in HEAD_ODD and side == "r":
+                sgn = -sgn     # yaw and roll flip under left-right reflection; pitch does not
             a = act_lookup.get(tgt)
             if a is None:
                 continue

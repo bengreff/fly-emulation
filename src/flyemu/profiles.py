@@ -169,6 +169,96 @@ M9 = {
     "cell_type:all|within_type_size_exponent": (1.0, _I, _RS + "; prior centre, central size rule on"),
 }
 
+# m9w (session 12, adopted 17:50 after seeds 12-19 stayed silent; DECISIONS s12 17:35): m9 + the
+# wing-muscle role map and nerve-based afferent assignment (F-WING-2, F-SENSE-NERVE-1). Not fitted.
+_W = "s12 body fix, not fitted (F-WING-2, F-SENSE-NERVE-1; DECISIONS s12)"
+M9W = {
+    **M9,
+    "motor_map:wing|roles": (1.0, _I, _W + "; wing MN roles from anatomy (data/params/wing_muscle_roles.csv)"),
+    "sense:mechano|assign_by_nerve": (1.0, _I, _W + "; leg sensors by census entry nerve (measured), rule inferred"),
+}
+
+# m9n (session 12, adopted 18:46 after seeds 12-19 stayed silent; DECISIONS s12 18:28): m9w + leg sensors by each
+# cell's own entry nerve and side (F-SENSE-NERVE-2). Not fitted.
+M9N = {
+    **M9W,
+    "sense:mechano|assign_by_nerve": (2.0, _I, "s12 body fix, not fitted (F-SENSE-NERVE-2; DECISIONS s12 18:28); "
+                                      "each cell's own entry nerve and root side (measured), rule inferred"),
+}
+
+# m9m (session 12, adopted 19:07 after the DECISIONS s12 18:38 gate): m9n + mid/hind leg muscles
+# scaled by measured segment size and the TTM torque from fibre data (F-MUSCLE-MH-1). Not fitted.
+_MH = "s12 derivation, not fitted (F-MUSCLE-MH-1; DECISIONS s12 18:38)"
+M9M = {
+    **M9N,
+    "muscle:leg|midhind_source": (1.0, _I, _MH + "; front-leg FlyMimic members scaled by flybody segment size"),
+    "jump:ttm|peak_torque": (90.0, _I, _MH + "; 27 fibres x 71.2 x 40.7 um x 34.7 mN/mm^2 (Jaramillo 2009, "
+                             "Jarvis 2021) x 0.033 mm arm; 5-95% 53-134 uN*mm"),
+}
+
+# m9d (session 12, adopted 19:13 after the DECISIONS s12 18:53 gate): m9m + leg damping from the
+# measured stiffness (c = 0.05 s x k; F-DAMP-1) and TTMn out of the Hill pool (counted twice).
+_D = "s12 body fix, not fitted (DECISIONS s12 18:53)"
+M9D = {
+    **M9M,
+    "joint:leg|damping_source": (1.0, _I, _D + "; c = tau x measured stiffness per leg joint"),
+    "joint:leg|damping_tau_s": (0.05, _I, _D + "; inside the bound c/k <= ~0.1 s from Wang et al. 2025 timing"),
+    "jump:ttm|exclude_from_hill": (1.0, _I, _D + "; TTMn drives the TTM hook only"),
+}
+
+# m9s (session 12, adopted 20:5x after the DECISIONS s12 20:33 gate): m9d with MuJoCo's noslip pass
+# off. flybody's 3 iterations do not converge at the 0.1 ms step on m9d's legs, so resting motion
+# depended on the step (F-DAMP-2); off, it converges, and it matches the MJWarp GPU path (no noslip).
+M9S = {
+    **M9D,
+    "contact:floor|noslip_iterations": (0.0, _I, "s12 numerical fix, not fitted (DECISIONS s12 20:33); "
+                                        "step-converged at rest; as MJWarp"),
+}
+
+# m9t (session 12, adopted 21:21 after the DECISIONS s12 21:12 gate): m9s with each non-leg motor
+# neuron's torque per spike from the leg motor-unit anchor x moved-part length (inferred), not the
+# shared 10 uN*mm guess, which pinned the head, rostrum and antennae at their joint limits.
+M9T = {
+    **M9S,
+    "motor_unit:nonleg|torque_source": (1.0, _I, "s12 body fix, not fitted (DECISIONS s12 21:12); "
+                                        "data/params/nonleg_motor_forces.csv"),
+}
+
+# m9u (session 12, adopted 21:49 after the DECISIONS s12 21:44 gate): m9t with the wing hinge
+# stiffness from Bergou et al. 2010 (wing pitch, fitted in flight; yaw and roll inferred), not
+# flybody's unsourced 1 uN*mm/rad, under which one steering spike lifted the folded wing 30-40 deg.
+M9U = {
+    **M9T,
+    "joint:wing|stiffness_source": (1.0, _I, "s12 body fix, not fitted (DECISIONS s12 21:44); "
+                                    "passive.WING_STIFFNESS_BERGOU"),
+}
+
+# m9v (session 12, adopted 21:58 after the DECISIONS s12 21:50 gate): m9u with right-side head yaw
+# and roll motor neurons on the opposite sign of their left mirror image (bilateral symmetry,
+# derived), so a pair firing together cancels instead of turning the head one way (F-NONLEG-2).
+M9V = {
+    **M9U,
+    "motor_map:neck|mirror_sides": (1.0, _I, "s12 body fix, not fitted (DECISIONS s12 21:50); "
+                                    "neuromuscular.HEAD_ODD"),
+}
+
+# m9f (session 12, DECISIONS 5 Oct 02:31; adopted 02:51 after its gate passed): m9v with
+# the folded wings resting on the abdominal tergites instead of 40-150 um inside them (F-WING-5).
+M9F = {
+    **M9V,
+    "joint:wing|folded_pose": (1.0, _I, "s12 body fix, not fitted (DECISIONS 5 Oct 02:31); elevation derived "
+                               "from the scanned body (passive.FOLDED_ELEVATION_DEG), left over right guessed"),
+}
+
+# m9r (session 12, DECISIONS 5 Oct 03:25; gate passed): m9f with the left legs' fitted rest angles
+# replaced by their right partners' (the eLife 2025 Fig 3C targets are right legs only; the left
+# fit was another solution of a non-unique fit; bilateral symmetry inferred).
+M9R = {
+    **M9F,
+    "joint:leg|rest_mirror": (1.0, _I, "s12 body fix, not fitted (DECISIONS 5 Oct 03:25); left legs take the "
+                              "right legs' fitted rest angles, bilateral symmetry inferred"),
+}
+
 # m10p (session 11 rung 2 candidate, not adopted until DECISIONS 2026-10-01 00:45 gates pass):
 # m9 + conductance synapses + slow-receptor shares from receptor mRNA + inhibitory decay.
 _R2 = "rung 2 at prior (DECISIONS 2026-10-01 00:45)"
@@ -195,7 +285,7 @@ KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
 # --profile none --min-synapses 1 for the session-3 baseline.
-WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
+WORKING_PROFILE = os.environ.get("FLYEMU_PROFILE", "m9r")   # s10: m5 then m6 (+ latency); s11: m7 (motor size principle) adopted, then m8 (+ rung-1 intrinsic channels), then m9 (+ class gains re-searched on m8); s12: m9w (+ wing roles, nerve-based afferents), then m9n (+ each sensor on its own nerve), then m9m (+ mid/hind muscles by segment size, TTM 90), then m9d (+ leg damping from measured stiffness, TTMn out of the Hill pool), then m9s (+ noslip off: step-converged contact, as the GPU path), then m9t (+ non-leg torque per spike from the leg anchor), then m9u (+ wing hinge stiffness, Bergou 2010), then m9v (+ mirror-image neck signs), then m9f (+ folded wings resting on the abdomen, not inside it), then m9r (+ left leg rest angles mirrored from the measured right legs); FLYEMU_PROFILE=m4 is the regression reference (m2: sessions 5-8)
 REGRESSION_PROFILE = "m4"
 WORKING_MIN_SYNAPSES = 5
 
@@ -210,6 +300,16 @@ PROFILES: dict[str, dict] = {
     "m7": {"values": M7, "kick_mv": KICK},
     "m8": {"values": M8, "kick_mv": KICK},
     "m9": {"values": M9, "kick_mv": KICK},
+    "m9w": {"values": M9W, "kick_mv": KICK},
+    "m9n": {"values": M9N, "kick_mv": KICK},
+    "m9m": {"values": M9M, "kick_mv": KICK},
+    "m9d": {"values": M9D, "kick_mv": KICK},
+    "m9s": {"values": M9S, "kick_mv": KICK},
+    "m9t": {"values": M9T, "kick_mv": KICK},
+    "m9u": {"values": M9U, "kick_mv": KICK},
+    "m9v": {"values": M9V, "kick_mv": KICK},
+    "m9f": {"values": M9F, "kick_mv": KICK},
+    "m9r": {"values": M9R, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
 }

@@ -271,3 +271,589 @@ Session 12, docs/BLANKS_AUDIT.md (grain-by-grain walk of what is measurable in a
 - Per synapse (12 quantities), nothing in the model varies at its own grain; 6 run on class or global values. The model holds 0 % measured synapse-grain numbers. 13 % of synapse slots are measured but unused (synapse positions, polyadic structure, weak synapses).
 - The slot total grows from 374.4 M to 1,701.7 M, mostly per-synapse STP and receptor mix. The headline "data in the model" share therefore falls from 1.90 % to 0.42 % with no change to the model. Outside the synapse grain: 50.0 M slots, 14.1 % measured.
 - Ledger corrections: 8 rows had no carrier (`mech: none`); two channel rows were labelled absent although rung 1 simulates them; about 50,000 glial-cell slots were counted as body parts (grain mapping bug); 4 receptor fills were inconsistent.
+
+### F-WING-2: the resting wings were lifted by body weight read as wing strain, then moved by a wing map written for the mislabelled joints
+Session 12 B. m9, seed 12, 1.5 s, minimal policy, `scripts/probes/wing_drive.py`; outputs, logs and contact sheets in `runs/s12/wings/`. All numbers are model measurements.
+- **The passive body is not the cause.** With all wing torques zeroed, the wings stay folded (end angles within 7°, peak 11°). The left wing motor neurons still fire tonically at 17-23 Hz (b1, b2, iii1, MNwm35), and the right ones do not.
+- **Source of the drive.** Trace by `scripts/probes/wing_premotor_trace.py`, signed synapses × presynaptic rate, 3 levels up:
+  1. SNpp30-33 are wing-nerve (ADMN) campaniforms with about 4.5 % of their synapses in leg neuropil.
+  2. The legacy rule assigned them to the hind legs and drove them as leg load at 16.7 Hz.
+  3. The drive passes through INXXX038, AN17A003 and AN17A031 to left IN17A039/027/034/035/064, then to the wing motor neurons.
+  4. In short, body weight on the legs was read as wing strain. F-SENSE-NERVE-1 has the general rule.
+- **The wing map was wrong in three places.** The legacy `motor_targets.csv` rows predate F-WING-1.
+  - The basalar muscles b1-b3 drove wing-roll, which is deviation on this body, not stroke.
+  - iii1 drove wing-pitch in the opening direction.
+  - DLM and DVM got direct hinge torques, though they have no wing insertion.
+- **Two fixes, each behind a switch with the legacy behaviour as neutral:**
+  - `motor_map:wing|roles` uses `data/params/wing_muscle_roles.csv`:
+    - basalars on +stroke (yaw), labelled inferred (Whitehead 2022; Tu & Dickinson 1996; Snodgrass 1935);
+    - iii1 on -stroke toward the fold stop, labelled inferred (Melis 2024: likely homolog of the ancestral retractor that folds the wing; Snodgrass 1935);
+    - DLM and DVM act only through the B10 flight generator, labelled measured anatomy (Dickinson & Tu 1997; Melis 2024).
+  - `sense:mechano|assign_by_nerve`, see F-SENSE-NERVE-1.
+
+| arm | non-leg torque/spike (µN·mm) | wing MNs > 5 Hz | end stroke L/R (°) | end rotation L/R (°) | peak \|angle\| (°) |
+|---|---|---|---|---|---|
+| m9 (legacy map and rule) | 10 | 4 | -10/-10 (fold stop) | 40/40 (stop) | 71 (deviation stop) |
+| torques zeroed | 10 | 4 | 5/7 | -7/-6 | 11 |
+| roles only | 10 | 4 | 160/0 | 41/-10 | 178 |
+| roles + nerve | 10 | 0 (max 2.7 Hz) | 140/122 | -131/-83 | 177 |
+| m9, legacy | 1 | 5 | 29/11 | 39/7 | 40 |
+| **roles + nerve** | **1** | **0 (max 2.0 Hz)** | **8/10** | **-7/-3** | **18** |
+
+- **Result.** With both switches at the declared default of 1 µN·mm per spike, the resting wings stay folded over the abdomen and are left-right symmetric. The contact sheet `docs/media/s12_wings_rest_roles_nerve.png` shows them folded throughout. The legacy arm at the same force holds the left wing raised (`docs/media/s12_wings_rest_legacy.png`).
+- **The remaining cause is the 10× torque, not the wiring.**
+  - Every run since session 5 has set the shared non-leg torque per spike to 10. That value is guessed, has no wing basis, and only reaches non-leg motor neurons, because the leg motor neurons use the per-neuron table.
+  - At 10, sporadic 2-3 Hz spikes throw the wings to their stops. Each spike adds 10 µN·mm against a 1 µN·mm/rad hinge spring.
+  - A rough estimate of one steering-muscle twitch is about 1 µN·mm (guessed: cross-section × specific tension × moment arm × twitch fraction).
+  - Bergou 2010 measured the in-flight rotation-axis stiffness at about 5.2 µN·mm/rad, which is stiffer than the 1 µN·mm/rad spring used here.
+  - Open: a wing torque per spike, and the resting stroke-axis stiffness.
+- **Not fixed here.** In both arms m9 lies on its belly at rest. That is m9's live leg output on the template body, a separate open item. The wing-strain proxy still reads wing-roll velocity instead of the stroke (F-WING-1).
+
+### F-SENSE-NERVE-1: 198 afferents that enter by wing, haltere, neck or other non-leg nerves were driven as leg sensors
+- **The legacy rule.** `sensory.leg_from_roiinfo` makes any mechanosensory afferent with leg-neuropil synapses a sensor of its dominant leg.
+- **The census check.** The male-cns census gives each type's entry nerve (`data/derived/sensory_census.csv`; leg nerves ProLN, MesoLN, MetaLN; Court et al. 2020 nerve names). By that census, the m9 organism drove 198 of 2,482 leg afferents that do not enter by a leg nerve (measured on the model, seed 0):
+
+| organ | nerve | cells |
+|---|---|---|
+| campaniform sensilla | ADMN (wing) | 48 |
+| campaniform sensilla | DMetaN (haltere) | 4 |
+| hair plate | PrN (prosternal, neck) | 35 |
+| chordotonal organ (census: leg) | ProCN | 30 |
+| mechanosensory bristle | ADMN / DMetaN / PDMN | 20 / 39 / 22 |
+
+- **Under `sense:mechano|assign_by_nerve`=1:**
+  - A cell is a leg sensor only if its type enters by a leg nerve.
+  - Campaniforms from ADMN join the wing-strain channel, which grows from 19 to 211 cells. This includes ADMN campaniforms that had no drive at all before.
+  - Campaniforms from DMetaN join haltere strain (213 to 288 cells).
+  - PrN hair plates join neck proprioception (3 to 38 cells).
+  - No cell is in two channels.
+  - The 110 leg afferents whose type has no census nerve keep the legacy rule.
+  - The ProCN chordotonal cells and non-leg bristles now have no drive. They are a recorded gap, not a model of their organ. ProCN's identity is uncertain.
+- **What it costs.** The m9 class gains were fitted under the legacy rule. With both s12 switches on, m9's silence gate still passes on seeds 12-19, so m9w was adopted (DECISIONS s12 17:50). The sugar gate is unaffected: that assay is brain-only with no body.
+
+### F-COXA-2: flybody's leg-specific coxa ranges admit the measured rest angles, but the fly still lies on its belly, alive or dead
+- **The switch.** `joint:coxa|range_source` (neutral 0) replaces the assumed joints.py coxa envelopes (±45/25/30° about the spawn pose, on mislabelled axes; F-COXA-1) with flybody's own leg-specific ranges (`data/params/coxa_ranges_flybody.csv`, flygym 2.1.0 joints.yaml; 18 joints). Label inferred: Vaxenburg et al. 2025 set those ranges to admit grooming inverse kinematics, not from measured joint limits.
+- **Rest angles refitted inside them** (`data/params/passive_leg_rest_fit_coxa_flybody.csv`, `joint:leg|spring_reference` 2), same eLife weighted protocol as F-REST-1/2.
+  - trf stalls at the neutral start (the neutral equilibrium sits on a coxa limit, every step rejected). Adding dogbox and a start from the s9 fit clipped into range fixes it.
+  - Residuals (theta/phi/psi, deg): front 2.5/-10.5/5.2 and 0.0/-12.4/3.0; middle 6.9/0.4/4.9 and 6.8/0.4/4.7; hind under 0.3. Similar to s9.
+  - Middle legs press flybody's coxa yaw and roll lower limits.
+  - The front solution moves coxa pitch to about +90° (s9: -45°) at a similar residual. Three measured angles cannot pin five spring references, so the front split is not unique (as F-REST-2).
+- **Dead-fly test with both** (`runs/s12/s12_deadfly_template_coxa`): all criteria pass. Fall onset 10 ms, thorax 1.32 to 0.77 mm, no joint at a limit, energy falls, wings move 4.8°.
+- **Standing, m9w, seed 12, 1.5 s** (`scripts/probes/standing_rest.py`):
+
+| body | thorax end (mm) | trunk on floor | legs carrying load at the end |
+|---|---|---|---|
+| legacy ranges, live | 0.54 | 96% of the run | rm, lh |
+| legacy ranges, dead | 0.54 | 97% | lm, lh |
+| flybody ranges + refit, live | 0.77 | 97% | lf, rf |
+| flybody ranges + refit, dead | 0.77 | 97% | lf, rf |
+
+- **Reading.** The coxa ranges raise the resting thorax by 0.23 mm, but the trunk still rests on the floor, and live equals dead to 0.2 µm. The contact sheet (`runs/s12/standing/standing_coxa_live_s12.png`) shows the front legs propped forward and up on the +90° coxa solution. That is not a resting posture. The switch stays at 0.
+- **Also found.** flybody's native ranges exist for CTr and FTi too (e.g. CTr pitch about -9° to +115°). The s9 CTr rest angles (-60 to -71°) and the sunk CTr poses (-12 to -41°) lie below that native lower limit. The body uses the joints.py envelopes there, so CTr ranges are a further open item of the same kind. Both sources are inferred (grooming IK; a passive-posture fit through an assumed paper-to-hinge mapping), so neither overrides the other. Discriminating test, not started: map measured 3D walking and grooming joint angles (Karashchuk et al. 2021 Anipose; Haustein et al. 2024) through the same mapping. Angles below -8.6° mean flybody's range is too narrow; none below it means the rest mapping is wrong.
+
+- **Measured CTr angles (19:39; agent extraction, `runs/s12/body/ctr_angles_lit.md`; table `data/derived/leg_angles_walking_haustein2024_karashchuk2021.csv`; figure-read).**
+  - Source: Haustein et al. 2024 (Front. Bioeng. Biotechnol. 12:1357598), 12 flies walking tethered on a ball. The CxTr flexion angle is from inverse kinematics on motion-captured joint positions: 0° fully flexed, 180° colinear. That is the same definition as `scripts/probes/ctr_flexion_map.py`.
+  - Mean ± SD trajectory envelopes over the step cycle: front 10-160°, middle 70-140°, hind 70-180°. These are not frame-level extremes, and no standing or grooming angles were found. Karashchuk et al. 2021 report coxa and femur rotation, not CTr flexion.
+- **Mapped onto the model's hinge** (physical branch only, hinge above the fold):
+
+  | leg | fold (femur flat on coxa) | measured walking envelope | flybody range |
+  |---|---|---|---|
+  | front | −30° | about −20° to 130° | −8.6° to 114.6° |
+  | middle | −15° | about 55° to 125° | −8.6° to 114.6° |
+  | hind | −67° | about 2° to 129° | −40° to 86° |
+
+  - The upper ends are extrapolated past the map's 120° hinge limit at slope about 1.
+  - The s9 front and middle rest references (−64/−71° and −60/−61°) lie below the fold. There the femur has passed through the coxa: the map's flexion rises again on that branch, to 34-45°. They are unphysical and cannot be rest targets.
+- **Reading.** flybody's lower bounds hold the measured envelope. Its upper bounds cut about 15° (front, middle) and about 40° (hind) of measured walking extension. That is within figure-read uncertainty for front and middle, but not for hind.
+  - Candidate, behind a switch, not built: CTr lower bound at the fold (physical_limit, derived from model geometry); upper bound at the measured envelope (measured_this_class, figure-read); s9 front and middle rest references dropped.
+  - Discriminating test: Haustein's Dataverse tracking data give frame-level extremes. Then rerun the dead-fly and standing checks (F-STAND-3) unchanged.
+- **Built, behind switches (20:09).** `joint:ctr|range_source` 1 (`passive.apply_ctr_ranges`, `data/params/ctr_ranges.csv`, written by `ctr_flexion_map.py --table` on a 0.5° grid):
+
+  | leg | lower bound (fold) | upper bound | basis of the upper bound |
+  |---|---|---|---|
+  | lf / rf | −29.0 / −30.5° | 130.8 / 129.7° | measured envelope max (160°) mapped onto the hinge |
+  | lm / rm | −14.5 / −15.5° | 125.3 / 124.6° | measured envelope max (140°) |
+  | lh / rh | −68.0 / −67.0° | 112.0 / 113.0° | the model's straightest reach (flexion 170.6 / 171.0°), short of the measured 180° |
+
+  - Correction to the table above: the hind upper end is not about 129°. The hind map peaks at a flexion of about 171° at hinge 112-113° and then bends back, so the model's hind leg cannot reach the measured colinear 180°. The linear extrapolation was wrong. The 9° shortfall is within the figure-read uncertainty of an envelope that touches 180°.
+  - Tests (`tests/test_coxa_ranges.py`): switch off keeps −100..100°; the lower bound is a flexion minimum on every leg; the s9 front and middle references lie below it and the hind ones do not; the refit references below lie inside the ranges.
+- **Rest references refitted inside the CTr ranges** (`data/params/passive_leg_rest_fit_ctr.csv`, `joint:leg|spring_reference` 3; `passive_rest_protocol.py --fit --ctr`; coxa ranges left at the joints.py envelopes):
+  - Front and middle CTr references sit on the fold bound (−29 to −30.5° front, −14.5 to −15.5° middle). Coxa yaw (−30°) and roll (±25°) sit on the joints.py limits, which are assumed.
+  - Residuals (theta/phi/psi, deg): rf 13.0/−4.2/9.0, lf 10.3/−1.6/7.4, rm 12.0/−0.5/7.2, lm 12.0/−0.6/7.3; hind under 0.3 and unchanged. s9 had rf 6.7/−11/2.0 and rm 8.9/−0.5/5.9.
+  - So with the CTr held physical, the eLife equilibria are matched to about the ±10° digitisation, but only by pressing every front and middle leg against three bounds. Two of those bounds are assumed. The fit is consistent with the data, but it does not identify the references.
+- **Dead fly and standing with the CTr switch** (20:13; `runs/s12/deadfly_template_ctr*`, `runs/s12/standing/standing_ctr_{dead,live}_s12.*`; m9d profile with `joint:ctr|range_source` 1 and `joint:leg|spring_reference` 3, seed 12, 1.5 s):
+  - Dead-fly test (template body): range limits fail, lf and lm CTr on the fold bound 50-59% of the time (F-DAMP-2 table). This is by construction: the refit puts those references on the bound.
+  - Standing: thorax ends at 0.635 mm dead and 0.634 mm live, with the trunk on the floor 98% of the run; at the end the load is mostly on rm (about 5.5-6 µN). Contact sheet (`standing_ctr_live_s12.png`, viewed): the fly lies on its belly with the left front leg raised in the air. That is not a resting posture.
+  - The switch stays at 0. The CTr ranges themselves are physical (the fold) and measured (the upper bounds); what fails is that the references refitted inside them do not hold the fly up, as with every other passive configuration (F-STAND-3).
+
+### F-STAND-3: the fly cannot stand because the model has no resting support drive, and no measurement fixes one
+Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 measure a median standing head height of 0.5 mm above the motor-silenced collapse. For this body that is a thorax origin near 1.0 mm (inferred). Pratt et al. 2024 put the dorsal thorax at 0.51 body lengths, about 1.04 mm, at the slowest walking speed. The model's dorsal thorax is the origin plus 0.54 mm. The model ends at 0.54-0.77 mm with the trunk on the floor.
+
+- **The brain contributes nothing at rest.** On m9w the only leg motor neurons with tonic firing are the slow tibia flexors, 12.6-15.6 Hz per leg. Their spontaneous drive (36.45 mV) is inferred, fitted to a measured 24.8 Hz. ThC, CTr and TiTa motor neurons are silent, so the live and dead runs end within 0.2 µm of each other.
+- **What holding the pose would take** (`scripts/probes/stand_budget.py`, thorax held at spawn by a stiff spring, joint torques read off). Units µN·mm.
+  - CTr needs 0.94-2.90 of hold torque per leg. The passive springs push the wrong way, by -0.42 to -0.83.
+  - ThC pitch needs about 2.0-2.4 on the front and hind legs.
+  - The CTr extensor Hill unit's capacity is r·F0 = 8.9 (F0 324 µN, r 0.027 mm; FlyMimic front leg, copied to mid/hind). Holding therefore needs a resting extensor activation of about 11-32%.
+- **Tonic slow units are two orders short.** Suppose every leg pool got the slow tibia flexor's resting rate (each pool's slow units capped at the slow class's EM-volume maximum). Hill activation is the force-weighted mean of unit activations, and slow units give 0.05 µN each (Azevedo 2020 class value; measured class, model use inferred). The result is about 0.3% activation, against the 11-32% needed.
+- **Real flies use active force at rest** (Wang 2025, read). Silencing the leg motor neurons (e49-Gal4 > GtACR1) makes standing flies fall:
+  - fall onset 40-300 ms after light-on;
+  - median fall rate 1.3 mm/s, against 37 mm/s for their passive-only simulation;
+  - their model reproduces the slow fall only if active force decays with τ ≈ 100 ms (MN inactivation onset about 30 ms, 90% by 52-114 ms, plus about 40 ms muscle delay);
+  - holding the median 0.5 mm stance needs about 90× the passive torque.
+  - Adhesion is not what fails. The silenced flies fall with their feet intact. In the model, the feet slide at the friction limit (traction/normal force 1.0 at μ = 1). That follows the collapse; it does not cause it.
+- **The reflex route is sparse and lopsided.** The leg load sensors (campaniform sensilla; `scripts/probes/load_reflex_paths.py`) number, per leg: lf 6, lm 2, lh 15, rf 2, rm 0, rh 9.
+  - Direct synapses from them onto support motor pools exist only on the front legs: lf sternotrochanter 46 and tergotrochanter 159; rf tergotrochanter 27.
+  - Two-hop paths are below 2 synapse-equivalents per pool.
+  - A left-right asymmetry of 6:2 and 2:0 is an assignment or annotation gap, not anatomy. It ties standing to the sensor-assignment item of B.
+- **The missing value.** The resting firing rate (or recruitment) of the trochanter-depressor pools (tergotrochanter, sternotrochanter) and the coxa promotor/remotor pools. No Drosophila recording of resting rates for these pools was found (subagent search plus own reading). Azevedo 2020 and 2024 record tibia motor neurons only.
+- **What would not be honest.** Filling that value so the fly stands at 1.0 mm would be a behavioural fit, which the Director's instruction rules out. Possible routes are listed in DECISIONS s12 (18:23).
+- **Resolved for now as option (a)** (Director 5 Oct 02:05; DECISIONS 02:41, result 02:50). Option (c), the connectome's own load reflex on m9f with nothing fitted, fails on seeds 12-14. Live and dead both lie down by 40 ms and end within 6 µm of each other. The only tonic leg motor neurons are the slow tibia flexors (12.6-16.1 Hz). The load afferents fire at 21-23 Hz on five legs and are silent on lh. The homolog search found no resting rate for any coxa or trochanter support pool in any insect, so there is nothing to fill. The blank stays open and the fly lies down.
+  - Fall after silencing at 500 ms: 2-4 µm, because there is no standing state to fall from. The model's only fall is passive, from placement at 1.32 mm: onset within 10 ms, 15 mm/s. Real silenced flies fall at 1.3 mm/s after 40-300 ms; Wang's passive-only model falls at 37 mm/s.
+  - Side note: the lh load afferents never fire at rest, while every other leg's fire. **Answered 5 October 03:30** (DECISIONS 03:25; `scripts/probes/load_afferent_legs.py`, `scripts/probes/mirror_audit.py`). It is that leg's load, not assignment. The dead fly lies rolled onto its right side with lm and lh in the air. lh's strain proxy is 0.83 against 1.7-6.4 on the other legs, so its drive (2 mV + 8 mV × tanh(load)) sits at 5.1 mV, under the 7 mV threshold. The load channel saturates above about 2 load units, so it reports little more than "loaded or not".
+  - The roll started in mid-air (0.9° at 10 ms) from a left/right difference in the fitted leg rest angles. The F-REST-1 targets are right legs only; the left legs were fitted to the same targets and reached another solution of a non-unique fit (front coxa roll 23.2° against 5.0°, yaw −29.4° against −19.7°, CTr −63.6° against −71.1°). `joint:leg|rest_mirror` 1 gives the left legs the right legs' values (bilateral symmetry inferred). Results: roll at 30 ms −0.2° (was 1.9°); final roll 16.2° (was 25.3°), still onto the right side; gate PASS. Adopted as **m9r**. Sheet `docs/media/s12_rest_mirror_dead.png` (viewed).
+  - The tip-over remains, smaller and in the same direction. The splayed lying pose looks sideways-unstable, and residual body asymmetry picks the side. Residual asymmetries after mirroring (audit): leg damping up to 10% (lf coxa yaw 0.049 against 0.053; it is derived from each leg's own stiffness projection), FTi ranges under 1°, segment origins up to 0.15 mm (flybody scan), and the left wing lying on top (guessed). lh still carries no load, so its load afferents stay silent. That is posture under option (a), not a sensor fault.
+  - The damping and stiffness residual is specimen geometry (`scripts/probes/mirror_legs_geometry.py`, `runs/s12/stand3/mirror_legs_geometry.json`). flybody's neutral hinge angles are identical left and right. The scanned legs differ: keypoints by up to 25 µm on the front legs and up to 14 µm on the others, and segment lengths by up to 1.6% (front tibia-tarsus 553 against 544 µm; mid femur 830 against 840 µm). The coupled stiffness built from that geometry (JᵀKJ) differs by 6.6% (front), 2.5% (mid) and 3.2% (hind); the damping follows it. This is measured geometry of one specimen, within scan uncertainty, so it stays.
+- **Is the gap upstream of the legs? Director leads (5 Oct 03:00), checked 03:45-03:52.** Recorded either way.
+  - **The model's descending drive at rest** (`scripts/probes/dn_rest_rates.py`; m9r, seeds 12-14; senses on 200-1200 ms, then 300 ms with all afferent drive removed; `runs/s12/dnrest/`, backhouse):
+    - No descending neuron (DN) has its own tonic drive. Only 60 cells in the whole model do, the slow tibia flexor motor neurons (`Ti flexor MN`, `Acc. ti flexor MN`; inferred, fitted to Azevedo 2020's resting rate).
+    - With the afferent drive removed, all 1318 DNs are silent (0 spikes in the last 200 ms, every seed).
+    - With senses on, 91-93 of the 1318 DNs fire (6.9-7.1%): 12.3-12.7 Hz among those active, 0.87 Hz averaged over all DNs, median 0.
+    - The firing DNs are mostly gnathal-ganglion types (DNge, DNg, including the DNg12 types). On seed 12, the largest excitatory input to 57 of the 91 is head bristle mechanoreceptors (BM, BM_InOm, BM_Taste, BM_Vib by type).
+    - The head-touch channel drives every head bristle cell with the total head contact force (`extrasenses.py`; gain guessed), and the lying fly's head is on the floor (F-DAMP-2). The model's resting DN activity is therefore a by-product of option (a)'s posture, not a tonic descending drive.
+    - DNs with published recordings are silent: DNa01, DNa02, the giant fiber DNp01, DNp02, DNp07, DNp09, DNp10, DNb02, DNa05, DNg11, DNp42, MDN, DNb06, DNa15 and DNg13. One DNb05 fires at 7-9 Hz. DNg02 and DNp50 are not type names in this connectome.
+  - **What real flies show** (`docs/research/s12_resting_dn_activity.md`; one source agent plus my own read):
+    - No paper found gives a resting DN rate in Hz.
+    - DNa02 "hyperpolarized whenever the fly stopped walking" (Rayshubskiy et al. 2025 eLife, Fig 6A-B, text read); the text gives no number.
+    - Calcium imaging of about 100 DNs per fly: "Only a very small fraction of DNs encode resting"; about 60% encode walking, about 15% head grooming (Aymanns, Chen & Ramdya 2022 eLife 11:e81527, read). The authors propose, without testing it, that the rest-encoding DNs "could actively drive the tonic muscle tone required to maintain a natural posture". Their cell types are not identified.
+    - VNC imaging (Chen et al. 2018 Nat Commun) and whole-brain imaging (Aimon et al. 2019 PLoS Biol) give no resting level that converts to a rate.
+    - In Azevedo 2020, a nicotinic antagonist lowers the slow flexor's resting rate and resting force (about 1.5 µN). So part of that pool's resting drive is cholinergic synaptic input (inferred), from central premotor neurons or cholinergic leg afferents; the paper does not say which. In the model, all of it is the cell's own drive.
+  - **Reading.**
+    - Mostly silent DNs at rest agree qualitatively with the imaging. No measurement shows the model's DNs to be too quiet, so the gap is not shown to be upstream of the legs.
+    - A small rest-encoding DN population exists in real flies. Its types and rates are unknown. It is a brain blank with no fill value, and it already has an owner: the per-type `spontaneous_drive` (`lif.py`, declared default 0, "no tonic drive"). No new mechanism is needed, only a value nobody has measured.
+    - Where the support drive originates (descending, VNC premotor, or sensory feedback) is unresolved.
+    - Side defect found: one head-contact scalar drives all head bristle types, including interommatidial and taste-peg bristles. Head touch has no spatial specificity (recorded, not changed).
+  - **Next discriminating experiment:** identify the Aymanns 2022 rest-encoding DNs by their stated positions (medial, near the giant fibers; lateral) against the connectome's DN somata or axon tracts in the neck connective. Then check whether those types reach the support pools within two synapses. If they do, the blank has a named location, though still no rate.
+  - **Done (Director item 2, 03:56-04:05; matches inferred, no drive set):** details in `docs/research/s12_resting_dn_activity.md`, scripts `neck_rest_dn_match.py` and `rest_dn_reach.py`.
+    - Method: every BANC DN axon was placed in the BANC neck cross-section (Dataverse 8.1, plane y = 92500). Types with SEZ somata were excluded because Aymanns' driver "lacks expression in the subesophageal zone".
+    - Candidates graded low (none higher): 21 brain DN types within 5 µm of a giant fiber (for example DNp07, DNa13, MDN, DNb01, DNb07) and 5 at the lateral extremities (DNa02, DNa06, DNb06, DNp20, DNp33). 156 of the 182 lateral types are SEZ cells and drop out.
+    - Leg reach: DNp07 and DNa02 rank above the 90th percentile of all DNs for two-hop reach onto leg motor neurons. Both make over 100 direct synapses per cell onto leg motor neurons.
+    - All low candidates are silent in the model at rest.
+    - Caveat: DNa02 hyperpolarizes when the fly stops (Rayshubskiy 2025), so if it is a rest-encoder its rest signal is a decrease.
+    - The blank now has candidate locations, still no rate.
+
+### F-SENSE-NERVE-2: each leg sensor on its own entry nerve; the connectome annotates only 2 load sensors per leg
+- **What option 1 still got wrong** (`sense:mechano|assign_by_nerve` 1, F-SENSE-NERVE-1):
+  - It looked up combined type names whole. "SNpp29,SNpp63" and "SApp06,SApp15" have no census nerve, so 23 wing- and haltere-nerve campaniforms stayed in the leg load channel, and 29 notum- and wing-nerve bristles stayed in leg contact.
+  - It gave each type one leg from its dominant neuropil. For the 12 annotated leg campaniforms (SNpp53) that agrees with the cell's own nerve and side in only 2 of 12. These cells project bilaterally and across segments, so the neuropil rule mislabels them. For the other leg afferents the two rules agree for 98.7%.
+- **Option 2** (`assign_by_nerve` 2; `sensory.entry_nerve_per_cell`): the cell's own male-cns entry nerve and root side (measured) give its leg. ProLN gives front, MesoLN mid and MetaLN hind. The prothoracic DProN, VProN and ProAN nerves, where the front hair plates enter, keep the type rule. Combined names are split into their parts. Test: `tests/test_sense_nerve2.py`.
+
+| channel (seed 0, m9w) | option 1 | option 2 |
+|---|---|---|
+| leg load (campaniform) | 34: lf 6, lm 2, lh 15, rf 2, rm 0, rh 9 | 13: 2 per leg (lh 3); all SNpp53 |
+| leg contact | 1793 | 1764 |
+| leg joint angle / velocity | 78 / 379 | 78 / 392 |
+| wing strain / haltere strain | 211 / 288 | 237 / 408 |
+
+- **Silence gate.** It passes on all 8 seeds, 12-19: 0 spikes/ms in the last 100 ms, thorax 0.535-0.55 mm, no MuJoCo warnings, no NaN. Adopted as m9n (DECISIONS 18:28).
+- **Load reflex under option 2** (`scripts/probes/load_reflex_paths.py --set ...=2`). Same-leg direct synapses from the campaniforms onto support pools are nearly gone: lh tergotrochanter 7, lh tibia flexor 6, rh tibia flexor 5. Two-hop paths are below 1 synapse-equivalent per pool. The front-leg paths in F-STAND-3 came from misassigned cells, so route (c) of DECISIONS 18:23 has almost no annotated substrate.
+- **The real gap is annotation, not assignment.** Counts in male-cns leg nerves, against the literature (agent report `docs/research/s12_leg_sensor_counts.md`):
+  - Campaniforms: 12 annotated (2 per leg). The femoral field alone has 11 numbered sensilla (Saltin 2025, quoting Dinges 2021; secondary). Dinges' per-leg table was not readable. Annotated load sensors are at most about a fifth of the real count.
+  - Hair plates: 96 in the leg nerves, plus front-leg plates via DProN/VProN. Pratt 2026 counts 214 hair-plate neurons in 42 plates on the six legs (read), about 36 per leg.
+  - Chordotonal: 372 in the leg nerves, about 62 per leg. Mamiya 2018 counts 135 front-leg FeCO neurons labelled by iav-Gal4, which is 80% of the population (read), so about 170 in one front-leg FeCO (derived).
+  - Unlabelled: about 180 leg-nerve cells annotated "leg proprioceptor, organ unassigned" (SNppxx 80, untyped 66, SNpp40 32, SNpp55 7), and 442 "unknown sensory" leg-nerve cells (262 on the front legs). None of them is driven. They are the likely home of the missing campaniforms and chordotonal neurons.
+- **Next discriminating step.** Assign organs to the unlabelled leg-nerve cells by an outside annotation (FANC/BANC leg-sensor labels via the existing crosswalk, `data/derived/banc_proprio_crosswalk.csv`). Keep the match uncertainty explicit. Then re-count the campaniform-to-support-pool paths. Until then the load channel is 2 cells per leg, which is a recorded under-count.
+
+### F-MUSCLE-MH-1: mid and hind leg muscles derived from measured segment size, not copied; the TTM torque from fibre data
+- **Before.** Every mid- and hind-leg Hill muscle was a copy of FlyMimic's front leg (guessed). FlyMimic (arXiv 2509.06426) built mid/hind muscle paths from micro-CT but fitted forces for the front leg only (agent report `docs/research/s12_leg_muscle_anatomy.md`).
+- **Measured input.** `scripts/probes/leg_segment_geometry.py` measures each leg segment of the flybody mesh: length, mid-third cross-section, and the width at the proximal and distal ends (`data/derived/leg_segment_geometry_flybody.csv`). The mesh comes from one confocal-scanned female, so these are one-specimen numbers. Ratios to the front leg (left/right mean):
+
+| ratio to front leg | coxa area | coxa distal width | coxa proximal width | femur area | femur distal width |
+|---|---|---|---|---|---|
+| mid | 0.579 | 1.106 | 1.227 | 0.770 | 1.014 |
+| hind | 0.932 | 1.072 | 1.442 | 1.058 | 1.016 |
+
+- **Rules** (inferred; `scripts/build_midhind_muscles.py`; switch `muscle:leg|midhind_source` 1). Each front-leg FlyMimic member is scaled by the segment that houses it. Force scales with that segment's cross-section, and moment arm and optimal length scale with the width of the joint it works on:
+  - muscles inside the coxa (trochanter flexors and extensor) follow the coxa;
+  - the tibia flexor and extensor inside the femur follow the femur;
+  - the 7 thorax-to-coxa muscles take force × (coxal opening)² and arms × the opening;
+  - the two sterno-tergo-trochanter extensors take force × (coxal opening)², with arms × the coxa distal width.
+  - The assumptions are the same fill fraction, pennation and specific tension as the front leg, and one strain per radian. Tibia-tarsus muscles stay placeholders (guessed).
+  - Kept as bounds in `data/params/leg_muscle_midhind_scale.csv`: the copy (all factors 1) and a volume rule (area × length / width).
+- **Effect on torque capacity** (F0·r, against the copy):
+
+  | joint | mid | hind |
+  |---|---|---|
+  | thorax-coxa | 1.85 | 3.0 |
+  | CTr flexor | 0.64 | 1.0 |
+  | CTr extensor | 1.62 | 2.17 |
+  | femur-tibia | 0.78 | 1.07 |
+
+  The thorax-coxa rule is the weakest assumption: the coxal opening is the only thoracic dimension measured per segment.
+- **TTM (B15).** Peak torque is 90 µN·mm (inferred; 5-95% 53-134), replacing the guessed 100.
+  - Force: 27 fibres (Jaramillo 2009) × 71.2 × 40.7 µm (Jarvis 2021) × 34.7 mN/mm² (Jarvis 2021) = 2.7 mN.
+  - Arm: 0.033 mm, FlyMimic's front sterno-tergo arm × the measured mid/front coxa distal width.
+  - Cross-check: about 60 µN per leg at the tarsus over a 1.5 mm lever, about 120 µN for both legs. Zumstein measured 101 µN and derived 274 µN from kinematics (abstract level).
+  - **Double count, checked** (`scripts/probes/ttm_double_count.py`, measured on m9w). Yes, it was counted twice. TTMn_L and TTMn_R each join the mid CTr-extensor Hill muscle (F0 324 µN, arm 0.027 mm), an 8-MN pool. Their activation-weight shares are 0.042 (L) and 0.055 (R), alongside STTMm, the sternotrochanter, tergotrochanter and Tr extensor MNs.
+  - The hook adds the TTM again. A giant-fibre volley therefore drives both the hook and about 5% of the mid CTr extensor. The second path is small, but it is the same muscle counted twice.
+  - Switch `jump:ttm|exclude_from_hill` 1 removes TTMn from the Hill pool, so the TTM acts only through the hook. Test: `tests/test_ttm_exclusion.py`. It is part of m9d, adopted after all 8 gate seeds passed (DECISIONS 18:53, result 19:13).
+- **Standing** (seed 12, m9w, 1.5 s; `runs/s12/standing/standing_midhind_live_s12.png`, viewed). Thorax ends at 0.542 mm, against 0.542 mm with copied muscles. Legs carry 0.3 µN at the end, against 3.6 µN. The trunk is on the floor 97% of the time in both runs. As pre-registered, the muscles do not lift the fly, because at rest only the slow tibia flexors fire (F-STAND-3).
+- **Gate** (m9m = m9n + this switch + TTM 90). All 8 seeds (12-19) pass: 0 spikes/ms in the last 100 ms, no MuJoCo warnings, no NaN, thorax 0.537-0.551 mm, whole brain 0.24-0.26 Hz. Adopted as m9m (DECISIONS 18:38, result 19:07).
+- **For Ben's list.** Ask the FlyMimic authors for their mid/hind muscle models, the actual values this derivation stands in for.
+
+### F-FTI-2: the measured maximal flexion torque sits at the femur's geometric ceiling; no data fix the flexor:extensor split
+- **Question** (B, extensor:flexor). FlyMimic's front-leg tibia flexor gives 1.04 µN·mm (F0 68.1 µN × arm 0.0152 mm) and its extensor 10.1 µN·mm. Azevedo et al. 2020 measured about 100 µN at a 417 µm lever, so the flexor makes at least 42 µN·mm. Scaling the flexor ×40 and moving the force-length optimum both failed their s11 checks (F-BODY-1). Per the two-fixes rule, this item gets a write-up with new data, not a third fix.
+- **New data** (agent report `docs/research/s12_tibia_flexor_extensor.md`; read unless marked):
+  - The whole front femur has 97 muscle fibres (Kuan et al. 2020, X-ray holographic nano-tomography). The older fluorescence count was 33-40 (Soler 2004, secondary).
+  - Leg muscle fibres are 8-16 µm in diameter (Kuan 2020).
+  - No published adult split of fibres between the flexor (tidm) and the extensor (tilm) was found. Soler 2004 probably has it, but it is paywalled.
+  - **No tibia extensor force has been measured.** Azevedo's authors call it unresolvable with their method.
+  - The flexor motor pool (about 15 MNs) is larger than the extensor's. That is a qualitative constraint only.
+- **The ceiling** (derived):
+  - All 97 fibres at 8-16 µm give 0.0049-0.0195 mm² of fibre cross-section. At 34.7 mN/mm² that is 170-680 µN for every femur muscle together. The specific tension is Jarvis 2021's jump-muscle value, so its use on leg muscle is inferred.
+  - The measured femur cross-section (0.0113 mm², flybody mesh) gives 392 µN at full fill.
+  - To make 42 µN·mm with all of that force needs an arm of at least 0.06-0.11 mm. The femur's distal half-width is 0.059 mm (measured on the mesh).
+  - So Azevedo's flexion torque is reachable only if the flexor takes nearly every femur fibre on an arm of nearly the whole joint radius, or if leg muscle has a higher specific tension than the jump muscle. FlyMimic's arm (0.0152 mm) and flexor force sit about 40× below it.
+- **What is fixed and what is not.** The flexor's torque capacity is bounded, 1-42 µN·mm (inferred), and the measurement sits at the top. The extensor has no measurement, so the ratio is free within the ceiling.
+- **Decision.** No new switch. The FlyMimic split stays, labelled fitted-by-FlyMimic. `muscle:leg|ft_flexor_scale` stays 1, with bounds 1-40 recorded.
+- **Next discriminating data.**
+  - The tidm/tilm fibre split (Soler 2004, or the Kuan 2020 XNH volumes, which are public EM-like data);
+  - the flexor tendon's insertion distance from the femur-tibia joint on the XNH volume;
+  - leg-muscle specific tension.
+  Each would collapse one factor of the 40× range.
+
+### F-DAMP-1: flybody's leg damping is about ten times the bound the data allow, and it was hiding the speed of the collapse
+- **The bound** (inferred). Wang et al. 2025 (eLife, PMC12324252; full text searched) give no damping value. Their motor-silenced standing flies reach the passive posture about 350 ms after light-on. That interval is already taken by MN inactivation (about 30-110 ms), muscle delay (about 40 ms) and active-force decay (τ ≈ 100 ms, their model). So passive relaxation can add at most about 0.1 s: c/k ≲ 0.1 s.
+- **The model.** flybody's damping is 1 µN·mm·s/rad (femur-tibia 0.4), guessed. Against the measured springs that gives c/k ≈ 1.2 s. FlyMimic uses c/k 0.05 s, a model choice.
+- **Option** (`joint:leg|damping_source` 1; `passive.set_damping_from_stiffness`). Each leg joint gets c = τ × its own measured stiffness: the diagonal of J^T K J when the springs are coupled, with off-diagonal damping dropped (inferred). τ = 0.05 s (`joint:leg|damping_tau_s`; bounds 0.005-0.1 s). It is applied as MuJoCo DOF damping, so the integrator treats it implicitly; the tarsal chain is unchanged. Test: `tests/test_leg_damping.py`.
+- **Dead and live fly** (seed 12, 1.5 s; numbers in DECISIONS s12 18:53).
+  - The passive collapse goes from 410 ms to 50 ms for 90% of the drop. The trunk touches the floor at 20 ms instead of 50 ms.
+  - The end height hardly moves: 0.544 → 0.565 mm dead, 0.542 → 0.555 mm live.
+  - Wang's passive-only simulation falls at about 37 mm/s (their model, not a measurement). With option 1 this model falls about 31 mm/s over the first 20 ms (1.32 → 0.70 mm); with flybody damping, 5 mm/s.
+- **Reading.** Damping sets how fast the fly falls, not whether it stands. The old slow sink (hundreds of ms) looked like a real silenced fly's slow fall, but for the wrong reason: viscous creep at a damping the data rule out, where the real fly has decaying active force. With realistic damping the missing resting drive (F-STAND-3) shows as a fast collapse.
+- **Status.** Gate passed on all 8 seeds (12-19); adopted as m9d with the TTMn exclusion (DECISIONS 18:53, result 19:13). Whole-brain rate excluding ORNs rose from about 0.08 to 0.14 Hz on 7 of 8 seeds (DECISIONS 19:13). Source found in F-DAMP-2: the collapsed fly's head lies on the floor instead of on its right front tibia, and the head-bristle channel reads total head contact force. Not leg motion.
+
+### F-DAMP-2: m9d's extra resting motion is MuJoCo's unconverged noslip pass; its brain-rate rise is the head lying on the floor; and under instant release its dead fly lands on range limits
+- **Status (20:49): noslip off adopted as m9s** (DECISIONS s12 20:33 pre-registration, result 20:49). Gate silent on seeds 12-19; template dead fly keeps every verdict. Resting leg speed is step-converged on seeds 12 and 14 (12.9/12.2 and 12.8/12.6 deg/s at k = 1/2, against 17.0/24.5 and 16.6/25.8 at 3 iterations). Feet move about half as much (0.32-0.37 against 0.75-0.84 mm summed over 0.8 s). The head-floor contact and the collapsed posture are unchanged.
+- **Question** (F-DAMP-1 status line). On m9d the whole-brain rate at rest rose from 0.086 to 0.143 Hz, mostly in the head bristles (summed BM_InOm 3725 → 8381 Hz). The first guess was that they reported more leg motion. Is that motion physical or numerical?
+- **Probe** (`scripts/probes/resting_joint_speed.py`). It runs the gate's closed loop (or the body alone) for 1 s and reports the RMS speed of the leg hinges after 200 ms. `--substeps k` divides the physics step by k and holds the muscle torques over the extra steps. The brain, muscles and sensing stay at 0.1 ms. A physical result does not change with k; a numerical one does.
+- **Results, closed loop, RMS leg speed (deg/s; peak in brackets):**
+
+  | profile, noslip iterations | k = 1 (0.1 ms) | k = 2 | k = 4 | k = 8 |
+  |---|---|---|---|---|
+  | m9m, 3 (flybody) | 14.9 (540) | 15.0 (536) | 16.9 (884) | |
+  | m9d, 3, seeds 12/13/14 | 17.0 / 16.8 / 16.6 | 24.5 / 24.3 / 25.8 | 9.5 / 5.7 / 9.4 | 7.5 (seed 13) |
+  | m9d, 0, seed 13 | 13.6 (142) | 12.0 (142) | 12.3 (131) | |
+  | m9d, 20, seed 13 | 15.6 (724) | 14.5 (440) | | |
+  | m9m, 0, seed 13 | 17.2 (759) | 17.5 (792) | | |
+
+  - With flybody's 3 noslip iterations, m9d's resting motion changes non-monotonically with the step, by up to 4×, with peaks up to 1800 deg/s. The three seeds agree closely at each step, so this is not chaotic divergence; it is set by the step.
+  - With noslip off, the same loop converges: 12-13.6 deg/s, peaks about 140 deg/s.
+  - With 20 iterations it is nearly converged (15.6 against 14.5, a 7% step change).
+  - m9m with noslip off moves more than m9d (17.2-17.5 against 12-13.6 deg/s), with peaks near 780 deg/s; why is not checked (m9m keeps flybody's damping and the TTMn in the Hill pool).
+  - The body alone (no spikes, noslip 3) is quiet on both: m9m 13.2, m9d 3.3-3.6 deg/s.
+- **Reading.** MuJoCo's noslip pass (a per-step projection that removes contact slip, run for a fixed 3 iterations) is not converged at this step when the legs are lightly damped. Its leftover depends on the step. The extra motion under 3 iterations is therefore numerical. With the solver converged (noslip off), m9d's legs move less than m9m's, yet m9d's brain still spikes more (41.5-43k against 33.4k spikes after 200 ms, seed 13). So the rate rise does not come from leg motion. F-DAMP-1's explanation ("lower damping lets the resting body move more and the bristles report it") is withdrawn.
+- **What the head bristles read** (same probe, now also logging head contact; seed 13, closed loop, `runs/s12/head/*.json` on backhouse). The head-touch channel (extrasenses) drives every head bristle, taste-peg and pharyngeal mechanosensor with gain × tanh(total normal contact force on the head, antennae, rostrum, haustellum and labra):
+
+  | profile, noslip | head in contact | mean head force (µN) | main contact partner (share of samples) | spikes after 200 ms |
+  |---|---|---|---|---|
+  | m9m, 3 | 84% | 1.20 | right front tibia 81%, floor 35% | 34.4k |
+  | m9m, 0 | 83% | 1.14 | right front tibia 78%, floor 27% | 33.4k |
+  | m9d, 3 | 92% | 2.37 | floor 92%, right front tibia 9% | 41.4k |
+  | m9d, 0 | 94% | 2.44 | floor 94% | 41.5k |
+
+  - The rate rise is the head resting on the floor. In m9m the collapsed fly's head mostly lies on its own right front tibia; in m9d it lies on the floor with twice the force. The noslip setting does not change this.
+  - A standing fly's head does not touch the floor. Both profiles therefore carry head-bristle drive that exists only because the fly is not standing (F-STAND-3). The resting whole-brain rate is not a clean baseline until it stands.
+  - The channel is coarse: interommatidial bristles fire for contact anywhere on the head region, including the mouthparts. A per-region map would need the bristle field (B18, absent).
+- **Dead fly under m9d's damping** (`scripts/dead_fly.py --template`, 1 s instant release; `runs/s12/deadfly_template_*`):
+
+  | body | end height | range limits | posture order |
+  |---|---|---|---|
+  | template (flybody damping) | 0.549 mm | pass | pass |
+  | + damping from stiffness (m9d's body) | 0.566 | **fail**: lf, rf, lm coxa roll on the assumed ±25° limit 78-95% of the time | pass |
+  | + damping + flybody coxa ranges and refit | 0.588 | **fail**: 7 coxa joints | **fail** |
+  | + CTr ranges and refit (flybody damping) | 0.606 | **fail**: lf, lm CTr on the fold bound 50-59% | pass |
+  | + CTr + damping | 0.635 | **fail**: 6 joints | **fail** |
+
+  - With realistic damping the instant-release fall is fast (peak kinetic energy 1.2-2.9 against 0.05). The legs are thrown against their limits and friction holds them there. The springs alone no longer set where the fly comes to rest.
+  - The CTr failure is built in: the refit puts the front and middle CTr references on the fold (F-COXA-2).
+  - The m9d adoption test (DECISIONS 18:53) did not include the dead-fly test. This failure is new information, not a regression the gate missed. The battery's dead-fly test uses flybody damping.
+- **Reading.** Instant release is not Wang et al.'s protocol. Their silenced flies start standing, and lose active force over about 100 ms (their model; MN inactivation measured). With flybody's damping the two protocols looked alike, because viscous creep slowed the fall. With damping from the measured stiffness they do not.
+- **Wang's protocol as a probe** (`scripts/probes/deadfly_decay.py`; criteria unchanged). The placed fly first gets the joint torques that hold it there (read off stiff instrument springs, as `stand_budget.py`; 32.2 µN·mm summed). Those torques then decay as exp(−t/100 ms). τ is Wang's model value (inferred). The hold torque is not a model quantity: it stands in for the active force the model lacks (F-STAND-3).
+
+  | body | range limits | posture order | 90% of drop |
+  |---|---|---|---|
+  | template (flybody damping) | pass | pass | 458 ms (collapse criterion fails: onset 52 ms) |
+  | + damping from stiffness (m9d's body) | **fail**: lf, rf coxa roll on the assumed limit 87-90% of the time | pass | 98 ms |
+
+  - The slower protocol restores the posture order under m9d's damping, but the front coxa roll still ends on the assumed ±25° joints.py limit (F-COXA-1: assumed envelope, mislabelled axes). So with realistic damping the dead fly's rest pose depends on the path of the fall and on an assumed limit, not on the springs alone.
+  - **Held-out caution.** This run reads the fall time course, which DECISIONS 18:23 reserves as the held-out check for standing option (b). To keep it usable, no switch is chosen on it. The damping choice stays on its own evidence (F-DAMP-1), and the comparison with Wang's measured fall is left for option (b). Register updated: seen in an s12 diagnostic, not used for selection.
+
+### F-FLIGHT-3: the fitted wing reproduces hover lift at one condition; against the robotic fly its lift is 1.7× too high and its drag has the wrong shape
+- **Test** (B, flight coefficients beyond one condition). `scripts/probes/wing_coefficients.py` holds the fly still with gravity off and blows a uniform wind (1000 mm/s) over the left wing membrane at angles of attack 0-90°. It reads the fluid force on the wing alone, after subtracting the drag on the rest of the body in the same wind. It then compares the result with the translational coefficients of the dynamically scaled robotic Drosophila wing (Dickinson, Lehmann & Sane 1999, Science 284:1954, Re ≈ 136; measured): CL = 0.225 + 1.58 sin(2.13α − 7.2°), CD = 1.92 − 1.55 cos(2.04α − 9.82°). Area is the membrane planform, π × 0.589 × 1.401 mm = 2.59 mm². Plot: `docs/media/s12_wing_coefficients.png`, viewed.
+- **Lift.** The model gives exactly CL = C_K sin 2α. At the adopted Kutta coefficient 3.1 (inferred: fitted so hover lift = weight, F-FLIGHT-2), CL peaks at 3.1 at 45°, against the robofly's 1.81. That is 1.72× at every angle. At MuJoCo's default of 1 it is 0.55×.
+- **Drag.** CD is 0.5 at α = 0 and then exactly 1.0 from α ≈ 2° to 90°. The robofly gives 0.39 at low angles, 1.70 at 45° and 3.46 at 90°. Split by coefficient:
+  - The slender term (0.25) gives the 0.5 at α = 0.
+  - The blunt term (0.5) gives 2 × 0.5 = 1.0 at any angle above about 1°. MuJoCo's projected area, π·sqrt(Σ(d_j d_k)⁴v_i² / Σ(d_j d_k)²v_i²), saturates for a plate this thin: by hand at 1° it is 98.5% of the planform, matching the probe's 0.985.
+  - So the model wing has 2.5× the robofly drag at 5-20° and 0.29× at 90°.
+- **Rest of the body.** MuJoCo also applies its inertia-box drag to every body that has no ellipsoid geom. In this wind the rest of the fly takes a force coefficient of 2.7-3.3, on the wing's reference area, which the probe subtracts. In flight the legs, head and thorax therefore carry inertia-box drag. Nothing here checks that drag against data.
+- **Reading.** F-FLIGHT-2 made hover lift match weight at one condition by inflating translational lift. That one number stands in for delayed stall, rotational lift and wake capture. The shape is wrong in ways the hover average hides:
+  - lift-to-drag at 45° is 3.1, against the robofly's 1.06, so aerodynamic power and the drag-based yaw torques are too low by about 3×;
+  - any condition with a different angle of attack (steering, forward flight, a changed stroke) gets the wrong force.
+- **Option, behind a switch** (`aero:wing|model` 1; `flight.BladeElementWing`; read only with `membrane_only` 1). A blade-element quasi-steady wing:
+  - 20 spanwise strips of the membrane ellipse, with velocities taken on the pitch axis;
+  - the robofly's translational coefficients (measured), with α folded to 0-90°;
+  - rotational force C_rot ρ|w| α̇ c² dr with C_rot = π(0.75 − x̂₀) (Sane & Dickinson 2002). x̂₀ = 0.20 is the pitch axis' chord position at mid-span on the model wing (derived), giving C_rot 1.74;
+  - α̇ is the pitch-joint rate. The conical stroke (span 40° out of the stroke plane) spins the wing about its span by about 1000 rad/s without changing α. A first version used the total spin and gave a spurious −0.59 W.
+  - MuJoCo's drag, lift and angular drag on the membrane are off, and its added-mass terms stay.
+  - Not modelled: acceleration added mass, wake capture, pitching moment, flexion.
+  - Tests: `tests/test_flight.py` (steady wind equals the robofly to 1e-6; the rotational term follows the pitch joint only).
+- **Bugs found on the way.** `mj_objectVelocity` with a body ID returns the centre-of-mass velocity, not the frame origin's, which gave 2.6 W. The strip width was shared between wings (a 1e-5 area error). Both are fixed and covered by the tests.
+- **Hover, no fitted number** (`scripts/probes/tethered_lift.py --blade`, `scripts/probes/hover_blade_trace.py`; 218 Hz, 140°, rotation −57 ± 55°; `docs/media/s12_hover_blade_trace.png`, viewed):
+
+  | aero | imposed kinematics | PD-tracked |
+  |---|---|---|
+  | ellipsoid, Kutta 3.1 (fitted) | 0.99 W | 0.89 W (s10) |
+  | blade element | 0.72 W (translational lift 0.81, rotational −0.10, drag 0.01) | 0.55 W, tracking p95 9.4° |
+
+  - The guessed kinematics give a mid-stroke α at 70% span of 29° on the upstroke and 47° on the downstroke. The rotation mean is guessed, and this asymmetry costs lift.
+  - The PD thorax tracks worse because the wing now carries robofly drag at high α, about 3.5× MuJoCo's.
+  - The hook costs 52 µs per step, about 5% of a body step.
+- **Reading.** With measured force coefficients and no fitted number, the guessed hover kinematics lift 0.72 of the weight. The fitted Kutta number was hiding errors in the kinematics as well as in the aerodynamics. The next test that can tell them apart: impose measured Drosophila hover kinematics (stroke, deviation and rotation over the beat, stroke-plane angle) and compare lift with weight. A source search is running (`runs/s12/flight/kinematics_lit.md`). The model wing is also larger than a typical female wing (2.59 mm² planform, 2.8 mm span ellipse), which is not checked against data yet.
+
+- **Pre-registered test with measured kinematics (19:35; DECISIONS s12 19:08): FAIL, high.** Muijres et al. 2014 steady-flight kinematics (D. hydei, Table S1; measured) were imposed at 218 Hz with the thorax at 47.6° pitch (`scripts/probes/build_measured_kinematics.py`, `hover_blade_trace.py --table`; pose-fit error 0.0°). Plot: `docs/media/s12_hover_blade_trace_measured.png`, viewed.
+  - Mean vertical force is 1.53 W: translational lift 1.35, drag 0.07, rotational 0.11. The pass band was 0.8-1.2 W.
+  - α at 70% span is 44° at mid-downstroke and 34° at mid-upstroke.
+- **A bug found by this test, fixed before the verdict.** The first run gave 0.29 W, with a rotational term of −1.14 W. The hook used the pitch-joint rate as α̇. That is right only if the other two hinges sweep the stroke frame, and in this model they do not (F-WING-3).
+  - Fix: α̇ is now the wing's spin about its span relative to the stroke frame (span and stroke-plane normal): ω·ŝ minus the frame's own spin (derived; `flight.stroke_frame_spin`).
+  - On the measured beat it equals the measured dα/dt at every phase. For example, at τ 0.2 it is 37 rad/s, where the pitch joint gives 2002 and the measured value is 37.
+  - Tests: a cone about the stroke normal gives zero; the spin equals the stroke-frame rotation rate; rotation that raises α adds force on the lift side.
+  - The old rate is kept as `rot_rate="pitch_joint"` to reproduce the 0.29.
+  - This is a correctness fix (the code did not compute its own documented quantity). No coefficient changed. Both numbers are reported.
+- **Mechanism of the excess (derived estimate, not a run).** At fixed kinematics, force scales roughly as R⁴. The model wing reaches 2.65 mm from hinge to tip, against 2.39 ± 0.08 mm measured in melanogaster free flight (Fry et al. 2005). (2.39/2.65)⁴ = 0.66, which takes 1.53 to 1.01. The model's planform (2.59 mm², ellipse span 2.80 mm) is also larger than typical melanogaster values. Other terms are smaller:
+  - hydei amplitude 131.6° against melanogaster 140° (+13% if melanogaster's were used);
+  - missing wake capture and acceleration added mass;
+  - the stroke-plane and α conventions are inferred.
+- **Reading.** With measured kinematics and no fitted number, the blade-element wing gives the right order of force. The remaining 53% excess is most plausibly the model's wing size. Per the pre-registration, the fail is recorded, nothing is refitted, and option 1 does not become the default.
+  - All guessed-kinematics numbers above (0.72 W, 0.55 W, the Kutta fit) used a generator that crosses the wings (F-WING-3), and are superseded.
+- **Pre-registered size check (20:04; DECISIONS s12 19:58): PASS.** The blade-element strips were scaled about the hinge to the measured female wing length, 2.47 mm (Lehmann & Dickinson 1997, n = 27, the same cohort weighed 1.05 mg). This is `aero:wing|size_source` 1; mesh, inertia and added mass are unchanged.
+  - Same test as 19:35: 1.153 W (translational lift 1.016, drag 0.056, rotational 0.082), against a predicted 1.15 W and a band of 0.8-1.2 W.
+  - Fry's 2.39 mm gives 1.011 W.
+  - Reading: the 53% excess was the scanned wing's length relative to the measured population mass. With measured kinematics, measured coefficients, measured mass and a measured wing length, hover force is within 15% of weight and nothing is fitted.
+  - Validity: one condition (hover, hydei kinematics on a melanogaster-sized wing), and the length was chosen after seeing the fail. It is a consistency check, not held-out validation.
+  - Still open: the mesh and inertia are the scan's, so wing inertial power and the passive pitch response are for the larger wing.
+  - Discriminating test: measure the flybody wing against the body it came from (wing length / thorax length against female melanogaster morphometrics). If the wing is oversized, scale the membrane to measured length and area, behind a switch, and rerun this same test unchanged.
+
+- **Second condition: 13 measured force levels against the robotic fly (20:36; DECISIONS s12 20:31 pre-registration and result).**
+  - Data: Muijres et al. 2014 Database S1, `robotForcesTorques.ForceModulations` (open): 13 beats built from the measured kinematic change per unit force (F/mg 0.85-1.76, 182-220 Hz; D. hydei), and the force a dynamically scaled robotic wing measured with each (measured). The robot's steady beat is Table S1 with stroke and rotation negated; that map is applied to all levels (`build_measured_kinematics.py --robot-level`).
+  - Model: blade-element wing, no coefficient changed, scaled to the database's wing (R 2.99 mm, planform R × c̄ = 2.83 mm², flybody ellipse shape kept; `aero:wing|size_source`-style strip scaling plus `area_mm2`), normalized by 1.8 mg.
+
+  | F/mg (flies) | 0.85 | 1.00 | 1.15 | 1.30 | 1.45 | 1.60 | 1.76 |
+  |---|---|---|---|---|---|---|---|
+  | robot, ratio to steady | 0.91 | 1 | 1.14 | 1.30 | 1.48 | 1.71 | 1.99 |
+  | model, ratio to steady | 0.88 | 1 | 1.13 | 1.29 | 1.45 | 1.62 | 1.82 |
+
+  - Pre-registered rule (ratios within 0.10 at every level): fails at the top two levels (−0.11, −0.17). Steady level 0.865 W, 0.85 of the robot's 1.02 (secondary, pass).
+  - Split (`docs/media/s12_robot_force_levels.png`, viewed): the angle changes alone agree with the robot to about 1% (1.34 against 1.33 at the top). The gap is the frequency term. The model scales as f² exactly; the robot's frequency-only record rises 1.50× for a change that gives 1.36× under f². How the robot runs were scaled in frequency is not stated in the SM. Unresolved.
+  - The free-flying flies' own F/mg rises more slowly than the robot's (1.76 against 1.99 at the top). The model sits between, close to the flies (1.82).
+  - Reading: with measured coefficients and no fitted number, the wing's response to measured kinematic changes is right within about 3% up to 1.45 W. Its absolute force at the steady hydei beat is 15% below the robot's. That fits the known shortfall of a quasi-steady model without wake capture or added-mass acceleration terms. The planform shape is flybody's ellipse, not the hydei wing; the database holds the hydei chord distribution (`wing_model.chords_L`, 20 sections), which would remove that difference. Not done.
+  - Next discriminating test: the robot's roll and pitch modulation sets (same database) give left-right and fore-aft force and torque at fixed frequency, so they test the wing without the frequency question.
+- **Third condition: roll torque at 13 measured roll conditions (20:49; DECISIONS s12 20:43 pre-registration and result). FAIL.**
+  - Data: Database S1 `RollModulations` (open): per-side kinematics built from the flies' measured kinematic change per unit roll acceleration (−0.72 to 3.61 deg per beat², steady frequency), and the robot's forces and torques for all changes and for each angle alone (measured). The torque normalization m g l is sourced in Dickinson & Muijres 2016 (PMC4992712, Fig. 2 caption).
+  - Model: the same wing and scaling as the force test. Torque about the hinge midpoint, robot frame (`hover_blade_trace.py` now reports it).
+  - Result: the model's roll torque is 0.42-0.52 of the robot's (force-corrected; 0.36-0.47 uncorrected) at levels 6-12, against a ±20% rule. The sign is opposite at every level. Yaw torque also flips sign, while side and vertical forces agree, so the robot's torque sign convention is probably the reverse of the force frame; unresolved, and not counted against the wing.
+  - The summed lift is right: vertical force over steady 1.232 against 1.260 at the top, and the stroke-only rise 1.224 against 1.242. The deficit is in the left-right difference: stroke-only torque 0.59 of the robot's, rotation-only 0.44, deviation-only 1.01. The model's parts are strongly non-additive (sum 1.44 of the all-changes torque, robot 0.89).
+  - A hand estimate from the stroke-amplitude difference alone gives about the model's value (0.026 against 0.023 m g l). The robot's is 1.7× larger. The model's narrower hinge spacing (0.43 against 0.71 mm off the midline) accounts for about 11%.
+  - Reading: a quasi-steady wing with measured coefficients gets lift and its symmetric modulation right, but gives about half the measured roll torque for measured asymmetric kinematics. The leading candidate is unsteady terms it lacks (wake capture, added mass), mainly through the rotation component. Plot `docs/media/s12_robot_roll_torque.png` (viewed).
+  - Consequence: steering torques from this wing would need about twice the measured kinematic asymmetry. For flight control the wing needs either an unsteady term with measured support or a torque check against a second robot dataset. No coefficient was changed.
+  - Next discriminating test: a wake-capture or added-mass term from the literature, behind a switch, scored on this same pre-registered roll set (now not held out) and on the untouched pitch set (21 levels) as the held-out check.
+- **Fourth check: the measured hydei planform (21:21; DECISIONS s12 21:17 pre-registration and result).** Muijres 2014 Database S1 `wing_model.chords_L` gives the robot wing's measured chord in 20 strips (`data/derived/muijres2014_wing_chords.csv`; r2/L 0.584, r3/L 0.622 against the ellipse's 0.539, 0.587). Used in place of the ellipse at the same length and area (`hover_blade_trace.py --planform hydei`):
+  - Steady force 1.011 W, 0.99 of the robot's (ellipse 0.85). The 15% deficit was the planform.
+  - Force ratios and roll are unchanged within 1-3%: still failing at levels 11-12 (frequency term), roll still 0.42-0.54 of the robot's with the sign opposite.
+  - The spanwise shape is ruled out as the cause of the roll gap. Robot comparisons use the hydei planform from now on; the organism keeps the scanned wing.
+- **Diagnostic after the result (21:40): the torque reference point.** The model's torques are about the hinge midpoint. Database S1 `body_model` puts the hinges 0.636 mm forward of and 0.465 mm above the centre of mass in the body frame, which is 0.087 mm forward and 0.783 mm above in the robot frame (`R_strk`).
+  - If the robot's torques are about the centre of mass, the model's become Mx + 0.262 Fy (normalized). The model's side force agrees with the robot's in sign and size (−0.031 against −0.029 at the top level).
+  - The force-corrected ratio then rises from 0.42-0.57 to 0.50-0.67 at levels 3-12. It still fails ±20%, and the side-force term has the model's sign, not the robot's.
+  - So the reference point accounts for part of the magnitude gap at most. The sign stays unexplained, and the robot's main text (paywalled) would settle both.
+- **Fifth check: flat-plate added mass (22:15; DECISIONS s12 22:08 pre-registration and result).** `aero:wing|added_mass` 1 adds −ρπc²/4 dr dv_n/dt per strip, at mid-chord, along the normal (Sane & Dickinson 2001; derived, no fitted constant). It matches an independent stroke-frame calculation (correlation 0.97-0.995, RMS 0.91-0.94; `scripts/probes/added_mass_check.py`).
+  - Roll: 0.464-0.554 of the robot's, against 0.425-0.534 without it. Still FAIL. This is the second fix to fail on roll, so no third is tried.
+  - **Held-out pitch set** (21 levels of Database S1 `PitchModulations`; first look, both arms): force-corrected ΔMy about the CoM is 0.61-0.70 of the robot's, with and without added mass, and the sign is the same at all 13 scored levels. FAIL ±20%. About the hinge midpoint: 0.71-0.81 without, 0.67-0.76 with. Plot `docs/media/s12_robot_pitch_torque.png`, viewed.
+  - Steady force is 1.11 of the robot's. The force-level response now departs at levels 9-12 instead of 11-12, because the added-mass mean (+0.12 W at steady, +0.09 W at the top) does not grow with the level.
+  - That mean is non-zero because the strip form keeps only the normal component. The full inviscid impulse, −d(m_a v_n n)/dt, has zero mean over a beat. The in-plane remainder corresponds to leading-edge suction, which separated flow loses. The literature's quasi-steady models use the normal-only form (derived; kept, labelled).
+  - Adopted for robot comparisons and flight under the registered rule. No walking profile uses it.
+- **Diagnostic (22:18): within-beat comparison with the robot's time-resolved record.** Database S1 also stores each robot beat's force and torque over time (1145 samples, filtered and unfiltered). `hover_blade_trace.py` now saves the model's per-step series (`*_series.npz`). Compared at pitch levels 0, 10 and 20 and roll levels 2 and 12 by `scripts/probes/robot_torque_reference.py`; plot `docs/media/s12_robot_torque_series.png`, viewed.
+  - **The opposite roll and yaw sign is a left-right labelling convention in Database S1, not physics (derived).**
+    - At roll level 12, the robot's Fy, Mx and Mz anticorrelate with the model's (r −0.90, −0.74, −0.89; filtered). Its Fx, Fz and My correlate (0.96, 0.96, 0.82). Only a left-right reflection flips exactly Fy, Mx and Mz.
+    - Each single-angle part (stroke, rotation, deviation) is mirrored in Mx.
+    - At positive roll acceleration the database's `R` wing has the larger stroke (150.0° against 145.8°). More stroke on the right wing raises the right side, which is negative Mx in the robot's x-forward, z-down frame if `R` is the fly's right. The robot reports positive Mx. So its labels or its y axis are mirrored relative to that reading, and the model's sign is the physically consistent one.
+    - Robot comparisons should mirror Fy, Mx and Mz (or swap the sides). The magnitudes above are unaffected.
+  - **The magnitude gap is not the reference point.** Fitting the robot's Mx(t) as ±(model Mx) plus d × F_robot gives a lateral offset dy ≈ 0 at the steady roll level and −0.032 l at level 12. No single point satisfies both. For pitch, the best reference point explains under 40% of the within-beat variance (r² −0.26 to 0.39).
+  - **Where the model departs.**
+    - Within the beat, Fz agrees in shape and size: r 0.94-0.98, RMS 0.90-1.11 of the robot's.
+    - Fx agrees in shape (r 0.93-0.98) but its size is 0.68-0.72 of the robot's at all five conditions, filtered or unfiltered. The model's force along the stroke direction is about 30% low, and the steady force hides this.
+    - The model also has sharp Fz dips at both stroke reversals (phase 0.15 and 0.7) that the robot does not show. Its My peaks at 1.5 near phase 0.7, against the robot's 0.3.
+    - Both features sit where the rotational and added-mass terms act.
+  - **Next discriminating step.** The robofly drag and rotational coefficients (Dickinson 1999, melanogaster wing, Re ≈ 136) applied to the hydei robot wing: is the Fx shortfall the drag coefficient? Split the model's Fx by term and check which term would have to change. Any change must come from a measured coefficient set for this wing, not a fit to Fx.
+  - **Fx split by term (22:20; pitch level 10 and roll level 12; per-term series in `*_series.npz`).**
+    - The drag term carries Fx: its Fx correlates 0.93-0.97 with the robot's, against 0.10-0.16 for lift, 0.44-0.48 for rotational and about 0 for added mass.
+    - A least-squares weighting of the four terms that would reproduce the robot's Fx gives drag 1.47-1.48 at both conditions, with lift 0.82-0.90, rotational 0.96-1.03 and added mass 1.1-2.0, the last poorly constrained. This is a diagnostic; nothing is changed.
+    - Reading: the robofly drag coefficient (Dickinson 1999; melanogaster wing, Re ≈ 136) is about 2/3 of what the hydei robot wing gives. Drag adds little to the mean vertical force (−0.05 to −0.09 W), so the steady-force pass does not test it.
+    - Database S1 holds geometry and scaling only (stroke-plane angle −47.5°, Lwing 2.99 mm, cwing 0.95 mm, AR 3.16), and no coefficient set. A source search for measured coefficients on this wing is running.
+- **Free-flight record, for the next held-out test (22:23; conventions only, no outcome looked at).** Database S1 `wing_data` and `body_data` hold 92 free-flight looming-escape sequences at 7500 fps: per-side stroke, deviation and pitch (rad), body position, velocity, acceleration, quaternion and angular velocity, and each fly's wing length (2.7-3.1 mm). There are 153,101 tracked frames, 403-4321 per sequence.
+  - The robot's steady beat is the mean of the free-flight pre-trigger beats. 3354 beats were cut stroke maximum to stroke maximum, giving r = 1.000 and an RMS difference of 0.3-0.5° on each angle, with no phase shift.
+  - The angle map is robot stroke = −free stroke, robot rotation = 90° − free pitch, deviation unchanged. In this project's convention that is (free stroke, deviation, free pitch − 90°) (derived).
+  - Sides are labelled as in the robot set, so they carry the same left-right mirror question.
+  - Frames (derived from the record itself):
+    - `qbody` is scalar-last and rotates body to world, with world z up. The body axes are x forward, y right and z down. Before the trigger, body x sits 47.3° nose-up (IQR 44.4-50.2°), body y is level (−0.4°) and body z is −41.7°.
+    - `vel` is the time derivative of `pos` (ratio 1.005-1.007), both in m.
+    - `accel` excludes gravity: its pre-trigger mean is under 0.06 m/s² on each axis.
+    - `omega` is in the body frame (inferred): it tracks finite-differenced body-frame rates (r 0.77-0.85) better than world-frame rates (r 0.41-0.56).
+- **Source search for a measured drag coefficient on the hydei robot wing (22:26): none found in open sources.**
+  - The Science 2014 supplementary text cites Dickinson, Lehmann & Sane 1999 for coefficients and gives none of its own.
+  - Its robot reference is Dickson, Polidoro, Tanner & Dickinson 2010 (JEB 213:3047, yaw dynamics of a scaled insect model). That paper is the most likely place for the robot wing's own coefficients but was not reached.
+  - Dickson & Dickinson 2004 (advance ratio) and Lentink & Dickinson 2009 (revolving wings) use melanogaster wings and give no α table for this wing. The Melis 2024 robofly code has analysis only. Kamimizu 2025 is fitted to CFD, not measured.
+  - So the 1999 set stays. The 0.70 drag-direction shortfall stays open.
+- **Held-out yaw test, Dickson et al. 2010 robot (s12, 5 Oct 02:52; DECISIONS 02:45).** The blade-element wing, with chords rescaled to the robot's c̄/R, on its baseline kinematics. Yaw damping C*_ω is −856 against the robot's −640: right sign, linear, 1.34× too strong, so it fails ±20%. Added mass changes nothing. Actuation magnitudes: pa 1.13 and pd 0.93 pass; pr 1.35 and pv 0.46 fail. The signs of pa, pd and pr are opposite to the robot's, under conventions the probe does not establish. The prediction (0.6-0.8) was wrong in direction.
+  - Split by term (03:21; DECISIONS 03:15): translational drag carries all of the damping (−858 of −856); rotational +1.9, added mass −0.1, lift 0, as a symmetry argument predicted (lift stays vertical; the rotational change is odd about mid-stroke). The rotational coefficient is cleared. At the robot's larger hinge offset the model's excess would be about 1.5× (strip-theory estimate, derived). Since the model's stroke-direction force is 0.70 of the hydei robot's, the two robot tests pull the drag in opposite directions; a measured drag polar at Re about 100 run through both is the next test.
+
+### F-WING-3: the s10 wingbeat generator and wing ranges swing each wing over the back to the other side
+- **Test.** `flight.wing_span_sign` gives the membrane's hinge-to-tip direction. The left wing alone was posed at the generator's mid-downstroke and viewed from above: `docs/media/s12_wing3_crossed_stroke.png`, viewed.
+- **Result.** At generator pose (stroke 86°, deviation 40°, rotation −12°) the left wing's centre is at y = −0.82 mm, on the right side of the fly (the hinge is at +0.43).
+  - The model's stroke (yaw) hinge axis is (0, 0.74, 0.68) in the thorax frame, which lies in the transverse plane. A stroke plane needs a normal in the sagittal plane, measured at (0.74, 0, 0.68) for a 47.5° tilt.
+  - Positive yaw therefore swings the folded wing up over the dorsum.
+  - `WING_RANGE_DEG` (yaw −10..175°) was sized around this crossed stroke.
+  - The measured hover beat needs yaw −121..37°, roll −62..4° and pitch −60..121° (exact fit with open ranges).
+- **Consequences.** Every s10-s12 generator-driven flight number used crossed wings: the Kutta fit (F-FLIGHT-2), the 0.72/0.55 W blade-element hover, and the PD tracking figures. The rotational-rate proxy in F-FLIGHT-3 also failed because of these axes. Walking profiles are unaffected: the generator is off, and the folded rest pose (F-WING-2) is not part of the stroke.
+- **Fix, built behind switches (19:44; no profile sets them).**
+  - `flight:wings|kinematics` 1 (`flight.StrokeFrameKinematics`) reads the measured beat in stroke-frame angles from `data/derived/muijres2014_hover_kinematics.csv` and fits hinge angles by `wing_pose_ik` at each phase. The build takes 2 s, the fit error is 0.0°, and it matches the npz table exactly.
+  - B11 steering acts on the stroke-frame angles through the pose Jacobian. Amplitude +10° gives +20.2° peak-to-peak, and mean +5° gives +5.0°. That is linear to 1%.
+  - `joint:wing|range_by_function` 2 (`WING_RANGE_MEASURED_DEG`) is the measured hinge envelope plus the folded pose, with a 20° margin (guessed).
+  - Test (`test_measured_beat_keeps_each_wing_on_its_side_and_steers`): PD-tracked through `motor_step`, the stroke is 131.6 ± 10° peak-to-peak. Each wing stays on its own side throughout, there are no MuJoCo warnings, and a left b2 burst widens only the left stroke.
+  - Contact sheet `docs/media/s12_wing_beat_views.png`, viewed: generator against measured beat, top and front views, thorax level. The measured beat reverses above and behind the hinge at τ 0 and in front and below at τ 0.5. The chord stands near vertical on the upstroke when the thorax is level, as expected for a 47.5° stroke plane.
+  - The s10 generator stays as switch value 0 (legacy fixture). `test_s10_generator_crosses_the_wings_and_measured_poses_do_not` pins its crossing.
+
+### F-NONLEG-1: a shared 10 µN·mm per spike pinned the head, rostrum and antennae at their stops; a per-part derivation frees them, and the wings then rise over the back
+- **Census** (`scripts/probes/nonleg_motor_census.py`, m9s gate values, seed 12, 200-600 ms; `runs/s12/nonleg/census_s12.json`). Every non-leg motor neuron used the shared `motor_unit:all|force_per_spike` 10 µN·mm (guessed). Against flybody's non-leg springs (head, antenna, proboscis 3 µN·mm/rad, abdomen 5, wing 1, haltere 400; all unsourced), a few Hz of resting drive held the head yaw, head pitch, rostrum and both antennae within 1° of a joint limit 97-100% of the time. On the contact sheet the head was pitched down onto the floor.
+- **No measurement.** The literature search (`docs/research/s12_nonleg_muscle_sources.md`) found no measured force, cross-section or moment arm for any fly neck, proboscis, antennal, abdominal or wing-steering muscle in open sources. The candidates are paywalled: Strausfeld 1987, Rajashekhar & Singh 1994, Tu & Dickinson 1994/96, Zanker 1988, Chan 1998.
+- **Derivation** (inferred; `scripts/build_nonleg_forces.py` → `data/params/nonleg_motor_forces.csv`; switch `motor_unit:nonleg|torque_source` 1).
+  - Torque per spike = force per motor unit × lever.
+  - Force: 1.035 µN, the mean per unit of the tibia-flexor pool (Azevedo 2020's measured classes, 10/1/0.05 µN × 1/3/9 units; derived).
+  - Lever: the length of the moved part on the flybody mesh, joint to far end (`scripts/probes/nonleg_joint_geometry.py`; derived).
+  - Bounds are the measured unit range, 0.05-10 µN, times the same lever.
+  - Interpretation: one average leg-sized motor unit acting at the far end of the part it moves.
+  - Validity: resting posture and slow movements. The real insertion is nearer the joint, so the lever overstates the torque. The wing is the worst case, because its steering muscles act on the hinge sclerites, not the blade.
+
+  | part | lever (mm) | torque per spike (µN·mm) | upper bound |
+  |---|---|---|---|
+  | head | 0.476 | 0.49 | 4.8 |
+  | rostrum, haustellum, labrum | 0.385, 0.246, 0.20 | 0.40, 0.25, 0.21 | 3.9, 2.5, 2.0 |
+  | antenna | 0.42 | 0.44 | 4.2 |
+  | abdomen 1-7 | 0.42-0.75 | 0.43-0.77 | 4.2-7.5 |
+  | wing | 2.64 | 2.73 | 26 |
+  | haltere | 0.30 | 0.31 | 3.0 |
+
+  The old 10 lies above the upper bound for the head, proboscis, antennae and halteres.
+- **Result** (DECISIONS s12 21:12, result 21:21).
+  - Gate silent on seeds 12-19.
+  - Time within 1° of a limit is now 0 for every head, proboscis and antenna joint.
+  - Mean angles: head yaw −0.4°, head pitch 0.3°, rostrum −12°, antennae 5-6°.
+  - On the sheet the head is upright and the proboscis is off its stop.
+  - Adopted as m9t.
+- **The wings now rise.** Both wings rise in a V over the thorax at 300 ms, and the left at 600 ms.
+  - The wing motor neurons fire about twice as often at rest as on m9s (left yaw 2.5 → 5 Hz, left pitch 7.5 → 15 Hz; the right side now fires too).
+  - The first-axillary neurons (i1, i2) map to wing yaw with sign +1 (guessed, `data/params/motor_targets.csv`).
+  - In flybody's hinge, positive yaw lifts the folded wing over the dorsum (F-WING-3).
+  - So any resting first-axillary drive raises the wing against a 1 µN·mm/rad spring. Steady state: 2.73 µN·mm × 5 Hz × 30 ms ÷ 1 µN·mm/rad = 0.41 rad, about 23°, against the measured mean left yaw of 20.3°.
+  - Three unsourced quantities meet here: the wing lever, the wing spring, and the yaw mapping. They are not changed after this result; the wing rest needs its own pre-registration.
+- **Still copied or guessed in this path** (recorded, not changed):
+  - Neck and antenna drive signs: +1 on both sides with no antagonists. ADNM2 (TH2) turns the head the same way from either side, which is anatomically wrong for a bilateral pair. Gorko et al. 2024 may give per-neuron directions.
+  - The actuator clip of ±30 µN·mm is a NeuroMechFly copy (`body.NMF_FORCERANGE`). It also applies to the Hill leg torques. On m9t it never binds:
+    - At rest (census, seeds 12 and 13, `runs/s12/nonleg/census_m9t_s1{2,3}.json`), the peak leg torque is 0.32 µN·mm and the time at the limit is 0.
+    - At full activation, the largest single-muscle torque F0 × arm is 19.3 µN·mm (hind trochanter-femur). Each coxa hinge sums to at most 10.9 µN·mm across its anatomical muscles. So no leg actuator can reach 30.
+    - It would bind if the femur-tibia flexor took its measured strength. The model's flexor gives 1.04 µN·mm against at least 42 µN·mm measured (F-FTI-2; `muscle:leg|ft_flexor_scale` is off). So the clip has to be sourced or lifted before that flexor is.
+  - The non-leg springs listed above.
+
+### F-WING-4: with flybody's 1 µN·mm/rad hinge spring a steering spike held the folded wing up; the measured stiffness turns it into a flick (s12, 21:54)
+- **The issue.** On m9t both wings rose in a V at rest (F-NONLEG-1). The plain body under m9t wing settings (`scripts/probes/wing_spike_response.py`) shows why: one 2.73 µN·mm spike with a 30 ms decay lifts the folded left wing to +40° yaw or −41° pitch at 38 ms, and 17° is still left at 100 ms. A 4-spike burst lifts it to +169° yaw, with 149° left at 100 ms. The hinge spring was flybody's 1 µN·mm/rad, unsourced.
+- **The source** (`docs/research/s12_wing_hinge_sources.md`). The one Drosophila hinge stiffness in open sources is the wing-pitch value fitted by Bergou et al. 2010 to free-flight kinematics: 91 ± 9 pN·m/deg = 5.21 µN·mm/rad. No source gives the yaw or roll axis or the folded hinge, so those take the same value (inferred). No source gives a steering-muscle moment arm or force, so the torque per spike is unchanged.
+- **The change** (`joint:wing|stiffness_source` 1, pre-registered DECISIONS 21:44) **passed:**
+  - gate silent on seeds 12-19;
+  - seed-12 mean wing angles within 3° of the fold (m9t: up to 20°);
+  - wings folded on the sheet;
+  - adopted as m9u.
+- **Behaviour now.** A single spike peaks at 15-17° at 16 ms and has 1-6° left at 100 ms. A 4-spike burst peaks at +70° yaw or −72° pitch and is back within 6° by 100 ms. So a resting burst shows as a flick of about 50 ms, not a raised wing.
+- **What the result does not show.**
+  - On seed 12 the wing motor neurons happened not to fire in the scored window. Across 8 seeds their rate is unchanged (0.16 against 0.19 Hz).
+  - How often the wings flick at rest is set by how often the wing motor neurons burst at rest. No source says whether real ones do. A multi-seed census (seeds 14-19, 800 ms) is queued.
+- **Still guessed or inferred:**
+  - yaw and roll stiffness (transfer from pitch);
+  - the folded-hinge stiffness (the real fold may be a separate locked state of the hinge sclerites);
+  - flybody's hinge damping (0.05 µN·mm·s/rad; Bergou's fitted pitch damping is 2.2 × 10⁻³, but with the model's 10⁻⁴ armature it would leave the hinge ringing);
+  - the wing torque per spike (wing-length lever);
+  - the i1/i2 yaw mapping.
+- **Six more seeds** (m9u, seeds 14-19, 200-1000 ms, `runs/s12/wing/census_m9u_s{14..19}.json`): no wing hinge spent any time within 1° of a limit. The right wing sits at the undriven fold (yaw +2.8°, roll −2.8°, pitch −2.4°) on every seed. The left wing, which draws most of the steering spikes (up to 15 Hz summed on pitch), averages at most 4° further out (yaw +6.8°, pitch −6.2° on seed 15). Why the left steering pool fires more than the right is not checked.
+
+### F-NONLEG-2: every neck motor neuron pushed the head one way on both sides; the mirror-image sign makes bilateral yaw drive cancel (s12, 21:58)
+- **Before.** In `data/params/motor_targets.csv`, head yaw (10 left, 10 right) and head roll (7 left, 8 right) motor neurons all mapped +1 (guessed). A pair firing together turned the head one way: about 0.33 µN·mm of standing yaw torque at rest (seeds 12 and 13).
+- **Change.** `motor_map:neck|mirror_sides` 1 (DECISIONS s12 21:50). Right-side neurons take the opposite yaw and roll sign of their mirror image. The basis is bilateral symmetry (derived). Each left-side type's absolute direction stays guessed.
+- **Result** (DECISIONS s12 21:58).
+  - Yaw torque falls about 40-fold (0.33 → 0.008 µN·mm).
+  - Gate silent on 8 seeds.
+  - Head never within 1° of a limit; upright on the sheet.
+- **Not tested.** No roll motor neuron fired at rest on seeds 12 and 13, in either profile.
+- **Side observation.** With its drive cancelled, closed-loop head yaw sits at −6°, while on the plain body with zero drive it stays within 0.3° of zero. So the closed-loop head angle is set by the posture of the body lying on its belly (inferred, F-STAND-3), not by neck drive.
+- **Still unknown.**
+  - The per-neuron target pose. Gorko et al. 2024 show that neck motor neurons drive the head toward a pose, so a fixed sign is an approximation. The paper is paywalled and is on Ben's list.
+  - The neck spring: flybody's 3 µN·mm/rad, unsourced.
+  - The antennal elevator/depressor split (`docs/research/s12_neck_antenna_sources.md`).
+
+### F-WING-5: the folded wings cut 40-150 µm into the abdomen, both on screen and in the contact model; lifting them 12.5° about the hinge line lays them on it (s12, 5 Oct 02:31)
+- **Report.** Ben: the wings visually clip through the body when pointing straight back. Probe `scripts/probes/wing_clip.py` (plain body, standing, m9v wing settings; `runs/s12/wingclip/`).
+- **It was both, visual and physical, with one cause: the folded pose.**
+  - flybody's folded pose (all wing hinge angles 0) holds each wing flat at hinge height. That is 40-150 µm below the dorsal surface of abdominal segments 1-4 (cross-sections, `sections_baseline.png`).
+  - **Visual.** About 24% of the vein-mesh vertices are inside the abdomen meshes, the deepest 123 µm. Seen from above, the abdomen covers the wing bases (`zoom_hinge.png`, top row).
+  - **Physical.** Wing-abdomen contacts are live: the bitmasks allow them, and the abdomen is not the wing's parent body. At t = 0 they penetrate 54-144 µm, plus about 20 µm into each haltere.
+    - flybody's XML excludes the wing-abdomen 1-3 and wing-wing pairs; flygym's port drops those excludes.
+    - The contacts push each wing up about 4°. They leave it 51-80 µm inside after 300 ms, because the spring reference sits inside the abdomen.
+  - **Wing-thorax is never checked.** The wing is a child of the thorax, so MuJoCo's parent-child filter drops the pair. At rest only the root overlaps the thorax mesh, the articulation of a rigid flat wing: vein vertices within 0.24 mm of the hinge, membrane within 0.6 mm.
+    - In motion, only the hinge ranges keep a wing out of the thorax. No contact does.
+- **Change.** `joint:wing|folded_pose` 1 (`passive.rest_wings_on_abdomen`; DECISIONS 5 Oct 02:31). Each wing is rotated about the thorax transverse axis through both hinges.
+  - The right wing by 12.5°: derived, the smallest angle with no wing vertex inside the abdomen and no wing-body contact.
+  - The left wing by 14.0°: derived, so that it clears the right wing by at least 2 µm where they overlap.
+  - Left over right is guessed. Real flies differ: each fly folds with a persistent individual preference for one wing on top, unrelated to its turning bias (Buchanan, Kain & de Bivort 2015 PNAS 112:6700; abstract and a search summary read, s12). Selection lines in Purnell & Thompson 1973 (Heredity 31:401; abstract) reached a 6-10% bias and then lost it. So left on top is one valid individual; the population split was not read.
+  - The pose sets the keyframes, the start state and the folded spring reference. qpos0 stays 0, because MuJoCo measures hinge angles from qpos0.
+- **Result, plain body.**
+  - t = 0: no wing vertex inside the abdomen and no wing contact.
+  - After 300 ms passive: the wings sag 0.3-0.6° under their own weight onto the tergites. Contact penetration is 3-12 µm (soft contact) and vein vertices sit up to 19 µm in, against 51-80 µm and 84 µm on flybody's pose.
+  - Sheets (`rest_on_abdomen.png`, `rest_on_abdomen_settled.png`, `zoom_hinge.png`, viewed): from the side the wings rise from the hinge and lie along the top of the abdomen. From above they cover it, with no abdomen showing through.
+- **Result, closed loop and gate** (m9f, DECISIONS 02:31 result).
+  - Gate on seeds 12-19: silent, thorax change under 0.01 mm.
+  - Closed-loop sheet, seed 12 (`organism_m9f_s12.png`, viewed): at most 4 µm of wing-abdomen contact and 9 µm of vein overlap from 150 to 600 ms. The fly lies rolled 15-19° on its belly (F-STAND-3), so in fixed cameras the wings look shifted off the abdomen while still resting on it.
+  - Root inside the thorax mesh: 1400 vein vertices up to 67 µm at rest, and 4256 up to 80 µm when spikes drive the left wing out (yaw 26°, pitch −15°). Not visible on the sheets.
+- **Still open.**
+  - Which wing lies on top.
+  - A real wing base folds along its basal lines; this one is rigid and flat.
+  - The wing-thorax pair stays filtered. A stroke that drives the wing into the thorax would pass through, and nothing reports it.
+
+### F-TASTE-LEG-1: leg taste never crossed threshold because every type was weakly tuned to everything; receptor-line weights fix the drive, but the lying fly touches the sugar with only two tarsi (s12, 5 Oct 03:03)
+- **Report** (flyapp relay). Leg taste peaks at about 2.9 mV at 1 M sugar, below the 7 mV threshold. Cause: every leg/wing taste type had a guessed weight of 0.2 to each of five tastants, so 15 mV × 0.95 × 0.2 = 2.86 mV.
+- **Data** (`docs/research/s12_tarsal_grn_physiology.md`, secondary reads through a fetch-and-summarise pass). The gustatory connectome preprint (bioRxiv 2025.08.25.671814; Cell 2026) matches four census types to receptor lines by projection: LgLG4 Gr64f+/Ir56b+ (sugar, also low salt), LgAG2 Gr61a+ (sugar), WG2 (likely sugar), LgAG1 Gr33a+ (bitter). Ten types are contact-pheromone lines. LgLG3 and LgAG3-9 are not found. Ling et al. 2014 give about 50-55 Hz for tarsal sugar GRNs at 100 mM sucrose and under 3 Hz spontaneous. No leg dose-response exists in open sources, so K stays guessed.
+- **Change.** `sense:taste_leg|modality_source` 1 (`extrasenses.leg_taste_weights`): matched types 1 for their modality and 0 otherwise (the labellar rule), pheromone types 0, unmatched types 0.2 (guessed). Gain and K unchanged.
+- **Result** (DECISIONS 02:57; `docs/media/s12_leg_taste.png`, viewed). Drive at 1 M: 14.3 mV for the sugar types. Specificity passes (bitter and pheromone types 0 Hz on sucrose). The held-out rate fails: LgLG4 4.5 Hz mean at 100 mM, 18.5 Hz per second of contact. Only the rm (44%) and rh (92-97%) tarsi touch the floor; the fly lies down (F-STAND-3). At steady contact the cell's own LIF constants give 38 Hz at 100 mM (derived). Gate identical. Switch off under the registered rule.
+- **Open.** Wing taste cells (WG1-4) have no leg and take the mean of six legs' contact (guessed; should be wing contact). MN9 stays at 0 Hz with tarsal sugar GRNs firing; real flies extend the proboscis to tarsal sugar.
+- **Trace, leg sugar GRNs to MN9** (Director, 5 Oct 04:08-04:30; `scripts/probes/legsugar_mn9_trace.py`, `runs/s12/legsugar/trace_s12.json`; seed 12, m9r, switch on). Real flies extend the proboscis when a tarsus touches sugar (tarsal PER, a classic measured behaviour).
+  - **Hops: 3** (GRN → layer 1 → layer 2 → MN9) in the model connectome (min 5 synapses per edge), also 3 using excitatory cells only. 54 sugar GRNs (LgLG4 43, LgAG2 11); 50 lie on a shortest path, from all six legs. The full male-cns table has a 2-hop route only through two DNd02 cells with 2-3 synapses in and 1-4 out, so the working route is 3 hops.
+  - **Synapses per hop** on the shortest paths: 2092 (123 edges, none inhibitory), 1942 (86 edges, 52% inhibitory), 1716 (39 edges, 23% inhibitory). Layer 1 is 27 cells (AN01B004 ×5, GNG147 ×3 inhibitory, GNG353, AN13B002 inhibitory and others); layer 2 is 32 GNG and DNge cells. Widest path: LgLG4 → AN01B004 30889 → GNG134 36316 → MN9_L, 58, 25 and 30 synapses.
+  - **Where it dies: between layer 1 and layer 2, in every test** (figure `docs/media/s12_legsugar_mn9_trace.png`, viewed; `scripts/probes/legsugar_mn9_plot.py`).
+    - Sugar patch, 1 M, closed loop: only the lm and lh GRNs fire (23 and 33 Hz; the lying fly's other tarsi do not touch). 3 of 27 layer-1 cells respond (one excitatory AN01B004 at 13 Hz, two inhibitory AN13B002 at 30 Hz). No layer-2 cell changes. MN9 never leaves rest.
+    - Every leg sugar GRN driven at its 1 M drive (14.3 mV, no contact needed): 4 excitatory layer-1 cells fire (AN01B004 ×3 at 13-37 Hz, GNG353 at 17 Hz). No layer-2 cell responds; MN9 0 Hz. The best-fed layer-2 cells (GNG538, GNG134) get 41-42 synapses from the firing layer-1 cells, 1-2% of their 2140-3588 input synapses, and peak at 12-26% of the way to threshold. Foreleg GRNs alone recruit no layer-1 cell. Those five layer-2 cells take 77-92% of their input from central-brain intrinsic cells (top types GNG542, GNG241, GNG211, SMP604), 5-15% from ascending and 3-9% from descending neurons, and none directly from labellar sugar GRNs: an integrating layer in which leg sugar is a small minority.
+    - Shiu et al. 2024 parameters (m2, open loop, Poisson 100 and 200 Hz into the 54 GRNs, 2 trials): up to 9 layer-1 cells fire (GNG353 up to 99 Hz, AN01B004 up to 73 Hz), no layer-2 cell, MN9_L 0 Hz. The working profile open loop (m9r) also gives 0 Hz at 100 and 200 Hz.
+  - **Controls.** Labellar sugar (34 LB3b/c cells at 14.3 mV, closed loop, m9r): MN9 0 Hz, held below rest; the MN9 inputs that respond are mostly inhibitory (GNG043, DNge051, GNG130), consistent with the known conductance-synapse block (F-R2-1). Under m2 the same labellar path works: MN9_L 26 Hz at 100 Hz input (21 and 31 Hz in 2 trials). Adding leg sugar at 200 Hz raises it to 40 Hz (37, 43); at 100 Hz, 21 Hz (19, 23), within trial spread.
+  - **Reading.** The block is in the wiring as modelled, not only in the parameters or the posture. Leg sugar converges on MN9's premotor cells, but too weakly to drive them alone: it adds to labellar sugar under Shiu parameters and does nothing by itself under either parameter set. Posture is a second, smaller block (the forelegs do not touch the patch). In real flies tarsal sugar alone evokes PER, so something that carries leg sugar to the GNG layer is missing or too weak. Connections under the 5-synapse cut are ruled out: with every edge of 1 synapse or more (25.6 million edges), m2, leg sugar at 200 Hz still gives MN9_L 0 Hz (2 trials; `runs/s12/legsugar/assay_leg_m2_min1.log`, backhouse). Remaining candidates: hunger-state modulation downstream of the GRNs (the model applies hunger only to labellar GRN drive, and a higher GRN rate alone does not help, since 200 Hz input already fails); neuromodulatory or electrical routes not in the graph; a sensory or interneuron population missing from the male-cns leg taste types.
+  - **Next discriminating experiment.** A sourced search for the tarsal PER pathway in real flies (which cells carry leg sugar to the SEZ, and whether any is identified in male-cns). If an identified cell exists and is on the model's path, its measured response to tarsal sugar tests the layer-1 → 2 gain directly.
+  - **Labellar control, open loop, working profile** (m9r, Poisson into LB3b/c, 2 trials; `runs/s12/legsugar/assay_lab_m9r.log`, backhouse): MN9_L 0 Hz at 0 Hz, 6-7 Hz at 100 Hz, 13-14 Hz at 200 Hz. So under m9r the labellar path reaches MN9 open loop but not in the closed-loop lying fly; leg sugar reaches it in neither.
+  - **Search result** (5 Oct 04:38; `docs/research/s12_tarsal_per_pathway.md`, secondary). Thoma et al. 2016 split tarsal sweet GRNs into segmental cells (9-10 per leg, end in the VNC, slow walking) and ascending cells (2-4 per leg, project straight to the GNG, start feeding). Male-cns has both (inferred match): LgAG2 (11, `sensory_ascending`, 1-3 per leg, 37-62% of output onto brain cells) and LgLG4 (43, `vnc_sensory`, none onto central-brain intrinsic cells). With all leg sugar GRNs injected, LgAG2 fire at 37 Hz; 4 of their 39 brain partners fire (GNG353, GNG141, two GNG266) and most of the rest peak at 0.4-0.96 of the threshold gap. No firing or calcium data exist in open sources for any second-order leg taste cell. Named cells (Dandelion, DNg103) have no male-cns label. Hunger in real flies raises sweet GRN presynaptic calcium (summary level), and the model applies hunger only to labellar GRNs. Next: drive LgAG2 alone with a bounded presynaptic gain behind a switch, pre-registered, reading layer 2 and MN9.
+  - **Two rescues fail** (DECISIONS 04:40 and 04:50, diagnostics, m2 open loop unless stated, LgAG2 at 100 Hz, 2 trials). (1) Presynaptic gain on LgAG2 (a hunger-like terminal gain): MN9_L 0 Hz at ×1 and ×3, 3 Hz at ×10, 5-7 Hz at ×30 (post hoc); all 54 leg sugar GRNs at ×10, 10-13 Hz (post hoc); under m9r 0 Hz up to ×10. At ×10, 15 of 16 layer-1 cells fire but only 3 of 26 layer-2 cells. (2) Disinhibition: silencing the 8 inhibitory cells on the paths, or those plus all 43 inhibitory inputs to MN9_L, leaves MN9_L at 0 Hz.
+  - **Mechanism, as far as it is known.** In the model connectome, leg sugar reaches the GNG through the ascending GRNs (LgAG2) and their first relays, but the premotor layer that drives MN9 takes nearly all its excitation from other brain cells (77-92% central-brain intrinsic input; leg sugar 1-2%). Neither a stronger first synapse nor removing inhibition lets leg sugar through, so the missing piece is excitation into layer 2: an unidentified excitatory route, a state that raises layer-2 excitability (hunger acting downstream of the GRNs, not measured), or cells missing from the traced leg taste types (LgAG2 has 1-3 per leg against Thoma's 2-4; LgLG4 5-9 against 9-10). Tarsal PER is normally measured in starved flies (assay practice; not sourced this session), and the model has no measured hunger effect on central taste cells. No further fix this session.
+  - **Dandelion and LgLG3** (DECISIONS 04:59, diagnostic; `docs/research/s12_tarsal_per_pathway.md`). The taste connectome (v2, secondary) identifies Dandelion, a key partner of labellar and leg sugar GRNs, as male-cns AN13B002, and proposes LgLG3 (162 cells, 23-31 per leg; the model gives it the unmatched weight 0.2) as a sugar type because Dandelion is its top partner (8770 synapses). AN13B002 is a layer-1 cell on the model's path and is predicted GABAergic (confidence 0.89), so the model makes it inhibitory. Driving LgLG3 + LgLG4 + LgAG2 (216 cells) at 100 Hz: Dandelion fires at 310-320 Hz under m2, MN9_L 0 Hz under m2 and m9r. Transmitter evidence (05:04): GABA by both EM classifiers (male-cns 0.89; BANC 0.96-0.97), and BANC's `neurotransmitter_verified` says gaba. That label's basis is undocumented and it covers 431 of 440 hemilineage-13B cells, so it is probably lineage-level (inferred). No measurement of this cell type was found. Its sign decides whether leg sugar excites or suppresses the feeding premotor layer in the model; HANDOFF item 1.
+  - **Next discriminating evidence.** The taste-feeding connectome paper (Tastekin et al., Cell 2026) states LgLG4 reaches MN9 "in a few hops" with "high connectivity" (search snippet, unverified). Reading its path analysis by eye, and matching its "Dandelion" second-order cell to a male-cns type, would show whether the paper's route is the model's 3-hop route or one the model lacks. Dandelion is now matched (AN13B002); a measured transmitter for it (FlyWire AN_GNG_68) is the most discriminating single fact.
+

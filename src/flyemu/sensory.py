@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from functools import lru_cache
 import os
 from pathlib import Path
 
@@ -76,6 +77,74 @@ def leg_from_roiinfo(roi_json: str | None) -> str | None:
         if w > best_w and seg in NEUROMERE_TO_LEG and side in SIDE:
             best, best_w = f"{SIDE[side]}{NEUROMERE_TO_LEG[seg]}", w
     return best
+
+
+# Leg nerves (Court et al. 2020 Neuron 107:1071, VNC nerve nomenclature, as used in male-cns).
+LEG_NERVES = {"ProLN", "MesoLN", "MetaLN"}
+
+
+def entry_nerves() -> dict[str, str]:
+    """Cell type -> entry nerve(s) ';'-joined, from the sensory census (male-cns entry nerve per type)."""
+    cen = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "derived" / "sensory_census.csv")
+    out = {}
+    for g, e in zip(cen.group, cen.entry_nerves):
+        for t in str(g).split(","):
+            out[t] = str(e) if isinstance(e, str) else ""
+    return out
+
+
+def enters_by_leg_nerve(nerves: str) -> bool | None:
+    """True/False when the entry nerve is known, None when it is not."""
+    parts = [x for x in str(nerves).split(";") if x and x != "nan"]
+    if not parts:
+        return None
+    return any(x in LEG_NERVES for x in parts)
+
+
+def assign_by_nerve(reg: Registry) -> int:
+    return int(reg.require(
+        "sense:mechano", "assign_by_nerve", units="enum",
+        model_use="0 legacy: a mechanosensory afferent is a leg sensor if it has any leg-neuropil "
+                  "synapses (dominant LegNp); 1 only if its type enters by a leg nerve (census entry "
+                  "nerve); wing-nerve (ADMN) and haltere-nerve (DMetaN) campaniforms go to the wing and "
+                  "haltere strain channels, prosternal-nerve hair plates to the neck (F-SENSE-NERVE-1); "
+                  "2 as 1 but by each cell's own entry nerve and root side where male-cns records them "
+                  "(leg = side + segment of its leg nerve), combined type names split (F-SENSE-NERVE-2)",
+        subsystem="sensory_transduction", minimal=0, minimal_note="legacy dominant-leg-neuropil rule"))
+
+
+SEGMENT_OF_NERVE = {"ProLN": "f", "MesoLN": "m", "MetaLN": "h"}
+# Prothoracic nerves other than the leg nerve. male-cns front-leg hair plates enter here
+# (SNpp45 by VProN, SNpp52 by DProN; ProLN carries 1), so a cell entering by one of them
+# is not excluded on its own nerve: its type decides, as under option 1 (inferred).
+PROTHORACIC_OTHER = {"DProN", "VProN", "ProAN"}
+
+
+@lru_cache(maxsize=1)
+def cell_nerves() -> dict[int, tuple[str, str]]:
+    """bodyId -> (entry nerve, root side) per cell, from male-cns (measured); '' when absent."""
+    e = pd.read_parquet(CACHE / "male_cns_extra.parquet", columns=["bodyId", "entryNerve", "rootSide"])
+    return {int(b): (n if isinstance(n, str) else "", s if isinstance(s, str) else "")
+            for b, n, s in zip(e.bodyId, e.entryNerve, e.rootSide)}
+
+
+def type_nerves(t, nerve: dict[str, str]) -> str:
+    """Census entry nerves of a type; a combined name ('SNpp29,SNpp63') takes all its parts."""
+    if not isinstance(t, str):
+        return ""
+    parts = {y for p in t.split(",") for y in nerve.get(p, "").split(";") if y}
+    return ";".join(sorted(parts))
+
+
+def entry_nerve_per_cell(body_ids, types, mode: int) -> np.ndarray:
+    """The nerve the assignment reads, per cell: option 1 the type's census nerve (unsplit
+    name); option 2 the cell's own nerve when recorded, otherwise the split type's."""
+    nerve = entry_nerves()
+    if mode < 2:
+        return np.array([nerve.get(t, "") if isinstance(t, str) else "" for t in types], dtype=object)
+    own = cell_nerves()
+    return np.array([own.get(int(b), ("", ""))[0] or type_nerves(t, nerve)
+                     for b, t in zip(body_ids, types)], dtype=object)
 
 
 @dataclass
@@ -197,7 +266,41 @@ def build(reg: Registry, conn, body, params=None) -> Afferents:
 
     sens = n[n.subclass.isin(ENCODES)].copy()
     sens["leg"] = [leg_from_roiinfo(roi_lut.get(b)) for b in sens.bodyId]
+    mode = assign_by_nerve(reg)
+    if mode >= 2:
+        # a cell that enters by a leg nerve belongs to that nerve's leg on its root side (measured);
+        # the dominant leg neuropil misplaces intersegmental projections (F-SENSE-NERVE-2)
+        own = cell_nerves()
+        by_nerve = []
+        for b in sens.bodyId:
+            nv, sd = own.get(int(b), ("", ""))
+            by_nerve.append(f"{SIDE[sd]}{SEGMENT_OF_NERVE[nv]}" if nv in SEGMENT_OF_NERVE and sd in SIDE else None)
+        moved = int(sum(a is not None and a != b for a, b in zip(by_nerve, sens.leg)))
+        sens["leg"] = [a if a is not None else b for a, b in zip(by_nerve, sens.leg)]
+        reg.provide(
+            "afferent:leg_mechano", "leg_from_own_nerve_moved", moved, units="neurons",
+            model_use="leg afferents whose own leg nerve and root side name a different leg than "
+                      "their dominant leg neuropil; the nerve is used",
+            status=Status.DERIVED, method="male-cns entryNerve/rootSide per cell (measured)",
+            subsystem="sensory_transduction", instances=moved)
     sens = sens[sens.leg.notna()]
+    if mode:
+        nv = entry_nerve_per_cell(sens.bodyId, sens.type, mode)
+        if mode >= 2:
+            nerve = entry_nerves()
+            nv = np.array([type_nerves(t, nerve) if x in PROTHORACIC_OTHER else x
+                           for x, t in zip(nv, sens.type)], dtype=object)
+        legn = pd.Series([enters_by_leg_nerve(x) for x in nv], index=sens.index)
+        dropped = sens[legn.eq(False).to_numpy()]
+        reg.provide(
+            "afferent:non_leg_nerve", "excluded_from_leg_drive", int(len(dropped)), units="neurons",
+            model_use="mechanosensory afferents with leg-neuropil synapses whose type enters by a "
+                      "non-leg nerve: no longer driven by leg signals",
+            status=Status.DERIVED, method="male-cns entry nerve per type (sensory census, measured) under the leg-nerve rule",
+            evidence="; ".join(f"{k}: {v}" for k, v in dropped.groupby("subclass").size().items()),
+            subsystem="sensory_transduction", instances=int(len(dropped)),
+            uncertainty="cells whose type has no census entry nerve keep the legacy rule")
+        sens = sens[~legn.eq(False).to_numpy()]
 
     rows = conn.index_of(sens.bodyId.to_numpy())
     ok = rows >= 0

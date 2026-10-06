@@ -1,0 +1,26 @@
+# Leg segment geometry measured on the flybody mesh (Vaxenburg et al. 2025; one female, confocal scan) by scripts/probes/leg_segment_geometry.py (session 12). Label derived (computed from the mesh). length: joint to child joint; area_mid: mean convex-hull cross-section over the middle third; width_dist/prox: largest width in the distal/proximal fifth. mm, mm^2.
+leg,segment,length_mm,area_mid_mm2,width_mid_mm,width_dist_mm,width_prox_mm,n_vertices
+lf,coxa,0.437,0.01576,0.1523,0.1536,0.095,6696
+lf,trochanterfemur,0.697,0.01127,0.1267,0.1181,0.1048,6444
+lf,tibia,0.5103,0.00276,0.0633,0.0865,0.0722,2970
+lf,tarsus1,0.2356,0.00064,0.027,0.0457,0.043,1968
+lm,coxa,0.281,0.00911,0.1494,0.1714,0.1156,7644
+lm,trochanterfemur,0.83,0.00866,0.1144,0.1199,0.1146,8928
+lm,tibia,0.6682,0.00201,0.0457,0.0784,0.0844,3750
+lm,tarsus1,0.3423,0.0006,0.022,0.0429,0.0546,3360
+lh,coxa,0.2447,0.01473,0.1722,0.1647,0.1358,5796
+lh,trochanterfemur,0.779,0.01193,0.1343,0.1197,0.1567,9216
+lh,tibia,0.7152,0.00421,0.0759,0.106,0.0997,6774
+lh,tarsus1,0.3372,0.00137,0.0453,0.0471,0.0695,4740
+rf,coxa,0.436,0.01577,0.1524,0.1536,0.0934,6696
+rf,trochanterfemur,0.698,0.01128,0.1268,0.1182,0.1048,6444
+rf,tibia,0.5153,0.00294,0.0645,0.0874,0.0707,2970
+rf,tarsus1,0.2278,0.00052,0.0216,0.0437,0.0417,1968
+rm,coxa,0.282,0.00914,0.1495,0.1685,0.1156,7644
+rm,trochanterfemur,0.84,0.0087,0.1148,0.1197,0.1137,8928
+rm,tibia,0.6652,0.00201,0.0492,0.0778,0.0854,3750
+rm,tarsus1,0.3392,0.0006,0.022,0.0428,0.0541,3360
+rh,coxa,0.2442,0.01466,0.1724,0.1647,0.1358,5796
+rh,trochanterfemur,0.77,0.01192,0.134,0.1203,0.1573,9216
+rh,tibia,0.7212,0.00398,0.0738,0.1076,0.098,6774
+rh,tarsus1,0.3383,0.00137,0.0451,0.0466,0.0697,4740
