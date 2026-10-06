@@ -71,6 +71,10 @@ def main() -> None:
         d = json.loads(Path(r).read_text())
         cells = d.get("cells", {})
         print(f"== {r}  set {d['meta']['set']}")
+        if "bounds" in d["meta"]:
+            b = d["meta"]["bounds"]
+            print(f"  cells outside {b['range_mv']} mV: {b['n_outside']} of {b['n']} (extremes {b['vmin']} / "
+                  f"{b['vmax']}) {b['types']}")
         rows = {}
         for ty, key in [(k, v[0]) for k, v in TARGETS.items()] + list(EXTRA.items()):
             if ty not in cells:
@@ -81,14 +85,15 @@ def main() -> None:
             m = np.isin(b, list(con[ty])) if ty in con else np.ones(b.size, bool)
             med = float(np.median(v[m])) if m.any() else float("nan")
             tgt = TARGETS.get(ty) if TARGETS.get(ty, ("",))[0] == key else None
-            rows[f"{ty}:{key}"] = {"median_connected": round(med, 3), "n_connected": int(m.sum()), "n": int(b.size),
+            base = d["res"][ty]["flashes"][-1]["base_mv"]
+            rows[f"{ty}:{key}"] = {"median_connected": round(med, 3), "base_mv": base, "n_connected": int(m.sum()), "n": int(b.size),
                                    "median_all": round(float(np.median(v)), 3),
                                    "recorded": tgt[1] if tgt else None, "role": tgt[2] if tgt else "extra"}
             tx = f"recorded {tgt[1]:+.1f} ({tgt[2]})  ratio {med / tgt[1]:.3f}" if tgt else ""
-            print(f"  {ty:6s} {key:7s} median connected {med:+8.3f} (n {m.sum()}/{b.size}; all {np.median(v):+7.3f})  {tx}")
+            print(f"  {ty:6s} {key:7s} dark {base:6.1f}  median connected {med:+8.3f} (n {m.sum()}/{b.size}; all {np.median(v):+7.3f})  {tx}")
         out[r] = rows
-    if len(runs) == 1:
-        Path(runs[0]).with_suffix(".score.json").write_text(json.dumps(out[runs[0]], indent=1))
+    for r in runs:
+        Path(r).with_suffix(".score.json").write_text(json.dumps(out[r], indent=1))
 
 
 if __name__ == "__main__":
