@@ -1028,8 +1028,8 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Mi1 +2.3 mV (recorded 20), Tm3 +4.2 (15), Tm1/Tm2 OFF +1.6/+1.9 (17.5), T4a +1.0. Every prediction landed within its tolerance.
 - **Mechanism (derived from the conductance state).**
   - Lamina: one compartment with tonic histamine conductance g_i ≈ 0.49 leak units (p 0.30) and release e-fold s 0.61 mV gives gain D(1 − p)/s with D 11.9 mV.
-  - Mi1: L1's inhibition falls 1.34 → 0.74 in light, while 0.7 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition stays constant. That caps Mi1 at about 7.5 mV.
-  - Tm3: L1 inhibition 1.17 → 0.68, with little else. Tm3 is capped by L1's release floor (r0 0.5), about 12 mV.
+  - Mi1: L1's inhibition falls 1.34 → 0.74 in light, while 0.7 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition stays constant. That caps Mi1 at about 6.9 mV.
+  - Tm3: L1 inhibition 1.17 → 0.68, with little else. L1's release floor (0.30 at −70 mV with r0 0.5) caps Tm3 at about 4.3 mV, which it already reaches. Without the floor the cap is about 12 mV.
 - **Reading.**
   - The first synapse can be made consistent with both recordings, but only by predicting an LMC histamine-free potential of about −32 mV (unmeasured).
   - The two other readings are an LMC transmembrane offset from the lamina field, or a steeper release curve. Neither is excluded: s is set by the guessed photoreceptor dark drive.

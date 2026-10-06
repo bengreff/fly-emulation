@@ -2598,8 +2598,8 @@ No cell left [−90, 20] mV.
 - The one-compartment arithmetic predicted the first synapse to within 10% (gain) and 0.7 mV (dark potential).
 - Both lamina targets are met together only with L1's histamine-free potential near −32 mV, 13 mV above the model's default. That is a prediction for an ort or hdc LMC recording, not a measurement.
 - The lamina now carries 0.56 of the recorded L1 swing. The deficit moves downstream:
-  - Mi1's L1 inhibition now falls 0.60 leak units in light (k 1: 0.33), but its 0.7 of tonic Pm/Dm1 inhibition is untouched (F-VISION-7). Even total L1 shutoff would leave Mi1 about 7.5 mV above dark (derived).
-  - Tm3 has little tonic inhibition (0.17). Its limit is L1's release modulation, which floors at 0.31 because of r0 0.5 and the 45 mV span; full shutoff would give about 12 mV against 15 recorded (derived).
+  - Mi1's L1 inhibition now falls 0.60 leak units in light (k 1: 0.33), but its 0.7 of tonic Pm/Dm1 inhibition is untouched (F-VISION-7). Even total L1 shutoff would leave Mi1 about 6.9 mV above dark (derived).
+  - Tm3 has little tonic inhibition (0.17). L1's release cannot fall below 0.30 even at −70 mV (r0 0.5, 45 mV span), so Tm3 is already at its ceiling of about 4.3 mV. If L1's release could fall to zero, Tm3 would reach about 12 mV, against 15 recorded (derived).
 - L2's dark potential is 12 mV below its *Calliphora* L1/2 rest, held there by spiking Dm6/Dm17/Dm1 inhibition (0.45 leak units, modes guessed).
 - Seen, not scored: L1 has no depolarising OFF transient at light-off in this arm (k 30 had +5-7 mV). Recorded LMCs have a strong one.
 
