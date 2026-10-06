@@ -153,3 +153,13 @@ maximum effective connectivity against about 5 for most labellar GRNs.
 Facts that would settle it: whether GNG093 and GNG250 are inhibitory in the animal (transmitter evidence as for
 Dandelion), whether LgLG3 senses sugar (calcium imaging of LgLG3 GRNs to sucrose), and a recording of Bract 2 or
 Roundup under tarsal sugar. The last is the held-out test for any fix.
+
+## Why the working profile blocks the route (5 October 23:14; DECISIONS 23:05 result)
+
+A profile ladder with the feedforward inhibition silenced (m2 → m4 → m7 → m8 → m9r, plus m9r with intrinsic
+currents off) puts the m9r block at rung 1. Roundup passes at 77-82 Hz under m4, m7 and m9r without intrinsic
+currents, and is blocked under m8 (0 Hz) and m9r (1.2 Hz). The intrinsic currents attenuate a cholinergic GNG
+cluster (AN17A002 → GNG588/GNG578 → GNG143/GNG167 → Roundup) at every hop. The feedforward inhibition cells
+also inhibit that cluster (GNG588 430 synapses), so with them left on the route stays shut even without
+intrinsic currents. Two facts would settle it: the transmitter of GNG093 and GNG250, and the rate-current
+curve of one central GNG type (to replace the slow-MN-fitted class prior for central cells).
