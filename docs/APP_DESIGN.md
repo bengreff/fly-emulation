@@ -7,10 +7,35 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 02:05 CDT, 6 October 2026 (M3 and the graded-medulla discriminating run are done;
-nothing of mine is running on either machine):**
+**State at 03:00 CDT, 6 October 2026 (M3, the graded-medulla run, the T4/T5 direction test for the
+fly worker and M4 are done; nothing of mine is running on either machine):**
 
-- **Done and pushed** (branch `app`; 163 tests pass).
+- **Since 02:05:**
+  - **The T4/T5 direction test** (section 13.1; validation in section 14): one command,
+    `app/tools/t4t5_ds.py --profile <rung> [--model-root <checkout>]`, records 17 runs and reports
+    per T4/T5 subtype whether the cells respond and prefer the fly's direction. It reproduces the
+    graded-medulla runs spike for spike. Baselines (measured): m9r with the graded-medulla rows
+    responds to medulla bars but 0 of 8 subtypes are selective; plain m9r gives no response in
+    either set, since its medulla inputs spike and the bars leave them below threshold. A
+    paragraph for the fly worker's HANDOFF is in section 13.1.
+  - **M4** (section 14): the Fidelity tab (the model's construction tables, this run's values by
+    evidence, bounds, ledger, mechanisms, profiles) and run configuration (profile, body, scan,
+    switches) sent to the Session tab; the protocol check refuses unknown profiles, bodies, scans
+    and override keys and reports the status the run will be recorded with; a named profile with
+    overrides is now labelled custom. Screenshot `docs/media/app_fidelity.png`.
+  - **Request 10** to the fly worker: quote the comma-containing flow text in
+    `data/model/mechanisms.yaml`.
+  - **`main` merged** (81e7afa, at f7e4490): its working profile is now m9c (m9r plus a clock
+    drive). The Fidelity tables were rebuilt from it (72 mechanisms, 685 unknowns, 105 structural
+    rows, 23 profiles), and the configure form lists the 75 switch keys, including the fly
+    worker's new `release_at_rest` and `mode_from_recordings`. Tests that named m9r as the working
+    profile now follow the model's own setting. Replay check (measured): the plain m9r T4/T5
+    control, recorded at a73e966, replayed on backhouse at the merged d63adbb
+    (`runs/app/replay/t4t5-m9r-control-merged` there) is identical in all 31 arrays (106,287
+    spikes), so `main`'s new switches leave m9r unchanged at their defaults. The replay is
+    labelled "custom, not validated", since m9r is no longer the working profile.
+
+- **Done and pushed** (branch `app`; 188 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
     - On seeds 0 to 2, every cell's spike count matches the model's own run.
     - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
@@ -94,9 +119,8 @@ nothing of mine is running on either machine):**
   with peaks of 1.2 to 2.0 mV, but neither is direction-selective (|DSI| at most 0.02 on the
   peak). Untouched, the model passes no light signal past L1-L3, because its graded rule
   transmits nothing at or below rest. Three notes for the fly worker (section 13, requests 7 to 9).
-- **Next step:** M4 (fidelity and body selection). Proposed follow-up, not run: the same bars with
-  a delayed copy into the slow inputs, to test whether the missing piece is the inputs' temporal
-  filters.
+- **Next step:** M5 (other scans' atlases and the cross-specimen comparison). The T4/T5 temporal-dynamics follow-up is the
+  fly worker's (Director, 6 October); the app runs the test when asked.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
@@ -336,7 +360,7 @@ M1 shows the chips in the inspector, can colour the map by position basis (measu
 and has a "measured positions only" filter that hides derived positions. There is no map colouring
 by parameter layer yet: that needs the inventory resolved per cell. Toggling a whole layer off, and choosing
 between alternative completions (seeds or ensemble members of a search), need completions to be
-recorded side by side; that is planned with the fidelity panel (M4).
+recorded side by side; M4's Fidelity tab counts each run's values by layer but does neither yet.
 
 ## 6. Selectable configuration: scans, bodies, fidelity
 
@@ -366,8 +390,9 @@ the brain switches.
 
 ### 6.3 Fidelity
 
-- **Profiles:** m4 (regression reference), m7, m8, m9 (working), m10p and m10q (rung 2 candidates,
-  not adopted), each shown with its status from `profiles.py` and HANDOFF.
+- **Profiles:** m4 (regression reference), m9r (the working profile), m10p and m10q (rung 2
+  candidates, not adopted) and the rest as "custom, not validated", each shown with its status
+  from `profiles.py` and HANDOFF (built in M4: the Fidelity tab, section 14).
 - **Switches:** registry keys with their neutral value, current value and evidence label
   (from `data/model/mechanisms.yaml`, `data/model/parameters.csv` and the run inventory), grouped by
   `docs/FIDELITY_LADDER.md` rung.
@@ -580,6 +605,103 @@ app makes:
 9. **The variant's graded rows as candidates for `cell_types.csv`:** Mi1, Tm3, Tm1, Tm2, Mi4, Mi9,
    C3, T4a to T4d and T5a to T5d (`app/protocols/eye/variant_graded_medulla.csv`, each with its
    whole-cell source).
+
+   The fly worker has since built switches for 7 and 9 (`main` 698c2eb and 81e7afa, merged into
+   `app`, neutral by default): `cell_type:ol_graded|release_at_rest` (a fraction of the maximum
+   release at rest, 0 to 0.9, guessed) and `cell_type:all|mode_from_recordings` with per-type
+   `graded_rec` rows. Request 8 (temporal filters) is the open one.
+
+Found while building M4 (section 14):
+
+10. **Quote the flow text in `data/model/mechanisms.yaml`.** The names of B1, B3, N22 and N25 and
+    the notes of B6 contain commas inside unquoted flow mappings, so a YAML reader cuts them into
+    stray keys. The app rejoins them (`app/build/fidelity.py`, marked in the tab); quoting them
+    would make that unnecessary.
+
+### 13.1 The T4/T5 direction test (for the fly worker)
+
+The Director's order (6 October): the fly worker builds per-type temporal dynamics as model rungs,
+and this test is their held-out check. One command records a profile and reports, per T4/T5
+subtype, whether the cells respond and whether they prefer the direction they prefer in flies.
+
+```
+.venv/bin/python app/tools/t4t5_ds.py --profile <rung> --out runs/app/t4t5/<label> \
+    [--set 'entity|property=value'] [--model-root ~/fly-emulation] [--parallel 7]
+```
+
+For the fly worker's `docs/HANDOFF.md` (theirs to paste; the app does not edit it):
+
+> **T4/T5 direction test (held-out, from the app worker).** From a checkout with `app/` (branch
+> `app`): `.venv/bin/python app/tools/t4t5_ds.py --profile <rung> --model-root <checkout with the
+> rung> --out runs/app/t4t5/<label> [--parallel 7]`. It records 17 two-second runs at seed 0 (a
+> control, then moving ON and OFF bars in 4 directions, injected either into the medulla inputs
+> of T4/T5 or into the photoreceptors) and reports, per T4/T5 subtype, "no response", "not
+> selective", "selective as in flies" or "opposite" (Maisak et al. 2013 preferences, Wilcoxon
+> with Holm). Exit 0 only if all 8 subtypes are selective as in flies. About 20 minutes on
+> backhouse at `--parallel 7`, over an hour on the Mac. Run it once a rung's values are set, not
+> while fitting, and record each call in DECISIONS. Baselines: plain m9r gives no response (its
+> medulla inputs spike and the 4 mV bars stay below threshold); m9r with the medulla inputs graded
+> responds but is not selective (0 of 8). The photoreceptor set also needs the lamina to transmit
+> at rest. Details: `docs/APP_DESIGN.md` section 13.1 on branch `app`.
+
+- **Where to run it.** From a checkout that has `app/` (this branch, or `main` once `app` is
+  merged). `--model-root` points at the checkout that holds the model under test (its `src/` and
+  `data/`), so a rung on the fly worker's branch is tested without merging anything; the manifest
+  records that checkout's commit and dirty files (`provenance.model_src`). Without it the
+  checkout's own `src/` is used. Profiles and the status label come from that checkout too
+  (checked 6 October with a 30 ms run on `main` at 81e7afa: the manifest named that commit, and
+  m9r was labelled "custom, not validated" because `main`'s working profile is now m9c). Switches
+  go in with `--set`, e.g. `--set 'cell_type:ol_graded|release_at_rest=0.5' --set
+  'cell_type:all|mode_from_recordings=1'`; every run's manifest keeps them and its status reads
+  custom. On the Mac every recording takes a slot from the Director's
+  limiter (through `run_library.py`). On backhouse set the MuJoCo environment first, as in
+  `~/flyapp/bh_t4t5.sh`: `LD_LIBRARY_PATH=$HOME/osmesa/root/usr/lib/x86_64-linux-gnu
+  MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa`, and pass `--parallel 7`.
+- **Cost.** 17 recordings of 2 s at seed 0 (one control; medulla ON and OFF bars and photoreceptor
+  ON and OFF bars, 4 directions each). On backhouse at `--parallel 7`: 342 to 431 s per run and
+  20 minutes for the set (measured, validation call below), up to 3 GB per run. On the Mac, one
+  at a time through the slot limiter, about 17 times 4 to 5 minutes (inferred from the M2 library's
+  190 to 240 s per 2 s run). Resumable: rerun the same command and finished runs are skipped.
+  `--stimulus medulla` or `photoreceptor` records one set (9 runs); `--analyse-only` re-reads.
+- **Output.** A report on stdout, `<out>/ds.json` and `<out>/ds.png`. Exit 0 when every set
+  recorded passes, 3 when any fails.
+- **The stimuli** are fixed files, `app/protocols/t4t5/*.json` (each run records the file's md5).
+  Medulla bars: current into the T4 inputs under a moving bar (Mi1, Tm3, Mi4, C3 +4 mV; Mi9
+  -4 mV) or the T5 inputs (Tm1, Tm2 +4 mV); they test the circuit from the medulla inputs on.
+  Photoreceptor bars: R1-R6, R7 and R8 under the bar +3 mV (ON) or -3 mV (OFF); they test the
+  whole path from the eye. 19 left-eye ommatidia, 2-column bars, one column per 50 ms, two
+  sweeps. Amplitudes are guessed; the axes are inferred from the retinotopy fit (front-to-back
+  is mosaic -x, upward -y).
+- **The readout and the verdict** (fixed 6 October, before any rung was tested). Per watched
+  cell, 17 to 19 per subtype: the peak change in potential against the control over both
+  sweeps; T4 from ON bars, T5 from OFF bars. DSI = (pref - null)/(|pref| + |null|) with the
+  preferred direction from flies (Maisak et al. 2013: a front-to-back, b back-to-front, c upward,
+  d downward). Two-sided Wilcoxon signed-rank test across cells, Holm over the 8 subtypes of a
+  set. A subtype is "no response" if its median peak is under 0.5 mV in every direction
+  (guessed floor), "not selective" if Holm p is 0.05 or more, otherwise "selective as in flies"
+  or "selective, opposite to flies" by the sign of the median DSI. A set passes when all 8 are
+  selective as in flies. A bias shared by every cell (for example from the bar geometry) cannot
+  pass, because within each pair (a/b, c/d) the preferences must be opposite.
+- **Held-out use.** Run it on a rung once its values are set, not while fitting them. Record each
+  call, the rung and the verdict in DECISIONS. If a rung fails and is changed, say what changed
+  and why before the next call. Do not edit the stimulus files to pass; `--write-stimuli`
+  rebuilds them from the mosaic and is maintenance only, to be recorded as a change to the test.
+- **What it cannot tell.** The bars are injected current, not light from a moving scene (the
+  arena has no moving stimulus: request 5). One patch, one seed. The amplitudes are guessed.
+  Flies' preferences were measured mostly by calcium imaging, and this test reads voltage.
+  A pass shows the right direction preference, not the right size: no DSI magnitude from flies
+  has been checked here.
+- **Baselines** (measured; section 14, "The T4/T5 direction test: validation"): m9r with the
+  graded-medulla rows FAILS both sets: medulla bars, T4 and T5 respond (1.2 to 2.1 mV) and 0 of 8
+  are selective; photoreceptor bars, no response in any subtype. Plain m9r FAILS both sets with no
+  response anywhere: its medulla inputs spike, and the 4 mV bars leave them 3 mV short of
+  threshold, so not one spike changes. A rung that adds temporal dynamics should first change the
+  medulla set, and needs the medulla inputs graded (request 9; `main`'s
+  `cell_type:all|mode_from_recordings` switch) for that set to respond at all.
+- **The photoreceptor set cannot pass while the lamina transmits nothing at rest** (request 7):
+  in m9r L1-L3 sit 3 to 5 mV below rest, and even under the bars they cross rest in at most 0.2%
+  of samples (measured, variant photoreceptor OFF runs). A rung aimed at the photoreceptor set
+  needs tonic lamina release, or a resting point above the cut-off, first.
 
 ## 14. Milestones
 
@@ -1210,10 +1332,105 @@ Director asked for it ahead of M4, with the graded cell types taken from recordi
     inputs (Mi4, Mi9, C3) given a delayed, smoothed copy of the bar (delay 30 to 50 ms, guessed),
     standing in for their measured filters. If T4 then become direction-selective with each
     subtype's sign from flies, the wiring carries the direction information and the missing piece
-    is the filters; if not, the wiring or the placement is at fault.
+    is the filters; if not, the wiring or the placement is at fault. Not to be run by the app
+    (Director, 6 October): the fly worker builds the dynamics as model rungs, and the test in
+    section 13.1 is their held-out check.
+
+**The T4/T5 direction test: validation (6 October, 02:12 to 02:51 CDT).** `app/tools/t4t5_ds.py`
+(section 13.1) run twice on backhouse at commit a73e966 (`~/flyapp/bh_t4t5.sh`, 7 at a time,
+under `timeout 90m`), outputs collected to `runs/app/t4t5/`. Expected before the calls: the
+variant reproduces the graded-medulla runs and fails; plain m9r gives no response.
+
+- **m9r with the graded-medulla rows** (`m9r-graded-variant`; figure
+  `docs/media/app_t4t5_variant.png`). FAIL, both sets.
+  - **Reproduction** (measured): the control and the 8 medulla bar runs are identical, spike for
+    spike, to the graded-A runs of the discriminating run (md5 of every spike; 106,681 spikes in
+    the control). The fixed stimulus files and the harness give the same runs as the
+    hand-written protocols.
+  - **Medulla bars:** T4 respond to ON bars (median peaks 1.7 to 2.1 mV) and T5 to OFF bars (1.2
+    to 1.4 mV), 0 of 8 selective: DSI -0.02 to +0.02, Holm p 0.36 or more.
+  - **Photoreceptor bars:** no response in any subtype (T4/T5 peaks under 0.01 mV). The
+    photoreceptors follow the bars (R1-R6 +2.3 mV ON, -2.4 mV OFF) and L1 and L2 invert them
+    (about 2.5 to 3.0 mV), but L1-L3 sit 3 to 5 mV below rest and cross it in at most 0.2% of
+    samples, so the graded rule passes nothing on (request 7).
+  - 17 runs, 342 to 431 s each, 20 minutes for the set.
+- **Plain m9r** (`m9r`, the profile as adopted at a73e966). FAIL, both sets: no response in any
+  subtype (T4/T5 peaks 0.00 mV), as expected.
+  - **Medulla bars:** the injected inputs move by their 4 mV (Mi1, Tm3, Mi4, C3 +3.8 to +4.0 mV,
+    Mi9 -3.9 mV, Tm1 +4.0 mV, Tm2 +3.2 mV) but in m9r they are spiking cells: rest -52 mV,
+    threshold -45 mV, and the watched Mi1 and Tm1 peak at -48 mV. Not one spike changes: every
+    medulla bar run has exactly the control's 70,552 spikes in the sweep windows (measured). The
+    medulla set is built for graded inputs, as flies' are (section 14, "The discriminating run");
+    with spiking inputs it reads "no response" because the 4 mV (guessed) is below threshold. A
+    rung that keeps these cells spiking fails it for that reason, and the amplitude is not to be
+    raised to pass.
+  - **Photoreceptor bars:** as in the variant up to the lamina (R1-R6 +2.3 / -2.4 mV, L1 and L2
+    inverted by 2.6 to 3.0 mV). Mi1 and Mi4 move by 0.3 to 0.5 mV, Tm1 to Tm9 and C3 not at all.
+  - 17 runs, 342 to 416 s each; 19 minutes for the set (02:32 to 02:51).
 
 **M4: fidelity and body selection.** Profiles and switches with labels and status; flybody vs
-NeuroMechFly (request 1); inventory and ledger panel per run.
+NeuroMechFly (request 1); inventory and ledger panel per run. Built 6 October (commits 1daa3ac
+and 5989464, then 2981fdd and d63adbb after merging `main`); screenshot
+`docs/media/app_fidelity.png`, from the rebuilt tables.
+
+- **The model's construction tables, as the app reads them.** `app/build/fidelity.py` writes
+  `app/data/model/fidelity.json` through the model's public functions (`flyemu.model_data.load`
+  and `construction_state`, `flyemu.profiles`): 72 mechanisms (27 body, 8 internal state, 34
+  nervous system, 1 development, 2 infrastructure) with their status, switch keys, neutral values
+  and tests; the 685 unknowns with their biological bounds and labels; 105 structural rows; the
+  23 profiles with the status the recorder gives each (working m9c, regression m4); and the scans
+  and bodies, each saying whether the recorder can run it and if not, why. Counts are from the
+  rebuild after merging `main` 81e7afa (684, 101 and 22 before). It records the tables' commit and
+  md5s and whether they were modified. Rerun it after the model changes; the server's catalog links the
+  file.
+- **The Fidelity tab** (one per run), from two sources kept apart: the run's own inventory (every
+  value the model's build asked for, with its basis, written at record time) and the tables above.
+  - **Configuration:** the run's profile and status, its overrides and variant rows; the scans and
+    bodies it did not use, with the reason each cannot be run (BANC, FAFB, MANC and hemibrain: no
+    simulation; NeuroMechFly: request 1, on hold). A warning when the run's model commit is not the
+    tables' commit.
+  - **Configure a run:** profile (newest first, with status), body, scan, and the 75 switch keys
+    without wildcards (those named by a mechanism and the structural table's switch rows, where
+    most profile additions live), each with the profile's value or the registry default. "Set in
+    the Session tab" writes these into the Session protocol, which is checked there and can be
+    started. Wildcard keys can be typed into the protocol's overrides.
+  - **This run's values by evidence:** counts by basis per subsystem. **Biological bounds:** each
+    numeric value against the range of every table row that owns its key. **Construction ledger:**
+    the model's counts by tier. **Mechanisms and switches:** filterable by status, tier and
+    "switched in this run". **Values in this run:** searchable, each with its owning row and range.
+    **Profiles:** the table, and the differences between any two (by default the run's profile and
+    the one defined before it).
+- **Checks the server now makes.** The protocol check (and so a session start) refuses a profile
+  the model does not define, a body or scan the recorder cannot run, and an override key that no
+  construction table owns (a mistyped key would otherwise give a run identical to its profile
+  under a "custom" label). It reports the status the run will be recorded with.
+- **A labelling fix.** `record.py` labelled m4 with overrides "regression reference". A named
+  profile with overrides or extra rows is now "<name> (<its status>) with overrides: custom, not
+  validated". The rule lives in `app/server/status.py`, shared by the recorder, the check and the
+  build; a test holds the page's copy to it. No recorded run was mislabelled (checked over all 284
+  manifests on the Mac): the m9 runs were recorded while m9 was the working profile, and the one
+  m4 run with overrides is a converted legacy recording, labelled as such.
+- **Results** (measured, on the graded-variant control, `eye/graded-A-control-m9r-s0`): 925 values
+  in its inventory: measured 14, derived 33, inferred 170, guessed 663, absent 28, no basis 17.
+  612 numeric values have a declared range, and none is outside it. From the model's own ledger,
+  two m4 values are outside their bounds (`b3_k_pro_retpro` and `b3_k_meta_retpro`, 1.0 each); the
+  tab shows them.
+- **Found in the model's data:** `data/model/mechanisms.yaml` writes five fields as unquoted flow
+  text containing commas (the names of B1, B3, N22 and N25 and the notes of B6), so a YAML reader
+  cuts them at the comma. The build rejoins the pieces in order and marks each one in the tab
+  (request 10).
+- **Tests** (`app/tests/test_fidelity.py`, 5): the tables match the model's; the split fields are
+  rejoined; the page's owner join matches `model_data.owners` on every table key; the page's
+  status and the check's equal the recorder's; the check refuses the four bad cases above.
+- **Not built in M4.**
+  - Choosing NeuroMechFly: listed, not selectable, until `Organism` takes a body choice (request 1,
+    on hold).
+  - Toggling a layer off and choosing between alternative completions (section 5.1): that needs
+    completions recorded side by side, which no run does yet.
+  - Colouring the brain map by parameter basis: the inventory is per type or class, not resolved
+    per cell.
+  - The installable-app parts (downloads, import and export of configurations beyond the protocol
+    file).
 
 **M5: other scans.** BANC, FAFB, MANC and hemibrain atlases; the cross-specimen comparison view;
 simulation on other scans when request 6 lands.
