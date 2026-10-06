@@ -10,7 +10,7 @@ entries of `docs/DECISIONS.md` and `docs/FINDINGS.md`, and the approved scope br
 Whole-CNS spiking model on the male-cns v1.0 connectome, with a MuJoCo flybody body. Ben's order: (1) a full set
 of blanks, an accurate body and brain, and fidelity rungs up to synapse-specific; (2) development models; (3) many
 flies; (4) a reconstruction study. Progress is the ledger fill fraction and the fixed behaviour scoreboard (see
-HANDOFF and the scope brief). Never tune toward a behaviour; "fit to recordings, then test walking" as a method is rejected.
+HANDOFF and the scope brief). Fit unknown parameters to physiology, and to behaviour where useful (Ben, 6 Oct), but as an actual fly, not a neural net: biological quantities, inside measured ranges, shared by type, class or development, labelled fitted, and tested on held-out data. No per-route or per-synapse free knobs, no decoders.
 The per-value bar is "consistent with SOME fly of this species" (inside the measured range, source cited), not
 this specimen's exact value.
 
