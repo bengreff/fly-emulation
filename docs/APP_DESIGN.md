@@ -7,10 +7,11 @@ sugar assay, live sessions, the protocol editor, a sham distribution) in the eve
 says what each contains, with the results; `app/README.md` says how to run it). Owner: the app worker (branch `app`). The model is owned by the fly worker; the app reads it
 only through public functions and asks for new ones (section 13, on hold).
 
-**State at 01:00 CDT, 6 October 2026 (the m9r library is collected, scored and compared; the
-Compare tab sets m9r and m9 side by side; nothing of mine is running on either machine):**
+**State at 01:30 CDT, 6 October 2026 (M3 is done: the Eye tab has the column table and the
+motion-sensing traces, checked on a watched control run; nothing of mine is running on either
+machine):**
 
-- **Done and pushed** (branch `app`; 145 tests pass).
+- **Done and pushed** (branch `app`; 147 tests pass).
   - **The model's sugar to MN9 assay** (`scripts/assay_pathways.py`, m9) is reproduced by the app.
     - On seeds 0 to 2, every cell's spike count matches the model's own run.
     - Over seeds 0 to 9 both give 5.7 ± 1.4 Hz; the app's own kick draws give 5.8 ± 2.1 Hz
@@ -82,7 +83,15 @@ Compare tab sets m9r and m9 side by side; nothing of mine is running on either m
   screenshot `docs/media/app_compare_m9r_vs_m9.png`). It reads the scores from each library and
   what differs between the models from the runs' registry inventories: 7 values differ, 35 are
   only in m9r's build and 3 only in m9's.
-- **Next step:** the rest of M3, the column table and the LPTC traces.
+- **M3 is done** (section 14, "M3, second part"; screenshots `docs/media/app_eye_columns.png` and
+  `docs/media/app_eye_traces.png`). The Eye tab has the column table, placed by connectivity
+  (derived), and the motion-sensing traces. A watched control run (measured) shows the light
+  signal reaching the photoreceptors and L1 to L3 and stopping at the first spiking stage of the
+  medulla. T4 and T5 do not move, and the tangential cells carry only an internal rhythm through
+  one inhibitory cell, Am1.
+- **Next step:** M4 (fidelity and body selection), unless the Director prefers the discriminating
+  run first: the same watched control with the optic-columnar graded switch at 1, as a labelled
+  variant.
 - **Blocked:**
   - MDN and DNa02 cannot pass until the body walks. m9r's fly lies down at rest (`main`'s
     handoff, F-STAND-3).
@@ -456,11 +465,12 @@ Panels, all synced to the replay clock:
 2. **Photoreceptors:** R1-R6 and R7/R8 drive and spikes at their ommatidium's azimuth and
    elevation. Ommatidia with no assigned photoreceptor are hatched: male-cns holds 3,377 R1-R6
    against ~9,600 in a fly (`src/flyemu/vision.py`), and that gap is shown, not hidden.
-3. **Columns downstream:** L1-L5, Mi1, Tm1-4, T4/T5 placed at a column derived from connectivity
-   (each cell's dominant upstream column, iterated from the photoreceptors; derived, with a
-   confidence per cell). This table may be useful to the model too and will be offered to fly.
-4. **Outputs:** lobula plate tangential cells (HS, VS) and visual projection neurons (LC types) as
-   rate traces.
+3. **Columns downstream:** L1-L5, Mi1, Tm1-4, T4/T5 placed at a column derived from connectivity.
+   As built (M3), each cell takes the synapse-weighted mean position of its placed inputs, iterated
+   from the photoreceptors (derived), with hops, input share and spread per cell. This table may
+   be useful to the model too and will be offered to fly.
+4. **Outputs:** lobula plate tangential cells (HS, VS, H1, H2) as traces: membrane potential where
+   watched, else spike rate. Visual projection neurons (LC types) are not drawn yet.
 
 Visual worlds (looming disc for the giant fibre escape, rotating grating for optomotor turning, a
 dark bar) need arena objects (request 5); until then the eye sees the floor and the sky.
@@ -978,8 +988,103 @@ A photoreceptor's inspector row links to its ommatidium. The tab states an assig
 receives 6 R1-R6 terminals (neural superposition, measured anatomy), but the assignment gives 1
 to 61 per ommatidium (mean 5.4 over the 629 ommatidia with any; exactly 6 in 19; 202 have one).
 So the counts average out, while single ommatidia are poorly resolved; worth the fly worker's
-attention if retinotopic precision matters for motion vision. Not yet built: the column table,
-LPTC traces.
+attention if retinotopic precision matters for motion vision.
+
+**M3, second part: the column table and motion-sensing traces** (6 October 2026, 01:00 to
+01:30 CDT; screenshots `docs/media/app_eye_columns.png` and `docs/media/app_eye_traces.png`).
+
+- **Column placement** (`app/build/columns.py`, writes `app/data/body/flybody/columns.json`,
+  flyemu-columns/1, 1.6 MB, 2 s to build). The scan has no column labels for these cells, so
+  the placement is derived from connectivity:
+  - photoreceptors sit at their ommatidium (eye.json, itself derived topology with an inferred
+    global alignment);
+  - every L1-L5, Mi1, Tm3, Mi4, Mi9, C3, Tm1, Tm2, Tm4, Tm9, T4a-d and T5a-d cell takes the
+    synapse-weighted mean position of its placed inputs (edges of 3 or more synapses), in the eye
+    giving it the most placed input, iterated until nothing moves by 0.01 spacing (185
+    iterations). The anchors stay fixed, so this is a weighted harmonic extension of the
+    photoreceptor map.
+  - Result: 37,763 cells placed. Every type is placed in full except L3 (1,452 of 1,772), L4
+    (1,255 of 1,770), Tm9 and T5a (short by 2 and 1); the rest have no placed input. 288 (L4,
+    left eye) to 456 of each eye's 721 columns hold a cell of a given type; the median is 1 cell
+    per occupied column (L1 and Tm3: 2; Mi1: 1.5). Hops from a photoreceptor: median 1 for L1,
+    L3, Mi1 and Mi4; 2 for the rest of the lamina and medulla and for T4; 3 for T5. That follows
+    the circuit, except L2 (2 hops; see the scan observation below).
+- **Checks, not used for placing** (derived):
+  - every placed cell lands in the eye of its annotated soma side (all 22 types, 100 %);
+  - a cell's 6 nearest cells by soma position (measured) lie within 2 column spacings of it in
+    the mosaic for 0.39 (C3) to 0.66 (L5) of pairs, against 0.03 to 0.06 with the placements
+    shuffled within the type. So the placement is retinotopic at the scale of a few columns.
+- **Its limit:** a weighted mean cannot put a cell beyond the photoreceptors it reads. Cells past
+  the edge of the photoreceptor map stack on edge ommatidia (left 700 to 715, right 0 to 28): up
+  to 22 cells of one type on one ommatidium, against one per column in a real eye (T4/T5: one of
+  each subtype). R1-R6 per ommatidium and L1 per ommatidium correlate only weakly (Spearman 0.24
+  left, 0.46 right). Columns without assigned photoreceptors stay empty. A fit to the full
+  hexagonal lattice (one cell per type per column) would fix the pile-ups; not done.
+- **Scan observation for the fly worker** (measured synapse counts, `male_cns_edges`): L2 receives
+  a median of 2 synapses from the assigned photoreceptors, against 16 for L1 and 13 for L3; 861
+  of 1,779 L2 have any photoreceptor edge of 3 or more (L1: 1,352 of 1,776). In real lamina
+  cartridges L1 and L2 are both postsynaptic at nearly every R1-R6 tetrad synapse (literature,
+  Meinertzhagen and O'Neil 1991; not checked here), so this looks like how the scan's lamina was
+  traced. It matters for the model: L2 feeds the OFF pathway (Tm1, Tm2, Tm4 to T5).
+- **The Eye tab now has:**
+  - the column table: per type, the model's mode (graded or spiking, read from the run's
+    inventory with its status), placed of scan, columns per eye, cells per column, the soma
+    check, cells fired, mean rate and the watched cells' mean voltage now. Clicking a type draws
+    its cells on the mosaic (watched ones coloured by voltage), lights them on the brain map, and
+    lists hops, input share and spread;
+  - clicking an ommatidium also lists the columnar cells placed on it;
+  - motion-sensing traces, synced to the clock: per type from photoreceptor to T4/T5, then every
+    lobula plate tangential type (HSE, HSN, HSS, H1, H2, VS, VSm, HST, VST1, VST2) per side. A row
+    shows the watched cells' mean membrane potential if any are watched, else the spike rate over
+    all cells of the type; a graded type with no recorded voltage says so instead of drawing a
+    flat line. Clicking sets the time;
+  - the side panel widens to 600 px on this tab; `etype=<type>` and `scroll=<element id>` in the
+    URL select a type and scroll the panel, for screenshots.
+- **What the library control shows** (`lib-m9r-seeds/control-s0`, measured): no cell in the table
+  fires. Of 44,738 cells, 11,418 are graded in the model (R1-R6, R7, R8: measured basis; L1-L3:
+  inferred) and cannot spike, and the library control records none of their voltages. Every
+  spiking type downstream, L4 and L5 to T4/T5 and every tangential cell, has 0 spikes in 2 s.
+  Across the optic lobe 28 of 89,394 intrinsic cells fire. The scene holds no moving stimulus
+  (request 5 is on hold), so the motion cells would be expected quiet; the question is whether
+  anything reaches them at all.
+- **A watched control** answers that. `app/tools/eye_watch.py` writes
+  `app/protocols/eye/control-watch-visual-m9r-s0.json`: the library control at seed 0 with 681
+  cells' membrane potential recorded at 1 kHz. Those are 194 photoreceptors and 397 columnar cells
+  of a patch of 19 left-eye ommatidia around ommatidium 298 (about one cell per type per
+  ommatidium, as placed), plus every tangential cell and the control's watch list (90). Run on
+  backhouse (m9r, 4723e1b), 01:10 to 01:21 CDT, 642 s, exit 0. Measured:
+  - watching changes nothing: 106,287 spikes, identical to `lib-m9r-seeds/control-s0`, and
+    identical body positions;
+  - mean voltage after the first 200 ms (every cell starts at -52 mV): R1-R6 -49.0, R7 and R8
+    -43 to -48; L1 -55.3, L2 -56.3, L3 -53.4 (photoreceptors depolarise and the lamina monopolar
+    cells hyperpolarise in light, the signs seen in flies); Mi1 -52.7, Mi4 -53.4, Mi9 -52.2,
+    C3 -51.9; L4, L5 and Tm1 to Tm9 about -52.0; T4a to T4d -52.00 with no variation at all;
+    T5a to T5d -52.01 to -52.03;
+  - each photoreceptor follows its ommatidium's luminance (median correlation 0.51, n = 194), but
+    the patch looks at sky near the renderer's ceiling (mean luminance 0.988), so the luminance
+    varies by a median 0.05 and the voltage by 0.4 mV.
+  - **Reading** (inferred): the light signal enters at the graded photoreceptors and L1 to L3 and
+    stops at the first spiking stage. The medulla cells spike by the model's default (guessed),
+    and the optic-columnar graded switch is 0 in m9r (guessed); the lamina input moves them by
+    under 1.5 mV, far from threshold, so T4 and T5 receive nothing. In flies Mi1, Tm3, Tm1 and Tm2
+    respond with graded potentials (Behnia et al. 2014; literature, not checked here), so the
+    spiking default is likely the wrong mode for them. A note for the fly worker, not a change
+    the app makes.
+  - **The tangential cells' only activity is an internal rhythm**, not vision (measured). Right
+    HSE, HSN, H2 and HST show 25 hyperpolarising dips of 2 to 3 mV in 2 s; on the left, HSE, HSN
+    and HST show 6. Each dip follows within 6 ms a spike of Am1 on that side (25 of 25; 6 of 6).
+    Am1 is one GABAergic optic-lobe cell per side (predicted transmitter) and gives 80 to 153
+    synapses to each HSE, HSN and HST cell (H2: 26 and 39; HSS, which shows no dips: 13 and 4).
+    It is the only spiking input to HSN R among its 858 inputs of 3 or
+    more synapses. Am1 R fires every 76 ms (about 13 Hz). It fires in lockstep with MeVPOL1 L
+    (cholinergic, 396 synapses onto Am1 R), MeVC11 L and Pm11 R. Octopaminergic OA-AL2i1 R (121
+    synapses) fires at twice that rate. Where this rhythm starts is not checked. The 0.1 to 0.3 mV
+    ripples in C3, Tm2 and other medulla rows look, by eye, to share its period; also not checked.
+  - **Next discriminating experiment** (not run): the same watched control with the
+    optic-columnar graded switch at 1, run as a labelled variant (`--set`, so it is not called
+    m9r), and a second patch at the horizon where the scene has contrast. If the mode is the
+    block, Mi1, Tm3, Tm1 and Tm2 follow L1 and L2, and T4 and T5 move. Direction selectivity
+    needs moving stimuli (request 5, on hold); until then the only image motion is the fly's own.
 
 **M4: fidelity and body selection.** Profiles and switches with labels and status; flybody vs
 NeuroMechFly (request 1); inventory and ledger panel per run.
