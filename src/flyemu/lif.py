@@ -80,6 +80,8 @@ class LIFParams:
     graded: np.ndarray | None = None       # bool per neuron
     graded_rmax_hz: float = 100.0          # rate-equivalent at threshold
     graded_r0: np.ndarray | None = None    # release at rest as a fraction of rmax (None: 0, m4)
+    graded_range: np.ndarray | None = None  # mV from rest to full release (None: v_th - v_rest)
+    graded_k: np.ndarray | None = None      # per-cell release multiplier (None: 1)
     spont_mv: float | np.ndarray = 0.0     # tonic drive
     release_gain: float | np.ndarray = 1.0  # presynaptic
     input_gain: float | np.ndarray = 1.0    # postsynaptic
@@ -426,6 +428,20 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
     tau_m = (np.asarray(tau_m, np.float32) * tm_scale).astype(np.float32)
+    # s12 vision gain (DECISIONS 6 Oct): graded release spans the type's recorded response amplitude
+    # (cell_types.csv graded_range_rec rows) instead of rest to threshold (7 mV in the optic lobe, guessed)
+    # 2: as 1, and each graded synapse keeps its transfer per mV at rest (release x span / (v_th - v_rest)),
+    # so only the saturation point moves (derived compensation; tonic release at rest scales with it)
+    graded_range, graded_k = None, None
+    gmode = one("graded_range_from_recordings", "switch", "per-type graded release range from recordings",
+                0.0, "neutral 0: graded release spans rest to threshold; 1 recorded span; 2 recorded span "
+                     "with the per-mV transfer at rest kept")
+    if gmode:
+        gr = ptable.per_neuron(reg, conn, "graded_range_rec", np.nan, units="mV", table=table)
+        d0 = v_th - np.asarray(v_rest, np.float32)
+        graded_range = np.where(np.isfinite(gr), gr, d0).astype(np.float32)
+        if gmode >= 2:
+            graded_k = (graded_range / d0).astype(np.float32)
     # --- session 11: per-cell input gain from within-type size/input rules (percell.py)
     from . import percell
     f_cell = percell.input_gain_factors(reg, conn)
@@ -595,7 +611,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
         tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, stp_edge=stp_edge, cond=bool(cond),
         e_exc=float(e_exc), e_inh=float(e_inh), graded=graded.astype(bool),
-        graded_rmax_hz=float(rmax), graded_r0=graded_r0, spont_mv=spont, release_gain=rel,
+        graded_rmax_hz=float(rmax), graded_r0=graded_r0, graded_range=graded_range, graded_k=graded_k, spont_mv=spont,
+        release_gain=rel,
         input_gain=inp, mod_release=mod_release, mod_sensitivity=sens,
         mod_tau_ms=float(mod_tau),
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
@@ -707,6 +724,9 @@ class Network:
         self.W_graded = None
         self.g_r0 = (None if p.graded_r0 is None or not np.any(p.graded_r0)
                      else np.asarray(p.graded_r0, np.float32)[self.g_idx])
+        self.g_range = (None if p.graded_range is None
+                        else np.asarray(p.graded_range, np.float32)[self.g_idx])
+        self.g_k = (None if p.graded_k is None else np.asarray(p.graded_k, np.float32)[self.g_idx])
         if self.g_idx.size:
             rows = [np.arange(self.conn.indptr[i], self.conn.indptr[i + 1]) for i in self.g_idx]
             sel = np.concatenate(rows) if rows else np.zeros(0, np.int64)
@@ -865,10 +885,13 @@ class Network:
         # graded transmission: continuous, delayed by one step
         if self.W_graded is not None:
             g = self.g_idx
-            r = (self.v[g] - self.v_rest[g]) / (self.v_th[g] - self.v_rest[g])
+            r = (self.v[g] - self.v_rest[g]) / (
+                self.v_th[g] - self.v_rest[g] if self.g_range is None else self.g_range)
             if self.g_r0 is not None:   # tonic release at rest; floor below rest
                 r = self.g_r0 + (1.0 - self.g_r0) * r
             r = np.clip(r, 0.0, 1.0)
+            if self.g_k is not None:
+                r = r * self.g_k
             if r.any():
                 self.delay[(self.delay_head + 1) % self.D] += (
                     self.W_graded @ (r * self.graded_scale)).astype(np.float32)

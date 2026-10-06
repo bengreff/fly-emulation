@@ -34,6 +34,8 @@ TYPES = ["R1-R6", "L1", "L2", "L3", "L4", "L5", "C2", "C3", "Mi1", "Tm3", "Mi4",
          "H2", "VS"]
 # (onset ms, duration ms) after the dark settle; two of Behnia et al. 2014 Fig. 2's blocks, 2 s dark between
 FLASHES = [(500, 200), (2700, 1000)]
+# per-cell peak deflections saved for these (scoring on cells whose cartridge has photoreceptor input)
+CELL_TYPES = ["R1-R6", "L1", "L2", "Mi1", "Tm3", "Tm1", "Tm2", "T4a", "T4b", "T4c", "T4d", "T5a", "T5b", "T5c", "T5d"]
 TAIL_MS = 1500.0
 
 
@@ -45,6 +47,9 @@ def main() -> None:
     ap.add_argument("--sample-hz", type=float, default=100.0, help="eye update rate, as the organism")
     ap.add_argument("--record-ms", type=float, default=5.0, help="trace sampling interval")
     ap.add_argument("--seed", type=int, default=1)
+    ap.add_argument("--flash", action="append", default=[],
+                    help="onset_ms:dur_ms after the settle, repeatable (default: two Behnia blocks)")
+    ap.add_argument("--tail-ms", type=float, default=TAIL_MS, help="dark after the last flash")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
     t0 = time.time()
@@ -80,7 +85,7 @@ def main() -> None:
 
     def run(ms: float, lum_at, record: bool):
         n_steps = int(round(ms / DT))
-        trace = np.zeros((n_steps // rec + 1, sel.size), np.float32) if record else None   # per cell
+        trace = np.zeros(((n_steps + rec - 1) // rec, sel.size), np.float32) if record else None   # per cell
         spikes = np.zeros(conn.n, np.int64)
         for s in range(n_steps):
             if s % every == 0:
@@ -91,21 +96,22 @@ def main() -> None:
             np.add.at(spikes, sp, 1)
         return trace, spikes
 
+    flashes = [tuple(float(x) for x in f.split(":")) for f in a.flash] or FLASHES
     run(a.settle_ms, lambda _t: 0.0, False)
-    total = FLASHES[-1][0] + FLASHES[-1][1] + TAIL_MS
+    total = flashes[-1][0] + flashes[-1][1] + a.tail_ms
 
     def lum(t_ms: float) -> float:
-        return 1.0 if any(on <= t_ms < on + d for on, d in FLASHES) else 0.0
+        return 1.0 if any(on <= t_ms < on + d for on, d in flashes) else 0.0
 
     trace, spikes = run(total, lum, True)
     tt = np.arange(trace.shape[0]) * rec * DT                     # ms after the settle
     # dark baseline: the 200 ms before each flash, per cell
-    res, traces = {}, {}
+    res, traces, cells = {}, {}, {}
     for ty, idx in groups.items():
         cols = slice(off[ty], off[ty] + idx.size)
         x = trace[:, cols]
         per = []
-        for on, d in FLASHES:
+        for on, d in flashes:
             b = x[(tt >= on - 200) & (tt < on)].mean(axis=0)
             w_on = (tt >= on) & (tt < on + d)
             w_off = (tt >= on + d) & (tt < on + d + 500)
@@ -117,6 +123,12 @@ def main() -> None:
                         "on_max_p90": round(float(np.percentile(dx_on.max(axis=0), 90)), 3),
                         "off_max_p90": round(float(np.percentile(dx_off.max(axis=0), 90)), 3),
                         "on_min_p10": round(float(np.percentile(dx_on.min(axis=0), 10)), 3)})
+        if ty in CELL_TYPES:   # last flash, per cell
+            cells[ty] = {"bodyId": conn.neurons.bodyId.to_numpy()[idx].tolist(),
+                         "on_max": np.round(dx_on.max(axis=0), 3).tolist(),
+                         "on_min": np.round(dx_on.min(axis=0), 3).tolist(),
+                         "off_max": np.round(dx_off.max(axis=0), 3).tolist(),
+                         "off_min": np.round(dx_off.min(axis=0), 3).tolist()}
         res[ty] = {"flashes": per, "n": int(idx.size), "graded": bool(graded[idx].all()),
                    "rate_hz": round(float(spikes[idx].sum() / idx.size / (total / 1000.0)), 3)}
         traces[ty] = np.round(x.mean(axis=1), 3).tolist()
@@ -124,12 +136,13 @@ def main() -> None:
         print(f"{ty:6s} base {f['base_mv']:7.2f}  1 s flash: ON {f['on_min']:+6.2f}/{f['on_max']:+6.2f}  "
               f"OFF {f['off_min']:+6.2f}/{f['off_max']:+6.2f}  p90 ON {f['on_max_p90']:+6.2f} "
               f"OFF {f['off_max_p90']:+6.2f}  {res[ty]['rate_hz']:.1f} Hz", flush=True)
-    meta = {"profile": a.profile, "set": a.set, "flashes_ms": FLASHES, "settle_ms": a.settle_ms,
+    meta = {"profile": a.profile, "set": a.set, "flashes_ms": flashes, "settle_ms": a.settle_ms,
             "sample_hz": a.sample_hz, "record_ms": a.record_ms, "seed": a.seed, "gain_mv": vis.gain_mv, "dark_mv": vis.baseline_mv,
             "driven": int(has.sum()), "wall_s": round(time.time() - t0)}
     if a.out:
         Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-        Path(a.out).write_text(json.dumps({"meta": meta, "res": res, "t_ms": tt.tolist(), "trace": traces}))
+        Path(a.out).write_text(json.dumps({"meta": meta, "res": res, "t_ms": tt.tolist(), "trace": traces,
+                                              "cells": cells}))
 
 
 if __name__ == "__main__":

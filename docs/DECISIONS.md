@@ -2256,3 +2256,109 @@ In the model, R1-R6 sit about 1 mV above −52 mV in the dark (`photoreceptor:al
   - the lamina truncation (55% of L1/L2 cells get no photoreceptor synapse);
   - the guessed per-stage gain (efficacy × `graded_rmax`), set alike for every synapse in the brain;
   - the guessed 7 mV range.
+
+**LMC amplitude and LPTC modes, read 02:54** (Sonnet extraction; raw pages and quote files in `data/raw/vision_gain_s12/`; the Zheng quotes re-checked here against the saved PMC page).
+- **Drosophila LMC, measured** (Zheng et al. 2006 J Gen Physiol 127:495, PMC2151524, sharp electrodes in vivo, LMC subtypes not separated):
+  - "LMCs responded to light pulses with transient hyperpolarizations that could reach values of 45 mV";
+  - "WT ... LMCs had resting potentials <−40 mV and maximum responses >40 mV" (an inclusion criterion);
+  - photoreceptors "maximum responses >40 mV" and "resting potentials in darkness <−60 mV";
+  - feedback onto photoreceptor terminals "requires tonic transmitter release" (their inference, from shibire^TS1).
+- **The measured amplitude chain for a bright flash from dark** (per cell, peak):
+  - R1-R6 >40 to 75 mV (Zheng 2006; Juusola & Hardie 2001);
+  - LMC up to 45 mV, hyperpolarising (Zheng 2006);
+  - Mi1/Tm3 about +15-20 mV ON, Tm1/Tm2 about +15-20 mV OFF (Behnia 2014 Fig. 2, figure estimate);
+  - T5 5-11 mV for a preferred-direction bar (Gruntman 2019 Fig. 1, figure estimate).
+  - Every stage after the photoreceptor passes about 0.4-1 of its input's swing (derived across studies and preparations: sharp electrode against whole-cell, flash against bar; uncertain to a factor of 2).
+- **Against the model** (grating per-cell F1, F-VISION-5): R1-R6 2.95, LMC 1.5, medulla 0.6, T4/T5 0.2 mV. Its stage ratios (0.5, 0.4, 0.33) are within that factor of 2. **Most of the deficit is at the first stage: the photoreceptor swings about 1/15-1/25 of the recorded amplitude, and the 7 mV graded range (guessed) cannot carry more.** This is a reading from two runs, not a test; the flash baseline measures the stage ratios directly.
+- **Constraint for any amplitude fit.** In conductance mode, a cell can hyperpolarise only to the inhibitory reversal: −70 mV (guessed) from −52 mV rest (guessed) allows 18 mV. A 45 mV LMC hyperpolarisation needs a sourced LMC rest and chloride reversal, or a declared amplitude cap.
+- **Not usable as measured values:**
+  - HS and VS mode: Joesch 2008, Schnell 2010 and Maimon 2010 were abstract-only (403, not in PMC). Numbers seen only in search summaries are excluded.
+  - CT1: Meier & Borst 2019 was abstract-only and is calcium imaging, so it gives no mode.
+  - Am1: no recording found.
+  - These stay guessed. HS, VS and CT1 tonic firing at mean luminance therefore cannot be scored against a recording, only against the guess.
+
+### Result, arm RTc (6 October, 02:58; `runs/s12/vision/grating_RTc.json`, 746 s on backhouse; figure `docs/media/s12_vision_grating.png`, five arms, viewed)
+
+| Quantity | Prediction (02:44) | Result |
+|---|---|---|
+| V (T4/T5 per-cell F1 above static ≥ 0.5 mV) | Fails; gain unchanged | **Fails on all 8 subtypes**: T4 0.080-0.089 mV (static 0.006-0.013), T5 0.064-0.073 (static 0.008-0.012). The gain is not unchanged: it is about half of RT's. |
+| HS / CT1 at mean luminance | Still tonic | **Held**: HSN 150.5 Hz, HSE 149.5, HSS 109, VS 60.7, CT1 354 |
+| Am1, H2 | Within [−90, 20] mV | **Held**: Am1 −54.94, H2 −53.19 (RT: −504.6 and −226.9) |
+
+- **Per-cell F1 per stage (RTc, against RT):**
+  - R1-R6 2.95 (2.95);
+  - L1 1.09 (1.54), L2 0.86 (1.50);
+  - Mi1 0.28 (0.62), Tm1 0.42 (0.65), Tm3 0.35 (0.59);
+  - T4 0.08-0.09 (0.20-0.21), T5 0.06-0.07 (0.14-0.15).
+- **Stage ratios fall from 0.3-0.5 to 0.2-0.5.** The stated reason for "gain unchanged" was wrong. Conductance weights keep each synapse's effect at rest, but the standing conductance from tonic release (r0 0.5) lowers every graded cell's input resistance, so each added input moves it less. That is inferred from the drop and has not been decomposed.
+- **Reading.** Conductance mode removes the runaway but costs gain. It does not change the conclusion: the visual chain is 10-100× short of recorded amplitudes at every stage after the photoreceptor. The motion tuning seen in RT (T4a/T4d DSI 1.0 at 0.06 mV) was noise-level and is gone in RTc (DSI 0-0.33).
+
+### Result, flash baseline (6 October, 03:00; `runs/s12/vision/flash_{B,RTc}.json`, 641 s each on backhouse; figure `docs/media/s12_vision_flash.png`, viewed, recorded peaks drawn as dashes)
+
+Prediction (02:48): Mi1/Tm3 ON and Tm1/Tm2 OFF deflections of 0.5-3 mV in RTc, about 0 in B. **Partly held.**
+
+| Type (1 s flash, type mean; 90th/10th-percentile cell) | B | RTc | Recorded |
+|---|---|---|---|
+| R1-R6 ON peak | +7.66 | +7.66 | >40 to 75 |
+| L1 ON | −3.88 | −2.51 (p10 −6.70) | down to −45 |
+| L2 ON | −3.40 | −1.66 (p10 −5.36) | down to −45 |
+| Mi1 ON | **−0.44** (wrong sign) | +0.38 (p90 +1.53) | about +20 |
+| Tm3 ON | 0.00 | +0.91 (p90 +2.72) | about +15 |
+| Tm1 ON dip / OFF | 0.00 / +0.13 | −0.68 / +0.14 (p90 OFF +0.64) | dip / +15-20 |
+| Tm2 ON dip / OFF | 0.00 / +0.12 | −0.53 / +0.20 (p90 OFF +0.86) | dip / +15-20 |
+| T4a ON / T5a OFF | 0 / 0 | +0.26 / +0.12 | not recorded for flashes |
+
+- **Where the prediction held and where it failed:**
+  - Tm3 is in range.
+  - Mi1's type mean (0.38) is just under the range; its 90th-percentile cell (1.5) is in range.
+  - Tm1/Tm2 OFF (0.13-0.20) is below the range.
+  - In B, Mi1 hyperpolarises by 0.44 mV. L1 does not release in B, so this is another input (not traced).
+- **Signs in RTc are right for every recorded type:** Mi1/Tm3 ON depolarisation, and the Tm1/Tm2 ON dip with an OFF rebound.
+- Mi4 hyperpolarises to light in both arms. It is spiking by guess and subthreshold. Mi4 is reported as an ON cell in imaging studies that were not read here, so this is an unscored sign flag.
+- **Stage ratios (RTc, strongest-decile cells against the recorded chain):**
+
+  | Stage | RTc | Recorded |
+  |---|---|---|
+  | R → L1 | 0.87 | 0.75 |
+  | L1 → Mi1 | 0.23 | 0.44 |
+  | L1 → Tm3 | 0.41 | 0.33 |
+  | L2 → Tm1 dip | 0.45 | — |
+  | Mi1 → T4a | 0.44 | T5/Tm 0.3-0.65 |
+
+  The stage ratios are within 2× of the recordings. **The absolute scale is set at the input:** the photoreceptor swings 7.7 mV against 60. The 7 mV graded spans (guessed) cap every stage after it.
+- **Probe bug, fixed:** the trace array had one unfilled final row, which plotted as a spike to 0 mV. The analysis windows never reached it. The plot trims it for existing files, and the probe now allocates the right length.
+
+### Pre-registration: the gain block (6 October, 03:04, before any gain run)
+
+**Question.** Do sourced graded spans, plus a photoreceptor amplitude and one synaptic gain fitted to two recorded amplitudes, bring the held-out medulla and T4/T5 responses to their recorded scale without destabilising the network?
+
+**New switch** (neutral 0, battery before adoption): `cell_type:all|graded_range_from_recordings`.
+- 1 = the release span of a graded type is its recorded response amplitude, from `cell_types.csv` `graded_range_rec` rows:
+  - R1-R6 60 mV (measured);
+  - L1-L3 45 (measured), L4/L5 45 (inferred);
+  - Mi1 20 (figure estimate, measured);
+  - Tm1/Tm2/Tm3 20 (inferred from Mi1, so that their own amplitudes stay held out);
+  - T4/T5 keep 7 (no row).
+- 2 = as 1, and each graded synapse keeps its transfer per mV at rest (release × span/(v_th − v_rest), derived). The span then moves only the saturation point. Tonic release at rest scales with it.
+
+**Base for every arm:** RTc (`mode_from_recordings` 1, `release_at_rest` 0.5, `conductance_based` 1) + `graded_range_from_recordings` 2.
+
+**Fitted parameters and training targets.** Each is scored as the median over connected cells (`scripts/probes/visual_flash_score.py`: L cells with R1-R6 input, and downstream cells taking at least half of their L input from such cells).
+- `photoreceptor:all|luminance_gain` (guessed 10) → R1-R6 ON peak 60 mV (Juusola & Hardie 2001). Set to 78 by linear scaling of RTc's 7.66 mV at 10 and checked in every run.
+- `class:LMC|release_scale` (neutral 1, bounds 0.1-20) → Mi1 ON 20 mV (Behnia 2014 Fig. 2, figure estimate). Grid {1, 3, 10} on a short flash (settle 600 ms, a 1 s flash at 300 ms, tail 600 ms). Pick by log-interpolation, then confirm with one run.
+
+**Held out:**
+
+| Quantity | Recorded | Prediction at the fitted LMC scale | Pass band |
+|---|---|---|---|
+| L1/L2 ON (connected) | −45 | −12 to −18 mV: capped by the inhibitory reversal (−70, guessed) from −52 rest. A predicted miss. | within 2× |
+| Tm3 ON | +15 | 8-25 (same L1 path as Mi1) | within 2× (7.5-30) |
+| Tm1/Tm2 OFF | +15-20 | Fails, under 4 mV. The model photoreceptor has no light adaptation, so the OFF rebound is small. | within 2× (8.75-35) |
+| Tm1/Tm2 ON dip | dip | negative | sign |
+| T4/T5 drifting grating, per-cell F1 above static | ≥ 0.5 mV (criterion V) | Passes for T4. T5 uncertain. | V on 8 subtypes |
+| T4/T5 direction selectivity (grating DSI) | 0.4-0.6 (T5 bar, figure estimate) | below 0.2 on most subtypes: the wiring is there, but delays and kinetics are guessed | DSI ≥ 0.3 |
+| Network bounds (vm_extremes) | — | 0 cells outside [−90, 20] mV | 0 |
+
+**Interpretation rules:**
+- If no LMC scale in the bounds gets Mi1 to 15 mV, the block is the disinhibition ceiling. Mi1's ON response is release of L1's tonic glutamate, so its swing cannot exceed the distance from its inhibited potential to its uninhibited one. That mechanism gets written up rather than fixed by a third change.
+- Nothing is adopted from this block. Conductance mode changes every synapse and needs its own gate and battery, and HS/VS/CT1 modes remain guessed.

@@ -225,3 +225,29 @@ def test_compartmental_apl_inhibits_the_active_lobe_more():
         n.step(kick=(g, 50.0))
     d = n.W_graded.data[n.apl_mask] / n.apl_base
     assert d[n.apl_sub == 1].mean() > 1.5 and d[n.apl_sub == 0].mean() < 0.5
+
+
+@needs_graph
+def test_graded_range_from_recordings_is_neutral_by_default_and_sets_the_span_when_on():
+    import pandas as pd
+    base = _org()
+    assert base.net.params.graded_range is None and base.net.g_range is None
+    on = _org(**{"cell_type:all|graded_range_from_recordings": 1.0})
+    t = pd.read_csv(REPO / "data/params/cell_types.csv", comment="#")
+    rows = t[t.param == "graded_range_rec"]
+    assert len(rows) and set(rows.basis) <= {"measured", "inferred"} and (rows.value > 0).all()
+    ty = on.conn.neurons.type.fillna("").reset_index(drop=True)
+    want = np.full(on.conn.n, np.nan)
+    for r in rows.itertuples(index=False):
+        want[(ty.str.match(r.type) if r.type.startswith("^") else ty.eq(r.type)).to_numpy()] = r.value
+    gr = on.net.params.graded_range
+    m = np.isfinite(want)
+    assert m.sum() > 1000 and np.allclose(gr[m], want[m])
+    dflt = on.net.v_th - on.net.v_rest
+    assert np.allclose(gr[~m], dflt[~m])
+    # only the release span differs: same weights and graded set
+    assert np.array_equal(on.net.w, base.net.w) and np.array_equal(on.net.graded, base.net.graded)
+    assert on.net.g_k is None
+    k = _org(**{"cell_type:all|graded_range_from_recordings": 2.0}).net
+    assert np.allclose(k.params.graded_k, gr / dflt)
+    assert np.allclose(k.params.graded_k[~m], 1.0) and (k.params.graded_k[m] > 1).all()
