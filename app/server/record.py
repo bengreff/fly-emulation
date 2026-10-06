@@ -240,6 +240,13 @@ def main() -> int:
         "created": dt.datetime.now().astimezone().isoformat(timespec="seconds"),
         "protocol": pr,
         "config": cfg,
+        # a profile name can change meaning between commits (m9r gained force_per_spike 10 on
+        # 5 Oct), so the run keeps the values the name had here
+        "profile_values": None if cfg["profile"] not in profiles.PROFILES else {
+            "values": {k: v for k, (v, _status, _why) in profiles.PROFILES[cfg["profile"]]["values"].items()},
+            "status": {k: str(getattr(s, "value", s)) for k, (_v, s, _why) in profiles.PROFILES[cfg["profile"]]["values"].items()},
+            "kick_mv": profiles.PROFILES[cfg["profile"]]["kick_mv"],
+            "basis": "the profile as defined at this commit (src/flyemu/profiles.py); config overrides apply on top"},
         "timestep_ms": ts,
         "chunk_ms": args.chunk_ms,
         "n_rows": int(n),
