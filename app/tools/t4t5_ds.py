@@ -12,9 +12,9 @@ checkout's commit. Recording is resumable (complete runs are skipped) and goes t
 run_library.py, so on the Mac each run takes a slot from the Director's limiter.
 --analyse-only re-reads the recordings in --out.
 
-Cost (measured on backhouse, 7 at a time: about 330 s and 2.4 to 3 GB per 2 s run): 17
-runs for both stimulus sets, about 15 minutes at --parallel 7 on backhouse; on the Mac
-expect about an hour at the limiter's pace.
+Cost (measured on backhouse, 7 at a time: 342 to 431 s and 2.4 to 3 GB per 2 s run): 17
+runs for both stimulus sets, about 20 minutes at --parallel 7 on backhouse; on the Mac
+expect over an hour at the limiter's pace.
 
 The design was fixed on 6 October 2026 before any rung was tested; it is the fly worker's
 held-out test for per-type temporal dynamics, so run it on a rung once its values are set,
