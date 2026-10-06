@@ -835,3 +835,30 @@ def test_extra_parameter_rows_are_opt_in(monkeypatch, tmp_path):
     monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(f))
     t = params.load()
     assert len(t) == len(live) + 1 and t.iloc[-1].type == "^ORN_"
+
+
+def test_graded_release_at_rest_lets_a_hyperpolarisation_lower_release():
+    """s12 vision blank: with release_at_rest r0, a graded cell at rest releases r0 x rmax and a
+    hyperpolarised one releases less; with r0 unset nothing is released at or below rest (m4)."""
+    from flyemu.connectome import Connectome
+    from flyemu.lif import LIFParams, Network
+    import pandas as pd
+    c = Connectome(pd.DataFrame({"bodyId": [0, 1]}), np.array([0, 1, 1]),
+                   np.array([1], np.int32), np.array([1.0], np.float32),
+                   np.ones(2, np.float32), np.array([1.0], np.float32))
+    full = lambda v: np.full(2, v, np.float32)
+    out = {}
+    for r0 in (None, 0.5):
+        for dv in (0.0, -3.0):
+            p = LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0), full(2.2), 5.0, 1, 0.0, True,
+                          graded=np.array([True, False]),
+                          graded_r0=None if r0 is None else np.array([r0, 0.0], np.float32))
+            net = Network(c, p, 0.1)
+            net.v[0] = -52.0 + dv
+            net.step(external_mv=np.array([dv, 0.0], np.float32))
+            net.step(external_mv=np.array([dv, 0.0], np.float32))
+            out[(r0, dv)] = float(net.i_syn[1])
+    assert out[(None, 0.0)] == 0.0 and out[(None, -3.0)] == 0.0
+    assert out[(0.5, 0.0)] > out[(0.5, -3.0)] > 0.0
+    # r0 = 0.5, 3 mV below rest on a 7 mV range: 0.5 - 0.5 x 3/7 of the rest release
+    assert abs(out[(0.5, -3.0)] / out[(0.5, 0.0)] - (0.5 - 0.5 * 3 / 7) / 0.5) < 0.05

@@ -142,6 +142,9 @@ class BatchedNetwork:
         if bad:
             raise ValueError(f"not per-member parameters: {sorted(bad)}")
 
+        if getattr(net, "g_r0", None) is not None:
+            raise NotImplementedError("cell_type:ol_graded|release_at_rest is CPU-only (s12)")
+
         # --- edges: spiking rows from net.w, graded rows from net.W_graded ---
         counts = np.diff(net.conn.indptr).astype(np.int64)
         pre0 = np.repeat(np.arange(n), counts)

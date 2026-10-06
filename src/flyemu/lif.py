@@ -79,6 +79,7 @@ class LIFParams:
     inh_cond_scale: float = 1.0     # s11 search: inhibitory conductance per unit fitted weight (cond)   # s11 rung 2 repair 1: 0 = share of peak, 1 = share of charge
     graded: np.ndarray | None = None       # bool per neuron
     graded_rmax_hz: float = 100.0          # rate-equivalent at threshold
+    graded_r0: np.ndarray | None = None    # release at rest as a fraction of rmax (None: 0, m4)
     spont_mv: float | np.ndarray = 0.0     # tonic drive
     release_gain: float | np.ndarray = 1.0  # presynaptic
     input_gain: float | np.ndarray = 1.0    # postsynaptic
@@ -390,8 +391,22 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
+    # s12 vision blank (DECISIONS 6 Oct): per-type mode from recordings (cell_types.csv
+    # graded_rec rows, 1 graded, 0 spiking) overrides the class groups for those types only
+    if one("mode_from_recordings", "boolean", "per-type spiking/graded mode from recordings", 0.0,
+           "neutral 0: modes from the graded rows and the class-group unknowns"):
+        rec = ptable.per_neuron(reg, conn, "graded_rec", np.nan, units="boolean", table=table)
+        graded = np.where(np.isnan(rec), graded, rec > 0.5)
     rmax = one("graded_rmax", "Hz", "graded rate-equivalent at threshold", 100.0,
                "guessed: maps graded depolarisation to spike-equivalent transmission")
+    # s12 vision blank (DECISIONS 6 Oct): optic-lobe graded synapses release tonically at rest, so a
+    # hyperpolarisation lowers release (Juusola et al. 1996 TINS); 0 = release starts at rest (m4)
+    ol_graded = graded & conn.neurons.superclass.eq("ol_intrinsic").to_numpy()
+    r0 = reg.require("cell_type:ol_graded", "release_at_rest", units="fraction of graded_rmax",
+                     model_use="graded release at the resting potential, optic-lobe graded interneurons",
+                     subsystem="neuron_biophysics", instances=int(ol_graded.sum()), minimal=0.0,
+                     minimal_note="neutral 0: no release at or below rest, as m4")
+    graded_r0 = np.where(ol_graded, np.float32(r0), np.float32(0.0)) if r0 else None
     spont = per("spontaneous_drive", "mV", "tonic drive (spontaneous activity)",
                 0.0, "declared default: no tonic drive")
     rel = per("release_gain", "dimensionless", "presynaptic release strength",
@@ -580,7 +595,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
         tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, stp_edge=stp_edge, cond=bool(cond),
         e_exc=float(e_exc), e_inh=float(e_inh), graded=graded.astype(bool),
-        graded_rmax_hz=float(rmax), spont_mv=spont, release_gain=rel,
+        graded_rmax_hz=float(rmax), graded_r0=graded_r0, spont_mv=spont, release_gain=rel,
         input_gain=inp, mod_release=mod_release, mod_sensitivity=sens,
         mod_tau_ms=float(mod_tau),
         mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
@@ -690,6 +705,8 @@ class Network:
         # graded cells: never spike; transmit a rate-equivalent every step
         self.g_idx = np.flatnonzero(self.graded)
         self.W_graded = None
+        self.g_r0 = (None if p.graded_r0 is None or not np.any(p.graded_r0)
+                     else np.asarray(p.graded_r0, np.float32)[self.g_idx])
         if self.g_idx.size:
             rows = [np.arange(self.conn.indptr[i], self.conn.indptr[i + 1]) for i in self.g_idx]
             sel = np.concatenate(rows) if rows else np.zeros(0, np.int64)
@@ -848,7 +865,10 @@ class Network:
         # graded transmission: continuous, delayed by one step
         if self.W_graded is not None:
             g = self.g_idx
-            r = np.clip((self.v[g] - self.v_rest[g]) / (self.v_th[g] - self.v_rest[g]), 0.0, 1.0)
+            r = (self.v[g] - self.v_rest[g]) / (self.v_th[g] - self.v_rest[g])
+            if self.g_r0 is not None:   # tonic release at rest; floor below rest
+                r = self.g_r0 + (1.0 - self.g_r0) * r
+            r = np.clip(r, 0.0, 1.0)
             if r.any():
                 self.delay[(self.delay_head + 1) % self.D] += (
                     self.W_graded @ (r * self.graded_scale)).astype(np.float32)

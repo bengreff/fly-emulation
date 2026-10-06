@@ -2110,3 +2110,33 @@ Route under noDN (open loop, MN9_L per trial, Hz; after the bar, the 1 s after):
   - the acetylcholine call for GNG117 (predicted; a glutamate or GABA sign would remove the loop).
   The measurable facts for Ben's list: GNG117's transmitter, and whether paired GNG117 cells fire
   persistently after a brief stimulus.
+
+## Pre-registration: does vision die at the lamina's release rule, at the medulla's mode, or both? (6 October, 01:58; diagnostic first, adoption rule below)
+
+**Relay** (flyapp, 883c836 on app): under m9r, L1-L3 respond with the right signs, but the medulla cells spike (the optic columnar mode group, guessed) and move by under 1.5 mV, so T4/T5 never respond. Recordings say Mi1, Tm1, Tm2, Tm3 and others are graded.
+
+**A second mechanism, found before any arm ran** (derived from the code and the m9c baseline's static segment). Graded release is `r = clip((v - v_rest)/(v_th - v_rest), 0, 1)` (lif.py), so a graded cell releases nothing at or below rest. L1 and L2 get their photoreceptor input through histamine (inhibitory), so they can only hyperpolarise. At mean luminance the L1 type mean is −54.17 mV against rest −52 (m9c, open loop, `motion_grating.py` static segment). They therefore release nothing in any light, and the lamina is silent downstream whatever the medulla's mode. Fly graded synapses are tonically active: transmitter is released at rest, and hyperpolarisation lowers it (Juusola et al. 1996 TINS; Uusitalo et al. 1995; [unverified], to be checked against the evidence agent's sources).
+
+**Two switches** (both neutral at 0; lif.py; registered in structural_keys.csv and parameters.csv):
+- `cell_type:all|mode_from_recordings` 1: per-type `graded_rec` rows in `data/params/cell_types.csv` (1 graded, 0 spiking, each with basis and source) override the class group for those types only. The rows are written from the evidence agent's table before arms R and RT launch, and committed before their results are read. Types with no recording stay in the group (spiking, guessed).
+- `cell_type:ol_graded|release_at_rest` r0: optic-lobe graded interneurons (superclass ol_intrinsic) release r0 × rmax at rest, `r = clip(r0 + (1 − r0)(v − v_rest)/(v_th − v_rest), 0, 1)`. Photoreceptors keep r0 = 0 (their dark potential is the bottom of their range). The value 0.5 (midpoint of the release range) is guessed. CPU path only; the GPU path refuses it.
+
+**Probe.** `scripts/probes/motion_grating.py` (new): no body, open loop, seed 1. A sine grating (30°, 1 Hz, contrast 1) drives every photoreceptor with a derived direction (6,026 of 6,091) through the eye's own drive rule, 1 s per direction (±az, ±el in each eye's derived frame) after a 1 s static grating at mean luminance. Reported per type: mean v, F1 of the type-mean v at 1 Hz, spike rate; for T4/T5 subtypes a direction index over opposite directions.
+
+**Arms** (m9c plus `--set`; backhouse `runs/s12/vision/`):
+
+| Arm | Set | Prediction |
+|---|---|---|
+| B | none (m9c) | L1-L3 modulate; T4/T5 at rest in every direction (type-mean F1 < 0.1 mV) |
+| T | release_at_rest 0.5 | Mi1/Tm1/Tm2/Tm3 type-mean F1 rises above B's; T4/T5 respond only if the spiking medulla cells cross threshold (no prediction) |
+| R | mode_from_recordings 1 | T4/T5 stay near rest (F1 < 0.1 mV): with the lamina silent, the mode change alone cannot revive them, except through R7/R8 inputs to the medulla |
+| RT | both | T4 and T5 respond: type-mean F1 or mean shift ≥ 0.5 mV in at least one direction for every subtype |
+
+- Direction selectivity is reported and not required. The model has no fitted visual parameters, so DSI could come out near 0 or with the wrong subtype pattern; T4a/T4b and T4c/T4d preferring opposite directions would be the biological pattern.
+- **What would change the plan.** If R alone revives T4/T5, the release rule is not the block, and r0 stays unproposed. If RT leaves T4/T5 silent, the next block is the photoreceptor-to-LMC gain (L1 moves 2.2 mV for the full range) and I stop after writing the mechanism up.
+
+**Adoption rule.** An arm that passes V (RT's row) then runs the gate G (`closed_loop_check.py` seeds 12-15; silent last 100 ms 0 spikes/ms; no runaway; 0 MuJoCo warnings; no NaN; thorax within 0.01 mm of m9c) and the battery (no new failures), and its seed 12 contact sheet is viewed. If all pass, it becomes candidate profile m9o (m9c plus the arm). The gate silences the eye too (zero drive), so tonic graded release keeps running in silence; if that alone makes visual projection cells fire in the silent window, it is reported as a conflict between the gate's convention and tonically active synapses, not passed.
+
+**Deviation, 02:00, before any R or RT result exists.** B finished first, and its photoreceptor type-mean F1 is 0.04 mV even though the drive swings ±5 mV. A 30° grating puts the columns of one type at every phase, so averaging the type before taking the F1 cancels the modulation. The type-mean F1 could never have passed V for any columnar type; the criterion was mis-specified. The probe now also records a per-cell F1 (`f1_cell_mv`, the mean over the type of each cell's F1 at 1 Hz), and the V criterion becomes: for every T4/T5 subtype, the per-cell F1 in at least one direction exceeds the static grating's per-cell F1 by ≥ 0.5 mV, or the mean shift is ≥ 0.5 mV. This makes V easier to pass than the row above, so it is declared here rather than applied silently. B and T were restarted with the fixed probe; the first B output is kept as `grating_m9c_typemeanonly.json`. Its mean potentials are unchanged by the fix: same seed, and the fix only adds recording.
+
+**Correction to s11 fill F3** (1 October, "Per-type resting potentials from the measurement library"): Behnia et al. 2014 recorded Mi1, Tm1, Tm2 and **Tm3**, not Tm4. Their full text names Tm3 about 69 times and Tm4 not at all. The `v_rest_shift_rec` row in `data/params/cell_types.csv` now reads Tm3. Only `cell_type:all|rest_from_recordings` reads these rows (m10p and m10q, rejected rungs), so m9c and every adopted profile are unchanged.
