@@ -211,6 +211,31 @@ def test_catalog_lists_scored_libraries(tmp_path):
     assert recs["lib-a/sugar-s0"]["library"] == "lib-a"
 
 
+# the eye view's column placement (app/build/columns.py)
+
+COLUMNS = APP / "data" / "body" / "flybody" / "columns.json"
+
+
+@pytest.mark.skipif(not COLUMNS.exists(), reason="columns.json not built")
+def test_columns_consistent_and_checked():
+    c = json.loads(COLUMNS.read_text())
+    assert c["format"] == "flyemu-columns/1"
+    cells, n_omm = c["cells"], 721
+    n = len(cells["bodyId"])
+    assert n and all(len(v) == n for v in cells.values())
+    assert len(set(cells["bodyId"])) == n
+    assert set(cells["eye"]) <= {0, 1} and 0 <= min(cells["column"]) and max(cells["column"]) < n_omm
+    assert set(cells["type"]) <= set(range(len(c["types"]))) and min(cells["hops"]) >= 1
+    per = {p["type"]: p for p in c["per_type"]}
+    for t, p in per.items():
+        assert p["n_placed"] <= p["n_scan"]
+        assert p["eye_matches_soma_side"] is None or p["eye_matches_soma_side"] > 0.95, t
+    # the independent check the placement must keep passing: neighbours by soma land
+    # near each other far more often than with placements shuffled within the type
+    for t in ("L1", "Mi1", "T4a"):
+        assert per[t]["soma_neighbours_near"] > 3 * per[t]["soma_neighbours_near_shuffled"], t
+
+
 # the page
 
 @pytest.mark.skipif(not (ATLAS / "atlas.json").exists() or not native_runs(), reason="needs the atlas and a recording")
