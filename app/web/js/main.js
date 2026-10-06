@@ -489,7 +489,7 @@ function runPanel(rec, atlas, entry) {
     <div>${Object.entries(basisCounts).sort((a, b) => b[1] - a[1]).map(([b, n]) => `${chip(b)} ${n}`).join(" &nbsp; ")}</div>
     <div class="dim">${(rec.inventory || []).length} rows; written by the model at record time.</div>
     <h3>Provenance</h3>
-    <table>${["commit", "branch", "dirty_files", "command", "python", "host", "dataset", "mujoco"].filter(k => pv[k] !== undefined).map(k => `<tr><td>${k}</td><td class="mono">${esc(Array.isArray(pv[k]) ? pv[k].join(" ") : pv[k])}</td></tr>`).join("")}</table>
+    <table>${["commit", "branch", "dirty_files", "model_src", "command", "python", "host", "dataset", "mujoco"].filter(k => pv[k] !== undefined).map(k => `<tr><td>${k === "model_src" ? "model from" : k}</td><td class="mono">${esc(Array.isArray(pv[k]) ? pv[k].join(" ") : typeof pv[k] === "object" ? JSON.stringify(pv[k]) : pv[k])}</td></tr>`).join("")}</table>
     ${m.edits ? `<h3>Edits after recording</h3><div>${esc(JSON.stringify(m.edits))}</div>` : ""}
     <h3>Atlas</h3>
     <table>${Object.entries(atlas.info.coverage.pos_basis_counts).map(([k, v]) => `<tr><td>${esc(k)}</td><td>${v.toLocaleString()}</td></tr>`).join("")}

@@ -26,7 +26,10 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "src"))
+# the model under test: this checkout's src/, or another checkout's (FLYAPP_MODEL_ROOT), so the
+# fly worker can record a rung on its own branch without merging the app (app/tools/t4t5_ds.py)
+MODEL_ROOT = Path(os.environ.get("FLYAPP_MODEL_ROOT") or ROOT).expanduser().resolve()
+sys.path.insert(0, str(MODEL_ROOT / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import mujoco as mj  # noqa: E402
@@ -42,15 +45,15 @@ from caveats import generate  # noqa: E402
 EYE_SCALE = 255.0   # readouts are stored as uint8 = round(value * EYE_SCALE), clipped
 
 
-def git_state() -> dict:
+def git_state(root: Path = ROOT) -> dict:
     def run(*a):
         try:
-            return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True,
+            return subprocess.run(["git", *a], cwd=root, capture_output=True, text=True,
                                   timeout=10).stdout.strip()
         except Exception:
             return ""
     commit = run("rev-parse", "HEAD")
-    if not commit and os.environ.get("FLYAPP_COMMIT"):
+    if not commit and root == ROOT and os.environ.get("FLYAPP_COMMIT"):
         # a copy without .git (backhouse gets `git archive` of a commit): the launcher declares it
         return {"commit": os.environ["FLYAPP_COMMIT"], "branch": os.environ.get("FLYAPP_BRANCH", ""),
                 "dirty_files": None, "source": "declared by the launcher (git archive copy, no .git)"}
@@ -311,6 +314,8 @@ def main() -> int:
             "git": git_state(), "command": " ".join(sys.argv), "python": platform.python_version(),
             "host": platform.node(), "dataset": "male-cns:v1.0", "build_s": round(build_s, 1),
             "mujoco": mj.__version__,
+            **({"model_src": {"root": str(MODEL_ROOT), **git_state(MODEL_ROOT)}}
+               if MODEL_ROOT != ROOT.resolve() else {}),
         },
     }
     out.mkdir(parents=True, exist_ok=True)
