@@ -208,13 +208,19 @@ export class FidelityPanel {
   switches() {
     const $ = s => this.el.querySelector(s), p = this.fid.profiles.find(x => x.name === $("#cfg-profile").value);
     const own = p && p.name === this.rec.manifest.config.profile;
-    const rows = this.fid.mechanisms.flatMap(m => m.switch.filter(s => !s.includes("*")).map(s => ({ s, m })));
-    $("#cfg-switches").innerHTML = rows.map(({ s, m }) => {
+    // switch keys named by a mechanism, then the structural table's switch rows (most profile
+    // additions are there); wildcard keys are typed into the protocol instead
+    const mech = Object.fromEntries(this.fid.mechanisms.map(m => [m.id, m]));
+    const rows = [...this.fid.mechanisms.flatMap(m => m.switch.map(s => ({ s, m, note: m.neutral && `neutral: ${m.neutral}` }))),
+      ...this.fid.structural.filter(r => r.kind === "switch").map(r => ({ s: r.key_pattern, m: mech[r.mechanism_id] || { id: r.mechanism_id, status: "" }, note: r.note }))]
+      .filter((x, i, a) => !x.s.includes("*") && a.findIndex(y => y.s === x.s) === i)
+      .sort((a, b) => a.m.id.localeCompare(b.m.id, "en", { numeric: true }) || a.s.localeCompare(b.s));
+    $("#cfg-switches").innerHTML = rows.map(({ s, m, note }) => {
       const v = p && p.values[s], r = this.byKey.get(s);
       return `<tr><td class="mono wrap">${esc(s)}<br><span class="dim">${esc(m.id)} ${esc(m.status)}</span></td>
         <td>${v ? `${esc(fmt(v[0]))} ${chip(v[1])} <span class="dim">set by ${esc(p.name)}</span>`
           : `<span class="dim">not set by ${esc(p ? p.name : "the profile")}: registry default${own && r ? ` (this run: ${esc(r.value)})` : ""}</span>`}
-          ${m.neutral ? `<br><span class="dim">neutral: ${esc(m.neutral)}</span>` : ""}</td>
+          ${note ? `<br><span class="dim">${esc(note)}</span>` : ""}</td>
         <td><input type="number" step="any" data-key="${esc(s)}" placeholder="keep" style="width:70px"></td></tr>`;
     }).join("");
     this.cfgStatus();
