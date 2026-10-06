@@ -68,7 +68,8 @@ Director night order item 3: each stub in audit order, data first, every number 
 | B25 | Retinal muscle kinematics measured (Fenk 2022); retinal motor neurons not identified in male-cns | absent | same |
 | B27 | Spiracle aperture tracks flight power and spiracle closure limits it (Luo ... van Breugel & Tuthill 2026, read). The spiracle motor neurons are in male-cns as ENXXX226 (inferred), with their measured GABAergic interneurons SpINA/SpINB (INXXX204, INXXX472), and are simulated as neurons. Heart rate 3-6 Hz (unverified) | absent; reason corrected; 3-step build plan for when flight runs | `docs/research/s12_b27_s7_s8_d1.md` |
 | S7 | Axenic females walk faster, and octopamine reproduces it (Schretter 2018, read); infection raises male activity and sleep (read) | absent; healthy, conventionally reared fly stated as the assumption; validation data must record rearing and infection | same |
-| S8, D1 | not searched yet (search running 5 October) | absent with their audit reasons | |
+| S8 | Courtship matures over 72 h after eclosion; mature-male tap starts courtship 47% of the time (Zhang 2021, read); cVA 0.2-2.9 µg on a mature male (read, review) | absent; courtship not a target; the model fly is a mature male | `docs/research/s12_b27_s7_s8_d1.md` |
+| D1 | Specimen record: 5-day-old Canton S G1 × w1118 male (Berg 2025, read), 12:12 LD, dissected ZT 1.5 (Nern 2024, read); density, food, temperature not stated | absent; values recorded on the age, rearing and genotype rows | same |
 
 Counts after the pass: tier A 15 have, 16 partial, 2 absent (N30, S6); tier B 3 have, 9 partial, 2 absent (B24, B26); tier C 1 have, 15 partial, 9 absent; 72 mechanisms.
 
