@@ -1,0 +1,10 @@
+# Rung 8 (N29, s12): short-term plasticity per connection class. Read when synapse:all|per_synapse_parameters = 1.
+# pre/post select cells: "type:<regex on male-cns type>", "class:<male-cns class>" or "*". Later rows override earlier ones.
+# Tsodyks-Markram form (Markram 1998): amplitude = w * u+ x / U; x -> x - u+ x; recovery tau_rec; facilitation tau_facil (0 = none).
+# With tau_facil = 0 this is the published depression model A -> f A per spike (Abbott 1997), so U = 1 - f (derived).
+# Edges no row matches keep the per-presynaptic-cell depression (std_release_fraction, std_tau_rec).
+# Searched without a usable number (s12 22:05): ORN->other targets, LN->LN (facilitating, Nagel & Wilson 2016, qualitative),
+# PN->KC, KC->MBON (baseline), PN->LHN, photoreceptor->LMC, JO->GF, GF->TTMn, DN->MN, leg afferent->VNC, GRN->second order.
+pre,post,U,tau_rec_ms,tau_facil_ms,basis,source,note
+type:^ORN_,class:ALPN,0.22,893,0,derived,"Nagel, Hong & Wilson 2015 Nat Neurosci 18:56, Fig 1b-c and Eq 1 (PMC4289142)","f = 0.78 per spike, recovery 893 ms; single-component fit to mean normalised EPSCs, 10 Hz antennal-nerve trains, DM6 and VM2 PNs, n = 19 cells; other glomeruli and multiglomerular PNs inferred (Kazama & Wilson 2008: release probability uniformly high, 0.79, in DM6 VM2 DL5 DM4)"
+type:^ORN_,class:ALLN,0.25,1566,0,derived,"Nagel & Wilson 2016 J Neurosci 36:4325, Fig 6B legend (PMC4829653, read 5 Oct 2026)","f = 0.75 per spike, recovery 1566 ms; same fit and protocol as the PN row, LNs n = 9 cells, subtypes not separated; the authors: LN EPSCs depress more than PN EPSCs"

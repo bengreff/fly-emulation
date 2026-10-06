@@ -126,6 +126,8 @@ class BatchedNetwork:
             raise NotImplementedError("N27 lumped glia is not ported")
         if getattr(net, "apl_mask", None) is not None:
             raise NotImplementedError("N23 compartmental APL is not ported")
+        if getattr(net, "stp", None) is not None:
+            raise NotImplementedError("N29 per-connection short-term plasticity is not ported")
         ich = getattr(net, "ich", None)
         if ich is not None and "v_rest" in (member or {}) and not np.array_equal(
                 np.broadcast_to(np.asarray(member["v_rest"], np.float32), (B, net.conn.n)),

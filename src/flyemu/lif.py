@@ -122,6 +122,62 @@ class LIFParams:
     nmda_mg_mM: float = 1.0
     # s11 ladder rung 1: intrinsic conductances per type (channels.Intrinsic); None = leak-only
     intrinsic: object | None = None
+    # s12 ladder rung 8 (N29): per-connection short-term plasticity on the edges a row of
+    # data/params/stp_connections.csv matches: {"idx", "U", "tau_rec", "tau_f"} (CSR edge
+    # order); None = per-presynaptic-cell depression only
+    stp_edge: dict | None = None
+
+
+STP_TABLE = "stp_connections.csv"
+
+
+def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
+    """Cells a stp_connections.csv selector names: type:<regex>, class:<name> or *."""
+    if sel == "*":
+        return np.ones(len(neurons), bool)
+    kind, _, pat = sel.partition(":")
+    if kind == "type":
+        return neurons.type.fillna("").str.contains(pat, regex=True).to_numpy()
+    if kind == "class" and "class" in neurons:
+        return neurons["class"].fillna("").eq(pat).to_numpy()
+    raise ValueError(f"{STP_TABLE}: cannot select {sel!r}")
+
+
+def _stp_connections(reg: Registry, conn: Connectome) -> dict | None:
+    """Rung 8 (N29, s12): Tsodyks-Markram parameters per connection class, or None."""
+    from pathlib import Path
+    mode = float(reg.require(
+        "synapse:all", "per_synapse_parameters", units="enum",
+        model_use="N29 rung 8: short-term plasticity per connection class "
+                  "(data/params/stp_connections.csv); other per-synapse values not built",
+        subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
+        minimal_note="neutral 0: short-term depression per presynaptic cell only (N10)"))
+    if mode == 0.0:
+        return None
+    if mode != 1.0:
+        raise NotImplementedError(
+            f"synapse:all|per_synapse_parameters = {mode:g}: only 1 (STP per connection "
+            "class) is built; per-synapse weight, release probability, receptor mix and "
+            "latency are not")
+    path = Path(__file__).resolve().parents[2] / "data" / "params" / STP_TABLE
+    tab = pd.read_csv(path, comment="#")
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    row = np.full(conn.n_edges, -1, np.int32)
+    for i, r in enumerate(tab.itertuples()):
+        m = _stp_cells(conn.neurons, r.pre)[pre] & _stp_cells(conn.neurons, r.post)[conn.indices]
+        row[m] = i
+        for prop, val, u in (("stp_U", r.U, "dimensionless"), ("stp_tau_rec", r.tau_rec_ms, "ms"),
+                             ("stp_tau_facil", r.tau_facil_ms, "ms")):
+            reg.provide(f"connection:{r.pre}->{r.post}", prop, float(val), units=u,
+                        model_use="per-connection short-term plasticity (rung 8, N29)",
+                        status=Status(r.basis), evidence=r.source, subsystem="synaptic_efficacy",
+                        instances=int(m.sum()), uncertainty=r.note,
+                        method="published single-component depression fit; U = 1 - f")
+    idx = np.flatnonzero(row >= 0)
+    k = row[idx]
+    return {"idx": idx, "U": tab.U.to_numpy(np.float64)[k],
+            "tau_rec": tab.tau_rec_ms.to_numpy(np.float64)[k],
+            "tau_f": tab.tau_facil_ms.to_numpy(np.float64)[k]}
 
 
 def _morph_delays(reg: Registry, conn: Connectome, delay_ms: np.ndarray) -> np.ndarray:
@@ -330,6 +386,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         leg = conn.neurons.type.fillna("").isin(leg_proprioceptor_types()).to_numpy()
         std_u = std_u.copy(); std_tau = std_tau.copy()
         std_u[leg], std_tau[leg] = 0.22, 893.0
+    stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
@@ -521,7 +578,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref, inh_cond_scale=inh_scale,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
-        tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, cond=bool(cond),
+        tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, stp_edge=stp_edge, cond=bool(cond),
         e_exc=float(e_exc), e_inh=float(e_inh), graded=graded.astype(bool),
         graded_rmax_hz=float(rmax), spont_mv=spont, release_gain=rel,
         input_gain=inp, mod_release=mod_release, mod_sensitivity=sens,
@@ -619,6 +676,16 @@ class Network:
         self._any_adapt = bool(self.adapt_mv.any())
         self._any_std = bool(self.std_u.any())
         self._any_spont = bool(self.spont.any())
+        # rung 8 (N29): per-edge resource x and release fraction u, updated lazily at
+        # each presynaptic spike from the time since that cell's previous spike
+        self.stp = None
+        se = p.stp_edge
+        if se is not None and len(se["idx"]):
+            pos = np.full(self.conn.n_edges, -1, np.int64)
+            pos[se["idx"]] = np.arange(len(se["idx"]))
+            self.stp = {"pos": pos, "U": se["U"], "tau_rec": se["tau_rec"], "tau_f": se["tau_f"],
+                        "x": np.ones(len(se["idx"])), "u": np.zeros(len(se["idx"])),
+                        "t_last": np.full(n, -np.inf)}
 
         # graded cells: never spike; transmit a rate-equivalent every step
         self.g_idx = np.flatnonzero(self.graded)
@@ -1047,9 +1114,17 @@ class Network:
                     w0 = self.w0_of(e)
                     k = np.clip(self.params.kc_ltp_timing * da[indices[e]], 0.0, 1.0)
                     self.w[e] += (k * (self.params.kc_w_cap * w0 - self.w[e])).astype(np.float32)
+        fac = facc = None    # amplitude factor on w, and on the slow/channel copies
         if self._any_std:
-            w = w * np.repeat(self.x_res[spiked], counts)
+            fac = np.repeat(self.x_res[spiked], counts)
             self.x_res[spiked] *= (1.0 - self.std_u[spiked])
+            if self.chan or self.w_slow is not None:
+                facc = np.repeat(self.x_res[spiked] / np.maximum(1.0 - self.std_u[spiked], 1e-6),
+                                 counts)
+        if self.stp is not None:
+            fac, facc = self._stp_factor(spiked, counts, sel, fac, facc)
+        if fac is not None:
+            w = w * fac
         # The head slot was consumed and zeroed earlier in this step; a slot
         # (head + d) % D is read d steps from now, so each presynaptic cell's
         # contribution arrives after exactly its own delay.
@@ -1063,14 +1138,43 @@ class Network:
             np.add.at(self.delay, (slot, tgt), w)
         for c in self.chan:
             wc = c["w"][sel]
-            if self._any_std:
-                wc = wc * np.repeat(self.x_res[spiked] / np.maximum(1.0 - self.std_u[spiked], 1e-6), counts)
+            if facc is not None:
+                wc = wc * facc
             np.add.at(c["buf"], (slot, tgt), wc)
         if self.w_slow is not None:
             ws = self.w_slow[sel]
-            if self._any_std:
-                ws = ws * np.repeat(self.x_res[spiked] / np.maximum(1.0 - self.std_u[spiked], 1e-6), counts)
+            if facc is not None:
+                ws = ws * facc
             np.add.at(self.delay_slow, (slot % self.delay_slow.shape[0], tgt), ws)
+
+    def _stp_factor(self, spiked, counts, sel, fac, facc):
+        """Rung 8 (N29): Tsodyks-Markram factor u+ x / U on the table's edges (Markram 1998
+        form: between spikes x recovers toward 1 with tau_rec and u decays toward 0 with
+        tau_facil; at a spike u+ = u + U (1 - u), release u+ x, x -= u+ x). At rest the factor
+        is 1, so w keeps its meaning; with tau_facil = 0 it equals the per-cell depression
+        rule with this edge's U. Edges without a row keep the per-cell factor."""
+        s = self.stp
+        k = s["pos"][sel]
+        cov = k >= 0
+        if not cov.any():
+            return fac, facc
+        kk = k[cov]
+        d = self.t_ms - np.repeat(s["t_last"][spiked], counts)[cov]   # inf at a first spike
+        x = 1.0 - (1.0 - s["x"][kk]) * np.exp(-d / s["tau_rec"][kk])
+        tf = s["tau_f"][kk]
+        um = np.where(tf > 0, s["u"][kk] * np.exp(-d / np.where(tf > 0, tf, 1.0)), 0.0)
+        U = s["U"][kk]
+        up = um + U * (1.0 - um)
+        f = (up * x / U).astype(np.float32)
+        s["x"][kk] = x - up * x
+        s["u"][kk] = up
+        s["t_last"][spiked] = self.t_ms
+        total = len(sel)
+        fac = np.ones(total, np.float32) if fac is None else fac.astype(np.float32, copy=True)
+        facc = np.ones(total, np.float32) if facc is None else facc.astype(np.float32, copy=True)
+        fac[cov] = f
+        facc[cov] = f
+        return fac, facc
 
     # --- readout -------------------------------------------------------------
 
