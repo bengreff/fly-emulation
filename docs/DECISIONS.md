@@ -1591,3 +1591,56 @@ period 2.2 ms, no spontaneous drive, class-prior channels (mRNA source 0). All 4
   feedforward inhibition intact. Read Roundup and MN9_L. If the route passes there and not at m9c, the
   block is resting excitability, which has a measurable counterpart: resting rates of GNG cells.
   Nothing adopted.
+
+## Pre-registration: does resting excitability block the leg sugar route? A route bracket nearer threshold (6 October, 00:05; diagnostic, nothing adopted)
+
+Why: F-FI-1 rules out central BK as the fix. The remaining candidate is resting excitability. Under m9c every
+route cell sits 7 mV below threshold with no noise. Recorded central cells rest nearer threshold:
+MBON-α3 fires at 12.1 Hz at rest (Hafez 2023), and PNs, LH local and LH output neurons at 1.4, 1 and 0.1 Hz
+(Frechter 2019) (all read).
+
+- **Route cells** (43 cells, 17 types; `scripts/probes/route_rest.py`, `ROUTE`):
+  - the paper's route: AN01B004, Bract I and II (DNge174, DNge173), Roundup (GNG108), S&S (GNG159);
+  - the co-exciting cluster from the ladder: AN17A002, GNG588, GNG578, GNG468, AN05B106, GNG421, GNG318,
+    GNG167, GNG143, DNge059;
+  - the feedforward inhibitors GNG093 and GNG250, raised with the rest so the test does not favour a pass.
+  - MN9 and the GRNs are unchanged.
+- **Single-cell calibration** (derived; m9c, each cell's own constants and channels, no synapses, 1 s;
+  `runs/s12/rest/route_rest_m9c.json`): rheobase 7.70 mV of drive (AN01B004 8.05, AN05B106 7.55).
+  - The onset is steep: 2 Hz at rheobase, 10 Hz 0.05 mV above, 12 Hz at 7.85 mV.
+  - So a deterministic model cell cannot rest at 0.1-4 Hz except on a knife-edge.
+- **Arms** (one `spontaneous_drive` row per cell through `FLYEMU_EXTRA_PARAMS`, files
+  `runs/s12/rest/route_{near,tonic2,tonic12}.csv`, labelled guessed):
+  - `base`: m9c as is.
+  - `near`: 1 mV below each cell's rheobase. Silent in isolation; stands for the 0.1-1.4 Hz cells.
+  - `tonic2`: at rheobase, about 2 Hz in isolation (1-4 Hz cells).
+  - `tonic12`: 12 Hz in isolation (MBON-α3).
+- **Runs** (backhouse): `assay_pathways.py --profile m9c --rates 0,100,200 --trials 3 --shuffles 0`.
+  - Run on both leg sugar assays: `legsugar_mn9` (the 54 paper-matched GRNs) and `legsugar3_mn9`
+    (216 cells, with LgLG3 proposed).
+  - Feedforward inhibition and BK stay on. Tag `rest_<arm>`.
+- **Readout:**
+  - Roundup (GNG108, mean of 2 cells) and MN9_L at 0 and 200 Hz.
+  - Each route type's rate at 0 Hz input, which is the achieved resting rate in the network.
+- **Pass rule.** The route passes when all three hold:
+  - Roundup ≥ 4 Hz at 200 Hz and at least 4 Hz above its own 0 Hz rate;
+  - MN9_L ≥ 5 Hz at 200 Hz;
+  - MN9_L ≤ 2 Hz at 0 Hz.
+  - A failure of the last condition is "fires at rest". That is a failure too: no proboscis extension
+    without sugar.
+  - Blocked means Roundup ≤ 2 Hz at 200 Hz.
+- **Expectation, written now** (low confidence):
+  - `base` is blocked on both assays.
+  - `near` passes Roundup on `legsugar3_mn9` but MN9_L stays under 5 Hz.
+  - `tonic12` fires at rest: Roundup at 12 Hz drives MN9_L above 2 Hz at 0 Hz input.
+- **Reading rule.**
+  - If `near` or `tonic2` passes and `base` does not, resting excitability on the route is enough to open
+    it with the feedforward inhibition intact. The measurable counterpart is the resting potential
+    against threshold, or the spontaneous rate, of a GNG route cell (Roundup or Bract patch); that goes on
+    Ben's list.
+  - If only `tonic12` passes, the route needs tonically firing relays, and its rest condition decides
+    whether that is plausible.
+  - If no arm passes, resting excitability alone does not open the route against the feedforward
+    inhibition. The GNG093/GNG250 sign is then the deciding unknown.
+  - Nothing is adopted either way. A route-only shift is not a model candidate: as a model change it
+    would have to be a class property, tested on the whole brain and the gate.
