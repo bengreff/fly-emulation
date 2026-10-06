@@ -178,7 +178,8 @@ def atlas_neurons():
 
 
 PROTOCOLS = sorted((APP / "protocols").glob("*.json")) + sorted((APP / "protocols" / "assay").glob("*.json")) + sorted(
-    (APP / "protocols" / "eye").glob("*.json")) + sorted((APP / "tests" / "protocols").glob("*.json"))
+    (APP / "protocols" / "eye").glob("*.json")) + sorted((APP / "protocols" / "t4t5").glob("*.json")) + sorted(
+    (APP / "tests" / "protocols").glob("*.json"))
 
 
 @pytest.mark.skipif(not (ATLAS / "atlas.json").exists(), reason="atlas not built")

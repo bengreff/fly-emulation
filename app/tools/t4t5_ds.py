@@ -20,8 +20,10 @@ The design was fixed on 6 October 2026 before any rung was tested; it is the fly
 held-out test for per-type temporal dynamics, so run it on a rung once its values are set,
 not while fitting them, and record each call in DECISIONS.
 
-Stimuli (app/tools/eye_sweep.py; the patch, seed and watch list of the library control
-app/protocols/eye/control-watch-visual-m9r-s0.json: 19 left-eye ommatidia around 298):
+Stimuli: fixed files in app/protocols/t4t5 (each run records the file's md5), built once by
+--write-stimuli with eye_sweep.py's bars on the patch and watch list of the library control
+app/protocols/eye/control-watch-visual-m9r-s0.json (19 left-eye ommatidia around 298); the
+medulla bars are the events of the graded-medulla run, so that run is the reference:
   medulla        ON bars into the T4 inputs under the bar (Mi1, Tm3, Mi4, C3 +4 mV; Mi9
                  -4 mV) and OFF bars into the T5 inputs (Tm1, Tm2 +4 mV), 4 directions.
                  Tests the circuit from the medulla inputs to T4/T5.
@@ -51,6 +53,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import os
 import subprocess
@@ -67,6 +70,7 @@ sys.path.insert(0, str(APP / "tools"))
 from eye_sweep import CONTROL, DIR_NOTE, DIRS, OFF, ON, PR_MV, SWEEPS_MS, bar_events  # noqa: E402
 from eye_ds import NULL, PREF, load, window  # noqa: E402
 
+STIM = APP / "protocols" / "t4t5"
 SETS = {"medulla": "med", "photoreceptor": "pr"}
 RESP_MV = 0.5        # guessed floor for "responds"
 ALPHA = 0.05
@@ -79,7 +83,29 @@ FLIES = ("In flies T4 respond to ON edges and T5 to OFF edges, and each subtype 
 
 
 def protocols(profile: str, seed: int, overrides: dict, extra: str | None, sets: list[str]) -> dict:
-    """The control and the bar runs, as flyemu-protocol/1 dicts keyed by run name."""
+    """The control and the bar runs of the chosen sets, as flyemu-protocol/1 dicts keyed by
+    run name: the fixed stimuli in app/protocols/t4t5 with the model to test filled in."""
+    label = f"{profile} seed {seed}" + (" with overrides" if overrides else "") + (" with variant rows" if extra else "")
+    tags = {"control"} | {SETS[s] for s in sets}
+    out = {}
+    for f in sorted(STIM.glob("*.json")):
+        if f.stem.split("-")[0] not in tags:
+            continue
+        p = json.loads(f.read_text())
+        p["title"] += f", {label}"
+        p["config"].update(profile=profile, seed=seed, overrides=dict(overrides))
+        if extra:
+            p["config"]["extra_params"] = extra
+            p["variant"] = {"name": "extra per-type rows", "rows": extra,
+                            "note": "a labelled variant of the profile; not adopted"}
+        p["harness"]["stimulus_md5"] = hashlib.md5(f.read_bytes()).hexdigest()
+        out[f.stem] = p
+    return out
+
+
+def build_stimuli() -> dict:
+    """The fixed stimuli (written once with --write-stimuli, from the eye mosaic and the column
+    placement; both are built, not tracked, so the files are what the test ships)."""
     ctl = json.loads(CONTROL.read_text())
     body = APP / "data" / "body" / "flybody"
     eye, cols = json.loads((body / "eye.json").read_text()), json.loads((body / "columns.json").read_text())
@@ -91,17 +117,11 @@ def protocols(profile: str, seed: int, overrides: dict, extra: str | None, sets:
     cpos, cid = np.c_[c["x"], c["y"]], np.asarray(c["bodyId"], np.int64)
     pr = eye["photoreceptors"]["L"]
     ppos, pid = omm[np.asarray(pr["ommatidium"])], np.asarray(pr["bodyId"], np.int64)
-    label = f"{profile} seed {seed}" + (" with overrides" if overrides else "") + (" with variant rows" if extra else "")
 
     def base(title: str) -> dict:
         p = copy.deepcopy(ctl)
-        p["title"] = f"T4/T5 direction test: {title}, {label}"
-        p["config"].update(profile=profile, seed=seed, overrides=dict(overrides))
+        p["title"] = f"T4/T5 direction test: {title}"
         p["config"].pop("extra_params", None)
-        if extra:
-            p["config"]["extra_params"] = extra
-            p["variant"] = {"name": "extra per-type rows", "rows": extra,
-                            "note": "a labelled variant of the profile; not adopted"}
         p["expect"] = {"text": FLIES, "source": "Maisak et al. 2013 Nature 500:212", "status": "observed in flies"}
         p["harness"] = {"tool": "app/tools/t4t5_ds.py"}
         p["events"] = []
@@ -109,18 +129,16 @@ def protocols(profile: str, seed: int, overrides: dict, extra: str | None, sets:
 
     out = {"control": base("control with the visual pathway watched")}
     for d in DIRS:
-        if "medulla" in sets:
-            for pol, pat, what in (("on", ON, "ON bar into T4 inputs"), ("off", OFF, "OFF bar into T5 inputs")):
-                m = left & np.isin(names, list(pat))
-                p = base(f"{what} moving {d} ({DIR_NOTE[d]})")
-                p["events"] = bar_events(cpos[m], cid[m], np.array([pat[t] for t in names[m]]), d, centre, sp, what)
-                out[f"med-{pol}{d}"] = p
-        if "photoreceptor" in sets:
-            for pol, mv in (("on", PR_MV), ("off", -PR_MV)):
-                what = f"photoreceptor {pol.upper()} bar"
-                p = base(f"{what} moving {d} ({DIR_NOTE[d]})")
-                p["events"] = bar_events(ppos, pid, np.full(len(pid), mv), d, centre, sp, what)
-                out[f"pr-{pol}{d}"] = p
+        for pol, pat, what in (("on", ON, "ON bar into T4 inputs"), ("off", OFF, "OFF bar into T5 inputs")):
+            m = left & np.isin(names, list(pat))
+            p = base(f"{what} moving {d} ({DIR_NOTE[d]})")
+            p["events"] = bar_events(cpos[m], cid[m], np.array([pat[t] for t in names[m]]), d, centre, sp, what)
+            out[f"med-{pol}{d}"] = p
+        for pol, mv in (("on", PR_MV), ("off", -PR_MV)):
+            what = f"photoreceptor {pol.upper()} bar"
+            p = base(f"{what} moving {d} ({DIR_NOTE[d]})")
+            p["events"] = bar_events(ppos, pid, np.full(len(pid), mv), d, centre, sp, what)
+            out[f"pr-{pol}{d}"] = p
     for k, p in out.items():
         p["harness"].update(run=k)
     return out
@@ -288,6 +306,14 @@ def main() -> int:
     ap.add_argument("--timeout-min", type=float, default=45.0, help="per run")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--analyse-only", action="store_true")
+    ap.add_argument("--write-stimuli", action="store_true", help="maintenance: rewrite app/protocols/t4t5 "
+                    "from the eye mosaic and column placement (changes the held-out test; say so in DECISIONS)")
+    if "--write-stimuli" in sys.argv:
+        STIM.mkdir(parents=True, exist_ok=True)
+        for k, p in build_stimuli().items():
+            (STIM / f"{k}.json").write_text(json.dumps(p, indent=1) + "\n")
+        print(f"wrote {len(list(STIM.glob('*.json')))} files to {STIM}")
+        return 0
     a = ap.parse_args()
     sets = list(SETS) if a.stimulus == "both" else [a.stimulus]
     overrides = {}

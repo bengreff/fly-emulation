@@ -5,11 +5,13 @@ and the verdicts it scores.
 """
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 APP = Path(__file__).resolve().parents[1]
 REPO = APP.parent
@@ -39,6 +41,20 @@ def test_protocols_target_the_declared_cells():
         assert all(e["effector"] == "current" and e["t_ms"] >= 300 for e in p["events"])
     v = h.protocols("m9r", 0, {}, "app/protocols/eye/variant_graded_medulla.csv", ["medulla"])
     assert len(v) == 9 and all(p["config"]["extra_params"] and p["variant"] for p in v.values())
+
+
+@pytest.mark.skipif(not (APP / "data" / "body" / "flybody" / "columns.json").exists(), reason="columns not built")
+def test_fixed_stimuli_match_the_builder_and_the_graded_run():
+    """The committed stimuli are what the builder makes from the current mosaic, and the medulla
+    bars are the events of the graded-medulla run (eye_sweep.py), so that run is the reference."""
+    built = h.build_stimuli()
+    assert sorted(built) == sorted(f.stem for f in h.STIM.glob("*.json"))
+    for k, p in built.items():
+        assert json.loads((h.STIM / f"{k}.json").read_text()) == json.loads(json.dumps(p)), k
+    for d in DIRS:
+        for pol in ("on", "off"):
+            ref = json.loads((APP / "protocols" / "eye" / f"graded-A-{pol}{d}-m9r-s0.json").read_text())
+            assert built[f"med-{pol}{d}"]["events"] == ref["events"]
 
 
 def _peaks(rule, n=18, seed=0):
