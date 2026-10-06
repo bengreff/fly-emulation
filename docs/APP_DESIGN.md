@@ -64,9 +64,11 @@ only through public functions and asks for new ones (section 13, on hold).
     `git archive` of ee6bc71, with `FLYAPP_COMMIT` set.
   - **Log:** `~/flyapp/runs/app/lib-m9r-seeds/runner.log`. It prints "m9r as named finished" and
     then "runner finished".
-  - **Expected (estimate, from the m9 round with contention):** about 6 to 7 min per run, so
-    about 1 h 20 min per library. That is about 22:50 for m9r and about 00:15 for both. About
-    15 GB on backhouse.
+  - **Speed (measured at 21:32):** all 5 first runs reached 250 ms at 223 s of wall time per
+    simulated second, so about 7.7 min per 2 s run. Memory in use was 22 GB of 31, with 8 GB
+    available, including the fly worker's jobs.
+  - **Expected finish (estimate):** 12 batches of 5 per library, so about 23:05 for m9r as named
+    and about 00:40 for both.
   - **Mac keepalive** for WSL: pid 41824 (`ssh backhouse ... exec sleep infinity`), mine. Stop it
     once "runner finished" appears.
 - **Next steps, in order:**
