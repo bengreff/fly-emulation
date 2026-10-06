@@ -238,6 +238,9 @@ def main() -> None:
                     help="diagnostic: multiply the presynaptic release gain of these types (s12)")
     ap.add_argument("--silence-ids", default="", metavar="FILE",
                     help="diagnostic: silence the output of these bodyIds, one per line (s12)")
+    ap.add_argument("--nt", action="append", default=[], metavar="TYPE[,TYPE]=TRANSMITTER",
+                    help="diagnostic: give these types this transmitter and its sign, e.g. a sign bracket "
+                         "for an unmeasured transmitter (s12)")
     args = ap.parse_args()
 
     a = ASSAYS[args.assay]
@@ -256,6 +259,12 @@ def main() -> None:
         reg.overrides[k] = float(v)
     prof = profiles.apply(reg, args.profile)
     conn = connectome.build(reg, min_synapses=args.min_synapses)
+    for s in args.nt:
+        tys, nt = s.split("=")
+        m = conn.neurons.type.isin(tys.split(",")).to_numpy()
+        conn.neurons.loc[conn.neurons.index[m], "predictedNt"] = nt
+        conn.sign[m] = connectome.SIGN_BY_NT[nt]
+        print(f"transmitter {nt} (sign {connectome.SIGN_BY_NT[nt]:+g}) on {int(m.sum())} cells ({tys}); diagnostic")
     params = lif.default_params(reg, conn, timestep_ms=args.timestep_ms)
     for s in args.release_gain:
         tys, g = s.split("=")

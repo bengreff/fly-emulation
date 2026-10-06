@@ -94,3 +94,42 @@ Its transmitter is the most discriminating missing fact for this pathway.
   AN13B002 cells are hemilineage 13B. So it is probably a lineage-level assignment (inferred).
 - Measured for this cell type: none found. BANC cross-matches the left cell to FlyWire AN_GNG_68 and the
   right to AN_GNG_193.
+
+## Transmitter evidence for Dandelion, tonight (5 October 21:31)
+
+Sources: one Sonnet Explore agent (web search and fetch; eLife and PMC were blocked, so Lacin 2019 was seen
+only through search snippets and the Tastekin v2 PDF's restatement), then the curated ground-truth table
+read by me: `flyconnectome/drosophila_neurotransmitters` `gt_data.csv` at commit a9417412 (pinned copy in
+`data/raw/drosophila_neurotransmitters/`, with `COMMIT` and `README.md`). That table feeds BANC's
+`neurotransmitter_verified` column (repository README, read by the agent).
+
+- **Row for this cell type (read by me):** `adult_drosophila_melanogaster, ventral_nerve_cord, 13B, AN13B002,
+  Lacin et al., 2019, FISH, confidence 3, gaba 1, acetylcholine 0`. The table's scale (README): 3 =
+  "identification of RNA transcripts related to transmitter expression"; 5 = "evidence for protein
+  expression in the given cell type, cell type specific labelling". 96 of the 98 rows that mention 13B cite
+  Lacin et al. 2019, FISH, confidence 3, so the row is the hemilineage result applied to the type.
+- **Lacin et al. 2019** (eLife 8:e43701; search snippets only, method and stage unverified): "Both the 13A
+  and 13B clusters were marked with GABA, but not ChAT ... Both the 13A and 13B hemilineages are
+  GABAergic." Restated in Tastekin v2: "All neurons within a hemilineage use the same neurotransmitter."
+- **Cell-type-specific measurement:** none found (no driver line, immunostaining, FISH or physiology for
+  Dandelion, AN_GNG_68 or AN_GNG_193). Eckstein et al. 2024 ground truth: not found to include it.
+- **Labels.** Measured: GABA transcripts in hemilineage 13B (FISH, Lacin 2019; the table's confidence 3).
+  Inferred for Dandelion: GABA, by hemilineage membership. Predicted: GABA by the male-cns (0.89) and
+  BANC (0.96-0.97) EM classifiers. These are not fully independent: the classifiers were trained on
+  ground truth of this kind. BANC's 440 hemilineage-13B cells: 431 labelled gaba, 9 with no verified
+  label (none with a different transmitter; checked 21:33).
+
+### Experiment that would settle it (for Ben's list)
+
+A split-GAL4 line that labels AN13B002 / AN_GNG_68 (search the Janelia VNC and SEZ split collections by
+the FlyWire and MANC names), then either (a) anti-GABA or anti-GAD1 immunostaining of the labelled cell
+in the adult VNC and GNG, or (b) an intersection with transmitter-specific T2A reporters (Gad1, ChAT,
+VGlut). Protein in this cell type would score 5 on the table's scale. A functional check would be to
+stimulate the cell optogenetically while recording a downstream partner (GNG297 or AN09B004), with and
+without picrotoxin.
+
+### Consequence in the model (bracket, 5 October 21:56; DECISIONS 21:30)
+
+Running Dandelion as acetylcholine instead of GABA leaves MN9_L at 0 Hz under leg sugar (m2 and m9r),
+changes labellar sugar MN9_L by +5% (m2) and −25% (m9r), and leaves sugar + bitter at 0 Hz. The sign
+changes the activity of 537-782 VNC cells downstream of Dandelion but not PER. Neither sign adopted.

@@ -1242,10 +1242,30 @@ MN9_L, Hz (2 trials, LgAG2 at 100 Hz):
 - **Predictions.** (1) GABA reproduces 05:02: leg drive gives MN9_L 0 Hz under m2 and m9r. (2) Acetylcholine: leg drive still gives MN9_L under 5 Hz under both profiles (no direct synapse; the only 2-hop route goes through an inhibitory cell). (3) Labellar sugar at 100 Hz: MN9_L differs by less than 30% between signs, under each profile. (4) Sugar + bitter: MN9_L differs by less than 1 Hz between signs.
 - **Reading rule.** If acetylcholine gives MN9_L ≥ 5 Hz to leg drive under either profile, the model's leg PER hinges on Dandelion's sign and the measurement goes high on Ben's list. If not, the leg sugar failure does not depend on this sign. Neither sign is adopted either way; the model keeps the classifier call (GABA) until a measurement exists.
 
-### Result (21:40; `runs/s12/fpsfold/`, backhouse and Mac)
+### Result of the fold (21:40; `runs/s12/fpsfold/`, backhouse and Mac; pre-registration two sections up)
 
 - (1) Static, Mac: m9r with no override and m9r with `--set ...=10` give identical per-neuron torque and twitch arrays (858 rows; 71 at 10). PASS.
 - (2) Gate seed 12 after the fold (`cl_fold_s12.json`) equals the archived m9r gate (`runs/s12/gates/cl_wm_s12.json`) in all 18 fields. PASS.
 - (3) Battery (`pytest_battery_m9r_fold.log`): 203 passed, 12 skipped, 2 failed. One is the known backhouse path check. The other, `test_steering_mns_change_their_wing_only`, was a truncated CSV read (`EOF inside string`) because I re-synced code to backhouse while the battery ran. Rerun alone it passes (`pytest_rerun_steering.log`, with the new fold test). So 204 passed, 1 known failure, no regressions. PASS.
 - Adopted: m9r now carries force_per_spike 10. Not a new model: it is the model every m9r gate ran. Docs updated (MODEL.md motor units, RUNNING.md examples, HANDOFF profile line).
 - **flyapp timing.** flyapp's m9r library started on backhouse at 21:30:45 from its own copy (`/home/greff/flyapp`), before this fold reached main, so those recordings run m9r at the old default of 1 for the 71 leg motor neurons. Not touched (another worker's runs). For the Director: restart it after merging main at the fold commit, or label it pre-fold.
+
+### Result of the Dandelion bracket (21:56; `runs/s12/dandelion/*.log`, `runs/assay-*-dand_{gaba,ach}/`, backhouse)
+
+MN9_L in Hz, 3 trials each, GABA (as built) vs acetylcholine (`--nt AN13B002=acetylcholine`). All numbers are model outputs (derived).
+
+| assay, stimulus | m2 GABA | m2 ACh | m9r GABA | m9r ACh |
+|---|---|---|---|---|
+| leg sugar (216 cells incl. LgLG3), 100 Hz | 0 0 0 | 0 0 0 | 0 0 0 | 0 0 0 |
+| labellar sugar, 100 Hz | 26 25 10 | 25 22 17 | 7 6 7 | 5 5 5 |
+| labellar sugar 100 Hz + bitter 0 Hz | 27 13 19 | 23 30 30 | 6 4 5 | 7 5 6 |
+| labellar sugar 100 Hz + bitter 100 Hz | 0 0 0 | 0 0 0 | 0 0 0 | 0 0 0 |
+
+- (1) GABA, leg drive: MN9_L 0 Hz under both profiles. PASS (reproduces 05:02).
+- (2) Acetylcholine, leg drive: MN9_L 0 Hz under both profiles, under the 5 Hz bound. PASS. Dandelion itself fires 294 to 320 Hz under leg drive with either sign, so the sign changes what it does downstream, not whether it is driven. With acetylcholine, 782 (m2) and 537 (m9r) more cells sit 2.5 Hz above their GABA-run rate, mostly its direct partners and their targets (IN01B065, IN00A031, leucokinin LK, AN09B004, ANXXX027, abdominal motor neurons MNad03/06); none of this reaches MN9.
+- (3) Labellar sugar: m2 means 20.3 vs 21.3 Hz (+5%), m9r 6.7 vs 5.0 Hz (−25%). Both under 30%. PASS, but m9r's is close to the bound with 3 trials; read it as "small", not "none". Dandelion fires 41 to 78 Hz under labellar sugar alone.
+- (4) Sugar + bitter at 100 Hz: 0 Hz under every condition, difference 0. PASS.
+- **Reading.** The reading rule's trigger did not fire: the model's leg-sugar-to-MN9 failure does not hinge on Dandelion's sign. The sign does change the activity of several hundred VNC cells under leg sugar, so it matters for any readout downstream of Dandelion's partners (AN09B004, abdominal motor neurons), just not for PER.
+- **Adopted: nothing.** The model keeps GABA, labelled inferred: transcripts for GABA are measured in hemilineage 13B (Lacin et al. 2019 FISH, ground-truth confidence 3), carried to this cell by lineage; EM classifiers predict GABA for it but are trained on lineage-level labels, so not fully independent. No cell-type measurement exists that the search found. The settling experiment is in `docs/research/s12_tarsal_per_pathway.md` and on HANDOFF's list for Ben.
+- `scripts/assay_pathways.py --nt TYPE=TRANSMITTER` stays as a diagnostic option (sets sign and the transmitter label the GABA-B split reads, for the named types, in this run only).
+
