@@ -2436,3 +2436,47 @@ Each factor alone caps the swing far below 20 mV. The 03:14 conclusion that the 
   - The script now requires `rest_from_recordings` so that its targets are the recorded rests.
 - The recording that discriminates these readings is the same one: Mi1's input conductance in dark and light. Both readings predict that it falls in light. This reading predicts a small fall (14% of g_i in the model now). Matching the recordings needs most of the dark conductance to be L1's and removed by light.
 - Ben's list also gets: whether Pm and Dm1 cells are graded or spiking, and their light responses.
+
+### Result, the dim flash: first-synapse small-signal gain (6 October, 03:42; `runs/s12/vision/flash_dim_i{0.01,0.05}.json`, 155 s each on backhouse; diagnostic, nothing changed)
+
+**Question.** The gain block base set gives an L1 ON swing of 16.6 mV against R1-R6's 46.8 mV. Is the photoreceptor→LMC synapse itself weak, or is the large flash compressing it?
+
+**Test.** Same base set as the gain block (no LMC scale). One 200 ms flash at intensity 0.01 and 0.05 of the full flash (`visual_flash.py --intensity`). Readout: median over connected cells (`/tmp/s12/dim_gain.py`), cross-checked against the type-mean trace divided by the connected fraction (0.45). The two agree to within 0.05 mV, and L1 has no dark noise (trace s.d. 0.000).
+
+| | i 0.01 | i 0.05 | Recorded (Juusola, Uusitalo & Weckström 1995, J Gen Physiol 105:117, PMC2216927, *Calliphora*) |
+|---|---|---|---|
+| R1-R6 peak | +0.64 mV | +3.12 | |
+| L1 peak | −0.79 | −3.45 | |
+| R→L1 gain | 1.24 | 1.10 | "~13-fold amplification of low frequency signals" at the lowest background (~160 photons/s), rolling off to 4-fold at 60 Hz; 1.5-4.5 across cells at 500,000 photons/s |
+| R→L2 gain | 0.66 | 0.55 | |
+| Mi1 peak | +0.16 | +0.33 | |
+| Tm3 peak | +0.22 | +0.58 | |
+| t½ R1-R6 / L1 | 15 / 30 ms | 15 / 30 ms | transfer delay 9 ms falling to 3.3 ms with background |
+
+**Reading.**
+- The first synapse is about 10× weaker than the recorded dim-background gain. That target is measured in *Calliphora*; its transfer to *Drosophila* is inferred. The model synapse is static. It has no adaptation, so no single value can match both 13 (dim) and 1.5-4.5 (bright).
+- Mi1 is compressive already at small L1 swings. Mi1 per mV of L1 was 0.19 at i 0.01 and 0.075 at i 0.05, while Tm3 stayed about linear (0.18 and 0.17 per mV). The mechanism is not identified.
+- The t½ difference (15 ms, at 5 ms sampling) includes L1's membrane charging, so it is not a measure of transfer delay.
+
+### Pre-registration: first-synapse gain (6 October, 03:42, before any run)
+
+**Question.** Can photoreceptor release strength alone bring R→L1 to the recorded dim gain, and what does that do to L1's dark potential and to Mi1?
+
+**Switch.** `class:photoreceptor|release_scale` k (existing, neutral 1; scales R1-R8 release onto every target). Base set as the dim flash.
+
+**Derived prediction (conductance arithmetic from the 03:29 conductance state; L1 dark g_e 0.16 and g_i 0.04, all of it R1-R6 tonic release, leak −52, e_inh −70).**
+- Photoreceptor tonic release in darkness scales with k too. L1's dark potential is therefore v(k) = (−52 − 2.8k)/(1.16 + 0.04k), and its small-signal gain scales as k/(1.16 + 0.04k)².
+- That gain peaks at k ≈ 29, at 7.8× the k = 1 value, so about 9.6. Under the current release rule no k reaches 13.
+
+| Arm | Dim R→L1 gain | L1 dark | L1 ON swing (full flash) | Mi1 ON (full flash) |
+|---|---|---|---|---|
+| k 1 (measured above / gain block) | 1.24 | −46.1 | −16.6 | +1.51 |
+| k 10 | 5-7.5 | −51.3 ± 2 | | |
+| k 30 | 6-9.6 (lower than linear: Δg is no longer small at i 0.01) | −57.6 ± 2 | −8 to −14 (the dark potential falls toward the −70 floor) | 1.0-2.5 |
+
+**Held out.** L1's dark potential against Pantazis et al. 2008 −43 ± 7.3 mV (n = 6; reference electrode not stated). At k 30 the predicted dark potential is 2 s.d. below it.
+
+**Interpretation.**
+- If the dim gain saturates below 13 as predicted, the bound comes from the release rule's tonic dark release scaling with the gain (photoreceptor dark offset `dark_mv` 1.0, guessed).
+- Tonic histamine release in darkness is real (Uusitalo et al. 1995 J Neurophysiol, *Calliphora*; to be read). The candidate next mechanism is a separately sourced dark release, or the lamina field potential that adds driving force in light (Zheng et al. 2006). It is not a third gain.
+- Nothing is adopted from this block.
