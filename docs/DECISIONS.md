@@ -2722,3 +2722,19 @@ No cell left [−90, 20] mV. Steady-state potentials from the conductance probe 
 3. Every fill runs the gate, the battery and a viewed contact sheet before any adoption.
 
 **The vision work tonight is consistent with this.** The v0/v0r rows are per-type biophysical values fitted or inferred from physiology recordings (L1 dark potential, R→L1 gain), not from behaviour, and stay diagnostic. The Mi1 block's next lever (the Pm/Dm1 modes) is rung 4.
+
+### Result: T4/T5 grating on the v0r base (6 October, 04:46; pre-registration 04:33)
+
+Run finished 04:43 (backhouse, 543 s; `runs/s12/vision/grating_v0r.json`, md5 checked; figure `docs/media/s12_vision_grating_v0r.png`, viewed). Per-cell F1 per direction (az+/az−/el+/el−), mV:
+
+| Type | RTc | v0r | Predicted | Score |
+|---|---|---|---|---|
+| Mi1 | 0.24-0.28 | 0.70-1.07 | 1.5-3.5 | FAIL (low) |
+| Tm3 | 0.24-0.35 | 0.89-1.55 | 2.5-5.5 | FAIL (low) |
+| T4a-d | 0.05-0.09 | 0.14-0.29 | 0.4-1.2, V for at least 3 of 4 | FAIL; V 0 of 4 (best 0.27-0.29) |
+| T5a-d | 0.05-0.07 | 0.15-0.30 | no call | V 0 of 4 |
+
+- Direction index 0.00-0.03 on every subtype (reported, not required). Every stage modulates 3-4× more than in RTc, and T4 still carries about 0.26 of Mi1 (RTc 0.3), so the T4 stage itself is no worse. The pre-registered failure clause (T4 below 0.3) is met, but Mi1 and Tm3 also missed, so the failure is in both places: the grating drive into Mi1/Tm3, and T4's transfer.
+- Tonic spiking during the grating: CT1 400 Hz, Mi9 22 Hz, Tm4 21 Hz, HSN 150 Hz, HSE 132 Hz, HSS 27 Hz. The grating script does not record the [−90, 20] mV bounds; not scored.
+- Diagnostic, measurement only (`visual_conductance_state.py --types T4a,T4c,T5a,Mi4,Mi9,C3,CT1`, `runs/s12/vision/cstate_v0r_t4.json`): T4a inhibition is 0.37 leak units, 0.24 of it from CT1 firing tonically at 400 Hz; Mi9 gives 0.02 and Mi4 about 0. T5a: 0.56, of which CT1 0.45. Mi4 and Mi9 run in spiking mode near −49 mV and light moves them by 0.3-1.5 mV. **T4/T5 have no modulated slow arm and their inhibition is a tonic CT1 shunt, so direction selectivity cannot appear.** Mi4, Mi9, C3, Tm4, Tm9 and CT1 have no mode row; their mode and kinetics are rung 4 and rung 5 of the Director's 02:10 order.
+- Nothing adopted. No second try (as registered). Next: the rung plan (DECISIONS 04:36), with this grating and flyapp's T4/T5 direction command as held-out tests.

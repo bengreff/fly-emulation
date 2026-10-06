@@ -1,4 +1,4 @@
-# S12: measured values for the five dynamics rungs (survey, 6 October 04:35-)
+# S12: measured values for the five dynamics rungs (survey, 6 October 04:35-04:46; WIP, optic-lobe kinetics not yet extracted)
 
 Director order 02:10 (DECISIONS 6 October 04:36): fill spike-frequency adaptation, short-term
 depression/facilitation, membrane noise, graded against spiking mode, and per-type membrane time

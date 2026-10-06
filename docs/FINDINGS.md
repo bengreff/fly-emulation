@@ -1055,3 +1055,9 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - The lamina-to-medulla handoff is now quantitatively understood. The remaining medulla deficit is tonic inhibition from spiking Pm/Dm cells whose modes and light responses are guessed.
   - r0 0.26 rests on a principle, not on a measured LMC release curve. A recorded LMC→Mi1/Tm3 transfer curve would test it.
 - **Correction to F-VISION-9's DECISIONS entry.** L1 does have a depolarising OFF transient in the v0 arm (connected median +10.7 mV). The 04:11 entry misread the diluted type mean.
+
+### F-VISION-11: on v0r, T4/T5 modulate 3-4× more but stay below the 0.5 mV criterion with no direction selectivity; their inhibition is a tonic CT1 shunt and Mi4/Mi9 carry no signal (s12, 6 Oct 04:46)
+- **Test** (DECISIONS pre-registration 04:33, result 04:46; `docs/media/s12_vision_grating_v0r.png`, viewed). `motion_grating.py` (30°, 1 Hz, contrast 1) on v0r against RTc.
+- **Result.** Per-cell F1: Mi1 0.70-1.07 mV (predicted 1.5-3.5), Tm3 0.89-1.55 (2.5-5.5), T4 0.14-0.29 (0.4-1.2), T5 0.15-0.30. V passes for 0 of 8 subtypes; the direction index is 0.00-0.03. All predictions failed low.
+- **Mechanism (conductance probe, diagnostic).** T4/T5 inhibition is mostly CT1 at a tonic 400 Hz (T4a 0.24 of 0.37 leak units; T5a 0.45 of 0.56). Mi4 and Mi9 sit in spiking mode near −49 mV and are barely modulated by light, so no slow, offset arm reaches T4. With only fast excitation and a constant shunt, the model cannot be direction selective.
+- **Reading.** This confirms the Director's 02:10 diagnosis for vision: the gap is cell modes and dynamics (rungs 4 and 5), not a gain number. Mi4, Mi9, C3, Tm4, Tm9 and CT1 need sourced mode rows, and Mi1/Tm3 against Mi4/Mi9 need sourced kinetics, before DS can be tested.
