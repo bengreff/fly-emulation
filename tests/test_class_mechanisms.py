@@ -275,3 +275,22 @@ def test_leak_from_network_rest_is_neutral_by_default_and_moves_only_the_leak(mo
     for _ in range(3000):
         on.step()
     assert abs(on.v[i] - on.v_leak[i]) < 0.5, (on.v[i], on.v_leak[i], on.v_rest[i])
+
+
+@needs_graph
+def test_release_at_rest_per_type_is_neutral_by_default_and_sets_only_the_rows(monkeypatch, tmp_path):
+    cls = {"cell_type:ol_graded|release_at_rest": 0.5}
+    base = _org(**cls).net
+    on0 = _org(**cls, **{"cell_type:all|release_at_rest_per_type": 1.0}).net   # no rows: same values
+    assert np.array_equal(on0.params.graded_r0, base.params.graded_r0)
+    extra = tmp_path / "rows.csv"
+    extra.write_text("type,param,value,units,basis,source,justification\n"
+                     "L1,release_at_rest,0.25,fraction of graded_rmax,inferred,test,test row\n")
+    monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(extra))
+    assert np.array_equal(_org(**cls).net.params.graded_r0, base.params.graded_r0)   # rows need the switch
+    on = _org(**cls, **{"cell_type:all|release_at_rest_per_type": 1.0}).net
+    l1 = on.conn.neurons.type.eq("L1").to_numpy() & on.graded
+    assert l1.sum() > 100
+    assert np.allclose(on.params.graded_r0[l1], 0.25)
+    assert np.array_equal(on.params.graded_r0[~l1], base.params.graded_r0[~l1])
+    assert np.array_equal(on.w, base.w) and np.array_equal(on.graded, base.graded)

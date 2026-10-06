@@ -419,6 +419,14 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                      subsystem="neuron_biophysics", instances=int(ol_graded.sum()), minimal=0.0,
                      minimal_note="neutral 0: no release at or below rest, as m4")
     graded_r0 = np.where(ol_graded, np.float32(r0), np.float32(0.0)) if r0 else None
+    # s12 vision Mi1/Tm3 block (DECISIONS 6 Oct): per-type release at rest (release_at_rest rows)
+    # replaces the class value for the graded cells of those types only
+    if one("release_at_rest_per_type", "boolean", "per-type graded release at rest from rows", 0.0,
+           "neutral 0: one class value for the optic-lobe graded interneurons"):
+        rt = ptable.per_neuron(reg, conn, "release_at_rest", np.nan, units="fraction of graded_rmax",
+                               table=table)
+        base_r0 = graded_r0 if graded_r0 is not None else np.zeros(conn.n, np.float32)
+        graded_r0 = np.where(graded & np.isfinite(rt), rt, base_r0).astype(np.float32)
     spont = per("spontaneous_drive", "mV", "tonic drive (spontaneous activity)",
                 0.0, "declared default: no tonic drive")
     rel = per("release_gain", "dimensionless", "presynaptic release strength",
