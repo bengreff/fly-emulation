@@ -63,6 +63,19 @@ ASSAYS = {
         evidence="convergence test (s12): does leg sugar add to labellar sugar at MN9? "
                  "Labellar sugar held at 100 Hz, leg sugar swept; compare with sugar_mn9 at 100 Hz",
     ),
+    "legbitter_mn9": dict(
+        stim=["LgAG1"], readout=["MN9"],
+        evidence="LgAG1 (Gr33a+) matches tarsal bitter GRN projections (male-CNS taste connectome, "
+                 "bioRxiv 10.1101/2025.08.25.671814, secondary read); bitter alone should not drive MN9. "
+                 "Specificity check for the route bracket (s12)",
+    ),
+    "legsugar_legbitter_mn9": dict(
+        stim=["LgAG1"], readout=["MN9"],
+        co_stim=(["LgLG4", "LgAG2"], 100.0),
+        evidence="leg sugar held at 100 Hz, leg bitter swept. Optogenetic activation of Gr66a cells on legs "
+                 "and proboscis reduces PER by 22%, 'only a moderate inhibition' (French et al. 2015 "
+                 "J Neurosci 35:3990, PMC6605581, Fig 3; secondary read). Specificity check (s12)",
+    ),
     "water_mn9": dict(
         stim=["LB3a"], readout=["MN9"],
         evidence="LB3a matches ppk28-GAL4 water lbGRNs; water GRNs also drive "

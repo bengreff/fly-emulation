@@ -115,8 +115,7 @@ def main() -> None:
             out = pd.DataFrame({"type": "bodyId:" + df.bodyId[ok].astype(str), "param": "spontaneous_drive",
                                 "value": (df[col][ok] + off).clip(lower=0.0).round(3), "units": "mV",
                                 "basis": "guessed", "source": "s12 route bracket (diagnostic, not adopted)",
-                                "justification": f"{df.type[ok].to_numpy()} route cell; " + why})
-            out["justification"] = [f"{t} route cell; {why}" for t in df.type[ok]]
+                                "justification": [f"{t} route cell; {why}" for t in df.type[ok]]})
             out.to_csv(d / f"route_{arm}.csv", index=False)
             print(f"{arm}: {ok.sum()} of {len(df)} cells -> {d / f'route_{arm}.csv'}")
 

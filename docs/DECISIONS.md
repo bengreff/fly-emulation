@@ -1644,3 +1644,69 @@ MBON-α3 fires at 12.1 Hz at rest (Hafez 2023), and PNs, LH local and LH output 
     inhibition. The GNG093/GNG250 sign is then the deciding unknown.
   - Nothing is adopted either way. A route-only shift is not a model candidate: as a model change it
     would have to be a class property, tested on the whole brain and the gate.
+
+### Result (00:22; 8 runs, 3 trials each, backhouse; `runs/s12/rest/route_rest_rates.json`; figure `docs/media/s12_legsugar_rest.png`, viewed)
+
+Mean rates (Hz). Roundup is the mean of its 2 cells. At 0 Hz input the 3 trials are identical, because
+there is no noise.
+
+| Assay | Arm | Roundup, 0 Hz | Roundup, 100 Hz | Roundup, 200 Hz | MN9_L, 0 Hz | MN9_L, 100 Hz | MN9_L, 200 Hz | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| 54 GRNs | base | 0 | 0 | 0 | 0 | 0 | 0 | blocked |
+| 54 GRNs | near | 0 | 32.5 | 34.8 | 0 | 35.0 | 39.0 | **PASS** |
+| 54 GRNs | tonic2 | 38.0 | 39.2 | 43.3 | 42.0 | 41.7 | 49.0 | fires at rest |
+| 54 GRNs | tonic12 | 37.0 | 41.2 | 43.8 | 41.0 | 44.7 | 50.7 | fires at rest |
+| 216 GRNs | base | 0 | 0 | 0 | 0 | 0 | 0 | blocked |
+| 216 GRNs | near | 0 | 31.3 | 33.5 | 0 | 32.0 | 34.0 | **PASS** |
+| 216 GRNs | tonic2 | 38.0 | 38.7 | 39.3 | 42.0 | 40.7 | 43.3 | fires at rest |
+| 216 GRNs | tonic12 | 37.0 | 39.2 | 39.5 | 41.0 | 40.7 | 43.7 | fires at rest |
+
+- **Predictions:**
+  - `base` blocked on both assays: held.
+  - `tonic12` fires at rest: held.
+  - `near` passes Roundup only on the 216-cell assay and leaves MN9_L under 5 Hz: wrong. `near` passes
+    on both assays, including the 54 GRNs the paper matched to sugar, with MN9_L at 32-39 Hz.
+- **Reading, as fixed in advance:**
+  - `near` passes and `base` does not. So resting excitability on the route is enough to open it, with
+    BK on and the feedforward inhibition intact.
+  - The inhibitors fire hard in `near` (GNG093 48 Hz, GNG250 54 Hz at 200 Hz) and the route still opens.
+    So the inhibition is not the deciding block once the relays sit near threshold.
+  - The measurable counterpart is the resting potential against threshold, or the spontaneous rate, of a
+    GNG route cell. It goes on Ben's list.
+  - Nothing is adopted.
+- **Seen, not scored:**
+  - **The route switches rather than grades.** Under `near`, Roundup and MN9_L are nearly the same at
+    100 and 200 Hz (32.5 against 34.8, and 35 against 39). The cluster (GNG578, GNG143, GNG167) runs at
+    26-42 Hz at both rates.
+  - **The route cells excite one another.** Under `tonic2`, each cell fires about 2 Hz alone but 30-40 Hz
+    in the network at rest (GNG167 39, Roundup 38). Under `near` with 54 GRNs, the cluster ignites
+    while AN17A002 fires only 4-8 Hz (60-83 Hz on the 216-cell assay).
+  - So near threshold the route behaves as a recurrent switch. Whether it switches off when the sugar is
+    removed is untested. Real PER is graded with concentration and ends when the stimulus ends (not
+    sourced this session).
+  - Bract 2 (DNge173) never exceeds 11 Hz in any arm, while Bract 1 (DNge174) reaches 31-41 Hz. So
+    Roundup is probably driven through the cluster and Bract 1 rather than Bract 2 (inferred from rates,
+    not tested by removing cells).
+  - **Without noise, the low resting rates are a knife-edge** (`scripts/probes/noise_rest.py`,
+    `runs/s12/rest/noise_rest_m9c.txt`; one generic central cell, derived). m9c has no membrane noise
+    (Shiu 2024 has none). Rates in the alone column below are for one cell with no synapses:
+
+    | Noise (mV/√ms) | Rate alone at 0 mV drive | Rate alone at 4 mV drive | Membrane SD |
+    |---|---|---|---|
+    | 0.75 | 0.1 Hz | 9 Hz | 2.3-2.9 mV |
+    | 1.0 | 1.8 Hz | 11 Hz | 2.9-3.3 mV |
+    | 1.5 | 7.6 Hz | 16 Hz | 3.9-4.0 mV |
+
+    So noise reaches the measured 0.1-12 Hz range smoothly, as tonic drive alone cannot.
+- **Next discriminating experiments** (pre-register before running):
+  1. Specificity under `near`. Leg bitter alone (LgAG1, new assay `legbitter_mn9`) should leave MN9_L
+     silent. Leg bitter on top of leg sugar (`legsugar_legbitter_mn9`) should give at most moderate
+     suppression: optogenetic Gr66a activation on legs and proboscis reduces PER by 22% (French et al.
+     2015 J Neurosci 35:3990, PMC6605581, Fig. 3; secondary read). Labellar sugar, bitter and sugar +
+     bitter should be unchanged from `base`.
+  2. Dose and offset under `near`: GRN rates 3, 10, 25 and 50 Hz (tarsal sugar GRNs fire under 3 Hz
+     spontaneously and about 50-55 Hz at 100 mM; Ling 2014), and whether MN9_L stops after the
+     stimulus.
+  3. A noise version: route cells (or the whole central class) resting at 0.1-1.4 Hz through membrane
+     noise instead of a fixed drive. Then the whole-brain question: does a class-level change pass the
+     gate?

@@ -24,7 +24,7 @@ def main() -> None:
     ap.add_argument("--types", required=True)
     ap.add_argument("--rates", default="100,200")
     ap.add_argument("--out", default="")
-    ap.add_argument("--png", default="", help="heatmap of type means at --png-rate, one row per run")
+    ap.add_argument("--png", default="", help="heatmap of type means at each --png-rate, one row per run")
     ap.add_argument("--png-rate", default="200")
     ap.add_argument("--labels", default="", help="comma-separated row labels for --png (default: run names)")
     ap.add_argument("--title", default="")
@@ -66,23 +66,25 @@ def plot(res: dict, types: list[str], a) -> None:
     import matplotlib.pyplot as plt
     runs = list(res)
     labels = [x for x in a.labels.split(",") if x] or [Path(r).name for r in runs]
-    m = np.array([[np.nan if (v := res[r].get(a.png_rate, {}).get(t, {}).get("mean")) is None else v
-                   for t in types] for r in runs], dtype=float)
-    fig, ax = plt.subplots(figsize=(1.3 * len(types) + 3, 0.45 * len(runs) + 1.5))
-    im = ax.imshow(np.log10(1 + m), cmap="viridis", vmin=0, vmax=np.log10(1 + max(150, np.nanmax(m))), aspect="auto")
-    for i in range(m.shape[0]):
-        for j in range(m.shape[1]):
-            if np.isfinite(m[i, j]):
-                ax.text(j, i, f"{m[i, j]:.1f}", ha="center", va="center", fontsize=8,
-                        color="white" if np.log10(1 + m[i, j]) < 1.4 else "black")
-    ax.set_xticks(range(len(types)), types, rotation=30, ha="right")
-    ax.set_yticks(range(len(runs)), labels)
-    ax.set_title(a.title or f"mean rate (Hz) at {a.png_rate} Hz stimulus", fontsize=9)
-    fig.colorbar(im, ax=ax, label="log10(1 + Hz)")
+    rates = a.png_rate.split(",")                 # one panel per stimulus rate
+    fig, axes = plt.subplots(len(rates), 1, figsize=(1.0 * len(types) + 4, (0.4 * len(runs) + 1.6) * len(rates)),
+                             squeeze=False)
+    for ax, rate in zip(axes[:, 0], rates):
+        m = np.array([[np.nan if (v := res[r].get(rate, {}).get(t, {}).get("mean")) is None else v
+                       for t in types] for r in runs], dtype=float)
+        im = ax.imshow(np.log10(1 + m), cmap="viridis", vmin=0, vmax=np.log10(1 + max(150, np.nanmax(m))), aspect="auto")
+        for i in range(m.shape[0]):
+            for j in range(m.shape[1]):
+                if np.isfinite(m[i, j]):
+                    ax.text(j, i, f"{m[i, j]:.1f}", ha="center", va="center", fontsize=8,
+                            color="white" if np.log10(1 + m[i, j]) < 1.4 else "black")
+        ax.set_xticks(range(len(types)), types, rotation=30, ha="right")
+        ax.set_yticks(range(len(runs)), labels)
+        ax.set_title((a.title + ": " if a.title else "") + f"mean rate (Hz) at {rate} Hz stimulus", fontsize=9)
+        fig.colorbar(im, ax=ax, label="log10(1 + Hz)")
     fig.tight_layout()
     Path(a.png).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(a.png, dpi=130)
-
 
 if __name__ == "__main__":
     main()
