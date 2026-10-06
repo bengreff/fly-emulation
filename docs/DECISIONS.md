@@ -2539,3 +2539,40 @@ The derived bound sets the prediction before any run: gain ≤ (E − v₀)/(4s)
   2. A curved release rule: s bounded 0.5-3 mV, extent about 12 mV below dark (Uusitalo).
 - The lamina-field offset is held back. The test flash for the small-signal gain must move R1-R6 by much less than s (i ≤ 0.001).
 - A source search for D, s and the LMC chloride reversal is running (04:00).
+
+### Pre-registration: LMC histamine-free potential plus R1-R6 release (6 October, 04:05, before any run)
+
+**Question.** F-VISION-8 gives the R→LMC small-signal gain as D(1 − p)/s. Can one sourced-target pair, L1's dark potential and the dim-background gain, be met together by moving only L1/L2's histamine-free potential v₀ and R1-R6's tonic release? And what does the medulla do then?
+
+**Sources** (searched 04:00-04:04, open full text only).
+- No open source gives an LMC potential with histamine transmission removed; Uusitalo 1995, Laughlin, Howard & Blakeslee 1987, Hardie 1989 and Zheng 2006 were paywalled.
+- Dau et al. 2016 (PMC4801898): hdc photoreceptors rest about 7 mV above wild type in the dark; LMCs were not recorded.
+- Rusanen & Weckström 2016 (PMC4869513, *Calliphora*, measured): L1/2 dark rest −38.4 ± 3.2 mV (n 15), L3 −49.3 ± 6.5 (n 11).
+- An unverified secondary snippet attributes "an e-fold increase in postsynaptic conductance per 1.50-1.86 mV, peak slope about 6" to the blowfly R→LMC synapse. It is not used as a value. It is listed for Ben (Laughlin, Howard & Blakeslee 1987 full text). If true, it conflicts with the model's s 0.6 mV and with 13 as a target.
+
+**Switches** (existing; rows in `FLYEMU_EXTRA_PARAMS`, diagnostic).
+- `cell_type:all|leak_from_network_rest` 1 with `v_leak_shift_fit` +15.1 mV on `^L1$|^L2$` (leak −36.9 mV; basis derived: solved from the two targets below). L3 is left alone (its *Calliphora* rest is 11 mV lower).
+- `release_gain` 12.5 on `^R1-R6$` (derived: same solve).
+- Base set as the gain block.
+
+**Derived solve** (one-compartment arithmetic from `cstate2_kR1`: a = 1 + g_e = 1.161, R1-R6 g_i 0.0387 per unit k, E −70, s 0.61 mV = the photoreceptor dark offset above the linear foot).
+- The targets are L1 dark −43 (Pantazis 2008, *Drosophila*, untyped LMCs) and small-signal gain 13 (Juusola 1995, *Calliphora*).
+- They give p 0.294, g_i 0.48, D 11.2 mV and v₀ −31.8 mV.
+
+**Predictions** (connected medians).
+
+| Readout | Role | Prediction | Recorded |
+|---|---|---|---|
+| L1 dark | train | −43 ± 2 | −43 ± 7.3 (Pantazis); −38.4 ± 3.2 (Rusanen, *Calliphora*, held) |
+| R→L1 gain, flash i 0.001 (R1-R6 ≈ 0.064 mV) | train | 13 ± 2.5 | about 13 |
+| R→L1 gain, i 0.01 | check | 9.0 ± 1.5 (release doubles) | |
+| L1 ON, full flash | held | −22 to −27 | −45 (recorded value in the score, field-referenced) |
+| L1 release, dark → light | check | 0.60 → 0.31 | |
+| Mi1 ON, full flash | held | +2 to +4 (still fails; F-VISION-7's tonic Pm/Dm1 inhibition) | +20 |
+| Tm3 ON, Tm1/Tm2 OFF, L2 | held | not predicted numerically; reported | |
+| v₀ (histamine-free LMC potential) | prediction for Ben's list | −32 ± 3 | not measured |
+
+**Interpretation.**
+- If the two training numbers land, the formula is confirmed, and the first synapse can meet both recordings only with v₀ about 12 mV above the model's current −44.8. That is a testable prediction (ort or hdc LMC rest).
+- If they miss by more than the tolerance, the one-compartment reading is wrong and I stop and write up.
+- Nothing is adopted. Adoption needs Ben's call on a fitted LMC leak, plus the gate and battery.
