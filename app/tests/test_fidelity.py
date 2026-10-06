@@ -50,6 +50,46 @@ def test_split_yaml_fields_are_rejoined(fid):
     assert not any(m["rejoined"] for m in fid["mechanisms"] if "," not in str(m["name"]) + str(m["notes"]))
 
 
+def test_session_check_refuses_unknown_configuration(fid, tmp_path):
+    sys.path.insert(0, str(APP / "server"))
+    import sessions
+    f = tmp_path / "fidelity.json"
+    f.write_text(json.dumps(fid))
+    ok = {"profile": "m9r", "body": "flybody", "scan": "male-cns:v1.0",
+          "overrides": {"adhesion:leg|detachment": 0.0, "cell_type:all|v_rest": -55.0, "cell_type:Mi1|graded": 1.0}}
+    assert sessions.config_problems(ok, f) == []
+    bad = sessions.config_problems({"profile": "m99", "body": "neuromechfly", "scan": "BANC",
+                                    "overrides": {"adhesion:leg|detachmnt": 0.0}}, f)
+    assert len(bad) == 4 and "m99" in bad[0] and "request 1" in bad[1] and "BANC" in bad[2] and "detachmnt" in bad[3]
+    # the status the check reports is the recorder's (record.py fills a missing profile with the working one)
+    assert sessions.recorded_status({}, f) == "adopted (working profile)"
+    assert sessions.recorded_status({"profile": "m4", "extra_params": "x.csv"}, f) == \
+        "m4 (regression reference) with extra per-type rows: custom, not validated"
+    assert sessions.recorded_status({"profile": None}, f) == "custom, not validated"
+
+
+@pytest.mark.skipif(not shutil.which("node"), reason="needs node")
+def test_page_status_matches_the_recorder(fid, tmp_path):
+    """configStatus in the page gives the status record.py will write."""
+    sys.path.insert(0, str(APP / "server"))
+    import record
+    cases = [[p, o] for p in ("m9r", "m4", "m9", "m10p", None) for o in ({}, {"a|b": 1})]
+    for f in ("fidelity.js", "inspector.js"):
+        shutil.copy(APP / "web" / "js" / f, tmp_path / f)
+    (tmp_path / "package.json").write_text('{"type": "module"}')
+    (tmp_path / "fid.json").write_text(json.dumps(fid))
+    (tmp_path / "run.mjs").write_text(f"""
+import {{ readFileSync }} from "fs";
+import {{ configStatus }} from "./fidelity.js";
+const fid = JSON.parse(readFileSync("fid.json"));
+console.log(JSON.stringify({json.dumps(cases)}.map(([p, o]) => configStatus(fid, p, o))));
+""")
+    out = subprocess.run(["node", "run.mjs"], cwd=tmp_path, capture_output=True, text=True, timeout=120)
+    assert out.returncode == 0, out.stderr
+    want = [record.profile_status(p or profiles.WORKING_PROFILE, o) for p, o in cases]
+    assert json.loads(out.stdout) == want
+
+
 @pytest.mark.skipif(not shutil.which("node"), reason="needs node")
 def test_page_join_matches_model_owners(fid, tmp_path):
     """The page's owner join (keyPattern, ownerIndex) gives the same owning rows as

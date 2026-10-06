@@ -29,12 +29,14 @@ import pandas as pd
 
 import heldout
 import protocol as proto
+import status
 from recfmt import unpack
 
 APP = Path(__file__).resolve().parents[1]
 REPO = APP.parent
 SLOT = Path.home() / "director" / "harness" / "slot.py"
 ATLAS = APP / "data" / "atlas" / "male-cns-v1.0"
+FIDELITY = APP / "data" / "model" / "fidelity.json"
 COMMANDS = ("pause", "resume", "stop", "stim")
 CHUNK_MS = 50.0          # small chunks so the page sees a live run grow (about every 5 s of wall time)
 
@@ -55,6 +57,37 @@ def atlas_table() -> pd.DataFrame:
     return _table
 
 
+def config_problems(cfg: dict, fidelity: Path = FIDELITY) -> list[str]:
+    """The configuration against the model's construction tables (app/build/fidelity.py): a
+    defined profile, override keys some table owns (a mistyped key would otherwise make a
+    "custom" run identical to the profile), and a body and scan the recorder can run."""
+    if not fidelity.exists():
+        return []
+    f = json.loads(fidelity.read_text())
+    out = []
+    if cfg.get("profile") and cfg["profile"] not in {p["name"] for p in f["profiles"]}:
+        out.append(f"profile {cfg['profile']} is not defined in the model's profiles")
+    for kind, opts in (("body", f["bodies"]), ("scan", f["scans"])):
+        o = next((x for x in opts if x["id"] == cfg.get(kind)), None)
+        if o and not o["simulate"]:
+            out.append(f"{kind} {o['id']} cannot be recorded: {o['why']}")
+    pats = [r["registry_key"] for r in f["parameters"] if r["registry_key"]] + \
+           [r["key_pattern"] for r in f["structural"]] + [s for m in f["mechanisms"] for s in m["switch"]]
+    pats = [re.compile("^" + ".*".join(re.escape(s) for s in p.split("*")) + "$") for p in pats]
+    out += [f"override {k} is not a key in the model's construction tables"
+            for k in (cfg.get("overrides") or {}) if not any(p.match(k) for p in pats)]
+    return out
+
+
+def recorded_status(cfg: dict, fidelity: Path = FIDELITY) -> str | None:
+    """The profile_status the recorder will write for this config (None without the built tables)."""
+    if not fidelity.exists():
+        return None
+    working = json.loads(fidelity.read_text())["working"]
+    return status.profile_status(cfg.get("profile", working), cfg.get("overrides") or {},
+                                 bool(cfg.get("extra_params")), working)
+
+
 def check(pr: dict) -> dict:
     """Resolve without building the model: what each event reaches, and the guard."""
     neurons = atlas_table()
@@ -68,12 +101,14 @@ def check(pr: dict) -> dict:
              for x in res["genotype"]] + \
             [{"kind": "event", "label": x["label"], "n": x["n"], "t_ms": x.get("t_ms"), "dur_ms": x.get("dur_ms"),
               "approximation": x.get("approximation")} for x in res["events"]]
-    problems = [f"touches held-out {h['id']} ({h['what']})" for h in g["items"]]
+    problems = config_problems(pr.get("config") or {})
+    problems += [f"touches held-out {h['id']} ({h['what']})" for h in g["items"]]
     if not g["seed_spent"]:
         problems.append(f"seed {g['seed']} may be a fresh held-out seed; use a spent seed "
                         f"(0-13, 17-19) or record it from the command line with --spend-heldout seed")
     return {"ok": not problems, "error": "; ".join(problems) or None, "items": items,
             "watch": len(res["watch"]), "preparation": res["preparation"],
+            "recorded_as": recorded_status(pr.get("config") or {}),
             "note": "resolved against the atlas (time step 0.1 ms); the recorder resolves again on the model's table"}
 
 

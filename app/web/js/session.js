@@ -78,6 +78,7 @@ export class SessionPanel {
     const cost = r.preparation && this.protocolCost();
     this.$("#ses-result").innerHTML = r.ok
       ? `<div class="ok">resolves${r.preparation ? ` (${esc(r.preparation)})` : ""}; ${r.watch ?? 0} cells watched${cost ? `; about ${cost}` : ""}</div>`
+        + (r.recorded_as ? `<div>recorded as <span class="chip completed">${esc(r.recorded_as)}</span></div>` : "")
         + (r.items || []).map(x => `<div>${esc(x.kind)}: ${esc(x.label)} <span class="dim">${x.n} cells${x.t_ms !== undefined ? `, ${x.t_ms}+${x.dur_ms} ms` : ""}</span> ${x.approximation ? approxChip(x.approximation) : ""}</div>`).join("")
         + (r.note ? `<div class="dim">${esc(r.note)}</div>` : "")
       : `<div class="warnline">${esc(r.error || "refused")}</div>`;
@@ -128,6 +129,16 @@ export class SessionPanel {
     if (!types.length) { this.show({ ok: false, error: "name the target cells (cell types or bodyIds)" }); return null; }
     const target = types.every(t => /^\d+$/.test(t)) ? { bodyId: types.map(Number) } : { type: types };
     return { effector: eff, target, dur_ms: dur, ...(eff === "kick" ? { rate_hz: val } : { mv: val }) };
+  }
+
+  // a configuration chosen in the Fidelity tab (profile, body, scan, overrides) replaces
+  // those fields of the protocol's config; the rest of the protocol stays
+  setConfig(cfg) {
+    const p = this.protocol();
+    if (!p) return;
+    p.config = { ...(p.config || {}), ...cfg };
+    this.$("#ses-json").value = JSON.stringify(p, null, 1);
+    this.check();
   }
 
   addEvent() {

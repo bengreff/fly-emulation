@@ -97,7 +97,7 @@ async function main() {
   if (params.get("etype") && app.eye.byName) app.eye.selectType(params.get("etype"));
   app.inspector.eyeOf = bid => app.eye.ommatidiumOf(bid);
   app.inspector.onOmm = (e, o) => { showTab("eye"); app.eye.pickOmm(e, o); };
-  app.fidelity = new FidelityPanel($("#tab-fidelity"));
+  app.fidelity = new FidelityPanel($("#tab-fidelity"), { onConfigure: cfg => { app.session.setConfig(cfg); showTab("session"); } });
   app.fidelity.bind(cat.model ? await fetchJSON(cat.model).catch(() => null) : null, rec);
   if (rec.manifest.status === "recording") followGrowth(atlas, entry);
   if (params.get("tab")) showTab(params.get("tab"));

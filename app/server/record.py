@@ -39,6 +39,7 @@ from flyemu.organism import Organism  # noqa: E402
 import heldout  # noqa: E402
 import live  # noqa: E402
 import protocol as proto  # noqa: E402
+import status  # noqa: E402
 from recfmt import RecWriter, spikes_to_csr  # noqa: E402
 from caveats import generate  # noqa: E402
 
@@ -95,14 +96,7 @@ def motor_limits(m, names) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
 
 
 def profile_status(profile: str | None, overrides: dict, extra_rows: bool = False) -> str:
-    if profile == profiles.WORKING_PROFILE and not overrides and not extra_rows:
-        return "adopted (working profile)"
-    if profile == profiles.WORKING_PROFILE:
-        return ("adopted profile with " + " and ".join(
-            w for w, on in (("overrides", overrides), ("extra per-type rows", extra_rows)) if on)
-            + ": custom, not validated")
-    return {"m4": "regression reference", "m10p": "candidate, not adopted",
-            "m10q": "candidate, not adopted"}.get(profile or "", "custom, not validated")
+    return status.profile_status(profile, overrides, extra_rows, profiles.WORKING_PROFILE)
 
 
 def main() -> int:

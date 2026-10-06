@@ -66,6 +66,16 @@ export function profileDiff(a, b) {
     .map(k => ({ key: k, a: a.values[k] || null, b: b.values[k] || null }));
 }
 
+// the status the recorder writes for a configuration (app/server/record.py profile_status);
+// no profile means the working profile
+export function configStatus(fid, profile, overrides) {
+  const name = profile || fid.working, added = Object.keys(overrides || {}).length ? "overrides" : "";
+  if (name === fid.working) return added ? `adopted profile with ${added}: custom, not validated` : "adopted (working profile)";
+  const p = fid.profiles.find(x => x.name === name), named = p && !p.status.startsWith("custom") ? p.status : null;
+  if (named && added) return `${name} (${named}) with ${added}: custom, not validated`;
+  return named || "custom, not validated";
+}
+
 function bar(counts) {
   const n = BASES.reduce((s, b) => s + (counts[b] || 0), 0) || 1;
   return `<div class="basisbar">${BASES.filter(b => counts[b]).map(b =>
@@ -77,7 +87,7 @@ const range = p => p ? `[${fmt(p.bio_min) || "-inf"}, ${fmt(p.bio_max) || "inf"}
 const runCommit = m => { const p = m.provenance || {}; return (p.model_src || {}).commit || p.commit || (p.git || {}).commit || ""; };
 
 export class FidelityPanel {
-  constructor(el) { this.el = el; }
+  constructor(el, { onConfigure } = {}) { this.el = el; this.onConfigure = onConfigure; }
 
   bind(fid, rec) {
     this.fid = fid; this.rec = rec;
@@ -119,6 +129,21 @@ export class FidelityPanel {
         <tr><td>tables</td><td>model tables at commit <span class="mono">${esc(fc.slice(0, 9))}</span>, built ${esc(fid.source.built || fid.built)}
           ${same ? "" : `<br><span class="warnline">${rc ? `this run's model is commit ${esc(rc.slice(0, 9))}` : "this run records no model commit"}${(fid.source.tables_modified || []).length ? `; tables modified since the commit: ${esc(fid.source.tables_modified.join(", "))}` : ""}. Values below are the run's own (inventory); statuses, bounds and profiles are the tables'.</span>`}</td></tr>
       </table>
+
+      <h3>Configure a run</h3>
+      <div class="row">
+        <label class="dim">profile <select id="cfg-profile">${fid.profiles.slice().reverse().map(p =>
+          `<option value="${esc(p.name)}"${p.name === (cfg.profile || fid.working) ? " selected" : ""}>${esc(p.name)}: ${esc(p.status)}${p.earlier ? " (earlier)" : ""}</option>`).join("")}</select></label>
+        <label class="dim">body <select id="cfg-body">${fid.bodies.map(b =>
+          `<option value="${esc(b.id)}"${b.simulate ? "" : " disabled"}${b.id === cfg.body ? " selected" : ""} title="${esc(b.why)}">${esc(b.id)}${b.simulate ? "" : " (not selectable)"}</option>`).join("")}</select></label>
+        <label class="dim">scan <select id="cfg-scan">${fid.scans.map(s =>
+          `<option value="${esc(s.id)}"${s.simulate ? "" : " disabled"}${s.id === cfg.scan ? " selected" : ""} title="${esc(s.why)}">${esc(s.id)}${s.simulate ? "" : " (not simulated)"}</option>`).join("")}</select></label>
+      </div>
+      <details id="cfg-sw-box"><summary class="dim">switches: override a value <span id="cfg-n"></span></summary><table id="cfg-switches"></table></details>
+      <div class="row"><span id="cfg-status"></span><button id="cfg-send">set in the Session tab</button></div>
+      <div class="dim">Writes profile, body, scan and overrides into the Session tab's protocol, where it is checked and can be
+        run; the rest of that protocol stays, including any extra_params (variant rows), and its check shows the status
+        the run will be recorded with. A changed profile is recorded as "custom, not validated".</div>
 
       <h3>This run's values by evidence <span class="chip measured">this run</span></h3>
       ${counts ? `<table class="basis">
@@ -171,7 +196,39 @@ export class FidelityPanel {
     for (const id of ["#fid-status", "#fid-tier", "#fid-switched"]) $(id).onchange = () => this.mechs();
     for (const id of ["#fid-q", "#fid-sub", "#fid-basis"]) $(id).oninput = () => this.values();
     if (prof) $("#fid-other").onchange = () => this.diff();
-    this.mechs(); this.values(); if (prof) this.diff();
+    $("#cfg-profile").onchange = () => this.switches();
+    $("#cfg-switches").oninput = () => this.cfgStatus();
+    $("#cfg-send").onclick = () => this.onConfigure && this.onConfigure(this.config());
+    this.mechs(); this.values(); this.switches(); if (prof) this.diff();
+  }
+
+  // the mechanism switches (no wildcards) with the chosen profile's value and an override box
+  switches() {
+    const $ = s => this.el.querySelector(s), p = this.fid.profiles.find(x => x.name === $("#cfg-profile").value);
+    const own = p && p.name === this.rec.manifest.config.profile;
+    const rows = this.fid.mechanisms.flatMap(m => m.switch.filter(s => !s.includes("*")).map(s => ({ s, m })));
+    $("#cfg-switches").innerHTML = rows.map(({ s, m }) => {
+      const v = p && p.values[s], r = this.byKey.get(s);
+      return `<tr><td class="mono wrap">${esc(s)}<br><span class="dim">${esc(m.id)} ${esc(m.status)}</span></td>
+        <td>${v ? `${esc(fmt(v[0]))} ${chip(v[1])} <span class="dim">set by ${esc(p.name)}</span>`
+          : `<span class="dim">not set by ${esc(p ? p.name : "the profile")}: registry default${own && r ? ` (this run: ${esc(r.value)})` : ""}</span>`}
+          ${m.neutral ? `<br><span class="dim">neutral: ${esc(m.neutral)}</span>` : ""}</td>
+        <td><input type="number" step="any" data-key="${esc(s)}" placeholder="keep" style="width:70px"></td></tr>`;
+    }).join("");
+    this.cfgStatus();
+  }
+
+  config() {
+    const $ = s => this.el.querySelector(s), overrides = {};
+    for (const i of this.el.querySelectorAll("#cfg-switches input"))
+      if (i.value !== "" && Number.isFinite(Number(i.value))) overrides[i.dataset.key] = Number(i.value);
+    return { profile: $("#cfg-profile").value, body: $("#cfg-body").value, scan: $("#cfg-scan").value, overrides };
+  }
+
+  cfgStatus() {
+    const c = this.config(), st = configStatus(this.fid, c.profile, c.overrides), n = Object.keys(c.overrides).length;
+    this.el.querySelector("#cfg-n").textContent = n ? `(${n} set)` : "";
+    this.el.querySelector("#cfg-status").innerHTML = `this configuration: <span class="chip ${/not validated/.test(st) ? "guessed" : "completed"}">${esc(st)}</span>`;
   }
 
   // mechanisms grouped by kind, each with its switches' values in this run

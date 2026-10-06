@@ -228,6 +228,10 @@ def test_record_labels_variants():
         "adopted profile with extra per-type rows: custom, not validated")
     assert record.profile_status("m9r", {"a|b": 1}, True) == (
         "adopted profile with overrides and extra per-type rows: custom, not validated")
+    assert record.profile_status("m4", {}) == "regression reference"
+    assert record.profile_status("m4", {"a|b": 1}) == (
+        "m4 (regression reference) with overrides: custom, not validated")
+    assert record.profile_status("m9", {}) == "custom, not validated"
 
 
 # recordings: an intervention changes nothing before it starts
