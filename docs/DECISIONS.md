@@ -2694,3 +2694,31 @@ No cell left [−90, 20] mV. Steady-state potentials from the conductance probe 
 - No cell leaves [−90, 20] mV. HS and VS rates are reported (RTc: HSE 149 Hz tonic).
 
 **Failure.** If T4 F1 stays below 0.3 mV, then T4 is limited past Mi1/Tm3 (Mi4/Mi9/C3 inhibition or T4's own leak), and that is the next block. No second try tonight.
+
+## Director order (02:10, received 04:35): stop route tuning; fill neuron and synapse dynamics model-wide (6 October, 04:36)
+
+**Order.** Three of tonight's results share one root: the leg sugar per-route margin, GNG117's latch with nothing to switch it off, and flyapp's T4/T5 with the right ON/OFF split but no direction selectivity (DS needs fast against slow inputs). The model lacks neuron and synapse dynamics. Route tuning stops; the leg sugar margin stays a recorded diagnostic (it was never adopted). The work moves up the ladder model-wide, as item 1 of Ben's priority ("upgrades to fidelity up to synapse-specific"), not as a new direction. Each rung is a switch, filled from data where measured, by cell class where inferred, and labelled.
+
+**The five rungs already have switches; what is missing is their fill.**
+
+| Rung | Switch today (`lif.py`) | Fill today | Existing evidence notes |
+|---|---|---|---|
+| 1. Spike-frequency adaptation | per-type `adaptation_increment` (default 0, guessed) and `adaptation_tau` (200 ms, guessed); also rung-1 intrinsic channels (M-type K, BK/SK with a Ca pool) | none per type (F-SFA-1) | `docs/research/s12_central_fi.md`: no adult central f-I, AHP or adaptation ratio in open text (5 Oct search) |
+| 2. Short-term depression/facilitation | per-type `std_release_fraction` (0) and `std_tau_rec` (500 ms); `afferent:ORN\|measured_depression` (Nagel 2015, U 0.22, τ 893 ms); rung 8 per connection (`stp_connections.csv`, 2 rows) | ORN only; off in m9c (F-STP-1: on, it silenced PNs because the ORN→PN weight was fitted without it) | Kazama & Wilson 2008; Nagel 2015/2016 |
+| 3. Membrane noise | one global `background_noise` (profiles set 0, a modelling choice) | none per type | none collected |
+| 4. Graded against spiking per type | `cell_type:all\|mode_from_recordings` (built tonight) | 7 `graded_rec` rows (Mi1, Tm1-3, T4, T5 measured; L4/L5 inferred) plus 3 `graded` rows | Behnia 2014; Gruntman 2018/2019 |
+| 5. Per-type membrane time constant | per-type `tau_m` (default 20 ms, borrowed) | 1 row | `docs/research/s12_compartments.md` (Gouwens & Wilson 2009 passive cable) |
+
+**Held-out tests for every rung** (fixed now, before any fill):
+- the silence check: `closed_loop_check.py` silent window, 0 spikes/ms, plus the gate's no-runaway, no-NaN and thorax criteria;
+- leg sugar: DECISIONS 00:41's checks (spontaneous GRN input and leg bitter ignored, a real sugar rate opens the route);
+- labellar sugar plus bitter: the `assay_pathways.py` taste assays;
+- T4/T5 direction selectivity: flyapp's eye harness (via the Director; I do not touch the flyapp worktree), and `motion_grating.py` open loop as the in-repo check.
+- GNG117 persistence after a brief stimulus is a reported readout, not a target. Its transmitter is on Ben's list (HANDOFF 1j).
+
+**Order of work.**
+1. Survey measured values (started 04:35; one Sonnet Explore agent on the open literature: Gouwens & Wilson 2009, Behnia 2014, Groschner 2022, Wilson-lab ORN/PN/LN, Strother 2017, Gruntman 2018/2019, Azevedo 2020, Turner 2008, Hige 2015), merged with the s12 research notes above. Output: `docs/research/s12_dynamics_survey.md`, each number re-read in the source before use.
+2. One pre-registration per rung: the fill rule (measured rows, then class priors with bounds, labelled), the predicted effect on each held-out test, and what would falsify it. Rungs 5 (τ_m) and 4 (modes) come first: they are the most measured, and they decide T4/T5 DS (Mi1/Tm3 against Mi4/Mi9 time constants).
+3. Every fill runs the gate, the battery and a viewed contact sheet before any adoption.
+
+**The vision work tonight is consistent with this.** The v0/v0r rows are per-type biophysical values fitted or inferred from physiology recordings (L1 dark potential, R→L1 gain), not from behaviour, and stay diagnostic. The Mi1 block's next lever (the Pm/Dm1 modes) is rung 4.
