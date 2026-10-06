@@ -1759,7 +1759,7 @@ plus `runs/s12/rest/route_near.csv`, the same file. `base` is plain m9c. Backhou
     That is the next mechanism to test.
   - Either way, nothing is adopted from this route-only, 43-cell bracket.
 
-### Result (6 October 01:02; S runs complete, D1 at 5 of 9 trials)
+### Result (6 October 01:02; S runs complete; D1 completed 01:28)
 
 MN9_L per trial (Hz). Means of 3 trials for the route cells are in `runs/s12/spec/spec_rates.json`; figure
 `docs/media/s12_route_spec.png` (viewed: rows are runs, columns the route cells and the GABA loop cells,
@@ -1778,9 +1778,9 @@ panels at 0 and 200 Hz).
 
 D1, leg sugar under `near`, MN9_L during the stimulus and (after the bar) in the 1 s after it:
 
-| Input (Hz) | 3 | 10 | 50 | 100 | 25 and 200 |
-|---|---|---|---|---|---|
-| MN9_L | 17, 13, 14 \| 2, 0, 2 | 23, 22 \| 1, 0 | 33, 31, 30 \| 1, 2, 2 | 36, 35 \| 0, 1 | still running |
+| Input (Hz) | 3 | 10 | 25 | 50 | 100 | 200 |
+|---|---|---|---|---|---|---|
+| MN9_L | 17, 13, 14 \| 2, 0, 2 | 23, 22, 24 \| 1, 0, 2 | 24, 26, 25 \| 0, 2, 2 | 33, 31, 30 \| 1, 2, 2 | 36, 35, 34 \| 0, 1, 1 | 38, 39, 40 \| 1, 0, 1 |
 
 - **`near` fails the reading rule** on two counts: leg bitter alone drives MN9_L (S1 at 100 Hz), and 3 Hz
   of leg sugar, the spontaneous GRN level (Ling 2014), drives it at 13-17 Hz (D1).
@@ -1811,8 +1811,8 @@ D1, leg sugar under `near`, MN9_L during the stimulus and (after the bar) in the
     a single GRN spike.
   - So at a 1 mV margin each entry cell repeats single GRN spikes. No unitary GRN → second-order PSP has
     been measured in the fly, so this cannot be checked against data.
-- The 00:41 margin sweep (below) asks whether a larger margin fixes both failures. The D1 runs at 25 and
-  200 Hz are added when they finish.
+- The 00:41 margin sweep (below) asks whether a larger margin fixes both failures. (D1 at 25 and 200 Hz
+  added 01:30; they change no verdict.)
 
 ## Pre-registration: is there a resting margin at which the leg sugar route ignores spontaneous GRN input and leg bitter, but opens at a real sugar rate? (6 October, 00:41; diagnostic, nothing adopted)
 
@@ -1886,3 +1886,227 @@ DNge059 → GNG108 has 333, both cholinergic (male-cns, edges ≥ 5).
   - If the failure is grading (fires at 3 Hz at one margin, misses 50 Hz at the next), the next
     mechanism is adaptation or inhibition that scales with input.
 - Nothing is adopted.
+
+### Result (6 October 01:28; all runs complete, 3 trials each; backhouse `runs/s12/margin/*.log`, rates `runs/s12/margin/dose_k{1..4}_{real,off_real}.json`, `dose_L1_real.json`; figure `docs/media/s12_route_margin.png`, viewed)
+
+MN9_L rate per trial (Hz); after the bar, the 1 s after the stimulus. k = 1 is `near` (D1, 00:26 runs).
+
+| Arm | 3 | 10 | 25 | 50 | 200 | Tk: leg bitter 100, 200 | Sk: bitter 0 → 200 | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| k = 1 | 17, 13, 14 | 23, 22, 24 | 24, 26, 25 | 33, 31, 30 \| 1, 2, 2 | 38, 39, 40 \| 1, 0, 1 | 9, 7, 6 and 3, 2, 1 | 57, 55, 57 → 0 | fails A, T |
+| k = 2 | 9, 3, 8 | mean 11 | mean 16 | mean 24 \| ≤ 1 | mean 29 \| ≤ 1 | 0 at both | 44, 41, 47 → 0 | fails A |
+| k = 3 | 1, 0, 0 | 5, 2, 3 | 12, 13, 13 | 18, 17, 16 \| 0, 0, 1 | 22, 24, 21 \| 1, 0, 1 | 0 at both | 33, 32, 29 → 0 | **passes all four** |
+| k = 4 | 0, 0, 0 | 0, 0, 0 | 3, 5, 7 | 8, 8, 9 \| 0, 0, 0 | 17, 17, 13 \| 0, 0, 1 | 0 at both | 24, 25, 28 → 0 | **passes all four** |
+| L1 (k = 1, DNge059 silent) | 15, 10, 14 | | | 27, 27, 26 | | | | probe |
+
+- **Two margins pass: 3 and 4 mV below rheobase.** Both ignore 3 Hz, ignore leg bitter, open at 50 Hz and
+  stop within a second, and labellar bitter still silences labellar sugar. This is a one-number fit to one
+  route (guessed margin, derived rheobase), not a model value.
+- **The input rate that brings MN9_L to 5 Hz** (derived from the means): k = 1 and 2 below 3 Hz, k = 3
+  about 10 Hz, k = 4 about 25 Hz. The real tarsal sugar GRN rate at 100 mM is 50-55 Hz (Ling 2014), so
+  both passing arms put threshold below the real rate.
+- **Leg bitter is cured by the margin, not by a new mechanism.** At 2 mV and above, leg bitter at 100 and
+  200 Hz gives 0 Hz on every trial. So the presynaptic inhibition switch is not needed for this failure
+  (`docs/research/s12_presyn_inhibition.md`).
+- **Where the separation happens** (figure, means). The entry cells grade the same at every margin:
+  AN05B106 38-44 Hz and AN01B004 30-39 Hz at 50 Hz input for k = 1-4. The margin acts downstream. There
+  are two branches:
+  - GNG250, DNge174, GNG093 and DNge173 open first. At k = 4 and 50 Hz they run at 27, 17, 12 and 9 Hz and
+    carry MN9_L to 8 Hz on their own.
+  - GNG578, GNG143 and the Roundup–DNge059 pair open late. At k = 4 and 50 Hz GNG578, GNG143 and DNge059 are
+    below 1 Hz and GNG108 is at 4 Hz; at 200 Hz GNG578 and GNG143 reach 13 Hz. At k = 3 they open between
+    10 and 25 Hz.
+- **Single spikes no longer cross** (`unitary_psp.py`, `runs/s12/margin/unitary_near3.json`). At k = 3 the
+  entry cells rest 2.7-2.8 mV below threshold. One GRN spike fires the cell alone for 1 of 25 GRN →
+  AN01B004 connections and 0 of 32 GRN → AN05B106 connections (12 and 8 at k = 1).
+- **L1:** silencing DNge059's output cuts MN9_L only slightly (13 against 15 Hz at 3 Hz, 27 against 31 at
+  50 Hz). The Roundup–DNge059 loop adds to the route but does not make the hair trigger.
+- **Labellar sugar is amplified at every margin** (seen, not scored): MN9_L at labellar sugar 100 Hz is
+  24-47 Hz at k = 2-4 against 4-6 Hz under m9c, because the route cells are shared.
+- **My expectations:**
+  - k = 2 fires at 3 Hz: held.
+  - k = 3 silent at 3 Hz and open at 50: held.
+  - k = 4 does not open at 50: wrong (8-9 Hz, through the first branch).
+  - Tk fails where the route opens: wrong.
+  - Sk passes: held.
+  - L1 below 5 Hz at 3 Hz: wrong.
+- **Per the reading rule,** the next step was a whole-brain version behind a switch. That is the 01:16
+  pre-registration below.
+
+## Pre-registration: a class-level resting level, the whole-brain version of the leg sugar margin (6 October, 01:16; written after the first trial of every 00:41 run; diagnostic until the rule below says otherwise)
+
+**Why now.** In the first trial of each 00:41 run, margins k = 3 and k = 4 pass all four route rules
+(A, B, T and S) and k = 2 fails A (MN9_L 9, 3 and 8 Hz at 3 Hz input). That margin is a fit to one route of
+43 cells. The 00:41 reading rule asks next for a whole-brain version behind a switch, gated and battery
+tested. This is it. The 00:41 result is written above once its last trials finish. If they reverse a pass,
+the matching arm here is dropped.
+
+**The switch.** The existing class rows `class:<c>|tonic_drive` (N3, mV added to the spontaneous drive,
+bounds −10 to 20, prior normal(0, 2), guessed; `data/model/parameters.csv`) for the three classes that hold
+all 43 route cells: central_other (22,674 cells), AN (1,878) and DN (1,318).
+- **W3:** 4.7 mV in all three. That is 7.7 mV, the isolated rheobase of a cell with the prior channels
+  (derived, `route_rest.py`), minus k = 3. With per-cell channels it leaves AN01B004 3.35 mV and AN05B106
+  2.85 mV below rheobase.
+- **W4:** 3.7 mV in all three (k = 4).
+- The value is fitted on one route (inferred). It stands for central cells resting nearer threshold than
+  the Shiu constants put them. It is not a measured resting potential.
+- Not driven: MBONs (MBON-α3 fires 12 Hz at rest, a different regime; F-FI-1), MNs (fitted templates),
+  VNC local, optic, CX, AL, MB, clock and sensory classes.
+
+**Runs** (backhouse; logs `runs/s12/whole/`; m9c plus `--set` for the arm; launch script
+`runs/s12/whole/launch_w.sh`):
+
+| Run | What | Pass rule | Basis |
+|---|---|---|---|
+| A | `legsugar_mn9` at 3 and 50 Hz, `--off-ms 1000` | MN9_L ≤ 2 Hz at 3 Hz; ≥ 5 Hz at 50 Hz; ≤ 2 Hz in the 1 s after | Ling 2014, as 00:41 |
+| T | `legbitter_mn9` at 100 and 200 Hz | MN9_L ≤ 2 Hz at both | analogy with labellar bitter, as 00:41 |
+| S | `sugar_bitter_mn9`, labellar sugar 100 Hz, bitter 0 and 200 | MN9_L at bitter 200 ≤ half its bitter-0 value, or ≤ 2 Hz | Shiu 2024, as 00:41 |
+| G | `closed_loop_check.py`, seeds 12-15 first, 16-19 if 12-15 pass | no runaway; silent last 100 ms 0 spikes/ms; 0 MuJoCo warnings; no NaN; thorax height within 0.01 mm of m9c for the same seed | the gate since s6 |
+| R | central_other class mean rate in G's 1 s run, each seed | ≤ 1.4 Hz | held out: Frechter et al. 2019 in vivo baselines, PN 1.4, LH local 1, LH output 0.1 Hz (measured, read) |
+| C | `clock_phase_rates.py` at CT 2 and 10 | DN1p 5-20 Hz at CT 2, ≤ 1 Hz at CT 10 | the 23:34 clock rule (Flourakis 2015); m9c's fit is fragile, so any change to central excitability must re-run it |
+
+- The class tonic drive counts as network activity in G (only per-type tonic rows are excluded). So a
+  driven cell that fires by itself in silence fails the gate. That is intended: no recording says these
+  cells fire with all input removed.
+- R is weak. The class mean includes silent cells and Frechter's cells are a few identified types. It can
+  only catch a class that runs hot.
+- C and the battery run only for an arm that passes A, T, S, G (8 seeds) and R.
+
+**Adoption rule.** An arm that passes A, T, S, G, R and C becomes candidate profile m9e (m9c plus the three
+class drives). It is adopted as the working profile only if the battery under `FLYEMU_PROFILE=m9e` has no
+new failures and its seed 12 sheet (`nonleg_motor_census.py --sheet`) looks like m9c's. If both arms
+qualify, W4 is adopted (the smaller change). The drive is then a fitted value (inferred) with this
+section as its derivation.
+
+**Expectations (mine, written now).**
+- W3 fails G: runaway or silent-window spikes on at least one of seeds 12-15. The DN class holds the
+  latent DNge019/DNg12 loop (F-STAB-1, F-STAB-2), and 4.7 mV across 1,318 DN cells is a large push.
+- W4 passes G and R. central_other rises from 0.15 Hz to 0.2-0.5 Hz.
+- The route is more excitable than in the route-only arm at the same k, because 25,870 driven cells add
+  recurrent input to it. So W3 fails A at 3 Hz and W4 passes it.
+- T and S pass under both arms.
+- C: DN1p rise above 20 Hz at CT 2 under W3 and stay within 5-20 Hz under W4.
+
+**Reading rule.**
+- If no arm passes G, a uniform class drive is not how this brain can rest nearer threshold. The candidates
+  then are a drive limited to the gustatory and SEZ cells (smaller and nearer the route, but a narrower
+  claim), or membrane noise, which the MBON-α3 trace argues against for that cell. Next steps are written
+  then.
+- If an arm passes G but fails A, B, T or S, the route-only margin does not survive the rest of the brain,
+  and the route's opening depends on how its neighbours rest. That is reported as such.
+- Nothing is adopted from this section except by the adoption rule above.
+
+### Result of stage 1 (01:24; gate seeds 12 and 13 only; backhouse `runs/s12/whole/cl_w{3,4}_s1{2,3}.{json,log}`)
+
+**Both arms fail G on both seeds, so neither can be adopted.** Seeds 14-15 and the A, T and S assays were
+not launched: no later run could change the verdict.
+
+| Seed | Arm | Silent last 100 ms (spikes/ms) | Thorax final (mm), m9c | central_other (Hz) | AN | DN | Motor | P-EN |
+|---|---|---|---|---|---|---|---|---|
+| 12 | m9c | 0 | 0.552 | 0.149 | 0.47 | 0.86 | 2.11 | 0 |
+| 12 | W3 | 24.5 | 0.542 | 1.00 | 1.83 | 4.40 | 3.56 | 26.1 |
+| 12 | W4 | 14.9 | 0.537 | 0.64 | 1.53 | 4.18 | 3.58 | 0 |
+| 13 | m9c | 0 | 0.547 | 0.146 | 0.46 | 0.85 | 2.03 | 0 |
+| 13 | W3 | 17.0 | 0.555 | 0.99 | 1.81 | 3.63 | 3.11 | 22.0 |
+| 13 | W4 | 1.4 | 0.554 | 0.64 | 1.38 | 2.92 | 2.79 | 0 |
+
+- No runaway, no MuJoCo warnings, no NaN. Thorax height misses the 0.01 mm tolerance on W4 seed 12 (0.015)
+  and is at its edge on W3 seed 12.
+- **R passes** on all four runs: central_other 0.64-1.00 Hz, under 1.4 Hz.
+- **Seen, not scored.** Under W3 the central complex lights up: P-EN 22-26 Hz, EPG 12 Hz. Standing P-EN fire
+  3.9 ± 2.6 Hz (Turner-Evans 2017, loose patch, read), so W3 would fail that check. The clock class doubles
+  (1.0-1.25 → 1.8-2.1 Hz), so DN1p are pushed off the fitted 23:34 rate, which C would have tested.
+- **What keeps firing** (the gate log's table of cells active in the silent window). On W4 seed 12 and W3
+  seed 12, the sustaining cells are DNge019 (11 cells), DNg12_a/c/e (22), DNge022, DNge009, DNg33,
+  DNge137, GNG117, GNG153, GNG423 and others, with leg MNs downstream. That is the latent DNge019 / DNg12
+  loop recorded in F-STAB-1 and F-STAB-2. On W4 seed 13, where silent activity decays to 1.4 spikes/ms,
+  DNge019, DNg12 and DNge022 are absent from the table.
+- **My expectations:** W3 fails G: held. W4 passes G: wrong. R under W4 0.2-0.5 Hz: wrong (0.64). The rest
+  were not run.
+- **Reading.** A uniform drive across central_other, AN and DN, at the margin the route needs, ignites the
+  DN loop that the Shiu 7 mV gap holds latent. This is the second fix for the leg sugar block that fails:
+  the route-only margin works but is a one-route fit, and its whole-brain version fails the gate. Per the
+  working rules, I stop fixing and write up the mechanism (FINDINGS F-TASTE-LEG-1 and F-STAB-1). The one
+  further run is the diagnostic below, which asks which class ignites the loop. It is not adoptable.
+
+## Pre-registration: which class drive ignites the DN loop? (6 October, 01:24; diagnostic only, nothing adoptable)
+
+**Question.** Is the DN class drive what ignites the DNge019 / DNg12 loop, and does the route still open with
+central_other and AN driven but not DN?
+
+**Arms** (m9c plus `--set`, all at 3.7 mV, gate seeds 12 and 13, backhouse `runs/s12/whole/`):
+- **noDN:** central_other and AN at 3.7 mV; DN 0.
+- **DNonly:** DN at 3.7 mV; central_other and AN 0.
+- **noDN, route:** `legsugar_mn9` at 3 and 50 Hz, `--off-ms 1000`, 3 trials.
+
+**Expectations (mine).**
+- noDN passes G on both seeds (silent 0).
+- DNonly fails G on seed 12.
+- Under noDN the route opens more weakly than in the route-only k = 4 arm (MN9_L 2-8 Hz at 50 Hz), because
+  its three DN types (DNge059, DNge173, DNge174) are not driven.
+
+**Reading rule.**
+- If noDN passes and DNonly fails, the DN loop's ignition needs the DN drive. Raising DN excitability is
+  then unsafe in this model without whatever holds that loop in the real fly. The candidates are
+  adaptation (N4) and per-class inhibition, recorded for the next session.
+- If noDN also fails, the loop can be ignited from upstream, and no class-level drive at this margin is
+  gate-safe.
+- Either way nothing is adopted. A class subset that passed would need its own pre-registration, with
+  held-out checks, before it could be a candidate.
+
+### Result (01:38; backhouse `runs/s12/whole/cl_{nodn,dnonly}_s1{2,3}.{json,log}`, `a_nodn.log`, run `runs/assay-legsugar_mn9-m9c-nodn4/`)
+
+Gate (closed loop, 1 s). Silent = spikes/ms in the last 100 ms after all input is removed; the rule is 0.
+
+| Arm | Seed | Silent | Thorax (mm; m9c 0.552, 0.547) | central_other (Hz) | AN | DN | Clock class |
+|---|---|---|---|---|---|---|---|
+| m9c | 12, 13 | 0, 0 | 0.552, 0.547 | 0.15, 0.15 | 0.47, 0.46 | 0.86, 0.85 | 0.98-1.25 |
+| W4 (all three at 3.7) | 12, 13 | 14.9, 1.4 | 0.537, 0.554 | 0.64, 0.64 | 1.53, 1.38 | 4.18, 2.92 | 1.76, 2.03 |
+| noDN | 12, 13 | **10.0, 11.0** | 0.550, 0.546 | 0.63, 0.65 | 1.06, 1.06 | 2.20, 2.29 | 1.91, 1.80 |
+| DNonly | 12, 13 | **0, 1.06** | 0.549, 0.556 | 0.15, 0.16 | 0.48, 0.86 | 2.12, 2.44 | 1.41, 1.45 |
+
+No MuJoCo warnings or NaN in any run. CX stays at 0 Hz in every noDN and DNonly run.
+
+Route under noDN (open loop, MN9_L per trial, Hz; after the bar, the 1 s after):
+- 3 Hz: 0, 0, 0 | 0, 0, 0. The whole brain sits at 0.01 Hz mean (119-129 active cells).
+- 50 Hz: 15, 11, **81** | 0, 0, **105**. Trial 3 latched.
+
+- **noDN fails G on both seeds**, with the same sustained cells as W3 and W4. So the loop can be ignited
+  without driving any DN, and per the reading rule **no class-level drive at this margin is gate-safe.**
+- **DNonly passes seed 12 and fails seed 13 narrowly** (1.06 spikes/ms). The cells that keep firing on seed
+  13 are a different, VNC-side set: AN09A005 (11 cells), AN27X013, DNg33, IN09A005, EA27X006.
+- **What holds the loop: the GNG117 pair** (male-cns, measured synapse counts; transmitter predicted).
+  - In the gate logs (noDN), the latched noDN route trial and the stage 1 runs, the highest-rate cells are
+    the same: GNG117 (both cells, 110-155 Hz), GNG153 (glutamate), GNG186 (GABA), DNge022 and GNG031. In
+    the latched trial they drive MN9 at 105 Hz and other cranial motor neurons (GNG668, MNx02) at 45-68 Hz
+    after the stimulus.
+  - GNG117_L and GNG117_R excite each other: 914 synapses one way and 973 the other, 22-23% of each cell's
+    4,000-4,400 input synapses, both predicted acetylcholine. GNG117 also sends 903 synapses to DNge022, 1,167
+    to GNG153 and 792 to GNG186. DNge019 (11 cells, 1,125 synapses among themselves) joins at lower rates.
+  - A reciprocal excitatory pair that strong is bistable in a model without adaptation or depression: once
+    both cells fire, each holds the other above threshold. Raising central excitability by 4 mV lets any
+    burst of input (body afferents in the gate, leg sugar in the open-loop route) push the pair into its
+    on state.
+  - Its largest inhibitory inputs are DNg98 (546 synapses, GABA) and AN05B007 (497, GABA). Its next
+    largest input after itself is GNG642 (505, serotonin).
+- **Correction to the stage 1 result.** I named the sustaining core the DNge019 / DNg12 loop. The cells
+  with the highest rates are the GNG117 pair and its targets; DNge019 is a lower-rate member. F-STAB-1's
+  Mi18/DNge019/DNg12 loop and this one may share DNge019 but are not the same circuit.
+- **Open-loop silence.** With no body, noDN at 3 Hz leaves the brain at 0.01 Hz. The gate's ignition needs
+  closed-loop afferent input (inferred; as in F-STAB-2).
+- **Seen, not scored.** The clock class rises from about 1.0-1.25 Hz to 1.4-2.0 Hz under every arm. F-CLOCK-1
+  warned that its fit is a 0.25 mV knife edge; DNonly raises it too.
+- **My expectations:**
+  - noDN passes G on both seeds: wrong.
+  - DNonly fails G on seed 12: wrong (passes 12, fails 13 through other cells).
+  - noDN route 2-8 Hz at 50 Hz: wrong (11-15 Hz on two trials, latched at 81 Hz on the third).
+- **Reading.** A whole-brain resting level 4 mV below rheobase is not gate-safe, because the GNG117 pair
+  becomes a switch that any strong input can turn on and nothing turns off. Nothing is adopted, and I stop
+  fixing per the two-failed-fixes rule. What could hold the pair, in order of evidence available:
+  - spike-frequency adaptation (N4) at a central value; MBON-α3's recorded adaptation is weak within
+    400 ms (`docs/research/s12_central_fi.md`);
+  - short-term depression at the GNG117 ↔ GNG117 synapse (no measurement for this cell);
+  - stronger GABA from DNg98 and AN05B007 (per-class inhibition, not fitted);
+  - the acetylcholine call for GNG117 (predicted; a glutamate or GABA sign would remove the loop).
+  The measurable facts for Ben's list: GNG117's transmitter, and whether paired GNG117 cells fire
+  persistently after a brief stimulus.
