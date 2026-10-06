@@ -7,7 +7,10 @@ this reports v, g_e, g_i and G in the dark after a settle and after --light-ms o
 ceiling the cell would reach if every graded inhibitory input vanished with g_e as in the light. If the light
 potential is near that ceiling, the leak/excitation sets the limit; if far below, inhibition is not removed
 (modulation depth). The graded part of g_e and g_i is split by presynaptic type from W_graded and each
-presynaptic cell's release fraction (steady state: arrival / (1 - decay)); the rest is spiking input.
+presynaptic cell's release fraction (steady state: arrival / (1 - decay)); the spiking part is split the same
+way from each presynaptic cell's spike count over the last --window-ms of the phase times its edge weights (times
+its current depression factor when short-term depression is on; facilitation and presynaptic inhibition are
+ignored, so this is an estimate). `split_residual` is the measured g minus the two splits.
 
     uv run python scripts/probes/visual_conductance_state.py --profile m9c --set ... --out runs/s12/vision/cstate.json
 """
@@ -39,6 +42,7 @@ def main() -> None:
     ap.add_argument("--types", default="L1,L2,Mi1,Tm3,Tm1,Tm2")
     ap.add_argument("--settle-ms", type=float, default=600.0)
     ap.add_argument("--light-ms", type=float, default=300.0)
+    ap.add_argument("--window-ms", type=float, default=200.0, help="spike-count window at the end of each phase")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     t0 = time.time()
@@ -64,6 +68,13 @@ def main() -> None:
     ptypes, pcode = np.unique(t[g_idx], return_inverse=True)
     onehot = sp.csr_matrix((np.ones(g_idx.size), (np.arange(g_idx.size), pcode)), shape=(g_idx.size, ptypes.size))
     p = params
+    atypes, acode = np.unique(t, return_inverse=True)
+    onehot_all = sp.csr_matrix((np.ones(conn.n), (np.arange(conn.n), acode)), shape=(conn.n, atypes.size))
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    w = np.asarray(net.w)
+    Wsp = {sign: sp.csr_matrix((np.abs(w[m]), (conn.indices[m], pre[m])), shape=(conn.n, conn.n))
+           for sign, m in (("e", w > 0), ("i", w < 0))}
+    counts = np.zeros(conn.n)
 
     def release() -> np.ndarray:
         g = g_idx
@@ -94,6 +105,25 @@ def main() -> None:
                     dst[ptypes[j] or "untyped"] = round(float(np.median(g_by[:, j])), 4)
             row["graded_g_e_by_pre"] = dict(sorted(se.items(), key=lambda kv: -kv[1])[:8])
             row["graded_g_i_by_pre"] = dict(sorted(si.items(), key=lambda kv: -kv[1])[:8])
+            per_step = counts / (a.window_ms / DT)
+            if getattr(net, "_any_std", False):
+                per_step = per_step * net.x_res
+            spl = {}
+            for sign, decay in (("e", net.decay_s), ("i", net.decay_si if p.cond else net.decay_s)):
+                g_by = (Wsp[sign][idx] @ sp.diags(per_step) @ onehot_all).toarray() / (1 - decay[idx])[:, None]
+                med = np.median(g_by, axis=0)
+                top = np.argsort(-g_by.mean(axis=0))[:8]
+                spl[sign] = {(atypes[j] or "untyped"): [round(float(med[j]), 4), round(float(g_by[:, j].mean()), 4),
+                             round(float(counts[acode == j].sum() / max((acode == j).sum(), 1) / (a.window_ms / 1000)), 1)]
+                             for j in top if g_by[:, j].any()}
+                tot_split = g_by.sum(axis=1) + sum(
+                    (W[idx] @ (r * net.graded_scale)) / (1 - dcy[idx])
+                    for W, dcy in ((net.W_graded, net.decay_s) if sign == "e" else (net.W_graded_i, net.decay_si),)
+                    if W is not None)
+                meas = ge if sign == "e" else gi
+                row[f"split_residual_{sign}"] = round(float(np.median(meas - tot_split)), 4)
+            row["spk_g_e_by_pre"] = spl["e"]   # type: [median, mean, presynaptic rate Hz]
+            row["spk_g_i_by_pre"] = spl["i"]
             if ty in ("L1", "L2", "L3"):
                 m = np.isin(g_idx, idx)
                 row["release"] = float(np.median(r[m]))
@@ -102,14 +132,21 @@ def main() -> None:
                   f"G {row['G']:.2f} leak {row['v_leak']:.1f} ceiling(no inh) {row['ceiling_no_inh']:.2f} "
                   f"{'release ' + format(row['release'], '.3f') if 'release' in row else ''}", flush=True)
             print(f"       e by pre {row['graded_g_e_by_pre']}  i by pre {row['graded_g_i_by_pre']}", flush=True)
+            print(f"       spiking e {row['spk_g_e_by_pre']}  i {row['spk_g_i_by_pre']}  residual e "
+                  f"{row['split_residual_e']} i {row['split_residual_i']}", flush=True)
         return out
 
     drive = np.zeros(conn.n, np.float32)
 
     def run(ms: float, lum: float) -> None:
         drive[vis.rows] = vis.baseline_mv + vis.gain_mv * lum
-        for _ in range(int(round(ms / DT))):
-            net.step(external_mv=drive)
+        n_steps = int(round(ms / DT))
+        start = n_steps - int(round(a.window_ms / DT))
+        counts[:] = 0
+        for s_ in range(n_steps):
+            spiked = net.step(external_mv=drive)
+            if s_ >= start and spiked.size:
+                counts[spiked] += 1
 
     run(a.settle_ms, 0.0)
     dark = state("dark")
