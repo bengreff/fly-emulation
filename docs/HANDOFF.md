@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 6 October 2026, 04:14, session 12 night (Director night order 21:30: Dandelion, the force_per_spike fold, then BLANKS_AUDIT stubs in audit order; park by 05:30) (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of 6 October 2026, 04:35, session 12 night (Director night order 21:30: Dandelion, the force_per_spike fold, then BLANKS_AUDIT stubs in audit order; park by 05:30) (session 11 state below the first block).
 
 **Session 12 (4 October 16:36 to 22:31, then 5 October from 02:05):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9c** (adopted 5 October 23:53; m9r before it, adopted 03:31; m9f 02:51). m9c = m9r + the N26 clock drive fitted to DN1p day-night firing (`state:coupling|clock_gain` 7.75, fitted) + the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`, sourced); F-CLOCK-1, DECISIONS 23:34-23:53. Gate, battery and sheet are unchanged from m9r; the clock cells now fire (DN1p about 4 Hz) and reach no motor neuron. flyapp's library runs m9r (differs only in the clock; Director's call). m9r's lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons; F-NONLEG-2) → m9f (folded wings resting on the abdomen; F-WING-5) → m9r (left leg rest angles mirrored from the right legs, the measured side; F-STAND-3 side note). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted. Since 5 October 21:40 m9r itself carries `motor_unit:all|force_per_spike` 10 (guessed), the value every gate ran with by `--set`; the name now means the gated model (DECISIONS 21:27, battery passed). Earlier profiles still need the `--set`.
@@ -57,7 +57,7 @@
      - Two fixes failed (route-only margin is a one-route fit; class drive fails the gate), so I stopped and wrote up the mechanism. Nothing adopted.
      - **Next, pre-register first:** what holds the GNG117 pair. In order: central adaptation (N4) sourced from MBON-α3's weak adaptation; depression at the GNG117 ↔ GNG117 synapse; inhibition from DNg98 and AN05B007; GNG117's sign. Then retry the class drive with that in place, with the leg sugar checks of DECISIONS 00:41 as the held-out function test.
      - **For Ben's list:** GNG117's transmitter, and whether GNG117 fires persistently after a brief stimulus.
-  1k. **Done 04:14 (partly; the lamina now meets its recordings, the medulla is still 3-10× short): the vision blank (flyapp relay: the visual pathway dies after the lamina in m9r).** See DECISIONS (pre-registration plus results at 02:08 and 02:40), F-VISION-4 and F-VISION-5, and `docs/media/s12_vision_grating.png` (viewed). The probe drives a grating onto the photoreceptors open loop: `scripts/probes/motion_grating.py`, with per-cell F1.
+  1k. **Done 04:35 (partly; the lamina meets its recordings, Tm3 is at 0.62 and Mi1 at 0.27 of recorded): the vision blank (flyapp relay: the visual pathway dies after the lamina in m9r).** See DECISIONS (pre-registration plus results at 02:08 and 02:40), F-VISION-4 and F-VISION-5, and `docs/media/s12_vision_grating.png` (viewed). The probe drives a grating onto the photoreceptors open loop: `scripts/probes/motion_grating.py`, with per-cell F1.
      - **Cause.** Graded release is zero at and below rest. L1 and L2 are only ever hyperpolarised (histamine), so they release nothing, and everything below the lamina sits at −52 mV.
      - **Arms.**
        - T, release at rest (r0 0.5, guessed): the medulla follows at 0.4-0.65 mV with the right signs, but T4/T5 still sit at rest. It also fails the gate's dark silent window (16 spikes/ms).
@@ -97,10 +97,18 @@
          - L2's dark potential is −50.4, held down by spiking Dm6/Dm17/Dm1 inhibition (*Calliphora* L1/2 −38.4).
        - Seen, not scored: no L1 OFF transient in this arm.
        - **DECISION NEEDED (Ben):** should the v0 arm become the vision base? Recommendation: yes for vision diagnostics, no for the working profile until the Mi1 block, gate and battery have run.
-     - **Next, pre-register first:** the Mi1/Tm3 block on the v0 base.
-       - Mi1: Pm/Dm1 modes (graded against spiking), and the GluClα reversal (M10Q −56 against −70).
-       - Tm3: L1's release r0 and span. `cell_type:ol_graded|release_at_rest` is class-level (`lif.py` 414-421), so a per-type r0 needs a new switch.
-       - Hold out Tm1/Tm2 OFF, L2 and the T4/T5 grating.
+     - **Continued 04:19-04:35: the LMC output release floor** (DECISIONS pre-registration 04:19 and result 04:32; F-VISION-10; `docs/media/s12_vision_release_floor.png`, viewed).
+       - New switch `cell_type:all|release_at_rest_per_type` (off by default, CPU only; per-type `release_at_rest` rows; commit f0194bd, battery 229 passed).
+       - v0r = v0 plus L1/L2 `release_at_rest` 0.26 (inferred: release reaches zero at the LMC's light-saturated −68 mV). Backhouse `/tmp/v0r_params.csv`, `/tmp/v0r_run.sh`, `/tmp/v0r_cs.sh`.
+       - Every pre-registered readout passed. Tm3 ON +9.3 (recorded 15), Mi1 +5.5 (20), Tm1/Tm2 OFF +2.8/+3.4 (17.5), T4a +2.0. The lamina is unchanged.
+       - Mi1 is now at its tonic-inhibition ceiling: 0.80 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition, with L1's share zero in light.
+       - Correction: L1 does have an OFF transient in v0/v0r (connected median +10.7 mV); the 04:11 entry misread the diluted type mean.
+       - **DECISION NEEDED (Ben):** should v0r become the vision diagnostic base? Recommendation: yes for diagnostics, not for the working profile.
+     - **Running at 04:33: the T4/T5 grating on v0r** (DECISIONS pre-registration 04:33; backhouse tmux `s12vis_grat`, `/tmp/v0r_grat.sh`, output `runs/s12/vision/grating_v0r.json`). Prediction: V passes for at least three of the four T4 subtypes; no confident call for T5.
+     - **Next, pre-register first:**
+       - The Mi1 block: Pm/Dm1 modes (graded against spiking) and the GluClα reversal (M10Q −56 against −70).
+       - The Tm1/Tm2 OFF limit: L2's OFF overshoot and Pm2a/Pm2b tonic inhibition (0.78 leak units).
+       - Hold out L2, the T4/T5 grating and the flash amplitudes not trained on.
        - Later: per-receptor-class reversals (Rdl −41.5, Lee et al. 2003; GluCl), which need per-class conductances in `lif.py` and `gpu/batched.py`.
        - The 13 Hz Am1 rhythm the relay saw did not appear open loop; it needs the closed loop.
      - **For Ben's list:**
