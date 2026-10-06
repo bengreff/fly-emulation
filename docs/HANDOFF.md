@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 6 October 2026, 02:42, session 12 night (Director night order 21:30: Dandelion, the force_per_spike fold, then BLANKS_AUDIT stubs in audit order; park by 05:30) (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of 6 October 2026, 04:02, session 12 night (Director night order 21:30: Dandelion, the force_per_spike fold, then BLANKS_AUDIT stubs in audit order; park by 05:30) (session 11 state below the first block).
 
 **Session 12 (4 October 16:36 to 22:31, then 5 October from 02:05):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9c** (adopted 5 October 23:53; m9r before it, adopted 03:31; m9f 02:51). m9c = m9r + the N26 clock drive fitted to DN1p day-night firing (`state:coupling|clock_gain` 7.75, fitted) + the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`, sourced); F-CLOCK-1, DECISIONS 23:34-23:53. Gate, battery and sheet are unchanged from m9r; the clock cells now fire (DN1p about 4 Hz) and reach no motor neuron. flyapp's library runs m9r (differs only in the clock; Director's call). m9r's lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons; F-NONLEG-2) → m9f (folded wings resting on the abdomen; F-WING-5) → m9r (left leg rest angles mirrored from the right legs, the measured side; F-STAND-3 side note). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted. Since 5 October 21:40 m9r itself carries `motor_unit:all|force_per_spike` 10 (guessed), the value every gate ran with by `--set`; the name now means the gated model (DECISIONS 21:27, battery passed). Earlier profiles still need the `--set`.
@@ -57,7 +57,7 @@
      - Two fixes failed (route-only margin is a one-route fit; class drive fails the gate), so I stopped and wrote up the mechanism. Nothing adopted.
      - **Next, pre-register first:** what holds the GNG117 pair. In order: central adaptation (N4) sourced from MBON-α3's weak adaptation; depression at the GNG117 ↔ GNG117 synapse; inhibition from DNg98 and AN05B007; GNG117's sign. Then retry the class drive with that in place, with the leg sugar checks of DECISIONS 00:41 as the held-out function test.
      - **For Ben's list:** GNG117's transmitter, and whether GNG117 fires persistently after a brief stimulus.
-  1k. **Done 03:14 (partly; the chain is still 5-10× short): the vision blank (flyapp relay: the visual pathway dies after the lamina in m9r).** See DECISIONS (pre-registration plus results at 02:08 and 02:40), F-VISION-4 and F-VISION-5, and `docs/media/s12_vision_grating.png` (viewed). The probe drives a grating onto the photoreceptors open loop: `scripts/probes/motion_grating.py`, with per-cell F1.
+  1k. **Done 04:02 (partly; the chain is still 5-20× short): the vision blank (flyapp relay: the visual pathway dies after the lamina in m9r).** See DECISIONS (pre-registration plus results at 02:08 and 02:40), F-VISION-4 and F-VISION-5, and `docs/media/s12_vision_grating.png` (viewed). The probe drives a grating onto the photoreceptors open loop: `scripts/probes/motion_grating.py`, with per-cell F1.
      - **Cause.** Graded release is zero at and below rest. L1 and L2 are only ever hyperpolarised (histamine), so they release nothing, and everything below the lamina sits at −52 mV.
      - **Arms.**
        - T, release at rest (r0 0.5, guessed): the medulla follows at 0.4-0.65 mV with the right signs, but T4/T5 still sit at rest. It also fails the gate's dark silent window (16 spikes/ms).
@@ -78,11 +78,21 @@
            - 0.75 of Mi1's g_i is tonic, from non-graded Pm/Dm1/Mi13 inputs (34% of its synapses). Even full L1 shutoff would reach only −52 mV, a 6.7 mV swing.
            - With no inhibition at all, Mi1 would sit at −41 mV, 18 mV above dark.
          - The leak-calibration switch (`cell_type:all|leak_from_network_rest`, neutral, CPU-only; `scripts/probes/visual_rest_calibrate.py`) is kept as tested infrastructure. It does not address this limit.
-     - **Next, pre-register first:** the parameters that set Mi1's swing are:
-       - the release rule's r0 (guessed 0.5) and span (inferred, 45 mV for LMCs);
-       - the inhibitory reversal (declared −70; M10Q −56);
-       - the modes of Pm/Dm1/Mi13 (guessed).
-       No single one reaches 20 mV, so a block must test a combination with a declared bound on each, train on Mi1 ON, and hold out Tm3, Tm1/Tm2 OFF, L1/L2 and the T4/T5 grating. The chloride reversal and medulla rest evidence (agent report, `data/raw/vision_rest_s12/`) comes first. The 13 Hz Am1 rhythm the relay saw did not appear open loop; it needs the closed loop.
+       - The leak switch is committed (0d8724a, off by default; battery 228 passed).
+     - **Continued 03:42-04:02: the first synapse** (DECISIONS pre-registration 03:42, addendum 03:53, result 03:59 and refinement 04:02; F-VISION-8; `docs/media/s12_vision_first_synapse.png`, viewed; conductance probe now splits spiking input by presynaptic type).
+       - R1-R6→L1 small-signal gain 1.24 against about 13 recorded (*Calliphora*, dim background; Juusola et al. 1995). Scaling photoreceptor release (k 10, 30) saturates the dim-flash gain at 6.1-6.2. L1's dark potential falls to −58 (2 s.d. below Pantazis −43 ± 7.3, held out). Mi1 stays at 1.1-1.5 mV.
+       - Derived: gain = D(1 − p)/s ≤ D/s.
+         - D is how far tonic histamine holds the dark LMC below its histamine-free potential v₀ (−44.8 mV in the model).
+         - s is the release e-fold at the dark potential. It is 0.6 mV in the model, set by the guessed `photoreceptor:all|dark_drive`, so the dim flash doubles release and its 6.2 is a large-signal gain (small-signal 10.6 at k 30).
+         - Gain 13 needs D of about 8-13 mV, which with v₀ −44.8 contradicts L1's recorded dark potential. So the lever is v₀ (L1's leak and non-histamine inputs) plus a release curve that extends about 12 mV below dark (Uusitalo et al. 1995). Driving force from the lamina field buys at most 2×.
+       - The R1-R8 class switch also scales R7/R8 synapses onto Mi1 (595 of 795 cells) and L1 in the medulla; at k 30 that flipped Mi1's light response. The R1-R6-only arm restores Mi1 (+1.13 mV; addendum passed, L1 moved 0.57 mV against a 0.5 tolerance). Any photoreceptor-level scale must be per type.
+       - Correction: the lamina field does not add driving force in light. Zheng 2006's values are dark rests; in *Calliphora* the space depolarises in light (Weckström & Laughlin 2010). The ledger row was corrected.
+       - Nothing adopted. Staged, not applied (to keep the series comparable): HS graded-mode rows at `runs/s12/vision/hs_rows_staged.csv` (local, not committed; HSN graded measured, Kim et al. 2015; HSE/HSS inferred).
+     - **Next, pre-register first:** the two-lever first-synapse block.
+       1. L1/L2's histamine-free potential v₀ (sourced from an LMC dark potential with histamine transmission removed, if found).
+       2. A curved photoreceptor release rule (s 0.5-3 mV, extent about 12 mV below dark).
+       Train on the small-signal dim gain (flash i ≤ 0.001). Hold out L1's dark potential and the full-flash Mi1/Tm3/Tm1/Tm2.
+       After that comes the Mi1 block of F-VISION-7: the release r0 and span, the inhibitory reversal, and the Pm/Dm1/Mi13 modes. A source search (04:00) is looking for D, s and the LMC chloride reversal. The 13 Hz Am1 rhythm the relay saw did not appear open loop; it needs the closed loop.
      - **For Ben's list:**
        - Strother et al. 2017 Neuron full text (whether Mi4/Mi9 were whole-cell recorded);
        - Schnell et al. 2010 J Neurophysiol (HS/VS mode);
@@ -90,7 +100,10 @@
        - a Drosophila LMC response amplitude per contrast (patch or sharp electrode);
        - Mi1 input resistance in dark and light, and the GluClα reversal (F-VISION-6, F-VISION-7);
        - whether Pm1-3 and Dm1 cells are graded or spiking, and their light responses (F-VISION-7);
-       - the ort reversal in LMCs against the lamina's local extracellular potential (Zheng et al. 2006: lamina space −20 to −40 mV against the retina);
+       - the ort reversal in LMCs against the lamina's local extracellular potential (Zheng et al. 2006: lamina space −20 to −40 mV against the retina in darkness);
+       - a *Drosophila* R→LMC small-signal gain or photoreceptor release curve (F-VISION-8);
+       - the LMC dark potential with histamine transmission removed (ort or hdc mutant, or a block), which measures v₀ (F-VISION-8);
+       - the sign and strength of R8→Mi1 (595 of 795 Mi1 cells receive R7/R8 synapses);
        - CT1 compartment physiology (Meier & Borst 2019);
        - any recording of Am1 or the LPi cells.
   1a. **Done 21:40: force_per_spike 10 folded into m9r** (DECISIONS 21:27). Under m9r it reaches 71 of 732 mapped motor neurons (leg cells without a force-table row). Static arrays identical with and without `--set`; gate seed 12 identical to the archived m9r gate; battery 204 passed, 1 known failure. flyapp's m9r library started at 21:30:45 from its own copy before the fold reached main, so it runs those 71 cells at 1: restart it after merging main, or label it pre-fold (Director's call; not touched). Later fidelity step (B5, behind a switch): per-neuron values for the 71 cells from `scripts/motor_forces.py`'s size rule.
