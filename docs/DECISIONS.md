@@ -2611,3 +2611,35 @@ No cell left [−90, 20] mV.
 - Mi1: the Pm/Dm1 modes (graded against spiking; their light responses are unknown) and the GluClα reversal (M10Q −56 against −70).
 - Tm3: the r0 and span of L1's release.
 - Hold out Tm1/Tm2 OFF, L2 and the T4/T5 grating.
+
+### Pre-registration: LMC output release reaches zero at the LMC's light-saturated potential (6 October, 04:19, before any run)
+
+**Question.** F-VISION-9 puts Tm3's ceiling (about 4.3 mV) at L1's release floor: with the class release at rest r0 0.5 (guessed) and span 45 mV (Zheng et al. 2006, measured), L1's release can only fall from 0.59 to 0.31 as L1 swings from −43.7 to −68. Does lowering L1/L2's r0, alone, raise Tm3 and Mi1 as the one-compartment arithmetic predicts?
+
+**Lever (inferred).** New switch `cell_type:all|release_at_rest_per_type` (neutral 0; per-type `release_at_rest` rows replace the class value for those graded cells; CPU and GPU both read the per-neuron array; unit test added). Rows: L1 and L2 `release_at_rest` 0.26.
+- Principle: a graded synapse uses its presynaptic cell's whole voltage range, so release reaches zero where the LMC saturates in bright light (Juusola et al. 1996 TINS; Laughlin's matched coding). This is an inference, not a measured LMC release curve.
+- Arithmetic: r0 + (1 − r0)(−68 + 52)/45 = 0 gives r0 = 16/61 = 0.26 (L1 light −68.0, L2 −68.2 in `cstate_v0`). The release reference stays −52 mV and the span stays 45.
+- L3 is left at 0.5. It barely responds in this arm (−55.7 to −57.2 mV), so its floor is not the limit.
+
+**Base.** The v0 arm (DECISIONS 04:05) unchanged, plus the switch and the two rows. The same flash protocol: i 0.001 and 0.01 (300:500, tail 400) and i 1 (300:1000, tail 600). Then the conductance state.
+
+**Predictions** (derived from `cstate_v0` conductances, steady state, one compartment):
+
+| Readout | Role | v0 arm | Prediction |
+|---|---|---|---|
+| L1 dark | check | −43.7 | −43.7 ± 1 |
+| R→L1 gain, i 0.001 | check | 11.8 | 11.8 ± 1 |
+| L1 release, dark → light | check | 0.59 → 0.33 | 0.40 ± 0.03 → ≤ 0.04 |
+| Tm3 ON, full flash | held | +4.2 | **+7 to +11** (recorded +15) |
+| Tm3 dark | held | −54.8 | −52.4 ± 1.5 |
+| Mi1 ON, full flash | held | +2.3 | **+4 to +6.5** (recorded +20) |
+| Mi1 dark | held | −59.0 | −57.2 ± 1.5 |
+| Tm1 dark | held | −46.4 | −51 ± 2 (L2's tonic excitation falls by about 45%) |
+| Tm1 / Tm2 OFF | held | +1.6 / +1.9 | larger (direction only; recorded +17.5) |
+| L2 dark | check | −50.4 | −50.4 ± 1 |
+
+No cell may leave [−90, 20] mV.
+
+**Failure.** If Tm3 ON comes in below +6 or above +12, the one-compartment reading of F-VISION-9 is wrong; write up why, and do not try a second r0.
+
+**Not adoption.** Even a pass leaves r0 0.26 inferred from a principle, and the working profile untouched until the Mi1 block, gate and battery have run.
