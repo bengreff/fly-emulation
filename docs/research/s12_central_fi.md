@@ -79,3 +79,19 @@ the model (no transcriptome row), so it tests exactly the BK value at issue. Res
 its result; F-FI-1): the model's MBON14 is 2-5× steeper than the recording with BK on, and steeper still
 with BK off. So the data argue against removing central BK. The l-LNv AHP (3-5 mV at the soma) is not used:
 soma AHPs in cells with a remote initiation zone are attenuated, and the model has one compartment.
+
+**Adaptation in the MBON-α3 traces** (6 October, by eye, from Fig. 1 supp. 1A-B, figure estimate). At the
+largest steps, cells 2 and 3 fire spikes at nearly even intervals from the first spike, about 20-50 ms after
+step onset, to the end of the 400 ms step. Any adaptation within 400 ms is weak, although the text calls the
+cell "a spike-frequency adapting neuron". No figure here shows adaptation over seconds.
+
+**What MBON-α3 rest looks like** (Fig. 1E, by eye; figure estimate; ex vivo whole-cell, read).
+- The 2 s example trace fires regularly, about 11 spikes (about 5.5 Hz; the text's mean is 12.1 Hz).
+- Between spikes the membrane ramps from about −53.5 to −51 mV, then fires. Fluctuations on the ramp are
+  about 0.5 mV or less.
+- So this cell's resting activity looks like slow regular pacemaking above threshold, not noise-driven
+  crossings from below. Ex vivo the synaptic noise is lower than in vivo, so this bounds the intrinsic
+  part only.
+- For the model: a near-threshold cell made to fire by 2-4 mV of membrane noise
+  (`scripts/probes/noise_rest.py`) would look different from this trace. A small tonic suprathreshold
+  drive with an AHP would look like it.
