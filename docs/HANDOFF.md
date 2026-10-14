@@ -241,6 +241,13 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/nig
 - **Merging:** main is NOT fast-forwarded yet. The worktree guard refuses git in the main checkout, and `git push . worktree-fly2:main` is rejected (main is checked out). Someone in the main checkout runs `git merge --ff-only worktree-fly2`. The branch passed 38 tests after rebasing on cf1c7ce.
 - **Ben's answers (DECISIONS 22:53):** flyvis type-pair strengths YES, as a separate switched arm, with PSP range checks and a held-out physiology check before any frontier use. PSI→DLMn 4.71 mV YES, as a measured scan-gap fill once the primary source is checked. Both are queued behind the body block.
 - **Now (Director redirect, 13 Oct): body interface, MN to ground** (development mode, pre-register each fix). The parts: (a) the MN→muscle mapping (187 of 505 leg MNs unmapped; no MN for the T2/T3 coxa promotors); (b) distal capacity against measured values, or the real standing pose; (c) force-length and passive stiffness (Hooper 2009 onward); (d) abdomen stiffness. Pass: the S1 rerun stands for 3 s at a plausible constant activation without rearing or sinking, with the contact sheet viewed. fly owns the VNC (S3): stay out of lif.py graded release and the VNC files. Viewed `docs/media/s13_bypass_s1.png`: support 0.3-0.5 and coact 1 rear nose-up on the abdomen tip; need 1.5-2 pitches head-down.
+  - **Done so far (23:05):** the literature and code survey is in `docs/research/s13_body_interface.md` (read it first). Findings:
+    - (a) The 187 = 168 long-tendon-muscle MNs (no Hill muscle, so they drive nothing in Hill mode) + 17 unnamed T2/T3 MNs + 2 TTMn excluded on purpose. MANC itself found no T2/T3 coxa promotor MNs (Cheong 2024, quoted), so those 12 muscles have no MN in the published data.
+    - (c) Passive stiffness is already Wang 2025's measured values, and Wang shows passive force is about 70× too small to stand, so standing must come from active tone plus force-length.
+    - (d) No abdomen stiffness data exist.
+  - **Next, in order:**
+    1. Settle what Wang 2025's "stands at a height of 0.5 mm" measures, and Pratt 2024's 1.04 mm dorsal thorax, against our thorax-origin 1.32 mm.
+    2. Pre-register fix 1 (place the fly at the measured height, recompute the need pattern, rerun S1). Then fix 2: an LTM Hill muscle, if a sourced force exists. No sweeps have run yet; use backhouse (`~/fly2`) for them.
 
 ## Where the project stands
 
