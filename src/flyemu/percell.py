@@ -123,7 +123,15 @@ def input_gain_factors(reg: Registry, conn) -> np.ndarray | None:
         uncertainty="S4a arm R (DECISIONS 13 Oct 23:31): 1.49 extends the within-type Rin law "
                     "(Azevedo 2020 150/300/700 MOhm, measured; mapping derived) between types; "
                     "median-volume normalisation guessed")
-    if not alpha and not beta and not alpha_mn and not gamma:
+    scale = reg.require(
+        "cell_type:leg_motor", "synaptic_input_scale", units="x",
+        model_use="leg-MN input gain x scale: one shared factor on all chemical synaptic input "
+                  "onto leg MNs (premotor interneurons carry most of it)",
+        subsystem="synaptic_efficacy", instances=int(leg.sum()), minimal=1.0, conventional=1.0,
+        minimal_note="neutral 1: the per-synapse efficacy shared with every other cell",
+        uncertainty="S4b (DECISIONS 14 Oct): fitted, bounded; no premotor->leg-MN unitary PSP "
+                    "has been recorded")
+    if not alpha and not beta and not alpha_mn and not gamma and scale == 1.0:
         return None
     types = conn.neurons.type.reset_index(drop=True)
     n_in = input_counts(conn)
@@ -137,4 +145,6 @@ def input_gain_factors(reg: Registry, conn) -> np.ndarray | None:
         f *= within_type_ratio(n_in, types, exclude=bad) ** beta
     if gamma:
         f *= between_type_leg_factor(conn, gamma, bad)
+    if scale != 1.0:
+        f *= np.where(leg, scale, 1.0)
     return f.astype(np.float32)

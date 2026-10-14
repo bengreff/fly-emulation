@@ -1269,7 +1269,6 @@ MN9_L in Hz, 3 trials each, GABA (as built) vs acetylcholine (`--nt AN13B002=ace
 - **Adopted: nothing.** The model keeps GABA, labelled inferred: transcripts for GABA are measured in hemilineage 13B (Lacin et al. 2019 FISH, ground-truth confidence 3), carried to this cell by lineage; EM classifiers predict GABA for it but are trained on lineage-level labels, so not fully independent. No cell-type measurement exists that the search found. The settling experiment is in `docs/research/s12_tarsal_per_pathway.md` and on HANDOFF's list for Ben.
 - `scripts/assay_pathways.py --nt TYPE=TRANSMITTER` stays as a diagnostic option (sets sign and the transmitter label the GABA-B split reads, for the named types, in this run only).
 
-
 ## Pre-registration: the taste connectome's leg sugar route, and feedforward inhibition at Bract 2 (5 October, 22:04; Director 22:00, the by-eye comparison; diagnostic, nothing adopted)
 
 - **The paper's route, read by eye** (Tastekin et al. bioRxiv 10.1101/2025.08.25.671814 v2, Figure 9B and text p. 20; PDF in `data/raw/tastekin2025/`, sha256 ef045ceb...): LgLG4 → AN01B004 (ascending, cholinergic) → Bract I and Bract II → Roundup → MN9, with a side branch AN01B004 → S&S → Roundup and S&S → MN9. "Multiple positive feedforward loops"; LgLG4 needs 7 hops for its maximum effective connectivity to feeding MNs, 2 more than most labellar GRNs.
@@ -2747,7 +2746,6 @@ Run finished 04:43 (backhouse, 543 s; `runs/s12/vision/grating_v0r.json`, md5 ch
 
 **Next block: motor-pathway bypass and rescue assay before more mechanism work** (Director, from brainstorm 13 Oct B and F). Stages S1 actuation, S2 descending drive, S3 graded release and signs, S4 feedback; each pre-registered in one line with a pass criterion. Output: a failure-localisation report. Forced drive is a diagnostic, not emergent walking. The mushroom body at 0 Hz waits behind it.
 
-
 ### Pre-registration S1, actuation with the CNS bypassed (13 October, 21:36, before any run)
 `bypass_s1_actuation.py`, m10f0, adhesion 1, 3 s, patterns support/coact at activation 0-1 (DIAGNOSTIC, forced drive). **Pass:** at some activation ≤ 0.5 (plausibility bound guessed), the thorax origin stays ≥ 0.9 mm (standing ≈ 1.0 mm, inferred from Wang 2025), sinks < 0.05 mm over the last 2 s, the leg floor force is 0.8-1.2× body weight, and the trunk never touches the floor. **Fail** localises to the static audit (unmapped muscles or MNs, moment arm, force-length at pose) or to contact.
 
@@ -2956,3 +2954,43 @@ Director brief (after /clear): build the minimal proprioceptive stance loop (`do
 
 ### fly2 result: stance loop step R (14 Oct, 00:07)
 **NO REACH, 0 of 8** (F-REFLEX-2; `docs/media/s13_fly2_reach.png`, viewed). The prediction for 8 mV was right, but its reason was wrong: F-REFLEX-1's tonic inhibitors are silent with the brain off. The signal stops at the first hop at 8 mV. At 40 mV (hook 76-78 Hz, the top of the only Drosophila chordotonal range) the path it opens is net inhibitory onto the tibia extensors. The CS load channel is saturated (0.94 in air), so the load arm tests nothing. **Per the brief, the stance loop stops here.** No HillLegDrive bias or delay was built, nothing was tuned, and no switch was added. The localisation readout (first-order and premotor rates, MN gap to threshold, CS signal) was added to the probe after the 8 scored runs, as extra outputs, and run once more on lm at 8 and 40 mV. Next test: rerun step R on fly's adopted S4a/S4b arm. Delay for a future loop: about 3 ms, inferred (Tuthill & Wilson 2016, bristle afferent → VNC EPSP); no Drosophila FeCO/CS latency exists.
+
+### Results S4a, 13 October, 23:57 (F-BYPASS-6)
+Fail on every arm: 0 transfer-pass pools in 9 runs; no antagonist pair; viewed. Nothing adopted; R and G stay neutral switches. The recruitment order was not spent. Battery fix: R's key gained its owner row `n2p_between_type_size_exponent_leg_mn` in `data/model/parameters.csv` (test_model_data had failed on the missing owner). The first battery stopped at that failure (`-x`), so the full rerun is pending at commit time.
+Director decision (as Ben), held from 13 Oct: S4b fits the premotor→MN scale only, against the force-probe MN firing read off Azevedo 2020's figures plus the 7-16 Hz rhythm band. It is labelled fitted, with the recruitment order held out. Burstiness stays unfitted until a measured range exists. Seki 2010 and Choi 2004 go on Ben's paywalled-paper list.
+
+### Pre-registration S4b: one fitted premotor→leg-MN synaptic scale (14 October, 00:12, before any S4b run)
+DIAGNOSTIC, forced drive; implements the Director's held decision (as Ben, recorded under Results S4a). Burstiness stays unfitted.
+- **Quantity.** One new neutral switch, `cell_type:leg_motor|synaptic_input_scale` (default 1; owner row `n5p_leg_mn_synaptic_input_scale`; percell.py). It multiplies the input gain of all 381 leg MNs (vnc_motor, subclass fl/ml/hl), so every synapse onto them scales together. It is shared by class: one number, no per-route or per-cell knob. Bounds 1-25, guessed. No premotor→leg-MN unitary PSP has been recorded. The upper edge is the 14-25× deficit in F-BYPASS-5, a model-to-model comparison, not a biological bound. Any value chosen is labelled **fitted**, never measured. The implied per-synapse peak PSP at s* is reported against measured fly central unitary PSPs as a plausibility check, not a target.
+- **Fit targets.**
+  - Measured, read off the plot: Azevedo 2020 eLife, Fig 5—figure supplement 1A. Average spike rate over all trials with spontaneous leg movements: fast ≈ 1, intermediate ≈ 10, slow ≈ 60 Hz. Reading error about ±3 Hz. No numbers are in the text (`docs/research/s13_s4b_azevedo_forceprobe.md`, Sonnet; figure read by me).
+  - The 7-16 Hz rhythm band.
+  - Constraint, measured (Fig 3D): intermediate and fast are silent at rest.
+- **Validity.** Those rates come from a fly with the femur fixed, moving spontaneously against a force probe, averaged over whole trials. They are not DNg100-driven walking. So they are an order-of-magnitude envelope, hence the ×3 acceptance bar.
+- **Run.** GPU batch, `scripts/probes/s4b_scale_sweep.py sweep`, on backhouse. It reproduces the bypass harness without the body (m10f0, seed 12, brain off, senses off, DNg100 300-1300 ms of 1500 ms; the body does not feed back in that harness).
+  - Grid: s ∈ {1, 1.5, 2, 3, 4, 6, 8, 12, 16, 25} × drive {15, 25, 40} mV (30 members).
+  - Tibia-flexor classes follow `motor_forces.py`: volume rank 1 fast, 2-4 intermediate, the rest slow.
+- **GPU checks (before any score).**
+  - CPU switch at s = 4 against a GPU member with leg input gain ×4, over 300 ms (100 ms rest, 200 ms at 25 mV). The input gains must be bit-identical, and the spike totals and leg-MN spikes must agree within 1%. Otherwise the sweep is not used.
+  - The s = 1 / 25 mV member against the CPU harness baseline `runs/s13/bypass/s2/s2_DNg100_25mv_traces.npz` (pool_rate), reported.
+- **Fit (25 mV members only; `s4b_score.py fit`).**
+  - E_rate = mean over 6 legs × 3 classes of [ln((r+1)/(r*+1))]², where r is the class's mean per-MN rate in 500-1300 ms.
+  - Admissible s:
+    - intermediate and fast mean pre-drive rate (0-300 ms) ≤ 1 Hz;
+    - **and** S4a's pass at 25 mV with the band widened to 7-16 Hz: two antagonist pools of one leg both transfer-pass, with r ≤ −0.3 at zero lag or a lagged peak (10-30 ms) r ≥ 0.5, and the summed leg-MN rate post-drive ≤ 1.5× pre-drive.
+  - s* = the admissible s with the lowest E_rate.
+  - Accepted if every class's leg-mean rate is within ×3 of target, i.e. |ln((r+1)/(r*+1))| ≤ ln 3.
+  - Nothing at 15 or 40 mV is looked at before s* is written down.
+- **Held out (spent once, at s* only; `s4b_score.py heldout`).**
+  - Recruitment order, Azevedo 2020 (measured, never fitted): slow before intermediate before fast.
+  - Scored as the recruited fraction (MNs with ≥ 2 spikes in 300-1300 ms) per class at 15/25/40 mV.
+  - Pass iff slow ≥ intermediate ≥ fast at every drive, with intermediate recruited at some drive and the order not degenerate.
+  - The 25 mV point is partly constrained by the fit; 15 and 40 mV are not.
+  - Reported, not scored: the fraction of intermediate spikes preceded within 25 ms by a same-leg slow spike (Fig 5C: 2972/3082), against chance from the slow pool's rate. With 7-12 slow MNs per leg, chance is near 1, so it cannot discriminate.
+- **Viewing.** Rasters at s* (all three drives). Then one CPU harness run with the body at s*, 25 mV (frames; confirms GPU = harness).
+- **Falsifier.**
+  - No s in 1-25 is admissible: the scale alone cannot carry the core's rhythm to the MNs. The break is the core's burst output, which is unfitted and has no measured range. That goes to Ben's list (E1/E2 burst recording; unitary premotor→MN PSP).
+  - Admissible but rates off by more than ×3: the fit is rejected.
+  - Held-out fail: s* is not adopted.
+- **No adoption from S4b alone.** A pass goes to the S4a follow-ons: E1/E2 silencing, DNb08 drive, and gate and rest with the brain on.
+
