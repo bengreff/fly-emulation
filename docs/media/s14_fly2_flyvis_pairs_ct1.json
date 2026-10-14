@@ -1,0 +1,50 @@
+{
+ "pairs_read": 543,
+ "edges_set": 708811,
+ "edges_kept_spiking_pre": 0,
+ "pairs_with_edges": 513,
+ "flags": {
+  "no edges in male-cns at this threshold": 30,
+  "full-range response > 60 mV (guessed ceiling)": 25
+ },
+ "lmc": [
+  {
+   "pair": "R1-R6->L1",
+   "gain_fv_median": -0.7777499787901465,
+   "gain_shared_median": -14.274679514465637
+  },
+  {
+   "pair": "R1-R6->L2",
+   "gain_fv_median": -0.40584600338727245,
+   "gain_shared_median": -13.921022230561128
+  }
+ ],
+ "ratio_fv_to_shared_median": 2.3559250978822237,
+ "sign_flip_pairs": [
+  "R8->Mi1",
+  "R8->Mi4",
+  "R8->Mi9",
+  "R8->Mi15",
+  "C2->L1",
+  "C2->L2",
+  "C3->L1",
+  "C3->L2",
+  "Mi10->Lawf1",
+  "Mi10->Mi9",
+  "Mi10->Mi14",
+  "Mi10->T4a",
+  "Mi10->T4b",
+  "Mi10->T4c",
+  "Mi10->T4d",
+  "Mi10->Tm5b",
+  "Mi10->TmY3",
+  "Mi10->TmY5a",
+  "Mi10->TmY14",
+  "T1->L2",
+  "T1->L5",
+  "T1->Tm20",
+  "TmY14->C3",
+  "TmY14->Mi13",
+  "TmY14->Tm16"
+ ]
+}

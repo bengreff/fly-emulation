@@ -73,6 +73,97 @@ class Connectome:
         return lut.reindex(body_ids).fillna(-1).astype(np.int64).to_numpy()
 
 
+CT1_RAW = CACHE.parent / "raw" / "ct1_columns_s14"
+CT1_LAYER = {"ME": "M10", "LO": "Lo1"}
+
+
+def ct1_compartments(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """s14 (fly2): each CT1 as independent graded compartments, one per (cell, neuropil, column).
+
+    CT1's terminals respond as independent units (Meier & Borst 2019 Curr Biol 29:1545, calcium imaging;
+    abstract only here) and flyvis models them as per-column types CT1(M10) and CT1(Lo1) (Lappalainen et
+    al. 2024). Each CT1 connection kept at the cell-level threshold is split over the optic-lobe column ROIs
+    its synapses lie in (male-cns ConnectsTo roiInfo, Nern et al. 2025 hex grid; raw pull
+    data/raw/ct1_columns_s14 by scripts/vision/fetch_ct1_columns.py): ME columns -> an M10 compartment,
+    LO columns -> an Lo1 compartment. Synapses outside ME/LO column ROIs (about 2%) stay on the original
+    node, kept as the trunk. A compartment copies its CT1 row (type, transmitter, per-type parameters),
+    gets a synthetic negative bodyId, instance <cell instance>/<M10|Lo1>/<column ROI>, and a size scaled by
+    its share of the cell's kept synapses (derived). Compartments are not coupled to each other or to the
+    trunk. Validity: no spread between neighbouring terminals or between M10 and Lo1; a compartment edge
+    can hold fewer synapses than the threshold (the connection passed it). CT1 -> CT1 connections stay on
+    the trunks.
+    """
+    import json
+    ct1 = neurons.type.eq("CT1").to_numpy()
+    if not reg.require(
+            "cell_type:CT1", "compartments_by_column", units="boolean",
+            model_use="CT1 as one independent graded compartment per (cell, M10/Lo1, column), edges split "
+                      "by the column ROIs of their synapses",
+            subsystem="connectivity", instances=int(ct1.sum()), minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: each CT1 is one point cell",
+            uncertainty="terminal independence from calcium imaging (Meier & Borst 2019, abstract); "
+                        "no coupling between compartments") or not ct1.any():
+        return neurons, e
+    raw = pd.concat([pd.read_parquet(CT1_RAW / f"ct1_{d}.parquet") for d in ("out", "in")])
+    info = raw.drop_duplicates(["pre", "post"]).set_index(["pre", "post"]).roiInfo
+    cells = neurons.loc[ct1].set_index("bodyId")
+    ids = set(cells.index)
+    touch = e.pre.isin(ids) | e.post.isin(ids)
+    both = e.pre.isin(ids) & e.post.isin(ids)
+    rows, missing = [], 0
+    for r in e[touch & ~both].itertuples(index=False):
+        cell = r.pre if r.pre in ids else r.post
+        if (r.pre, r.post) not in info.index:
+            missing += 1
+            rows.append((r.pre, r.post, r.weight, None))
+            continue
+        left = int(r.weight)
+        for k, v in json.loads(info[(r.pre, r.post)]).items():
+            npl, c = k.split("_", 1)[0], int(v.get("post", 0))
+            if "_col_" in k and npl in CT1_LAYER and c:
+                rows.append((r.pre, r.post, c, (cell, CT1_LAYER[npl], k)))
+                left -= c
+        if left < 0:
+            raise ValueError(f"CT1 column counts exceed the cached weight on {r.pre}->{r.post}")
+        if left:
+            rows.append((r.pre, r.post, left, None))
+    sp = pd.DataFrame(rows, columns=["pre", "post", "weight", "comp"])
+    keys = sorted({k for k in sp.comp if k is not None})
+    sid = {k: -(i + 1) for i, k in enumerate(keys)}            # synthetic, not neuPrint bodies
+    c = sp.comp.map(lambda k: sid.get(k, 0) if k is not None else 0).to_numpy()
+    out = (sp.pre.isin(ids) & (c != 0)).to_numpy()
+    sp["pre"] = np.where(out, c, sp.pre)
+    sp["post"] = np.where(~out & (c != 0), c, sp.post)
+    syn = (sp.groupby("pre").weight.sum().add(sp.groupby("post").weight.sum(), fill_value=0)
+           .add(e[both].groupby("pre").weight.sum(), fill_value=0).add(e[both].groupby("post").weight.sum(),
+                                                                       fill_value=0))
+    total = {b: sum(syn.get(sid[k], 0) for k in keys if k[0] == b) + syn.get(b, 0) for b in ids}
+    new = []
+    for k in keys:
+        row = cells.loc[k[0]].copy()
+        row["instance"] = f"{row['instance']}/{k[1]}/{k[2]}"
+        row["ct1_compartment"], row["compartment_of"] = k[1], k[0]
+        row["size"] = row["size"] * syn.get(sid[k], 0) / total[k[0]]
+        new.append(row.rename(sid[k]))
+    neurons = neurons.copy()
+    neurons["ct1_compartment"] = np.where(ct1, "trunk", "")
+    neurons["compartment_of"] = np.where(ct1, neurons.bodyId, 0)
+    neurons.loc[ct1, "size"] = [s * syn.get(b, 0) / total[b] for b, s in zip(neurons.bodyId[ct1], neurons["size"][ct1])]
+    comp = pd.DataFrame(new).rename_axis("bodyId").reset_index().infer_objects()
+    neurons = pd.concat([neurons, comp[neurons.columns]], ignore_index=True)
+    e = pd.concat([e[~touch | both], sp[["pre", "post", "weight"]]], ignore_index=True)
+    n_out = int(sp.weight[sp.comp.isna()].sum())
+    reg.provide("cell_type:CT1", "column_compartments", len(keys), units="compartments",
+                model_use="independent CT1 compartments (M10 and Lo1 terminals per column)",
+                status=Status.DERIVED, evidence=f"{DATASET} ConnectsTo roiInfo column ROIs (Nern et al. 2025 hex "
+                "grid); data/raw/ct1_columns_s14 (scripts/vision/fetch_ct1_columns.py)",
+                subsystem="connectivity", instances=len(keys),
+                uncertainty=f"{n_out} of {int(sp.weight.sum())} split synapses outside ME/LO column ROIs stay on "
+                            f"the trunks; {missing} connections absent from the raw pull stay whole; "
+                            f"{int(both.sum())} CT1->CT1 connections stay on the trunks")
+    return neurons, e
+
+
 @lru_cache(maxsize=1)
 def load_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
     neurons = pd.read_parquet(CACHE / "male_cns_neurons.parquet")
@@ -179,9 +270,9 @@ def build(
                         model_use="fast transmitter (sets the synaptic sign)", status=Status(r.basis),
                         evidence=r.source, subsystem="sign", instances=int(m.sum()), uncertainty=r.note)
             neurons.loc[m, "predictedNt"] = r.nt
-    pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
-
     e = edges[edges.weight >= min_synapses]
+    neurons, e = ct1_compartments(reg, neurons, e)   # s14 (fly2); unchanged at neutral
+    pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
     pre = pos.reindex(e.pre.values).to_numpy()
     post = pos.reindex(e.post.values).to_numpy()
     keep = ~(np.isnan(pre) | np.isnan(post))

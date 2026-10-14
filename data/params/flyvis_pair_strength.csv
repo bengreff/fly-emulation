@@ -118,7 +118,7 @@ type:^C3$,type:^L3$,0.0006799,3.13e-05,0.049866,-1,C3->L3,1,inferred,"fitted (fl
 type:^C3$,type:^L5$,0.012757,4.89e-05,0.050157,-1,C3->L5,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Lawf2$,0.006569,5.27e-05,0.034599,-1,C3->Lawf2,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Am1$,0.0036256,2.86e-05,0.014234,-1,C3->Am,1,inferred,"fitted (flyvis, task-trained)",
-type:^C3$,type:^CT1$,0.048369,0.009883,0.10581,-1,C3->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^C3$,instance:^CT1_[LR]/M10/,0.048369,0.009883,0.10581,-1,C3->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^C3$,type:^Mi1$,0.026005,0.0003479,0.076717,-1,C3->Mi1,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Mi4$,0.02091,0.0046192,0.075797,-1,C3->Mi4,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Mi9$,0.014638,0.0006221,0.044594,-1,C3->Mi9,1,inferred,"fitted (flyvis, task-trained)",
@@ -133,23 +133,23 @@ type:^C3$,type:^Tm2$,0.013958,0.0001352,0.043999,-1,C3->Tm2,1,inferred,"fitted (
 type:^C3$,type:^Tm4$,0.0099259,0.0034181,0.044046,-1,C3->Tm4,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Tm9$,0.023096,0.003381,0.05885,-1,C3->Tm9,1,inferred,"fitted (flyvis, task-trained)",
 type:^C3$,type:^Tm20$,0.023437,0.0015357,0.068307,-1,C3->Tm20,1,inferred,"fitted (flyvis, task-trained)",
-type:^CT1$,type:^T5a(?:_unclear)?$,0.0050898,6.91e-05,0.021676,-1,CT1(Lo1)->T5a,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T5b$,0.016395,0.0079582,0.025482,-1,CT1(Lo1)->T5b,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T5c$,0.012898,0.001597,0.032388,-1,CT1(Lo1)->T5c,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T5d$,0.031163,0.013965,0.043326,-1,CT1(Lo1)->T5d,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^Tm1$,5.16e-05,2.15e-05,0.0063708,-1,CT1(Lo1)->Tm1,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^Tm9$,0.0014266,3.87e-05,0.0082968,-1,CT1(Lo1)->Tm9,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^C3$,0.019049,0.0020418,0.036989,-1,CT1(M10)->C3,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^Mi1$,0.022649,0.0002882,0.063369,-1,CT1(M10)->Mi1,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T4a$,0.019898,0.007002,0.033181,-1,CT1(M10)->T4a,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T4b$,0.014188,9.15e-05,0.032205,-1,CT1(M10)->T4b,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T4c$,0.040682,0.028425,0.052211,-1,CT1(M10)->T4c,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
-type:^CT1$,type:^T4d$,0.02309,0.0067407,0.035414,-1,CT1(M10)->T4d,0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+instance:^CT1_[LR]/Lo1/,type:^T5a(?:_unclear)?$,0.0050898,6.91e-05,0.021676,-1,CT1(Lo1)->T5a,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/Lo1/,type:^T5b$,0.016395,0.0079582,0.025482,-1,CT1(Lo1)->T5b,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/Lo1/,type:^T5c$,0.012898,0.001597,0.032388,-1,CT1(Lo1)->T5c,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/Lo1/,type:^T5d$,0.031163,0.013965,0.043326,-1,CT1(Lo1)->T5d,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/Lo1/,type:^Tm1$,5.16e-05,2.15e-05,0.0063708,-1,CT1(Lo1)->Tm1,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/Lo1/,type:^Tm9$,0.0014266,3.87e-05,0.0082968,-1,CT1(Lo1)->Tm9,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^C3$,0.019049,0.0020418,0.036989,-1,CT1(M10)->C3,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^Mi1$,0.022649,0.0002882,0.063369,-1,CT1(M10)->Mi1,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^T4a$,0.019898,0.007002,0.033181,-1,CT1(M10)->T4a,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^T4b$,0.014188,9.15e-05,0.032205,-1,CT1(M10)->T4b,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^T4c$,0.040682,0.028425,0.052211,-1,CT1(M10)->T4c,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
+instance:^CT1_[LR]/M10/,type:^T4d$,0.02309,0.0067407,0.035414,-1,CT1(M10)->T4d,1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Mi1$,type:^L1$,4.53e-05,3.1e-06,0.0008174,1,Mi1->L1,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi1$,type:^L5$,0.055958,0.015661,0.073195,1,Mi1->L5,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi1$,type:^C2$,0.0032454,0.0006022,0.0099263,1,Mi1->C2,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi1$,type:^C3$,0.0056299,9e-05,0.016222,1,Mi1->C3,1,inferred,"fitted (flyvis, task-trained)",
-type:^Mi1$,type:^CT1$,0.027827,0.010502,0.077767,1,Mi1->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^Mi1$,instance:^CT1_[LR]/M10/,0.027827,0.010502,0.077767,1,Mi1->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Mi1$,type:^Mi2$,0.027294,0.010736,0.036373,1,Mi1->Mi2,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi1$,type:^Mi4$,0.043519,0.021098,0.062688,1,Mi1->Mi4,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi1$,type:^Mi9$,0.0029683,3.31e-05,0.03015,1,Mi1->Mi9,1,inferred,"fitted (flyvis, task-trained)",
@@ -208,7 +208,7 @@ type:^Mi4$,type:^TmY18$,0.052816,0.03152,0.07512,-1,Mi4->TmY18,1,inferred,"fitte
 type:^Mi9$,type:^L3$,0.0001266,1.99e-05,0.016687,-1,Mi9->L3,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi9$,type:^Lawf1$,0.03201,0.0076606,0.063434,-1,Mi9->Lawf1,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi9$,type:^C3$,0.012245,0.00012,0.052522,-1,Mi9->C3,1,inferred,"fitted (flyvis, task-trained)",
-type:^Mi9$,type:^CT1$,0.047031,0.026025,0.079339,-1,Mi9->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^Mi9$,instance:^CT1_[LR]/M10/,0.047031,0.026025,0.079339,-1,Mi9->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Mi9$,type:^Mi1$,0.0076342,0.0001209,0.036041,-1,Mi9->Mi1,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi9$,type:^Mi4$,0.016958,0.0063395,0.03112,-1,Mi9->Mi4,1,inferred,"fitted (flyvis, task-trained)",
 type:^Mi9$,type:^Mi10$,0.0099177,0.0008432,0.01825,-1,Mi9->Mi10,1,inferred,"fitted (flyvis, task-trained)",
@@ -278,40 +278,40 @@ type:^T3$,type:^T2$,0.011168,0.0001092,0.03877,1,T3->T2,1,inferred,"fitted (flyv
 type:^T3$,type:^T2a$,0.034562,0.006734,0.058847,1,T3->T2a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T3$,type:^Tm3(?:_unclear)?$,0.055143,0.015212,0.085753,1,T3->Tm3,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^C3$,0.0021573,8.24e-05,0.015779,1,T4a->C3,1,inferred,"fitted (flyvis, task-trained)",
-type:^T4a$,type:^CT1$,0.014753,0.0004433,0.037493,1,T4a->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T4a$,instance:^CT1_[LR]/M10/,0.014753,0.0004433,0.037493,1,T4a->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T4a$,type:^Mi9$,0.0091345,5.7e-06,0.040929,1,T4a->Mi9,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^T4a$,0.018933,0.013978,0.024943,1,T4a->T4a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^T4c$,0.014156,0.0005647,0.036781,1,T4a->T4c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^T5a(?:_unclear)?$,0.014362,0.0011833,0.033185,1,T4a->T5a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^TmY14$,0.029554,0.0023792,0.052797,1,T4a->TmY14,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4a$,type:^TmY18$,0.013197,0.000356,0.032094,1,T4a->TmY18,1,inferred,"fitted (flyvis, task-trained)",
-type:^T4b$,type:^CT1$,0.033401,0.0055444,0.050897,1,T4b->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T4b$,instance:^CT1_[LR]/M10/,0.033401,0.0055444,0.050897,1,T4b->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T4b$,type:^Mi9$,0.032757,0.0045139,0.091576,1,T4b->Mi9,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4b$,type:^T4b$,0.018647,0.0066196,0.029712,1,T4b->T4b,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4b$,type:^T4c$,0.0088958,6.29e-05,0.035347,1,T4b->T4c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4b$,type:^T5b$,0.030709,0.0015549,0.052983,1,T4b->T5b,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4b$,type:^TmY15$,0.02633,0.010453,0.034879,1,T4b->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T4c$,type:^CT1$,0.049366,0.0051393,0.078796,1,T4c->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T4c$,instance:^CT1_[LR]/M10/,0.049366,0.0051393,0.078796,1,T4c->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T4c$,type:^Mi9$,0.013238,1.29e-05,0.057944,1,T4c->Mi9,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4c$,type:^T4c$,0.045894,0.027238,0.057733,1,T4c->T4c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4c$,type:^T5c$,0.028346,0.0047286,0.050152,1,T4c->T5c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4c$,type:^TmY4$,0.019594,0.0009522,0.038172,1,T4c->TmY4,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4c$,type:^TmY14$,0.01031,9.52e-05,0.061563,1,T4c->TmY14,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4c$,type:^TmY15$,0.0011485,2.12e-05,0.020831,1,T4c->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T4d$,type:^CT1$,0.0091582,2.94e-05,0.043052,1,T4d->CT1(M10),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T4d$,instance:^CT1_[LR]/M10/,0.0091582,2.94e-05,0.043052,1,T4d->CT1(M10),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T4d$,type:^T4a$,0.049288,0.014716,0.088929,1,T4d->T4a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4d$,type:^T4d$,0.061843,0.039665,0.072609,1,T4d->T4d,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4d$,type:^T5d$,0.029945,0.0025059,0.070546,1,T4d->T5d,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4d$,type:^TmY4$,0.025373,0.0002462,0.052603,1,T4d->TmY4,1,inferred,"fitted (flyvis, task-trained)",
 type:^T4d$,type:^TmY15$,8.36e-05,1.73e-05,0.038425,1,T4d->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T5a(?:_unclear)?$,type:^CT1$,0.010508,6.49e-05,0.044985,1,T5a->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T5a(?:_unclear)?$,instance:^CT1_[LR]/Lo1/,0.010508,6.49e-05,0.044985,1,T5a->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T5a(?:_unclear)?$,type:^T4a$,0.0028102,0.0001026,0.017658,1,T5a->T4a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5a(?:_unclear)?$,type:^T5a(?:_unclear)?$,0.018022,0.0044113,0.029952,1,T5a->T5a,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5a(?:_unclear)?$,type:^T5b$,0.0071074,0.0001078,0.028313,1,T5a->T5b,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5a(?:_unclear)?$,type:^TmY9[ab]$,0.02311,7.64e-05,0.077977,1,T5a->TmY9,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5a(?:_unclear)?$,type:^TmY14$,0.0056497,0.0002512,0.022669,1,T5a->TmY14,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5a(?:_unclear)?$,type:^TmY15$,0.016008,0.0001315,0.076038,1,T5a->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T5b$,type:^CT1$,0.034309,0.0026975,0.060769,1,T5b->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T5b$,instance:^CT1_[LR]/Lo1/,0.034309,0.0026975,0.060769,1,T5b->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T5b$,type:^T2$,0.019532,0.0017266,0.070155,1,T5b->T2,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5b$,type:^T4b$,0.012973,7.81e-05,0.030678,1,T5b->T4b,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5b$,type:^T5b$,0.0207,0.014195,0.029845,1,T5b->T5b,1,inferred,"fitted (flyvis, task-trained)",
@@ -319,14 +319,14 @@ type:^T5b$,type:^T5d$,0.01105,7.12e-05,0.044912,1,T5b->T5d,1,inferred,"fitted (f
 type:^T5b$,type:^Tm2$,0.021947,0.0045613,0.059228,1,T5b->Tm2,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5b$,type:^TmY14$,0.01404,5.16e-05,0.041465,1,T5b->TmY14,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5b$,type:^TmY15$,0.025903,0.0066629,0.076279,1,T5b->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T5c$,type:^CT1$,0.015395,0.0001578,0.027699,1,T5c->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T5c$,instance:^CT1_[LR]/Lo1/,0.015395,0.0001578,0.027699,1,T5c->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T5c$,type:^T4c$,0.013581,0.0007296,0.031884,1,T5c->T4c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5c$,type:^T5c$,0.034683,0.02016,0.054984,1,T5c->T5c,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5c$,type:^Tm2$,0.043667,0.013345,0.069871,1,T5c->Tm2,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5c$,type:^TmY4$,0.0015593,4.9e-05,0.0077125,1,T5c->TmY4,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5c$,type:^TmY14$,0.013619,6.27e-05,0.044884,1,T5c->TmY14,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5c$,type:^TmY15$,0.005045,7.86e-05,0.022121,1,T5c->TmY15,1,inferred,"fitted (flyvis, task-trained)",
-type:^T5d$,type:^CT1$,0.010821,0.0001243,0.036446,1,T5d->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^T5d$,instance:^CT1_[LR]/Lo1/,0.010821,0.0001243,0.036446,1,T5d->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^T5d$,type:^T2$,0.025203,0.0007766,0.12115,1,T5d->T2,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5d$,type:^T4d$,0.011825,7.44e-05,0.040903,1,T5d->T4d,1,inferred,"fitted (flyvis, task-trained)",
 type:^T5d$,type:^T5d$,0.032568,0.022555,0.043639,1,T5d->T5d,1,inferred,"fitted (flyvis, task-trained)",
@@ -336,7 +336,7 @@ type:^Tm1$,type:^L2$,0.030176,0.0085631,0.069517,1,Tm1->L2,1,inferred,"fitted (f
 type:^Tm1$,type:^L5$,0.026322,0.0050351,0.048321,1,Tm1->L5,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm1$,type:^Lawf2$,0.003119,4.56e-05,0.021355,1,Tm1->Lawf2,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm1$,type:^C3$,0.011185,0.0010311,0.029349,1,Tm1->C3,1,inferred,"fitted (flyvis, task-trained)",
-type:^Tm1$,type:^CT1$,0.018883,0.0020223,0.039386,1,Tm1->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^Tm1$,instance:^CT1_[LR]/Lo1/,0.018883,0.0020223,0.039386,1,Tm1->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Tm1$,type:^Mi1$,0.084938,0.035738,0.11334,1,Tm1->Mi1,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm1$,type:^Mi2$,0.0063249,6.09e-05,0.023363,1,Tm1->Mi2,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm1$,type:^Mi4$,0.0059566,0.0003505,0.020574,1,Tm1->Mi4,1,inferred,"fitted (flyvis, task-trained)",
@@ -362,7 +362,7 @@ type:^Tm2$,type:^L2$,0.030811,0.016209,0.076608,1,Tm2->L2,1,inferred,"fitted (fl
 type:^Tm2$,type:^L5$,0.012994,0.0005982,0.039597,1,Tm2->L5,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm2$,type:^Lawf1$,0.080615,0.044181,0.12973,1,Tm2->Lawf1,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm2$,type:^C3$,0.016456,0.0010715,0.038721,1,Tm2->C3,1,inferred,"fitted (flyvis, task-trained)",
-type:^Tm2$,type:^CT1$,0.019105,0.0018588,0.032335,1,Tm2->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^Tm2$,instance:^CT1_[LR]/Lo1/,0.019105,0.0018588,0.032335,1,Tm2->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Tm2$,type:^Mi4$,0.006942,0.0001159,0.019089,1,Tm2->Mi4,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm2$,type:^Mi9$,0.015804,0.0018744,0.037104,1,Tm2->Mi9,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm2$,type:^T2$,0.003871,0.0001888,0.02489,1,Tm2->T2,1,inferred,"fitted (flyvis, task-trained)",
@@ -437,7 +437,7 @@ type:^Tm5c$,type:^Mi15$,0.010718,5.25e-05,0.032213,-1,Tm5c->Mi15,1,inferred,"fit
 type:^Tm5c$,type:^Tm5Y$,0.028611,0.01093,0.050848,-1,Tm5c->Tm5Y,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm5c$,type:^Tm5b$,0.0079276,7.85e-05,0.030815,-1,Tm5c->Tm5b,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm5c$,type:^Tm16$,0.01394,0.000119,0.044531,-1,Tm5c->Tm16,1,inferred,"fitted (flyvis, task-trained)",
-type:^Tm9$,type:^CT1$,0.0046804,8.85e-05,0.029001,1,Tm9->CT1(Lo1),0,inferred,"fitted (flyvis, task-trained)",CT1 compartment: not read until CT1 is compartmentalised
+type:^Tm9$,instance:^CT1_[LR]/Lo1/,0.0046804,8.85e-05,0.029001,1,Tm9->CT1(Lo1),1,inferred,"fitted (flyvis, task-trained)",CT1 compartment: matches cells only with cell_type:CT1|compartments_by_column = 1
 type:^Tm9$,type:^Mi9$,0.017241,0.0001786,0.053447,1,Tm9->Mi9,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm9$,type:^T5a(?:_unclear)?$,0.0061611,5.19e-05,0.01888,1,Tm9->T5a,1,inferred,"fitted (flyvis, task-trained)",
 type:^Tm9$,type:^T5b$,0.0094107,0.0018085,0.024892,1,Tm9->T5b,1,inferred,"fitted (flyvis, task-trained)",

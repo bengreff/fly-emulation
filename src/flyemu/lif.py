@@ -152,12 +152,17 @@ FV_PAIR_TABLE = "flyvis_pair_strength.csv"
 
 def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
     """Cells a stp_connections.csv / receptor_kinetics.csv selector names: type:<regex>,
-    class:<name>, nt:<transmitter> (predictedNt as built, lower case) or *."""
+    instance:<regex> (s14: CT1 compartments, connectome.ct1_compartments), class:<name>,
+    nt:<transmitter> (predictedNt as built, lower case) or *."""
     if sel == "*":
         return np.ones(len(neurons), bool)
     kind, _, pat = sel.partition(":")
     if kind == "type":
         return neurons.type.fillna("").str.contains(pat, regex=True).to_numpy()
+    if kind == "instance":
+        if "instance" not in neurons:
+            return np.zeros(len(neurons), bool)
+        return neurons.instance.fillna("").str.contains(pat, regex=True).to_numpy()
     if kind == "class" and "class" in neurons:
         return neurons["class"].fillna("").eq(pat).to_numpy()
     if kind == "nt":

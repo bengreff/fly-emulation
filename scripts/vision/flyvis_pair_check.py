@@ -14,6 +14,7 @@ gains, same conversion). Measured comparisons (only those a primary source gave,
 
     FLYEMU_EXTRA_PARAMS=data/params/candidates/candidates_s13_v0r.csv \
         .venv/bin/python scripts/vision/flyvis_pair_check.py --out docs/media/s14_fly2_flyvis_pairs.png
+    (add --ct1 for CT1 as per-column compartments, so the CT1(M10)/CT1(Lo1) rows are checked too)
 """
 from __future__ import annotations
 
@@ -40,6 +41,7 @@ V0R = {"cell_type:all|mode_from_recordings": 1.0, "cell_type:ol_graded|release_a
        "photoreceptor:all|luminance_gain": 78.0, "cell_type:all|leak_from_network_rest": 1.0,
        "cell_type:all|release_at_rest_per_type": 1.0, "cell_type:all|optic_lobe_flyvis": 1.0}
 KEY = "cell_type:all|optic_lobe_flyvis_pair_strength"
+CT1_KEY = "cell_type:CT1|compartments_by_column"
 CEIL_MV = 60.0
 LMC = (0.4, 1.3)
 
@@ -72,9 +74,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", default="m9c")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--ct1", action="store_true", help="CT1 per-column compartments on (CT1 rows then select)")
     a = ap.parse_args()
+    ov = {**V0R, KEY: 1.0, **({CT1_KEY: 1.0} if a.ct1 else {})}
     org = Organism(policy="minimal", profile=a.profile, min_synapses=profiles.WORKING_MIN_SYNAPSES, seed=0,
-                   overrides={**V0R, KEY: 1.0})
+                   overrides=ov)
     c, p = org.conn, org.net.params
     flat = lambda q: lif.Network(c, dataclasses.replace(q, cond=False), org.timestep_ms)
     on, off = flat(p), flat(dataclasses.replace(p, fv_edge=None))
@@ -135,7 +139,8 @@ def main():
     ax.plot(lim, lim, color="0.6", lw=0.8, ls=":", label="equal")
     ax.set(xscale="log", yscale="log", xlim=lim, ylim=lim, xlabel="shared scale: |gain| per post cell (mV/mV)",
            ylabel="flyvis (fitted, task-trained): |gain| per post cell (mV/mV)")
-    ax.set_title(f"flyvis pair strengths vs the shared scale, {int(ok.sum())} type pairs (median post cell)\n"
+    ax.set_title(f"flyvis pair strengths vs the shared scale, {int(ok.sum())} type pairs (median post cell)"
+                 + (", CT1 per column" if a.ct1 else "") + "\n"
                  "red: flagged (no clipping)", fontsize=9)
     ax.legend(fontsize=7, loc="upper left")
     fig.tight_layout()
