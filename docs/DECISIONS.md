@@ -2906,3 +2906,52 @@ DIAGNOSTIC, forced drive; implements the Director's held decision (as Ben, recor
   - Admissible but rates off by more than ×3: the fit is rejected.
   - Held-out fail: s* is not adopted.
 - **No adoption from S4b alone.** A pass goes to the S4a follow-ons: E1/E2 silencing, DNb08 drive, and gate and rest with the brain on.
+
+### Results S4b fit, 14 October, 00:21 (written before any held-out or 15/40 mV look; F-BYPASS-7 pending the body run and PSP check)
+**s\* = none. FALSIFIED:** no scale in 1-25 is admissible. The verdict is from `s4b_score.py fit` (`runs/s13/bypass/s4b/fit.json`), 25 mV members only.
+- **Checks passed first.**
+  - `gpu_check.json`: input gains bit-identical; 957 = 957 spikes and 605 = 605 leg-MN spikes; exact over 3000 steps.
+  - Baseline: the s=1 / 25 mV GPU member's pool_rate equals the CPU harness `s2_DNg100_25mv_traces.npz` exactly (2158 = 2158 spikes, L1 difference 0). The body does not feed back in this harness.
+- **Silent at rest:** holds at every s (intermediate and fast are 0 Hz pre-drive).
+- **Rates** (class mean in 500-1300 ms; target slow 60 / intermediate 10 / fast 1 Hz):
+  - Slow sits at 21-23 Hz at every s. That is the tonic, drive-independent tibia-flexor line (23 Hz pre-drive too).
+  - Intermediate rises from 0 Hz at s ≤ 2 to 5.8 Hz at s 25. Fast rises from 0 Hz to 4.4 Hz.
+  - Within ×3 of target only at s 16 and 25; lowest E_rate 1.50 at s 25.
+- **Rhythm fails at every s:**
+  - Transfer-pass pools: 0 at s ≤ 2, 4-6 at s 3-4, 13-14 at s 12-25.
+  - **No antagonist pair at any s.** The candidate pairs fire together. lh sternal anterior vs posterior rotator: r0 from +0.03 to +0.42 (lagged peak ≤ 0.48). lf pleural remotor vs promotor: r0 from +0.37 to +0.82.
+  - Activity stops at drive-off (post/pre 0.94-1.13). There is no runaway at any s.
+- **Viewed:** `docs/media/s13_bypass_s4b_rasters_25mv.png` (s 1, 4, 12, 25). A ~12 Hz rhythm reaches lf, rf and lh pools from s ≥ 4 and is clear at s 12-25. It is one co-active burst per cycle; nothing alternates with it.
+- **Reading (falsifier as pre-registered):** the scale alone cannot carry the core's rhythm to the MNs as alternation. Raising MN gain only makes the existing in-phase volley visible in more pools. The stance antagonists have no rhythmic inhibition (I1 silent, F-BYPASS-3/4). The break is the core's burst output and I1, which are unfitted and have no measured range. Ben's list (E1/E2 burst recording; unitary premotor→MN PSP) stands.
+- **Not spent:** the recruitment order stays held out. The pre-registration spends it at s\* only, and there is no s\*. 15 and 40 mV members are not looked at.
+- **Nothing adopted.** `synaptic_input_scale` stays neutral 1.
+- **Pending (diagnostic only):**
+  - one CPU body run at s 25, the best-rate arm, to view frames;
+  - the Director's PSP check: the model's unitary premotor→leg-MN PSP at s 1/16/25 (`scripts/probes/s4b_unitary_psp.py`) against measured insect unitary PSPs.
+
+### Results S4b, diagnostics after the fit, 14 October, 00:33 (F-BYPASS-7; nothing adopted)
+- **Body run at s 25, 25 mV** (best-rate arm, not s\*; `runs/s13/bypass/s4b/body/`, backhouse, 228 s). Its pool_rate equals the GPU s25/25 mV member exactly (5375 = 5375 spikes, L1 0), so GPU = harness at a non-unity scale too.
+  - The S2 harness scorer says "passes". That comes only from left-right mirror pools (r −0.32 to −0.55). Every within-leg antagonist r is positive or missing (+0.23 to +0.58), so this is not the pre-registered S4b criterion.
+  - **Viewed** (`docs/media/s13_bypass_s4b_frames.png`, s=1 top, s=25 bottom): the thorax lies on the floor in both rows (S1's body block). At s=25 the legs splay sideways and shift between frames (joint SD up to 17°), with no stance and no stepping cycle. Wings open as at s=1.
+- **PSP plausibility check (Director's held note).** `scripts/probes/s4b_unitary_psp.py`; `runs/s13/bypass/s4b/psp/unitary_psp.json`; 24 cholinergic premotor cells spread over connection size, 126 pairs.
+  - Method: one forced premotor spike, minus an unkicked copy.
+  - The peak comes at 10.5 ms (monosynaptic) and scales linearly with s (measured/s1 ratio 16.0 and 24.9).
+  - Model PSP at a leg MN (derived from the model):
+
+    | s | mV per synapse | median connection (12 syn) | q90 connection (54 syn) | sampled pairs where one premotor spike fires the MN |
+    |---|---|---|---|---|
+    | 1 | 0.021 (q10-q90 0.009-0.035) | 0.25 mV | 1.1 mV | 0/126 |
+    | 16 | 0.34 | 4.1 mV | 18 mV | 52/126 (41%) |
+    | 25 | 0.53 | 6.4 mV | 29 mV | 68/126 (54%) |
+
+  - Measured comparison (`docs/research/s13_s4b_unitary_psp.md`; Sonnet, unchecked row by row; no adult premotor→leg-MN unitary PSP exists):
+    - Drosophila central unitary PSPs are 0.4-10 mV per spike, mostly 1-7. Examples: ORN→PN ~5; PN→LHN 0.4-6.6 (Liu et al. 2022); PN→KC 1.4 ± 0.8 (Turner 2008); larval premotor A31k→aCC −2.8 ± 0.5 (Giachello 2022).
+    - Locust nonspiking IN→leg MN reaches up to ~5 mV; locust FETi→flexor at 12-24 mV is a MN→MN outlier.
+    - mV per synapse is ~0.1-0.3 (derived) in small, high-Rin central cells (KC Rin >10 GΩ). Leg MNs are 150-700 MΩ (Azevedo 2020), so they are expected at or below that band (inferred).
+  - **Verdict.** s 1 is consistent: low per synapse, as a leaky MN should be, and strong connections reach 1-5 mV. **s 16-25, the only scales with rates within ×3, are not consistent:**
+    - per synapse 0.34-0.53 mV, above the small-cell band;
+    - strong connections at 18-29 mV, beyond every measured interneuron→MN value;
+    - a single premotor spike fires about half the sampled MNs.
+  - So a rate-matching scale would be compensating for something else. In this harness the premotor layer is nearly silent: 0.13 Hz mean over 5314 cells during the drive, with the core giving one spike per cycle (F-BYPASS-4/5). That is the missing burst output.
+  - Proposed evidence bound, if the scale is ever refitted: s ≤ ~14 (0.3 mV per synapse). This is inferred, from the unchecked table, and replaces the guessed 25. Not adopted.
+- **Held-out recruitment order: NOT spent.** There is no s\*, and the pre-registration spends it at s\* only. 15 and 40 mV members were not looked at.

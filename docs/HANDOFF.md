@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 14 October 2026, 00:13 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
+**Rewritten each session; do not append.** State as of Wed 14 October 2026, 00:35 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
 
 **Bypass assay, nerve-cord side (s13, 13 Oct 21:30-23:14).** All results are committed. Read F-BYPASS-1 to F-BYPASS-4 and the DECISIONS entries from 21:41 onward (pre-registrations S2 21:41 and S3 22:09, calibration note 22:18, results 22:09 and 23:10, reference 23:13).
 - **S0 done:** `rest_vs_reference.py`. MBON14, P-EN and DN1a are low at rest. Queued behind the assay.
@@ -21,20 +21,37 @@
 - **Tools:** `scripts/probes/bypass_s2_descending.py`, `bypass_s3_chain.py` (network-only oscillator traces), `bypass_rasters.py` (repeat `--chain` for one V panel each), `bypass_sign_audit.py`, `bypass_lag_readout.py` (secondary lagged readout, never a pass), `bypass_sheet.py`. Runs are in `runs/s13/bypass/{s2,s3,pugliese_ref}` (Mac, gitignored). The backhouse S3 run is in `~/fly-m10f/runs/s13/bypass/s3/` (run.sh, done-files, ALL.done).
 - **S4 step 1 (F-BYPASS-5, DECISIONS 13 Oct 23:31).** At equal synapse counts our MNs need 14-25× more input than Pugliese's to reach threshold. Above threshold they have 0.17-0.22× the gain. Neither scale is measured. Azevedo 2020 has no fast or intermediate f-I curve, so the recruitment order (slow, then intermediate, then fast; measured, never fitted, **still unspent**) is the held-out check. Readout `scripts/probes/bypass_moddepth.py` (per-cycle depth, drive-dependence; `hi` band edge, default 15, S4b uses 16).
 - **S4a FAIL, all arms (F-BYPASS-6, DECISIONS 13 Oct 23:57; commit f86cc8a; viewed `docs/media/s13_bypass_s4a_{rasters,frames}.png`).** R `cell_type:leg_motor|between_type_size_exponent` 1.49 and G `cell_type:leg_motor|glutamate_receptor_sign` +1, plus RG: 0 transfer-pass pools in 9 runs, no antagonist pair. R and G stay neutral switches (0). GPU R+G equivalence: reference member exact over 3000 steps.
-- **S4b RUNNING (pre-registration DECISIONS 14 Oct 00:12; Director's held decision as Ben).** It fits ONE shared quantity, `cell_type:leg_motor|synaptic_input_scale` (neutral 1, owner row `n5p_leg_mn_synaptic_input_scale`, bounds 1-25 guessed). Any chosen value is labelled **fitted**. Burstiness is NOT fitted (no measured range).
-  - Fit targets: Azevedo 2020 Fig 5—fig supp 1A (read off the plot; fast ≈ 1, intermediate ≈ 10, slow ≈ 60 Hz, averaged over spontaneous-movement trials) and S4a's pass with a 7-16 Hz band, at 25 mV only. Constraint: intermediate and fast silent at rest.
-  - Held out: recruitment order at s* across 15/25/40 mV. Do not look at 15/40 mV before s* is written into DECISIONS.
-  - Scripts: `scripts/probes/s4b_scale_sweep.py` (`check`: CPU switch vs GPU member; `sweep`: 10 scales × 3 drives, VNC-only GPU batch reproducing the harness) and `scripts/probes/s4b_score.py` (`fit`, then `heldout --scale s*`). Both were tested on smoke and synthetic data. The scorer was written before any S4b output existed.
-  - **Running on backhouse:** tmux `s4b`, `~/fly-m10f/runs/s13/bypass/s4b/run.sh`, started 00:13. Done-files: `check.done`, `sweep.done`, `ALL.done`. Keep-alive: `ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`, run from the Mac session; if WSL died, relaunch run.sh (it overwrites). The tmux session `crucible_s7_blobfine` is another project's; don't touch it.
+- **S4b FALSIFIED (F-BYPASS-7; DECISIONS 14 Oct 00:21 fit, 00:33 diagnostics; pre-registration 00:12).** It fitted one shared quantity, `cell_type:leg_motor|synaptic_input_scale` (neutral 1; owner row `n5p_leg_mn_synaptic_input_scale`), over 1-25. **s\* = none:**
+  - No scale gives an antagonist pair; candidate pairs fire in phase.
+  - Rates are within ×3 only at s 16-25.
+  - Nothing adopted; the scale stays neutral 1.
+  - **Recruitment order still unspent** (it is spent at s\* only). The 15/40 mV members were never looked at.
+  - Checks:
+    - GPU check exact;
+    - s1/25 mV member = CPU harness, exact;
+    - s25 body run = GPU member, exact.
+  - Viewed:
+    - `docs/media/s13_bypass_s4b_rasters_25mv.png`: one co-active ~12 Hz volley, no alternation, stops at drive-off;
+    - `..._s4b_frames.png`: thorax on the floor; legs splay at s 25 without stepping.
+  - **PSP check (Director):**
+    - `scripts/probes/s4b_unitary_psp.py`; literature `docs/research/s13_s4b_unitary_psp.md` (Sonnet, unchecked).
+    - The model gives 0.021 mV per synapse at s 1, linear in s.
+    - s 1 is consistent with measured insect unitary PSPs. s 16-25 is not: 0.34-0.53 mV per synapse, q90 connections at 18-29 mV, and one premotor spike fires about half the MNs.
+    - So rate-matching compensates for a near-silent premotor layer (0.13 Hz mean during drive). Proposed evidence bound s ≤ ~14 (inferred; not adopted).
+  - Scripts: `s4b_scale_sweep.py`, `s4b_score.py`, `s4b_unitary_psp.py`. Runs: `runs/s13/bypass/s4b/{,body,psp}` (Mac copy; backhouse `~/fly-m10f/runs/s13/bypass/s4b/`). Nothing is running on backhouse.
+- **Where the break is now:**
+  - The core's output: one spike per cycle; the premotor layer is near-silent.
+  - I1 never fires, so the stance antagonists get no rhythmic inhibition.
+  - The MN-side gain is ruled out: R, G and the scale all failed.
 - **Next, in order:**
-  1. When ALL.done exists, copy `runs/s13/bypass/s4b/` to the Mac.
-     - Read `gpu_check.json`: input gains must be bit-identical, and spikes must agree within 1%, or the sweep is void.
-     - Compare the s1/25 mV member's pool_rate with `runs/s13/bypass/s2/s2_DNg100_25mv_traces.npz`.
-     - Then `s4b_score.py fit`. Write s* and the verdict into DECISIONS **before** `heldout`.
-     - Then `heldout`, rasters at s* (all drives), and one CPU harness run with the body at s*, 25 mV (`bypass_s2_descending.py --set cell_type:leg_motor|synaptic_input_scale=<s*>`). View, write F-BYPASS-7, commit.
-  2. **Ben's list (keep whatever S4b gives):** (a) a unitary premotor→leg-MN PSP recording, which would replace the fitted scale with a measured one; (b) an E1/E2 (core) burst recording during walking, which would give burstiness a range.
-  3. The tonic tibia-flexor drive (fitted spontaneous drive of 35.55 mV against a 26.2 mV gap, 23 Hz) is a separate MN-layer issue.
-  5. S4 proper: proprioceptive replay, closed loop, delays.
+  1. **I1 recruitment, a data audit (no fit).** E2→I1 is 38 synapses here against 71 in MANC (F-BYPASS-3). Check IN16B036's input completeness in male-cns against MANC (postsynapse counts, the proofreading status of its partners, and the inclusion policy). Is the deficit reconstruction or biology? Write a pre-registration before any change.
+  2. **S4 proper: proprioceptive replay and closed loop.** Insect antagonist switching depends on load and position feedback (Büschges; needs a cited range). Pre-register whether feedback produces alternation at s 1.
+  3. **Ben's list (unchanged by S4b):**
+     - (a) a unitary premotor→leg-MN PSP recording, which would bound the scale by measurement;
+     - (b) an E1/E2 (core) burst recording during walking, which would give burstiness a range;
+     - also Seki 2010 and Choi 2004 (paywalled).
+  4. The tonic tibia-flexor drive (fitted spontaneous drive of 35.55 mV against a 26.2 mV gap, 23 Hz) is a separate MN-layer issue. It is the "slow" class in every S4b row.
+  5. Then the queued mechanism work (session 13 list below).
 
 **Session 13: where it stopped (13 Oct 21:31).** Brief (Thu 8 Oct): build the frontier profile m10f, with every built mechanism ON at an in-range value. Adoption needs a 60 s smoke (no runaway, no NaN, resting rates in range) plus the silence gate with eye cells excluded. m9c stays the reference. Mechanisms in order: (1) per-type intrinsic dynamics from a range table, (2) membrane noise, (3) neuromodulation with receptor effects, (4) standing via one fitted shared support drive, with the fall after silencing held out.
 - **Committed 13 Oct:** bfc5751 class-grain adaptation (N4, neutral); 258b502 m10f0 profile and gate changes; fabdabb probes `smoke_live.py` and `adapt_fit.py`; 7fa4fb1 research tables `docs/research/s13_intrinsic_ranges.csv` (118 rows) and `s13_neuromodulation_effects.csv` (63 rows), both agent-gathered and not yet checked row by row. `tests/test_class_mechanisms.py` 14 passed, `tests/test_repo_hygiene.py` 12 passed. Nothing in the tree was fly2's.
@@ -75,7 +92,7 @@
 - **Backhouse:**
   - Private checkout `~/fly-m10f` (data/raw, cache and .venv symlinked to `~/fly-emulation`). Sync with `COPYFILE_DISABLE=1 tar --no-xattrs -cf - src scripts tests data/model | ssh backhouse 'wsl -d Ubuntu -- bash -c "tar -x -C ~/fly-m10f"'`.
   - WSL needs a keep-alive (`ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`) or tmux jobs die.
-  - Bypass jobs: none running (S2, S3 and the Pugliese reference are all collected). The keep-alive was stopped at session end. `/home/greff` holds Ben's other project; don't touch it. Keep memory headroom: each probe process takes about 2.4 GB, others use about 24 GB.
+  - Bypass jobs: none running (S2, S3, S4a, S4b and the Pugliese reference are all collected). The keep-alive was stopped at session end. `/home/greff` holds Ben's other project; don't touch it. Keep memory headroom: each probe process takes about 2.4 GB, others use about 24 GB.
 
 **Session 12 (4 October 16:36 to 22:31, then 5 October from 02:05):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9c** (adopted 5 October 23:53; m9r before it, adopted 03:31; m9f 02:51). m9c = m9r + the N26 clock drive fitted to DN1p day-night firing (`state:coupling|clock_gain` 7.75, fitted) + the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`, sourced); F-CLOCK-1, DECISIONS 23:34-23:53. Gate, battery and sheet are unchanged from m9r; the clock cells now fire (DN1p about 4 Hz) and reach no motor neuron. flyapp's library runs m9r (differs only in the clock; Director's call). m9r's lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons; F-NONLEG-2) → m9f (folded wings resting on the abdomen; F-WING-5) → m9r (left leg rest angles mirrored from the right legs, the measured side; F-STAND-3 side note). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted. Since 5 October 21:40 m9r itself carries `motor_unit:all|force_per_spike` 10 (guessed), the value every gate ran with by `--set`; the name now means the gated model (DECISIONS 21:27, battery passed). Earlier profiles still need the `--set`.
@@ -375,7 +392,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | seen (s13 fly2, F-GJ-4; not used to set any value) | if it sets a value, it can no longer validate |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
-| Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out** for S4b s* (unspent) | score once, via `s4b_score.py heldout`, after s* is written down |
+| Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
 
 ## Things that will bite you
 

@@ -1224,3 +1224,24 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Predictions:** G, "more MN drive, tonic not rhythmic": confirmed (leg MN 6.2 Hz at 40 mV, against 4.7 in R). R: the promotor and remotor loss was right; the trochanter-flexor gain was wrong before the run (0.88, not ~2×).
 - **Held-out recruitment order: not computed, not spent.** The harness saves pool rates, not per-MN spikes, and no arm passed the primary criterion. It stays held out for S4b.
 - **Reading (the falsifier, as registered):** per-type MN properties and the glutamate sign are not the break. What remains is the premotor→MN scale (14-25×, F-BYPASS-5) and the core's single-spike output; neither has a measured value. S4b (Director decision, as Ben, 13 Oct) fits the scale only, as a bounded shared quantity. Burstiness stays unfitted.
+
+### F-BYPASS-7: S4b is falsified. No premotor→leg-MN scale in 1-25 carries the core's rhythm as alternation, and the scales that match MN rates imply implausibly large unitary PSPs (s13, 14 Oct 00:21-00:33; DIAGNOSTIC, forced drive; no adoption)
+- **Runs:** 10 scales × 3 drives on the backhouse GPU (`runs/s13/bypass/s4b/`).
+  - GPU check exact: bit-identical gains, 957 = 957 spikes.
+  - The s1/25 mV member equals the CPU harness exactly; so does s25/25 mV with the body.
+- **Fit** (25 mV only; `s4b_score.py fit`, `fit.json`): **s\* = none.**
+  - Intermediate and fast are silent at rest at every s.
+  - Rates come within ×3 only at s 16-25 (intermediate 3.8-5.8 Hz, fast 2.3-4.4 Hz). Slow stays at the tonic 21-23 Hz tibia-flexor line at every s.
+  - Transfer-pass pools rise from 0 to 14, but there is **no antagonist pair at any s**. The candidate pairs fire in phase (r0 +0.03 to +0.82).
+- **Viewed:**
+  - Rasters `docs/media/s13_bypass_s4b_rasters_25mv.png`: one co-active ~12 Hz volley per cycle, clear at s ≥ 12, which stops at drive-off.
+  - Frames `docs/media/s13_bypass_s4b_frames.png`: the thorax is on the floor; at s 25 the legs splay without stepping.
+- **PSP check:** `s4b_unitary_psp.py`; table in DECISIONS 14 Oct 00:33; literature `docs/research/s13_s4b_unitary_psp.md` (Sonnet, unchecked).
+  - At s 1: 0.021 mV per synapse; a median connection gives 0.25 mV and a q90 connection 1.1 mV. Consistent with measured insect values, at the leaky end.
+  - At s 16-25: 0.34-0.53 mV per synapse; a q90 connection gives 18-29 mV; one premotor spike fires 41-54% of sampled MNs. Not consistent: above the 0.1-0.3 mV per synapse of small high-Rin Drosophila central cells, and above every measured interneuron→MN PSP (≤ ~5 mV, locust; larval −2.8 mV).
+- **Reading:**
+  - The MN-side gain is not the break. A biologically sized scale gives near-silent MNs.
+  - A rate-matching scale compensates for a premotor layer that is nearly silent: 0.13 Hz mean during drive, with the core giving one spike per cycle.
+  - Alternation is absent at every gain, because the stance antagonists get no rhythmic inhibition (I1 silent, F-BYPASS-3/4).
+  - The break is the core's burst output and I1's recruitment. Neither has a measured range yet (Ben's list: an E1/E2 burst recording; a unitary premotor→MN PSP).
+- **Held-out recruitment order: still unspent.**
