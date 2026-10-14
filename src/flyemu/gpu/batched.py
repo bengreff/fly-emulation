@@ -129,9 +129,9 @@ class BatchedNetwork:
         if getattr(net, "stp", None) is not None:
             raise NotImplementedError("N29 per-connection short-term plasticity is not ported")
         if getattr(p, "fv_edge", None) is not None:
-        raise NotImplementedError("flyvis pair strengths (optic_lobe_flyvis_pair_strength) are CPU-only "
-                                  "until a GPU equivalence check (s14)")
-    if getattr(p, "psp_edge", None) is not None:
+            raise NotImplementedError("flyvis pair strengths (optic_lobe_flyvis_pair_strength) are CPU-only "
+                                      "until a GPU equivalence check (s14)")
+        if getattr(p, "psp_edge", None) is not None:
             raise NotImplementedError("measured unitary PSPs (unitary_psp_from_recordings) are CPU-only "
                                       "until a GPU equivalence check (s14)")
         ich = getattr(net, "ich", None)
