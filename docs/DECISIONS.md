@@ -2747,3 +2747,9 @@ Run finished 04:43 (backhouse, 543 s; `runs/s12/vision/grating_v0r.json`, md5 ch
 
 **Next block: motor-pathway bypass and rescue assay before more mechanism work** (Director, from brainstorm 13 Oct B and F). Stages S1 actuation, S2 descending drive, S3 graded release and signs, S4 feedback; each pre-registered in one line with a pass criterion. Output: a failure-localisation report. Forced drive is a diagnostic, not emergent walking. The mushroom body at 0 Hz waits behind it.
 
+
+### Pre-registration S1, actuation with the CNS bypassed (13 October, 21:36, before any run)
+`bypass_s1_actuation.py`, m10f0, adhesion 1, 3 s, patterns support/coact at activation 0-1 (DIAGNOSTIC, forced drive). **Pass:** at some activation ≤ 0.5 (plausibility bound guessed), the thorax origin stays ≥ 0.9 mm (standing ≈ 1.0 mm, inferred from Wang 2025), sinks < 0.05 mm over the last 2 s, the leg floor force is 0.8-1.2× body weight, and the trunk never touches the floor. **Fail** localises to the static audit (unmapped muscles or MNs, moment arm, force-length at pose) or to contact.
+
+### Pre-registration S2, descending drive with the brain off (13 October, 21:41, before any run)
+`bypass_s2_descending.py`, m10f0, brain silenced (non-VNC output removed), senses off, thorax tethered 1 mm up; constant drive 300-1300 ms into DNg100 at 10/15/25/40 mV, then DNb08 (Pugliese's second pathway), DNg97 (oDN1) and DNa02 (DIAGNOSTIC, forced drive). **Pass:** at a drive keeping the driven DNs ≤ 200 Hz (bound guessed), some leg MN pool has an MN with rhythm excess > 0.10 at 4-25 Hz (F-RHYTHM-1 score) and is anti-correlated with its antagonist pool (r ≤ −0.3, 20 ms smoothing; Pugliese 2025's within-leg readout) or with its left-right mate. Reference: Pugliese 2025 rate model, about 7-15 Hz; Bidaye 2020 air-stepping about 11 Hz (secondary source). A fail is localised along the recorded chain: DN rate, premotor recruitment, MN rate, activation.
