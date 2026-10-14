@@ -1,4 +1,4 @@
-"""Write the per-circuit-class N3/N5 rows of data/model/parameters.csv (session 10).
+"""Write the per-circuit-class N2-N5 rows of data/model/parameters.csv (session 10).
 
 One row per (circuit class, property) for the four class-grain properties that
 lif._class_scales reads (registry keys `class:<circuit_class>|<property>`).
@@ -41,12 +41,19 @@ SPEC = {
                     "tau_m 5-50 ms around the 20 ms default (measured 15.5-16.6 ms in slow MNs, "
                     "F-AZ-2; central neurons ~10-30 ms)", "lognormal", 1, 0.4, 1,
                     "neutral (m4): the shared 20 ms"),
+    "adaptation_mv": ("N4", "n4c_adapt", "mV", 0, 10, "guessed",
+                      "as the global row n4_adapt_inc; fitted per class to a recorded adaptation ratio "
+                      "where one exists (s13)", "uniform", "", "", 1,
+                      "neutral (m4): no adaptation beyond the per-type rows"),
+    "adaptation_tau_scale": ("N4", "n4c_atau", "dimensionless", 0.25, 5, "guessed",
+                             "adaptation decay 50-1000 ms around the 200 ms default", "lognormal", 1, 0.5, 1,
+                             "neutral (m4): the shared 200 ms"),
 }
 
 
 def main():
     par = pd.read_csv(PAR, dtype=str, keep_default_na=False)
-    par = par[~par.param_id.str.match(r"^(n2c|n3c|n5c)_")]
+    par = par[~par.param_id.str.match(r"^(n2c|n3c|n4c|n5c)_")]
     cls = pd.read_csv(CLS, keep_default_na=False)
     cc = cls.groupby("circuit_class").n_cells.sum()
     rows = []

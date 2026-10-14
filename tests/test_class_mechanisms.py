@@ -73,11 +73,24 @@ def test_every_circuit_class_has_its_bounded_rows():
     cc = set(pd.read_csv(REPO / "data/model/classes.csv", keep_default_na=False).circuit_class)
     p = md.parameters
     for prop in ("release_scale", "input_scale", "tonic_drive", "noise", "threshold_offset",
-                 "tau_m_scale"):
+                 "tau_m_scale", "adaptation_mv", "adaptation_tau_scale"):
         keys = set(p.registry_key[p.registry_key.str.endswith(f"|{prop}")
                                   & p.registry_key.str.startswith("class:")])
         assert keys == {f"class:{c}|{prop}" for c in cc}, prop
     assert M.validate(md) == []
+
+
+@needs_graph
+def test_class_adaptation_is_neutral_by_default_and_acts_on_that_class_only():
+    """N4 at class grain (s13): neutral leaves adaptation off; a class value adds to that class only."""
+    from flyemu.lif import circuit_classes
+    base = _org()
+    assert not base.net._any_adapt
+    on = _org(**{"class:DN|adaptation_mv": 0.5, "class:DN|adaptation_tau_scale": 2.0})
+    dn = circuit_classes(on.conn) == "DN"
+    assert on.net._any_adapt and np.all(on.net.adapt_mv[dn] == 0.5) and not on.net.adapt_mv[~dn].any()
+    da = np.exp(-on.net.timestep_ms / (200.0 * 2.0))
+    assert np.allclose(on.net.decay_a[dn], da) and np.allclose(on.net.decay_a[~dn], base.net.decay_a[~dn])
 
 
 @needs_graph

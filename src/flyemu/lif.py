@@ -276,6 +276,34 @@ def _class_scales(reg: Registry, conn: Connectome, rel, inp, spont):
     return rel, inp, spont, noise, tonic, vals["threshold_offset"], vals["tau_m_scale"]
 
 
+CLASS_ADAPT_PROPS = (  # s13 (frontier stage 1): N4 at class grain, same keys and bounds file as CLASS_PROPS
+    ("adaptation_mv", "mV", 0.0, "N4: spike-frequency adaptation increment per spike, added to the per-type value"),
+    ("adaptation_tau_scale", "dimensionless", 1.0, "N4: adaptation decay time scale of every cell in the class"),
+)
+
+
+def _class_adaptation(reg: Registry, conn: Connectome, adapt, tau_adapt):
+    """N4 at class grain (s13): one registry value per (circuit class, property), `class:<c>|adaptation_mv`
+    added to the per-type increment and `class:<c>|adaptation_tau_scale` multiplying the per-type decay.
+    Neutral values (0, 1) return the per-type values unchanged."""
+    cls = circuit_classes(conn)
+    names, idx = np.unique(cls, return_inverse=True)
+    vals = {}
+    for prop, units, neutral, use in CLASS_ADAPT_PROPS:
+        vals[prop] = np.array([reg.require(
+            f"class:{c}", prop, units=units, model_use=use, subsystem="neuron_biophysics",
+            instances=int((idx == k).sum()), minimal=neutral, conventional=neutral,
+            minimal_note=f"neutral ({neutral}): the class adds nothing to the per-type values",
+            uncertainty="class grain from data/model/classes.csv circuit_class; value fitted to a recorded "
+                        "adaptation ratio where one exists, bounded in data/model/parameters.csv")
+            for k, c in enumerate(names)], dtype=np.float32)[idx]
+    if vals["adaptation_mv"].any():
+        adapt = np.asarray(adapt, np.float32) + vals["adaptation_mv"]
+    if (vals["adaptation_tau_scale"] != 1.0).any():
+        tau_adapt = np.asarray(tau_adapt, np.float32) * vals["adaptation_tau_scale"]
+    return adapt, tau_adapt
+
+
 def _class_modes(reg: Registry, conn: Connectome, graded: np.ndarray) -> np.ndarray:
     """N1 (s10): the spiking/graded mode of classes whose mode is unknown
     (classes.csv mode = unknown) is one Bernoulli unknown per group (mode_param
@@ -444,6 +472,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
             arr[fin] = alt[fin]
     # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
+    adapt, tau_adapt = _class_adaptation(reg, conn, adapt, tau_adapt)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
     tau_m = (np.asarray(tau_m, np.float32) * tm_scale).astype(np.float32)
     # s12 vision gain (DECISIONS 6 Oct): graded release spans the type's recorded response amplitude
