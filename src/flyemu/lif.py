@@ -327,6 +327,24 @@ def _class_modes(reg: Registry, conn: Connectome, graded: np.ndarray) -> np.ndar
     return out
 
 
+FLYVIS_TABLE = ptable.TABLE.with_name("cell_types_flyvis.csv")
+
+
+def _optic_lobe_flyvis(reg: Registry, conn: Connectome, table: pd.DataFrame) -> dict:
+    """fly2 (s13, DECISIONS 13 Oct): per-type optic-lobe values read out of the 50 published flyvis networks
+    (Lappalainen et al. 2024; data/params/cell_types_flyvis.csv, scripts/vision/flyvis_rows.py), all fitted
+    (inferred): graded mode, effective time constant and release at rest. Each quantity fills only the cells
+    whose type has no row of its own for it in cell_types.csv. Arrays are NaN outside the mapped types; `own_*`
+    marks cells with their own row."""
+    fvt = ptable.load(FLYVIS_TABLE)
+    out = {}
+    for prop, own, units in (("graded", "graded", "boolean"), ("tau_m", "tau_m", "ms"),
+                             ("release_at_rest", "release_at_rest", "fraction of graded_rmax")):
+        out[prop] = ptable.per_neuron(reg, conn, prop + "_flyvis", np.nan, units=units, table=fvt)
+        out["own_" + prop] = np.isfinite(ptable.per_neuron(reg, conn, own, np.nan, units=units, table=table))
+    return out
+
+
 def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LIFParams:
     """Shared defaults (registry-labelled) overwritten by per-type table rows."""
     n = conn.n
@@ -431,6 +449,11 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
+    fv = None
+    if one("optic_lobe_flyvis", "boolean", "per-type optic-lobe mode, time constant and release at rest "
+           "from the flyvis ensemble", 0.0, "neutral 0: no flyvis rows read"):
+        fv = _optic_lobe_flyvis(reg, conn, table)
+        graded = graded | ((fv["graded"] > 0.5) & ~fv["own_graded"])   # recorded modes still win below
     # s12 vision blank (DECISIONS 6 Oct): per-type mode from recordings (cell_types.csv
     # graded_rec rows, 1 graded, 0 spiking) overrides the class groups for those types only
     if one("mode_from_recordings", "boolean", "per-type spiking/graded mode from recordings", 0.0,
@@ -449,12 +472,19 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     graded_r0 = np.where(ol_graded, np.float32(r0), np.float32(0.0)) if r0 else None
     # s12 vision Mi1/Tm3 block (DECISIONS 6 Oct): per-type release at rest (release_at_rest rows)
     # replaces the class value for the graded cells of those types only
+    own_r0 = np.zeros(conn.n, bool)
     if one("release_at_rest_per_type", "boolean", "per-type graded release at rest from rows", 0.0,
            "neutral 0: one class value for the optic-lobe graded interneurons"):
         rt = ptable.per_neuron(reg, conn, "release_at_rest", np.nan, units="fraction of graded_rmax",
                                table=table)
         base_r0 = graded_r0 if graded_r0 is not None else np.zeros(conn.n, np.float32)
         graded_r0 = np.where(graded & np.isfinite(rt), rt, base_r0).astype(np.float32)
+        own_r0 = np.isfinite(rt)
+    if fv is not None:   # flyvis release at rest for graded cells of the mapped types, where no active own row
+        use = graded & np.isfinite(fv["release_at_rest"]) & ~own_r0
+        if use.any():
+            base_r0 = graded_r0 if graded_r0 is not None else np.zeros(conn.n, np.float32)
+            graded_r0 = np.where(use, fv["release_at_rest"], base_r0).astype(np.float32)
     spont = per("spontaneous_drive", "mV", "tonic drive (spontaneous activity)",
                 0.0, "declared default: no tonic drive")
     rel = per("release_gain", "dimensionless", "presynaptic release strength",
@@ -474,6 +504,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
     adapt, tau_adapt = _class_adaptation(reg, conn, adapt, tau_adapt)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
+    if fv is not None:   # flyvis effective time constant for the mapped types without a tau_m row; class scale kept
+        tau_m = np.where(np.isfinite(fv["tau_m"]) & ~fv["own_tau_m"], fv["tau_m"], tau_m)
     tau_m = (np.asarray(tau_m, np.float32) * tm_scale).astype(np.float32)
     # s12 vision gain (DECISIONS 6 Oct): graded release spans the type's recorded response amplitude
     # (cell_types.csv graded_range_rec rows) instead of rest to threshold (7 mV in the optic lobe, guessed)

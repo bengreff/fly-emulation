@@ -307,3 +307,40 @@ def test_release_at_rest_per_type_is_neutral_by_default_and_sets_only_the_rows(m
     assert np.allclose(on.params.graded_r0[l1], 0.25)
     assert np.array_equal(on.params.graded_r0[~l1], base.params.graded_r0[~l1])
     assert np.array_equal(on.w, base.w) and np.array_equal(on.graded, base.graded)
+
+
+@needs_graph
+def test_optic_lobe_flyvis_is_neutral_by_default_and_fills_only_types_without_own_rows(monkeypatch, tmp_path):
+    import pandas as pd
+    from flyemu import lif
+    org = _org()
+    base = org.net
+    inv = org.reg.inventory()
+    assert not inv.property.isin(["graded_flyvis", "tau_m_flyvis", "release_at_rest_flyvis"]).any()
+    rows = pd.read_csv(lif.FLYVIS_TABLE)
+    assert set(rows.basis) == {"inferred"} and rows.source.str.contains("Lappalainen").all()
+    fv = rows.pivot(index="type", columns="param", values="value")
+    extra = tmp_path / "rows.csv"   # an own tau_m row (C3) and an own release_at_rest row (Mi4) win
+    extra.write_text("type,param,value,units,basis,source,justification\n"
+                     "C3,tau_m,12.0,ms,inferred,test,test row\n"
+                     "Mi4,release_at_rest,0.1,fraction of graded_rmax,inferred,test,test row\n")
+    monkeypatch.setenv("FLYEMU_EXTRA_PARAMS", str(extra))
+    on = _org(**{"cell_type:all|optic_lobe_flyvis": 1.0, "cell_type:all|release_at_rest_per_type": 1.0}).net
+    ty = on.conn.neurons.type.fillna("").reset_index(drop=True)
+    for t in ("Mi4", "Mi9", "C3", "CT1", "Tm9"):
+        m = ty.eq(t).to_numpy()
+        assert m.sum() > 0 and on.graded[m].all(), t
+    c2, c3, mi4, mi9 = (ty.eq(t).to_numpy() for t in ("C2", "C3", "Mi4", "Mi9"))
+    assert np.allclose(on.params.tau_m[c2], fv.loc["C2", "tau_m_flyvis"])
+    assert np.allclose(on.params.tau_m[c3], 12.0)
+    assert np.allclose(on.params.graded_r0[mi9], fv.loc["Mi9", "release_at_rest_flyvis"])
+    assert np.allclose(on.params.graded_r0[mi4], 0.1)
+    mapped = np.zeros(on.conn.n, bool)
+    for t in fv.index:
+        mapped |= (ty.str.match(t) if t.startswith("^") else ty.eq(t)).to_numpy()
+    assert np.array_equal(on.params.tau_m[~mapped], base.params.tau_m[~mapped])
+    assert np.array_equal(on.graded[~mapped], base.graded[~mapped])
+    # spike weights change only on the outputs of cells that became graded (graded cells do not spike-transmit)
+    pre = np.repeat(np.arange(on.conn.n), np.diff(on.conn.indptr))
+    same = (on.graded == base.graded)[pre]
+    assert np.array_equal(on.w[same], base.w[same]) and (on.w[~same] == 0).all()

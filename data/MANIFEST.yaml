@@ -242,3 +242,11 @@ flymimic_front_leg:
   fetched: already installed; extracted 2026-09-27 (session 9)
   local_path: data/params/flymimic_mtu.csv (15 left-front-leg MTUs; F0 in uN, file units g/mm/s)
   role: B4 muscle parameters for the flybody antagonist pairs (task 5); label inferred (fitted to kinematics)
+
+flyvis_lappalainen2024:
+  name: "Lappalainen et al. 2024 Nature 634:1132 (doi 10.1038/s41586-024-07939-3), flyvis connectome-constrained visual system models"
+  version: "flyvis 1.2.0 wheel (PyPI, sha256 af365b16e870111fcb06782a063f6551b05cce9a105c6eaab9c0bda3b017031f; connectome spec fib25-fib19_v2.2.json inside); results_pretrained_models.zip from the authors' Google Drive folder via flyvis_cli/download_pretrained_models.py (sha256 71c78d4070556a536b13b23ee3139cd2788aa2a9d07d430a223b4edead281db1), ensemble flow/0000, 50 networks; fetched 2026-10-08"
+  license: "MIT (data/raw/flyvis_lappalainen2024/license.txt)"
+  local: "data/raw/flyvis_lappalainen2024/ (wheel, zip, extracted results/)"
+  basis: "inferred (fitted): per-type time constants and biases and per-type-pair synapse strengths of task-trained networks (optic flow on Sintel), synapse counts from the FIB-25/FIB-19 connectome; voltages in arbitrary units"
+  use: "scripts/fetch/flyvis_*.py and scripts/vision/flyvis_*.py (numpy re-implementation, no torch); data/derived/flyvis_lappalainen2024_*.csv; data/params/cell_types_flyvis.csv (52 types, read only by cell_type:all|optic_lobe_flyvis); the Tm2 time constant is left out (conflicts with Behnia 2014)"
