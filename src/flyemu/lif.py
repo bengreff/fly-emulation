@@ -139,11 +139,15 @@ class LIFParams:
     # s14 (fly2): measured unitary PSP per identified connection from data/params/unitary_psp.csv:
     # {"idx", "psp_mv"} (CSR edge order, signed peak mV); None = every edge from the shared scale
     psp_edge: dict | None = None
+    # s14 (fly2): flyvis type-pair strengths (data/params/flyvis_pair_strength.csv), fitted to a task:
+    # {"idx", "alpha"} (CSR edge order, voltage gain per synapse); None = every edge from the shared scale
+    fv_edge: dict | None = None
 
 
 STP_TABLE = "stp_connections.csv"
 KIN_TABLE = "receptor_kinetics.csv"
 PSP_TABLE = "unitary_psp.csv"
+FV_PAIR_TABLE = "flyvis_pair_strength.csv"
 
 
 def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
@@ -222,6 +226,52 @@ def _unitary_psp(reg: Registry, conn: Connectome) -> dict | None:
                     instances=int(m.sum()), uncertainty=r.note, method=r.condition)
     idx = np.flatnonzero(row >= 0)
     return {"idx": idx, "psp_mv": tab.psp_mv.to_numpy(np.float64)[row[idx]]}
+
+
+
+def _flyvis_pairs(reg: Registry, conn: Connectome) -> dict | None:
+    """s14 (fly2, DECISIONS 13 Oct 22:53): flyvis type-pair strengths (Lappalainen et al. 2024), or None.
+    flyvis gives a cell of type t the input sign x n_syn x alpha_st x relu(V_s) from a type-s cell, so
+    alpha is a fitted voltage gain per synapse (task-trained, not physiology). Each read row (use = 1) is
+    returned per edge between cells of its two types; Network._flyvis_pair_weights converts it for graded
+    presynaptic cells. Selectors must be disjoint, so each cell belongs to at most one row type."""
+    from pathlib import Path
+    if not reg.require(
+            "cell_type:all", "optic_lobe_flyvis_pair_strength", units="boolean",
+            model_use="flyvis type-pair strengths (fitted, task-trained; data/params/flyvis_pair_strength.csv) "
+                      "replace the shared per-synapse scale on optic-lobe edges from graded cells",
+            subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: every edge from synapse count x the shared efficacy and gains"):
+        return None
+    path = Path(__file__).resolve().parents[2] / "data" / "params" / FV_PAIR_TABLE
+    tab = pd.read_csv(path, comment="#")
+    tab = tab[tab.use == 1].reset_index(drop=True)
+    sels = sorted(set(tab.pre) | set(tab.post))
+    code = np.full(conn.n, -1, np.int32)
+    for k, sel in enumerate(sels):
+        m = _stp_cells(conn.neurons, sel)
+        if (code[m] >= 0).any():
+            raise ValueError(f"{FV_PAIR_TABLE}: selector {sel} overlaps {sels[code[m][code[m] >= 0][0]]}")
+        code[m] = k
+    alpha = np.full((len(sels), len(sels)), np.nan)
+    alpha[tab.pre.map(sels.index), tab.post.map(sels.index)] = tab.alpha
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    cp, cq = code[pre], code[conn.indices]
+    on = (cp >= 0) & (cq >= 0)
+    a = np.full(conn.n_edges, np.nan)
+    a[on] = alpha[cp[on], cq[on]]
+    idx = np.flatnonzero(np.isfinite(a))
+    sgn = dict(zip(zip(tab.pre.map(sels.index), tab.post.map(sels.index)), tab.flyvis_sign))
+    flip = sum(np.sign(conn.sign[pre[e]]) != sgn[(cp[e], cq[e])] for e in idx)
+    reg.provide("cell_type:optic_lobe_pairs", "flyvis_pair_strength", float(np.median(tab.alpha)),
+                units="mV/mV per synapse", model_use="voltage gain per synapse per type pair (sets the edge "
+                "weight of graded presynaptic cells); the value is the median over read rows",
+                status=Status.INFERRED, evidence="Lappalainen et al. 2024 flyvis ensemble (50 networks); "
+                + FV_PAIR_TABLE, subsystem="synaptic_efficacy", instances=int(idx.size),
+                uncertainty=f"per-row quartiles in the table; {int(on.sum() - idx.size)} edges between mapped "
+                f"types have no flyvis pair and keep the shared scale; {int(flip)} edges carry a sign other "
+                "than flyvis's (our sign kept)", method="fitted (flyvis, task-trained)")
+    return {"idx": idx, "alpha": a[idx]}
 
 
 def _stp_connections(reg: Registry, conn: Connectome) -> dict | None:
@@ -525,6 +575,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
     kin_edge = _receptor_kinetics(reg, conn)   # s13 (N29); None at neutral
     psp_edge = _unitary_psp(reg, conn)   # s14 (fly2); None at neutral
+    fv_edge = _flyvis_pairs(reg, conn)   # s14 (fly2); None at neutral
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
@@ -802,7 +853,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
-        intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge,
+        intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge, fv_edge=fv_edge,
         psp_edge=psp_edge,
     )
 
@@ -855,6 +906,7 @@ class Network:
         self.w = (self.conn.sign[pre] * self.conn.efficacy_mv * self.conn.weight_syn
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
+        self._flyvis_pair_weights(pre)
         self._unitary_psp_weights()
         self._slow_channels(pre)
         self._kinetic_channels(pre)
@@ -1333,6 +1385,32 @@ class Network:
             self.w[e] = 0.0
             self.chan.append(dict(name=f"kin{t:g}", w=ws, buf=np.zeros((self.D, n), np.float32),
                                   i=np.zeros(n, np.float32), vdep=False, decay=dc, kin=True))
+
+    def _flyvis_pair_weights(self, pre: np.ndarray) -> None:
+        """s14 (fly2): give each flyvis pair edge from a graded cell the weight whose steady-state voltage
+        gain (post mV per pre mV, on the linear part of release) is flyvis's alpha x synapse count. Our
+        graded release adds w g_k (1 - r0) / range x rmax dt per step per mV, held at tau_s, so
+        w = alpha n range (1 - e^(-dt/tau_s,post)) / (g_k (1 - r0) rmax dt). Our sign is kept. Validity:
+        presynaptic voltage between rest and the end of its release range (flyvis' relu has no ceiling);
+        spiking presynaptic cells keep the shared scale (no voltage-gain reading); release and input
+        gains are replaced on these edges. Conductance synapses convert this weight like any other, so
+        the gain holds at the reference voltage with no other conductance open; tonic conductance shunts
+        it (scripts/vision/flyvis_pair_check.py reports the in-network gain)."""
+        fe = self.params.fv_edge
+        if fe is None or not len(fe["idx"]):
+            return
+        p, n, dt = self.params, self.conn.n, self.timestep_ms
+        keep = self.graded[pre[fe["idx"]]]
+        idx, j = fe["idx"][keep], pre[fe["idx"][keep]]
+        post = self.conn.indices[idx]
+        rng = (self.v_th - self.v_rest if p.graded_range is None else _arr(p.graded_range, n))[j]
+        r0 = np.zeros(idx.size) if p.graded_r0 is None else _arr(p.graded_r0, n, np.float64)[j]
+        gk = np.ones(idx.size) if p.graded_k is None else _arr(p.graded_k, n, np.float64)[j]
+        ds = np.exp(-dt / _arr(p.tau_s, n, np.float64)[post])
+        gain = fe["alpha"][keep] * self.conn.weight_syn[idx]
+        self.w[idx] = (np.sign(self.conn.sign[j]) * gain * rng * (1.0 - ds)
+                       / (gk * (1.0 - r0) * p.graded_rmax_hz * dt / 1000.0)).astype(np.float32)
+        self.fv_spiking_pre = int((~keep).sum())   # flyvis pairs left at the shared scale
 
     def _unitary_psp_weights(self) -> None:
         """s14 (fly2): set each unitary_psp.csv edge to the weight whose PSP peak in the passive
