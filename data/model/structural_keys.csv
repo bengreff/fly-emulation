@@ -74,6 +74,7 @@ muscle:leg|coxa_model,B4,switch,Hill mode: 0 per-DOF coxa pairs (s9) / 1 anatomi
 muscle:leg|optimum_join,B4,switch,Hill mode: leg muscle force-length optimum at the flybody zero pose (0; s9) or FlyMimic optimum joined by interior segment angle (1; data/derived/leg_muscle_optimum_join.csv; s11)
 muscle:leg|ft_flexor_scale,B4,switch,read only in Hill mode; value row b4_ft_flexor_scale (1 = FlyMimic flexor F0 as shipped)
 muscle:leg|midhind_source,B4,switch,"read only in Hill mode; 0 mid/hind muscles copy the front leg (guessed) / 1 front-leg FlyMimic members scaled by measured segment size on the flybody mesh (inferred; data/params/leg_muscle_midhind_scale.csv; F-MUSCLE-MH-1) (s12)"
+muscle:leg|tita_specific_tension,B4,switch,"read only in Hill mode; 0 the guessed tibia-tarsus placeholder (F0 20 uN, r 0.01 mm) / > 0 F0 = flybody tibia mid-third cross-section x this specific tension (mN/mm^2), r = half the distal tibia width, L0 scaled with r (inferred upper bound; value row b4_tita_specific_tension; s13 fly2 S1 fix 2)"
 jump:ttm|exclude_from_hill,B15,switch,"read only when jump:ttm|model = 1 and Hill mode; 0 TTMn is in the mid CTr extensor Hill pool and drives the TTM hook (counted twice; weight share 4-5%) / 1 TTMn drives the TTM hook only (s12; F-MUSCLE-MH-1)"
 motor_unit:leg|fatigue_fraction,B5,switch,read only in Hill mode; value row b5_fatigue_fraction (0 = no fatigue)
 motor_unit:leg|fatigue_tau_ms,B5,switch,read only in Hill mode with fatigue_fraction > 0; value row b5_fatigue_tau_ms

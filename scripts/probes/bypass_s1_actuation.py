@@ -106,8 +106,10 @@ def floor_forces(m, d, leg_body: np.ndarray, touched: dict | None = None) -> tup
     return fl, fo
 
 
-def hold_need(org, head_mm: float | None = None, pitch_only: bool = False) -> dict[str, float]:
-    """Instrument hold torque per leg hinge at the placed pose (stand_budget.py method), uN*mm."""
+def hold_need(org, head_mm: float | None = None, pitch_only: bool = False, k_mult: float = 1.0) -> dict[str, float]:
+    """Instrument hold torque per leg hinge at the placed pose (stand_budget.py method), uN*mm.
+    k_mult scales the instrument stiffness K_HOLD (damping by sqrt(k_mult), same damping ratio); a valid need has
+    only the feet on the floor throughout the hold and almost no sag (fix 2 step 0, DECISIONS 13 Oct 23:36)."""
     b = org.body
     m, d = b.sim.mj_model, b.sim.mj_data
     pre = f"{b.fly.name}/"
@@ -117,23 +119,35 @@ def hold_need(org, head_mm: float | None = None, pitch_only: bool = False) -> di
     qa = np.array([m.jnt_qposadr[j] for j in hj]); va = np.array([m.jnt_dofadr[j] for j in hj])
     q_hold = d.qpos[qa].copy()
     k0, ref0, dmp0 = m.jnt_stiffness[hj].copy(), m.qpos_spring[qa].copy(), m.dof_damping[va].copy()
-    m.jnt_stiffness[hj] += K_HOLD
-    m.qpos_spring[qa] = (k0 * ref0 + K_HOLD * q_hold) / (k0 + K_HOLD)
-    m.dof_damping[va] += D_HOLD
+    kh, dh = K_HOLD * k_mult, D_HOLD * np.sqrt(k_mult)
+    m.jnt_stiffness[hj] += kh
+    m.qpos_spring[qa] = (k0 * ref0 + kh * q_hold) / (k0 + kh)
+    m.dof_damping[va] += dh
     b.set_adhesion(np.zeros(len(b.adhesion_names)))
     zero = np.zeros(b.n_actuators)
-    for _ in range(int(round(300.0 / (m.opt.timestep * 1e3)))):
-        b.actuate(zero); b.step()
-    need = K_HOLD * (q_hold - d.qpos[qa])
-    m.jnt_stiffness[hj], m.qpos_spring[qa], m.dof_damping[va] = k0, ref0, dmp0
-    # bodies other than the feet on the floor at the end of the hold: if any, the floor carries part of the weight
-    # and the need is understated
+    # bodies other than the feet on the floor at any point of the hold: if any, the floor carries part of the
+    # weight and the need is understated
     leg_body = np.array(["tarsus" in (m.body(i).name or "") for i in range(m.nbody)])
+    weight = float(m.body_subtreemass[1] * -m.opt.gravity[2])
+    thorax = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, pre + "c_thorax")
+    z0 = float(d.xpos[thorax, 2])
     touched: dict = {}
-    _, trunk = floor_forces(m, d, leg_body, touched)
+    trunk_max = 0.0
+    n = int(round(300.0 / (m.opt.timestep * 1e3)))
+    for s in range(n):
+        b.actuate(zero); b.step()
+        if s % 10 == 9 or s == n - 1:
+            trunk_max = max(trunk_max, floor_forces(m, d, leg_body, touched)[1])
+    need = kh * (q_hold - d.qpos[qa])
+    m.jnt_stiffness[hj], m.qpos_spring[qa], m.dof_damping[va] = k0, ref0, dmp0
+    _, trunk = floor_forces(m, d, leg_body)
     out = {(m.joint(j).name or "").removeprefix(pre): float(t) for j, t in zip(hj, need)}
     out["_non_foot_touch"] = sorted(touched)
-    out["_non_foot_force_over_weight"] = trunk / float(m.body_subtreemass[1] * -m.opt.gravity[2])
+    out["_non_foot_force_over_weight"] = trunk / weight
+    out["_non_foot_force_over_weight_max"] = trunk_max / weight
+    out["_sag_mm"] = z0 - float(d.xpos[thorax, 2])
+    out["_max_hinge_dev_deg"] = float(np.degrees(np.abs(q_hold - d.qpos[qa]).max()))
+    out["_k_hold"] = kh
     return out
 
 
@@ -186,11 +200,15 @@ def main() -> None:
                     help="place the head point at this height (mm) instead of flybody's neutral pose at first contact")
     ap.add_argument("--pitch-only", action="store_true", help="with --head-mm, fold the legs only in their pitch planes")
     ap.add_argument("--place-only", action="store_true", help="report and save the placed pose, then stop")
+    ap.add_argument("--need-only", action="store_true", help="measure the static hold need (and audit), save, then stop")
+    ap.add_argument("--k-hold-mult", type=float, default=1.0, help="instrument stiffness multiplier for the hold need")
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=V", help="registry override, e.g. muscle:leg|tita_specific_tension=28")
     ap.add_argument("--out", default=str(REPO / "runs" / "s13" / "bypass" / "s1"))
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
-    org = Organism(policy="minimal", profile=a.profile, min_synapses=5, seed=a.seed, with_camera=True)
+    ov = {k: float(v) for k, v in (x.split("=") for x in a.set)}
+    org = Organism(policy="minimal", profile=a.profile, min_synapses=5, overrides=ov, seed=a.seed, with_camera=True)
     h, b = org.hill, org.body
     if h is None:
         raise SystemExit(f"profile {a.profile} has no Hill leg muscles (muscle:leg|model 0)")
@@ -203,7 +221,7 @@ def main() -> None:
     adh_ids = adh_ids[adh_ids >= 0]
     thorax = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, pre + "c_thorax")
     weight = float(m.body_subtreemass[1] * -m.opt.gravity[2])
-    res = dict(profile=a.profile, seed=a.seed, ms=a.ms, adhesion=a.adhesion, diagnostic="forced drive (CNS bypassed)",
+    res = dict(profile=a.profile, overrides=ov, k_hold_mult=a.k_hold_mult, seed=a.seed, ms=a.ms, adhesion=a.adhesion, diagnostic="forced drive (CNS bypassed)",
                units=dict(gravity=m.opt.gravity.tolist(), mass_g=float(m.body_subtreemass[1]), weight_uN=round(weight, 3),
                           timestep_ms=float(m.opt.timestep * 1e3)),
                build_s=round(time.time() - t0))
@@ -222,9 +240,11 @@ def main() -> None:
         print(json.dumps(res["placed"]["heights_mm"]), res["placed"]["non_foot_touch"])
         return
     res["audit"] = audit(org, pre, a.head_mm, a.pitch_only)
-    need = hold_need(org, a.head_mm, a.pitch_only)
+    need = hold_need(org, a.head_mm, a.pitch_only, a.k_hold_mult)
     res["hold_need_non_foot_touch"] = need.pop("_non_foot_touch")
     res["hold_need_non_foot_force_over_weight"] = round(need.pop("_non_foot_force_over_weight"), 3)
+    for k in ("non_foot_force_over_weight_max", "sag_mm", "max_hinge_dev_deg", "k_hold"):
+        res[f"hold_need_{k}"] = round(need.pop(f"_{k}"), 4)
     res["hold_need_uNmm"] = {k: round(v, 3) for k, v in need.items()}
     p = h.p
     sup_pair = np.array([s * need.get(j, 0.0) > 0 for j, s in zip(p.joint, p.direction)], float)
@@ -251,6 +271,11 @@ def main() -> None:
                                   coxa_max=None if need_coxa is None else round(float(need_coxa.max()), 3),
                                   coxa_residual_frac=coxa_resid,
                                   by_pair={f"{j}{'+' if s > 0 else '-'}": round(float(v), 3) for j, s, v in zip(p.joint, p.direction, need_pair)})
+    if a.need_only:
+        (out / f"need_{a.profile}_k{a.k_hold_mult:g}.json").write_text(json.dumps(res, indent=1))
+        print(json.dumps({k: v for k, v in res.items() if k.startswith("hold_need_") and k != "hold_need_uNmm"}),
+              json.dumps({k: res["need_activation"][k] for k in ("pair_max", "pair_mean_on", "coxa_max")}))
+        return
     # bypass: constant activations replace the motor-unit pools; the network is never stepped
     adh_set = b.set_adhesion
     b.set_adhesion = lambda s: adh_set(np.full(np.shape(s), a.adhesion))

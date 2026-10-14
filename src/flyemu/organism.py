@@ -177,6 +177,15 @@ class Organism:
                           "scripts/build_midhind_muscles.py)",
                 subsystem="muscle_mechanics", minimal=0,
                 minimal_note="copy (s9-s11 behaviour); 1 is the s12 derivation (F-MUSCLE-MH-1)"))
+            # s13 fly2 (S1 fix 2): tibia-tarsus pair from the tibia cross-section (the shipped pair is a placeholder)
+            tita_tension = float(self.reg.require(
+                "muscle:leg", "tita_specific_tension", units="mN/mm^2",
+                model_use="tibia-tarsus Hill pair: 0 the guessed placeholder (F0 20 uN, r 0.01 mm); > 0 F0 = tibia "
+                          "mid-third cross-section on the flybody mesh x this specific tension, r = half the distal "
+                          "tibia width, L0 scaled with r (inferred upper bound; muscles.tita_from_cross_section)",
+                subsystem="muscle_mechanics", minimal=0.0,
+                minimal_note="neutral: the placeholder; measured range 9-37 mN/mm^2 "
+                             "(parameters.csv b4_tita_specific_tension; s13 fly2)"))
             units_kw = {"fused_hz": float(fused)}
             fat = float(self.reg.require(
                 "motor_unit:leg", "fatigue_fraction", units="dimensionless",
@@ -195,7 +204,8 @@ class Organism:
                                              units_kw=units_kw, coxa_model=coxa_model,
                                              mn_types=mn_types, optimum_join=optimum_join,
                                              ft_flexor_scale=ft_flexor_scale,
-                                             midhind_source=midhind_source)
+                                             midhind_source=midhind_source,
+                                             tita_specific_tension=tita_tension)
             self.nm.bypass_forbidden = True
         self.aff = sensory.build(self.reg, self.conn, self.body, params)
         self.vis = (

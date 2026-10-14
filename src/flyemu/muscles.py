@@ -19,6 +19,8 @@ muscles stiffens the joint under co-contraction through FL and FV.
 """
 from __future__ import annotations
 
+import re
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -126,6 +128,34 @@ def _replace_rows(t: pd.DataFrame, new: pd.DataFrame, key: list[str]) -> pd.Data
         raise ValueError(f"derived muscle rows not in the base table: {list(missing)[:3]}")
     t.loc[new.index, new.columns] = new
     return t.reset_index()
+# s13 fly2 (S1 fix 2): the tibia-tarsus pair has no FlyMimic muscle (the tibia was excluded) and ships as a guessed
+# placeholder (F0 20 uN, r 0.01 mm). With muscle:leg|tita_specific_tension = s > 0 (mN/mm^2), each TiTa muscle
+# gets F0 = tibia mid-third cross-section x s and r = half the distal tibia width, both measured on the flybody
+# mesh (left/right mean per leg position), and L0 scales with r so the strain per radian (force-length shape)
+# stays as shipped. Inferred upper bound: the whole outer section, given to each direction of the pair.
+GEOMETRY_TABLE = TABLE.parents[1] / "derived" / "leg_segment_geometry_flybody.csv"
+TITA_JOINT = re.compile(r"^([lr])([fmh])_tibia-[lr][fmh]_tarsus1-pitch$")
+
+
+def tita_from_cross_section(p: "MusclePairs", tension_mN_mm2: float, geometry: Path = GEOMETRY_TABLE) -> "MusclePairs":
+    """p with its tibia-tarsus rows set from the tibia cross-section x specific tension (see TITA_JOINT note)."""
+    if not 0.0 < tension_mN_mm2 < 100.0:
+        raise ValueError(f"muscle:leg|tita_specific_tension {tension_mN_mm2!r} (mN/mm^2; measured range 9-37)")
+    g = pd.read_csv(geometry, comment="#")
+    g = g[g.segment == "tibia"].assign(pos=lambda x: x.leg.str[1]).groupby("pos")[["area_mid_mm2", "width_dist_mm"]].mean()
+    F0, r, L0 = p.F0.copy(), p.r.copy(), p.L0.copy()
+    for i, j in enumerate(p.joint):
+        m_ = TITA_JOINT.match(j)
+        if m_ is None:
+            continue
+        a, w = g.loc[m_.group(2)]
+        r_new = 0.5 * float(w)
+        F0[i] = float(a) * tension_mN_mm2 * 1e3      # mm^2 x mN/mm^2 = mN -> uN
+        L0[i] = L0[i] * r_new / r[i]
+        r[i] = r_new
+    return MusclePairs(p.joint, p.direction, F0, r, L0, p.lmin, p.lmax, p.vmax, p.fvmax, p.q_ref)
+
+
 # s11: per-muscle optimum angle joined from FlyMimic by interior segment angle
 OPTIMUM_TABLE = TABLE.parents[1] / "derived" / "leg_muscle_optimum_join.csv"
 COXA_AXES = ("yaw", "roll", "pitch")
@@ -279,8 +309,11 @@ class HillLegDrive:
                  unit_class: np.ndarray | None = None, units_kw: dict | None = None,
                  remap: dict[int, tuple[str, float]] | None = None, coxa_model: int = 0,
                  mn_types: np.ndarray | None = None, coxa: CoxaMuscles | None = None,
-                 optimum_join: int = 0, ft_flexor_scale: float = 1.0, midhind_source: int = 0):
+                 optimum_join: int = 0, ft_flexor_scale: float = 1.0, midhind_source: int = 0,
+                 tita_specific_tension: float = 0.0):
         """ft_flexor_scale multiplies the femur-tibia flexor (-1) F0 on every leg (s11).
+        tita_specific_tension 0: the guessed tibia-tarsus placeholder; > 0 (mN/mm^2): the pair from the tibia
+        cross-section (tita_from_cross_section; s13 fly2).
         midhind_source 0: mid/hind muscles copy the front leg; 1: scaled by measured
         segment size (s12, scripts/build_midhind_muscles.py).
         coxa_model 0: per-DOF antagonist pairs on the coxa (session 9);
@@ -300,6 +333,8 @@ class HillLegDrive:
         if midhind_source not in (0, 1):
             raise ValueError(f"muscle:leg|midhind_source {midhind_source!r} (0 or 1)")
         self.p = pairs or MusclePairs.load(q_ref, optimum=bool(optimum_join), midhind=bool(midhind_source))
+        if tita_specific_tension:
+            self.p = tita_from_cross_section(self.p, float(tita_specific_tension))
         if ft_flexor_scale != 1.0:
             ft = np.array([("_trochanterfemur-" in j) and j.endswith("_tibia-pitch") for j in self.p.joint])
             self.p.F0 = np.where(ft & (self.p.direction < 0), self.p.F0 * ft_flexor_scale, self.p.F0)
