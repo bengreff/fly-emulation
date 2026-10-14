@@ -2886,7 +2886,7 @@ Read in the primary text (Europe PMC full text, PMC12324252, eLife RP107390, Wan
 - **If it fails:** the next fixes are (i) a placement that keeps the legs under the body (pitch joints only), then (ii) the LTM Hill muscle, if a sourced force exists. Each gets its own pre-registration.
 
 ### fly2 result: S1 fix 1 (13 Oct, 23:25)
-FAIL 0 of 10, as predicted (F-BYPASS-4; sheet `docs/media/s13_bypass_s1fix1.png`, viewed). The passive fold splays the legs, the fly ends on its belly at the collapse height at every level, and the active legs swing up into the air. The fix 1 hold-need numbers are confounded by trunk contact at placement.
+FAIL 0 of 10, as predicted (F-STAND-4; sheet `docs/media/s13_bypass_s1fix1.png`, viewed). The passive fold splays the legs, the fly ends on its belly at the collapse height at every level, and the active legs swing up into the air. The fix 1 hold-need numbers are confounded by trunk contact at placement.
 
 ### fly2 pre-registration: S1 fix 1b, legs folded in their pitch planes (13 Oct, 23:26)
 - **Change (instrument only):** `--head-mm 0.929 --pitch-only`, the same lowering as fix 1. During the lowering, the instrument springs (K_HOLD 200 µN·mm/rad, D_HOLD) hold the thorax-coxa yaw and roll and the trochanter-femur roll of every leg at their neutral angles, and are removed before the run. Pose: inferred (pitch-plane fold), not measured.
@@ -2897,7 +2897,7 @@ FAIL 0 of 10, as predicted (F-BYPASS-4; sheet `docs/media/s13_bypass_s1fix1.png`
 - **Falsifier for "a pose with the legs under the body closes the gap":** any run passing.
 
 ### fly2 result: S1 fix 1b (13 Oct, 23:36)
-FAIL 0 of 10, as predicted (F-BYPASS-5; sheet `docs/media/s13_bypass_s1fix1b.png`, viewed). The pose hypothesis is dropped: the original 1.32 mm placement already puts the head 0.86 mm above the collapse, inside Wang's measured range, and lowering made standing worse. The hold-need instrument lets the trunk reach the floor at lowered poses (the floor carries 0.93 W), so need patterns there are invalid. `--head-mm` stays as an instrument and is not the default.
+FAIL 0 of 10, as predicted (F-STAND-5; sheet `docs/media/s13_bypass_s1fix1b.png`, viewed). The pose hypothesis is dropped: the original 1.32 mm placement already puts the head 0.86 mm above the collapse, inside Wang's measured range, and lowering made standing worse. The hold-need instrument lets the trunk reach the floor at lowered poses (the floor carries 0.93 W), so need patterns there are invalid. `--head-mm` stays as an instrument and is not the default.
 
 ### fly2 pre-registration: S1 fix 2, a tibia-tarsus capacity from an inferred bound instead of the guessed placeholder (13 Oct, 23:36; not run)
 Both steps run at the original placement (`place_standing`, thorax origin 1.32 mm, head 0.86 mm above collapse, inside Wang's range).
