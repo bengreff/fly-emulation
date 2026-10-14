@@ -32,7 +32,7 @@ def main() -> None:
             if "drive_mv" in j:   # S2/S3: one run per file, keyed by its tag (s2_<tag>.json, frames_<tag>.npy)
                 js[tuple(f.stem[3:].rsplit("_", 1))] = j
         num = lambda x: float(re.sub(r"[^0-9.]", "", x) or 0)
-        for f in sorted(d.glob("frames_*.npy"), key=lambda p: (p.stem.split("_")[1], num(p.stem.split("_")[2]))):
+        for f in sorted((x for x in d.glob("frames_*.npy") if x.stem.count("_") == 2), key=lambda p: (p.stem.split("_")[1], num(p.stem.split("_")[2]))):
             _, pat, lv = f.stem.split("_", 2)
             r = js.get((pat, lv), {})
             if "drive_mv" in r:

@@ -1101,6 +1101,17 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Glutamate→leg MN: MN clusters co-express GluClα with NMDA and kainate subunits (Allen 2020), so the sign is inferred, not measured.
 - **Reading.** I1's silence is a property of the male-CNS counts under a spiking threshold, not an implementation bug. The biological questions are whether I1 releases graded (unknown) and how strong VNC synapses are (unmeasured). S3 tests both with existing class-level switches (DECISIONS 22:09); no per-synapse knob.
 
+### F-BYPASS-4: placed at Wang's median head height, the fly collapses at every constant activation; a passive-fold pose splays the legs, and their torques lift the legs instead of the body (s13 fly2, 13 Oct 23:25)
+- **Test** (DECISIONS pre-registration 23:16; `docs/media/s13_bypass_s1fix1.png`, viewed). `bypass_s1_actuation.py --head-mm 0.929` on backhouse, m10f0, seed 12, adhesion 1, 3 s (DIAGNOSTIC, forced drive). The head is placed 0.5 mm above this body's collapse (Wang 2025 median, measured; the zero is inferred). The pinned root is lowered and the unpowered legs fold where the floor pushes them (pose inferred, passive fold). Need k = 0.5-2; support 0.1-0.5.
+- **Verdict: FAIL, 0 of 10, as predicted.** Every run ends with the thorax origin at 0.47-0.56 mm (placed 0.96) and the head at 0.43-0.48 mm, which is the collapse. Trunk touch fraction 0.997-1.0 (head, abdomen 4-6, coxae; in support runs, the thorax too). Net foot support −0.24 to −0.50 W: adhesion pulls harder than the floor pushes, so the trunk carries the weight. Pitch change 10-12°, head down.
+- **Viewed:**
+  - At t = 0 the legs splay sideways and the abdomen almost touches the floor.
+  - From 250 ms on, the fly lies on its belly at every level. The active legs (two to four, mostly front and middle) rotate upward into the air.
+  - At this pose the pitch-joint torques swing the legs, not the body. At the old 1.32 mm pose, support 0.3 lifted the fly; here no level does. Lowering the fly made standing worse.
+- **The hold-need numbers here are confounded.** The head, abdomen and coxae already touch at the placed pose, so the floor bears part of the weight while the instrument springs read the leg torques. The hind TiTa 1.50× (pair max; was 6.1×) and the pair mean of 0.086 understate the true need. They are not evidence that height closes the gap.
+- **Reading:** height alone is not the variable. The pose the legs take to reach that height decides whether the muscles can bear weight. A passive fold is not a standing pose, and measured standing joint angles are a blank: Wang 2025 has none, and Karashchuk 2021 and Haustein 2024 give tethered envelopes. Wang's height is spent as a setting (register).
+- **Next (pre-registered separately):** fix 1b holds the roll and yaw hinges at the neutral pose while lowering, so the legs fold in their pitch planes under the body. Then fix 2, the LTM Hill muscle.
+
 ### F-GJ-2: no identified Drosophila gap junction has a coupling number in readable primary text, and the s10 JO-B→GF site contradicts the source that measured JO→GF coupling (s13 fly2, 13 Oct 22:19)
 - **Coupling magnitudes.** Read in full text (Sonnet sweep, 13 Oct):
   - eLN–PN: Yaksi & Wilson 2010. Coupling coefficients appear only in Fig 4C (n = 37 control pairs, 19 shakB2). Depolarisation passes better than hyperpolarisation.
