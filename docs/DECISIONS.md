@@ -2937,3 +2937,19 @@ Director brief (after /clear, 13 Oct ~23:37). These points sharpen the interpret
 
 ### fly2 result: S1 fix 2 step 1 (13 Oct, 23:47)
 FAIL 0 of 24, as predicted (F-STAND-6; sheet `docs/media/s13_bypass_s1fix2.png`, viewed). The falsifier branch is hit: capacity is ruled out as the break, and stability is the break. At 9 mN/mm², support 0.3 stands for 3 s with no trunk contact but sinks (0.16 mm over the last 2 s; pitch 10.6°), and support 0.5 rises 0.29 mm. At 28-37, support 0.5 flips the fly over. Need runs are capacity-independent by construction and clip the femur-tibia flexors. `muscle:leg|tita_specific_tension` stays neutral and is not adopted. Next: the minimal measured proprioceptive loop (Director's interpretation, addendum 23:40), with its own pre-registration. It needs a CPU path that steps the VNC with the brain off and adds the constant bypass activation to the MN-driven activation; fly's S4a/S4b switches stay untouched.
+
+### fly2 pre-registration: proprioceptive stance loop, step R (reach gate; 13 Oct, 23:58)
+Director brief (after /clear): build the minimal proprioceptive stance loop (`docs/research/s13_proprio_loop.md`). Check F-REFLEX-1 first; if the loop can't reach the MNs, that is the localisation result and fly2 stops there. Step R is that check. It runs in the loop's own configuration and is written before any run (a 400 ms smoke of the probe was run to test the code, not scored).
+- **Probe:** `scripts/probes/proprio_reach.py`. m10f0, seed 12. Brain off: every cell outside the VNC set loses its output, as in S2. Senses: leg proprioceptors only (chordotonal, hair-plate and CS rows of `sensory.Afferents`). Bristle rows, eyes, chemosenses and organs are not driven. Thorax tethered 1 mm above the standing placement, legs in air. No afferent delay (a delay cannot change whether a path exists).
+- **Stimuli:**
+  - **clamp:** the femur-tibia joint is held from 200 ms, then moved 0.4 rad at 2 Hz from 300 to 1300 ms (F-REFLEX-1's protocol). Legs lm (the best-assigned leg: 25 claw, 12 hook) and lf (4 claw, 4 hook).
+  - **load:** on lm, the 2 CS afferents get full signal (1) over 300-1300 ms. Leg free. In m10f0 each leg has only 2-3 CS rows (assignment count, checked now).
+  - **Control:** `--zero-afferents` (no afferent drive at all) for clamp lm and clamp lf.
+- **Gain arms (mV mode):** 8 mV per unit (`afferent:all|rate_gain`, the profile default, guessed) and 40 mV (5×, a sweep arm). The afferent rates reached are reported. Any arm whose FeCO or CS rates exceed the measured maximum found by the literature search (running now) is labelled supraphysiological, and a reach seen only there counts as no reach.
+- **Readout:** per-MN rate of every motor pool on the leg (Hill pairs by joint and direction, coxa by MN type), binned hold / flexing / extending (clamp) or before / during (load). Also the afferent rates by subtype and the F-REFLEX-1 inhibitor rates.
+- **Reach criterion (a pool "is reached"):**
+  - **clamp:** max/min of its rate across flexing and extending ≥ 1.25, with a difference ≥ 2 Hz per MN, and under 1.08 in the zero-afferent control.
+  - **load:** during/before ≥ 1.25 or ≤ 0.8, with a difference ≥ 2 Hz per MN.
+  - The loop "reaches the MNs" if, on lm at a physiological arm, a tibia pool is reached by clamp or any lm pool is reached by load.
+- **Prediction:** NO REACH at 8 mV on lm. F-REFLEX-1's block is in the VNC (tonic inhibitors IN13A/IN08A/IN19A/IN21A), and turning the brain off removes DNg105 but not those. At 40 mV, prediction uncertain.
+- **If no reach at any physiological arm:** write the localisation finding (where the signal stops, with the inhibitor rates) and stop. No gain is tuned to force a reach. **If reached:** go on to step L (the stance loop), pre-registered separately before its runs.
