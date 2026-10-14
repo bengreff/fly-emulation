@@ -45,10 +45,14 @@ COLLAPSED_HEAD_MM = 0.429
 LEG_RE = re.compile(r"(?:^|[-/_])([lr][fmh])_")
 
 
-def place(b, head_mm: float | None = None, lower_ms: float = 300.0, hold_ms: float = 100.0) -> float:
+def place(b, head_mm: float | None = None, lower_ms: float = 300.0, hold_ms: float = 100.0,
+          pitch_only: bool = False) -> float:
     """place_standing (lower flybody's neutral keyframe to first contact); with head_mm, then lower the root
     kinematically (position and orientation pinned, no activation, no adhesion) until the head point is at head_mm,
-    so the unpowered legs fold where the floor pushes them. An instrument for the initial pose, not a mechanism."""
+    so the unpowered legs fold where the floor pushes them. An instrument for the initial pose, not a mechanism.
+    pitch_only: during the lowering, instrument springs (K_HOLD, D_HOLD) hold the out-of-plane leg hinges (coxa yaw
+    and roll, trochanter-femur roll) at their placed angles, so the legs fold only in their pitch planes; the springs
+    are removed before returning."""
     m, d = b.sim.mj_model, b.sim.mj_data
     b.reset(); place_standing(b)
     if head_mm is None:
@@ -59,9 +63,18 @@ def place(b, head_mm: float | None = None, lower_ms: float = 300.0, hold_ms: flo
     type(b).set_adhesion(b, np.zeros(len(b.adhesion_names)))   # the class method: main() overrides the instance's
     zero = np.zeros(b.n_actuators)
     n1, n2 = int(round(lower_ms / (m.opt.timestep * 1e3))), int(round(hold_ms / (m.opt.timestep * 1e3)))
+    hj = [j for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE and pitch_only
+          and any(f"{L}_" in (m.joint(j).name or "") for L in LEGS)
+          and re.search(r"(c_thorax-[lr][fmh]_coxa-(yaw|roll)|[lr][fmh]_coxa-[lr][fmh]_trochanterfemur-roll)$", m.joint(j).name or "")]
+    qa = np.array([m.jnt_qposadr[j] for j in hj], int); va = np.array([m.jnt_dofadr[j] for j in hj], int)
+    k0, ref0, dmp0 = m.jnt_stiffness[hj].copy(), m.qpos_spring[qa].copy(), m.dof_damping[va].copy()
+    m.jnt_stiffness[hj] += K_HOLD
+    m.qpos_spring[qa] = (k0 * ref0 + K_HOLD * d.qpos[qa]) / (k0 + K_HOLD)
+    m.dof_damping[va] += D_HOLD
     for s in range(n1 + n2):
         d.qpos[:7] = root; d.qpos[2] = root[2] - dz * min(1.0, (s + 1) / n1); d.qvel[:6] = 0.0
         b.actuate(zero); b.step()
+    m.jnt_stiffness[hj], m.qpos_spring[qa], m.dof_damping[va] = k0, ref0, dmp0
     d.qpos[:7] = root; d.qpos[2] = root[2] - dz; d.qvel[:] = 0.0
     mj.mj_forward(m, d)
     return float(d.qpos[2])
@@ -93,12 +106,12 @@ def floor_forces(m, d, leg_body: np.ndarray, touched: dict | None = None) -> tup
     return fl, fo
 
 
-def hold_need(org, head_mm: float | None = None) -> dict[str, float]:
+def hold_need(org, head_mm: float | None = None, pitch_only: bool = False) -> dict[str, float]:
     """Instrument hold torque per leg hinge at the placed pose (stand_budget.py method), uN*mm."""
     b = org.body
     m, d = b.sim.mj_model, b.sim.mj_data
     pre = f"{b.fly.name}/"
-    place(b, head_mm)
+    place(b, head_mm, pitch_only=pitch_only)
     hj = [j for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE
           and any(f"{L}_" in (m.joint(j).name or "") for L in LEGS)]
     qa = np.array([m.jnt_qposadr[j] for j in hj]); va = np.array([m.jnt_dofadr[j] for j in hj])
@@ -116,10 +129,10 @@ def hold_need(org, head_mm: float | None = None) -> dict[str, float]:
     return {(m.joint(j).name or "").removeprefix(pre): float(t) for j, t in zip(hj, need)}
 
 
-def audit(org, pre: str, head_mm: float | None = None) -> dict:
+def audit(org, pre: str, head_mm: float | None = None, pitch_only: bool = False) -> dict:
     h, b = org.hill, org.body
     m, d = b.sim.mj_model, b.sim.mj_data
-    place(b, head_mm)
+    place(b, head_mm, pitch_only=pitch_only)
     p = h.p
     gl = gain_length(p.lengths(d.qpos[h.q_adr]), p.lmin, p.lmax)
     n_mn = np.bincount(h.mn_muscle[h.ok], minlength=len(p.F0))
@@ -163,6 +176,8 @@ def main() -> None:
     ap.add_argument("--frames-ms", default="0,250,1000,3000")
     ap.add_argument("--head-mm", type=float, default=None,
                     help="place the head point at this height (mm) instead of flybody's neutral pose at first contact")
+    ap.add_argument("--pitch-only", action="store_true", help="with --head-mm, fold the legs only in their pitch planes")
+    ap.add_argument("--place-only", action="store_true", help="report and save the placed pose, then stop")
     ap.add_argument("--out", default=str(REPO / "runs" / "s13" / "bypass" / "s1"))
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
@@ -184,16 +199,22 @@ def main() -> None:
                units=dict(gravity=m.opt.gravity.tolist(), mass_g=float(m.body_subtreemass[1]), weight_uN=round(weight, 3),
                           timestep_ms=float(m.opt.timestep * 1e3)),
                build_s=round(time.time() - t0))
-    place(b, a.head_mm)
-    res["placed"] = dict(head_mm_target=a.head_mm, heights_mm={k: round(v, 3) for k, v in heights(m, d, pre).items()},
+    place(b, a.head_mm, pitch_only=a.pitch_only)
+    touched0 = {}
+    floor_forces(m, d, leg_body, touched0)
+    res["placed"] = dict(head_mm_target=a.head_mm, pitch_only=a.pitch_only, non_foot_touch=sorted(touched0), heights_mm={k: round(v, 3) for k, v in heights(m, d, pre).items()},
                          pitch_deg=round(pitch_deg(d, thorax), 2),
                          leg_angles_deg={(m.joint(j).name or "").removeprefix(pre): round(float(np.degrees(d.qpos[m.jnt_qposadr[j]])), 1)
                                          for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE
                                          and any(f"{L}_" in (m.joint(j).name or "") for L in LEGS)})
     if a.head_mm is not None:
         np.save(out / "frames_placed.npy", np.stack([shot(m, d, thorax)]))
-    res["audit"] = audit(org, pre, a.head_mm)
-    need = hold_need(org, a.head_mm)
+    if a.place_only:
+        (out / f"placed_{a.profile}.json").write_text(json.dumps(res, indent=1))
+        print(json.dumps(res["placed"]["heights_mm"]), res["placed"]["non_foot_touch"])
+        return
+    res["audit"] = audit(org, pre, a.head_mm, a.pitch_only)
+    need = hold_need(org, a.head_mm, a.pitch_only)
     res["hold_need_uNmm"] = {k: round(v, 3) for k, v in need.items()}
     p = h.p
     sup_pair = np.array([s * need.get(j, 0.0) > 0 for j, s in zip(p.joint, p.direction)], float)
@@ -236,7 +257,7 @@ def main() -> None:
                 ac_ = None if h.coxa is None else ((sup_coxa if pat == "support" else np.ones(len(h.coxa.F0))) * lv)
             h.activation = lambda nm=None, v=ap_: v
             h.coxa_activation = lambda v=ac_: v
-            place(b, a.head_mm)
+            place(b, a.head_mm, pitch_only=a.pitch_only)
             z = [float(d.xpos[thorax, 2])]
             p0, pmax = pitch_deg(d, thorax), 0.0
             fl, fo, fa, nonleg_touch, touched = [], [], [], 0, {}

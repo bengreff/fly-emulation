@@ -2884,3 +2884,14 @@ Read in the primary text (Europe PMC full text, PMC12324252, eLife RP107390, Wan
 - **Prediction:** FAIL on trunk touch at every level, because the passive-fold pose puts the abdomen down. The hind TiTa need at 1.5× is clipped at k ≥ 0.67.
 - **Falsifier for "pose alone closes the gap":** any run passing.
 - **If it fails:** the next fixes are (i) a placement that keeps the legs under the body (pitch joints only), then (ii) the LTM Hill muscle, if a sourced force exists. Each gets its own pre-registration.
+
+### fly2 result: S1 fix 1 (13 Oct, 23:25)
+FAIL 0 of 10, as predicted (F-BYPASS-4; sheet `docs/media/s13_bypass_s1fix1.png`, viewed). The passive fold splays the legs, the fly ends on its belly at the collapse height at every level, and the active legs swing up into the air. The fix 1 hold-need numbers are confounded by trunk contact at placement.
+
+### fly2 pre-registration: S1 fix 1b, legs folded in their pitch planes (13 Oct, 23:26)
+- **Change (instrument only):** `--head-mm 0.929 --pitch-only`, the same lowering as fix 1. During the lowering, the instrument springs (K_HOLD 200 µN·mm/rad, D_HOLD) hold the thorax-coxa yaw and roll and the trochanter-femur roll of every leg at their neutral angles, and are removed before the run. Pose: inferred (pitch-plane fold), not measured.
+- **Gate 1 (placement, checked before any run):** at the placed pose, no head, thorax, abdomen, coxa, femur or tibia touches the floor. If anything does, fix 1b fails at placement, no run is launched, and that is the result.
+- **Runs (if gate 1 passes; backhouse, m10f0, seed 12, adhesion 1, 3 s):** need k = 0.5, 0.75, 1, 1.25, 1.5, 2; support 0.1, 0.2, 0.3, 0.5.
+- **Pass:** the same `holds_prereg` criteria as fix 1 (DECISIONS 23:16), the same plausibility rule, and the sheet viewed.
+- **Prediction (written before the placement check):** gate 1 passes or nearly passes, because the abdomen hangs below the thorax and its clearance at 0.96 mm thorax origin is unknown. The need runs then fail on sinking, because the force-length curve is flat (F-BYPASS-1). A constant need k > 1 may hold for a while.
+- **Falsifier for "a pose with the legs under the body closes the gap":** any run passing.
