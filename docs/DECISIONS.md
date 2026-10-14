@@ -2861,3 +2861,9 @@ Also reported, not scored: the number of transfer-pass pools against the baselin
 **Falsifier:** if R, G and RG all fail S4a, then per-type MN properties and the glutamate sign are not the break. What remains is the scale (14-25×) and the core's single-spike output, and neither has a measured value. Both would go to Ben's list: a unitary premotor→MN PSP recording, and an E1/E2 burst recording.
 
 No adoption from S4a. A pass goes on to the held-out tests: silencing E1/E2, DNb08 drive, and the gate and rest with the brain on.
+
+### S4a switches built, run launched (13 October, 23:40; no adoption)
+Director brief 23:3x: run S4a as registered, then pre-register S4b (bounded fit of two shared VNC-class quantities). Built, neutral at 0, CPU path (`percell.py`, `lif.py`), tests in `tests/test_percell.py` (17 passed with hygiene):
+- **R** `cell_type:leg_motor|between_type_size_exponent` (1.49 for the arm): leg MNs = vnc_motor with subclass fl/ml/hl (381 cells). Factor (median leg-MN volume / type geometric-mean volume)^γ on top of the within-type law; incomplete cells take their type's factor. Factors span 0.30 (Ti extensor) to 12 (MNml76, a one-cell type). **Pre-registration prediction partly wrong before any run:** promotors 0.42 and remotor 0.46 (predicted ~0.5, right), but Tr flexors 0.88 (predicted ~2×; wrong, their type mean is near the median). Ti flexor type 0.80.
+- **G** `cell_type:leg_motor|glutamate_receptor_sign` (+1 for the arm): sets the glutamate sign on all 381 leg MNs, overriding per-type rows.
+- GPU: R is an input_gain change and G a static weight transform, both inherited by `BatchedNetwork` from the reference build. `scripts/gpu_bench.py equiv` gained `--set`; the R+G check runs on backhouse alongside the 9 S4a runs (`~/fly-m10f/runs/s13/bypass/s4a/run.sh`, done-files, ALL.done). Scoring follows the 23:31 pre-registration unchanged.

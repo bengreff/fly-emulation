@@ -50,6 +50,30 @@ def within_type_ratio(values: np.ndarray, types: pd.Series, min_cells: int = 2,
 
 
 COMPLETE_FRACTION = 0.25
+LEG_MN_SUBCLASSES = ("fl", "ml", "hl")   # male-cns subclass of vnc_motor: front, middle, hind leg
+
+
+def leg_motor_mask(conn) -> np.ndarray:
+    """Leg motor neurons: superclass vnc_motor, subclass fl/ml/hl (381 cells at min_synapses 5)."""
+    n = conn.neurons
+    return (n.superclass.eq("vnc_motor") & n.subclass.isin(LEG_MN_SUBCLASSES)).to_numpy()
+
+
+def between_type_leg_factor(conn, gamma: float, bad: np.ndarray) -> np.ndarray:
+    """S4a arm R: leg-MN input gain x (median leg-MN volume / type geometric-mean volume)^gamma.
+
+    Extends the within-type Rin law between leg-MN types (Rin ~ volume^-1.49). A type at the
+    median leg-MN volume keeps factor 1 (guessed normalisation); non-leg cells, untyped cells
+    and types with no complete sized cell keep 1. Incomplete cells get their type's factor."""
+    n = conn.neurons
+    leg = leg_motor_mask(conn)
+    v = n["size"].to_numpy(np.float64)
+    types = n.type.fillna("").reset_index(drop=True)
+    ok = leg & np.isfinite(v) & (v > 0) & ~bad & types.ne("").to_numpy()
+    lv = pd.Series(np.where(ok, np.log(np.where(ok, v, 1.0)), np.nan))
+    g = np.exp(lv.groupby(types).transform("mean").to_numpy())
+    f = (np.median(v[ok]) / g) ** gamma
+    return np.where(leg & np.isfinite(f), f, 1.0)
 
 
 def incomplete(n_in: np.ndarray, types: pd.Series) -> np.ndarray:
@@ -90,7 +114,16 @@ def input_gain_factors(reg: Registry, conn) -> np.ndarray | None:
         uncertainty="1.49 = slope of log input resistance (Azevedo 2020 Fig 3E, 150/300/700 MOhm "
                     "fast/intermediate/slow) on log EM volume of volume-ranked flexor classes; "
                     "rows n2p_size_exponent_motor")
-    if not alpha and not beta and not alpha_mn:
+    leg = leg_motor_mask(conn)
+    gamma = reg.require(
+        "cell_type:leg_motor", "between_type_size_exponent", units="dimensionless",
+        model_use="leg-MN input gain x (median leg-MN volume / type geometric-mean volume)^gamma",
+        subsystem="neuron_biophysics", instances=int(leg.sum()), minimal=0.0, conventional=0.0,
+        minimal_note="neutral 0: leg-MN types share one gain; size varies it within type only",
+        uncertainty="S4a arm R (DECISIONS 13 Oct 23:31): 1.49 extends the within-type Rin law "
+                    "(Azevedo 2020 150/300/700 MOhm, measured; mapping derived) between types; "
+                    "median-volume normalisation guessed")
+    if not alpha and not beta and not alpha_mn and not gamma:
         return None
     types = conn.neurons.type.reset_index(drop=True)
     n_in = input_counts(conn)
@@ -102,4 +135,6 @@ def input_gain_factors(reg: Registry, conn) -> np.ndarray | None:
         f *= r ** np.where(motor, alpha_mn, alpha)
     if beta:
         f *= within_type_ratio(n_in, types, exclude=bad) ** beta
+    if gamma:
+        f *= between_type_leg_factor(conn, gamma, bad)
     return f.astype(np.float32)

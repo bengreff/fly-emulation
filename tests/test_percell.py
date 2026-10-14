@@ -103,3 +103,36 @@ def test_unclear_cells_take_their_hemilineage_transmitter_only_when_switched_on(
     assert changed.sum() > 500
     m = b.bodyId.isin(fill.bodyId).to_numpy() & changed
     assert (nb[m].to_numpy() == b.bodyId[m].map(fill.set_index("bodyId").nt).to_numpy()).all()
+
+
+@needs_graph
+def test_s4a_switches_are_neutral_by_default_and_touch_leg_mns_only():
+    """S4a arms R (between-type leg-MN size law) and G (glutamate onto leg MNs +1), DECISIONS 13 Oct 23:31."""
+    from flyemu.percell import incomplete, leg_motor_mask
+    base = _org()
+    inv = base.reg.inventory()
+    keys = set(inv.entity + "|" + inv.property)
+    assert {"cell_type:leg_motor|between_type_size_exponent",
+            "cell_type:leg_motor|glutamate_receptor_sign"} <= keys
+    leg = leg_motor_mask(base.conn)
+    assert 300 < leg.sum() < 450
+    # R: leg-MN types follow (median volume / type geometric-mean volume)^1.49; others untouched
+    r = _org(**{"cell_type:leg_motor|between_type_size_exponent": 1.49})
+    g = r.net.input_gain / base.net.input_gain
+    assert np.all(g[~leg] == 1.0) and np.array_equal(r.net.w != 0, base.net.w != 0)
+    n = base.conn.neurons.reset_index(drop=True)
+    ok = leg & ~incomplete(n["post"].to_numpy(float), n.type)   # incomplete cells: not in the reference
+    lt = pd.DataFrame({"t": n.type[ok].to_numpy(), "lg": np.log(g[ok]),
+                       "lv": np.log(n["size"].to_numpy(float)[ok])})
+    gm = lt.groupby("t").mean()
+    assert np.polyfit(gm.lv, gm.lg, 1)[0] == pytest.approx(-1.49, abs=1e-3)
+    # G: glutamatergic edges onto leg MNs turn excitatory; every other edge is unchanged
+    gl = _org(**{"cell_type:leg_motor|glutamate_receptor_sign": 1.0})
+    post = base.conn.indices
+    pre = np.repeat(np.arange(base.conn.n), np.diff(base.conn.indptr))
+    glu = n.predictedNt.fillna("").str.lower().eq("glutamate").to_numpy()[pre]
+    on = glu & leg[post]
+    assert on.sum() > 1000
+    assert np.all(gl.net.w[on] > 0) and np.any(base.net.w[on] < 0)
+    assert np.array_equal(gl.net.w[~on], base.net.w[~on])
+    assert np.allclose(np.abs(gl.net.w[on]), np.abs(base.net.w[on]))

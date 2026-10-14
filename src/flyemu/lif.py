@@ -606,6 +606,18 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                    0.0, "neutral default 0: use the transmitter-level glutamate sign "
                         "(profile); +1 = excitatory (iGluR), -1 = inhibitory (GluCl) per "
                         "postsynaptic type via cell_types.csv rows")
+    leg_glu = reg.require(
+        "cell_type:leg_motor", "glutamate_receptor_sign", units="sign",
+        model_use="sign of glutamatergic input onto every leg MN (overrides per-type rows)",
+        subsystem="synaptic_efficacy", instances=n, minimal=0.0, conventional=0.0,
+        minimal_note="neutral 0: transmitter-level glutamate sign (inhibitory) onto leg MNs",
+        uncertainty="S4a arm G (DECISIONS 13 Oct 23:31): +1 inferred from mixed receptor evidence "
+                    "(Allen 2020: GluClalpha with NMDA/kainate subunits in MN clusters); no leg-MN "
+                    "glutamate PSP recorded")
+    if leg_glu:
+        from . import percell as _pc
+        glu_sign = np.where(_pc.leg_motor_mask(conn), np.float32(leg_glu),
+                            np.asarray(glu_sign, np.float32)).astype(np.float32)
     gabab = per("gabab_fraction", "dimensionless", "share of GABAergic input that is slow (GABA-B)",
                 0.0, "neutral default 0: all GABA fast (GABA-A-like, tau_s); GABA-B slow "
                      "inhibition exists in AL PNs (Wilson & Laurent 2005) but per-type shares "
