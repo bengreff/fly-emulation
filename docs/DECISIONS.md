@@ -2759,3 +2759,22 @@ Two measurement fixes, found by looking at the first sweep's frames, apply to ev
 
 ### Results S1 and S2 (DNg100), 13 October, 21:58 (F-BYPASS-1, F-BYPASS-2)
 S1 fails as pre-registered. The legs lift the fly, but no constant activation holds: distal muscles are short of the static hold at the placed pose (hind TiTa 6.1×, FTi 1.3-1.5×), force-length is flat over the joint range, the abdomen drags, and 12 mid/hind coxa promotors have no MN. S2 (DNg100, brain off) fails at 10-40 mV: E1 and E2 fire at 13-18 Hz, I1 is silent, MNs stay tonic. Next: S3 (graded VNC interneurons, sign and scaling audit), since I1's recruitment is the first broken link.
+
+### Results S2 (DNb08, DNg97, DNa02), and the reference check on Pugliese's own spiking model, 13 October, 22:09 (F-BYPASS-2 addendum, F-BYPASS-3)
+S2 fails for all three remaining DNs at 15 and 40 mV (frames `docs/media/s13_bypass_s2_other.png` and rasters `docs/media/s13_bypass_s2_rasters.png`, both viewed): the MNs stay tonic, with no alternating pool. Reference check (F-BYPASS-3): Pugliese's own LIF (their Extended Data Fig. 4 code, Shiu parameters) oscillates on their MANC T1L mini-circuit, but on the same circuit taken from their male-CNS extract it never brings I1 to threshold. Our I1 failure therefore reproduces in their formulation and is not an implementation error.
+
+### Pre-registration S3, graded release and synaptic scaling in the VNC (13 October, 22:09, before any S3 run)
+DIAGNOSTIC, forced drive. `bypass_s2_descending.py` unchanged (m10f0, brain silenced, senses off, tethered 1 mm, DNg100 drive 300-1300 ms) at 15/25/40 mV, with one arm per row. No value is fitted; each arm is one existing class-level switch.
+- **A, literature list** (`cell_type:all|mode_from_recordings` = 1, with two new `graded_rec` rows, `^IN13B\d+$` and `^IN10B\d+$`: 95 + 33 types, 433 + 254 cells). Agrawal et al. 2020 eLife 9:e60299 recorded 13Bα as nonspiking (all cells) and 10Bα as largely nonspiking (measured for those subsets; extended to the hemilineage by type name, so inferred). No recording exists for 16B, 17A or 19A (Sonnet sweep, 13 Oct).
+- **B, class unknown** (`mode:n1_p_graded_vnc_local|graded` = 1): every VNC local type of unknown mode is graded (2,778 types, including E1, E2, I1 and IN19A007). This is the assumption behind Pugliese's rate model ("some neurons in the insect VNC, including premotor neurons active during walking, are nonspiking"). Prior 0.5, guessed.
+- **C, count scaling** (`connection_class:vnc_sensorimotor|efficacy_scale` = 1.754, which is 0.275/0.15675): the VNC intrinsic and motor edges get Shiu 2024's per-synapse efficacy, the value Pugliese's LIF uses, instead of our whole-brain stability ceiling. Borrowed, so inferred.
+- **D, A + C.**
+
+**Pass** (Ben's brief): at a drive keeping DNg100 ≤ 200 Hz, alternating MN output in at least one leg pair. Scored with S2's criterion unchanged: an MN with rhythm excess > 0.10 at 4-25 Hz whose pool has r ≤ −0.3 against its antagonist pool or its left-right mate. The rasters and frames must also show it on viewing; a score without visible alternation is a fail.
+
+**Also reported, not scored:** the oscillator cells per neuromere (`bypass_s3_chain.py`, network only, 25 mV per arm): whether I1 or IN19A007 is recruited every cycle, and the cycle frequency against Pugliese's 7-15 Hz.
+
+**Falsifier and localisation:** if no arm passes, mode and per-synapse scale are not the break, and it moves to premotor→MN transmission (the sign and count audit, reported alongside) or to the MN layer.
+
+**Held out:** nothing is fitted, so no data are spent. If an arm passes, then before any adoption: silencing E1 or E2 must abolish the rhythm (Pugliese's in-model result); DNb08 drive must also alternate; and the gate and resting rates must hold with the brain on.
+- 22:11 addendum to the S3 pre-registration (before any S3 run). A run of Pugliese's own LIF on their MANC mini-circuit (F-BYPASS-3) shows that 1 of 25 MNs carries the rhythm there too. So "at least one leg pair alternates" means one antagonist or left-right pair, scored as already registered; I am not counting how many pools are recruited.

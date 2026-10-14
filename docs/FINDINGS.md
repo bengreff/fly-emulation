@@ -1081,3 +1081,22 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Why I1 is silent** (derived from the weights): E2→I1 sums to 69 mV of weight, about 1.8 mV peak per E2 spike against a 7 mV threshold gap. GABAergic IN19A004 (active at 15 Hz, −52 mV) and IN19A002 (−180 mV) inhibit it.
 - **Also:** a 22 mV LIF weight gives a peak depolarisation of only about 0.16× that (synaptic current filtered by 5 and 16-20 ms time constants). At 12 mV drive, DNg100 at 36 Hz lifts E1 by 3-5 mV only.
 - **Reading.** Pugliese's rate model passes graded signals through every cell. In our spiking model the oscillator's inhibitory arm is never recruited, which points to S3 (graded release in nonspiking VNC interneurons) before any weight change. DNb08, DNg97 and DNa02 runs are in progress.
+- **Addendum, 22:09: DNb08, DNg97 and DNa02 also fail** (frames `docs/media/s13_bypass_s2_other.png`; rasters `docs/media/s13_bypass_s2_rasters.png`; both viewed). At 15 and 40 mV these DNs fire 38-40 and 92-96 Hz and the leg MNs fire 3.8-4.7 Hz. The top pools are always the tonic tibia flexors (15 → 17.5 Hz). A single pool turns rhythmic twice, DNb08 15 mV (left-middle tibia flexor) and DNg97 40 mV (left-middle coxa anterior rotator), but neither has an anti-correlated partner. Peak activation is 0.01-0.21. In the frames the legs only fold passively. So S2 fails for all four candidate walking DNs, and the break is not specific to DNg100.
+
+### F-BYPASS-3: Pugliese's own spiking model doesn't recruit I1 on the male-CNS connectome either; their oscillator needs graded transmission or MANC's stronger E2→I1 (s13, 13 Oct 22:11)
+- **Test** (DIAGNOSTIC). Their published LIF code (`src/lif_model/lif_dynamics.py`, Extended Data Fig. 4, Shiu parameters: 0.275 mV per synapse, 7 mV threshold gap, τm 20 ms, τs 5 ms), run unchanged on the Mac on two inputs from their repository: (a) their MANC T1L mini-circuit; (b) the left T1 cells of their male-CNS extract (`W_20260210_vncRoisOnly.csv`), with DNg100 driven at 10, 15 and 25 mV. Scratch scripts are in `/tmp/pug_ref` (not kept).
+- **MANC reproduces.** BDN2 (MANC's DNg100) at 67 Hz drives E1 and E2 in 4 bursts in 300 ms (13.5 Hz, 3 spikes each). I1 (IN16B007) fires one spike per cycle, about 33 ms after E1 has started. One of 25 MNs (a pleural promotor) bursts twice per cycle; the other 24 stay silent (Vmax −48.7 to −52 mV). So even in their spiking reference the MN read-out of the rhythm is sparse.
+- **The male CNS doesn't.** I1 (IN16B036, bodyId 801884; the MANC→male-CNS mapping goes through `mancBodyid` and is correct) never fires at any drive or with any subset of the inhibitory cells. Its Vmax is −46.9 to −50.1 mV against the −45 mV threshold.
+  - With E1, E2 and I1 only: E1 and E2 fire tonically (20-76 Hz).
+  - Adding IN19A007 (GABA) produces a cycle at 12.7/22.6/32 Hz with one E1, E2 and A007 spike per cycle. Our m10f0 network shows this same mode (smoke chain: E1 16 Hz, E2 12 Hz, A007 12 Hz, I1 silent, Vmax −49.6 mV).
+- **Why** (derived from counts):
+  - In T1L the male-CNS E2→I1 count is 38 synapses against 71 in MANC (0.54×). E1→I1 is small in both.
+  - I1 also receives GABA from IN19A002 (−28 mV of model weight in T1L) and IN19A004.
+  - Our per-synapse efficacy (0.157 mV, fitted brain-stability ceiling) is 0.57× Shiu's 0.275 mV.
+  - Pugliese's rate model avoids the threshold altogether, because every cell passes graded signals.
+- **Literature** (Sonnet sweep, 13 Oct):
+  - Measured: 13Bα cells are nonspiking (all recorded cells, Agrawal 2020 eLife); 10Bα are largely nonspiking; 9Aα spike.
+  - 16B (I1's hemilineage), 17A and 19A have never been recorded. Whether I1 spikes is unknown.
+  - Nobody has measured input resistance, resting potential or threshold for any VNC premotor interneuron. The 7 mV gap is Shiu's brain-wide guess, not a measured value for these cells.
+  - Glutamate→leg MN: MN clusters co-express GluClα with NMDA and kainate subunits (Allen 2020), so the sign is inferred, not measured.
+- **Reading.** I1's silence is a property of the male-CNS counts under a spiking threshold, not an implementation bug. The biological questions are whether I1 releases graded (unknown) and how strong VNC synapses are (unmeasured). S3 tests both with existing class-level switches (DECISIONS 22:09); no per-synapse knob.
