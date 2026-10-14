@@ -1180,3 +1180,11 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - the stance antagonist never gets the rhythm (I1 is the cell that would carry it).
   - The tonic tibia-flexor drive is a separate MN-layer issue.
 - **What this does not show.** It says nothing about whether I1 is graded in a real fly (never recorded); only that making every unknown-mode cell graded is unstable in this model. Behavioural failure here is not evidence about internal physiology.
+- **Addendum, 23:13: the GPU reference at the paper's tolerances** (Pugliese commit 10e7661, backhouse; outputs copied to `runs/s13/bypass/pugliese_ref/`; figure `docs/media/s13_pugliese_ref_mn.png`, viewed).
+  - MANC, I 250: 3 of 144 MNs active, oscillation score 0.93 at 11.4 Hz, the same as the CPU smoke.
+  - Male CNS, either DNg100 at I 250: nothing oscillates. DNg100 sits at 7 rate units; the only other core cell above zero is E1 at 0.1. I 250 is below threshold in the male CNS.
+  - Male CNS, I 400:
+    - DNg100 R: 7 MNs at 12.0 Hz, score 1.00. Their peaks are 2.7-16 units, and every pool is modulated from near 0 to its peak on every cycle.
+    - DNg100 L: 4 MNs at 10.4 Hz. The stance remotor peaks about 25 ms before the swing promotors, and one pair, promotor against remotor, reaches r −0.31 at zero lag. That just passes our −0.3 bar. The R run has 0 pairs.
+  - Core cells reaching 3-16 units: E1, E2, I1 (3.1-7.8) and IN19A007 (2-16). I1 is active in every oscillating run, as it is in Pugliese's paper.
+  - **Reading:** with this model class on this connectome, a stimulated core does give a deep, cycle-locked MN rhythm with a swing-stance phase offset. Our MNs get roughly one spike per cycle per pool. That gap is the target for the next step. In the rate model, any input above a size-normalised threshold gives I1 a graded rate (inferred to be why it is recruited); our LIF I1 needs a 7 mV crossing before it does anything. Whether a real I1 is graded remains unmeasured.
