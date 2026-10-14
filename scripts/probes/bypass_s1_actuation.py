@@ -9,6 +9,7 @@ and run for --ms. Two patterns:
   coact:   every leg muscle at the same activation (antagonists included);
   support: only the muscles whose torque at the placed pose points the way the standing hold needs. The need is
            measured first with stand_budget.py's instrument springs (300 ms, then removed).
+  need:    each muscle at the activation that supplies exactly that measured hold torque, times the level k.
 Reports per run: thorax-origin height over time, floor force on the legs and on the trunk against body weight,
 active torque by joint group, and NaN. Before the runs, a static audit lists, per muscle: F0, moment arm,
 force-length gain at the placed pose, and motor neurons mapped (muscles with none are unreachable from the CNS),
@@ -40,8 +41,8 @@ LEGS = ("lf", "lm", "lh", "rf", "rm", "rh")
 LEG_RE = re.compile(r"(?:^|[-/_])([lr][fmh])_")
 
 
-def floor_forces(m, d, leg_body: np.ndarray) -> tuple[float, float]:
-    """Normal floor force (uN) on leg bodies and on everything else."""
+def floor_forces(m, d, leg_body: np.ndarray, touched: dict | None = None) -> tuple[float, float]:
+    """Normal floor force (uN) on the feet (tarsal segments) and on everything else; counts other bodies touching."""
     f6 = np.zeros(6)
     fl = fo = 0.0
     for i in range(d.ncon):
@@ -55,6 +56,9 @@ def floor_forces(m, d, leg_body: np.ndarray) -> tuple[float, float]:
             fl += f6[0]
         else:
             fo += f6[0]
+            if touched is not None:
+                nm = (m.body(other).name or "").split("/")[-1]
+                touched[nm] = touched.get(nm, 0) + 1
     return fl, fo
 
 
@@ -136,7 +140,11 @@ def main() -> None:
         raise SystemExit(f"profile {a.profile} has no Hill leg muscles (muscle:leg|model 0)")
     m, d = b.sim.mj_model, b.sim.mj_data
     pre = f"{b.fly.name}/"
-    leg_body = np.array([bool(LEG_RE.search(m.body(i).name or "")) for i in range(m.nbody)])
+    # feet are the tarsal segments; a coxa, femur or tibia on the floor means the fly is down, not standing
+    leg_body = np.array(["tarsus" in (m.body(i).name or "") for i in range(m.nbody)])
+    adh_ids = np.array([mj.mj_name2id(m, mj.mjtObj.mjOBJ_ACTUATOR, n if n.startswith(pre) else pre + n)
+                        for n in b.adhesion_names], int)
+    adh_ids = adh_ids[adh_ids >= 0]
     thorax = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, pre + "c_thorax")
     weight = float(m.body_subtreemass[1] * -m.opt.gravity[2])
     res = dict(profile=a.profile, seed=a.seed, ms=a.ms, adhesion=a.adhesion, diagnostic="forced drive (CNS bypassed)",
@@ -153,6 +161,24 @@ def main() -> None:
         c = h.coxa
         nv = np.array([[need.get(j, 0.0) for j in row] for row in c.joint])
         sup_coxa = ((c.R * nv).sum(1) > 0).astype(float)
+    # need: per muscle, the activation that supplies the measured static hold torque (FL gain is 1 at the pose).
+    # Pairs act on one hinge each; the coxa muscles share the three coxa hinges, so per leg a non-negative least
+    # squares picks their activations. Scaled by the level k (k = 1 is exactly the static need).
+    need_pair = np.array([max(0.0, s * need.get(j, 0.0)) / (r * f) for j, s, r, f in zip(p.joint, p.direction, p.r, p.F0)])
+    need_coxa, coxa_resid = None, {}
+    if h.coxa is not None:
+        from scipy.optimize import nnls
+        need_coxa = np.zeros(len(c.F0))
+        for L in sorted(set(c.leg)):
+            ix = np.flatnonzero(np.asarray(c.leg) == L)
+            tgt = np.array([need.get(j, 0.0) for j in c.joint[ix[0]]])
+            x, rn = nnls((c.R[ix] * c.F0[ix, None]).T, tgt)
+            need_coxa[ix] = x
+            coxa_resid[L] = round(float(rn / max(np.linalg.norm(tgt), 1e-9)), 3)
+    res["need_activation"] = dict(pair_max=round(float(need_pair.max()), 3), pair_mean_on=round(float(need_pair[need_pair > 0].mean()), 3),
+                                  coxa_max=None if need_coxa is None else round(float(need_coxa.max()), 3),
+                                  coxa_residual_frac=coxa_resid,
+                                  by_pair={f"{j}{'+' if s > 0 else '-'}": round(float(v), 3) for j, s, v in zip(p.joint, p.direction, need_pair)})
     # bypass: constant activations replace the motor-unit pools; the network is never stepped
     adh_set = b.set_adhesion
     b.set_adhesion = lambda s: adh_set(np.full(np.shape(s), a.adhesion))
@@ -161,13 +187,17 @@ def main() -> None:
     runs = []
     for pat in a.patterns.split(","):
         for lv in (float(x) for x in a.levels.split(",")):
-            ap_ = (sup_pair if pat == "support" else np.ones(len(p.F0))) * lv
-            ac_ = None if h.coxa is None else ((sup_coxa if pat == "support" else np.ones(len(h.coxa.F0))) * lv)
+            if pat == "need":
+                ap_ = np.clip(need_pair * lv, 0.0, 1.0)
+                ac_ = None if h.coxa is None else np.clip(need_coxa * lv, 0.0, 1.0)
+            else:
+                ap_ = (sup_pair if pat == "support" else np.ones(len(p.F0))) * lv
+                ac_ = None if h.coxa is None else ((sup_coxa if pat == "support" else np.ones(len(h.coxa.F0))) * lv)
             h.activation = lambda nm=None, v=ap_: v
             h.coxa_activation = lambda v=ac_: v
             b.reset(); place_standing(b)
             z = [float(d.xpos[thorax, 2])]
-            fl, fo, nonleg_touch = [], [], 0
+            fl, fo, fa, nonleg_touch, touched = [], [], [], 0, {}
             imgs = []
             n = int(round(a.ms / org.timestep_ms))
             k10 = int(round(10.0 / org.timestep_ms))
@@ -179,9 +209,10 @@ def main() -> None:
                 org.motor_step(nospk)
                 if (s + 1) % k10 == 0:
                     z.append(float(d.xpos[thorax, 2]))
-                    a_, o_ = floor_forces(m, d, leg_body)
+                    a_, o_ = floor_forces(m, d, leg_body, touched if s >= n - 100 * k10 else None)
                     fl.append(a_); fo.append(o_); nonleg_touch += o_ > 0
-            z = np.array(z); fl = np.array(fl); fo = np.array(fo)
+                    fa.append(float(np.abs(d.actuator_force[adh_ids]).sum()) if adh_ids.size else 0.0)
+            z = np.array(z); fl = np.array(fl); fo = np.array(fo); fa = np.array(fa)
             last1 = slice(-100, None)
             tq = p.torques(ap_, d.qpos[h.q_adr], d.qvel[h.v_adr])
             by = {}
@@ -198,6 +229,10 @@ def main() -> None:
                      leg_floor_force_over_weight_last1s=round(float(fl[last1].mean() / weight), 3),
                      trunk_floor_force_over_weight_last1s=round(float(fo[last1].mean() / weight), 3),
                      trunk_touch_frac=round(nonleg_touch / max(len(fo), 1), 3),
+                     # adhesion presses the feet down, so the foot normal force includes it; net support removes it
+                     adhesion_force_over_weight_last1s=round(float(fa[last1].mean() / weight), 3),
+                     foot_net_support_over_weight_last1s=round(float((fl[last1] - fa[last1]).mean() / weight), 3),
+                     non_foot_touch_last1s={k: round(v / 100, 2) for k, v in sorted(touched.items(), key=lambda kv: -kv[1])[:8]},
                      active_torque_abs_uNmm=({k: round(v, 2) for k, v in by.items()}),
                      nan=bool(not np.isfinite(d.qpos).all()), heights_final_mm={k: round(v, 3) for k, v in heights(m, d, pre).items()})
             r["holds"] = bool(r["z_final"] >= 0.9 and (r["sink_last2s_mm"] or 0) < 0.05 and r["trunk_touch_frac"] == 0

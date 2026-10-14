@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -25,14 +26,24 @@ def main() -> None:
     for d in map(Path, a.dirs):
         js = {}
         for f in d.glob("*.json"):
-            for r in json.loads(f.read_text()).get("runs", []):
+            j = json.loads(f.read_text())
+            for r in j.get("runs", []):
                 js[(r["pattern"], f"{r['level']:g}")] = r
-        for f in sorted(d.glob("frames_*.npy"), key=lambda p: (p.stem.split("_")[1], float(p.stem.split("_")[2]))):
+            if "drive_mv" in j:   # S2: one run per file
+                js[(j["type"].replace(",", "+"), f"{j['drive_mv']:g}mv")] = j
+        num = lambda x: float(re.sub(r"[^0-9.]", "", x) or 0)
+        for f in sorted(d.glob("frames_*.npy"), key=lambda p: (p.stem.split("_")[1], num(p.stem.split("_")[2]))):
             _, pat, lv = f.stem.split("_", 2)
             r = js.get((pat, lv), {})
-            lab = (f"{pat} a={lv}  z {r.get('z_place', '?')}->{r.get('z_final', '?')} mm  "
-                   f"legF/W {r.get('leg_floor_force_over_weight_last1s', '?')}  "
-                   f"{'HOLDS' if r.get('holds') else 'fails'}")
+            if "drive_mv" in r:
+                rz = r["rates_hz"]
+                lab = (f"{pat} {lv} (forced drive)  DN {rz['stim_drive']} Hz  premotor {rz['premotor_drive']} Hz  "
+                       f"leg MN {rz['leg_mn_drive']} Hz  act max {r['activation_drive_max']}  "
+                       f"{'PASS' if r['passes'] else 'fails'}")
+            else:
+                lab = (f"{pat} a={lv}  z {r.get('z_place', '?')}->{r.get('z_final', '?')} mm  "
+                       f"legF/W {r.get('leg_floor_force_over_weight_last1s', '?')}  "
+                       f"{'HOLDS' if r.get('holds') else 'fails'}")
             rows.append((lab, np.load(f)))
     if not rows:
         raise SystemExit("no frames found")
