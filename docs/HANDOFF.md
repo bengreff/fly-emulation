@@ -243,10 +243,10 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: PSI→DLMn measured PSP, flyvis pair-strength arm; body hook (14 Oct 00:45)
+## fly2: PSI→DLMn measured PSP, flyvis pair-strength arm with CT1 compartments; body hook (14 Oct 01:08)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 14 Oct message (the two items Ben approved in DECISIONS 13 Oct 22:53). Every switch below is neutral by default and **none is adopted**.
-- **Merging:** worktree-fly2 contains main (merge 0667b45) plus 3f60224, 53e3010, 9423fd6 and this HANDOFF. The worktree guard refuses `git -C /Users/ben/fly-emulation …`, so someone in the main checkout runs `git merge --ff-only worktree-fly2`. The full battery has not been rerun since the merge. The new tests (`test_unitary_psp.py`, `test_flyvis_pairs.py`) pass, and so does `test_model_data.py`.
+- **Merging:** worktree-fly2 contains main (merge 0667b45) plus 3f60224, 53e3010, 9423fd6, 609b238, 4c654e2, 39f61ee and this HANDOFF. The worktree guard refuses `git -C /Users/ben/fly-emulation …`, so someone in the main checkout runs `git merge --ff-only worktree-fly2`. The full battery has not been rerun since the merge. The new tests (`test_unitary_psp.py`, `test_flyvis_pairs.py`, `test_ct1_compartments.py`) pass, and so does `test_model_data.py`.
 - **Body hook (Director, 14 Oct):** fly owns the premotor→MN transmission fix (the scale, plus the glutamate sign for 14A/21A; S4a scored, S4b fit next). Don't duplicate it. When fly lands a fitted scale or a glutamate result on main, rerun step R (the reach gate; F-REFLEX-2 got 0 of 8) on it as the held-out test. Run `scripts/probes/run_proprio_reach.sh` (8 runs; add the `--set`s to the probe calls), then `proprio_reach_score.py` and `proprio_reach_fig.py`, all on backhouse (Mac load hit 27). If the leg reaches, build step L as `docs/research/s13_proprio_loop.md` plans: a neutral bias in `HillLegDrive.torque()`, an afferent delay ring of about 3 ms (inferred), a pushed-stance test, and its own pre-registration.
 - **Item 1 done: PSI→DLMn is 4.71 mV MEASURED (F-GJ-5; 3f60224, 53e3010).**
   - The switch is `connectome:identified|unitary_psp_from_recordings` (neutral; CPU only, the GPU refuses it). It reads `data/params/unitary_psp.csv`.
@@ -257,7 +257,7 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
   - Figure `docs/media/s14_fly2_psi_dlm.png`, viewed.
 - **Item 2 in progress: flyvis type-pair strengths (F-VISION-13; 9423fd6).**
   - The switch is `cell_type:all|optic_lobe_flyvis_pair_strength` (neutral; CPU only, the GPU refuses it). It is labelled "fitted (flyvis, task-trained)", basis inferred.
-  - The table `data/params/flyvis_pair_strength.csv` comes from `scripts/vision/flyvis_pair_rows.py`: 543 pairs, 517 read, 26 CT1 pairs held back.
+  - The table `data/params/flyvis_pair_strength.csv` comes from `scripts/vision/flyvis_pair_rows.py`: 543 pairs; the 26 CT1 pairs select CT1 compartments only.
   - `Network._flyvis_pair_weights` sets each edge from a graded cell so that the linear voltage gain is alpha × n. The weight is w = alpha·n·range·(1 − e^(−dt/τ_s)) / (g_k·(1 − r0)·rmax·dt).
   - Edges from spiking presynaptic cells keep the shared scale (there are none on v0r). Our sign is kept; 25 pairs disagree in sign with flyvis. Conductance synapses convert this weight like any other.
   - **Size check** (`scripts/vision/flyvis_pair_check.py`; `docs/media/s14_fly2_flyvis_pairs.{png,csv,json}`, viewed):
@@ -265,25 +265,19 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
     - 25 pairs are flagged above a 60 mV full-range ceiling (guessed). They are flagged, not clipped.
     - R1-R6→L1 (−0.78) and R1-R6→L2 (−0.41) clear the only measured lower bound (Zheng 2006, 0.4, derived).
     - Every other class is **unchecked**. No primary-text mV value was found; the sources for Mi1/Mi4/Mi9→T4, T4/T5→LPTC and CT1 are paywalled.
-  - **CT1 is not compartmentalised.** This deviates from Ben's condition, and the pre-registration says so.
-    - Male-cns has 2 CT1 cells and our data has no column assignment.
-    - **The data exists (Sonnet survey, 14 Oct, live queries on male-cns v1.0):**
-      - Neuron nodes carry `assignedOlHex1`/`assignedOlHex2`.
-      - Synapse nodes carry `olHex1`, `olHex2` and `olLayer`.
-      - Male-cns shares bodyIds with optic-lobe v1.1 (Nern et al. 2025).
-      - CT1 10009 spans 866 columns in ME layer 10 (100,448 synapses) and 868 in LO layer 1 (145,362).
-      - Caveat: one Mi1 sampled splits its weight 37/30/28% over 3 columns. So assign the edge column from the CT1 synapse's own `olHex`, not from the partner's assigned column.
-    - **The build:**
-      - Fetch the CT1 synapses with partner and column. This is a pinned raw pull (about 250k rows per cell), so preserve it raw.
-      - Make one graded compartment per (CT1 cell, layer, column). Inputs come from the partners at that column's synapses (Mi1/C3/Mi9/T4 in M10, or T5/Tm1/Tm2/Tm9 in Lo1); outputs go to the same column. Use the flyvis alpha per compartment pair.
-      - Then CPU tests, a GPU refusal, and a new seed (2).
-  - **Running on backhouse:** tmux `fly2_t4t5`, `~/fly2/runs/s14/t4t5/run.sh`, started 00:44, about 40 min.
-    - It is the pre-registered flyapp T4/T5 test (DECISIONS 14 Oct 00:41): seed 1, both stimulus sets.
-    - It runs with `--parallel 3` because crucible holds the rest of the memory.
-    - Model snapshot `~/fly2` at 9423fd6; app copy `~/fly2-app` at 80bc01c.
-    - Done-file `~/fly2/runs/s14/t4t5/v0rfvp_s1.done`; outputs `…/v0rfvp_s1/ds.{json,png}`.
-    - Keep-alive from the Mac: `ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`.
-    - To collect: copy `ds.json`, `ds.png` and the log to `runs/s14/fly2/t4t5/v0rfvp_s1/` and view the sheet. Write the result under the pre-registration (pass: 8 of 8 in the medulla set; predicted FAIL). Add F-VISION-14 and update the register row.
+  - **CT1 per-column compartments built (F-VISION-14; 4c654e2).** The seed-1 run below predates them; its pre-registration states that deviation.
+    - The switch is `cell_type:CT1|compartments_by_column` (neutral, in `connectome.ct1_compartments`). It is a graph transform, so both paths run it; the pair arm stays CPU-only.
+    - Data: male-cns ConnectsTo `roiInfo` column counts. Raw pull `data/raw/ct1_columns_s14` (`scripts/vision/fetch_ct1_columns.py`, sha256 manifest), also on backhouse under the shared raw store.
+    - Result: 1,669 M10 and 1,729 Lo1 compartments, plus 2 trunks holding the ~2% of synapses outside ME/LO columns and CT1→CT1. All totals are conserved.
+    - The flyvis CT1 rows select the compartments by `instance:` (they match nothing at 0). Size check `docs/media/s14_fly2_flyvis_pairs_ct1.*`, viewed: no CT1 flags, max 8.9 mV; CT1 is unchecked against measurements (none found). C3↔CT1 has no edges at 5 synapses.
+    - 100 ms smoke clean. Tests: `test_ct1_compartments.py`.
+    - Possible next step: the CT1 Sonnet survey also found per-synapse `olHex1/olHex2/olLayer`. A synapse-level pull would allow layer-exact splits; the connection-level ROI split is used now.
+  - **GPU module fix (609b238):** 9423fd6 left `gpu/batched.py` failing to compile. Fixed, but not yet run under JAX: run `pytest tests/test_gpu_batched.py` on backhouse once the runs finish, since the Mac lacks JAX and skips it.
+  - **Running on backhouse, two pre-registered flyapp T4/T5 tests** (app copy `~/fly2-app` at 80bc01c, both stimulus sets, `--parallel 3` because crucible holds the rest of the memory):
+    - Seed 1 (DECISIONS 14 Oct 00:41), pair strengths, CT1 a point cell. tmux `fly2_t4t5`, snapshot `~/fly2` at 9423fd6, started 00:44. Done-file `~/fly2/runs/s14/t4t5/v0rfvp_s1.done`; outputs `…/v0rfvp_s1/ds.{json,png}`.
+    - Seed 2 (DECISIONS 14 Oct 01:05), pair strengths + CT1 compartments. tmux `fly2_t4t5_s2`, snapshot `~/fly2_s2` at 39f61ee. It waits for the seed-1 done-file, then takes about 40 min. Done-file `~/fly2_s2/runs/s14/t4t5/v0rfvpct1_s2.done`; outputs `…/v0rfvpct1_s2/`.
+    - Keep-alive from the Mac (a fly2 background shell): `ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`. Stop it after seed 2.
+    - To collect each: copy `ds.json`, `ds.png` and the log to `runs/s14/fly2/t4t5/<name>/` and view the sheet. Write the result under its pre-registration (pass: 8 of 8 in the medulla set; both predicted FAIL). Add a FINDINGS entry (F-VISION-15 onward) and update the register row. For seed 2, check in the manifest that the CT1 switch was applied.
   - **Held-out recordings check** (Ben's condition before any frontier use). Not yet run; keep it sealed until the arm passes T4/T5.
     - Data: Behnia et al. 2014 temporal measures. flyvis was not trained on them and this project has not used them.
     - Offset/onset ratios for 1-s full-field steps (SEM; primary text checked by the s14 Sonnet pass): Mi1 11 ± 3.5%, Tm3 36.6 ± 7.1%, Tm1 26.1 ± 3.8%, Tm2 17.7 ± 2.3%.
@@ -406,7 +400,8 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | SET a value (s14 fly2, F-GJ-5: PSI→DLMn unitary PSP, switch neutral) | can no longer validate |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
-| flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, running on backhouse, pre-registered DECISIONS 14 Oct 00:41) | the next candidate needs seed 2 or a new test |
+| flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, running on backhouse, pre-registered DECISIONS 14 Oct 00:41) | — |
+| flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, both sets) | being spent (s14 fly2, queued on backhouse, pre-registered DECISIONS 14 Oct 01:05) | the next candidate needs seed 3 or a new test |
 | Behnia 2014 step offset/onset ratios and filter peaks (Mi1, Tm3, Tm1, Tm2) | unspent; reserved as the flyvis pair arm's held-out recordings check (Ben, 13 Oct 22:53) | their amplitudes already set graded_range_rec |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out** for S4b s* (unspent) | score once, via `s4b_score.py heldout`, after s* is written down |
