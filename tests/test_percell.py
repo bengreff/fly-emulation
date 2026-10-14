@@ -136,3 +136,18 @@ def test_s4a_switches_are_neutral_by_default_and_touch_leg_mns_only():
     assert np.all(gl.net.w[on] > 0) and np.any(base.net.w[on] < 0)
     assert np.array_equal(gl.net.w[~on], base.net.w[~on])
     assert np.allclose(np.abs(gl.net.w[on]), np.abs(base.net.w[on]))
+
+
+def test_s4b_scale_is_neutral_by_default_and_scales_leg_mn_input_only():
+    """S4b fit quantity (DECISIONS 14 Oct): one shared premotor-to-leg-MN synaptic scale, neutral 1."""
+    from flyemu.percell import leg_motor_mask
+    base = _org()
+    inv = base.reg.inventory()
+    assert "cell_type:leg_motor|synaptic_input_scale" in set(inv.entity + "|" + inv.property)
+    leg = leg_motor_mask(base.conn)
+    s = _org(**{"cell_type:leg_motor|synaptic_input_scale": 4.0})
+    g = s.net.input_gain / base.net.input_gain
+    assert np.all(g[~leg] == 1.0) and np.allclose(g[leg], 4.0)
+    on = leg[base.conn.indices]                    # w carries the postsynaptic gain (lif.py)
+    assert np.array_equal(s.net.w[~on], base.net.w[~on])
+    assert np.allclose(s.net.w[on], 4.0 * base.net.w[on], rtol=1e-6)

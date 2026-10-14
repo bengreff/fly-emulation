@@ -3,7 +3,8 @@
 The S3 result (F-BYPASS-4) and Pugliese's reference differ less in rhythm than in how deeply each MN pool is
 modulated on every cycle. This readout measures that, the same way for both models:
 
-- f0: the pool's spectral peak in 7-15 Hz (Pugliese 2025's reported range) over the scored window;
+- f0: the pool's spectral peak in 7-15 Hz (Pugliese 2025's reported range) over the scored window; S4b uses
+  7-16 Hz (`hi`, Director's band, DECISIONS 14 Oct);
 - the trace is folded at period 1/f0 into 12 phase bins; the "on" half-cycle is the 6 contiguous bins (circular)
   with the largest mean;
 - per cycle k: m_k = (on - off) / (on + off), the summed activity in the on half against the off half of that cycle.
@@ -42,12 +43,12 @@ def f_peak(x: np.ndarray, dt_s: float, lo: float = 7.0, hi: float = 15.0) -> flo
     return float(f[m][np.argmax(p[m])]) if p[m].max() > 0 else float("nan")
 
 
-def depth(x: np.ndarray, dt_s: float, min_spikes: float | None) -> dict:
+def depth(x: np.ndarray, dt_s: float, min_spikes: float | None, hi: float = 15.0) -> dict:
     """x: activity per bin (spike counts, or rate) over the scored window."""
     tot = float(x.sum())
     if tot <= 0:
         return dict(f0_hz=None, depth=0.0, per_cycle=None, cycles=0, frac_cycles_floor=0.0, profile=None)
-    f0 = f_peak(x, dt_s)
+    f0 = f_peak(x, dt_s, hi=hi)
     per = 1.0 / f0 / dt_s                               # period in bins
     ph = (np.arange(len(x)) % per) / per
     pb = np.minimum((ph * NB).astype(int), NB - 1)
