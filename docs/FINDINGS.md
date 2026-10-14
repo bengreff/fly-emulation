@@ -1100,3 +1100,29 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Nobody has measured input resistance, resting potential or threshold for any VNC premotor interneuron. The 7 mV gap is Shiu's brain-wide guess, not a measured value for these cells.
   - Glutamate→leg MN: MN clusters co-express GluClα with NMDA and kainate subunits (Allen 2020), so the sign is inferred, not measured.
 - **Reading.** I1's silence is a property of the male-CNS counts under a spiking threshold, not an implementation bug. The biological questions are whether I1 releases graded (unknown) and how strong VNC synapses are (unmeasured). S3 tests both with existing class-level switches (DECISIONS 22:09); no per-synapse knob.
+
+### F-GJ-2: no identified Drosophila gap junction has a coupling number in readable primary text, and the s10 JO-B→GF site contradicts the source that measured JO→GF coupling (s13 fly2, 13 Oct 22:19)
+- **Coupling magnitudes.** Read in full text (Sonnet sweep, 13 Oct):
+  - eLN–PN: Yaksi & Wilson 2010. Coupling coefficients appear only in Fig 4C (n = 37 control pairs, 19 shakB2). Depolarisation passes better than hyperpolarisation.
+  - Sister PNs: Kazama & Wilson 2009. Values appear only in Fig 7d; coupling is larger for depolarising steps.
+  - JO→GF: Pézier et al. 2016 gives no coupling coefficient.
+  - Not accessible: VS–VS (Haag & Borst 2004, Cuntz 2003), Ammer 2022, Thomas & Wyman 1984. Tanouye & Wyman 1980 was not found.
+  - So every DC coupling in `data/params/gap_junctions.csv` stays blank (registered unresolved, not simulated) until a figure is digitised.
+- **GF rows carry spikes, not DC.** TTMn follows each GF spike 1:1, so the GF→TTMn and GF→PSI rows use a spike step of safety (2, guessed) × the partner's threshold distance. The step is delivered after the GF conduction time only. It is rectifying, with the reverse direction 0: ShakB(N+16)/ShakB(L) rectifies in oocyte pairs (Phelan 2008).
+- **JO-B contradiction.** Pézier 2016: "the GF is NB-coupled only to the A group of JON axons". The JO-B1_a/JO-B1_c→DNp01 kicks in `electrical.CURATED_PAIRS` (s10) name the wrong subgroup. Their strength is 0 in every profile, so no run is affected.
+  - male-cns has no JO-A→DNp01 chemical synapse at the working threshold, so the JO-A row is registered with partners `none`. It is not simulated.
+- **Validity.** Point cells, so a junction sees the somatic potential. The DC coupling is explicit, from start-of-step potentials, and is stable only while c·dt/τm ≪ 1.
+
+### F-GJ-3: with the GF gap junctions on, TTM latency is 1.10 ms (inside the Augustin 2017 WT band) and TTMn follows every GF spike; DLM never responds, because male-cns gives PSI no transmitter (s13 fly2, 13 Oct 22:24)
+- **Run.** `scripts/probes/gf_latency.py --profile m10f --trials 20`, pre-registered 22:18. Output: `runs/s13/fly2/gf_latency_m10f.{json,png}` (figure viewed).
+- **Gaps off.** TTMn, PSI and both DLMn types follow 0 of 20 GF spikes (control 0). One GF spike's chemical input does not fire them. This matches shakB2 losing the short-latency response (Thomas & Wyman 1984).
+- **Gaps on.** TTMn and PSI follow 20 of 20 (control 0), central latency 0.3 ms in every trial. Latency to muscle: TTM 1.099 ms, PSI 1.097 ms, against the band 0.866-1.216 ms (WT young 0.926 to old 1.216). The pre-registered TTM prediction holds; the falsifier did not fire.
+- **What this shows, and what it doesn't.** It is a consistency check, not a validation of the junction:
+  - 1:1 following is built in, since the spike step is 2 × the threshold distance.
+  - The latency is the sum of delay rows: GF conduction 0.27 ms (v measured), plus TTMn axon 0.30 ms (v inferred), plus 0.5 ms neuromuscular (inferred).
+  - The stimulus-to-GF time in the recordings is not modelled.
+- **DLM: the prediction failed.** I predicted "above the band, about 2 ms". In fact DLMn never fired within 10 ms in either arm (follow 0.00).
+  - Measured reason: PSI is `unclear` in both predictedNt and consensusNt, and the hemilineage fill (`connectome:unclear|nt_by_development`, on in m10f) has no row for PSI. So PSI has sign 0 and transmits nothing to DLMn (406 synapses onto DLMn c-f, 43 onto DLMn a, b).
+  - Physiology: PSI→DLMn is "an identified cholinergic synapse", and TTMn and PSI "are connected via electrical synapses to the giant fiber" (Fayyazuddin et al. 2006 PLoS Biol 4:e63, open text). The same paper reports a WT synaptic potential of 4.71 ± 0.35 mV (n = 10) at the soma; the cell is not checked. Lead, not adopted.
+- **Spent.** The DLM latency (Augustin 2017 S1 Table) is now seen on m10f. A later PSI-transmitter fix can only report DLM as a consistency check.
+- **Next (not done).** Give identified types their transmitter from physiology (PSI = acetylcholine), under a neutral switch with the source per row. Then check whether one PSI spike fires DLMn under the shared synapse scale.

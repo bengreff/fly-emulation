@@ -250,3 +250,11 @@ flyvis_lappalainen2024:
   local: "data/raw/flyvis_lappalainen2024/ (wheel, zip, extracted results/)"
   basis: "inferred (fitted): per-type time constants and biases and per-type-pair synapse strengths of task-trained networks (optic flow on Sintel), synapse counts from the FIB-25/FIB-19 connectome; voltages in arbitrary units"
   use: "scripts/fetch/flyvis_*.py and scripts/vision/flyvis_*.py (numpy re-implementation, no torch); data/derived/flyvis_lappalainen2024_*.csv; data/params/cell_types_flyvis.csv (52 types, read only by cell_type:all|optic_lobe_flyvis); the Tm2 time constant is left out (conflicts with Behnia 2014)"
+
+augustin2017_gfs:
+  name: "Augustin et al. 2017 PLoS Biol 15:e2001655 (doi 10.1371/journal.pbio.2001655), giant fibre system latencies with age and Rab11/Rab4 knockdown"
+  version: "supporting files S1 Table pbio.2001655.s008.docx (23,723 bytes, sha256 prefix 0274bd4dc790650c) and S1 Data pbio.2001655.s009.xlsx (101,724 bytes, sha256 prefix b035283ef7668fdb); fetched 2026-10-13"
+  license: "CC BY 4.0"
+  local: "data/raw/augustin2017_gfs/"
+  basis: "measured: GF-TTM and GF-DLM response latency (stimulus artifact to muscle EPSP onset, mean ± SEM), brain stimulation through the eyes (40 V, 0.03 ms) and thoracic stimulation, WT young (d5-7) / mid-aged / old, da-GAL4/+ controls, Rab11 and Rab4 RNAi"
+  use: "scripts/probes/gf_latency.py reference band (REFERENCE); the brain-minus-thoracic difference informed the no-chemical-delay rule of electrical.build_gap (s13 fly2)"
