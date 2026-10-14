@@ -1188,3 +1188,31 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
     - DNg100 L: 4 MNs at 10.4 Hz. The stance remotor peaks about 25 ms before the swing promotors, and one pair, promotor against remotor, reaches r −0.31 at zero lag. That just passes our −0.3 bar. The R run has 0 pairs.
   - Core cells reaching 3-16 units: E1, E2, I1 (3.1-7.8) and IN19A007 (2-16). I1 is active in every oscillating run, as it is in Pugliese's paper.
   - **Reading:** with this model class on this connectome, a stimulated core does give a deep, cycle-locked MN rhythm with a swing-stance phase offset. Our MNs get roughly one spike per cycle per pool. That gap is the target for the next step. In the rate model, any input above a size-normalised threshold gives I1 a graded rate (inferred to be why it is recruited); our LIF I1 needs a 7 mV crossing before it does anything. Whether a real I1 is graded remains unmeasured.
+
+### F-BYPASS-5: at the same synapse counts, our MNs need 14-25× more presynaptic input than Pugliese's to reach threshold and have 0.17-0.22× the gain above it; the core's one spike per cycle cannot cross that gap (s13, 13 Oct 23:31; derived, no model change)
+- **Method.** This is a code and single-cell analysis, not a network run. Ours is m10f0 as built by the bypass probes. Theirs is `/tmp/pugliese_cpg` at 10e7661, with the male-CNS extract (`rate_equation_half_tanh`, `set_sizes`, `configs/neuron_params/default.yaml`). Left T1. Synapse counts are identical in both builds.
+- **Equations.**
+  - Ours: w = sign × 0.15675 mV × n × input_gain; τs 5 ms; τm 20 ms; gap 7 mV. One spike peaks at 0.1575·w after 9.2 ms, and the mean depolarisation is w·r·τs.
+  - Theirs: dR/dt = (max(200·tanh((a/200)(I + W·R − θ)), 0) − R)/τ, with W = 0.03·n, θ = 7.5·sz, a = 1/sz, τ 20 ms. sz is the cell's voxel volume over the network median.
+- **Threshold in synapse·Hz** (ours = 8,932/g; theirs = 250·sz):
+
+  | MN pool | Ours | Theirs | Ratio |
+  |---|---|---|---|
+  | Promotor 801173 | 11,750 | 857 | 13.7× |
+  | Promotor 800061 | 16,120 | 1,060 | 15.2× |
+  | Remotor 802509 | 11,320 | 783 | 14.5× |
+  | Trochanter flexors | 6,100-7,600 | 333-385 | 18-20× |
+  | Tibia flexor 807165 | 20,530 | 805 | 25.5× |
+
+- **Gain above threshold:** ours/theirs 0.17-0.22. Spike-triggered Kv2/BK/SK set our f-I slope at 3.3 Hz/mV; leak only would give 6.1.
+- **Per spike** (peak PSP from one E2 spike, against the 7 mV gap):
+
+  | Promotor 801173 | Other promotor, remotor, TrF | Tibia flexor |
+  |---|---|---|
+  | 3.47 mV | 0.86-1.62 mV | 0.06 mV |
+
+  Into 801173, an E2 burst of 1 or 2 spikes gives 0 MN spikes (peak −45.3 mV at 2). A burst of 3-5 gives 1 spike, and 10 give 2-3. For 801173 to reach threshold in steady state, E2 must fire at about 65 Hz in ours, against R 4.8 in theirs.
+- **Synapses:** I1 makes no synapse onto any of these pools in either build. The core reaches the MNs through E2 (+) and IN19A007 (−).
+- **Size:** our non-slow MNs share one set of membrane values. Input gain varies only within type (0.36-2.96, the m7 size law). Theirs scale threshold and gain with absolute size (0.68-4.24× the median).
+- **Azevedo 2020** (read by a Sonnet agent, 13 Oct). Rin is fast 150 MΩ (n 15), intermediate 300 (11), slow 700 (14), measured. Fast and intermediate MNs have no f-I curve: current injection "failed to reliably trigger action potentials". The slow-MN f-I curve is spent (F-AZ-2/3, F-RUNG1-2). The recruitment order (slow, then intermediate, then fast) is measured and has never been fitted.
+- **Reading.** The model differs at the oscillator→MN step mainly in scale and in the core's output (one spike per cycle). Neither has a measured value for VNC cells. The one measured quantity that bears on the step is MN Rin by class, and it redistributes gain between types rather than setting the scale. S4a (DECISIONS 23:31) tests Rin and the glutamate sign as shared arms before anything unmeasured is considered.

@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Tue 13 October 2026, 23:14 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
+**Rewritten each session; do not append.** State as of Tue 13 October 2026, 23:33 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
 
 **Bypass assay, nerve-cord side (s13, 13 Oct 21:30-23:14).** All results are committed. Read F-BYPASS-1 to F-BYPASS-4 and the DECISIONS entries from 21:41 onward (pre-registrations S2 21:41 and S3 22:09, calibration note 22:18, results 22:09 and 23:10, reference 23:13).
 - **S0 done:** `rest_vs_reference.py`. MBON14, P-EN and DN1a are low at rest. Queued behind the assay.
@@ -19,15 +19,20 @@
   - Male CNS: I 400 is needed (I 250 gives nothing). DNg100 R gives 12.0 Hz with 7 MNs and 0 anti pairs; DNg100 L gives 10.4 Hz with 4 MNs and one zero-lag pair at r −0.31.
   - Mac scratch copies `/tmp/pugliese_cpg` and `/tmp/pug_ref` may vanish. The backhouse clone is the durable one.
 - **Tools:** `scripts/probes/bypass_s2_descending.py`, `bypass_s3_chain.py` (network-only oscillator traces), `bypass_rasters.py` (repeat `--chain` for one V panel each), `bypass_sign_audit.py`, `bypass_lag_readout.py` (secondary lagged readout, never a pass), `bypass_sheet.py`. Runs are in `runs/s13/bypass/{s2,s3,pugliese_ref}` (Mac, gitignored). The backhouse S3 run is in `~/fly-m10f/runs/s13/bypass/s3/` (run.sh, done-files, ALL.done).
+- **S4 step 1 done (13 Oct 23:15-23:31, Director brief 23:15; DECISIONS 23:31; F-BYPASS-5).** The difference note and the S4a pre-registration are written and committed; no code or model change yet.
+  - The difference, in numbers: at equal synapse counts our MNs need 14-25× more input than Pugliese's to reach threshold. Above threshold they have 0.17-0.22× the gain (Kv2/BK/SK halve the f-I slope). One E2 spike gives 0.06-3.5 mV against a 7 mV gap. Their size principle scales every cell; ours varies gain only within type. Neither scale is measured.
+  - Azevedo 2020 (Sonnet read): Rin fast 150, intermediate 300, slow 700 MΩ, measured. **There is no fast or intermediate f-I curve** (current injection did not evoke spikes), and the slow-MN f-I is spent. Ben's f-I held-out check is therefore impossible as briefed; the recruitment order (slow, then intermediate, then fast) replaces it. Say so to the Director.
+  - New readout `scripts/probes/bypass_moddepth.py` (per-cycle depth, 7-15 Hz, 3-spike floor, drive-dependence). On the reference: depth 0.35-0.80. On all 22 S2/S3 runs: one pool passes (S2 DNg100 40 mV, rh coxa-tr +1, depth 0.50). Calibration caught the tonic tibia flexors scoring as modulated, hence the drive-ratio rule.
 - **Next, in order:**
-  1. **S4 pre-registration, written before any run.** It keeps the S2 criterion (r ≤ −0.3) OR a lagged-phase readout calibrated on the reference (swing-stance offset 12-25 ms). It adds per-cycle MN modulation depth, compared against the reference's.
-  2. **Core→premotor→MN gain**, the measured gap. Candidates, each a shared, bounded value labelled by its basis:
-     - MN input resistance and size by type (measured MN Rin exists: Azevedo 2020 for the tibia MNs);
-     - the glutamate receptor sign on leg MNs (19% of premotor input; Allen 2020 co-expression, inferred) as one pre-registered arm;
-     - burst output of the oscillator cells (does a real E1/E2 burst? Unmeasured; say so).
-     No per-synapse knobs and no I1-specific forcing.
-  3. The tonic tibia-flexor drive at rest (a separate MN-layer issue).
-  4. S4 proper: proprioceptive replay, closed loop, delays. Held-out checks only after a pass (E1/E2 silencing, DNb08 alternation, gate and resting rates with the brain on).
+  1. **Build S4a's two neutral switches** (CPU first, then GPU, with an equivalence check):
+     - R: leg-MN input gain ∝ Rin(volume) between types, using the existing within-type law (exponent 1.49 in `src/flyemu/percell.py`, F-PERCELL-1), normalised so the median leg MN keeps gain 1;
+     - G: glutamate→leg-MN sign +1 (see how `candidates_s7_glu_flexor.csv` did it for the tibia flexors, F-AZ-2).
+     Tests in `tests/`, battery, then commit.
+  2. **Run S4a on backhouse with done-files:** arms R, G, RG × DNg100 15/25/40 mV (9 runs, `bypass_s2_descending.py --set ...`, about 2.4 GB each). Then `bypass_moddepth.py`, rasters (`bypass_rasters.py`), frames and the lag readout. View them before scoring, then score exactly as pre-registered (DECISIONS 23:31) and commit.
+  3. If S4a fails as predicted, the falsifier puts the break in unmeasured scale and burst output. Write a Ben's-list item: a unitary premotor→MN PSP recording and an E1/E2 burst recording.
+     - fly2 owns the PSI→DLMn 4.71 mV value (3-10× above our per-synapse PSP at that MN). It is the only measured MN-input PSP; don't extend it to leg MNs without Ben.
+  4. The tonic tibia-flexor drive (fitted spontaneous drive of 35.55 mV against a 26.2 mV gap, 23 Hz): a separate MN-layer issue.
+  5. S4 proper: proprioceptive replay, closed loop, delays.
 
 **Session 13: where it stopped (13 Oct 21:31).** Brief (Thu 8 Oct): build the frontier profile m10f, with every built mechanism ON at an in-range value. Adoption needs a 60 s smoke (no runaway, no NaN, resting rates in range) plus the silence gate with eye cells excluded. m9c stays the reference. Mechanisms in order: (1) per-type intrinsic dynamics from a range table, (2) membrane noise, (3) neuromodulation with receptor effects, (4) standing via one fitted shared support drive, with the fall after silencing held out.
 - **Committed 13 Oct:** bfc5751 class-grain adaptation (N4, neutral); 258b502 m10f0 profile and gate changes; fabdabb probes `smoke_live.py` and `adapt_fit.py`; 7fa4fb1 research tables `docs/research/s13_intrinsic_ranges.csv` (118 rows) and `s13_neuromodulation_effects.csv` (63 rows), both agent-gathered and not yet checked row by row. `tests/test_class_mechanisms.py` 14 passed, `tests/test_repo_hygiene.py` 12 passed. Nothing in the tree was fly2's.

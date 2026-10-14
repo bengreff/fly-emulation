@@ -2820,3 +2820,44 @@ FAIL in both sets, 0 of 8, as pre-registered 22:05 (F-VISION-12; sheet viewed). 
 ### Results S3, 13 October, 23:10 (F-BYPASS-4)
 FAIL on all arms (A, B, C, D at 15/25/40 mV). B passed the scorer at all three drives, but viewing shows a VNC-wide runaway that continues after the drive stops: DNg100 is suppressed, the body convulses, and the raster shows no alternation. Per the pre-registration that is a fail. No held-out data spent; nothing adopted; m10f0 unchanged. The `graded_rec` rows for 13B/10B stay in cell_types.csv. They are read only under `cell_type:all|mode_from_recordings = 1` (neutral 0), so m10f0 is unaffected.
 - **23:13, GPU reference collected** (F-BYPASS-4 addendum). Male CNS at I 400: score 1.00 at 10.4-12.0 Hz. One zero-lag promotor/remotor pair at r −0.31, on the L side only. So the reference just meets the S2/S3 criterion on one side and misses it on the other, which keeps the 22:18 calibration note valid. An S4 criterion should keep r ≤ −0.3 OR a pre-registered lagged-phase readout. It should also require per-cycle MN modulation depth, because that is the variable that separates us from the reference. Write it down before any S4 run.
+
+### S4 step 1: what our model does differently from Pugliese's at the oscillator→MN step, written before any change (13 October, 23:31; F-BYPASS-5)
+Director brief (23:15): the reference is a rate model in arbitrary units and drives 4-7 of 130 MNs, so it is a reference for oscillator→MN transfer, not for walking. The difference is the mechanism. Full numbers in F-BYPASS-5. In short, at the same synapse counts:
+- **Threshold:** a median-sized cell in their model reaches threshold at 250·size synapse·Hz (θ 7.5, W 0.03 per synapse). Ours needs 8,932/g (7 mV gap, 0.15675 mV per synapse, τs 5 ms). For the core's target MNs ours needs 14-25× more input.
+- **Gain above threshold:** ours is 0.17-0.22× theirs. Spike-triggered Kv2/BK/SK halve our f-I slope (3.3 against 6.1 Hz/mV).
+- **Input units:** theirs is a rate passed on instantly and continuously. Ours is one spike per core cell per cycle, giving a PSP of 0.06-3.5 mV against a 7 mV gap. So 1 E2 spike gives 0 MN spikes, 2 give 0, and 3-5 give 1.
+- **Size:** their threshold and gain scale with every cell's volume (a size principle across all cells). Ours varies input gain within type only. Between types, every non-slow MN shares one set of membrane values.
+- **Leak and time constants:** both use τ 20 ms. Ours adds τs 5 ms, so a spike's PSP peaks at 0.157× the weight.
+- **Tonic slow tibia flexors:** ours fire 23 Hz on a fitted spontaneous drive. Theirs rest at 0.
+
+Measured values touch only one of these: MN input resistance by class (Azevedo 2020: fast 150, intermediate 300, slow 700 MΩ). The scale (theirs fitted to oscillate, ours a brain-stability ceiling) and the core's burst output are unmeasured.
+
+### Pre-registration S4a: oscillator→MN transfer, two shared arms (13 October, 23:31, before any S4 run or code change)
+DIAGNOSTIC, forced drive. Same harness as S3: `bypass_s2_descending.py`, m10f0, brain off, senses off, tethered 1 mm, DNg100 at 15/25/40 mV for 300-1300 ms. Each arm is one new neutral switch (off by default):
+- **R, MN input resistance by type (measured Rin, derived mapping).** Leg-MN input gain ∝ Rin(V), where V is the cell's EM volume and Rin(V) runs through Azevedo 2020's three classes (fast 150, intermediate 300, slow 700 MΩ; measured) via the repo's volume law, exponent 1.49 (F-PERCELL-1; derived, already fitted, so not held out). The arm extends that law from within type to between types. It is normalised so the median leg MN keeps gain 1 (guessed normalisation), so the arm redistributes gain and does not rescale it. Predicted from F-BYPASS-5: the trochanter flexors (small) gain about 2×, the promotors and remotor (large) lose about 2×. Some TrF pools may reach the transfer bar, but no antagonist pair alternates.
+- **G, glutamate sign on leg MNs = +1 (one shared arm, inferred).** The receptor evidence is mixed. Allen 2020 finds GluClα in 39-70% of cells in every VNC hemilineage, alongside GluRIA/GluRIB; MN clusters co-express GluClα with NMDA and kainate subunits. No leg-MN glutamate PSP has been recorded. The excitatory sign was tried before on the tibia flexors only, and it failed its held-out reflex (F-AZ-2; spent). Glutamate is 19% of the premotor input to leg MNs. Prediction: more MN drive overall, with tonic rather than rhythmic output.
+- **RG:** R + G.
+
+**Readout** (`scripts/probes/bypass_moddepth.py`, calibrated 23:20-23:30 on the reference and on the S2/S3 traces only). For each pool over 500-1300 ms:
+- f0 is the pool's spectral peak in 7-15 Hz (Pugliese 2025's range);
+- per-cycle depth m_k = (on − off)/(on + off), using the half-cycle with the most activity;
+- cycles with fewer than 3 pool spikes score 0 (the floor is guessed);
+- depth = median m_k.
+
+Reference depth: male CNS 0.59-0.80 (DNg100 R) and 0.35-0.78 (L); MANC 0.63-0.67. Calibration found that the tonic tibia flexors (23 Hz, synchronous) look modulated at their own firing frequency. So a pool counts only if it is drive-dependent: rate ≥ 2× pre-drive, or silent before drive.
+
+**Transfer pass (per pool):** drive-dependent, f0 in 7-15 Hz, depth ≥ 0.5, and the 3-spike floor reached on ≥ 2/3 of cycles.
+
+**Baseline, before any arm** (all 22 S2/S3 runs): one pool passes, S2 DNg100 40 mV, right-hind coxa-trochanter +1 (depth 0.50, 4.4 spikes per cycle). Every other run has none. So a single pool does not separate arms.
+
+**S4a pass:** at DNg100 ≤ 200 Hz, two antagonist pools of one leg both meet the transfer pass, and their phase relation shows either r ≤ −0.3 at zero lag or a lagged peak (lag 10-30 ms, r ≥ 0.5; the reference has offsets of 12-25 ms). Two further conditions:
+- on viewing, the rasters and frames show the bursts;
+- activity stops after the drive (post-drive pool rate ≤ 1.5× pre-drive).
+
+Also reported, not scored: the number of transfer-pass pools against the baseline (0/0/1 at 15/25/40 mV).
+
+**Held-out check (Ben's item 2), with a correction.** Azevedo 2020 has no f-I curve for fast or intermediate MNs: current injection did not evoke spikes in them. The slow-MN f-I is already spent (F-AZ-2/3, F-RUNG1-2). So the f-I check as briefed cannot be run. In its place, the held-out check is the recruitment order across classes: slow, then intermediate, then fast (Azevedo 2020, measured; never fitted). In arm R, the intermediate tibia flexors must start firing at a lower DNg100 drive than the fast ones, or else the arm fails the check. Azevedo's resting potentials (−68/−60/−48 mV) stay held out. R does not touch them.
+
+**Falsifier:** if R, G and RG all fail S4a, then per-type MN properties and the glutamate sign are not the break. What remains is the scale (14-25×) and the core's single-spike output, and neither has a measured value. Both would go to Ben's list: a unitary premotor→MN PSP recording, and an E1/E2 burst recording.
+
+No adoption from S4a. A pass goes on to the held-out tests: silencing E1/E2, DNb08 drive, and the gate and rest with the brain on.
