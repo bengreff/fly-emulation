@@ -273,9 +273,9 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
     - 100 ms smoke clean. Tests: `test_ct1_compartments.py`.
     - Possible next step: the CT1 Sonnet survey also found per-synapse `olHex1/olHex2/olLayer`. A synapse-level pull would allow layer-exact splits; the connection-level ROI split is used now.
   - **GPU module fix (609b238):** 9423fd6 left `gpu/batched.py` failing to compile. Fixed, but not yet run under JAX: run `pytest tests/test_gpu_batched.py` on backhouse once the runs finish, since the Mac lacks JAX and skips it.
-  - **Running on backhouse, two pre-registered flyapp T4/T5 tests** (app copy `~/fly2-app` at 80bc01c, both stimulus sets, `--parallel 3` because crucible holds the rest of the memory):
-    - Seed 1 (DECISIONS 14 Oct 00:41), pair strengths, CT1 a point cell. tmux `fly2_t4t5`, snapshot `~/fly2` at 9423fd6, started 00:44. Done-file `~/fly2/runs/s14/t4t5/v0rfvp_s1.done`; outputs `…/v0rfvp_s1/ds.{json,png}`.
-    - Seed 2 (DECISIONS 14 Oct 01:05), pair strengths + CT1 compartments. tmux `fly2_t4t5_s2`, snapshot `~/fly2_s2` at 39f61ee. It waits for the seed-1 done-file, then takes about 40 min. Done-file `~/fly2_s2/runs/s14/t4t5/v0rfvpct1_s2.done`; outputs `…/v0rfvpct1_s2/`.
+  - **Running on backhouse, two pre-registered flyapp T4/T5 tests** (app copy `~/fly2-app` at 80bc01c, `--parallel 3` because crucible holds the rest of the memory). Backhouse load is about 44, so each 2-s protocol takes about 47 min:
+    - Seed 1 (DECISIONS 14 Oct 00:41): pair strengths, CT1 a point cell, both sets (17 runs). tmux `fly2_t4t5`, snapshot `~/fly2` at 9423fd6, started 00:44, done about 05:30. Done-file `~/fly2/runs/s14/t4t5/v0rfvp_s1.done`; outputs `…/v0rfvp_s1/ds.{json,png}`.
+    - Seed 2 (DECISIONS 14 Oct 01:05, amended 01:07 to the medulla set only, 9 runs): pair strengths + CT1 compartments. tmux `fly2_t4t5_s2`, snapshot `~/fly2_s2` at 39f61ee. It waits for the seed-1 done-file and should finish about 08:00. Done-file `~/fly2_s2/runs/s14/t4t5/v0rfvpct1_s2.done`; outputs `…/v0rfvpct1_s2/`.
     - Keep-alive from the Mac (a fly2 background shell): `ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`. Stop it after seed 2.
     - To collect each: copy `ds.json`, `ds.png` and the log to `runs/s14/fly2/t4t5/<name>/` and view the sheet. Write the result under its pre-registration (pass: 8 of 8 in the medulla set; both predicted FAIL). Add a FINDINGS entry (F-VISION-15 onward) and update the register row. For seed 2, check in the manifest that the CT1 switch was applied.
   - **Held-out recordings check** (Ben's condition before any frontier use). Not yet run; keep it sealed until the arm passes T4/T5.
@@ -401,7 +401,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | SET a value (s14 fly2, F-GJ-5: PSI→DLMn unitary PSP, switch neutral) | can no longer validate |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, running on backhouse, pre-registered DECISIONS 14 Oct 00:41) | — |
-| flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, both sets) | being spent (s14 fly2, queued on backhouse, pre-registered DECISIONS 14 Oct 01:05) | the next candidate needs seed 3 or a new test |
+| flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | being spent (s14 fly2, queued on backhouse, pre-registered DECISIONS 14 Oct 01:05, amended 01:07) | the next candidate needs seed 3 or a new test |
 | Behnia 2014 step offset/onset ratios and filter peaks (Mi1, Tm3, Tm1, Tm2) | unspent; reserved as the flyvis pair arm's held-out recordings check (Ben, 13 Oct 22:53) | their amplitudes already set graded_range_rec |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out** for S4b s* (unspent) | score once, via `s4b_score.py heldout`, after s* is written down |
