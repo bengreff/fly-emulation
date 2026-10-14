@@ -244,7 +244,7 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: optic lobe, gap junctions, receptor kinetics; body block (13 Oct 23:37)
+## fly2: optic lobe, gap junctions, receptor kinetics; body block (13 Oct 23:49)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/night-2026-10-08/briefs/fly2.md`. All three tasks have a measured result. Every switch below is neutral by default and **none is adopted**. Taking them into an m10f candidate is the fly worker's call. Adoption needs the 60 s smoke, the silence gate, a battery and a viewed figure.
 - **Handed to the fly worker for m10f** (5 s pre-handoff smoke, m10f seed 12, all three on: no runaway, no NaN, whole brain 0.307 Hz against 0.324, DECISIONS 22:45):
@@ -260,26 +260,20 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/nig
   1. May flyvis per-type-pair strengths (604 edges, fitted to a task, shared by type pair) be imported as fitted values?
   2. May a measured soma EPSP for an identified pair (PSI→DLMn, 4.71 mV) override the shared synapse scale, or does that wait for two compartments (N30)?
 - **GPU:** the gap and receptor-kinetics paths are refused on GPU until a CPU/GPU match check.
-- **Merging:** main is NOT fast-forwarded yet. The worktree guard refuses git in the main checkout, and `git push . worktree-fly2:main` is rejected (main is checked out). Someone in the main checkout runs `git merge --ff-only worktree-fly2`. The branch passed 38 tests after rebasing on cf1c7ce.
+- **Merging:** worktree-fly2 was rebased onto main 97d5bd8 on 13 Oct 23:38 and is ahead of main by fly2's body-block commits only. Main is checked out in the main checkout, so someone there runs `git merge --ff-only worktree-fly2`. **ID note:** fly2's earlier F-BYPASS-4/5 were renumbered F-STAND-4/5 at that rebase; main's F-BYPASS-4/5 are fly's nerve-cord findings. fly2's body findings use F-STAND-n from now on.
 - **Ben's answers (DECISIONS 22:53):** flyvis type-pair strengths YES, as a separate switched arm, with PSP range checks and a held-out physiology check before any frontier use. PSI→DLMn 4.71 mV YES, as a measured scan-gap fill once the primary source is checked. Both are queued behind the body block.
-- **Now (Director redirect, 13 Oct): body interface, MN to ground** (development mode, pre-register each fix). The parts: (a) the MN→muscle mapping (187 of 505 leg MNs unmapped; no MN for the T2/T3 coxa promotors); (b) distal capacity against measured values, or the real standing pose; (c) force-length and passive stiffness (Hooper 2009 onward); (d) abdomen stiffness. Pass: the S1 rerun stands for 3 s at a plausible constant activation without rearing or sinking, with the contact sheet viewed. fly owns the VNC (S3): stay out of lif.py graded release and the VNC files. Viewed `docs/media/s13_bypass_s1.png`: support 0.3-0.5 and coact 1 rear nose-up on the abdomen tip; need 1.5-2 pitches head-down.
-  - **Survey (23:05):** `docs/research/s13_body_interface.md` (read it first). (a) The 187 = 168 LTM MNs (no Hill muscle, so they drive nothing in Hill mode) + 17 unnamed T2/T3 MNs + 2 TTMn. MANC has no T2/T3 coxa promotor MNs (Cheong 2024), a published gap. (c) Passive stiffness is already Wang 2025's measured values, about 70× too weak to stand. (d) No abdomen data exist.
-  - **Height settled (23:16, DECISIONS):** Wang 2025 tracks a DLC head point of a free-standing fly, median 0.5 mm (n = 92), measured above the collapse (zero inferred). Their OpenSim "height" is the thorax CoM, a different quantity. Pratt 2024's thorax point is unspecified, so it is not used. This body collapses to a head height of 0.429 mm, so the target head is 0.929 mm. Wang's height is now a SETTING (register updated).
-  - **S1 fix 1 and fix 1b: FAIL, 0 of 10 each, as predicted** (F-STAND-4, F-STAND-5; sheets `docs/media/s13_bypass_s1fix1.png` and `s13_bypass_s1fix1b.png`, both viewed).
-    - Placed at Wang's median head height (0.929 mm, thorax origin 0.96 mm), whether by passive fold or by pitch-plane fold, the fly is belly-down within 250 ms at every level, and the active legs swing up into the air.
-    - The original 1.32 mm placement is already inside Wang's measured range (head 0.86 mm above the collapse; range about 0.15-1.35). So the pose hypothesis is dropped.
-    - The hold-need instrument lets the trunk reach the floor at lowered poses (the floor carries 0.93 W during the hold), so the need patterns there are invalid. Whether the original 6.1× was clean is unchecked.
-    - Runs: `runs/s13/bypass/s1fix1{,b}/` (Mac, collected; backhouse `~/fly2`, now set up with symlinks).
-  - **LTM and TiTa sources (research note addendum 23:30):**
-    - The TiTa pair behind the 6.1× is a GUESSED placeholder (F0 20 µN, r 0.01 mm).
-    - The LTM acts on the tarsal chain, not on TiTa.
-    - No Drosophila source gives a tibia-muscle or LTM force. FlyMimic excluded the tibia muscles (partial X-ray), so "an LTM with a sourced force" cannot be built.
-  - **Next (pre-registered, DECISIONS 23:36, not run): S1 fix 2.**
-    1. Step 0: check `hold_need` at 1.32 mm (the contact record is now in the script). If the trunk touches, stiffen K_HOLD until it doesn't.
-    2. Step 1: a neutral switch making the TiTa F0 = tibia mesh cross-section × specific tension at 9, 28 and 37 mN/mm², with r = half the distal tibia diameter. Both inferred upper bounds.
-    3. Rerun S1 at 1.32 mm. Falsifier: nothing holds at 37 → capacity is ruled out, and the question becomes stability under constant activation (flat force-length, no feedback; S4 is the fly worker's).
-    4. The LTM comes after, by the same route.
-  - **Script state:** `bypass_s1_actuation.py` now has `--head-mm`, `--pitch-only` and `--place-only`, a pitch readout, `holds_prereg`, and the hold-need contact record. `bypass_sheet.py` skips `frames_placed.npy`. Nothing is running on backhouse or the Mac.
+- **Body block (Director redirect 13 Oct; development mode; pre-register each fix). Status 23:47: constant activation is ruled out as a way to stand. The break is stability, not capacity, height or pose.** fly owns the VNC and the DN→oscillator→MN gain (S3, S4a/S4b): stay out of lif.py graded release, the VNC files and fly's switches.
+  - Survey: `docs/research/s13_body_interface.md` (MN→muscle gaps: 168 LTM MNs drive nothing in Hill mode, 17 unnamed T2/T3 MNs, no T2/T3 coxa-promotor MNs in MANC; passive stiffness is Wang 2025's, ~70× too weak to stand; no abdomen data; no Drosophila tibia-muscle or LTM force).
+  - **F-STAND-4/5 (fix 1, 1b): FAIL.** Height and pose are not the variable. The original 1.32 mm placement is inside Wang's measured range, and lowering made standing worse. Wang's height is spent as a setting.
+  - **F-STAND-6 (fix 2): FAIL 0/24, as predicted** (`docs/media/s13_bypass_s1fix2.png`, viewed).
+    - Step 0: the hold need is statically indeterminate (6 feet, 1 weight). The pair max ranges 4.9-10× across valid instrument stiffnesses (×25, ×125), and a stiffer instrument puts the load on fewer legs. The TiTa placeholder is 4.8-10× too weak at every valid stiffness.
+    - Step 1: new neutral switch `muscle:leg|tita_specific_tension` (mN/mm²; 0 = placeholder; `muscles.tita_from_cross_section`; `tests/test_tita_cross_section.py`; parameters.csv `b4_tita_specific_tension`, inferred, 9-37). At 9 mN/mm², support 0.3 stands 3 s with no trunk contact but sinks and pitches 10.6°, and 0.5 rises. At 28-37, 0.5 flips the fly. Not adopted.
+  - **Next (fly2's, not fly's), Director 13 Oct: a minimal measured proprioceptive loop.** A standing fly uses tonic drive plus resistance reflexes. The loop: FeCO (claw position, hook direction; Mamiya 2018) and CS (load; Dallmann/Tuthill) afferents already in the connectome, driven by their measured encoding, with a sensory delay inside the measured range, through the real connectome (brain off) to the MNs. The constant bypass drive (support pattern, at the 9 mN/mm² TiTa or the placeholder, stated in the pre-registration) is held on and ADDED to the MN-driven activation. Pass: the fly holds a stance for 3 s and returns after a small push, contact sheet viewed. Steps:
+    1. Read `docs/research/s13_proprio_loop.md` (survey, 13 Oct 23:5x; repo state of the FeCO/CS models, where to add the bypass activation, F-REFLEX-1, measured encodings and delays).
+    2. Pre-register: the afferent sets and encodings with labels, the delay value and its source, the push (size, direction, time), the return criterion, the drive level, and the falsifier. Don't fit anything to the stance.
+    3. Build it CPU-first as a new neutral switch or a probe-only mode (the S1 script's bypass plus network stepping as in `bypass_s2_descending.py`, senses limited to the leg proprioceptors).
+    4. Known risk (F-REFLEX-1): the tibia pools sit under tonic VNC inhibition and the front-leg FeCO is under-assigned, so the loop may not reach the MNs. That would itself be a localisation result.
+  - **Script state:** `bypass_s1_actuation.py` has `--head-mm`, `--pitch-only`, `--place-only`, `--need-only`, `--k-hold-mult`, `--set KEY=V`, a pitch readout, `holds_prereg`, and the hold-need contact and sag record. `bypass_sheet.py` labels rows by run directory when several are given, and shows trunk contact, pitch and `holds_prereg`. Runs: `runs/s13/bypass/s1fix2/{step0,t9,t28,t37}` (Mac). Nothing of fly2's is running on backhouse or the Mac.
 
 ## Where the project stands
 
