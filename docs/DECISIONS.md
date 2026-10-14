@@ -2895,3 +2895,22 @@ FAIL 0 of 10, as predicted (F-BYPASS-4; sheet `docs/media/s13_bypass_s1fix1.png`
 - **Pass:** the same `holds_prereg` criteria as fix 1 (DECISIONS 23:16), the same plausibility rule, and the sheet viewed.
 - **Prediction (written before the placement check):** gate 1 passes or nearly passes, because the abdomen hangs below the thorax and its clearance at 0.96 mm thorax origin is unknown. The need runs then fail on sinking, because the force-length curve is flat (F-BYPASS-1). A constant need k > 1 may hold for a while.
 - **Falsifier for "a pose with the legs under the body closes the gap":** any run passing.
+
+### fly2 result: S1 fix 1b (13 Oct, 23:36)
+FAIL 0 of 10, as predicted (F-BYPASS-5; sheet `docs/media/s13_bypass_s1fix1b.png`, viewed). The pose hypothesis is dropped: the original 1.32 mm placement already puts the head 0.86 mm above the collapse, inside Wang's measured range, and lowering made standing worse. The hold-need instrument lets the trunk reach the floor at lowered poses (the floor carries 0.93 W), so need patterns there are invalid. `--head-mm` stays as an instrument and is not the default.
+
+### fly2 pre-registration: S1 fix 2, a tibia-tarsus capacity from an inferred bound instead of the guessed placeholder (13 Oct, 23:36; not run)
+Both steps run at the original placement (`place_standing`, thorax origin 1.32 mm, head 0.86 mm above collapse, inside Wang's range).
+- **Step 0, instrument check (before any fix):**
+  - Rerun `hold_need` at 1.32 mm with the non-foot contact record.
+  - If the floor carries > 0.05 W, or anything but the feet touches during the hold, raise K_HOLD (×5, then ×25) until the sag is < 0.01 mm and only the feet touch. Report the converged need; the 6.1× is valid only if it survives.
+- **Step 1, the change (a new neutral switch, off by default):** the TiTa pair's F0 = tibia cross-section × specific tension.
+  - Cross-section: inferred, from flybody's tibia mesh at mid-length (outer section, an upper bound, because the wall thickness is unknown).
+  - Specific tension: 28 mN/mm² (FlyMimic's choice, inside the measured 9-37). Run at 9, 28 and 37 to give the range.
+  - Moment arm r: inferred, half the distal tibia diameter (an upper bound).
+  - Shared by type across all six legs, scaled by segment size like the other mid/hind rows. Labelled inferred, with the derivation in the CSV.
+  - No muscle-specific Drosophila value exists (research note addendum 23:30). No held-out check that isn't standing exists for this value, so it can only be "consistent", never "validated".
+- **Runs (backhouse, m10f0, seed 12, adhesion 1, 3 s):** need k = 0.5, 0.75, 1, 1.5 (from the step 0 need); support 0.1, 0.2, 0.3, 0.5; each specific tension.
+- **Pass:** `holds_prereg` (DECISIONS 23:16) plus a placement-relative height test: |z_final − 1.32| ≤ 0.15 mm. The activation must be plausible (need k ≤ 1 with nothing clipped, or support ≤ 0.5), and the sheet must be viewed.
+- **Falsifier for "distal capacity is the bottleneck":** if nothing holds even at 37 mN/mm² (the bound's top), capacity is ruled out. The next question is then stability under constant activation: the flat force-length curve and the lack of feedback (F-BYPASS-1; S4 belongs to the fly worker).
+- **The LTM is deferred.** It acts on the tarsal chain, not on TiTa, and no source exists for it. It comes after step 1 and uses the same inferred-bound route if needed.

@@ -244,7 +244,7 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: optic lobe, gap junctions, receptor kinetics (13 Oct 22:49)
+## fly2: optic lobe, gap junctions, receptor kinetics; body block (13 Oct 23:37)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/night-2026-10-08/briefs/fly2.md`. All three tasks have a measured result. Every switch below is neutral by default and **none is adopted**. Taking them into an m10f candidate is the fly worker's call. Adoption needs the 60 s smoke, the silence gate, a battery and a viewed figure.
 - **Handed to the fly worker for m10f** (5 s pre-handoff smoke, m10f seed 12, all three on: no runaway, no NaN, whole brain 0.307 Hz against 0.324, DECISIONS 22:45):
@@ -265,14 +265,21 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/nig
 - **Now (Director redirect, 13 Oct): body interface, MN to ground** (development mode, pre-register each fix). The parts: (a) the MN→muscle mapping (187 of 505 leg MNs unmapped; no MN for the T2/T3 coxa promotors); (b) distal capacity against measured values, or the real standing pose; (c) force-length and passive stiffness (Hooper 2009 onward); (d) abdomen stiffness. Pass: the S1 rerun stands for 3 s at a plausible constant activation without rearing or sinking, with the contact sheet viewed. fly owns the VNC (S3): stay out of lif.py graded release and the VNC files. Viewed `docs/media/s13_bypass_s1.png`: support 0.3-0.5 and coact 1 rear nose-up on the abdomen tip; need 1.5-2 pitches head-down.
   - **Survey (23:05):** `docs/research/s13_body_interface.md` (read it first). (a) The 187 = 168 LTM MNs (no Hill muscle, so they drive nothing in Hill mode) + 17 unnamed T2/T3 MNs + 2 TTMn. MANC has no T2/T3 coxa promotor MNs (Cheong 2024), a published gap. (c) Passive stiffness is already Wang 2025's measured values, about 70× too weak to stand. (d) No abdomen data exist.
   - **Height settled (23:16, DECISIONS):** Wang 2025 tracks a DLC head point of a free-standing fly, median 0.5 mm (n = 92), measured above the collapse (zero inferred). Their OpenSim "height" is the thorax CoM, a different quantity. Pratt 2024's thorax point is unspecified, so it is not used. This body collapses to a head height of 0.429 mm, so the target head is 0.929 mm. Wang's height is now a SETTING (register updated).
-  - **S1 fix 1 (pre-registered 23:16; commit "fix 1 pre-registered"):** `bypass_s1_actuation.py --head-mm 0.929` lowers the pinned root until the head is at 0.929 mm; the unpowered legs fold passively. An unscored Mac smoke: thorax origin 0.96 mm; hind TiTa need **1.50×** (was 6.1×); every other pair ≤ 0.9×. But the legs fold out sideways and the head, abdomen and coxae touch from the start, so the predicted verdict is FAIL on trunk touch.
-  - **RUNNING on backhouse** (tmux `fly2s1`, started 23:16; new checkout `~/fly2` with .venv, data/cache and data/raw symlinked to `~/fly-emulation`; synced by tar from this worktree). Done-file `~/fly2/runs/s13/bypass/s1fix1/all.done` (about 5 min). Keep-alive: Mac PID 21732 (`ssh backhouse wsl … sleep infinity`), fly2's own; kill it once the run is done.
-    - Collect: `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/fly2/runs/s13/bypass/s1fix1 && tar -cf - need support"' | tar -x -C runs/s13/bypass/s1fix1` (mkdir first).
-    - Then: `bypass_sheet.py` on each folder, plus `frames_placed.npy`. View the sheet, score `holds_prereg` against the 23:16 pre-registration, and write F-BYPASS-4.
-  - **Next, in order:**
-    1. Score fix 1.
-    2. Fix 1b, pre-registered: a placement that keeps the legs under the body. Lower with the roll and yaw hinges held, so only the pitch joints fold. Abdomen clearance is a separate blank (no data).
-    3. Fix 2: an LTM Hill muscle on the tarsal flexion, if a sourced force or PCSA exists (Sonnet search; FlyMimic does not fit tibia or tarsus muscles). This also gives the 168 LTM MNs a target.
+  - **S1 fix 1 and fix 1b: FAIL, 0 of 10 each, as predicted** (F-BYPASS-4, F-BYPASS-5; sheets `docs/media/s13_bypass_s1fix1.png` and `s13_bypass_s1fix1b.png`, both viewed).
+    - Placed at Wang's median head height (0.929 mm, thorax origin 0.96 mm), whether by passive fold or by pitch-plane fold, the fly is belly-down within 250 ms at every level, and the active legs swing up into the air.
+    - The original 1.32 mm placement is already inside Wang's measured range (head 0.86 mm above the collapse; range about 0.15-1.35). So the pose hypothesis is dropped.
+    - The hold-need instrument lets the trunk reach the floor at lowered poses (the floor carries 0.93 W during the hold), so the need patterns there are invalid. Whether the original 6.1× was clean is unchecked.
+    - Runs: `runs/s13/bypass/s1fix1{,b}/` (Mac, collected; backhouse `~/fly2`, now set up with symlinks).
+  - **LTM and TiTa sources (research note addendum 23:30):**
+    - The TiTa pair behind the 6.1× is a GUESSED placeholder (F0 20 µN, r 0.01 mm).
+    - The LTM acts on the tarsal chain, not on TiTa.
+    - No Drosophila source gives a tibia-muscle or LTM force. FlyMimic excluded the tibia muscles (partial X-ray), so "an LTM with a sourced force" cannot be built.
+  - **Next (pre-registered, DECISIONS 23:36, not run): S1 fix 2.**
+    1. Step 0: check `hold_need` at 1.32 mm (the contact record is now in the script). If the trunk touches, stiffen K_HOLD until it doesn't.
+    2. Step 1: a neutral switch making the TiTa F0 = tibia mesh cross-section × specific tension at 9, 28 and 37 mN/mm², with r = half the distal tibia diameter. Both inferred upper bounds.
+    3. Rerun S1 at 1.32 mm. Falsifier: nothing holds at 37 → capacity is ruled out, and the question becomes stability under constant activation (flat force-length, no feedback; S4 is the fly worker's).
+    4. The LTM comes after, by the same route.
+  - **Script state:** `bypass_s1_actuation.py` now has `--head-mm`, `--pitch-only` and `--place-only`, a pitch readout, `holds_prereg`, and the hold-need contact record. `bypass_sheet.py` skips `frames_placed.npy`. Nothing is running on backhouse or the Mac.
 
 ## Where the project stands
 

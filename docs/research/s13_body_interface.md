@@ -41,3 +41,14 @@ Support 0.3-0.5 and coact 1 rear nose-up, pivoting on the abdomen tip. Need 1.5-
 2. **LTM:** add the long tendon muscle as a Hill muscle on the tarsal flexion joints, if a sourced force or PCSA exists (FlyMimic does not fit tibia/tarsus muscles: check). This would also give the 168 LTM MNs a target.
 3. **Abdomen:** a support or tone at the abdomen joint needs data; none found. Record it as a blank, and test whether stopping the tip drag (a diagnostic only) removes the rearing.
 4. **Force-length:** keep FlyMimic's curve unless Drosophila data appear. The insect-wide range (2-4× over the working range) is the only bound.
+
+## Addendum (13 Oct 23:30): tibia-tarsus and LTM sources (Sonnet search, quotes as reported; "check" = not read by fly2)
+- **The TiTa pair the 6.1× need was measured against is a guessed placeholder** on every leg (`leg_muscles*.csv`: F0 20 µN, r 0.01 mm, "no FlyMimic tarsal muscle; placeholder"). The Ta levator and Ta depressor drive it (`neuromuscular.MUSCLE_TO_ACTION`). The LTM is mapped onto the tendon-coupled tarsus 1→5 chain, not onto TiTa (`COUPLED_TO_JOINTS`). So the 6.1× is a gap against a guess, not against a measured capacity.
+- **No Drosophila source gives a force, PCSA, volume or moment arm for the LTM (ltm1/ltm2) or for the tarsal levator or depressor.**
+  - FlyMimic (Ozdil 2025, arXiv 2509.06426): "Muscles housed in the tibia were excluded because the tibia segment was partially captured in the X-ray data." Only the fast tibia flexor and extensor are modelled in the femur. Its specific tension is 28 mN/mm², inside the measured 9 (IFM) to 37 (jump muscle) mN/mm².
+  - Azevedo 2020 (PMC7347388): about 10 / 1 / < 0.1 µN per spike (fast / intermediate / slow) for the tibia flexor/reductor only. There is no LTM text (checked by the agent).
+  - Lesser 2024 (Nature), ED Fig 6g: "The LTM is composed of two muscles, one in the femur and one in the tibia, that both insert on the long tendon that crosses multiple articulations to insert on the claw." It gives two LTM MNs and no force.
+  - Soler 2004: tadm has more fibres than talm; no forces.
+  - Stick-insect homologue: retractor unguis (Radnikow & Bässler 1991, JEB 157:87); numbers not read (check).
+  - No Drosophila claw adhesion force, per-leg standing ground-reaction force, or leg-muscle micro-CT volumetry was found. Chaturvedi 2019 covers the flight muscles only.
+- **Consequence for fix 2:** "an LTM Hill muscle with a sourced force" cannot be built from published values. The only route is an INFERRED force: the tibia's internal cross-section from the body mesh × 28 mN/mm², as an upper bound shared by the tibia muscles (tadm, talm, ltm2). It would be labelled inferred and bounded by the 9-37 mN/mm² range. That needs its own pre-registration and, because it would set the capacity that the standing test then probes, a held-out check that isn't standing.
