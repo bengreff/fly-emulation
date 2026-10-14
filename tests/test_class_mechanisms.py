@@ -208,6 +208,30 @@ def test_curated_gap_junctions_wire_into_the_organism():
 
 
 @needs_graph
+def test_gap_junctions_are_neutral_by_default_and_step_the_partner_after_conduction():
+    base = _org()
+    assert base.net.params.gap is None and base.net.gap is None
+    on = _org(**{"electrical:all|gap_conductance": 1.0})
+    net, g = on.net, on.net.gap
+    assert net.elec is None                       # the s10 kicks stay separate (strength 0)
+    t = on.conn.neurons.type.fillna("").to_numpy()
+    # only the GF rows carry a value; the rest are registered unresolved and not simulated
+    assert sorted(zip(t[g["a"]], t[g["b"]])) == [("DNp01", "PSI")] * 2 + [("DNp01", "TTMn")] * 2
+    assert len(set(g["b"])) == 4 and not g["c"].any() and not g["k_ba"].any()   # rectifying
+    assert np.allclose(g["k_ab"], 2.0 * (net.v_th - net.v_rest)[g["b"]])         # one_to_one x safety 2
+    # conduction time only: the presynaptic delay less the 0.5 ms chemical share
+    assert (g["d_a"] >= 1).all() and (np.abs(g["d_a"] - (net.delay_steps[g["a"]] - 5)) <= 1).all()
+    unresolved = on.reg.inventory()
+    assert (unresolved.property == "gap_coupling").sum() == 8
+    # a GF spike at step 0 fires each partner exactly d_a steps later
+    first = {}
+    for s in range(int(g["d_a"].max()) + 2):
+        for i in net.step(kick=(np.unique(g["a"]), 100.0) if s == 0 else None):
+            first.setdefault(int(i), s)
+    assert [first.get(int(b)) for b in g["b"]] == [int(d) for d in g["d_a"]]
+
+
+@needs_graph
 def test_ring_plasticity_and_glia_are_inert_by_default_and_act_when_set():
     base = _org()
     assert base.net.ring_e is None and base.net.glia_k is None

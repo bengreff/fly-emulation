@@ -130,6 +130,9 @@ class LIFParams:
     # data/params/stp_connections.csv matches: {"idx", "U", "tau_rec", "tau_f"} (CSR edge
     # order); None = per-presynaptic-cell depression only
     stp_edge: dict | None = None
+    # s13 (fly2, N12): identified gap junctions from electrical.build_gap: pairs (a, b), DC coupling c with
+    # rectification r, spike steps k_ab / k_ba and arrival delays d_a / d_b in steps; None = none
+    gap: dict | None = None
 
 
 STP_TABLE = "stp_connections.csv"
@@ -683,6 +686,10 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         gabab, mglur, machr, nmda = (sh["gabab_fraction"], sh["mglur_fraction"],
                                      sh["machr_fraction"], sh["nmda_fraction"])
 
+    # --- s13 (fly2, N12): identified gap junctions (data/params/gap_junctions.csv); None at neutral
+    from . import electrical
+    gap = electrical.build_gap(reg, conn, tau_m, v_rest, v_th, delay_ms, timestep_ms)
+
     return LIFParams(
         tau_m=tau_m, v_rest=v_rest, v_leak=v_leak, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
         tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref, inh_cond_scale=inh_scale,
@@ -707,7 +714,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
-        intrinsic=intrinsic, tau_s_inh=tau_s_inh,
+        intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap,
     )
 
 
@@ -784,6 +791,13 @@ class Network:
         self.adapt = np.zeros(n, dtype=np.float32)
         self.kick_held = np.zeros(n, dtype=np.float32)
         self.elec = None   # (pre, post, kick_mv): identified electrical synapses
+        # s13 (fly2): gap junctions as DC coupling plus spike steps through their own ring (no chemical delay)
+        self.gap = None if p.gap is None else {k: np.array(v) for k, v in p.gap.items()}
+        if self.gap is not None:
+            self.gap_dc = bool(np.any(self.gap["c"] > 0))
+            self.Dg = int(max(self.gap["d_a"].max(), self.gap["d_b"].max())) + 1
+            self.gap_ring = np.zeros((self.Dg, n), dtype=np.float32)
+            self.gap_head = 0
         self.x_res = np.ones(n, dtype=np.float32)
         self._any_adapt = bool(self.adapt_mv.any())
         self._any_std = bool(self.std_u.any())
@@ -850,6 +864,12 @@ class Network:
             self.W_graded = (self.W_graded @ sp.diags(keep.astype(np.float32))).tocsr()
             if getattr(self, "W_graded_i", None) is not None:
                 self.W_graded_i = (self.W_graded_i @ sp.diags(keep.astype(np.float32))).tocsr()
+        if self.gap is not None:   # s13: a silenced cell neither steps nor couples its partners
+            g = self.gap
+            a_off, b_off = np.isin(g["a"], idx), np.isin(g["b"], idx)
+            g["k_ab"][a_off] = 0.0
+            g["k_ba"][b_off] = 0.0
+            g["c"][a_off | b_off] = 0.0
 
     def step(
         self,
@@ -923,6 +943,12 @@ class Network:
         if self._any_adapt:
             self.adapt *= self.decay_a
             drive = drive - self.adapt
+        if self.gap is not None and self.gap_dc:
+            # s13: junction current from the start-of-step potentials (explicit; c dt / tau_m << 1)
+            g = self.gap
+            dv = self.v[g["a"]] - self.v[g["b"]]
+            i = np.where(dv > 0, g["c"], g["c"] * g["r"]) * dv
+            drive = drive + (np.bincount(g["b"], i, n) - np.bincount(g["a"], i, n)).astype(np.float32)
 
         if p.cond:
             g_e = self.i_syn
@@ -955,6 +981,9 @@ class Network:
         self.v = np.where(free, self.v, self.v_reset)
         if kick is not None and len(kick[0]):
             self.kick_held[kick[0]] += kick[1]
+        if self.gap is not None:   # s13: gap-junction spike steps due this step
+            self.kick_held += self.gap_ring[self.gap_head]
+            self.gap_ring[self.gap_head].fill(0.0)
         if self.kick_held.any():
             land = free & (self.kick_held > 0)
             self.v[land] += self.kick_held[land]
@@ -1000,6 +1029,13 @@ class Network:
                 hit = np.isin(self.elec[0], spiked)
                 if hit.any():
                     np.add.at(self.kick_held, self.elec[1][hit], self.elec[2][hit])
+            if self.gap is not None:
+                g, h = self.gap, self.gap_head
+                for src, dst, k, d in ((g["a"], g["b"], g["k_ab"], g["d_a"]),
+                                       (g["b"], g["a"], g["k_ba"], g["d_b"])):
+                    hit = np.isin(src, spiked) & (k != 0)
+                    if hit.any():
+                        np.add.at(self.gap_ring, ((h + d[hit]) % self.Dg, dst[hit]), k[hit])
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
             if self.ich is not None:
                 self.ich.on_spike(spiked)
@@ -1021,6 +1057,8 @@ class Network:
             self.spike_count += spiked.size
 
         self.delay_head = (self.delay_head + 1) % self.D
+        if self.gap is not None:
+            self.gap_head = (self.gap_head + 1) % self.Dg
         self.t_ms += self.timestep_ms
         return spiked
 
