@@ -103,6 +103,10 @@ def main():
     last = np.array(silent[-k100:])
     last_eye = np.array(silent_eye[-k100:])
     prev_eye = np.array(silent_eye[-2 * k100:-k100])
+    # F-VISION-5 option (a), second half (Ben, 13 Oct): eye activity in darkness may persist (tonic lamina
+    # release) but must not grow; growth from the previous 100 ms to the last 100 ms beyond 3 Poisson SDs fails
+    pe, le = float(prev_eye.sum()), float(last_eye.sum())
+    eye_stationary = bool(le - pe <= 3.0 * np.sqrt(pe + le))
     out = {
         "whole_brain_hz": round(float(hz.mean()), 3),
         "whole_brain_excl_orn_hz": round(float(hz[~orn].mean()), 3),
@@ -116,6 +120,8 @@ def main():
         "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
         "silent_last100ms_noneye_spikes_per_ms": round(float((last.sum() - last_eye.sum()) / 100), 2),
         "silent_eye_spikes_per_ms_prev_last": [round(float(prev_eye.sum() / 100), 2), round(float(last_eye.sum() / 100), 2)],
+        "silent_eye_stationary": eye_stationary,
+        "silent_pass": bool(last.sum() - last_eye.sum() == 0 and eye_stationary),
         "silent_noise_removed": not a.silent_noise_on,
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,

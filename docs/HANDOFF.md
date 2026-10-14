@@ -151,14 +151,14 @@
          - Tm3 is already at its 4.3 mV ceiling, set by L1's release floor (r 0.30 at −70 mV with r0 0.5 and span 45). Without the floor it would reach about 12 mV (derived).
          - L2's dark potential is −50.4, held down by spiking Dm6/Dm17/Dm1 inhibition (*Calliphora* L1/2 −38.4).
        - Seen, not scored: no L1 OFF transient in this arm.
-       - **DECISION NEEDED (Ben):** should the v0 arm become the vision base? Recommendation: yes for vision diagnostics, no for the working profile until the Mi1 block, gate and battery have run.
+       - **Decided (Ben, 13 Oct):** v0r, not v0, is the vision diagnostic base. The question was: should the v0 arm become the vision base? Recommendation: yes for vision diagnostics, no for the working profile until the Mi1 block, gate and battery have run.
      - **Continued 04:19-04:34: the LMC output release floor** (DECISIONS pre-registration 04:19 and result 04:32; F-VISION-10; `docs/media/s12_vision_release_floor.png`, viewed).
        - New switch `cell_type:all|release_at_rest_per_type` (off by default, CPU only; per-type `release_at_rest` rows; commit f0194bd, battery 229 passed).
        - v0r = v0 plus L1/L2 `release_at_rest` 0.26 (inferred: release reaches zero at the LMC's light-saturated −68 mV). Backhouse `/tmp/v0r_params.csv`, `/tmp/v0r_run.sh`, `/tmp/v0r_cs.sh`.
        - Every pre-registered readout passed. Tm3 ON +9.3 (recorded 15), Mi1 +5.5 (20), Tm1/Tm2 OFF +2.8/+3.4 (17.5), T4a +2.0. The lamina is unchanged.
        - Mi1 is now at its tonic-inhibition ceiling: 0.80 leak units of spiking Pm2b/Dm1/Pm2a/Pm1 inhibition, with L1's share zero in light.
        - Correction: L1 does have an OFF transient in v0/v0r (connected median +10.7 mV); the 04:11 entry misread the diluted type mean.
-       - **DECISION NEEDED (Ben):** should v0r become the vision diagnostic base? Recommendation: yes for diagnostics, not for the working profile.
+       - **Decided (Ben, 13 Oct): yes, for diagnostics only.** The question was: should v0r become the vision diagnostic base? Recommendation: yes for diagnostics, not for the working profile.
      - **Done 04:46: the T4/T5 grating on v0r FAILED as registered** (DECISIONS 04:33 and result 04:46; F-VISION-11; `docs/media/s12_vision_grating_v0r.png`, viewed). Per-cell F1 Mi1 0.70-1.07, Tm3 0.89-1.55, T4 0.14-0.29, T5 0.15-0.30 mV; V 0 of 8; DSI 0.00-0.03. T4/T5 inhibition is a tonic CT1 shunt (400 Hz); Mi4/Mi9 carry no signal. Next is rung 4/5 work (item 0), not more gain.
      - **Next, pre-register first:**
        - The Mi1 block: Pm/Dm1 modes (graded against spiking) and the GluClα reversal (M10Q −56 against −70).
@@ -192,7 +192,7 @@
   5. Remaining unsourced wing-rest quantities (F-WING-4): steering motor neuron activity at rest, folded-hinge yaw and roll stiffness, wing damping 0.05, the 2.64 mm wing lever, the +1 i1/i2 yaw mapping. None can be fixed from open sources today.
   6. Neck target pose (Gorko 2024, paywalled) and the antennal elevator/depressor split (`docs/research/s12_neck_antenna_sources.md`).
 - **Open, needs Ben:**
-  - **DECISION NEEDED (vision, F-VISION-5): what the silence gate means for the eye.**
+  - **Decided (Ben, 13 Oct): option (a), with the stationarity check now in `closed_loop_check.py`.** The question was what the silence gate means for the eye (F-VISION-5).
     - The gate makes the eye dark and requires 0 spikes/ms in the last 100 ms.
     - Real lamina cells release transmitter tonically, and most in darkness (Juusola et al. 1996). With that release on, the OFF pathway fires in the dark window (gate seed 12 under arm T: 16 spikes/ms). That is biology, not runaway.
     - Options:

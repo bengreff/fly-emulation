@@ -2603,7 +2603,7 @@ No cell left [−90, 20] mV.
 - L2's dark potential is 12 mV below its *Calliphora* L1/2 rest, held there by spiking Dm6/Dm17/Dm1 inhibition (0.45 leak units, modes guessed).
 - Seen, not scored: L1 has no depolarising OFF transient at light-off in this arm (k 30 had +5-7 mV). Recorded LMCs have a strong one.
 
-**DECISION NEEDED (Ben).** Should the v0 arm become the vision base for the next blocks? It is a fitted L1/L2 leak (−36.9 mV, derived from two recordings) plus R1-R6 release ×12.5 (derived).
+**Decided by Ben, 13 Oct (see the s13 entry at the end): v0 superseded by v0r as the vision diagnostic base.** The question was: should the v0 arm become the vision base for the next blocks? It is a fitted L1/L2 leak (−36.9 mV, derived from two recordings) plus R1-R6 release ×12.5 (derived).
 - My recommendation is yes for vision diagnostics, and no for the working profile until the Mi1 block and the gate and battery have run.
 - Both rows are fitted to one *Drosophila* and one *Calliphora* number. The v₀ they imply is unmeasured.
 
@@ -2673,7 +2673,7 @@ No cell left [−90, 20] mV. Steady-state potentials from the conductance probe 
 - The pre-registration said the CPU and GPU paths both read the per-neuron array. The GPU path refuses any nonzero release at rest (`gpu/batched.py` raises NotImplementedError), so the switch is CPU-only like the class value. `structural_keys.csv` says so.
 - The 04:11 result said "L1 has no depolarising OFF transient at light-off in this arm". That is wrong. Connected L1 cells overshoot by a median +10.7 mV after light-off in the v0 arm (+10.6 in v0r, +13.4 at k 30, +1.5 at k 1). I misread it from the type-mean trace, which unconnected cells dilute to +4.7.
 
-**DECISION NEEDED (Ben), extending 04:11.** Should v0r (the v0 rows plus L1/L2 `release_at_rest` 0.26, inferred) become the vision diagnostic base? My recommendation is yes for diagnostics, and no for the working profile until the Mi1 block, gate and battery have run.
+**Decided by Ben, 13 Oct (see the s13 entry at the end): yes, v0r is the vision diagnostic base, not the working profile.** The question, extending 04:11, was: should v0r (the v0 rows plus L1/L2 `release_at_rest` 0.26, inferred) become the vision diagnostic base? My recommendation is yes for diagnostics, and no for the working profile until the Mi1 block, gate and battery have run.
 
 **Next (pre-register first).**
 - The T4/T5 grating (V) on v0r, held out since 02:08.
@@ -2738,3 +2738,12 @@ Run finished 04:43 (backhouse, 543 s; `runs/s12/vision/grating_v0r.json`, md5 ch
 - Tonic spiking during the grating: CT1 400 Hz, Mi9 22 Hz, Tm4 21 Hz, HSN 150 Hz, HSE 132 Hz, HSS 27 Hz. The grating script does not record the [−90, 20] mV bounds; not scored.
 - Diagnostic, measurement only (`visual_conductance_state.py --types T4a,T4c,T5a,Mi4,Mi9,C3,CT1`, `runs/s12/vision/cstate_v0r_t4.json`): T4a inhibition is 0.37 leak units, 0.24 of it from CT1 firing tonically at 400 Hz; Mi9 gives 0.02 and Mi4 about 0. T5a: 0.56, of which CT1 0.45. Mi4 and Mi9 run in spiking mode near −49 mV and light moves them by 0.3-1.5 mV. **T4/T5 have no modulated slow arm and their inhibition is a tonic CT1 shunt, so direction selectivity cannot appear.** Mi4, Mi9, C3, Tm4, Tm9 and CT1 have no mode row; their mode and kinetics are rung 4 and rung 5 of the Director's 02:10 order.
 - Nothing adopted. No second try (as registered). Next: the rung plan (DECISIONS 04:36), with this grating and flyapp's T4/T5 direction command as held-out tests.
+
+## Session 13 decisions (Ben via the Director, recorded 13 October, 21:32)
+
+**v0 and v0r (answers the open questions of 04:11 and 04:32).** v0r becomes the vision DIAGNOSTIC base, not the working profile (m9c stays). fly2 is importing flyvis (Lappalainen 2024) this run, which may supersede it, so no more hand-tuning of the eye here.
+
+**Silence gate for the eye (F-VISION-5): option (a).** Count only non-optic spikes in the silent window, and require optic activity in darkness to be stationary: eye spikes in the last 100 ms may not exceed the previous 100 ms by more than 3 Poisson SDs (3·√(prev+last)). Tonic lamina release in the dark is biology. `closed_loop_check.py` now reports `silent_eye_stationary` and `silent_pass` (both halves).
+
+**Next block: motor-pathway bypass and rescue assay before more mechanism work** (Director, from brainstorm 13 Oct B and F). Stages S1 actuation, S2 descending drive, S3 graded release and signs, S4 feedback; each pre-registered in one line with a pass criterion. Output: a failure-localisation report. Forced drive is a diagnostic, not emergent walking. The mushroom body at 0 Hz waits behind it.
+
