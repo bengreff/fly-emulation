@@ -1142,3 +1142,41 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
 - **Where the signal is.** Medulla bars: ON cells Mi1 +2.05, Tm3 +2.90, Mi4 +3.59, C3 +2.87 mV; Mi9 −3.34 to ON; OFF cells Tm1 +2.14, Tm2 +2.05 to OFF. So the inputs have the recorded polarity and Mi4/Mi9 now carry signal (on v0r with motion_grating they did not, F-VISION-11; a different stimulus, so not a like-for-like attribution). Photoreceptor bars: R1-R6 swing about 1-2 mV but L1-L5 only 0.04-0.35 mV and the medulla 0.1-0.4, so little reaches T4/T5 (the F-VISION-8/9 lamina gap, still open on this base).
 - **Measured reason** (before the call, `runs/vision/flyvis_ablate_ds_{0-4,5-9}.csv`). In the 50 flyvis networks themselves, DS needs their per-type-pair synapse strengths: median DSI 0.40 medulla / 0.49 photoreceptor as published, 0.32 / 0.32 with tau set to 20 ms, 0.02 / 0.06 with per-type product strengths. The import carries per-type mode, tau and release at rest only, so the connectome synapse counts times one shared scale set the T4 input balance. Here that gives a direction-blind sum. CT1 was also saturated at −11 mV in the flash run.
 - **Reading.** Task 1 is done with a measured reason, not a pass. The next step would be flyvis per-type-pair strengths (fitted, 604 type-pair edges in `flyvis_lappalainen2024_edges.csv`). Each is a fitted value per connection class: shared by type pair, not per synapse, but fitted to a task, not to physiology. Whether that passes the bar is for Ben. Spent: the flyapp T4/T5 call on v0r + flyvis. Nothing adopted.
+
+### F-BYPASS-4: S3 fails. Graded release or Shiu's synapse strength in the VNC doesn't make the leg MNs alternate. Our core already oscillates at Pugliese's frequency, but its output reaches the MNs at about one spike per cycle (s13, 13 Oct 23:10)
+- **Test** (DECISIONS pre-registration 22:09, calibration note 22:18). `bypass_s2_descending.py` unchanged, DNg100 at 15/25/40 mV, brain off, in four arms:
+  - A: 13B and 10B types graded (687 cells);
+  - B: every VNC local type of unknown mode graded (13,128 cells);
+  - C: VNC per-synapse efficacy ×1.754, Shiu's value;
+  - D: A + C.
+  - Viewed: rasters `docs/media/s13_bypass_s3_rasters.png`, frames `docs/media/s13_bypass_s3_frames.png`, oscillator cells `docs/media/s13_bypass_s3_chain.png` (T1L, 25 mV).
+- **Verdict: FAIL** for all arms.
+
+  | Arm | DNg100 | Leg MNs | Scorer | On viewing |
+  |---|---|---|---|---|
+  | A | 48-104 Hz | 4.4-5.1 Hz, act ≤ 0.12 | fail | Like S2: tonic tibia flexors, legs passive, wings open at 25-40 mV |
+  | C | 48-102 Hz | 4.5-6.4 Hz, act ≤ 0.32 | fail | Same as A |
+  | D | 48-78 Hz | up to 20 Hz at 40 mV, act ≤ 0.39 | fail | At 40 mV the abdomen curls and the wings rise; no alternation |
+  | B | 3-22 Hz (suppressed) | 26-27 Hz, act 0.91 | "passes" (1-3 pools, r_ant −0.30 to −0.46) | Fail (see below) |
+
+  B is a false positive. DNg100 is suppressed, so it isn't driving anything. MN activity is the same after the drive stops (3.7 against 3.6 pool spikes/ms), which makes it a VNC-wide runaway. In the oscillator cells, graded V swings between −120 and −10 mV with no reversal potential to bound it (current-based synapses). The frames show a whole-body convulsion (abdomen curled, wings vertical, legs held extended), and the raster shows dense irregular activity in every leg, not alternation. Lagged readout (secondary): no pairs except B (1-3 pairs, part of the same runaway).
+- **Chain (25 mV, T1L)** in m10f0, A, C and D:
+  - E1 integrates to threshold and fires; E2 and IN19A007 follow within milliseconds; IN19A007's GABA resets E1. That gives a cycle of about 11-12 Hz with one spike per cell per cycle.
+  - I1 gets a 2-4 mV EPSP per cycle and peaks at −45.4 mV (C). It fires once in all of D (T2L).
+  - IN19A007 is Pugliese's own I2 in the male CNS (their Extended Data Fig. 3 male-CNS mini-circuit is DNg100, E1, E2, E3 IN19B012, I1, I2 IN19A007). Our cycle is therefore a version of theirs, without I1.
+- **The core's output reaches the right MNs, too weakly.**
+  - In S2 DNg100 25 mV, the left-front coxa promotor pool rises from 0 to 3.1 Hz, and both it and the trochanter flexor pool show a pooled spectral peak at 12.2 Hz (11 spikes in 0.9 s across each pool).
+  - Pugliese's model recruits the same MN types: coxa swing promotors, stance remotor, trochanter flexors.
+  - So the rhythm gets through, at about one spike per cycle per pool. No muscle can follow that, and the antagonist (remotor) stays silent.
+  - The rest of the "tonic" output is the tibia flexor pools in every leg, firing regularly from before the drive starts (a 23.3 Hz spectral line, independent of the drive).
+- **Pugliese reference** (their code; Mac CPU, relaxed tolerances; DECISIONS 22:18). Their MNs also run at low rates: active MN peaks of 2-16 (their rate units), I1 peaking at 5.9, IN19A007 at 15.8. Swing and stance lag each other by 12-17 ms of an 83 ms cycle instead of alternating. So "alternating MN output" as we score it is not what the reference produces either. The GPU run at paper tolerances, with both DNg100s at I 250/400, is running on backhouse.
+- **Sign audit.** Leg MNs: 318, receiving 980k input synapses (edges ≥ 5).
+  - Premotor VNC-intrinsic input: 55% ACh (+), 26% GABA (−), 19% glutamate (−, because no leg MN type has a receptor-sign row).
+  - The core loop's edges have the expected signs (E1→E2 +, I1→E1 −, IN19A007→E1 −) and counts that match the connectome. ID mapping verified (F-BYPASS-3).
+  - Glutamate onto leg MNs is still inferred (Allen 2020 co-expression), not measured.
+- **Localisation** (the pre-registered falsifier fired). Making the 13B/10B types graded (as literature reports) doesn't change the core, and neither does Shiu's VNC synapse strength. Making every VNC local graded destabilises the whole VNC, with or without drive. So neither mode assignment nor per-synapse scale is the break. The break sits between the oscillator and the MNs:
+  - the core fires one spike per cycle, against bursts of 3 in Pugliese's MANC LIF;
+  - premotor→MN gain is low;
+  - the stance antagonist never gets the rhythm (I1 is the cell that would carry it).
+  - The tonic tibia-flexor drive is a separate MN-layer issue.
+- **What this does not show.** It says nothing about whether I1 is graded in a real fly (never recorded); only that making every unknown-mode cell graded is unstable in this model. Behavioural failure here is not evidence about internal physiology.

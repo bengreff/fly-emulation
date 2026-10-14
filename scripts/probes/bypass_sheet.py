@@ -29,8 +29,8 @@ def main() -> None:
             j = json.loads(f.read_text())
             for r in j.get("runs", []):
                 js[(r["pattern"], f"{r['level']:g}")] = r
-            if "drive_mv" in j:   # S2: one run per file
-                js[(j["type"].replace(",", "+"), f"{j['drive_mv']:g}mv")] = j
+            if "drive_mv" in j:   # S2/S3: one run per file, keyed by its tag (s2_<tag>.json, frames_<tag>.npy)
+                js[tuple(f.stem[3:].rsplit("_", 1))] = j
         num = lambda x: float(re.sub(r"[^0-9.]", "", x) or 0)
         for f in sorted(d.glob("frames_*.npy"), key=lambda p: (p.stem.split("_")[1], num(p.stem.split("_")[2]))):
             _, pat, lv = f.stem.split("_", 2)
