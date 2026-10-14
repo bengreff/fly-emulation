@@ -117,6 +117,25 @@ def main() -> None:
     pools = leg_pools(org, a.leg)
     typ = org.conn.neurons.type.fillna("").to_numpy().astype(str)
     inh = {t: np.flatnonzero(typ == t) for t in INHIBITORS}
+    # localisation sets (added after the step R runs, extra outputs only): first-order targets of this leg's
+    # claw/hook afferents (>= 20 synapses from them) and premotor cells of its tibia pools (>= 20 synapses onto them)
+    c = org.conn
+    fe = np.concatenate([groups.get(g, np.array([], int)) for g in ("claw", "hook_flex", "hook_ext")])
+    src = np.repeat(np.arange(c.n), np.diff(c.indptr))
+    w_fe = np.bincount(c.indices[np.isin(src, fe)], weights=c.weight_syn[np.isin(src, fe)], minlength=c.n)
+    first = np.setdiff1d(np.flatnonzero(w_fe >= 20), fe)
+    tib = {nme: r for nme, r in pools if "tibia-pitch" in nme and nme.startswith("trochanterfemur")}
+    premotor = {}
+    for nme, r in tib.items():
+        hit = np.isin(c.indices, r)
+        w = np.bincount(src[hit], weights=c.weight_syn[hit], minlength=c.n)
+        premotor[nme] = np.flatnonzero(w >= 20)
+    loc_sets = {"first_order": first, **{f"premotor {k}": v for k, v in premotor.items()}}
+    lcnt = {k: np.zeros((len(v), 3)) for k, v in loc_sets.items()}
+    bix = None
+    vgap = {nme: np.zeros((len(r), 3)) for nme, r in tib.items()}
+    lb = af.load_bodies.get(a.leg)
+    cs_sig = np.zeros(3)
     b = org.body
     m, d = b.sim.mj_model, b.sim.mj_data
     b.reset(); place_standing(b)
@@ -157,7 +176,14 @@ def main() -> None:
         if b_ is None:
             continue
         T[b_] += dt
+        bix = bins.index(b_)
+        for nme, r in tib.items():
+            vgap[nme][:, bix] += (org.net.v_th[r] - org.net.v[r]) * dt
+        if lb is not None:
+            cs_sig[bix] += np.tanh(float(np.linalg.norm(obs["segment_load"][lb, 3:], axis=-1).sum())) * dt
         if sp.size:
+            for k, rows in loc_sets.items():
+                lcnt[k][:, bix] += np.isin(rows, sp)
             for nme, r in pools:
                 cnt[nme][b_] += int(np.isin(sp, r).sum())
             for g, r in groups.items():
@@ -175,6 +201,21 @@ def main() -> None:
            "inhibitor_hz_per_cell": {tt: {"n": int(r.size), **{k: hz(icnt[tt][k], r.size, k) for k in bins}}
                                      for tt, r in inh.items()},
            "warnings": int(d.warning.number.sum()), "wall_s": round(time.time() - t0)}
+    s0, s1 = (1, 2) if a.stim == "clamp" else (1, 0)          # the two stimulus bins compared
+    loc = {}
+    for k, rows in loc_sets.items():
+        r_ = 1000 * lcnt[k][:, :len(bins)] / np.maximum([T[b] for b in bins], 1e-9)
+        hi_, lo_ = np.maximum(r_[:, s0], r_[:, s1]), np.minimum(r_[:, s0], r_[:, s1])
+        mod = ((hi_ + 1e-3) / (lo_ + 1e-3) >= 1.25) & (hi_ - lo_ >= 2.0)
+        loc[k] = {"n": int(len(rows)), "n_active": int((r_.sum(1) > 0).sum()), "n_modulated": int(mod.sum()),
+                  "mean_hz": {b: round(float(r_[:, i].mean()), 2) for i, b in enumerate(bins)} if len(rows) else {},
+                  "modulated": [{"type": typ[rows[i]], "sign": int(c.sign[rows[i]]),
+                                 **{b: round(float(r_[i, j]), 1) for j, b in enumerate(bins)}}
+                                for i in np.flatnonzero(mod)][:25]}
+    out["localisation"] = loc
+    out["tibia_mn_gap_to_threshold_mv"] = {nme: [[round(float(x), 2) for x in row[:len(bins)] / np.maximum([T[b] for b in bins], 1e-9)]
+                                                 for row in g] for nme, g in vgap.items()}
+    out["cs_signal_mean"] = {b: round(float(cs_sig[i] / max(T[b], 1e-9)), 3) for i, b in enumerate(bins)}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     Path(a.out).write_text(json.dumps(out, indent=1))
     print(json.dumps(out))
