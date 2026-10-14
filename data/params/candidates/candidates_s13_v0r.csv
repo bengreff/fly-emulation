@@ -1,0 +1,11 @@
+# v0r vision diagnostic base (Ben 13 Oct: diagnostics only, not the working profile), rebuilt by fly2 from
+# DECISIONS 6 Oct 04:05 (v0) and 04:19 (v0r) and runs/s12/vision/grating_v0r.json meta. Use with profile m9c and
+# --set cell_type:all|mode_from_recordings=1 --set cell_type:ol_graded|release_at_rest=0.5
+# --set cell_type:all|conductance_based=1 --set cell_type:all|graded_range_from_recordings=2
+# --set photoreceptor:all|luminance_gain=78 --set cell_type:all|leak_from_network_rest=1
+# --set cell_type:all|release_at_rest_per_type=1
+type,param,value,units,basis,source,justification
+^L1$|^L2$,v_leak_shift_fit,15.1,mV,derived,"DECISIONS 6 Oct 04:05 (v0): solved from L1 dark -43 mV (Pantazis 2008, Drosophila) and small-signal gain 13 (Juusola 1995, Calliphora)","leak reversal -36.9 mV; one-compartment solve from cstate2_kR1; diagnostic row, not adopted"
+^R1-R6$,release_gain,12.5,dimensionless,derived,"DECISIONS 6 Oct 04:05 (v0): same solve as the L1/L2 leak","R1-R6 tonic release scaled so the R to LMC gain meets the two targets; diagnostic row, not adopted"
+L1,release_at_rest,0.26,fraction of graded_rmax,inferred,"DECISIONS 6 Oct 04:19 (v0r); Juusola et al. 1996 TINS principle","release reaches zero at the light-saturated LMC potential -68 mV: r0 + (1 - r0)(-68 + 52)/45 = 0; diagnostic row, not adopted"
+L2,release_at_rest,0.26,fraction of graded_rmax,inferred,"DECISIONS 6 Oct 04:19 (v0r); Juusola et al. 1996 TINS principle","as L1 (L2 light -68.2 mV in cstate_v0); diagnostic row, not adopted"
