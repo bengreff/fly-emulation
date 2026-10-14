@@ -1,0 +1,24 @@
+{
+ "shared scale (count x efficacy)": {
+  "dlm_peak_mv": -51.39002990722656,
+  "dlm_start_mv": -52.0,
+  "spikes_ms": {
+   "PSI": [
+    0.3
+   ],
+   "DLMn a, b": []
+  },
+  "v_th": -45.0
+ },
+ "measured unitary PSP 4.71 mV": {
+  "dlm_peak_mv": -47.2158088684082,
+  "dlm_start_mv": -52.0,
+  "spikes_ms": {
+   "PSI": [
+    0.3
+   ],
+   "DLMn a, b": []
+  },
+  "v_th": -45.0
+ }
+}

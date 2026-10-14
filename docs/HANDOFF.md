@@ -367,7 +367,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Wang 2025 standing head height (median 0.5 mm above collapse) | spent as a SETTING (s13 fly2, S1 fix 1 places the head at 0.929 mm) | can no longer validate standing height |
 | Augustin 2017 S1 Table, GF→TTM latency (WT, brain stimulation) | seen (it set fly2's no-chemical-delay rule; F-GJ-3 used it only as a consistency check) | none |
 | Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
-| Fayyazuddin 2006 MN5 soma potential 4.71 mV | seen (s13 fly2, F-GJ-4; not used to set any value) | if it sets a value, it can no longer validate |
+| Fayyazuddin 2006 MN5 soma potential 4.71 mV | SET a value (s14 fly2, F-GJ-5: PSI→DLMn unitary PSP, switch neutral) | can no longer validate |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out** for S4b s* (unspent) | score once, via `s4b_score.py heldout`, after s* is written down |
