@@ -1270,3 +1270,27 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - So the deficit is male-CNS-specific. The neuromere-wide pattern makes **reconstruction** (T1 completeness or synapse detection) the more likely reading. **Individual variation** isn't excluded. Labelled inferred.
   - Under the per-value bar, the male-CNS T1 counts are not obviously "some fly's" values. They are plausibly an undercount. MANC and BANC would both be admissible.
   - The simulation half of X1 (does our model recruit I1 and alternate on MANC counts?) is running on backhouse; see HANDOFF.
+
+### F-XCONN-2: on MANC's counts our model still doesn't recruit I1 or alternate. The male-CNS counts are not the break (s13, 14 Oct 02:21; DIAGNOSTIC, forced drive; no fitting, nothing adopted)
+- **Runs** (pre-registered, DECISIONS 14 Oct 00:39; `xconn_swap.py`, backhouse, 18 runs, all exit 0).
+  - Three arms: M0 (male CNS), Xc (MANC counts among the 36 core cells: 182 edges with 17,774 synapses → 199 edges with 20,652) and Xv (MANC counts among 17,645 matched VNC-set cells: 3.05M edges, 20.0M synapses → 4.16M edges, 25.1M).
+  - Each × DNg100 15/25/40 mV, chain and MN harness.
+  - The swap reached the model. T1L model weights went E2→I1 6.88 → 12.86 mV (×1.87 = 71/38), E1→I1 1.09 → 3.08, E1→E2 70.3 → 81.5, A007→E1 −50 → −59, A004→I1 −4.2 → −7.3.
+  - A002→I1 in T1L stays −28.3 mV, because that A002 has no one-to-one MANC match. In the other neuromeres A002 was swapped, and I1 failed there too.
+  - Outputs `runs/s13/xconn/{chain,s2,s2_score.json}` (Mac, gitignored).
+- **I1 recruited (≥ 0.5 × the E1 cycle frequency, T1L): no, in any arm at any drive.**
+  - T1L I1 Vmax against a −45 mV threshold: M0 −49.6/−48.4 mV (25/40 mV drive); Xc −48.4/−47.5; Xv −52.0/−48.5.
+  - In all six neuromeres, the only I1 spikes are stray ones: T2R 1.4 Hz (Xc 25), T2L 1.4 Hz (Xv 25), T2R 2.9 Hz (Xv 40), each against E1 cycles of 4-22 Hz.
+- **Alternation (S4b's admissibility pass, `s4b_score.rhythm`): fail in all 9 runs.**
+  - 0 transfer-pass pools and no antagonist pair. Post-drive ÷ pre-drive 0.87-0.98.
+  - The only active antagonist pair anywhere is Xv 40 mV, right-hind femur-tibia ±1, at r −0.21. It doesn't pass.
+- **Viewed** (`docs/media/s13_xconn_rasters_{25,40}mv.png`; panels M0, Xc, Xv, then T1L oscillator V; titles say "no overrides" because the swap is outside the registry):
+  - MN rasters: the three arms are indistinguishable. In each, the synchronous tonic pulse train from before the drive dominates, with sparse scattered spikes after onset and no alternation.
+  - Oscillator: under M0 and Xc, E1, E2 and A007 fire once per cycle (Xc slower, 8.8 Hz against 12.3 Hz at 25 mV, with E1 hyperpolarised more deeply by the stronger A007→E1). I1 gets one 2-4 mV bump per cycle and never crosses threshold.
+  - Under Xv at 25 mV the T1L core falls silent after about 400 ms: E2 and A007 stop, and E1 sits just below threshold.
+- **Reading (as pre-registered: "neither"):**
+  - Doubling E2→I1 to MANC's count doesn't recruit I1 in our model. Neither does swapping the whole matched VNC wiring.
+  - So the male-CNS T1 undercount (F-XCONN-1) is real but is not what stops the circuit. The break is in our spiking model's handling of this circuit on either animal's wiring: single-spike core output, and an I1 that reaches −47.5 mV at best behind strong GABA input.
+  - This matches F-BYPASS-3: Pugliese's own LIF, at 1.75× our per-synapse efficacy, gets I1 to only one spike per cycle on MANC.
+  - It points at the questions on Ben's list: whether I1 spikes or passes graded signals (16B has never been recorded); unitary PSP size; E1/E2 burst output.
+  - The prediction on record was right; if anything it erred toward success.
