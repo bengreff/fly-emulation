@@ -2811,3 +2811,8 @@ PSI now follows 20/20 GF spikes (gaps on); DLMn follows 0/20 in both arms, so th
 
 ### fly2 result: flyapp T4/T5 on v0r + flyvis (13 Oct, 22:48)
 FAIL in both sets, 0 of 8, as pre-registered 22:05 (F-VISION-12; sheet viewed). Medulla inputs respond with the recorded polarity (Mi4 +3.6, Mi9 −3.3 mV); T4 rises 0.6-0.8 mV to every direction (DSI ≈ 0). The photoreceptor set barely passes the lamina. Reason measured beforehand: flyvis DS needs its type-pair strengths. v0r alone is not called (rule: only if this passed). The T4/T5 call on v0r + flyvis is spent. Nothing adopted; type-pair strengths go to Ben.
+
+### Ben (via Director) decisions for fly2, 13 Oct 22:53
+1. flyvis type-pair strengths: YES, as a separately switched arm labelled "fitted (flyvis, task-trained)" (shared by type pair, published, connectome-constrained). Conditions: each pair strength × synapse count must give a PSP inside the measured range for its class (flag outliers, never clip silently); stays out of the frontier profile until a held-out physiology check passes (T4/T5 tuning or Mi1/Tm3 recordings flyvis was not trained on); CT1 compartmentalised as in flyvis.
+2. PSI→DLMn 4.71 mV: YES, as a MEASURED value for that one identified connection, recorded as a scan-gap fill (part of the contact lies in the nerve outside the volume; the synapse is axonal), not a free knob. Check the claim against Fayyazuddin 2006 / the primary source first; revisit when N30 exists.
+3. Order: both queued behind the body-interface block (Director 13 Oct: the body cannot stand under any constant activation, F-BYPASS-1). fly2 fast-forwards main now (fly idle).
