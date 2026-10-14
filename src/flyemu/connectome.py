@@ -163,6 +163,22 @@ def build(
             new = neurons.bodyId.map(f)
             m = new.notna() & neurons.predictedNt.fillna("unclear").eq("unclear")
             neurons.loc[m, "predictedNt"] = new[m]
+    # s13 (fly2, F-GJ-3): identified types whose transmitter is known from physiology or pharmacology
+    # (data/params/transmitter_physiology.csv); the row wins over the EM and development calls
+    tp = CACHE.parent / "params" / "transmitter_physiology.csv"
+    if reg.require(
+            "connectome:identified", "nt_from_physiology", units="boolean",
+            model_use="fast transmitter of identified types from physiology (per-type table with sources)",
+            subsystem="sign", instances=len(neurons), minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: transmitter from the EM classifier / consensus / development calls",
+            uncertainty="one row per identified type; each row cites the recording or pharmacology") \
+            and tp.exists():
+        for r in pd.read_csv(tp, comment="#").itertuples():
+            m = neurons.type.eq(r.type)
+            reg.provide(f"cell_type:{r.type}", "transmitter", r.nt, units="category",
+                        model_use="fast transmitter (sets the synaptic sign)", status=Status(r.basis),
+                        evidence=r.source, subsystem="sign", instances=int(m.sum()), uncertainty=r.note)
+            neurons.loc[m, "predictedNt"] = r.nt
     pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
 
     e = edges[edges.weight >= min_synapses]

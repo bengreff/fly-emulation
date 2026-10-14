@@ -35,9 +35,9 @@ BAND = {k: (round(v["young"] - 2 * v["young_sem"], 3), v["old"]) for k, v in REF
 
 
 def run_arm(profile: str, gap: float, trials: int, period_ms: float, window_ms: float,
-            settle_ms: float, seed: int) -> dict:
+            settle_ms: float, seed: int, extra: dict | None = None) -> dict:
     org = Organism(policy="minimal", profile=profile, min_synapses=profiles.WORKING_MIN_SYNAPSES,
-                   seed=seed, overrides={"electrical:all|gap_conductance": gap})
+                   seed=seed, overrides={**(extra or {}), "electrical:all|gap_conductance": gap})
     net, dt = org.net, org.timestep_ms
     t = org.conn.neurons.type.fillna("").to_numpy()
     gf = np.flatnonzero(t == "DNp01")
@@ -105,13 +105,15 @@ if __name__ == "__main__":
     ap.add_argument("--window-ms", type=float, default=10.0)
     ap.add_argument("--settle-ms", type=float, default=200.0)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--set", action="append", default=[], help="extra override entity|property=value")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
+    extra = {k: float(v) for k, v in (s.split("=", 1) for s in a.set)}
     res = {"probe": "gf_latency", "profile": a.profile, "reference": REFERENCE, "band_ms": BAND,
            "reference_source": "Augustin et al. 2017 PLoS Biol 15:e2001655 S1 Table (WT brain stimulation)",
-           "arms": {}}
+           "overrides": extra, "arms": {}}
     for name, gap in (("gaps_off", 0.0), ("gaps_on", 1.0)):
-        r = run_arm(a.profile, gap, a.trials, a.period_ms, a.window_ms, a.settle_ms, a.seed)
+        r = run_arm(a.profile, gap, a.trials, a.period_ms, a.window_ms, a.settle_ms, a.seed, extra)
         res["arms"][name] = r
         for ty, v in r["types"].items():
             print(f"{name:9s} {ty:10s} follow {v['follow_fraction']:.2f} (control {v['control_fraction']:.2f})"

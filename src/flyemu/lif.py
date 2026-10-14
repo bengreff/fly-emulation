@@ -133,13 +133,18 @@ class LIFParams:
     # s13 (fly2, N12): identified gap junctions from electrical.build_gap: pairs (a, b), DC coupling c with
     # rectification r, spike steps k_ab / k_ba and arrival delays d_a / d_b in steps; None = none
     gap: dict | None = None
+    # s13 (fly2, N29): fast receptor decay per connection class from data/params/receptor_kinetics.csv:
+    # {"idx", "tau"} (CSR edge order); None = every edge decays with its post cell's tau_s
+    kin_edge: dict | None = None
 
 
 STP_TABLE = "stp_connections.csv"
+KIN_TABLE = "receptor_kinetics.csv"
 
 
 def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
-    """Cells a stp_connections.csv selector names: type:<regex>, class:<name> or *."""
+    """Cells a stp_connections.csv / receptor_kinetics.csv selector names: type:<regex>,
+    class:<name>, nt:<transmitter> (predictedNt as built, lower case) or *."""
     if sel == "*":
         return np.ones(len(neurons), bool)
     kind, _, pat = sel.partition(":")
@@ -147,7 +152,36 @@ def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
         return neurons.type.fillna("").str.contains(pat, regex=True).to_numpy()
     if kind == "class" and "class" in neurons:
         return neurons["class"].fillna("").eq(pat).to_numpy()
+    if kind == "nt":
+        return neurons.predictedNt.fillna("").str.lower().eq(pat).to_numpy()
     raise ValueError(f"{STP_TABLE}: cannot select {sel!r}")
+
+
+def _receptor_kinetics(reg: Registry, conn: Connectome) -> dict | None:
+    """N29 (s13, fly2): fast ionotropic decay per connection class (pre and post selectors), or None.
+    The decay belongs to the postsynaptic receptor, so a row is a (transmitter or presynaptic class,
+    postsynaptic class) pair; later rows override earlier ones."""
+    from pathlib import Path
+    if not reg.require(
+            "synapse:all", "receptor_kinetics_per_connection", units="boolean",
+            model_use="N29: fast receptor decay per connection class (data/params/receptor_kinetics.csv), "
+                      "charge per spike kept",
+            subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: every edge decays with its postsynaptic cell's tau_s"):
+        return None
+    path = Path(__file__).resolve().parents[2] / "data" / "params" / KIN_TABLE
+    tab = pd.read_csv(path, comment="#")
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    row = np.full(conn.n_edges, -1, np.int32)
+    for i, r in enumerate(tab.itertuples()):
+        m = _stp_cells(conn.neurons, r.pre)[pre] & _stp_cells(conn.neurons, r.post)[conn.indices]
+        row[m] = i
+        reg.provide(f"connection:{r.pre}->{r.post}", "receptor_tau_decay", float(r.tau_decay_ms), units="ms",
+                    model_use="fast receptor decay per connection class (N29)", status=Status(r.basis),
+                    evidence=r.source, subsystem="synaptic_efficacy", instances=int(m.sum()),
+                    uncertainty=r.note, method="published current decay (single exponential)")
+    idx = np.flatnonzero(row >= 0)
+    return {"idx": idx, "tau": tab.tau_decay_ms.to_numpy(np.float64)[row[idx]]}
 
 
 def _stp_connections(reg: Registry, conn: Connectome) -> dict | None:
@@ -449,6 +483,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         std_u = std_u.copy(); std_tau = std_tau.copy()
         std_u[leg], std_tau[leg] = 0.22, 893.0
     stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
+    kin_edge = _receptor_kinetics(reg, conn)   # s13 (N29); None at neutral
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
@@ -714,7 +749,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         mglur_fraction=mglur, mglur_tau_ms=float(mglur_tau), machr_fraction=machr,
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
-        intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap,
+        intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge,
     )
 
 
@@ -767,6 +802,7 @@ class Network:
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
         self._slow_channels(pre)
+        self._kinetic_channels(pre)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
         self._edge_scales(pre)
@@ -1216,6 +1252,32 @@ class Network:
             self.chan.append(dict(name=name, w=ws, buf=np.zeros((self.D, n), np.float32),
                                   i=np.zeros(n, np.float32), vdep=vdep,
                                   decay=np.float32(np.exp(-dt / tau))))
+
+    def _kinetic_channels(self, pre: np.ndarray) -> None:
+        """N29 (s13, fly2): the fast weight of each receptor_kinetics.csv edge moves to a current
+        with the row's decay, one current per distinct decay. The charge per spike is kept
+        (w (1 - e^(-dt/tau_row)) / (1 - e^(-dt/tau_s,post))), so only the time course changes and
+        the shared efficacy keeps its meaning (the peak basis tripled cholinergic charge in the
+        slow-share ablation, DECISIONS 2026-10-01 01:06). Spiking presynaptic cells only; graded
+        cells transmit through W_graded at tau_s. Current-based synapses only."""
+        ke = self.params.kin_edge
+        if ke is None or not len(ke["idx"]):
+            return
+        if self.params.cond:
+            raise NotImplementedError("synapse:all|receptor_kinetics_per_connection with conductance "
+                                      "synapses is not built (s13)")
+        dt, n, post = self.timestep_ms, self.conn.n, self.conn.indices
+        keep = ~self.graded[pre[ke["idx"]]]
+        idx, tau = ke["idx"][keep], ke["tau"][keep]
+        decay_s = np.exp(-dt / _arr(self.params.tau_s, n))
+        for t in np.unique(tau):
+            e = idx[tau == t]
+            dc = np.float32(np.exp(-dt / t))
+            ws = np.zeros_like(self.w)
+            ws[e] = self.w[e] * (1.0 - dc) / (1.0 - decay_s[post[e]])
+            self.w[e] = 0.0
+            self.chan.append(dict(name=f"kin{t:g}", w=ws, buf=np.zeros((self.D, n), np.float32),
+                                  i=np.zeros(n, np.float32), vdep=False, decay=dc, kin=True))
 
     def _edge_scales(self, pre: np.ndarray) -> None:
         """Candidate-only edge-class scaling (session 8): $FLYEMU_EDGE_SCALES is a CSV of

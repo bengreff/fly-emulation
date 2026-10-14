@@ -1,0 +1,12 @@
+# N29 (s13, fly2, brief task 3): fast receptor decay per connection class. Read by lif._receptor_kinetics when
+# synapse:all|receptor_kinetics_per_connection = 1; edges no row matches decay with their post cell's tau_s (5 ms, Shiu 2024).
+# pre/post select cells: "type:<regex on male-cns type>", "class:<male-cns class>", "nt:<transmitter>" (predictedNt as built) or "*".
+# Later rows override earlier ones. tau_decay_ms: single-exponential decay of the synaptic current. The charge per spike is kept, so
+# a row changes the time course only (lif.Network._kinetic_channels). Spiking presynaptic cells only (graded cells, e.g. APL, keep tau_s).
+# Searched without a usable number in readable text (s13, 13 Oct): KC->MBON (Hige 2015 x2, Barnstedt 2016), LN->PN GABA-A / GABA-B and
+# GluCl (Wilson & Laurent 2005, Olsen & Wilson 2008, Liu & Wilson 2013: qualitative only), ORN->PN mEPSC half-decay (Kazama & Wilson 2008
+# Fig 6C, graph only), photoreceptor->LMC (Zheng 2006), GF->TTMn chemical component, PN->KC evoked (Gruntman & Turner 2013).
+pre,post,tau_decay_ms,basis,source,note
+type:^ORN_,class:ALPN,1.1,inferred,"Gouwens & Wilson 2009 J Neurosci 29:6239 (PMC2709801), Methods and Results","fitted: decay of a two-exponential synaptic conductance (rise 0.2 ms) on 25 tuft branches, tuned so a compartmental PN model's somatic EPSP matched a recorded unitary ORN->PN EPSP; the single-site fit gave 0.6 ms. A point neuron lacks the dendritic filtering that slowed their somatic EPSP, so its EPSP rises faster than recorded"
+nt:acetylcholine,class:Kenyon_Cell,1.4,inferred,"Su & O'Dowd 2003 J Neurosci 23:9246 (PMC6740836), Table 1","measured in cultured pupal-brain Kenyon cells: nicotinic mEPSC decay 1.4 +/- 0.1 ms (SEM), n = 38, room temperature, -75 mV; in situ adult KCs: an example cell's ensemble mEPSC decays with tau 4 ms (Gu & O'Dowd 2006 J Neurosci 26:265, Fig 2 legend; table mean not read). Range 1.4-4 ms; culture value used"
+nt:gaba,class:Kenyon_Cell,3.7,inferred,"Su & O'Dowd 2003 J Neurosci 23:9246 (PMC6740836), Table 1","measured in cultured pupal-brain Kenyon cells: picrotoxin-sensitive mIPSC decay 3.7 +/- 0.9 ms (SEM), n = 12, room temperature; APL (the main GABA input to KCs) is graded in the model and keeps tau_s, so this row reaches only spiking GABAergic inputs"

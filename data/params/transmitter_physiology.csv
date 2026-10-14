@@ -1,0 +1,5 @@
+# Identified types whose fast transmitter is known from physiology or pharmacology (fly2, s13, F-GJ-3). Read by
+# connectome.build when connectome:identified|nt_from_physiology = 1; a row overrides the EM classifier, consensus and
+# development calls for every cell of that exact male-cns type.
+type,nt,basis,source,note
+PSI,acetylcholine,measured,"Fayyazuddin, Zaheer, Hiesinger & Bellen 2006 PLoS Biol 4:e63 (open text, read 13 Oct 2026)","'transmission at an identified cholinergic synapse between the peripherally synapsing interneuron and the dorsal lateral muscle motor neuron'; Dalpha7 nAChR mutants and gfA1 lose the PSI-DLMn EPSC. male-cns calls both PSI cells unclear (predictedNt and consensusNt) and the hemilineage fill has no row, so without this row PSI has sign 0"
