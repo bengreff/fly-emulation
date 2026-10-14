@@ -1,6 +1,18 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 14 October 2026, 00:35 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
+**Rewritten each session; do not append.** State as of Wed 14 October 2026, 00:45 CDT. Session 13 continues on Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
+
+**X1, cross-connectome control of the E2→I1 deficit (s13, 14 Oct 00:39-; Director brief after S4b).** Pre-registration DECISIONS 14 Oct 00:39. No fitting, no new switch.
+- **Count audit DONE (F-XCONN-1).** The male-CNS E2→I1 deficit belongs to a T1-wide input deficit against MANC: the per-cell matched-input ratio is 0.58 in T1, 0.69 T2, 0.82 T3. Male-CNS T1 I1 has 1,176/836 postsynapses against 2,100-2,500 for its own T2/T3 homologs and ~2,500-2,900 for MANC's I1 in every segment. BANC (third animal; Pugliese's T1 extract) sits with MANC on E2→I1 ÷ I1→E1 (0.13-0.15 against male CNS 0.06-0.07). All core cells are Traced/"Reviewed". Reading: male-CNS-specific, reconstruction more likely than individual variation (inferred). FANC unusable (hemilineage labels only). Script `scripts/probes/xconn_counts.py` (`build` on backhouse needs the dense MANC matrix at `~/pugliese_cpg/data`; `audit` on the Mac needs `/tmp/pugliese_cpg/data`, a scratch copy that may vanish, so re-copy from backhouse if needed). Outputs `runs/s13/xconn/` (Mac; `manc_on_mcns_edges.parquet` is the MANC-on-male-CNS edge table).
+- **Simulation RUNNING on backhouse** (tmux `xconn`, `~/fly-m10f/runs/s13/xconn/run.sh`; done-files `{chain,s2}/<arm>_<mv>.done`, then `ALL.done`; launched 00:43, est. ~50 min). Wrapper `scripts/probes/xconn_swap.py` swaps MANC counts into `connectome.load_tables` (signs, thresholds, mechanisms unchanged): M0 none, Xc core cells, Xv every one-to-one matched VNC-set cell; × DNg100 15/25/40 mV; `bypass_s3_chain.py` and `bypass_s2_descending.py`. Each swapped log's first line `[xconn] swap ...` gives the replaced/added edge counts; check it.
+- **To score** (as pre-registered; write the result before viewing anything else):
+  1. Copy `~/fly-m10f/runs/s13/xconn/{chain,s2}` to the Mac.
+  2. Chain: I1 recruited iff T1L I1 rate ≥ 0.5 × the E1 T1L cycle frequency (`rhythm_hz`, else the E1 rate) at some drive. Report all six neuromeres.
+  3. S2: `bypass_moddepth.py runs/s13/xconn/s2/s2_*_traces.npz --hi 16` plus `bypass_lag_readout.py`; apply S4b's admissibility pass (see `s4b_score.py`) per arm and drive.
+  4. View rasters (`bypass_rasters.py`) for the M0/Xc/Xv 25 mV runs, then F-XCONN-2 and the DECISIONS result.
+  5. Stop the keep-alive ssh and confirm tmux `xconn` has exited.
+- **Prediction on record:** neither swap recruits I1 beyond ~1 spike per cycle or alternates (our 0.157 mV per synapse is 0.57× Pugliese's, whose own LIF gets 1 I1 spike per cycle on MANC).
+- **Then S4 proper at s 1** (proprioceptive feedback → alternation?). Read fly2's F-REFLEX-2 first (the afferent path stops at the first hop). Pre-register, backhouse with done-files, view, commit.
 
 **Bypass assay, nerve-cord side (s13, 13 Oct 21:30-23:14).** All results are committed. Read F-BYPASS-1 to F-BYPASS-4 and the DECISIONS entries from 21:41 onward (pre-registrations S2 21:41 and S3 22:09, calibration note 22:18, results 22:09 and 23:10, reference 23:13).
 - **S0 done:** `rest_vs_reference.py`. MBON14, P-EN and DN1a are low at rest. Queued behind the assay.
@@ -38,13 +50,13 @@
     - The model gives 0.021 mV per synapse at s 1, linear in s.
     - s 1 is consistent with measured insect unitary PSPs. s 16-25 is not: 0.34-0.53 mV per synapse, q90 connections at 18-29 mV, and one premotor spike fires about half the MNs.
     - So rate-matching compensates for a near-silent premotor layer (0.13 Hz mean during drive). Proposed evidence bound s ≤ ~14 (inferred; not adopted).
-  - Scripts: `s4b_scale_sweep.py`, `s4b_score.py`, `s4b_unitary_psp.py`. Runs: `runs/s13/bypass/s4b/{,body,psp}` (Mac copy; backhouse `~/fly-m10f/runs/s13/bypass/s4b/`). Nothing is running on backhouse.
+  - Scripts: `s4b_scale_sweep.py`, `s4b_score.py`, `s4b_unitary_psp.py`. Runs: `runs/s13/bypass/s4b/{,body,psp}` (Mac copy; backhouse `~/fly-m10f/runs/s13/bypass/s4b/`).
 - **Where the break is now:**
   - The core's output: one spike per cycle; the premotor layer is near-silent.
   - I1 never fires, so the stance antagonists get no rhythmic inhibition.
   - The MN-side gain is ruled out: R, G and the scale all failed.
 - **Next, in order:**
-  1. **I1 recruitment, a data audit (no fit).** E2→I1 is 38 synapses here against 71 in MANC (F-BYPASS-3). Check IN16B036's input completeness in male-cns against MANC (postsynapse counts, the proofreading status of its partners, and the inclusion policy). Is the deficit reconstruction or biology? Write a pre-registration before any change.
+  1. **I1 recruitment: now X1 (above).** The count audit is done (F-XCONN-1); the simulation is running.
   2. **S4 proper: proprioceptive replay and closed loop.** Insect antagonist switching depends on load and position feedback (Büschges; needs a cited range). Pre-register whether feedback produces alternation at s 1.
   3. **Ben's list (unchanged by S4b):**
      - (a) a unitary premotor→leg-MN PSP recording, which would bound the scale by measurement;
@@ -92,7 +104,7 @@
 - **Backhouse:**
   - Private checkout `~/fly-m10f` (data/raw, cache and .venv symlinked to `~/fly-emulation`). Sync with `COPYFILE_DISABLE=1 tar --no-xattrs -cf - src scripts tests data/model | ssh backhouse 'wsl -d Ubuntu -- bash -c "tar -x -C ~/fly-m10f"'`.
   - WSL needs a keep-alive (`ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`) or tmux jobs die.
-  - Bypass jobs: none running (S2, S3, S4a, S4b and the Pugliese reference are all collected). The keep-alive was stopped at session end. `/home/greff` holds Ben's other project; don't touch it. Keep memory headroom: each probe process takes about 2.4 GB, others use about 24 GB.
+  - Bypass jobs: X1 running (tmux `xconn`, above); S2, S3, S4a, S4b and the Pugliese reference are collected. A keep-alive ssh from the Mac is open while X1 runs; stop it when ALL.done appears. `/home/greff` holds Ben's other project; don't touch it. Keep memory headroom: each probe process takes about 2.4 GB, others use about 24 GB.
 
 **Session 12 (4 October 16:36 to 22:31, then 5 October from 02:05):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9c** (adopted 5 October 23:53; m9r before it, adopted 03:31; m9f 02:51). m9c = m9r + the N26 clock drive fitted to DN1p day-night firing (`state:coupling|clock_gain` 7.75, fitted) + the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`, sourced); F-CLOCK-1, DECISIONS 23:34-23:53. Gate, battery and sheet are unchanged from m9r; the clock cells now fire (DN1p about 4 Hz) and reach no motor neuron. flyapp's library runs m9r (differs only in the clock; Director's call). m9r's lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons; F-NONLEG-2) → m9f (folded wings resting on the abdomen; F-WING-5) → m9r (left leg rest angles mirrored from the right legs, the measured side; F-STAND-3 side note). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted. Since 5 October 21:40 m9r itself carries `motor_unit:all|force_per_spike` 10 (guessed), the value every gate ran with by `--set`; the name now means the gated model (DECISIONS 21:27, battery passed). Earlier profiles still need the `--set`.

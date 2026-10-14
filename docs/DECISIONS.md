@@ -2955,3 +2955,29 @@ DIAGNOSTIC, forced drive; implements the Director's held decision (as Ben, recor
   - So a rate-matching scale would be compensating for something else. In this harness the premotor layer is nearly silent: 0.13 Hz mean over 5314 cells during the drive, with the core giving one spike per cycle (F-BYPASS-4/5). That is the missing burst output.
   - Proposed evidence bound, if the scale is ever refitted: s ≤ ~14 (0.3 mV per synapse). This is inferred, from the unchecked table, and replaces the guessed 25. Not adopted.
 - **Held-out recruitment order: NOT spent.** There is no s\*, and the pre-registration spends it at s\* only. 15 and 40 mV members were not looked at.
+
+### Pre-registration X1: cross-connectome control of the E2→I1 deficit (14 October, 00:39, before any count extraction beyond F-BYPASS-3 or any run)
+DIAGNOSTIC, forced drive; Director brief (14 Oct, after S4b). No fitting, no new switch, nothing adopted. Question: is I1's silence (F-BYPASS-3/4) a property of this animal's counts, and if so is the deficit reconstruction or individual variation?
+- **Simulation (our neuron model, everything identical except counts).** A wrapper replaces `connectome.load_tables` edges before `connectome.build`, so every mechanism, threshold, sign (from the male-CNS cell), the `min_synapses` 5 cut and m10f0 apply unchanged. Counts come from MANC (Pugliese's full-MANC matrix `W_20260522_allSynapses`, checked first against their T1L minicircuit, E2→I1 = 71).
+  - **M0:** male CNS as is (re-run in the same batch).
+  - **Xc (core swap):** cells of types DNg100, IN17A001 (E1), INXXX466 (E2), IN16B036 (I1), IN19A007, IN19A004, IN19A002 with a one-to-one `mancBodyid`; every edge between two of them takes the MANC count of the matched pair (edges absent in MANC are removed, MANC-only edges added).
+  - **Xv (VNC swap):** the same rule for every VNC-set cell (superclass vnc_*, descending, ascending, as in the S2 harness) with a one-to-one `mancBodyid`. Edges with an unmatched endpoint keep male-CNS counts.
+  - Each arm × DNg100 15/25/40 mV, seed 12, brain and senses off: `bypass_s3_chain.py` (core cells, 900 ms) and `bypass_s2_descending.py` (MN pools, body tethered, 1500 ms). Backhouse, done-files.
+- **Readouts (scored per arm, any drive).**
+  - *I1 recruited:* T1L I1 fires on ≥ 50% of core cycles during drive (rate ≥ 0.5 × E1 cycle frequency). All six neuromeres reported.
+  - *Alternation:* S4b's admissibility criterion unchanged (two antagonist pools of one leg both transfer-pass, band 7-16 Hz; r ≤ −0.3 at zero lag or lagged peak 10-30 ms ≥ 0.5; post-drive leg-MN rate ≤ 1.5× pre-drive), then viewed on rasters.
+- **Interpretation, fixed now.**
+  - Xc or Xv alternates and M0 doesn't → the male-CNS counts are the break; the audit below says which kind.
+  - I1 recruited under a swap but no alternation → the E2→I1 deficit explains I1's silence but not the failed transfer.
+  - Neither → the male-CNS counts are not the break; our spiking model can't run this circuit on either animal's wiring (the threshold/efficacy/burst question, Ben's list).
+  - **Prediction (mine, before running):** the last. Pugliese's own LIF on MANC gets I1 to one spike per cycle and 1 of 25 MNs bursting at 0.275 mV per synapse (F-BYPASS-3); ours is 0.157 mV. Expect I1 at most ~1 spike per cycle at 40 mV under Xc, and no antagonist pair in any arm.
+- **Count audit (descriptive; no simulation).** Per leg neuromere and side, the core edges in male CNS, MANC, BANC and FANC (Pugliese's T1 extracts; BANC/FANC matched through their MANC type labels).
+  - Normalisation: the median male-CNS/MANC ratio over matched VNC edges with ≥ 10 MANC synapses (dataset-wide detection and completeness difference).
+  - *Outlier call:* the normalised E2→I1 log ratio lies outside the 5-95% band of matched edges of similar MANC size (30-150 synapses).
+  - *Reconstruction indicators:* I1's and E2's status labels; I1's total postsynapses and the fraction of its input from Traced bodies, against MANC's I1; whether the deficit is specific to E2→I1 or shared by all of I1's inputs (whole-cell under-reconstruction).
+  - *Individual-variation indicators:* the left-right and T1/T2/T3 spread of E2→I1 inside each animal, and where BANC/FANC fall. If the other animals sit with MANC and the male CNS alone is low, the deficit is male-CNS-specific (reconstruction or this individual; counts alone can't separate those two, and the report will say so). If the animals spread across the range, it is individual variation, and under the per-value bar both counts are admissible.
+
+### X1 count audit result and simulation launch (14 October, 00:45; F-XCONN-1)
+- Count audit as pre-registered: T1L E2→I1 is **not an outlier** on the pre-registered normaliser (0.538, matched edges ≥ 10 MANC synapses; normalised log ratio ≈ 0). On the secondary normaliser (edges in both, 0.875), it is low. The deficit is male-CNS T1-wide (per-cell matched-input ratio T1 0.58, T2 0.69, T3 0.82) and whole-cell for I1 (all of I1's T1 inputs 0.34-0.38× MANC's). BANC sits with MANC. Reading: male-CNS-specific, more likely reconstruction than individual variation (inferred). Detail in F-XCONN-1.
+- Simulation launched on backhouse at 00:43 exactly as pre-registered (`runs/s13/xconn/run.sh`, 18 runs, done-files). Nothing scored yet.
+- Wrapper fix at 00:46, before any swapped run started (the M0 chain batch was still running): the swap set is now restricted to cells whose MANC body is in the MANC table. Before the fix, 74 matched cells outside it would have lost their within-set edges under Xv. Checked on the Mac: Xc swaps 36 cells (182 male-CNS edges, 17,774 synapses → 199 MANC edges, 20,652), and T1L E2→I1 becomes 71, I1→E2 172, E1→E2 539.

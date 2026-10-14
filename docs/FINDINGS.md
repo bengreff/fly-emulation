@@ -1245,3 +1245,28 @@ Target (held out; `data/measurements/targets_session6.csv`): Wang et al. 2025 me
   - Alternation is absent at every gain, because the stance antagonists get no rhythmic inhibition (I1 silent, F-BYPASS-3/4).
   - The break is the core's burst output and I1's recruitment. Neither has a measured range yet (Ben's list: an E1/E2 burst recording; a unitary premotor→MN PSP).
 - **Held-out recruitment order: still unspent.**
+
+### F-XCONN-1: the male-CNS E2→I1 deficit is part of a prothoracic (T1) input deficit against MANC, not an E2→I1-specific gap; BANC sits between, nearer MANC (s13, 14 Oct 00:43; count audit, no simulation, no fitting)
+- **Test** (pre-registered, DECISIONS 14 Oct 00:39). `scripts/probes/xconn_counts.py`. MANC counts from Pugliese's full-MANC matrix (`W_20260522_allSynapses`, rows pre; checked: their T1L minicircuit gives E2→I1 71, I1→E2 −172, and the full matrix matches). Matched through the dataset's `mancBodyid`, one-to-one only: 17,645 VNC-set cells; 4.16M MANC edges among them. BANC from Pugliese's T1 premotor extract (2026-02-17; it uses the male-CNS type names). FANC's extract labels interneurons by hemilineage only, so E2 and I1 can't be identified there; it is not used. Output `runs/s13/xconn/audit.json` (Mac, gitignored).
+- **Core edges, synapses** (T1L / T1R; male CNS · MANC · BANC):
+  - E2→I1: 38/27 · 71/60 · 50/53. In T2 the male CNS has 121/129 against MANC's 192/202; in T3, 65/65 against 72 (T3R).
+  - E1→E2: 465/328 · 539/456 · 336/190. I1→E1: 526/439 · 531/580 · 379/357.
+  - Relative to its own core (E2→I1 ÷ I1→E1): male CNS 0.07/0.06, MANC 0.13/0.10, BANC 0.13/0.15. So BANC sits with MANC, and the male CNS is about half.
+- **Dataset-wide ratio.**
+  - Pre-registered normaliser: the median male-CNS/MANC ratio over matched edges with ≥ 10 MANC synapses is 0.538 (562k edges). It is pulled down by matched edges absent in the male CNS.
+  - On that normaliser, T1L E2→I1 is typical: normalised log ratio ≈ 0, inside the 5-95% band for 30-150-synapse edges (−3.2 to +1.0). **So the outlier call is "not an outlier".**
+  - Secondary, not pre-registered: over edges present in both (≥ 10 each) the ratio is 0.875 (288k edges). On that, T1 E2→I1 (0.54, 0.45) is low.
+- **Where the deficit sits** (per-cell matched-input ratio, male CNS/MANC, cells with ≥ 500 MANC matched inputs; median, 5-95%):
+  - T1 0.58 (0.22-0.95; 3,002 cells); T2 0.69; T3 0.82; A1-A3 0.86-1.02.
+  - **The whole male-CNS prothoracic neuromere has less matched input than MANC's, about 0.7× of T3's ratio.** That fits a reconstruction or synapse-detection difference across the T1 volume better than biology of one connection (inferred; counts can't prove it).
+  - I1 sits low inside its neuromere: T1L 0.40 (20th percentile of T1 cells), T1R 0.33 (12th), T2 0.71/0.54, T3 0.81/0.84 (median).
+- **I1 totals.**
+  - Male-CNS I1 has 1,176 (T1L) and 836 (T1R) postsynapses against 2,110-2,509 in its own T2/T3 homologs. MANC's I1 is uniform across segments: 2,489-2,932 inputs from neurons.
+  - 96% of the male-CNS T1L I1's postsynapses come from Traced bodies (T1R 95%). So the input it lacks isn't sitting on orphan fragments. It's absent: missing branches or undetected synapses.
+  - Across I1's own inputs with ≥ 10 MANC synapses, the male-CNS T1 counts are 0.38× (T1L) and 0.34× (T1R) of MANC's. That is whole-cell, not E2-specific.
+- **Proofreading status.** All 36 core interneurons (E1, E2, I1, A007, A004, A002 in six neuromeres) are Traced, with statusLabel "Reviewed". Both DNg100 are "Prelim Roughly traced". There is no per-connection proofreading flag in the dataset.
+- **Reading** (as pre-registered):
+  - The other animal (BANC) sits with MANC on the within-animal ratio. The male CNS alone is low, and it's low across its T1 neuromere and across all of I1's inputs.
+  - So the deficit is male-CNS-specific. The neuromere-wide pattern makes **reconstruction** (T1 completeness or synapse detection) the more likely reading. **Individual variation** isn't excluded. Labelled inferred.
+  - Under the per-value bar, the male-CNS T1 counts are not obviously "some fly's" values. They are plausibly an undercount. MANC and BANC would both be admissible.
+  - The simulation half of X1 (does our model recruit I1 and alternate on MANC counts?) is running on backhouse; see HANDOFF.
