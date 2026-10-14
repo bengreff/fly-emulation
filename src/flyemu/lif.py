@@ -136,10 +136,14 @@ class LIFParams:
     # s13 (fly2, N29): fast receptor decay per connection class from data/params/receptor_kinetics.csv:
     # {"idx", "tau"} (CSR edge order); None = every edge decays with its post cell's tau_s
     kin_edge: dict | None = None
+    # s14 (fly2): measured unitary PSP per identified connection from data/params/unitary_psp.csv:
+    # {"idx", "psp_mv"} (CSR edge order, signed peak mV); None = every edge from the shared scale
+    psp_edge: dict | None = None
 
 
 STP_TABLE = "stp_connections.csv"
 KIN_TABLE = "receptor_kinetics.csv"
+PSP_TABLE = "unitary_psp.csv"
 
 
 def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
@@ -182,6 +186,42 @@ def _receptor_kinetics(reg: Registry, conn: Connectome) -> dict | None:
                     uncertainty=r.note, method="published current decay (single exponential)")
     idx = np.flatnonzero(row >= 0)
     return {"idx": idx, "tau": tab.tau_decay_ms.to_numpy(np.float64)[row[idx]]}
+
+
+def _unitary_psp(reg: Registry, conn: Connectome) -> dict | None:
+    """s14 (fly2): the unitary PSP of an identified connection from a recording, or None. A row
+    (pre selector, post selector, signed peak mV) replaces sign x efficacy x count x release x input
+    gain on its edges by the weight whose passive PSP peak, for one presynaptic spike, equals the
+    recorded value (Network._unitary_psp_weights). It is a value for one connection the recording
+    names, never a free knob; later rows override earlier ones."""
+    from pathlib import Path
+    if not reg.require(
+            "connectome:identified", "unitary_psp_from_recordings", units="boolean",
+            model_use="measured unitary PSP per identified connection (data/params/unitary_psp.csv) "
+                      "replaces the shared per-synapse scale on those edges",
+            subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: every edge from synapse count x the shared efficacy and gains"):
+        return None
+    path = Path(__file__).resolve().parents[2] / "data" / "params" / PSP_TABLE
+    tab = pd.read_csv(path, comment="#")
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    row = np.full(conn.n_edges, -1, np.int32)
+    for i, r in enumerate(tab.itertuples()):
+        m = _stp_cells(conn.neurons, r.pre)[pre] & _stp_cells(conn.neurons, r.post)[conn.indices]
+        if not m.any():
+            raise ValueError(f"{PSP_TABLE}: row {r.pre} -> {r.post} matches no edge")
+        bad = np.sign(conn.sign[pre[m]]) != np.sign(r.psp_mv)
+        if bad.any():
+            raise ValueError(f"{PSP_TABLE}: {r.pre} -> {r.post} is recorded with sign {np.sign(r.psp_mv):+g} "
+                             f"but {int(bad.sum())} edges carry another transmitter sign (PSI needs "
+                             "connectome:identified|nt_from_physiology = 1)")
+        row[m] = i
+        reg.provide(f"connection:{r.pre}->{r.post}", "unitary_psp_peak", float(r.psp_mv), units="mV",
+                    model_use="peak PSP of one presynaptic spike (sets the edge weight)",
+                    status=Status(r.basis), evidence=r.source, subsystem="synaptic_efficacy",
+                    instances=int(m.sum()), uncertainty=r.note, method=r.condition)
+    idx = np.flatnonzero(row >= 0)
+    return {"idx": idx, "psp_mv": tab.psp_mv.to_numpy(np.float64)[row[idx]]}
 
 
 def _stp_connections(reg: Registry, conn: Connectome) -> dict | None:
@@ -484,6 +524,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         std_u[leg], std_tau[leg] = 0.22, 893.0
     stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
     kin_edge = _receptor_kinetics(reg, conn)   # s13 (N29); None at neutral
+    psp_edge = _unitary_psp(reg, conn)   # s14 (fly2); None at neutral
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
@@ -762,6 +803,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
         intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge,
+        psp_edge=psp_edge,
     )
 
 
@@ -813,6 +855,7 @@ class Network:
         self.w = (self.conn.sign[pre] * self.conn.efficacy_mv * self.conn.weight_syn
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
+        self._unitary_psp_weights()
         self._slow_channels(pre)
         self._kinetic_channels(pre)
         if p.ring_class_norm:
@@ -1290,6 +1333,36 @@ class Network:
             self.w[e] = 0.0
             self.chan.append(dict(name=f"kin{t:g}", w=ws, buf=np.zeros((self.D, n), np.float32),
                                   i=np.zeros(n, np.float32), vdep=False, decay=dc, kin=True))
+
+    def _unitary_psp_weights(self) -> None:
+        """s14 (fly2): set each unitary_psp.csv edge to the weight whose PSP peak in the passive
+        membrane (this cell's tau_m and tau_s, this timestep and update order) equals the recorded
+        peak. Validity: the cell's intrinsic channels, a slow receptor share or an N29 decay on the
+        edge change the peak (the probe reports the in-network value); current-based synapses only."""
+        pe = self.params.psp_edge
+        if pe is None or not len(pe["idx"]):
+            return
+        if self.params.cond:
+            raise NotImplementedError("connectome:identified|unitary_psp_from_recordings with "
+                                      "conductance synapses is not built (s14)")
+        ke = self.params.kin_edge
+        if ke is not None and np.intersect1d(ke["idx"], pe["idx"]).size:
+            raise NotImplementedError("a unitary_psp.csv edge also has an N29 decay row (not built)")
+        post = self.conn.indices[pe["idx"]]
+        self.w[pe["idx"]] = (pe["psp_mv"] / self.psp_peak_per_mv(post)).astype(np.float32)
+
+    def psp_peak_per_mv(self, cells: np.ndarray) -> np.ndarray:
+        """Passive PSP peak (mV) per mV of synaptic weight arriving at `cells`, in this model's
+        discrete update (I <- I e^(-dt/tau_s) + w, then V relaxes toward I with e^(-dt/tau_m))."""
+        dt = self.timestep_ms
+        ds = np.exp(-dt / _arr(self.params.tau_s, self.conn.n, np.float64)[cells])
+        dv = np.exp(-dt / _arr(self.params.tau_m, self.conn.n, np.float64)[cells])
+        i, v, peak = np.ones_like(ds), np.zeros_like(ds), np.zeros_like(ds)
+        for _ in range(int(np.ceil(200.0 / dt))):
+            v = v * dv + i * (1.0 - dv)
+            peak = np.maximum(peak, v)
+            i = i * ds
+        return peak
 
     def _edge_scales(self, pre: np.ndarray) -> None:
         """Candidate-only edge-class scaling (session 8): $FLYEMU_EDGE_SCALES is a CSV of

@@ -1,0 +1,9 @@
+# Measured unitary PSPs of identified connections (fly2, s14; Ben via the Director, DECISIONS 13 Oct 22:53). Read by
+# lif._unitary_psp when connectome:identified|unitary_psp_from_recordings = 1 (neutral 0). A row sets each matching
+# edge to the weight whose passive PSP peak for ONE presynaptic spike equals psp_mv, replacing synapse count x the
+# shared efficacy and gains on those edges. Scan-gap fill: part of the PSI-DLMn contact runs in the posterior dorsal
+# motor nerve, outside the reconstructed volume, and the synapse is axonal, so the count x shared scale is not
+# expected to carry it. Revisit when two-compartment MNs (N30) exist. Selectors as stp_connections.csv.
+pre,post,psp_mv,basis,source,condition,note
+type:^PSI$,"type:^DLMn a, b$",4.71,measured,"Fayyazuddin, Zaheer, Hiesinger & Bellen 2006 PLoS Biol 4:e63, Results 'gfA1 Mutants Have Reduced Excitatory Drive at the PSI-DLMmn Synapse', Fig 5 (PMC1382016; text checked 14 Oct 2026 by a Sonnet subagent and by fly2)","WT adult in situ, whole-cell current clamp at the MN5 soma held at -74 mV, GF stimulation at 1 Hz; EPSP amplitude by three methods (spike failure at high frequency, amplitude to the spike inflection point, MN5 spike forced refractory before GF activation): 4.71 +/- 0.35 mV (SEM), n = 10","MN5 supplies DLMa and b (same paper), taken as male-cns DLMn a, b by name (inferred). One GF stimulus gives one PSI spike through the GF-PSI electrical synapse (inferred; the paper does not say so for this value). Soma value of an axonal synapse: the spike initiation zone sees more, so in a point neuron it is a lower bound on the effective input. Temperature not found in the text"
+type:^PSI$,"type:^DLMn c-f$",4.71,inferred,"value of PSI -> MN5 (Fayyazuddin 2006, measured) carried to MN1-4","same presynaptic identified cell and the same axonal contact along the PDMN; no MN1-4 recording","inferred: no unitary PSP recorded for MN1-4 (DLMn c-f)"
