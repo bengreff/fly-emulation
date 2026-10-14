@@ -1,6 +1,46 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 6 October 2026, 04:46 (parked on usage budget; item 0 is first), session 12 night (Director night order 21:30: Dandelion, the force_per_spike fold, then BLANKS_AUDIT stubs in audit order; park by 05:30) (session 11 state below the first block).
+**Rewritten each session; do not append.** State as of Tue 13 October 2026, 21:31 CDT. Session 13 (frontier m10f) died on an auth expiry on Thu 8 Oct about an hour in; on 13 Oct the uncommitted tree was verified and committed, and the session stopped there for a Director rebrief from `logs/night-2026-10-08/briefs/fly.md`. The s13 block is current; everything from "Session 12" down is older state, still valid where not contradicted (the sealed and held-out register near the end is still in force).
+
+**Session 13: where it stopped (13 Oct 21:31).** Brief (Thu 8 Oct): build the frontier profile m10f, with every built mechanism ON at an in-range value. Adoption needs a 60 s smoke (no runaway, no NaN, resting rates in range) plus the silence gate with eye cells excluded. m9c stays the reference. Mechanisms in order: (1) per-type intrinsic dynamics from a range table, (2) membrane noise, (3) neuromodulation with receptor effects, (4) standing via one fitted shared support drive, with the fall after silencing held out.
+- **Committed 13 Oct:** bfc5751 class-grain adaptation (N4, neutral); 258b502 m10f0 profile and gate changes; fabdabb probes `smoke_live.py` and `adapt_fit.py`; 7fa4fb1 research tables `docs/research/s13_intrinsic_ranges.csv` (118 rows) and `s13_neuromodulation_effects.csv` (63 rows), both agent-gathered and not yet checked row by row. `tests/test_class_mechanisms.py` 14 passed, `tests/test_repo_hygiene.py` 12 passed. Nothing in the tree was fly2's.
+- **Left uncommitted (broken):** `docs/research/s13_resting_rates_reference.csv`, 61 rows from agent C (published spontaneous rates by class); 21 rows have unquoted commas in free-text fields (agent C died before checking). Fix the quoting by hand before using it.
+- **m10f0 (= `m10f`)** = m9c + `sense:taste_leg|modality_source` 1.0 + `connectome:unclear|nt_by_development` 1.0. These are the only built switches that were off in m9c and are in range. It is not adopted; the brief's adoption bar also needs resting rates in range, which fails (see below).
+- **Gate** (`closed_loop_check.py --profile m10f0`, eye classes excluded, noise removed in the silent window): seeds 12-15 all 0.0 non-eye spikes/ms in the last 100 ms (eye cells too). Results in `runs/s13/gates/` (Mac copy, gitignored).
+- **"Does it live" smoke** (`smoke_live.py`, 60 s, seed 12; m9c also seed 13; results in `runs/s13/smoke/`): m10f0 and m9c match to rounding.
+  - Whole brain 0.32 Hz; 2.8% of cells active; median active cell 10.8 Hz; max 221 Hz.
+  - Movement in the first 10 s: 20.5 rad/s summed hinge speed (m9c 20.3 and 20.1), moving in 100% of bins (head 13.5, wing 3.8, leg 2.9 rad/s). Thorax path 2.3 mm in 60 s; thorax height 0.55 mm.
+  - Dead control (m9c, no brain drive): 0.39 rad/s, 7% of bins moving.
+  - No runaway, no NaN, 0 MuJoCo warnings. Wall time about 6500 s per 60 s run on backhouse (8 jobs in parallel).
+  - **Resting rates fail for the mushroom body:** MBON, KC, DAN, APL and DPM (and LMC) are 0 Hz at rest in both m9c and m10f0. Published spontaneous rates for MBONs and DANs are nonzero (agent C's table has rows). This is the first target for mechanism 2.
+- **Noise sweep** (3 s, m10f0 seed 12, `class:<c>|noise` set to σ on all 55 central and VNC classes, eye and sensory classes untouched; `runs/s13/noise/`). These are open-loop facts, not a fit:
+
+  | σ (mV/√ms) | whole brain (Hz) | cells active | summed hinge speed, first 10 s (rad/s) | thorax |
+  |---|---|---|---|---|
+  | 0.25 | 0.33 | 3.0% | 23 | |
+  | 0.5 | 0.37 | 4.4% | 21 | |
+  | 0.75 | 0.53 | 23% | 70 | path 11.8 mm, final height 1.9 mm (left the floor) |
+  | 1.0 | 1.08 | 30% | 110 | |
+
+  Single-cell reference (s12): σ 1.0 → 1.8 Hz and σ 1.5 → 7.6 Hz for an undriven cell. Not yet run with the gate's noise-on option.
+- **Class adaptation (N4):** built and neutral, not ON anywhere. `adapt_fit.py` on the generic central cell (τ_adapt 200 ms): the late/early ratio falls from 0.983 to 0.396 over 0-6 mV; a recorded ratio of 0.5 gives 3.05 mV (inferred). There is no class with a numeric recorded ratio yet; the MBON data are qualitative only (weak within 400 ms).
+- **Mechanism 1 candidates** (`s13_intrinsic_ranges.csv`):
+  - MBON τ_m 16 ms measured (13.8-18.4), against model 20 ms, so `class:MBON|tau_m_scale` 0.8 is a candidate;
+  - uPN τ 20 ms is already in range;
+  - HS τ 4.3-4.9 ms (Cuntz 2013) is a per-type candidate;
+  - VNC 13B and 10B non-spiking are mode candidates.
+  - Most classes have no measured value.
+- **Mechanism 3** (`s13_neuromodulation_effects.csv`): the plan is sign from receptor coupling weighted by expression probability (`receptors.gene_probabilities`), with magnitude bounded by a measured effect (e.g. OA flight gain on HS). The validity limit is global modulator pools.
+- **Next, in order:**
+  1. Fix the resting-rates CSV quoting.
+  2. Score per-class rest against it (MB classes are at zero).
+  3. Mechanism 1: MBON tau_m_scale 0.8, then HS per-type τ; smoke and gate after each.
+  4. Mechanism 2: per-class σ fitted to spontaneous rates. Pre-register first, holding out P-EN, DN1p and VUM.
+  5. Mechanism 3, then mechanism 4.
+- **Backhouse:**
+  - Private checkout `~/fly-m10f` (data/raw, cache and .venv symlinked to `~/fly-emulation`). Sync with `COPYFILE_DISABLE=1 tar --no-xattrs -cf - src scripts tests data/model | ssh backhouse 'wsl -d Ubuntu -- bash -c "tar -x -C ~/fly-m10f"'`.
+  - WSL needs a keep-alive (`ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`) or tmux jobs die.
+  - No s13 jobs or tmux sessions are left running. `/home/greff` holds Ben's other project; don't touch it.
 
 **Session 12 (4 October 16:36 to 22:31, then 5 October from 02:05):** Ben's order is blanks, then an accurate body, then the ladder to synapse-specific fidelity (A, B, C), and nothing else. Development models, many flies and the reconstruction study come after. Timeline in `docs/SESSION12_LOG.md`. The m10q search on backhouse stays uncollected. Below this block, the file is still the session 11 state, except the working model.
 - **Working profile: m9c** (adopted 5 October 23:53; m9r before it, adopted 03:31; m9f 02:51). m9c = m9r + the N26 clock drive fitted to DN1p day-night firing (`state:coupling|clock_gain` 7.75, fitted) + the run starting at the specimen's ZT 1.5 (`state:clock|initial_ct`, sourced); F-CLOCK-1, DECISIONS 23:34-23:53. Gate, battery and sheet are unchanged from m9r; the clock cells now fire (DN1p about 4 Hz) and reach no motor neuron. flyapp's library runs m9r (differs only in the clock; Director's call). m9r's lineage: m9 → m9w (wing motor roles, nerve-based afferents) → m9n (each sensor on its own nerve) → m9m (mid/hind muscles derived from segment size; TTM 90 µN·mm) → m9d (leg damping 0.05 s × measured stiffness; TTMn out of the Hill pool) → m9s (MuJoCo noslip off) → m9t (non-leg torque per spike from the leg motor-unit anchor × moved-part length, inferred; F-NONLEG-1) → m9u (wing hinge stiffness from Bergou et al. 2010; F-WING-4) → m9v (mirror-image neck motor neurons; F-NONLEG-2) → m9f (folded wings resting on the abdomen; F-WING-5) → m9r (left leg rest angles mirrored from the right legs, the measured side; F-STAND-3 side note). Each step passed the silence gate (seeds 12-19; DECISIONS s12). None is fitted. Since 5 October 21:40 m9r itself carries `motor_unit:all|force_per_spike` 10 (guessed), the value every gate ran with by `--set`; the name now means the gated model (DECISIONS 21:27, battery passed). Earlier profiles still need the `--set`.
