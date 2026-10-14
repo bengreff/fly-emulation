@@ -23,7 +23,9 @@ def main() -> None:
     a = ap.parse_args()
     cols = a.frames_ms.split(",")
     rows = []
+    many = len({Path(x).resolve().parent for x in a.dirs}) > 1
     for d in map(Path, a.dirs):
+        tag = f"{d.parent.name} " if many else ""
         js = {}
         for f in d.glob("*.json"):
             j = json.loads(f.read_text())
@@ -41,9 +43,11 @@ def main() -> None:
                        f"leg MN {rz['leg_mn_drive']} Hz  act max {r['activation_drive_max']}  "
                        f"{'PASS' if r['passes'] else 'fails'}")
             else:
-                lab = (f"{pat} a={lv}  z {r.get('z_place', '?')}->{r.get('z_final', '?')} mm  "
+                ok = r.get("holds_prereg", r.get("holds"))
+                lab = (f"{tag}{pat} a={lv}  z {r.get('z_place', '?')}->{r.get('z_final', '?')} mm  "
                        f"legF/W {r.get('leg_floor_force_over_weight_last1s', '?')}  "
-                       f"{'HOLDS' if r.get('holds') else 'fails'}")
+                       f"trunk {r.get('trunk_touch_frac', '?')}  pitch {r.get('pitch_change_deg', {}).get('max_abs', '?')}  "
+                       f"{'HOLDS' if ok else 'fails'}")
             rows.append((lab, np.load(f)))
     if not rows:
         raise SystemExit("no frames found")
