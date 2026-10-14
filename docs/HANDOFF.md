@@ -238,7 +238,9 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/nig
   1. May flyvis per-type-pair strengths (604 edges, fitted to a task, shared by type pair) be imported as fitted values?
   2. May a measured soma EPSP for an identified pair (PSI→DLMn, 4.71 mV) override the shared synapse scale, or does that wait for two compartments (N30)?
 - **GPU:** the gap and receptor-kinetics paths are refused on GPU until a CPU/GPU match check.
-- **Merging:** fly2 rebases onto main and fast-forwards main (`git merge --ff-only worktree-fly2` in the main checkout) only when the fly worker is idle.
+- **Merging:** main is NOT fast-forwarded yet. The worktree guard refuses git in the main checkout, and `git push . worktree-fly2:main` is rejected (main is checked out). Someone in the main checkout runs `git merge --ff-only worktree-fly2`. The branch passed 38 tests after rebasing on cf1c7ce.
+- **Ben's answers (DECISIONS 22:53):** flyvis type-pair strengths YES, as a separate switched arm, with PSP range checks and a held-out physiology check before any frontier use. PSI→DLMn 4.71 mV YES, as a measured scan-gap fill once the primary source is checked. Both are queued behind the body block.
+- **Now (Director redirect, 13 Oct): body interface, MN to ground** (development mode, pre-register each fix). The parts: (a) the MN→muscle mapping (187 of 505 leg MNs unmapped; no MN for the T2/T3 coxa promotors); (b) distal capacity against measured values, or the real standing pose; (c) force-length and passive stiffness (Hooper 2009 onward); (d) abdomen stiffness. Pass: the S1 rerun stands for 3 s at a plausible constant activation without rearing or sinking, with the contact sheet viewed. fly owns the VNC (S3): stay out of lif.py graded release and the VNC files. Viewed `docs/media/s13_bypass_s1.png`: support 0.3-0.5 and coact 1 rear nose-up on the abdomen tip; need 1.5-2 pitches head-down.
 
 ## Where the project stands
 
