@@ -222,6 +222,24 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
+## fly2: optic lobe, gap junctions, receptor kinetics (13 Oct 22:49)
+
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`); brief `logs/night-2026-10-08/briefs/fly2.md`. All three tasks have a measured result. Every switch below is neutral by default and **none is adopted**. Taking them into an m10f candidate is the fly worker's call. Adoption needs the 60 s smoke, the silence gate, a battery and a viewed figure.
+- **Handed to the fly worker for m10f** (5 s pre-handoff smoke, m10f seed 12, all three on: no runaway, no NaN, whole brain 0.307 Hz against 0.324, DECISIONS 22:45):
+  - `electrical:all|gap_conductance=1` (N12; `data/params/gap_junctions.csv`, each row with its evidence; `electrical.build_gap`). Supplies DC coupling plus a spike step after conduction. CPU only (GPU refuses).
+  - `synapse:all|receptor_kinetics_per_connection=1` (N29; `data/params/receptor_kinetics.csv`, 3 inferred rows: ORN→PN 1.1 ms fitted, ACh→KC 1.4 and GABA→KC 3.7 ms from culture). Charge per spike is kept. Current-based only (cond refused) and CPU only. Use it with `synapse:all|per_synapse_parameters=1` (existing STP rows). No new STP numbers were found (search listed in the CSV header).
+  - `connectome:identified|nt_from_physiology=1` (N6; `data/params/transmitter_physiology.csv`; PSI = acetylcholine, measured, Fayyazuddin 2006). Changes only PSI today.
+  - `cell_type:all|optic_lobe_flyvis=1` (flyvis per-type rows, fitted (Lappalainen 2024), labelled inferred). Not recommended for m10f: it does not make T4/T5 selective.
+- **Results:**
+  - Gap junctions: TTM latency 1.10 ms, inside the Augustin 2017 band (consistency check, F-GJ-3).
+  - DLM: never fires, even with PSI cholinergic. One PSI spike gives DLMn 0.5-1.6 mV against a 7 mV gap; 4.71 mV was measured at the MN5 soma, with the synapse on the axon (F-GJ-4).
+  - T4/T5 on v0r + flyvis: 0 of 8 selective in both sets. Flyvis DS needs its type-pair strengths, which were not imported (F-VISION-12, `docs/media/s13_fly2_t4t5_v0rfv.png`).
+- **For Ben:**
+  1. May flyvis per-type-pair strengths (604 edges, fitted to a task, shared by type pair) be imported as fitted values?
+  2. May a measured soma EPSP for an identified pair (PSI→DLMn, 4.71 mV) override the shared synapse scale, or does that wait for two compartments (N30)?
+- **GPU:** the gap and receptor-kinetics paths are refused on GPU until a CPU/GPU match check.
+- **Merging:** fly2 rebases onto main and fast-forwards main (`git merge --ff-only worktree-fly2` in the main checkout) only when the fly worker is idle.
+
 ## Where the project stands
 
 - **Direction (Ben, locked 2026-09-28, re-stated 2026-09-30):** fill 100% of the fly's information at the highest plausible fidelity; the ledger fill fraction is the metric. Missing data is inferred with development models (size rule, lineage/hemilineage, birth order, wiring compensation, segment/side) and transcriptome tables, every built mechanism runs at its prior, then the bounded search of CONSTRUCTION.md / PLAN_NEXT.md. Behaviour and stability are guardrails, never objectives: do not fit to recorded walking or tune for walking (that was tried; see DECISIONS 2026-09-30 20:35).
@@ -322,6 +340,10 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 twitch-kinetics text/figures | seen (s9) | raw recordings keep their status |
 | Session 10 search fit set: template seeds 0-2, sugar->MN9 100 Hz | seen (fit) | none |
 | Session 10 held out: template seeds 3-8, m4 body seeds 0-5, bitter, sugar+bitter, sugar 200 Hz | spent (m5 candidate) | new candidates need new held-out evidence |
+| Augustin 2017 S1 Table, GF→TTM latency (WT, brain stimulation) | seen (it set fly2's no-chemical-delay rule; F-GJ-3 used it only as a consistency check) | none |
+| Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
+| Fayyazuddin 2006 MN5 soma potential 4.71 mV | seen (s13 fly2, F-GJ-4; not used to set any value) | if it sets a value, it can no longer validate |
+| flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 
 ## Things that will bite you
 
