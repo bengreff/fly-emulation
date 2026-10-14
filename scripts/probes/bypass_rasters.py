@@ -3,7 +3,7 @@ colour = pool rate in 1 ms bins smoothed over 10 ms. Optionally, a chain run (by
 oscillator cells' membrane potential for one neuromere underneath. Look at this before calling any pass.
 
     uv run python scripts/probes/bypass_rasters.py runs/s13/bypass/s2/s2_DNg100_40mv_traces.npz ... --out x.png \
-        [--chain runs/s13/bypass/s3/chain_DNg100_25mv_traces.npz --seg T2L]
+        [--chain runs/s13/bypass/s3/chain_A_25mv_traces.npz ... --seg T2L]
 """
 from __future__ import annotations
 
@@ -22,14 +22,14 @@ CELL_COLOURS = {"E1": "#0072B2", "E2": "#D55E00", "I1": "#009E73", "A007": "#CC7
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("traces", nargs="+")
+    ap.add_argument("traces", nargs="*")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--chain", default=None)
+    ap.add_argument("--chain", action="append", default=[])
     ap.add_argument("--seg", default="T2L")
     ap.add_argument("--t0", type=float, default=200.0)
     ap.add_argument("--t1", type=float, default=1300.0)
     a = ap.parse_args()
-    n = len(a.traces) + (1 if a.chain else 0)
+    n = len(a.traces) + len(a.chain)
     fig, axs = plt.subplots(n, 1, figsize=(11, 2.6 * n), squeeze=False)
     for ax, f in zip(axs[:, 0], a.traces):
         z = np.load(f)
@@ -59,23 +59,27 @@ def main() -> None:
         ax.axvline(300, color="#444444", lw=0.8, ls="--")
         cb = fig.colorbar(im, ax=ax, pad=0.01, fraction=0.02)
         cb.set_label("pool spikes / ms", fontsize=7); cb.ax.tick_params(labelsize=6)
-    if a.chain:
-        ax = axs[-1, 0]
-        z = np.load(a.chain)
+    for ax, f in zip(axs[len(a.traces):, 0], a.chain):
+        z = np.load(f)
         lab = [str(x) for x in z["labels"]]
         V = z["V"]
         for i, nm in enumerate(lab):
             role, sg = nm.split()
             if sg == a.seg and role in CELL_COLOURS:
                 ax.plot(np.arange(V.shape[0]), V[:, i], color=CELL_COLOURS[role], lw=1.2, label=role)
-                ax.text(V.shape[0] + 3, V[-1, i], role, color="#333333", fontsize=7, va="center")
         ax.axhline(-45, color="#888888", lw=0.6, ls=":"); ax.text(2, -44.6, "threshold", fontsize=6, color="#555555")
-        ax.set_ylabel("V (mV, 1 ms mean)", fontsize=7); ax.set_xlabel("time (ms)", fontsize=7)
-        ax.set_title(f"oscillator cells, {a.seg} ({Path(a.chain).stem})", fontsize=8, loc="left")
+        ax.set_ylabel("V (mV, 1 ms mean)", fontsize=7)
+        j = Path(f.replace("_traces.npz", ".json"))
+        ovs = ""
+        if j.exists():
+            r = json.loads(j.read_text())
+            ovs = ", ".join(f"{k}={v:g}" for k, v in r.get("overrides", {}).items()) or "no overrides"
+            ovs = f"{r['type']} {r['drive_mv']:g} mV, {ovs}, DN {r['stim_hz']} Hz"
+        ax.set_title(f"oscillator cells, {a.seg}: {ovs} ({Path(f).stem})", fontsize=8, loc="left")
         ax.legend(fontsize=7, frameon=False, ncol=4, loc="upper right")
         ax.tick_params(labelsize=7)
-        for s in ("top", "right"):
-            ax.spines[s].set_visible(False)
+        for s_ in ("top", "right"):
+            ax.spines[s_].set_visible(False)
     axs[-1, 0].set_xlabel("time (ms)", fontsize=7)
     fig.tight_layout()
     fig.savefig(a.out, dpi=110)
