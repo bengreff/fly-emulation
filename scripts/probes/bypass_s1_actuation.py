@@ -126,7 +126,15 @@ def hold_need(org, head_mm: float | None = None, pitch_only: bool = False) -> di
         b.actuate(zero); b.step()
     need = K_HOLD * (q_hold - d.qpos[qa])
     m.jnt_stiffness[hj], m.qpos_spring[qa], m.dof_damping[va] = k0, ref0, dmp0
-    return {(m.joint(j).name or "").removeprefix(pre): float(t) for j, t in zip(hj, need)}
+    # bodies other than the feet on the floor at the end of the hold: if any, the floor carries part of the weight
+    # and the need is understated
+    leg_body = np.array(["tarsus" in (m.body(i).name or "") for i in range(m.nbody)])
+    touched: dict = {}
+    _, trunk = floor_forces(m, d, leg_body, touched)
+    out = {(m.joint(j).name or "").removeprefix(pre): float(t) for j, t in zip(hj, need)}
+    out["_non_foot_touch"] = sorted(touched)
+    out["_non_foot_force_over_weight"] = trunk / float(m.body_subtreemass[1] * -m.opt.gravity[2])
+    return out
 
 
 def audit(org, pre: str, head_mm: float | None = None, pitch_only: bool = False) -> dict:
@@ -215,6 +223,8 @@ def main() -> None:
         return
     res["audit"] = audit(org, pre, a.head_mm, a.pitch_only)
     need = hold_need(org, a.head_mm, a.pitch_only)
+    res["hold_need_non_foot_touch"] = need.pop("_non_foot_touch")
+    res["hold_need_non_foot_force_over_weight"] = round(need.pop("_non_foot_force_over_weight"), 3)
     res["hold_need_uNmm"] = {k: round(v, 3) for k, v in need.items()}
     p = h.p
     sup_pair = np.array([s * need.get(j, 0.0) > 0 for j, s in zip(p.joint, p.direction)], float)
