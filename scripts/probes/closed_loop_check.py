@@ -16,6 +16,9 @@ sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
 from flyemu.profiles import WORKING_PROFILE  # noqa: E402
 
+EYE_CLASSES = ("photoreceptor", "ocellar_photoreceptor", "LMC", "T4T5", "optic_columnar", "optic_other",
+               "optic_projection")
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -31,6 +34,10 @@ def main():
     ap.add_argument("--hold-k", type=int, default=1,
                     help="sense every k steps and hold the drive in between (GPU closed-loop scheme, docs/GPU.md)")
     ap.add_argument("--out", default="", help="also write the result (with per-class silent spikes) to this JSON")
+    ap.add_argument("--profile", default=WORKING_PROFILE)
+    ap.add_argument("--silent-noise-on", action="store_true",
+                    help="keep membrane noise in the silent window (default: noise, which stands for unmodelled "
+                         "input to the CNS, is removed with the afferent drive; s13)")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     if a.template:
@@ -39,7 +46,7 @@ def main():
     if a.sample_fly is not None:
         from flyemu import model_data as M
         ov = {**M.sample_fly(M.load(), a.sample_fly, a.stage), **ov}
-    org = Organism(policy="minimal", profile=WORKING_PROFILE, min_synapses=5, overrides=ov, seed=a.seed)
+    org = Organism(policy="minimal", profile=a.profile, min_synapses=5, overrides=ov, seed=a.seed)
     n = org.conn.neurons
     t = n.type.fillna("").to_numpy()
     orn = np.char.startswith(t.astype(str), "ORN_")
@@ -77,13 +84,25 @@ def main():
         spont = spont - org.net.params.tonic_class_mv
     tonic = spont > 0
     scnt = np.zeros(org.conn.n)
+    from flyemu.lif import circuit_classes
+    cls = circuit_classes(org.conn)
+    # F-VISION-5 option (a) (Director, s13): eye cells are reported apart from the silent-window count
+    eye = np.isin(cls, list(EYE_CLASSES))
+    silent_eye = []
+    if not a.silent_noise_on:
+        org.net.params.noise_mv = 0.0
+        org.net.params.noise_class_mv = None
     for s in range(int(a.silent_ms / org.timestep_ms)):
         obs = org.body.observe()
         sp = org.net.step(external_mv=np.zeros(org.conn.n, np.float32))
         org.motor_step(sp)
         silent.append(int((~tonic[sp]).sum()))
+        silent_eye.append(int((~tonic[sp] & eye[sp]).sum()))
         scnt[sp] += 1
-    last = np.array(silent[-int(100 / org.timestep_ms):])
+    k100 = int(100 / org.timestep_ms)
+    last = np.array(silent[-k100:])
+    last_eye = np.array(silent_eye[-k100:])
+    prev_eye = np.array(silent_eye[-2 * k100:-k100])
     out = {
         "whole_brain_hz": round(float(hz.mean()), 3),
         "whole_brain_excl_orn_hz": round(float(hz[~orn].mean()), 3),
@@ -95,14 +114,15 @@ def main():
         "cx_hz": {g: round(float(hz[np.char.startswith(t.astype(str), g)].mean()), 2)
                   for g in ("EPG", "PEN_", "PEG", "Delta7", "ER")},
         "silent_last100ms_spikes_per_ms": round(float(last.sum() / 100), 2),
+        "silent_last100ms_noneye_spikes_per_ms": round(float((last.sum() - last_eye.sum()) / 100), 2),
+        "silent_eye_spikes_per_ms_prev_last": [round(float(prev_eye.sum() / 100), 2), round(float(last_eye.sum() / 100), 2)],
+        "silent_noise_removed": not a.silent_noise_on,
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,
         "mujoco_warnings": int(sum(w.number for w in org.body.sim.mj_data.warning)),
         "nan_state": bool(not np.isfinite(org.body.sim.mj_data.qpos).all()
                           or not np.isfinite(org.net.v).all()),
     }
-    from flyemu.lif import circuit_classes
-    cls = circuit_classes(org.conn)
     ns = (scnt * ~tonic)
     out["silent_spikes_by_class"] = {c: int(ns[cls == c].sum()) for c in np.unique(cls[ns > 0])}
     out["hz_by_class"] = {c: round(float(hz[cls == c].mean()), 4) for c in np.unique(cls)}

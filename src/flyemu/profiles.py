@@ -299,6 +299,21 @@ M10Q = {
     "cell_type:all|rest_from_recordings": (1.0, _I, "s11 fill F3; Mi1/Tm1/Tm2/Tm4 at -55 mV (Behnia 2014)"),
 }
 
+# m10f, the FRONTIER profile (s13, Director brief 8 Oct; strategy review 6 Oct): every built mechanism ON at
+# an in-range value, fitted to physiology where possible (bounded, shared by class, labelled). m9c stays the
+# reference. A stage enters on a 60 s smoke test (no runaway, no NaN, resting rates in range) plus the silence
+# gate with eye cells reported apart (F-VISION-5 option (a)); the battery runs once per session.
+# Stage 0: built switches that were off.
+M10F0 = {
+    **M9C,
+    "sense:taste_leg|modality_source": (1.0, _I, "s13 frontier: leg/wing taste types matched to receptor lines "
+                                        "take the labellar rule (DECISIONS 5 Oct 02:57; gustatory connectome "
+                                        "preprint, secondary read); 237 unmatched cells keep 0.2"),
+    "connectome:unclear|nt_by_development": (1.0, _I, "s13 frontier: 817 unclear cells get the hemilineage "
+                                             "majority transmitter (Lacin 2019 rule; leave-one-type-out accuracy "
+                                             "0.989; F-NT-2)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -331,7 +346,9 @@ PROFILES: dict[str, dict] = {
     "m9c": {"values": M9C, "kick_mv": KICK},
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
+    "m10f0": {"values": M10F0, "kick_mv": KICK},
 }
+PROFILES["m10f"] = PROFILES["m10f0"]   # the frontier: the latest stage that passed its smoke test and gate
 
 
 def apply(reg: Registry, name: str) -> dict:
