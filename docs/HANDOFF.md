@@ -371,6 +371,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 twitch-kinetics text/figures | seen (s9) | raw recordings keep their status |
 | Session 10 search fit set: template seeds 0-2, sugar->MN9 100 Hz | seen (fit) | none |
 | Session 10 held out: template seeds 3-8, m4 body seeds 0-5, bitter, sugar+bitter, sugar 200 Hz | spent (m5 candidate) | new candidates need new held-out evidence |
+| Wang 2025 standing head height (median 0.5 mm above collapse) | spent as a SETTING (s13 fly2, S1 fix 1 places the head at 0.929 mm) | can no longer validate standing height |
 | Augustin 2017 S1 Table, GF→TTM latency (WT, brain stimulation) | seen (it set fly2's no-chemical-delay rule; F-GJ-3 used it only as a consistency check) | none |
 | Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | seen (s13 fly2, F-GJ-4; not used to set any value) | if it sets a value, it can no longer validate |

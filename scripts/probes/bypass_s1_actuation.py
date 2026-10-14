@@ -16,6 +16,7 @@ force-length gain at the placed pose, and motor neurons mapped (muscles with non
 plus the leg motor neurons that reach no muscle.
 
     uv run python scripts/probes/bypass_s1_actuation.py [--profile m10f0] [--ms 3000] [--levels 0,0.1,0.3,1]
+        [--head-mm 0.929]   # place the head at Wang 2025's median 0.5 mm above this body's collapse (0.429 mm)
 """
 from __future__ import annotations
 
@@ -38,7 +39,37 @@ from stand_budget import K_HOLD, D_HOLD, group, heights  # noqa: E402
 from standing_rest import shot  # noqa: E402
 
 LEGS = ("lf", "lm", "lh", "rf", "rm", "rh")
+# head point of the motor-silenced collapse in this body (derived: S1 level 0, m10f0, adhesion 1, 3 s;
+# runs/s13/bypass/s1/support/s1_m10f0_adh1.json heights_final_mm.head). Wang 2025 heights are above this.
+COLLAPSED_HEAD_MM = 0.429
 LEG_RE = re.compile(r"(?:^|[-/_])([lr][fmh])_")
+
+
+def place(b, head_mm: float | None = None, lower_ms: float = 300.0, hold_ms: float = 100.0) -> float:
+    """place_standing (lower flybody's neutral keyframe to first contact); with head_mm, then lower the root
+    kinematically (position and orientation pinned, no activation, no adhesion) until the head point is at head_mm,
+    so the unpowered legs fold where the floor pushes them. An instrument for the initial pose, not a mechanism."""
+    m, d = b.sim.mj_model, b.sim.mj_data
+    b.reset(); place_standing(b)
+    if head_mm is None:
+        return float(d.qpos[2])
+    hd = mj.mj_name2id(m, mj.mjtObj.mjOBJ_BODY, f"{b.fly.name}/c_head")
+    root = d.qpos[:7].copy()
+    dz = float(d.xpos[hd, 2]) - head_mm
+    type(b).set_adhesion(b, np.zeros(len(b.adhesion_names)))   # the class method: main() overrides the instance's
+    zero = np.zeros(b.n_actuators)
+    n1, n2 = int(round(lower_ms / (m.opt.timestep * 1e3))), int(round(hold_ms / (m.opt.timestep * 1e3)))
+    for s in range(n1 + n2):
+        d.qpos[:7] = root; d.qpos[2] = root[2] - dz * min(1.0, (s + 1) / n1); d.qvel[:6] = 0.0
+        b.actuate(zero); b.step()
+    d.qpos[:7] = root; d.qpos[2] = root[2] - dz; d.qvel[:] = 0.0
+    mj.mj_forward(m, d)
+    return float(d.qpos[2])
+
+
+def pitch_deg(d, body: int) -> float:
+    """Nose-up pitch of a body's x (head) axis against the horizontal, degrees."""
+    return float(np.degrees(np.arcsin(np.clip(d.xmat[body].reshape(3, 3)[2, 0], -1, 1))))
 
 
 def floor_forces(m, d, leg_body: np.ndarray, touched: dict | None = None) -> tuple[float, float]:
@@ -62,12 +93,12 @@ def floor_forces(m, d, leg_body: np.ndarray, touched: dict | None = None) -> tup
     return fl, fo
 
 
-def hold_need(org) -> dict[str, float]:
+def hold_need(org, head_mm: float | None = None) -> dict[str, float]:
     """Instrument hold torque per leg hinge at the placed pose (stand_budget.py method), uN*mm."""
     b = org.body
     m, d = b.sim.mj_model, b.sim.mj_data
     pre = f"{b.fly.name}/"
-    b.reset(); place_standing(b)
+    place(b, head_mm)
     hj = [j for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE
           and any(f"{L}_" in (m.joint(j).name or "") for L in LEGS)]
     qa = np.array([m.jnt_qposadr[j] for j in hj]); va = np.array([m.jnt_dofadr[j] for j in hj])
@@ -85,10 +116,10 @@ def hold_need(org) -> dict[str, float]:
     return {(m.joint(j).name or "").removeprefix(pre): float(t) for j, t in zip(hj, need)}
 
 
-def audit(org, pre: str) -> dict:
+def audit(org, pre: str, head_mm: float | None = None) -> dict:
     h, b = org.hill, org.body
     m, d = b.sim.mj_model, b.sim.mj_data
-    b.reset(); place_standing(b)
+    place(b, head_mm)
     p = h.p
     gl = gain_length(p.lengths(d.qpos[h.q_adr]), p.lmin, p.lmax)
     n_mn = np.bincount(h.mn_muscle[h.ok], minlength=len(p.F0))
@@ -130,6 +161,8 @@ def main() -> None:
     ap.add_argument("--patterns", default="support,coact")
     ap.add_argument("--adhesion", type=float, default=1.0, help="tarsal adhesion state on every leg (0-1)")
     ap.add_argument("--frames-ms", default="0,250,1000,3000")
+    ap.add_argument("--head-mm", type=float, default=None,
+                    help="place the head point at this height (mm) instead of flybody's neutral pose at first contact")
     ap.add_argument("--out", default=str(REPO / "runs" / "s13" / "bypass" / "s1"))
     a = ap.parse_args()
     out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
@@ -151,8 +184,16 @@ def main() -> None:
                units=dict(gravity=m.opt.gravity.tolist(), mass_g=float(m.body_subtreemass[1]), weight_uN=round(weight, 3),
                           timestep_ms=float(m.opt.timestep * 1e3)),
                build_s=round(time.time() - t0))
-    res["audit"] = audit(org, pre)
-    need = hold_need(org)
+    place(b, a.head_mm)
+    res["placed"] = dict(head_mm_target=a.head_mm, heights_mm={k: round(v, 3) for k, v in heights(m, d, pre).items()},
+                         pitch_deg=round(pitch_deg(d, thorax), 2),
+                         leg_angles_deg={(m.joint(j).name or "").removeprefix(pre): round(float(np.degrees(d.qpos[m.jnt_qposadr[j]])), 1)
+                                         for j in range(m.njnt) if m.jnt_type[j] == mj.mjtJoint.mjJNT_HINGE
+                                         and any(f"{L}_" in (m.joint(j).name or "") for L in LEGS)})
+    if a.head_mm is not None:
+        np.save(out / "frames_placed.npy", np.stack([shot(m, d, thorax)]))
+    res["audit"] = audit(org, pre, a.head_mm)
+    need = hold_need(org, a.head_mm)
     res["hold_need_uNmm"] = {k: round(v, 3) for k, v in need.items()}
     p = h.p
     sup_pair = np.array([s * need.get(j, 0.0) > 0 for j, s in zip(p.joint, p.direction)], float)
@@ -195,8 +236,9 @@ def main() -> None:
                 ac_ = None if h.coxa is None else ((sup_coxa if pat == "support" else np.ones(len(h.coxa.F0))) * lv)
             h.activation = lambda nm=None, v=ap_: v
             h.coxa_activation = lambda v=ac_: v
-            b.reset(); place_standing(b)
+            place(b, a.head_mm)
             z = [float(d.xpos[thorax, 2])]
+            p0, pmax = pitch_deg(d, thorax), 0.0
             fl, fo, fa, nonleg_touch, touched = [], [], [], 0, {}
             imgs = []
             n = int(round(a.ms / org.timestep_ms))
@@ -209,6 +251,7 @@ def main() -> None:
                 org.motor_step(nospk)
                 if (s + 1) % k10 == 0:
                     z.append(float(d.xpos[thorax, 2]))
+                    pmax = max(pmax, abs(pitch_deg(d, thorax) - p0))
                     a_, o_ = floor_forces(m, d, leg_body, touched if s >= n - 100 * k10 else None)
                     fl.append(a_); fo.append(o_); nonleg_touch += o_ > 0
                     fa.append(float(np.abs(d.actuator_force[adh_ids]).sum()) if adh_ids.size else 0.0)
@@ -235,11 +278,20 @@ def main() -> None:
                      non_foot_touch_last1s={k: round(v / 100, 2) for k, v in sorted(touched.items(), key=lambda kv: -kv[1])[:8]},
                      active_torque_abs_uNmm=({k: round(v, 2) for k, v in by.items()}),
                      nan=bool(not np.isfinite(d.qpos).all()), heights_final_mm={k: round(v, 3) for k, v in heights(m, d, pre).items()})
+            r["pitch_change_deg"] = dict(final=round(pitch_deg(d, thorax) - p0, 1), max_abs=round(pmax, 1))
+            # pre-registered pass (DECISIONS fly2 s13 body block, 13 Oct): no trunk touch, no sinking, no rearing,
+            # net foot support near the weight, head still above Wang 2025's collapsed-relative lower bound
+            hf = r["heights_final_mm"]["head"]
+            r["holds_prereg"] = bool(r["trunk_touch_frac"] == 0 and (r["sink_last2s_mm"] or 0) < 0.05
+                                     and abs(r["z_final"] - r["z_place"]) <= 0.15 and pmax <= 10.0
+                                     and 0.8 <= r["foot_net_support_over_weight_last1s"] <= 1.2
+                                     and hf - COLLAPSED_HEAD_MM >= 0.1 and not r["nan"])
             r["holds"] = bool(r["z_final"] >= 0.9 and (r["sink_last2s_mm"] or 0) < 0.05 and r["trunk_touch_frac"] == 0
                               and 0.8 <= r["leg_floor_force_over_weight_last1s"] <= 1.2 and not r["nan"])
             runs.append(r)
             print(json.dumps({k: r[k] for k in ("pattern", "level", "z_place", "z_min", "z_final", "sink_last2s_mm",
-                                                "leg_floor_force_over_weight_last1s", "trunk_touch_frac", "holds")}), flush=True)
+                                                "leg_floor_force_over_weight_last1s", "foot_net_support_over_weight_last1s",
+                                                "trunk_touch_frac", "pitch_change_deg", "holds", "holds_prereg")}), flush=True)
             if imgs:
                 np.save(out / f"frames_{pat}_{lv:g}.npy", np.stack(imgs))
     res["runs"] = runs
