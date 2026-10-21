@@ -3396,3 +3396,38 @@ So at measured geometry the doublet goes away, but the spike comes late (2.8-3.2
   - F-GJ-7's "nicotinic range (1.1-4 ms)" is corrected in place.
   - In the 00:07 pre-registration, "Kadas et al." means Herrera-Valdez et al. 2012.
   - The 00:18 entry's "Next" is superseded by this entry.
+
+### Pre-registration s14: class-level options test for the walking break (20 October, 22:28, before any network run with a new switch)
+DIAGNOSTIC, forced drive (Director brief, 20 Oct). Nothing is adopted. All new values are **guessed**, shared by type or hemilineage, and never set per synapse. The question: does one unmeasured class property (16B firing mode; E1/E2 intrinsic bursting) let the bypass core (DNg100 → E1/E2/I1/IN19A007 → leg MNs) alternate antagonist pools? On male-CNS and MANC counts it does not (F-XCONN-2).
+- **Harness (as X1):** m10f0, seed 12, brain and senses off, DNg100 driven at 15/25/40 mV for 300-1300 ms of 1500 ms, thorax tethered: `bypass_s2_descending.py` (MN pools, body). Same drive with `bypass_s3_chain.py` (core cells, 900 ms, drive 100-900 ms). Backhouse, done-files, launches gated on load < 24.
+- **Arms** (one line each; the pass criterion is the same for all, below):
+  - **M0:** neutral m10f0, re-run in the same batch. It must fail. If M0 passes, the test is broken.
+  - **A:** `class:vnc_local_16B|graded=1`. The 433 unknown-mode 16B cells, I1 included, release graded through the shared N1 graded rows (inside locust NSI bounds; docs/research/s14_16b_firing_mode.md).
+  - **B4:** E1/E2 saturating ADP at 20 mV ceiling, 100 ms decay, 200 ms recovery (`cell_type:core_rhythm_exc|adp_mv=20, |adp_tau_ms=100, |adp_recovery_ms=200`). Chosen by calibration rule v2 on isolated cells before this run: 4 spikes in 92 ms.
+  - **B2:** the same ADP at 25 mV, 40 ms, 50 ms, the shortest admissible burst (2 spikes in 21 ms). B4 matches the cricket spike count and B2 the cricket burst duration; no setting does both (docs/research/s14_burst_ranges.md).
+  - **C4 = A + B4; C2 = A + B2.**
+  - **B' / C' (NaP x 1.5-10): not run.** No admissible scale (1 spike at every scale, calibration). Recorded as a negative calibration result.
+- **Pass (per arm, scored on the S2 run at each drive): `s4b_score.rhythm` → rhythm_pass, then confirmed by viewing the raster.**
+  - Two antagonist pools of one leg each have modulation depth ≥ 0.5 (f0 7-16 Hz, at least 2/3 of cycles at the 3-spike floor) and are drive-locked (rate ≥ 2× pre-drive, or silent before).
+  - They are out of phase: r ≤ −0.3 at zero lag, or a lagged peak (10-30 ms) of ≥ 0.5.
+  - Activity stops at drive-off: summed leg-MN rate over 1300-1500 ms ≤ 1.5× pre-drive.
+  - Before viewing I write down which pair passed. On the raster the two pools must visibly alternate over most cycles; if not, the pass is void.
+  - An arm passes if any of its drives passes. That is 5 arms × 3 drives = 15 tries, so a single pass is weak evidence and needs a seed repeat before any claim.
+- **Secondary (reported, not pass criteria), from the chain run:**
+  - I1 recruited. Spiking I1: as X1 (T1L I1 fires on ≥ 50% of E1 cycles). Graded I1 (arms A, C): mean V during drive ≥ 2 mV above rest (the locust NSI release threshold, Burrows & Siegler 1978) and a cycle-locked swing ≥ 2 mV at E1's f0.
+  - E1/E2 spikes per cycle, and f0.
+- **Falsifiers, written now.**
+  - An arm with no rhythm_pass at any drive falsifies "this class property alone, inside these bounds, fixes the break".
+  - If every arm fails, neither unmeasured fact alone is sufficient in this model; the next suspects are the slow-MN BK the E1/E2 cells inherited, and the MN transfer (F-BYPASS-7).
+- **Held-out register.** The S4b recruitment order stays unspent; nothing here reads it and `s4b_score heldout` is not run. No sealed data is used.
+- **If an arm passes, the measurement that would settle it is written into FINDINGS for Ben's measurement experiment:**
+  - A: whether 16B premotor cells (IN16B036) spike or release graded, by patch or voltage imaging during fictive walking.
+  - B: whether E1/E2 burst intrinsically, by current injection with synapses blocked (spikes per burst, rate, burst end).
+- **Prediction (mine, before running):** A recruits graded I1 more than spiking I1 did, because release starts 2 mV above rest instead of at threshold, but A alone does not alternate the MN pools; the B arms raise E1/E2 output and I1 drive. I expect at most one arm to pass, and C2 is the likeliest.
+
+### Results s14 at 25 mV, S2 only (20 October, 23:57; partial: 15/40 mV and the chain runs are queued; nothing adopted)
+Scored with `s14_score.py` (written before any output) on the six S2 runs from backhouse, then viewed: `docs/media/s14_arms_rasters_25mv.png` and `docs/media/s14_arms_frames_25mv.png`.
+- **No arm passes at 25 mV.** M0, A, B4, B2, C4 and C2 all have 0 transfer-pass pools and 0 antagonist pairs. Leg-MN activity stops at drive-off (post/pre 0.93-0.95). M0 fails as required, so the test is not broken.
+- **Viewing agrees; no pair was written down, because none passed.** All six rasters look alike: the tonic ~23 Hz tibia-flexor line (present before drive) and sparse co-active flecks in other pools. Nothing alternates in any leg. Frames: the thorax is on the floor and the legs are splayed in every arm, with no stepping. The wing flicks at 700 and 1100 ms are also in M0, so they don't come from any arm.
+- **What each arm changes at the MN layer** (run JSON, during drive): the B arms raise the mean premotor rate from 0.13 to 0.28-0.29 Hz, but the leg-MN rate stays 4.72-4.76 Hz (M0 4.81) and no pool becomes rhythmic. The A arms (16B graded) lower the leg-MN rate to 4.22-4.29 Hz and the peak activation from 0.079 to 0.050, and they blur the tonic line. The B arms also raise peak activation from 0.079 to 0.13. M0, A and C2 each have one rhythmic pool (a tibia pool on a different leg each time); B4, B2 and C4 have none. More core output does not reach the MNs as a rhythm.
+- **Runner:** the previous session's runner was waiting on the load gate (backhouse load 26, all from outside our distro). It was restarted detached at 23:57 with chain:25 queued next, so the network-only check of whether the switches engage E1/E2/I1 comes first. Done-files are `~/fly-m10f/runs/s14/arms/{s2,chain}/<arm>_<mv>.done`; `ALL.done` marks the end.
