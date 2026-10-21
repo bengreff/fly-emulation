@@ -69,8 +69,6 @@ WORLD_TODO = [
     {"item": "world/stimuli/full_field_flash.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/moving_grating.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/looming_disc.yaml", "today": "scripts/probes (code)"},
-    {"item": "world/stimuli/leg_sugar.yaml", "today": "scripts/probes (code); the same form as "
-     "world/stimuli/labellar_sugar_100hz.json, waiting for its protocol bar (world/scoreboard.json)"},
     {"item": "world/stimuli/bitter.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/odour_pulse.yaml", "today": "world.OdourSource, set in code"},
     {"item": "world/stimuli/dn_current_injection.yaml", "today": "scripts/probes/bypass_* (code)"},

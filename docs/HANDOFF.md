@@ -347,40 +347,41 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: fly_brain.zip runs its own check and four of the eight scoreboard items from the zip alone (F-ZIP-1 to F-ZIP-3, 21 Oct 02:27)
+## fly2: the scoreboard has real verdicts, 1 of 8 passes, and every scored item plays from the zip alone (F-ZIP-4, 21 Oct 03:17)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test), then flyemu.check and the scoreboard as zip `world/` data. Nothing in the model changed; no switch was added or adopted.
-- **Merging:** `main` was fast-forwarded to fa679f6. The zip work since then is 1cbccff, 27676a1, 793c3eb, b595250, 089022c, c248318, c6ad8e1, ef54015, b7e6fc9 and this docs commit. **`main` can fast-forward to worktree-fly2.**
-- **The zip:** `runs/s22/fly2_zip/s3/fly_brain.zip`.
-  - 134,771,271 bytes, 479 members, sha256 8cc81b45…, packed from b7e6fc9.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test), then flyemu.check and the scoreboard as zip `world/` data, then the bars (Director as Ben, DECISIONS 21 Oct 02:33). Nothing in the model changed; no switch was added or adopted.
+- **Merging:** `main` was fast-forwarded to fa679f6. The zip work since then is 1cbccff, 27676a1, 793c3eb, b595250, 089022c, c248318, c6ad8e1, ef54015, b7e6fc9, cfdfbea, 8f1ad74 and this docs commit. **`main` can fast-forward to worktree-fly2.**
+- **The zip:** `runs/s22/fly2_zip/s5/fly_brain.zip`.
+  - 134,776,816 bytes, 481 members, sha256 dbb16195…, packed from clean 8f1ad74.
   - It is a build artifact, not in git (over 50 MB). Rebuild it with `.venv/bin/python -m flyemu.pack --out X.zip`, which refuses a dirty tree and any member path packed twice.
-  - Earlier zips:
-    - `runs/s22/fly2_zip/s2/fly_brain.zip`: c248318, F-ZIP-2, the one whose flyemu.check was run;
-    - `runs/s22/fly2_zip/fly_brain.zip`: F-ZIP-1.
+  - Its manifest still lists `world/stimuli/leg_sugar.yaml` as TODO (stale). The packer is fixed in this docs commit, so the next pack drops the line.
+  - Earlier zips: `s3/` (b7e6fc9, F-ZIP-3), `s2/` (c248318, F-ZIP-2), and the F-ZIP-1 zip at the top of `runs/s22/fly2_zip/`.
 - **Entry points** (`docs/FLY_BRAIN_ZIP.md`, "Entry point" and "Check and scoreboard"). Each also takes `--tree .` to run the same path from the repo.
   - `PYTHONPATH=X.zip/code python -m flyemu.run X.zip --ms 1000 --out run/ [--deny <repo>]`: the closed-loop smoke run.
   - `python -m flyemu.check X.zip --out c/`: runs the zip's tests, rebuilds the ledger from the zip's tables, and prints the fill fraction and the scoreboard. About 15 min; `--no-tests` takes seconds.
   - `python -m flyemu.score X.zip --protocol <name> --out s/`: plays one scoreboard protocol from `world/` (source `data/world/`).
-    - Harnesses: `assay` and `organism` (network only) and `closed_loop` (body stepped, every sense on).
-    - A protocol without pass conditions must carry a `bar_todo`; its verdict is NO BAR.
-- **Scoreboard from the zip.** Each built protocol is identical zip vs tree and equals its reference run (F-ZIP-2, F-ZIP-3).
-  - Stands, `stands_flat_floor`: **NO BAR**. Thorax at 0.55 mm, lying (F-STAND-3). Reproduces the F-ZIP-1 `flyemu.run` hashes.
-  - Walks, `walks_dng100`: **NO BAR**. DNg100 at 100 Hz gives no stepping: tips at 3-4 Hz, band share 0.1-0.3, thorax 0.04 mm backwards. Equals command_walk.py.
-  - Grooms: no protocol (no test and no mechanism).
-  - PER to labellar sugar, `per_labellar_sugar`: **PASS**, MN9_L 5.7 Hz (bar > 5, mean of seeds 0-9). The margin is thin.
-  - PER to leg sugar: no protocol. It needs a single "opens" number.
-  - Optomotor turning: no protocol (needs code: vision bypasses the World).
-  - Giant-fibre escape, `gf_escape`: **FAIL**. The GF spikes on every kick, but no TTMn, PSI or DLMn spike follows (gap junctions off, the default).
-  - Stable flight: no protocol (needs code: kinematics are imposed).
-  - **The scoreboard still passes 1 of 8.**
-- **Ledger fill fraction, from the zip's own tables:** 0.42% of slots from data (measured + derived), also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities. The 793c3eb commit message understated the per-quantity change; F-ZIP-2 has the correction.
-- **Bars proposed to the Director (21 Oct, not adopted).** Writing them turns NO BAR into PASS/FAIL. Each is a definition, not a fit.
-  - Stands: only the tarsi touch the floor over the last 500 ms. This needs a contact readout, a small code change.
-  - Walks: at least 4 of 6 legs with the dominant tip frequency in 7-15 Hz (the step band command_walk cites, Pugliese 2025) and a band share of at least 0.5, plus forward thorax displacement over the window.
-  - Leg sugar "opens": MN9_L mean over seeds 0-9 above 5 Hz at 50 Hz leg drive, the labellar bar. The rest of the four-part check stays as written on 6 Oct.
+    - Harnesses: `assay` and `organism` (network only) and `closed_loop` (body stepped, every sense on). A closed-loop run is refused unless only the network's motor spikes move the body (`drive_check`).
+- **Scoreboard (F-ZIP-4; m10f0; each item from the zip, identical zip vs tree; verdicts in `runs/s22/fly2_zip/s5/scoreboard_verdicts.json`):**
+  - Stands, `stands_flat_floor`: **FAIL.** A non-foot body is on the floor in every sample of 500-1000 ms (head, coxae, abdomen), and the head sits at the collapse height (bar: none on the floor, head ≥ 0.1 mm above collapse). The fly lies on its belly by 250 ms (`docs/media/s22_fly2_stands_frames.png`).
+  - Walks, `walks_dng100`: **FAIL.** 0 of 6 legs step at 7-15 Hz (all at 3-4 Hz, 7-15 Hz share 0.04-0.05; bar ≥ 4 legs), and the thorax moves 0.041 mm backwards. Leg MNs average 2.6 Hz while DNg100 fires at 92 Hz (`docs/media/s22_fly2_walk_tips.png`).
+  - Grooms: not scored. A protocol spec (`grooms_antenna_jo`, Hampel 2015) went to the Director (DECISIONS 21 Oct 02:44); not built, not adopted.
+  - PER to labellar sugar, `per_labellar_sugar`: **PASS**, MN9_L 5.7 Hz (bar > 5). Thin margin: 4 of 10 seeds are at or below 5 Hz (F-ZIP-2 said 3; it miscounted).
+  - PER to leg sugar, `per_leg_sugar` (new): **FAIL**, MN9_L 0 Hz on all 10 seeds. Only about 110 neurons beyond the 54 driven ones fire: the route is blocked at rest (F-TASTE-LEG-1).
+  - Optomotor turning: not scored (needs code: vision bypasses the World).
+  - Giant-fibre escape, `gf_escape`: **FAIL.** The GF spikes on every kick; no TTMn or DLMn spike follows (gap junctions off, the default).
+  - Stable flight: not scored (needs code: kinematics are imposed).
+  - **1 of 8 passes; 5 of 8 are scored.** All five score spent or seen evidence, so they are regression checks (register rows below).
+- **flyemu.check, 8f1ad74 zip:** 273 passed, 14 skipped; no outcome changed from the c248318 zip, and the 4 new tests are the protocol tests. The tree check at 8f1ad74 has equal outcomes, except the 2 repo-layout tests that skip only inside a zip (275 passed, 12 skipped). The ledger rebuilt from the zip equals the packed ledger.
+- **Ledger fill fraction, from the zip's own tables (unchanged):** 0.42% of slots from data (measured + derived), also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities.
+- **Not in the zip yet** (the manifest's `todo`):
+  - `variation/` (the between-fly spread), `individual/` (a realised fly) and per-element slot addresses;
+  - arenas: ball, flight tether, sugar patch (code today);
+  - stimuli: flash, grating, looming disc, bitter, odour pulse, DN and MN current injection (code in `scripts/probes` today);
+  - protocols for grooms, optomotor turning and stable flight;
+  - the repo's `docs/` and all but two `scripts/`.
 - **Next, for fly2 (zip track):**
-  1. **Bars.** Once the Director or Ben writes them, add the pass conditions (and, for stands, the contact readout). Rerun the four protocols zip vs tree.
-  2. **flyemu.check on the b7e6fc9 zip**, zip vs tree. Not run this step (15 min each); the c248318 zip's check passed.
+  1. **Three FAILs share a symptom: motor neurons don't follow their drive.** Walks: leg MNs at 2.6 Hz under 92 Hz DNg100. GF: no TTMn or DLMn spike. Stands: the live fly ends where the motor-silenced fly ends. A missing transmission onto motor neurons is a candidate shared cause, not tested here. fly owns the premotor→MN fix; when it lands on main, rerun all five protocols zip vs tree as regression checks. Held-out standing and walking tests need new seeds (register).
+  2. **Grooms bar**, if the Director adopts the 02:44 spec. Hand the Hampel 2015 reading (Fig 1B minimum grooming share; whether the aJO lines are JO-C/E) to a Sonnet subagent.
   3. **Identity across switches.** Run the neutral-switch identity tests and one non-default profile from the zip.
   4. **Portability.** Run the same zip on backhouse (Linux, its own runtime) with `--allow-runtime-mismatch`. Measure the floating-point differences; don't assume them.
   5. Then the variation model (`variation/`) and the individual layer, per the spec.
@@ -521,7 +522,8 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | `docs/research/sealed/s21_gf_dlm_sealed.md` (GF→DLM 1:1 vs doublet, paired-pulse refractory period, following frequency, soma amplitude of the axon spike; sources Ryglewski et al. 2014 PNAS, Fayyazuddin 2006 and others) | **sealed, unread** (written by fly2's literature agent, 21 Oct). One header line ("Source 1 — Ryglewski S, Kadas D, … (2014)") was seen in a grep; no value. Value-free summary from the agent: Ryglewski 2014 states two following-frequency pairs, plots the refractory period without stating it, and gives 1:1 qualitatively; Fayyazuddin 2006 gives 1:1 and the spike shape qualitatively only | open once, for the DLMn build at measured values, after its pre-registration |
 | fly_brain.zip identity runs (s22 fly2, F-ZIP-1): m10f0, flat floor, no stimulus, 1 s, seeds 12 and 13 | seen as engineering output only (spike totals and hashes; no observation compared, nothing scored or selected) | seeds 12-13 were noted as reserved for the rung-1 G1 check; seed 12 has long been the smoke default. If G1 needs unseen seeds, use 14+ |
 | fly_brain.zip scoreboard protocols (s22 fly2, F-ZIP-2): `per_labellar_sugar` (LB3b/LB3c 100 Hz → MN9_L, seeds 0-9, bar > 5 Hz) and `gf_escape` (DNp01 kick train, seed 0, Augustin 2017 latency ranges) | regression checks on spent evidence: the sugar gate is the session 10 fit and class-search gate, and the Augustin ranges are seen or spent (rows above). Results: PASS 5.7 Hz; FAIL, no motor neuron follows | a PASS or FAIL here is not a held-out test; a changed model needs its own held-out check elsewhere |
-| fly_brain.zip closed-loop protocols (s22 fly2, F-ZIP-3): `stands_flat_floor` (seed 12, 1 s, no stimulus) and `walks_dng100` (DNg100 100 Hz, seed 0) | seen as recorded readouts only (no bar, verdict NO BAR; nothing scored or selected). Seed 12 is the F-ZIP-1 engineering seed; seed 0 is command_walk's exploratory seed | when bars are written, scoring these same seeds is a regression check; a held-out standing or walking test needs new seeds |
+| fly_brain.zip closed-loop protocols (s22 fly2, F-ZIP-3, scored in F-ZIP-4): `stands_flat_floor` (seed 12, 1 s, no stimulus) and `walks_dng100` (DNg100 100 Hz, seed 0) | seen in F-ZIP-3 before their bars were written (DECISIONS 21 Oct 02:33), then scored under those bars as regression checks: both FAIL. Seed 12 is the F-ZIP-1 engineering seed; seed 0 is command_walk's exploratory seed | a held-out standing or walking test needs new seeds |
+| fly_brain.zip `per_leg_sugar` (s22 fly2, F-ZIP-4): LgLG4 + LgAG2 50 Hz → MN9_L, seeds 0-9, bar > 5 Hz | regression check on spent evidence (leg sugar at 50 Hz was the target of the s12 margin diagnostics, F-TASTE-LEG-1, F-STAB-6). Result: FAIL, 0 Hz on every seed | not a held-out test; a changed model needs its own held-out check |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 00:41; F-VISION-15): medulla FAIL 1 of 8, photoreceptor FAIL 0 of 8 | the next candidate needs seed 3 or a new test |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |

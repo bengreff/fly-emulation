@@ -1848,3 +1848,51 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - The closed loop is identical zip vs tree, and identical to both `flyemu.run` and command_walk.py. The full sensing and body path reproduces from one file.
 - NO BAR is not a pass or a fail: the scoreboard still passes 1 of 8. Writing the bars is the Director's or Ben's call; the report proposes them.
 - `flyemu.check` was not rerun on the b7e6fc9 zip. The c248318 zip's check passed, and the protocol test changes since then passed in the tree (20 of 20).
+
+### F-ZIP-4: with bars written, the scoreboard has real verdicts: stands FAIL, walks FAIL, PER to leg sugar FAIL (MN9_L 0 Hz); 1 of 8 items passes, 5 of 8 are scored, all five from the zip alone, identical zip vs tree (fly2, s22, 21 Oct 03:06; DECISIONS 21 Oct 02:33)
+
+**What was built** (8f1ad74; bars decided by the Director as Ben, reversible).
+- `stands_flat_floor`: pass if no body other than a tarsal segment is pushed by the floor in any 1-ms sample of 500-1000 ms, and the head point is at least 0.1 mm above this body's motor-silenced collapse (0.429 mm, derived) over that window. Wang 2025 tracked a head point, so the bar reads the head, not the thorax. 0.1 mm is the lowest standing start height in Wang Fig 5C; no population maximum is published, so there is no upper bound.
+- `walks_dng100`: pass if at least 4 of 6 legs have the dominant tip frequency in 7-15 Hz and at least half the tip power in 7-15 Hz, and the thorax moves forward along its heading.
+- `per_leg_sugar` (new): LgLG4 + LgAG2 at 50 Hz, pass if MN9_L > 5 Hz (mean of seeds 0-9).
+- The scorer refuses a closed-loop run unless only the network's motor spikes move the body, and records the check (`drive_check`): 106 actuators, none a servo; no mocap body; no active equality constraint; no wingbeat generator; no stimulated motor neuron.
+- New readouts: floor contact per body, head height, thorax heading, 7-15 Hz share; judge op `count_where`. Reading contacts does not change the run: both closed-loop protocols reproduce their F-ZIP-3 spike and final-pose hashes.
+
+**Results (m10f0).**
+- **Stands: FAIL** on both conditions. Over 500-1000 ms a non-foot body is on the floor in every sample (head 496 of 500 samples, right-mid coxa 478, left-hind coxa 457, abdomen segments 4 and 6 about 455, left-mid coxa 450). The head sits at the collapse height (median −0.001 mm above it), and a median of 2 legs have a tarsus on the floor. Frames at 0, 250, 500, 750 and 1000 ms (`docs/media/s22_fly2_stands_frames.png`, viewed): placed standing at 0 ms; by 250 ms the fly lies on its belly and head with the legs splayed sideways and one leg raised in the air, and it stays there. The live fly ends where the motor-silenced fly ends (F-STAND-3).
+- **Walks: FAIL** on both conditions. No leg counts: every dominant frequency is 3-4 Hz (the search band's lower edge) and the 7-15 Hz share is 0.035-0.053 per leg. The thorax moves 0.041 mm backwards along its heading. Leg motor neurons average 2.6 Hz while DNg100 fires at 92 Hz. Tip traces (`docs/media/s22_fly2_walk_tips.png`, viewed): the tips drift backwards over the drive with small irregular wiggles; only the right hind leg makes 3-4 slow, uneven swings of about 0.2 mm.
+- **PER to leg sugar: FAIL.** MN9_L is at 0 Hz on all 10 seeds (bar > 5 Hz; MN9_R is dropped as incompletely traced, as in the labellar protocol). The 54 LgLG4 and LgAG2 cells fire at 47-51 Hz, but only about 164 of 167,111 neurons fire at all (the 54 driven cells plus about 110 others; network mean 0.029 Hz). The route stays blocked at rest, as F-TASTE-LEG-1 found at an earlier profile; this is the first measurement at m10f0.
+- All three predictions written at 02:33 held, and the scoreboard count is as predicted.
+
+**The scoreboard (m10f0, every scored item played from the zip at 8f1ad74).**
+
+| item | protocol | verdict | measured (bar) |
+|---|---|---|---|
+| stands | `stands_flat_floor` | FAIL | non-foot body on the floor in 100% of samples (bar 0%); head 0.001 mm below the collapse height (bar ≥ 0.1 mm above) |
+| walks | `walks_dng100` | FAIL | 0 of 6 legs at 7-15 Hz with share ≥ 0.5 (bar ≥ 4); thorax −0.041 mm (bar > 0) |
+| grooms | none | not scored | a protocol spec went to the Director (DECISIONS 02:44); not built, not adopted |
+| PER to labellar sugar | `per_labellar_sugar` | PASS | MN9_L 5.7 Hz (bar > 5); per seed 7 6 7 5 7 7 5 6 4 3, so 4 of 10 at or below 5 Hz (F-ZIP-2 said 3; it miscounted) |
+| PER to leg sugar | `per_leg_sugar` | FAIL | MN9_L 0.0 Hz (bar > 5) |
+| optomotor turning | none | not scored | needs code: vision bypasses the World, and there is no turning readout |
+| giant-fibre escape | `gf_escape` | FAIL | GF spikes on 20 of 20 kicks; no TTMn or DLMn spike (bar: TTMn follows ≥ 90% at 0.87-1.22 ms, both DLMn groups at 1.36-1.85 ms) |
+| stable flight | none | not scored | needs code: flight kinematics are imposed and the tether is set in code |
+
+**1 of 8 passes; 5 of 8 are scored.** Every scored item scores spent or seen evidence (register rows for the zip protocols), so these verdicts are regression checks, not held-out tests.
+
+**The zip.** `runs/s22/fly2_zip/s5/fly_brain.zip`, packed from clean commit 8f1ad74.
+- 134,776,816 bytes, 481 members (2 more than F-ZIP-3's: the leg-sugar protocol and its stimulus), 271.5 MB unpacked, sha256 dbb16195….
+- It is not in git (over 50 MB).
+- Its manifest still lists `world/stimuli/leg_sugar.yaml` as TODO, which is stale; the packer's list is corrected after this check, so the next pack drops the line.
+
+**Identity** (`compare.py`, written before the runs; verdict ACCEPT).
+- The stands and walks tree runs at 8f1ad74 reproduce every F-ZIP-3 field, including the spike and final-pose hashes. Reading floor contacts doesn't change the run.
+- Zip equals tree for stands (17 fields), walks (37 fields) and leg sugar (8 fields per seed, 10 seeds, equal spike hashes). The pass conditions are equal, and the read guard denied nothing.
+- The leg-sugar tree run equals `assay_pathways.py --assay legsugar_mn9 --rates 50 --trials 10 --profile m10f0` per trial.
+- Labellar sugar and GF escape from the new zip equal the F-ZIP-2 zip runs field for field, including verdicts.
+- The walk figure's replay, made outside the scorer, reproduces the scored final-pose hash.
+
+**flyemu.check on the 8f1ad74 zip.**
+- Tests: 273 passed, 14 skipped, in 14.6 min. The 4 tests added since the c248318 zip are the new protocol tests (`test_world_protocols`: completeness of the 3 new or changed protocols, and the stand-window test). No earlier outcome changed.
+- The ledger rebuilt from the zip's tables equals the packed ledger. The numbers are unchanged: 0.42% of slots from data, also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities.
+- The read guard denied nothing. Outside the root and the Python install, the check read only the macOS version file, matplotlib's font cache, `/dev/null` and the timezone file.
+- Tree check at 8f1ad74: 275 passed, 12 skipped. Zip and tree have the same test ids and equal outcomes except the 2 repo-layout tests (`test_docs_cited_in_code_exist`, `test_scripts_default_to_the_working_model`), which pass in the tree and skip only inside an extracted zip, by design (F-ZIP-2). The ledger and the scoreboard listing are equal.

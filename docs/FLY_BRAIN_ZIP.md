@@ -105,18 +105,25 @@ Sizes are measured on 20 Oct from the files the model reads today.
 - **Built protocols, network only** (the body is not stepped):
   - `per_labellar_sugar`: LB3b/LB3c at 100 Hz, read out on MN9_L, pass if the mean over seeds 0-9 is > 5 Hz.
     Its brain is built as `scripts/assay_pathways.py` builds it.
+  - `per_leg_sugar`: LgLG4/LgAG2 at 50 Hz, the same readout and bar (DECISIONS 21 Oct 02:33).
   - `gf_escape`: DNp01 kick train; TTMn and DLMn muscle latency against Augustin 2017. Its brain is built as
     `scripts/probes/gf_latency.py` builds it.
 - **Built protocols, closed loop** (harness `closed_loop`: body stepped, every sense reaching the brain; the loop
-  of `flyemu.run` and `scripts/probes/command_walk.py`). Neither has a bar yet, so the verdict is NO BAR and the
-  protocol carries a `bar_todo` saying which number is missing:
-  - `stands_flat_floor`: no stimulus, seed 12, 1 s; readout `posture` (thorax height and drift).
+  of `flyemu.run` and `scripts/probes/command_walk.py`). Bars of DECISIONS 21 Oct 02:33. The scorer refuses a
+  closed-loop run unless only the network's motor spikes move the body (no servo, mocap, tether, wingbeat
+  generator or stimulated motor neuron) and records what it checked as `drive_check`:
+  - `stands_flat_floor`: no stimulus, seed 12, 1 s; readout `posture` (thorax and head height, drift, floor
+    contacts per body). Pass: no non-foot body on the floor over 500-1000 ms, and the head at least 0.1 mm above
+    the motor-silenced collapse (Wang 2025's lowest standing height).
   - `walks_dng100`: DNg100 at 100 Hz from 300 to 1300 ms, seed 0; readout `leg_oscillation` (command_walk.py's
-    per-leg stepping summary).
-- **Not built:** grooms, leg sugar, optomotor turning and stable flight, with reasons in the file.
+    per-leg stepping summary, plus each tip's 7-15 Hz power share and the forward thorax displacement). Pass: at
+    least 4 of 6 legs with the dominant frequency in 7-15 Hz and a 7-15 Hz share of at least 0.5, and the thorax
+    moving forward.
+- **Not built:** grooms, optomotor turning and stable flight, with reasons in the file.
 
-The sugar and GF protocols score spent evidence, so their runs are regression checks. The closed-loop ones score
-nothing until a bar is written.
+Every built protocol scores spent or seen evidence (the stands and walks seeds were seen before their bars were
+written), so its runs are regression checks, not held-out tests. Verdicts at 8f1ad74 (F-ZIP-4): stands FAIL,
+walks FAIL, labellar sugar PASS, leg sugar FAIL, GF escape FAIL; 1 of 8 items passes.
 
 ## Scan files
 
