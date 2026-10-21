@@ -30,6 +30,7 @@ More commands, regression checks and data rebuilds: [docs/RUNNING.md](docs/RUNNI
 | [docs/NEXT_SESSION_PROMPT.md](docs/NEXT_SESSION_PROMPT.md) | prompt for the next unattended session | rewritten each session |
 | [docs/FIDELITY_LADDER.md](docs/FIDELITY_LADDER.md) | ranked simulation-fidelity upgrades: constraining data, Mac vs backhouse compute, what turns each on | revised as rungs are built |
 | [docs/FLY_BRAIN_ZIP.md](docs/FLY_BRAIN_ZIP.md) | draft spec for fly_brain.zip, the single-file emulation: members, sizes, entry point, ledger mapping | draft (fly2, 20 Oct) |
+| [docs/MEASUREMENT_LIST.md](docs/MEASUREMENT_LIST.md) | Ben's measurement list: recordings that would pin values the literature and connectome can't, with the slots each fills and what each answer decides | append new items at the bottom (fly2, 21 Oct) |
 | [docs/BLANKS_AUDIT.md](docs/BLANKS_AUDIT.md) | every measurable quantity of a fly mapped to a ledger slot and an owning mechanism (built or stub), coverage per grain | revised when the ledger is |
 | [docs/MODEL.md](docs/MODEL.md) | the model's equations, mechanisms and defaults | living |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | code, data and test layout | living |
