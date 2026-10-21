@@ -1403,7 +1403,7 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - As a fly_brain.zip member, the fill is a labelled inferred table for a known reconstruction deficit (F-XCONN-1). It stays neutral: it moves T1 to the male CNS's own T2 level, not to MANC's.
   - The remaining gap is absent connections. Filling them would mean inventing partners from MANC by type, which this rule forbids and which would be a separate pre-registered step.
 
-### F-XCONN-4: adding the T1 connections the male CNS lacks, where both MANC and BANC have them, adds 0.8% and changes no motor result (fly2, s20, 20 Oct 22:55; inferred, cross-connectome; level 2 of the fill switch, not adopted)
+### F-XCONN-4: adding the T1 connections the male CNS lacks, where both MANC and BANC have them, adds 0.8% and changes no motor result (fly2, s20, 20 Oct 22:54; inferred, cross-connectome; level 2 of the fill switch, not adopted)
 - **What was built** (Ben's rule via the Director; pre-registered DECISIONS 20 Oct 22:44, before code):
   - Level 2 of `connectome:T1|fill_from_other_animals` (level 1 is T1F, unchanged).
   - Table `data/params/t1_add.csv.gz` (`scripts/connectome/t1_fill_table.py add`, provenance `t1_add.json`): 25,218 (presynaptic type, T1 type, side) keys with no male-CNS synapse that both MANC and count-matched BANC have, out of 83,798 keys the two share.

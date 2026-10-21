@@ -3180,7 +3180,7 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - **Predictions:** H1 FAIL 3 of 3 with I1 not recruited (Vmax < −45 mV); H2 NO REACH 0 of 8.
 - **Falsifier:** any H1 pass or any H2 reach would mean the absent connections matter. Either way the switch stays neutral (completeness member, not adopted).
 
-### fly2 T1A results (20 Oct, 22:55; F-XCONN-4)
+### fly2 T1A results (20 Oct, 22:54; F-XCONN-4)
 - **Audit:** +0.8% synapses onto T1 at the model cut; T1 ratio 0.669 → 0.680. Both are inside the predictions.
 - **H1:** FAIL 3 of 3; I1 not recruited (Vmax −47.8 mV).
 - **H2:** NO REACH 0 of 8; MN rates equal level 1.
