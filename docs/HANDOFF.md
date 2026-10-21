@@ -276,57 +276,44 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: PSI→DLMn measured PSP, flyvis pair-strength arm with CT1 compartments; body hook (14 Oct 01:08)
+## fly2: inferred T1 fill (F-XCONN-3), fly_brain.zip draft spec, T4/T5 seeds recovered (20 Oct 22:40)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 14 Oct message (the two items Ben approved in DECISIONS 13 Oct 22:53). Every switch below is neutral by default and **none is adopted**.
-- **Merging:** worktree-fly2 contains main (merge 0667b45) plus 3f60224, 53e3010, 9423fd6, 609b238, 4c654e2, 39f61ee and this HANDOFF. The worktree guard refuses `git -C /Users/ben/fly-emulation …`, so someone in the main checkout runs `git merge --ff-only worktree-fly2`. The full battery has not been rerun since the merge. The new tests (`test_unitary_psp.py`, `test_flyvis_pairs.py`, `test_ct1_compartments.py`) pass, and so does `test_model_data.py`.
-- **Body hook (Director, 14 Oct):** fly owns the premotor→MN transmission fix (the scale, plus the glutamate sign for 14A/21A; S4a scored, S4b fit next). Don't duplicate it. When fly lands a fitted scale or a glutamate result on main, rerun step R (the reach gate; F-REFLEX-2 got 0 of 8) on it as the held-out test. Run `scripts/probes/run_proprio_reach.sh` (8 runs; add the `--set`s to the probe calls), then `proprio_reach_score.py` and `proprio_reach_fig.py`, all on backhouse (Mac load hit 27). If the leg reaches, build step L as `docs/research/s13_proprio_loop.md` plans: a neutral bias in `HillLegDrive.torque()`, an afferent delay ring of about 3 ms (inferred), a pushed-stance test, and its own pre-registration.
-- **Item 1 done: PSI→DLMn is 4.71 mV MEASURED (F-GJ-5; 3f60224, 53e3010).**
-  - The switch is `connectome:identified|unitary_psp_from_recordings` (neutral; CPU only, the GPU refuses it). It reads `data/params/unitary_psp.csv`.
-  - The row: Fayyazuddin 2006, MN5 soma, 4.71 ± 0.35 mV, n = 10, checked against the primary text. The scan-gap reason is recorded. DLMn c-f is inferred.
-  - Gate: +4.78 mV, passed.
-  - GF escape: DLMn fired in 0 of 20 runs, as predicted. Its peak was −47.2 mV against a −45 mV threshold, about 10 ms after the GF spike.
-  - Why: our point neuron, the guessed 7 mV gap from rest to threshold, and τ_m of 20 ms. MN5's own Rin × Cm gives 4.4 ms (derived). Revisit with N30 (a two-compartment MN).
-  - Figure `docs/media/s14_fly2_psi_dlm.png`, viewed.
-- **Item 2 in progress: flyvis type-pair strengths (F-VISION-13; 9423fd6).**
-  - The switch is `cell_type:all|optic_lobe_flyvis_pair_strength` (neutral; CPU only, the GPU refuses it). It is labelled "fitted (flyvis, task-trained)", basis inferred.
-  - The table `data/params/flyvis_pair_strength.csv` comes from `scripts/vision/flyvis_pair_rows.py`: 543 pairs; the 26 CT1 pairs select CT1 compartments only.
-  - `Network._flyvis_pair_weights` sets each edge from a graded cell so that the linear voltage gain is alpha × n. The weight is w = alpha·n·range·(1 − e^(−dt/τ_s)) / (g_k·(1 − r0)·rmax·dt).
-  - Edges from spiking presynaptic cells keep the shared scale (there are none on v0r). Our sign is kept; 25 pairs disagree in sign with flyvis. Conductance synapses convert this weight like any other.
-  - **Size check** (`scripts/vision/flyvis_pair_check.py`; `docs/media/s14_fly2_flyvis_pairs.{png,csv,json}`, viewed):
-    - The flyvis gain is a median 2.3× the shared scale.
-    - 25 pairs are flagged above a 60 mV full-range ceiling (guessed). They are flagged, not clipped.
-    - R1-R6→L1 (−0.78) and R1-R6→L2 (−0.41) clear the only measured lower bound (Zheng 2006, 0.4, derived).
-    - Every other class is **unchecked**. No primary-text mV value was found; the sources for Mi1/Mi4/Mi9→T4, T4/T5→LPTC and CT1 are paywalled.
-  - **CT1 per-column compartments built (F-VISION-14; 4c654e2).** The seed-1 run below predates them; its pre-registration states that deviation.
-    - The switch is `cell_type:CT1|compartments_by_column` (neutral, in `connectome.ct1_compartments`). It is a graph transform, so both paths run it; the pair arm stays CPU-only.
-    - Data: male-cns ConnectsTo `roiInfo` column counts. Raw pull `data/raw/ct1_columns_s14` (`scripts/vision/fetch_ct1_columns.py`, sha256 manifest), also on backhouse under the shared raw store.
-    - Result: 1,669 M10 and 1,729 Lo1 compartments, plus 2 trunks holding the ~2% of synapses outside ME/LO columns and CT1→CT1. All totals are conserved.
-    - The flyvis CT1 rows select the compartments by `instance:` (they match nothing at 0). Size check `docs/media/s14_fly2_flyvis_pairs_ct1.*`, viewed: no CT1 flags, max 8.9 mV; CT1 is unchecked against measurements (none found). C3↔CT1 has no edges at 5 synapses.
-    - 100 ms smoke clean. Tests: `test_ct1_compartments.py`.
-    - Possible next step: the CT1 Sonnet survey also found per-synapse `olHex1/olHex2/olLayer`. A synapse-level pull would allow layer-exact splits; the connection-level ROI split is used now.
-  - **GPU module fix (609b238):** 9423fd6 left `gpu/batched.py` failing to compile. Fixed, but not yet run under JAX: run `pytest tests/test_gpu_batched.py` on backhouse once the runs finish, since the Mac lacks JAX and skips it.
-  - **Running on backhouse, two pre-registered flyapp T4/T5 tests** (app copy `~/fly2-app` at 80bc01c, `--parallel 3` because crucible holds the rest of the memory). Backhouse load is about 44, so each 2-s protocol takes about 47 min:
-    - Seed 1 (DECISIONS 14 Oct 00:41): pair strengths, CT1 a point cell, both sets (17 runs). tmux `fly2_t4t5`, snapshot `~/fly2` at 9423fd6, started 00:44, done about 05:30. Done-file `~/fly2/runs/s14/t4t5/v0rfvp_s1.done`; outputs `…/v0rfvp_s1/ds.{json,png}`.
-    - Seed 2 (DECISIONS 14 Oct 01:05, amended 01:07 to the medulla set only, 9 runs): pair strengths + CT1 compartments. tmux `fly2_t4t5_s2`, snapshot `~/fly2_s2` at 39f61ee. It waits for the seed-1 done-file and should finish about 08:00. Done-file `~/fly2_s2/runs/s14/t4t5/v0rfvpct1_s2.done`; outputs `…/v0rfvpct1_s2/`.
-    - Keep-alive from the Mac (a fly2 background shell): `ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"'`. Stop it after seed 2.
-    - To collect each: copy `ds.json`, `ds.png` and the log to `runs/s14/fly2/t4t5/<name>/` and view the sheet. Write the result under its pre-registration (pass: 8 of 8 in the medulla set; both predicted FAIL). Add a FINDINGS entry (F-VISION-15 onward) and update the register row. For seed 2, check in the manifest that the CT1 switch was applied.
-  - **Held-out recordings check** (Ben's condition before any frontier use). Not yet run; keep it sealed until the arm passes T4/T5.
-    - Data: Behnia et al. 2014 temporal measures. flyvis was not trained on them and this project has not used them.
-    - Offset/onset ratios for 1-s full-field steps (SEM; primary text checked by the s14 Sonnet pass): Mi1 11 ± 3.5%, Tm3 36.6 ± 7.1%, Tm1 26.1 ± 3.8%, Tm2 17.7 ± 2.3%.
-    - Filter peaks (`docs/research/s12_dynamics_survey.md`): Mi1 71, Tm3 53, Tm1 56, Tm2 43 ms.
-    - Their amplitudes already set `graded_range_rec`, so the amplitudes are spent.
-    - Read the ratios with `scripts/probes/visual_flash.py` (1-s block). Before pre-registering, read n from the figure legend so the bar is the fly-to-fly range, not the SEM.
-- **Stance loop (F-REFLEX-2, 14 Oct 00:07): NO REACH, 0 of 8.**
-  - Brain off, proprioceptors only. The afferents fire (hook 16 Hz at 8 mV, 76-78 Hz at 40 mV).
-  - But only the tonic slow tibia flexors fire, the same with the afferents zeroed. This is the same transmission gap as F-BYPASS-5, so it waits on fly (hook above).
-  - Transduction blanks fly2 can fill without touching the VNC:
-    - the CS load normalisation (it saturates at 0.94 with the leg in air);
-    - CS rows per leg (2-3 assigned);
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 20 Oct night run (Task 1 the T1 fill, Task 2 the zip spec). Every switch below is neutral by default and **none is adopted**.
+- **Merging:** worktree-fly2 contains main (merge 063f105, clean, with fly's S4a/S4b) plus f7473b9, 88e2a65 and this HANDOFF. **It is ready to fast-forward.** The worktree guard refuses commands aimed at the main checkout, so someone in the main checkout runs the fast-forward merge of `worktree-fly2`. Tests after the merge: `test_t1_fill`, `test_class_mechanisms`, `test_ct1_compartments`, `test_repo_hygiene` and `test_model_data` pass (the 2 owner-row failures in `test_model_data` were fixed in 88e2a65). The full battery has not been rerun.
+- **Task 1 done: inferred T1 fill (F-XCONN-3; DECISIONS 20 Oct 22:02, 22:08, 22:15, 22:30).**
+  - Why: the male-CNS T1 neuromere has about 58% of MANC's input per matched cell (F-XCONN-1), a reconstruction deficit.
+  - Switch `connectome:T1|fill_from_other_animals` (neutral 0; label inferred, cross-animal; owner X1). Table `data/params/t1_fill.csv.gz` from `scripts/connectome/t1_fill_table.py`, with the sources pinned by sha256. Audit script `scripts/connectome/t1_fill_audit.py`. Tests `tests/test_t1_fill.py`.
+  - Rule: per (presynaptic type, T1 postsynaptic type, side), synapses per connected cell pair. The target is the median of male CNS, MANC and BANC (BANC only where its cell counts match). Kept edges are scaled up to the target only where MANC has the pair and the male CNS is below it. No edge is added or removed.
+  - Count audit: T1 matched-input ratio 0.578 → 0.669 (T2 is 0.694). About 22-25% of MANC input in every neuromere is on connections the male CNS lacks; a no-invention rule can't reach it.
+  - Held-out checks, both pre-registered and **both unchanged by the fill**:
+    - H1, bypass S2 at DNg100 15/25/40 mV: FAIL 3 of 3, as with the fill off. I1 peaks at −48.2 mV against a −45 threshold.
+    - H2, step R: NO REACH 0 of 8. The MN pool rates are the same as fill off to 0.01 Hz.
+    - Rasters and the reach figure were viewed (`docs/media/s20_fly2_t1fill_*`).
+  - Reading: the T1 undercount, at the size a no-invention fill can repair, is not what blocks the VNC rhythm or the reach. The next step would be inventing absent partners from MANC by type. That needs its own rule, its own pre-registration and Ben's view, since it adds connections the specimen lacks.
+  - Backhouse snapshot `~/fly2_t1` (code at 8524459, see its `COMMIT` file). Outputs are copied to the Mac under `runs/s20/t1fill/{s2,chain,reach_on,reach_off}`.
+- **Task 2 done: `docs/FLY_BRAIN_ZIP.md`, a one-page draft spec (83ead09).**
+  - Members: connectome, inferred tables, params with provenance, mechanisms.yaml, the ledger, profiles, body, code and tests, plus a register. About 125 MB; raw data is cited by hash, not shipped.
+  - It maps each member onto the ledger and the mechanism inventory, and lists the open questions for Ben.
+- **T4/T5 seeds after the 16 Oct backhouse reboot (pre-registered DECISIONS 14 Oct 00:41 and 01:05/01:07):**
+  - The recorded protocols survived on disk; the analysis had crashed because flyapp reads `data/cache` from the app directory, not `--model-root`. Fixed with a link `~/fly2-app/data/cache → ~/fly-emulation/data/cache` and a rerun with `--analyse-only` (`run_analyse.sh` next to each `run.sh`).
+  - **Seed 2 (pair strengths + CT1 compartments, medulla set): FAIL, 0 of 8.** The T4 peaks are 0.38-0.51 mV and the T5 peaks 0.18-0.40 mV, below the 0.5 mV floor, with |DSI| at most 0.08. The ON pathway is there (Mi1 0.77, Tm3 1.09, Mi4 2.37 mV, Mi9 −1.96), but T4 sums it to 0.43 mV. Sheet `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png`, viewed.
+  - **Seed 1 (pair strengths, CT1 a point cell, both sets): pending.** Its control and two medulla protocols were truncated by the reboot. They were moved aside (`v0rfvp_s1_truncated_control`, `*.incomplete-*`) and a re-record is queued in tmux `fly2_t4t5q` (`queue_rerun.sh`). It waits for backhouse load < 24; at 22:40 the load was 26 from another distro. Done-file `~/fly2/runs/s14/t4t5/control_rerun.done`; output `~/fly2/runs/s14/t4t5/v0rfvp_s1/ds.{json,png}`.
+  - To finish: copy `ds.json`/`ds.png` to `runs/s14/fly2/t4t5/v0rfvp_s1/`, view the sheet, score against 00:41 (pass: 8 of 8 in the medulla set; predicted FAIL), check seed 2's "within ±2 of seed 1" prediction, then write F-VISION-15 (both seeds) and the register rows.
+- **Backhouse lessons (20 Oct):**
+  - The WSL distro stops when no wsl client is attached, which kills tmux jobs. While anything runs, hold a keep-alive from the Mac as a background shell: `ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'"`.
+  - Send remote commands as a script (`… bash -s < /tmp/x.sh`). Quoted one-liners pass through Windows cmd and break.
+  - Rule 16: at most 4 threads per job; check the load first and queue if it's over 24. Another distro's load shows in `/proc/loadavg`.
+- **Carried from 14 Oct:**
+  - **Body hook:** fly owns the premotor→MN transmission fix. When fly lands a fitted scale or a glutamate result on main, rerun step R on it as the held-out test, on backhouse: `scripts/probes/run_proprio_reach.sh`, then `proprio_reach_score.py` and `proprio_reach_fig.py`. If the leg reaches, build step L (`docs/research/s13_proprio_loop.md`).
+  - **PSI→DLMn is 4.71 mV, measured** (F-GJ-5; switch `connectome:identified|unitary_psp_from_recordings`, CPU only). DLMn fired in 0 of 20 GF escapes. Revisit with a two-compartment MN (N30).
+  - **flyvis pair strengths** (F-VISION-13, `cell_type:all|optic_lobe_flyvis_pair_strength`, CPU only) and **CT1 compartments** (F-VISION-14, `cell_type:CT1|compartments_by_column`). Seed 2 says the pair arm doesn't make T4/T5 direction selective. Whether to continue the arm depends on seed 1.
+  - **Behnia 2014 held-out check:** still sealed. Open it only after an optic-lobe arm passes T4/T5.
+  - **GPU:** `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse (fix 609b238).
+  - **Stance loop (F-REFLEX-2):** three transduction blanks fly2 can fill without touching the VNC:
+    - the CS load normalisation;
+    - CS rows per leg;
     - the front-leg FeCO assignment.
-  - Gain bound: no adult Drosophila FeCO/CS spike rate exists. Larval lch5 fires at 1.5-78.4 Hz (Warren & Göpfert 2024).
-- **Handed to fly earlier for m10f:** `electrical:all|gap_conductance`, `synapse:all|receptor_kinetics_per_connection` and `connectome:identified|nt_from_physiology` (TTM latency 1.10 ms inside Augustin 2017, F-GJ-3). `optic_lobe_flyvis=1` is not recommended (F-VISION-12).
-- **Stay out of:** lif.py graded release, the VNC files and fly's switches. Don't touch the flyapp worktree; run its tool with `--model-root`, or from a copy on backhouse.
+- **Stay out of:** lif.py graded release, the VNC files and fly's switches. Don't touch the flyapp worktree; run its tool from the copy `~/fly2-app` on backhouse.
 
 ## Where the project stands
 
@@ -433,8 +420,9 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | SET a value (s14 fly2, F-GJ-5: PSI→DLMn unitary PSP, switch neutral) | can no longer validate |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
-| flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, running on backhouse, pre-registered DECISIONS 14 Oct 00:41) | — |
-| flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | being spent (s14 fly2, queued on backhouse, pre-registered DECISIONS 14 Oct 01:05, amended 01:07) | the next candidate needs seed 3 or a new test |
+| flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, pre-registered DECISIONS 14 Oct 00:41; the re-record after the 16 Oct reboot is queued on backhouse) | — |
+| flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |
+| Bypass S2 DNg100 15/25/40 mV and step R (8 arms) on the T1 fill | spent (s20 fly2, F-XCONN-3, pre-registered DECISIONS 20 Oct 22:02): FAIL 3 of 3, NO REACH 0 of 8, both unchanged | a new T1 candidate needs a new test or seeds |
 | Behnia 2014 step offset/onset ratios and filter peaks (Mi1, Tm3, Tm1, Tm2) | unspent; reserved as the flyvis pair arm's held-out recordings check (Ben, 13 Oct 22:53) | their amplitudes already set graded_range_rec |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
