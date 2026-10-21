@@ -3145,3 +3145,37 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - **Decision:** the switch stays neutral and is not adopted. It is kept as a labelled inferred member for fly_brain.zip (`docs/FLY_BRAIN_ZIP.md`).
 - **Not done here:** inventing partners from MANC to fill the ~25% of MANC input on connections absent in the male CNS. That would need its own rule and pre-registration, and it doesn't touch the T1-specific part (the absent share is the same in T2 and T3).
 - H1 and H2 are spent for this switch. Any future T1 candidate needs a new held-out test or new seeds.
+
+### fly2 T1A pre-registration: add absent T1 connections found in both MANC and BANC (20 Oct, 22:44; Ben via the Director, 20 Oct; before any code)
+- **Ben's ruling (Director, 20 Oct):** a T1 connection missing in the male CNS may be added only where the same matched type-to-type connection exists in BOTH MANC and BANC. Use the cross-animal median count, label it inferred (cross-connectome), and keep it behind the fill switch. Never connect pairs that neither animal has.
+- **Switch:** `connectome:T1|fill_from_other_animals` becomes a level:
+  - 0: off (neutral);
+  - 1: T1F as scored (scale kept edges);
+  - 2: T1F plus T1A, the added connections.
+  Level 1 is unchanged.
+- **Which pairs are absent:** a key (presynaptic type A, T1 postsynaptic type B, post side s) where:
+  - A has included male-CNS cells;
+  - B has male-CNS T1 cells on side s;
+  - the male CNS has zero synapses from A onto them (raw counts, any size).
+  Present but below the synapse cut is not absent; level 1 already covers that case.
+- **Which absent pairs are added:** both MANC (`manc_t1_typepair.parquet`) and BANC (`banc_typepair`, under the count-match rule) have the key with at least one connected pair.
+- **Counts:**
+  - Synapses per added edge: x_add = median(x_manc, x_banc), the synapses per connected (A, B) cell pair. The male CNS's zero is read as a reconstruction miss, not a value, so it is left out of the median. With two animals, the median is their mean.
+  - A partners per B cell: c_add = median(n_conn/n_post in MANC, in BANC), rounded, between 1 and the number of male-CNS A cells.
+- **Which A cells (guessed, deterministic):**
+  - The candidates are the A cells on side s first, then the other A cells, each in bodyId order.
+  - B cells are taken in bodyId order. B cell j takes the c_add candidates starting at j·c_add, wrapping round within the same-side cells, then within the others if c_add is larger.
+  - No self-edges.
+  - Label: partner identity within the type is guessed; the counts are inferred.
+- **The synapse cut applies as to measured edges:** an added edge is kept only if x_add ≥ min_synapses (5). Key pairs below it are in the table, for a cut-1 build, but add nothing to the model.
+- **Table:** `data/params/t1_add.csv.gz` from `scripts/connectome/t1_fill_table.py add`, with provenance in `t1_add.json`.
+- **Count audit predictions:**
+  - T1A adds under 10% to the T1 input.
+  - The T1 matched-input ratio goes from 0.669 to between 0.67 and 0.72. BANC is a premotor extract with count-matched groups only, so few keys qualify.
+- **Motor checks** (rerun once, as Ben asked):
+  - H1: bypass S2 at DNg100 15/25/40 mV, plus the I1 chain readout.
+  - H2: step R, 8 arms.
+  - Both at level 2, same snapshot method as T1F.
+  - These checks were already spent once on T1F (level 1). A pass here is weaker evidence and would need a fresh check before any adoption.
+- **Predictions:** H1 FAIL 3 of 3 with I1 not recruited (Vmax < −45 mV); H2 NO REACH 0 of 8.
+- **Falsifier:** any H1 pass or any H2 reach would mean the absent connections matter. Either way the switch stays neutral (completeness member, not adopted).
