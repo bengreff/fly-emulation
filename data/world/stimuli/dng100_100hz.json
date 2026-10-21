@@ -1,0 +1,9 @@
+{
+ "schema": 1,
+ "name": "dng100_100hz",
+ "what": "every DNg100 cell kicked by an independent 100 Hz Poisson train from 300 to 1300 ms, as scripts/probes/command_walk.py --type DNg100 --hz 100 does",
+ "evidence": "DNg100 (BDN2) activation drives forward walking: optogenetic activation in flies (Bidaye et al. 2020) and rhythmic front-leg motor output in VNC connectome simulations confirmed optogenetically (Pugliese et al. 2025, bioRxiv 10.1101/2025.09.12.675944). The kick stands in for the optogenetic drive; its size is the profile's kick_mv",
+ "events": [
+  {"kind": "poisson_kick", "types": ["DNg100"], "rate_hz": 100.0, "t_on_ms": 300.0, "t_off_ms": 1300.0, "kick_mv": "profile"}
+ ]
+}

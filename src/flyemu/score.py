@@ -7,15 +7,19 @@ A protocol (world/protocols/<name>.json) names the brain build, settings, seeds,
 (world/stimuli/<name>.json: timed events on cell types), a readout and its pass conditions. This module only
 interprets them; every number is in the files. Launch, extraction and the read guard are flyemu.run's.
 
-Harnesses (both step only the network; the body is never stepped):
-- build "assay": the brain as scripts/assay_pathways.py builds it, a fresh lif.Network per seed;
-- build "organism": flyemu.organism.Organism, as scripts/probes/gf_latency.py builds it.
+Harnesses:
+- build "assay": the brain as scripts/assay_pathways.py builds it, a fresh lif.Network per seed; no body;
+- build "organism": flyemu.organism.Organism, as scripts/probes/gf_latency.py builds it; the body is not stepped;
+- build "closed_loop": the same Organism with the body stepped and every sense reaching the brain, the loop of
+  flyemu.run and scripts/probes/command_walk.py.
 Stimulus events: "poisson_kick" (each listed cell gets an independent Poisson train of kicks while on) and
-"kick" (a fixed train of kicks). Readouts: "mean_rate_hz" and "gf_latency".
+"kick" (a fixed train of kicks). Readouts: "mean_rate_hz", "gf_latency" (network harnesses), "leg_oscillation"
+(command_walk.py's per-leg stepping summary) and "posture" (thorax height and drift) (closed_loop).
 
 Writes score_manifest.json (per seed: spike count and hash over every neuron, readout; the aggregate readout,
-each pass condition and the verdict) and registry_reads.csv. Exit code 0 whether the protocol passes or fails;
-2 on refusal.
+each pass condition and the verdict) and registry_reads.csv. A protocol whose bar is not written yet has no pass
+conditions and a "bar_todo"; its verdict is NO BAR. Exit code 0 whether the protocol passes or fails; 2 on
+refusal.
 """
 from __future__ import annotations
 
@@ -155,6 +159,28 @@ def _build_organism(s: dict, seed: int, world):
     return org
 
 
+class _Body:
+    """Body samples taken after the motor step every `every` steps, as scripts/probes/command_walk.py takes
+    them: the thorax position and each tarsal tip's fore-aft position in the thorax frame (mm)."""
+
+    def __init__(self, org, legs: list[str], every: int):
+        import mujoco
+        m = org.body.sim.mj_model
+        pre = org.body.fly.name + "/"
+        self.d, self.every, self.X, self.P = org.body.sim.mj_data, every, [], []
+        self.tips = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, pre + f"{leg}_tarsus5") for leg in legs]
+        self.th = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, pre + "c_thorax")
+        if min(self.tips + [self.th]) < 0:
+            raise flyzip.Refused("the body has no c_thorax or <leg>_tarsus5 body")
+
+    def sample(self, step: int) -> None:
+        if step % self.every == 0:
+            d = self.d
+            R = d.xmat[self.th].reshape(3, 3)
+            self.X.append(((d.xpos[self.tips] - d.xpos[self.th]) @ R)[:, 0])
+            self.P.append(d.xpos[self.th].copy())
+
+
 # --- readouts -------------------------------------------------------------------------------------------
 
 def _status_excluded(root: Path, conn, idx, words):
@@ -211,6 +237,46 @@ def _gf_latency(r: dict, sp, dt: float, gf, mns: dict, kicks: list[int], period:
 
 # --- pass conditions ------------------------------------------------------------------------------------
 
+def _window(r: dict, sample_ms: float) -> tuple[int, int]:
+    i0, i1 = (int(round(t / sample_ms)) for t in r["window_ms"])
+    return i0, i1
+
+
+def _leg_oscillation(r: dict, X: list, P: list, hz, stim, mn, sample_ms: float) -> dict:
+    """scripts/probes/command_walk.py's leg summary over the window: per leg, the dominant fore-aft frequency of
+    the tarsal tip inside the band, the band's share of the tip's power and its peak-to-peak amplitude (2 SD);
+    the thorax displacement; the mean rate of the leg motor neurons and of the stimulated cells."""
+    import numpy as np
+    i0, i1 = _window(r, sample_ms)
+    Xw = np.array(X)[i0:i1]
+    lo, hi = r["band_hz"]
+    out = {}
+    for i, leg in enumerate(r["legs"]):
+        x = Xw[:, i] - Xw[:, i].mean()
+        f = np.fft.rfftfreq(len(x), sample_ms / 1000.0)
+        pw = np.abs(np.fft.rfft(x)) ** 2
+        band = (f >= lo) & (f <= hi)
+        k = np.argmax(pw * band)
+        out[f"{leg}.f_hz"] = float(f[k])
+        out[f"{leg}.band_share"] = float(pw[band].sum() / pw[1:].sum())
+        out[f"{leg}.amp_mm"] = float(x.std() * 2)
+    out["thorax_dx_mm"] = float(P[i1][0] - P[i0][0])
+    out["thorax_dy_mm"] = float(P[i1][1] - P[i0][1])
+    out["leg_mn_hz"] = float(hz[mn].mean())
+    out["stim_rate_hz"] = float(hz[stim].mean()) if len(stim) else None
+    return out
+
+
+def _posture(r: dict, P: list, sample_ms: float) -> dict:
+    """The thorax body's world-frame height (mm) over the window: median, minimum and last sample; and its
+    horizontal drift from the window's first to last sample."""
+    import numpy as np
+    i0, i1 = _window(r, sample_ms)
+    Pw = np.array(P)[i0:i1]
+    return {"thorax_z_mm_median": float(np.median(Pw[:, 2])), "thorax_z_mm_min": float(Pw[:, 2].min()),
+            "thorax_z_mm_last": float(Pw[-1, 2]), "thorax_drift_mm": float(np.hypot(*(Pw[-1, :2] - Pw[0, :2])))}
+
+
 def judge(conds: list[dict], q: dict) -> list[dict]:
     out = []
     for c in conds:
@@ -251,17 +317,22 @@ def inside(a) -> int:
     if build == "assay":
         reg, conn, kick_mv, network, _ = _build_assay(s)
         last_reg = reg
-    elif build != "organism":
+    elif build not in ("organism", "closed_loop"):
         raise flyzip.Refused(f"harness build {build!r} is not built")
+    loop = build == "closed_loop"
+    if loop != (r["kind"] in ("leg_oscillation", "posture")):
+        raise flyzip.Refused(f"readout {r['kind']!r} does not go with harness build {build!r}")
     build_s = time.time() - t_build
     for seed in proto["seeds"]:
         t0 = time.time()
-        if build == "organism":
+        if build in ("organism", "closed_loop"):
             world, world_src = run._world(root, mode, s["arena"])
             org = _build_organism(s, seed, world)
             reg, conn, kick_mv, net = org.reg, org.conn, org.kick_mv, org.net
             last_reg = reg
-            body = {"source": c["body_src"], "nq": int(org.body.sim.mj_model.nq), "stepped": False}
+            body = {"source": c["body_src"], "nq": int(org.body.sim.mj_model.nq), "stepped": loop}
+            if loop:
+                bs = _Body(org, r.get("legs", []), r["sample_every_steps"])
         else:
             net = network(seed)
         types = conn.neurons.type.fillna("").to_numpy()
@@ -270,15 +341,37 @@ def inside(a) -> int:
         counts = np.zeros(conn.n, np.int32)
         st, ix = [], []
         for step in range(n_steps):
-            spk = net.step(kick=sched.kick(step, rng))
+            if loop:
+                obs = org.body.observe()
+                spk = net.step(external_mv=org.sense(step, obs), kick=sched.kick(step, rng))
+            else:
+                spk = net.step(kick=sched.kick(step, rng))
             if spk.size:
                 counts[spk] += 1
                 st.append(np.full(spk.size, step, np.int32))
                 ix.append(np.asarray(spk, np.int32))
+            if loop:
+                org.motor_step(spk)
+                bs.sample(step)
         steps = np.concatenate(st) if st else np.zeros(0, np.int32)
         idx = np.concatenate(ix) if ix else np.zeros(0, np.int32)
         row = {"seed": seed, "spikes": int(idx.size), "spikes_sha256": flyzip.sha256_bytes(steps.tobytes() + idx.tobytes())}
-        if r["kind"] == "mean_rate_hz":
+        if loop:
+            dd = org.body.sim.mj_data
+            row["final_qpos_sha256"] = flyzip.sha256_bytes(np.ascontiguousarray(dd.qpos, dtype=np.float64).tobytes())
+            row["nan_state"] = bool(not np.isfinite(dd.qpos).all() or not np.isfinite(net.v).all())
+            row["mujoco_warnings"] = int(sum(w.number for w in dd.warning))
+            sample_ms = r["sample_every_steps"] * dt
+        if r["kind"] == "leg_oscillation":
+            a0, a1 = r["window_ms"]
+            t = steps * dt
+            w = (t >= a0) & (t < a1)
+            hz = np.bincount(idx[w], minlength=conn.n) / ((a1 - a0) / 1000.0)
+            mn = np.flatnonzero(conn.neurons.superclass.fillna("").eq(r["mn_superclass"]).to_numpy())
+            row.update(_leg_oscillation(r, bs.X, bs.P, hz, select(r["stim_types"], types), mn, sample_ms))
+        elif r["kind"] == "posture":
+            row.update(_posture(r, bs.P, sample_ms))
+        elif r["kind"] == "mean_rate_hz":
             read = select(r["types"], types)
             read, dropped = _status_excluded(root, conn, read, r.get("exclude_status_containing", []))
             if not len(read):
@@ -309,12 +402,19 @@ def inside(a) -> int:
     if r["kind"] == "mean_rate_hz":
         agg = {"rate_hz_mean": float(np.mean([t["rate_hz"] for t in trials])),
                "rate_hz_per_seed": [t["rate_hz"] for t in trials]}
-    else:
+    elif r["kind"] == "gf_latency":
         if len(trials) != 1:
             raise flyzip.Refused("gf_latency reads one seed (the kicks are its trials)")
         agg = {k: v for k, v in trials[0].items() if "." in k or k == "gf_spike_fraction"}
+    else:
+        if len(trials) != 1:
+            raise flyzip.Refused(f"{r['kind']} reads one seed")
+        agg = {k: v for k, v in trials[0].items()
+               if k not in ("seed", "spikes", "spikes_sha256", "final_qpos_sha256", "wall_s")}
     conds = judge(proto["pass"], agg)
-    verdict = "PASS" if all(x["ok"] for x in conds) else "FAIL"
+    if not conds and not proto.get("bar_todo"):
+        raise flyzip.Refused(f"protocol {proto['name']} has no pass conditions and no bar_todo")
+    verdict = "NO BAR" if not conds else "PASS" if all(x["ok"] for x in conds) else "FAIL"
     out.mkdir(parents=True, exist_ok=True)
     last_reg.write(out / "registry_reads.csv")
     sm = {
@@ -325,7 +425,8 @@ def inside(a) -> int:
         "protocol": {"name": proto["name"], "item": proto["item"], "file_sha256": shas, "stimulus": proto["stimulus"],
                      "harness": proto["harness"], "settings": s, "profile_source": profile_src,
                      "world_source": world_src, "seeds": proto["seeds"], "duration_ms": proto["duration_ms"],
-                     "evidence_status": proto["evidence_status"], "bar_source": proto["bar_source"]},
+                     "evidence_status": proto["evidence_status"], "bar_source": proto["bar_source"],
+                     "bar_todo": proto.get("bar_todo")},
         "runtime": c["versions"],
         "env": {"dropped": [k for k in os.environ.get("FLYBRAIN_DROPPED_ENV", "").split(",") if k],
                 "PYTHONHASHSEED": os.environ.get("PYTHONHASHSEED")},
@@ -337,8 +438,8 @@ def inside(a) -> int:
         "trials": trials, "readout": agg, "pass": conds, "verdict": verdict,
     }
     (out / RESULT).write_text(json.dumps(sm, indent=1, default=str))
-    print(f"{proto['item']}: {verdict}; " + "; ".join(f"{x['quantity']} = {x['observed']} ({x['op']} {x['value']})"
-                                                     for x in conds), file=sys.stderr)
+    print(f"{proto['item']}: {verdict}; " + ("; ".join(f"{x['quantity']} = {x['observed']} ({x['op']} {x['value']})"
+                                                      for x in conds) or json.dumps(agg)), file=sys.stderr)
     return 0
 
 

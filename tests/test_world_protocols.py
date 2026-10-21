@@ -12,7 +12,11 @@ from flyemu import check, flyzip, score  # noqa: E402
 
 W = ROOT / score.WORLD
 READOUT_QUANTITIES = {"mean_rate_hz": {"rate_hz_mean"},
-                      "gf_latency": {"gf_spike_fraction"}}   # plus <type>.<field> for each mn type
+                      "gf_latency": {"gf_spike_fraction"},   # plus <type>.<field> for each mn type
+                      "leg_oscillation": {"thorax_dx_mm", "thorax_dy_mm", "leg_mn_hz", "stim_rate_hz"},  # + <leg>.<f>
+                      "posture": {"thorax_z_mm_median", "thorax_z_mm_min", "thorax_z_mm_last", "thorax_drift_mm"}}
+HARNESS_READOUTS = {"assay": {"mean_rate_hz"}, "organism": {"mean_rate_hz", "gf_latency"},
+                    "closed_loop": {"leg_oscillation", "posture"}}
 
 
 def test_scoreboard_lists_the_fixed_items_and_built_protocols():
@@ -26,16 +30,23 @@ def test_scoreboard_lists_the_fixed_items_and_built_protocols():
 def test_protocol_is_complete(name):
     proto, stim, shas = score.load(ROOT, name)
     assert proto["name"] == name and stim["name"] == proto["stimulus"]
-    for k in ("item", "harness", "settings", "seeds", "duration_ms", "readout", "pass", "bar_source",
+    for k in ("item", "harness", "settings", "seeds", "duration_ms", "readout", "bar_source",
               "reference_script", "evidence_status"):
         assert proto[k] not in (None, "", []), k
+    assert proto["pass"] or proto["bar_todo"]          # no pass conditions only with the reason written down
     assert proto["item"] in check.SCOREBOARD
-    assert proto["harness"]["build"] in ("assay", "organism")
     r = proto["readout"]
+    assert r["kind"] in HARNESS_READOUTS[proto["harness"]["build"]]
     names = set(READOUT_QUANTITIES[r["kind"]])
     if r["kind"] == "gf_latency":
         names |= {f"{t}.{f}" for t in r["mn_types"] for f in ("follow_fraction", "muscle_ms_median",
                                                               "central_ms_median", "control_fraction")}
+    if r["kind"] == "leg_oscillation":
+        names |= {f"{leg}.{f}" for leg in r["legs"] for f in ("f_hz", "band_share", "amp_mm")}
+    if r["kind"] in ("leg_oscillation", "posture"):
+        n = proto["duration_ms"] / proto["settings"]["timestep_ms"] / r["sample_every_steps"]
+        i0, i1 = score._window(r, r["sample_every_steps"] * proto["settings"]["timestep_ms"])
+        assert 0 <= i0 < i1 <= n - (r["kind"] == "leg_oscillation"), "window outside the run's samples"
     for c in proto["pass"]:
         for q in (c["quantity"] if isinstance(c["quantity"], list) else [c["quantity"]]):
             assert q in names, q

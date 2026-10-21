@@ -134,6 +134,8 @@ def _scoreboard(root: Path) -> dict:
         if x["protocol"] and x["protocol"] not in built:
             raise flyzip.Refused(f"scoreboard item {x['item']!r} names protocol {x['protocol']!r}, not in the zip")
         out[x["item"]] = {"protocol": x["protocol"]} if x["protocol"] else {"protocol": None, "todo": x["todo"]}
+        if x["protocol"] and x.get("todo"):             # a protocol whose bar is not written yet
+            out[x["item"]]["todo"] = x["todo"]
     return out
 
 
