@@ -33,7 +33,7 @@
   - On a spike, only the segment is reset.
 - **Solver:** `src/flyemu/morph.py`, a custom backward-Euler solver factorised once (scipy splu). 434,567 nodes, 0.15 s to factorise, 9.4 ms per step. NEURON 9.0.2 (pip, not yet installed) is the check, never production. Why: the cells must step inside `lif.Network`.
 - **Already measured (not a gate run yet):** at the registered values, Ti flexor MN somatic Rin median 527 MΩ (253-832, n 10). Azevedo's means are 150/300/700, so gate 1(c) should pass. Core somatic Rin is 420 MΩ, against Rin_iso 98: the soma is electrotonically remote.
-- **Raw-data fetch DONE:** `scripts/connectome/walking_morph_fetch.py` → `data/derived/walking_morph/syn_in.parquet`, 318,230 input synapses onto the 106 cells from 3,613 partners, with partner and position.
+- **Raw-data fetch DONE:** `scripts/connectome/walking_morph_fetch.py` → `data/derived/walking_morph/syn_in.parquet`, 318,230 input synapses onto the 106 cells from 3,613 partners, with partner and position. It is gitignored (*.parquet), with a copy on backhouse `~/fly-m10f/data/derived/walking_morph/`; regenerate it with the script.
 - **Next steps, in order:**
   1. Gate 1: (a) install `neuron` into .venv and compare 6 cells (Rin and PSP peaks within 2%); (b) the isopotential-limit test; (c) Rin of the tibia flexors (Ti flexor MN + Acc. ti flexor MN).
   2. Spike-zone locator (motor axon = longest synapse-free terminal run).
