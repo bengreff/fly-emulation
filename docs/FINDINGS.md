@@ -1374,3 +1374,29 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - This matches F-BYPASS-3: Pugliese's own LIF, at 1.75× our per-synapse efficacy, gets I1 to only one spike per cycle on MANC.
   - It points at the questions on Ben's list: whether I1 spikes or passes graded signals (16B has never been recorded); unitary PSP size; E1/E2 burst output.
   - The prediction on record was right; if anything it erred toward success.
+
+### F-XCONN-3: an inferred T1 fill from MANC and BANC closes only part of the male-CNS T1 deficit and changes no motor result (fly2, s20, 20 Oct 22:30; inferred, development mode; switch neutral, nothing adopted)
+- **What was built** (rule pre-registered DECISIONS 20 Oct 22:02; unit amended 22:08 from the count audit, before any run):
+  - Switch `connectome:T1|fill_from_other_animals` (neutral 0, label inferred, cross-animal), `connectome.t1_fill`.
+  - Table `data/params/t1_fill.csv.gz` from `scripts/connectome/t1_fill_table.py`, sources pinned by sha256 in `t1_fill.json`.
+  - Rule: per (presynaptic type, T1 postsynaptic type, side), synapses per connected cell pair. The target is the median over male CNS, MANC and (where its cell counts match) BANC. Kept male-CNS edges are scaled up to it only where MANC also has the pair and the male CNS sits below the target. No edge is added or removed, so no partner is invented.
+  - Tests `tests/test_t1_fill.py`: neutral changes nothing, and only the T1 pair is scaled.
+- **Count audit** (`scripts/connectome/t1_fill_audit.py`; `docs/media/s20_fly2_t1fill_audit.png`, viewed):
+  - Kept edges onto T1: 73,741 of 216,006 scaled, 3.60M → 4.00M synapses (+11%).
+  - Per-cell matched-input ratio against MANC: T1 0.578 → 0.669. T2 is 0.694 and T3 0.821. **Expected 0.8-0.95: missed.**
+  - About a quarter of MANC's input lands on connections the male CNS lacks entirely, in every neuromere (T1 24.6%, T2 22.1%, T3 21.8%). A no-invention rule cannot fill that part.
+  - I1 (IN16B036) inputs: T1L 1,125 → 1,225 and T1R 797 → 938. Expected 1,700-2,300: missed.
+  - E2→I1: T1L 38 → 50 and T1R 27 → 53. Expected 50-60 / 40-55: met.
+- **H1, bypass S2, DNg100 at 15/25/40 mV, brain off** (backhouse snapshot `~/fly2_t1` at 8524459; fill on vs off on the same code):
+  - **FAIL in all 3 with the fill on, the same as off.** No alternating pool. The rhythmic pools went from 0/1/1 (off) to 0/0/0 (on).
+  - Model weights moved as intended. T1L E2→I1 6.88 → 9.06 mV and T1R 4.84 → 9.5. T1L A007→E2 −8.5 → −13.9 and E2→E1 1.7 → 2.9.
+  - **I1 not recruited** (chain harness, X1's settings): T1L Vmax −48.2 mV at 25 and 40 mV with the fill, against −49.6 and −48.4 without. Threshold is −45. T1R stays at rest.
+  - The fill-off chain runs reproduce X1's M0 numbers exactly, so the snapshot matches.
+  - Viewed `docs/media/s20_fly2_t1fill_rasters_{25,40}mv.png`. The MN rasters are the same synchronous tonic pulse train. In T1L the core cycles faster with the fill (E1 15.7 vs 12.9 Hz at 25 mV), and I1's bump per cycle grows by about 1 mV but stays under threshold.
+- **H2, step R reach gate, 8 runs:** **NO REACH, 0 of 8 with the fill on**, as predicted (`runs/s20/t1fill/reach_on`).
+  - The lf arms (the T1 leg, inside the fill) match F-REFLEX-2. The tibia flexors are tonic at 17-19 Hz with a ratio of 1.00-1.03, the same with the afferents zeroed.
+  - Viewed `docs/media/s20_fly2_t1fill_reach_on.png` (the lm leg, the panel layout of F-REFLEX-2's figure). The afferents fire, the premotor hop is nearly silent (at most 8 of 177 flexor-premotor cells active at 40 mV), and the tibia MNs sit 6-12 mV below threshold.
+- **Reading:**
+  - The pre-registered falsifier holds: H1 and H2 are unchanged. So the male-CNS T1 undercount, at the size a no-invention fill can repair, is not what stops either motor test. This agrees with F-XCONN-2, where MANC counts across the whole VNC didn't help.
+  - As a fly_brain.zip member, the fill is a labelled inferred table for a known reconstruction deficit (F-XCONN-1). It stays neutral: it moves T1 to the male CNS's own T2 level, not to MANC's.
+  - The remaining gap is absent connections. Filling them would mean inventing partners from MANC by type, which this rule forbids and which would be a separate pre-registered step.
