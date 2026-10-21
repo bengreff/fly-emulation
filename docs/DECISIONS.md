@@ -3268,3 +3268,34 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
   4. a battery run.
 - **Measurement plan:** `docs/research/s20_n30_pin_q_rho.md`. EM geometry first (fly2 can do it), then one MN5 soma recording for Ben's measurement experiment.
 - **Fixed in passing:** `tests/test_organism.py::test_depression_weakens_repeated_spikes_and_recovers` failed at HEAD. It passed LIFParams positionally, and the ADP fields added earlier shifted its depression arguments. It now uses keywords for std_u and std_tau_rec.
+
+### fly2 pre-registration: class MN q and ρ from the male-CNS MN5 skeleton (N30 option B; 21 Oct, 00:07; Director's brief 21 Oct; before any skeleton or synapse fetch for this purpose)
+**Why.** F-GJ-6 passed at q 0.07 and ρ 1.6, derived from guessed geometry. DLMn follows the GF only for ρ below about 4, and the registered bracket (0.13-25) spans that boundary. The male-CNS skeleton of MN5 (DLMn a, b) gives the diameter and path length, so only Ri stays fitted.
+
+**Seen before writing.** The `data/derived/skeleton_lengths.csv` row of one DLMn a, b cell (bodyId 801970): cable 7,454 µm; median radius along the root-to-farthest-leaf path, excluding its first 10%, 1.36 µm; root radius 4.67 µm. Nothing else about this geometry.
+
+**Method** (`scripts/connectome/mn_axon_geometry.py`; male-cns v1.0, neuPrint; 8 nm voxels to µm):
+- **Cells.** Every DLMn a, b cell (MN5, where Rin and Cm were measured) sets the class value. Every DLMn c-f cell is computed and reported, not used.
+- **Data.** The healed skeleton, rooted at the soma node as in `skeleton_lengths.py`. Every PSI→cell synapse, each mapped to its nearest skeleton node.
+- **Axon base.** Walk from the PSI contact nearest the root toward the root. The axon base is the first branch point whose off-path subtrees hold ≥ 5% of the cell's cable. Sensitivity: 1% and 20%.
+- **Contact site.** The synapse-weighted median path position of the PSI contacts.
+- **Coupling.** R_ax = Ri Σ Δℓ / (π r₁ r₂) over the skeleton edges from the axon base to the contact site (a frustum's axial resistance). g_c = 1 / R_ax.
+- **ρ = g_c × Rin**, with Rin 102 MΩ (Fayyazuddin 2006, MN5, measured). Ri is 200 Ω·cm at the centre, with the range 102-311 (Gouwens & Wilson 2009, fitted, as registered 20 Oct).
+- **q = A_axon / A_total.** Areas are frustum lateral areas, π(r₁ + r₂)·slant, plus the soma as a sphere of the root radius. A_axon is the whole subtree distal to the axon base that holds the PSI contacts, inside the volume. Reported brackets: A_axon / (Cm / 1 µF/cm²) at 43 pF (Fayyazuddin 2006) and 127 pF (Kadas et al.).
+- **Class value.** The mean over the DLMn a, b cells.
+- **Boundary.** ρ*(q) is the ρ at which the passive pair's axon peak reaches the 7 mV gap, with the soma peak held at the measured 4.71 mV. It uses the model's own pair update (tau_m 20, tau_s 5, dt 0.1 ms; `Network.psp_peak_per_mv_axon`).
+
+**Decision rule:**
+- **PASS** (the geometry supports the build): ρ < ρ*(q) across the whole Ri range. Class MN then takes the derived q and ρ (central Ri), with the label "derived from EM geometry, measured Rin, fitted Ri"; the registry status stays inferred, because Ri is fitted. The GF escape is rerun at seeds 1 and 2 as a consistency check only, since Ryglewski 2014 is spent.
+- **FAIL**: ρ > ρ*(q) across the whole Ri range. The build fails at measured geometry, F-GJ-6's pass is withdrawn as resting on guessed geometry, and the next candidate is a spike-initiation zone with a lower threshold (its own registration).
+- **UNDECIDED**: the Ri range spans ρ*. The recording (option C) decides. The table takes the derived values and brackets, and the label says so.
+- **Shrinkage.** Report the linear radius factor that would move ρ across ρ*. No correction is applied; no factor is measured for this volume.
+
+**Prediction.** From the cached 1.36 µm radius and a guessed 50-150 µm base-to-contact path: ρ 1.9-5.8 at Ri 200, central about 3. So PASS or UNDECIDED, and q 0.03-0.10.
+
+**Falsifier of the prediction:** ρ at Ri 200 above 4.
+
+**Validity, stated now.**
+- Only the part inside the volume is counted. The axon and part of the PSI contact continue into the nerve (F-GJ-5).
+- Skeleton radii are approximate; the membrane is uniform; the cell has one isopotential axon segment.
+- The axon base is the conservative choice. It gives the shortest path, so the highest ρ.
