@@ -183,7 +183,8 @@ def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFra
     Validity: T1 post cells only; no edge is added or removed (edges below the synapse cut stay out even where the
     filled count would cross it), no sign changes; assumes per-cell input by type is conserved across animals.
     """
-    t1 = neurons.somaNeuromere.astype(str).eq("T1") & neurons.type.notna()
+    nm = neurons.somaNeuromere if "somaNeuromere" in neurons else pd.Series("", index=neurons.index)
+    t1 = nm.astype(str).eq("T1") & neurons.type.notna()
     if not reg.require(
             "connectome:T1", "fill_from_other_animals", units="boolean",
             model_use="scale male-CNS edges onto T1 cells toward the cross-animal median (MANC, BANC) by "
@@ -192,7 +193,7 @@ def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFra
             minimal_note="neutral 0: male-CNS counts as reconstructed",
             uncertainty="the T1 deficit is read as reconstruction (F-XCONN-1, inferred); pair counts vary "
                         "between animals; the fill-only rule raises T1 above the median of totals") \
-            or not T1_FILL.exists():
+            or not T1_FILL.exists() or not t1.any():
         return e
     f = pd.read_csv(T1_FILL, comment="#").set_index(["pre_type", "post_type", "post_side"]).factor
     ty = neurons.set_index("bodyId").type

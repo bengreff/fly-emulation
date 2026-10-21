@@ -1,8 +1,9 @@
 """T1F: inferred T1 synapse fill from MANC and BANC (fly2, 20 Oct; rule pre-registered in DECISIONS 20 Oct 22:02).
 
 Fills the male-CNS prothoracic (T1) input deficit (F-XCONN-1) by matched cell type and connection, never inventing
-a partner. Unit: x_X(A, B, s) = synapses from all type-A cells onto the type-B cells with soma in T1 on side s,
-divided by the number of those B cells, in animal X (raw counts, before the model's synapse cut). Target = median
+a partner. Unit (as amended, DECISIONS 20 Oct 22:08): x_X(A, B, s) = synapses from type-A cells onto the type-B
+cells with soma in T1 on side s, divided by the number of (A cell, B cell) pairs with >= 1 synapse, in animal X
+(synapses per connection; raw counts, before the model's synapse cut). Target = median
 over the animals with a value (male CNS included); factor = target / x_mcns where x_mcns > 0, x_manc > 0 and
 target > x_mcns, else 1. `connectome.t1_fill` applies the factor to kept male-CNS edges; it adds no edge.
 
