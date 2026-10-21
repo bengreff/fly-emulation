@@ -33,3 +33,16 @@ Measurements that would pin a model value we can't pin from the literature or th
 **What it replaces.** q and ρ are now derived from EM geometry, the measured Rin and a fitted Ri. The threshold gap, refractory period, AHP and tau_s for DLMn are shared defaults (guessed). The recording would move all of these to measured in one cell. That cell is consistent with some fly, which meets the per-value bar.
 
 **Sources.** `docs/research/s20_n30_pin_q_rho.md` (option C); DECISIONS 21 Oct 00:07 and the results entry after it; F-GJ-6.
+
+## 2. The spike-initiation site in an adult leg MN (front-leg tibia flexor, Azevedo 2020 preparation)
+
+**Why now.** The s15c morphological arm needs a spike zone in each leg MN. The male-CNS v1.0 skeletons of the T1 leg MNs end inside LegNp(T1). The motor axon in the leg nerve isn't traced, so the skeleton can't say where spikes start (DECISIONS 21 Oct 02:10). The model guesses the arbor base (the soma-side split node + 20 µm), with the end of the main trunk as the alternative (DECISIONS 21 Oct 02:17). Azevedo et al. 2020 found that soma current steps fail to fire fast and intermediate tibia flexors, which suggests a spike zone electrically remote from the soma. That is qualitative, not a site.
+
+| Protocol | Fills (slot) | Read-out |
+|---|---|---|
+| Soma whole-cell recording, plus a nerve (extracellular) recording or Ca/voltage imaging along the neurite, with antidromic stimulation of the leg nerve | the spike-zone site (path distance from the soma) and the soma spike attenuation | The latency difference between soma and nerve spikes, and the site where the spike first appears, give the initiation zone. Its distance from the arbor base or the trunk end decides between the two model sites. |
+| Local TTX puff or Nav (para) immunostaining along the neurite | the site of the Nav-dense (AIS-like) domain | The Nav-dense segment's position and length. The model now guesses 20 µm. Ravenscroft et al. 2020 describe a para-dense distal AIS-like domain in Drosophila neurons. |
+
+**What it replaces.** The leg-MN spike-zone site and length are guessed (two candidates). A measured site in one tibia flexor is consistent with some fly, which meets the per-value bar.
+
+**Sources.** DECISIONS 21 Oct 02:10 and 02:17; F-S15-3; `docs/research/s15c_cable_params.md`.

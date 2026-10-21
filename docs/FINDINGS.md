@@ -1629,3 +1629,14 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Rin, measured check:** tibia flexors (n 29) median 582 MΩ (369-959) at Rm 20 kΩ·cm² and Ri 200; Azevedo 2020 class means are 150/300/700. With radii ×0.8 or Günay's Rm/Cm, the median goes over 700.
 - **Spike zone, leg MNs:** the male-CNS v1.0 skeletons end in LegNp(T1). No node is more than 94 µm from an input site, and there is no thick axon. The longest synapse-free terminal run is median 40 µm; 89/94 cells fall back, and 13/94 pick a twig at the soma. A choice (arbor base = s15b split, or the end of the trunk) must be written down before gate 2. The measurement that would settle it is the spike-initiation site in an adult leg MN.
 - **Per-synapse gain preview:** 1 mV of point weight gives 0.11-0.20 mV at the soma and 0.13-0.19 mV at the spike zone, against 0.157 mV in the point cell. The passive morphology at the point model's synaptic charge changes the hand-off little (gate 2 will measure it).
+
+### F-S15-4: a passive EM morphology doesn't change the core → leg-MN hand-off. Every edge's spike-zone gain is 1.01 (inhibitory/excitatory 0.997), so the stop rule applies and the morphology path is parked (s15c gate 2, 21 Oct 02:20; pre-registered DECISIONS 21 Oct 01:38, operational form and spike-zone decision 02:17; nothing adopted)
+- **Method:** all 11,417 network edges onto the 106 T1 walking cells, each at its EM synapse sites, at the point model's synaptic charge. The cells are passive and linear, so one reciprocal cable run per recording node gives every edge (checked to 10⁻¹⁰).
+- **Admissible:** 0.021 mV per synapse at the soma, and a q90 of 1.0-1.4 mV per spike (band ≤ 0.3 mV and 0.4-10 mV).
+- **Gain vs the isopotential cell** at the arbor-base spike zone (the leg-MN primary site, Director 02:17):
+  - core → leg MN 1.015, E2 → I1 0.974;
+  - excitatory 1.016 vs inhibitory 1.012 onto leg MNs;
+  - edge-to-edge q10-q90 0.94-1.10.
+  - The trunk-end site, Ri 102-311 and radius ×0.8-1.25 all stay within 0.91-1.03.
+- **Against the 7 mV gap:** E2 → I1 gives 0.75-1.07 mV per spike at the spike zone.
+- **Meaning:** at these measured-range membrane values (Rin checked against Azevedo, F-S15-3), dendritic position doesn't re-weight inputs. Together with s14/S4b (uniform strength) and s15/s15b (two compartments), shape and transmission strength are ruled out as the single cause of the hand-off failure. Gate 3 and the hybrid network weren't built. Tools: `src/flyemu/morph.py` (`spike_zone` kinds `arbor_base`, `trunk_end`), `scripts/probes/s15c_gate2.py`.

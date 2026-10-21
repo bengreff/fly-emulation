@@ -199,10 +199,23 @@ def spike_zone(cell: Cell, syn_nodes: np.ndarray, kind: str, offset_um: float = 
     soma -> leaf path with the longest synapse-free terminal run; the arbor exit is the last node on it with an
     input synapse on or distal to it; the segment is offset_um..offset_um + length_um distal to the exit, or the
     last length_um before the leaf if the run is shorter than offset + length. kind 'core_premotor': the s15b split
-    node + length_um along the largest-cable child (offset_um unused). Returns nodes, mid (the threshold node),
+    node + length_um along the largest-cable child (offset_um unused); 'arbor_base' is the same rule, the leg-MN
+    primary site since 21 Oct 02:17 (the skeletons have no motor axon); 'trunk_end' follows the largest-radius child
+    from the soma to a leaf and takes its last length_um. Returns nodes, mid (the threshold node),
     exit, run_um, fallback."""
     dist, kids = cell.path_dist(), _kids(cell)
-    if kind == "core_premotor":
+    if kind == "trunk_end":                        # leg-MN sensitivity site (DECISIONS 21 Oct 02:17)
+        cable = _cable(cell)
+        path, v = [cell.root], cell.root
+        while kids[v]:
+            v = max(kids[v], key=lambda k: (cell.rad[k], cable[k]))
+            path.append(v)
+        path = np.array(path)
+        d = dist[path[-1]] - dist[path]                # distance back from the trunk's leaf
+        seg = path[d <= length_um]
+        mid = int(seg[int(np.argmin(np.abs(d[d <= length_um] - 0.5 * length_um)))])
+        return dict(nodes=seg, mid=mid, exit=int(path[-1]), run_um=float(dist[path[-1]]), fallback=False)
+    if kind in ("core_premotor", "arbor_base"):    # arbor_base: the leg-MN primary site (02:17), same rule
         cable = _cable(cell)
         s = split_node(cell)
         seg = _walk(cell, s, lambda v: max(kids[v], key=lambda k: cable[k]) if kids[v] else None, length_um, dist)
