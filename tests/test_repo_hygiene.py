@@ -19,6 +19,10 @@ ROOT = Path(__file__).resolve().parents[1]
 import sys  # noqa: E402
 sys.path.insert(0, str(ROOT / "src"))
 BASES = {"measured", "derived", "inferred", "guessed"}
+# Inside an extracted fly_brain.zip (flyemu.check) there is no docs/ and only two scripts: the checks of the
+# repo's layout skip there, and only there (flyemu.run writes this manifest copy at the extracted root).
+repo_only = pytest.mark.skipif((ROOT / ".flybrain_manifest.json").exists(),
+                               reason="repo layout check; an extracted fly_brain.zip ships no docs/ and two scripts")
 
 
 def read(name: str) -> pd.DataFrame:
@@ -160,6 +164,7 @@ def test_run_records_capture_the_environment(tmp_path):
     RunRecord("hygiene-test", tmp_path)
 
 
+@repo_only
 def test_scripts_default_to_the_working_model():
     import subprocess
     import sys
@@ -171,6 +176,7 @@ def test_scripts_default_to_the_working_model():
     assert profiles.WORKING_PROFILE in profiles.PROFILES
 
 
+@repo_only
 def test_docs_cited_in_code_exist():
     missing = set()
     for f in list((ROOT / "src").rglob("*.py")) + list((ROOT / "scripts").rglob("*.py")):
