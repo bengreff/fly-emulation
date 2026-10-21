@@ -301,7 +301,13 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
   - A species layer and an individual layer, one slot-address space, and the scan file (`*.flyscan`: observed slots with sd, per-modality noise models).
   - The pipeline `flyemu.scan` → `flyemu.reconstruct` → `flyemu.compare`, with a leak guard and round-trip tests.
   - Next to build would be the variation model, the study's main prerequisite.
-- **Ben approved (20 Oct, via the Director):** two-compartment neurons where a point model provably fails, PSI→DLMn first (F-GJ-5), and in general any clean increase in neuron fidelity. This is the natural next fly2 task (N30): pre-register a PSI→DLMn two-compartment MN with measured MN5 values (Rin, Cm), and the GF-escape DLMn test as the check (spent once on the point model; needs a new seed set).
+- **Ben approved (20 Oct, via the Director):** two-compartment neurons where a point model provably fails, PSI→DLMn first (F-GJ-5), and in general any clean increase in neuron fidelity. **Started 20 Oct (Director's order): pre-registered in DECISIONS 20 Oct 23:30, not yet built.**
+  - Build it exactly as written there. In `lif.py` the soma is the existing cell, and the axon is a small add-on state for the listed cells (`self.c2`: v, i, a delay buffer, refractory).
+  - `_propagate` sends edges flagged as axon inputs to the axon buffer, and refuses if those edges carry receptor-channel or slow copies.
+  - `step`: the axon updates from the start-of-step soma voltage, and soma drive += κs(Va − Vs). Listed cells can't spike from the soma: they are masked out of `can_spike`, and their soma is neither clamped nor reset. Axon spikes are merged into `spiked`.
+  - `_unitary_psp_weights` calibrates axon-routed edges to the soma peak of the coupled pair.
+  - Register the switch in `data/model/structural_keys.csv` (N30), set N30 to partial in `mechanisms.yaml`, and add `tests/test_two_compartment.py`.
+  - Then run the gate, the latency at seed 1 and the four sensitivity corners on the Mac via slot.py.
 - **T4/T5 seeds after the 16 Oct backhouse reboot (pre-registered DECISIONS 14 Oct 00:41 and 01:05/01:07):**
   - The recorded protocols survived on disk; the analysis had crashed because flyapp reads `data/cache` from the app directory, not `--model-root`. Fixed with a link `~/fly2-app/data/cache → ~/fly-emulation/data/cache` and a rerun with `--analyse-only` (`run_analyse.sh` next to each `run.sh`).
   - **Seed 2 (pair strengths + CT1 compartments, medulla set): FAIL, 0 of 8.** The T4 peaks are 0.38-0.51 mV and the T5 peaks 0.18-0.40 mV, below the 0.5 mV floor, with |DSI| at most 0.08. The ON pathway is there (Mi1 0.77, Tm3 1.09, Mi4 2.37 mV, Mi9 −1.96), but T4 sums it to 0.43 mV. Sheet `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png`, viewed.

@@ -3193,3 +3193,39 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - **Seed 2 (01:05/01:07 arm, recovered earlier):** FAIL, 0 of 8.
 - **Predictions:** the FAIL predictions were right on both seeds, and seed 2 landed within ±2 of seed 1 (0 vs 1). Seed 1's "|DSI| above 0.02" held only at the maximum (0.04); 6 of 8 subtypes are at ≤ 0.01. The falsifier (8 of 8) did not fire.
 - **Decision:** the pair-strength and CT1-compartment switches stay neutral; nothing is adopted. The flyapp T4/T5 test is now spent at seeds 0, 1 and 2, so the next candidate needs seed 3 or a new test. The Behnia 2014 check is still sealed.
+\n
+### fly2 pre-registration: two-compartment DLMn with the PSI input on the axon (N30, first build), GF escape (20 Oct, 23:30; Ben via the Director, 20 Oct; before any code)
+**Why here.** F-GJ-5 shows the point model fails for PSI→DLMn: a 4.71 mV EPSP measured at the soma, from an axonal synapse, cannot cross the 7 mV gap. The recording paper says where the spike starts: "the action potential generated at the distal PSI-DLMmn synapse on the axon appeared small and broad in somatic recordings ... suggesting that the peripherally generated action potential fails to propagate antidromically into the dendrite" (Fayyazuddin et al. 2006 PLoS Biol 4:e63, measured, qualitative). PSI "makes multiple synaptic contacts that span 50 μm and follow the axons out into the posterior dorsal motor nerve" (same paper).
+
+**Build** (CPU only; the GPU refuses it; switch `cell_type:all|two_compartments_where_point_fails`, neutral 0; owner N30, which goes from absent to partial):
+- Table `data/params/two_compartment.csv` lists the cells (DLMn a, b = MN5; DLMn c-f, inferred, same contact), the inputs that land on the axon (PSI), the class whose shared values apply, and the finding.
+- **Soma + dendrite compartment:** the existing cell, unchanged. It keeps every other input, its tau_m, rest, noise, channels and gap junctions.
+- **Axon compartment:** the same tau_m, rest, threshold, reset and refractory as the cell (the shared guessed values, as now). It receives the listed inputs, and **the cell's spikes start only here**.
+- **Coupling:** both ways, from start-of-step voltages. Soma drive += κs(Va − Vs). The axon relaxes toward (Vrest + Ia + κa·Vs)/(1 + κa) by exponential Euler.
+- Uniform membrane and two class values: q (the axon's share of the membrane) and ρ (coupling conductance × whole-cell input resistance). κs = ρ/(1 − q) and κa = ρ/q.
+- **The PSI→DLMn weight is recalibrated so the soma peak equals 4.71 mV** with the input on the axon. The measured value stays matched where it was measured.
+- Tests: neutral identity; only the listed edges move; the soma PSP equals the table value; the GPU refuses; conductance synapses are refused.
+
+**Values** (class `MN`, shared by every listed motor neuron; derived from guessed geometry, labelled so):
+- **q = 0.07.** Derivation: a 50 µm axon segment carrying the contacts (measured), diameter 2 µm (guessed), area 314 µm², against 4,300 µm² from the MN5 whole-cell 43 pF (Fayyazuddin 2006) at Cm 1 µF/cm² (guessed). Bracket 0.012-0.15: diameter 1-4 µm, and Kadas et al. adult MN5 127 ± 16 pF, n 52 (PMC6595220, measured).
+- **ρ = 1.6.** Derivation: g_c = π d²/(4 Ri ℓ), with d 2 µm (guessed), Ri 200 Ω·cm (inside the fitted Drosophila 102-311, Gouwens & Wilson 2009; s12) and ℓ 100 µm, the arbor-to-contact path (guessed). That gives 15.7 nS × Rin 102 MΩ. Bracket 0.13-25 (d 1-4, Ri 100-400, ℓ 50-150).
+- No value is fitted to the test.
+
+**Runs** (Mac, isolated CNS, profile m10f + `nt_from_physiology=1` + `unitary_psp_from_recordings=1` + the switch, **seed 1**; seed 0 was spent on the point model):
+1. `gf_psi_dlm_path.py`: mechanism gate. Soma peak 4.71 ± 0.5 mV after one GF spike; the axon peak is reported.
+2. `gf_latency.py --trials 20`, gaps on and off.
+3. Sensitivity, reported and not scored: the four (q, ρ) bracket corners, 20 trials each, gaps on.
+
+**Pass** (the Director's): gaps on, DLMn a, b follow ≥ 90% of GF spikes, **and** the median muscle latency is inside the measured range for some wild-type fly:
+- **(a) Augustin 2017, 1.36-1.849 ms.** Spent (F-GJ-3), so this is a consistency check.
+- **(b) Ryglewski et al. 2014 PNAS 111:18049** (PMC4273390): "the delay between giant fiber stimulation and muscle potential is 1.85 ± 0.21 ms". n 10, the onset of the DLM response, control genotypes. The ± is not defined in the text. Read as SD (the narrower case), that is 1.43-2.27 ms (mean ± 2 SD). **Held out and never used before; spent by this call.**
+
+**Prediction:**
+- DLMn a, b follow 20/20 at the central values.
+- Median latency 2.0-2.3 ms: GF→PSI about 0.3 ms + the PSI delay row 0.797 + an axon rise of 0.1-0.4 + the DLMn a, b delay row 0.796.
+- So **FAIL on (a)** and **PASS on (b)**.
+- Gaps off: 0/20, as for the point model. Sensitivity: follows at every corner except low ρ with high q.
+
+**Falsifier of the prediction:** DLMn follows < 90% at the central values. If so, the derived coupling cannot relay the measured EPSP, and the threshold gap or the soma-axon split is wrong. A latency < 1.9 ms also falsifies it.
+
+**Not adopted by this test alone:** adoption needs the gate, a battery run and a viewed figure. Then: DLMn tau_m (4.4 ms from Fayyazuddin, 12.3 ms from Kadas; measured spread) and the inferred delay rows (velocity 0.5 m/s, t_syn 0.5 ms).
