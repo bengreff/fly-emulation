@@ -142,6 +142,8 @@ class BatchedNetwork:
         if bad:
             raise ValueError(f"not per-member parameters: {sorted(bad)}")
 
+        if getattr(net, "adp_mv", None) is not None:
+            raise NotImplementedError("s14 B after-depolarisation (core_rhythm_exc|adp_mv) is CPU-only")
         if getattr(net, "g_r0", None) is not None:
             raise NotImplementedError("cell_type:ol_graded|release_at_rest is CPU-only (s12)")
         if getattr(net, "g_range", None) is not None:
