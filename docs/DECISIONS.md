@@ -2984,3 +2984,31 @@ DIAGNOSTIC, forced drive; Director brief (14 Oct, after S4b). No fitting, no new
 
 ### Results X1 simulation (14 October, 02:21; F-XCONN-2; nothing adopted)
 Scored as pre-registered, before viewing: I1 not recruited in any arm or drive (T1L Vmax ≤ −47.5 mV against −45). S4b alternation pass fails in all 9 runs (0 transfer-pass pools, no antagonist pair). Viewed `docs/media/s13_xconn_rasters_{25,40}mv.png`: arms indistinguishable at the MN layer. Interpretation branch "neither": the male-CNS counts are not the break. F-XCONN-1's T1 undercount stands as a dataset finding; no change to the model's counts (MANC substitution was a control, not a candidate). Rule 16 noted (Director, 14 Oct): from the next backhouse launch, cap OMP/MKL/OPENBLAS/JAX threads at 4 per job and check `uptime` first; X1 was launched before the rule.
+
+### Pre-registration s14: class-level options test for the walking break (20 October, 22:28, before any network run with a new switch)
+DIAGNOSTIC, forced drive (Director brief, 20 Oct). Nothing is adopted. All new values are **guessed**, shared by type or hemilineage, and never set per synapse. The question: does one unmeasured class property (16B firing mode; E1/E2 intrinsic bursting) let the bypass core (DNg100 → E1/E2/I1/IN19A007 → leg MNs) alternate antagonist pools? On male-CNS and MANC counts it does not (F-XCONN-2).
+- **Harness (as X1):** m10f0, seed 12, brain and senses off, DNg100 driven at 15/25/40 mV for 300-1300 ms of 1500 ms, thorax tethered: `bypass_s2_descending.py` (MN pools, body). Same drive with `bypass_s3_chain.py` (core cells, 900 ms, drive 100-900 ms). Backhouse, done-files, launches gated on load < 24.
+- **Arms** (one line each; the pass criterion is the same for all, below):
+  - **M0:** neutral m10f0, re-run in the same batch. It must fail. If M0 passes, the test is broken.
+  - **A:** `class:vnc_local_16B|graded=1`. The 433 unknown-mode 16B cells, I1 included, release graded through the shared N1 graded rows (inside locust NSI bounds; docs/research/s14_16b_firing_mode.md).
+  - **B4:** E1/E2 saturating ADP at 20 mV ceiling, 100 ms decay, 200 ms recovery (`cell_type:core_rhythm_exc|adp_mv=20, |adp_tau_ms=100, |adp_recovery_ms=200`). Chosen by calibration rule v2 on isolated cells before this run: 4 spikes in 92 ms.
+  - **B2:** the same ADP at 25 mV, 40 ms, 50 ms, the shortest admissible burst (2 spikes in 21 ms). B4 matches the cricket spike count and B2 the cricket burst duration; no setting does both (docs/research/s14_burst_ranges.md).
+  - **C4 = A + B4; C2 = A + B2.**
+  - **B' / C' (NaP x 1.5-10): not run.** No admissible scale (1 spike at every scale, calibration). Recorded as a negative calibration result.
+- **Pass (per arm, scored on the S2 run at each drive): `s4b_score.rhythm` → rhythm_pass, then confirmed by viewing the raster.**
+  - Two antagonist pools of one leg each have modulation depth ≥ 0.5 (f0 7-16 Hz, at least 2/3 of cycles at the 3-spike floor) and are drive-locked (rate ≥ 2× pre-drive, or silent before).
+  - They are out of phase: r ≤ −0.3 at zero lag, or a lagged peak (10-30 ms) of ≥ 0.5.
+  - Activity stops at drive-off: summed leg-MN rate over 1300-1500 ms ≤ 1.5× pre-drive.
+  - Before viewing I write down which pair passed. On the raster the two pools must visibly alternate over most cycles; if not, the pass is void.
+  - An arm passes if any of its drives passes. That is 5 arms × 3 drives = 15 tries, so a single pass is weak evidence and needs a seed repeat before any claim.
+- **Secondary (reported, not pass criteria), from the chain run:**
+  - I1 recruited. Spiking I1: as X1 (T1L I1 fires on ≥ 50% of E1 cycles). Graded I1 (arms A, C): mean V during drive ≥ 2 mV above rest (the locust NSI release threshold, Burrows & Siegler 1978) and a cycle-locked swing ≥ 2 mV at E1's f0.
+  - E1/E2 spikes per cycle, and f0.
+- **Falsifiers, written now.**
+  - An arm with no rhythm_pass at any drive falsifies "this class property alone, inside these bounds, fixes the break".
+  - If every arm fails, neither unmeasured fact alone is sufficient in this model; the next suspects are the slow-MN BK the E1/E2 cells inherited, and the MN transfer (F-BYPASS-7).
+- **Held-out register.** The S4b recruitment order stays unspent; nothing here reads it and `s4b_score heldout` is not run. No sealed data is used.
+- **If an arm passes, the measurement that would settle it is written into FINDINGS for Ben's measurement experiment:**
+  - A: whether 16B premotor cells (IN16B036) spike or release graded, by patch or voltage imaging during fictive walking.
+  - B: whether E1/E2 burst intrinsically, by current injection with synapses blocked (spikes per burst, rate, burst end).
+- **Prediction (mine, before running):** A recruits graded I1 more than spiking I1 did, because release starts 2 mV above rest instead of at threshold, but A alone does not alternate the MN pools; the B arms raise E1/E2 output and I1 drive. I expect at most one arm to pass, and C2 is the likeliest.
