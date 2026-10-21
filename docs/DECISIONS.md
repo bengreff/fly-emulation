@@ -3021,3 +3021,81 @@ Pass (the Director's): all 8 T4/T5 subtypes direction selective with the fly's p
 Prediction: FAIL in the medulla set, with the number of selective subtypes within ±2 of seed 1. Reason: CT1 feedback is local inhibition onto T4/T5 at small gains (−0.1 to −0.6 mV/mV per post cell). The shunting and offset reasons given for seed 1 still apply. Photoreceptor set: FAIL.
 Falsifier: 8 of 8 selective in the medulla set. Spent by this call: the flyapp T4/T5 test at seed 2 on this arm. A different seed means the seed-1 and seed-2 results are not a paired comparison of CT1; they are two draws, read as such. Nothing is adopted either way. This is not the held-out recordings check (the Behnia 2014 temporal measures, still sealed), which Ben requires before frontier use.
 Amendment (14 Oct 01:07, before the seed-2 run starts; it is still queued behind seed 1): seed 2 runs the **medulla set only** (`--stimulus medulla`, 9 runs instead of 17). Reason: under the current backhouse load each 2-s protocol takes about 47 min at --parallel 3, so both sets would take about 4.7 h. The pass and the falsifier are read in the medulla set only, and the photoreceptor set was secondary and predicted FAIL on the lamina gap. Pass, prediction and falsifier are unchanged; the photoreceptor-set prediction is withdrawn for seed 2.
+
+### Results S4b fit, 14 October, 00:21 (written before any held-out or 15/40 mV look; F-BYPASS-7 pending the body run and PSP check)
+**s\* = none. FALSIFIED:** no scale in 1-25 is admissible. The verdict is from `s4b_score.py fit` (`runs/s13/bypass/s4b/fit.json`), 25 mV members only.
+- **Checks passed first.**
+  - `gpu_check.json`: input gains bit-identical; 957 = 957 spikes and 605 = 605 leg-MN spikes; exact over 3000 steps.
+  - Baseline: the s=1 / 25 mV GPU member's pool_rate equals the CPU harness `s2_DNg100_25mv_traces.npz` exactly (2158 = 2158 spikes, L1 difference 0). The body does not feed back in this harness.
+- **Silent at rest:** holds at every s (intermediate and fast are 0 Hz pre-drive).
+- **Rates** (class mean in 500-1300 ms; target slow 60 / intermediate 10 / fast 1 Hz):
+  - Slow sits at 21-23 Hz at every s. That is the tonic, drive-independent tibia-flexor line (23 Hz pre-drive too).
+  - Intermediate rises from 0 Hz at s ≤ 2 to 5.8 Hz at s 25. Fast rises from 0 Hz to 4.4 Hz.
+  - Within ×3 of target only at s 16 and 25; lowest E_rate 1.50 at s 25.
+- **Rhythm fails at every s:**
+  - Transfer-pass pools: 0 at s ≤ 2, 4-6 at s 3-4, 13-14 at s 12-25.
+  - **No antagonist pair at any s.** The candidate pairs fire together. lh sternal anterior vs posterior rotator: r0 from +0.03 to +0.42 (lagged peak ≤ 0.48). lf pleural remotor vs promotor: r0 from +0.37 to +0.82.
+  - Activity stops at drive-off (post/pre 0.94-1.13). There is no runaway at any s.
+- **Viewed:** `docs/media/s13_bypass_s4b_rasters_25mv.png` (s 1, 4, 12, 25). A ~12 Hz rhythm reaches lf, rf and lh pools from s ≥ 4 and is clear at s 12-25. It is one co-active burst per cycle; nothing alternates with it.
+- **Reading (falsifier as pre-registered):** the scale alone cannot carry the core's rhythm to the MNs as alternation. Raising MN gain only makes the existing in-phase volley visible in more pools. The stance antagonists have no rhythmic inhibition (I1 silent, F-BYPASS-3/4). The break is the core's burst output and I1, which are unfitted and have no measured range. Ben's list (E1/E2 burst recording; unitary premotor→MN PSP) stands.
+- **Not spent:** the recruitment order stays held out. The pre-registration spends it at s\* only, and there is no s\*. 15 and 40 mV members are not looked at.
+- **Nothing adopted.** `synaptic_input_scale` stays neutral 1.
+- **Pending (diagnostic only):**
+  - one CPU body run at s 25, the best-rate arm, to view frames;
+  - the Director's PSP check: the model's unitary premotor→leg-MN PSP at s 1/16/25 (`scripts/probes/s4b_unitary_psp.py`) against measured insect unitary PSPs.
+
+### Results S4b, diagnostics after the fit, 14 October, 00:33 (F-BYPASS-7; nothing adopted)
+- **Body run at s 25, 25 mV** (best-rate arm, not s\*; `runs/s13/bypass/s4b/body/`, backhouse, 228 s). Its pool_rate equals the GPU s25/25 mV member exactly (5375 = 5375 spikes, L1 0), so GPU = harness at a non-unity scale too.
+  - The S2 harness scorer says "passes". That comes only from left-right mirror pools (r −0.32 to −0.55). Every within-leg antagonist r is positive or missing (+0.23 to +0.58), so this is not the pre-registered S4b criterion.
+  - **Viewed** (`docs/media/s13_bypass_s4b_frames.png`, s=1 top, s=25 bottom): the thorax lies on the floor in both rows (S1's body block). At s=25 the legs splay sideways and shift between frames (joint SD up to 17°), with no stance and no stepping cycle. Wings open as at s=1.
+- **PSP plausibility check (Director's held note).** `scripts/probes/s4b_unitary_psp.py`; `runs/s13/bypass/s4b/psp/unitary_psp.json`; 24 cholinergic premotor cells spread over connection size, 126 pairs.
+  - Method: one forced premotor spike, minus an unkicked copy.
+  - The peak comes at 10.5 ms (monosynaptic) and scales linearly with s (measured/s1 ratio 16.0 and 24.9).
+  - Model PSP at a leg MN (derived from the model):
+
+    | s | mV per synapse | median connection (12 syn) | q90 connection (54 syn) | sampled pairs where one premotor spike fires the MN |
+    |---|---|---|---|---|
+    | 1 | 0.021 (q10-q90 0.009-0.035) | 0.25 mV | 1.1 mV | 0/126 |
+    | 16 | 0.34 | 4.1 mV | 18 mV | 52/126 (41%) |
+    | 25 | 0.53 | 6.4 mV | 29 mV | 68/126 (54%) |
+
+  - Measured comparison (`docs/research/s13_s4b_unitary_psp.md`; Sonnet, unchecked row by row; no adult premotor→leg-MN unitary PSP exists):
+    - Drosophila central unitary PSPs are 0.4-10 mV per spike, mostly 1-7. Examples: ORN→PN ~5; PN→LHN 0.4-6.6 (Liu et al. 2022); PN→KC 1.4 ± 0.8 (Turner 2008); larval premotor A31k→aCC −2.8 ± 0.5 (Giachello 2022).
+    - Locust nonspiking IN→leg MN reaches up to ~5 mV; locust FETi→flexor at 12-24 mV is a MN→MN outlier.
+    - mV per synapse is ~0.1-0.3 (derived) in small, high-Rin central cells (KC Rin >10 GΩ). Leg MNs are 150-700 MΩ (Azevedo 2020), so they are expected at or below that band (inferred).
+  - **Verdict.** s 1 is consistent: low per synapse, as a leaky MN should be, and strong connections reach 1-5 mV. **s 16-25, the only scales with rates within ×3, are not consistent:**
+    - per synapse 0.34-0.53 mV, above the small-cell band;
+    - strong connections at 18-29 mV, beyond every measured interneuron→MN value;
+    - a single premotor spike fires about half the sampled MNs.
+  - So a rate-matching scale would be compensating for something else. In this harness the premotor layer is nearly silent: 0.13 Hz mean over 5314 cells during the drive, with the core giving one spike per cycle (F-BYPASS-4/5). That is the missing burst output.
+  - Proposed evidence bound, if the scale is ever refitted: s ≤ ~14 (0.3 mV per synapse). This is inferred, from the unchecked table, and replaces the guessed 25. Not adopted.
+- **Held-out recruitment order: NOT spent.** There is no s\*, and the pre-registration spends it at s\* only. 15 and 40 mV members were not looked at.
+
+### Pre-registration X1: cross-connectome control of the E2→I1 deficit (14 October, 00:39, before any count extraction beyond F-BYPASS-3 or any run)
+DIAGNOSTIC, forced drive; Director brief (14 Oct, after S4b). No fitting, no new switch, nothing adopted. Question: is I1's silence (F-BYPASS-3/4) a property of this animal's counts, and if so is the deficit reconstruction or individual variation?
+- **Simulation (our neuron model, everything identical except counts).** A wrapper replaces `connectome.load_tables` edges before `connectome.build`, so every mechanism, threshold, sign (from the male-CNS cell), the `min_synapses` 5 cut and m10f0 apply unchanged. Counts come from MANC (Pugliese's full-MANC matrix `W_20260522_allSynapses`, checked first against their T1L minicircuit, E2→I1 = 71).
+  - **M0:** male CNS as is (re-run in the same batch).
+  - **Xc (core swap):** cells of types DNg100, IN17A001 (E1), INXXX466 (E2), IN16B036 (I1), IN19A007, IN19A004, IN19A002 with a one-to-one `mancBodyid`; every edge between two of them takes the MANC count of the matched pair (edges absent in MANC are removed, MANC-only edges added).
+  - **Xv (VNC swap):** the same rule for every VNC-set cell (superclass vnc_*, descending, ascending, as in the S2 harness) with a one-to-one `mancBodyid`. Edges with an unmatched endpoint keep male-CNS counts.
+  - Each arm × DNg100 15/25/40 mV, seed 12, brain and senses off: `bypass_s3_chain.py` (core cells, 900 ms) and `bypass_s2_descending.py` (MN pools, body tethered, 1500 ms). Backhouse, done-files.
+- **Readouts (scored per arm, any drive).**
+  - *I1 recruited:* T1L I1 fires on ≥ 50% of core cycles during drive (rate ≥ 0.5 × E1 cycle frequency). All six neuromeres reported.
+  - *Alternation:* S4b's admissibility criterion unchanged (two antagonist pools of one leg both transfer-pass, band 7-16 Hz; r ≤ −0.3 at zero lag or lagged peak 10-30 ms ≥ 0.5; post-drive leg-MN rate ≤ 1.5× pre-drive), then viewed on rasters.
+- **Interpretation, fixed now.**
+  - Xc or Xv alternates and M0 doesn't → the male-CNS counts are the break; the audit below says which kind.
+  - I1 recruited under a swap but no alternation → the E2→I1 deficit explains I1's silence but not the failed transfer.
+  - Neither → the male-CNS counts are not the break; our spiking model can't run this circuit on either animal's wiring (the threshold/efficacy/burst question, Ben's list).
+  - **Prediction (mine, before running):** the last. Pugliese's own LIF on MANC gets I1 to one spike per cycle and 1 of 25 MNs bursting at 0.275 mV per synapse (F-BYPASS-3); ours is 0.157 mV. Expect I1 at most ~1 spike per cycle at 40 mV under Xc, and no antagonist pair in any arm.
+- **Count audit (descriptive; no simulation).** Per leg neuromere and side, the core edges in male CNS, MANC, BANC and FANC (Pugliese's T1 extracts; BANC/FANC matched through their MANC type labels).
+  - Normalisation: the median male-CNS/MANC ratio over matched VNC edges with ≥ 10 MANC synapses (dataset-wide detection and completeness difference).
+  - *Outlier call:* the normalised E2→I1 log ratio lies outside the 5-95% band of matched edges of similar MANC size (30-150 synapses).
+  - *Reconstruction indicators:* I1's and E2's status labels; I1's total postsynapses and the fraction of its input from Traced bodies, against MANC's I1; whether the deficit is specific to E2→I1 or shared by all of I1's inputs (whole-cell under-reconstruction).
+  - *Individual-variation indicators:* the left-right and T1/T2/T3 spread of E2→I1 inside each animal, and where BANC/FANC fall. If the other animals sit with MANC and the male CNS alone is low, the deficit is male-CNS-specific (reconstruction or this individual; counts alone can't separate those two, and the report will say so). If the animals spread across the range, it is individual variation, and under the per-value bar both counts are admissible.
+
+### X1 count audit result and simulation launch (14 October, 00:45; F-XCONN-1)
+- Count audit as pre-registered: T1L E2→I1 is **not an outlier** on the pre-registered normaliser (0.538, matched edges ≥ 10 MANC synapses; normalised log ratio ≈ 0). On the secondary normaliser (edges in both, 0.875), it is low. The deficit is male-CNS T1-wide (per-cell matched-input ratio T1 0.58, T2 0.69, T3 0.82) and whole-cell for I1 (all of I1's T1 inputs 0.34-0.38× MANC's). BANC sits with MANC. Reading: male-CNS-specific, more likely reconstruction than individual variation (inferred). Detail in F-XCONN-1.
+- Simulation launched on backhouse at 00:43 exactly as pre-registered (`runs/s13/xconn/run.sh`, 18 runs, done-files). Nothing scored yet.
+- Wrapper fix at 00:46, before any swapped run started (the M0 chain batch was still running): the swap set is now restricted to cells whose MANC body is in the MANC table. Before the fix, 74 matched cells outside it would have lost their within-set edges under Xv. Checked on the Mac: Xc swaps 36 cells (182 male-CNS edges, 17,774 synapses → 199 MANC edges, 20,652), and T1L E2→I1 becomes 71, I1→E2 172, E1→E2 539.
+
+### Results X1 simulation (14 October, 02:21; F-XCONN-2; nothing adopted)
+Scored as pre-registered, before viewing: I1 not recruited in any arm or drive (T1L Vmax ≤ −47.5 mV against −45). S4b alternation pass fails in all 9 runs (0 transfer-pass pools, no antagonist pair). Viewed `docs/media/s13_xconn_rasters_{25,40}mv.png`: arms indistinguishable at the MN layer. Interpretation branch "neither": the male-CNS counts are not the break. F-XCONN-1's T1 undercount stands as a dataset finding; no change to the model's counts (MANC substitution was a control, not a candidate). Rule 16 noted (Director, 14 Oct): from the next backhouse launch, cap OMP/MKL/OPENBLAS/JAX threads at 4 per job and check `uptime` first; X1 was launched before the rule.

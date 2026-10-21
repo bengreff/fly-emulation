@@ -1304,3 +1304,73 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
 - **Size check with compartments** (`flyvis_pair_check.py --ct1`; `docs/media/s14_fly2_flyvis_pairs_ct1.{png,csv,json}`, figure viewed). 24 of the 26 CT1 pairs have edges. C3→CT1(M10) and CT1(M10)→C3 have none at 5 synapses. Gains per post cell: CT1→T4/T5 −0.12 to −0.62 mV/mV (shared scale −0.05 to −0.11); T4/T5/Mi1/Tm1/Tm9→CT1 +0.03 to +0.25. The largest full-range response is 8.9 mV (CT1(Lo1)→T5d), so none is flagged. No measured CT1 PSP range was found; **unchecked**, not passed.
 - **Smoke** (m9c + v0r + optic_lobe_flyvis + pair strengths + compartments, `candidates_s13_v0r.csv`, 100 ms, Mac). It builds in 10 s with 3,400 CT1 rows, all graded and none spiking presynaptic. No NaN; at most 91 spikes per step. CT1 voltages run −57.7 to −41.4 mV (rest median −52.0). Tests: `tests/test_ct1_compartments.py` (3) and `test_flyvis_pairs.py`, `test_unitary_psp.py`, `test_model_data.py` pass. Nothing adopted.
 - **Also found and fixed:** 9423fd6 had left `src/flyemu/gpu/batched.py` failing to compile (an indent in the refusal block); fixed in 609b238. The Mac battery skips `test_gpu_batched.py` without JAX. The running T4/T5 test does not import it.
+
+### F-BYPASS-7: S4b is falsified. No premotor→leg-MN scale in 1-25 carries the core's rhythm as alternation, and the scales that match MN rates imply implausibly large unitary PSPs (s13, 14 Oct 00:21-00:33; DIAGNOSTIC, forced drive; no adoption)
+- **Runs:** 10 scales × 3 drives on the backhouse GPU (`runs/s13/bypass/s4b/`).
+  - GPU check exact: bit-identical gains, 957 = 957 spikes.
+  - The s1/25 mV member equals the CPU harness exactly; so does s25/25 mV with the body.
+- **Fit** (25 mV only; `s4b_score.py fit`, `fit.json`): **s\* = none.**
+  - Intermediate and fast are silent at rest at every s.
+  - Rates come within ×3 only at s 16-25 (intermediate 3.8-5.8 Hz, fast 2.3-4.4 Hz). Slow stays at the tonic 21-23 Hz tibia-flexor line at every s.
+  - Transfer-pass pools rise from 0 to 14, but there is **no antagonist pair at any s**. The candidate pairs fire in phase (r0 +0.03 to +0.82).
+- **Viewed:**
+  - Rasters `docs/media/s13_bypass_s4b_rasters_25mv.png`: one co-active ~12 Hz volley per cycle, clear at s ≥ 12, which stops at drive-off.
+  - Frames `docs/media/s13_bypass_s4b_frames.png`: the thorax is on the floor; at s 25 the legs splay without stepping.
+- **PSP check:** `s4b_unitary_psp.py`; table in DECISIONS 14 Oct 00:33; literature `docs/research/s13_s4b_unitary_psp.md` (Sonnet, unchecked).
+  - At s 1: 0.021 mV per synapse; a median connection gives 0.25 mV and a q90 connection 1.1 mV. Consistent with measured insect values, at the leaky end.
+  - At s 16-25: 0.34-0.53 mV per synapse; a q90 connection gives 18-29 mV; one premotor spike fires 41-54% of sampled MNs. Not consistent: above the 0.1-0.3 mV per synapse of small high-Rin Drosophila central cells, and above every measured interneuron→MN PSP (≤ ~5 mV, locust; larval −2.8 mV).
+- **Reading:**
+  - The MN-side gain is not the break. A biologically sized scale gives near-silent MNs.
+  - A rate-matching scale compensates for a premotor layer that is nearly silent: 0.13 Hz mean during drive, with the core giving one spike per cycle.
+  - Alternation is absent at every gain, because the stance antagonists get no rhythmic inhibition (I1 silent, F-BYPASS-3/4).
+  - The break is the core's burst output and I1's recruitment. Neither has a measured range yet (Ben's list: an E1/E2 burst recording; a unitary premotor→MN PSP).
+- **Held-out recruitment order: still unspent.**
+
+### F-XCONN-1: the male-CNS E2→I1 deficit is part of a prothoracic (T1) input deficit against MANC, not an E2→I1-specific gap; BANC sits between, nearer MANC (s13, 14 Oct 00:43; count audit, no simulation, no fitting)
+- **Test** (pre-registered, DECISIONS 14 Oct 00:39). `scripts/probes/xconn_counts.py`. MANC counts from Pugliese's full-MANC matrix (`W_20260522_allSynapses`, rows pre; checked: their T1L minicircuit gives E2→I1 71, I1→E2 −172, and the full matrix matches). Matched through the dataset's `mancBodyid`, one-to-one only: 17,645 VNC-set cells; 4.16M MANC edges among them. BANC from Pugliese's T1 premotor extract (2026-02-17; it uses the male-CNS type names). FANC's extract labels interneurons by hemilineage only, so E2 and I1 can't be identified there; it is not used. Output `runs/s13/xconn/audit.json` (Mac, gitignored).
+- **Core edges, synapses** (T1L / T1R; male CNS · MANC · BANC):
+  - E2→I1: 38/27 · 71/60 · 50/53. In T2 the male CNS has 121/129 against MANC's 192/202; in T3, 65/65 against 72 (T3R).
+  - E1→E2: 465/328 · 539/456 · 336/190. I1→E1: 526/439 · 531/580 · 379/357.
+  - Relative to its own core (E2→I1 ÷ I1→E1): male CNS 0.07/0.06, MANC 0.13/0.10, BANC 0.13/0.15. So BANC sits with MANC, and the male CNS is about half.
+- **Dataset-wide ratio.**
+  - Pre-registered normaliser: the median male-CNS/MANC ratio over matched edges with ≥ 10 MANC synapses is 0.538 (562k edges). It is pulled down by matched edges absent in the male CNS.
+  - On that normaliser, T1L E2→I1 is typical: normalised log ratio ≈ 0, inside the 5-95% band for 30-150-synapse edges (−3.2 to +1.0). **So the outlier call is "not an outlier".**
+  - Secondary, not pre-registered: over edges present in both (≥ 10 each) the ratio is 0.875 (288k edges). On that, T1 E2→I1 (0.54, 0.45) is low.
+- **Where the deficit sits** (per-cell matched-input ratio, male CNS/MANC, cells with ≥ 500 MANC matched inputs; median, 5-95%):
+  - T1 0.58 (0.22-0.95; 3,002 cells); T2 0.69; T3 0.82; A1-A3 0.86-1.02.
+  - **The whole male-CNS prothoracic neuromere has less matched input than MANC's, about 0.7× of T3's ratio.** That fits a reconstruction or synapse-detection difference across the T1 volume better than biology of one connection (inferred; counts can't prove it).
+  - I1 sits low inside its neuromere: T1L 0.40 (20th percentile of T1 cells), T1R 0.33 (12th), T2 0.71/0.54, T3 0.81/0.84 (median).
+- **I1 totals.**
+  - Male-CNS I1 has 1,176 (T1L) and 836 (T1R) postsynapses against 2,110-2,509 in its own T2/T3 homologs. MANC's I1 is uniform across segments: 2,489-2,932 inputs from neurons.
+  - 96% of the male-CNS T1L I1's postsynapses come from Traced bodies (T1R 95%). So the input it lacks isn't sitting on orphan fragments. It's absent: missing branches or undetected synapses.
+  - Across I1's own inputs with ≥ 10 MANC synapses, the male-CNS T1 counts are 0.38× (T1L) and 0.34× (T1R) of MANC's. That is whole-cell, not E2-specific.
+- **Proofreading status.** All 36 core interneurons (E1, E2, I1, A007, A004, A002 in six neuromeres) are Traced, with statusLabel "Reviewed". Both DNg100 are "Prelim Roughly traced". There is no per-connection proofreading flag in the dataset.
+- **Reading** (as pre-registered):
+  - The other animal (BANC) sits with MANC on the within-animal ratio. The male CNS alone is low, and it's low across its T1 neuromere and across all of I1's inputs.
+  - So the deficit is male-CNS-specific. The neuromere-wide pattern makes **reconstruction** (T1 completeness or synapse detection) the more likely reading. **Individual variation** isn't excluded. Labelled inferred.
+  - Under the per-value bar, the male-CNS T1 counts are not obviously "some fly's" values. They are plausibly an undercount. MANC and BANC would both be admissible.
+  - The simulation half of X1 (does our model recruit I1 and alternate on MANC counts?) is running on backhouse; see HANDOFF.
+
+### F-XCONN-2: on MANC's counts our model still doesn't recruit I1 or alternate. The male-CNS counts are not the break (s13, 14 Oct 02:21; DIAGNOSTIC, forced drive; no fitting, nothing adopted)
+- **Runs** (pre-registered, DECISIONS 14 Oct 00:39; `xconn_swap.py`, backhouse, 18 runs, all exit 0).
+  - Three arms: M0 (male CNS), Xc (MANC counts among the 36 core cells: 182 edges with 17,774 synapses → 199 edges with 20,652) and Xv (MANC counts among 17,645 matched VNC-set cells: 3.05M edges, 20.0M synapses → 4.16M edges, 25.1M).
+  - Each × DNg100 15/25/40 mV, chain and MN harness.
+  - The swap reached the model. T1L model weights went E2→I1 6.88 → 12.86 mV (×1.87 = 71/38), E1→I1 1.09 → 3.08, E1→E2 70.3 → 81.5, A007→E1 −50 → −59, A004→I1 −4.2 → −7.3.
+  - A002→I1 in T1L stays −28.3 mV, because that A002 has no one-to-one MANC match. In the other neuromeres A002 was swapped, and I1 failed there too.
+  - Outputs `runs/s13/xconn/{chain,s2,s2_score.json}` (Mac, gitignored).
+- **I1 recruited (≥ 0.5 × the E1 cycle frequency, T1L): no, in any arm at any drive.**
+  - T1L I1 Vmax against a −45 mV threshold: M0 −49.6/−48.4 mV (25/40 mV drive); Xc −48.4/−47.5; Xv −52.0/−48.5.
+  - In all six neuromeres, the only I1 spikes are stray ones: T2R 1.4 Hz (Xc 25), T2L 1.4 Hz (Xv 25), T2R 2.9 Hz (Xv 40), each against E1 cycles of 4-22 Hz.
+- **Alternation (S4b's admissibility pass, `s4b_score.rhythm`): fail in all 9 runs.**
+  - 0 transfer-pass pools and no antagonist pair. Post-drive ÷ pre-drive 0.87-0.98.
+  - The only active antagonist pair anywhere is Xv 40 mV, right-hind femur-tibia ±1, at r −0.21. It doesn't pass.
+- **Viewed** (`docs/media/s13_xconn_rasters_{25,40}mv.png`; panels M0, Xc, Xv, then T1L oscillator V; titles say "no overrides" because the swap is outside the registry):
+  - MN rasters: the three arms are indistinguishable. In each, the synchronous tonic pulse train from before the drive dominates, with sparse scattered spikes after onset and no alternation.
+  - Oscillator: under M0 and Xc, E1, E2 and A007 fire once per cycle (Xc slower, 8.8 Hz against 12.3 Hz at 25 mV, with E1 hyperpolarised more deeply by the stronger A007→E1). I1 gets one 2-4 mV bump per cycle and never crosses threshold.
+  - Under Xv at 25 mV the T1L core falls silent after about 400 ms: E2 and A007 stop, and E1 sits just below threshold.
+- **Reading (as pre-registered: "neither"):**
+  - Doubling E2→I1 to MANC's count doesn't recruit I1 in our model. Neither does swapping the whole matched VNC wiring.
+  - So the male-CNS T1 undercount (F-XCONN-1) is real but is not what stops the circuit. The break is in our spiking model's handling of this circuit on either animal's wiring: single-spike core output, and an I1 that reaches −47.5 mV at best behind strong GABA input.
+  - This matches F-BYPASS-3: Pugliese's own LIF, at 1.75× our per-synapse efficacy, gets I1 to only one spike per cycle on MANC.
+  - It points at the questions on Ben's list: whether I1 spikes or passes graded signals (16B has never been recorded); unitary PSP size; E1/E2 burst output.
+  - The prediction on record was right; if anything it erred toward success.
