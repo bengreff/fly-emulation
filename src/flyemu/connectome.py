@@ -164,6 +164,57 @@ def ct1_compartments(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> t
     return neurons, e
 
 
+T1_FILL = CACHE.parent / "params" / "t1_fill.csv.gz"
+
+
+def _side(s) -> str:
+    s = str(s).strip().upper()
+    return "L" if s.startswith("L") else "R" if s.startswith("R") else "?"
+
+
+def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFrame:
+    """s20 (fly2, T1F; DECISIONS 20 Oct 22:02): fill the male-CNS prothoracic input deficit from MANC and BANC.
+
+    The male-CNS T1 neuromere has 0.58 of MANC's per-cell matched input (T2 0.69, T3 0.82; BANC sits with MANC;
+    F-XCONN-1, read as a reconstruction undercount, inferred). Per (presynaptic type A, T1 post type B, post side)
+    the table holds factor = median(male CNS, MANC, BANC) / male CNS of the synapses per B cell from type A, where
+    the male CNS is below that median and MANC has the pair (scripts/connectome/t1_fill_table.py, sources pinned
+    in t1_fill.json). Each kept edge from an A cell onto a T1 B cell on that side is multiplied by its factor.
+    Validity: T1 post cells only; no edge is added or removed (edges below the synapse cut stay out even where the
+    filled count would cross it), no sign changes; assumes per-cell input by type is conserved across animals.
+    """
+    t1 = neurons.somaNeuromere.astype(str).eq("T1") & neurons.type.notna()
+    if not reg.require(
+            "connectome:T1", "fill_from_other_animals", units="boolean",
+            model_use="scale male-CNS edges onto T1 cells toward the cross-animal median (MANC, BANC) by "
+                      "presynaptic type, post type and side; never adds a partner",
+            subsystem="connectivity", instances=int(t1.sum()), minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: male-CNS counts as reconstructed",
+            uncertainty="the T1 deficit is read as reconstruction (F-XCONN-1, inferred); pair counts vary "
+                        "between animals; the fill-only rule raises T1 above the median of totals") \
+            or not T1_FILL.exists():
+        return e
+    f = pd.read_csv(T1_FILL, comment="#").set_index(["pre_type", "post_type", "post_side"]).factor
+    ty = neurons.set_index("bodyId").type
+    post = neurons[t1].set_index("bodyId")
+    on = e.post.isin(post.index).to_numpy()
+    k = pd.MultiIndex.from_arrays([e.pre[on].map(ty).to_numpy(), e.post[on].map(post.type).to_numpy(),
+                                   e.post[on].map(post.somaSide.map(_side)).to_numpy()])
+    fac = f.reindex(k).fillna(1.0).to_numpy()
+    w = e.weight.to_numpy(dtype=np.float32, copy=True)
+    before = float(w[on].sum())
+    w[on] *= fac.astype(np.float32)
+    e = e.assign(weight=w)
+    reg.provide("connectome:T1", "fill_factor", float(np.median(fac[fac > 1])) if (fac > 1).any() else 1.0,
+                units="dimensionless", model_use="median factor over the filled edges onto T1 cells",
+                status=Status.INFERRED, evidence="cross-animal median of synapses per post cell by type: male-cns "
+                "v1.0, MANC (Pugliese_cpg_2025 W_20260522), BANC (W_20260217 T1 premotor extract); "
+                "data/params/t1_fill.csv.gz", subsystem="connectivity", instances=int((fac > 1).sum()),
+                uncertainty=f"{int((fac > 1).sum())} of {int(on.sum())} kept edges onto T1 cells scaled; T1 "
+                            f"synapses {before:.0f} -> {float(w[on].sum()):.0f}")
+    return e
+
+
 @lru_cache(maxsize=1)
 def load_tables() -> tuple[pd.DataFrame, pd.DataFrame]:
     neurons = pd.read_parquet(CACHE / "male_cns_neurons.parquet")
@@ -272,6 +323,7 @@ def build(
             neurons.loc[m, "predictedNt"] = r.nt
     e = edges[edges.weight >= min_synapses]
     neurons, e = ct1_compartments(reg, neurons, e)   # s14 (fly2); unchanged at neutral
+    e = t1_fill(reg, neurons, e)                     # s20 (fly2, T1F); unchanged at neutral
     pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
     pre = pos.reindex(e.pre.values).to_numpy()
     post = pos.reindex(e.post.values).to_numpy()

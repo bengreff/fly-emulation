@@ -1,0 +1,64 @@
+{
+ "rule": "DECISIONS 20 Oct 22:02 (T1F)",
+ "basis": "inferred (cross-animal)",
+ "manc": {
+  "W": "manc full vnc data/W_20260522_allSynapses.npz",
+  "W_sha256": "3cd637b2397236aec4c8d46883b753335f73e3acae508f9c082f39bd123e0b84",
+  "table": "manc full vnc data/wTable_20260522_allSynapses.feather",
+  "table_sha256": "a013ec9910d5377bf8b90b9abdd6411bf29f934141228be3d677962a047b7522",
+  "n_cells": 23628,
+  "n_t1_typed_post": 4475,
+  "n_pairs": 699266,
+  "neuromere_values": {
+   "T2": 5025,
+   "T1": 4493,
+   "T3": 3932,
+   "A1": 775,
+   "A2": 285,
+   "A3": 237,
+   "A4": 204,
+   "A8": 195,
+   "A5": 178,
+   "A6": 169,
+   "A9": 157,
+   "A7": 110,
+   "A10": 23
+  },
+  "side_values": {
+   "RHS": 7743,
+   "LHS": 7721,
+   "Midline": 318
+  }
+ },
+ "banc": {
+  "W": "banc t1 premotor/W_20260217.npz",
+  "W_sha256": "83197529fa336b5f9ce400cf689f299fa3e8f6f5379947ae7df5ec004869141f",
+  "table": "banc t1 premotor/wTable_20260217_fullData_consistentColumns.csv",
+  "table_sha256": "6f87bf62227e160754523418bfbac35fc8971a90e4ed54574bf769b08332e285",
+  "n_post_groups_extract": 2782,
+  "n_post_groups_count_match": 830
+ },
+ "mcns": {
+  "neurons_sha256": "1713518538bd4920b9ef533526ce792f33ca21652bef330fa80e53cf4bdc65d7",
+  "edges_sha256": "4c7cf33f6080cba73fa30bd2c69b6726cd5d9778902f6353e6696bcf886dcbd0"
+ },
+ "pairs_mcns": 475242,
+ "pairs_with_manc": 251883,
+ "pairs_with_banc": 69538,
+ "pairs_filled": 121660,
+ "pairs_filled_with_banc": 13643,
+ "t1_post_groups": 2545,
+ "t1_post_groups_in_manc": 2247,
+ "t1_post_groups_same_count_in_manc": 1884,
+ "t1_post_cells": 4220,
+ "t1_post_cells_type_in_manc": 3803,
+ "syn_mcns_t1_typed": 4670221,
+ "factor_quantiles": {
+  "0.1": 1.125,
+  "0.5": 1.5,
+  "0.9": 2.865,
+  "0.99": 6.5
+ },
+ "factor_max": 158.0,
+ "table_sha256": "e12aa7015b9a122063f410b160403ae678a79b6de52fd8daaa3ccf050ef12612"
+}
