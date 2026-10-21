@@ -3299,3 +3299,59 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - Only the part inside the volume is counted. The axon and part of the PSI contact continue into the nerve (F-GJ-5).
 - Skeleton radii are approximate; the membrane is uniform; the cell has one isopotential axon segment.
 - The axon base is the conservative choice. It gives the shortest path, so the highest ρ.
+
+### fly2 N30 option B results and the doublet diagnosis (21 Oct, 00:18; F-GJ-7)
+**Registration:** DECISIONS 21 Oct 00:07.
+
+**Geometry** (`scripts/connectome/mn_axon_geometry.py`; `data/derived/mn_axon_geometry.csv`/`.json`; skeletons and PSI synapses saved under `data/derived/mn_axon_geometry_skel/`; figure `docs/media/s21_fly2_mn5_geometry.png`, viewed):
+
+| MN5 | PSI synapses | Base → median contact | d_equiv | q | ρ at Ri 200 (102-311) | ρ* |
+|---|---|---|---|---|---|---|
+| L (801970) | 17 | 76 µm | 1.96 µm | 0.156 | 2.03 (1.31-3.98) | 3.51 |
+| R (801295) | 26 | 23 µm | 1.78 µm | 0.052 | 5.57 (3.58-10.9) | 4.03 |
+| **Class mean** | | 49 µm | 1.87 µm | **0.104** | **3.80 (2.44-7.45)** | **3.78** |
+
+- **Verdict: UNDECIDED.** The Ri range spans ρ*. The class value sits 0.5% above the boundary, and a 1.00× radius change crosses it, so any shrinkage correction (real radii larger) would push it to FAIL. The two MN5s of one fly fall on opposite sides.
+- **Prediction met.** "PASS or UNDECIDED, ρ about 3" came out UNDECIDED at 3.80; the falsifier (ρ > 4) was not triggered. q came out 0.104, inside the predicted 0.03-0.10 only at its top edge (outside by 0.004).
+- **Base.** The 1% sensitivity puts the base inside the contact field for both cells (only 8-18% of PSI synapses distal), so the 5% rule is the meaningful one. The 20% rule finds no branch point for MN5 L (the arbor splits into small branches).
+- **DLMn c-f** (reported, not used): the rule gives a value for 6 of the 8 cells. ρ at Ri 200 is 2.41-35.98 and q is 0.003-0.147.
+  - In 800890 and 803013, the PSI contacts sit on more than one branch, so the median contact is not distal to the base at any FRAC. The rule raises an error and the cell gets no row.
+  - In 801998, the 5% base lands inside the contact field: only 2.5% of the PSI synapses are distal to it (q 0.003).
+  - So the base rule is fragile wherever the PSI contacts spread over branches. In the two MN5s, all PSI synapses are distal to the base.
+- **Table.** As registered for UNDECIDED, `two_compartment_classes.csv` now has q 0.104 (0.052-0.156) and ρ 3.80 (1.31-10.9), labelled "derived from EM geometry, measured Rin, fitted Ri". The `parameters.csv` rows were updated to match. The mechanism tests pin the s20 pair by override.
+
+**Consistency runs in the network** (seed 1, gaps on, 20 trials; Ryglewski 2014 is spent, so none of these is scored; `scripts/probes/n30_optB_runs.sh`, outputs `runs/s21/optB_*.json`):
+
+| Values | DLMn a, b follow | Spikes per GF | Muscle latency |
+|---|---|---|---|
+| Class (0.104, 3.80) | 19/20 | 1 | 3.20 ms |
+| MN5 L (0.156, 2.03) | 20/20 | 1 | 2.80 ms |
+| MN5 R (0.052, 5.57) | 0/20 | 0 | |
+| s20 guessed (0.07, 1.6), F-GJ-6 | 20/20 | 2 | 2.20 ms |
+
+So at measured geometry the doublet goes away, but the spike comes late (2.8-3.2 ms against Ryglewski's 1.43-2.27) or not at all. The axon reaches threshold only near its peak.
+
+**Doublet diagnosis** (`scripts/probes/n30_doublet_mechanism.py`, an exact replica of the lif.py pair update; figure `docs/media/s21_fly2_n30_doublet.png`, viewed). At the s20 values, when the 2 ms refractory period ends, the axon's target potential is 11.5 mV from the synaptic current and 0.11 mV from the soma, against the 7 mV threshold.
+- Cutting the soma→axon term keeps the doublet (second spike 3.3 ms instead of 3.2): **not ping-pong**.
+- Removing the synaptic current at the first spike leaves 1 spike: **the synaptic tail is the cause**. The reset to rest without an afterhyperpolarisation (AHP) lets it act.
+- The in-network second spike comes 3.2 ms after the first (spike steps 15, 47 in `gate_spiking`), as in the replica.
+- Any one of these removes it at the s20 values: refractory ≥ 3.0 ms, an AHP ≥ 7.5 mV below rest, tau_s ≤ 1.8 ms, or tau_m 4.4 ms.
+
+**Synaptic decay and tau_m across the derived values** (replica):
+- At tau_m 20, every decay in the Drosophila nicotinic range (1.1-4 ms; N29 table) gives exactly one spike, 0.1-0.9 ms after the EPSC starts, at the class values (R needs ≤ 3 ms). At the shared 5 ms the class gives none.
+- At tau_m 4.4 ms, the class and R values never fire at any decay.
+
+**The 4.4 ms tau_m is suspect.**
+- It is Rin × Cm (102 MΩ × 43 pF). The skeleton membrane is 24,650-25,840 µm², which is about 250 pF at 1 µF/cm², 6× the 43 pF.
+- The capacitance read from a soma transient in a cell this extended is likely space-clamp limited.
+- Rin × skeleton area gives Rm of about 25 kΩ·cm², inside the fitted Drosophila 8.3-26.4 (Gouwens & Wilson 2009), and tau_m of about 25 ms.
+- **Reading:** the DLMn tau_m blank stays open. The slow time constant of a step response (MEASUREMENT_LIST item 1) is the measurement that decides it. 4.4 ms is not applied as measured.
+
+**Decision:**
+- Nothing adopted.
+- The doublet is no longer the main blank: at measured geometry the cell fires once, but late.
+- **Next**, as its own registration: give the PSI→DLMn connection a nicotinic decay from measurement. It is the one candidate that fixes latency and spike count together at the derived values.
+  - Building it means letting an N29 decay row act on an axon edge and on a unitary-PSP edge; both are refused today.
+  - The value comes from a measurement: a PSI→MN5 EPSC or EPSP decay if the literature has one, otherwise the class bracket for adult nicotinic synapses.
+  - The test is held-out GF→DLM data (sealed by the literature agent, not read) at seed 2.
+- MN5 soma recording added to `docs/MEASUREMENT_LIST.md` (item 1: q, ρ, tau_m, threshold, AHP and refractory, the soma amplitude of the axon spike, EPSP decay).
