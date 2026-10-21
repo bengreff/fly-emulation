@@ -3640,7 +3640,7 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct): shape (
 - **Prediction (mine):** no pass. OA4 recruits I1 in some legs and raises the co-active flecks and the tonic MN rate. OA4M brings back the M0 tonic tibia-flexor line, stronger. The brain-off run is silent at OA2 and gives sparse tonic firing at OA4.
 - **Measurement for Ben's list:** the OA effect on adult VNC premotor and leg-MN rest, Rin and f-I. It would come from a whole-cell recording, as in Azevedo 2020, before and after bath OA (10 µM) or Tdc2 activation (`docs/MEASUREMENT_LIST.md` item 3).
 
-### s16 addendum: the s13 neuromodulation table checked row by row (21 October, 02:45; before any s16 row is written)
+### s16 addendum: the s13 neuromodulation table checked row by row (21 October, 02:31; before any s16 row is written)
 Sonnet check, `docs/research/s16_neuromod_rowcheck.csv` (63 rows): **32 CONFIRMED, 20 CORRECTED, 6 WRONG, 5 UNVERIFIABLE.** `s13_neuromodulation_effects.csv` is left unchanged as raw. Use it only through the row check.
 - **OA rows:**
   - s13_011 (Octβ1R EC50 ~0.03 µM, Balfanz 2005) and s13_014-018 are confirmed.

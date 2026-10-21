@@ -30,7 +30,7 @@
   3. Add the per-cell bound check.
   4. Copy `runs/s15/arms/run.sh` (rule 16 gate, done-files) to `runs/s16/oa/` on backhouse (`~/fly-m10f`; sync the code first).
   5. Score with `s14_score.py` unchanged, view rasters/frames/chain, then FINDINGS F-S16-1.
-- **Row check DONE** (DECISIONS 02:45, `docs/research/s16_neuromod_rowcheck.csv`): 32 confirmed, 20 corrected, 6 wrong, 5 unverifiable; no effect on s16. Use the s13 table only through the row check.
+- **Row check DONE** (DECISIONS 02:31, `docs/research/s16_neuromod_rowcheck.csv`): 32 confirmed, 20 corrected, 6 wrong, 5 unverifiable; no effect on s16. Use the s13 table only through the row check.
 - **Measurement list:** item 3 is the OA effect on adult VNC premotor/leg-MN rest, Rin and f-I.
 
 **s15b DONE: 0/12 pass (F-S15-2).** TM/TPM silenced the leg MNs through the soma-placed `spontaneous_drive` (0.24× at the spike zone), an arm-design confound. Runs are in Mac `runs/s15/arms/`. Nothing is running on backhouse.
