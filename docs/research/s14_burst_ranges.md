@@ -66,3 +66,17 @@ BK 7.87, Kv2 0.22, SK 0.025, NaP 0.015 x leak). With a +10 mV trigger:
 Reading: a spike-triggered ADP alone is positive feedback with no limit. A burst also needs something that ends
 it. Real ADPs and plateaus are conductances, so they saturate, and plateaus inactivate (Hancox & Pitman 1991:
 plateaus outlive the stimulus, then end).
+
+## Calibration result, saturating ADP with inactivation (rule v2, 20 Oct; measured on the model)
+
+The ADP now saturates at `adp_mv`, and with `adp_recovery_ms` > 0 each trigger uses up its availability. The
+ceiling is held inside the measured 20-25 mV. Of 105 triples (a ∈ {20, 22.5, 25} mV, tau 10-100 ms, recovery
+0-200 ms), 32 are admissible: 2-6 spikes, and the burst ends and stays ended.
+
+- **Rule selection (closest to 4 spikes; ties to the smaller a, tau, rec): 20 mV, 100 ms, 200 ms.** It gives
+  4 spikes over 92 ms at 33 Hz. Tau and rec are both at their upper bounds.
+- **The shortest admissible burst: 25 mV, 40 ms, 50 ms**, the smallest rec giving that burst. It gives 2 spikes
+  in 21 ms (47 Hz), the closest admissible burst to the cricket burst duration (4-6 spikes in about 10-20 ms).
+- Every admissible burst fires at 29-47 Hz, against the measured 160-380 Hz. This is the arm's validity limit.
+  The model cell can match the cricket spike count or the cricket burst duration, but not both.
+- NaP x 1.5-10 (arm B') still gives 1 spike at every scale, so it has no admissible value.

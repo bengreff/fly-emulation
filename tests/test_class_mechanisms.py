@@ -416,3 +416,28 @@ def test_s14_core_nap_scale_acts_only_on_the_core_types():
     assert np.allclose(g[4.0]["NaP"][:2], 4.0 * g[1.0]["NaP"][:2])
     assert np.array_equal(g[4.0]["NaP"][2:], g[1.0]["NaP"][2:])
     assert all(np.array_equal(g[4.0][k], g[1.0][k]) for k in g[1.0] if k != "NaP")
+
+
+def test_s14_adp_saturates_at_its_ceiling_and_inactivates_per_trigger():
+    """The ADP drive never exceeds adp_mv; with adp_recovery_ms > 0 a trigger uses up its availability, so a
+    second spike right after adds (almost) nothing; with 0 every spike refreshes the drive to the ceiling."""
+    import pandas as pd
+    from flyemu import lif
+    from flyemu.connectome import Connectome
+    n = 2
+    nrn = pd.DataFrame({"bodyId": -1 - np.arange(n), "type": "x", "predictedNt": "acetylcholine",
+                        "superclass": "x", "class": "x"})
+    conn = Connectome(nrn, np.zeros(n + 1, np.int64), np.zeros(0, np.int32), np.zeros(0, np.float32),
+                      np.zeros(n, np.float32), np.zeros(0, np.float32))
+    f = lambda v: np.full(n, v, np.float32)
+    p = lif.LIFParams(f(20.0), f(-52.0), f(-45.0), f(-52.0), f(0.0), 5.0, np.ones(n, np.int64), 0.0, True,
+                      graded=np.zeros(n, bool), adp_mv=f(10.0), tau_adp=f(50.0),
+                      adp_rec_ms=np.array([0.0, 100.0], np.float32))
+    net = lif.Network(conn, p, 0.1)
+    net.step(kick=(np.arange(n), 30.0))
+    assert np.allclose(net.adp, 10.0)
+    for _ in range(5):
+        net.step()
+    net.step(kick=(np.arange(n), 30.0))
+    assert net.adp[0] <= 10.0 + 1e-5 and net.adp[0] > 9.99
+    assert net.adp[1] < 10.0 * np.exp(-0.6 / 50.0) + 0.1
