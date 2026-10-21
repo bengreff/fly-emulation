@@ -179,9 +179,57 @@ def table(a) -> None:
     print(json.dumps({k: v for k, v in prov.items() if k != "manc"}, indent=1))
 
 
+ADD = REPO / "data" / "params" / "t1_add.csv.gz"
+ADD_PROV = REPO / "data" / "params" / "t1_add.json"
+
+
+def add(a) -> None:
+    """T1A (DECISIONS 20 Oct 22:44): keys with no male-CNS synapse that both MANC and count-matched BANC have."""
+    pug = Path(a.pug).expanduser()
+    mc, n_mcns = mcns_typepair()
+    nr = pd.read_parquet(CACHE / "male_cns_neurons.parquet")
+    nr = nr[(nr.status == "Traced") | nr.type.notna()]
+    n_pre = nr.type.value_counts().rename("n_pre_mcns")
+    ma = pd.read_parquet(OUT / "manc_t1_typepair.parquet")
+    bc, binfo = banc_typepair(pug, n_mcns)
+    j = (ma.rename(columns=dict(syn="syn_manc", n_conn="n_conn_manc", n_post="n_post_manc"))
+         .merge(bc.rename(columns=dict(syn="syn_banc", n_conn="n_conn_banc", n_post="n_post_banc")), on=KEY))
+    j = j[(j.n_conn_manc > 0) & (j.n_conn_banc > 0)]
+    j = j.merge(n_mcns.rename(columns=dict(n_post="n_post_mcns")), on=["post_type", "post_side"])
+    j = j.merge(n_pre, left_on="pre_type", right_index=True)
+    j = j.merge(mc[KEY].assign(in_mcns=True), on=KEY, how="left")
+    j = j[j.in_mcns.isna()].drop(columns="in_mcns")
+    for X in ("manc", "banc"):
+        j[f"x_{X}"] = j[f"syn_{X}"] / j[f"n_conn_{X}"]
+        j[f"c_{X}"] = j[f"n_conn_{X}"] / j[f"n_post_{X}"]
+    j["x_add"] = j[["x_manc", "x_banc"]].median(axis=1).round(3)
+    j["c_add"] = np.clip(np.rint(j[["c_manc", "c_banc"]].median(axis=1)), 1, j.n_pre_mcns).astype(int)
+    out = j[KEY + ["n_pre_mcns", "n_post_mcns", "x_manc", "c_manc", "x_banc", "c_banc", "x_add", "c_add"]]
+    out = out.sort_values(KEY).round(3)
+    with gzip.open(ADD, "wt") as f:
+        f.write("# T1A inferred T1 connections absent from the male CNS (fly2, DECISIONS 20 Oct 22:44). basis: "
+                "inferred (cross-connectome); partner identity within the type guessed (connectome.t1_fill). Rows: "
+                "(pre type, T1 post type, post side) with no male-CNS synapse, present in MANC (W_20260522) and "
+                "count-matched BANC (W_20260217); x = synapses per connected pair, c = A partners per B cell; "
+                "x_add, c_add = median of MANC and BANC. Built by scripts/connectome/t1_fill_table.py add\n")
+        out.to_csv(f, index=False)
+    syn = out.x_add * out.c_add * out.n_post_mcns
+    prov = dict(rule="DECISIONS 20 Oct 22:44 (T1A)", basis="inferred (cross-connectome)",
+                manc_typepair_sha256=sha256(OUT / "manc_t1_typepair.parquet"),
+                banc=dict(W_sha256=sha256(pug / BANC_W), table_sha256=sha256(pug / BANC_T), **binfo),
+                mcns=dict(neurons_sha256=sha256(CACHE / "male_cns_neurons.parquet"),
+                          edges_sha256=sha256(CACHE / "male_cns_edges.parquet")),
+                keys_manc_and_banc=int(len(ma.merge(bc, on=KEY))), keys_added=int(len(out)),
+                keys_added_x_ge_5=int((out.x_add >= 5).sum()), syn_added_any=int(syn.sum()),
+                syn_added_x_ge_5=int(syn[out.x_add >= 5].sum()), syn_mcns_t1_typed=int(mc.syn.sum()),
+                table_sha256=sha256(ADD))
+    ADD_PROV.write_text(json.dumps(prov, indent=1))
+    print(json.dumps({k: v for k, v in prov.items() if k not in ("banc", "mcns")}, indent=1))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("manc", "table"))
+    ap.add_argument("cmd", choices=("manc", "table", "add"))
     ap.add_argument("--pug", default="~/pugliese_cpg/data")
     a = ap.parse_args()
-    manc(a) if a.cmd == "manc" else table(a)
+    dict(manc=manc, table=table, add=add)[a.cmd](a)

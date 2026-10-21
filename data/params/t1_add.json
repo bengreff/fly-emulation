@@ -1,0 +1,22 @@
+{
+ "rule": "DECISIONS 20 Oct 22:44 (T1A)",
+ "basis": "inferred (cross-connectome)",
+ "manc_typepair_sha256": "a45d758618c1df99c16a290687dcbb346bd4c787a7252a4f843305569883797f",
+ "banc": {
+  "W_sha256": "83197529fa336b5f9ce400cf689f299fa3e8f6f5379947ae7df5ec004869141f",
+  "table_sha256": "6f87bf62227e160754523418bfbac35fc8971a90e4ed54574bf769b08332e285",
+  "n_post_groups_extract": 2782,
+  "n_post_groups_count_match": 830
+ },
+ "mcns": {
+  "neurons_sha256": "1713518538bd4920b9ef533526ce792f33ca21652bef330fa80e53cf4bdc65d7",
+  "edges_sha256": "4c7cf33f6080cba73fa30bd2c69b6726cd5d9778902f6353e6696bcf886dcbd0"
+ },
+ "keys_manc_and_banc": 83798,
+ "keys_added": 25218,
+ "keys_added_x_ge_5": 1986,
+ "syn_added_any": 99797,
+ "syn_added_x_ge_5": 30629,
+ "syn_mcns_t1_typed": 4670221,
+ "table_sha256": "7c74d9732bffe4adb21dc1cfdce764f26df86ac6c20ab4221cae903eff45828e"
+}

@@ -65,3 +65,28 @@ def test_fill_scales_only_the_t1_pair_and_adds_no_edge(graph):
     assert _edges(c1) == {(A, B): pytest.approx(15.0), (U, B): 8, (A, C): 10, (A, D): 10}
     assert set(_edges(c1)) == set(_edges(c0))
     assert np.array_equal(c1.sign, c0.sign)
+
+
+def test_level2_adds_only_table_pairs_above_the_cut(tmp_path, monkeypatch):
+    """T1A (DECISIONS 20 Oct 22:44): level 2 adds the add table's type pairs at x_add, same-side A cells first;
+    a row below the synapse cut adds nothing; level 1 adds nothing."""
+    P1, P2, Q1, Q2, R1 = 11, 12, 13, 14, 15
+    f, t = tmp_path / "t1_fill.csv.gz", tmp_path / "t1_add.csv.gz"
+    with gzip.open(f, "wt") as h:
+        h.write("# test\npre_type,post_type,post_side,factor\nIN_X,IN_Y,L,1.5\n")
+    with gzip.open(t, "wt") as h:
+        h.write("# test\npre_type,post_type,post_side,x_add,c_add\nIN_P,IN_Q,L,6.0,2\nIN_Q,IN_R,R,4.0,1\n")
+    monkeypatch.setattr(connectome, "T1_FILL", f)
+    monkeypatch.setattr(connectome, "T1_ADD", t)
+    n = pd.DataFrame(dict(bodyId=[P1, P2, Q1, Q2, R1], type=["IN_P", "IN_P", "IN_Q", "IN_Q", "IN_R"],
+                          instance=list("pqrst"), status="Traced", superclass="vnc_intrinsic", **{"class": None},
+                          somaNeuromere="T1", somaSide=["L", "R", "L", "L", "R"],
+                          predictedNt="acetylcholine", size=1000.0))
+    g = (n, pd.DataFrame(dict(pre=[P1], post=[R1], weight=[10])))
+    out = {}
+    for lvl in (1.0, 2.0):
+        r = Registry(Policy.MINIMAL)
+        r.overrides[KEY] = lvl
+        out[lvl] = _edges(connectome.build(r, neurons=g[0], edges=g[1], min_synapses=5))
+    assert out[1.0] == {(P1, R1): 10}
+    assert out[2.0] == {(P1, R1): 10, (P1, Q1): 6, (P2, Q1): 6, (P1, Q2): 6, (P2, Q2): 6}

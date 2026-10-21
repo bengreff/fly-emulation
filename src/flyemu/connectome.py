@@ -165,6 +165,7 @@ def ct1_compartments(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> t
 
 
 T1_FILL = CACHE.parent / "params" / "t1_fill.csv.gz"
+T1_ADD = CACHE.parent / "params" / "t1_add.csv.gz"
 
 
 def _side(s) -> str:
@@ -172,7 +173,7 @@ def _side(s) -> str:
     return "L" if s.startswith("L") else "R" if s.startswith("R") else "?"
 
 
-def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFrame:
+def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame, min_synapses: int = 5) -> pd.DataFrame:
     """s20 (fly2, T1F; DECISIONS 20 Oct 22:02): fill the male-CNS prothoracic input deficit from MANC and BANC.
 
     The male-CNS T1 neuromere has 0.58 of MANC's per-cell matched input (T2 0.69, T3 0.82; BANC sits with MANC;
@@ -182,18 +183,25 @@ def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFra
     in t1_fill.json). Each kept edge from an A cell onto a T1 B cell on that side is multiplied by its factor.
     Validity: T1 post cells only; no edge is added or removed (edges below the synapse cut stay out even where the
     filled count would cross it), no sign changes; assumes per-cell input by type is conserved across animals.
+
+    Level 2 adds T1A (DECISIONS 20 Oct 22:44, Ben's rule): keys with no male-CNS synapse that both MANC and
+    count-matched BANC have (data/params/t1_add.csv.gz) get c_add partners per B cell at x_add synapses each,
+    kept only if x_add >= min_synapses. Partner identity within the type is guessed: same-side A cells first,
+    then the others, round-robin over B cells in bodyId order. Never connects a type pair neither animal has.
     """
     nm = neurons.somaNeuromere if "somaNeuromere" in neurons else pd.Series("", index=neurons.index)
     t1 = nm.astype(str).eq("T1") & neurons.type.notna()
-    if not reg.require(
-            "connectome:T1", "fill_from_other_animals", units="boolean",
-            model_use="scale male-CNS edges onto T1 cells toward the cross-animal median (MANC, BANC) by "
-                      "presynaptic type, post type and side; never adds a partner",
+    lvl = reg.require(
+            "connectome:T1", "fill_from_other_animals", units="level",
+            model_use="1: scale male-CNS edges onto T1 cells toward the cross-animal median (MANC, BANC) by "
+                      "presynaptic type, post type and side; 2: also add type pairs absent here that MANC and "
+                      "BANC both have (T1A)",
             subsystem="connectivity", instances=int(t1.sum()), minimal=0.0, conventional=0.0,
             minimal_note="neutral 0: male-CNS counts as reconstructed",
             uncertainty="the T1 deficit is read as reconstruction (F-XCONN-1, inferred); pair counts vary "
-                        "between animals; the fill-only rule raises T1 above the median of totals") \
-            or not T1_FILL.exists() or not t1.any():
+                        "between animals; the fill-only rule raises T1 above the median of totals")
+    lvl = float(lvl or 0)
+    if lvl <= 0 or not T1_FILL.exists() or not t1.any():
         return e
     f = pd.read_csv(T1_FILL, comment="#").set_index(["pre_type", "post_type", "post_side"]).factor
     ty = neurons.set_index("bodyId").type
@@ -213,7 +221,51 @@ def t1_fill(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame) -> pd.DataFra
                 "data/params/t1_fill.csv.gz", subsystem="connectivity", instances=int((fac > 1).sum()),
                 uncertainty=f"{int((fac > 1).sum())} of {int(on.sum())} kept edges onto T1 cells scaled; T1 "
                             f"synapses {before:.0f} -> {float(w[on].sum()):.0f}")
+    if lvl >= 2 and T1_ADD.exists():
+        e = _t1_add(reg, neurons, e, t1, min_synapses)
     return e
+
+
+def _t1_add(reg: Registry, neurons: pd.DataFrame, e: pd.DataFrame, t1: pd.Series, min_synapses: int) -> pd.DataFrame:
+    """T1A edges (see t1_fill): absent here, present in MANC and BANC; median counts; guessed partner identity."""
+    a = pd.read_csv(T1_ADD, comment="#")
+    a = a[a.x_add >= min_synapses]
+    nb = neurons[["bodyId", "type"]].assign(side=neurons.somaSide.map(_side) if "somaSide" in neurons else "?")
+    by_type = {t: g.sort_values("bodyId") for t, g in nb[nb.type.notna()].groupby("type")}
+    post = nb[t1.to_numpy()]
+    post_by = {k: g.bodyId.sort_values().to_numpy() for k, g in post.groupby(["type", "side"])}
+    pre_l, post_l, w_l = [], [], []
+    for r in a.itertuples():
+        A, B = by_type.get(r.pre_type), post_by.get((r.post_type, r.post_side))
+        if A is None or B is None:
+            continue
+        same = A.bodyId[A.side.eq(r.post_side)].to_numpy()
+        other = A.bodyId[~A.side.eq(r.post_side)].to_numpy()
+        c = int(min(r.c_add, len(A)))
+        k = np.arange(c)
+        for j, b in enumerate(B):
+            if c <= len(same):
+                pick = same[(j * c + k) % len(same)]
+            else:
+                rest = c - len(same)
+                pick = np.concatenate([same, other[(j * rest + np.arange(rest)) % len(other)]])
+            pick = pick[pick != b]
+            pre_l.append(pick)
+            post_l.append(np.full(len(pick), b))
+            w_l.append(np.full(len(pick), r.x_add, dtype=np.float32))
+    if not pre_l:
+        return e
+    new = pd.DataFrame(dict(pre=np.concatenate(pre_l), post=np.concatenate(post_l), weight=np.concatenate(w_l)))
+    reg.provide("connectome:T1", "added_connections", float(len(new)), units="edges",
+                model_use="T1A edges added onto T1 cells (type pairs absent in the male CNS, present in MANC and "
+                          "BANC)", status=Status.INFERRED,
+                evidence="median synapses per connected pair and partners per post cell over MANC "
+                         "(Pugliese_cpg_2025 W_20260522) and count-matched BANC (W_20260217); partner identity "
+                         "within the type guessed; data/params/t1_add.csv.gz", subsystem="connectivity",
+                instances=int(len(new)),
+                uncertainty=f"{len(a)} type pairs at x_add >= {min_synapses}; {float(new.weight.sum()):.0f} synapses "
+                            "added; which cells connect is not known")
+    return pd.concat([e, new], ignore_index=True)
 
 
 @lru_cache(maxsize=1)
@@ -324,7 +376,7 @@ def build(
             neurons.loc[m, "predictedNt"] = r.nt
     e = edges[edges.weight >= min_synapses]
     neurons, e = ct1_compartments(reg, neurons, e)   # s14 (fly2); unchanged at neutral
-    e = t1_fill(reg, neurons, e)                     # s20 (fly2, T1F); unchanged at neutral
+    e = t1_fill(reg, neurons, e, min_synapses)       # s20 (fly2, T1F); unchanged at neutral
     pos = pd.Series(np.arange(len(neurons)), index=neurons.bodyId.values)
     pre = pos.reindex(e.pre.values).to_numpy()
     post = pos.reindex(e.post.values).to_numpy()
