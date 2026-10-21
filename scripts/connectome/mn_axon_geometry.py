@@ -35,7 +35,7 @@ from fetch_male_cns import DATASET, TOKEN  # noqa: E402
 VOXEL_UM = 0.008
 RIN_MOHM = 102.0                       # MN5 whole-cell input resistance (Fayyazuddin 2006), measured
 RI_OHM_CM = {"lo": 102.0, "mid": 200.0, "hi": 311.0}   # Gouwens & Wilson 2009 fitted range; 200 as registered
-CM_PF = {"fayyazuddin": 43.0, "kadas": 127.0}          # MN5 whole-cell capacitance, measured
+CM_PF = {"fayyazuddin": 43.0, "herrera_valdez": 127.0}  # MN5 whole-cell Cm, measured (2006; 2012, n 52)
 GAP_MV, PSP_MV = 7.0, 4.71
 FRACS = (0.05, 0.01, 0.20)
 OUT = ROOT / "data" / "derived"
@@ -267,7 +267,7 @@ def main() -> None:
     pd.set_option("display.width", 250)
     print(df[["type", "instance", "bodyId", "frac", "n_psi_syn", "frac_psi_distal_to_base", "base_dist_um",
               "site_dist_um", "ell_um", "path_radius_median_um", "d_equiv_um", "q", "q_cm_fayyazuddin",
-              "q_cm_kadas", "rho_lo", "rho_mid", "rho_hi", "rho_star", "shrink_factor_to_cross"]].to_string())
+              "q_cm_herrera_valdez", "rho_lo", "rho_mid", "rho_hi", "rho_star", "shrink_factor_to_cross"]].to_string())
     print(json.dumps(summ, indent=1))
 
 

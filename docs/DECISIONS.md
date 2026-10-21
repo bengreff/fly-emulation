@@ -3355,3 +3355,44 @@ So at measured geometry the doublet goes away, but the spike comes late (2.8-3.2
   - The value comes from a measurement: a PSI→MN5 EPSC or EPSP decay if the literature has one, otherwise the class bracket for adult nicotinic synapses.
   - The test is held-out GF→DLM data (sealed by the literature agent, not read) at seed 2.
 - MN5 soma recording added to `docs/MEASUREMENT_LIST.md` (item 1: q, ρ, tau_m, threshold, AHP and refractory, the soma amplitude of the axon spike, EPSP decay).
+
+### fly2 N30: what the MN5 literature changes, and why no doublet or latency fix is adopted (21 Oct, 00:25)
+**Source.** `docs/research/s21_mn5_literature.md` (Sonnet literature agent, sections A-D; read). The sealed file `docs/research/sealed/s21_gf_dlm_sealed.md` was not read. A repo grep for "Kadas" matched one header line of it ("Source 1 — Ryglewski S, Kadas D, … (2014)"); no quantity or value was seen. The agent's value-free summary of it is in HANDOFF's sealed register.
+
+**What changes.**
+- **The 127 pF is Herrera-Valdez et al. 2012** (J Comput Neurosci 34:211, PMC6595220). It reports MN5 Rin 97 ± 31 MΩ and Cm 127 ± 16 pF, n 52, measured. The s20 note and the 00:07 pre-registration called it "Kadas et al."; the s20 note and the script's column name are corrected, and no value changes.
+- **MN5 tau_m as Rin × Cm is 4.4 ms (Fayyazuddin 2006) or 12.3 ms (Herrera-Valdez 2012).** Both are derived from measurements; the two labs' Cm differ 3×. Rin × the skeleton area bounds it at about 25 ms (1 µF/cm²). The DLMn tau_m blank stays open. ρ* at the class q is 3.78 at tau_m 20 and 2.94 at 12.3.
+- **The adult nicotinic decay bracket is wider than the 1.1-4 ms used at 00:18.**
+  - Gu & O'Dowd 2006 (adult Kenyon cells in situ, read directly) give an mEPSC decay τ of 4.45-6.73 ms.
+  - The bracket is now 1.1 (ORN→PN, fitted) to 6.73 ms (measured). The shared 5 ms is inside it.
+- **Not found in readable primary text:** a PSI→MN5 decay, or MN5's threshold, AHP and refractory period. Fayyazuddin 2006 gives the EPSP amplitude only. Ryglewski & Duch 2009 and Ryglewski, Kilo & Duch 2014 (EJN, spike shape by stage) were behind paywalls.
+
+**Replica scan** (`n30_doublet_mechanism.run`; one PSI spike, soma peak held at 4.71 mV). Each cell gives the spike count, then the spike times in ms after the EPSC starts:
+
+| tau_m | Cell (q, ρ) | tau_s 1.1 | 2 | 3 | 4 | 5 | 6.73 |
+|---|---|---|---|---|---|---|---|
+| 4.4 | class (0.104, 3.80) | 0 | 0 | 0 | 0 | 0 | 0 |
+| 12.3 | class | 1: 0.1 | 1: 0.4 | 1: 1.4 | 0 | 0 | 0 |
+| 20 | class | 1: 0.1 | 1: 0.3 | 1: 0.5 | 1: 0.9 | 0 | 0 |
+| 20 | class at Ri 311 (ρ 2.44) | 1: 0.1 | 1: 0.2 | 1: 0.4 | 1: 0.6 | 1: 0.7 | 1: 1.1 |
+| 20 | MN5 L (0.156, 2.03) | 1: 0.2 | 1: 0.4 | 1: 0.6 | 1: 0.8 | 1: 1.0 | 1: 1.4 |
+| 20 | MN5 R (0.052, 5.57) | 1: 0.0 | 1: 0.2 | 1: 0.5 | 0 | 0 | 0 |
+| 20 | s20 guessed (0.07, 1.6) | 1: 0.1 | 2: 0.1, 3.0 | 2: 0.2, 2.9 | 2: 0.3, 3.1 | 2: 0.4, 3.2 | 2: 0.5, 3.5 |
+
+- tau_m 25 matches tau_m 20 within 0.1 ms, except that the class cell also fires at 5 ms (1: 1.2).
+- One in-network point maps replica time to muscle latency: s20 gives 0.4 ms in the replica and 2.20 ms in the network. On that single point, Ryglewski's spent upper bound of 2.27 ms corresponds to about 0.5 ms here.
+
+**Reading.**
+- Within the measured ranges, the derived class values give one early spike (≤ 0.5 ms) only for tau_s ≤ 3 ms at tau_m ≥ 20, or at the high-Ri end.
+- At the shared 5 ms the class does not fire, and at tau_m 4.4 it never fires.
+- So no value available tonight fixes latency and spike count from a measurement. The decay bracket spans the flip, and DLMn's AHP and refractory period are not in readable text.
+- A PSI→DLMn-only decay chosen to pass would be a per-route knob. Changing the shared nicotinic decay would move every cholinergic synapse, and this pathway alone doesn't justify that.
+
+**Decision.**
+- Nothing adopted. The 00:18 "Next" (a PSI→DLMn nicotinic decay from measurement) is withdrawn: there is no measurement to take it from.
+- The decider is `docs/MEASUREMENT_LIST.md` item 1, now annotated with the replica's thresholds.
+- The held-out GF→DLM data stay sealed, kept for the build at measured values.
+- Corrections:
+  - F-GJ-7's "nicotinic range (1.1-4 ms)" is corrected in place.
+  - In the 00:07 pre-registration, "Kadas et al." means Herrera-Valdez et al. 2012.
+  - The 00:18 entry's "Next" is superseded by this entry.

@@ -1544,10 +1544,13 @@ The registered sensitivity prediction ("follows except at low ρ with high q") i
   - tau_s ≤ 1.8 ms;
   - tau_m 4.4 ms.
 
-**Synaptic decay, from the replica.** At tau_m 20 and the class values, every decay in the Drosophila nicotinic range (1.1-4 ms) gives exactly one spike, early. The shared 5 ms gives none. This makes a measured PSI→DLMn decay the single candidate that fixes both latency and spike count.
+**Synaptic decay, from the replica** (corrected 00:25, DECISIONS 21 Oct 00:25).
+- The measured adult nicotinic bracket is 1.1-6.73 ms (Gu & O'Dowd 2006 in situ: 4.45-6.73 ms), not the 1.1-4 ms first written here.
+- At tau_m 20 and the class values, decays up to 3 ms give one spike within 0.5 ms, and 4 ms gives one at 0.9 ms. The shared 5 ms and 6.73 ms give none. At tau_m 12.3 (Herrera-Valdez 2012 Rin × Cm), class values fire only for decays ≤ 3 ms.
+- The bracket spans the flip, and no PSI→MN5 decay is published in readable text. So the MN5 recording decides, not a literature value.
 
 **The MN5 tau_m of 4.4 ms is suspect.**
-- It is Rin × 43 pF, but the skeleton membrane is about 25,000 µm² (about 250 pF).
+- It is Rin × 43 pF, but the skeleton membrane is about 25,000 µm² (about 250 pF). A second lab's Rin × Cm gives 12.3 ms (97 MΩ × 127 pF, n 52; Herrera-Valdez et al. 2012).
 - Rin × that area gives Rm of about 25 kΩ·cm² (inside the fitted Drosophila range) and tau_m of about 25 ms.
 - The blank stays open. It is not applied.
 

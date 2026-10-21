@@ -6,9 +6,20 @@ Measurements that would pin a model value we can't pin from the literature or th
 
 **Why now.**
 - Whether DLMn follows the giant fibre (GF escape, F-GJ-6) depends on the soma-axon coupling ρ.
-- The male-CNS skeletons put ρ at 3.8 (option B, 21 Oct). That is on the follow boundary (3.8 at the model's shared tau_m 20 ms; 2.2 at MN5's measured 4.4 ms).
+- The male-CNS skeletons put ρ at 3.8 (option B, 21 Oct). That is on the follow boundary ρ*: 3.8 at the model's shared tau_m 20 ms, 2.9 at 12.3 ms and 2.2 at 4.4 ms. The last two are MN5's Rin × Cm from two labs: Herrera-Valdez et al. 2012 and Fayyazuddin 2006.
 - The fitted range of axial resistivity spans the boundary (ρ 2.4-7.5), and the two MN5s of one fly differ by a factor of 2.7.
-- The same cell also carries the doublet blank: the axon compartment fires twice per GF spike, because the PSI synaptic current outlasts the axon's 2 ms refractory period with no afterhyperpolarisation.
+- The same cell also carries the doublet blank. At the earlier guessed geometry, the axon compartment fired twice per GF spike, because the PSI synaptic current outlasts the axon's 2 ms refractory period with no afterhyperpolarisation. At the derived geometry it fires once, but late or not at all.
+- None of these is published in readable primary text: the PSI→MN5 decay, MN5's spike threshold, its AHP, its refractory period. The adult nicotinic bracket for the decay (1.1-6.73 ms) spans the point where the model's answer flips.
+
+**What each answer would decide** (replica of the model's pair, one PSI spike, class q 0.104 and ρ 3.80; DECISIONS 21 Oct 00:25):
+
+| Read-out | If | Then |
+|---|---|---|
+| EPSP decay (tau_s) | ≤ 3 ms | One spike within 0.5 ms at tau_m 20; within 1.4 ms at 12.3 |
+| EPSP decay (tau_s) | ≥ 5 ms | No spike at the class values unless Ri is near 300 Ω·cm or the cell is like MN5 L. The geometry or the threshold would then be the next suspect. |
+| tau_m (slow constant of the step response) | near 4.4 ms | No spike at the class values for any decay; the two-compartment reading of F-GJ-6 fails |
+| tau_m (slow constant of the step response) | 12-25 ms | The decay decides, as above |
+| Soma amplitude of the GF-evoked spike | | Reads ρ directly; the step response gives q |
 
 **Protocols, all in one cell** (in situ, as in Fayyazuddin et al. 2006 or Ryglewski & Duch 2009):
 

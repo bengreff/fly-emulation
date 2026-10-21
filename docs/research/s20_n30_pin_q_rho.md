@@ -34,7 +34,7 @@ Each fills the slots `cell_class:MN|soma_axon_coupling` (ρ) and `cell_class:MN|
 **What it measures.**
 - The MN5 (DLMn a, b) skeleton radius along the segment that carries the PSI synapses.
 - The path length from the dendritic arbor's junction to the centroid of the PSI synapses.
-- The total membrane area, from the mesh. The measured whole-cell capacitance (43 pF, Fayyazuddin 2006; 127 ± 16 pF, Kadas et al.) is an alternative.
+- The total membrane area, from the mesh. The measured whole-cell capacitance (43 pF, Fayyazuddin 2006; 127 ± 16 pF, Herrera-Valdez et al. 2012, J Comput Neurosci 34:211, PMC6595220; earlier misattributed here to "Kadas et al.") is an alternative.
 
 Source: male-cns v1.0 and MANC.
 
@@ -67,7 +67,7 @@ Their amplitude split gives q, and τ1 then gives ρ. Ri drops out.
 - Telling these apart needs good series-resistance compensation (Rs·C is about 0.4 ms at 10 MΩ and 43 pF).
 - The dendritic arbor adds its own fast components, so the fit needs a third exponential.
 
-Kadas et al. already measure MN5 capacitance from these transients (n 52). Their raw traces, if obtainable, might contain this without a new experiment.
+Herrera-Valdez et al. 2012 (with Ryglewski and Duch) already measured MN5 capacitance from these transients (n 52). Their raw traces, if obtainable, might contain this without a new experiment.
 
 ## Recommendation
 
