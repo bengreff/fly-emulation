@@ -1449,3 +1449,63 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - Next blanks, none tuned: the T4/T5 dendritic input (they are point cells here, while T4's direction selectivity in the fly relies on where on the dendrite its inputs sit, the N30 question in the optic lobe), and the per-type rest and release levels at the T4/T5 input synapses.
   - The pair-strength arm stays neutral and is not continued as is. The sealed Behnia 2014 temporal check is still unspent.
 - **Figures** (viewed): `docs/media/s14_fly2_t4t5_v0rfvp_s1.png` (seed 1, both sets) and `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png` (seed 2). Data: `runs/s14/fly2/t4t5/v0rfvp_s1/ds.json`, `v0rfvpct1_s2/ds.json`.
+
+### F-GJ-6: a two-compartment DLMn with the PSI input on its axon follows the GF 20/20 at a 2.20 ms muscle latency, inside the held-out Ryglewski 2014 range (PASS). The pass holds only for soma-axon coupling ρ < about 4, and the registered bracket spans that boundary. Each GF spike gives a DLMn doublet (fly2, s20, 21 Oct 00:01; pre-registered DECISIONS 20 Oct 23:30 and the 23:48 build note; seed 1; nothing adopted)
+**Build.** N30 first build, `cell_type:all|two_compartments_where_point_fails` (neutral 0, CPU only; N30 now partial; `tests/test_two_compartment.py`, 8 tests).
+- **Cells:** DLMn a, b (measured site) and DLMn c-f (inferred) get an axon compartment. The PSI inputs land on it and spikes start only there.
+- **Class values (class MN, derived from guessed geometry):** q 0.07 and ρ 1.6, from `data/params/two_compartment_classes.csv`.
+- **Calibration:** the PSI→DLMn weight is recalibrated so the passive pair's soma peak is the measured 4.71 mV.
+
+**Runs.** Isolated CNS, m10f + `nt_from_physiology` + `unitary_psp_from_recordings` + the switch, seed 1. Outputs in `runs/s20/fly2/` (`gate_passive`, `gate_spiking`, `latency`, `corner_*`, `.json` and `.log`).
+
+**1. Gate: PASS.** With the axon spike disabled, one GF spike gives a soma peak of 4.78 mV against 4.71 ± 0.5.
+- The point model at seed 0 also gave 4.78, so the 0.07 mV excess is not from the compartment.
+- The axon peaks at 13.8 mV, 3.1 ms after the kick. The same value comes from the pair's equations, a cross-check.
+- With spiking on, the soma rises only 1.0-1.7 mV, because each axon reset pulls it back.
+
+**2. GF escape, 20 trials.**
+
+| Arm | Cells | Follow | Central latency | Median muscle latency |
+|---|---|---|---|---|
+| Gaps on | DLMn a, b | 20/20 (control 0) | 1.4 ms, every trial | **2.196 ms** |
+| Gaps on | DLMn c-f | 20/20 | | 2.249 ms |
+| Gaps on | TTMn, PSI | 20/20 | 0.3 ms | |
+| Gaps off | all | 0/20 | | |
+
+**Scored against the registration:**
+- **(b) Ryglewski et al. 2014, 1.43-2.27 ms (held out): PASS.**
+- (a) Augustin 2017, 1.36-1.849 ms (spent, consistency only): outside, as predicted.
+- Prediction:
+  - 20/20, 2.0-2.3 ms, FAIL (a), PASS (b), gaps off 0/20: **all met.**
+  - Falsifiers (follow < 90%, latency < 1.9 ms): not triggered.
+
+**3. Sensitivity, gaps on, reported and not scored.**
+
+| q | ρ | DLMn a, b follow | Muscle latency | Spikes per GF |
+|---|---|---|---|---|
+| 0.012 | 0.13 | 20/20 | 1.896 ms | 4 |
+| 0.15 | 0.13 | 20/20 | 2.096 ms | 3 |
+| 0.012 | 25 | 0/20 | | |
+| 0.15 | 25 | 0/20 | | |
+
+The registered sensitivity prediction ("follows except at low ρ with high q") is **wrong**. Both tight-coupling corners fail: at ρ 25 the axon tracks the soma and the cell is a point neuron again (F-GJ-5).
+
+**Derived boundary** (passive pair at tau_m 20 and tau_s 5): with the soma peak held at 4.71 mV, the axon peak crosses the 7 mV gap only for ρ < 3.6-4.2 at any q in the bracket. ρ decides following; q moves latency and spike count.
+
+**Caveats** (stated, not corrected):
+- **Latency margin.** 2.196 ms sits 0.07 ms under Ryglewski's upper bound. The model omits the stimulus-to-GF-spike time, which is inside the measured delay ("between giant fiber stimulation and muscle potential"). The TTM consistency check in F-GJ-3 used the same convention.
+- **The ± reading.** Ryglewski's ± is undefined in the paper; reading it as SD was registered before the run.
+- **Step quantisation.** Latency is quantised at the 0.1 ms step.
+- **Doublet.** Every DLMn fires **2 spikes per GF spike** (3-4 at the low-ρ corners); the fly's DLM gives one. The 5 ms PSI→DLMn current outlasts the 2 ms axon refractory period. This is a blank (the axon refractory period, or the PSI→DLMn decay), not tuned.
+- **Not evidence of physiology.** Behavioural success is not evidence that the internal values are right; q and ρ are guessed geometry.
+
+**Spent:** Ryglewski 2014 GF→DLM latency, and seed 1 of this test.
+
+**Viewed figure:** `docs/media/s20_fly2_two_comp_dlmn.png` (gate traces, spiking traces, latency per corner).
+
+**What would pin q and ρ:** `docs/research/s20_n30_pin_q_rho.md`. In short:
+- (B) the MN5 EM geometry (axon radius and path to the PSI contacts) gives q and narrows ρ to Ri's 3× range;
+- (C) one MN5 soma recording (a two-exponential step response or capacitive transient) gives both, measured;
+- (A) the soma amplitude of the "small and broad" axon spike in Fayyazuddin 2006 is a quick read of ρ < 4.
+
+**Not adopted.** That needs a battery run, and the doublet and the tau_m blank should be addressed first.

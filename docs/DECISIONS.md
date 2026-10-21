@@ -3229,3 +3229,42 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 **Falsifier of the prediction:** DLMn follows < 90% at the central values. If so, the derived coupling cannot relay the measured EPSP, and the threshold gap or the soma-axon split is wrong. A latency < 1.9 ms also falsifies it.
 
 **Not adopted by this test alone:** adoption needs the gate, a battery run and a viewed figure. Then: DLMn tau_m (4.4 ms from Fayyazuddin, 12.3 ms from Kadas; measured spread) and the inferred delay rows (velocity 0.5 m/s, t_syn 0.5 ms).
+
+### fly2 N30 build note and gate reading (20 Oct, 23:48; after the toy-graph tests, before any whole-CNS run)
+**Built as registered** (`lif._two_compartments`, `Network._two_comp_init`, `tests/test_two_compartment.py`, 8 tests). The switch `cell_type:all|two_compartments_where_point_fails` is neutral 0. The GPU, conductance synapses, graded cells and a receptor-channel or slow copy on an axon edge are refused. `cell_type:all|n_compartments` (per-cell counts, synapses placed by position) is still refused. N30 goes from absent to partial. q and ρ are registered as class `MN` (`cell_class:MN|axon_membrane_share`, `|soma_axon_coupling`). Their registry status is INFERRED with the method "derived from guessed geometry", because the registry's DERIVED requires every input measured. parameters.csv bound basis: guessed; prior log-uniform over the bracket.
+
+**Choices the registration left open, fixed now (none tuned on output):**
+- **Axon weights.** An axon edge's weight is divided by q, so the synaptic charge is kept. The unitary-PSP recalibration then sets the weight from the passive pair's soma peak. The division only changes the weight before recalibration.
+- **No soma reset.** The soma is never reset or clamped by an axon spike.
+- **Soma processes.** Spike-triggered soma processes (adaptation, ADP, the rung-1 channel spike hook) do not see the axon spike. The paper: "small and broad in somatic recordings".
+- **Output spike.** Every output of the cell (transmission, gap and electrical events, spike count) uses the axon spike.
+- **What the axon has.** The axon has no noise and no channels of its own. It uses the cell's v_leak and starts at rest.
+- **Soma DC loss.** The soma's other inputs lose a little steady-state effect to the axon load: (1−q)/((1−q)+qρ/(q+ρ)) = 0.93 of the point cell's at the class values. This is stated as the validity range in the code.
+
+**Gate reading** (clarifying run 1, made before it runs). The paper measured the 4.71 mV EPSP without the spike: spike failures, the inflection point, and forced refractoriness (F-GJ-5). So the gate's soma peak is read with the DLMn axon spike disabled (`gf_psi_dlm_path.py --axon-passive` raises the DLMn threshold out of reach; the soma cannot spike under the switch). Window 30 ms, because the 10 ms window cut the point-model peak at its last step. The same probe with spiking on reports the soma and axon peaks and the DLMn spike count. Both runs use seed 1.
+
+**Toy-graph observation, not tuned:** one PSI spike gave two DLMn axon spikes 2.8 ms apart. The 5 ms synaptic current outlasts the 2 ms refractory period at about 2.5× threshold. The real DLM fires 1:1 to GF. `gf_latency.py` now reports the DLMn spikes per GF spike. A doublet in the whole CNS is recorded as an observation and a blank (axon refractory, or PSI→DLMn decay), not a pass or fail item.
+
+### fly2 N30 results (21 Oct, 00:01; F-GJ-6)
+**Registration:** DECISIONS 20 Oct 23:30, with the 23:48 build note.
+
+**Results:**
+- **Gate: PASS.** Soma 4.78 mV with the axon passive; axon 13.8 mV.
+- **Director's pass: PASS.** Gaps on, DLMn a, b follow 20/20, median muscle latency 2.196 ms.
+  - Inside Ryglewski 2014's 1.43-2.27 ms (held out, now spent).
+  - Outside Augustin 2017's 1.36-1.849 ms (spent; as predicted).
+- **Gaps off:** 0/20.
+- **Predictions:** all met except the sensitivity one.
+- **Corners:** follow at ρ 0.13 (both q), 0/20 at ρ 25 (both q).
+  - Derived boundary: ρ < about 4 at any q in the bracket.
+- **Doublet:** DLMn fires 2 spikes per GF spike (the fly fires 1). This is a new blank.
+
+**Decision:**
+- **Nothing adopted.** The switch stays neutral.
+- **Before adoption:**
+  1. pin ρ (it decides the pass; the registered bracket spans the boundary);
+  2. register a fix for the doublet as its own blank (axon refractory or the PSI→DLMn current decay, both from measurements);
+  3. the DLMn tau_m blank (4.4 ms measured against the shared 20);
+  4. a battery run.
+- **Measurement plan:** `docs/research/s20_n30_pin_q_rho.md`. EM geometry first (fly2 can do it), then one MN5 soma recording for Ben's measurement experiment.
+- **Fixed in passing:** `tests/test_organism.py::test_depression_weakens_repeated_spikes_and_recovers` failed at HEAD. It passed LIFParams positionally, and the ADP fields added earlier shifted its depression arguments. It now uses keywords for std_u and std_tau_rec.

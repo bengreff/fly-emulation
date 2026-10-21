@@ -11,10 +11,9 @@ from __future__ import annotations
 # key -> (mechanism id, neutral value, what the non-neutral setting would build)
 STUBS = {
     # N29 synapse:all|per_synapse_parameters left the stubs in s12 (rung 8 STP per connection
-    # class built, lif._stp_connections); its other per-synapse values are refused there
-    "cell_type:all|n_compartments": (
-        "N30", 1.0, "reduced multi-compartment neurons with synapses placed by position "
-                    "(FIDELITY_LADDER rung 6)"),
+    # class built, lif._stp_connections); its other per-synapse values are refused there.
+    # N30 cell_type:all|n_compartments left in s20 (fly2: two compartments for the cells of
+    # two_compartment.csv, lif._two_compartments); it is still read there and refused when set
     "synapse:all|structural_plasticity": (
         "N31", 0.0, "synapse addition and removal during life (experience, sleep)"),
     "cell_type:all|homeostatic_plasticity": (

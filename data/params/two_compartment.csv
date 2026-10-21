@@ -1,0 +1,9 @@
+# N30 first build (fly2, 20 Oct; pre-registered DECISIONS 20 Oct 23:30; Ben via the Director, 20 Oct). Read by
+# lif._two_compartments when cell_type:all|two_compartments_where_point_fails = 1 (neutral 0). Each row gives the listed
+# cells an axon compartment where their spikes start; edges from axon_inputs onto them land on that axon instead of the
+# soma. Every other input, the cell's channels, noise and gap junctions stay on the soma (the existing cell). The class
+# names the shared values in two_compartment_classes.csv. A row is only added where a finding shows the point neuron
+# fails. Selectors as stp_connections.csv.
+cells,axon_inputs,class,basis,source,finding,note
+"type:^DLMn a, b$",type:^PSI$,MN,measured,"Fayyazuddin, Zaheer, Hiesinger & Bellen 2006 PLoS Biol 4:e63 (PMC1382016): 'the action potential generated at the distal PSI-DLMmn synapse on the axon appeared small and broad in somatic recordings ... suggesting that the peripherally generated action potential fails to propagate antidromically into the dendrite'; PSI 'makes multiple synaptic contacts that span 50 um and follow the axons out into the posterior dorsal motor nerve'",F-GJ-5,"qualitative measurement of the spike start site and the contact site (MN5 = DLMn a, b by name, inferred); no axon voltage was recorded"
+"type:^DLMn c-f$",type:^PSI$,MN,inferred,"carried from MN5 (Fayyazuddin 2006) to MN1-4","F-GJ-5","same presynaptic cell and the same contact along the posterior dorsal motor nerve; no MN1-4 recording"

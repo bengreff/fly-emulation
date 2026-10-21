@@ -145,12 +145,18 @@ class LIFParams:
     # s14 (fly2): flyvis type-pair strengths (data/params/flyvis_pair_strength.csv), fitted to a task:
     # {"idx", "alpha"} (CSR edge order, voltage gain per synapse); None = every edge from the shared scale
     fv_edge: dict | None = None
+    # s20 (fly2, N30): an axon compartment where spikes start, for the cells of data/params/two_compartment.csv:
+    # {"cells", "edge_idx" (CSR edges that land on the axon), "q", "rho" (per listed cell, from the class)};
+    # None = every cell is a point neuron
+    two_comp: dict | None = None
 
 
 STP_TABLE = "stp_connections.csv"
 KIN_TABLE = "receptor_kinetics.csv"
 PSP_TABLE = "unitary_psp.csv"
 FV_PAIR_TABLE = "flyvis_pair_strength.csv"
+TWO_COMP_TABLE = "two_compartment.csv"
+TWO_COMP_CLASSES = "two_compartment_classes.csv"
 
 
 def _stp_cells(neurons: pd.DataFrame, sel: str) -> np.ndarray:
@@ -234,6 +240,80 @@ def _unitary_psp(reg: Registry, conn: Connectome) -> dict | None:
                     instances=int(m.sum()), uncertainty=r.note, method=r.condition)
     idx = np.flatnonzero(row >= 0)
     return {"idx": idx, "psp_mv": tab.psp_mv.to_numpy(np.float64)[row[idx]]}
+
+
+def _two_compartments(reg: Registry, conn: Connectome) -> dict | None:
+    """N30 first build (s20, fly2; DECISIONS 20 Oct 23:30): an axon compartment for the cells of
+    two_compartment.csv, where a finding shows the point neuron fails, or None. The soma is the
+    existing cell; the axon has the cell's tau_m, rest, threshold, reset and refractory, takes the
+    listed inputs, and is where the cell's spikes start (Network._two_comp_init). The two class
+    values (axon membrane share q, coupling rho) come from two_compartment_classes.csv, derived from
+    guessed geometry; a run override replaces them for a sensitivity corner."""
+    from pathlib import Path
+    nc = reg.require("cell_type:all", "n_compartments", units="enum",
+                     model_use="N30: compartments per neuron with synapses placed by position (FIDELITY_LADDER "
+                               "rung 6; not built)", subsystem="neuron_biophysics", minimal=1.0, conventional=1.0,
+                     minimal_note="neutral 1: point neurons except the cells of two_compartment.csv")
+    if float(nc) != 1.0:
+        raise NotImplementedError("cell_type:all|n_compartments: compartments per neuron with synapses placed by "
+                                  "position are not built (N30); only cell_type:all|two_compartments_where_point_"
+                                  "fails, for the cells of data/params/two_compartment.csv")
+    if not reg.require(
+            "cell_type:all", "two_compartments_where_point_fails", units="boolean",
+            model_use="N30: an axon compartment where spikes start, with the listed inputs on it, for the "
+                      "cells of data/params/two_compartment.csv",
+            subsystem="neuron_biophysics", instances=conn.n, minimal=0.0, conventional=0.0,
+            minimal_note="neutral 0: every cell is a point neuron"):
+        return None
+    root = Path(__file__).resolve().parents[2] / "data" / "params"
+    tab = pd.read_csv(root / TWO_COMP_TABLE, comment="#").rename(columns={"class": "cls"})
+    cls = pd.read_csv(root / TWO_COMP_CLASSES, comment="#").set_index("class")
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    cell_row = np.full(conn.n, -1, np.int32)
+    edges = []
+    for i, r in enumerate(tab.itertuples()):
+        cm = _stp_cells(conn.neurons, r.cells)
+        em = _stp_cells(conn.neurons, r.axon_inputs)[pre] & cm[conn.indices]
+        if not cm.any() or not em.any():
+            raise ValueError(f"{TWO_COMP_TABLE}: row {r.cells} <- {r.axon_inputs} matches no cell or no edge")
+        if r.cls not in cls.index:
+            raise ValueError(f"{TWO_COMP_TABLE}: class {r.cls!r} has no row in {TWO_COMP_CLASSES}")
+        cell_row[cm] = i
+        edges.append(np.flatnonzero(em))
+        reg.provide(f"cell_type:{r.cells}", "spike_initiation_compartment", "axon", units="compartment",
+                    model_use="where the cell's spikes start (N30)", status=Status(r.basis), evidence=r.source,
+                    subsystem="neuron_biophysics", instances=int(cm.sum()), uncertainty=r.note,
+                    method=f"qualitative recording; finding {r.finding}")
+        reg.provide(f"connection:{r.axon_inputs}->{r.cells}", "synapse_compartment", "axon",
+                    units="compartment", model_use="these inputs land on the axon compartment (N30)",
+                    status=Status(r.basis), evidence=r.source, subsystem="neuron_biophysics",
+                    instances=int(em.sum()), uncertainty=r.note, method="anatomy of the contact")
+    cells = np.flatnonzero(cell_row >= 0)
+    ccls = tab.cls.to_numpy()[cell_row[cells]]
+    vals = {}
+    for c in tab.cls.unique():
+        row = cls.loc[c]
+        for prop, col, units, use in (
+                ("axon_membrane_share", "q", "fraction of whole-cell membrane",
+                 "axon compartment's share of the leak conductance and capacitance (N30)"),
+                ("soma_axon_coupling", "rho", "coupling conductance x whole-cell input resistance",
+                 "soma-axon coupling (N30)")):
+            ent = f"cell_class:{c}"
+            unc = f"sensitivity bracket {row[col + '_lo']}-{row[col + '_hi']} (pre-registered)"
+            if f"{ent}|{prop}" in reg.overrides:   # a sensitivity corner
+                v = reg.require(ent, prop, units=units, model_use=use, subsystem="neuron_biophysics",
+                                instances=int((ccls == c).sum()), uncertainty=unc)
+            else:
+                v = reg.provide(ent, prop, float(row[col]), units=units, model_use=use, status=Status.INFERRED,
+                                evidence=f"{row.derivation}; {row.source}", subsystem="neuron_biophysics",
+                                instances=int((ccls == c).sum()), uncertainty=unc,
+                                method=str(row.basis))
+            vals[(c, col)] = float(v)
+    q = np.array([vals[(c, "q")] for c in ccls])
+    rho = np.array([vals[(c, "rho")] for c in ccls])
+    if not (np.all((q > 0) & (q < 1)) and np.all(rho > 0)):
+        raise ValueError(f"{TWO_COMP_CLASSES}: need 0 < q < 1 and rho > 0")
+    return {"cells": cells, "edge_idx": np.unique(np.concatenate(edges)), "q": q, "rho": rho}
 
 
 
@@ -637,6 +717,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
     kin_edge = _receptor_kinetics(reg, conn)   # s13 (N29); None at neutral
     psp_edge = _unitary_psp(reg, conn)   # s14 (fly2); None at neutral
+    two_comp = _two_compartments(reg, conn)   # s20 (fly2, N30); None at neutral
     fv_edge = _flyvis_pairs(reg, conn)   # s14 (fly2); None at neutral
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
@@ -919,7 +1000,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
         intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge, fv_edge=fv_edge,
-        psp_edge=psp_edge,
+        psp_edge=psp_edge, two_comp=two_comp,
     )
 
 
@@ -972,6 +1053,7 @@ class Network:
                   * rel[pre] * self.input_gain[self.conn.indices]).astype(np.float32)
         self._session6_mechanisms(pre, rel)
         self._flyvis_pair_weights(pre)
+        self._two_comp_init(pre)
         self._unitary_psp_weights()
         self._slow_channels(pre)
         self._kinetic_channels(pre)
@@ -1066,6 +1148,7 @@ class Network:
         self.mod_decay = float(np.exp(-dt / p.mod_tau_ms))
         self._mod_active = bool(self.mod_sens.any())
         self._s10_ring_glia(pre)          # after W_graded exists (N23 edits it)
+        self._two_comp_refusals()
 
     # --- one timestep --------------------------------------------------------
 
@@ -1116,6 +1199,13 @@ class Network:
                 arr_i = arr_i * gain
             self.g_i = self.g_i * self.decay_si + arr_i
             self.delay_i[self.delay_head].fill(0.0)
+        c2 = self.c2
+        if c2 is not None:   # N30 (s20): axon-compartment inputs due this step
+            arr_a = c2["buf"][self.delay_head]
+            if self._mod_active:
+                arr_a = arr_a * gain[c2["cells"]]
+            c2["i"] = c2["i"] * c2["decay_s"] + arr_a
+            c2["buf"][self.delay_head].fill(0.0)
 
         drive = self.i_syn
         if self.w_slow is not None:
@@ -1171,6 +1261,14 @@ class Network:
             dv = self.v[g["a"]] - self.v[g["b"]]
             i = np.where(dv > 0, g["c"], g["c"] * g["r"]) * dv
             drive = drive + (np.bincount(g["b"], i, n) - np.bincount(g["a"], i, n)).astype(np.float32)
+        if c2 is not None:   # N30: soma-axon coupling and the axon update, both from start-of-step voltages
+            cs = c2["cells"]
+            vs0, va0 = self.v[cs], c2["v"]
+            if drive is self.i_syn:
+                drive = drive.copy()
+            drive[cs] += c2["kap_s"] * (va0 - vs0)
+            vinf = (self.v_leak[cs] + c2["i"] + c2["kap_a"] * vs0) / (1.0 + c2["kap_a"])
+            c2["v"] = (vinf + (va0 - vinf) * c2["decay"]).astype(np.float32)
 
         if p.cond:
             g_e = self.i_syn
@@ -1211,6 +1309,16 @@ class Network:
             self.v[land] += self.kick_held[land]
             self.kick_held[land] = 0.0
         can_spike = free & ~self.graded
+        ax_sp = None
+        if c2 is not None:   # N30: the listed cells spike only from the axon; their soma is never clamped
+            can_spike &= ~c2["is_cell"]
+            free_a = self.t_ms >= c2["ref_until"]
+            c2["v"] = np.where(free_a, c2["v"], self.v_reset[cs])
+            hit = free_a & (c2["v"] >= self.v_th[cs])
+            if hit.any():
+                ax_sp = cs[hit]
+                c2["v"][hit] = self.v_reset[ax_sp]
+                c2["ref_until"][hit] = self.t_ms + self.t_ref[ax_sp]
         spiked = np.flatnonzero(can_spike & (self.v >= self.v_th))
 
         # graded transmission: continuous, delayed by one step
@@ -1234,7 +1342,7 @@ class Network:
             self.x_res += (1.0 - self.x_res) * self.rec_step
         if self._mod_active:
             self.mod_level *= self.mod_decay
-        if spiked.size:
+        if spiked.size:   # soma side: reset, refractory and spike-triggered processes
             self.v[spiked] = self.v_reset[spiked]
             if p.reset_syn:
                 self.i_syn[spiked] = 0.0
@@ -1246,6 +1354,12 @@ class Network:
                 a = self.adp[spiked]
                 self.adp[spiked] = a + np.maximum(self.adp_mv[spiked] - a, 0.0) * self.adp_h[spiked]
                 self.adp_h[spiked] = np.where(self.adp_inact[spiked], 0.0, 1.0)
+            self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
+            if self.ich is not None:
+                self.ich.on_spike(spiked)
+        if ax_sp is not None:   # N30: an axon spike is the cell's output spike; the soma does not see it
+            spiked = np.union1d(spiked, ax_sp)
+        if spiked.size:   # output side
             if self._mod_active:
                 k = self.mod_release[spiked]
                 k = k[k >= 0]
@@ -1262,9 +1376,6 @@ class Network:
                     hit = np.isin(src, spiked) & (k != 0)
                     if hit.any():
                         np.add.at(self.gap_ring, ((h + d[hit]) % self.Dg, dst[hit]), k[hit])
-            self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
-            if self.ich is not None:
-                self.ich.on_spike(spiked)
             if self.ring_e is not None or self.glia_k is not None or self.apl_mask is not None:
                 self._s10_spikes(spiked)
             if self.kc_edge is not None:
@@ -1495,11 +1606,83 @@ class Network:
                        / (gk * (1.0 - r0) * p.graded_rmax_hz * dt / 1000.0)).astype(np.float32)
         self.fv_spiking_pre = int((~keep).sum())   # flyvis pairs left at the shared scale
 
+    def _two_comp_init(self, pre: np.ndarray) -> None:
+        """N30 first build (s20, fly2; DECISIONS 20 Oct 23:30): axon compartments for the cells of
+        params.two_comp. The soma is the existing cell (every other input, its channels, noise and gap
+        junctions). The axon has the cell's tau_m, leak potential, threshold, reset and refractory, no
+        channels or noise of its own, takes the listed edges, and is where the cell's spikes start.
+        Coupling both ways from start-of-step voltages: soma drive += kappa_s (Va - Vs), and the axon
+        relaxes toward (V_leak + Ia + kappa_a Vs) / (1 + kappa_a) by exponential Euler, with
+        kappa_s = rho / (1 - q) and kappa_a = rho / q. An axon spike is the cell's output spike
+        (propagation, gap-junction steps, modulator release). The soma is neither reset nor clamped, and
+        its spike-triggered processes (adaptation, ADP, channel Ca) do not see the spike, which reaches
+        the soma "small and broad" (Fayyazuddin 2006). An axon edge keeps its synaptic charge: its weight
+        is divided by q, since the axon's leak is q of the cell's (unitary_psp.csv rows then reset it).
+        Validity: one isopotential axon segment and a uniform membrane; the soma's other inputs act on
+        (1 - q) of the membrane, so their DC effect is (1 - q) / ((1 - q) + q rho / (q + rho)) of the
+        point cell's (0.93 at the class values)."""
+        tc = self.params.two_comp
+        self.c2 = None
+        if tc is None or not len(tc["cells"]):
+            return
+        if self.params.cond:
+            raise NotImplementedError("N30 two compartments with conductance synapses are not built (s20)")
+        cells = np.asarray(tc["cells"], np.int64)
+        ax = np.zeros(self.conn.n_edges, bool)
+        ax[tc["edge_idx"]] = True
+        if self.graded[cells].any() or self.graded[pre[ax]].any():
+            raise NotImplementedError("N30: graded listed cells or graded axon inputs are not built (s20)")
+        pos = np.full(self.conn.n, -1, np.int64)
+        pos[cells] = np.arange(cells.size)
+        q, rho = np.asarray(tc["q"], np.float64), np.asarray(tc["rho"], np.float64)
+        ka = rho / q
+        self.w[ax] = (self.w[ax] / q[pos[self.conn.indices[ax]]]).astype(np.float32)
+        self.c2 = {"cells": cells, "pos": pos, "ax_edge": ax, "is_cell": pos >= 0,
+                   "kap_a": ka.astype(np.float32), "kap_s": (rho / (1.0 - q)).astype(np.float32),
+                   "decay": np.exp(-self.timestep_ms * (1.0 + ka) / self.tau_m[cells]).astype(np.float32),
+                   "v": self.v_rest[cells].copy(), "i": np.zeros(cells.size, np.float32),
+                   "buf": np.zeros((self.D, cells.size), np.float32),
+                   "ref_until": np.zeros(cells.size, np.float32)}
+
+    def _two_comp_refusals(self) -> None:
+        """N30: refuse what the axon compartment does not carry: a receptor-channel or slow copy on an
+        axon edge, or an inhibitory axon edge with its own decay (tau_s_inh)."""
+        c2 = self.c2
+        if c2 is None:
+            return
+        e = np.flatnonzero(c2["ax_edge"])
+        if (any(np.any(c["w"][e] != 0) for c in self.chan)
+                or (self.w_slow is not None and np.any(self.w_slow[e] != 0))):
+            raise NotImplementedError("N30: an axon edge with a receptor-channel or slow copy is not built (s20)")
+        post = self.conn.indices[e]
+        if np.any((self.w[e] < 0) & (self.decay_si[post] != self.decay_s[post])):
+            raise NotImplementedError("N30: an inhibitory axon edge with its own decay is not built (s20)")
+        c2["decay_s"] = self.decay_s[c2["cells"]]
+
+    def psp_peak_per_mv_axon(self, cells: np.ndarray) -> np.ndarray:
+        """N30: soma PSP peak (mV) per mV of synaptic weight arriving on the axon of listed `cells`, in
+        the coupled pair's discrete update (as step; axon passive, no threshold)."""
+        c2, dt = self.c2, self.timestep_ms
+        j = c2["pos"][cells]
+        ds = np.exp(-dt / _arr(self.params.tau_s, self.conn.n, np.float64)[cells])
+        tau = _arr(self.params.tau_m, self.conn.n, np.float64)[cells]
+        ka, ks = c2["kap_a"][j].astype(np.float64), c2["kap_s"][j].astype(np.float64)
+        dv, da = np.exp(-dt / tau), np.exp(-dt * (1.0 + ka) / tau)
+        i, va, vs, peak = np.ones_like(ds), np.zeros_like(ds), np.zeros_like(ds), np.zeros_like(ds)
+        for _ in range(int(np.ceil(200.0 / dt))):
+            vinf = (i + ka * vs) / (1.0 + ka)
+            va, vs = vinf + (va - vinf) * da, vs * dv + ks * (va - vs) * (1.0 - dv)
+            peak = np.maximum(peak, vs)
+            i = i * ds
+        return peak
+
     def _unitary_psp_weights(self) -> None:
         """s14 (fly2): set each unitary_psp.csv edge to the weight whose PSP peak in the passive
         membrane (this cell's tau_m and tau_s, this timestep and update order) equals the recorded
-        peak. Validity: the cell's intrinsic channels, a slow receptor share or an N29 decay on the
-        edge change the peak (the probe reports the in-network value); current-based synapses only."""
+        peak. N30 (s20): an edge onto an axon compartment gets the weight whose SOMA peak in the coupled
+        pair equals it (where the recording was made). Validity: the cell's intrinsic channels, a slow
+        receptor share or an N29 decay on the edge change the peak (the probe reports the in-network
+        value); current-based synapses only."""
         pe = self.params.psp_edge
         if pe is None or not len(pe["idx"]):
             return
@@ -1510,7 +1693,12 @@ class Network:
         if ke is not None and np.intersect1d(ke["idx"], pe["idx"]).size:
             raise NotImplementedError("a unitary_psp.csv edge also has an N29 decay row (not built)")
         post = self.conn.indices[pe["idx"]]
-        self.w[pe["idx"]] = (pe["psp_mv"] / self.psp_peak_per_mv(post)).astype(np.float32)
+        per = self.psp_peak_per_mv(post)
+        if self.c2 is not None:
+            on_ax = self.c2["ax_edge"][pe["idx"]]
+            if on_ax.any():
+                per[on_ax] = self.psp_peak_per_mv_axon(post[on_ax])
+        self.w[pe["idx"]] = (pe["psp_mv"] / per).astype(np.float32)
 
     def psp_peak_per_mv(self, cells: np.ndarray) -> np.ndarray:
         """Passive PSP peak (mV) per mV of synaptic weight arriving at `cells`, in this model's
@@ -1599,6 +1787,11 @@ class Network:
         # contribution arrives after exactly its own delay.
         slot = np.repeat((self.delay_head + self.delay_steps[spiked]) % self.D, counts)
         tgt = indices[sel]
+        if self.c2 is not None:   # N30: edges onto an axon compartment go to its own buffer
+            ax = self.c2["ax_edge"][sel]
+            if ax.any():
+                np.add.at(self.c2["buf"], (slot[ax], self.c2["pos"][tgt[ax]]), w[ax])
+                w = np.where(ax, np.float32(0.0), w)   # channel and slow copies are refused on these edges
         if self.params.cond:
             ex = w > 0
             np.add.at(self.delay, (slot[ex], tgt[ex]), w[ex])

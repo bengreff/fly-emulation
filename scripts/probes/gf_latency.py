@@ -59,6 +59,10 @@ def run_arm(profile: str, gap: float, trials: int, period_ms: float, window_ms: 
             spikes.append((s, int(i)))
     sp = pd.DataFrame(spikes, columns=["step", "cell"])
 
+    def count_after(cells, s0):
+        x = sp[sp.cell.isin(cells) & (sp.step > s0) & (sp.step <= s0 + win)]
+        return x.groupby("cell").step.size()
+
     def first_after(cells, s0):
         x = sp[sp.cell.isin(cells) & (sp.step > s0) & (sp.step <= s0 + win)]
         return x.groupby("cell").step.min()
@@ -70,12 +74,14 @@ def run_arm(profile: str, gap: float, trials: int, period_ms: float, window_ms: 
         for ty, ix in mns.items():
             fk = first_after(ix, s_gf) if s_gf is not None else pd.Series(dtype=int)
             fc = first_after(ix, c)
+            nk = count_after(ix, s_gf) if s_gf is not None else pd.Series(dtype=int)
             for cell in ix:
                 lat = (fk[cell] - s_gf) * dt if cell in fk.index else None
                 rows.append({"trial": trial, "type": ty, "cell": int(cell), "gf_spiked": s_gf is not None,
                              "central_ms": lat,
                              "muscle_ms": None if lat is None else lat + float(delays[ty]),
-                             "control_spike": cell in fc.index})
+                             "control_spike": cell in fc.index,
+                             "n_spikes": int(nk[cell]) if cell in nk.index else 0})
     df = pd.DataFrame(rows)
     out = {"gap_conductance": gap, "gf_cells": gf.tolist(), "trials": trials,
            "gf_spike_fraction": float(df.drop_duplicates("trial").gf_spiked.mean()),
@@ -92,6 +98,8 @@ def run_arm(profile: str, gap: float, trials: int, period_ms: float, window_ms: 
             "central_ms_median": float(lat.median()) if len(lat) else None,
             "central_ms_p10_p90": [float(lat.quantile(0.1)), float(lat.quantile(0.9))] if len(lat) else None,
             "muscle_ms_median": float(d.muscle_ms.dropna().median()) if len(lat) else None,
+            "spikes_per_window_mean": float(d.n_spikes.mean()),
+            "spikes_per_window_max": int(d.n_spikes.max()),
             "per_cell_follow": d.groupby("cell").central_ms.apply(lambda x: float(x.notna().mean())).to_dict(),
         }
     return out
@@ -107,12 +115,13 @@ if __name__ == "__main__":
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--set", action="append", default=[], help="extra override entity|property=value")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--arms", default="gaps_off,gaps_on", help="comma list of gaps_off, gaps_on")
     a = ap.parse_args()
     extra = {k: float(v) for k, v in (s.split("=", 1) for s in a.set)}
     res = {"probe": "gf_latency", "profile": a.profile, "reference": REFERENCE, "band_ms": BAND,
            "reference_source": "Augustin et al. 2017 PLoS Biol 15:e2001655 S1 Table (WT brain stimulation)",
            "overrides": extra, "arms": {}}
-    for name, gap in (("gaps_off", 0.0), ("gaps_on", 1.0)):
+    for name, gap in ((n, g) for n, g in (("gaps_off", 0.0), ("gaps_on", 1.0)) if n in a.arms.split(",")):
         r = run_arm(a.profile, gap, a.trials, a.period_ms, a.window_ms, a.settle_ms, a.seed, extra)
         res["arms"][name] = r
         for ty, v in r["types"].items():

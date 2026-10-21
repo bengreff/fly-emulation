@@ -276,7 +276,7 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: T1 fill levels 1 and 2 (F-XCONN-3, F-XCONN-4), fly_brain.zip spec rev 2 with scan files, T4/T5 seed 1 re-recording (20 Oct 22:54)
+## fly2: two-compartment DLMn passes GF escape at the guessed coupling (F-GJ-6), T1 fill levels 1 and 2 (F-XCONN-3, F-XCONN-4), fly_brain.zip spec rev 2, T4/T5 seed 1 (21 Oct 00:02)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 20 Oct night run (Task 1 the T1 fill, Task 2 the zip spec), then Ben's rulings via the Director (T1A, the scan-file design, two-compartment neurons). Every switch below is neutral by default and **none is adopted**.
 - **Merging:** worktree-fly2 contains main (merge 063f105, clean, with fly's S4a/S4b) plus the fly2 commits through this HANDOFF. **It is ready to fast-forward.** The worktree guard refuses commands aimed at the main checkout, so someone in the main checkout runs the fast-forward merge of `worktree-fly2`. Tests after the merge: `test_t1_fill`, `test_class_mechanisms`, `test_ct1_compartments`, `test_repo_hygiene` and `test_model_data` pass (the 2 owner-row failures in `test_model_data` were fixed in 88e2a65). The full battery has not been rerun.
@@ -301,13 +301,34 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
   - A species layer and an individual layer, one slot-address space, and the scan file (`*.flyscan`: observed slots with sd, per-modality noise models).
   - The pipeline `flyemu.scan` → `flyemu.reconstruct` → `flyemu.compare`, with a leak guard and round-trip tests.
   - Next to build would be the variation model, the study's main prerequisite.
-- **Ben approved (20 Oct, via the Director):** two-compartment neurons where a point model provably fails, PSI→DLMn first (F-GJ-5), and in general any clean increase in neuron fidelity. **Started 20 Oct (Director's order): pre-registered in DECISIONS 20 Oct 23:30, not yet built.**
-  - Build it exactly as written there. In `lif.py` the soma is the existing cell, and the axon is a small add-on state for the listed cells (`self.c2`: v, i, a delay buffer, refractory).
-  - `_propagate` sends edges flagged as axon inputs to the axon buffer, and refuses if those edges carry receptor-channel or slow copies.
-  - `step`: the axon updates from the start-of-step soma voltage, and soma drive += κs(Va − Vs). Listed cells can't spike from the soma: they are masked out of `can_spike`, and their soma is neither clamped nor reset. Axon spikes are merged into `spiked`.
-  - `_unitary_psp_weights` calibrates axon-routed edges to the soma peak of the coupled pair.
-  - Register the switch in `data/model/structural_keys.csv` (N30), set N30 to partial in `mechanisms.yaml`, and add `tests/test_two_compartment.py`.
-  - Then run the gate, the latency at seed 1 and the four sensitivity corners on the Mac via slot.py.
+- **Two-compartment DLMn (N30 first build), done and scored. F-GJ-6: PASS at the guessed coupling; nothing adopted.**
+  - Ben approved two-compartment neurons where a point model provably fails (20 Oct, via the Director). The registration is DECISIONS 20 Oct 23:30, with the 23:48 build note and the 21 Oct 00:01 results.
+  - **Built:** switch `cell_type:all|two_compartments_where_point_fails` (neutral 0, CPU only, GPU refuses).
+    - Tables: `data/params/two_compartment.csv` (cells and the inputs that land on the axon) and `two_compartment_classes.csv` (class MN: q 0.07, ρ 1.6, derived from guessed geometry).
+    - In `lif.py`, the axon state is `self.c2`. The listed cells spike only from it, and their soma is never reset.
+    - Tests: `tests/test_two_compartment.py`.
+    - Registry: N30 is now partial, with structural_keys and parameters rows (`n30_axon_share`, `n30_coupling`; bound basis guessed).
+  - **Results (seed 1, isolated CNS, m10f + measured NT + measured PSP):**
+    - Gate: soma 4.78 mV, axon 13.8 mV.
+    - Gaps on: DLMn a, b follow 20/20 at a 2.196 ms muscle latency. Inside Ryglewski 2014 (held out, now spent); outside Augustin (spent).
+    - Gaps off: 0/20.
+    - Corners: follow at ρ 0.13, 0/20 at ρ 25. The registered sensitivity prediction was wrong. The derived boundary is ρ < about 4, so ρ decides the pass.
+    - Figure `docs/media/s20_fly2_two_comp_dlmn.png`, viewed.
+  - **Blanks found, none tuned:**
+    - DLMn fires a doublet (2 spikes per GF spike; 3-4 at the low-ρ corners) where the fly fires 1. Cause: the 5 ms PSI current outlasts the 2 ms axon refractory period.
+    - DLMn tau_m is 4.4 ms measured, against the shared 20.
+  - **Measurement plan for Ben's experiment:** `docs/research/s20_n30_pin_q_rho.md`.
+    - (B) MN5 EM geometry from neuPrint: q measured, ρ narrowed to Ri's 3× range. fly2 can do this next.
+    - (C) One MN5 soma recording (two-exponential step response or capacitive transient) pins both values, measured.
+    - (A) The soma amplitude of the "small and broad" axon spike in the 2006 paper is a quick ρ < 4 read.
+  - **Next, in order:**
+    1. B (pre-register first).
+    2. Register the doublet fix as its own blank, from a measurement (axon refractory or PSI current decay).
+    3. Then a battery run toward adoption.
+  - If ρ comes out > 4, the build fails. The next candidate is a lower axon threshold (a spike-initiation zone), as a new registration.
+  - Run scripts: `scripts/probes/n30_runs.sh` (runs) and `n30_figure.py` (figure). The probes `gf_psi_dlm_path.py` (`--seed`, `--window-ms`, `--axon-passive`) and `gf_latency.py` (`--arms`, spikes per window) gained options. All defaults are unchanged.
+  - Fixed in passing: `test_organism.py::test_depression_...` failed at HEAD (positional LIFParams); it now uses keywords.
+  - Tests: `test_two_compartment`, `test_unitary_psp`, `test_stubs`, `test_model_data`, `test_channels`, `test_class_mechanisms`, `test_ct1_compartments`, `test_stp_connections`, `test_internal_state`, `test_muscles_s10` and `test_organism` pass. The full battery was not run.
 - **T4/T5 seeds after the 16 Oct backhouse reboot (pre-registered DECISIONS 14 Oct 00:41 and 01:05/01:07):**
   - The recorded protocols survived on disk; the analysis had crashed because flyapp reads `data/cache` from the app directory, not `--model-root`. Fixed with a link `~/fly2-app/data/cache → ~/fly-emulation/data/cache` and a rerun with `--analyse-only` (`run_analyse.sh` next to each `run.sh`).
   - **Seed 2 (pair strengths + CT1 compartments, medulla set): FAIL, 0 of 8.** The T4 peaks are 0.38-0.51 mV and the T5 peaks 0.18-0.40 mV, below the 0.5 mV floor, with |DSI| at most 0.08. The ON pathway is there (Mi1 0.77, Tm3 1.09, Mi4 2.37 mV, Mi9 −1.96), but T4 sums it to 0.43 mV. Sheet `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png`, viewed.
@@ -432,6 +453,8 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Augustin 2017 S1 Table, GF→TTM latency (WT, brain stimulation) | seen (it set fly2's no-chemical-delay rule; F-GJ-3 used it only as a consistency check) | none |
 | Augustin 2017 S1 Table, GF→DLM latency | spent on m10f + gaps (s13 fly2, F-GJ-3); DLMn silent | consistency check only from now on |
 | Fayyazuddin 2006 MN5 soma potential 4.71 mV | SET a value (s14 fly2, F-GJ-5: PSI→DLMn unitary PSP, switch neutral) | can no longer validate |
+| Ryglewski et al. 2014 GF→DLM delay 1.85 ± 0.21 ms (n 10; read as SD, 1.43-2.27) | spent (s20 fly2, F-GJ-6, pre-registered DECISIONS 20 Oct 23:30): two-compartment DLMn PASS at 2.196 ms | consistency check only from now on |
+| `gf_latency.py` + `gf_psi_dlm_path.py` on m10f + measured NT + measured PSP + N30 two compartments, seed 1 (central values and the four corners) | spent (s20 fly2, F-GJ-6) | a changed DLMn (doublet fix, tau_m, measured q/ρ) needs seed 2+ and a new held-out range |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 00:41; F-VISION-15): medulla FAIL 1 of 8, photoreceptor FAIL 0 of 8 | the next candidate needs seed 3 or a new test |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |

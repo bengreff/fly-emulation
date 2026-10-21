@@ -530,7 +530,7 @@ def test_depression_weakens_repeated_spikes_and_recovers():
                    np.ones(2, np.float32), np.array([1.0], np.float32))
     full = lambda v: np.full(2, v, np.float32)
     p = LIFParams(full(20.0), full(-52.0), full(-45.0), full(-52.0), full(2.2),
-                  5.0, 1, 0.0, True, 0.0, 200.0, 0.5, 500.0)
+                  5.0, 1, 0.0, True, 0.0, 200.0, std_u=0.5, std_tau_rec=500.0)
     net = Network(c, p, 0.1)
     net.step(kick=(np.array([0]), 100.0)); net.step()
     first = float(net.i_syn[1])

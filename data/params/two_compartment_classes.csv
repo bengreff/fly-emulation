@@ -1,0 +1,10 @@
+# N30 class values (fly2, 20 Oct; DECISIONS 20 Oct 23:30). Shared by every cell of the class listed in
+# two_compartment.csv; never per cell or per route. Uniform membrane: q = the axon compartment's share of the
+# whole-cell membrane (so of its leak conductance and capacitance); rho = soma-axon coupling conductance x the
+# whole-cell input resistance. Then kappa_s = rho / (1 - q) and kappa_a = rho / q (coupling in units of each
+# compartment's own leak). The values are DERIVED FROM GUESSED GEOMETRY: some inputs are measured, the diameter and
+# path length are guessed. The registry labels them inferred (its 'derived' needs every input measured). The
+# bracket is the sensitivity range of the pre-registration, not a fit range. Override per run with
+# cell_class:<class>|axon_membrane_share and cell_class:<class>|soma_axon_coupling.
+class,q,q_lo,q_hi,rho,rho_lo,rho_hi,basis,derivation,source
+MN,0.07,0.012,0.15,1.6,0.13,25,derived from guessed geometry,"q: a 50 um axon segment carrying the PSI contacts (measured) of diameter 2 um (guessed) has 314 um2, against 4,300 um2 from the MN5 whole-cell 43 pF (measured) at a specific capacitance 1 uF/cm2 (guessed); bracket from diameter 1-4 um and the adult MN5 127 +/- 16 pF (n 52). rho: g_c = pi d^2 / (4 Ri l) with d 2 um (guessed), Ri 200 Ohm cm (inside the fitted Drosophila 102-311 Ohm cm) and l 100 um, the arbor-to-contact path (guessed), giving 15.7 nS x Rin 102 MOhm (measured); bracket from d 1-4 um, Ri 100-400 Ohm cm, l 50-150 um","Fayyazuddin et al. 2006 PLoS Biol 4:e63 (MN5 Rin 102 +/- 12 MOhm, Cm 43 +/- 2 pF, n 22, in situ whole-cell; contact span 50 um); Kadas et al. (PMC6595220; adult MN5 127 +/- 16 pF, n 52); Gouwens & Wilson 2009 J Neurosci (Ri 102-311 Ohm cm, fitted, DM1 PN)"
