@@ -368,3 +368,76 @@ def test_optic_lobe_flyvis_is_neutral_by_default_and_fills_only_types_without_ow
     pre = np.repeat(np.arange(on.conn.n), np.diff(on.conn.indptr))
     same = (on.graded == base.graded)[pre]
     assert np.array_equal(on.w[same], base.w[same]) and (on.w[~same] == 0).all()
+
+
+@needs_graph
+def test_s14_class_switches_are_neutral_by_default_and_act_only_on_their_cells():
+    """s14 (DIAGNOSTIC): arm A makes the unknown-mode types of hemilineage 16B graded; arm B adds a
+    spike-triggered after-depolarisation to the E1/E2 rhythm-core types; B' scales their NaP density."""
+    import pandas as pd
+    from flyemu import percell
+    from flyemu.lif import circuit_classes
+    base = _org()
+    assert base.net.adp_mv is None
+    a = _org(**{"class:vnc_local_16B|graded": 1.0})
+    c = pd.read_csv(REPO / "data/model/classes.csv", keep_default_na=False)
+    unk = set(c.type[(c.circuit_class == "vnc_local_16B") & (c["mode"] == "unknown")])
+    m = (circuit_classes(a.conn) == "vnc_local_16B") & a.conn.neurons.type.isin(unk).to_numpy()
+    assert m.sum() > 300 and (a.conn.neurons.type == "IN16B036").to_numpy()[m].sum() >= 2
+    assert not base.net.graded[m].any() and a.net.graded[m].all()
+    assert np.array_equal(base.net.graded[~m], a.net.graded[~m])
+    b = _org(**{"cell_type:core_rhythm_exc|adp_mv": 6.0, "cell_type:core_rhythm_exc|adp_tau_ms": 10.0})
+    core = percell.core_rhythm_mask(b.conn)
+    assert core.sum() == 12
+    assert np.all(b.net.adp_mv[core] == 6.0) and not b.net.adp_mv[~core].any()
+    assert np.allclose(b.net.decay_adp[core], np.exp(-b.net.timestep_ms / 10.0))
+    sp = b.net.step(kick=(np.flatnonzero(core), 40.0))
+    assert set(np.flatnonzero(core)) <= set(sp)
+    assert np.all(b.net.adp[core] == 6.0) and not b.net.adp[~core].any()
+
+
+def test_s14_core_nap_scale_acts_only_on_the_core_types():
+    import pandas as pd
+    from flyemu import channels
+    from flyemu.connectome import Connectome
+    from flyemu.registry import Policy, Registry
+    types = ["IN17A001", "INXXX466", "IN16B036", "IN19A007"]
+    n = len(types)
+    nrn = pd.DataFrame({"bodyId": -1 - np.arange(n), "type": types, "predictedNt": "acetylcholine",
+                        "superclass": "x", "class": "x"})
+    conn = Connectome(nrn, np.zeros(n + 1, np.int64), np.zeros(0, np.int32), np.zeros(0, np.float32),
+                      np.zeros(n, np.float32), np.zeros(0, np.float32))
+    g = {}
+    for s in (1.0, 4.0):
+        reg = Registry(Policy.MINIMAL)
+        reg.overrides["cell_type:all|intrinsic_channels"] = 1.0
+        reg.overrides["cell_type:core_rhythm_exc|nap_gbar_scale"] = s
+        g[s] = channels.from_registry(reg, conn, timestep_ms=0.1).g
+    assert np.allclose(g[4.0]["NaP"][:2], 4.0 * g[1.0]["NaP"][:2])
+    assert np.array_equal(g[4.0]["NaP"][2:], g[1.0]["NaP"][2:])
+    assert all(np.array_equal(g[4.0][k], g[1.0][k]) for k in g[1.0] if k != "NaP")
+
+
+def test_s14_adp_saturates_at_its_ceiling_and_inactivates_per_trigger():
+    """The ADP drive never exceeds adp_mv; with adp_recovery_ms > 0 a trigger uses up its availability, so a
+    second spike right after adds (almost) nothing; with 0 every spike refreshes the drive to the ceiling."""
+    import pandas as pd
+    from flyemu import lif
+    from flyemu.connectome import Connectome
+    n = 2
+    nrn = pd.DataFrame({"bodyId": -1 - np.arange(n), "type": "x", "predictedNt": "acetylcholine",
+                        "superclass": "x", "class": "x"})
+    conn = Connectome(nrn, np.zeros(n + 1, np.int64), np.zeros(0, np.int32), np.zeros(0, np.float32),
+                      np.zeros(n, np.float32), np.zeros(0, np.float32))
+    f = lambda v: np.full(n, v, np.float32)
+    p = lif.LIFParams(f(20.0), f(-52.0), f(-45.0), f(-52.0), f(0.0), 5.0, np.ones(n, np.int64), 0.0, True,
+                      graded=np.zeros(n, bool), adp_mv=f(10.0), tau_adp=f(50.0),
+                      adp_rec_ms=np.array([0.0, 100.0], np.float32))
+    net = lif.Network(conn, p, 0.1)
+    net.step(kick=(np.arange(n), 30.0))
+    assert np.allclose(net.adp, 10.0)
+    for _ in range(5):
+        net.step()
+    net.step(kick=(np.arange(n), 30.0))
+    assert net.adp[0] <= 10.0 + 1e-5 and net.adp[0] > 9.99
+    assert net.adp[1] < 10.0 * np.exp(-0.6 / 50.0) + 0.1

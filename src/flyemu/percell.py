@@ -53,6 +53,14 @@ COMPLETE_FRACTION = 0.25
 LEG_MN_SUBCLASSES = ("fl", "ml", "hl")   # male-cns subclass of vnc_motor: front, middle, hind leg
 
 
+CORE_RHYTHM_EXC = ("IN17A001", "INXXX466")   # E1, E2 of Pugliese 2025's walking oscillator (male-CNS types)
+
+
+def core_rhythm_mask(conn) -> np.ndarray:
+    """s14 arm B: the excitatory rhythm-core types E1 and E2, every neuromere copy (12 cells)."""
+    return conn.neurons.type.isin(CORE_RHYTHM_EXC).to_numpy()
+
+
 def leg_motor_mask(conn) -> np.ndarray:
     """Leg motor neurons: superclass vnc_motor, subclass fl/ml/hl (381 cells at min_synapses 5)."""
     n = conn.neurons

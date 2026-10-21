@@ -68,6 +68,9 @@ class LIFParams:
     reset_syn: bool = False  # zero the synaptic current on a spike (Shiu 2024)
     adapt_mv: float | np.ndarray = 0.0   # adaptation increment per spike, mV
     tau_adapt: float | np.ndarray = 200.0  # adaptation decay, ms
+    adp_mv: np.ndarray | None = None       # s14 B: after-depolarisation ceiling, mV (None: off)
+    tau_adp: float | np.ndarray = 20.0     # s14 B: after-depolarisation decay, ms
+    adp_rec_ms: float | np.ndarray = 0.0   # s14 B: recovery of ADP availability after a trigger, ms (0: none)
     std_u: float | np.ndarray = 0.0        # short-term depression per spike
     std_tau_rec: float | np.ndarray = 500.0  # ms
     cond: bool = False       # conductance-based synapses
@@ -459,6 +462,60 @@ def _class_modes(reg: Registry, conn: Connectome, graded: np.ndarray) -> np.ndar
     return out
 
 
+GRADED_CLASSES = ("vnc_local_16B",)   # s14 A: circuit classes with a class-grain mode switch
+
+
+def _class_graded(reg: Registry, conn: Connectome, graded: np.ndarray) -> np.ndarray:
+    """s14 arm A (DIAGNOSTIC): graded (1) or spiking (0) transmission for every unknown-mode type of one
+    circuit class, `class:<c>|graded`, finer than the N1 vnc_local group (one hemilineage, not all).
+    Types with a recorded mode row still win (mode_from_recordings is applied after this)."""
+    from pathlib import Path
+    c = pd.read_csv(Path(__file__).resolve().parents[2] / "data" / "model" / "classes.csv",
+                    keep_default_na=False)
+    cls = circuit_classes(conn)
+    n = conn.neurons
+    key = np.where(n.type.notna(), n.type, "untyped:" + n.superclass.fillna("none"))
+    out = np.asarray(graded, bool).copy()
+    for name in GRADED_CLASSES:
+        unk = set(c.type[(c.circuit_class == name) & (c["mode"] == "unknown")])
+        m = (cls == name) & pd.Series(key).isin(unk).to_numpy()
+        v = reg.require(f"class:{name}", "graded", units="boolean",
+                        model_use="s14 A: graded (1) or spiking (0) transmission for the unknown-mode "
+                                  "types of this circuit class (hemilineage)",
+                        subsystem="neuron_biophysics", instances=int(m.sum()), minimal=0.0, conventional=0.0,
+                        minimal_note="neutral 0: spiking, as the N1 group default")
+        if v:
+            out[m] = True
+    return out
+
+
+def _core_rhythm_adp(reg: Registry, conn: Connectome):
+    """s14 arm B (DIAGNOSTIC): spike-triggered after-depolarisation of the excitatory cells of the walking
+    rhythm core (E1 IN17A001, E2 INXXX466; percell.CORE_RHYTHM_EXC), one value shared by both types and
+    all neuromere copies. A spike moves the ADP drive toward `adp_mv` by the available fraction h, so the drive
+    saturates at `adp_mv` (a conductance has a ceiling); it decays at `adp_tau_ms`. With `adp_recovery_ms` > 0
+    each trigger uses up the availability (h -> 0), which recovers at that time constant, so a plateau ends
+    (Hancox & Pitman 1991); 0 = no inactivation. Neutral adp_mv 0: off. Commit e16b3b7 had the additive,
+    unbounded form (each spike added adp_mv): it latches (docs/research/s14_burst_ranges.md)."""
+    from . import percell as _pc
+    m = _pc.core_rhythm_mask(conn)
+    amp = reg.require("cell_type:core_rhythm_exc", "adp_mv", units="mV",
+                      model_use="after-depolarisation ceiling (E1/E2 types): each spike moves the drive toward it",
+                      subsystem="neuron_biophysics", instances=int(m.sum()), minimal=0.0, conventional=0.0,
+                      minimal_note="neutral 0: no after-depolarisation")
+    tau = reg.require("cell_type:core_rhythm_exc", "adp_tau_ms", units="ms",
+                      model_use="decay time constant of the E1/E2 after-depolarisation",
+                      subsystem="neuron_biophysics", instances=int(m.sum()), minimal=20.0, conventional=20.0,
+                      minimal_note="guessed 20 ms; inert while adp_mv is 0")
+    rec = reg.require("cell_type:core_rhythm_exc", "adp_recovery_ms", units="ms",
+                      model_use="recovery of the E1/E2 ADP availability after each trigger (0: no inactivation)",
+                      subsystem="neuron_biophysics", instances=int(m.sum()), minimal=0.0, conventional=0.0,
+                      minimal_note="neutral 0: no inactivation; inert while adp_mv is 0")
+    if not amp:
+        return None, float(tau), float(rec)
+    return np.where(m, np.float32(amp), np.float32(0.0)).astype(np.float32), float(tau), float(rec)
+
+
 FLYVIS_TABLE = ptable.TABLE.with_name("cell_types_flyvis.csv")
 
 
@@ -584,6 +641,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     graded = per("graded", "boolean", "graded (non-spiking) transmission",
                  0.0, "declared default: spiking; graded types listed in cell_types.csv")
     graded = _class_modes(reg, conn, graded)
+    graded = _class_graded(reg, conn, graded)
     fv = None
     if one("optic_lobe_flyvis", "boolean", "per-type optic-lobe mode, time constant and release at rest "
            "from the flyvis ensemble", 0.0, "neutral 0: no flyvis rows read"):
@@ -638,6 +696,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     # --- session 10: per-circuit-class background drive (N3) and synaptic strength (N5)
     rel, inp, spont, noise_class, tonic_class, th_off, tm_scale = _class_scales(reg, conn, rel, inp, spont)
     adapt, tau_adapt = _class_adaptation(reg, conn, adapt, tau_adapt)
+    adp_mv, tau_adp, adp_rec_ms = _core_rhythm_adp(reg, conn)
     v_th = (np.asarray(v_th, np.float32) + th_off).astype(np.float32)
     if fv is not None:   # flyvis effective time constant for the mapped types without a tau_m row; class scale kept
         tau_m = np.where(np.isfinite(fv["tau_m"]) & ~fv["own_tau_m"], fv["tau_m"], tau_m)
@@ -839,7 +898,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         tau_s=tau_s, slow_share_basis=share_basis, cond_reference=cond_ref, inh_cond_scale=inh_scale,
         delay_steps=np.maximum(1, np.round(delay_ms / timestep_ms)).astype(np.int64),
         noise_mv=noise, reset_syn=bool(reset_syn), adapt_mv=adapt,
-        tau_adapt=tau_adapt, std_u=std_u, std_tau_rec=std_tau, stp_edge=stp_edge, cond=bool(cond),
+        tau_adapt=tau_adapt, adp_mv=adp_mv, tau_adp=tau_adp, adp_rec_ms=adp_rec_ms,
+        std_u=std_u, std_tau_rec=std_tau, stp_edge=stp_edge, cond=bool(cond),
         e_exc=float(e_exc), e_inh=float(e_inh), graded=graded.astype(bool),
         graded_rmax_hz=float(rmax), graded_r0=graded_r0, graded_range=graded_range, graded_k=graded_k, spont_mv=spont,
         release_gain=rel,
@@ -937,6 +997,16 @@ class Network:
         self.rec_step = (1.0 - np.exp(-dt / _arr(p.std_tau_rec, n))).astype(np.float32)
         self.spike_count = 0
         self.adapt = np.zeros(n, dtype=np.float32)
+        # s14 B: spike-triggered after-depolarisation (drive += adp; a spike moves adp toward adp_mv by the
+        # availability h; decays at tau_adp; h -> 0 per trigger, recovering at adp_rec_ms; 0 = h stays 1)
+        self.adp_mv = None if p.adp_mv is None or not np.any(p.adp_mv) else _arr(p.adp_mv, n)
+        if self.adp_mv is not None:
+            self.adp = np.zeros(n, dtype=np.float32)
+            self.decay_adp = np.exp(-dt / _arr(p.tau_adp, n)).astype(np.float32)
+            rec = _arr(p.adp_rec_ms, n)
+            self.adp_h = np.ones(n, dtype=np.float32)
+            self.adp_inact = rec > 0
+            self.decay_h = np.exp(-dt / np.where(self.adp_inact, rec, 1.0)).astype(np.float32)
         self.kick_held = np.zeros(n, dtype=np.float32)
         self.elec = None   # (pre, post, kick_mv): identified electrical synapses
         # s13 (fly2): gap junctions as DC coupling plus spike steps through their own ring (no chemical delay)
@@ -1091,6 +1161,10 @@ class Network:
         if self._any_adapt:
             self.adapt *= self.decay_a
             drive = drive - self.adapt
+        if self.adp_mv is not None:
+            self.adp *= self.decay_adp
+            self.adp_h = 1.0 - (1.0 - self.adp_h) * self.decay_h
+            drive = drive + self.adp
         if self.gap is not None and self.gap_dc:
             # s13: junction current from the start-of-step potentials (explicit; c dt / tau_m << 1)
             g = self.gap
@@ -1168,6 +1242,10 @@ class Network:
                     self.g_i[spiked] = 0.0
             if self._any_adapt:
                 self.adapt[spiked] += self.adapt_mv[spiked]
+            if self.adp_mv is not None:
+                a = self.adp[spiked]
+                self.adp[spiked] = a + np.maximum(self.adp_mv[spiked] - a, 0.0) * self.adp_h[spiked]
+                self.adp_h[spiked] = np.where(self.adp_inact[spiked], 0.0, 1.0)
             if self._mod_active:
                 k = self.mod_release[spiked]
                 k = k[k >= 0]

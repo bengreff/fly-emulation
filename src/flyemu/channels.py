@@ -249,10 +249,18 @@ def from_registry(reg, conn, *, timestep_ms: float) -> Intrinsic | None:
     ca_tau = reg.require("channel:Ca", "tau_ms", units="ms", model_use="decay of the spike Ca pool (SK gating)",
                          subsystem="neuron_biophysics", instances=n, minimal=KINETICS["Ca"][1],
                          conventional=KINETICS["Ca"][1], minimal_note="guessed: medium AHP time scale")
+    from . import percell as _pc
+    core = _pc.core_rhythm_mask(conn)
+    nap_core = reg.require("cell_type:core_rhythm_exc", "nap_gbar_scale", units="x",
+                           model_use="s14 B': persistent Na density x scale on the E1/E2 rhythm-core types",
+                           subsystem="neuron_biophysics", instances=int(core.sum()), minimal=1.0,
+                           conventional=1.0, minimal_note="neutral 1: the types' expression-scaled NaP density")
     if not on:
         return None
     types = conn.neurons.type.fillna("untyped").to_numpy()
     f, src = expression_factors(types, float(beta), conn.neurons.bodyId.to_numpy())
     g = {c: (float(gbar[c]) * f[c]).astype(np.float32) for c in CHANNELS}
+    if nap_core != 1.0:
+        g["NaP"] = np.where(core, g["NaP"] * np.float32(nap_core), g["NaP"]).astype(np.float32)
     ca = (float(ca_scale) * f["Ca"]).astype(np.float32)
     return Intrinsic(g=g, ca_per_spike=ca, dt=timestep_ms, source=src, ca_tau=float(ca_tau))
