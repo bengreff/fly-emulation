@@ -1,36 +1,52 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 01:25 CDT. Session 15 (s15 step 1 done, F-S15-1; s15b pre-registered; s14 below is done). Session 14, the class-level options test (Director brief, 20 Oct). It's a forced-drive DIAGNOSTIC, and nothing is adopted. The night runs until about 05:30. Ben's note: two compartments (soma plus spike-initiation zone) are allowed where a point model provably fails.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 01:40 CDT. Session 15 (Director brief after /clear: run s15b, then pre-register s15c). The night runs until about 05:30. Ben's note: two compartments (soma plus spike zone) are allowed where a point model provably fails. Ben, via the Director: "we are trying to discover the minimum for functional behavior", so take clean fidelity steps, and don't go to a fitted synaptic scale.
 
-**s14 DONE (F-S14-1; DECISIONS 20 Oct 22:28 pre-registration, 23:57 and 21 Oct 01:16 results).**
-- **Result:** 6 arms × 15/25/40 mV, 0 of 18 pass. The arms were M0, A (16B graded), B4/B2 (E1/E2 saturating ADP), C4/C2 (A+B). Viewed: `docs/media/s14_arms_rasters_{15,25,40}mv.png`, `s14_arms_frames_all.png`, `s14_arms_chain_T1L.png`.
-- **The B arms don't burst in the network:** E1/E2 fire a 24-33 Hz train with no gaps, and the 12 Hz cycle is lost.
-- **I1 is never recruited:** graded I1 rises at most 1.54 mV, under the 2 mV threshold.
-- **Extra core spikes leave MN output unchanged.**
-- **Hand-off probe** `scripts/probes/s14_handoff.py` (`runs/s14/handoff.json`): a median E2 → leg-MN edge gives 0.47 mV per spike, and E1 0.17 mV, against a 7 mV gap.
-- **Reading:** the core → MN hand-off is confirmed as a bottleneck, and E2 → I1 fails the same way.
-- **Measurement for Ben's list:** a front-leg MN somatic recording with E2 (IN15A001) or E1 (IN17A001) activation. It gives the unitary PSP, Rin, and ideally the soma-to-neurite attenuation.
-- **Outputs:** Mac `runs/s14/arms/` (score.json); backhouse `~/fly-m10f/runs/s14/arms/`. Nothing is running, and the runner exited (ALL.done 01:11).
+**s15b RUNNING (pre-registered DECISIONS 21 Oct 01:25; step 1 and class values 01:30; gate 01:34).**
+- **Geometry (committed f61c480):** `premotor_mn_geometry.py --split --offline` → `data/derived/premotor_mn_split.{csv,json}`. Both classes are derivable at FRAC 0.05:
+  - leg_MN: 94/94 cells, median 95% of input sites distal to the split, q 0.725;
+  - core_premotor: 12/12 cells, 97.5% distal, q 0.933.
+  - ρ is the cell median, 1.38 (leg MN, Rin 300) and 1.58 (core, Rin 600). The mean is 223 for leg MNs because one Ti flexor MN pair splits 1 µm from the soma.
+  - Rows appended to fly2's `two_compartment*.csv`; fly2's rows are unchanged.
+- **Arm control:** `cell_class:<class>|two_compartments_in_run` (neutral 1, read only when set) leaves a class out. Every s15b arm turns the MN (DLMn) class off.
+- **Gate passed (`runs/s15/gate/*.json`):**
+  - TM: soma 0.018 mV per synapse, q90 per spike 1.32 mV; the spike zone sees 1.05× the point PSP.
+  - TP: soma 0.024 mV per synapse, q90 1.37 mV; the spike zone sees 0.89×.
+  - So the hand-off gain is about 1, against the 15-20× needed.
+- **Arms RUNNING on backhouse since 01:33:** M0/TM/TP/TPM × 15/25/40 × {s2, chain}, 24 jobs, `~/fly-m10f/runs/s15/arms/` (run.sh, queue.log, done-files). **WAITING ON `~/fly-m10f/runs/s15/arms/ALL.done`.** Expected about 01:33 + 40-60 min.
+  - Then copy `s2/` and `chain/` to Mac `runs/s15/arms/`.
+  - Score with `.venv/bin/python scripts/probes/s14_score.py runs/s15/arms --arms M0,TM,TP,TPM --out runs/s15/arms/score.json` (needs the *_traces.npz).
+  - Make the raster and frame sheets as s14 (`bypass_rasters.py`, `bypass_sheet.py`) and view them.
+  - Write F-S15-2 and the DECISIONS results entry, then commit.
+  - My prediction: no pass, and little change from M0.
+  - A keep-alive ssh is held from the Mac session. If WSL stopped, the runner skips finished jobs on restart: `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/fly-m10f && nohup runs/s15/arms/run.sh > runs/s15/arms/runner.log 2>&1 &"'`.
 
-**s15 PRE-REGISTERED (DECISIONS 21 Oct 01:16): the two-compartment premotor/leg-MN arm.** It uses fly2's N30 mechanism (`cell_type:all|two_compartments_where_point_fails`) and its tables `data/params/two_compartment*.csv`.
-- **Ownership cleared (Director as Ben, 21 Oct; DECISIONS 01:22):** fly appends the leg_MN and core_premotor rows. Append only, keep fly2's rows and method, and write cell and class rows together.
-- **Step 1 result (F-S15-1, DECISIONS 01:25):** fly2's option-B rule doesn't transfer to cells whose inputs cover the arbor.
-  - It fails for 27/94 leg MNs and 4/12 core cells.
-  - Where it returns values, the "axon" holds a median 2.1% (leg MN) and 0.1% (core) of the input sites.
-  - So, as pre-registered, **no arm ran and no row was written**. Nothing is running.
-  - Outputs: `data/derived/premotor_mn_geometry.{csv,json}`, raw skeletons and post synapses in `data/derived/premotor_mn_geometry_skel/` (106 T1 cells, committed).
-  - Rin (01:22): leg_MN 300 MΩ (150-700, measured, Azevedo 2020 Fig. 3E); core 600 (150-1000, guessed).
-- **Next: s15b (pre-registered 01:25):** a soma–arbor split (soma + primary neurite against everything distal). It is derivable only if ≥ 90% of input sites are distal to the split.
-  1. Add the split rule to `premotor_mn_geometry.py` as a new function; leave fly2's `reduce()` alone. Run `--offline` (the skeletons are saved).
-  2. Append cell and class rows together:
-     - leg_MN: cells = a type regex over LEG_TYPES, axon_inputs `*`, basis measured (Azevedo's qualitative soma isolation);
-     - core_premotor: cells `type:^(IN17A001|INXXX466|IN16B036|IN19A007|IN19A004|IN19A002)$`, basis inferred.
+**s15c PRE-REGISTERED (DECISIONS 21 Oct 01:38 and the 01:38 addendum): the morphological hybrid.**
+- **What:** passive cables from the EM skeletons for the 106 T1 walking cells (94 leg MNs + 12 core), synapses at their EM positions, and the spike zone at the AIS. They are embedded in the point network.
+- **The isopotential-limit rule:** as Ri → 0 each cell is exactly its point cell.
+  - Synaptic current = the point weight × kernel / Rin_iso, split over the edge's EM sites.
+  - Rm = τ_m / Cm, with Cm 1.0 µF/cm², so 20 kΩ·cm². Günay 2015's fits give the same τ.
+  - Ri 200 (102-311).
+- **Spike zone:**
+  - Leg MN: a 20 µm segment 70 µm distal to the arbor exit on the motor axon (Günay 2015 offset, inferred; length guessed).
+  - Core: the s15b split + 20 µm.
+  - On a spike, only the segment is reset.
+- **Solver:** `src/flyemu/morph.py`, a custom backward-Euler solver factorised once (scipy splu). 434,567 nodes, 0.15 s to factorise, 9.4 ms per step. NEURON 9.0.2 (pip, not yet installed) is the check, never production. Why: the cells must step inside `lif.Network`.
+- **Already measured (not a gate run yet):** at the registered values, Ti flexor MN somatic Rin median 527 MΩ (253-832, n 10). Azevedo's means are 150/300/700, so gate 1(c) should pass. Core somatic Rin is 420 MΩ, against Rin_iso 98: the soma is electrotonically remote.
+- **Raw-data fetch DONE:** `scripts/connectome/walking_morph_fetch.py` → `data/derived/walking_morph/syn_in.parquet`, 318,230 input synapses onto the 106 cells from 3,613 partners, with partner and position.
+- **Next steps, in order:**
+  1. Gate 1: (a) install `neuron` into .venv and compare 6 cells (Rin and PSP peaks within 2%); (b) the isopotential-limit test; (c) Rin of the tibia flexors (Ti flexor MN + Acc. ti flexor MN).
+  2. Spike-zone locator (motor axon = longest synapse-free terminal run).
+  3. Synapse-site map from `syn_in.parquet` onto the network edges.
+  4. The `lif.Network` hybrid behind `cell_type:all|morphological_walking_cells` (neutral 0; GPU refuses).
+  5. Gate 2 (unitary, with the stop-rule reading).
+  6. Gate 3 arms H0/HM/HP/HPM on backhouse.
+- **Scan:** `docs/research/s15c_cable_params.md`. Gouwens & Wilson 2009 and Kazama & Wilson 2008 values there are unverified against the primary PDFs.
 
-     The loader refuses graded inputs, receptor/slow copies and tau_s_inh on axon edges. If it does, narrow `axon_inputs` and record why.
-  3. The switch turns on every row, DLMn included. TM and TP alone need a per-class way to leave a class out; check `_two_compartments`.
-  4. Gate: add `--set`, `--post core` and a spike-zone readout (`net.c2["v"]`) to `s4b_unitary_psp.py`, on backhouse.
-  5. Arms × 15/25/40: a copy of `~/fly-m10f/runs/s14/arms/run.sh` → `runs/s15/arms/`, rule 16. Score (`s14_score.py`, ARMS), view, commit.
-  - My prediction: q ≈ 0.9 and little change at scale 1. If so, the useful follow-up is anchoring the shared scale at the soma (a new pre-registration).
+**s15 step 1 (F-S15-1) and s14 (F-S14-1): done; see FINDINGS.**
+- fly2's option-B rule has no spike zone for distributed-input cells.
+- s14: 0/18 pass. The hand-off probe gives 0.17-0.47 mV per core spike against the 7 mV gap.
+- Measurement for Ben's list: a front-leg MN somatic recording with E2 (INXXX466) or E1 (IN17A001) activation. It gives the unitary PSP, Rin, and the soma-to-neurite attenuation.
 - The S4b recruitment order is still unspent.
 
 **Session 13 (14 Oct 02:21; kept for reference).** Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
