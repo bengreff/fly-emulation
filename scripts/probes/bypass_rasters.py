@@ -54,7 +54,9 @@ def main() -> None:
         title = Path(f).stem
         if j.exists():
             r = json.loads(j.read_text())
-            title = (f"{r['type']} {r['drive_mv']:g} mV, {override_text(r)}"
+            lp = r.get("proprio")
+            loop = f", loop {lp['gain_mv']:g} mV / {lp['delay_ms']:g} ms" if lp else ""
+            title = (f"{r['type']} {r['drive_mv']:g} mV, {override_text(r)}{loop}"
                      f"  |  MN {r['rates_hz']['leg_mn_drive']} Hz, rhythmic pools {len(r['rhythmic_pools'])}, "
                      f"alternating {len(r['alternating_pools'])}  ->  {'PASS' if r['passes'] else 'fail'}")
         ax.set_title(title, fontsize=8, loc="left")

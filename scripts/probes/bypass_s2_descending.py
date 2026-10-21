@@ -5,7 +5,9 @@ DIAGNOSTIC, forced drive: the DN input is set by hand. A rhythm here would not b
 The organism is built as usual. Then:
   - brain off: every neuron outside the VNC set (superclass vnc_*, ascending, descending, sensory_ascending,
     efferent_ascending) loses all output (lif.Network.silence, as Shiu 2024 silences cells);
-  - senses off: no afferent drive at all (feedback is S4);
+  - senses off by default: no afferent drive at all. --proprio closes the S4 loop (s17, DECISIONS 21 Oct 03:18): the
+    leg proprioceptor drive is computed from the body every step, as proprio_reach.py (bristle rows zeroed), and reaches
+    the afferents --proprio-delay-ms later;
   - the thorax is tethered --tether-mm above the standing placement, so the legs move in air;
   - every cell of --type gets a constant external drive of --drive-mv during [--on-ms, --off-ms).
 Recorded together, 1 ms bins: the driven DNs, all DNs, premotor cells (VNC intrinsic cells with a direct edge
@@ -23,6 +25,7 @@ import json
 import re
 import sys
 import time
+from collections import deque
 from pathlib import Path
 
 import mujoco as mj
@@ -39,6 +42,7 @@ from standing_rest import shot  # noqa: E402
 LEGS = ("lf", "lm", "lh", "rf", "rm", "rh")
 VNC_SUPER = ("ascending_neuron", "descending_neuron", "descending_neuron_tbc", "sensory_ascending",
              "sensory_ascending_tbc", "efferent_ascending")
+CORE = {"IN17A001": "E1", "INXXX466": "E2", "IN16B036": "I1", "IN19A007": "A007"}    # bypass_s3_chain.ROLE
 COXA_ANTAGONIST = (("promotor", "remotor"), ("remotor", "promotor"),
                    ("anterior rotator", "posterior rotator"), ("posterior rotator", "anterior rotator"))
 
@@ -66,6 +70,9 @@ def main() -> None:
     ap.add_argument("--tether-mm", type=float, default=1.0)
     ap.add_argument("--set", action="append", default=[], metavar="KEY=V")
     ap.add_argument("--frames-ms", default="0,300,500,700,900,1100,1300")
+    ap.add_argument("--proprio", action="store_true", help="S4 closed loop: leg proprioceptor drive from the body")
+    ap.add_argument("--proprio-gain-mv", type=float, default=None, help="afferent:all|rate_gain (default: profile's)")
+    ap.add_argument("--proprio-delay-ms", type=float, default=3.0)
     ap.add_argument("--tag", default="")
     ap.add_argument("--out", default=str(REPO / "runs" / "s13" / "bypass" / "s2"))
     a = ap.parse_args()
@@ -73,6 +80,8 @@ def main() -> None:
     tag = a.tag or f"{a.type.replace(',', '+')}_{a.drive_mv:g}mv{'_brain' if a.brain_on else ''}"
     t0 = time.time()
     ov = {k: float(v) for k, v in (x.split("=") for x in a.set)}
+    if a.proprio and a.proprio_gain_mv is not None:
+        ov["afferent:all|rate_gain"] = a.proprio_gain_mv
     org = Organism(policy="minimal", profile=a.profile, min_synapses=5, overrides=ov, seed=a.seed, with_camera=True)
     dt = org.timestep_ms
     n = org.conn.neurons
@@ -81,6 +90,19 @@ def main() -> None:
     vnc = np.char.startswith(sc, "vnc_") | np.isin(sc, VNC_SUPER)
     if not a.brain_on:
         org.net.silence(np.flatnonzero(~vnc))
+    if a.proprio:
+        from proprio_reach import proprio_drive
+        af = org.aff
+        assert vnc[af.rows].all(), "a leg afferent is outside the VNC set"
+        pdrive = proprio_drive(org)
+        lab = np.where(af.channel == "load", "CS", af.subtype if af.subtype is not None else af.channel)
+        lab = np.where(af.channel == "contact", "", lab)
+        aff_grp = {g: af.rows[lab == g] for g in np.unique(lab) if g}
+        prop = np.setdiff1d(af.rows, af.rows[af.channel == "contact"])
+        src_ = np.repeat(np.arange(org.conn.n), np.diff(org.conn.indptr))
+        hit = np.isin(src_, prop)
+        w_in = np.bincount(org.conn.indices[hit], weights=org.conn.weight_syn[hit], minlength=org.conn.n)
+        first = np.setdiff1d(np.flatnonzero(w_in >= 20), af.rows)
     stim = np.flatnonzero(np.isin(typ, a.type.split(",")))
     if stim.size == 0:
         raise SystemExit(f"no cells of type {a.type}")
@@ -130,11 +152,24 @@ def main() -> None:
     is_dn = np.zeros(org.conn.n, bool); is_dn[dn] = True
     is_pm = np.zeros(org.conn.n, bool); is_pm[premotor] = True
     row_of = np.full(org.conn.n, -1); row_of[mn_rows] = np.arange(len(mn_rows))
+    core = np.flatnonzero(np.isin(typ, list(CORE)))
+    core_c = np.zeros((2, core.size)); is_core = np.full(org.conn.n, -1); is_core[core] = np.arange(core.size)
+    if a.proprio:
+        nd = int(round(a.proprio_delay_ms / dt))
+        fifo = deque([zero] * nd)                 # drive vectors in flight, body to afferent
+        grp_c = {g: np.zeros(2) for g in aff_grp}
+        is_first = np.zeros(org.conn.n, bool); is_first[first] = True
+        first_c = np.zeros((2, first.size)); first_pos = np.full(org.conn.n, -1); first_pos[first] = np.arange(first.size)
+    win = lambda t: 0 if 100 <= t < a.on_ms else (1 if a.on_ms + 100 <= t < a.off_ms else -1)  # noqa: E731
     for s in range(steps):
         t = s * dt
         if s in frames_at:
             imgs.append(shot(m, d, thorax))
-        sp = org.net.step(external_mv=on if a.on_ms <= t < a.off_ms else zero)
+        x = on if a.on_ms <= t < a.off_ms else zero
+        if a.proprio:
+            fifo.append(pdrive(b.observe()))
+            x = x + fifo.popleft()
+        sp = org.net.step(external_mv=x)
         org.motor_step(sp)
         d.qpos[:7] = q0; d.qvel[:6] = 0.0
         k = s // per
@@ -142,6 +177,13 @@ def main() -> None:
             stim_c[k] += is_stim[sp].sum(); dn_c[k] += is_dn[sp].sum(); pm_c[k] += is_pm[sp].sum()
             r = row_of[sp]; r = r[r >= 0]
             R[k, r] += 1
+            wi = win(t)
+            if wi >= 0:
+                c_ = is_core[sp]; np.add.at(core_c[wi], c_[c_ >= 0], 1)
+                if a.proprio:
+                    for g, rows in aff_grp.items():
+                        grp_c[g][wi] += np.isin(sp, rows).sum()
+                    f_ = first_pos[sp]; np.add.at(first_c[wi], f_[f_ >= 0], 1)
         if s % per == per - 1:
             act[k] = h.activation(); qj[k] = d.qpos[h.q_adr]
     # ---- analysis over the drive window minus its first 100 ms, and the baseline before it
@@ -191,9 +233,24 @@ def main() -> None:
     alternating = [p for p in rhythmic if (p["r_antagonist"] is not None and p["r_antagonist"] <= -0.3)
                    or (p["r_left_right"] is not None and p["r_left_right"] <= -0.3)]
     qd = qj[drv] - qj[drv].mean(0)
+    tw = np.array([(a.on_ms - 100) / 1000, (a.off_ms - a.on_ms - 100) / 1000])     # window lengths, s
+    segs = (n["somaNeuromere"].fillna("") if "somaNeuromere" in n else n.get("soma_neuromere", "")).astype(str)
+    side = n["somaSide"].fillna("").astype(str)
+    core_out = [dict(role=CORE[typ[i]], neuromere=f"{segs.iloc[i]}{side.iloc[i]}", base_hz=round(float(core_c[0, k] / tw[0]), 2),
+                     drive_hz=round(float(core_c[1, k] / tw[1]), 2)) for k, i in enumerate(core)]
+    loop = None
+    if a.proprio:
+        fr = first_c / tw[:, None]
+        loop = dict(gain_mv=float(np.unique(org.aff.gain_mv)[0]), delay_ms=a.proprio_delay_ms, delay_steps=nd,
+                    afferent_hz_per_cell={g: dict(n=int(r.size), base=round(float(grp_c[g][0] / max(r.size, 1) / tw[0]), 2),
+                                                  drive=round(float(grp_c[g][1] / max(r.size, 1) / tw[1]), 2))
+                                          for g, r in aff_grp.items()},
+                    first_order=dict(n=int(first.size), n_active_drive=int((fr[1] > 0).sum()),
+                                     n_active_base=int((fr[0] > 0).sum()),
+                                     mean_hz=[round(float(fr[0].mean()), 3), round(float(fr[1].mean()), 3)] if first.size else None))
     res = dict(diagnostic="forced drive (DN input set by hand); not emergent walking",
                profile=a.profile, seed=a.seed, type=a.type, drive_mv=a.drive_mv, brain_off=not a.brain_on,
-               senses="off", tether_mm=a.tether_mm, overrides=ov, n_stim=int(stim.size), n_premotor=int(premotor.size),
+               senses="leg proprio" if a.proprio else "off", proprio=loop, core=core_out, tether_mm=a.tether_mm, overrides=ov, n_stim=int(stim.size), n_premotor=int(premotor.size),
                n_leg_mn=int(leg_mn.sum()), n_pools=len(pools),
                rates_hz=dict(stim_base=hz(stim_c, stim.size, base), stim_drive=hz(stim_c, stim.size, drv),
                              dn_base=hz(dn_c, dn.size, base), dn_drive=hz(dn_c, dn.size, drv),
