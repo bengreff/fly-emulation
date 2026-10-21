@@ -3639,3 +3639,13 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct): shape (
 - **Falsifier:** no pass in 9 tries means a sustained class-level premotor depolarisation of the size the threshold bound allows, the only OA effect with a measured direction in motor circuits, doesn't restore alternation. The state then isn't the single missing piece either. The remaining suspects are I1's mode (graded or spiking), proprioceptive feedback (S4 proper) and the per-synapse strength, all on Ben's list.
 - **Prediction (mine):** no pass. OA4 recruits I1 in some legs and raises the co-active flecks and the tonic MN rate. OA4M brings back the M0 tonic tibia-flexor line, stronger. The brain-off run is silent at OA2 and gives sparse tonic firing at OA4.
 - **Measurement for Ben's list:** the OA effect on adult VNC premotor and leg-MN rest, Rin and f-I. It would come from a whole-cell recording, as in Azevedo 2020, before and after bath OA (10 µM) or Tdc2 activation (`docs/MEASUREMENT_LIST.md` item 3).
+
+### s16 addendum: the s13 neuromodulation table checked row by row (21 October, 02:45; before any s16 row is written)
+Sonnet check, `docs/research/s16_neuromod_rowcheck.csv` (63 rows): **32 CONFIRMED, 20 CORRECTED, 6 WRONG, 5 UNVERIFIABLE.** `s13_neuromodulation_effects.csv` is left unchanged as raw. Use it only through the row check.
+- **OA rows:**
+  - s13_011 (Octβ1R EC50 ~0.03 µM, Balfanz 2005) and s13_014-018 are confirmed.
+  - **s13_012 is WRONG.** "Octβ1-3R all raise cAMP" comes from Maqueira, Chatwin & Evans 2005 (J Neurochem 94:547, CHO cells), not Balfanz 2005. The finding stands; the citation is fixed.
+  - s13_013 and s13_060 are corrected: Balfanz's three receptors are Octα1R-a/b and Octβ1R.
+  - **s13_062 is WRONG:** Drosophila has six OA receptors, not four.
+- **Elsewhere:** reviews are labelled "measured" where they should be "measured (secondary)". The 5-HT gain-control rows s13_028/029 are misattributed (they come from Suzuki et al. 2020 Curr Biol). s13_007/061 carry a quote that doesn't appear in the cited paper.
+- **Effect on s16: none.** The arm takes its direction from `s16_octopamine_excitability` and its classes from the Allen 2020 calls. The Gs coupling of Octβ2R/β3R, which underlies the "depolarising" reading (inferred), stands on Maqueira 2005. In the 02:28 entry, read the "Octβ1-3R are Gs (HEK293 ...)" line as Octβ1R from Balfanz 2005 (HEK293) and Octβ2R/β3R from Maqueira 2005 (CHO).
