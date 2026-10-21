@@ -3493,3 +3493,63 @@ The rule fly2's method lacks, for unipolar insect neurons whose inputs and spike
 - **Arm control:** `lif._two_compartments` gets `cell_class:<class>|two_compartments_in_run` (neutral 1, read only when set). It leaves a whole class out of a run. Every s15b arm sets `cell_class:MN|...=0`, so the DLMn (flight) rows stay off and the arms differ from M0 only in the walking rows. That's cleaner than the 01:16 plan, which let the DLMn rows ride along. TM sets core_premotor off, TP sets leg_MN off, TPM sets neither.
 - **Gate as 01:22:** `s4b_unitary_psp.py --scales 1` at the class values, on backhouse. TM uses `--post leg` and TP `--post core`. M0 at both posts is run as the reference. The spike-zone PSP is reported, not gated.
 - **What the geometry predicts (passive arithmetic, before any run):** with all inputs on the arbor compartment, its input resistance is about (q + (1−q)ρ/(1−q+ρ))⁻¹ × Rin. That's 1.05 × Rin for leg_MN and 1.00 × for core, and the soma sees ρ/(1−q+ρ) of the arbor's DC voltage (0.83 and 0.96). So the spike zone gets about the point-model PSP, and the hand-off should change little (my 01:25 prediction stands).
+
+### s15b gate: both arms admissible (21 October, 01:34; before any arm output; arms launched 01:33 on backhouse)
+`s4b_unitary_psp.py --scales 1`, seed 1, 24 excitatory presynaptic cells; `runs/s15/gate/*.json`.
+
+| run | post | pairs | soma median mV/syn | soma per spike median (q10-q90) | spike-zone per spike median (q10-q90) |
+|---|---|---|---|---|---|
+| M0 | leg MN | 126 | 0.0212 | 0.344 (0.104-1.57) | n/a |
+| TM | leg MN | 134 | 0.0180 | 0.295 (0.086-1.32) | 0.361 (0.106-1.78) |
+| M0 | core | 46 | 0.0252 | 0.326 (0.140-1.77) | n/a |
+| TP | core | 43 | 0.0237 | 0.277 (0.132-1.37) | 0.289 (0.137-1.43) |
+
+- **Both arms pass the 01:22 gate:** the somatic median is ≤ 0.3 mV per synapse, and the somatic q90 per spike is inside 0.4-10 mV.
+- The leg MN spike zone sees 1.05× the point PSP. The core spike zone sees 0.89×, against the passive DC estimate of 1.00×. The pair sets differ slightly, since pairs where the post cell spikes are dropped. So the hand-off gain from the split is about 1, as predicted at 01:30, against the 15-20× the 7 mV gap needs (F-S14-1).
+
+### Pre-registration s15c: morphological walking cells in the point network (a hybrid) (21 October, 01:38; before any morphological cell is scored or embedded)
+DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct): the next clean fidelity step after s15b, toward "the minimum for functional behaviour". This is FIDELITY_LADDER rung 6 (compartments with synapses placed by position) for the walking circuit only.
+- **Question:** is the point reduction what breaks the core → MN hand-off? Test it by replacing the 106 T1 walking cells with passive cables built from their own EM skeletons, with synapses at their EM positions and the spike zone at the axon initial segment. Nothing else in the network changes.
+- **What already bounds the answer:**
+  - S4b swept a uniform leg-MN input scale over 1-25 and found no alternation at any scale (F-BYPASS-7). To first order, a passive morphology rescales each input by a position-dependent gain. So it can only help by changing the inputs' *relative* weights, for example if I1's and the other inhibitory premotor synapses sit nearer the spike zone than the tonic excitation.
+  - Pugliese's point LIF alternates on MANC, so point reduction isn't necessary for alternation in a model. What the morphology replaces is our un-measured point gain. It puts physical quantities in its place: area, Rm, Cm, Ri and the synapse positions.
+- **Cells:** the 106 T1 cells of `premotor_mn_geometry.py`: 94 leg MNs (LEG_TYPES) and the 12 core cells (E1, E2, I1, IN19A007/004/002), both sides. They are male-cns v1.0 healed skeletons, already saved in `data/derived/premotor_mn_geometry_skel/`. The input synapses with their partners and positions come from `walking_morph_fetch.py` → `data/derived/walking_morph/syn_in.parquet`, kept as raw data. T2/T3 cells stay point cells, which I'll state in every result.
+- **Solver:** a small custom implicit solver, `src/flyemu/morph.py`, the CPU reference path.
+  - **How it works:** one compartment per skeleton node, node-centred frustum areas, a soma sphere of the root radius, and axial conductance π r1 r2/(Ri dl). The block-diagonal passive matrix is constant, so it is factorised once (scipy splu, Hines-equivalent on trees) and each 0.1 ms step is one solve. Measured: 434,567 nodes, 0.15 s to factorise, 9.4 ms per step on the Mac.
+  - **Why not NEURON or Arbor in production:** the cells must step inside `lif.Network` at its 0.1 ms step, with its current synapses, delays, noise and spike exchange. NEURON or Arbor would need a Python round trip and event translation every step, and neither can host the rest of the network. Arbor's step coupling is the harder of the two.
+  - **NEURON's role (`neuron` 9.0.2 from pip):** the independent check of the cable maths (gate 1a), not the production path.
+  - The custom path keeps one code route open for a later GPU port of batched triangular solves, per the CPU-first rule.
+- **Membrane (shared, not fitted):**
+  - **Cm 1.0 µF/cm²** is the standard value.
+  - **Rm = the cell's point τ_m / Cm**, which is 20 kΩ·cm² at τ_m 20 ms (derived). It is checked against the fitted insect range in `docs/research/s15c_cable_params.md` (Sonnet scan, running).
+  - **Ri is 200 Ω·cm, bracket 102-311** (Gouwens & Wilson 2009, fitted there, as s15).
+  - **Radii:** traced. Radii ≤ 0.05 µm take the neighbours' mean (none in these 106 cells). There is no shrinkage correction; a ×0.8 and ×1.25 radius scaling is reported as sensitivity.
+  - **E_leak** is the cell's point v_rest.
+- **The isopotential-limit rule (design):** every point-cell mechanism is placed so that, as Ri → 0, the morphological cell *is* the point cell.
+  - Each synapse's current is the point edge weight × the point synaptic kernel / Rin_iso (Rin_iso = Rm / area), split equally over that edge's EM sites. The total charge is the point model's.
+  - Noise and any whole-cell intrinsic current are spread in proportion to area.
+  - An edge with no EM site found is spread over the cell's input-site distribution; I'll report the weight share this affects.
+  - Graded inputs, gap junctions, receptor/slow copies and conductance synapses onto these cells are refused, as in N30. If any is present in m10f0 the arm stops and I record which.
+- **Spike zone (operational):**
+  - **Leg MN:** the motor axon is the soma → leaf path with the longest synapse-free terminal run, which is the nerve exit. The arbor exit is the last node on that path with an input synapse on or distal to it. The spike zone is the AIS segment starting there. Its length and offset come from the scan (Ravenscroft 2020, the para distal AIS-like domain). Default if the scan finds none: 0-20 µm distal to the arbor exit (guessed).
+  - **Core:** the s15b split node, with the same segment length distal along the largest-cable child. A sensitivity alternative is the centroid of the cell's neuPrint "linker" synapses, where there are ≥ 5. For leg MNs the alternative is the s15b split.
+  - **Spike rule:** the cell's point threshold is read at the segment's middle node. On a spike, the segment's nodes are set to v_reset and held there for the point t_ref. The spike is the cell's output spike. The arbor and soma are not reset; a spike is local, and Azevedo 2020 reports small somatic spikes.
+  - So, unlike the passive limit, the f-I curve differs from the point cell. It is reported, not gated.
+- **Gate 1 (single cell, before any network run; all must pass):**
+  - (a) **Solver vs NEURON:** for 6 cells (2 core, 4 leg MN), the somatic Rin and the soma and spike-zone PSP peaks for 10 random input sites each agree within 2%, at dt 0.1 with backward Euler on both.
+  - (b) **Isopotential limit:** at Ri 10⁻³ Ω·cm with spikes off, the soma trace of a 1 s synaptic drive equals the point cell's within 0.05 mV.
+  - (c) **Rin check (measured, never fitted):** the model somatic Rin of the T1 tibia flexor MNs (Ti flexor MN and Acc. ti flexor MN) has its median inside Azevedo 2020 Fig. 3E's class means (150-700 MΩ). Its cells' q10-q90 must overlap that range. If (c) fails at the registered values, the build doesn't go into the network; Rm is not tuned. Measured already on the build (01:36, Rm 20 kΩ·cm², Ri 200): Ti flexor MN somatic Rin median 527 MΩ (253-832, n 10). The full gate is still to run.
+- **Gate 2 (unitary, the hand-off):** the s4b probe on the hybrid. Soma per synapse and q90 per spike must sit inside the 01:22 band. Reported, not gated: the spike-zone PSP per E1/E2 spike onto leg MNs and onto I1, against the 7 mV gap; and the spread of spike-zone gain across inputs (position-dependence), split by sign. **Stop rule:** if the spike-zone gain is ≤ 2× for the core → MN and E2 → I1 edges *and* the inhibitory/excitatory gain ratio is within 0.8-1.25, the hybrid is a re-weighting S4b already covered. Gate 3 still runs, as the Director asked, but the falsifier is then the expected outcome.
+- **Gate 3 (network): arms H0 (point, re-run), HM (leg MNs morphological), HP (core), HPM (both).** DNg100 15/25/40 mV, seed 12, the s14 harnesses (S2 + chain), on backhouse under rule 16. The switch is `cell_type:all|morphological_walking_cells` (neutral 0, CPU only, GPU refuses). **Pass** exactly as s14: `s4b_score.rhythm` → rhythm_pass, then viewing, with the passing pair written down before viewing. 9 tries; a pass needs seeds 13 and 14 first. Secondary: transfer-pass pools, I1 recruitment, E1/E2 spikes per cycle, leg-MN rates. The Ri, radius and spike-zone-site alternatives are sensitivity runs and never count as a pass.
+- **Held-out:** the S4b recruitment order (slow → intermediate → fast; measured, unspent) is spent once, only on a passing arm at its passing drive, after the seed repeats. The Rin check (c) uses Azevedo's Rin as a check for the first time; s15/s15b used it as an input to ρ, not as a target.
+- **Falsifier:** no pass in 9 tries means a passive EM morphology with an AIS spike zone, at the point model's synaptic charge and threshold, doesn't restore alternation. Then point reduction isn't the break. The remaining suspects are the per-synapse strength itself (Ben's measurement list: a unitary PSP from E1/E2 onto a front-leg MN) and the missing mechanisms (I1's mode, proprioceptive feedback in S4 proper).
+- **Prediction (mine):** gate 1(c) passes, since the build already gives 527 MΩ. The spike-zone gain is 1-2× with a modest position spread. No arm passes. HM raises the transfer-pass pools a little, because the AIS-only reset lets the arbor's depolarisation carry over to the next spike.
+
+### s15c addendum: values from the scan (21 October, 01:38; before any gate-1 run; `docs/research/s15c_cable_params.md`)
+- **Rm check:** Günay et al. 2015 (PLoS Comput Biol, Table 2; larval aCC/RP2 MNs, n 5, fitted) give Cm 0.77 µF/cm², Ri 212 Ω·cm and g_leak 38 µS/cm², i.e. Rm 26.3 kΩ·cm². Their τ = Rm·Cm is 20.2 ms, the same as our point τ_m, so the registered Rm 20 kΩ·cm² at Cm 1.0 sits inside the fitted insect values. Rin scales with Rm, so Günay's pair gives Rin ×1.31, run as a sensitivity corner. Gouwens & Wilson 2009's numbers couldn't be fetched from the primary source; they stay as cited in s15 (Ri bracket only).
+- **Spike-zone site (the rule as registered, "offset and length from the scan"):**
+  - **Offset:** 70 µm distal to the arbor exit. Günay 2015 derived it from their model, 70 µm past the most distal dendritic branch point in larval MNs (inferred, another stage).
+  - **Length:** 20 µm (guessed; no SIZ length found). If the traced axon past the arbor exit is shorter than 90 µm, the segment is its last 20 µm before the exit leaf, which I'll report.
+  - **Sensitivity alternative:** offset 0. Core: as registered (s15b split + 20 µm).
+- **Azevedo 2020:** rest −68/−60/−48 mV (fast/intermediate/slow). No τ, Cm or threshold is given. Rin 150/300/700 MΩ, as used.
+- **Precedent:** no adult EM-based multi-compartment VNC model was found.

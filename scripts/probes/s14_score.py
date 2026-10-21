@@ -66,10 +66,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("root")
     ap.add_argument("--out", default="")
+    ap.add_argument("--arms", default=",".join(ARMS), help="comma list (s15: M0,TM,TP,TPM)")
     a = ap.parse_args()
     root = Path(a.root)
     res = {}
-    for arm in ARMS:
+    for arm in a.arms.split(","):
         for mv in DRIVES:
             k = f"{arm}_{mv}mv"
             s2 = root / "s2" / f"s2_{k}_traces.npz"
