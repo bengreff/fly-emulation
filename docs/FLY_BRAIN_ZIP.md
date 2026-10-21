@@ -24,7 +24,7 @@ Sizes are measured on 20 Oct from the files the model reads today.
 
 | member | holds | size now | label rule |
 |---|---|---|---|
-| `manifest.json` | zip schema version; layer (`species` or `individual`); git commit; sha256 of every member; dataset pins (male-cns v1.0; MANC and BANC extract hashes, as in `data/params/t1_fill.json`); runtime pins (Python 3.12, MuJoCo, flygym 2.1.0); default profile and seed; for an individual, its parent species zip hash and variation seed | <1 MB | n/a |
+| `manifest.json` | zip schema version; layer (`species` or `individual`); git commit; sha256 of every member; dataset pins (male-cns v1.0; MANC and BANC extract hashes, as in `data/params/t1_fill.json`); runtime pins (Python 3.12, MuJoCo, numpy, scipy, pandas, pyarrow, numba, ...; flygym is vendored, so its version is recorded, not pinned); default profile and seed; for an individual, its parent species zip hash and variation seed | <1 MB | n/a |
 | `connectome/neurons.parquet`, `annotations/*.parquet` | 167,111 neurons: type, class, side, neuromere, transmitter prediction, plus the hemilineage, ROI and photoreceptor tables | 5.1 + 6.7 MB | measured |
 | `connectome/edges.parquet` | all 25.9M connections and 125.0M synapses (the model keeps ≥5 synapses: 6.29M edges, 90.3M synapses). The cut is a switch, not baked into the file | 95 MB | measured |
 | `inferred/<name>.{csv.gz,json}` | graph transforms on the measured connectome, each with its rule, sources, hashes and switch. Today: T1 fill and T1 added connections (`t1_fill`, `t1_add`; from MANC and BANC), CT1 column compartments, the gap-junction map. Later: development-inferred tables | 1.5 MB + small | inferred; never overwrites `connectome/` |
@@ -34,17 +34,17 @@ Sizes are measured on 20 Oct from the files the model reads today.
 | `individual/*.parquet` | individual layer only: realised per-cell and per-synapse values by slot address | per-synapse at about 8 values in float16: about 2 GB; per-cell only: about 10 MB | synthetic, drawn (seed in manifest) |
 | `ledger/` | 145 measurable quantities, each mapped to a mechanism (basis: 15 measured, 6 derived, 21 inferred, 15 mixed, 53 guessed, 33 unknown, 2 absent) | 0.1 MB | n/a |
 | `profiles/*.json` | each named parameter set (e.g. `m10f0`) as an explicit list of `KEY=value` with labels, not code | small | fitted or borrowed, marked |
-| `body/` | flybody MJCF and meshes, copied in so the zip doesn't depend on a package version | about 5 MB | measured geometry; masses and inertias as in the registry |
-| `world/arenas/*.xml`, `world/stimuli/*.yaml` | **standard arenas:** flat floor, air-supported ball, flight tether, sugar patch. **Stimuli as data, not code:** full-field flash, moving grating, looming disc, labellar and leg sugar, bitter, odour pulse, DN or MN current injection. Each stimulus is a declarative schedule (onset, duration, amplitude, geometry) that the entry point plays into the sensory models. Today these live in `scripts/probes/*` and flygym's arenas | to build; small | the stimulus is a protocol, not a fly quantity |
+| `body/` | the flygym 2.1.0 package (pure Python, Apache-2.0, with its MJCF-side tables) and the 85 fullsize flybody meshes, copied in so the zip doesn't depend on a package version or a download cache | 145 MB unpacked (measured 21 Oct; the 5 MB estimate left out the fullsize meshes) | measured geometry; masses and inertias as in the registry |
+| `world/arenas/*.xml`, `world/stimuli/*.yaml` | **standard arenas:** flat floor, air-supported ball, flight tether, sugar patch. **Stimuli as data, not code:** full-field flash, moving grating, looming disc, labellar and leg sugar, bitter, odour pulse, DN or MN current injection. Each stimulus is a declarative schedule (onset, duration, amplitude, geometry) that the entry point plays into the sensory models. Today these live in `scripts/probes/*` and flygym's arenas. **Built 21 Oct:** `flat_floor.json` (the `World()` defaults) and `none.json`; the rest are declared TODO entries in the manifest, not files | small | the stimulus is a protocol, not a fly quantity |
 | `code/flyemu/` | the simulator (LIF network, graded release, synapses, body coupling, senses, registry) | 1.5 MB | n/a |
 | `tests/` | unit tests (38 files today), the neutral-switch identity tests, the gates with expected outputs, the scoreboard harness | <1 MB | n/a |
 | `register.json` | the sealed / held-out data register (HANDOFF), so a reader can tell which evidence has been spent | small | n/a |
 
-**Total today: about 125 MB** (species layer), most of it the edge table. A complete possible fly with explicit per-synapse values adds about 2 GB. Raw source data (`data/raw`, about 7.3 GB) stays out; the manifest cites it by hash.
+**Measured 21 Oct (first build): 134.7 MB zipped, 271.4 MB unpacked, 467 members** (species layer): edges 102 MB, body 145 MB unpacked (mostly meshes, which compress well). A complete possible fly with explicit per-synapse values adds about 2 GB. Raw source data (`data/raw`, about 7.3 GB) stays out; the manifest cites it by hash.
 
 **Neuron fidelity (Ben, 20 Oct):** two-compartment neurons are approved where a point model provably fails, PSI→DLMn first (F-GJ-5: measured 4.71 mV PSP, DLMn silent in 0 of 20 escapes). Compartment parameters are per-cell slots like any other (`cell:<bodyId>|n_compartments`, coupling and dendrite values), so they need no new member.
 
-## Entry point (to build)
+## Entry point (built 21 Oct: `src/flyemu/run.py`; packer `src/flyemu/pack.py`)
 
     python -m flyemu.run fly_brain.zip --world ball --stimulus grating_ccw --profile m10f0 --seed 12 --set KEY=V --ms 1000 --out run/
 
@@ -53,6 +53,32 @@ Sizes are measured on 20 Oct from the files the model reads today.
 3. Load the arena and stimulus from `world/`. A stimulus reaches the brain only through the sensory models; no world state bypasses them.
 4. Refuse any `--set` key that isn't in `mechanisms.yaml`. Absent stubs keep refusing non-neutral values.
 5. Write a run manifest: every registry read with its value, unit, label and source, plus the zip hash.
+
+**How the first build does it (21 Oct).**
+
+    .venv/bin/python -m flyemu.pack --out fly_brain.zip          # refuses a dirty tree
+    PYTHONPATH=fly_brain.zip/code python -m flyemu.run fly_brain.zip --ms 1000 --out run/ [--deny <repo>]
+    python -m flyemu.run --tree . --ms 1000 --out run_tree/      # the same run from the repo, for comparison
+
+- Every member has two names: its spec path (`connectome/edges.parquet`) and the path the code reads
+  (`data/cache/male_cns_edges.parquet`). The runner verifies every hash, extracts each member to its runtime
+  path under a fresh root, and runs the unchanged code there in a child process. The launcher is stdlib only
+  and imports straight from the zip.
+- Members come from git-tracked files only (plus the external caches: the connectome extract, the CT1 column
+  files, the flybody meshes), so an untracked scratch file cannot leak in. The packer refuses if the neuron or
+  edge file differs from the hashes pinned in `t1_fill.json`. The zip is deterministic: fixed member dates,
+  sorted members, no clock time in the manifest.
+- flygym is vendored. Its asset paths are bound at import time (module constants and default arguments), so
+  they cannot be pointed at the zip after import; shipping the package is the only clean way.
+- In the child, a read guard (Python audit hooks, plus path checks on pyarrow's parquet reader and MuJoCo's
+  mesh loader) refuses reads under `--deny` roots, the installed flygym and its mesh cache, and records any
+  other file opened outside the root and the Python install. `run_manifest.json` lists them.
+- `--set KEY=V` is refused unless `parameters.csv`, `structural_keys.csv` or a mechanism's switch list owns the
+  key. Unbuilt worlds and stimuli are refused by name.
+- Outputs: `run_manifest.json` (zip and manifest hash, settings, runtime, body source, read-guard report,
+  registry summary, result with `spikes_sha256` and `final_qpos_sha256`), `spikes.npz`, `registry_reads.csv`.
+- Not built yet: `flyemu.check`, `variation/`, `individual/`, slot addresses, and every world item except the
+  flat floor and the null stimulus. All are listed under `todo` in the manifest.
 
 `python -m flyemu.check fly_brain.zip` runs `tests/` and the scoreboard, and prints the ledger fill fraction from the zip's own tables.
 

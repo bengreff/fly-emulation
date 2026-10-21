@@ -347,56 +347,54 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: N30 option B, the MN5 skeletons put class MN on the follow boundary (UNDECIDED, F-GJ-7); the doublet is the synaptic tail; no fix from measurement exists yet, so the MN5 recording decides (21 Oct 00:30)
+## fly2: the first fly_brain.zip (species layer) is built and runs a 1 s m10f0 smoke run spike-for-spike identical to the repo tree (F-ZIP-1, 21 Oct 00:52)
 
-**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15). fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief (N30 option B, then the doublet's mechanism, then the MN5 recording onto Ben's list). Every switch below is neutral by default and **none is adopted**.
-- **Merging:** `main` (26f6976, fly's s14 25 mV results) was merged into worktree-fly2 at 8d722b6. DECISIONS conflicted only because both sides appended; both kept. **`main` can fast-forward to worktree-fly2.** The guard refuses commands aimed at the main checkout, so someone there runs the merge.
-- **N30 option B done: class MN q and ρ from EM geometry (F-GJ-7).** Pre-registered DECISIONS 21 Oct 00:07; results 00:18; literature 00:25.
-  - **Method.** `scripts/connectome/mn_axon_geometry.py` (male-cns v1.0 healed skeletons and PSI synapses, saved under `data/derived/mn_axon_geometry_skel/`; `--offline` reruns from them).
-    - The axon base is the first branch point proximal to the PSI contacts with ≥ 5% of the cable off the path. The contact site is the median PSI synapse.
-    - Coupling is a frustum axial resistance with Ri 200 Ω·cm (102-311, fitted), against Rin 102 MΩ (measured). q is the axon-side area over the whole area plus the soma sphere.
-  - **Result.**
-
-    | | q | ρ at Ri 200 (102-311) | ρ* |
-    |---|---|---|---|
-    | MN5 L | 0.156 | 2.03 | 3.51 |
-    | MN5 R | 0.052 | 5.57 | 4.03 |
-    | Class | 0.104 | 3.80 (2.44-7.45) | 3.78 |
-
-    UNDECIDED, as registered. `two_compartment_classes.csv` and the `parameters.csv` rows now hold the derived values ("derived from EM geometry, measured Rin, fitted Ri"). `tests/test_two_compartment.py` pins the s20 pair (0.07, 1.6) by override for the mechanism tests (8 pass).
-  - **Consistency runs, seed 1** (`scripts/probes/n30_optB_runs.sh`; `runs/s21/optB_*.json`; not scored, Ryglewski is spent):
-    - class: 19/20, 1 spike, 3.20 ms;
-    - L: 20/20, 1 spike, 2.80 ms;
-    - R: 0/20.
-
-    At the derived geometry the doublet is gone, but the spike comes late or not at all.
-  - **DLMn c-f** (reported, not used): the base rule fails or is fragile in 3 of 8 cells (PSI contacts on several branches).
-- **Doublet mechanism (at the guessed s20 pair):** the 5 ms PSI current's tail, not soma-axon ping-pong.
-  - The script is `scripts/probes/n30_doublet_mechanism.py`, an exact replica of the pair update; figure `docs/media/s21_fly2_n30_doublet.png`, viewed.
-  - Any one of these alone removes it: refractory ≥ 3 ms, AHP ≥ 7.5 mV, tau_s ≤ 1.8 ms.
-- **Literature** (`docs/research/s21_mn5_literature.md`, Sonnet agent, A-D read):
-  - **No readable PSI→MN5 decay, MN5 threshold, AHP or refractory value exists.**
-  - The adult nicotinic decay bracket is 1.1-6.73 ms (Gu & O'Dowd 2006 in situ: 4.45-6.73). It spans the flip: the class values give one early spike only for tau_s ≤ 3 ms (tau_m ≥ 20), and none at the shared 5 ms.
-  - The MN5 Cm of 127 pF is from Herrera-Valdez et al. 2012 (not "Kadas"), which gives tau_m 12.3 ms against Fayyazuddin's 4.4. The skeleton-area bound is about 25 ms. The DLMn tau_m blank is open.
-- **Decision (DECISIONS 00:25): no fix adopted; the decider is Ben's measurement.** `docs/MEASUREMENT_LIST.md` item 1 is one MN5 whole-cell recording. Its four protocols give q, ρ, tau_m, threshold/AHP/refractory and the PSI EPSP decay, with a table of what each answer decides.
-- **Next, for fly2:**
-  1. If Ben's recording comes (or someone reads Ryglewski, Kilo & Duch 2014 EJN, or Ryglewski & Duch 2009, behind paywalls), set the measured values and pre-register the GF escape at seed 2. Score it against the sealed GF→DLM file (see the register).
-  2. If ρ is measured above ρ*, the next candidate is a spike-initiation zone with a lower threshold, as its own registration.
-  3. Building a per-edge decay on an axon or unitary-PSP edge (N29) is refused today. A measured PSI→DLMn decay would need that build first, CPU path and tests.
-- **Done earlier in this worktree (20 Oct; details in FINDINGS and DECISIONS):**
-  - The T1 fill, levels 1 and 2 (F-XCONN-3, F-XCONN-4): switch `connectome:T1|fill_from_other_animals`, neutral. Every T1 deficit we can repair is ruled out as the cause of the missing VNC rhythm and reach.
-  - `docs/FLY_BRAIN_ZIP.md` rev 2: brain + body + world, species and individual layers, the scan file, scan → reconstruct → compare. The variation model is next to build.
-  - Two-compartment DLMn first build (F-GJ-6): switch `cell_type:all|two_compartments_where_point_fails`, CPU only. PASS at the guessed pair, Ryglewski 2014 spent.
-  - T4/T5 seeds 1 and 2: FAIL (F-VISION-15). The pair-strength arm is not continued as is.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test). Nothing in the model changed; no switch was added or adopted.
+- **Merging:** `main` was fast-forwarded to fa679f6. The zip work is 1cbccff plus this docs commit. **`main` can fast-forward to worktree-fly2 again.**
+- **Built (DECISIONS 21 Oct 00:50; `docs/FLY_BRAIN_ZIP.md`, "How the first build does it"):**
+  - `src/flyemu/pack.py`: `.venv/bin/python -m flyemu.pack --out X.zip`. It refuses a dirty tree. The manifest records:
+    - the sha256, size, group, label rule and runtime path of every member;
+    - dataset pins, checked against `t1_fill.json`, and runtime pins;
+    - profiles as JSON;
+    - `todo` entries for unbuilt items.
+  - `src/flyemu/run.py`: `PYTHONPATH=X.zip/code python -m flyemu.run X.zip --ms 1000 --out run/ [--deny <repo>] [--set K=V] [--seed N]`. `--tree .` runs the same path from the repo.
+    - It verifies all hashes, extracts to a fresh root and runs a child process under a read guard.
+    - It refuses `--set` keys with no owner, and refuses unbuilt worlds and stimuli by name.
+    - It writes `run_manifest.json`, `spikes.npz` and `registry_reads.csv`.
+  - `src/flyemu/flyzip.py` holds the stdlib-only shared code (verify, extract, read guard). `scripts/probes/zip_trace_inputs.py` is the trace of what a build reads. The tests are `tests/test_flyzip.py` (5 pass).
+  - flygym 2.1.0 is vendored into the zip with its 85 fullsize meshes. Its asset paths are bound at import, so they can't be redirected.
+- **Result (F-ZIP-1):**
+  - The zip is 134,741,559 bytes, 467 members, 271.4 MB unpacked (body 145 MB, connectome 102 MB).
+  - Run from a fresh temp dir with the repo denied, it matches the tree run exactly: 53,314 spikes in 10,000 steps, identical spike and final-pose hashes, and an identical 1085-row registry table.
+  - Controls: seed 13 differs, and an unknown `--set` key is refused (exit 2).
+  - A 1 s run takes about 2 min on the Mac, plus 8.5 s to build.
+  - Files: `runs/s22/fly2_zip/fly_brain.zip` (sha256 f846617c…), the three runs' manifests, spikes and registry reads, and the job scripts plus `compare.py`. Packing is deterministic by construction (unit-tested on a small zip); a full repack at 1cbccff has not been compared byte for byte.
+- **Next, for fly2 (zip track):**
+  1. `python -m flyemu.check X.zip`: runs `tests/` from the extracted root and prints the ledger fill fraction from the zip's own tables.
+  2. Arenas and stimuli as data. Convert the probe protocols (ball, flight tether, sugar patch; flash, grating, looming, sugar/bitter, odour pulse, current injection) into `world/` files the runner plays through the sensory models. Each becomes a `BUILT_*` entry only once a zip-vs-tree identity run passes for it.
+  3. Identity across switches. Run the neutral-switch identity tests and one non-default profile from the zip.
+  4. Portability. Run the same zip on backhouse (Linux, its own runtime) with `--allow-runtime-mismatch`. Expect differences in floating-point results; measure them, don't assume.
+  5. Then the variation model (`variation/`) and the individual layer, per the spec.
+- **Earlier fly2 state, unchanged (details in FINDINGS F-GJ-7 and DECISIONS 21 Oct 00:25):**
+  - N30 option B is UNDECIDED: class MN q 0.104, ρ 3.80 against ρ* 3.78.
+  - The DLMn doublet is the PSI current's synaptic tail.
+  - No fix is adopted; Ben's MN5 recording (`docs/MEASUREMENT_LIST.md` item 1) decides.
+  - If that recording comes, or someone reads Ryglewski, Kilo & Duch 2014 EJN, set the measured values, pre-register the GF escape at seed 2, and score it against the sealed GF→DLM file.
+- **Done earlier in this worktree (20 Oct):**
+  - T1 fill levels 1 and 2 (F-XCONN-3/4; switch neutral).
+  - Two-compartment DLMn (F-GJ-6; CPU only, neutral).
+  - T4/T5 seeds 1 and 2 FAIL (F-VISION-15).
+  - `docs/FLY_BRAIN_ZIP.md` rev 2.
 - **Backhouse lessons:**
   - The WSL distro stops when no wsl client is attached. Hold a keep-alive from the Mac while anything runs: `ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'"`.
   - Send remote commands as a script (`… bash -s < /tmp/x.sh`).
   - Use at most 4 threads per job, and queue if the load is over 24.
 - **Mac lessons:**
   - Detach long jobs with `nohup … > log 2>&1 & disown` and write the done-file from the job.
-  - The worktree guard refuses heredocs that pipe into nohup or git, and `cd … && git …` chains with redirects. Use the Write tool plus plain commands.
-  - `runs/` is a symlink into the shared checkout, so the Write tool refuses paths under it. Stage temp files in `/tmp`.
+  - The worktree guard refuses shell variables or `$(...)` inside sed/find, heredocs that pipe into nohup or git, and `cd … && git …` chains with redirects. Put scripts in `/tmp` with the Write tool and run them with plain commands.
+  - `runs/` is a symlink into the shared checkout, so the Write tool refuses paths under it.
   - `timeout` doesn't exist on macOS.
+  - The zip's `*.zip` is gitignored. Pack to `/tmp` or a gitignored path, never into `runs/` through Write.
 - **Carried:**
   - **Body hook:** fly owns the premotor→MN transmission fix. When it lands on main, rerun step R as the held-out test on backhouse (`scripts/probes/run_proprio_reach.sh`, then `proprio_reach_score.py` and `proprio_reach_fig.py`).
   - **Stance loop (F-REFLEX-2):** three transduction blanks that fly2 can fill without touching the VNC: the CS load normalisation, CS rows per leg, and the front-leg FeCO assignment.
@@ -512,6 +510,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | `gf_latency.py` + `gf_psi_dlm_path.py` on m10f + measured NT + measured PSP + N30 two compartments, seed 1 (central values and the four corners) | spent (s20 fly2, F-GJ-6) | a changed DLMn (doublet fix, tau_m, measured q/ρ) needs seed 2+ and a new held-out range |
 | `gf_latency.py` on m10f + measured NT + measured PSP + N30 at the option-B values (class, MN5 L, MN5 R), seed 1 | consistency only (s21 fly2, F-GJ-7; Ryglewski already spent) | none; a build at measured values needs seed 2+ |
 | `docs/research/sealed/s21_gf_dlm_sealed.md` (GF→DLM 1:1 vs doublet, paired-pulse refractory period, following frequency, soma amplitude of the axon spike; sources Ryglewski et al. 2014 PNAS, Fayyazuddin 2006 and others) | **sealed, unread** (written by fly2's literature agent, 21 Oct). One header line ("Source 1 — Ryglewski S, Kadas D, … (2014)") was seen in a grep; no value. Value-free summary from the agent: Ryglewski 2014 states two following-frequency pairs, plots the refractory period without stating it, and gives 1:1 qualitatively; Fayyazuddin 2006 gives 1:1 and the spike shape qualitatively only | open once, for the DLMn build at measured values, after its pre-registration |
+| fly_brain.zip identity runs (s22 fly2, F-ZIP-1): m10f0, flat floor, no stimulus, 1 s, seeds 12 and 13 | seen as engineering output only (spike totals and hashes; no observation compared, nothing scored or selected) | seeds 12-13 were noted as reserved for the rung-1 G1 check; seed 12 has long been the smoke default. If G1 needs unseen seeds, use 14+ |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 00:41; F-VISION-15): medulla FAIL 1 of 8, photoreceptor FAIL 0 of 8 | the next candidate needs seed 3 or a new test |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |

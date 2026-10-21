@@ -3685,3 +3685,25 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct, after F-
 
 ### Results s17: the closed proprioceptive loop (21 October, 03:56; F-S17-1; nothing adopted)
 0/24 pass ({M0, OA4} × {g8, g40} × {d3, d1.5} × DNg100 15/25/40 mV), with no antagonist pair in any run. The open-loop repro equals s16 exactly, so the batch is valid. Every run's chordotonal rate is inside the 78.4 Hz bound (highest subtype 11.8 Hz), so no void rule applied. Feedback without drive (g40, 0 mV) gives no rhythm under M0 or OA4. The falsifier in the 03:18 entry is hit: proprioception is not the single missing piece. The finding states two limits. The loop's afferents stay far below their clamp rates because the legs barely move. The replay half of S4 (imposed walking-like joint trajectories under drive and OA4) was not run. `--proprio` stays a neutral switch (off by default); `afferent:all|rate_gain` stays at the profile's 8. The S4b recruitment order is still unspent. Scored with `s14_score.py` unchanged and `s17_loop_summary.py` (`runs/s17/loop/{score,summary}.json`). Viewed: `docs/media/s17_loop_rasters_{0,15,25,40}mv.png`, `docs/media/s17_loop_frames.png`.
+### fly2: how the first fly_brain.zip is built (21 Oct, 00:50)
+**Brief.** Director, 21 Oct: build the species-layer zip, its entry point, and the identity test. Spec: `docs/FLY_BRAIN_ZIP.md` rev 2.
+
+**What was decided, and why.**
+- **The zip holds the files the code reads, under the spec's names.** Each member has a spec path (`connectome/edges.parquet`) and a runtime path (`data/cache/male_cns_edges.parquet`). The runner extracts each member to its runtime path under a fresh root and runs the code there unchanged. The other route, rewriting every loader to read through a zip layer, touches 20+ modules and could change results.
+- **What goes in.**
+  - The inclusion policy came from a trace first: `scripts/probes/zip_trace_inputs.py` audit-hooks one m10f0 build and records every file opened.
+  - The zip then takes all git-tracked files under `data/params`, `data/derived`, `data/model`, `data/ontology` and `data/measurements`, plus `tests/`. It also takes the external caches the code reads (connectome extract, annotations, CT1 column files, flybody meshes), each hashed.
+  - Untracked files are never packed. The packer refuses a dirty tree, and refuses if the neuron or edge hash differs from the `t1_fill.json` pin.
+- **flygym 2.1.0 is vendored** (Apache-2.0, pure Python, about 2 MB plus 143 MB of fullsize meshes).
+  - The first approach, pointing the installed flygym at the zip's assets, failed: its asset paths are module constants and default arguments bound at import.
+  - The read guard caught it as a read of the installed `all_geom_suffixes.yaml`.
+  - flygym therefore leaves the runtime pins and is recorded as vendored, with its version and licence.
+- **A read guard, not just PYTHONPATH.**
+  - The child process installs Python audit hooks and wraps pyarrow's parquet reader and MuJoCo's XML loader. It also checks every compiled mesh path.
+  - Reads under `--deny` roots, the installed flygym and its mesh cache are refused. Any other read outside the root and the Python install is listed in `run_manifest.json`.
+  - Limit: native reads that bypass these paths would not be seen. The identity result below is the backstop.
+- **World.** Only `flat_floor` (the `World()` defaults, as JSON) and the null stimulus are built. The other three arenas and nine stimuli are declared `todo` entries in the manifest, and the runner refuses them by name.
+- **Profiles go out as data.** Each profile is exported as JSON (key, value, label, why). In zip mode the runner loads the profile from that JSON, not from `profiles.py`.
+- **Determinism.** Members get fixed dates and a sorted order, and the manifest has no clock time. The child runs with `PYTHONHASHSEED=0`, and `FLYEMU_*` environment variables are dropped and recorded.
+
+**Acceptance (registered in the brief before running).** A 1 s m10f0 smoke run (seed 12, ≥ 5 synapses, flat floor) from the zip, in a fresh temp dir with the repo denied, must be spike-for-spike identical to the same run from the repo tree. Falsifier: any difference in the spike arrays, the final body pose or the registry reads. Result: FINDINGS F-ZIP-1.

@@ -1700,3 +1700,56 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 
   If Sapkal et al. 2026 holds (unchecked, `docs/research/s17_premotor_hemilineages.md`), the fly's own rhythm survives deafferentation, so a missing feedback loop isn't expected to be the cause anyway. Two candidates remain: connection-specific strength (measurement list item 4) and a premotor driver outside the 106-cell core (connectome query, next session).
 - **Held-out:** the S4b recruitment order is still unspent (no passing arm).
+### F-ZIP-1: the first fly_brain.zip (species layer, 134.7 MB, 467 members) runs a 1 s m10f0 smoke run that is spike-for-spike identical to the same run from the repo tree (fly2, s22, 21 Oct 00:52; registered in the Director's brief; DECISIONS 21 Oct 00:50)
+**The zip.** `python -m flyemu.pack` at commit 1cbccff (clean tree), kept with the run outputs and job scripts in `runs/s22/fly2_zip/`.
+- Size: 134,741,559 bytes zipped, 271.4 MB unpacked, 467 members. sha256 `f846617ce72e49f5…`.
+- Unpacked size by group:
+  - body 144.7 MB (flygym 2.1.0 vendored plus the 85 fullsize flybody meshes);
+  - connectome 102.3 MB;
+  - derived 7.1 MB;
+  - annotations 6.8 MB;
+  - params 5.0 MB;
+  - model 2.9 MB;
+  - inferred 1.4 MB;
+  - code 0.7 MB;
+  - profiles 0.3 MB;
+  - tests 0.2 MB;
+  - ledger, measurements, datasets, world and register under 0.1 MB each.
+- The spec's 5 MB body estimate left out the fullsize meshes; the spec now says 145 MB.
+- Dataset pins: the male-cns v1.0 neuron and edge hashes (they match the `t1_fill.json` pin), plus the MANC and BANC extract hashes.
+- Runtime pins: Python 3.12.14, darwin arm64, numpy 2.5.3, MuJoCo 3.9.0 and six more packages.
+- Declared `todo`: three arenas, nine stimuli, `variation/`, `individual/`, `flyemu.check` and slot addresses.
+
+**The test.** m10f0, seed 12, ≥ 5 synapses, flat floor, no stimulus, 0.1 ms steps, 1000 ms.
+- Run (a), from the zip: run in a fresh temp dir holding only the zip, with `PYTHONPATH=fly_brain.zip/code`. Every hash was verified, the zip was extracted there, and `--deny /Users/ben/fly-emulation` was set.
+- Run (b), from the tree: `--tree .` in the fly2 worktree at the same commit.
+- Both runs ran on the Mac through the slot limiter.
+
+| | zip | tree |
+|---|---|---|
+| steps | 10,000 | 10,000 |
+| spikes | 53,314 | 53,314 |
+| spikes sha256 (step and neuron arrays) | 77080785… | 77080785… |
+| final body qpos sha256 | 3ec293ba… | 3ec293ba… |
+| registry reads (rows; whole table) | 1085 | 1085, equal |
+| NaN, runaway, MuJoCo warnings | none | none |
+| build / 1 s run wall time | 8.5 s / 121.5 s | 8.8 s / 117.8 s |
+
+**PASS: identical spike for spike.** The spike arrays (step, neuron, bodyId), the final body pose and the whole registry-reads table are equal.
+- **Sources in the zip run.** Profile from `profiles/m10f0.json`, arena from `world/arenas/flat_floor.json`. The flygym package, its assets and all 85 meshes came from the extracted root.
+- **Read guard.** Nothing was denied. The only reads outside the root and the Python install were matplotlib's font cache (`~/.matplotlib/fontlist-v3.11.0.json`) and the system UTC zone file.
+- **The test can fail.** The same zip run at seed 13 gives 52,597 spikes, a different spike hash and a different final pose.
+- **Refusals work end to end.** `--set made_up|nonsense_key=1` from the zip exits with code 2 before any build ("no mechanism in mechanisms.yaml / parameters.csv / structural_keys.csv").
+- **Unit tests.** `tests/test_flyzip.py` (5 pass) covers:
+  - tampered, unlisted and escaping members;
+  - non-empty roots;
+  - deterministic packing;
+  - the guard;
+  - orphan `--set` keys.
+
+**What this does and does not show.**
+- It shows that the zip holds everything this run reads, and that nothing outside the zip changes the result.
+- It does not show that every switch or profile runs from the zip. Only m10f0 at its defaults was run.
+- It does not show portability to another machine or another runtime. The runtime pins are refused on mismatch unless `--allow-runtime-mismatch` is given.
+- The guard sees Python opens, pyarrow parquet reads and MuJoCo mesh paths. A native read by another path would be missed; the identity result is the backstop for this run.
+- The Python runtime (`/Users/ben/fly-emulation/.venv`) sits inside the denied repo directory but is allowed as `sys.prefix`. It holds no model data: the trace found none, and its only `.pth` is virtualenv's.
