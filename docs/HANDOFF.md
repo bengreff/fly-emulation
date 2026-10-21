@@ -19,7 +19,7 @@
   - Make the raster and frame sheets as s14 (`bypass_rasters.py`, `bypass_sheet.py`) and view them.
   - Write F-S15-2 and the DECISIONS results entry, then commit.
   - My prediction: no pass, and little change from M0.
-  - A keep-alive ssh is held from the Mac session. If WSL stopped, the runner skips finished jobs on restart: `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/fly-m10f && nohup runs/s15/arms/run.sh > runs/s15/arms/runner.log 2>&1 &"'`.
+  - The Mac holds a detached keep-alive (ssh PID 14040, `until [ -f .../ALL.done ]`), which exits by itself when the arms finish. If WSL stopped anyway, the runner skips finished jobs on restart: `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/fly-m10f && nohup runs/s15/arms/run.sh > runs/s15/arms/runner.log 2>&1 &"'`.
 
 **s15c PRE-REGISTERED (DECISIONS 21 Oct 01:38 and the 01:38 addendum): the morphological hybrid.**
 - **What:** passive cables from the EM skeletons for the 106 T1 walking cells (94 leg MNs + 12 core), synapses at their EM positions, and the spike zone at the AIS. They are embedded in the point network.
