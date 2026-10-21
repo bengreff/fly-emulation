@@ -1607,3 +1607,18 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Reading:** the rule is built for one compact input zone on the axon (PSI → MN5). With distributed inputs it has no well-defined answer, so the class "can't be derived" (pre-registered stop).
 - **Rin:** for leg MNs it is measured, 150/300/700 MΩ fast/intermediate/slow (Azevedo 2020 Fig. 3E). The same paper reports the soma as electrically isolated from the spike zone (soma current injection fails to fire fast and intermediate MNs; qualitative, measured). No adult VNC interneuron Rin was found.
 - **Next:** s15b (pre-registered 01:25), a soma–arbor split along the primary neurite.
+
+### F-S15-2: a soma–arbor split (two compartments at the derived class values) doesn't make the leg-MN pools alternate. 0/12 S2 tries pass; in the leg-MN arms the fitted tonic drive, left on the soma, reaches the spike zone at 0.24× and silences the tonic tibia flexors (s15b, 21 Oct 02:03; pre-registered DECISIONS 21 Oct 01:16, 01:22, 01:25; gate 01:34; DIAGNOSTIC, forced drive; nothing adopted)
+- **Arms:** M0 (m10f0), TM (leg_MN q 0.725, ρ 1.38), TP (core_premotor q 0.933, ρ 1.58), TPM (both); every arm keeps the DLMn (MN) rows off. DNg100 15/25/40 mV, seed 12, S2 and chain harnesses.
+- **Score:** 0 transfer-pass pairs and 0 antagonist pairs in all 12 S2 runs; activity stops at drive-off where it exists. Viewing agrees (`docs/media/s15b_arms_rasters_{15,25,40}mv.png`, `s15b_arms_frames_all.png`).
+
+  | arm | leg MN before drive (Hz) | leg MN during drive, 15/25/40 mV (Hz) | premotor during drive, 25 mV (Hz) |
+  |---|---|---|---|
+  | M0 | 3.77 | 4.43 / 4.81 / 5.37 | 0.13 |
+  | TM | 0 | 0.06 / 0.52 / 1.32 | 0.13 |
+  | TP | 3.77 | 4.43 / 4.90 / 5.34 | 0.22 |
+  | TPM | 0 | 0.06 / 0.71 / 1.35 | 0.22 |
+- **Why TM silences the MNs:** `spontaneous_drive` (fitted, 35.55 mV for the slow tibia flexors; a stand-in for tonic premotor excitation) is a soma input in fly2's N30 mechanism, while every synaptic edge goes to the spike zone. At the leg_MN values a soma DC input reaches the spike zone at 0.24× (derived), 8.5 mV against the 26.2 mV gap. The registration didn't say where the tonic drive goes; this is an arm-design confound, not a hand-off effect.
+- **Core:** TP/TPM at 40 mV turn T1L E1/E2 from ~20 Hz single spikes into ~3-spike bursts at ~6 Hz (`s15b_arms_chain_T1L_40mv.png`), a mode M0 already shows in T2. I1 is recruited only in T2R at 40 mV, never in T1.
+- **Reading:** the hand-off gain from the split is about 1 (gate), and no arm alternates. With the tonic line gone (TM), the drive-locked MN activity is still co-active. The two-compartment reduction, at derived values, is not what's missing.
+- **For s15c:** the morphological hybrid spreads the tonic drive by membrane area, which keeps the spike zone at the point cell's full tonic drive; gate 1(b) checks that.
