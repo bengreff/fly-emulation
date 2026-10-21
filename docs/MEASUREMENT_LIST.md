@@ -59,3 +59,20 @@ Measurements that would pin a model value we can't pin from the literature or th
 **What it replaces.** The state's magnitude is guessed for every class, and its direction is inferred from other species. One recording per class would make it measured for some fly.
 
 **Sources.** `docs/research/s16_octopamine_excitability.{csv,md}`; DECISIONS 21 Oct 02:28.
+
+## 4. The unitary PSP from a core premotor cell onto an adult leg MN (E2, E1 or I1 onto a front-leg MN)
+
+**Why now.** Every walking arm since s13 fails at the same step: the core's output doesn't cross to the leg MNs. That covers MANC counts (F-XCONN-2), graded release (F-BYPASS-4, F-S14-1), MN gain and a uniform synaptic scale (F-BYPASS-6, F-BYPASS-7), E1/E2 bursting (F-S14-1), two compartments (F-S15-2), passive EM morphology (F-S15-4) and an octopamine state (F-S16-1). In the model, one core spike gives a leg MN a median 0.17 mV (E1), 0.47 mV (E2) or 0.21 mV (I1), derived as connectome synapse count × 0.021 mV per synapse. The gap to threshold is 7 mV, or 26 mV for the slow tibia flexors. The 0.021 mV per synapse is inside the insect unitary-PSP range, but no adult Drosophila premotor → leg-MN unitary PSP was found. A uniform scale large enough to reach measured MN rates implies 0.34-0.53 mV per synapse, outside that range (F-BYPASS-7). The open question is whether a few connections are strong (a synapse-specific value) or all of them are as weak as the model's.
+
+| Protocol | Fills (slot) | Read-out |
+|---|---|---|
+| Whole-cell recording of a front-leg tibia flexor or coxa MN (Azevedo 2020 preparation), with brief CsChrimson pulses in a sparse line for E2 (INXXX466), E1 (IN17A001) or I1 (IN16B036); a sparse split line for these types has not been checked | the mV per presynaptic spike for that connection: `connection_class:...\|efficacy_per_synapse` at connection grain, and tau_s for it | The unitary PSP amplitude, latency and decay. With Rin from the same cell, this gives the synaptic charge. |
+| The same with the MN held near rest during walking-like DN drive (DNg100 activation), if the preparation allows | the summed core input per cycle at the MN | Peak-to-trough depolarisation per cycle at the soma. |
+
+**What each answer would decide.**
+- **About 0.2-0.5 mV per spike:** the fly's hand-off is as weak as the model's. Then the missing piece isn't strength; it's proprioceptive feedback (S4 proper) or another premotor driver.
+- **Several mV per spike from a sparse set of connections:** connection-specific strength is the break, and the synapse-specific fidelity rung is next.
+
+**What it replaces.** The core → leg-MN strength is now the shared per-synapse value (fitted on the brain, inferred for the VNC). One recorded connection is consistent with some fly, which meets the per-value bar.
+
+**Sources.** F-S14-1 hand-off table (`runs/s14/handoff.json`); F-BYPASS-7 and `docs/research/s13_s4b_unitary_psp.md`; F-S15-4; F-S16-1.

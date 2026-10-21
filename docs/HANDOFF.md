@@ -1,44 +1,47 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 02:29 CDT. Session 15, second Director brief after a /clear: decide the leg-MN spike zone, run s15c gate 2, step back if the stop rule applies, and pre-register the octopamine state arm. Usage is near tonight's cap, so stop at a clean commit by about 04:30. Ben's notes: two compartments are allowed where a point model provably fails; "we are trying to discover the minimum for functional behavior". Take clean fidelity steps, and don't go to a fitted synaptic scale.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 03:13 CDT. Session 16, a Director brief after a /clear: run the s16 octopamine-state arm as registered, score it, view it and commit. If it fails, write the morning-report paragraph (below). Park by about 04:30. Ben's notes still apply: two compartments only where a point model provably fails; "we are trying to discover the minimum for functional behavior"; no fitted synaptic scale.
 
-**s15c gate 2 DONE: the stop rule applies, and the morphology path is PARKED (F-S15-4; DECISIONS 21 Oct 02:17 decision + operational form, 02:20 results; commit 9806ac7).**
-- **Spike-zone decision (Director):** leg MNs use the arbor base (s15b split + 20 µm), with the trunk end as the sensitivity run. Both are in `morph.spike_zone` as kinds `arbor_base` and `trunk_end`. The measurement is item 2 in `docs/MEASUREMENT_LIST.md`.
-- **Result:** `scripts/probes/s15c_gate2.py` (58 s on the Mac; one reciprocal cable run per recording node, checked to 10⁻¹⁰) covered all 11,417 network edges onto the 106 cells, every one with EM sites.
-  - Admissible: 0.021 mV per synapse, q90 1.0-1.4 mV per spike.
-  - Spike-zone gain 1.015 (core → MN), 0.974 (E2 → I1).
-  - Inhibitory/excitatory ratio 0.997 (leg MN), 0.990 (core).
-  - The trunk end, Ri 102-311 and radius ×0.8-1.25 all stay within 0.91-1.03.
-  - E2 → I1 gives 0.75-1.07 mV per spike against the 7 mV gap.
-- **Consequence:** gate 3 and the `lif.Network` hybrid were not built. Shape (s15/s15b/s15c) and uniform strength (s14, S4b) are both ruled out as the single cause. Outputs: `runs/s15/morph/gate2.json` and `gate2.edges.csv.gz` (gitignored).
+**s16 DONE: 0/9 pass (F-S16-1; DECISIONS 21 Oct 02:35 operational form, 03:12 results).**
+- **What ran:** `data/params/octopamine_state.csv` (OA2 / OA4: +2 / +4 mV `class:<c>|tonic_drive` on 33 Octβ premotor classes, 11,294 cells; OA4M also +4 mV on MN_leg).
+  - Bound check `scripts/probes/s16_oa.py check`: 0 breaches, smallest gap 3.0 mV.
+  - 28 runs on backhouse, all exit 0. Copied to Mac `runs/s16/oa/`; backhouse `~/fly-m10f/runs/s16/oa/`.
+- **Result:**
+  - 0 antagonist pairs in all 12 S2 runs.
+  - Premotor rate at 25 mV rises from 0.13 to 0.82 Hz.
+  - I1 fires in most neuromeres under OA4 (first time since s13). But many of its "recruited" calls come where the core cycle has collapsed to 4-7 Hz, and I1 reaches the leg MNs at only a median 0.21 mV per spike.
+  - Brain-off 0 mV: no rhythm in any arm (comparison spent).
+  - Viewed: `docs/media/s16_oa_{rasters_{0,15,25,40}mv,chain_T1L_{25,40}mv,frames_all}.png`. Rasters co-active; frames show no stepping. Under OA the wings open at lower drive.
+- **Nothing adopted.** The S4b recruitment order is still unspent. `MEASUREMENT_LIST.md` item 4 added: the unitary core → leg-MN PSP.
+- **Tooling:** `bypass_rasters.py` now summarises long override lists in panel titles (`override_text`).
+- **Backhouse:** nothing of ours running; tmux `s16oa` exited. I stopped my Mac keep-alive (02:36:58). The `ssh backhouse ... sleep infinity` from 01:29:56 isn't this session's, so I left it. tmux `inq2s7` is another project's.
 
-**s16 RUNNING on backhouse since 02:37 (tmux `s16oa`, `~/fly-m10f/runs/s16/oa/run.sh`; done-file `ALL.done`). Table, bound check and operational form committed d750671 (DECISIONS 21 Oct 02:35); all three OA arms pass the bound (min gap 3.0 mV; OA4M leaves the 60 tonic tibia flexors suprathreshold, as at baseline). Mac keep-alive: the `ssh backhouse ... sleep infinity` started 02:36:58 (the one from 01:29:56 is not this session's). When ALL.done exists: copy back, `s14_score.py runs/s16/oa --arms M0,OA2,OA4,OA4M`, view, F-S16-1.**
+**Morning-report paragraph (s16 failed, as briefed):**
+Since s13, eight single-cause candidates for the missing leg alternation have each been tested and ruled out, all with forced DNg100 drive, pre-registered and viewed:
+- **Synapse counts:** MANC's counts don't help (F-XCONN-2).
+- **Synaptic scale:** a uniform scale large enough to match MN rates (16-25×) implies 0.34-0.53 mV per synapse, outside the measured insect range, and still gives no antagonist pair (F-BYPASS-7).
+- **MN gain:** the MN-side size exponent and glutamate sign don't help (F-BYPASS-6).
+- **Graded release:** neither 13B/10B, nor all VNC locals, nor 16B/I1 (F-BYPASS-4, F-S14-1).
+- **E1/E2 bursting:** the network chops the burst into a single train (F-S14-1).
+- **Two compartments:** a soma–arbor split (F-S15-2).
+- **Passive EM morphology:** spike-zone gain 1.01 on all 11,417 edges (F-S15-4).
+- **Octopamine state:** a premotor depolarisation of +2-4 mV (F-S16-1). This is the first arm that makes I1 fire, yet the MN pools stay co-active.
 
-**s16 pre-registration: the octopamine-high state arm (DECISIONS 21 Oct 02:28; commit 9795f5e).**
-- **Literature** (`docs/research/s16_octopamine_excitability.{csv,md}`, Sonnet, 26 rows):
-  - No measured OA magnitude for adult VNC MNs or premotor cells.
-  - The larval RP2 MN shows no OA effect (Schützler 2019, full text).
-  - The premotor direction is excitatory: stick insect, locust (abstract-level).
-  - The brief's "OA raises MN excitability" is contradicted at the MN. Tell the Director.
-- **Arms:** `class:<c>|tonic_drive` (existing N3 key, no new code).
-  - OA2 / OA4: +2 / +4 mV on 33 vnc_local classes. These are the 18 with Allen 2020 Octβ2R/β3R calls ≥ 0.30, plus 15 not in the atlas (inferred), which include E1's 17A and E2's TBD. 04B, 08A, 12B and 13B are left out (measured, not called).
-  - OA4M: OA4 plus +4 mV on MN_leg (against the larval null).
-  - M0 re-run.
-  - DNg100 15/25/40 mV, seed 12, S2 + chain, plus a 0 mV brain-off S2 run per arm.
-- **Values:** magnitude guessed, direction inferred. Bound: rest stays at or below −45 mV with a threshold gap ≥ 2 mV, checked per cell at build, and the arm stops on a breach.
-- **To run it:**
-  1. Write `data/params/octopamine_state.csv` (class, value, label, source).
-  2. Make the run script expand it to `--set class:<c>|tonic_drive=<v>`. Check that the key with a "." (`vnc_local_20A.22A`) parses.
-  3. Add the per-cell bound check.
-  4. Copy `runs/s15/arms/run.sh` (rule 16 gate, done-files) to `runs/s16/oa/` on backhouse (`~/fly-m10f`; sync the code first).
-  5. Score with `s14_score.py` unchanged, view rasters/frames/chain, then FINDINGS F-S16-1.
-- **Row check DONE** (DECISIONS 02:31, `docs/research/s16_neuromod_rowcheck.csv`): 32 confirmed, 20 corrected, 6 wrong, 5 unverifiable; no effect on s16. Use the s13 table only through the row check.
-- **Measurement list:** item 3 is the OA effect on adult VNC premotor/leg-MN rest, Rin and f-I.
+Every arm stalls at the same step. The core's rhythm exists (11-20 Hz), but one core spike moves a leg MN only 0.17-0.47 mV (median) against a 7 mV gap, or 26 mV for the slow tibia flexors. That holds whether the core fires more, bursts or recruits I1. Three things remain:
+- **Connection-specific strength:** a few strong core → MN synapses, the synapse-specific rung.
+- **Proprioceptive feedback:** S4 proper, the closed loop, never run.
+- **A premotor driver outside the 106-cell core.**
 
-**s15b DONE: 0/12 pass (F-S15-2).** TM/TPM silenced the leg MNs through the soma-placed `spontaneous_drive` (0.24× at the spike zone), an arm-design confound. Runs are in Mac `runs/s15/arms/`. Nothing is running on backhouse.
+The single measurement that would most cut this space is **item 4: a whole-cell recording from a front-leg MN while E2 (INXXX466), E1 (IN17A001) or I1 (IN16B036) is activated optogenetically**, to read the unitary PSP:
+- **About 0.2-0.5 mV:** the fly's hand-off is as weak as ours. Strength is then ruled out entirely, and feedback or another driver is the answer.
+- **Several mV from a few connections:** the break is synapse-specific strength, and we know which connections to fix.
 
-**s15c gate 1 DONE (F-S15-3).** `src/flyemu/morph.py` matches NEURON 9.0.2 (check-only, `uv pip install --python .venv/bin/python neuron==9.0.2`) to about 10⁻⁵. The isopotential limit is ≤ 0.047 mV. Tibia flexor Rin is 582 MΩ, inside Azevedo's range. Tools: `scripts/probes/s15c_point_params.py`, `s15c_gate1.py {a,b,c}`, `s15c_gate2.py`.
+**Next, in order:**
+1. **S4 proper:** proprioceptive replay and closed loop at s 1. Read fly2's F-REFLEX-2 first: the afferent path stops at the first hop. Pre-register; this needs no measurement and is the only untested family left that doesn't wait on Ben.
+2. Ben's list items 3 and 4 (OA magnitude, unitary PSP).
+3. The tonic tibia-flexor drive (fitted 35.55 mV) is a separate MN-layer issue.
 
+**Earlier tonight (s15, kept for reference).** s15c gate 2 parked the morphology path (F-S15-4, commit 9806ac7): spike-zone gain 1.015 core → MN, 0.974 E2 → I1, inh/exc 0.997. Leg MNs use the arbor-base spike zone (`morph.spike_zone` kinds `arbor_base`, `trunk_end`; measurement item 2). s15b 0/12 (F-S15-2): TM/TPM silenced the leg MNs through the soma-placed `spontaneous_drive`, an arm-design confound. s15c gate 1 (F-S15-3): `src/flyemu/morph.py` matches NEURON 9.0.2 to about 10⁻⁵ (check-only, `uv pip install --python .venv/bin/python neuron==9.0.2`); tools `scripts/probes/s15c_point_params.py`, `s15c_gate1.py {a,b,c}`, `s15c_gate2.py`. Row check of the s13 neuromodulation table: `docs/research/s16_neuromod_rowcheck.csv` (32 confirmed, 20 corrected, 6 wrong, 5 unverifiable); use the s13 table only through it.
 
 **s15 step 1 (F-S15-1) and s14 (F-S14-1): done; see FINDINGS.**
 - fly2's option-B rule has no spike zone for distributed-input cells.

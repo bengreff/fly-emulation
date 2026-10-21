@@ -20,6 +20,14 @@ LEG_ORDER = ("lf", "lm", "lh", "rf", "rm", "rh")
 CELL_COLOURS = {"E1": "#0072B2", "E2": "#D55E00", "I1": "#009E73", "A007": "#CC79A7"}   # Okabe-Ito, validated
 
 
+def override_text(r: dict) -> str:
+    """The run's overrides for a panel title; long lists (s16: one per class) are summarised."""
+    ov = r.get("overrides", {})
+    if len(ov) > 3:
+        return f"{len(ov)} overrides (values {', '.join(sorted({f'{v:g}' for v in ov.values()}))})"
+    return ", ".join(f"{k}={v:g}" for k, v in ov.items()) or "no overrides"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("traces", nargs="*")
@@ -46,7 +54,7 @@ def main() -> None:
         title = Path(f).stem
         if j.exists():
             r = json.loads(j.read_text())
-            title = (f"{r['type']} {r['drive_mv']:g} mV, {', '.join(f'{k}={v:g}' for k, v in r.get('overrides', {}).items()) or 'no overrides'}"
+            title = (f"{r['type']} {r['drive_mv']:g} mV, {override_text(r)}"
                      f"  |  MN {r['rates_hz']['leg_mn_drive']} Hz, rhythmic pools {len(r['rhythmic_pools'])}, "
                      f"alternating {len(r['alternating_pools'])}  ->  {'PASS' if r['passes'] else 'fail'}")
         ax.set_title(title, fontsize=8, loc="left")
@@ -73,8 +81,7 @@ def main() -> None:
         ovs = ""
         if j.exists():
             r = json.loads(j.read_text())
-            ovs = ", ".join(f"{k}={v:g}" for k, v in r.get("overrides", {}).items()) or "no overrides"
-            ovs = f"{r['type']} {r['drive_mv']:g} mV, {ovs}, DN {r['stim_hz']} Hz"
+            ovs = f"{r['type']} {r['drive_mv']:g} mV, {override_text(r)}, DN {r['stim_hz']} Hz"
         ax.set_title(f"oscillator cells, {a.seg}: {ovs} ({Path(f).stem})", fontsize=8, loc="left")
         ax.legend(fontsize=7, frameon=False, ncol=4, loc="upper right")
         ax.tick_params(labelsize=7)
