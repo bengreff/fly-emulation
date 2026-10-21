@@ -102,14 +102,21 @@ Sizes are measured on 20 Oct from the files the model reads today.
     kicks per listed cell) or `kick` (a fixed train).
   - `flyemu.score` only interprets these files and writes `score_manifest.json`: per seed, the spike count and
     a hash over every neuron, plus the readout; then the aggregate readout, each pass condition and the verdict.
-- **Built protocols** (both step the network only; the body is not stepped):
+- **Built protocols, network only** (the body is not stepped):
   - `per_labellar_sugar`: LB3b/LB3c at 100 Hz, read out on MN9_L, pass if the mean over seeds 0-9 is > 5 Hz.
     Its brain is built as `scripts/assay_pathways.py` builds it.
   - `gf_escape`: DNp01 kick train; TTMn and DLMn muscle latency against Augustin 2017. Its brain is built as
     `scripts/probes/gf_latency.py` builds it.
-- **Not built:** the other six items, with reasons in the file.
+- **Built protocols, closed loop** (harness `closed_loop`: body stepped, every sense reaching the brain; the loop
+  of `flyemu.run` and `scripts/probes/command_walk.py`). Neither has a bar yet, so the verdict is NO BAR and the
+  protocol carries a `bar_todo` saying which number is missing:
+  - `stands_flat_floor`: no stimulus, seed 12, 1 s; readout `posture` (thorax height and drift).
+  - `walks_dng100`: DNg100 at 100 Hz from 300 to 1300 ms, seed 0; readout `leg_oscillation` (command_walk.py's
+    per-leg stepping summary).
+- **Not built:** grooms, leg sugar, optomotor turning and stable flight, with reasons in the file.
 
-Both built protocols score spent evidence, so their runs are regression checks.
+The sugar and GF protocols score spent evidence, so their runs are regression checks. The closed-loop ones score
+nothing until a bar is written.
 
 ## Scan files
 

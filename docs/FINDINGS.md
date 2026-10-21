@@ -1811,3 +1811,40 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - Both step the brain only. PER is read as MN9 firing, and escape as motor neuron latency; no body moves in either.
 - The two protocols build the brain the way their scripts do, which is not quite the same way. The sugar build skips the stubs, the body and Q10. Moving to one harness would mean re-scoring both gates.
 - Leg sugar is the next protocol that needs no new code. It needs one decision first: a single number for "the route opens".
+
+### F-ZIP-3: stands and walks now run from the zip in closed loop, identical to the tree and to their reference runs; both have no bar yet (verdict NO BAR), and neither stands nor walks (fly2, s22, 21 Oct 02:25; DECISIONS 21 Oct 02:16)
+
+**What was built.**
+- A `closed_loop` harness in `flyemu.score`: the body is stepped and every sense reaches the brain (observe, sense, network step with the kick, motor step).
+- Two readouts: `leg_oscillation`, which is command_walk.py's per-leg summary, and `posture`.
+- Two protocols in `data/world/`: `stands_flat_floor` and `walks_dng100`.
+- Neither protocol has a pass condition. Each carries a `bar_todo` naming the missing number, so its verdict is NO BAR.
+
+**The zip.** `runs/s22/fly2_zip/s3/fly_brain.zip`: 134,771,271 bytes, 479 members, sha256 8cc81b45…, packed from b7e6fc9. It is a build artifact and is not in git.
+- **The first pack of this step was defective** (ef54015). It held two members named `world/stimuli/none.json`: the packer's generated null stimulus and the new tracked file. zipfile's duplicate-name warning caught it.
+  - Fix (b7e6fc9): the packer refuses any member path packed twice, and the generated file gives way to the tracked one.
+  - The defective zip was replaced before either zip run began; both zip manifests record b7e6fc9. It is not preserved.
+- The tree runs started at ef54015 and finished after b7e6fc9 was committed, so their manifests read b7e6fc9. The two commits differ only in `pack.py`, which the runs never import.
+
+**Identity (all pre-registered checks pass;** `compare_loop.txt` **in the run directory).**
+
+| | reference | tree | zip |
+|---|---|---|---|
+| `walks_dng100`, seed 0: every field command_walk.py prints (6 legs × frequency, band share, amplitude; thorax dx, dy; leg MN rate; DNg100 rate; MuJoCo warnings) | `FLYEMU_PROFILE=m10f0 command_walk.py --type DNg100 --hz 100 --seed 0` | equal at the script's rounding | spike hash (79,030 spikes), final pose hash and every field equal to tree |
+| `stands_flat_floor`, seed 12: spikes and final pose | the F-ZIP-1 tree run of `flyemu.run` | 53,314 spikes; spike hash 770807… and pose hash 3ec293… equal | equal to tree |
+
+- **Read guard (zip runs).** Nothing denied. Outside the root, they read only matplotlib's font cache and the timezone file.
+
+**What the model does (m10f0; recorded, not scored).**
+- **Walks, DNg100 at 100 Hz (observed 92 Hz):** no stepping.
+  - Each leg's dominant tarsal-tip frequency in 3-25 Hz is 3-4 Hz, the band's lower edge.
+  - The band holds only 10-30% of the tip's power, and amplitudes are 0.04-0.25 mm.
+  - The thorax moves 0.04 mm backwards. Leg motor neurons average 2.6 Hz.
+  - This is the known walking failure (F-BYPASS-7, F-XCONN-2), now as a regression number.
+- **Stands, no stimulus:** the thorax origin sits at 0.55 mm (median; minimum 0.546) and drifts 0.24 mm in 1 s. This is the lying posture of F-STAND-3; no standing bar exists to judge it against.
+
+**What this does and does not show.**
+- Four of the eight scoreboard items now run from the zip alone: labellar sugar PASS, GF escape FAIL, stands NO BAR, walks NO BAR.
+- The closed loop is identical zip vs tree, and identical to both `flyemu.run` and command_walk.py. The full sensing and body path reproduces from one file.
+- NO BAR is not a pass or a fail: the scoreboard still passes 1 of 8. Writing the bars is the Director's or Ben's call; the report proposes them.
+- `flyemu.check` was not rerun on the b7e6fc9 zip. The c248318 zip's check passed, and the protocol test changes since then passed in the tree (20 of 20).
