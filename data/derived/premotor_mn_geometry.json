@@ -1,0 +1,58 @@
+{
+ "registration": "DECISIONS 21 Oct 01:16",
+ "dataset": "male-cns:v1.0",
+ "method": "mn_axon_geometry.reduce, contacts = all postsynaptic sites",
+ "Ri_ohm_cm": {
+  "lo": 102.0,
+  "mid": 200.0,
+  "hi": 311.0
+ },
+ "classes": {
+  "core_premotor": {
+   "n_cells": 8,
+   "q": 0.0023675583122891907,
+   "q_lo": 0.00026296532292473506,
+   "q_hi": 0.0049100301298201894,
+   "frac_syn_distal_median": 0.0012306999620185675,
+   "ell_um_median": 102.22530100632682,
+   "gc_nS_mid_median": 3.834902654440227,
+   "Rin_MOhm": [
+    150.0,
+    600.0,
+    1000.0
+   ],
+   "Rin_basis": "guessed",
+   "Rin_source": "no adult VNC interneuron Rin found (s15 scan); central value from adult antennal-lobe PNs, 598 +/- 69 MOhm (Gouwens & Wilson 2009, measured, another class); bracket from the leg-MN low end to ~1 GOhm (guessed)",
+   "rho": 3.101056144298209,
+   "rho_cells_q10_q90": [
+    1.2559134700386505,
+    5.235597932641154
+   ],
+   "rho_lo": 0.20191534888081197,
+   "rho_hi": 17.109797165493966
+  },
+  "leg_MN": {
+   "n_cells": 67,
+   "q": 0.08532731678087803,
+   "q_lo": 0.0021856674628251216,
+   "q_hi": 0.1762597889474838,
+   "frac_syn_distal_median": 0.02095238095238095,
+   "ell_um_median": 93.81847048978572,
+   "gc_nS_mid_median": 3.5867070876116482,
+   "Rin_MOhm": [
+    150.0,
+    300.0,
+    700.0
+   ],
+   "Rin_basis": "measured",
+   "Rin_source": "Azevedo et al. 2020 eLife 9:e56754 Fig 3E: T1 tibia flexor MNs, fast 150 (n 15), intermediate 300 (n 11), slow 700 MOhm (n 14); whole-cell at the soma, in vivo; central value = intermediate",
+   "rho": 1.3038254785978272,
+   "rho_cells_q10_q90": [
+    0.666173806512522,
+    2.092406344705727
+   ],
+   "rho_lo": 0.21420379630627712,
+   "rho_hi": 9.573100923490253
+  }
+ }
+}

@@ -3451,3 +3451,34 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Ben approved it (Director note, 20
 - **Falsifier:** no pass at the class values at any drive. That would mean a two-compartment hand-off at derived values doesn't fix alternation. The next suspects would be the slow-MN BK on E1/E2 (named by s14) and proprioceptive feedback (S4 proper).
 - **Prediction (mine):** TM raises transfer-pass pools above 0 but gives no antagonist pair, because without I1 the stance pools get no rhythmic inhibition. TP is likelier to recruit I1. If anything passes it is TPM, and I expect at most one pass.
 - **Measurement for Ben's list:** see F-S14-1. A front-leg MN somatic recording with E2/E1 activation gives the unitary PSP and Rin, and ideally the soma-to-neurite attenuation, which fixes ρ.
+
+### s15 ownership cleared, Rin values and the gate's operational form (21 October, 01:22; before any row is written or any arm runs)
+- **Ownership (Director, as Ben, 21 Oct):** fly may add the leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Append only; fly2's DLMn and MN rows and its derivation method stay unchanged. fly2 is on the zip packer tonight and won't touch those tables. Cell rows and their class rows go in together, so the switch never meets a class without values (that would also break fly2's DLMn runs).
+- **Geometry:** `scripts/connectome/premotor_mn_geometry.py` imports fly2's `mn_axon_geometry.reduce()` and runs it unchanged. Only the cells and contacts differ. The cells are the T1 leg-MN types in LEG_TYPES (tibia and coxa/trochanter) and the 12 T1 core cells, both sides. The contacts are every postsynaptic site, because the arms put all chemical inputs on the spike zone. The class value is the mean over cells at FRAC 0.05 and Ri 200. The bracket is the cells' q10-q90 × the Rin range × the Ri range; with this many cells I use q10-q90 rather than fly2's two-cell min/max.
+- **Rin (s15 Sonnet scan):**
+  - **leg_MN:** 300 MΩ (intermediate), bracket 150-700. Measured: Azevedo et al. 2020 eLife Fig. 3E, T1 tibia flexors, fast 150 (n 15), intermediate 300 (n 11), slow 700 (n 14), whole-cell at the soma, in vivo. The same paper says current injection at the soma failed to fire fast and intermediate MNs, "likely because of intrinsic morphological or electrophysiological properties that electrically isolate the soma from the spike initiation zone". That is the measured, qualitative basis for the leg_MN row, the same kind of evidence as fly2's DLMn row.
+  - **core_premotor:** 600 MΩ, guessed. No adult VNC interneuron Rin was found. The central value is adult antennal-lobe PNs, 598 ± 69 MΩ (Gouwens & Wilson 2009, measured in another class). The bracket, 150-1000, is guessed.
+- **Cells in the rows:** type selectors can't split segments (instances have no neuromere), and q and ρ are class values. So each row names its types in all three thoracic neuromeres; the values are derived from T1, where Rin was measured. The pre-registration said "front-leg MNs". This applies the same class to the other legs and is stated in the result.
+- **Admissibility gate, operational form (fixed now):** `s4b_unitary_psp.py` at the class values, recording at the soma. TM measures excitatory premotor → leg MN; TP measures excitatory inputs → core cells. An arm is admissible if both hold:
+  - the somatic median is ≤ 0.3 mV per synapse (the top of the small-central-neuron band, with leg MNs expected at or below it);
+  - the somatic q90 PSP per spike is inside 0.4-10 mV (the measured insect band; the MN→MN outlier is excluded).
+
+  The spike-zone PSP is reported, not gated. Otherwise as pre-registered (01:16).
+
+### Results s15 step 1, geometry (21 October, 01:25; F-S15-1; no row written, no arm run)
+fly2's option-B rule doesn't define a spike-zone compartment for cells whose inputs cover the arbor. The base walk starts from the input contact nearest the soma, which here sits close to the soma. It then fails for 27 of 94 T1 leg MNs and 4 of 12 core cells (no branch point holds ≥ 5% of the cable off the path). Where it does return values, the compartment it picks holds a median 2.1% of the leg MN's input sites, and 0.1% of the core cells'. Mean q is 0.085 (leg_MN) and 0.0024 (core). That compartment is a twig, not the arbor the arm puts every input on. **Per the 01:16 pre-registration, "if a class can't be derived, the arm doesn't run"**: TM, TP and TPM don't run at option-B values. ρ at the stated Rin is reported anyway, in `data/derived/premotor_mn_geometry.json`: leg_MN 1.30, core 3.10. These are not used.
+
+### Pre-registration s15b: a soma–arbor split for distributed-input cells (21 October, 01:25, before computing it)
+The rule fly2's method lacks, for unipolar insect neurons whose inputs and spike zone are in the neuropil and whose soma hangs off a primary neurite. It is a new derivation for the new rows only; fly2's rows and method are unchanged.
+- **Rule:**
+  - **Split point:** walk from the soma along the skeleton. The split is the first branch point whose off-path subtrees hold ≥ 5% of the cable (1% and 20% are reported).
+  - **Soma compartment:** the soma sphere plus the primary neurite up to that point.
+  - **Spike-zone compartment:** everything distal to the split point (arbor, spike zone and axon).
+  - **q:** the distal membrane area divided by the whole.
+  - **R_ax:** Ri × Σ dl/(π r1 r2) along the primary neurite.
+  - **ρ:** Rin / R_ax.
+  - **Rin and Ri:** as 01:22.
+  - **Check:** report the fraction of input sites distal to the split. A class is derivable only if its median is ≥ 0.9.
+- **Validity:** it lumps the arbor and the spike zone into one isopotential compartment, so it only describes the soma-to-arbor attenuation, not attenuation within the dendrites.
+- **Prediction (mine):** q comes out near 0.9. The spike zone then sees about the point-model PSP and the soma a smaller one, so TM and TP change the hand-off little at the shared scale 1. Read that way, a two-compartment cell matters for this break only if the shared scale is anchored at the soma. That would be a separate, later pre-registration.
+- **Gate, arms, pass, held-out and falsifier:** as 01:16 and 01:22.

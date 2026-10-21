@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 01:16 CDT. Session 14, the class-level options test (Director brief, 20 Oct). It's a forced-drive DIAGNOSTIC, and nothing is adopted. The night runs until about 05:30. Ben's note: two compartments (soma plus spike-initiation zone) are allowed where a point model provably fails.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 01:25 CDT. Session 15 (s15 step 1 done, F-S15-1; s15b pre-registered; s14 below is done). Session 14, the class-level options test (Director brief, 20 Oct). It's a forced-drive DIAGNOSTIC, and nothing is adopted. The night runs until about 05:30. Ben's note: two compartments (soma plus spike-initiation zone) are allowed where a point model provably fails.
 
 **s14 DONE (F-S14-1; DECISIONS 20 Oct 22:28 pre-registration, 23:57 and 21 Oct 01:16 results).**
 - **Result:** 6 arms × 15/25/40 mV, 0 of 18 pass. The arms were M0, A (16B graded), B4/B2 (E1/E2 saturating ADP), C4/C2 (A+B). Viewed: `docs/media/s14_arms_rasters_{15,25,40}mv.png`, `s14_arms_frames_all.png`, `s14_arms_chain_T1L.png`.
@@ -13,13 +13,24 @@
 - **Outputs:** Mac `runs/s14/arms/` (score.json); backhouse `~/fly-m10f/runs/s14/arms/`. Nothing is running, and the runner exited (ALL.done 01:11).
 
 **s15 PRE-REGISTERED (DECISIONS 21 Oct 01:16): the two-compartment premotor/leg-MN arm.** It uses fly2's N30 mechanism (`cell_type:all|two_compartments_where_point_fails`) and its tables `data/params/two_compartment*.csv`.
-- **Blocked on a DECISION NEEDED (Director):** fly2 owns those tables. Either fly2 adds the rows for the leg_MN and core_premotor classes, or the Director clears fly to.
-- **Then:**
-  1. Run a Sonnet scan for leg-MN Rin (Azevedo 2020) and VNC interneuron Rin.
-  2. Derive the class q and ρ with `scripts/connectome/mn_axon_geometry.py` (option B as F-GJ-7).
-  3. Pass the admissibility gate: the somatic unitary PSP stays in the measured range (`s4b_unitary_psp.py`).
-  4. Run arms M0/TM/TP/TPM × 15/25/40 mV on backhouse with done-files.
-  5. Score with `s14_score.py` (the ARMS tuple needs the new names), then view.
+- **Ownership cleared (Director as Ben, 21 Oct; DECISIONS 01:22):** fly appends the leg_MN and core_premotor rows. Append only, keep fly2's rows and method, and write cell and class rows together.
+- **Step 1 result (F-S15-1, DECISIONS 01:25):** fly2's option-B rule doesn't transfer to cells whose inputs cover the arbor.
+  - It fails for 27/94 leg MNs and 4/12 core cells.
+  - Where it returns values, the "axon" holds a median 2.1% (leg MN) and 0.1% (core) of the input sites.
+  - So, as pre-registered, **no arm ran and no row was written**. Nothing is running.
+  - Outputs: `data/derived/premotor_mn_geometry.{csv,json}`, raw skeletons and post synapses in `data/derived/premotor_mn_geometry_skel/` (106 T1 cells, committed).
+  - Rin (01:22): leg_MN 300 MΩ (150-700, measured, Azevedo 2020 Fig. 3E); core 600 (150-1000, guessed).
+- **Next: s15b (pre-registered 01:25):** a soma–arbor split (soma + primary neurite against everything distal). It is derivable only if ≥ 90% of input sites are distal to the split.
+  1. Add the split rule to `premotor_mn_geometry.py` as a new function; leave fly2's `reduce()` alone. Run `--offline` (the skeletons are saved).
+  2. Append cell and class rows together:
+     - leg_MN: cells = a type regex over LEG_TYPES, axon_inputs `*`, basis measured (Azevedo's qualitative soma isolation);
+     - core_premotor: cells `type:^(IN17A001|INXXX466|IN16B036|IN19A007|IN19A004|IN19A002)$`, basis inferred.
+
+     The loader refuses graded inputs, receptor/slow copies and tau_s_inh on axon edges. If it does, narrow `axon_inputs` and record why.
+  3. The switch turns on every row, DLMn included. TM and TP alone need a per-class way to leave a class out; check `_two_compartments`.
+  4. Gate: add `--set`, `--post core` and a spike-zone readout (`net.c2["v"]`) to `s4b_unitary_psp.py`, on backhouse.
+  5. Arms × 15/25/40: a copy of `~/fly-m10f/runs/s14/arms/run.sh` → `runs/s15/arms/`, rule 16. Score (`s14_score.py`, ARMS), view, commit.
+  - My prediction: q ≈ 0.9 and little change at scale 1. If so, the useful follow-up is anchoring the shared scale at the soma (a new pre-registration).
 - The S4b recruitment order is still unspent.
 
 **Session 13 (14 Oct 02:21; kept for reference).** Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
@@ -300,7 +311,7 @@ Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03
 
 ## fly2: N30 option B, the MN5 skeletons put class MN on the follow boundary (UNDECIDED, F-GJ-7); the doublet is the synaptic tail; no fix from measurement exists yet, so the MN5 recording decides (21 Oct 00:30)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief (N30 option B, then the doublet's mechanism, then the MN5 recording onto Ben's list). Every switch below is neutral by default and **none is adopted**.
+**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15). fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief (N30 option B, then the doublet's mechanism, then the MN5 recording onto Ben's list). Every switch below is neutral by default and **none is adopted**.
 - **Merging:** `main` (26f6976, fly's s14 25 mV results) was merged into worktree-fly2 at 8d722b6. DECISIONS conflicted only because both sides appended; both kept. **`main` can fast-forward to worktree-fly2.** The guard refuses commands aimed at the main checkout, so someone there runs the merge.
 - **N30 option B done: class MN q and ρ from EM geometry (F-GJ-7).** Pre-registered DECISIONS 21 Oct 00:07; results 00:18; literature 00:25.
   - **Method.** `scripts/connectome/mn_axon_geometry.py` (male-cns v1.0 healed skeletons and PSI synapses, saved under `data/derived/mn_axon_geometry_skel/`; `--offline` reruns from them).

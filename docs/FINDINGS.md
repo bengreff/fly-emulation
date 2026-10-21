@@ -1592,3 +1592,18 @@ Insect leg MNs and interneurons are unipolar. Their premotor synapses sit on neu
 - ideally, the soma-to-neurite attenuation (dual-site recording or calcium/voltage imaging of the neurite).
 
 The somatic PSP bounds the point model. With the attenuation, it fixes the two-compartment coupling.
+
+### F-S15-1: fly2's option-B geometry rule doesn't define a spike-zone compartment for cells whose inputs cover the arbor (T1 leg MNs, oscillator core), so the s15 two-compartment arms don't run at option-B values (s15, 21 Oct 01:25; pre-registered DECISIONS 21 Oct 01:16 and 01:22; nothing adopted, no row written)
+- **Method:** `scripts/connectome/premotor_mn_geometry.py` runs fly2's `mn_axon_geometry.reduce()` unchanged on 94 T1 leg MNs (tibia and coxa/trochanter types) and the 12 T1 core cells. The contacts are every postsynaptic site. Skeletons and synapses are from male-cns v1.0 and are kept as raw data.
+- **Rule failures:** no qualifying branch point for 27/94 leg MNs and 4/12 core cells at FRAC 0.05 (similar at 0.01 and 0.20). The input site nearest the soma is close to the soma.
+- **Where values come out**, they describe a twig, not the input arbor:
+
+  | class | cells derived | q mean (q10-q90) | input sites distal to the base, median |
+  |---|---|---|---|
+  | leg_MN | 67 | 0.085 (0.002-0.18) | 2.1% |
+  | core_premotor | 8 | 0.0024 | 0.1% |
+
+  ρ at the stated Rin is reported, not used: leg_MN 1.30, core 3.10.
+- **Reading:** the rule is built for one compact input zone on the axon (PSI → MN5). With distributed inputs it has no well-defined answer, so the class "can't be derived" (pre-registered stop).
+- **Rin:** for leg MNs it is measured, 150/300/700 MΩ fast/intermediate/slow (Azevedo 2020 Fig. 3E). The same paper reports the soma as electrically isolated from the spike zone (soma current injection fails to fire fast and intermediate MNs; qualitative, measured). No adult VNC interneuron Rin was found.
+- **Next:** s15b (pre-registered 01:25), a soma–arbor split along the primary neurite.
