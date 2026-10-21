@@ -46,3 +46,16 @@ Measurements that would pin a model value we can't pin from the literature or th
 **What it replaces.** The leg-MN spike-zone site and length are guessed (two candidates). A measured site in one tibia flexor is consistent with some fly, which meets the per-value bar.
 
 **Sources.** DECISIONS 21 Oct 02:10 and 02:17; F-S15-3; `docs/research/s15c_cable_params.md`.
+
+## 3. The octopamine effect on adult VNC premotor neurons and leg MNs (rest, Rin, f-I)
+
+**Why now.** The s16 state arm (DECISIONS 21 Oct 02:28) depolarises VNC premotor classes to stand in for the aroused, octopamine-high walking state. Its direction comes from the stick insect and the locust, and its size is guessed. No adult Drosophila VNC recording with octopamine was found. The one direct MN measurement, larval RP2, is a null (Schützler et al. 2019).
+
+| Protocol | Fills (slot) | Read-out |
+|---|---|---|
+| Whole-cell recording of a front-leg tibia flexor MN (Azevedo 2020 preparation) before and after bath octopamine (1-10 µM), or Tdc2>CsChrimson activation | `class:MN_leg\|tonic_drive` and threshold under the state; leg-MN Rin and f-I change | Δrest, ΔRin, Δrheobase and the f-I slope. A null confirms the larval result in the adult. |
+| The same in a premotor interneuron with a sparse line (e.g. a 19A, 16B or 17A type) | `class:vnc_local_<hl>\|tonic_drive` under the state | The same read-outs. They set the size of the s16 depolarisation, now guessed at +2-4 mV. |
+
+**What it replaces.** The state's magnitude is guessed for every class, and its direction is inferred from other species. One recording per class would make it measured for some fly.
+
+**Sources.** `docs/research/s16_octopamine_excitability.{csv,md}`; DECISIONS 21 Oct 02:28.
