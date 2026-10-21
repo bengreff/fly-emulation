@@ -12,7 +12,9 @@
   - E2 → I1 gives 0.75-1.07 mV per spike against the 7 mV gap.
 - **Consequence:** gate 3 and the `lif.Network` hybrid were not built. Shape (s15/s15b/s15c) and uniform strength (s14, S4b) are both ruled out as the single cause. Outputs: `runs/s15/morph/gate2.json` and `gate2.edges.csv.gz` (gitignored).
 
-**s16 PRE-REGISTERED, not run: the octopamine-high state arm (DECISIONS 21 Oct 02:28; commit 9795f5e). This is the next job.**
+**s16 RUNNING on backhouse since 02:37 (tmux `s16oa`, `~/fly-m10f/runs/s16/oa/run.sh`; done-file `ALL.done`). Table, bound check and operational form committed d750671 (DECISIONS 21 Oct 02:35); all three OA arms pass the bound (min gap 3.0 mV; OA4M leaves the 60 tonic tibia flexors suprathreshold, as at baseline). Mac keep-alive: the `ssh backhouse ... sleep infinity` started 02:36:58 (the one from 01:29:56 is not this session's). When ALL.done exists: copy back, `s14_score.py runs/s16/oa --arms M0,OA2,OA4,OA4M`, view, F-S16-1.**
+
+**s16 pre-registration: the octopamine-high state arm (DECISIONS 21 Oct 02:28; commit 9795f5e).**
 - **Literature** (`docs/research/s16_octopamine_excitability.{csv,md}`, Sonnet, 26 rows):
   - No measured OA magnitude for adult VNC MNs or premotor cells.
   - The larval RP2 MN shows no OA effect (Schützler 2019, full text).
