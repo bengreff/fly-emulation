@@ -3187,3 +3187,9 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - Both predictions were right, so the falsifier did not fire.
 - **Decision:** level 2 stays neutral and is not adopted. It is kept as the completeness member of the T1 fill, with the partner identity labelled guessed.
 - The S2 and step R checks are now spent twice on T1 fills. A future VNC candidate needs a fresh check.
+
+### fly2 T4/T5 seed 1 and seed 2 results (20 Oct, 23:23; F-VISION-15)
+- **Seed 1 (00:41 arm):** medulla set FAIL, 1 of 8. T4a only formally passes (DSI +0.04, peak 0.51 against 0.48 mV); every other subtype sits under the 0.5 mV floor or at DSI 0. Photoreceptor set FAIL, 0 of 8.
+- **Seed 2 (01:05/01:07 arm, recovered earlier):** FAIL, 0 of 8.
+- **Predictions:** the FAIL predictions were right on both seeds, and seed 2 landed within ±2 of seed 1 (0 vs 1). Seed 1's "|DSI| above 0.02" held only at the maximum (0.04); 6 of 8 subtypes are at ≤ 0.01. The falsifier (8 of 8) did not fire.
+- **Decision:** the pair-strength and CT1-compartment switches stay neutral; nothing is adopted. The flyapp T4/T5 test is now spent at seeds 0, 1 and 2, so the next candidate needs seed 3 or a new test. The Behnia 2014 check is still sealed.

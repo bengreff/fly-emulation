@@ -1421,3 +1421,31 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - Viewed `docs/media/s20_fly2_t1add_rasters_40mv.png` (level 1 vs 2): the same synchronous tonic pulse train (MN 5.38 vs 5.34 Hz), and the T1L core cycles the same.
 - **H2, step R, 8 arms: NO REACH, 0 of 8**, as predicted (`runs/s20/t1add/reach`). The tibia MN rates equal level 1 in every arm, including the T1 (lf) arms. Viewed `docs/media/s20_fly2_t1add_reach.png`.
 - **Reading:** completeness only, as Ben expected. Level 2 is the most the cross-connectome rule allows without inventing type pairs. It moves T1 by about 0.01 and changes neither motor check. With F-XCONN-2 and F-XCONN-3, the T1 reconstruction deficit is ruled out as the cause of the missing VNC rhythm and reach at every size we can repair. The switch stays neutral as a labelled inferred member of fly_brain.zip.
+
+### F-VISION-15: flyvis pair strengths do not make T4/T5 direction selective. Seed 1 (CT1 a point cell) gives 1 of 8 in the medulla set and seed 2 (CT1 per-column compartments) 0 of 8. Every T4/T5 response sits at the 0.5 mV floor with |DSI| ≤ 0.04 (fly2, s14/s20, 20 Oct 23:23; diagnostic, nothing adopted)
+- **Arms** (pre-registered DECISIONS 14 Oct 00:41 and 01:05/01:07, before any run):
+  - Setup common to both: m9c + the 7 v0r switches + `optic_lobe_flyvis=1` + `optic_lobe_flyvis_pair_strength=1` (F-VISION-13), with `candidates_s13_v0r.csv`. Tool: flyapp `t4t5_ds.py`.
+  - Seed 1: both stimulus sets, CT1 a point cell. Seed 2: medulla set only, plus `cell_type:CT1|compartments_by_column=1` (F-VISION-14).
+  - Different seeds, so the two are two draws, not a paired test of CT1.
+- **Provenance of seed 1:**
+  - The 16 Oct backhouse reboot truncated six protocols (control, med-off ±x ±y, med-on+x). They were re-recorded on 20 Oct, 22:44-23:21, about 1,090 s each, from the same snapshot (`~/fly2`, COMMIT 9423fd6, the commit carrying the 00:41 entry; no file changed after 14 Oct 00:41).
+  - The decompressed static arrays of the 20 Oct and 14 Oct recordings are identical (md5 f00d685a…), and the tool reports every protocol paired with the control (identical before the first bar).
+  - The 11 protocols recorded on 14 Oct were reused.
+- **Seed 1, medulla set: FAIL, 1 of 8.**
+  - T4a counts as "selective as in flies" only formally: DSI +0.04, Holm p 0.021. Its peaks are 0.51 mV in the fly's preferred direction (−x) and 0.48 mV against.
+  - T4b and T4c are not selective (DSI 0.00). T4d and all four T5s are "no response": peaks 0.24-0.43 mV, under the tool's 0.5 mV floor, with |DSI| ≤ 0.03.
+  - The ON input pathway responds (Mi1 0.80, Tm3 1.05, Mi4 2.48, C3 2.63 mV; Mi9 −1.96), and so does the OFF one (Tm1 2.18, Tm2 2.04 mV). T4 still sums them to 0.50 mV and T5 to 0.37 mV, the same in every direction.
+  - **Photoreceptor set: FAIL, 0 of 8.** Peaks are 0.05-0.27 mV. L1-L5 carry 0.07-0.55 mV, the lamina gap of F-VISION-8/9/12.
+- **Seed 2** (recovered 20 Oct, F-VISION-14 arm; HANDOFF): FAIL, 0 of 8. T4 peaks are 0.38-0.51 mV, T5 0.18-0.40, |DSI| ≤ 0.08.
+- **Predictions:**
+  - Seed 1 FAIL with some but fewer than 8 selective: met (1).
+  - Seed 1 "|DSI| above F-VISION-12's ≤ 0.02": met only at the extremes. The largest is 0.04, but 6 of 8 subtypes are at ≤ 0.01, so DSI stays at the F-VISION-12 level.
+  - Seed 1 photoreceptor set FAIL: met.
+  - Seed 2 FAIL within ±2 of seed 1: met (0 vs 1).
+  - The falsifier (8 of 8) did not fire on either seed.
+- **Reading:**
+  - With flyvis's task-trained type-pair strengths, our medulla carries direction-blind signals into T4/T5. Those signals are small (≤ 0.5 mV against the ON and OFF inputs' 1-2.6 mV). Adding CT1 column compartments doesn't change that.
+  - In flyvis the same strengths give median DSI 0.40, so they are not enough on their own. What still differs is listed in the 00:41 reasons: conductance synapses with tonic release (shunting), and spatial offsets from the connectome rather than a hex lattice.
+  - Next blanks, none tuned: the T4/T5 dendritic input (they are point cells here, while T4's direction selectivity in the fly relies on where on the dendrite its inputs sit, the N30 question in the optic lobe), and the per-type rest and release levels at the T4/T5 input synapses.
+  - The pair-strength arm stays neutral and is not continued as is. The sealed Behnia 2014 temporal check is still unspent.
+- **Figures** (viewed): `docs/media/s14_fly2_t4t5_v0rfvp_s1.png` (seed 1, both sets) and `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png` (seed 2). Data: `runs/s14/fly2/t4t5/v0rfvp_s1/ds.json`, `v0rfvpct1_s2/ds.json`.
