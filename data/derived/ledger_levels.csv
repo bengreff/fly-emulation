@@ -1,7 +1,8 @@
 grain_group,level,slots
 body part,absent,243
 body part,derived,1384
-body part,guessed,18623
+body part,guessed,18628
+body part,measured (unused),2
 body part,mixed,3315
 body part,prior,18
 body part,rule,24
