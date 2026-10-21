@@ -43,13 +43,23 @@ def test_protocol_is_complete(name):
                                                               "central_ms_median", "control_fraction")}
     if r["kind"] == "leg_oscillation":
         names |= {f"{leg}.{f}" for leg in r["legs"] for f in ("f_hz", "band_share", "amp_mm")}
+        if "step_band_hz" in r:
+            names |= {f"{leg}.step_band_share" for leg in r["legs"]} | {"thorax_forward_mm"}
+    if r["kind"] == "posture" and "stand_window_ms" in r:
+        names |= {"head_above_collapse_mm_median", "head_above_collapse_mm_min", "nonfoot_floor_frac",
+                  "legs_on_floor_median"}
+        j0, j1 = score._window({"window_ms": r["stand_window_ms"]}, r["sample_every_steps"] * proto["settings"]["timestep_ms"])
+        assert 0 <= j0 < j1 <= proto["duration_ms"] / proto["settings"]["timestep_ms"] / r["sample_every_steps"]
     if r["kind"] in ("leg_oscillation", "posture"):
         n = proto["duration_ms"] / proto["settings"]["timestep_ms"] / r["sample_every_steps"]
         i0, i1 = score._window(r, r["sample_every_steps"] * proto["settings"]["timestep_ms"])
         assert 0 <= i0 < i1 <= n - (r["kind"] == "leg_oscillation"), "window outside the run's samples"
     for c in proto["pass"]:
         for q in (c["quantity"] if isinstance(c["quantity"], list) else [c["quantity"]]):
-            assert q in names, q
+            if c["op"] == "count_where":
+                assert c["where"] and all(f"{q}.{w['field']}" in names for w in c["where"]), q
+            else:
+                assert q in names, q
 
 
 def test_schedule_poisson_and_train():
@@ -78,6 +88,25 @@ def test_judge():
     assert not score.judge([{"quantity": "y.m", "op": "in", "value": [0, 1]}], q)[0]["ok"]
     with pytest.raises(flyzip.Refused):
         score.judge([{"quantity": "missing", "op": ">", "value": 0}], q)
+    legs = {"lf.f_hz": 10.0, "lf.s": 0.6, "lm.f_hz": 10.0, "lm.s": 0.4, "lh.f_hz": 3.0, "lh.s": 0.9}
+    where = [{"field": "f_hz", "op": "in", "value": [7.0, 15.0]}, {"field": "s", "op": ">=", "value": 0.5}]
+    (c,) = score.judge([{"quantity": ["lf", "lm", "lh"], "op": "count_where", "where": where, "value": 1}], legs)
+    assert c["ok"] and c["observed"] == 1 and c["counted"] == ["lf"]
+    assert not score.judge([{"quantity": ["lf", "lm", "lh"], "op": "count_where", "where": where, "value": 2}],
+                           legs)[0]["ok"]
+    with pytest.raises(flyzip.Refused):
+        score.judge([{"quantity": ["rf"], "op": "count_where", "where": where, "value": 1}], legs)
+
+
+def test_posture_stand_window():
+    r = {"window_ms": [0.0, 4.0], "stand_window_ms": [2.0, 4.0], "collapsed_head_mm": 0.4}
+    P = [np.array([0.0, 0.0, 1.0])] * 4
+    Z = [0.4, 0.4, 0.55, 0.65]
+    C = [(["c_thorax"], 2), (["c_thorax"], 2), ([], 6), (["lf_tibia"], 5)]
+    q = score._posture(r, P, Z, C, 1.0)
+    assert q["nonfoot_floor_frac"] == 0.5 and q["nonfoot_floor_bodies"] == {"lf_tibia": 1}
+    assert abs(q["head_above_collapse_mm_median"] - 0.2) < 1e-12 and abs(q["head_above_collapse_mm_min"] - 0.15) < 1e-12
+    assert q["legs_on_floor_median"] == 5.5
 
 
 def test_world_files_are_json():

@@ -14,7 +14,9 @@ Harnesses:
   flyemu.run and scripts/probes/command_walk.py.
 Stimulus events: "poisson_kick" (each listed cell gets an independent Poisson train of kicks while on) and
 "kick" (a fixed train of kicks). Readouts: "mean_rate_hz", "gf_latency" (network harnesses), "leg_oscillation"
-(command_walk.py's per-leg stepping summary) and "posture" (thorax height and drift) (closed_loop).
+(command_walk.py's per-leg stepping summary) and "posture" (thorax and head height, drift, floor contacts)
+(closed_loop). A closed-loop run is refused unless only the network's motor spikes move the body (no servo,
+mocap, tether, wingbeat generator or stimulated motor neuron; _connectome_driven).
 
 Writes score_manifest.json (per seed: spike count and hash over every neuron, readout; the aggregate readout,
 each pass condition and the verdict) and registry_reads.csv. A protocol whose bar is not written yet has no pass
@@ -107,6 +109,7 @@ class Schedule:
                 self.trains.append((idx, float(mv), {s0 + i * per for i in range(ev["count"])}))
             else:
                 raise flyzip.Refused(f"stimulus event kind {ev['kind']!r} is not built")
+        self.cells = np.flatnonzero(seen)
 
     def kick(self, s: int, rng):
         """The (indices, mV) kick of step s, or None. One uniform per Poisson cell per step while it is on."""
@@ -159,19 +162,78 @@ def _build_organism(s: dict, seed: int, world):
     return org
 
 
+def _connectome_driven(org, conn, stim_cells) -> dict:
+    """Refuse a closed-loop run in which anything but the network's motor spikes could move the body (bar of
+    21 Oct, DECISIONS 02:33: no controller, CPG stub or kinematic replay may be active). Checked: every MuJoCo
+    actuator is a plain force or adhesion actuator (no position or velocity servo, i.e. no bias term); no mocap
+    body; no active weld or connect constraint (a tether); no wingbeat generator (flight:wings 0); no stimulated
+    cell is a motor neuron. By construction of this module's loop, motor_step gets the spikes and no external
+    torque, and nothing writes qpos or ctrl. Returns what was checked, for the manifest."""
+    import mujoco
+    import numpy as np
+    m, d = org.body.sim.mj_model, org.body.sim.mj_data
+    servo = [m.actuator(i).name for i in range(m.nu) if m.actuator_biastype[i] != mujoco.mjtBias.mjBIAS_NONE]
+    tether = [i for i in range(m.neq) if d.eq_active[i]
+              and m.eq_type[i] in (mujoco.mjtEq.mjEQ_WELD, mujoco.mjtEq.mjEQ_CONNECT)]
+    sc = conn.neurons.superclass.fillna("").to_numpy()[stim_cells]
+    stim_motor = sorted({str(conn.neurons.type.iat[i]) for i, s in zip(stim_cells, sc) if "motor" in s})
+    got = {"actuators": int(m.nu), "servo_actuators": servo, "mocap_bodies": int(m.nmocap),
+           "equality_active": int(np.sum(d.eq_active[:m.neq])) if m.neq else 0, "tether_constraints": tether,
+           "wingbeat_generator": org.flight is not None, "stimulated_motor_types": stim_motor,
+           "motor_step_extra_torque": False}
+    bad = {k: v for k, v in got.items() if k not in ("actuators", "equality_active") and v}
+    if bad:
+        raise flyzip.Refused(f"closed loop is not driven by the connectome alone: {bad}")
+    return got
+
+
 class _Body:
     """Body samples taken after the motor step every `every` steps, as scripts/probes/command_walk.py takes
-    them: the thorax position and each tarsal tip's fore-aft position in the thorax frame (mm)."""
+    them: the thorax position and each tarsal tip's fore-aft position in the thorax frame (mm); the thorax
+    heading (its x axis in the world, horizontal); the head body's height; and the floor contacts: which bodies
+    the floor pushes on (normal force > 0, as bypass_s1_actuation.py's floor_forces counts a touch). Feet are the
+    tarsal segments; a head, thorax, abdomen, wing, coxa, femur or tibia on the floor is a non-foot touch.
+    Reading contacts and forces does not change the simulation."""
 
     def __init__(self, org, legs: list[str], every: int):
         import mujoco
+        import numpy as np
         m = org.body.sim.mj_model
         pre = org.body.fly.name + "/"
-        self.d, self.every, self.X, self.P = org.body.sim.mj_data, every, [], []
+        self.m, self.d, self.every = m, org.body.sim.mj_data, every
+        self.X, self.P, self.H, self.Z, self.C = [], [], [], [], []
         self.tips = [mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, pre + f"{leg}_tarsus5") for leg in legs]
         self.th = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, pre + "c_thorax")
-        if min(self.tips + [self.th]) < 0:
-            raise flyzip.Refused("the body has no c_thorax or <leg>_tarsus5 body")
+        self.hd = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, pre + "c_head")
+        if min(self.tips + [self.th, self.hd]) < 0:
+            raise flyzip.Refused("the body has no c_thorax, c_head or <leg>_tarsus5 body")
+        names = [(m.body(i).name or "").split("/")[-1] for i in range(m.nbody)]
+        self.names = names
+        self.foot = np.array(["tarsus" in n for n in names])
+        self.leg_of = {i: n[:2] for i, n in enumerate(names) if self.foot[i]}
+        d = self.d
+        if (d.xpos[self.hd] - d.xpos[self.th]) @ d.xmat[self.th].reshape(3, 3)[:, 0] <= 0:
+            raise flyzip.Refused("the head is not ahead of the thorax along the thorax x axis")
+        self._f6 = np.zeros(6)
+
+    def _contacts(self) -> tuple[list[str], int]:
+        import mujoco
+        m, d = self.m, self.d
+        other, legs = set(), set()
+        for i in range(d.ncon):
+            c = d.contact[i]
+            b1, b2 = m.geom_bodyid[c.geom1], m.geom_bodyid[c.geom2]
+            if (b1 != 0) == (b2 != 0):
+                continue
+            b = b2 if b1 == 0 else b1
+            mujoco.mj_contactForce(m, d, i, self._f6)
+            if self._f6[0] <= 0:
+                continue
+            if self.foot[b]:
+                legs.add(self.leg_of[b])
+            else:
+                other.add(self.names[b])
+        return sorted(other), len(legs)
 
     def sample(self, step: int) -> None:
         if step % self.every == 0:
@@ -179,6 +241,9 @@ class _Body:
             R = d.xmat[self.th].reshape(3, 3)
             self.X.append(((d.xpos[self.tips] - d.xpos[self.th]) @ R)[:, 0])
             self.P.append(d.xpos[self.th].copy())
+            self.H.append(R[:2, 0].copy())
+            self.Z.append(float(d.xpos[self.hd, 2]))
+            self.C.append(self._contacts())
 
 
 # --- readouts -------------------------------------------------------------------------------------------
@@ -242,15 +307,18 @@ def _window(r: dict, sample_ms: float) -> tuple[int, int]:
     return i0, i1
 
 
-def _leg_oscillation(r: dict, X: list, P: list, hz, stim, mn, sample_ms: float) -> dict:
+def _leg_oscillation(r: dict, X: list, P: list, H: list, hz, stim, mn, sample_ms: float) -> dict:
     """scripts/probes/command_walk.py's leg summary over the window: per leg, the dominant fore-aft frequency of
     the tarsal tip inside the band, the band's share of the tip's power and its peak-to-peak amplitude (2 SD);
-    the thorax displacement; the mean rate of the leg motor neurons and of the stimulated cells."""
+    the thorax displacement; the mean rate of the leg motor neurons and of the stimulated cells. With
+    "step_band_hz", also each tip's power share inside that band, and the thorax displacement along its own
+    heading at the window's start (thorax_forward_mm, > 0 is forward)."""
     import numpy as np
     i0, i1 = _window(r, sample_ms)
     Xw = np.array(X)[i0:i1]
     lo, hi = r["band_hz"]
     out = {}
+    s_lo, s_hi = r.get("step_band_hz", (lo, hi))
     for i, leg in enumerate(r["legs"]):
         x = Xw[:, i] - Xw[:, i].mean()
         f = np.fft.rfftfreq(len(x), sample_ms / 1000.0)
@@ -259,36 +327,71 @@ def _leg_oscillation(r: dict, X: list, P: list, hz, stim, mn, sample_ms: float) 
         k = np.argmax(pw * band)
         out[f"{leg}.f_hz"] = float(f[k])
         out[f"{leg}.band_share"] = float(pw[band].sum() / pw[1:].sum())
+        if "step_band_hz" in r:
+            out[f"{leg}.step_band_share"] = float(pw[(f >= s_lo) & (f <= s_hi)].sum() / pw[1:].sum())
         out[f"{leg}.amp_mm"] = float(x.std() * 2)
     out["thorax_dx_mm"] = float(P[i1][0] - P[i0][0])
     out["thorax_dy_mm"] = float(P[i1][1] - P[i0][1])
+    if H:
+        h = H[i0] / np.hypot(*H[i0])
+        out["thorax_forward_mm"] = float((P[i1][:2] - P[i0][:2]) @ h)
     out["leg_mn_hz"] = float(hz[mn].mean())
     out["stim_rate_hz"] = float(hz[stim].mean()) if len(stim) else None
     return out
 
 
-def _posture(r: dict, P: list, sample_ms: float) -> dict:
+def _posture(r: dict, P: list, Z: list, C: list, sample_ms: float) -> dict:
     """The thorax body's world-frame height (mm) over the window: median, minimum and last sample; and its
-    horizontal drift from the window's first to last sample."""
+    horizontal drift from the window's first to last sample. With "stand_window_ms", over that window: the head
+    body's height above the motor-silenced collapse ("collapsed_head_mm", the zero of Wang 2025's head heights),
+    median and minimum; the share of samples with any non-foot body on the floor and those bodies (samples
+    touched); the median number of legs with a tarsal segment on the floor."""
     import numpy as np
     i0, i1 = _window(r, sample_ms)
     Pw = np.array(P)[i0:i1]
-    return {"thorax_z_mm_median": float(np.median(Pw[:, 2])), "thorax_z_mm_min": float(Pw[:, 2].min()),
-            "thorax_z_mm_last": float(Pw[-1, 2]), "thorax_drift_mm": float(np.hypot(*(Pw[-1, :2] - Pw[0, :2])))}
+    out = {"thorax_z_mm_median": float(np.median(Pw[:, 2])), "thorax_z_mm_min": float(Pw[:, 2].min()),
+           "thorax_z_mm_last": float(Pw[-1, 2]), "thorax_drift_mm": float(np.hypot(*(Pw[-1, :2] - Pw[0, :2])))}
+    if "stand_window_ms" in r:
+        j0, j1 = _window({"window_ms": r["stand_window_ms"]}, sample_ms)
+        if not 0 <= j0 < j1 <= len(Z):
+            raise flyzip.Refused(f"stand_window_ms {r['stand_window_ms']} is outside the run")
+        head = np.array(Z[j0:j1]) - r["collapsed_head_mm"]
+        other = [c[0] for c in C[j0:j1]]
+        bodies: dict[str, int] = {}
+        for o in other:
+            for b in o:
+                bodies[b] = bodies.get(b, 0) + 1
+        out.update({"head_above_collapse_mm_median": float(np.median(head)),
+                    "head_above_collapse_mm_min": float(head.min()),
+                    "nonfoot_floor_frac": float(np.mean([bool(o) for o in other])),
+                    "nonfoot_floor_bodies": dict(sorted(bodies.items(), key=lambda kv: -kv[1])),
+                    "legs_on_floor_median": float(np.median([c[1] for c in C[j0:j1]]))})
+    return out
 
 
 def judge(conds: list[dict], q: dict) -> list[dict]:
     out = []
     for c in conds:
         names = c["quantity"] if isinstance(c["quantity"], list) else [c["quantity"]]
-        for n in names:
+        v, op = c["value"], c["op"]
+        for n in names if op != "count_where" else []:
             if n not in q:
                 raise flyzip.Refused(f"pass condition names {n!r}, which the readout does not produce")
-        vals = [q[n] for n in names]
-        v, op = c["value"], c["op"]
+        vals = [q[n] for n in names] if op != "count_where" else []
         if op == "present_all_in":
             got = [x for x in vals if x is not None]
             ok = bool(got) and all(v[0] <= x <= v[1] for x in got)
+        elif op == "count_where":
+            # quantity: prefixes (legs); each prefix counts if every "where" test on <prefix>.<field> holds
+            hits = []
+            for p in names:
+                tests = [judge([{"quantity": f"{p}.{w['field']}", "op": w["op"], "value": w["value"]}], q)[0]
+                         for w in c["where"]]
+                if all(t["ok"] for t in tests):
+                    hits.append(p)
+            ok = len(hits) >= v
+            out.append({**c, "observed": len(hits), "counted": hits, "ok": bool(ok)})
+            continue
         else:
             x = vals[0]
             ok = x is not None and {">": lambda: x > v, ">=": lambda: x >= v, "<": lambda: x < v,
@@ -337,6 +440,7 @@ def inside(a) -> int:
             net = network(seed)
         types = conn.neurons.type.fillna("").to_numpy()
         sched = Schedule(stim, types, dt, n_steps, kick_mv)
+        drive = _connectome_driven(org, conn, sched.cells) if loop else None
         rng = np.random.default_rng(seed + proto["stimulus_rng_offset"])
         counts = np.zeros(conn.n, np.int32)
         st, ix = [], []
@@ -361,6 +465,7 @@ def inside(a) -> int:
             row["final_qpos_sha256"] = flyzip.sha256_bytes(np.ascontiguousarray(dd.qpos, dtype=np.float64).tobytes())
             row["nan_state"] = bool(not np.isfinite(dd.qpos).all() or not np.isfinite(net.v).all())
             row["mujoco_warnings"] = int(sum(w.number for w in dd.warning))
+            row["drive_check"] = drive
             sample_ms = r["sample_every_steps"] * dt
         if r["kind"] == "leg_oscillation":
             a0, a1 = r["window_ms"]
@@ -368,9 +473,9 @@ def inside(a) -> int:
             w = (t >= a0) & (t < a1)
             hz = np.bincount(idx[w], minlength=conn.n) / ((a1 - a0) / 1000.0)
             mn = np.flatnonzero(conn.neurons.superclass.fillna("").eq(r["mn_superclass"]).to_numpy())
-            row.update(_leg_oscillation(r, bs.X, bs.P, hz, select(r["stim_types"], types), mn, sample_ms))
+            row.update(_leg_oscillation(r, bs.X, bs.P, bs.H, hz, select(r["stim_types"], types), mn, sample_ms))
         elif r["kind"] == "posture":
-            row.update(_posture(r, bs.P, sample_ms))
+            row.update(_posture(r, bs.P, bs.Z, bs.C, sample_ms))
         elif r["kind"] == "mean_rate_hz":
             read = select(r["types"], types)
             read, dropped = _status_excluded(root, conn, read, r.get("exclude_status_containing", []))
@@ -410,7 +515,7 @@ def inside(a) -> int:
         if len(trials) != 1:
             raise flyzip.Refused(f"{r['kind']} reads one seed")
         agg = {k: v for k, v in trials[0].items()
-               if k not in ("seed", "spikes", "spikes_sha256", "final_qpos_sha256", "wall_s")}
+               if k not in ("seed", "spikes", "spikes_sha256", "final_qpos_sha256", "wall_s", "drive_check")}
     conds = judge(proto["pass"], agg)
     if not conds and not proto.get("bar_todo"):
         raise flyzip.Refused(f"protocol {proto['name']} has no pass conditions and no bar_todo")

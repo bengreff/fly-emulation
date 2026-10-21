@@ -2,19 +2,60 @@
  "schema": 1,
  "name": "stands_flat_floor",
  "item": "stands",
- "what": "the whole fly in closed loop on the flat floor with no stimulus for 1 s; readout the thorax height and drift. The model lies down today (F-STAND-3 to 6), so this records where it ends up",
- "harness": {"kind": "closed_loop", "build": "closed_loop",
-             "note": "flyemu.organism.Organism with the body stepped and every sense reaching the brain, the loop of flyemu.run (observe, sense, network step, motor step); seeded default_rng(seed); noise per profile"},
- "settings": {"profile": "m10f0", "min_synapses": 5, "timestep_ms": 0.1, "policy": "minimal", "arena": "flat_floor"},
- "seeds": [12],
+ "what": "the whole fly in closed loop on the flat floor with no stimulus for 1 s; it stands if over the last 500 ms only its feet (tarsal segments) touch the floor and its head is at least 0.1 mm above the motor-silenced collapse (Wang 2025's lowest standing height). The model lies down today (F-STAND-3 to 6)",
+ "harness": {
+  "kind": "closed_loop",
+  "build": "closed_loop",
+  "note": "flyemu.organism.Organism with the body stepped and every sense reaching the brain, the loop of flyemu.run (observe, sense, network step, motor step); seeded default_rng(seed); noise per profile"
+ },
+ "settings": {
+  "profile": "m10f0",
+  "min_synapses": 5,
+  "timestep_ms": 0.1,
+  "policy": "minimal",
+  "arena": "flat_floor"
+ },
+ "seeds": [
+  12
+ ],
  "stimulus_rng_offset": 0,
  "duration_ms": 1000.0,
  "stimulus": "none",
- "readout": {"kind": "posture", "sample_every_steps": 10, "window_ms": [0.0, 1000.0],
-             "note": "the c_thorax body's world-frame position (mm) sampled every 1 ms after the motor step: height median, minimum and last sample over the window, and the horizontal drift from first to last sample; also the run's NaN state and MuJoCo warning count"},
- "pass": [],
- "bar_todo": "no bar yet: standing needs one number written down first, the thorax height (or body-floor clearance) that counts as standing, from a measured standing posture. Wang 2025's standing head height was spent as a setting (register), so it can't be the test. Proposed to the Director 21 Oct, not adopted",
- "bar_source": "none yet (see bar_todo)",
+ "readout": {
+  "kind": "posture",
+  "sample_every_steps": 10,
+  "window_ms": [
+   0.0,
+   1000.0
+  ],
+  "note": "the c_thorax body's world-frame position (mm) sampled every 1 ms after the motor step: height median, minimum and last sample over window_ms, and the horizontal drift from first to last sample. Over stand_window_ms: the c_head body origin's height above collapsed_head_mm (median, minimum), the share of samples where the floor pushes (normal force > 0) on any body that is not a tarsal segment and which bodies, and the median number of legs with a tarsal segment on the floor. collapsed_head_mm: this body's head point after motor silencing (derived: S1 level 0, m10f0, adhesion 1, 3 s; runs/s13/bypass/s1/support/s1_m10f0_adh1.json heights_final_mm.head), the zero of Wang 2025's heights",
+  "stand_window_ms": [
+   500.0,
+   1000.0
+  ],
+  "collapsed_head_mm": 0.429
+ },
+ "pass": [
+  {
+   "quantity": "nonfoot_floor_frac",
+   "op": "<=",
+   "value": 0.0
+  },
+  {
+   "quantity": "head_above_collapse_mm_median",
+   "op": ">=",
+   "value": 0.1,
+   "units": "mm"
+  }
+ ],
+ "bar_source": "DECISIONS 21 Oct 02:33 (bars decided by the Director as Ben, 21 Oct; reversible): only the feet touch the floor over the last 500 ms, and the height inside the measured standing range (read at the head point Wang tracked)",
  "reference_script": "python -m flyemu.run --tree . (defaults: m10f0, seed 12, flat floor, no stimulus) --ms 1000: the F-ZIP-1 tree run, spikes_sha256 770807852827186b and final_qpos_sha256 3ec293bad4b3b7b7 (runs/s22/fly2_zip/run_tree)",
- "evidence_status": "engineering seed 12 (register: F-ZIP-1 identity seeds); nothing is scored while there is no bar"
+ "evidence_status": "engineering seed 12 (register: F-ZIP-1 identity seeds). Wang 2025's median head height was spent as an instrument setting in s13 (S1 fix 1, --head-mm, not the default); this bar defines standing and is not held-out evidence",
+ "reference": {
+  "head_above_collapse_mm": {
+   "lowest": 0.1,
+   "median": 0.5
+  },
+  "source": "Wang et al. 2025 eLife RP107390 (PMC12324252): a tracked head point of free-standing flies before motor silencing; Fig 5C 'the starting height varies from 0.4 mm to 0.1 mm in this fly'; Methods 'the median height of the fly was 0.5 mm' (measured). Zero = the collapsed position (inferred, DECISIONS 13 Oct 23:16). No population maximum is published, so there is no upper bound"
+ }
 }

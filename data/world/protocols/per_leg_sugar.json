@@ -1,0 +1,54 @@
+{
+ "schema": 1,
+ "name": "per_leg_sugar",
+ "item": "PER to leg sugar",
+ "what": "open-loop, brain only: tarsal sugar drive at 50 Hz, read out as the firing rate of the proboscis motor neuron MN9 (the neural proxy for proboscis extension; the body is not stepped)",
+ "harness": {
+  "kind": "network",
+  "build": "assay",
+  "note": "the brain as scripts/assay_pathways.py builds it: Registry(policy), profiles.apply, connectome.build, lif.default_params, electrical.build; a fresh lif.Network per trial seeded default_rng(seed). No body, no sensory model, no Q10 (25 degC); noise per profile"
+ },
+ "settings": {
+  "profile": "m10f0",
+  "min_synapses": 5,
+  "timestep_ms": 0.1,
+  "policy": "minimal"
+ },
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "stimulus_rng_offset": 10000,
+ "duration_ms": 1000.0,
+ "stimulus": "leg_sugar_50hz",
+ "readout": {
+  "kind": "mean_rate_hz",
+  "types": [
+   "MN9"
+  ],
+  "exclude_status_containing": [
+   "Hard to trace",
+   "Partially"
+  ],
+  "note": "rate over the whole trial, averaged over the readout cells, then over trials. MN9 cells whose male_cns_extra statusLabel says they are incompletely traced are dropped (F-DATA-3: MN9_R has 633 inputs vs MN9_L's 6,358), which leaves MN9_L"
+ },
+ "pass": [
+  {
+   "quantity": "rate_hz_mean",
+   "op": ">",
+   "value": 5.0,
+   "units": "Hz"
+  }
+ ],
+ "bar_source": "DECISIONS 21 Oct 02:33 (bars decided by the Director as Ben, 21 Oct; reversible): 'opens' is MN9_L above 5 Hz (mean of seeds 0-9) at 50 Hz leg sugar drive, the labellar bar. The rest of the four-part check of DECISIONS 6 Oct 00:41 (3 Hz silent, leg bitter silent, labellar bitter still suppresses) is not part of this item. A protocol bar for a qualitative behaviour (tarsal sugar evokes PER; Dethier 1976), not a measured MN9 rate",
+ "reference_script": "scripts/assay_pathways.py --assay legsugar_mn9 --rates 50 --shuffles 0 --trials 10 --profile m10f0 (trials.csv readout_hz per trial)",
+ "evidence_status": "spent: leg sugar at 50 Hz was the target of the s12 margin diagnostics (DECISIONS 6 Oct 00:41, F-TASTE-LEG-1, F-STAB-6), so this is a regression check, not held-out evidence"
+}
