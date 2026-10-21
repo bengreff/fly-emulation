@@ -150,3 +150,87 @@ class CableSet:
         v = lu.solve(b)
         out[:] = v[nodes] * 1e3                               # mV / pA = GOhm -> MOhm
         return out
+
+
+def _kids(cell: Cell) -> list[list[int]]:
+    kids = [[] for _ in range(cell.n)]
+    for v in np.flatnonzero(cell.par >= 0):
+        kids[cell.par[v]].append(int(v))
+    return kids
+
+
+def _cable(cell: Cell) -> np.ndarray:
+    """Cable length (um) in each node's subtree, its own edge included."""
+    has = cell.par >= 0
+    c = np.where(has, np.linalg.norm(cell.xyz - cell.xyz[np.maximum(cell.par, 0)], axis=1), 0.0)
+    for v in cell.order[::-1]:
+        if cell.par[v] >= 0:
+            c[cell.par[v]] += c[v]
+    return c
+
+
+def _walk(cell: Cell, start: int, nxt, length_um: float, dist: np.ndarray) -> np.ndarray:
+    """Nodes from `start` following nxt(v) until length_um of path is covered (start included)."""
+    out, v = [start], start
+    while dist[v] - dist[start] < length_um:
+        w = nxt(v)
+        if w is None:
+            break
+        out.append(w)
+        v = w
+    return np.array(out, np.int64)
+
+
+def split_node(cell: Cell, frac: float = 0.05) -> int:
+    """s15b soma-arbor split (DECISIONS 21 Oct 01:25): along the primary neurite (at each node the child with the
+    most cable), the first non-root branch point whose off-path subtrees hold >= frac of the cell's cable."""
+    kids, cable, v = _kids(cell), _cable(cell), cell.root
+    while kids[v]:
+        main = max(kids[v], key=lambda k: cable[k])
+        if v != cell.root and sum(cable[k] for k in kids[v] if k != main) >= frac * cable[cell.root]:
+            return int(v)
+        v = main
+    raise ValueError(f"{cell.body_id}: no split at frac {frac}")
+
+
+def spike_zone(cell: Cell, syn_nodes: np.ndarray, kind: str, offset_um: float = 70.0,
+               length_um: float = 20.0) -> dict:
+    """s15c spike-zone segment (DECISIONS 21 Oct 01:38 and addendum). kind 'leg_MN': the motor axon is the
+    soma -> leaf path with the longest synapse-free terminal run; the arbor exit is the last node on it with an
+    input synapse on or distal to it; the segment is offset_um..offset_um + length_um distal to the exit, or the
+    last length_um before the leaf if the run is shorter than offset + length. kind 'core_premotor': the s15b split
+    node + length_um along the largest-cable child (offset_um unused). Returns nodes, mid (the threshold node),
+    exit, run_um, fallback."""
+    dist, kids = cell.path_dist(), _kids(cell)
+    if kind == "core_premotor":
+        cable = _cable(cell)
+        s = split_node(cell)
+        seg = _walk(cell, s, lambda v: max(kids[v], key=lambda k: cable[k]) if kids[v] else None, length_um, dist)
+        return dict(nodes=seg, mid=int(seg[len(seg) // 2]), exit=s, run_um=float("nan"), fallback=False)
+    has_syn = np.zeros(cell.n, bool)
+    has_syn[syn_nodes] = True
+    for v in cell.order[::-1]:                     # any input synapse on or distal to v
+        if cell.par[v] >= 0 and has_syn[v]:
+            has_syn[cell.par[v]] = True
+    leaves = np.array([v for v in range(cell.n) if not kids[v] and v != cell.root])
+    exits = np.empty(leaves.size, np.int64)
+    for k, lf in enumerate(leaves):
+        v = lf
+        while not has_syn[v] and cell.par[v] >= 0:
+            v = cell.par[v]
+        exits[k] = v
+    run = dist[leaves] - dist[exits]
+    k = int(np.argmax(run))
+    leaf, ex = int(leaves[k]), int(exits[k])
+    path = [leaf]
+    while path[-1] != ex:
+        path.append(int(cell.par[path[-1]]))
+    path = np.array(path[::-1])                    # exit -> leaf
+    d = dist[path] - dist[ex]
+    fallback = bool(run[k] < offset_um + length_um)
+    lo, hi = (run[k] - length_um, run[k]) if fallback else (offset_um, offset_um + length_um)
+    seg = path[(d >= lo) & (d <= hi)]
+    if seg.size == 0:
+        seg = path[[int(np.argmin(np.abs(d - 0.5 * (lo + hi))))]]
+    mid = int(seg[int(np.argmin(np.abs(dist[seg] - dist[ex] - 0.5 * (lo + hi))))])
+    return dict(nodes=seg, mid=mid, exit=ex, run_um=float(run[k]), fallback=fallback)
