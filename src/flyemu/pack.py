@@ -34,7 +34,8 @@ ANNOTATIONS = ("male_cns_extra.parquet", "male_cns_extra2.parquet", "male_cns_he
 INFERRED = ("t1_fill.json", "t1_fill.csv.gz", "t1_add.json", "t1_add.csv.gz", "gap_junctions.csv")
 LEDGER = ("blank_ledger.csv", "ledger_levels.csv", "blanks_audit_coverage.csv")
 CT1_RAW = REPO / "data" / "raw" / "ct1_columns_s14"
-CODE_EXTRA = ("scripts/passive_rest_protocol.py",)       # imported by passive.projected_matrices at build
+# passive_rest_protocol: imported by passive.projected_matrices at build; blank_ledger: run by flyemu.check
+CODE_EXTRA = ("scripts/passive_rest_protocol.py", "scripts/blank_ledger.py")
 RUNTIME_PACKAGES = ("numpy", "scipy", "pandas", "pyarrow", "mujoco", "PyYAML", "numba", "matplotlib", "pillow")
 VENDORED = ("flygym",)                 # shipped inside the zip (body/flygym), so not a runtime pin
 DEFAULTS = {"profile": "m10f0", "seed": 12, "min_synapses": 5, "world": "flat_floor", "stimulus": "none",
@@ -78,8 +79,6 @@ WORLD_TODO = [
 OTHER_TODO = [
     {"item": "variation/*.csv", "what": "the variation model (between-fly spread per slot class)", "today": "unbuilt"},
     {"item": "individual/*.parquet", "what": "individual layer only; this zip is species layer", "today": "n/a"},
-    {"item": "python -m flyemu.check", "what": "runs tests/ and the scoreboard, prints the ledger fill fraction",
-     "today": "unbuilt; tests/ ships but has not been run from an extracted zip"},
     {"item": "slot addresses", "what": "cell:/synapse:/body: addresses for per-element values",
      "today": "registry keys are entity|property at type/class grain only"},
 ]

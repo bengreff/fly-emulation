@@ -65,11 +65,12 @@ def parser() -> argparse.ArgumentParser:
 
 # --- launcher (standard library only) ------------------------------------------------------------------
 
-def launch(a) -> int:
+def launch(a, module: str = "flyemu.run", result_file: str = "run_manifest.json") -> int:
+    """Verify and extract the zip (or take --tree), then run `python -m <module> --inside` in that tree."""
     out = Path(a.out).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    if (out / "run_manifest.json").exists():
-        raise flyzip.Refused(f"{out} already holds a run")
+    if (out / result_file).exists():
+        raise flyzip.Refused(f"{out} already holds a result ({result_file})")
     env = {k: v for k, v in os.environ.items() if not k.startswith("FLYEMU_") and k != "PYTHONPATH"}
     dropped = sorted(k for k in os.environ if k.startswith("FLYEMU_"))
     if a.tree:
@@ -91,7 +92,7 @@ def launch(a) -> int:
     env["PYTHONPATH"] = str(root / "src")
     passthrough = [x for x in sys.argv[1:] if x != a.zip] if a.zip else sys.argv[1:]
     # the child runs in the tree, so it gets the absolute output path (argparse keeps the last --out)
-    cmd = [sys.executable, "-m", "flyemu.run", "--inside", "--root", str(root), *passthrough, "--out", str(out)]
+    cmd = [sys.executable, "-m", module, "--inside", "--root", str(root), *passthrough, "--out", str(out)]
     env["FLYBRAIN_DROPPED_ENV"] = ",".join(dropped)
     env.setdefault("PYTHONHASHSEED", "0")           # set and str iteration order fixed across processes
     try:
@@ -187,17 +188,12 @@ def _versions() -> dict:
             "packages": {p: md.version(p) for p in RUNTIME_PACKAGES}}
 
 
-def inside(a) -> int:
+def child_setup(a) -> dict:
+    """Inside the extracted (or repo) tree: install the read guard, then check that flyemu, flygym and the
+    runtime are the zip's. Shared by run and check."""
     root = Path(a.root).resolve()
     mode = "tree" if a.tree else "zip"
     man = json.loads((root / MANIFEST_COPY).read_text()) if mode == "zip" else None
-    d = man["defaults"] if man else {"profile": "m10f0", "seed": 12, "min_synapses": 5, "world": "flat_floor",
-                                     "stimulus": "none", "timestep_ms": 0.1, "policy": "minimal"}
-    profile = a.profile or d["profile"]
-    seed = d["seed"] if a.seed is None else a.seed
-    min_syn = d["min_synapses"] if a.min_synapses is None else a.min_synapses
-    world_name, stim = a.world or d["world"], a.stimulus or d["stimulus"]
-    out = Path(a.out).resolve()
     allowed = [root, sys.prefix, sys.base_prefix]
     deny_inside = []
     if mode == "zip":                               # the installed flygym and its mesh cache are the repo's body
@@ -215,6 +211,20 @@ def inside(a) -> int:
         if {k: v for k, v in versions.items() if k != "vendored"} != pins and not a.allow_runtime_mismatch:
             raise flyzip.Refused(f"runtime {versions} differs from the zip's pins {man['runtime_pins']}")
     body_src = _check_flygym(root) if mode == "zip" else None
+    return {"root": root, "mode": mode, "man": man, "guard": guard, "versions": versions, "body_src": body_src}
+
+
+def inside(a) -> int:
+    c = child_setup(a)
+    root, mode, man, guard, versions, body_src = (c[k] for k in ("root", "mode", "man", "guard", "versions",
+                                                               "body_src"))
+    d = man["defaults"] if man else {"profile": "m10f0", "seed": 12, "min_synapses": 5, "world": "flat_floor",
+                                     "stimulus": "none", "timestep_ms": 0.1, "policy": "minimal"}
+    profile = a.profile or d["profile"]
+    seed = d["seed"] if a.seed is None else a.seed
+    min_syn = d["min_synapses"] if a.min_synapses is None else a.min_synapses
+    world_name, stim = a.world or d["world"], a.stimulus or d["stimulus"]
+    out = Path(a.out).resolve()
     if stim not in BUILT_STIMULI:
         raise flyzip.Refused(f"stimulus {stim!r} is not built (declared TODO in the manifest); "
                              f"built: {sorted(BUILT_STIMULI)}")
