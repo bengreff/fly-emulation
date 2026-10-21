@@ -276,7 +276,7 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: T1 fill levels 1 and 2 (F-XCONN-3, F-XCONN-4), fly_brain.zip spec rev 2 with scan files, T4/T5 seed 1 re-recording (20 Oct 22:56)
+## fly2: T1 fill levels 1 and 2 (F-XCONN-3, F-XCONN-4), fly_brain.zip spec rev 2 with scan files, T4/T5 seed 1 re-recording (20 Oct 22:54)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 20 Oct night run (Task 1 the T1 fill, Task 2 the zip spec), then Ben's rulings via the Director (T1A, the scan-file design, two-compartment neurons). Every switch below is neutral by default and **none is adopted**.
 - **Merging:** worktree-fly2 contains main (merge 063f105, clean, with fly's S4a/S4b) plus the fly2 commits through this HANDOFF. **It is ready to fast-forward.** The worktree guard refuses commands aimed at the main checkout, so someone in the main checkout runs the fast-forward merge of `worktree-fly2`. Tests after the merge: `test_t1_fill`, `test_class_mechanisms`, `test_ct1_compartments`, `test_repo_hygiene` and `test_model_data` pass (the 2 owner-row failures in `test_model_data` were fixed in 88e2a65). The full battery has not been rerun.
