@@ -8,7 +8,9 @@ unitary PSP on, one PSI spike gives a SOMA peak equal to the table's 4.71 mV (ax
 axon peak is larger; with the shared threshold the DLMn spike starts on the axon, the soma is never
 reset, and the spike reaches the DLMn's own target; a large soma input still fires the cell through the
 axon; a run override replaces a class value; the GPU, conductance synapses and a slow copy on an axon
-edge are refused. These are implementation checks, not validation.
+edge are refused. These are implementation checks, not validation. The mechanism tests pin the class values to
+the s20 guessed-geometry pair (q 0.07, rho 1.6) by override, where the axon fires; the table's own values
+(s21 option B, derived from the MN5 skeletons) are checked where the table is read.
 """
 from __future__ import annotations
 
@@ -44,8 +46,13 @@ def _conn():
                       np.full(4, 0.2, np.float32))
 
 
-def _reg(two=True, psp=True, **over):
+S20 = {"cell_class:MN|axon_membrane_share": 0.07, "cell_class:MN|soma_axon_coupling": 1.6}
+
+
+def _reg(two=True, psp=True, s20=True, **over):
     r = Registry(Policy.MINIMAL)
+    if s20:
+        r.overrides.update(S20)
     if two:
         r.overrides[KEY] = 1.0
     if psp:
@@ -83,17 +90,17 @@ def test_switch_neutral_builds_nothing():
 
 
 def test_only_the_psi_edges_land_on_the_axons():
-    reg = _reg(psp=False)
+    reg = _reg(psp=False, s20=False)
     tc = lif._two_compartments(reg, _conn())
     assert tc["cells"].tolist() == [1, 2] and tc["edge_idx"].tolist() == [0, 1]
-    assert np.allclose(tc["q"], 0.07) and np.allclose(tc["rho"], 1.6)
+    assert np.allclose(tc["q"], 0.104) and np.allclose(tc["rho"], 3.80)
     net = _net(reg)
     # an axon edge keeps its synaptic charge (weight / q); the other edges keep count x scale
-    assert np.allclose(net.w, [17 * 0.2 / 0.07, 40 * 0.2 / 0.07, -10 * 0.2, 5 * 0.2], rtol=1e-6)
+    assert np.allclose(net.w, [17 * 0.2 / 0.104, 40 * 0.2 / 0.104, -10 * 0.2, 5 * 0.2], rtol=1e-6)
     inv = reg.inventory()
     q = inv[inv.property == "axon_membrane_share"]
     assert len(q) == 1 and str(q.status.iloc[0]) == str(Status.INFERRED.value)
-    assert "guessed geometry" in str(q.method.iloc[0])
+    assert "EM geometry" in str(q.method.iloc[0])
     site = inv[inv.property == "spike_initiation_compartment"]
     assert sorted(site.status.astype(str)) == sorted([str(Status.MEASURED.value), str(Status.INFERRED.value)])
 
