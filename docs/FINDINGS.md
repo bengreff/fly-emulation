@@ -1557,3 +1557,38 @@ The registered sensitivity prediction ("follows except at low ρ with high q") i
 **Ben's measurement list.** `docs/MEASUREMENT_LIST.md` item 1, a single MN5 whole-cell recording, would measure q, ρ, tau_m, threshold, AHP and refractory period, and the PSI EPSP decay in one cell.
 
 **Spent:** nothing new. The option-B runs reuse the spent Ryglewski 2014 seed 1 as consistency checks.
+
+### F-S14-1: no class-level option alternates. Neither 16B graded release nor E1/E2 ADP, alone or together, inside measured bounds; the core's output can't cross the point-model hand-off to the leg MNs (s14, 21 Oct 01:16; DIAGNOSTIC, forced drive; pre-registered DECISIONS 20 Oct 22:28; nothing adopted)
+**Primary.** 6 arms × DNg100 15/25/40 mV = 18 S2 runs, all exit 0. **0 pass:** every one has 0 transfer-pass pools and 0 antagonist pairs, and stops at drive-off (post/pre 0.90-0.98). M0 fails as required. Viewed:
+- rasters: `docs/media/s14_arms_rasters_{15,25,40}mv.png`. No leg alternates. Every panel shows the tonic ~23 Hz tibia-flexor line (present before drive) plus co-active flecks, more of them at higher drive;
+- frames: `docs/media/s14_arms_frames_all.png`. The thorax is on the floor with legs splayed and no stepping, in every arm at every drive. The wings open more with drive (from 700 ms at 25 mV, from 500 ms at 40) in M0 too, so that comes from DNg100, not an arm.
+- **Falsifier hit for every arm:** neither class property, alone or with the other, inside these bounds, fixes the break.
+
+**Secondary (chain runs, network only; `docs/media/s14_arms_chain_T1L.png`, viewed; spike times from the S arrays).**
+- **The B arms don't make E1/E2 burst inside the network.** In M0, T1L E1 fires one spike per cycle, 81 ms apart (12.3 Hz at 25 mV). With B4 or B2 it fires 17-23 spikes in 700 ms at irregular 20-60 ms intervals, with no quiet gap between groups. That is a near-continuous 24-33 Hz train, not bursts, and the 12 Hz cycle is lost. The scorer's "3-5 spikes per cycle" (B4 25 mV: 3.2 at f0 7.5 Hz) is this train folded at a lower f0 the detector found. Isolated, the same ADP gives 4 spikes in 92 ms (calibration). In the network, IN19A007's inhibition and the E1/E2 loop chop it into single spikes. C4/C2 (with 16B graded) are in between: 7-14 spikes, at most 1.6 per group.
+- **I1 is never recruited in T1L.** Spiking I1 Vmax is −47.6 to −52 mV against −45. The one listed "recruitment" (B2 40 mV, T2R) is an artefact of f0 dropping to 4.3 Hz (2 I1 spikes in 700 ms). Graded I1 (A, C4, C2) sits at most 1.54 mV above rest in any neuromere, with a T1L swing of 0.6-1.8 mV, below the pre-registered 2 mV release threshold.
+- **More core spikes don't move the MNs.** Leg-MN rate during drive: M0 4.43/4.81/5.37 Hz (15/25/40 mV); B4 4.44/4.76/5.26; B2 4.49/4.72/5.17. The B arms add premotor spikes (mean premotor 0.13 → 0.28 Hz at 25 mV). The A arms lower MN output (4.2-4.3 Hz at every drive).
+
+**Hand-off size** (`scripts/probes/s14_handoff.py`, `runs/s14/handoff.json`; connectome counts × the model's mV per synapse at scale 1, 0.0212 (q10-q90 0.0094-0.0349), derived in S4b; linear summation, so a lower bound):
+
+| core role | leg-MN edges (MNs) | synapses median (max) | PSP per spike, median (max) mV | coincident spikes to threshold, median (min) |
+|---|---|---|---|---|
+| E1 (exc) | 28 (22) | 8 (78) | 0.17 (1.65) | 41 (4.2) |
+| E2 (exc) | 92 (52) | 22 (275) | 0.47 (5.8) | 15 (1.2) |
+| I1 (inh) | 15 (9) | 10 (44) | 0.21 (0.93) | — |
+| IN19A007 (inh) | 86 (42) | 18 (298) | 0.38 (6.3) | — |
+
+The leg-MN threshold gap is 7 mV. The core delivers about one spike per cycle, so most of its targets can't follow. Only E2's few heavy edges can fire an MN on a single spike, which is the "about one spike per cycle in a few pools" of F-BYPASS-4.
+
+**Reading (inferred).** The break has two hand-offs of the same kind, both in point neurons at somatic-range PSPs:
+- core → leg MN: confirmed as a bottleneck here. Extra core spikes, spread out, don't sum to MN output. A uniform scale (S4b) matches rates only at implausible somatic PSPs and still doesn't alternate.
+- E2 → I1 inside the core: still unrecruited on either animal's counts (F-XCONN-2) and with graded release.
+
+Insect leg MNs and interneurons are unipolar. Their premotor synapses sit on neuropil neurites near the spike-initiation zone, and the recorded soma is electrically remote. So a PSP measured at the soma can understate the depolarisation where spikes start. A point model can't hold both at once (the measured somatic PSP, and the local drive needed to cross threshold). That makes it the case Ben approved a two-compartment arm for. The next suspects named by the s14 falsifier (the slow-MN BK the E1/E2 cells inherited; MN transfer) stay open; the second is what the two-compartment arm tests.
+
+**Measurement for Ben's list (the hand-off).** A somatic whole-cell recording from a front-leg MN, made in the same session as single-type premotor activation: optogenetic or a paired patch of E2 (INXXX466 = MANC IN15A001) or E1 (IN17A001). It would give:
+- the unitary PSP at the soma, in mV per presynaptic spike;
+- the MN's input resistance;
+- ideally, the soma-to-neurite attenuation (dual-site recording or calcium/voltage imaging of the neurite).
+
+The somatic PSP bounds the point model. With the attenuation, it fixes the two-compartment coupling.

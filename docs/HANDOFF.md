@@ -1,29 +1,26 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Tue 20 October 2026, 23:58 CDT. Session 14, the class-level options test (Director brief, 20 Oct). Can one unmeasured class property (the 16B firing mode, or E1/E2 intrinsic bursting) make the bypass core alternate antagonist MN pools? It's a forced-drive DIAGNOSTIC, and nothing is adopted. The night runs until about 05:30. Ben's note: a two-compartment premotor/MN arm (soma plus spike-initiation zone) is a legitimate next diagnostic if arms A-C fail.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 01:16 CDT. Session 14, the class-level options test (Director brief, 20 Oct). It's a forced-drive DIAGNOSTIC, and nothing is adopted. The night runs until about 05:30. Ben's note: two compartments (soma plus spike-initiation zone) are allowed where a point model provably fails.
 
-**s14 (20 Oct 22:28 onward; DECISIONS "Pre-registration s14" 22:28 and "Results s14 at 25 mV" 23:57).**
-- **Built (neutral, committed):**
-  - `class:vnc_local_16B|graded` (A);
-  - the saturating E1/E2 ADP: `cell_type:core_rhythm_exc|adp_mv`, `|adp_tau_ms` and `|adp_recovery_ms` (B);
-  - the NaP scale (B'), which has no admissible value.
-  - Calibration: `scripts/probes/s14_burst_calib.py`. Literature: `docs/research/s14_16b_firing_mode.md` and `s14_burst_ranges.md` (both Sonnet, unchecked).
-  - Scorer: `scripts/probes/s14_score.py` (written before any output).
-- **Arms:** M0 (neutral control), A, B4 (20 mV/100/200 ms), B2 (25/40/50), C4 = A+B4, C2 = A+B2. Each runs at DNg100 15/25/40 mV, in two harnesses: S2 (MN pools plus body) and chain (core cells, network only).
-- **25 mV S2 result: no arm alternates** (0 transfer pools and 0 pairs in all six). Viewed: `docs/media/s14_arms_{rasters,frames}_25mv.png`. The B arms double the premotor rate, but MN output stays flat. The A arms lower MN output. Wing flicks appear in M0 too.
-- **Running (backhouse, detached, its own session under WSL init):**
-  - Runner: `~/fly-m10f/runs/s14/arms/run.sh`. Order: chain:25, then s2:15, s2:40, chain:15, chain:40.
-  - Done-files: `{s2,chain}/<arm>_<mv>.done`, then `ALL.done`. Launch log: `queue.log`.
-  - The rule-16 gate holds each launch until load is below 24. Load was 26 at 23:58, all of it from outside our distro, so the runs may queue for a while.
-  - Collect with `ssh backhouse 'wsl -d Ubuntu -- bash -c "cd ~/fly-m10f/runs/s14/arms && tar -cf - s2 chain"' | tar -x -C runs/s14/arms`.
-  - Then run `.venv/bin/python scripts/probes/s14_score.py runs/s14/arms --out runs/s14/arms/score.json`.
-  - Then make the rasters per drive with `bypass_rasters.py`. For the core cells, add `--chain runs/s14/arms/chain/<arm>_<mv>mv_traces.npz --seg T1L`.
-- **Next:**
-  1. Score the 15/40 mV runs and the chain runs.
-  2. View them.
-  3. Write FINDINGS F-S14-1, with the I1 recruitment per arm (spiking vs graded criterion) and E1/E2 spikes per cycle.
-  4. If every arm fails, the falsifier names the next suspects: the slow-MN BK the E1/E2 cells inherited, and the MN transfer (F-BYPASS-7). Ben's two-compartment arm is the approved next diagnostic.
-  5. The held-out S4b recruitment order is still unspent.
+**s14 DONE (F-S14-1; DECISIONS 20 Oct 22:28 pre-registration, 23:57 and 21 Oct 01:16 results).**
+- **Result:** 6 arms × 15/25/40 mV, 0 of 18 pass. The arms were M0, A (16B graded), B4/B2 (E1/E2 saturating ADP), C4/C2 (A+B). Viewed: `docs/media/s14_arms_rasters_{15,25,40}mv.png`, `s14_arms_frames_all.png`, `s14_arms_chain_T1L.png`.
+- **The B arms don't burst in the network:** E1/E2 fire a 24-33 Hz train with no gaps, and the 12 Hz cycle is lost.
+- **I1 is never recruited:** graded I1 rises at most 1.54 mV, under the 2 mV threshold.
+- **Extra core spikes leave MN output unchanged.**
+- **Hand-off probe** `scripts/probes/s14_handoff.py` (`runs/s14/handoff.json`): a median E2 → leg-MN edge gives 0.47 mV per spike, and E1 0.17 mV, against a 7 mV gap.
+- **Reading:** the core → MN hand-off is confirmed as a bottleneck, and E2 → I1 fails the same way.
+- **Measurement for Ben's list:** a front-leg MN somatic recording with E2 (IN15A001) or E1 (IN17A001) activation. It gives the unitary PSP, Rin, and ideally the soma-to-neurite attenuation.
+- **Outputs:** Mac `runs/s14/arms/` (score.json); backhouse `~/fly-m10f/runs/s14/arms/`. Nothing is running, and the runner exited (ALL.done 01:11).
+
+**s15 PRE-REGISTERED (DECISIONS 21 Oct 01:16): the two-compartment premotor/leg-MN arm.** It uses fly2's N30 mechanism (`cell_type:all|two_compartments_where_point_fails`) and its tables `data/params/two_compartment*.csv`.
+- **Blocked on a DECISION NEEDED (Director):** fly2 owns those tables. Either fly2 adds the rows for the leg_MN and core_premotor classes, or the Director clears fly to.
+- **Then:**
+  1. Run a Sonnet scan for leg-MN Rin (Azevedo 2020) and VNC interneuron Rin.
+  2. Derive the class q and ρ with `scripts/connectome/mn_axon_geometry.py` (option B as F-GJ-7).
+  3. Pass the admissibility gate: the somatic unitary PSP stays in the measured range (`s4b_unitary_psp.py`).
+  4. Run arms M0/TM/TP/TPM × 15/25/40 mV on backhouse with done-files.
+  5. Score with `s14_score.py` (the ARMS tuple needs the new names), then view.
+- The S4b recruitment order is still unspent.
 
 **Session 13 (14 Oct 02:21; kept for reference).** Ben's 13 Oct order: the motor-pathway bypass assay (S0-S4) comes before more mechanism work. Its output is a failure-localisation report. Forced drive is a DIAGNOSTIC, not emergent walking. fly owns the nerve-cord side (S2-S4). fly2 owns the body side (S1 follow-up, its section below), the optic lobe and gap junctions; stay out of its files.
 
