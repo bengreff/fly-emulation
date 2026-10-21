@@ -1394,6 +1394,8 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - The fill-off chain runs reproduce X1's M0 numbers exactly, so the snapshot matches.
   - Viewed `docs/media/s20_fly2_t1fill_rasters_{25,40}mv.png`. The MN rasters are the same synchronous tonic pulse train. In T1L the core cycles faster with the fill (E1 15.7 vs 12.9 Hz at 25 mV), and I1's bump per cycle grows by about 1 mV but stays under threshold.
 - **H2, step R reach gate, 8 runs:** **NO REACH, 0 of 8 with the fill on**, as predicted (`runs/s20/t1fill/reach_on`).
+  - The fill-off rerun on the same snapshot (`reach_off`) is also 0 of 8. The MN pool rates are identical on and off in all 8 arms, to 0.01 Hz.
+  - In the lf arms the fill moves the tibia MNs' subthreshold gap to threshold by 0.2 mV at most.
   - The lf arms (the T1 leg, inside the fill) match F-REFLEX-2. The tibia flexors are tonic at 17-19 Hz with a ratio of 1.00-1.03, the same with the afferents zeroed.
   - Viewed `docs/media/s20_fly2_t1fill_reach_on.png` (the lm leg, the panel layout of F-REFLEX-2's figure). The afferents fire, the premotor hop is nearly silent (at most 8 of 177 flexor-premotor cells active at 40 mV), and the tibia MNs sit 6-12 mV below threshold.
 - **Reading:**

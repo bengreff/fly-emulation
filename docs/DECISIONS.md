@@ -3137,3 +3137,11 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 ### fly2 T1F H1 reading note (20 Oct, 22:15; before any H1 or H2 output exists)
 - The S2 harness records MN pools only, not I1. H1's I1 reading ("T1L/T1R I1 spikes or Vmax ≥ −45 mV") is taken the way X1 took it (F-XCONN-2): `bypass_s3_chain.py`, DNg100 at 15/25/40 mV, brain off, its default window (drive 100-900 ms), fill on and off, same snapshot. Six extra network-only runs. The H1 pass criterion is unchanged (S2 `passes`).
 - Run note: the first launch (22:11) died at about 22:13 when the WSL distro stopped with no client attached. Relaunched with the keep-alive; no output was read.
+
+### fly2 T1F results (20 Oct, 22:30; F-XCONN-3)
+- **H1, bypass S2 DNg100 15/25/40 mV, brain off: FAIL in 3 of 3 with the fill on, as predicted, the same as off.** I1 is not recruited: T1L Vmax −48.2 mV against −45. The fill reached the model (T1L E2→I1 6.88 → 9.06 mV, T1R 4.84 → 9.5 mV). The fill-off chain runs reproduce X1's M0 exactly. Rasters viewed.
+- **H2, step R: NO REACH 0 of 8 with the fill on, as predicted.** Fill off is also 0 of 8, with identical MN pool rates. Figure viewed.
+- **Falsifier holds:** H1 and H2 are unchanged. At the size a no-invention fill can repair, the male-CNS T1 undercount doesn't cause either motor failure.
+- **Decision:** the switch stays neutral and is not adopted. It is kept as a labelled inferred member for fly_brain.zip (`docs/FLY_BRAIN_ZIP.md`).
+- **Not done here:** inventing partners from MANC to fill the ~25% of MANC input on connections absent in the male CNS. That would need its own rule and pre-registration, and it doesn't touch the T1-specific part (the absent share is the same in T2 and T3).
+- H1 and H2 are spent for this switch. Any future T1 candidate needs a new held-out test or new seeds.
