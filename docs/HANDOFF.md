@@ -276,10 +276,10 @@
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: inferred T1 fill (F-XCONN-3), fly_brain.zip draft spec, T4/T5 seeds recovered (20 Oct 22:40)
+## fly2: T1 fill levels 1 and 2 (F-XCONN-3, F-XCONN-4), fly_brain.zip spec rev 2 with scan files, T4/T5 seed 1 re-recording (20 Oct 22:56)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 20 Oct night run (Task 1 the T1 fill, Task 2 the zip spec). Every switch below is neutral by default and **none is adopted**.
-- **Merging:** worktree-fly2 contains main (merge 063f105, clean, with fly's S4a/S4b) plus f7473b9, 88e2a65 and this HANDOFF. **It is ready to fast-forward.** The worktree guard refuses commands aimed at the main checkout, so someone in the main checkout runs the fast-forward merge of `worktree-fly2`. Tests after the merge: `test_t1_fill`, `test_class_mechanisms`, `test_ct1_compartments`, `test_repo_hygiene` and `test_model_data` pass (the 2 owner-row failures in `test_model_data` were fixed in 88e2a65). The full battery has not been rerun.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 20 Oct night run (Task 1 the T1 fill, Task 2 the zip spec), then Ben's rulings via the Director (T1A, the scan-file design, two-compartment neurons). Every switch below is neutral by default and **none is adopted**.
+- **Merging:** worktree-fly2 contains main (merge 063f105, clean, with fly's S4a/S4b) plus the fly2 commits through this HANDOFF. **It is ready to fast-forward.** The worktree guard refuses commands aimed at the main checkout, so someone in the main checkout runs the fast-forward merge of `worktree-fly2`. Tests after the merge: `test_t1_fill`, `test_class_mechanisms`, `test_ct1_compartments`, `test_repo_hygiene` and `test_model_data` pass (the 2 owner-row failures in `test_model_data` were fixed in 88e2a65). The full battery has not been rerun.
 - **Task 1 done: inferred T1 fill (F-XCONN-3; DECISIONS 20 Oct 22:02, 22:08, 22:15, 22:30).**
   - Why: the male-CNS T1 neuromere has about 58% of MANC's input per matched cell (F-XCONN-1), a reconstruction deficit.
   - Switch `connectome:T1|fill_from_other_animals` (neutral 0; label inferred, cross-animal; owner X1). Table `data/params/t1_fill.csv.gz` from `scripts/connectome/t1_fill_table.py`, with the sources pinned by sha256. Audit script `scripts/connectome/t1_fill_audit.py`. Tests `tests/test_t1_fill.py`.
@@ -291,13 +291,21 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Dire
     - Rasters and the reach figure were viewed (`docs/media/s20_fly2_t1fill_*`).
   - Reading: the T1 undercount, at the size a no-invention fill can repair, is not what blocks the VNC rhythm or the reach. The next step would be inventing absent partners from MANC by type. That needs its own rule, its own pre-registration and Ben's view, since it adds connections the specimen lacks.
   - Backhouse snapshot `~/fly2_t1` (code at 8524459, see its `COMMIT` file). Outputs are copied to the Mac under `runs/s20/t1fill/{s2,chain,reach_on,reach_off}`.
-- **Task 2 done: `docs/FLY_BRAIN_ZIP.md`, a one-page draft spec (83ead09).**
-  - Members: connectome, inferred tables, params with provenance, mechanisms.yaml, the ledger, profiles, body, code and tests, plus a register. About 125 MB; raw data is cited by hash, not shipped.
-  - It maps each member onto the ledger and the mechanism inventory, and lists the open questions for Ben.
+- **T1A done (level 2 of the same switch; F-XCONN-4; Ben's rule, DECISIONS 20 Oct 22:44 and 22:54).**
+  - What it does: adds type pairs absent from the male CNS that both MANC and count-matched BANC have, at their median counts (table `data/params/t1_add.csv.gz`, 25,218 keys). Partner identity within a type is guessed: same-side cells first, round-robin. The 5-synapse cut applies.
+  - Audit (`scripts/connectome/t1_add_audit.py`): +0.8% synapses onto T1; ratio 0.669 → 0.680. Only 18% of the added edges land on pairs MANC connects.
+  - Motor checks, run on the Mac (`runs/s20/t1add`): S2 FAIL 3 of 3, with I1 at −47.8 mV; step R 0 of 8, with MN rates equal to level 1. Rasters and the reach figure were viewed.
+  - Neutral; a completeness member. Every T1 deficit size we can repair is now ruled out as the cause.
+- **Task 2 done: `docs/FLY_BRAIN_ZIP.md` rev 2 (e767fb8), with Ben's held note.**
+  - The zip is brain + body + world. `world/` holds arenas and stimuli as data; today they live in `scripts/probes/*`.
+  - A species layer and an individual layer, one slot-address space, and the scan file (`*.flyscan`: observed slots with sd, per-modality noise models).
+  - The pipeline `flyemu.scan` → `flyemu.reconstruct` → `flyemu.compare`, with a leak guard and round-trip tests.
+  - Next to build would be the variation model, the study's main prerequisite.
+- **Ben approved (20 Oct, via the Director):** two-compartment neurons where a point model provably fails, PSI→DLMn first (F-GJ-5), and in general any clean increase in neuron fidelity. This is the natural next fly2 task (N30): pre-register a PSI→DLMn two-compartment MN with measured MN5 values (Rin, Cm), and the GF-escape DLMn test as the check (spent once on the point model; needs a new seed set).
 - **T4/T5 seeds after the 16 Oct backhouse reboot (pre-registered DECISIONS 14 Oct 00:41 and 01:05/01:07):**
   - The recorded protocols survived on disk; the analysis had crashed because flyapp reads `data/cache` from the app directory, not `--model-root`. Fixed with a link `~/fly2-app/data/cache → ~/fly-emulation/data/cache` and a rerun with `--analyse-only` (`run_analyse.sh` next to each `run.sh`).
   - **Seed 2 (pair strengths + CT1 compartments, medulla set): FAIL, 0 of 8.** The T4 peaks are 0.38-0.51 mV and the T5 peaks 0.18-0.40 mV, below the 0.5 mV floor, with |DSI| at most 0.08. The ON pathway is there (Mi1 0.77, Tm3 1.09, Mi4 2.37 mV, Mi9 −1.96), but T4 sums it to 0.43 mV. Sheet `docs/media/s14_fly2_t4t5_v0rfvpct1_s2.png`, viewed.
-  - **Seed 1 (pair strengths, CT1 a point cell, both sets): pending.** Its control and two medulla protocols were truncated by the reboot. They were moved aside (`v0rfvp_s1_truncated_control`, `*.incomplete-*`) and a re-record is queued in tmux `fly2_t4t5q` (`queue_rerun.sh`). It waits for backhouse load < 24; at 22:40 the load was 26 from another distro. Done-file `~/fly2/runs/s14/t4t5/control_rerun.done`; output `~/fly2/runs/s14/t4t5/v0rfvp_s1/ds.{json,png}`.
+  - **Seed 1 (pair strengths, CT1 a point cell, both sets): pending.** Its control and two medulla protocols were truncated by the reboot. They were moved aside (`v0rfvp_s1_truncated_control`, `*.incomplete-*`) and a re-record is running in tmux `fly2_t4t5q` (`queue_rerun.sh`; it started at about 22:46, 3 recordings then the analysis). **The Mac keep-alive must be running while it does:** if this session has ended, restart it first (below), then check the tmux session is still alive. If WSL stopped, rerun `queue_rerun.sh`; it is resumable. Done-file `~/fly2/runs/s14/t4t5/control_rerun.done`; output `~/fly2/runs/s14/t4t5/v0rfvp_s1/ds.{json,png}`.
   - To finish: copy `ds.json`/`ds.png` to `runs/s14/fly2/t4t5/v0rfvp_s1/`, view the sheet, score against 00:41 (pass: 8 of 8 in the medulla set; predicted FAIL), check seed 2's "within ±2 of seed 1" prediction, then write F-VISION-15 (both seeds) and the register rows.
 - **Backhouse lessons (20 Oct):**
   - The WSL distro stops when no wsl client is attached, which kills tmux jobs. While anything runs, hold a keep-alive from the Mac as a background shell: `ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'"`.
@@ -422,7 +430,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | being spent (s14 fly2, pre-registered DECISIONS 14 Oct 00:41; the re-record after the 16 Oct reboot is queued on backhouse) | — |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |
-| Bypass S2 DNg100 15/25/40 mV and step R (8 arms) on the T1 fill | spent (s20 fly2, F-XCONN-3, pre-registered DECISIONS 20 Oct 22:02): FAIL 3 of 3, NO REACH 0 of 8, both unchanged | a new T1 candidate needs a new test or seeds |
+| Bypass S2 DNg100 15/25/40 mV and step R (8 arms) on the T1 fill | spent twice (s20 fly2): level 1 F-XCONN-3 (DECISIONS 20 Oct 22:02) and level 2 F-XCONN-4 (22:44); FAIL 3 of 3 and NO REACH 0 of 8 both times | a new VNC candidate needs a fresh check |
 | Behnia 2014 step offset/onset ratios and filter peaks (Mi1, Tm3, Tm1, Tm2) | unspent; reserved as the flyvis pair arm's held-out recordings check (Ben, 13 Oct 22:53) | their amplitudes already set graded_range_rec |
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
