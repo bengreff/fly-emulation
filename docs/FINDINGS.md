@@ -1402,3 +1402,22 @@ Step R of fly2's proprioceptive stance loop (pre-registration DECISIONS 13 Oct 2
   - The pre-registered falsifier holds: H1 and H2 are unchanged. So the male-CNS T1 undercount, at the size a no-invention fill can repair, is not what stops either motor test. This agrees with F-XCONN-2, where MANC counts across the whole VNC didn't help.
   - As a fly_brain.zip member, the fill is a labelled inferred table for a known reconstruction deficit (F-XCONN-1). It stays neutral: it moves T1 to the male CNS's own T2 level, not to MANC's.
   - The remaining gap is absent connections. Filling them would mean inventing partners from MANC by type, which this rule forbids and which would be a separate pre-registered step.
+
+### F-XCONN-4: adding the T1 connections the male CNS lacks, where both MANC and BANC have them, adds 0.8% and changes no motor result (fly2, s20, 20 Oct 22:55; inferred, cross-connectome; level 2 of the fill switch, not adopted)
+- **What was built** (Ben's rule via the Director; pre-registered DECISIONS 20 Oct 22:44, before code):
+  - Level 2 of `connectome:T1|fill_from_other_animals` (level 1 is T1F, unchanged).
+  - Table `data/params/t1_add.csv.gz` (`scripts/connectome/t1_fill_table.py add`, provenance `t1_add.json`): 25,218 (presynaptic type, T1 type, side) keys with no male-CNS synapse that both MANC and count-matched BANC have, out of 83,798 keys the two share.
+  - Counts: the median of MANC and BANC for synapses per connected pair and for partners per post cell. Which A cells connect is guessed: same-side cells first, round-robin. The model's 5-synapse cut applies, so 1,986 keys add edges.
+  - Test `tests/test_t1_fill.py::test_level2_adds_only_table_pairs_above_the_cut`.
+- **Count audit** (`scripts/connectome/t1_add_audit.py`, `runs/s20/t1fill/audit_add.json`):
+  - At the model cut: +3,115 edges and +30.6k synapses onto T1 (4.00M → 4.03M, +0.8%). At cut 1: +42,027 edges and +99.7k synapses.
+  - The T1 matched-input ratio against MANC goes from 0.669 to 0.680. Predicted 0.67-0.72: met. Predicted under 10% added: met.
+  - I1 input changes by +16 synapses at the cut; E2→I1 is unchanged.
+  - Only 18% of the added edges (573 of 3,115) land on cell pairs that MANC's body-matched graph also connects. The guessed partner identity mostly picks other cells of the right types.
+- **Reading of the audit:** MANC's input on connections absent from the male CNS (about 25% in every neuromere, F-XCONN-3) is mostly spread over weak type pairs. Where BANC confirms the type pair, the median counts are mostly under 5 synapses per pair, so the model cut drops them.
+- **H1, bypass S2 at DNg100 15/25/40 mV, brain off** (Mac, this checkout; the level-0 runs at 25 mV reproduce backhouse's T1F snapshot exactly: I1 T1L −49.62 mV, E1 12.9 Hz, 1 rhythmic pool):
+  - **FAIL in all 3**, as predicted. Rhythmic pools 0/0/0, as at level 1.
+  - I1 T1L Vmax −48.17 mV at 25 mV and −47.81 at 40 (threshold −45): not recruited.
+  - Viewed `docs/media/s20_fly2_t1add_rasters_40mv.png` (level 1 vs 2): the same synchronous tonic pulse train (MN 5.38 vs 5.34 Hz), and the T1L core cycles the same.
+- **H2, step R, 8 arms: NO REACH, 0 of 8**, as predicted (`runs/s20/t1add/reach`). The tibia MN rates equal level 1 in every arm, including the T1 (lf) arms. Viewed `docs/media/s20_fly2_t1add_reach.png`.
+- **Reading:** completeness only, as Ben expected. Level 2 is the most the cross-connectome rule allows without inventing type pairs. It moves T1 by about 0.01 and changes neither motor check. With F-XCONN-2 and F-XCONN-3, the T1 reconstruction deficit is ruled out as the cause of the missing VNC rhythm and reach at every size we can repair. The switch stays neutral as a labelled inferred member of fly_brain.zip.
