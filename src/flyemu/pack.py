@@ -182,9 +182,7 @@ def world_members() -> list[tuple[str, bytes]]:
              "what": "flygym flat ground as body.Body builds it (the default resting world of every gate and "
                      "smoke run) with flyemu.world.World at these field values",
              "world": w}
-    none = {"name": "none", "status": "built", "what": "no stimulus: the resting world", "schedule": []}
-    return [("world/arenas/flat_floor.json", json.dumps(arena, indent=1).encode()),
-            ("world/stimuli/none.json", json.dumps(none, indent=1).encode())]
+    return [("world/arenas/flat_floor.json", json.dumps(arena, indent=1).encode())]   # stimuli: data/world
 
 
 def register_member() -> tuple[str, bytes]:
@@ -242,6 +240,10 @@ def main(argv=None):
     files = file_members()
     prof, prof_cov = profile_members()
     gen = [*prof, *world_members(), register_member()]
+    names = [m["path"] for m in files] + [p for p, _ in gen]
+    dup = sorted({p for p in names if names.count(p) > 1})
+    if dup:
+        raise flyzip.Refused(f"{len(dup)} member path(s) packed twice: {dup[:5]}")
     members, hashes = [], {}
     out = Path(a.out)
     tmp = out.with_suffix(out.suffix + ".partial")
