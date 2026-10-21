@@ -3193,6 +3193,7 @@ Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulati
 - **Seed 2 (01:05/01:07 arm, recovered earlier):** FAIL, 0 of 8.
 - **Predictions:** the FAIL predictions were right on both seeds, and seed 2 landed within ±2 of seed 1 (0 vs 1). Seed 1's "|DSI| above 0.02" held only at the maximum (0.04); 6 of 8 subtypes are at ≤ 0.01. The falsifier (8 of 8) did not fire.
 - **Decision:** the pair-strength and CT1-compartment switches stay neutral; nothing is adopted. The flyapp T4/T5 test is now spent at seeds 0, 1 and 2, so the next candidate needs seed 3 or a new test. The Behnia 2014 check is still sealed.
+
 ### fly2 pre-registration: two-compartment DLMn with the PSI input on the axon (N30, first build), GF escape (20 Oct, 23:30; Ben via the Director, 20 Oct; before any code)
 **Why here.** F-GJ-5 shows the point model fails for PSI→DLMn: a 4.71 mV EPSP measured at the soma, from an axonal synapse, cannot cross the 7 mV gap. The recording paper says where the spike starts: "the action potential generated at the distal PSI-DLMmn synapse on the axon appeared small and broad in somatic recordings ... suggesting that the peripherally generated action potential fails to propagate antidromically into the dendrite" (Fayyazuddin et al. 2006 PLoS Biol 4:e63, measured, qualitative). PSI "makes multiple synaptic contacts that span 50 μm and follow the axons out into the posterior dorsal motor nerve" (same paper).
 
