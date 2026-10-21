@@ -1753,3 +1753,61 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - It does not show portability to another machine or another runtime. The runtime pins are refused on mismatch unless `--allow-runtime-mismatch` is given.
 - The guard sees Python opens, pyarrow parquet reads and MuJoCo mesh paths. A native read by another path would be missed; the identity result is the backstop for this run.
 - The Python runtime (`/Users/ben/fly-emulation/.venv`) sits inside the denied repo directory but is allowed as `sys.prefix`. It holds no model data: the trace found none, and its only `.pth` is virtualenv's.
+
+### F-ZIP-2: the scoreboard runs from the zip alone. Labellar sugar PER PASSES (MN9_L 5.7 Hz, bar > 5) and giant-fibre escape FAILS (no motor neuron follows); both are spike-for-spike identical zip vs tree and equal their reference scripts exactly. flyemu.check from the zip matches the tree (fly2, s22, 21 Oct 01:57; DECISIONS 21 Oct 01:10)
+
+**What was built.**
+- `flyemu.check`: runs the zip's tests, rebuilds the blank ledger from the zip's own tables, prints the fill fraction, and lists the scoreboard.
+- `flyemu.score`: plays one protocol.
+- `data/world/` (the zip's `world/`): the scoreboard, 2 protocols and 2 stimuli.
+- Format and harnesses: DECISIONS 21 Oct 01:10, and `docs/FLY_BRAIN_ZIP.md`, "Check and scoreboard".
+
+**The zip.** `runs/s22/fly2_zip/s2/fly_brain.zip`. It is a build artifact and is not in git (it is over 50 MB); the packer is committed.
+- 134,765,680 bytes, 476 members, 271.5 MB unpacked.
+- sha256 65892c89…, packed from clean commit c248318.
+- The first pack at 089022c (sha256 c32b7d3a…, 134,765,506 bytes) differs only in `tests/test_repo_hygiene.py`; see the check below.
+
+**Identity runs.** Each zip run was made from a scratch directory, with `/Users/ben/fly-emulation` denied and only the zip's code on the path.
+
+| | reference script | tree | zip |
+|---|---|---|---|
+| `per_labellar_sugar`, MN9_L Hz, seeds 0-9 | 7 6 7 5 7 7 5 6 4 3 | the same | the same |
+| its spikes over all 167,111 neurons, per seed | (not hashed) | 7040 … 7096 | equal hashes, all 10 seeds |
+| `gf_escape`: GF spikes / TTMn, PSI, DLMn follow | 20 of 20 / 0, 0, 0 | the same | the same; equal spike hash (1720 spikes) |
+
+- **Reference scripts.** `assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 --trials 10` and `gf_latency.py --arms gaps_off --trials 20 --seed 0`, both at m10f0. Every compared field is exactly equal: the per-seed rate, and for GF every type's follow, control, median and spike fields.
+- **Labellar sugar PER: PASS.** MN9_L mean 5.7 Hz against a bar of > 5 Hz. The margin is thin: 3 of 10 seeds are at or below 5 Hz (seed 9: 3 Hz).
+- **Giant-fibre escape: FAIL.**
+  - The giant fibre spikes on every kick, but none of TTMn, PSI or DLMn spikes within 10 ms; the controls are silent too.
+  - This is the model default, with gap junctions off (`electrical:all|gap_conductance` 0, not adopted).
+  - F-GJ-6 passed only with switches that are not adopted. This run agrees.
+- **Read guard.**
+  - Nothing was denied.
+  - Outside the root and the Python install, the zip runs read only matplotlib's font cache and the system timezone file.
+  - Tree runs read the connectome cache through the worktree's link to the main repo, which is expected in tree mode.
+- **Run time on the Mac.** About 60 s per sugar seed; 76 s for the GF run, including its Organism build.
+
+**flyemu.check, zip vs tree** (tree at 089022c; tests 15 min each way).
+- **The first zip (089022c) failed 2 tests**, both repo-layout checks:
+  - `test_scripts_default_to_the_working_model` runs `scripts/run_organism.py --help`;
+  - `test_docs_cited_in_code_exist` needs `docs/`.
+- The zip ships no `docs/` and only two scripts. Those tests check the repo, not the fly.
+- They now skip only inside an extracted zip (the root holds `.flybrain_manifest.json`), so the repo still fails them if a script or doc goes missing (c248318).
+- All other 269 outcomes, 12 skips, the ledger numbers and the scoreboard were equal between zip and tree.
+- At c248318, the zip check passes (exit 0): 269 passed and 14 skipped in 849 s. The two repo-layout tests skip in the zip; every other test id and outcome, the rebuilt ledger and the scoreboard equal the tree's at 089022c (889 s). In the tree at c248318, `tests/test_repo_hygiene.py` still passes all 12, including those two.
+- Read guard in the zip check: nothing denied. Outside the root and the Python install it read only the system version file, matplotlib's font cache, the timezone file, `/dev/null` and pytest's temp directories.
+
+**Ledger fill fraction, rebuilt from the zip's own tables.** The rebuilt ledger equals the packed one in both modes.
+- 145 quantities and 1,701,664,723 slots.
+- Data (measured + derived): 0.42% of slots. With rule-inferred added: also 0.42%.
+- Per quantity: 9.66% from data, 12.42% with rule-inferred.
+- Outside the synapse grain (50.0 M slots): 14.18% / 14.19%.
+
+**Correction to commit 793c3eb.** Its message says the ledger rebuild left the fill fractions "unchanged to 0.01%". That is true by slot (0.4171% / 0.4173%) but not per quantity. The 6 Oct ontology rows add 2 quantities (143 → 145) and move the per-quantity fill from 9.79% to 9.66% (data) and from 12.60% to 12.42% (with rule). The commit is not rewritten; this entry is the record.
+
+**What this does and does not show.**
+- Two of the eight scoreboard items now run from the zip alone, with results equal to the scripts that defined them. That makes them regression checks for any later zip.
+- Both protocols score spent evidence, so neither verdict is a held-out test.
+- Both step the brain only. PER is read as MN9 firing, and escape as motor neuron latency; no body moves in either.
+- The two protocols build the brain the way their scripts do, which is not quite the same way. The sugar build skips the stubs, the body and Q10. Moving to one harness would mean re-scoring both gates.
+- Leg sugar is the next protocol that needs no new code. It needs one decision first: a single number for "the route opens".

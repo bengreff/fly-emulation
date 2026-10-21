@@ -77,10 +77,39 @@ Sizes are measured on 20 Oct from the files the model reads today.
   key. Unbuilt worlds and stimuli are refused by name.
 - Outputs: `run_manifest.json` (zip and manifest hash, settings, runtime, body source, read-guard report,
   registry summary, result with `spikes_sha256` and `final_qpos_sha256`), `spikes.npz`, `registry_reads.csv`.
-- Not built yet: `flyemu.check`, `variation/`, `individual/`, slot addresses, and every world item except the
-  flat floor and the null stimulus. All are listed under `todo` in the manifest.
+- Not built yet: `variation/`, `individual/`, slot addresses, and the world items listed under `todo` in the
+  manifest.
 
-`python -m flyemu.check fly_brain.zip` runs `tests/` and the scoreboard, and prints the ledger fill fraction from the zip's own tables.
+## Check and scoreboard (built 21 Oct: `src/flyemu/check.py`, `src/flyemu/score.py`, `data/world/`)
+
+    PYTHONPATH=fly_brain.zip/code python -m flyemu.check fly_brain.zip --out check/ [--deny <repo>]
+    PYTHONPATH=fly_brain.zip/code python -m flyemu.score fly_brain.zip --protocol per_labellar_sugar --out s/
+    (each also takes --tree . instead of the zip: the same from the repo, for comparison)
+
+- **check** works under the same guard as run. It:
+  - runs the zip's own `tests/` with pytest in-process, recording each test's outcome;
+  - rebuilds the blank ledger from the zip's own ontology and tables, writing it to the output directory, and
+    compares it with the packed ledger;
+  - prints the ledger fill fraction by slot, per quantity, and outside the synapse grain;
+  - lists the scoreboard from `world/scoreboard.json`.
+
+  Exit 0 only if no test fails and the rebuilt ledger equals the packed one.
+- **The scoreboard** is the zip's `world/` data (source in `data/world/`):
+  - `scoreboard.json` lists the 8 fixed items in order. Each names a protocol or says why there is none yet.
+  - A protocol names a brain build, settings, seeds, duration, a stimulus, a readout, pass conditions, the bar's
+    source, the reference script it reproduces, and its evidence status.
+  - A stimulus is a list of timed events on cell types: `poisson_kick` (an independent Poisson train of membrane
+    kicks per listed cell) or `kick` (a fixed train).
+  - `flyemu.score` only interprets these files and writes `score_manifest.json`: per seed, the spike count and
+    a hash over every neuron, plus the readout; then the aggregate readout, each pass condition and the verdict.
+- **Built protocols** (both step the network only; the body is not stepped):
+  - `per_labellar_sugar`: LB3b/LB3c at 100 Hz, read out on MN9_L, pass if the mean over seeds 0-9 is > 5 Hz.
+    Its brain is built as `scripts/assay_pathways.py` builds it.
+  - `gf_escape`: DNp01 kick train; TTMn and DLMn muscle latency against Augustin 2017. Its brain is built as
+    `scripts/probes/gf_latency.py` builds it.
+- **Not built:** the other six items, with reasons in the file.
+
+Both built protocols score spent evidence, so their runs are regression checks.
 
 ## Scan files
 

@@ -347,33 +347,32 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: the first fly_brain.zip (species layer) is built and runs a 1 s m10f0 smoke run spike-for-spike identical to the repo tree (F-ZIP-1, 21 Oct 00:52)
+## fly2: fly_brain.zip runs its own check and two scoreboard protocols from the zip alone (F-ZIP-1, F-ZIP-2, 21 Oct 02:00)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test). Nothing in the model changed; no switch was added or adopted.
-- **Merging:** `main` was fast-forwarded to fa679f6. The zip work is 1cbccff plus this docs commit. **`main` can fast-forward to worktree-fly2 again.**
-- **Built (DECISIONS 21 Oct 00:50; `docs/FLY_BRAIN_ZIP.md`, "How the first build does it"):**
-  - `src/flyemu/pack.py`: `.venv/bin/python -m flyemu.pack --out X.zip`. It refuses a dirty tree. The manifest records:
-    - the sha256, size, group, label rule and runtime path of every member;
-    - dataset pins, checked against `t1_fill.json`, and runtime pins;
-    - profiles as JSON;
-    - `todo` entries for unbuilt items.
-  - `src/flyemu/run.py`: `PYTHONPATH=X.zip/code python -m flyemu.run X.zip --ms 1000 --out run/ [--deny <repo>] [--set K=V] [--seed N]`. `--tree .` runs the same path from the repo.
-    - It verifies all hashes, extracts to a fresh root and runs a child process under a read guard.
-    - It refuses `--set` keys with no owner, and refuses unbuilt worlds and stimuli by name.
-    - It writes `run_manifest.json`, `spikes.npz` and `registry_reads.csv`.
-  - `src/flyemu/flyzip.py` holds the stdlib-only shared code (verify, extract, read guard). `scripts/probes/zip_trace_inputs.py` is the trace of what a build reads. The tests are `tests/test_flyzip.py` (5 pass).
-  - flygym 2.1.0 is vendored into the zip with its 85 fullsize meshes. Its asset paths are bound at import, so they can't be redirected.
-- **Result (F-ZIP-1):**
-  - The zip is 134,741,559 bytes, 467 members, 271.4 MB unpacked (body 145 MB, connectome 102 MB).
-  - Run from a fresh temp dir with the repo denied, it matches the tree run exactly: 53,314 spikes in 10,000 steps, identical spike and final-pose hashes, and an identical 1085-row registry table.
-  - Controls: seed 13 differs, and an unknown `--set` key is refused (exit 2).
-  - A 1 s run takes about 2 min on the Mac, plus 8.5 s to build.
-  - Files: `runs/s22/fly2_zip/fly_brain.zip` (sha256 f846617c…), the three runs' manifests, spikes and registry reads, and the job scripts plus `compare.py`. Packing is deterministic by construction (unit-tested on a small zip); a full repack at 1cbccff has not been compared byte for byte.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test), then flyemu.check and the scoreboard as zip `world/` data. Nothing in the model changed; no switch was added or adopted.
+- **Merging:** `main` was fast-forwarded to fa679f6. The zip work since then is 1cbccff, 27676a1, 793c3eb, b595250, 089022c, c248318 and this docs commit. **`main` can fast-forward to worktree-fly2.**
+- **The zip:** `runs/s22/fly2_zip/s2/fly_brain.zip`.
+  - 134,765,680 bytes, 476 members, sha256 65892c89…, packed from c248318.
+  - It is a build artifact, not in git (over 50 MB). Rebuild it with `.venv/bin/python -m flyemu.pack --out X.zip`, which refuses a dirty tree.
+  - The first zip (F-ZIP-1) is at `runs/s22/fly2_zip/fly_brain.zip`.
+- **Entry points** (`docs/FLY_BRAIN_ZIP.md`, "Entry point" and "Check and scoreboard"). Each also takes `--tree .` to run the same path from the repo.
+  - `PYTHONPATH=X.zip/code python -m flyemu.run X.zip --ms 1000 --out run/ [--deny <repo>]`: the closed-loop smoke run. Identical to the tree run (F-ZIP-1).
+  - `python -m flyemu.check X.zip --out c/`: runs the zip's tests, rebuilds the ledger from the zip's tables, and prints the fill fraction and the scoreboard. Takes about 15 min (tests); `--no-tests` takes seconds.
+  - `python -m flyemu.score X.zip --protocol <name> --out s/`: plays one scoreboard protocol from `world/` (source `data/world/`).
+- **Scoreboard from the zip** (F-ZIP-2). Both built protocols are spike-for-spike identical zip vs tree, and both equal their reference scripts exactly.
+  - PER to labellar sugar: **PASS**, MN9_L 5.7 Hz (bar > 5, mean of seeds 0-9). The margin is thin.
+  - Giant-fibre escape: **FAIL**. The GF spikes on every kick, but no TTMn, PSI or DLMn spike follows at the model default (gap junctions off).
+  - The other six items have no protocol. `data/world/scoreboard.json` gives the reason for each:
+    - stands and walks: mechanisms missing, and no closed-loop protocol harness yet;
+    - grooms: no test and no mechanism;
+    - leg sugar: needs a single "opens" number (decision below);
+    - optomotor turning and stable flight: need code.
+- **Ledger fill fraction, from the zip's own tables:** 0.42% of slots from data (measured + derived), also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities. The 793c3eb commit message understated the per-quantity change; F-ZIP-2 has the correction.
 - **Next, for fly2 (zip track):**
-  1. `python -m flyemu.check X.zip`: runs `tests/` from the extracted root and prints the ledger fill fraction from the zip's own tables.
-  2. Arenas and stimuli as data. Convert the probe protocols (ball, flight tether, sugar patch; flash, grating, looming, sugar/bitter, odour pulse, current injection) into `world/` files the runner plays through the sensory models. Each becomes a `BUILT_*` entry only once a zip-vs-tree identity run passes for it.
-  3. Identity across switches. Run the neutral-switch identity tests and one non-default profile from the zip.
-  4. Portability. Run the same zip on backhouse (Linux, its own runtime) with `--allow-runtime-mismatch`. Expect differences in floating-point results; measure them, don't assume.
+  1. **Leg sugar protocol.** Same harness as labellar sugar (LgLG4 + LgAG2 → MN9). It needs one number written down first: the MN9_L rate at 50 Hz drive that counts as "the route opens" (DECISIONS 6 Oct 00:41 has the four-part check without it). Ask the Director whether fly2 may set it or Ben must.
+  2. **Closed-loop protocol harness** (body stepped, sensing through the sensory models), so stands and walks can be written as data. Mechanism-blocked items will still FAIL, but they become regression checks.
+  3. **Identity across switches.** Run the neutral-switch identity tests and one non-default profile from the zip.
+  4. **Portability.** Run the same zip on backhouse (Linux, its own runtime) with `--allow-runtime-mismatch`. Measure the floating-point differences; don't assume them.
   5. Then the variation model (`variation/`) and the individual layer, per the spec.
 - **Earlier fly2 state, unchanged (details in FINDINGS F-GJ-7 and DECISIONS 21 Oct 00:25):**
   - N30 option B is UNDECIDED: class MN q 0.104, ρ 3.80 against ρ* 3.78.
@@ -511,6 +510,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | `gf_latency.py` on m10f + measured NT + measured PSP + N30 at the option-B values (class, MN5 L, MN5 R), seed 1 | consistency only (s21 fly2, F-GJ-7; Ryglewski already spent) | none; a build at measured values needs seed 2+ |
 | `docs/research/sealed/s21_gf_dlm_sealed.md` (GF→DLM 1:1 vs doublet, paired-pulse refractory period, following frequency, soma amplitude of the axon spike; sources Ryglewski et al. 2014 PNAS, Fayyazuddin 2006 and others) | **sealed, unread** (written by fly2's literature agent, 21 Oct). One header line ("Source 1 — Ryglewski S, Kadas D, … (2014)") was seen in a grep; no value. Value-free summary from the agent: Ryglewski 2014 states two following-frequency pairs, plots the refractory period without stating it, and gives 1:1 qualitatively; Fayyazuddin 2006 gives 1:1 and the spike shape qualitatively only | open once, for the DLMn build at measured values, after its pre-registration |
 | fly_brain.zip identity runs (s22 fly2, F-ZIP-1): m10f0, flat floor, no stimulus, 1 s, seeds 12 and 13 | seen as engineering output only (spike totals and hashes; no observation compared, nothing scored or selected) | seeds 12-13 were noted as reserved for the rung-1 G1 check; seed 12 has long been the smoke default. If G1 needs unseen seeds, use 14+ |
+| fly_brain.zip scoreboard protocols (s22 fly2, F-ZIP-2): `per_labellar_sugar` (LB3b/LB3c 100 Hz → MN9_L, seeds 0-9, bar > 5 Hz) and `gf_escape` (DNp01 kick train, seed 0, Augustin 2017 latency ranges) | regression checks on spent evidence: the sugar gate is the session 10 fit and class-search gate, and the Augustin ranges are seen or spent (rows above). Results: PASS 5.7 Hz; FAIL, no motor neuron follows | a PASS or FAIL here is not a held-out test; a changed model needs its own held-out check elsewhere |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 00:41; F-VISION-15): medulla FAIL 1 of 8, photoreceptor FAIL 0 of 8 | the next candidate needs seed 3 or a new test |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |

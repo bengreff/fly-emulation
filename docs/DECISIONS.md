@@ -3707,3 +3707,48 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct, after F-
 - **Determinism.** Members get fixed dates and a sorted order, and the manifest has no clock time. The child runs with `PYTHONHASHSEED=0`, and `FLYEMU_*` environment variables are dropped and recorded.
 
 **Acceptance (registered in the brief before running).** A 1 s m10f0 smoke run (seed 12, ≥ 5 synapses, flat floor) from the zip, in a fresh temp dir with the repo denied, must be spike-for-spike identical to the same run from the repo tree. Falsifier: any difference in the spike arrays, the final body pose or the registry reads. Result: FINDINGS F-ZIP-1.
+
+### fly2: scoreboard protocols as zip world/ data; flyemu.check (21 Oct, 01:10)
+**Brief.** Director, 21 Oct: build flyemu.check, then turn the probe arenas and stimuli into zip `world/` data, each tested zip against tree, so the scoreboard runs from the zip alone. The zip is over 50 MB, so it stays a build artifact; the packer is committed.
+- **Format.** Source files live in `data/world/` (git-tracked) and are packed as the zip's `world/`.
+  - `scoreboard.json` lists the 8 fixed items in order. Each names a protocol or gives the reason there is none.
+  - A protocol (`protocols/<name>.json`) holds the brain build, settings, seeds, duration, stimulus name, readout, pass conditions, bar source, reference script and evidence status.
+  - A stimulus (`stimuli/<name>.json`) is a list of timed events on cell types.
+  - `flyemu.score` only interprets these files. No number lives in its code.
+- **Two harnesses, each a copy of the script whose numbers it must reproduce.**
+  - `assay` builds the brain as `scripts/assay_pathways.py` does: no stubs, no body, no Q10, and a fresh network per seed.
+  - `organism` builds it as `scripts/probes/gf_latency.py` does: Organism, with the body not stepped.
+  - Both step only the network. The sugar gate has always been scored by the first and GF latency by the second, so this keeps both comparable with every earlier number.
+  - The cost: the two protocols do not share one brain build. Moving to a single harness would mean re-scoring both gates. Not done here.
+- **Built:**
+  - `per_labellar_sugar`: LB3b/LB3c Poisson drive at 100 Hz, read out on MN9 with incompletely traced cells dropped (which leaves MN9_L). Pass: mean over seeds 0-9 > 5 Hz, the class-search gate.
+  - `gf_escape`: DNp01 kicked 20 times; TTMn, PSI and DLMn latency plus conduction delay, against Augustin 2017. Pass: the gf_latency verdict, with gap junctions at the model default of 0.
+- **Not built, with the reasons in `scoreboard.json`:**
+  - Stands and walks: expressible as data, but both fail for want of mechanisms, and the closed-loop harness is not yet a protocol harness.
+  - Grooms: no test and no mechanism.
+  - Leg sugar: same harness, but its bar is the four-part check of 6 Oct 00:41, with no single number for "opens". Writing that number is a decision, not plumbing.
+  - Optomotor turning and stable flight: these need code. Vision bypasses the World, and flight kinematics are imposed.
+- **Evidence status.** Both built protocols score spent evidence: the sugar gate was a fit target, and the Augustin latencies have been scored since s13. Their runs are regression checks, not held-out tests. The register says so.
+- **Acceptance (written before the zip runs finished).** For each protocol:
+  - The tree run must reproduce its reference script exactly: the per-seed MN9 rate for sugar, and every gf_latency type field for GF.
+  - The zip run, from a scratch directory with `/Users/ben/fly-emulation` denied, must give per-seed spike hashes over every neuron equal to the tree run's.
+  - flyemu.check from the zip must give the same test outcomes as from the tree, and a rebuilt ledger equal to the packed one.
+  - Any difference fails the zip, whatever the verdicts are.
+  - GF tree vs reference had already finished (exact match, FAIL) when this was written; the rest had not.
+
+### fly2: a closed-loop protocol harness; stands and walks as zip world/ data with no bar yet (21 Oct, 02:16)
+
+- **Harness `closed_loop`** (`flyemu.score`): the Organism with the body stepped and every sense reaching the brain. Each step is observe, sense, network step (with the stimulus kick) and motor step, the loop of `flyemu.run` and `scripts/probes/command_walk.py`. Body samples every 10 steps (1 ms) after the motor step, as command_walk takes them. Each trial also records the final-pose hash, the NaN state and the MuJoCo warning count.
+- **Readouts.**
+  - `leg_oscillation` is command_walk.py's per-leg summary over 300-1300 ms: the dominant tarsal-tip fore-aft frequency in 3-25 Hz, the band's power share, the peak-to-peak amplitude, the thorax displacement, and the leg motor neuron and DNg100 rates.
+  - `posture` gives the thorax height (median, minimum, last) and its horizontal drift.
+- **Protocols.**
+  - `walks_dng100`: DNg100 at 100 Hz, 300-1300 ms, seed 0, 1.4 s. Reference: `command_walk.py --type DNg100 --hz 100 --seed 0` at m10f0.
+  - `stands_flat_floor`: no stimulus, seed 12, 1 s. Reference: the F-ZIP-1 tree run of `flyemu.run` (same build, seed and loop).
+- **No bar, so the verdict is NO BAR.** What counts as standing (a thorax height) or walking (a step-frequency band, how many legs, a forward displacement) is not written down anywhere as a number. Choosing one is a decision for the Director or Ben, not plumbing. Each protocol carries a `bar_todo`, and `flyemu.score` refuses a protocol with neither pass conditions nor a `bar_todo`. Proposals go to the Director in the report and are not adopted. Both items still fail today for want of mechanisms (F-STAND-3 to 6; F-BYPASS-7, F-XCONN-2).
+- **Evidence.** Seed 12 is the F-ZIP-1 engineering seed. Seed 0 is exploratory for command_walk. Nothing is scored without a bar.
+- **Acceptance (written before any run of these protocols):**
+  - Walks: the tree run equals command_walk.py's output on every field it reports, at the script's rounding.
+  - Stands: the tree run reproduces the F-ZIP-1 tree run's spike hash (770807852827186b…) and final-pose hash (3ec293bad4b3b7b7…).
+  - For both, the zip run (scratch directory, `/Users/ben/fly-emulation` denied) equals the tree run: spike hash, final-pose hash and every readout field.
+  - Any difference fails the zip.
