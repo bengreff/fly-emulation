@@ -1509,3 +1509,48 @@ The registered sensitivity prediction ("follows except at low ρ with high q") i
 - (A) the soma amplitude of the "small and broad" axon spike in Fayyazuddin 2006 is a quick read of ρ < 4.
 
 **Not adopted.** That needs a battery run, and the doublet and the tau_m blank should be addressed first.
+
+### F-GJ-7: the male-CNS MN5 skeletons put class MN at q 0.104 and ρ 3.80, on the follow boundary (ρ* 3.78; UNDECIDED). At these derived values DLMn fires once per GF spike but late (3.2 ms), or not at all. The doublet at the guessed values is the synaptic tail, not soma-axon ping-pong (fly2, s21, 21 Oct 00:21; pre-registered DECISIONS 21 Oct 00:07; results entry 00:18; nothing adopted)
+**What was derived.** Option B of `docs/research/s20_n30_pin_q_rho.md`: the coupling ρ and the axon membrane share q from the two DLMn a, b (MN5) skeletons in male-cns v1.0 and their PSI synapses (`scripts/connectome/mn_axon_geometry.py`).
+- **Geometry:** derived from EM (skeleton radii and path lengths).
+- **Rin:** 102 MΩ, measured (Fayyazuddin 2006).
+- **Axial resistivity Ri:** 200 Ω·cm, range 102-311, fitted (Gouwens & Wilson 2009).
+
+| MN5 | ℓ base → median contact | q | ρ at Ri 200 (102-311) | ρ* |
+|---|---|---|---|---|
+| L (801970) | 76 µm | 0.156 | 2.03 (1.31-3.98) | 3.51 |
+| R (801295) | 23 µm | 0.052 | 5.57 (3.58-10.9) | 4.03 |
+| Class mean | 49 µm | **0.104** | **3.80 (2.44-7.45)** | **3.78** |
+
+- **Verdict: UNDECIDED.** The Ri range spans the boundary, and the two MN5s of one fly sit on opposite sides of it. Any shrinkage correction would push the class value to FAIL.
+- **Table.** `two_compartment_classes.csv` class MN now holds these derived values, with brackets that span both cells and the Ri range. The switch stays neutral (off).
+- **DLMn c-f.** Reported, not used. The base rule fails or is fragile in 3 of 8 cells, where the PSI contacts spread over several branches.
+
+**Consistency runs** (seed 1, gaps on, 20 trials; not scored, because Ryglewski 2014 is spent):
+
+| Values | DLMn a, b follow | Spikes per GF | Muscle latency |
+|---|---|---|---|
+| Class (0.104, 3.80) | 19/20 | 1 | 3.20 ms |
+| MN5 L (0.156, 2.03) | 20/20 | 1 | 2.80 ms |
+| MN5 R (0.052, 5.57) | 0/20 | 0 | |
+| s20 guessed (0.07, 1.6) | 20/20 | 2 | 2.20 ms |
+
+**Doublet mechanism** (`scripts/probes/n30_doublet_mechanism.py`, an exact replica of the pair update; figure `docs/media/s21_fly2_n30_doublet.png`, viewed):
+- When the 2 ms refractory period ends, the axon's target potential is 11.5 mV from the PSI current and 0.11 mV from the soma, against a 7 mV threshold.
+- Removing the soma-to-axon term keeps both spikes; cutting the synaptic current after the first spike leaves one. **The 5 ms synaptic tail causes it.** The reset to rest, with no afterhyperpolarisation, lets the tail act.
+- Any one of these alone removes it at the s20 values:
+  - a refractory period ≥ 3.0 ms;
+  - an AHP ≥ 7.5 mV;
+  - tau_s ≤ 1.8 ms;
+  - tau_m 4.4 ms.
+
+**Synaptic decay, from the replica.** At tau_m 20 and the class values, every decay in the Drosophila nicotinic range (1.1-4 ms) gives exactly one spike, early. The shared 5 ms gives none. This makes a measured PSI→DLMn decay the single candidate that fixes both latency and spike count.
+
+**The MN5 tau_m of 4.4 ms is suspect.**
+- It is Rin × 43 pF, but the skeleton membrane is about 25,000 µm² (about 250 pF).
+- Rin × that area gives Rm of about 25 kΩ·cm² (inside the fitted Drosophila range) and tau_m of about 25 ms.
+- The blank stays open. It is not applied.
+
+**Ben's measurement list.** `docs/MEASUREMENT_LIST.md` item 1, a single MN5 whole-cell recording, would measure q, ρ, tau_m, threshold, AHP and refractory period, and the PSI EPSP decay in one cell.
+
+**Spent:** nothing new. The option-B runs reuse the spent Ryglewski 2014 seed 1 as consistency checks.
