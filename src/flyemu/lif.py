@@ -268,6 +268,16 @@ def _two_compartments(reg: Registry, conn: Connectome) -> dict | None:
     root = Path(__file__).resolve().parents[2] / "data" / "params"
     tab = pd.read_csv(root / TWO_COMP_TABLE, comment="#").rename(columns={"class": "cls"})
     cls = pd.read_csv(root / TWO_COMP_CLASSES, comment="#").set_index("class")
+    # s15 (fly): an arm control leaves a whole class out of a run (cell_class:<class>|two_compartments_in_run=0);
+    # neutral 1, read only when set, so the rows of every class are on with the switch
+    off = [c for c in tab.cls.unique() if f"cell_class:{c}|two_compartments_in_run" in reg.overrides
+           and not float(reg.require(f"cell_class:{c}", "two_compartments_in_run", units="boolean",
+                                     model_use="arm control: this two_compartment.csv class is on in this run "
+                                               "(s15)", subsystem="neuron_biophysics", minimal=1.0,
+                                     conventional=1.0, minimal_note="neutral 1: every class is on"))]
+    tab = tab[~tab.cls.isin(off)]
+    if tab.empty:
+        return None
     pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
     cell_row = np.full(conn.n, -1, np.int32)
     edges = []

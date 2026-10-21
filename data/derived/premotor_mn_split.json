@@ -1,0 +1,168 @@
+{
+ "registration": "DECISIONS 21 Oct 01:25 (s15b)",
+ "dataset": "male-cns:v1.0",
+ "method": "premotor_mn_geometry.split: soma + primary neurite | everything distal to the first branch point with >= FRAC of the cable off the primary neurite",
+ "Ri_ohm_cm": {
+  "lo": 102.0,
+  "mid": 200.0,
+  "hi": 311.0
+ },
+ "classes": {
+  "core_premotor@0.05": {
+   "n_cells": 12,
+   "n_derived": 12,
+   "q": 0.933304012690945,
+   "q_lo": 0.9017971401156741,
+   "q_hi": 0.9554957004419738,
+   "frac_syn_distal_median": 0.9748398933727767,
+   "frac_syn_distal_q10": 0.938038263243127,
+   "split_dist_um_median": 96.9845847101336,
+   "gc_nS_mid_median": 2.631865859216555,
+   "cm_total_pF_median": 203.50478190281976,
+   "derivable": true,
+   "Rin_MOhm": [
+    150.0,
+    600.0,
+    1000.0
+   ],
+   "Rin_basis": "guessed",
+   "rho": 1.6687975810786906,
+   "rho_cells_q10_q90": [
+    0.9678232337681676,
+    2.385959384813115
+   ],
+   "rho_lo": 0.15559859063796905,
+   "rho_hi": 7.797252891546128
+  },
+  "leg_MN@0.05": {
+   "n_cells": 94,
+   "n_derived": 94,
+   "q": 0.7248473762181792,
+   "q_lo": 0.5174138529943354,
+   "q_hi": 0.8800596813000272,
+   "frac_syn_distal_median": 0.9495438794993282,
+   "frac_syn_distal_q10": 0.8154450966664871,
+   "split_dist_um_median": 80.8748495195332,
+   "gc_nS_mid_median": 4.60061730402435,
+   "cm_total_pF_median": 62.33390226628369,
+   "derivable": true,
+   "Rin_MOhm": [
+    150.0,
+    300.0,
+    700.0
+   ],
+   "Rin_basis": "measured",
+   "rho": 222.83559469460127,
+   "rho_cells_q10_q90": [
+    0.7914350055492805,
+    4.140785922904246
+   ],
+   "rho_lo": 0.25448070917983295,
+   "rho_hi": 18.944772196293933
+  },
+  "core_premotor@0.01": {
+   "n_cells": 12,
+   "n_derived": 12,
+   "q": 0.9485785568335263,
+   "q_lo": 0.9319214420666333,
+   "q_hi": 0.9671640654907194,
+   "frac_syn_distal_median": 0.9930890144220776,
+   "frac_syn_distal_q10": 0.9740760542068977,
+   "split_dist_um_median": 90.482104523531,
+   "gc_nS_mid_median": 2.756123295751514,
+   "cm_total_pF_median": 203.50478190281976,
+   "derivable": true,
+   "Rin_MOhm": [
+    150.0,
+    600.0,
+    1000.0
+   ],
+   "Rin_basis": "guessed",
+   "rho": 1.756856607134238,
+   "rho_cells_q10_q90": [
+    1.024292543464345,
+    2.5019968246544617
+   ],
+   "rho_lo": 0.16467725779169531,
+   "rho_hi": 8.17646021128909
+  },
+  "leg_MN@0.01": {
+   "n_cells": 94,
+   "n_derived": 94,
+   "q": 0.8453940954985997,
+   "q_lo": 0.7416366251386479,
+   "q_hi": 0.9373303583397854,
+   "frac_syn_distal_median": 1.0,
+   "frac_syn_distal_q10": 0.9757055607412448,
+   "split_dist_um_median": 44.74267867558251,
+   "gc_nS_mid_median": 13.84785490544725,
+   "cm_total_pF_median": 62.33390226628369,
+   "derivable": true,
+   "Rin_MOhm": [
+    150.0,
+    300.0,
+    700.0
+   ],
+   "Rin_basis": "measured",
+   "rho": 1217.9496968351652,
+   "rho_cells_q10_q90": [
+    1.1288714635422585,
+    4639.231168484993
+   ],
+   "rho_lo": 0.36298117798786445,
+   "rho_hi": 21225.240640127413
+  },
+  "core_premotor@0.2": {
+   "n_cells": 12,
+   "n_derived": 8,
+   "q": 0.8709751955613576,
+   "q_lo": 0.7216527286122307,
+   "q_hi": 0.9583775963142586,
+   "frac_syn_distal_median": 0.9643986969978786,
+   "frac_syn_distal_q10": 0.7665901767405526,
+   "split_dist_um_median": 101.40461132016233,
+   "gc_nS_mid_median": 2.0314308268693217,
+   "cm_total_pF_median": 159.8707771842228,
+   "derivable": false,
+   "Rin_MOhm": [
+    150.0,
+    600.0,
+    1000.0
+   ],
+   "Rin_basis": "guessed",
+   "rho": 1.3591345297194857,
+   "rho_cells_q10_q90": [
+    0.8309340832782947,
+    2.06260338889537
+   ],
+   "rho_lo": 0.1335906886299509,
+   "rho_hi": 6.740533950638463
+  },
+  "leg_MN@0.2": {
+   "n_cells": 94,
+   "n_derived": 49,
+   "q": 0.6515904000943291,
+   "q_lo": 0.445500776675448,
+   "q_hi": 0.8346835399062363,
+   "frac_syn_distal_median": 0.8003155931717114,
+   "frac_syn_distal_q10": 0.5437123986202146,
+   "split_dist_um_median": 101.77761332937725,
+   "gc_nS_mid_median": 5.195145729663323,
+   "cm_total_pF_median": 90.52164640617855,
+   "derivable": false,
+   "Rin_MOhm": [
+    150.0,
+    300.0,
+    700.0
+   ],
+   "Rin_basis": "measured",
+   "rho": 1.800777866807821,
+   "rho_cells_q10_q90": [
+    0.7139659044666535,
+    3.2822493266149633
+   ],
+   "rho_lo": 0.22957103037512971,
+   "rho_hi": 15.016826984512901
+  }
+ }
+}
