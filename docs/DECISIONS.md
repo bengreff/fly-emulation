@@ -3099,3 +3099,26 @@ DIAGNOSTIC, forced drive; Director brief (14 Oct, after S4b). No fitting, no new
 
 ### Results X1 simulation (14 October, 02:21; F-XCONN-2; nothing adopted)
 Scored as pre-registered, before viewing: I1 not recruited in any arm or drive (T1L Vmax ≤ −47.5 mV against −45). S4b alternation pass fails in all 9 runs (0 transfer-pass pools, no antagonist pair). Viewed `docs/media/s13_xconn_rasters_{25,40}mv.png`: arms indistinguishable at the MN layer. Interpretation branch "neither": the male-CNS counts are not the break. F-XCONN-1's T1 undercount stands as a dataset finding; no change to the model's counts (MANC substitution was a control, not a candidate). Rule 16 noted (Director, 14 Oct): from the next backhouse launch, cap OMP/MKL/OPENBLAS/JAX threads at 4 per job and check `uptime` first; X1 was launched before the rule.
+
+### fly2 pre-registration T1F: inferred T1 synapse fill from MANC and BANC (20 Oct, 22:02, rule written before any code, count or run)
+Brief: Director 20 Oct (Ben's goal: fly_brain.zip, a complete functional emulation; inferring missing data is core). Development mode. Motivation: F-XCONN-1 (male-CNS T1 per-cell matched input 0.58 of MANC, T2 0.69, T3 0.82; BANC sits with MANC; reading: reconstruction undercount, inferred).
+- **Unit.** x_X(A, B, s) = synapses from all cells of type A (any neuromere, any side) onto the cells of type B with soma in T1 on side s, divided by the number of those B cells, in animal X. Raw counts, before the model's 5-synapse cut.
+- **Animals.**
+  - Male CNS: our cache; included cells (Traced or typed, as `connectome.build`); type, somaNeuromere, somaSide from the dataset.
+  - MANC: Pugliese_cpg_2025's full-MANC matrix (`W_20260522_allSynapses`, sign dropped), aggregated by MANC's own type, somaNeuromere and somaSide labels (not by body matching).
+  - BANC: Pugliese's T1 premotor extract (`W_20260217`, `cell_type`, `side`). It has no neuromere label and holds only premotor-network cells, so it enters a pair only if the extract holds exactly as many B cells on side s as the male CNS has in T1 on side s, and A is in the extract. Its pre side is limited to the extract, so it can only read low, which can only lower the target.
+- **Target** t = median over the animals that have a value for the pair, the male CNS included (male CNS + MANC: the mean of the two; with BANC: the median of three).
+- **Factor** f = t / x_mcns if x_mcns > 0, x_manc > 0 and t > x_mcns; otherwise 1. Fill only, never below 1, no cap (t never exceeds the largest animal's value).
+- **Application.** Every male-CNS edge from a type-A cell onto a T1 type-B cell on side s that the model keeps (≥ 5 synapses) is multiplied by f (weights become non-integer). Edges below the cut stay out even if the filled count would cross it. Untyped cells, non-T1 post cells, signs and every other quantity are unchanged. **No edge is added or removed: no partner is invented.**
+- **Label:** inferred (cross-animal). Switch `connectome:T1|fill_from_other_animals` (boolean, neutral 0) reading `data/params/t1_fill.csv`, built by `scripts/connectome/t1_fill_table.py` with the source files pinned by sha256.
+- **Validity range:** T1 post cells only; assumes the T1 deficit is reconstruction, not biology (F-XCONN-1 reading); assumes per-post-cell input by type is conserved across animals; no ROI or neuropil split; the fill-only rule raises the T1 total above the median of totals (measured below).
+- **Count audit, before and after (no simulation), stated expectations:**
+  1. T1 per-cell matched-input ratio male CNS/MANC (F-XCONN-1 metric; T2/T3 untouched as reference): expect 0.58 → about 0.8-0.95.
+  2. I1 (IN16B036) T1L/T1R inputs (1,176/836 now; T2/T3 copies 2,110-2,509; MANC 2,489-2,932): expect about 1,700-2,300. E2→I1 T1L/T1R (38/27; MANC 71/60, BANC 50/53): expect about 50-60/40-55.
+  3. Pairs filled, edges scaled, synapses added, factor distribution, edges below the cut that would cross it; edge set identical (checked).
+  4. Type-name agreement male CNS vs MANC for T1 cells (fraction of T1 post types found in MANC T1 on the same side).
+- **Held-out checks** (the rule is fixed above and is not changed after seeing these; fill off rerun on the same code as the baseline; m10f0, seed 12, min_synapses 5):
+  - **H1, bypass S2 DNg100**, brain off, 15/25/40 mV (fly's `bypass_s2_descending.py`, X1's s2 settings). Pass = the harness's own `passes` (a rhythmic MN pool, excess > 0.10 at 4-25 Hz, with antagonist or left-right r ≤ −0.3). Also read I1 recruitment (T1L/T1R I1 spikes or Vmax ≥ −45 mV). **Predicted FAIL in all 3, and I1 not recruited**: MANC counts across the whole VNC (X1 Xv) did neither, and this fill is a smaller change confined to T1.
+  - **H2, step R reach gate**, 8 runs as `run_proprio_reach.sh` (DECISIONS 13 Oct 23:58 criteria). **Predicted NO REACH 0/8**: F-REFLEX-2's block is first-hop transmission, which counts did not fix in X1 or S4b. Only the lf arms have their MN pools inside the fill.
+  - Falsifier for "the male-CNS T1 undercount is a cause of the motor failure": H1 and H2 both unchanged from fill off. If either passes, the fill becomes an adoption candidate (gate, battery, viewed figure), not adopted here.
+- Rasters viewed for H1 (fill on vs off), the reach figure for H2.
