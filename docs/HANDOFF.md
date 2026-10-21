@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 02:31 CDT. Session 15, second Director brief after a /clear: decide the leg-MN spike zone, run s15c gate 2, step back if the stop rule applies, and pre-register the octopamine state arm. Usage is near tonight's cap, so stop at a clean commit by about 04:30. Ben's notes: two compartments are allowed where a point model provably fails; "we are trying to discover the minimum for functional behavior". Take clean fidelity steps, and don't go to a fitted synaptic scale.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 02:29 CDT. Session 15, second Director brief after a /clear: decide the leg-MN spike zone, run s15c gate 2, step back if the stop rule applies, and pre-register the octopamine state arm. Usage is near tonight's cap, so stop at a clean commit by about 04:30. Ben's notes: two compartments are allowed where a point model provably fails; "we are trying to discover the minimum for functional behavior". Take clean fidelity steps, and don't go to a fitted synaptic scale.
 
 **s15c gate 2 DONE: the stop rule applies, and the morphology path is PARKED (F-S15-4; DECISIONS 21 Oct 02:17 decision + operational form, 02:20 results; commit 9806ac7).**
 - **Spike-zone decision (Director):** leg MNs use the arbor base (s15b split + 20 µm), with the trunk end as the sensitivity run. Both are in `morph.spike_zone` as kinds `arbor_base` and `trunk_end`. The measurement is item 2 in `docs/MEASUREMENT_LIST.md`.
@@ -30,7 +30,7 @@
   3. Add the per-cell bound check.
   4. Copy `runs/s15/arms/run.sh` (rule 16 gate, done-files) to `runs/s16/oa/` on backhouse (`~/fly-m10f`; sync the code first).
   5. Score with `s14_score.py` unchanged, view rasters/frames/chain, then FINDINGS F-S16-1.
-- **Pending:** the Sonnet row check of `docs/research/s13_neuromodulation_effects.csv` (output `docs/research/s16_neuromod_rowcheck.csv`) was still running at 02:31. If the file exists, add a one-line result to the s16 entry in DECISIONS. If it doesn't, re-run it (the OA rows first).
+- **Pending:** the Sonnet row check of `docs/research/s13_neuromodulation_effects.csv` (output `docs/research/s16_neuromod_rowcheck.csv`) was still running at 02:29. If the file exists, add a one-line result to the s16 entry in DECISIONS. If it doesn't, re-run it (the OA rows first).
 - **Measurement list:** item 3 is the OA effect on adult VNC premotor/leg-MN rest, Rin and f-I.
 
 **s15b DONE: 0/12 pass (F-S15-2).** TM/TPM silenced the leg MNs through the soma-placed `spontaneous_drive` (0.24× at the spike zone), an arm-design confound. Runs are in Mac `runs/s15/arms/`. Nothing is running on backhouse.
