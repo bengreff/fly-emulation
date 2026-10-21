@@ -1,23 +1,27 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 03:13 CDT. Session 16, a Director brief after a /clear: run the s16 octopamine-state arm as registered, score it, view it and commit. If it fails, write the morning-report paragraph (below). Park by about 04:30. Ben's notes still apply: two compartments only where a point model provably fails; "we are trying to discover the minimum for functional behavior"; no fitted synaptic scale.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 03:57 CDT. Session 17, a Director brief after a /clear: score all of s17 (the closed proprioceptive loop) against its registration, view it, write the finding, update the ruled-out paragraph, commit, park by about 04:45. Ben's notes still apply: two compartments only where a point model provably fails; "we are trying to discover the minimum for functional behavior"; no fitted synaptic scale.
 
-**s16 DONE: 0/9 pass (F-S16-1; DECISIONS 21 Oct 02:35 operational form, 03:12 results).**
-- **What ran:** `data/params/octopamine_state.csv` (OA2 / OA4: +2 / +4 mV `class:<c>|tonic_drive` on 33 Octβ premotor classes, 11,294 cells; OA4M also +4 mV on MN_leg).
-  - Bound check `scripts/probes/s16_oa.py check`: 0 breaches, smallest gap 3.0 mV.
-  - 28 runs on backhouse, all exit 0. Copied to Mac `runs/s16/oa/`; backhouse `~/fly-m10f/runs/s16/oa/`.
+**s17 DONE: 0/24 pass (F-S17-1; DECISIONS 21 Oct 03:18 pre-registration, 03:56 results).**
+- **What ran:** `bypass_s2_descending.py --proprio` (neutral switch, off by default). Leg proprioceptor drive is computed from `body.observe()` every step through a FIFO delay. Arms: {M0, OA4} × gain {8, 40 mV} × delay {3, 1.5 ms} × DNg100 15/25/40 mV, plus an open-loop repro and two 0 mV feedback-only runs.
+  - 27 runs on backhouse, all exit 0. Mac copy `runs/s17/loop/`; backhouse `~/fly-m10f/runs/s17/loop/`.
 - **Result:**
-  - 0 antagonist pairs in all 12 S2 runs.
-  - Premotor rate at 25 mV rises from 0.13 to 0.82 Hz.
-  - I1 fires in most neuromeres under OA4 (first time since s13). But many of its "recruited" calls come where the core cycle has collapsed to 4-7 Hz, and I1 reaches the leg MNs at only a median 0.21 mV per spike.
-  - Brain-off 0 mV: no rhythm in any arm (comparison spent).
-  - Viewed: `docs/media/s16_oa_{rasters_{0,15,25,40}mv,chain_T1L_{25,40}mv,frames_all}.png`. Rasters co-active; frames show no stepping. Under OA the wings open at lower drive.
-- **Nothing adopted.** The S4b recruitment order is still unspent. `MEASUREMENT_LIST.md` item 4 added: the unitary core → leg-MN PSP.
-- **Tooling:** `bypass_rasters.py` now summarises long override lists in panel titles (`override_text`).
-- **Backhouse:** nothing of ours running; tmux `s16oa` exited. I stopped my Mac keep-alive (02:36:58). The `ssh backhouse ... sleep infinity` from 01:29:56 isn't this session's, so I left it. tmux `inq2s7` is another project's.
+  - The open-loop repro equals s16 exactly.
+  - 0 antagonist pairs in all 24 runs; activity stops at drive-off in all of them.
+  - Feedback adds at most 0.4 Hz to the leg MNs (OA4g40 at 40 mV: 5.78-5.85 against 5.46 Hz open loop) and doesn't recruit I1 under M0.
+  - Delay makes no difference (≤ 0.16 Hz).
+  - No rhythm from feedback alone at 0 mV.
+- **New fact:**
+  - The loop is self-limiting. The legs barely move (joint SD 6-12°), so the chordotonal afferents fire at 0.3-12 Hz per cell. The same gain gives 76-78 Hz under F-REFLEX-2's joint clamp. The 78.4 Hz bound was never approached.
+  - At gain 40, feedback breaks up the synchronous tonic tibia-flexor tick line on lf/lm/rm (fold peak-to-mean 8.6 → 2.9-4.5) but not on lh/rf/rh. Why the hind legs are spared isn't checked.
+- **Viewed:** `docs/media/s17_loop_rasters_{0,15,25,40}mv.png` (each puts the s16 open-loop M0/OA4 panels beside the loop arms) and `docs/media/s17_loop_frames.png`. No leg alternates and nothing steps; it looks like s16.
+- **Nothing adopted.** `--proprio` stays off; `afferent:all|rate_gain` stays at the profile's 8. The S4b recruitment order is still unspent.
+- **Not run:** the replay half of S4, an imposed walking-like joint trajectory under DNg100 + OA4. It would put the afferents at walking rates whatever the MN output does. F-REFLEX-2 ran the clamp only with brain off, no drive and M0.
+- **Research note committed, unchecked:** `docs/research/s17_premotor_hemilineages.md` (Sonnet scan, s17). It ranks hemilineages for the query below: 19A/19B, then 16B beyond I1 plus 03A/04B, then 13A/13B, then the DNg97/DNg74 targets. It cites Sapkal et al. 2026 bioRxiv, which reports that the fly's walking rhythm survives deafferentation, and an arXiv preprint (Guan et al. 2609.38665), both new to the project. Check that both sources exist before using any row.
+- **Backhouse:** nothing of ours running; tmux `s17loop` exited; load 22 at 03:50. I started no keep-alive. The Mac `ssh backhouse ... sleep infinity` from 01:29:56 isn't ours (s16), so I left it. tmux `inq2s7` is another project's.
 
-**Morning-report paragraph (s16 failed, as briefed):**
-Since s13, eight single-cause candidates for the missing leg alternation have each been tested and ruled out, all with forced DNg100 drive, pre-registered and viewed:
+**Ruled out so far (morning-report paragraph, updated for s17):**
+Since s13, nine single-cause candidates for the missing leg alternation have each been tested and ruled out, all with forced DNg100 drive, pre-registered and viewed:
 - **Synapse counts:** MANC's counts don't help (F-XCONN-2).
 - **Synaptic scale:** a uniform scale large enough to match MN rates (16-25×) implies 0.34-0.53 mV per synapse, outside the measured insect range, and still gives no antagonist pair (F-BYPASS-7).
 - **MN gain:** the MN-side size exponent and glutamate sign don't help (F-BYPASS-6).
@@ -26,20 +30,38 @@ Since s13, eight single-cause candidates for the missing leg alternation have ea
 - **Two compartments:** a soma–arbor split (F-S15-2).
 - **Passive EM morphology:** spike-zone gain 1.01 on all 11,417 edges (F-S15-4).
 - **Octopamine state:** a premotor depolarisation of +2-4 mV (F-S16-1). This is the first arm that makes I1 fire, yet the MN pools stay co-active.
+- **Proprioceptive feedback:** the leg loop closed through the tethered body, at gains up to the top of the measured chordotonal range and across the 1.5-3 ms delay band, with and without the OA4 state (F-S17-1). The limit: in the loop the afferents never exceed 12 Hz, because the legs barely move, and the replay variant wasn't run.
 
-Every arm stalls at the same step. The core's rhythm exists (11-20 Hz), but one core spike moves a leg MN only 0.17-0.47 mV (median) against a 7 mV gap, or 26 mV for the slow tibia flexors. That holds whether the core fires more, bursts or recruits I1. Three things remain:
+Every arm stalls at the same step. The core's rhythm exists (11-20 Hz), but one core spike moves a leg MN only 0.17-0.47 mV (median) against a 7 mV gap, or 26 mV for the slow tibia flexors. That holds whether the core fires more, bursts, recruits I1 or gets sensory feedback. Two things remain:
 - **Connection-specific strength:** a few strong core → MN synapses, the synapse-specific rung.
-- **Proprioceptive feedback:** S4 proper, the closed loop, never run.
-- **A premotor driver outside the 106-cell core.**
+- **A premotor driver outside the 106-cell core:** a cell population we don't model as part of the rhythm, which carries the alternation to the MNs. This is a connectome query, next.
 
-The single measurement that would most cut this space is **item 4: a whole-cell recording from a front-leg MN while E2 (INXXX466), E1 (IN17A001) or I1 (IN16B036) is activated optogenetically**, to read the unitary PSP:
-- **About 0.2-0.5 mV:** the fly's hand-off is as weak as ours. Strength is then ruled out entirely, and feedback or another driver is the answer.
+The single measurement that would most cut this space is still **item 4: a whole-cell recording from a front-leg MN while E2 (INXXX466), E1 (IN17A001) or I1 (IN16B036) is activated optogenetically**, to read the unitary PSP:
+- **About 0.2-0.5 mV:** the fly's hand-off is as weak as ours. Strength is then ruled out, and the answer is another driver.
 - **Several mV from a few connections:** the break is synapse-specific strength, and we know which connections to fix.
 
-**Next, in order:**
-1. **S4 proper:** proprioceptive replay and closed loop at s 1. Read fly2's F-REFLEX-2 first: the afferent path stops at the first hop. Pre-register; this needs no measurement and is the only untested family left that doesn't wait on Ben.
-2. Ben's list items 3 and 4 (OA magnitude, unitary PSP).
-3. The tonic tibia-flexor drive (fitted 35.55 mV) is a separate MN-layer issue.
+**Next session, in order:**
+1. **Connectome query: premotor drivers of the T1 leg MNs outside the 106-cell core.** The 106 cells are the T1 instances of the six Pugliese core types (`CORE_TYPES` in `scripts/connectome/premotor_mn_geometry.py`: IN17A001, INXXX466, IN16B036, IN19A007, IN19A004, IN19A002) plus the T1 leg MNs (`LEG_TYPES`). Use the local cache (`data/cache/male_cns_neurons.parquet` and the connectome tables `connectome.load_tables` reads); it needs no neuPrint token.
+   - **Ask, per T1 antagonist MN pool pair** (coxa promotor/remotor, trochanter flexor/extensor, tibia flexor/extensor):
+     - Which presynaptic cells outside the core give the largest synapse share?
+     - Grouped by hemilineage: is 19A/19B, 13A/13B or 03A/04B the big one (per the research note)?
+     - Which receive DNg100 within two hops?
+     - Which are reciprocally inhibitory between the flexor-premotor and extensor-premotor sets?
+     - Which would the core drive directly?
+   - **Then:** are those candidates active in the s16/s17 runs? The S2 harness saves only pool rates and the core cells, so add a neutral per-cell spike save for a named cell list first.
+   - **Pre-register** the candidate set and the test before any run. Write the query as a script under `scripts/connectome/`, with a table in `docs/research/`.
+   - Check the research note's two new sources first (a Sonnet subagent, one page back).
+2. **Optional, cheap:** the S4 replay (an imposed walking-like joint trajectory under DNg100 + OA4, F-REFLEX-2's clamp harness `proprio_reach.py`), which closes the rate limit in F-S17-1. Pre-register it as a short add-on if the query stalls.
+3. Ben's list items 3 and 4 (OA magnitude, unitary PSP).
+4. The tonic tibia-flexor drive (fitted 35.55 mV) is a separate MN-layer issue.
+
+**s16 (kept for reference): 0/9 pass (F-S16-1).** OA2 / OA4 put +2 / +4 mV `class:<c>|tonic_drive` on 33 Octβ premotor classes (11,294 cells); OA4M also put +4 mV on MN_leg. Values are in `data/params/octopamine_state.csv`; bound check `scripts/probes/s16_oa.py check`: 0 breaches, gap ≥ 3.0 mV. Results:
+- No antagonist pair.
+- Premotor rate at 25 mV rose from 0.13 to 0.82 Hz.
+- I1 fires in most neuromeres under OA4, but reaches the leg MNs at a median 0.21 mV per spike.
+- No rhythm with brain off at 0 mV.
+
+Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` item 4 (the unitary core → leg-MN PSP) was added then.
 
 **Earlier tonight (s15, kept for reference).** s15c gate 2 parked the morphology path (F-S15-4, commit 9806ac7): spike-zone gain 1.015 core → MN, 0.974 E2 → I1, inh/exc 0.997. Leg MNs use the arbor-base spike zone (`morph.spike_zone` kinds `arbor_base`, `trunk_end`; measurement item 2). s15b 0/12 (F-S15-2): TM/TPM silenced the leg MNs through the soma-placed `spontaneous_drive`, an arm-design confound. s15c gate 1 (F-S15-3): `src/flyemu/morph.py` matches NEURON 9.0.2 to about 10⁻⁵ (check-only, `uv pip install --python .venv/bin/python neuron==9.0.2`); tools `scripts/probes/s15c_point_params.py`, `s15c_gate1.py {a,b,c}`, `s15c_gate2.py`. Row check of the s13 neuromodulation table: `docs/research/s16_neuromod_rowcheck.csv` (32 confirmed, 20 corrected, 6 wrong, 5 unverifiable); use the s13 table only through it.
 

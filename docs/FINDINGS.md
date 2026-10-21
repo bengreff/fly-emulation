@@ -1660,3 +1660,43 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Prediction check:** no pass (right). OA4 recruits I1 in some legs (right, more widely than predicted). OA4M brings the tonic line back stronger (right: 6.6 vs 3.8 Hz). "Sparse tonic firing at OA4 with brain off" was wrong: premotor stays silent, since +4 mV leaves a 3 mV gap and nothing else drives it.
 - **Reading:** raising premotor excitability raises premotor output about sixfold (0.13 → 0.82 Hz at 25 mV) and switches I1 on. The MN layer still gets only denser co-active flecks. Even a firing I1 reaches the leg MNs through 15 edges at a median 0.21 mV per spike (F-S14-1 hand-off table). So more core activity, including the missing stance inhibitor, still can't pattern the MNs through the point-model hand-off. The class-level state isn't the single missing piece. The falsifier is hit for every arm.
 - **Held-out:** the S4b recruitment order is still unspent (no passing arm).
+
+### F-S17-1: closing the leg proprioceptive loop through the tethered body and the connectome doesn't make the leg MNs alternate, under M0 or under the OA4 state where I1 fires. 0/24 S2 tries pass, with no antagonist pair in any run. The loop is self-limiting: the legs barely move, so the chordotonal afferents fire at only 0.3-12 Hz per cell, far below the 76-78 Hz a joint clamp gives at the same gain (s17, 21 Oct 03:55; pre-registered DECISIONS 21 Oct 03:18; DIAGNOSTIC, forced drive; nothing adopted)
+- **Arms:** {M0, OA4} × afferent gain {g8, g40} × delay {d3, d1.5 ms} × DNg100 15/25/40 mV = 24 tries. `bypass_s2_descending.py --proprio` drives all leg proprioceptor rows of `sensory.Afferents` (claw, hook, club, CS, hair plates; six legs) from `body.observe()` each step, through a FIFO delay. Plus the open-loop repro (M0 25 mV, no `--proprio`) and feedback without drive (M0g40d3, OA4g40d3 at 0 mV). m10f0, seed 12, brain off, thorax tethered. 27 runs on backhouse, all exit 0 (`~/fly-m10f/runs/s17/loop/`; Mac copy `runs/s17/loop/`).
+- **Repro control: pass.** The edited harness without `--proprio` equals `runs/s16/oa/s2/s2_M0_25mv.json` exactly (rates, MN counts, every pool; `s17_loop_summary.py`). The batch is valid.
+- **Score** (`s14_score.py`, unchanged; `runs/s17/loop/score.json`): **0 antagonist pairs in all 24 runs.** Transfer-pass pools: 0, except one each in OA4g8d3 40 mV and OA4g40d3 40 mV (lh coxa-trochanter +1) and OA4g40d1p5 40 mV (rm pleural remotor). Open-loop OA4 40 mV had one as well (rh coxa-trochanter +1). Activity stops at drive-off in every run (post/pre 0.89-0.97), so feedback sustains nothing. Viewing agrees:
+  - rasters `docs/media/s17_loop_rasters_{15,25,40}mv.png` (each: s16 open-loop M0, the four M0 loop arms, s16 open-loop OA4, the four OA4 loop arms): no leg alternates in any panel. The tonic tick line (39 ms period by autocorrelation here; earlier entries call it ~23 Hz) is there before drive, with co-active flecks after onset, denser under OA4, as in s16;
+  - `docs/media/s17_loop_rasters_0mv.png`: no rhythm without drive in any arm;
+  - frames `docs/media/s17_loop_frames.png` (8 runs: M0 open, M0g8/g40 at 25 mV, M0g40 at 40 mV, OA4g8/g40 at 25 mV, OA4g40 d3 and d1.5 at 40 mV): thorax low, legs splayed by 300 ms, wings opening from 500-700 ms, no stepping. Indistinguishable from the open-loop run.
+
+  | arm (d3 / d1.5 pooled where equal) | premotor during drive, 15/25/40 mV (Hz) | leg MN during drive, 15/25/40 mV (Hz) | first-order targets active, 15/25/40 mV (of 1,730) | MNs active, 25 mV | neuromeres with I1 spiking, 15/25/40 mV |
+  |---|---|---|---|---|---|
+  | M0 open (s16) | 0.05 / 0.13 / 0.38 | 4.43 / 4.81 / 5.37 | not computed | 68 | 0 / 0 / 0 |
+  | M0g8 | 0.05 / 0.14 / 0.37-0.40 | 4.43 / 4.81 / 5.32-5.38 | 20 / 30 / 91-94 | 68 | 0 / 0 / 0 |
+  | M0g40 | 0.07 / 0.16 / 0.41-0.43 | 4.44 / 4.80-4.82 / 5.55-5.60 | 24-26 / 39-53 / 200 | 67-69 | 0 / 0 / 0 |
+  | OA4 open (s16) | 0.54 / 0.82 / 1.17 | 5.05 / 5.29 / 5.46 | not computed | 96 | 5 / 4 / 5 |
+  | OA4g8 | 0.51 / 0.86-0.88 / 1.10-1.18 | 5.05-5.16 / 5.33-5.36 / 5.47-5.63 | 186-191 / 223-244 / 246-247 | 97-101 | 5 / 4-5 / 5 |
+  | OA4g40 | 0.62-0.68 / 0.90-0.94 / 1.19-1.24 | 5.07-5.22 / 5.48-5.59 / 5.78-5.85 | 349-367 / 352-371 / 427-442 | 103-111 | 4 / 4-5 / 3-5 |
+
+  Under OA4 the first-order count also includes cells that the OA4 shift itself drives: the first-order set overlaps the 33 OA classes, and the open-loop runs have no first-order readout. So the OA4 rows overstate what feedback adds (inferred).
+- **Afferent rates (measured in the model; bound inside, but never approached):**
+  - The chordotonal mean per run is 0.3-0.7 Hz at g8 and 2.9-10.6 Hz at g40. The highest single subtype in any run is 11.8 Hz (hook_flex or club under OA4g40). Every run is inside the 78.4 Hz bound, so no pass would have been void.
+  - The club (220 cells) and hook_flex (21) are silent under M0 and fire at about 10 Hz under OA4g40 during drive. OA4 sets only VNC-local classes, so this comes back through the body: OA4's motor output moves the legs differently (inferred).
+  - CS reads 13-15 Hz at g8 and 58-74 Hz at g40. That is the saturated in-air channel of F-REFLEX-2, so load is not tested.
+  - F-REFLEX-2's clamp gave hook 16 Hz at g8 and 76-78 Hz at g40. In the loop the legs move only as far as the weak MN output moves them (max joint-angle SD 6-12°), so the position and velocity afferents stay near rest. The loop can't bootstrap: closing it needs the movement that the missing hand-off would produce.
+- **Feedback does one visible thing at the MN layer, before and without drive.** At g40 it breaks up the synchronous tonic tick line on lf, lm and rm. The fold peak-to-mean of each leg's summed pool rate over 0-300 ms falls from 8.6 (open loop) to 4.5 / 3.3 / 2.9 on lf / lm / rm. On lh, rf and rh it stays at 8.4 / 7.5 / 8.6. The leg MNs keep firing at the same rate (pre-drive 3.77 → 4.10 Hz), just less in unison. At g8 the effect is smaller (lm 5.6, rf 5.8). Why the hind legs are spared isn't checked (afferent assignment per leg, F-REFLEX-2, is the first suspect).
+- **Delay:** d1.5 and d3 differ by at most 0.16 Hz in leg-MN rate and 0.08 Hz in premotor rate at any matched arm. The 1.5-3 ms band doesn't matter here.
+- **Prediction check:**
+  - No pass: right.
+  - g8 matches open loop: right (leg MN 4.81 vs 4.81 Hz at 25 mV).
+  - OA4g40 gives the most premotor activity and the first MN-layer change, co-active: right, though the change is small (+0.3-0.4 Hz at 25-40 mV).
+  - The delay edges don't differ: right.
+  - The 0 mV runs show only the tonic line: right, but the line is desynchronised at g40, which I didn't predict.
+  - "The FeCO recruits mostly inhibitory first-order cells": not checked this time, since the harness doesn't save cell identities.
+  - Not predicted: the afferents stay far below their clamp rates.
+- **Reading (the falsifier, as registered):** closed-loop leg proprioception, at gains up to the one that puts a clamped hook afferent at the top of the measured chordotonal range, across the inferred delay band, with or without the state where I1 fires, doesn't restore alternation. It adds at most 0.4 Hz to the leg MNs and decorrelates the tonic line. Proprioception isn't the single missing piece. Two limits on that statement:
+  1. The test covers the gain, not the rate. In the loop the afferents never got above 12 Hz.
+  2. The replay half of S4 (imposing a walking-like joint trajectory under DNg100 and OA4, so the afferents fire at walking rates whatever the MN output) was not run. F-REFLEX-2's clamp did this with brain off, no drive and M0, and the signal stopped at the first hop.
+
+  If Sapkal et al. 2026 holds (unchecked, `docs/research/s17_premotor_hemilineages.md`), the fly's own rhythm survives deafferentation, so a missing feedback loop isn't expected to be the cause anyway. Two candidates remain: connection-specific strength (measurement list item 4) and a premotor driver outside the 106-cell core (connectome query, next session).
+- **Held-out:** the S4b recruitment order is still unspent (no passing arm).
