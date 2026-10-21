@@ -1,0 +1,19 @@
+{
+ "schema": 1,
+ "what": "the fixed behaviour scoreboard (scope brief, 6 Oct): each item names its protocol in world/protocols, or says why there is none yet. Run one with python -m flyemu.score <zip> --protocol <name>",
+ "items": [
+  {"item": "stands", "protocol": null,
+   "todo": "expressible as data (flat_floor, no stimulus, posture readout) but the model does not stand yet (F-STAND-3 to 6); the readout and bar are not yet written as data"},
+  {"item": "walks", "protocol": null,
+   "todo": "expressible as data (a Poisson drive into DNg100, scripts/probes/command_walk.py) but walking fails for want of mechanisms (F-BYPASS-7, F-XCONN-2); the closed-loop harness that steps the body is not yet a protocol harness"},
+  {"item": "grooms", "protocol": null, "todo": "no test and no mechanism"},
+  {"item": "PER to labellar sugar", "protocol": "per_labellar_sugar"},
+  {"item": "PER to leg sugar", "protocol": null,
+   "todo": "same harness as per_labellar_sugar (LgLG4 + LgAG2 drive), but its bar is the four-part check of DECISIONS 6 Oct 00:41 (3 Hz silent, 50 Hz opens, leg bitter silent, labellar bitter still suppresses), with no single number for 'opens'; it needs that number written first"},
+  {"item": "optomotor turning", "protocol": null,
+   "todo": "needs code: vision bypasses the World (no rendered grating reaches the eyes through world/) and there is no turning readout (F-VISION-15)"},
+  {"item": "giant-fibre escape", "protocol": "gf_escape"},
+  {"item": "stable flight", "protocol": null,
+   "todo": "needs code: flight kinematics are imposed and the tether is set in code (flight.py, F-FLIGHT-3)"}
+ ]
+}

@@ -214,6 +214,19 @@ def child_setup(a) -> dict:
     return {"root": root, "mode": mode, "man": man, "guard": guard, "versions": versions, "body_src": body_src}
 
 
+def load_profile(root: Path, mode: str, profile: str) -> str:
+    """In zip mode the profile comes from the zip's profiles/<name>.json, not from the code; returns its source."""
+    if mode != "zip":
+        return "flyemu.profiles (code)"
+    from . import profiles
+    from .registry import Status
+    pdoc = json.loads((root / "profiles" / f"{profile}.json").read_text())
+    profiles.PROFILES[profile] = {"kick_mv": pdoc["kick_mv"],
+                                  "values": {r["key"]: (r["value"], Status(r["label"]), r["why"])
+                                             for r in pdoc["values"]}}
+    return f"profiles/{profile}.json"
+
+
 def inside(a) -> int:
     c = child_setup(a)
     root, mode, man, guard, versions, body_src = (c[k] for k in ("root", "mode", "man", "guard", "versions",
@@ -234,17 +247,8 @@ def inside(a) -> int:
 
     import numpy as np
 
-    from . import profiles
     from .organism import Organism
-    from .registry import Status
-    if mode == "zip":
-        pdoc = json.loads((root / "profiles" / f"{profile}.json").read_text())
-        profiles.PROFILES[profile] = {"kick_mv": pdoc["kick_mv"],
-                                      "values": {r["key"]: (r["value"], Status(r["label"]), r["why"])
-                                                 for r in pdoc["values"]}}
-        profile_src = f"profiles/{profile}.json"
-    else:
-        profile_src = "flyemu.profiles (code)"
+    profile_src = load_profile(root, mode, profile)
     t_build = time.time()
     org = Organism(policy=d["policy"], timestep_ms=d["timestep_ms"], profile=profile, min_synapses=min_syn,
                    overrides=sets, seed=seed, world=world)

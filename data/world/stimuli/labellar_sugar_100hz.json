@@ -1,0 +1,11 @@
+{
+ "schema": 1,
+ "name": "labellar_sugar_100hz",
+ "what": "labellar sweet gustatory receptor neurons driven at 100 Hz: each LB3b and LB3c cell gets an independent Poisson train of membrane kicks for the whole trial (the Shiu et al. 2024 drive, as scripts/assay_pathways.py --assay sugar_mn9 gives it)",
+ "evidence": "LB3b/LB3c match Gr64f-GAL4 sweet labellar GRN projections (male-CNS taste connectome, bioRxiv 10.1101/2025.08.25.671814; measured identity). 100 Hz is the drive of the existing sugar gate (DECISIONS s8, profiles.py M3), a protocol choice, not a fly quantity",
+ "events": [
+  {"kind": "poisson_kick", "types": ["LB3b", "LB3c"], "rate_hz": 100.0, "t_on_ms": 0.0, "t_off_ms": null,
+   "kick_mv": "profile"}
+ ],
+ "notes": "t_off_ms null = to the end of the trial. kick_mv 'profile' = the profile's kick_mv. The Poisson draws come from numpy default_rng(seed + the protocol's stimulus_rng_offset), one uniform per stimulated cell per step while the event is on"
+}

@@ -9,8 +9,8 @@ Inside the extracted tree, under the same read guard as flyemu.run:
    output directory, never over the tree) and compares it with the packed ledger;
 3. prints the ledger fill fraction: the share of slots whose value comes from data (measured or derived), then
    with the rule-inferred share added, by slot and with each measurable quantity weighted equally;
-4. lists the behaviour scoreboard and which items have a protocol in the zip's world/ (the scoreboard runs
-   themselves are separate flyemu.run calls; see SCOREBOARD).
+4. lists the behaviour scoreboard from the zip's world/scoreboard.json: which items have a protocol and why
+   the others do not (the protocol runs themselves are separate flyemu.score calls).
 Writes check_manifest.json, junit.xml, ledger_report.txt and ledger/*.csv. Exit code 0 only if every test
 passes or skips and the rebuilt ledger matches the packed one.
 
@@ -29,19 +29,10 @@ from . import flyzip, run
 RESULT = "check_manifest.json"
 LEDGER_TABLES = ("blank_ledger.csv", "ledger_levels.csv")
 
-# The fixed behaviour scoreboard (scope brief, 6 Oct). A protocol is a world/ arena + stimulus pair that
-# flyemu.run can play, plus the readout that scores it; None until it is built and passes a zip-vs-tree
-# identity run.
-SCOREBOARD = {
-    "stands": None,
-    "walks": None,
-    "grooms": None,
-    "PER to labellar sugar": None,
-    "PER to leg sugar": None,
-    "optomotor turning": None,
-    "giant-fibre escape": None,
-    "stable flight": None,
-}
+# The fixed behaviour scoreboard (scope brief, 6 Oct). The zip's world/scoreboard.json maps each item to a
+# protocol (played by flyemu.score) or says why there is none yet; check refuses a zip whose list differs.
+SCOREBOARD = ("stands", "walks", "grooms", "PER to labellar sugar", "PER to leg sugar", "optomotor turning",
+              "giant-fibre escape", "stable flight")
 
 
 def parser() -> argparse.ArgumentParser:
@@ -132,9 +123,18 @@ def _ledger(root: Path, out: Path) -> dict:
 
 
 def _scoreboard(root: Path) -> dict:
-    built = sorted(p.stem for p in (root / "world" / "protocols").glob("*.json")) \
-        if (root / "world" / "protocols").is_dir() else []
-    return {item: (proto if proto in built else None) for item, proto in SCOREBOARD.items()}
+    from .score import WORLD
+    doc = json.loads((root / WORLD / "scoreboard.json").read_text())
+    items = [x["item"] for x in doc["items"]]
+    if tuple(items) != SCOREBOARD:
+        raise flyzip.Refused(f"world/scoreboard.json lists {items}, not the fixed scoreboard {list(SCOREBOARD)}")
+    built = {p.stem for p in (root / WORLD / "protocols").glob("*.json")}
+    out = {}
+    for x in doc["items"]:
+        if x["protocol"] and x["protocol"] not in built:
+            raise flyzip.Refused(f"scoreboard item {x['item']!r} names protocol {x['protocol']!r}, not in the zip")
+        out[x["item"]] = {"protocol": x["protocol"]} if x["protocol"] else {"protocol": None, "todo": x["todo"]}
+    return out
 
 
 def inside(a) -> int:
@@ -169,7 +169,9 @@ def inside(a) -> int:
           f"{L['fill_outside_synapse_grain']['data_pct']}% / {L['fill_outside_synapse_grain']['data_plus_rule_pct']}%",
           file=sys.stderr)
     sb = res["scoreboard"]
-    print(f"scoreboard protocols in the zip: {sum(v is not None for v in sb.values())} of {len(sb)}", file=sys.stderr)
+    built = [f"{k} ({v['protocol']})" for k, v in sb.items() if v["protocol"]]
+    print(f"scoreboard protocols in the zip: {len(built)} of {len(sb)}: {', '.join(built)}; run each with "
+          f"python -m flyemu.score", file=sys.stderr)
     return 0 if res["ok"] else 1
 
 

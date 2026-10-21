@@ -69,8 +69,8 @@ WORLD_TODO = [
     {"item": "world/stimuli/full_field_flash.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/moving_grating.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/looming_disc.yaml", "today": "scripts/probes (code)"},
-    {"item": "world/stimuli/labellar_sugar.yaml", "today": "scripts/probes (code)"},
-    {"item": "world/stimuli/leg_sugar.yaml", "today": "scripts/probes (code)"},
+    {"item": "world/stimuli/leg_sugar.yaml", "today": "scripts/probes (code); the same form as "
+     "world/stimuli/labellar_sugar_100hz.json, waiting for its protocol bar (world/scoreboard.json)"},
     {"item": "world/stimuli/bitter.yaml", "today": "scripts/probes (code)"},
     {"item": "world/stimuli/odour_pulse.yaml", "today": "world.OdourSource, set in code"},
     {"item": "world/stimuli/dn_current_injection.yaml", "today": "scripts/probes/bypass_* (code)"},
@@ -123,6 +123,8 @@ def file_members() -> list[dict]:
         add("ledger/" + p[len("data/ontology/"):], p, "ledger", REPO / p, "git")
     for p in tracked("data/model"):
         add("model/" + p[len("data/model/"):], p, "model", REPO / p, "git")
+    for p in tracked("data/world"):                 # scoreboard protocols, their stimuli, the scoreboard
+        add("world/" + p[len("data/world/"):], p, "world", REPO / p, "git")
     for p in tracked("data/measurements"):
         add("measurements/" + p[len("data/measurements/"):], p, "measurements", REPO / p, "git")
     add("datasets.yaml", "data/MANIFEST.yaml", "datasets", REPO / "data/MANIFEST.yaml", "git")
@@ -231,7 +233,7 @@ def main(argv=None):
     ap.add_argument("--allow-dirty", action="store_true", help="pack modified tracked files (recorded)")
     a = ap.parse_args(argv)
     commit = git("rev-parse", "HEAD").strip()
-    paths = ["src/flyemu", "data/params", "data/derived", "data/ontology", "data/model", "data/measurements",
+    paths = ["src/flyemu", "data/params", "data/derived", "data/ontology", "data/model", "data/world", "data/measurements",
              "data/MANIFEST.yaml", "tests", *CODE_EXTRA, "docs/HANDOFF.md"]
     dirty = [ln for ln in git("status", "--porcelain", "--", *paths).splitlines() if ln]
     if dirty and not a.allow_dirty:

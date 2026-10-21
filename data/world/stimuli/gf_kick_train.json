@@ -1,0 +1,10 @@
+{
+ "schema": 1,
+ "name": "gf_kick_train",
+ "what": "both giant fibres (DNp01) kicked by 100 mV, enough for one spike each, every 50 ms from 200 ms (20 kicks), as scripts/probes/gf_latency.py does",
+ "evidence": "DNp01 is the giant fibre (male-cns type; measured identity). The kick stands in for the visual looming drive, which is not modelled; the stimulus-to-GF-spike time is therefore not part of the readout",
+ "events": [
+  {"kind": "kick", "types": ["DNp01"], "kick_mv": 100.0, "start_ms": 200.0, "period_ms": 50.0, "count": 20}
+ ],
+ "notes": "kick steps are round(start_ms/dt) + i * round(period_ms/dt), i = 0..count-1"
+}

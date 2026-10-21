@@ -1,0 +1,20 @@
+{
+ "schema": 1,
+ "name": "per_labellar_sugar",
+ "item": "PER to labellar sugar",
+ "what": "open-loop, brain only: labellar sugar drive, read out as the firing rate of the proboscis motor neuron MN9 (the neural proxy for proboscis extension; the body is not stepped)",
+ "harness": {"kind": "network", "build": "assay",
+             "note": "the brain as scripts/assay_pathways.py builds it: Registry(policy), profiles.apply, connectome.build, lif.default_params, electrical.build; a fresh lif.Network per trial seeded default_rng(seed). No body, no sensory model, no Q10 (25 degC); noise per profile"},
+ "settings": {"profile": "m10f0", "min_synapses": 5, "timestep_ms": 0.1, "policy": "minimal"},
+ "seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+ "stimulus_rng_offset": 10000,
+ "duration_ms": 1000.0,
+ "stimulus": "labellar_sugar_100hz",
+ "readout": {"kind": "mean_rate_hz", "types": ["MN9"],
+             "exclude_status_containing": ["Hard to trace", "Partially"],
+             "note": "rate over the whole trial, averaged over the readout cells, then over trials. MN9 cells whose male_cns_extra statusLabel says they are incompletely traced are dropped (F-DATA-3: MN9_R has 633 inputs vs MN9_L's 6,358), which leaves MN9_L"},
+ "pass": [{"quantity": "rate_hz_mean", "op": ">", "value": 5.0, "units": "Hz"}],
+ "bar_source": "the sugar gate of the calibration and class searches: sugar->MN9_L > 5 Hz at 100 Hz, mean of 10 trials (DECISIONS s8 calibration rule v3; scripts/search/class_search.py). A protocol bar for a qualitative behaviour (sugar evokes PER; Shiu et al. 2024 Fig 2), not a measured MN9 rate",
+ "reference_script": "scripts/assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 --trials 10 --profile m10f0 (trials.csv readout_hz per trial)",
+ "evidence_status": "spent: the gate was a fit target of the s8 calibration and s11 class searches, so this is a regression check, not held-out evidence"
+}
