@@ -3977,3 +3977,108 @@ only), and the hormone loop.
 - S1, consistency: 39.2 mM after 6 h of fasting, against a set point of 40.
 Both held-out values are now spent. By the falsifier, the S-rows' values count as sourced and the switch
 stays off until a stage gate.
+
+### s19 driver bug: a* = 0.0458 came from the voided bracket; its products voided unread, grid resumed (22 October, 04:42)
+**What happened.** `n19_drive3.sh` ran the first refined point, a = 0.02 (Mi4 evoked spikes 213 → 290, ratio 1.36),
+and then stopped the grid. Its `astar()` step globbed every `u2_a*.json`, including the old a = 0.25 run (ratio
+12.9). It therefore found the bracket [0.02, 0.25] and interpolated a* = 0.0458 across a 9.5-fold jump, which is
+the kind of step the 02:25 entry voided. The registered rule is the first crossing on the refined grid
+0.02, 0.04, ..., 0.2, so 0.0458 is not the registered a*. Dacks, U1, U1 5-HT and U1h then all ran at 0.0458.
+**What has been seen.** Only the driver's lines: `astar=0.0458`, `dacks finished, gate_runs=0`, and
+`GATE_ALL.done`: "gate not run: Dacks outside +5% to +30% or missing". Since `dacks.done` is rc=0, this says
+Dacks at a = 0.0458 was outside the band (or its `change` was null). The number was not read. U1, U1 5-HT and
+U1h were not read.
+**Change (decided before any further output).**
+- `dacks.json/log`, `u1_*.json/log`, `u1h.json/log`, `astar.json` and their done-files move to
+  `runs/s19/n19/void/v3_a0.0458/`, unread.
+- `n19_drive4.sh` resumes the refined grid at a = 0.04 in order. The early stop and the interpolation use only
+  (0, 1) and the points run so far, in list order. a = 0.25 is used only if 0.02-0.2 never cross.
+- Dacks runs once at that a* and is scored once (pass if +5% ≤ change ≤ +30%). This re-run would have been made
+  whatever the leaked verdict was, because a* was wrong either way, and nothing chosen here depends on Dacks.
+  **Recorded weakness:** the held-out test is not fully clean. A fail at a nearby a is known. A pass at the
+  registered a* would be reported with that caveat.
+- The stage gate (about 4 h) does not start automatically; the park is 05:30. U1/U1h are re-run at the
+  registered a* next session.
+
+### s19 N26 clock light-input plan, written before any source is read (22 October, 04:44)
+N26 is on and has one unit check (F-CLOCK-1, DN1p day/night). Its light coupling `k_light_per_h`, `l50_lux`,
+`ct_light_h` and the cell drive peaks `peak_morning_h`/`peak_evening_h` are guessed. A Sonnet read-only agent
+gathers measured values (it does not edit the repo).
+- **Parameter sources (used to set values):**
+  - `l50_lux`: the half-maximal light intensity of a phase-shift intensity-response curve (wild type, adult).
+  - `ct_light_h` and `k_light_per_h`: one light-pulse PRC (wild type, adult, its pulse duration and intensity
+    recorded). `ct_light_h` is set so that the model PRC's delay-to-advance zero crossing matches the measured
+    one. `k_light_per_h` is then set so that the model's delay at the measured maximal-delay phase (near CT15)
+    matches the measured delay, under the same pulse (duration and lux through the `l50` above).
+  - `peak_morning_h`, `peak_evening_h`: the measured time of peak firing (or, if none, peak Ca²⁺) of the morning
+    cells (s-LNv, l-LNv, DN1p) and the evening cells (LNd, 5th s-LNv), under 12:12 LD, ZT taken as CT.
+- **Held out (never used to set a value; scored once):** the maximal phase advance of the same PRC, near CT21,
+  as the model predicts it at that measured phase and pulse. Pass band: the measured range across the PRCs the
+  agent finds for that pulse class. With one report, ×/÷ 1.5 around it, and the sign must match.
+- **Consistency only:** the entrained phase under 12:12 LD (the model's CT 0 against lights-on), and the DN1p
+  CT 2 / CT 10 rates (F-CLOCK-1's held-out value is spent). If moving `peak_morning_h` breaks the CT 2 rate,
+  `g_clock_mv` is re-fitted at CT 2 alone by the F-CLOCK-1 rule, and labelled fitted.
+- **Value rule:** median of the reports for adult wild-type flies at 25 °C, males if given, otherwise mixed or
+  female (labelled measured_related). Bounds are the range across reports.
+- **Validity, known in advance:** the lumped Stuart-Landau oscillator with additive forcing has a sinusoidal PRC
+  with no dead zone. A measured dead zone in subjective day is a recorded limit, not a fitted feature.
+- The values go behind a new switch `state:clock|values_from_sources`, neutral 0, as with S1-S4.
+
+### s19 N26 first read thin; method clarifications before any fit (22 October, 04:49)
+The first read (Sonnet, about 4 min) found one full-text source, Vinayak et al. 2013 PLoS Genet 9:e1003615
+(w1118, about 21 °C), with two results. First, a maximal advance of 2.4 h at CT20-21 for a 1 h white pulse of
+about 150 µW/cm². Second, intensity-response half-maxima at CT20 for blue pulses: about 600 nW/cm² for 10 min,
+4 for 120 min and 3 for 360 min. No delay, zero crossing or clock-cell peak time came from a read source; those
+were secondary or unverified (a "Levine 1994" PRC could not be traced). A second, narrower read is running.
+Clarifications, decided now and independent of any number above:
+- **`l50_lux`** is set so that the model's own intensity-response half-maximum (shift against intensity, the same
+  CT and pulse duration, under the fitted k) falls at the measured half-max intensity. The model's IRC half-max
+  depends on k as well as l50, so l50 is not copied from the measured half-max. Duration class: 10 min, the
+  class of the ZT15/ZT21 pulse assays. Blue irradiance is converted to lux at 470 nm (683 lm/W × V(470) = 0.091,
+  so 1 µW/cm² is about 0.62 lux). That conversion is labelled inferred: the fly's CRY action spectrum is not
+  photopic. The 120 min half-max is a consistency check. The model integrates dose linearly below l50, so it
+  predicts a 12-fold lower half-max at 120 min, against 150-fold measured. A miss is a recorded limit.
+- If no read source gives the zero crossing, `ct_light_h` keeps its guess, and k is fitted at the delay alone.
+- The held-out point stays the maximal advance near CT21. Vinayak's 2.4 h (1 h pulse) is held out only for a
+  model run with its own pulse (1 h, 150 µW/cm² white, inferred as lux by the source's own conversion if given).
+  A different pulse class is not compared.
+
+### s19 N26 sources so far; no value changed; the held-out advance kept blind (22 October, 04:56)
+**Read (full text):**
+- Vinayak et al. 2013 PLoS Genet 9:e1003615: maximal advance 2.4 h at CT20-21 (1 h white pulse, about
+  150 µW/cm²). Intensity-response half-max at CT20 for blue pulses: about 600 nW/cm² for 10 min, 4 for 120 min
+  and 3 for 360 min (via the agent; the figure was not re-read by me).
+- Lamba et al. 2014 Cell Rep 7:601 (PMC4303071), Methods and the Fig. 1 legend: y w controls get a 5 min,
+  1,500 lux pulse at ZT15 and at ZT21 after 5 LD days, then 6 DD days; 16 flies × 3; SEM. Values exist only
+  in the Fig. 1C bars. A blind Sonnet reader is extracting the y w ZT15 delay alone. **I have not seen the ZT21
+  advance**, and it stays held out.
+- Liang, Holy & Taghert 2016 Science 351:976 (PMC4836443), text: M cells (s-LNv) peak in Ca²⁺ toward the end
+  of subjective night (around lights-on), and E cells (LNd) toward the end of subjective day (before lights-off).
+  The M-E phase difference is about 10 h, and both lead their behavioural peaks by about 4 h. This holds in
+  long and short photoperiods. The per-group ZT is only in Fig. 1F, which was not read. These are Ca²⁺ phases,
+  not firing.
+- Dollish et al. 2022 (bioRxiv 2021.04.08.439018; D. ananassae, so a related species only): a delay zone of
+  about 5 h, an advance zone of about 10 h and a 9 h dead zone, anchored to lights-off.
+**Not found in a read source:** the D. melanogaster delay-to-advance zero crossing, and a full wild-type PRC.
+Candidates for a figure read are Kistenpfennig et al. 2012 J Biol Rhythms (epub.uni-regensburg.de/34459) and
+the Dollish PRC figure (related species).
+**Decision.** Under the 04:49 rule, `ct_light_h` keeps its guess (8 h). At 8 h the model's weak-pulse PRC
+crosses from delay to advance at CT20 and peaks its advance at CT2. That contradicts Vinayak's maximal advance
+at CT20-21, so the guess is already known to be wrong. Scoring the held-out ZT21 advance against it would spend
+the point to learn nothing new. So nothing is fitted or scored tonight: `CLOCK_SOURCED` stays empty behind the
+neutral switch. The fit (ct_light from a read zero crossing, k from Lamba's ZT15 delay, l50 from Vinayak's
+10 min IRC) and the one held-out score (Lamba ZT21 advance, same pulse) wait for the zero-crossing read.
+Liang's text is consistent with the current peak guesses in direction (morning group 2, evening 10, 8 h apart
+against about 10 h). They are left unchanged until Fig. 1F is read, because any change to `peak_morning_h`
+also moves the fitted DN1p drive at CT 2 (F-CLOCK-1).
+Tool: `scripts/probes/s19_n26_prc.py` (prc, irc, fit, entrain modes; the Organs ODE m10f uses). Check: under
+the guesses, a 10 min 1,000 lux pulse gives −0.13 h at CT14 and +0.13 h at CT2, about 20× below measured
+shifts, so k will rise far above its guessed bounds [0.02, 2].
+
+**N26 addendum (22 October, 05:04).** The blind reader returned the Lamba 2014 Fig. 1C **y w ZT15 delay:
+−3.1 h, SEM about 0.35 h** (5 min, 1,500 lux; 16 flies × 3). Derived from the figure pixels: the axis ticks fit
+to under 0.02 h, and the bar end is at y = 215 px. Crops are in `/tmp/lamba_crops/` (not kept). The reader was told
+not to report any ZT21 or advance value and did not. The ZT21 advance stays held out and unseen. This is the
+value k will be fitted to once ct_light is sourced.
+Correction to the 04:49 entry: Vinayak's 2.4 h advance was seen in the agent report before 04:49 called it held
+out, so it counts as consistency only. The one held-out N26 point is Lamba's ZT21 advance.

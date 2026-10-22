@@ -216,6 +216,11 @@ SOURCED = {
                   "faecal dye from 15 min, abundant by 45-60 min (PMC4335172); whole-tract transit < 1 h (secondary)"),
 }
 
+# s19: N26 clock values read from sources (DECISIONS 22 Oct 04:44), the defaults only with
+# state:clock|values_from_sources = 1 (neutral 0 keeps the s10 guesses). Same tuple layout as SOURCED.
+CLOCK_SOURCED_SWITCH = ("state:clock", "values_from_sources")
+CLOCK_SOURCED: dict = {}
+
 # Populations coupled (male-cns `type`), evidence and label of the mapping.
 COUPLED = {
     "isn": (["ISN"], "inferred",
@@ -373,10 +378,12 @@ class Organs:
         self.t_s += dt
 
 
-def default_params(sourced: bool = False) -> dict:
+def default_params(sourced: bool = False, clock_sourced: bool = False) -> dict:
     p = {r[0]: float(r[5]) for r in PARAMS}
     if sourced:
         p.update({f: v[0] for f, v in SOURCED.items()})
+    if clock_sourced:
+        p.update({f: v[0] for f, v in CLOCK_SOURCED.items()})
     return p
 
 
@@ -385,10 +392,17 @@ def read_params(reg: Registry) -> dict:
                            model_use="S1-S4: values read from sources (internal_state.SOURCED, s19) as defaults",
                            subsystem="internal_state", minimal=0.0, conventional=0.0,
                            minimal_note="neutral 0: the s10 guessed prior centres"))
+    clk = bool(reg.require(*CLOCK_SOURCED_SWITCH, units="boolean",
+                           model_use="N26: clock light input and cell peaks read from sources "
+                                     "(internal_state.CLOCK_SOURCED, s19) as defaults",
+                           subsystem="internal_state", minimal=0.0, conventional=0.0,
+                           minimal_note="neutral 0: the s10 guessed clock values"))
     out = {}
     for f, mech, ent, prop, unit, val, lo, hi, *_rest in PARAMS:
         if src and f in SOURCED:
             val, lo, hi = SOURCED[f][:3]
+        if clk and f in CLOCK_SOURCED:
+            val, lo, hi = CLOCK_SOURCED[f][:3]
         out[f] = float(reg.require(
             ent, prop, units=unit, model_use=f"{mech} internal state ({f})",
             subsystem="internal_state", minimal=val,
