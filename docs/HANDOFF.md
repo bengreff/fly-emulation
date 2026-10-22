@@ -347,72 +347,55 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: the scoreboard has real verdicts, 1 of 8 passes, and every scored item plays from the zip alone (F-ZIP-4, 21 Oct 03:17)
+## fly2: mechanism-complete night, frontier stages m10f1-m10f3 in their gate (21 Oct 21:45)
 
 **From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15).
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test), then flyemu.check and the scoreboard as zip `world/` data, then the bars (Director as Ben, DECISIONS 21 Oct 02:33). Nothing in the model changed; no switch was added or adopted.
-- **Merging:** `main` was fast-forwarded to fa679f6. The zip work since then is 1cbccff, 27676a1, 793c3eb, b595250, 089022c, c248318, c6ad8e1, ef54015, b7e6fc9, cfdfbea, 8f1ad74 and this docs commit. **`main` can fast-forward to worktree-fly2.**
-- **The zip:** `runs/s22/fly2_zip/s5/fly_brain.zip`.
-  - 134,776,816 bytes, 481 members, sha256 dbb16195…, packed from clean 8f1ad74.
-  - It is a build artifact, not in git (over 50 MB). Rebuild it with `.venv/bin/python -m flyemu.pack --out X.zip`, which refuses a dirty tree and any member path packed twice.
-  - Its manifest still lists `world/stimuli/leg_sugar.yaml` as TODO (stale). The packer is fixed in this docs commit, so the next pack drops the line.
-  - Earlier zips: `s3/` (b7e6fc9, F-ZIP-3), `s2/` (c248318, F-ZIP-2), and the F-ZIP-1 zip at the top of `runs/s22/fly2_zip/`.
-- **Entry points** (`docs/FLY_BRAIN_ZIP.md`, "Entry point" and "Check and scoreboard"). Each also takes `--tree .` to run the same path from the repo.
-  - `PYTHONPATH=X.zip/code python -m flyemu.run X.zip --ms 1000 --out run/ [--deny <repo>]`: the closed-loop smoke run.
-  - `python -m flyemu.check X.zip --out c/`: runs the zip's tests, rebuilds the ledger from the zip's tables, and prints the fill fraction and the scoreboard. About 15 min; `--no-tests` takes seconds.
-  - `python -m flyemu.score X.zip --protocol <name> --out s/`: plays one scoreboard protocol from `world/` (source `data/world/`).
-    - Harnesses: `assay` and `organism` (network only) and `closed_loop` (body stepped, every sense on). A closed-loop run is refused unless only the network's motor spikes move the body (`drive_check`).
-- **Scoreboard (F-ZIP-4; m10f0; each item from the zip, identical zip vs tree; verdicts in `runs/s22/fly2_zip/s5/scoreboard_verdicts.json`):**
-  - Stands, `stands_flat_floor`: **FAIL.** A non-foot body is on the floor in every sample of 500-1000 ms (head, coxae, abdomen), and the head sits at the collapse height (bar: none on the floor, head ≥ 0.1 mm above collapse). The fly lies on its belly by 250 ms (`docs/media/s22_fly2_stands_frames.png`).
-  - Walks, `walks_dng100`: **FAIL.** 0 of 6 legs step at 7-15 Hz (all at 3-4 Hz, 7-15 Hz share 0.04-0.05; bar ≥ 4 legs), and the thorax moves 0.041 mm backwards. Leg MNs average 2.6 Hz while DNg100 fires at 92 Hz (`docs/media/s22_fly2_walk_tips.png`).
-  - Grooms: not scored. A protocol spec (`grooms_antenna_jo`, Hampel 2015) went to the Director (DECISIONS 21 Oct 02:44); not built, not adopted.
-  - PER to labellar sugar, `per_labellar_sugar`: **PASS**, MN9_L 5.7 Hz (bar > 5). Thin margin: 4 of 10 seeds are at or below 5 Hz (F-ZIP-2 said 3; it miscounted).
-  - PER to leg sugar, `per_leg_sugar` (new): **FAIL**, MN9_L 0 Hz on all 10 seeds. Only about 110 neurons beyond the 54 driven ones fire: the route is blocked at rest (F-TASTE-LEG-1).
-  - Optomotor turning: not scored (needs code: vision bypasses the World).
-  - Giant-fibre escape, `gf_escape`: **FAIL.** The GF spikes on every kick; no TTMn or DLMn spike follows (gap junctions off, the default).
-  - Stable flight: not scored (needs code: kinematics are imposed).
-  - **1 of 8 passes; 5 of 8 are scored.** All five score spent or seen evidence, so they are regression checks (register rows below).
-- **flyemu.check, 8f1ad74 zip:** 273 passed, 14 skipped; no outcome changed from the c248318 zip, and the 4 new tests are the protocol tests. The tree check at 8f1ad74 has equal outcomes, except the 2 repo-layout tests that skip only inside a zip (275 passed, 12 skipped). The ledger rebuilt from the zip equals the packed ledger.
-- **Ledger fill fraction, from the zip's own tables (unchanged):** 0.42% of slots from data (measured + derived), also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities.
-- **Not in the zip yet** (the manifest's `todo`):
-  - `variation/` (the between-fly spread), `individual/` (a realised fly) and per-element slot addresses;
-  - arenas: ball, flight tether, sugar patch (code today);
-  - stimuli: flash, grating, looming disc, bitter, odour pulse, DN and MN current injection (code in `scripts/probes` today);
-  - protocols for grooms, optomotor turning and stable flight;
-  - the repo's `docs/` and all but two `scripts/`.
-- **Next, for fly2 (zip track):**
-  1. **Three FAILs share a symptom: motor neurons don't follow their drive.** Walks: leg MNs at 2.6 Hz under 92 Hz DNg100. GF: no TTMn or DLMn spike. Stands: the live fly ends where the motor-silenced fly ends. A missing transmission onto motor neurons is a candidate shared cause, not tested here. fly owns the premotor→MN fix; when it lands on main, rerun all five protocols zip vs tree as regression checks. Held-out standing and walking tests need new seeds (register).
-  2. **Grooms bar**, if the Director adopts the 02:44 spec. Hand the Hampel 2015 reading (Fig 1B minimum grooming share; whether the aJO lines are JO-C/E) to a Sonnet subagent.
-  3. **Identity across switches.** Run the neutral-switch identity tests and one non-default profile from the zip.
-  4. **Portability.** Run the same zip on backhouse (Linux, its own runtime) with `--allow-runtime-mismatch`. Measure the floating-point differences; don't assume them.
-  5. Then the variation model (`variation/`) and the individual layer, per the spec.
-- **Earlier fly2 state, unchanged (details in FINDINGS F-GJ-7 and DECISIONS 21 Oct 00:25):**
-  - N30 option B is UNDECIDED: class MN q 0.104, ρ 3.80 against ρ* 3.78.
-  - The DLMn doublet is the PSI current's synaptic tail.
-  - No fix is adopted; Ben's MN5 recording (`docs/MEASUREMENT_LIST.md` item 1) decides.
-  - If that recording comes, or someone reads Ryglewski, Kilo & Duch 2014 EJN, set the measured values, pre-register the GF escape at seed 2, and score it against the sealed GF→DLM file.
-- **Done earlier in this worktree (20 Oct):**
-  - T1 fill levels 1 and 2 (F-XCONN-3/4; switch neutral).
-  - Two-compartment DLMn (F-GJ-6; CPU only, neutral).
-  - T4/T5 seeds 1 and 2 FAIL (F-VISION-15).
-  - `docs/FLY_BRAIN_ZIP.md` rev 2.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief. Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work has stopped (`fly_brain.zip` v1 stays as is: `runs/s22/fly2_zip/s5/`, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body.
+- **Merging:** worktree-fly2 was rebased onto main f4d75f9 (fly s14-s17); DECISIONS/FINDINGS kept both sides, and fly's 01:22 note was restored. git refused the fast-forward of `main` because main is checked out in fly's tree, so **the Director merges: main can fast-forward to worktree-fly2**. main has since moved to 09e31b1 (fly s18, `docs/MECHANISM_STATUS.md`), so merge main into worktree-fly2 first.
+- **Switch inventory** (`scripts/probes/switch_inventory.py --profile m10f0`, output `/tmp/fly2n/switch_inv_m10f0.csv`, rerun it to get it back). Several "have" mechanisms are **off in m10f0**: N7 gabab_fraction, N9 conductance_based, N10 (std_release_fraction, ORN measured_depression, leg transferred_depression), N11 presynaptic_inhibition_gain, N21 kc_mbon_ltd_rate, both N29 switches, and N12 `electrical:all|gap_conductance`, which is missing from the yaml's switch list.
+- **Frontier stages** (`profiles.py`; cumulative; `m10f` still = m10f0; pre-registered in DECISIONS 21 Oct 21:35):
+  - m10f1 = + N29 STP per connection (ORN→PN, ORN→LN);
+  - m10f2 = + N29 receptor decay per connection;
+  - m10f3 = + N12 gaps + PSI cholinergic.
+  - **Gate running on backhouse** (`~/fly2_mc`, the 725cf46 archive): `~/fly2_mc/runs/s23/fc/`, `gate_m10f{1,2,3}_s{12-15}.json`, `smoke_m10f{1,2,3}_s12.json` (60 s), done-files `gate_m10fK.done`, `smoke_m10fK.done`, `ALL.done`. Check it with `ssh backhouse "wsl -d Ubuntu -- bash -s" < /tmp/fly2n/bh_status.sh`.
+  - At 21:43 seed 12 passed silence on all three stages (0.0 non-eye spikes/ms; whole brain 0.31 Hz against 0.33). The smokes take about 2-2.5 h, so expect them done around 00:00-00:30.
+  - The Mac keep-alive ssh to backhouse runs under nohup; kill it once ALL.done exists (`pkill -f "exec sleep infinity"` matches only ours on the Mac).
+- **When the gate finishes:**
+  - Score G and S per stage against the 21:35 entry.
+  - Advance `PROFILES["m10f"]` to the last passing stage.
+  - Run the unit checks: stage 1, an in-network ORN→PN 10 Hz train against Nagel 2015 f 0.78 / τ 893 ms (a consistency check; no held-out number is readable); stage 2, the per-row current decay; stage 3, `gf_latency.py --profile m10f3` against the Augustin TTM band (spent, consistency only).
+  - Then commit, write a FINDINGS entry and fill the MECHANISM_STATUS rows.
+- **Literature in hand** (`docs/research/s23_fly2_synaptic_plasticity_lit.md`):
+  - DLMn coupling coefficient 0.01 (all pairs) and 0.023 (MN1-2, MN3-4), Hurkey 2023, measured. This can fill the gap_junctions.csv DLMn row.
+  - Hige 2015: one pairing gives 80% fewer spikes and 90 ± 3.7% less charge, persisting ≥ 40 min.
+  - Handler 2019: the timing rule (forward depresses, DAN 1.2 s first potentiates, 6 s minimal).
+  - Memory: retained at 10 min, decayed by 24 h (Aso & Rubin 2016), so the 3 h relaxation tau is inside the bracket.
+  - Sister-PN, eLN-PN and VS coupling are plotted only, and GF-TTMn coupling is unmeasured.
+- **Next, in order:**
+  1. Score the gate, check, commit, fill the table.
+  2. N21+N22 KC→MBON: fit the timing LTD rate to Hige Fig 3D (charge −90% after one pairing, labelled fitted, shared by all compartments), then a held-out unit check against Handler 2019 (sign flip at −1.2 s, near zero at 6 s), with the memory relaxation on at 3 h; then stage m10f4 plus its gate. KCs are silent at rest, so the gate risk is low.
+  3. The DLMn coupling row from Hurkey 2023 (stage 3 extension; a unit check against CC 0.01).
+  4. N10 leg proprioceptor and generic STD, N7 GABA-B, N11 presynaptic inhibition (Olsen & Wilson 2008, unreadable today) and N9 conductance synapses (failed silence as m10p, DECISIONS s11). Each needs values first.
+  5. Sensors and body rows (B13 halteres, N15/N16, B10/B11 flight motor), as the table shows gaps.
+- **Earlier fly2 state (unchanged; details in FINDINGS F-ZIP-1..4, F-GJ-7 and DECISIONS 21 Oct):**
+  - Scoreboard: 1 of 8 passes (PER labellar).
+  - N30 option B is UNDECIDED; Ben's MN5 recording decides (`docs/MEASUREMENT_LIST.md` item 1).
+  - Not done from the zip track: the grooms spec (DECISIONS 02:44), portability, and the variation/individual layers. Zip work is parked by Ben.
 - **Backhouse lessons:**
-  - The WSL distro stops when no wsl client is attached. Hold a keep-alive from the Mac while anything runs: `ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'"`.
-  - Send remote commands as a script (`… bash -s < /tmp/x.sh`).
-  - Use at most 4 threads per job, and queue if the load is over 24.
+  - Hold a keep-alive (`nohup ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'" &`).
+  - Send commands as scripts (`bash -s < x.sh`). cmd.exe breaks single-quoted `bash -c` with `;`.
+  - Use at most 4 threads and queue above load 24. A closed-loop gate run takes about 6 min there.
 - **Mac lessons:**
-  - Detach long jobs with `nohup … > log 2>&1 & disown` and write the done-file from the job.
-  - The worktree guard refuses shell variables or `$(...)` inside sed/find, heredocs that pipe into nohup or git, and `cd … && git …` chains with redirects. Put scripts in `/tmp` with the Write tool and run them with plain commands.
-  - `runs/` is a symlink into the shared checkout, so the Write tool refuses paths under it.
-  - `timeout` doesn't exist on macOS.
-  - The zip's `*.zip` is gitignored. Pack to `/tmp` or a gitignored path, never into `runs/` through Write.
+  - Detach with nohup + disown.
+  - The worktree guard refuses `$(...)` in sed/find and heredocs into nohup/git or into python in a git command. Put scripts in `/tmp`.
+  - `runs/` is a symlink (Write refuses it), and `timeout` doesn't exist.
 - **Carried:**
-  - **Body hook:** fly owns the premotor→MN transmission fix. When it lands on main, rerun step R as the held-out test on backhouse (`scripts/probes/run_proprio_reach.sh`, then `proprio_reach_score.py` and `proprio_reach_fig.py`).
-  - **Stance loop (F-REFLEX-2):** three transduction blanks that fly2 can fill without touching the VNC: the CS load normalisation, CS rows per leg, and the front-leg FeCO assignment.
-  - **Optic lobe:** the next candidates are T4/T5 dendritic input position (N30 in the optic lobe) and the input synapses' rest and release levels. Behnia 2014 stays sealed until an arm passes T4/T5.
-  - **GPU:** `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse (fix 609b238).
-- **Stay out of:** lif.py graded release, the VNC files and fly's switches. Don't touch the flyapp worktree; run its tool from the copy `~/fly2-app` on backhouse.
+  - Body hook: fly owns the premotor→MN fix. When it lands, rerun the five scoreboard protocols and step R (`scripts/probes/run_proprio_reach.sh`).
+  - Stance loop: the CS load normalisation, CS rows per leg and the front-leg FeCO assignment are fly2's to fill.
+  - Optic lobe: T4/T5 dendritic input position next; Behnia 2014 stays sealed.
+  - GPU: `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse.
+- **Stay out of:** the VNC files, fly's switches and the flyapp worktree.
 
 ## Where the project stands
 
