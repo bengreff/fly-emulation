@@ -59,4 +59,4 @@ depends on state: it follows walking, flailing, arousal and sleep (Cohn 2015, Be
 **What this means for the model:** DANs and MBONs at 0 Hz are outside every measured value (PPL1-α'2α2 6-10 Hz,
 MBON-α3 12 Hz). This is a resting-state miss, first noted in s13 (HANDOFF "Resting rates fail for the mushroom
 body"). It's also why the m10f4 gate can't see N21/N22. The best data source is Huang 2024's raw data on Zenodo
-(per-type rates for 5 PPL1 and 6 MBON types, n 20 each). Pin the record version before downloading.
+(per-type rates for 5 PPL1 and 6 MBON types, n 20 each). Figure1.zip is now downloaded and pinned (`data/raw/huang2024/`, MANIFEST `huang2024_mb_voltage`, 22 Oct 03:53): per-trial detected spike times, 5 s trials. Its values are unseen.

@@ -258,3 +258,11 @@ augustin2017_gfs:
   local: "data/raw/augustin2017_gfs/"
   basis: "measured: GF-TTM and GF-DLM response latency (stimulus artifact to muscle EPSP onset, mean ± SEM), brain stimulation through the eyes (40 V, 0.03 ms) and thoracic stimulation, WT young (d5-7) / mid-aged / old, da-GAL4/+ controls, Rab11 and Rab4 RNAi"
   use: "scripts/probes/gf_latency.py reference band (REFERENCE); the brain-minus-thoracic difference informed the no-chemical-delay rule of electrical.build_gap (s13 fly2)"
+
+huang2024_mb_voltage:
+  name: "Huang, Luo et al. 2024 Nature 634:1141 (PMC11525173), in vivo voltage imaging (pAce) of PPL1 DANs and MBONs, head-fixed fly on a ball; Figure 1 data only"
+  version: "Zenodo record 10998457 (doi 10.5281/zenodo.10998457, published 2024-05-25), file Figure1.zip, 121,597,393 bytes, md5 63b517a2516f65722029cbb6ba3e7fd7 (matches Zenodo), sha256 prefix 578f8540c294117d; fetched 2026-10-22 by fly2. Figures 2-5 (about 0.8 GB) not fetched"
+  license: "CC BY 4.0 (Zenodo record)"
+  local: "data/raw/huang2024/Figure1.zip (not unpacked)"
+  basis: "measured: per trial (5 s), the authors' DetectedSpikes peak times, HighpassedTrace dF/F, PhotobleachCorrectedTrace, t, imagingRate, SpikeDectionLimit. 11 types x 20 flies: PPL1-a2, a3, a`3, v1, v2; MBON-a2sc, a3, a`2, a`3m, v1, v2 (100-160 trials per type). The mapping of the v1/v2 folder names to compartments must come from the paper"
+  use: "candidate resting-rate reference for MB DANs and MBONs (fly2 s24 lit note). Values unseen apart from one PPL1-a`3 trial's spike count, visible in a structure listing; check the trial conditions (naive or trained, odour or none) in the paper before using any value"
