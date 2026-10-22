@@ -1,51 +1,52 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 21:43 CDT. Session 18, a Director brief after a /clear: Ben's goal tonight is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in the frontier profile `m10f` with in-range values, and passing a unit or physiology check against a measurement where one exists. Behaviour isn't required. Development inference comes after. Walking is parked. fly_brain.zip isn't a priority. The night runs to about 05:30.
-- **My area (fly):** neuromodulation (all modulators and receptor classes), hormones, internal state (hunger, thirst, arousal, sleep pressure, circadian) and metabolism.
-- **fly2 owns** plasticity, synaptic dynamics, sensors and body; stay out of those.
+**Rewritten each session; do not append.** State as of Wed 21 October 2026, 21:57 CDT. Session 18, part 2 (a Director brief after a /clear). The night runs to about 05:30. Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with in-range values, and passing a unit check against a measurement where one exists. Walking is parked.
+- **Heavy runs go on backhouse tonight.** The Mac has about 1.9 GB of free RAM.
+- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, plus (Director, 21 Oct) N1-N4 intrinsics and N27/N33 glia.
+- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those.
 
-**s18 so far (21:31-21:43):**
-- **Step 1 done:** `docs/MECHANISM_STATUS.md` (commit cead727). One row per `mechanisms.yaml` entry, owner and status by Ben's definition.
-  - fly rows: **0 of 14 done.** B27, S6, S7 and S8 are absent stubs; S1-S5, N19, N20 and N25, N26, N28 are partial.
-  - N26 is closest: `clock_gain` is fitted to DN1p and the held-out CT 10 passes. Light coupling is still guessed.
-  - fly2 and the unassigned rows (N1-N4, N13, N14, N18, N27, N33) are left for fly2 and the Director.
-  - Key fact: `m10f` sets `state:organs|model` 1, so internal state is ON, but almost every row of `internal_state.PARAMS` is labelled guessed, with guessed bounds. N19's pools run, but every `mod_sensitivity_*` is 0, so they have no effect.
-- **Walking query done and parked:** F-S18-1 (commit b5de8cc).
-  - The 12-cell T1 core gives only 0.8% of the T1 leg-MN input.
-  - Out-of-core input leads with 20A/22A 10.7%, 04B 9.4%, 03A 8.5%, 13A 8.5% and 21A 7.2%.
-  - All of the top-20 types are within two hops of DNg100; 13 of the 20 also get core input; reciprocal GABA/Glu exists between flexor and extensor feeders.
-  - Script `scripts/connectome/premotor_outside_core.py`; note `docs/research/s18_premotor_outside_core.md`.
-  - Walking stays parked. The next walking step, when it resumes, is a per-cell spike save of these types in the s16/s17 arms.
-- **N19 sources gathered:** `docs/research/s18_n19_receptor_coupling.md` (Sonnet; read levels marked; not yet row-checked by me).
-  - **Coverage:** `receptors.gene_probabilities` already has per-cell probabilities for Dop1R1, Dop1R2, Dop2R, DopEcR, Oamb, Octβ1R/2R/3R, 5-HT1A/1B/2A/2B/7, but `FAMILIES` doesn't consume them. Octα2R and every tyramine receptor are missing from the transcript tables; Octα2R is only in an unwired `epiney2025_*` table.
-  - **Coupling (sign):**
-    - Gs, so excitatory: Dop1R1, Octβ1-3R, 5-HT7.
-    - Gq, so excitatory: Oamb, 5-HT2A/2B.
-    - Dual Gs+Gq: Dop1R2.
-    - Gi/o, so inhibitory: Dop2R, Octα2R, 5-HT1A/1B, honoka/Oct-TyrR.
-    - DopEcR is non-canonical.
-  - **Magnitudes:**
-    - DA cuts MBON-γ1pedc EPSC charge by 90 ± 3.7% (Hige 2015);
-    - the OA Ca²⁺ response has an EC50 of 11 µM (Černe 2025);
-    - TA lowers larval MN firing (Schützler 2019; figure-only).
-  - **Kinetics:**
-    - GRAB-OA in vivo: τ_on 0.34-0.6 s, τ_off 5.9-9.4 s (Lv 2024);
-    - larval DAT clearance: Km 0.1 µM (Privman/Venton 2015).
-- **Nothing running.** I started nothing on backhouse or the Mac.
+## Report for Ben (s18)
+- **Walking (F-S18-1, commit b5de8cc). This matters.**
+  - The 12-cell T1 core supplies only **0.8%** of the T1 leg-MN input.
+  - The rest comes from 20A/22A (10.7%), 04B (9.4%), 03A (8.5%), 13A (8.5%) and 21A (7.2%), all within two hops of DNg100.
+  - So the missing alternation most likely lives in premotor populations we never modelled as part of the rhythm, not in the core's strength.
+  - Walking stays parked. When it resumes, the next step is a per-cell spike save of these types in the s16/s17 arms.
+- **N19 unit check changed before building.** The planned Hige 2015 check (−90% MBON input) is associative plasticity, so it can't test N19.
+  - It is depression after *pairing* odor with a DAN, absent with backward pairing, through Dop1R1 in KC axons (presynaptic).
+  - It goes to fly2 as a candidate check for MB plasticity (N21).
+  - N19's checks are now Lv 2024 / Wan 2021 kinetics, a Strother 2018 Mi4 calibration, Dacks 2009 PN 5-HT (held out) and a Strother sign test (held out). See DECISIONS 21 Oct 21:56.
+- **Owners updated** in `docs/MECHANISM_STATUS.md`. The brief's "giant-fibre escape (N13, N14, N18)" only matches N18: N13 is conduction delays and N14 is noise. The IDs were followed as listed. N27 (lumped glial K+) isn't synaptic, so it went to fly.
 
-**Next (this order):**
-1. **N19, the highest leverage.** Spec: s_ik = Σ_r p_ir · sign_r · a_k.
-   - p_ir: the per-cell receptor probability from `gene_probabilities`.
-   - sign_r: from the coupling table. Dop1R2 and DopEcR go to 0 or an explicit rule; write it down.
-   - a_k: one shared magnitude per modulator, bounded by the measured effects.
-   - Also make `mod_tau` modulator-specific (OA τ_off ~6-9 s, GRAB-OA) and add a TA pool. TA has no transcript row, so its sensitivity stays 0 and its absence is recorded.
-   - Pre-register the unit check before building. Candidate: the DA effect on MBON-γ1pedc input gain against the measured −90% (Hige 2015), with the pool level set by a DAN-burst protocol. The OA τ_off against GRAB-OA is the kinetic check.
-   - Build, keep a CPU path, then add an m10f stage (m10f1). Run the whole-brain stability gate (`closed_loop_check.py --profile m10f1`, eye excluded; the 60 s `smoke_live.py` on backhouse under rule 16). Commit and update MECHANISM_STATUS.
-   - If it destabilises, it stays built-off with the reason written down.
-   - First row-check the three magnitude rows and the GRAB-OA numbers in the new note (Sonnet, foreground).
-2. **N20:** identified peptide release cells and receptor maps.
-3. **S1-S4:** read sources for the guessed rows; physiology checks for resting trehalose, starvation survival on water and desiccation survival.
-4. **N26:** light coupling. **N25:** against measured daily sleep and rebound. **S5/N28:** temperature, with a cited neural Q10.
+## Done this part (21:42-21:57)
+- Owner column (above).
+- Row-check of the N19 sources (Sonnet, foreground, full text): `docs/research/s18_n19_rowcheck.md`.
+  - **Lv 2024 confirmed:** OA in vivo τ_on 0.34 s, τ_off 5.90 s for a single pulse (MB γ3); 0.6 / 9.4 s for a 50-pulse train; in vitro τ_off 1.40 s.
+  - **Wan 2021:** 5-HT in vivo τ_off 4.08 s.
+  - **No fly in vivo DA τ:** Sun 2018's 3 s / 17 s are mouse slice.
+  - **Dacks 2009:** bath 5-HT raises PN odor responses ~15%.
+  - **Strother 2018:** CDM raises Mi4 gain to L5 (figure only) and raises Mi1/Tm3/Mi4/Mi9/T4 in vivo.
+- **Coverage fact:** `gene_probabilities` has type-specific rows for only **82 types** (optic lobe and KCs). VNC cells go by hemilineage (Allen); every other brain cell, PNs and MBONs included, gets the population prior.
+- N19 pre-registration: DECISIONS 21 Oct 21:56. Nothing built, nothing running.
+
+## Next (this order)
+1. **N19 build** per DECISIONS 21:56:
+   - Read the Strother 2018 Fig. 6F/H Mi4 numbers from the figure image: PMC5776785; curl the figure and view it.
+   - Code in `lif.py`:
+     - switch `neuromodulation:all|receptor_map`;
+     - per-pool τ_on/τ_off;
+     - occupancy K;
+     - a TA pool (MODULATORS 3→4; the GPU path `gpu/batched.py` hard-codes 3, so make it refuse the new mode);
+     - a hold/clamp of pool levels for bath experiments.
+   - Tests: bit-identical when off; sign rule; kinetics.
+   - Unit checks U1, U1h, U2, U3 on backhouse (rule 16).
+   - Then the m10f1 stage, gate and 60 s smoke on backhouse. Each smoke takes about 6500 s of wall time, so launch it early.
+   - Commit, then update the MECHANISM_STATUS row.
+2. N20 (peptide cells and receptor maps).
+3. S1-S4 physiology checks (trehalose, starvation, desiccation).
+4. N26 light; N25 daily sleep; S5/N28 Q10.
+5. Fill the status cells of the new rows: N1-N4, N27, N33.
+
+**s18 part 1 (21:31-21:43, kept for reference):** `docs/MECHANISM_STATUS.md` built (commit cead727; fly rows 0 of 14 done; N26 closest). N19 sources gathered in `docs/research/s18_n19_receptor_coupling.md`. The coupling table there is used by the sign rule above. Octα2R is only in the unwired `epiney2025_*` tables.
 
 **s17 (kept for reference): 0/24 pass (F-S17-1).** The closed proprioceptive loop under M0 and OA4 fails; the afferents stay at 0.3-12 Hz because the legs barely move. Runs `runs/s17/loop/`; figures `docs/media/s17_loop_*.png`. The replay half of S4 wasn't run.
 

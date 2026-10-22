@@ -13,8 +13,11 @@ Status words:
 - **absent:** nothing built, or a stub only.
 
 One row per entry in `data/model/mechanisms.yaml`; X1 and X2 are infrastructure and are not counted.
-Owners: **fly** = neuromodulation, hormones, internal state, metabolism; **fly2** = plasticity, synaptic
-dynamics, sensors, body; **unassigned** = neuron intrinsics and the rest (Director to assign).
+Owners: **fly** = neuromodulation, hormones, internal state, metabolism, plus (Director, 21 Oct) neuron
+intrinsics N1-N4 and glia N27, N33; **fly2** = plasticity, synaptic dynamics, sensors, body, plus (Director,
+21 Oct) N13, N14, N18. The Director's brief called N13/N14/N18 "the giant-fibre escape system"; only N18 is GF.
+N13 is per-type conduction delays and N14 is membrane noise. The IDs were followed as listed. N27 (lumped glial
+K+) is glial, not synaptic, so it went to fly with N33.
 
 Frontier `m10f` = m10f0 = m9c + `sense:taste_leg|modality_source` 1 + `connectome:unclear|nt_by_development` 1.
 It sets `state:organs|model` 1, so every internal-state row below is on, but almost every value in
@@ -59,10 +62,10 @@ It sets `state:organs|model` 1, so every internal-state row below is on, but alm
 | S6 | A | fly | absent | none | Stub `state:hemolymph\|ion_model` 0. Data read s12 (`s12_hemolymph_ions.md`). |
 | S7 | C | fly | absent | none | Stub; healthy lab fly assumed. |
 | S8 | C | fly | absent | none | Stub; courtship not a target. |
-| N1 | A | unassigned | to fill | | registry partial |
-| N2 | A | unassigned | to fill | | registry partial; rung-1 channels on in m10f |
-| N3 | A | unassigned | to fill | | registry have |
-| N4 | A | unassigned | to fill | | registry have; increment 0 (off) in m10f |
+| N1 | A | fly | to fill | | registry partial |
+| N2 | A | fly | to fill | | registry partial; rung-1 channels on in m10f |
+| N3 | A | fly | to fill | | registry have |
+| N4 | A | fly | to fill | | registry have; increment 0 (off) in m10f |
 | N5 | A | fly2 | fly2 to fill | | registry have |
 | N6 | A | fly2 | fly2 to fill | | registry partial |
 | N7 | A | fly2 | fly2 to fill | | registry have; slow fractions 0 in m10f |
@@ -71,13 +74,13 @@ It sets `state:organs|model` 1, so every internal-state row below is on, but alm
 | N10 | A | fly2 | fly2 to fill | | registry have; off |
 | N11 | A | fly2 | fly2 to fill | | registry have; off |
 | N12 | B | fly2 | fly2 to fill | | registry partial; strengths 0 |
-| N13 | A | unassigned | to fill | | registry have |
-| N14 | A | unassigned | to fill | | registry have; noise 0 in m10f |
+| N13 | A | fly2 | fly2 to fill | | registry have |
+| N14 | A | fly2 | fly2 to fill | | registry have; noise 0 in m10f |
 | N15 | A | fly2 | fly2 to fill | | registry partial |
 | N16 | B | fly2 | fly2 to fill | | registry partial |
 | N17 | B | fly2 | fly2 to fill | | registry partial |
-| N18 | B | unassigned | to fill | | registry partial |
-| N19 | C | fly | partial | none | Volume pools for DA, OA, 5-HT built in `lif.py` (gain × (1 + Σ s·m)). All sensitivities 0, so the pools have no effect; no tyramine pool; no per-type receptor map; `mod_tau` 1 s and increment guessed. Required level: pools with per-type receptor maps and second-to-minute kinetics. s16 `octopamine_state.csv` is a diagnostic tonic drive, not this mechanism. |
+| N18 | B | fly2 | fly2 to fill | | registry partial |
+| N19 | C | fly | partial | none yet; pre-registered U1/U1h kinetics (Lv 2024, Wan 2021), U2 Mi4 calibration (Strother 2018) with Dacks 2009 PN 5-HT held out, U3 sign test (DECISIONS 21 Oct 21:56). Hige 2015 is associative and presynaptic, so it is not an N19 check. | Volume pools for DA, OA, 5-HT built in `lif.py` (gain × (1 + Σ s·m)). All sensitivities 0, so the pools have no effect; no tyramine pool; no per-type receptor map; `mod_tau` 1 s and increment guessed. Required level: pools with per-type receptor maps and second-to-minute kinetics. s16 `octopamine_state.csv` is a diagnostic tonic drive, not this mechanism. |
 | N20 | C | fly | partial | none | On. Minimal tonic mV drive from lumped state to ISN, IPC, LB3a/b/c; every gain guessed. No peptide release cells or receptor maps (AKH, DILPs, NPF, sNPF, DH44, CRZ, ...). |
 | N21 | C | fly2 | fly2 to fill | | registry have; rates 0 |
 | N22 | C | fly2 | fly2 to fill | | registry partial |
@@ -85,13 +88,13 @@ It sets `state:organs|model` 1, so every internal-state row below is on, but alm
 | N24 | C | fly2 | fly2 to fill | | registry partial |
 | N25 | C | fly | partial | Tests check direction and hysteresis only. | On. Borbély process S plus dFB switch on FB6A_a/b/c and FB6E. `t_sleep` 5 min inferred (Shaw 2000); the 7 other rows guessed. Needed: daily sleep and rebound against measurement. |
 | N26 | C | fly | partial | DN1p day/night firing (F-CLOCK-1): `clock_gain` 7.75 fitted at CT 2, held-out CT 10 passes. | On. Lumped Stuart-Landau oscillator; period 24 h (Konopka & Benzer 1971 range). Light coupling, `l50`, `ct_light`, peak hours guessed; no molecular loop or CRY/eye light input. Closest of the fly rows to done. |
-| N27 | C | unassigned | to fill | | registry partial; gain 0 |
+| N27 | C | fly | to fill | | registry partial; gain 0 |
 | N28 | A | fly | partial | none | Q10 2 at 25 °C on neural rates (inferred, structural). Needed: a cited Drosophila neural Q10 range and a check. |
 | N29 | A | fly2 | fly2 to fill | | registry partial |
 | N30 | A | fly2 | fly2 to fill | | registry partial (fly2 first build s20) |
 | N31 | C | fly2 | fly2 to fill | | stub |
 | N32 | C | fly2 | fly2 to fill | | stub |
-| N33 | C | unassigned | to fill | | stub (glia; OA/TA-gated Ca would touch N19) |
+| N33 | C | fly | to fill | | stub (glia; OA/TA-gated Ca would touch N19) |
 | N34 | C | fly2 | fly2 to fill | | stub |
 | D1 | C | (phase 2) | absent | | after mechanism-complete (Ben, 21 Oct) |
 
