@@ -364,7 +364,7 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s24, m10f = m10f3, table filled, m10f4 (KC->MBON) fitted and held-out tested, waiting on its 60 s smoke (22 Oct 03:33)
+## fly2: s24, m10f = m10f3, table filled, m10f4 (KC->MBON) fitted and held-out tested, waiting on its 60 s smoke (22 Oct 03:56)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
@@ -376,6 +376,7 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
   - Unit checks: STP equals Nagel Eq 1 (from rest; ORNs are silent in the isolated CNS); 3 of 3 decay rows within 5%; TTMn 1.099 ms inside Augustin (spent). **DLMn follow 0.00 in both arms** (the open part of N18; waits on N30 option B, Ben's MN5 recording).
   - `docs/MECHANISM_STATUS.md` fly2 rows filled: **0 done of 49** (B: 23 partial, 3 absent; N: 4 built-off, 16 partial, 3 absent). N29 is partial only because the required level is synapse-specific; its checks pass.
   - m10f4 pre-registered (DECISIONS 22 Oct 01:55, amendment 01:57, clarification 02:00).
+  - After F-S24-2: `docs/research/s24_fly2_ltp_and_mb_rest_lit.md` (potentiation sources, MB resting rates) and Huang 2024 Fig 1 spike data pinned, unseen (`data/raw/huang2024/`). No fly2 process is left on the Mac; on backhouse only the m10f4 smoke (pid 57241, wrapper `run_gate4.sh`, which writes `ALL.done` at the end).
 - **m10f4 (N21 KC->MBON depression + N22 forgetting), FINDINGS F-S24-2:**
   - Fit: shared `kc_mbon_ltd_timing_rate` 0.430 (fitted; seeds 12-15 gave 0.404-0.450; γ-silent sensitivity 0.408). In-network CS+ charge 0.087-0.110 against Hige's 0.10. Pass.
   - Handler 2019 held out (now spent): depression at ISI 0 (0.095) and +0.5 s (0.077), minimal at +6 s (0.991); H1 and H2 pass. At −1.2 s the ratio is 1.000: H3 fails, as pre-registered, because LTP is off with no non-held-out source.
