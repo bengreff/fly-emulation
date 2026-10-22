@@ -1,6 +1,6 @@
 """Unit checks for frontier stages 1-2 (fly2, s24; pre-registered in DECISIONS 22 Oct).
 
-Isolated CNS (no body), noise on. The network settles, then is copied; the copy is kicked and the
+Isolated CNS (no body), membrane noise as in the profile (off in m10f). The network settles, then is copied; the copy is kicked and the
 unkicked copy subtracted (same random state), so only the evoked input remains. "Input current" into
 a cell is i_syn plus every extra receptor channel's current (stage 2 moves some edges into their own
 channels).
