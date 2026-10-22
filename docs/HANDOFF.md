@@ -349,6 +349,8 @@ Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03
 
 ## fly2: the scoreboard has real verdicts, 1 of 8 passes, and every scored item plays from the zip alone (F-ZIP-4, 21 Oct 03:17)
 
+**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15).
+
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct development-mode brief (packer, entry point, identity test), then flyemu.check and the scoreboard as zip `world/` data, then the bars (Director as Ben, DECISIONS 21 Oct 02:33). Nothing in the model changed; no switch was added or adopted.
 - **Merging:** `main` was fast-forwarded to fa679f6. The zip work since then is 1cbccff, 27676a1, 793c3eb, b595250, 089022c, c248318, c6ad8e1, ef54015, b7e6fc9, cfdfbea, 8f1ad74 and this docs commit. **`main` can fast-forward to worktree-fly2.**
 - **The zip:** `runs/s22/fly2_zip/s5/fly_brain.zip`.
