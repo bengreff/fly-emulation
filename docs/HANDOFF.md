@@ -15,6 +15,12 @@
   - It is depression after *pairing* odor with a DAN, absent with backward pairing, through Dop1R1 in KC axons (presynaptic).
   - It goes to fly2 as a candidate check for MB plasticity (N21).
   - N19's checks are now Lv 2024 / Wan 2021 kinetics, a Strother 2018 Mi4 calibration, Dacks 2009 PN 5-HT (held out) and a Strother sign test (held out). See DECISIONS 21 Oct 21:56.
+- **MB resting rates are fly's (Director, 22 Oct 03:58; written in by fly2).** The Director gave them to fly as the owner of neuron intrinsics (N1-N4). Fit targets (measured, cited, read from the text by fly2's search agent and not yet re-checked against the paper; `docs/research/s24_fly2_ltp_and_mb_rest_lit.md` on worktree-fly2):
+  - **PPL1-α'2α2 (MB-V1): about 6-10 spikes/s**, n 10 flies, in vivo voltage imaging, head-fixed awake (Huang et al. 2018 Nat Commun 9:872, PMC5830414, Fig 6d-e).
+  - **MBON-α3: 12.1 Hz**, n 5, ex vivo whole-cell at room temperature (Hafez et al. 2023 eLife 12:e77578; also in `s13_intrinsic_ranges.csv`).
+  - The model has every KC, DAN (340 PAM/PPL1) and MBON (97) at 0 Hz at rest in m10f3 and m10f4 (F-S24-2).
+  - **Held out, not a target:** Huang 2024 Nature Fig 1 per-type spike rates (`data/raw/huang2024/`, unseen; register row). KC 0.1 Hz (Turner 2008) is already spent.
+  - Why fly2 cares: until DANs fire at rest, N21 depression and N22 forgetting never act in the gate or the smoke.
 - **Owners updated** in `docs/MECHANISM_STATUS.md`. The brief's "giant-fibre escape (N13, N14, N18)" only matches N18: N13 is conduction delays and N14 is noise. The IDs were followed as listed. N27 (lumped glial K+) isn't synaptic, so it went to fly.
 
 ## Done this part (21:42-21:57)
@@ -518,7 +524,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
 | Hige 2015 Fig 3D, MBON-γ1pedc>α/β CS+ charge after one forward pairing (−90 ± 3.7%) | seen; **fit target** for m10f4's shared `kc_mbon_ltd_timing_rate` 0.430 (F-S24-2). Its CS− (about −25%) is reported, not scored | don't reuse Fig 3D as a check of N21 |
 | Hige 2015 Fig 1H/1J backward pairing (odour 0.5 s after the last DAN pulse: no change at γ1pedc, n 7) | **unspent** (F-S24-2 reported it without scoring; LTP was off) | spend once, as the falsifier of a future potentiation rule |
-| Huang 2024 Nature Fig 1 voltage-imaging spikes (Zenodo 10998457 Figure1.zip, `data/raw/huang2024/`; 5 PPL1 + 6 MBON types, 20 flies each) | **unseen** (fly2 s24 listed structure only; one PPL1-α'3 trial's spike count showed in the listing) | decide before opening whether it's a fit target or the held-out check for MB resting rates; pre-register first |
+| Huang 2024 Nature Fig 1 voltage-imaging spikes (Zenodo 10998457 Figure1.zip, `data/raw/huang2024/`; 5 PPL1 + 6 MBON types, 20 flies each) | **HELD OUT, unseen** (declared 22 Oct 03:58 by the Director, before anyone opened it; fly2 s24 listed the zip structure only, and one PPL1-α'3 trial's spike count showed in that listing) | held out for **MB plasticity (N21/N22) and DAN/MBON dynamics, resting rates included** (fly and fly2). Not a fit target for anything. Open once, as the check, only after a written pre-registration names the readout and the pass band. The fit targets for MB resting rates are Huang 2018 PPL1-α'2α2 6-10 Hz and Hafez 2023 MBON-α3 12 Hz (fly's section) |
 | Handler 2019 Fig 2D-E, ISI dependence of KC->MBON plasticity (γ4 signs: −1.2 s potentiation, 0 and +0.5 s depression, +6 s minimal) | **spent** on m10f4 (F-S24-2, 22 Oct): H1 and H2 pass, H3 fails (no LTP) | don't reuse as held out; a future LTP rule needs a new held-out set |
 | Turner 2008 KC odour responses (6 ± 5% respond; α/β 2.2, α'/β' 4.9 spikes per odour) | seen; set the KC drive in `kc_mbon_pairing.py` (F-S24-2) | none |
 
