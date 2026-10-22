@@ -3780,6 +3780,59 @@ Brief: the Director's 21 Oct night brief (Ben: a mechanism is done when built at
 - **Falsifier / consequence:** a stage that fails G or S stays built-off with the reason recorded, and later stages are rerun on the last passing stage.
 - Runs on backhouse, `~/fly2_mc` (git archive of the commit carrying this entry), rule 16 caps, rule 17 detached, done-files.
 
+
+### s18 N19 plan revised before building (21 October, 21:56; pre-registration of the unit checks; nothing built yet)
+**Hige 2015 dropped as N19's unit check.** The row-check (`docs/research/s18_n19_rowcheck.md`, Sonnet, full text)
+shows the −90 ± 3.7% is depression after *pairing* odor with one DAN, absent with backward pairing or a
+non-cognate DAN, and attributed to Dop1R1 in KC axons (presynaptic). N19 is a non-associative postsynaptic gain,
+so that number can't test it. It goes to fly2 as a candidate unit check for the MB plasticity rows (N21).
+
+**Mechanism (CPU path in `lif.py`; GPU path refuses it until ported and matched).** Switch
+`neuromodulation:all|receptor_map`, neutral 0, bit-identical when off.
+- s_ik = a_k · Σ_r p_ir · sign_r. p_ir comes from `receptors.gene_probabilities`. Coverage is 82 types with
+  type-specific rows (optic lobe and KCs, Davis 2020 / Özel 2021), VNC cells by hemilineage (Allen 2020), and
+  the rest of the brain on the population prior. Coverage counts will be reported. Validity: the prior cells get
+  one shared s per modulator.
+- Sign rule (written down before use): +1 if every reported coupling arm is Gs or Gq; −1 if Gi/o; 0 if the
+  receptor is non-canonical. So Dop1R1 +1, Dop1R2 +1 (Gs and Gq, both excitatory), Dop2R −1, DopEcR 0,
+  Oamb +1, Octβ1-3R +1, 5-HT2A/2B/7 +1, 5-HT1A/1B −1 (primary Gi; the heterologous PLC report is noted as
+  uncertainty).
+- Gain law in this mode: g_i = max(0, 1 + Σ_k s_ik · u_k), with occupancy u_k = m_k/(m_k + K_k). m_k is in spikes
+  per releasing cell (each pool normalised by its own cells).
+  - K_k is half occupancy: guessed 10 spikes per releasing cell. The measurement that would fix it is the GRAB ΔF/F
+    per pulse relative to a saturating bath in the same prep.
+- Kinetics per pool, an alpha-like rise (τ_on) then decay (τ_off):
+  - OA: τ_on 0.34 s, τ_off 5.90 s, measured (Lv 2024 Fig. 2J, single pulse, MB γ3).
+  - 5-HT: τ_on 0.07 s, τ_off 4.08 s, measured (Wan 2021 Fig. 2h-j).
+  - DA: τ_off 1.4 s, derived from larval protocerebrum DAT Vmax/Km 0.08/0.11 µM/s per µM (Privman/Venton 2015;
+    larval stage, secondary read; VNC gives 2.0 s). Its τ_on is inferred from OA's.
+- **Tyramine:** a fourth pool, held at 0. The EM transmitter classifier has no tyramine class, so the pool has no
+  releasing cells. No transcript table carries a TA receptor (or Octα2R), and the receptor names
+  (TyrR/TyrRII/honoka/TAR1) aren't reconciled with FlyBase. Its sensitivity is 0, with that reason recorded.
+- Validity range: postsynaptic excitability only. There is no presynaptic release modulation (that is where Hige's
+  Dop1R1 acts) and no GPCR second-messenger lag beyond the pool kinetics.
+
+**Unit checks (pre-registered, scored once):**
+- **U1, kinetics (consistency):** whole brain, receptor map on. One kick to every OA-releasing cell; read the
+  network's OA pool. Pass if τ_on and τ_off are within ±25% of 0.34 s / 5.90 s. The same for 5-HT against
+  0.07 / 4.08 s.
+- **U1h, held out:** 50 kicks at 100 Hz to the OA cells. Measured τ_on 0.6 s, τ_off 9.4 s (Lv Fig. 2E; a different
+  region and stimulation mode). Pass is ±25% on each. A linear pool predicts τ_off ≈ 5.9 s, so a fail is expected
+  unless the network reverberates. A fail is recorded as the validity limit (stimulus-dependent clearance,
+  e.g. saturable uptake).
+- **U2, magnitude:**
+  - Calibrate one shared a (monoamine GPCR rule; a_DA = a_OA = a_5HT, fitted) on the Strother 2018 Fig. 6F/H Mi4
+    gain to L5 photoactivation under 50 nM CDM. Model: kick L5, Mi4 rate with u_OA held at 1 against 0. Mi4 has
+    type-specific transcripts.
+  - **Held-out magnitude test:** Dacks 2009. Kick the ORNs of DM2/DL1/DM3; PN response with u_5HT held at 1
+    against 0. Measured ~+15% (n=8). Pass is +5% to +30%. PNs are on the population prior, a hard test of the prior.
+- **U3, held-out sign test:** Strother 2018 Fig. 4E-F (in vivo CDM raises Mi1, Tm3, Mi4, Mi9 and T4 responses).
+  Pass if s_i,OA > 0 in at least 4 of these 5 types, from the Özel rows.
+- **Falsifier for adoption:** if U2-held-out or U3 fails, N19 stays built-off at neutral, with the reason. If the
+  m10f1 stability gate fails (`closed_loop_check.py --profile m10f1`, eye excluded, seeds 12-15; 60 s
+  `smoke_live.py` on backhouse: no runaway, no NaN, whole-brain rate within 2× of m10f), it also stays built-off.
+Stage name (21 October, 21:58): fly2 owns m10f1-m10f4 tonight, so N19's stage is the next free m10f stage, on top of fly2's last passing one. The gate and smoke are run on that profile, not on "m10f1".
+
 ### fly2: unit checks for frontier stages 1-3, pass rules written before the run (22 Oct 01:41)
 Gate result first (scored from `~/fly2_mc/runs/s23/fc/`, all JSONs read): every stage passes the 21:35 gate. G: 0.0 non-eye spikes/ms in the last 100 ms on seeds 12-15 at m10f1, m10f2 and m10f3; no NaN; 0 MuJoCo warnings; top class 11.0 Hz (sensory_olfactory), none near 200. S (60 s, seed 12): whole brain 0.303 / 0.304 / 0.304 Hz against 0.324 (bounds 0.162-0.486), active fraction 0.027 / 0.027 / 0.027 against 0.0281 (0.014-0.042), no runaway. m10f3 is bit-identical to m10f2 at rest in G and S (the coupled cells, GF, TTMn, DLMn and PSI, are silent at rest, so neither the gap current nor PSI's sign reaches a spike); the stage-3 check below is what shows the switches act. Probe: `scripts/probes/m10f_unit_checks.py` (isolated CNS, noise on, kicked copy minus unkicked copy).
 - **Stage 1 (N29 STP), consistency check, not held out:** all ORN_DM6 cells kicked together 10 times at 10 Hz; per pulse, the peak evoked input current summed over DM6 PNs within 5 ms, normalised to pulse 1. Reference: Nagel 2015 Eq 1 from rest, f 0.78, tau 893 ms: 1, 0.803, 0.666, 0.570, 0.504, 0.457, 0.425, 0.402, 0.386, 0.375. **Pass:** RMS deviation over pulses 2-10 <= 0.10 and pulse 10 within +-0.10. Reported with it: the resting resource x on these edges at train start and the spontaneous ORN rate (spontaneous spikes pre-depress the synapse, so the normalised curve is expected to be flatter than Eq 1 from rest; if it fails for that reason, U is refit in network as a fitted class value, not adopted tonight).
