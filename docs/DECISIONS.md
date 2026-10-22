@@ -3851,3 +3851,4 @@ Written before any m10f4 run. Probe: `scripts/probes/kc_mbon_pairing.py` (isolat
 - **Gate for m10f4:** G and S as on 21:35 (seeds 12-15; 60 s smoke within +-50% of 0.324 Hz and 0.0281 active). Prediction: bit-identical to m10f3 at rest unless DANs spike at rest; any difference has to be traced to DAN spikes.
 - Runs on backhouse, rule 16 caps, detached, done-file.
 - Amendment (22 Oct 01:57, before any m10f4 run): the Handler DAN train is three pulses at 2 Hz (0, 0.5, 1 s from DAN onset; 1 s of activation, the CsChrimson duration in their Methods), not four. Four at 2 Hz span 1.5 s, which at ISI -1.2 s would overlap the KC window and stop being DAN-before-KC.
+- Clarification (22 Oct 02:00, before any m10f4 run): Handler H1-H3 are scored on the mean charge ratio over seeds 12-15 (each its own KC set), with each seed reported. The confirm, recovery and Handler runs all use the one shared rate (mean of the four fits).

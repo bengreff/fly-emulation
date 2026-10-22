@@ -335,6 +335,19 @@ M10F3 = {
     "connectome:identified|nt_from_physiology": (1.0, _I, "frontier stage 3 (N6 identified cells): PSI "
                                                  "cholinergic (Fayyazuddin 2006, measured)"),
 }
+# Stage 4 (fly2, 22 Oct; DECISIONS 22 Oct 01:55): KC->MBON depression fitted to Hige 2015, forgetting on.
+M10F4 = {
+    **M10F3,
+    "cell_type:all|kc_mbon_ltd_timing_rate": (0.42991, _I, "frontier stage 4 (N21): fitted, one value shared by "
+                                              "all compartments; one forward pairing (1 s odour, four PPL1-γ1pedc "
+                                              "pulses at 2 Hz) leaves MBON-γ1pedc's CS+ KC charge at 0.10 (Hige 2015 "
+                                              "Fig 3D, -90 +- 3.7%); mean of seeds 12-15 (0.404-0.450); KC drive "
+                                              "Turner 2008"),
+    "cell_type:all|kc_mbon_forgetting": (1.0, _I, "frontier stage 4 (N22): KC->MBON weights relax to baseline"),
+    "cell_type:all|kc_mbon_memory_tau_h": (3.0, _G, "frontier stage 4 (N22): guessed, inside 2.3-10.4 h read from "
+                                           "Hige 2015 (little recovery in 40 min) and Aso & Rubin 2016 (largely "
+                                           "gone by 24 h); Berry 2018 γ2α'1 (gone by 1 h) disagrees"),
+}
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
@@ -372,6 +385,7 @@ PROFILES: dict[str, dict] = {
     "m10f1": {"values": M10F1, "kick_mv": KICK},
     "m10f2": {"values": M10F2, "kick_mv": KICK},
     "m10f3": {"values": M10F3, "kick_mv": KICK},
+    "m10f4": {"values": M10F4, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f3"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41)
