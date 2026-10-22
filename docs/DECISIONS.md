@@ -3907,3 +3907,15 @@ Director brief, 22 Oct. Sources: Cohn 2015, Berry 2018 and Hattori 2017, with Hi
   - U4: edges outside the spiking DANs' compartments are unchanged.
   - U5: the GPU path refuses (already true for any KC plasticity).
 - **If it passes:** m10f5 = m10f4 + r_res, gated by G and S as on 21:35. Prediction: identical to m10f4 at rest, since DANs are silent.
+- Amendment (22 Oct 04:22, before any scored run). One engineering test with a shortened protocol (`/tmp/fly2n/probe_test.json`) checked only that the new arm runs and that one kick gives one compartment DAN spike-step.
+  - **Hattori confirm:** `kc_mbon_pairing.py --profile m10f4 --mbon MBON16,MBON17 --dan PPL104 --restore-stims 1,3,6,10`, seeds 12-15.
+    - Type names follow Aso et al. 2014 (PPL104 = PPL1-α'3, MBON16/17 = MBON-α'3ap/α'3m). The mapping is inferred; the probe finds PPL104 (both cells) as the only DAN type contacting these MBONs.
+  - **Suppression stand-in:** one Hige-style forward pairing (1 s odour, 4 kicks) instead of 15 odour repetitions. Under a linear rule the recovery fraction doesn't depend on how the weight got depressed.
+  - **Timing:**
+    - A 10 s wait after the pairing, so the KC eligibility (tau 1 s) decays below 1e-4 and the stimulations don't depress.
+    - Then stimulations 2 s apart instead of 30 s. Between stimulations only N22 (tau 3 h) moves the weights. The 9 × 28 s it skips would add at most 1 - exp(-252 s / 3 h) = 2.3% recovery by n = 10 (0.26% per interval), under half of one SEM (6%); Hattori's unstimulated controls are flat at about 0 ± 5%.
+    - That keeps each seed to 32 s of simulated time.
+  - **S is counted** (`compartment_dan_spike_steps`). If S per stimulation isn't 20, the fit is redone with the counted S and the confirm rerun at that value.
+  - **Regression:** the default MBON11/PPL101 Hige protocol with r_res on, seeds 12-15.
+  - **Machine:** the Mac (load 3; two jobs at a time, detached, 2 threads each), because backhouse is at load 25.5, above the rule-16 queue line.
+  - **Provisional r_res = 0.00289** (`scripts/probes/s25_restore_fit.py`, S = 20).

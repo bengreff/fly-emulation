@@ -100,6 +100,14 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=12)
     ap.add_argument("--fit-target", type=float, default=None, help="CS+ charge ratio to fit the LTD rate to")
     ap.add_argument("--recovery-ms", type=float, default=0.0, help="N22 check: unstimulated ms after pairing")
+    ap.add_argument("--restore-stims", default="", help="s25 Hattori 2017 Fig 6F arm: after the pairing, "
+                    "DAN-only stimulations; snapshot the CS+ ratio after these counts, e.g. 1,3,6,10")
+    ap.add_argument("--pulses-per-stim", type=int, default=10)
+    ap.add_argument("--pulse-hz", type=float, default=7.0)
+    ap.add_argument("--pulse-ms", type=float, default=50.0)
+    ap.add_argument("--spikes-per-pulse", type=int, default=2, help="guessed (DECISIONS 22 Oct 04:11)")
+    ap.add_argument("--stim-interval-ms", type=float, default=2000.0)
+    ap.add_argument("--restore-wait-ms", type=float, default=10000.0, help="KC eligibility decay first")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.rsplit("=", 1) for s in a.set)}
@@ -187,6 +195,34 @@ def main() -> None:
         tau = float(-1.0 / np.polyfit(np.array(tt)[ok], np.log(y[ok]), 1)[0])
         out["recovery"] = {"t_ms": tt, "mean_dev": dev, "tau_fit_ms": tau, "points": int(ok.sum())}
         print("recovery", json.dumps({"tau_fit_ms": tau, "points": int(ok.sum()), "dev0": dev[0]}), flush=True)
+    if a.restore_stims:
+        # s25 (DECISIONS 22 Oct 04:11 and amendment): recovery of the depressed CS+ ratio under DAN-only
+        # stimulations; one stimulation = pulses at pulse_hz, each pulse spikes_per_pulse kicks
+        snaps = sorted(int(x) for x in a.restore_stims.split(","))
+        m = np.isin(net.kc_post, mbon) & np.isin(net.kc_pre, cs_plus)
+        q = n_spk[net.kc_pre[m]].astype(np.float64)
+
+        def cs_ratio():
+            return float((q * net.w[net.kc_e][m]).sum() / (q * wb[m]).sum())
+        for _ in range(int(a.restore_wait_ms / DT)):
+            net.step()
+        r_supp = cs_ratio()
+        kick_at = {int(round((i * 1000.0 / a.pulse_hz + j * a.pulse_ms / a.spikes_per_pulse) / DT))
+                   for i in range(a.pulses_per_stim) for j in range(a.spikes_per_pulse)}
+        contact = np.flatnonzero(np.asarray(net.M_da[mbon, :].sum(axis=0)).ravel() > 0)
+        rows, comp_steps, kc_spk = [], 0, 0
+        for n_ in range(1, max(snaps) + 1):
+            for s_ in range(int(a.stim_interval_ms / DT)):
+                sp = net.step(kick=(dan, prof["kick_mv"]) if s_ in kick_at else None)
+                comp_steps += bool(np.isin(sp, contact).any())
+                kc_spk += int(np.isin(sp, kc).sum())
+            if n_ in snaps:
+                r_n = cs_ratio()
+                rows.append({"n": n_, "ratio": r_n, "recovery": (r_n - r_supp) / (1.0 - r_supp),
+                             "compartment_dan_spike_steps": comp_steps, "kc_spikes": kc_spk})
+                print("restore", json.dumps(rows[-1]), flush=True)
+        out["restore"] = {"ratio_suppressed": r_supp, "rows": rows, "kicks_per_stim": len(kick_at),
+                          "contact_dans": [str(t.iat[c]) for c in contact]}
     out["final_overrides"] = ov
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(out, indent=1))
