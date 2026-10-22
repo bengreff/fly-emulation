@@ -1929,3 +1929,29 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - With gaps off, nothing follows (0.00), so the switch acts.
   - **DLMn a,b and c-f follow 0.00 in both arms.** The DLM latency (band 1.36-1.85 ms) is unmet, so GF→PSI→DLMn does not transmit even with PSI cholinergic. This is the open part of N18.
 - **Adopted:** `PROFILES["m10f"] = PROFILES["m10f3"]`. fly's scripts that default to m10f (s16_oa, proprio_reach, etc.) now run with the four synaptic switches on. fly_brain.zip v1 is unchanged.
+
+### F-S24-2: KC->MBON depression fitted to Hige 2015 at one shared rate (0.430) passes the Handler 2019 held-out forward and +6 s checks and fails the backward one, as pre-registered (no LTP); m10f4 waits only on its 60 s smoke (fly2, s24, 22 Oct 03:33; DECISIONS 22 Oct 01:55, 01:57, 02:00)
+- **Probe:** `scripts/probes/kc_mbon_pairing.py` (isolated CNS; KCs and DANs driven by kicks; `runs/s24/kc/` on backhouse, copied to the Mac). KC drive is Turner 2008: 6% of KCs, Poisson spikes per odour (α/β 2.2, α'/β' 4.9, γ 2.2 guessed). Readout: the KC-spike-weighted KC->MBON weight after over before, over the odour's KCs.
+- **Fit (fitted, shared by all compartments):** one forward pairing (1 s odour, PPL1-γ1pedc pulses at 0.2/0.7/1.2/1.7 s), target CS+ charge 0.10 on MBON-γ1pedc>α/β (Hige 2015 Fig 3D, −90 ± 3.7%).
+  - Per-seed solutions: 0.424, 0.442, 0.450 and 0.404 (seeds 12-15). The shared rate is the mean, **0.430 per DAN spike per unit KC eligibility**.
+  - In network at the shared rate, the CS+ ratio is 0.097 / 0.106 / 0.110 / 0.087. **Pass** (band 0.06-0.14). PPL101 contacts both MBON11 cells in the compartment proxy.
+  - The sensitivity run with γ KCs silent (Turner literal) gives 0.408, within 2×, so no flag. Only 32% of MBON11's KC synapses are from α/β KCs, but the ratio is a per-KC average, so the fitted rate barely depends on which KCs carry it.
+- **Reported, not scored:**
+  - CS− ratio is 1.0 at every seed; Hige measured about −25% in spikes. This is a known miss: the rule has no non-associative change.
+  - Hige backward pairing: no change by construction, since LTP is off. Not evidence.
+- **Held out, spent (Handler 2019 Fig 2D-E; MBON-γ4>γ1γ2 with PAM-γ4; KCs 500 ms, DAN 3 pulses at 2 Hz; mean of seeds 12-15):**
+  - ISI −1.2 s: 1.000 at every seed. **H3 fails, as predicted**; there is no potentiation without LTP.
+  - ISI 0: 0.095 (0.090-0.100). ISI +0.5 s: 0.077 (0.072-0.082). **H1 passes.**
+  - ISI +6 s: 0.991 (0.990-0.991). **H2 passes** (bound: ratio ≥ 0.769).
+  - The model's depression is about 90% at both forward ISIs. Handler's magnitudes are plot-only, so the size is not checked.
+- Figure (viewed): `runs/s24/kc/fig_kc_mbon.png` (`scripts/probes/kc_mbon_figure.py`).
+- **N22 unit check (implementation):** with forgetting on and tau overridden to 1 s, the mean CS+ deviation decays with tau 1000.0 ms (300 points). **Pass.** At the adopted 3 h, the derived recovery is 20% at 40 min and essentially complete by 24 h.
+- **Gate (m10f4; G seeds 12-15, S 60 s):** G 0.0 non-eye spikes/ms, no NaN, 0 warnings, and identical to m10f3 in every JSON value at every seed. S (the pre-registered 60 s smoke, seed 12) was still running at 03:33 and finishes about 07:00, so it is not scored here and `m10f` stays m10f3. Its 10.5 s checkpoint (0.3054 Hz, 0.0268 active) equals the m10f3 10.5 s checkpoint in all 244 recorded values; only the profile name, build time and wall time differ. That is consistent with the prediction but is not the pre-registered test.
+  - Why identical: in the m10f3 60 s smoke, all 4064 KCs, all 340 PAM/PPL DANs and all 97 MBONs are silent (0 Hz). So the rule never fires at rest, and the gate says nothing about it. The KC resting rate in vivo is about 0.1 Hz (HANDOFF register), so the silent mushroom body at rest is itself a miss of the resting state, not of this mechanism.
+- **Limits:**
+  - Compartments are proxied by DAN->MBON contacts.
+  - One rate for all compartments, though Hige finds that α2 needs a much longer protocol.
+  - The 3 h tau disagrees with Berry 2018 for γ2α'1.
+  - γ-KC odour spiking is in tension with Turner 2008.
+  - The eligibility tau (1 s) and DA tau are guessed.
+  - LTP is off, so N21 stays partial.

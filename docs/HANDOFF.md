@@ -364,54 +364,35 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: mechanism-complete night, frontier stages m10f1-m10f3 in their gate (21 Oct 21:45)
+## fly2: s24, m10f = m10f3, table filled, m10f4 (KC->MBON) fitted and held-out tested, waiting on its 60 s smoke (22 Oct 03:33)
 
-**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15).
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief. Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work has stopped (`fly_brain.zip` v1 stays as is: `runs/s22/fly2_zip/s5/`, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body.
-- **Merging:** worktree-fly2 was rebased onto main f4d75f9 (fly s14-s17); DECISIONS/FINDINGS kept both sides, and fly's 01:22 note was restored. git refused the fast-forward of `main` because main is checked out in fly's tree, so **the Director merges: main can fast-forward to worktree-fly2**. main has since moved to 09e31b1 (fly s18, `docs/MECHANISM_STATUS.md`), so merge main into worktree-fly2 first.
-- **Switch inventory** (`scripts/probes/switch_inventory.py --profile m10f0`, output `/tmp/fly2n/switch_inv_m10f0.csv`, rerun it to get it back). Several "have" mechanisms are **off in m10f0**: N7 gabab_fraction, N9 conductance_based, N10 (std_release_fraction, ORN measured_depression, leg transferred_depression), N11 presynaptic_inhibition_gain, N21 kc_mbon_ltd_rate, both N29 switches, and N12 `electrical:all|gap_conductance`, which is missing from the yaml's switch list.
-- **Frontier stages** (`profiles.py`; cumulative; `m10f` still = m10f0; pre-registered in DECISIONS 21 Oct 21:35):
-  - m10f1 = + N29 STP per connection (ORN→PN, ORN→LN);
-  - m10f2 = + N29 receptor decay per connection;
-  - m10f3 = + N12 gaps + PSI cholinergic.
-  - **Gate running on backhouse** (`~/fly2_mc`, the 725cf46 archive): `~/fly2_mc/runs/s23/fc/`, `gate_m10f{1,2,3}_s{12-15}.json`, `smoke_m10f{1,2,3}_s12.json` (60 s), done-files `gate_m10fK.done`, `smoke_m10fK.done`, `ALL.done`. Check it with `ssh backhouse "wsl -d Ubuntu -- bash -s" < /tmp/fly2n/bh_status.sh`.
-  - At 21:43 seed 12 passed silence on all three stages (0.0 non-eye spikes/ms; whole brain 0.31 Hz against 0.33). The smokes take about 2-2.5 h, so expect them done around 00:00-00:30.
-  - The Mac keep-alive ssh to backhouse runs under nohup; kill it once ALL.done exists (`pkill -f "exec sleep infinity"` matches only ours on the Mac).
-- **When the gate finishes:**
-  - Score G and S per stage against the 21:35 entry.
-  - Advance `PROFILES["m10f"]` to the last passing stage.
-  - Run the unit checks: stage 1, an in-network ORN→PN 10 Hz train against Nagel 2015 f 0.78 / τ 893 ms (a consistency check; no held-out number is readable); stage 2, the per-row current decay; stage 3, `gf_latency.py --profile m10f3` against the Augustin TTM band (spent, consistency only).
-  - Then commit, write a FINDINGS entry and fill the MECHANISM_STATUS rows.
-- **Literature in hand** (`docs/research/s23_fly2_synaptic_plasticity_lit.md`):
-  - DLMn coupling coefficient 0.01 (all pairs) and 0.023 (MN1-2, MN3-4), Hurkey 2023, measured. This can fill the gap_junctions.csv DLMn row.
-  - Hige 2015: one pairing gives 80% fewer spikes and 90 ± 3.7% less charge, persisting ≥ 40 min.
-  - Handler 2019: the timing rule (forward depresses, DAN 1.2 s first potentiates, 6 s minimal).
-  - Memory: retained at 10 min, decayed by 24 h (Aso & Rubin 2016), so the 3 h relaxation tau is inside the bracket.
-  - Sister-PN, eLN-PN and VS coupling are plotted only, and GF-TTMn coupling is unmeasured.
+**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Turning on `two_compartments_where_point_fails` also turns those on, so DLMn-only runs need them neutralised (fly s15).
+
+- **For fly and the Director:** `PROFILES["m10f"]` is now m10f3 (F-S24-1). Scripts that default to m10f (s16_oa, proprio_reach, ...) now run with per-connection ORN STP, per-connection receptor decay, identified gap junctions and PSI cholinergic. At rest, m10f3 is 6.5% below m10f0 in whole-brain rate (the ORN->PN depression). **Merging:** main can merge or fast-forward worktree-fly2 (main was merged in at 31eda14).
+- **Done this session (s24):**
+  - Gate scored: m10f1-m10f3 all pass G and S (DECISIONS 22 Oct 01:41, F-S24-1).
+  - Unit checks: STP equals Nagel Eq 1 (from rest; ORNs are silent in the isolated CNS); 3 of 3 decay rows within 5%; TTMn 1.099 ms inside Augustin (spent). **DLMn follow 0.00 in both arms** (the open part of N18; waits on N30 option B, Ben's MN5 recording).
+  - `docs/MECHANISM_STATUS.md` fly2 rows filled: **0 done of 49** (B: 23 partial, 3 absent; N: 4 built-off, 16 partial, 3 absent). N29 is partial only because the required level is synapse-specific; its checks pass.
+  - m10f4 pre-registered (DECISIONS 22 Oct 01:55, amendment 01:57, clarification 02:00).
+- **m10f4 (N21 KC->MBON depression + N22 forgetting), FINDINGS F-S24-2:**
+  - Fit: shared `kc_mbon_ltd_timing_rate` 0.430 (fitted; seeds 12-15 gave 0.404-0.450; γ-silent sensitivity 0.408). In-network CS+ charge 0.087-0.110 against Hige's 0.10. Pass.
+  - Handler 2019 held out (now spent): depression at ISI 0 (0.095) and +0.5 s (0.077), minimal at +6 s (0.991); H1 and H2 pass. At −1.2 s the ratio is 1.000: H3 fails, as pre-registered, because LTP is off with no non-held-out source.
+  - N22 forgetting check: tau 1000.0 ms against 1000 (implementation). Figure viewed: `runs/s24/kc/fig_kc_mbon.png`.
+  - Gate: G passes and is identical to m10f3 (the mushroom body is silent at rest: 0 of 4064 KCs, 0 of 340 DANs, 0 of 97 MBONs). **S (60 s smoke) still running on backhouse, left on purpose** (pid 57241, started 02:25; m10f3's took 4.0 h, so it should finish about 07:00): `~/fly2_mc/runs/s24/fc/smoke_m10f4_s12.json`, done-file `smoke_m10f4.done`. Check it with `/tmp/fly2n/bh_gate4st.sh`. Pass is whole brain 0.162-0.486 Hz and active fraction 0.014-0.042; expected identical to m10f3 (0.3037 / 0.0273). Its 10.5 s checkpoint already equals m10f3's in all 244 values. If you don't want it, kill pid 57241; m10f stays m10f3.
+  - **If S passes:** set `PROFILES["m10f"] = PROFILES["m10f4"]` (profiles.py, the line after the PROFILES dict), add an S line to F-S24-2 in FINDINGS, and update the MECHANISM_STATUS header note and N21/N22 in MECHANISM_STATUS (N21 stays partial: LTP off, compartment proxy; N22 stays partial: decay only, guessed tau, no consolidation).
 - **Next, in order:**
-  1. Score the gate, check, commit, fill the table.
-  2. N21+N22 KC→MBON: fit the timing LTD rate to Hige Fig 3D (charge −90% after one pairing, labelled fitted, shared by all compartments), then a held-out unit check against Handler 2019 (sign flip at −1.2 s, near zero at 6 s), with the memory relaxation on at 3 h; then stage m10f4 plus its gate. KCs are silent at rest, so the gate risk is low.
-  3. The DLMn coupling row from Hurkey 2023 (stage 3 extension; a unit check against CC 0.01).
-  4. N10 leg proprioceptor and generic STD, N7 GABA-B, N11 presynaptic inhibition (Olsen & Wilson 2008, unreadable today) and N9 conductance synapses (failed silence as m10p, DECISIONS s11). Each needs values first.
-  5. Sensors and body rows (B13 halteres, N15/N16, B10/B11 flight motor), as the table shows gaps.
-- **Earlier fly2 state (unchanged; details in FINDINGS F-ZIP-1..4, F-GJ-7 and DECISIONS 21 Oct):**
-  - Scoreboard: 1 of 8 passes (PER labellar).
-  - N30 option B is UNDECIDED; Ben's MN5 recording decides (`docs/MEASUREMENT_LIST.md` item 1).
-  - Not done from the zip track: the grooms spec (DECISIONS 02:44), portability, and the variation/individual layers. Zip work is parked by Ben.
-- **Backhouse lessons:**
-  - Hold a keep-alive (`nohup ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'" &`).
-  - Send commands as scripts (`bash -s < x.sh`). cmd.exe breaks single-quoted `bash -c` with `;`.
-  - Use at most 4 threads and queue above load 24. A closed-loop gate run takes about 6 min there.
-- **Mac lessons:**
-  - Detach with nohup + disown.
-  - The worktree guard refuses `$(...)` in sed/find and heredocs into nohup/git or into python in a git command. Put scripts in `/tmp`.
-  - `runs/` is a symlink (Write refuses it), and `timeout` doesn't exist.
-- **Carried:**
-  - Body hook: fly owns the premotor→MN fix. When it lands, rerun the five scoreboard protocols and step R (`scripts/probes/run_proprio_reach.sh`).
-  - Stance loop: the CS load normalisation, CS rows per leg and the front-leg FeCO assignment are fly2's to fill.
-  - Optic lobe: T4/T5 dendritic input position next; Behnia 2014 stays sealed.
-  - GPU: `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse.
+  1. Finish m10f4 (above) if it is not finished.
+  2. LTP source: find a non-Handler numeric potentiation magnitude (e.g. Cohn 2015 plots, Berry 2018, Aso & Rubin 2016 reversal) so N21 can be bidirectional; then re-test H3 against a new held-out set, since Handler is spent.
+  3. The mushroom body is silent at rest (KC 0 Hz against the measured about 0.1 Hz). That is a resting-state miss worth a ledger line; it also means memory never decays through spontaneous DAN activity.
+  4. The DLMn coupling row from Hurkey 2023 (CC 0.01; 0.023 for MN1-2/MN3-4), a stage-3 extension with a unit check.
+  5. N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition and N9 conductance synapses, each needing values first; then the B rows (B3 leg stiffness 3-5× soft, B4 flexor ≥40× weak, B12 robofly lift 1.72×).
+- **Earlier fly2 state (unchanged; FINDINGS F-ZIP-1..4, F-GJ-7, DECISIONS 21 Oct):** scoreboard 1 of 8 (PER labellar). N30 option B UNDECIDED (`docs/MEASUREMENT_LIST.md` item 1). Zip track: grooms spec, portability, variation layers not done, parked by Ben.
+- **Literature in hand:** `docs/research/s23_fly2_synaptic_plasticity_lit.md` (Hurkey 2023 DLMn coupling, Hige 2015, Handler 2019, Aso & Rubin 2016 memory bracket). Switch inventory: `scripts/probes/switch_inventory.py --profile m10f0`.
+- **Backhouse:** `~/fly2_mc` is the 725cf46 archive plus shipped probes (`m10f_unit_checks.py`, `kc_mbon_pairing.py`; ship via `/tmp/fly2n/mk_ship*.py` then `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`). Send commands as scripts (`bash -s < x.sh`); cmd.exe breaks quoted `bash -c` with `;`. At most 4 threads, queue above load 24 (load sat at 20-23 tonight from other users). The probe needs no new src: it runs m10f3 with `--set` overrides.
+- **Mac lessons:** detach with nohup + disown. The worktree guard refuses `$(...)`, heredocs into nohup/git/python-in-git and any compound command it can't verify; write scripts or text to `/tmp/fly2n` with the Write tool and run them plainly. `runs/` is a symlink (Write refuses it). No `timeout`, no foreground `sleep`.
+- **Carried:** body hook (fly owns the premotor->MN fix; then rerun the five scoreboard protocols and step R); stance loop CS rows (fly2); optic lobe T4/T5 dendritic position (Behnia 2014 sealed); `pytest tests/test_gpu_batched.py` under JAX on backhouse.
 - **Stay out of:** the VNC files, fly's switches and the flyapp worktree.
 
 ## Where the project stands
@@ -534,6 +515,9 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 Fig 3E Rin class means (150/300/700 MΩ) | **spent as a check** in s15c gate 1(c), 21 Oct 02:12 (pass; it had been an input to ρ in s15/s15b) | don't reuse as a held-out target |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
+| Hige 2015 Fig 3D, MBON-γ1pedc>α/β CS+ charge after one forward pairing (−90 ± 3.7%) | seen; **fit target** for m10f4's shared `kc_mbon_ltd_timing_rate` 0.430 (F-S24-2). Its CS− (about −25%) and backward-pairing results are reported, not scored | don't reuse as a check of N21 |
+| Handler 2019 Fig 2D-E, ISI dependence of KC->MBON plasticity (γ4 signs: −1.2 s potentiation, 0 and +0.5 s depression, +6 s minimal) | **spent** on m10f4 (F-S24-2, 22 Oct): H1 and H2 pass, H3 fails (no LTP) | don't reuse as held out; a future LTP rule needs a new held-out set |
+| Turner 2008 KC odour responses (6 ± 5% respond; α/β 2.2, α'/β' 4.9 spikes per odour) | seen; set the KC drive in `kc_mbon_pairing.py` (F-S24-2) | none |
 
 ## Things that will bite you
 
