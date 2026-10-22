@@ -1700,3 +1700,21 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 
   If Sapkal et al. 2026 holds (unchecked, `docs/research/s17_premotor_hemilineages.md`), the fly's own rhythm survives deafferentation, so a missing feedback loop isn't expected to be the cause anyway. Two candidates remain: connection-specific strength (measurement list item 4) and a premotor driver outside the 106-cell core (connectome query, next session).
 - **Held-out:** the S4b recruitment order is still unspent (no passing arm).
+
+### F-S18-1: the 12-cell rhythm core supplies only 0.8% of the synaptic input to the T1 leg MNs; nearly all of it comes from outside the core, mostly hemilineages 20A/22A, 04B, 03A, 13A and 21A (s18, 21 Oct 21:41; connectome query, no simulation; walking parked after this; nothing adopted)
+- **Query** (`scripts/connectome/premotor_outside_core.py`, Sonnet agent, unchecked by me row by row; write-up `docs/research/s18_premotor_outside_core.md`; CSV `runs/s18/premotor_outside_core.csv`). Local cache, synapses ≥ 5 per connection.
+  - The T1 core is 12 cells (six `CORE_TYPES` × L/R); the T1 leg MNs are 94 cells of 13 `LEG_TYPES`, so 106 in all, as before.
+- **Shares (derived):**
+  - The core provides 0.8% of all input to the T1 leg MNs, between 0.2% and 5.5% depending on the pool.
+  - Out-of-core input by hemilineage: 20A/22A 10.7%, 04B 9.4%, 03A 8.5%, 13A 8.5%, 21A 7.2%, 16B 6.1%, 19A 5.4%. TBD (no hemilineage) is 4.7%.
+- **Reachability (derived):**
+  - All of the top-20 out-of-core types are within two hops of DNg100: 7 directly, 13 through one cell.
+  - 13 of the 20 also get direct input from the core.
+  - Six get no core input: IN21A001, IN19A005, IN04B015, IN16B034, DNg105 and IN03A046.
+- **Reciprocal inhibition (derived):** there are GABA and glutamate connections of at least 5 synapses in both directions between the candidates that feed flexors and those that feed extensors. Examples: DNg105 (GABA) onto four types that feed extensors; IN19A005 (GABA) ↔ IN16B016 (glutamate). These are a small fraction of each type's output, and glutamate's sign is unresolved.
+- **What this says (inferred):** the s13-s17 arms drove a population that is a small minority of the leg MNs' input. A rhythm can reach the MNs only through the 20A/22A, 04B, 03A and 13A premotor layer, and that layer is near-silent in our runs (s4b: 0.13 Hz mean). This fits the "premotor driver outside the core" branch of the ruled-out paragraph.
+- **Limits:**
+  - The pool mapping reuses the repo test-file names.
+  - The non-axis MN types (adductor, sternotrochanter, tergotrochanter) are excluded.
+  - Results depend on the threshold.
+- Walking is parked (Ben, 21 Oct). The next test, when it resumes: per-cell activity of these types in the s16/s17 runs, which needs a neutral per-cell spike save.
