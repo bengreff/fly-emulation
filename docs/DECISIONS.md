@@ -3736,3 +3736,4 @@ so that number can't test it. It goes to fly2 as a candidate unit check for the 
 - **Falsifier for adoption:** if U2-held-out or U3 fails, N19 stays built-off at neutral, with the reason. If the
   m10f1 stability gate fails (`closed_loop_check.py --profile m10f1`, eye excluded, seeds 12-15; 60 s
   `smoke_live.py` on backhouse: no runaway, no NaN, whole-brain rate within 2× of m10f), it also stays built-off.
+Stage name (21 October, 21:58): fly2 owns m10f1-m10f4 tonight, so N19's stage is the next free m10f stage, on top of fly2's last passing one. The gate and smoke are run on that profile, not on "m10f1".

@@ -39,7 +39,7 @@
      - a hold/clamp of pool levels for bath experiments.
    - Tests: bit-identical when off; sign rule; kinetics.
    - Unit checks U1, U1h, U2, U3 on backhouse (rule 16).
-   - Then the m10f1 stage, gate and 60 s smoke on backhouse. Each smoke takes about 6500 s of wall time, so launch it early.
+   - Then the next free m10f stage, gate and 60 s smoke on backhouse. **Not m10f1:** fly2 is building m10f1-m10f4 tonight (its DECISIONS 21 Oct 21:35 on worktree-fly2, Hige 2015 as its m10f4 fit target), so stack N19 on fly2's last passing stage. Each smoke takes about 6500 s of wall time, so launch it early.
    - Commit, then update the MECHANISM_STATUS row.
 2. N20 (peptide cells and receptor maps).
 3. S1-S4 physiology checks (trehalose, starvation, desiccation).
