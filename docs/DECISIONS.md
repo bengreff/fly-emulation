@@ -3919,3 +3919,10 @@ Director brief, 22 Oct. Sources: Cohn 2015, Berry 2018 and Hattori 2017, with Hi
   - **Regression:** the default MBON11/PPL101 Hige protocol with r_res on, seeds 12-15.
   - **Machine:** the Mac (load 3; two jobs at a time, detached, 2 threads each), because backhouse is at load 25.5, above the rule-16 queue line.
   - **Provisional r_res = 0.00289** (`scripts/probes/s25_restore_fit.py`, S = 20).
+- Model expectation for the Berry held-out arm (22 Oct 04:28; written before any Berry value has been read by fly2; the sealed file is still unopened).
+  - The linear rule at r_res 0.00289 predicts F = 1 - (1 - r)^S_forget, where S_forget = 3 Forget trials × 6 DAN pulses × spikes per pulse. That gives **F about 0.05** at 1 spike per 1 ms pulse (0.10 at 2, 0.19 at 4).
+  - Assumptions:
+    - The train 22 s before MCH meets no KC eligibility, so no depression.
+    - No DAN spikes come from the network at rest; DANs are silent in m10f4.
+    - N22 cancels in Paired>Unpaired minus Paired>Decay.
+  - The scored value is still the in-network one; this line only records what the rule implies before the test.
