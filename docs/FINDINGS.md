@@ -1916,6 +1916,24 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - Results depend on the threshold.
 - Walking is parked (Ben, 21 Oct). The next test, when it resumes: per-cell activity of these types in the s16/s17 runs, which needs a neutral per-cell spike save.
 
+### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
+- **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure
+  pixels, derived). Refined grid: Mi4 output a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16; a* = 0.0649.
+  Mi4's own input gain at a* is only ×1.13 (L5 is modulated too). The ×2.66 output is network amplification
+  of a near-threshold Mi4.
+- **Held-out test (spent).** Dacks 2009, PN odour response +15% under bath 5-HT (n = 8). In the model: DM2/DL1/DM3
+  ORNs kicked (Poisson 100 Hz), 12 PNs read (DL1_adPN, DM2_lPN, DM3_adPN, DM3_vPN), u_5HT 1 against 0 at a*: 297 → 296 evoked spikes, **−0.34%**, band +5% to +30%. **FAIL.**
+- **Why.** All 12 PNs are on the population prior (no type or hemilineage transcript row), with net 5-HT
+  +0.0556 under the sign rule. Their input gain is therefore about +0.4%. Mi4's type row gives net OA 2.0, about 36 times the
+  receptor weight per unit a (`runs/s19/n19/map.json`).
+- **Caveat.** A first Dacks run at a wrong a* (0.0458, a driver bug that let a voided grid point in) leaked a
+  "fail" before this score (DECISIONS 04:42). The registered run fails the same way.
+- **Also held (s19):** U3 sign test passes 5 of 5, weak by construction; the off-path spike hash is identical.
+  U1/U1h are unscored (their runs at the wrong a* are void and unread).
+- **Reading.** The mechanism runs and is neutral when off, but one shared gain over a population prior can't place
+  a sensitivity where the prior has none. The next step is data: PN 5-HT receptor expression (Davie 2018 brain atlas,
+  fetched tonight, has annotated PN clusters), then a re-registered test on unspent evidence. Dacks can't be reused.
+
 ### F-S19-1: the lumped metabolism, given values read from sources, predicts male starvation survival (28.4 h) and CAFE intake (1.85 µl/day) inside their held-out bands. This holds only at the measured group metabolic rate: at Burggren's single-fly extrapolation, both fail (s19, 22 Oct 02:31; pre-registered DECISIONS 22 Oct 02:06 and 02:30; switch `state:organs|values_from_sources` built, neutral 0; nothing adopted)
 - **What was run.** The `internal_state.Organs` ODE alone, with no nervous system, from six values read from
   sources: basal use, the fat store, hemolymph volume, body water, and the crop and gut τ. The other parameters

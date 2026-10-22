@@ -4082,3 +4082,24 @@ not to report any ZT21 or advance value and did not. The ZT21 advance stays held
 value k will be fitted to once ct_light is sourced.
 Correction to the 04:49 entry: Vinayak's 2.4 h advance was seen in the agent report before 04:49 called it held
 out, so it counts as consistency only. The one held-out N26 point is Lamba's ZT21 advance.
+
+### s19 N19 U2 a* and Dacks scored once: Dacks FAILS, N19 stays built-off (22 October, 05:23)
+**U2 (fitted, Strother 2018 Fig. 6F ×2.66; `runs/s19/n19/astar.json`, backhouse).** Mi4 evoked spikes, u_OA 1
+against 0 (u0 = 213): a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16. The first crossing is between 0.06 and 0.08:
+**a* = 0.0649 (fitted)**. At a*, Mi4's own input gain is 1 + 0.0649 × 2.0 = 1.13 (net OA 2.0, type row). The
+kicked L5 are modulated too (net OA 2.98). Even so, the ×2.66 output is network amplification of a near-threshold Mi4
+(`runs/s19/n19/map.json`).
+**Dacks 2009 (held out; scored once; `runs/s19/n19/dacks.json`).** At a* = 0.0649, with DM2/DL1/DM3 ORNs kicked
+(200 ORNs, 100 Hz Poisson × 68.75 mV) and 12 uniglomerular PNs read (DL1_adPN, DM2_lPN, DM3_adPN, DM3_vPN): evoked PN spikes **297 at u_5HT 0, 296 at
+u_5HT 1, change −0.34%**, against the band +5% to +30%. **FAIL.** The 04:42 weakness applies (a fail at
+a = 0.0458 had leaked), but the outcome is the same.
+**Consequence (falsifier, 21 Oct 21:56).** N19 stays built-off at neutral; no gate, and no m10f5. The input-gain
+arithmetic predicted this: all 12 PNs sit on the population prior (no type or hemilineage row), with net 5-HT
++0.0556, so their input gain at a* is about +0.4%. The network does not amplify that the way it amplifies Mi4.
+**Validity limit (recorded).** One shared monoamine gain a can't carry both Mi4's ×2.66 under CDM and the PNs'
++15% under 5-HT, given the receptor map's population prior for PNs. The candidates, none of them tested:
+- PN-specific 5-HT receptor rows from a transcript source (the Davie 2018 brain atlas fetched tonight has PN
+  clusters; not yet read).
+- Presynaptic 5-HT action at ORN terminals, outside N19's validity range.
+- A per-modulator a. That would need a second calibration point, and is not adopted without one.
+Dacks is now **spent**.

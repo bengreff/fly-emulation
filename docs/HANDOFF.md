@@ -1,50 +1,54 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Thu 22 October 2026, 05:04 CDT. Session 19, second Director brief (after a /clear; park about 05:30). Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
+**Rewritten each session; do not append.** State as of Thu 22 October 2026, 05:26 CDT. Session 19, second Director brief (after a /clear; park about 05:30). Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
 - **Heavy runs go on backhouse.** The Mac is short of RAM. backhouse sits at load 20-25 from other work, so my jobs run one at a time under the load-24 rule.
-- **backhouse has no internet** (since about 04:48): every URL returns the eero router's "Device Paused" page. That is Ben's router setting, so I didn't work around it. LAN ssh from the Mac works, so downloads go through the Mac.
+- **backhouse has no internet** (since about 04:48; still off at park): every URL returns the eero router's "Device Paused" page. That is Ben's router setting, so I didn't work around it. LAN ssh from the Mac works, so downloads go through the Mac.
 - **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows, **0 done**.
 - **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
 
 ## Report for Ben (s19, second brief)
-- **N19 driver bug found and fixed before scoring (DECISIONS 22 Oct 04:42).** `n19_drive3.sh` let the old a = 0.25 point into the refined grid. It stopped after a = 0.02 and interpolated a* = 0.0458 across the voided bracket. Dacks, U1 and U1h then ran at that wrong a*.
-  - **Seen:** only the driver's line "gate not run: Dacks outside +5% to +30% or missing". That means Dacks at a = 0.0458 failed (or returned null). The number was not read.
-  - All a = 0.0458 products are in `runs/s19/n19/void/v3_a0.0458/`, unread. The refined grid resumed under `n19_drive4.sh`.
-  - **Weakness to report with any Dacks result:** a fail at a nearby a is already known.
-- **U2 refined grid so far** (Mi4 evoked spikes, u_OA 1 against 0; u0 = 213): a = 0.02 gives ×1.36, 0.04 ×1.82, 0.06 ×2.50 (target ×2.66). a = 0.08 is running.
+- **N19 scored: Dacks FAILS, N19 stays built-off (F-S19-2; DECISIONS 22 Oct 05:23).**
+  - U2 refined grid (Mi4 evoked spikes, u_OA 1 against 0, u0 = 213): a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50,
+    0.08 ×3.16. **a* = 0.0649 (fitted, Strother 2018 Fig. 6F ×2.66).**
+  - Held-out Dacks 2009 at a*: PN evoked spikes 297 → 296 under 5-HT, **−0.34%** against the band +5% to +30%.
+    Dacks is **spent**. No gate, no m10f5.
+  - Why: all 12 PNs (DL1_adPN, DM2_lPN, DM3_adPN, DM3_vPN) sit on the receptor-map population prior (net 5-HT
+    +0.056, about +0.4% input gain at a*). One shared a can't give both Mi4 ×2.66 and PN +15%. Next is data:
+    PN receptor rows from Davie 2018.
+  - Weakness, recorded: the driver bug (DECISIONS 04:42) leaked a fail at a = 0.0458 before this score. The
+    registered run fails the same way.
 - **N26 clock (DECISIONS 04:44 plan, 04:49 method, 04:56 decision, 05:04 addendum).** Sources:
-  - Vinayak 2013: CT20-21 maximal advance 2.4 h; intensity-response half-maxima 600/4/3 nW/cm² for 10/120/360 min.
+  - Vinayak 2013: CT20-21 maximal advance 2.4 h (consistency only); intensity-response half-maxima 600/4/3 nW/cm² for 10/120/360 min.
   - Lamba 2014: y w ZT15 delay **−3.1 ± 0.35 h** for a 5 min, 1,500 lux pulse, read blind from the figure. The ZT21 advance is **held out and unseen**.
   - Liang 2016 text: s-LNv Ca²⁺ peaks late night and LNd late day, about 10 h apart.
-  - **Nothing fitted or scored.** The guessed `ct_light` of 8 h puts the model's maximal advance at CT2, against CT20-21 measured. Scoring the held-out point now would only re-confirm that.
+  - **Nothing fitted or scored.** The guessed `ct_light` of 8 h puts the model's maximal advance at CT2, against CT20-21 measured.
   - Missing: a read delay-to-advance zero crossing for D. melanogaster.
   - Built: `scripts/probes/s19_n26_prc.py` (prc / irc / fit / entrain modes, on the Organs ODE m10f uses), and the switch `state:clock|values_from_sources` (neutral 0; `CLOCK_SOURCED` empty).
-- **N20 data:** Davie 2018 adult brain (57k cells, 219 MB matrix and metadata) and Allen 2020 VNC (70.6 MB) were fetched on the Mac and copied to backhouse `~/fly-m10f/data/raw/scrna/`. sha256 OK on both machines; sources are in `SOURCES.md` and `data/raw/scrna/SOURCES_mac.md`.
-  - The Fly Cell Atlas h5ad is pending: cloud.flycellatlas.org returned 503 (maintenance), and backhouse is offline anyway. `dl_scrna.sh` on backhouse retries it.
-- **Done count: 0 of 20 fly rows** (unchanged). N19 hinges on Dacks below. N26 waits on the zero-crossing read.
+- **N20 data:** Davie 2018 adult brain (57k cells, 219 MB matrix and metadata) and Allen 2020 VNC (70.6 MB) are on the Mac and on backhouse `~/fly-m10f/data/raw/scrna/`. sha256 OK on both; sources are in `SOURCES.md` and `data/raw/scrna/SOURCES_mac.md`.
+  - The Fly Cell Atlas h5ad is pending: cloud.flycellatlas.org returned 503, and backhouse is offline. `dl_scrna.sh` on backhouse retries it.
+- **Done count: 0 of 20 fly rows** (2 built-off: N4 and N19; 13 partial; 5 absent).
+- **Test suite (Mac, `runs/s19/n26/pytest_fast.log`):** 287 passed, 6 failed. All 6 are in `tests/test_two_compartment.py`
+  ("two_compartment.csv: row type:^(Ti flexor MN|... matches no cell or no edge"). That is fly2's area and not my change (inferred; not re-run on the parent commit). Flagged for fly2.
 - Earlier in s19 (first brief): worktree-fly2 merged (71c4048); N19 built (6e2a994); S1-S4 sourced values with two held-out passes that are fragile (F-S19-1; c175e92, 593ac29).
 
-## Running now (backhouse, detached; I started these)
-- tmux `n19` in WSL runs `~/fly-m10f/scripts/n19_drive4.sh`. It continues the grid in order (0.08, 0.11, 0.15, 0.2, then 0.25 last) and stops at the first crossing of 2.66. a* is linear between the crossing pair, with (0, 1) as the lowest point (`astar.json`). It then runs **Dacks once at a*** (`dacks.json`, about 17 min) and writes `ALL.done`.
-  - Expected: a* near 0.06-0.08, Dacks finished about 05:30-05:35.
-  - No gate and no U1 run from this driver.
-- `drive.log` has the timeline. Status: `ssh backhouse 'wsl -d Ubuntu -- bash -c "cat ~/fly-m10f/runs/s19/n19/drive.log; cat ~/fly-m10f/runs/s19/n19/astar.json"'`.
-- **WSL keep-alive** on the Mac (`pgrep -fl "sleep infinity"`; I started it at 04:41). Kill it once `ALL.done` exists. To restart it: `nohup ssh -o ServerAliveInterval=30 backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"' >/dev/null 2>&1 & disown`.
-- Mac: `runs/s19/n26/pytest_fast.log` (the whole test suite, detached; `pytest_fast.done`) checks the new N26 switch.
+## Running now
+- Nothing of mine. The backhouse `n19` tmux ended after `ALL.done`, and the Mac WSL keep-alive is stopped. Only
+  another project's tmux (`inqs7z`) runs on backhouse; leave it alone.
+- Result copies on the Mac: `runs/s19/n19/{astar,dacks,map,u2_a0.06,u2_a0.08}.json`. The originals are in backhouse `~/fly-m10f/runs/s19/n19/`.
 
 ## Next (this order)
-1. **Score Dacks once** from `dacks.json`: `change` = PN evoked spikes at u_5HT 1 over 0, minus 1. Pass if +5% ≤ change ≤ +30% (DECISIONS 21 Oct 21:56).
-   - Write the score into DECISIONS and FINDINGS (F-S19-2) with the 04:42 weakness, and mark Dacks spent in the register below.
-   - **If it passes:** run `n19_gate.sh` (smoke plus seeds 12-15, about 4 h; the 02:05 stage rule). Then add `M10F5 = {**M10F3, receptor_map 1, receptor_gain a* (fitted, Strother 2018 Fig. 6F)}` to `profiles.py`, view a figure, and run the battery.
-   - **If it fails:** N19 stays built-off. Record the validity limit: one shared a can't carry both Mi4's ×2.66 and the PNs' +15%, because the PNs sit on the population prior with net 5-HT expression 0.056.
-   - Either way, update the N19 row in `docs/MECHANISM_STATUS.md`.
-2. Re-run **U1, U1 5-HT and U1h at the registered a*** (16/12/16 s; the 0.0458 runs are void and unread). Score them per DECISIONS 22 Oct 01:56; U1h is held out.
-3. **N26:** read a D. melanogaster light-pulse PRC zero crossing (Kistenpfennig et al. 2012 J Biol Rhythms, PDF at epub.uni-regensburg.de/34459, a figure read) and Liang 2016 Fig. 1F (per-group ZT).
+1. Re-run **U1, U1 5-HT and U1h at the registered a* = 0.0649** (16/12/16 s; the 0.0458 runs are void and unread). Score them per DECISIONS 22 Oct 01:56; U1h is held out.
+   - These score the kinetics only; N19 stays built-off whatever they show.
+2. **N26:** read a D. melanogaster light-pulse PRC zero crossing (Kistenpfennig et al. 2012 J Biol Rhythms, PDF at epub.uni-regensburg.de/34459, a figure read) and Liang 2016 Fig. 1F (per-group ZT).
    - Then fit: `ct_light` from the zero crossing, k from Lamba's −3.1 h at ZT15 (5 min, 1,500 lux), and l50 from Vinayak's 10 min half-max (blue → lux at 470 nm, inferred). Use `s19_n26_prc.py fit` / `irc`.
    - Fill `CLOCK_SOURCED`, then score **Lamba's ZT21 advance once**, read blind by a subagent only after the model's prediction is written down.
    - If `peak_morning_h` changes, re-fit `g_clock_mv` at CT 2 (F-CLOCK-1 rule).
-4. **N20:** peptide-receptor calls from Davie 2018 (metadata annotation × matrix) for the receptor genes (AkhR, InR, NPFR, sNPF-R, Dh44-R1/R2, CrzR, AstA-R1/R2, Lkr, CCHa1/2-R, ...). Map them to male-cns types where the annotation allows, and to the prior otherwise. FCA h5ad once backhouse's internet is back.
-5. S1-S4 follow-ups (adult male hemolymph trehalose, water-loss rate and lethal fraction, single-fly respirometry); N25 daily sleep and rebound; S5/N28 Q10.
+3. **N20 and the N19 fix together:** receptor calls from Davie 2018 (metadata annotation × matrix).
+   - Peptide receptors for N20 (AkhR, InR, NPFR, sNPF-R, Dh44-R1/R2, CrzR, AstA-R1/R2, Lkr, CCHa1/2-R, ...).
+   - The 5-HT/OA/DA/TA receptors in the annotated PN clusters for N19.
+   - Map to male-cns types where the annotation allows, and to the prior otherwise. FCA h5ad once backhouse's internet is back.
+   - Any new N19 test needs unspent evidence and a fresh pre-registration; Dacks can't be reused.
+4. S1-S4 follow-ups (adult male hemolymph trehalose, water-loss rate and lethal fraction, single-fly respirometry); N25 daily sleep and rebound; S5/N28 Q10.
 
 **s18 part 1 (21:31-21:43, kept for reference):** `docs/MECHANISM_STATUS.md` built (commit cead727; fly rows 0 of 14 done; N26 closest). N19 sources gathered in `docs/research/s18_n19_receptor_coupling.md`. The coupling table there is used by the sign rule above. Octα2R is only in the unwired `epiney2025_*` tables.
 
@@ -536,8 +540,8 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
 | Strother 2018 Fig. 4E-F (in vivo CDM raises Mi1, Tm3, Mi4, Mi9, T4) | **spent** (s19 U3, pass 5 of 5; DECISIONS 22 Oct 02:05) | sign consistency only from now |
 | Strother 2018 Fig. 6F Mi4 ×2.66 under CDM | SETS the shared receptor gain a (s19 U2 calibration) | can't validate N19 |
-| Dacks 2009 PN +15% under bath 5-HT | **held out, unspent but weakened**: the first run was stopped before output (02:25). A second ran at the wrong a* = 0.0458, and its pass/fail leaked as "outside the band or missing" (number unread; DECISIONS 22 Oct 04:42) | score once at the registered a* (`dacks.json`, drive4), then mark spent |
-| Lv 2024 Fig. 2E 50-pulse OA τ 0.6/9.4 s | **held out, unspent** for U1h (s19). The run at the wrong a* is void and unread | score once, at the registered a* |
+| Dacks 2009 PN +15% under bath 5-HT | **SPENT (s19, 22 Oct 05:23): FAIL**, −0.34% at a* = 0.0649 (F-S19-2). Weakened beforehand: a fail at the wrong a* = 0.0458 had leaked (DECISIONS 04:42) | none; can't be reused |
+| Lv 2024 Fig. 2E 50-pulse OA τ 0.6/9.4 s | **held out, unspent** for U1h (s19). The run at the wrong a* is void and unread | score once, at the registered a* = 0.0649 |
 | Lamba 2014 Fig. 1C y w ZT21 advance (5 min, 1,500 lux) | **held out, unseen** (a blind reader extracted only the ZT15 delay; DECISIONS 22 Oct 05:04) | score once after the N26 fit, read blind |
 | Lamba 2014 Fig. 1C y w ZT15 delay −3.1 ± 0.35 h; Vinayak 2013 IRC half-maxima | will SET k and l50 (N26) | can't validate N26 |
 | Vinayak 2013 CT20-21 advance 2.4 h (1 h pulse) | seen in an agent report; never used to set a value | consistency only (seen before registration) |
