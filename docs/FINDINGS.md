@@ -1700,6 +1700,203 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 
   If Sapkal et al. 2026 holds (unchecked, `docs/research/s17_premotor_hemilineages.md`), the fly's own rhythm survives deafferentation, so a missing feedback loop isn't expected to be the cause anyway. Two candidates remain: connection-specific strength (measurement list item 4) and a premotor driver outside the 106-cell core (connectome query, next session).
 - **Held-out:** the S4b recruitment order is still unspent (no passing arm).
+### F-ZIP-1: the first fly_brain.zip (species layer, 134.7 MB, 467 members) runs a 1 s m10f0 smoke run that is spike-for-spike identical to the same run from the repo tree (fly2, s22, 21 Oct 00:52; registered in the Director's brief; DECISIONS 21 Oct 00:50)
+**The zip.** `python -m flyemu.pack` at commit 1cbccff (clean tree), kept with the run outputs and job scripts in `runs/s22/fly2_zip/`.
+- Size: 134,741,559 bytes zipped, 271.4 MB unpacked, 467 members. sha256 `f846617ce72e49f5…`.
+- Unpacked size by group:
+  - body 144.7 MB (flygym 2.1.0 vendored plus the 85 fullsize flybody meshes);
+  - connectome 102.3 MB;
+  - derived 7.1 MB;
+  - annotations 6.8 MB;
+  - params 5.0 MB;
+  - model 2.9 MB;
+  - inferred 1.4 MB;
+  - code 0.7 MB;
+  - profiles 0.3 MB;
+  - tests 0.2 MB;
+  - ledger, measurements, datasets, world and register under 0.1 MB each.
+- The spec's 5 MB body estimate left out the fullsize meshes; the spec now says 145 MB.
+- Dataset pins: the male-cns v1.0 neuron and edge hashes (they match the `t1_fill.json` pin), plus the MANC and BANC extract hashes.
+- Runtime pins: Python 3.12.14, darwin arm64, numpy 2.5.3, MuJoCo 3.9.0 and six more packages.
+- Declared `todo`: three arenas, nine stimuli, `variation/`, `individual/`, `flyemu.check` and slot addresses.
+
+**The test.** m10f0, seed 12, ≥ 5 synapses, flat floor, no stimulus, 0.1 ms steps, 1000 ms.
+- Run (a), from the zip: run in a fresh temp dir holding only the zip, with `PYTHONPATH=fly_brain.zip/code`. Every hash was verified, the zip was extracted there, and `--deny /Users/ben/fly-emulation` was set.
+- Run (b), from the tree: `--tree .` in the fly2 worktree at the same commit.
+- Both runs ran on the Mac through the slot limiter.
+
+| | zip | tree |
+|---|---|---|
+| steps | 10,000 | 10,000 |
+| spikes | 53,314 | 53,314 |
+| spikes sha256 (step and neuron arrays) | 77080785… | 77080785… |
+| final body qpos sha256 | 3ec293ba… | 3ec293ba… |
+| registry reads (rows; whole table) | 1085 | 1085, equal |
+| NaN, runaway, MuJoCo warnings | none | none |
+| build / 1 s run wall time | 8.5 s / 121.5 s | 8.8 s / 117.8 s |
+
+**PASS: identical spike for spike.** The spike arrays (step, neuron, bodyId), the final body pose and the whole registry-reads table are equal.
+- **Sources in the zip run.** Profile from `profiles/m10f0.json`, arena from `world/arenas/flat_floor.json`. The flygym package, its assets and all 85 meshes came from the extracted root.
+- **Read guard.** Nothing was denied. The only reads outside the root and the Python install were matplotlib's font cache (`~/.matplotlib/fontlist-v3.11.0.json`) and the system UTC zone file.
+- **The test can fail.** The same zip run at seed 13 gives 52,597 spikes, a different spike hash and a different final pose.
+- **Refusals work end to end.** `--set made_up|nonsense_key=1` from the zip exits with code 2 before any build ("no mechanism in mechanisms.yaml / parameters.csv / structural_keys.csv").
+- **Unit tests.** `tests/test_flyzip.py` (5 pass) covers:
+  - tampered, unlisted and escaping members;
+  - non-empty roots;
+  - deterministic packing;
+  - the guard;
+  - orphan `--set` keys.
+
+**What this does and does not show.**
+- It shows that the zip holds everything this run reads, and that nothing outside the zip changes the result.
+- It does not show that every switch or profile runs from the zip. Only m10f0 at its defaults was run.
+- It does not show portability to another machine or another runtime. The runtime pins are refused on mismatch unless `--allow-runtime-mismatch` is given.
+- The guard sees Python opens, pyarrow parquet reads and MuJoCo mesh paths. A native read by another path would be missed; the identity result is the backstop for this run.
+- The Python runtime (`/Users/ben/fly-emulation/.venv`) sits inside the denied repo directory but is allowed as `sys.prefix`. It holds no model data: the trace found none, and its only `.pth` is virtualenv's.
+
+### F-ZIP-2: the scoreboard runs from the zip alone. Labellar sugar PER PASSES (MN9_L 5.7 Hz, bar > 5) and giant-fibre escape FAILS (no motor neuron follows); both are spike-for-spike identical zip vs tree and equal their reference scripts exactly. flyemu.check from the zip matches the tree (fly2, s22, 21 Oct 01:57; DECISIONS 21 Oct 01:10)
+
+**What was built.**
+- `flyemu.check`: runs the zip's tests, rebuilds the blank ledger from the zip's own tables, prints the fill fraction, and lists the scoreboard.
+- `flyemu.score`: plays one protocol.
+- `data/world/` (the zip's `world/`): the scoreboard, 2 protocols and 2 stimuli.
+- Format and harnesses: DECISIONS 21 Oct 01:10, and `docs/FLY_BRAIN_ZIP.md`, "Check and scoreboard".
+
+**The zip.** `runs/s22/fly2_zip/s2/fly_brain.zip`. It is a build artifact and is not in git (it is over 50 MB); the packer is committed.
+- 134,765,680 bytes, 476 members, 271.5 MB unpacked.
+- sha256 65892c89…, packed from clean commit c248318.
+- The first pack at 089022c (sha256 c32b7d3a…, 134,765,506 bytes) differs only in `tests/test_repo_hygiene.py`; see the check below.
+
+**Identity runs.** Each zip run was made from a scratch directory, with `/Users/ben/fly-emulation` denied and only the zip's code on the path.
+
+| | reference script | tree | zip |
+|---|---|---|---|
+| `per_labellar_sugar`, MN9_L Hz, seeds 0-9 | 7 6 7 5 7 7 5 6 4 3 | the same | the same |
+| its spikes over all 167,111 neurons, per seed | (not hashed) | 7040 … 7096 | equal hashes, all 10 seeds |
+| `gf_escape`: GF spikes / TTMn, PSI, DLMn follow | 20 of 20 / 0, 0, 0 | the same | the same; equal spike hash (1720 spikes) |
+
+- **Reference scripts.** `assay_pathways.py --assay sugar_mn9 --rates 100 --shuffles 0 --trials 10` and `gf_latency.py --arms gaps_off --trials 20 --seed 0`, both at m10f0. Every compared field is exactly equal: the per-seed rate, and for GF every type's follow, control, median and spike fields.
+- **Labellar sugar PER: PASS.** MN9_L mean 5.7 Hz against a bar of > 5 Hz. The margin is thin: 3 of 10 seeds are at or below 5 Hz (seed 9: 3 Hz).
+- **Giant-fibre escape: FAIL.**
+  - The giant fibre spikes on every kick, but none of TTMn, PSI or DLMn spikes within 10 ms; the controls are silent too.
+  - This is the model default, with gap junctions off (`electrical:all|gap_conductance` 0, not adopted).
+  - F-GJ-6 passed only with switches that are not adopted. This run agrees.
+- **Read guard.**
+  - Nothing was denied.
+  - Outside the root and the Python install, the zip runs read only matplotlib's font cache and the system timezone file.
+  - Tree runs read the connectome cache through the worktree's link to the main repo, which is expected in tree mode.
+- **Run time on the Mac.** About 60 s per sugar seed; 76 s for the GF run, including its Organism build.
+
+**flyemu.check, zip vs tree** (tree at 089022c; tests 15 min each way).
+- **The first zip (089022c) failed 2 tests**, both repo-layout checks:
+  - `test_scripts_default_to_the_working_model` runs `scripts/run_organism.py --help`;
+  - `test_docs_cited_in_code_exist` needs `docs/`.
+- The zip ships no `docs/` and only two scripts. Those tests check the repo, not the fly.
+- They now skip only inside an extracted zip (the root holds `.flybrain_manifest.json`), so the repo still fails them if a script or doc goes missing (c248318).
+- All other 269 outcomes, 12 skips, the ledger numbers and the scoreboard were equal between zip and tree.
+- At c248318, the zip check passes (exit 0): 269 passed and 14 skipped in 849 s. The two repo-layout tests skip in the zip; every other test id and outcome, the rebuilt ledger and the scoreboard equal the tree's at 089022c (889 s). In the tree at c248318, `tests/test_repo_hygiene.py` still passes all 12, including those two.
+- Read guard in the zip check: nothing denied. Outside the root and the Python install it read only the system version file, matplotlib's font cache, the timezone file, `/dev/null` and pytest's temp directories.
+
+**Ledger fill fraction, rebuilt from the zip's own tables.** The rebuilt ledger equals the packed one in both modes.
+- 145 quantities and 1,701,664,723 slots.
+- Data (measured + derived): 0.42% of slots. With rule-inferred added: also 0.42%.
+- Per quantity: 9.66% from data, 12.42% with rule-inferred.
+- Outside the synapse grain (50.0 M slots): 14.18% / 14.19%.
+
+**Correction to commit 793c3eb.** Its message says the ledger rebuild left the fill fractions "unchanged to 0.01%". That is true by slot (0.4171% / 0.4173%) but not per quantity. The 6 Oct ontology rows add 2 quantities (143 → 145) and move the per-quantity fill from 9.79% to 9.66% (data) and from 12.60% to 12.42% (with rule). The commit is not rewritten; this entry is the record.
+
+**What this does and does not show.**
+- Two of the eight scoreboard items now run from the zip alone, with results equal to the scripts that defined them. That makes them regression checks for any later zip.
+- Both protocols score spent evidence, so neither verdict is a held-out test.
+- Both step the brain only. PER is read as MN9 firing, and escape as motor neuron latency; no body moves in either.
+- The two protocols build the brain the way their scripts do, which is not quite the same way. The sugar build skips the stubs, the body and Q10. Moving to one harness would mean re-scoring both gates.
+- Leg sugar is the next protocol that needs no new code. It needs one decision first: a single number for "the route opens".
+
+### F-ZIP-3: stands and walks now run from the zip in closed loop, identical to the tree and to their reference runs; both have no bar yet (verdict NO BAR), and neither stands nor walks (fly2, s22, 21 Oct 02:25; DECISIONS 21 Oct 02:16)
+
+**What was built.**
+- A `closed_loop` harness in `flyemu.score`: the body is stepped and every sense reaches the brain (observe, sense, network step with the kick, motor step).
+- Two readouts: `leg_oscillation`, which is command_walk.py's per-leg summary, and `posture`.
+- Two protocols in `data/world/`: `stands_flat_floor` and `walks_dng100`.
+- Neither protocol has a pass condition. Each carries a `bar_todo` naming the missing number, so its verdict is NO BAR.
+
+**The zip.** `runs/s22/fly2_zip/s3/fly_brain.zip`: 134,771,271 bytes, 479 members, sha256 8cc81b45…, packed from b7e6fc9. It is a build artifact and is not in git.
+- **The first pack of this step was defective** (ef54015). It held two members named `world/stimuli/none.json`: the packer's generated null stimulus and the new tracked file. zipfile's duplicate-name warning caught it.
+  - Fix (b7e6fc9): the packer refuses any member path packed twice, and the generated file gives way to the tracked one.
+  - The defective zip was replaced before either zip run began; both zip manifests record b7e6fc9. It is not preserved.
+- The tree runs started at ef54015 and finished after b7e6fc9 was committed, so their manifests read b7e6fc9. The two commits differ only in `pack.py`, which the runs never import.
+
+**Identity (all pre-registered checks pass;** `compare_loop.txt` **in the run directory).**
+
+| | reference | tree | zip |
+|---|---|---|---|
+| `walks_dng100`, seed 0: every field command_walk.py prints (6 legs × frequency, band share, amplitude; thorax dx, dy; leg MN rate; DNg100 rate; MuJoCo warnings) | `FLYEMU_PROFILE=m10f0 command_walk.py --type DNg100 --hz 100 --seed 0` | equal at the script's rounding | spike hash (79,030 spikes), final pose hash and every field equal to tree |
+| `stands_flat_floor`, seed 12: spikes and final pose | the F-ZIP-1 tree run of `flyemu.run` | 53,314 spikes; spike hash 770807… and pose hash 3ec293… equal | equal to tree |
+
+- **Read guard (zip runs).** Nothing denied. Outside the root, they read only matplotlib's font cache and the timezone file.
+
+**What the model does (m10f0; recorded, not scored).**
+- **Walks, DNg100 at 100 Hz (observed 92 Hz):** no stepping.
+  - Each leg's dominant tarsal-tip frequency in 3-25 Hz is 3-4 Hz, the band's lower edge.
+  - The band holds only 10-30% of the tip's power, and amplitudes are 0.04-0.25 mm.
+  - The thorax moves 0.04 mm backwards. Leg motor neurons average 2.6 Hz.
+  - This is the known walking failure (F-BYPASS-7, F-XCONN-2), now as a regression number.
+- **Stands, no stimulus:** the thorax origin sits at 0.55 mm (median; minimum 0.546) and drifts 0.24 mm in 1 s. This is the lying posture of F-STAND-3; no standing bar exists to judge it against.
+
+**What this does and does not show.**
+- Four of the eight scoreboard items now run from the zip alone: labellar sugar PASS, GF escape FAIL, stands NO BAR, walks NO BAR.
+- The closed loop is identical zip vs tree, and identical to both `flyemu.run` and command_walk.py. The full sensing and body path reproduces from one file.
+- NO BAR is not a pass or a fail: the scoreboard still passes 1 of 8. Writing the bars is the Director's or Ben's call; the report proposes them.
+- `flyemu.check` was not rerun on the b7e6fc9 zip. The c248318 zip's check passed, and the protocol test changes since then passed in the tree (20 of 20).
+
+### F-ZIP-4: with bars written, the scoreboard has real verdicts: stands FAIL, walks FAIL, PER to leg sugar FAIL (MN9_L 0 Hz); 1 of 8 items passes, 5 of 8 are scored, all five from the zip alone, identical zip vs tree (fly2, s22, 21 Oct 03:06; DECISIONS 21 Oct 02:33)
+
+**What was built** (8f1ad74; bars decided by the Director as Ben, reversible).
+- `stands_flat_floor`: pass if no body other than a tarsal segment is pushed by the floor in any 1-ms sample of 500-1000 ms, and the head point is at least 0.1 mm above this body's motor-silenced collapse (0.429 mm, derived) over that window. Wang 2025 tracked a head point, so the bar reads the head, not the thorax. 0.1 mm is the lowest standing start height in Wang Fig 5C; no population maximum is published, so there is no upper bound.
+- `walks_dng100`: pass if at least 4 of 6 legs have the dominant tip frequency in 7-15 Hz and at least half the tip power in 7-15 Hz, and the thorax moves forward along its heading.
+- `per_leg_sugar` (new): LgLG4 + LgAG2 at 50 Hz, pass if MN9_L > 5 Hz (mean of seeds 0-9).
+- The scorer refuses a closed-loop run unless only the network's motor spikes move the body, and records the check (`drive_check`): 106 actuators, none a servo; no mocap body; no active equality constraint; no wingbeat generator; no stimulated motor neuron.
+- New readouts: floor contact per body, head height, thorax heading, 7-15 Hz share; judge op `count_where`. Reading contacts does not change the run: both closed-loop protocols reproduce their F-ZIP-3 spike and final-pose hashes.
+
+**Results (m10f0).**
+- **Stands: FAIL** on both conditions. Over 500-1000 ms a non-foot body is on the floor in every sample (head 496 of 500 samples, right-mid coxa 478, left-hind coxa 457, abdomen segments 4 and 6 about 455, left-mid coxa 450). The head sits at the collapse height (median −0.001 mm above it), and a median of 2 legs have a tarsus on the floor. Frames at 0, 250, 500, 750 and 1000 ms (`docs/media/s22_fly2_stands_frames.png`, viewed): placed standing at 0 ms; by 250 ms the fly lies on its belly and head with the legs splayed sideways and one leg raised in the air, and it stays there. The live fly ends where the motor-silenced fly ends (F-STAND-3).
+- **Walks: FAIL** on both conditions. No leg counts: every dominant frequency is 3-4 Hz (the search band's lower edge) and the 7-15 Hz share is 0.035-0.053 per leg. The thorax moves 0.041 mm backwards along its heading. Leg motor neurons average 2.6 Hz while DNg100 fires at 92 Hz. Tip traces (`docs/media/s22_fly2_walk_tips.png`, viewed): the tips drift backwards over the drive with small irregular wiggles; only the right hind leg makes 3-4 slow, uneven swings of about 0.2 mm.
+- **PER to leg sugar: FAIL.** MN9_L is at 0 Hz on all 10 seeds (bar > 5 Hz; MN9_R is dropped as incompletely traced, as in the labellar protocol). The 54 LgLG4 and LgAG2 cells fire at 47-51 Hz, but only about 164 of 167,111 neurons fire at all (the 54 driven cells plus about 110 others; network mean 0.029 Hz). The route stays blocked at rest, as F-TASTE-LEG-1 found at an earlier profile; this is the first measurement at m10f0.
+- All three predictions written at 02:33 held, and the scoreboard count is as predicted.
+
+**The scoreboard (m10f0, every scored item played from the zip at 8f1ad74).**
+
+| item | protocol | verdict | measured (bar) |
+|---|---|---|---|
+| stands | `stands_flat_floor` | FAIL | non-foot body on the floor in 100% of samples (bar 0%); head 0.001 mm below the collapse height (bar ≥ 0.1 mm above) |
+| walks | `walks_dng100` | FAIL | 0 of 6 legs at 7-15 Hz with share ≥ 0.5 (bar ≥ 4); thorax −0.041 mm (bar > 0) |
+| grooms | none | not scored | a protocol spec went to the Director (DECISIONS 02:44); not built, not adopted |
+| PER to labellar sugar | `per_labellar_sugar` | PASS | MN9_L 5.7 Hz (bar > 5); per seed 7 6 7 5 7 7 5 6 4 3, so 4 of 10 at or below 5 Hz (F-ZIP-2 said 3; it miscounted) |
+| PER to leg sugar | `per_leg_sugar` | FAIL | MN9_L 0.0 Hz (bar > 5) |
+| optomotor turning | none | not scored | needs code: vision bypasses the World, and there is no turning readout |
+| giant-fibre escape | `gf_escape` | FAIL | GF spikes on 20 of 20 kicks; no TTMn or DLMn spike (bar: TTMn follows ≥ 90% at 0.87-1.22 ms, both DLMn groups at 1.36-1.85 ms) |
+| stable flight | none | not scored | needs code: flight kinematics are imposed and the tether is set in code |
+
+**1 of 8 passes; 5 of 8 are scored.** Every scored item scores spent or seen evidence (register rows for the zip protocols), so these verdicts are regression checks, not held-out tests.
+
+**The zip.** `runs/s22/fly2_zip/s5/fly_brain.zip`, packed from clean commit 8f1ad74.
+- 134,776,816 bytes, 481 members (2 more than F-ZIP-3's: the leg-sugar protocol and its stimulus), 271.5 MB unpacked, sha256 dbb16195….
+- It is not in git (over 50 MB).
+- Its manifest still lists `world/stimuli/leg_sugar.yaml` as TODO, which is stale; the packer's list is corrected after this check, so the next pack drops the line.
+
+**Identity** (`compare.py`, written before the runs; verdict ACCEPT).
+- The stands and walks tree runs at 8f1ad74 reproduce every F-ZIP-3 field, including the spike and final-pose hashes. Reading floor contacts doesn't change the run.
+- Zip equals tree for stands (17 fields), walks (37 fields) and leg sugar (8 fields per seed, 10 seeds, equal spike hashes). The pass conditions are equal, and the read guard denied nothing.
+- The leg-sugar tree run equals `assay_pathways.py --assay legsugar_mn9 --rates 50 --trials 10 --profile m10f0` per trial.
+- Labellar sugar and GF escape from the new zip equal the F-ZIP-2 zip runs field for field, including verdicts.
+- The walk figure's replay, made outside the scorer, reproduces the scored final-pose hash.
+
+**flyemu.check on the 8f1ad74 zip.**
+- Tests: 273 passed, 14 skipped, in 14.6 min. The 4 tests added since the c248318 zip are the new protocol tests (`test_world_protocols`: completeness of the 3 new or changed protocols, and the stand-window test). No earlier outcome changed.
+- The ledger rebuilt from the zip's tables equals the packed ledger. The numbers are unchanged: 0.42% of slots from data, also 0.42% with rule-inferred; 9.66% / 12.42% per quantity; 145 quantities.
+- The read guard denied nothing. Outside the root and the Python install, the check read only the macOS version file, matplotlib's font cache, `/dev/null` and the timezone file.
+- Tree check at 8f1ad74: 275 passed, 12 skipped. Zip and tree have the same test ids and equal outcomes except the 2 repo-layout tests (`test_docs_cited_in_code_exist`, `test_scripts_default_to_the_working_model`), which pass in the tree and skip only inside an extracted zip, by design (F-ZIP-2). The ledger and the scoreboard listing are equal.
+
 
 ### F-S18-1: the 12-cell rhythm core supplies only 0.8% of the synaptic input to the T1 leg MNs; nearly all of it comes from outside the core, mostly hemilineages 20A/22A, 04B, 03A, 13A and 21A (s18, 21 Oct 21:41; connectome query, no simulation; walking parked after this; nothing adopted)
 - **Query** (`scripts/connectome/premotor_outside_core.py`, Sonnet agent, unchecked by me row by row; write-up `docs/research/s18_premotor_outside_core.md`; CSV `runs/s18/premotor_outside_core.csv`). Local cache, synapses ≥ 5 per connection.

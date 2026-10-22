@@ -364,62 +364,55 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: N30 option B, the MN5 skeletons put class MN on the follow boundary (UNDECIDED, F-GJ-7); the doublet is the synaptic tail; no fix from measurement exists yet, so the MN5 recording decides (21 Oct 00:30)
+## fly2: mechanism-complete night, frontier stages m10f1-m10f3 in their gate (21 Oct 21:45)
 
-**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15). fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief (N30 option B, then the doublet's mechanism, then the MN5 recording onto Ben's list). Every switch below is neutral by default and **none is adopted**.
-- **Merging:** `main` (26f6976, fly's s14 25 mV results) was merged into worktree-fly2 at 8d722b6. DECISIONS conflicted only because both sides appended; both kept. **`main` can fast-forward to worktree-fly2.** The guard refuses commands aimed at the main checkout, so someone there runs the merge.
-- **N30 option B done: class MN q and ρ from EM geometry (F-GJ-7).** Pre-registered DECISIONS 21 Oct 00:07; results 00:18; literature 00:25.
-  - **Method.** `scripts/connectome/mn_axon_geometry.py` (male-cns v1.0 healed skeletons and PSI synapses, saved under `data/derived/mn_axon_geometry_skel/`; `--offline` reruns from them).
-    - The axon base is the first branch point proximal to the PSI contacts with ≥ 5% of the cable off the path. The contact site is the median PSI synapse.
-    - Coupling is a frustum axial resistance with Ri 200 Ω·cm (102-311, fitted), against Rin 102 MΩ (measured). q is the axon-side area over the whole area plus the soma sphere.
-  - **Result.**
+**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Your DLMn/MN rows and the option-B method are unchanged; `scripts/connectome/premotor_mn_geometry.py` imports your `reduce()` as is. Turning on `two_compartments_where_point_fails` will then also turn on those rows, so DLMn-only runs need them neutralised (see fly s15).
 
-    | | q | ρ at Ri 200 (102-311) | ρ* |
-    |---|---|---|---|
-    | MN5 L | 0.156 | 2.03 | 3.51 |
-    | MN5 R | 0.052 | 5.57 | 4.03 |
-    | Class | 0.104 | 3.80 (2.44-7.45) | 3.78 |
-
-    UNDECIDED, as registered. `two_compartment_classes.csv` and the `parameters.csv` rows now hold the derived values ("derived from EM geometry, measured Rin, fitted Ri"). `tests/test_two_compartment.py` pins the s20 pair (0.07, 1.6) by override for the mechanism tests (8 pass).
-  - **Consistency runs, seed 1** (`scripts/probes/n30_optB_runs.sh`; `runs/s21/optB_*.json`; not scored, Ryglewski is spent):
-    - class: 19/20, 1 spike, 3.20 ms;
-    - L: 20/20, 1 spike, 2.80 ms;
-    - R: 0/20.
-
-    At the derived geometry the doublet is gone, but the spike comes late or not at all.
-  - **DLMn c-f** (reported, not used): the base rule fails or is fragile in 3 of 8 cells (PSI contacts on several branches).
-- **Doublet mechanism (at the guessed s20 pair):** the 5 ms PSI current's tail, not soma-axon ping-pong.
-  - The script is `scripts/probes/n30_doublet_mechanism.py`, an exact replica of the pair update; figure `docs/media/s21_fly2_n30_doublet.png`, viewed.
-  - Any one of these alone removes it: refractory ≥ 3 ms, AHP ≥ 7.5 mV, tau_s ≤ 1.8 ms.
-- **Literature** (`docs/research/s21_mn5_literature.md`, Sonnet agent, A-D read):
-  - **No readable PSI→MN5 decay, MN5 threshold, AHP or refractory value exists.**
-  - The adult nicotinic decay bracket is 1.1-6.73 ms (Gu & O'Dowd 2006 in situ: 4.45-6.73). It spans the flip: the class values give one early spike only for tau_s ≤ 3 ms (tau_m ≥ 20), and none at the shared 5 ms.
-  - The MN5 Cm of 127 pF is from Herrera-Valdez et al. 2012 (not "Kadas"), which gives tau_m 12.3 ms against Fayyazuddin's 4.4. The skeleton-area bound is about 25 ms. The DLMn tau_m blank is open.
-- **Decision (DECISIONS 00:25): no fix adopted; the decider is Ben's measurement.** `docs/MEASUREMENT_LIST.md` item 1 is one MN5 whole-cell recording. Its four protocols give q, ρ, tau_m, threshold/AHP/refractory and the PSI EPSP decay, with a table of what each answer decides.
-- **Next, for fly2:**
-  1. If Ben's recording comes (or someone reads Ryglewski, Kilo & Duch 2014 EJN, or Ryglewski & Duch 2009, behind paywalls), set the measured values and pre-register the GF escape at seed 2. Score it against the sealed GF→DLM file (see the register).
-  2. If ρ is measured above ρ*, the next candidate is a spike-initiation zone with a lower threshold, as its own registration.
-  3. Building a per-edge decay on an axon or unitary-PSP edge (N29) is refused today. A measured PSI→DLMn decay would need that build first, CPU path and tests.
-- **Done earlier in this worktree (20 Oct; details in FINDINGS and DECISIONS):**
-  - The T1 fill, levels 1 and 2 (F-XCONN-3, F-XCONN-4): switch `connectome:T1|fill_from_other_animals`, neutral. Every T1 deficit we can repair is ruled out as the cause of the missing VNC rhythm and reach.
-  - `docs/FLY_BRAIN_ZIP.md` rev 2: brain + body + world, species and individual layers, the scan file, scan → reconstruct → compare. The variation model is next to build.
-  - Two-compartment DLMn first build (F-GJ-6): switch `cell_type:all|two_compartments_where_point_fails`, CPU only. PASS at the guessed pair, Ryglewski 2014 spent.
-  - T4/T5 seeds 1 and 2: FAIL (F-VISION-15). The pair-strength arm is not continued as is.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Brief: the Director's 21 Oct night brief. Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work has stopped (`fly_brain.zip` v1 stays as is: `runs/s22/fly2_zip/s5/`, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body.
+- **Merging:** worktree-fly2 was rebased onto main f4d75f9 (fly s14-s17); DECISIONS/FINDINGS kept both sides, and fly's 01:22 note was restored. git refused the fast-forward of `main` because main is checked out in fly's tree, so **the Director merges: main can fast-forward to worktree-fly2**. main has since moved to 09e31b1 (fly s18, `docs/MECHANISM_STATUS.md`), so merge main into worktree-fly2 first.
+- **Switch inventory** (`scripts/probes/switch_inventory.py --profile m10f0`, output `/tmp/fly2n/switch_inv_m10f0.csv`, rerun it to get it back). Several "have" mechanisms are **off in m10f0**: N7 gabab_fraction, N9 conductance_based, N10 (std_release_fraction, ORN measured_depression, leg transferred_depression), N11 presynaptic_inhibition_gain, N21 kc_mbon_ltd_rate, both N29 switches, and N12 `electrical:all|gap_conductance`, which is missing from the yaml's switch list.
+- **Frontier stages** (`profiles.py`; cumulative; `m10f` still = m10f0; pre-registered in DECISIONS 21 Oct 21:35):
+  - m10f1 = + N29 STP per connection (ORN→PN, ORN→LN);
+  - m10f2 = + N29 receptor decay per connection;
+  - m10f3 = + N12 gaps + PSI cholinergic.
+  - **Gate running on backhouse** (`~/fly2_mc`, the 725cf46 archive): `~/fly2_mc/runs/s23/fc/`, `gate_m10f{1,2,3}_s{12-15}.json`, `smoke_m10f{1,2,3}_s12.json` (60 s), done-files `gate_m10fK.done`, `smoke_m10fK.done`, `ALL.done`. Check it with `ssh backhouse "wsl -d Ubuntu -- bash -s" < /tmp/fly2n/bh_status.sh`.
+  - At 21:43 seed 12 passed silence on all three stages (0.0 non-eye spikes/ms; whole brain 0.31 Hz against 0.33). The smokes take about 2-2.5 h, so expect them done around 00:00-00:30.
+  - The Mac keep-alive ssh to backhouse runs under nohup; kill it once ALL.done exists (`pkill -f "exec sleep infinity"` matches only ours on the Mac).
+- **When the gate finishes:**
+  - Score G and S per stage against the 21:35 entry.
+  - Advance `PROFILES["m10f"]` to the last passing stage.
+  - Run the unit checks: stage 1, an in-network ORN→PN 10 Hz train against Nagel 2015 f 0.78 / τ 893 ms (a consistency check; no held-out number is readable); stage 2, the per-row current decay; stage 3, `gf_latency.py --profile m10f3` against the Augustin TTM band (spent, consistency only).
+  - Then commit, write a FINDINGS entry and fill the MECHANISM_STATUS rows.
+- **Literature in hand** (`docs/research/s23_fly2_synaptic_plasticity_lit.md`):
+  - DLMn coupling coefficient 0.01 (all pairs) and 0.023 (MN1-2, MN3-4), Hurkey 2023, measured. This can fill the gap_junctions.csv DLMn row.
+  - Hige 2015: one pairing gives 80% fewer spikes and 90 ± 3.7% less charge, persisting ≥ 40 min.
+  - Handler 2019: the timing rule (forward depresses, DAN 1.2 s first potentiates, 6 s minimal).
+  - Memory: retained at 10 min, decayed by 24 h (Aso & Rubin 2016), so the 3 h relaxation tau is inside the bracket.
+  - Sister-PN, eLN-PN and VS coupling are plotted only, and GF-TTMn coupling is unmeasured.
+- **Next, in order:**
+  1. Score the gate, check, commit, fill the table.
+  2. N21+N22 KC→MBON: fit the timing LTD rate to Hige Fig 3D (charge −90% after one pairing, labelled fitted, shared by all compartments), then a held-out unit check against Handler 2019 (sign flip at −1.2 s, near zero at 6 s), with the memory relaxation on at 3 h; then stage m10f4 plus its gate. KCs are silent at rest, so the gate risk is low.
+  3. The DLMn coupling row from Hurkey 2023 (stage 3 extension; a unit check against CC 0.01).
+  4. N10 leg proprioceptor and generic STD, N7 GABA-B, N11 presynaptic inhibition (Olsen & Wilson 2008, unreadable today) and N9 conductance synapses (failed silence as m10p, DECISIONS s11). Each needs values first.
+  5. Sensors and body rows (B13 halteres, N15/N16, B10/B11 flight motor), as the table shows gaps.
+- **Earlier fly2 state (unchanged; details in FINDINGS F-ZIP-1..4, F-GJ-7 and DECISIONS 21 Oct):**
+  - Scoreboard: 1 of 8 passes (PER labellar).
+  - N30 option B is UNDECIDED; Ben's MN5 recording decides (`docs/MEASUREMENT_LIST.md` item 1).
+  - Not done from the zip track: the grooms spec (DECISIONS 02:44), portability, and the variation/individual layers. Zip work is parked by Ben.
 - **Backhouse lessons:**
-  - The WSL distro stops when no wsl client is attached. Hold a keep-alive from the Mac while anything runs: `ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'"`.
-  - Send remote commands as a script (`… bash -s < /tmp/x.sh`).
-  - Use at most 4 threads per job, and queue if the load is over 24.
+  - Hold a keep-alive (`nohup ssh backhouse wsl -d Ubuntu -- bash -c "'exec sleep infinity'" &`).
+  - Send commands as scripts (`bash -s < x.sh`). cmd.exe breaks single-quoted `bash -c` with `;`.
+  - Use at most 4 threads and queue above load 24. A closed-loop gate run takes about 6 min there.
 - **Mac lessons:**
-  - Detach long jobs with `nohup … > log 2>&1 & disown` and write the done-file from the job.
-  - The worktree guard refuses heredocs that pipe into nohup or git, and `cd … && git …` chains with redirects. Use the Write tool plus plain commands.
-  - `runs/` is a symlink into the shared checkout, so the Write tool refuses paths under it. Stage temp files in `/tmp`.
-  - `timeout` doesn't exist on macOS.
+  - Detach with nohup + disown.
+  - The worktree guard refuses `$(...)` in sed/find and heredocs into nohup/git or into python in a git command. Put scripts in `/tmp`.
+  - `runs/` is a symlink (Write refuses it), and `timeout` doesn't exist.
 - **Carried:**
-  - **Body hook:** fly owns the premotor→MN transmission fix. When it lands on main, rerun step R as the held-out test on backhouse (`scripts/probes/run_proprio_reach.sh`, then `proprio_reach_score.py` and `proprio_reach_fig.py`).
-  - **Stance loop (F-REFLEX-2):** three transduction blanks that fly2 can fill without touching the VNC: the CS load normalisation, CS rows per leg, and the front-leg FeCO assignment.
-  - **Optic lobe:** the next candidates are T4/T5 dendritic input position (N30 in the optic lobe) and the input synapses' rest and release levels. Behnia 2014 stays sealed until an arm passes T4/T5.
-  - **GPU:** `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse (fix 609b238).
-- **Stay out of:** lif.py graded release, the VNC files and fly's switches. Don't touch the flyapp worktree; run its tool from the copy `~/fly2-app` on backhouse.
+  - Body hook: fly owns the premotor→MN fix. When it lands, rerun the five scoreboard protocols and step R (`scripts/probes/run_proprio_reach.sh`).
+  - Stance loop: the CS load normalisation, CS rows per leg and the front-leg FeCO assignment are fly2's to fill.
+  - Optic lobe: T4/T5 dendritic input position next; Behnia 2014 stays sealed.
+  - GPU: `pytest tests/test_gpu_batched.py` still needs a run under JAX on backhouse.
+- **Stay out of:** the VNC files, fly's switches and the flyapp worktree.
 
 ## Where the project stands
 
@@ -529,6 +522,10 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | `gf_latency.py` + `gf_psi_dlm_path.py` on m10f + measured NT + measured PSP + N30 two compartments, seed 1 (central values and the four corners) | spent (s20 fly2, F-GJ-6) | a changed DLMn (doublet fix, tau_m, measured q/ρ) needs seed 2+ and a new held-out range |
 | `gf_latency.py` on m10f + measured NT + measured PSP + N30 at the option-B values (class, MN5 L, MN5 R), seed 1 | consistency only (s21 fly2, F-GJ-7; Ryglewski already spent) | none; a build at measured values needs seed 2+ |
 | `docs/research/sealed/s21_gf_dlm_sealed.md` (GF→DLM 1:1 vs doublet, paired-pulse refractory period, following frequency, soma amplitude of the axon spike; sources Ryglewski et al. 2014 PNAS, Fayyazuddin 2006 and others) | **sealed, unread** (written by fly2's literature agent, 21 Oct). One header line ("Source 1 — Ryglewski S, Kadas D, … (2014)") was seen in a grep; no value. Value-free summary from the agent: Ryglewski 2014 states two following-frequency pairs, plots the refractory period without stating it, and gives 1:1 qualitatively; Fayyazuddin 2006 gives 1:1 and the spike shape qualitatively only | open once, for the DLMn build at measured values, after its pre-registration |
+| fly_brain.zip identity runs (s22 fly2, F-ZIP-1): m10f0, flat floor, no stimulus, 1 s, seeds 12 and 13 | seen as engineering output only (spike totals and hashes; no observation compared, nothing scored or selected) | seeds 12-13 were noted as reserved for the rung-1 G1 check; seed 12 has long been the smoke default. If G1 needs unseen seeds, use 14+ |
+| fly_brain.zip scoreboard protocols (s22 fly2, F-ZIP-2): `per_labellar_sugar` (LB3b/LB3c 100 Hz → MN9_L, seeds 0-9, bar > 5 Hz) and `gf_escape` (DNp01 kick train, seed 0, Augustin 2017 latency ranges) | regression checks on spent evidence: the sugar gate is the session 10 fit and class-search gate, and the Augustin ranges are seen or spent (rows above). Results: PASS 5.7 Hz; FAIL, no motor neuron follows | a PASS or FAIL here is not a held-out test; a changed model needs its own held-out check elsewhere |
+| fly_brain.zip closed-loop protocols (s22 fly2, F-ZIP-3, scored in F-ZIP-4): `stands_flat_floor` (seed 12, 1 s, no stimulus) and `walks_dng100` (DNg100 100 Hz, seed 0) | seen in F-ZIP-3 before their bars were written (DECISIONS 21 Oct 02:33), then scored under those bars as regression checks: both FAIL. Seed 12 is the F-ZIP-1 engineering seed; seed 0 is command_walk's exploratory seed | a held-out standing or walking test needs new seeds |
+| fly_brain.zip `per_leg_sugar` (s22 fly2, F-ZIP-4): LgLG4 + LgAG2 50 Hz → MN9_L, seeds 0-9, bar > 5 Hz | regression check on spent evidence (leg sugar at 50 Hz was the target of the s12 margin diagnostics, F-TASTE-LEG-1, F-STAB-6). Result: FAIL, 0 Hz on every seed | not a held-out test; a changed model needs its own held-out check |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows (seed 0, both sets) | spent (s13 fly2, F-VISION-12: 0 of 8) | a new optic-lobe candidate needs a new seed or a new test |
 | flyapp `t4t5_ds.py` on v0r + flyvis rows + flyvis pair strengths (seed 1, both sets) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 00:41; F-VISION-15): medulla FAIL 1 of 8, photoreceptor FAIL 0 of 8 | the next candidate needs seed 3 or a new test |
 | flyapp `t4t5_ds.py` on the same + CT1 per-column compartments (seed 2, medulla set) | spent (s14/s20 fly2, pre-registered DECISIONS 14 Oct 01:05/01:07): FAIL 0 of 8, responses under the 0.5 mV floor | the next candidate needs seed 3 or a new test |

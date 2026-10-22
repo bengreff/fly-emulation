@@ -3685,6 +3685,101 @@ DIAGNOSTIC, forced drive. Nothing is adopted. Director's brief (21 Oct, after F-
 
 ### Results s17: the closed proprioceptive loop (21 October, 03:56; F-S17-1; nothing adopted)
 0/24 pass ({M0, OA4} × {g8, g40} × {d3, d1.5} × DNg100 15/25/40 mV), with no antagonist pair in any run. The open-loop repro equals s16 exactly, so the batch is valid. Every run's chordotonal rate is inside the 78.4 Hz bound (highest subtype 11.8 Hz), so no void rule applied. Feedback without drive (g40, 0 mV) gives no rhythm under M0 or OA4. The falsifier in the 03:18 entry is hit: proprioception is not the single missing piece. The finding states two limits. The loop's afferents stay far below their clamp rates because the legs barely move. The replay half of S4 (imposed walking-like joint trajectories under drive and OA4) was not run. `--proprio` stays a neutral switch (off by default); `afferent:all|rate_gain` stays at the profile's 8. The S4b recruitment order is still unspent. Scored with `s14_score.py` unchanged and `s17_loop_summary.py` (`runs/s17/loop/{score,summary}.json`). Viewed: `docs/media/s17_loop_rasters_{0,15,25,40}mv.png`, `docs/media/s17_loop_frames.png`.
+### fly2: how the first fly_brain.zip is built (21 Oct, 00:50)
+**Brief.** Director, 21 Oct: build the species-layer zip, its entry point, and the identity test. Spec: `docs/FLY_BRAIN_ZIP.md` rev 2.
+
+**What was decided, and why.**
+- **The zip holds the files the code reads, under the spec's names.** Each member has a spec path (`connectome/edges.parquet`) and a runtime path (`data/cache/male_cns_edges.parquet`). The runner extracts each member to its runtime path under a fresh root and runs the code there unchanged. The other route, rewriting every loader to read through a zip layer, touches 20+ modules and could change results.
+- **What goes in.**
+  - The inclusion policy came from a trace first: `scripts/probes/zip_trace_inputs.py` audit-hooks one m10f0 build and records every file opened.
+  - The zip then takes all git-tracked files under `data/params`, `data/derived`, `data/model`, `data/ontology` and `data/measurements`, plus `tests/`. It also takes the external caches the code reads (connectome extract, annotations, CT1 column files, flybody meshes), each hashed.
+  - Untracked files are never packed. The packer refuses a dirty tree, and refuses if the neuron or edge hash differs from the `t1_fill.json` pin.
+- **flygym 2.1.0 is vendored** (Apache-2.0, pure Python, about 2 MB plus 143 MB of fullsize meshes).
+  - The first approach, pointing the installed flygym at the zip's assets, failed: its asset paths are module constants and default arguments bound at import.
+  - The read guard caught it as a read of the installed `all_geom_suffixes.yaml`.
+  - flygym therefore leaves the runtime pins and is recorded as vendored, with its version and licence.
+- **A read guard, not just PYTHONPATH.**
+  - The child process installs Python audit hooks and wraps pyarrow's parquet reader and MuJoCo's XML loader. It also checks every compiled mesh path.
+  - Reads under `--deny` roots, the installed flygym and its mesh cache are refused. Any other read outside the root and the Python install is listed in `run_manifest.json`.
+  - Limit: native reads that bypass these paths would not be seen. The identity result below is the backstop.
+- **World.** Only `flat_floor` (the `World()` defaults, as JSON) and the null stimulus are built. The other three arenas and nine stimuli are declared `todo` entries in the manifest, and the runner refuses them by name.
+- **Profiles go out as data.** Each profile is exported as JSON (key, value, label, why). In zip mode the runner loads the profile from that JSON, not from `profiles.py`.
+- **Determinism.** Members get fixed dates and a sorted order, and the manifest has no clock time. The child runs with `PYTHONHASHSEED=0`, and `FLYEMU_*` environment variables are dropped and recorded.
+
+**Acceptance (registered in the brief before running).** A 1 s m10f0 smoke run (seed 12, ≥ 5 synapses, flat floor) from the zip, in a fresh temp dir with the repo denied, must be spike-for-spike identical to the same run from the repo tree. Falsifier: any difference in the spike arrays, the final body pose or the registry reads. Result: FINDINGS F-ZIP-1.
+
+### fly2: scoreboard protocols as zip world/ data; flyemu.check (21 Oct, 01:10)
+**Brief.** Director, 21 Oct: build flyemu.check, then turn the probe arenas and stimuli into zip `world/` data, each tested zip against tree, so the scoreboard runs from the zip alone. The zip is over 50 MB, so it stays a build artifact; the packer is committed.
+- **Format.** Source files live in `data/world/` (git-tracked) and are packed as the zip's `world/`.
+  - `scoreboard.json` lists the 8 fixed items in order. Each names a protocol or gives the reason there is none.
+  - A protocol (`protocols/<name>.json`) holds the brain build, settings, seeds, duration, stimulus name, readout, pass conditions, bar source, reference script and evidence status.
+  - A stimulus (`stimuli/<name>.json`) is a list of timed events on cell types.
+  - `flyemu.score` only interprets these files. No number lives in its code.
+- **Two harnesses, each a copy of the script whose numbers it must reproduce.**
+  - `assay` builds the brain as `scripts/assay_pathways.py` does: no stubs, no body, no Q10, and a fresh network per seed.
+  - `organism` builds it as `scripts/probes/gf_latency.py` does: Organism, with the body not stepped.
+  - Both step only the network. The sugar gate has always been scored by the first and GF latency by the second, so this keeps both comparable with every earlier number.
+  - The cost: the two protocols do not share one brain build. Moving to a single harness would mean re-scoring both gates. Not done here.
+- **Built:**
+  - `per_labellar_sugar`: LB3b/LB3c Poisson drive at 100 Hz, read out on MN9 with incompletely traced cells dropped (which leaves MN9_L). Pass: mean over seeds 0-9 > 5 Hz, the class-search gate.
+  - `gf_escape`: DNp01 kicked 20 times; TTMn, PSI and DLMn latency plus conduction delay, against Augustin 2017. Pass: the gf_latency verdict, with gap junctions at the model default of 0.
+- **Not built, with the reasons in `scoreboard.json`:**
+  - Stands and walks: expressible as data, but both fail for want of mechanisms, and the closed-loop harness is not yet a protocol harness.
+  - Grooms: no test and no mechanism.
+  - Leg sugar: same harness, but its bar is the four-part check of 6 Oct 00:41, with no single number for "opens". Writing that number is a decision, not plumbing.
+  - Optomotor turning and stable flight: these need code. Vision bypasses the World, and flight kinematics are imposed.
+- **Evidence status.** Both built protocols score spent evidence: the sugar gate was a fit target, and the Augustin latencies have been scored since s13. Their runs are regression checks, not held-out tests. The register says so.
+- **Acceptance (written before the zip runs finished).** For each protocol:
+  - The tree run must reproduce its reference script exactly: the per-seed MN9 rate for sugar, and every gf_latency type field for GF.
+  - The zip run, from a scratch directory with `/Users/ben/fly-emulation` denied, must give per-seed spike hashes over every neuron equal to the tree run's.
+  - flyemu.check from the zip must give the same test outcomes as from the tree, and a rebuilt ledger equal to the packed one.
+  - Any difference fails the zip, whatever the verdicts are.
+  - GF tree vs reference had already finished (exact match, FAIL) when this was written; the rest had not.
+
+### fly2: a closed-loop protocol harness; stands and walks as zip world/ data with no bar yet (21 Oct, 02:16)
+
+- **Harness `closed_loop`** (`flyemu.score`): the Organism with the body stepped and every sense reaching the brain. Each step is observe, sense, network step (with the stimulus kick) and motor step, the loop of `flyemu.run` and `scripts/probes/command_walk.py`. Body samples every 10 steps (1 ms) after the motor step, as command_walk takes them. Each trial also records the final-pose hash, the NaN state and the MuJoCo warning count.
+- **Readouts.**
+  - `leg_oscillation` is command_walk.py's per-leg summary over 300-1300 ms: the dominant tarsal-tip fore-aft frequency in 3-25 Hz, the band's power share, the peak-to-peak amplitude, the thorax displacement, and the leg motor neuron and DNg100 rates.
+  - `posture` gives the thorax height (median, minimum, last) and its horizontal drift.
+- **Protocols.**
+  - `walks_dng100`: DNg100 at 100 Hz, 300-1300 ms, seed 0, 1.4 s. Reference: `command_walk.py --type DNg100 --hz 100 --seed 0` at m10f0.
+  - `stands_flat_floor`: no stimulus, seed 12, 1 s. Reference: the F-ZIP-1 tree run of `flyemu.run` (same build, seed and loop).
+- **No bar, so the verdict is NO BAR.** What counts as standing (a thorax height) or walking (a step-frequency band, how many legs, a forward displacement) is not written down anywhere as a number. Choosing one is a decision for the Director or Ben, not plumbing. Each protocol carries a `bar_todo`, and `flyemu.score` refuses a protocol with neither pass conditions nor a `bar_todo`. Proposals go to the Director in the report and are not adopted. Both items still fail today for want of mechanisms (F-STAND-3 to 6; F-BYPASS-7, F-XCONN-2).
+- **Evidence.** Seed 12 is the F-ZIP-1 engineering seed. Seed 0 is exploratory for command_walk. Nothing is scored without a bar.
+- **Acceptance (written before any run of these protocols):**
+  - Walks: the tree run equals command_walk.py's output on every field it reports, at the script's rounding.
+  - Stands: the tree run reproduces the F-ZIP-1 tree run's spike hash (770807852827186b…) and final-pose hash (3ec293bad4b3b7b7…).
+  - For both, the zip run (scratch directory, `/Users/ben/fly-emulation` denied) equals the tree run: spike hash, final-pose hash and every readout field.
+  - Any difference fails the zip.
+
+### fly2: bars for stands, walks and PER to leg sugar (Director as Ben, 21 Oct; recorded 02:33, before any run with them)
+**Brief.** Director, 21 Oct: the three bars below are decided (as Ben, reversible). Each is a definition of the behaviour, not a fit; nothing in the model changes. Pre-registered here before any scored run.
+- **Stands (`stands_flat_floor`, seed 12, last 500 ms of 1 s).**
+  - Only the feet touch the floor: `nonfoot_floor_frac` ≤ 0, the share of 1-ms samples in 500-1000 ms where the floor pushes (normal force > 0) on any body other than a tarsal segment. "Foot" is any tarsal segment (tarsus1-5), the definition of `bypass_s1_actuation.py`'s `floor_forces` and of the 13 Oct `holds_prereg` (no head, thorax, abdomen, coxa, femur or tibia on the floor). A fly stands on its tarsi, not only on the last tarsomere, so "foot tips" is read as the tarsi.
+  - Height inside the measured standing range: `head_above_collapse_mm_median` ≥ 0.1 mm over 500-1000 ms.
+    - Wang 2025 (eLife RP107390) tracked a head point, not the thorax, so the bar reads the same point: the `c_head` body origin above this body's motor-silenced collapse, 0.429 mm (derived; S1 level 0, m10f0, adhesion 1, 3 s; `runs/s13/bypass/s1/support/s1_m10f0_adh1.json`). Wang's zero is the collapsed position (inferred, DECISIONS 13 Oct 23:16). A thorax height would need a conversion through an assumed point; Pratt 2024's thorax value was read off a figure from an unspecified point and is not used.
+    - Lower bound 0.1 mm: the lowest standing start height in Wang Fig 5C ("varies from 0.4 mm to 0.1 mm in this fly"; measured). No upper bound: the paper gives a median (0.5 mm) but no population maximum, IQR or histogram (Sonnet check 21 Oct, this session), so an upper limit would be invented. The earlier note that 0.86 mm is "inside Wang's measured range" (F-STAND-5) is not supported by a published maximum.
+  - Evidence status: Wang's median head height was spent as an instrument setting in s13 (S1 fix 1, `--head-mm`, not the default). This bar defines standing; it is not held-out evidence.
+- **Walks (`walks_dng100`, seed 0, 300-1300 ms).**
+  - At least 4 of 6 legs step in the walking band: dominant tarsal-tip fore-aft frequency (searched in 3-25 Hz, unchanged) in 7-15 Hz AND `step_band_share` ≥ 0.5, the tip's power share inside 7-15 Hz (Director: "at least half their movement in that band"; this is stricter than the 3-25 Hz `band_share` proposed). Band: Pugliese 2025, as command_walk.py cites.
+  - The thorax moves forward: `thorax_forward_mm` > 0, the horizontal displacement over the window along the thorax heading at 300 ms.
+  - The stepping comes from the connectome: every closed-loop run (stands too) is refused unless only the network's motor spikes move the body. Checked in the scorer (`_connectome_driven`): no position or velocity servo actuator, no mocap body, no active weld or connect constraint (tether), no wingbeat generator (`flight:wings` 0), no stimulated motor neuron; by construction motor_step gets no external torque and nothing writes qpos or ctrl. No CPG stub or kinematic replay exists in `src/flyemu` (the replays live in `scripts/probes` and are not reachable from the scorer).
+- **PER to leg sugar (`per_leg_sugar`, new; seeds 0-9, 1 s, assay harness).** LgLG4 + LgAG2 Poisson drive at 50 Hz; MN9 rate with incompletely traced cells dropped (leaves MN9_L, as the labellar protocol); pass `rate_hz_mean` > 5 Hz. Reference: `scripts/assay_pathways.py --assay legsugar_mn9 --rates 50 --shuffles 0 --trials 10 --profile m10f0`. The other three parts of the 6 Oct 00:41 check (3 Hz silent, leg bitter silent, labellar bitter suppresses) stay as written and are not part of this item. Evidence status: spent (leg sugar at 50 Hz was the target of the s12 margin diagnostics, F-TASTE-LEG-1, F-STAB-6), a regression check.
+- **Acceptance (code):** stands and walks with the new readouts reproduce their F-ZIP-3 spike and final-pose hashes and every earlier readout field (reading contacts must not change the run); `per_leg_sugar` tree equals the reference script per trial; zip equals tree for all three.
+- **Predictions (written before any run):** stands FAIL on both conditions (the model lies on its belly, F-STAND-3 to 6). Walks FAIL: 0 legs counted (tips at 3-4 Hz, band share 0.1-0.3) and the thorax moves backwards (-0.04 mm). Leg sugar FAIL, MN9_L near 0 Hz (the route is blocked at rest, F-TASTE-LEG-1; not measured at m10f0). The scoreboard stays at 1 of 8 passing, now with 5 of 8 scored.
+
+### fly2: a grooming test spec (proposal to the Director, 21 Oct 02:44; not built, not adopted)
+**Grooms, proposed protocol `grooms_antenna_jo`.** *Stimulus:* the antennal Johnston's-organ neurons of the JO-C and JO-E groups (male-CNS types JO-CA1, JO-CA2, JO-CL, JO-CM and JO-ED1, JO-ED2_a-c, JO-EV1-6; 68 + 267 cells, counted in `male_cns_neurons.parquet`), the population whose activation drives antennal grooming in Hampel et al. 2015 (their "aJO" lines; that these lines are JO-C/E is inferred and must be checked against the paper's line names before building). Drive: Poisson kicks at 100 Hz (a protocol choice, as for the sugar drives) during the on-phases of Hampel's CsChrimson pattern, 5 Hz for 5 s with 0.1 s on and 0.1 s off (Fig 7); the control is the same seed with no stimulus. *Harness:* closed loop on the flat floor, m10f0, with the connectome-only drive check of the walk bar. *Readout:* the share of 1-ms samples in which a front-leg tarsal segment (lf or rf) touches an antenna or the head (the contact readout built for stands, applied to body-body contacts), and the number of front-tarsus passes over the antennae. *Bar:* the grooming share during stimulation above the control's and above the minimum percent of time grooming the antennae under aJO activation in Hampel 2015 Fig 1B (n ≥ 17 flies); that number has not been read off the figure, so the protocol would carry a `bar_todo` until it is. *Source:* Hampel, Franconville, Simpson & Seeds 2015, eLife 4:e08758 (behaviour, measured; mechanical antennal displacement in the same paper gives a second, non-genetic stimulus: 31 ± 6 µm at 1 Hz for 10 s). *Validity:* a fly grooms its antennae while standing on its mid and hind legs, so this item cannot pass before stands does. The paper's interneurons (aBN1, aBN2, aDN1, aDN2) have no confirmed male-CNS type names, so the readout is behavioural only. The model's Johnston's organ is a proxy (`extrasenses.py`: gravity and wind projected on the head, plus a vibration term; guessed stiffness), not the antenna's own deflection, which matters only for the mechanical variant; the genetic variant kicks the JO cells directly. The l_antenna and r_antenna bodies already exist (`extrasenses.HEAD_BODIES`).
+
+### fly2: frontier stages 1-3, built synaptic switches turned on, with the gate written first (21 Oct 21:35, before any run)
+Brief: the Director's 21 Oct night brief (Ben: a mechanism is done when built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists). The switch inventory (`scripts/probes/switch_inventory.py --profile m10f0`) shows that several mechanisms the yaml calls "have" are off in m10f0: N10 (all three), N7, N9, N11, N21, both N29 switches, and N12 (`electrical:all|gap_conductance`, not in the yaml's switch list). Stages, cumulative, one switch group each (`src/flyemu/profiles.py`): **m10f1** = m10f0 + `synapse:all|per_synapse_parameters` (STP rows ORN→PN, ORN→LN, derived from Nagel 2015 / Nagel & Wilson 2016); **m10f2** = m10f1 + `synapse:all|receptor_kinetics_per_connection`; **m10f3** = m10f2 + `electrical:all|gap_conductance` + `connectome:identified|nt_from_physiology` (PSI cholinergic, measured). `m10f` keeps pointing at m10f0 until a stage passes.
+- **Gate (the m10f stage-entry rule of 13 Oct, as written in profiles.py):** (G) `closed_loop_check.py --profile m10fK`, seeds 12-15, 1000 ms + 300 ms silent, noise removed in the silent window: 0.0 non-eye spikes/ms in the last 100 ms on every seed, no NaN, 0 MuJoCo warnings, no class above 200 Hz; eye cells reported apart. (S) `smoke_live.py --profile m10fK --ms 60000 --seed 12`: no runaway, no NaN, 0 MuJoCo warnings, whole-brain rate within ±50% of m10f0's 0.324 Hz (the 13 Oct 22:33 criterion), and the active fraction within ±50% of m10f0's 0.0281.
+- **Unit checks (each written down before its run, below or in its own entry):** stage 1, a network-only ORN→PN train probe against a held-out depression measurement (to be named before the run); stage 2, the in-network unitary current decay per row; stage 3, `gf_latency.py` at m10f3 against Augustin 2017 (TTM band 0.866-1.216 ms; a consistency check, spent in s13).
+- **Prediction:** all three stages pass G and S (the s13 5 s smoke with all three on was within 5%); the KC rows of stage 2 change nothing at rest because KCs are silent at rest in m10f0.
+- **Falsifier / consequence:** a stage that fails G or S stays built-off with the reason recorded, and later stages are rerun on the last passing stage.
+- Runs on backhouse, `~/fly2_mc` (git archive of the commit carrying this entry), rule 16 caps, rule 17 detached, done-files.
+
 
 ### s18 N19 plan revised before building (21 October, 21:56; pre-registration of the unit checks; nothing built yet)
 **Hige 2015 dropped as N19's unit check.** The row-check (`docs/research/s18_n19_rowcheck.md`, Sonnet, full text)

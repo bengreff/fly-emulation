@@ -314,6 +314,28 @@ M10F0 = {
                                              "0.989; F-NT-2)"),
 }
 
+# Stages 1-3 (fly2, 21 Oct night, mechanism-complete brief): synaptic mechanisms that were built and off, one
+# per stage, cumulative. A stage becomes m10f only after its gate (DECISIONS 21 Oct 21:5x).
+M10F1 = {
+    **M10F0,
+    "synapse:all|per_synapse_parameters": (1.0, _I, "frontier stage 1 (N29 STP): ORN->PN and ORN->LN depression "
+                                           "per connection class (Nagel 2015, Nagel & Wilson 2016; derived rows "
+                                           "in stp_connections.csv); other edges keep N10"),
+}
+M10F2 = {
+    **M10F1,
+    "synapse:all|receptor_kinetics_per_connection": (1.0, _I, "frontier stage 2 (N29 receptor decay): ORN->PN "
+                                                     "1.1 ms (fitted, Gouwens & Wilson 2009), KC nicotinic 1.4 ms "
+                                                     "and GABA 3.7 ms (measured in culture, Su & O'Dowd 2003)"),
+}
+M10F3 = {
+    **M10F2,
+    "electrical:all|gap_conductance": (1.0, _I, "frontier stage 3 (N12): identified gap junctions "
+                                       "(gap_junctions.csv); only rows with a spike or coupling value act"),
+    "connectome:identified|nt_from_physiology": (1.0, _I, "frontier stage 3 (N6 identified cells): PSI "
+                                                 "cholinergic (Fayyazuddin 2006, measured)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -347,6 +369,9 @@ PROFILES: dict[str, dict] = {
     "m10p": {"values": M10P, "kick_mv": KICK},
     "m10q": {"values": M10Q, "kick_mv": KICK},
     "m10f0": {"values": M10F0, "kick_mv": KICK},
+    "m10f1": {"values": M10F1, "kick_mv": KICK},
+    "m10f2": {"values": M10F2, "kick_mv": KICK},
+    "m10f3": {"values": M10F3, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f0"]   # the frontier: the latest stage that passed its smoke test and gate
 

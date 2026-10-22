@@ -1,0 +1,41 @@
+{
+ "schema": 1,
+ "what": "the fixed behaviour scoreboard (scope brief, 6 Oct): each item names its protocol in world/protocols, or says why there is none yet. Run one with python -m flyemu.score <zip> --protocol <name>",
+ "items": [
+  {
+   "item": "stands",
+   "protocol": "stands_flat_floor"
+  },
+  {
+   "item": "walks",
+   "protocol": "walks_dng100"
+  },
+  {
+   "item": "grooms",
+   "protocol": null,
+   "todo": "no test and no mechanism"
+  },
+  {
+   "item": "PER to labellar sugar",
+   "protocol": "per_labellar_sugar"
+  },
+  {
+   "item": "PER to leg sugar",
+   "protocol": "per_leg_sugar"
+  },
+  {
+   "item": "optomotor turning",
+   "protocol": null,
+   "todo": "needs code: vision bypasses the World (no rendered grating reaches the eyes through world/) and there is no turning readout (F-VISION-15)"
+  },
+  {
+   "item": "giant-fibre escape",
+   "protocol": "gf_escape"
+  },
+  {
+   "item": "stable flight",
+   "protocol": null,
+   "todo": "needs code: flight kinematics are imposed and the tether is set in code (flight.py, F-FLIGHT-3)"
+  }
+ ]
+}

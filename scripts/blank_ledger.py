@@ -37,6 +37,7 @@ from flyemu.registry import Policy, Registry
 
 REPO = Path(__file__).resolve().parents[1]
 D = REPO / "data" / "derived"
+OUT = D                  # where the ledger tables are written (flyemu.check points it at its own output)
 
 # Estimated counts: value, basis, source
 ESTIMATES = {
@@ -182,7 +183,7 @@ def main() -> None:
                            "per-element", "parameter")
     df["level"] = [level(b, f) for b, f in zip(df.basis, df.fidelity)]
     df["grain_group"] = df.grain.map(GRAIN_GROUP).fillna("body part")
-    df.to_csv(D / "blank_ledger.csv", index=False)
+    df.to_csv(OUT / "blank_ledger.csv", index=False)
     levels_report(df)
 
     filled = df.basis.isin(["measured", "derived"])
@@ -249,7 +250,7 @@ def levels_report(df: pd.DataFrame) -> None:
         print(f"\nINCONSISTENT rows (fidelity none <=> model absent): {len(bad)}")
     # the per-session metric table: level x grain slots (appended by date)
     out = df.groupby(["grain_group", "level"]).slots.sum().rename("slots").reset_index()
-    out.to_csv(D / "ledger_levels.csv", index=False)
+    out.to_csv(OUT / "ledger_levels.csv", index=False)
 
 
 def construction_report() -> None:

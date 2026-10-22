@@ -1,0 +1,92 @@
+{
+ "schema": 1,
+ "name": "walks_dng100",
+ "item": "walks",
+ "what": "the whole fly in closed loop on the flat floor, DNg100 driven at 100 Hz from 300 to 1300 ms; it walks if at least 4 of 6 legs step at 7-15 Hz with at least half their tip movement in that band and the thorax moves forward, with nothing but the network's motor spikes moving the body. Walking fails today for want of mechanisms (F-BYPASS-7, F-XCONN-2)",
+ "harness": {
+  "kind": "closed_loop",
+  "build": "closed_loop",
+  "note": "flyemu.organism.Organism with the body stepped and every sense reaching the brain, the loop of scripts/probes/command_walk.py (observe, sense, network step with the kick, motor step); seeded default_rng(seed); noise per profile"
+ },
+ "settings": {
+  "profile": "m10f0",
+  "min_synapses": 5,
+  "timestep_ms": 0.1,
+  "policy": "minimal",
+  "arena": "flat_floor"
+ },
+ "seeds": [
+  0
+ ],
+ "stimulus_rng_offset": 1,
+ "duration_ms": 1400.0,
+ "stimulus": "dng100_100hz",
+ "readout": {
+  "kind": "leg_oscillation",
+  "sample_every_steps": 10,
+  "window_ms": [
+   300.0,
+   1300.0
+  ],
+  "band_hz": [
+   3.0,
+   25.0
+  ],
+  "legs": [
+   "lf",
+   "lm",
+   "lh",
+   "rf",
+   "rm",
+   "rh"
+  ],
+  "mn_superclass": "vnc_motor",
+  "stim_types": [
+   "DNg100"
+  ],
+  "note": "each tarsal tip's fore-aft position in the thorax frame, sampled every 1 ms over the window: the dominant frequency inside 3-25 Hz, that band's share of the power and the peak-to-peak amplitude (2 SD); the thorax displacement over the window (mm); the mean rate of vnc_motor neurons and of the DNg100 cells over the window; with step_band_hz, each tip's power share inside 7-15 Hz (step_band_share) and the thorax displacement along its heading at the window's start (thorax_forward_mm)",
+  "step_band_hz": [
+   7.0,
+   15.0
+  ]
+ },
+ "pass": [
+  {
+   "quantity": [
+    "lf",
+    "lm",
+    "lh",
+    "rf",
+    "rm",
+    "rh"
+   ],
+   "op": "count_where",
+   "value": 4,
+   "where": [
+    {
+     "field": "f_hz",
+     "op": "in",
+     "value": [
+      7.0,
+      15.0
+     ]
+    },
+    {
+     "field": "step_band_share",
+     "op": ">=",
+     "value": 0.5
+    }
+   ],
+   "units": "legs"
+  },
+  {
+   "quantity": "thorax_forward_mm",
+   "op": ">",
+   "value": 0.0,
+   "units": "mm"
+  }
+ ],
+ "bar_source": "DECISIONS 21 Oct 02:33 (bars decided by the Director as Ben, 21 Oct; reversible): at least 4 of 6 legs with the dominant tip frequency in 7-15 Hz (the step band command_walk.py cites, Pugliese 2025) and at least half their movement in that band; the thorax moving forward; and the stepping from the connectome model (the scorer refuses a run with a servo, mocap, tether, wingbeat generator or stimulated motor neuron)",
+ "reference_script": "FLYEMU_PROFILE=m10f0 scripts/probes/command_walk.py --type DNg100 --hz 100 --seed 0 (its stimulus rng is default_rng(1), so seed 0 + offset 1). The script's default --set motor_unit:all|force_per_spike=10 equals m10f0's own value",
+ "evidence_status": "exploratory seed 0 (command_walk.py is not pre-registered); DNg100 direction was spent on seeds 1-4 in s7 and the bypass DNg100 arms in s20 (register); a definition bar, not held-out evidence"
+}

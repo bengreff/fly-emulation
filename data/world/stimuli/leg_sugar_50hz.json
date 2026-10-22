@@ -1,0 +1,20 @@
+{
+ "schema": 1,
+ "name": "leg_sugar_50hz",
+ "what": "tarsal sweet gustatory receptor neurons driven at 50 Hz: each LgLG4 and LgAG2 cell gets an independent Poisson train of membrane kicks for the whole trial (as scripts/assay_pathways.py --assay legsugar_mn9 --rates 50 gives it)",
+ "evidence": "LgLG4 (Gr64f+/Ir56b+) and LgAG2 (Gr61a+) match tarsal sweet GRN projections (male-CNS taste connectome, bioRxiv 10.1101/2025.08.25.671814; measured identity). 50 Hz is the 'real sugar rate' of the 6 Oct 00:41 check, a protocol choice, not a fly quantity",
+ "events": [
+  {
+   "kind": "poisson_kick",
+   "types": [
+    "LgLG4",
+    "LgAG2"
+   ],
+   "rate_hz": 50.0,
+   "t_on_ms": 0.0,
+   "t_off_ms": null,
+   "kick_mv": "profile"
+  }
+ ],
+ "notes": "t_off_ms null = to the end of the trial. kick_mv 'profile' = the profile's kick_mv. The Poisson draws come from numpy default_rng(seed + the protocol's stimulus_rng_offset), one uniform per stimulated cell per step while the event is on"
+}
