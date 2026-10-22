@@ -3852,3 +3852,58 @@ Written before any m10f4 run. Probe: `scripts/probes/kc_mbon_pairing.py` (isolat
 - Runs on backhouse, rule 16 caps, detached, done-file.
 - Amendment (22 Oct 01:57, before any m10f4 run): the Handler DAN train is three pulses at 2 Hz (0, 0.5, 1 s from DAN onset; 1 s of activation, the CsChrimson duration in their Methods), not four. Four at 2 Hz span 1.5 s, which at ISI -1.2 s would overlap the KC window and stop being DAN-before-KC.
 - Clarification (22 Oct 02:00, before any m10f4 run): Handler H1-H3 are scored on the mean charge ratio over seeds 12-15 (each its own KC set), with each seed reported. The confirm, recovery and Handler runs all use the one shared rate (mean of the four fits).
+### fly2: N21/N22 dopamine-only restoration of KC->MBON weights, pre-registered (22 Oct 04:11; before any build, fit or run)
+Director brief, 22 Oct. Sources: Cohn 2015, Berry 2018 and Hattori 2017, with Hige 2015 backward pairing as the falsifier. A Sonnet agent read the plotted values from the figures first (`docs/research/s25_restoration_figcheck.md`). It wrote the held-out values to `docs/research/sealed/s25_restoration_heldout_sealed.md`, which fly2 has not read.
+- **Rule.** New switch `cell_type:all|kc_mbon_dan_restore_rate` (r_res, per DAN spike; neutral 0; CPU only, the GPU path already refuses all KC->MBON plasticity).
+  - At each step in which a DAN spikes, every KC->MBON edge in that DAN's compartments (the m10f4 proxy: the DAN contacts the MBON) moves toward its baseline weight: w <- w + r_res (w0 - w).
+  - It doesn't depend on KC activity. In the same step it is applied before the m10f4 depression, so a coincident KC still gets the depression, which dominates (r_ltd 0.430 against r_res of order 10^-3).
+  - **The target is baseline (w0), not the cap.**
+  - Validity range: compartments whose depression comes from KC-DA coincidence. It holds only while DANs are silent or near-silent at rest (see the resting check below).
+- **Sources and their roles:**
+  - **Cohn 2015 Fig 7G-I (existence and direction).** In γ4, interleaved unpaired DAN activation returns a depressed KC-evoked response (0.7 ± 0.2) to the potentiated level (2.2 ± 0.5; fig, n 12). There is no spike count (ATP/P2X2), so it sets no number.
+  - **Hattori 2017 Fig 6F (fit target).**
+    - Recovery of MBON-α'3 after 1, 3, 6 and 10 PPL1-α'3 stimulations: 8 ± 5, 18 ± 7, 33 ± 6, 40 ± 6% (fig, mean ± SEM, n 10 cells).
+    - One stimulation is 10 × 50 ms pulses at about 7 Hz.
+    - The genetic controls are flat (0 ± 5%).
+  - **Berry 2018 Fig 5H-I:** held out (sealed).
+  - **Hige 2015 Fig 1H/1J:** see below.
+- **Fit (fitted, one value shared by all compartments).**
+  - Spikes per 50 ms pulse: **2 (guessed**: the light was calibrated to odour-evoked activity, and there's no spike count). Sensitivity runs at 1 and 4 are reported; r_res scales about inversely.
+  - Solve r_res by weighted least squares (weights 1/SEM²) of R(n) = 1 - (1 - r_res)^(S n) on the four points. S is the number of PPL1-α'3 spike-steps per stimulation, counted in the network from the kicks (expected 20).
+  - **In-network confirm:** a new mode of `kc_mbon_pairing.py`, seeds 12-15.
+    1. Depress the α'3 CS+ edges by forward pairing: Turner KC drive and PPL1-α'3 kicks, the m10f4 rule at 0.430.
+    2. Then give DAN-only stimulations in Hattori's pattern, 30 s apart.
+    3. Recovery = (R_n - R_supp)/(1 - R_supp) on the CS+ charge ratio.
+  - **Pass:** PPL1-α'3 contacts MBON-α'3 in the proxy, and the mean recovery at each n lies inside Hattori ± 2 SEM: n 1 -2..18%, n 3 4..32%, n 6 21..45%, n 10 28..52%.
+- **Regression (seen, not evidence).** With r_res on and r_ltd 0.430, the Hige 2015 Fig 3D forward CS+ ratio must stay inside 0.06-0.14 at every seed (the m10f4 band). If it leaves, refit r_ltd with r_res on and report both.
+- **Held out, spent once: Berry 2018 Fig 5H-I** (PPL1-γ2α'1 -> MBON-γ2α'1).
+  - Protocol as in the figure check: MCH CS+, OCT CS−, 5 s odours 45 s apart.
+    - Learn: 3 trials of 6 × 1 ms pulses at 2 Hz, from 1 s after MCH onset.
+    - Forget: 3 of the same trains, 22 s before MCH onset.
+    - Paired>Decay: no light in Forget.
+  - Model assumptions:
+    - 1 DAN spike per 1 ms pulse (guessed, as for Hige).
+    - The m10f4 Turner drive per odour (counts for 0.5 s odours, guessed to hold for the 5 s odour, spread over its first 1 s; KC odour responses are mostly onset).
+    - N22 forgetting on (3 h).
+  - **Readout:** the restoration fraction F = (R_post2 - R_post1)/(R_pre - R_post1) on MCH, for Paired>Unpaired minus Paired>Decay. Berry's F comes from the plotted %ΔF/F0 means, assuming the MBON calcium response is proportional to the KC->MBON drive (inferred).
+  - **Order:** the model value is computed and written down first. The scorer then opens the sealed file and computes Berry's F and its SE (delta method from the plotted SEMs).
+  - **Pass:** |F_model - F_Berry| <= 2 SE.
+  - **Falsifier:** outside the band, the rule is not adopted and N21 stays depression-only. If Berry's MBON response doesn't fall after Learn (no R_pre - R_post1 > 0), the test is void and is reported as such.
+  - Reported, not scored: OCT (CS−). The model predicts no change, because its weights sit at baseline.
+- **Hige 2015 backward pairing (Director's falsifier). It is not spent by this rule, and this corrects fly2's s24 sketch.**
+  - Under a baseline target, naive weights already sit at the target. The isolated probe has no DAN spikes outside the pulses: the F-S24-2 CS− ratio was exactly 1.0, so KCs never drive DANs there. So 4 pulses followed by an odour give a ratio of exactly 1.0 by construction (unit check U3 shows it), and scoring it would spend the data for no evidence.
+  - It stays unspent, reserved as the falsifier for any variant that can move naive weights: a cap target (Cohn 6A-C and 7D show DA alone potentiating above naive in γ4/γ2) or Handler-type timing LTP. With a cap of 2 and the r_res fitted here, 4 pulses would give about +1%, so even that variant would need a larger r to be falsified by it.
+- **Resting check (a prediction; it blocks adoption into any profile where DANs fire at rest).**
+  - DA-only restoration erases a memory in τ = -1/(f ln(1 - r_res)) at a resting DAN rate f.
+  - With r_res about 0.003 and Huang 2018's PPL1-α'2α2 6-10 Hz, τ is about 30-60 s. That is far below the N22 bracket (≥ 2.3 h), and against Hattori's own flat controls (their DANs presumably fire spontaneously).
+  - So a rule linear in DAN spikes holds only while DANs are silent at rest (m10f3/m10f4: 0 of 340 fire).
+  - Before fly's MB resting-rate fit is adopted, the rule needs a nonlinearity in dopamine. Inferred candidate: DAMB/Dop1R2, the low-affinity receptor that mediates forgetting (Berry 2012; Himmelreich 2017; leads, not read).
+  - The predicted τ at the fitted r is reported with the fit.
+- **Known misses (reported, not scored):** DA-alone potentiation above naive (Cohn 6A-C, 7D); Hige CS− about −25%.
+- **Unit checks (implementation; CPU; `tests/test_class_mechanisms.py`):**
+  - U1: with the switch at 0, weights and spikes are bit-identical to the current code under the m10f4 KC overrides.
+  - U2: after a depression, k DAN-only spike-steps leave (w0 - w)(1 - r)^k (relative 1e-5).
+  - U3: naive weights are unchanged by DA-only spikes, exactly.
+  - U4: edges outside the spiking DANs' compartments are unchanged.
+  - U5: the GPU path refuses (already true for any KC plasticity).
+- **If it passes:** m10f5 = m10f4 + r_res, gated by G and S as on 21:35. Prediction: identical to m10f4 at rest, since DANs are silent.
