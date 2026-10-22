@@ -3832,3 +3832,30 @@ so that number can't test it. It goes to fly2 as a candidate unit check for the 
   m10f1 stability gate fails (`closed_loop_check.py --profile m10f1`, eye excluded, seeds 12-15; 60 s
   `smoke_live.py` on backhouse: no runaway, no NaN, whole-brain rate within 2× of m10f), it also stays built-off.
 Stage name (21 October, 21:58): fly2 owns m10f1-m10f4 tonight, so N19's stage is the next free m10f stage, on top of fly2's last passing one. The gate and smoke are run on that profile, not on "m10f1".
+
+### s19 N19 built; protocol details fixed before any whole-brain run (22 October, 01:56)
+**Strother 2018 Fig. 6F, read from the figure pixels (derived).** Mi4 peak dF/F to L5 photoactivation, with 50 nM
+CDM against without, at 0.2 mW/mm²: ratio **2.66**. Across the five light intensities the ratio runs 2.4 to 3.6;
+the Fig. 6H example traces give 2.6, consistent. This is the one number the shared gain a is calibrated on.
+Assumptions, both inferred: dF/F is proportional to Mi4 rate (GCaMP6s near-linear at low rates), and 50 nM CDM
+is taken as OA occupancy 1 (CDM is a potent Octβ agonist; a lower true occupancy would mean a larger true a).
+
+**U2 protocol.** Isolated CNS, profile m10f3 with the receptor map on, settle 500 ms. One settled network is
+deep-copied; each copy holds u_OA (0 or 1). L5 cells get Poisson kicks at 100 Hz × the profile's kick_mv for
+1 s; the response is Mi4's evoked activity (stim minus a no-stim copy with the same random state; spike count, or
+the rate-equivalent sum if Mi4 is graded). Run a on a grid (0.25, 0.5, 1, 1.5, 2, 3, 4); a* is interpolated to
+ratio 2.66. If no a in 0 to 5 (the registered range) reaches 2.66, U2 fails and N19 stays off. Dacks uses the same
+protocol with DM2/DL1/DM3 ORNs kicked, uniglomerular PNs read, u_5HT held, at a*. a* is labelled **fitted**.
+
+**U1/U1h fit method.** The pool trace is the kicked-minus-control m_k, sampled every 10 ms for 20 s. τ_off is a
+log-linear fit from the peak to 10% of it; τ_on is a single-exponential rise A(1 − e^(−t/τ)) fitted from onset to
+peak, as a GRAB trace is fitted. On the analytic kernels this method returns 285 ms for a 340 ms τ_on (−16%,
+inside the ±25%), 5922 ms for 5900, and 65 ms for 70. The impulse-kernel τ_on implied by the peak time is
+reported as a secondary number, not scored. On a 50-pulse train the rise fit returns about 1.35 s and decay 5.9 s
+for a linear pool, so U1h is expected to fail on τ_off (and on τ_on), as registered.
+
+**Off-path identity.** receptor_map 0 must give the same spikes as the code before N19: a 300 ms whole-brain
+spike hash (m10f3, seed 1), old code (commit 71c4048) against new, on backhouse.
+
+**Stage.** N19's stage is m10f5, on fly2's m10f3 (the last passing stage); it moves onto m10f4 if fly2's
+passes first. Added to `profiles.py` only if Dacks and U3 pass.

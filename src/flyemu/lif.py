@@ -93,6 +93,7 @@ class LIFParams:
     mod_sensitivity: np.ndarray | None = None  # (n, 3)
     mod_tau_ms: float = 1000.0
     mod_increment: float = 0.01
+    mod_map: dict | None = None             # N19 receptor-map mode (neuromod.py); None = legacy pools
     # session 6: absent mechanisms, simulated with neutral defaults
     glu_sign_post: float | np.ndarray = 0.0    # per postsynaptic cell; 0 = transmitter default
     gabab_fraction: float | np.ndarray = 0.0   # per postsynaptic cell
@@ -947,6 +948,12 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
                 status=Status.DERIVED, subsystem="neuromodulation", instances=n_mod_cells,
                 evidence="predicted transmitter (male-cns EM classifier)",
                 method="predictedNt in {dopamine, octopamine, serotonin}")
+    # s19 N19: receptor-map mode (neuromod.py); keys read always, map built only when the switch is on
+    from . import neuromod
+    mod_map = neuromod.build(reg, conn, timestep_ms)
+    if mod_map is not None and np.any(sens):
+        raise ValueError("neuromodulation:all|receptor_map = 1 with nonzero per-type mod_sensitivity_* rows: "
+                         "use one sensitivity source, not both")
 
     reg.require(
         "state:all_neurons", "initial_condition",
@@ -996,7 +1003,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         release_gain=rel,
         input_gain=inp, mod_release=mod_release, mod_sensitivity=sens,
         mod_tau_ms=float(mod_tau),
-        mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0),
+        mod_increment=float(mod_inc) / max(1.0, n_mod_cells / 1000.0), mod_map=mod_map,
         glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
         kc_ltd_timing=float(kc_ltd_t), kc_ltp_timing=float(kc_ltp_t), kc_elig_tau_ms=float(kc_elig),
@@ -1157,10 +1164,52 @@ class Network:
         self.mod_level = np.zeros(len(MODULATORS), np.float32)
         self.mod_decay = float(np.exp(-dt / p.mod_tau_ms))
         self._mod_active = bool(self.mod_sens.any())
+        # N19 receptor-map mode (neuromod.py): four pools, released c -> level m (tau_on) -> cleared (tau_off)
+        self.modmap = None
+        if p.mod_map is not None:
+            mm = p.mod_map
+            self.modmap = {
+                "sens": np.asarray(mm["sens"], np.float32),
+                "release": np.asarray(mm["release"], np.int8),
+                "per_spike": (1.0 / np.maximum(1, mm["n_release"])).astype(np.float64),
+                "dec_on": np.exp(-dt / np.asarray(mm["tau_on_ms"], np.float64)),
+                "dec_off": np.exp(-dt / np.asarray(mm["tau_off_ms"], np.float64)),
+                "K": float(mm["K"]),
+                "c": np.zeros(len(mm["n_release"]), np.float64),
+                "m": np.zeros(len(mm["n_release"]), np.float64),
+                "hold": np.full(len(mm["n_release"]), np.nan),
+            }
+            self._modmap_pools = [k for k in range(self.modmap["sens"].shape[1])
+                                  if self.modmap["sens"][:, k].any()]
+        self._gain_on = self._mod_active or self.modmap is not None
         self._s10_ring_glia(pre)          # after W_graded exists (N23 edits it)
         self._two_comp_refusals()
 
     # --- one timestep --------------------------------------------------------
+
+    # --- N19 receptor-map mode (neuromod.py) ----------------------------------
+
+    def modmap_occupancy(self) -> np.ndarray:
+        """u_k = m_k/(m_k + K) per pool, or the held value where a pool is held (bath experiments)."""
+        mm = self.modmap
+        u = mm["m"] / (mm["m"] + mm["K"])
+        return np.where(np.isfinite(mm["hold"]), mm["hold"], u)
+
+    def modmap_gain(self) -> np.ndarray:
+        """g_i = max(0, 1 + sum_k s_ik u_k), elementwise over the pools with any nonzero sensitivity."""
+        mm = self.modmap
+        u = self.modmap_occupancy()
+        g = np.ones(self.conn.n, np.float32)
+        for k in self._modmap_pools:
+            g += mm["sens"][:, k] * np.float32(u[k])
+        return np.maximum(g, 0.0)
+
+    def hold_modulator(self, pool: str, occupancy: float | None) -> None:
+        """Clamp one pool's occupancy (a bath of agonist); None releases the clamp."""
+        from .neuromod import POOLS
+        if self.modmap is None:
+            raise ValueError("hold_modulator needs neuromodulation:all|receptor_map = 1")
+        self.modmap["hold"][POOLS.index(pool)] = np.nan if occupancy is None else float(occupancy)
 
     def silence(self, idx: np.ndarray) -> None:
         """Remove all output of these neurons, as Shiu 2024 silences cells."""
@@ -1201,18 +1250,21 @@ class Network:
             gain = 1.0 + (self.mod_sens[:, 0] * self.mod_level[0] + self.mod_sens[:, 1] * self.mod_level[1]
                           + self.mod_sens[:, 2] * self.mod_level[2])
             arriving = arriving * gain
+        elif self.modmap is not None:
+            gain = self.modmap_gain()
+            arriving = arriving * gain
         self.i_syn = self.i_syn * self.decay_s + arriving
         self.delay[self.delay_head].fill(0.0)
         if p.cond:
             arr_i = self.delay_i[self.delay_head]
-            if self._mod_active:
+            if self._gain_on:
                 arr_i = arr_i * gain
             self.g_i = self.g_i * self.decay_si + arr_i
             self.delay_i[self.delay_head].fill(0.0)
         c2 = self.c2
         if c2 is not None:   # N30 (s20): axon-compartment inputs due this step
             arr_a = c2["buf"][self.delay_head]
-            if self._mod_active:
+            if self._gain_on:
                 arr_a = arr_a * gain[c2["cells"]]
             c2["i"] = c2["i"] * c2["decay_s"] + arr_a
             c2["buf"][self.delay_head].fill(0.0)
@@ -1352,6 +1404,11 @@ class Network:
             self.x_res += (1.0 - self.x_res) * self.rec_step
         if self._mod_active:
             self.mod_level *= self.mod_decay
+        mm = self.modmap
+        if mm is not None:
+            moved = mm["c"] * (1.0 - mm["dec_on"])
+            mm["c"] -= moved
+            mm["m"] = mm["m"] * mm["dec_off"] + moved
         if spiked.size:   # soma side: reset, refractory and spike-triggered processes
             self.v[spiked] = self.v_reset[spiked]
             if p.reset_syn:
@@ -1375,6 +1432,11 @@ class Network:
                 k = k[k >= 0]
                 if k.size:
                     self.mod_level += np.bincount(k, minlength=len(MODULATORS)) * p.mod_increment
+            if mm is not None:
+                k = mm["release"][spiked]
+                k = k[k >= 0]
+                if k.size:
+                    mm["c"] += np.bincount(k, minlength=len(mm["c"])) * mm["per_spike"]
             if self.elec is not None and len(self.elec[0]):
                 hit = np.isin(self.elec[0], spiked)
                 if hit.any():
