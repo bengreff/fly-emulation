@@ -105,6 +105,7 @@ class LIFParams:
     kc_elig_tau_ms: float = 1000.0 # KC eligibility trace decay
     kc_w_cap: float = 2.0          # potentiation ceiling, x baseline weight
     kc_recovery_tau_ms: float = 0.0  # N22: relaxation to baseline (0 = none)
+    kc_restore: float = 0.0        # s25: DA-only restoration toward baseline per DAN spike
     # s10 N24: ER (ring neuron) -> EPG inhibitory plasticity; N27: lumped glial K+ buffer
     ring_eta: float = 0.0           # depression per ER spike x EPG activity trace
     ring_trace_tau_ms: float = 100.0
@@ -898,6 +899,11 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
     kc_mem_h = one("kc_mbon_memory_tau_h", "h", "N22: relaxation time constant", 3.0,
                    "guessed within the n22_memory_tau bounds (aversive STM decays over hours)")
     kc_rec = float(kc_mem_h) * 3.6e6 if kc_forget else 0.0
+    kc_res = one("kc_mbon_dan_restore_rate", "per DAN spike",
+                 "N21/N22: a DAN spike moves KC->MBON weights in its compartments toward "
+                 "baseline, with or without KC activity", 0.0,
+                 "neutral 0; unpaired DAN activity restores depressed KC->MBON transmission "
+                 "(Cohn et al. 2015 Fig 7I; Hattori et al. 2017 Fig 6F; Berry et al. 2018 Fig 5H-I)")
     ring_eta = one("ring_epg_plasticity_rate", "per ER spike per unit EPG trace",
                    "N24: coactive ER->EPG inhibitory synapses weaken (visual map learning)", 0.0,
                    "neutral 0: Fisher et al. 2019 Nature; Kim et al. 2019 Nature (leads, not read)")
@@ -1000,7 +1006,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         glu_sign_post=glu_sign, gabab_fraction=gabab, gabab_tau_ms=float(gabab_tau),
         presyn_inh_gain=float(pi_gain), kc_mbon_eta=float(kc_eta), dan_tau_ms=float(dan_tau),
         kc_ltd_timing=float(kc_ltd_t), kc_ltp_timing=float(kc_ltp_t), kc_elig_tau_ms=float(kc_elig),
-        kc_w_cap=float(kc_cap), kc_recovery_tau_ms=float(kc_rec),
+        kc_w_cap=float(kc_cap), kc_recovery_tau_ms=float(kc_rec), kc_restore=float(kc_res),
         ring_eta=float(ring_eta), ring_trace_tau_ms=float(ring_tt), ring_recovery_tau_ms=float(ring_rec),
         ring_floor=float(ring_floor), glia_gain_mv=float(glia_g), glia_tau_ms=float(glia_tau),
         apl_local=float(apl_loc), apl_local_tau_ms=float(apl_tau),
@@ -1392,14 +1398,17 @@ class Network:
                 ds = spiked[self.is_dan[spiked]]
                 self.dan_trace[ds] += 1.0
                 self.kc_elig[spiked[self.is_kc[spiked]]] += 1.0
-                if ds.size and p.kc_ltd_timing > 0:
-                    # KC-before-DA: depress KC->MBON edges in the spiking DANs' compartments
+                if ds.size and (p.kc_ltd_timing > 0 or p.kc_restore > 0):
+                    # KC->MBON edges in the spiking DANs' compartments
                     comp = np.asarray(self.M_da[:, ds].sum(axis=1)).ravel() > 0
                     hit = comp[self.kc_post]
                     if hit.any():
                         e = self.kc_e[hit]
-                        self.w[e] *= np.clip(1.0 - p.kc_ltd_timing * self.kc_elig[self.kc_pre[hit]],
-                                             0.0, 1.0).astype(np.float32)
+                        if p.kc_restore > 0:     # DA alone: restore toward baseline (s25)
+                            self.w[e] += (p.kc_restore * (self.kc_w0[hit] - self.w[e])).astype(np.float32)
+                        if p.kc_ltd_timing > 0:  # KC-before-DA: depress
+                            self.w[e] *= np.clip(1.0 - p.kc_ltd_timing * self.kc_elig[self.kc_pre[hit]],
+                                                 0.0, 1.0).astype(np.float32)
             self._propagate(spiked)
             self.spike_count += spiked.size
 
@@ -1418,7 +1427,7 @@ class Network:
         gs = _arr(p.glu_sign_post, n)
         f = _arr(p.gabab_fraction, n)
         self.w_slow = self.w_pi = self.kc_edge = None
-        kc_on = p.kc_mbon_eta > 0 or p.kc_ltd_timing > 0 or p.kc_ltp_timing > 0
+        kc_on = p.kc_mbon_eta > 0 or p.kc_ltd_timing > 0 or p.kc_ltp_timing > 0 or p.kc_restore > 0
         if not (np.any(gs != 0) or np.any(f > 0) or p.presyn_inh_gain > 0 or kc_on):
             return
         nt = self.conn.neurons.get("predictedNt", pd.Series([""] * n)).fillna("").str.lower().to_numpy()

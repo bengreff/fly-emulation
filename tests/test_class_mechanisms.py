@@ -441,3 +441,39 @@ def test_s14_adp_saturates_at_its_ceiling_and_inactivates_per_trigger():
     net.step(kick=(np.arange(n), 30.0))
     assert net.adp[0] <= 10.0 + 1e-5 and net.adp[0] > 9.99
     assert net.adp[1] < 10.0 * np.exp(-0.6 / 50.0) + 0.1
+
+
+@needs_graph
+def test_kc_mbon_dan_restoration_moves_toward_baseline_only():
+    """s25 (DECISIONS 22 Oct 04:11): each step in which a DAN spikes moves the KC->MBON
+    weights in its compartments toward baseline, w <- w + r (w0 - w), without KC activity.
+    U2 geometric approach from a depressed state; U3 naive weights exactly unchanged;
+    U4 edges outside the spiking DANs' compartments exactly unchanged."""
+    r = 0.05
+    o = _org(**{"cell_type:all|kc_mbon_dan_restore_rate": r})
+    n = o.net
+    assert n.kc_edge is not None and n.params.kc_restore == r
+    t = o.conn.neurons.type.fillna("")
+    dan = np.flatnonzero(t.str.match(r"^PPL1").to_numpy())
+
+    def drive(steps):
+        k = np.zeros(n.kc_e.size)
+        for _ in range(steps):
+            spk = n.step(kick=(dan, 50.0))
+            ds = spk[n.is_dan[spk]]
+            if ds.size:
+                k += (np.asarray(n.M_da[:, ds].sum(axis=1)).ravel() > 0)[n.kc_post]
+        return k
+
+    w0 = n.kc_w0.astype(np.float64)
+    k3 = drive(30)                                            # U3: naive
+    assert k3.max() > 0
+    assert np.array_equal(n.w[n.kc_e], n.kc_w0)
+    n.w[n.kc_e] = (0.5 * n.kc_w0).astype(np.float32)         # U2/U4: a depressed state
+    k = drive(30)
+    w = n.w[n.kc_e].astype(np.float64)
+    hit, miss = k > 0, k == 0
+    assert hit.sum() > 100 and miss.sum() > 100
+    expect = w0 - 0.5 * w0 * (1 - r) ** k
+    assert np.abs(w - expect)[hit].max() <= 1e-5 * np.abs(w0).max()
+    assert np.array_equal(n.w[n.kc_e][miss], (0.5 * n.kc_w0).astype(np.float32)[miss])
