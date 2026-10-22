@@ -1,50 +1,43 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 21:57 CDT. Session 18, part 2 (a Director brief after a /clear). The night runs to about 05:30. Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with in-range values, and passing a unit check against a measurement where one exists. Walking is parked.
-- **Heavy runs go on backhouse tonight.** The Mac has about 1.9 GB of free RAM.
-- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, plus (Director, 21 Oct) N1-N4 intrinsics and N27/N33 glia.
-- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those.
+**Rewritten each session; do not append.** State as of Thu 22 October 2026, 02:36 CDT. Session 19 (a Director brief after a /clear; the night runs to about 05:30). Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
+- **Heavy runs go on backhouse.** The Mac is short of RAM. backhouse sits at load 22-25 from other work, so my jobs run about one at a time under the load-24 rule.
+- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows, **0 done**.
+- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
 
-## Report for Ben (s18)
-- **Walking (F-S18-1, commit b5de8cc). This matters.**
-  - The 12-cell T1 core supplies only **0.8%** of the T1 leg-MN input.
-  - The rest comes from 20A/22A (10.7%), 04B (9.4%), 03A (8.5%), 13A (8.5%) and 21A (7.2%), all within two hops of DNg100.
-  - So the missing alternation most likely lives in premotor populations we never modelled as part of the rhythm, not in the core's strength.
-  - Walking stays parked. When it resumes, the next step is a per-cell spike save of these types in the s16/s17 arms.
-- **N19 unit check changed before building.** The planned Hige 2015 check (−90% MBON input) is associative plasticity, so it can't test N19.
-  - It is depression after *pairing* odor with a DAN, absent with backward pairing, through Dop1R1 in KC axons (presynaptic).
-  - It goes to fly2 as a candidate check for MB plasticity (N21).
-  - N19's checks are now Lv 2024 / Wan 2021 kinetics, a Strother 2018 Mi4 calibration, Dacks 2009 PN 5-HT (held out) and a Strother sign test (held out). See DECISIONS 21 Oct 21:56.
-- **Owners updated** in `docs/MECHANISM_STATUS.md`. The brief's "giant-fibre escape (N13, N14, N18)" only matches N18: N13 is conduction delays and N14 is noise. The IDs were followed as listed. N27 (lumped glial K+) isn't synaptic, so it went to fly.
+## Report for Ben (s19)
+- **worktree-fly2 merged into main** (71c4048; both sides kept; fast tests 86 passed).
+- **N19 built (6e2a994), CPU only, neutral off.**
+  - Mechanism: four monoamine pools (DA, OA, 5-HT, TA) with τ_on/τ_off. Each cell's sensitivity comes from its receptor transcripts (sign rule Gs/Gq +1, Gi/o −1). One shared gain a; occupancy K is guessed.
+  - Off-path identity passes: an identical 300 ms whole-brain spike hash, old code against new.
+  - U3 (held-out sign, Strother Fig. 4E-F) passes 5 of 5. It is weak by construction.
+  - Strother Fig. 6F, read from the figure: Mi4 gain under CDM ×2.66 (derived).
+- **U2 surprise.** At a = 0.25, Mi4's input gain is only ×1.5, but its spikes rose ×12.9, so the model's Mi4 sits near threshold. The first a* (0.035 from one bracket) was voided. Dacks and the smoke had started at that value; they were stopped before any output, so **Dacks is unspent**. A refined grid is running (DECISIONS 22 Oct 02:25).
+  - Expected: a* below 0.25, which puts the PN gain at about +1% or less, so Dacks will likely fail and N19 will stay built-off.
+- **S1-S4 metabolism (F-S19-1, c175e92 and 593ac29).** The values come from sources: Burggren 2017 respirometry and male mass; TAG per male; Ja 2007 CAFE read in full. They sit behind the new switch `state:organs|values_from_sources`, neutral 0, because the organs model is on in every profile.
+  - Held out: starvation **28.4 h** (band 24-112 h) and CAFE **1.85 µl/day** (band 1.0-2.25). Both pass.
+  - The passes are fragile: at Burggren's single-fly extrapolated rate, both fail (12.2 h, 4.3 µl). A single-fly respirometry value would settle it.
+  - Desiccation is not scored (its loss rate and lethal fraction weren't found) and stays unspent.
+- **N20 data gap.** The receptor transcript tables in the repo (Davis, Özel, Allen, epiney) have 33-53 genes each and no peptide receptors. N20's first step is calling peptide receptors from the raw atlases, which needs downloads.
 
-## Done this part (21:42-21:57)
-- Owner column (above).
-- Row-check of the N19 sources (Sonnet, foreground, full text): `docs/research/s18_n19_rowcheck.md`.
-  - **Lv 2024 confirmed:** OA in vivo τ_on 0.34 s, τ_off 5.90 s for a single pulse (MB γ3); 0.6 / 9.4 s for a 50-pulse train; in vitro τ_off 1.40 s.
-  - **Wan 2021:** 5-HT in vivo τ_off 4.08 s.
-  - **No fly in vivo DA τ:** Sun 2018's 3 s / 17 s are mouse slice.
-  - **Dacks 2009:** bath 5-HT raises PN odor responses ~15%.
-  - **Strother 2018:** CDM raises Mi4 gain to L5 (figure only) and raises Mi1/Tm3/Mi4/Mi9/T4 in vivo.
-- **Coverage fact:** `gene_probabilities` has type-specific rows for only **82 types** (optic lobe and KCs). VNC cells go by hemilineage (Allen); every other brain cell, PNs and MBONs included, gets the population prior.
-- N19 pre-registration: DECISIONS 21 Oct 21:56. Nothing built, nothing running.
+## Running now (backhouse, detached; I started these)
+- tmux `n19` in WSL runs `~/fly-m10f/scripts/n19_drive3.sh`. Outputs and done-files are in `~/fly-m10f/runs/s19/n19/`; `drive.log` has the timeline; `ALL.done` marks the end.
+  1. **U2 grid** a = 0.02, 0.04, 0.06, 0.08, 0.11, 0.15, 0.2 (a = 0.25 is done: ratio 12.9). Each point takes about 13 min and the grid stops at the first crossing of 2.66. `astar.json` holds a*, its bracket and the grid.
+  2. **Dacks** at a* → `dacks.json` (`change` = PN evoked spikes u_5HT 1 / 0 − 1). **Score once**: pass if +5% ≤ change ≤ +30% (DECISIONS 21 Oct 21:56). Write the score into DECISIONS and FINDINGS (F-S19-2), and update the register below.
+  3. If Dacks passes, the driver starts `n19_gate.sh` (60 s smoke, seed 12, plus `closed_loop_check` seeds 12-15 at m10f3 + the N19 keys; `GATE_ALL.done`). The smoke takes about 4 h. If Dacks fails, `GATE_ALL.done` says so and nothing runs.
+  4. **U1** OA (16 s) and 5-HT (12 s), then **U1h** (16 s), all at a*. Each is likely 1-3 h at this load. Score per DECISIONS 22 Oct 01:56: τ within ±25% of 0.34/5.90 s (OA) and 0.07/4.08 s (5-HT). U1h is held out (Lv Fig. 2E 0.6/9.4 s, ±25%), and a fail is expected.
+- Status in one command: `ssh backhouse 'wsl -d Ubuntu -- bash ~/fly-m10f/scripts/n19_status.sh'`.
+- WSL dies without a keep-alive: `nohup ssh -o ServerAliveInterval=30 backhouse 'wsl -d Ubuntu -- bash -c "exec sleep infinity"' >/dev/null 2>&1 & disown`. tmux survives a restart.
+- `runs/s19/n19/void/` holds the voided first a* and the unread partial Dacks and smoke logs. Don't read them.
+- **If Dacks passes and the gate passes:** add `M10F5 = {**M10F3, receptor_map 1, receptor_gain a* (fitted, Strother 2018 Fig. 6F)}` to `profiles.py`, view a figure, then run the battery.
+- **If Dacks fails:** N19 stays built-off. Record the validity limit: one shared a can't carry both Mi4's ×2.66 and the PNs' +15%, because the PNs sit on the population prior with net 5-HT expression 0.056.
 
 ## Next (this order)
-1. **N19 build** per DECISIONS 21:56:
-   - Read the Strother 2018 Fig. 6F/H Mi4 numbers from the figure image: PMC5776785; curl the figure and view it.
-   - Code in `lif.py`:
-     - switch `neuromodulation:all|receptor_map`;
-     - per-pool τ_on/τ_off;
-     - occupancy K;
-     - a TA pool (MODULATORS 3→4; the GPU path `gpu/batched.py` hard-codes 3, so make it refuse the new mode);
-     - a hold/clamp of pool levels for bath experiments.
-   - Tests: bit-identical when off; sign rule; kinetics.
-   - Unit checks U1, U1h, U2, U3 on backhouse (rule 16).
-   - Then the next free m10f stage, gate and 60 s smoke on backhouse. **Not m10f1:** fly2 is building m10f1-m10f4 tonight (its DECISIONS 21 Oct 21:35 on worktree-fly2, Hige 2015 as its m10f4 fit target), so stack N19 on fly2's last passing stage. Each smoke takes about 6500 s of wall time, so launch it early.
-   - Commit, then update the MECHANISM_STATUS row.
-2. N20 (peptide cells and receptor maps).
-3. S1-S4 physiology checks (trehalose, starvation, desiccation).
-4. N26 light; N25 daily sleep; S5/N28 Q10.
-5. Fill the status cells of the new rows: N1-N4, N27, N33.
+1. Score Dacks, U1 and U1h from the runs above. Then update the N19 row in `docs/MECHANISM_STATUS.md` and add FINDINGS F-S19-2.
+2. **N26 clock: closest to done.** It is on, and its unit check passes (DN1p day/night, F-CLOCK-1). What's missing is sourced values for the light coupling, `l50`, `ct_light` and the morning/evening peak hours. Read: a Drosophila light-pulse PRC (delay near CT15, advance near CT21), the light intensity for entrainment, and the LNv/DN1p/LNd firing-peak times. Put the values behind a neutral switch, as with S1-S4, and pre-register one PRC point as held out.
+3. S1-S4 follow-ups: an adult male hemolymph trehalose read (S1's set point), a water-loss rate and lethal fraction (to score S4), and a single-fly respirometry value.
+4. N20: peptide-receptor calls from the raw atlases (downloads).
+5. N25 daily sleep and rebound; S5/N28 Q10.
 
 **s18 part 1 (21:31-21:43, kept for reference):** `docs/MECHANISM_STATUS.md` built (commit cead727; fly rows 0 of 14 done; N26 closest). N19 sources gathered in `docs/research/s18_n19_receptor_coupling.md`. The coupling table there is used by the sign rule above. Octα2R is only in the unwired `epiney2025_*` tables.
 
@@ -534,6 +527,15 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo 2020 Fig 5—fig supp 1A class rates (fast ≈1, int ≈10, slow ≈60 Hz, read off the plot) | seen (S4b fit target, 14 Oct) | none |
 | Azevedo 2020 Fig 3E Rin class means (150/300/700 MΩ) | **spent as a check** in s15c gate 1(c), 21 Oct 02:12 (pass; it had been an input to ρ in s15/s15b) | don't reuse as a held-out target |
 | Azevedo 2020 recruitment order slow→intermediate→fast (Fig 5G text) | **held out, unspent** (S4b falsified with no s*, 14 Oct 00:21; its 15/40 mV members unviewed) | score once, against a future pre-registered MN-layer fit, after its chosen value is written down |
+| Strother 2018 Fig. 4E-F (in vivo CDM raises Mi1, Tm3, Mi4, Mi9, T4) | **spent** (s19 U3, pass 5 of 5; DECISIONS 22 Oct 02:05) | sign consistency only from now |
+| Strother 2018 Fig. 6F Mi4 ×2.66 under CDM | SETS the shared receptor gain a (s19 U2 calibration) | can't validate N19 |
+| Dacks 2009 PN +15% under bath 5-HT | **held out, unspent** (the first run was stopped before output; DECISIONS 22 Oct 02:25); being scored once at the refined a* (`dacks.json`) | score once, then mark spent |
+| Lv 2024 Fig. 2E 50-pulse OA τ 0.6/9.4 s | **held out** for U1h (s19), unspent until `u1h.json` is scored | score once |
+| Lv 2024 Fig. 2J and Wan 2021 single-pulse τ | SET the pool kinetics; U1 is a consistency check | none |
+| Burggren 2017 respirometry and male mass; PMC8774106 TAG; PMC4335172 crop and gut | SET the s19 sourced values (`internal_state.SOURCED`) | can't validate S1-S4 |
+| Male starvation survival 24-112 h (secondary reports) | **spent** (s19 S2, pass 28.4 h; F-S19-1) | consistency only |
+| Ja 2007 CAFE, single males 1.5 µl/day | **spent** (s19 S3, pass 1.85; F-S19-1) | consistency only |
+| Male desiccation survival 16.1-34.5 h (secondary) | **held out, unspent**; seen in an agent report and never used to set a value (S4 not scored) | score once when the loss rate and lethal fraction are sourced |
 
 ## Things that will bite you
 
