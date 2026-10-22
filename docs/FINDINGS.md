@@ -1915,3 +1915,28 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - The non-axis MN types (adductor, sternotrochanter, tergotrochanter) are excluded.
   - Results depend on the threshold.
 - Walking is parked (Ben, 21 Oct). The next test, when it resumes: per-cell activity of these types in the s16/s17 runs, which needs a neutral per-cell spike save.
+
+### F-S19-1: the lumped metabolism, given values read from sources, predicts male starvation survival (28.4 h) and CAFE intake (1.85 µl/day) inside their held-out bands. This holds only at the measured group metabolic rate: at Burggren's single-fly extrapolation, both fail (s19, 22 Oct 02:31; pre-registered DECISIONS 22 Oct 02:06 and 02:30; switch `state:organs|values_from_sources` built, neutral 0; nothing adopted)
+- **What was run.** The `internal_state.Organs` ODE alone, with no nervous system, from six values read from
+  sources: basal use, the fat store, hemolymph volume, body water, and the crop and gut τ. The other parameters
+  keep their s10 guesses. Probe: `scripts/probes/s19_metabolism_checks.py --sourced`.
+- **Results.**
+  - S2 starvation on water: 28.4 h against a 24-112 h band, from secondary reports. Pass.
+  - S3 CAFE: 1.85 µl/fly/day against 1.0-2.25, from Ja 2007 (single Canton-S males at 25 °C, read). Pass.
+  - S4 desiccation: not scored, because two of its inputs were not found. Its values are unspent.
+  - S1 rest sugar after 6 h of fasting: 39.2 mM. This is consistency only.
+- **What the passes rest on.** The fly burns 0.00626 nmol glucose-eq/s. That comes from Burggren 2017's group
+  respirometry: 6 µl O2/mg/h × 0.505 mg, with RQ 1 and STPD assumed. The authors extrapolate a single fly to
+  14 µl/mg/h; at that rate starvation is 12.2 h and CAFE 4.3 µl/day, and both fail. CAFE also counts only the
+  food's sucrose. With the yeast extract's energy counted (guessed 3.3 kcal/g), CAFE lands at 1.00, the band's
+  edge. The store is TAG only, with glycogen missing.
+- **Reading.** The model's energy budget can be consistent with some fly of this species from read values
+  alone. The model was not fitted to either held-out value. The agreement is still fragile to one unresolved
+  measured quantity: the single fly's metabolic rate.
+- **Validity.** A resting, lumped single store; no starvation-induced change in metabolic rate or activity;
+  no protein pool.
+- **Needed (Ben's list).**
+  - Adult male hemolymph trehalose and glucose.
+  - A water-loss rate at low RH, and a lethal water-loss fraction.
+  - A primary male starvation survival time.
+  - A single-fly respirometry value.
