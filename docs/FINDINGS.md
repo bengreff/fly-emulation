@@ -1955,3 +1955,29 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - γ-KC odour spiking is in tension with Turner 2008.
   - The eligibility tau (1 s) and DA tau are guessed.
   - LTP is off, so N21 stays partial.
+
+### F-S25-1: a dopamine-only restoration of KC->MBON weights is built behind a neutral switch and passes U1-U4; fitted to Hattori 2017 at 0.00289 per DAN spike it reproduces Hattori Fig 6F in network, inside ± 2 SEM at every n (3 of 4 seeds in at the park), keeps the Hige forward fit (0.089-0.112), but it fails the pre-registered resting check, so it is not adopted (fly2, s25, 22 Oct 05:09; DECISIONS 22 Oct 04:11, amendment 04:22)
+- **Rule (`lif.py`, `kc_mbon_dan_restore_rate`, neutral 0, CPU only):** in each step where a DAN spikes, the KC->MBON weights in its compartments (DAN->MBON contact proxy) move toward baseline, `w <- w + r (w0 - w)`, whatever the KCs do. It is applied before the depression term. The form comes from Cohn 2015 Fig 7I, Hattori 2017 Fig 6F and Berry 2018 Fig 5H-I (figure check: `docs/research/s25_restoration_figcheck.md`, by a Sonnet subagent in the foreground).
+- **Unit checks:**
+  - U1: at r 0 the model is bit-identical to the pre-s25 `lif.py` under m10f4's KC overrides (170 steps, 5073 spikes, 4895 of 33496 edges depressed; `scripts/probes/s25_restore_u1.py`).
+  - U2: from a halved state, weights approach baseline as (1 - r)^k per counted compartment spike-step (relative error ≤ 1e-5).
+  - U3: naive weights are exactly unchanged.
+  - U4: edges outside the spiking DANs' compartments are exactly unchanged.
+  - U5: the GPU path refuses (code inspection). All pass.
+- **Fit (fitted, analytic, provisional; `scripts/probes/s25_restore_fit.py`):** r 0.00289 per DAN spike-step, from weighted least squares on Hattori Fig 6F at S = 20 spike-steps per stimulation (10 light pulses × 2 spikes, guessed). Predicted recovery is 5.6/16/29/44% against 8/18/33/40% after 1/3/6/10 stimulations, chi2 1.12 (3 dof). S = 10 or 40 gives r 0.00578 or 0.00145.
+- **In-network confirm (implementation check, not evidence; MBON16/17 = MBON-α'3ap/m with PPL104 = PPL1-α'3, inferred mapping; seeds 12-15):** S counted 20 spike-steps per stimulation at every seed, as assumed. There were no KC spikes during the stimulations. PPL104 is the only DAN type contacting MBON16/17, and it contacts all four cells. Recovery after 1/3/6/10 stimulations is 0.056/0.160/0.294/0.440 at seeds 12, 13, 15, identical to 3 decimals (depressed CS+ ratio 0.014-0.018), against the bands -0.02..0.18, 0.04..0.32, 0.21..0.45 and 0.28..0.52: inside at every n. The network reproduces the analytic fit, so this checks the implementation and the counted S, not the rule. **Seed 14 was still running at the park** (`runs/s25/restore/hattori_s14.json`, done-file `ALL.done`). The pre-registered 4-seed mean is scored by `.venv/bin/python scripts/probes/s25_restore_summary.py` once it lands. The seeds in hand agree to 3 decimals, so seed 14 would have to differ by more than 0.12 at n 10 to change the verdict.
+- **Regression (seen, not evidence):** the Hige 2015 Fig 3D forward CS+ ratio with r on is 0.099/0.108/0.112/0.089 at seeds 12-15, a pass (band 0.06-0.14 at every seed; m10f4 alone gave 0.097/0.106/0.110/0.087).
+- **Resting check (pre-registered): FAIL.**
+  - At PPL1-α'2α2's measured resting rate (6-10 Hz, Huang 2018), a memory would last tau = -1/(f ln(1 - r)) = 58/43/35 s, against the 2.3-10.4 h bracket.
+  - Only resting DAN rates below 0.04 Hz are compatible.
+  - Hattori's own unstimulated controls are flat, so in the fly resting dopamine does not restore at this rate. A linear per-spike rule can't be the whole mechanism.
+  - Not adopted: no m10f5. `kc_mbon_dan_restore_rate` stays 0 in every profile.
+- **Derived, not pre-registered (same script):** m10f4's own depression has the same problem. At rest (KCs 0.1 Hz, so a mean eligibility of 0.1), DANs at 6-10 Hz would drive every KC->MBON weight to 0 with tau about 3 s (2.2-3.6 s with restoration on; steady state 6% of baseline). Today this is invisible, because the mushroom body is silent at rest in every profile (F-S24-2). It matters as soon as fly fits the DAN resting rates (HANDOFF, fly section). Both N21 terms need a form that ignores resting dopamine (for example a low-affinity receptor threshold or burst-only gating, inferred) before DANs fire at rest.
+- **Hige 2015 backward pairing stays unspent.** The brief named it as the falsifier, but under a baseline target a naive synapse can't move, so it passes by construction. It is kept for a potentiation variant (cap target or timing LTP).
+- **Berry 2018 Fig 5H-I stays sealed and unspent.** Its arm (about 450 s simulated per run) is next. The model value is computed first; then a scorer opens `docs/research/sealed/s25_restoration_heldout_sealed.md`.
+- **Known misses:**
+  - DA alone doesn't potentiate naive synapses (Cohn 2015 Figs 6A-C and 7D do).
+  - CS- doesn't change (Hige: about -25%).
+  - One rate for all compartments.
+  - Spikes per light pulse guessed.
+- Figure (viewed): `runs/s25/restore/fig_s25_restore.png` (`scripts/probes/s25_restore_figure.py`).
