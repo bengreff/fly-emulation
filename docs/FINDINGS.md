@@ -1915,3 +1915,17 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - The non-axis MN types (adductor, sternotrochanter, tergotrochanter) are excluded.
   - Results depend on the threshold.
 - Walking is parked (Ben, 21 Oct). The next test, when it resumes: per-cell activity of these types in the s16/s17 runs, which needs a neutral per-cell spike save.
+
+### F-S24-1: frontier stages m10f1-m10f3 all pass their gate and their unit checks; `m10f` now points at m10f3 (STP per connection, receptor decay per connection, identified gap junctions, PSI cholinergic). DLMn still never follow the giant fibre (fly2, s24, 22 Oct 01:49; DECISIONS 21 Oct 21:35 and 22 Oct 01:41)
+- **Gate (measured, backhouse, `runs/s23/fc/`):**
+  - G: 0.0 non-eye spikes/ms in the last 100 ms of silence on seeds 12-15 for every stage. No NaN, 0 MuJoCo warnings, top class 11.0 Hz (sensory_olfactory).
+  - S, 60 s, seed 12: whole brain 0.303 / 0.304 / 0.304 Hz for m10f1 / m10f2 / m10f3 (m10f0 0.324; bound ±50%). Active fraction 0.027 for all three (m10f0 0.0281). No runaway.
+  - m10f1 is 6.5% below m10f0, which is the ORN→PN depression. m10f3 is bit-identical to m10f2 at rest in G and S. The coupled cells (GF, TTMn, DLMn, PSI) are silent at rest, so neither the gap current nor PSI's sign reaches a spike.
+- **Unit checks (measured in the model; `scripts/probes/m10f_unit_checks.py`, `gf_latency.py`; `runs/s24/unit/`):**
+  - **Stage 1, STP: pass.** All 58 ORN_DM6 cells were kicked together at 10 Hz, and the summed input to the 7 DM6 PNs was recorded. The normalised per-pulse peaks equal Nagel 2015 Eq 1 to 1e-7 (0.803, 0.666 … 0.375). This is an implementation check, not held out.
+  - Caveat for stage 1: in the isolated CNS the ORNs are silent (0 spontaneous spikes; resting resource x = 1.0), so the check runs from rest. In closed loop the ORNs fire about 11 Hz at rest. At that rate the derived resting x on these edges is about 1/(1 + U r τ) ≈ 0.32, so the synapse sits about two-thirds depressed. No measurement of in-vivo resting ORN→PN depression is in hand to check this.
+  - **Stage 2, receptor decay: pass.** The fitted decay of the evoked current was 1.100 ms (row 1.1, ORN_DP1m→DP1m_adPN), 1.383 ms (row 1.4, DM2_lPN→KCab-s, −1.2%) and 3.700 ms (row 3.7, VP3+_vPN→KCg-s2). This is an implementation check of the measured or fitted rows.
+  - **Stage 3, gaps and PSI: pass** (20 trials, isolated CNS). With gaps on, TTMn and PSI follow every GF spike (1.00, control 0.00). Latency to muscle is 1.099 ms for TTMn, inside the Augustin 2017 band 0.866-1.216 (spent, consistency only), and 1.097 ms for PSI.
+  - With gaps off, nothing follows (0.00), so the switch acts.
+  - **DLMn a,b and c-f follow 0.00 in both arms.** The DLM latency (band 1.36-1.85 ms) is unmet, so GF→PSI→DLMn does not transmit even with PSI cholinergic. This is the open part of N18.
+- **Adopted:** `PROFILES["m10f"] = PROFILES["m10f3"]`. fly's scripts that default to m10f (s16_oa, proprio_reach, etc.) now run with the four synaptic switches on. fly_brain.zip v1 is unchanged.

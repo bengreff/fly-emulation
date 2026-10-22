@@ -315,7 +315,7 @@ M10F0 = {
 }
 
 # Stages 1-3 (fly2, 21 Oct night, mechanism-complete brief): synaptic mechanisms that were built and off, one
-# per stage, cumulative. A stage becomes m10f only after its gate (DECISIONS 21 Oct 21:5x).
+# per stage, cumulative. A stage becomes m10f only after its gate (DECISIONS 21 Oct 21:35; passed 22 Oct 01:41).
 M10F1 = {
     **M10F0,
     "synapse:all|per_synapse_parameters": (1.0, _I, "frontier stage 1 (N29 STP): ORN->PN and ORN->LN depression "
@@ -373,7 +373,8 @@ PROFILES: dict[str, dict] = {
     "m10f2": {"values": M10F2, "kick_mv": KICK},
     "m10f3": {"values": M10F3, "kick_mv": KICK},
 }
-PROFILES["m10f"] = PROFILES["m10f0"]   # the frontier: the latest stage that passed its smoke test and gate
+PROFILES["m10f"] = PROFILES["m10f3"]   # the frontier: the latest stage that passed its smoke test and gate
+                                       # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41)
 
 
 def apply(reg: Registry, name: str) -> dict:
