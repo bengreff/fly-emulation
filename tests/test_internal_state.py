@@ -256,3 +256,16 @@ def test_pump_gating_reads_the_pump_mns():
         org._last_spiked = st.pump_cells if s % 100 == 0 else np.zeros(0, np.int64)
         st.drive(org, org.timestep_ms, np.zeros(org.conn.n, np.float32))
     assert st.pump_rate > 5.0
+
+
+def test_sourced_values_are_neutral_off_and_inside_their_bounds():
+    """s19: state:organs|values_from_sources = 0 leaves the s10 defaults; the sourced values sit in their bounds."""
+    from flyemu import internal_state as S
+    base = S.default_params()
+    assert base == {r[0]: float(r[5]) for r in S.PARAMS}
+    src = S.default_params(sourced=True)
+    assert set(S.SOURCED) <= set(base)
+    for f, (v, lo, hi, label, *_r) in S.SOURCED.items():
+        assert lo <= v <= hi and src[f] == v, f
+        assert label in {"measured", "derived", "inferred", "guessed"}, f
+    assert {f: src[f] for f in base if f not in S.SOURCED} == {f: base[f] for f in base if f not in S.SOURCED}

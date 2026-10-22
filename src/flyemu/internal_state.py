@@ -194,6 +194,28 @@ PARAMS = [
 
 MECH_PREFIX = {"S1": "s1", "S2": "s2", "S3": "s3", "S4": "s4", "N20": "n20", "N25": "n25", "N26": "n26"}
 
+# s19: values read from sources (DECISIONS 22 Oct 02:30), the defaults only with
+# state:organs|values_from_sources = 1 (neutral 0 keeps the guessed PARAMS centres above).
+# field: (value, lo, hi, label, bound_basis, source)
+SOURCED_SWITCH = ("state:organs", "values_from_sources")
+SOURCED = {
+    "basal_nmol_s": (0.00626, 0.00574, 0.0146, "derived", "measured_this_class",
+                     "Burggren, Souder & Ho 2017 Biol Open 6:471 (PMC5399560): grouped fed Oregon R males, 25 degC, "
+                     "~6 ul O2/mg wet/h x 0.505 mg; 6 O2 per glucose, 22.4 ul/umol (STPD not stated: -8% at "
+                     "24.45); upper bound the single-fly extrapolation 14 ul/mg/h"),
+    "fat0_nmol": (672.0, 320.0, 1170.0, "derived", "measured_related",
+                  "~50 ug TAG per male (PMC8774106 bar graph; Dahomey 10 d, 20-21 degC) x 37.7 kJ/g / 2803 kJ/mol "
+                  "glucose; bounds 24-87 ug across reports; glycogen not included (no male value found)"),
+    "vh0_nl": (24.0, 10.0, 60.0, "inferred", "measured_related",
+               "24 +- 2 nL extractable from males (attributed to AJP-Regu 2015; secondary, not read)"),
+    "w0_nl": (344.0, 300.0, 780.0, "derived", "measured_this_class",
+              "Burggren 2017: male wet mass 0.505 minus dry mass 0.161 mg"),
+    "tau_crop_s": (11250.0, 11250.0, 25700.0, "derived", "measured_related",
+                   "crop turnover 32%/h of capacity fully fed, 14%/h dietary restriction (PMC4335172; Geer 1970 model)"),
+    "tau_gut_s": (2700.0, 900.0, 7200.0, "inferred", "measured_related",
+                  "faecal dye from 15 min, abundant by 45-60 min (PMC4335172); whole-tract transit < 1 h (secondary)"),
+}
+
 # Populations coupled (male-cns `type`), evidence and label of the mapping.
 COUPLED = {
     "isn": (["ISN"], "inferred",
@@ -351,13 +373,22 @@ class Organs:
         self.t_s += dt
 
 
-def default_params() -> dict:
-    return {r[0]: float(r[5]) for r in PARAMS}
+def default_params(sourced: bool = False) -> dict:
+    p = {r[0]: float(r[5]) for r in PARAMS}
+    if sourced:
+        p.update({f: v[0] for f, v in SOURCED.items()})
+    return p
 
 
 def read_params(reg: Registry) -> dict:
+    src = bool(reg.require(*SOURCED_SWITCH, units="boolean",
+                           model_use="S1-S4: values read from sources (internal_state.SOURCED, s19) as defaults",
+                           subsystem="internal_state", minimal=0.0, conventional=0.0,
+                           minimal_note="neutral 0: the s10 guessed prior centres"))
     out = {}
     for f, mech, ent, prop, unit, val, lo, hi, *_rest in PARAMS:
+        if src and f in SOURCED:
+            val, lo, hi = SOURCED[f][:3]
         out[f] = float(reg.require(
             ent, prop, units=unit, model_use=f"{mech} internal state ({f})",
             subsystem="internal_state", minimal=val,

@@ -62,10 +62,10 @@ It sets `state:organs|model` 1, so every internal-state row below is on, but alm
 | S6 | A | fly | absent | none | Stub `state:hemolymph\|ion_model` 0. Data read s12 (`s12_hemolymph_ions.md`). |
 | S7 | C | fly | absent | none | Stub; healthy lab fly assumed. |
 | S8 | C | fly | absent | none | Stub; courtship not a target. |
-| N1 | A | fly | to fill | | registry partial |
-| N2 | A | fly | to fill | | registry partial; rung-1 channels on in m10f |
-| N3 | A | fly | to fill | | registry have |
-| N4 | A | fly | to fill | | registry have; increment 0 (off) in m10f |
+| N1 | A | fly | partial | none | Point LIF for every cell; graded mode only for photoreceptors, L1-L3 and APL (13B/10B `graded_rec` rows exist behind a neutral switch). Required level: spiking or graded by class, from recordings. Most classes have no recorded mode, so the default is spiking (guessed). |
+| N2 | A | fly | partial | Slow tibia-flexor MN fit to Azevedo 2020 current steps (fitted at that class only). | V_rest −52, threshold −45 and τ_m 20 ms are Shiu 2024's shared values (borrowed, not per class). Class threshold-offset and τ_m-scale rows are built at neutral. Rung-1 channels (A, M, h, T, NaP, Kv2, BK, SK) are on in m10f with per-type densities from mRNA. Candidate in-range values: MBON τ_m 16 ms measured (13.8-18.4) against 20; HS τ 4.3-4.9 ms (s13 table, not row-checked). |
+| N3 | A | fly | partial | S0 rest-vs-reference (s13): MB classes (MBON, KC, DAN, APL, DPM) are 0 Hz at rest, while published spontaneous rates are nonzero. | Class tonic-drive and noise rows are built; noise is 0 in m10f; per-type spontaneous drive for a few types (some fitted). The resting-rates reference CSV still has broken quoting (21 rows). |
+| N4 | A | fly | built-off | none: no class has a numeric recorded adaptation ratio (MBON data qualitative). | Class-grain adaptation built (bfc5751); increment 0 in m10f. `adapt_fit.py`: a recorded late/early ratio of 0.5 would map to 3.05 mV (inferred). |
 | N5 | A | fly2 | fly2 to fill | | registry have |
 | N6 | A | fly2 | fly2 to fill | | registry partial |
 | N7 | A | fly2 | fly2 to fill | | registry have; slow fractions 0 in m10f |
@@ -88,13 +88,13 @@ It sets `state:organs|model` 1, so every internal-state row below is on, but alm
 | N24 | C | fly2 | fly2 to fill | | registry partial |
 | N25 | C | fly | partial | Tests check direction and hysteresis only. | On. Borbély process S plus dFB switch on FB6A_a/b/c and FB6E. `t_sleep` 5 min inferred (Shaw 2000); the 7 other rows guessed. Needed: daily sleep and rebound against measurement. |
 | N26 | C | fly | partial | DN1p day/night firing (F-CLOCK-1): `clock_gain` 7.75 fitted at CT 2, held-out CT 10 passes. | On. Lumped Stuart-Landau oscillator; period 24 h (Konopka & Benzer 1971 range). Light coupling, `l50`, `ct_light`, peak hours guessed; no molecular loop or CRY/eye light input. Closest of the fly rows to done. |
-| N27 | C | fly | to fill | | registry partial; gain 0 |
+| N27 | C | fly | partial | none | Per-class K+ load from spikes, cleared with τ, depolarises the class; gain 0 (off) in m10f. No measured clearance τ or K+ rise per spike read; FIDELITY sets no required level for glia. |
 | N28 | A | fly | partial | none | Q10 2 at 25 °C on neural rates (inferred, structural). Needed: a cited Drosophila neural Q10 range and a check. |
 | N29 | A | fly2 | fly2 to fill | | registry partial |
 | N30 | A | fly2 | fly2 to fill | | registry partial (fly2 first build s20) |
 | N31 | C | fly2 | fly2 to fill | | stub |
 | N32 | C | fly2 | fly2 to fill | | stub |
-| N33 | C | fly | to fill | | stub (glia; OA/TA-gated Ca would touch N19) |
+| N33 | C | fly | absent | none | Stub `glia:all\|astrocyte_model` 0. Glia are not in the male-cns Neuron table. Larval data only (Ma 2016: astrocyte Ca 8-9 events per 15 min, silences DA neurons via adenosine); no adult transfer function. OA/TA-gated astrocyte Ca would read N19's OA pool. |
 | N34 | C | fly2 | fly2 to fill | | stub |
 | D1 | C | (phase 2) | absent | | after mechanism-complete (Ben, 21 Oct) |
 

@@ -3859,3 +3859,121 @@ spike hash (m10f3, seed 1), old code (commit 71c4048) against new, on backhouse.
 
 **Stage.** N19's stage is m10f5, on fly2's m10f3 (the last passing stage); it moves onto m10f4 if fly2's
 passes first. Added to `profiles.py` only if Dacks and U3 pass.
+
+### s19 N19 run order and lengths changed before the runs they affect; U3 scored (22 October, 02:05)
+backhouse sits at load 22-25 from other work (the GPU is at 98% under another job), so my jobs run about one at a
+time under the load-24 rule. Changes, made before the affected runs started:
+- The a-grid stops at its first crossing of 2.66. a* is defined as the first crossing, so later points can't
+  change it.
+- U1 runs at a* (receptor map on, nothing held), OA trace 16 s, 5-HT 12 s, U1h 16 s. These are long enough for
+  the decay to fall to 10% of its peak at the registered τ_off (OA: peak about 1.2 s, then 2.3 × 5.9 s).
+- Order: off-path hash, U2 grid, Dacks, then the stage gate and smoke (if Dacks passes), then U1, U1 5-HT, U1h.
+  U1 is not an adoption criterion in the 21:56 entry.
+- Stage gate for m10f5: fly2's stage rule (21 Oct 21:35: G seeds 12-15; S 60 s, whole-brain rate within ±50%
+  of 0.324 Hz and active fraction within ±50% of 0.0281) **and** my 21:56 rule (rate within 2× of m10f). Both
+  must pass; ±50% is the stricter.
+
+**U3 scored (held-out sign, Strother 2018 Fig. 4E-F; spent).** Mean net OA expression Σ p·sign from the Özel
+rows (`runs/s19/n19/map.json` on backhouse): Mi1 2.50, Tm3 2.00, Mi4 2.00, Mi9 2.00, T4a-d 1.50. All five are
+> 0, so s_OA > 0 for any a > 0: **pass, 5 of 5.** It's weak by construction, since every OA receptor in the
+tables is +1 under the sign rule; it would only have failed if these types expressed no OA receptor.
+Other map facts (derived): coverage 73,253 cells on type rows, 10,492 on VNC hemilineage rows, 83,366 on the
+prior. Releasing cells DA 392, OA 101, 5-HT 48, TA 0. The 12 Dacks PNs (DL1_adPN, DM2_lPN, DM3_adPN,
+DM3_vPN) are all on the prior. Their net 5-HT expression is only +0.056 (DA 0.27, OA 1.59), so Dacks' +15%
+needs a·0.056 to carry it through the network. If a* is near 1, the input gain is about +6% and the test is
+borderline. Mi4's net OA is 2.0, so a* near 0.8 would give gain 2.66 if Mi4 responded linearly.
+
+### s19 S1-S4 plan, written before any source is read (22 October, 02:06)
+Next row after N19 is S1-S4 (metabolism). FIDELITY's required level for this layer is a "peptide/metabolic state
+layer", which the lumped `internal_state` model meets. What's missing is values from read sources and a check
+against a measurement. A Sonnet read-only agent gathers measured values (it doesn't edit the repo).
+- **Parameter sources (used to set values):** hemolymph volume; hemolymph trehalose and glucose (fed adult);
+  whole-fly resting metabolic rate (CO2 or O2) and its Q10; flight or walking metabolic rate relative to rest;
+  TAG and glycogen per fly; body water content; water loss rate at low humidity; ingestion rate during a meal;
+  crop capacity or meal volume; crop emptying time.
+- **Held out (never used to set a value; each scored once):**
+  - S2: starvation survival on water (adult male, about 25 °C);
+  - S4: desiccation survival without food or water (adult male, low RH);
+  - S3: daily food intake (CAFE).
+  The model predicts each one from the parameter sources above.
+- **Consistency only:** S1's resting sugar is its set point, so a match there is not evidence.
+- The pass band for each held-out check is the measured range across the reports the agent finds (strains,
+  labs). Where only one report exists, the band is ×/÷ 1.5 around it. This is written down now, before any
+  value is seen.
+- Where a source is for a different sex, strain or temperature, the value is labelled measured_related, not
+  measured_this_class.
+- Value rule, fixed now so the held-out numbers can't steer it: each parameter takes the median of the reports for
+  fed adult males at 22-25 °C. If there are none, it takes the median for adult females or mixed sexes, and if
+  none of those, the nearest condition. Its bounds are the range across all reports.
+
+### s19 U2 grid refined after a one-point bracket; Dacks stopped before any output (22 October, 02:25)
+**What happened.** The first grid point, a = 0.25, gave evoked Mi4 spikes of 213 with u_OA 0 and 2,751 with
+u_OA 1: ratio 12.9 (`runs/s19/n19/u2_a0.25.json`, backhouse). Mi4 is spiking in m10f3, so the spike readout is
+the registered one. The driver interpolated the first crossing linearly from (0, 1) to (0.25, 12.9), getting
+a* = 0.035, and it started Dacks and the smoke at that value. I stopped both before either wrote a result.
+Dacks' partial log is moved to `runs/s19/n19/void/` and stays unread. **Dacks is unspent.**
+**Why the a* is voided.** The interpolation spans a 13-fold jump in one step. Mi4's input gain at a = 0.25 is
+only 1 + 0.25 × 2.0 = 1.5, but its output rose 12.9-fold, so the response is strongly nonlinear in a. Linear
+interpolation across that bracket can be off by a large factor. This is an estimation step inside a calibration
+(U2 is fitted, not held out), and nothing held out has been scored.
+**Change (before any held-out result exists).** Readout, target (2.66) and first-crossing rule are unchanged.
+- New grid inside the bracket: a = 0.02, 0.04, 0.06, 0.08, 0.11, 0.15, 0.2, run in order with the early stop
+  (at load 22-25 only one job fits). Because a* is the first crossing, later points can't change it.
+- The gate (smoke plus seeds 12-15) starts only if Dacks lands inside its band, as the 02:05 order says. The
+  v2 driver had started it unconditionally.
+- a* is linear between the two grid points that bracket the first crossing, with (0, 1) as the lowest point.
+- Dacks, the gate and U1/U1h then run at that a*, in the 02:05 order.
+- Expected consequence, written now: a* will be small (below 0.25). The Dacks PN gain is 1 + a* × 0.056 under
+  bath 5-HT, so below about +1.4% at a* < 0.25. A Dacks fail is likely, and it would keep N19 built-off.
+- Validity note for the fitted a: Mi4's steep response says the model's Mi4 sits near threshold under L5
+  drive. A small a* therefore partly reflects Mi4's excitability in m10f3, not the receptor gain alone. This is
+  recorded with the result.
+
+### s19 S1-S4 values from sources and the held-out bands, fixed before any check is run (22 October, 02:30)
+Applied under the 02:06 value rule. The agent's report (most numbers secondary) was re-checked for the two
+load-bearing sources: Burggren, Souder & Ho 2017 Biol Open 6:471 (PMC5399560) and Ja et al. 2007 PNAS 104:8253
+(PMC1899109). Both were read for the numbers below.
+**Neutral by default.** `state:organs|model` is on in every profile (`model_data.py`). Changing the PARAMS
+defaults would therefore shift every stage, fly2's included. So the values go behind a new switch,
+`state:organs|values_from_sources`, neutral 0. With it at 0 the s10 guesses run unchanged.
+| field | value | bounds | label | source |
+|---|---|---|---|---|
+| basal_nmol_s | 0.00626 | 0.00574-0.0146 | derived | Burggren: grouped Oregon R males, fed, 25 °C, about 6 µl O2/mg wet/h; male wet mass 0.505 mg. Converted with 6 O2 per glucose and 22.4 µl/µmol. STPD is not stated; at 24.45 µl/µmol the value is 8% lower. The upper bound is the authors' single-fly extrapolation, 14 µl/mg/h. The value is the measured group figure, not the extrapolation. |
+| fat0_nmol | 672 | 320-1170 | derived | about 50 µg TAG per male (PMC8774106, read off a bar graph; Dahomey, 10 d, 20-21 °C) × 37.7 kJ/g ÷ 2803 kJ/mol glucose. Bounds are 24-87 µg across the reports (mixed sexes per mg, females). Glycogen is left out because no male value was found, so the store is low. |
+| vh0_nl | 24 | 10-60 | inferred | 24 ± 2 nL extractable from males (attributed to an AJP-Regu 2015 paper; secondary, fetch blocked) |
+| w0_nl | 344 | 300-780 | derived | Burggren: male wet 0.505 minus dry 0.161 mg |
+| tau_crop_s | 11,250 | 11,250-25,700 | derived | crop turnover 32%/h of capacity when fully fed, 14%/h under dietary restriction (PMC4335172, full text read by the agent; a Geer 1970 model) |
+| tau_gut_s | 2,700 | 900-7,200 | inferred | dye in the faeces from 15 min and abundant by 45-60 min (PMC4335172); whole-tract transit under 1 h (secondary). Transit time is not an absorption τ. |
+Unchanged, because nothing was found: conc0, evaporation, k_act (flight is 10-15× rest, but activity 1 here is
+walking, and no walking value was found), ingestion and crop capacity (sip 1.05 nL and meals of 6-200 nL are leads
+only), and the hormone loop.
+**Checks (scored once each; run with the switch on, nothing else changed).**
+- **S2, starvation (held out).** Hours until fat + sugar falls to 5% of the start; RH 1, rest, 25 °C. The
+  residual 0.05 is guessed (the death criterion; no measured residual found), and it is the value used in the
+  dry run before any source was read. Band: 24-112 h, the range across the agent's reports (young and old
+  Canton-S males 48 and 24 h; mixed sexes 58-112 h). All of these are secondary, so a pass is weak evidence.
+- **S3, CAFE (held out).** The Ja 2007 read: single males, Canton-S, 25 °C, 1.5 ± 0.04 µl/fly/day. That is
+  one report, so the band is ×/÷ 1.5 around it: **1.0-2.25 µl/day** (the paper's 1.3-2.3 across experiments is
+  also reported). Food: 5% sucrose plus 5% yeast extract. The model has no protein pool, so only the sucrose
+  is counted: 292 mM glucose-eq, inferred. Assimilation is 1, guessed (an upper bound, which gives the lowest
+  intake). The prediction with yeast-extract energy counted is reported as a sensitivity, unscored.
+- **S4, desiccation: not scored.** The water-loss rate and the lethal water fraction were not found, so its
+  prediction would test two guesses. Its held-out values stay unspent.
+- **S1:** consistency only (rest sugar after 6 h of fasting, from the set point).
+- **Falsifier.** A fail on S2 or S3 keeps the switch off and records which value is wrong. A pass on both
+  fills the S-rows' values as sourced. Adoption into a stage needs the profile gate (S couples into the
+  brain through hunger/satiety), so it is not done tonight.
+
+**S1-S4 scored (22 October, 02:31; `runs/s19/met/checks.json`, Mac).** With the switch on and nothing else changed:
+- **S2 starvation: 28.4 h. Band 24-112 h: pass.** It's weak: the band is secondary and the value sits near
+  its low edge. The store is TAG only (glycogen is missing), which biases the prediction short.
+- **S3 CAFE: 1.85 µl/fly/day. Band 1.0-2.25: pass** (also inside the paper's 1.3-2.3).
+- Registered sensitivity, unscored: with yeast-extract energy counted (5% at 3.3 kcal/g, guessed; 538 mM
+  glucose-eq), CAFE is 1.00 µl/day, at the band's edge.
+- Extra sensitivity, unscored: at the single-fly extrapolated rate (14 µl O2/mg/h) both fail, starvation
+  12.2 h and CAFE 4.3 µl/day. The CAFE males were housed singly, so the S3 pass holds only if the measured
+  group rate is the right one for a single fly. Burggren's extrapolation says it is not; that remains open.
+- S4: not scored, as registered. Its held-out values stay unspent.
+- S1, consistency: 39.2 mM after 6 h of fasting, against a set point of 40.
+Both held-out values are now spent. By the falsifier, the S-rows' values count as sourced and the switch
+stays off until a stage gate.
