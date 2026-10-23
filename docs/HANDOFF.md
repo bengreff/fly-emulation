@@ -374,65 +374,47 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s26, m10f4 adopted (`m10f` = m10f4); KC->MBON resting stability is an OPEN MECHANISM (test R fails for every sourced form, including Handler 2019's timing windows; no unheld source puts DANs near the 0.0015 Hz bound); two-compartment tests fixed (22 Oct 22:46)
+## fly2: s27, DLMn coupling fitted to Hurkey 2023 (m10f5; G passes, S running); the cAMP-PKA cascade is ruled out as N21's resting-safety factor (22 Oct 23:55)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
 - **For the Director:**
-  - s26b did as decided on 22 Oct 22:50 (DECISIONS 22 Oct 22:40, outcome at 22:45):
-    - (e) Handler 2019 timing windows fail R in every form, and fail Hattori (F-S26-2). s25 restoration is not the Dop1R2 side; that side is lif.py's `kc_mbon_ltp_timing_rate`, which lacks a sourced magnitude.
-    - (b) Only PPL1-α'2α2 has a measured resting spike rate (F-S26-3, `docs/research/s26_mb_dan_rest_rates.md`).
-    - So resting stability is recorded as an **open mechanism** (MECHANISM_STATUS N21). The decisive recording is `docs/MEASUREMENT_LIST.md` item 5.
-    - Huang 2024 (held out) holds the PPL1 resting rates; releasing it is your call.
-  - Background from s26: what makes a spontaneous DAN spike about 10^3-10^4 times less effective than a pairing one? Test R (F-S26-1) shows that no sourced form in hand keeps a KC->MBON memory for 2.3 h at KCs 0.1 Hz and DANs 6-10 Hz while still fitting Hige 2015 and Hattori 2017. The forms tested were: m10f4 itself, with s25 restoration, KC coincidence e^4, DAN burst d^2, and Berry restoration only.
-  - The reason is rate ordering. Every pairing protocol drives the DAN at or below its resting rate, and a spontaneous KC spike leaves about the same eligibility as an odour.
-  - Options, all inferred:
-    - (a) Stimulated DAN spikes signal far more dopamine than spontaneous ones. Needs a source.
-    - (b) The plastic compartments' DANs rest far below 6-10 Hz. The 6-10 Hz is PPL1-α'2α2 only; Huang 2024 is held out, fly's data.
-    - (c) A state gate.
-    - (d) A fitted threshold, which the brief rejects.
-  - Until then, **fly's resting-rate fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0** (or on m10f3). With N21 on and DANs firing, every KC->MBON weight goes to 0 in seconds. N22 alone is passive and safe.
-- **Done this session (s26):**
-  - **m10f4 smoke S scored:** 0.3037 Hz (band 0.162-0.486), active fraction 0.0273 (band 0.014-0.042), no runaway, no NaN, 0 warnings, identical to m10f3. **ADOPTED:** `PROFILES["m10f"] = PROFILES["m10f4"]` (`src/flyemu/profiles.py`), with the validity range stated in DECISIONS 22 Oct 22:28, F-S24-2, F-S26-1 and MECHANISM_STATUS.
-  - **Test R**, pre-registered in DECISIONS 22 Oct 22:28; the harness-fix amendment at 22:31 came before any verdict. Harness: `scripts/probes/s26_retention.py`, output `runs/s26/retention.json`, about 30 s on the Mac.
-    - Results at 2.3 h, DANs at 6/8/10 Hz:
-      - R0 (m10f4): naive weight W 0.001 (uniform KCs). FAIL.
-      - R1 (+ restoration): W 0.15-0.19. FAIL.
-      - C1: W 0.002. FAIL.
-      - C2: W 0.001. FAIL.
-      - C3 (restoration only, 1.16e-5 per spike): passes R by construction, but forms no memory and predicts 0.23% Hattori recovery against 40 ± 6%.
-    - R0 passes only below 0.0015 Hz resting DAN. All of this was predicted analytically before the runs.
-  - **s25 closed:** Hattori confirm seed 14 scored, so it passes at 4 of 4 seeds (0.056/0.160/0.294/0.440, F-S25-1). The Hige regression passes at 4 seeds. `kc_mbon_dan_restore_rate` stays at neutral 0.
-  - **Two-compartment tests (6 failing, now 8 of 8 pass):**
-    - Cause: fly's s15b leg_MN and core_premotor rows in `data/params/two_compartment.csv`. With the switch on, every row must match a cell, and the 5-cell DLMn test graph has none of theirs, so `lif._two_compartments` correctly raised "matches no cell or no edge".
-    - Fix: the tests now leave those classes out with fly's arm control, `cell_class:<class>|two_compartments_in_run` 0 (`DLMN_ONLY` in `tests/test_two_compartment.py`). The refusal in `lif.py` is unchanged.
-  - **s26b:** (e) and (b) as above; commits 2e6d0e9 and the park commit.
-  - **Full pytest (Mac, after the 2-comp fix, 22 Oct 22:33-22:47):** 276 passed, 12 skipped, 0 failed (842 s).
-    - The skips are guarded tests; `test_gpu_batched.py` needs JAX, which is on backhouse.
-    - One MuJoCo "QACC unstable at DOF 40, t 0.0001" line is printed; no test failed on it.
-- **Running:** nothing of fly2's is running at the park.
+  - **Task 1, Hurkey 2023 DLMn coupling (F-S27-1):**
+    - The neutral switch is committed and bit-identical (120e0f6).
+    - The value is c 0.0266, which gives an in-network CC of 0.01433 against the pair-count mean target 0.0143.
+    - Unit check: the CC and no-spike parts pass. "Both directions within 5%" fails as written (9.5%). The cause is stimulation order, not the junction: pairs read at the same order position agree to every digit.
+    - My pre-registration wrongly said the model DLMn have no AHP (a negative-kick artefact). They have -5.4 mV, so Hurkey Fig 2h is now seen, consistency only (AHP CC 0.0155 vs 0.042 +- 0.04). Amended in DECISIONS 23:32, and the register is updated.
+    - Gate G passes on seeds 12-15, identical to m10f4. Smoke S is running on backhouse.
+  - **Task 2, cascade (F-S27-2): ruled out with numbers, not built.**
+    - C1 failed because 3.9-4.9% of resting KC coincidences cross its criterion (the pairing's per-event strength). That is 202-440 events per KC in 2.3 h, against 1.6 per pairing, and they carry 85-89% of the resting depression.
+    - The cascade at ceiling cooperativity (Ca n 4, PKA h 2) passes test R in 0 of 108 kinetic combinations: best W 0.013, 55x short.
+    - The reason: the charge-weighted Hige target forces KCs with 2-3 odour spikes down, and resting KC spike pairs meet at least the pairing's dopamine dozens of times. Calcium cooperativity can't tell a resting pair from an odour pair.
+    - The missing factor is on the dopamine side: (a) evoked DA per spike, or (b) DAN rest rates.
+  - **Task 3, Huang 2024:** not opened. Waiting for your relay that fly has scored it.
+- **Done this session (s27):**
+  - Commits 120e0f6 (switch) and 4b79905 (fit, m10f5 stage, row split, negative-spike guard, cascade ruling).
+  - Tools:
+    - `scripts/probes/s27_dlmn_cc.py` (in-network CC; `--reverse`);
+    - `s27_dlmn_cc_baseline.py` (clean-pair scoring; `--directions`);
+    - `s27_gap_identity.py` (hash identity);
+    - `s27_cascade_predict.py` (C1 fractions and the cascade under per-KC test R).
+  - Runs are in `runs/s27/`.
+  - Source checked: Tomchik & Davis 2009 full text (PMC4080329). Forward 1 s and 15 s synergise, 30 s does not, backward does not. DA alone raises cAMP 11.9% dR/R0. No time constants given.
+  - Tests: the gap tests pass (3), including the new negative `gap_spike` refusal. The full suite was not rerun this session.
+- **Running:** the m10f5 smoke S on backhouse, `~/fly2_mc/run_gate5.sh`, output in `~/fly2_mc/runs/s27/fc/` (`smoke_m10f5.done`, then `ALL.done`). Started 23:30; about 6500 s at load 24, longer at the current load of 30.
 - **Next, in order:**
-  1. N21 resting stability waits on a source or a recording (MEASUREMENT_LIST item 5, or the Director releasing Huang 2024). With one in hand, pre-register a resting-safe N21, then retest R (`s26_retention.py`, with `--e` for the timing forms) and the Hige and Hattori regressions.
-  2. Berry 2018 held-out arm: the analytic model expectation F is about 0.05 (DECISIONS 22 Oct 04:28, recorded before opening). It needs a new `kc_mbon_pairing.py` mode: MCH CS+ and OCT, 5 s odours 45 s apart; Learn trials 3-5; Forget trials 8-10; Paired>Unpaired minus Paired>Decay. Compute F from the model first, then a scorer opens the sealed file. It takes about 5 h per run on the Mac, so either pre-register a compressed dead time or run on backhouse when load is below 24. Berry tests forgetting by DAN activity, so it is only worth spending once N21 is resting-safe.
-  3. From s24's list:
-     - the DLMn coupling row from Hurkey 2023 (the next item; prepared in s26, not started).
-       - `data/params/gap_junctions.csv` `^DLMn,^DLMn,same_side` has a blank coupling. N12 is on in m10f, so filling the blank changes m10f.
-       - So first add a neutral per-row override in `electrical.build_gap`, read only when set, like fly's `two_compartments_in_run` arm control. Then pre-register, then run G and the 60 s S.
-       - Values, from the s23 lit note (re-read Hurkey et al. 2023 Nature 618:118, PMC10232364, Fig 2f and 2h, first):
-         - the coupling coefficient is 0.023 ± 0.003 (SEM, n 6) for MN1-MN2 and MN3-MN4, and 0.01 ± 0.0027 for the other MN1-4 pairs;
-         - by component, AHP 0.042 and spike 0.01.
-       - Open questions: is MN5 (DLMn a, b) measured, and is the coefficient DC or spike-peak?
-       - Convert with g/gL = CC/(1 - CC), inferred. A spike-peak coefficient underestimates DC coupling, so the AHP value bounds it from above.
-       - One shared value for the class, since `DLMn c-f` is one type label.
-     - N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first);
-     - B3, B4, B12.
+  1. Score S: band 0.162-0.486 Hz, active fraction 0.014-0.042, no runaway or NaN. If it passes, set `PROFILES["m10f"] = PROFILES["m10f5"]` in `src/flyemu/profiles.py`, then update F-S27-1, MECHANISM_STATUS N12 and this section.
+  2. N21 resting stability: after the Director relays that Huang 2024 is scored, read the PPL1 resting rates (candidate b). If any plastic compartment rests near 0.0015 Hz, pre-register and retest R (`s26_retention.py`). Otherwise candidate (a) needs a source on evoked vs spontaneous DA release.
+  3. N12 next: Hurkey's splay/synchrony (unspent) needs DLMn spike overshoot or a spike step, plus a sourced spike amplitude. MN5 coupling needs a measurement.
+  4. Berry 2018 held-out arm (only once N21 is resting-safe; s26 notes).
+  5. From s24's list: N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first); B3, B4, B12.
 - **Known misses of N21/N22:**
   - No LTP.
   - DA alone doesn't potentiate naive synapses (Cohn 2015).
   - CS- doesn't change (Hige: about -25%).
   - One rate for all compartments, and compartments are a DAN->MBON contact proxy.
   - The eligibility and DA trace taus are guessed.
-  - Not resting-safe (F-S26-1).
+  - Not resting-safe (F-S26-1); KC-side cooperativity can't fix it (F-S27-2).
 - **Earlier fly2 state (FINDINGS F-S24-1/2, F-S25-1, F-ZIP-1..4, F-GJ-7):**
   - MECHANISM_STATUS fly2 rows: 0 done of 49.
   - Scoreboard: 1 of 8 (PER labellar).
@@ -444,7 +426,7 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
   - `docs/research/s23_fly2_synaptic_plasticity_lit.md`
   - Switch inventory: `scripts/probes/switch_inventory.py --profile m10f0`.
 - **Backhouse:**
-  - `~/fly2_mc` is the 725cf46 archive plus the shipped probes. The s25 probe and `lif.py` are not shipped yet. Ship via `/tmp/fly2n/mk_ship*.py`, then `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`.
+  - `~/fly2_mc` has the worktree's src, data/params and data/model as of s27 (shipped 23:30 by streaming a tar into `wsl -d Ubuntu -- bash -c "tar -x -C ~/fly2_mc"`; the pre-s27 copy is `~/fly2_mc_pre_s27.tgz`). Run scripts with `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`.
   - Send commands as scripts: cmd.exe breaks a quoted `bash -c` that contains `;`.
   - At most 4 threads, and queue above load 24.
 - **Mac lessons:**
@@ -592,6 +574,8 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Handler 2019 Fig 2D-E, ISI dependence of KC->MBON plasticity (γ4 signs: −1.2 s potentiation, 0 and +0.5 s depression, +6 s minimal) | **spent** on m10f4 (F-S24-2, 22 Oct): H1 and H2 pass, H3 fails (no LTP) | don't reuse as held out; a future LTP rule needs a new held-out set |
 | Huang et al. 2018 PPL1-α'2α2 resting rate (6-10 Hz) and Turner 2008 KC rest (0.1 Hz) | fly's resting-fit targets; used by fly2 s26 as the rest CONDITION of test R (F-S26-1), not fitted to and not scored against | none |
 | Turner 2008 KC odour responses (6 ± 5% respond; α/β 2.2, α'/β' 4.9 spikes per odour) | seen; set the KC drive in `kc_mbon_pairing.py` (F-S24-2) | none |
+| Hurkey 2023 Fig 2f, MN1-4 subthreshold coupling coefficients (0.023 ± 0.003 s.d. strong pairs, 0.01 ± 0.0027 weak) | seen; **fit target** for m10f5's `electrical:DLMn c-f->DLMn c-f\|gap_coupling` 0.0266 (pair-count mean 0.0143; fly2 s27, F-S27-1) | none |
+| Hurkey 2023 Fig 2h, spike AHP CC 0.042 ± 0.04 and overshoot 0.01 ± 0.004 | **seen**: the AHP CC was computed in the s27 fit runs (0.0123-0.0188) before any band was written (DECISIONS s27 amendment) | consistency only, never held out. Hurkey's splay/synchrony result (sync index 0.56 vs 0.61 under shakB RNAi) is unspent |
 
 ## Things that will bite you
 

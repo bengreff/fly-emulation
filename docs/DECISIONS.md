@@ -4110,8 +4110,11 @@ firing should largely cancel), then (b) compartment DAN rest rates from sources 
     the expansive regime; w = exp(-k x integral of PKA). k is solved to the Hige target per KC, charge-weighted.
   - **Sourced (Tomchik & Davis 2009):**
     - supralinear, rut-dependent cAMP for coincident KC depolarisation and DA;
-    - DA up to about 15 s after the KC input still synergises;
-    - each input alone also raises cAMP, so the pure product used here over-discriminates, an upper bound.
+    - forward delays of 1 s and 15 s synergise, 30 s does not (p 0.24), and backward pairing does not (full text,
+      PMC4080329, checked s27);
+    - each input alone also raises cAMP (10 mM DA: 11.9 +- 1.3% dR/R0), so the pure product used here
+      over-discriminates, an upper bound;
+    - no rise or decay time constants are given.
   - **Rut:** Ca/CaM activation about 5-fold.
   - **No source in hand gives a Hill coefficient or a time constant.** Gervasi 2010 is paywalled, with no numbers.
   - **Grid (all inferred brackets), 108 combinations:** tau_ca 0.1 / 0.5 / 1 s; tau_d 0.5 s (lif.py) / 15 s

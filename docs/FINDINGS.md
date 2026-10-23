@@ -2082,3 +2082,28 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
     - (a) stimulated DAN spikes far more effective than resting ones (no source yet);
     - (b) plastic-compartment DANs rest far below 6-10 Hz (Huang 2024, after fly scores it).
   - The pure product over-discriminates relative to Tomchik's measured synergy (each input alone raises cAMP). The real cascade is further from passing.
+
+### F-S27-1: DLM motoneuron (MN1-4) electrical coupling fitted to Hurkey 2023 in the full network (c 0.0266 gives CC 0.0143); gate G passes, identical to m10f4; smoke S running (fly2, s27, 22 Oct 23:53; DECISIONS s27 N12 entry 23:08 and amendment 23:32)
+- **Switch (neutral, bit-identical; commit 120e0f6):** per-row `electrical:<pre>-><post>|gap_coupling` / `|gap_spike`, read only when set. The DLMn row is split into MN1-4 (`DLMn c-f,DLMn c-f`) and MN5 (`^DLMn a,DLMn c-f`, registered, inert). A negative `gap_spike` is refused, because `lif.step` lands only positive held kicks.
+- **Value (inferred, fitted; one value for the class):** `electrical:DLMn c-f->DLMn c-f|gap_coupling` **0.0266** (junction / partner leak conductance), 12 same-side pairs.
+  - Target: the pair-count mean of Hurkey 2023 Fig 2f, (2 x 0.023 + 4 x 0.010) / 6 = 0.0143; band 0.0073-0.026 (s.d.).
+  - Protocol: `scripts/probes/s27_dlmn_cc.py` (m10f, seed 12). A 20 ms depolarising pulse into each cell in turn (pre peak 4.38 mV), with an unstimulated twin subtracted. Scored by `s27_dlmn_cc_baseline.py` (onset baseline, clean pairs; post hoc, see the amendment).
+  - Fit: CC 0.01081 / 0.01613 / 0.01792 at c 0.02 / 0.03 / 0.0334, linear. **Confirm at 0.0266: 0.01433** (0.01362-0.01498). No spike from any pulse.
+- **Implementation check:**
+  - CC within 5% of target: **pass** (+0.2%).
+  - No pulse spike: **pass**.
+  - "Both directions within 5%" **fails as written** (reversed-order run `c0.0266r`; max 9.5%, mean 5.8%; `runs/s27/dlmn_cc_directions.json`). The cause is protocol history, not the junction:
+    - The clean CC takes three values set by the presynaptic cell's place in its side's stimulation order: first 0.01498, second 0.01362, third 0.01378.
+    - Pairs read at the same order position in both runs agree to every digit (31456/54469, 36444/36447, 36445/36446).
+    - The junction is symmetric by construction (r 1, one c, identical DLMn parameters).
+    - The history-free (first-pulse) CC is 0.01498, +4.8% on target.
+- **AHP (seen, consistency only):**
+  - The model DLMn have a -5.4 mV spike AHP (the s27 pre-registration wrongly said none, from a run whose negative kicks never landed).
+  - AHP CC at 0.0266: 0.0155 (0.0113-0.0300), against 0.042 +- 0.04. Inside one s.d.
+- **Gate G (m10f5, seeds 12-15, backhouse):** whole brain 0.308-0.310 Hz, motor 2.01-2.02 Hz, silent window 0.0 non-eye spikes/ms, 0 MuJoCo warnings, no NaN. All values equal m10f4's to the printed precision. **Pass.**
+- **Smoke S (60 s, seed 12):** running on backhouse since 23:30. Adoption (`m10f` = m10f5) waits on it.
+- **Validity range:**
+  - Subthreshold DC coupling of MN1-4 only. The spike step stays blank (spike amplitude unreported), so overshoot is not carried. The AHP is carried only as the model's own AHP through the junction.
+  - The 2:1 strong/weak pair structure can't be placed, since the type label can't say which cell is MN1-4.
+  - MN5 coupling is unmeasured.
+  - Hurkey's functional result (splay: sync index 0.56 vs 0.61 under shakB RNAi) is not tested, and is unspent.
