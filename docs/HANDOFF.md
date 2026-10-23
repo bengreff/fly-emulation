@@ -374,7 +374,7 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s27, DLMn coupling fitted to Hurkey 2023 (m10f5; G passes, S running); the cAMP-PKA cascade is ruled out as N21's resting-safety factor (22 Oct 23:55)
+## fly2: s27, DLMn coupling fitted to Hurkey 2023 and adopted (`m10f` = m10f5); the cAMP-PKA cascade is ruled out as N21's resting-safety factor (23 Oct 03:13)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
@@ -384,7 +384,7 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
     - The value is c 0.0266, which gives an in-network CC of 0.01433 against the pair-count mean target 0.0143.
     - Unit check: the CC and no-spike parts pass. "Both directions within 5%" fails as written (9.5%). The cause is stimulation order, not the junction: pairs read at the same order position agree to every digit.
     - My pre-registration wrongly said the model DLMn have no AHP (a negative-kick artefact). They have -5.4 mV, so Hurkey Fig 2h is now seen, consistency only (AHP CC 0.0155 vs 0.042 +- 0.04). Amended in DECISIONS 23:32, and the register is updated.
-    - Gate G passes on seeds 12-15, identical to m10f4. Smoke S is running on backhouse.
+    - Gate G (seeds 12-15) and the 60 s smoke S pass, identical to m10f4: 0.3037 Hz, active fraction 0.0273, and every cell's 60 s rate equal. The DLMn are silent at rest, so the junction changes no resting spike. Figure viewed (`runs/s27/dlmn_cc_fig.png`). **`m10f` = m10f5 since 23 Oct 03:13.**
   - **Task 2, cascade (F-S27-2): ruled out with numbers, not built.**
     - C1 failed because 3.9-4.9% of resting KC coincidences cross its criterion (the pairing's per-event strength). That is 202-440 events per KC in 2.3 h, against 1.6 per pairing, and they carry 85-89% of the resting depression.
     - The cascade at ceiling cooperativity (Ca n 4, PKA h 2) passes test R in 0 of 108 kinetic combinations: best W 0.013, 55x short.
@@ -397,14 +397,16 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
     - `scripts/probes/s27_dlmn_cc.py` (in-network CC; `--reverse`);
     - `s27_dlmn_cc_baseline.py` (clean-pair scoring; `--directions`);
     - `s27_gap_identity.py` (hash identity);
-    - `s27_cascade_predict.py` (C1 fractions and the cascade under per-KC test R).
+    - `s27_cascade_predict.py` (C1 fractions and the cascade under per-KC test R);
+    - `s27_dlmn_cc_fig.py` (the F-S27-1 figure).
   - Runs are in `runs/s27/`.
   - Source checked: Tomchik & Davis 2009 full text (PMC4080329). Forward 1 s and 15 s synergise, 30 s does not, backward does not. DA alone raises cAMP 11.9% dR/R0. No time constants given.
-  - Tests: the gap tests pass (3), including the new negative `gap_spike` refusal. The full suite was not rerun this session.
-- **Running:** the m10f5 smoke S on backhouse, `~/fly2_mc/run_gate5.sh`, output in `~/fly2_mc/runs/s27/fc/` (`smoke_m10f5.done`, then `ALL.done`). Started 23:30; about 6500 s at load 24, longer at the current load of 30.
+  - Tests: full pytest on the Mac (00:04-00:18, `runs/s27/pytest_full_s27.log`): 277 passed, 12 skipped, 0 failed.
+  - Lead examined for candidate (a), not usable as the source: Ueno et al. 2017 (eLife 6:e21076). In an isolated brain, spH exocytosis from TH terminals in the MB needed antennal-lobe stimulation plus NMDA on the MB together; AFV stimulation alone gave none. It gives no magnitude and no timing window. Its NMDA requirement also conflicts with Hige 2015's in-vivo depression from direct 2 Hz DAN stimulation without shock input. Not recorded in DECISIONS; nothing was built.
+- **Running:** nothing. The backhouse m10f5 run finished (`~/fly2_mc/runs/s27/fc/ALL.done`).
 - **Next, in order:**
-  1. Score S: band 0.162-0.486 Hz, active fraction 0.014-0.042, no runaway or NaN. If it passes, set `PROFILES["m10f"] = PROFILES["m10f5"]` in `src/flyemu/profiles.py`, then update F-S27-1, MECHANISM_STATUS N12 and this section.
-  2. N21 resting stability: after the Director relays that Huang 2024 is scored, read the PPL1 resting rates (candidate b). If any plastic compartment rests near 0.0015 Hz, pre-register and retest R (`s26_retention.py`). Otherwise candidate (a) needs a source on evoked vs spontaneous DA release.
+  1. (Done 03:13: S passed, `m10f` = m10f5.)
+  2. N21 resting stability: after the Director relays that Huang 2024 is scored, read the PPL1 resting rates (candidate b). If any plastic compartment rests near 0.0015 Hz, pre-register and retest R (`s26_retention.py`). Otherwise candidate (a) needs a source on evoked vs spontaneous DA release (Ueno 2017 is not it, see above).
   3. N12 next: Hurkey's splay/synchrony (unspent) needs DLMn spike overshoot or a spike step, plus a sourced spike amplitude. MN5 coupling needs a measurement.
   4. Berry 2018 held-out arm (only once N21 is resting-safe; s26 notes).
   5. From s24's list: N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first); B3, B4, B12.

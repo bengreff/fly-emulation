@@ -397,7 +397,7 @@ PROFILES: dict[str, dict] = {
     "m10f4": {"values": M10F4, "kick_mv": KICK},
     "m10f5": {"values": M10F5, "kick_mv": KICK},
 }
-PROFILES["m10f"] = PROFILES["m10f4"]   # the frontier: the latest stage that passed its smoke test and gate
+PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;
                                        # N21 valid only while DANs are near-silent at rest, F-S26-1)
 

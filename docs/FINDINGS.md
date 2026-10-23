@@ -2083,7 +2083,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
     - (b) plastic-compartment DANs rest far below 6-10 Hz (Huang 2024, after fly scores it).
   - The pure product over-discriminates relative to Tomchik's measured synergy (each input alone raises cAMP). The real cascade is further from passing.
 
-### F-S27-1: DLM motoneuron (MN1-4) electrical coupling fitted to Hurkey 2023 in the full network (c 0.0266 gives CC 0.0143); gate G passes, identical to m10f4; smoke S running (fly2, s27, 22 Oct 23:53; DECISIONS s27 N12 entry 23:08 and amendment 23:32)
+### F-S27-1: DLM motoneuron (MN1-4) electrical coupling fitted to Hurkey 2023 in the full network (c 0.0266 gives CC 0.0143); G and the 60 s smoke S pass, identical to m10f4; `m10f` = m10f5 (fly2, s27, 22 Oct 23:53, adopted 23 Oct 03:13; DECISIONS s27 N12 entry 23:08 and amendment 23:32)
 - **Switch (neutral, bit-identical; commit 120e0f6):** per-row `electrical:<pre>-><post>|gap_coupling` / `|gap_spike`, read only when set. The DLMn row is split into MN1-4 (`DLMn c-f,DLMn c-f`) and MN5 (`^DLMn a,DLMn c-f`, registered, inert). A negative `gap_spike` is refused, because `lif.step` lands only positive held kicks.
 - **Value (inferred, fitted; one value for the class):** `electrical:DLMn c-f->DLMn c-f|gap_coupling` **0.0266** (junction / partner leak conductance), 12 same-side pairs.
   - Target: the pair-count mean of Hurkey 2023 Fig 2f, (2 x 0.023 + 4 x 0.010) / 6 = 0.0143; band 0.0073-0.026 (s.d.).
@@ -2101,7 +2101,9 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - The model DLMn have a -5.4 mV spike AHP (the s27 pre-registration wrongly said none, from a run whose negative kicks never landed).
   - AHP CC at 0.0266: 0.0155 (0.0113-0.0300), against 0.042 +- 0.04. Inside one s.d.
 - **Gate G (m10f5, seeds 12-15, backhouse):** whole brain 0.308-0.310 Hz, motor 2.01-2.02 Hz, silent window 0.0 non-eye spikes/ms, 0 MuJoCo warnings, no NaN. All values equal m10f4's to the printed precision. **Pass.**
-- **Smoke S (60 s, seed 12):** running on backhouse since 23:30. Adoption (`m10f` = m10f5) waits on it.
+- **Smoke S (m10f5, seed 12, 60 s, backhouse, done 23 Oct 03:10):** whole brain 0.3037 Hz (band 0.162-0.486), active fraction 0.0273 (band 0.014-0.042), no runaway, no NaN, 0 MuJoCo warnings. Identical to m10f4, as is every one of the 167,111 cells' 60 s rates (`runs/s27/fc/smoke_m10f5_s12_rates.npz` vs s24's). The DLMn c-f fire at 0 Hz in both, so the junction joins silent cells at rest. **Pass.** `m10f` = m10f5 (`src/flyemu/profiles.py`).
+- **Battery:** full pytest on the Mac with the s27 code (23 Oct 00:04-00:18, `runs/s27/pytest_full_s27.log`): 277 passed, 12 skipped, 0 failed; the usual MuJoCo QACC warning.
+- **Figure (viewed):** `runs/s27/dlmn_cc_fig.png` (`scripts/probes/s27_dlmn_cc_fig.py`). Left: the 4.38 mV pulse in 31456 gives a 0.066 mV partner peak about 11 ms later in all three same-side partners; the opposite-side cell and the c = 0 run stay flat. Right: CC is linear in c through about the origin, and the fitted c sits on the target inside Hurkey's s.d. band.
 - **Validity range:**
   - Subthreshold DC coupling of MN1-4 only. The spike step stays blank (spike amplitude unreported), so overshoot is not carried. The AHP is carried only as the model's own AHP through the junction.
   - The 2:1 strong/weak pair structure can't be placed, since the type label can't say which cell is MN1-4.
