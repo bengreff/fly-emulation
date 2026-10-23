@@ -81,7 +81,38 @@ GluCl convention, inferred), dopamine no fast sign. These are synaptic events pe
   rates, KC drive (candidate 1) would have to balance this. PPL1-α3 (PPL106) is the exception: little inhibition,
   still slow, so it points to candidate 3 or to missing excitation.
 
+## Model drive at rest, in the network's own weights (`scripts/probes/s22_mb_rest_drive.py`, no simulation)
+
+The m10f3 network as built for the MB rest run (fitted class noise, plasticity off). Drive = Σ final signed weight
+× presynaptic rate at rest, mV/s per cell (rates as above). Output `runs/s20/mb/rest_drive.json`, wall 4 s.
+
+| type | inhibitory, from MB | excitatory, from MB | net (all sources) | KC drive per 1 Hz of KC firing | KC Hz that would cancel net | model / data |
+|---|---|---|---|---|---|---|
+| MBON11 | −1,146 | 32 | −1,115 | 3,034 | 0.37 | 0.23 |
+| PPL101 | −456 | 274 | −172 | 1,102 | 0.16 | 0.34 |
+| PPL106 | −63 | 47 | −14 | 377 | 0.04 | 0.44 |
+| MBON12 | −505 | 22 | −487 | 693 | 0.70 | 0.53 |
+| PPL103 | −430 | 160 | −267 | 1,361 | 0.20 | 0.56 |
+| MBON13 | −452 | 12 | −443 | 781 | 0.57 | 0.78 |
+| MBON14 | −378 | 80 | −299 | 743 | 0.40 | 0.79 |
+| PPL105 | −197 | 104 | −94 | 389 | 0.24 | 0.89 |
+| MBON17 | −122 | 49 | −75 | 191 | 0.39 | 1.07 |
+| MBON18 | −269 | 37 | −237 | 1,022 | 0.23 | 1.13 |
+| PPL104 | −13 | 697 | +683 | 93 | (net excitatory) | 1.92 |
+
+- **Candidate 3 is out in the current model.** Every one of the 11 types has τ_m 20 ms, threshold gap 7 mV and
+  input gain 1.0. There is no per-type intrinsic row, so all type differences come from synaptic drive at rest.
+- **Candidate 2 holds in model units.** Inhibition from active MB partners against model/data: ρ +0.69 (p 0.019;
+  inhibition is negative, so more inhibition goes with a lower ratio). Excitation: +0.26 (0.43).
+- **Candidate 1 is the class-level counterweight.** KC drive per Hz is largest for MBON11 (3,034 mV/s) and
+  correlates with the gap (ρ −0.57, p 0.066). A single KC rate of 0.04-0.70 Hz would cancel the net inhibition
+  type by type. This is mean drive only; rates also depend on fluctuations, so it needs a run.
+
 ## Next
 
-A rest run with the input current split by source (KC, inhibitory, excitatory non-KC, noise) per type. That
-decides between 1-3 before any source is read for a rate.
+1. Read a measured spontaneous KC rate in vivo (class level, source cited; Sonnet reader). No value is assumed
+   here.
+2. A rest run with KCs firing at that rate (Poisson, class level, switch off by default). Check whether the type
+   pattern moves toward the data, descriptively: Huang is spent, so adoption needs a new held-out MB rate source,
+   registered first.
+3. The sign of glutamate at MBON → MBON and MBON → DAN links (GluCl inferred) is the other open assumption.
