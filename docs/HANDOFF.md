@@ -374,12 +374,17 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s26, m10f4 adopted (smoke passes, so `m10f` = m10f4); resting-retention test R fails for every sourced KC->MBON form, so N21 is valid only while DANs rest below about 0.0015 Hz; two-compartment tests fixed (22 Oct 22:36)
+## fly2: s26, m10f4 adopted (`m10f` = m10f4); KC->MBON resting stability is an OPEN MECHANISM (test R fails for every sourced form, including Handler 2019's timing windows; no unheld source puts DANs near the 0.0015 Hz bound); two-compartment tests fixed (22 Oct 22:46)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
-- **For the Director (decision needed):**
-  - **What makes a spontaneous DAN spike about 10^3-10^4 times less effective than a pairing one?** Test R (F-S26-1) shows that no sourced form in hand keeps a KC->MBON memory for 2.3 h at KCs 0.1 Hz and DANs 6-10 Hz while still fitting Hige 2015 and Hattori 2017. The forms tested were: m10f4 itself, with s25 restoration, KC coincidence e^4, DAN burst d^2, and Berry restoration only.
+- **For the Director:**
+  - s26b did as decided on 22 Oct 22:50 (DECISIONS 22 Oct 22:40, outcome at 22:45):
+    - (e) Handler 2019 timing windows fail R in every form, and fail Hattori (F-S26-2). s25 restoration is not the Dop1R2 side; that side is lif.py's `kc_mbon_ltp_timing_rate`, which lacks a sourced magnitude.
+    - (b) Only PPL1-α'2α2 has a measured resting spike rate (F-S26-3, `docs/research/s26_mb_dan_rest_rates.md`).
+    - So resting stability is recorded as an **open mechanism** (MECHANISM_STATUS N21). The decisive recording is `docs/MEASUREMENT_LIST.md` item 5.
+    - Huang 2024 (held out) holds the PPL1 resting rates; releasing it is your call.
+  - Background from s26: what makes a spontaneous DAN spike about 10^3-10^4 times less effective than a pairing one? Test R (F-S26-1) shows that no sourced form in hand keeps a KC->MBON memory for 2.3 h at KCs 0.1 Hz and DANs 6-10 Hz while still fitting Hige 2015 and Hattori 2017. The forms tested were: m10f4 itself, with s25 restoration, KC coincidence e^4, DAN burst d^2, and Berry restoration only.
   - The reason is rate ordering. Every pairing protocol drives the DAN at or below its resting rate, and a spontaneous KC spike leaves about the same eligibility as an odour.
   - Options, all inferred:
     - (a) Stimulated DAN spikes signal far more dopamine than spontaneous ones. Needs a source.
@@ -401,9 +406,10 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
   - **Two-compartment tests (6 failing, now 8 of 8 pass):**
     - Cause: fly's s15b leg_MN and core_premotor rows in `data/params/two_compartment.csv`. With the switch on, every row must match a cell, and the 5-cell DLMn test graph has none of theirs, so `lif._two_compartments` correctly raised "matches no cell or no edge".
     - Fix: the tests now leave those classes out with fly's arm control, `cell_class:<class>|two_compartments_in_run` 0 (`DLMN_ONLY` in `tests/test_two_compartment.py`). The refusal in `lif.py` is unchanged.
+  - **s26b:** (e) and (b) as above; commits 2e6d0e9 and the park commit.
 - **Running:** nothing of fly2's is running at the park.
 - **Next, in order:**
-  1. The Director's answer on the missing factor (above). With (a) or (b) sourced, pre-register a resting-safe N21, then retest R and the Hige, Handler and Hattori regressions.
+  1. N21 resting stability waits on a source or a recording (MEASUREMENT_LIST item 5, or the Director releasing Huang 2024). With one in hand, pre-register a resting-safe N21, then retest R (`s26_retention.py`, with `--e` for the timing forms) and the Hige and Hattori regressions.
   2. Berry 2018 held-out arm: the analytic model expectation F is about 0.05 (DECISIONS 22 Oct 04:28, recorded before opening). It needs a new `kc_mbon_pairing.py` mode: MCH CS+ and OCT, 5 s odours 45 s apart; Learn trials 3-5; Forget trials 8-10; Paired>Unpaired minus Paired>Decay. Compute F from the model first, then a scorer opens the sealed file. It takes about 5 h per run on the Mac, so either pre-register a compressed dead time or run on backhouse when load is below 24. Berry tests forgetting by DAN activity, so it is only worth spending once N21 is resting-safe.
   3. From s24's list:
      - the DLMn coupling row from Hurkey 2023;

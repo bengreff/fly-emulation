@@ -4022,3 +4022,10 @@ firing should largely cancel), then (b) compartment DAN rest rates from sources 
 - If every E rule fails: on to (b); if (b) gives no compartment resting near the 0.0015 Hz bound from a measured
   source, record MB plasticity's resting stability as an open mechanism and add the decisive recording to
   `docs/MEASUREMENT_LIST.md` (Director, 22 Oct).
+- **Outcome (22 Oct 22:45; F-S26-2, F-S26-3):** every E rule fails R, and all fail Hattori (0 recovery). The
+  pre-registered "every E rule fails" held. Three details were wrong: E1b was unattainable (W at most 0.018), E2's W was
+  0.01-0.06, and the uniform-KC M could not be assessed; both windows saturate at rest. (b): only PPL1-α'2α2 has a
+  measured resting spike rate (6-10 Hz). Calcium quiet elsewhere can't reach the 0.0015 Hz bound, since GCaMP3 reads
+  α'2α2 as silent. **Decision (per the Director's rule):** KC->MBON resting stability is recorded as an open mechanism
+  (MECHANISM_STATUS N21). The decisive recording is MEASUREMENT_LIST item 5. N21 stays in m10f with its validity range,
+  and fly's resting fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0. Nothing new is switched on.

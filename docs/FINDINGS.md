@@ -2054,3 +2054,14 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - Handler's window shapes are taken as exponentials with lif.py's guessed taus (eligibility 1 s, DA 0.5 s); its amplitudes are plot-only and spent.
   - The cap of 2 is guessed.
   - Hige 2015 backward pairing is still unspent.
+
+### F-S26-3: candidate (b) finds no source placing any MB compartment's DANs near the 0.0015 Hz bound; KC->MBON plasticity's resting stability is an OPEN MECHANISM (fly2, s26b, 22 Oct 22:45)
+- **Table:** `docs/research/s26_mb_dan_rest_rates.md`, from one read-only search agent; fly2 has not re-checked it. Huang 2024 was not opened, nor Berry 2018 Fig 5.
+- **Measured resting spike rate:** only PPL1-α'2α2 has one, about 6-10 Hz (Huang 2018, voltage imaging). PPL1-α'3 is "stationary", with no Hz read.
+- **Other compartments:** calcium only. Berry 2012 Fig 5C (GCaMP3) shows ongoing activity in PPL1-γ1pedc and PPL1-γ2α'1, with no number. Plaçais 2012 reports slow oscillations at about 0.1-0.3 Hz (unverified). Cohn 2015, Siju 2020 and Zolin 2021 report state-dependent fluctuation. Aimon 2019 reports "surprisingly little activity during resting or grooming".
+- **Calcium can't settle it (derived):** Berry 2012's GCaMP3 reads PPL1-α'2α2 as not different from zero, while voltage imaging finds the same type at 6-10 Hz. So calcium quiet is consistent with tonic Hz-rate spiking, and no unheld source can put a compartment below about 0.01 Hz, let alone 0.0015 Hz.
+- **Outcome of the Director's 22 Oct ladder:** (e) fails (F-S26-2), and (b) finds no source. **MB plasticity's resting stability is an open mechanism.**
+  - N21 stays in m10f with its validity range (DANs silent at rest).
+  - fly's resting fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0.
+  - The decisive recording is item 5 in `docs/MEASUREMENT_LIST.md`.
+  - Huang 2024 (held out) would answer the PPL1 resting rates when the Director releases it.

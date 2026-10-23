@@ -76,3 +76,30 @@ Measurements that would pin a model value we can't pin from the literature or th
 **What it replaces.** The core → leg-MN strength is now the shared per-synapse value (fitted on the brain, inferred for the VNC). One recorded connection is consistent with some fly, which meets the per-value bar.
 
 **Sources.** F-S14-1 hand-off table (`runs/s14/handoff.json`); F-BYPASS-7 and `docs/research/s13_s4b_unitary_psp.md`; F-S15-4; F-S16-1.
+
+## 5. Does resting dopamine erase a KC→MBON memory? MBON-γ1pedc after one pairing, with its DAN's resting spikes recorded, silenced and replayed
+
+**Why now.**
+- With measured resting rates (KCs 0.1 Hz, DANs 6-10 Hz), every sourced KC→MBON plasticity rule fitted to Hige 2015 erases a memory within seconds, and naive weights collapse too. This holds for m10f4's rule, Berry/Cohn/Hattori-style restoration, KC coincidence, DAN burst dependence and Handler 2019's two-receptor timing windows (F-S26-1, F-S26-2).
+- Yet Hige 2015 saw γ1pedc depression persist for at least 40 min in vivo.
+- So either spontaneous DAN spikes are about 10^3-10^4 times less effective than pairing ones, or the plastic compartments' DANs are far quieter at rest than 6-10 Hz. No unheld source says which (F-S26-3). Calcium imaging can't tell: GCaMP3 reads PPL1-α'2α2 as silent while voltage imaging finds it spiking at 6-10 Hz.
+- N21 is on in m10f only because its DANs are silent at rest in the model. It must be switched off for any run with resting DANs.
+
+**Protocols, in one preparation** (in vivo whole-cell MBON-γ1pedc>α/β as Hige et al. 2015, with voltage imaging of PPL1-γ1pedc as Huang et al. 2018):
+
+| Protocol | Fills (slot) | Read-out |
+|---|---|---|
+| 10 min of no stimulus, quiescent and moving epochs | `cell_type:PPL1-γ1pedc` resting spike rate and pattern (tonic or burst) | Spikes/s and inter-spike intervals of the DAN, by voltage imaging |
+| One forward pairing (Hige protocol), then CS+ and CS- tests at 1, 10, 40, 90 and 180 min, with the DAN left at rest | N22 memory tau with DANs active; `kc_mbon_memory_tau_h` | CS+ / CS- MBON charge over time |
+| The same with the DAN silenced after pairing (GtACR1 or shibire-ts) | how much of the forgetting is driven by resting dopamine (Berry 2012 active forgetting) | Difference between the two retention curves |
+| No odour: 10 min of CsChrimson drive of the DAN at the measured resting rate and pattern, then a naive odour test; repeat with a 2 Hz pairing-like train of equal spike count | per-spike efficacy of tonic against pairing-like DAN spikes (the missing factor, F-S26-1) | Naive-odour MBON charge before and after |
+
+**What each answer would decide.**
+- **The DAN rests at Hz rates, the memory lasts hours, and tonic replay doesn't depress naive responses:** spontaneous spikes really are far less effective. The replay at different patterns then gives the form of the factor, sourced. N21 can get it and be switched on with resting DANs.
+- **The DAN rests near silence (below about 0.01 Hz) in this state:** today's rule is safe in that compartment. The fit stands, and the resting fit sets that DAN quiet.
+- **The memory decays faster with the DAN at rest than silenced:** active forgetting is real here, and its rate replaces the guessed 3 h N22 tau.
+- **Tonic replay at the resting rate erases naive responses within minutes:** the per-spike rule is right, and memory survives by another route (state gating, KC silence). Look there next.
+
+**What it replaces.** The rule (`kc_mbon_ltd_timing_rate` 0.430, fitted to Hige 2015) is valid only with DANs silent at rest. One compartment's answer is consistent with some fly, which meets the per-value bar.
+
+**Sources.** F-S26-1, F-S26-2, F-S26-3; `docs/research/s26_mb_dan_rest_rates.md`; `scripts/probes/s26_retention.py`. Huang et al. 2024 (held out) has voltage-imaging resting rates for five PPL1 types and would answer the first row for the PPL1 compartments once the Director releases it.
