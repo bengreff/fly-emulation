@@ -4935,3 +4935,13 @@ Scored as registered on 22 Oct at 22:23 (F-S21-1).
     intrinsics does not reproduce splay: N12's DLMn entry stays partial, and the miss goes to the excitability side
     (fly's N2/N4) as well as to the junction. No value is refitted either way.
 - **Falsifier:** the fitted arm's same-side fraction is >= the c = 0 arm's, in A or in B.
+
+## fly2 s27: N12 second check scored, FAIL (23 Oct 03:59 CDT)
+- Scored once, exactly as registered at 03:34 (F-S27-4). A: fitted same-side 0.192 vs c = 0 0.198 (needs < 0.18 and
+  0.02 below); B: fitted 0.251 vs c = 0 0.245, the registered falsifier. The cross-side control read uniform in A (0.191).
+- Readout note: the registration's "12 / 16 ordered pairs" are the unordered counts; the committed probe averages 24 / 32
+  ordered pairs, which gives identical means.
+- Per the registration: no refit; the DLMn c-f row in `gap_junctions.csv` stays partial and is not proposed as done;
+  the miss is recorded against the DLMn intrinsics (fly's N2/N4; passed to fly through the Director, fly's rows not
+  edited) and the blank spike step, as well as against the junction. Hurkey Fig. 2b / Extended Data Fig. 6 is spent.
+  `m10f` stays m10f5 (CC inside the measured band; DLMn silent at rest).

@@ -2110,7 +2110,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - MN5 coupling is unmeasured.
   - Hurkey's functional result (the splay gap around phase 0, which shakB RNAi removes, Fig. 2b and Extended Data Fig. 6) is not tested here; it is the second check registered in DECISIONS 23 Oct 03:34. Correction (23 Oct 03:34): the "sync index 0.56 vs 0.61" quoted here before was the Shab knock-down, not shakB.
 
-### F-S27-3: N21 candidate (b) is ruled out for every recorded PPL1 compartment: Huang 2024's PPL1 DANs rest at 5-27 Hz per fly, at least 3,300x above the 0.0015 Hz test R needs (fly2, s27, 23 Oct 03:37)
+### F-S27-3: N21 candidate (b) is ruled out for every recorded PPL1 compartment: Huang 2024's PPL1 DANs rest at 5-27 Hz per fly, about 3,400x or more above the 0.0015 Hz test R needs (fly2, s27, 23 Oct 03:37)
 - **Data (measured).** Huang et al. 2024 Fig. 1 voltage imaging (`data/raw/huang2024/Figure1.zip`), released to fly2 by the Director at 03:25 after fly spent it once as a held-out test of resting rates (F-S21-1). Using it here as a bound on a model assumption spends nothing new: the rates are already training context for the MB and nothing is fitted to them. Readout as fly's (`scripts/probes/s21_mb_huang_score.py`): trial spikes / duration, then the mean of the trials within each fly. Script `scripts/probes/s27_huang_ppl1_rest.py`, output `runs/s27/huang_ppl1_rest.json`.
 
   | type | flies | min (Hz) | P10 | median | max | flies < 0.1 Hz | min / 0.0015 Hz |
@@ -2121,8 +2121,38 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   | PPL1-α3 | 20 | 8.4 | 10.9 | 14.0 | 23.4 | 0 | 5,600 |
   | PPL1-α2 | 20 | 7.1 | 7.4 | 8.5 | 13.0 | 0 | 4,800 |
 
-- **Verdict (derived).** Not one of the 100 flies has a PPL1 DAN at rest within three orders of magnitude of the bound, so N21's resting safety can't come from silent DANs in these compartments. Huang 2024 records no PAM types, so the PAM compartments are still open. PAM DANs are also tonically active in calcium (F-S26-3), so this is no reason to expect PAM rest near the bound.
+- **Verdict (derived).** Not one of the 100 flies has a PPL1 DAN at rest within three orders of magnitude of the bound, so N21's resting safety can't come from silent DANs in these compartments. Huang 2024 records no PAM types, so the PAM compartments are still open. Calcium imaging shows ongoing, state-dependent DAN activity (F-S26-3) and gives no hint that any compartment is near silent, but that is not a PAM rate measurement.
 - **What is left on the Director's 22 Oct ladder:** (a), a dopamine-side gate. Ueno 2017 doesn't supply it: there's no magnitude or timing, and its NMDA requirement conflicts with Hige 2015's in-vivo depression from DAN activity alone (HANDOFF s27). (b) and (e) are ruled out, and the cAMP-PKA cascade is ruled out by prediction (F-S27-2). N21 stays in m10f with its validity range. fly's note (01:10) agrees: the model DANs fire at 6-15 Hz at fitted noise, so any run with σ*_DAN on must set `cell_type:all|kc_mbon_ltd_timing_rate` 0.
+
+### F-S27-4: N12's second check FAILS. The fitted DLMn junction gives no splay gap, the falsifier fires in condition B, and the DLMn entry stays partial with no refit (fly2, s27, 23 Oct 03:59; pre-registered DECISIONS 23 Oct 03:34)
+- **Protocol as registered.** `scripts/probes/s27_dlmn_splay.py`: m10f5, seed 12, 20 s with 2 s skipped, DC 0.026 plus 0.5 mV Poisson kicks (guessed drive). Scored by `s27_dlmn_splay_score.py`; output in `runs/s27/dlmn_splay_{A,B}_{fit,c0}.json` and `dlmn_splay_score.json`. All four runs went through `slot.py` at 1 thread, about 21 min each.
+- **Readout note.** The registration called the 12 same-side and 16 cross-side pairs "ordered", but those are the unordered counts. The committed probe averages the 24 and 32 ordered pairs. The means are identical either way, since each unordered pair's value is the average of its two directions; only the SEM differs.
+- **Rates:** 8.2-10.5 Hz in every arm, inside Hurkey's 3-12 Hz. ISI CV is 0.43-0.52.
+
+  | condition | arm | same-side | cross-side (uncoupled control) | rule | result |
+  |---|---|---|---|---|---|
+  | A (independent 200 Hz) | fitted c 0.0266 | 0.192 ± 0.005 | 0.191 | < 0.18, >= 0.02 below c0, cross 0.17-0.23 | **fail** (only the cross rule passes) |
+  | A | c = 0 | 0.198 ± 0.006 | 0.206 | | |
+  | B (shared 50 + independent 150 Hz) | fitted | 0.251 ± 0.006 | 0.261 | < 0.20, >= 0.02 below c0 | **fail** |
+  | B | c = 0 | 0.245 ± 0.006 | 0.249 | | |
+
+- **Verdict: FAIL, falsified.**
+  - In B the fitted arm's same-side fraction is above the c = 0 arm's (0.251 vs 0.245), the registered falsifier.
+  - In A the fitted arm sits 0.005 below c = 0, about one SEM, and its coupled pairs read the same as its uncoupled pairs (0.192 vs 0.191).
+  - The junction at c 0.0266, with the current DLMn intrinsics, does not reproduce Hurkey's splay gap. Hurkey Fig. 2b / Extended Data Fig. 6 is now **spent**.
+- **Figure (viewed):** `runs/s27/dlmn_splay_fig.png` (`s27_dlmn_splay_fig.py`).
+  - A: both arms' same-side phase histograms are flat within ±15% of uniform. The fitted arm has a mild bump at phase 0.5-0.6 and no dip at 0.
+  - B: the shared input puts an in-phase peak (phase near 0 and 1, density about 1.6) in every pair, coupled or not, and the fitted arm doesn't lower it.
+- **Post hoc, untested (why; no refit was made).** These are three candidate reasons, all outside the junction value:
+  - (1) The spike itself is not passed through the junction (the spike step is blank; Hurkey's spike amplitude is unreported). Per partner spike the model passes only the subthreshold and AHP parts, about 0.07-0.08 mV (F-S27-1).
+  - (2) Against that, the guessed drive gives each cell about 22 kicks of 0.5 mV per ISI, a count SD of about 2.3 mV (derived). So the coupling signal from 3 partners is about a tenth of the noise.
+  - (3) Hurkey's model needs a PRC that falls around phase 0.5 (excitability near the SNL point). The model DLMn are LIF plus rung-1 channels, with a type-I-like PRC (not measured here).
+  - So the miss goes to the excitability side (fly's N2/N4 DLMn intrinsics) and to the missing spike step, as registered, as well as to the junction.
+- **Consequence:**
+  - The `gap_junctions.csv` DLMn c-f row is **not** proposed as done. It stays partial: fitted to the CC (F-S27-1), with the functional check failed.
+  - N12 as a whole couldn't be done in any case: 6 of the 9 rows in `data/params/gap_junctions.csv` carry no value (JO-A->GF, VS-VS, LN->PN, PN-PN, APL-DPM, MN5->MN1-4).
+  - `m10f` stays m10f5. The coupling is inside Hurkey's measured CC band and the DLMn are silent at rest, so the failure doesn't affect resting runs.
+  - A retry needs a sourced DLMn spike amplitude (for the spike step) and a DLMn PRC or excitability source, then a new held-out functional measurement. Candidate: Hurkey Fig. 3d's synchronization index under ShakB overexpression, unspent, but its formula isn't in the text.
 ### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
 - **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure
   pixels, derived). Refined grid: Mi4 output a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16; a* = 0.0649.
