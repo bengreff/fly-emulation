@@ -218,8 +218,8 @@ PARAMS = [
     ("need_tau_rise_h", "N25", "state:sleep", "need_rise_tau", "h", 12.0, 1.0, 48.0, "guessed",
      "ER5 need rise while awake; no direct anchor (Liu 2016 gives no time constant); fitted in s21",
      "loguniform", "guessed", "read only with state:sleep|homeostat = 1"),
-    ("need_tau_decay_h", "N25", "state:sleep", "need_decay_tau", "h", 5.5, 2.9, 10.4, "derived",
-     "Liu et al. 2016 Cell 165:1347 Fig. 4: ER5 BRP still raised 2 h into recovery sleep, back at baseline "
+    ("need_tau_decay_h", "N25", "state:sleep", "need_decay_tau", "h", 5.5, 2.9, 10.4, "measured_this_class",
+     "Liu et al. 2016 Cell 165:1347 Fig. 4: BRP in R2 cells (R69F08; ER5 inferred) still raised 2 h into recovery sleep, back at baseline "
      "after 24 h (bracket: >= 50 % of the excess left at 2 h, <= 10 % at 24 h)", "loguniform", "derived",
      "read only with state:sleep|homeostat = 1"),
     ("dfb_restart_per_min", "N25", "state:sleep", "dfb_restart_rate", "1/min", 0.0387, 0.0106, 0.094,

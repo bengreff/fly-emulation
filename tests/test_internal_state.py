@@ -318,3 +318,50 @@ def test_sleep_sourced_values_are_neutral_off_and_switch_the_threshold_form():
         o2 = S.Organs(q, z=complex(0.0, 1.0)); o2.pressure = thr - 0.004
         o2.step(1.0, activity=1.0)
         assert not o2.switch
+
+
+def test_homeostat_mode_is_neutral_off_and_its_rates_are_exact():
+    """s22: state:sleep|homeostat = 0 leaves N25 as in s10; mode 1 is the ER5 need and 8 stochastic dFB cells."""
+    from flyemu import internal_state as S
+    base, hom = S.default_params(), S.default_params(homeostat=True)
+    assert "homeostat" not in base and hom.pop("homeostat") == 1.0 and hom == base
+    o = run(S.Organs(base), 6, activity=1.0)                  # mode 0: the dFB cells are never touched
+    assert o.dfb_on.shape == (S.N_DFB,) and not o.dfb_on.any()
+    q = S.default_params(homeostat=True)
+    kr, g = q["dfb_restart_per_min"] / 60.0, q["need_gain"]
+    k1, f0 = S.dfb_rates(q, 1.0, 0.0)
+    k0, f1 = S.dfb_rates(q, 0.0, 1.0)
+    assert np.isclose(k1, kr) and np.isclose(k0, kr / (1.0 + g))  # the measured restart is the rate at full need
+    assert np.isclose(f1, f0 * (1.0 + q["light_arousal"]))
+    # the exact two-state transition composes: two steps of dt equal one of 2 dt
+    def m(dt):
+        stay, turn = S.dfb_transition(k1, f0, dt)
+        return np.array([[1 - turn, turn], [1 - stay, stay]])
+    assert np.allclose(m(30.0) @ m(30.0), m(60.0))
+    # the need rises awake and falls asleep
+    o = S.Organs(q, pressure=0.2)
+    run(o, 4, activity=1.0)
+    hi = o.pressure
+    assert hi > 0.2
+    o.switch = True
+    run(o, 2, activity=0.0)
+    assert o.asleep and o.pressure < hi
+
+
+def test_homeostat_drives_each_dfb_cell_by_its_own_state(orgs):
+    _, _, org = orgs
+    st, o, r = org.organs, org.organs.organs, org.organs.rows
+    assert len(o.dfb_on) == len(r["dfb"])
+    pattern = np.arange(len(r["dfb"])) % 2 == 0
+    saved = (st.p.get("homeostat"), o.dfb_on.copy(), o.switch)
+    try:
+        st.p["homeostat"], o.dfb_on[:], o.switch = 1.0, pattern, False
+        st._refresh()
+        assert np.allclose(st.tonic()[r["dfb"]], st.p["g_dfb_mv"] * pattern)
+    finally:
+        if saved[0] is None:
+            st.p.pop("homeostat", None)
+        else:
+            st.p["homeostat"] = saved[0]
+        o.dfb_on[:], o.switch = saved[1], saved[2]
+        st._refresh()

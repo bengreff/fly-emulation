@@ -303,6 +303,50 @@ def select(acc: list) -> dict:
             "candidate": acc[j]}
 
 
+def figure(path: Path = Path("docs/media/s22_n25_homeostat.png")) -> dict:
+    """The primary candidate: 30-min sleep profile and need (control vs 24 h arm), and day-1 rebound vs length
+    with the accepted-set spread. Re-simulated with 512 flies per arm (seed 40)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    r = json.loads((OUT / "fit.json").read_text())
+    pr = r["primary"]
+    c = pr["candidate"]
+    p = base_params(**{k: c[k] for k in GRID})
+    runs = {a: sim(p, flies=512, burn_days=6, days=5, sd=sd, seed=40 + j)
+            for j, (a, sd) in enumerate([("ctrl", None), ("24h", ARMS["24h"])])}
+    fig, ax = plt.subplots(3, 1, figsize=(9, 9))
+    h = np.arange(5 * DAY) / 60.0
+    for a, col in (("ctrl", "k"), ("24h", "tab:red")):
+        sl = dam_sleep(runs[a]["inact"], runs[a]["run0"])[:5 * DAY, 0].mean(1)
+        ax[0].plot(h.reshape(-1, 30).mean(1), sl.reshape(-1, 30).mean(1) * 30, col, lw=1, label=a)
+        ax[1].plot(h, runs[a]["need"][:5 * DAY, 0], col, lw=1, label=a)
+    for a_ in ax[:2]:
+        for d in range(5):
+            a_.axvspan(d * 24 + 12, d * 24 + 24, color="0.9", zorder=0)
+        a_.set_xlim(0, 120)
+    ax[0].axvspan(24, 48, ymax=0.05, color="tab:red", alpha=0.5)
+    ax[0].set_ylabel("sleep (min per 30 min)")
+    ax[0].set_title("N25 mode 1 primary candidate: " + ", ".join(f"{k} {c[k]}" for k in GRID), fontsize=9)
+    ax[0].legend(fontsize=8)
+    ax[1].set_ylabel("ER5 need n (mean over flies)")
+    ax[1].set_xlabel("h from ZT 0 of baseline day B (grey: dark; red bar: 24 h deprivation)")
+    L = [6, 12, 24]
+    ax[2].errorbar(L, [pr["median"][a] for a in ARMS],
+                   yerr=[[pr["median"][a] - pr["p2.5"][a] for a in ARMS],
+                         [pr["p97.5"][a] - pr["median"][a] for a in ARMS]], fmt="o", color="0.5",
+                   capsize=4, label=f"accepted sets, median and 2.5-97.5 % (n {pr['n_accepted']})")
+    ax[2].plot(L, [c[f"{a}_d1"] for a in ARMS], "s-", color="tab:blue", label="candidate")
+    ax[2].axhline(0, color="k", lw=0.5)
+    ax[2].set_xlabel("deprivation length (h), ending ZT 0")
+    ax[2].set_ylabel("day-1 rebound (min)")
+    ax[2].legend(fontsize=8)
+    fig.tight_layout()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=110)
+    return {"figure": str(path)}
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
@@ -319,4 +363,6 @@ if __name__ == "__main__":
                   json.dumps({kk: v for kk, v in r[k].items() if kk != "candidate"}))
         for k in ("primary", "wide"):
             print(k, "candidate", json.dumps(r[k].get("candidate")))
+    elif sys.argv[1] == "figure":
+        print(figure())
     print(f"wall {time.time() - t0:.0f} s")
