@@ -2043,3 +2043,41 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Rebound in the reduced loop barely depends on time awake.** The mode-1 gain over the recovery day is 142 / 139 / 138 min after 6 / 12 / 24 h of deprivation (φ = CT 0), or 175-212 min (φ = CT 12). The long, circadian-gated day episode caps it. That conflicts with the dose dependence Huber's abstract states (direction seen, magnitudes not; predictions fixed in DECISIONS 00:34).
 - **Held out and unspent:** Huber et al. 2004 rebound (full text not reachable). Nothing was adopted. The switch `state:sleep|values_from_sources` stays neutral (0).
 - **Status:** N25 stays **partial**.
+
+### F-S21-1: MB resting rates with plasticity off: one noise level per class passes Huang 2024 by the minimum (6 of 9), and compresses the per-type spread (s21, 23 Oct 01:00; DECISIONS 22 Oct 22:23, 23 Oct 01:01)
+- **Fit (labelled fitted).** m10f3, isolated CNS, no stimulus, N21 absent and N22 forgetting 0; grid seed 12 (`scripts/probes/s20_mb_rest.py`).
+  - σ*_DAN = 1.477 mV/√ms puts PPL105 at 8 Hz (Huang 2018: 6-10 Hz).
+  - σ*_MBON = 2.287 mV/√ms puts MBON14 at 12.1 Hz (Hafez 2023).
+  - Both lie inside the 0-3 row bounds (guessed). Output: `runs/s20/mb/sigma_star.json`.
+- **Confirm (not held out), seeds 12 / 13.** Pass on both seeds:
+  - PPL105 7.63 / 7.63 Hz (band 6-10);
+  - MBON14 12.31 / 11.69 Hz (band 9.7-15.1).
+  - Class means: DAN 8.0 Hz and MBON 13.2-13.4 Hz. KC, APL and DPM stay at 0 Hz.
+  - Whole brain: 0.034 Hz with 0.38 % of cells active, against 0.008 Hz and 0.04 % at σ = 0.5. There was no σ = 0 run, although the registration asked for one.
+- **Held-out Huang et al. 2024 Fig. 1 voltage imaging (spent once).** 20 flies per type, from trial spike counts (`scripts/probes/s21_mb_huang_score.py`, `runs/s20/mb/huang_score.json`). Model readout locked first (`runs/s20/mb/model_readout.json`, 01:00).
+
+  | type | model (Hz) | data median [P10, P90] | model / median | result |
+  |---|---|---|---|---|
+  | PPL1-γ1 (PPL101) | 7.0 | 20.4 [12.8, 25.6] | 0.34 | fail |
+  | PPL1-γ2 (PPL103) | 6.5 | 11.7 [8.8, 15.6] | 0.56 | pass |
+  | PPL1-α′3 (PPL104) | 14.9 | 7.7 [6.1, 19.4] | 1.92 | pass |
+  | PPL1-α3 (PPL106) | 6.2 | 14.0 [10.9, 20.3] | 0.44 | fail |
+  | MBON-γ1 (MBON11) | 7.9 | 34.8 [26.2, 49.8] | 0.23 | fail |
+  | MBON-γ2 (MBON12) | 11.2 | 20.9 [19.1, 25.3] | 0.53 | pass |
+  | MBON-α′2 (MBON13) | 12.1 | 15.6 [11.5, 23.1] | 0.78 | pass |
+  | MBON-α′3m (MBON17) | 14.0 | 13.1 [10.1, 16.3] | 1.07 | pass |
+  | MBON-α2sc (MBON18) | 11.0 | 9.8 [6.6, 18.0] | 1.13 | pass |
+  | fit: PPL1-α2 (PPL105) | 7.6 | 8.5 [7.4, 12.7] | 0.89 | pass (cross-study) |
+  | fit: MBON-α3 (MBON14) | 12.0 | 15.2 [11.9, 20.8] | 0.79 | pass (cross-study) |
+
+- **Verdict: PASS, 6 of 9 (the registered minimum).**
+  - Two of the passes sit near the band edge: MBON-γ2 at 0.53 and PPL1-γ2 at 0.56.
+  - The fit types agree across studies: Huang's PPL1-α2 and MBON-α3 medians lie within ×1.3 of the Huang 2018 and Hafez 2023 targets.
+- **What it shows.** One noise level per class carries the order of magnitude, but not the per-type spread.
+  - The model spans 6-15 Hz; the data span 8-35 Hz.
+  - The γ1 pair (PPL1-γ1, MBON-γ1) and PPL1-α3 fire 2-4× faster in vivo.
+  - Huang's flies were on a ball, with walking and rest mixed, so part of the γ-lobe gap may be behavioural state. The model is an isolated CNS.
+  - Huang is spent and is not used for a refit. A per-type account would need its own mechanism (intrinsic rows, or input from walking state) and a new held-out source.
+- **Leak note.** One PPL1-α′3 trial's spike count was seen in fly2's listing (recorded beforehand). The array shape of one trial was seen while the keys were inspected, after the model readout was locked.
+- **Bearing on N21.** At these noise levels, DANs fire at about 6-15 Hz at rest, and Huang's DAN medians are 8-20 Hz. KC → MBON rules must be stable at those DAN rates (fly2's memory-wipe finding).
+- **Status:** N3 stays **partial**. Adoption needs a stage on m10f3 with N21 off, the gate, a battery run and a viewed figure (DECISIONS 22 Oct 22:23).

@@ -1,59 +1,62 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 00:35 CDT, session 20.
-- **Brief:** the Director's s20 brief (Thu 22 Oct night): MB resting rates with plasticity off; the N26 clock row; Davie 2018 receptor data for N19 and N20. The budget cap was doubled (about 5% of the week; take the next item after the current one).
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 01:03 CDT, session 21 (fresh context after s20, same night).
+- **Brief:** Director, 23 Oct 00:45.
+  - (1) Score the MB grid once against Huang 2024 when `ALL.done` lands.
+  - (2) Meanwhile, N25: pre-register an open-access held-out rebound test, and scope a sourced homeostat that makes rebound scale with time awake.
+  - N26 is accepted: adopt it as a stage on fly2's newest stage once that is on main, without waiting idle for it.
+  - Budget: about 2 % of the week.
 - **Goal:** Ben's is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
-- **Heavy runs go on backhouse.** It sits at load 24-25 from other work; my jobs use ≤ 4 threads and queue above load 24.
+- **Heavy runs go on backhouse** (load 25-27 from other work). My jobs use ≤ 4 threads and queue above load 24.
 - **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows, **0 done**.
 - **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
-- **fly2's frontier** (m10f = m10f4, m10f5 defined) is on its branch, not on main. Stages I register wait for that merge.
+- **fly2's frontier** (m10f4/m10f5) is on its branch, not on main. The stages I register (N26, MB noise) wait for that merge.
 
-## Report for Ben (s20)
-**Rows moved: none.** The done count stays **0 of 20** (2 built-off: N4 and N19; 13 partial; 5 absent). Three rows have new evidence.
+## Report for Ben (s21)
+**Rows moved: none (0 of 20 done).** One held-out test was passed and one registered. N25 is scoped.
 
-- **N26 clock: held-out pass, not adopted** (F-S20-3; DECISIONS 22 Oct 23:02, 23:55; 23 Oct 00:09).
-  - The s10 one-point light pull couldn't fit the sources (F-S20-1). It is replaced by a CRY-dependent TIM degradation input, `state:clock|light_input` 1 (neutral 0).
-  - Fitted: k_tim 0.789 and ct_tim 7.59 h. Inferred by rule: k_deg 13.85/h and the CRY rate 10.26/lux/h.
-  - All four training targets pass.
-  - **Held-out Lamba 2014 ZT21:** +2.89 h predicted against +3.21 ± 0.23 h measured. Pass; spent.
-  - Not adopted: the stage has to sit on fly2's frontier. The plan is registered (fly2 gate plus a 3-day LD organism check). N26 stays partial (τ_c, μ and the cell peak hours are guessed).
-- **N25 sleep: nothing scored; s10 values found to sleep too little** (F-S20-4; DECISIONS 23 Oct 00:27, 00:30, 00:34).
-  - In a reduced loop (activity off while the dFB switch is on), the s10 values that are on in m10f give **411 min/day**. Every cited wild-type value is ≥ 618.
-  - **Abhilash & Shafer 2024** is the only published fly fit (taus 8.76 / 9.51 h). It is built behind `state:sleep|values_from_sources` (neutral 0), and gives 1092 min/day.
-    - It misses its own stated output (75.56 % against 74.36 %), so the registered implementation check failed and nothing was scored.
-    - Its time origin is unstated, and its code is not public.
-  - **Rebound predictions are fixed before any data:** recovery barely depends on time awake (+138-144 min after 6-24 h of deprivation). That conflicts with the dose dependence Huber 2004's abstract states (direction seen; magnitudes unseen and unspent).
-  - Huber's full text was not reachable.
-- **N19/N20 data** (c802e6b; DECISIONS 22 Oct 22:43, 22:51).
-  - N19 `receptor_map` mode 2: Davie 2018 brain-cluster rows (122 types, 2,447 cells; neutral 0).
-  - The PN net 5-HT sign isn't robust to 10x dropout, but the magnitude gap to Dacks holds (F-S20-2).
-  - The AL 5-HT routes (LN and ORN) were **scoped, not built**. Davie covers neither.
-  - N20 peptide-receptor rows: data only.
-- **MB resting rates:** the grid is running on backhouse; see Running now. Registered 22 Oct 22:23.
-- **Tests (Mac, `runs/s20/pytest_s20.log`):** 288 passed, 6 failed, all in `tests/test_two_compartment.py` (fly2's area, as in s19). The suite ran before the N25 switch; the internal-state and model-data tests were re-run after it and pass (16 + 12).
-- **Commits:** c802e6b, edb754d (N26), 14c7a07 (N25).
+- **MB resting rates: held-out PASS by the minimum** (F-S21-1; DECISIONS 22 Oct 22:23, 23 Oct 01:01).
+  - Plasticity off. One noise level per class was fitted on two cells: σ*_DAN 1.477 and σ*_MBON 2.287 mV/√ms.
+  - The confirm runs pass on seeds 12 and 13.
+  - **Huang 2024, 6 of 9 types inside the band (spent).** The γ1 pair and PPL1-α3 fire 2-4× slower than in vivo.
+  - The model compresses the spread: 6-15 Hz against 8-35 Hz in the data.
+  - Not adopted. It needs a stage on m10f3 with N21 off. N3 stays partial.
+- **N25: held-out rebound test registered** (DECISIONS 23 Oct 00:53).
+  - Chowdhury et al. 2023 eLife Fig. 1: Canton-S males, vortexer 20 s arm, 6/12/24 h ending at ZT 0, day-1 rebound normalised to unperturbed flies. The raw data are on Dryad, unopened.
+  - Pass rule: the Huber rule.
+  - **Weakened by a leak I caused.** Listing the XML's sections showed the Results subsection titles (qualitative: stimulus frequency matters, little debt repaid over cycles, short bouts mask rebound, 5-HT a candidate). No magnitudes and no length dependence were seen.
+  - Huber 2004 is now training context. Brown 2020 has only one duration (24 h), mostly in females, so it is unused.
+- **N25 scoped, not built** (`docs/research/s21_n25_homeostat_scope.md`).
+  - The flat rebound and the 411 min/day both come from the deterministic single-threshold switch.
+  - Recommended: an ER5 (R5) need variable (Liu 2016: BRP, NMDAR and firing rise with wake and return to baseline after 24 h of recovery sleep) driving stochastic per-cell dFB switching (Pimentel 2016: spontaneous restart after a mean 25.9 min).
+  - Three shared fitted quantities, trained on baseline sleep and the Liu anchors; held out on Chowdhury.
+  - **Connectome (male-cns, measured):**
+    - ER5 (21 cells) ⇄ ExR1 (4 cells; = helicon cells, inferred): 10,044 / 5,624 synapses.
+    - dFB → ExR1: 260.
+    - The only R5 → dFB route runs through ExR3 (5-HT): 211 → 692.
+    - The dFB gets 31 % of its input from serotonergic cells and 0.1 % from dopaminergic ones.
+  - The 23E10/dFB controversy (De 2023 vs Jones 2023) is recorded.
+- **Commits:** 8bbb635 (N25 scope and registration), plus this one (MB score, docs).
 
 ## Running now
-- **backhouse tmux `s20mb`:** the MB grid and confirm runs (`scripts/probes/s20_mb_rest.py`, m10f3).
-  - Output: `~/fly-m10f/runs/s20/mb/`. All 8 grid points (seed 12) and `sigma_star.json` were written by 00:35; the confirm runs follow.
-  - Done-file: `~/fly-m10f/runs/s20/mb/ALL.done`.
-- **Mac WSL keep-alive, PID 4311** (`ssh backhouse ... sleep infinity`). Kill it once `s20mb` has ended.
-- **Not mine; never touch:** tmux `inqs7z` on backhouse, and fly2's pid 57241.
+Nothing. The `s20mb` tmux has ended and the WSL keep-alive (PID 4311) is stopped. Not mine; never touch: fly2's processes and the other projects' tmux sessions on backhouse.
 
 ## Next (this order)
-1. **MB**, when `ALL.done` lands. Score per DECISIONS 22 Oct 22:23:
-   - Copy the results to `runs/s20/mb/`.
-   - Read σ*_DAN (PPL105 at 8 Hz) and σ*_MBON (MBON14 at 12.1 Hz), and check the seed 12/13 confirms.
-   - Then open Huang 2024 (`data/raw/huang2024/`) **once** and score: pass if ≥ 6 of 9 types.
-   - Record a FINDINGS row and the register entry. N3 stays partial (adoption needs a stage with N21 off).
-   - Tell fly2 and the Director that DANs fire at rest, which bears on N21's memory wipe.
-2. **N26 adoption stage** once fly2's frontier is on main (DECISIONS 23 Oct 00:09).
-3. **N25.**
-   - Ben: the Huber 2004 full text (library access). It is the registered held-out rebound source.
-   - Or register an open-access substitute (Brown 2020 PMC7089559, Chowdhury 2023 eLife) after a protocol-only read.
-   - The model's capped rebound is structural (fixed thresholds, long episodes), so a structure change probably comes before any score.
-4. **N19:** Li 2017 PN rows, then the McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
-5. S5/N28 Q10; S1-S4 follow-ups.
+1. **N26 adoption stage** once fly2's frontier is on main (DECISIONS 23 Oct 00:09). Same for an MB noise stage with N21 off (F-S21-1).
+2. **N25 build, CPU reduced loop first:**
+   - Cheap reads first (Sonnet): Liu 2016 Fig. 3-4 values, Pimentel 2016's restart distribution, and the helicon transmitter in Donlea 2018.
+   - Then switch `state:sleep|homeostat` (neutral 0) mode 1 in `internal_state.py`. Tell fly2 first: the ER5 gain sits next to its plasticity rows.
+   - Then the implementation and training checks, and predictions written down before the Chowdhury Dryad data are opened once.
+   - The falsifier is in the scope doc.
+3. **N19:** Li 2017 PN rows, then McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
+4. S5/N28 Q10; S1-S4 follow-ups.
+- Tell fly2: DANs fire at 6-15 Hz at rest in the fitted model, and at 8-20 Hz in Huang 2024. That matters for N21's memory-wipe rule.
+
+**s20 (kept for reference).**
+- N26 CRY-TIM light input: the held-out Lamba ZT21 passed (F-S20-3); the Director has accepted it.
+- N25: the s10 values sleep 411 min/day, and the Abhilash set failed its C1 check (F-S20-4).
+- N19 mode 2 Davie rows; N20 peptide-receptor data rows.
+- Tests at the end of s20: 288 passed, 6 failed, all in fly2's `tests/test_two_compartment.py`.
 
 **s18 part 1 (21:31-21:43, kept for reference):** `docs/MECHANISM_STATUS.md` built (commit cead727; fly rows 0 of 14 done; N26 closest). N19 sources gathered in `docs/research/s18_n19_receptor_coupling.md`. The coupling table there is used by the sign rule above. Octα2R is only in the unwired `epiney2025_*` tables.
 
@@ -555,6 +558,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Huber et al. 2004 Sleep 27:628 rebound after 6/12/24 h deprivation | **training context** (Director, 23 Oct 00:45: its direction "dependent on prior time awake" leaked through the s20 round-3 reader). Magnitudes still unread; no full text reachable | may set or train N25 values if Ben supplies the full text; never a held-out test |
 | Chowdhury et al. 2023 eLife 12:e91355 Fig. 1 (Canton-S males, vortexer 20 s arm, 6/12/24 h ending ZT 0, day-1 normalised rebound); raw data Dryad doi:10.5061/dryad.qnk98sfpp | **held out, unspent, weakened** (registered DECISIONS 23 Oct 00:53). Protocol read (Methods only). Results/Discussion subsection titles seen (stimulus-frequency effect, yoked low-frequency rebound, little debt repaid over cycles, short bouts mask rebound, 5-HT candidate); magnitudes and the deprivation-length dependence unseen. Dryad not downloaded | score once, on the first new-structure homeostat that passes its implementation and training checks; the 00:34 mode 0/1 predictions are reported at the same read |
 | Brown et al. 2020 PLoS Genet 16:e1008270 (PMC7089559) | protocol read only (one 24 h duration, mainly females); no outcome seen | unused; not a dose series |
+| Huang et al. 2024 Nature Fig. 1 voltage imaging (PPL1 and MBON resting rates, Zenodo 10998457, `data/raw/huang2024/`) | **spent** 23 Oct 01:00 on the s20 MB noise fit: PASS 6 of 9 (F-S21-1) | consistency only from now; a per-type MB rate mechanism needs another held-out source |
 | Abhilash & Shafer 2024 two-process fit (taus 8.76 / 9.51 h, 74.36 % sleep) | model source (s20 `SLEEP_SOURCED`, neutral). C1 implementation check FAILED by 1.2 pp (F-S20-4) | not evidence for N25 |
 | Male daily sleep 618-1100 min/day (Cirelli 2008, Harbison 2013, Buchert 2022, Geissmann 2019) | seen (s20 N25 category A); C2 consistency check | consistency only |
 | Lv 2024 Fig. 2J and Wan 2021 single-pulse τ | SET the pool kinetics; U1 is a consistency check | none |

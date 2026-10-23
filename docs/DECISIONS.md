@@ -4556,3 +4556,12 @@ then. It sets `state:clock|light_input` 1, `k_tim` 0.789 and `ct_tim_h` 7.59 (bo
 **Not seen:** any magnitude, the dependence on deprivation length, and the Fig. 1 values. The ExR3 (5-HT) → dFB route in the scope was found in the connectome query at about 00:42, before this leak. The test stays usable but weakened, and it is marked so in the register.
 
 **Huber 2004** stays training context, if Ben supplies the full text.
+
+### s20 MB resting rates scored once against Huang 2024: PASS 6 of 9 (23 October, 01:01)
+Scored as registered on 22 Oct at 22:23 (F-S21-1).
+- **Fit:** σ*_DAN 1.477 and σ*_MBON 2.287 mV/√ms (fitted).
+- **Confirm:** PPL105 and MBON14 sit inside their bands on seeds 12 and 13.
+- **Huang 2024 (held out, now spent): 6 of 9 test types pass, the minimum for a pass.**
+  - Fails: PPL1-γ1, MBON-γ1 and PPL1-α3, all low by ×0.23-0.44.
+- **Not adopted tonight.** The class noise rows stay off in m10f. A stage with N21 off is next once the frontier merges, and fly2 is told of the resting DAN rates.
+- **Deviation from the registration:** the whole-brain comparison used σ = 0.5, because no σ = 0 run was made.
