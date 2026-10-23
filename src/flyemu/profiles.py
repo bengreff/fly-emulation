@@ -348,6 +348,15 @@ M10F4 = {
                                            "Hige 2015 (little recovery in 40 min) and Aso & Rubin 2016 (largely "
                                            "gone by 24 h); Berry 2018 γ2α'1 (gone by 1 h) disagrees"),
 }
+# Stage 5 (fly2, s27, 22 Oct; DECISIONS s27 N12 entry): DLM motoneuron (MN1-4) electrical coupling, Hurkey 2023.
+M10F5 = {
+    **M10F4,
+    "electrical:DLMn c-f->DLMn c-f|gap_coupling": (0.0266, _I, "frontier stage 5 (N12): fitted, one value for "
+                                                  "same-side DLMn c-f (MN1-4) pairs; in-network 20 ms pulse CC 0.0143 "
+                                                  "(clean pairs, seed 12) = pair-count mean of Hurkey 2023 Fig 2f "
+                                                  "(strong 0.023, weak 0.01; band 0.0073-0.026); subthreshold only, "
+                                                  "no spike step, MN5 unset"),
+}
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
@@ -386,6 +395,7 @@ PROFILES: dict[str, dict] = {
     "m10f2": {"values": M10F2, "kick_mv": KICK},
     "m10f3": {"values": M10F3, "kick_mv": KICK},
     "m10f4": {"values": M10F4, "kick_mv": KICK},
+    "m10f5": {"values": M10F5, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f4"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

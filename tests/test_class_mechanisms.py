@@ -222,7 +222,7 @@ def test_gap_junctions_are_neutral_by_default_and_step_the_partner_after_conduct
     # conduction time only: the presynaptic delay less the 0.5 ms chemical share
     assert (g["d_a"] >= 1).all() and (np.abs(g["d_a"] - (net.delay_steps[g["a"]] - 5)) <= 1).all()
     unresolved = on.reg.inventory()
-    assert (unresolved.property == "gap_coupling").sum() == 8
+    assert (unresolved.property == "gap_coupling").sum() == 9      # s27: DLMn split into MN1-4 and MN5 rows
     # a GF spike at step 0 fires each partner exactly d_a steps later
     first = {}
     for s in range(int(g["d_a"].max()) + 2):
@@ -233,17 +233,20 @@ def test_gap_junctions_are_neutral_by_default_and_step_the_partner_after_conduct
 
 @needs_graph
 def test_a_gap_row_value_is_tried_by_override_before_it_enters_the_table():
-    on = _org(**{"electrical:all|gap_conductance": 1.0, "electrical:^DLMn->^DLMn|gap_coupling": 0.05})
+    on = _org(**{"electrical:all|gap_conductance": 1.0, "electrical:DLMn c-f->DLMn c-f|gap_coupling": 0.05})
     g, t = on.net.gap, on.conn.neurons.type.fillna("").to_numpy().astype(str)
-    side = on.conn.neurons.somaSide.fillna("?").astype(str).to_numpy()
-    d = np.char.startswith(t[g["a"]], "DLMn")
-    assert d.sum() == 20 and np.char.startswith(t[g["b"][d]], "DLMn").all()      # 5 per side, each pair once
+    side = on.conn.neurons.somaSide.fillna("?").to_numpy().astype(str)
+    d = t[g["a"]] == "DLMn c-f"
+    assert d.sum() == 12 and (t[g["b"][d]] == "DLMn c-f").all()       # MN1-4, 4 per side, each pair once
     assert (side[g["a"][d]] == side[g["b"][d]]).all()
     assert np.allclose(g["c"][d], 0.05) and not g["c"][~d].any()
-    assert not g["k_ab"][d].any() and np.allclose(g["r"][d], 1.0)                 # spike blank, symmetric
+    assert not g["k_ab"][d].any() and np.allclose(g["r"][d], 1.0)       # spike blank, symmetric
+    assert not np.isin(t[np.r_[g["a"], g["b"]]], ["DLMn a, b"]).any()    # MN5 row unmeasured, not simulated
     req = on.reg.inventory()
-    row = req[(req.entity == "electrical:^DLMn->^DLMn") & (req.property == "gap_coupling")]
+    row = req[(req.entity == "electrical:DLMn c-f->DLMn c-f") & (req.property == "gap_coupling")]
     assert len(row) == 1 and float(row.value.iloc[0]) == 0.05
+    with pytest.raises(ValueError, match="gap_spike must be >= 0"):        # lif.step never lands a negative held kick
+        _org(**{"electrical:all|gap_conductance": 1.0, "electrical:DLMn c-f->DLMn c-f|gap_spike": -1.0})
 
 
 @needs_graph

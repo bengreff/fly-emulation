@@ -179,6 +179,8 @@ def build_gap(reg: Registry, conn, tau_m, v_rest, v_th, delay_ms, timestep_ms: f
                         model_use="not simulated: magnitude unmeasured", status=Status.UNRESOLVED,
                         evidence=note, subsystem="electrical", instances=len(a))
         if k_set:
+            if reg.overrides[f"{ent}|gap_spike"] < 0:   # lif.step lands only positive held kicks
+                raise ValueError(f"{ent}|gap_spike must be >= 0: a negative held kick never lands")
             k = np.full(len(b), float(reg.require(
                 ent, "gap_spike", units="mV per presynaptic spike",
                 model_use="candidate step on the partner after the presynaptic conduction time (s27 per-row "

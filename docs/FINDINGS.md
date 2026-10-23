@@ -2065,3 +2065,20 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - fly's resting fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0.
   - The decisive recording is item 5 in `docs/MEASUREMENT_LIST.md`.
   - Huang 2024 (held out) would answer the PPL1 resting rates when the Director releases it.
+
+### F-S27-2: C1 failed because about 4-5% of resting KC coincidences (200-440 per KC in 2.3 h) are as strong as the pairing's; a rutabaga/dunce cAMP-PKA cascade at ceiling cooperativity still misses test R by 55x, so it is ruled out as the resting-safety factor and not built (fly2, s27, 22 Oct 23:32; DECISIONS same time)
+- **Harness:** `scripts/probes/s27_cascade_predict.py` -> `runs/s27/cascade_predict.json`. s26 test R conditions: KCs 0.1 Hz, DANs 6-10 Hz, 2.3 h, the Hige charge-weighted target 0.10, pass at W >= 0.5 with N22.
+- **C1, per KC in 2.3 h at DANs 6 / 8 / 10 Hz (derived):**
+  - Coincidences (e >= 1/e): 5166 / 7004 / 8949.
+  - Crossing C1's criterion (e >= the pairing's median, about 1.14): **3.9 / 4.9 / 4.9%**, i.e. 202 / 340 / 442 events against 1.6 per pairing. These carry 85-89% of the resting depression.
+  - Saturating events (r e^4 >= 1): 68 / 89 / 160 against 1.2 per pairing.
+  - The power removes single-spike coincidences, but not the about 80 resting KC spike pairs, each seen by about 8 resting DAN spikes (4 in the pairing).
+- **Cascade (Ca^n x D, cAMP low-pass tau_c, PKA c^h, k solved per KC to the Hige target):**
+  - 108 combinations: tau_ca 0.1-1 s; tau_d 0.5 s / 15 s (Tomchik 2009 window); n 1-4 (calmodulin ceiling); tau_c 1-60 s; h 1-2. All brackets are inferred; no Hill coefficient or tau is sourced in hand.
+  - **0 of 108 pass.** Best W is 0.013. Rest must be **55x** less effective at the ceiling (n 4, h 2), and 55-552x across the grid.
+  - The ratio of mean drives (0.18-0.6 at n 4, h 2) is misleading. The charge-weighted target forces KCs with 2-3 odour spikes down (w 0.35 / 0.04), and resting spike pairs repeat that dozens of times.
+- **Meaning:**
+  - KC-side cooperativity, of any sourced form, cannot make N21 resting-safe. The missing factor is on the dopamine side:
+    - (a) stimulated DAN spikes far more effective than resting ones (no source yet);
+    - (b) plastic-compartment DANs rest far below 6-10 Hz (Huang 2024, after fly scores it).
+  - The pure product over-discriminates relative to Tomchik's measured synergy (each input alone raises cAMP). The real cascade is further from passing.

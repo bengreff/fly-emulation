@@ -4029,3 +4029,103 @@ firing should largely cancel), then (b) compartment DAN rest rates from sources 
   α'2α2 as silent. **Decision (per the Director's rule):** KC->MBON resting stability is recorded as an open mechanism
   (MECHANISM_STATUS N21). The decisive recording is MEASUREMENT_LIST item 5. N21 stays in m10f with its validity range,
   and fly's resting fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0. Nothing new is switched on.
+
+## fly2 s27: N12 DLMn coupling from Hurkey 2023, pre-registered (22 Oct 23:08 CDT, before any coupled run)
+- **Switch (done, commit 120e0f6):** a per-row override in `electrical.build_gap`, read only when set:
+  `electrical:<pre>-><post>|gap_coupling` (leak units) and `|gap_spike` (mV). Unset = the table's value. m10f is
+  bit-identical: `scripts/probes/s27_gap_identity.py` gives the same spike, voltage and gap-table hashes before and
+  after the change, and after the row split below (`runs/s27/identity_{before,after,after_split}.json`).
+- **Row split (no dynamics change; both rows blank):** `DLMn c-f,DLMn c-f,same_side` (MN1-4, measured coupling) and
+  `^DLMn a,DLMn c-f,same_side` (MN5 to MN1-4: tracer coupling only; Hurkey's model assumes half the MN1-4 mean, which
+  is an assumption, so the row stays registered and inert).
+- **Source (re-read s27 by a read-only agent, raw PMC text):** Hurkey et al. 2023 Nature 618:118 Fig 2f: CC = post
+  peak / pre peak for 20 ms subthreshold current pulses, dual patch; 0.023 +- 0.003 for MN1-MN2 and MN3-MN4 (6 pairs,
+  5 animals) and 0.01 +- 0.0027 for the other MN1-4 pairs (10 pairs, 10 animals). **The CC error bars are s.d., not
+  s.e.m.** (the s23 note said SEM; corrected). Fig 2h: spike AHP CC 0.042 +- 0.04, overshoot 0.01 +- 0.004 (n and
+  s.d./s.e.m. unstated). Rest about -60 mV; no input resistance, tau, spike or AHP amplitude given.
+- **Fit (one shared value for the class; label inferred, fitted):** the type label cannot say which DLMn c-f cell is
+  MN1-4, so the 2:1 strong/weak pair structure cannot be placed. Target = the pair-count mean over the 6 MN1-4 pairs of
+  one side, (2 x 0.023 + 4 x 0.010) / 6 = **0.0143** (derived). In-range band for one class value: 0.0073-0.026 (weak
+  mean - 1 s.d. to strong mean + 1 s.d.). Protocol in the network (`scripts/probes/s27_dlmn_cc.py`, m10f, seed 12): a
+  20 ms **depolarising** subthreshold pulse into each DLMn c-f in turn (pre peak about 4-5 mV; the model's negative
+  kicks never land, see below), every potential taken relative to an identical unstimulated run; CC = mean over
+  same-side DLMn c-f pairs, both directions. Solve c by interpolation, then confirm at the solved c.
+- **Unit check:**
+  - Implementation (not held out): CC at the solved c within 5% of 0.0143; both directions within 5%; no pulse spike.
+  - Held out, the AHP CC (0.042): **cannot be run.** In m10f the DLMn reset to rest (v_reset = v_rest = -52 mV, tau
+    20 ms) and have no AHP current; the uncoupled diagnostic (`runs/s27/dlmn_cc_uncoupled.json`) shows a 0.0 mV AHP.
+    A LIF spike also has no overshoot for the junction to carry, and the spike step stays blank (spike amplitude
+    unreported). So Fig 2h stays unspent, and the junction's measured function (AHP-carried desynchronisation, the
+    splay lost in shakB RNAi) is a missing mechanism: DLMn need an AHP (N2/N4 intrinsics, fly's rows).
+- **Adoption:** m10f5 = m10f4 + the fitted override, only if gate G (`closed_loop_check.py` seeds 12-15) and the 60 s
+  smoke S (seed 12) pass. Validity range stated with it: subthreshold coupling of MN1-4 only; no spike or AHP
+  transmission, so it cannot reproduce Hurkey's splay. Falsifier: G or S fails, or the solved c gives a CC outside
+  0.0073-0.026 at either band edge's c (it cannot by construction; recorded for completeness).
+- **Found on the way (fly2 owns N12):** `lif.step` lands a held kick only when positive, so a negative kick, or a
+  negative gap spike step, is held forever and cancels later positive kicks. The new `gap_spike` override refuses
+  negative values for that reason.
+- **Amendment (22 Oct 23:32 CDT, after the fit runs; corrections and post-hoc changes, labelled):**
+  - **The "AHP cannot be run" claim above was wrong.** The uncoupled diagnostic used negative kicks, which never land,
+    so it showed nothing. With 100 mV spike kicks, every model DLMn c-f has a presynaptic AHP of -5.4 mV (from its
+    rung-1 channels). The AHP CC was therefore computed in all four fit runs before any band for it was written.
+    Hurkey Fig 2h is **seen**: a consistency check only, never held-out evidence (register updated in HANDOFF).
+  - **Scoring changed after seeing data (post hoc).** A cell pulsed earlier still carries a slow undershoot of about
+    -0.04 mV for more than 80 ms. That biased the as-registered all-pairs mean low, by up to 65% asymmetry between the
+    two directions of a pair, and gave one negative pair at c 0.02. The fit uses `s27_dlmn_cc_baseline.py`:
+    - each peak is taken from the cell's own value at pulse onset;
+    - only clean pairs count (partner not yet stimulated in the run): 12 per run, one direction each.
+  - **Fit (inferred, fitted):** clean pulse CC 0.01081 / 0.01613 / 0.01792 at c 0.02 / 0.03 / 0.0334. Linear
+    (0.532 c + 0.00017), giving **c = 0.0266**. Confirm run at 0.0266: **0.01433** (target 0.0143; 12 pairs,
+    0.01362-0.01498). No pulse spike (8 spikes = the 8 spike kicks). Pre peak 4.38 mV.
+    - Band-edge c: 0.0134 / 0.0485.
+    - AHP CC at 0.0266: 0.0155 (0.0113-0.0300), against 0.042 +- 0.04 measured. Inside one s.d., but seen.
+    - DLMn a, b (MN5) unchanged: CC 0.0, its row is unset.
+  - **"Both directions within 5%":** clean scoring reads each pair in one direction only. A reversed-order run at
+    0.0266 (`--reverse`) reads the other direction; its result is recorded in F-S27-1 before adoption.
+  - **Gate:** m10f5 = m10f4 + `electrical:DLMn c-f->DLMn c-f|gap_coupling` 0.0266 (`profiles.py`). Gate G (seeds 12-15)
+    and smoke S (60 s, seed 12) launched on backhouse `~/fly2_mc` at 23:30, from the current src, params and model
+    (backup `~/fly2_mc_pre_s27.tgz`). Same bands as 21 Oct 21:35.
+
+## fly2 s27: the rutabaga/dunce cAMP-PKA cascade is ruled out as N21's resting-safety factor, by prediction (22 Oct 23:32 CDT; nothing built, no held-out data used)
+- **Brief (Director, s27):**
+  - Explain quantitatively why C1 (KC coincidence e^4) failed test R.
+  - State what the cascade's sourced kinetics predict for R.
+  - Build only if that prediction could pass.
+- **Harness:** `scripts/probes/s27_cascade_predict.py` writes `runs/s27/cascade_predict.json` (Mac, about 1 min). It
+  uses s26 test R: KCs at 0.1 Hz, DANs at 6-10 Hz, 2.3 h, Hige target CS+ charge ratio 0.10 (2.86 spikes per CS+ KC),
+  pass at naive weight W >= 0.5 with N22 on.
+- **Why C1 failed (derived, s26 C1 rule, r 0.223).** Per KC over 2.3 h at DANs 6 / 8 / 10 Hz:
+  - **Coincidences:** 5166 / 7004 / 8949 resting DAN spikes arrive within about one eligibility tau of a KC spike
+    (e >= 1/e).
+  - **Criterion crossings:** **3.9% / 4.9% / 4.9%** cross C1's criterion, the per-event strength of the pairing
+    (e >= the pairing's median e, 1.13-1.15, which needs two KC spikes within about 1 s). That is 202 / 340 / 442
+    events per KC, against 1.6 per pairing, and they carry 85-89% of the resting depression.
+  - **Saturating events:** 68 / 89 / 160 events reach r e^4 >= 1 (e >= 1.455), each zeroing the weight on its own,
+    against 1.2 per pairing.
+  - **Why the power doesn't help:** e^4 discards the 95% of coincidences that are single spikes. It cannot discard
+    resting KC spike pairs, about 80 per KC in 2.3 h, and each of those is seen by about 8 DAN spikes at rest against
+    4 in the pairing.
+- **Cascade prediction:**
+  - **Form:** cyclase drive Ca^n x D (multiplicative); cAMP is that drive low-passed by tau_c (dunce); PKA is c^h in
+    the expansive regime; w = exp(-k x integral of PKA). k is solved to the Hige target per KC, charge-weighted.
+  - **Sourced (Tomchik & Davis 2009):**
+    - supralinear, rut-dependent cAMP for coincident KC depolarisation and DA;
+    - DA up to about 15 s after the KC input still synergises;
+    - each input alone also raises cAMP, so the pure product used here over-discriminates, an upper bound.
+  - **Rut:** Ca/CaM activation about 5-fold.
+  - **No source in hand gives a Hill coefficient or a time constant.** Gervasi 2010 is paywalled, with no numbers.
+  - **Grid (all inferred brackets), 108 combinations:** tau_ca 0.1 / 0.5 / 1 s; tau_d 0.5 s (lif.py) / 15 s
+    (Tomchik); Ca cooperativity n 1 / 2 / 4 (4 = calmodulin's sites, the ceiling); tau_c 1 / 10 / 60 s; PKA h 1 / 2.
+- **Result:**
+  - **0 of 108 pass R.** Best W at 2.3 h is 0.013 (n 4, h 2, tau_ca 0.5 s, tau_d 0.5 s, tau_c 10 s).
+  - Rest would have to be **55x** less effective to pass at that ceiling, and 55-552x across the grid (n 1, h 1:
+    457-552x).
+  - The ratio of mean drives looks passable (0.18-0.6 for n 4, h 2). It isn't the test: the mean pairing drive comes
+    from KCs with 4-5 spikes, while the charge-weighted target forces KCs with 2-3 spikes down (w 0.35 and 0.04 after
+    one pairing).
+  - At rest, KC spike pairs and triples then recur dozens of times per KC, each meeting at least the pairing's
+    dopamine. Calcium cooperativity separates one spike from two. It cannot separate a resting pair from an odour pair.
+- **Verdict: ruled out as the resting-safety factor at any sourced or ceiling cooperativity (55x short). Not built.**
+  - The factor has to act on the dopamine side: stimulated DAN spikes far more effective than resting ones (candidate a), or
+    plastic-compartment DANs resting far below 6-10 Hz (candidate b; Huang 2024 after fly scores it).
+  - The cascade remains a fidelity rung for how plasticity works (N21), not a fix for resting safety.
