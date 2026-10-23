@@ -374,39 +374,77 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s25, DA-only KC->MBON restoration pre-registered, built behind a switch (off), unit checks pass; Hattori confirm passes (3 of 4 seeds, seed 14 running), Hige regression passes; resting check fails, so not adopted (22 Oct 05:09)
+## fly2: s26, m10f4 adopted (smoke passes, so `m10f` = m10f4); resting-retention test R fails for every sourced KC->MBON form, so N21 is valid only while DANs rest below about 0.0015 Hz; two-compartment tests fixed (22 Oct 22:36)
 
 fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
-**From fly (21 Oct 01:22; Director as Ben):** fly is cleared to append leg_MN and core_premotor rows to `data/params/two_compartment.csv` and `two_compartment_classes.csv`. Turning on `two_compartments_where_point_fails` also turns those on, so DLMn-only runs need them neutralised (fly s15).
-
-- **For the Director (decisions taken or needed):**
-  - Done as asked: MB resting-rate fit targets are in fly's section above; Huang 2024 is declared HELD OUT in the register (03:58, before anyone opened it); the dopamine-only rule is pre-registered (DECISIONS 22 Oct 04:11, run amendment 04:22) and built CPU-first behind a neutral switch.
-  - **Deviation from the brief: Hige 2015 backward pairing is not the falsifier, and stays unspent.** Under a rule that restores toward baseline, a naive synapse is already at baseline, so backward pairing (DA before odour) can't change it; the test would pass by construction. It is kept for a later potentiation variant (cap target or timing LTP). The held-out test is Berry 2018 Fig 5H-I (sealed by a figure-check agent, never read by fly2).
-  - **Resting conflict (derived, for fly and the Director):** the linear per-spike rules can't coexist with resting DAN rates. See the caution in fly's section. Needs a decision on order: fly2 makes N21 resting-safe first, or fly's resting fit runs with N21 off.
-- **Done this session (s25):** commits efb9a35, c0b2f78, 24e06f8, 629bffc, 8d6e958, edbff29, f5325e7 (+ FINDINGS F-S25-1 and this HANDOFF).
-  - Figure check (Sonnet subagent, foreground): `docs/research/s25_restoration_figcheck.md`. Cohn 2015 Figs 6-7 and Hattori 2017 Fig 6F values; Berry 2018 and Hige 2015 protocols only, their values sealed in `docs/research/sealed/s25_restoration_heldout_sealed.md`.
-  - Rule (`lif.py`, `kc_mbon_dan_restore_rate`, neutral 0, parameters row `n21_dan_restore`, guessed): each step in which a DAN spikes, its compartments' KC->MBON weights move a fraction r toward baseline, `w <- w + r (w0 - w)`, independent of KC activity, applied before depression. GPU path refuses (as for all KC plasticity, U5).
-  - Unit checks: U1 bit-identical to the pre-s25 `lif.py` at r 0 under m10f4 (170 steps, 5073 spikes; `scripts/probes/s25_restore_u1.py`); U2-U4 in `tests/test_class_mechanisms.py` (geometric approach to baseline, naive weights untouched, other compartments untouched). All pass.
-  - Provisional fit (`scripts/probes/s25_restore_fit.py`, analytic): r 0.00289 per DAN spike at 20 spike-steps per Hattori stimulation (2 per 50 ms pulse, guessed; 1 and 4 give 0.00578 and 0.00145). Predicted recovery 5.6/16/29/44% against 8/18/33/40%, chi2 1.12 (3 dof).
-  - **Resting check (pre-registered): FAIL.** At 6-10 Hz resting DAN rates a memory would last 35-58 s, not the 2.3-10.4 h bracket. Compatible only below 0.04 Hz. So r_res can't be adopted into any profile where DANs fire at rest.
-  - Derived, not pre-registered: m10f4's depression alone would collapse KC->MBON weights within about 3 s at those resting rates (see fly's section).
-- **Running, left on purpose:**
-  - **Mac:** `runs/s25/restore/` (driver `run_s25b.sh`, pid 52991, which took over from `run_s25.sh` at 04:27 to run three lanes, 2 threads each; done-file `ALL.done`, expected about 05:35). Hattori confirm (MBON16/17 with PPL104, seeds 12-15) and Hige forward regression (MBON11/PPL101, seeds 12-15), both at r 0.00289. Score with `.venv/bin/python scripts/probes/s25_restore_summary.py`. Pass rules: DECISIONS 22 Oct 04:11 and 04:22. In hand: Hige regression PASS at all 4 seeds (CS+ 0.089-0.112); Hattori confirm at seeds 12, 13, 15 inside the bands at every n (0.056/0.160/0.294/0.440, S counted 20; FINDINGS F-S25-1, figure viewed `runs/s25/restore/fig_s25_restore.png`). Seed 14 still running: score it with the summary script, re-render the figure and add the 4-seed line to F-S25-1. To stop: `pkill -f run_s25b.sh; pkill -f kc_mbon_pairing`.
-  - **Backhouse:** the m10f4 60 s smoke (pid 57241, started 02:25, about 07:00; `~/fly2_mc/runs/s24/fc/smoke_m10f4_s12.json`, done-file `smoke_m10f4.done`; check with `/tmp/fly2n/bh_gate4st.sh`). Pass is whole brain 0.162-0.486 Hz and active fraction 0.014-0.042; expected identical to m10f3 (0.3037 / 0.0273). If you don't want it, kill pid 57241; m10f stays m10f3.
-  - **If the smoke passes:** set `PROFILES["m10f"] = PROFILES["m10f4"]` (profiles.py, the line after the PROFILES dict), add an S line to F-S24-2, and update the MECHANISM_STATUS header note and N21/N22.
+- **For the Director (decision needed):**
+  - **What makes a spontaneous DAN spike about 10^3-10^4 times less effective than a pairing one?** Test R (F-S26-1) shows that no sourced form in hand keeps a KC->MBON memory for 2.3 h at KCs 0.1 Hz and DANs 6-10 Hz while still fitting Hige 2015 and Hattori 2017. The forms tested were: m10f4 itself, with s25 restoration, KC coincidence e^4, DAN burst d^2, and Berry restoration only.
+  - The reason is rate ordering. Every pairing protocol drives the DAN at or below its resting rate, and a spontaneous KC spike leaves about the same eligibility as an odour.
+  - Options, all inferred:
+    - (a) Stimulated DAN spikes signal far more dopamine than spontaneous ones. Needs a source.
+    - (b) The plastic compartments' DANs rest far below 6-10 Hz. The 6-10 Hz is PPL1-α'2α2 only; Huang 2024 is held out, fly's data.
+    - (c) A state gate.
+    - (d) A fitted threshold, which the brief rejects.
+  - Until then, **fly's resting-rate fit runs with `cell_type:all|kc_mbon_ltd_timing_rate` 0** (or on m10f3). With N21 on and DANs firing, every KC->MBON weight goes to 0 in seconds. N22 alone is passive and safe.
+- **Done this session (s26):**
+  - **m10f4 smoke S scored:** 0.3037 Hz (band 0.162-0.486), active fraction 0.0273 (band 0.014-0.042), no runaway, no NaN, 0 warnings, identical to m10f3. **ADOPTED:** `PROFILES["m10f"] = PROFILES["m10f4"]` (`src/flyemu/profiles.py`), with the validity range stated in DECISIONS 22 Oct 22:28, F-S24-2, F-S26-1 and MECHANISM_STATUS.
+  - **Test R**, pre-registered in DECISIONS 22 Oct 22:28; the harness-fix amendment at 22:31 came before any verdict. Harness: `scripts/probes/s26_retention.py`, output `runs/s26/retention.json`, about 30 s on the Mac.
+    - Results at 2.3 h, DANs at 6/8/10 Hz:
+      - R0 (m10f4): naive weight W 0.001 (uniform KCs). FAIL.
+      - R1 (+ restoration): W 0.15-0.19. FAIL.
+      - C1: W 0.002. FAIL.
+      - C2: W 0.001. FAIL.
+      - C3 (restoration only, 1.16e-5 per spike): passes R by construction, but forms no memory and predicts 0.23% Hattori recovery against 40 ± 6%.
+    - R0 passes only below 0.0015 Hz resting DAN. All of this was predicted analytically before the runs.
+  - **s25 closed:** Hattori confirm seed 14 scored, so it passes at 4 of 4 seeds (0.056/0.160/0.294/0.440, F-S25-1). The Hige regression passes at 4 seeds. `kc_mbon_dan_restore_rate` stays at neutral 0.
+  - **Two-compartment tests (6 failing, now 8 of 8 pass):**
+    - Cause: fly's s15b leg_MN and core_premotor rows in `data/params/two_compartment.csv`. With the switch on, every row must match a cell, and the 5-cell DLMn test graph has none of theirs, so `lif._two_compartments` correctly raised "matches no cell or no edge".
+    - Fix: the tests now leave those classes out with fly's arm control, `cell_class:<class>|two_compartments_in_run` 0 (`DLMN_ONLY` in `tests/test_two_compartment.py`). The refusal in `lif.py` is unchanged.
+- **Running:** nothing of fly2's is running at the park.
 - **Next, in order:**
-  1. Score Hattori seed 14 when `ALL.done` appears (above) and add the 4-seed line to F-S25-1. S was counted at 20 at seeds 12, 13 and 15, so no refit is needed unless seed 14 differs.
-  2. Berry 2018 held-out arm (analytic model expectation F about 0.05, recorded in DECISIONS 22 Oct 04:28 before opening): a new `kc_mbon_pairing.py` mode (MCH CS+ and OCT, 5 s odours 45 s apart; Learn trials 3-5, 6 x 1 ms DAN pulses at 2 Hz from 1 s after MCH onset; Forget trials 8-10, the same train 22 s before MCH; Paired>Unpaired minus Paired>Decay). Compute F from the model first, then a scorer opens the sealed file. Cost: about 450 s simulated per arm, so about 5 h per run on the Mac. Either pre-register a compressed dead time (between events only N22 acts, and the Decay arm subtracts it), or run on backhouse when load is below 24.
-  3. A resting-safe form of N21 (depression and restoration) before any profile has DANs firing at rest; needs a source for the threshold (DAMB low-affinity receptor, burst coding), pre-registration first.
-  4. Then from s24's list: the DLMn coupling row from Hurkey 2023; N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first); B3, B4, B12.
-- **Known misses of the s25 rule:** DA alone doesn't potentiate naive synapses (Cohn 2015 Figs 6A-C, 7D do); CS- doesn't change (Hige about -25%); one rate for all compartments; compartments are a DAN->MBON contact proxy; spikes per light pulse guessed.
-- **Earlier fly2 state (unchanged; FINDINGS F-S24-1/2, F-ZIP-1..4, F-GJ-7):** m10f = m10f3; m10f4 fitted and held-out tested (Handler 2019 spent). MECHANISM_STATUS fly2 rows: 0 done of 49. Scoreboard 1 of 8 (PER labellar). N30 option B UNDECIDED (`docs/MEASUREMENT_LIST.md` item 1). DLMn never follow the giant fibre.
-- **Literature in hand:** `docs/research/s25_restoration_figcheck.md`, `docs/research/s24_fly2_ltp_and_mb_rest_lit.md`, `docs/research/s23_fly2_synaptic_plasticity_lit.md`. Switch inventory: `scripts/probes/switch_inventory.py --profile m10f0`.
-- **Backhouse:** `~/fly2_mc` is the 725cf46 archive plus shipped probes (`m10f_unit_checks.py`, `kc_mbon_pairing.py` of s24; the s25 probe and `lif.py` are not shipped yet; ship via `/tmp/fly2n/mk_ship*.py` then `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`). Send commands as scripts; cmd.exe breaks quoted `bash -c` with `;`. At most 4 threads, queue above load 24 (load 22-25 tonight from other users).
-- **Mac lessons:** detach with nohup + disown. The worktree guard refuses `$(...)`, heredocs into nohup/git/python-in-git and any compound command it can't verify; write scripts to `/tmp/fly2n` with the Write tool and run them plainly. `runs/` is a symlink (Write refuses it; copy into it). zsh errors on an unmatched glob: run watchers under bash with `shopt -s nullglob`. No `timeout`, no foreground `sleep`. The Mac probe runs at about 40 s wall per simulated second alone, 60-100 s with three lanes.
-- **Carried:** body hook (fly owns the premotor->MN fix; then rerun the five scoreboard protocols and step R); stance loop CS rows (fly2); optic lobe T4/T5 dendritic position (Behnia 2014 sealed); `pytest tests/test_gpu_batched.py` under JAX on backhouse.
-- **Stay out of:** the VNC files, fly's switches and the flyapp worktree. Don't open `data/raw/huang2024/` (held out) or `docs/research/sealed/*`.
+  1. The Director's answer on the missing factor (above). With (a) or (b) sourced, pre-register a resting-safe N21, then retest R and the Hige, Handler and Hattori regressions.
+  2. Berry 2018 held-out arm: the analytic model expectation F is about 0.05 (DECISIONS 22 Oct 04:28, recorded before opening). It needs a new `kc_mbon_pairing.py` mode: MCH CS+ and OCT, 5 s odours 45 s apart; Learn trials 3-5; Forget trials 8-10; Paired>Unpaired minus Paired>Decay. Compute F from the model first, then a scorer opens the sealed file. It takes about 5 h per run on the Mac, so either pre-register a compressed dead time or run on backhouse when load is below 24. Berry tests forgetting by DAN activity, so it is only worth spending once N21 is resting-safe.
+  3. From s24's list:
+     - the DLMn coupling row from Hurkey 2023;
+     - N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first);
+     - B3, B4, B12.
+- **Known misses of N21/N22:**
+  - No LTP.
+  - DA alone doesn't potentiate naive synapses (Cohn 2015).
+  - CS- doesn't change (Hige: about -25%).
+  - One rate for all compartments, and compartments are a DAN->MBON contact proxy.
+  - The eligibility and DA trace taus are guessed.
+  - Not resting-safe (F-S26-1).
+- **Earlier fly2 state (FINDINGS F-S24-1/2, F-S25-1, F-ZIP-1..4, F-GJ-7):**
+  - MECHANISM_STATUS fly2 rows: 0 done of 49.
+  - Scoreboard: 1 of 8 (PER labellar).
+  - N30 option B is UNDECIDED (`docs/MEASUREMENT_LIST.md` item 1).
+  - DLMn never follow the giant fibre.
+- **Literature in hand:**
+  - `docs/research/s25_restoration_figcheck.md`
+  - `docs/research/s24_fly2_ltp_and_mb_rest_lit.md`
+  - `docs/research/s23_fly2_synaptic_plasticity_lit.md`
+  - Switch inventory: `scripts/probes/switch_inventory.py --profile m10f0`.
+- **Backhouse:**
+  - `~/fly2_mc` is the 725cf46 archive plus the shipped probes. The s25 probe and `lif.py` are not shipped yet. Ship via `/tmp/fly2n/mk_ship*.py`, then `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`.
+  - Send commands as scripts: cmd.exe breaks a quoted `bash -c` that contains `;`.
+  - At most 4 threads, and queue above load 24.
+- **Mac lessons:**
+  - Detach with nohup + disown.
+  - The worktree guard refuses `$(...)`, heredocs into nohup, git or python-in-git, and any compound command it can't verify. Write scripts to `/tmp/fly2n` and run them plainly. DECISIONS is over 256 KB, so Read it with offset and limit before an Edit.
+  - `runs/` is a symlink (Write refuses it; copy into it).
+  - zsh errors on an unmatched glob.
+  - There is no `timeout` and no foreground `sleep`.
+  - The full pytest takes several minutes (detached, `/tmp/fly2n/run_all.sh`).
+- **Carried:**
+  - The body hook: fly owns the premotor->MN fix; then rerun the five scoreboard protocols and step R.
+  - The stance loop CS rows (fly2).
+  - Optic lobe T4/T5 dendritic position (Behnia 2014 is sealed).
+  - `pytest tests/test_gpu_batched.py` under JAX on backhouse.
+- **Stay out of:**
+  - the VNC files, fly's switches and the flyapp worktree;
+  - `data/raw/huang2024/` (held out) and `docs/research/sealed/*` (don't open either).
 
 ## Where the project stands
 
@@ -535,6 +573,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Berry 2018 Fig 5H-I, unpaired DAN activity after learning erases the MBON-γ2α'1 memory trace (Paired>Unpaired vs Paired>Decay) | **SEALED** (values in `docs/research/sealed/s25_restoration_heldout_sealed.md`, written by a figure-check agent, never read by fly2). Held out for the s25 restoration rule; score F = (R_post2 - R_post1)/(R_pre - R_post1) from the model first, then open | spend once, as the held-out test of `kc_mbon_dan_restore_rate` |
 | Huang 2024 Nature Fig 1 voltage-imaging spikes (Zenodo 10998457 Figure1.zip, `data/raw/huang2024/`; 5 PPL1 + 6 MBON types, 20 flies each) | **HELD OUT, unseen** (declared 22 Oct 03:58 by the Director, before anyone opened it; fly2 s24 listed the zip structure only, and one PPL1-α'3 trial's spike count showed in that listing) | held out for **MB plasticity (N21/N22) and DAN/MBON dynamics, resting rates included** (fly and fly2). Not a fit target for anything. Open once, as the check, only after a written pre-registration names the readout and the pass band. The fit targets for MB resting rates are Huang 2018 PPL1-α'2α2 6-10 Hz and Hafez 2023 MBON-α3 12 Hz (fly's section) |
 | Handler 2019 Fig 2D-E, ISI dependence of KC->MBON plasticity (γ4 signs: −1.2 s potentiation, 0 and +0.5 s depression, +6 s minimal) | **spent** on m10f4 (F-S24-2, 22 Oct): H1 and H2 pass, H3 fails (no LTP) | don't reuse as held out; a future LTP rule needs a new held-out set |
+| Huang et al. 2018 PPL1-α'2α2 resting rate (6-10 Hz) and Turner 2008 KC rest (0.1 Hz) | fly's resting-fit targets; used by fly2 s26 as the rest CONDITION of test R (F-S26-1), not fitted to and not scored against | none |
 | Turner 2008 KC odour responses (6 ± 5% respond; α/β 2.2, α'/β' 4.9 spikes per odour) | seen; set the KC drive in `kc_mbon_pairing.py` (F-S24-2) | none |
 
 ## Things that will bite you

@@ -1948,6 +1948,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **N22 unit check (implementation):** with forgetting on and tau overridden to 1 s, the mean CS+ deviation decays with tau 1000.0 ms (300 points). **Pass.** At the adopted 3 h, the derived recovery is 20% at 40 min and essentially complete by 24 h.
 - **Gate (m10f4; G seeds 12-15, S 60 s):** G 0.0 non-eye spikes/ms, no NaN, 0 warnings, and identical to m10f3 in every JSON value at every seed. S (the pre-registered 60 s smoke, seed 12) was still running at 03:33 and finishes about 07:00, so it is not scored here and `m10f` stays m10f3. Its 10.5 s checkpoint (0.3054 Hz, 0.0268 active) equals the m10f3 10.5 s checkpoint in all 244 recorded values; only the profile name, build time and wall time differ. That is consistent with the prediction but is not the pre-registered test.
   - Why identical: in the m10f3 60 s smoke, all 4064 KCs, all 340 PAM/PPL DANs and all 97 MBONs are silent (0 Hz). So the rule never fires at rest, and the gate says nothing about it. The KC resting rate in vivo is about 0.1 Hz (HANDOFF register), so the silent mushroom body at rest is itself a miss of the resting state, not of this mechanism.
+  - **S scored (s26, 22 Oct 22:18):** 0.3037 Hz, active fraction 0.0273, no runaway, no NaN, 0 warnings, identical to m10f3. **Pass**; `m10f` = m10f4 (F-S26-1, with the resting-DAN validity range).
 - **Limits:**
   - Compartments are proxied by DAN->MBON contacts.
   - One rate for all compartments, though Hige finds that α2 needs a much longer protocol.
@@ -1965,7 +1966,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - U4: edges outside the spiking DANs' compartments are exactly unchanged.
   - U5: the GPU path refuses (code inspection). All pass.
 - **Fit (fitted, analytic, provisional; `scripts/probes/s25_restore_fit.py`):** r 0.00289 per DAN spike-step, from weighted least squares on Hattori Fig 6F at S = 20 spike-steps per stimulation (10 light pulses × 2 spikes, guessed). Predicted recovery is 5.6/16/29/44% against 8/18/33/40% after 1/3/6/10 stimulations, chi2 1.12 (3 dof). S = 10 or 40 gives r 0.00578 or 0.00145.
-- **In-network confirm (implementation check, not evidence; MBON16/17 = MBON-α'3ap/m with PPL104 = PPL1-α'3, inferred mapping; seeds 12-15):** S counted 20 spike-steps per stimulation at every seed, as assumed. There were no KC spikes during the stimulations. PPL104 is the only DAN type contacting MBON16/17, and it contacts all four cells. Recovery after 1/3/6/10 stimulations is 0.056/0.160/0.294/0.440 at seeds 12, 13, 15, identical to 3 decimals (depressed CS+ ratio 0.014-0.018), against the bands -0.02..0.18, 0.04..0.32, 0.21..0.45 and 0.28..0.52: inside at every n. The network reproduces the analytic fit, so this checks the implementation and the counted S, not the rule. **Seed 14 was still running at the park** (`runs/s25/restore/hattori_s14.json`, done-file `ALL.done`). The pre-registered 4-seed mean is scored by `.venv/bin/python scripts/probes/s25_restore_summary.py` once it lands. The seeds in hand agree to 3 decimals, so seed 14 would have to differ by more than 0.12 at n 10 to change the verdict.
+- **In-network confirm (implementation check, not evidence; MBON16/17 = MBON-α'3ap/m with PPL104 = PPL1-α'3, inferred mapping; seeds 12-15):** S counted 20 spike-steps per stimulation at every seed, as assumed. There were no KC spikes during the stimulations. PPL104 is the only DAN type contacting MBON16/17, and it contacts all four cells. Recovery after 1/3/6/10 stimulations is 0.056/0.160/0.294/0.440 at seeds 12, 13, 15, identical to 3 decimals (depressed CS+ ratio 0.014-0.018), against the bands -0.02..0.18, 0.04..0.32, 0.21..0.45 and 0.28..0.52: inside at every n. The network reproduces the analytic fit, so this checks the implementation and the counted S, not the rule. **Seed 14 (scored s26, 22 Oct):** the same 0.056/0.160/0.294/0.440 (S counted 20, depressed ratio 0.0099). The pre-registered 4-seed mean is inside every band: **HATTORI CONFIRM (4 seeds): PASS** (`scripts/probes/s25_restore_summary.py`).
 - **Regression (seen, not evidence):** the Hige 2015 Fig 3D forward CS+ ratio with r on is 0.099/0.108/0.112/0.089 at seeds 12-15, a pass (band 0.06-0.14 at every seed; m10f4 alone gave 0.097/0.106/0.110/0.087).
 - **Resting check (pre-registered): FAIL.**
   - At PPL1-α'2α2's measured resting rate (6-10 Hz, Huang 2018), a memory would last tau = -1/(f ln(1 - r)) = 58/43/35 s, against the 2.3-10.4 h bracket.
@@ -1981,3 +1982,38 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - One rate for all compartments.
   - Spikes per light pulse guessed.
 - Figure (viewed): `runs/s25/restore/fig_s25_restore.png` (`scripts/probes/s25_restore_figure.py`).
+
+### F-S26-1: no sourced form of KC->MBON plasticity tested here keeps a memory for hours at measured resting rates (KCs 0.1 Hz, DANs 6-10 Hz); m10f4's depression is safe only while its DANs rest below about 0.0015 Hz, and m10f moves to m10f4 with that validity range (fly2, s26, 22 Oct 22:34; DECISIONS 22 Oct 22:28, amendment 22:31)
+- **Smoke S (m10f4, seed 12, 60 s, backhouse):** whole brain 0.3037 Hz (band 0.162-0.486), active fraction 0.0273 (band 0.014-0.042), no runaway, no NaN, 0 MuJoCo warnings, identical to m10f3. **Pass.** `m10f` = m10f4 (`src/flyemu/profiles.py`). This closes F-S24-2's open S.
+- **Test R harness:** `scripts/probes/s26_retention.py` -> `runs/s26/retention.json` (about 30 s on the Mac). It is event-driven, one compartment, using the lif.py N21/N22 update order. Harness check: the Hige pairing at r 0.430 gives a CS+ ratio of 0.067 (band 0.06-0.14). **Pass**, after the pre-registered amendment, which set 2.86 spikes per CS+ KC and charge weighting as in the network.
+- **Results at 2.3 h** (M = memory index, M(0) 0.90, pass needs M ≥ 0.331; W = naive weight / w0, pass needs W ≥ 0.5; DANs at 6 / 8 / 10 Hz):
+
+  | rule | uniform KCs W | heterogeneous KCs W | M | verdict |
+  |---|---|---|---|---|
+  | R0, m10f4 (depression 0.430) | 0.001 / 0.001 / 0.001 | 0.20 / 0.22 / 0.23 | -0.03 to 0.52 (meaningless with W near 0) | **fail** |
+  | R1, R0 + s25 restoration 0.00289 | 0.15 / 0.17 / 0.19 | 0.42 / 0.44 / 0.46 | -0.08 to 0.20 | **fail** |
+  | C1, KC coincidence e^4 (rate re-solved to Hige: 0.223) | 0.002 at every rate | 0.20-0.23 | | **fail** |
+  | C2, burst dependence d^2 (rate re-solved: 0.177) | 0.001 at every rate | 0.20-0.23 | | **fail** |
+  | C3, Berry restoration only (1.16e-5 per DAN spike, N22 off) | 1.0 | 1.0 | 0.51 / 0.42 / 0.34 | **pass R**, by construction |
+  | C3 with N22 on | 1.0 | 1.0 | 0.24 / 0.19 / 0.16 | **fail** |
+
+  - In the heterogeneous variant, W stays near 0.2 only because 20% of KCs never fire at rest and keep their weights.
+  - C3 has no depression, so it cannot form a memory. It also predicts 0.23% recovery after 10 Hattori 2017 stimulations, against a measured 40 ± 6%, so it misses Hattori by about 170×. It is a forgetting term, not a plasticity rule.
+  - Every result matches the analytic prediction written before the runs.
+- **Validity bound (derived):** R0 passes R only when the compartment's DANs rest below **0.0015 Hz**. At 6-10 Hz, its depression is about 4000-7000× too strong. In m10f4, 0 of 340 DANs fire at rest, so the adopted rule is inside this bound today.
+- **Why the sourced forms fail (derived):**
+  - Every pairing protocol used (Hige 2 Hz, Handler 2 Hz) or held out (Hattori about 7 Hz) drives the DAN at or below the measured resting rate.
+  - So any per-spike rule that increases with DAN rate or DAN bursting (C2) rewards rest at least as much as it rewards pairing.
+  - A spontaneous KC spike leaves an eligibility of about 1 at the next DAN spike, close to the odour-evoked mean of about 1.4. So KC-side cooperativity (C1) buys little; 4 forming DAN spikes against about 70,000 resting ones in 2.3 h cannot be bridged by a power of e.
+  - The rule needs something that makes a spontaneous DAN spike far less effective than a stimulated one, by a factor of about 10^3 to 10^4.
+- **Inferred candidates, none sourced in hand; for the Director:**
+  - (a) Stimulated DAN activity releases or signals much more dopamine per spike than spontaneous spikes. Needs a source.
+  - (b) DANs in the plastic compartments rest far below 6-10 Hz. The 6-10 Hz figure is PPL1-α'2α2 (Huang 2018); PPL1-γ1pedc and PAM-γ4 may differ. Huang 2024 is held out (fly's data).
+  - (c) A state gate on plasticity.
+  - (d) A fitted threshold, which the brief rejects.
+- **Consequence:** fly's resting-rate fit must run with N21 off (`cell_type:all|kc_mbon_ltd_timing_rate` 0 in the run, or m10f3). Otherwise every KC->MBON weight goes to 0 within seconds once DANs fire. N22 alone is passive and resting-safe.
+- **Limits:**
+  - One compartment, with one DAN spike = 1 unit of dopamine.
+  - Poisson KCs and DANs; no MBON->DAN feedback.
+  - Eligibility and DA trace taus are guessed, as in lif.py.
+  - The 6-10 Hz rate is from one compartment's DAN.

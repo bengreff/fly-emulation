@@ -3926,3 +3926,59 @@ Director brief, 22 Oct. Sources: Cohn 2015, Berry 2018 and Hattori 2017, with Hi
     - No DAN spikes come from the network at rest; DANs are silent in m10f4.
     - N22 cancels in Paired>Unpaired minus Paired>Decay.
   - The scored value is still the in-network one; this line only records what the rule implies before the test.
+
+## fly2 s26: m10f4 smoke scored; resting-retention test R for KC->MBON plasticity pre-registered (22 Oct 22:28 CDT, before any R run)
+
+**m10f4 60 s smoke S (scored 22:18, backhouse, finished 06:26):** whole brain 0.3037 Hz (band 0.162-0.486), active
+fraction 0.0273 (band 0.014-0.042), no runaway, no NaN, 0 MuJoCo warnings; identical to m10f3, as predicted. G passed
+(s24). By the 21 Oct 21:35 rule, m10f moves to m10f4. Validity range (stated with the adoption): DANs are silent at rest
+in m10f4 (0 of 340 fire), so N21 depression acts only in driven protocols. The rule is not resting-safe (test R below).
+
+**Test R: does KC->MBON memory last hours at the resting rates? (Director, 22 Oct; Ben's order item 1)**
+- Harness: `scripts/probes/s26_retention.py`, event-driven, one compartment, the lif.py N21/N22 update order copied
+  (per DAN spike: restore toward w0, then w *= clip(1 - r e^n, 0, 1); KC eligibility e +1 per spike, tau 1 s; N22
+  relaxation tau 3 h between events). One DAN spike adds 1 to the compartment's dopamine signal (PPL1 compartments
+  have one DAN per side; inferred).
+- Rest (measured): KCs Poisson 0.1 Hz (Turner et al. 2008, 0.1 +- 0.4 Hz); a heterogeneous variant with 20% silent KCs
+  (14 of 71 never fired) and the rest exponential with mean 0.125 Hz. DANs Poisson at 6, 8 and 10 Hz (Huang et al.
+  2018, PPL1-α'2α2).
+- Start: a Hige-style memory. 1000 KCs; CS+ = 6% (Turner: 6 +- 5% respond) at w = 0.10 w0 (the F-S24-2 fit target);
+  a disjoint CS- 6% and all others at w0.
+- Readouts at 1, 2.3 and 3 h: memory index M = 1 - mean w(CS+)/mean w(CS-), M(0) = 0.90; naive weight W = mean w/w0
+  over non-CS+ KCs.
+- **Pass (each DAN rate):** M(2.3 h) >= M(0)/e (memory tau >= 2.3 h, the low edge of the N22 bracket) **and**
+  W(2.3 h) >= 0.5 (the MBON still hears odours).
+- Harness check first (not scored): the Hige pairing in the harness (2.2 Poisson KC spikes in a 1 s odour, DAN spikes
+  at 200/700/1200/1700 ms, no rest activity) at r 0.430 must give a CS+ ratio inside 0.06-0.14, as the network did.
+- Rules, at their fitted or sourced values; **nothing is fitted to R**:
+  - R0, m10f4 as adopted: depression 0.430, no restoration.
+  - R1, R0 + s25 restoration 0.00289 per DAN spike.
+  - C1 (KC-side coincidence, the Director's "coincidence windows"): depression on e^4 instead of e, n 4 from
+    calmodulin's four Ca2+ sites gating Rutabaga (inferred, Livingstone et al. 1984 lead); its rate re-solved in the
+    harness so the Hige pairing still gives 0.10.
+  - C2 (DAN burst against tonic): depression scaled by the compartment dopamine trace d (tau 500 ms, lif.py), as d^2
+    (supralinear receptor activation, inferred), its rate re-solved to the Hige pairing as for C1.
+  - C3 (Berry 2012 forgetting as the feature): restoration only, at the rate that makes the 8 Hz resting memory tau
+    exactly 3 h (derived); reported with its prediction for Hattori 2017 Fig 6F (40 +- 6% after 10 stimulations).
+- **Prediction written before running (analytic):** R0 collapses W within seconds (depression rate about
+  f_DAN x 0.43 x 0.1 Hz x 1 s = 0.26-0.43 per s); R1 adds a 35-58 s memory tau; C2 fails harder than R0 because the
+  Hige pairing drives the DAN at 2 Hz, below the 6-10 Hz rest (any rule increasing in DAN rate rewards rest more than
+  the pairing); C1 fails by more than 10x; C3 passes R by construction and fails Hattori by more than 100x.
+- **If every rule fails:** no sourced mechanism in hand makes N21 resting-safe at 6-10 Hz. Then (a) N21 stays valid
+  only while its compartments' DANs are near-silent at rest (the bound is reported), (b) fly's resting-rate fit runs with
+  N21 off (the Director's fallback), and (c) the decision on what supplies the missing factor goes to the Director.
+- Amendment (22 Oct 22:31, after the harness check failed, before any R verdict is scored or reported). The first
+  harness run gave a Hige CS+ ratio of 0.292 at r 0.430 (band 0.06-0.14), so the harness did not reproduce the
+  network. Two differences from `kc_mbon_pairing.py`, read from `runs/s24/kc/fit_s12.json`: the network's CS+ KCs fire
+  2.86 spikes per odour on average (type mix 2.2/4.9), and its ratio is charge-weighted (sum of spikes x w over sum
+  of spikes), so KCs that don't fire carry no weight. The harness used 2.2 spikes and an unweighted mean (floor
+  P(0 spikes) = 0.11, which is also why C1/C2 could not be solved). Fixed to Poisson 2.86 and charge weighting; the
+  network's mean eligibility at the four DAN steps (0.56/1.39/1.47/0.89) checks the event timing. C3 is "restoration
+  only" as written, so N22's passive term is off in C3 (the first run had it on, giving tau 1.5 h); the with-N22
+  variant is reported too. Retention readouts and pass rules are unchanged.
+- **Outcome (22 Oct 22:34, F-S26-1):** every rule fails except C3, which passes by construction, cannot form a memory,
+  and misses Hattori by about 170x, as predicted. The "if every rule fails" branch applies. N21 stays in m10f with its
+  validity range (DANs at rest below about 0.0015 Hz; 0 of 340 fire in m10f4). fly's resting-rate fit runs with
+  `cell_type:all|kc_mbon_ltd_timing_rate` 0 (or m10f3). The missing factor is a decision for the Director: (a) stimulated
+  DAN spikes signal far more than spontaneous ones (needs a source), (b) the plastic compartments' DANs rest far below
+  6-10 Hz (Huang 2024 is held out), (c) a state gate, or (d) a fitted threshold (rejected by the brief).

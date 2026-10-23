@@ -47,6 +47,9 @@ def _conn():
 
 
 S20 = {"cell_class:MN|axon_membrane_share": 0.07, "cell_class:MN|soma_axon_coupling": 1.6}
+# s26: the table's later classes (s15b leg_MN, core_premotor) have no cell in this graph, and a row that matches no
+# cell is refused; the s15 arm control leaves them out, as a DLMn-only run does
+DLMN_ONLY = {"cell_class:leg_MN|two_compartments_in_run": 0.0, "cell_class:core_premotor|two_compartments_in_run": 0.0}
 
 
 def _reg(two=True, psp=True, s20=True, **over):
@@ -55,6 +58,7 @@ def _reg(two=True, psp=True, s20=True, **over):
         r.overrides.update(S20)
     if two:
         r.overrides[KEY] = 1.0
+        r.overrides.update(DLMN_ONLY)
     if psp:
         r.overrides[PSP_KEY] = 1.0
     r.overrides.update(over)
