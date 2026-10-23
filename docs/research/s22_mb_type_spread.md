@@ -52,6 +52,35 @@ Spearman ρ over the 11 types (n = 11, p uncorrected, descriptive only):
 - Note: male-cns `predictedNt` calls 4,058 KCs "dopamine". The build already overrides this with consensusNt
   acetylcholine (`connectome.py`, Davis 2020), so the model is not affected.
 
+## Synaptic events at rest (no run; partner rates from `runs/s20/mb/confirm_s12.json`)
+
+Each type's input weight × the presynaptic type's rate at rest (MB types from the confirm run; every other cell at
+the whole-brain mean 0.034 Hz). Sign from consensusNt, else predictedNt: ACh +, GABA and glutamate − (the model's
+GluCl convention, inferred), dopamine no fast sign. These are synaptic events per s per cell, not currents.
+
+| type | excitatory ev/s | inhibitory ev/s | of which from active MB types | model / data |
+|---|---|---|---|---|
+| MBON11 | 355 | 7,423 | 7,420 | 0.23 |
+| PPL101 | 2,042 | 3,114 | 3,035 | 0.34 |
+| PPL106 | 614 | 470 | 432 | 0.44 |
+| MBON12 | 233 | 3,478 | 3,455 | 0.53 |
+| PPL103 | 1,287 | 3,135 | 3,089 | 0.56 |
+| MBON13 | 219 | 2,988 | 2,966 | 0.78 |
+| MBON14 | 543 | 2,466 | 2,462 | 0.79 |
+| PPL105 | 878 | 1,342 | 1,310 | 0.89 |
+| MBON17 | 512 | 807 | 798 | 1.07 |
+| MBON18 | 377 | 1,789 | 1,756 | 1.13 |
+| PPL104 | 4,641 | 263 | 238 | 1.92 |
+
+- Inhibitory events against the model/data ratio: ρ −0.67 (p 0.023); excitatory: +0.17 (0.61).
+- Almost all the inhibition at rest comes from other MBONs firing at 11-16 Hz: the glutamatergic MBON → MBON
+  links of the MB output network. MBON11's largest are MBON05 (203 synapses per cell, 12.8 Hz) and MBON06 (123,
+  13.1 Hz). PPL101's largest is MBON11 itself (GABA).
+- So candidate 2 has support. Two of its parts are open: the sign of glutamate at these links (GluCl inhibition
+  is inferred, not measured for MBON → MBON), and the MBON rates themselves. Where in vivo MBONs fire at Huang's
+  rates, KC drive (candidate 1) would have to balance this. PPL1-α3 (PPL106) is the exception: little inhibition,
+  still slow, so it points to candidate 3 or to missing excitation.
+
 ## Next
 
 A rest run with the input current split by source (KC, inhibitory, excitatory non-KC, noise) per type. That
