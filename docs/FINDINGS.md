@@ -2108,7 +2108,21 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - Subthreshold DC coupling of MN1-4 only. The spike step stays blank (spike amplitude unreported), so overshoot is not carried. The AHP is carried only as the model's own AHP through the junction.
   - The 2:1 strong/weak pair structure can't be placed, since the type label can't say which cell is MN1-4.
   - MN5 coupling is unmeasured.
-  - Hurkey's functional result (splay: sync index 0.56 vs 0.61 under shakB RNAi) is not tested, and is unspent.
+  - Hurkey's functional result (the splay gap around phase 0, which shakB RNAi removes, Fig. 2b and Extended Data Fig. 6) is not tested here; it is the second check registered in DECISIONS 23 Oct 03:34. Correction (23 Oct 03:34): the "sync index 0.56 vs 0.61" quoted here before was the Shab knock-down, not shakB.
+
+### F-S27-3: N21 candidate (b) is ruled out for every recorded PPL1 compartment: Huang 2024's PPL1 DANs rest at 5-27 Hz per fly, at least 3,300x above the 0.0015 Hz test R needs (fly2, s27, 23 Oct 03:37)
+- **Data (measured).** Huang et al. 2024 Fig. 1 voltage imaging (`data/raw/huang2024/Figure1.zip`), released to fly2 by the Director at 03:25 after fly spent it once as a held-out test of resting rates (F-S21-1). Using it here as a bound on a model assumption spends nothing new: the rates are already training context for the MB and nothing is fitted to them. Readout as fly's (`scripts/probes/s21_mb_huang_score.py`): trial spikes / duration, then the mean of the trials within each fly. Script `scripts/probes/s27_huang_ppl1_rest.py`, output `runs/s27/huang_ppl1_rest.json`.
+
+  | type | flies | min (Hz) | P10 | median | max | flies < 0.1 Hz | min / 0.0015 Hz |
+  |---|---|---|---|---|---|---|---|
+  | PPL1-γ1 | 20 | 12.3 | 12.8 | 20.4 | 26.6 | 0 | 8,200 |
+  | PPL1-γ2 | 20 | 7.8 | 8.8 | 11.7 | 18.1 | 0 | 5,200 |
+  | PPL1-α′3 | 20 | 5.0 | 6.1 | 7.7 | 24.3 | 0 | 3,400 |
+  | PPL1-α3 | 20 | 8.4 | 10.9 | 14.0 | 23.4 | 0 | 5,600 |
+  | PPL1-α2 | 20 | 7.1 | 7.4 | 8.5 | 13.0 | 0 | 4,800 |
+
+- **Verdict (derived).** Not one of the 100 flies has a PPL1 DAN at rest within three orders of magnitude of the bound, so N21's resting safety can't come from silent DANs in these compartments. Huang 2024 records no PAM types, so the PAM compartments are still open. PAM DANs are also tonically active in calcium (F-S26-3), so this is no reason to expect PAM rest near the bound.
+- **What is left on the Director's 22 Oct ladder:** (a), a dopamine-side gate. Ueno 2017 doesn't supply it: there's no magnitude or timing, and its NMDA requirement conflicts with Hige 2015's in-vivo depression from DAN activity alone (HANDOFF s27). (b) and (e) are ruled out, and the cAMP-PKA cascade is ruled out by prediction (F-S27-2). N21 stays in m10f with its validity range. fly's note (01:10) agrees: the model DANs fire at 6-15 Hz at fitted noise, so any run with σ*_DAN on must set `cell_type:all|kc_mbon_ltd_timing_rate` 0.
 ### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
 - **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure
   pixels, derived). Refined grid: Mi4 output a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16; a* = 0.0649.
