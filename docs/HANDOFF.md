@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 04:10 CDT, session 22 (fresh context after s21, same night).
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 04:27 CDT, session 22 (fresh context after s21, same night).
 - **Brief:** Director, 23 Oct 01:10, plus "now" (budget to about 05:15).
   - Order: (1) adopt N26 and the MB noise stage on fly2's frontier once it is on main; (2) build the N25 reduced ER5/dFB loop on the CPU under its registration, switch off by default; (3) the MB type-spread gap (model 6-15 Hz vs data 8-35 Hz): look for a per-type source (input counts, intrinsic properties), not per-type noise.
   - Tonight: item (2). Item (1) waits on fly2's merge.
@@ -29,10 +29,10 @@
   - Fragmented nights come only with weak need coupling (γ ≤ 0.5); with k_r fixed at 1/26 min the structure cannot have both.
   - **Proposed amendment T5** (mean night bout ≤ 335 min). Its candidate (τ_rise 18 h, γ 2, k_off 0.00639, λ 2), re-run with 2,048 flies, predicts **70.3 / 111.3 / 131.1 min (± 3.4)**. Written down before any held-out read.
 - **k_r diagnostic** (registered 03:45, result 04:09; F-S22-2). Training only. At the measured upper end of the restart rate (k_r 0.094 min⁻¹), 6 sets reach Garbe-like nights (4.3-6.3 bouts of 100-133 min, γ 1-4). Every one of them breaks the day into 16-23 bouts of 18-30 min (Garbe: 8.7 ± 3.3 of 57 ± 25). No set matches both. Figure viewed: `docs/media/s22_n25_bouts.png`. One ON → OFF rate with a day-only light term cannot fragment the night without over-fragmenting the day, so a revision probably needs a night-specific element (clock input to dFB or ER5, or dark arousal), not a refit.
-- **MB type spread, first look** (item 3, exploratory, no run; `docs/research/s22_mb_type_spread.md`). In the model, rate falls with input count across the 11 Huang types (ρ −0.83); in the data it does not (+0.34). The under-firing types (γ1 pair, PPL1-α3, PPL1-γ2) are the large, heavily innervated cells. At rest they get the most glutamatergic and GABAergic events from other MBONs (ρ −0.67 with model/data), while KCs sit at 0 Hz. PPL1-α3 is the exception. In the network's own weights (`scripts/probes/s22_mb_rest_drive.py`, no sim): all 11 types have identical intrinsic rows (τ_m 20 ms, gap 7 mV), so the type differences are all synaptic; inhibition from active MBONs tracks the gap (ρ +0.69, p 0.019), and silent KCs are the obvious class-level counterweight (a single KC rate of 0.04-0.70 Hz would cancel each type's net inhibition; MBON11 gets 3,034 mV/s per KC Hz).
+- **MB type spread, first look** (item 3, exploratory, no run; `docs/research/s22_mb_type_spread.md`). In the model, rate falls with input count across the 11 Huang types (ρ −0.83); in the data it does not (+0.34). The under-firing types (γ1 pair, PPL1-α3, PPL1-γ2) are the large, heavily innervated cells. At rest they get the most glutamatergic and GABAergic events from other MBONs (ρ −0.67 with model/data), while KCs sit at 0 Hz. PPL1-α3 is the exception. In the network's own weights (`scripts/probes/s22_mb_rest_drive.py`, no sim): all 11 types have identical intrinsic rows (τ_m 20 ms, gap 7 mV), so the type differences are all synaptic; inhibition from active MBONs tracks the gap (ρ +0.69, p 0.019), and silent KCs are the obvious class-level counterweight (a single KC rate of 0.04-0.70 Hz would cancel each type's net inhibition; MBON11 gets 3,034 mV/s per KC Hz). Measured KC spontaneous rate 0.1 ± 0.4 Hz (Turner 2008): a partial counterweight only.
 - **Decision for the Director (QUESTIONS FOR BEN in the reply):** score Chowdhury once on the locked prediction, on the T5 amendment, or revise the structure first (clock input, sleep-link threshold, arousal term; a new registration). Only one prediction gets scored, named before Dryad is opened.
 - **Not adopted.** Switch stays 0; N25 stays partial.
-- **Commits:** 5f60cbf (mode 1 and registration), b338a38 (tests, bound fix, reads), b02b3a3 (fit, locked prediction, figure), 75ea668 (bout check, F-S22-1), ea3f940 (HANDOFF), 9845367 / 0fd3bae / dadb57b (k_r diagnostic registered, result, timestamp fix), 6c9893e / 84be319 (MB note), plus this one (bout figure, HANDOFF).
+- **Commits:** 5f60cbf (mode 1 and registration), b338a38 (tests, bound fix, reads), b02b3a3 (fit, locked prediction, figure), 75ea668 (bout check, F-S22-1), ea3f940 (HANDOFF), 9845367 / 0fd3bae / dadb57b (k_r diagnostic registered, result, timestamp fix), 6c9893e / 84be319 / f64259e (MB note, rest drive), 07ff22f (bout figure), plus this one (KC rate read, tests, HANDOFF).
 
 ## Running now
 Nothing of mine. Not mine; never touch: fly2's processes and the other projects' tmux sessions on backhouse.
@@ -40,7 +40,7 @@ Nothing of mine. Not mine; never touch: fly2's processes and the other projects'
 ## Next (this order)
 1. **N26 adoption stage** once fly2's frontier is on main (DECISIONS 23 Oct 00:09). Same for an MB noise stage with N21 off (F-S21-1).
 2. **N25:** the Director's call above. If scoring: build the scoring pipeline from Chowdhury's raw DAM files (5-min rule, ZT windows, the Huber pass rule of the 00:53 registration) and spend it once. If revising: register the new structure and its training checks first (T1-T5, plus day and night bouts inside Garbe's range, F-S22-2).
-3. **MB type-spread gap** (item 3; `docs/research/s22_mb_type_spread.md`): read a measured spontaneous KC rate (Sonnet), then a rest run with KCs at that rate (class level, switch off by default), descriptive only. Adoption needs a new held-out MB rate source, registered first (Huang is spent). Also open: the glutamate sign at MBON → MBON/DAN links. No per-type noise fitting.
+3. **MB type-spread gap** (item 3; `docs/research/s22_mb_type_spread.md`): the measured KC rate is 0.1 ± 0.4 Hz (Turner 2008, females; read s22), which offsets only 14-64 % of each type's net inhibition at rest (27 % for MBON11). Next: a rest run with KCs at 0.1 Hz (class level, switch off by default), descriptive only, and a read on the glutamate sign at MBON → MBON links (MBON05/MBON06 → MBON11 carry most of MBON11's inhibition). Adoption needs a new held-out MB rate source, registered first (Huang is spent). Also open: the glutamate sign at MBON → MBON/DAN links. No per-type noise fitting.
 4. **N19:** Li 2017 PN rows, then McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
 5. S5/N28 Q10; S1-S4 follow-ups.
 - Tell fly2: the ER5 network gain (not built yet; only the reduced loop and per-cell dFB drive exist) will sit next to its plasticity rows. DANs fire at 6-15 Hz at rest in the fitted MB model, and at 8-20 Hz in Huang 2024; that matters for N21's memory-wipe rule.
@@ -49,7 +49,7 @@ Nothing of mine. Not mine; never touch: fly2's processes and the other projects'
 - MB resting rates: one noise per class (σ*_DAN 1.477, σ*_MBON 2.287 mV/√ms, fitted) passes held-out Huang 2024 by the minimum, 6 of 9 (spent; F-S21-1). Spread compressed (6-15 Hz vs 8-35 Hz). Not adopted.
 - N25 scoped (`docs/research/s21_n25_homeostat_scope.md`) and the Chowdhury 2023 test registered (DECISIONS 23 Oct 00:53). A leak of qualitative Results subsection titles is recorded there; no magnitudes seen.
 - Connectome (male-cns, measured): ER5 (21) ⇄ ExR1 (4; helicon, inferred) 10,044 / 5,624 synapses; dFB → ExR1 260; R5 → dFB only via ExR3 (5-HT) 211 → 692; dFB input 31 % serotonergic, 0.1 % dopaminergic.
-- Tests at the end of s22: the two N25 test files pass (30, run once without the slot limiter); the full suite last run in s22 before the fit: 291 passed, 6 failed, all in fly2's `tests/test_two_compartment.py`.
+- Tests at the end of s22 (04:26, slot limiter, 13.7 min): 291 passed, 6 failed, all in fly2's `tests/test_two_compartment.py` (unchanged from the start of s22).
 
 **s20 (kept for reference).**
 - N26 CRY-TIM light input: the held-out Lamba ZT21 passed (F-S20-3); the Director has accepted it.
@@ -563,6 +563,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Liu et al. 2016 Cell 165:1347: R2 (= ER5, inferred) BRP raised at +2 h, back at +24 h; firing about 3× ZT13-15 vs ZT0-2 | SET τ_decay bracket (s21) and training checks T3, T4 of the s22 fit | can't validate N25 |
 | Pimentel et al. 2016 Nature 536:333: dFB restart 25.86 ± 7.61 min (7 of 15, after > 12 h SD) | SET k_r (s22, the rate at full need) | can't validate N25 |
 | Garbe et al. 2015 Biol Open 4:1558 Fig. 2 (iso31 males, SB/MB DAM bouts; own figure read) | training (s22): night bout check, proposed T5 | can't validate N25 bouts |
+| Turner, Bazhenov & Laurent 2008 J Neurophysiol 99:734: KC spontaneous 0.1 ± 0.4 Hz (71 KCs, Canton-S females; text) | seen (s22, Sonnet reader; MBON/DAN rates barred, unseen): SET candidate for a KC rest rate | can't validate MB rest rates |
 | Male daily sleep 618-1100 min/day (Cirelli 2008, Harbison 2013, Buchert 2022, Geissmann 2019) | seen (s20 N25 category A); C2 consistency check | consistency only |
 | Lv 2024 Fig. 2J and Wan 2021 single-pulse τ | SET the pool kinetics; U1 is a consistency check | none |
 | Burggren 2017 respirometry and male mass; PMC8774106 TAG; PMC4335172 crop and gut | SET the s19 sourced values (`internal_state.SOURCED`) | can't validate S1-S4 |

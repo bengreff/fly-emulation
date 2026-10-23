@@ -110,9 +110,20 @@ The m10f3 network as built for the MB rest run (fitted class noise, plasticity o
 
 ## Next
 
-1. Read a measured spontaneous KC rate in vivo (class level, source cited; Sonnet reader). No value is assumed
-   here.
-2. A rest run with KCs firing at that rate (Poisson, class level, switch off by default). Check whether the type
-   pattern moves toward the data, descriptively: Huang is spent, so adoption needs a new held-out MB rate source,
-   registered first.
-3. The sign of glutamate at MBON → MBON and MBON → DAN links (GluCl inferred) is the other open assumption.
+1. **Measured KC rate (read 23 Oct, Sonnet reader, KC rates only; MBON and DAN rates barred and not seen).**
+   - Turner, Bazhenov & Laurent 2008 J Neurophysiol 99:734: "very low spontaneous firing (0.1 ± 0.4 spike/s)"
+     (mean ± s.d.). Whole-cell at the soma; 71 KCs, 14 of which never fired; Canton-S **females**, 1-2 days old;
+     subtypes pooled. Text value; measured, other sex.
+   - Gruntman & Turner 2013 Nat Neurosci 16:1821: "most cells had a baseline rate of zero" (no number).
+   - Murthy et al. 2008 and Inada et al. 2017 give no baseline rate of their own (Inada cites Turner).
+   - No per-subtype spontaneous rate exists in these papers.
+2. **At 0.1 Hz, KC drive offsets only part of the inhibition** (mean drive, the network's weights):
+   - MBON11 +303 against −1,115 mV/s (27 %), MBON12 14 %, MBON13 18 %, MBON14 25 %, MBON17 26 %, MBON18 43 %;
+   - PPL101 64 %, PPL103 51 %, PPL105 41 %; PPL106 turns net excitatory.
+   - So KC firing at the measured mean is a partial counterweight, largest in absolute terms for MBON11. It
+     cannot close MBON11's gap alone, and the MBON → MBON inhibition stays the main lever.
+3. **Next.**
+   - A rest run with KCs at 0.1 Hz (Poisson, class level, measured, switch off by default). Descriptive only:
+     Huang is spent, so adoption needs a new held-out MB rate source, registered first.
+   - Read the evidence for the sign of glutamate at MBON → MBON and MBON → DAN links (GluCl inhibition is inferred
+     in the model). MBON11's inhibition at rest comes mostly from glutamatergic MBON05 and MBON06.
