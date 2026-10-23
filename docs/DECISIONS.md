@@ -4507,3 +4507,52 @@ then. It sets `state:clock|light_input` 1, `k_tim` 0.789 and `ct_tim_h` 7.59 (bo
 - **The model fails the qualitative claim.** Huber's abstract says recovery "was dependent on prior time awake", seen through the round-3 reader. On that the model fails as a structure, whatever the magnitudes turn out to be. The cap comes from fixed thresholds with long single episodes, not from the values.
 
 **Register.** Huber 2004's qualitative direction is now seen; its magnitudes are unseen and unspent.
+
+### s21 N25 held-out rebound test: Chowdhury et al. 2023 Fig. 1, registered before any magnitude is read (23 October, 00:53)
+
+**Director (00:45).** Huber 2004's direction leaked, so it is now training context. Register Brown 2020 or Chowdhury 2023, whichever has the cleaner deprivation-length series.
+
+**Choice: Chowdhury, Abhilash, Ortega, Liu & Shafer 2023 eLife 12:e91355 (PMC10642965, CC-BY).**
+- It is the only one of the two with a deprivation-length series in one wild-type line and one sex: Canton-S males, vortexer in DAM, 6, 12 and 24 h.
+- Brown et al. 2020 PLoS Genet 16:e1008270 has one duration (24 h), mainly in mated females, varied by method.
+- The protocol came from a Sonnet reader that reported no outcomes, plus my own read of the Methods subsections only. The XML is pinned at `data/raw/chowdhury2023/PMC10642965_fullText.xml`, downloaded 23 Oct 00:52.
+
+**Protocol (Methods, verbatim facts).**
+- Flies: male Canton-S, 5-7 days old at loading, single in DAM tubes on 5 % sucrose / 2 % agar, 12:12 LD, 25 °C. One acclimation day, then 1 baseline day.
+- Deprivation: vortexer shakes each DAM for 2 s at random, every 20, 120 or 220 s.
+  - 24 h runs ZT 0-24, 12 h runs ZT 12-24 and 6 h runs ZT 18-24, so all end at lights-on of recovery day 1.
+  - Arms (from the reader, legends): 6 h at 20 s (n 62) and 220 s (n 57); 12 h at 20 s (64) and 220 s (64); 24 h at 20 s (32), 120 s (64) and 220 s (64).
+- Sleep: DAM beam crossings in 20 s bins, ≥ 5 min of inactivity.
+- Rebound: (focal post − focal pre) − (unperturbed post − unperturbed pre), with total sleep per 24 h day. "Post" is days 1, 2 and 3 after deprivation, "pre" is the baseline day. Units: min per 24 h.
+- Sleep during deprivation is measured: debt = deprivation-window 24 h sleep minus baseline 24 h sleep.
+- Raw data: Dryad doi:10.5061/dryad.qnk98sfpp. **Not downloaded and not opened.**
+
+**What is scored (spent once).**
+- **Primary:** the 20 s arm, 24 h deprivation, day-1 normalised rebound (min).
+- **Secondary:** the 20 s arm, 6 h and 12 h, day 1.
+  - The 20 s arm is primary because it comes closest to the reduced loop's assumption of complete deprivation (activity forced to 1).
+  - The 120 and 220 s arms are reported, not scored. Our model has no path by which the stimulus itself affects sleep, and that sleep-independent effect is the paper's own subject (validity limit).
+- Our counterpart is the model's recovery-day sleep minus the same day without deprivation, with 24 h windows from ZT 0. That is exactly the "gain, 24 h" column of DECISIONS 23 Oct 00:34, and in an entrained model the unperturbed difference is 0.
+
+**Pass rule (the Huber rule of 23 Oct 00:27, unchanged).**
+- Compute each arm's group mean ± 2 SEM from the Dryad raw data with the paper's formula and the ≥ 5 min criterion. If the raw data cannot be read, use a blind figure read with its read uncertainty added.
+- **Pass:** the primary point lies inside its span, and the 6 h and 12 h predictions both lie inside theirs (two-thirds of the other durations, which with two means both).
+- **Also reported, not part of the pass:**
+  - the ordering rule: the sign of 24 h − 6 h, wherever the data's difference exceeds 2 combined SEM;
+  - the residual sleep during deprivation in each arm (the model assumes 0);
+  - days 2 and 3.
+
+**What the test is spent on.** Spent once, on the first candidate of the new homeostat structure (`docs/research/s21_n25_homeostat_scope.md`) that passes its implementation check and its training checks: baseline 618-1100 min/day, night > day, and the Liu 2016 anchors.
+- The fixed 00:34 predictions for mode 0 and mode 1 are reported at the same read and spend nothing extra: mode 1 φ CT 0 gives 142 / 139 / 138 min; V3 gives 175 / 195 / 212; mode 0 gives 19 / −22 / 49 (6 / 12 / 24 h).
+- **Falsifier:** if the primary point misses, the candidate fails as a rebound model. FINDINGS gets the miss and its direction, with no refit on Chowdhury.
+
+**Leak, recorded honestly (00:52).** Printing the XML's section list also showed the Results and Discussion subsection titles. Their qualitative content is now **seen**:
+- measured rebound depends on the stimulus frequency;
+- with yoked controls, significant rebound appears with low-frequency triggers;
+- rebound accumulates over multiple cycles, but little debt is paid off;
+- short-bout sleep masks the rebound magnitude, and long-bout sleep is under potent homeostatic control;
+- serotonin is a candidate sleep substance in the central brain.
+
+**Not seen:** any magnitude, the dependence on deprivation length, and the Fig. 1 values. The ExR3 (5-HT) → dFB route in the scope was found in the connectome query at about 00:42, before this leak. The test stays usable but weakened, and it is marked so in the register.
+
+**Huber 2004** stays training context, if Ben supplies the full text.
