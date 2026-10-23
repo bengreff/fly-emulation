@@ -1,0 +1,64 @@
+{
+ "params": {
+  "k_light_per_h": 499.9999999522611,
+  "l50_lux": 29.639682717005332,
+  "ct_light_h": 6.5,
+  "mu_per_h": 1.0,
+  "period_h": 24.0
+ },
+ "guess": {
+  "k_light_per_h": 0.2,
+  "l50_lux": 10.0,
+  "ct_light_h": 8.0,
+  "mu_per_h": 1.0,
+  "period_h": 24.0
+ },
+ "history": [
+  {
+   "round": 0,
+   "k": 499.9999999522611,
+   "ct_light": 6.5,
+   "l50": 29.639682717005332,
+   "zc": null,
+   "half_lsat": 0.012395173023377858
+  },
+  {
+   "round": 1,
+   "k": 499.9999999522611,
+   "ct_light": 6.5,
+   "l50": 29.639682717005332,
+   "zc": null,
+   "half_lsat": 0.012395173023377858
+  },
+  {
+   "round": 2,
+   "k": 499.9999999522611,
+   "ct_light": 6.5,
+   "l50": 29.639682717005332,
+   "zc": null,
+   "half_lsat": 0.012395173023377858
+  }
+ ],
+ "fit_checks": {
+  "zero_crossing_ct_60min_1000lux": null,
+  "ld_zt15_shift_5min_1500lux": -3.0817251637134575,
+  "irc_half_lux_ct20_10min": 0.372
+ },
+ "consistency": {
+  "kistenpfennig_ct15_delay_60min_1000lux_h": {
+   "model": -9.48928206633958,
+   "measured": -4.05,
+   "sem": 0.18
+  },
+  "kistenpfennig_max_advance_ct_measured": 21.0,
+  "model_max_advance_ct_60min_1000lux": 18.0,
+  "vinayak_irc_half_lux_ct20_120min": {
+   "model": 0.03514291072145285,
+   "measured_inferred_lux": 0.00248
+  },
+  "ct_at_lights_on_ld12": 18.510717933660548
+ },
+ "prediction_heldout": {
+  "lamba_zt21_shift_5min_1500lux_h": -9.081329260280889
+ }
+}

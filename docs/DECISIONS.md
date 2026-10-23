@@ -4103,3 +4103,80 @@ arithmetic predicted this: all 12 PNs sit on the population prior (no type or he
 - Presynaptic 5-HT action at ORN terminals, outside N19's validity range.
 - A per-modulator a. That would need a second calibration point, and is not adopted without one.
 Dacks is now **spent**.
+
+### s20 MB resting rates with plasticity off: one noise level per class, fitted on two cells, tested on Huang 2024 (pre-registered 22 October, 22:23, before any grid run)
+**Director's held note.** fly2 found the KC->MBON rules wipe memories in seconds at real DAN resting rates. So this
+fit runs with plasticity off. In this checkout m10f3 has no N21 (it lives in fly2's worktree), and the probe asserts
+N22 forgetting is 0. ORN->PN short-term depression (N29, stage 1) stays as it is; it is not memory. Nothing here
+may enter a profile with N21 on until fly2's resting-safe rule lands.
+**Mechanism (N3, existing rows).** `class:DAN|noise` (340 cells) and `class:MBON|noise` (97 cells), in mV/√ms.
+The row bounds are 0-3, guessed. Tonic drive stays 0 because without noise the low rates are a knife-edge
+(DECISIONS s12). KC, APL and DPM are untouched: KCs at 0 Hz sit inside Turner 2008's 0.1 ± 0.4 Hz, and APL/DPM
+have no rate.
+**Probe.** `scripts/probes/s20_mb_rest.py`: m10f3, isolated CNS, no stimulus, settle 0.5 s, read 4 s.
+**Grid (seed 12).** σ in {0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0}, applied to both classes in each run.
+**Fit (labelled fitted).**
+- σ*_DAN: the first crossing of 8 Hz by PPL105's (PPL1-α'2α2) mean rate. 8 Hz is the middle of Huang 2018
+  Nat Commun 6-10 Hz.
+- σ*_MBON: the first crossing of 12.1 Hz by MBON14's (MBON-α3) mean rate (Hafez 2023 eLife).
+- Both by linear interpolation between grid points. No crossing means no fit, and that is reported.
+**Confirm (not held out).** One run at (σ*_DAN, σ*_MBON) with seeds 12 and 13. Needs PPL105 in 6-10 Hz and MBON14
+in 9.7-15.1 Hz (×/÷1.25, guessed). Whole-brain rate and active fraction are reported against σ = 0.
+**Held-out test, once: Huang et al. 2024 Nature Fig. 1 voltage imaging** (Zenodo 10998457, `data/raw/huang2024/`).
+This is unseen, and the register names it for resting rates. Opened only after the confirm runs are written.
+- **Data readout.** Per trial, rate = number of `DetectedSpikes` / (t[-1] − t[0]). Average trials within a fly.
+  Per type, take the median across flies and the 10th-90th percentile across flies.
+- **Model readout.** The per-type mean rate over that type's cells at σ*, averaged over seeds 12 and 13.
+- **Map.** PPL1-γ1 → PPL101, PPL1-γ2 → PPL103, PPL1-α'3 → PPL104, PPL1-α2 → PPL105, PPL1-α3 → PPL106;
+  MBON-γ1 → MBON11, MBON-γ2 → MBON12, MBON-α'2 → MBON13, MBON-α3 → MBON14, MBON-α'3m → MBON17,
+  MBON-α2sc → MBON18. These come from instance labels; PPL106 = α3 by its 860 synapses onto MBON14.
+- **Per-type pass.** The model is inside [min(P10, median/2), max(P90, 2 × median)].
+- **Test set.** The 9 types other than PPL105 and MBON14 (the fit types). **Pass if at least 6 of 9.**
+  PPL105 and MBON14 are reported apart, as a cross-study consistency check.
+- **Falsifier.** 5 or fewer of 9: one noise level per class can't carry the per-type spread. Not adopted.
+- **Weaknesses, recorded now.**
+  - One PPL1-α'3 trial's spike count showed in fly2's zip listing.
+  - Huang's flies were on a ball, with walking and rest mixed, and spikes detected optically.
+  - The model is an isolated CNS with no body input.
+**Adoption, if it passes.** Not tonight. It needs a stage on m10f3 (name chosen then, to avoid fly2's m10f4), the
+gate, a battery run and a viewed figure, with N21 off. Until then N3 stays partial.
+
+### s20 N26 fit void: the Stuart-Landau light input cannot carry the read sources; Lamba ZT21 stays sealed and unspent (22 October, 22:43)
+The registered fit (04:44, 04:49, 05:04; `scripts/probes/s20_n26_fit.py`, `runs/s20/n26/fit.json`) did not converge:
+k ran to its 500/h bound, no PRC zero crossing was found, and lights-on in 12:12 LD fell at model CT 18.5. A k scan at
+ct_light 6.5 (the zero-crossing solution) shows why, at every k from 0.3 to 100/h:
+- **Entrained phase.** Lights-on sits at model CT 19-22, not CT 0. Light pulls the phase towards one point (ct_light), so the
+  day can't sit in a dead zone. The PRC zero crossing (CT 18.5) and the entrained phase can't both be met.
+- **Pulse length.** The shift grows with pulse length until type-0 resetting. At CT15, a 5 min pulse gives 3.5 h and a
+  60 min pulse 9.2 h (k 10). Flies give about 3.1 h for 5 min (Lamba 2014, y w, 25 °C) and 4.05 h for 60 min (Kistenpfennig 2012, w1118, 20 °C).
+**Decision.**
+- Nothing is fitted or written to `CLOCK_SOURCED`. The switch stays neutral 0 and the guessed values stay as they are.
+- The −9.08 h ZT21 "prediction" in fit.json comes from the void fit and is void. Lamba's ZT21 measurement was never
+  opened, so it stays held out, unspent.
+- The peak hours read from Liang 2016 are not written either, since they depend on a valid entrained phase.
+
+**Next.** A light input gated by a light-labile night state, i.e. CRY-dependent TIM degradation. The input is
+present only when TIM is high (subjective night) and is used up by light within minutes. That gives the dead zone
+and the pulse-length saturation. Its values come from sources: TIM's daily profile and its light degradation
+half-time (Western blots). Then re-register the fit.
+
+### s20 N19 receptor_map mode 2: Davie 2018 brain-cluster rows for types with no Davis/Ozel row (22 October, 22:43)
+- **Rows.** `data/derived/receptor_calls_davie2018.csv` (`scripts/probes/s20_davie_rows.py`) covers 122 male-cns types, 2,447 cells.
+  - p is the share of a cluster's cells with ≥ 1 UMI, pooled by cell count (derived).
+  - The crosswalk is by name (inferred): `*_adPN` → the five adPN clusters (365 cells); `*_lPN` → the three lPN clusters (107);
+    KCg* → G-KC; KCab-m → A/B-KC + A/B*-KC; MBON* → MBON; PAM* → PAM; PPL1/PPL2 → Dopaminergic; s/l-LNv → LNv; DN1* → DN1.
+  - Not covered: ventral PNs, KCa'b', ring neurons, AL local neurons.
+  - Peptide-receptor genes are in the same file (N20 data, not wired).
+- **Switch.** `neuromodulation:all|receptor_map` = 2 uses these rows for cells with no Davis/Ozel row (source 3).
+  Precedence is type > Davie > hemilineage > prior. Mode 1 is unchanged everywhere: checked equal outside the
+  2,447 cells, and Mi4 is untouched, so a* = 0.0649 still holds. The default stays 0.
+- **Scale check (overlap).** On 11 types that also have Davis/Ozel rows (143 type-gene pairs), Davie p vs Davis p gives r = 0.63.
+  Davie p runs lower (median 0.22 vs 0.99; 10x dropout), and the 5-HT2B and 5-HT7 shortfalls are the largest
+  (0.03/0.06 vs 0.30/0.27). Validity limit: Davie and Allen rows share this 10x scale, the Davis rows don't.
+- **PN result (not a score; Dacks is spent).** Under mode 2, net 5-HT is −0.29 for the adPNs and −0.11 for the lPNs, against +0.056 on the prior.
+  Postsynaptic N19 therefore predicts PN *inhibition* under 5-HT with PN-specific transcripts. Dacks 2009's
+  facilitation then has to come from paths N19 doesn't have (release from ORN terminals, LNs). The s19 failure was not only the
+  prior. A PN retry on Dacks would be both re-use and expected to fail, so it isn't run.
+- **N19's next held-out test** goes on unspent evidence for cells on type or Davie rows. Candidates are Sampson 2020 L2/T1 5-HT
+  (open access; direction already known from the abstract, magnitudes sealed unread) and a KC/MBON/LNv monoamine
+  measurement still to be found. To be registered next session.

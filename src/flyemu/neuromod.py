@@ -8,7 +8,9 @@ per-type sensitivities are all 0, runs unchanged). When on, for cell i and pool 
     u_k  = m_k / (m_k + K)                  (occupancy; K = `neuromodulation:all|half_occupancy`)
 
 p_ir is the cell's expression probability for receptor gene r (`receptors.gene_probabilities`: type rows
-from Davis 2020 / Ozel 2021, VNC hemilineage rows from Allen 2020, otherwise the population prior).
+from Davis 2020 / Ozel 2021, VNC hemilineage rows from Allen 2020, otherwise the population prior). Mode 2 of
+the switch also uses Davie 2018 brain-cluster rows (PNs by lineage, KCs, MBONs, DANs, LNv, DN1; s20) for cells
+with no Davis/Ozel row; mode 1 is unchanged.
 sign_r is the coupling rule written down before use (DECISIONS 21 Oct 21:56): +1 if every reported arm is
 Gs or Gq, -1 if Gi/o, 0 if non-canonical (`docs/research/s18_n19_receptor_coupling.md`).
 
@@ -62,7 +64,7 @@ def net_expression(P) -> np.ndarray:
 def build(reg, conn, timestep_ms: float) -> dict | None:
     """Read the N19 keys (always); the per-cell map when the switch is on, else None."""
     n = conn.n
-    on = reg.require("neuromodulation:all", "receptor_map", units="boolean",
+    on = reg.require("neuromodulation:all", "receptor_map", units="mode (0 off, 1 on, 2 on + Davie 2018 rows)",
                      model_use="N19: per-cell monoamine sensitivities from receptor transcripts, "
                                "four pools with tau_on/tau_off and occupancy (src/flyemu/neuromod.py)",
                      subsystem="neuromodulation", instances=n, minimal=0.0, conventional=0.0,
@@ -88,7 +90,7 @@ def build(reg, conn, timestep_ms: float) -> dict | None:
     from . import receptors
     from .registry import Status
     P, src = receptors.gene_probabilities(conn.neurons.type.fillna("untyped").to_numpy(),
-                                          conn.neurons.bodyId.to_numpy())
+                                          conn.neurons.bodyId.to_numpy(), davie=on >= 2)
     net = net_expression(P)
     nt = conn.neurons.predictedNt.fillna("").str.lower().to_numpy()
     rel = np.full(n, -1, np.int8)
@@ -96,7 +98,7 @@ def build(reg, conn, timestep_ms: float) -> dict | None:
         rel[nt == pool] = k
     n_rel = np.array([(rel == k).sum() for k in range(len(POOLS))])
     cover = {"type": int((src == 2).sum()), "hemilineage": int((src == 1).sum()),
-             "prior": int((src == 0).sum())}
+             "prior": int((src == 0).sum()), "davie_cluster": int((src == 3).sum())}
     reg.provide("neuromodulation:all", "receptor_map_coverage", cover, units="neurons",
                 model_use="source of each cell's receptor probabilities", status=Status.DERIVED,
                 subsystem="neuromodulation", instances=n,

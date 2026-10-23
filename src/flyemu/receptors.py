@@ -3,7 +3,9 @@
 For each cell, p(gene) = probability the cell expresses a receptor gene, taken in order of
 precedence from (2) its type in Davis 2020 / Özel 2021 (`p_expressed`, mean where both),
 (1) its VNC hemilineage in Allen 2020 (`frac_expressed`), (0) the mean over profiled types
-(population prior). The share of a transmitter's input carried by the slow (metabotropic or
+(population prior). With `davie=True` (N19 receptor_map mode 2 only), cells with no Davis/Ozel row whose type has a
+Davie 2018 brain-cluster row take that row (source 3; `data/derived/receptor_calls_davie2018.csv`, share of the
+cluster's cells with >= 1 UMI, crosswalk by name; s20). The share of a transmitter's input carried by the slow (metabotropic or
 Mg-blocked) receptor is
 
     f = s p_slow / (s p_slow + p_fast)
@@ -25,6 +27,7 @@ _REPO = Path(__file__).resolve().parents[2]
 DAVIS = _REPO / "data/derived/receptor_calls_davis2020.csv"
 OZEL = _REPO / "data/derived/receptor_calls_ozel2021.csv"
 ALLEN = _REPO / "data/derived/receptor_calls_allen2020_vnc.csv"
+DAVIE = _REPO / "data/derived/receptor_calls_davie2018.csv"
 
 # family -> (LIFParams field, slow genes (product), fast genes (max), guessed prior s)
 FAMILIES = {
@@ -36,8 +39,10 @@ FAMILIES = {
 }
 
 
-def gene_probabilities(types: np.ndarray, body_ids: np.ndarray | None) -> tuple[pd.DataFrame, np.ndarray]:
-    """(cells x genes) expression probability, and the source per cell (2 type, 1 hemilineage, 0 prior)."""
+def gene_probabilities(types: np.ndarray, body_ids: np.ndarray | None,
+                       davie: bool = False) -> tuple[pd.DataFrame, np.ndarray]:
+    """(cells x genes) expression probability, and the source per cell (2 type, 3 Davie 2018 cluster,
+    1 hemilineage, 0 prior; precedence in that order)."""
     n = len(types)
     d = pd.read_csv(DAVIS).pivot_table(index="male_cns_type", columns="gene", values="p_expressed")
     o = pd.read_csv(OZEL).pivot_table(index="male_cns_type", columns="gene", values="p_expressed")
@@ -64,6 +69,16 @@ def gene_probabilities(types: np.ndarray, body_ids: np.ndarray | None) -> tuple[
             m = have & np.isfinite(col)
             out.loc[m, g] = col[m]
         src[have] = 1
+    if davie:
+        v = pd.read_csv(DAVIE).pivot_table(index="male_cns_type", columns="gene", values="p_expressed")
+        v = v.reindex(columns=out.columns)
+        jdx = pd.Index(v.index).get_indexer(types)
+        m = jdx >= 0
+        cur = out.to_numpy().copy()
+        t = v.to_numpy()[jdx[m]]
+        cur[m] = np.where(np.isfinite(t), t, cur[m])
+        out = pd.DataFrame(cur, columns=out.columns)
+        src[m] = 3
     idx = pd.Index(by_type.index).get_indexer(types)
     m = idx >= 0
     t = by_type.reindex(columns=out.columns).to_numpy()[idx[m]]

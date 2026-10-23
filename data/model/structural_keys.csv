@@ -136,5 +136,5 @@ connectome:T1|fill_from_other_animals,X1,switch,"level. 0 male-cns synapse count
 cell_type:all|two_compartments_where_point_fails,N30,switch,"0 point neurons / 1 an axon compartment where spikes start for the cells of data/params/two_compartment.csv (DLMn a, b and c-f), with the listed inputs (PSI) on it; class values in two_compartment_classes.csv; CPU only (s20 fly2; DECISIONS 20 Oct 23:30)"
 cell_type:*|spike_initiation_compartment,N30,assignment,"axon: where the listed cells' spikes start, from two_compartment.csv with its basis, read when cell_type:all|two_compartments_where_point_fails = 1 (s20 fly2)"
 connection:*|synapse_compartment,N30,assignment,"axon: the listed inputs land on the axon compartment, from two_compartment.csv with its basis, read when cell_type:all|two_compartments_where_point_fails = 1 (s20 fly2)"
-neuromodulation:all|receptor_map,N19,switch,s19 receptor-map mode (neuromod.py): per-cell monoamine sensitivities from transcripts; neutral 0
+neuromodulation:all|receptor_map,N19,switch,s19 receptor-map mode (neuromod.py): per-cell monoamine sensitivities from transcripts; neutral 0; 2 adds Davie 2018 brain-cluster rows (s20)
 neuromodulation:all|receptor_map_coverage,N19,data,cells per receptor-probability source (type / hemilineage / prior); provided only when the switch is on

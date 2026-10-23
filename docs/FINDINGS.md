@@ -1958,3 +1958,25 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - A water-loss rate at low RH, and a lethal water-loss fraction.
   - A primary male starvation survival time.
   - A single-fly respirometry value.
+
+## Session 20 (22 October 2026)
+
+### F-S20-1: the lumped clock's light input (one pull towards ct_light, saturating only in intensity) cannot fit the light-pulse sources: in 12:12 LD lights-on lands at CT 19-22. The k that gives Kistenpfennig's 60 min delay (k ≈ 1) gives a 5 min shift of 0.26 h (flies 3.1 h). The k that gives about 3.5 h for 5 min gives 9.2 h for 60 min (flies 4.05 h). the registered fit is void and Lamba ZT21 stays unspent (s20, 22 Oct 22:43; DECISIONS same time)
+- k scan (ct_light 6.5, l50 10, `s19_n26_prc.shift_h`, `s20_n26_fit.ld_assay_shift`):
+
+  | k (/h) | lights-on CT | DD CT15, 5 min 1500 lux | DD CT15, 60 min 1000 lux |
+  |---|---|---|---|
+  | 0.3 | 21.8 | −0.08 | −0.94 |
+  | 1 | 19.8 | −0.26 | −4.00 |
+  | 10 | 18.7 | −3.51 | −9.22 |
+  | 100 | 18.5 | −8.26 | −9.46 |
+
+  The LD ZT15 shift at the same k values: −0.09 / −0.28 / −1.49 / −2.90.
+- Measured comparisons: Lamba 2014 −3.1 h (5 min, LD ZT15) and Kistenpfennig 2012 −4.05 ± 0.18 h (60 min, DD CT15). Different strains and
+  temperatures, so the ratio is approximate. Real flies are near saturation by 5 min; this model is not.
+- Status: inferred (model structure), measured inputs. N26 doesn't move. Next: a TIM-like light-labile input (DECISIONS).
+
+### F-S20-2: Davie 2018 rows give the PNs a negative net 5-HT sensitivity (adPN −0.29, lPN −0.11; the prior gave +0.056), so postsynaptic N19 predicts PN inhibition, while Dacks 2009 measured facilitation; the s19 failure is structural (no presynaptic path), not only the prior (s20, 22 Oct 22:43)
+- Rows: 122 types / 2,447 cells, N19 mode 2 (neutral default 0; mode 1 identical outside those cells).
+- Scale check against Davis/Ozel on 11 overlapping types: r = 0.63, Davie lower (10x dropout).
+- Not a score (Dacks spent). Labels: p derived, crosswalk inferred.
