@@ -3982,3 +3982,43 @@ in m10f4 (0 of 340 fire), so N21 depression acts only in driven protocols. The r
   `cell_type:all|kc_mbon_ltd_timing_rate` 0 (or m10f3). The missing factor is a decision for the Director: (a) stimulated
   DAN spikes signal far more than spontaneous ones (needs a source), (b) the plastic compartments' DANs rest far below
   6-10 Hz (Huang 2024 is held out), (c) a state gate, or (d) a fitted threshold (rejected by the brief).
+
+## fly2 s26b: candidate (e), Handler 2019 two-receptor timing rule, under test R; pre-registered (22 Oct 22:40 CDT, before any (e) run)
+
+Director note headed 22 Oct 22:50 (received 22:37 by `date` here): not (d); not (a)/(c) without a source. Try (e) Handler et al. 2019
+Cell 178:60 (Dop1R1 depression when KC precedes DA, Dop1R2 potentiation when DA precedes KC; uncorrelated resting
+firing should largely cancel), then (b) compartment DAN rest rates from sources other than Huang 2024.
+- **Is s25's restoration already the Dop1R2 side? No.** s25 restoration moves weights toward baseline on every DAN
+  spike, independent of KC activity (non-associative: Cohn 2015 unpaired, Hattori 2017, Berry 2018). Handler's Dop1R2
+  side is associative (a KC spike during the DA trace). It is already built since s10 as `kc_mbon_ltp_timing_rate`
+  (lif.py: per KC spike, w += clip(r_p d, 0, 1) (cap w0 - w), d = DA trace +1 per DAN spike, tau 500 ms, cap 2.0;
+  neutral 0). What is missing is its magnitude (Handler's are plot-only, and Handler is spent, F-S24-2), not its
+  timing dependence.
+- **Rules (harness `scripts/probes/s26_retention.py`, extended with the per-KC-spike potentiation term; same R
+  protocol, readouts and pass rule as DECISIONS 22 Oct 22:28; extra M checkpoints at 10 s, 60 s and 10 min, report
+  only):**
+  - E1a, lif.py's soft-bound form with the window integrals balanced a priori (derived): net drift at w0 under
+    uncorrelated Poisson firing is f_K f_D (r_p tau_d (cap - 1) - r_d tau_e) w0, so r_p = r_d tau_e / (tau_d (cap - 1))
+    = 2 r_d. r_d (with r_p tied) re-solved so the Hige pairing gives CS+ 0.10.
+  - E1b, the best case for W: r_p chosen so naive W(2.3 h) = 1.00 at 8 Hz, uniform KCs (**fitted to R's W**, labelled;
+    it concedes W so that M is the test), r_d re-solved to Hige with that r_p, by alternation.
+  - E2, an additive form (weight-independent steps, bounds 0 and cap w0): -a_d e w0 per DAN spike, +a_p d w0 per KC
+    spike, a_p = 2 a_d (the same balance), a_d solved to Hige.
+- **Prediction written before running (analytic):**
+  - With balance the mean drift of naive weights cancels, but memory erasure does not: soft-bound weights relax to
+    the fixed point at rate f_K f_D (r_d tau_e + r_p tau_d) = 2 f_K f_D r_d tau_e, about 0.5-1 per s at 6-10 Hz, so
+    a memory tau of about 1-2 s; additive weights diffuse with variance rate about f_D E[e^2] a_d^2 + f_K E[d^2] a_p^2
+    (E[d^2] about 18 at 8 Hz), about 0.3 w0^2 per s, filling [0, 2 w0] within about a minute.
+  - Signed cancellation removes the drift (the sum of the windows), not the erasure (their absolute sum, or the
+    sum of squares). Rest gives about f_K f_D tau_e T = 6600 KC-DAN coincidence units in 2.3 h against about 5 in the
+    pairing.
+  - So: E1a, W far from 1 because at 8 Hz rest d is about 4 and r_p d clips at 1 (the linear balance breaks), and
+    M(2.3 h) < 0.05; E1b, W 1 by construction and M(2.3 h) < 0.05 uniform, about 0.18 heterogeneous (only the 20%
+    silent KCs keep it); E2, M(2.3 h) < 0.05 and W 0.7-1.3. **Every E rule fails R.** All pass the Hige band by
+    construction if solvable.
+  - Hattori 2017: DA-only stimulation with no KC spikes (s25 confirm counted 0) gives 0 recovery under any E rule,
+    against 40 +- 6%: **fail** (derived; adding s25 restoration gives back R1, which failed R).
+- Hige 2015 backward pairing stays unspent (not scored here); Handler 2019 is spent and used only as the form.
+- If every E rule fails: on to (b); if (b) gives no compartment resting near the 0.0015 Hz bound from a measured
+  source, record MB plasticity's resting stability as an open mechanism and add the decisive recording to
+  `docs/MEASUREMENT_LIST.md` (Director, 22 Oct).

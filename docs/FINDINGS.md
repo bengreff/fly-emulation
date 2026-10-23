@@ -2017,3 +2017,40 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - Poisson KCs and DANs; no MBON->DAN feedback.
   - Eligibility and DA trace taus are guessed, as in lif.py.
   - The 6-10 Hz rate is from one compartment's DAN.
+
+### F-S26-2: candidate (e), Handler 2019's two-receptor timing rule, fails test R in every form (fly2, s26b, 22 Oct 22:42; DECISIONS 22 Oct 22:40)
+- **Is s25's restoration already the Dop1R2 side? No.**
+  - s25 restoration is KC-independent and non-associative.
+  - Handler's Dop1R2 side, DA before KC, is lif.py's `kc_mbon_ltp_timing_rate`, built in s10 and neutral 0. It is the timing-dependent term, and what it lacks is a sourced magnitude.
+- **Harness:** `scripts/probes/s26_retention.py --e` writes `runs/s26/retention_e.json` (about 2 min on the Mac). The per-KC-spike potentiation was added, and the R0 regression is unchanged (W 0.0008 at 8 Hz). The Hige pairing band is met by construction: CS+ 0.100 for E1a (r_d 0.541, r_p 1.082) and for E2 (a_d 0.706, a_p 1.411).
+- **Results at 2.3 h, DANs at 6 / 8 / 10 Hz.** W = naive weight / w0, which must be ≥ 0.5 to pass. With uniform KCs, M is meaningless because CS+ and CS- weights are both near 0.
+
+  | rule | W, uniform KCs | W, heterogeneous KCs | M, heterogeneous | verdict |
+  |---|---|---|---|---|
+  | E1a, soft-bound, windows balanced (r_p = 2 r_d) | 0.085 / 0.025 / 0.036 | 0.27 / 0.24 / 0.26 | 0.36 / 0.52 / 0.56, only the silent KCs | **fail** |
+  | E1b, r_p chosen for W = 1 | unattainable: W is 0.018 at r_p 100 | | | **fail** |
+  | E2, additive, balanced (a_p = 2 a_d) | 0.059 / 0.011 / 0.031 | 0.25 / 0.23 / 0.25 | 0.40 / 0.55 / 0.59 | **fail** |
+
+  - Hattori 2017: DA-only stimulation with no KC spikes gives 0 recovery under every E rule, against a measured 40 ± 6%. **Fail.**
+- **Against the prediction written beforehand:**
+  - Held:
+    - "Every E rule fails R".
+    - E1a's W far from 1, because the linear balance breaks at rest.
+  - Wrong:
+    - E1b was predicted attainable, but it is not.
+    - E2's W was predicted at 0.7-1.3 but came out 0.01-0.06.
+    - In the uniform case, M can't be assessed.
+  - Why the details were wrong: both rules hit their bounds at rest.
+    - A KC spike at 8 Hz rest sees a DA trace of about 4. That potentiates to the cap at once (E1: r_p d clips at 1; E2: +5.6 w0 is clipped to +2 w0).
+    - The roughly 8 DAN spikes inside the same KC spike's 1 s eligibility window then take the weight to 0 within about 0.25 s. It stays there until the KC's next spike, about 10 s later.
+    - The linear balance assumes small steps. The Hige fit requires steps of order w0 per event (90% depression from 4 DAN spikes).
+- **Mechanism-level statement (derived):**
+  - Signed timing windows cancel only the mean drift, and only when steps are small next to the weight range.
+  - At 6-10 Hz rest, every spontaneous KC spike falls inside both windows at once, about 4 DA units before it and about 8 DAN spikes after it. With steps large enough to learn from one pairing, both sides saturate and depression has the last word.
+  - Even with exact cancellation, erasure would remain: soft-bound weights relax to the fixed point with a 1-2 s tau, and additive weights diffuse across the range in about a minute. Rest supplies about 6600 KC-DAN coincidence units in 2.3 h, against about 5 in a pairing.
+  - A rule that keeps memories for hours must either see far fewer coincidences at rest (DANs much quieter there, or spontaneous spikes much less effective), or depend on something rest lacks.
+- **Limits:**
+  - This is the harness, not the network.
+  - Handler's window shapes are taken as exponentials with lif.py's guessed taus (eligibility 1 s, DA 0.5 s); its amplitudes are plot-only and spent.
+  - The cap of 2 is guessed.
+  - Hige 2015 backward pairing is still unspent.
