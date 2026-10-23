@@ -4895,3 +4895,43 @@ Scored as registered on 22 Oct at 22:23 (F-S21-1).
 - **Prediction (counterpart of the 00:53 registration):** rebound on day k = (focal Rk − focal B) − (control Rk − control B), 24 h windows from ZT 0, group means; day 1 scored, days 2 and 3 reported. The model's residual sleep during deprivation is 0 by construction.
 - **Falsifier (before any held-out read):** no grid set passes T1-T4 in the primary band. Then the structure fails as built and FINDINGS records it; the wide variant is reported but cannot rescue the primary.
 - Chowdhury 2023 Dryad stays unopened until the predictions are written into this file. Huber 2004 stays training context; no rebound magnitude is read from any source before then.
+
+## fly2 s27: N12 second check, Hurkey 2023 splay with the fitted DLMn junction (no refit); pre-registered (23 Oct 03:34 CDT, before any scored run)
+- **Why (Director, 03:25):** the CC was the fit target, so matching it is not an independent check. A second
+  Hurkey measurement the fitted junction should reproduce without refitting is needed before the row can be done.
+- **Source (Hurkey et al. 2023, PMC10232364, read s27 at 03:2x, text only):**
+  - In tethered flight MN1-5 fire tonically, "each MN fires only every approximately 20th to 40th wingbeat", working
+    range about 3-12 Hz, all five at identical frequencies, with shared synaptic input (Extended Data Fig. 4c,d).
+  - Fig. 2b (n 10 animals per genotype): MN4->MN5 phase histograms show a gap around phase 0 in controls. "With shakB
+    KD in MN1-5, the gap around phase 0 is absent and firing is more random with a slight preference for in-phase
+    firing." The histogram heights are plot-only (not read).
+  - Extended Data Fig. 6: "The dip around zero in phase histograms is quantified using the fraction that falls within
+    (-0.1, 0.1)". Uniform phases give 0.2. The synchronization index's formula was not found (Fig. 3d: control median
+    0.56, n 11; ShakB overexpression 0.84, n 7), so it is not used.
+  - Their model (Fig. 3c): CC below 0.05 gives splay; out-of-phase firing needs a PRC that falls around phase 0.5
+    (excitability near the SNL point). So this check tests the junction together with the model DLMn's intrinsic
+    excitability (LIF plus rung-1 channels, fly's N2/N4 rows), not the junction alone.
+  - Correction: the s27 HANDOFF/FINDINGS phrase "sync index 0.56 vs 0.61 under shakB RNAi" is wrong. The 0.559 vs
+    0.598 pair (n 11 each, P 0.393) is Shab (K channel) knockdown, not shakB.
+- **Protocol (`scripts/probes/s27_dlmn_splay.py`, m10f = m10f5, seed 12, full network, policy minimal):**
+  - Each of the 8 DLMn c-f gets DC 0.026 mV per 0.1 ms step plus 0.5 mV excitatory Poisson kicks: one train shared
+    by all 8, one independent train per cell, 200 Hz total per cell. DC, kick size and rates are **guessed** drive
+    parameters, not fly values.
+  - DC chosen from 3 s calibration runs in the fitted arm (dc 0.036: 18.8 Hz; 0.030: 13.8 Hz; 0.026: 8.4-10.4 Hz)
+    for a rate inside 3-12 Hz. **Seen during calibration:** at shared/independent 100/100 Hz, the near-zero-phase
+    fraction was 0.34-0.37 in both same-side and cross-side pairs (3 s, fitted arm). Nothing else was seen.
+  - 20 s per run, first 2 s skipped. Arms: fitted (profile value 0.0266) and `--coupling 0` (shakB KD analogue).
+  - Conditions: **A (primary)**, independent input only (shared 0, independent 200 Hz), the setting of Hurkey's
+    model claim; **B (secondary)**, shared 50 Hz plus independent 150 Hz (in vivo-like shared input, guessed
+    fraction).
+  - Readout: per ordered pair, the fraction of partner spikes in the reference cell's ISIs with phase < 0.1 or
+    > 0.9; mean over the 12 same-side (coupled) ordered pairs, and separately over the 16 cross-side pairs (never
+    coupled: in-run control).
+- **Pass rule (written before any scored run):**
+  - A: fitted same-side fraction < 0.18 (a dip below uniform), AND at least 0.02 below the c = 0 arm's same-side
+    fraction, AND the fitted arm's cross-side fraction within 0.17-0.23 (the control reads uniform).
+  - B: fitted same-side fraction < 0.2, AND at least 0.02 below the c = 0 arm's same-side fraction.
+  - The row is proposed as done only if A and B both pass. If A fails, the fitted junction with the current DLMn
+    intrinsics does not reproduce splay: N12's DLMn entry stays partial, and the miss goes to the excitability side
+    (fly's N2/N4) as well as to the junction. No value is refitted either way.
+- **Falsifier:** the fitted arm's same-side fraction is >= the c = 0 arm's, in A or in B.
