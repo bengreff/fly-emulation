@@ -122,7 +122,19 @@ The m10f3 network as built for the MB rest run (fitted class noise, plasticity o
    - PPL101 64 %, PPL103 51 %, PPL105 41 %; PPL106 turns net excitatory.
    - So KC firing at the measured mean is a partial counterweight, largest in absolute terms for MBON11. It
      cannot close MBON11's gap alone, and the MBON → MBON inhibition stays the main lever.
-3. **Next.**
+3. **Glutamate sign at MBON links (read 23 Oct, second Sonnet reader; rates barred and not seen).**
+   - Transmitters measured (Aso et al. 2014 eLife, immunostaining): MBON05 (γ4>γ1γ2) and MBON06 (β1>α)
+     glutamatergic, MBON11 GABAergic, MBON12 cholinergic.
+   - **No functional test of glutamatergic MBON → MBON, or of any glutamatergic MBON → PPL1 link, was found.** The
+     inhibitory sign rests on GluClα inhibition in the antennal lobe (Liu & Wilson 2013 PNAS: glutamate
+     hyperpolarises AL neurons, blocked by picrotoxin and GluClα RNAi) and on transcripts (the reader reports DANs
+     expressing GluClα and Nmdar2 highly; source not pinned).
+   - **Where it was measured, it was excitatory:** Felsenberg et al. 2018 Cell, CsChrimson in glutamatergic
+     M4β′/M6 MBONs gave "robust γ5 DAN excitation" (GCaMP6f in PAM-γ5). Possibly indirect; a different
+     compartment from the links that matter here.
+   - So the model's dominant inhibition at rest (MBON05/MBON06 → MBON11) rests on an inferred sign. Candidate 2 is
+     really "is glutamate inhibitory at MBON → MBON links": an open biological question, not a fit knob.
+4. **Next.**
    - A rest run with KCs at 0.1 Hz (Poisson, class level, measured, switch off by default). Descriptive only:
      Huang is spent, so adoption needs a new held-out MB rate source, registered first.
    - Read the evidence for the sign of glutamate at MBON → MBON and MBON → DAN links (GluCl inhibition is inferred
