@@ -4638,3 +4638,13 @@ Training data only; Chowdhury 2023's Dryad data still unopened, no rebound magni
   - Either way, only one prediction is scored, named before Dryad is opened.
   - The likely structural cause is that k_r (one restart per 26 min, measured) caps how fast cells can flip; fragmented nights need small γ, which weakens the homeostat. A revision (a clock input, the sleep-link threshold, or the arousal term) is a new registration, not a refit.
 - **Not adopted.** Switch stays 0; N25 stays partial.
+
+### s22 N25 diagnostic registered: does the fast end of the measured k_r range allow Garbe-like nights? (23 October, 03:45)
+
+Training data only; not a candidate for scoring, and no new prediction gets registered from it. It tells the Director whether a structure revision can stay inside measured values.
+- **Question.** At k_r = 1/25.86 min⁻¹ no accepted set reaches Garbe 2015's mean night structure (best: 4.6 bouts of 130 min). Pimentel's restart has a measured range [0.0106, 0.094] min⁻¹; a faster restart lets cells flip faster. Does k_r = 0.094 (the upper end) allow sets that pass T1-T4 (primary band) and reach Garbe-like nights, while keeping strong need coupling?
+- **Run.** `scripts/probes/s21_n25_homeostat.py krcheck`: the same 14,256-set grid and stage 1 (seed 10), primary band only; then DAM bouts (128 flies, seed 30); then stage 2 (deprivation, seed 20) and T3 on the sets with mean night bout ≤ 335 min (T5). Mac, through the slot limiter; about 15 min.
+- **Reported.** The number of sets passing T1-T5, their night bouts and γ, and their day-1 rebound spread (model side only).
+- **Reading.** "Garbe-like" means ≥ 2.8 bouts per night and a mean night bout ≤ 183 min (Garbe's mean ± 1 s.d.).
+  - **No.** If no T1-T5 set at k_r 0.094 is Garbe-like with γ ≥ 1, the measured k_r range does not fix the structure. A revision then needs a new element (clock input, sleep-link threshold, arousal).
+  - **Yes.** Otherwise, fitting k_r inside its measured range is a candidate revision, for a separate registration.
