@@ -2095,7 +2095,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Bearing.** Behavioural fit is not evidence for the dFB mechanism: no dFB ON fraction or spontaneous OFF rate has been measured (Pimentel 2016 measured the restart only).
 - **Status.** Not adopted, switch 0, N25 stays **partial**. Whether to amend before scoring (T5 night bout ≤ 335 min; its candidate predicts 70.3 / 111.3 / 131.1 min), or to revise the structure first, is for the Director (DECISIONS 03:32).
 
-### F-S22-2: N25 mode 1 cannot match measured day and night bout structure together, even with k_r anywhere in its measured range (s22, 23 Oct 04:11; DECISIONS 03:32, 03:45, 04:11)
+### F-S22-2: N25 mode 1 cannot match measured day and night bout structure together, even with k_r anywhere in its measured range (s22, 23 Oct 04:09; DECISIONS 03:32, 03:45, 04:09)
 - At k_r = 1/25.86 min⁻¹ (measured mean): the best night is 4.6 bouts of 130 min (F-S22-1).
 - At k_r = 0.094 min⁻¹ (the measured upper end): 6 of 38 accepted sets reach Garbe-like nights (≥ 2.8 bouts per night, ≤ 183 min; γ 1-4).
   - Every one of them breaks the day into 16-23 bouts of 18-30 min, against Garbe's 8.7 ± 3.3 of 57 ± 25.

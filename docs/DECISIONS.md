@@ -4649,7 +4649,7 @@ Training data only; not a candidate for scoring, and no new prediction gets regi
   - **No.** If no T1-T5 set at k_r 0.094 is Garbe-like with γ ≥ 1, the measured k_r range does not fix the structure. A revision then needs a new element (clock input, sleep-link threshold, arousal).
   - **Yes.** Otherwise, fitting k_r inside its measured range is a candidate revision, for a separate registration.
 
-### s22 N25 k_r diagnostic result: the registered answer is yes, but the day bouts then fall apart (23 October, 04:11)
+### s22 N25 k_r diagnostic result: the registered answer is yes, but the day bouts then fall apart (23 October, 04:09)
 
 Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`; slot limiter, wall 803 s). Training data only; Dryad unopened.
 - **k_r = 0.094 min⁻¹** (upper end of Pimentel's measured range). 158 sets pass T1 (primary band), T2 and T4. 38 also pass T5 (night bout ≤ 335 min), and all 38 pass T3.
