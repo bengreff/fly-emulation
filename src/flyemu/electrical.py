@@ -162,7 +162,14 @@ def build_gap(reg: Registry, conn, tau_m, v_rest, v_th, delay_ms, timestep_ms: f
         note = f"{row.evidence}; {row.source}; {row.justification}"
         c = float(row.coupling) if row.coupling else 0.0
         r = float(row.rectification) if row.rectification else 1.0
-        if row.coupling:
+        # s27 (fly2): per-row candidate values, read only when set (neutral: this table's value), so a value is
+        # tried in a run before it enters the table: <ent>|gap_coupling (leak units), <ent>|gap_spike (mV)
+        c_set, k_set = (f"{ent}|{p}" in reg.overrides for p in ("gap_coupling", "gap_spike"))
+        if c_set:
+            c = float(reg.require(ent, "gap_coupling", units="junction / partner leak conductance",
+                                  model_use="candidate DC coupling, both directions (s27 per-row override)",
+                                  subsystem="electrical", instances=len(a), minimal=c, conventional=c))
+        elif row.coupling:
             reg.provide(ent, "gap_coupling", c, units="junction / partner leak conductance",
                         model_use="DC coupling, both directions (rectification on the reverse)",
                         status=_BASIS[row.coupling_basis], evidence=note, subsystem="electrical",
@@ -171,13 +178,18 @@ def build_gap(reg: Registry, conn, tau_m, v_rest, v_th, delay_ms, timestep_ms: f
             reg.provide(ent, "gap_coupling", None, units="junction / partner leak conductance",
                         model_use="not simulated: magnitude unmeasured", status=Status.UNRESOLVED,
                         evidence=note, subsystem="electrical", instances=len(a))
-        if row.spike == "one_to_one":
+        if k_set:
+            k = np.full(len(b), float(reg.require(
+                ent, "gap_spike", units="mV per presynaptic spike",
+                model_use="candidate step on the partner after the presynaptic conduction time (s27 per-row "
+                          "override)", subsystem="electrical", instances=len(a), minimal=0.0, conventional=0.0)))
+        elif row.spike == "one_to_one":
             k = safety * (v_th[b] - v_rest[b])
         elif row.spike == "from_coupling":
             k = c * area / tau_m[b]
         else:
             k = np.full(len(b), float(row.spike) if row.spike else 0.0)
-        if row.spike:
+        if row.spike and not k_set:
             reg.provide(ent, "gap_spike", row.spike, units="mV per presynaptic spike (or rule)",
                         model_use="step on the partner after the presynaptic conduction time",
                         status=_BASIS[row.spike_basis], evidence=note, subsystem="electrical",

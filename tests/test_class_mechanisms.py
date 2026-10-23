@@ -232,6 +232,21 @@ def test_gap_junctions_are_neutral_by_default_and_step_the_partner_after_conduct
 
 
 @needs_graph
+def test_a_gap_row_value_is_tried_by_override_before_it_enters_the_table():
+    on = _org(**{"electrical:all|gap_conductance": 1.0, "electrical:^DLMn->^DLMn|gap_coupling": 0.05})
+    g, t = on.net.gap, on.conn.neurons.type.fillna("").to_numpy().astype(str)
+    side = on.conn.neurons.somaSide.fillna("?").astype(str).to_numpy()
+    d = np.char.startswith(t[g["a"]], "DLMn")
+    assert d.sum() == 20 and np.char.startswith(t[g["b"][d]], "DLMn").all()      # 5 per side, each pair once
+    assert (side[g["a"][d]] == side[g["b"][d]]).all()
+    assert np.allclose(g["c"][d], 0.05) and not g["c"][~d].any()
+    assert not g["k_ab"][d].any() and np.allclose(g["r"][d], 1.0)                 # spike blank, symmetric
+    req = on.reg.inventory()
+    row = req[(req.entity == "electrical:^DLMn->^DLMn") & (req.property == "gap_coupling")]
+    assert len(row) == 1 and float(row.value.iloc[0]) == 0.05
+
+
+@needs_graph
 def test_ring_plasticity_and_glia_are_inert_by_default_and_act_when_set():
     base = _org()
     assert base.net.ring_e is None and base.net.glia_k is None
