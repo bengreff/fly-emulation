@@ -2318,3 +2318,25 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **Leak note.** One PPL1-α′3 trial's spike count was seen in fly2's listing (recorded beforehand). The array shape of one trial was seen while the keys were inspected, after the model readout was locked.
 - **Bearing on N21.** At these noise levels, DANs fire at about 6-15 Hz at rest, and Huang's DAN medians are 8-20 Hz. KC → MBON rules must be stable at those DAN rates (fly2's memory-wipe finding).
 - **Status:** N3 stays **partial**. Adoption needs a stage on m10f3 with N21 off, the gate, a battery run and a viewed figure (DECISIONS 22 Oct 22:23).
+
+### F-S22-1: N25 homeostat mode 1 (ER5 need, 8 stochastic dFB cells) fits the training data and gives a rebound that grows with deprivation, but only by consolidating nights more than measured flies do (s22, 23 Oct 03:32; DECISIONS 23 Oct 02:58, 03:24, 03:32)
+- **Built** behind `state:sleep|homeostat` (neutral 0, the s10 process S). CPU reference path in `src/flyemu/internal_state.py`; the reduced loop in `scripts/probes/s21_n25_homeostat.py`. Implementation checks U1-U3 pass. In organism runs each dFB cell is driven by its own state.
+- **Training fit** (4 fitted, shared values on a 14,256-set grid): 140 sets pass the primary checks (Abhilash 2024 total band, night > day, the Liu 2016 BRP anchors, the Liu firing ratio). The falsifier is not hit.
+- **Locked prediction for Chowdhury 2023** (held out, unopened): day-1 rebound 99.7 / 150.2 / 174.3 min after 6 / 12 / 24 h (± 3.0 model SEM). Accepted-set spread: 19-157, 22-219, 26-257. Mode 0 and the s20 Abhilash set give a flat rebound (F-S20-4); mode 1 does not.
+- **Night bouts (Garbe et al. 2015, SB DAM, iso31 males, own figure read; training).** About 7.0 ± 4.2 bouts per night of 113 ± 70 min, per-fly means up to about 335 min.
+  - Accepted model sets: 0.43-4.6 bouts per night of 130-729 min.
+  - Locked candidate: 0.64 bouts of 556 min. Outside every measured fly.
+- **The prediction depends on that structure.** Sets with mean night bouts ≤ 335 min (32 of 140) predict 82 / 114 / 134 min at the median; ≤ 250 min (17) predict 34 / 61 / 68 min.
+  - A fragmented night is reached only with small γ (weak need coupling). With k_r fixed at the measured 1/26 min, the model cannot have both fragmented nights and a strong homeostat.
+  - So a Chowdhury score on the locked candidate would test a model whose nights are wrong.
+- **Bearing.** Behavioural fit is not evidence for the dFB mechanism: no dFB ON fraction or spontaneous OFF rate has been measured (Pimentel 2016 measured the restart only).
+- **Status.** Not adopted, switch 0, N25 stays **partial**. Whether to amend before scoring (T5 night bout ≤ 335 min; its candidate predicts 70.3 / 111.3 / 131.1 min), or to revise the structure first, is for the Director (DECISIONS 03:32).
+
+### F-S22-2: N25 mode 1 cannot match measured day and night bout structure together, even with k_r anywhere in its measured range (s22, 23 Oct 04:09; DECISIONS 03:32, 03:45, 04:09)
+- At k_r = 1/25.86 min⁻¹ (measured mean): the best night is 4.6 bouts of 130 min (F-S22-1).
+- At k_r = 0.094 min⁻¹ (the measured upper end): 6 of 38 accepted sets reach Garbe-like nights (≥ 2.8 bouts per night, ≤ 183 min; γ 1-4).
+  - Every one of them breaks the day into 16-23 bouts of 18-30 min, against Garbe's 8.7 ± 3.3 of 57 ± 25.
+  - No set is inside Garbe's mean ± 1 s.d. for both day and night.
+- The trade-off comes from one ON → OFF rate whose only light dependence raises it in the day. Day/night bout structure is training data (Garbe 2015, SB DAM, iso31 males), so it can enter the next registration as a check.
+- The rebound grows with deprivation in every variant; its size depends on the bout structure (6 h about 50-100 min, 24 h about 90-190 min).
+- N25 stays **partial**. The Director chooses between scoring now (locked or T5) and a revision with a night-specific element.

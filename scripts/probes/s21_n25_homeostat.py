@@ -303,6 +303,155 @@ def select(acc: list) -> dict:
             "candidate": acc[j]}
 
 
+def bouts(sl: np.ndarray, days: int) -> dict:
+    """DAM-style bouts from sleep[T, M, F]: each bout belongs to the 12 h period it starts in and counts its full
+    length (bouts still running at the end of the record are cut there). Per set: mean bouts per period, and the
+    mean bout length (pooled over bouts) for day and night."""
+    T, m, f = sl.shape
+    x = np.concatenate([np.zeros((1, m, f), bool), sl, np.zeros((1, m, f), bool)]).reshape(T + 2, m * f).T
+    dx = np.diff(x.astype(np.int8), axis=1)
+    sc, st = np.nonzero(dx == 1)
+    _, en = np.nonzero(dx == -1)
+    length, cell = en - st, sc // f
+    keep = st < days * DAY
+    night = (st % DAY) >= 720
+    out = {}
+    for name, sel in (("day", keep & ~night), ("night", keep & night)):
+        n = np.bincount(cell[sel], minlength=m)
+        tot = np.bincount(cell[sel], weights=length[sel], minlength=m)
+        out[f"bouts_{name}"] = n / (f * days)
+        out[f"bout_len_{name}"] = tot / np.maximum(n, 1)
+    return out
+
+
+def rebout(sets: dict, flies: int = 128, seed: int = 30) -> dict:
+    """Baseline bout structure (bouts() above) for given sets, 2 scored days after 6 burn-in days."""
+    r = sim(base_params(), sets, flies=flies, burn_days=6, days=2, seed=seed)
+    return bouts(dam_sleep(r["inact"], r["run0"]), 2)
+
+
+GARBE_NIGHT_BOUT_MAX = 335.0  # min, longest per-fly mean night bout, Garbe 2015 Fig. 2 (SB DAM; own figure read)
+
+
+def bout_check() -> dict:
+    """Baseline bouts for every stage-2 set (seed 30 + chunk), then the s22 sensitivity: the primary accepted sets
+    whose mean night bout lies inside Garbe 2015's per-fly range, and their day-1 predictions. Not a registered
+    check: the locked prediction is the plain primary candidate."""
+    path = OUT / "fit_bouts.json"
+    if path.exists():
+        r = json.loads(path.read_text())
+    else:
+        r = json.loads((OUT / "fit.json").read_text())
+        rows = r["sets"]
+        sets = {k: np.array([s[k] for s in rows], float) for k in GRID}
+        res = {}
+        for i, ch in chunks(sets, 200):
+            for k, v in rebout(ch, seed=30 + i).items():
+                res.setdefault(k, []).append(v)
+        for k, v in res.items():
+            for s, x in zip(rows, np.concatenate(v)):
+                s["dam_" + k] = round(float(x), 3)
+        path.write_text(json.dumps(r, indent=1))
+    acc = [s for s in r["sets"] if s["liu_pass"] and s["band"]]
+    keys = ("dam_bouts_night", "dam_bout_len_night", "dam_bouts_day", "dam_bout_len_day")
+    out = {"primary_bout_ranges": {k: [min(s[k] for s in acc), max(s[k] for s in acc)] for k in keys}}
+    for cap in (GARBE_NIGHT_BOUT_MAX, 250.0):
+        sel = select([s for s in acc if s["dam_bout_len_night"] <= cap])
+        if sel["n_accepted"]:
+            c = sel.pop("candidate")
+            sel["candidate"] = {k: c[k] for k in (*GRID, "total", "day", "night", *keys, *(f"{a}_d1" for a in ARMS))}
+        out[f"night_bout_le_{cap:g}"] = sel
+    c = out[f"night_bout_le_{GARBE_NIGHT_BOUT_MAX:g}"]["candidate"]
+    d = deprivation({k: np.array([c[k]], float) for k in GRID}, flies=2048, seed=500)
+    out["amended_candidate_2048"] = {k: round(float(v[0]), 2) for k, v in d.items()}
+    return out
+
+
+KR_FAST = 0.094               # min^-1, upper end of the measured k_r range, 1/(mean - 2 SEM) (Pimentel 2016)
+GARBE_LIKE = (2.8, 183.0)     # bouts per night >= mean - 1 s.d., mean night bout <= mean + 1 s.d. (Garbe 2015 SB)
+
+
+def kr_check(kr: float = KR_FAST) -> dict:
+    """s22 diagnostic (DECISIONS 23 Oct 03:45), training data only: the mode 1 grid with k_r at the fast end of its
+    measured range. Stage 1 in the primary band, then bouts, then stage 2 and T3 on the T5 survivors."""
+    sets = grid_sets()
+    sets["dfb_restart_per_min"] = np.full(len(sets["need_gain"]), kr)
+    t0 = time.time()
+    b = baseline(sets)
+    pre = (b["total"] >= BAND[0]) & (b["total"] <= BAND[1]) & (b["night"] > b["day"]) & (b["ratio"] >= RATIO_MIN)
+    idx = np.flatnonzero(pre)
+    print(f"stage 1: {len(idx)} sets pass T1 (primary band), T2, T4; {time.time() - t0:.0f} s", flush=True)
+    out = {"k_r": kr, "n_t124": int(len(idx)),
+           "stage1_night_bout_range": [float(b["bout_night"].min()), float(b["bout_night"].max())], "sets": []}
+    if not len(idx):
+        return out
+    sub = {k: v[idx] for k, v in sets.items()}
+    bo = {}
+    for i, ch in chunks(sub, 200):
+        for k, v in rebout(ch, seed=30 + i).items():
+            bo.setdefault(k, []).append(v)
+    bo = {k: np.concatenate(v) for k, v in bo.items()}
+    t5 = np.flatnonzero(bo["bout_len_night"] <= GARBE_NIGHT_BOUT_MAX)
+    out["n_t1245"] = int(len(t5))
+    out["t124_bouts_night_range"] = [float(bo["bouts_night"].min()), float(bo["bouts_night"].max())]
+    out["t124_bout_len_night_range"] = [float(bo["bout_len_night"].min()), float(bo["bout_len_night"].max())]
+    print(f"bouts: {len(t5)} sets pass T5; {time.time() - t0:.0f} s", flush=True)
+    d = deprivation({k: v[t5] for k, v in sub.items()}) if len(t5) else {}
+    for j, i in enumerate(t5):
+        row = {k: float(sub[k][i]) for k in GRID}
+        row.update({k: round(float(b[k][idx[i]]), 3) for k in ("total", "day", "night", "ratio")})
+        row.update({"dam_" + k: round(float(v[i]), 3) for k, v in bo.items()})
+        row.update({k: round(float(v[j]), 4) for k, v in d.items()})
+        e0 = row["liu_e0"]
+        row["liu_pass"] = bool(e0 > 0 and row["liu_e2"] >= 0.5 * e0 and abs(row["liu_e24"]) <= 0.1 * e0)
+        row["garbe_like"] = bool(row["dam_bouts_night"] >= GARBE_LIKE[0] and row["dam_bout_len_night"] <= GARBE_LIKE[1])
+        out["sets"].append(row)
+    acc = [r for r in out["sets"] if r["liu_pass"]]
+    like = [r for r in acc if r["garbe_like"]]
+    out["n_accepted_t1_5"] = len(acc)
+    out["n_garbe_like"] = len(like)
+    out["garbe_like_gamma"] = sorted({r["need_gain"] for r in like})
+    out["accepted"] = select(acc)
+    out["garbe_like_sel"] = select(like)
+    print(f"stage 2: {len(acc)} accepted, {len(like)} Garbe-like; {time.time() - t0:.0f} s", flush=True)
+    return out
+
+
+def bout_figure(path: Path = Path("docs/media/s22_n25_bouts.png")) -> dict:
+    """Accepted sets at k_r 0.0387 (fit_bouts.json, primary) and 0.094 (kr_check.json): bouts per 12 h and mean bout
+    length, day against night, coloured by the 24 h day-1 rebound; Garbe 2015 SB mean +- 1 s.d. as a box."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    a = [s for s in json.loads((OUT / "fit_bouts.json").read_text())["sets"] if s["liu_pass"] and s["band"]]
+    b = [s for s in json.loads((OUT / "kr_check.json").read_text())["sets"] if s["liu_pass"]]
+    garbe = {"bouts": ((8.7, 3.3), (7.0, 4.2)), "bout_len": ((57.0, 25.0), (113.0, 70.0))}
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6))
+    for j, (key, lab) in enumerate((("bouts", "bouts per 12 h"), ("bout_len", "mean bout (min)"))):
+        (dm, ds), (nm, ns) = garbe[key]
+        ax[j].add_patch(plt.Rectangle((dm - ds, nm - ns), 2 * ds, 2 * ns, fc="0.85", ec="k", lw=0.8,
+                                      label="Garbe 2015 SB, mean +- 1 s.d."))
+        for rows, mk, name in ((a, "o", "k_r 0.0387 (measured mean)"), (b, "^", "k_r 0.094 (measured upper end)")):
+            sc = ax[j].scatter([r[f"dam_{key}_day"] for r in rows], [r[f"dam_{key}_night"] for r in rows],
+                               c=[r["24h_d1"] for r in rows], marker=mk, s=22, cmap="viridis", vmin=0, vmax=260,
+                               edgecolors="k", linewidths=0.3, label=name)
+        ax[j].set_xlabel(f"day: {lab}")
+        ax[j].set_ylabel(f"night: {lab}")
+    ax[1].set_xscale("log")
+    ax[1].set_yscale("log")
+    for axis, ticks in ((ax[1].xaxis, (20, 30, 50, 100, 200)), (ax[1].yaxis, (50, 100, 200, 400, 700))):
+        axis.set_major_locator(matplotlib.ticker.FixedLocator(ticks))
+        axis.set_major_formatter(matplotlib.ticker.FixedFormatter([str(t) for t in ticks]))
+        axis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax[0].legend(fontsize=7, loc="upper right")
+    fig.colorbar(sc, ax=ax, label="24 h arm day-1 rebound (min)")
+    fig.suptitle("N25 mode 1 accepted sets: night bout structure only matches with over-fragmented days", fontsize=10)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=110)
+    return {"figure": str(path), "n_mean": len(a), "n_fast": len(b)}
+
+
 def figure(path: Path = Path("docs/media/s22_n25_homeostat.png")) -> dict:
     """The primary candidate: 30-min sleep profile and need (control vs 24 h arm), and day-1 rebound vs length
     with the accepted-set spread. Re-simulated with 512 flies per arm (seed 40)."""
@@ -365,4 +514,17 @@ if __name__ == "__main__":
             print(k, "candidate", json.dumps(r[k].get("candidate")))
     elif sys.argv[1] == "figure":
         print(figure())
+    elif sys.argv[1] == "krcheck":
+        r = kr_check()
+        (OUT / "kr_check.json").write_text(json.dumps(r, indent=1))
+        for k, v in r.items():
+            if k != "sets":
+                print(k, json.dumps(v))
+    elif sys.argv[1] == "boutfig":
+        print(bout_figure())
+    elif sys.argv[1] == "bouts":
+        r = bout_check()
+        (OUT / "bout_check.json").write_text(json.dumps(r, indent=1))
+        for k, v in r.items():
+            print(k, json.dumps(v))
     print(f"wall {time.time() - t0:.0f} s")

@@ -51,7 +51,23 @@ data or any rebound magnitude. What each read changed in the build is marked **�
 - The reader saved a temporary copy of the XML to /tmp for text search, against its no-write instruction; it
   reported this itself. No repo file was touched.
 
-## 5. Still open
+## 5. Night bout structure (a third Sonnet reader, then my own figure read)
+
+Asked after the fit showed every accepted set consolidating the night. Baseline sleep only; rebound papers barred.
+- **Garbe et al. 2015 Biol Open 4:1558 (PMC4728345), Fig. 2.** iso31 virgin males, 24 h on sucrose/agar,
+  classic single-beam DAM (SB) against multibeam (MB). Means ± s.d. read off the figure (± a few min):
+  - SB: day about 515 min, night about 610, total about 1,120.
+  - SB bouts: day about 8.7 ± 3.3 per 12 h, about 57 ± 25 min; night about 7.0 ± 4.2, about 113 ± 70 min, per-fly
+    means from about 25 to about 335 min.
+  - MB splits bouts further (night about 9 bouts of about 85 ± 45 min).
+  **→** the reported sensitivity and the proposed T5 (mean night bout ≤ 335 min, the per-fly maximum).
+- **Harbison et al. 2013 (PMC3644253).** DGRP males, night 278-703 min, day 120-682 across lines. Bout means are
+  in a supplement, not read.
+- **Buchert et al. 2022.** 24 h totals only.
+- Caveats: different strain from Chowdhury (iso31 vs Canton-S), and the 5-min rule plus the beam layout set the
+  bout numbers. SB matches the held-out paper's monitors, so SB is the comparison.
+
+## 6. Still open
 
 - No Canton-S male day/night minutes from any source read so far.
 - No source pins how strongly need raises the restart rate (γ). Baseline data cannot separate γ from τ_rise

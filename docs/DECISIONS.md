@@ -4945,3 +4945,69 @@ Scored as registered on 22 Oct at 22:23 (F-S21-1).
   the miss is recorded against the DLMn intrinsics (fly's N2/N4; passed to fly through the Director, fly's rows not
   edited) and the blank spike step, as well as against the junction. Hurkey Fig. 2b / Extended Data Fig. 6 is spent.
   `m10f` stays m10f5 (CC inside the measured band; DLMn silent at rest).
+
+### s22 N25 mode 1 training fit: the falsifier is not hit; registered prediction locked for Chowdhury 2023 (23 October, 03:24)
+
+Run as registered at 02:58 (`runs/s21/n25/fit.json`, wall 1440 s; Chowdhury's Dryad data still unopened).
+- **Stage 1 (14,256 sets).** 2,676 sets inside 618-1100 min/day, 448 inside the primary band 1008-1100, 11,301 with night > day, 2,745 with need ratio ≥ 2. 1,055 pass T1 (wide), T2 and T4 together.
+- **Stage 2.** Of the 153 stage-2 sets in the primary band, 13 fail the Liu anchors (T3); **140 are accepted.** The wide variant accepts 1,012.
+- **Falsifier not hit.** The structure can put baseline sleep in range with the need inside the Liu bracket.
+- **Registered candidate (selection rule):** τ_rise 18 h, γ 4, k_off 0.00186 min⁻¹, λ 8 (all fitted; inside their bounds).
+  - Baseline: 1067 min/day (day 358, night 709); need ratio ZT13-15 / ZT0-2 = 3.87; Liu excess 67 % left at +2 h, 1 % at +24 h.
+  - Day-1 rebound in the fit (128 flies per arm): 103 / 144 / 165 min after 6 / 12 / 24 h (± 13 SEM).
+  - **Locked point prediction**, the same parameters re-simulated with 2,048 flies per arm (seed 500; `runs/s21/n25/candidate_2048.json`): **99.7 / 150.2 / 174.3 min (± 3.0 model SEM)** for 6 / 12 / 24 h, day 1. Days 2 and 3: −1.4 / −2.7 / −0.8 and −2.0 / −4.8 / −1.2 min. Residual sleep during deprivation: 0 (by construction). Using the larger run for the point is a precision step on the same model, not a new selection.
+  - Accepted-set spread (day 1, 2.5-97.5 %): 6 h 19-157 (median 97), 12 h 22-219 (146), 24 h 26-257 (159).
+  - Wide variant candidate (τ_rise 8 h, γ 2, k_off 0.00344, λ 16; 837 min/day): 62.6 / 91.5 / 92.7 min (2,048 flies). Reported, not scored.
+- **Figure viewed** (`docs/media/s22_n25_homeostat.png`). Two things it shows:
+  - The rebound grows with deprivation length (100 → 150 → 174 min), unlike mode 0 and the Abhilash set (flat, F-S20-4).
+  - **Every simulated fly sleeps the whole night.** Each 30-min dark bin is 30 of 30 min; the candidate starts 0.65 sleep bouts per night (the bout spans lights-off) and its mean night bout is about 1,100 min. Day sleep is 9.7 bouts of 37 min. With the night full, rebound can only appear in the day after deprivation.
+- **The rebound size tracks the night bout structure across the accepted set.** The 11 accepted sets whose night bouts average under 240 min all have γ 0.25-0.5, k_off 0.0119 and λ 2, and predict small rebounds (24 h: 19-70 min). The consolidated ones predict large rebounds. Night bout structure is training data that no source read so far gives, so a Sonnet reader is on it now (baseline only; rebound papers barred).
+- **Not adopted.** The switch stays 0. No held-out data opened.
+
+### s22 N25 night bout structure against Garbe 2015: registered prediction stays locked; a bout check is proposed as an amendment for the Director (23 October, 03:32)
+
+Training data only; Chowdhury 2023's Dryad data still unopened, no rebound magnitude read.
+- **Source (seen, training).** Garbe et al. 2015 Biol Open 4:1558 (PMC4728345), Fig. 2, my own read of the figure. iso31 virgin males, 24 h, sucrose/agar, means ± s.d.
+  - Classic single-beam DAM (SB): day sleep about 515 min, night about 610, total about 1,120.
+  - SB bouts: day about 8.7 ± 3.3 per 12 h of about 57 ± 25 min; night about 7.0 ± 4.2 per 12 h of about 113 ± 70 min. Per-fly mean night bouts run from about 25 to about 335 min.
+  - Multibeam monitors (MB) split bouts further (night about 9 bouts of about 85 min).
+  - Caveats: other strain (iso31, not Canton-S), food, and light level; values read off a scatter plot (inferred, ± a few min).
+  - The Sonnet reader also found Harbison 2013 (PMC3644253; male night sleep 278-703 min, day 120-682 across DGRP lines; bout means only in a supplement, not read) and Buchert 2022 (24 h totals only).
+- **Model (`scripts/probes/s21_n25_homeostat.py bouts`, `runs/s21/n25/bout_check.json`).** DAM bouts counted in the 12 h period they start in, full length; 128 flies, 2 days per set.
+  - The 140 accepted primary sets start 0.43-4.6 bouts per night, of 130-729 min mean.
+  - The locked candidate starts 0.64 bouts per night, of 556 min mean. Garbe's per-fly maximum is about 335 min, so no single measured fly matches it.
+  - At the per-value bar ("some fly of this species"), the candidate's night structure fails; its total, its day/night split and its day bouts (9.1 per 12 h of 81 min) pass.
+- **Sensitivity (reported, not registered).** Keep only the accepted sets whose mean night bout is ≤ 335 min:
+  - 32 sets remain. Their day-1 medians are 82 / 114 / 134 min (2.5-97.5 %: 20-146, 23-207, 25-250).
+  - The selection rule's candidate among them: τ_rise 18 h, γ 2, k_off 0.00639, λ 2. It gives 85 / 113 / 140 min, with 2.6 night bouts of 200 min.
+  - A tighter cap (≤ 250 min) leaves 17 sets with medians 34 / 61 / 68 min. **The prediction moves with the night structure.**
+- **Decision.**
+  - The 03:24 prediction (99.7 / 150.2 / 174.3 min) stays the registered, locked one. It was registered before this read, and changing it now would be a choice made after seeing that the check moves it.
+  - Proposed amendment, for the Director **before** any held-out read: add **T5, mean night bout ≤ 335 min** (inside Garbe 2015's per-fly range, SB DAM). Under T5 the prediction becomes the ≤ 335 candidate above, re-simulated with 2,048 flies per arm (seed 500, as for the locked one; `runs/s21/n25/bout_check.json`): **70.3 / 111.3 / 131.1 min (± 3.4 model SEM)** day 1; days 2 and 3 within ± 6 min.
+  - Either way, only one prediction is scored, named before Dryad is opened.
+  - The likely structural cause is that k_r (one restart per 26 min, measured) caps how fast cells can flip; fragmented nights need small γ, which weakens the homeostat. A revision (a clock input, the sleep-link threshold, or the arousal term) is a new registration, not a refit.
+- **Not adopted.** Switch stays 0; N25 stays partial.
+
+### s22 N25 diagnostic registered: does the fast end of the measured k_r range allow Garbe-like nights? (23 October, 03:45)
+
+Training data only; not a candidate for scoring, and no new prediction gets registered from it. It tells the Director whether a structure revision can stay inside measured values.
+- **Question.** At k_r = 1/25.86 min⁻¹ no accepted set reaches Garbe 2015's mean night structure (best: 4.6 bouts of 130 min). Pimentel's restart has a measured range [0.0106, 0.094] min⁻¹; a faster restart lets cells flip faster. Does k_r = 0.094 (the upper end) allow sets that pass T1-T4 (primary band) and reach Garbe-like nights, while keeping strong need coupling?
+- **Run.** `scripts/probes/s21_n25_homeostat.py krcheck`: the same 14,256-set grid and stage 1 (seed 10), primary band only; then DAM bouts (128 flies, seed 30); then stage 2 (deprivation, seed 20) and T3 on the sets with mean night bout ≤ 335 min (T5). Mac, through the slot limiter; about 15 min.
+- **Reported.** The number of sets passing T1-T5, their night bouts and γ, and their day-1 rebound spread (model side only).
+- **Reading.** "Garbe-like" means ≥ 2.8 bouts per night and a mean night bout ≤ 183 min (Garbe's mean ± 1 s.d.).
+  - **No.** If no T1-T5 set at k_r 0.094 is Garbe-like with γ ≥ 1, the measured k_r range does not fix the structure. A revision then needs a new element (clock input, sleep-link threshold, arousal).
+  - **Yes.** Otherwise, fitting k_r inside its measured range is a candidate revision, for a separate registration.
+
+### s22 N25 k_r diagnostic result: the registered answer is yes, but the day bouts then fall apart (23 October, 04:09)
+
+Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`; slot limiter, wall 803 s). Training data only; Dryad unopened.
+- **k_r = 0.094 min⁻¹** (upper end of Pimentel's measured range). 158 sets pass T1 (primary band), T2 and T4. 38 also pass T5 (night bout ≤ 335 min), and all 38 pass T3.
+- **Registered reading: yes.** 6 sets are Garbe-like at night (≥ 2.8 bouts, ≤ 183 min), with γ 1 or 4 (k_off 0.0220 or 0.0119, λ 2):
+  - 4.3-6.3 bouts per night of 100-133 min, against Garbe's 7.0 ± 4.2 of 113 ± 70;
+  - day-1 rebound 47-100 / 87-147 / 89-193 min for 6 / 12 / 24 h (median 60 / 92 / 108; model side only).
+- **Not registered, seen in the same output:** those 6 sets break the day into 15.8-23.3 bouts per 12 h of 18-30 min, against Garbe's 8.7 ± 3.3 of 57 ± 25.
+  - No accepted set is inside Garbe's mean ± 1 s.d. for both day and night.
+  - The sets with Garbe-like days (γ 8, k_off 0.00639: about 11 day bouts of 49-52 min) have nights just outside (2.7-2.8 bouts of 187-193 min).
+  - One k_off with a light term cannot fragment the night without over-fragmenting the day.
+- **Meaning for the Director's call.** Fitting k_r inside its measured range fixes the night only at the cost of the day. A structure that has both probably needs a night-specific element (a clock input to the dFB or ER5, or a dark-specific arousal), not a refit. Every variant so far predicts a day-1 rebound that grows with deprivation; its size spans about 50-100 min (6 h) and 90-190 min (24 h) across them.
+- Nothing adopted; no new prediction registered.
