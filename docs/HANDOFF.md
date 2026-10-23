@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 01:03 CDT, session 21 (fresh context after s20, same night).
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 01:02 CDT, session 21 (fresh context after s20, same night).
 - **Brief:** Director, 23 Oct 00:45.
   - (1) Score the MB grid once against Huang 2024 when `ALL.done` lands.
   - (2) Meanwhile, N25: pre-register an open-access held-out rebound test, and scope a sourced homeostat that makes rebound scale with time awake.
