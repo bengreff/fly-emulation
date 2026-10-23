@@ -14,7 +14,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from flyemu.internal_state import Organs, default_params  # noqa: E402
+from flyemu.internal_state import Organs, default_params, tim_dd  # noqa: E402
 
 HAVE_GRAPH = (REPO / "data/cache/male_cns_edges.parquet").exists()
 P = default_params()
@@ -130,6 +130,33 @@ def test_light_entrains_and_shifts_phase():
     lit = _ld(Organs(P, z=-1 + 0j), 1)
     assert abs((lit.ct_h - dark.ct_h + 12) % 24 - 12) > 1.0   # one light day shifts the phase
 
+
+
+def test_cry_tim_light_input_is_night_gated_and_starts_entrained():
+    """s20 N26, state:clock|light_input = 1 (CRY-dependent TIM degradation; DECISIONS 22 Oct 23:02, 23:55):
+    a run started in the light starts with TIM already cleared (no start-up kick); a pulse moves the phase only
+    when TIM is up (night); the neutral path never touches c or T."""
+    q = dict(P, light_input=1.0, k_tim=0.789, ct_tim_h=7.59)          # the s20 fit (fitted values)
+    z15 = complex(np.exp(1j * 2 * np.pi * 1.5 / 24))
+    o = Organs(q, z=z15)
+    assert o.cry > 0.99 and o.tim < 1e-3                               # ZT 1.5 after 12:12 LD
+    o.step(60.0, light_lux=1000.0)
+    assert o.ct_h == pytest.approx(1.5 + 60 / 3600, abs=2e-3)
+
+    def shift(ct):
+        z = complex(np.exp(1j * 2 * np.pi * ct / 24))
+        a, b = (Organs(q, z=z, cry=0.0, tim=tim_dd(ct)) for _ in range(2))      # DD start state
+        a.step(600.0, light_lux=1000.0)
+        b.step(600.0, light_lux=0.0)
+        run(a, 8)
+        run(b, 8)
+        return (a.ct_h - b.ct_h + 12) % 24 - 12
+    assert abs(shift(6.0)) < 0.1                                        # subjective day: dead zone
+    assert shift(15.0) < -1.0 and shift(21.0) > 1.0                     # early delay, late advance
+    n = Organs(P, z=z15)
+    c0, t0 = n.cry, n.tim
+    run(n, 1, light_lux=1000.0)
+    assert (n.cry, n.tim) == (c0, t0)                                   # neutral 0 leaves c and T alone
 
 # --- N25 sleep homeostat -------------------------------------------------------
 

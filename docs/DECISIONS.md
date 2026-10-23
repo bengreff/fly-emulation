@@ -4180,3 +4180,220 @@ half-time (Western blots). Then re-register the fit.
 - **N19's next held-out test** goes on unspent evidence for cells on type or Davie rows. Candidates are Sampson 2020 L2/T1 5-HT
   (open access; direction already known from the abstract, magnitudes sealed unread) and a KC/MBON/LNv monoamine
   measurement still to be found. To be registered next session.
+
+### s20 N19 scope: the AL routes for 5-HT, which data cover them (scoped, not built; 22 October, 22:51)
+F-S20-2 is corrected: Davie's PN sign flips under a per-gene dropout scale. The magnitude gap stands: the direct PN gain at a* is ≤ 2%,
+against +15%.
+**Connectome (male-cns, traced).** 2 CSD cells (5-HT) make 14,743 output synapses:
+- 6,415 onto AL LNs (420 cells, 79 types; 128 ACh, 114 GABA, 87 Glu, 89 unclear);
+- 1,795 onto PNs;
+- 518 onto ORN terminals (2,635 ORNs, 53 types).
+Wiring favours an LN route over a presynaptic ORN route (5-HT also acts by volume, so this isn't decisive).
+**Receptor data per route.**
+- **Davie 2018 covers neither.** It is brain-only, so there are no ORN cell bodies (they sit in the antenna), and it has no named
+  AL-LN cluster. Its 20+ unnamed GABAergic clusters can't be assigned to AL LNs without a marker.
+- **ORNs.** McLaughlin et al. 2021 eLife (adult ORN scRNA-seq, per ORN class) or Fly Cell Atlas antenna (Li et al. 2022 Science;
+  s19's FCA download got a 503).
+- **LNs.** No type-resolved transcriptome is known. Sizemore & Dacks 2016 Sci Rep give per-receptor PN-vs-LN presence from
+  MiMIC-GAL4 lines (qualitative, so p would be inferred 0/1). Suzuki 2020 places 5-HT7 in a GABAergic LN population.
+- **PNs.** Li et al. 2017 Cell (Smart-seq2, PN class-resolved, deeper than 10x) would settle the PN sign without dropout.
+**Mechanism needed.**
+- LN route: no new code. LNs already get N19's postsynaptic gain; they only need rows (mode 2 extension).
+- ORN route: a presynaptic gain (a cell's outgoing spikes × (1 + a s_pre u)) as a new neutral switch, CPU first, plus ORN rows.
+- Both must keep the shared a* and stay neutral off.
+**Proposed order (not started).**
+1. Li 2017 PN rows (settles the sign).
+2. McLaughlin 2021 ORN rows and the presynaptic switch.
+3. LN presence calls from Sizemore & Dacks 2016.
+4. Register the next held-out test on unspent evidence (Suzuki 2020's LN/PN gain control is the natural one, since it tests the LN route).
+
+### s20 N26 CRY-TIM refit, registered before running (22 October, 23:02)
+**Mechanism.** Switch `state:clock|light_input` = 1 (neutral 0 keeps the s10 pull). Light activates CRY, CRY
+removes TIM, and the TIM removed pushes the phase (`internal_state` docstring):
+- c' = a L (1 − c) − c/τ_c
+- T' = (P(ct) − T)/τ_rec − k_d c T
+- z += k_tim (k_d c T dt) e^{i 2π ct_tim/24}
+
+It is night-gated, because T is low in the subjective day, and saturates in pulse length, because T gets used up.
+Before this entry I ran only the smoke and assay checks (`s20_n26_tim.py`; the fast assays match the reference
+to < 1e-4 h) and one evaluation at the guessed k_tim 1 and ct_tim 6.5. No fit has been run.
+
+**Values (labels).**
+- **TIM_DD** (measured, pixel read): Shafer, Rosbash & Truman 2002 J Neurosci 22:5946, Fig. 6D.
+  - Small vLNs (s-LNv), Canton-S, DD day 1, 25 °C, 4 brains per point.
+  - Value = cytoplasmic + nuclear mean pixel intensity, read by eye from a 3× crop (±3 of 200), divided by the
+    CT16 maximum.
+  - CT0 0.77, 1 0.51, 2 0.16, 3 0.065, 4 0.029, 6-10 0.015, 12 0.15, 14 0.30, 16 1.0, 18 0.51, 20 0.26, 22 0.98.
+  - Interpolation is log-linear. P = TIM_DD (1 + τ_rec d ln TIM_DD/dct) (derived), so T follows TIM_DD in DD.
+- **τ_rec = 0.86 h** (derived). It is the upper bound set by the profile's steepest decline, CT1→2: ln(0.51/0.16) = 1.16/h,
+  where P reaches 0. The value is taken at that bound. A slower dark turnover can't produce the measured
+  morning fall.
+- **k_d by rule** (derived). A 10 min, 1000 lux pulse at CT15 (DD) leaves 10% of unpulsed TIM 1 h after the
+  pulse. Source: Tang et al. 2010 Neuron 66:378, where DN/LNd TIM is "undetectable" after a saturating 10 min
+  ZT15 pulse fixed 1 h later. The 10% is inferred.
+- **a by rule** (as registered 04:49). The model's 10 min IRC half-max at CT20 is 0.372 lux (Vinayak 2013,
+  600 nW/cm² blue; the lux conversion is inferred). The two rules are solved jointly at every evaluation.
+- **τ_c = 0.5 h** (guessed). Two reads found no in vivo active-CRY lifetime.
+- Period 24 h (inferred) and μ 1/h (guessed) are unchanged.
+
+**Fitted (labelled fitted).** `k_tim` and `ct_tim_h`. Search: a 5 × 12 grid (k 0.3-30, ct 0-22), then Nelder-Mead
+from the two best cells (`scripts/probes/s20_n26_tim_fit.py`).
+
+**Training targets (4 targets, 2 free parameters).**
+- PRC zero crossing CT 18.5: Kistenpfennig 2012, DD, 60 min, 1000 lux, w1118, 20 °C.
+- DD CT15 delay −4.05 h: same source and pulse.
+- LD ZT15 delay −3.1 h: Lamba 2014 y w, 5 min, 1500 lux. The model's LD is 1000 lux for 20 days.
+- Lights-on in 12:12 LD (1000 lux) at CT 0.
+
+The loss is the sum of squared band-scaled residuals.
+
+**Pass bands.** Zero crossing ±1 h; both delays ×/÷ 1.5, with sign; lights-on ±2 h.
+
+**Falsifier.** If any of the four is outside its band at the best fit, CRY-TIM with these sourced values fails.
+That goes in FINDINGS, and ZT21 is not scored.
+
+**Robustness variants.** Registered now; reported, not deciding:
+- V1: τ_c 0.1 h.
+- V2: τ_c 2 h.
+- V3: τ_rec 0.43 h.
+- V4: TIM_DD without the CT20 point. Its dip may be staining noise.
+- V5: Tang fraction 3%.
+
+The primary fit decides. If it passes and a variant fails, the dependence is reported. If it fails and only a
+variant passes, nothing is scored tonight (a post hoc choice).
+
+**Consistency only.**
+- Vinayak 120 min half-max, 4 nW/cm² ≈ 0.0025 lux. The model integrates dose, so about 12-fold below the 10 min
+  value is expected, against 150-fold measured. A miss is a recorded limit.
+- Vinayak TIM loss ≥ 60% after 10 min at the threshold intensity.
+- Vinayak 2.4 h maximal advance near CT20-21 (already seen).
+- Pulse-length saturation: CT15 delay for 1-120 min.
+- A small subjective-day response.
+
+**Held out (scored once).** Lamba 2014 y w ZT21 advance, 5 min, 1500 lux, in the same LD assay. It is predicted
+only by the primary fit and only if all four targets pass. The prediction goes in DECISIONS before a blind
+reader opens the figure. Band ×/÷ 1.5 around the measured value, and the sign must match.
+
+**Validity, known in advance.**
+- s-LNv TIM stands in for the network's light-labile TIM. Tang finds DN/LNd TIM, not s-LNv TIM, degraded at ZT15.
+- One lumped oscillator.
+- The sources differ in strain and temperature: 20 °C against 25 °C.
+- Lamba's LD intensity is not known.
+
+**Adoption.** The switch stays 0 whatever happens. The N26 row moves only on a held-out pass followed by a gate.
+
+### s20 N26 CRY-TIM refit scored against the 23:02 registration; ZT21 prediction written before the blind read (22 October, 23:55)
+**Primary fit: all four training targets pass.**
+- Fitted values: k_tim 0.789, ct_tim_h 7.59 h. Loss 0.634.
+- Rule-set values (derived):
+  - k_d 13.8/h (half-life 3 min under full CRY);
+  - a 10.3/(lux·h).
+  - The two rules close: Tang left 0.100, IRC half-max 0.373 lux.
+
+| target | measured | model | band | result |
+|---|---|---|---|---|
+| PRC zero crossing, DD 60 min | CT 18.5 | CT 18.80 | ±1 h | pass |
+| DD CT15 delay, 60 min 1000 lux | −4.05 h | −3.86 h | ×/÷1.5 | pass |
+| LD ZT15 delay, 5 min 1500 lux | −3.1 h | −2.36 h | ×/÷1.5 (−2.07..−4.65) | pass, low side |
+| lights-on in 12:12 LD | CT 0 | CT −0.54, no drift | ±2 h | pass |
+
+**Variants** (reported, not deciding):
+
+| variant | ld15 | ZT21 | result |
+|---|---|---|---|
+| V1 τ_c 0.1 h | −2.73 | +4.15 | passes; Tang rule unmet (k_d at its 50/h bound, left 0.135) |
+| V2 τ_c 2 h | −1.97 | +0.17 | **fails**: does not entrain (lights-on drifts 7.9 h); ld15 out of band |
+| V3 τ_rec 0.43 h | −2.26 | +2.45 | passes |
+| V4 no CT20 point | −2.27 | +3.75 | passes |
+| V5 Tang 3% | −2.41 | +2.68 | passes; rule unmet (k_d at bound, left 0.047) |
+
+- The result depends on τ_c, which is guessed. It needs active CRY to clear within about an hour of lights-off;
+  at 2 h the clock cannot entrain.
+- ld15 sits on the low side (−2.0 to −2.7) in every variant. ct_tim is 7.2-7.8 h wherever a variant passes.
+
+**Consistency only** (registered list).
+- Vinayak 120 min half-max: model 0.014 lux against 0.0025 measured. The model's 10 → 120 min ratio is 26-fold
+  against 150-fold measured. This is the recorded limit: the model integrates dose and the fly does more.
+- Vinayak TIM loss right after 10 min at 0.372 lux, CT20: model 38% against ≥ 60% measured (Vinayak's fixation
+  delay unknown). This misses.
+- Saturating 10 min CT20 advance: model +2.11 h against Vinayak's ~2.4 h maximum. The half-max pulse gives
+  +1.05 h.
+- Pulse-length saturation at CT15: 1 / 5 / 15 / 30 / 60 / 120 min give −2.86 / −2.93 / −3.10 / −3.36 / −3.86 /
+  −4.86 h.
+- Subjective-day response: |shift| < 0.25 h from CT 3 to CT 9 (60 min).
+
+**Figures viewed** (`docs/media/s20_n26_tim_prc.png`, `docs/media/s20_n26_tim_tim.png`).
+- The 60 min PRC is strong type 1, with steep but continuous delay → advance across CT 17-20.
+- The advance extends to CT0 (+2.4 h) and fades by CT3.
+- In LD:
+  - TIM is ≈ 0 through the day and rises from ZT13.
+  - The LD TIM waveform has two peaks (ZT16.5, ZT22.5). That shape is inherited from the single Shafer CT20 point. V4
+    drops the point and still passes, so it isn't load-bearing, but the waveform shape is an artefact.
+  - Lights-on clears TIM within about 10 min.
+- Entrainment settles in 2 days.
+
+**Held-out prediction** (written now, before anyone opens Lamba 2014 for ZT21).
+- Protocol: Lamba 2014 y w, 5 min pulse, 1500 lux, at ZT21 on the last LD night, same LD assay as the ZT15
+  training point.
+- **Primary fit predicts a phase advance of +2.89 h.** The fast path (`LD.shift`) and the reference
+  `s20_n26_tim.ld_shift` agree to 3 decimals.
+- Pass if the measured value is an advance and the prediction is within ×/÷1.5 of it, i.e. measured in
+  +1.93 to +4.34 h.
+- The variants span +2.45 to +4.15 among the passing ones. They are reported only and do not change the score.
+- For context, not a scoring rule: the ZT15 training point came out at 0.76 of the measured value, so a similar
+  shortfall at ZT21 would still pass.
+
+**Blind read.**
+- One Sonnet reader, no subagents of its own.
+- It extracts only the y w ZT21 value (mean and SEM) from Lamba 2014 Fig. 1C, by pixel read with axis
+  calibration.
+- It is not told the prediction. Scored once, then spent.
+
+### s20 N26 held-out Lamba ZT21 scored once: PASS; start-up state fixed; not adopted tonight (23 October, 00:09)
+**Blind read** (one Sonnet reader, no subagents; it was not told the prediction; Lamba 2014 Fig. 1C,
+`nihms655030f1.jpg` 601 × 456 px).
+- Calibration: 9 axis ticks, fit residual ≤ 0.03 h.
+- y w bar identified by its legend fill.
+- Result: **y w ZT21 = +3.21 ± 0.23 h (SEM), an advance.**
+- Neither the text nor the legend states the number. n = 16 flies per genotype, N = 3 experiments.
+- Calibration check: the same read gives y w ZT15 −3.04 ± 0.38 h, against the 22 Oct 05:04 blind read of −3.1 ± 0.35.
+
+**Score.**
+- Predicted +2.89 h (23:55, written before the read). Measured / predicted = 1.11, the sign matches, and the
+  prediction lies inside [3.21/1.5, 3.21 × 1.5] = [2.14, 4.82]: **PASS.** The point is now **spent**.
+- Variant predictions, reported only: V1 4.15, V3 2.45, V4 3.75, V5 2.68 would all pass. V2 (τ_c 2 h) at 0.17
+  would fail, as it already failed training.
+
+**Start-up state (fixed, before any adoption).**
+- With `light_input` 1, `Organs` started T at TIM_DD(ct): 0.29 at the m9c start CT 1.5.
+- A run in light therefore began by clearing night-level TIM. The clock jumped +0.18 h in its first minute
+  at 100-1000 lux.
+- Now c and T start from 2 days of 12:12 LD at 1000 lux, ending at ZT = start CT. This matches a fly kept in
+  LD, like the male-cns specimen (`initial_ct`, ZT 1.5). Rearing intensity is guessed; the rule is inferred.
+  - At ZT 1.5: c 0.9998, T 9 × 10⁻⁵. After 60 s at 1000 lux the clock reads CT 1.5198 against 1.5197
+    free-running.
+  - At night (CT 16): c ≈ 0, T 0.975.
+- DD assays now start from a DD state (c 0, T = TIM_DD), as in the registered fit.
+- Every registered number reproduces exactly: ld15 −2.3571, ZT21 +2.891, dd15 −3.8607, Tang 0.100.
+- `cry_tim_step` is shared by `_step` and the pre-run.
+- New test: `test_cry_tim_light_input_is_night_gated_and_starts_entrained`.
+
+**Registry.**
+- `cry_rate_per_lux_h` 10.26 and `tim_kdeg_per_h` 13.85 become the PARAMS defaults, labelled inferred (each
+  set by a rule from a measured point through an inferred step). They are read only with `light_input` 1.
+- `tim_tau_rec_h` keeps value 0.86 (derived); its bounds are labelled guessed (the validator caught
+  `bound_basis` derived).
+- `k_tim` 0.789 and `ct_tim_h` 7.59 are fitted. As with `clock_gain`, they belong in the stage profile, not
+  in PARAMS.
+
+**Not adopted tonight (reason).** The registration requires a gate after a held-out pass. fly2's branch has
+moved the frontier (`m10f` = m10f4, with m10f5 defined; commits 134de81 and 4b79905, not on main), so a stage
+defined now on main's m10f0 would sit on a stale base and collide with fly2's numbering.
+
+**Next (registered now).** Adoption stage on fly2's latest passing stage once it is on main; the name is chosen
+then. It sets `state:clock|light_input` 1, `k_tim` 0.789 and `ct_tim_h` 7.59 (both fitted).
+- Gate: fly2's stage rule (G seeds 12-15; S 60 s, whole-brain rate within ±50%).
+- Plus an LD check on the organism: 3 days of 12:12 LD, lights-on within CT 0 ± 2 h.
+- The default world is dark (`light_lux` 0). The gate therefore tests only that the switch is inert in the
+  dark. The LD check is the meaningful one.
+- N26 stays **partial** even then: τ_c and μ are guessed, and the cell peak hours are guessed.

@@ -36,6 +36,17 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    z' = (mu (1 - |z|^2) + i 2 pi / period) z + K Lsat e^{i alpha}
                    Lsat = L / (L + L50); alpha = the phase light pulls toward
                    (circadian time ct_light). ct = arg(z) / 2 pi * 24 h.
+                   s20, switch state:clock|light_input = 1 (neutral 0 keeps the line above):
+                   light acts through CRY-dependent TIM degradation instead of K Lsat:
+                   c' = a L (1 - c) - c / tau_c          (active CRY fraction; a per lux per h)
+                   T' = (P(ct) - T) / tau_rec - k_d c T  (TIM, units of its DD peak)
+                   P = TIM_DD (1 + tau_rec dlnTIM_DD/dct), so T = TIM_DD in DD
+                   z gets k_tim (k_d c T) e^{i alpha_tim} (phase pushed by the TIM light removes)
+                   Night-gated (T is low in the subjective day) and saturating in pulse length
+                   (T is used up), unlike the one-point pull (F-S20-1).
+                   Start-up c and T: 2 days of 12:12 LD at REAR_LUX ending at ZT = the start CT (a fly
+                   kept in LD, like the male-cns specimen; inferred), so a run started in the light
+                   does not begin by clearing night-level TIM.
   N25 sleep        Borbely process S: P' = (1 - P)/tau_wake awake, -P/tau_sleep
                    asleep; asleep = inactive (activity < a_rest) for >= t_sleep.
                    Switch (dFB) on when P > th_hi + c_amp cos(4 pi ct / 24), off
@@ -152,6 +163,30 @@ PARAMS = [
      "light pulls the phase toward subjective day: delays in the early night, advances late (sign of the "
      "classic PRC; no dead zone)", "uniform", "guessed",
      "8 h puts entrained CT 0 within ~1 h of lights-on under 12:12 LD (convention ZT0 = CT0; s10 check)"),
+    # s20 CRY-TIM light input, read only with state:clock|light_input = 1 (values: s20 reads and fit, DECISIONS)
+    ("cry_rate_per_lux_h", "N26", "state:clock", "cry_activation_rate", "1/(lux h)", 10.26, 1e-3, 1e3, "guessed",
+     "CRY photoactivation per photon flux; set by rule in the s20 fit (DECISIONS 22 Oct 23:02, 23:55): the model's "
+     "10 min IRC half-max at CT20 is Vinayak 2013's 600 nW/cm2 blue = 0.372 lux (lux conversion at 470 nm "
+     "inferred), solved jointly with tim_kdeg_per_h", "loguniform", "inferred",
+     "read only with state:clock|light_input = 1"),
+    ("cry_tau_h", "N26", "state:clock", "cry_active_lifetime", "h", 0.5, 0.02, 6.0, "guessed",
+     "how long light-activated CRY keeps degrading TIM after the light ends; no in vivo measurement found "
+     "(s20 reads rounds 1-2)", "loguniform", "guessed", "read only with state:clock|light_input = 1"),
+    ("tim_kdeg_per_h", "N26", "state:clock", "tim_light_degradation_rate", "1/h", 13.85, 0.1, 50.0, "guessed",
+     "TIM loss rate under active CRY; set by rule in the s20 fit so a saturating 10 min pulse at CT15 leaves "
+     "10% (inferred) of unpulsed TIM 1 h later (Tang et al. 2010 Neuron 66:378: DN/LNd TIM 'undetectable' "
+     "after that pulse); half-life 3 min under full CRY", "loguniform", "inferred",
+     "read only with state:clock|light_input = 1"),
+    ("tim_tau_rec_h", "N26", "state:clock", "tim_recovery_tau", "h", 0.86, 0.25, 12.0, "guessed",
+     "TIM dark turnover time; upper bound from the steepest DD decline of TIM_DD (CT1-2, ln(0.51/0.16) = "
+     "1.16/h; Shafer et al. 2002 Fig. 6D), taken at the bound", "loguniform", "derived",
+     "read only with state:clock|light_input = 1"),
+    ("k_tim", "N26", "state:clock", "tim_light_coupling", "per unit peak TIM removed", 1.0, 0.01, 100.0, "guessed",
+     "phase displacement per unit of TIM removed by light; fitted to the PRC in s20", "loguniform", "guessed",
+     "read only with state:clock|light_input = 1"),
+    ("ct_tim_h", "N26", "state:clock", "tim_kick_ct", "h", 6.5, 0.0, 24.0, "guessed",
+     "the circadian time TIM removal pushes the phase towards; fitted to the PRC in s20", "uniform", "guessed",
+     "read only with state:clock|light_input = 1 (mode 0 keeps ct_light_h)"),
     # --- N25 sleep -----------------------------------------------------------
     ("tau_wake_h", "N25", "state:sleep", "rise_tau", "h", 12.0, 1.0, 48.0, "guessed",
      "sleep rebound after hours of deprivation (same basis as n25_sleep_tau)", "lognormal", "guessed", ""),
@@ -221,6 +256,68 @@ SOURCED = {
 CLOCK_SOURCED_SWITCH = ("state:clock", "values_from_sources")
 CLOCK_SOURCED: dict = {}
 
+# s20: N26 light input mode (0 the one-point pull, 1 CRY-TIM; see the module docstring)
+LIGHT_INPUT_SWITCH = ("state:clock", "light_input")
+# TIM's dark (DD) profile relative to its peak, at circadian times (h); used only with light_input = 1.
+# Shafer, Rosbash & Truman 2002 J Neurosci 22:5946 Fig. 6D: small vLNs (s-LNv), Canton-S, DD day 1, 25 C,
+# 4 brains per point; cytoplasmic + nuclear mean pixel intensity, read by eye from a 3x crop (axis 0-200,
+# about +-3 units), summed and divided by the CT16 maximum (159.5). The s-LNv profile stands in for the
+# light-labile TIM of the whole clock network (validity limit: Tang 2010 finds DN/LNd, not s-LNv, TIM
+# degraded by an early-night pulse).
+TIM_DD = ((0.0, 0.77), (1.0, 0.51), (2.0, 0.16), (3.0, 0.065), (4.0, 0.029), (6.0, 0.015), (8.0, 0.015),
+          (10.0, 0.015), (12.0, 0.15), (14.0, 0.30), (16.0, 1.0), (18.0, 0.51), (20.0, 0.26), (22.0, 0.98))
+TIM_DD_LABEL = "measured (pixel read)"
+
+
+def _tim_seg(ct: float, prof=None) -> tuple[float, float]:
+    """Log-linear periodic interpolation of TIM_DD: (TIM, d ln TIM / d ct)."""
+    x, y = zip(*(prof or TIM_DD))
+    xs, ly = np.array(list(x) + [x[0] + 24.0]), np.log(list(y) + [y[0]])
+    c = ct % 24.0
+    i = min(int(np.searchsorted(xs, c, side="right")) - 1, len(xs) - 2)
+    s = (ly[i + 1] - ly[i]) / (xs[i + 1] - xs[i])
+    return float(np.exp(ly[i] + s * (c - xs[i]))), float(s)
+
+
+def tim_dd(ct: float, prof=None) -> float:
+    """TIM_DD at ct (log-linear between the read points)."""
+    return _tim_seg(ct, prof)[0]
+
+
+def tim_target(ct: float, tau_rec_h: float, prof=None) -> float:
+    """P(ct) = TIM_DD (1 + tau_rec dlnTIM_DD/dct), floored at 0: with it, T follows TIM_DD in the dark."""
+    t, s = _tim_seg(ct, prof)
+    return max(0.0, t * (1.0 + tau_rec_h * s))
+
+
+def cry_tim_step(c: float, tim: float, ct: float, light_lux: float, dth: float,
+                 p: dict) -> tuple[float, float, float]:
+    """One step of active CRY c and TIM T (exact exponentials for constant light): (c, T, TIM removed)."""
+    a, b = p["cry_rate_per_lux_h"] * max(light_lux, 0.0), 1.0 / p["cry_tau_h"]
+    ci = a / (a + b)
+    c1 = ci + (c - ci) * np.exp(-(a + b) * dth)
+    kd = p["tim_kdeg_per_h"] * 0.5 * (c + c1)
+    r = 1.0 / p["tim_tau_rec_h"] + kd
+    ti = tim_target(ct, p["tim_tau_rec_h"], p.get("tim_dd")) / (p["tim_tau_rec_h"] * r)
+    t1 = ti + (tim - ti) * np.exp(-r * dth)
+    return float(c1), float(t1), kd * 0.5 * (tim + t1) * dth
+
+
+REAR_LUX = 1000.0   # rearing light for the start-up state (guessed; the s20 fit's LD intensity)
+
+
+def entrained_cry_tim(ct0: float, p: dict, days: float = 2.0, lux: float = REAR_LUX,
+                      dt_h: float = 1.0 / 60.0) -> tuple[float, float]:
+    """(c, T) at ZT = ct0 after `days` of 12:12 LD, lights on ZT 0-12 (CT = ZT, as initial_ct). Phase kicks
+    are left out of the pre-run; c and T forget their own start within hours (tau_c, tau_rec < 1 h)."""
+    n = int(round(days * 24.0 / dt_h))
+    ct = (ct0 - n * dt_h) % 24.0
+    c, t = 0.0, tim_dd(ct, p.get("tim_dd"))
+    for _ in range(n):
+        c, t, _r = cry_tim_step(c, t, ct, lux if ct % 24.0 < 12.0 else 0.0, dt_h, p)
+        ct = (ct + dt_h) % 24.0
+    return c, t
+
 # Populations coupled (male-cns `type`), evidence and label of the mapping.
 COUPLED = {
     "isn": (["ISN"], "inferred",
@@ -266,6 +363,8 @@ class Organs:
     akh: float = 0.5
     dilp: float = 0.5
     z: complex = 1.0 + 0.0j                       # clock state; arg 0 = CT 0
+    cry: float = 0.0                              # active CRY fraction (light_input = 1)
+    tim: float = field(default=np.nan)            # TIM, units of its DD peak (light_input = 1)
     pressure: float = 0.2
     inactive_s: float = 0.0
     asleep: bool = False
@@ -279,6 +378,11 @@ class Organs:
             self.water_nl = p["w0_nl"]
         if np.isnan(self.sugar):
             self.sugar = p["conc0_mM"] * p["vh0_nl"] / 1000.0
+        if np.isnan(self.tim):
+            if p.get("light_input", 0.0) >= 1:
+                self.cry, self.tim = entrained_cry_tim(self.ct_h, p)
+            else:
+                self.tim = tim_dd(self.ct_h, p.get("tim_dd"))
 
     # --- derived quantities ----------------------------------------------------
     @property
@@ -362,7 +466,12 @@ class Organs:
         L = light_lux / (light_lux + p["l50_lux"]) if light_lux > 0 else 0.0
         alpha = 2 * np.pi * p["ct_light_h"] / 24.0
         z = self.z * np.exp(1j * w * dth)
-        z = z + dth * (p["mu_per_h"] * (1 - abs(z) ** 2) * z + p["k_light_per_h"] * L * np.exp(1j * alpha))
+        if p.get("light_input", 0.0) >= 1:          # s20 CRY-TIM (exact exponential steps for c and T)
+            self.cry, self.tim, removed = cry_tim_step(self.cry, self.tim, self.ct_h, light_lux, dth, p)
+            z = z + dth * p["mu_per_h"] * (1 - abs(z) ** 2) * z \
+                + p["k_tim"] * removed * np.exp(1j * 2 * np.pi * p["ct_tim_h"] / 24.0)
+        else:
+            z = z + dth * (p["mu_per_h"] * (1 - abs(z) ** 2) * z + p["k_light_per_h"] * L * np.exp(1j * alpha))
         self.z = complex(z)
         # N25 sleep homeostat
         self.inactive_s = self.inactive_s + dt if act < p["a_rest"] else 0.0
@@ -397,7 +506,12 @@ def read_params(reg: Registry) -> dict:
                                      "(internal_state.CLOCK_SOURCED, s19) as defaults",
                            subsystem="internal_state", minimal=0.0, conventional=0.0,
                            minimal_note="neutral 0: the s10 guessed clock values"))
-    out = {}
+    li = float(reg.require(*LIGHT_INPUT_SWITCH, units="mode",
+                           model_use="N26 light input: 0 one-point pull K Lsat e^{i alpha}; 1 CRY-dependent TIM "
+                                     "degradation (night-gated, saturating; s20)",
+                           subsystem="internal_state", minimal=0.0, conventional=0.0,
+                           minimal_note="neutral 0: the s10 one-point pull"))
+    out = {"light_input": li} if li else {}
     for f, mech, ent, prop, unit, val, lo, hi, *_rest in PARAMS:
         if src and f in SOURCED:
             val, lo, hi = SOURCED[f][:3]

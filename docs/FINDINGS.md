@@ -1976,7 +1976,57 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   temperatures, so the ratio is approximate. Real flies are near saturation by 5 min; this model is not.
 - Status: inferred (model structure), measured inputs. N26 doesn't move. Next: a TIM-like light-labile input (DECISIONS).
 
-### F-S20-2: Davie 2018 rows give the PNs a negative net 5-HT sensitivity (adPN −0.29, lPN −0.11; the prior gave +0.056), so postsynaptic N19 predicts PN inhibition, while Dacks 2009 measured facilitation; the s19 failure is structural (no presynaptic path), not only the prior (s20, 22 Oct 22:43)
+### F-S20-2 (corrected 22:51, see the last bullet): Davie 2018 rows give the PNs a negative net 5-HT sensitivity (adPN −0.29, lPN −0.11; the prior gave +0.056), so postsynaptic N19 predicts PN inhibition, while Dacks 2009 measured facilitation; the s19 failure is structural (no presynaptic path), not only the prior (s20, 22 Oct 22:43)
 - Rows: 122 types / 2,447 cells, N19 mode 2 (neutral default 0; mode 1 identical outside those cells).
 - Scale check against Davis/Ozel on 11 overlapping types: r = 0.63, Davie lower (10x dropout).
 - Not a score (Dacks spent). Labels: p derived, crosswalk inferred.
+- **Correction (22 Oct 22:51).** The sign isn't robust to 10x dropout. A per-gene scale (Davis p / Davie p, means over the
+  143 overlap pairs: 5-HT2A ×2.5, 2B ×8.9, 7 ×4.6, 1A ×1.4, 1B ×3.4; derived, thin, from KC/PAM/L2/T1 only) turns PN net
+  5-HT to **+0.06 (adPN) and +0.26 (lPN)**. Davie therefore doesn't settle the PN sign. What holds in both readings is the
+  magnitude: at a* = 0.0649 the direct PN input gain is between −1.9% and +1.7%, against Dacks' +15%. Reaching +15% directly
+  would need net ≈ +2.3, i.e. near-full expression of every excitatory 5-HT receptor and none of the inhibitory ones. So the
+  "route, not the prior" reading rests on magnitude, not on sign. The title's "structural" claim is downgraded to likely.
+
+### F-S20-3: a CRY-dependent TIM light input (night-gated, saturating within minutes) fits all four light-pulse training targets with two fitted values and predicts Lamba's held-out ZT21 advance (+2.89 h against +3.21 ± 0.23 h measured; pass, spent) (s20, 23 Oct 00:09; DECISIONS 22 Oct 23:02, 23:55; 23 Oct 00:09)
+- Mechanism (`state:clock|light_input` 1, neutral 0):
+  - light activates CRY, and active CRY degrades TIM;
+  - the TIM removed pushes the oscillator towards `ct_tim`.
+- Values and labels:
+  - TIM's DD profile: measured (Shafer 2002 Fig. 6D, s-LNv, pixel read).
+  - τ_rec 0.86 h: derived.
+  - k_d 13.8/h (half-life 3 min under full CRY): inferred, by rule from Tang 2010.
+  - a 10.3/(lux·h): inferred, by rule from Vinayak 2013.
+  - τ_c 0.5 h: guessed.
+  - k_tim 0.789 and ct_tim 7.59 h: fitted.
+- Training (registered bands):
+
+  | target | model | measured |
+  |---|---|---|
+  | PRC zero crossing | CT 18.80 | CT 18.5 |
+  | DD CT15 delay, 60 min | −3.86 h | −4.05 |
+  | LD ZT15 delay, 5 min | −2.36 h | −3.1, low side in every variant |
+  | lights-on in 12:12 LD | CT −0.54 | CT 0 |
+
+  The s10 pull failed this set (F-S20-1). This input clears it because T is used up, so the response
+  saturates by about 1 min of pulse: CT15 delays are −2.86 / −2.93 / −3.86 h for 1 / 5 / 60 min.
+- Held out: ZT21, 5 min, 1500 lux, LD assay. Predicted +2.89 h, measured +3.21 ± 0.23 (blind pixel read).
+  Ratio 1.11: **pass**.
+- Consistency only:
+  - The saturating 10 min CT20 advance is +2.11 h, against Vinayak's ~2.4 h.
+  - The dead zone (|shift| < 0.25 h) spans CT 3-9.
+  - Misses, recorded as limits:
+    - The 120 min IRC half-max is 0.014 lux against 0.0025 (the model integrates dose; the fly is 6× more
+      sensitive to long dim light).
+    - TIM loss right after a threshold pulse is 38% against ≥ 60%.
+- Dependence: the result needs active CRY to clear within about 1 h of lights-off. At τ_c 2 h the clock no
+  longer entrains, and τ_c is guessed (no in vivo lifetime found).
+- The LD TIM waveform has two night peaks. That shape comes from the single Shafer CT20 point; dropping it (V4)
+  still passes.
+- Validity:
+  - s-LNv TIM stands in for the network's light-labile TIM (Tang: DN/LNd TIM, not s-LNv, is degraded at ZT15).
+  - One lumped oscillator.
+  - Strains and temperatures differ (w1118 at 20 °C, y w at 25 °C).
+  - No eye input (the CRY-only route stands in for both).
+- Status: N26 stays **partial**. The switch is off in m10f. Adoption needs a stage gate on fly2's current
+  frontier plus an organism LD check (DECISIONS 00:09).
+- Figures: `docs/media/s20_n26_tim_prc.png` and `docs/media/s20_n26_tim_tim.png`. Runs: `runs/s20/n26/tim/`.
