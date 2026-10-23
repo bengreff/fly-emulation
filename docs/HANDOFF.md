@@ -1,56 +1,53 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 01:02 CDT, session 21 (fresh context after s20, same night).
-- **Brief:** Director, 23 Oct 00:45.
-  - (1) Score the MB grid once against Huang 2024 when `ALL.done` lands.
-  - (2) Meanwhile, N25: pre-register an open-access held-out rebound test, and scope a sourced homeostat that makes rebound scale with time awake.
-  - N26 is accepted: adopt it as a stage on fly2's newest stage once that is on main, without waiting idle for it.
-  - Budget: about 2 % of the week.
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 03:44 CDT, session 22 (fresh context after s21, same night).
+- **Brief:** Director, 23 Oct 01:10, plus "now" (budget to about 05:15).
+  - Order: (1) adopt N26 and the MB noise stage on fly2's frontier once it is on main; (2) build the N25 reduced ER5/dFB loop on the CPU under its registration, switch off by default; (3) the MB type-spread gap (model 6-15 Hz vs data 8-35 Hz): look for a per-type source (input counts, intrinsic properties), not per-type noise.
+  - Tonight: item (2). Item (1) waits on fly2's merge.
+  - Accepted by the Director: the MB rest fit (Huang 2024, 6 of 9, spent, not adopted); the N25 scope and the Chowdhury registration.
 - **Goal:** Ben's is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
-- **Heavy runs go on backhouse** (load 25-27 from other work). My jobs use ≤ 4 threads and queue above load 24.
+- **Heavy runs:** backhouse for multi-run sets; on the Mac, through `~/director/harness/slot.py` (worker rule 3). Tonight's runs were short CPU probes on the Mac (the fit took 24 min); the bout check (11 s) and two pytest files (160 s) ran without the slot limiter, which rule 3 asks for.
 - **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows, **0 done**.
 - **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
 - **fly2's frontier** (m10f4/m10f5) is on its branch, not on main. The stages I register (N26, MB noise) wait for that merge.
 
-## Report for Ben (s21)
-**Rows moved: none (0 of 20 done).** One held-out test was passed and one registered. N25 is scoped.
+## Report for Ben (s22)
+**Rows moved: none (0 of 20 done).** N25 mode 1 is built (switch off), fitted on training data, and a prediction is locked; a training-data check then showed its nights are too consolidated.
 
-- **MB resting rates: held-out PASS by the minimum** (F-S21-1; DECISIONS 22 Oct 22:23, 23 Oct 01:01).
-  - Plasticity off. One noise level per class was fitted on two cells: σ*_DAN 1.477 and σ*_MBON 2.287 mV/√ms.
-  - The confirm runs pass on seeds 12 and 13.
-  - **Huang 2024, 6 of 9 types inside the band (spent).** The γ1 pair and PPL1-α3 fire 2-4× slower than in vivo.
-  - The model compresses the spread: 6-15 Hz against 8-35 Hz in the data.
-  - Not adopted. It needs a stage on m10f3 with N21 off. N3 stays partial.
-- **N25: held-out rebound test registered** (DECISIONS 23 Oct 00:53).
-  - Chowdhury et al. 2023 eLife Fig. 1: Canton-S males, vortexer 20 s arm, 6/12/24 h ending at ZT 0, day-1 rebound normalised to unperturbed flies. The raw data are on Dryad, unopened.
-  - Pass rule: the Huber rule.
-  - **Weakened by a leak I caused.** Listing the XML's sections showed the Results subsection titles (qualitative: stimulus frequency matters, little debt repaid over cycles, short bouts mask rebound, 5-HT a candidate). No magnitudes and no length dependence were seen.
-  - Huber 2004 is now training context. Brown 2020 has only one duration (24 h), mostly in females, so it is unused.
-- **N25 scoped, not built** (`docs/research/s21_n25_homeostat_scope.md`).
-  - The flat rebound and the 411 min/day both come from the deterministic single-threshold switch.
-  - Recommended: an ER5 (R5) need variable (Liu 2016: BRP, NMDAR and firing rise with wake and return to baseline after 24 h of recovery sleep) driving stochastic per-cell dFB switching (Pimentel 2016: spontaneous restart after a mean 25.9 min).
-  - Three shared fitted quantities, trained on baseline sleep and the Liu anchors; held out on Chowdhury.
-  - **Connectome (male-cns, measured):**
-    - ER5 (21 cells) ⇄ ExR1 (4 cells; = helicon cells, inferred): 10,044 / 5,624 synapses.
-    - dFB → ExR1: 260.
-    - The only R5 → dFB route runs through ExR3 (5-HT): 211 → 692.
-    - The dFB gets 31 % of its input from serotonergic cells and 0.1 % from dopaminergic ones.
-  - The 23E10/dFB controversy (De 2023 vs Jones 2023) is recorded.
-- **Commits:** 8bbb635 (N25 scope and registration), plus this one (MB score, docs).
+- **N25 mode 1 built** behind `state:sleep|homeostat` (neutral 0 = the s10 process S). DECISIONS 23 Oct 02:58.
+  - ER5 need n: rises while awake (τ_rise, fitted), falls while asleep (τ_decay 5.5 h, derived from Liu 2016's BRP time course; R2 = ER5 inferred).
+  - 8 dFB cells, each a two-state switch. OFF → ON at k_r (1 + γn)/(1 + γ), with k_r = 1/25.86 min⁻¹ measured by Pimentel 2016 in flies deprived > 12 h (so taken at n = 1, inferred). ON → OFF at k_off (1 + λ·light), fitted. The fly can sleep while ≥ 4 of 8 are ON (guessed).
+  - CPU path in `src/flyemu/internal_state.py`, reduced loop in `scripts/probes/s21_n25_homeostat.py`. Implementation checks U1-U3 pass; new tests pass (neutral off, exact rates, per-cell drive).
+  - Reads: `docs/research/s22_n25_reads.md` (Liu, Pimentel, Donlea 2018, Abhilash 2024, night bout sources).
+- **Training fit** (DECISIONS 03:24): 140 of 14,256 sets pass every check (Abhilash 70-80 % total, night > day, Liu BRP anchors, Liu firing ratio). Falsifier not hit.
+  - **Locked prediction for Chowdhury 2023** (held out, Dryad unopened): day-1 rebound **99.7 / 150.2 / 174.3 min** after 6 / 12 / 24 h (± 3.0, 2,048 flies). The rebound grows with deprivation, unlike mode 0 (flat, F-S20-4).
+  - Figure viewed: `docs/media/s22_n25_homeostat.png`.
+- **Problem found after locking (F-S22-1; DECISIONS 03:32).** Every accepted set sleeps the night in very few bouts.
+  - Garbe 2015 (iso31 males, classic DAM; my own figure read, training): about 7.0 ± 4.2 night bouts of 113 ± 70 min, per-fly means up to about 335 min.
+  - Locked candidate: 0.64 night bouts of 556 min. Accepted sets: 0.43-4.6 bouts of 130-729 min.
+  - The rebound moves with this. Sets with night bouts ≤ 335 min (32) give 82 / 114 / 134 min at the median; ≤ 250 min (17) give 34 / 61 / 68.
+  - Fragmented nights come only with weak need coupling (γ ≤ 0.5); with k_r fixed at 1/26 min the structure cannot have both.
+  - **Proposed amendment T5** (mean night bout ≤ 335 min). Its candidate (τ_rise 18 h, γ 2, k_off 0.00639, λ 2), re-run with 2,048 flies, predicts **70.3 / 111.3 / 131.1 min (± 3.4)**. Written down before any held-out read.
+- **Decision for the Director (QUESTIONS FOR BEN in the reply):** score Chowdhury once on the locked prediction, on the T5 amendment, or revise the structure first (clock input, sleep-link threshold, arousal term; a new registration). Only one prediction gets scored, named before Dryad is opened.
+- **Not adopted.** Switch stays 0; N25 stays partial.
+- **Commits:** 5f60cbf (mode 1 and registration), b338a38 (tests, bound fix, reads), b02b3a3 (fit, locked prediction, figure), 75ea668 (bout check, F-S22-1), plus this HANDOFF.
 
 ## Running now
-Nothing. The `s20mb` tmux has ended and the WSL keep-alive (PID 4311) is stopped. Not mine; never touch: fly2's processes and the other projects' tmux sessions on backhouse.
+Nothing of mine. Not mine; never touch: fly2's processes and the other projects' tmux sessions on backhouse.
 
 ## Next (this order)
 1. **N26 adoption stage** once fly2's frontier is on main (DECISIONS 23 Oct 00:09). Same for an MB noise stage with N21 off (F-S21-1).
-2. **N25 build, CPU reduced loop first:**
-   - Cheap reads first (Sonnet): Liu 2016 Fig. 3-4 values, Pimentel 2016's restart distribution, and the helicon transmitter in Donlea 2018.
-   - Then switch `state:sleep|homeostat` (neutral 0) mode 1 in `internal_state.py`. Tell fly2 first: the ER5 gain sits next to its plasticity rows.
-   - Then the implementation and training checks, and predictions written down before the Chowdhury Dryad data are opened once.
-   - The falsifier is in the scope doc.
-3. **N19:** Li 2017 PN rows, then McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
-4. S5/N28 Q10; S1-S4 follow-ups.
-- Tell fly2: DANs fire at 6-15 Hz at rest in the fitted model, and at 8-20 Hz in Huang 2024. That matters for N21's memory-wipe rule.
+2. **N25:** the Director's call above. If scoring: build the scoring pipeline from Chowdhury's raw DAM files (5-min rule, ZT windows, the Huber pass rule of the 00:53 registration) and spend it once. If revising: register the new structure and its training checks first (T1-T5).
+3. **MB type-spread gap** (item 3): per-type input counts and intrinsic rows for PPL101, PPL106, MBON11 against the passing types; no per-type noise fitting.
+4. **N19:** Li 2017 PN rows, then McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
+5. S5/N28 Q10; S1-S4 follow-ups.
+- Tell fly2: the ER5 network gain (not built yet; only the reduced loop and per-cell dFB drive exist) will sit next to its plasticity rows. DANs fire at 6-15 Hz at rest in the fitted MB model, and at 8-20 Hz in Huang 2024; that matters for N21's memory-wipe rule.
+
+**s21 (kept for reference).**
+- MB resting rates: one noise per class (σ*_DAN 1.477, σ*_MBON 2.287 mV/√ms, fitted) passes held-out Huang 2024 by the minimum, 6 of 9 (spent; F-S21-1). Spread compressed (6-15 Hz vs 8-35 Hz). Not adopted.
+- N25 scoped (`docs/research/s21_n25_homeostat_scope.md`) and the Chowdhury 2023 test registered (DECISIONS 23 Oct 00:53). A leak of qualitative Results subsection titles is recorded there; no magnitudes seen.
+- Connectome (male-cns, measured): ER5 (21) ⇄ ExR1 (4; helicon, inferred) 10,044 / 5,624 synapses; dFB → ExR1 260; R5 → dFB only via ExR3 (5-HT) 211 → 692; dFB input 31 % serotonergic, 0.1 % dopaminergic.
+- Tests at the end of s22: the two N25 test files pass (30); the full suite last run in s22 before the fit: 291 passed, 6 failed, all in fly2's `tests/test_two_compartment.py`.
 
 **s20 (kept for reference).**
 - N26 CRY-TIM light input: the held-out Lamba ZT21 passed (F-S20-3); the Director has accepted it.
@@ -556,13 +553,14 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Vinayak 2013 120 min half-max, TIM loss at threshold, 2.4 h max advance | consistency only (seen); the first two miss (F-S20-3) | none |
 | Vinayak 2013 CT20-21 advance 2.4 h (1 h pulse) | seen in an agent report; never used to set a value | consistency only (seen before registration) |
 | Huber et al. 2004 Sleep 27:628 rebound after 6/12/24 h deprivation | **training context** (Director, 23 Oct 00:45: its direction "dependent on prior time awake" leaked through the s20 round-3 reader). Magnitudes still unread; no full text reachable | may set or train N25 values if Ben supplies the full text; never a held-out test |
-| Chowdhury et al. 2023 eLife 12:e91355 Fig. 1 (Canton-S males, vortexer 20 s arm, 6/12/24 h ending ZT 0, day-1 normalised rebound); raw data Dryad doi:10.5061/dryad.qnk98sfpp | **held out, unspent, weakened** (registered DECISIONS 23 Oct 00:53). Protocol read (Methods only). Results/Discussion subsection titles seen (stimulus-frequency effect, yoked low-frequency rebound, little debt repaid over cycles, short bouts mask rebound, 5-HT candidate); magnitudes and the deprivation-length dependence unseen. Dryad not downloaded | score once, on the first new-structure homeostat that passes its implementation and training checks; the 00:34 mode 0/1 predictions are reported at the same read |
+| Chowdhury et al. 2023 eLife 12:e91355 Fig. 1 (Canton-S males, vortexer 20 s arm, 6/12/24 h ending ZT 0, day-1 normalised rebound); raw data Dryad doi:10.5061/dryad.qnk98sfpp | **held out, unspent, weakened** (registered DECISIONS 23 Oct 00:53). Protocol read (Methods only). Results/Discussion subsection titles seen (stimulus-frequency effect, yoked low-frequency rebound, little debt repaid over cycles, short bouts mask rebound, 5-HT candidate); magnitudes and the deprivation-length dependence unseen. Dryad not downloaded | score once, on the first new-structure homeostat that passes its implementation and training checks; the 00:34 mode 0/1 predictions are reported at the same read. s22: mode 1 passes; locked 99.7 / 150.2 / 174.3 min (DECISIONS 03:24); T5 amendment 70.3 / 111.3 / 131.1 proposed (03:32); the Director names the one scored |
 | Brown et al. 2020 PLoS Genet 16:e1008270 (PMC7089559) | protocol read only (one 24 h duration, mainly females); no outcome seen | unused; not a dose series |
 | Huang et al. 2024 Nature Fig. 1 voltage imaging (PPL1 and MBON resting rates, Zenodo 10998457, `data/raw/huang2024/`) | **spent** 23 Oct 01:00 on the s20 MB noise fit: PASS 6 of 9 (F-S21-1) | consistency only from now; a per-type MB rate mechanism needs another held-out source |
 | Abhilash & Shafer 2024 two-process fit (taus 8.76 / 9.51 h, 74.36 % sleep) | model source (s20 `SLEEP_SOURCED`, neutral). C1 implementation check FAILED by 1.2 pp (F-S20-4) | not evidence for N25 |
 | Abhilash & Shafer 2024 Fig. 1E: CS, w1118, yw males "~70 % to 80 %" of 24 h asleep (DAM, LD) | training: the s22 primary band 1008-1100 min/day (`docs/research/s22_n25_reads.md`) | can't validate N25 baseline |
 | Liu et al. 2016 Cell 165:1347: R2 (= ER5, inferred) BRP raised at +2 h, back at +24 h; firing about 3× ZT13-15 vs ZT0-2 | SET τ_decay bracket (s21) and training checks T3, T4 of the s22 fit | can't validate N25 |
 | Pimentel et al. 2016 Nature 536:333: dFB restart 25.86 ± 7.61 min (7 of 15, after > 12 h SD) | SET k_r (s22, the rate at full need) | can't validate N25 |
+| Garbe et al. 2015 Biol Open 4:1558 Fig. 2 (iso31 males, SB/MB DAM bouts; own figure read) | training (s22): night bout check, proposed T5 | can't validate N25 bouts |
 | Male daily sleep 618-1100 min/day (Cirelli 2008, Harbison 2013, Buchert 2022, Geissmann 2019) | seen (s20 N25 category A); C2 consistency check | consistency only |
 | Lv 2024 Fig. 2J and Wan 2021 single-pulse τ | SET the pool kinetics; U1 is a consistency check | none |
 | Burggren 2017 respirometry and male mass; PMC8774106 TAG; PMC4335172 crop and gut | SET the s19 sourced values (`internal_state.SOURCED`) | can't validate S1-S4 |
