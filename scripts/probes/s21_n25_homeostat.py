@@ -303,6 +303,70 @@ def select(acc: list) -> dict:
             "candidate": acc[j]}
 
 
+def bouts(sl: np.ndarray, days: int) -> dict:
+    """DAM-style bouts from sleep[T, M, F]: each bout belongs to the 12 h period it starts in and counts its full
+    length (bouts still running at the end of the record are cut there). Per set: mean bouts per period, and the
+    mean bout length (pooled over bouts) for day and night."""
+    T, m, f = sl.shape
+    x = np.concatenate([np.zeros((1, m, f), bool), sl, np.zeros((1, m, f), bool)]).reshape(T + 2, m * f).T
+    dx = np.diff(x.astype(np.int8), axis=1)
+    sc, st = np.nonzero(dx == 1)
+    _, en = np.nonzero(dx == -1)
+    length, cell = en - st, sc // f
+    keep = st < days * DAY
+    night = (st % DAY) >= 720
+    out = {}
+    for name, sel in (("day", keep & ~night), ("night", keep & night)):
+        n = np.bincount(cell[sel], minlength=m)
+        tot = np.bincount(cell[sel], weights=length[sel], minlength=m)
+        out[f"bouts_{name}"] = n / (f * days)
+        out[f"bout_len_{name}"] = tot / np.maximum(n, 1)
+    return out
+
+
+def rebout(sets: dict, flies: int = 128, seed: int = 30) -> dict:
+    """Baseline bout structure (bouts() above) for given sets, 2 scored days after 6 burn-in days."""
+    r = sim(base_params(), sets, flies=flies, burn_days=6, days=2, seed=seed)
+    return bouts(dam_sleep(r["inact"], r["run0"]), 2)
+
+
+GARBE_NIGHT_BOUT_MAX = 335.0  # min, longest per-fly mean night bout, Garbe 2015 Fig. 2 (SB DAM; own figure read)
+
+
+def bout_check() -> dict:
+    """Baseline bouts for every stage-2 set (seed 30 + chunk), then the s22 sensitivity: the primary accepted sets
+    whose mean night bout lies inside Garbe 2015's per-fly range, and their day-1 predictions. Not a registered
+    check: the locked prediction is the plain primary candidate."""
+    path = OUT / "fit_bouts.json"
+    if path.exists():
+        r = json.loads(path.read_text())
+    else:
+        r = json.loads((OUT / "fit.json").read_text())
+        rows = r["sets"]
+        sets = {k: np.array([s[k] for s in rows], float) for k in GRID}
+        res = {}
+        for i, ch in chunks(sets, 200):
+            for k, v in rebout(ch, seed=30 + i).items():
+                res.setdefault(k, []).append(v)
+        for k, v in res.items():
+            for s, x in zip(rows, np.concatenate(v)):
+                s["dam_" + k] = round(float(x), 3)
+        path.write_text(json.dumps(r, indent=1))
+    acc = [s for s in r["sets"] if s["liu_pass"] and s["band"]]
+    keys = ("dam_bouts_night", "dam_bout_len_night", "dam_bouts_day", "dam_bout_len_day")
+    out = {"primary_bout_ranges": {k: [min(s[k] for s in acc), max(s[k] for s in acc)] for k in keys}}
+    for cap in (GARBE_NIGHT_BOUT_MAX, 250.0):
+        sel = select([s for s in acc if s["dam_bout_len_night"] <= cap])
+        if sel["n_accepted"]:
+            c = sel.pop("candidate")
+            sel["candidate"] = {k: c[k] for k in (*GRID, "total", "day", "night", *keys, *(f"{a}_d1" for a in ARMS))}
+        out[f"night_bout_le_{cap:g}"] = sel
+    c = out[f"night_bout_le_{GARBE_NIGHT_BOUT_MAX:g}"]["candidate"]
+    d = deprivation({k: np.array([c[k]], float) for k in GRID}, flies=2048, seed=500)
+    out["amended_candidate_2048"] = {k: round(float(v[0]), 2) for k, v in d.items()}
+    return out
+
+
 def figure(path: Path = Path("docs/media/s22_n25_homeostat.png")) -> dict:
     """The primary candidate: 30-min sleep profile and need (control vs 24 h arm), and day-1 rebound vs length
     with the accepted-set spread. Re-simulated with 512 flies per arm (seed 40)."""
@@ -365,4 +429,9 @@ if __name__ == "__main__":
             print(k, "candidate", json.dumps(r[k].get("candidate")))
     elif sys.argv[1] == "figure":
         print(figure())
+    elif sys.argv[1] == "bouts":
+        r = bout_check()
+        (OUT / "bout_check.json").write_text(json.dumps(r, indent=1))
+        for k, v in r.items():
+            print(k, json.dumps(v))
     print(f"wall {time.time() - t0:.0f} s")

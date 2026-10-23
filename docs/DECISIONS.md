@@ -4614,3 +4614,27 @@ Run as registered at 02:58 (`runs/s21/n25/fit.json`, wall 1440 s; Chowdhury's Dr
   - **Every simulated fly sleeps the whole night.** Each 30-min dark bin is 30 of 30 min; the candidate starts 0.65 sleep bouts per night (the bout spans lights-off) and its mean night bout is about 1,100 min. Day sleep is 9.7 bouts of 37 min. With the night full, rebound can only appear in the day after deprivation.
 - **The rebound size tracks the night bout structure across the accepted set.** The 11 accepted sets whose night bouts average under 240 min all have γ 0.25-0.5, k_off 0.0119 and λ 2, and predict small rebounds (24 h: 19-70 min). The consolidated ones predict large rebounds. Night bout structure is training data that no source read so far gives, so a Sonnet reader is on it now (baseline only; rebound papers barred).
 - **Not adopted.** The switch stays 0. No held-out data opened.
+
+### s22 N25 night bout structure against Garbe 2015: registered prediction stays locked; a bout check is proposed as an amendment for the Director (23 October, 03:32)
+
+Training data only; Chowdhury 2023's Dryad data still unopened, no rebound magnitude read.
+- **Source (seen, training).** Garbe et al. 2015 Biol Open 4:1558 (PMC4728345), Fig. 2, my own read of the figure. iso31 virgin males, 24 h, sucrose/agar, means ± s.d.
+  - Classic single-beam DAM (SB): day sleep about 515 min, night about 610, total about 1,120.
+  - SB bouts: day about 8.7 ± 3.3 per 12 h of about 57 ± 25 min; night about 7.0 ± 4.2 per 12 h of about 113 ± 70 min. Per-fly mean night bouts run from about 25 to about 335 min.
+  - Multibeam monitors (MB) split bouts further (night about 9 bouts of about 85 min).
+  - Caveats: other strain (iso31, not Canton-S), food, and light level; values read off a scatter plot (inferred, ± a few min).
+  - The Sonnet reader also found Harbison 2013 (PMC3644253; male night sleep 278-703 min, day 120-682 across DGRP lines; bout means only in a supplement, not read) and Buchert 2022 (24 h totals only).
+- **Model (`scripts/probes/s21_n25_homeostat.py bouts`, `runs/s21/n25/bout_check.json`).** DAM bouts counted in the 12 h period they start in, full length; 128 flies, 2 days per set.
+  - The 140 accepted primary sets start 0.43-4.6 bouts per night, of 130-729 min mean.
+  - The locked candidate starts 0.64 bouts per night, of 556 min mean. Garbe's per-fly maximum is about 335 min, so no single measured fly matches it.
+  - At the per-value bar ("some fly of this species"), the candidate's night structure fails; its total, its day/night split and its day bouts (9.1 per 12 h of 81 min) pass.
+- **Sensitivity (reported, not registered).** Keep only the accepted sets whose mean night bout is ≤ 335 min:
+  - 32 sets remain. Their day-1 medians are 82 / 114 / 134 min (2.5-97.5 %: 20-146, 23-207, 25-250).
+  - The selection rule's candidate among them: τ_rise 18 h, γ 2, k_off 0.00639, λ 2. It gives 85 / 113 / 140 min, with 2.6 night bouts of 200 min.
+  - A tighter cap (≤ 250 min) leaves 17 sets with medians 34 / 61 / 68 min. **The prediction moves with the night structure.**
+- **Decision.**
+  - The 03:24 prediction (99.7 / 150.2 / 174.3 min) stays the registered, locked one. It was registered before this read, and changing it now would be a choice made after seeing that the check moves it.
+  - Proposed amendment, for the Director **before** any held-out read: add **T5, mean night bout ≤ 335 min** (inside Garbe 2015's per-fly range, SB DAM). Under T5 the prediction becomes the ≤ 335 candidate above, re-simulated with 2,048 flies per arm (seed 500, as for the locked one; `runs/s21/n25/bout_check.json`): **70.3 / 111.3 / 131.1 min (± 3.4 model SEM)** day 1; days 2 and 3 within ± 6 min.
+  - Either way, only one prediction is scored, named before Dryad is opened.
+  - The likely structural cause is that k_r (one restart per 26 min, measured) caps how fast cells can flip; fragmented nights need small γ, which weakens the homeostat. A revision (a clock input, the sleep-link threshold, or the arousal term) is a new registration, not a refit.
+- **Not adopted.** Switch stays 0; N25 stays partial.
