@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 04:13 CDT, session 22 (fresh context after s21, same night).
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 04:10 CDT, session 22 (fresh context after s21, same night).
 - **Brief:** Director, 23 Oct 01:10, plus "now" (budget to about 05:15).
   - Order: (1) adopt N26 and the MB noise stage on fly2's frontier once it is on main; (2) build the N25 reduced ER5/dFB loop on the CPU under its registration, switch off by default; (3) the MB type-spread gap (model 6-15 Hz vs data 8-35 Hz): look for a per-type source (input counts, intrinsic properties), not per-type noise.
   - Tonight: item (2). Item (1) waits on fly2's merge.
