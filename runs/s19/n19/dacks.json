@@ -1,0 +1,33 @@
+{
+ "mode": "dacks",
+ "profile": "m10f3",
+ "a": 0.0649,
+ "coverage": {
+  "type": 73253,
+  "hemilineage": 10492,
+  "prior": 83366
+ },
+ "n_release": {
+  "dopamine": 392,
+  "octopamine": 101,
+  "serotonin": 48,
+  "tyramine": 0
+ },
+ "kick_mv": 68.75,
+ "n_orn": 200,
+ "n_pn": 12,
+ "u0": {
+  "spikes": 297.0,
+  "graded": 0.0,
+  "stim_spikes": 297.0,
+  "ctrl_spikes": 0.0
+ },
+ "u1": {
+  "spikes": 296.0,
+  "graded": 0.0,
+  "stim_spikes": 296.0,
+  "ctrl_spikes": 0.0
+ },
+ "change": -0.0033670033670033517,
+ "wall_s": 571.4
+}

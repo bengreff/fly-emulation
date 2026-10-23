@@ -2109,3 +2109,168 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - The 2:1 strong/weak pair structure can't be placed, since the type label can't say which cell is MN1-4.
   - MN5 coupling is unmeasured.
   - Hurkey's functional result (splay: sync index 0.56 vs 0.61 under shakB RNAi) is not tested, and is unspent.
+### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
+- **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure
+  pixels, derived). Refined grid: Mi4 output a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16; a* = 0.0649.
+  Mi4's own input gain at a* is only ×1.13 (L5 is modulated too). The ×2.66 output is network amplification
+  of a near-threshold Mi4.
+- **Held-out test (spent).** Dacks 2009, PN odour response +15% under bath 5-HT (n = 8). In the model: DM2/DL1/DM3
+  ORNs kicked (Poisson 100 Hz), 12 PNs read (DL1_adPN, DM2_lPN, DM3_adPN, DM3_vPN), u_5HT 1 against 0 at a*: 297 → 296 evoked spikes, **−0.34%**, band +5% to +30%. **FAIL.**
+- **Why.** All 12 PNs are on the population prior (no type or hemilineage transcript row), with net 5-HT
+  +0.0556 under the sign rule. Their input gain is therefore about +0.4%. Mi4's type row gives net OA 2.0, about 36 times the
+  receptor weight per unit a (`runs/s19/n19/map.json`).
+- **Caveat.** A first Dacks run at a wrong a* (0.0458, a driver bug that let a voided grid point in) leaked a
+  "fail" before this score (DECISIONS 04:42). The registered run fails the same way.
+- **Also held (s19):** U3 sign test passes 5 of 5, weak by construction; the off-path spike hash is identical.
+  U1/U1h are unscored (their runs at the wrong a* are void and unread).
+- **Reading.** The mechanism runs and is neutral when off, but one shared gain over a population prior can't place
+  a sensitivity where the prior has none. The next step is data: PN 5-HT receptor expression (Davie 2018 brain atlas,
+  fetched tonight, has annotated PN clusters), then a re-registered test on unspent evidence. Dacks can't be reused.
+
+### F-S19-1: the lumped metabolism, given values read from sources, predicts male starvation survival (28.4 h) and CAFE intake (1.85 µl/day) inside their held-out bands. This holds only at the measured group metabolic rate: at Burggren's single-fly extrapolation, both fail (s19, 22 Oct 02:31; pre-registered DECISIONS 22 Oct 02:06 and 02:30; switch `state:organs|values_from_sources` built, neutral 0; nothing adopted)
+- **What was run.** The `internal_state.Organs` ODE alone, with no nervous system, from six values read from
+  sources: basal use, the fat store, hemolymph volume, body water, and the crop and gut τ. The other parameters
+  keep their s10 guesses. Probe: `scripts/probes/s19_metabolism_checks.py --sourced`.
+- **Results.**
+  - S2 starvation on water: 28.4 h against a 24-112 h band, from secondary reports. Pass.
+  - S3 CAFE: 1.85 µl/fly/day against 1.0-2.25, from Ja 2007 (single Canton-S males at 25 °C, read). Pass.
+  - S4 desiccation: not scored, because two of its inputs were not found. Its values are unspent.
+  - S1 rest sugar after 6 h of fasting: 39.2 mM. This is consistency only.
+- **What the passes rest on.** The fly burns 0.00626 nmol glucose-eq/s. That comes from Burggren 2017's group
+  respirometry: 6 µl O2/mg/h × 0.505 mg, with RQ 1 and STPD assumed. The authors extrapolate a single fly to
+  14 µl/mg/h; at that rate starvation is 12.2 h and CAFE 4.3 µl/day, and both fail. CAFE also counts only the
+  food's sucrose. With the yeast extract's energy counted (guessed 3.3 kcal/g), CAFE lands at 1.00, the band's
+  edge. The store is TAG only, with glycogen missing.
+- **Reading.** The model's energy budget can be consistent with some fly of this species from read values
+  alone. The model was not fitted to either held-out value. The agreement is still fragile to one unresolved
+  measured quantity: the single fly's metabolic rate.
+- **Validity.** A resting, lumped single store; no starvation-induced change in metabolic rate or activity;
+  no protein pool.
+- **Needed (Ben's list).**
+  - Adult male hemolymph trehalose and glucose.
+  - A water-loss rate at low RH, and a lethal water-loss fraction.
+  - A primary male starvation survival time.
+  - A single-fly respirometry value.
+
+## Session 20 (22 October 2026)
+
+### F-S20-1: the lumped clock's light input (one pull towards ct_light, saturating only in intensity) cannot fit the light-pulse sources: in 12:12 LD lights-on lands at CT 19-22. The k that gives Kistenpfennig's 60 min delay (k ≈ 1) gives a 5 min shift of 0.26 h (flies 3.1 h). The k that gives about 3.5 h for 5 min gives 9.2 h for 60 min (flies 4.05 h). the registered fit is void and Lamba ZT21 stays unspent (s20, 22 Oct 22:43; DECISIONS same time)
+- k scan (ct_light 6.5, l50 10, `s19_n26_prc.shift_h`, `s20_n26_fit.ld_assay_shift`):
+
+  | k (/h) | lights-on CT | DD CT15, 5 min 1500 lux | DD CT15, 60 min 1000 lux |
+  |---|---|---|---|
+  | 0.3 | 21.8 | −0.08 | −0.94 |
+  | 1 | 19.8 | −0.26 | −4.00 |
+  | 10 | 18.7 | −3.51 | −9.22 |
+  | 100 | 18.5 | −8.26 | −9.46 |
+
+  The LD ZT15 shift at the same k values: −0.09 / −0.28 / −1.49 / −2.90.
+- Measured comparisons: Lamba 2014 −3.1 h (5 min, LD ZT15) and Kistenpfennig 2012 −4.05 ± 0.18 h (60 min, DD CT15). Different strains and
+  temperatures, so the ratio is approximate. Real flies are near saturation by 5 min; this model is not.
+- Status: inferred (model structure), measured inputs. N26 doesn't move. Next: a TIM-like light-labile input (DECISIONS).
+
+### F-S20-2 (corrected 22:51, see the last bullet): Davie 2018 rows give the PNs a negative net 5-HT sensitivity (adPN −0.29, lPN −0.11; the prior gave +0.056), so postsynaptic N19 predicts PN inhibition, while Dacks 2009 measured facilitation; the s19 failure is structural (no presynaptic path), not only the prior (s20, 22 Oct 22:43)
+- Rows: 122 types / 2,447 cells, N19 mode 2 (neutral default 0; mode 1 identical outside those cells).
+- Scale check against Davis/Ozel on 11 overlapping types: r = 0.63, Davie lower (10x dropout).
+- Not a score (Dacks spent). Labels: p derived, crosswalk inferred.
+- **Correction (22 Oct 22:51).** The sign isn't robust to 10x dropout. A per-gene scale (Davis p / Davie p, means over the
+  143 overlap pairs: 5-HT2A ×2.5, 2B ×8.9, 7 ×4.6, 1A ×1.4, 1B ×3.4; derived, thin, from KC/PAM/L2/T1 only) turns PN net
+  5-HT to **+0.06 (adPN) and +0.26 (lPN)**. Davie therefore doesn't settle the PN sign. What holds in both readings is the
+  magnitude: at a* = 0.0649 the direct PN input gain is between −1.9% and +1.7%, against Dacks' +15%. Reaching +15% directly
+  would need net ≈ +2.3, i.e. near-full expression of every excitatory 5-HT receptor and none of the inhibitory ones. So the
+  "route, not the prior" reading rests on magnitude, not on sign. The title's "structural" claim is downgraded to likely.
+
+### F-S20-3: a CRY-dependent TIM light input (night-gated, saturating within minutes) fits all four light-pulse training targets with two fitted values and predicts Lamba's held-out ZT21 advance (+2.89 h against +3.21 ± 0.23 h measured; pass, spent) (s20, 23 Oct 00:09; DECISIONS 22 Oct 23:02, 23:55; 23 Oct 00:09)
+- Mechanism (`state:clock|light_input` 1, neutral 0):
+  - light activates CRY, and active CRY degrades TIM;
+  - the TIM removed pushes the oscillator towards `ct_tim`.
+- Values and labels:
+  - TIM's DD profile: measured (Shafer 2002 Fig. 6D, s-LNv, pixel read).
+  - τ_rec 0.86 h: derived.
+  - k_d 13.8/h (half-life 3 min under full CRY): inferred, by rule from Tang 2010.
+  - a 10.3/(lux·h): inferred, by rule from Vinayak 2013.
+  - τ_c 0.5 h: guessed.
+  - k_tim 0.789 and ct_tim 7.59 h: fitted.
+- Training (registered bands):
+
+  | target | model | measured |
+  |---|---|---|
+  | PRC zero crossing | CT 18.80 | CT 18.5 |
+  | DD CT15 delay, 60 min | −3.86 h | −4.05 |
+  | LD ZT15 delay, 5 min | −2.36 h | −3.1, low side in every variant |
+  | lights-on in 12:12 LD | CT −0.54 | CT 0 |
+
+  The s10 pull failed this set (F-S20-1). This input clears it because T is used up, so the response
+  saturates by about 1 min of pulse: CT15 delays are −2.86 / −2.93 / −3.86 h for 1 / 5 / 60 min.
+- Held out: ZT21, 5 min, 1500 lux, LD assay. Predicted +2.89 h, measured +3.21 ± 0.23 (blind pixel read).
+  Ratio 1.11: **pass**.
+- Consistency only:
+  - The saturating 10 min CT20 advance is +2.11 h, against Vinayak's ~2.4 h.
+  - The dead zone (|shift| < 0.25 h) spans CT 3-9.
+  - Misses, recorded as limits:
+    - The 120 min IRC half-max is 0.014 lux against 0.0025 (the model integrates dose; the fly is 6× more
+      sensitive to long dim light).
+    - TIM loss right after a threshold pulse is 38% against ≥ 60%.
+- Dependence: the result needs active CRY to clear within about 1 h of lights-off. At τ_c 2 h the clock no
+  longer entrains, and τ_c is guessed (no in vivo lifetime found).
+- The LD TIM waveform has two night peaks. That shape comes from the single Shafer CT20 point; dropping it (V4)
+  still passes.
+- Validity:
+  - s-LNv TIM stands in for the network's light-labile TIM (Tang: DN/LNd TIM, not s-LNv, is degraded at ZT15).
+  - One lumped oscillator.
+  - Strains and temperatures differ (w1118 at 20 °C, y w at 25 °C).
+  - No eye input (the CRY-only route stands in for both).
+- Status: N26 stays **partial**. The switch is off in m10f. Adoption needs a stage gate on fly2's current
+  frontier plus an organism LD check (DECISIONS 00:09).
+- Figures: `docs/media/s20_n26_tim_prc.png` and `docs/media/s20_n26_tim_tim.png`. Runs: `runs/s20/n26/tim/`.
+
+### F-S20-4: N25's s10 sleep values sleep too little (411 min/day), and the published fly two-process set does not reproduce its own stated output or say where its day starts (s20, 23 Oct 00:30; DECISIONS 23 Oct 00:27, 00:30)
+- **Reduced loop.** Activity is 0 while the dFB switch is on and 1 while it is off. Steps are 1 min, the clock runs at 24 h, and sleep is scored like DAM (runs ≥ 5 min). Probe: `scripts/probes/s20_n25_sleep.py`; output `runs/s20/n25/checks.json`.
+- **Mode 0 (s10 guesses, on in m10f): 411 min/day (28.5 %).** That is below every cited wild-type male value (618-1100 min/day; `docs/research/s20_n25_reads.md` A).
+  - The cause is tau_sleep 3 h against tau_wake 12 h, with thresholds 0.6 / 0.3: about 6.7 h awake for every 2.1 h asleep.
+  - This holds whatever the brain does, because the homeostat itself switches the dFB on only about 30 % of the time.
+- **Abhilash & Shafer 2024 set (mode 1): 1092 min/day (75.8 %),** inside the range. But:
+  - **(i) It does not reproduce its own number.** Implemented as published, the discrete rule gives 75.56 % against their stated 74.36 %. τ, update order, transients and step size don't close the gap. Our registered ±1 pp check fails, so nothing was scored.
+  - **(ii) The time origin is not stated.** With the thresholds peaking at CT 0, the model sleeps through the day (day 576 > night 516 min). With CT 12 it is night-biased, as their figure is.
+- Their thresholds are fixed from a human model (Daan 1984). Only the two taus carry fly data, and they come from a single fitted number (% sleep per day, no errors).
+- **Rebound in the reduced loop barely depends on time awake.** The mode-1 gain over the recovery day is 142 / 139 / 138 min after 6 / 12 / 24 h of deprivation (φ = CT 0), or 175-212 min (φ = CT 12). The long, circadian-gated day episode caps it. That conflicts with the dose dependence Huber's abstract states (direction seen, magnitudes not; predictions fixed in DECISIONS 00:34).
+- **Held out and unspent:** Huber et al. 2004 rebound (full text not reachable). Nothing was adopted. The switch `state:sleep|values_from_sources` stays neutral (0).
+- **Status:** N25 stays **partial**.
+
+### F-S21-1: MB resting rates with plasticity off: one noise level per class passes Huang 2024 by the minimum (6 of 9), and compresses the per-type spread (s21, 23 Oct 01:00; DECISIONS 22 Oct 22:23, 23 Oct 01:01)
+- **Fit (labelled fitted).** m10f3, isolated CNS, no stimulus, N21 absent and N22 forgetting 0; grid seed 12 (`scripts/probes/s20_mb_rest.py`).
+  - σ*_DAN = 1.477 mV/√ms puts PPL105 at 8 Hz (Huang 2018: 6-10 Hz).
+  - σ*_MBON = 2.287 mV/√ms puts MBON14 at 12.1 Hz (Hafez 2023).
+  - Both lie inside the 0-3 row bounds (guessed). Output: `runs/s20/mb/sigma_star.json`.
+- **Confirm (not held out), seeds 12 / 13.** Pass on both seeds:
+  - PPL105 7.63 / 7.63 Hz (band 6-10);
+  - MBON14 12.31 / 11.69 Hz (band 9.7-15.1).
+  - Class means: DAN 8.0 Hz and MBON 13.2-13.4 Hz. KC, APL and DPM stay at 0 Hz.
+  - Whole brain: 0.034 Hz with 0.38 % of cells active, against 0.008 Hz and 0.04 % at σ = 0.5. There was no σ = 0 run, although the registration asked for one.
+- **Held-out Huang et al. 2024 Fig. 1 voltage imaging (spent once).** 20 flies per type, from trial spike counts (`scripts/probes/s21_mb_huang_score.py`, `runs/s20/mb/huang_score.json`). Model readout locked first (`runs/s20/mb/model_readout.json`, 01:00).
+
+  | type | model (Hz) | data median [P10, P90] | model / median | result |
+  |---|---|---|---|---|
+  | PPL1-γ1 (PPL101) | 7.0 | 20.4 [12.8, 25.6] | 0.34 | fail |
+  | PPL1-γ2 (PPL103) | 6.5 | 11.7 [8.8, 15.6] | 0.56 | pass |
+  | PPL1-α′3 (PPL104) | 14.9 | 7.7 [6.1, 19.4] | 1.92 | pass |
+  | PPL1-α3 (PPL106) | 6.2 | 14.0 [10.9, 20.3] | 0.44 | fail |
+  | MBON-γ1 (MBON11) | 7.9 | 34.8 [26.2, 49.8] | 0.23 | fail |
+  | MBON-γ2 (MBON12) | 11.2 | 20.9 [19.1, 25.3] | 0.53 | pass |
+  | MBON-α′2 (MBON13) | 12.1 | 15.6 [11.5, 23.1] | 0.78 | pass |
+  | MBON-α′3m (MBON17) | 14.0 | 13.1 [10.1, 16.3] | 1.07 | pass |
+  | MBON-α2sc (MBON18) | 11.0 | 9.8 [6.6, 18.0] | 1.13 | pass |
+  | fit: PPL1-α2 (PPL105) | 7.6 | 8.5 [7.4, 12.7] | 0.89 | pass (cross-study) |
+  | fit: MBON-α3 (MBON14) | 12.0 | 15.2 [11.9, 20.8] | 0.79 | pass (cross-study) |
+
+- **Verdict: PASS, 6 of 9 (the registered minimum).**
+  - Two of the passes sit near the band edge: MBON-γ2 at 0.53 and PPL1-γ2 at 0.56.
+  - The fit types agree across studies: Huang's PPL1-α2 and MBON-α3 medians lie within ×1.3 of the Huang 2018 and Hafez 2023 targets.
+- **What it shows.** One noise level per class carries the order of magnitude, but not the per-type spread.
+  - The model spans 6-15 Hz; the data span 8-35 Hz.
+  - The γ1 pair (PPL1-γ1, MBON-γ1) and PPL1-α3 fire 2-4× faster in vivo.
+  - Huang's flies were on a ball, with walking and rest mixed, so part of the γ-lobe gap may be behavioural state. The model is an isolated CNS.
+  - Huang is spent and is not used for a refit. A per-type account would need its own mechanism (intrinsic rows, or input from walking state) and a new held-out source.
+- **Leak note.** One PPL1-α′3 trial's spike count was seen in fly2's listing (recorded beforehand). The array shape of one trial was seen while the keys were inspected, after the model readout was locked.
+- **Bearing on N21.** At these noise levels, DANs fire at about 6-15 Hz at rest, and Huang's DAN medians are 8-20 Hz. KC → MBON rules must be stable at those DAN rates (fly2's memory-wipe finding).
+- **Status:** N3 stays **partial**. Adoption needs a stage on m10f3 with N21 off, the gate, a battery run and a viewed figure (DECISIONS 22 Oct 22:23).

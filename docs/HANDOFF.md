@@ -1,60 +1,62 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Wed 21 October 2026, 21:57 CDT. Session 18, part 2 (a Director brief after a /clear). The night runs to about 05:30. Ben's goal is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with in-range values, and passing a unit check against a measurement where one exists. Walking is parked.
-- **Heavy runs go on backhouse tonight.** The Mac has about 1.9 GB of free RAM.
-- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, plus (Director, 21 Oct) N1-N4 intrinsics and N27/N33 glia.
-- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those.
+**Rewritten each session; do not append.** State as of Fri 23 October 2026, 01:02 CDT, session 21 (fresh context after s20, same night).
+- **Brief:** Director, 23 Oct 00:45.
+  - (1) Score the MB grid once against Huang 2024 when `ALL.done` lands.
+  - (2) Meanwhile, N25: pre-register an open-access held-out rebound test, and scope a sourced homeostat that makes rebound scale with time awake.
+  - N26 is accepted: adopt it as a stage on fly2's newest stage once that is on main, without waiting idle for it.
+  - Budget: about 2 % of the week.
+- **Goal:** Ben's is a **mechanism-complete fly**. "Done" means built at full fidelity, ON in `m10f` with values in range, and passing a unit check against a measurement where one exists. Walking is parked.
+- **Heavy runs go on backhouse** (load 25-27 from other work). My jobs use ≤ 4 threads and queue above load 24.
+- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows, **0 done**.
+- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
+- **fly2's frontier** (m10f4/m10f5) is on its branch, not on main. The stages I register (N26, MB noise) wait for that merge.
 
-## Report for Ben (s18)
-- **Walking (F-S18-1, commit b5de8cc). This matters.**
-  - The 12-cell T1 core supplies only **0.8%** of the T1 leg-MN input.
-  - The rest comes from 20A/22A (10.7%), 04B (9.4%), 03A (8.5%), 13A (8.5%) and 21A (7.2%), all within two hops of DNg100.
-  - So the missing alternation most likely lives in premotor populations we never modelled as part of the rhythm, not in the core's strength.
-  - Walking stays parked. When it resumes, the next step is a per-cell spike save of these types in the s16/s17 arms.
-- **N19 unit check changed before building.** The planned Hige 2015 check (−90% MBON input) is associative plasticity, so it can't test N19.
-  - It is depression after *pairing* odor with a DAN, absent with backward pairing, through Dop1R1 in KC axons (presynaptic).
-  - It goes to fly2 as a candidate check for MB plasticity (N21).
-  - N19's checks are now Lv 2024 / Wan 2021 kinetics, a Strother 2018 Mi4 calibration, Dacks 2009 PN 5-HT (held out) and a Strother sign test (held out). See DECISIONS 21 Oct 21:56.
-- **MB resting rates are fly's (Director, 22 Oct 03:58; written in by fly2).** The Director gave them to fly as the owner of neuron intrinsics (N1-N4). Fit targets (measured, cited, read from the text by fly2's search agent and not yet re-checked against the paper; `docs/research/s24_fly2_ltp_and_mb_rest_lit.md` on worktree-fly2):
-  - **PPL1-α'2α2 (MB-V1): about 6-10 spikes/s**, n 10 flies, in vivo voltage imaging, head-fixed awake (Huang et al. 2018 Nat Commun 9:872, PMC5830414, Fig 6d-e).
-  - **MBON-α3: 12.1 Hz**, n 5, ex vivo whole-cell at room temperature (Hafez et al. 2023 eLife 12:e77578; also in `s13_intrinsic_ranges.csv`).
-  - The model has every KC, DAN (340 PAM/PPL1) and MBON (97) at 0 Hz at rest in m10f3 and m10f4 (F-S24-2).
-  - **Held out, not a target:** Huang 2024 Nature Fig 1 per-type spike rates (`data/raw/huang2024/`, unseen; register row). KC 0.1 Hz (Turner 2008) is already spent.
-  - Why fly2 cares: until DANs fire at rest, N21 depression and N22 forgetting never act in the gate or the smoke.
-  - **Caution from fly2 (s25, 22 Oct 04:24; derived from the model's own rules, `scripts/probes/s25_restore_fit.py`): don't turn on resting DAN rates in a profile with N21 on until fly2 has a resting-safe rule.**
-    - m10f4's depression (0.430 per DAN spike per unit KC eligibility, fitted to Hige's 4 pulses at 1 spike each) applied at rest: with DANs at 6-10 Hz and KCs at 0.1 Hz, every KC->MBON weight falls to 0 with a time constant of about 3 s.
-    - The s25 restoration term (0.00289 per DAN spike, provisional) would only hold the weights at 6% of baseline, and memories would last 35-58 s instead of hours.
-    - So the per-spike rules need a form that ignores resting DA (a low-affinity receptor threshold or a burst-only rule, inferred) before both are on. This is an N21 item for fly2. Profiles where DANs are silent at rest (all of them today) are unaffected.
-- **Owners updated** in `docs/MECHANISM_STATUS.md`. The brief's "giant-fibre escape (N13, N14, N18)" only matches N18: N13 is conduction delays and N14 is noise. The IDs were followed as listed. N27 (lumped glial K+) isn't synaptic, so it went to fly.
+## Report for Ben (s21)
+**Rows moved: none (0 of 20 done).** One held-out test was passed and one registered. N25 is scoped.
 
-## Done this part (21:42-21:57)
-- Owner column (above).
-- Row-check of the N19 sources (Sonnet, foreground, full text): `docs/research/s18_n19_rowcheck.md`.
-  - **Lv 2024 confirmed:** OA in vivo τ_on 0.34 s, τ_off 5.90 s for a single pulse (MB γ3); 0.6 / 9.4 s for a 50-pulse train; in vitro τ_off 1.40 s.
-  - **Wan 2021:** 5-HT in vivo τ_off 4.08 s.
-  - **No fly in vivo DA τ:** Sun 2018's 3 s / 17 s are mouse slice.
-  - **Dacks 2009:** bath 5-HT raises PN odor responses ~15%.
-  - **Strother 2018:** CDM raises Mi4 gain to L5 (figure only) and raises Mi1/Tm3/Mi4/Mi9/T4 in vivo.
-- **Coverage fact:** `gene_probabilities` has type-specific rows for only **82 types** (optic lobe and KCs). VNC cells go by hemilineage (Allen); every other brain cell, PNs and MBONs included, gets the population prior.
-- N19 pre-registration: DECISIONS 21 Oct 21:56. Nothing built, nothing running.
+- **MB resting rates: held-out PASS by the minimum** (F-S21-1; DECISIONS 22 Oct 22:23, 23 Oct 01:01).
+  - Plasticity off. One noise level per class was fitted on two cells: σ*_DAN 1.477 and σ*_MBON 2.287 mV/√ms.
+  - The confirm runs pass on seeds 12 and 13.
+  - **Huang 2024, 6 of 9 types inside the band (spent).** The γ1 pair and PPL1-α3 fire 2-4× slower than in vivo.
+  - The model compresses the spread: 6-15 Hz against 8-35 Hz in the data.
+  - Not adopted. It needs a stage on m10f3 with N21 off. N3 stays partial.
+- **N25: held-out rebound test registered** (DECISIONS 23 Oct 00:53).
+  - Chowdhury et al. 2023 eLife Fig. 1: Canton-S males, vortexer 20 s arm, 6/12/24 h ending at ZT 0, day-1 rebound normalised to unperturbed flies. The raw data are on Dryad, unopened.
+  - Pass rule: the Huber rule.
+  - **Weakened by a leak I caused.** Listing the XML's sections showed the Results subsection titles (qualitative: stimulus frequency matters, little debt repaid over cycles, short bouts mask rebound, 5-HT a candidate). No magnitudes and no length dependence were seen.
+  - Huber 2004 is now training context. Brown 2020 has only one duration (24 h), mostly in females, so it is unused.
+- **N25 scoped, not built** (`docs/research/s21_n25_homeostat_scope.md`).
+  - The flat rebound and the 411 min/day both come from the deterministic single-threshold switch.
+  - Recommended: an ER5 (R5) need variable (Liu 2016: BRP, NMDAR and firing rise with wake and return to baseline after 24 h of recovery sleep) driving stochastic per-cell dFB switching (Pimentel 2016: spontaneous restart after a mean 25.9 min).
+  - Three shared fitted quantities, trained on baseline sleep and the Liu anchors; held out on Chowdhury.
+  - **Connectome (male-cns, measured):**
+    - ER5 (21 cells) ⇄ ExR1 (4 cells; = helicon cells, inferred): 10,044 / 5,624 synapses.
+    - dFB → ExR1: 260.
+    - The only R5 → dFB route runs through ExR3 (5-HT): 211 → 692.
+    - The dFB gets 31 % of its input from serotonergic cells and 0.1 % from dopaminergic ones.
+  - The 23E10/dFB controversy (De 2023 vs Jones 2023) is recorded.
+- **Commits:** 8bbb635 (N25 scope and registration), plus this one (MB score, docs).
+
+## Running now
+Nothing. The `s20mb` tmux has ended and the WSL keep-alive (PID 4311) is stopped. Not mine; never touch: fly2's processes and the other projects' tmux sessions on backhouse.
 
 ## Next (this order)
-1. **N19 build** per DECISIONS 21:56:
-   - Read the Strother 2018 Fig. 6F/H Mi4 numbers from the figure image: PMC5776785; curl the figure and view it.
-   - Code in `lif.py`:
-     - switch `neuromodulation:all|receptor_map`;
-     - per-pool τ_on/τ_off;
-     - occupancy K;
-     - a TA pool (MODULATORS 3→4; the GPU path `gpu/batched.py` hard-codes 3, so make it refuse the new mode);
-     - a hold/clamp of pool levels for bath experiments.
-   - Tests: bit-identical when off; sign rule; kinetics.
-   - Unit checks U1, U1h, U2, U3 on backhouse (rule 16).
-   - Then the next free m10f stage, gate and 60 s smoke on backhouse. **Not m10f1:** fly2 is building m10f1-m10f4 tonight (its DECISIONS 21 Oct 21:35 on worktree-fly2, Hige 2015 as its m10f4 fit target), so stack N19 on fly2's last passing stage. Each smoke takes about 6500 s of wall time, so launch it early.
-   - Commit, then update the MECHANISM_STATUS row.
-2. N20 (peptide cells and receptor maps).
-3. S1-S4 physiology checks (trehalose, starvation, desiccation).
-4. N26 light; N25 daily sleep; S5/N28 Q10.
-5. Fill the status cells of the new rows: N1-N4, N27, N33.
+1. **N26 adoption stage** once fly2's frontier is on main (DECISIONS 23 Oct 00:09). Same for an MB noise stage with N21 off (F-S21-1).
+2. **N25 build, CPU reduced loop first:**
+   - Cheap reads first (Sonnet): Liu 2016 Fig. 3-4 values, Pimentel 2016's restart distribution, and the helicon transmitter in Donlea 2018.
+   - Then switch `state:sleep|homeostat` (neutral 0) mode 1 in `internal_state.py`. Tell fly2 first: the ER5 gain sits next to its plasticity rows.
+   - Then the implementation and training checks, and predictions written down before the Chowdhury Dryad data are opened once.
+   - The falsifier is in the scope doc.
+3. **N19:** Li 2017 PN rows, then McLaughlin 2021 ORN rows with a presynaptic switch, then the Sizemore & Dacks LN calls (DECISIONS 22 Oct 22:51).
+4. S5/N28 Q10; S1-S4 follow-ups.
+- Tell fly2: DANs fire at 6-15 Hz at rest in the fitted model, and at 8-20 Hz in Huang 2024. That matters for N21's memory-wipe rule.
+
+**s20 (kept for reference).**
+- N26 CRY-TIM light input: the held-out Lamba ZT21 passed (F-S20-3); the Director has accepted it.
+- N25: the s10 values sleep 411 min/day, and the Abhilash set failed its C1 check (F-S20-4).
+- N19 mode 2 Davie rows; N20 peptide-receptor data rows.
+- Tests at the end of s20: 288 passed, 6 failed, all in fly2's `tests/test_two_compartment.py`.
 
 **s18 part 1 (21:31-21:43, kept for reference):** `docs/MECHANISM_STATUS.md` built (commit cead727; fly rows 0 of 14 done; N26 closest). N19 sources gathered in `docs/research/s18_n19_receptor_coupling.md`. The coupling table there is used by the sign rule above. Octα2R is only in the unwired `epiney2025_*` tables.
 
@@ -572,12 +574,31 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Hattori 2017 Fig 6F, PPL1-α'3 restores depressed MBON-α'3 responses (8, 18, 33, 40% after 1, 3, 6, 10 DAN stimulations; flat controls; n 10 cells) | seen; **fit target** for `kc_mbon_dan_restore_rate` (provisional 0.00289, s25; `docs/research/s25_restoration_figcheck.md`). The in-network confirm (DECISIONS 22 Oct 04:11, 04:22) is a check of the implementation, not evidence | don't reuse Fig 6F as a check of the restoration rule |
 | Cohn 2015 Figs 6-7 (DA alone potentiates naive KC->MBON-γ1pedc EPSCs; unpaired DA restores depressed ones, Fig 7I) | seen; **form only** (the rule's shape, no value fitted). DA-alone potentiation of naive synapses is a known miss of the s25 rule | not usable as a held-out check of the s25 rule |
 | Berry 2018 Fig 5H-I, unpaired DAN activity after learning erases the MBON-γ2α'1 memory trace (Paired>Unpaired vs Paired>Decay) | **SEALED** (values in `docs/research/sealed/s25_restoration_heldout_sealed.md`, written by a figure-check agent, never read by fly2). Held out for the s25 restoration rule; score F = (R_post2 - R_post1)/(R_pre - R_post1) from the model first, then open | spend once, as the held-out test of `kc_mbon_dan_restore_rate` |
-| Huang 2024 Nature Fig 1 voltage-imaging spikes (Zenodo 10998457 Figure1.zip, `data/raw/huang2024/`; 5 PPL1 + 6 MBON types, 20 flies each) | **HELD OUT, unseen** (declared 22 Oct 03:58 by the Director, before anyone opened it; fly2 s24 listed the zip structure only, and one PPL1-α'3 trial's spike count showed in that listing) | held out for **MB plasticity (N21/N22) and DAN/MBON dynamics, resting rates included** (fly and fly2). Not a fit target for anything. Open once, as the check, only after a written pre-registration names the readout and the pass band. The fit targets for MB resting rates are Huang 2018 PPL1-α'2α2 6-10 Hz and Hafez 2023 MBON-α3 12 Hz (fly's section) |
 | Handler 2019 Fig 2D-E, ISI dependence of KC->MBON plasticity (γ4 signs: −1.2 s potentiation, 0 and +0.5 s depression, +6 s minimal) | **spent** on m10f4 (F-S24-2, 22 Oct): H1 and H2 pass, H3 fails (no LTP) | don't reuse as held out; a future LTP rule needs a new held-out set |
 | Huang et al. 2018 PPL1-α'2α2 resting rate (6-10 Hz) and Turner 2008 KC rest (0.1 Hz) | fly's resting-fit targets; used by fly2 s26 as the rest CONDITION of test R (F-S26-1), not fitted to and not scored against | none |
 | Turner 2008 KC odour responses (6 ± 5% respond; α/β 2.2, α'/β' 4.9 spikes per odour) | seen; set the KC drive in `kc_mbon_pairing.py` (F-S24-2) | none |
 | Hurkey 2023 Fig 2f, MN1-4 subthreshold coupling coefficients (0.023 ± 0.003 s.d. strong pairs, 0.01 ± 0.0027 weak) | seen; **fit target** for m10f5's `electrical:DLMn c-f->DLMn c-f\|gap_coupling` 0.0266 (pair-count mean 0.0143; fly2 s27, F-S27-1) | none |
 | Hurkey 2023 Fig 2h, spike AHP CC 0.042 ± 0.04 and overshoot 0.01 ± 0.004 | **seen**: the AHP CC was computed in the s27 fit runs (0.0123-0.0188) before any band was written (DECISIONS s27 amendment) | consistency only, never held out. Hurkey's splay/synchrony result (sync index 0.56 vs 0.61 under shakB RNAi) is unspent |
+| Strother 2018 Fig. 4E-F (in vivo CDM raises Mi1, Tm3, Mi4, Mi9, T4) | **spent** (s19 U3, pass 5 of 5; DECISIONS 22 Oct 02:05) | sign consistency only from now |
+| Strother 2018 Fig. 6F Mi4 ×2.66 under CDM | SETS the shared receptor gain a (s19 U2 calibration) | can't validate N19 |
+| Dacks 2009 PN +15% under bath 5-HT | **SPENT (s19, 22 Oct 05:23): FAIL**, −0.34% at a* = 0.0649 (F-S19-2). Weakened beforehand: a fail at the wrong a* = 0.0458 had leaked (DECISIONS 04:42) | none; can't be reused |
+| Lv 2024 Fig. 2E 50-pulse OA τ 0.6/9.4 s | **held out, unspent** for U1h (s19). The run at the wrong a* is void and unread | score once, at the registered a* = 0.0649 |
+| Lamba 2014 Fig. 1C y w ZT21 advance (5 min, 1,500 lux) | **spent** 23 Oct 00:09: +3.21 ± 0.23 h (blind pixel read) against +2.89 predicted, **pass** (F-S20-3) | can't validate N26 again |
+| Lamba 2014 Fig. 1C y w ZT15 delay −3.1 ± 0.35 h; Kistenpfennig 2012 zero crossing CT 18.5 and CT15 delay −4.05 h | training targets of the s20 CRY-TIM fit (k_tim, ct_tim fitted) | can't validate N26 |
+| Vinayak 2013 10 min IRC half-max; Tang 2010 ZT15 TIM loss; Shafer 2002 Fig. 6D TIM profile | SET a, k_d (by rule) and TIM_DD (s20) | can't validate N26 |
+| Vinayak 2013 120 min half-max, TIM loss at threshold, 2.4 h max advance | consistency only (seen); the first two miss (F-S20-3) | none |
+| Vinayak 2013 CT20-21 advance 2.4 h (1 h pulse) | seen in an agent report; never used to set a value | consistency only (seen before registration) |
+| Huber et al. 2004 Sleep 27:628 rebound after 6/12/24 h deprivation | **training context** (Director, 23 Oct 00:45: its direction "dependent on prior time awake" leaked through the s20 round-3 reader). Magnitudes still unread; no full text reachable | may set or train N25 values if Ben supplies the full text; never a held-out test |
+| Chowdhury et al. 2023 eLife 12:e91355 Fig. 1 (Canton-S males, vortexer 20 s arm, 6/12/24 h ending ZT 0, day-1 normalised rebound); raw data Dryad doi:10.5061/dryad.qnk98sfpp | **held out, unspent, weakened** (registered DECISIONS 23 Oct 00:53). Protocol read (Methods only). Results/Discussion subsection titles seen (stimulus-frequency effect, yoked low-frequency rebound, little debt repaid over cycles, short bouts mask rebound, 5-HT candidate); magnitudes and the deprivation-length dependence unseen. Dryad not downloaded | score once, on the first new-structure homeostat that passes its implementation and training checks; the 00:34 mode 0/1 predictions are reported at the same read |
+| Brown et al. 2020 PLoS Genet 16:e1008270 (PMC7089559) | protocol read only (one 24 h duration, mainly females); no outcome seen | unused; not a dose series |
+| Huang et al. 2024 Nature Fig. 1 voltage imaging (PPL1 and MBON resting rates, Zenodo 10998457, `data/raw/huang2024/`) | **spent** 23 Oct 01:00 on the s20 MB noise fit: PASS 6 of 9 (F-S21-1) | consistency only from now; a per-type MB rate mechanism needs another held-out source |
+| Abhilash & Shafer 2024 two-process fit (taus 8.76 / 9.51 h, 74.36 % sleep) | model source (s20 `SLEEP_SOURCED`, neutral). C1 implementation check FAILED by 1.2 pp (F-S20-4) | not evidence for N25 |
+| Male daily sleep 618-1100 min/day (Cirelli 2008, Harbison 2013, Buchert 2022, Geissmann 2019) | seen (s20 N25 category A); C2 consistency check | consistency only |
+| Lv 2024 Fig. 2J and Wan 2021 single-pulse τ | SET the pool kinetics; U1 is a consistency check | none |
+| Burggren 2017 respirometry and male mass; PMC8774106 TAG; PMC4335172 crop and gut | SET the s19 sourced values (`internal_state.SOURCED`) | can't validate S1-S4 |
+| Male starvation survival 24-112 h (secondary reports) | **spent** (s19 S2, pass 28.4 h; F-S19-1) | consistency only |
+| Ja 2007 CAFE, single males 1.5 µl/day | **spent** (s19 S3, pass 1.85; F-S19-1) | consistency only |
+| Male desiccation survival 16.1-34.5 h (secondary) | **held out, unspent**; seen in an agent report and never used to set a value (S4 not scored) | score once when the loss rate and lethal fraction are sourced |
 
 ## Things that will bite you
 

@@ -137,6 +137,9 @@ class BatchedNetwork:
         if getattr(p, "two_comp", None) is not None:
             raise NotImplementedError("N30 two compartments (two_compartments_where_point_fails) are CPU-only "
                                       "until a GPU equivalence check (s20)")
+        if getattr(net, "modmap", None) is not None:
+            raise NotImplementedError("N19 receptor-map neuromodulation (neuromodulation:all|receptor_map) is "
+                                      "CPU-only until a GPU equivalence check (s19)")
         ich = getattr(net, "ich", None)
         if ich is not None and "v_rest" in (member or {}) and not np.array_equal(
                 np.broadcast_to(np.asarray(member["v_rest"], np.float32), (B, net.conn.n)),

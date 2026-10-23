@@ -4132,3 +4132,766 @@ firing should largely cancel), then (b) compartment DAN rest rates from sources 
   - The factor has to act on the dopamine side: stimulated DAN spikes far more effective than resting ones (candidate a), or
     plastic-compartment DANs resting far below 6-10 Hz (candidate b; Huang 2024 after fly scores it).
   - The cascade remains a fidelity rung for how plasticity works (N21), not a fix for resting safety.
+### s19 N19 built; protocol details fixed before any whole-brain run (22 October, 01:56)
+**Strother 2018 Fig. 6F, read from the figure pixels (derived).** Mi4 peak dF/F to L5 photoactivation, with 50 nM
+CDM against without, at 0.2 mW/mm²: ratio **2.66**. Across the five light intensities the ratio runs 2.4 to 3.6;
+the Fig. 6H example traces give 2.6, consistent. This is the one number the shared gain a is calibrated on.
+Assumptions, both inferred: dF/F is proportional to Mi4 rate (GCaMP6s near-linear at low rates), and 50 nM CDM
+is taken as OA occupancy 1 (CDM is a potent Octβ agonist; a lower true occupancy would mean a larger true a).
+
+**U2 protocol.** Isolated CNS, profile m10f3 with the receptor map on, settle 500 ms. One settled network is
+deep-copied; each copy holds u_OA (0 or 1). L5 cells get Poisson kicks at 100 Hz × the profile's kick_mv for
+1 s; the response is Mi4's evoked activity (stim minus a no-stim copy with the same random state; spike count, or
+the rate-equivalent sum if Mi4 is graded). Run a on a grid (0.25, 0.5, 1, 1.5, 2, 3, 4); a* is interpolated to
+ratio 2.66. If no a in 0 to 5 (the registered range) reaches 2.66, U2 fails and N19 stays off. Dacks uses the same
+protocol with DM2/DL1/DM3 ORNs kicked, uniglomerular PNs read, u_5HT held, at a*. a* is labelled **fitted**.
+
+**U1/U1h fit method.** The pool trace is the kicked-minus-control m_k, sampled every 10 ms for 20 s. τ_off is a
+log-linear fit from the peak to 10% of it; τ_on is a single-exponential rise A(1 − e^(−t/τ)) fitted from onset to
+peak, as a GRAB trace is fitted. On the analytic kernels this method returns 285 ms for a 340 ms τ_on (−16%,
+inside the ±25%), 5922 ms for 5900, and 65 ms for 70. The impulse-kernel τ_on implied by the peak time is
+reported as a secondary number, not scored. On a 50-pulse train the rise fit returns about 1.35 s and decay 5.9 s
+for a linear pool, so U1h is expected to fail on τ_off (and on τ_on), as registered.
+
+**Off-path identity.** receptor_map 0 must give the same spikes as the code before N19: a 300 ms whole-brain
+spike hash (m10f3, seed 1), old code (commit 71c4048) against new, on backhouse.
+
+**Stage.** N19's stage is m10f5, on fly2's m10f3 (the last passing stage); it moves onto m10f4 if fly2's
+passes first. Added to `profiles.py` only if Dacks and U3 pass.
+
+### s19 N19 run order and lengths changed before the runs they affect; U3 scored (22 October, 02:05)
+backhouse sits at load 22-25 from other work (the GPU is at 98% under another job), so my jobs run about one at a
+time under the load-24 rule. Changes, made before the affected runs started:
+- The a-grid stops at its first crossing of 2.66. a* is defined as the first crossing, so later points can't
+  change it.
+- U1 runs at a* (receptor map on, nothing held), OA trace 16 s, 5-HT 12 s, U1h 16 s. These are long enough for
+  the decay to fall to 10% of its peak at the registered τ_off (OA: peak about 1.2 s, then 2.3 × 5.9 s).
+- Order: off-path hash, U2 grid, Dacks, then the stage gate and smoke (if Dacks passes), then U1, U1 5-HT, U1h.
+  U1 is not an adoption criterion in the 21:56 entry.
+- Stage gate for m10f5: fly2's stage rule (21 Oct 21:35: G seeds 12-15; S 60 s, whole-brain rate within ±50%
+  of 0.324 Hz and active fraction within ±50% of 0.0281) **and** my 21:56 rule (rate within 2× of m10f). Both
+  must pass; ±50% is the stricter.
+
+**U3 scored (held-out sign, Strother 2018 Fig. 4E-F; spent).** Mean net OA expression Σ p·sign from the Özel
+rows (`runs/s19/n19/map.json` on backhouse): Mi1 2.50, Tm3 2.00, Mi4 2.00, Mi9 2.00, T4a-d 1.50. All five are
+> 0, so s_OA > 0 for any a > 0: **pass, 5 of 5.** It's weak by construction, since every OA receptor in the
+tables is +1 under the sign rule; it would only have failed if these types expressed no OA receptor.
+Other map facts (derived): coverage 73,253 cells on type rows, 10,492 on VNC hemilineage rows, 83,366 on the
+prior. Releasing cells DA 392, OA 101, 5-HT 48, TA 0. The 12 Dacks PNs (DL1_adPN, DM2_lPN, DM3_adPN,
+DM3_vPN) are all on the prior. Their net 5-HT expression is only +0.056 (DA 0.27, OA 1.59), so Dacks' +15%
+needs a·0.056 to carry it through the network. If a* is near 1, the input gain is about +6% and the test is
+borderline. Mi4's net OA is 2.0, so a* near 0.8 would give gain 2.66 if Mi4 responded linearly.
+
+### s19 S1-S4 plan, written before any source is read (22 October, 02:06)
+Next row after N19 is S1-S4 (metabolism). FIDELITY's required level for this layer is a "peptide/metabolic state
+layer", which the lumped `internal_state` model meets. What's missing is values from read sources and a check
+against a measurement. A Sonnet read-only agent gathers measured values (it doesn't edit the repo).
+- **Parameter sources (used to set values):** hemolymph volume; hemolymph trehalose and glucose (fed adult);
+  whole-fly resting metabolic rate (CO2 or O2) and its Q10; flight or walking metabolic rate relative to rest;
+  TAG and glycogen per fly; body water content; water loss rate at low humidity; ingestion rate during a meal;
+  crop capacity or meal volume; crop emptying time.
+- **Held out (never used to set a value; each scored once):**
+  - S2: starvation survival on water (adult male, about 25 °C);
+  - S4: desiccation survival without food or water (adult male, low RH);
+  - S3: daily food intake (CAFE).
+  The model predicts each one from the parameter sources above.
+- **Consistency only:** S1's resting sugar is its set point, so a match there is not evidence.
+- The pass band for each held-out check is the measured range across the reports the agent finds (strains,
+  labs). Where only one report exists, the band is ×/÷ 1.5 around it. This is written down now, before any
+  value is seen.
+- Where a source is for a different sex, strain or temperature, the value is labelled measured_related, not
+  measured_this_class.
+- Value rule, fixed now so the held-out numbers can't steer it: each parameter takes the median of the reports for
+  fed adult males at 22-25 °C. If there are none, it takes the median for adult females or mixed sexes, and if
+  none of those, the nearest condition. Its bounds are the range across all reports.
+
+### s19 U2 grid refined after a one-point bracket; Dacks stopped before any output (22 October, 02:25)
+**What happened.** The first grid point, a = 0.25, gave evoked Mi4 spikes of 213 with u_OA 0 and 2,751 with
+u_OA 1: ratio 12.9 (`runs/s19/n19/u2_a0.25.json`, backhouse). Mi4 is spiking in m10f3, so the spike readout is
+the registered one. The driver interpolated the first crossing linearly from (0, 1) to (0.25, 12.9), getting
+a* = 0.035, and it started Dacks and the smoke at that value. I stopped both before either wrote a result.
+Dacks' partial log is moved to `runs/s19/n19/void/` and stays unread. **Dacks is unspent.**
+**Why the a* is voided.** The interpolation spans a 13-fold jump in one step. Mi4's input gain at a = 0.25 is
+only 1 + 0.25 × 2.0 = 1.5, but its output rose 12.9-fold, so the response is strongly nonlinear in a. Linear
+interpolation across that bracket can be off by a large factor. This is an estimation step inside a calibration
+(U2 is fitted, not held out), and nothing held out has been scored.
+**Change (before any held-out result exists).** Readout, target (2.66) and first-crossing rule are unchanged.
+- New grid inside the bracket: a = 0.02, 0.04, 0.06, 0.08, 0.11, 0.15, 0.2, run in order with the early stop
+  (at load 22-25 only one job fits). Because a* is the first crossing, later points can't change it.
+- The gate (smoke plus seeds 12-15) starts only if Dacks lands inside its band, as the 02:05 order says. The
+  v2 driver had started it unconditionally.
+- a* is linear between the two grid points that bracket the first crossing, with (0, 1) as the lowest point.
+- Dacks, the gate and U1/U1h then run at that a*, in the 02:05 order.
+- Expected consequence, written now: a* will be small (below 0.25). The Dacks PN gain is 1 + a* × 0.056 under
+  bath 5-HT, so below about +1.4% at a* < 0.25. A Dacks fail is likely, and it would keep N19 built-off.
+- Validity note for the fitted a: Mi4's steep response says the model's Mi4 sits near threshold under L5
+  drive. A small a* therefore partly reflects Mi4's excitability in m10f3, not the receptor gain alone. This is
+  recorded with the result.
+
+### s19 S1-S4 values from sources and the held-out bands, fixed before any check is run (22 October, 02:30)
+Applied under the 02:06 value rule. The agent's report (most numbers secondary) was re-checked for the two
+load-bearing sources: Burggren, Souder & Ho 2017 Biol Open 6:471 (PMC5399560) and Ja et al. 2007 PNAS 104:8253
+(PMC1899109). Both were read for the numbers below.
+**Neutral by default.** `state:organs|model` is on in every profile (`model_data.py`). Changing the PARAMS
+defaults would therefore shift every stage, fly2's included. So the values go behind a new switch,
+`state:organs|values_from_sources`, neutral 0. With it at 0 the s10 guesses run unchanged.
+| field | value | bounds | label | source |
+|---|---|---|---|---|
+| basal_nmol_s | 0.00626 | 0.00574-0.0146 | derived | Burggren: grouped Oregon R males, fed, 25 °C, about 6 µl O2/mg wet/h; male wet mass 0.505 mg. Converted with 6 O2 per glucose and 22.4 µl/µmol. STPD is not stated; at 24.45 µl/µmol the value is 8% lower. The upper bound is the authors' single-fly extrapolation, 14 µl/mg/h. The value is the measured group figure, not the extrapolation. |
+| fat0_nmol | 672 | 320-1170 | derived | about 50 µg TAG per male (PMC8774106, read off a bar graph; Dahomey, 10 d, 20-21 °C) × 37.7 kJ/g ÷ 2803 kJ/mol glucose. Bounds are 24-87 µg across the reports (mixed sexes per mg, females). Glycogen is left out because no male value was found, so the store is low. |
+| vh0_nl | 24 | 10-60 | inferred | 24 ± 2 nL extractable from males (attributed to an AJP-Regu 2015 paper; secondary, fetch blocked) |
+| w0_nl | 344 | 300-780 | derived | Burggren: male wet 0.505 minus dry 0.161 mg |
+| tau_crop_s | 11,250 | 11,250-25,700 | derived | crop turnover 32%/h of capacity when fully fed, 14%/h under dietary restriction (PMC4335172, full text read by the agent; a Geer 1970 model) |
+| tau_gut_s | 2,700 | 900-7,200 | inferred | dye in the faeces from 15 min and abundant by 45-60 min (PMC4335172); whole-tract transit under 1 h (secondary). Transit time is not an absorption τ. |
+Unchanged, because nothing was found: conc0, evaporation, k_act (flight is 10-15× rest, but activity 1 here is
+walking, and no walking value was found), ingestion and crop capacity (sip 1.05 nL and meals of 6-200 nL are leads
+only), and the hormone loop.
+**Checks (scored once each; run with the switch on, nothing else changed).**
+- **S2, starvation (held out).** Hours until fat + sugar falls to 5% of the start; RH 1, rest, 25 °C. The
+  residual 0.05 is guessed (the death criterion; no measured residual found), and it is the value used in the
+  dry run before any source was read. Band: 24-112 h, the range across the agent's reports (young and old
+  Canton-S males 48 and 24 h; mixed sexes 58-112 h). All of these are secondary, so a pass is weak evidence.
+- **S3, CAFE (held out).** The Ja 2007 read: single males, Canton-S, 25 °C, 1.5 ± 0.04 µl/fly/day. That is
+  one report, so the band is ×/÷ 1.5 around it: **1.0-2.25 µl/day** (the paper's 1.3-2.3 across experiments is
+  also reported). Food: 5% sucrose plus 5% yeast extract. The model has no protein pool, so only the sucrose
+  is counted: 292 mM glucose-eq, inferred. Assimilation is 1, guessed (an upper bound, which gives the lowest
+  intake). The prediction with yeast-extract energy counted is reported as a sensitivity, unscored.
+- **S4, desiccation: not scored.** The water-loss rate and the lethal water fraction were not found, so its
+  prediction would test two guesses. Its held-out values stay unspent.
+- **S1:** consistency only (rest sugar after 6 h of fasting, from the set point).
+- **Falsifier.** A fail on S2 or S3 keeps the switch off and records which value is wrong. A pass on both
+  fills the S-rows' values as sourced. Adoption into a stage needs the profile gate (S couples into the
+  brain through hunger/satiety), so it is not done tonight.
+
+**S1-S4 scored (22 October, 02:31; `runs/s19/met/checks.json`, Mac).** With the switch on and nothing else changed:
+- **S2 starvation: 28.4 h. Band 24-112 h: pass.** It's weak: the band is secondary and the value sits near
+  its low edge. The store is TAG only (glycogen is missing), which biases the prediction short.
+- **S3 CAFE: 1.85 µl/fly/day. Band 1.0-2.25: pass** (also inside the paper's 1.3-2.3).
+- Registered sensitivity, unscored: with yeast-extract energy counted (5% at 3.3 kcal/g, guessed; 538 mM
+  glucose-eq), CAFE is 1.00 µl/day, at the band's edge.
+- Extra sensitivity, unscored: at the single-fly extrapolated rate (14 µl O2/mg/h) both fail, starvation
+  12.2 h and CAFE 4.3 µl/day. The CAFE males were housed singly, so the S3 pass holds only if the measured
+  group rate is the right one for a single fly. Burggren's extrapolation says it is not; that remains open.
+- S4: not scored, as registered. Its held-out values stay unspent.
+- S1, consistency: 39.2 mM after 6 h of fasting, against a set point of 40.
+Both held-out values are now spent. By the falsifier, the S-rows' values count as sourced and the switch
+stays off until a stage gate.
+
+### s19 driver bug: a* = 0.0458 came from the voided bracket; its products voided unread, grid resumed (22 October, 04:42)
+**What happened.** `n19_drive3.sh` ran the first refined point, a = 0.02 (Mi4 evoked spikes 213 → 290, ratio 1.36),
+and then stopped the grid. Its `astar()` step globbed every `u2_a*.json`, including the old a = 0.25 run (ratio
+12.9). It therefore found the bracket [0.02, 0.25] and interpolated a* = 0.0458 across a 9.5-fold jump, which is
+the kind of step the 02:25 entry voided. The registered rule is the first crossing on the refined grid
+0.02, 0.04, ..., 0.2, so 0.0458 is not the registered a*. Dacks, U1, U1 5-HT and U1h then all ran at 0.0458.
+**What has been seen.** Only the driver's lines: `astar=0.0458`, `dacks finished, gate_runs=0`, and
+`GATE_ALL.done`: "gate not run: Dacks outside +5% to +30% or missing". Since `dacks.done` is rc=0, this says
+Dacks at a = 0.0458 was outside the band (or its `change` was null). The number was not read. U1, U1 5-HT and
+U1h were not read.
+**Change (decided before any further output).**
+- `dacks.json/log`, `u1_*.json/log`, `u1h.json/log`, `astar.json` and their done-files move to
+  `runs/s19/n19/void/v3_a0.0458/`, unread.
+- `n19_drive4.sh` resumes the refined grid at a = 0.04 in order. The early stop and the interpolation use only
+  (0, 1) and the points run so far, in list order. a = 0.25 is used only if 0.02-0.2 never cross.
+- Dacks runs once at that a* and is scored once (pass if +5% ≤ change ≤ +30%). This re-run would have been made
+  whatever the leaked verdict was, because a* was wrong either way, and nothing chosen here depends on Dacks.
+  **Recorded weakness:** the held-out test is not fully clean. A fail at a nearby a is known. A pass at the
+  registered a* would be reported with that caveat.
+- The stage gate (about 4 h) does not start automatically; the park is 05:30. U1/U1h are re-run at the
+  registered a* next session.
+
+### s19 N26 clock light-input plan, written before any source is read (22 October, 04:44)
+N26 is on and has one unit check (F-CLOCK-1, DN1p day/night). Its light coupling `k_light_per_h`, `l50_lux`,
+`ct_light_h` and the cell drive peaks `peak_morning_h`/`peak_evening_h` are guessed. A Sonnet read-only agent
+gathers measured values (it does not edit the repo).
+- **Parameter sources (used to set values):**
+  - `l50_lux`: the half-maximal light intensity of a phase-shift intensity-response curve (wild type, adult).
+  - `ct_light_h` and `k_light_per_h`: one light-pulse PRC (wild type, adult, its pulse duration and intensity
+    recorded). `ct_light_h` is set so that the model PRC's delay-to-advance zero crossing matches the measured
+    one. `k_light_per_h` is then set so that the model's delay at the measured maximal-delay phase (near CT15)
+    matches the measured delay, under the same pulse (duration and lux through the `l50` above).
+  - `peak_morning_h`, `peak_evening_h`: the measured time of peak firing (or, if none, peak Ca²⁺) of the morning
+    cells (s-LNv, l-LNv, DN1p) and the evening cells (LNd, 5th s-LNv), under 12:12 LD, ZT taken as CT.
+- **Held out (never used to set a value; scored once):** the maximal phase advance of the same PRC, near CT21,
+  as the model predicts it at that measured phase and pulse. Pass band: the measured range across the PRCs the
+  agent finds for that pulse class. With one report, ×/÷ 1.5 around it, and the sign must match.
+- **Consistency only:** the entrained phase under 12:12 LD (the model's CT 0 against lights-on), and the DN1p
+  CT 2 / CT 10 rates (F-CLOCK-1's held-out value is spent). If moving `peak_morning_h` breaks the CT 2 rate,
+  `g_clock_mv` is re-fitted at CT 2 alone by the F-CLOCK-1 rule, and labelled fitted.
+- **Value rule:** median of the reports for adult wild-type flies at 25 °C, males if given, otherwise mixed or
+  female (labelled measured_related). Bounds are the range across reports.
+- **Validity, known in advance:** the lumped Stuart-Landau oscillator with additive forcing has a sinusoidal PRC
+  with no dead zone. A measured dead zone in subjective day is a recorded limit, not a fitted feature.
+- The values go behind a new switch `state:clock|values_from_sources`, neutral 0, as with S1-S4.
+
+### s19 N26 first read thin; method clarifications before any fit (22 October, 04:49)
+The first read (Sonnet, about 4 min) found one full-text source, Vinayak et al. 2013 PLoS Genet 9:e1003615
+(w1118, about 21 °C), with two results. First, a maximal advance of 2.4 h at CT20-21 for a 1 h white pulse of
+about 150 µW/cm². Second, intensity-response half-maxima at CT20 for blue pulses: about 600 nW/cm² for 10 min,
+4 for 120 min and 3 for 360 min. No delay, zero crossing or clock-cell peak time came from a read source; those
+were secondary or unverified (a "Levine 1994" PRC could not be traced). A second, narrower read is running.
+Clarifications, decided now and independent of any number above:
+- **`l50_lux`** is set so that the model's own intensity-response half-maximum (shift against intensity, the same
+  CT and pulse duration, under the fitted k) falls at the measured half-max intensity. The model's IRC half-max
+  depends on k as well as l50, so l50 is not copied from the measured half-max. Duration class: 10 min, the
+  class of the ZT15/ZT21 pulse assays. Blue irradiance is converted to lux at 470 nm (683 lm/W × V(470) = 0.091,
+  so 1 µW/cm² is about 0.62 lux). That conversion is labelled inferred: the fly's CRY action spectrum is not
+  photopic. The 120 min half-max is a consistency check. The model integrates dose linearly below l50, so it
+  predicts a 12-fold lower half-max at 120 min, against 150-fold measured. A miss is a recorded limit.
+- If no read source gives the zero crossing, `ct_light_h` keeps its guess, and k is fitted at the delay alone.
+- The held-out point stays the maximal advance near CT21. Vinayak's 2.4 h (1 h pulse) is held out only for a
+  model run with its own pulse (1 h, 150 µW/cm² white, inferred as lux by the source's own conversion if given).
+  A different pulse class is not compared.
+
+### s19 N26 sources so far; no value changed; the held-out advance kept blind (22 October, 04:56)
+**Read (full text):**
+- Vinayak et al. 2013 PLoS Genet 9:e1003615: maximal advance 2.4 h at CT20-21 (1 h white pulse, about
+  150 µW/cm²). Intensity-response half-max at CT20 for blue pulses: about 600 nW/cm² for 10 min, 4 for 120 min
+  and 3 for 360 min (via the agent; the figure was not re-read by me).
+- Lamba et al. 2014 Cell Rep 7:601 (PMC4303071), Methods and the Fig. 1 legend: y w controls get a 5 min,
+  1,500 lux pulse at ZT15 and at ZT21 after 5 LD days, then 6 DD days; 16 flies × 3; SEM. Values exist only
+  in the Fig. 1C bars. A blind Sonnet reader is extracting the y w ZT15 delay alone. **I have not seen the ZT21
+  advance**, and it stays held out.
+- Liang, Holy & Taghert 2016 Science 351:976 (PMC4836443), text: M cells (s-LNv) peak in Ca²⁺ toward the end
+  of subjective night (around lights-on), and E cells (LNd) toward the end of subjective day (before lights-off).
+  The M-E phase difference is about 10 h, and both lead their behavioural peaks by about 4 h. This holds in
+  long and short photoperiods. The per-group ZT is only in Fig. 1F, which was not read. These are Ca²⁺ phases,
+  not firing.
+- Dollish et al. 2022 (bioRxiv 2021.04.08.439018; D. ananassae, so a related species only): a delay zone of
+  about 5 h, an advance zone of about 10 h and a 9 h dead zone, anchored to lights-off.
+**Not found in a read source:** the D. melanogaster delay-to-advance zero crossing, and a full wild-type PRC.
+Candidates for a figure read are Kistenpfennig et al. 2012 J Biol Rhythms (epub.uni-regensburg.de/34459) and
+the Dollish PRC figure (related species).
+**Decision.** Under the 04:49 rule, `ct_light_h` keeps its guess (8 h). At 8 h the model's weak-pulse PRC
+crosses from delay to advance at CT20 and peaks its advance at CT2. That contradicts Vinayak's maximal advance
+at CT20-21, so the guess is already known to be wrong. Scoring the held-out ZT21 advance against it would spend
+the point to learn nothing new. So nothing is fitted or scored tonight: `CLOCK_SOURCED` stays empty behind the
+neutral switch. The fit (ct_light from a read zero crossing, k from Lamba's ZT15 delay, l50 from Vinayak's
+10 min IRC) and the one held-out score (Lamba ZT21 advance, same pulse) wait for the zero-crossing read.
+Liang's text is consistent with the current peak guesses in direction (morning group 2, evening 10, 8 h apart
+against about 10 h). They are left unchanged until Fig. 1F is read, because any change to `peak_morning_h`
+also moves the fitted DN1p drive at CT 2 (F-CLOCK-1).
+Tool: `scripts/probes/s19_n26_prc.py` (prc, irc, fit, entrain modes; the Organs ODE m10f uses). Check: under
+the guesses, a 10 min 1,000 lux pulse gives −0.13 h at CT14 and +0.13 h at CT2, about 20× below measured
+shifts, so k will rise far above its guessed bounds [0.02, 2].
+
+**N26 addendum (22 October, 05:04).** The blind reader returned the Lamba 2014 Fig. 1C **y w ZT15 delay:
+−3.1 h, SEM about 0.35 h** (5 min, 1,500 lux; 16 flies × 3). Derived from the figure pixels: the axis ticks fit
+to under 0.02 h, and the bar end is at y = 215 px. Crops are in `/tmp/lamba_crops/` (not kept). The reader was told
+not to report any ZT21 or advance value and did not. The ZT21 advance stays held out and unseen. This is the
+value k will be fitted to once ct_light is sourced.
+Correction to the 04:49 entry: Vinayak's 2.4 h advance was seen in the agent report before 04:49 called it held
+out, so it counts as consistency only. The one held-out N26 point is Lamba's ZT21 advance.
+
+### s19 N19 U2 a* and Dacks scored once: Dacks FAILS, N19 stays built-off (22 October, 05:23)
+**U2 (fitted, Strother 2018 Fig. 6F ×2.66; `runs/s19/n19/astar.json`, backhouse).** Mi4 evoked spikes, u_OA 1
+against 0 (u0 = 213): a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16. The first crossing is between 0.06 and 0.08:
+**a* = 0.0649 (fitted)**. At a*, Mi4's own input gain is 1 + 0.0649 × 2.0 = 1.13 (net OA 2.0, type row). The
+kicked L5 are modulated too (net OA 2.98). Even so, the ×2.66 output is network amplification of a near-threshold Mi4
+(`runs/s19/n19/map.json`).
+**Dacks 2009 (held out; scored once; `runs/s19/n19/dacks.json`).** At a* = 0.0649, with DM2/DL1/DM3 ORNs kicked
+(200 ORNs, 100 Hz Poisson × 68.75 mV) and 12 uniglomerular PNs read (DL1_adPN, DM2_lPN, DM3_adPN, DM3_vPN): evoked PN spikes **297 at u_5HT 0, 296 at
+u_5HT 1, change −0.34%**, against the band +5% to +30%. **FAIL.** The 04:42 weakness applies (a fail at
+a = 0.0458 had leaked), but the outcome is the same.
+**Consequence (falsifier, 21 Oct 21:56).** N19 stays built-off at neutral; no gate, and no m10f5. The input-gain
+arithmetic predicted this: all 12 PNs sit on the population prior (no type or hemilineage row), with net 5-HT
++0.0556, so their input gain at a* is about +0.4%. The network does not amplify that the way it amplifies Mi4.
+**Validity limit (recorded).** One shared monoamine gain a can't carry both Mi4's ×2.66 under CDM and the PNs'
++15% under 5-HT, given the receptor map's population prior for PNs. The candidates, none of them tested:
+- PN-specific 5-HT receptor rows from a transcript source (the Davie 2018 brain atlas fetched tonight has PN
+  clusters; not yet read).
+- Presynaptic 5-HT action at ORN terminals, outside N19's validity range.
+- A per-modulator a. That would need a second calibration point, and is not adopted without one.
+Dacks is now **spent**.
+
+### s20 MB resting rates with plasticity off: one noise level per class, fitted on two cells, tested on Huang 2024 (pre-registered 22 October, 22:23, before any grid run)
+**Director's held note.** fly2 found the KC->MBON rules wipe memories in seconds at real DAN resting rates. So this
+fit runs with plasticity off. In this checkout m10f3 has no N21 (it lives in fly2's worktree), and the probe asserts
+N22 forgetting is 0. ORN->PN short-term depression (N29, stage 1) stays as it is; it is not memory. Nothing here
+may enter a profile with N21 on until fly2's resting-safe rule lands.
+**Mechanism (N3, existing rows).** `class:DAN|noise` (340 cells) and `class:MBON|noise` (97 cells), in mV/√ms.
+The row bounds are 0-3, guessed. Tonic drive stays 0 because without noise the low rates are a knife-edge
+(DECISIONS s12). KC, APL and DPM are untouched: KCs at 0 Hz sit inside Turner 2008's 0.1 ± 0.4 Hz, and APL/DPM
+have no rate.
+**Probe.** `scripts/probes/s20_mb_rest.py`: m10f3, isolated CNS, no stimulus, settle 0.5 s, read 4 s.
+**Grid (seed 12).** σ in {0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 2.5, 3.0}, applied to both classes in each run.
+**Fit (labelled fitted).**
+- σ*_DAN: the first crossing of 8 Hz by PPL105's (PPL1-α'2α2) mean rate. 8 Hz is the middle of Huang 2018
+  Nat Commun 6-10 Hz.
+- σ*_MBON: the first crossing of 12.1 Hz by MBON14's (MBON-α3) mean rate (Hafez 2023 eLife).
+- Both by linear interpolation between grid points. No crossing means no fit, and that is reported.
+**Confirm (not held out).** One run at (σ*_DAN, σ*_MBON) with seeds 12 and 13. Needs PPL105 in 6-10 Hz and MBON14
+in 9.7-15.1 Hz (×/÷1.25, guessed). Whole-brain rate and active fraction are reported against σ = 0.
+**Held-out test, once: Huang et al. 2024 Nature Fig. 1 voltage imaging** (Zenodo 10998457, `data/raw/huang2024/`).
+This is unseen, and the register names it for resting rates. Opened only after the confirm runs are written.
+- **Data readout.** Per trial, rate = number of `DetectedSpikes` / (t[-1] − t[0]). Average trials within a fly.
+  Per type, take the median across flies and the 10th-90th percentile across flies.
+- **Model readout.** The per-type mean rate over that type's cells at σ*, averaged over seeds 12 and 13.
+- **Map.** PPL1-γ1 → PPL101, PPL1-γ2 → PPL103, PPL1-α'3 → PPL104, PPL1-α2 → PPL105, PPL1-α3 → PPL106;
+  MBON-γ1 → MBON11, MBON-γ2 → MBON12, MBON-α'2 → MBON13, MBON-α3 → MBON14, MBON-α'3m → MBON17,
+  MBON-α2sc → MBON18. These come from instance labels; PPL106 = α3 by its 860 synapses onto MBON14.
+- **Per-type pass.** The model is inside [min(P10, median/2), max(P90, 2 × median)].
+- **Test set.** The 9 types other than PPL105 and MBON14 (the fit types). **Pass if at least 6 of 9.**
+  PPL105 and MBON14 are reported apart, as a cross-study consistency check.
+- **Falsifier.** 5 or fewer of 9: one noise level per class can't carry the per-type spread. Not adopted.
+- **Weaknesses, recorded now.**
+  - One PPL1-α'3 trial's spike count showed in fly2's zip listing.
+  - Huang's flies were on a ball, with walking and rest mixed, and spikes detected optically.
+  - The model is an isolated CNS with no body input.
+**Adoption, if it passes.** Not tonight. It needs a stage on m10f3 (name chosen then, to avoid fly2's m10f4), the
+gate, a battery run and a viewed figure, with N21 off. Until then N3 stays partial.
+
+### s20 N26 fit void: the Stuart-Landau light input cannot carry the read sources; Lamba ZT21 stays sealed and unspent (22 October, 22:43)
+The registered fit (04:44, 04:49, 05:04; `scripts/probes/s20_n26_fit.py`, `runs/s20/n26/fit.json`) did not converge:
+k ran to its 500/h bound, no PRC zero crossing was found, and lights-on in 12:12 LD fell at model CT 18.5. A k scan at
+ct_light 6.5 (the zero-crossing solution) shows why, at every k from 0.3 to 100/h:
+- **Entrained phase.** Lights-on sits at model CT 19-22, not CT 0. Light pulls the phase towards one point (ct_light), so the
+  day can't sit in a dead zone. The PRC zero crossing (CT 18.5) and the entrained phase can't both be met.
+- **Pulse length.** The shift grows with pulse length until type-0 resetting. At CT15, a 5 min pulse gives 3.5 h and a
+  60 min pulse 9.2 h (k 10). Flies give about 3.1 h for 5 min (Lamba 2014, y w, 25 °C) and 4.05 h for 60 min (Kistenpfennig 2012, w1118, 20 °C).
+**Decision.**
+- Nothing is fitted or written to `CLOCK_SOURCED`. The switch stays neutral 0 and the guessed values stay as they are.
+- The −9.08 h ZT21 "prediction" in fit.json comes from the void fit and is void. Lamba's ZT21 measurement was never
+  opened, so it stays held out, unspent.
+- The peak hours read from Liang 2016 are not written either, since they depend on a valid entrained phase.
+
+**Next.** A light input gated by a light-labile night state, i.e. CRY-dependent TIM degradation. The input is
+present only when TIM is high (subjective night) and is used up by light within minutes. That gives the dead zone
+and the pulse-length saturation. Its values come from sources: TIM's daily profile and its light degradation
+half-time (Western blots). Then re-register the fit.
+
+### s20 N19 receptor_map mode 2: Davie 2018 brain-cluster rows for types with no Davis/Ozel row (22 October, 22:43)
+- **Rows.** `data/derived/receptor_calls_davie2018.csv` (`scripts/probes/s20_davie_rows.py`) covers 122 male-cns types, 2,447 cells.
+  - p is the share of a cluster's cells with ≥ 1 UMI, pooled by cell count (derived).
+  - The crosswalk is by name (inferred): `*_adPN` → the five adPN clusters (365 cells); `*_lPN` → the three lPN clusters (107);
+    KCg* → G-KC; KCab-m → A/B-KC + A/B*-KC; MBON* → MBON; PAM* → PAM; PPL1/PPL2 → Dopaminergic; s/l-LNv → LNv; DN1* → DN1.
+  - Not covered: ventral PNs, KCa'b', ring neurons, AL local neurons.
+  - Peptide-receptor genes are in the same file (N20 data, not wired).
+- **Switch.** `neuromodulation:all|receptor_map` = 2 uses these rows for cells with no Davis/Ozel row (source 3).
+  Precedence is type > Davie > hemilineage > prior. Mode 1 is unchanged everywhere: checked equal outside the
+  2,447 cells, and Mi4 is untouched, so a* = 0.0649 still holds. The default stays 0.
+- **Scale check (overlap).** On 11 types that also have Davis/Ozel rows (143 type-gene pairs), Davie p vs Davis p gives r = 0.63.
+  Davie p runs lower (median 0.22 vs 0.99; 10x dropout), and the 5-HT2B and 5-HT7 shortfalls are the largest
+  (0.03/0.06 vs 0.30/0.27). Validity limit: Davie and Allen rows share this 10x scale, the Davis rows don't.
+- **PN result (not a score; Dacks is spent).** Under mode 2, net 5-HT is −0.29 for the adPNs and −0.11 for the lPNs, against +0.056 on the prior.
+  Postsynaptic N19 therefore predicts PN *inhibition* under 5-HT with PN-specific transcripts. Dacks 2009's
+  facilitation then has to come from paths N19 doesn't have (release from ORN terminals, LNs). The s19 failure was not only the
+  prior. A PN retry on Dacks would be both re-use and expected to fail, so it isn't run.
+- **N19's next held-out test** goes on unspent evidence for cells on type or Davie rows. Candidates are Sampson 2020 L2/T1 5-HT
+  (open access; direction already known from the abstract, magnitudes sealed unread) and a KC/MBON/LNv monoamine
+  measurement still to be found. To be registered next session.
+
+### s20 N19 scope: the AL routes for 5-HT, which data cover them (scoped, not built; 22 October, 22:51)
+F-S20-2 is corrected: Davie's PN sign flips under a per-gene dropout scale. The magnitude gap stands: the direct PN gain at a* is ≤ 2%,
+against +15%.
+**Connectome (male-cns, traced).** 2 CSD cells (5-HT) make 14,743 output synapses:
+- 6,415 onto AL LNs (420 cells, 79 types; 128 ACh, 114 GABA, 87 Glu, 89 unclear);
+- 1,795 onto PNs;
+- 518 onto ORN terminals (2,635 ORNs, 53 types).
+Wiring favours an LN route over a presynaptic ORN route (5-HT also acts by volume, so this isn't decisive).
+**Receptor data per route.**
+- **Davie 2018 covers neither.** It is brain-only, so there are no ORN cell bodies (they sit in the antenna), and it has no named
+  AL-LN cluster. Its 20+ unnamed GABAergic clusters can't be assigned to AL LNs without a marker.
+- **ORNs.** McLaughlin et al. 2021 eLife (adult ORN scRNA-seq, per ORN class) or Fly Cell Atlas antenna (Li et al. 2022 Science;
+  s19's FCA download got a 503).
+- **LNs.** No type-resolved transcriptome is known. Sizemore & Dacks 2016 Sci Rep give per-receptor PN-vs-LN presence from
+  MiMIC-GAL4 lines (qualitative, so p would be inferred 0/1). Suzuki 2020 places 5-HT7 in a GABAergic LN population.
+- **PNs.** Li et al. 2017 Cell (Smart-seq2, PN class-resolved, deeper than 10x) would settle the PN sign without dropout.
+**Mechanism needed.**
+- LN route: no new code. LNs already get N19's postsynaptic gain; they only need rows (mode 2 extension).
+- ORN route: a presynaptic gain (a cell's outgoing spikes × (1 + a s_pre u)) as a new neutral switch, CPU first, plus ORN rows.
+- Both must keep the shared a* and stay neutral off.
+**Proposed order (not started).**
+1. Li 2017 PN rows (settles the sign).
+2. McLaughlin 2021 ORN rows and the presynaptic switch.
+3. LN presence calls from Sizemore & Dacks 2016.
+4. Register the next held-out test on unspent evidence (Suzuki 2020's LN/PN gain control is the natural one, since it tests the LN route).
+
+### s20 N26 CRY-TIM refit, registered before running (22 October, 23:02)
+**Mechanism.** Switch `state:clock|light_input` = 1 (neutral 0 keeps the s10 pull). Light activates CRY, CRY
+removes TIM, and the TIM removed pushes the phase (`internal_state` docstring):
+- c' = a L (1 − c) − c/τ_c
+- T' = (P(ct) − T)/τ_rec − k_d c T
+- z += k_tim (k_d c T dt) e^{i 2π ct_tim/24}
+
+It is night-gated, because T is low in the subjective day, and saturates in pulse length, because T gets used up.
+Before this entry I ran only the smoke and assay checks (`s20_n26_tim.py`; the fast assays match the reference
+to < 1e-4 h) and one evaluation at the guessed k_tim 1 and ct_tim 6.5. No fit has been run.
+
+**Values (labels).**
+- **TIM_DD** (measured, pixel read): Shafer, Rosbash & Truman 2002 J Neurosci 22:5946, Fig. 6D.
+  - Small vLNs (s-LNv), Canton-S, DD day 1, 25 °C, 4 brains per point.
+  - Value = cytoplasmic + nuclear mean pixel intensity, read by eye from a 3× crop (±3 of 200), divided by the
+    CT16 maximum.
+  - CT0 0.77, 1 0.51, 2 0.16, 3 0.065, 4 0.029, 6-10 0.015, 12 0.15, 14 0.30, 16 1.0, 18 0.51, 20 0.26, 22 0.98.
+  - Interpolation is log-linear. P = TIM_DD (1 + τ_rec d ln TIM_DD/dct) (derived), so T follows TIM_DD in DD.
+- **τ_rec = 0.86 h** (derived). It is the upper bound set by the profile's steepest decline, CT1→2: ln(0.51/0.16) = 1.16/h,
+  where P reaches 0. The value is taken at that bound. A slower dark turnover can't produce the measured
+  morning fall.
+- **k_d by rule** (derived). A 10 min, 1000 lux pulse at CT15 (DD) leaves 10% of unpulsed TIM 1 h after the
+  pulse. Source: Tang et al. 2010 Neuron 66:378, where DN/LNd TIM is "undetectable" after a saturating 10 min
+  ZT15 pulse fixed 1 h later. The 10% is inferred.
+- **a by rule** (as registered 04:49). The model's 10 min IRC half-max at CT20 is 0.372 lux (Vinayak 2013,
+  600 nW/cm² blue; the lux conversion is inferred). The two rules are solved jointly at every evaluation.
+- **τ_c = 0.5 h** (guessed). Two reads found no in vivo active-CRY lifetime.
+- Period 24 h (inferred) and μ 1/h (guessed) are unchanged.
+
+**Fitted (labelled fitted).** `k_tim` and `ct_tim_h`. Search: a 5 × 12 grid (k 0.3-30, ct 0-22), then Nelder-Mead
+from the two best cells (`scripts/probes/s20_n26_tim_fit.py`).
+
+**Training targets (4 targets, 2 free parameters).**
+- PRC zero crossing CT 18.5: Kistenpfennig 2012, DD, 60 min, 1000 lux, w1118, 20 °C.
+- DD CT15 delay −4.05 h: same source and pulse.
+- LD ZT15 delay −3.1 h: Lamba 2014 y w, 5 min, 1500 lux. The model's LD is 1000 lux for 20 days.
+- Lights-on in 12:12 LD (1000 lux) at CT 0.
+
+The loss is the sum of squared band-scaled residuals.
+
+**Pass bands.** Zero crossing ±1 h; both delays ×/÷ 1.5, with sign; lights-on ±2 h.
+
+**Falsifier.** If any of the four is outside its band at the best fit, CRY-TIM with these sourced values fails.
+That goes in FINDINGS, and ZT21 is not scored.
+
+**Robustness variants.** Registered now; reported, not deciding:
+- V1: τ_c 0.1 h.
+- V2: τ_c 2 h.
+- V3: τ_rec 0.43 h.
+- V4: TIM_DD without the CT20 point. Its dip may be staining noise.
+- V5: Tang fraction 3%.
+
+The primary fit decides. If it passes and a variant fails, the dependence is reported. If it fails and only a
+variant passes, nothing is scored tonight (a post hoc choice).
+
+**Consistency only.**
+- Vinayak 120 min half-max, 4 nW/cm² ≈ 0.0025 lux. The model integrates dose, so about 12-fold below the 10 min
+  value is expected, against 150-fold measured. A miss is a recorded limit.
+- Vinayak TIM loss ≥ 60% after 10 min at the threshold intensity.
+- Vinayak 2.4 h maximal advance near CT20-21 (already seen).
+- Pulse-length saturation: CT15 delay for 1-120 min.
+- A small subjective-day response.
+
+**Held out (scored once).** Lamba 2014 y w ZT21 advance, 5 min, 1500 lux, in the same LD assay. It is predicted
+only by the primary fit and only if all four targets pass. The prediction goes in DECISIONS before a blind
+reader opens the figure. Band ×/÷ 1.5 around the measured value, and the sign must match.
+
+**Validity, known in advance.**
+- s-LNv TIM stands in for the network's light-labile TIM. Tang finds DN/LNd TIM, not s-LNv TIM, degraded at ZT15.
+- One lumped oscillator.
+- The sources differ in strain and temperature: 20 °C against 25 °C.
+- Lamba's LD intensity is not known.
+
+**Adoption.** The switch stays 0 whatever happens. The N26 row moves only on a held-out pass followed by a gate.
+
+### s20 N26 CRY-TIM refit scored against the 23:02 registration; ZT21 prediction written before the blind read (22 October, 23:55)
+**Primary fit: all four training targets pass.**
+- Fitted values: k_tim 0.789, ct_tim_h 7.59 h. Loss 0.634.
+- Rule-set values (derived):
+  - k_d 13.8/h (half-life 3 min under full CRY);
+  - a 10.3/(lux·h).
+  - The two rules close: Tang left 0.100, IRC half-max 0.373 lux.
+
+| target | measured | model | band | result |
+|---|---|---|---|---|
+| PRC zero crossing, DD 60 min | CT 18.5 | CT 18.80 | ±1 h | pass |
+| DD CT15 delay, 60 min 1000 lux | −4.05 h | −3.86 h | ×/÷1.5 | pass |
+| LD ZT15 delay, 5 min 1500 lux | −3.1 h | −2.36 h | ×/÷1.5 (−2.07..−4.65) | pass, low side |
+| lights-on in 12:12 LD | CT 0 | CT −0.54, no drift | ±2 h | pass |
+
+**Variants** (reported, not deciding):
+
+| variant | ld15 | ZT21 | result |
+|---|---|---|---|
+| V1 τ_c 0.1 h | −2.73 | +4.15 | passes; Tang rule unmet (k_d at its 50/h bound, left 0.135) |
+| V2 τ_c 2 h | −1.97 | +0.17 | **fails**: does not entrain (lights-on drifts 7.9 h); ld15 out of band |
+| V3 τ_rec 0.43 h | −2.26 | +2.45 | passes |
+| V4 no CT20 point | −2.27 | +3.75 | passes |
+| V5 Tang 3% | −2.41 | +2.68 | passes; rule unmet (k_d at bound, left 0.047) |
+
+- The result depends on τ_c, which is guessed. It needs active CRY to clear within about an hour of lights-off;
+  at 2 h the clock cannot entrain.
+- ld15 sits on the low side (−2.0 to −2.7) in every variant. ct_tim is 7.2-7.8 h wherever a variant passes.
+
+**Consistency only** (registered list).
+- Vinayak 120 min half-max: model 0.014 lux against 0.0025 measured. The model's 10 → 120 min ratio is 26-fold
+  against 150-fold measured. This is the recorded limit: the model integrates dose and the fly does more.
+- Vinayak TIM loss right after 10 min at 0.372 lux, CT20: model 38% against ≥ 60% measured (Vinayak's fixation
+  delay unknown). This misses.
+- Saturating 10 min CT20 advance: model +2.11 h against Vinayak's ~2.4 h maximum. The half-max pulse gives
+  +1.05 h.
+- Pulse-length saturation at CT15: 1 / 5 / 15 / 30 / 60 / 120 min give −2.86 / −2.93 / −3.10 / −3.36 / −3.86 /
+  −4.86 h.
+- Subjective-day response: |shift| < 0.25 h from CT 3 to CT 9 (60 min).
+
+**Figures viewed** (`docs/media/s20_n26_tim_prc.png`, `docs/media/s20_n26_tim_tim.png`).
+- The 60 min PRC is strong type 1, with steep but continuous delay → advance across CT 17-20.
+- The advance extends to CT0 (+2.4 h) and fades by CT3.
+- In LD:
+  - TIM is ≈ 0 through the day and rises from ZT13.
+  - The LD TIM waveform has two peaks (ZT16.5, ZT22.5). That shape is inherited from the single Shafer CT20 point. V4
+    drops the point and still passes, so it isn't load-bearing, but the waveform shape is an artefact.
+  - Lights-on clears TIM within about 10 min.
+- Entrainment settles in 2 days.
+
+**Held-out prediction** (written now, before anyone opens Lamba 2014 for ZT21).
+- Protocol: Lamba 2014 y w, 5 min pulse, 1500 lux, at ZT21 on the last LD night, same LD assay as the ZT15
+  training point.
+- **Primary fit predicts a phase advance of +2.89 h.** The fast path (`LD.shift`) and the reference
+  `s20_n26_tim.ld_shift` agree to 3 decimals.
+- Pass if the measured value is an advance and the prediction is within ×/÷1.5 of it, i.e. measured in
+  +1.93 to +4.34 h.
+- The variants span +2.45 to +4.15 among the passing ones. They are reported only and do not change the score.
+- For context, not a scoring rule: the ZT15 training point came out at 0.76 of the measured value, so a similar
+  shortfall at ZT21 would still pass.
+
+**Blind read.**
+- One Sonnet reader, no subagents of its own.
+- It extracts only the y w ZT21 value (mean and SEM) from Lamba 2014 Fig. 1C, by pixel read with axis
+  calibration.
+- It is not told the prediction. Scored once, then spent.
+
+### s20 N26 held-out Lamba ZT21 scored once: PASS; start-up state fixed; not adopted tonight (23 October, 00:09)
+**Blind read** (one Sonnet reader, no subagents; it was not told the prediction; Lamba 2014 Fig. 1C,
+`nihms655030f1.jpg` 601 × 456 px).
+- Calibration: 9 axis ticks, fit residual ≤ 0.03 h.
+- y w bar identified by its legend fill.
+- Result: **y w ZT21 = +3.21 ± 0.23 h (SEM), an advance.**
+- Neither the text nor the legend states the number. n = 16 flies per genotype, N = 3 experiments.
+- Calibration check: the same read gives y w ZT15 −3.04 ± 0.38 h, against the 22 Oct 05:04 blind read of −3.1 ± 0.35.
+
+**Score.**
+- Predicted +2.89 h (23:55, written before the read). Measured / predicted = 1.11, the sign matches, and the
+  prediction lies inside [3.21/1.5, 3.21 × 1.5] = [2.14, 4.82]: **PASS.** The point is now **spent**.
+- Variant predictions, reported only: V1 4.15, V3 2.45, V4 3.75, V5 2.68 would all pass. V2 (τ_c 2 h) at 0.17
+  would fail, as it already failed training.
+
+**Start-up state (fixed, before any adoption).**
+- With `light_input` 1, `Organs` started T at TIM_DD(ct): 0.29 at the m9c start CT 1.5.
+- A run in light therefore began by clearing night-level TIM. The clock jumped +0.18 h in its first minute
+  at 100-1000 lux.
+- Now c and T start from 2 days of 12:12 LD at 1000 lux, ending at ZT = start CT. This matches a fly kept in
+  LD, like the male-cns specimen (`initial_ct`, ZT 1.5). Rearing intensity is guessed; the rule is inferred.
+  - At ZT 1.5: c 0.9998, T 9 × 10⁻⁵. After 60 s at 1000 lux the clock reads CT 1.5198 against 1.5197
+    free-running.
+  - At night (CT 16): c ≈ 0, T 0.975.
+- DD assays now start from a DD state (c 0, T = TIM_DD), as in the registered fit.
+- Every registered number reproduces exactly: ld15 −2.3571, ZT21 +2.891, dd15 −3.8607, Tang 0.100.
+- `cry_tim_step` is shared by `_step` and the pre-run.
+- New test: `test_cry_tim_light_input_is_night_gated_and_starts_entrained`.
+
+**Registry.**
+- `cry_rate_per_lux_h` 10.26 and `tim_kdeg_per_h` 13.85 become the PARAMS defaults, labelled inferred (each
+  set by a rule from a measured point through an inferred step). They are read only with `light_input` 1.
+- `tim_tau_rec_h` keeps value 0.86 (derived); its bounds are labelled guessed (the validator caught
+  `bound_basis` derived).
+- `k_tim` 0.789 and `ct_tim_h` 7.59 are fitted. As with `clock_gain`, they belong in the stage profile, not
+  in PARAMS.
+
+**Not adopted tonight (reason).** The registration requires a gate after a held-out pass. fly2's branch has
+moved the frontier (`m10f` = m10f4, with m10f5 defined; commits 134de81 and 4b79905, not on main), so a stage
+defined now on main's m10f0 would sit on a stale base and collide with fly2's numbering.
+
+**Next (registered now).** Adoption stage on fly2's latest passing stage once it is on main; the name is chosen
+then. It sets `state:clock|light_input` 1, `k_tim` 0.789 and `ct_tim_h` 7.59 (both fitted).
+- Gate: fly2's stage rule (G seeds 12-15; S 60 s, whole-brain rate within ±50%).
+- Plus an LD check on the organism: 3 days of 12:12 LD, lights-on within CT 0 ± 2 h.
+- The default world is dark (`light_lux` 0). The gate therefore tests only that the switch is inert in the
+  dark. The LD check is the meaningful one.
+- N26 stays **partial** even then: τ_c and μ are guessed, and the cell peak hours are guessed.
+
+### s20 N25 sleep homeostat: Abhilash & Shafer 2024 values against held-out rebound, registered before building (23 October, 00:27)
+
+**Question.** Does the two-process set that Abhilash & Shafer 2024 fitted to fly sleep predict rebound sleep after deprivation? Their fit never used deprivation data. Implemented in our N25 homeostat, a pass would replace guessed N25 values with inferred ones. Sources: `docs/research/s20_n25_reads.md`, rounds 1-2.
+
+**Nothing is fitted.** All values are taken as published. The only free choices are the structural ones below, and they are fixed now.
+
+**Model (new switch `state:sleep|values_from_sources`, neutral 0).**
+- **Mode 0** is unchanged: the s10 guesses (tau_wake 12 h, tau_sleep 3 h, th 0.6/0.3) with the 12 h harmonic c_amp cos(4π ct/24).
+- **Mode 1** is the Abhilash set:
+
+  | field | value | label |
+  |---|---|---|
+  | tau_wake_h | 8.76 | inferred |
+  | tau_sleep_h | 9.51 | inferred |
+  | th_hi | 0.35 | guessed (Daan) |
+  | th_lo | 0.15 | guessed (Daan) |
+  | c_amp | 0.10 | guessed (Daan) |
+
+  - Modulation is c_amp cos(2π(ct − φ)/24), a 24 h cosine.
+  - φ is the time origin of their simulation, being read now (round 3, model information only). If the paper does not state it, φ = CT 0 (guessed). That is the Daan convention: the thresholds peak at dawn, so sleep falls at night.
+  - The S equations and the behavioural sleep criterion (≥ 5 min below a_rest) are unchanged.
+
+**Reduced loop (CPU probe, `scripts/probes/s20_n25_sleep.py`).**
+- The clock is entrained (ct = ZT, period 24 h).
+- Activity is 0 while the dFB switch is on and 1 while it is off. This assumes the switch-to-inactivity link through the brain, which this probe does not test (validity limit).
+- Deprivation forces activity to 1, as mechanical deprivation keeps the fly moving.
+- Time step 1 min. Sleep is scored like DAM data: inactivity runs ≥ 5 min count whole.
+- The probe reports the last of 10 entrained days (baseline), then deprivation and recovery.
+
+**Checks before the held-out score (not evidence).**
+- **C1, implementation (unit) check.** Abhilash's discrete rule with their values at τ 24 h must give 74.36 % sleep/24 h within ±1 pp.
+  - Our continuous form with the 5-min onset lag must match the discrete rule within ±2 pp.
+  - If C1 fails, the implementation is wrong and nothing is scored.
+- **C2, consistency with seen data (category A, already read; not held out).**
+  - Baseline total sleep must lie within 618-1100 min/day.
+  - Night sleep must exceed day sleep.
+  - These are reported for mode 0 and mode 1. A fail is recorded as a validity limit; it is not a reason to retune.
+
+**Held-out score (spent once): Huber et al. 2004 Sleep 27:628 rebound after mechanical deprivation.**
+- The protocol (durations, timing, recovery window, baseline, units) is being read now **without magnitudes**.
+- The model is then run on that exact protocol, and the predictions for mode 1 and mode 0 are written here before any magnitude is read.
+- **Pass (mode 1).** "Consistent with some fly" is the per-value bar. Take the span of wild-type group means ± 2 SEM, over the lines and sexes Huber reports (males preferred; females used only if no male group exists).
+  - The predicted recovery for the longest deprivation (the primary point) must lie inside that span.
+  - The predictions for at least two-thirds of the other durations must also lie inside it.
+  - If only figure reads are available, the read uncertainty is added to the SEM.
+- **Falsifier.** If the primary point falls outside the span, the published set fails as a rebound model. N25 then keeps its guessed values, and the miss and its direction go into FINDINGS. There is no refit on Huber, because it will be spent.
+- **Variants (reported, not scored).** V1: S decays from switch-on (no 5-min lag). V2: τ 23.5 and 24.5 h. V3: φ = CT 12.
+
+**Physiology.** dFB excitability against sleep need (Donlea 2014, Pimentel 2016) is not scored. Our dFB state is a binary switch with a fixed drive g_dfb, so no continuous excitability can be compared. This is recorded as a validity limit of N25.
+
+**Adoption.** Even on a pass, adoption needs a stage on fly2's frontier with the usual gate, as for N26. N25 is already on in m10f with mode 0.
+
+### s20 N25 checks C1 and C2 scored against the 00:27 registration: C1 FAILS, nothing scored, Huber 2004 stays unread (23 October, 00:30)
+
+**C1 (implementation) FAILS, by the registered ±1 pp.**
+- Abhilash's discrete rule with their values gives 75.56 % sleep per 24 h against their stated 74.36 %, a gap of 1.20 pp.
+- The gap is not explained by:
+  - τ: 23.5 / 24 / 24.5 h give 75.83 / 75.56 / 75.42;
+  - update order: updating S before the threshold test also gives 75.56;
+  - including the transient: all 9 LD days give 75.22, and days 1-4 give 73.26 / 74.93 / 75.49 / 75.56;
+  - a coarser step: 15 min gives 75.0, 1 h gives 77.1.
+- Our continuous form (Organs, 5-min onset lag) gives 75.83 %, against 75.56 % for the discrete rule (within the ±2 pp tolerance). So our code matches my reading of their equations. The gap lies in an unstated detail of their simulation.
+- By the registration, nothing is scored. The tolerance is not relaxed after the fact.
+
+**C2 (consistency with seen data; recorded, not used to retune).**
+
+| run | total (min/day) | day | night | in 618-1100? | night > day? |
+|---|---|---|---|---|---|
+| mode 1, φ = CT 0 | 1092 | 576 | 516 | yes | **no** |
+| mode 1, V3 φ = CT 12 | 1092 | 516 | 576 | yes | yes |
+| mode 1, V1 (no lag) | 1088 | 594 | 494 | yes | no |
+| mode 0 (s10 guesses, on in m10f) | 411 | 205 | 206 | **no** | equal |
+
+- **The s10 values now on in m10f sleep too little in the reduced loop.** 411 min/day (28.5 %) is below every cited wild-type value (≥ 618).
+- **Mode 1 with φ at CT 0 sleeps through the day.** It sleeps ZT 2.1-16.0 and ZT 19.4-23.6. Abhilash's own figure legend says their model profile is night-biased ("underestimate daytime sleep and somewhat overestimate nighttime sleep"; round 3). So their time origin is probably not CT 0, but it is not stated.
+
+**Huber 2004 protocol read (round 3).** No full text is reachable: there is no PMC version and the OUP page is paywalled.
+- Only the methods fragments in the abstract were found: deprivation of 6, 12 and 24 h by mechanical stimulation, in DAM.
+- The recovery window, baseline and units are unknown, so the registered held-out score cannot be specified.
+- No magnitudes were read. The reader saw a number quoted by secondary sources and withheld it. **Huber 2004 stays unspent.**
+
+**Next.**
+1. Resolve C1 and the time origin from the authors' code or supplement, if public. This is model information, not held-out data. A new registration would follow before any rebound data are read.
+2. Huber's full text needs Ben (library access). An open-access alternative (Brown et al. 2020 PLoS Genet, PMC7089559) would need its own registration and protocol read first.
+3. Nothing on N25 changes tonight. The switch stays neutral (0) and mode 0 stays on in m10f.
+
+### s20 N25 rebound predictions written before any magnitude is read (23 October, 00:34)
+**Not a score.** C1 failed, so nothing is scored. These predictions are recorded now so that a later score on Huber 2004, or on a registered open-access substitute, compares against numbers fixed before the data were read.
+
+**Design.** Reduced loop as registered. Deprivation ends at ZT 0 of the recovery day: 6 h is ZT 18-24, 12 h is ZT 12-24, 24 h is ZT 0-24. Baseline is the same day without deprivation. Output: `runs/s20/n25/sd.json`, with hourly time courses for any window.
+
+**Sleep gained over baseline.**
+
+| set | deprivation | sleep lost | gain, first 6 h | gain, 24 h | share of lost sleep regained in 24 h |
+|---|---|---|---|---|---|
+| mode 1, φ = CT 0 | 6 h | 266 min | 144 | 142 | 53 % |
+|  | 12 h | 516 | 144 | 139 | 27 % |
+|  | 24 h | 1092 | 144 | 138 | 13 % |
+| mode 1, φ = CT 12 (V3) | 6 / 12 / 24 h | 360 / 576 / 1092 | 110 / 110 / 110 | 175 / 195 / 212 | 49 / 34 / 19 % |
+| mode 0 (s10) | 6 / 12 / 24 h | 16 / 205 / 411 | −30 / 3 / 55 | 19 / −22 / 49 | not meaningful |
+
+**What the table shows.**
+- **Recovery barely depends on time awake.**
+  - With φ = CT 0, the fly sleeps through the morning gap it is normally awake in (ZT 0-2). From there the recovery day matches the baseline day: the long day episode is circadian-gated, and S cannot exceed 1.
+  - With φ = CT 12 the gain rises only from 175 to 212 min as deprivation goes from 6 to 24 h.
+  - Mode 0 has no consistent rebound.
+- **The model fails the qualitative claim.** Huber's abstract says recovery "was dependent on prior time awake", seen through the round-3 reader. On that the model fails as a structure, whatever the magnitudes turn out to be. The cap comes from fixed thresholds with long single episodes, not from the values.
+
+**Register.** Huber 2004's qualitative direction is now seen; its magnitudes are unseen and unspent.
+
+### s21 N25 held-out rebound test: Chowdhury et al. 2023 Fig. 1, registered before any magnitude is read (23 October, 00:53)
+
+**Director (00:45).** Huber 2004's direction leaked, so it is now training context. Register Brown 2020 or Chowdhury 2023, whichever has the cleaner deprivation-length series.
+
+**Choice: Chowdhury, Abhilash, Ortega, Liu & Shafer 2023 eLife 12:e91355 (PMC10642965, CC-BY).**
+- It is the only one of the two with a deprivation-length series in one wild-type line and one sex: Canton-S males, vortexer in DAM, 6, 12 and 24 h.
+- Brown et al. 2020 PLoS Genet 16:e1008270 has one duration (24 h), mainly in mated females, varied by method.
+- The protocol came from a Sonnet reader that reported no outcomes, plus my own read of the Methods subsections only. The XML is pinned at `data/raw/chowdhury2023/PMC10642965_fullText.xml`, downloaded 23 Oct 00:52.
+
+**Protocol (Methods, verbatim facts).**
+- Flies: male Canton-S, 5-7 days old at loading, single in DAM tubes on 5 % sucrose / 2 % agar, 12:12 LD, 25 °C. One acclimation day, then 1 baseline day.
+- Deprivation: vortexer shakes each DAM for 2 s at random, every 20, 120 or 220 s.
+  - 24 h runs ZT 0-24, 12 h runs ZT 12-24 and 6 h runs ZT 18-24, so all end at lights-on of recovery day 1.
+  - Arms (from the reader, legends): 6 h at 20 s (n 62) and 220 s (n 57); 12 h at 20 s (64) and 220 s (64); 24 h at 20 s (32), 120 s (64) and 220 s (64).
+- Sleep: DAM beam crossings in 20 s bins, ≥ 5 min of inactivity.
+- Rebound: (focal post − focal pre) − (unperturbed post − unperturbed pre), with total sleep per 24 h day. "Post" is days 1, 2 and 3 after deprivation, "pre" is the baseline day. Units: min per 24 h.
+- Sleep during deprivation is measured: debt = deprivation-window 24 h sleep minus baseline 24 h sleep.
+- Raw data: Dryad doi:10.5061/dryad.qnk98sfpp. **Not downloaded and not opened.**
+
+**What is scored (spent once).**
+- **Primary:** the 20 s arm, 24 h deprivation, day-1 normalised rebound (min).
+- **Secondary:** the 20 s arm, 6 h and 12 h, day 1.
+  - The 20 s arm is primary because it comes closest to the reduced loop's assumption of complete deprivation (activity forced to 1).
+  - The 120 and 220 s arms are reported, not scored. Our model has no path by which the stimulus itself affects sleep, and that sleep-independent effect is the paper's own subject (validity limit).
+- Our counterpart is the model's recovery-day sleep minus the same day without deprivation, with 24 h windows from ZT 0. That is exactly the "gain, 24 h" column of DECISIONS 23 Oct 00:34, and in an entrained model the unperturbed difference is 0.
+
+**Pass rule (the Huber rule of 23 Oct 00:27, unchanged).**
+- Compute each arm's group mean ± 2 SEM from the Dryad raw data with the paper's formula and the ≥ 5 min criterion. If the raw data cannot be read, use a blind figure read with its read uncertainty added.
+- **Pass:** the primary point lies inside its span, and the 6 h and 12 h predictions both lie inside theirs (two-thirds of the other durations, which with two means both).
+- **Also reported, not part of the pass:**
+  - the ordering rule: the sign of 24 h − 6 h, wherever the data's difference exceeds 2 combined SEM;
+  - the residual sleep during deprivation in each arm (the model assumes 0);
+  - days 2 and 3.
+
+**What the test is spent on.** Spent once, on the first candidate of the new homeostat structure (`docs/research/s21_n25_homeostat_scope.md`) that passes its implementation check and its training checks: baseline 618-1100 min/day, night > day, and the Liu 2016 anchors.
+- The fixed 00:34 predictions for mode 0 and mode 1 are reported at the same read and spend nothing extra: mode 1 φ CT 0 gives 142 / 139 / 138 min; V3 gives 175 / 195 / 212; mode 0 gives 19 / −22 / 49 (6 / 12 / 24 h).
+- **Falsifier:** if the primary point misses, the candidate fails as a rebound model. FINDINGS gets the miss and its direction, with no refit on Chowdhury.
+
+**Leak, recorded honestly (00:52).** Printing the XML's section list also showed the Results and Discussion subsection titles. Their qualitative content is now **seen**:
+- measured rebound depends on the stimulus frequency;
+- with yoked controls, significant rebound appears with low-frequency triggers;
+- rebound accumulates over multiple cycles, but little debt is paid off;
+- short-bout sleep masks the rebound magnitude, and long-bout sleep is under potent homeostatic control;
+- serotonin is a candidate sleep substance in the central brain.
+
+**Not seen:** any magnitude, the dependence on deprivation length, and the Fig. 1 values. The ExR3 (5-HT) → dFB route in the scope was found in the connectome query at about 00:42, before this leak. The test stays usable but weakened, and it is marked so in the register.
+
+**Huber 2004** stays training context, if Ben supplies the full text.
+
+### s20 MB resting rates scored once against Huang 2024: PASS 6 of 9 (23 October, 01:01)
+Scored as registered on 22 Oct at 22:23 (F-S21-1).
+- **Fit:** σ*_DAN 1.477 and σ*_MBON 2.287 mV/√ms (fitted).
+- **Confirm:** PPL105 and MBON14 sit inside their bands on seeds 12 and 13.
+- **Huang 2024 (held out, now spent): 6 of 9 test types pass, the minimum for a pass.**
+  - Fails: PPL1-γ1, MBON-γ1 and PPL1-α3, all low by ×0.23-0.44.
+- **Not adopted tonight.** The class noise rows stay off in m10f. A stage with N21 off is next once the frontier merges, and fly2 is told of the resting DAN rates.
+- **Deviation from the registration:** the whole-brain comparison used σ = 0.5, because no σ = 0 run was made.
+
+### s22 N25 homeostat mode 1 built on the CPU; training fit and prediction protocol registered before any fit is run (23 October, 02:58)
+
+**Director (23 Oct 01:10, and the session order).** Build the N25 reduced ER5/dFB loop on the CPU under its registration, behind a switch that is off by default. Item (1), the N26 and MB noise adoption, waits on fly2's merge.
+
+**What is built (nothing adopted).**
+- Switch `state:sleep|homeostat`, neutral 0 = the s10 process S with the hysteretic dFB threshold. Mode 1 (`internal_state.py`):
+  - ER5 need n (BRP-like, Liu et al. 2016; their cells are called "R2" in the paper, R69F08-GAL4; the mapping to ER5/R5 is **inferred** from later naming). Awake n relaxes to 1 with τ_rise; asleep to 0 with τ_decay.
+  - Each of the 8 dFB cells (FB6A_a/b/c and FB6E, 2 cells each in male-cns v1.0, measured) is a two-state unit. OFF → ON at k_r (1 + γ n) / (1 + γ); ON → OFF at k_off (1 + λ Lsat(light)). Transitions use the exact two-state probabilities over the step.
+  - Sleep link (reduced loop only): asleep-capable while ≥ 4 of 8 cells are ON (guessed, the s20 convention of a dFB switch). In organism runs each dFB cell gets the dFB drive by its own state.
+  - No clock input in mode 1. Validity limit: no rhythm in DD and no anticipation peaks; LD only.
+- **k_r anchoring changed after the source read.** Pimentel et al. 2016 measured the restart (7 of 15 cells, 7-60 min, mean 25.86 ± 7.61 SEM min) in flies sleep-deprived > 12 h. So k_r = 1/25.86 min⁻¹ is the rate at full need (n = 1, **inferred**). Range [0.0106, 0.094] min⁻¹: the upper end is 1/(mean − 2 SEM); the lower end is the censored-exponential estimate if the 8 silent cells were held 60 min (the hold time is not stated).
+- Implementation checks, all passed before this entry (`runs/s21/n25/unit.json`):
+  - U1, OFF dwell of the model class at γ = 0: 25.83 min against 1/k_r = 25.84.
+  - U2, stationary ON fraction 0.2889 against k_on/(k_on + k_off) = 0.2922 (tolerance 0.01).
+  - U3, the vectorised probe loop against the Organs class (2 days, 200 vs 60 flies): 10.0 min apart in daily sleep, tolerance 3 combined SE = 25 min.
+
+**Fit, registered now (script `scripts/probes/s21_n25_homeostat.py fit`, output `runs/s21/n25/fit.json`).**
+- Fitted (shared, one value each, labelled fitted): τ_rise ∈ {1 … 48} h (12 values), γ ∈ {0 … 100} (11), k_off ∈ 0.001-0.9 min⁻¹ (12, log-spaced), λ ∈ {0 … 20} (9). 14,256 sets.
+- Fixed: k_r 0.0387 min⁻¹ (measured, at n = 1 inferred); τ_decay 5.5 h (derived bracket 2.9-10.4 from Liu 2016); 8 cells; ≥ 4 ON; LD 12:12 at 1000 lux; 1-min steps; DAM scoring (inactive runs ≥ 5 min count whole).
+- Stage 1, baseline (64 flies per set, 6 burn-in days, 2 scored days):
+  - T1 total sleep inside 618-1100 min/day (the registered training range);
+  - T2 night > day;
+  - T4 Liu 2016 firing: mean need ZT13-15 / ZT0-2 ≥ 2. Firing about 3× in rested flies; if firing is affine in need with a non-negative offset, the need ratio is at least the firing ratio; 2 allows for "about".
+- Stage 2, deprivation (128 flies per arm per set, on the stage-1 survivors): control, and 6, 12 and 24 h of forced activity ending at ZT 0 of recovery day R1 (6 h ZT18-24, 12 h ZT12-24, 24 h ZT0-24 of day S), days B, S, R1-R3.
+  - T3 Liu 2016 BRP anchors on the 24 h arm, need excess over control: at +2 h ≥ 50 % of the excess at the end of deprivation, and at +24 h within ±10 % of it. Liu's own deprivation timing differs (vortexer 5 s per min; end time not recorded here); this is the loop's version.
+- **Primary accepted set:** T1-T4, with the total also inside 1008-1100 min/day. That band is Abhilash & Shafer 2024 (Sleep 47:zsad277): Canton-S, w1118 and yw males in DAM, LD, "~70 % to 80 %" of 24 h asleep. It is seen training data from the same lab and line as the held-out paper (food differs: corn syrup/soy vs 5 % sucrose agar). **Variant:** the full 618-1100 band, reported.
+- **Selection rule:** the candidate is the accepted set whose day-1 rebound predictions (6, 12, 24 h) lie closest (Euclidean, min) to the per-arm medians over the accepted set. Reported with it: the medians and the 2.5-97.5 % range over the accepted set. The training data do not pin γ well, so the range is part of the prediction and goes into the register.
+- **Prediction (counterpart of the 00:53 registration):** rebound on day k = (focal Rk − focal B) − (control Rk − control B), 24 h windows from ZT 0, group means; day 1 scored, days 2 and 3 reported. The model's residual sleep during deprivation is 0 by construction.
+- **Falsifier (before any held-out read):** no grid set passes T1-T4 in the primary band. Then the structure fails as built and FINDINGS records it; the wide variant is reported but cannot rescue the primary.
+- Chowdhury 2023 Dryad stays unopened until the predictions are written into this file. Huber 2004 stays training context; no rebound magnitude is read from any source before then.

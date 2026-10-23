@@ -14,7 +14,7 @@ import pytest
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
 
-from flyemu.internal_state import Organs, default_params  # noqa: E402
+from flyemu.internal_state import Organs, default_params, tim_dd  # noqa: E402
 
 HAVE_GRAPH = (REPO / "data/cache/male_cns_edges.parquet").exists()
 P = default_params()
@@ -130,6 +130,33 @@ def test_light_entrains_and_shifts_phase():
     lit = _ld(Organs(P, z=-1 + 0j), 1)
     assert abs((lit.ct_h - dark.ct_h + 12) % 24 - 12) > 1.0   # one light day shifts the phase
 
+
+
+def test_cry_tim_light_input_is_night_gated_and_starts_entrained():
+    """s20 N26, state:clock|light_input = 1 (CRY-dependent TIM degradation; DECISIONS 22 Oct 23:02, 23:55):
+    a run started in the light starts with TIM already cleared (no start-up kick); a pulse moves the phase only
+    when TIM is up (night); the neutral path never touches c or T."""
+    q = dict(P, light_input=1.0, k_tim=0.789, ct_tim_h=7.59)          # the s20 fit (fitted values)
+    z15 = complex(np.exp(1j * 2 * np.pi * 1.5 / 24))
+    o = Organs(q, z=z15)
+    assert o.cry > 0.99 and o.tim < 1e-3                               # ZT 1.5 after 12:12 LD
+    o.step(60.0, light_lux=1000.0)
+    assert o.ct_h == pytest.approx(1.5 + 60 / 3600, abs=2e-3)
+
+    def shift(ct):
+        z = complex(np.exp(1j * 2 * np.pi * ct / 24))
+        a, b = (Organs(q, z=z, cry=0.0, tim=tim_dd(ct)) for _ in range(2))      # DD start state
+        a.step(600.0, light_lux=1000.0)
+        b.step(600.0, light_lux=0.0)
+        run(a, 8)
+        run(b, 8)
+        return (a.ct_h - b.ct_h + 12) % 24 - 12
+    assert abs(shift(6.0)) < 0.1                                        # subjective day: dead zone
+    assert shift(15.0) < -1.0 and shift(21.0) > 1.0                     # early delay, late advance
+    n = Organs(P, z=z15)
+    c0, t0 = n.cry, n.tim
+    run(n, 1, light_lux=1000.0)
+    assert (n.cry, n.tim) == (c0, t0)                                   # neutral 0 leaves c and T alone
 
 # --- N25 sleep homeostat -------------------------------------------------------
 
@@ -256,3 +283,85 @@ def test_pump_gating_reads_the_pump_mns():
         org._last_spiked = st.pump_cells if s % 100 == 0 else np.zeros(0, np.int64)
         st.drive(org, org.timestep_ms, np.zeros(org.conn.n, np.float32))
     assert st.pump_rate > 5.0
+
+
+def test_sourced_values_are_neutral_off_and_inside_their_bounds():
+    """s19: state:organs|values_from_sources = 0 leaves the s10 defaults; the sourced values sit in their bounds."""
+    from flyemu import internal_state as S
+    base = S.default_params()
+    assert base == {r[0]: float(r[5]) for r in S.PARAMS}
+    src = S.default_params(sourced=True)
+    assert set(S.SOURCED) <= set(base)
+    for f, (v, lo, hi, label, *_r) in S.SOURCED.items():
+        assert lo <= v <= hi and src[f] == v, f
+        assert label in {"measured", "derived", "inferred", "guessed"}, f
+    assert {f: src[f] for f in base if f not in S.SOURCED} == {f: base[f] for f in base if f not in S.SOURCED}
+
+
+def test_sleep_sourced_values_are_neutral_off_and_switch_the_threshold_form():
+    """s20: state:sleep|values_from_sources = 0 leaves N25 as in s10; 1 sets the Abhilash values, 24 h cosine."""
+    from flyemu import internal_state as S
+    base, src = S.default_params(), S.default_params(sleep_sourced=True)
+    for f, (v, lo, hi, label, *_r) in S.SLEEP_SOURCED.items():
+        assert lo <= v <= hi and src[f] == v, f
+        assert label in {"measured", "derived", "inferred", "guessed"}, f
+    assert {f: src[f] for f in base if f not in S.SLEEP_SOURCED} == {f: base[f] for f in base
+                                                                      if f not in S.SLEEP_SOURCED}
+    assert "sleep_sourced" not in base and src["sleep_sourced"] == 1.0
+    # at CT 6 the s10 drive is c_amp cos(pi) = -0.1 (12 h harmonic); the one-cycle drive is cos(pi/2) = 0
+    for q, thr in ((base, base["th_hi"] - base["c_amp"]), (src, src["th_hi"])):
+        o = S.Organs(q, z=complex(0.0, 1.0))          # ct = 6 h
+        assert abs(o.ct_h - 6.0) < 1e-9
+        o.pressure = thr + 0.004
+        o.step(1.0, activity=1.0)
+        assert o.switch, q.get("sleep_sourced")
+        o2 = S.Organs(q, z=complex(0.0, 1.0)); o2.pressure = thr - 0.004
+        o2.step(1.0, activity=1.0)
+        assert not o2.switch
+
+
+def test_homeostat_mode_is_neutral_off_and_its_rates_are_exact():
+    """s22: state:sleep|homeostat = 0 leaves N25 as in s10; mode 1 is the ER5 need and 8 stochastic dFB cells."""
+    from flyemu import internal_state as S
+    base, hom = S.default_params(), S.default_params(homeostat=True)
+    assert "homeostat" not in base and hom.pop("homeostat") == 1.0 and hom == base
+    o = run(S.Organs(base), 6, activity=1.0)                  # mode 0: the dFB cells are never touched
+    assert o.dfb_on.shape == (S.N_DFB,) and not o.dfb_on.any()
+    q = S.default_params(homeostat=True)
+    kr, g = q["dfb_restart_per_min"] / 60.0, q["need_gain"]
+    k1, f0 = S.dfb_rates(q, 1.0, 0.0)
+    k0, f1 = S.dfb_rates(q, 0.0, 1.0)
+    assert np.isclose(k1, kr) and np.isclose(k0, kr / (1.0 + g))  # the measured restart is the rate at full need
+    assert np.isclose(f1, f0 * (1.0 + q["light_arousal"]))
+    # the exact two-state transition composes: two steps of dt equal one of 2 dt
+    def m(dt):
+        stay, turn = S.dfb_transition(k1, f0, dt)
+        return np.array([[1 - turn, turn], [1 - stay, stay]])
+    assert np.allclose(m(30.0) @ m(30.0), m(60.0))
+    # the need rises awake and falls asleep
+    o = S.Organs(q, pressure=0.2)
+    run(o, 4, activity=1.0)
+    hi = o.pressure
+    assert hi > 0.2
+    o.switch = True
+    run(o, 2, activity=0.0)
+    assert o.asleep and o.pressure < hi
+
+
+def test_homeostat_drives_each_dfb_cell_by_its_own_state(orgs):
+    _, _, org = orgs
+    st, o, r = org.organs, org.organs.organs, org.organs.rows
+    assert len(o.dfb_on) == len(r["dfb"])
+    pattern = np.arange(len(r["dfb"])) % 2 == 0
+    saved = (st.p.get("homeostat"), o.dfb_on.copy(), o.switch)
+    try:
+        st.p["homeostat"], o.dfb_on[:], o.switch = 1.0, pattern, False
+        st._refresh()
+        assert np.allclose(st.tonic()[r["dfb"]], st.p["g_dfb_mv"] * pattern)
+    finally:
+        if saved[0] is None:
+            st.p.pop("homeostat", None)
+        else:
+            st.p["homeostat"] = saved[0]
+        o.dfb_on[:], o.switch = saved[1], saved[2]
+        st._refresh()
