@@ -417,6 +417,41 @@ def kr_check(kr: float = KR_FAST) -> dict:
     return out
 
 
+def bout_figure(path: Path = Path("docs/media/s22_n25_bouts.png")) -> dict:
+    """Accepted sets at k_r 0.0387 (fit_bouts.json, primary) and 0.094 (kr_check.json): bouts per 12 h and mean bout
+    length, day against night, coloured by the 24 h day-1 rebound; Garbe 2015 SB mean +- 1 s.d. as a box."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    a = [s for s in json.loads((OUT / "fit_bouts.json").read_text())["sets"] if s["liu_pass"] and s["band"]]
+    b = [s for s in json.loads((OUT / "kr_check.json").read_text())["sets"] if s["liu_pass"]]
+    garbe = {"bouts": ((8.7, 3.3), (7.0, 4.2)), "bout_len": ((57.0, 25.0), (113.0, 70.0))}
+    fig, ax = plt.subplots(1, 2, figsize=(11, 4.6))
+    for j, (key, lab) in enumerate((("bouts", "bouts per 12 h"), ("bout_len", "mean bout (min)"))):
+        (dm, ds), (nm, ns) = garbe[key]
+        ax[j].add_patch(plt.Rectangle((dm - ds, nm - ns), 2 * ds, 2 * ns, fc="0.85", ec="k", lw=0.8,
+                                      label="Garbe 2015 SB, mean +- 1 s.d."))
+        for rows, mk, name in ((a, "o", "k_r 0.0387 (measured mean)"), (b, "^", "k_r 0.094 (measured upper end)")):
+            sc = ax[j].scatter([r[f"dam_{key}_day"] for r in rows], [r[f"dam_{key}_night"] for r in rows],
+                               c=[r["24h_d1"] for r in rows], marker=mk, s=22, cmap="viridis", vmin=0, vmax=260,
+                               edgecolors="k", linewidths=0.3, label=name)
+        ax[j].set_xlabel(f"day: {lab}")
+        ax[j].set_ylabel(f"night: {lab}")
+    ax[1].set_xscale("log")
+    ax[1].set_yscale("log")
+    for axis, ticks in ((ax[1].xaxis, (20, 30, 50, 100, 200)), (ax[1].yaxis, (50, 100, 200, 400, 700))):
+        axis.set_major_locator(matplotlib.ticker.FixedLocator(ticks))
+        axis.set_major_formatter(matplotlib.ticker.FixedFormatter([str(t) for t in ticks]))
+        axis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax[0].legend(fontsize=7, loc="upper right")
+    fig.colorbar(sc, ax=ax, label="24 h arm day-1 rebound (min)")
+    fig.suptitle("N25 mode 1 accepted sets: night bout structure only matches with over-fragmented days", fontsize=10)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=110)
+    return {"figure": str(path), "n_mean": len(a), "n_fast": len(b)}
+
+
 def figure(path: Path = Path("docs/media/s22_n25_homeostat.png")) -> dict:
     """The primary candidate: 30-min sleep profile and need (control vs 24 h arm), and day-1 rebound vs length
     with the accepted-set spread. Re-simulated with 512 flies per arm (seed 40)."""
@@ -485,6 +520,8 @@ if __name__ == "__main__":
         for k, v in r.items():
             if k != "sets":
                 print(k, json.dumps(v))
+    elif sys.argv[1] == "boutfig":
+        print(bout_figure())
     elif sys.argv[1] == "bouts":
         r = bout_check()
         (OUT / "bout_check.json").write_text(json.dumps(r, indent=1))
