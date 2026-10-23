@@ -4648,3 +4648,17 @@ Training data only; not a candidate for scoring, and no new prediction gets regi
 - **Reading.** "Garbe-like" means ≥ 2.8 bouts per night and a mean night bout ≤ 183 min (Garbe's mean ± 1 s.d.).
   - **No.** If no T1-T5 set at k_r 0.094 is Garbe-like with γ ≥ 1, the measured k_r range does not fix the structure. A revision then needs a new element (clock input, sleep-link threshold, arousal).
   - **Yes.** Otherwise, fitting k_r inside its measured range is a candidate revision, for a separate registration.
+
+### s22 N25 k_r diagnostic result: the registered answer is yes, but the day bouts then fall apart (23 October, 04:11)
+
+Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`; slot limiter, wall 803 s). Training data only; Dryad unopened.
+- **k_r = 0.094 min⁻¹** (upper end of Pimentel's measured range). 158 sets pass T1 (primary band), T2 and T4. 38 also pass T5 (night bout ≤ 335 min), and all 38 pass T3.
+- **Registered reading: yes.** 6 sets are Garbe-like at night (≥ 2.8 bouts, ≤ 183 min), with γ 1 or 4 (k_off 0.0220 or 0.0119, λ 2):
+  - 4.3-6.3 bouts per night of 100-133 min, against Garbe's 7.0 ± 4.2 of 113 ± 70;
+  - day-1 rebound 47-100 / 87-147 / 89-193 min for 6 / 12 / 24 h (median 60 / 92 / 108; model side only).
+- **Not registered, seen in the same output:** those 6 sets break the day into 15.8-23.3 bouts per 12 h of 18-30 min, against Garbe's 8.7 ± 3.3 of 57 ± 25.
+  - No accepted set is inside Garbe's mean ± 1 s.d. for both day and night.
+  - The sets with Garbe-like days (γ 8, k_off 0.00639: about 11 day bouts of 49-52 min) have nights just outside (2.7-2.8 bouts of 187-193 min).
+  - One k_off with a light term cannot fragment the night without over-fragmenting the day.
+- **Meaning for the Director's call.** Fitting k_r inside its measured range fixes the night only at the cost of the day. A structure that has both probably needs a night-specific element (a clock input to the dFB or ER5, or a dark-specific arousal), not a refit. Every variant so far predicts a day-1 rebound that grows with deprivation; its size spans about 50-100 min (6 h) and 90-190 min (24 h) across them.
+- Nothing adopted; no new prediction registered.

@@ -2094,3 +2094,12 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - So a Chowdhury score on the locked candidate would test a model whose nights are wrong.
 - **Bearing.** Behavioural fit is not evidence for the dFB mechanism: no dFB ON fraction or spontaneous OFF rate has been measured (Pimentel 2016 measured the restart only).
 - **Status.** Not adopted, switch 0, N25 stays **partial**. Whether to amend before scoring (T5 night bout ≤ 335 min; its candidate predicts 70.3 / 111.3 / 131.1 min), or to revise the structure first, is for the Director (DECISIONS 03:32).
+
+### F-S22-2: N25 mode 1 cannot match measured day and night bout structure together, even with k_r anywhere in its measured range (s22, 23 Oct 04:11; DECISIONS 03:32, 03:45, 04:11)
+- At k_r = 1/25.86 min⁻¹ (measured mean): the best night is 4.6 bouts of 130 min (F-S22-1).
+- At k_r = 0.094 min⁻¹ (the measured upper end): 6 of 38 accepted sets reach Garbe-like nights (≥ 2.8 bouts per night, ≤ 183 min; γ 1-4).
+  - Every one of them breaks the day into 16-23 bouts of 18-30 min, against Garbe's 8.7 ± 3.3 of 57 ± 25.
+  - No set is inside Garbe's mean ± 1 s.d. for both day and night.
+- The trade-off comes from one ON → OFF rate whose only light dependence raises it in the day. Day/night bout structure is training data (Garbe 2015, SB DAM, iso31 males), so it can enter the next registration as a check.
+- The rebound grows with deprivation in every variant; its size depends on the bout structure (6 h about 50-100 min, 24 h about 90-190 min).
+- N25 stays **partial**. The Director chooses between scoring now (locked or T5) and a revision with a night-specific element.
