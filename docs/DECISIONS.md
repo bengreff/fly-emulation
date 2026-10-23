@@ -4565,3 +4565,34 @@ Scored as registered on 22 Oct at 22:23 (F-S21-1).
   - Fails: PPL1-γ1, MBON-γ1 and PPL1-α3, all low by ×0.23-0.44.
 - **Not adopted tonight.** The class noise rows stay off in m10f. A stage with N21 off is next once the frontier merges, and fly2 is told of the resting DAN rates.
 - **Deviation from the registration:** the whole-brain comparison used σ = 0.5, because no σ = 0 run was made.
+
+### s22 N25 homeostat mode 1 built on the CPU; training fit and prediction protocol registered before any fit is run (23 October, 02:58)
+
+**Director (23 Oct 01:10, and the session order).** Build the N25 reduced ER5/dFB loop on the CPU under its registration, behind a switch that is off by default. Item (1), the N26 and MB noise adoption, waits on fly2's merge.
+
+**What is built (nothing adopted).**
+- Switch `state:sleep|homeostat`, neutral 0 = the s10 process S with the hysteretic dFB threshold. Mode 1 (`internal_state.py`):
+  - ER5 need n (BRP-like, Liu et al. 2016; their cells are called "R2" in the paper, R69F08-GAL4; the mapping to ER5/R5 is **inferred** from later naming). Awake n relaxes to 1 with τ_rise; asleep to 0 with τ_decay.
+  - Each of the 8 dFB cells (FB6A_a/b/c and FB6E, 2 cells each in male-cns v1.0, measured) is a two-state unit. OFF → ON at k_r (1 + γ n) / (1 + γ); ON → OFF at k_off (1 + λ Lsat(light)). Transitions use the exact two-state probabilities over the step.
+  - Sleep link (reduced loop only): asleep-capable while ≥ 4 of 8 cells are ON (guessed, the s20 convention of a dFB switch). In organism runs each dFB cell gets the dFB drive by its own state.
+  - No clock input in mode 1. Validity limit: no rhythm in DD and no anticipation peaks; LD only.
+- **k_r anchoring changed after the source read.** Pimentel et al. 2016 measured the restart (7 of 15 cells, 7-60 min, mean 25.86 ± 7.61 SEM min) in flies sleep-deprived > 12 h. So k_r = 1/25.86 min⁻¹ is the rate at full need (n = 1, **inferred**). Range [0.0106, 0.094] min⁻¹: the upper end is 1/(mean − 2 SEM); the lower end is the censored-exponential estimate if the 8 silent cells were held 60 min (the hold time is not stated).
+- Implementation checks, all passed before this entry (`runs/s21/n25/unit.json`):
+  - U1, OFF dwell of the model class at γ = 0: 25.83 min against 1/k_r = 25.84.
+  - U2, stationary ON fraction 0.2889 against k_on/(k_on + k_off) = 0.2922 (tolerance 0.01).
+  - U3, the vectorised probe loop against the Organs class (2 days, 200 vs 60 flies): 10.0 min apart in daily sleep, tolerance 3 combined SE = 25 min.
+
+**Fit, registered now (script `scripts/probes/s21_n25_homeostat.py fit`, output `runs/s21/n25/fit.json`).**
+- Fitted (shared, one value each, labelled fitted): τ_rise ∈ {1 … 48} h (12 values), γ ∈ {0 … 100} (11), k_off ∈ 0.001-0.9 min⁻¹ (12, log-spaced), λ ∈ {0 … 20} (9). 14,256 sets.
+- Fixed: k_r 0.0387 min⁻¹ (measured, at n = 1 inferred); τ_decay 5.5 h (derived bracket 2.9-10.4 from Liu 2016); 8 cells; ≥ 4 ON; LD 12:12 at 1000 lux; 1-min steps; DAM scoring (inactive runs ≥ 5 min count whole).
+- Stage 1, baseline (64 flies per set, 6 burn-in days, 2 scored days):
+  - T1 total sleep inside 618-1100 min/day (the registered training range);
+  - T2 night > day;
+  - T4 Liu 2016 firing: mean need ZT13-15 / ZT0-2 ≥ 2. Firing about 3× in rested flies; if firing is affine in need with a non-negative offset, the need ratio is at least the firing ratio; 2 allows for "about".
+- Stage 2, deprivation (128 flies per arm per set, on the stage-1 survivors): control, and 6, 12 and 24 h of forced activity ending at ZT 0 of recovery day R1 (6 h ZT18-24, 12 h ZT12-24, 24 h ZT0-24 of day S), days B, S, R1-R3.
+  - T3 Liu 2016 BRP anchors on the 24 h arm, need excess over control: at +2 h ≥ 50 % of the excess at the end of deprivation, and at +24 h within ±10 % of it. Liu's own deprivation timing differs (vortexer 5 s per min; end time not recorded here); this is the loop's version.
+- **Primary accepted set:** T1-T4, with the total also inside 1008-1100 min/day. That band is Abhilash & Shafer 2024 (Sleep 47:zsad277): Canton-S, w1118 and yw males in DAM, LD, "~70 % to 80 %" of 24 h asleep. It is seen training data from the same lab and line as the held-out paper (food differs: corn syrup/soy vs 5 % sucrose agar). **Variant:** the full 618-1100 band, reported.
+- **Selection rule:** the candidate is the accepted set whose day-1 rebound predictions (6, 12, 24 h) lie closest (Euclidean, min) to the per-arm medians over the accepted set. Reported with it: the medians and the 2.5-97.5 % range over the accepted set. The training data do not pin γ well, so the range is part of the prediction and goes into the register.
+- **Prediction (counterpart of the 00:53 registration):** rebound on day k = (focal Rk − focal B) − (control Rk − control B), 24 h windows from ZT 0, group means; day 1 scored, days 2 and 3 reported. The model's residual sleep during deprivation is 0 by construction.
+- **Falsifier (before any held-out read):** no grid set passes T1-T4 in the primary band. Then the structure fails as built and FINDINGS records it; the wide variant is reported but cannot rescue the primary.
+- Chowdhury 2023 Dryad stays unopened until the predictions are written into this file. Huber 2004 stays training context; no rebound magnitude is read from any source before then.

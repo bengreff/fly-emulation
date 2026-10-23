@@ -53,6 +53,14 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    when P < th_lo + c_amp cos(4 pi ct / 24) (crepuscular wake drive).
                    state:sleep|values_from_sources = 1 (s20, neutral 0): Abhilash & Shafer 2024's
                    fly fit (SLEEP_SOURCED) with their one-cycle form c_amp cos(2 pi ct / 24).
+                   state:sleep|homeostat = 1 (s21, neutral 0; docs/research/s21_n25_homeostat_scope.md):
+                   P is the ER5 (R5) need n, BRP-like (Liu 2016): n' = (1 - n)/need_tau_rise awake,
+                   -n/need_tau_decay asleep. No thresholds: each dFB cell is a two-state unit,
+                   OFF -> ON at k_r (1 + need_gain n) / (1 + need_gain) (k_r the spontaneous restart
+                   measured in flies deprived > 12 h, Pimentel 2016, taken at full need n = 1),
+                   ON -> OFF at k_off (1 + light_arousal Lsat) (arousal), stepped exactly with a
+                   seeded generator. switch = ON fraction >= DFB_SLEEP_FRACTION (the reduced loop's
+                   sleep link); the organism drives each dFB cell by its own state.
 
 Indices read by the nervous system (N20, minimal):
   hunger  = clip(2 akh - 1, 0, 1)       satiety = clip(2 dilp - 1, 0, 1)
@@ -206,6 +214,32 @@ PARAMS = [
      "dFB switch-off threshold (hysteresis)", "uniform", "guessed", ""),
     ("c_amp", "N25", "state:sleep", "circadian_amplitude", "pressure", 0.1, 0.0, 0.3, "guessed",
      "circadian wake drive peaking at dawn and dusk (crepuscular activity)", "uniform", "guessed", ""),
+    # s21 homeostat mode 1 (read only with state:sleep|homeostat = 1; DECISIONS 23 Oct, s21 registration)
+    ("need_tau_rise_h", "N25", "state:sleep", "need_rise_tau", "h", 12.0, 1.0, 48.0, "guessed",
+     "ER5 need rise while awake; no direct anchor (Liu 2016 gives no time constant); fitted in s21",
+     "loguniform", "guessed", "read only with state:sleep|homeostat = 1"),
+    ("need_tau_decay_h", "N25", "state:sleep", "need_decay_tau", "h", 5.5, 2.9, 10.4, "derived",
+     "Liu et al. 2016 Cell 165:1347 Fig. 4: ER5 BRP still raised 2 h into recovery sleep, back at baseline "
+     "after 24 h (bracket: >= 50 % of the excess left at 2 h, <= 10 % at 24 h)", "loguniform", "derived",
+     "read only with state:sleep|homeostat = 1"),
+    ("dfb_restart_per_min", "N25", "state:sleep", "dfb_restart_rate", "1/min", 0.0387, 0.0106, 0.094,
+     "measured_this_class",
+     "Pimentel et al. 2016 Nature 536:333: in flies sleep-deprived > 12 h, dFB cells switched OFF by dopamine "
+     "restarted spiking after 7-60 min, mean 25.86 +- 7.61 (SEM) min, 7 of 15 cells (the other 8 recordings "
+     "ended first; their length not stated). Centre 1/25.86; upper 1/(mean - 2 SEM); lower the censored "
+     "exponential estimate if the 8 were held 60 min (7 / (7 x 25.86 + 8 x 60))", "loguniform", "derived",
+     "read only with state:sleep|homeostat = 1; the rate at full need n = 1 (inferred: > 12 h of deprivation)"),
+    ("need_gain", "N25", "state:sleep", "need_restart_gain", "x", 1.0, 0.0, 100.0, "guessed",
+     "dFB restart rate at full ER5 need relative to zero need, minus 1 (ER5 -> ExR3 -> dFB, 5-HT; scope s21); "
+     "fitted in s21",
+     "uniform", "guessed", "read only with state:sleep|homeostat = 1"),
+    ("dfb_koff_per_min", "N25", "state:sleep", "dfb_arousal_off_rate", "1/min", 0.04, 0.001, 0.9, "guessed",
+     "dFB ON -> OFF rate in the dark; upper bound the dopamine switch-off (time constant about 1.1 min, "
+     "Pimentel 2016); fitted in s21", "loguniform", "guessed", "read only with state:sleep|homeostat = 1"),
+    ("light_arousal", "N25", "state:sleep", "light_arousal_gain", "x", 1.0, 0.0, 20.0, "guessed",
+     "relative rise of the dFB OFF rate in saturating light (light-driven arousal; leads Shang et al. 2008, "
+     "Sheeba et al. 2008, not read); fitted in s21", "uniform", "guessed",
+     "read only with state:sleep|homeostat = 1"),
     # --- N20 couplings (mV) ----------------------------------------------------
     ("g_isn_mv", "N20", "state:coupling", "isn_gain", "mV", 3.0, 0.0, 15.0, "guessed",
      "tonic drive at full hunger or thirst; sign from Jourjine 2016", "uniform", "guessed", ""),
@@ -275,6 +309,13 @@ SLEEP_SOURCED = {
     "th_lo": (0.15, 0.05, 0.6, "guessed", "guessed", f"{_AS24}: lower threshold mean M_l, fixed from Daan 1984"),
     "c_amp": (0.10, 0.0, 0.3, "guessed", "guessed", f"{_AS24}: threshold amplitude A_u = A_l, fixed from Daan 1984"),
 }
+
+# s21: N25 homeostat mode (0 process S with the threshold switch; 1 ER5 need and stochastic dFB cells)
+HOMEOSTAT_SWITCH = ("state:sleep", "homeostat")
+# Reduced-loop sleep link: the dFB population drives sleep while at least half its cells are ON (guessed,
+# structural; the dFB-to-inactivity path through the brain is not modelled in the reduced loop).
+DFB_SLEEP_FRACTION = 0.5
+N_DFB = 8           # male-cns v1.0: FB6A_a/b/c and FB6E, 2 cells each (COUPLED["dfb"])
 
 # s20: N26 light input mode (0 the one-point pull, 1 CRY-TIM; see the module docstring)
 LIGHT_INPUT_SWITCH = ("state:clock", "light_input")
@@ -385,13 +426,19 @@ class Organs:
     z: complex = 1.0 + 0.0j                       # clock state; arg 0 = CT 0
     cry: float = 0.0                              # active CRY fraction (light_input = 1)
     tim: float = field(default=np.nan)            # TIM, units of its DD peak (light_input = 1)
-    pressure: float = 0.2
+    pressure: float = 0.2                         # process S; the ER5 need n with homeostat = 1
     inactive_s: float = 0.0
     asleep: bool = False
     switch: bool = False
+    n_dfb: int = N_DFB                            # homeostat = 1: one two-state unit per dFB cell
+    seed: int = 0
+    dfb_on: np.ndarray = field(default=None)
 
     def __post_init__(self):
         p = self.p
+        if self.dfb_on is None:
+            self.dfb_on = np.zeros(self.n_dfb, dtype=bool)
+        self._rng = np.random.default_rng(self.seed)
         if np.isnan(self.fat):
             self.fat = p["fat0_nmol"]
         if np.isnan(self.water_nl):
@@ -496,6 +543,10 @@ class Organs:
         # N25 sleep homeostat
         self.inactive_s = self.inactive_s + dt if act < p["a_rest"] else 0.0
         self.asleep = self.inactive_s >= p["t_sleep_s"]
+        if p.get("homeostat", 0.0) >= 1:            # s21 mode 1: ER5 need and stochastic dFB cells
+            self._homeostat_step(dt, L)
+            self.t_s += dt
+            return
         tau = (p["tau_sleep_h"] if self.asleep else p["tau_wake_h"]) * 3600.0
         target = 0.0 if self.asleep else 1.0
         self.pressure = target + (self.pressure - target) * np.exp(-dt / tau)
@@ -507,9 +558,39 @@ class Organs:
             self.switch = False
         self.t_s += dt
 
+    def _homeostat_step(self, dt: float, lsat: float) -> None:
+        """Mode 1: exact relaxation of the need, exact two-state transition probabilities per dFB cell."""
+        p = self.p
+        tau = (p["need_tau_decay_h"] if self.asleep else p["need_tau_rise_h"]) * 3600.0
+        target = 0.0 if self.asleep else 1.0
+        self.pressure = target + (self.pressure - target) * np.exp(-dt / tau)
+        k_on, k_off = dfb_rates(p, self.pressure, lsat)
+        p_stay_on, p_turn_on = dfb_transition(k_on, k_off, dt)
+        u = self._rng.random(self.n_dfb)
+        self.dfb_on = np.where(self.dfb_on, u < p_stay_on, u < p_turn_on)
+        self.switch = bool(self.dfb_on.mean() >= DFB_SLEEP_FRACTION)
 
-def default_params(sourced: bool = False, clock_sourced: bool = False, sleep_sourced: bool = False) -> dict:
+
+def dfb_rates(p: dict, need, lsat):
+    """Homeostat mode 1 rates per s: OFF -> ON k_r (1 + g n) / (1 + g), ON -> OFF k_off (1 + light_arousal Lsat)."""
+    g = p["need_gain"]
+    k_on = p["dfb_restart_per_min"] / 60.0 * (1.0 + g * need) / (1.0 + g)
+    k_off = p["dfb_koff_per_min"] / 60.0 * (1.0 + p["light_arousal"] * lsat)
+    return k_on, k_off
+
+
+def dfb_transition(k_on, k_off, dt: float):
+    """Exact two-state Markov step over dt: (P(ON at t+dt | ON), P(ON at t+dt | OFF))."""
+    r = k_on + k_off
+    pinf, e = k_on / r, np.exp(-r * dt)
+    return pinf + (1.0 - pinf) * e, pinf * (1.0 - e)
+
+
+def default_params(sourced: bool = False, clock_sourced: bool = False, sleep_sourced: bool = False,
+                   homeostat: bool = False) -> dict:
     p = {r[0]: float(r[5]) for r in PARAMS}
+    if homeostat:
+        p["homeostat"] = 1.0
     if sourced:
         p.update({f: v[0] for f, v in SOURCED.items()})
     if clock_sourced:
@@ -539,9 +620,16 @@ def read_params(reg: Registry) -> dict:
                                      "form (internal_state.SLEEP_SOURCED, s20) as defaults",
                            subsystem="internal_state", minimal=0.0, conventional=0.0,
                            minimal_note="neutral 0: the s10 guessed sleep values and 12 h threshold harmonic"))
+    hom = float(reg.require(*HOMEOSTAT_SWITCH, units="mode",
+                            model_use="N25 homeostat: 0 process S with the hysteretic dFB switch; 1 ER5 need "
+                                      "(Liu 2016) and stochastic per-cell dFB switching (Pimentel 2016; s21)",
+                            subsystem="internal_state", minimal=0.0, conventional=0.0,
+                            minimal_note="neutral 0: the s10 process S and threshold switch"))
     out = {"light_input": li} if li else {}
     if slp:
         out["sleep_sourced"] = 1.0
+    if hom:
+        out["homeostat"] = hom
     for f, mech, ent, prop, unit, val, lo, hi, *_rest in PARAMS:
         if src and f in SOURCED:
             val, lo, hi = SOURCED[f][:3]
@@ -560,11 +648,11 @@ def read_params(reg: Registry) -> dict:
 class InternalState:
     """Organs + couplings, stepped from the organism every `update_ms`."""
 
-    def __init__(self, p: dict, n_neurons: int, rows: dict, update_ms: float = 10.0):
+    def __init__(self, p: dict, n_neurons: int, rows: dict, update_ms: float = 10.0, seed: int = 0):
         self.p = p
-        self.organs = Organs(p)
         self.n = n_neurons
         self.rows = {k: np.asarray(v, dtype=np.int64) for k, v in rows.items()}
+        self.organs = Organs(p, n_dfb=max(1, len(self.rows.get("dfb", ()))), seed=seed)
         self.update_ms = update_ms
         self._acc_ms = 0.0
         self._tonic = np.zeros(n_neurons, dtype=np.float32)
@@ -580,7 +668,10 @@ class InternalState:
         ct = o.ct_h
         t[r["clock_morning"]] += p["g_clock_mv"] * np.cos(2 * np.pi * (ct - p["peak_morning_h"]) / 24)
         t[r["clock_evening"]] += p["g_clock_mv"] * np.cos(2 * np.pi * (ct - p["peak_evening_h"]) / 24)
-        t[r["dfb"]] += p["g_dfb_mv"] * float(o.switch)
+        if p.get("homeostat", 0.0) >= 1 and len(r["dfb"]) == len(o.dfb_on):
+            t[r["dfb"]] += p["g_dfb_mv"] * o.dfb_on.astype(np.float32)      # each dFB cell by its own state
+        else:
+            t[r["dfb"]] += p["g_dfb_mv"] * float(o.switch)
         self._tonic = t
 
     def tonic(self) -> np.ndarray:
@@ -652,7 +743,7 @@ def population_rows(conn) -> tuple[dict, dict]:
     return rows, counts
 
 
-def build(reg: Registry, conn) -> InternalState | None:
+def build(reg: Registry, conn, seed: int = 0) -> InternalState | None:
     """The switch, and (only when on) the parameters and population records."""
     on = int(reg.require(
         *SWITCH, units="enum",
@@ -677,7 +768,7 @@ def build(reg: Registry, conn) -> InternalState | None:
                 model_use="identified populations not coupled", status=Status.ABSENT,
                 subsystem="internal_state", instances=len(NOT_COUPLED),
                 evidence="; ".join(f"{k}: {v}" for k, v in NOT_COUPLED.items()))
-    st = InternalState(p, conn.n, rows)
+    st = InternalState(p, conn.n, rows, seed=seed)
     # B17 (s10): ingestion gated by the cibarial pump MNs (MN11D/MN12D innervate the
     # cibarial dilator muscles; Manzo et al. 2012 PNAS, lead, not read)
     if int(reg.require("state:crop", "pump_gated", units="enum",

@@ -219,7 +219,7 @@ class Organism:
         self.extra = extrasenses.build(self.reg, self.conn, self.body)
         # --- S1-S4, N20, N25, N26 internal state (task 12); state:organs|model 0 = off (m4) ---
         from . import internal_state
-        self.organs = internal_state.build(self.reg, self.conn)
+        self.organs = internal_state.build(self.reg, self.conn, seed=self.seed)
         # --- end internal state ---
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness
