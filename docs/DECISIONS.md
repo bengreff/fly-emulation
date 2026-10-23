@@ -4596,3 +4596,21 @@ Scored as registered on 22 Oct at 22:23 (F-S21-1).
 - **Prediction (counterpart of the 00:53 registration):** rebound on day k = (focal Rk − focal B) − (control Rk − control B), 24 h windows from ZT 0, group means; day 1 scored, days 2 and 3 reported. The model's residual sleep during deprivation is 0 by construction.
 - **Falsifier (before any held-out read):** no grid set passes T1-T4 in the primary band. Then the structure fails as built and FINDINGS records it; the wide variant is reported but cannot rescue the primary.
 - Chowdhury 2023 Dryad stays unopened until the predictions are written into this file. Huber 2004 stays training context; no rebound magnitude is read from any source before then.
+
+### s22 N25 mode 1 training fit: the falsifier is not hit; registered prediction locked for Chowdhury 2023 (23 October, 03:24)
+
+Run as registered at 02:58 (`runs/s21/n25/fit.json`, wall 1440 s; Chowdhury's Dryad data still unopened).
+- **Stage 1 (14,256 sets).** 2,676 sets inside 618-1100 min/day, 448 inside the primary band 1008-1100, 11,301 with night > day, 2,745 with need ratio ≥ 2. 1,055 pass T1 (wide), T2 and T4 together.
+- **Stage 2.** Of the 153 stage-2 sets in the primary band, 13 fail the Liu anchors (T3); **140 are accepted.** The wide variant accepts 1,012.
+- **Falsifier not hit.** The structure can put baseline sleep in range with the need inside the Liu bracket.
+- **Registered candidate (selection rule):** τ_rise 18 h, γ 4, k_off 0.00186 min⁻¹, λ 8 (all fitted; inside their bounds).
+  - Baseline: 1067 min/day (day 358, night 709); need ratio ZT13-15 / ZT0-2 = 3.87; Liu excess 67 % left at +2 h, 1 % at +24 h.
+  - Day-1 rebound in the fit (128 flies per arm): 103 / 144 / 165 min after 6 / 12 / 24 h (± 13 SEM).
+  - **Locked point prediction**, the same parameters re-simulated with 2,048 flies per arm (seed 500; `runs/s21/n25/candidate_2048.json`): **99.7 / 150.2 / 174.3 min (± 3.0 model SEM)** for 6 / 12 / 24 h, day 1. Days 2 and 3: −1.4 / −2.7 / −0.8 and −2.0 / −4.8 / −1.2 min. Residual sleep during deprivation: 0 (by construction). Using the larger run for the point is a precision step on the same model, not a new selection.
+  - Accepted-set spread (day 1, 2.5-97.5 %): 6 h 19-157 (median 97), 12 h 22-219 (146), 24 h 26-257 (159).
+  - Wide variant candidate (τ_rise 8 h, γ 2, k_off 0.00344, λ 16; 837 min/day): 62.6 / 91.5 / 92.7 min (2,048 flies). Reported, not scored.
+- **Figure viewed** (`docs/media/s22_n25_homeostat.png`). Two things it shows:
+  - The rebound grows with deprivation length (100 → 150 → 174 min), unlike mode 0 and the Abhilash set (flat, F-S20-4).
+  - **Every simulated fly sleeps the whole night.** Each 30-min dark bin is 30 of 30 min; the candidate starts 0.65 sleep bouts per night (the bout spans lights-off) and its mean night bout is about 1,100 min. Day sleep is 9.7 bouts of 37 min. With the night full, rebound can only appear in the day after deprivation.
+- **The rebound size tracks the night bout structure across the accepted set.** The 11 accepted sets whose night bouts average under 240 min all have γ 0.25-0.5, k_off 0.0119 and λ 2, and predict small rebounds (24 h: 19-70 min). The consolidated ones predict large rebounds. Night bout structure is training data that no source read so far gives, so a Sonnet reader is on it now (baseline only; rebound papers barred).
+- **Not adopted.** The switch stays 0. No held-out data opened.
