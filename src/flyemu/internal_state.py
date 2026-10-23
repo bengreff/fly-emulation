@@ -51,6 +51,8 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    asleep; asleep = inactive (activity < a_rest) for >= t_sleep.
                    Switch (dFB) on when P > th_hi + c_amp cos(4 pi ct / 24), off
                    when P < th_lo + c_amp cos(4 pi ct / 24) (crepuscular wake drive).
+                   state:sleep|values_from_sources = 1 (s20, neutral 0): Abhilash & Shafer 2024's
+                   fly fit (SLEEP_SOURCED) with their one-cycle form c_amp cos(2 pi ct / 24).
 
 Indices read by the nervous system (N20, minimal):
   hunger  = clip(2 akh - 1, 0, 1)       satiety = clip(2 dilp - 1, 0, 1)
@@ -255,6 +257,24 @@ SOURCED = {
 # state:clock|values_from_sources = 1 (neutral 0 keeps the s10 guesses). Same tuple layout as SOURCED.
 CLOCK_SOURCED_SWITCH = ("state:clock", "values_from_sources")
 CLOCK_SOURCED: dict = {}
+
+# s20: N25 values and threshold form from Abhilash & Shafer 2024 Sleep 47:zsad277 (PMC11275470;
+# docs/research/s20_n25_reads.md round 2), the defaults only with state:sleep|values_from_sources = 1, which
+# also switches the threshold modulation to one cycle per day (their omega = 2 pi / tau, phi = 0 at CT 0).
+# Their taus are a grid fit (no errors) to % sleep / 24 h of CS, w1118 and yw males in LD; the thresholds are
+# fixed from Daan et al. 1984 (human model), so only the taus carry fly data. Same tuple layout as SOURCED.
+SLEEP_SOURCED_SWITCH = ("state:sleep", "values_from_sources")
+_AS24 = "Abhilash & Shafer 2024 Sleep 47:zsad277, Methods"
+SLEEP_SOURCED = {
+    "tau_wake_h": (8.76, 1.0, 48.0, "inferred", "guessed",
+                   "Abhilash & Shafer 2024 Fig. 2B and text: build-up t_i fitted to % sleep / 24 h, LD, males "
+                   "(no errors given); bounds the s10 guesses"),
+    "tau_sleep_h": (9.51, 0.5, 12.0, "inferred", "guessed",
+                    "Abhilash & Shafer 2024 Fig. 2B and text: decay t_delta, same fit; bounds the s10 guesses"),
+    "th_hi": (0.35, 0.3, 0.9, "guessed", "guessed", f"{_AS24}: upper threshold mean M_u, fixed from Daan 1984"),
+    "th_lo": (0.15, 0.05, 0.6, "guessed", "guessed", f"{_AS24}: lower threshold mean M_l, fixed from Daan 1984"),
+    "c_amp": (0.10, 0.0, 0.3, "guessed", "guessed", f"{_AS24}: threshold amplitude A_u = A_l, fixed from Daan 1984"),
+}
 
 # s20: N26 light input mode (0 the one-point pull, 1 CRY-TIM; see the module docstring)
 LIGHT_INPUT_SWITCH = ("state:clock", "light_input")
@@ -479,7 +499,8 @@ class Organs:
         tau = (p["tau_sleep_h"] if self.asleep else p["tau_wake_h"]) * 3600.0
         target = 0.0 if self.asleep else 1.0
         self.pressure = target + (self.pressure - target) * np.exp(-dt / tau)
-        c = p["c_amp"] * np.cos(4 * np.pi * self.ct_h / 24.0)
+        cyc = 1.0 if p.get("sleep_sourced", 0.0) >= 1 else 2.0      # cycles per day of the threshold drive
+        c = p["c_amp"] * np.cos(2 * np.pi * cyc * self.ct_h / 24.0)
         if self.pressure > p["th_hi"] + c:
             self.switch = True
         elif self.pressure < p["th_lo"] + c:
@@ -487,12 +508,14 @@ class Organs:
         self.t_s += dt
 
 
-def default_params(sourced: bool = False, clock_sourced: bool = False) -> dict:
+def default_params(sourced: bool = False, clock_sourced: bool = False, sleep_sourced: bool = False) -> dict:
     p = {r[0]: float(r[5]) for r in PARAMS}
     if sourced:
         p.update({f: v[0] for f, v in SOURCED.items()})
     if clock_sourced:
         p.update({f: v[0] for f, v in CLOCK_SOURCED.items()})
+    if sleep_sourced:
+        p.update({f: v[0] for f, v in SLEEP_SOURCED.items()}, sleep_sourced=1.0)
     return p
 
 
@@ -511,12 +534,21 @@ def read_params(reg: Registry) -> dict:
                                      "degradation (night-gated, saturating; s20)",
                            subsystem="internal_state", minimal=0.0, conventional=0.0,
                            minimal_note="neutral 0: the s10 one-point pull"))
+    slp = bool(reg.require(*SLEEP_SOURCED_SWITCH, units="boolean",
+                           model_use="N25: Abhilash & Shafer 2024 fly two-process values and one-cycle threshold "
+                                     "form (internal_state.SLEEP_SOURCED, s20) as defaults",
+                           subsystem="internal_state", minimal=0.0, conventional=0.0,
+                           minimal_note="neutral 0: the s10 guessed sleep values and 12 h threshold harmonic"))
     out = {"light_input": li} if li else {}
+    if slp:
+        out["sleep_sourced"] = 1.0
     for f, mech, ent, prop, unit, val, lo, hi, *_rest in PARAMS:
         if src and f in SOURCED:
             val, lo, hi = SOURCED[f][:3]
         if clk and f in CLOCK_SOURCED:
             val, lo, hi = CLOCK_SOURCED[f][:3]
+        if slp and f in SLEEP_SOURCED:
+            val, lo, hi = SLEEP_SOURCED[f][:3]
         out[f] = float(reg.require(
             ent, prop, units=unit, model_use=f"{mech} internal state ({f})",
             subsystem="internal_state", minimal=val,

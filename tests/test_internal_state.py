@@ -296,3 +296,25 @@ def test_sourced_values_are_neutral_off_and_inside_their_bounds():
         assert lo <= v <= hi and src[f] == v, f
         assert label in {"measured", "derived", "inferred", "guessed"}, f
     assert {f: src[f] for f in base if f not in S.SOURCED} == {f: base[f] for f in base if f not in S.SOURCED}
+
+
+def test_sleep_sourced_values_are_neutral_off_and_switch_the_threshold_form():
+    """s20: state:sleep|values_from_sources = 0 leaves N25 as in s10; 1 sets the Abhilash values, 24 h cosine."""
+    from flyemu import internal_state as S
+    base, src = S.default_params(), S.default_params(sleep_sourced=True)
+    for f, (v, lo, hi, label, *_r) in S.SLEEP_SOURCED.items():
+        assert lo <= v <= hi and src[f] == v, f
+        assert label in {"measured", "derived", "inferred", "guessed"}, f
+    assert {f: src[f] for f in base if f not in S.SLEEP_SOURCED} == {f: base[f] for f in base
+                                                                      if f not in S.SLEEP_SOURCED}
+    assert "sleep_sourced" not in base and src["sleep_sourced"] == 1.0
+    # at CT 6 the s10 drive is c_amp cos(pi) = -0.1 (12 h harmonic); the one-cycle drive is cos(pi/2) = 0
+    for q, thr in ((base, base["th_hi"] - base["c_amp"]), (src, src["th_hi"])):
+        o = S.Organs(q, z=complex(0.0, 1.0))          # ct = 6 h
+        assert abs(o.ct_h - 6.0) < 1e-9
+        o.pressure = thr + 0.004
+        o.step(1.0, activity=1.0)
+        assert o.switch, q.get("sleep_sourced")
+        o2 = S.Organs(q, z=complex(0.0, 1.0)); o2.pressure = thr - 0.004
+        o2.step(1.0, activity=1.0)
+        assert not o2.switch

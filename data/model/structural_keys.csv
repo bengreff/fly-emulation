@@ -88,6 +88,7 @@ state:organs|model,S1,switch,"0 no internal state (m4); 1 lumped organs S1-S4, A
 state:organs|values_from_sources,S1,switch,"0 the s10 guessed prior centres; 1 the s19 values read from sources (internal_state.SOURCED: basal use, fat store, hemolymph volume, body water, crop and gut tau; DECISIONS 22 Oct 02:30)"
 state:clock|values_from_sources,N26,switch,"0 the s10 guessed clock values; 1 the s19 values read from sources (internal_state.CLOCK_SOURCED: light coupling, l50, ct_light, cell peak hours; DECISIONS 22 Oct 04:44 and 04:49; empty until the PRC figure reads)"
 state:clock|light_input,N26,switch,"0 the s10 one-point light pull (K Lsat e^{i alpha}); 1 the s20 CRY-dependent TIM degradation input (night-gated, saturating in pulse length; internal_state.py)"
+state:sleep|values_from_sources,N25,switch,"0 the s10 guessed sleep values with the 12 h threshold harmonic; 1 the s20 Abhilash & Shafer 2024 fly two-process set (internal_state.SLEEP_SOURCED: taus inferred, thresholds fixed from Daan 1984) with one threshold cycle per day; DECISIONS 23 Oct 00:27"
 state:population_*|*,N20,data,"internal-state coupled populations by male-cns type, recorded when state:organs|model = 1"
 jump:ttm|model,B15,switch,0 TTMn through the legacy capped actuator (m4); 1 fast uncapped TTM twitch (jump.py) (s10)
 state:crop|pump_gated,B17,switch,0 ingestion on contact alone; 1 scaled by cibarial pump MN activity (s10)

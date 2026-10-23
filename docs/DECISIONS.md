@@ -4397,3 +4397,113 @@ then. It sets `state:clock|light_input` 1, `k_tim` 0.789 and `ct_tim_h` 7.59 (bo
 - The default world is dark (`light_lux` 0). The gate therefore tests only that the switch is inert in the
   dark. The LD check is the meaningful one.
 - N26 stays **partial** even then: τ_c and μ are guessed, and the cell peak hours are guessed.
+
+### s20 N25 sleep homeostat: Abhilash & Shafer 2024 values against held-out rebound, registered before building (23 October, 00:27)
+
+**Question.** Does the two-process set that Abhilash & Shafer 2024 fitted to fly sleep predict rebound sleep after deprivation? Their fit never used deprivation data. Implemented in our N25 homeostat, a pass would replace guessed N25 values with inferred ones. Sources: `docs/research/s20_n25_reads.md`, rounds 1-2.
+
+**Nothing is fitted.** All values are taken as published. The only free choices are the structural ones below, and they are fixed now.
+
+**Model (new switch `state:sleep|values_from_sources`, neutral 0).**
+- **Mode 0** is unchanged: the s10 guesses (tau_wake 12 h, tau_sleep 3 h, th 0.6/0.3) with the 12 h harmonic c_amp cos(4π ct/24).
+- **Mode 1** is the Abhilash set:
+
+  | field | value | label |
+  |---|---|---|
+  | tau_wake_h | 8.76 | inferred |
+  | tau_sleep_h | 9.51 | inferred |
+  | th_hi | 0.35 | guessed (Daan) |
+  | th_lo | 0.15 | guessed (Daan) |
+  | c_amp | 0.10 | guessed (Daan) |
+
+  - Modulation is c_amp cos(2π(ct − φ)/24), a 24 h cosine.
+  - φ is the time origin of their simulation, being read now (round 3, model information only). If the paper does not state it, φ = CT 0 (guessed). That is the Daan convention: the thresholds peak at dawn, so sleep falls at night.
+  - The S equations and the behavioural sleep criterion (≥ 5 min below a_rest) are unchanged.
+
+**Reduced loop (CPU probe, `scripts/probes/s20_n25_sleep.py`).**
+- The clock is entrained (ct = ZT, period 24 h).
+- Activity is 0 while the dFB switch is on and 1 while it is off. This assumes the switch-to-inactivity link through the brain, which this probe does not test (validity limit).
+- Deprivation forces activity to 1, as mechanical deprivation keeps the fly moving.
+- Time step 1 min. Sleep is scored like DAM data: inactivity runs ≥ 5 min count whole.
+- The probe reports the last of 10 entrained days (baseline), then deprivation and recovery.
+
+**Checks before the held-out score (not evidence).**
+- **C1, implementation (unit) check.** Abhilash's discrete rule with their values at τ 24 h must give 74.36 % sleep/24 h within ±1 pp.
+  - Our continuous form with the 5-min onset lag must match the discrete rule within ±2 pp.
+  - If C1 fails, the implementation is wrong and nothing is scored.
+- **C2, consistency with seen data (category A, already read; not held out).**
+  - Baseline total sleep must lie within 618-1100 min/day.
+  - Night sleep must exceed day sleep.
+  - These are reported for mode 0 and mode 1. A fail is recorded as a validity limit; it is not a reason to retune.
+
+**Held-out score (spent once): Huber et al. 2004 Sleep 27:628 rebound after mechanical deprivation.**
+- The protocol (durations, timing, recovery window, baseline, units) is being read now **without magnitudes**.
+- The model is then run on that exact protocol, and the predictions for mode 1 and mode 0 are written here before any magnitude is read.
+- **Pass (mode 1).** "Consistent with some fly" is the per-value bar. Take the span of wild-type group means ± 2 SEM, over the lines and sexes Huber reports (males preferred; females used only if no male group exists).
+  - The predicted recovery for the longest deprivation (the primary point) must lie inside that span.
+  - The predictions for at least two-thirds of the other durations must also lie inside it.
+  - If only figure reads are available, the read uncertainty is added to the SEM.
+- **Falsifier.** If the primary point falls outside the span, the published set fails as a rebound model. N25 then keeps its guessed values, and the miss and its direction go into FINDINGS. There is no refit on Huber, because it will be spent.
+- **Variants (reported, not scored).** V1: S decays from switch-on (no 5-min lag). V2: τ 23.5 and 24.5 h. V3: φ = CT 12.
+
+**Physiology.** dFB excitability against sleep need (Donlea 2014, Pimentel 2016) is not scored. Our dFB state is a binary switch with a fixed drive g_dfb, so no continuous excitability can be compared. This is recorded as a validity limit of N25.
+
+**Adoption.** Even on a pass, adoption needs a stage on fly2's frontier with the usual gate, as for N26. N25 is already on in m10f with mode 0.
+
+### s20 N25 checks C1 and C2 scored against the 00:27 registration: C1 FAILS, nothing scored, Huber 2004 stays unread (23 October, 00:30)
+
+**C1 (implementation) FAILS, by the registered ±1 pp.**
+- Abhilash's discrete rule with their values gives 75.56 % sleep per 24 h against their stated 74.36 %, a gap of 1.20 pp.
+- The gap is not explained by:
+  - τ: 23.5 / 24 / 24.5 h give 75.83 / 75.56 / 75.42;
+  - update order: updating S before the threshold test also gives 75.56;
+  - including the transient: all 9 LD days give 75.22, and days 1-4 give 73.26 / 74.93 / 75.49 / 75.56;
+  - a coarser step: 15 min gives 75.0, 1 h gives 77.1.
+- Our continuous form (Organs, 5-min onset lag) gives 75.83 %, against 75.56 % for the discrete rule (within the ±2 pp tolerance). So our code matches my reading of their equations. The gap lies in an unstated detail of their simulation.
+- By the registration, nothing is scored. The tolerance is not relaxed after the fact.
+
+**C2 (consistency with seen data; recorded, not used to retune).**
+
+| run | total (min/day) | day | night | in 618-1100? | night > day? |
+|---|---|---|---|---|---|
+| mode 1, φ = CT 0 | 1092 | 576 | 516 | yes | **no** |
+| mode 1, V3 φ = CT 12 | 1092 | 516 | 576 | yes | yes |
+| mode 1, V1 (no lag) | 1088 | 594 | 494 | yes | no |
+| mode 0 (s10 guesses, on in m10f) | 411 | 205 | 206 | **no** | equal |
+
+- **The s10 values now on in m10f sleep too little in the reduced loop.** 411 min/day (28.5 %) is below every cited wild-type value (≥ 618).
+- **Mode 1 with φ at CT 0 sleeps through the day.** It sleeps ZT 2.1-16.0 and ZT 19.4-23.6. Abhilash's own figure legend says their model profile is night-biased ("underestimate daytime sleep and somewhat overestimate nighttime sleep"; round 3). So their time origin is probably not CT 0, but it is not stated.
+
+**Huber 2004 protocol read (round 3).** No full text is reachable: there is no PMC version and the OUP page is paywalled.
+- Only the methods fragments in the abstract were found: deprivation of 6, 12 and 24 h by mechanical stimulation, in DAM.
+- The recovery window, baseline and units are unknown, so the registered held-out score cannot be specified.
+- No magnitudes were read. The reader saw a number quoted by secondary sources and withheld it. **Huber 2004 stays unspent.**
+
+**Next.**
+1. Resolve C1 and the time origin from the authors' code or supplement, if public. This is model information, not held-out data. A new registration would follow before any rebound data are read.
+2. Huber's full text needs Ben (library access). An open-access alternative (Brown et al. 2020 PLoS Genet, PMC7089559) would need its own registration and protocol read first.
+3. Nothing on N25 changes tonight. The switch stays neutral (0) and mode 0 stays on in m10f.
+
+### s20 N25 rebound predictions written before any magnitude is read (23 October, 00:34)
+**Not a score.** C1 failed, so nothing is scored. These predictions are recorded now so that a later score on Huber 2004, or on a registered open-access substitute, compares against numbers fixed before the data were read.
+
+**Design.** Reduced loop as registered. Deprivation ends at ZT 0 of the recovery day: 6 h is ZT 18-24, 12 h is ZT 12-24, 24 h is ZT 0-24. Baseline is the same day without deprivation. Output: `runs/s20/n25/sd.json`, with hourly time courses for any window.
+
+**Sleep gained over baseline.**
+
+| set | deprivation | sleep lost | gain, first 6 h | gain, 24 h | share of lost sleep regained in 24 h |
+|---|---|---|---|---|---|
+| mode 1, φ = CT 0 | 6 h | 266 min | 144 | 142 | 53 % |
+|  | 12 h | 516 | 144 | 139 | 27 % |
+|  | 24 h | 1092 | 144 | 138 | 13 % |
+| mode 1, φ = CT 12 (V3) | 6 / 12 / 24 h | 360 / 576 / 1092 | 110 / 110 / 110 | 175 / 195 / 212 | 49 / 34 / 19 % |
+| mode 0 (s10) | 6 / 12 / 24 h | 16 / 205 / 411 | −30 / 3 / 55 | 19 / −22 / 49 | not meaningful |
+
+**What the table shows.**
+- **Recovery barely depends on time awake.**
+  - With φ = CT 0, the fly sleeps through the morning gap it is normally awake in (ZT 0-2). From there the recovery day matches the baseline day: the long day episode is circadian-gated, and S cannot exceed 1.
+  - With φ = CT 12 the gain rises only from 175 to 212 min as deprivation goes from 6 to 24 h.
+  - Mode 0 has no consistent rebound.
+- **The model fails the qualitative claim.** Huber's abstract says recovery "was dependent on prior time awake", seen through the round-3 reader. On that the model fails as a structure, whatever the magnitudes turn out to be. The cap comes from fixed thresholds with long single episodes, not from the values.
+
+**Register.** Huber 2004's qualitative direction is now seen; its magnitudes are unseen and unspent.

@@ -2030,3 +2030,16 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - Status: N26 stays **partial**. The switch is off in m10f. Adoption needs a stage gate on fly2's current
   frontier plus an organism LD check (DECISIONS 00:09).
 - Figures: `docs/media/s20_n26_tim_prc.png` and `docs/media/s20_n26_tim_tim.png`. Runs: `runs/s20/n26/tim/`.
+
+### F-S20-4: N25's s10 sleep values sleep too little (411 min/day), and the published fly two-process set does not reproduce its own stated output or say where its day starts (s20, 23 Oct 00:30; DECISIONS 23 Oct 00:27, 00:30)
+- **Reduced loop.** Activity is 0 while the dFB switch is on and 1 while it is off. Steps are 1 min, the clock runs at 24 h, and sleep is scored like DAM (runs ≥ 5 min). Probe: `scripts/probes/s20_n25_sleep.py`; output `runs/s20/n25/checks.json`.
+- **Mode 0 (s10 guesses, on in m10f): 411 min/day (28.5 %).** That is below every cited wild-type male value (618-1100 min/day; `docs/research/s20_n25_reads.md` A).
+  - The cause is tau_sleep 3 h against tau_wake 12 h, with thresholds 0.6 / 0.3: about 6.7 h awake for every 2.1 h asleep.
+  - This holds whatever the brain does, because the homeostat itself switches the dFB on only about 30 % of the time.
+- **Abhilash & Shafer 2024 set (mode 1): 1092 min/day (75.8 %),** inside the range. But:
+  - **(i) It does not reproduce its own number.** Implemented as published, the discrete rule gives 75.56 % against their stated 74.36 %. τ, update order, transients and step size don't close the gap. Our registered ±1 pp check fails, so nothing was scored.
+  - **(ii) The time origin is not stated.** With the thresholds peaking at CT 0, the model sleeps through the day (day 576 > night 516 min). With CT 12 it is night-biased, as their figure is.
+- Their thresholds are fixed from a human model (Daan 1984). Only the two taus carry fly data, and they come from a single fitted number (% sleep per day, no errors).
+- **Rebound in the reduced loop barely depends on time awake.** The mode-1 gain over the recovery day is 142 / 139 / 138 min after 6 / 12 / 24 h of deprivation (φ = CT 0), or 175-212 min (φ = CT 12). The long, circadian-gated day episode caps it. That conflicts with the dose dependence Huber's abstract states (direction seen, magnitudes not; predictions fixed in DECISIONS 00:34).
+- **Held out and unspent:** Huber et al. 2004 rebound (full text not reachable). Nothing was adopted. The switch `state:sleep|values_from_sources` stays neutral (0).
+- **Status:** N25 stays **partial**.
