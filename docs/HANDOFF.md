@@ -407,12 +407,23 @@ fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definitio
     - Cause: fly's s15b leg_MN and core_premotor rows in `data/params/two_compartment.csv`. With the switch on, every row must match a cell, and the 5-cell DLMn test graph has none of theirs, so `lif._two_compartments` correctly raised "matches no cell or no edge".
     - Fix: the tests now leave those classes out with fly's arm control, `cell_class:<class>|two_compartments_in_run` 0 (`DLMN_ONLY` in `tests/test_two_compartment.py`). The refusal in `lif.py` is unchanged.
   - **s26b:** (e) and (b) as above; commits 2e6d0e9 and the park commit.
+  - **Full pytest (Mac, after the 2-comp fix, 22 Oct 22:33-22:47):** 276 passed, 12 skipped, 0 failed (842 s).
+    - The skips are guarded tests; `test_gpu_batched.py` needs JAX, which is on backhouse.
+    - One MuJoCo "QACC unstable at DOF 40, t 0.0001" line is printed; no test failed on it.
 - **Running:** nothing of fly2's is running at the park.
 - **Next, in order:**
   1. N21 resting stability waits on a source or a recording (MEASUREMENT_LIST item 5, or the Director releasing Huang 2024). With one in hand, pre-register a resting-safe N21, then retest R (`s26_retention.py`, with `--e` for the timing forms) and the Hige and Hattori regressions.
   2. Berry 2018 held-out arm: the analytic model expectation F is about 0.05 (DECISIONS 22 Oct 04:28, recorded before opening). It needs a new `kc_mbon_pairing.py` mode: MCH CS+ and OCT, 5 s odours 45 s apart; Learn trials 3-5; Forget trials 8-10; Paired>Unpaired minus Paired>Decay. Compute F from the model first, then a scorer opens the sealed file. It takes about 5 h per run on the Mac, so either pre-register a compressed dead time or run on backhouse when load is below 24. Berry tests forgetting by DAN activity, so it is only worth spending once N21 is resting-safe.
   3. From s24's list:
-     - the DLMn coupling row from Hurkey 2023;
+     - the DLMn coupling row from Hurkey 2023 (the next item; prepared in s26, not started).
+       - `data/params/gap_junctions.csv` `^DLMn,^DLMn,same_side` has a blank coupling. N12 is on in m10f, so filling the blank changes m10f.
+       - So first add a neutral per-row override in `electrical.build_gap`, read only when set, like fly's `two_compartments_in_run` arm control. Then pre-register, then run G and the 60 s S.
+       - Values, from the s23 lit note (re-read Hurkey et al. 2023 Nature 618:118, PMC10232364, Fig 2f and 2h, first):
+         - the coupling coefficient is 0.023 ± 0.003 (SEM, n 6) for MN1-MN2 and MN3-MN4, and 0.01 ± 0.0027 for the other MN1-4 pairs;
+         - by component, AHP 0.042 and spike 0.01.
+       - Open questions: is MN5 (DLMn a, b) measured, and is the coefficient DC or spike-peak?
+       - Convert with g/gL = CC/(1 - CC), inferred. A spike-peak coefficient underestimates DC coupling, so the AHP value bounds it from above.
+       - One shared value for the class, since `DLMn c-f` is one type label.
      - N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first);
      - B3, B4, B12.
 - **Known misses of N21/N22:**
