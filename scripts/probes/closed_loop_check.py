@@ -92,21 +92,36 @@ def main():
     if not a.silent_noise_on:
         org.net.params.noise_mv = 0.0
         org.net.params.noise_class_mv = None
-    for s in range(int(a.silent_ms / org.timestep_ms)):
+    nsil = int(a.silent_ms / org.timestep_ms)
+    lcnt = np.zeros(org.conn.n)   # the window's last 100 ms
+    for s in range(nsil):
         obs = org.body.observe()
         sp = org.net.step(external_mv=np.zeros(org.conn.n, np.float32))
         org.motor_step(sp)
         silent.append(int((~tonic[sp]).sum()))
         silent_eye.append(int((~tonic[sp] & eye[sp]).sum()))
         scnt[sp] += 1
+        if s >= nsil - int(100 / org.timestep_ms):
+            lcnt[sp] += 1
     k100 = int(100 / org.timestep_ms)
-    last = np.array(silent[-k100:])
-    last_eye = np.array(silent_eye[-k100:])
-    prev_eye = np.array(silent_eye[-2 * k100:-k100])
+    # G is defined on the first 300 ms of the silent window; a longer window (G2, DECISIONS 24 Oct 01:31)
+    # leaves G's verdict unchanged and adds per-100-ms bins
+    k300 = min(len(silent), 3 * k100)
+    last = np.array(silent[k300 - k100:k300])
+    last_eye = np.array(silent_eye[k300 - k100:k300])
+    prev_eye = np.array(silent_eye[k300 - 2 * k100:k300 - k100])
     # F-VISION-5 option (a), second half (Ben, 13 Oct): eye activity in darkness may persist (tonic lamina
     # release) but must not grow; growth from the previous 100 ms to the last 100 ms beyond 3 Poisson SDs fails
     pe, le = float(prev_eye.sum()), float(last_eye.sum())
     eye_stationary = bool(le - pe <= 3.0 * np.sqrt(pe + le))
+    nb = len(silent) // k100
+    bin_eye = [int(sum(silent_eye[b * k100:(b + 1) * k100])) for b in range(nb)]
+    bin_non = [int(sum(silent[b * k100:(b + 1) * k100])) - e for b, e in enumerate(bin_eye)]
+
+    def no_growth(c):   # every consecutive 100 ms pair: rise <= 3 Poisson SDs (Ben's 13 Oct eye rule, extended)
+        return all(b - a <= 3.0 * np.sqrt(a + b) for a, b in zip(c[:-1], c[1:]))
+    gv = org.net.g_idx
+    g_dv = (org.net.v[gv] - org.net.v_rest[gv]) if gv.size else np.zeros(0)
     out = {
         "whole_brain_hz": round(float(hz.mean()), 3),
         "whole_brain_excl_orn_hz": round(float(hz[~orn].mean()), 3),
@@ -123,6 +138,15 @@ def main():
         "silent_eye_stationary": eye_stationary,
         "silent_pass": bool(last.sum() - last_eye.sum() == 0 and eye_stationary),
         "silent_noise_removed": not a.silent_noise_on,
+        "silent_ms": a.silent_ms,
+        "silent_bins_100ms_eye": bin_eye,
+        "silent_bins_100ms_noneye": bin_non,
+        "g2_no_growth_eye": no_growth(bin_eye),
+        "g2_no_growth_noneye": no_growth(bin_non),
+        "g2_noneye_last100ms": bin_non[-1] if bin_non else None,
+        "g2_pass": bool(a.silent_ms >= 1000 and no_growth(bin_eye) and no_growth(bin_non) and bin_non[-1] == 0),
+        "silent_end_graded_frac_above_rest": round(float((g_dv > 0.01).mean()), 4) if g_dv.size else None,
+        "silent_end_graded_mean_dv_mv": round(float(g_dv.mean()), 4) if g_dv.size else None,
         "thorax_z_mm_final": round(z[-1], 3), "thorax_z_mm_min": round(min(z), 3),
         "wall_s": round(time.time() - t0), "overrides": ov,
         "mujoco_warnings": int(sum(w.number for w in org.body.sim.mj_data.warning)),
@@ -131,6 +155,8 @@ def main():
     }
     ns = (scnt * ~tonic)
     out["silent_spikes_by_class"] = {c: int(ns[cls == c].sum()) for c in np.unique(cls[ns > 0])}
+    nl = lcnt * ~tonic
+    out["silent_last100ms_by_class"] = {c: int(nl[cls == c].sum()) for c in np.unique(cls[nl > 0])}
     out["hz_by_class"] = {c: round(float(hz[cls == c].mean()), 4) for c in np.unique(cls)}
     ty = n.type.fillna("untyped").to_numpy().astype(str)
     tot = {}

@@ -5439,3 +5439,62 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   adult brain [K+]o (13.1 ± 2.8 mM) and pathological surges but no per-activity rise or clearance τ; N33 has one
   larval acute-TBOA slowing of glutamatergic IPSC decay (ratio in Fig. 8B, unread) and no fly GAT current data;
   N1's release at rest is in no open text (Laughlin 1987 and Uusitalo 1995, paywalled, hold the transfer curves).
+
+### s23 gate G's silent window: purpose, F-S23-8 correction, and amendment G2 registered before any rescoring (24 October, 01:31)
+- **Trigger.** Director, 24 Oct 01:30: is G's "0 non-eye spikes in the silent window" a biological claim or an
+  engineering convention? Fly photoreceptors release tonically in darkness (Uusitalo 1995), and the real brain is
+  not silent at rest. If G forbids something biology does, the gate is wrong, not the model. Don't change G
+  silently; register any amendment before rescoring.
+- **Correction to F-S23-8 (checked in the built networks, not run):** in m10f9b and m10f9c, no graded cell
+  releases at rest. `graded_r0` is None, so `release_at_rest` is 0 for all 36,360 graded cells (6,091
+  photoreceptors, 8,884 LMCs, 7,370 optic columnar, 13,580 T4/T5, 433 IN13B, 2 APL). No eye class has a per-type
+  or class tonic drive. Noise is removed in the window. So the silent-window eye activity **is not tonic dark
+  release**: no deterministic input reaches a graded cell. It is a recurrent tail. Eye counts from the 2nd to the
+  3rd 100 ms bin fall ×0.21 (m10f9b, s12 and s13) and ×0.71 / ×0.73 (m10f9c, s12 / s13). Tripling graded_rmax
+  triples the gain of the graded optic-lobe loops, so the tail decays about 4× more slowly (τ ≈ 290 ms against
+  ≈ 65 ms). F-S23-8's "inferred mechanism" (resting drive = release_at_rest × graded_rmax) is wrong for this chain,
+  and so is the conclusion that release_at_rest binds. Correction finding F-S23-10 follows.
+- **(1) What the silent window protects against.** Self-sustained network activity: activity that persists or
+  grows with no afferent drive, no noise and no per-type tonic drive. In the full run this becomes a runaway
+  (s13 arm A; F-S23-7, m10f9 MN_other 0.5 → 8.4 Hz). It is a stability test of the noise-free model's quiescent
+  state. It is **not** a claim that a fly brain is silent. In the model, noise stands for the unmodelled inputs
+  that keep real neurons spontaneously active; measured resting rates (Huang DANs, the S band) are matched with
+  noise on.
+  - "0 non-eye spikes in the last 100 ms of 300 ms" is an **engineering convention**. It assumes every stable
+    network falls silent within 200-300 ms. That is an assumption about decay speed, not stability.
+  - Biology would make it wrong in two ways. (a) A real deterministic tonic source, such as graded release at rest
+    in darkness or an intrinsically tonic type, would keep downstream cells active without noise. That is absent
+    in this chain (r0 = 0), so (a) is not what failed m10f9c. (b) A stable network with a slow mode decays more
+    slowly than the window.
+  - Known limit, not tested tonight: a model whose head-direction bump self-sustains without noise would fail G
+    and G2 alike, although the real bump persists in darkness.
+- **(2) Amendment G2.** It replaces G's silent clause for every stage scored from now on. The rest of G is
+  unchanged: no NaN, 0 MuJoCo warnings, no class above 200 Hz. G's own verdict stays reported (`silent_pass`,
+  still computed on the first 300 ms).
+  - Window 1000 ms, with afferent drive and all noise removed, per-type tonic cells excluded, and eye classes
+    reported apart, all as before.
+  - (a) **No growth**, for eye and non-eye counts separately. For every pair of consecutive 100 ms bins,
+    count(k+1) − count(k) ≤ 3 √(count(k) + count(k+1)). This is Ben's 13 Oct eye rule applied to every bin and to
+    non-eye cells.
+  - (b) **Return to rest outside the eye:** 0 non-eye spikes in the last 100 ms (900-1000 ms).
+  - Fields: `g2_no_growth_eye`, `g2_no_growth_noneye`, `g2_noneye_last100ms`, `g2_pass`, plus the per-bin counts
+    and the end-of-window graded depolarisation (`scripts/probes/closed_loop_check.py --silent-ms 1000`).
+  - The 1000 ms window is an engineering choice: the length of the noisy phase. It was chosen knowing m10f9c's
+    ×0.71 per 100 ms decay. At that rate, (b) for m10f9c is about a coin flip per seed (expected non-eye last bin
+    about 6 × 0.71⁷ ≈ 0.5 spikes), so it was not chosen to make m10f9c pass.
+  - Future clause: a stage that turns on a sourced deterministic tonic source (r0 > 0) registers, with it, a
+    clamp arm (b scored with that source's output clamped) and stationarity of the non-eye rate in place of (b).
+- **Runs** (Mac, slot.py, `runs/s23/g2/`, seeds 12-15, scored once): m10f9c, m10f9b, m10f10. The stage adopted
+  tonight must pass G2 on seeds 12-15. m10f6-m10f8 are not rerun (subsumed by m10f9b/m10f10).
+- **Decision rules for m10f9c:**
+  - G2 passes on all of seeds 12-15: G's failure was a decay-time artefact of the 300 ms window in a stable
+    network. m10f9c is gated and may go to S. N1 is still not done: release at rest is absent, and graded_rmax is
+    a photoreceptor-synapse value applied to every graded class.
+  - (a) fails on any seed: model failure (growth).
+  - (a) holds and (b) fails on any seed: model failure under G2 (not back to rest in 1 s). Record the per-bin decay
+    ratio.
+- **Predictions:**
+  - m10f9c: (a) holds on all four seeds; (b) fails on at least one.
+  - m10f9b and m10f10: G2 passes on all four seeds.
+  - Falsifier of the correction: if m10f9c's eye counts plateau (last 300 ms not below the first 300 ms), the tail
+    is not a decay, and the mechanism needs re-examining before any rule is applied.
