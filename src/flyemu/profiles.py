@@ -441,6 +441,9 @@ PROFILES: dict[str, dict] = {
     "m10f7": {"values": M10F7, "kick_mv": KICK},
     "m10f8": {"values": M10F8, "kick_mv": KICK},
     "m10f9": {"values": M10F9, "kick_mv": KICK},
+    # s23 (DECISIONS 24 Oct 00:29): m10f9 failed G with the s13 IN10B row; m10f9b = the same values with that row
+    # removed from cell_types.csv under the 00:20 rule (graded-with-spikelets types get no row)
+    "m10f9b": {"values": M10F9, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

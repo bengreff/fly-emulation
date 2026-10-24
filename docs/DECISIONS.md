@@ -5296,3 +5296,41 @@ Ben's done rule. The switch is built and tested (`cell_type:all|mode_from_record
   Ben rules a mixed mode is required.
 - **Runs.** G on backhouse if the load allows, else on the Mac through `slot.py`. S takes 4-5 h at the current
   load, so it cannot finish before the 05:30 park; it runs next session.
+
+### s23 m10f9 result: gate G fails on seed 12 (VNC runaway); the switch stays built-off (24 October, 00:29)
+`runs/s23/fc/gate_m10f9_s12.json` (Mac through slot.py, cell_types.csv as at 0d4af68). In the last 100 ms of the silent
+window there are 7.03 non-eye spikes/ms, against 0 for m10f8. Whole brain 0.378 Hz against 0.337 (+0.041; predicted
+±0.01). No NaN, 0 MuJoCo warnings. The runaway is in the VNC: MN_other 0.51 → 8.43 Hz, vnc_local_TBD 0 → 3.20,
+endocrine 0 → 3.29, efferent 0 → 2.41, and these classes keep firing through the silent window (933, 807, 148, 104
+spikes, ...). The optic classes are unchanged (optic_columnar 0.004, T4T5 0, LMC 0): in the dark the optic recorded
+modes are no-ops. IN13B fires 0.055 Hz and IN10B 0 Hz as spiking cells in m10f8, so the runaway does not come from
+losing their spikes. Mechanism (inferred, not tested): as graded cells, IN10B's 254 cholinergic cells release from
+rest upward (release_at_rest 0 means release starts at rest and reaches the guessed graded_rmax 100 Hz-equivalent at
+threshold), so subthreshold depolarisation becomes continuous excitation. This is the same failure as s13 S3 arm A
+(DECISIONS 13 Oct 23:10, a VNC-wide runaway after the drive stopped). I missed that result when writing the 00:20
+prediction. The other seeds and the smoke were stopped. Per the registration, `mode_from_recordings` stays built-off,
+and N1 stays partial with this reason.
+
+### s23 frontier stage m10f9b: recorded modes ON with the 00:20 rule also applied to the s13 IN10B row, registered before any run (24 October, 00:29)
+**Why this is a new stage, not a rescue.** The 00:20 rule gives graded-with-spikelets types no row. Agrawal 2020
+(open text): 10Bα "current injection failed to evoke identifiable action potentials, though we did occasionally
+observe spike-like events". The research note committed before the m10f9 gate was read (3fe4cf7) already recorded
+that the s13 IN10B row breaks the rule; it stayed in m10f9 only because the registration listed it. The decision to
+apply the rule now is taken after seeing G fail, so it is labelled that way and gets its own stage and prediction.
+- **Change.** The `^IN10B\d+$` graded_rec row is removed from `data/params/cell_types.csv` (its text moves to
+  `docs/research/s23_n1_recorded_modes.md` as a validity limit; the row is in git at 676b47f). IN10B keeps its group
+  mode (vnc_local, spiking). m10f9b = the m10f9 profile values; the only difference is the row file. IN13B (433
+  GABAergic cells, all recorded cells non-spiking) stays graded.
+- **Gate.** G as 23 Oct 22:58: seeds 12-15, 0 non-eye spikes/ms in the last 100 ms of the silent window, no NaN,
+  0 MuJoCo warnings, no class above 200 Hz. Then S (60 s, seed 12, band 0.162-0.486 Hz, active 0.014-0.042), with
+  the 00:20 unit check: cells of every graded_rec = 1 type emit no spikes.
+- **Prediction.** G passes on all four seeds, with the whole brain within ±0.01 Hz of m10f8 (0.337 on seed 12).
+- **Falsifier / consequence.** If G fails, graded IN13B (disinhibition through GABA release from rest) or another
+  graded type also drives the VNC. Then the mode switch cannot be ON until graded release is set from a measurement
+  for VNC nonspiking interneurons (graded_rmax and release_at_rest are guessed). That goes to MEASUREMENT_LIST, and N1
+  stays partial. If G and S pass, `m10f` moves to m10f9b after the battery and a viewed figure. N1 is then done
+  under the 00:20 rule, with one stated caveat: graded transmission uses the guessed graded_rmax 100 Hz, which
+  belongs to the graded-synapse value, not to the mode itself. If Ben counts that value as part of N1, N1 stays
+  partial on it.
+- **Runs.** Mac through slot.py (the m10f9 gate took 151 s per seed tonight). S follows G in the same script and may
+  finish before the 05:30 park; if not, it is stopped and rerun next session.

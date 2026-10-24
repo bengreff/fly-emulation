@@ -51,8 +51,10 @@ labelled inferred (measured for the R32F10 cells and extended by morphological c
 - **HS, VS (LPTCs):** graded with spikelets or occasional action potentials. Mixed mode, secondary text.
 - **IN10B (10Balpha):** Agrawal 2020 open text: "current injection failed to evoke identifiable action potentials,
   though we did occasionally observe spike-like events". By the 00:20 rule this is graded-with-spikelets. The
-  existing s13 `^IN10B\d+$` graded row predates the rule and is listed in the m10f9 registration, so it stays for
-  this stage. Whether it should go is recorded as an open point in HANDOFF; it is not changed after registration.
+  existing s13 `^IN10B\d+$` graded row predated the rule and was listed in the m10f9 registration, so it stayed for
+  that stage. m10f9 then failed gate G with a VNC runaway (DECISIONS 24 Oct 00:29). The row was removed for stage
+  m10f9b, registered as applying the rule after the failure was seen (row text in git at 676b47f). IN10B keeps its
+  group mode (spiking) as a validity limit.
 - **LPi (e.g. LPi4-3):** non-spiking per Mauss et al. 2015 Cell 162:351, but secondary (paywalled).
 - **AL LN classes of Seki et al. 2010 (J Neurophysiol 104:1007):** all four classes spike (burst or tonic). Secondary.
 - **Calcium imaging only, so mode not established:** Mi4, Mi9, Tm4, Tm9 (Arenz et al. 2017); LC4, LC6, LC11, LPLC2
