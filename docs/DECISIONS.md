@@ -5117,3 +5117,13 @@ Chowdhury magnitude is read. Chowdhury is then scored once under the 23 Oct 00:5
 174.3) and the T5-amended one (70 / 111 / 131) are reported at the same read and spend nothing extra.
 Chowdhury's Dryad data stays unopened until then. Garbe 2015 is training. Huber 2004 is training context.
 **Runs.** backhouse, one job, 3 worker processes of 1 thread each.
+
+### s23 m10f8 amendment: metabolic Q10 gets a measured source; gate result (23 October, 23:31)
+- `q10_met` joins `internal_state.SOURCED` at 2.0, **measured** (Klepsatel, Wildridge & Gáliková 2019 Sci Rep
+  9:5239, full text: whole-fly O2 consumption of adult males over 13-33 °C, Q10 2.0 in Oregon R and 2.3 in
+  Canton S). The value equals the old guessed default. It scales basal use by Q10^((T − 25)/10), which is 1 at
+  25 °C, so no gate, smoke or unit check changes. Only the provenance changes, from guessed to measured. The
+  running m10f8 smoke stands.
+- m10f8 gate (G), run as registered at 23:20: pass on seeds 12-15. Whole brain 0.337 / 0.336 / 0.337 / 0.337 Hz,
+  identical to m10f7 on every seed. 0.0 non-eye spikes/ms in the silent window, no NaN, 0 MuJoCo warnings, top
+  class MBON 12.7-13.9 Hz. The smoke (S) is still running.

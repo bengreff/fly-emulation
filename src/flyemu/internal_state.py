@@ -302,6 +302,9 @@ SOURCED = {
     "crop_max_nl": (250.0, 250.0, 320.0, "inferred", "measured_related",
                     "Edgecomb, Harth & Schneiderman 1994 J Exp Biol 197:215 via a secondary citation (sex not stated, "
                     "primary not read); upper bound Qi et al. 2015 starved first meal ~0.32 ul (females)"),
+    "q10_met": (2.0, 2.0, 2.3, "measured", "measured_this_class",
+                "Klepsatel, Wildridge & Galikova 2019 Sci Rep 9:5239 (PMC6437209): whole-fly O2 consumption, adult "
+                "males, 13-33 degC, Q10 2.0 Oregon R (the basal-rate strain) and 2.3 Canton S"),
 }
 
 # s19: N26 clock values read from sources (DECISIONS 22 Oct 04:44), the defaults only with
