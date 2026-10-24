@@ -365,3 +365,33 @@ def test_homeostat_drives_each_dfb_cell_by_its_own_state(orgs):
             st.p["homeostat"] = saved[0]
         o.dfb_on[:], o.switch = saved[1], saved[2]
         st._refresh()
+
+
+def test_heat_balance_is_neutral_off_and_derives_a_near_ambient_body():
+    """s23 S5: state:body_temp|model = 0 leaves the organs at air temperature; mode 1 relaxes T_b with tau = C/G
+    to T_air + (P_met - P_evap)/G, a few hundredths of a kelvin above air at rest for a 0.5 mg fly."""
+    from types import SimpleNamespace
+    from flyemu import internal_state as S
+    from flyemu.registry import Policy, Registry
+    base = S.default_params(sourced=True)
+    off = run(S.Organs(dict(base)), 1, temperature_c=30.0)
+    assert np.isnan(off.t_body)
+    heat = dict(base, heat_balance=1.0)
+    on = run(S.Organs(heat), 1, temperature_c=30.0)
+    assert np.isclose(on.t_body, S.rest_body_temp(heat, 30.0, 0.5), atol=1e-6)
+    c, g = S.body_thermal(heat, 25.0)
+    assert 5.0 < c / g < 20.0                                   # seconds: a 1 mg body follows the air
+    dT = S.rest_body_temp(heat, 25.0, 0.5) - 25.0
+    assert np.isclose(dT, (S.basal_heat_w(heat, 25.0 + dT) - S.evap_heat_w(heat, 25.0 + dT, 0.5)) / g, rtol=1e-3)
+    assert 0.0 < dT < 0.2
+    o = S.Organs(heat)                                           # exact relaxation after a step in air temperature
+    o.step(1e-3, temperature_c=25.0)
+    t0 = o.t_body
+    o.step(c / g, temperature_c=30.0)
+    t_inf = S.rest_body_temp(heat, 30.0, 0.5)
+    assert np.isclose((t_inf - o.t_body) / (t_inf - t0), np.exp(-1.0), atol=0.01)
+    world = SimpleNamespace(temperature_c=28.0, humidity_rh=0.5)
+    assert S.neural_temperature_c(Registry(Policy.MINIMAL), world) == 28.0   # organs off: air temperature
+    reg = Registry(Policy.MINIMAL)
+    reg.overrides.update({"state:organs|model": 1, "state:body_temp|model": 1.0})
+    assert 28.0 < S.neural_temperature_c(reg, world) < 28.2

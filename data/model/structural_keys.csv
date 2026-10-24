@@ -141,3 +141,4 @@ cell_type:*|spike_initiation_compartment,N30,assignment,"axon: where the listed 
 connection:*|synapse_compartment,N30,assignment,"axon: the listed inputs land on the axon compartment, from two_compartment.csv with its basis, read when cell_type:all|two_compartments_where_point_fails = 1 (s20 fly2)"
 neuromodulation:all|receptor_map,N19,switch,s19 receptor-map mode (neuromod.py): per-cell monoamine sensitivities from transcripts; neutral 0; 2 adds Davie 2018 brain-cluster rows (s20)
 neuromodulation:all|receptor_map_coverage,N19,data,cells per receptor-probability source (type / hemilineage / prior); provided only when the switch is on
+state:body_temp|model,S5,switch,0 body at air temperature (neutral); 1 the s23 lumped heat balance C T_b' = P_met - P_evap - G (T_b - T_air) (internal_state.py; the neural Q10 reads the resting T_b at build; DECISIONS 24 Oct 00:51)

@@ -399,6 +399,22 @@ M10F9 = {
                                            "rows); every other type keeps its group default"),
 }
 
+# Stage 9c (fly, s23; DECISIONS 24 Oct 00:52): N1 graded release at the sourced graded_rmax.
+M10F9C = {
+    **M10F9,
+    "cell_type:all|graded_rmax": (300.0, _I, "frontier stage 9c (N1): derived 240 vesicles/s per active zone at "
+                                  "the blowfly R1-6 -> LMC graded synapse (Laughlin, Howard & Blakeslee 1987) / "
+                                  "0.79 vesicles per site per spike at Drosophila ORN -> PN (Kazama & Wilson 2008); "
+                                  "range 171-684 Hz; one value for every graded type"),
+}
+# Stage 10 (fly, s23; DECISIONS 24 Oct 00:51, rebased 00:57): S5 lumped body heat balance, on m10f9b because
+# m10f9c failed G.
+M10F10 = {
+    **M10F9,
+    "state:body_temp|model": (1.0, _I, "frontier stage 10 (S5): body temperature from metabolic heat, evaporation "
+                              "and conduction/radiation to the air (internal_state.py); +0.07 K at rest"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -444,6 +460,8 @@ PROFILES: dict[str, dict] = {
     # s23 (DECISIONS 24 Oct 00:29): m10f9 failed G with the s13 IN10B row; m10f9b = the same values with that row
     # removed from cell_types.csv under the 00:20 rule (graded-with-spikelets types get no row)
     "m10f9b": {"values": M10F9, "kick_mv": KICK},
+    "m10f9c": {"values": M10F9C, "kick_mv": KICK},
+    "m10f10": {"values": M10F10, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

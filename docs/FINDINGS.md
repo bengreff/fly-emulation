@@ -2447,3 +2447,24 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   guessed. The release curve of VNC nonspiking interneurons is unmeasured in the model's sources. m10f9b (IN10B
   back to spiking, as the 00:20 rule already required for graded-with-spikelets types) tests whether IN10B alone
   is the trigger.
+
+### F-S23-8: at the sourced graded_rmax (300 Hz) the dark eye leaks into the central brain at rest; the guessed release-at-rest is now the binding N1 value (s23, 24 Oct 00:57; DECISIONS 24 Oct 00:52, 00:57)
+- **Result.** m10f9c (m10f9b + graded_rmax 300 Hz, derived from the blowfly R1-6 → LMC tonic vesicle rate) fails
+  the silence gate on seeds 12 and 13: 0.06 and 0.04 non-eye spikes/ms in the last 100 ms of the silent window
+  (bar 0; m10f9b 0). Eye-class spikes in that window rise from 0.04/ms to 6.0-6.1/ms (optic columnar, then optic
+  other and projection), and a trickle reaches AL local neurons, DNs, central cells and one non-leg MN. Whole brain
+  0.354 Hz on both seeds, within the ±0.03 prediction; no NaN, 0 MuJoCo warnings.
+- **Inferred mechanism.** The resting drive of a graded cell is release_at_rest × graded_rmax. Tripling graded_rmax
+  triples the dark eye's resting output, which is what the silent window measures.
+- **What it means.** The sourced graded_rmax is not resting-safe with the guessed release-at-rest fractions, so N1
+  stays partial (sourced value not ON). The next N1 value to source is the fraction of maximal release at the dark
+  or resting potential of a fly graded synapse. Seeds 14-15 and the m10f9c smoke were cancelled.
+
+### F-S23-9: the derived S5 heat balance predicts Digby's measured *Drosophila* radiant warming to within 6 % (s23, 24 Oct 00:57; DECISIONS 24 Oct 00:51, 00:57)
+- **Result.** Check D (registered before the source was opened): a small *D. melanogaster* in 10 cm/s air under
+  1.0 cal cm⁻² min⁻¹ warmed by 2.5 K (Digby 1955, wing-beat thermometer). The still-air sphere model at the measured
+  male mass (0.505 mg) and α 0.8 predicts 2.36 K (0.4-1.0 mg: 2.20-2.90 K). PASS (bar ×2); spent.
+- **What it means.** The conductance G = 175 µW/K is about right for a fly this size, so the +0.07 K resting excess
+  stands: a resting fly's body is at ambient to within 0.1 K, as Digby states qualitatively. Part of the close match
+  is offsetting errors (wing airflow vs partial transmission of radiation); at 50 cm/s the model over-predicts by
+  1.6-2.4×, outside its stated still-air validity.

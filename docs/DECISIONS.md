@@ -5342,3 +5342,81 @@ silent window, no NaN, 0 MuJoCo warnings, highest class 12.7-13.8 Hz (MBON). Who
 graded, emits 0 spikes (0.055 Hz as spiking cells in m10f8). The VNC classes that ran away in m10f9 are at their m10f8
 rates (MN_other 0.54 against 0.51). Prediction met. The 60 s smoke S (seed 12) and the unit check follow in the same
 Mac run. Nothing is adopted until S, the battery and a viewed figure.
+
+### s23 S5 body heat balance: build and check registration (24 October, 00:51)
+- **Ruling** (Director, 24 Oct 00:55 in `~/director/decisions/fly.md`): S5 is a derived lumped heat balance that
+  yields about ambient at rest, checked against a cited body-vs-ambient measurement; not a bare constant.
+- **Built** (`internal_state.py`, switch `state:body_temp|model`, neutral 0 = body at air temperature):
+  C T_b' = P_met − P_evap − G (T_b − T_air), exact exponential steps. P_met = metabolic use × 2803 kJ/mol glucose;
+  P_evap = evaporation × 2.44 kJ/g; C = m c_p; G = 2π k_air D + 4 ε σ T_air³ π D² (a sphere of the body's volume
+  in still air, Nu = 2, plus linearised radiation to surroundings at air temperature), D = (6 m / π ρ)^(1/3).
+  Metabolic and evaporative Q10 read T_b; the neural Q10 (`organism.py`, applied at build) reads the resting
+  steady state. Values: m 0.505 mg (measured, Burggren 2017 male wet mass, the basal-rate flies); ρ 1.07 g/mL,
+  c_p 3.5 J/(g K), ε 0.95 (inferred, provisional: the reader found no insect source); k_air, σ, latent heat and
+  the glucose heat are physical constants. Validity: still air, no radiant load, rest to walking; flight is out.
+- **Model numbers** at m10f8 values (sourced basal; evaporation still the guessed S4 value): C 1.77 mJ/K,
+  G 0.176 mW/K, τ = C/G 10.1 s. At 25 °C, 50 % RH, rest: P_met 17.5 µW, P_evap 4.9 µW, **T_b − T_air = +0.072 K**
+  (0 % RH +0.044 K; activity 1 at the guessed k_act 5: +0.57 K). With the neutral s10 values (m10f7): +0.004 K.
+- **Order, stated plainly.** These numbers were computed before the S5 reader's report was read. The report came
+  in a minute later, and I wrote this registration after reading it. It has **no quantitative value** for any insect
+  of 5 mg or less (Heinrich & Bartholomew 1974, secondary and qualitative; an untraced mosquito snippet; Hangartner
+  2023 morph differences under a lamp; `docs/research/s23_graded_rmax_s5_reads.md`), so no check value has been seen.
+- **Check D (registered before opening Digby 1955 J Exp Biol 32:279).** If Digby's full text gives the
+  temperature excess ΔT_D of a Drosophila, or of an insect of 5 mg or less, under a stated radiation intensity I in
+  air of 30 cm/s or less, the model predicts ΔT = (α I A_proj + P_met − P_evap) / G for that insect's mass. A_proj
+  = π D²/4 for a sphere of its mass at ρ; α is Digby's absorptivity if stated, else 0.8 (inferred); P_met is the
+  fly's mass-specific basal rate times its mass; P_evap is 0. **PASS** if the prediction is within a factor of 2 of
+  ΔT_D (the sphere stands in for the real shape; ignoring free convection biases the model high). **Falsifier:**
+  outside the factor of 2, on the smallest insect Digby reports. Scored once, on the first qualifying number. If the
+  text can't be reached, or has only larger insects, no check is scored. S5 then counts as built and ON with no
+  check found (documented search), at the required level.
+- **Stage.** m10f10 = the last passing N1 stage + `state:body_temp|model` 1 (registered below with m10f9c).
+
+### s23 N1 graded_rmax sourced; stage m10f9c registered (24 October, 00:52)
+- **Value, by rule:** graded_rmax = (release rate per active zone at a graded fly synapse) / (vesicles per active
+  zone per spike at a fly spiking synapse) = 240 / 0.79 = 304 → **300 Hz**. Range 171-684 Hz (135-540 vesicles/s).
+  Sources: Laughlin, Howard & Blakeslee 1987, through de Ruyter van Steveninck & Bialek 2002 and Simmons & de Ruyter
+  van Steveninck 2005 (blowfly R1-6 → LMC tonic rate, derived by the authors); Kazama & Wilson 2008 (Drosophila
+  ORN → PN, p 0.79). **Label: derived.** One shared value for every graded type (an inferred transfer from the
+  photoreceptor synapse). The tonic rate is a lower bound on the rate at the top of the range, so the true value
+  may be higher; by rule the central value is used. Quotes: `docs/research/s23_graded_rmax_s5_reads.md`.
+- **m10f9c** = m10f9b + `cell_type:all|graded_rmax` 300. **Gate** as m10f9b (G seeds 12-15, then S 60 s seed 12
+  with the graded_rec unit check). **Prediction:** G passes on all four seeds; whole brain within ±0.03 Hz of
+  m10f9b on each seed (0.333 / 0.331 / 0.333 / 0.332). flyvis pair edges are unchanged (their weights divide out
+  rmax), so the change is in the graded cells off those edges (photoreceptors, L1-L3, APL, IN13B and the rest).
+  **Falsifier / consequence:** if G fails, the sourced graded_rmax is not resting-safe with the present
+  release-at-rest values. N1 then stays partial (sourced value not ON), and the failure goes to FINDINGS and
+  MEASUREMENT_LIST. If G and S pass, then battery and a viewed figure, and N1 is done (DECISIONS 00:20 rule plus the
+  Director's 00:55 ruling on graded_rmax).
+- **m10f10** = m10f9c + `state:body_temp|model` 1 (S5). **Prediction:** G passes; whole brain within ±0.005 Hz of
+  m10f9c (the neural time constants scale by 2.5^(−0.0072) = 0.9934). Then S. If m10f9c fails, m10f10 is rebuilt on
+  m10f9b and re-registered.
+
+### s23 Check D scored (S5 PASS); m10f9c fails G; m10f10 rebased on m10f9b (24 October, 00:57)
+- **Check D, scored once.** First qualifying number in Digby 1955 (J Exp Biol 32:279, p 285; archived
+  `data/raw/digby1955/`, sha256 386c2c5d…): a small *D. melanogaster*, tethered and flying, "at a wind speed of
+  10 cm./sec. ... the temperature rise was 2·5° C." at radiation 1·0 cal./cm.²/min (the sentence's stated
+  intensity), read from the change in wing-beat rate calibrated against air temperature. Digby gives no mass and no
+  absorptivity for *Drosophila*, so the registered defaults apply: the model mass 0.505 mg and α 0.8.
+  I = 1.0 cal cm⁻² min⁻¹ = 697 W/m²; D 0.966 mm, A_proj 0.733 mm², G 175 µW/K, absorbed 409 µW, basal 4 µW →
+  **predicted 2.36 K vs 2.5 K measured, ratio 0.94. PASS** (bar: within a factor of 2). Mass 0.4-1.0 mg gives
+  2.20-2.90 K (ratio 0.88-1.16), all inside.
+- **What it does and doesn't show.** It checks the conductance G (the excess at rest is (P_met − P_evap)/G), so
+  the +0.07 K resting excess stands, matching Digby's own statement (p 279) that "metabolism and evaporation are
+  practically negligible in the resting insect". The close match is partly offsetting errors: the flying fly's wing
+  airflow adds forced convection the still-air G lacks (pushes the model high), and Digby notes small insects pass
+  part of the radiation (pushes it low). At 50 cm/s the same fly rose 1.0-1.5 K, which the still-air model
+  over-predicts by 1.6-2.4×: outside its stated validity (still air), as registered. Labels: ΔT_D measured
+  (indirect, wing-beat thermometer); prediction derived. Held-out register: Digby's *Drosophila* numbers are spent.
+- **S5:** built, derived, checked against a cited measurement (passed). ON in the frontier only through stage
+  m10f10 (gate, smoke, battery, viewed figure).
+- **m10f9c fails G** (seed 12): 0.06 non-eye spikes/ms in the last 100 ms of the silent window (the bar is 0); eye
+  spikes in that window 6.0/ms (m10f9b: 0.04/ms); whole brain 0.354 Hz (inside the ±0.03 prediction). With
+  graded_rmax tripled (100 guessed → 300 derived), resting graded release (release_at_rest × graded_rmax) triples, and
+  the dark eye drives a trickle into the central brain (AL_LN, DN, central_other, MN_other in the silent window).
+  By the registered consequence: **N1 stays partial** (the sourced value is not ON). The binding unknown is now
+  `release_at_rest` (guessed, 0-0.9): the resting drive is the product, so a sourced release_at_rest is the next
+  N1 item. Seed 13 is finishing as descriptive; seeds 14-15 and the m10f9c smoke are cancelled.
+- **m10f10 re-registered** = m10f9b + `state:body_temp|model` 1. **Prediction:** G passes on seeds 12-15; whole
+  brain within ±0.005 Hz of m10f9b on each seed (0.333 / 0.331 / 0.333 / 0.332). Then S (60 s, seed 12, the same
+  band and the graded_rec unit check). Falsifier: G fails, or any seed outside ±0.005 Hz.
