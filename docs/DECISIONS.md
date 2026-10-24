@@ -5685,3 +5685,28 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   m10f10, or not at all, after the battery and a viewed figure (registered 02:28). N33 is then built and ON at the
   healthy constant, with no independent adult check (R is the one measurement and sets the value). Whether that
   is done is for the Director. Ca signalling and coupling stay a stub, so N33 is `partial` in mechanisms.yaml.
+
+### s23 m10f9b S scored: passes every registered bar, with the graded_rec zero-spike check (24 October, 03:02)
+`runs/s23/fc/smoke_m10f9b_s12.json` and `_rates.npz` (Mac, slot.py; 60 s, seed 12; wall 7,993 s). Scored once, on
+the bars registered at 00:29 (scorer `/tmp/flys23/score_s.py`):
+- Whole brain **0.3307 Hz** (band 0.162-0.486). Active fraction **0.0312** (0.014-0.042). Max cell 57.1 Hz.
+- Spikes per second: 53,903-56,844 over 59 bins; first 55,366, last 56,244. No trend and no runaway
+  (runaway_at_ms None). No NaN, 0 MuJoCo warnings, full 60,000 ms.
+- The body stood the whole run: thorax z 0.544-0.549 mm, net drift 0.12 mm.
+- The 10.5 s checkpoint read 0.3319 / 0.0303, so the full run moved by −0.001 Hz.
+- Top classes: MBON 13.2 Hz, ORNs 10.9, DAN 7.95 (inside the 7.8-8.0 measured rest from m10f7), AL_other 4.4,
+  leg MNs 3.7 (17 % active).
+- **Unit check (00:20 rule): pass.** All 24,940 cells of the graded_rec = 1 types emit 0 spikes in 60 s: Mi1 1,773,
+  Tm3 2,054, Tm1 1,777, Tm2 1,766, T4a-d 6,861, T5a-d 6,719, L4/L5 3,557, IN13B 433. The rates file also holds
+  5,208 spiking cells, so the zeros are not an empty file.
+- **What the check can and cannot show.** At dark rest the optic lobe is silent whatever the mode. Spiking-mode
+  Mi4 (1,772 cells) and Tm9 (1,771 cells) also emit 0 spikes, and so do the 254 IN10B cells, which went back to
+  spiking at 00:29. So for the 24,507 optic-lobe cells the check only confirms that the mode is applied. It cannot
+  tell graded from silent spiking. It has power only for IN13B, which spiked at 0.055 Hz as a spiking type in
+  m10f8 G and gives 0 here. A stronger test needs a driven state (light on), where spiking-mode Mi/Tm cells would
+  fire. That is not registered and not run.
+- **Consequence.** m10f9b passes G (00:42), G2 (01:47) and S. The 00:29 registration would have counted N1 as done
+  with a caveat. The Director's 00:55 ruling (graded_rmax must be sourced) supersedes that, so **N1 stays
+  partial**: graded transmission runs on the guessed 100 Hz, and release_at_rest is guessed at 0. Next is
+  m10f11 (photoreceptors at the sourced 300 Hz). Adoption is m10f10 or m10f12 if their S passes (03:20-03:30), else m10f9b. Each
+  goes through the battery and a viewed figure first.
