@@ -2409,3 +2409,26 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - **N4:** no sustained-step early/late rates in any open full text read (PNs, LNs, KCs, LHNs, leg MNs, MN5). Only
   qualitative "adapting" statements exist (MBON-α3, MN5). Seki et al. 2010 defines an adaptation rate for AL LNs
   but is paywalled.
+
+### F-S23-6: the N25 night-input candidate fails Chowdhury 2023 on the 6 h arm; measured rebound does not grow with deprivation length, the model's does (s23, 24 Oct 00:15; DECISIONS 23 Oct 23:30, 23:49, 23:52, 24 Oct 00:15; `docs/research/s23_chowdhury_fig1_read.md`)
+- **Fit (training data only).** With the clock's late-night DN1 drive added to the dFB OFF rate (peak CT 19, the
+  DN1 Ca2+ peak of Liang 2016, inferred as a firing peak), 2 of 32,340 sets pass the training checks and Garbe's day
+  and night bouts. Against expectation, one of the two has the night term at 0; inside Garbe's ± 1 s.d. band the
+  night term is not needed, and both sets reach only about 3 night bouts against Garbe's mean 7. The scored set (B,
+  night_arousal 8) was chosen by the registered tie-break and survived a 512-fly repeat that the other set failed.
+- **Score (blind figure read; Dryad raw data unread).** B predicted 69.3 / 114.4 / 139.9 min of day-1 rebound for
+  6 / 12 / 24 h of 20 s-trigger deprivation. The 6 h point is low in every reading (span lower bound 82-110 min);
+  12 h is inside; the 24 h primary is inside for panels I and K (148 or 163 min, spans from about 106) and outside,
+  high, for panel J (44 min, span 14-75). B fails the pass rule.
+- **The published figure disagrees with itself** for the 20 s, 24 h arm: panel I median 196 min, panel J 101,
+  while the 220 s boxes agree between the same panels within 1 min. Panel K agrees with I; the Results text agrees
+  with J. The J 6 h box also differs from C's although their whiskers match, so the J box reads may be the weaker
+  ones, but this read cannot decide. The Dryad raw data would.
+- **Shape.** Measured rebound is flat across 6, 12 and 24 h (I reading: 127 / 107 / 148, differences inside 2 SEM)
+  or falls with length (J reading and the paper's own test: 6 h significantly above 12 h and 24 h). Every mode 1
+  candidate grows with length, because need accumulates with time awake. The only prediction inside all three
+  I-reading spans is the flat 00:34 mode 1 φ CT 0 (142 / 139 / 138), which was reported, not scored.
+- **What it means.** The rebound magnitude near 24 h is reachable; the dependence on deprivation length is wrong.
+  Rebound after only 6 h at night (ZT 18-24) is as large as after 24 h, which a single need variable rising with
+  time awake does not give. Chowdhury is spent and N25 stays partial (built, off by default, failed its held-out
+  check). No held-out deprivation-length series remains.

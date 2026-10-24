@@ -5216,3 +5216,51 @@ Readers (`docs/research/s23_crop_pump_q10_adaptation.md`) changed two of the 23:
 - Rows: S3 still waits on fly2's `pump_full_rate_hz` (10 Hz, guessed; measured pump cycle 5-7 Hz, Manzo 2012,
   Sui 2026), as registered at 23:20. N28 has a value inside a cited range but no independent check (every Juusola
   number comes from the cells that set the value), so it stays partial.
+
+### s23 N25 Chowdhury 2023 scored once: candidate B fails the pass rule; Chowdhury is spent (24 October, 00:15)
+**How it was read.** Dryad needs a login or a bot check, which was not circumvented, so the registered fallback was
+used: a blind pixel read of Fig. 1 (`docs/research/s23_chowdhury_fig1_read.md`), read uncertainty 4 min per
+difference. Scored with `scripts/probes/s23_chowdhury_score.py` (`runs/s23/n25/chowdhury_score.json`).
+**Method choices made at read time** (the 00:53 rule assumed raw data and did not fix these):
+- Fig. 1 C, F and I plot per-fly box plots (quartiles, median, whiskers) of raw post − pre sleep for control and
+  each trigger, not means. The normalised rebound is the 20 s group minus the control group. Group means and SDs
+  come from the quartiles (Wan et al. 2014: mean (Q1 + median + Q3) / 3, SD IQR / 1.35), SEM SD / √n with the
+  caption's n. Span: estimate ± (2 combined SEM + 4 min).
+- Reported alongside: medians instead of estimated means, panel K's 24 h points (error bars of unstated type), and
+  panel J. **The figure disagrees with itself for the 20 s arm:** panel I's 24 h box has median 195.7 min, panel
+  J's nominally identical box 101.2. The 220 s boxes agree between the same panels (68.0 vs 67.4, 87.5 vs 88.0).
+  Panel K agrees with I. The Results text ("the 6 hr deprivation condition ... displayed significantly higher
+  rebound sleep compared to the 12 hr and 24 hr") agrees with J.
+
+**Spans (min per 24 h, day 1) and B's locked predictions:**
+
+| Reading | 6 h | 12 h | 24 h (primary) |
+|---|---|---|---|
+| C/F/I, estimated means | 126.5 [85.9, 167.1] | 106.8 [63.6, 150.0] | 148.0 [106.5, 189.5] |
+| C/F/I, medians | 122.3 [81.7, 162.9] | 114.3 [71.1, 157.5] | 137.5 [96.0, 179.0] |
+| J, estimated means | 149.9 [110.0, 189.8] | 105.4 [63.6, 147.2] | 44.2 [13.9, 74.5] |
+| K, 24 h only | | | 163.3 [121.9, 204.7] |
+| **B, scored** | **69.3, out (low) in every reading** | **114.4, in** | **139.9, in for C/F/I and K; out (high) for J** |
+
+**Verdict: B fails the registered pass rule.** The pass needs all three inside; the 6 h secondary misses low by
+12-41 min beyond the span in every reading. The primary is inside under three of the four readings and outside
+under J, so whether the falsifier itself is hit depends on which panel of the published figure is right; that is
+recorded, not resolved. B is not a passing rebound model either way.
+**Reported at the same read, spending nothing:** A and the s22 T5-amended set behave like B (6 h low). The s22
+locked set misses at 12 h under C/F/I. The 00:34 mode 1 φ CT 0 prediction (142 / 139 / 138, flat) lies inside all
+three C/F/I spans and fails J's 24 h. V3 and mode 0 miss.
+**Ordering (reported):** the model's rebound rises with deprivation length (24 h > 12 h > 6 h). The data's 24 h − 6 h
+is +21.5 min under C/F/I, inside 2 combined SEM (52.3), so not tested; under J it is −105.7, beyond 44.5, the
+opposite sign, and the paper's own test says 6 h > 12 h and 24 h. Days 2 and 3 are not in Fig. 1; residual sleep
+during deprivation was not quantified by the reader.
+**Consequences.**
+- Chowdhury 2023 is **spent**. No refit on it, and no candidate may be tuned toward these spans.
+- N25 stays partial: mode 1 and the night term are built, off by default, and have now failed their held-out check.
+- The shape result goes to FINDINGS (F-S23-6): rebound that does not grow with deprivation length is the thing a
+  next structure has to explain from training data; the paper's own account (short-bout sleep masking, long-bout
+  sleep under homeostatic control) is seen context.
+- No held-out deprivation-length series is left. A next N25 candidate would need a new held-out source registered
+  first (Brown et al. 2020, one 24 h duration, mainly mated females, is the only one named so far). N25 drops below
+  the cheaper completions in the path-to-done ranking.
+- The Dryad raw data, if Ben downloads it in a browser, can settle the I/J disagreement as a refinement of this
+  recorded score only; it cannot re-open the test.
