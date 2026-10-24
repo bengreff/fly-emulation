@@ -42,7 +42,9 @@ def test_constant_states_are_read_at_their_value_and_refused_otherwise():
 def test_every_stub_is_an_absent_mechanism_that_owns_its_switch():
     mech = {m["id"]: m for m in yaml.safe_load((REPO / "data/model/mechanisms.yaml").read_text())}
     for key, (mid, *_rest) in stubs.STUBS.items():
-        assert mech[mid]["status"] == "absent" and key in mech[mid]["switch"], mid
+        # s23: a partly built mechanism (N33: uptake built) keeps its unbuilt remainder as a stub, named in
+        # absent_reason
+        assert mech[mid]["status"] in ("absent", "partial") and key in mech[mid]["switch"], mid
         assert mech[mid].get("absent_reason"), mid
 
 

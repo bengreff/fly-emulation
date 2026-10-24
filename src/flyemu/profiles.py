@@ -427,6 +427,17 @@ M10F11 = {
                                             "(Kazama & Wilson 2008); range 171-684 Hz; photoreceptor classes only"),
 }
 
+M10F12 = {
+    **M10F10,
+    "state:glia|uptake_model": (1.0, _I, "frontier stage 12 (N33): astrocytic Eaat1 uptake sets the fast decay of "
+                                "glutamatergic edges, tau(u) = tau(1) R / (1 + (R - 1) u); the identity at healthy uptake"),
+    "class:astrocyte|eaat1_block_decay_ratio": (2.9, _I, "frontier stage 12 (N33): measured 2.9 (2-4 per pair) in "
+                                                "larval looper -> motor neuron IPSCs under 100 uM DL-TBOA (MacNamee et "
+                                                "al. 2016 Fig. 8B); its use on adult synapses is inferred"),
+    "state:glia|eaat1_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
+    "state:glia|gat_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -475,6 +486,7 @@ PROFILES: dict[str, dict] = {
     "m10f9c": {"values": M10F9C, "kick_mv": KICK},
     "m10f10": {"values": M10F10, "kick_mv": KICK},
     "m10f11": {"values": M10F11, "kick_mv": KICK},
+    "m10f12": {"values": M10F12, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

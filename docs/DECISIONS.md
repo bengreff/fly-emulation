@@ -5626,3 +5626,44 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   - If both pass, m10f11 is adoptable after the battery and a viewed figure. N1 then has a sourced graded_rmax ON
     for the photoreceptors and stays partial: the other classes' rate and `release_at_rest` are unsourced.
 - **Held-out data.** None used. The gate seeds are engineering seeds.
+
+### s23 N33 build registered before writing it: astrocytic uptake sets the glutamatergic decay, identity at the healthy state (24 October, 02:28)
+- **Source.** MacNamee et al. 2016 J Comp Neurol 524:1979, Fig. 8, read by eye on 24 Oct 02:27
+  (`docs/research/s23_b27_n27_n33_reads.md`). Larval looper → motor-neuron glutamatergic IPSCs:
+  - acute 100 µM DL-TBOA: tau ×2.9 (per pair about 2-4, n = 5);
+  - astrocyte-specific Eaat1 RNAi: tau ×2.05 (n 10 and 8);
+  - amplitude and rise unchanged under block.
+- **Mechanism (class level, CPU path).** Glutamate is cleared by diffusion (rate k_d) and astrocytic uptake
+  (u·k_u) in parallel, and the decay is clearance-limited, so τ(u) = τ(1) · R / (1 + (R − 1) u). Here u is the
+  fraction of healthy astrocytic Eaat1 uptake and R = τ(0)/τ(1).
+  - It applies to every edge from a spiking glutamatergic cell (predictedNt as built): the N29 row decay where
+    a row exists, else the post cell's tau_s.
+  - The peak is kept (each spike's increment is the u = 1 one) and the charge grows with the decay, because the
+    source reports no amplitude change.
+  - Graded presynaptic cells keep W_graded at tau_s, as in N29. Conductance synapses are refused, as in N29.
+  - GABA/GAT has the same structure with `state:glia|gat_uptake`, but no fly ratio exists (no fly GABA current
+    with GAT loss, s23 reads). It refuses any value other than 1 until one is sourced.
+- **Keys.**
+  - Switch `state:glia|uptake_model`: neutral 0 (decays do not depend on uptake).
+  - `state:glia|eaat1_uptake` and `state:glia|gat_uptake`: 1 = healthy. This is the S7 healthy constant, so the
+    stage reads 1.
+  - Row `n33_eaat1_block_decay_ratio`: R 2.9, bounds 2.0-4.0 (the per-pair range), measured_related. It is
+    labelled measured for the larval synapse; its use on adult synapses is inferred.
+- **Validity.** It holds for clearance-limited decays. For receptor-limited decays the factor overstates the effect
+  (an upper bound). The source is a compound light-evoked IPSC at a larval synapse without astrocyte ensheathment,
+  and TBOA blocks all EAATs.
+- **Checks (pre-registered).**
+  - (1) A unit test on a small graph: switch 0 and switch 1 with u = 1 build identical weights and kinetics.
+    With u = 0, a glutamatergic edge's current decays with R × its u = 1 tau, its peak equals the u = 1 peak
+    (rel 1e-4), and non-glutamatergic edges are unchanged. A gat_uptake other than 1 raises.
+  - (2) The validator passes.
+  - (3) Real-connectome build: the m10f10 values with the switch on and u = 1 give the same `w`, `kin_edge` and
+    channel list as m10f10.
+  - Because the mechanism is the identity at u = 1, no G/S re-run is needed for a stage that turns it on at the
+    healthy state. Check (3) is the gate.
+- **Descriptive, not a gate.** The RNAi ratio implies a residual astrocytic uptake of
+  u = (R/2.05 − 1)/(R − 1) ≈ 0.22 under knockdown. No knockdown efficiency is measured, so this tests nothing.
+- **Done status.** If (1)-(3) pass and it is adopted, N33 is built and ON at the healthy constant. The one
+  measurement set R, so no independent unit check exists in the adult. Whether built-and-ON counts as done here
+  is for the Director; I will report it as "built and ON, no independent check".
+- **Held-out data.** None. Fig. 8 is used to set R and is now spent for N33.

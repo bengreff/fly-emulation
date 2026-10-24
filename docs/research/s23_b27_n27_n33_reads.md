@@ -43,6 +43,27 @@ clearance τ have no fly measurement to sit inside; the row stays partial (gain 
   or amplitude". Means are in Fig. 8B only (not yet read).
 - **Eaat1, astrocyte RNAi** (alrm-GAL4 > Eaat1-RNAi, same paper; control n = 10, knock-down n = 8): decay changes
   "remained significant", smaller than with acute block.
+- **Fig. 8 read (24 Oct 02:27, s23; figure `nihms-776898-f0009.jpg` from the PMC author manuscript; values read by
+  eye from the plotted points and bars, about ±10 %; label measured, by-eye precision).**
+  - What was measured: looper-evoked motor-neuron IPSCs, compound currents during and after a ~200 ms ChR light pulse
+    (whole-cell voltage clamp, −60 mV; third-instar larval VNC; room temperature, not stated). Decay time is
+    2/3 → 1/3 of peak; tau is a single-exponential fit.
+  - **8B, acute TBOA (100 µM DL-TBOA), n = 5 paired:**
+
+    | Measure | Saline (ms) | TBOA (ms) | Ratio of means |
+    |---|---|---|---|
+    | Half-width | 310-480 (mean about 400) | 620-850 (about 750) | about 1.9 |
+    | Decay time | 90-290 (about 190) | 300-760 (about 520) | about 2.7 |
+    | Tau | 170-350 (about 260) | 530-1080 (about 760) | **about 2.9 (per pair about 2-4)** |
+
+  - **8E, astrocyte Eaat1 RNAi (alrm-GAL4 control n = 10, knock-down n = 8; bars):** half-width 400 → 530 (×1.33),
+    decay time 190 → 275 (×1.45), tau 275 → 565 (**×2.05**).
+  - **8G, RP2 motor neurons only:** half-width 475 → 625, decay time 165 → 350, tau 320 → 690 (×2.2).
+  - **Validity limits.** These are compound, light-evoked IPSCs at a larval glutamatergic (GluCl-type, inhibitory)
+    synapse with no astrocyte ensheathment, not unitary currents. The control tau (170-350 ms) is far slower than a
+    unitary fast receptor decay, so presynaptic firing after the pulse is part of it. The ratio under block is the
+    transferable content; applying it to an adult unitary decay is inferred. TBOA blocks all EAATs, not only the
+    astrocytic Eaat1; the RNAi arm is the astrocyte-specific one, with an unknown residual uptake.
 - **Ensheathment** (same paper, EM, n = 67 presynaptic sites): no site fully ensheathed; astrocyte process to
   synapse 0.375 ± 0.2 µm (range 0.0006-0.93).
 - **Adult NMJ** (Rival et al. 2006 J Neurobiol 66:1061; abstract only): glial dEAAT1 loss "prolonged the duration of
@@ -54,7 +75,8 @@ clearance τ have no fly measurement to sit inside; the row stays partial (gain 
 - **Ensheathing glia and sleep:** Stahl et al. 2018 Curr Biol (ensheathing-glia Eaat2 loss increases sleep;
   abstract level). Ties to N25.
 
-**Consequence:** the glutamate side has one larval acute-block effect on decay (Fig. 8B to be read for the ratio);
+**Consequence:** the glutamate side has one larval acute-block effect on decay (Fig. 8B, read 24 Oct: tau ×2.9 under
+TBOA, ×2.05 under astrocyte Eaat1 RNAi);
 the GABA side has no fly current measurement. A class-level uptake mechanism with intact uptake as the healthy
 constant (S7) reproduces the current decay values exactly; its only measured content is the decay ratio under
 block, larval and glutamatergic.

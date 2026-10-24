@@ -143,3 +143,6 @@ connection:*|synapse_compartment,N30,assignment,"axon: the listed inputs land on
 neuromodulation:all|receptor_map,N19,switch,s19 receptor-map mode (neuromod.py): per-cell monoamine sensitivities from transcripts; neutral 0; 2 adds Davie 2018 brain-cluster rows (s20)
 neuromodulation:all|receptor_map_coverage,N19,data,cells per receptor-probability source (type / hemilineage / prior); provided only when the switch is on
 state:body_temp|model,S5,switch,0 body at air temperature (neutral); 1 the s23 lumped heat balance C T_b' = P_met - P_evap - G (T_b - T_air) (internal_state.py; the neural Q10 reads the resting T_b at build; DECISIONS 24 Oct 00:51)
+state:glia|uptake_model,N33,switch,"0 decays do not depend on uptake (neutral); 1 astrocytic Eaat1 uptake sets the fast decay of glutamatergic edges, tau(u) = tau(1) R / (1 + (R - 1) u) (lif._glia_uptake; DECISIONS 24 Oct 02:28); CPU path only"
+state:glia|eaat1_uptake,N33,assignment,"fraction of healthy astrocytic glutamate uptake; 1 the healthy fly (the S7 healthy constant); read only with state:glia|uptake_model = 1"
+state:glia|gat_uptake,N33,assignment,"fraction of healthy astrocytic GABA uptake; only 1 (healthy) is built: no fly GABA decay ratio under GAT loss is sourced; read only with state:glia|uptake_model = 1"

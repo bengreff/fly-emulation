@@ -19,8 +19,8 @@ STUBS = {
     "cell_type:all|homeostatic_plasticity": (
         "N32", 0.0, "activity-dependent regulation of channel densities toward a set point"),
     "glia:all|astrocyte_model": (
-        "N33", 0.0, "astrocyte uptake, OA/TA-gated Ca signalling and glial coupling "
-                    "(FIDELITY_LADDER rung 7)"),
+        "N33", 0.0, "astrocyte OA/TA-gated Ca signalling and glial coupling (FIDELITY_LADDER rung 7); "
+                    "uptake is built apart, s23, state:glia|uptake_model"),
     "synapse:other_sites|plasticity": (
         "N34", 0.0, "plasticity outside the mushroom body and ring (AL, visual, courtship)"),
     "sense:all|efferent_gain_control": (
