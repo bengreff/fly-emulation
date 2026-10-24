@@ -34,6 +34,15 @@ then the heavy rows (N2, S6, N19, N20, N33) and the rows waiting on a Ben ruling
 S8, N27). Circular checks: S1 (fasting against its own set point), N2 (slow MN), N25 (mode-1 training checks).
 Independent checks: S2, S3, N3 and N26 (passed, spent); S4 (unspent); N25 (failed, spent).
 
+**Count (fly rows, 24 Oct 01:20 CDT): 2 of 20 done, both as ruled constants, 0 on evidence.** S7 and S8 are done
+by the Director's 24 Oct 00:55 rulings: each is one constant state, read by every profile and refused if changed
+(`stubs.CONSTANT_STATES`). They are counted apart from rows done on evidence, because no measurement checks them.
+The rulings settle all seven required-level questions, so no row waits on Ben now. S5 is built (neutral off) and
+passes Check D (Digby 1955, spent); it is done once m10f10 (S5 on) is adopted. Ranked next: adopt m10f9b or m10f10
+(N26, N3, N28, S1, S3, S5 move together; each row still needs its own bar), then N1 (sourced graded_rmax fails G
+in m10f9c; release_at_rest binds, F-S23-8), N33 (class-level Eaat1/GAT uptake, ruled in scope), B27 and N27
+(reads in `docs/research/s23_b27_n27_n33_reads.md`).
+
 **Count (fly2 rows, 22 Oct 01:59 CDT): 0 done of 49.** B: 23 partial, 3 absent. N: 4 built-off (N7, N8, N10, N14), 16 partial, 3 absent.
 
 | id | tier | owner | status | unit check | evidence | path to done (s23) |
