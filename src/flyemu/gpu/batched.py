@@ -137,6 +137,9 @@ class BatchedNetwork:
         if getattr(p, "two_comp", None) is not None:
             raise NotImplementedError("N30 two compartments (two_compartments_where_point_fails) are CPU-only "
                                       "until a GPU equivalence check (s20)")
+        if getattr(net, "_life", False):
+            raise NotImplementedError("s29 lifetime plasticity (N32 homeostat, N34 site plasticity, N31 "
+                                      "structural scale) is CPU-only until a GPU equivalence check")
         if getattr(net, "modmap", None) is not None:
             raise NotImplementedError("N19 receptor-map neuromodulation (neuromodulation:all|receptor_map) is "
                                       "CPU-only until a GPU equivalence check (s19)")

@@ -220,6 +220,8 @@ class Organism:
         # --- S1-S4, N20, N25, N26 internal state (task 12); state:organs|model 0 = off (m4) ---
         from . import internal_state
         self.organs = internal_state.build(self.reg, self.conn, seed=self.seed)
+        if getattr(self.net, "struct", None) is not None and self.organs is None:   # s29 N31 reads N25
+            raise ValueError("synapse:all|structural_plasticity = 1 needs state:organs|model on (the N25 sleep state)")
         # --- end internal state ---
         # Record every brain-body channel, including the ones with no
         # implementation, so the inventory measures interface completeness
@@ -327,6 +329,8 @@ class Organism:
         if self.adapt is not None:      # N15 transducer adaptation (s10); None = static (m4)
             drive = self.adapt.apply(drive)
         drive = drive if self.organs is None else drive + self.organs.drive(self, self.timestep_ms, drive)
+        if getattr(self.net, "struct", None) is not None:   # s29 N31: the synaptic scale follows N25 sleep
+            self.net.set_asleep(self.organs.organs.asleep)
         return drive
 
     # --- running -------------------------------------------------------------

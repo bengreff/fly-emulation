@@ -2153,6 +2153,77 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   - N12 as a whole couldn't be done in any case: 6 of the 9 rows in `data/params/gap_junctions.csv` carry no value (JO-A->GF, VS-VS, LN->PN, PN-PN, APL-DPM, MN5->MN1-4).
   - `m10f` stays m10f5. The coupling is inside Hurkey's measured CC band and the DLMn are silent at rest, so the failure doesn't affect resting runs.
   - A retry needs a sourced DLMn spike amplitude (for the spike step) and a DLMn PRC or excitability source, then a new held-out functional measurement. Candidate: Hurkey Fig. 3d's synchronization index under ShakB overexpression, unspent, but its formula isn't in the text.
+### F-S29-1: the receptor-mRNA route cannot set slow-receptor shares: its sources sit on two incompatible scales, so N7 goes ON through recorded cell types instead (fly2, s29, 23 Oct 23:58; DECISIONS 23 Oct 23:31)
+- **What failed.** `receptor_shares_from_rna` turns each type's transcript level into a slow share with one ratio s
+  per receptor family. Its sources measure different things:
+  - Davis 2020 and Ozel 2021 give call probabilities that are close to 0 or 1. Ozel's GABA-B-R2 is 1.0 in every type.
+  - Davie 2018 and the Allen hemilineage table give detection fractions: the share of cells with at least one read.
+  - Davis and Ozel disagree on GABA-B-R1 in 5 of the 17 types they share.
+- So an s calibrated on PNs puts every other type on an arbitrary scale. The mode stays off, and it would need a per-source
+  calibration with a recorded type in each source.
+- **What was done instead.** Two recorded classes went ON at their measured values (PN 0.54 derived from Wilson &
+  Laurent 2005; AL LN 0 inferred), in stage m10f5n7.
+- **Kenyon cells.** Inada, Tsuchimoto & Kazama 2017 Fig 5C (figure read, n 10) gives a KC GABA-B share of about 32 %
+  of the drug-blockable response. This is a second measured type, but KC GABA comes from APL, which is graded, and graded release has
+  no slow pool, so a KC row would act on almost nothing. Not added. That makes it a structural blocker (graded slow release), not a missing value.
+- **Davie consistency, unregistered.** An s from PNs on the Davie scale (about 4.3) predicts a KC share of about 0.30,
+  close to Inada's 0.32. The prediction was worked out after the Inada figure had been read, so it is not
+  a check and is recorded only as a consistency note.
+- Reads: `docs/research/s29_fly2_gabab_lit.md`.
+
+### F-S29-2: tonight's literature gaps: no fly central NMDA current, no GABA-B decay constant, no muscarinic or mGluR current, no ORN paired-pulse ratio, no wild-type resting wing angle (fly2, s29, 23 Oct 23:58)
+- These are gaps after a targeted search, with sources in `docs/research/s29_fly2_*_lit.md`. Each one blocks a row from going
+  ON at a measured value. None of them is filled by a guess.
+- **N8 NMDA.** No recorded NMDA-mediated synaptic current in any Drosophila central neuron, adult, larval or cultured,
+  was found. Xia et al. 2005 shows dNR1/dNR2 Mg2+ block only in heterologous cells (S2 cells, oocytes), with no IC50 and no decay tau.
+  Hemolymph Mg2+ (about 26 mM whole, Larrivee 1979) is a secondary read. The N8 share stays 0 for that reason, and
+  N8 cannot be done by Ben's definition until a fly current exists.
+- **N7 GABA-B decay.** No paper states a GABA-B IPSP or IPSC decay constant. Olsen & Wilson 2008 Fig 4b suggests about 1 s or
+  more of extra presynaptic suppression at ORN terminals, figure-read, presynaptic, and not represented. The 150 ms is guessed.
+- **mAChR / mGluR.** No recorded slow current. Bielopolski et al. 2019 (eLife, full text) shows mAChR-A is
+  inhibitory in KCs: muscarine lowers KC odour responses. That is the opposite sign to the built slow excitatory
+  component, so a muscarinic share must not be switched on through the excitatory slow pool.
+- **N10 ORN depression.** No ORN -> PN paired-pulse ratio in Kazama & Wilson 2008 or 2009, or in Nagel, Hong & Wilson 2015.
+  N29's ORN STP check stays circular (Nagel Eq 1).
+- **B14 wing rest.** No measured folded-wing angle for wild-type flies; papers give angle conventions, not values. B14's
+  spring reference stays an inferred posture.
+
+### F-S29-3: B15 take-off is about half the measured speed; the fly starts from its belly (fly2, s29, 23 Oct 23:58; DECISIONS 23 Oct 23:36 and 23:55)
+- m10f5, seed 12, one GF volley:
+  - COM speed in the first 2 ms of flight is 0.263 m/s, against Card & Dickinson 2008's 0.48 +- 0.05 (SD derived);
+  - middle-leg extension is 6.1 and 4.4 ms, against a median of 3.33;
+  - peak vertical acceleration is 225 m/s^2, against a median of 112.
+  - FAIL on both registered criteria. The data are spent.
+- **Contact diagnostic** (`scripts/probes/s29_contacts_diag.py`): the settled fly touches the floor with its head, abdomen
+  tip, lm and lh coxae, and one tarsus (lh5). After the volley the lm tarsus pushes, leaves and retouches until 5.5 ms;
+  lift-off (5 ms clear) is 6.0 ms.
+  - The registered tarsus-only detector called lift-off at 0.1 ms and was replaced after the first run. This is disclosed, and
+    it cannot change the verdict.
+- **Reading.** A take-off test needs a standing fly (F-STAND-3), so B15 waits on the posture blank. It also needs a new
+  measurement, von Reyn 2014 or Zabala 2012. The candidate causes (posture, guessed twitch kinetics, no lever arm, middle
+  legs only) are untested.
+
+### F-S29-4: B20 antenna receiver set from living-fly vibrometry and checked on other flies, PASS (fly2, s29, 23 Oct 23:58; DECISIONS 23 Oct 23:37 and 23:56)
+- Göpfert & Robert 2002: f0 426 +- 16 Hz, Q 1.2 +- 0.1, 8 Oregon-R flies, measured. The model's swept best frequency is
+  430 Hz and its Q 1.21.
+- GR2003's 395 +- 46 Hz (n 10) band is 303-487, so it passes. This is a replicate on other flies, not a prediction, and both numbers had
+  been seen before the check. GR2003 is spent.
+- Valid for a linear receiver at low levels only. The intensity-dependent rise (to 815 Hz) and self-oscillation are not
+  represented.
+- B20 is ON once stack m10f5s29 passes G and S.
+
+### F-S29-5: N31, N32 and N34 built and off; each acts over minutes to days, so none can be checked by a 60 s run (fly2, s29, 23 Oct 23:58; DECISIONS 23 Oct 23:56)
+- **Design.** `src/flyemu/lifetime.py`, one switch each, neutral 0, CPU only, with 6 implementation tests. Values and labels
+  are in the DECISIONS entry.
+- **N32 falsifier design (for later registration).** The rule's per-type bounds (APL down only, alpha/beta KC up only)
+  were read from Apostolopoulou & Lin 2020. So matching their APL activation arm is circular. Their APL>TNT arm, where KC
+  odour responses do not compensate for lost inhibition, is a prediction of the bounds, but it comes from the same paper, so it is weak.
+  An independent check needs another lab's chronic manipulation with KC or APL physiology.
+- **N34 fit plan.** Engel & Wu 1996 Table 2 gives stimuli to 5 failures at 2, 5 and 10 Hz (median 42, 85, 39). The plan is to fit u at
+  one frequency and hold out the other two. This is unspent and not run.
+- **Cost of ON.** Hours of model time per check, and the CPU path runs at about 13 000 s wall per 60 s model. That is
+  unaffordable without the GPU port, which needs its own equivalence check first.
+
 ### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
 - **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure
   pixels, derived). Refined grid: Mi4 output a = 0.02 ×1.36, 0.04 ×1.82, 0.06 ×2.50, 0.08 ×3.16; a* = 0.0649.

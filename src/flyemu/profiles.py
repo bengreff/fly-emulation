@@ -357,6 +357,26 @@ M10F5 = {
                                                   "(strong 0.023, weak 0.01; band 0.0073-0.026); subthreshold only, "
                                                   "no spike step, MN5 unset"),
 }
+# fly2 s29 N7 stage on m10f5 (DECISIONS s29 N7 entry; named apart from fly's m10f6-8): slow GABA-B in the two
+# recorded AL classes only.
+M10F5N7 = {
+    **M10F5,
+    "cell_type:all|gabab_from_recordings": (1.0, _I, "fly2 N7 stage: uniglomerular PNs 0.54 of GABA charge "
+                                            "slow (derived, Wilson & Laurent 2005 Fig 2: picrotoxin-resistant 46 "
+                                            "+- 5 %), AL LNs 0 (inferred, same paper); other cells keep 0; decay "
+                                            "150 ms guessed"),
+    "cell_type:all|slow_share_basis": (1.0, _I, "fly2 N7 stage: the recorded shares are shares of charge "
+                                       "(inferred); no other slow share is nonzero in m10f"),
+}
+# fly2 s29 stack (DECISIONS s29 B20 entry): m10f5n7 + the antenna receiver at its measured living tuning.
+M10F5S29 = {
+    **M10F5N7,
+    "antenna:a3|resonance_hz": (426.0, _I, "fly2 s29 (B20): measured, Goepfert & Robert 2002 J Exp Biol 205:1199, "
+                                "arista-tip velocity response of living flies, 426 +- 16 Hz (n 8, 24-26 C); a "
+                                "linear receiver, valid at low sound levels (f0 rises with intensity)"),
+    "antenna:a3|quality_factor": (1.2, _I, "fly2 s29 (B20): measured, same paper and flies, Q 1.2 +- 0.1 (n 8); "
+                                  "single source"),
+}
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
@@ -396,6 +416,8 @@ PROFILES: dict[str, dict] = {
     "m10f3": {"values": M10F3, "kick_mv": KICK},
     "m10f4": {"values": M10F4, "kick_mv": KICK},
     "m10f5": {"values": M10F5, "kick_mv": KICK},
+    "m10f5n7": {"values": M10F5N7, "kick_mv": KICK},
+    "m10f5s29": {"values": M10F5S29, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

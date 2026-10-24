@@ -375,75 +375,76 @@ Figures `docs/media/s16_oa_*.png`; runs `runs/s16/oa/`. `MEASUREMENT_LIST.md` it
 
 Session 11 was Director-run, from 30 September about 17:00 to 1 October about 03:00, mostly on the Mac. Its results are in `docs/FINDINGS.md` (Session 11), decisions in `docs/DECISIONS.md`, the timeline in `docs/SESSION11_LOG.md`, the plan in `docs/PLAN_NEXT.md`, and ranked fidelity upgrades in `docs/FIDELITY_LADDER.md`.
 
-## fly2: s27, `m10f` = m10f5 (DLMn coupling) merged with main and pushed; N12's second check (Hurkey splay) FAILS (no done row); N21 candidate (b) ruled out by Huang 2024 (23 Oct 04:01)
+## fly2: s29, the three absent N rows built (off); B20 checked PASS; N7 ON for the recorded AL classes in stage m10f5n7; B15 FAIL; frontier move waiting on two smokes (24 Oct 00:02)
 
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists. Zip work is parked (`fly_brain.zip` v1 stays as is, F-ZIP-4). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
+fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists; where none exists, built and ON counts, with a cited basis (Director, 23 Oct). fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
 
-- **For the Director (03:25 brief):**
-  - **Merge: done and pushed.** Main merged into `worktree-fly2` (149d07d; conflicts in parameters.csv, DECISIONS, FINDINGS, MECHANISM_STATUS and HANDOFF, with no row changed on both sides). Full suite on the merged tree, run through `slot.py` (03:22-03:37, `runs/s27/pytest_full_merged_s27.log`): **287 passed, 12 skipped, 0 failed**. Pushed to `origin/worktree-fly2`, ready for you to fast-forward main once fly parks. The commits after the merge touch only docs and probe scripts.
-  - **DLMn (N12) second check:** **FAIL, so not the first done row** (F-S27-4; registered DECISIONS 03:34, scored once at 03:59). Second measurement: Hurkey Fig. 2b / Extended Data Fig. 6, the gap around phase 0 in pairwise MN phase histograms, which shakB KD removes, read as the fraction of partner spikes at phase < 0.1 or > 0.9 (uniform 0.2). Fitted c 0.0266 vs c = 0, full network, 8-10 Hz tonic firing, no refit. With independent input the coupled pairs read 0.192 against 0.198 at c = 0 (needs < 0.18 and 0.02 below), and the coupled pairs equal the uncoupled cross-side control (0.191). With shared input, fitted 0.251 vs 0.245 is the registered falsifier. Figure viewed (`runs/s27/dlmn_splay_fig.png`): flat histograms, no dip at 0. Suspects, untested: no spike step through the junction (spike amplitude unsourced), the DLMn PRC (fly's N2/N4 intrinsics; Hurkey's model needs one near the SNL point), and the guessed drive noise (the coupling signal is about a tenth of it). **Tell fly:** the miss is registered against the DLMn intrinsics too. I did not edit fly's rows. `m10f` stays m10f5 (the CC is in band, and the DLMn are silent at rest). The junction row stays partial. N12 could not be done in any case: 6 of 9 gap rows have no value. Hurkey 2b/ED6 is now spent.
-  - **N21 candidate (b): ruled out for PPL1 (F-S27-3).** Huang 2024's PPL1 DANs rest at 5.0-26.6 Hz per fly (100 flies, 5 compartments, none below 0.1 Hz). The lowest fly is 3,400x above the 0.0015 Hz that test R needs. PAM is not in Huang. Of the 22 Oct ladder, only (a) remains: a dopamine-side gate, i.e. evoked vs spontaneous DA release per spike. I have no source for it (Ueno 2017 is not one). **Needs your call:** keep looking for (a), or park N21's resting safety as an open mechanism (`docs/MEASUREMENT_LIST.md` item 5) and move on.
-  - **fly's ER5 sleep need vs my plasticity rows: no conflict today, one future overlap.**
-    - No key collisions: `data/model/parameters.csv` has 860 rows and no duplicate ids. fly's are `n25_*` / `state:sleep|*`; mine are `n21_*`, `n22_*`, `n24_*`.
-    - No shared state: the homeostat (mode 1) keeps the ER5 need as a scalar in `internal_state.py` and enters the network only as a tonic `g_dfb_mv` drive on the dFB cells (FB6A/FB6E). N21/N22 edit KC->MBON weights, and N24 edits ER->EPG weights.
-    - Future overlap: N24's selection (`^ER\d`) includes ER5, and ER5->EPG is 3,222 synapses (271 edges at >= 5). If the ER5 need ever becomes ER5's release strength (Liu's BRP is an active-zone protein, so that is the natural next step), it would multiply the same edges N24 edits. Both factors would need to act on the baseline weight, and N24's floor would apply to its own factor only. N24 is off (0) in m10f and the need writes no weights, so nothing is needed now. Tell fly2 before wiring the need into ER5 synapses.
-- **Done this session (s27):**
-  - Commits: 120e0f6 (switch), 4b79905 (fit, m10f5 stage, cascade ruling), 015e339 (`m10f` = m10f5), 149d07d (merge), 736d8d9 (splay pre-registration), 52a7dbe (N21 (b), scorer), plus this one (splay scored). All pushed to `origin/worktree-fly2`.
-  - m10f5 adoption (F-S27-1): the DLMn c-f coupling is 0.0266, which gives in-network CC 0.01433 against Hurkey's pair-count mean of 0.0143. Gate G and the 60 s smoke S pass, identical to m10f4 (the DLMn are silent at rest). Battery 277/12/0 before the merge, 287/12/0 after. Figure viewed. **`m10f` = m10f5 since 23 Oct 03:13.**
-  - Task 2 (F-S27-2): the rutabaga/dunce cascade is ruled out by prediction (0 of 108 kinetic combinations pass test R; best 55x short). Not built.
-  - Tools:
-    - `scripts/probes/s27_dlmn_cc.py` (in-network CC; `--reverse`);
-    - `s27_dlmn_cc_baseline.py` (clean-pair scoring);
-    - `s27_gap_identity.py` (hash identity);
-    - `s27_cascade_predict.py` (C1 fractions, the cascade under per-KC test R);
-    - `s27_dlmn_cc_fig.py` (F-S27-1 figure);
-    - `s27_dlmn_splay.py` (Hurkey splay phase fractions, `--coupling`, `--rate-common/--rate-indep`);
-    - `s27_dlmn_splay_score.py` (the registered rules);
-    - `s27_dlmn_splay_fig.py`;
-    - `s27_huang_ppl1_rest.py` (per-fly PPL1 rest rates).
-  - Runs are in `runs/s27/`.
-  - Sources read: Hurkey 2023 full text (PMC10232364), Tomchik & Davis 2009 (PMC4080329), Ueno 2017 (not usable for N21 (a)).
-- **Running:** nothing. The four splay runs and the merged suite went through `slot.py` and have finished.
+- **Brief (Director, Fri 23 Oct 23:00).**
+  - (1) A 'path to done' column for fly2's 49 MECHANISM_STATUS rows. Done in s28 (2be895e) and updated tonight for the nine rows touched.
+  - (2) Work the cheapest real completions in order: build the 3 absent N rows, and say what stops N7, N8, N10 and N14 going ON. No lowered bars, no fitted thresholds; smoke any frontier change.
+  - Budget about 7 % of the week. Stop at a clean commit by 05:30.
+- **Done this session (s29).**
+  - **N31, N32, N34 built, off** (`src/flyemu/lifetime.py`, `data/params/site_plasticity.csv`, `tests/test_lifetime.py` with 6 implementation tests; DECISIONS 23 Oct 23:56; F-S29-5). Each has one switch, neutral 0, CPU only (the GPU path refuses).
+    - N32: per-cell set-point intrinsic current, APL down only and alpha/beta KCs up only (inferred, Apostolopoulou & Lin 2020).
+    - N34: per-edge plasticity at GF afferents (Engel & Wu 1996) and AL LN->PN (Das 2011).
+    - N31: one whole-brain wake/sleep synaptic scale (Bushey 2011, Gilestro 2009) reading fly's N25 sleep state.
+    - absent -> partial in MECHANISM_STATUS, mechanisms.yaml and the ledger. None can be checked in a 60 s run.
+  - **N7:** the mRNA route was rejected (F-S29-1: its sources sit on incompatible scales). A new switch, `cell_type:all|gabab_from_recordings`, sets uniglomerular PNs 0.54 (derived, Wilson & Laurent 2005) and AL LNs 0 (inferred). Stage `m10f5n7` was pre-registered at 23:31. **G passes on seeds 12-15**: whole brain 0.309-0.310 Hz, UPN 0.95-1.01 Hz against m10f5's 1.01-1.07, thorax 0.546-0.547 mm, silent, 0 warnings. The 60 s smoke S is running.
+  - **B20:** f0 426 Hz and Q 1.2 from Göpfert & Robert 2002 (measured). Checked on GR2003's flies: 430 Hz is inside 303-487, **PASS**; a replicate, with values seen first (DECISIONS 23:37, 23:56; F-S29-4). Stack `m10f5s29` = m10f5n7 + B20. G seeds 12-13 pass (identical to m10f5n7); seeds 14-15 and S are running.
+  - **B15: FAIL** (pre-registered 23:36, scored 23:55; F-S29-3). The take-off is about half the measured speed (0.263 against 0.38-0.58 m/s), and middle-leg extension is 6.1 / 4.4 ms against 2.4-4.3. The lift-off detector was fixed after the first run, which is disclosed and can't flip the verdict. The fly starts from its belly (F-STAND-3). Card & Dickinson 2008 is spent.
+  - **What stops the built-off rows going ON** (MECHANISM_STATUS path column, F-S29-2):
+    - N7: no measured GABA-B decay constant exists, and the other classes are unmeasured.
+    - N8: no recorded NMDA current in any fly central neuron. It stays 0 unless Ben rules a transferred value acceptable.
+    - N10: no ORN paired-pulse ratio in Kazama & Wilson or Nagel 2015.
+    - N14: N21's resting stability (parked).
+    - B14: no measured wild-type resting wing angle. A derived basis from a photograph is the cheap path.
+  - Literature reads kept in `docs/research/s29_fly2_*_lit.md` (four files).
+- **Running now** (backhouse `~/fly2_mc`, my processes only):
+  - `run_gate_n7.sh`: smoke `m10f5n7` seed 12, writing `runs/s29/fc/smoke_m10f5n7_s12.json`; flags `smoke_m10f5n7.done` and `ALL.done`.
+  - `run_gate_s29.sh`: gates `m10f5s29` seeds 14-15 and smoke seed 12; flag `ALL_s29.done`.
+  - A 60 s smoke took 13 214 s wall for m10f5 (load about 40 tonight, with fly's three m10f6-8 smokes alongside). Expect results about 03:30-04:30.
 - **Next, in order:**
-  1. N21: the Director's call on (a) vs parking (above). If a source for evoked vs spontaneous DA per spike turns up, pre-register test R with it (`s26_retention.py`).
-  2. N12: a DLMn retry needs a sourced MN spike amplitude (for the spike step) and DLMn excitability/PRC values (fly's N2/N4), then a fresh held-out functional measurement (Hurkey Fig. 3d sync index under ShakB overexpression is unspent, but its formula isn't in the text). MN5 coupling needs a measurement.
-  3. Berry 2018 held-out arm (only once N21 is resting-safe).
-  4. From s24's list: N10 leg/generic STD, N7 GABA-B, N11 presynaptic inhibition, N9 conductance synapses (values first); B3, B4, B12.
+  1. Score both smokes against the 21 Oct 21:35 bands: whole brain 0.162-0.486 Hz, active 0.014-0.042, no runaway, no NaN. If m10f5s29 passes, `m10f` = m10f5s29 (B20 done, N7 ON for two classes), with a DECISIONS entry. If only m10f5n7 passes, `m10f` = m10f5n7 and the B20 failure is reported. Adoption still needs the battery and a viewed figure (the smoke rates figure). Fly's m10f6-8 are on its branch; whichever merges second re-runs the smoke on the combined stack.
+  2. Proposed order for the next rows, those with an unspent independent check:
+     - N34 GF habituation: fit per-spike u at one Engel & Wu 1996 Table 2 frequency, hold out the other two. Seconds to minutes of model time; the cheapest lifetime check.
+     - B14: a derived folded-wing basis.
+     - N10: a sensory first synapse with a recorded PPR.
+     - N7 KC: a slow pool on graded release, with a second KC recording as the check.
+     - B2: the measured coxa ranges ON.
+     - B8 / B9: fix the neck and abdomen pinning, then built and ON.
+  3. N21 resting stability stays parked (MEASUREMENT_LIST item 5). Watch for evoked vs spontaneous DA release sources, item (a).
 - **Known misses of N21/N22:**
   - No LTP.
-  - DA alone doesn't potentiate naive synapses (Cohn 2015).
-  - CS- doesn't change (Hige: about -25%).
-  - One rate for all compartments; compartments are a DAN->MBON contact proxy.
-  - The eligibility and DA trace taus are guessed.
-  - Not resting-safe at measured DAN rest (F-S26-1, F-S27-3). KC-side cooperativity can't fix it (F-S27-2). Any run with fly's σ*_DAN on needs `cell_type:all|kc_mbon_ltd_timing_rate` 0.
-- **Earlier fly2 state:**
-  - MECHANISM_STATUS fly2 rows: 0 done of 49.
+  - DA alone doesn't potentiate (Cohn 2015).
+  - CS- doesn't change.
+  - One rate for all compartments.
+  - The trace taus are guessed.
+  - Not resting-safe at measured DAN rest (F-S26-1, F-S27-2/3). Any run with fly's σ*_DAN on needs `cell_type:all|kc_mbon_ltd_timing_rate` 0.
+- **State.**
+  - MECHANISM_STATUS fly2 rows: 0 done of 49. B: 23 partial, 3 absent (B24-B26). N: 4 built-off, 19 partial, 0 absent.
   - Scoreboard: 1 of 8 (PER labellar).
   - N30 option B is UNDECIDED (`docs/MEASUREMENT_LIST.md` item 1).
-  - DLMn never follow the giant fibre.
-- **Literature in hand:**
-  - `docs/research/s25_restoration_figcheck.md`
-  - `docs/research/s24_fly2_ltp_and_mb_rest_lit.md`
-  - `docs/research/s23_fly2_synaptic_plasticity_lit.md`
-  - Switch inventory: `scripts/probes/switch_inventory.py --profile m10f0`.
+  - Fast tests after the lifetime build: 94 passed, 1 failed (`test_the_m4_profile_is_a_view_of_the_table`: the N31/N32 scalars were read only when on). Fixed by reading them at neutral; rerun of the three affected files (lifetime, model data, stubs): 21 passed, 0 failed. Full suite not run this session.
 - **Backhouse:**
-  - `~/fly2_mc` has the worktree's src, data/params and data/model as of s27 (pre-merge). Run scripts with `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`.
-  - Send commands as scripts: cmd.exe breaks a quoted `bash -c` that contains `;`.
+  - `~/fly2_mc` has the worktree's src, data and probes as of s29.
+  - Run scripts with `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`. Launch scripts need `sleep 3` after `nohup ... &`, or the job dies with the shell.
+  - Fetch files with `ssh backhouse "wsl cat /home/greff/fly2_mc/<path>"` (an absolute path; `~` is not expanded).
+  - cmd.exe breaks a quoted `bash -c` that contains `;` or nested quotes.
   - At most 4 threads; queue above load 24.
+  - Fly's processes (smokes m10f6-8 in `runs/s23`, the s23_n25_night fit) are not mine.
 - **Mac lessons:**
-  - Every heavy job goes through `python3 ~/director/harness/slot.py run --label "fly2: <what>" -- <cmd>` (rule 3; I missed it once in s27).
-  - The worktree guard refuses `$(...)`, heredocs into nohup, and any compound command it can't verify. Write scripts to `/tmp/fly2n` and run them plainly.
-  - DECISIONS is over 256 KB, so Read it with offset and limit.
-  - `runs/` is a symlink.
-  - zsh errors on an unmatched glob.
-  - The full pytest takes about 15 min.
-  - A 20 s full-network run of `s27_dlmn_splay.py` takes about 25 min at 1 thread and needs about 2 GB.
+  - Heavy jobs go through `python3 ~/director/harness/slot.py run --label "fly2: <what>" -- <cmd>`.
+  - The worktree guard refuses heredoc python, awk programs and compound commands. Write scripts to `/tmp/fly2n/s29` and run them plainly.
+  - DECISIONS is over 600 KB, so Read it with offset and limit.
+  - `runs/` is gitignored.
+  - The fast suite (lifetime, stubs, model data, internal state, class mechanisms, hygiene, GPU) takes about 7 min.
 - **Carried:**
-  - The body hook: fly owns the premotor->MN fix; then rerun the five scoreboard protocols and step R.
-  - The stance loop CS rows (fly2).
+  - The body hook: fly owns the premotor->MN fix; then rerun the five scoreboard protocols.
+  - The stance loop CS rows.
   - Optic lobe T4/T5 dendritic position (Behnia 2014 is sealed).
   - `pytest tests/test_gpu_batched.py` under JAX on backhouse.
-- **Stay out of:** the VNC files, fly's switches, the flyapp worktree, and `docs/research/sealed/*`. `data/raw/huang2024/` is released to fly2 (spent; consistency and bounds only).
+  - N12 retry needs a DLMn spike amplitude and PRC.
+- **Stay out of:** the VNC files, fly's switches and rows, the flyapp worktree, and `docs/research/sealed/*`.
 
 ## Where the project stands
 
@@ -602,6 +603,15 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Male starvation survival 24-112 h (secondary reports) | **spent** (s19 S2, pass 28.4 h; F-S19-1) | consistency only |
 | Ja 2007 CAFE, single males 1.5 µl/day | **spent** (s19 S3, pass 1.85; F-S19-1) | consistency only |
 | Male desiccation survival 16.1-34.5 h (secondary) | **held out, unspent**; seen in an agent report and never used to set a value (S4 not scored) | score once when the loss rate and lethal fraction are sourced |
+| Card & Dickinson 2008 J Exp Biol 211:341 Table 1 (take-off COM speed over the first 2 ms, middle-leg extension, peak acceleration; N 27) | **spent** 23 Oct 23:55 (fly2 s29 B15: FAIL on both criteria, F-S29-3) | consistency only; a B15 retest needs von Reyn 2014 or Zabala 2012 (unread) |
+| Göpfert & Robert 2002 J Exp Biol 205:1199 (arista f0 426 ± 16 Hz, Q 1.2 ± 0.1, 8 living flies) | SET B20 f0 and Q (fly2 s29) | can't validate B20 |
+| Göpfert & Robert 2003 PNAS 100:5514 (living best frequency 395 ± 46 Hz at 1e-5 m/s, n 10) | **spent** 23 Oct 23:56 (fly2 s29 B20 PASS, a replicate with values seen first; F-S29-4) | consistency only |
+| Wilson & Laurent 2005 J Neurosci Fig 2 (PN picrotoxin 46 ± 5 %, CGP 97 ± 2 % of the rest; LN picrotoxin 98 ± 3 %) | SET N7 recorded shares (fly2 s29, PN 0.54 derived, LN 0 inferred) | can't validate N7 |
+| Inada, Tsuchimoto & Kazama 2017 Fig 5C (KC GABA-B share about 32 % of the blockable response, figure read) | seen (fly2 s29 reader); not used to set a value; an unregistered Davie-scale prediction (0.30) was made after it was read | consistency only |
+| Engel & Wu 1996 J Neurosci Table 2 (GF-pathway habituation: median 42 / 85 / 39 stimuli to 5 failures at 2 / 5 / 10 Hz) | **held out, unspent**; Fig 5 recovery read to SET the N34 GF tau (fly2 s29) | N34 fit target: fit one frequency, hold out the other two |
+| Apostolopoulou & Lin 2020 PNAS 117:16606 (APL chronic activation and APL>TNT; KC compensation over about 4 d) | SET N32 directions and tau (fly2 s29); effect sizes in figures not read | the APL arm can't validate N32; the TNT arm is a weak same-paper prediction |
+| Bushey 2011 Science 332:1576; Gilestro 2009 Science 324:109 (secondary); Das 2011 (AL habituation half-life) | SET N31 taus and gain, N34 AL tau (fly2 s29) | can't validate N31 or N34-AL |
+| Fontaine 2009 J Exp Biol 212:1307; Riabinina 2011; Jang, Goodman & von Reyn 2022 preprint | seen (fly2 s29 reader, take-off and antenna context); not used | not blind for B15 or B20 |
 
 ## Things that will bite you
 

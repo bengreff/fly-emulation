@@ -14,15 +14,11 @@ STUBS = {
     # class built, lif._stp_connections); its other per-synapse values are refused there.
     # N30 cell_type:all|n_compartments left in s20 (fly2: two compartments for the cells of
     # two_compartment.csv, lif._two_compartments); it is still read there and refused when set
-    "synapse:all|structural_plasticity": (
-        "N31", 0.0, "synapse addition and removal during life (experience, sleep)"),
-    "cell_type:all|homeostatic_plasticity": (
-        "N32", 0.0, "activity-dependent regulation of channel densities toward a set point"),
+    # N31 synapse:all|structural_plasticity, N32 cell_type:all|homeostatic_plasticity and N34
+    # synapse:other_sites|plasticity left in s29 (fly2: built in lifetime.py, read by lif.default_params)
     "glia:all|astrocyte_model": (
         "N33", 0.0, "astrocyte uptake, OA/TA-gated Ca signalling and glial coupling "
                     "(FIDELITY_LADDER rung 7)"),
-    "synapse:other_sites|plasticity": (
-        "N34", 0.0, "plasticity outside the mushroom body and ring (AL, visual, courtship)"),
     "sense:all|efferent_gain_control": (
         "B24", 0.0, "central (e.g. octopaminergic) control of sense-organ gain"),
     "sense:active|sensor_muscles": (

@@ -42,6 +42,7 @@ import pandas as pd
 import scipy.sparse as sp
 
 from . import channels as ichan
+from . import lifetime
 from . import params as ptable
 from .connectome import Connectome
 from .registry import Registry, Status
@@ -151,6 +152,10 @@ class LIFParams:
     # {"cells", "edge_idx" (CSR edges that land on the axon), "q", "rho" (per listed cell, from the class)};
     # None = every cell is a point neuron
     two_comp: dict | None = None
+    # s29 (fly2): lifetime plasticity built from the s12 stubs (lifetime.py); None = off (neutral)
+    homeostat: dict | None = None      # N32 per-cell activity set point
+    site_plast: dict | None = None     # N34 use-dependent plasticity at identified sites
+    structural: dict | None = None     # N31 whole-brain wake/sleep synaptic scale
 
 
 STP_TABLE = "stp_connections.csv"
@@ -992,10 +997,20 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         sh, _src = rr
         gabab, mglur, machr, nmda = (sh["gabab_fraction"], sh["mglur_fraction"],
                                      sh["machr_fraction"], sh["nmda_fraction"])
+    # s29 N7: GABA-B shares of recorded types (gabab_fraction_rec rows) override the default and the mRNA shares
+    if one("gabab_from_recordings", "boolean", "N7: per-type GABA-B shares from recordings", 0.0,
+           "neutral 0: gabab_fraction rows, the default or the mRNA shares apply"):
+        rec = ptable.per_neuron(reg, conn, "gabab_fraction_rec", np.nan, units="dimensionless", table=table)
+        gabab = np.where(np.isfinite(rec), rec, _arr(gabab, n)).astype(np.float32)
 
     # --- s13 (fly2, N12): identified gap junctions (data/params/gap_junctions.csv); None at neutral
     from . import electrical
     gap = electrical.build_gap(reg, conn, tau_m, v_rest, v_th, delay_ms, timestep_ms)
+
+    # --- s29 (fly2): N32, N34, N31 lifetime plasticity (lifetime.py); None at neutral
+    homeo = lifetime.homeostat(reg, conn, table, ptable.per_neuron)
+    site = lifetime.site_plasticity(reg, conn, np.asarray(graded, bool))
+    struct = lifetime.structural(reg, conn)
 
     return LIFParams(
         tau_m=tau_m, v_rest=v_rest, v_leak=v_leak, v_th=v_th, v_reset=v_reset, t_ref=t_ref,
@@ -1023,7 +1038,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
         intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge, fv_edge=fv_edge,
-        psp_edge=psp_edge, two_comp=two_comp,
+        psp_edge=psp_edge, two_comp=two_comp, homeostat=homeo, site_plast=site, structural=struct,
     )
 
 
@@ -1190,6 +1205,11 @@ class Network:
         self._gain_on = self._mod_active or self.modmap is not None
         self._s10_ring_glia(pre)          # after W_graded exists (N23 edits it)
         self._two_comp_refusals()
+        # s29 (fly2): lifetime plasticity state, one copy per network (lifetime.py)
+        self.hs = copy.deepcopy(p.homeostat)
+        self.site = copy.deepcopy(p.site_plast)
+        self.struct = copy.deepcopy(p.structural)
+        self._life = self.hs is not None or self.site is not None or self.struct is not None
 
     # --- one timestep --------------------------------------------------------
 
@@ -1312,6 +1332,11 @@ class Network:
             if p.kc_recovery_tau_ms > 0 and int(round(self.t_ms / self.timestep_ms)) % 100 == 0:
                 k = 1.0 - np.exp(-100 * self.timestep_ms / p.kc_recovery_tau_ms)
                 self.w[self.kc_e] += ((self.kc_w0 - self.w[self.kc_e]) * k).astype(np.float32)
+        if self._life:   # s29 N32 / N34 / N31: slow updates every 100 steps, N32 current every step
+            if int(round(self.t_ms / self.timestep_ms)) % 100 == 0 and self.t_ms > 0:
+                self._life_tick(100 * self.timestep_ms)
+            if self.hs is not None:
+                drive = drive + self.hs["h_full"]
         if external_mv is not None:
             drive = drive + external_mv
         if self._any_spont:
@@ -1399,6 +1424,8 @@ class Network:
             r = np.clip(r, 0.0, 1.0)
             if self.g_k is not None:
                 r = r * self.g_k
+            if self.struct is not None:   # s29 N31: graded synapses scale too
+                r = r * np.float32(self.struct["s"])
             if r.any():
                 self.delay[(self.delay_head + 1) % self.D] += (
                     self.W_graded @ (r * self.graded_scale)).astype(np.float32)
@@ -1430,6 +1457,9 @@ class Network:
             self.ref_until[spiked] = self.t_ms + self.t_ref[spiked]
             if self.ich is not None:
                 self.ich.on_spike(spiked)
+            if self.hs is not None:   # s29 N32 activity sensor
+                k = self.hs["pos"][spiked]
+                self.hs["cnt"][k[k >= 0]] += 1.0
         if ax_sp is not None:   # N30: an axon spike is the cell's output spike; the soma does not see it
             spiked = np.union1d(spiked, ax_sp)
         if spiked.size:   # output side
@@ -1861,6 +1891,15 @@ class Network:
                                  counts)
         if self.stp is not None:
             fac, facc = self._stp_factor(spiked, counts, sel, fac, facc)
+        if self.site is not None:   # s29 N34: per-edge factor at the identified sites
+            f = lifetime.site_factor(self.site, sel)
+            if f is not None:
+                fac = f if fac is None else fac * f
+                facc = f if facc is None else facc * f
+        if self.struct is not None:   # s29 N31: one whole-brain synaptic scale
+            sc = np.float32(self.struct["s"])
+            fac = sc if fac is None else fac * sc
+            facc = sc if facc is None else facc * sc
         if fac is not None:
             w = w * fac
         # The head slot was consumed and zeroed earlier in this step; a slot
@@ -1889,6 +1928,20 @@ class Network:
             if facc is not None:
                 ws = ws * facc
             np.add.at(self.delay_slow, (slot % self.delay_slow.shape[0], tgt), ws)
+
+    def _life_tick(self, dt_ms: float) -> None:
+        """s29 (fly2): the slow N32 / N34 / N31 updates over the last dt_ms (lifetime.py)."""
+        if self.hs is not None:
+            lifetime.homeostat_tick(self.hs, self, dt_ms)
+        if self.site is not None:
+            lifetime.site_tick(self.site, dt_ms)
+        if self.struct is not None:
+            lifetime.structural_tick(self.struct, dt_ms)
+
+    def set_asleep(self, asleep: bool) -> None:
+        """N31: the sleep state the synaptic scale follows (the organism passes N25's; default awake)."""
+        if self.struct is not None:
+            self.struct["asleep"] = bool(asleep)
 
     def _stp_factor(self, spiked, counts, sel, fac, facc):
         """Rung 8 (N29): Tsodyks-Markram factor u+ x / U on the table's edges (Markram 1998

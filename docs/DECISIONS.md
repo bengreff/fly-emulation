@@ -5011,3 +5011,177 @@ Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`
   - One k_off with a light term cannot fragment the night without over-fragmenting the day.
 - **Meaning for the Director's call.** Fitting k_r inside its measured range fixes the night only at the cost of the day. A structure that has both probably needs a night-specific element (a clock input to the dFB or ER5, or a dark-specific arousal), not a refit. Every variant so far predicts a day-1 rebound that grows with deprivation; its size spans about 50-100 min (6 h) and 90-190 min (24 h) across them.
 - Nothing adopted; no new prediction registered.
+
+## fly2 s29: N7 slow GABA-B goes ON for the two recorded antennal-lobe classes; stage m10f5n7 pre-registered (23 Oct 23:31 CDT, before any gate or smoke run)
+- **Why not the mRNA route (the s28 'path to done').** `receptor_shares_from_rna` uses one slow/fast ratio s per
+  receptor family over all sources, and the sources are on different scales:
+  - Davis 2020 and Ozel 2021 give near-binary call probabilities (Ozel GABA-B-R2 is 1.0 in every type);
+  - Davie 2018 and the Allen hemilineage table give detection fractions (share of cells with at least one read).
+  - GABA-B-R1 calls disagree between Davis and Ozel in 5 of 17 shared types.
+  - One s cannot convert both scales, so a PN-calibrated s would set every other type on an arbitrary scale. Recorded
+    as F-S29-1; the mode stays off.
+- **What goes ON instead.** `cell_type:all|gabab_from_recordings` 1 (new switch, neutral 0, CPU path; the GPU path
+  already carries `w_slow`):
+  - 219 uniglomerular PNs (51 types, `^.*_(adPN|lPN)$`) get GABA-B share 0.54, derived. Source: Wilson & Laurent 2005 Fig 2. Picrotoxin
+    blocks 46 +- 5 % of the GABA hyperpolarisation (n 14) and CGP54626 blocks 97 +- 2 % of the rest (n 5). Range 0.49-0.59
+    at +-1 SEM;
+  - 317 AL LNs (64 types, `^(lLN|l2LN|v2LN|vLN|il3LN).*`) get 0, inferred. Picrotoxin blocks 98 +- 3 % in recorded LNs (n 6) and CGP
+    does nothing (101 +- 6 %, n 5); transferred to every AL LN type;
+  - `slow_share_basis` 1: the share is read as a share of charge (inferred), so each LN spike delivers the same total
+    inhibitory charge, 54 % of it through the 150 ms pool. No other slow share is nonzero in m10f, so the basis
+    changes nothing else.
+- **Stage.** `m10f5n7` = m10f5 + those two values (`profiles.py`). It is named apart from fly's m10f6-m10f8, which fly
+  defined tonight on backhouse. If both pass, whichever merges second re-runs the smoke on the combined stack.
+- **Objective.** A fill, not a fit: no value is tuned. N7 moves from built-off to ON for the measured classes.
+- **Falsifier.** Gate G (`closed_loop_check.py` seeds 12-15) and the 60 s smoke S (seed 12) fail, with the bands of
+  21 Oct 21:35:
+  - G: last 100 ms silent, no runaway, 0 MuJoCo warnings, no NaN, thorax within 0.01 mm of m9c;
+  - S: whole brain 0.162-0.486 Hz, active fraction 0.014-0.042, no runaway, no NaN.
+  - If either fails, the stage is not adopted and the failure is reported. No value is changed to make it pass.
+- **Expected (written now).** Whole-brain rate within 0.01 Hz of m10f5's (0.3037). Only 219 PNs (51 types) carry the slow
+  pool, and the charge basis keeps the total inhibition. ALPN mean rate at rest is reported against m10f5 as a
+  description, not scored.
+- **Validity range, stated with it.** It covers postsynaptic GABA-B in uniglomerular PNs and the AL LN zero only.
+  - The 150 ms decay is guessed (lit read s29: no paper states a GABA-B decay constant).
+  - Every other cell keeps GABA-B 0 because it is unmeasured, not because it is known to be 0.
+  - Kenyon cells have a measured share (Inada et al. 2017 Fig 5C, read s29), but their GABA comes from APL. APL is
+    graded, and graded release has no slow pool, so a KC row would act on almost nothing. It is not added.
+  - Presynaptic GABA-B on ORN terminals (Olsen & Wilson 2008) is not represented: central input onto sensory
+    terminals is excluded since m1.
+- **N7 row after adoption.** Still partial. ON at measured values for two classes; the rest of the brain is unmeasured,
+  and the decay is guessed.
+
+## fly2 s29: B15 take-off check against Card & Dickinson 2008, pre-registered (23 Oct 23:36 CDT, before the probe is run)
+- **Measurement (read in full text s29, `/tmp/fly2n/b3_card2008.txt`).** Card & Dickinson 2008 J Exp Biol 211:341,
+  Table 1 and Results. Freely moving 3-day mated females, wild-caught stock, 22-25 C, 6000 frames/s, looming-stimulus
+  escape take-offs (N 27):
+  - centre-of-mass speed over the first 2 ms of flight 0.48 +- 0.01 m/s (mean +- SEM); SD about 0.05 (SEM x sqrt 27,
+    derived);
+  - middle-leg extension, start of motion to end of extension: median 3.33 ms (IQR 0.46);
+  - peak vertical COM acceleration: median 112 m/s^2 (IQR 47.8), reported only.
+- **Model.** m10f5 as it stands; nothing is changed or fitted for this check. The TTM peak torque (90 uN mm) is derived
+  from fibre physiology (M9M). The twitch rise and decay (1 and 5 ms) are guessed. Neither was set from take-off data.
+- **Protocol.** `scripts/probes/s29_jump_check.py --profile m10f5 --seed 12`:
+  - 100 ms settle, then one GF (DNp01) volley (kick 50 mV, as `tests/test_jump.py`), then 40 ms;
+  - lift-off is the first step with no tarsal contact force;
+  - COM speed is averaged over the 2 ms after lift-off;
+  - leg extension is the CTr joint of each middle leg moving in the TTM's depression direction, from 5 % of its peak
+    angular velocity until it falls back below that.
+  - Run on backhouse `~/fly2_mc`.
+- **Pass (both needed).**
+  - COM speed in the first 2 ms of flight is within 0.38-0.58 m/s (mean +- 2 SD).
+  - Middle-leg extension lasts 2.4-4.3 ms (median +- 2 IQR). The IQR band is derived; the paper gives no SD.
+- **Fail.** Either is outside, or there is no lift-off within 40 ms (then the speed is outside by definition). A
+  failure is recorded with its size. No value is refitted against this measurement. It is spent here and goes in the
+  held-out register.
+- **Meaning.** A pass checks the TTM jump end to end against a measurement. B15 would still not be done: the twitch
+  kinetics are guessed, and von Reyn 2014's short-mode split is unread (paywalled). A fail says the single-joint TTM
+  model does not produce a measured take-off.
+
+## fly2 s29: B20 antenna receiver set from Göpfert & Robert 2002 and checked on their 2003 flies; stack m10f5s29 pre-registered (23 Oct 23:37 CDT, before the sweep or any gate)
+- **Values (read in full text s29, `/tmp/fly2n/b1_gopfertrobert2002.txt`).** Göpfert & Robert 2002 J Exp Biol
+  205:1199, arista-tip vibrometry of living flies (Oregon-R, 4 males and 4 females, 24-26 C, noise 100-1000 Hz in a
+  free sound field). A simple harmonic oscillator fitted to the velocity response gives:
+  - f0 426 +- 16 Hz (range 405-445);
+  - Q 1.2 +- 0.1 (range 1.1-1.3).
+  - Set as `antenna:a3|resonance_hz` 426 and `antenna:a3|quality_factor` 1.2. They replace the guesses 250 and 1.5.
+- **Check (independent flies, same quantity).** Göpfert & Robert 2003 PNAS 100:5514, living flies, forced response at
+  the lowest particle velocity tested (1e-5 m/s, where a linear receiver applies): best frequency 395 +- 46 Hz
+  (n 10). `scripts/probes/s29_antenna_sweep.py` drives the oscillator as built (extrasenses.Antenna, 0.1 ms step).
+  - **Pass:** the model's velocity-response best frequency is within 303-487 Hz (mean +- 2 SD).
+  - **Implementation check, not validation:** the swept best frequency is within 2 % of 426 Hz, and the Q from the
+    -3 dB bandwidth is within 5 % of 1.2.
+  - **Disclosed:** both numbers were seen before this was written, so the outcome is known. It is a replicate check
+    of the value on different flies, not a test of a prediction. The 2003 value is spent here.
+- **Validity range, stated with it.** A linear receiver at low sound levels only.
+  - Not represented: the living f0 rising with intensity (395 to 815 Hz, 2003); free self-oscillation at 147-207 Hz
+    (2003; Riabinina 2011); the passive or CO2 receiver at about 800 Hz.
+  - The JO sound gain and the JO-A/B half-saturation stay guessed.
+- **Stack.** `m10f5s29` = m10f5n7 + these two values. G (seeds 12-15) and S (60 s, seed 12) use the 21 Oct 21:35
+  bands. Expected: identical to m10f5n7. There is no sound in G or S, and the oscillator starts at rest at its static
+  deflection.
+  - If m10f5n7 fails, m10f5s29 is not adopted either.
+  - If m10f5n7 passes and m10f5s29 does not, the B20 change is the cause, and it is reported.
+
+## fly2 s29: B15 take-off check scored, FAIL on both criteria; lift-off detector fixed after the first run, disclosed (23 Oct 23:55 CDT)
+- **Result (m10f5, seed 12, backhouse; `runs/s29/jump_m10f5_c.json`, gitignored).**
+  - COM speed over the first 2 ms of flight: 0.263 m/s. Band 0.38-0.58: **FAIL**, 0.12 m/s below the floor, about
+    4.3 SD below the measured mean (0.48 +- 0.05 SD).
+  - Middle-leg extension: 6.1 ms (left) and 4.4 ms (right). Band 2.4-4.3: **FAIL**. The left leg is 1.8 ms over; the
+    right is 0.1 ms over.
+  - Reported only: peak vertical COM acceleration 225 m/s^2 against a median of 112 (IQR 47.8); GF -> TTMn first spike 0.3 ms;
+    peak TTM torque 90 uN mm (its derived ceiling); COM rise 3.9 mm in 40 ms; 0 MuJoCo warnings.
+  - B15 stays partial. Card & Dickinson 2008 Table 1 is spent; no value is refitted against it.
+- **Detector change after seeing the first run (disclosed).** The pre-registered rule was "first step with no tarsal
+  contact force", and it had two faults:
+  - The body's ground-contact sensors are off in m10f5, so it read nothing. The fix is to read MuJoCo's contact list.
+  - The settled fly touches the floor with its head, abdomen tip, two coxae and one tarsus (`scripts/probes/
+    s29_contacts_diag.py`, `runs/s29/contacts_diag.log`; the known lying posture, F-STAND-3), so a tarsus-only rule
+    called lift-off at 0.1 ms.
+  - Lift-off is now the start of the first 5 ms with no contact between any part of the fly and the floor. The pushing middle tarsus
+    leaves and retouches until 5.5 ms, and lift-off is 6.0 ms. The first contact-free step is 1.4 ms, and is reported too.
+  - The change cannot flip the verdict. Leg extension, which does not depend on the detector, already fails. The speed
+    also fails under any lift-off time, because the peak COM speed over the whole 40 ms is 0.273 m/s.
+- **Reading.** The single-joint TTM model, starting from the lying posture, gives a take-off about half as fast as
+  measured. The peak vertical acceleration is twice the measured one, but the push is longer, so the impulse is
+  peaky, not sustained. Candidate causes, none tested:
+  - The jump starts from the belly, not from standing on the middle legs.
+  - Twitch kinetics are guessed (rise 1 ms, decay 5 ms).
+  - The model has a TTM in the middle legs only, with no wing depression or other legs.
+  - There is no measured lever arm.
+  - The posture is a body blank (F-STAND-3), so a B15 retest waits for a standing fly. It also needs a new measurement:
+    von Reyn 2014 (paywalled) or Zabala 2012 kinematics.
+
+## fly2 s29: B20 antenna receiver check scored, PASS; values adopted in stack m10f5s29 pending its gate and smoke (23 Oct 23:56 CDT)
+- **Result (`scripts/probes/s29_antenna_sweep.py --profile m10f5s29`, `runs/s29/antenna_m10f5s29.json`, gitignored).**
+  - Velocity-response best frequency: 430 Hz. Band 303-487 (Göpfert & Robert 2003, 395 +- 46 Hz): **PASS**.
+  - Implementation check: 430 Hz is 0.9 % from the set 426 (within 2 %); Q from the -3 dB band (290-645 Hz) is 1.21
+    against the set 1.2 (within 5 %). Pass.
+  - Disclosed as pre-registered: both values were seen before the check, so it is a replicate on other flies, not a
+    prediction. GR2003's 395 Hz is spent.
+- **B20 row.** Measured f0 and Q, checked on independent flies. It goes ON once m10f5s29 passes G and S (the smoke is
+  running). After that the row is done for a linear low-level receiver. The intensity-dependent f0 and
+  self-oscillation are outside the stated validity range, and the JO gain stays guessed.
+
+## fly2 s29: the three absent lifetime rows built, off by default: N32 set-point intrinsic plasticity, N34 plasticity at two identified sites, N31 sleep/wake synaptic scale (23 Oct 23:56 CDT)
+- **Why now.** The Director asked to build the whole system first (s29 brief). N31, N32 and N34 were the only fly2 rows
+  with no code. Each is now one switch in `src/flyemu/lifetime.py`, neutral 0, read by `lif.default_params`. The stubs
+  were removed from `stubs.py`. The GPU path refuses all three (CPU reference only). Tests: `tests/test_lifetime.py`,
+  6 implementation checks, which are not validation.
+- **N32 `cell_type:all|homeostatic_plasticity`.**
+  - Each listed cell gets an additive intrinsic current h (mV) holding its activity at a set point. Activity is the
+    spike rate for spiking cells and the depolarisation for graded cells. The set point is the mean over the first
+    capture_ms: the specimen is taken as the adapted state, as in s12.
+  - h moves at h_max / tau per unit relative error and is bounded per type.
+  - Rows (cell_types.csv), inferred from Apostolopoulou & Lin 2020 PNAS 117:16606 Fig 1, 4, 6: APL may only fall
+    (`homeostat_down`), and alpha/beta KCs may only rise (`homeostat_up`). A symmetric rule would predict KC
+    compensation under APL>TNT, which they did not see.
+  - Values: tau 2 d (inferred, Fig 3: induced over about 4 d, gone 1-2 d after); h_max 5 mV, sensor 600 s, capture 1 s
+    (all guessed).
+  - **Circular check only so far.** The direction rows come from the same paper a check would use. An independent
+    falsifier is the APL>TNT arm read for effect size: KC odour responses must not change. That is a prediction
+    of the bounds, but it is in the same paper, so it is weak.
+- **N34 `synapse:other_sites|plasticity`.** Per-edge factor y on the edges selected by
+  `data/params/site_plasticity.csv`. Each presynaptic spike moves y toward the row's bound by u, and y relaxes to 1
+  with tau_rec. y multiplies the fast, slow and channel copies of the edge, like short-term depression. Spiking
+  presynaptic cells only. Two rows:
+  - excitatory afferents onto DNp01: depress, u 0.05 (guessed), recovery tau 10 s (inferred, Engel & Wu 1996 Fig 5),
+    floor 0 (guessed);
+  - GABAergic AL LNs onto uniglomerular PNs: potentiate, u 1e-4 (guessed), tau 1731 s (derived from Das 2011's 20 min
+    half-life), cap 1.5 (guessed).
+  - Visual experience and courtship memory sites are not built.
+  - The first fit target is Engel & Wu Table 2: fit u at one stimulus frequency and hold out the others. Not run.
+- **N31 `synapse:all|structural_plasticity`.** One whole-brain scale s on every chemical synapse (spiking and graded).
+  - Awake, s relaxes toward 1 + 0.35 with tau 12 h. Gain guessed from Gilestro 2009's BRP 30-40 %, a secondary
+    read; tau inferred from Bushey 2011 Fig 1.
+  - Asleep, s relaxes toward 1 with tau 2.5 h (inferred: Bushey's baseline after 5-7 h of recovery sleep).
+  - The organism passes the N25 sleep state and refuses N31 with organs off. s = 1 is the specimen as reconstructed.
+    There is no per-synapse addition or removal.
+- **Ledger.** The four ledger rows move from absent to default at their stated fidelity (N32 element and global, N31
+  global, N34 class). mechanisms.yaml marks N31, N32 and N34 partial. None is ON in m10f.
+- **What ON would need.**
+  - All three act over minutes to days, so a 60 s smoke cannot test them. N32 moves h by under 0.01 mV in 60 s.
+  - Each needs a long-run harness (hours of model time). The CPU path runs at about 13 000 s wall per 60 s, so that
+    is not affordable now.
+  - Each also needs its fit or check measurement read for effect size.
+  - Until then they stay off, which is neutral by the standing rule.
