@@ -2340,3 +2340,56 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - The trade-off comes from one ON → OFF rate whose only light dependence raises it in the day. Day/night bout structure is training data (Garbe 2015, SB DAM, iso31 males), so it can enter the next registration as a check.
 - The rebound grows with deprivation in every variant; its size depends on the bout structure (6 h about 50-100 min, 24 h about 90-190 min).
 - N25 stays **partial**. The Director chooses between scoring now (locked or T5) and a revision with a night-specific element.
+
+### F-S23-1: frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off) pass the gate and their unit checks; m10f8 (sourced organ values) passes the gate (s23, 23 Oct 23:36; DECISIONS 23 Oct 22:58, 23:20, 23:31)
+- **Gate G, seeds 12-15:** all three stages pass every check: 0.0 non-eye spikes/ms in the silent window, no NaN,
+  0 MuJoCo warnings, no class above 200 Hz.
+  - m10f6 is spike-identical to m10f3 (0.310 / 0.308 / 0.309 / 0.309 Hz), as predicted. The default world is
+    dark, so only the clock's start state differs.
+  - m10f7 is 0.337 / 0.336 / 0.337 / 0.337 Hz, up 0.028 as predicted (+0.03). DANs run at 7.8-8.0 Hz and MBONs
+    at 12.7-13.9 Hz.
+  - m10f8 is identical to m10f7 on every seed. In a 1.3 s dark run with no food, the organ values do not reach
+    the spiking network.
+- **m10f6 LD check (registered):** the clock read through the stage's registry entrains to 12:12 LD at 1000 lux.
+  At the last lights-on the model is at CT −0.54 h, inside ±2 h. Pass.
+  - Reported, not scored: after a 6 h phase jump the model re-entrains in one day (CT 0.0 on day 1, −0.54 from
+    day 3). Kistenpfennig 2012 is quoted (secondary, not verified) as "within 1 or 2 days". If that holds, the
+    model is at the fast edge. Re-entrainment speed is a candidate independent check for the guessed `mu`.
+- **m10f7 MB unit check (training targets, isolated CNS):** PPL105 7.6 Hz on both seeds (band 6-10). MBON14 12.3
+  and 11.7 Hz (band 9.7-15.1). Pass. This only shows that the stage carries the fitted state. Huang 2024 is spent
+  and was not rescored.
+- **Test battery (merged tree, before the stage edits):** 299 passed, 0 failed.
+- The 60 s smokes for m10f6-m10f8 were still running at this entry. Figure: `docs/media/s23_frontier.png`.
+
+### F-S23-2: at m10f3 rest, glutamatergic MBON inputs give most of the inhibition on MBON11 and the PPL1 DANs, so the MBON→MBON glutamate sign decides the MB output layer's rest state (s23, 23 Oct; `scripts/probes/s23_mb_glu_split.py`, `runs/s20/mb/glu_split.json`)
+- Rest drive from MBON inputs, split by the presynaptic transmitter (male-cns `predictedNt`; m10f3 with the s21
+  class noise):
+  - MBON11: glutamate −988, GABA −158, ACh +32 (net −1,115).
+  - MBON12: glutamate −500 (net −487). MBON14: glutamate −336 (net −299).
+  - PPL105: glutamate −166, ACh +104 (net −94).
+- Glutamate is inhibitory in the model (GluClα), which is the standard reading for MBON→MBON. If it were
+  excitatory at these links, MBON11 would flip to about +860, MBON12 to about +510, MBON14 to about +370 and
+  PPL105 to about +240. `docs/MEASUREMENT_LIST.md` entry 6 lists the experiments that would decide it.
+
+### F-S23-3: no usable Drosophila value found for body temperature excess, a thermal time constant, a neural Q10, adult hemolymph trehalose, or a walking metabolic multiplier; the metabolic Q10 is now measured (s23, 23 Oct; Sonnet reader, full texts where stated)
+- **S5:** no absolute Drosophila body-minus-ambient difference and no thermal time constant. Freoa et al. 2023
+  (Sci Rep 13:3513, full text) gives only genotype differences under a lamp (0.6 °C between pigment lines, a
+  difference visible within 15 s). S5's required level (body temperature = ambient for a 1 mg fly) stays a
+  question for Ben.
+- **N28:** no Drosophila neural Q10 with a citable number. The larval NMJ temperature paper (PMID 105927) was not
+  reachable. N28 stays partial.
+- **S1:** no absolute adult fed trehalose or glucose in mM (Haselton & Fridell 2010 gives relative changes only).
+  Flight at 10-15× rest is secondary, and there is no walking multiplier. **Metabolic Q10: Klepsatel, Wildridge &
+  Gáliková 2019 (Sci Rep 9:5239, full text), adult males, 13-33 °C, 2.0 Oregon R and 2.3 Canton S.** That is now
+  the sourced `q10_met` (2.0, the basal-rate strain). The value is unchanged, so no run changes.
+
+### F-S23-4: the two dry-air water-loss sources in hand cannot set S4's evaporation rate; desiccation stays unscored and unspent (s23, 23 Oct; metabolism reader round 2)
+- Lighton & Schilman 2007 (PLoS ONE 2:e1267, full text), as quoted: 0.0617 ± 0.0034 mg/h, Oregon-R males, dry
+  air, 25 °C, active. Per fly, that would empty a male's 344 nL of body water (Burggren 2017, derived) in 5.6 h.
+  So the number is either not per resting fly or misquoted. This conclusion comes from the body water content
+  alone, not from any survival value. Not used.
+- Telonis-Scott et al. 2006 state that their 3 h weight loss "may also reflect weight lost through metabolism".
+  Not a water-only rate.
+- Nayal et al. 2024 Fig. 4B is in ppt per fly per minute at 30 °C and 50 % RH, the denominator is not stated, and
+  the value was not extracted.
+- S4 stays partial. The held-out desiccation band stays unspent.
