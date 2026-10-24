@@ -5149,3 +5149,24 @@ adopt anything. A per-type mechanism suggested by it needs a new held-out source
 heavily KC-innervated types (MBON11, PPL101, PPL103) rise most, ρ moves toward 0 and stays negative, and the
 log-SD widens but stays below the data's.
 **Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, launched only while the 1-min load is below 22.
+
+### s23 N25 night-input fit result, tie-break and robustness rule, written before any prediction run or held-out read (23 October, 23:49)
+**Result** (`runs/s23/n25/fit.json`, backhouse, 1,053 s). 475 of 32,340 sets pass T1, T2, T4. **2 pass T5** (Garbe day
+and night bouts within mean ± 1 s.d.), and both pass the Liu anchors (T3). The falsifier (no set passes T1-T5) is not hit.
+- Set A: τ_rise 36 h, γ 2, k_off 0.00639 min⁻¹, λ 2, **night_arousal 0**. Night 3.17 bouts of 181.8 min (bound 183),
+  day 10.7 of 43.7. Day-1 rebound (fit run): 76.6 / 98.2 / 137.4 min (6 / 12 / 24 h).
+- Set B: τ_rise 18 h, γ 2, k_off 0.001 min⁻¹, λ 20, **night_arousal 8**. Night 3.63 bouts of 148.4 min, day 11.7 of
+  41.8. Day-1 rebound: 77.1 / 95.9 / 129.6 min.
+- Against expectation: a night_arousal 0 set passes T5. Inside Garbe's ± 1 s.d. band the night term is not required;
+  F-S22-2 was about nights near Garbe's mean, which neither set reaches (both have about 3 night bouts against 7.0).
+  T5 passes at night_arousal 0 (1 set) and 8 (1); T1, T2, T4 passes fall with night_arousal (158 at 0, 11 at 8, 0 at 16).
+**Tie.** The registered `select()` rule picks the set closest to the per-arm medians. With two sets both are equally
+distant by construction; the code returned A by floating-point rounding. Tie-break, decided now: **B is the scored
+candidate**, because the Director's (c) asks for a candidate with a night-acting input and B is the only accepted set
+that uses it. A's prediction is computed the same way and reported at the same read; it spends nothing extra and
+cannot pass or fail the test.
+**Robustness rule (tightens, never loosens).** Both sets passed T5 at 128 flies, A by 1.2 min on night bout length. The
+predict run repeats the bout check at 512 flies (seed 600). If B fails T5 there, A becomes the candidate if it passes;
+if neither passes, there is no robust candidate, Chowdhury stays unspent and that is the result.
+**Predict** (`s23_n25_night.py predict`, both sets): deprivation at 2,048 flies (seed 500), bouts at 512 (seed 600).
+The scored candidate's 6 / 12 / 24 h day-1 predictions go into the next entry before Dryad is downloaded.
