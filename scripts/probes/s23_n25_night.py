@@ -116,18 +116,25 @@ def fit(procs: int) -> dict:
 
 
 def predict() -> dict:
-    """The fit's candidate at 2048 flies (seed 500, as the s22 amended candidate): day 1-3 rebounds per arm, the
-    Liu anchors, and its baseline bouts at 512 flies. Written to DECISIONS before any Chowdhury read."""
+    """Every accepted set at 2048 flies (seed 500, as the s22 amended candidate): day 1-3 rebounds per arm and the Liu
+    anchors, plus its bouts at 512 flies (seed 600) against T5. Scored candidate by DECISIONS 23 Oct 23:49: the
+    accepted set with night_arousal > 0 if it still passes T5 at 512 flies, else another that does, else none.
+    Written to DECISIONS before any Chowdhury read."""
     r = json.loads((OUT / "fit.json").read_text())
-    c = r["accepted"]["candidate"]
-    one = {g: np.array([c[g]], float) for g in GRID}
-    d = h.deprivation(one, flies=2048, seed=500)
-    bo = h.rebout(one, flies=512, seed=600)
-    return {"candidate": {g: c[g] for g in GRID}, "n_accepted": r["n_accepted"],
-            "fit_medians": r["accepted"]["median"], "fit_p2.5": r["accepted"]["p2.5"],
-            "fit_p97.5": r["accepted"]["p97.5"],
-            "pred_2048": {k: round(float(v[0]), 2) for k, v in d.items()},
-            "bouts_512": {k: round(float(v[0]), 2) for k, v in bo.items()}}
+    acc = [x for x in r["t124_sets"] if x.get("t5") and x.get("liu_pass")]
+    sets = []
+    for x in acc:
+        one = {g: np.array([x[g]], float) for g in GRID}
+        d = h.deprivation(one, flies=2048, seed=500)
+        bo = h.rebout(one, flies=512, seed=600)
+        b512 = {k: round(float(v[0]), 2) for k, v in bo.items()}
+        sets.append({"params": {g: x[g] for g in GRID},
+                     "pred_2048": {k: round(float(v[0]), 2) for k, v in d.items()}, "bouts_512": b512,
+                     "t5_512": bool(all(lo <= b512[q] <= hi for q, (lo, hi) in GARBE.items()))})
+    order = sorted(range(len(sets)), key=lambda k: sets[k]["params"]["night_arousal"] == 0)
+    scored = next((k for k in order if sets[k]["t5_512"]), None)
+    return {"n_accepted": len(acc), "sets": sets, "scored_index": scored,
+            "scored": sets[scored] if scored is not None else None}
 
 
 if __name__ == "__main__":

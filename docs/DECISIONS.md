@@ -5170,3 +5170,29 @@ predict run repeats the bout check at 512 flies (seed 600). If B fails T5 there,
 if neither passes, there is no robust candidate, Chowdhury stays unspent and that is the result.
 **Predict** (`s23_n25_night.py predict`, both sets): deprivation at 2,048 flies (seed 500), bouts at 512 (seed 600).
 The scored candidate's 6 / 12 / 24 h day-1 predictions go into the next entry before Dryad is downloaded.
+
+### s23 N25 scored candidate and its locked Chowdhury predictions, written before Dryad is downloaded (23 October, 23:52)
+**Robustness rule (23:49) applied** (`runs/s23/n25/predict.json`, Mac, `s23_n25_night.py predict`). Bouts at 512 flies,
+seed 600, against T5:
+- B (night_arousal 8): night 3.54 bouts of 151.5 min, day 11.59 of 42.3. **Passes T5.**
+- A (night_arousal 0): night 2.88 bouts of **188.0 min** (bound 183), day 10.49 of 48.3. **Fails T5** at 512 flies.
+- So **B is the scored candidate**, by the tie-break and now also by robustness. Liu anchors at 2,048 flies: B
+  e0 0.69, e2 0.48 (≥ 0.5 e0), e24 0.00, pass; A 0.47 / 0.34 / 0.01, pass.
+**Locked predictions** (2,048 flies, seed 500; day-1 normalised rebound, min per 24 h, ± model SEM):
+
+| | 6 h | 12 h | 24 h (primary) |
+|---|---|---|---|
+| **B, scored** (τ_rise 18 h, γ 2, k_off 0.001 min⁻¹, λ 20, night_arousal 8) | **69.3 ± 3.4** | **114.4 ± 3.4** | **139.9 ± 3.3** |
+| A, reported (τ_rise 36 h, γ 2, k_off 0.00639, λ 2, night_arousal 0; fails T5 at 512) | 57.0 | 100.0 | 125.4 |
+| s22 locked, reported | 99.7 | 150.2 | 174.3 |
+| s22 T5-amended, reported | 70 | 111 | 131 |
+| 00:34 mode 1 φ CT 0 / V3 / mode 0, reported | 142 / 175 / 19 | 139 / 195 / −22 | 138 / 212 / 49 |
+
+- B days 2 and 3: 6 h −1.8 / 3.7, 12 h −4.3 / −1.8, 24 h −3.4 / 3.0 min. Ordering: 24 h > 12 h > 6 h. Residual sleep
+  during deprivation: 0 by construction.
+- The 23 Oct 00:53 rule applies unchanged: the 20 s arm, group mean ± 2 SEM of the paper's normalised rebound from
+  the Dryad raw data (doi:10.5061/dryad.qnk98sfpp), DAM 20 s bins, ≥ 5 min inactivity. Pass: 139.9 inside the 24 h
+  span, and 69.3 and 114.4 inside the 6 h and 12 h spans. If the primary misses, B fails as a rebound model; the miss
+  and its direction go into FINDINGS, with no refit on Chowdhury.
+- Validity, stated before the read: the reduced loop has no route by which the stimulus itself changes sleep, the
+  fast loop uses CT = ZT, and the night term's peak hour is the DN1 Ca2+ peak (inferred, not a firing peak).
