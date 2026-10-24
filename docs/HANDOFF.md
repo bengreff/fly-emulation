@@ -37,7 +37,7 @@
   - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`, `m10f8_ALL.done`), started 23:24.
   - `run_s23_kc.sh`: KC grid σ_KC 0.5-3.0 on m10f7 seed 12 (`runs/s23/kc/kc{σ}_s12.done`, `grid.done`); waits until the 1-min load is below 22, so it may not start tonight.
 - Mac: `runs/s23/fc/run_m10f9_mac.sh` through slot.py ("fly: m10f9 gate+smoke", started 00:24): G seeds 12-15 (`gate_m10f9_s{s}.json`, `gate_m10f9.done`), then the 60 s smoke (`smoke_m10f9.done`). The smoke will not finish by 05:30; kill it at park (process hygiene) and rerun next session.
-- Reader running: N2 measured membrane values by class (tau_m, R_in, V_rest, threshold), for `docs/research/s23_n2_membrane_values.md` and the N2 path.
+- Reader running: N2 measured membrane values by class (tau_m, R_in, V_rest, threshold), for `docs/research/s23_n2_membrane_values.md` and the N2 path. Its result lands in `/private/tmp/claude-501/-Users-ben-fly-emulation/175c4808-56c0-4baf-adf3-3cd60559933e/tasks/aecb36245d3e0198e.output` if the notification is lost after a clear. Before park, stop my keepalive and watcher shells and my backhouse jobs (`run_s23_gate.sh`, `run_s23_m10f8.sh`, `run_s23_kc.sh`) if they are unfinished.
 - Not mine; never touch: fly2's processes (its s29 `m10f5n7` and `m10f5s29` smokes on backhouse), CRUCIBLE, other projects' tmux sessions.
 
 ## Next (this order)
