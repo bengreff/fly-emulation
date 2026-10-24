@@ -2432,3 +2432,18 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   Rebound after only 6 h at night (ZT 18-24) is as large as after 24 h, which a single need variable rising with
   time awake does not give. Chowdhury is spent and N25 stays partial (built, off by default, failed its held-out
   check). No held-out deprivation-length series remains.
+
+### F-S23-7: making the recorded non-spiking VNC hemilineages graded sets off a self-sustaining VNC runaway at rest (s23, 24 Oct 00:29; DECISIONS 24 Oct 00:29)
+- **Result.** m10f9 (m10f8 + per-type recorded modes, with IN13B and IN10B graded) fails the silence gate on seed 12:
+  7.03 non-eye spikes/ms in the last 100 ms of the silent window (m10f8: 0). Motor neurons outside the leg set
+  (0.51 → 8.43 Hz), unassigned VNC locals (0 → 3.20), endocrine (0 → 3.29) and efferent cells (0 → 2.41) start
+  and keep firing. The optic recorded modes change nothing in the dark.
+- **Why it is not lost spikes.** As spiking cells in m10f8, IN13B fires 0.055 Hz and IN10B 0 Hz.
+- **Inferred mechanism (not yet tested).** The model's graded synapse releases from the resting potential upward,
+  reaching the guessed 100 Hz-equivalent at threshold. A graded excitatory interneuron sitting a few mV above rest
+  therefore excites its targets continuously. IN10B is 254 cholinergic cells. s13 S3 arm A showed the same runaway
+  under drive.
+- **What it means.** A cell type's recorded mode cannot simply be switched ON while the graded release law is
+  guessed. The release curve of VNC nonspiking interneurons is unmeasured in the model's sources. m10f9b (IN10B
+  back to spiking, as the 00:20 rule already required for graded-with-spikelets types) tests whether IN10B alone
+  is the trigger.
