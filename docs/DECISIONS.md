@@ -5667,3 +5667,21 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   measurement set R, so no independent unit check exists in the adult. Whether built-and-ON counts as done here
   is for the Director; I will report it as "built and ON, no independent check".
 - **Held-out data.** None. Fig. 8 is used to set R and is now spent for N33.
+
+### s23 N33 checks scored: (1)-(3) pass; m10f12 builds the same network as m10f10 (24 October, 02:45)
+- **(1) Unit test** `tests/test_glia_uptake.py`: 5 pass. Switch 0 and switch 1 at u = 1 build nothing. With u = 0 the
+  glutamatergic edge decays at R × 5 ms, its peak equals the u = 1 peak (rel 1e-4), the charge grows by the decay
+  ratio, and the cholinergic and graded edges are unchanged. At u = 0.5 an N29 row decay of 2.0 ms is scaled by
+  R/(1+(R−1)u) and moved out of the N29 channel. gat_uptake 0.5 and eaat1_uptake 1.5 are refused, and so are
+  conductance synapses.
+- **(2) Validator** (`test_model_data`, with `test_stubs` and the N33 tests): 21 pass, re-run 02:42 on main at
+  b8b77a6.
+- **(3) Real connectome** (`scripts/probes/s23_n33_identity.py`, Mac slot.py, `runs/s23/n33/identity.json`):
+  m10f12 against m10f10, seed 12, min_synapses 5. The fast weights, the N29 kin_edge (idx and tau), the channel
+  list (kin1.1, kin1.4, kin3.7) and its weights, and W_graded are all equal. uptake_edge is None. Spikes are equal
+  on all 200 steps under the same kick. Registry reads: switch 1, R 2.9, eaat1_uptake 1, gat_uptake 1, and the
+  astrocyte_model stub 0. **Pass.**
+- **Consequence.** m10f12 is the network of m10f10, so it inherits m10f10's G, G2 and S. It is adopted with
+  m10f10, or not at all, after the battery and a viewed figure (registered 02:28). N33 is then built and ON at the
+  healthy constant, with no independent adult check (R is the one measurement and sets the value). Whether that
+  is done is for the Director. Ca signalling and coupling stay a stub, so N33 is `partial` in mechanisms.yaml.
