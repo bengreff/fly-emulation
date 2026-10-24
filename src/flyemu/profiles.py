@@ -390,6 +390,14 @@ M10F8 = {
                                    "value applied to all neural time constants; 1 at the 25 degC world default "
                                    "(DECISIONS 24 Oct)"),
 }
+# Stage 9 (fly, s23; DECISIONS 24 Oct 00:20): N1, per-type spiking or graded mode from recordings
+# (data/params/cell_types.csv graded_rec rows) over the class-group default.
+M10F9 = {
+    **M10F8,
+    "cell_type:all|mode_from_recordings": (1.0, _I, "frontier stage 9 (N1): recorded modes win for the recorded "
+                                           "types (Behnia 2014, Gruntman 2018/2019, Agrawal 2020 and the s23 "
+                                           "rows); every other type keeps its group default"),
+}
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
@@ -432,6 +440,7 @@ PROFILES: dict[str, dict] = {
     "m10f6": {"values": M10F6, "kick_mv": KICK},
     "m10f7": {"values": M10F7, "kick_mv": KICK},
     "m10f8": {"values": M10F8, "kick_mv": KICK},
+    "m10f9": {"values": M10F9, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;
