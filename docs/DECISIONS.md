@@ -5668,7 +5668,7 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   is for the Director; I will report it as "built and ON, no independent check".
 - **Held-out data.** None. Fig. 8 is used to set R and is now spent for N33.
 
-### s23 N33 checks scored: (1)-(3) pass; m10f12 builds the same network as m10f10 (24 October, 02:45)
+### s23 N33 checks scored: (1)-(3) pass; m10f12 builds the same network as m10f10 (24 October, 02:42)
 - **(1) Unit test** `tests/test_glia_uptake.py`: 5 pass. Switch 0 and switch 1 at u = 1 build nothing. With u = 0 the
   glutamatergic edge decays at R × 5 ms, its peak equals the u = 1 peak (rel 1e-4), the charge grows by the decay
   ratio, and the cholinergic and graded edges are unchanged. At u = 0.5 an N29 row decay of 2.0 ms is scaled by
