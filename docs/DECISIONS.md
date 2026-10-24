@@ -5334,3 +5334,11 @@ apply the rule now is taken after seeing G fail, so it is labelled that way and 
   partial on it.
 - **Runs.** Mac through slot.py (the m10f9 gate took 151 s per seed tonight). S follows G in the same script and may
   finish before the 05:30 park; if not, it is stopped and rerun next session.
+
+### s23 m10f9b result: gate G passes on seeds 12-15 (24 October, 00:42)
+`runs/s23/fc/gate_m10f9b_s{12..15}.json` (Mac, slot.py). On every seed: 0 non-eye spikes/ms in the last 100 ms of the
+silent window, no NaN, 0 MuJoCo warnings, highest class 12.7-13.8 Hz (MBON). Whole brain 0.333 / 0.331 / 0.333 /
+0.332 Hz against m10f8's 0.337 / 0.336 / 0.337 / 0.337 (−0.004 to −0.005; the prediction was ±0.01). IN13B, now
+graded, emits 0 spikes (0.055 Hz as spiking cells in m10f8). The VNC classes that ran away in m10f9 are at their m10f8
+rates (MN_other 0.54 against 0.51). Prediction met. The 60 s smoke S (seed 12) and the unit check follow in the same
+Mac run. Nothing is adopted until S, the battery and a viewed figure.
