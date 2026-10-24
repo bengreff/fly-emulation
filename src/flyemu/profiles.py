@@ -489,9 +489,11 @@ PROFILES: dict[str, dict] = {
     "m10f11": {"values": M10F11, "kick_mv": KICK},
     "m10f12": {"values": M10F12, "kick_mv": KICK},
 }
-PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
+PROFILES["m10f"] = PROFILES["m10f10"]  # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;
-                                       # N21 valid only while DANs are near-silent at rest, F-S26-1)
+                                       # m10f5 s27 23 Oct 03:13; m10f10 = m10f5 + stages 6-10 (fly, s23): G, G2 and S
+                                       # pass, battery 307/0, figure viewed, DECISIONS 24 Oct 03:43. N21 is off from
+                                       # m10f7 on: it is valid only while DANs are near-silent at rest, F-S26-1)
 
 
 def apply(reg: Registry, name: str) -> dict:

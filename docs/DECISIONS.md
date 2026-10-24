@@ -5749,3 +5749,89 @@ was the same as the identity check: `Policy.MINIMAL`, min_synapses 5, dt 0.1 ms.
   - **done where no check exists:** the row is built, ON and active, its values are cited and in range, and no
     independent measurement exists to check it;
   - **done by ruling.**
+
+### s23 m10f10 S scored: passes every registered bar; m10f11 G2 passes on all four seeds, as predicted (24 October, 03:29)
+**m10f10 S.** `runs/s23/fc/smoke_m10f10_s12.json` and `_rates.npz`: Mac, slot.py, 60 s, seed 12, wall 8,322 s.
+Scored once on the 00:29 bars with `/tmp/flys23/score_s.py`.
+- Whole brain **0.3313 Hz** (band 0.162-0.486). Active fraction **0.0311** (0.014-0.042). Max cell 57.3 Hz.
+- Spikes per second: 54,788-56,773; first 55,263, last 55,222. No runaway or NaN, 0 MuJoCo warnings, full
+  60,000 ms.
+- The body stood the whole run: thorax z 0.544-0.546 mm, net drift 0.12 mm.
+- Against m10f9b's S: whole brain +0.0006 Hz, active −0.0001, and the movement totals are within 1 %. Top classes
+  are MBON 13.2 Hz, DAN 7.94 and leg MNs 3.7, the same as m10f9b.
+- The graded_rec check passes: all 24,940 cells emit 0 spikes. It has the same limit as at 03:02: it only has
+  power for IN13B.
+- **Pass.** S5's effect is small at the 25 °C default. The neural Q10 reads T_b = air + 0.072 K, so every tau_m,
+  tau_s and t_ref is divided by 1.0067. This was checked with `internal_state.neural_temperature_c` on the m10f10
+  registry: 1.0067 at 25 °C air and 0.635 at 20 °C. m10f8 and m10f9b give exactly 1 at 25 °C.
+
+**m10f11 G2.** `runs/s23/g2/g2_m10f11_s{12-15}.json`, scored once against the 02:20 predictions:
+- G2 passes on all four seeds. There is no growth in eye or non-eye bins. Non-eye spikes in the last 100 ms are
+  0. **Prediction met.**
+- Eye bin 1: 267-271 spikes (m10f10: 51-52). The prediction was about 250, based on P's 256; the result is within
+  10 %. Eye cells reach 0 by 650-750 ms, against 550 ms in m10f10. **Met.**
+- Whole brain in G: 0.331-0.332 Hz, the same as m10f10. **Met** (±0.005).
+- Its S is deferred to next session under the 02:40 time rule (G2 ended at 03:23). So m10f11 is not adoptable
+  tonight.
+
+**Figure** `docs/media/s23_frontier.png`, re-rendered 03:28 and viewed:
+- Panel D: m10f10's class rates fall on m10f9b's. All of them lie on the m10f3 diagonal except DAN and MBON,
+  which rise from 0 to about 8 and 13 Hz. That is the intended m10f7 change (N3: DANs at their measured rest).
+- Panels E and F: m10f11 (red) starts about five times higher in the eye and decays to 0. Its non-eye cells are
+  silent from 150 ms. m10f9c (dashed) holds at about 700 spikes per bin.
+
+### s23 m10f6 S scored: passes (24 October, 03:30)
+The run was on backhouse at nice 19 from 02:50: 60 s, seed 12, wall 15,420 s. It finished at 03:24 and was
+copied to `runs/s23/fc/smoke_m10f6_s12.json` and `_rates.npz`. It was scored once on the 00:29 bars.
+- Whole brain **0.3037 Hz**, active fraction **0.0273**, max 55.9 Hz.
+- Spikes per second: 49,448-51,958 (first 51,390, last 50,781). No runaway or NaN, 0 warnings, full 60 s.
+- Thorax z 0.545-0.547 mm. **Pass.**
+- DAN and MBON are at 0 Hz, as expected: the class noise is added at m10f7. The clock cells are at 0.20 Hz.
+- The graded_rec zero-spike check does not apply: recorded modes start at m10f9.
+- m10f6's light input (N26) is part of m10f10, so it is adopted with it. The m10f7 and m10f8 smokes are still
+  running on backhouse.
+
+### s23 adopted: `m10f` = m10f10. Rows scored against their own bars, in three separate tallies (24 October, 03:43)
+- **Gate path.** m10f10 passed G (seeds 12-15), G2 (01:47) and S (03:29). The battery ran on c9adbba, the code
+  that m10f10 runs (`runs/s23/battery/pytest.log`): **307 passed, 0 failed**, 14:50, through slot.py.
+  - The MuJoCo "QACC at DOF 40" line after the summary also appears in every battery since s12 (s12, s23, s27
+    logs). It is a known test artefact, not new.
+  - The figure `docs/media/s23_frontier.png` was viewed at 03:28.
+- **Adopted.** `PROFILES["m10f"] = PROFILES["m10f10"]` = m10f5 + N26 light input (m10f6) + MB class noise with
+  N21 off (m10f7) + sourced organ values and Q10 2.5 (m10f8) + recorded modes (m10f9b) + the S5 heat balance
+  (m10f10).
+  - Not adopted: m10f12, because N33 is inert there (03:08), and m10f11, whose S runs next session.
+  - N21 (fly2's) is off in `m10f` from now on. That is fly2's own condition: the timing rule is not resting-safe
+    at measured DAN rest (F-S26-1).
+  - m10f10 is a CPU-path profile. The GPU path ignores the N1 graded options.
+- **Rows, each against its own bar.**
+  - **S5: done on evidence.** The bar is the 00:55 ruling: a lumped heat balance, about ambient at rest, checked
+    against a cited measurement.
+    - It is built at that level and is ON. Its values are derived or cited.
+    - It is active: T_b is air + 0.072 K, so the Q10 divides every tau_m, tau_s and t_ref by 1.0067. This was
+      checked on the m10f10 registry.
+    - Check D (Digby 1955; 2.36 K predicted against 2.5 K measured) was not used to set any value and is spent.
+  - **N28: done where no check exists.** The bar is the 00:55 ruling: a cited measured Q10 range is enough when a
+    documented search finds no independent check.
+    - Q10 2.5 is inside the measured 2.3-3.5 (Juusola & Hardie 2001). The s23 search found no check
+      (`docs/research/s23_n28_n26_checks.md`).
+    - It is ON and active on all 167,111 cells: 1.0067 at 25 °C air through S5, and 0.635 at 20 °C. It was exactly
+      1 in m10f8 and m10f9b, where it was ON but inert at the default 25 °C. So it counts only from m10f10.
+    - **Applied beyond its source**: one photoreceptor value scales every cell.
+  - **N26: partial.** The light input is ON, and m10f6's S (03:30) and LD check pass. tau_c, mu, `l50` and the
+    peak hours are still guessed.
+  - **N3: partial.** MB class noise is ON (DAN 7.94 Hz, MBON 13.2 Hz in S). The per-type spread is compressed and
+    other classes have no fitted drive.
+  - **S3: partial.** Ingest and crop are ON. fly2's B17 pump rate is still guessed at 10 Hz against a measured
+    5-7 Hz.
+  - **S1: partial.** The sourced values are ON. `conc0`, `k_act`, `act_scale` and `q10_met` are still guessed, and
+    the only check is circular.
+  - **N1: partial.** Recorded modes are ON. graded_rmax and release_at_rest are guessed.
+- **Tallies (fly rows, of 20; never added together).**
+  - Done on evidence: **1** (S5).
+  - Done where no check exists: **1** (N28).
+  - Done by ruling: **2** (S7, S8).
+- **Ledger.** S5 is now fidelity global, model simulated, basis mixed. N28 is model simulated, basis inferred.
+  `scripts/blank_ledger.py` was regenerated: organism/world absent goes from 23 to 21, and mixed from 0 to 2.
+  Mixed rows don't fill, so the **filled fraction is unchanged**. `test_model_data`, `test_t1_fill`,
+  `test_repo_hygiene` and `test_stubs` pass (31).

@@ -2506,3 +2506,30 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
     sourced r0. Its effect (tonic inhibition into L1-L3) must be run, not assumed.
   - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md`. Detail:
     `docs/research/s23_gate_silent_window.md`.
+
+### F-S23-11: a clearance-limited uptake factor is inert at healthy uptake; N33 in m10f12 modifies 0 of 6.24 M edges (s23, 24 Oct 03:08; DECISIONS 24 Oct 02:28, 02:42, 03:08)
+- **Result.** `scripts/probes/s23_n33_edge_count.py` shows that m10f12 (m10f10 + N33 at healthy uptake u = 1)
+  modifies 0 of 6,241,231 edges. The spikes equal m10f10's on 200 steps.
+  - Below healthy uptake the factor would act on 1,022,236 glutamatergic edges (16.4 %).
+  - None of those edges has an N29 receptor-kinetics row, so all of them decay at the default 5 ms.
+- **What it means.** τ(u) = τ(1)·R/(1+(R−1)u) equals τ(1) at u = 1 by construction. A measured healthy decay
+  already includes healthy uptake. So an uptake mechanism can only shape synapses in the healthy model if each
+  decay is split into a receptor-limited part and a clearance-limited part, and that split needs fly Eaat1
+  kinetics or a clearance time. Without the split, the mechanism can be switched on but changes nothing. "ON"
+  is not evidence that a mechanism acts; count the edges or cells it modifies.
+- **Source scope.** R 2.9 is from a larval third-instar VNC looper → motor neuron compound IPSC (MacNamee 2016
+  Fig. 8B). That is a CNS synapse, not the NMJ, and not adult. Its use on adult synapses is inferred.
+- **Missing.** Adult glutamatergic decays (the N29 glutamate rows, fly2's) and fly Eaat1 kinetics. N33 stays
+  partial and is not adopted.
+
+### F-S23-12: m10f10 adopted as `m10f`; the first fly row done on evidence (S5) and the first done where no check exists (N28) (s23, 24 Oct 03:43; DECISIONS 24 Oct 03:29, 03:43)
+- **Result.**
+  - m10f10 passes G, G2 and S: whole brain 0.3313 Hz, active 0.0311, 60 s.
+  - The battery passes 307/0, and the figure was viewed.
+  - The rows are scored against their own bars. S5 is done on evidence (Digby check D). N28 is done where no
+    check exists (cited range, documented search). N26, N3, S3, S1 and N1 stay partial. N33 is inert and not
+    adopted.
+- **What it means.** N28 was ON but inert in m10f8 and m10f9b: the world default of 25 °C equals the Q10
+  reference, so its factor was exactly 1. It acts in m10f10 only because S5 puts the body 0.072 K above air
+  (factor 1.0067), and at any other air temperature (0.635 at 20 °C). The same lesson as F-S23-11: a switch being
+  ON does not show that it acts; check the factor on the adopted profile.

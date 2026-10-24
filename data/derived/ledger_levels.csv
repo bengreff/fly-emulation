@@ -21,9 +21,10 @@ edge,guessed,12482462
 edge,measured,6241231
 edge,measured (unused),19337526
 edge,prior,6241231
-organism/world,absent,23
+organism/world,absent,21
 organism/world,guessed,39
 organism/world,measured,2
+organism/world,mixed,2
 organism/world,prior,8
 synapse,absent,449255920
 synapse,guessed,808660656
