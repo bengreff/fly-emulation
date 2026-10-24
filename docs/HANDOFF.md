@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Sat 24 October 2026, 02:14 CDT, session 23 (third context of the night; main at 617a790 plus this commit; base m10f5 from fly2).
+**Rewritten each session; do not append.** State as of Sat 24 October 2026, 02:24 CDT, session 23 (fourth context of the night; main at f117258 plus this commit; base m10f5 from fly2).
 - **Brief (Director, 24 Oct 00:55 entry in `/Users/ben/director/decisions/fly.md`):** about 5 % of the week left tonight; park at a clean commit by 05:30 with HANDOFF current. The seven required-level questions are not Ben's: fidelity is an engineering call he delegated, with a bias toward simulating more. Work the path-to-done table in rank order: (1) score m10f9b and the m10f6/7/8 smokes; (2) source graded_rmax; (3) the next rows. A row is done only on evidence.
 - **Director rulings (00:55), now applied in the path-to-done column:**
   - Derived constants beat declared ones. A row is never done by declaring it out of scope.
@@ -46,6 +46,10 @@
     graded release rate; locust graded synapses give only a voltage axis. The `n1_graded_rmax` row says this.
   - The chain keeps 100 Hz (guessed).
   - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md` (new; README map).
+- **m10f11 (registered DECISIONS 02:20; queued).** It is m10f10 with the photoreceptors at 300 Hz (derived) and every
+  other graded cell at 100 Hz (guessed). New switch `cell_type:all|graded_rmax_by_class` (neutral 0, CPU path) with
+  row `n1_photoreceptor_graded_rmax`; test `test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release`.
+  Predictions: G2 passes seeds 12-15, eye bin 1 about 250, whole brain within ±0.005 of m10f10, S within ±0.02.
 - **m10f10** = m10f9b + S5 on. It was registered on m10f9c and rebased on m10f9b when m10f9c failed (DECISIONS 00:57). **G passes on seeds 12-15**, within ±0.005 Hz of m10f9b. The smoke is running.
 - **m10f9b** (N1 recorded modes, IN10B row removed; DECISIONS 00:29, 00:42) passes G on seeds 12-15. Its smoke checkpoint at 10.5 s reads whole brain 0.332 Hz, active 0.030, max 58.5 Hz, no NaN, 0 warnings, no runaway (provisional; S is scored on 60 s).
 - **S7 and S8 (done, ruled constants; DECISIONS 01:18).** `stubs.CONSTANT_STATES`:
@@ -68,13 +72,17 @@
 
 ## Running now
 - **Mac**, through slot.py:
-  - `runs/s23/fc/run_m10f9b_smoke_mac.sh` (pid 24479): the 60 s smoke. Writes `runs/s23/fc/smoke_m10f9b_s12.json` and `_rates.npz`; done-file **`/Users/ben/fly-emulation/runs/s23/fc/smoke_m10f9b.done`**. ETA about 02:50.
+  - `runs/s23/fc/run_m10f9b_smoke_mac.sh` (pid 24479): the 60 s smoke. Writes `runs/s23/fc/smoke_m10f9b_s12.json` and `_rates.npz`; done-file **`/Users/ben/fly-emulation/runs/s23/fc/smoke_m10f9b.done`**. ETA about 02:45.
   - `runs/s23/fc/run_stage_mac.sh` with P=m10f10 (pid 27223; smoke pid 29147). Gate done; smoke done-file `runs/s23/fc/smoke_m10f10.done`. ETA about 03:20.
 - **backhouse** `/home/greff/fly-m10f` (one thread per job; load about 30 on 28 threads):
-  - `run_s23_gate.sh`: smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`), started 23:06. ETA about 02:45.
-  - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`), started 23:24. ETA about 03:15.
+  - `run_s23_gate.sh`: smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`), started 23:06. ETA about 02:45-03:00 (load 40 at 02:23).
+  - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`), started 23:24. ETA about 04:15-04:45 (its 10 s checkpoint took 51 min).
   - `run_s23_kc.sh`: KC grid σ_KC 0.5-3.0 on m10f7 seed 12. Gated on load below 22; `kc0.5_s12` is done.
+  - `runs/s23/g2/run_m10f11.sh` (waiting for a slot; log `runs/s23/g2/launch_m10f11.log`): G2 on seeds 12-15
+    (`runs/s23/g2/g2_m10f11_s*.json`), then the 60 s smoke only if all four pass. It always touches
+    `runs/s23/fc/smoke_m10f11.done`. The smoke takes about 2 h, so it may not land before 05:30; if not, stop it and record it as unfinished.
 - G2 and the localisation diagnostic are finished (`runs/s23/g2/`, all done-files present).
+- S scorer: `/tmp/flys23/score_s.py <smoke.json> [<rates.npz>]` (bars and the graded_rec unit check; tmp, not committed).
 - **Keepalive:** Mac pid 32120 (`ssh backhouse ... exec sleep 14400`), started 01:22 under nohup; it ends by itself at about 05:22.
 - **Park checklist:** before 05:30, stop whatever of these is unfinished: the two Mac runs and their slots, the three backhouse scripts, and the keepalive shell. Rerun them next session.
 - Not mine; never touch: fly2's s29 smokes (`m10f5n7`, `m10f5s29`) on backhouse, CRUCIBLE, and other projects' processes.
@@ -85,10 +93,9 @@
    - m10f10: the same bars.
    - m10f6/7/8: copy `smoke_m10f{6,7,8}_s12.json` and `_rates.npz` from backhouse to `runs/s23/fc/` first.
    - Then re-render and view `docs/media/s23_frontier.png` (it is untracked; commit it with the smoke panel).
-2. **Adopt** the last stage that passes S into `PROFILES["m10f"]` (m10f10 if it passes, else m10f9b, else m10f8). Run the full battery first: the last one was 299/0, before the S5 and constant-state tests; run it through slot.py, about 15 min. Then view the figure. Then update MECHANISM_STATUS (the N26, N3, N28, S1, S3, S5 rows, each against its own bar, plus the count with a timestamp from `date`), FINDINGS, and the ledger S5 row.
-3. **N1:** register and run a class-specific stage: photoreceptors at 300 Hz (derived), the other graded cells at
-   100 Hz (guessed, labelled). It needs a per-class `graded_rmax` (CPU path; neutral = one value), G2 on seeds
-   12-15, and S. Then source `release_at_rest`. The open-text search found none; the candidates are Ben's PDFs of
+2. **Adopt** the last stage that passes S into `PROFILES["m10f"]` (m10f11 if its S lands and passes in time, else m10f10, else m10f9b, else m10f8). Run the full battery first: the last one was 299/0, before the S5 and constant-state tests; run it through slot.py, about 15 min. Then view the figure. Then update MECHANISM_STATUS (the N26, N3, N28, S1, S3, S5 rows, each against its own bar, plus the count with a timestamp from `date`), FINDINGS, and the ledger S5 row.
+3. **N1:** score m10f11 (the class-specific stage, built and registered 02:20) on G2, then S, against the 02:20
+   predictions. Then source `release_at_rest`. The open-text search found none; the candidates are Ben's PDFs of
    Laughlin 1987 or Uusitalo 1995, or a value derived from the mid-curve resting point (Weckström & Laughlin
    2010). Run its effect on the lamina (tonic chloride current into L1-L3); don't assume it.
 4. **N33:** read the MacNamee 2016 Fig. 8B TBOA decay ratio. Then build class-level astrocytic Eaat1/GAT uptake (neutral off, CPU path), with a pre-registered check.
