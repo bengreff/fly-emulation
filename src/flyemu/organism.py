@@ -86,7 +86,9 @@ class Organism:
                           "(e.g. Hille; Robertson & Money 2012 review of insect thermal "
                           "effects); 2 taken, one value for all types",
             uncertainty="per-type Q10 unmeasured; reference 25 degC is the world default")
-        f = q10 ** ((self.world.temperature_c - 25.0) / 10.0)
+        # S5 (s23): body temperature at the resting heat balance when state:body_temp|model = 1
+        from . import internal_state
+        f = q10 ** ((internal_state.neural_temperature_c(self.reg, self.world) - 25.0) / 10.0)
         if f != 1.0:
             params.tau_m = params.tau_m / f
             params.tau_s = np.asarray(params.tau_s) / f

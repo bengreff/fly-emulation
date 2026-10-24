@@ -5213,3 +5213,852 @@ Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`
 - **Rows.**
   - B20 is still not done: it waits on m10f10s29's G and S.
   - N7 stays built-off in m10f, and moves to partial when the rebased stage is adopted.
+
+### s23 frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off), registered before any run (23 October, 22:58)
+**Brief.** Director, 23 Oct 23:00: adopt N26 and the MB noise stage on m10f5 (smoke, figure, tests). Main is merged
+(859348d), so fly2's m10f5 is the base. Two cumulative stages, so each one's effect is attributable.
+- **m10f6 = m10f5 + N26 CRY-TIM light input** (DECISIONS 23 Oct 00:09, held-out Lamba ZT21 passed, F-S20-3):
+  `state:clock|light_input` 1, `state:clock|tim_light_coupling` (k_tim) 0.789 and `state:clock|tim_kick_ct`
+  (ct_tim_h) 7.59, both fitted. `cry_rate_per_lux_h` 10.26 and `tim_kdeg_per_h` 13.85 are already the PARAMS
+  defaults (inferred).
+- **m10f7 = m10f6 + MB class noise + N21 off** (F-S21-1, held-out Huang 2024 6 of 9, spent):
+  `class:DAN|noise` 1.4773 and `class:MBON|noise` 2.2871 mV/√ms (fitted on PPL105 and MBON14), and
+  `cell_type:all|kc_mbon_ltd_timing_rate` 0. N21 goes off because its fitted rate is not resting-safe at measured
+  DAN rest (F-S26-1, F-S27-3; fly2's s27 HANDOFF: "Any run with fly's σ*_DAN on needs ... 0"). N22 forgetting stays
+  on; with no depression it relaxes weights that are already at baseline, so it is a no-op at rest. This trades an
+  N21 that acts only while DANs are silent (outside the measured 5-27 Hz) for DANs and MBONs at measured rest. N21
+  returns when fly2's resting-safe rule lands. fly2 is told in the HANDOFF.
+**Gate (fly2's stage rule, 21 Oct 21:35, unchanged).** (G) `closed_loop_check.py --profile m10fK`, seeds 12-15,
+1000 ms + 300 ms silent, noise (global and class) removed in the silent window: 0.0 non-eye spikes/ms in the last
+100 ms on every seed, no NaN, 0 MuJoCo warnings, no class above 200 Hz. (S) `smoke_live.py --profile m10fK
+--ms 60000 --seed 12`: no runaway, no NaN, 0 MuJoCo warnings, whole-brain rate within 0.162-0.486 Hz and active
+fraction within 0.014-0.042.
+**Unit checks.**
+- m10f6, LD check on the organism (registered 00:09): the clock params read through the stage's registry
+  (`profiles.apply` → `internal_state.read_params`), 3 days of 12:12 LD at 1000 lux from the default start state:
+  the model CT at the last lights-on within CT 0 ± 2 h. Reported with it, not scored: the same after a 6 h phase
+  jump (start at CT 6).
+- m10f7, an implementation check that the stage carries the fitted state (training targets, not held out):
+  `s20_mb_rest.py` at m10f7 (isolated CNS, settle 0.5 s, read 4 s), seeds 12 and 13: PPL105 in 6-10 Hz and MBON14
+  in 9.7-15.1 Hz on both seeds, the s20 confirm bands. The probe's plasticity asserts are relaxed to "N21 rate 0 and
+  no other KC->MBON rate on"; N22 is allowed. Huang 2024 is spent and is not rescored.
+- Reported, not scored: DAN and MBON class means in the 60 s smoke against the isolated-CNS confirm (8.0 / 13.2 Hz).
+**Prediction.** m10f6 is identical to m10f5 at rest in G and S (the default world is dark, so only the start
+state differs). m10f7 passes G (noise is removed in the silent window) and S, with the whole-brain rate up by about
+0.03 Hz (437 DANs and MBONs at about 10 Hz in about 160,000 cells) plus MBON targets.
+**Falsifier / consequence.** A stage that fails G, S or its unit check stays built-off with the reason recorded; if
+m10f6 fails, m10f7 is rerun on m10f5. Both passing moves `m10f` to m10f7 after the battery and a viewed figure.
+N26 stays partial even then (τ_c, μ and the cell peak hours are guessed); N3 stays partial (every other class has
+no noise or tonic drive from a source).
+**Runs.** backhouse `/home/greff/fly-m10f` (git archive of the commit carrying this entry), one thread per job
+(rule 16), detached, done-files. Expected: G about 8 min per seed, S about 3.8 h (fly2's m10f1 S: 13,616 s), about
+2 GB each.
+
+### s23 frontier stage m10f8 (S1-S4 sourced organ values ON), registered before any run (23 October, 23:20)
+**Brief.** Director item (3), 23 Oct: work the cheapest real completions. S3 is third in the s23 ranking
+(MECHANISM_STATUS "path to done"); its block is a guessed ingestion rate and crop capacity with the s19 sourced
+values switched off. One stage on m10f7, so its effect is attributable.
+- **m10f8 = m10f7 + `state:organs|values_from_sources` 1.** This turns on the six s19 SOURCED values (basal use,
+  fat store, hemolymph volume, body water, crop and gut taus; DECISIONS 22 Oct 02:30) plus two added now:
+  - `ingest_nl_s` 7.0 nL/s, **derived**: Itskov et al. 2014 sip volume about 1.05 nL times a sip rate of 6-7.7 Hz
+    (from Itskov's sip duration; Manzo et al. 2012 cibarial pumping about 6 Hz). Bounds 4.3-10.4.
+  - `crop_max_nl` 250 nL, **inferred**: Edgecomb, Harth & Schneiderman 1994 (J Exp Biol 197:215) via a secondary
+    citation (sex not stated, primary not read). Bounds 250-320, the upper bound Qi et al. 2015's starved first
+    meal of about 0.32 µL (females).
+  - `pump_full_rate_hz` stays at 10 (guessed), so S3 stays partial whatever the gate says.
+**Gate.** The same G and S as the 22:58 entry, on `m10f8`.
+**Unit checks.** S2 starvation and S3 CAFE are spent, and neither depends on the ingest rate or the crop capacity
+(the CAFE check is a pure energy balance), so there is no fresh scored check for this stage. Reported, not scored:
+the meal volume of a 24 h starved fly with the pump full on, against Qi 2015's 0.32 µL. This is **circular**
+(Qi sets the crop bound). Desiccation (S4) is not run or scored here and stays unspent.
+**Prediction.** G passes. S passes, with the whole-brain rate within ±0.02 Hz of m10f7. In a 60 s dark run with
+no food contact, the organ values only move the starting hunger and thirst signals.
+**Falsifier / consequence.** If G or S fails, the switch stays built-off with the reason recorded. If both pass,
+`m10f` moves to m10f8 after the battery and a viewed figure. S1 stays partial (trehalose `conc0`, `k_act` and
+`act_scale` guessed). S3 stays partial (pump rate guessed, crop capacity secondary). S4 stays partial (evaporation
+unsourced).
+**Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, detached, done-files, queued behind the m10f6 and
+m10f7 smokes if load is above 24.
+
+### s23 N25 night input (Director's (c)): DN1 late-night wake on the dFB OFF rate, Garbe day and night bout checks, registered before any fit run (23 October, 23:30)
+**Brief.** Director, 23 Oct 04:50, decision (c), standing in s23: before Chowdhury 2023 is spent, add a night-acting
+input from a sourced mechanism, pre-register day and night bout checks against Garbe 2015, refit, then score
+Chowdhury once. The s22 diagnosis (F-S22-1, F-S22-2): at the measured restart rate the best set already has a
+Garbe-like day (11.0 bouts of 53 min against 8.7 ± 3.3 of 57 ± 25), but its night is too consolidated (2.6 bouts of
+200 min against 7.0 ± 4.2 of 113 ± 70). The only time-of-day term was light raising k_off.
+**Mechanism (built, neutral 0).** k_off = k_off0 (1 + light_arousal Lsat + night_arousal D(CT)), with
+D(CT) = (1 + cos(2π (CT − ct_dn1)/24)) / 2.
+- Source of sign and window: DH31+ DN1 cells promote wake in the late night (Kunst et al. 2014 Curr Biol
+  24:2652; abstract and secondary only, no magnitude).
+- `ct_dn1_h` 19 h, **inferred**: Liang, Holy & Taghert 2016 Fig. 1G, the DN1 Ca2+ peak at about CT 18.8-19
+  (per-fly CT 17-20, DD1; s20 figure read). The Ca2+ peak is taken as the peak of the drive. Liang's "Ca2+ leads
+  behaviour by about 4 h" is noted and not applied.
+- `night_arousal`, **fitted**: one shared quantity, bounds 0-20, the same form as `light_arousal`. The one-cycle
+  cosine is the model's standard clock form; it reaches CT 1-3 at half and quarter strength.
+- The term reads the clock, so it persists in DD; the fast loop uses CT = ZT (entrained LD, its validity range).
+- Implementation check U4 (vector loop against the Organs class, night term on, U3's 3 SE rule): passed before
+  this entry (578.7 against 574.6 min/day, SE 9.1; `runs/s23/n25/unit.json`).
+**Fit (training only).** `scripts/probes/s23_n25_night.py fit`. k_r stays at its measured centre (1/25.86 min⁻¹).
+The grid is 32,340 sets: `need_tau_rise_h` 2-48 (10 values), `need_gain` 0-100 (11), `dfb_koff_per_min`
+0.001-0.041 (7; values above never passed in s22), `light_arousal` 1-20 (6; values below 1 never passed in s22),
+`night_arousal` {0, 0.5, 1, 2, 4, 8, 16}. Checks, in order:
+- T1, total sleep 1008-1100 min/day (Abhilash & Shafer primary band). T2, night > day. T4, the Liu ZT13-15 /
+  ZT0-2 need ratio ≥ 2. These are as in s22, stage 1, 64 flies.
+- **T5 (new), Garbe 2015 day and night bouts, each within mean ± 1 s.d.:** night 2.8-11.2 bouts of 43-183 min,
+  day 5.4-12.0 bouts of 32-82 min. Uses `bouts()` with 128 flies, seed 30 + chunk.
+- T3, the Liu anchors (stage 2), as in s22.
+- Candidate: the registered `select()` rule of s21 (the accepted set closest to the per-arm medians of the
+  day-1 predictions).
+**Expected.** night_arousal 0 gives no T1-T5 set (reproduces F-S22-2). Some sets with night_arousal > 0 pass.
+**Falsifier.** No set passes T1-T5. Then the DN1 night term alone cannot give Garbe-like days and nights at the
+measured k_r. That goes into FINDINGS, Chowdhury stays unspent, and the next candidate is a day-side term,
+registered separately.
+**Then.** If there is a candidate, its 6 / 12 / 24 h day-1 predictions are written into this file before any
+Chowdhury magnitude is read. Chowdhury is then scored once under the 23 Oct 00:53 rule, unchanged: the primary
+24 h point plus 6 h and 12 h, from Dryad raw data, mean ± 2 SEM. The s22 locked prediction (99.7 / 150.2 /
+174.3) and the T5-amended one (70 / 111 / 131) are reported at the same read and spend nothing extra.
+Chowdhury's Dryad data stays unopened until then. Garbe 2015 is training. Huber 2004 is training context.
+**Runs.** backhouse, one job, 3 worker processes of 1 thread each.
+
+### s23 m10f8 amendment: metabolic Q10 gets a measured source; gate result (23 October, 23:31)
+- `q10_met` joins `internal_state.SOURCED` at 2.0, **measured** (Klepsatel, Wildridge & Gáliková 2019 Sci Rep
+  9:5239, full text: whole-fly O2 consumption of adult males over 13-33 °C, Q10 2.0 in Oregon R and 2.3 in
+  Canton S). The value equals the old guessed default. It scales basal use by Q10^((T − 25)/10), which is 1 at
+  25 °C, so no gate, smoke or unit check changes. Only the provenance changes, from guessed to measured. The
+  running m10f8 smoke stands.
+- m10f8 gate (G), run as registered at 23:20: pass on seeds 12-15. Whole brain 0.337 / 0.336 / 0.337 / 0.337 Hz,
+  identical to m10f7 on every seed. 0.0 non-eye spikes/ms in the silent window, no NaN, 0 MuJoCo warnings, top
+  class MBON 12.7-13.9 Hz. The smoke (S) is still running.
+
+### s23 MB descriptive run: KCs at the measured 0.1 Hz (Director's held note), registered before any run (23 October, 23:42)
+**Brief.** Director, 23 Oct 04:50: after the N25 step, "the MB 0.1 Hz input run (descriptive)". It runs now, in
+parallel with the N25 refit, because it shares nothing with it. Question (s22, `docs/research/s22_mb_type_spread.md`):
+silent KCs are the obvious class-level counterweight to the MBON→MBON inhibition that compresses the MB type spread
+(model 6-15 Hz against Huang's 8-35 Hz; model rate falls with input count, ρ −0.83, the data's does not, +0.34).
+Turner, Bazhenov & Laurent 2008 measured KC spontaneous firing at 0.1 ± 0.4 Hz (71 KCs, Canton-S females).
+**Method.** `s20_mb_rest.py --profile m10f7 --stage --kc σ` (isolated CNS, settle 0.5 s, read 4 s). `class:KC|noise`
+(n3c_noise_KC, bounds 0-3 mV/√ms, neutral 0) is the only change; plasticity as in the m10f7 stage check.
+- Calibration (one class-level value, **fitted** to Turner's measured mean): σ_KC ∈ {0.5, 1.0, 1.5, 2.0, 2.5, 3.0},
+  seed 12. σ*_KC is the grid value whose KC class mean is closest to 0.1 Hz in log terms, if it lies within
+  0.05-0.2 Hz; otherwise log-linear interpolation between the bracketing values and one more run. If 3.0 (the
+  bound) stays below 0.05 Hz, that is the result and no value outside the bound is tried.
+- Confirm σ*_KC on seed 13.
+**Reported (descriptive, nothing scored or adopted):** KC mean, SD and quantiles (Turner's SD is 0.4 Hz); DAN, MBON,
+APL and DPM class means; the 11 Huang types; Spearman ρ of model rate with total input synapses (s22 table); the SD of
+log10 rate across the 11 types, model against data. Huang 2024 is spent (consistency only), so none of this can
+adopt anything. A per-type mechanism suggested by it needs a new held-out source, registered first.
+**Expected** (s22 rest-drive numbers): KC input at 0.1 Hz offsets 14-64 % of each type's net inhibition, so the
+heavily KC-innervated types (MBON11, PPL101, PPL103) rise most, ρ moves toward 0 and stays negative, and the
+log-SD widens but stays below the data's.
+**Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, launched only while the 1-min load is below 22.
+
+### s23 N25 night-input fit result, tie-break and robustness rule, written before any prediction run or held-out read (23 October, 23:49)
+**Result** (`runs/s23/n25/fit.json`, backhouse, 1,053 s). 475 of 32,340 sets pass T1, T2, T4. **2 pass T5** (Garbe day
+and night bouts within mean ± 1 s.d.), and both pass the Liu anchors (T3). The falsifier (no set passes T1-T5) is not hit.
+- Set A: τ_rise 36 h, γ 2, k_off 0.00639 min⁻¹, λ 2, **night_arousal 0**. Night 3.17 bouts of 181.8 min (bound 183),
+  day 10.7 of 43.7. Day-1 rebound (fit run): 76.6 / 98.2 / 137.4 min (6 / 12 / 24 h).
+- Set B: τ_rise 18 h, γ 2, k_off 0.001 min⁻¹, λ 20, **night_arousal 8**. Night 3.63 bouts of 148.4 min, day 11.7 of
+  41.8. Day-1 rebound: 77.1 / 95.9 / 129.6 min.
+- Against expectation: a night_arousal 0 set passes T5. Inside Garbe's ± 1 s.d. band the night term is not required;
+  F-S22-2 was about nights near Garbe's mean, which neither set reaches (both have about 3 night bouts against 7.0).
+  T5 passes at night_arousal 0 (1 set) and 8 (1); T1, T2, T4 passes fall with night_arousal (158 at 0, 11 at 8, 0 at 16).
+**Tie.** The registered `select()` rule picks the set closest to the per-arm medians. With two sets both are equally
+distant by construction; the code returned A by floating-point rounding. Tie-break, decided now: **B is the scored
+candidate**, because the Director's (c) asks for a candidate with a night-acting input and B is the only accepted set
+that uses it. A's prediction is computed the same way and reported at the same read; it spends nothing extra and
+cannot pass or fail the test.
+**Robustness rule (tightens, never loosens).** Both sets passed T5 at 128 flies, A by 1.2 min on night bout length. The
+predict run repeats the bout check at 512 flies (seed 600). If B fails T5 there, A becomes the candidate if it passes;
+if neither passes, there is no robust candidate, Chowdhury stays unspent and that is the result.
+**Predict** (`s23_n25_night.py predict`, both sets): deprivation at 2,048 flies (seed 500), bouts at 512 (seed 600).
+The scored candidate's 6 / 12 / 24 h day-1 predictions go into the next entry before Dryad is downloaded.
+
+### s23 N25 scored candidate and its locked Chowdhury predictions, written before Dryad is downloaded (23 October, 23:52)
+**Robustness rule (23:49) applied** (`runs/s23/n25/predict.json`, Mac, `s23_n25_night.py predict`). Bouts at 512 flies,
+seed 600, against T5:
+- B (night_arousal 8): night 3.54 bouts of 151.5 min, day 11.59 of 42.3. **Passes T5.**
+- A (night_arousal 0): night 2.88 bouts of **188.0 min** (bound 183), day 10.49 of 48.3. **Fails T5** at 512 flies.
+- So **B is the scored candidate**, by the tie-break and now also by robustness. Liu anchors at 2,048 flies: B
+  e0 0.69, e2 0.48 (≥ 0.5 e0), e24 0.00, pass; A 0.47 / 0.34 / 0.01, pass.
+**Locked predictions** (2,048 flies, seed 500; day-1 normalised rebound, min per 24 h, ± model SEM):
+
+| | 6 h | 12 h | 24 h (primary) |
+|---|---|---|---|
+| **B, scored** (τ_rise 18 h, γ 2, k_off 0.001 min⁻¹, λ 20, night_arousal 8) | **69.3 ± 3.4** | **114.4 ± 3.4** | **139.9 ± 3.3** |
+| A, reported (τ_rise 36 h, γ 2, k_off 0.00639, λ 2, night_arousal 0; fails T5 at 512) | 57.0 | 100.0 | 125.4 |
+| s22 locked, reported | 99.7 | 150.2 | 174.3 |
+| s22 T5-amended, reported | 70 | 111 | 131 |
+| 00:34 mode 1 φ CT 0 / V3 / mode 0, reported | 142 / 175 / 19 | 139 / 195 / −22 | 138 / 212 / 49 |
+
+- B days 2 and 3: 6 h −1.8 / 3.7, 12 h −4.3 / −1.8, 24 h −3.4 / 3.0 min. Ordering: 24 h > 12 h > 6 h. Residual sleep
+  during deprivation: 0 by construction.
+- The 23 Oct 00:53 rule applies unchanged: the 20 s arm, group mean ± 2 SEM of the paper's normalised rebound from
+  the Dryad raw data (doi:10.5061/dryad.qnk98sfpp), DAM 20 s bins, ≥ 5 min inactivity. Pass: 139.9 inside the 24 h
+  span, and 69.3 and 114.4 inside the 6 h and 12 h spans. If the primary misses, B fails as a rebound model; the miss
+  and its direction go into FINDINGS, with no refit on Chowdhury.
+- Validity, stated before the read: the reduced loop has no route by which the stimulus itself changes sleep, the
+  fast loop uses CT = ZT, and the night term's peak hour is the DN1 Ca2+ peak (inferred, not a firing peak).
+
+### s23 m10f8 amendment 2: S3 sources corrected, N28 neural Q10 moved to a cited value (23 October, 23:59)
+Readers (`docs/research/s23_crop_pump_q10_adaptation.md`) changed two of the 23:20 S3 values and gave N28 a source.
+- `ingest_nl_s` **7.0 → 5.0 nL/s, derived.** Itskov et al. 2014: 1.05 nL per sip cycle of 0.13 s sip plus a 0.08 s
+  inter-sip interval (w1118 males and females, 25 °C). The 23:20 derivation used sip duration alone. Bounds 4.4
+  (sucrose sip, 0.16 s) to 8.8 nL/s (Pool et al. 2014, 150 nL in 17 s, deprived females, 30 °C).
+- `crop_max_nl` **stays 250 nL, inferred; bounds 150-320.** Edgecomb et al. 1994 scores crop size on an ordinal
+  scale, so the 23:20 citation is withdrawn. Measured single meals after deprivation (females): Pool 2014 about
+  150 nL, Qi et al. 2015 0.27-0.32 µL. No male value found.
+- `cell_type:all|q10` **2.0 → 2.5 in m10f8, inferred** (N28). Juusola & Hardie 2001: adult photoreceptor
+  time-to-peak Q10 2.5 ± 0.2, kinetics range 2.3-3.5. One cell type's value applied to all neural time
+  constants (validity: the phototransduction cascade may not stand for membrane and synaptic kinetics). The
+  parameters.csv bounds stay insect-wide 1.5-4, because m4 keeps 2.0.
+- **No re-run needed.** All three act only away from the defaults the gate and smoke use: Q10 scales by
+  Q10^((T − 25)/10), which is 1 at the 25 °C world default, and ingestion needs food contact, which the 60 s dark
+  smoke does not have. The running m10f8 smoke and the 23:31 gate stand. Tests: internal state, model data and
+  repo hygiene pass (42).
+- Rows: S3 still waits on fly2's `pump_full_rate_hz` (10 Hz, guessed; measured pump cycle 5-7 Hz, Manzo 2012,
+  Sui 2026), as registered at 23:20. N28 has a value inside a cited range but no independent check (every Juusola
+  number comes from the cells that set the value), so it stays partial.
+
+### s23 N25 Chowdhury 2023 scored once: candidate B fails the pass rule; Chowdhury is spent (24 October, 00:15)
+**How it was read.** Dryad needs a login or a bot check, which was not circumvented, so the registered fallback was
+used: a blind pixel read of Fig. 1 (`docs/research/s23_chowdhury_fig1_read.md`), read uncertainty 4 min per
+difference. Scored with `scripts/probes/s23_chowdhury_score.py` (`runs/s23/n25/chowdhury_score.json`).
+**Method choices made at read time** (the 00:53 rule assumed raw data and did not fix these):
+- Fig. 1 C, F and I plot per-fly box plots (quartiles, median, whiskers) of raw post − pre sleep for control and
+  each trigger, not means. The normalised rebound is the 20 s group minus the control group. Group means and SDs
+  come from the quartiles (Wan et al. 2014: mean (Q1 + median + Q3) / 3, SD IQR / 1.35), SEM SD / √n with the
+  caption's n. Span: estimate ± (2 combined SEM + 4 min).
+- Reported alongside: medians instead of estimated means, panel K's 24 h points (error bars of unstated type), and
+  panel J. **The figure disagrees with itself for the 20 s arm:** panel I's 24 h box has median 195.7 min, panel
+  J's nominally identical box 101.2. The 220 s boxes agree between the same panels (68.0 vs 67.4, 87.5 vs 88.0).
+  Panel K agrees with I. The Results text ("the 6 hr deprivation condition ... displayed significantly higher
+  rebound sleep compared to the 12 hr and 24 hr") agrees with J.
+
+**Spans (min per 24 h, day 1) and B's locked predictions:**
+
+| Reading | 6 h | 12 h | 24 h (primary) |
+|---|---|---|---|
+| C/F/I, estimated means | 126.5 [85.9, 167.1] | 106.8 [63.6, 150.0] | 148.0 [106.5, 189.5] |
+| C/F/I, medians | 122.3 [81.7, 162.9] | 114.3 [71.1, 157.5] | 137.5 [96.0, 179.0] |
+| J, estimated means | 149.9 [110.0, 189.8] | 105.4 [63.6, 147.2] | 44.2 [13.9, 74.5] |
+| K, 24 h only | | | 163.3 [121.9, 204.7] |
+| **B, scored** | **69.3, out (low) in every reading** | **114.4, in** | **139.9, in for C/F/I and K; out (high) for J** |
+
+**Verdict: B fails the registered pass rule.** The pass needs all three inside; the 6 h secondary misses low by
+12-41 min beyond the span in every reading. The primary is inside under three of the four readings and outside
+under J, so whether the falsifier itself is hit depends on which panel of the published figure is right; that is
+recorded, not resolved. B is not a passing rebound model either way.
+**Reported at the same read, spending nothing:** A and the s22 T5-amended set behave like B (6 h low). The s22
+locked set misses at 12 h under C/F/I. The 00:34 mode 1 φ CT 0 prediction (142 / 139 / 138, flat) lies inside all
+three C/F/I spans and fails J's 24 h. V3 and mode 0 miss.
+**Ordering (reported):** the model's rebound rises with deprivation length (24 h > 12 h > 6 h). The data's 24 h − 6 h
+is +21.5 min under C/F/I, inside 2 combined SEM (52.3), so not tested; under J it is −105.7, beyond 44.5, the
+opposite sign, and the paper's own test says 6 h > 12 h and 24 h. Days 2 and 3 are not in Fig. 1; residual sleep
+during deprivation was not quantified by the reader.
+**Consequences.**
+- Chowdhury 2023 is **spent**. No refit on it, and no candidate may be tuned toward these spans.
+- N25 stays partial: mode 1 and the night term are built, off by default, and have now failed their held-out check.
+- The shape result goes to FINDINGS (F-S23-6): rebound that does not grow with deprivation length is the thing a
+  next structure has to explain from training data; the paper's own account (short-bout sleep masking, long-bout
+  sleep under homeostatic control) is seen context.
+- No held-out deprivation-length series is left. A next N25 candidate would need a new held-out source registered
+  first (Brown et al. 2020, one 24 h duration, mainly mated females, is the only one named so far). N25 drops below
+  the cheaper completions in the path-to-done ranking.
+- The Dryad raw data, if Ben downloads it in a browser, can settle the I/J disagreement as a refinement of this
+  recorded score only; it cannot re-open the test.
+
+### s23 frontier stage m10f9 (N1 recorded firing modes ON), registered before any run (24 October, 00:20)
+**Brief.** Director item (3): the cheapest real completions. N1's path (MECHANISM_STATUS): use the recorded
+spiking or graded mode wherever a recording exists; where none exists, the built default (spiking) ON counts under
+Ben's done rule. The switch is built and tested (`cell_type:all|mode_from_recordings`, s12 and s13; test
+`test_recorded_modes_override_the_group_only_for_recorded_types`) but off in every m10f stage.
+- **m10f9 = m10f8 + `cell_type:all|mode_from_recordings` 1.** Current `graded_rec` rows (`data/params/cell_types.csv`):
+  Mi1, Tm1, Tm2, Tm3 (measured; Behnia 2014 Fig. 1 mode only, its held-out step ratios and filter peaks are not
+  used); T4a-d, T5a-d (measured; Gruntman 2018, 2019); L4, L5 (inferred); IN13B and IN10B types (inferred by
+  hemilineage from Agrawal 2020's 13Bα and 10Bα recordings).
+- **Row-addition rule, fixed before the mode reader reports** (Sonnet reader launched 00:17):
+  - A type gets a row only if a primary adult Drosophila recording (whole-cell, sharp electrode or an isolated unit)
+    states that it fires action potentials (row 0) or that it does not (row 1). Calcium imaging alone does not count.
+  - Basis measured for the recorded type; inferred when extended by name to sibling types (as IN13B).
+  - Rows are written only where they change the model: graded types not yet graded, and spiking types that sit in
+    an unknown-mode group (AL LNs, optic columnar, VNC local). Recorded spiking types already spiking by default
+    go into the research note only.
+  - Contested types (two recordings disagree) and graded-with-spikelets types get no row: they keep their group's
+    mode, and the conflict or the missing mixed mode is a recorded validity limit.
+- **Gate.** G and S as the 23 Oct 22:58 entry, on m10f9.
+- **Unit check (against the recordings).** In the 60 s smoke, cells of every `graded_rec` = 1 type emit no spikes,
+  and the test above passes at the m10f9 values. Reported: the newly graded cell count, and their spike rate in
+  m10f8's smoke.
+- **Prediction.** G passes. S passes with the whole-brain rate within ±0.01 Hz of m10f8 and the active fraction
+  within ±0.002: in the dark at rest the optic columnar cells are near silent (0.003 Hz in m10f7's first 10 s;
+  T4/T5 0), and the 687 IN13B and IN10B cells are under 0.5 % of the brain.
+- **Falsifier / consequence.** If G or S fails, the switch stays built-off with the reason recorded. If both pass,
+  `m10f` moves to m10f9 after the battery and a viewed figure, and N1 is done if every type with a recorded mode
+  uses it and the rest are spiking by default. Contested types are listed in the row; they do not block done unless
+  Ben rules a mixed mode is required.
+- **Runs.** G on backhouse if the load allows, else on the Mac through `slot.py`. S takes 4-5 h at the current
+  load, so it cannot finish before the 05:30 park; it runs next session.
+
+### s23 m10f9 result: gate G fails on seed 12 (VNC runaway); the switch stays built-off (24 October, 00:29)
+`runs/s23/fc/gate_m10f9_s12.json` (Mac through slot.py, cell_types.csv as at 0d4af68). In the last 100 ms of the silent
+window there are 7.03 non-eye spikes/ms, against 0 for m10f8. Whole brain 0.378 Hz against 0.337 (+0.041; predicted
+±0.01). No NaN, 0 MuJoCo warnings. The runaway is in the VNC: MN_other 0.51 → 8.43 Hz, vnc_local_TBD 0 → 3.20,
+endocrine 0 → 3.29, efferent 0 → 2.41, and these classes keep firing through the silent window (933, 807, 148, 104
+spikes, ...). The optic classes are unchanged (optic_columnar 0.004, T4T5 0, LMC 0): in the dark the optic recorded
+modes are no-ops. IN13B fires 0.055 Hz and IN10B 0 Hz as spiking cells in m10f8, so the runaway does not come from
+losing their spikes. Mechanism (inferred, not tested): as graded cells, IN10B's 254 cholinergic cells release from
+rest upward (release_at_rest 0 means release starts at rest and reaches the guessed graded_rmax 100 Hz-equivalent at
+threshold), so subthreshold depolarisation becomes continuous excitation. This is the same failure as s13 S3 arm A
+(DECISIONS 13 Oct 23:10, a VNC-wide runaway after the drive stopped). I missed that result when writing the 00:20
+prediction. The other seeds and the smoke were stopped. Per the registration, `mode_from_recordings` stays built-off,
+and N1 stays partial with this reason.
+
+### s23 frontier stage m10f9b: recorded modes ON with the 00:20 rule also applied to the s13 IN10B row, registered before any run (24 October, 00:29)
+**Why this is a new stage, not a rescue.** The 00:20 rule gives graded-with-spikelets types no row. Agrawal 2020
+(open text): 10Bα "current injection failed to evoke identifiable action potentials, though we did occasionally
+observe spike-like events". The research note committed before the m10f9 gate was read (3fe4cf7) already recorded
+that the s13 IN10B row breaks the rule; it stayed in m10f9 only because the registration listed it. The decision to
+apply the rule now is taken after seeing G fail, so it is labelled that way and gets its own stage and prediction.
+- **Change.** The `^IN10B\d+$` graded_rec row is removed from `data/params/cell_types.csv` (its text moves to
+  `docs/research/s23_n1_recorded_modes.md` as a validity limit; the row is in git at 676b47f). IN10B keeps its group
+  mode (vnc_local, spiking). m10f9b = the m10f9 profile values; the only difference is the row file. IN13B (433
+  GABAergic cells, all recorded cells non-spiking) stays graded.
+- **Gate.** G as 23 Oct 22:58: seeds 12-15, 0 non-eye spikes/ms in the last 100 ms of the silent window, no NaN,
+  0 MuJoCo warnings, no class above 200 Hz. Then S (60 s, seed 12, band 0.162-0.486 Hz, active 0.014-0.042), with
+  the 00:20 unit check: cells of every graded_rec = 1 type emit no spikes.
+- **Prediction.** G passes on all four seeds, with the whole brain within ±0.01 Hz of m10f8 (0.337 on seed 12).
+- **Falsifier / consequence.** If G fails, graded IN13B (disinhibition through GABA release from rest) or another
+  graded type also drives the VNC. Then the mode switch cannot be ON until graded release is set from a measurement
+  for VNC nonspiking interneurons (graded_rmax and release_at_rest are guessed). That goes to MEASUREMENT_LIST, and N1
+  stays partial. If G and S pass, `m10f` moves to m10f9b after the battery and a viewed figure. N1 is then done
+  under the 00:20 rule, with one stated caveat: graded transmission uses the guessed graded_rmax 100 Hz, which
+  belongs to the graded-synapse value, not to the mode itself. If Ben counts that value as part of N1, N1 stays
+  partial on it.
+- **Runs.** Mac through slot.py (the m10f9 gate took 151 s per seed tonight). S follows G in the same script and may
+  finish before the 05:30 park; if not, it is stopped and rerun next session.
+
+### s23 m10f9b result: gate G passes on seeds 12-15 (24 October, 00:42)
+`runs/s23/fc/gate_m10f9b_s{12..15}.json` (Mac, slot.py). On every seed: 0 non-eye spikes/ms in the last 100 ms of the
+silent window, no NaN, 0 MuJoCo warnings, highest class 12.7-13.8 Hz (MBON). Whole brain 0.333 / 0.331 / 0.333 /
+0.332 Hz against m10f8's 0.337 / 0.336 / 0.337 / 0.337 (−0.004 to −0.005; the prediction was ±0.01). IN13B, now
+graded, emits 0 spikes (0.055 Hz as spiking cells in m10f8). The VNC classes that ran away in m10f9 are at their m10f8
+rates (MN_other 0.54 against 0.51). Prediction met. The 60 s smoke S (seed 12) and the unit check follow in the same
+Mac run. Nothing is adopted until S, the battery and a viewed figure.
+
+### s23 S5 body heat balance: build and check registration (24 October, 00:51)
+- **Ruling** (Director, 24 Oct 00:55 in `~/director/decisions/fly.md`): S5 is a derived lumped heat balance that
+  yields about ambient at rest, checked against a cited body-vs-ambient measurement; not a bare constant.
+- **Built** (`internal_state.py`, switch `state:body_temp|model`, neutral 0 = body at air temperature):
+  C T_b' = P_met − P_evap − G (T_b − T_air), exact exponential steps. P_met = metabolic use × 2803 kJ/mol glucose;
+  P_evap = evaporation × 2.44 kJ/g; C = m c_p; G = 2π k_air D + 4 ε σ T_air³ π D² (a sphere of the body's volume
+  in still air, Nu = 2, plus linearised radiation to surroundings at air temperature), D = (6 m / π ρ)^(1/3).
+  Metabolic and evaporative Q10 read T_b; the neural Q10 (`organism.py`, applied at build) reads the resting
+  steady state. Values: m 0.505 mg (measured, Burggren 2017 male wet mass, the basal-rate flies); ρ 1.07 g/mL,
+  c_p 3.5 J/(g K), ε 0.95 (inferred, provisional: the reader found no insect source); k_air, σ, latent heat and
+  the glucose heat are physical constants. Validity: still air, no radiant load, rest to walking; flight is out.
+- **Model numbers** at m10f8 values (sourced basal; evaporation still the guessed S4 value): C 1.77 mJ/K,
+  G 0.176 mW/K, τ = C/G 10.1 s. At 25 °C, 50 % RH, rest: P_met 17.5 µW, P_evap 4.9 µW, **T_b − T_air = +0.072 K**
+  (0 % RH +0.044 K; activity 1 at the guessed k_act 5: +0.57 K). With the neutral s10 values (m10f7): +0.004 K.
+- **Order, stated plainly.** These numbers were computed before the S5 reader's report was read. The report came
+  in a minute later, and I wrote this registration after reading it. It has **no quantitative value** for any insect
+  of 5 mg or less (Heinrich & Bartholomew 1974, secondary and qualitative; an untraced mosquito snippet; Hangartner
+  2023 morph differences under a lamp; `docs/research/s23_graded_rmax_s5_reads.md`), so no check value has been seen.
+- **Check D (registered before opening Digby 1955 J Exp Biol 32:279).** If Digby's full text gives the
+  temperature excess ΔT_D of a Drosophila, or of an insect of 5 mg or less, under a stated radiation intensity I in
+  air of 30 cm/s or less, the model predicts ΔT = (α I A_proj + P_met − P_evap) / G for that insect's mass. A_proj
+  = π D²/4 for a sphere of its mass at ρ; α is Digby's absorptivity if stated, else 0.8 (inferred); P_met is the
+  fly's mass-specific basal rate times its mass; P_evap is 0. **PASS** if the prediction is within a factor of 2 of
+  ΔT_D (the sphere stands in for the real shape; ignoring free convection biases the model high). **Falsifier:**
+  outside the factor of 2, on the smallest insect Digby reports. Scored once, on the first qualifying number. If the
+  text can't be reached, or has only larger insects, no check is scored. S5 then counts as built and ON with no
+  check found (documented search), at the required level.
+- **Stage.** m10f10 = the last passing N1 stage + `state:body_temp|model` 1 (registered below with m10f9c).
+
+### s23 N1 graded_rmax sourced; stage m10f9c registered (24 October, 00:52)
+- **Value, by rule:** graded_rmax = (release rate per active zone at a graded fly synapse) / (vesicles per active
+  zone per spike at a fly spiking synapse) = 240 / 0.79 = 304 → **300 Hz**. Range 171-684 Hz (135-540 vesicles/s).
+  Sources: Laughlin, Howard & Blakeslee 1987, through de Ruyter van Steveninck & Bialek 2002 and Simmons & de Ruyter
+  van Steveninck 2005 (blowfly R1-6 → LMC tonic rate, derived by the authors); Kazama & Wilson 2008 (Drosophila
+  ORN → PN, p 0.79). **Label: derived.** One shared value for every graded type (an inferred transfer from the
+  photoreceptor synapse). The tonic rate is a lower bound on the rate at the top of the range, so the true value
+  may be higher; by rule the central value is used. Quotes: `docs/research/s23_graded_rmax_s5_reads.md`.
+- **m10f9c** = m10f9b + `cell_type:all|graded_rmax` 300. **Gate** as m10f9b (G seeds 12-15, then S 60 s seed 12
+  with the graded_rec unit check). **Prediction:** G passes on all four seeds; whole brain within ±0.03 Hz of
+  m10f9b on each seed (0.333 / 0.331 / 0.333 / 0.332). flyvis pair edges are unchanged (their weights divide out
+  rmax), so the change is in the graded cells off those edges (photoreceptors, L1-L3, APL, IN13B and the rest).
+  **Falsifier / consequence:** if G fails, the sourced graded_rmax is not resting-safe with the present
+  release-at-rest values. N1 then stays partial (sourced value not ON), and the failure goes to FINDINGS and
+  MEASUREMENT_LIST. If G and S pass, then battery and a viewed figure, and N1 is done (DECISIONS 00:20 rule plus the
+  Director's 00:55 ruling on graded_rmax).
+- **m10f10** = m10f9c + `state:body_temp|model` 1 (S5). **Prediction:** G passes; whole brain within ±0.005 Hz of
+  m10f9c (the neural time constants scale by 2.5^(−0.0072) = 0.9934). Then S. If m10f9c fails, m10f10 is rebuilt on
+  m10f9b and re-registered.
+
+### s23 Check D scored (S5 PASS); m10f9c fails G; m10f10 rebased on m10f9b (24 October, 00:57)
+- **Check D, scored once.** First qualifying number in Digby 1955 (J Exp Biol 32:279, p 285; archived
+  `data/raw/digby1955/`, sha256 386c2c5d…): a small *D. melanogaster*, tethered and flying, "at a wind speed of
+  10 cm./sec. ... the temperature rise was 2·5° C." at radiation 1·0 cal./cm.²/min (the sentence's stated
+  intensity), read from the change in wing-beat rate calibrated against air temperature. Digby gives no mass and no
+  absorptivity for *Drosophila*, so the registered defaults apply: the model mass 0.505 mg and α 0.8.
+  I = 1.0 cal cm⁻² min⁻¹ = 697 W/m²; D 0.966 mm, A_proj 0.733 mm², G 175 µW/K, absorbed 409 µW, basal 4 µW →
+  **predicted 2.36 K vs 2.5 K measured, ratio 0.94. PASS** (bar: within a factor of 2). Mass 0.4-1.0 mg gives
+  2.20-2.90 K (ratio 0.88-1.16), all inside.
+- **What it does and doesn't show.** It checks the conductance G (the excess at rest is (P_met − P_evap)/G), so
+  the +0.07 K resting excess stands, matching Digby's own statement (p 279) that "metabolism and evaporation are
+  practically negligible in the resting insect". The close match is partly offsetting errors: the flying fly's wing
+  airflow adds forced convection the still-air G lacks (pushes the model high), and Digby notes small insects pass
+  part of the radiation (pushes it low). At 50 cm/s the same fly rose 1.0-1.5 K, which the still-air model
+  over-predicts by 1.6-2.4×: outside its stated validity (still air), as registered. Labels: ΔT_D measured
+  (indirect, wing-beat thermometer); prediction derived. Held-out register: Digby's *Drosophila* numbers are spent.
+- **S5:** built, derived, checked against a cited measurement (passed). ON in the frontier only through stage
+  m10f10 (gate, smoke, battery, viewed figure).
+- **m10f9c fails G** (seed 12): 0.06 non-eye spikes/ms in the last 100 ms of the silent window (the bar is 0); eye
+  spikes in that window 6.0/ms (m10f9b: 0.04/ms); whole brain 0.354 Hz (inside the ±0.03 prediction). With
+  graded_rmax tripled (100 guessed → 300 derived), resting graded release (release_at_rest × graded_rmax) triples, and
+  the dark eye drives a trickle into the central brain (AL_LN, DN, central_other, MN_other in the silent window).
+  By the registered consequence: **N1 stays partial** (the sourced value is not ON). The binding unknown is now
+  `release_at_rest` (guessed, 0-0.9): the resting drive is the product, so a sourced release_at_rest is the next
+  N1 item. Seed 13 is finishing as descriptive; seeds 14-15 and the m10f9c smoke are cancelled.
+- **m10f10 re-registered** = m10f9b + `state:body_temp|model` 1. **Prediction:** G passes on seeds 12-15; whole
+  brain within ±0.005 Hz of m10f9b on each seed (0.333 / 0.331 / 0.333 / 0.332). Then S (60 s, seed 12, the same
+  band and the graded_rec unit check). Falsifier: G fails, or any seed outside ±0.005 Hz.
+
+### s23 m10f10 G passes; S7 and S8 made ruled constants; B27/N27/N33/N1 reads (24 October, 01:18)
+- **m10f10 G (scored against the 00:57 prediction):** seeds 12-15 whole brain 0.332 / 0.331 / 0.331 / 0.332 Hz
+  (m10f9b 0.333 / 0.331 / 0.333 / 0.332; all within ±0.005), 0 non-eye spikes/ms in the silent window, 0 MuJoCo
+  warnings, no NaN, no class above 200 Hz (max 13.7 Hz). **PASS.** The S smoke is running (Mac,
+  `runs/s23/fc/smoke_m10f10.done`).
+- **S7 and S8** (Director ruling 24 Oct 00:55: a constant healthy state, and a naive male constant stated as such,
+  are the required levels). Both leave the stubs for `stubs.CONSTANT_STATES`: each key is read by every profile at
+  its one value (0) with the stated condition and validity range in the inventory, and any other value is refused.
+  S7: healthy, uninfected, unparasitised, conventionally reared lab fly (inferred for the specimen, whose health is
+  unreported). S8: naive (virgin) mature male (the specimen was 5 days old; its mating history is unstated, so virgin
+  is guessed). mechanisms.yaml status `have`; MECHANISM_STATUS "done (ruled constant)", counted apart from rows done
+  on evidence. Ledger: 7 organism slots move from absent to default (S7 inferred, S8 guessed); the measured/derived
+  fill is unchanged.
+- **Reads** (`docs/research/s23_b27_n27_n33_reads.md`, `docs/research/s23_graded_rmax_s5_reads.md`): B27 has no
+  adult cardiac output, chamber length or transit time, so the mixing time can't be derived yet; N27 has a resting
+  adult brain [K+]o (13.1 ± 2.8 mM) and pathological surges but no per-activity rise or clearance τ; N33 has one
+  larval acute-TBOA slowing of glutamatergic IPSC decay (ratio in Fig. 8B, unread) and no fly GAT current data;
+  N1's release at rest is in no open text (Laughlin 1987 and Uusitalo 1995, paywalled, hold the transfer curves).
+
+### s23 gate G's silent window: purpose, F-S23-8 correction, and amendment G2 registered before any rescoring (24 October, 01:31)
+- **Trigger.** Director, 24 Oct 01:30: is G's "0 non-eye spikes in the silent window" a biological claim or an
+  engineering convention? Fly photoreceptors release tonically in darkness (Uusitalo 1995), and the real brain is
+  not silent at rest. If G forbids something biology does, the gate is wrong, not the model. Don't change G
+  silently; register any amendment before rescoring.
+- **Correction to F-S23-8 (checked in the built networks, not run):** in m10f9b and m10f9c, no graded cell
+  releases at rest. `graded_r0` is None, so `release_at_rest` is 0 for all 36,360 graded cells (6,091
+  photoreceptors, 8,884 LMCs, 7,370 optic columnar, 13,580 T4/T5, 433 IN13B, 2 APL). No eye class has a per-type
+  or class tonic drive. Noise is removed in the window. So the silent-window eye activity **is not tonic dark
+  release**: no deterministic input reaches a graded cell. It is a recurrent tail. Eye counts from the 2nd to the
+  3rd 100 ms bin fall ×0.21 (m10f9b, s12 and s13) and ×0.71 / ×0.73 (m10f9c, s12 / s13). Tripling graded_rmax
+  triples the gain of the graded optic-lobe loops, so the tail decays about 4× more slowly (τ ≈ 290 ms against
+  ≈ 65 ms). F-S23-8's "inferred mechanism" (resting drive = release_at_rest × graded_rmax) is wrong for this chain,
+  and so is the conclusion that release_at_rest binds. Correction finding F-S23-10 follows.
+- **(1) What the silent window protects against.** Self-sustained network activity: activity that persists or
+  grows with no afferent drive, no noise and no per-type tonic drive. In the full run this becomes a runaway
+  (s13 arm A; F-S23-7, m10f9 MN_other 0.5 → 8.4 Hz). It is a stability test of the noise-free model's quiescent
+  state. It is **not** a claim that a fly brain is silent. In the model, noise stands for the unmodelled inputs
+  that keep real neurons spontaneously active; measured resting rates (Huang DANs, the S band) are matched with
+  noise on.
+  - "0 non-eye spikes in the last 100 ms of 300 ms" is an **engineering convention**. It assumes every stable
+    network falls silent within 200-300 ms. That is an assumption about decay speed, not stability.
+  - Biology would make it wrong in two ways. (a) A real deterministic tonic source, such as graded release at rest
+    in darkness or an intrinsically tonic type, would keep downstream cells active without noise. That is absent
+    in this chain (r0 = 0), so (a) is not what failed m10f9c. (b) A stable network with a slow mode decays more
+    slowly than the window.
+  - Known limit, not tested tonight: a model whose head-direction bump self-sustains without noise would fail G
+    and G2 alike, although the real bump persists in darkness.
+- **(2) Amendment G2.** It replaces G's silent clause for every stage scored from now on. The rest of G is
+  unchanged: no NaN, 0 MuJoCo warnings, no class above 200 Hz. G's own verdict stays reported (`silent_pass`,
+  still computed on the first 300 ms).
+  - Window 1000 ms, with afferent drive and all noise removed, per-type tonic cells excluded, and eye classes
+    reported apart, all as before.
+  - (a) **No growth**, for eye and non-eye counts separately. For every pair of consecutive 100 ms bins,
+    count(k+1) − count(k) ≤ 3 √(count(k) + count(k+1)). This is Ben's 13 Oct eye rule applied to every bin and to
+    non-eye cells.
+  - (b) **Return to rest outside the eye:** 0 non-eye spikes in the last 100 ms (900-1000 ms).
+  - Fields: `g2_no_growth_eye`, `g2_no_growth_noneye`, `g2_noneye_last100ms`, `g2_pass`, plus the per-bin counts
+    and the end-of-window graded depolarisation (`scripts/probes/closed_loop_check.py --silent-ms 1000`).
+  - The 1000 ms window is an engineering choice: the length of the noisy phase. It was chosen knowing m10f9c's
+    ×0.71 per 100 ms decay. At that rate, (b) for m10f9c is about a coin flip per seed (expected non-eye last bin
+    about 6 × 0.71⁷ ≈ 0.5 spikes), so it was not chosen to make m10f9c pass.
+  - Future clause: a stage that turns on a sourced deterministic tonic source (r0 > 0) registers, with it, a
+    clamp arm (b scored with that source's output clamped) and stationarity of the non-eye rate in place of (b).
+- **Runs** (Mac, slot.py, `runs/s23/g2/`, seeds 12-15, scored once): m10f9c, m10f9b, m10f10. The stage adopted
+  tonight must pass G2 on seeds 12-15. m10f6-m10f8 are not rerun (subsumed by m10f9b/m10f10).
+- **Decision rules for m10f9c:**
+  - G2 passes on all of seeds 12-15: G's failure was a decay-time artefact of the 300 ms window in a stable
+    network. m10f9c is gated and may go to S. N1 is still not done: release at rest is absent, and graded_rmax is
+    a photoreceptor-synapse value applied to every graded class.
+  - (a) fails on any seed: model failure (growth).
+  - (a) holds and (b) fails on any seed: model failure under G2 (not back to rest in 1 s). Record the per-bin decay
+    ratio.
+- **Predictions:**
+  - m10f9c: (a) holds on all four seeds; (b) fails on at least one.
+  - m10f9b and m10f10: G2 passes on all four seeds.
+  - Falsifier of the correction: if m10f9c's eye counts plateau (last 300 ms not below the first 300 ms), the tail
+    is not a decay, and the mechanism needs re-examining before any rule is applied.
+
+### s23 diagnostic registered before running: where m10f9c's self-sustained silent-window state lives (24 October, 01:40)
+
+- **Trigger.** G2 seeds 12 and 13 of m10f9c are in; the scoring entry follows when all four seeds are.
+  - After the noise-off transient the eye counts per 100 ms stop decaying: s12 bins 3-10 go 597 → 689, s13
+    604 → 739.
+  - Non-eye counts are 2-11 per bin; the last bin is 11 (s12) and 9 (s13).
+  - The 01:31 falsifier ("last 300 ms not below the first 300 ms") sits at its edge: s12 2027 vs 2174, s13 2162
+    vs 2182.
+  - The shape is a plateau, not the τ ≈ 290 ms decay the correction claimed (that would give about 50 spikes by
+    bin 10). Under that clause the mechanism is re-examined before any rule is applied.
+- **Facts.**
+  - m10f9b and m10f9c differ in one value only, `cell_type:all|graded_rmax` 100 vs 300 (checked in PROFILES).
+  - Neither has flyvis pair weights (`fv_edge` None), and release at rest is 0 in both.
+- **Diagnostic.** This is not a gate and not a stage. It runs m10f9c on seed 12 with G2's protocol (1000 ms
+  silent window). After the build, each arm scales the per-cell graded release multiplier `g_k`:
+  - **P:** graded cells outside the photoreceptor classes × 1/3. Photoreceptors keep 300 Hz, which is where the
+    value is sourced, and the rest get 100 Hz as in m10f9b.
+  - **Q:** photoreceptor classes × 1/3, so 300 Hz applies only to the other graded classes.
+  - Both arms also record the graded types still above rest at the end of the window
+    (`scripts/probes/closed_loop_check.py --graded-k-scale`, neutral when unset).
+- **Prediction.** P returns to rest: 0 non-eye spikes in the last 100 ms, and eye counts decay as in m10f9b. Q keeps
+  the plateau. That would put the state in the gain applied beyond its source.
+- **Falsifier.**
+  - If P keeps the plateau, the photoreceptor gain alone sustains it, and the state sits in the sourced part.
+  - If Q decays, both gains are needed.
+- **Use.** The result decides only F-S23-10's mechanism sentence and whether a class-specific stage (rmax 300 for
+  photoreceptors only) is worth registering. It does not rescore m10f9c, change G2 or adopt anything. A
+  class-specific stage would need its own registration, G2 on seeds 12-15, and S.
+
+### s23 G2 scored for m10f9c and m10f9b against the 01:31 registration (24 October, 01:47)
+
+- **m10f9c (graded_rmax 300): model failure under G2 on all four seeds.** It fails G on seeds 12-15 as well.
+  - Non-eye spikes in the last 100 ms: 11, 9, 8 and 5 on seeds 12-15 (bar 0), so (b) fails on all four.
+  - (a) holds on seeds 12-14 and fails on seed 15, at the first step after the noise is removed: eye bin 1 → 2
+    rises by 123, against a bar of 117.
+  - Under the 01:31 rules this is "(a) fails on any seed: model failure (growth)". The verdict does not depend on
+    it, because (b) fails everywhere.
+  - Eye counts per 100 ms plateau at about 540-740 from bin 3 to bin 10 on every seed, and rise at the end on
+    seeds 12-14.
+  - The last 100 ms by class, seeds 12-15: optic columnar 483-556, optic other 111-124, optic projection 53-59,
+    DN 5-9, central other 0-2.
+  - 2.4-3.4 % of graded cells sit above rest at the end. No NaN, 0 warnings, no runaway, whole brain
+    0.353-0.354 Hz.
+- **m10f9b (graded_rmax 100): G2 passes on seeds 12-15.**
+  - Non-eye spikes reach 0 by bin 2 and eye spikes by bin 6.
+  - Eye bins are 51-53, 19, 4, 1, 2, then 0 on every seed.
+- **Predictions.**
+  - "m10f9c (b) fails on at least one seed": confirmed on four of four.
+  - "m10f9c (a) holds on all four": wrong on seed 15.
+  - "m10f9b passes": confirmed.
+  - "m10f10 passes": confirmed (added 02:03). Seeds 12-15 decay exactly as m10f9b's do (eye 51-52, 19-20, 4, 1,
+    2, then 0; non-eye 0 from bin 2). Whole brain 0.331-0.332 Hz, no NaN, 0 warnings.
+  - m10f9b and m10f10 both meet "the stage adopted tonight must pass G2 on seeds 12-15". Adoption still waits on
+    S.
+- **The correction's falsifier.** The literal test ("last 300 ms not below the first 300 ms") is not hit on any
+  seed. The last 300 ms are 0.9-7.7 % below the first, because the first 300 ms carry the noise-off transient.
+  The decay it protected is still refuted by the shape: a τ ≈ 290 ms decay leaves about 50 spikes in bin 10, and
+  the runs show 647-739. So the 01:31 mechanism ("a slow recurrent tail") is replaced: m10f9c holds a
+  self-sustained optic-lobe state with no input, noise or tonic source. The 01:40 diagnostic locates it.
+- **Answer to the Director's question: a model failure, not a gate artefact.**
+  - G's silent window is a stability convention, and G2 states it as one.
+  - What fails m10f9c is a state that does not return to rest. It is created by one value, `graded_rmax` 300,
+    which is sourced for photoreceptors and applied beyond its source to 30,269 of the 36,360 graded cells.
+  - The measured dark activity that the challenge cites is tonic photoreceptor release. That release is inhibitory
+    onto the LMCs, and the model lacks it (r0 = 0).
+  - Detail: `docs/research/s23_gate_silent_window.md`.
+- **Consequence.** m10f9c stays off. It is not smoked, and `graded_rmax` stays at 100 (guessed) in the chain.
+  N1 stays partial.
+
+### s23 diagnostic scored (registered 01:40): m10f9c's silent-window state lives in the graded gain applied beyond its source (24 October, 02:12)
+
+- **P (300 Hz for the photoreceptors only, 100 Hz for every other graded cell; seed 12): returns to rest.**
+  - Eye counts per 100 ms: 256, 103, 11, 3, 3, 3, then 0 from bin 7.
+  - Non-eye counts: 12, then 0 from bin 2.
+  - No graded cell is above rest at the end. G2 conditions met.
+- **Q (300 Hz for the non-photoreceptor graded cells only, 100 Hz for the photoreceptors): sustains and grows.**
+  - Eye counts per 100 ms: 322, 415, 375, 546, 641, 662, 733, 724, 759, 779. (a) fails at 375 → 546 (+171,
+    bar 91).
+  - Non-eye counts: 14, 0, 1, 3, 6, 6, 5, 6, 11, 6.
+  - At the end, 2.4 % of graded cells are above rest: L1 126, Tm2 113, Tm3 83, L4 78, L5 78, L2 78, T5a-d 219,
+    Tm1 52 (mean +5.9 mV), L3 20, Mi1 6, T4 9.
+  - The spiking cells carrying it are the medulla GABAergic Pm2a/Pm2b/Pm4/Pm5/Pm11, T1, LPi12, Dm13, Tm6 and VS,
+    as in m10f9c.
+- **Prediction met on both arms. Falsifier not hit.**
+- **Mechanism (replaces F-S23-8's).** The self-sustained state is a recurrent loop through the graded lamina and
+  medulla columnar cells (L1-L5, Tm1-Tm3, T5) and the spiking medulla interneurons. At 300 Hz release it
+  sustains itself and grows; at 100 Hz it decays. Photoreceptor release at 300 Hz does not sustain it: it raises
+  the noise-phase tail (eye bin 1: 256 vs 52) and then decays.
+- **Inferred, not tested.** The missing tonic photoreceptor release would put a constant histamine (chloride)
+  current into L1-L3 in the dark and hold them below their present rest, which may damp this loop. That is a
+  hypothesis for a sourced r0 stage, not a reason to set r0.
+- **Use.** F-S23-10's mechanism sentence. A class-specific stage (300 Hz for photoreceptors only, sourced; 100 Hz
+  guessed for the rest, labelled as such) is worth registering. It needs its own registration, G2 on seeds 12-15
+  and S; this arm is not evidence for it.
+
+### s23 stage m10f11 registered before any run: graded_rmax by class, with the photoreceptors at their sourced value (24 October, 02:20)
+
+- **What.** m10f11 = m10f10 + `cell_type:all|graded_rmax_by_class` 1 + `cell_type:photoreceptor|graded_rmax` 300.
+  - Photoreceptors (R1-R8 and ocellar; 6,091 graded cells) release up to 300 Hz rate-equivalent. That is derived,
+    171-684, from the blowfly R1-6 → LMC rate and Kazama & Wilson's p.
+  - Every other graded cell keeps `cell_type:all|graded_rmax` 100, guessed and now labelled as applied without a
+    source.
+  - It answers the Director's N1 instruction (01:30): use class-specific sources where they exist.
+- **Build.** The switch is neutral off. It is folded into the per-cell release multiplier, as a per-class factor
+  of `r_ph / graded_rmax` on the photoreceptors, and runs on the CPU path only (the GPU path ignores `graded_k`, as
+  it does for `graded_range_from_recordings` 2).
+  - Unit test: `tests/test_class_mechanisms.py::test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release`
+    passes.
+  - `model_data` validation passes.
+  - Rows: `n1_photoreceptor_graded_rmax` (label derived, bound 171-684, measured_related) and a structural switch.
+- **Gate.**
+  - G2 (01:31 definition, 1000 ms window) on seeds 12-15, scored once.
+  - Then S, the 60 s smoke on seed 12, only if all four seeds pass: whole brain 0.162-0.486 Hz, active
+    0.014-0.042, no runaway or NaN, 0 warnings.
+  - Mac via slot.py, `runs/s23/g2/g2_m10f11_s*.json` and `runs/s23/fc/smoke_m10f11_s12.json`.
+- **Predictions.**
+  - G2 passes on all four seeds. The 01:40 diagnostic arm P is the same configuration on m10f9b (no S5) and
+    returned to rest on seed 12; that is the basis, and it is not counted as evidence here.
+  - The eye's silent-window bin 1 is about 250 (P: 256; m10f10: 51-52).
+  - G's whole brain is within ±0.005 Hz of m10f10 (0.331-0.332).
+  - S's whole brain is within ±0.02 Hz of m10f10's S.
+- **Falsifier / consequence.**
+  - Any G2 seed failing: the stage stays built-off with the reason recorded.
+  - S out of band: off.
+  - If both pass, m10f11 is adoptable after the battery and a viewed figure. N1 then has a sourced graded_rmax ON
+    for the photoreceptors and stays partial: the other classes' rate and `release_at_rest` are unsourced.
+- **Held-out data.** None used. The gate seeds are engineering seeds.
+
+### s23 N33 build registered before writing it: astrocytic uptake sets the glutamatergic decay, identity at the healthy state (24 October, 02:28)
+- **Source.** MacNamee et al. 2016 J Comp Neurol 524:1979, Fig. 8, read by eye on 24 Oct 02:27
+  (`docs/research/s23_b27_n27_n33_reads.md`). Larval looper → motor-neuron glutamatergic IPSCs:
+  - acute 100 µM DL-TBOA: tau ×2.9 (per pair about 2-4, n = 5);
+  - astrocyte-specific Eaat1 RNAi: tau ×2.05 (n 10 and 8);
+  - amplitude and rise unchanged under block.
+- **Mechanism (class level, CPU path).** Glutamate is cleared by diffusion (rate k_d) and astrocytic uptake
+  (u·k_u) in parallel, and the decay is clearance-limited, so τ(u) = τ(1) · R / (1 + (R − 1) u). Here u is the
+  fraction of healthy astrocytic Eaat1 uptake and R = τ(0)/τ(1).
+  - It applies to every edge from a spiking glutamatergic cell (predictedNt as built): the N29 row decay where
+    a row exists, else the post cell's tau_s.
+  - The peak is kept (each spike's increment is the u = 1 one) and the charge grows with the decay, because the
+    source reports no amplitude change.
+  - Graded presynaptic cells keep W_graded at tau_s, as in N29. Conductance synapses are refused, as in N29.
+  - GABA/GAT has the same structure with `state:glia|gat_uptake`, but no fly ratio exists (no fly GABA current
+    with GAT loss, s23 reads). It refuses any value other than 1 until one is sourced.
+- **Keys.**
+  - Switch `state:glia|uptake_model`: neutral 0 (decays do not depend on uptake).
+  - `state:glia|eaat1_uptake` and `state:glia|gat_uptake`: 1 = healthy. This is the S7 healthy constant, so the
+    stage reads 1.
+  - Row `n33_eaat1_block_decay_ratio`: R 2.9, bounds 2.0-4.0 (the per-pair range), measured_related. It is
+    labelled measured for the larval synapse; its use on adult synapses is inferred.
+- **Validity.** It holds for clearance-limited decays. For receptor-limited decays the factor overstates the effect
+  (an upper bound). The source is a compound light-evoked IPSC at a larval synapse without astrocyte ensheathment,
+  and TBOA blocks all EAATs.
+- **Checks (pre-registered).**
+  - (1) A unit test on a small graph: switch 0 and switch 1 with u = 1 build identical weights and kinetics.
+    With u = 0, a glutamatergic edge's current decays with R × its u = 1 tau, its peak equals the u = 1 peak
+    (rel 1e-4), and non-glutamatergic edges are unchanged. A gat_uptake other than 1 raises.
+  - (2) The validator passes.
+  - (3) Real-connectome build: the m10f10 values with the switch on and u = 1 give the same `w`, `kin_edge` and
+    channel list as m10f10.
+  - Because the mechanism is the identity at u = 1, no G/S re-run is needed for a stage that turns it on at the
+    healthy state. Check (3) is the gate.
+- **Descriptive, not a gate.** The RNAi ratio implies a residual astrocytic uptake of
+  u = (R/2.05 − 1)/(R − 1) ≈ 0.22 under knockdown. No knockdown efficiency is measured, so this tests nothing.
+- **Done status.** If (1)-(3) pass and it is adopted, N33 is built and ON at the healthy constant. The one
+  measurement set R, so no independent unit check exists in the adult. Whether built-and-ON counts as done here
+  is for the Director; I will report it as "built and ON, no independent check".
+- **Held-out data.** None. Fig. 8 is used to set R and is now spent for N33.
+
+### s23 N33 checks scored: (1)-(3) pass; m10f12 builds the same network as m10f10 (24 October, 02:42)
+- **(1) Unit test** `tests/test_glia_uptake.py`: 5 pass. Switch 0 and switch 1 at u = 1 build nothing. With u = 0 the
+  glutamatergic edge decays at R × 5 ms, its peak equals the u = 1 peak (rel 1e-4), the charge grows by the decay
+  ratio, and the cholinergic and graded edges are unchanged. At u = 0.5 an N29 row decay of 2.0 ms is scaled by
+  R/(1+(R−1)u) and moved out of the N29 channel. gat_uptake 0.5 and eaat1_uptake 1.5 are refused, and so are
+  conductance synapses.
+- **(2) Validator** (`test_model_data`, with `test_stubs` and the N33 tests): 21 pass, re-run 02:42 on main at
+  b8b77a6.
+- **(3) Real connectome** (`scripts/probes/s23_n33_identity.py`, Mac slot.py, `runs/s23/n33/identity.json`):
+  m10f12 against m10f10, seed 12, min_synapses 5. The fast weights, the N29 kin_edge (idx and tau), the channel
+  list (kin1.1, kin1.4, kin3.7) and its weights, and W_graded are all equal. uptake_edge is None. Spikes are equal
+  on all 200 steps under the same kick. Registry reads: switch 1, R 2.9, eaat1_uptake 1, gat_uptake 1, and the
+  astrocyte_model stub 0. **Pass.**
+- **Consequence.** m10f12 is the network of m10f10, so it inherits m10f10's G, G2 and S. It is adopted with
+  m10f10, or not at all, after the battery and a viewed figure (registered 02:28). N33 is then built and ON at the
+  healthy constant, with no independent adult check (R is the one measurement and sets the value). Whether that
+  is done is for the Director. Ca signalling and coupling stay a stub, so N33 is `partial` in mechanisms.yaml.
+
+### s23 m10f9b S scored: passes every registered bar, with the graded_rec zero-spike check (24 October, 03:02)
+`runs/s23/fc/smoke_m10f9b_s12.json` and `_rates.npz` (Mac, slot.py; 60 s, seed 12; wall 7,993 s). Scored once, on
+the bars registered at 00:29 (scorer `/tmp/flys23/score_s.py`):
+- Whole brain **0.3307 Hz** (band 0.162-0.486). Active fraction **0.0312** (0.014-0.042). Max cell 57.1 Hz.
+- Spikes per second: 53,903-56,844 over 59 bins; first 55,366, last 56,244. No trend and no runaway
+  (runaway_at_ms None). No NaN, 0 MuJoCo warnings, full 60,000 ms.
+- The body stood the whole run: thorax z 0.544-0.549 mm, net drift 0.12 mm.
+- The 10.5 s checkpoint read 0.3319 / 0.0303, so the full run moved by −0.001 Hz.
+- Top classes: MBON 13.2 Hz, ORNs 10.9, DAN 7.95 (inside the 7.8-8.0 measured rest from m10f7), AL_other 4.4,
+  leg MNs 3.7 (17 % active).
+- **Unit check (00:20 rule): pass.** All 24,940 cells of the graded_rec = 1 types emit 0 spikes in 60 s: Mi1 1,773,
+  Tm3 2,054, Tm1 1,777, Tm2 1,766, T4a-d 6,861, T5a-d 6,719, L4/L5 3,557, IN13B 433. The rates file also holds
+  5,208 spiking cells, so the zeros are not an empty file.
+- **What the check can and cannot show.** At dark rest the optic lobe is silent whatever the mode. Spiking-mode
+  Mi4 (1,772 cells) and Tm9 (1,771 cells) also emit 0 spikes, and so do the 254 IN10B cells, which went back to
+  spiking at 00:29. So for the 24,507 optic-lobe cells the check only confirms that the mode is applied. It cannot
+  tell graded from silent spiking. It has power only for IN13B, which spiked at 0.055 Hz as a spiking type in
+  m10f8 G and gives 0 here. A stronger test needs a driven state (light on), where spiking-mode Mi/Tm cells would
+  fire. That is not registered and not run.
+- **Consequence.** m10f9b passes G (00:42), G2 (01:47) and S. The 00:29 registration would have counted N1 as done
+  with a caveat. The Director's 00:55 ruling (graded_rmax must be sourced) supersedes that, so **N1 stays
+  partial**: graded transmission runs on the guessed 100 Hz, and release_at_rest is guessed at 0. Next is
+  m10f11 (photoreceptors at the sourced 300 Hz). Adoption is m10f10 or m10f12 if their S passes (03:20-03:30), else m10f9b. Each
+  goes through the battery and a viewed figure first.
+
+### s23 N33 is inert in m10f12: it modifies 0 edges, so it is not done (24 October, 03:08)
+This supersedes the "Consequence" of the 02:42 entry, following the Director's 03:10 review. Edges were counted
+with `scripts/probes/s23_n33_edge_count.py --profile m10f12`, output in `runs/s23/n33/edge_count.json`. The build
+was the same as the identity check: `Policy.MINIMAL`, min_synapses 5, dt 0.1 ms. It has 167,111 cells and
+6,241,231 edges.
+- **Edges modified in m10f12: 0.** Uptake is at the healthy constant u = 1, and τ(u) = τ(1)·R/(1+(R−1)u) equals
+  τ(1) at u = 1 by construction. So the build makes no uptake edges and the spikes equal m10f10's on all
+  200 steps. The switch is on, but the mechanism is inert.
+- **What it would act on below healthy (u < 1):** 1,022,236 edges, which is 16.4 % of all edges. These are the
+  edges from the 29,746 glutamatergic cells, minus 15,962 graded-pre edges that are excluded. **None of them has
+  an N29 receptor-kinetics row.** All of them decay at the post cell's default tau_s of 5 ms (Shiu 2024). The
+  three N29 rows cover 77,940 edges: ORN→PN, ACh→KC and GABA→KC. None of them is glutamatergic.
+- **What is missing, and whose row it is:**
+  - **(a) Sourced glutamatergic decays.** These would be the N29 rows for glutamate (receptor_kinetics.csv):
+    adult GluCl IPSC decay, and ionotropic Glu EPSC decay where a class has one. **N29 is fly2's row.** fly2's s13
+    search found no usable adult number; Liu & Wilson 2013 (LN→PN GluCl) is qualitative only. fly does not write
+    fly2's rows, so this goes to fly2 and the Director as a request.
+  - **(b) A healthy-state effect.** Even with (a), N33 would change nothing at u = 1. A measured healthy decay
+    already includes healthy uptake. For uptake to shape synapses in the healthy model, the decay has to be split
+    into a receptor-limited part and a clearance-limited part. That split needs fly Eaat1 kinetics (Km, Vmax,
+    density) or a clearance-time measurement, and none was found (s23 read). Until then, N33 can only act in
+    perturbation states (Eaat1 knock-down or block), and those are not scored.
+- **Source label (corrected).** R 2.9 comes from a **larval** synapse, not an adult CNS synapse. The Director
+  wrote larval NMJ. The paper is a larval third-instar **VNC** synapse instead: a looper interneuron → motor
+  neuron glutamatergic (GluCl-type) IPSC inside the CNS, compound and light-evoked (MacNamee 2016 Fig. 8; Methods
+  and Fig. 8 legend). Either way it is not adult. The label is now "larval VNC; its use on adult synapses is
+  inferred" in `parameters.csv` and in the `lif.py` minimal note. The adult NMJ source (Rival 2006, abstract
+  only) gives a direction and no ratio.
+- **Status.** N33 is `partial`: built on the CPU path, neutral, and inert at the healthy state. It is **not done**,
+  and it is not counted in any of the three tallies below.
+- **Adoption (amends 02:28).** **m10f10** is adopted, not m10f12, if S, the battery and the figure pass. Turning
+  on a switch that changes 0 edges would read as ON when the mechanism does nothing. m10f12 stays staged with
+  the N33 code and tests, ready for when (a) and (b) exist.
+- **Tallies from now on (Director, 03:10).** These are three separate counts and are never added together:
+  - **done on evidence:** a row passes a check against a measurement it was not fitted to;
+  - **done where no check exists:** the row is built, ON and active, its values are cited and in range, and no
+    independent measurement exists to check it;
+  - **done by ruling.**
+
+### s23 m10f10 S scored: passes every registered bar; m10f11 G2 passes on all four seeds, as predicted (24 October, 03:29)
+**m10f10 S.** `runs/s23/fc/smoke_m10f10_s12.json` and `_rates.npz`: Mac, slot.py, 60 s, seed 12, wall 8,322 s.
+Scored once on the 00:29 bars with `/tmp/flys23/score_s.py`.
+- Whole brain **0.3313 Hz** (band 0.162-0.486). Active fraction **0.0311** (0.014-0.042). Max cell 57.3 Hz.
+- Spikes per second: 54,788-56,773; first 55,263, last 55,222. No runaway or NaN, 0 MuJoCo warnings, full
+  60,000 ms.
+- The body stood the whole run: thorax z 0.544-0.546 mm, net drift 0.12 mm.
+- Against m10f9b's S: whole brain +0.0006 Hz, active −0.0001, and the movement totals are within 1 %. Top classes
+  are MBON 13.2 Hz, DAN 7.94 and leg MNs 3.7, the same as m10f9b.
+- The graded_rec check passes: all 24,940 cells emit 0 spikes. It has the same limit as at 03:02: it only has
+  power for IN13B.
+- **Pass.** S5's effect is small at the 25 °C default. The neural Q10 reads T_b = air + 0.072 K, so every tau_m,
+  tau_s and t_ref is divided by 1.0067. This was checked with `internal_state.neural_temperature_c` on the m10f10
+  registry: 1.0067 at 25 °C air and 0.635 at 20 °C. m10f8 and m10f9b give exactly 1 at 25 °C.
+
+**m10f11 G2.** `runs/s23/g2/g2_m10f11_s{12-15}.json`, scored once against the 02:20 predictions:
+- G2 passes on all four seeds. There is no growth in eye or non-eye bins. Non-eye spikes in the last 100 ms are
+  0. **Prediction met.**
+- Eye bin 1: 267-271 spikes (m10f10: 51-52). The prediction was about 250, based on P's 256; the result is within
+  10 %. Eye cells reach 0 by 650-750 ms, against 550 ms in m10f10. **Met.**
+- Whole brain in G: 0.331-0.332 Hz, the same as m10f10. **Met** (±0.005).
+- Its S is deferred to next session under the 02:40 time rule (G2 ended at 03:23). So m10f11 is not adoptable
+  tonight.
+
+**Figure** `docs/media/s23_frontier.png`, re-rendered 03:28 and viewed:
+- Panel D: m10f10's class rates fall on m10f9b's. All of them lie on the m10f3 diagonal except DAN and MBON,
+  which rise from 0 to about 8 and 13 Hz. That is the intended m10f7 change (N3: DANs at their measured rest).
+- Panels E and F: m10f11 (red) starts about five times higher in the eye and decays to 0. Its non-eye cells are
+  silent from 150 ms. m10f9c (dashed) holds at about 700 spikes per bin.
+
+### s23 m10f6 S scored: passes (24 October, 03:30)
+The run was on backhouse at nice 19 from 02:50: 60 s, seed 12, wall 15,420 s. It finished at 03:24 and was
+copied to `runs/s23/fc/smoke_m10f6_s12.json` and `_rates.npz`. It was scored once on the 00:29 bars.
+- Whole brain **0.3037 Hz**, active fraction **0.0273**, max 55.9 Hz.
+- Spikes per second: 49,448-51,958 (first 51,390, last 50,781). No runaway or NaN, 0 warnings, full 60 s.
+- Thorax z 0.545-0.547 mm. **Pass.**
+- DAN and MBON are at 0 Hz, as expected: the class noise is added at m10f7. The clock cells are at 0.20 Hz.
+- The graded_rec zero-spike check does not apply: recorded modes start at m10f9.
+- m10f6's light input (N26) is part of m10f10, so it is adopted with it. The m10f7 and m10f8 smokes are still
+  running on backhouse.
+
+### s23 adopted: `m10f` = m10f10. Rows scored against their own bars, in three separate tallies (24 October, 03:43)
+- **Gate path.** m10f10 passed G (seeds 12-15), G2 (01:47) and S (03:29). The battery ran on c9adbba, the code
+  that m10f10 runs (`runs/s23/battery/pytest.log`): **307 passed, 0 failed**, 14:50, through slot.py.
+  - The MuJoCo "QACC at DOF 40" line after the summary also appears in every battery since s12 (s12, s23, s27
+    logs). It is a known test artefact, not new.
+  - The figure `docs/media/s23_frontier.png` was viewed at 03:28.
+- **Adopted.** `PROFILES["m10f"] = PROFILES["m10f10"]` = m10f5 + N26 light input (m10f6) + MB class noise with
+  N21 off (m10f7) + sourced organ values and Q10 2.5 (m10f8) + recorded modes (m10f9b) + the S5 heat balance
+  (m10f10).
+  - Not adopted: m10f12, because N33 is inert there (03:08), and m10f11, whose S runs next session.
+  - N21 (fly2's) is off in `m10f` from now on. That is fly2's own condition: the timing rule is not resting-safe
+    at measured DAN rest (F-S26-1).
+  - m10f10 is a CPU-path profile. The GPU path ignores the N1 graded options.
+- **Rows, each against its own bar.**
+  - **S5: done on evidence.** The bar is the 00:55 ruling: a lumped heat balance, about ambient at rest, checked
+    against a cited measurement.
+    - It is built at that level and is ON. Its values are derived or cited.
+    - It is active: T_b is air + 0.072 K, so the Q10 divides every tau_m, tau_s and t_ref by 1.0067. This was
+      checked on the m10f10 registry.
+    - Check D (Digby 1955; 2.36 K predicted against 2.5 K measured) was not used to set any value and is spent.
+  - **N28: done where no check exists.** The bar is the 00:55 ruling: a cited measured Q10 range is enough when a
+    documented search finds no independent check.
+    - Q10 2.5 is inside the measured 2.3-3.5 (Juusola & Hardie 2001). The s23 search found no check
+      (`docs/research/s23_n28_n26_checks.md`).
+    - It is ON and active on all 167,111 cells: 1.0067 at 25 °C air through S5, and 0.635 at 20 °C. It was exactly
+      1 in m10f8 and m10f9b, where it was ON but inert at the default 25 °C. So it counts only from m10f10.
+    - **Applied beyond its source**: one photoreceptor value scales every cell.
+  - **N26: partial.** The light input is ON, and m10f6's S (03:30) and LD check pass. tau_c, mu, `l50` and the
+    peak hours are still guessed.
+  - **N3: partial.** MB class noise is ON (DAN 7.94 Hz, MBON 13.2 Hz in S). The per-type spread is compressed and
+    other classes have no fitted drive.
+  - **S3: partial.** Ingest and crop are ON. fly2's B17 pump rate is still guessed at 10 Hz against a measured
+    5-7 Hz.
+  - **S1: partial.** The sourced values are ON. `conc0`, `k_act`, `act_scale` and `q10_met` are still guessed, and
+    the only check is circular.
+  - **N1: partial.** Recorded modes are ON. graded_rmax and release_at_rest are guessed.
+- **Tallies (fly rows, of 20; never added together).**
+  - Done on evidence: **1** (S5).
+  - Done where no check exists: **1** (N28).
+  - Done by ruling: **2** (S7, S8).
+- **Ledger.** S5 is now fidelity global, model simulated, basis mixed. N28 is model simulated, basis inferred.
+  `scripts/blank_ledger.py` was regenerated: organism/world absent goes from 23 to 21, and mixed from 0 to 2.
+  Mixed rows don't fill, so the **filled fraction is unchanged**. `test_model_data`, `test_t1_fill`,
+  `test_repo_hygiene` and `test_stubs` pass (31).
+
+## fly2 s29: merged main (m10f = m10f10); stage m10f10s29 defined in profiles.py, not run (24 Oct 04:23 CDT)
+- **Profile.** `m10f10s29` = M10F10 plus four keys taken from M10F5S29:
+  - `cell_type:all|gabab_from_recordings` 1 and `cell_type:all|slow_share_basis` 1 (N7: uniglomerular PNs 0.54,
+    derived from Wilson & Laurent 2005; AL LNs 0, inferred);
+  - `antenna:a3|resonance_hz` 426 and `antenna:a3|quality_factor` 1.2 (B20, measured, Göpfert & Robert 2002).
+  - A check confirmed that it differs from m10f10 in exactly those four keys.
+  - No antennal-lobe type is graded_rec in m10f10 (N1 recorded modes cover Mi1, Tm1-3, T4, T5, L4/L5 and IN13B),
+    so the N7 shares act on spiking PNs and LNs as they did on m10f5.
+- **Bars** (unchanged from the 04:11 entry, written before any run):
+  - G seeds 12-15 on `closed_loop_check.py`;
+  - S seed 12 inside the published bands;
+  - the whole brain within 0.01 Hz of m10f10's S (0.3313 Hz).
+  - Falsifier: any G seed fails, or S leaves a band, or the whole brain moves more than 0.01 Hz.
+- **Not launched tonight.** S takes about 4.5 h wall, so it can't finish before the 05:30 park. Backhouse
+  priority is CRUCIBLE S7, then B4, then fly jobs. Next launch: cap every thread pool at the slot count (OMP,
+  OpenBLAS, MKL, NUMBA, VECLIB, NUMEXPR, XLA), run under taskset, and check `ps -o nlwp` after launch.
+- **Merge.** Conflicts were resolved by keeping both sides:
+  - profiles: main's m10f6-m10f12, fly2's m10f5n7/m10f5s29, then m10f10s29;
+  - data rows: both sides' rows; main's IN10B graded_rec row removal kept;
+  - N33 stub text: main's;
+  - DECISIONS and HANDOFF: both sides' entries;
+  - MECHANISM_STATUS: row-wise by owner, and fly2's count rewritten in the three-tally format.
+  - Fast tests (lifetime, stubs, gabab_recordings, model_data, internal_state, class_mechanisms, repo_hygiene,
+    glia_uptake, t1_fill, antenna): 89 passed, 0 failed.

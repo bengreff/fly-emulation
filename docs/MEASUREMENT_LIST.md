@@ -103,3 +103,56 @@ Measurements that would pin a model value we can't pin from the literature or th
 **What it replaces.** The rule (`kc_mbon_ltd_timing_rate` 0.430, fitted to Hige 2015) is valid only with DANs silent at rest. One compartment's answer is consistent with some fly, which meets the per-value bar.
 
 **Sources.** F-S26-1, F-S26-2, F-S26-3; `docs/research/s26_mb_dan_rest_rates.md`; `scripts/probes/s26_retention.py`. Huang et al. 2024 (held out) has voltage-imaging resting rates for five PPL1 types and would answer the first row for the PPL1 compartments once the Director releases it.
+
+## 6. Is glutamate inhibitory at MBON → MBON and MBON → DAN links? MBON-γ1pedc>α/β with MBON-γ4>γ1γ2 and MBON-β1>α driven
+
+**Why now.**
+- At rest the model's MB output neurons fire too little, and the cause is inhibition from other MBONs. Glutamatergic
+  MBONs supply most of it (rest drive in mV/s per cell, signed weight × presynaptic rate, m10f3 with the s21 class
+  noise; `runs/s20/mb/glu_split.json`):
+
+  | Cell type | From glutamatergic MBONs | From GABAergic MBONs | Net, all inputs | KC drive at 0.1 Hz |
+  |---|---|---|---|---|
+  | MBON11 (γ1pedc>α/β) | −988 | −158 | −1,115 | +303 |
+  | MBON12 (γ2α′1) | −500 | −5 | −487 | +69 |
+  | MBON13 (α′2) | −452 | 0 | −443 | +78 |
+  | MBON14 (α3) | −336 | −42 | −299 | +74 |
+  | PPL101 (PPL1-γ1pedc) | −220 | −236 | −172 | +110 |
+  | PPL105 (PPL1-α′2α2) | −166 | −31 | −94 | +39 |
+
+- The model treats glutamate as inhibitory (GluClα, a glutamate-gated chloride channel). That sign is **inferred**
+  from the antennal lobe (Liu & Wilson 2013). No functional test of a glutamatergic MBON → MBON or MBON → PPL1 link
+  was found (s22 reader, `docs/research/s22_mb_type_spread.md` section 3). The one measured glutamatergic MBON → DAN
+  effect was excitation (Felsenberg et al. 2018, M4β′/M6 → PAM-γ5, calcium imaging, possibly indirect).
+- KC firing at the measured 0.1 Hz offsets only 14-64 % of this inhibition, so the sign is the main open lever. It is
+  a biological question, not a fit knob.
+
+**Protocols** (in vivo whole-cell MBON-γ1pedc>α/β as Hige et al. 2015; MBON05 and MBON06 have split lines, Aso et
+al. 2014):
+
+| Protocol | Fills (slot) | Read-out |
+|---|---|---|
+| CsChrimson pulses in MBON-γ4>γ1γ2 (MBON05) or MBON-β1>α (MBON06), recording MBON-γ1pedc>α/β | the sign and size of glutamate at MBON → MBON links: `cell_type:all\|glutamate_receptor_sign` at that connection, and its mV per spike | PSP sign, amplitude, latency and reversal potential (chloride or cation) |
+| The same with picrotoxin, then with GluClα RNAi in the recorded MBON | which receptor carries it (GluClα, or an excitatory ionotropic or NMDA receptor) | Fraction of the PSP removed by each |
+| The same recording with PPL1-γ1pedc (voltage imaging, Huang et al. 2018) instead of the MBON | the sign at glutamatergic MBON → PPL1 links | Change in DAN spike rate during the pulses |
+
+**What each answer would decide.**
+- **Inhibitory, GluClα (chloride, blocked by picrotoxin and the RNAi):** the model's sign stands. MBON11's
+  under-firing must then come from elsewhere: the MBON rates feeding it, the per-synapse strength, or a missing
+  excitatory input. Look there next.
+- **Excitatory:** the glutamatergic share flips sign. By the table, MBON11's net rest drive goes from −1,115 to
+  about +860 mV/s, MBON12 to about +510, MBON14 to about +370 and PPL105 to about +240. The γ1 pair and the PPL1
+  under-firing would likely close without any fitted value, and the class noise fitted in s21 would need refitting.
+- **Mixed (different receptors in different compartments, or a biphasic PSP):** glutamate's sign becomes
+  per-connection-class, which is the synapse-specific fidelity rung. Each measured link then gets its own sign,
+  and the rest stay inferred.
+- **No detectable PSP:** the links are weaker than the synapse counts suggest, and the per-synapse strength at
+  MBON → MBON links is the next measurement.
+
+**What it replaces.** The glutamate sign at all MBON outputs (inferred from the antennal lobe). One measured link
+is consistent with some fly, which meets the per-value bar.
+
+**Sources.** `docs/research/s22_mb_type_spread.md` sections 1-3; `runs/s20/mb/rest_drive.json` and
+`runs/s20/mb/glu_split.json`; Aso et al. 2014 eLife (MBON transmitters and split lines); Liu & Wilson 2013 PNAS
+(GluClα in the antennal lobe); Felsenberg et al. 2018 Cell (glutamatergic MBON → PAM excitation); Hige et al. 2015
+(MBON whole-cell preparation); Huang et al. 2018 (DAN voltage imaging).

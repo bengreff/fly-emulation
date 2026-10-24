@@ -2434,3 +2434,196 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - The trade-off comes from one ON → OFF rate whose only light dependence raises it in the day. Day/night bout structure is training data (Garbe 2015, SB DAM, iso31 males), so it can enter the next registration as a check.
 - The rebound grows with deprivation in every variant; its size depends on the bout structure (6 h about 50-100 min, 24 h about 90-190 min).
 - N25 stays **partial**. The Director chooses between scoring now (locked or T5) and a revision with a night-specific element.
+
+### F-S23-1: frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off) pass the gate and their unit checks; m10f8 (sourced organ values) passes the gate (s23, 23 Oct 23:33; DECISIONS 23 Oct 22:58, 23:20, 23:31)
+- **Gate G, seeds 12-15:** all three stages pass every check: 0.0 non-eye spikes/ms in the silent window, no NaN,
+  0 MuJoCo warnings, no class above 200 Hz.
+  - m10f6 is spike-identical to m10f3 (0.310 / 0.308 / 0.309 / 0.309 Hz), as predicted. The default world is
+    dark, so only the clock's start state differs.
+  - m10f7 is 0.337 / 0.336 / 0.337 / 0.337 Hz, up 0.028 as predicted (+0.03). DANs run at 7.8-8.0 Hz and MBONs
+    at 12.7-13.9 Hz.
+  - m10f8 is identical to m10f7 on every seed. In a 1.3 s dark run with no food, the organ values do not reach
+    the spiking network.
+- **m10f6 LD check (registered):** the clock read through the stage's registry entrains to 12:12 LD at 1000 lux.
+  At the last lights-on the model is at CT −0.54 h, inside ±2 h. Pass.
+  - Reported, not scored: after a 6 h phase jump the model re-entrains in one day (CT 0.0 on day 1, −0.54 from
+    day 3). Kistenpfennig 2012 is quoted (secondary, not verified) as "within 1 or 2 days". If that holds, the
+    model is at the fast edge. Re-entrainment speed is a candidate independent check for the guessed `mu`.
+- **m10f7 MB unit check (training targets, isolated CNS):** PPL105 7.6 Hz on both seeds (band 6-10). MBON14 12.3
+  and 11.7 Hz (band 9.7-15.1). Pass. This only shows that the stage carries the fitted state. Huang 2024 is spent
+  and was not rescored.
+- **Test battery (merged tree, before the stage edits):** 299 passed, 0 failed.
+- The 60 s smokes for m10f6-m10f8 were still running at this entry. Figure: `docs/media/s23_frontier.png`.
+
+### F-S23-2: at m10f3 rest, glutamatergic MBON inputs give most of the inhibition on MBON11 and the PPL1 DANs, so the MBON→MBON glutamate sign decides the MB output layer's rest state (s23, 23 Oct; `scripts/probes/s23_mb_glu_split.py`, `runs/s20/mb/glu_split.json`)
+- Rest drive from MBON inputs, split by the presynaptic transmitter (male-cns `predictedNt`; m10f3 with the s21
+  class noise):
+  - MBON11: glutamate −988, GABA −158, ACh +32 (net −1,115).
+  - MBON12: glutamate −500 (net −487). MBON14: glutamate −336 (net −299).
+  - PPL105: glutamate −166, ACh +104 (net −94).
+- Glutamate is inhibitory in the model (GluClα), which is the standard reading for MBON→MBON. If it were
+  excitatory at these links, MBON11 would flip to about +860, MBON12 to about +510, MBON14 to about +370 and
+  PPL105 to about +240. `docs/MEASUREMENT_LIST.md` entry 6 lists the experiments that would decide it.
+
+### F-S23-3: no usable Drosophila value found for body temperature excess, a thermal time constant, a neural Q10, adult hemolymph trehalose, or a walking metabolic multiplier; the metabolic Q10 is now measured (s23, 23 Oct; Sonnet reader, full texts where stated)
+- **S5:** no absolute Drosophila body-minus-ambient difference and no thermal time constant. Freoa et al. 2023
+  (Sci Rep 13:3513, full text) gives only genotype differences under a lamp (0.6 °C between pigment lines, a
+  difference visible within 15 s). S5's required level (body temperature = ambient for a 1 mg fly) stays a
+  question for Ben.
+- **N28:** no Drosophila neural Q10 with a citable number. The larval NMJ temperature paper (PMID 105927) was not
+  reachable. N28 stays partial.
+- **S1:** no absolute adult fed trehalose or glucose in mM (Haselton & Fridell 2010 gives relative changes only).
+  Flight at 10-15× rest is secondary, and there is no walking multiplier. **Metabolic Q10: Klepsatel, Wildridge &
+  Gáliková 2019 (Sci Rep 9:5239, full text), adult males, 13-33 °C, 2.0 Oregon R and 2.3 Canton S.** That is now
+  the sourced `q10_met` (2.0, the basal-rate strain). The value is unchanged, so no run changes.
+
+### F-S23-4: the two dry-air water-loss sources in hand cannot set S4's evaporation rate; desiccation stays unscored and unspent (s23, 23 Oct; metabolism reader round 2)
+- Lighton & Schilman 2007 (PLoS ONE 2:e1267, full text), as quoted: 0.0617 ± 0.0034 mg/h, Oregon-R males, dry
+  air, 25 °C, active. Per fly, that would empty a male's 344 nL of body water (Burggren 2017, derived) in 5.6 h.
+  So the number is either not per resting fly or misquoted. This conclusion comes from the body water content
+  alone, not from any survival value. Not used.
+- Telonis-Scott et al. 2006 state that their 3 h weight loss "may also reflect weight lost through metabolism".
+  Not a water-only rate.
+- Nayal et al. 2024 Fig. 4B is in ppt per fly per minute at 30 °C and 50 % RH, the denominator is not stated, and
+  the value was not extracted.
+- S4 stays partial. The held-out desiccation band stays unspent.
+
+### F-S23-5: two of the 23:20 S3 values were mis-sourced and are corrected; N28 gets a measured Drosophila Q10 range but no independent check; no recorded adaptation ratio exists in open full text, so N4 stays blocked (s23, 23 Oct 23:59; `docs/research/s23_crop_pump_q10_adaptation.md`, DECISIONS 23 Oct 23:59)
+- **Ingest rate:** the 23:20 derivation (1.05 nL × a 6-7.7 Hz sip rate) took the sip rate from sip duration alone.
+  With Itskov's 0.08 s inter-sip interval the rate is 5.0 nL/s (4.4 on sucrose). Pool et al. 2014 gives 6.7-8.8
+  nL/s in deprived females at 30 °C. `ingest_nl_s` is now 5.0, derived.
+- **Crop capacity:** Edgecomb et al. 1994, cited for 250 nL via a secondary, reports an ordinal crop score, not a
+  volume. Measured meals after deprivation are 150 nL (Pool 2014) to 0.27-0.32 µL (Qi 2015), both in females.
+  250 nL stays, inferred, inside 150-320.
+- **Pump:** measured cibarial pumping is 5-7 Hz (Manzo 2012 ≈6 Hz; Sui 2026 5, 6 or 7 Hz by method), and pump MNs
+  burst at 25-90 Hz within each cycle. fly2's `pump_full_rate_hz` (10, guessed) is the last guessed term S3 waits on.
+- **N28:** Juusola & Hardie 2001, adult photoreceptor kinetics, Q10 2.3-3.5 (time-to-peak 2.5 ± 0.2, n 3). The
+  model's 2.0 lay below it; m10f8 now uses 2.5 (inferred: one cell type stands for all). There is no independent
+  check, because every value in that paper comes from the cells that set the value.
+- **N4:** no sustained-step early/late rates in any open full text read (PNs, LNs, KCs, LHNs, leg MNs, MN5). Only
+  qualitative "adapting" statements exist (MBON-α3, MN5). Seki et al. 2010 defines an adaptation rate for AL LNs
+  but is paywalled.
+
+### F-S23-6: the N25 night-input candidate fails Chowdhury 2023 on the 6 h arm; measured rebound does not grow with deprivation length, the model's does (s23, 24 Oct 00:15; DECISIONS 23 Oct 23:30, 23:49, 23:52, 24 Oct 00:15; `docs/research/s23_chowdhury_fig1_read.md`)
+- **Fit (training data only).** With the clock's late-night DN1 drive added to the dFB OFF rate (peak CT 19, the
+  DN1 Ca2+ peak of Liang 2016, inferred as a firing peak), 2 of 32,340 sets pass the training checks and Garbe's day
+  and night bouts. Against expectation, one of the two has the night term at 0; inside Garbe's ± 1 s.d. band the
+  night term is not needed, and both sets reach only about 3 night bouts against Garbe's mean 7. The scored set (B,
+  night_arousal 8) was chosen by the registered tie-break and survived a 512-fly repeat that the other set failed.
+- **Score (blind figure read; Dryad raw data unread).** B predicted 69.3 / 114.4 / 139.9 min of day-1 rebound for
+  6 / 12 / 24 h of 20 s-trigger deprivation. The 6 h point is low in every reading (span lower bound 82-110 min);
+  12 h is inside; the 24 h primary is inside for panels I and K (148 or 163 min, spans from about 106) and outside,
+  high, for panel J (44 min, span 14-75). B fails the pass rule.
+- **The published figure disagrees with itself** for the 20 s, 24 h arm: panel I median 196 min, panel J 101,
+  while the 220 s boxes agree between the same panels within 1 min. Panel K agrees with I; the Results text agrees
+  with J. The J 6 h box also differs from C's although their whiskers match, so the J box reads may be the weaker
+  ones, but this read cannot decide. The Dryad raw data would.
+- **Shape.** Measured rebound is flat across 6, 12 and 24 h (I reading: 127 / 107 / 148, differences inside 2 SEM)
+  or falls with length (J reading and the paper's own test: 6 h significantly above 12 h and 24 h). Every mode 1
+  candidate grows with length, because need accumulates with time awake. The only prediction inside all three
+  I-reading spans is the flat 00:34 mode 1 φ CT 0 (142 / 139 / 138), which was reported, not scored.
+- **What it means.** The rebound magnitude near 24 h is reachable; the dependence on deprivation length is wrong.
+  Rebound after only 6 h at night (ZT 18-24) is as large as after 24 h, which a single need variable rising with
+  time awake does not give. Chowdhury is spent and N25 stays partial (built, off by default, failed its held-out
+  check). No held-out deprivation-length series remains.
+
+### F-S23-7: making the recorded non-spiking VNC hemilineages graded sets off a self-sustaining VNC runaway at rest (s23, 24 Oct 00:29; DECISIONS 24 Oct 00:29)
+- **Result.** m10f9 (m10f8 + per-type recorded modes, with IN13B and IN10B graded) fails the silence gate on seed 12:
+  7.03 non-eye spikes/ms in the last 100 ms of the silent window (m10f8: 0). Motor neurons outside the leg set
+  (0.51 → 8.43 Hz), unassigned VNC locals (0 → 3.20), endocrine (0 → 3.29) and efferent cells (0 → 2.41) start
+  and keep firing. The optic recorded modes change nothing in the dark.
+- **Why it is not lost spikes.** As spiking cells in m10f8, IN13B fires 0.055 Hz and IN10B 0 Hz.
+- **Inferred mechanism (not yet tested).** The model's graded synapse releases from the resting potential upward,
+  reaching the guessed 100 Hz-equivalent at threshold. A graded excitatory interneuron sitting a few mV above rest
+  therefore excites its targets continuously. IN10B is 254 cholinergic cells. s13 S3 arm A showed the same runaway
+  under drive.
+- **What it means.** A cell type's recorded mode cannot simply be switched ON while the graded release law is
+  guessed. The release curve of VNC nonspiking interneurons is unmeasured in the model's sources. m10f9b (IN10B
+  back to spiking, as the 00:20 rule already required for graded-with-spikelets types) tests whether IN10B alone
+  is the trigger.
+
+### F-S23-8: at the sourced graded_rmax (300 Hz) the dark eye leaks into the central brain at rest; the guessed release-at-rest is now the binding N1 value (s23, 24 Oct 00:57; DECISIONS 24 Oct 00:52, 00:57)
+- **Result.** m10f9c (m10f9b + graded_rmax 300 Hz, derived from the blowfly R1-6 → LMC tonic vesicle rate) fails
+  the silence gate on seeds 12 and 13: 0.06 and 0.04 non-eye spikes/ms in the last 100 ms of the silent window
+  (bar 0; m10f9b 0). Eye-class spikes in that window rise from 0.04/ms to 6.0-6.1/ms (optic columnar, then optic
+  other and projection), and a trickle reaches AL local neurons, DNs, central cells and one non-leg MN. Whole brain
+  0.354 Hz on both seeds, within the ±0.03 prediction; no NaN, 0 MuJoCo warnings.
+- **Inferred mechanism (wrong; corrected by F-S23-10).** The resting drive of a graded cell is release_at_rest ×
+  graded_rmax, so tripling graded_rmax triples the dark eye's resting output, which is what the silent window
+  measures. In fact release at rest is 0 in every graded cell of this chain.
+- **What it means.** The sourced graded_rmax is not resting-safe with the guessed release-at-rest fractions, so N1
+  stays partial (sourced value not ON). The next N1 value to source is the fraction of maximal release at the dark
+  or resting potential of a fly graded synapse. Seeds 14-15 and the m10f9c smoke were cancelled.
+
+### F-S23-9: the derived S5 heat balance predicts Digby's measured *Drosophila* radiant warming to within 6 % (s23, 24 Oct 00:57; DECISIONS 24 Oct 00:51, 00:57)
+- **Result.** Check D (registered before the source was opened): a small *D. melanogaster* in 10 cm/s air under
+  1.0 cal cm⁻² min⁻¹ warmed by 2.5 K (Digby 1955, wing-beat thermometer). The still-air sphere model at the measured
+  male mass (0.505 mg) and α 0.8 predicts 2.36 K (0.4-1.0 mg: 2.20-2.90 K). PASS (bar ×2); spent.
+- **What it means.** The conductance G = 175 µW/K is about right for a fly this size, so the +0.07 K resting excess
+  stands: a resting fly's body is at ambient to within 0.1 K, as Digby states qualitatively. Part of the close match
+  is offsetting errors (wing airflow vs partial transmission of radiation); at 50 cm/s the model over-predicts by
+  1.6-2.4×, outside its stated still-air validity.
+
+### F-S23-10: m10f9c's failure is the model, not the gate: a self-sustained optic-lobe loop made by graded_rmax applied beyond its source (s23, 24 Oct 02:12; DECISIONS 24 Oct 01:31, 01:40, 01:47, 02:12)
+- **Question (Director, 01:30).** Does G's silent window ("0 non-eye spikes") encode something biology does not do,
+  given tonic photoreceptor release in darkness and a brain that is not silent at rest?
+- **Gate.** G is an engineering stability convention: the noise-free network must return to rest. Noise stands
+  for the unmodelled input behind measured resting rates, and S scores those rates with noise on. The amendment G2
+  was registered before rescoring: a 1000 ms window, no growth in any 100 ms step (3 Poisson SD) for eye and
+  non-eye counts, and 0 non-eye spikes in the last 100 ms. A stage that adds a sourced tonic source gets a clamp
+  arm.
+- **Result (G2, seeds 12-15, scored once).**
+  - m10f9b and m10f10 pass.
+  - m10f9c fails: non-eye 5-11 spikes in the last 100 ms on all four seeds, and a no-growth failure on seed 15 at
+    the noise-off step.
+  - m10f9c's eye counts plateau at about 540-740 per 100 ms for 700 ms with no input, noise or tonic source.
+    Release at rest is 0 in all 36,360 graded cells, which corrects F-S23-8's mechanism.
+- **Localisation (seed 12, diagnostic).** With 300 Hz for the photoreceptors only, the network returns to rest.
+  With 300 Hz for the other graded classes only, activity sustains and grows. The loop runs through the graded
+  L1-L5, Tm1-Tm3 and T5 cells and the spiking medulla Pm, T1, Dm13, Tm6 and VS cells.
+- **N1 source scope.** 300 Hz is derived from the photoreceptor synapse (Laughlin 1987 via secondaries; Kazama &
+  Wilson 2008). For the other 30,269 graded cells it is applied beyond its source: no open text gives a
+  non-photoreceptor graded release rate. Locust graded synapses give only a voltage axis (release from about 8 mV
+  below rest).
+- **Measured lamina rest in the dark (open text).**
+  - Tonic photoreceptor → LMC release in dark and light (Laughlin 1989; Uusitalo 1995 abstract).
+  - Dark resting potentials: terminal −60.3 mV, L1/L2 −41.6 mV, L3 −59 mV; the synapse sits at the steep
+    mid-curve (Weckström & Laughlin 2010).
+  - *hdc* LMCs are depolarised (Dau 2016), so dark release is inhibitory onto L1-L3.
+  - No fraction of maximal release at rest is stated, and there are no dark rates for downstream types.
+- **What it means.**
+  - The failure is a model failure: an unsourced gain creates reverberation where biology has a different, sourced
+    cause of dark activity, which the model lacks (r0 = 0).
+  - G2 has two limits, written down and not applied: its pairwise no-growth test is weak to slow drift, and (b)
+    would also fail a real noise-free attractor.
+  - Next N1 step: a class-specific stage (photoreceptors 300 Hz, sourced; the rest 100 Hz, guessed), then a
+    sourced r0. Its effect (tonic inhibition into L1-L3) must be run, not assumed.
+  - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md`. Detail:
+    `docs/research/s23_gate_silent_window.md`.
+
+### F-S23-11: a clearance-limited uptake factor is inert at healthy uptake; N33 in m10f12 modifies 0 of 6.24 M edges (s23, 24 Oct 03:08; DECISIONS 24 Oct 02:28, 02:42, 03:08)
+- **Result.** `scripts/probes/s23_n33_edge_count.py` shows that m10f12 (m10f10 + N33 at healthy uptake u = 1)
+  modifies 0 of 6,241,231 edges. The spikes equal m10f10's on 200 steps.
+  - Below healthy uptake the factor would act on 1,022,236 glutamatergic edges (16.4 %).
+  - None of those edges has an N29 receptor-kinetics row, so all of them decay at the default 5 ms.
+- **What it means.** τ(u) = τ(1)·R/(1+(R−1)u) equals τ(1) at u = 1 by construction. A measured healthy decay
+  already includes healthy uptake. So an uptake mechanism can only shape synapses in the healthy model if each
+  decay is split into a receptor-limited part and a clearance-limited part, and that split needs fly Eaat1
+  kinetics or a clearance time. Without the split, the mechanism can be switched on but changes nothing. "ON"
+  is not evidence that a mechanism acts; count the edges or cells it modifies.
+- **Source scope.** R 2.9 is from a larval third-instar VNC looper → motor neuron compound IPSC (MacNamee 2016
+  Fig. 8B). That is a CNS synapse, not the NMJ, and not adult. Its use on adult synapses is inferred.
+- **Missing.** Adult glutamatergic decays (the N29 glutamate rows, fly2's) and fly Eaat1 kinetics. N33 stays
+  partial and is not adopted.
+
+### F-S23-12: m10f10 adopted as `m10f`; the first fly row done on evidence (S5) and the first done where no check exists (N28) (s23, 24 Oct 03:43; DECISIONS 24 Oct 03:29, 03:43)
+- **Result.**
+  - m10f10 passes G, G2 and S: whole brain 0.3313 Hz, active 0.0311, 60 s.
+  - The battery passes 307/0, and the figure was viewed.
+  - The rows are scored against their own bars. S5 is done on evidence (Digby check D). N28 is done where no
+    check exists (cited range, documented search). N26, N3, S3, S1 and N1 stay partial. N33 is inert and not
+    adopted.
+- **What it means.** N28 was ON but inert in m10f8 and m10f9b: the world default of 25 °C equals the Q10
+  reference, so its factor was exactly 1. It acts in m10f10 only because S5 puts the body 0.072 K above air
+  (factor 1.0067), and at any other air temperature (0.635 at 20 °C). The same lesson as F-S23-11: a switch being
+  ON does not show that it acts; check the factor on the adopted profile.

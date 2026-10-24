@@ -24,10 +24,27 @@ def test_stubs_are_read_at_neutral_and_refused_otherwise():
             stubs.read(r)
 
 
+def test_constant_states_are_read_at_their_value_and_refused_otherwise():
+    reg = Registry(Policy.MINIMAL)
+    stubs.read(reg)
+    keys = set((reg.inventory().entity + "|" + reg.inventory().property))
+    assert set(stubs.CONSTANT_STATES) <= keys
+    assert not set(stubs.CONSTANT_STATES) & set(stubs.STUBS)
+    mech = {m["id"]: m for m in yaml.safe_load((REPO / "data/model/mechanisms.yaml").read_text())}
+    for key, (mid, value, _c, _v) in stubs.CONSTANT_STATES.items():
+        assert mech[mid]["status"] == "have" and key in mech[mid]["switch"], mid
+        r = Registry(Policy.MINIMAL)
+        r.overrides[key] = value + 1.0
+        with pytest.raises(NotImplementedError):
+            stubs.read(r)
+
+
 def test_every_stub_is_an_absent_mechanism_that_owns_its_switch():
     mech = {m["id"]: m for m in yaml.safe_load((REPO / "data/model/mechanisms.yaml").read_text())}
     for key, (mid, *_rest) in stubs.STUBS.items():
-        assert mech[mid]["status"] == "absent" and key in mech[mid]["switch"], mid
+        # s23: a partly built mechanism (N33: uptake built) keeps its unbuilt remainder as a stub, named in
+        # absent_reason
+        assert mech[mid]["status"] in ("absent", "partial") and key in mech[mid]["switch"], mid
         assert mech[mid].get("absent_reason"), mid
 
 

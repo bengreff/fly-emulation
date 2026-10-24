@@ -17,8 +17,8 @@ STUBS = {
     # N31 synapse:all|structural_plasticity, N32 cell_type:all|homeostatic_plasticity and N34
     # synapse:other_sites|plasticity left in s29 (fly2: built in lifetime.py, read by lif.default_params)
     "glia:all|astrocyte_model": (
-        "N33", 0.0, "astrocyte uptake, OA/TA-gated Ca signalling and glial coupling "
-                    "(FIDELITY_LADDER rung 7)"),
+        "N33", 0.0, "astrocyte OA/TA-gated Ca signalling and glial coupling (FIDELITY_LADDER rung 7); "
+                    "uptake is built apart, s23, state:glia|uptake_model"),
     "sense:all|efferent_gain_control": (
         "B24", 0.0, "central (e.g. octopaminergic) control of sense-organ gain"),
     "sense:active|sensor_muscles": (
@@ -29,18 +29,42 @@ STUBS = {
         "B27", 0.0, "heart, hemolymph flow and tracheal ventilation"),
     "state:hemolymph|ion_model": (
         "S6", 0.0, "hemolymph ion concentrations setting the reversal potentials"),
-    "state:immune|model": (
-        "S7", 0.0, "immune state and gut microbiome acting on sleep and feeding"),
-    "state:reproductive|model": (
-        "S8", 0.0, "male reproductive state, mating history and pheromone production"),
+    # S7 state:immune|model and S8 state:reproductive|model left in s23 for CONSTANT_STATES below
     "development:all|model": (
         "D1", 0.0, "development model: lineage, birth order, maturation and rearing history "
                    "set identity, wiring and intrinsic values (construction time, not lifetime)"),
 }
 
 
+# Ruled constant states (Director, 24 Oct 2026 00:55; DECISIONS 24 Oct): the required level of these rows is one
+# stated condition held for the whole run, not a dynamic model. key -> (mechanism id, the value, the condition,
+# its validity range). Any other value is refused.
+CONSTANT_STATES = {
+    "state:immune|model": (
+        "S7", 0.0, "healthy, uninfected, unparasitised, conventionally reared laboratory fly: no immune activation "
+                   "and no microbiome-dependent effect on sleep, feeding, activity or metabolism",
+        "flies with infection, immune challenge or axenic rearing are outside the model (Kuo 2014; Schretter "
+        "2018); validation data must come from healthy conventionally reared flies"),
+    "state:reproductive|model": (
+        "S8", 0.0, "naive (virgin) mature male: no mating history and no courtship experience; reproductive state "
+                   "held constant (the connectome male was 5 days old, past the 72 h courtship maturation)",
+        "mated or courtship-conditioned males and mating-state effects on sleep, feeding and aggression are "
+        "outside the model; validation data must come from virgin males"),
+}
+
+
 def read(reg) -> None:
-    """Read every stub switch at its neutral value; refuse anything else."""
+    """Read every stub switch at its neutral value; refuse anything else. Read every ruled constant state at
+    its one modelled value; refuse anything else."""
+    for key, (mech, value, condition, validity) in CONSTANT_STATES.items():
+        entity, prop = key.split("|")
+        v = reg.require(entity, prop, units="enum",
+                        model_use=f"{mech} constant state (ruled level): {condition}",
+                        subsystem="state", minimal=value, conventional=value,
+                        minimal_note=f"{value:g}: the one modelled state; validity: {validity}")
+        if float(v) != value:
+            raise NotImplementedError(
+                f"{key} = {v}: {mech} is modelled as one constant state only ({condition})")
     for key, (mech, neutral, what) in STUBS.items():
         entity, prop = key.split("|")
         v = reg.require(entity, prop, units="enum",

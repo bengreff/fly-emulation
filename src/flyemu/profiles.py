@@ -378,6 +378,95 @@ M10F5S29 = {
                                   "single source"),
 }
 
+# Stage 6 (fly, s23; DECISIONS 23 Oct 00:09 and 22:58): N26 CRY-TIM light input, held-out Lamba 2014 ZT21 passed.
+M10F6 = {
+    **M10F5,
+    "state:clock|light_input": (1.0, _I, "frontier stage 6 (N26): CRY-dependent TIM degradation, night-gated and "
+                                "saturating (s20); held-out Lamba 2014 ZT21 advance +2.89 h predicted, +3.21 +- 0.23 "
+                                "measured (F-S20-3, spent)"),
+    "state:clock|tim_light_coupling": (0.789, _I, "frontier stage 6 (N26): k_tim, fitted (s20 CRY-TIM refit, "
+                                       "DECISIONS 22 Oct 23:02 and 23:55)"),
+    "state:clock|tim_kick_ct": (7.59, _I, "frontier stage 6 (N26): ct_tim_h, fitted (same fit)"),
+}
+# Stage 7 (fly, s23; DECISIONS 23 Oct 22:58): one noise level per MB class (F-S21-1), with N21 off.
+M10F7 = {
+    **M10F6,
+    "class:DAN|noise": (1.4773, _I, "frontier stage 7 (N3): fitted, one value for all DANs; PPL105 at 8 Hz (Huang "
+                        "2018, 6-10 Hz); held-out Huang 2024 resting rates 6 of 9 (F-S21-1, spent)"),
+    "class:MBON|noise": (2.2871, _I, "frontier stage 7 (N3): fitted, one value for all MBONs; MBON14 at 12.1 Hz "
+                         "(Hafez 2023); same held-out test"),
+    "cell_type:all|kc_mbon_ltd_timing_rate": (0.0, _I, "frontier stage 7: N21 off; its fitted rate is not "
+                                              "resting-safe at measured DAN rest (F-S26-1, F-S27-3), so with DANs "
+                                              "at 6-15 Hz it would erase KC->MBON weights; back on with a "
+                                              "resting-safe rule"),
+}
+
+M10F8 = {
+    **M10F7,
+    "state:organs|values_from_sources": (1.0, _I, "frontier stage 8 (S1-S4): the s19 sourced organ values plus the "
+                                         "s23 ingest rate (derived) and crop capacity (inferred, secondary); "
+                                         "internal_state.SOURCED (DECISIONS 23 Oct 23:20)"),
+    "cell_type:all|q10": (2.5, _I, "N28: Juusola & Hardie 2001 J Gen Physiol 117:27, adult R1-6 photoreceptors "
+                                   "in vivo, time-to-peak Q10 2.5 +- 0.2 (kinetics range 2.3-3.5); one cell type's "
+                                   "value applied to all neural time constants; 1 at the 25 degC world default "
+                                   "(DECISIONS 24 Oct)"),
+}
+# Stage 9 (fly, s23; DECISIONS 24 Oct 00:20): N1, per-type spiking or graded mode from recordings
+# (data/params/cell_types.csv graded_rec rows) over the class-group default.
+M10F9 = {
+    **M10F8,
+    "cell_type:all|mode_from_recordings": (1.0, _I, "frontier stage 9 (N1): recorded modes win for the recorded "
+                                           "types (Behnia 2014, Gruntman 2018/2019, Agrawal 2020 and the s23 "
+                                           "rows); every other type keeps its group default"),
+}
+
+# Stage 9c (fly, s23; DECISIONS 24 Oct 00:52): N1 graded release at the sourced graded_rmax.
+M10F9C = {
+    **M10F9,
+    "cell_type:all|graded_rmax": (300.0, _I, "frontier stage 9c (N1): derived 240 vesicles/s per active zone at "
+                                  "the blowfly R1-6 -> LMC graded synapse (Laughlin, Howard & Blakeslee 1987) / "
+                                  "0.79 vesicles per site per spike at Drosophila ORN -> PN (Kazama & Wilson 2008); "
+                                  "range 171-684 Hz; one value for every graded type"),
+}
+# Stage 10 (fly, s23; DECISIONS 24 Oct 00:51, rebased 00:57): S5 lumped body heat balance, on m10f9b because
+# m10f9c failed G.
+M10F10 = {
+    **M10F9,
+    "state:body_temp|model": (1.0, _I, "frontier stage 10 (S5): body temperature from metabolic heat, evaporation "
+                              "and conduction/radiation to the air (internal_state.py); +0.07 K at rest"),
+}
+
+# Stage 11 (fly, s23; DECISIONS 24 Oct 02:20): graded_rmax by class; the photoreceptors take the value derived at
+# their own synapse (F-S23-10), every other graded cell keeps the guessed shared 100 Hz
+M10F11 = {
+    **M10F10,
+    "cell_type:all|graded_rmax_by_class": (1.0, _I, "frontier stage 11 (N1): photoreceptors take their own "
+                                           "graded_rmax; the other graded classes keep cell_type:all|graded_rmax"),
+    "cell_type:photoreceptor|graded_rmax": (300.0, _I, "frontier stage 11 (N1): derived 240 vesicles/s per active "
+                                            "zone at the blowfly R1-6 -> LMC graded synapse (Laughlin, Howard & "
+                                            "Blakeslee 1987) / 0.79 vesicles per site per spike at Drosophila ORN -> PN "
+                                            "(Kazama & Wilson 2008); range 171-684 Hz; photoreceptor classes only"),
+}
+
+M10F12 = {
+    **M10F10,
+    "state:glia|uptake_model": (1.0, _I, "frontier stage 12 (N33): astrocytic Eaat1 uptake sets the fast decay of "
+                                "glutamatergic edges, tau(u) = tau(1) R / (1 + (R - 1) u); the identity at healthy uptake"),
+    "class:astrocyte|eaat1_block_decay_ratio": (2.9, _I, "frontier stage 12 (N33): measured 2.9 (2-4 per pair) in "
+                                                "larval VNC looper -> motor neuron IPSCs under 100 uM DL-TBOA (MacNamee "
+                                                "et al. 2016 Fig. 8B), not adult; its use on adult synapses is "
+                                                "inferred; inert at healthy uptake (0 edges modified)"),
+    "state:glia|eaat1_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
+    "state:glia|gat_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
+}
+# fly2 s29 rebased (DECISIONS 24 Oct): the m10f5s29 additions (N7 recorded GABA-B shares, B20 measured antenna
+# tuning) on m10f10, because fly's stages 6-10 superseded the m10f5 base while the m10f5s29 smoke ran.
+M10F10S29 = {
+    **M10F10,
+    **{k: M10F5S29[k] for k in ("cell_type:all|gabab_from_recordings", "cell_type:all|slow_share_basis",
+                                "antenna:a3|resonance_hz", "antenna:a3|quality_factor")},
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -416,12 +505,28 @@ PROFILES: dict[str, dict] = {
     "m10f3": {"values": M10F3, "kick_mv": KICK},
     "m10f4": {"values": M10F4, "kick_mv": KICK},
     "m10f5": {"values": M10F5, "kick_mv": KICK},
+    "m10f6": {"values": M10F6, "kick_mv": KICK},
+    "m10f7": {"values": M10F7, "kick_mv": KICK},
+    "m10f8": {"values": M10F8, "kick_mv": KICK},
+    "m10f9": {"values": M10F9, "kick_mv": KICK},
+    # s23 (DECISIONS 24 Oct 00:29): m10f9 failed G with the s13 IN10B row; m10f9b = the same values with that row
+    # removed from cell_types.csv under the 00:20 rule (graded-with-spikelets types get no row)
+    "m10f9b": {"values": M10F9, "kick_mv": KICK},
+    "m10f9c": {"values": M10F9C, "kick_mv": KICK},
+    "m10f10": {"values": M10F10, "kick_mv": KICK},
+    "m10f11": {"values": M10F11, "kick_mv": KICK},
+    "m10f12": {"values": M10F12, "kick_mv": KICK},
     "m10f5n7": {"values": M10F5N7, "kick_mv": KICK},
     "m10f5s29": {"values": M10F5S29, "kick_mv": KICK},
+    # fly2 s29 (DECISIONS 24 Oct 04:11 and the m10f10s29 registration): the s29 stack rebased on the frontier;
+    # needs its own G and S before it can be adopted
+    "m10f10s29": {"values": M10F10S29, "kick_mv": KICK},
 }
-PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
+PROFILES["m10f"] = PROFILES["m10f10"]  # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;
-                                       # N21 valid only while DANs are near-silent at rest, F-S26-1)
+                                       # m10f5 s27 23 Oct 03:13; m10f10 = m10f5 + stages 6-10 (fly, s23): G, G2 and S
+                                       # pass, battery 307/0, figure viewed, DECISIONS 24 Oct 03:43. N21 is off from
+                                       # m10f7 on: it is valid only while DANs are near-silent at rest, F-S26-1)
 
 
 def apply(reg: Registry, name: str) -> dict:

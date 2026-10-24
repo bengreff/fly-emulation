@@ -142,6 +142,9 @@ class LIFParams:
     # s13 (fly2, N29): fast receptor decay per connection class from data/params/receptor_kinetics.csv:
     # {"idx", "tau"} (CSR edge order); None = every edge decays with its post cell's tau_s
     kin_edge: dict | None = None
+    # s23 (N33): astrocytic uptake on the glutamatergic edges' fast decay, {"idx", "factor"} (CSR edge order);
+    # None = decays do not depend on uptake (neutral, and the identity at healthy uptake)
+    uptake_edge: dict | None = None
     # s14 (fly2): measured unitary PSP per identified connection from data/params/unitary_psp.csv:
     # {"idx", "psp_mv"} (CSR edge order, signed peak mV); None = every edge from the shared scale
     psp_edge: dict | None = None
@@ -211,6 +214,41 @@ def _receptor_kinetics(reg: Registry, conn: Connectome) -> dict | None:
                     uncertainty=r.note, method="published current decay (single exponential)")
     idx = np.flatnonzero(row >= 0)
     return {"idx": idx, "tau": tab.tau_decay_ms.to_numpy(np.float64)[row[idx]]}
+
+
+def _glia_uptake(reg: Registry, conn: Connectome) -> dict | None:
+    """N33 (s23, DECISIONS 24 Oct 02:28): astrocytic uptake and the fast decay of glutamatergic edges, or None.
+    Glutamate is cleared by diffusion and astrocytic Eaat1 uptake in parallel and the decay is clearance-limited,
+    so tau(u) = tau(1) R / (1 + (R - 1) u), with u the fraction of healthy uptake and R = tau(0) / tau(1)
+    (MacNamee et al. 2016 Fig. 8: larval VNC looper -> motor neuron, not adult; inferred for adult). The identity
+    at the healthy u = 1 (the S7 healthy constant), so None there: inert at healthy uptake, 0 edges modified
+    (DECISIONS 24 Oct 03:08). GABA/GAT has the same structure but no fly ratio, so a gat_uptake other than 1 is
+    refused."""
+    if not reg.require("state:glia", "uptake_model", units="boolean",
+                       model_use="N33: astrocytic uptake sets the fast decay of glutamatergic edges",
+                       subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
+                       minimal_note="neutral 0: decays do not depend on uptake"):
+        return None
+    r = reg.require("class:astrocyte", "eaat1_block_decay_ratio", units="dimensionless",
+                    model_use="N33: glutamatergic decay with uptake blocked / healthy (clearance-limited)",
+                    subsystem="synaptic_efficacy", minimal=2.9,
+                    minimal_note="measured 2.9 (2-4 per pair): MacNamee 2016 Fig. 8B IPSC tau in 100 uM DL-TBOA / "
+                                 "saline, larval VNC looper -> motor neuron, not adult (read by eye)")
+    if float(reg.require("state:glia", "gat_uptake", units="fraction of healthy",
+                         model_use="N33: astrocytic GABA uptake (GAT)", subsystem="state", minimal=1.0,
+                         conventional=1.0, minimal_note="1: healthy uptake (the S7 healthy constant)")) != 1.0:
+        raise NotImplementedError("state:glia|gat_uptake other than 1: no fly GABA decay ratio under GAT loss "
+                                  "is sourced (N33, s23)")
+    u = float(reg.require("state:glia", "eaat1_uptake", units="fraction of healthy",
+                          model_use="N33: astrocytic glutamate uptake (Eaat1)", subsystem="state", minimal=1.0,
+                          conventional=1.0, minimal_note="1: healthy uptake (the S7 healthy constant)"))
+    if not 0.0 <= u <= 1.0:
+        raise ValueError(f"state:glia|eaat1_uptake = {u}: a fraction of healthy uptake, 0-1")
+    if u == 1.0:
+        return None
+    pre = np.repeat(np.arange(conn.n), np.diff(conn.indptr))
+    idx = np.flatnonzero(_stp_cells(conn.neurons, "nt:glutamate")[pre])
+    return {"idx": idx, "factor": float(r) / (1.0 + (float(r) - 1.0) * u)}
 
 
 def _unitary_psp(reg: Registry, conn: Connectome) -> dict | None:
@@ -733,6 +771,7 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         std_u[leg], std_tau[leg] = 0.22, 893.0
     stp_edge = _stp_connections(reg, conn)   # s12 rung 8 (N29); None at neutral
     kin_edge = _receptor_kinetics(reg, conn)   # s13 (N29); None at neutral
+    uptake_edge = _glia_uptake(reg, conn)   # s23 (N33); None at neutral and at healthy uptake
     psp_edge = _unitary_psp(reg, conn)   # s14 (fly2); None at neutral
     two_comp = _two_compartments(reg, conn)   # s20 (fly2, N30); None at neutral
     fv_edge = _flyvis_pairs(reg, conn)   # s14 (fly2); None at neutral
@@ -813,6 +852,20 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         graded_range = np.where(np.isfinite(gr), gr, d0).astype(np.float32)
         if gmode >= 2:
             graded_k = (graded_range / d0).astype(np.float32)
+    # s23 (DECISIONS 24 Oct 02:20): graded_rmax is sourced at the photoreceptor synapse only (F-S23-10); 1 = the
+    # photoreceptor classes take their own value and every other graded cell keeps cell_type:all|graded_rmax.
+    # Folded into the per-cell release multiplier, so release is graded_rmax x k as before; CPU path only
+    if one("graded_rmax_by_class", "switch", "photoreceptors take their own graded_rmax", 0.0,
+           "neutral 0: one graded_rmax for every graded cell"):
+        photo = (np.asarray(graded).astype(bool)
+                 & np.isin(circuit_classes(conn), ["photoreceptor", "ocellar_photoreceptor"]))
+        r_ph = reg.require("cell_type:photoreceptor", "graded_rmax", units="Hz",
+                           model_use="graded rate-equivalent at threshold, photoreceptor terminals",
+                           subsystem="neuron_biophysics", instances=int(photo.sum()), minimal=300.0,
+                           minimal_note="derived 300 Hz (171-684): 240 vesicles/s per active zone at blowfly "
+                                        "R1-6 -> LMC / 0.79 vesicles per site per spike at ORN -> PN")
+        graded_k = (np.ones(conn.n, np.float32) if graded_k is None else graded_k.copy())
+        graded_k[photo] *= np.float32(r_ph / rmax)
     # --- session 11: per-cell input gain from within-type size/input rules (percell.py)
     from . import percell
     f_cell = percell.input_gain_factors(reg, conn)
@@ -1038,7 +1091,8 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         machr_tau_ms=float(machr_tau), nmda_fraction=nmda, nmda_tau_ms=float(nmda_tau),
         nmda_mg_mM=float(nmda_mg),
         intrinsic=intrinsic, tau_s_inh=tau_s_inh, gap=gap, kin_edge=kin_edge, fv_edge=fv_edge,
-        psp_edge=psp_edge, two_comp=two_comp, homeostat=homeo, site_plast=site, structural=struct,
+        psp_edge=psp_edge, two_comp=two_comp, uptake_edge=uptake_edge,
+        homeostat=homeo, site_plast=site, structural=struct,
     )
 
 
@@ -1095,6 +1149,7 @@ class Network:
         self._unitary_psp_weights()
         self._slow_channels(pre)
         self._kinetic_channels(pre)
+        self._uptake_channels(pre)
         if p.ring_class_norm:
             self._ring_class_norm(pre)
         self._edge_scales(pre)
@@ -1690,6 +1745,39 @@ class Network:
             self.w[e] = 0.0
             self.chan.append(dict(name=f"kin{t:g}", w=ws, buf=np.zeros((self.D, n), np.float32),
                                   i=np.zeros(n, np.float32), vdep=False, decay=dc, kin=True))
+
+    def _uptake_channels(self, pre: np.ndarray) -> None:
+        """N33 (s23): the glutamatergic edges' fast decay times the uptake factor (_glia_uptake), from the N29
+        row decay where an edge has one, else the post cell's tau_s (after Q10). Each edge keeps its u = 1
+        increment, so the peak is kept and the charge grows with the decay (MacNamee 2016: amplitude unchanged
+        under block). Spiking presynaptic cells only (graded cells keep W_graded at tau_s); current-based
+        synapses only; CPU path only (the GPU path refuses kin channels)."""
+        ue = self.params.uptake_edge
+        if ue is None or not len(ue["idx"]):
+            return
+        if self.params.cond:
+            raise NotImplementedError("state:glia|uptake_model with conductance synapses is not built (s23)")
+        dt, n = self.timestep_ms, self.conn.n
+        e = ue["idx"][~self.graded[pre[ue["idx"]]]]
+        tau = _arr(self.params.tau_s, n)[self.conn.indices[e]].astype(np.float64)
+        inc = self.w[e].copy()
+        self.w[e] = 0.0
+        ke = self.params.kin_edge
+        if ke is not None and len(ke["idx"]):
+            k = np.isin(e, ke["idx"])          # moved to N29 channels by _kinetic_channels
+            tau[k] = ke["tau"][np.searchsorted(ke["idx"], e[k])]
+            for c in self.chan:
+                if c.get("kin"):
+                    inc[k] += c["w"][e[k]]
+                    c["w"][e[k]] = 0.0
+        new = tau * ue["factor"]
+        for t in np.unique(new):
+            m = new == t
+            ws = np.zeros_like(self.w)
+            ws[e[m]] = inc[m]
+            self.chan.append(dict(name=f"upt{t:g}", w=ws, buf=np.zeros((self.D, n), np.float32),
+                                  i=np.zeros(n, np.float32), vdep=False, decay=np.float32(np.exp(-dt / t)),
+                                  kin=True))
 
     def _flyvis_pair_weights(self, pre: np.ndarray) -> None:
         """s14 (fly2): give each flyvis pair edge from a graded cell the weight whose steady-state voltage

@@ -32,6 +32,15 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    evap = e0 (1 - RH) Q10w^((T-25)/10) (1 + k_w activity)
                    excrete = max(0, W - W0) / tau_excrete
                    V_h = max(0.2 V_h0, V_h0 + f_h (W - W0));  osm = V_h0 / V_h
+  S5 body temp     s23, switch state:body_temp|model = 1 (neutral 0: the body is at air temperature):
+                   lumped heat balance C T_b' = P_met - P_evap - G (T_b - T_air), exact steps.
+                   P_met = use x 2803 kJ/mol glucose; P_evap = evap x 2.44 kJ/g water (25 degC);
+                   C = m c_p; G = 2 pi k_air D + 4 eps sigma T_air^3 pi D^2 (conduction from a sphere
+                   of the body's volume in still air, Nu = 2, plus linearised radiation to surroundings
+                   at air temperature), D = (6 m / (pi rho))^(1/3). Metabolic and evaporative Q10 and
+                   the neural Q10 (organism.py, at build, from the resting steady state) read T_b.
+                   Validity: still air, no radiant load, rest to walking; flight's forced convection
+                   and muscle heat are not modelled beyond k_act.
   N26 clock        Stuart-Landau limit cycle z = x + iy:
                    z' = (mu (1 - |z|^2) + i 2 pi / period) z + K Lsat e^{i alpha}
                    Lsat = L / (L + L50); alpha = the phase light pulls toward
@@ -58,7 +67,8 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    -n/need_tau_decay asleep. No thresholds: each dFB cell is a two-state unit,
                    OFF -> ON at k_r (1 + need_gain n) / (1 + need_gain) (k_r the spontaneous restart
                    measured in flies deprived > 12 h, Pimentel 2016, taken at full need n = 1),
-                   ON -> OFF at k_off (1 + light_arousal Lsat) (arousal), stepped exactly with a
+                   ON -> OFF at k_off (1 + light_arousal Lsat + night_arousal D(CT)) (arousal; D the
+                   clock's DN1 drive, s23, neutral 0), stepped exactly with a
                    seeded generator. switch = ON fraction >= DFB_SLEEP_FRACTION (the reduced loop's
                    sleep link); the organism drives each dFB cell by its own state.
 
@@ -158,6 +168,17 @@ PARAMS = [
      "share of a body-water change borne by hemolymph volume; no data", "uniform", "guessed", ""),
     ("osm_full", "S4", "state:water", "thirst_full_osm_rise", "fraction", 0.2, 0.05, 0.5, "guessed",
      "osmolality rise that saturates thirst; no data", "loguniform", "guessed", ""),
+    # --- S5 body temperature (s23; read only with state:body_temp|model = 1) ------------
+    ("m_body_mg", "S5", "state:body_temp", "wet_mass", "mg", 0.505, 0.40, 1.00, "measured_this_class",
+     "Burggren, Souder & Ho 2017 Biol Open 6:471: male wet mass 0.505 mg (the basal-rate flies); upper "
+     "the flybody model mass 0.985 mg", "uniform", "measured", "sets C and the body diameter D"),
+    ("rho_g_ml", "S5", "state:body_temp", "density", "g/mL", 1.07, 1.0, 1.15, "insect_wide",
+     "insect tissue density near water's (provisional; s23 S5 reader)", "uniform", "inferred", "sets D"),
+    ("cp_j_gk", "S5", "state:body_temp", "specific_heat", "J/(g K)", 3.5, 3.0, 4.0, "insect_wide",
+     "water-rich tissue 3-4 J/(g K) (provisional; s23 S5 reader)", "uniform", "inferred", "sets C"),
+    ("emissivity", "S5", "state:body_temp", "emissivity", "dimensionless", 0.95, 0.8, 1.0, "insect_wide",
+     "insect cuticle emits nearly as a black body in the thermal infrared (provisional)", "uniform",
+     "inferred", "radiative part of G"),
     # --- N26 clock -----------------------------------------------------------
     ("period_h", "N26", "state:clock", "period", "h", 24.0, 22.0, 26.0, "measured_this_class",
      "wild-type free-running period about 23.5-24.5 h (Konopka & Benzer 1971 lead; same as n26_clock_period)",
@@ -240,6 +261,15 @@ PARAMS = [
      "relative rise of the dFB OFF rate in saturating light (light-driven arousal; leads Shang et al. 2008, "
      "Sheeba et al. 2008, not read); fitted in s21", "uniform", "guessed",
      "read only with state:sleep|homeostat = 1"),
+    ("night_arousal", "N25", "state:sleep", "night_arousal_gain", "x", 0.0, 0.0, 20.0, "guessed",
+     "relative rise of the dFB OFF rate at the peak of the clock's DN1 drive (late-night wake from DH31+ DN1, "
+     "Kunst et al. 2014 Curr Biol 24:2652, abstract only: sign and window, no magnitude); fitted in s23",
+     "uniform", "guessed", "read only with state:sleep|homeostat = 1; neutral 0"),
+    ("ct_dn1_h", "N25", "state:sleep", "night_arousal_peak_ct", "h", 19.0, 17.0, 20.0, "measured_related",
+     "Liang, Holy & Taghert 2016 Science 351:976 Fig. 1G: DN1 Ca2+ peak about CT 18.8-19, per-fly scatter "
+     "CT 17-20, DD1 (figure read, docs/research/s20_n26_figreads.md)", "uniform", "inferred",
+     "the Ca2+ peak taken as the peak of the wake drive (Liang: Ca2+ leads behaviour by about 4 h, not applied); "
+     "read only with night_arousal > 0"),
     # --- N20 couplings (mV) ----------------------------------------------------
     ("g_isn_mv", "N20", "state:coupling", "isn_gain", "mV", 3.0, 0.0, 15.0, "guessed",
      "tonic drive at full hunger or thirst; sign from Jourjine 2016", "uniform", "guessed", ""),
@@ -263,7 +293,7 @@ PARAMS = [
      "(lead: Donlea et al. 2014, not read)", "uniform", "guessed", ""),
 ]
 
-MECH_PREFIX = {"S1": "s1", "S2": "s2", "S3": "s3", "S4": "s4", "N20": "n20", "N25": "n25", "N26": "n26"}
+MECH_PREFIX = {"S1": "s1", "S2": "s2", "S3": "s3", "S4": "s4", "S5": "s5", "N20": "n20", "N25": "n25", "N26": "n26"}
 
 # s19: values read from sources (DECISIONS 22 Oct 02:30), the defaults only with
 # state:organs|values_from_sources = 1 (neutral 0 keeps the guessed PARAMS centres above).
@@ -285,6 +315,20 @@ SOURCED = {
                    "crop turnover 32%/h of capacity fully fed, 14%/h dietary restriction (PMC4335172; Geer 1970 model)"),
     "tau_gut_s": (2700.0, 900.0, 7200.0, "inferred", "measured_related",
                   "faecal dye from 15 min, abundant by 45-60 min (PMC4335172); whole-tract transit < 1 h (secondary)"),
+    # s23 (DECISIONS 23 Oct 23:20)
+    "ingest_nl_s": (5.0, 4.4, 8.8, "derived", "measured_related",
+                    "Itskov et al. 2014 Nat Commun 5:4560 (w1118 males and females, 25 degC): median sip 1.05 nL per "
+                    "sip cycle of 0.13 s sip + 0.08 s inter-sip interval (yeast) = 5.0 nL/s; 4.4 with the 0.16 s "
+                    "sucrose sip; upper 8.8 from Pool et al. 2014 Neuron 83:164 (~150 nL in ~17 s, 24 h deprived "
+                    "females, 30 degC). s23 amendment (DECISIONS 24 Oct): the 23:20 value 7.0 omitted the interval"),
+    "crop_max_nl": (250.0, 150.0, 320.0, "inferred", "measured_related",
+                    "largest single meals after deprivation, females (no male value found): Pool et al. 2014 Neuron "
+                    "83:164 ~150 nL after 24 h (30 degC); Qi et al. 2015 Mol Brain 8:13 0.27 +- 0.02 ul (100 mM "
+                    "sucrose) and 0.32 +- 0.01 ul mean after 36 h (virgin Canton-S, 25 degC). Edgecomb et al. 1994, "
+                    "cited at 23:20, scores crop size on an ordinal 1-5 scale, not in nL"),
+    "q10_met": (2.0, 2.0, 2.3, "measured", "measured_this_class",
+                "Klepsatel, Wildridge & Galikova 2019 Sci Rep 9:5239 (PMC6437209): whole-fly O2 consumption, adult "
+                "males, 13-33 degC, Q10 2.0 Oregon R (the basal-rate strain) and 2.3 Canton S"),
 }
 
 # s19: N26 clock values read from sources (DECISIONS 22 Oct 04:44), the defaults only with
@@ -319,6 +363,43 @@ N_DFB = 8           # male-cns v1.0: FB6A_a/b/c and FB6E, 2 cells each (COUPLED[
 
 # s20: N26 light input mode (0 the one-point pull, 1 CRY-TIM; see the module docstring)
 LIGHT_INPUT_SWITCH = ("state:clock", "light_input")
+
+# s23 S5 (DECISIONS 24 Oct): lumped body heat balance; neutral 0 keeps the body at air temperature
+HEAT_SWITCH = ("state:body_temp", "model")
+J_PER_NMOL_GLUCOSE = 2.803e-3    # 2803 kJ/mol, complete oxidation (the same constant as SOURCED fat0)
+J_PER_NL_WATER = 2.44e-3         # latent heat of vaporisation 2.44 kJ/g at 25 degC; 1 nL = 1 ug
+K_AIR_W_MK = 0.0262              # thermal conductivity of air at 25 degC
+SIGMA_SB = 5.670e-8              # Stefan-Boltzmann, W/(m^2 K^4)
+
+
+def body_thermal(p: dict, t_air_c: float) -> tuple[float, float]:
+    """S5: heat capacity C (J/K) and conductance to the air G (W/K), derived from mass, density,
+    specific heat and emissivity (sphere of the body's volume, still air, Nu = 2, plus linearised
+    radiation to surroundings at air temperature)."""
+    m_g = p["m_body_mg"] * 1e-3
+    d_m = (6.0 * m_g / (np.pi * p["rho_g_ml"])) ** (1.0 / 3.0) * 1e-2     # cm -> m
+    t_k = t_air_c + 273.15
+    g = 2.0 * np.pi * K_AIR_W_MK * d_m + 4.0 * p["emissivity"] * SIGMA_SB * t_k ** 3 * np.pi * d_m ** 2
+    return m_g * p["cp_j_gk"], g
+
+
+def basal_heat_w(p: dict, t_body_c: float, act: float = 0.0) -> float:
+    return J_PER_NMOL_GLUCOSE * p["basal_nmol_s"] * p["q10_met"] ** ((t_body_c - 25) / 10) * (1 + p["k_act"] * act)
+
+
+def evap_heat_w(p: dict, t_body_c: float, rh: float, act: float = 0.0) -> float:
+    return J_PER_NL_WATER * p["evap_nl_s"] * (1 - rh) * p["q10_evap"] ** ((t_body_c - 25) / 10) \
+        * (1 + p["k_w_act"] * act)
+
+
+def rest_body_temp(p: dict, t_air_c: float, rh: float, act: float = 0.0) -> float:
+    """S5 steady state T_air + (P_met - P_evap) / G at the given activity (fixed point; the Q10
+    terms move it by < 1e-4 K per iteration at 25 degC)."""
+    _c, g = body_thermal(p, t_air_c)
+    tb = t_air_c
+    for _ in range(4):
+        tb = t_air_c + (basal_heat_w(p, tb, act) - evap_heat_w(p, tb, rh, act)) / g
+    return float(tb)
 # TIM's dark (DD) profile relative to its peak, at circadian times (h); used only with light_input = 1.
 # Shafer, Rosbash & Truman 2002 J Neurosci 22:5946 Fig. 6D: small vLNs (s-LNv), Canton-S, DD day 1, 25 C,
 # 4 brains per point; cytoplasmic + nuclear mean pixel intensity, read by eye from a 3x crop (axis 0-200,
@@ -427,6 +508,7 @@ class Organs:
     cry: float = 0.0                              # active CRY fraction (light_input = 1)
     tim: float = field(default=np.nan)            # TIM, units of its DD peak (light_input = 1)
     pressure: float = 0.2                         # process S; the ER5 need n with homeostat = 1
+    t_body: float = field(default=np.nan)        # S5 body temperature, degC (heat_balance = 1)
     inactive_s: float = 0.0
     asleep: bool = False
     switch: bool = False
@@ -508,8 +590,13 @@ class Organs:
         ab_nl, ab_s = self.gut_nl * fg, self.gut_sugar * fg
         self.gut_nl += mv_nl - ab_nl
         self.gut_sugar += mv_s - ab_s
+        # S5 (s23): the organs run at body temperature when the heat balance is on
+        heat = p.get("heat_balance", 0.0) >= 1
+        if heat and np.isnan(self.t_body):
+            self.t_body = rest_body_temp(p, temperature_c, humidity_rh, act)
+        tb = self.t_body if heat else temperature_c
         # S1/S2 energy
-        use = p["basal_nmol_s"] * p["q10_met"] ** ((temperature_c - 25) / 10) * (1 + p["k_act"] * act)
+        use = p["basal_nmol_s"] * p["q10_met"] ** ((tb - 25) / 10) * (1 + p["k_act"] * act)
         x = self.sugar_mM / p["conc0_mM"] - 1
         s = p["hormone_s"]
         fh = 1 - np.exp(-dt / p["tau_hormone_s"])
@@ -523,8 +610,12 @@ class Organs:
         self.sugar = max(0.0, self.sugar + dH)
         self.fat = max(0.0, self.fat - rel + sto)
         # S4 water
-        evap = p["evap_nl_s"] * (1 - humidity_rh) * p["q10_evap"] ** ((temperature_c - 25) / 10) \
+        evap = p["evap_nl_s"] * (1 - humidity_rh) * p["q10_evap"] ** ((tb - 25) / 10) \
             * (1 + p["k_w_act"] * act)
+        if heat:                                      # S5: exact relaxation toward this step's steady state
+            c_j, g = body_thermal(p, temperature_c)
+            t_inf = temperature_c + (J_PER_NMOL_GLUCOSE * use - J_PER_NL_WATER * evap) / g
+            self.t_body = t_inf + (self.t_body - t_inf) * np.exp(-dt * g / c_j)
         exc = max(0.0, self.water_nl - p["w0_nl"]) * (1 - np.exp(-dt / p["tau_excrete_s"]))
         self.water_nl = max(0.0, self.water_nl + ab_nl - evap * dt - exc)
         # N26 clock: exact rotation, Euler amplitude and forcing (dt << 1 h)
@@ -564,18 +655,28 @@ class Organs:
         tau = (p["need_tau_decay_h"] if self.asleep else p["need_tau_rise_h"]) * 3600.0
         target = 0.0 if self.asleep else 1.0
         self.pressure = target + (self.pressure - target) * np.exp(-dt / tau)
-        k_on, k_off = dfb_rates(p, self.pressure, lsat)
+        k_on, k_off = dfb_rates(p, self.pressure, lsat, self.ct_h)
         p_stay_on, p_turn_on = dfb_transition(k_on, k_off, dt)
         u = self._rng.random(self.n_dfb)
         self.dfb_on = np.where(self.dfb_on, u < p_stay_on, u < p_turn_on)
         self.switch = bool(self.dfb_on.mean() >= DFB_SLEEP_FRACTION)
 
 
-def dfb_rates(p: dict, need, lsat):
-    """Homeostat mode 1 rates per s: OFF -> ON k_r (1 + g n) / (1 + g), ON -> OFF k_off (1 + light_arousal Lsat)."""
+def night_drive(ct, peak_ct: float):
+    """The clock's DN1 drive, one cycle: 1 at peak_ct, 0 twelve hours away (s23)."""
+    return 0.5 * (1.0 + np.cos(2 * np.pi * (ct - peak_ct) / 24.0))
+
+
+def dfb_rates(p: dict, need, lsat, ct=None):
+    """Homeostat mode 1 rates per s: OFF -> ON k_r (1 + g n) / (1 + g), ON -> OFF
+    k_off (1 + light_arousal Lsat + night_arousal D(ct)), D the DN1 drive (night_drive; s23, neutral 0)."""
     g = p["need_gain"]
     k_on = p["dfb_restart_per_min"] / 60.0 * (1.0 + g * need) / (1.0 + g)
-    k_off = p["dfb_koff_per_min"] / 60.0 * (1.0 + p["light_arousal"] * lsat)
+    a = 1.0 + p["light_arousal"] * lsat
+    na = p.get("night_arousal", 0.0)
+    if ct is not None and np.any(na):
+        a = a + na * night_drive(ct, p["ct_dn1_h"])
+    k_off = p["dfb_koff_per_min"] / 60.0 * a
     return k_on, k_off
 
 
@@ -625,7 +726,15 @@ def read_params(reg: Registry) -> dict:
                                       "(Liu 2016) and stochastic per-cell dFB switching (Pimentel 2016; s21)",
                             subsystem="internal_state", minimal=0.0, conventional=0.0,
                             minimal_note="neutral 0: the s10 process S and threshold switch"))
+    heat = float(reg.require(*HEAT_SWITCH, units="mode",
+                             model_use="S5 body temperature: 0 the body is at air temperature; 1 lumped heat "
+                                       "balance (metabolic heat, evaporation, conduction and radiation to the "
+                                       "air; s23)",
+                             subsystem="internal_state", minimal=0.0, conventional=0.0,
+                             minimal_note="neutral 0: body at air temperature (as before s23)"))
     out = {"light_input": li} if li else {}
+    if heat:
+        out["heat_balance"] = heat
     if slp:
         out["sleep_sourced"] = 1.0
     if hom:
@@ -743,14 +852,30 @@ def population_rows(conn) -> tuple[dict, dict]:
     return rows, counts
 
 
-def build(reg: Registry, conn, seed: int = 0) -> InternalState | None:
-    """The switch, and (only when on) the parameters and population records."""
-    on = int(reg.require(
+def neural_temperature_c(reg: Registry, world) -> float:
+    """S5: the temperature the neural Q10 reads at build. Air temperature unless the organs and the heat
+    balance are both on; then the resting steady state (activity 0) at the world's air and RH. Validity:
+    neural kinetics do not follow T_b during a run (< 0.1 K at rest; flight heat not modelled)."""
+    if not (_organs_on(reg) and reg.require(*HEAT_SWITCH, units="mode", model_use="S5 body temperature "
+                                            "(read for the neural Q10)", subsystem="internal_state",
+                                            minimal=0.0, conventional=0.0,
+                                            minimal_note="neutral 0: body at air temperature")):
+        return float(world.temperature_c)
+    return rest_body_temp(read_params(reg), float(world.temperature_c), float(world.humidity_rh))
+
+
+def _organs_on(reg: Registry) -> int:
+    return int(reg.require(
         *SWITCH, units="enum",
         model_use="0 no internal state (legacy m4); 1 lumped organs, clock and sleep homeostat with "
                   "tonic drive to identified populations (internal_state.py, task 12)",
         subsystem="internal_state", minimal=0,
         minimal_note="legacy m4; internal state is a template option"))
+
+
+def build(reg: Registry, conn, seed: int = 0) -> InternalState | None:
+    """The switch, and (only when on) the parameters and population records."""
+    on = _organs_on(reg)
     if not on:
         return None
     p = read_params(reg)
