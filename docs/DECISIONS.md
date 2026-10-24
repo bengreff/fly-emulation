@@ -5264,3 +5264,35 @@ during deprivation was not quantified by the reader.
   the cheaper completions in the path-to-done ranking.
 - The Dryad raw data, if Ben downloads it in a browser, can settle the I/J disagreement as a refinement of this
   recorded score only; it cannot re-open the test.
+
+### s23 frontier stage m10f9 (N1 recorded firing modes ON), registered before any run (24 October, 00:20)
+**Brief.** Director item (3): the cheapest real completions. N1's path (MECHANISM_STATUS): use the recorded
+spiking or graded mode wherever a recording exists; where none exists, the built default (spiking) ON counts under
+Ben's done rule. The switch is built and tested (`cell_type:all|mode_from_recordings`, s12 and s13; test
+`test_recorded_modes_override_the_group_only_for_recorded_types`) but off in every m10f stage.
+- **m10f9 = m10f8 + `cell_type:all|mode_from_recordings` 1.** Current `graded_rec` rows (`data/params/cell_types.csv`):
+  Mi1, Tm1, Tm2, Tm3 (measured; Behnia 2014 Fig. 1 mode only, its held-out step ratios and filter peaks are not
+  used); T4a-d, T5a-d (measured; Gruntman 2018, 2019); L4, L5 (inferred); IN13B and IN10B types (inferred by
+  hemilineage from Agrawal 2020's 13Bα and 10Bα recordings).
+- **Row-addition rule, fixed before the mode reader reports** (Sonnet reader launched 00:17):
+  - A type gets a row only if a primary adult Drosophila recording (whole-cell, sharp electrode or an isolated unit)
+    states that it fires action potentials (row 0) or that it does not (row 1). Calcium imaging alone does not count.
+  - Basis measured for the recorded type; inferred when extended by name to sibling types (as IN13B).
+  - Rows are written only where they change the model: graded types not yet graded, and spiking types that sit in
+    an unknown-mode group (AL LNs, optic columnar, VNC local). Recorded spiking types already spiking by default
+    go into the research note only.
+  - Contested types (two recordings disagree) and graded-with-spikelets types get no row: they keep their group's
+    mode, and the conflict or the missing mixed mode is a recorded validity limit.
+- **Gate.** G and S as the 23 Oct 22:58 entry, on m10f9.
+- **Unit check (against the recordings).** In the 60 s smoke, cells of every `graded_rec` = 1 type emit no spikes,
+  and the test above passes at the m10f9 values. Reported: the newly graded cell count, and their spike rate in
+  m10f8's smoke.
+- **Prediction.** G passes. S passes with the whole-brain rate within ±0.01 Hz of m10f8 and the active fraction
+  within ±0.002: in the dark at rest the optic columnar cells are near silent (0.003 Hz in m10f7's first 10 s;
+  T4/T5 0), and the 687 IN13B and IN10B cells are under 0.5 % of the brain.
+- **Falsifier / consequence.** If G or S fails, the switch stays built-off with the reason recorded. If both pass,
+  `m10f` moves to m10f9 after the battery and a viewed figure, and N1 is done if every type with a recorded mode
+  uses it and the rest are spiking by default. Contested types are listed in the row; they do not block done unless
+  Ben rules a mixed mode is required.
+- **Runs.** G on backhouse if the load allows, else on the Mac through `slot.py`. S takes 4-5 h at the current
+  load, so it cannot finish before the 05:30 park; it runs next session.
