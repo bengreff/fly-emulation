@@ -5077,3 +5077,43 @@ no food contact, the organ values only move the starting hunger and thirst signa
 unsourced).
 **Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, detached, done-files, queued behind the m10f6 and
 m10f7 smokes if load is above 24.
+
+### s23 N25 night input (Director's (c)): DN1 late-night wake on the dFB OFF rate, Garbe day and night bout checks, registered before any fit run (23 October, 23:30)
+**Brief.** Director, 23 Oct 04:50, decision (c), standing in s23: before Chowdhury 2023 is spent, add a night-acting
+input from a sourced mechanism, pre-register day and night bout checks against Garbe 2015, refit, then score
+Chowdhury once. The s22 diagnosis (F-S22-1, F-S22-2): at the measured restart rate the best set already has a
+Garbe-like day (11.0 bouts of 53 min against 8.7 ± 3.3 of 57 ± 25), but its night is too consolidated (2.6 bouts of
+200 min against 7.0 ± 4.2 of 113 ± 70). The only time-of-day term was light raising k_off.
+**Mechanism (built, neutral 0).** k_off = k_off0 (1 + light_arousal Lsat + night_arousal D(CT)), with
+D(CT) = (1 + cos(2π (CT − ct_dn1)/24)) / 2.
+- Source of sign and window: DH31+ DN1 cells promote wake in the late night (Kunst et al. 2014 Curr Biol
+  24:2652; abstract and secondary only, no magnitude).
+- `ct_dn1_h` 19 h, **inferred**: Liang, Holy & Taghert 2016 Fig. 1G, the DN1 Ca2+ peak at about CT 18.8-19
+  (per-fly CT 17-20, DD1; s20 figure read). The Ca2+ peak is taken as the peak of the drive. Liang's "Ca2+ leads
+  behaviour by about 4 h" is noted and not applied.
+- `night_arousal`, **fitted**: one shared quantity, bounds 0-20, the same form as `light_arousal`. The one-cycle
+  cosine is the model's standard clock form; it reaches CT 1-3 at half and quarter strength.
+- The term reads the clock, so it persists in DD; the fast loop uses CT = ZT (entrained LD, its validity range).
+- Implementation check U4 (vector loop against the Organs class, night term on, U3's 3 SE rule): passed before
+  this entry (578.7 against 574.6 min/day, SE 9.1; `runs/s23/n25/unit.json`).
+**Fit (training only).** `scripts/probes/s23_n25_night.py fit`. k_r stays at its measured centre (1/25.86 min⁻¹).
+The grid is 32,340 sets: `need_tau_rise_h` 2-48 (10 values), `need_gain` 0-100 (11), `dfb_koff_per_min`
+0.001-0.041 (7; values above never passed in s22), `light_arousal` 1-20 (6; values below 1 never passed in s22),
+`night_arousal` {0, 0.5, 1, 2, 4, 8, 16}. Checks, in order:
+- T1, total sleep 1008-1100 min/day (Abhilash & Shafer primary band). T2, night > day. T4, the Liu ZT13-15 /
+  ZT0-2 need ratio ≥ 2. These are as in s22, stage 1, 64 flies.
+- **T5 (new), Garbe 2015 day and night bouts, each within mean ± 1 s.d.:** night 2.8-11.2 bouts of 43-183 min,
+  day 5.4-12.0 bouts of 32-82 min. Uses `bouts()` with 128 flies, seed 30 + chunk.
+- T3, the Liu anchors (stage 2), as in s22.
+- Candidate: the registered `select()` rule of s21 (the accepted set closest to the per-arm medians of the
+  day-1 predictions).
+**Expected.** night_arousal 0 gives no T1-T5 set (reproduces F-S22-2). Some sets with night_arousal > 0 pass.
+**Falsifier.** No set passes T1-T5. Then the DN1 night term alone cannot give Garbe-like days and nights at the
+measured k_r. That goes into FINDINGS, Chowdhury stays unspent, and the next candidate is a day-side term,
+registered separately.
+**Then.** If there is a candidate, its 6 / 12 / 24 h day-1 predictions are written into this file before any
+Chowdhury magnitude is read. Chowdhury is then scored once under the 23 Oct 00:53 rule, unchanged: the primary
+24 h point plus 6 h and 12 h, from Dryad raw data, mean ± 2 SEM. The s22 locked prediction (99.7 / 150.2 /
+174.3) and the T5-amended one (70 / 111 / 131) are reported at the same read and spend nothing extra.
+Chowdhury's Dryad data stays unopened until then. Garbe 2015 is training. Huber 2004 is training context.
+**Runs.** backhouse, one job, 3 worker processes of 1 thread each.

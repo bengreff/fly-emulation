@@ -71,7 +71,7 @@ def sim(p: dict, sets: dict | None = None, flies: int = 64, burn_days: int = 4, 
         tau = np.where(asleep, q["need_tau_decay_h"], q["need_tau_rise_h"]) * 3600.0
         target = np.where(asleep, 0.0, 1.0)
         need = target + (need - target) * np.exp(-60.0 / tau)
-        k_on, k_off = dfb_rates(q, need, lsat)
+        k_on, k_off = dfb_rates(q, need, lsat, (t % DAY) / 60.0)    # entrained LD: CT = ZT (s23 night term)
         stay, turn = dfb_transition(k_on, k_off * np.ones_like(need), 60.0)
         u = rng.random(on.shape)
         on = np.where(on, u < stay[..., None], u < turn[..., None])

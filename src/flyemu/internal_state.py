@@ -58,7 +58,8 @@ data/model/parameters.csv; all are bounded guesses unless labelled otherwise):
                    -n/need_tau_decay asleep. No thresholds: each dFB cell is a two-state unit,
                    OFF -> ON at k_r (1 + need_gain n) / (1 + need_gain) (k_r the spontaneous restart
                    measured in flies deprived > 12 h, Pimentel 2016, taken at full need n = 1),
-                   ON -> OFF at k_off (1 + light_arousal Lsat) (arousal), stepped exactly with a
+                   ON -> OFF at k_off (1 + light_arousal Lsat + night_arousal D(CT)) (arousal; D the
+                   clock's DN1 drive, s23, neutral 0), stepped exactly with a
                    seeded generator. switch = ON fraction >= DFB_SLEEP_FRACTION (the reduced loop's
                    sleep link); the organism drives each dFB cell by its own state.
 
@@ -240,6 +241,15 @@ PARAMS = [
      "relative rise of the dFB OFF rate in saturating light (light-driven arousal; leads Shang et al. 2008, "
      "Sheeba et al. 2008, not read); fitted in s21", "uniform", "guessed",
      "read only with state:sleep|homeostat = 1"),
+    ("night_arousal", "N25", "state:sleep", "night_arousal_gain", "x", 0.0, 0.0, 20.0, "guessed",
+     "relative rise of the dFB OFF rate at the peak of the clock's DN1 drive (late-night wake from DH31+ DN1, "
+     "Kunst et al. 2014 Curr Biol 24:2652, abstract only: sign and window, no magnitude); fitted in s23",
+     "uniform", "guessed", "read only with state:sleep|homeostat = 1; neutral 0"),
+    ("ct_dn1_h", "N25", "state:sleep", "night_arousal_peak_ct", "h", 19.0, 17.0, 20.0, "measured_related",
+     "Liang, Holy & Taghert 2016 Science 351:976 Fig. 1G: DN1 Ca2+ peak about CT 18.8-19, per-fly scatter "
+     "CT 17-20, DD1 (figure read, docs/research/s20_n26_figreads.md)", "uniform", "inferred",
+     "the Ca2+ peak taken as the peak of the wake drive (Liang: Ca2+ leads behaviour by about 4 h, not applied); "
+     "read only with night_arousal > 0"),
     # --- N20 couplings (mV) ----------------------------------------------------
     ("g_isn_mv", "N20", "state:coupling", "isn_gain", "mV", 3.0, 0.0, 15.0, "guessed",
      "tonic drive at full hunger or thirst; sign from Jourjine 2016", "uniform", "guessed", ""),
@@ -571,18 +581,28 @@ class Organs:
         tau = (p["need_tau_decay_h"] if self.asleep else p["need_tau_rise_h"]) * 3600.0
         target = 0.0 if self.asleep else 1.0
         self.pressure = target + (self.pressure - target) * np.exp(-dt / tau)
-        k_on, k_off = dfb_rates(p, self.pressure, lsat)
+        k_on, k_off = dfb_rates(p, self.pressure, lsat, self.ct_h)
         p_stay_on, p_turn_on = dfb_transition(k_on, k_off, dt)
         u = self._rng.random(self.n_dfb)
         self.dfb_on = np.where(self.dfb_on, u < p_stay_on, u < p_turn_on)
         self.switch = bool(self.dfb_on.mean() >= DFB_SLEEP_FRACTION)
 
 
-def dfb_rates(p: dict, need, lsat):
-    """Homeostat mode 1 rates per s: OFF -> ON k_r (1 + g n) / (1 + g), ON -> OFF k_off (1 + light_arousal Lsat)."""
+def night_drive(ct, peak_ct: float):
+    """The clock's DN1 drive, one cycle: 1 at peak_ct, 0 twelve hours away (s23)."""
+    return 0.5 * (1.0 + np.cos(2 * np.pi * (ct - peak_ct) / 24.0))
+
+
+def dfb_rates(p: dict, need, lsat, ct=None):
+    """Homeostat mode 1 rates per s: OFF -> ON k_r (1 + g n) / (1 + g), ON -> OFF
+    k_off (1 + light_arousal Lsat + night_arousal D(ct)), D the DN1 drive (night_drive; s23, neutral 0)."""
     g = p["need_gain"]
     k_on = p["dfb_restart_per_min"] / 60.0 * (1.0 + g * need) / (1.0 + g)
-    k_off = p["dfb_koff_per_min"] / 60.0 * (1.0 + p["light_arousal"] * lsat)
+    a = 1.0 + p["light_arousal"] * lsat
+    na = p.get("night_arousal", 0.0)
+    if ct is not None and np.any(na):
+        a = a + na * night_drive(ct, p["ct_dn1_h"])
+    k_off = p["dfb_koff_per_min"] / 60.0 * a
     return k_on, k_off
 
 
