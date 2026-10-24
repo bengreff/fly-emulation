@@ -35,6 +35,7 @@ def main() -> None:
     ap.add_argument("--profile", default="m10f3")
     ap.add_argument("--dan", type=float, help="class:DAN|noise, mV/sqrt(ms) (default: the profile's)")
     ap.add_argument("--mbon", type=float, help="class:MBON|noise, mV/sqrt(ms) (default: the profile's)")
+    ap.add_argument("--kc", type=float, help="s23: class:KC|noise, mV/sqrt(ms) (default: the profile's, 0)")
     ap.add_argument("--stage", action="store_true",
                     help="s23 stage check: allow N22 forgetting (a no-op without depression); N21 must still be 0")
     ap.add_argument("--seed", type=int, default=12)
@@ -49,6 +50,9 @@ def main() -> None:
         reg.overrides["class:DAN|noise"] = a.dan
     if a.mbon is not None:
         reg.overrides["class:MBON|noise"] = a.mbon
+    if a.kc is not None:
+        reg.overrides["class:KC|noise"] = a.kc
+    a.kc = float(reg.overrides.get("class:KC|noise", 0.0))
     a.dan = float(reg.overrides.get("class:DAN|noise", 0.0))
     a.mbon = float(reg.overrides.get("class:MBON|noise", 0.0))
     allowed = {"cell_type:all|kc_mbon_forgetting", "cell_type:all|kc_mbon_memory_tau_h"} if a.stage else set()
@@ -78,11 +82,13 @@ def main() -> None:
     hz = counts / (a.read_ms / 1000.0)
     sd = np.sqrt(np.maximum(s2 / nv - (s1 / nv) ** 2, 0.0))
     mb = sorted({t for t in types if t.startswith(("PPL1", "PPL2", "PAM", "MBON", "KC", "APL", "DPM"))})
-    out = {"profile": a.profile, "dan_noise": a.dan, "mbon_noise": a.mbon, "seed": a.seed,
+    kc = cls == "KC"
+    out = {"profile": a.profile, "dan_noise": a.dan, "mbon_noise": a.mbon, "kc_noise": a.kc, "seed": a.seed,
            "settle_ms": a.settle_ms, "read_ms": a.read_ms,
            "whole_brain_hz": float(hz.mean()), "active_frac": float((counts > 0).mean()),
            "class_hz": {c: float(hz[cls == c].mean()) for c in ("DAN", "MBON", "KC", "APL", "DPM")},
            "class_active": {c: float((counts[cls == c] > 0).mean()) for c in ("DAN", "MBON", "KC", "APL", "DPM")},
+           "kc_hz_sd": float(hz[kc].std()), "kc_hz_quantiles": [float(q) for q in np.quantile(hz[kc], [0.5, 0.9, 0.99])],
            "type_hz": {t: float(hz[types == t].mean()) for t in mb},
            "huang_types_hz": {k: float(hz[types == v].mean()) for k, v in HUANG.items()},
            "fit_targets": {t: {"model_hz": float(hz[types == t].mean()), "target": FIT[t][0], "band": FIT[t][1:],

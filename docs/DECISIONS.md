@@ -5127,3 +5127,25 @@ Chowdhury's Dryad data stays unopened until then. Garbe 2015 is training. Huber 
 - m10f8 gate (G), run as registered at 23:20: pass on seeds 12-15. Whole brain 0.337 / 0.336 / 0.337 / 0.337 Hz,
   identical to m10f7 on every seed. 0.0 non-eye spikes/ms in the silent window, no NaN, 0 MuJoCo warnings, top
   class MBON 12.7-13.9 Hz. The smoke (S) is still running.
+
+### s23 MB descriptive run: KCs at the measured 0.1 Hz (Director's held note), registered before any run (23 October, 23:42)
+**Brief.** Director, 23 Oct 04:50: after the N25 step, "the MB 0.1 Hz input run (descriptive)". It runs now, in
+parallel with the N25 refit, because it shares nothing with it. Question (s22, `docs/research/s22_mb_type_spread.md`):
+silent KCs are the obvious class-level counterweight to the MBON→MBON inhibition that compresses the MB type spread
+(model 6-15 Hz against Huang's 8-35 Hz; model rate falls with input count, ρ −0.83, the data's does not, +0.34).
+Turner, Bazhenov & Laurent 2008 measured KC spontaneous firing at 0.1 ± 0.4 Hz (71 KCs, Canton-S females).
+**Method.** `s20_mb_rest.py --profile m10f7 --stage --kc σ` (isolated CNS, settle 0.5 s, read 4 s). `class:KC|noise`
+(n3c_noise_KC, bounds 0-3 mV/√ms, neutral 0) is the only change; plasticity as in the m10f7 stage check.
+- Calibration (one class-level value, **fitted** to Turner's measured mean): σ_KC ∈ {0.5, 1.0, 1.5, 2.0, 2.5, 3.0},
+  seed 12. σ*_KC is the grid value whose KC class mean is closest to 0.1 Hz in log terms, if it lies within
+  0.05-0.2 Hz; otherwise log-linear interpolation between the bracketing values and one more run. If 3.0 (the
+  bound) stays below 0.05 Hz, that is the result and no value outside the bound is tried.
+- Confirm σ*_KC on seed 13.
+**Reported (descriptive, nothing scored or adopted):** KC mean, SD and quantiles (Turner's SD is 0.4 Hz); DAN, MBON,
+APL and DPM class means; the 11 Huang types; Spearman ρ of model rate with total input synapses (s22 table); the SD of
+log10 rate across the 11 types, model against data. Huang 2024 is spent (consistency only), so none of this can
+adopt anything. A per-type mechanism suggested by it needs a new held-out source, registered first.
+**Expected** (s22 rest-drive numbers): KC input at 0.1 Hz offsets 14-64 % of each type's net inhibition, so the
+heavily KC-innervated types (MBON11, PPL101, PPL103) rise most, ρ moves toward 0 and stays negative, and the
+log-SD widens but stays below the data's.
+**Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, launched only while the 1-min load is below 22.
