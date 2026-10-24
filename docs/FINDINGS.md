@@ -2341,7 +2341,7 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - The rebound grows with deprivation in every variant; its size depends on the bout structure (6 h about 50-100 min, 24 h about 90-190 min).
 - N25 stays **partial**. The Director chooses between scoring now (locked or T5) and a revision with a night-specific element.
 
-### F-S23-1: frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off) pass the gate and their unit checks; m10f8 (sourced organ values) passes the gate (s23, 23 Oct 23:36; DECISIONS 23 Oct 22:58, 23:20, 23:31)
+### F-S23-1: frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off) pass the gate and their unit checks; m10f8 (sourced organ values) passes the gate (s23, 23 Oct 23:33; DECISIONS 23 Oct 22:58, 23:20, 23:31)
 - **Gate G, seeds 12-15:** all three stages pass every check: 0.0 non-eye spikes/ms in the silent window, no NaN,
   0 MuJoCo warnings, no class above 200 Hz.
   - m10f6 is spike-identical to m10f3 (0.310 / 0.308 / 0.309 / 0.309 Hz), as predicted. The default world is
