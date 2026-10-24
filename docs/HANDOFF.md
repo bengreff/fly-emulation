@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Sat 24 October 2026, 02:40 CDT, session 23 (fifth context of the night; main at b8b77a6 plus this commit; base m10f5 from fly2).
+**Rewritten each session; do not append.** State as of Sat 24 October 2026, 03:12 CDT, session 23 (sixth context of the night; main at 12f4a34 plus this commit; base m10f5 from fly2).
 - **Brief (Director, 24 Oct 00:55 entry in `/Users/ben/director/decisions/fly.md`):** about 5 % of the week left tonight; park at a clean commit by 05:30 with HANDOFF current. The seven required-level questions are not Ben's: fidelity is an engineering call he delegated, with a bias toward simulating more. Work the path-to-done table in rank order: (1) score m10f9b and the m10f6/7/8 smokes; (2) source graded_rmax; (3) the next rows. A row is done only on evidence.
 - **Director rulings (00:55), now applied in the path-to-done column:**
   - Derived constants beat declared ones. A row is never done by declaring it out of scope.
@@ -13,11 +13,15 @@
   - N1: graded_rmax must be sourced (fly first; other insects labelled derived).
 - **Goal:** a **mechanism-complete fly**. "Done" means built at the required fidelity, ON in `m10f` with values inside a cited measured range, and passing a unit check against a measurement where one exists (where none exists, built and ON counts).
 - **Heavy runs:** backhouse for multi-run sets (at most 4 threads per job, queue above load 24, nohup, done-files); on the Mac, through `python3 ~/director/harness/slot.py run --label "fly: <what>" -- <cmd>` under nohup with done-files.
-- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows. **2 done as ruled constants (S7, S8), 0 done on evidence.**
+- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows.
+- **Tallies (Director 03:10: three separate counts, never added together):**
+  - done on evidence: **0**;
+  - done where no check exists (built, ON, active, cited values): **0**;
+  - done by ruling: **2** (S7, S8).
 - **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
 
 ## Report for Ben (s23)
-**Rows moved: S7 and S8 done as ruled constants (no evidence check exists); 0 rows done on evidence yet.** The first evidence-based done rows wait on adopting m10f9b or m10f10, whose 60 s smokes are running. S5 is built and passes its measurement check.
+**Rows moved: S7 and S8 done by ruling. 0 rows done on evidence and 0 done where no check exists.** The first rows done on evidence wait on adopting m10f10, whose 60 s smoke is running (m10f9b's passed S at 03:02). S5 is built and passes its measurement check. N33 is built but inert, so it is **not done** (Director 03:10).
 
 - **S5 body temperature (built, neutral off; DECISIONS 24 Oct 00:51, 00:57; F-S23-9).**
   - Lumped heat balance: C T_b' = P_met − P_evap − G (T_b − T_air), with G = 2π k_air D + 4εσT³πD² and D = (6m/πρ)^(1/3). The values are sourced (mass 0.505 mg, ρ 1.07, c_p 3.5 J/g/K, ε 0.95). The resting excess is derived at **+0.07 K**. The neural Q10 reads the resting body temperature at build (`internal_state.neural_temperature_c`).
@@ -46,27 +50,36 @@
     graded release rate; locust graded synapses give only a voltage axis. The `n1_graded_rmax` row says this.
   - The chain keeps 100 Hz (guessed).
   - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md` (new; README map).
-- **N33 astrocytic uptake (built, neutral off, CPU path; DECISIONS 02:28; commit cf4c2f9).**
+- **N33 astrocytic uptake: built, neutral off, CPU path, and inert. Not done (DECISIONS 02:28, 02:42, 03:08; Director 03:10).**
   - Eaat1 uptake u (fraction of healthy) sets the fast decay of every spiking glutamatergic edge:
-    τ(u) = τ(1)·R/(1+(R−1)u), with the u = 1 peak kept, so charge grows with the decay. τ(1) is the edge's N29
-    row decay where it has one, else tau_s. Graded edges are unchanged.
-  - R = 2.9 (measured, by-eye read ±10 %; per pair 2-4) from MacNamee 2016 Fig. 8B: larval TBOA,
-    compound IPSC at −60 mV. Use in the adult is inferred. Fig. 8 is now spent for N33.
-  - It is the identity at healthy uptake (u = 1). GAT loss is refused because no fly GABA decay ratio is
-    sourced. Conductance synapses are refused.
+    τ(u) = τ(1)·R/(1+(R−1)u), with the u = 1 peak kept. R = 2.9 (measured, by eye, ±10 %; per pair 2-4) from
+    MacNamee 2016 Fig. 8B.
+  - **Source label:** a **larval** third-instar VNC looper → motor neuron GluCl-type compound IPSC under TBOA. That
+    is a CNS synapse, not the NMJ (the Director wrote NMJ) and not adult. The adult use is inferred. The label is
+    corrected in `parameters.csv`, `lif.py` and `profiles.py`.
+  - **m10f12** (m10f10 + N33 at u = 1) **modifies 0 edges** (`scripts/probes/s23_n33_edge_count.py`,
+    `runs/s23/n33/edge_count.json`). The factor is 1 at u = 1 by construction, and the spikes equal m10f10's on
+    200 steps.
+    - Below healthy it would act on 1,022,236 glutamatergic edges (16.4 %).
+    - None of those edges has an N29 row; all sit at the default 5 ms.
+  - **Missing:**
+    - (a) sourced adult glutamatergic decays, i.e. the N29 glutamate rows. **These are fly2's rows**; the s13
+      search found none.
+    - (b) a split of each decay into receptor-limited and clearance-limited parts, so that healthy uptake shapes
+      it. This needs fly Eaat1 kinetics or a clearance time; none found.
+  - **m10f10, not m10f12, is the adoption candidate**: a switch that changes 0 edges is not "ON".
   - Keys `state:glia|uptake_model`, `state:glia|eaat1_uptake`, `state:glia|gat_uptake`; row
-    `n33_eaat1_block_decay_ratio`; `tests/test_glia_uptake.py` (5 pass). N33 is `partial` in mechanisms.yaml:
-    Ca signalling and coupling remain a stub.
-  - **m10f12** = m10f10 + N33 at u = 1. Check (3) is the identity probe
-    (`scripts/probes/s23_n33_identity.py`, queued in slot.py; `runs/s23/n33/identity.json`). It is the
-    registered gate; no G/S re-run is needed. Report N33 as "built and ON, no independent check"; whether
-    that counts as done is the Director's call.
+    `n33_eaat1_block_decay_ratio`; `tests/test_glia_uptake.py` (5 pass).
 - **m10f11 (registered DECISIONS 02:20; queued).** It is m10f10 with the photoreceptors at 300 Hz (derived) and every
   other graded cell at 100 Hz (guessed). New switch `cell_type:all|graded_rmax_by_class` (neutral 0, CPU path) with
   row `n1_photoreceptor_graded_rmax`; test `test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release`.
   Predictions: G2 passes seeds 12-15, eye bin 1 about 250, whole brain within ±0.005 of m10f10, S within ±0.02.
-- **m10f10** = m10f9b + S5 on. It was registered on m10f9c and rebased on m10f9b when m10f9c failed (DECISIONS 00:57). **G passes on seeds 12-15**, within ±0.005 Hz of m10f9b. The smoke is running.
-- **m10f9b** (N1 recorded modes, IN10B row removed; DECISIONS 00:29, 00:42) passes G on seeds 12-15. Its smoke checkpoint at 10.5 s reads whole brain 0.332 Hz, active 0.030, max 58.5 Hz, no NaN, 0 warnings, no runaway (provisional; S is scored on 60 s).
+- **m10f10** = m10f9b + S5 on. It was registered on m10f9c and rebased on m10f9b when m10f9c failed (DECISIONS 00:57). **G and G2 pass on seeds 12-15**, within ±0.005 Hz of m10f9b. The smoke is running (ETA about 03:25-03:30).
+- **m10f9b** (N1 recorded modes, IN10B row removed; DECISIONS 00:29, 00:42) **passes G, G2 and S** (DECISIONS 03:02).
+  - S: whole brain 0.3307 Hz, active 0.0312, no runaway or NaN, 0 warnings, 60 s.
+  - The graded_rec check passes: all 24,940 cells emit 0 spikes. It has power only for IN13B, because the optic
+    lobe is silent at dark rest in either mode.
+  - N1 stays partial under the 00:55 ruling.
 - **S7 and S8 (done, ruled constants; DECISIONS 01:18).** `stubs.CONSTANT_STATES`:
   - `state:immune|model` 0: a healthy, uninfected, conventionally reared lab fly.
   - `state:reproductive|model` 0: a naive (virgin) mature male.
@@ -86,41 +99,60 @@
   - Reader notes: `docs/research/s23_n28_n26_checks.md` and `s23_n2_membrane_values.md`.
 
 ## Running now
+- **Thread limits (Director 01:40).**
+  - Every new launch exports OMP, OPENBLAS, MKL, NUMBA, NUMEXPR, VECLIB and LP (Mesa llvmpipe) `_NUM_THREADS`
+    set to the slot count, uses `taskset` on Linux, and checks `ps` after launch.
+  - The backhouse smokes reached 89-98 threads at runtime: 28 llvmpipe render threads, plus about 27 worker
+    threads. BLAS honoured the settings.
+  - Response: my backhouse smokes were reniced to 19 and the KC grid was stopped (kc0.5 and kc1.0 kept). The
+    queued Mac scripts were patched before they started.
 - **Mac**, through slot.py:
-  - `runs/s23/fc/run_m10f9b_smoke_mac.sh` (pid 24479): the 60 s smoke. Writes `runs/s23/fc/smoke_m10f9b_s12.json` and `_rates.npz`; done-file **`/Users/ben/fly-emulation/runs/s23/fc/smoke_m10f9b.done`**. ETA about 02:45.
-  - `runs/s23/fc/run_stage_mac.sh` with P=m10f10 (pid 27223; smoke pid 29147). Gate done; smoke done-file `runs/s23/fc/smoke_m10f10.done`. ETA about 03:20.
-- **backhouse** `/home/greff/fly-m10f` (one thread per job; load about 30 on 28 threads):
-  - `run_s23_gate.sh`: smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`), started 23:06. ETA about 02:45-03:00 (load 40 at 02:23).
-  - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`), started 23:24. ETA about 04:15-04:45 (its 10 s checkpoint took 51 min).
-  - `run_s23_kc.sh`: KC grid σ_KC 0.5-3.0 on m10f7 seed 12. Gated on load below 22; `kc0.5_s12` is done.
-  - `runs/s23/g2/run_m10f11.sh` (waiting for a slot; log `runs/s23/g2/launch_m10f11.log`): G2 on seeds 12-15
-    (`runs/s23/g2/g2_m10f11_s*.json`), then the 60 s smoke only if all four pass. It always touches
-    `runs/s23/fc/smoke_m10f11.done`. The smoke takes about 2 h, so (edit 02:40, before the job started) it starts
-    only if G2 finishes before 03:05; otherwise the log says it is deferred to next session.
-  - `runs/s23/n33/run_identity.sh` (waiting for a slot; log `runs/s23/n33/launch.log`; done-file
-    `runs/s23/n33/identity.done`): the N33 identity check, a few minutes once it starts.
-- G2 and the localisation diagnostic are finished (`runs/s23/g2/`, all done-files present).
-- S scorer: `/tmp/flys23/score_s.py <smoke.json> [<rates.npz>]` (bars and the graded_rec unit check; tmp, not committed).
+  - `runs/s23/fc/run_stage_mac.sh` with P=m10f10 (pid 27223; smoke pid 29147). Smoke done-file
+    `runs/s23/fc/smoke_m10f10.done`. ETA about 03:25-03:30.
+  - `runs/s23/g2/run_m10f11.sh` (slot waiter pid 43156; log `runs/s23/g2/launch_m10f11.log`): G2 on seeds 12-15
+    (`runs/s23/g2/g2_m10f11_s*.json`, done-file `runs/s23/g2/g2_m10f11.done`). The 60 s smoke runs only if all
+    four seeds pass and G2 ends before 03:05, so it will be deferred to next session. The job always touches
+    `runs/s23/fc/smoke_m10f11.done`.
+  - `runs/s23/battery/run_battery.sh` (slot waiter pid 48008): the full pytest battery, writing
+    `runs/s23/battery/pytest.log` and `battery.done`, with the commit in `head.txt`. It needs about 15 min once it
+    starts. Don't edit src or data while it runs.
+- **backhouse** `/home/greff/fly-m10f` (nice 19 since 02:50; priority CRUCIBLE S7, then B4, then fly):
+  - `run_s23_gate.sh` (pids 697/710/720; smokes 714/723): smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`).
+  - `run_s23_m10f8.sh` (7887/7898; smoke 7901): smoke m10f8 (`smoke_m10f8.done`).
+  - The KC grid is stopped. kc0.5 and kc1.0 are kept, and a note is in `runs/s23/kc/launch.log`.
+- Finished: G2, the localisation diagnostic, the m10f9b smoke (scored), and the N33 identity and edge count.
+- Scorer `/tmp/flys23/score_s.py <smoke.json> [<rates.npz>]` (bars plus the graded_rec unit check; tmp, not committed). The adoption ledger edits are in `/tmp/flys23/ledger_patch.py` (S5 and N28 only; N33 left as is).
 - **Keepalive:** Mac pid 32120 (`ssh backhouse ... exec sleep 14400`), started 01:22 under nohup; it ends by itself at about 05:22.
-- **Park checklist:** before 05:30, stop whatever of these is unfinished: the two Mac runs and their slots, the three backhouse scripts, and the keepalive shell. Rerun them next session.
+- **Park checklist:** before 05:30, stop whatever of these is unfinished: the Mac jobs (27223/29147, 43156, 48008) and their slots, the two backhouse scripts and their smokes, the keepalive and my waiters. Rerun them next session.
 - Not mine; never touch: fly2's s29 smokes (`m10f5n7`, `m10f5s29`) on backhouse, CRUCIBLE, and other projects' processes.
 
 ## Next (this order)
 1. **Score S** for each smoke when it lands, on the registered bars: whole brain 0.162-0.486 Hz, active 0.014-0.042, no runaway or NaN, 0 warnings.
-   - m10f9b: also the unit check from `smoke_m10f9b_s12_rates.npz` (every cell of a graded_rec = 1 type has 0 spikes).
-   - m10f10: the same bars.
+   - m10f10 next. m10f9b passed (03:02).
    - m10f6/7/8: copy `smoke_m10f{6,7,8}_s12.json` and `_rates.npz` from backhouse to `runs/s23/fc/` first.
-   - Then re-render and view `docs/media/s23_frontier.png` (`scripts/probes/s23_frontier_figure.py`, committed b8b77a6; it now has the G2 panels; the png is untracked, so commit it with the smoke panel).
-2. **Adopt** the last stage that passes S into `PROFILES["m10f"]`: m10f12 if m10f10 passes S and the N33 identity passes, else m10f10, else m10f9b, else m10f8. m10f11 waits for its S. Run the full battery first: the last one was 299/0, before the S5 and constant-state tests; run it through slot.py, about 15 min. Then view the figure. Then update MECHANISM_STATUS (the N26, N3, N28, S1, S3, S5 rows, each against its own bar, plus the count with a timestamp from `date`), FINDINGS, and the ledger S5 row.
-3. **N1:** score m10f11 (the class-specific stage, built and registered 02:20) on G2, then S, against the 02:20
-   predictions. Then source `release_at_rest`. The open-text search found none; the candidates are Ben's PDFs of
-   Laughlin 1987 or Uusitalo 1995, or a value derived from the mid-curve resting point (Weckström & Laughlin
-   2010). Run its effect on the lamina (tonic chloride current into L1-L3); don't assume it.
-4. **N33:** score the identity check, then adopt with m10f12. Open items: a fly GABA decay ratio under GAT loss, and an independent adult check of R.
-5. `rest_vs_reference.py` on the m10f7 rates; the KC grid summary (`s23_kc_summary.py`, descriptive) once it lands.
-6. The rest of the ranked list in MECHANISM_STATUS (count paragraph, 24 Oct 01:20).
+   - Then re-render and view `docs/media/s23_frontier.png` (`scripts/probes/s23_frontier_figure.py`). The png is untracked; commit it with the smoke panel.
+2. **Adopt** into `PROFILES["m10f"]` the last stage that passes S: m10f10, else m10f9b, else m10f8. m10f12 is not
+   adopted, because N33 is inert there. m10f11 waits for its S.
+   - First the battery (queued, above), then view the figure.
+   - Then update MECHANISM_STATUS (the N26, N3, N28, S1, S3 and S5 rows, each against its own bar), with the
+     three tallies kept separate and timestamped from `date`.
+   - Then FINDINGS, and the ledger (`/tmp/flys23/ledger_patch.py`, then `scripts/blank_ledger.py`).
+3. **N1:** score m10f11 on G2 (seeds 12-15) against the 02:20 predictions: G2 passes, eye bin 1 about 250, whole
+   brain within ±0.005 of m10f10. Run its S next session. Then source `release_at_rest`. The open-text search
+   found none; the candidates are Ben's PDFs of Laughlin 1987 or Uusitalo 1995, or a value derived from the
+   mid-curve resting point (Weckström & Laughlin 2010). Run its effect on the lamina (tonic chloride current into
+   L1-L3); don't assume it.
+4. **N33:** not done. It needs (a) adult glutamatergic N29 rows (fly2) and (b) fly Eaat1 kinetics or a clearance
+   time, to split each healthy decay into receptor-limited and clearance-limited parts. It also needs a fly GABA
+   decay ratio under GAT loss, and an independent adult check of R.
+5. `rest_vs_reference.py` on the m10f7 rates. The KC grid summary (`s23_kc_summary.py`, descriptive) can run on
+   kc0.5 and kc1.0.
+6. The rest of the ranked list in MECHANISM_STATUS (count paragraph, 24 Oct 03:11).
 
 **For fly2:**
+- **N29 glutamate rows (yours), requested for N33 (DECISIONS 03:08).** No glutamatergic edge has a
+  receptor-kinetics row. 1,022,236 spiking glutamatergic edges decay at the default 5 ms. A sourced adult GluCl
+  IPSC decay (and ionotropic Glu EPSC decays where a class has one) would give N33 its τ(1).
 - From m10f7 on, N21 is off (`cell_type:all|kc_mbon_ltd_timing_rate` 0), because the stage puts DANs at measured rest (7.8-8.0 Hz). It returns when your resting-safe rule lands.
 - N22 forgetting stays on (a no-op at rest).
 - Your N24 selection includes ER5. The N25 night term acts only on the dFB OFF rate and touches no weights.

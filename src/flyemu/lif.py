@@ -215,8 +215,10 @@ def _glia_uptake(reg: Registry, conn: Connectome) -> dict | None:
     """N33 (s23, DECISIONS 24 Oct 02:28): astrocytic uptake and the fast decay of glutamatergic edges, or None.
     Glutamate is cleared by diffusion and astrocytic Eaat1 uptake in parallel and the decay is clearance-limited,
     so tau(u) = tau(1) R / (1 + (R - 1) u), with u the fraction of healthy uptake and R = tau(0) / tau(1)
-    (MacNamee et al. 2016 Fig. 8, larval). The identity at the healthy u = 1 (the S7 healthy constant), so None
-    there. GABA/GAT has the same structure but no fly ratio, so a gat_uptake other than 1 is refused."""
+    (MacNamee et al. 2016 Fig. 8: larval VNC looper -> motor neuron, not adult; inferred for adult). The identity
+    at the healthy u = 1 (the S7 healthy constant), so None there: inert at healthy uptake, 0 edges modified
+    (DECISIONS 24 Oct 03:08). GABA/GAT has the same structure but no fly ratio, so a gat_uptake other than 1 is
+    refused."""
     if not reg.require("state:glia", "uptake_model", units="boolean",
                        model_use="N33: astrocytic uptake sets the fast decay of glutamatergic edges",
                        subsystem="synaptic_efficacy", instances=conn.n_edges, minimal=0.0, conventional=0.0,
@@ -226,7 +228,7 @@ def _glia_uptake(reg: Registry, conn: Connectome) -> dict | None:
                     model_use="N33: glutamatergic decay with uptake blocked / healthy (clearance-limited)",
                     subsystem="synaptic_efficacy", minimal=2.9,
                     minimal_note="measured 2.9 (2-4 per pair): MacNamee 2016 Fig. 8B IPSC tau in 100 uM DL-TBOA / "
-                                 "saline, larval looper -> motor neuron (read by eye)")
+                                 "saline, larval VNC looper -> motor neuron, not adult (read by eye)")
     if float(reg.require("state:glia", "gat_uptake", units="fraction of healthy",
                          model_use="N33: astrocytic GABA uptake (GAT)", subsystem="state", minimal=1.0,
                          conventional=1.0, minimal_note="1: healthy uptake (the S7 healthy constant)")) != 1.0:

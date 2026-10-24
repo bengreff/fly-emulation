@@ -5710,3 +5710,42 @@ the bars registered at 00:29 (scorer `/tmp/flys23/score_s.py`):
   partial**: graded transmission runs on the guessed 100 Hz, and release_at_rest is guessed at 0. Next is
   m10f11 (photoreceptors at the sourced 300 Hz). Adoption is m10f10 or m10f12 if their S passes (03:20-03:30), else m10f9b. Each
   goes through the battery and a viewed figure first.
+
+### s23 N33 is inert in m10f12: it modifies 0 edges, so it is not done (24 October, 03:08)
+This supersedes the "Consequence" of the 02:42 entry, following the Director's 03:10 review. Edges were counted
+with `scripts/probes/s23_n33_edge_count.py --profile m10f12`, output in `runs/s23/n33/edge_count.json`. The build
+was the same as the identity check: `Policy.MINIMAL`, min_synapses 5, dt 0.1 ms. It has 167,111 cells and
+6,241,231 edges.
+- **Edges modified in m10f12: 0.** Uptake is at the healthy constant u = 1, and τ(u) = τ(1)·R/(1+(R−1)u) equals
+  τ(1) at u = 1 by construction. So the build makes no uptake edges and the spikes equal m10f10's on all
+  200 steps. The switch is on, but the mechanism is inert.
+- **What it would act on below healthy (u < 1):** 1,022,236 edges, which is 16.4 % of all edges. These are the
+  edges from the 29,746 glutamatergic cells, minus 15,962 graded-pre edges that are excluded. **None of them has
+  an N29 receptor-kinetics row.** All of them decay at the post cell's default tau_s of 5 ms (Shiu 2024). The
+  three N29 rows cover 77,940 edges: ORN→PN, ACh→KC and GABA→KC. None of them is glutamatergic.
+- **What is missing, and whose row it is:**
+  - **(a) Sourced glutamatergic decays.** These would be the N29 rows for glutamate (receptor_kinetics.csv):
+    adult GluCl IPSC decay, and ionotropic Glu EPSC decay where a class has one. **N29 is fly2's row.** fly2's s13
+    search found no usable adult number; Liu & Wilson 2013 (LN→PN GluCl) is qualitative only. fly does not write
+    fly2's rows, so this goes to fly2 and the Director as a request.
+  - **(b) A healthy-state effect.** Even with (a), N33 would change nothing at u = 1. A measured healthy decay
+    already includes healthy uptake. For uptake to shape synapses in the healthy model, the decay has to be split
+    into a receptor-limited part and a clearance-limited part. That split needs fly Eaat1 kinetics (Km, Vmax,
+    density) or a clearance-time measurement, and none was found (s23 read). Until then, N33 can only act in
+    perturbation states (Eaat1 knock-down or block), and those are not scored.
+- **Source label (corrected).** R 2.9 comes from a **larval** synapse, not an adult CNS synapse. The Director
+  wrote larval NMJ. The paper is a larval third-instar **VNC** synapse instead: a looper interneuron → motor
+  neuron glutamatergic (GluCl-type) IPSC inside the CNS, compound and light-evoked (MacNamee 2016 Fig. 8; Methods
+  and Fig. 8 legend). Either way it is not adult. The label is now "larval VNC; its use on adult synapses is
+  inferred" in `parameters.csv` and in the `lif.py` minimal note. The adult NMJ source (Rival 2006, abstract
+  only) gives a direction and no ratio.
+- **Status.** N33 is `partial`: built on the CPU path, neutral, and inert at the healthy state. It is **not done**,
+  and it is not counted in any of the three tallies below.
+- **Adoption (amends 02:28).** **m10f10** is adopted, not m10f12, if S, the battery and the figure pass. Turning
+  on a switch that changes 0 edges would read as ON when the mechanism does nothing. m10f12 stays staged with
+  the N33 code and tests, ready for when (a) and (b) exist.
+- **Tallies from now on (Director, 03:10).** These are three separate counts and are never added together:
+  - **done on evidence:** a row passes a check against a measurement it was not fitted to;
+  - **done where no check exists:** the row is built, ON and active, its values are cited and in range, and no
+    independent measurement exists to check it;
+  - **done by ruling.**

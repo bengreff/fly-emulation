@@ -432,8 +432,9 @@ M10F12 = {
     "state:glia|uptake_model": (1.0, _I, "frontier stage 12 (N33): astrocytic Eaat1 uptake sets the fast decay of "
                                 "glutamatergic edges, tau(u) = tau(1) R / (1 + (R - 1) u); the identity at healthy uptake"),
     "class:astrocyte|eaat1_block_decay_ratio": (2.9, _I, "frontier stage 12 (N33): measured 2.9 (2-4 per pair) in "
-                                                "larval looper -> motor neuron IPSCs under 100 uM DL-TBOA (MacNamee et "
-                                                "al. 2016 Fig. 8B); its use on adult synapses is inferred"),
+                                                "larval VNC looper -> motor neuron IPSCs under 100 uM DL-TBOA (MacNamee "
+                                                "et al. 2016 Fig. 8B), not adult; its use on adult synapses is "
+                                                "inferred; inert at healthy uptake (0 edges modified)"),
     "state:glia|eaat1_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
     "state:glia|gat_uptake": (1.0, _I, "frontier stage 12 (N33): healthy uptake, the S7 healthy constant"),
 }
