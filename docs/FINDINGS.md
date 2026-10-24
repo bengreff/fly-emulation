@@ -2393,3 +2393,19 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
 - Nayal et al. 2024 Fig. 4B is in ppt per fly per minute at 30 °C and 50 % RH, the denominator is not stated, and
   the value was not extracted.
 - S4 stays partial. The held-out desiccation band stays unspent.
+
+### F-S23-5: two of the 23:20 S3 values were mis-sourced and are corrected; N28 gets a measured Drosophila Q10 range but no independent check; no recorded adaptation ratio exists in open full text, so N4 stays blocked (s23, 23 Oct 23:59; `docs/research/s23_crop_pump_q10_adaptation.md`, DECISIONS 23 Oct 23:59)
+- **Ingest rate:** the 23:20 derivation (1.05 nL × a 6-7.7 Hz sip rate) took the sip rate from sip duration alone.
+  With Itskov's 0.08 s inter-sip interval the rate is 5.0 nL/s (4.4 on sucrose). Pool et al. 2014 gives 6.7-8.8
+  nL/s in deprived females at 30 °C. `ingest_nl_s` is now 5.0, derived.
+- **Crop capacity:** Edgecomb et al. 1994, cited for 250 nL via a secondary, reports an ordinal crop score, not a
+  volume. Measured meals after deprivation are 150 nL (Pool 2014) to 0.27-0.32 µL (Qi 2015), both in females.
+  250 nL stays, inferred, inside 150-320.
+- **Pump:** measured cibarial pumping is 5-7 Hz (Manzo 2012 ≈6 Hz; Sui 2026 5, 6 or 7 Hz by method), and pump MNs
+  burst at 25-90 Hz within each cycle. fly2's `pump_full_rate_hz` (10, guessed) is the last guessed term S3 waits on.
+- **N28:** Juusola & Hardie 2001, adult photoreceptor kinetics, Q10 2.3-3.5 (time-to-peak 2.5 ± 0.2, n 3). The
+  model's 2.0 lay below it; m10f8 now uses 2.5 (inferred: one cell type stands for all). There is no independent
+  check, because every value in that paper comes from the cells that set the value.
+- **N4:** no sustained-step early/late rates in any open full text read (PNs, LNs, KCs, LHNs, leg MNs, MN5). Only
+  qualitative "adapting" statements exist (MBON-α3, MN5). Seki et al. 2010 defines an adaptation rate for AL LNs
+  but is paywalled.
