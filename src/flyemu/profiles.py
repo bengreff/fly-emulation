@@ -357,6 +357,28 @@ M10F5 = {
                                                   "(strong 0.023, weak 0.01; band 0.0073-0.026); subthreshold only, "
                                                   "no spike step, MN5 unset"),
 }
+# Stage 6 (fly, s23; DECISIONS 23 Oct 00:09 and 22:58): N26 CRY-TIM light input, held-out Lamba 2014 ZT21 passed.
+M10F6 = {
+    **M10F5,
+    "state:clock|light_input": (1.0, _I, "frontier stage 6 (N26): CRY-dependent TIM degradation, night-gated and "
+                                "saturating (s20); held-out Lamba 2014 ZT21 advance +2.89 h predicted, +3.21 +- 0.23 "
+                                "measured (F-S20-3, spent)"),
+    "state:clock|tim_light_coupling": (0.789, _I, "frontier stage 6 (N26): k_tim, fitted (s20 CRY-TIM refit, "
+                                       "DECISIONS 22 Oct 23:02 and 23:55)"),
+    "state:clock|tim_kick_ct": (7.59, _I, "frontier stage 6 (N26): ct_tim_h, fitted (same fit)"),
+}
+# Stage 7 (fly, s23; DECISIONS 23 Oct 22:58): one noise level per MB class (F-S21-1), with N21 off.
+M10F7 = {
+    **M10F6,
+    "class:DAN|noise": (1.4773, _I, "frontier stage 7 (N3): fitted, one value for all DANs; PPL105 at 8 Hz (Huang "
+                        "2018, 6-10 Hz); held-out Huang 2024 resting rates 6 of 9 (F-S21-1, spent)"),
+    "class:MBON|noise": (2.2871, _I, "frontier stage 7 (N3): fitted, one value for all MBONs; MBON14 at 12.1 Hz "
+                         "(Hafez 2023); same held-out test"),
+    "cell_type:all|kc_mbon_ltd_timing_rate": (0.0, _I, "frontier stage 7: N21 off; its fitted rate is not "
+                                              "resting-safe at measured DAN rest (F-S26-1, F-S27-3), so with DANs "
+                                              "at 6-15 Hz it would erase KC->MBON weights; back on with a "
+                                              "resting-safe rule"),
+}
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
@@ -396,6 +418,8 @@ PROFILES: dict[str, dict] = {
     "m10f3": {"values": M10F3, "kick_mv": KICK},
     "m10f4": {"values": M10F4, "kick_mv": KICK},
     "m10f5": {"values": M10F5, "kick_mv": KICK},
+    "m10f6": {"values": M10F6, "kick_mv": KICK},
+    "m10f7": {"values": M10F7, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

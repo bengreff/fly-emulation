@@ -5011,3 +5011,43 @@ Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`
   - One k_off with a light term cannot fragment the night without over-fragmenting the day.
 - **Meaning for the Director's call.** Fitting k_r inside its measured range fixes the night only at the cost of the day. A structure that has both probably needs a night-specific element (a clock input to the dFB or ER5, or a dark-specific arousal), not a refit. Every variant so far predicts a day-1 rebound that grows with deprivation; its size spans about 50-100 min (6 h) and 90-190 min (24 h) across them.
 - Nothing adopted; no new prediction registered.
+
+### s23 frontier stages m10f6 (N26 light input) and m10f7 (MB class noise, N21 off), registered before any run (23 October, 22:58)
+**Brief.** Director, 23 Oct 23:00: adopt N26 and the MB noise stage on m10f5 (smoke, figure, tests). Main is merged
+(859348d), so fly2's m10f5 is the base. Two cumulative stages, so each one's effect is attributable.
+- **m10f6 = m10f5 + N26 CRY-TIM light input** (DECISIONS 23 Oct 00:09, held-out Lamba ZT21 passed, F-S20-3):
+  `state:clock|light_input` 1, `state:clock|tim_light_coupling` (k_tim) 0.789 and `state:clock|tim_kick_ct`
+  (ct_tim_h) 7.59, both fitted. `cry_rate_per_lux_h` 10.26 and `tim_kdeg_per_h` 13.85 are already the PARAMS
+  defaults (inferred).
+- **m10f7 = m10f6 + MB class noise + N21 off** (F-S21-1, held-out Huang 2024 6 of 9, spent):
+  `class:DAN|noise` 1.4773 and `class:MBON|noise` 2.2871 mV/√ms (fitted on PPL105 and MBON14), and
+  `cell_type:all|kc_mbon_ltd_timing_rate` 0. N21 goes off because its fitted rate is not resting-safe at measured
+  DAN rest (F-S26-1, F-S27-3; fly2's s27 HANDOFF: "Any run with fly's σ*_DAN on needs ... 0"). N22 forgetting stays
+  on; with no depression it relaxes weights that are already at baseline, so it is a no-op at rest. This trades an
+  N21 that acts only while DANs are silent (outside the measured 5-27 Hz) for DANs and MBONs at measured rest. N21
+  returns when fly2's resting-safe rule lands. fly2 is told in the HANDOFF.
+**Gate (fly2's stage rule, 21 Oct 21:35, unchanged).** (G) `closed_loop_check.py --profile m10fK`, seeds 12-15,
+1000 ms + 300 ms silent, noise (global and class) removed in the silent window: 0.0 non-eye spikes/ms in the last
+100 ms on every seed, no NaN, 0 MuJoCo warnings, no class above 200 Hz. (S) `smoke_live.py --profile m10fK
+--ms 60000 --seed 12`: no runaway, no NaN, 0 MuJoCo warnings, whole-brain rate within 0.162-0.486 Hz and active
+fraction within 0.014-0.042.
+**Unit checks.**
+- m10f6, LD check on the organism (registered 00:09): the clock params read through the stage's registry
+  (`profiles.apply` → `internal_state.read_params`), 3 days of 12:12 LD at 1000 lux from the default start state:
+  the model CT at the last lights-on within CT 0 ± 2 h. Reported with it, not scored: the same after a 6 h phase
+  jump (start at CT 6).
+- m10f7, an implementation check that the stage carries the fitted state (training targets, not held out):
+  `s20_mb_rest.py` at m10f7 (isolated CNS, settle 0.5 s, read 4 s), seeds 12 and 13: PPL105 in 6-10 Hz and MBON14
+  in 9.7-15.1 Hz on both seeds, the s20 confirm bands. The probe's plasticity asserts are relaxed to "N21 rate 0 and
+  no other KC->MBON rate on"; N22 is allowed. Huang 2024 is spent and is not rescored.
+- Reported, not scored: DAN and MBON class means in the 60 s smoke against the isolated-CNS confirm (8.0 / 13.2 Hz).
+**Prediction.** m10f6 is identical to m10f5 at rest in G and S (the default world is dark, so only the start
+state differs). m10f7 passes G (noise is removed in the silent window) and S, with the whole-brain rate up by about
+0.03 Hz (437 DANs and MBONs at about 10 Hz in about 160,000 cells) plus MBON targets.
+**Falsifier / consequence.** A stage that fails G, S or its unit check stays built-off with the reason recorded; if
+m10f6 fails, m10f7 is rerun on m10f5. Both passing moves `m10f` to m10f7 after the battery and a viewed figure.
+N26 stays partial even then (τ_c, μ and the cell peak hours are guessed); N3 stays partial (every other class has
+no noise or tonic drive from a source).
+**Runs.** backhouse `/home/greff/fly-m10f` (git archive of the commit carrying this entry), one thread per job
+(rule 16), detached, done-files. Expected: G about 8 min per seed, S about 3.8 h (fly2's m10f1 S: 13,616 s), about
+2 GB each.

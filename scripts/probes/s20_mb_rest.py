@@ -33,8 +33,10 @@ FIT = {"PPL105": (8.0, 6.0, 10.0), "MBON14": (12.1, 12.1 / 1.25, 12.1 * 1.25)}
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", default="m10f3")
-    ap.add_argument("--dan", type=float, required=True, help="class:DAN|noise, mV/sqrt(ms)")
-    ap.add_argument("--mbon", type=float, required=True, help="class:MBON|noise, mV/sqrt(ms)")
+    ap.add_argument("--dan", type=float, help="class:DAN|noise, mV/sqrt(ms) (default: the profile's)")
+    ap.add_argument("--mbon", type=float, help="class:MBON|noise, mV/sqrt(ms) (default: the profile's)")
+    ap.add_argument("--stage", action="store_true",
+                    help="s23 stage check: allow N22 forgetting (a no-op without depression); N21 must still be 0")
     ap.add_argument("--seed", type=int, default=12)
     ap.add_argument("--settle-ms", type=float, default=500.0)
     ap.add_argument("--read-ms", type=float, default=4000.0)
@@ -42,11 +44,18 @@ def main() -> None:
     a = ap.parse_args()
     t0 = time.time()
     reg = Registry(Policy.MINIMAL)
-    reg.overrides["class:DAN|noise"] = a.dan
-    reg.overrides["class:MBON|noise"] = a.mbon
     profiles.apply(reg, a.profile)
-    assert float(reg.overrides.get("cell_type:all|kc_mbon_forgetting", 0.0)) == 0.0, "N22 must be off"
-    assert not any("kc_mbon" in k and float(v) for k, v in reg.overrides.items()), "KC->MBON plasticity must be off"
+    if a.dan is not None:
+        reg.overrides["class:DAN|noise"] = a.dan
+    if a.mbon is not None:
+        reg.overrides["class:MBON|noise"] = a.mbon
+    a.dan = float(reg.overrides.get("class:DAN|noise", 0.0))
+    a.mbon = float(reg.overrides.get("class:MBON|noise", 0.0))
+    allowed = {"cell_type:all|kc_mbon_forgetting", "cell_type:all|kc_mbon_memory_tau_h"} if a.stage else set()
+    if not a.stage:
+        assert float(reg.overrides.get("cell_type:all|kc_mbon_forgetting", 0.0)) == 0.0, "N22 must be off"
+    assert not any("kc_mbon" in k and k not in allowed and float(v) for k, v in reg.overrides.items()), \
+        "KC->MBON plasticity must be off"
     conn = connectome.build(reg, min_synapses=profiles.WORKING_MIN_SYNAPSES)
     params = lif.default_params(reg, conn, timestep_ms=DT)
     el = electrical.build(reg, conn)
