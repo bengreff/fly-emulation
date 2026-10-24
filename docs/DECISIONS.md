@@ -5420,3 +5420,22 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
 - **m10f10 re-registered** = m10f9b + `state:body_temp|model` 1. **Prediction:** G passes on seeds 12-15; whole
   brain within ±0.005 Hz of m10f9b on each seed (0.333 / 0.331 / 0.333 / 0.332). Then S (60 s, seed 12, the same
   band and the graded_rec unit check). Falsifier: G fails, or any seed outside ±0.005 Hz.
+
+### s23 m10f10 G passes; S7 and S8 made ruled constants; B27/N27/N33/N1 reads (24 October, 01:18)
+- **m10f10 G (scored against the 00:57 prediction):** seeds 12-15 whole brain 0.332 / 0.331 / 0.331 / 0.332 Hz
+  (m10f9b 0.333 / 0.331 / 0.333 / 0.332; all within ±0.005), 0 non-eye spikes/ms in the silent window, 0 MuJoCo
+  warnings, no NaN, no class above 200 Hz (max 13.7 Hz). **PASS.** The S smoke is running (Mac,
+  `runs/s23/fc/smoke_m10f10.done`).
+- **S7 and S8** (Director ruling 24 Oct 00:55: a constant healthy state, and a naive male constant stated as such,
+  are the required levels). Both leave the stubs for `stubs.CONSTANT_STATES`: each key is read by every profile at
+  its one value (0) with the stated condition and validity range in the inventory, and any other value is refused.
+  S7: healthy, uninfected, unparasitised, conventionally reared lab fly (inferred for the specimen, whose health is
+  unreported). S8: naive (virgin) mature male (the specimen was 5 days old; its mating history is unstated, so virgin
+  is guessed). mechanisms.yaml status `have`; MECHANISM_STATUS "done (ruled constant)", counted apart from rows done
+  on evidence. Ledger: 7 organism slots move from absent to default (S7 inferred, S8 guessed); the measured/derived
+  fill is unchanged.
+- **Reads** (`docs/research/s23_b27_n27_n33_reads.md`, `docs/research/s23_graded_rmax_s5_reads.md`): B27 has no
+  adult cardiac output, chamber length or transit time, so the mixing time can't be derived yet; N27 has a resting
+  adult brain [K+]o (13.1 ± 2.8 mM) and pathological surges but no per-activity rise or clearance τ; N33 has one
+  larval acute-TBOA slowing of glutamatergic IPSC decay (ratio in Fig. 8B, unread) and no fly GAT current data;
+  N1's release at rest is in no open text (Laughlin 1987 and Uusitalo 1995, paywalled, hold the transfer curves).

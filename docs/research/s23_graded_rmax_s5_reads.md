@@ -50,3 +50,26 @@ synapse of the same count. So graded_rmax = (vesicle release rate per active zon
   length about 2.5 mm (BioNumbers 100750, tertiary). Church 1960 J Exp Biol 37:186 (insect convection, dead
   specimens) abstract only. Flight power: Lehmann & Dickinson 1997 J Exp Biol 200:1133, mechanical power about
   80 W/kg muscle at 24 °C, muscle efficiency up to 10 % (flight is outside the S5 validity range).
+
+## N1 release at rest (r0), read 24 Oct 01:20 (Sonnet reader, after m10f9c failed G)
+
+The model's resting graded drive is release_at_rest × graded_rmax, so with graded_rmax sourced, r0 binds.
+**No open full text states r0 (release at the resting or dark potential as a fraction of maximal release) for any
+fly graded synapse.**
+- Uusitalo, Juusola, Kouvalainen & Weckström 1995 J Neurophysiol 74:470 (blowfly R1-6 → LMC; paywalled, secondary
+  summary only): release is tonic in the dark and "decreased dramatically approximately 12 mV below the resting
+  potential of the presynaptic photoreceptors".
+- Laughlin, Howard & Blakeslee 1987 Proc R Soc B 231:437 (paywalled, secondary only): "a presynaptic depolarization
+  of 1.50–1.86 mV produces an e-fold increase in postsynaptic conductance" (slope of the transfer curve, not r0).
+- Weckström & Laughlin 2010 J Neurosci 30:9557 (PMC6632427, open): the synapse operates "in the steep mid-region of
+  the synaptic characteristic curve" (qualitative: the resting point is not at the foot).
+- de Ruyter van Steveninck & Bialek (arXiv physics/0202014, open): transmission "completely shut down when the
+  photoreceptor hyperpolarizes", at about 50 % light modulation.
+- Burrows & Siegler 1978 J Physiol 285:231 (locust, **other insect**, open): "At their resting potential some
+  interneurones tonically release sufficient transmitter to have a measurable post-synaptic effect."
+- Zheng et al. 2006 J Gen Physiol (Drosophila LMC, open): no transfer-curve value.
+
+**Consequence.** r0 can't be sourced from open text. The two primary sources (Laughlin 1987, Uusitalo 1995) are
+paywalled; with their transfer curves, r0 at the dark rest follows from the curve read at the dark potential over
+the curve's maximum. Until then N1 stays partial: graded_rmax sourced but not ON (m10f9c fails G), r0 guessed or
+flyvis-fitted.
