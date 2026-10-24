@@ -43,7 +43,7 @@
 3. **KC run** (descriptive): `s23_kc_summary.py` once the grid lands, seed-13 confirm of σ*_KC.
 4. The rest of the ranked "path to done" list in MECHANISM_STATUS.
 
-**For fly2:** from m10f7 on, N21 is off (`cell_type:all|kc_mbon_ltd_timing_rate` 0) because the stage puts DANs at measured rest (7.8-8.0 Hz); it returns when your resting-safe rule lands. N22 forgetting stays on (a no-op at rest). Your N24 selection includes ER5; the N25 night term acts only on the dFB OFF rate and touches no weights.
+**For fly2:** from m10f7 on, N21 is off (`cell_type:all|kc_mbon_ltd_timing_rate` 0) because the stage puts DANs at measured rest (7.8-8.0 Hz); it returns when your resting-safe rule lands. N22 forgetting stays on (a no-op at rest). Your N24 selection includes ER5; the N25 night term acts only on the dFB OFF rate and touches no weights. **B17 pump rate (yours):** `pump_full_rate_hz` 10 is guessed; measured cibarial pumping is 5-7 Hz (Manzo 2012 ≈6 Hz, n 14-21, females, 25 °C; Sui et al. 2026 Nat Neurosci 5 / 6 / 7 Hz by method) and the pump MNs burst at 25-90 Hz within each cycle (Sui 2026, n 18 per MN). Quotes in `docs/research/s23_crop_pump_q10_adaptation.md`. S3 waits only on this term now.
 
 **Earlier sessions.** The s13-s22 reference blocks (walking bypass assay and the nine ruled-out single causes, X1 cross-connectome control, s12 body work, the s22 N25 mode 1 fit and its bout trade-off, the MB type-spread first look) are in `git show 859348d:docs/HANDOFF.md` and in FINDINGS / DECISIONS. Key carried facts:
 - N25 mode 1 (s22): 140 of 14,256 sets passed T1-T4; every accepted set over-consolidates the night (F-S22-1); at the fast end of k_r the nights fit but the days fall apart (F-S22-2). Hence the night term.
