@@ -172,6 +172,7 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Azevedo cell 181021_F1_C1, Piezo trials | **sealed** (unopened) | open only via `scripts/score_reflex.py` after a dev pass |
 | Azevedo cells 180621_F1_C1, 181127_F1_C1, Piezo trials | **sealed spares** | as above |
 | Azevedo CurrentStep trials (181021, 180621, 181127) | seen | none |
+| Azevedo 2020 Fig. 3C/E per-type MN V_rest and R_in (fast 150, intermediate 300, slow 700 MΩ) | seen (s23 N2 reader, 24 Oct) | none while the recruitment order is held out: setting MN parameters from them would make that test circular |
 | Agrawal 2020 13Bα static tuning | seen | none |
 | Agrawal 2020 10Bα / 9Aα recordings | held out; not extracted. The papers' text statement that 13Bα/10Bα are nonspiking set the s13 S3 arm A `graded_rec` rows (mode only). The tuning recordings are untouched | don't use the spiking-mode statement as a check of arm A |
 | PN spontaneous rate; PEN 3.9 Hz; KC 0.1 Hz | spent | none |
