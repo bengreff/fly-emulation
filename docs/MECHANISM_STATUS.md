@@ -27,7 +27,7 @@ Since 22 Oct 01:41 (fly2, F-S24-1), `m10f` = m10f3 = m10f0 + per-connection STP 
 
 **Count (fly rows, 21 Oct 21:32 CDT): 0 done of 14.**
 
-**Count (fly rows, 23 Oct 23:15 CDT): 0 done of 20** (14 plus N1-N4, N27 and N33, reassigned 21 Oct). The
+**Count (fly rows, 23 Oct 23:09 CDT): 0 done of 20** (14 plus N1-N4, N27 and N33, reassigned 21 Oct). The
 "path to done" column (s23) gives, per fly row, what blocks done, the cheapest real path, and whether a check is
 circular or independent. Ranked cheapest first: S5, N28, S3, S1, N26, S4, N3, N25 (Director's (c)), N4, N1, S2;
 then the heavy rows (N2, S6, N19, N20, N33) and the rows waiting on a Ben ruling on the required level (B27, S7,
