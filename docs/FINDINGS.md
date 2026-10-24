@@ -2219,10 +2219,33 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   were read from Apostolopoulou & Lin 2020. So matching their APL activation arm is circular. Their APL>TNT arm, where KC
   odour responses do not compensate for lost inhibition, is a prediction of the bounds, but it comes from the same paper, so it is weak.
   An independent check needs another lab's chronic manipulation with KC or APL physiology.
-- **N34 fit plan.** Engel & Wu 1996 Table 2 gives stimuli to 5 failures at 2, 5 and 10 Hz (median 42, 85, 39). The plan is to fit u at
+- **N34 fit plan.** Engel & Wu 1996 Table 2 gives stimuli to 5 failures at 2, 5 and 10 Hz (median 42, 85, 39; 85 checked on the table image, see below). The plan is to fit u at
   one frequency and hold out the other two. This is unspent and not run.
 - **Cost of ON.** Hours of model time per check, and the CPU path runs at about 13 000 s wall per 60 s model. That is
   unaffordable without the GPU port, which needs its own equivalence check first.
+- **A note before the N34 check is registered (24 Oct 00:13).** The literature read gave the control 5 Hz median as
+  8.5 from OCR. I checked the table on the page image (J Neurosci PDF, Wayback copy of 15 Oct 2026, p 3490): it is
+  **85 (n 90)**. So the 85 written above is right; the read's 8.5 was an OCR error, and the read now carries a
+  correction line. The same table gives two more control first-bout medians at 5 Hz, from the recovery trials: 39
+  (n 15) and 85 (n 15). So the same frequency gives 39 to 85 across subsets, and 42 / 85 / 39 across 2 / 5 / 10 Hz
+  is not clearly non-monotonic beyond that spread. The Results say habituation is faster at higher frequency.
+  - A rule that only depresses per spike and recovers with one tau gives fewer stimuli at every higher frequency;
+    that fits the Results' direction.
+  - For the band, Fig 4B gives the mean ± SEM of log-transformed stimuli to criterion per frequency and genotype.
+    That is the spread to register, written down before the run.
+
+### F-S29-6: neuPrint skeleton radii are quantised at 0.256 µm, so cable-scaled conduction velocities (N13) are resolution-limited for three quarters of types (fly2, s29, 24 Oct 00:07)
+- **Data.** `data/derived/skeleton_lengths.csv` `axon_radius_um` (median node radius along the main path, one skeleton
+  per type, s6) takes a few discrete values. 8 903 of 11 750 types (75.8 %) sit at exactly 0.256 µm (32 voxels of 8 nm),
+  2 055 at 0.468 and 407 at 0.768; under 1 % are below 0.256. The giant fibre (DNp01) is 4.34 µm.
+- **What cable scaling would give.** v = 2.07 m/s x sqrt(r / r_GF) (unmyelinated cable scaling, Hodgkin 1954;
+  the GF velocity is measured, Kadas 2019) gives 0.503 m/s for every type at the floor. That is the current guessed
+  0.5 m/s by coincidence. Large axons rise: DNa02 1.09, DLMn 1.16, PSI and TTMn 0.87 m/s. Median delay changes from
+  0.963 to 0.935 ms; the 95th percentile from 1.65 to 1.47 ms.
+- **Reading.** For the 76 % at the floor, the derived velocity is an upper bound, because the true calibre may be
+  below the skeleton's resolution (KC and Mi1 axons are thinner than 0.256 µm in EM). So N13 could move from guessed to
+  derived only for the 24 % of types above the floor. The rest need calibre from segmentation meshes (cross-section
+  area), not skeleton radii. Not built; this sets N13's path.
 
 ### F-S19-2: N19's receptor map, calibrated on Mi4 (a* = 0.0649), gives the antennal-lobe PNs −0.3% under 5-HT against Dacks' +15%: the held-out magnitude test fails and N19 stays built-off (s19, 22 Oct 05:23; pre-registered DECISIONS 21 Oct 21:56, 22 Oct 01:56, 02:05, 02:25, 04:42)
 - **Calibration (fitted).** Strother 2018 Fig. 6F, Mi4 ×2.66 to L5 photoactivation under CDM (read from the figure

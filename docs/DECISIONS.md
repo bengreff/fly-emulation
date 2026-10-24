@@ -5185,3 +5185,31 @@ Run as registered at 03:45 (`runs/s21/n25/kr_check.json`, `runs/s22_krcheck.log`
     is not affordable now.
   - Each also needs its fit or check measurement read for effect size.
   - Until then they stay off, which is neutral by the standing rule.
+
+## fly2 s29: smoke S scored for m10f5n7 and m10f5s29, both PASS; neither adopted, because m10f moved to m10f10 (fly s23, 4e0ff0c, 03:47) while they ran (24 Oct 04:11 CDT)
+- **Bars (pre-registered 23 Oct 23:31 and 23:37, the 21 Oct 21:35 bands).** Whole brain 0.162-0.486 Hz, active
+  fraction 0.014-0.042, no runaway, no NaN. Seed 12, 60 s, backhouse CPU path, unchanged probe
+  (`scripts/probes/smoke_live.py`).
+- **Results.**
+
+  | stage | whole brain Hz | active | runaway | NaN | MuJoCo warnings | thorax z final mm | wall s |
+  |---|---|---|---|---|---|---|---|
+  | m10f5 (reference, s27) | 0.3037 | 0.0273 | none | no | 0 | 0.547 | 13 214 |
+  | m10f5n7 | 0.3035 | 0.0272 | none | no | 0 | 0.548 | 16 068 |
+  | m10f5s29 | 0.3034 | 0.0271 | none | no | 0 | 0.547 | 16 055 |
+
+  Both **PASS**. The registered expectation (whole brain within 0.01 Hz of 0.3037) holds. The mean rate of all AL_PN
+  cells falls 0.283 -> 0.270 Hz, and AL_LN falls 0.377 -> 0.356 Hz, a description, not scored. G passed earlier on
+  seeds 12-15 for both stages. Figure viewed: `runs/s29/smk/s29_smoke_compare.png`
+  (`scripts/probes/s29_smoke_compare_fig.py`), with group means against the resting references and per-neuron
+  rates against m10f5.
+- **Not adopted.** Fly adopted m10f = m10f10 at 03:47, while these ran. A stage on m10f5 would roll back fly's
+  m10f6-m10f10 work, so neither moves the frontier. The passes say that N7's two recorded classes and B20's measured
+  tuning are safe on m10f5. They are not evidence for m10f10.
+- **Next.** Rebase as m10f10s29 = m10f10 + `cell_type:all|gabab_from_recordings` 1 + the antenna f0 426 Hz and Q 1.2.
+  It needs its own G (seeds 12-15) and S. The S takes about 4.5 h wall at tonight's load, so it cannot finish before
+  the 05:30 park, and it is not launched tonight. The bars are unchanged: G and S as above, and the whole brain within
+  0.01 Hz of m10f10's S (0.3313).
+- **Rows.**
+  - B20 is still not done: it waits on m10f10s29's G and S.
+  - N7 stays built-off in m10f, and moves to partial when the rebased stage is adopted.

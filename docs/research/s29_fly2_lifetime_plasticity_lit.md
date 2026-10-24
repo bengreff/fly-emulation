@@ -194,6 +194,8 @@ OCR'd with pdftotext; a few characters garbled by OCR, e.g. "Controls" OCR'd as 
   as OCR'd; the rut row's leading genotype label was OCR-garbled but the row's identity is unambiguous from
   context and the Results text, which states rut needs far more stimuli than controls):
   - Controls: 2 Hz = 42 (n=26); 5 Hz = 8.5 (n=90); 10 Hz = 39 (n=13).
+    **Correction (fly2, 24 Oct 00:13, checked on the page image of the PDF, p 3490): the 5 Hz control median is 85
+    (n=90), not 8.5; the 8.5 was an OCR artefact. The other control entries above match the image. PDF: http://web.archive.org/web/20261015084648id_/https://www.jneurosci.org/content/jneuro/16/10/3486.full.pdf (Table 2 and Fig 4 on p 3490, page 5 of the file).**
   - rutabaga (rut, cAMP-synthesis-deficient): 2 Hz ≈ 404 (n=12); 5 Hz ≈ 473 (n=36); 10 Hz ≈ 64 (n=18) —
     resistant to habituation (far more stimuli needed).
   - dunce (dnc, cAMP-elevated): 2 Hz = 37 (n=11); 5 Hz = 30 (n=32); 10 Hz = 19 (n=8) — habituates faster
