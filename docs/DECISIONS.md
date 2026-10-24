@@ -5196,3 +5196,23 @@ seed 600, against T5:
   and its direction go into FINDINGS, with no refit on Chowdhury.
 - Validity, stated before the read: the reduced loop has no route by which the stimulus itself changes sleep, the
   fast loop uses CT = ZT, and the night term's peak hour is the DN1 Ca2+ peak (inferred, not a firing peak).
+
+### s23 m10f8 amendment 2: S3 sources corrected, N28 neural Q10 moved to a cited value (23 October, 23:59)
+Readers (`docs/research/s23_crop_pump_q10_adaptation.md`) changed two of the 23:20 S3 values and gave N28 a source.
+- `ingest_nl_s` **7.0 → 5.0 nL/s, derived.** Itskov et al. 2014: 1.05 nL per sip cycle of 0.13 s sip plus a 0.08 s
+  inter-sip interval (w1118 males and females, 25 °C). The 23:20 derivation used sip duration alone. Bounds 4.4
+  (sucrose sip, 0.16 s) to 8.8 nL/s (Pool et al. 2014, 150 nL in 17 s, deprived females, 30 °C).
+- `crop_max_nl` **stays 250 nL, inferred; bounds 150-320.** Edgecomb et al. 1994 scores crop size on an ordinal
+  scale, so the 23:20 citation is withdrawn. Measured single meals after deprivation (females): Pool 2014 about
+  150 nL, Qi et al. 2015 0.27-0.32 µL. No male value found.
+- `cell_type:all|q10` **2.0 → 2.5 in m10f8, inferred** (N28). Juusola & Hardie 2001: adult photoreceptor
+  time-to-peak Q10 2.5 ± 0.2, kinetics range 2.3-3.5. One cell type's value applied to all neural time
+  constants (validity: the phototransduction cascade may not stand for membrane and synaptic kinetics). The
+  parameters.csv bounds stay insect-wide 1.5-4, because m4 keeps 2.0.
+- **No re-run needed.** All three act only away from the defaults the gate and smoke use: Q10 scales by
+  Q10^((T − 25)/10), which is 1 at the 25 °C world default, and ingestion needs food contact, which the 60 s dark
+  smoke does not have. The running m10f8 smoke and the 23:31 gate stand. Tests: internal state, model data and
+  repo hygiene pass (42).
+- Rows: S3 still waits on fly2's `pump_full_rate_hz` (10 Hz, guessed; measured pump cycle 5-7 Hz, Manzo 2012,
+  Sui 2026), as registered at 23:20. N28 has a value inside a cited range but no independent check (every Juusola
+  number comes from the cells that set the value), so it stays partial.

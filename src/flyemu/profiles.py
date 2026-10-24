@@ -385,6 +385,10 @@ M10F8 = {
     "state:organs|values_from_sources": (1.0, _I, "frontier stage 8 (S1-S4): the s19 sourced organ values plus the "
                                          "s23 ingest rate (derived) and crop capacity (inferred, secondary); "
                                          "internal_state.SOURCED (DECISIONS 23 Oct 23:20)"),
+    "cell_type:all|q10": (2.5, _I, "N28: Juusola & Hardie 2001 J Gen Physiol 117:27, adult R1-6 photoreceptors "
+                                   "in vivo, time-to-peak Q10 2.5 +- 0.2 (kinetics range 2.3-3.5); one cell type's "
+                                   "value applied to all neural time constants; 1 at the 25 degC world default "
+                                   "(DECISIONS 24 Oct)"),
 }
 
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike

@@ -296,12 +296,16 @@ SOURCED = {
     "tau_gut_s": (2700.0, 900.0, 7200.0, "inferred", "measured_related",
                   "faecal dye from 15 min, abundant by 45-60 min (PMC4335172); whole-tract transit < 1 h (secondary)"),
     # s23 (DECISIONS 23 Oct 23:20)
-    "ingest_nl_s": (7.0, 4.3, 10.4, "derived", "measured_related",
-                    "Itskov et al. 2014 sip volume ~1.05 nL x sip rate 6-7.7 Hz (Itskov sip duration; Manzo et al. "
-                    "2012 cibarial pumping ~6 Hz)"),
-    "crop_max_nl": (250.0, 250.0, 320.0, "inferred", "measured_related",
-                    "Edgecomb, Harth & Schneiderman 1994 J Exp Biol 197:215 via a secondary citation (sex not stated, "
-                    "primary not read); upper bound Qi et al. 2015 starved first meal ~0.32 ul (females)"),
+    "ingest_nl_s": (5.0, 4.4, 8.8, "derived", "measured_related",
+                    "Itskov et al. 2014 Nat Commun 5:4560 (w1118 males and females, 25 degC): median sip 1.05 nL per "
+                    "sip cycle of 0.13 s sip + 0.08 s inter-sip interval (yeast) = 5.0 nL/s; 4.4 with the 0.16 s "
+                    "sucrose sip; upper 8.8 from Pool et al. 2014 Neuron 83:164 (~150 nL in ~17 s, 24 h deprived "
+                    "females, 30 degC). s23 amendment (DECISIONS 24 Oct): the 23:20 value 7.0 omitted the interval"),
+    "crop_max_nl": (250.0, 150.0, 320.0, "inferred", "measured_related",
+                    "largest single meals after deprivation, females (no male value found): Pool et al. 2014 Neuron "
+                    "83:164 ~150 nL after 24 h (30 degC); Qi et al. 2015 Mol Brain 8:13 0.27 +- 0.02 ul (100 mM "
+                    "sucrose) and 0.32 +- 0.01 ul mean after 36 h (virgin Canton-S, 25 degC). Edgecomb et al. 1994, "
+                    "cited at 23:20, scores crop size on an ordinal 1-5 scale, not in nL"),
     "q10_met": (2.0, 2.0, 2.3, "measured", "measured_this_class",
                 "Klepsatel, Wildridge & Galikova 2019 Sci Rep 9:5239 (PMC6437209): whole-fly O2 consumption, adult "
                 "males, 13-33 degC, Q10 2.0 Oregon R (the basal-rate strain) and 2.3 Canton S"),
