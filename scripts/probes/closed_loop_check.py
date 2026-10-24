@@ -11,6 +11,7 @@ import sys
 import time
 
 import numpy as np
+import pandas as pd
 
 sys.path.insert(0, "src")
 from flyemu.organism import Organism  # noqa: E402
@@ -38,6 +39,9 @@ def main():
     ap.add_argument("--silent-noise-on", action="store_true",
                     help="keep membrane noise in the silent window (default: noise, which stands for unmodelled "
                          "input to the CNS, is removed with the afferent drive; s13)")
+    ap.add_argument("--graded-k-scale", default="", metavar="GROUP=F",
+                    help="diagnostic (DECISIONS 24 Oct 01:40): scale the graded release multiplier of the graded "
+                         "cells in GROUP (photo: the photoreceptor classes; nonphoto: the rest) by F after the build")
     a = ap.parse_args()
     ov = {k: float(v) for k, v in (s.split("=") for s in a.set)}
     if a.template:
@@ -48,6 +52,16 @@ def main():
         ov = {**M.sample_fly(M.load(), a.sample_fly, a.stage), **ov}
     org = Organism(policy="minimal", profile=a.profile, min_synapses=5, overrides=ov, seed=a.seed)
     n = org.conn.neurons
+    from flyemu.lif import circuit_classes
+    cls = circuit_classes(org.conn)
+    if a.graded_k_scale:
+        grp, f = a.graded_k_scale.split("=")
+        assert org.net.params.fv_edge is None, "flyvis pair weights are normalised by g_k at build"
+        photo = np.isin(cls[org.net.g_idx], ["photoreceptor", "ocellar_photoreceptor"])
+        sel = {"photo": photo, "nonphoto": ~photo}[grp]
+        gk = np.ones(org.net.g_idx.size, np.float32) if org.net.g_k is None else org.net.g_k.copy()
+        gk[sel] *= np.float32(f)
+        org.net.g_k = gk
     t = n.type.fillna("").to_numpy()
     orn = np.char.startswith(t.astype(str), "ORN_")
     upn = (n["class"].fillna("") == "ALPN").to_numpy() & np.char.endswith(t.astype(str), "PN")
@@ -84,8 +98,6 @@ def main():
         spont = spont - org.net.params.tonic_class_mv
     tonic = spont > 0
     scnt = np.zeros(org.conn.n)
-    from flyemu.lif import circuit_classes
-    cls = circuit_classes(org.conn)
     # F-VISION-5 option (a) (Director, s13): eye cells are reported apart from the silent-window count
     eye = np.isin(cls, list(EYE_CLASSES))
     silent_eye = []
@@ -157,6 +169,12 @@ def main():
     out["silent_spikes_by_class"] = {c: int(ns[cls == c].sum()) for c in np.unique(cls[ns > 0])}
     nl = lcnt * ~tonic
     out["silent_last100ms_by_class"] = {c: int(nl[cls == c].sum()) for c in np.unique(cls[nl > 0])}
+    if gv.size:
+        gt = pd.DataFrame({"type": n.type.fillna("untyped").to_numpy()[gv], "dv": g_dv})
+        up = gt[gt.dv > 0.01].groupby("type").dv.agg(["size", "mean"]).sort_values("size", ascending=False)
+        out["silent_end_graded_above_rest_by_type"] = {k: [int(r["size"]), round(float(r["mean"]), 3)]
+                                                        for k, r in up.head(20).iterrows()}
+    out["graded_k_scale"] = a.graded_k_scale
     out["hz_by_class"] = {c: round(float(hz[cls == c].mean()), 4) for c in np.unique(cls)}
     ty = n.type.fillna("untyped").to_numpy().astype(str)
     tot = {}
@@ -169,7 +187,6 @@ def main():
         with open(a.out, "w") as f:
             json.dump(out, f)
     if last.sum() > 0:
-        import pandas as pd
         df = pd.DataFrame({"type": n.type.fillna("untyped"), "sc": n.superclass.fillna(""),
                            "nt": n.predictedNt.fillna(""), "spk": scnt})
         g = df[df.spk > 0].groupby(["type", "sc", "nt"]).agg(cells=("spk", "size"), spikes=("spk", "sum"))

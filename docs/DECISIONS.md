@@ -5498,3 +5498,32 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
   - m10f9b and m10f10: G2 passes on all four seeds.
   - Falsifier of the correction: if m10f9c's eye counts plateau (last 300 ms not below the first 300 ms), the tail
     is not a decay, and the mechanism needs re-examining before any rule is applied.
+
+### s23 diagnostic registered before running: where m10f9c's self-sustained silent-window state lives (24 October, 01:40)
+
+- **Trigger.** G2 seeds 12 and 13 of m10f9c are in; the scoring entry follows when all four seeds are.
+  - After the noise-off transient the eye counts per 100 ms stop decaying: s12 bins 3-10 go 597 → 689, s13
+    604 → 739.
+  - Non-eye counts are 2-11 per bin; the last bin is 11 (s12) and 9 (s13).
+  - The 01:31 falsifier ("last 300 ms not below the first 300 ms") sits at its edge: s12 2027 vs 2174, s13 2162
+    vs 2182.
+  - The shape is a plateau, not the τ ≈ 290 ms decay the correction claimed (that would give about 50 spikes by
+    bin 10). Under that clause the mechanism is re-examined before any rule is applied.
+- **Facts.**
+  - m10f9b and m10f9c differ in one value only, `cell_type:all|graded_rmax` 100 vs 300 (checked in PROFILES).
+  - Neither has flyvis pair weights (`fv_edge` None), and release at rest is 0 in both.
+- **Diagnostic.** This is not a gate and not a stage. It runs m10f9c on seed 12 with G2's protocol (1000 ms
+  silent window). After the build, each arm scales the per-cell graded release multiplier `g_k`:
+  - **P:** graded cells outside the photoreceptor classes × 1/3. Photoreceptors keep 300 Hz, which is where the
+    value is sourced, and the rest get 100 Hz as in m10f9b.
+  - **Q:** photoreceptor classes × 1/3, so 300 Hz applies only to the other graded classes.
+  - Both arms also record the graded types still above rest at the end of the window
+    (`scripts/probes/closed_loop_check.py --graded-k-scale`, neutral when unset).
+- **Prediction.** P returns to rest: 0 non-eye spikes in the last 100 ms, and eye counts decay as in m10f9b. Q keeps
+  the plateau. That would put the state in the gain applied beyond its source.
+- **Falsifier.**
+  - If P keeps the plateau, the photoreceptor gain alone sustains it, and the state sits in the sourced part.
+  - If Q decays, both gains are needed.
+- **Use.** The result decides only F-S23-10's mechanism sentence and whether a class-specific stage (rmax 300 for
+  photoreceptors only) is worth registering. It does not rescore m10f9c, change G2 or adopt anything. A
+  class-specific stage would need its own registration, G2 on seeds 12-15, and S.
