@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Fri 23 October 2026, 23:37 CDT, session 23 (fresh context; main merged at 859348d, so fly2's m10f5 is the base).
+**Rewritten each session; do not append.** State as of Sat 24 October 2026, 00:02 CDT, session 23 (fresh context; main merged at 859348d, so fly2's m10f5 is the base).
 - **Brief:** Director, 23 Oct 23:00. Budget about 7 % of the week, few heavy turns, park at a clean commit by 05:30.
   - (1) Adopt N26 and the MB noise stage on m10f5 (smoke, figure, tests).
   - (2) A "path to done" column for every fly row in `docs/MECHANISM_STATUS.md`. Done (f43ffb7, 103ed2f).
@@ -13,7 +13,7 @@
 - **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
 
 ## Report for Ben (s23)
-**Rows moved: none yet (0 of 20 done).** Three frontier stages are built and pass the gate; their 60 s smokes were still running at this writing. The N25 night input is built and its refit is running.
+**Rows moved: none yet (0 of 20 done).** Three frontier stages pass the gate; their 60 s smokes were still running at this writing. N25: the night-input refit gave 2 accepted sets; the scored candidate's Chowdhury predictions are locked in DECISIONS (23 Oct 23:52 entry, c492fb0) and the one-time score is in progress.
 
 - **Frontier stages, cumulative on m10f5** (DECISIONS 23 Oct 22:58, 23:20; F-S23-1). Each registered before any run.
   - **m10f6** = m10f5 + N26 CRY-TIM light input (held-out Lamba ZT21 passed in s20). Gate G passes on seeds 12-15, spike-identical to m10f3 (the default world is dark). LD check passes: CT −0.54 h at the last lights-on (band ±2 h). A 6 h jump re-entrains in 1 day (reported; possibly at the fast edge of "1 or 2 days", a candidate check for the guessed μ).
@@ -22,24 +22,25 @@
   - Smoke S (60 s, seed 12, band 0.162-0.486 Hz, active 0.014-0.042) for all three: running on backhouse, about 3.8 h each.
   - Figure `docs/media/s23_frontier.png` (gate, MB check, LD check, smoke panel waiting); viewed.
   - `PROFILES["m10f"]` is still m10f5. It moves to the last stage that passes S, after the battery and a viewed figure.
-- **N25 night input** (Director's (c); DECISIONS 23:30). Built, neutral 0: k_off = k_off0 (1 + λ·light + night_arousal·D(CT)), D a one-cycle cosine peaking at CT 19 (the DN1 Ca2+ peak, Liang 2016 Fig. 1G, inferred; sign and window from Kunst 2014, DH31+ DN1 late-night wake). U4 implementation check passes. Refit of 32,340 sets with the new T5 (Garbe 2015 day **and** night bouts within mean ± 1 s.d.) is running on backhouse. Falsifier: no set passes T1-T5. Chowdhury 2023 stays unopened until a candidate's predictions are written into DECISIONS.
+- **N25 night input** (Director's (c); DECISIONS 23:30, 23:49, 23:52). Built, neutral 0: k_off = k_off0 (1 + λ·light + night_arousal·D(CT)), D peaking at CT 19 (DN1 Ca2+ peak, Liang 2016, inferred; sign from Kunst 2014). Refit: 475 of 32,340 sets pass T1, T2, T4; **2 pass T5 and Liu** (falsifier not hit). Against expectation one has night_arousal 0 (A); it fails T5 at 512 flies (night bouts 188 min > 183), so **B (night_arousal 8) is the scored candidate**. Locked day-1 predictions: **69.3 / 114.4 / 139.9 min** (6 / 12 / 24 h). Neither set reaches Garbe's mean night (about 3 bouts against 7.0). Dryad's download needs a login or passes a bot check, so it was not used; the registered fallback (blind figure read of Chowdhury Fig. 1, read uncertainty added) is running in a Sonnet reader.
 - **Path to done** column (f43ffb7): per fly row, what blocks done, the cheapest real path, whether a check is circular or independent, and cost; ranked list under the table. Six rows hinge on a Ben ruling about the required level (below).
 - **Reads with no usable value** (F-S23-3, F-S23-4): no Drosophila body-minus-ambient temperature or thermal τ (S5), no neural Q10 (N28), no absolute adult trehalose (S1), no walking multiplier. The two dry-air water-loss sources can't set S4's rate (Lighton & Schilman 2007 as quoted would empty a male's body water in 5.6 h). **Desiccation stays unscored and unspent.**
+- **Source corrections** (F-S23-5, DECISIONS 23:59): `ingest_nl_s` 7.0 → 5.0 nL/s (the inter-sip interval was left out); `crop_max_nl` 250 nL re-sourced to measured meals (Edgecomb 1994 is an ordinal score, withdrawn); N28 neural Q10 2.0 → 2.5 in m10f8 (Juusola & Hardie 2001 photoreceptor kinetics, 2.3-3.5; inferred for all neurons; no independent check yet). All three are no-ops at 25 °C without food, so no run changes. N4: no recorded adaptation ratio in open full text (Seki 2010 paywalled).
 - **MB output layer** (F-S23-2): glutamatergic MBON inputs give −988 of MBON11's net −1,115 mV/s rest drive; the MBON→MBON glutamate sign decides the layer's rest state. `MEASUREMENT_LIST.md` entry 6 lists the experiments that would decide it.
 - **QUESTIONS FOR BEN (required levels; each decides whether a row can be done by a documented constant):** S5 body temperature = ambient for a 1 mg fly? B27 well-mixed hemolymph? S7 a constant healthy state? S8 a fixed courtship/mating state (naive male)? N27 glial K+ buffering at the class level? N33 glia beyond N27 out of scope?
 
 ## Running now
-- backhouse `/home/greff/fly-m10f` (git archive of 6240ea7 plus synced src; one thread per job):
+- backhouse `/home/greff/fly-m10f` (one thread per job; load about 38 on 28 threads, mostly CRUCIBLE and fly2):
   - `run_s23_gate.sh`: smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`), started 23:06.
   - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`, `m10f8_ALL.done`), started 23:24.
-  - `run_s23_n25.sh`: `s23_n25_night.py fit --procs 3` (`runs/s23/n25/fit.log`, `fit.done`), started 23:30.
-- Mac: the test battery through slot.py (`runs/s23/pytest_s23.log`).
-- Not mine; never touch: fly2's processes (e.g. its s29 `m10f5n7` gate and smoke on backhouse) and other projects' tmux sessions.
+  - `run_s23_kc.sh`: KC grid σ_KC 0.5-3.0 on m10f7 seed 12 (`runs/s23/kc/kc{σ}_s12.done`, `grid.done`); waits until the 1-min load is below 22, so it may not start tonight.
+- Mac: none (battery done: 299 passed, `runs/s23/pytest_s23.log`; N25 predict done, `runs/s23/n25/predict.json`).
+- Not mine; never touch: fly2's processes (its s29 `m10f5n7` and `m10f5s29` smokes on backhouse), CRUCIBLE, other projects' tmux sessions.
 
 ## Next (this order)
-1. **Smokes:** copy `smoke_m10f{6,7,8}_s12.json` and `_rates.npz` to `runs/s23/fc/`, score S, re-render and view the figure. If S passes: `PROFILES["m10f"] = PROFILES["m10f8"]` (or the last passing stage), battery, MECHANISM_STATUS (N26, N3, S1, S3 rows and the count, timestamp from `date`), FINDINGS. Then `rest_vs_reference.py` on the m10f7 rates for the N3 reference check (its factor-2 bands are guessed).
-2. **N25:** when `fit.done` lands, read `fit.json` (n_t124, n_t1245, counts by night_arousal). With a candidate: `s23_n25_night.py predict` on backhouse (2,048 flies, seed 500), write its 6 / 12 / 24 h day-1 rebound into DECISIONS (time from `date`), commit, and only then download Dryad doi:10.5061/dryad.qnk98sfpp and score once under the 23 Oct 00:53 rule (primary 24 h point plus 6 h and 12 h, mean ± 2 SEM; the s22 locked 99.7 / 150.2 / 174.3 and the T5-amended 70 / 111 / 131 reported at the same read). Without one: FINDINGS F-S23-5, Chowdhury stays unspent, and the next candidate is a day-side term, registered separately.
-3. **MB 0.1 Hz KC input run** (descriptive; Director's held note): KCs at Turner's 0.1 Hz as a class-level input, switch off by default.
+1. **N25 score:** when the blind Fig. 1 read is in, score B once under the 23 Oct 00:53 rule (the 20 s arm; primary 24 h, secondaries 6 and 12 h; mean ± 2 SEM plus read uncertainty), report A, the s22 locked, T5-amended and 00:34 predictions at the same read, then FINDINGS. If Ben can download the Dryad zip in a browser (doi:10.5061/dryad.qnk98sfpp, 225 KB), the raw-data numbers can be reported later as a refinement of the same spent test; no refit on Chowdhury.
+2. **Smokes:** copy `smoke_m10f{6,7,8}_s12.json` and `_rates.npz` to `runs/s23/fc/`, score S, re-render and view the figure. If S passes: `PROFILES["m10f"] = PROFILES["m10f8"]` (or the last passing stage), fast tests, MECHANISM_STATUS (N26, N3, N28, S1, S3 rows and the count, timestamp from `date`), FINDINGS. Then `rest_vs_reference.py` on the m10f7 rates.
+3. **KC run** (descriptive): `s23_kc_summary.py` once the grid lands, seed-13 confirm of σ*_KC.
 4. The rest of the ranked "path to done" list in MECHANISM_STATUS.
 
 **For fly2:** from m10f7 on, N21 is off (`cell_type:all|kc_mbon_ltd_timing_rate` 0) because the stage puts DANs at measured rest (7.8-8.0 Hz); it returns when your resting-safe rule lands. N22 forgetting stays on (a no-op at rest). Your N24 selection includes ER5; the N25 night term acts only on the dFB OFF rate and touches no weights.
