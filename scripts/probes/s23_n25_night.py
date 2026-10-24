@@ -5,6 +5,7 @@ bouts, Abhilash & Shafer band, Liu 2016 anchors); Chowdhury 2023 stays unopened.
 
     .venv/bin/python scripts/probes/s23_n25_night.py unit             # U4 -> runs/s23/n25/unit.json
     .venv/bin/python scripts/probes/s23_n25_night.py fit --procs 3    # grid -> runs/s23/n25/fit.json
+    .venv/bin/python scripts/probes/s23_n25_night.py predict          # candidate, 2048 flies -> predict.json
 """
 from __future__ import annotations
 
@@ -114,12 +115,27 @@ def fit(procs: int) -> dict:
     return out
 
 
+def predict() -> dict:
+    """The fit's candidate at 2048 flies (seed 500, as the s22 amended candidate): day 1-3 rebounds per arm, the
+    Liu anchors, and its baseline bouts at 512 flies. Written to DECISIONS before any Chowdhury read."""
+    r = json.loads((OUT / "fit.json").read_text())
+    c = r["accepted"]["candidate"]
+    one = {g: np.array([c[g]], float) for g in GRID}
+    d = h.deprivation(one, flies=2048, seed=500)
+    bo = h.rebout(one, flies=512, seed=600)
+    return {"candidate": {g: c[g] for g in GRID}, "n_accepted": r["n_accepted"],
+            "fit_medians": r["accepted"]["median"], "fit_p2.5": r["accepted"]["p2.5"],
+            "fit_p97.5": r["accepted"]["p97.5"],
+            "pred_2048": {k: round(float(v[0]), 2) for k, v in d.items()},
+            "bouts_512": {k: round(float(v[0]), 2) for k, v in bo.items()}}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=["unit", "fit"])
+    ap.add_argument("mode", choices=["unit", "fit", "predict"])
     ap.add_argument("--procs", type=int, default=1)
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    res = unit() if a.mode == "unit" else fit(a.procs)
+    res = unit() if a.mode == "unit" else fit(a.procs) if a.mode == "fit" else predict()
     (OUT / f"{a.mode}.json").write_text(json.dumps(res, indent=1))
     print(json.dumps({k: v for k, v in res.items() if k != "t124_sets"}, indent=1)[:4000])
