@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Sat 24 October 2026, 00:24 CDT, session 23 (fresh context; main merged at 859348d, so fly2's m10f5 is the base).
+**Rewritten each session; do not append.** State as of Sat 24 October 2026, 00:21 CDT, session 23 (fresh context; main merged at 859348d, so fly2's m10f5 is the base).
 - **Brief:** Director, 23 Oct 23:00. Budget about 7 % of the week, few heavy turns, park at a clean commit by 05:30.
   - (1) Adopt N26 and the MB noise stage on m10f5 (smoke, figure, tests).
   - (2) A "path to done" column for every fly row in `docs/MECHANISM_STATUS.md`. Done (f43ffb7, 103ed2f).
