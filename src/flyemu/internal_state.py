@@ -285,6 +285,13 @@ SOURCED = {
                    "crop turnover 32%/h of capacity fully fed, 14%/h dietary restriction (PMC4335172; Geer 1970 model)"),
     "tau_gut_s": (2700.0, 900.0, 7200.0, "inferred", "measured_related",
                   "faecal dye from 15 min, abundant by 45-60 min (PMC4335172); whole-tract transit < 1 h (secondary)"),
+    # s23 (DECISIONS 23 Oct 23:20)
+    "ingest_nl_s": (7.0, 4.3, 10.4, "derived", "measured_related",
+                    "Itskov et al. 2014 sip volume ~1.05 nL x sip rate 6-7.7 Hz (Itskov sip duration; Manzo et al. "
+                    "2012 cibarial pumping ~6 Hz)"),
+    "crop_max_nl": (250.0, 250.0, 320.0, "inferred", "measured_related",
+                    "Edgecomb, Harth & Schneiderman 1994 J Exp Biol 197:215 via a secondary citation (sex not stated, "
+                    "primary not read); upper bound Qi et al. 2015 starved first meal ~0.32 ul (females)"),
 }
 
 # s19: N26 clock values read from sources (DECISIONS 22 Oct 04:44), the defaults only with

@@ -5051,3 +5051,29 @@ no noise or tonic drive from a source).
 **Runs.** backhouse `/home/greff/fly-m10f` (git archive of the commit carrying this entry), one thread per job
 (rule 16), detached, done-files. Expected: G about 8 min per seed, S about 3.8 h (fly2's m10f1 S: 13,616 s), about
 2 GB each.
+
+### s23 frontier stage m10f8 (S1-S4 sourced organ values ON), registered before any run (23 October, 23:20)
+**Brief.** Director item (3), 23 Oct: work the cheapest real completions. S3 is third in the s23 ranking
+(MECHANISM_STATUS "path to done"); its block is a guessed ingestion rate and crop capacity with the s19 sourced
+values switched off. One stage on m10f7, so its effect is attributable.
+- **m10f8 = m10f7 + `state:organs|values_from_sources` 1.** This turns on the six s19 SOURCED values (basal use,
+  fat store, hemolymph volume, body water, crop and gut taus; DECISIONS 22 Oct 02:30) plus two added now:
+  - `ingest_nl_s` 7.0 nL/s, **derived**: Itskov et al. 2014 sip volume about 1.05 nL times a sip rate of 6-7.7 Hz
+    (from Itskov's sip duration; Manzo et al. 2012 cibarial pumping about 6 Hz). Bounds 4.3-10.4.
+  - `crop_max_nl` 250 nL, **inferred**: Edgecomb, Harth & Schneiderman 1994 (J Exp Biol 197:215) via a secondary
+    citation (sex not stated, primary not read). Bounds 250-320, the upper bound Qi et al. 2015's starved first
+    meal of about 0.32 µL (females).
+  - `pump_full_rate_hz` stays at 10 (guessed), so S3 stays partial whatever the gate says.
+**Gate.** The same G and S as the 22:58 entry, on `m10f8`.
+**Unit checks.** S2 starvation and S3 CAFE are spent, and neither depends on the ingest rate or the crop capacity
+(the CAFE check is a pure energy balance), so there is no fresh scored check for this stage. Reported, not scored:
+the meal volume of a 24 h starved fly with the pump full on, against Qi 2015's 0.32 µL. This is **circular**
+(Qi sets the crop bound). Desiccation (S4) is not run or scored here and stays unspent.
+**Prediction.** G passes. S passes, with the whole-brain rate within ±0.02 Hz of m10f7. In a 60 s dark run with
+no food contact, the organ values only move the starting hunger and thirst signals.
+**Falsifier / consequence.** If G or S fails, the switch stays built-off with the reason recorded. If both pass,
+`m10f` moves to m10f8 after the battery and a viewed figure. S1 stays partial (trehalose `conc0`, `k_act` and
+`act_scale` guessed). S3 stays partial (pump rate guessed, crop capacity secondary). S4 stays partial (evaporation
+unsourced).
+**Runs.** backhouse `/home/greff/fly-m10f`, one thread per job, detached, done-files, queued behind the m10f6 and
+m10f7 smokes if load is above 24.

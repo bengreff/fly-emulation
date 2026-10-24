@@ -380,6 +380,13 @@ M10F7 = {
                                               "resting-safe rule"),
 }
 
+M10F8 = {
+    **M10F7,
+    "state:organs|values_from_sources": (1.0, _I, "frontier stage 8 (S1-S4): the s19 sourced organ values plus the "
+                                         "s23 ingest rate (derived) and crop capacity (inferred, secondary); "
+                                         "internal_state.SOURCED (DECISIONS 23 Oct 23:20)"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -420,6 +427,7 @@ PROFILES: dict[str, dict] = {
     "m10f5": {"values": M10F5, "kick_mv": KICK},
     "m10f6": {"values": M10F6, "kick_mv": KICK},
     "m10f7": {"values": M10F7, "kick_mv": KICK},
+    "m10f8": {"values": M10F8, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;
