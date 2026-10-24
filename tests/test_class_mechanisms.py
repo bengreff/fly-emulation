@@ -495,3 +495,19 @@ def test_kc_mbon_dan_restoration_moves_toward_baseline_only():
     expect = w0 - 0.5 * w0 * (1 - r) ** k
     assert np.abs(w - expect)[hit].max() <= 1e-5 * np.abs(w0).max()
     assert np.array_equal(n.w[n.kc_e][miss], (0.5 * n.kc_w0).astype(np.float32)[miss])
+
+
+@needs_graph
+def test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release():
+    from flyemu.lif import circuit_classes
+    base = _org()
+    assert base.net.params.graded_k is None and base.net.g_k is None
+    on = _org(**{"cell_type:all|graded_rmax_by_class": 1.0, "cell_type:photoreceptor|graded_rmax": 300.0})
+    p = on.net.params
+    assert p.graded_rmax_hz == base.net.params.graded_rmax_hz == 100.0
+    photo = p.graded & np.isin(circuit_classes(on.conn), ["photoreceptor", "ocellar_photoreceptor"])
+    assert photo.sum() > 5000 and (p.graded & ~photo).sum() > 1000
+    assert np.allclose(p.graded_k[photo], 3.0) and np.allclose(p.graded_k[~photo], 1.0)
+    # only the photoreceptors' release changes: same weights, graded set and release span
+    assert np.array_equal(on.net.w, base.net.w) and np.array_equal(on.net.graded, base.net.graded)
+    assert on.net.params.graded_range is None

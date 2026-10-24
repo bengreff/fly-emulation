@@ -415,6 +415,18 @@ M10F10 = {
                               "and conduction/radiation to the air (internal_state.py); +0.07 K at rest"),
 }
 
+# Stage 11 (fly, s23; DECISIONS 24 Oct 02:20): graded_rmax by class; the photoreceptors take the value derived at
+# their own synapse (F-S23-10), every other graded cell keeps the guessed shared 100 Hz
+M10F11 = {
+    **M10F10,
+    "cell_type:all|graded_rmax_by_class": (1.0, _I, "frontier stage 11 (N1): photoreceptors take their own "
+                                           "graded_rmax; the other graded classes keep cell_type:all|graded_rmax"),
+    "cell_type:photoreceptor|graded_rmax": (300.0, _I, "frontier stage 11 (N1): derived 240 vesicles/s per active "
+                                            "zone at the blowfly R1-6 -> LMC graded synapse (Laughlin, Howard & "
+                                            "Blakeslee 1987) / 0.79 vesicles per site per spike at Drosophila ORN -> PN "
+                                            "(Kazama & Wilson 2008); range 171-684 Hz; photoreceptor classes only"),
+}
+
 KICK = 0.275 * 250   # Shiu 2024 Poisson input: w_syn x f_poi mV, forces a spike
 
 # The current working model (docs/MODEL.md). Scripts default to it; pass
@@ -462,6 +474,7 @@ PROFILES: dict[str, dict] = {
     "m10f9b": {"values": M10F9, "kick_mv": KICK},
     "m10f9c": {"values": M10F9C, "kick_mv": KICK},
     "m10f10": {"values": M10F10, "kick_mv": KICK},
+    "m10f11": {"values": M10F11, "kick_mv": KICK},
 }
 PROFILES["m10f"] = PROFILES["m10f5"]   # the frontier: the latest stage that passed its smoke test and gate
                                        # (m10f1-m10f3 passed, DECISIONS 22 Oct 01:41; m10f4 passed, s26 22 Oct 22:28;

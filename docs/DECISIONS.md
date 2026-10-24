@@ -5593,3 +5593,36 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
 - **Use.** F-S23-10's mechanism sentence. A class-specific stage (300 Hz for photoreceptors only, sourced; 100 Hz
   guessed for the rest, labelled as such) is worth registering. It needs its own registration, G2 on seeds 12-15
   and S; this arm is not evidence for it.
+
+### s23 stage m10f11 registered before any run: graded_rmax by class, with the photoreceptors at their sourced value (24 October, 02:20)
+
+- **What.** m10f11 = m10f10 + `cell_type:all|graded_rmax_by_class` 1 + `cell_type:photoreceptor|graded_rmax` 300.
+  - Photoreceptors (R1-R8 and ocellar; 6,091 graded cells) release up to 300 Hz rate-equivalent. That is derived,
+    171-684, from the blowfly R1-6 → LMC rate and Kazama & Wilson's p.
+  - Every other graded cell keeps `cell_type:all|graded_rmax` 100, guessed and now labelled as applied without a
+    source.
+  - It answers the Director's N1 instruction (01:30): use class-specific sources where they exist.
+- **Build.** The switch is neutral off. It is folded into the per-cell release multiplier, as a per-class factor
+  of `r_ph / graded_rmax` on the photoreceptors, and runs on the CPU path only (the GPU path ignores `graded_k`, as
+  it does for `graded_range_from_recordings` 2).
+  - Unit test: `tests/test_class_mechanisms.py::test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release`
+    passes.
+  - `model_data` validation passes.
+  - Rows: `n1_photoreceptor_graded_rmax` (label derived, bound 171-684, measured_related) and a structural switch.
+- **Gate.**
+  - G2 (01:31 definition, 1000 ms window) on seeds 12-15, scored once.
+  - Then S, the 60 s smoke on seed 12, only if all four seeds pass: whole brain 0.162-0.486 Hz, active
+    0.014-0.042, no runaway or NaN, 0 warnings.
+  - Mac via slot.py, `runs/s23/g2/g2_m10f11_s*.json` and `runs/s23/fc/smoke_m10f11_s12.json`.
+- **Predictions.**
+  - G2 passes on all four seeds. The 01:40 diagnostic arm P is the same configuration on m10f9b (no S5) and
+    returned to rest on seed 12; that is the basis, and it is not counted as evidence here.
+  - The eye's silent-window bin 1 is about 250 (P: 256; m10f10: 51-52).
+  - G's whole brain is within ±0.005 Hz of m10f10 (0.331-0.332).
+  - S's whole brain is within ±0.02 Hz of m10f10's S.
+- **Falsifier / consequence.**
+  - Any G2 seed failing: the stage stays built-off with the reason recorded.
+  - S out of band: off.
+  - If both pass, m10f11 is adoptable after the battery and a viewed figure. N1 then has a sourced graded_rmax ON
+    for the photoreceptors and stays partial: the other classes' rate and `release_at_rest` are unsourced.
+- **Held-out data.** None used. The gate seeds are engineering seeds.

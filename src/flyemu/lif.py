@@ -808,6 +808,20 @@ def default_params(reg: Registry, conn: Connectome, *, timestep_ms: float) -> LI
         graded_range = np.where(np.isfinite(gr), gr, d0).astype(np.float32)
         if gmode >= 2:
             graded_k = (graded_range / d0).astype(np.float32)
+    # s23 (DECISIONS 24 Oct 02:20): graded_rmax is sourced at the photoreceptor synapse only (F-S23-10); 1 = the
+    # photoreceptor classes take their own value and every other graded cell keeps cell_type:all|graded_rmax.
+    # Folded into the per-cell release multiplier, so release is graded_rmax x k as before; CPU path only
+    if one("graded_rmax_by_class", "switch", "photoreceptors take their own graded_rmax", 0.0,
+           "neutral 0: one graded_rmax for every graded cell"):
+        photo = (np.asarray(graded).astype(bool)
+                 & np.isin(circuit_classes(conn), ["photoreceptor", "ocellar_photoreceptor"]))
+        r_ph = reg.require("cell_type:photoreceptor", "graded_rmax", units="Hz",
+                           model_use="graded rate-equivalent at threshold, photoreceptor terminals",
+                           subsystem="neuron_biophysics", instances=int(photo.sum()), minimal=300.0,
+                           minimal_note="derived 300 Hz (171-684): 240 vesicles/s per active zone at blowfly "
+                                        "R1-6 -> LMC / 0.79 vesicles per site per spike at ORN -> PN")
+        graded_k = (np.ones(conn.n, np.float32) if graded_k is None else graded_k.copy())
+        graded_k[photo] *= np.float32(r_ph / rmax)
     # --- session 11: per-cell input gain from within-type size/input rules (percell.py)
     from . import percell
     f_cell = percell.input_gain_factors(reg, conn)
