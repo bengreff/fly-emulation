@@ -2454,8 +2454,9 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   (bar 0; m10f9b 0). Eye-class spikes in that window rise from 0.04/ms to 6.0-6.1/ms (optic columnar, then optic
   other and projection), and a trickle reaches AL local neurons, DNs, central cells and one non-leg MN. Whole brain
   0.354 Hz on both seeds, within the ±0.03 prediction; no NaN, 0 MuJoCo warnings.
-- **Inferred mechanism.** The resting drive of a graded cell is release_at_rest × graded_rmax. Tripling graded_rmax
-  triples the dark eye's resting output, which is what the silent window measures.
+- **Inferred mechanism (wrong; corrected by F-S23-10).** The resting drive of a graded cell is release_at_rest ×
+  graded_rmax, so tripling graded_rmax triples the dark eye's resting output, which is what the silent window
+  measures. In fact release at rest is 0 in every graded cell of this chain.
 - **What it means.** The sourced graded_rmax is not resting-safe with the guessed release-at-rest fractions, so N1
   stays partial (sourced value not ON). The next N1 value to source is the fraction of maximal release at the dark
   or resting potential of a fly graded synapse. Seeds 14-15 and the m10f9c smoke were cancelled.
@@ -2468,3 +2469,40 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   stands: a resting fly's body is at ambient to within 0.1 K, as Digby states qualitatively. Part of the close match
   is offsetting errors (wing airflow vs partial transmission of radiation); at 50 cm/s the model over-predicts by
   1.6-2.4×, outside its stated still-air validity.
+
+### F-S23-10: m10f9c's failure is the model, not the gate: a self-sustained optic-lobe loop made by graded_rmax applied beyond its source (s23, 24 Oct 02:12; DECISIONS 24 Oct 01:31, 01:40, 01:47, 02:12)
+- **Question (Director, 01:30).** Does G's silent window ("0 non-eye spikes") encode something biology does not do,
+  given tonic photoreceptor release in darkness and a brain that is not silent at rest?
+- **Gate.** G is an engineering stability convention: the noise-free network must return to rest. Noise stands
+  for the unmodelled input behind measured resting rates, and S scores those rates with noise on. The amendment G2
+  was registered before rescoring: a 1000 ms window, no growth in any 100 ms step (3 Poisson SD) for eye and
+  non-eye counts, and 0 non-eye spikes in the last 100 ms. A stage that adds a sourced tonic source gets a clamp
+  arm.
+- **Result (G2, seeds 12-15, scored once).**
+  - m10f9b and m10f10 pass.
+  - m10f9c fails: non-eye 5-11 spikes in the last 100 ms on all four seeds, and a no-growth failure on seed 15 at
+    the noise-off step.
+  - m10f9c's eye counts plateau at about 540-740 per 100 ms for 700 ms with no input, noise or tonic source.
+    Release at rest is 0 in all 36,360 graded cells, which corrects F-S23-8's mechanism.
+- **Localisation (seed 12, diagnostic).** With 300 Hz for the photoreceptors only, the network returns to rest.
+  With 300 Hz for the other graded classes only, activity sustains and grows. The loop runs through the graded
+  L1-L5, Tm1-Tm3 and T5 cells and the spiking medulla Pm, T1, Dm13, Tm6 and VS cells.
+- **N1 source scope.** 300 Hz is derived from the photoreceptor synapse (Laughlin 1987 via secondaries; Kazama &
+  Wilson 2008). For the other 30,269 graded cells it is applied beyond its source: no open text gives a
+  non-photoreceptor graded release rate. Locust graded synapses give only a voltage axis (release from about 8 mV
+  below rest).
+- **Measured lamina rest in the dark (open text).**
+  - Tonic photoreceptor → LMC release in dark and light (Laughlin 1989; Uusitalo 1995 abstract).
+  - Dark resting potentials: terminal −60.3 mV, L1/L2 −41.6 mV, L3 −59 mV; the synapse sits at the steep
+    mid-curve (Weckström & Laughlin 2010).
+  - *hdc* LMCs are depolarised (Dau 2016), so dark release is inhibitory onto L1-L3.
+  - No fraction of maximal release at rest is stated, and there are no dark rates for downstream types.
+- **What it means.**
+  - The failure is a model failure: an unsourced gain creates reverberation where biology has a different, sourced
+    cause of dark activity, which the model lacks (r0 = 0).
+  - G2 has two limits, written down and not applied: its pairwise no-growth test is weak to slow drift, and (b)
+    would also fail a real noise-free attractor.
+  - Next N1 step: a class-specific stage (photoreceptors 300 Hz, sourced; the rest 100 Hz, guessed), then a
+    sourced r0. Its effect (tonic inhibition into L1-L3) must be run, not assumed.
+  - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md`. Detail:
+    `docs/research/s23_gate_silent_window.md`.

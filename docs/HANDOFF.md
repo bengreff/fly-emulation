@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Sat 24 October 2026, 01:20 CDT, session 23 (the second context of the night; main at 4e5a335 plus this commit; base m10f5 from fly2).
+**Rewritten each session; do not append.** State as of Sat 24 October 2026, 02:14 CDT, session 23 (third context of the night; main at 617a790 plus this commit; base m10f5 from fly2).
 - **Brief (Director, 24 Oct 00:55 entry in `/Users/ben/director/decisions/fly.md`):** about 5 % of the week left tonight; park at a clean commit by 05:30 with HANDOFF current. The seven required-level questions are not Ben's: fidelity is an engineering call he delegated, with a bias toward simulating more. Work the path-to-done table in rank order: (1) score m10f9b and the m10f6/7/8 smokes; (2) source graded_rmax; (3) the next rows. A row is done only on evidence.
 - **Director rulings (00:55), now applied in the path-to-done column:**
   - Derived constants beat declared ones. A row is never done by declaring it out of scope.
@@ -23,14 +23,29 @@
   - Lumped heat balance: C T_b' = P_met − P_evap − G (T_b − T_air), with G = 2π k_air D + 4εσT³πD² and D = (6m/πρ)^(1/3). The values are sourced (mass 0.505 mg, ρ 1.07, c_p 3.5 J/g/K, ε 0.95). The resting excess is derived at **+0.07 K**. The neural Q10 reads the resting body temperature at build (`internal_state.neural_temperature_c`).
   - **Check D PASS (spent).** Digby 1955 J Exp Biol 32:279 measured a small *D. melanogaster* warming by 2.5 K in 10 cm/s air under 1.0 cal/cm²/min. The model predicts 2.36 K (ratio 0.94; the bar was ×2).
   - Switch `state:body_temp|model` 0 = body at air temperature; m10f10 sets it to 1. S5 is done once m10f10 is adopted.
-- **N1 graded_rmax sourced (F-S23-8).** Derived value 300 Hz, range 171-684. Sources:
-  - graded side: Laughlin 1987, 240 vesicles/s per active zone at the blowfly photoreceptor→LMC synapse, via de Ruyter van Steveninck & Bialek 2002;
-  - spiking side: Kazama & Wilson 2008, p 0.79 vesicles per site per spike at Drosophila ORN→PN.
-
-  Reads are in `docs/research/s23_graded_rmax_s5_reads.md`.
-  - **m10f9c** (m10f9b + graded_rmax 300) **fails G** on seeds 12 and 13: 0.06 and 0.04 non-eye spikes/ms in the silent window. The dark eye's graded resting release now drives the central brain.
-  - The binding value is now `release_at_rest` (r0, guessed), which no open text gives (Laughlin 1987 and Uusitalo 1995 are paywalled). N1 stays partial.
-  - The m4 and frontier value 100 Hz is guessed. It lies below the derived range; `parameters.csv` notes this, and the wide bio bound follows the n28 precedent.
+- **Director challenge (01:30): is G's silent window biology or convention? Answer: m10f9c failed on the model, not
+  on the gate (F-S23-10; `docs/research/s23_gate_silent_window.md`).**
+  - G is an engineering stability convention: the noise-free network must return to rest. It is not a claim that
+    the brain is silent. S scores measured resting rates with noise on.
+  - The amendment G2 was registered before rescoring (DECISIONS 01:31): a 1000 ms window, no growth in any 100 ms
+    step, and 0 non-eye spikes in the last 100 ms. A stage that adds a sourced tonic source gets a clamp arm.
+  - G2 results, seeds 12-15: m10f9b and m10f10 pass. m10f9c fails on all four seeds.
+  - m10f9c's optic lobe holds a self-sustained loop with no input, noise or tonic source. Release at rest is 0
+    in this chain, so F-S23-8's mechanism was wrong.
+  - Localisation (DECISIONS 01:40, scored 02:12): 300 Hz at the photoreceptors alone returns to rest; 300 Hz at
+    the other graded cells sustains and grows (L1-L5, Tm1-Tm3, T5 with the Pm/T1/Dm13 medulla cells).
+  - Measured lamina dark rest: tonic photoreceptor release in dark and light, inhibitory onto L1-L3, with the
+    synapse resting mid-curve. No fraction of maximal release at rest and no downstream dark rates are in open
+    text.
+  - Two G2 limits are written down and not applied: (a) is weak to slow drift, and (b) would also fail a real
+    noise-free attractor.
+- **N1 graded_rmax (F-S23-8, F-S23-10).**
+  - Derived 300 Hz (171-684), **sourced for the 6,091 photoreceptors only**: Laughlin 1987 via secondaries, and
+    Kazama & Wilson 2008.
+  - For the other 30,269 graded cells it is applied beyond its source. No open text gives a non-photoreceptor
+    graded release rate; locust graded synapses give only a voltage axis. The `n1_graded_rmax` row says this.
+  - The chain keeps 100 Hz (guessed).
+  - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md` (new; README map).
 - **m10f10** = m10f9b + S5 on. It was registered on m10f9c and rebased on m10f9b when m10f9c failed (DECISIONS 00:57). **G passes on seeds 12-15**, within ±0.005 Hz of m10f9b. The smoke is running.
 - **m10f9b** (N1 recorded modes, IN10B row removed; DECISIONS 00:29, 00:42) passes G on seeds 12-15. Its smoke checkpoint at 10.5 s reads whole brain 0.332 Hz, active 0.030, max 58.5 Hz, no NaN, 0 warnings, no runaway (provisional; S is scored on 60 s).
 - **S7 and S8 (done, ruled constants; DECISIONS 01:18).** `stubs.CONSTANT_STATES`:
@@ -59,6 +74,7 @@
   - `run_s23_gate.sh`: smokes m10f6 and m10f7 (`runs/s23/fc/smoke_m10f{6,7}_s12.done`, then `ALL.done`), started 23:06. ETA about 02:45.
   - `run_s23_m10f8.sh`: smoke m10f8 (`smoke_m10f8.done`), started 23:24. ETA about 03:15.
   - `run_s23_kc.sh`: KC grid σ_KC 0.5-3.0 on m10f7 seed 12. Gated on load below 22; `kc0.5_s12` is done.
+- G2 and the localisation diagnostic are finished (`runs/s23/g2/`, all done-files present).
 - **Keepalive:** Mac pid 32120 (`ssh backhouse ... exec sleep 14400`), started 01:22 under nohup; it ends by itself at about 05:22.
 - **Park checklist:** before 05:30, stop whatever of these is unfinished: the two Mac runs and their slots, the three backhouse scripts, and the keepalive shell. Rerun them next session.
 - Not mine; never touch: fly2's s29 smokes (`m10f5n7`, `m10f5s29`) on backhouse, CRUCIBLE, and other projects' processes.
@@ -70,7 +86,11 @@
    - m10f6/7/8: copy `smoke_m10f{6,7,8}_s12.json` and `_rates.npz` from backhouse to `runs/s23/fc/` first.
    - Then re-render and view `docs/media/s23_frontier.png` (it is untracked; commit it with the smoke panel).
 2. **Adopt** the last stage that passes S into `PROFILES["m10f"]` (m10f10 if it passes, else m10f9b, else m10f8). Run the full battery first: the last one was 299/0, before the S5 and constant-state tests; run it through slot.py, about 15 min. Then view the figure. Then update MECHANISM_STATUS (the N26, N3, N28, S1, S3, S5 rows, each against its own bar, plus the count with a timestamp from `date`), FINDINGS, and the ledger S5 row.
-3. **N1:** source `release_at_rest`. The open-text search is done (none). Options are Ben-supplied PDFs of Laughlin 1987 or Uusitalo 1995, or a derived r0 from measured LMC/photoreceptor dark potentials and a release curve. Then m10f9c's successor.
+3. **N1:** register and run a class-specific stage: photoreceptors at 300 Hz (derived), the other graded cells at
+   100 Hz (guessed, labelled). It needs a per-class `graded_rmax` (CPU path; neutral = one value), G2 on seeds
+   12-15, and S. Then source `release_at_rest`. The open-text search found none; the candidates are Ben's PDFs of
+   Laughlin 1987 or Uusitalo 1995, or a value derived from the mid-curve resting point (Weckström & Laughlin
+   2010). Run its effect on the lamina (tonic chloride current into L1-L3); don't assume it.
 4. **N33:** read the MacNamee 2016 Fig. 8B TBOA decay ratio. Then build class-level astrocytic Eaat1/GAT uptake (neutral off, CPU path), with a pre-registered check.
 5. `rest_vs_reference.py` on the m10f7 rates; the KC grid summary (`s23_kc_summary.py`, descriptive) once it lands.
 6. The rest of the ranked list in MECHANISM_STATUS (count paragraph, 24 Oct 01:20).
@@ -282,10 +302,11 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Klepsatel, Wildridge & Gáliková 2019 Sci Rep 9:5239, metabolic Q10 2.0 (Oregon R) / 2.3 (Canton S), adult males | SETS `q10_met` (s23, measured) | can't validate S1 |
 | Itskov et al. 2014 sip volume and duration; Manzo et al. 2012 pumping rate; Edgecomb et al. 1994 (via a secondary) crop capacity; Qi et al. 2015 first meal 0.32 µL | SET `ingest_nl_s` (derived) and `crop_max_nl` (inferred, Qi the upper bound) for m10f8 (s23) | Qi's meal volume is circular for S3 |
 | Liang, Holy & Taghert 2016 Fig. 1G DN1 Ca2+ peak CT 18.8-19; Kunst et al. 2014 DH31+ DN1 late-night wake (abstract and secondary) | SET `ct_dn1_h` 19 (inferred) and the sign and window of the N25 night term (s23) | can't validate N25 |
-| Gate G seeds 12-15 and smoke S seed 12 on m10f6-m10f10, m10f9 (seed 12) and m10f9c (seeds 12-13) (s23) | engineering checks under fly2's stage rule; nothing fitted on them | none |
+| Gate G seeds 12-15 and smoke S seed 12 on m10f6-m10f10, m10f9 (seed 12) and m10f9c (seeds 12-13); G2 (1000 ms window, registered 24 Oct 01:31) seeds 12-15 on m10f9b, m10f9c, m10f10, and the seed-12 localisation diagnostic (P/Q) on m10f9c (s23) | engineering checks under fly2's stage rule; nothing fitted on them | none |
 | Digby 1955 J Exp Biol 32:279, small *D. melanogaster* radiant warming 2.5 K (10 cm/s air, 1.0 cal/cm²/min; wing-beat thermometer) | **spent** 24 Oct 00:57 on S5 Check D: PASS, 2.36 K predicted (F-S23-9; registered DECISIONS 00:51) | consistency only from now; S5 needs another measurement for any further check |
 | Laughlin, Howard & Blakeslee 1987 (240 vesicles/s per active zone, via de Ruyter van Steveninck & Bialek 2002) and Kazama & Wilson 2008 (p 0.79) | SET `graded_rmax` 300 Hz (derived, s23) | can't validate N1 |
 | B27 / N27 / N33 reads (Wolf 2006, Wasserthal 2007, Armstrong 2011, Spong 2016, MacNamee 2016; `docs/research/s23_b27_n27_n33_reads.md`) | seen; candidate SET values (none used yet) | a check for those rows needs a source not used to set them |
+| Lamina dark-rest reads (Laughlin 1989; Weckström & Laughlin 2010; Rusanen & Weckström 2016; Dau 2016; Laughlin & Osorio 1989; Zheng 2006; Juusola 1995 and Uusitalo 1995 abstracts) and graded-synapse voltage reads (Simmons & de Ruyter van Steveninck 2005; Burrows & Siegler 1978); `docs/research/s23_gate_silent_window.md` | seen; candidate SET values for `release_at_rest` (none used) | a check for N1 only if not used to set r0 |
 
 ## Things that will bite you
 

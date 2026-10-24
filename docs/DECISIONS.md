@@ -5527,3 +5527,69 @@ Mac run. Nothing is adopted until S, the battery and a viewed figure.
 - **Use.** The result decides only F-S23-10's mechanism sentence and whether a class-specific stage (rmax 300 for
   photoreceptors only) is worth registering. It does not rescore m10f9c, change G2 or adopt anything. A
   class-specific stage would need its own registration, G2 on seeds 12-15, and S.
+
+### s23 G2 scored for m10f9c and m10f9b against the 01:31 registration (24 October, 01:47)
+
+- **m10f9c (graded_rmax 300): model failure under G2 on all four seeds.** It fails G on seeds 12-15 as well.
+  - Non-eye spikes in the last 100 ms: 11, 9, 8 and 5 on seeds 12-15 (bar 0), so (b) fails on all four.
+  - (a) holds on seeds 12-14 and fails on seed 15, at the first step after the noise is removed: eye bin 1 → 2
+    rises by 123, against a bar of 117.
+  - Under the 01:31 rules this is "(a) fails on any seed: model failure (growth)". The verdict does not depend on
+    it, because (b) fails everywhere.
+  - Eye counts per 100 ms plateau at about 540-740 from bin 3 to bin 10 on every seed, and rise at the end on
+    seeds 12-14.
+  - The last 100 ms by class, seeds 12-15: optic columnar 483-556, optic other 111-124, optic projection 53-59,
+    DN 5-9, central other 0-2.
+  - 2.4-3.4 % of graded cells sit above rest at the end. No NaN, 0 warnings, no runaway, whole brain
+    0.353-0.354 Hz.
+- **m10f9b (graded_rmax 100): G2 passes on seeds 12-15.**
+  - Non-eye spikes reach 0 by bin 2 and eye spikes by bin 6.
+  - Eye bins are 51-53, 19, 4, 1, 2, then 0 on every seed.
+- **Predictions.**
+  - "m10f9c (b) fails on at least one seed": confirmed on four of four.
+  - "m10f9c (a) holds on all four": wrong on seed 15.
+  - "m10f9b passes": confirmed.
+  - "m10f10 passes": confirmed (added 02:03). Seeds 12-15 decay exactly as m10f9b's do (eye 51-52, 19-20, 4, 1,
+    2, then 0; non-eye 0 from bin 2). Whole brain 0.331-0.332 Hz, no NaN, 0 warnings.
+  - m10f9b and m10f10 both meet "the stage adopted tonight must pass G2 on seeds 12-15". Adoption still waits on
+    S.
+- **The correction's falsifier.** The literal test ("last 300 ms not below the first 300 ms") is not hit on any
+  seed. The last 300 ms are 0.9-7.7 % below the first, because the first 300 ms carry the noise-off transient.
+  The decay it protected is still refuted by the shape: a τ ≈ 290 ms decay leaves about 50 spikes in bin 10, and
+  the runs show 647-739. So the 01:31 mechanism ("a slow recurrent tail") is replaced: m10f9c holds a
+  self-sustained optic-lobe state with no input, noise or tonic source. The 01:40 diagnostic locates it.
+- **Answer to the Director's question: a model failure, not a gate artefact.**
+  - G's silent window is a stability convention, and G2 states it as one.
+  - What fails m10f9c is a state that does not return to rest. It is created by one value, `graded_rmax` 300,
+    which is sourced for photoreceptors and applied beyond its source to 30,269 of the 36,360 graded cells.
+  - The measured dark activity that the challenge cites is tonic photoreceptor release. That release is inhibitory
+    onto the LMCs, and the model lacks it (r0 = 0).
+  - Detail: `docs/research/s23_gate_silent_window.md`.
+- **Consequence.** m10f9c stays off. It is not smoked, and `graded_rmax` stays at 100 (guessed) in the chain.
+  N1 stays partial.
+
+### s23 diagnostic scored (registered 01:40): m10f9c's silent-window state lives in the graded gain applied beyond its source (24 October, 02:12)
+
+- **P (300 Hz for the photoreceptors only, 100 Hz for every other graded cell; seed 12): returns to rest.**
+  - Eye counts per 100 ms: 256, 103, 11, 3, 3, 3, then 0 from bin 7.
+  - Non-eye counts: 12, then 0 from bin 2.
+  - No graded cell is above rest at the end. G2 conditions met.
+- **Q (300 Hz for the non-photoreceptor graded cells only, 100 Hz for the photoreceptors): sustains and grows.**
+  - Eye counts per 100 ms: 322, 415, 375, 546, 641, 662, 733, 724, 759, 779. (a) fails at 375 → 546 (+171,
+    bar 91).
+  - Non-eye counts: 14, 0, 1, 3, 6, 6, 5, 6, 11, 6.
+  - At the end, 2.4 % of graded cells are above rest: L1 126, Tm2 113, Tm3 83, L4 78, L5 78, L2 78, T5a-d 219,
+    Tm1 52 (mean +5.9 mV), L3 20, Mi1 6, T4 9.
+  - The spiking cells carrying it are the medulla GABAergic Pm2a/Pm2b/Pm4/Pm5/Pm11, T1, LPi12, Dm13, Tm6 and VS,
+    as in m10f9c.
+- **Prediction met on both arms. Falsifier not hit.**
+- **Mechanism (replaces F-S23-8's).** The self-sustained state is a recurrent loop through the graded lamina and
+  medulla columnar cells (L1-L5, Tm1-Tm3, T5) and the spiking medulla interneurons. At 300 Hz release it
+  sustains itself and grows; at 100 Hz it decays. Photoreceptor release at 300 Hz does not sustain it: it raises
+  the noise-phase tail (eye bin 1: 256 vs 52) and then decays.
+- **Inferred, not tested.** The missing tonic photoreceptor release would put a constant histamine (chloride)
+  current into L1-L3 in the dark and hold them below their present rest, which may damp this loop. That is a
+  hypothesis for a sourced r0 stage, not a reason to set r0.
+- **Use.** F-S23-10's mechanism sentence. A class-specific stage (300 Hz for photoreceptors only, sourced; 100 Hz
+  guessed for the rest, labelled as such) is worth registering. It needs its own registration, G2 on seeds 12-15
+  and S; this arm is not evidence for it.
