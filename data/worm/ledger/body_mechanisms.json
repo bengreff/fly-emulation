@@ -1,0 +1,179 @@
+{
+ "numerics": {
+  "n_seg": 48,
+  "dt_s": 0.001,
+  "dt_fluid_s": 0.000125,
+  "n_seg_basis": "BBC 2012 use 48 segments (numerical choice)",
+  "dt_basis": "first-order linearly implicit step. Agar: 1 ms vs 0.25 ms changes speed 0.2%. Water relaxes in ~0.2 ms, so 1 ms is 8% off the converged swim speed; 0.125 ms is ~1% off (BODY_TESTS.md numerics)"
+ },
+ "mechanisms": [
+  {
+   "id": "WB1",
+   "name": "planar inextensible rod, bending elasticity EI(s) ~ r^4, BBC radius taper",
+   "status": "have",
+   "switch": [],
+   "neutral": null,
+   "test": [
+    "tests/worm/test_body.py::test_dead_worm"
+   ]
+  },
+  {
+   "id": "WB2",
+   "name": "internal bending viscosity (Kelvin-Voigt)",
+   "status": "have",
+   "switch": [
+    "body.internal_damping"
+   ],
+   "neutral": "kelvin_voigt",
+   "options": [
+    "kelvin_voigt",
+    "off"
+   ],
+   "test": []
+  },
+  {
+   "id": "WB3",
+   "name": "resistive-force drag: water/buffer (Lighthill), any Newtonian viscosity, agar",
+   "status": "have",
+   "switch": [
+    "env.agar_drag"
+   ],
+   "neutral": "wallace_K40",
+   "options": [
+    "wallace_K40",
+    "rabets_K1p4"
+   ],
+   "test": [
+    "tests/worm/test_body.py::test_gait"
+   ],
+   "notes": "agar anisotropy is a live disagreement (K 40 vs 1.4): kept as two possible worlds"
+  },
+  {
+   "id": "WB4",
+   "name": "95 body-wall muscles in 4 quadrants (24/24/23/24), overlapping cells",
+   "status": "have",
+   "switch": [],
+   "neutral": null,
+   "test": [
+    "tests/worm/test_body.py::test_muscle_count"
+   ]
+  },
+  {
+   "id": "WB5",
+   "name": "excitation-contraction: first-order activation; optional Ca -> force Hill",
+   "status": "partial",
+   "switch": [
+    "muscle.input"
+   ],
+   "neutral": "activation",
+   "options": [
+    "activation",
+    "calcium_hill"
+   ],
+   "test": []
+  },
+  {
+   "id": "WB6",
+   "name": "muscle force: max moment, head-to-tail profile, optional force-length",
+   "status": "partial",
+   "switch": [
+    "muscle.force_gradient",
+    "muscle.force_length"
+   ],
+   "neutral": "radius_scaled / off",
+   "options": [
+    "radius_scaled|bbc_head_to_tail",
+    "off|gaussian"
+   ],
+   "test": [],
+   "notes": "absolute force unmeasured (guessed); no force-velocity"
+  },
+  {
+   "id": "WB7",
+   "name": "proprioceptive readout: per-muscle fibre strain, per-joint curvature",
+   "status": "have",
+   "switch": [],
+   "neutral": null,
+   "test": [
+    "tests/worm/test_body.py::test_stretch_sign"
+   ]
+  },
+  {
+   "id": "WB8",
+   "name": "3D Cosserat rod (twist, roll, out-of-plane bends; Denham-Ranner-Cohen 2018)",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": [],
+   "notes": "needed for 3D burrowing and roll manoeuvres (PNAS 2017)"
+  },
+  {
+   "id": "WB9",
+   "name": "3D continuum body (MetaWorm projective dynamics tet mesh / Sibernetic SPH)",
+   "status": "partial",
+   "switch": [],
+   "neutral": null,
+   "test": [],
+   "notes": "3D surface is drawn from the rod (visual only); continuum physics not built"
+  },
+  {
+   "id": "WB10",
+   "name": "hydrostatic skeleton: internal pressure, layered cuticle/muscle/pseudocoelom",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": []
+  },
+  {
+   "id": "WB11",
+   "name": "self-contact (omega turns, coiling)",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": []
+  },
+  {
+   "id": "WB12",
+   "name": "inertia",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": [],
+   "notes": "dropped on purpose: Re 0.1-0.4 in water, far lower on agar"
+  },
+  {
+   "id": "WB13",
+   "name": "sensory world: chemical and thermal fields at the nose, touch, food lawn, O2/CO2",
+   "status": "partial",
+   "switch": [],
+   "neutral": null,
+   "test": [],
+   "notes": "head position/heading and touch events exported; fields not built"
+  },
+  {
+   "id": "WB14",
+   "name": "nonlinear (power-law) substrate drag on agar (Rabets 2014)",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": [],
+   "notes": "units of the published fit prefactors unresolved"
+  },
+  {
+   "id": "WB15",
+   "name": "shear-thinning viscoelastic body (Backholm 2013 power-law damping)",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": []
+  },
+  {
+   "id": "WB16",
+   "name": "non-locomotor mechanics: pharyngeal pumping, egg-laying, defecation (pBoc/aBoc/Exp)",
+   "status": "absent",
+   "switch": [],
+   "neutral": null,
+   "test": []
+  }
+ ]
+}

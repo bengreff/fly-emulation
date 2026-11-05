@@ -1,0 +1,7 @@
+# Archived: own planar rod body (2026-11-05)
+
+Our own overdamped Kirchhoff rod with Boyle-Berri-Cohen 2012 numbers. Archived on Ben's direction (2026-11-05
+15:05 CST): port published bodies (MetaWorm/BAAIWorm eworm; a published rod model's code if a fast body is
+needed) instead of writing our own physics. It was not a faithful port of any published code.
+Test results: docs/worm/BODY_TESTS.md. To rerun, copy rod.py back into src/wormemu/body/ and restore the
+`Body, BodyConfig` import in src/wormemu/body/__init__.py.

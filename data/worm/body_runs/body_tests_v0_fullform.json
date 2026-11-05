@@ -1,0 +1,75 @@
+{
+ "dead_worm": {
+  "agar": {
+   "D1_displacement_m": 2.140019588629972e-17,
+   "D1_max_abs_kappa_per_m": 1.0076632861455437e-06,
+   "D1_pass": 0.0,
+   "D2": {
+    "E0_J": 8.251167885566299e-10,
+    "E_end_J": 2.336117293825338e-14,
+    "E_end_frac": 2.8312565278327317e-05,
+    "n_rises": 0,
+    "max_rise_frac": -1.6256788015345514e-08,
+    "centroid_move_L": 0.00833179145962847,
+    "t_end_s": 9.999999999999897,
+    "pass": true,
+    "E_half_time_s": 0.098
+   },
+   "D2_flipped_control": {
+    "E0_J": 8.251167885566299e-10,
+    "E_end_J": 1.6260415102194467e-06,
+    "E_end_frac": 1970.680433086167,
+    "n_rises": 33,
+    "max_rise_frac": 1112.4981072644214,
+    "centroid_move_L": 0.07338967577789174,
+    "t_end_s": 0.03300000000000002,
+    "pass": false
+   },
+   "D3": {
+    "E_peak_J": 4.967309288376557e-10,
+    "t_peak_s": 0.051000000000000004,
+    "mean_kappa_at_peak_per_mm": 5.979814080507996,
+    "E_end_frac_of_peak": 0.00011560961871867763,
+    "max_abs_kappa_end_per_mm": 0.04783817222082831,
+    "bends_dorsal": true,
+    "pass": true
+   }
+  },
+  "water": {
+   "D1_displacement_m": 2.55178130704973e-16,
+   "D1_max_abs_kappa_per_m": 2.7284841053187847e-09,
+   "D1_pass": 0.0,
+   "D2": {
+    "E0_J": 8.251167885566299e-10,
+    "E_end_J": 4.4523031330097863e-23,
+    "E_end_frac": 5.395967207015826e-14,
+    "n_rises": 0,
+    "max_rise_frac": 1.5185882335770395e-13,
+    "centroid_move_L": 0.0121576795401756,
+    "t_end_s": 9.999999999999897,
+    "pass": true,
+    "E_half_time_s": 0.002
+   },
+   "D2_flipped_control": {
+    "E0_J": 8.251167885566299e-10,
+    "E_end_J": 1.5998780002226839e-06,
+    "E_end_frac": 1938.9715764011266,
+    "n_rises": 8,
+    "max_rise_frac": 1193.0021844081718,
+    "centroid_move_L": 1.2101411106166087,
+    "t_end_s": 0.008,
+    "pass": false
+   },
+   "D3": {
+    "E_peak_J": 7.867853541947663e-09,
+    "t_peak_s": 0.011,
+    "mean_kappa_at_peak_per_mm": 23.88558729738252,
+    "E_end_frac_of_peak": 1.8624439779542486e-15,
+    "max_abs_kappa_end_per_mm": 1.4281908988778014e-12,
+    "bends_dorsal": true,
+    "pass": true
+   }
+  },
+  "wall_s": 5.8784308433532715
+ }
+}
