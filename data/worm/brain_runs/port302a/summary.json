@@ -1,0 +1,34 @@
+{
+ "seed": 1,
+ "tstop_ms": 6000.0,
+ "sign_rule": "transmitter",
+ "stim_nA": 0.02,
+ "stim_cells": [
+  "ALML",
+  "ALMR",
+  "AVM",
+  "PLML",
+  "PLMR"
+ ],
+ "stim_window_ms": [
+  2000,
+  4000
+ ],
+ "n_cells": 398,
+ "n_neurons": 302,
+ "n_muscles": 96,
+ "n_segments": 48202,
+ "connections": {
+  "syn": 4898,
+  "gj": 2094,
+  "syn_nmj": 552,
+  "syn_mn": 175
+ },
+ "n_syn_made_inhibitory": 341,
+ "build_s": 16.3,
+ "sim_s": 42.3,
+ "wall_s_per_bio_s": 7.06,
+ "maxrss_MB": 888,
+ "aborted": null,
+ "dt_ms": 0.5
+}

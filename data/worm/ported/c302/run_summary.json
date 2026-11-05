@@ -1,0 +1,110 @@
+{
+  "task": "Port OpenWorm c302 full-network (302 neurons + 95 muscles) C. elegans simulation, as published, run in NEURON, parameters/connections extracted to CSV.",
+  "run_date": "2026-11-05",
+  "machine": "backhouse (Windows PC, WSL2 Ubuntu, user greff); work confined to ~/worm-port/c302/",
+  "software_versions": {
+    "c302": "0.12.1",
+    "cect": "0.3.5",
+    "pyneuroml": "1.3.22",
+    "libNeuroML (python package 'neuroml')": "0.6.7",
+    "jNeuroML": "0.14.0",
+    "neuron (python package)": "9.0.2",
+    "java": "openjdk 21.0.12.1 (OpenJDK Runtime Environment, build 21.0.12.1+1-1-24.04.4-Ubuntu)",
+    "owmeta": "not installed (c302 proceeds without it; owmeta-cache JSON used instead for morphology placement)",
+    "owmeta_core": "not installed"
+  },
+  "parameter_set": "C2 (single-compartment HH-like conductance-based cells; graded/analogue chemical synapses; electrical gap junctions; muscle-specific NMJ synapse components via custom_muscle_components.xml). Chosen because c302's own runAndPlot.py documents -fullC1 and -fullC2 as the two options for the complete network, and C2 has muscle-specific NMJ parameterisation C1 lacks.",
+  "network_config": "c302_Full.py setup('C2', generate=True, duration=1000, dt=0.05, target_directory='examples', verbose=True)",
+  "connectivity_data_source": "cect.readers.SpreadsheetDataReader, reading CElegansNeuronTables.xls (bundled with cect). IMPORTANT CAVEAT: cect's own READER_DESCRIPTION string for this reader states verbatim: 'legacy dataset (based on White_whole) used in the past in OpenWorm. Only included here for reference! Do not use!' This is the reader c302's default Full-network generation path actually invokes; it is NOT the Cook 2019 adjacency data (cect.Cook2019HermReader exists as an alternative reader but is not what generate() used here). Treat all connectivity counts in c302_connections.csv as coming from this legacy/flagged-as-deprecated source, not from Cook 2019.",
+  "cells_generated": 302,
+  "muscles_generated": 95,
+  "muscle_name_list_example": "MDL01-MDL24 (24), MDR01-MDR24 (24), MVL01-MVL23 (23), MVR01-MVR24 (24) = 95 total; dorsal/ventral, left/right body-wall muscle numbering, consistent with the standard WormAtlas/White et al. muscle naming scheme used throughout c302 and CeNGEN-adjacent worm literature (same root convention as Cook 2019's body-wall muscle names, e.g. Cook 2019 dBWML1..24 etc. map 1:1 in position/number to c302's MDL/MVL 01..24 by dorsal/ventral left/right position, though no explicit c302-authored lookup table confirming an exact id correspondence was found in this install -- treat the mapping as positional/by-convention, not as a verified cect/c302 crosswalk).",
+  "generated_file_sizes_bytes": {
+    "LEMS_c302_C2_Full.xml": 97275,
+    "c302_C2_Full.net.nml": 1556311,
+    "cell_C.xml": 4961,
+    "custom_muscle_components.xml": 12791,
+    "custom_synapses.xml": 12339
+  },
+  "network_topology_counts": {
+    "populations": 397,
+    "population_breakdown": "302 GenericNeuronCell + 95 GenericMuscleCell",
+    "electricalProjection_elements": 1084,
+    "continuousProjection_elements": 2831,
+    "total_connections_extracted": 3915,
+    "connection_breakdown": "1084 electrical (all neuron-neuron) + 2831 chemical (2079 excitatory neuron-neuron + 200 inhibitory neuron-neuron + 428 excitatory NMJ (neuron-muscle) + 124 inhibitory NMJ (neuron-muscle))",
+    "neuron_to_muscle_electrical_connections_found": 0,
+    "muscle_to_muscle_electrical_connections_found": 0,
+    "note": "neuron_to_muscle_elec_syn and muscle_to_muscle_elec_syn gap-junction components are defined with nonzero (neuron-muscle) or zero (muscle-muscle, by design) conductance in parameters_C2.py but 0 actual connections of either kind exist in the generated network; only neuron-neuron gap junctions are instantiated."
+  },
+  "stimulus": {
+    "cells_stimulated": ["PLML", "PLMR"],
+    "current_component": "offset_current (PulseGenerator)",
+    "amplitude_pA": 5,
+    "delay_ms": 50,
+    "duration_ms": 900,
+    "label_in_c302_source": "c302 itself labels this bioparameter group with source 'KnownError' at the C2-default level and overrides it specifically for the Full config in c302_Full.py; the override amplitude/delay/duration above are what actually ran. Not a physiological input; c302 calls this group 'unphysiological_offset_current' in its own naming."
+  },
+  "exact_commands_run": [
+    "On the Mac side: ssh backhouse 'wsl -d Ubuntu -- bash -s' < <local script file>  (used for every remote step; nested quoting under cmd.exe breaks, so scripts were always piped via stdin)",
+    "export PATH=$HOME/.local/bin:$PATH && taskset -c 0-3 uv pip install neuron==9.0.2   (installed into /home/greff/worm-tools/c302_env)",
+    "cd /home/greff/worm-port/c302 && python3 genfull.py   # wraps: from c302 import c302_Full; c302_Full.setup('C2', generate=True, duration=1000, dt=0.05, target_directory='examples', verbose=True)  -> generates examples/c302_C2_Full.net.nml, LEMS_c302_C2_Full.xml, cell_C.xml, custom_muscle_components.xml, custom_synapses.xml",
+    "cd /home/greff/worm-port/c302/examples && export NEURON_HOME=/home/greff/worm-tools/c302_env && /usr/bin/time -v taskset -c 0-3 pynml LEMS_c302_C2_Full.xml -neuron -run -nogui   # generates all .mod/.hoc files, compiles them, runs the NEURON simulation; detached via setsid nohup job_run_neuron2.sh > /dev/null 2>&1 < /dev/null & ; sleep 3",
+    "cd /home/greff/worm-port/c302/examples && python3 analyze.py   # loads c302_C2_Full.dat and c302_C2_Full.muscles.dat, computes per-cell min/max/mean V, NaN/out-of-range checks, writes voltage_stats.csv and traces.png",
+    "cd /home/greff/worm-port/c302/examples && python3 extract.py   # regex-parses c302_C2_Full.net.nml into cells_extract.csv and connections_extract2.csv"
+  ],
+  "threading_and_resource_hygiene": {
+    "thread_env_vars_set_on_every_heavy_command": "OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 NUMBA_NUM_THREADS=4 NUMEXPR_NUM_THREADS=4",
+    "cpu_affinity": "taskset -c 0-3 on both the neuron==9.0.2 install and the pynml -neuron -run command",
+    "uptime_checked_before_heavy_steps": true,
+    "uptime_at_run_time": "load average around 18-22 on a shared machine; not caused by this job (job itself ran single taskset-pinned process at 142% CPU of its 4-core budget)",
+    "uptime_at_finish": "15:27:26 up 12 days, 15:50, load average: 22.21, 22.29, 18.17 (background load from other users/jobs on the shared machine, not from this task)"
+  },
+  "timing": {
+    "network_setup_wall_seconds": 8.632050,
+    "neuron_simulation_wall_seconds": 9.119361,
+    "neuron_simulation_wall_minutes": 0.151989,
+    "results_saving_wall_seconds": 11.313381,
+    "full_pynml_command_wall_clock": "0:51.00 (51 seconds, /usr/bin/time -v elapsed)",
+    "full_pynml_command_user_cpu_seconds": 66.87,
+    "full_pynml_command_sys_cpu_seconds": 5.86,
+    "full_pynml_command_percent_cpu": "142%",
+    "full_pynml_command_max_rss_kb": 994172,
+    "exit_status": 0
+  },
+  "simulation_parameters": {
+    "duration_ms": 1000,
+    "dt_ms": 0.05,
+    "random_seed": 123456789,
+    "backend": "jNeuroML_NEURON (pynml -neuron -run)"
+  },
+  "fix_required": {
+    "issue": "jNeuroML's bundled Java ProcessManager could not auto-locate the pip-wheel NEURON install (searches a small set of known install layouts, doesn't recognise a venv-relative nrniv).",
+    "error_message": "Could not find NEURON home directory!",
+    "fix": "export NEURON_HOME=/home/greff/worm-tools/c302_env   (the venv root, containing bin/nrniv and bin/nrnivmodl) before invoking pynml."
+  },
+  "output_data_sanity_checks": {
+    "neurons_nan_present": false,
+    "neurons_min_mV": -63.14,
+    "neurons_max_mV": 4.36,
+    "muscles_nan_present": false,
+    "muscles_min_mV": -29.50,
+    "muscles_max_mV": -1.90,
+    "out_of_range_(-100_to_60mV)_count": 0,
+    "qualitative_finding": "No numerical blow-up or NaN anywhere across 302 neurons and 95 muscles. But with only PLML/PLMR current-injected (the Full config's built-in test stimulus), activity does not show rhythmic/oscillatory locomotor-like bursting: essentially the whole network depolarises into one broad, roughly saturating plateau rather than distinct per-cell dynamics. This is consistent with the network being correctly wired and excitable, but it is not evidence of a validated locomotor pattern -- the stimulus itself is labelled unphysiological by c302's own source."
+  },
+  "deliverable_files_written_on_mac": [
+    "data/worm/ported/c302/c302_parameters.csv (95 rows)",
+    "data/worm/ported/c302/c302_connections.csv (3915 rows)",
+    "data/worm/ported/c302/c302_cells.csv (397 rows)",
+    "data/worm/ported/c302/c302_voltage_stats.csv (397 rows, supplementary sanity-check data)",
+    "data/worm/ported/c302/traces.png",
+    "data/worm/ported/c302/run_summary.json (this file)",
+    "docs/worm/research/c302_port.md"
+  ],
+  "licence_notes": {
+    "c302": "MIT licence",
+    "pyNeuroML / jNeuroML": "LGPL v3"
+  },
+  "backhouse_files_left_in_place": "All generated NeuroML, LEMS, hoc, mod, and raw .dat output files were left on backhouse under /home/greff/worm-port/c302/examples/ (not deleted), per instructions. See the final message / c302_port.md for the path and size listing."
+}

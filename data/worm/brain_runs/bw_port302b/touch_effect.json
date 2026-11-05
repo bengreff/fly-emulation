@@ -1,0 +1,70 @@
+{
+ "run": "bw_port302b",
+ "n_neurons_moved_1mV": 9,
+ "n_neurons_moved_5mV": 0,
+ "n_muscles_moved_1mV": 0,
+ "top10": [
+  [
+   "BDUR",
+   3.05
+  ],
+  [
+   "BDUL",
+   2.53
+  ],
+  [
+   "FLPR",
+   2.12
+  ],
+  [
+   "CEPVL",
+   1.81
+  ],
+  [
+   "ADEL",
+   1.56
+  ],
+  [
+   "ADER",
+   1.49
+  ],
+  [
+   "OLQDL",
+   1.26
+  ],
+  [
+   "URYDL",
+   1.24
+  ],
+  [
+   "AINL",
+   1.13
+  ],
+  [
+   "CEPDL",
+   0.95
+  ]
+ ],
+ "touch_cells": [
+  [
+   "ALML",
+   17.97
+  ],
+  [
+   "ALMR",
+   18.58
+  ],
+  [
+   "AVM",
+   17.86
+  ],
+  [
+   "PLML",
+   84.39
+  ],
+  [
+   "PLMR",
+   83.07
+  ]
+ ]
+}

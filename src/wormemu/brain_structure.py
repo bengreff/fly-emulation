@@ -87,6 +87,21 @@ def cengen_class(name: str, classes: set[str], awc_on: str = "L") -> str | None:
     return None
 
 
+# --- BAAIWorm muscle cell -> body-wall muscle name (interface.BWM_NAMES) -------------------------------------------
+BAAIWORM_NO_SUCH_MUSCLE = "MCVL24"
+
+
+def bwm_name(baai: str) -> str | None:
+    """MCDL01 -> dBWML1. None for MCVL24: BAAIWorm builds 4 x 24 muscles but the worm has 95 (no ventral-left 24;
+    Cook 2019 has no vBWML24). Checked 5 Nov against Cook 2019 neuron->muscle edges: of BAAIWorm's 552 placed NMJ
+    pairs, 337 are Cook edges under this map, 309 with the index shifted by -1, 278 by +1, 26 with D and V swapped."""
+    if baai == BAAIWORM_NO_SUCH_MUSCLE:
+        return None
+    m = re.fullmatch(r"MC([DV])([LR])(\d\d)", baai)
+    assert m, baai
+    return f"{m.group(1).lower()}BWM{m.group(2)}{int(m.group(3))}"
+
+
 # --- the structure object ----------------------------------------------------------------------------------------
 NEURON_CATS = {"sensory", "interneuron", "motorneuron", "neuron"}
 TRANSMITTERS = ["acetylcholine", "glutamate", "gaba", "dopamine", "serotonin", "tyramine", "octopamine", "betaine"]

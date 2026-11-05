@@ -1,0 +1,599 @@
+- id: literature_overrides
+  name: 'Literature wins: ported values outside a literature range are clipped to it'
+  layer: policy
+  status: have
+  toggle: literature_overrides
+  neutral: off = BAAIWorm values as published
+  default: 'on'
+  source: docs/worm/research/param_ranges.csv
+  notes: clips neuron cm (A1), leak reversal (A5), Ra (A6), muscle leak reversal (F1), excitatory synapse reversal (B5), synaptic decay (B3), conductance per EM synapse (B4) and per EM gap junction (C4;
+    C4 itself is guessed, checked against the measured pair coupling C2); clipped elements are labelled guessed. Also fixes the Ca units bug (ca_pool notes) and sets celsius 20
+  absent_reason: ''
+- id: passive
+  name: Passive membrane (soma and neurite)
+  layer: cell
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: BAAIWorm assigns one of 5 parameter sets to every neuron (sizes [89, 82, 80, 43, 8]); values/<id>.csv column set_id
+  absent_reason: ''
+- id: muscle_passive
+  name: Body-wall muscle passive membrane (BAAIWorm muscle set)
+  layer: muscle
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'BAAIWorm muscles are passive (all channel densities 0). BAAIWorm builds 96 cells; the model uses 95 (MCVL24 dropped: the worm has no ventral-left 24). Element names are interface.BWM_NAMES (brain_structure.bwm_name:
+    MCDL01 -> dBWML1, checked against Cook 2019 NMJ edges)'
+  absent_reason: ''
+- id: ch_shl1
+  name: shl1 channel (shl-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 140 neurons have a ported density but no detected shl-1; 0 express it with ported density 0'
+  absent_reason: ''
+- id: ch_shk1
+  name: shk1 channel (shk-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 146 neurons have a ported density but no detected shk-1; 52 express it with ported density 0'
+  absent_reason: ''
+- id: ch_kvs1
+  name: kvs1 channel (kvs-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 76 neurons have a ported density but no detected kvs-1; 94 express it with ported density 0'
+  absent_reason: ''
+- id: ch_egl2
+  name: egl2 channel (egl-2)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 158 neurons have a ported density but no detected egl-2; 76 express it with ported density 0'
+  absent_reason: ''
+- id: ch_egl36
+  name: egl36 channel (egl-36)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 179 neurons have a ported density but no detected egl-36; 18 express it with ported density 0'
+  absent_reason: ''
+- id: ch_kqt3
+  name: kqt3 channel (kqt-3)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 242 neurons have a ported density but no detected kqt-3; 0 express it with ported density 0'
+  absent_reason: ''
+- id: ch_egl19
+  name: egl19 channel (egl-19)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 9 neurons have a ported density but no detected egl-19; 43 express it with ported density 0'
+  absent_reason: ''
+- id: ch_unc2
+  name: unc2 channel (unc-2)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 9 neurons have a ported density but no detected unc-2; 207 express it with ported density 0'
+  absent_reason: ''
+- id: ch_cca1
+  name: cca1 channel (cca-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 47 neurons have a ported density but no detected cca-1; 86 express it with ported density 0'
+  absent_reason: ''
+- id: ch_slo1_egl19
+  name: slo1_egl19 channel (slo-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 7 neurons have a ported density but no detected slo-1; 165 express it with ported density 0'
+  absent_reason: ''
+- id: ch_slo1_unc2
+  name: slo1_unc2 channel (slo-1)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 7 neurons have a ported density but no detected slo-1; 68 express it with ported density 0'
+  absent_reason: ''
+- id: ch_slo2_egl19
+  name: slo2_egl19 channel (slo-2)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 28 neurons have a ported density but no detected slo-2; 80 express it with ported density 0'
+  absent_reason: ''
+- id: ch_slo2_unc2
+  name: slo2_unc2 channel (slo-2)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 22 neurons have a ported density but no detected slo-2; 117 express it with ported density 0'
+  absent_reason: ''
+- id: ch_kcnl
+  name: kcnl channel (kcnl-1, kcnl-2, kcnl-3, kcnl-4)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 6 neurons have a ported density but no detected kcnl-1/kcnl-2/kcnl-3/kcnl-4; 204 express it with ported density 0'
+  absent_reason: ''
+- id: ch_nca
+  name: nca channel (nca-1, nca-2)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 41 neurons have a ported density but no detected nca-1/nca-2; 34 express it with ported density 0'
+  absent_reason: ''
+- id: ch_irk
+  name: irk channel (irk-1, irk-2, irk-3)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 8 neurons have a ported density but no detected irk-1/irk-2/irk-3; 130 express it with ported density 0'
+  absent_reason: ''
+- id: expression_map
+  name: CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0)
+  layer: channel
+  status: have
+  toggle: expression_map
+  neutral: 'off'
+  default: 'off'
+  source: CeNGEN threshold 2 (Taylor et al. 2021)
+  notes: ''
+  absent_reason: ''
+- id: ca_nanodomain
+  name: Ca nanodomain at the channel mouth driving SLO-1/SLO-2 (Nicoletti et al. 2024)
+  layer: channel
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 80 Ca-channel constants inside the slo mods equal the egl19/unc2 values and are tied to those rows, not counted twice
+  absent_reason: ''
+- id: ca_pool
+  name: Intracellular Ca pool (cainternm)
+  layer: cell
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: 'units bug as published: cai is in uM in the mod but NEURON''s Nernst reads it as mM against cao 2 mM, so eca sits near +41 mV at rest instead of about +130 mV (measured on backhouse: eca 41.2
+    mV at cai 0.065). Fixed under literature_overrides (known value, literature wins): the outside Ca is entered as 2000 (uM, the same units as cai), cai starts at caeq 0.05 uM, celsius 20; eca then follows
+    Nernst at about +130 mV at rest (derived). literature_overrides off = as published'
+  absent_reason: ''
+- id: ions
+  name: Ion reversal potentials, outside Ca, temperature
+  layer: cell
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: NEURON defaults (BAAIWorm never sets them)
+  notes: ''
+  absent_reason: ''
+- id: syn_exc
+  name: Graded chemical synapse, excitatory (neuron_to_neuron_exc_syn; also NMJ and muscle-to-neuron)
+  layer: synapse
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: ''
+  absent_reason: ''
+- id: syn_inh
+  name: Graded chemical synapse, inhibitory (neuron_to_neuron_inh_syn; also NMJ and muscle-to-neuron)
+  layer: synapse
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: ''
+  absent_reason: ''
+- id: gap
+  name: Gap junctions (ohmic, symmetric)
+  layer: gap
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
+  notes: ''
+  absent_reason: ''
+- id: wiring
+  name: 'Connectome: Cook et al. 2019, every pair (wiring=cook), or BAAIWorm''s construction as published (wiring=baaiworm: tanh-compressed counts placed on segments in contact)'
+  layer: synapse
+  status: have
+  toggle: wiring
+  neutral: baaiworm = as published (port302a)
+  default: cook
+  source: Cook et al. 2019 SI 5 (data/worm/structure); BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) config2detailed
+  notes: 'Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section 3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). BAAIWorm''s neuron-neuron
+    counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical and 599 gap pairs (single-synapse
+    pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges, Cook has 956 pairs from 162 neurons)
+    and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for all of it: BAAIWorm''s sites where
+    it placed any, else one site on the nearest segment pair'
+  absent_reason: ''
+- id: bwm_coupling
+  name: Gap junctions between neighbouring body-wall muscles (UNC-9), Cook 2019 pairs
+  layer: muscle
+  status: have
+  toggle: bwm_coupling
+  neutral: off (BAAIWorm and c302 have no muscle coupling)
+  default: 'off'
+  source: Cook et al. 2019 pairs; strength guessed inside Liu et al. 2013 (F11)
+  notes: ''
+  absent_reason: ''
+- id: syn_sign
+  name: Synapse sign by presynaptic transmitter (GABA-only presynaptic neuron -> inhibitory)
+  layer: synapse
+  status: have
+  toggle: sign_rule
+  neutral: allexc = BAAIWorm as published (every synapse excitatory)
+  default: transmitter
+  source: Wang et al. 2024 transmitter atlas, CeNGEN markers as fallback
+  notes: ''
+  absent_reason: ''
+- id: receptor_sign
+  name: 'Synapse sign by postsynaptic receptor: inhibitory where the postsynaptic class expresses more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel
+    ones, in summed CeNGEN TPM (guessed rule); the transmitter rule where it expresses neither'
+  layer: synapse
+  status: have
+  toggle: receptor_sign
+  neutral: off = the presynaptic transmitter rule
+  default: 'off'
+  source: CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
+  notes: 3262 of 3709 pairs from receptor expression; 1125 differ from the transmitter rule
+  absent_reason: ''
+- id: innexin_identity
+  name: Gap junction conductance and rectification by innexin pair
+  layer: gap
+  status: absent
+  toggle: ''
+  neutral: ''
+  default: ''
+  source: Bhattacharya et al. 2019 innexin atlas (not extracted)
+  notes: ''
+  absent_reason: per-pair innexin identity not mapped
+- id: morphology
+  name: Cell morphologies (NEURON hoc, 3D points with diameters)
+  layer: cell
+  status: have
+  toggle: ''
+  neutral: ''
+  default: 'on'
+  source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) model/*.hoc (from the OpenWorm / Virtual Worm NeuroML cells)
+  notes: ''
+  absent_reason: ''
+- id: muscle_active
+  name: Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)
+  layer: muscle
+  status: partial
+  toggle: muscle_active
+  neutral: 'off'
+  default: 'off'
+  source: c302 parameters_C2 (OpenWorm, MIT)
+  notes: parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)
+  absent_reason: ''
+- id: sens_salt
+  name: Salt sensing (ASEL ON, ASER OFF)
+  layer: sensory
+  status: partial
+  toggle: sens_salt
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_odor_attract
+  name: Attractive odours (AWA ON; AWC OFF)
+  layer: sensory
+  status: partial
+  toggle: sens_odor_attract
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_repellent
+  name: Repellents and nociception (ASH, ADL, AWB, PHA/PHB)
+  layer: sensory
+  status: partial
+  toggle: sens_repellent
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_thermo
+  name: Thermosensation (AFD around T*)
+  layer: sensory
+  status: partial
+  toggle: sens_thermo
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_o2
+  name: Oxygen (URX/AQR/PQR rise, BAG fall)
+  layer: sensory
+  status: partial
+  toggle: sens_o2
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_co2
+  name: Carbon dioxide (BAG)
+  layer: sensory
+  status: partial
+  toggle: sens_co2
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_light
+  name: Light (LITE-1 in ASJ, ASK, ASH, AWB, ASI)
+  layer: sensory
+  status: partial
+  toggle: sens_light
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_food
+  name: Food cue at the mouth (ADF, ASI, ASJ, NSM)
+  layer: sensory
+  status: partial
+  toggle: sens_food
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_touch_gentle
+  name: Gentle touch (MEC-4 in ALM, AVM, PLM, PVM)
+  layer: sensory
+  status: partial
+  toggle: sens_touch_gentle
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_touch_harsh
+  name: Harsh and nose touch (PVD, FLP, ASH, OLQ, IL1)
+  layer: sensory
+  status: partial
+  toggle: sens_touch_harsh
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_tap
+  name: Plate tap (all touch receptor neurons)
+  layer: sensory
+  status: partial
+  toggle: sens_tap
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: sens_proprio
+  name: Proprioception (B-type stretch, DVA, SMD)
+  layer: sensory
+  status: partial
+  toggle: sens_proprio
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: muscle_ca
+  name: BWM membrane V -> Ca (lumped, passive muscles)
+  layer: muscle
+  status: partial
+  toggle: muscle_ca
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: muscle_activation
+  name: BWM Ca -> activation (Hill, rise/decay)
+  layer: muscle
+  status: partial
+  toggle: muscle_activation
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: peptides
+  name: Neuropeptide signalling by ligand-GPCR pair (well mixed)
+  layer: neuromodulation
+  status: partial
+  toggle: peptides
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: monoamines
+  name: Monoamine signalling (5-HT, DA, TA, OA; well mixed)
+  layer: neuromodulation
+  status: partial
+  toggle: monoamines
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: glia
+  name: Amphid sheath glia, lumped as a sensory gain
+  layer: glia
+  status: partial
+  toggle: glia
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: pharynx
+  name: Pharyngeal pumping oscillator (lumped)
+  layer: organ
+  status: partial
+  toggle: pharynx
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: defecation
+  name: Defecation motor programme clock (intestine)
+  layer: organ
+  status: partial
+  toggle: defecation
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: egg_laying
+  name: Egg-laying two-state circuit (lumped HSN/VC/vulval muscles)
+  layer: organ
+  status: partial
+  toggle: egg_laying
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: metabolism
+  name: Energy store (lumped)
+  layer: organ
+  status: partial
+  toggle: metabolism
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: gcamp
+  name: GCaMP observation model
+  layer: observation
+  status: partial
+  toggle: gcamp
+  neutral: 'off'
+  default: 'on'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: homeostasis
+  name: 'Homeostatic self-tuning: a slow bias current pulls each neuron''s V toward a target'
+  layer: plasticity
+  status: partial
+  toggle: homeostasis
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: slow_signalling
+  name: Hours-scale sensory adaptation (EGL-4, CMK-1), lumped as a slow gain drift
+  layer: plasticity
+  status: partial
+  toggle: slow_signalling
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: gap_rectification
+  name: Rectifying gap junctions (AVA-A class UNC-7/UNC-9)
+  layer: gap
+  status: partial
+  toggle: gap_rectification
+  neutral: 'off'
+  default: 'off'
+  source: lumped model in src/wormemu/brain_layers.py
+  notes: ''
+  absent_reason: ''
+- id: other_cells
+  name: Hypodermis, seam, excretory canal, coelomocytes, other glia
+  layer: organ
+  status: absent
+  toggle: ''
+  neutral: ''
+  default: ''
+  source: none
+  notes: ''
+  absent_reason: no lumped model yet; no INTERFACE channel needs them this week
