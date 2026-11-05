@@ -133,7 +133,7 @@ row("mw_damping_per_step", "MB4", "velocity factor per step", 0.9999, "", "", "p
 
 # ---- MB5 fluid
 row("mw_fluid_density", "MB5", "kg/m^3", 1000, 997, 999, "published", MW + " Worm.cpp",
-    "outside by 0.1-0.3% (negligible)", "bound is pure water at 20-25 C; M9 buffer not checked",
+    "near: 0.1-0.3% above pure water (negligible)", "bound is pure water at 20-25 C; M9 buffer not checked",
     bound_source="standard tables (measured)")
 row("mw_drag_model", "MB5", "model", "quadratic: 0.5 rho A Cd(aoa) |v|^2, Cd = sin^2(aoa), plus a lift table",
     "", "", "published", MW + " Worm::SetExternalForce", "outside (wrong regime)",

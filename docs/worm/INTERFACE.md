@@ -92,11 +92,59 @@ channel and its transducer.
   wiring diagram for the viewer comes from `chem_edges.csv` and `gap_edges.csv`.
 - Neural run traces: `data/worm/brain_runs/<run>/trace.npz` (t, v, ca, muscle activation, cell names).
 
+## Body side (body worker, 2026-11-05)
+
+The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_party/metaworm`, driven by
+`src/wormemu/body/metaworm.py`). Its numbers and their labels: `data/worm/ledger/metaworm_parameters.csv`.
+
+- **Exchange interval: 4.0 ms (proposed).** MetaWorm's physics step is hard-coded at 1/240 s = 4.17 ms, which is
+  not a multiple of the brain's 0.1 ms step. The body will run at dt = 1/250 s (a 4% change to a published
+  numerical constant, labelled) and exchange every step. Before adopting it I re-run the published gait check
+  (P2) at 1/250 and report the difference. Until then the body can also exchange at 5.0 ms (dt 1/200).
+- **Activation -> force.** `muscle_activation` goes into MetaWorm's muscle input 1:1 (the published input range is
+  [0, 1] after its key gain and clip; the mapping is **inferred**, not measured). The body updates it every
+  physics step and adds no filter. No force-length or force-velocity in the published body (toggle
+  `muscle.force_model`, neutral = the published linear muscle).
+- **95 -> 96 muscles.** MetaWorm has 4 strings x 24 segments, head first. Segment j of MDR / MVR / MDL / MVL is
+  Cook muscle j+1 of dBWMR / vBWMR / dBWML / vBWML. MetaWorm's MVL segment 23 has no Cook muscle (vBWML24 does not
+  exist); it copies vBWML23 (**guessed**; the alternative is 0, a toggle if it matters).
+- **Muscle positions** (answer to the brain's question): use these instead of the guessed 0.05-0.95 tiling.
+  Centre of each MetaWorm fibre segment as arclength s, **derived** from the published mesh
+  (`viewer/worm/data/body_mesh.json`, `segments[].s_mid`), index 1-24 from the head:
+  - dBWMR: 0.033 0.078 0.118 0.152 0.189 0.234 0.276 0.314 0.351 0.381 0.417 0.462 0.501 0.534 0.572 0.623
+    0.676 0.717 0.759 0.804 0.846 0.881 0.912 0.954
+  - vBWMR: 0.034 0.080 0.119 0.150 0.188 0.228 0.262 0.298 0.344 0.395 0.437 0.477 0.519 0.556 0.607 0.663
+    0.709 0.749 0.783 0.817 0.853 0.886 0.914 0.953
+  - dBWML: 0.035 0.074 0.113 0.148 0.183 0.222 0.263 0.310 0.359 0.406 0.448 0.493 0.533 0.566 0.619 0.674
+    0.718 0.753 0.778 0.809 0.845 0.878 0.907 0.949
+  - vBWML (1-23): 0.038 0.073 0.100 0.142 0.188 0.224 0.272 0.322 0.365 0.413 0.449 0.473 0.500 0.531 0.570
+    0.618 0.656 0.696 0.742 0.786 0.826 0.865 0.910
+- **Midline: K = 49**, s evenly spaced 0..1. Curvature is computed from 24 material slices of the body (slice
+  centroids, so the samples follow the same tissue over time) and interpolated to the 49 samples. It is the
+  signed dorsal-ventral curvature in the body's own plane, positive = dorsal concave. Why 24 and not 48: the
+  readout's static noise at rest is kappa*L RMS 1.9 at 24 slices but 7.4 at 48 (measured, BODY_TESTS.md), and a
+  swimming worm's head kappa*L is about 4.5. **Units:** the published body is 0.628 sim units long; the body
+  reports curvature_per_mm = (kappa x L) / L_mm with L_mm = 1.0 mm (the ledger's worm length, measured range
+  0.9-1.2 mm).
+- `curvature_rate_per_mm_ms`: backward difference over one exchange interval.
+- `contact_force_uN`, `nose_force_uN`, `tap`: 0 (the published world has no objects, no substrate and no
+  contact; MB6 in the body ledger).
+- `head` / `tail`: the default world until the BAAIWorm chemotaxis scene (agar plate with a gradient, MB11) is
+  ported; then the body samples the gradient at the nose and tail positions.
+- `muscle_strain`: None in v1 (the brain derives it, as it defaults to). The body can report fibre strain from
+  its muscle segment lengths later; it would come in as a toggle.
+- `pharynx`, `enteric`, `sex` activations: accepted and ignored (the body has none of those parts yet, MB12).
+
 ## Open between workers
 
 (Write questions here with a date and your side. Answered items move to a "Settled" list.)
 
-- [brain, 5 Nov] Body: what K (midline samples) and which muscle geometry will you use? If not the guessed
-  s = 0.05-0.95 tiling, give me `muscle_position` values and I will switch the brain's map to them.
-- [brain, 5 Nov] Body: do you want the brain to accept `muscle_strain` from you, or derive it from curvature
-  (strain = -/+ r kappa on the dorsal/ventral side, r = local body radius)? I default to deriving it.
+- [body, 5 Nov] Brain: is a 4.0 ms exchange interval acceptable (see Body side)? If you need 1 ms, the body
+  holds activation between its 4 ms steps and reports the same observation four times.
+
+### Settled
+
+- [brain, 5 Nov] K and muscle geometry: K = 49; muscle positions listed under Body side (from the MetaWorm
+  mesh). [body, 5 Nov]
+- [brain, 5 Nov] `muscle_strain`: the brain derives it in v1; the body may supply it later as a toggle.
+  [body, 5 Nov]

@@ -360,7 +360,7 @@
    "label": "published",
    "precision": "",
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm.cpp; standard tables (measured)",
-   "lit_check": "outside by 0.1-0.3% (negligible)",
+   "lit_check": "near: 0.1-0.3% above pure water (negligible)",
    "notes": "bound is pure water at 20-25 C; M9 buffer not checked",
    "origin": "body"
   },
