@@ -21,6 +21,10 @@ muscle_active on = c302 C2's body-wall muscle membrane (third_party/c302, MIT; B
 fast K and Ca currents with a Ca pool) in place of BAAIWorm's passive muscle, on the same 5 x 20 um cylinder, every
 value from the ledger's c302_* rows; the muscles start at c302's -28 mV with no Ca.
 
+gap_rectification on = the gap junctions between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB rectify (nmodl/rectgap.mod):
+the template conductance when current flows from the motor neuron into the interneuron (Liu et al. 2017), divided
+by gap_rect_ratio the other way.
+
 NEURON is one simulator per process: build one Brain per process.
 """
 from __future__ import annotations
@@ -50,6 +54,7 @@ from wormemu.interface import (BWM_NAMES, ENTERIC_MUSCLES, PHARYNX_MUSCLES, SEX_
 ROOT = Path(__file__).resolve().parents[2]
 BAAI = ROOT / "third_party" / "baaiworm"
 C302 = ROOT / "third_party" / "c302"
+OWN_MODS = Path(__file__).resolve().parent / "nmodl"
 MODEL = ROOT / "data" / "worm" / "model"
 PORT302A = ROOT / "data" / "worm" / "brain_runs" / "port302a" / "connections.csv"
 DT_MS = 0.5                     # BAAIWorm's step
@@ -75,6 +80,10 @@ MUSCLE_ACTIVE = {               # c302 mod: {range variable: ledger row}; the re
 MUSCLE_EREV = {"c302_muscle_k_slow_erev": -30.0, "c302_muscle_k_fast_erev": -30.0,   # fixed inside the c302 mods
                "c302_muscle_ca_boyle_erev": 0.0}                                       # (INITIAL, not reachable)
 RHO_SI_TO_MOD = 1e-8            # mol / (m A s) -> umol / (cm nA ms), the mod's unit (derived)
+# gap_rectification: AVA-class interneuron (UNC-7 side) to A- and B-type motor neuron (UNC-9 side) junctions pass
+# current into the interneuron (Liu et al. 2017, measured for AVA-VA5; the other classes by the ledger's C3 range)
+RECT_INTO = re.compile(r"(AVA|AVB|AVD|AVE|PVC)[LR]")
+RECT_FROM = re.compile(r"(DA|VA|DB|VB)\d\d")
 CHANNELS = ["slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "slo2_unc2", "irk", "egl36", "egl19",
             "cca1", "shk1", "slo2_egl19", "nca", "kcnl", "cainternm"]          # BAAIWorm's insert order
 GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2"}
@@ -90,7 +99,7 @@ def _neuron():
     if _h is not None:
         return _h
     from neuron import h
-    mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod"))
+    mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) + sorted(OWN_MODS.glob("*.mod"))
     tag = hashlib.sha1(b"".join(m.name.encode() + m.read_bytes() for m in mods)).hexdigest()[:12]
     d = Path(os.environ.get("WORMEMU_NRNMECH", Path.home() / ".cache" / "wormemu" / "nrnmech")) / tag
 
@@ -232,9 +241,6 @@ class Brain:
             assert k in self.toggles, f"unknown toggle {k}"
             self.toggles[k] = {True: "on", False: "off"}.get(v, v)
         tg = self.toggles
-        for k in ("gap_rectification",):
-            if tg[k] == "on":
-                raise NotImplementedError(f"{k}: not wired into the NEURON build yet")
         self.lit = tg["literature_overrides"] == "on"
         self.mact = tg["muscle_active"] == "on"
         self.h = h = _neuron()
@@ -437,14 +443,20 @@ class Brain:
         self.conn.append(pp)
         self.placed[kind + ("_inh" if inh else "")] += 1
 
-    def _gap(self, seg_a, seg_b, g_uS, kind):
+    def _gap(self, seg_a, seg_b, g_uS, kind, into=None, ratio=1.0):
+        """One gap junction between two segments. `into` (seg_a or seg_b): a rectifying junction that passes
+        current into that side at g_uS and the other way at g_uS / ratio (gap_rectification)."""
         h = self.h
         for x, y in ((seg_a, seg_b), (seg_b, seg_a)):
-            pp = h.gapjunction(x)
+            if into is None:
+                pp = h.gapjunction(x)
+            else:
+                pp = h.rectgap(x)
+                pp.ratio, pp.side = ratio, 1.0 if x is into else -1.0
             h.setpointer(y._ref_v, "vpre", pp)
             pp.weight = g_uS
             self.conn.append(pp)
-        self.placed[kind] += 1
+        self.placed[kind if into is None else kind + "_rect"] += 1
 
     def _g_syn(self, inh):
         sk = "inh" if inh else "exc"
@@ -507,6 +519,7 @@ class Brain:
             for i, j in sites:
                 self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0], w, inh, "syn_nn")
         inx = self.toggles.get("innexin_identity") == "on"
+        rect = self.toggles.get("gap_rectification") == "on"
         for e, g in sv("gap_strength_per_pair").items():
             a, b = e.split("-")
             if a not in self.idx or b not in self.idx:
@@ -518,8 +531,13 @@ class Brain:
             key = tuple(sorted((a, b)))
             sites = sorted(gap_sites.get(key, ())) or [self._nearest(*key)]
             w = g * n_em["gap_strength_per_pair"][e] / len(sites) / 1000.0
+            into = next((n for n in key if RECT_INTO.fullmatch(n)), None) if rect else None
+            if into is not None and not any(RECT_FROM.fullmatch(n) for n in key):
+                into = None
             for i, j in sites:
-                self._gap(self.segs[self.idx[key[0]]][i][0], self.segs[self.idx[key[1]]][j][0], w, "gap_nn")
+                sa, sb = self.segs[self.idx[key[0]]][i][0], self.segs[self.idx[key[1]]][j][0]
+                self._gap(sa, sb, w, "gap_nn", into=None if into is None else (sa if into == key[0] else sb),
+                          ratio=sv("gap_rect_ratio") if into else 1.0)
         for e, g in sv("nmj_strength_per_pair").items():
             a, b = e.split(">")
             if a not in self.idx or b not in self.idx:

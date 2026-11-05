@@ -412,3 +412,47 @@ choices, or measured in other units (Wen 2012's 0.62 is curvature per curvature,
 - **Result (D8b, `data/worm/brain_runs/bw_D8b/`, 6 s):** 105 neurons above -20 mV at 6 s (D8: 100); touch moves 46
   neurons by 1 mV or more (D8: 44); 40 muscles above -20 mV (unchanged). As predicted, a few. D8b is the default
   configuration from here on.
+
+## 7. gap_rectification (pre-registration)
+
+Pre-registered 2026-11-05 17:44 CST, before any run. The toggle (off by default) makes the 86 Cook gap junction
+pairs between AVA, AVB, AVD, AVE, PVC (38, 31, 1, 1, 15 pairs) and DA, VA, DB, VB rectify, in
+`src/wormemu/nmodl/rectgap.mod` (ours: BAAIWorm's junction equation with a direction). Direction is measured: in
+paired in-situ recordings of AVA and VA5, current passes only when VA5 is the more depolarised cell, from the motor
+neuron (UNC-9 side) into AVA (UNC-7 side) (Liu, Chen, Mailler and Wang 2017, Nat Commun 8:14818). Starich et al.
+2009 (oocytes) gives the same polarity and states it for AVB to B; extending it to AVD, AVE and PVC is the ledger's
+class rule, inferred. Magnitude: no paper gives a ratio, so `gap_rect_ratio` stays at its inferred template, 4
+(range 2-10). Choice (guessed): the preferred direction keeps the template conductance and the other direction gets
+template / ratio.
+
+- **R1 (neutral):** on with `gap_rect_ratio` = 1 is bit-identical to off on the test brain (largest |dV| = 0).
+- **R2 (direction):** AVAL with DA01 and VA01 only, chemical synapses removed (weights 0), 0.4 s steps of +20 pA into
+  one cell at a time. Coupling coefficient CC = (change in the other cell's V) / (change in the injected cell's V).
+  Bar: with the toggle on, CC from motor neuron to AVAL is at least 0.95 of its off value, and CC from AVAL to the
+  motor neuron is at most 0.6 of its off value. Falsifier: either fails.
+- **R3 (report-only):** D8b plus `gap_rectification=on`, 6 s, with no-stim control: neurons above -20 mV at 6 s,
+  touch effect.
+- **C2 (report-only):** the 5 s closed loop (`scripts/worm/port/closed_loop_c1.py`) with the toggle on; rhythm as in
+  C1. No bar.
+
+### 7 results (5 Nov, 17:48 CST)
+
+- **R1 misses its literal bar, and the miss is rounding.** With `gap_rect_ratio` = 1 the toggle-on brain differs
+  from off by at most 1.6e-12 mV, not exactly 0. The equation is the same, but NEURON sums the two mechanism types'
+  currents in a different order, so the last bits differ. The scale matches `innexin_identity`'s neutrality
+  (1.7e-11 mV). Read as neutral; recorded as a miss of the bar as written.
+- **R2 passes** (`data/worm/brain_runs/rect_r/summary.json`, `scripts/worm/port/rect_r.py`). AVAL, DA01 and VA01
+  with chemical synapses removed, CC on/off: DA01 to AVAL 0.995 and VA01 to AVAL 1.05 (bar at least 0.95); AVAL to
+  DA01 0.44 and AVAL to VA01 0.59 (bar at most 0.6; VA01 is close to the line). The DA01-VA01 coupling, which runs
+  through AVAL, also drops (0.53 and 0.41).
+- **R3: no change in the count** (`bw_R3`, `bw_R3_nostim` against `bw_D8b`, `bw_D8b_nostim`). Neurons above -20 mV at
+  6 s 105 in both. Individual neurons move by up to 10.9 mV (PVNL, PQR, VA07, AS06). Touch reaches 13 neurons
+  (D8b: 11), no muscle in either. 138 junction sites rectify.
+- **C2: no rhythm either way** (`data/worm/brain_runs/c2_rect/`, figure `c2.png`, viewed). Both runs are at the D8b
+  template (C1's off run predates the template change, so it was rerun as `c2_off`). Over the last 3 s the median
+  muscle's activation SD is 0.0011 (off) and 0.0013 (on); 4 muscles above 0.05 in each; the centroid moves under
+  0.001 body lengths.
+- **Verdict:** `gap_rectification` is implemented with the measured direction and stays off by default. It is not
+  the missing rhythm either.
+- A unit test (`test_gap_rectification`) checks the junction currents directly: at set voltages, motor neuron to
+  AVAL carries the full current, AVAL to motor neuron carries 1 / ratio of it, and the two halves conserve current.

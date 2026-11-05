@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:42 CST",
+ "generated_at": "2026-11-05 17:47 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -1077,12 +1077,12 @@
    "id": "gap_rectification",
    "name": "Rectifying gap junctions (AVA-A class UNC-7/UNC-9)",
    "layer": "gap",
-   "status": "partial",
+   "status": "have",
    "toggle": "gap_rectification",
    "neutral": "off",
    "default": "off",
-   "source": "lumped model in src/wormemu/brain_layers.py",
-   "notes": "",
+   "source": "src/wormemu/nmodl/rectgap.mod (ours; BAAIWorm's junction with a direction)",
+   "notes": "on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template conductance and the other way at template / gap_rect_ratio. Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7",
    "absent_reason": "",
    "numbers": 1,
    "by_label": {
@@ -11466,7 +11466,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)",
    "kind": "physiology"
   }
  ],

@@ -632,6 +632,14 @@ def build_c302_muscle():
 
 def build_layers(st):
     for mid, name, layer, default in brain_layers.MECHANISMS:
+        if mid == "gap_rectification":                   # in the NEURON build, not a lumped layer
+            mech(mid, name, layer, "have", "src/wormemu/nmodl/rectgap.mod (ours; BAAIWorm's junction with a "
+                 "direction)", toggle=mid, neutral="off", default=default,
+                 notes="on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from "
+                 "the motor neuron into the interneuron at the template conductance and the other way at template / "
+                 "gap_rect_ratio. Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired "
+                 "recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7")
+            continue
         mech(mid, name, layer, "partial", "lumped model in src/wormemu/brain_layers.py", toggle=mid,
              neutral="off", default=default)
     lig = sorted({a for a, _ in st.peptide_pairs})

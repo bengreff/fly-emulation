@@ -185,7 +185,9 @@ SPECS: list[Spec] = [
     S("slow_gain_floor", "slow_signalling", "1", 0.3, 0, 1, notes="fraction of the odour gain left after full "
       "long-term adaptation"),
     S("gap_rect_ratio", "gap_rectification", "ratio", 4, 2, 10, lit="C3", grain="class",
-      applies_to="AVA, AVB, AVD, AVE, PVC to A- and B-type motor neurons"),
+      applies_to="AVA, AVB, AVD, AVE, PVC to A- and B-type motor neurons",
+      notes="preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current "
+      "passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)"),
 ]
 
 # Receptor neurons and sign per stimulus channel (structure, measured: WormAtlas / the papers named in INTERFACE).

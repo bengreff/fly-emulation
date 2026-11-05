@@ -130,3 +130,37 @@ print(json.dumps(dict(worst=worst, passive=hasattr(seg, "pas"))))
     assert p.returncode == 0, p.stderr[-2000:]
     x = json.loads(p.stdout.strip().splitlines()[-1])
     assert x["worst"] < 1e-5 and not x["passive"]          # the generated mods round to 6 significant figures
+
+
+def test_gap_rectification():
+    """gap_rectification on: AVAL-DA01 junctions pass current from the motor neuron into AVAL at the full conductance
+    and back at 1 / gap_rect_ratio of it (Liu 2017), conserving current; off, symmetric."""
+    code = """
+import json
+from wormemu.brain import Brain, sample_worm
+out = {}
+for tg in ("off", "on"):
+    b = Brain(sample_worm(None), toggles=dict(wiring="cook", gap_rectification=tg), cells=["AVAL", "DA01"])
+    b.reset()
+    gaps = [pp for pp in b.conn if "gap" in pp.hname()]
+    ava, da = b.soma[b.idx["AVAL"]], b.soma[b.idx["DA01"]]
+    for name, va, vd in (("mn_high", -40.0, -30.0), ("ava_high", -30.0, -40.0)):
+        for sec, v in ((ava, va), (da, vd)):
+            for seg in (s for x in sec.wholetree() for s in x):
+                seg.v = v
+        b.h.fcurrent()
+        out[tg + name] = [abs(sum(pp.i for pp in gaps)), sum(abs(pp.i) for pp in gaps)]
+    out[tg + "placed"] = dict(b.placed)
+    out["ratio"] = sample_worm(None).v("gap_rect_ratio")
+print(json.dumps(out))
+"""
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    p = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, cwd=ROOT, timeout=600)
+    assert p.returncode == 0, p.stderr[-2000:]
+    x = json.loads(p.stdout.strip().splitlines()[-1])
+    assert x["onplaced"].get("gap_nn_rect", 0) > 0 and "gap_nn_rect" not in x["offplaced"]
+    for k in ("offmn_high", "offava_high", "onmn_high", "onava_high"):
+        assert x[k][0] < 1e-12 * x[k][1]                   # the two halves carry equal and opposite currents
+    assert x["offmn_high"][1] == pytest.approx(x["offava_high"][1])
+    assert x["onmn_high"][1] == pytest.approx(x["offmn_high"][1])                    # motor neuron -> AVAL: full
+    assert x["onava_high"][1] == pytest.approx(x["offava_high"][1] / x["ratio"])    # AVAL -> motor neuron
