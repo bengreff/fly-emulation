@@ -111,4 +111,39 @@ rests on it.
 - Noted, not used: Naudin's own fits train on -15 to +25 pA and keep 30 and 35 pA out; our split (section 1) is
   different and stays as registered.
 
-Q2 and Q3: not started.
+**Q2, pre-registered 2026-11-05 01:53 CST (run `port2`), before any check ran.**
+
+Code: the eight channels are in `wormemu.nicoletti` (`NEW_CHANNELS`), transcribed from the same commit's .mod
+files. They are opt-in: `make_membrane(lib, channels=[...])` builds only the listed channels and their gates;
+the default (`lib.CHANNELS`, the AIY spike's 13) is unchanged. CCA-1's current joins EGL-19's and UNC-2's in
+the Ca pool, as `caintra1.mod` reads the total `ica`.
+
+Check (`scripts/worm/check_port2.sh`): single compartment, NEURON 9.0.2 on the published .mod files
+(`ext/nicoletti2024`; one compartment, so the GLOBAL defect of F-W0-10 does not apply) against Jaxley, both in
+float64, the `neuron_ref.py` protocol (11 steps, -15 to +35 pA, 1-6 s, 11 s, v_init -65 mV, eca 60, ek -80), at
+dt 0.4 ms and 0.1 ms. Configurations (densities in nS per cell; test settings, not biological claims):
+
+- `rim_pub`: the published Nicoletti 2024 RIM model (SHL-1, EGL-2, IRK, CCA-1, UNC-2, EGL-19, leak at the
+  `RIM_simulation.py` densities; RIML surface 103.34e-8 cm2, volume 10.94e-12 cm3, cm 1.5, eL -50 mV).
+- `iso_<channel>`, one for each of the eight: leak 0.5 nS (eL -50) plus that channel at 1.0 nS, RIML geometry
+  (guessed test density: four of the eight, EGL-36, KQT-3, KVS-1 and UNC-103, have no published density in any
+  Nicoletti 2024 neuron); `leak_only` is the same cell without the channel.
+- `all21`: the earlier `all_test` (all 13 original channels, AIY geometry) plus the eight at 0.3 nS each, with
+  KCNL and the Ca pool on, so CCA-1 feeds the pool.
+
+Bars, all must pass:
+
+- **B1, match:** in every configuration, at both dt, every sweep's RMS difference (Jaxley minus NEURON, whole
+  11 s trace) <= 0.01 mV.
+- **B2, the check can see the channel (must-differ control):** for each `iso_<channel>`, the NEURON trace
+  differs from `leak_only` by >= 1 mV RMS (mean over the 11 sweeps, dt 0.4 ms), i.e. at least 100 times the B1
+  bar. A channel that fails B2 has an uninformative B1, and its port is not adopted from this run.
+- **R0, the default path is unchanged:** the refactored membrane, with the default channel set, reproduces the
+  stored Jaxley outputs of the earlier check (`ref/aiy_pub_jx.npy`, `ref/all_test_jx.npy`, dt 0.4 ms) to
+  <= 1e-9 mV max absolute difference.
+
+Reported, not bars: the largest absolute difference per configuration; the resting potential of each.
+Adoption: if all bars pass and the figure has been viewed, the eight channels become available for W1; nothing
+changes for existing models (R0).
+
+Q3: not started.
