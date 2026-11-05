@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 2026-11-05 01:29 CST, worm session W0b (second block of
+**Rewritten each session; do not append.** State as of 2026-11-05 01:42 CST, worm session W0b (second block of
 the first night of the C. elegans phase; main at the commit carrying this file).
 
 - **Direction (Ben, 4 Nov 2026; Director brief of that date; Ben's ten binding answers in `~/director/goals.md`,
@@ -17,7 +17,7 @@ the first night of the C. elegans phase; main at the commit carrying this file).
   junctions), `docs/worm/W1_RIM_AFD.md` (next fits, pre-registered), `docs/worm/STATE_OF_THE_ART.md`,
   `docs/worm/MANIFEST.md`, and the "Worm" entries at the end of `docs/FINDINGS.md` and `docs/DECISIONS.md`.
 
-## Report for Ben (W0b, 5 Nov 00:50-01:29)
+## Report for Ben (W0b, 5 Nov 00:50-01:42)
 
 **Gap junctions are now stable and accurate in Jaxley; adopted on a pre-registered gate** (GAPCHECK.md, F-W0-9).
 - `ImplicitGap` (`src/bioemu/jx_gap.py`) puts the junction conductances into the same backward-Euler solve as the
@@ -27,9 +27,11 @@ the first night of the C. elegans phase; main at the commit carrying this file).
   as the must-fail control required. Figure `docs/worm/media/gapcheck3.png` (viewed).
 - On the 446-cell stand-in network at 1.5x conductance, every cell stays within -60 to +0.5 mV and the gradient
   is finite; the explicit form's gradient is not (measured).
-- **Cost is the open problem:** 13x (gradient) to 23x (forward) slower than the explicit form on that network,
-  measured on one core, because the 434-compartment junction system is solved as a dense matrix each step
-  (inferred). Fix: a sparse solve, then the same NEURON check.
+- **Cost: about 2x the explicit form** (measured, one core, 446-cell bench): forward 0.66-0.74 ms and with gradient
+  3.7-3.9 ms per step, against 0.23-0.28 and 1.9-2.0 ms explicit. A first, dense solve of the junction system cost
+  13-23x; replacing it with GMRES gave the same answer (3.5e-12 mV in float64) at 8-9x less cost, adopted on
+  `gapcheck5`. `gapcheck4`, its first try, failed one bar because I wrote a float64 tolerance for a float32 run;
+  recorded as a failure, then re-registered.
 - Two runs before the scored one did not count, both because the **published Nicoletti 2024 NEURON mods pass
   channel state through GLOBAL variables** (F-W0-10): across compartments every segment's BK channel sees one
   segment's EGL-19 gate (0.13 mV on a 3-compartment cell), and between runs in one process the state carries
@@ -49,16 +51,22 @@ held-out bars (SPIKE.md, F-W0-8).
 
 Nothing. All W0b jobs on backhouse finished; the Mac keepalive to backhouse is stopped at park.
 
+**Incident to report (01:29-01:31, my error).** When stopping my WSL keepalive I ran `pkill -f "^sleep infinity"`
+on backhouse, which also killed another session's identical keepalive. With no wsl.exe session attached, the Ubuntu
+distro shut down about a minute later and every running job in it died. The other project's flock-managed crucible
+jobs were relaunched by their own resume mechanism at 01:31:14; three manually started runs in
+`~/crucible_p0/agree` (`run.sh e1p ... t1_probe2`, `i20f ... t1_fix`, `i10f ... t1_fix`, started 01:24-01:27)
+were not running afterwards. I did not touch or relaunch them. Their owner should check them. From now on I kill
+only a uniquely named keepalive by PID.
+
 ## Next (this order)
 
-1. **Sparse junction solve** in `ImplicitGap` (the dense nS x nS solve per step is the cost; the system is a
-   per-cell block plus the sparse junction graph). Gate: rerun `scripts/worm/check_gap_neuron.py` with the new
-   solve (same cases and bars as `gapcheck3`, new run name), then the bench at 1.0x and 1.5x, then the GPU at
-   batch 32.
-2. **W1 prerequisites** (`W1_RIM_AFD.md` section 2): Q1 confirm Naudin 2022 step amplitudes and VC protocol;
+1. **W1 prerequisites** (`W1_RIM_AFD.md` section 2): Q1 confirm Naudin 2022 step amplitudes and VC protocol;
    Q2 port CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103 and check each against NEURON at
    <= 0.01 mV RMS; Q3 extend the mod patch to `kcnl` / `caintra1`. Then run `w1rim1`, `w1afd1` and their
    controls (about 8-12 core-hours, derived; backhouse outside 17:00-22:00).
+2. **GPU batch run of the gap-junction bench** (`BENCH_GAP=implicit`, batch 32) when the GPU is free: GMRES
+   inside `vmap` runs every batch member for the slowest one's iteration count, so measure it rather than assume.
 3. A new, separately named AIY fit with bounded gating shifts shared by gene, separate soma and neurite
    densities, and a membrane-area check (F-W0-8); pre-register first.
 4. Check whether BAAIWorm / MetaWorm `eworm` mods carry the same GLOBAL coupling before porting any (F-W0-10;
@@ -84,7 +92,8 @@ Nothing. All W0b jobs on backhouse finished; the Mac keepalive to backhouse is s
   NEURON 9.0.2; `repo/` the synced code; `runs/` outputs; `ext/nicoletti2024` published mods,
   `ext/nicoletti2024_local` patched mods); `~/worm-data/` (datasets, `MANIFEST.md`).
 - **Logs and media in the repo.** `data/worm/gapcheck/` (every gap run, including the two invalid harness runs,
-  gapcheck1-3, the branched check and the bench), `docs/worm/media/spike_fit1.png`, `gapcheck3.png` (both viewed).
+  gapcheck1-5, the branched check and the benches), `docs/worm/media/spike_fit1.png`, `gapcheck3.png`,
+  `gapcheck4.png` (all viewed).
 
 ## Sealed and held-out data register
 

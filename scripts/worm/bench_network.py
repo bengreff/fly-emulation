@@ -14,6 +14,8 @@ import json, math, os, sys, time
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
 import numpy as np
 import jax, jax.numpy as jnp
+if os.environ.get("BENCH_X64"):  # float64 throughout (accuracy comparisons); default float32, the fitting precision
+    jax.config.update("jax_enable_x64", True)
 import jaxley as jx
 from jaxley.synapses import IonotropicSynapse
 from jaxley.connect import connectivity_matrix_connect
@@ -77,7 +79,7 @@ connectivity_matrix_connect(net.cell("all"), net.cell("all"), IonotropicSynapse(
 if G.any():
     connectivity_matrix_connect(net.cell("all"), net.cell("all"), GAP(), G)
     if GAP is ImplicitGap:
-        use_implicit_gaps(net)
+        use_implicit_gaps(net, solve=os.environ.get("BENCH_GAP_SOLVE", "gmres"))
 t_build = time.time() - t0
 net.set("v", -60.0)
 net.init_states(delta_t=DT)
@@ -97,9 +99,9 @@ for k in range(8):
 nsteps = int(round(T / DT)) + 1
 ck = [int(math.ceil(nsteps ** 0.5))] * 2
 info = {"cells": N, "compartments": int(net.nodes.shape[0]), "chem_synapses": int(C.sum()), "gap_couplings": int(G.sum()),
-        "gap_junction_pairs": len(gpairs) // 2, "gap_form": GAP.__name__,
+        "gap_junction_pairs": len(gpairs) // 2, "gap_form": GAP.__name__, "gap_solve": os.environ.get("BENCH_GAP_SOLVE", "gmres") if GAP is ImplicitGap else None,
         "implicit_gap_sites": int(len(net._implicit_gap["S"])) if GAP is ImplicitGap else None,
-        "implicit_gap_slots": len(net._implicit_gap["slot_nodes"]) if GAP is ImplicitGap else None, "batch": B, "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
+        "implicit_gap_slots": len(net._implicit_gap["slot_nodes"]) if GAP is ImplicitGap else None, "batch": B, "x64": bool(os.environ.get("BENCH_X64")), "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
 print(json.dumps(info), flush=True)
 
 
@@ -117,7 +119,8 @@ if B > 1:
     scale = jnp.asarray(np.random.default_rng(0).uniform(0.5, 1.5, B))
     params = [{k: v[None] * scale.reshape((B,) + (1,) * v.ndim) for k, v in d.items()} for d in params]
     fwd, lossf = jax.vmap(fwd), (lambda p, f=lossf: jnp.sum(jax.vmap(f)(p)))
-for mode, f in [("fwd", jax.jit(fwd)), ("grad", jax.jit(jax.grad(lossf)))]:
+modes = [("fwd", jax.jit(fwd))] + ([] if os.environ.get("BENCH_NO_GRAD") else [("grad", jax.jit(jax.grad(lossf)))])
+for mode, f in modes:
     t0 = time.time(); r = jax.block_until_ready(f(params)); tc = time.time() - t0
     t0 = time.time(); r = jax.block_until_ready(f(params)); tr = time.time() - t0
     ok = bool(np.all(np.isfinite(np.asarray(r)))) if mode == "fwd" else bool(all(np.all(np.isfinite(np.asarray(x))) for d in r for x in d.values()))
@@ -125,6 +128,8 @@ for mode, f in [("fwd", jax.jit(fwd)), ("grad", jax.jit(jax.grad(lossf)))]:
         print(json.dumps({k: int((~np.isfinite(np.asarray(x))).sum()) for d in r for k, x in d.items()}), flush=True)
     if mode == "fwd":
         vr = np.asarray(r)
+        if os.environ.get("BENCH_SAVE"):  # the recorded voltages, for comparing two solves
+            np.save(os.environ["BENCH_SAVE"], vr)
         print(json.dumps({"v_min": round(float(np.nanmin(vr)), 1), "v_max": round(float(np.nanmax(vr)), 1)}), flush=True)
         if os.environ.get("BENCH_RECORD_ALL") and B == 1:
             ext = np.nanmax(np.abs(vr), axis=1)

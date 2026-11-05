@@ -2751,7 +2751,7 @@ pre-registration and results in `docs/worm/SPIKE.md`.
   separate soma and neurite densities, a membrane-area check), pre-registered under a new name. Cost per fit:
   about 1.5 h on 2 CPU cores with backhouse heavily loaded (measured).
 
-### F-W0-9: gap junctions solved with the cable match NEURON to rounding, stay stable, and cost 13-23x (5 Nov, 01:28 CST)
+### F-W0-9: gap junctions solved with the cable match NEURON to rounding, stay stable, and cost about 2x (5 Nov, 01:28 CST; cost updated 01:41)
 - `ImplicitGap` (`src/bioemu/jx_gap.py`) puts the junction conductances into the same backward-Euler solve as the
   cable, using Jaxley's tree solver plus an exact low-rank correction. Pre-registered check `gapcheck3`
   (GAPCHECK.md), measured against NEURON's fully implicit `LinearMechanism` at the same step: passive pair (a up
@@ -2762,12 +2762,12 @@ pre-registration and results in `docs/worm/SPIKE.md`.
   0.015 mV at dt 0.004, 0.002, 0.001 ms; three AIY cells), after fixing a node-label bug the 446-cell bench found.
 - On the 446-cell stand-in network at 1.5x conductance, every cell stays within -60 to +0.5 mV and the gradient
   is finite; the explicit form reaches +48.6 mV and its gradient is not finite (measured).
-- **Cost, measured on one CPU core:** forward 5.8-6.4 ms per step against 0.23-0.28 ms explicit; with gradient
-  24.5-25.4 ms against 1.9-2.0 ms. Inferred cause: the 434-compartment junction system is solved densely every
-  step. It is sparse (one junction compartment per cell here), so a sparse or iterative solve is the next step.
-- **What it means.** The stability problem of F-W0-5 is solved without giving up accuracy; whole-worm fits with
-  gap junctions are possible but, at this cost, about 13x slower per gradient than the bench's 4 Nov extrapolation
-  assumed, until the junction solve is made sparse.
+- **Cost, measured on one CPU core:** with the dense junction solve, forward 5.8-6.4 ms per step against
+  0.23-0.28 ms explicit, and with gradient 24.5-25.4 ms against 1.9-2.0 ms. Solving the junction system by GMRES
+  instead (`gapcheck4`/`gapcheck5`; same answer to 3.5e-12 mV in float64, equally accurate in float32): forward
+  0.66-0.74 ms and with gradient 3.7-3.9 ms, so about 2.6x and 2x the explicit form.
+- **What it means.** The stability problem of F-W0-5 is solved without giving up accuracy, at about 2x the
+  explicit gradient cost, so the 4 Nov whole-worm fitting extrapolation roughly doubles where gap junctions are on.
 
 ### F-W0-10: the published Nicoletti 2024 NEURON mods couple channels through GLOBALs (5 Nov, 01:28 CST)
 - `egl19.mod` declares `GLOBAL megl19, hegl19` and writes them in its BREAKPOINT; `slo1egl19.mod` and

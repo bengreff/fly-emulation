@@ -95,7 +95,7 @@ def _patched():
 
 
 PATCHED = _patched()
-print(json.dumps({"reference_mods": moddir, "per_segment_egl19_pointer": PATCHED}), flush=True)
+print(json.dumps({"reference_mods": moddir, "per_segment_egl19_pointer": PATCHED, "gap_solve": os.environ.get("GAP_SOLVE", "gmres")}), flush=True)
 
 
 def jxl(case, form, g_nS, dt, want_grad=False):
@@ -118,7 +118,7 @@ def jxl(case, form, g_nS, dt, want_grad=False):
     if g_nS > 0:
         net.set(f"{form.__name__}_g", g_nS * 1e-3)
         if form is ImplicitGap:
-            use_implicit_gaps(net)
+            use_implicit_gaps(net, solve=os.environ.get("GAP_SOLVE", "gmres"))
     net.set("v", c["v0"])
     net.init_states(delta_t=dt)
     for i in range(c["ncell"]):

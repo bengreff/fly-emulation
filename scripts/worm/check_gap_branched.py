@@ -23,7 +23,7 @@ SITES = [((0, 0, 0), (1, 0, 0)), ((1, 1, 1), (2, 0, 0)), ((0, 1, 1), (2, 1, 0))]
 T, G_NS = 100.0, 5.0
 
 
-def run(form, dt):
+def run(form, dt, solve="dense"):
     nml_to_swc(MORPH, "/tmp/AIYL_gb.swc")
     cell = jx.read_swc("/tmp/AIYL_gb.swc", ncomp=2)
     cell.insert(make_membrane(lib)())
@@ -36,7 +36,7 @@ def run(form, dt):
         connect(pa, pb, form()); connect(pb, pa, form())
     net.set(f"{form.__name__}_g", G_NS * 1e-3)
     if form is ImplicitGap:
-        use_implicit_gaps(net)
+        use_implicit_gaps(net, solve=solve)
     net.set("v", -60.0)
     net.init_states(delta_t=dt)
     for k in range(3):
@@ -59,4 +59,6 @@ for dt in (0.004, 0.002, 0.001):
         k = 100
         n = min(vi.shape[1], a[:, ::k].shape[1])
         out["implicit_dt0.1_vs_implicit_dt0.001_mV"] = float(np.abs(vi[:, :n] - a[:, ::k][:, :n]).max())
+vg, _ = run(ImplicitGap, 0.1, "gmres")  # gapcheck4 B4: the iterative junction solve against the dense one
+out["gmres_vs_dense_dt0.1_mV"] = float(np.abs(vg - vi).max())
 print(json.dumps(out), flush=True)

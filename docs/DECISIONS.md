@@ -6119,10 +6119,10 @@ its own R0 rule, both because the published Nicoletti mods couple channels throu
   Euler, Jaxley 0.14.0 (the patch asserts the version). Branched cells: a label-lookup bug was fixed after the
   scored run, and a reported check on three branched AIY cells shows implicit and explicit coupling converging to
   the same solution (difference halving with dt). Any other Jaxley version, solver or voltage solver raises.
-- **Not settled: cost.** On the 446-cell bench the junction system (434 junction compartments) is solved as a
-  dense matrix each step, measured at 6.4 ms per forward step against 0.28 ms for the explicit form on one CPU
-  core (F-W0-9). Accurate and stable, but about 23x slower at this size. Using a sparse or iterative solve for
-  that system is the next engineering step; it gets the same NEURON check before replacing the dense one.
+- **Cost.** With a dense solve of the junction system (434 junction compartments on the 446-cell bench) it
+  measured 6.4 ms per forward step against 0.28 ms explicit. **Addendum 01:41:** the GMRES solve passed
+  `gapcheck5` (after `gapcheck4` failed a float64 bar applied to a float32 run, an error in that
+  pre-registration) and is now the default: 0.66-0.74 ms forward, 3.7-3.9 ms with gradient, about 2x explicit.
 - `ExplicitGap` and `Gap` stay in `jx_gap.py` as controls; the bench still defaults to the explicit form so its
   4 Nov timings stay reproducible (`BENCH_GAP=implicit` selects the adopted one).
 

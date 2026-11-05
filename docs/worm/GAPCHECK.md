@@ -247,3 +247,27 @@ B4 carry over from `gapcheck4` unchanged. Only the bench part of B4 is redone, w
 - **B5** re-measured in the same runs (float32 GMRES forward below float32 dense).
 - Gate: B4', B5, B6 pass, plus the carried bars and the `gapcheck4` figure (to be rendered and viewed):
   GMRES replaces dense as the default solve.
+
+## Result of `gapcheck5` (scored 2026-11-05 01:41 CST): every bar passes; GMRES becomes the default solve
+
+Logs `data/worm/gapcheck/gapcheck5_*.log` (the `jx_gap.py` md5 05201f59... in `gapcheck5_jx_gap.md5`, the same
+file `gapcheck4` ran). Measured, 446-cell bench, T 200 ms, dt 0.1 ms, one core per run, 4 runs at once on a
+machine at load about 22.
+
+| Bar | 1.0x | 1.5x | Verdict |
+|---|---|---|---|
+| B4' float64, GMRES vs dense, max over 8 cells and all times | 3.5e-12 mV | 2.6e-12 mV | pass (<= 1e-6) |
+| B6 float32 error against float64 dense: dense / GMRES (max) | 0.0026 / 0.0026 mV | 0.0047 / 0.0047 mV | pass |
+| same, mean | 3.5e-5 / 3.5e-5 mV | 1.9e-5 / 1.9e-5 mV | (reported) |
+| B5 float32 forward, dense / GMRES | 6146 / 738 us per step | 5894 / 664 us per step | pass (8.3x / 8.9x faster) |
+| float32 forward + gradient, GMRES | 3895 us per step | 3714 us per step | finite; voltages -60 to +0.7 / +0.5 mV |
+
+- The two float32 maxima are equal to the last digit because both sit at the same point (cell 1, the first step
+  after initialisation), where both paths round the same way; the files differ (GMRES vs dense 0.0009 / 0.0018 mV)
+  and their 99.9th-percentile errors are 0.00078 / 0.00079 mV (1.0x).
+- Carried from `gapcheck4` (same code): R0, B1, B2, B3, F1, F2, branched B4; the `gapcheck4` figure
+  (`docs/worm/media/gapcheck4.png`) was rendered and viewed before this scoring: it matches `gapcheck3`.
+- **Adopted:** `use_implicit_gaps(net)` now defaults to `solve="gmres"`; `solve="dense"` stays as the reference.
+  Cost against the explicit form on this bench (derived from the measured tables): forward about 2.6x
+  (664-738 against 228-283 us), forward + gradient about 1.9-2x (3714-3895 against 1948-2010 us), for a coupling
+  that is stable at 1.5x and matches NEURON.

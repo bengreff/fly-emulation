@@ -20,7 +20,9 @@ NEURON's LinearMechanism in `scripts/worm/check_gap_neuron.py` (pre-registration
 """
 import inspect
 
+import jax
 import jax.numpy as jnp
+import jax.scipy.sparse.linalg
 import numpy as np
 import jaxley
 from jaxley.synapses import Synapse
@@ -75,12 +77,15 @@ class ImplicitGap(Synapse):
 _CTX = []  # (gap structure, params) of the step being traced; read by the patched tree solve
 
 
-def use_implicit_gaps(net, name="ImplicitGap"):
+def use_implicit_gaps(net, name="ImplicitGap", solve="gmres"):
     """Register the network's `name` edges as implicitly solved junctions. Call after every connect.
 
     Each junction is two directed edges (a->b and b->a), as with the other forms. Needs Jaxley 0.14.0, backward
     Euler and the default `jaxley.dhs` voltage solver; anything else raises rather than dropping the junctions.
+    `solve` picks how the junction system is solved each step: "gmres" (default since gapcheck5; 8-9x faster on
+    the 446-cell bench) iterates on it without forming it; "dense" (gapcheck3, the reference) factorises it.
     """
+    assert solve in ("dense", "gmres")
     assert jaxley.__version__ == "0.14.0", "patch written against jaxley 0.14.0 internals"
     _patch()
     e = net.edges[net.edges["type"] == name]
@@ -94,8 +99,14 @@ def use_implicit_gaps(net, name="ImplicitGap"):
     for i, c in enumerate(S):  # slot j = the j-th junction compartment of its cell
         slot[i] = seen.get(cell_of[c], 0)
         seen[cell_of[c]] = slot[i] + 1
+    nslot = int(slot.max()) + 1 if len(S) else 0
+    nbr = np.full((len(S), nslot), len(S), int)  # nbr[a, j] = the site of slot j in a's cell (len(S) = none)
+    for i, c in enumerate(S):
+        for k, d in enumerate(S):
+            if cell_of[d] == cell_of[c]:
+                nbr[i, slot[k]] = k
     net._implicit_gap = dict(
-        name=name, post=post, S=S, slot=slot,
+        name=name, post=post, S=S, slot=slot, solve=solve, nbr=nbr,
         slot_nodes=[S[slot == j] for j in range(slot.max() + 1)] if len(S) else [],
         same_cell=(np.array([cell_of[c] for c in S])[:, None] == np.array([cell_of[c] for c in S])[None, :]).astype(float),
         pre_s=np.array([pos[c] for c in pre], int), post_s=np.array([pos[c] for c in post], int))
@@ -147,10 +158,21 @@ def _patch():
             return x0
         # W[a, b] = (M'^-1 e_b)[S_a]; M' has no coupling between cells, so one solve per slot covers all cells.
         X = jnp.stack([tree(jnp.zeros_like(voltages).at[nodes].set(1.0), zero) for nodes in gj["slot_nodes"]])
-        W = X[gj["slot"][None, :], S[:, None]] * gj["same_cell"]
         # Off-diagonal junction terms O[post, pre] = -gn. Solve (I + dt W O) y = x0[S], then correct x0.
-        WO = jnp.zeros((nS, nS), W.dtype).at[:, gj["pre_s"]].add(-W[:, gj["post_s"]] * gn[None, :])
-        y = jnp.linalg.solve(jnp.eye(nS, dtype=W.dtype) + dt * WO, x0[S])
+        if gj["solve"] == "dense":
+            W = X[gj["slot"][None, :], S[:, None]] * gj["same_cell"]
+            WO = jnp.zeros((nS, nS), W.dtype).at[:, gj["pre_s"]].add(-W[:, gj["post_s"]] * gn[None, :])
+            y = jnp.linalg.solve(jnp.eye(nS, dtype=W.dtype) + dt * WO, x0[S])
+        else:
+            Wb = X[:, S].T  # Wb[a, j] = W[a, nbr[a, j]]; W is zero between cells
+            nbr = gj["nbr"]
+
+            def op(z):
+                Oz = jnp.zeros(nS + 1, z.dtype).at[gj["post_s"]].add(-gn * z[gj["pre_s"]])
+                return z + dt * jnp.sum(Wb * Oz[nbr], axis=1)
+
+            tol = 1e-12 if x0.dtype == jnp.float64 else 1e-6
+            y, _ = jax.scipy.sparse.linalg.gmres(op, x0[S], x0=x0[S], tol=tol, restart=30, maxiter=20)
         Oy = jnp.zeros(nS, y.dtype).at[gj["post_s"]].add(-gn * y[gj["pre_s"]])
         return x0 + tree(jnp.zeros_like(voltages).at[S].set(-dt * Oy), zero)
 

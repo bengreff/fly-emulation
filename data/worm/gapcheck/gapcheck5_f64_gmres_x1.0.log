@@ -1,0 +1,3 @@
+{"cells": 446, "compartments": 1784, "chem_synapses": 4841, "gap_couplings": 2684, "gap_junction_pairs": 1342, "gap_form": "ImplicitGap", "gap_solve": "gmres", "implicit_gap_sites": 434, "implicit_gap_slots": 1, "batch": 1, "x64": true, "scale": 1.0, "T_ms": 200.0, "dt_ms": 0.1, "device": "cpu:0", "build_s": 1.5}
+{"v_min": -60.0, "v_max": 0.7}
+{"mode": "fwd", "compile_plus_run_s": 7.47, "run_s": 2.49, "wall_s_per_bio_s": 12.45, "bio_s_per_wall_s": 0.08, "us_per_step": 1244.3, "finite": true}
