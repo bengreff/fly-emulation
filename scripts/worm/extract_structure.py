@@ -7,7 +7,6 @@ Outputs (all measured data, copied without change except reshaping):
   chem_edges.csv     hermaphrodite chemical adjacency, SI 5 corrected July 2020: pre, post, n (EM synapse count)
   gap_edges.csv      hermaphrodite gap junctions, symmetric sheet: a, b, n (a < b), EM gap-junction count
   cengen_t2.csv      CeNGEN threshold-2 (medium) presence, genes of the families listed below x 128 neuron classes
-  cengen_tpm.csv     CeNGEN average integrated TMM counts (length-normalised), same genes x classes
 """
 import csv, os, re, sys
 import openpyxl
@@ -27,6 +26,7 @@ FAM = re.compile(r"^(egl-19|unc-2|cca-1|nca-[12]|unc-80|unc-79|shl-1|shk-1|shw-[
                  r"eat-4|unc-17|cha-1|unc-25|unc-47|tph-1|cat-[12]|tdc-1|tbh-1|bas-1|mod-5|dat-1|snf-3|unc-46|"
                  r"flp-\d+|nlp-\d+|ins-\d+|pdf-[12]|ntc-1|snet-1|capa-1|trh-1|npr-\d+|frpr-\d+|dmsr-\d+|pdfr-1|"
                  r"ckr-[12]|ntr-1|tkr-\d|seb-3|egl-6|aex-[25]|egl-3|egl-21|unc-31|sbt-1|"
+                 r"gnrr-\d+|nmur-\d+|sprr-\d+|trhr-1|pdfr-\d+|"  # receptors of the Beets 2023 pairs (5 Nov)
                  r"gcy-\d+|daf-11|odr-1|tax-[24]|cng-[13]|ocr-[1-4]|osm-9|trp-[124]|trpa-1|pkd-2|lov-1|mec-[1-6]|mec-10|"
                  r"deg-1|del-\d+|unc-8|lite-1|odr-10|str-2|sra-\d+|srx-\d+|"
                  r"egl-4|unc-43|cmk-1|crh-1|daf-[27]|daf-16|daf-2|daf-28|tax-6|cnb-1|itr-1|egl-30|goa-1|gsa-1|"
@@ -91,5 +91,4 @@ def filt(src, dst, sep):
             if FAM.match(g.strip('"')):
                 w.writerow(row)
 filt(f"{D}/cengen/021821_medium_threshold2.csv", f"{OUT}/cengen_t2.csv", ",")
-filt(f"{D}/cengen/Average_integrated_TMM_counts_lengthNormalized_111521.tsv", f"{OUT}/cengen_tpm.csv", "\t")
 print("done", len(chem), "chem", len(seen), "gap")

@@ -108,6 +108,14 @@ rests on it.
   Nicoletti 2024's text, and the recording paper (Liu et al. 2018 Cell 175:57) was not reachable (403). The peak
   current depends on the holding potential through inactivation, so the peak half of the VC bar uses -60 mV
   labelled inferred until the Liu 2018 methods are checked; the steady-state half barely depends on it.
+- **Holding potential update, 2026-11-05 (brain worker): -60 mV is now published, not inferred.** The Liu et al.
+  2018 bioRxiv preprint (10.1101/359935 v1, saved at `docs/worm/research/liu2018_biorxiv_359935v1.html`), Fig 1B
+  legend, for the voltage-clamped RIM, AIY, AFD and AWA recordings: "voltage step protocol, starting from -100 mV
+  and increasing to 50 mV in 10 mV increments. The holding potential was set at -60 mV before and after applying
+  each voltage step." These are the same three cell types (RIM, AIY, AFD) whose recordings Naudin 2022 used. Label:
+  holding potential -60 mV **measured protocol (published, preprint)**; the Cell 175:57 version itself is still
+  unchecked (403). The hold durations (1100 ms before, 100 ms after) are **still inferred** from Nicoletti 2024's
+  simulation script; the preprint does not state them.
 - Noted, not used: Naudin's own fits train on -15 to +25 pA and keep 30 and 35 pA out; our split (section 1) is
   different and stays as registered.
 
