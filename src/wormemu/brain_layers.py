@@ -227,16 +227,18 @@ def _sig(x):
 class Layers:
     """State and stepping of every lumped layer. `names` is the brain's cell list; `pos` the soma position along
     the body (0 nose, 1 tail) for neurons, NaN otherwise; `p` the parameter dict (template_params() or a draw);
-    `on` the set of mechanisms switched on; `rng` for the stochastic layers."""
+    `on` the set of mechanisms switched on; `seed` for the stochastic layers (defecation phase, egg-laying times,
+    GCaMP noise); the generator is rebuilt at every reset, so a reset replays the same draws."""
 
-    def __init__(self, names, pos, bwm_pos, p, on, rng, peptide=None, monoamine=None):
+    def __init__(self, names, pos, bwm_pos, p, on, seed, peptide=None, monoamine=None):
         self.names, self.idx = list(names), {n: i for i, n in enumerate(names)}
-        self.pos, self.bwm_pos, self.p, self.on, self.rng = np.asarray(pos), np.asarray(bwm_pos), p, set(on), rng
+        self.pos, self.bwm_pos, self.p, self.on, self.seed = np.asarray(pos), np.asarray(bwm_pos), p, set(on), seed
         self.peptide, self.monoamine = peptide, monoamine     # (release matrix, receptor matrix, ec50s) or None
         self.reset()
 
     def reset(self):
         n = len(self.names)
+        self.rng = np.random.default_rng(self.seed)
         self.slow = {}                                   # adaptation low-pass per (mechanism, channel)
         self.act = np.zeros(len(self.bwm_pos))
         self.gc = np.zeros(n)

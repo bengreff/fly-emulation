@@ -307,7 +307,8 @@ class Brain:
         pos = (y - np.nanmin(yall)) / (np.nanmax(yall) - np.nanmin(yall))
         self.bwm = np.array([self.idx.get(m, -1) for m in BWM_NAMES])
         self.layers = brain_layers.Layers(self.cell_names, pos, [muscle_position(m) for m in BWM_NAMES], p, on,
-                                          np.random.default_rng(self.spec.seed), peptide=self._modulators("pep"),
+                                          0 if self.spec.seed is None else self.spec.seed,   # template: fixed
+                                          peptide=self._modulators("pep"),
                                           monoamine=self._modulators("ma"))
         self.t = 0.0
 

@@ -385,7 +385,9 @@ in `third_party/c302/generated/`.
   Neurons above -20 mV in the last frame 103 in both. Activation is tonic after a 0.3 s rise; over the last 3 s the
   median muscle's activation SD is 0.003 (off) and 0.002 (on), and a few muscles wander slowly (largest SD 0.21 and
   0.14), with no alternating dorsal-ventral pattern. The centroid moves under 0.001 body lengths in both. The off
-  run has a step at 4.35 s (one muscle to full activation) that the on run lacks; not chased.
+  run has a step at about 4.35 s that the on run lacks. (Corrected 5 Nov 17:57 by section 8: the step is the
+  defecation clock's posterior body contraction, mean activation of rows 17-24 up 0.42 in one frame, not one
+  muscle. The template's defecation phase was unseeded, so only that run caught one in its window.)
 - **Verdict:** `muscle_active` is implemented and correct as a port, stays off by default, and is not the missing
   rhythm. The rhythm question goes upstream to the motor neurons and their drive (section 7).
 
@@ -456,3 +458,76 @@ template / ratio.
   the missing rhythm either.
 - A unit test (`test_gap_rectification`) checks the junction currents directly: at set voltages, motor neuron to
   AVAL carries the full current, AVAL to motor neuron carries 1 / ratio of it, and the two halves conserve current.
+
+## 8. Why no rhythm: closed-loop screen (pre-registration)
+
+Pre-registered 2026-11-05 17:49 CST, before any run. All runs: the body worker's 5 s closed loop
+(`scripts/worm/port/closed_loop_c1.py`; `sample_worm(None)` at the D8b template, receptor_sign on, proprioception
+on), one run per row, report-only. Nothing is adopted from this section; a candidate that shows rhythm goes to its
+own pre-registered test with held-out criteria.
+
+Candidates, each literature-grounded:
+- **E1 `expression_map=on`.** CeNGEN decides which channels each class has. For the A, B, AS, D motor neurons it adds
+  UNC-2, KCNL (SK-type Ca-activated K), KVS-1, IRK and SLO-1 coupled to EGL-19, at the median ported density of
+  cells that have them, and removes SHK-1, EGL-36 and KQT-3, which CeNGEN does not detect there. This is the
+  "motor-neuron K+ adaptation" candidate. A-type motor neurons oscillate intrinsically (Gao et al. 2018, eLife
+  7:e29915), so their real channel set is a candidate for the missing rhythm.
+- **E2: every literature mechanism on:** E1 plus `muscle_active` and `gap_rectification`.
+- **S01, S11, S14, S16 range ends** (from section 5, the four single range ends that each end saturation): chemical
+  strength 0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV.
+  Diagnostic only: is the tonic state what blocks the rhythm? Section 6a found no measurement for or against any
+  of these ends, so none can be adopted from this.
+- **Control:** `c2_off` (section 7).
+
+Readouts over 1-5 s (after the first-second rise): neurons above -20 mV in the last frame; muscles whose activation
+SD exceeds 0.05; the dorsal-minus-ventral mean activation of the mid-body muscles (rows 9-16), demeaned: zero
+crossings and peak-to-peak. **A rhythm candidate** = at least 3 zero crossings with peak-to-peak at least 0.1 in
+that signal. Then the activation figure is viewed before anything is said about it.
+
+### 8 results (5 Nov, 17:57 CST; all measured unless labelled)
+
+Runs finished 17:52 CST (file times), Mac, 18.4-19.6 s of wall each; `data/worm/brain_runs/s8_screen/` (readouts
+`*.c1.json`, figure `s8.png`, viewed). The new readout lines in `closed_loop_c1.py` crashed after each run: they
+indexed the saved activations in `BWM_NAMES` order, but the body saves them in MetaWorm driver order (MDR, MVR,
+MDL, MVL, rows 1-24 each, MVL24 a copy of MVL23). The simulations were saved intact, so the readouts were computed
+afterwards from the saved files by `scripts/worm/port/c1_readouts.py` (which the run script now calls), the control
+included, with the pre-registered definitions unchanged.
+
+| run | neurons above -20 mV (last frame) | muscles above -20 mV | mean activation, last 1 s | muscles with SD > 0.05 (1-5 s) | mid-body D-V zero crossings | peak-to-peak | rhythm candidate | centroid net (body lengths) |
+|---|---|---|---|---|---|---|---|---|
+| control `c2_off` | 109 | 40 | 0.40 | 6 | 4 | 0.027 | no | 2.0e-4 |
+| E1 `expression_map` | 137 | 43 | 0.44 | 7 | 6 | 0.029 | no | 1.4e-4 |
+| E2 E1 + `muscle_active` + `gap_rectification` | 136 | 45 | 0.43 | 11 | 5 | 0.033 | no | 1.8e-4 |
+| S01 chemical strength 0.1 nS | 0 | 55 | 0.47 | 12 | 8 | 0.067 | no | 1.5e-4 |
+| S11 excitatory reversal -10 mV | 15 | 28 | 0.23 | 7 | 1 | 0.071 | no | 1.4e-4 |
+| S14 excitatory release slope 2 mV | 0 | 0 | 0.14 | 27 (defecation, below) | 2 | 0.0001 | no | 2.5e-5 |
+| S16 inhibitory release threshold -45 mV | 0 | 3 | 0.03 | 0 | 10 (noise around 0) | under 0.0001 | no | 1.1e-5 |
+
+- **No rhythm candidate.** No run meets the rule, and the figure agrees. The control, E1, E2 and S11 hold a fixed
+  dorsal bend in rows 12-19 (dorsal minus ventral at the colour limit, 0.5) from 0.3 s to the end, and the body sits
+  in a coil. S01, the only run with visible fluctuation, has a ventral bias with irregular ventral excursions in rows
+  15-21 at about 0.7, 1.5 and 3.8-4.3 s, not an alternation (peak-to-peak 0.067, under the 0.1 bar). S14 and S16 are
+  nearly silent: the muscles barely activate and the body stays almost straight.
+- **E1: the CeNGEN channel sets make the tonic state stronger, not rhythmic** (137 neurons above -20 mV against
+  109). At median ported densities, the motor neurons' CeNGEN channels do not reproduce the A-class intrinsic
+  oscillation Gao et al. 2018 recorded, at least not under the network's tonic drive. E2 changes nothing beyond E1.
+- **Ending saturation does not unmask a rhythm.** The four range ends take the network to 0-15 neurons above -20 mV
+  and the muscles to a weaker tonic bend (S11, S01) or near silence (S14, S16). Reading (inferred): no oscillator
+  is hidden under the saturation. The model lacks a rhythm generator, or the proprioceptive gain at which feedback
+  could make one (that gain is guessed with no cited range).
+- **A non-brain event, found while viewing the figure.** In S14, rows 18-24 of all four quadrants rise by exactly
+  0.5 at 3.4 s with no neuron changing. This is the defecation clock's posterior body contraction (pBoc,
+  `dmp_pboc_amp` 0.5 added to the posterior third; a lumped layer, on by default). It adds equally to dorsal and
+  ventral, so it cancels in the rhythm signal, but it accounts for 27 of S14's muscles above SD 0.05. Of the ten
+  closed-loop runs in sections 6-8, two caught one in their window (S14 at 3.4 s, `c1_off` at about 4.35 s; section 6
+  corrected above). Its phase was random: the template worm (`sample_worm(None)`) gave the lumped layers an unseeded
+  generator, so the defecation phase, egg-laying times and GCaMP noise differed from run to run, and a reset redrew
+  them. **Fixed in the same commit:** the layers keep a seed (0 for the template, the worm's own seed otherwise) and
+  rebuild the generator at every reset; `test_template_layers_fixed` checks that two template brains and a reset
+  give the same phase. With seed 0 the template's first posterior contraction starts at 16.3 s (derived from the
+  seeded draw and the 45 s period): 5 s and 10 s runs see none, and 20 s runs see it at 16.3-18.3 s and the anterior
+  one at 19.3-20.3 s.
+- **Verdict:** neither the CeNGEN channel sets nor the four saturation-ending range ends give a rhythm in the closed
+  loop. The question moves to the rhythm generator itself. Candidates for section 9, to be checked against the
+  papers before pre-registration: the B-type proprioceptive coupling and its gain (Wen et al. 2012), A-type intrinsic
+  oscillation (Gao et al. 2018) and descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS).

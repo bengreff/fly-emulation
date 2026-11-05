@@ -23,18 +23,18 @@ cells, toggles, seed = json.loads(sys.argv[1]), json.loads(sys.argv[2]), json.lo
 b = Brain(sample_worm(seed), toggles=toggles, cells=cells)
 def run():
     b.reset()
-    eca = b.soma[0](0.5).eca
+    eca, dmp = b.soma[0](0.5).eca, b.layers.dmp_t
     V, A = [], []
     for k in range(400):
         b.extra_pA[:5] = 20.0 if 150 <= k < 300 else 0.0
         o = b.step()
         V.append(o.v_mV); A.append(o.muscle_activation)
-    return eca, np.array(V), np.array(A), o
-eca, V, A, o = run()
-_, V2, _, _ = run()
+    return eca, dmp, np.array(V), np.array(A), o
+eca, dmp, V, A, o = run()
+_, dmp2, V2, _, _ = run()
 print(json.dumps(dict(eca=eca, finite=bool(np.isfinite(V).all()), vmin=float(V.min()), vmax=float(V.max()),
     same=bool(np.array_equal(V, V2)), shift=float(np.abs(V[200:300, 5:].mean(0) - V[50:150, 5:].mean(0)).max()),
-    placed=dict(b.placed), n=len(b.cell_names), n_act=len(o.muscle_activation), amax=float(A.max()))))
+    placed=dict(b.placed), n=len(b.cell_names), n_act=len(o.muscle_activation), amax=float(A.max()), dmp=[dmp, dmp2])))
 """
 
 
@@ -81,6 +81,13 @@ def test_small_brain(toggles):
 def test_drawn_brain_runs():
     r = _run(dict(wiring="cook"), seed=3)
     assert r["finite"] and r["same"]
+
+
+def test_template_layers_fixed():
+    """The template worm's stochastic layers (defecation phase, egg-laying times, GCaMP noise) replay across brains
+    and resets; before 5 Nov an unseeded generator gave every template run its own defecation phase."""
+    a, b = _run(dict(wiring="cook")), _run(dict(wiring="cook"))
+    assert a["dmp"][0] == a["dmp"][1] == b["dmp"][0]
 
 
 def test_proprio_senses_anterior():

@@ -1,0 +1,22 @@
+{
+ "toggles": {
+  "receptor_sign": "on"
+ },
+ "sets": "syn_exc_erev=-10",
+ "seconds": 5.0,
+ "wall_s": 18.520582914352417,
+ "n_frames": 151,
+ "finite": true,
+ "neurons_above_m20_last": 15,
+ "muscles_above_m20_last": 28,
+ "act_max": 0.7552561163902283,
+ "act_mean_last_s": 0.23119646310806274,
+ "act_std_time_median": 0.027926558628678322,
+ "power_above_lowest_bin_median": 0.8610007762908936,
+ "centroid_net_body_lengths": 0.0001385407376801595,
+ "centroid_path_body_lengths": 0.00015840312698855996,
+ "muscles_sd_gt_0p05": 7,
+ "midbody_dv_zero_crossings": 1,
+ "midbody_dv_p2p": 0.07127830386161804,
+ "rhythm_candidate": false
+}
