@@ -61,8 +61,10 @@ only a uniquely named keepalive by PID.
 
 ## Next (this order)
 
-1. **W1 prerequisites** (`W1_RIM_AFD.md` section 2): Q1 confirm Naudin 2022 step amplitudes and VC protocol;
-   Q2 port CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103 and check each against NEURON at
+1. **W1 prerequisites** (`W1_RIM_AFD.md` section 2): Q1 is done (01:46, `W1_RIM_AFD.md` "Prerequisite
+   status"): current-clamp order confirmed; the voltage-clamp holding potential (-60 mV) is still inferred from
+   Nicoletti's simulation code, so try the Liu 2018 Cell STAR methods (cell.com returned 403) before the VC bar is
+   scored. Q2 port CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103 and check each against NEURON at
    <= 0.01 mV RMS; Q3 extend the mod patch to `kcnl` / `caintra1`. Then run `w1rim1`, `w1afd1` and their
    controls (about 8-12 core-hours, derived; backhouse outside 17:00-22:00).
 2. **GPU batch run of the gap-junction bench** (`BENCH_GAP=implicit`, batch 32) when the GPU is free: GMRES

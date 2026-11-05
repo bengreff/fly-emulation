@@ -88,3 +88,27 @@ fit, about 8-12 core-hours for both fits and the controls; to run at night or ou
 If the training bar passes but a held-out bar fails, the model does not generalise for that cell, reported as
 "fails the pre-registered bar". If a control passes a bar, the bar was too weak to test the model and no claim
 rests on it.
+
+## Prerequisite status (added after pre-registration; no RIM or AFD value opened)
+
+**Q1, 2026-11-05 01:46 CST: current clamp confirmed; voltage clamp confirmed except the holding potential.**
+
+- Current clamp (measured protocol, from the paper): Naudin et al. 2022 PLoS ONE 17:e0268380, Fig 1 legend:
+  "a series of current injections, in spans of 5 seconds, starting from -15pA and increasing to 35pA by 5pA
+  increments". Sweep order (inferred from the authors' code, strong): their fitting scripts
+  (github.com/lois76/codeGenerationNonSpikingCBM, tag v1, Zenodo 10.5281/zenodo.5407653) pair data column i with
+  `stim=[-15:5:25]` element i, in increasing order, for both RIM and AFD. Our files' headers number the sweeps in
+  acquisition order (`CC-IV-long_3..13`). So sweep k is -15 + 5k pA, as assumed in section 1.
+- Voltage clamp, from the papers: steps -100 to +50 mV by 10 mV (Naudin 2022 Methods; Nicoletti 2024 Fig 5
+  legend, "16 voltage steps from -100 mV to 50 mV with a duration of 500 ms"). Peak = the largest absolute
+  current in the first 100 ms of the step; steady state = the mean current over the last 50 ms (Naudin 2022 Fig 1
+  legend; these windows are used, since the held-out numbers are Naudin's). Recorded at 22-23 C.
+- Holding potential, **inferred, not confirmed**: -60 mV, held 1100 ms before the step and 100 ms after it, as in
+  Nicoletti 2024's published simulation (`RIM_simulation_vclamp.py`). It is not stated in Naudin 2022 or in
+  Nicoletti 2024's text, and the recording paper (Liu et al. 2018 Cell 175:57) was not reachable (403). The peak
+  current depends on the holding potential through inactivation, so the peak half of the VC bar uses -60 mV
+  labelled inferred until the Liu 2018 methods are checked; the steady-state half barely depends on it.
+- Noted, not used: Naudin's own fits train on -15 to +25 pA and keep 30 and 35 pA out; our split (section 1) is
+  different and stays as registered.
+
+Q2 and Q3: not started.
