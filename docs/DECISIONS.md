@@ -6062,3 +6062,44 @@ copied to `runs/s23/fc/smoke_m10f6_s12.json` and `_rates.npz`. It was scored onc
   - MECHANISM_STATUS: row-wise by owner, and fly2's count rewritten in the three-tally format.
   - Fast tests (lifetime, stubs, gabab_recordings, model_data, internal_state, class_mechanisms, repo_hygiene,
     glia_uptake, t1_fill, antenna): 89 passed, 0 failed.
+
+## Worm W0: C. elegans first, fly paused (Ben, 4 Nov 2026; this entry written 5 Nov 00:47 CST)
+
+Ben's direction (Director brief, 4 Nov; binding answers in `~/director/goals.md`): build a full functional
+C. elegans emulation first, with the same rules as the fly (mechanisms, bounded biological parameters fitted to
+physiology and behaviour, no trained black box), adult N2 hermaphrodite, blind held-out prediction within real
+variability as the pass bar. Same repo, organism-agnostic. The fly is paused, not abandoned.
+
+**Code layout.** Organism-agnostic pieces go in a new package `src/bioemu/` (so far: `jx_membrane`, a fused
+Jaxley membrane built from any channel library; `morph`, NeuroML to SWC). Worm-specific pieces go in
+`src/wormemu/` (so far: `nicoletti`, the Nicoletti 2024 channel library). `src/flyemu/` is untouched while the
+fly is paused; moving its generic parts into `bioemu` is planned in PLAN.md (d) and gated on the fly battery
+(307/0) passing unchanged. Why a new package rather than renaming flyemu: nothing the fly depends on moves
+tonight, so the paused fly stays reproducible.
+
+**Engine.** Jaxley 0.14 (Apache 2.0) for differentiable multicompartment simulation, NEURON 8 as the CPU
+reference path (the port matches it to <= 0.009 mV RMS; F-W0-1). Verdicts and evidence in PLAN.md (b).
+
+**The spike ran on CPU, not the GPU.** The pre-registration said "gradients on the GPU". Before any fit was
+scored, the shared GPU measured slower than CPU cores for one small cell (F-W0-4), so both fits ran on CPU,
+2 cores each. Nothing judged depends on the device. GPU throughput is still measured, on the network bench.
+
+**Addendum A to the spike pre-registration** (SPIKE.md, 2026-11-04 23:26 CST): fixed the four open details of
+the voltage-clamp prediction (ionic current summed over all compartments, published windows, dt 0.1 ms float64,
+E_Ca 60 mV) before any held-out score was computed. The pipeline test that followed (a 2-iteration fit) scored
+the held-out voltage clamp; the real fits were already running with frozen settings, so nothing was tuned on it.
+
+**HANDOFF.** The fly HANDOFF (s23, 24 Oct) is archived unchanged in `docs/archive/HANDOFF_fly_2026-11-04.md`.
+`docs/HANDOFF.md` is now worm-first and carries the fly's sealed and held-out register unchanged, plus a worm
+register.
+
+**Gap junctions: no form adopted.** The cost bench's non-finite gradients trace to Jaxley's synapse linearisation,
+which makes an ohmic gap current fully explicit (F-W0-5). `src/bioemu/jx_gap.py` keeps both tested forms:
+`ExplicitGap` (Jaxley's default behaviour; accurate, unstable above a = dt g / C = 1) and `Gap` (half-implicit;
+stable but slows coupled cells' common relaxation by about 1 + a, measured on a pair). Neither is adopted for
+fitting. The bench defaults to the explicit form, the one its 4 Nov timings used. Before any network fit:
+build a coupling solved implicitly on both sides, check it on the pair against the dt 0.001 ms reference and
+NEURON, and adopt it on that gate.
+
+**Spike verdict recorded as failed.** `fit1` misses the pre-registered training bar (F-W0-8). Nothing is refitted
+under that name; the next AIY fit gets a new name and its own pre-registration.

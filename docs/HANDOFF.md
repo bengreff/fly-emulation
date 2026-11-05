@@ -1,285 +1,103 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of Sat 24 October 2026, 03:46 CDT, session 23 (sixth context of the night; main at c9adbba plus this commit). **`m10f` = m10f10 since 03:43.**
-- **Brief (Director, 24 Oct 00:55 entry in `/Users/ben/director/decisions/fly.md`):** about 5 % of the week left tonight; park at a clean commit by 05:30 with HANDOFF current. The seven required-level questions are not Ben's: fidelity is an engineering call he delegated, with a bias toward simulating more. Work the path-to-done table in rank order: (1) score m10f9b and the m10f6/7/8 smokes; (2) source graded_rmax; (3) the next rows. A row is done only on evidence.
-- **Director rulings (00:55), now applied in the path-to-done column:**
-  - Derived constants beat declared ones. A row is never done by declaring it out of scope.
-  - S5: a lumped heat balance near ambient at rest, checked against a cited measurement.
-  - B27: well-mixed only with a cited circulation or mixing time, and only for slower processes.
-  - S7: a constant healthy state is OK. S8: a naive-male constant is OK, stated as such.
-  - N27: class level where no type-specific data exist, with the search documented.
-  - N33: in scope. Build at least astrocytic Eaat1/GAT uptake and its effect on synaptic time course at class level. The ensheathing-glia sleep roles tie to N25.
-  - N28: a cited measured Q10 range is enough when a documented search finds no independent check in open text.
-  - N1: graded_rmax must be sourced (fly first; other insects labelled derived).
-- **Goal:** a **mechanism-complete fly**. "Done" means built at the required fidelity, ON in `m10f` with values inside a cited measured range, and passing a unit check against a measurement where one exists (where none exists, built and ON counts).
-- **Heavy runs:** backhouse for multi-run sets (at most 4 threads per job, queue above load 24, nohup, done-files); on the Mac, through `python3 ~/director/harness/slot.py run --label "fly: <what>" -- <cmd>` under nohup with done-files.
-- **My rows (fly):** neuromodulation, hormones, internal state, metabolism, N1-N4 intrinsics and N27/N33 glia: 20 rows.
-- **Tallies (Director 03:10: three separate counts, never added together):**
-  - done on evidence: **1** (S5);
-  - done where no check exists (built, ON, active, cited values): **1** (N28);
-  - done by ruling: **2** (S7, S8).
-- **fly2:** plasticity, synaptic dynamics, sensors, body, plus N13, N14, N18. Stay out of those, and out of `~/fly2_mc` and the flyapp worktree.
+**Rewritten each session; do not append.** State as of 2026-11-05 00:48 CST, worm session W0 (first night of the
+C. elegans phase; main at the commit carrying this file).
 
-## Report for Ben (s23)
-**Rows moved tonight:**
-- S5 is done on evidence (Digby check D).
-- N28 is done where no check exists. Its photoreceptor Q10 is applied beyond its source.
-- S7 and S8 are done by ruling.
+- **Direction (Ben, 4 Nov 2026; Director brief of that date; Ben's ten binding answers in `~/director/goals.md`,
+  fly-emulation section):** build a full functional emulation of C. elegans first: adult N2 hermaphrodite,
+  multicompartment neurons with CeNGEN channels, every mechanism layer (peptides, monoamines, glia, muscles,
+  non-neural cells, innexin-specific gap junctions, metabolism, gene expression), a fast rod body for fitting
+  cross-checked against a 3D body, hours-to-days timescale, blind held-out prediction within real variability as
+  the pass bar. Bounded biological parameters fitted to physiology and behaviour, never a trained black box.
+  Same repo, organism-agnostic. Ben prefers compute over code.
+- **The fly is paused.** Its HANDOFF (s23, 24 Oct, `m10f` = m10f10) is archived unchanged in
+  `docs/archive/HANDOFF_fly_2026-11-04.md`; its sealed and held-out register is carried below unchanged. Nothing
+  of the fly was run or changed in W0.
+- **Read first:** `docs/worm/PLAN.md` (verdict first; ledger, adoption verdicts, fitting architecture, fly
+  generalisation, roadmap, DECISIONS NEEDED), `docs/worm/SPIKE.md` (the pre-registered spike and its results),
+  `docs/worm/STATE_OF_THE_ART.md` (prior efforts, data by layer, the behaviour corpus), `docs/worm/MANIFEST.md`
+  (data on backhouse), the "Worm W0" sections at the end of `docs/FINDINGS.md` and `docs/DECISIONS.md`.
 
-N26, N3, S3, S1 and N1 stay partial, each against its own bar (DECISIONS 03:43). N33 is built but inert, so it is **not done** (Director 03:10).
+## Report for Ben (W0)
 
-- **Adoption (DECISIONS 03:43; F-S23-12).** `m10f` = m10f10 = m10f5 + N26 light input (m10f6) + MB class noise
-  with N21 off (m10f7) + sourced organ values and Q10 2.5 (m10f8) + recorded modes (m10f9b) + S5 heat balance.
-  - G, G2 and S pass. S: 0.3313 Hz, active 0.0311.
-  - The battery passed 307/0 on c9adbba, and the figure was viewed.
-  - The ledger was regenerated. S5 moves to mixed, so the fill is unchanged.
-  - N28 was inert at the 25 °C default until S5: its factor is 1.0067 in m10f10, measured on the registry.
-  - m10f6 S passes too (0.3037 Hz, 03:30).
-  - m10f11 G2 passes on all four seeds, as predicted (eye bin 1 267-271); its S is next session.
+**The spike failed its pre-registered training bar and passed both held-out bars** (measured, SPIKE.md RESULTS).
+One AIY neuron (4 compartments, Virtual Worm morphology), fitted with gradients to one cell's current-clamp
+steps (Naudin 2022), twice: with its CeNGEN channel set (12 densities, no SHL-1) and with the published 7-channel
+set.
 
-- **S5 body temperature (built, neutral off; DECISIONS 24 Oct 00:51, 00:57; F-S23-9).**
-  - Lumped heat balance: C T_b' = P_met − P_evap − G (T_b − T_air), with G = 2π k_air D + 4εσT³πD² and D = (6m/πρ)^(1/3). The values are sourced (mass 0.505 mg, ρ 1.07, c_p 3.5 J/g/K, ε 0.95). The resting excess is derived at **+0.07 K**. The neural Q10 reads the resting body temperature at build (`internal_state.neural_temperature_c`).
-  - **Check D PASS (spent).** Digby 1955 J Exp Biol 32:279 measured a small *D. melanogaster* warming by 2.5 K in 10 cm/s air under 1.0 cal/cm²/min. The model predicts 2.36 K (ratio 0.94; the bar was ×2).
-  - Switch `state:body_temp|model` 0 = body at air temperature; m10f10 sets it to 1. S5 is done once m10f10 is adopted.
-- **Director challenge (01:30): is G's silent window biology or convention? Answer: m10f9c failed on the model, not
-  on the gate (F-S23-10; `docs/research/s23_gate_silent_window.md`).**
-  - G is an engineering stability convention: the noise-free network must return to rest. It is not a claim that
-    the brain is silent. S scores measured resting rates with noise on.
-  - The amendment G2 was registered before rescoring (DECISIONS 01:31): a 1000 ms window, no growth in any 100 ms
-    step, and 0 non-eye spikes in the last 100 ms. A stage that adds a sourced tonic source gets a clamp arm.
-  - G2 results, seeds 12-15: m10f9b and m10f10 pass. m10f9c fails on all four seeds.
-  - m10f9c's optic lobe holds a self-sustained loop with no input, noise or tonic source. Release at rest is 0
-    in this chain, so F-S23-8's mechanism was wrong.
-  - Localisation (DECISIONS 01:40, scored 02:12): 300 Hz at the photoreceptors alone returns to rest; 300 Hz at
-    the other graded cells sustains and grows (L1-L5, Tm1-Tm3, T5 with the Pm/T1/Dm13 medulla cells).
-  - Measured lamina dark rest: tonic photoreceptor release in dark and light, inhibitory onto L1-L3, with the
-    synapse resting mid-curve. No fraction of maximal release at rest and no downstream dark rates are in open
-    text.
-  - Two G2 limits are written down and not applied: (a) is weak to slow drift, and (b) would also fail a real
-    noise-free attractor.
-- **N1 graded_rmax (F-S23-8, F-S23-10).**
-  - Derived 300 Hz (171-684), **sourced for the 6,091 photoreceptors only**: Laughlin 1987 via secondaries, and
-    Kazama & Wilson 2008.
-  - For the other 30,269 graded cells it is applied beyond its source. No open text gives a non-photoreceptor
-    graded release rate; locust graded synapses give only a voltage axis. The `n1_graded_rmax` row says this.
-  - The chain keeps 100 Hz (guessed).
-  - Laughlin 1987 and Uusitalo 1995 are on `docs/PAPERS_FOR_BEN.md` (new; README map).
-- **N33 astrocytic uptake: built, neutral off, CPU path, and inert. Not done (DECISIONS 02:28, 02:42, 03:08; Director 03:10).**
-  - Eaat1 uptake u (fraction of healthy) sets the fast decay of every spiking glutamatergic edge:
-    τ(u) = τ(1)·R/(1+(R−1)u), with the u = 1 peak kept. R = 2.9 (measured, by eye, ±10 %; per pair 2-4) from
-    MacNamee 2016 Fig. 8B.
-  - **Source label:** a **larval** third-instar VNC looper → motor neuron GluCl-type compound IPSC under TBOA. That
-    is a CNS synapse, not the NMJ (the Director wrote NMJ) and not adult. The adult use is inferred. The label is
-    corrected in `parameters.csv`, `lif.py` and `profiles.py`.
-  - **m10f12** (m10f10 + N33 at u = 1) **modifies 0 edges** (`scripts/probes/s23_n33_edge_count.py`,
-    `runs/s23/n33/edge_count.json`). The factor is 1 at u = 1 by construction, and the spikes equal m10f10's on
-    200 steps.
-    - Below healthy it would act on 1,022,236 glutamatergic edges (16.4 %).
-    - None of those edges has an N29 row; all sit at the default 5 ms.
-  - **Missing:**
-    - (a) sourced adult glutamatergic decays, i.e. the N29 glutamate rows. **These are fly2's rows**; the s13
-      search found none.
-    - (b) a split of each decay into receptor-limited and clearance-limited parts, so that healthy uptake shapes
-      it. This needs fly Eaat1 kinetics or a clearance time; none found.
-  - **m10f10, not m10f12, is the adoption candidate**: a switch that changes 0 edges is not "ON".
-  - Keys `state:glia|uptake_model`, `state:glia|eaat1_uptake`, `state:glia|gat_uptake`; row
-    `n33_eaat1_block_decay_ratio`; `tests/test_glia_uptake.py` (5 pass).
-- **m10f11 (registered DECISIONS 02:20; G2 passes on all four seeds, 03:29; S next session).** It is m10f10 with the photoreceptors at 300 Hz (derived) and every
-  other graded cell at 100 Hz (guessed). New switch `cell_type:all|graded_rmax_by_class` (neutral 0, CPU path) with
-  row `n1_photoreceptor_graded_rmax`; test `test_graded_rmax_by_class_is_neutral_by_default_and_scales_only_photoreceptor_release`.
-  Predictions: G2 passes seeds 12-15, eye bin 1 about 250, whole brain within ±0.005 of m10f10, S within ±0.02.
-- **m10f10** = m10f9b + S5 on. It was registered on m10f9c and rebased on m10f9b when m10f9c failed (DECISIONS 00:57). **G and G2 pass on seeds 12-15**, within ±0.005 Hz of m10f9b. **S passes** (03:29): whole brain 0.3313 Hz, active 0.0311. Adopted as `m10f` at 03:43.
-- **m10f9b** (N1 recorded modes, IN10B row removed; DECISIONS 00:29, 00:42) **passes G, G2 and S** (DECISIONS 03:02).
-  - S: whole brain 0.3307 Hz, active 0.0312, no runaway or NaN, 0 warnings, 60 s.
-  - The graded_rec check passes: all 24,940 cells emit 0 spikes. It has power only for IN13B, because the optic
-    lobe is silent at dark rest in either mode.
-  - N1 stays partial under the 00:55 ruling.
-- **S7 and S8 (done, ruled constants; DECISIONS 01:18).** `stubs.CONSTANT_STATES`:
-  - `state:immune|model` 0: a healthy, uninfected, conventionally reared lab fly.
-  - `state:reproductive|model` 0: a naive (virgin) mature male.
+| Bar | cengen | pub |
+|---|---|---|
+| training mean RMSE <= 4 mV | 4.79, fail | 4.80, fail |
+| held-out steps mean <= 5 mV | 3.78, pass | 3.77, pass |
+| held-out worst step <= 8 mV | 5.68, pass | 5.81, pass |
+| population voltage clamp >= 80% inside mean +/- 2 SD | 100%, pass (uninformative, F-W0-6) | 100%, pass |
 
-  Every profile reads them, and any other value raises. Test: `tests/test_stubs.py::test_constant_states_are_read_at_their_value_and_refused_otherwise`. Ledger (S7 inferred, S8 guessed, fidelity global) regenerated; the filled fraction is unchanged.
-- **Reads for the next rows** (`docs/research/s23_b27_n27_n33_reads.md`):
-  - **B27:** adult heart dimensions and rates (Wolf 2006) and the reversal cycle 20-25 s (Wasserthal 2007). There is no adult stroke volume, chamber length or tracer transit, so no adult mixing time can be derived yet; the pre-pupal transit is under 1 s. B27 stays absent.
-  - **N27:** resting brain [K+]o is 13.1 ± 2.8 mM (Armstrong 2011), and the surges are pathological only (anoxia 54 mM; spreading depolarisation, median 24 mM). There is no physiological per-spike rise or clearance τ, so the class-level build has its resting value but no rate.
-  - **N33:** one larval TBOA effect on synaptic decay (MacNamee 2016 Fig. 8B; the ratio is not read yet) and no fly GAT current data. Eaat1/GAT class uptake is the build; it needs the decay ratio first.
-- **Carried from the first s23 context:**
-  - m10f6 (N26 light input), m10f7 (MB class noise, N21 off) and m10f8 (sourced organ values) pass G. m10f6 S passes (03:30). The m10f7 and m10f8 smokes are on backhouse and are optional now (F-S23-1).
-  - N25: the night-input candidate B **failed** Chowdhury 2023, which is now spent (F-S23-6).
-  - m10f9 failed G from the IN10B graded row (F-S23-7).
-  - Source corrections (F-S23-5): `ingest_nl_s` 5.0 nL/s; `crop_max_nl` re-sourced to measured meals; N28 Q10 2.5 (Juusola & Hardie 2001).
-  - MB output layer sign (F-S23-2; `MEASUREMENT_LIST.md` entry 6).
-  - Reads with no usable value (F-S23-3, F-S23-4). Desiccation stays unscored and unspent.
-  - Reader notes: `docs/research/s23_n28_n26_checks.md` and `s23_n2_membrane_values.md`.
+- The two channel sets fit equally well, and the published fit switched SHL-1 nearly off: consistent with
+  CeNGEN calling it absent in AIY (F-W0-3).
+- The misfit is systematic, not noise: most starts hit the same floor, and steady states are 5-8 mV off. More
+  biology is needed (bounded gating shifts, soma and neurite densities, a membrane-area check), not more
+  iterations (F-W0-8).
+- Cost (measured, 2 CPU cores, backhouse load about 30): 1.5 h per fit; 5.4 gradient and 31-33 forward 8 s
+  simulations per second. The fits ran on CPU, not the GPU. That was a deviation, recorded before scoring,
+  because the shared GPU was slower for one small cell (F-W0-4).
+- Whole-worm extrapolation (derived, PLAN c.5): running the worm costs about 2.4 h per biological hour on one
+  core at 4 compartments per cell. One joint fit takes about a day on backhouse.
+- **Found a numerical problem that blocks network fits** (F-W0-5): Jaxley integrates gap junctions explicitly,
+  so highly coupled cells blow up. My half-implicit patch stops the blow-up but is quietly inaccurate, so it is
+  not adopted. A coupling solved implicitly on both sides is the first W1 job.
+- PLAN.md is written (ledger, verdicts, fitting architecture, fly generalisation, roadmap, 5 DECISIONS NEEDED).
+  The data is on backhouse with `docs/worm/MANIFEST.md`.
 
 ## Running now
-- **Thread limits (Director 01:40).**
-  - Every new launch exports OMP, OPENBLAS, MKL, NUMBA, NUMEXPR, VECLIB and LP (Mesa llvmpipe) `_NUM_THREADS`
-    set to the slot count, uses `taskset` on Linux, and checks `ps` after launch.
-  - Measured: the backhouse smokes reached 89-98 threads, about 28 of them llvmpipe render threads. BLAS
-    honoured the settings.
-- **Mac:** nothing of mine. The m10f10 smoke, the m10f11 G2 and the battery have all finished.
-- **backhouse** `/home/greff/fly-m10f` (nice 19; priority CRUCIBLE S7, then B4, then fly):
-  - `run_s23_gate.sh` (pids 697/710/720; smoke 723): the m10f7 smoke, done-file `runs/s23/fc/smoke_m10f7_s12.done`
-    then `ALL.done`. The m10f6 smoke landed at 03:24 and was scored.
-  - `run_s23_m10f8.sh` (7887/7898; smoke 7901): the m10f8 smoke (`smoke_m10f8.done`).
-  - Both are optional now: m10f10's S covers stages 7 and 8. Stop them at park if unfinished.
-  - The KC grid is stopped. kc0.5 and kc1.0 are kept.
-- Scorer `/tmp/flys23/score_s.py <smoke.json> [<rates.npz>]` (tmp, not committed).
-- **Keepalive:** Mac pid 32120 (`ssh backhouse ... exec sleep 14400`). It ends by itself at about 05:22.
-- **Park checklist:** before 05:30, stop the two backhouse scripts and their smokes if unfinished, the keepalive,
-  and my waiters.
-- Not mine; never touch: fly2's s29 smokes (`m10f5n7`, `m10f5s29`) on backhouse, CRUCIBLE, and other projects' processes.
+
+Nothing. All W0 jobs on backhouse finished; no keepalive or poller left running.
 
 ## Next (this order)
-1. **m10f11 S** (60 s smoke, seed 12) on the 00:29 bars, plus S within ±0.02 Hz of m10f10's 0.3313 (02:20
-   prediction). If it passes, run the battery, view the figure, and adopt. N1 then has the photoreceptors at a
-   sourced rate and stays partial.
-2. **N1 `release_at_rest`:** the open-text search found none. The candidates are Ben's PDFs of Laughlin 1987 or
-   Uusitalo 1995 (`docs/PAPERS_FOR_BEN.md`), or a value derived from the mid-curve resting point (Weckström &
-   Laughlin 2010). Run its effect on the lamina; don't assume it.
-3. **Partial rows, cheapest real path** (MECHANISM_STATUS, count 24 Oct 03:43):
-   - S3 needs fly2's B17 pump rate.
-   - S1 needs a primary adult hemolymph trehalose value and an independent starvation time course.
-   - N3 needs one noise level per class, fitted on half the types and checked on the other half (registered first).
-   - N26 needs mu from a measured re-entrainment, and the peak hours from firing phases.
-4. **N33:** not done. It needs (a) adult glutamatergic N29 rows (fly2's) and (b) fly Eaat1 kinetics or a clearance
-   time, to split each healthy decay. It also needs a fly GABA decay ratio under GAT loss, and an independent adult
-   check of R.
-5. B27 and N27 (reads in `docs/research/s23_b27_n27_n33_reads.md`). Also `rest_vs_reference.py` on the m10f10
-   rates, and the KC grid summary on kc0.5 and kc1.0.
-6. If the m10f7 and m10f8 smokes landed, copy them from backhouse and score them for the record.
 
-**For fly2:**
-- **N29 glutamate rows (yours), requested for N33 (DECISIONS 03:08).** No glutamatergic edge has a
-  receptor-kinetics row. 1,022,236 spiking glutamatergic edges decay at the default 5 ms. A sourced adult GluCl
-  IPSC decay (and ionotropic Glu EPSC decays where a class has one) would give N33 its τ(1).
-- **`m10f` is now m10f10 (24 Oct 03:43), so N21 is off in the frontier** (`cell_type:all|kc_mbon_ltd_timing_rate`
-  0). That is your F-S26-1 condition: DANs are at their measured rest (7.94 Hz). It returns when your resting-safe
-  rule lands. Rebase your next stages on m10f10.
-- N22 forgetting stays on (a no-op at rest).
-- Your N24 selection includes ER5. The N25 night term acts only on the dFB OFF rate and touches no weights.
-- **B17 pump rate (yours):** `pump_full_rate_hz` 10 is guessed. Measured values:
-  - cibarial pumping is 5-7 Hz (Manzo 2012 ≈6 Hz, n 14-21, females, 25 °C; Sui et al. 2026 Nat Neurosci 5 / 6 / 7 Hz by method);
-  - the pump MNs burst at 25-90 Hz within each cycle (Sui 2026, n 18 per MN).
+1. **Implicit gap-junction coupling** (blocks every network fit). Solve the coupling implicitly on both sides,
+   for example with fixed-point sweeps per step or the gap conductances added to the voltage solve. Gate: the
+   pair check (`scripts/worm/check_gap.py`, add the new form) matches the dt 0.001 ms reference and NEURON at a
+   up to 6. Then rerun the bench gradient at batch 32 on the GPU.
+2. **W1 cells:** pre-register RIM and AFD (same Naudin deposit, values unopened) with a control model that must
+   fail. Use a new, separately named AIY fit with bounded gating shifts shared by gene, separate soma and
+   neurite densities, and a membrane-area check (F-W0-8).
+3. Port the BAAIWorm channel models and check them against NEURON (PLAN b).
+4. Try Sibernetic with Windows-native NVIDIA OpenCL (DECISION 4).
+5. Seed the held-out splits for Randi 2023 and the behaviour corpus before anything reads them (PLAN c.4).
+6. Ben's calls: PLAN.md "DECISIONS NEEDED" 1-5 (morphology source, the variability bar plus a must-fail
+   control, GPU time, the 3D body, the CeNGEN threshold).
 
-  Quotes are in `docs/research/s23_crop_pump_q10_adaptation.md`. S3 waits only on this term now.
-- S5 (m10f10 on) gives a body temperature 0.07 K above ambient at rest. A body model that needs thorax temperature can read `internal_state.neural_temperature_c`.
+## Where things are
 
-**Earlier sessions.** The s13-s22 reference blocks are in `git show 859348d:docs/HANDOFF.md` and in FINDINGS / DECISIONS: the walking bypass assay and the nine ruled-out single causes, the X1 cross-connectome control, s12 body work, the s22 N25 mode 1 fit and its bout trade-off, and the MB type-spread first look. Key carried facts:
-- N25 mode 1 (s22): 140 of 14,256 sets passed T1-T4. Every accepted set over-consolidates the night (F-S22-1); at the fast end of k_r the nights fit but the days fall apart (F-S22-2). Hence the night term.
-- MB type spread (s22, `docs/research/s22_mb_type_spread.md`): model rate falls with input count (ρ −0.83); data does not (+0.34).
-- Walking (parked, Ben 21 Oct): every arm stalls at the core → leg-MN hand-off. `MEASUREMENT_LIST.md` item 4 is the measurement that would cut it.
-- Azevedo 2020 recruitment order slow → intermediate → fast is still held out and unspent.
-
-## fly2: s29 parked; N31/N32/N34 built (off); B20 and N7 passed G and S on m10f5 but not adopted (base superseded by m10f10); rebased stage m10f10s29 defined, not run (24 Oct 04:23)
-
-fly2 works in `.claude/worktrees/fly2` (branch `worktree-fly2`). Ben's definition of done: built at full fidelity, ON in the frontier profile at in-range values, and passing a unit check against a measurement where one exists; where none exists, built and ON counts, with a cited basis (Director, 23 Oct). Done is counted in three separate tallies (Director, 24 Oct 03:10): on evidence / no check exists / by ruling. fly2 owns plasticity/learning, synaptic dynamics, sensors and muscles/body, plus N13, N14 and N18.
-
-- **Tallies (fly2's 49 rows, 24 Oct 04:15):**
-  - **Done on evidence: 0.**
-  - **Done where no check exists: 0.**
-  - **Done by ruling: 0.**
-  - B: 23 partial, 3 absent (B24-B26). N: 4 built-off (N7, N8, N10, N14), 19 partial, 0 absent.
-- **Done this session (s29).**
-  - **N31, N32, N34 built, off** (`src/flyemu/lifetime.py`, `data/params/site_plasticity.csv`, `tests/test_lifetime.py`; DECISIONS 23 Oct 23:56; F-S29-5). Each has one switch, neutral 0, CPU only (the GPU path refuses). absent -> partial. None can be checked in a 60 s run.
-  - **N7:** the mRNA route was rejected (F-S29-1). `cell_type:all|gabab_from_recordings` sets uniglomerular PNs 0.54 (derived, Wilson & Laurent 2005) and AL LNs 0 (inferred).
-  - **B20:** f0 426 Hz, Q 1.2 (measured, Göpfert & Robert 2002). Check on GR2003's flies: 430 Hz inside 303-487, **PASS** (F-S29-4; GR2003 spent).
-  - **Smokes (scored 04:11, DECISIONS):** m10f5n7 0.3035 Hz and m10f5s29 0.3034 Hz against m10f5's 0.3037. Both PASS G (seeds 12-15) and S. AL PN 0.283 -> 0.270 Hz, AL LN 0.377 -> 0.356 Hz. Figure `runs/s29/smk/s29_smoke_compare.png` (viewed; `scripts/probes/s29_smoke_compare_fig.py`). **Not adopted:** fly moved m10f to m10f10 at 03:47 while they ran, and a stage on m10f5 would roll back fly's m10f6-m10f10.
-  - **Rebase:** `m10f10s29` = m10f10 + the four s29 keys (gabab_from_recordings, slow_share_basis, antenna f0 and Q). It is defined in `profiles.py`, and a check confirmed it differs from m10f10 in exactly those keys. Bars (registered before any run, DECISIONS 04:11 and 04:23): G seeds 12-15, S in the bands, whole brain within 0.01 Hz of 0.3313. **Not launched**, because an S takes about 4.5 h.
-  - **B15: FAIL** (F-S29-3; Card & Dickinson 2008 spent). The take-off reaches about half the measured speed.
-  - **F-S29-6 (N13 path):** skeleton radii are quantized. 75.8 % of types sit at the 0.256 µm floor, so per-type conduction speeds are derived only for the 24 % above it; the rest need meshes.
-  - **Engel & Wu 1996 Table 2:** 85 (n 90) at 5 Hz was checked on the page image. Fig 4B (log-mean ± SEM) is the band source for the N34 check, still unspent.
-  - **Merge of main** (fly s23, m10f = m10f10): conflicts resolved by keeping both sides (DECISIONS 04:23). Fast tests 89 passed, 0 failed.
-- **Next, in order:**
-  1. **m10f10s29 G and S** on backhouse.
-     - Cap every pool at the slot's thread count: `OMP_NUM_THREADS`, `OPENBLAS_NUM_THREADS`, `MKL_NUM_THREADS`, `NUMBA_NUM_THREADS`, `VECLIB_MAXIMUM_THREADS`, `NUMEXPR_NUM_THREADS`, `XLA_FLAGS` (Director, 24 Oct 01:40: the s29 smokes ran 89-98 threads at about 150 % CPU and starved CRUCIBLE).
-     - Run under `taskset`, then check `ps -o nlwp` after launch.
-     - Backhouse priority: CRUCIBLE first, then B4, then fly jobs.
-     - If it passes: battery, a viewed figure, then `m10f` = m10f10s29. That makes B20 done on evidence and moves N7 built-off -> partial.
-  2. **The DOF 40 warning** (Director, small item). "Nan, Inf or huge value in QACC at DOF 40, t=0.0001" appears in every full test run. Find which test and which joint DOF 40 is, why it blows up at the first step (initial penetration, a zero-mass body, a bad actuator gain), and fix the cause.
-  3. **N34 GF habituation:** fit per-spike u at one Engel & Wu Table 2 frequency, hold out the other two; Fig 4B gives the band. Pre-register first.
-  4. **Then:**
-     - B14: a derived folded-wing basis.
-     - N10: a sensory first synapse with a recorded PPR.
-     - N7 KC: a slow pool on graded release, checked on a second KC recording.
-     - B2: measured coxa ranges ON.
-     - B8 / B9: fix the neck and abdomen pinning.
-     - N13: derived speeds for the 24 % of types above the radius floor.
-  5. **Ben's call:** N8 stays 0 unless Ben rules a transferred NMDA value acceptable. No recorded NMDA current exists in any fly central neuron.
-- **What stops the built-off rows going ON** (MECHANISM_STATUS path column, F-S29-2):
-  - N7: no measured GABA-B decay constant; the other classes are unmeasured.
-  - N8: as above.
-  - N10: no ORN paired-pulse ratio.
-  - N14: N21's resting stability (parked).
-- **Known misses of N21/N22:**
-  - No LTP.
-  - DA alone doesn't potentiate.
-  - CS- doesn't change.
-  - One rate for all compartments.
-  - Guessed trace taus.
-  - Not resting-safe at the measured DAN rest; any run with fly's σ*_DAN on needs `cell_type:all|kc_mbon_ltd_timing_rate` 0.
-- **State:**
-  - Scoreboard 1 of 8 (PER labellar).
-  - N30 option B UNDECIDED (`docs/MEASUREMENT_LIST.md` item 1).
-  - The ledger is not updated for N7: `blank_ledger.py` doesn't expand regex rows.
-- **Backhouse:**
-  - `~/fly2_mc` holds the worktree's src, data and probes as of s29. It does not yet have the merged profiles.py, so sync before launching m10f10s29.
-  - Run scripts with `ssh backhouse "wsl -d Ubuntu -- bash -s" < script.sh`; launch scripts need `sleep 3` after `nohup ... &`.
-  - Fetch files with `ssh backhouse "wsl cat /home/greff/fly2_mc/<path>"` (an absolute path).
-  - None of my processes were running at park.
-- **Mac lessons:**
-  - Heavy jobs go through `slot.py`, with the same thread caps.
-  - The worktree guard refuses heredoc python, awk programs, compound commands and paths containing `/fc/`. Write scripts to `/tmp/fly2n/<session>` and run them plainly.
-  - DECISIONS is over 600 KB, so Read it with offset and limit.
-- **Carried:**
-  - The body hook (fly owns the premotor->MN fix).
-  - The stance loop CS rows.
-  - T4/T5 dendritic position (Behnia 2014 sealed).
-  - `test_gpu_batched.py` under JAX on backhouse.
-  - N12 retry needs a DLMn spike amplitude and PRC.
-- **Stay out of:** the VNC files, fly's switches and rows, the flyapp worktree, and `docs/research/sealed/*`.
-
-## Where the project stands
-
-- **Frontier profile:** `m10f` = m10f5 (fly2, since 23 Oct 03:13). Chain in `src/flyemu/profiles.py`: m10f0 → m10f1 (STP) → m10f2 (receptor decay) → m10f3 (gap junctions, PSI) → m10f4 (N21, N22) → m10f5 (DLMn coupling) → m10f6 (N26 light input) → m10f7 (MB class noise, N21 off) → m10f8 (sourced organ values) → m10f9b (N1 recorded modes, no IN10B row) → m10f10 (S5 heat balance on). Side stages that failed G: m10f9 (IN10B row) and m10f9c (graded_rmax 300). m10f6-m10f10 are registered and gated (s23), not yet adopted.
-- **Default profile:** `WORKING_PROFILE` is still m9c (`FLYEMU_PROFILE` overrides; m4 is the regression reference).
-- **Done rows:** fly 2 of 20, both ruled constants (S7, S8), 0 on evidence; fly2 0 of 49 (`docs/MECHANISM_STATUS.md`, with the s23 "path to done" column for fly rows). Scoreboard 1 of 8 (PER labellar; fly2).
-- The m9-era state (rung 2 conductance synapses, the m10q class search, ledger v3, rung 1 in m8) is in `git show 859348d:docs/HANDOFF.md` and FINDINGS.
-
-## Regressions
-
-- s23 battery after the m10f6-m10f8 stage edits: 299 passed, 0 failed (`runs/s23/pytest_s23.log`). Since then the S5 heat balance, the constant states and two `parameters.csv` / `structural_keys.csv` rows were added; `test_model_data`, `test_stubs` and `test_internal_state` pass on them. A full battery is due before adoption.
-- fly2's merged tree (s27): 287 passed, 12 skipped, 0 failed.
-
-## Open items (carried)
-
-- **Information gaps from session 11:** front-leg FeCO afferent assignment; FeCO rate model; resting activity of tonic VNC inhibitors; VNC glutamate sign per type (needs per-cell Allen labels); FlyMimic passive flexor element (dropped from leg_muscles.csv).
-- **Per-cell rules:** the central size rule needs a joint class re-search (GPU); the hemilineage transmitter rule needs its own pre-registration.
-- **B3/B4:** coxa DOF labels and envelopes (F-COXA-1); mid/hind muscle parameters are copies; leg damping unmeasured (FlyMimic c/k 0.05 s is a fit).
-- **B5:** fused rate and facilitation guessed; fatigue built (guessed).
-- **Flight:** fluid coefficients fitted to one condition; body pitch untuned.
-- **Brain:** peptide receptor tables minimal; eLN->PN gap junctions absent.
-- **State:** organ and clock parameters mostly guessed; ingestion path never exercised.
-- **For Ben (optional, outward-facing):** raw data requests as in session 9 (eLife per-trial angles; FlyMimic mid/hind MTUs); per-cell cluster labels for Allen 2020 would let VNC glutamate be signed by cell type.
-
-## Unverified foundations
-
-| Item | Label | What would settle it |
-|---|---|---|
-| m5 class values (DN release 0.70, MN_other input 1.30) | inferred (search) | a broader search with margins; more held-out behaviours |
-| Spring rest angles (fitted) and coxa labels | inferred / assumed (F-COXA-1) | coxa DOFs by function, refit |
-| Coxa moment arms (front leg derived; mid/hind copied) | derived / guessed | FlyMimic mid/hind MTUs |
-| Wing kinematics and Kutta lift 3.1 | guessed / inferred | measured hover kinematics; lift vs a blade-element model |
-| Steering map coefficients (B11) | guessed | Melis et al. 2024 hinge model or data |
-| Internal-state couplings (ISN, IPC, clock, dFB types) | inferred / guessed | per-population physiology |
-| Haltere afferent identity SNpp25/SNpp34 (census) | inferred | haltere nerve labels (FANC/BANC) |
-| Spiking vs graded mode for 2,969 unknown types | Bernoulli priors | per-class physiology |
-| Motor size exponent 1.49 (Rin vs volume, 3 classes) | inferred | per-cell Rin and volume in one pool |
-| Allen 2020 cluster assignment by marker scoring | inferred (proxy, r 0.72) | deposited per-cell labels |
-| Everything in LESSONS labelled guessed/inferred | as recorded | see entries |
+- **Code.** `src/bioemu/` (organism-agnostic: `jx_membrane` fused Jaxley membrane from any channel library,
+  `morph` NeuroML to SWC), `src/wormemu/` (`nicoletti`: the Nicoletti 2024 13-channel library, 17 states),
+  `scripts/worm/` (spike: `fit_aiy.py`, `eval_aiy.py`, `plot_spike.py`, `run_spike.sh`; port checks:
+  `check_port.py`, `neuron_ref.py`; cost: `bench_jaxley.py`, `bench_network.py`, `check_grad_nan.py`;
+  gap junctions: `check_gap.py` with `src/bioemu/jx_gap.py`;
+  `sync_spike.sh` pushes code to backhouse).
+- **Rerun the spike with one command:** `scripts/worm/run_spike.sh` (launch on backhouse, wait, pull; about
+  1.5 h; `launch` and `pull` separately if the laptop may sleep). Results land in `data/worm/spike/<run>/` and
+  `docs/worm/media/spike_<run>.png`. `RUN=` names the run (W0's is `fit1`).
+- **backhouse (WSL, user greff).** `~/worm-spike/` (venv `.venv` with jaxley 0.14, jax 0.12 CUDA 12, optax,
+  NEURON 8; `repo/` is the synced code; `runs/` the outputs; `ref/` the NEURON reference traces);
+  `~/worm-data/` (the datasets, `MANIFEST.md`; mirrored in `docs/worm/MANIFEST.md`).
+- **Media.** `docs/worm/media/spike_fit1.png` (viewed).
 
 ## Sealed and held-out data register
+
+### Worm
+
+| Data | Status | Rule |
+|---|---|---|
+| Naudin 2022 AIY current clamp (`Fig1A_AIY_CC.txt`, one cell), steps -15, -5, +5, +15, +25, +35 pA | seen (W0 spike training set) | training only |
+| Naudin 2022 AIY current clamp, steps -10, 0, +10, +20, +30 pA | **spent** (W0 spike `fit1`, 5 Nov; also scored first on the 2-iteration pipeline test while `fit1` ran with frozen settings) | consistency only from now on; the same cell, so never a cross-cell test |
+| Naudin 2022 AIY population voltage-clamp I-V (n 5-7; steady state and peak; `Fig1_IVcurves_AFD_RIM_AIY.xlsx`) | **spent** (W0 spike `fit1`; pipeline test before it). The table was read while writing the pre-registration (n per voltage, windows) | consistency only; the 2 SD band does not discriminate (F-W0-6) |
+| Naudin 2022 RIM and AFD current clamp and I-V (same deposit) | file formats inspected by the data agent (sample interval, columns); no values used or scored | reserved for W1: pre-register the split before opening the values |
+| Nicoletti 2024 published AIY model (densities, kinetics, code) | seen; kinetics SET the channel library; densities SET one start of the spike fit and its baseline | can't validate the library |
+| Randi 2023 functional atlas; Atanas 2023 whole-brain data; Witvliet 2021; Cook 2019; CeNGEN; the neuropeptide connectome | downloaded (`~/worm-data`, MANIFEST); Cook 2019 adjacency used for the cost bench only (structure, no activity); no activity data read | seed the held-out split (PLAN c.4) before the first fit that uses them |
+| Behaviour corpus (`docs/worm/STATE_OF_THE_ART.md`, about 90 items) | read as a list of items; no outcome scored | seal about a third by seed before any behaviour fit (PLAN c.4, W2) |
+
+### Fly (paused; carried unchanged from `docs/archive/HANDOFF_fly_2026-11-04.md`)
 
 No sealed data was opened in session 11. Spent as held out for m7: closed-loop seeds 9-11, bitter->MN9_L, sugar+bitter (these had been spent in s10 for m5 too; seeds 9-11 were new). Seeds 12+ are fresh (12-13 reserved for the rung-1 G1 check, still unspent).
 
@@ -375,19 +193,3 @@ No sealed data was opened in session 11. Spent as held out for m7: closed-loop s
 | Laughlin, Howard & Blakeslee 1987 (240 vesicles/s per active zone, via de Ruyter van Steveninck & Bialek 2002) and Kazama & Wilson 2008 (p 0.79) | SET `graded_rmax` 300 Hz (derived, s23) | can't validate N1 |
 | B27 / N27 / N33 reads (Wolf 2006, Wasserthal 2007, Armstrong 2011, Spong 2016, MacNamee 2016; `docs/research/s23_b27_n27_n33_reads.md`) | seen; candidate SET values (none used yet) | a check for those rows needs a source not used to set them |
 | Lamina dark-rest reads (Laughlin 1989; Weckström & Laughlin 2010; Rusanen & Weckström 2016; Dau 2016; Laughlin & Osorio 1989; Zheng 2006; Juusola 1995 and Uusitalo 1995 abstracts) and graded-synapse voltage reads (Simmons & de Ruyter van Steveninck 2005; Burrows & Siegler 1978); `docs/research/s23_gate_silent_window.md` | seen; candidate SET values for `release_at_rest` (none used) | a check for N1 only if not used to set r0 |
-
-## Things that will bite you
-
-- **The default profile is m9c** (`WORKING_PROFILE`); the frontier is `--profile m10f` (= m10f5 until a stage is adopted). Regression commands need `FLYEMU_PROFILE=m4`. `standing.py` reads legacy per-unit torque states and fails under Hill mode: run it with m4. `scripts/model_keys.py` always dumps the m4 inventory.
-- **Never sync code to backhouse while a battery runs there** (5 Oct 21:30): a test read a CSV mid-overwrite (`EOF inside string`) and failed spuriously. Wait for the battery, or sync to a separate directory.
-- **Probes must step the motor path with `Organism.motor_step()`** and check `d.warning` (F-HARNESS-1/2).
-- **closed_loop_check's "tonic" exclusion** uses per-type spontaneous drive; a sampled global drive makes every cell tonic (F-SAMPLE-1). Class tonic drive is counted as network activity.
-- **GPU:** `.venv-gpu` sees the main venv through a `.pth`; XLA prints out-of-memory retries at start (shared GPU) and continues; runs are not bitwise reproducible in busy regimes; plasticity mechanisms (N21-N24, N27 glia, conductance, presynaptic inhibition) are refused, not ported; k > 1 in the closed loop is an approximation.
-- **Flight needs a 0.05 ms step** (FlightMotor raises otherwise); halteres and wings are PD-imposed at 3 kHz bandwidth (5 kHz diverges).
-- **parameters.csv:** append rows or rewrite with pandas `dtype=str, keep_default_na=False`; `build_class_params.py` rewrites the class rows (n2c_/n3c_/n5c_) and keeps the others. Retired placeholders are in `data/params/retired_placeholder_rows_s10.csv`.
-- **backhouse needs a WSL keepalive** while detached jobs run (`ssh backhouse 'wsl -d Ubuntu -- bash -c "exec sleep 25000"'` in the background), or the VM can stop. Send commands as piped scripts (`ssh backhouse 'wsl -d Ubuntu -- bash -s' < script.sh`); cmd.exe mangles quoted pipes and `;`. A sync can fail silently inside a compound command: check before launching. s23 overwrote `/home/greff/fly-m10f/src` from `git archive`.
-- **GPU physics:** MJX 3.9 refuses this fly (mesh-contact margins on 69 adhesion pairs; body-transmission adhesion actuators); mujoco-warp needs MuJoCo 3.14 while flygym pins 3.9 (F-GPU-3). Body time is 30% physics, 70% our Python.
-- From earlier sessions, still true: eLife stiffness units mN·m/° (F-PASSIVE-1); FlyMimic in g, mm, s; Hill mode replaces leg torques only; `date` is the only clock; `runs/` and `data/cache/` hold evidence (untracked); ≤ 8 model processes on backhouse; re-run `calibrate_joint_signs.py` after an adopted body change (not re-run for m5; the signs should depend on joint geometry, not on the springs m5 changes, but that is unverified).
-- **Diagnostic probes** (`scripts/probes/command_walk.py`, `resistance_reflex.py`, `feco_paths.py`) measure; they are not objectives. In command_walk the whole-spectrum joint share includes the slow posture shift at replay onset, so read the 3-50 Hz share.
-- **`FLYEMU_EXTRA_PARAMS`** adds candidate per-type rows for probes without editing cell_types.csv.
-- **`model_data.validate`** (s23): `bound_verified` must be `verified` or `unverified`. A wired row's `current_m4` must lie inside `bio_min`/`bio_max`; never widen a bound to hide it. The n28_q10 precedent keeps a wide bound and puts the sourced range in the prior and notes. Every key the model reads needs exactly one owner, a `mechanisms.yaml` switch or a row in `structural_keys.csv`.

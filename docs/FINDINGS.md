@@ -2627,3 +2627,126 @@ The somatic PSP bounds the point model. With the attenuation, it fixes the two-c
   reference, so its factor was exactly 1. It acts in m10f10 only because S5 puts the body 0.072 K above air
   (factor 1.0067), and at any other air temperature (0.635 at 20 °C). The same lesson as F-S23-11: a switch being
   ON does not show that it acts; check the factor on the adopted profile.
+
+## Worm W0 (4-5 November 2026): the C. elegans spike (AIY) and the whole-worm cost bench
+
+The fly is paused (Ben, 4 Nov). These are the first worm results; plan in `docs/worm/PLAN.md`, the spike's
+pre-registration and results in `docs/worm/SPIKE.md`.
+
+### F-W0-1: NEURON silently runs the published Nicoletti 2024 models at E_Ca = 127.6 mV, not the stated 60 mV
+- **Claim.** In NEURON, any mechanism that reads `cai` (here `slo1iso`) makes `eca` follow the Nernst
+  equation from cai/cao. The published AIY model therefore ran at E_Ca = 127.59 mV, although its code sets 60 mV.
+  Our Jaxley port reproduces NEURON only once eca is pinned (`ion_style`): then 0.000 mV RMS at the published
+  AIY densities and <= 0.009 mV with all 13 channels on (measured, model vs model).
+- **Effect on the published model's fit to the AIY current-clamp cell** (measured, model vs data, loss window
+  0.2-8 s): E_Ca 60, train mean RMSE 5.31 mV, held-out mean 3.88, held-out max 4.94; E_Ca 127.59, train 5.81,
+  held-out mean 4.54, max 7.14.
+- **What it means.** Any reuse of a NEURON model whose mechanisms read an ion concentration must state which
+  reversal it actually ran at. The spike fixes E_Ca at 60 mV (the stated value).
+
+### F-W0-2: the deposited AIY current-clamp data are one cell
+- `Fig1A_AIY_CC.txt` (Naudin 2022, Mendeley 6pgdf3zrp3) holds one cell's 11 steps. n = 5-7 is the voltage-clamp
+  population (`Fig1_IVcurves_AFD_RIM_AIY.xlsx`). `docs/worm/research/ephys_sources.md` said n = 7 for the
+  current-clamp data; corrected. So the held-out current-clamp test is the same cell at other step amplitudes,
+  and only the voltage-clamp test reaches other cells (verified, file contents).
+
+### F-W0-3: AIY's CeNGEN channel set at threshold 2 has no SHL-1, but the published AIY model does
+- The CeNGEN model ("cengen", 12 densities, no SHL-1) and the published 7-channel set ("pub") were fitted side
+  by side. They fit equally well (training mean RMSE 4.79 and 4.80 mV), and the pub fit drove SHL-1 to 1.8e-6
+  S/cm2, near off (measured). So this cell's current clamp does not need SHL-1, consistent with CeNGEN's call. That
+  is a statement about one cell's current clamp, not proof of absence (CeNGEN table verified; fit measured).
+
+### F-W0-4: one small cell fits faster on CPU cores than on the shared GPU
+- Gradient simulations per second for the AIY cell (measured): CPU about 5.96 per second per fit (2 cores);
+  GPU 0.33 per second at batch 12, with the card shared with another project's jobs. Tiny cells cannot fill
+  the GPU; the GPU's advantage starts at network scale (F-W0-5). The spike fits therefore ran on CPU, a
+  deviation from the pre-registration's "on the GPU", recorded before any score (SPIKE.md RESULTS).
+
+### F-W0-5: whole-worm-scale cost, and a numerical instability the cost bench exposed
+- **Bench** (`scripts/worm/bench_network.py`): every cell in the Cook 2019 hermaphrodite chemical adjacency
+  (446 cells: neurons, muscles, end organs) as the spike's AIY model with 4 compartments; 4,841 chemical
+  synapses (Jaxley IonotropicSynapse), 1,342 gap-junction pairs (2,684 directed ohmic couplings); dt 0.1 ms.
+  The model is a cost stand-in, not a worm.
+- **Cost (measured):** one CPU core, forward 2.36 s wall per biological second, forward+gradient 19.25 s.
+  Shared GPU: batch 1 forward 3.18 s per bio-s and gradient 21.2 s per bio-s (slower than one core); batch 32
+  forward 10.43 bio-s per wall-s and gradient 1.07; batch 128 forward 8.68, gradient out of memory.
+- **Gap-pair count.** The Cook "symmetric" sheet lists every pair in both directions; counting its nonzero
+  entries gives 2,684, which is directed couplings, not junction pairs (1,342). Fixed in the bench output.
+- **The non-finite gradients are a step-size instability in the forward run, not a gradient bug** (measured,
+  CPU, batch 1, every conductance scaled by 1.5, 200 ms): the forward run is "finite" but the hypodermis entry
+  (`hyp`, 57 gap partners and 59 chemical inputs, given the tiny AIY morphology in this stand-in) swings to
+  -1,749 / +1,688 mV, and the gradient then contains non-finite entries for both conductance groups. At scale 1.0
+  every cell stays within -60 to +0.7 mV and the gradient is finite. At scale 1.5 with dt 0.025 ms (50 ms run)
+  every cell stays within -60 to +0.5 mV and the gradient is finite. The membrane's own gradients are finite
+  everywhere tested (-200 to +200 mV, Ca 1e-9 to 1e-3 M, float32 and float64; `check_grad_nan.py`). The batched
+  GPU runs draw scales of 0.5-1.5, so some copies were unstable.
+- **Mechanism (verified by reading the source, `jaxley/modules/network.py`, `_synapse_currents`, v0.14).**
+  Jaxley makes synaptic currents semi-implicit by linearising each one: it evaluates the current at (pre, post)
+  and at (pre + 1e-3 mV, post + 1e-3 mV) and takes the difference as the slope in the postsynaptic voltage. For
+  a gap-junction current g (post - pre) the two nudges cancel, so the slope is 0 and the gap term is fully
+  explicit. Explicit coupling is unstable once dt times the summed coupling conductance over the cell's
+  capacitance exceeds about 2. The stand-in's `hyp` is tiny (AIY morphology) with 57 gap partners, so it goes
+  first. For chemical synapses whose current depends only on the postsynaptic voltage this linearisation is
+  right; for any current that also depends instantly on the presynaptic voltage (gap junctions, graded
+  transmission written that way) it is wrong.
+- **What it means for the build.** Gap junctions must not be written as Jaxley synapses as they stand. Either
+  patch the linearisation to nudge only the postsynaptic voltage (then the post term is implicit and the pre
+  term explicit; tested below, and not enough), or solve gap junctions inside the implicit voltage step; either way, check
+  against NEURON on a coupled pair before use. Every network run must also check the voltage range of every
+  cell, not only the recorded ones. In the real worm the hypodermis is a large syncytium with a large
+  capacitance, so this stand-in exaggerates the problem; the worm's most gap-coupled neurons still need the
+  check: AVAR 51 partners, AVAL 45, PVT 31, PVPL 29, AVBR and PVCR 28 (measured, Cook 2019 symmetric sheet).
+- **Tested on 5 Nov: the half-implicit patch is not enough** (`src/bioemu/jx_gap.py`, `scripts/worm/check_gap.py`).
+  `Gap` carries the presynaptic voltage as a state, so Jaxley's nudge sees only the post term (post implicit, pre
+  explicit). On two coupled passive cells (0.628 pF each, 1 pA into one for 50 ms; error against the same form
+  at dt 0.001 ms), measured:
+
+  | coupling g | dt | a = dt g / C | `ExplicitGap` max error | `Gap` max error |
+  |---|---|---|---|---|
+  | 1-100 pS | 0.1, 0.4 ms | 0.00-0.06 | 0.02-0.11 mV | 0.03-0.24 mV |
+  | 1 nS | 0.1 / 0.4 ms | 0.16 / 0.64 | 0.016 / 0.13 mV | 0.44 / 1.46 mV |
+  | 10 nS | 0.1 / 0.4 ms | 1.59 / 6.37 | **blows up** (1e16 mV) / blows up | 2.65 / 5.00 mV |
+
+  `Gap` never blows up but is wrong in a quiet way: it slows the pair's common relaxation by about
+  (1 + a + l) / (1 + l), with l = dt x leak / C (derived from the update rule). That predicts peaks of -66.0 and
+  -63.2 mV at a 6.37 and 1.59, against -66.06 and -63.18 measured and -62.07 for the reference. The explicit form
+  is accurate wherever it is stable. On the whole-worm stand-in at 1.5x conductance and dt 0.1 ms, `Gap` keeps
+  every cell within -60 to +0.5 mV and the gradient finite (measured; `BENCH_GAP=semi`), but by the pair result
+  some of those voltages may be slow rather than right. With the explicit form at dt 0.025 ms (200 ms, 1.5x) the
+  gradient is finite too (measured). With gap junctions switched off at dt 0.1 ms and 1.5x, every cell stays
+  within -60 to +2.2 mV and the gradient is finite (measured), so the chemical synapses are not the problem.
+- **So:** neither form is adopted. Gap junctions need a coupling solved implicitly on both sides (for example
+  a few fixed-point sweeps per step, or adding the gap conductances to the voltage solve). Until then, any run
+  with gap junctions must keep every cell's summed a = dt x sum(g) / C well below 1 and use the explicit form.
+  Whether the real worm needs this depends on real capacitances and gap conductances, both still blanks (rows 2
+  and 8 of the PLAN ledger). Rough check, guessed values: AVA at about 5 pF with 51 partners at 0.1-1 nS each
+  gives a = 0.1-1 at dt 0.1 ms.
+
+### F-W0-6: the spike's pre-registered voltage-clamp bar does not discriminate
+- On the pipeline test (a 2-start, 2-iteration fit, run after the bars and Addendum A were written and while
+  the real fits were already running with frozen settings), the barely fitted model and the published model
+  at either E_Ca all put 100% of voltages inside mean +/- 2 SD, for steady state and for peak (measured).
+  With n = 5-7 cells, 2 SD spans roughly -10 to +180 pA at +50 mV.
+- **What it means.** "Within real variability" with a small, variable population is a weak test of one
+  model. The bar stays as registered for this spike. For the next pre-registration: add a discriminating
+  check (for example a per-voltage z-score summary, or a comparison against a deliberately wrong model that
+  must fail), decided before scoring.
+
+### F-W0-7: most of the current-clamp misfit is slow, not recording noise
+- RMS of each AIY trace around its own moving average over the loss window (derived): 10 ms window, train
+  mean 0.74 mV, held-out 0.70; 50 ms window, 1.66 and 1.54. The best fits sit near 4.9 mV train RMSE, so most
+  of the error is slower structure (steady-state offsets, the large events in the -15 pA trace), which a
+  deterministic single-cell model may or may not be able to follow.
+
+### F-W0-8: the spike fails its training bar; the misfit is systematic and points at missing biology
+- Pre-registered bars (SPIKE.md), measured on run `fit1`: training mean RMSE 4.79 (cengen) and 4.80 mV (pub)
+  against <= 4, **fail**; held-out steps mean 3.78 and 3.77 (bar 5) and worst 5.68 and 5.81 (bar 8), pass;
+  population voltage clamp 100% inside the 2 SD band (bar 80%), pass but uninformative (F-W0-6).
+- The error is not noise (0.7-1.7 mV, F-W0-7) and not under-fitting: 11 of 16 and 8 of 16 starts land on the
+  same 4.86-4.95 mV floor. The model's steady-state I-V is too straight (about -76 mV against -84 recorded at
+  -5 pA). Capacitance sits at its upper bound (1.99 of 2.0 uF/cm2), and leak reversal is unidentifiable (-49 mV
+  in one fit, -74 in the other, with the same error).
+- **What it means.** With fixed published kinetics, uniform densities and the Virtual Worm geometry, this model
+  class cannot reach 4 mV on this cell. The next fit should add bounded biology (gating shifts shared by gene,
+  separate soma and neurite densities, a membrane-area check), pre-registered under a new name. Cost per fit:
+  about 1.5 h on 2 CPU cores with backhouse heavily loaded (measured).
