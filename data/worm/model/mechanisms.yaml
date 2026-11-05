@@ -268,12 +268,13 @@
   status: have
   toggle: wiring
   neutral: baaiworm = as published (port302a)
-  default: baaiworm
+  default: cook
   source: Cook et al. 2019 SI 5 (data/worm/structure); BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) config2detailed
-  notes: 'BAAIWorm''s neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical
-    and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges,
-    Cook has 956 pairs from 162 neurons) and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for
-    all of it: BAAIWorm''s sites where it placed any, else one site on the nearest segment pair'
+  notes: 'Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section 3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). BAAIWorm''s neuron-neuron
+    counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical and 599 gap pairs (single-synapse
+    pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges, Cook has 956 pairs from 162 neurons)
+    and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for all of it: BAAIWorm''s sites where
+    it placed any, else one site on the nearest segment pair'
   absent_reason: ''
 - id: bwm_coupling
   name: Gap junctions between neighbouring body-wall muscles (UNC-9), Cook 2019 pairs

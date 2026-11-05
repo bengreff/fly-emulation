@@ -109,3 +109,52 @@ Reported, not scored: placed connections by kind, wall time per biological secon
 
 Adoption: wiring=cook becomes the default only if port302c passes G1-G3 and its figure has been viewed. A pass
 says the Cook wiring runs and propagates; it says nothing about whether the dynamics are right.
+
+### Result (runs 2026-11-05 16:45-16:49 CST on backhouse, one thread each)
+
+All numbers measured. Figures: `data/worm/brain_runs/bw_<run>/traces.png` (viewed). Traces (`run.npz`) are not in
+git; summaries are.
+
+| | ref | port302b | port302c |
+|---|---|---|---|
+| R1 (within 1 mV of port302a) | **pass**, max difference 0.0 mV | - | - |
+| G1 finite | pass | pass | pass |
+| G2 range after 100 ms (mV) | pass, -73.5 to 28.1 | pass, -73.7 to 14.1 | pass, -66.1 to 13.2 |
+| G3 as written (unstimulated neurons whose 2-4 s mean moves >= 1 mV from the 1-2 s mean) | pass, 180 | pass, 140 | pass, 155 |
+| neurons above -20 mV at 6 s (port302a: 180) | 180 | **141** | 188 |
+| median / 90th pct neuron mean V, 1-2 s (mV) | -9.6 / 21.8 | -20.3 / 4.2 | -13.4 / 5.3 |
+| placed: chemical / gap / NMJ / muscle-to-neuron | 4898 / 2094 halves / 552 / 175 | same | 6301 / 1539 sites / 956 / 0 |
+| wall s per bio-s / peak memory | 3.77 / 213 MB | 3.75 / 212 MB | 4.10 / 239 MB |
+
+**R1: brain.py builds BAAIWorm's network exactly.** With overrides off it reproduces port302a to 0.0 mV in every cell
+at every sample. It is also cheaper than the run script of section 2 (3.77 against 7.06 s of wall per bio-s, 213 MB
+against 888 MB), because it records only the soma.
+
+**G3 as written is passed by drift alone (found after scoring, not pre-registered).** Matching runs with no input
+(`--no_stim`; runs are deterministic, so stim minus no-stim is the input's effect alone) "move" 180, 146 and 158
+neurons by the same test. The real touch effect, as the largest |V(stim) - V(no stim)| over 2-4 s in unstimulated
+neurons (`touch_effect.json`):
+
+| | neurons >= 1 mV | >= 5 mV | muscles >= 1 mV | largest |
+|---|---|---|---|---|
+| ref | 1 | 0 | 0 | BDUR 1.2 mV |
+| port302b | 9 | 0 | 0 | BDUR 3.1, BDUL 2.5, FLPR 2.1 mV |
+| port302c | 9 | 1 | 0 | PVR 5.1, PDEL 4.7, LUAR 4.2, LUAL 4.1, PVCR 3.1 mV |
+
+Under this stricter reading G3 still passes in all three runs (at least one unstimulated neuron moves >= 1 mV), so
+the scores stand, but the input barely spreads: no muscle moves and at most 9 neurons move a millivolt. In port302c
+the effect follows the anatomical posterior-touch path (PLM to PVC, LUA, PVR, PDE: Cook pairs, PVC is the forward
+command interneuron). In the BAAIWorm wiring it reaches BDU, FLP and ADE (ALM partners) instead. Under Cook wiring
+the touch neurons themselves depolarise far less (largest PLML change 13.8 mV against 84.4 in port302b); inferred,
+not checked: Cook gives them more gap partners, so the input current leaks into more cells.
+
+**Falsifier not triggered: 141 is below 150.** The literature overrides cut saturation from 180 to 141 neurons above
+-20 mV, and the median neuron mean drops from -9.6 to -20.3 mV. So the hypothesis survives, but only partly: almost
+half the network still sits depolarised and flat. The out-of-range values are one cause, not the whole cause.
+Untested candidates for the rest: the synapse strengths (BAAIWorm's construction weights in port302b; the shared
+template strength on every Cook pair in port302c), the slow currents and homeostasis that are off in these runs,
+and graded synapses with no adaptation.
+
+**Adopted: wiring=cook is the default** (port302c passed G1-G3, figure viewed; `build_ledger.py` default flipped,
+ledger rebuilt). It saturates more than port302b (188 against 141 neurons above -20 mV), so the saturation problem
+is now the brain's top open question before the closed loop.

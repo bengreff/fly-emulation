@@ -340,8 +340,10 @@ def build_synapses(mods, st, conns):
     mech("wiring", "Connectome: Cook et al. 2019, every pair (wiring=cook), or BAAIWorm's construction as published "
          "(wiring=baaiworm: tanh-compressed counts placed on segments in contact)", "synapse", "have",
          f"Cook et al. 2019 SI 5 (data/worm/structure); {BAAI_SRC} config2detailed", toggle="wiring",
-         neutral="baaiworm = as published (port302a)", default="baaiworm",
-         notes="BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 "
+         neutral="baaiworm = as published (port302a)", default="cook",
+         notes="Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section "
+               "3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). "
+               "BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 "
                "synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical "
                "and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within "
                "1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges, "

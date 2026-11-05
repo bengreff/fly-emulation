@@ -1,0 +1,70 @@
+{
+ "run": "bw_ref",
+ "n_neurons_moved_1mV": 1,
+ "n_neurons_moved_5mV": 0,
+ "n_muscles_moved_1mV": 0,
+ "top10": [
+  [
+   "BDUR",
+   1.2
+  ],
+  [
+   "BDUL",
+   0.75
+  ],
+  [
+   "URYVL",
+   0.51
+  ],
+  [
+   "ADER",
+   0.49
+  ],
+  [
+   "CEPVL",
+   0.36
+  ],
+  [
+   "DA01",
+   0.28
+  ],
+  [
+   "FLPR",
+   0.23
+  ],
+  [
+   "OLQVL",
+   0.16
+  ],
+  [
+   "ADEL",
+   0.16
+  ],
+  [
+   "AVHL",
+   0.15
+  ]
+ ],
+ "touch_cells": [
+  [
+   "ALML",
+   16.58
+  ],
+  [
+   "ALMR",
+   17.46
+  ],
+  [
+   "AVM",
+   20.14
+  ],
+  [
+   "PLML",
+   82.82
+  ],
+  [
+   "PLMR",
+   80.96
+  ]
+ ]
+}

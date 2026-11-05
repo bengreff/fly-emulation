@@ -1,0 +1,70 @@
+{
+ "run": "bw_port302c",
+ "n_neurons_moved_1mV": 9,
+ "n_neurons_moved_5mV": 1,
+ "n_muscles_moved_1mV": 0,
+ "top10": [
+  [
+   "PVR",
+   5.07
+  ],
+  [
+   "PDEL",
+   4.65
+  ],
+  [
+   "LUAR",
+   4.17
+  ],
+  [
+   "LUAL",
+   4.13
+  ],
+  [
+   "PVCR",
+   3.09
+  ],
+  [
+   "ALNR",
+   3.01
+  ],
+  [
+   "PDER",
+   2.2
+  ],
+  [
+   "PVCL",
+   1.58
+  ],
+  [
+   "PDB",
+   1.3
+  ],
+  [
+   "PLNR",
+   0.9
+  ]
+ ],
+ "touch_cells": [
+  [
+   "ALML",
+   16.39
+  ],
+  [
+   "ALMR",
+   16.89
+  ],
+  [
+   "AVM",
+   10.84
+  ],
+  [
+   "PLML",
+   13.82
+  ],
+  [
+   "PLMR",
+   14.22
+  ]
+ ]
+}
