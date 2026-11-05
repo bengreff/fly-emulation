@@ -12,7 +12,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm.cpp (worm.meta)",
    "lit_check": "not comparable",
    "notes": "body rest length 0.628 sim units (measured from the mesh); read as SI = 628 mm vs 0.9-1.2 mm",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_length",
@@ -26,7 +29,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); WormAtlas (measured, young adult)",
    "lit_check": "outside if SI (523x to 697x)",
    "notes": "rest length of the mesh along its long axis; literature L in m",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_radius_over_length",
@@ -40,7 +46,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); WormAtlas; Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
    "lit_check": "inside",
    "notes": "max radius / length of the mesh; literature: radius 30-40 um over L 0.9-1.2 mm (derived)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_n_vertices",
@@ -54,7 +63,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "numerical",
    "notes": "984 vertices, 735 on the surface",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_n_tets",
@@ -68,7 +80,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "numerical",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_n_surface_triangles",
@@ -82,7 +97,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "numerical",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_youngs_modulus",
@@ -96,7 +114,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Environment.cpp; Sznitman et al. 2010 Biophys J 98:617 (PMC2820645); Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528 (PMC3607018); Fang-Yen et al. 2010 PNAS 107:20323 (PMC2996704)",
    "lit_check": "inside if SI",
    "notes": "literature spread: 3.77 kPa (Sznitman 2010), 110 kPa (Backholm 2013), ~13 MPa (derived from Fang-Yen 2010 EI = 9.5e-14 N m^2 at r = 40 um)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_poisson_ratio",
@@ -110,7 +131,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Environment.cpp",
    "lit_check": "outside (guessed bound)",
    "notes": "no worm measurement found; a pressurised, water-filled body suggests near-incompressible (bound guessed)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_cuticle_modulus",
@@ -124,7 +148,10 @@
    "source": "placeholder inside the measured range; Frontiers Bioeng Biotechnol 2024 (BODY.md s1)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) needed for a layered body (toggle body.material); value = midpoint (guessed)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_muscle_layer_modulus",
@@ -138,7 +165,10 @@
    "source": "placeholder inside the measured range; Frontiers Bioeng Biotechnol 2024 (BODY.md s1)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) geometric mean of the range (guessed)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_pseudocoelom_modulus",
@@ -152,7 +182,10 @@
    "source": "placeholder inside the measured range; Frontiers Bioeng Biotechnol 2024 (BODY.md s1)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) geometric mean of the range (guessed)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_internal_pressure",
@@ -166,7 +199,10 @@
    "source": "placeholder inside the measured range; Park 2007 PNAS; Frontiers Bioeng Biotechnol 2024 (BODY.md s1)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) hydrostatic pressure; toggle body.pressure (geometric mean, guessed)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_muscle_stiffness",
@@ -180,7 +216,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Muscle.cpp",
    "lit_check": "not comparable",
    "notes": "LinearMuscleConstraint stiffness per tet, times weight exp(-d/0.005); the comparable quantity is the bend it makes: published key t0_fast gives head kappa*L 22 (measured in the sim, BODY_TESTS.md)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_muscle_attach_length",
@@ -194,7 +233,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Muscle.cpp",
    "lit_check": "not comparable",
    "notes": "tets within this distance of a fibre segment are driven by it (0.8% of L)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_n_muscle_segments",
@@ -208,7 +250,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) worm_nerve_cord_highResCord.obj; Cook et al. 2019 Nature 571:63 (measured)",
    "lit_check": "outside by one",
    "notes": "4 strings x 24; Cook 2019 has 95 body-wall muscles (vBWML24 does not exist): MVL segment 23 has no counterpart",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_muscle_span_start",
@@ -222,7 +267,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); WormAtlas, Somatic muscle (hermaphrodite) (inferred)",
    "lit_check": "inside",
    "notes": "centre of the most anterior fibre segment",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_muscle_span_end",
@@ -236,7 +284,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); WormAtlas, Somatic muscle (hermaphrodite) (inferred)",
    "lit_check": "inside",
    "notes": "centre of the most posterior fibre segment",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_key_gain",
@@ -250,7 +301,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm::SetKey",
    "lit_check": "numerical",
    "notes": "the key files are multiplied by 20 and clipped to [0, 1]",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_key_period",
@@ -264,7 +318,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) (20 key rows at 30 Hz); Sibernetic 2018 experimental swim table (measured), Fang-Yen et al. 2010 PNAS 107:20323 (PMC2996704)",
    "lit_check": "outside (15% below the swim range)",
    "notes": "published keys t0_fast and turn2",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_key_transport_alpha",
@@ -278,7 +335,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) KeyWorm",
    "lit_check": "numerical",
    "notes": "head-to-tail transport of the key activation, 2 sub-steps per control step",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_force_length_width",
@@ -292,7 +352,10 @@
    "source": "placeholder",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) toggle muscle.force_model: active force x exp(-(strain/width)^2)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_force_velocity",
@@ -306,7 +369,10 @@
    "source": "",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) no measured C. elegans body-wall force-velocity curve found yet",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "none",
+   "fill_kind": "absent",
+   "n_values": 1
   },
   {
    "id": "mw_mass",
@@ -320,7 +386,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm.cpp",
    "lit_check": "not comparable",
    "notes": "split equally over the 984 vertices",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_density",
@@ -334,7 +403,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); PLOS ONE 2013 (BODY.md s1, measured)",
    "lit_check": "outside if SI (19x)",
    "notes": "mass 10 / mesh volume 0.0004908 sim units^3",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_damping_per_step",
@@ -348,7 +420,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Environment.cpp",
    "lit_check": "numerical",
    "notes": "equivalent decay rate -ln(0.9999) x 240 = 0.024 /s (derived)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_worm_length",
@@ -362,7 +437,10 @@
    "source": "Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079) (model worm length)",
    "lit_check": "inside",
    "notes": "(not used by the running body) toggle body.scale = worm_1mm: 1 sim unit = 1 mm / 0.6276 = 1.593 mm (derived)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_worm_density",
@@ -376,7 +454,10 @@
    "source": "placeholder inside the measured range; Reina et al. 2013 PLOS ONE 8:e69651 (BODY.md s1, measured 1.07-1.08 g/cm^3)",
    "lit_check": "inside",
    "notes": "(not used by the running body) toggle body.scale = worm_1mm",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_worm_mass",
@@ -390,7 +471,10 @@
    "source": "density x mesh volume (4.908e-4 units^3 at 1.593 mm)",
    "lit_check": "no literature value",
    "notes": "(not used by the running body) toggle body.scale = worm_1mm; spread evenly over the 984 vertices; the mass unit is 1.593e-3 kg so stress and drag per length stay numerically SI",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_fluid_density",
@@ -404,7 +488,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm.cpp; standard tables (measured)",
    "lit_check": "near: 0.1-0.3% above pure water (negligible)",
    "notes": "bound is pure water at 20-25 C; M9 buffer not checked",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_drag_model",
@@ -418,7 +505,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Worm::SetExternalForce",
    "lit_check": "outside (wrong regime)",
    "notes": "a swimming worm is at Reynolds 0.1-0.5 (viscous, linear drag); the port runs at Re ~7,300 (measured, P3)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_drag_force_cap",
@@ -432,7 +522,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "numerical",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_lift_table_x",
@@ -446,7 +539,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "no literature value",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_lift_table_y",
@@ -460,7 +556,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "no literature value",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_water_viscosity",
@@ -474,7 +573,10 @@
    "source": "Sznitman et al. 2010 Biophys J 98:617 (PMC2820645)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) M9 buffer; for toggle env.fluid = viscous_rft_water",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "mw_water_Ct",
@@ -488,7 +590,10 @@
    "source": "Lighthill slender body (as in Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079))",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) 2 pi mu / ln(2 q / a), mu 1.1 mPa s, q = 0.09 x 1.54 mm, a = 40 um",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_water_Cn",
@@ -502,7 +607,10 @@
    "source": "Lighthill slender body (as in Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079))",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) 4 pi mu / (ln(2 q / a) + 0.5); Cn/Ct = 1.59",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_agar_Ct",
@@ -516,7 +624,10 @@
    "source": "Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) for toggle env.fluid = agar_rft; BBC quote kg/s, read per body length",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "mw_agar_Cn",
@@ -530,7 +641,10 @@
    "source": "Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) K = Cn/Ct = 40 (BBC); Rabets 2014 measure K 1.4 in gels (row mw_agar_K_rabets)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "mw_agar_K_rabets",
@@ -544,7 +658,10 @@
    "source": "Rabets, Backholm, Dalnoki-Veress & Ryu 2014 Biophys J 107:1980 (PMC4213666)",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) alternative agar anisotropy",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "mw_gravity",
@@ -558,7 +675,10 @@
    "source": "standard",
    "lit_check": "absent in the port",
    "notes": "(not used by the running body) no gravity in the published world (the body floats and tumbles in 3D); toggle env.substrate = agar_plate|agar_film: toward the plate, about 1000x weaker than the elastic forces (derived)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "mw_side_down",
@@ -572,7 +692,10 @@
    "source": "worms crawl on either side",
    "lit_check": "no literature value",
    "notes": "(not used by the running body) toggle env.substrate: which side lies on the plate (--side_down right|left)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_plate_contact",
@@ -586,7 +709,10 @@
    "source": "this repo",
    "lit_check": "no literature value",
    "notes": "(not used by the running body) toggle env.substrate = agar_plate; no friction beyond the agar drag. Alone it fails gate A2: the body pitches up and lifts off (BODY_TESTS.md)",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mw_film_surface",
@@ -600,7 +726,10 @@
    "source": "rest mesh thickness across the plate; Gray & Lissmann 1964 J Exp Biol 41:135; Shen et al. 2012 Biophys J 102:2772 (arXiv 1112.1118)",
    "lit_check": "60 um at 1 mm; adult diameter about 50-80 um",
    "notes": "(not used by the running body) toggle env.substrate = agar_film: the water film's surface as a hard wall at this height (form guessed); stands for the meniscus that holds a worm on agar",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 1
   },
   {
    "id": "mw_surface_tension",
@@ -614,7 +743,10 @@
    "source": "standard tables (water, 20-35 C); Gray & Lissmann 1964 J Exp Biol 41:135; Shen et al. 2012 Biophys J 102:2772 (arXiv 1112.1118)",
    "lit_check": "no value in the port",
    "notes": "(not used by the running body) only sets the order of the hold-down force: 0.072 N/m x 1 mm is about 7e-5 N, about 3000x the weight (derived); the film wall treats it as infinite",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "mw_dt",
@@ -628,7 +760,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Environment.cpp",
    "lit_check": "numerical",
    "notes": "hard-coded 240 Hz; a time-step check needs an upstream edit",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_iterations",
@@ -642,7 +777,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
    "lit_check": "numerical",
    "notes": "local/global iterations per step",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_convergence_eps",
@@ -656,7 +794,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) fem/World.cpp",
    "lit_check": "numerical",
    "notes": "",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "mw_control_hz",
@@ -670,7 +811,10 @@
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim) Environment.cpp",
    "lit_check": "numerical",
    "notes": "muscle input rate; 8 physics steps per control step",
-   "origin": "body"
+   "origin": "body",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "pas_soma_Ra",
@@ -684,7 +828,10 @@
    "source": "no worm-specific measurement found (param_ranges A6)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_soma_cm",
@@ -698,7 +845,10 @@
    "source": "Gentet, Stuart & Spruston 2000 Biophys J (generic neuronal membrane); used as default in published C. elegans single-cell models (Nicoletti 2019/2024) (param_ranges A1)",
    "notes": "302 of 302 ported values outside the literature range, clipped",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_soma_gpas",
@@ -712,7 +862,10 @@
    "source": "guessed (input resistance 0.2-5 GOhm, param_ranges A3, is the check, not a bound)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_soma_epas",
@@ -726,7 +879,10 @@
    "source": "Inferred from K+-dominated background conductance; Goodman et al. 1998 (param_ranges A5)",
    "notes": "51 of 302 ported values outside the literature range, clipped",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_neurite_Ra",
@@ -740,7 +896,10 @@
    "source": "no worm-specific measurement found (param_ranges A6)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_neurite_cm",
@@ -754,7 +913,10 @@
    "source": "Gentet, Stuart & Spruston 2000 Biophys J (generic neuronal membrane); used as default in published C. elegans single-cell models (Nicoletti 2019/2024) (param_ranges A1)",
    "notes": "302 of 302 ported values outside the literature range, clipped",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_neurite_gpas",
@@ -768,7 +930,10 @@
    "source": "guessed (input resistance 0.2-5 GOhm, param_ranges A3, is the check, not a bound)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "pas_neurite_epas",
@@ -782,7 +947,10 @@
    "source": "Inferred from K+-dominated background conductance; Goodman et al. 1998 (param_ranges A5)",
    "notes": "51 of 302 ported values outside the literature range, clipped",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "mpas_Ra",
@@ -796,7 +964,10 @@
    "source": "no worm-specific measurement found (param_ranges A6)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 95
   },
   {
    "id": "mpas_cm",
@@ -810,7 +981,10 @@
    "source": "Gentet, Stuart & Spruston 2000 Biophys J (generic neuronal membrane); used as default in published C. elegans single-cell models (Nicoletti 2019/2024) (param_ranges A1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 95
   },
   {
    "id": "mpas_gpas",
@@ -824,7 +998,10 @@
    "source": "guessed",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 95
   },
   {
    "id": "mpas_epas",
@@ -838,7 +1015,10 @@
    "source": "Gao & Zhen 2011 PNAS 108:2557 (search summary); Liu et al. 2011 J Physiol 589:101 (param_ranges F1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 95
   },
   {
    "id": "dens_shl1",
@@ -852,7 +1032,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_shk1",
@@ -866,7 +1049,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_kvs1",
@@ -880,7 +1066,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_egl2",
@@ -894,7 +1083,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_egl36",
@@ -908,7 +1100,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_kqt3",
@@ -922,7 +1117,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_egl19",
@@ -936,7 +1134,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_unc2",
@@ -950,7 +1151,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_cca1",
@@ -964,7 +1168,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_slo1_egl19",
@@ -978,7 +1185,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_slo1_unc2",
@@ -992,7 +1202,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_slo2_egl19",
@@ -1006,7 +1219,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_slo2_unc2",
@@ -1020,7 +1236,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_kcnl",
@@ -1034,7 +1253,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_nca",
@@ -1048,7 +1270,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "dens_irk",
@@ -1062,7 +1287,10 @@
    "source": "guessed: 0 to 10x the largest ported density",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 302
   },
   {
    "id": "kin_cca1_vhm",
@@ -1076,7 +1304,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_ka",
@@ -1090,7 +1321,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_vhh",
@@ -1104,7 +1338,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_ki",
@@ -1118,7 +1355,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_atm",
@@ -1132,7 +1372,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_btm",
@@ -1146,7 +1389,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_ctm",
@@ -1160,7 +1406,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_dtm",
@@ -1174,7 +1423,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_ath",
@@ -1188,7 +1440,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_bth",
@@ -1202,7 +1457,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_cth",
@@ -1216,7 +1474,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_cca1_dth",
@@ -1230,7 +1491,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_vhm",
@@ -1244,7 +1508,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ka",
@@ -1258,7 +1525,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_vhh",
@@ -1272,7 +1542,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ki",
@@ -1286,7 +1559,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_vhhb",
@@ -1300,7 +1576,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_kib",
@@ -1314,7 +1593,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ahinf",
@@ -1328,7 +1610,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_bhinf",
@@ -1342,7 +1627,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_chinf",
@@ -1356,7 +1644,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_dhinf",
@@ -1370,7 +1661,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_atm",
@@ -1384,7 +1678,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_btm",
@@ -1398,7 +1695,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ctm",
@@ -1412,7 +1712,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_dtm",
@@ -1426,7 +1729,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_etm",
@@ -1440,7 +1746,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ftm",
@@ -1454,7 +1763,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_gtm",
@@ -1468,7 +1780,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_ath",
@@ -1482,7 +1797,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_bth",
@@ -1496,7 +1814,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_cth",
@@ -1510,7 +1831,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_dth",
@@ -1524,7 +1848,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_eth",
@@ -1538,7 +1865,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_fth",
@@ -1552,7 +1882,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_gth",
@@ -1566,7 +1899,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl19_hth",
@@ -1580,7 +1916,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_vhm",
@@ -1594,7 +1933,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_ka",
@@ -1608,7 +1950,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_atm",
@@ -1622,7 +1967,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_btm",
@@ -1636,7 +1984,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_ctm",
@@ -1650,7 +2001,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl2_dtm",
@@ -1664,7 +2018,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl36_vhm",
@@ -1678,7 +2035,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl36_ka",
@@ -1692,7 +2052,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl36_atms",
@@ -1706,7 +2069,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl36_atmm",
@@ -1720,7 +2086,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_egl36_atmf",
@@ -1734,7 +2103,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_vhm",
@@ -1748,7 +2120,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_ka",
@@ -1762,7 +2137,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_atm",
@@ -1776,7 +2154,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_btm",
@@ -1790,7 +2171,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_ctm",
@@ -1804,7 +2188,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_dtm",
@@ -1818,7 +2205,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_etm",
@@ -1832,7 +2222,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_irk_ftm",
@@ -1846,7 +2239,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kcnl_kca",
@@ -1860,7 +2256,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kcnl_a",
@@ -1874,7 +2273,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_vhm",
@@ -1888,7 +2290,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ka",
@@ -1902,7 +2307,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_vhw",
@@ -1916,7 +2324,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_kiw",
@@ -1930,7 +2341,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_aw",
@@ -1944,7 +2358,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_bw",
@@ -1958,7 +2375,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_vhs",
@@ -1972,7 +2392,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_kis",
@@ -1986,7 +2409,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_as",
@@ -2000,7 +2426,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_bs",
@@ -2014,7 +2443,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_atmf",
@@ -2028,7 +2460,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_btmf",
@@ -2042,7 +2477,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ctmf",
@@ -2056,7 +2494,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_atms",
@@ -2070,7 +2511,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_btms",
@@ -2084,7 +2528,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ctms",
@@ -2098,7 +2545,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_dtms",
@@ -2112,7 +2562,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_etms",
@@ -2126,7 +2579,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ftms",
@@ -2140,7 +2596,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_gtms",
@@ -2154,7 +2613,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_atw",
@@ -2168,7 +2630,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_btw",
@@ -2182,7 +2647,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ctw",
@@ -2196,7 +2664,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_dtw",
@@ -2210,7 +2681,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kqt3_ats",
@@ -2224,7 +2698,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_vhm",
@@ -2238,7 +2715,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_ka",
@@ -2252,7 +2732,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_vhh",
@@ -2266,7 +2749,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_ki",
@@ -2280,7 +2766,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_atm",
@@ -2294,7 +2783,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_btm",
@@ -2308,7 +2800,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_ctm",
@@ -2322,7 +2817,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_dtm",
@@ -2336,7 +2834,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_ath",
@@ -2350,7 +2851,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_bth",
@@ -2364,7 +2868,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_cth",
@@ -2378,7 +2885,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_kvs1_dth",
@@ -2392,7 +2902,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_vhm",
@@ -2406,7 +2919,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_ka",
@@ -2420,7 +2936,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_vhh",
@@ -2434,7 +2953,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_ki",
@@ -2448,7 +2970,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_atm",
@@ -2462,7 +2987,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_btm",
@@ -2476,7 +3004,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_ctm",
@@ -2490,7 +3021,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_dtm",
@@ -2504,7 +3038,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_etm",
@@ -2518,7 +3055,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_ftm",
@@ -2532,7 +3072,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shk1_ath",
@@ -2546,7 +3089,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_vhm",
@@ -2560,7 +3106,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_ka",
@@ -2574,7 +3123,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_vhh",
@@ -2588,7 +3140,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_ki",
@@ -2602,7 +3157,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_atm",
@@ -2616,7 +3174,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_btm",
@@ -2630,7 +3191,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_ctm",
@@ -2644,7 +3208,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_dtm",
@@ -2658,7 +3225,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_etm",
@@ -2672,7 +3242,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_ftm",
@@ -2686,7 +3259,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_athf",
@@ -2700,7 +3276,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_bthf",
@@ -2714,7 +3293,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_cthf",
@@ -2728,7 +3310,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_dthf",
@@ -2742,7 +3327,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_aths",
@@ -2756,7 +3344,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_bths",
@@ -2770,7 +3361,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_cths",
@@ -2784,7 +3378,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_shl1_dths",
@@ -2798,7 +3395,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_wyx",
@@ -2812,7 +3412,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_wxy",
@@ -2826,7 +3429,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_wom",
@@ -2840,7 +3446,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_wop",
@@ -2854,7 +3463,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_kxy",
@@ -2868,7 +3480,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_nxy",
@@ -2882,7 +3497,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_kyx",
@@ -2896,7 +3514,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_egl19_nyx",
@@ -2910,7 +3531,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_wyx",
@@ -2924,7 +3548,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_wxy",
@@ -2938,7 +3565,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_wom",
@@ -2952,7 +3582,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_wop",
@@ -2966,7 +3599,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_kxy",
@@ -2980,7 +3616,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_nxy",
@@ -2994,7 +3633,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_kyx",
@@ -3008,7 +3650,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo1_unc2_nyx",
@@ -3022,7 +3667,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_wyx",
@@ -3036,7 +3684,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_wxy",
@@ -3050,7 +3701,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_wom",
@@ -3064,7 +3718,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_wop",
@@ -3078,7 +3735,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_kxy",
@@ -3092,7 +3752,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_nxy",
@@ -3106,7 +3769,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_kyx",
@@ -3120,7 +3786,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_egl19_nyx",
@@ -3134,7 +3803,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_wyx",
@@ -3148,7 +3820,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_wxy",
@@ -3162,7 +3837,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_wom",
@@ -3176,7 +3854,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_wop",
@@ -3190,7 +3871,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_kxy",
@@ -3204,7 +3888,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_nxy",
@@ -3218,7 +3905,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_kyx",
@@ -3232,7 +3922,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_slo2_unc2_nyx",
@@ -3246,7 +3939,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_vhm",
@@ -3260,7 +3956,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_ka",
@@ -3274,7 +3973,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_vhh",
@@ -3288,7 +3990,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_ki",
@@ -3302,7 +4007,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_atm",
@@ -3316,7 +4024,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_btm",
@@ -3330,7 +4041,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_ctm",
@@ -3344,7 +4058,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_dtm",
@@ -3358,7 +4075,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_etm",
@@ -3372,7 +4092,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_ath",
@@ -3386,7 +4109,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_bth",
@@ -3400,7 +4126,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_cth",
@@ -3414,7 +4143,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_dth",
@@ -3428,7 +4160,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_eth",
@@ -3442,7 +4177,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "kin_unc2_fth",
@@ -3456,7 +4194,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "nano_btot",
@@ -3470,7 +4211,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "nano_canci",
@@ -3484,7 +4228,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "nano_dca",
@@ -3498,7 +4245,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "nano_gsc",
@@ -3512,7 +4262,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "the mod says 'assumed equal to 40 pS'",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "nano_kb",
@@ -3526,7 +4279,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "nano_r",
@@ -3540,7 +4296,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "capool_vcell",
@@ -3554,7 +4313,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "capool_f",
@@ -3568,7 +4330,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "capool_tca",
@@ -3582,7 +4347,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "capool_caeq",
@@ -3596,7 +4364,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "ion_ek",
@@ -3610,7 +4381,10 @@
    "source": "guessed",
    "notes": "NEURON default; BAAIWorm never sets it",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "NEURON",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "ion_ena",
@@ -3624,7 +4398,10 @@
    "source": "guessed",
    "notes": "NEURON default, read by nca",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "NEURON",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "ion_cao",
@@ -3638,7 +4415,10 @@
    "source": "guessed",
    "notes": "NEURON default; worm salines use 1-5 mM (guessed). With literature_overrides on it is entered as 2000 because cainternm keeps cai in uM",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "NEURON",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "ion_celsius",
@@ -3652,7 +4432,10 @@
    "source": "guessed",
    "notes": "NEURON default 6.3 as ported (literature_overrides off); 20 is a usual worm culture temperature (guessed). Here it only enters the Ca Nernst potential (no mod reads celsius; checked 5 Nov)",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "syn_exc_conductance",
@@ -3666,7 +4449,10 @@
    "source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_exc_delta",
@@ -3680,7 +4466,10 @@
    "source": "Wicks et al. 1996; Kunert et al. 2014 (param_ranges B2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_exc_k",
@@ -3694,7 +4483,10 @@
    "source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3)",
    "notes": "ported value 0.5 kHz",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "syn_exc_Vth",
@@ -3708,7 +4500,10 @@
    "source": "Wicks, Roehrig & Rankin 1996 J Neurosci 16:4017 (tap withdrawal circuit model); Kunert, Shlizerman & Kutz 2014 PLoS ONE (param_ranges B1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_exc_erev",
@@ -3716,13 +4511,16 @@
    "value": null,
    "unit": "mV",
    "min": -10.0,
-   "max": 10.0,
+   "max": 11.0,
    "label": "guessed",
    "precision": "not yet estimated",
-   "source": "Generic nicotinic/cation-channel reversal, consistent with depolarizing EPSCs in Richmond & Jorgensen 1999 (param_ranges B5)",
+   "source": "Richmond & Jorgensen 1999 Nat Neurosci 2:791 Fig. 4c (ACh current at body-wall muscle reverses at +11 mV, n=4); Lindsay, Thiele & Lockery 2011 Nat Commun 2:306 Fig. 6b (glutamate synaptic current at AVA, -7.0 +/- 3.2 mV) (param_ranges B5)",
    "notes": "ported value 30 mV",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "syn_inh_conductance",
@@ -3736,7 +4534,10 @@
    "source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_inh_delta",
@@ -3750,7 +4551,10 @@
    "source": "Wicks et al. 1996; Kunert et al. 2014 (param_ranges B2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_inh_k",
@@ -3764,7 +4568,10 @@
    "source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3)",
    "notes": "ported value 0.015 kHz",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "syn_inh_Vth",
@@ -3778,7 +4585,10 @@
    "source": "Wicks, Roehrig & Rankin 1996 J Neurosci 16:4017 (tap withdrawal circuit model); Kunert, Shlizerman & Kutz 2014 PLoS ONE (param_ranges B1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_inh_erev",
@@ -3792,7 +4602,10 @@
    "source": "Bamber, Beg, Twyman & Jorgensen 1999 J Neurosci; Bamber et al. 2005 (param_ranges B8)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "gap_weight",
@@ -3806,7 +4619,10 @@
    "source": "no direct value found (param_ranges C4)",
    "notes": "ported value 1e-5 uS = 0.01 nS per placed junction, below range C4; the template is 22x it. Range C4 is itself guessed (no measurement found), so the override is ours, not a cited value",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "syn_weight_nn",
@@ -3820,7 +4636,10 @@
    "source": "guessed",
    "notes": "every neuron-neuron synapse (transform.py); bounds = BAAIWorm's own weight_range",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_weight_nmj",
@@ -3834,7 +4653,10 @@
    "source": "guessed",
    "notes": "every neuron-to-muscle synapse",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "syn_weight_mn",
@@ -3848,7 +4670,10 @@
    "source": "guessed",
    "notes": "every muscle-to-neuron synapse",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_syn_a",
@@ -3862,7 +4687,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_syn_b",
@@ -3876,7 +4704,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_a",
@@ -3890,7 +4721,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_b",
@@ -3904,7 +4738,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_syn_mu",
@@ -3918,7 +4755,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_syn_scale",
@@ -3932,7 +4772,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_mu",
@@ -3946,7 +4789,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_scale",
@@ -3960,7 +4806,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_thresh",
@@ -3974,7 +4823,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_syn_cnt_scale",
@@ -3988,7 +4840,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_cnt_scale",
@@ -4002,7 +4857,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_gj_priority",
@@ -4016,7 +4874,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "build_length_per_seg",
@@ -4030,7 +4891,10 @@
    "source": "guessed",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "wire_chem_contacts",
@@ -4044,7 +4908,10 @@
    "source": "counts",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 3709
   },
   {
    "id": "wire_gap_contacts",
@@ -4058,7 +4925,10 @@
    "source": "counts",
    "notes": "BAAIWorm's sheet also has 14 self pairs (a cell to itself); not used",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1091
   },
   {
    "id": "wire_nmj_contacts",
@@ -4072,7 +4942,10 @@
    "source": "counts",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 956
   },
   {
    "id": "wire_bwm_gap_contacts",
@@ -4086,7 +4959,10 @@
    "source": "counts",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 96
   },
   {
    "id": "wire_nmj_baaiworm",
@@ -4100,7 +4976,10 @@
    "source": "counts",
    "notes": "BAAIWorm muscle names; 6 pairs go to MCVL24, which the worm does not have",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 552
   },
   {
    "id": "wire_mn_baaiworm",
@@ -4114,7 +4993,10 @@
    "source": "counts",
    "notes": "BAAIWorm's proprioceptive feedback stand-in (its sheet cites Wen 2012, Krieg 2022); not anatomical",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "published fit",
+   "n_values": 175
   },
   {
    "id": "syn_strength_per_pair",
@@ -4128,7 +5010,10 @@
    "source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "guessed",
+   "n_values": 3709
   },
   {
    "id": "gap_strength_per_pair",
@@ -4142,7 +5027,10 @@
    "source": "no direct value found (param_ranges C4)",
    "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1091
   },
   {
    "id": "nmj_strength_per_pair",
@@ -4156,7 +5044,10 @@
    "source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "guessed",
+   "n_values": 956
   },
   {
    "id": "bwm_gap",
@@ -4170,7 +5061,10 @@
    "source": "Liu, Chen & Bhattacharya 2013 PLoS ONE 'Six innexins contribute to electrical coupling of C. elegans body-wall muscle' (title/existence confirmed by search, numeric value not retrieved) (param_ranges F11)",
    "notes": "macroscopic coupling per neighbouring pair; not scaled by the EM count",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 96
   },
   {
    "id": "syn_inhibitory",
@@ -4184,7 +5078,10 @@
    "source": "flag",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "derived",
+   "n_values": 302
   },
   {
    "id": "syn_sign_receptor",
@@ -4198,7 +5095,10 @@
    "source": "flag",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 3709
   },
   {
    "id": "gap_innexin_unitary",
@@ -4207,12 +5107,49 @@
    "unit": "pS",
    "min": 50.0,
    "max": 300.0,
-   "label": "absent",
+   "label": "guessed",
    "precision": "not yet estimated",
    "source": "no direct value found this session (param_ranges C1)",
-   "notes": "C1 range",
+   "notes": "Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value found), so this value is ours",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
+  },
+  {
+   "id": "gap_open_channels_per_em",
+   "mechanism": "innexin_identity",
+   "value": null,
+   "unit": "channels",
+   "min": 0.1666666666666666,
+   "max": 20.0,
+   "label": "guessed",
+   "precision": "not yet estimated",
+   "source": "range C4 / range C1 (both guessed)",
+   "notes": "open innexin channels per EM-visible gap contact; no count found",
+   "lit_check": "",
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
+  },
+  {
+   "id": "gap_innexin_pair",
+   "mechanism": "innexin_identity",
+   "value": null,
+   "unit": "flag",
+   "min": 0.0,
+   "max": 1.0,
+   "label": "derived",
+   "precision": "not yet estimated",
+   "source": "flag",
+   "notes": "7 of 1091 pairs have a partner with no innexin detected",
+   "lit_check": "",
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "derived",
+   "n_values": 1091
   },
   {
    "id": "morph_xyz",
@@ -4226,7 +5163,10 @@
    "source": "body length about 1 mm",
    "notes": "from the Virtual Worm 3D atlas, not an EM reconstruction of one animal",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 48306
   },
   {
    "id": "morph_diam",
@@ -4240,7 +5180,10 @@
    "source": "guessed",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "BAAIWorm",
+   "fill_kind": "derived",
+   "n_values": 16102
   },
   {
    "id": "c302_muscle_leak_cond_density",
@@ -4254,7 +5197,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_leak_erev",
@@ -4268,7 +5214,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_k_slow_cond_density",
@@ -4282,7 +5231,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_k_slow_erev",
@@ -4296,7 +5248,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_slow_gate_n_tau",
@@ -4310,7 +5265,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_slow_gate_n_scale",
@@ -4324,7 +5282,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_slow_gate_n_midpoint",
@@ -4338,7 +5299,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_k_fast_cond_density",
@@ -4352,7 +5316,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_k_fast_erev",
@@ -4366,7 +5333,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_p_tau",
@@ -4380,7 +5350,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_p_scale",
@@ -4394,7 +5367,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_p_midpoint",
@@ -4408,7 +5384,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_q_tau",
@@ -4422,7 +5401,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_q_scale",
@@ -4436,7 +5418,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_k_fast_gate_q_midpoint",
@@ -4450,7 +5435,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_ca_boyle_cond_density",
@@ -4464,7 +5452,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_muscle_ca_boyle_erev",
@@ -4478,7 +5469,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_e_tau",
@@ -4492,7 +5486,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_e_scale",
@@ -4506,7 +5503,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_e_midpoint",
@@ -4520,7 +5520,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_f_tau",
@@ -4534,7 +5537,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_f_scale",
@@ -4548,7 +5554,10 @@
    "source": "guessed: factor 2 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_f_midpoint",
@@ -4562,7 +5571,10 @@
    "source": "guessed: +-20 mV around the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_h_alpha",
@@ -4576,7 +5588,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_h_ca_half",
@@ -4590,7 +5605,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_boyle_gate_h_k",
@@ -4604,7 +5622,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_conc_decay_time_muscle",
@@ -4618,7 +5639,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "c302_ca_conc_rho_muscle",
@@ -4632,7 +5656,10 @@
    "source": "guessed: factor 3 either side of the published value",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "c302",
+   "fill_kind": "published fit",
+   "n_values": 1
   },
   {
    "id": "salt_gain_pA",
@@ -4646,7 +5673,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "salt_c0_mM",
@@ -4660,7 +5690,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "u = log(1 + c/c0)",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "salt_tau_adapt_s",
@@ -4674,7 +5707,10 @@
    "source": "Suzuki et al. 2008 Nature 454:114; Luo et al. 2014 Neuron 82:1115 (param_ranges J1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "salt_adapt_frac",
@@ -4688,7 +5724,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "odor_gain_pA",
@@ -4702,7 +5741,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "odor_c0_uM",
@@ -4716,7 +5758,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "odor_tau_adapt_s",
@@ -4730,7 +5775,10 @@
    "source": "Chalasani et al. 2007 Nature 450:63 (param_ranges J2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "odor_adapt_frac",
@@ -4744,7 +5792,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "repel_gain_pA",
@@ -4758,7 +5809,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "repel_c0",
@@ -4772,7 +5826,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "one half-saturation for every repellent channel (mM for glycerol, copper, quinine, SDS; uM for octanol, nonanone)",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "repel_tau_adapt_s",
@@ -4786,7 +5843,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "repel_adapt_frac",
@@ -4800,7 +5860,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "thermo_gain_pA_per_C",
@@ -4814,7 +5877,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "thermo_Tstar_C",
@@ -4828,7 +5894,10 @@
    "source": "Kimura, Miyawaki, Matsumoto & Mori 2004 J Neurosci 24:7752; Clark, Biron, Sengupta & Samuel 2006 J Neurosci; Ramot, MacInnis & Goodman 2008 PLoS ONE (param_ranges J5)",
    "notes": "threshold, tracks cultivation",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "thermo_tau_adapt_s",
@@ -4842,7 +5911,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "o2_gain_pA_per_pct",
@@ -4856,7 +5928,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "o2_threshold_pct",
@@ -4870,7 +5945,10 @@
    "source": "Zimmer et al. 2009 Neuron 61:865; Busch et al. 2012 Nat Neurosci 15:581 (param_ranges J9)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "co2_gain_pA_per_pct",
@@ -4884,7 +5962,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "co2_threshold_pct",
@@ -4898,7 +5979,10 @@
    "source": "not retrieved (param_ranges J10)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "light_gain_pA_per_mWmm2",
@@ -4912,7 +5996,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "food_gain_pA",
@@ -4926,7 +6013,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "food_od0",
@@ -4940,7 +6030,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "touch_gain_pA",
@@ -4954,7 +6047,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "touch_f0_uN",
@@ -4968,7 +6064,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "touch_tau_adapt_ms",
@@ -4982,7 +6081,10 @@
    "source": "O'Hagan, Chalfie & Goodman 2005 Nat Neurosci 8:43 (param_ranges J7)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "touch_adapt_frac",
@@ -4996,7 +6098,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "harsh_gain_pA",
@@ -5010,7 +6115,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "harsh_f0_uN",
@@ -5024,7 +6132,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "tap_gain_pA",
@@ -5038,7 +6149,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "tap_tau_ms",
@@ -5052,7 +6166,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "proprio_gain_pA_mm",
@@ -5066,7 +6183,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "no measured current per unit curvature found (param_ranges J13 DVA and J14 SMD not retrieved), so the gain and its range are guessed, not cited",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "proprio_field_frac",
@@ -5080,7 +6200,10 @@
    "source": "Wen et al. 2012 Neuron 76:750 (search summary) (param_ranges J12)",
    "notes": "a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "mca_vhalf_mV",
@@ -5094,7 +6217,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mca_k_mV",
@@ -5108,7 +6234,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mca_max_uM",
@@ -5122,7 +6251,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mact_hill",
@@ -5136,7 +6268,10 @@
    "source": "not retrieved (param_ranges F7)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mact_khalf_uM",
@@ -5150,7 +6285,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mact_tau_rise_ms",
@@ -5164,7 +6302,10 @@
    "source": "not retrieved (Fang-Yen 2010 PNAS, Petzold 2011 Biophys J named sources, not fetched this session) (param_ranges F8)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "mact_tau_decay_ms",
@@ -5178,7 +6319,10 @@
    "source": "same sources as F8, not retrieved (param_ranges F9)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "pep_release_nM_per_s",
@@ -5192,7 +6336,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "released at rate x sigmoid((V - Vth_release)/5 mV)",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 49
   },
   {
    "id": "pep_release_vth_mV",
@@ -5206,7 +6353,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "pep_clear_tau_s",
@@ -5220,7 +6370,10 @@
    "source": "no direct value found (param_ranges D4)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "pep_ec50_nM",
@@ -5234,7 +6387,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "measured per pair in Beets et al. 2023 (all <= 500 nM by the pair list's inclusion rule); the per-pair values are not yet in the repo, so the template uses one guessed value",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 92
   },
   {
    "id": "pep_gain_pA",
@@ -5248,7 +6404,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "current at full receptor activation; sign (G-protein class) unknown, template +",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 51
   },
   {
    "id": "ma_release_nM_per_s",
@@ -5262,7 +6421,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 4
   },
   {
    "id": "ma_release_vth_mV",
@@ -5276,7 +6438,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "ma_clear_tau_s",
@@ -5290,7 +6455,10 @@
    "source": "no direct worm value found (param_ranges D5)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "ma_ec50_nM",
@@ -5304,7 +6472,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "MOD-1 and LGC-55 EC50 measured (param_ranges D6, D7); others guessed",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 14
   },
   {
    "id": "ma_gain_pA",
@@ -5318,7 +6489,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 14
   },
   {
    "id": "glia_gain",
@@ -5332,7 +6506,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "multiplies amphid sensory currents; 1 = no effect",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "pump_rate_food_hz",
@@ -5346,7 +6523,10 @@
    "source": "Per project STATE_OF_THE_ART.md behavior corpus #32 (~4-5Hz, ~250 pumps/min); Raizen & Avery 1994 J Neurosci (param_ranges G1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "pump_rate_nofood_hz",
@@ -5360,7 +6540,10 @@
    "source": "Avery & Horvitz 1990 J Exp Zool; Raizen & Avery 1994 (param_ranges G2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "pump_duration_ms",
@@ -5374,7 +6557,10 @@
    "source": "Per project STATE_OF_THE_ART.md behavior corpus #33 (~170ms) (param_ranges G3)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "pump_food_od0",
@@ -5388,7 +6574,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_period_s",
@@ -5402,7 +6591,10 @@
    "source": "Per project STATE_OF_THE_ART.md behavior corpus #49 (45s +/-<3s at 20C, temp-insensitive 19-30C); Thomas 1990 Genetics 124:855 (param_ranges H1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "dmp_pboc_dur_s",
@@ -5416,7 +6608,10 @@
    "source": "not retrieved (param_ranges H2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_aboc_delay_s",
@@ -5430,7 +6625,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_aboc_dur_s",
@@ -5444,7 +6642,10 @@
    "source": "not retrieved (param_ranges H3)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_exp_delay_s",
@@ -5458,7 +6659,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_exp_dur_s",
@@ -5472,7 +6676,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_pboc_amp",
@@ -5486,7 +6693,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "added to the posterior 1/3 of BWM",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "dmp_pboc_frac",
@@ -5500,7 +6710,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "egg_active_min",
@@ -5514,7 +6727,10 @@
    "source": "Waggoner, Zhou, Schafer & Schafer 1998 Neuron 21:203; Collins et al. 2016 eLife (param_ranges I1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "egg_inactive_min",
@@ -5528,7 +6744,10 @@
    "source": "Waggoner et al. 1998 Neuron; Collins et al. 2016 eLife (param_ranges I2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "egg_rate_active_per_min",
@@ -5542,7 +6761,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "in the active phase; with I1 and I2 gives the basal rate of param_ranges I3",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "egg_vm_dur_ms",
@@ -5556,7 +6778,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "vulval muscle contraction per egg",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "met_store_tau_h",
@@ -5570,7 +6795,10 @@
    "source": "not retrieved (param_ranges L1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "met_intake_per_pump",
@@ -5584,7 +6812,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "gcamp_kd_nM",
@@ -5598,7 +6829,10 @@
    "source": "Chen et al. 2013 Nature 499:295 (GCaMP6 series); search summary: Kd=157nM (param_ranges M1)",
    "notes": "GCaMP6s",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "gcamp_hill",
@@ -5612,7 +6846,10 @@
    "source": "Chen et al. 2013 Nature 499:295, search summary (param_ranges M3)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "gcamp_tau_rise_ms",
@@ -5626,7 +6863,10 @@
    "source": "Chen et al. 2013 Nature 499:295, search summary: ~50ms (param_ranges M4)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "gcamp_tau_decay_ms",
@@ -5640,7 +6880,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "gcamp_dff_max",
@@ -5654,7 +6897,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "gcamp_ca_rest_nM",
@@ -5668,7 +6914,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "gcamp_noise_pct",
@@ -5682,7 +6931,10 @@
    "source": "not retrieved (param_ranges M8)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "homeo_target_mV",
@@ -5696,7 +6948,10 @@
    "source": "Goodman, Hall, Avery & Lockery 1998 J Neurosci (ASER and other head neurons, whole-cell current clamp) (param_ranges A4)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "homeo_tau_s",
@@ -5710,7 +6965,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "homeo_gain_pA_per_mV",
@@ -5724,7 +6982,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "homeo_max_pA",
@@ -5738,7 +6999,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "slow_olf_tau_h",
@@ -5752,7 +7016,10 @@
    "source": "L'Etoile et al. 2002 Neuron 36:1079 (param_ranges K1)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "measured",
+   "n_values": 1
   },
   {
    "id": "slow_thermo_tau_h",
@@ -5766,7 +7033,10 @@
    "source": "Yu, Tirman, Bargmann et al. 2014 eLife (CMK-1); Clark et al. 2006 (param_ranges K2)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   },
   {
    "id": "slow_gain_floor",
@@ -5780,7 +7050,10 @@
    "source": "guessed (src/wormemu/brain_layers.py)",
    "notes": "fraction of the odour gain left after full long-term adaptation",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "ours",
+   "fill_kind": "guessed",
+   "n_values": 1
   },
   {
    "id": "gap_rect_ratio",
@@ -5794,7 +7067,53 @@
    "source": "Starich et al. 2009 J Neurosci; Kawano et al. 2011 Neuron (param_ranges C3)",
    "notes": "",
    "lit_check": "",
-   "origin": "brain"
+   "origin": "brain",
+   "source_project": "literature",
+   "fill_kind": "inferred (ours)",
+   "n_values": 1
   }
- ]
+ ],
+ "source_by_fill_kind": {
+  "brain_numbers": {
+   "BAAIWorm": {
+    "published fit": 7757,
+    "guessed": 1,
+    "derived": 64408
+   },
+   "literature": {
+    "guessed": 5469,
+    "measured": 5865,
+    "derived": 3078,
+    "inferred (ours)": 6
+   },
+   "NEURON": {
+    "guessed": 3
+   },
+   "ours": {
+    "guessed": 3492,
+    "inferred (ours)": 5
+   },
+   "c302": {
+    "published fit": 28
+   }
+  },
+  "body_rows": {
+   "BAAIWorm": {
+    "published fit": 22,
+    "derived": 8
+   },
+   "ours": {
+    "guessed": 8
+   },
+   "none": {
+    "absent": 1
+   },
+   "literature": {
+    "published fit": 1,
+    "measured": 4,
+    "derived": 2,
+    "inferred (ours)": 2
+   }
+  }
+ }
 }

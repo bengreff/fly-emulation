@@ -103,6 +103,7 @@
     <div id="tab-mech" class="tab"></div>
     <div id="tab-cat" class="tab">
       <div class="row counts" id="catcounts"></div>
+      <div class="row" id="catsrc"></div>
       <div class="row">
         <input type="search" id="catq" placeholder="search name, source, mechanism">
         <select id="catlab"><option value="">all labels</option></select>
@@ -504,13 +505,33 @@ function mechView() {
 // ---------------------------------------------------------------- catalog
 let CAT = [];
 async function loadCatalog() {
-  try { CAT = (await getJSON('data/catalog.json')).rows; } catch (e) { CAT = []; }
+  let SRC = null;
+  try { const c = await getJSON('data/catalog.json'); CAT = c.rows; SRC = c.source_by_fill_kind; } catch (e) { CAT = []; }
   const labs = [...new Set(CAT.map(r => r.label))].sort();
   $('catlab').innerHTML = '<option value="">all labels</option>' + labs.map(l => `<option>${l}</option>`).join('');
   const cnt = {}; CAT.forEach(r => cnt[r.label] = (cnt[r.label] || 0) + 1);
   const miss = CAT.filter(isMissing).length;
-  $('catcounts').innerHTML = `<b>${CAT.length} numbers</b> &nbsp; ` + labs.map(l => `<span><span class="lab lab-${l.split(' ')[0]}">${l}</span> ${cnt[l]}</span>`).join('') + ` &nbsp; <b>to fill: ${miss}</b> (guessed ${cnt.guessed || 0}, absent ${cnt.absent || 0}, published or derived but outside the literature ${CAT.filter(r => /^outside/.test(r.lit_check || '')).length}). Precision needed: not computed yet (sensitivity pass pending).`;
+  const nNum = CAT.reduce((a, r) => a + (+r.n_values || 1), 0);
+  $('catcounts').innerHTML = `<b>${CAT.length} rows</b> (holding ${nNum.toLocaleString()} numbers; a brain row can hold one number per cell, pair or synapse) &nbsp; rows by label: ` + labs.map(l => `<span><span class="lab lab-${l.split(' ')[0]}">${l}</span> ${cnt[l]}</span>`).join('') + ` &nbsp; <b>to fill: ${miss}</b> (guessed ${cnt.guessed || 0}, absent ${cnt.absent || 0}, published or derived but outside the literature ${CAT.filter(r => /^outside/.test(r.lit_check || '')).length}). Precision needed: not computed yet (sensitivity pass pending).`;
+  $('catsrc').innerHTML = SRC ? srcTable(SRC) : '';
   drawCatalog();
+}
+// Source project x fill kind (Director's queued note): brain numbers from the brain ledger's own table, body rows.
+function srcTable(T) {
+  const B = T.brain_numbers || {}, Y = T.body_rows || {};
+  const kinds = ['measured', 'published fit', 'derived', 'inferred (ours)', 'guessed', 'absent'];
+  const projs = [...new Set([...Object.keys(B), ...Object.keys(Y)])].sort((a, b) =>
+    kinds.reduce((t, k) => t + ((B[b] || {})[k] || 0), 0) - kinds.reduce((t, k) => t + ((B[a] || {})[k] || 0), 0));
+  const cell = (p, k) => { const b = (B[p] || {})[k] || 0, y = (Y[p] || {})[k] || 0;
+    return `<td class="num">${b ? b.toLocaleString() : (y ? '' : '<span class="muted">.</span>')}${y ? ` <span class="muted">+${y} body</span>` : ''}</td>`; };
+  const tot = (k) => { let b = 0, y = 0; projs.forEach(p => { b += (B[p] || {})[k] || 0; y += (Y[p] || {})[k] || 0; });
+    return `<td class="num"><b>${b.toLocaleString()}</b>${y ? ` <span class="muted">+${y} body</span>` : ''}</td>`; };
+  return `<div class="muted" style="margin-bottom:3px"><b>Where the numbers come from</b> (rows: source project; columns: fill kind). ` +
+    `Brain: numbers, from the brain ledger (docs/worm/ledger.json, structure rows included). Body: ledger rows, one number each. ` +
+    `Known = measured + published fit + derived + inferred; to fill = guessed + absent.</div>` +
+    `<table style="width:auto"><thead><tr><th>source</th>${kinds.map(k => `<th><span class="lab lab-${k.split(' ')[0]}">${k}</span></th>`).join('')}</tr></thead><tbody>` +
+    projs.map(p => `<tr><td>${p}</td>${kinds.map(k => cell(p, k)).join('')}</tr>`).join('') +
+    `<tr><td><b>total</b></td>${kinds.map(tot).join('')}</tr></tbody></table>`;
 }
 function sig(x) { return typeof x === 'number' ? String(+x.toPrecision(3)) : String(x); }
 function isMissing(r) { return /^(guessed|absent)/.test(r.label) || /^outside/.test(r.lit_check || ''); }

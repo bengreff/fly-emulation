@@ -256,13 +256,27 @@ MECH = {
 }
 
 
+# Same vocabulary as the brain ledger (src/bioemu/ledger.py FILL_KIND, SOURCE_PROJECTS). MetaWorm is BAAIWorm's body.
+FILL_KIND = {"measured": "measured", "published": "published fit", "published_fit": "published fit",
+             "derived": "derived", "inferred": "inferred (ours)", "guessed": "guessed", "absent": "absent"}
+
+
+def body_project(r):
+    if r["label"] == "absent":
+        return "none"
+    if r["label"] == "guessed" or r["source"] in ("", "this repo"):
+        return "ours"
+    return "BAAIWorm" if r["source"].startswith("MetaWorm") or "mesh" in r["source"] else "literature"
+
+
 def catalog_rows():
     rows = [{"id": r["param_id"], "mechanism": r["mechanism_id"], "value": r["value_used"], "unit": r["unit"],
              "min": r["bio_min"], "max": r["bio_max"], "label": r["label"], "precision": r["precision_needed"],
              "source": "; ".join(x for x in (r["source"], r["bound_source"]) if x),
              "lit_check": r["lit_check"],
              "notes": " ".join(x for x in ("" if r["used_in_body"] == "yes" else "(not used by the running body)",
-                                           r["notes"]) if x), "origin": "body"} for r in R]
+                                           r["notes"]) if x), "origin": "body",
+             "source_project": body_project(r), "fill_kind": FILL_KIND[r["label"]], "n_values": 1} for r in R]
     brain = ROOT / "docs" / "worm" / "ledger.json"
     if brain.exists():  # the brain worker's export; field names mapped best effort
         led = json.load(open(brain))
@@ -273,8 +287,21 @@ def catalog_rows():
                          "label": p.get("label"), "precision": p.get("precision_needed", ""),
                          "source": p.get("bound_source", p.get("source", "")), "notes": p.get("notes", ""),
                          "lit_check": p.get("lit_check", ""),
-                         "origin": "brain"})
+                         "origin": "brain", "source_project": p.get("source_project", ""),
+                         "fill_kind": p.get("fill_kind", ""), "n_values": p.get("n_values", 1)})
     return rows
+
+
+def source_by_fill_kind(rows):
+    """Brain: the brain ledger's own table (numbers, per-element labels and sources). Body: one per row."""
+    brain = ROOT / "docs" / "worm" / "ledger.json"
+    out = {"brain_numbers": json.load(open(brain)).get("source_by_fill_kind", {}).get("all", {}) if brain.exists() else {},
+           "body_rows": {}}
+    for r in rows:
+        if r["origin"] == "body":
+            d = out["body_rows"].setdefault(r["source_project"], {})
+            d[r["fill_kind"]] = d.get(r["fill_kind"], 0) + 1
+    return out
 
 
 def main():
@@ -287,7 +314,8 @@ def main():
     json.dump(MECH, open(OUT / "metaworm_mechanisms.json", "w"), indent=1)
     json.dump(MECH, open(VIEW / "mechanisms.json", "w"), indent=1)
     rows = catalog_rows()
-    json.dump({"rows": rows}, open(VIEW / "catalog.json", "w"), indent=1)
+    json.dump({"rows": rows, "source_by_fill_kind": source_by_fill_kind(rows)}, open(VIEW / "catalog.json", "w"),
+              indent=1)
     n_used = sum(r["used_in_body"] == "yes" for r in R)
     print(f"{len(R)} body rows ({n_used} used by the running body), {len(MECH['mechanisms'])} mechanisms, "
           f"catalog {len(rows)} rows")
