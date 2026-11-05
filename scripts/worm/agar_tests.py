@@ -1,6 +1,7 @@
 """Agar plate and agar film gates, numerics and report-only crawl readouts (pre-registered in
 docs/worm/BODY_TESTS.md, 17:20 and 17:30 CST, 5 Nov). Run from the repo root:
-    .venv/bin/python scripts/worm/agar_tests.py A1|A2|A2n|A2l|A1f|A2f|crawl|crawlf
+    .venv/bin/python scripts/worm/agar_tests.py A1|A2|A2n|A2l|A1f|A2f|crawl|crawlf [latest]
+(latest: A1f and A2f with body.solver_exit = latest, gate S4 of 17:48; runs get a _latest suffix)
 Writes runs/worm/metaworm/agar_*. Crawl readouts: from t = 3 s, which gait() trims to the last 2 periods."""
 import sys
 from pathlib import Path
@@ -10,6 +11,8 @@ from wormemu.body import metaworm as mw
 
 OUT = "runs/worm/metaworm/"
 which = sys.argv[1]
+SE = sys.argv[2] if len(sys.argv) > 2 else "published"
+SUF = "" if SE == "published" else "_" + SE
 
 
 def geom(r):
@@ -70,18 +73,19 @@ elif which in ("A2", "A2n", "A2l"):
     report(which, r, res)
     print("   readouts (report only):", readouts(r, 1.76, 1.0), flush=True)
 elif which == "A1f":
-    r = mw.run(OUT + "agar_a1f_dead", mode="dead", seconds=3.0, world=dict(mw.AGAR_FILM))
+    r = mw.run(OUT + "agar_a1f_dead" + SUF, mode="dead", seconds=3.0, world=dict(mw.AGAR_FILM), solver_exit=SE)
     g = geom(r)
     res = {"finite": g["finite"], "lowest_point_max_L": float(np.abs(g["low"]).max()),
            "drift_max_L": float(g["drift"].max()), "disp_max_L": float(g["disp"].max())}
     res["pass"] = bool(res["finite"] and res["lowest_point_max_L"] <= 1e-3 and res["drift_max_L"] < 0.01
                        and res["disp_max_L"] < 0.02)
     a = np.fromfile(OUT + "agar_a1_dead.frames.f32", np.float32)
-    b = np.fromfile(OUT + "agar_a1f_dead.frames.f32", np.float32)
+    b = np.fromfile(OUT + "agar_a1f_dead" + SUF + ".frames.f32", np.float32)
     res["bit_identical_to_A1"] = bool(a.shape == b.shape and (a == b).all())
     report("A1f", r, res)
 elif which == "A2f":
-    r = mw.run(OUT + "agar_a2f_p3", mode="wave", seconds=5.0, f=1.76, lam=1.54, amp=0.157, world=dict(mw.AGAR_FILM))
+    r = mw.run(OUT + "agar_a2f_p3" + SUF, mode="wave", seconds=5.0, f=1.76, lam=1.54, amp=0.157, world=dict(mw.AGAR_FILM),
+               solver_exit=SE)
     g = geom(r)
     w = r["meta"]["world"]
     top = -w["plate_down"] * (w["film_y"] - w["plate_y"]) / g["L"]  # film surface height, L

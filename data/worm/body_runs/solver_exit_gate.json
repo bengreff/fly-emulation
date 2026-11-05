@@ -1,0 +1,167 @@
+{
+ "P0": {
+  "max_disp_from_rest": 8.12671042e-11,
+  "pass": true
+ },
+ "P1": {
+  "end_over_peak": 0.08759062342734707,
+  "pass": true
+ },
+ "P2": {
+  "f_body_hz": 1.5,
+  "wavelength_L": 0.5601978640427138,
+  "head_amp_kL": 22.70936045453926,
+  "speed_L_s": 0.272929882006517,
+  "net_disp_L": 2.0507026546144944,
+  "head_lat_f_hz": 0.30000000000000004,
+  "pass_disp": true,
+  "pass_freq": false,
+  "pass": false
+ },
+ "P3": {
+  "f_body_hz": 1.76,
+  "wavelength_L": 0.5654093759751274,
+  "head_amp_kL": 3.169817182362945,
+  "speed_L_s": 0.026429087018327996,
+  "pass_speed": false,
+  "pass_wavelength": false,
+  "pass_freq": true
+ },
+ "S3": {
+  "amps": [
+   0.001,
+   0.003,
+   0.01,
+   0.03,
+   0.06,
+   0.1,
+   0.157
+  ],
+  "max_disp_L": {
+   "published": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.04765609225447585,
+    0.07167963899182322,
+    0.10231198192090593
+   ],
+   "latest": [
+    0.0016865637657375746,
+    0.005005970925760497,
+    0.01582711564620426,
+    0.03815509813769252,
+    0.054824781331439185,
+    0.07763488165403705,
+    0.11918030095475413
+   ]
+  },
+  "ratio_0.01_over_0.001": 9.384237920754028,
+  "pass": true
+ },
+ "S1": {
+  "checks": {
+   "P0.pass": {
+    "published": true,
+    "latest": true,
+    "ok": true
+   },
+   "P1.pass": {
+    "published": false,
+    "latest": true,
+    "ok": true
+   },
+   "P2.pass_disp": {
+    "published": true,
+    "latest": true,
+    "ok": true
+   },
+   "P2.pass_freq": {
+    "published": false,
+    "latest": false,
+    "ok": true
+   },
+   "P2.pass": {
+    "published": false,
+    "latest": false,
+    "ok": true
+   },
+   "P3.pass_speed": {
+    "published": false,
+    "latest": false,
+    "ok": true
+   },
+   "P3.pass_wavelength": {
+    "published": true,
+    "latest": false,
+    "ok": false
+   },
+   "P3.pass_freq": {
+    "published": false,
+    "latest": true,
+    "ok": true
+   }
+  },
+  "pass": false
+ },
+ "S2": {
+  "checks": {
+   "P1.end_over_peak": {
+    "published": 0.10083157145346658,
+    "latest": 0.08759062342734707,
+    "rel": -0.13131748157103912,
+    "ok": false
+   },
+   "P2.f_body_hz": {
+    "published": 1.5,
+    "latest": 1.5,
+    "rel": 0.0,
+    "ok": true
+   },
+   "P2.wavelength_L": {
+    "published": 0.5681754549015481,
+    "latest": 0.5601978640427138,
+    "rel": -0.014040717158780911,
+    "ok": true
+   },
+   "P2.head_amp_kL": {
+    "published": 21.89762568616145,
+    "latest": 22.70936045453926,
+    "rel": 0.037069533474161045,
+    "ok": true
+   },
+   "P2.speed_L_s": {
+    "published": 0.25975533361495085,
+    "latest": 0.272929882006517,
+    "rel": 0.05071906785596753,
+    "ok": true
+   },
+   "P3.f_body_hz": {
+    "published": 1.8656000000000001,
+    "latest": 1.76,
+    "rel": -0.05660377358490573,
+    "ok": true
+   },
+   "P3.wavelength_L": {
+    "published": 1.5894636019752582,
+    "latest": 0.5654093759751274,
+    "rel": -0.6442766130205926,
+    "ok": false
+   },
+   "P3.head_amp_kL": {
+    "published": 4.878578365443711,
+    "latest": 3.169817182362945,
+    "rel": -0.35025801679939866,
+    "ok": false
+   },
+   "P3.speed_L_s": {
+    "published": 0.018498330555914825,
+    "latest": 0.026429087018327996,
+    "rel": 0.4287282270386999,
+    "ok": false
+   }
+  },
+  "pass": false
+ }
+}

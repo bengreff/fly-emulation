@@ -507,3 +507,44 @@ Same drives as the published tests, nothing recalibrated (P3 keeps a0 0.1573). B
 Adoption: if S1-S4 all pass and the figure is viewed, `latest` is adoptable as the default; I report it to the
 Director before flipping the default, because the brain worker's closed loops use it. If any fails, it stays a
 toggle and the failure is recorded here.
+
+## Results: `body.solver_exit = latest` gate (2026-11-05 17:48-17:50 CST, measured, Mac)
+
+Script `scripts/worm/solver_exit_gate.py` (S1-S3, figure `data/worm/body_runs/solver_exit_gate.png`, numbers in
+`solver_exit_gate.json`); S4 is `scripts/worm/agar_tests.py A1f|A2f latest`.
+
+**Verdict: FAIL (S1 and S2 fail, S3 and S4 pass). `latest` is not adopted; `published` stays the default.**
+
+| check | published | latest | change | bar |
+|---|---|---|---|---|
+| P0 displacement | 0 | 0 | | below 1e-9: pass both |
+| P1 end/peak | 0.1008 (fail) | 0.0876 (pass) | -13% | S2 fails (over 10%) |
+| P2 body frequency | 1.5 Hz | 1.5 Hz | 0% | |
+| P2 wavelength | 0.568 L | 0.560 L | -1.4% | |
+| P2 head kappa*L | 21.9 | 22.7 | +3.7% | |
+| P2 speed | 0.260 L/s | 0.273 L/s | +5.1% | |
+| P3 body frequency | 1.87 Hz (fail) | 1.76 Hz (pass) | -5.7% | |
+| P3 wavelength | 1.59 L (pass) | 0.565 L (fail) | -64% | **S1 fails** (pass to fail); S2 fails |
+| P3 head kappa*L | 4.88 | 3.17 | -35% | S2 fails |
+| P3 speed | 0.018 L/s (fail) | 0.026 L/s (fail) | +43% | S2 fails |
+
+S3, largest displacement from rest in 1.5 s of the swim wave (L): published exit 0 exactly at 0.001, 0.003, 0.01
+and 0.03, then 0.048 at 0.06; `latest` 0.0017, 0.0050, 0.0158, 0.038, 0.055 (0.001 to 0.06). Ratio 0.01/0.001 =
+9.4, inside 5-20. **Pass:** `latest` has no threshold, and the published dead zone reaches at least 0.03.
+
+S4, the agar film under `latest`: A1f pass (lowest point 8e-10 L, drift 1.2e-4 L, displacement 4.2e-4 L); A2f
+pass (spread 0.52 L, midline 0.88-1.00 L, centroid height 0.034 L, highest vertex at the film). A2f readouts
+against the published exit (report-only): wavelength 1.215 vs 1.205 L (+0.8%), head kappa*L 3.79 vs 3.76
+(+0.8%), speed 0.313 vs 0.306 L/s (+2.4%); largest frame difference 0.028 sim units (0.044 L).
+
+Reading. All of the failure is in P3, the published (metre-scale, inertial) world at a small drive (a0 0.157,
+calibrated under the published exit and deliberately not recalibrated). Viewed: the curvature kymographs with the
+rest pose subtracted (`data/worm/body_runs/solver_exit_p3_kymo.png`). Under the published exit the P3 wave is
+irregular, with patches that stall. Under `latest` it is a regular head-to-tail travelling wave at the drive
+frequency, with a shorter wavelength that sits near the published body's own P2 wavelength (0.56 L). My reading,
+inferred and not tested: the published exit's 1.59 L "pass" at this drive partly reflects the stalling response
+rather than the body following the drive. That does not change the verdict; the bars were set before the run.
+In the agar film world, which is the demo world, the exit changes the readouts by under 3%.
+
+What would come next (not started): a narrower pre-registered gate for `latest` inside the agar world only
+(A2f and the crawl drive under both exits, plus S3 at worm scale). That would be its own decision.
