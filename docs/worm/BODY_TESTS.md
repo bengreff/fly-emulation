@@ -471,3 +471,39 @@ co-contraction as in the published world. The loop's curvature readout reaches 1
 5 s; the midline shortens to 0.67 L; the centroid drifts 0.05 L net in the plate plane (path 0.18 L). Viewed
 (`runs/worm/media/cl_film_tmpl_sheet.png` and the MP4): the body curls into a C within about 1.2 s and holds it on
 the plate, raster lit. No rhythm, no crawling: the brain side's open item (BRAIN_PORT section 6), not the body's.
+
+## Closed loop on the agar film, 10 s demo (2026-11-05 17:44 CST, measured, Mac; no bar, a demonstration run)
+
+Same setup as above, after merging main (brain: excitatory reversal template +0.5 mV, `muscle_active` wired but
+off), 10 s (`cl_film_tmpl10`). Wall 43.8 s. Finite; highest vertex at the film surface; max activation 0.795; the
+loop's curvature readout 14.6 /mm at 1 s, 16.3 /mm at 10 s; midline shortens to 0.66 L; centroid creeps 0.13 L net
+in the plate plane (path 0.32 L). Viewed (`runs/worm/media/cl_film_tmpl10_sheet.png`, MP4 beside it, opened for
+Ben): the body curls into a C by 2.5 s and holds it, with the plate, the 1 mm contours of the diacetyl cone and the
+odour peak in view. No rhythm, no crawling, no chemotaxis.
+
+## Gate for `body.solver_exit = latest`: pre-registration (2026-11-05 17:48 CST, written before any run below)
+
+What changes: MetaWorm's solver returns the iterate from before its last converged solve; `latest` returns the
+converged one (`World::SetReturnLatestIterate`). Neutral is `published`. Question: does `latest` remove the dead
+zone without changing the published body's tested behaviour?
+
+Already seen before this pre-registration (disclosed; these parts are confirmations, not tests): P2 under
+`latest` (gait within 5%, table above), the 0.01 and 0.03 waves under both exits (1.5 s), and A2 on the gravity
+plate under `latest` (speed -7%, 17:2x). Not yet seen: P0, P1, P3 under `latest`; anything at amplitude 0.001; A1f
+and A2f under `latest`.
+
+Same drives as the published tests, nothing recalibrated (P3 keeps a0 0.1573). Bars:
+- **S1 no regression.** Under `latest`, P0 stays below 1e-9 displacement; every sub-bar of P1, P2 and P3
+  (`pass`, `pass_disp`, `pass_freq`, `pass_speed`, `pass_wavelength`) keeps its published outcome or goes from fail
+  to pass. Falsifier: any pass turns to fail.
+- **S2 readouts close.** P2 and P3 gait readouts (body frequency, wavelength, head kappa*L, speed) and P1
+  end/peak are each within 10% (relative) of the published values. Falsifier: any one off by more than 10%.
+- **S3 dead zone gone.** Prescribed swim wave (f 1.76 Hz, lambda 1.54 L), 1.5 s, amplitudes 0.001 and 0.01, under
+  both exits. Pass if under `latest` both move the body (largest displacement from rest above zero) and the
+  0.01/0.001 displacement ratio is between 5 and 20 (close to linear, so no threshold remains); the published
+  exit must still give exactly 0 at both (control). A response curve over 0.001-0.157 is report-only.
+- **S4 demo world holds.** A1f and A2f under `latest` meet their 17:30 bars.
+
+Adoption: if S1-S4 all pass and the figure is viewed, `latest` is adoptable as the default; I report it to the
+Director before flipping the default, because the brain worker's closed loops use it. If any fails, it stays a
+toggle and the failure is recorded here.
