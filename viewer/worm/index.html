@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Worm emulation viewer</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg:#111418; --panel:#1a1e24; --line:#2c323b; --text:#d8dde4; --dim:#8a93a0; --acc:#ff8a3d; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--text); font:13px/1.35 -apple-system, Helvetica, Arial, sans-serif; }
+  #app { display:grid; grid-template-rows: auto 1fr; height:100vh; }
+  header { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:6px 10px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:14px; margin:0 8px 0 0; font-weight:600; }
+  header select, header button, header input { background:#242a32; color:var(--text); border:1px solid var(--line); border-radius:4px; padding:3px 6px; font-size:12px; }
+  header button { cursor:pointer; }
+  #tlabel { font-variant-numeric: tabular-nums; min-width:110px; }
+  #slider { width:260px; }
+  main { display:grid; grid-template-columns: 57% 43%; min-height:0; }
+  #left { display:grid; grid-template-rows: 1fr 150px; min-height:0; border-right:1px solid var(--line); }
+  #body3d { position:relative; min-height:0; }
+  #body3d canvas, #wire canvas { display:block; width:100%; height:100%; }
+  .overlay { position:absolute; left:8px; top:6px; pointer-events:none; color:var(--dim); font-size:12px; max-width:70%; }
+  .overlay b { color:var(--text); }
+  .legend { position:absolute; right:8px; top:6px; font-size:11px; color:var(--dim); text-align:right; }
+  #kymo { position:relative; border-top:1px solid var(--line); }
+  #kymo canvas { width:100%; height:100%; display:block; }
+  #right { display:grid; grid-template-rows: auto 1fr; min-height:0; }
+  nav { display:flex; border-bottom:1px solid var(--line); background:var(--panel); }
+  nav button { flex:1; background:none; border:none; color:var(--dim); padding:7px; cursor:pointer; font-size:13px; border-bottom:2px solid transparent; }
+  nav button.on { color:var(--text); border-bottom-color:var(--acc); }
+  .tab { display:none; min-height:0; overflow:auto; padding:8px 10px; }
+  .tab.on { display:block; }
+  #tab-wire.on { display:grid; grid-template-rows: auto 1fr auto; padding:0; overflow:hidden; }
+  #wirectl { padding:6px 10px; display:flex; flex-wrap:wrap; gap:4px 12px; border-bottom:1px solid var(--line); font-size:12px; }
+  #wirectl label { white-space:nowrap; }
+  #wire { position:relative; min-height:0; }
+  #wirenote { padding:4px 10px; color:var(--dim); font-size:11px; border-top:1px solid var(--line); }
+  #tip { position:absolute; pointer-events:none; background:#000c; border:1px solid var(--line); padding:3px 6px; border-radius:3px; font-size:12px; display:none; white-space:nowrap; }
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  #cattable { table-layout:fixed; }
+  #cattable td { overflow-wrap:anywhere; }
+  th, td { border-bottom:1px solid var(--line); padding:3px 5px; text-align:left; vertical-align:top; }
+  th { position:sticky; top:0; background:var(--panel); color:var(--dim); font-weight:600; }
+  td.num { font-variant-numeric: tabular-nums; white-space:nowrap; }
+  .lab { padding:0 5px; border-radius:3px; font-size:11px; white-space:nowrap; }
+  .lab-measured { background:#1f5f3a; } .lab-derived { background:#2b4f7a; } .lab-inferred { background:#5a4a1f; }
+  .lab-guessed { background:#7a2b2b; } .lab-absent { background:#444; } .lab-published { background:#3d3d7a; }
+  .st-have { color:#6fd08c; } .st-partial { color:#e0c050; } .st-missing { color:#e06060; }
+  .pass { color:#6fd08c; } .fail { color:#e06060; }
+  .counts span { margin-right:12px; }
+  .muted { color:var(--dim); }
+  input[type=search] { width:220px; }
+  .row { margin:6px 0; }
+  fieldset { border:1px solid var(--line); border-radius:4px; margin:8px 0; }
+  fieldset input, fieldset select { background:#242a32; color:var(--text); border:1px solid var(--line); border-radius:3px; width:80px; }
+  fieldset button { background:#2d3540; color:var(--text); border:1px solid var(--line); border-radius:3px; padding:3px 10px; cursor:pointer; }
+  .opt { display:inline-block; margin-right:8px; }
+  .opt.na { color:#666; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+</script>
+</head>
+<body>
+<div id="app">
+<header>
+  <h1>Worm emulation viewer</h1>
+  <select id="runsel" title="run"></select>
+  <button id="play">Pause</button>
+  <input id="slider" type="range" min="0" max="0" value="0">
+  <span id="tlabel">t = 0.00 s</span>
+  <select id="speed" title="playback speed">
+    <option value="0.25">0.25x</option><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="2">2x</option>
+  </select>
+  <select id="colour" title="body colour">
+    <option value="act" selected>colour: muscle activation</option>
+    <option value="s">colour: head to tail</option>
+    <option value="quad">colour: muscle quadrant</option>
+  </select>
+  <label><input id="follow" type="checkbox" checked> follow</label>
+  <label><input id="trail" type="checkbox" checked> path</label>
+</header>
+<main>
+  <section id="left">
+    <div id="body3d">
+      <div class="overlay" id="bodyinfo"></div>
+      <div class="legend" id="bodylegend"></div>
+    </div>
+    <div id="kymo"><canvas id="kymocv"></canvas><div class="overlay" style="top:2px">muscle activation fed to the body (rows: dorsal L, dorsal R, ventral L, ventral R; head at top of each block)</div></div>
+  </section>
+  <section id="right">
+    <nav>
+      <button data-tab="wire" class="on">Wiring</button>
+      <button data-tab="mech">Mechanisms</button>
+      <button data-tab="cat">Catalog</button>
+      <button data-tab="run">Run</button>
+    </nav>
+    <div id="tab-wire" class="tab on">
+      <div id="wirectl"></div>
+      <div id="wire"><div id="tip"></div></div>
+      <div id="wirenote"></div>
+    </div>
+    <div id="tab-mech" class="tab"></div>
+    <div id="tab-cat" class="tab">
+      <div class="row counts" id="catcounts"></div>
+      <div class="row">
+        <input type="search" id="catq" placeholder="search name, source, mechanism">
+        <select id="catlab"><option value="">all labels</option></select>
+        <label><input type="checkbox" id="catmiss"> to fill only (guessed, absent, or outside the literature)</label>
+        <span id="catn" class="muted"></span>
+      </div>
+      <table id="cattable"><colgroup><col style="width:14%"><col style="width:6%"><col style="width:10%"><col style="width:9%"><col style="width:11%"><col style="width:10%"><col style="width:10%"><col style="width:30%"></colgroup><thead><tr><th>id</th><th>mech.</th><th>value used</th><th>unit</th><th>literature range</th><th>label</th><th>literature check</th><th>source / notes</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div id="tab-run" class="tab"></div>
+  </section>
+</main>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const $ = (id) => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const RECORD = params.has('record');
+const S = { runs: [], run: null, X: null, A: null, nF: 0, nV: 0, f: 0, playing: !RECORD, speed: 1, acc: 0,
+            colour: 'act', follow: true, trail: true, amax: 1 };
+
+async function getJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }
+async function getF32(url) { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return new Float32Array(await r.arrayBuffer()); }
+
+// ---------------------------------------------------------------- body scene
+const mesh = await getJSON('data/body_mesh.json');
+S.nV = mesh.n_vertices;
+const bodyEl = $('body3d');
+const R1 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: RECORD });
+R1.setPixelRatio(Math.min(devicePixelRatio, 2));
+bodyEl.appendChild(R1.domElement);
+const scene1 = new THREE.Scene();
+scene1.background = new THREE.Color(0x15191e);
+const cam1 = new THREE.PerspectiveCamera(35, 1, 0.01, 50);
+cam1.position.set(0.0, 1.35, 0.75);
+const ctl1 = new OrbitControls(cam1, R1.domElement);
+ctl1.enableDamping = true;
+scene1.add(new THREE.HemisphereLight(0xdfe8ff, 0x302820, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(1, 2, 1.5); scene1.add(sun);
+const grid = new THREE.GridHelper(6, 24, 0x3a4250, 0x262c35); grid.position.y = -0.12; scene1.add(grid);
+
+const geo = new THREE.BufferGeometry();
+const pos = new Float32Array(mesh.rest);
+geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+const col = new Float32Array(S.nV * 3);
+geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+geo.setIndex(mesh.triangles);
+geo.computeVertexNormals();
+const body = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.0, side: THREE.DoubleSide }));
+body.frustumCulled = false; // the bounding sphere is from the rest pose; the body moves away from it
+scene1.add(body);
+const MAXTRAIL = 4000;
+const trailGeo = new THREE.BufferGeometry();
+trailGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(MAXTRAIL * 3), 3));
+const trail = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({ color: 0x7fb0ff, transparent: true, opacity: 0.7 }));
+trail.frustumCulled = false;
+scene1.add(trail);
+const headDot = new THREE.Mesh(new THREE.SphereGeometry(0.012, 12, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+scene1.add(headDot);
+let headV = 0; { let m = 1e9; mesh.s.forEach((s, i) => { if (s < m) { m = s; headV = i; } }); }
+
+const QCOL = { MDR: [0.95, 0.45, 0.35], MDL: [0.95, 0.75, 0.35], MVR: [0.35, 0.6, 0.95], MVL: [0.45, 0.9, 0.75] };
+const segString = mesh.segments.map(sg => sg.string);
+function viridis(t) { // 5-stop approximation
+  const c = [[0.267,0.005,0.329],[0.230,0.322,0.546],[0.128,0.567,0.551],[0.369,0.789,0.383],[0.993,0.906,0.144]];
+  t = Math.min(1, Math.max(0, t)) * 4; const i = Math.min(3, Math.floor(t)), u = t - i;
+  return c[i].map((v, k) => v + (c[i + 1][k] - v) * u);
+}
+function heat(a) { // 0 -> tissue, 1 -> hot orange-white
+  const base = [0.62, 0.58, 0.52];
+  const hot = a < 0.5 ? [0.95, 0.35, 0.12] : [1.0, 0.85, 0.6];
+  const u = a < 0.5 ? a * 2 : (a - 0.5) * 2;
+  return a < 0.5 ? base.map((v, k) => v + (hot[k] - v) * u) : [0.95 + 0.05 * u, 0.35 + 0.5 * u, 0.12 + 0.48 * u];
+}
+function colourBody() {
+  const a0 = S.f * 96;
+  for (let v = 0; v < S.nV; v++) {
+    let c;
+    if (S.colour === 's') c = viridis(mesh.s[v]);
+    else if (S.colour === 'quad') { const q = QCOL[segString[mesh.muscle[v]]]; const w = mesh.muscle_weight[v]; c = q.map(x => 0.5 + (x - 0.5) * w); }
+    else { const a = S.A ? S.A[a0 + mesh.muscle[v]] * mesh.muscle_weight[v] : 0; c = heat(Math.min(1, a / S.amax)); }
+    col[3 * v] = c[0]; col[3 * v + 1] = c[1]; col[3 * v + 2] = c[2];
+  }
+  geo.attributes.color.needsUpdate = true;
+}
+const lastCen = new THREE.Vector3();
+function centroid(f) {
+  const o = f * S.nV * 3; let x = 0, y = 0, z = 0;
+  for (let v = 0; v < S.nV; v++) { x += S.X[o + 3 * v]; y += S.X[o + 3 * v + 1]; z += S.X[o + 3 * v + 2]; }
+  return new THREE.Vector3(x / S.nV, y / S.nV, z / S.nV);
+}
+let cenPath = [];
+function showFrame(f) {
+  S.f = f;
+  const o = f * S.nV * 3;
+  pos.set(S.X.subarray(o, o + S.nV * 3));
+  geo.attributes.position.needsUpdate = true;
+  geo.computeVertexNormals();
+  colourBody();
+  headDot.position.set(pos[3 * headV], pos[3 * headV + 1], pos[3 * headV + 2]);
+  const c = cenPath[f];
+  if (S.follow) {
+    const d = c.clone().sub(lastCen);
+    cam1.position.add(d); ctl1.target.add(d);
+  }
+  lastCen.copy(c);
+  const tp = trailGeo.attributes.position.array; const n = Math.min(f + 1, MAXTRAIL);
+  for (let i = 0; i < n; i++) { tp[3 * i] = cenPath[i].x; tp[3 * i + 1] = cenPath[i].y - 0.0; tp[3 * i + 2] = cenPath[i].z; }
+  trailGeo.setDrawRange(0, n); trailGeo.attributes.position.needsUpdate = true;
+  trail.visible = S.trail;
+  $('slider').value = f;
+  const t = f * S.run.frame_dt;
+  $('tlabel').textContent = `t = ${t.toFixed(2)} s / ${(S.run.seconds).toFixed(1)} s`;
+  drawKymo();
+  updateWireActivity();
+}
+
+// ---------------------------------------------------------------- kymograph
+const kcv = $('kymocv'); const kctx = kcv.getContext('2d');
+let kimg = null;
+const KROWS = ['MDL', 'MDR', 'MVL', 'MVR'];
+function buildKymo() {
+  const off = document.createElement('canvas'); off.width = S.nF; off.height = 96 + 6;
+  const c = off.getContext('2d'); const im = c.createImageData(S.nF, 96 + 6);
+  const strIdx = KROWS.map(n => mesh.segments.findIndex(sg => sg.string === n && sg.seg === 0));
+  for (let b = 0; b < 4; b++) for (let j = 0; j < 24; j++) {
+    const yy = b * 24 + j + (b >= 2 ? 6 : 0);
+    for (let f = 0; f < S.nF; f++) {
+      const a = Math.min(1, S.A[f * 96 + strIdx[b] + j] / S.amax); const h = heat(a);
+      const p = 4 * (yy * S.nF + f); im.data[p] = h[0] * 255; im.data[p + 1] = h[1] * 255; im.data[p + 2] = h[2] * 255; im.data[p + 3] = 255;
+    }
+  }
+  c.putImageData(im, 0, 0); kimg = off;
+}
+function drawKymo() {
+  const w = kcv.clientWidth, h = kcv.clientHeight;
+  if (kcv.width !== w * devicePixelRatio) { kcv.width = w * devicePixelRatio; kcv.height = h * devicePixelRatio; }
+  kctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  kctx.fillStyle = '#15191e'; kctx.fillRect(0, 0, w, h);
+  if (!kimg) return;
+  kctx.imageSmoothingEnabled = false;
+  const top = 18, hh = h - top - 4;
+  kctx.drawImage(kimg, 0, top, w, hh);
+  kctx.fillStyle = '#8a93a0'; kctx.font = '10px sans-serif';
+  [['DL', 0], ['DR', 24], ['VL', 54], ['VR', 78]].forEach(([t, r]) => kctx.fillText(t, 3, top + (r + 13) / 102 * hh));
+  const x = (S.f + 0.5) / S.nF * w;
+  kctx.strokeStyle = '#7fb0ff'; kctx.lineWidth = 1.5; kctx.beginPath(); kctx.moveTo(x, top); kctx.lineTo(x, h); kctx.stroke();
+}
+
+// ---------------------------------------------------------------- wiring diagram
+const G = await getJSON('data/graph.json');
+const wireEl = $('wire');
+const R2 = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: RECORD });
+R2.setPixelRatio(Math.min(devicePixelRatio, 2));
+wireEl.appendChild(R2.domElement);
+const scene2 = new THREE.Scene(); scene2.background = new THREE.Color(0x111418);
+const cam2 = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
+cam2.position.set(0.4, 2.2, 13.5);
+const ctl2 = new OrbitControls(cam2, R2.domElement); ctl2.target.set(0.4, 0, 0); ctl2.enableDamping = true;
+const GCOL = { 'SENSORY NEURONS': 0x5fd0ff, 'INTERNEURONS': 0xffd060, 'MOTOR NEURONS': 0xff7a5a, 'PHARYNX': 0xa0e070, 'SEX SPECIFIC': 0xe080e0, 'OTHER END ORGANS': 0xbbbbbb, 'MUSCLE': 0xff4040 };
+const npos = {}; const nodes = [];
+for (const n of G.neurons) { const p = new THREE.Vector3(n.y / 100, n.z / 100, n.x / 100); npos[n.name] = p; nodes.push({ name: n.name, group: n.group, p }); }
+// muscle placement in this panel is schematic: arclength from the MetaWorm fibre segment, quadrant offsets
+const segByCook = {}; mesh.segments.forEach(sg => { if (sg.cook) segByCook[sg.cook] = sg; });
+const muscleNodes = [];
+for (const m of G.muscles) {
+  const sg = segByCook[m.name]; const s = sg ? sg.s_mid : (m.index - 0.5) / 24;
+  const dors = m.quadrant[0] === 'D', left = m.quadrant[1] === 'L';
+  const p = new THREE.Vector3(-3.2 + s * 7.6, dors ? 0.75 : -0.85, left ? 0.35 : -0.35);
+  npos[m.name] = p; muscleNodes.push({ name: m.name, group: 'MUSCLE', p, seg: sg ? sg.i : null });
+}
+const allNodes = nodes.concat(muscleNodes);
+const deg = {}; for (const [lay, es] of Object.entries(G.edges)) for (const [a, b] of es) { for (const x of [a, b]) { deg[x] = deg[x] || {}; deg[x][lay] = (deg[x][lay] || 0) + 1; } }
+const ptsGeo = new THREE.BufferGeometry();
+const pp = new Float32Array(allNodes.length * 3), pc = new Float32Array(allNodes.length * 3), baseCol = [];
+allNodes.forEach((n, i) => { pp.set([n.p.x, n.p.y, n.p.z], 3 * i); const c = new THREE.Color(GCOL[n.group] || 0xffffff); baseCol.push(c); pc.set([c.r, c.g, c.b], 3 * i); });
+ptsGeo.setAttribute('position', new THREE.BufferAttribute(pp, 3));
+ptsGeo.setAttribute('color', new THREE.BufferAttribute(pc, 3));
+const dotTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 64; const x = c.getContext('2d'); const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, '#fff'); g.addColorStop(0.6, '#fff'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c); })();
+const pts = new THREE.Points(ptsGeo, new THREE.PointsMaterial({ size: 0.12, vertexColors: true, map: dotTex, transparent: true, alphaTest: 0.2, sizeAttenuation: true }));
+scene2.add(pts);
+const LAYERS = [
+  ['chemical', 0x4fa3ff, 0.35, true, 'chemical synapses (Cook 2019, measured)'],
+  ['electrical', 0xffd24f, 0.45, true, 'gap junctions (Cook 2019, measured)'],
+  ['peptide', 0xc070ff, 0.05, false, 'neuropeptide (Ripoll-Sanchez 2023, inferred)'],
+  ['monoamine', 0x50e0a0, 0.15, false, 'monoamine (Bentley 2016, inferred)'],
+  ['nmj', 0xff7050, 0.35, true, 'neuromuscular (Cook 2019, measured)'],
+];
+const layerObj = {};
+for (const [name, color, op, on, title] of LAYERS) {
+  const es = G.edges[name] || []; const arr = new Float32Array(es.length * 6); let k = 0;
+  for (const [a, b] of es) { const p = npos[a], q = npos[b]; if (!p || !q) continue; arr.set([p.x, p.y, p.z, q.x, q.y, q.z], 6 * k++); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(arr.subarray(0, 6 * k), 3));
+  const ls = new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color, transparent: true, opacity: op, depthWrite: false }));
+  ls.visible = on; scene2.add(ls); layerObj[name] = ls;
+  const lab = document.createElement('label');
+  lab.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''}> <span style="color:#${color.toString(16).padStart(6, '0')}">&#9632;</span> ${name} (${k})`;
+  lab.title = title; lab.querySelector('input').onchange = (e) => { ls.visible = e.target.checked; };
+  $('wirectl').appendChild(lab);
+}
+{
+  const lab = document.createElement('span'); lab.className = 'muted';
+  lab.innerHTML = Object.entries(GCOL).map(([g, c]) => `<span style="color:#${c.toString(16).padStart(6, '0')}">&#9679;</span> ${g.toLowerCase()}`).join(' &nbsp;');
+  $('wirectl').appendChild(lab);
+}
+function updateWireActivity() {
+  if (!S.A) return;
+  const o = S.f * 96;
+  muscleNodes.forEach((m, j) => {
+    const i = nodes.length + j; const a = m.seg === null ? 0 : Math.min(1, S.A[o + m.seg] / S.amax); const h = heat(a);
+    pc[3 * i] = 0.25 + 0.75 * h[0] * (0.3 + 0.7 * a); pc[3 * i + 1] = h[1] * (0.3 + 0.7 * a); pc[3 * i + 2] = h[2] * (0.3 + 0.7 * a);
+  });
+  ptsGeo.attributes.color.needsUpdate = true;
+}
+$('wirenote').innerHTML = 'Neuron positions: OpenWorm soma atlas (inferred). Muscle positions in this panel are schematic (arclength from the MetaWorm fibres, quadrant offsets). ' +
+  '<b>Activity:</b> muscles light with the drive fed to the body. Neurons stay unlit: these runs have no brain (prescribed drive). They will light from the brain worker\'s traces in the closed loop.';
+const tip = $('tip');
+R2.domElement.addEventListener('mousemove', (e) => {
+  const r = R2.domElement.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top;
+  let best = null, bd = 64;
+  for (const n of allNodes) { const v = n.p.clone().project(cam2); const sx = (v.x + 1) / 2 * r.width, sy = (1 - v.y) / 2 * r.height; const d = (sx - mx) ** 2 + (sy - my) ** 2; if (d < bd && v.z < 1) { bd = d; best = n; } }
+  if (!best) { tip.style.display = 'none'; return; }
+  const dg = deg[best.name] || {};
+  tip.innerHTML = `<b>${best.name}</b> ${best.group.toLowerCase()}<br>` + Object.entries(dg).map(([k, v]) => `${k} ${v}`).join(', ');
+  tip.style.display = 'block'; tip.style.left = (mx + 12) + 'px'; tip.style.top = (my + 8) + 'px';
+});
+R2.domElement.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+
+// ---------------------------------------------------------------- runs
+async function loadRuns() {
+  const idx = await getJSON('runs/index.json');
+  S.runs = idx.runs;
+  const sel = $('runsel'); sel.innerHTML = '';
+  for (const r of S.runs) { const o = document.createElement('option'); o.value = r.id; o.textContent = r.title; sel.appendChild(o); }
+}
+async function setRun(id) {
+  const r = S.runs.find(x => x.id === id) || S.runs[0];
+  S.run = r; $('runsel').value = r.id;
+  S.X = await getF32(`runs/${r.id}.frames.f32`);
+  S.A = await getF32(`runs/${r.id}.act.f32`);
+  S.nF = r.n_frames; $('slider').max = S.nF - 1;
+  S.amax = 0; for (let i = 0; i < S.A.length; i++) if (S.A[i] > S.amax) S.amax = S.A[i]; if (!(S.amax > 0)) S.amax = 1;
+  cenPath = []; for (let f = 0; f < S.nF; f++) cenPath.push(centroid(f));
+  lastCen.copy(cenPath[0]); cam1.position.set(0.0, 1.35, 0.75); ctl1.target.set(0, 0, 0);
+  S.acc = 0;
+  buildKymo(); showFrame(0); runInfo(); mechView();
+  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. Grid 0.25 body lengths. White dot = nose. Colour: activation as a fraction of this run's maximum (${S.amax.toFixed(3)}).`;
+}
+function fmt(x) { return typeof x === 'number' ? (Math.abs(x) >= 100 || Math.abs(x) < 0.01 && x !== 0 ? x.toExponential(2) : x.toFixed(3)) : String(x); }
+function runInfo() {
+  const r = S.run; const t = r.tests || {};
+  const pf = (k) => k in t ? `<span class="${t[k] ? 'pass' : 'fail'}">${t[k] ? 'pass' : 'fail'}</span>` : '';
+  const rows = Object.entries(t).filter(([k]) => !k.startsWith('pass')).map(([k, v]) => `<tr><td>${k}</td><td class="num">${fmt(v)}</td></tr>`).join('');
+  $('tab-run').innerHTML = `<h3>${r.title}</h3><p>${r.description}</p>
+  <p class="muted">mode ${r.mode}${r.key ? ', key ' + r.key : ''}${r.mode === 'wave' ? `, f ${r.f} Hz, wavelength ${r.lam} L, amplitude ${r.amp}` : ''}; ${r.seconds} s, ${r.n_frames} frames. ${r.label}.</p>
+  <p>Pre-registered tests (docs/worm/BODY_TESTS.md): ${['pass', 'pass_disp', 'pass_freq', 'pass_speed', 'pass_wavelength'].filter(k => k in t).map(k => k.replace('pass_', '') + ' ' + pf(k)).join(', ') || 'none for this run'}</p>
+  <table><tbody>${rows}</tbody></table>
+  <fieldset><legend>Run a new prescribed drive (about 15 s wall for 10 s simulated)</legend>
+   <div class="row">mode <select id="nm"><option value="wave">sine wave</option><option value="key">published key</option><option value="dead">dead</option></select>
+   key <select id="nk"></select></div>
+   <div class="row">f (Hz) <input id="nf" value="1.76"> wavelength (L) <input id="nl" value="1.54"> amplitude 0-1 <input id="na" value="0.157"> seconds <input id="ns" value="10"></div>
+   <button id="go">Run</button> <span id="gost" class="muted"></span>
+   <p class="muted">The body has no brain here: the drive is prescribed. Speed fails the worm literature with the published environment (BODY_TESTS.md); the viscous environment is a toggle still to build.</p>
+  </fieldset>`;
+  fetch('/api/keys').then(x => x.json()).then(k => { $('nk').innerHTML = k.keys.map(x => `<option>${x}</option>`).join(''); }).catch(() => { $('gost').textContent = 'run server not reachable (static serving only)'; });
+  $('go').onclick = async () => {
+    $('gost').textContent = 'running...';
+    const body = { mode: $('nm').value, key: $('nk').value, f: +$('nf').value, lam: +$('nl').value, amp: +$('na').value, seconds: +$('ns').value };
+    try {
+      const res = await fetch('/api/run', { method: 'POST', body: JSON.stringify(body) }); const j = await res.json();
+      if (!res.ok) throw new Error(j.error);
+      await loadRuns(); await setRun(j.id); $('gost').textContent = 'done';
+    } catch (e) { $('gost').textContent = 'failed: ' + e.message; }
+  };
+}
+
+// ---------------------------------------------------------------- mechanisms
+let MECH = null;
+async function loadMech() { try { MECH = await getJSON('data/mechanisms.json'); } catch (e) { MECH = null; } }
+function mechView() {
+  const el = $('tab-mech');
+  if (!MECH) { el.innerHTML = '<p class="muted">data/mechanisms.json not built yet.</p>'; return; }
+  const r = S.run;
+  const cur = (sw) => sw.current_by_mode ? (sw.current_by_mode[r.mode] ?? sw.neutral) : sw.neutral;
+  el.innerHTML = `<p class="muted">${MECH.title}. Status: <span class="st-have">have</span> = present in the running body;
+    <span class="st-partial">partial</span> = present but differs from the worm literature (see the catalog); <span class="st-missing">missing</span> = not in the body yet.
+    Toggles show the setting in this run; greyed options are not built yet. Neutral = the published body.</p>
+   <table><thead><tr><th>id</th><th>mechanism</th><th>status</th><th>toggle (this run)</th><th>source</th></tr></thead><tbody>` +
+    MECH.mechanisms.map(m => `<tr><td>${m.id}</td><td>${m.name}${m.notes ? `<div class="muted">${m.notes}</div>` : ''}</td><td class="st-${m.status}">${m.status}</td>
+      <td>${(m.switch || []).map(sw => `<div><span class="muted">${sw.name}:</span> ${sw.options.map(o => `<span class="opt ${sw.available.includes(o) ? '' : 'na'}">${o === cur(sw) ? '&#9673;' : '&#9675;'} ${o}</span>`).join('')}</div>`).join('') || '<span class="muted">none</span>'}</td>
+      <td class="muted">${m.source || ''}</td></tr>`).join('') + '</tbody></table>';
+}
+
+// ---------------------------------------------------------------- catalog
+let CAT = [];
+async function loadCatalog() {
+  try { CAT = (await getJSON('data/catalog.json')).rows; } catch (e) { CAT = []; }
+  const labs = [...new Set(CAT.map(r => r.label))].sort();
+  $('catlab').innerHTML = '<option value="">all labels</option>' + labs.map(l => `<option>${l}</option>`).join('');
+  const cnt = {}; CAT.forEach(r => cnt[r.label] = (cnt[r.label] || 0) + 1);
+  const miss = CAT.filter(isMissing).length;
+  $('catcounts').innerHTML = `<b>${CAT.length} numbers</b> &nbsp; ` + labs.map(l => `<span><span class="lab lab-${l.split(' ')[0]}">${l}</span> ${cnt[l]}</span>`).join('') + ` &nbsp; <b>to fill: ${miss}</b> (guessed ${cnt.guessed || 0}, absent ${cnt.absent || 0}, published or derived but outside the literature ${CAT.filter(r => /^outside/.test(r.lit_check || '')).length}). Precision needed: not computed yet (sensitivity pass pending).`;
+  drawCatalog();
+}
+function sig(x) { return typeof x === 'number' ? String(+x.toPrecision(3)) : String(x); }
+function isMissing(r) { return /^(guessed|absent)/.test(r.label) || /^outside/.test(r.lit_check || ''); }
+function drawCatalog() {
+  const q = $('catq').value.toLowerCase(), lab = $('catlab').value, miss = $('catmiss').checked;
+  const rows = CAT.filter(r => (!lab || r.label === lab) && (!miss || isMissing(r)) && (!q || JSON.stringify(r).toLowerCase().includes(q)));
+  $('catn').textContent = `${rows.length} shown`;
+  $('cattable').tBodies[0].innerHTML = rows.slice(0, 1500).map(r => `<tr><td>${r.id}</td><td>${r.mechanism || ''}</td><td class="num">${r.value ?? ''}</td><td>${r.unit || ''}</td>
+    <td>${r.min !== '' && r.min != null ? sig(r.min) + ' to ' + sig(r.max) : ''}</td><td><span class="lab lab-${(r.label || '').split(' ')[0]}">${r.label}</span></td>
+    <td class="${/^outside/.test(r.lit_check || '') ? 'fail' : /^inside/.test(r.lit_check || '') ? 'pass' : 'muted'}">${r.lit_check || ''}</td><td class="muted">${r.source || ''}${r.notes ? '<br>' + r.notes : ''}</td></tr>`).join('');
+}
+['catq', 'catlab', 'catmiss'].forEach(id => $(id).addEventListener('input', drawCatalog));
+
+// ---------------------------------------------------------------- UI
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + b.dataset.tab));
+  resize();
+});
+$('play').onclick = () => { S.playing = !S.playing; $('play').textContent = S.playing ? 'Pause' : 'Play'; };
+$('slider').oninput = (e) => { showFrame(+e.target.value); };
+$('speed').onchange = (e) => { S.speed = +e.target.value; };
+$('colour').onchange = (e) => { S.colour = e.target.value; colourBody(); };
+$('follow').onchange = (e) => { S.follow = e.target.checked; };
+$('trail').onchange = (e) => { S.trail = e.target.checked; trail.visible = S.trail; };
+$('runsel').onchange = (e) => setRun(e.target.value);
+const WSPAN = 8.2, WCX = 0.6; let wireDist = 13.5;
+function fitWire() { // fit the head-to-tail span (neurons and muscles, about 7.6 units) to the panel width
+  const t = Math.tan(cam2.fov * Math.PI / 360);
+  wireDist = Math.max(WSPAN / 2 / (t * cam2.aspect), 3.0 / t);
+  cam2.position.set(WCX, 0.15 * wireDist, wireDist); ctl2.target.set(WCX, 0, 0); ctl2.update();
+}
+function resize() {
+  for (const [R, el, cam] of [[R1, bodyEl, cam1], [R2, wireEl, cam2]]) {
+    const w = el.clientWidth, h = el.clientHeight; if (!w || !h) continue;
+    R.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+  }
+  fitWire();
+  drawKymo();
+}
+addEventListener('resize', resize);
+
+let last = performance.now();
+function loop(now) {
+  const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (S.playing && S.run) {
+    S.acc += dt * S.speed;
+    const step = Math.floor(S.acc / S.run.frame_dt);
+    if (step > 0) { S.acc -= step * S.run.frame_dt; showFrame((S.f + step) % S.nF); }
+  }
+  ctl1.update(); ctl2.update();
+  R1.render(scene1, cam1); R2.render(scene2, cam2);
+  if (!RECORD) requestAnimationFrame(loop);
+}
+
+await loadRuns();
+await loadMech();
+await loadCatalog();
+resize();
+await setRun(params.get('run') || 'p3_final');
+if (params.get('colour')) { S.colour = params.get('colour'); $('colour').value = S.colour; colourBody(); }
+requestAnimationFrame(loop);
+window.viewer = {
+  ready: true,
+  nFrames: () => S.nF,
+  setRun: async (id) => { await setRun(id); },
+  setFrame: (f) => { showFrame(f); ctl1.update(); ctl2.update(); R1.render(scene1, cam1); R2.render(scene2, cam2); },
+  rotateWire: (a) => { const r = wireDist; cam2.position.set(WCX + r * Math.sin(a), 0.15 * r, r * Math.cos(a)); ctl2.update(); },
+};
+</script>
+</body>
+</html>

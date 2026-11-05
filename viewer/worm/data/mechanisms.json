@@ -1,0 +1,192 @@
+{
+ "title": "Body mechanisms of the ported MetaWorm body (data/worm/ledger/metaworm_mechanisms.json)",
+ "mechanisms": [
+  {
+   "id": "MB1",
+   "name": "3D tetrahedral body (984 vertices, 3341 tets), MetaWorm mesh",
+   "status": "have",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": []
+  },
+  {
+   "id": "MB2",
+   "name": "elastic tissue: corotated linear FEM, one homogeneous material",
+   "status": "partial",
+   "notes": "E inside the literature range if SI; Poisson 0.4; no cuticle / muscle / pseudocoelom layers",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": [
+    {
+     "name": "body.material",
+     "options": [
+      "homogeneous_published",
+      "layered"
+     ],
+     "available": [
+      "homogeneous_published"
+     ],
+     "neutral": "homogeneous_published"
+    }
+   ]
+  },
+  {
+   "id": "MB3",
+   "name": "body-wall muscles: 96 linear fibre segments in 4 quadrants",
+   "status": "partial",
+   "notes": "95 Cook muscles + one extra (MVL24); no force-length or force-velocity",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": [
+    {
+     "name": "muscle.force_model",
+     "options": [
+      "linear_published",
+      "force_length"
+     ],
+     "available": [
+      "linear_published"
+     ],
+     "neutral": "linear_published"
+    }
+   ]
+  },
+  {
+   "id": "MB4",
+   "name": "inertia: mass 10 over the 0.63-unit body, numerical damping",
+   "status": "partial",
+   "notes": "density 19x a worm if read as SI; metre-scale world",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": [
+    {
+     "name": "body.scale",
+     "options": [
+      "published",
+      "worm_1mm"
+     ],
+     "available": [
+      "published"
+     ],
+     "neutral": "published"
+    }
+   ]
+  },
+  {
+   "id": "MB5",
+   "name": "fluid: quadratic drag and lift per surface triangle",
+   "status": "partial",
+   "notes": "inertial regime (Re ~7,300) vs a worm's 0.1-0.5; viscous resistive-force drag is the literature replacement (needs implicit drag in the solver)",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": [
+    {
+     "name": "env.fluid",
+     "options": [
+      "quadratic_published",
+      "viscous_rft_water",
+      "agar_rft"
+     ],
+     "available": [
+      "quadratic_published"
+     ],
+     "neutral": "quadratic_published"
+    }
+   ]
+  },
+  {
+   "id": "MB6",
+   "name": "gravity and substrate contact (agar plate)",
+   "status": "missing",
+   "notes": "the published world has neither",
+   "source": "",
+   "switch": [
+    {
+     "name": "env.substrate",
+     "options": [
+      "none_published",
+      "agar_plate"
+     ],
+     "available": [
+      "none_published"
+     ],
+     "neutral": "none_published"
+    }
+   ]
+  },
+  {
+   "id": "MB7",
+   "name": "drive source",
+   "status": "have",
+   "notes": "brain closed loop waits for sample_worm(seed) in main",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); this repo",
+   "switch": [
+    {
+     "name": "drive.source",
+     "options": [
+      "key_published",
+      "prescribed_wave",
+      "dead",
+      "brain_closed_loop"
+     ],
+     "available": [
+      "key_published",
+      "prescribed_wave",
+      "dead"
+     ],
+     "neutral": "key_published",
+     "current_by_mode": {
+      "key": "key_published",
+      "wave": "prescribed_wave",
+      "dead": "dead"
+     }
+    }
+   ]
+  },
+  {
+   "id": "MB8",
+   "name": "proprioceptive outputs to the brain (curvature, rate, strain)",
+   "status": "partial",
+   "notes": "curvature readout exists (src/wormemu/body/metaworm.py); not yet streamed to a brain",
+   "source": "this repo",
+   "switch": []
+  },
+  {
+   "id": "MB9",
+   "name": "numerics: projective dynamics, 240 Hz, 50 iterations",
+   "status": "have",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "switch": []
+  },
+  {
+   "id": "MB10",
+   "name": "hydrostatic pressure",
+   "status": "missing",
+   "source": "",
+   "switch": [
+    {
+     "name": "body.pressure",
+     "options": [
+      "none_published",
+      "pressurised"
+     ],
+     "available": [
+      "none_published"
+     ],
+     "neutral": "none_published"
+    }
+   ]
+  },
+  {
+   "id": "MB11",
+   "name": "chemical gradient scene (BAAIWorm chemotaxis)",
+   "status": "missing",
+   "notes": "needed for Ben's agar plate with a gradient",
+   "source": "BAAIWorm (to port)",
+   "switch": []
+  },
+  {
+   "id": "MB12",
+   "name": "pharynx, egg-laying and defecation body parts",
+   "status": "missing",
+   "notes": "the interface carries their activations; the body has no parts for them yet",
+   "source": "",
+   "switch": []
+  }
+ ]
+}

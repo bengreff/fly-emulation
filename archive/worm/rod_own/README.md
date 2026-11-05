@@ -5,3 +5,6 @@ Our own overdamped Kirchhoff rod with Boyle-Berri-Cohen 2012 numbers. Archived o
 needed) instead of writing our own physics. It was not a faithful port of any published code.
 Test results: docs/worm/BODY_TESTS.md. To rerun, copy rod.py back into src/wormemu/body/ and restore the
 `Body, BodyConfig` import in src/wormemu/body/__init__.py.
+Its ledger moved here too (body_parameters.csv, body_mechanisms.json, build_body_ledger.py; paths inside still
+point at data/worm/ledger/). The live body ledger is data/worm/ledger/metaworm_parameters.csv; it reuses this
+ledger's literature rows (water viscosity, agar drag, density, tissue moduli).

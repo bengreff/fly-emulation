@@ -1,6 +1,7 @@
 """Body rows of the worm ledger: the only place a body number may come from.
 
-`data/worm/ledger/body_parameters.csv` has the fly's parameters.csv columns (docs/CONSTRUCTION.md, "The data
+`data/worm/ledger/metaworm_parameters.csv` (built by scripts/worm/build_metaworm_ledger.py for the ported
+MetaWorm body; the own-rod ledger is archived in archive/worm/rod_own/) has the fly's parameters.csv columns (docs/CONSTRUCTION.md, "The data
 model") plus the worm's `precision_needed` columns. `value_used` is the number a run uses: `value_fixed` when
 the value is measured and fixed, otherwise the prior centre (a guess, labelled as such). `sample(seed)` draws the
 free rows from their priors inside [bio_min, bio_max] for population runs.
@@ -15,8 +16,8 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
-LEDGER = ROOT / "data" / "worm" / "ledger" / "body_parameters.csv"
-MECHANISMS = ROOT / "data" / "worm" / "ledger" / "body_mechanisms.json"
+LEDGER = ROOT / "data" / "worm" / "ledger" / "metaworm_parameters.csv"
+MECHANISMS = ROOT / "data" / "worm" / "ledger" / "metaworm_mechanisms.json"
 
 COLUMNS = ["param_id", "mechanism_id", "grain", "applies_to", "unit", "bio_min", "bio_max", "bound_basis",
            "bound_source", "prior_dist", "prior_a", "prior_b", "prior_basis", "prior_source", "value_fixed",
@@ -24,7 +25,10 @@ COLUMNS = ["param_id", "mechanism_id", "grain", "applies_to", "unit", "bio_min",
 
 
 def _f(x):
-    return float(x) if x not in ("", None) else math.nan
+    try:
+        return float(x) if x not in ("", None) else math.nan
+    except ValueError:  # model rows hold a description, not a number
+        return math.nan
 
 
 @dataclass

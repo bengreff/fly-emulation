@@ -1,7 +1,8 @@
 # Worm body tests: pre-registration and results
 
-Body = `src/wormemu/body` (planar rod, resistive-force drag, 95 muscles). All numbers from
-`data/worm/ledger/body_parameters.csv` (built by `scripts/worm/build_body_ledger.py`). Sources:
+First body tested here = our own planar rod (resistive-force drag, 95 muscles), now archived with its ledger in
+`archive/worm/rod_own/` (`body_parameters.csv`, built by `build_body_ledger.py`). The ported MetaWorm body's
+numbers are in `data/worm/ledger/metaworm_parameters.csv` (built by `scripts/worm/build_metaworm_ledger.py`). Sources:
 `docs/worm/research/BODY_PARAMS.md`, `docs/worm/research/BODY.md`.
 
 ## Pre-registration (written 2026-11-05 14:55 CST, before any gait or dead-worm run was scored)
