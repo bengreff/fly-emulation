@@ -1,7 +1,8 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 2026-11-05 01:42 CST, worm session W0b (second block of
-the first night of the C. elegans phase; main at the commit carrying this file).
+**Rewritten each session; do not append.** State as of 2026-11-05 02:04 CST, worm session W0b (first night of
+the C. elegans phase; blocks 00:50-01:42 gap junctions, 01:42-02:04 W1 prerequisites Q1 and Q2; main at the
+commit carrying this file).
 
 - **Direction (Ben, 4 Nov 2026; Director brief of that date; Ben's ten binding answers in `~/director/goals.md`,
   fly-emulation section):** build a full functional emulation of C. elegans first: adult N2 hermaphrodite,
@@ -14,59 +15,65 @@ the first night of the C. elegans phase; main at the commit carrying this file).
 - **The fly is paused.** Its HANDOFF (s23, 24 Oct) is archived unchanged in
   `docs/archive/HANDOFF_fly_2026-11-04.md`; its sealed and held-out register is carried below unchanged.
 - **Read first:** `docs/worm/PLAN.md`, `docs/worm/SPIKE.md` (spike results), `docs/worm/GAPCHECK.md` (gap
-  junctions), `docs/worm/W1_RIM_AFD.md` (next fits, pre-registered), `docs/worm/STATE_OF_THE_ART.md`,
-  `docs/worm/MANIFEST.md`, and the "Worm" entries at the end of `docs/FINDINGS.md` and `docs/DECISIONS.md`.
+  junctions), `docs/worm/W1_RIM_AFD.md` (next fits, pre-registered; its "Prerequisite status" section has Q1 and
+  Q2), `docs/worm/STATE_OF_THE_ART.md`, `docs/worm/MANIFEST.md`, and the "Worm" entries at the end of
+  `docs/FINDINGS.md` and `docs/DECISIONS.md`.
+- **For Ben's paper list:** Liu et al. 2018 (Cell), STAR methods, for the voltage-clamp holding potential of the
+  RIM and AFD I-V data. cell.com returned 403 to me; -60 mV is inferred from Nicoletti 2024's code until then.
 
-## Report for Ben (W0b, 5 Nov 00:50-01:42)
+## Report for Ben (W0b, 5 Nov 00:50-02:04)
 
-**Gap junctions are now stable and accurate in Jaxley; adopted on a pre-registered gate** (GAPCHECK.md, F-W0-9).
-- `ImplicitGap` (`src/bioemu/jx_gap.py`) puts the junction conductances into the same backward-Euler solve as the
-  cable. Against NEURON's fully implicit coupling at the same step (measured, run `gapcheck3`): coupled passive
-  pair 1e-12 mV, 8-cell active AIY chain 1.2e-5 mV, at dt 0.1 and 0.4 ms and coupling strength a up to 8; bar
-  0.01 mV. Gradient matches finite differences to 6.4e-7. The current explicit form blows up in the strong cases,
-  as the must-fail control required. Figure `docs/worm/media/gapcheck3.png` (viewed).
-- On the 446-cell stand-in network at 1.5x conductance, every cell stays within -60 to +0.5 mV and the gradient
-  is finite; the explicit form's gradient is not (measured).
-- **Cost: about 2x the explicit form** (measured, one core, 446-cell bench): forward 0.66-0.74 ms and with gradient
-  3.7-3.9 ms per step, against 0.23-0.28 and 1.9-2.0 ms explicit. A first, dense solve of the junction system cost
-  13-23x; replacing it with GMRES gave the same answer (3.5e-12 mV in float64) at 8-9x less cost, adopted on
-  `gapcheck5`. `gapcheck4`, its first try, failed one bar because I wrote a float64 tolerance for a float32 run;
-  recorded as a failure, then re-registered.
-- Two runs before the scored one did not count, both because the **published Nicoletti 2024 NEURON mods pass
-  channel state through GLOBAL variables** (F-W0-10): across compartments every segment's BK channel sees one
-  segment's EGL-19 gate (0.13 mV on a 3-compartment cell), and between runs in one process the state carries
-  over (2.7e-5 mV). Patched copy: `scripts/worm/patch_nicoletti_mods.sh` (identical in one compartment).
-- A label-indexing bug for branched cells was found by the network bench and fixed after the scored run (it did
-  not touch any scored case); a branched-cell check shows implicit and explicit coupling converging to the same
-  solution.
+**W1 prerequisites: two of three done** (`docs/worm/W1_RIM_AFD.md`, "Prerequisite status"; no RIM or AFD data
+value opened).
+- **Q1, protocol (done 01:46).** The current-clamp step order and the voltage-clamp steps and windows are confirmed
+  from Naudin 2022 and its code. The voltage-clamp holding potential (-60 mV) is still inferred (see paper list).
+- **Q2, nine channels ported and checked against NEURON (done 02:00; F-W0-11, DECISIONS "Q2").** CCA-1, EGL-2,
+  EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103 and EXP-2 are in `wormemu.nicoletti` (22 channels). Measured, float64,
+  one compartment: each alone matches NEURON to 1e-13 to 1e-7 mV RMS (bar 0.01); the published RIM model to
+  2.8e-6 mV; all 22 on to 2.2e-3 mV. Each moves the voltage 2.2 to 9.6 mV against a leak-only cell, so the match
+  is informative (bar 1 mV). The default 13-channel membrane is bit-identical (0.0 mV). Figures
+  `docs/worm/media/port2.png`, `port2c.png` (viewed).
+- **Two slips, both recorded in W1_RIM_AFD.md.** The pre-registration said EXP-2 has no kinetics; it does
+  (`exp2.mod`), so a dated amendment, made before any RIM or AFD data was opened, put it in the AFD model. EXP-2 then
+  failed its must-differ bar at 1 nS (0.52 mV; it inactivates almost fully above rest, inferred), so it was not
+  adopted from that run; a new run at 10 nS passed. The first scorer run also crashed on its own output file;
+  re-scored on the same traces.
 
-**RIM and AFD fits are pre-registered, not run** (`docs/worm/W1_RIM_AFD.md`): same split and bars as AIY, n >= 3
-for voltage clamp, and two controls that must fail (a passive cell; the other cell's channel densities). Three
-prerequisites first: confirm the step amplitudes from the paper, port eight more channels, patch the KCNL Ca pool.
+**Gap junctions are stable and accurate in Jaxley; adopted on a pre-registered gate** (GAPCHECK.md, F-W0-9).
+- `ImplicitGap` (`src/bioemu/jx_gap.py`) solves the junction conductances with the cable. Against NEURON's fully
+  implicit coupling (measured, `gapcheck3`): passive pair 1e-12 mV, 8-cell active AIY chain 1.2e-5 mV, dt 0.1 and
+  0.4 ms, coupling up to a = 8; bar 0.01 mV. Gradient matches finite differences to 6.4e-7. The explicit form blows
+  up in the strong cases, as the must-fail control required.
+- **Cost about 2x the explicit form** (measured, one core, 446-cell bench, GMRES solve adopted on `gapcheck5`):
+  forward 0.66-0.74 ms and with gradient 3.7-3.9 ms per step. `gapcheck4` failed one bar because I wrote a float64
+  tolerance for a float32 run; recorded as a failure, then re-registered.
+- **The published Nicoletti 2024 NEURON mods pass channel state through GLOBAL variables** (F-W0-10): wrong across
+  compartments (0.13 mV on a 3-compartment cell) and carried over between runs (2.7e-5 mV). Patched copy:
+  `scripts/worm/patch_nicoletti_mods.sh` (EGL-19 and UNC-2 to BK; identical in one compartment). KCNL / caintra1
+  is not patched yet (Q3).
 
-Earlier tonight (W0, unchanged): the AIY spike failed its training bar (4.79 mV against 4) and passed both
-held-out bars (SPIKE.md, F-W0-8).
+Earlier (W0, unchanged): the AIY spike failed its training bar (4.79 mV against 4) and passed both held-out bars
+(SPIKE.md, F-W0-8).
 
 ## Running now
 
-Nothing. All W0b jobs on backhouse finished; the Mac keepalive to backhouse is stopped at park.
+Nothing. The port2, port2b and port2c runs on backhouse finished (done-files written); my uniquely named
+keepalive (`worm_keepalive_port2`) is stopped by its recorded PID at park.
 
-**Incident to report (01:29-01:31, my error).** When stopping my WSL keepalive I ran `pkill -f "^sleep infinity"`
-on backhouse, which also killed another session's identical keepalive. With no wsl.exe session attached, the Ubuntu
-distro shut down about a minute later and every running job in it died. The other project's flock-managed crucible
-jobs were relaunched by their own resume mechanism at 01:31:14; three manually started runs in
-`~/crucible_p0/agree` (`run.sh e1p ... t1_probe2`, `i20f ... t1_fix`, `i10f ... t1_fix`, started 01:24-01:27)
-were not running afterwards. I did not touch or relaunch them. Their owner should check them. From now on I kill
-only a uniquely named keepalive by PID.
+**Incident reported earlier (01:29-01:31, my error).** I ran `pkill -f "^sleep infinity"` on backhouse, which also
+killed another session's keepalive; the Ubuntu distro shut down and its running jobs died. The crucible
+flock-managed jobs relaunched themselves at 01:31:14; three manually started runs in `~/crucible_p0/agree`
+(`e1p ... t1_probe2`, `i20f ... t1_fix`, `i10f ... t1_fix`) were not running afterwards and I did not touch them.
+Their owner should check them. Since then I kill only a uniquely named keepalive by verified PID.
 
 ## Next (this order)
 
-1. **W1 prerequisites** (`W1_RIM_AFD.md` section 2): Q1 is done (01:46, `W1_RIM_AFD.md` "Prerequisite
-   status"): current-clamp order confirmed; the voltage-clamp holding potential (-60 mV) is still inferred from
-   Nicoletti's simulation code, so try the Liu 2018 Cell STAR methods (cell.com returned 403) before the VC bar is
-   scored. Q2 port CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103 and check each against NEURON at
-   <= 0.01 mV RMS; Q3 extend the mod patch to `kcnl` / `caintra1`. Then run `w1rim1`, `w1afd1` and their
-   controls (about 8-12 core-hours, derived; backhouse outside 17:00-22:00).
+1. **W1 prerequisite Q3:** extend `scripts/worm/patch_nicoletti_mods.sh` to the `kcnl` / `caintra1` GLOBAL
+   (KCNL reads `calcium_caintra1`), pre-register its check the same way as the BK patch (published model unchanged
+   in one compartment to 0.0 mV; multi-compartment against the per-compartment Jaxley model; a must-differ
+   control). Then run `w1rim1`, `w1afd1` and their controls (about 8-12 core-hours, derived; backhouse outside
+   17:00-22:00). Build the RIM and AFD membranes with `make_membrane(lib, channels=[...])` from the registered
+   gene lists. The VC holding potential stays inferred unless Ben finds Liu 2018's methods.
 2. **GPU batch run of the gap-junction bench** (`BENCH_GAP=implicit`, batch 32) when the GPU is free: GMRES
    inside `vmap` runs every batch member for the slowest one's iteration count, so measure it rather than assume.
 3. A new, separately named AIY fit with bounded gating shifts shared by gene, separate soma and neurite
@@ -78,24 +85,28 @@ only a uniquely named keepalive by PID.
 
 ## Where things are
 
-- **Code.** `src/bioemu/` (organism-agnostic: `jx_membrane` fused Jaxley membrane from any channel library,
-  `morph` NeuroML to SWC, `jx_gap` gap-junction forms with the adopted `ImplicitGap` and `use_implicit_gaps`),
-  `src/wormemu/` (`nicoletti`: the Nicoletti 2024 13-channel library), `scripts/worm/` (spike: `fit_aiy.py`,
-  `eval_aiy.py`, `plot_spike.py`, `run_spike.sh`; port checks: `check_port.py`, `neuron_ref.py`; cost:
-  `bench_jaxley.py`, `bench_network.py` (`BENCH_GAP=implicit|semi`), `check_grad_nan.py`; gap junctions:
-  `check_gap.py` (pair vs small dt), `check_gap_neuron.py` (the pre-registered NEURON check),
-  `check_gap_branched.py`, `plot_gapcheck.py`, `patch_nicoletti_mods.sh`; `sync_spike.sh` pushes code).
+- **Code.** `src/bioemu/` (organism-agnostic: `jx_membrane` fused Jaxley membrane from any channel library, with
+  an optional channel subset; `morph` NeuroML to SWC; `jx_gap` gap-junction forms with the adopted `ImplicitGap`
+  and `use_implicit_gaps`), `src/wormemu/` (`nicoletti`: the Nicoletti 2024 library, `CHANNELS` the original 13,
+  `ALL_CHANNELS` 22, `states_for`), `scripts/worm/` (spike: `fit_aiy.py`, `eval_aiy.py`, `plot_spike.py`,
+  `run_spike.sh`; port checks: `check_port.py`, `neuron_ref.py`, `port2_configs.py`, `check_port2.sh`,
+  `score_port2.py`; cost: `bench_jaxley.py`, `bench_network.py` (`BENCH_GAP=implicit|semi`), `check_grad_nan.py`;
+  gap junctions: `check_gap.py`, `check_gap_neuron.py`, `check_gap_branched.py`, `plot_gapcheck.py`,
+  `patch_nicoletti_mods.sh`; `sync_spike.sh` pushes code).
+- **Rerun the channel check:** on backhouse, `ISO_NS=1 bash repo/scripts/worm/check_port2.sh port2` (eight
+  channels) or `ISO_NS=10 bash repo/scripts/worm/check_port2.sh port2c exp2` (about 5-10 min on three cores).
 - **Rerun the gap check:** on backhouse, `python repo/scripts/worm/check_gap_neuron.py
   ~/worm-spike/ext/nicoletti2024_local <traces.npz>` (about 3 min on one core), then `plot_gapcheck.py`.
   The script that ran `gapcheck3` is `~/worm-spike/runs/gapcheck3/run.sh`.
 - **Rerun the spike:** `scripts/worm/run_spike.sh` (about 1.5 h; `launch` and `pull` separately if the laptop
   may sleep). Results in `data/worm/spike/<run>/`, figure `docs/worm/media/spike_<run>.png`.
 - **backhouse (WSL, user greff).** `~/worm-spike/` (venv `.venv` with jaxley 0.14, jax 0.12 CUDA 12, optax,
-  NEURON 9.0.2; `repo/` the synced code; `runs/` outputs; `ext/nicoletti2024` published mods,
-  `ext/nicoletti2024_local` patched mods); `~/worm-data/` (datasets, `MANIFEST.md`).
-- **Logs and media in the repo.** `data/worm/gapcheck/` (every gap run, including the two invalid harness runs,
-  gapcheck1-5, the branched check and the benches), `docs/worm/media/spike_fit1.png`, `gapcheck3.png`,
-  `gapcheck4.png` (all viewed).
+  NEURON 9.0.2; `repo/` the synced code; `runs/` outputs incl. `port2`, `port2b`, `port2c` with full traces;
+  `ref/` stored Jaxley outputs for the R0 check; `ext/nicoletti2024` published mods, `ext/nicoletti2024_local`
+  patched mods); `~/worm-data/` (datasets, `MANIFEST.md`).
+- **Logs and media in the repo.** `data/worm/gapcheck/` (every gap run), `data/worm/port2/{port2,port2b,port2c}/`
+  (configs, logs, scores; the trace npz files stay on backhouse), `docs/worm/media/spike_fit1.png`,
+  `gapcheck3.png`, `gapcheck4.png`, `port2.png`, `port2c.png` (all viewed).
 
 ## Sealed and held-out data register
 
@@ -107,7 +118,7 @@ only a uniquely named keepalive by PID.
 | Naudin 2022 AIY current clamp, steps -10, 0, +10, +20, +30 pA | **spent** (W0 spike `fit1`, 5 Nov; also scored first on the 2-iteration pipeline test while `fit1` ran with frozen settings) | consistency only from now on; the same cell, so never a cross-cell test |
 | Naudin 2022 AIY population voltage-clamp I-V (n 5-7; steady state and peak; `Fig1_IVcurves_AFD_RIM_AIY.xlsx`) | **spent** (W0 spike `fit1`; pipeline test before it). The table was read while writing the pre-registration (n per voltage, windows) | consistency only; the 2 SD band does not discriminate (F-W0-6) |
 | Naudin 2022 RIM and AFD current clamp and I-V (same deposit) | file headers (columns, row counts) and the voltage-clamp `n` columns viewed; no voltage or current value printed, plotted or used. The AIY loader read the whole I-V sheet into memory but used only AIY columns | **held out for W1**, split and bars pre-registered in `docs/worm/W1_RIM_AFD.md` (5 Nov 01:13): train sweeps 0, 2, 4, 6, 8, 10; held out 1, 3, 5, 7, 9 and all voltage clamp |
-| Nicoletti 2024 published AIY model (densities, kinetics, code) | seen; kinetics SET the channel library; densities SET one start of the spike fit and its baseline | can't validate the library |
+| Nicoletti 2024 published AIY and RIM models (densities, kinetics, code) | seen; kinetics SET the channel library (22 channels); AIY densities SET one start of the spike fit and its baseline; RIM densities used as a port-check configuration (`port2`, 5 Nov) and, as registered, SET one start of `w1rim1` and its published-model baseline | can't validate the library |
 | Randi 2023 functional atlas; Atanas 2023 whole-brain data; Witvliet 2021; Cook 2019; CeNGEN; the neuropeptide connectome | downloaded (`~/worm-data`, MANIFEST); Cook 2019 adjacency used for the cost bench only (structure, no activity); no activity data read | seed the held-out split (PLAN c.4) before the first fit that uses them |
 | Behaviour corpus (`docs/worm/STATE_OF_THE_ART.md`, about 90 items) | read as a list of items; no outcome scored | seal about a third by seed before any behaviour fit (PLAN c.4, W2) |
 

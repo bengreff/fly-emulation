@@ -26,7 +26,8 @@ def build_single(cfg):
     cell.set("radius", L / 2)
     cell.set("capacitance", cfg["cm"])
     cell.set("axial_resistivity", 100.0)
-    Mem = make_membrane(lib)
+    extra = set(cfg["g_nS"]) - set(lib.CHANNELS)  # a W1 channel present: build just this config's channels
+    Mem = make_membrane(lib, channels=[c for c in lib.ALL_CHANNELS if c in cfg["g_nS"]] if extra else None)
     cell.insert(Mem())
     for c, val in cfg["g_nS"].items():
         cell.set(f"Mem_g_{c}", val * 1e-9 / cfg["surf"])

@@ -1,0 +1,73 @@
+{
+ "B1": {
+  "all22_dt0.1": {
+   "worst_rms_mV": 0.0005453695556911187,
+   "max_abs_mV": 0.012070737803183462,
+   "pass": true,
+   "rest_nrn_mV": -64.7
+  },
+  "all22_dt0.4": {
+   "worst_rms_mV": 0.002195508839819972,
+   "max_abs_mV": 0.048637902686230916,
+   "pass": true,
+   "rest_nrn_mV": -64.7
+  },
+  "iso_exp2_dt0.1": {
+   "worst_rms_mV": 1.9514331838190552e-13,
+   "max_abs_mV": 1.7550405573274475e-12,
+   "pass": true,
+   "rest_nrn_mV": -50.09
+  },
+  "iso_exp2_dt0.4": {
+   "worst_rms_mV": 4.4964475979883945e-13,
+   "max_abs_mV": 2.1614710021822248e-11,
+   "pass": true,
+   "rest_nrn_mV": -50.09
+  },
+  "leak_only_dt0.1": {
+   "worst_rms_mV": 2.0009570315772053e-13,
+   "max_abs_mV": 3.2942537586677645e-12,
+   "pass": true,
+   "rest_nrn_mV": -50.0
+  },
+  "leak_only_dt0.4": {
+   "worst_rms_mV": 1.9234000430078856e-13,
+   "max_abs_mV": 1.3031353773840237e-11,
+   "pass": true,
+   "rest_nrn_mV": -50.0
+  },
+  "rim_pub_dt0.1": {
+   "worst_rms_mV": 2.797154907061227e-06,
+   "max_abs_mV": 1.9379023079579838e-05,
+   "pass": true,
+   "rest_nrn_mV": -43.51
+  },
+  "rim_pub_dt0.4": {
+   "worst_rms_mV": 2.798092409062723e-06,
+   "max_abs_mV": 1.9385391318849088e-05,
+   "pass": true,
+   "rest_nrn_mV": -43.51
+  }
+ },
+ "B2": {
+  "exp2": {
+   "effect_rms_mV": 0.52,
+   "pass": false
+  }
+ },
+ "R0": {
+  "aiy_pub": {
+   "max_abs_mV": 0.0,
+   "pass": true
+  },
+  "all_test": {
+   "max_abs_mV": 0.0,
+   "pass": true
+  }
+ },
+ "pass": {
+  "B1": true,
+  "B2": false,
+  "R0": true
+ }
+}

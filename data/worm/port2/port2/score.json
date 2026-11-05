@@ -1,0 +1,185 @@
+{
+ "B1": {
+  "all21_dt0.1": {
+   "worst_rms_mV": 0.0005540309121772911,
+   "max_abs_mV": 0.012066484759452933,
+   "pass": true,
+   "rest_nrn_mV": -64.69
+  },
+  "all21_dt0.4": {
+   "worst_rms_mV": 0.002229997599355516,
+   "max_abs_mV": 0.04862083161222586,
+   "pass": true,
+   "rest_nrn_mV": -64.69
+  },
+  "iso_cca1_dt0.1": {
+   "worst_rms_mV": 7.856382407542986e-14,
+   "max_abs_mV": 2.001065979584382e-12,
+   "pass": true,
+   "rest_nrn_mV": -44.3
+  },
+  "iso_cca1_dt0.4": {
+   "worst_rms_mV": 2.5358425210485043e-13,
+   "max_abs_mV": 1.389821591146756e-11,
+   "pass": true,
+   "rest_nrn_mV": -44.3
+  },
+  "iso_egl2_dt0.1": {
+   "worst_rms_mV": 1.582913847492672e-08,
+   "max_abs_mV": 5.332971539928621e-07,
+   "pass": true,
+   "rest_nrn_mV": -52.47
+  },
+  "iso_egl2_dt0.4": {
+   "worst_rms_mV": 1.540914095602707e-08,
+   "max_abs_mV": 5.144774704035626e-07,
+   "pass": true,
+   "rest_nrn_mV": -52.47
+  },
+  "iso_egl36_dt0.1": {
+   "worst_rms_mV": 1.3606362505719572e-13,
+   "max_abs_mV": 2.3012702854430245e-12,
+   "pass": true,
+   "rest_nrn_mV": -51.09
+  },
+  "iso_egl36_dt0.4": {
+   "worst_rms_mV": 1.9837706925940715e-13,
+   "max_abs_mV": 1.9277024421171518e-11,
+   "pass": true,
+   "rest_nrn_mV": -51.09
+  },
+  "iso_irk_dt0.1": {
+   "worst_rms_mV": 1.3046956163771869e-13,
+   "max_abs_mV": 2.8528290840768022e-12,
+   "pass": true,
+   "rest_nrn_mV": -55.67
+  },
+  "iso_irk_dt0.4": {
+   "worst_rms_mV": 3.208611183291061e-13,
+   "max_abs_mV": 2.1520563109334034e-11,
+   "pass": true,
+   "rest_nrn_mV": -55.67
+  },
+  "iso_kqt3_dt0.1": {
+   "worst_rms_mV": 1.2531008148730112e-13,
+   "max_abs_mV": 1.5916157281026244e-12,
+   "pass": true,
+   "rest_nrn_mV": -54.5
+  },
+  "iso_kqt3_dt0.4": {
+   "worst_rms_mV": 1.0912494304197155e-13,
+   "max_abs_mV": 1.1223022511330782e-11,
+   "pass": true,
+   "rest_nrn_mV": -54.5
+  },
+  "iso_kvs1_dt0.1": {
+   "worst_rms_mV": 1.6585670917233384e-13,
+   "max_abs_mV": 1.531219595563016e-12,
+   "pass": true,
+   "rest_nrn_mV": -52.23
+  },
+  "iso_kvs1_dt0.4": {
+   "worst_rms_mV": 1.834652930597375e-13,
+   "max_abs_mV": 1.1823431123048067e-11,
+   "pass": true,
+   "rest_nrn_mV": -52.23
+  },
+  "iso_shk1_dt0.1": {
+   "worst_rms_mV": 1.0603239868323043e-07,
+   "max_abs_mV": 4.2753908653381245e-06,
+   "pass": true,
+   "rest_nrn_mV": -50.32
+  },
+  "iso_shk1_dt0.4": {
+   "worst_rms_mV": 1.0623068304026368e-07,
+   "max_abs_mV": 4.141850734384889e-06,
+   "pass": true,
+   "rest_nrn_mV": -50.32
+  },
+  "iso_unc103_dt0.1": {
+   "worst_rms_mV": 1.235784087160014e-13,
+   "max_abs_mV": 2.4371615836571436e-12,
+   "pass": true,
+   "rest_nrn_mV": -50.22
+  },
+  "iso_unc103_dt0.4": {
+   "worst_rms_mV": 2.5247551273250403e-13,
+   "max_abs_mV": 1.5544898701591592e-11,
+   "pass": true,
+   "rest_nrn_mV": -50.22
+  },
+  "leak_only_dt0.1": {
+   "worst_rms_mV": 2.0009570315772053e-13,
+   "max_abs_mV": 3.2942537586677645e-12,
+   "pass": true,
+   "rest_nrn_mV": -50.0
+  },
+  "leak_only_dt0.4": {
+   "worst_rms_mV": 1.9234000430078856e-13,
+   "max_abs_mV": 1.3031353773840237e-11,
+   "pass": true,
+   "rest_nrn_mV": -50.0
+  },
+  "rim_pub_dt0.1": {
+   "worst_rms_mV": 2.797154907061227e-06,
+   "max_abs_mV": 1.9379023079579838e-05,
+   "pass": true,
+   "rest_nrn_mV": -43.51
+  },
+  "rim_pub_dt0.4": {
+   "worst_rms_mV": 2.798092409062723e-06,
+   "max_abs_mV": 1.9385391318849088e-05,
+   "pass": true,
+   "rest_nrn_mV": -43.51
+  }
+ },
+ "B2": {
+  "cca1": {
+   "effect_rms_mV": 4.74,
+   "pass": true
+  },
+  "egl2": {
+   "effect_rms_mV": 9.51,
+   "pass": true
+  },
+  "egl36": {
+   "effect_rms_mV": 4.04,
+   "pass": true
+  },
+  "irk": {
+   "effect_rms_mV": 4.65,
+   "pass": true
+  },
+  "kqt3": {
+   "effect_rms_mV": 9.58,
+   "pass": true
+  },
+  "kvs1": {
+   "effect_rms_mV": 6.86,
+   "pass": true
+  },
+  "shk1": {
+   "effect_rms_mV": 5.3,
+   "pass": true
+  },
+  "unc103": {
+   "effect_rms_mV": 4.5,
+   "pass": true
+  }
+ },
+ "R0": {
+  "aiy_pub": {
+   "max_abs_mV": 0.0,
+   "pass": true
+  },
+  "all_test": {
+   "max_abs_mV": 0.0,
+   "pass": true
+  }
+ },
+ "pass": {
+  "B1": true,
+  "B2": true,
+  "R0": true
+ }
+}

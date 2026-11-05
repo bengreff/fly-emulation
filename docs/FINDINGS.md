@@ -2787,3 +2787,19 @@ pre-registration and results in `docs/worm/SPIKE.md`.
   a way the biology does not. Whether BAAIWorm / MetaWorm's `eworm` channel files inherit the pattern is not
   checked (its checkout from the adoption tests was not found on backhouse tonight); check before porting any of
   its channels.
+
+### F-W0-11: nine more Nicoletti 2024 channels ported; EXP-2 is nearly invisible at 1 nS (5 Nov, 02:03 CST)
+- **Ported and matching NEURON** (runs `port2`, `port2c`; W1_RIM_AFD.md, Q2): CCA-1, EGL-2, EGL-36, IRK, KQT-3,
+  KVS-1, SHK-1, UNC-103, EXP-2. Each alone on a leak cell: 1e-13 to 3e-13 mV RMS, except EGL-2 (1.6e-8) and SHK-1
+  (1.1e-7), the same at dt 0.4 and 0.1, so a rounding-level difference in a constant, not the step. The published
+  RIM model: 2.8e-6 mV. All 22 channels on: 2.2e-3 mV RMS at dt 0.4 (max 0.049 mV), the Ca-pool residual already
+  seen with 13 channels. All measured, float64, single compartment.
+- **EXP-2 barely moves the voltage at 1 nS:** 0.52 mV RMS against a leak-only cell (measured, `port2b`), so its
+  match there said little; at 10 nS it moves it 2.2 mV (`port2c`). Likely reason (inferred): its h^2 gate
+  (half-point -50 mV, time constant about 1-2 ms) shuts it almost fully above rest, leaving a small window current.
+  A fitted AFD EXP-2 density may therefore be poorly constrained by current-clamp data.
+- **Mod-file quirks the port reproduces on purpose:** CCA-1's `hinf(m)` is called with m but reads the global v,
+  so it is hinf(v); IRK labels its gbar nS/cm2 but uses it as S/cm2; UNC-103 and EXP-2 time constants are
+  products of two sigmoids. CCA-1 current enters the Ca pool with EGL-19 and UNC-2 (`caintra1` reads total ica).
+- **No published density** for EGL-36, KQT-3, KVS-1 or UNC-103 in any Nicoletti 2024 neuron model; W1 fits them
+  inside its registered bounds.

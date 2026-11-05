@@ -173,7 +173,15 @@ trace by only 0.52 mV RMS, under the 1 mV must-differ bar. That makes its match 
 registered rule. The likely reason (inferred): EXP-2 inactivates almost fully above -50 mV (h^2, h half-point
 -50 mV, h time constant about 1-2 ms), so at 1 nS its window current is small.
 
-**port2c, pre-registered 2026-11-05 02:01 CST:** port2b's configurations and bars unchanged, except that
+**port2c, pre-registered 2026-11-05 02:00 CST:** port2b's configurations and bars unchanged, except that
 `iso_exp2` carries EXP-2 at 10 nS (`ISO_NS=10`; a guessed test density).
+
+**port2c result (scored 2026-11-05 02:00 CST): all bars pass; EXP-2 is adopted for AFD.** Measured
+(`data/worm/port2/port2c/score.json`; figure `docs/worm/media/port2c.png`, viewed): B2, EXP-2 at 10 nS moves the
+trace 2.2 mV RMS (bar 1 mV). B1, EXP-2 alone matches NEURON to 3.5e-13 mV at dt 0.4 and 1.4e-13 at dt 0.1; all 22
+channels on, 2.2e-3 mV at dt 0.4 and 5.5e-4 at dt 0.1 (max 0.049 mV); published RIM 2.8e-6 mV. R0, 0.0 mV. The 10 nS
+is a test density only; AFD's EXP-2 density is fitted inside the registered bounds. With port2 this completes Q2:
+nine channels (CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103, EXP-2) are available to W1 through
+`make_membrane(lib, channels=[...])`; the default 13-channel membrane is unchanged (R0).
 
 Q3: not started.

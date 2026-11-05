@@ -6134,3 +6134,14 @@ The `kcnl` / `caintra1` GLOBAL is not patched yet (needed for W1, RIM and AFD).
 **W1 pre-registered, not run:** RIM and AFD fits (`w1rim1`, `w1afd1`) with must-fail controls, in
 `docs/worm/W1_RIM_AFD.md`. Three prerequisites must pass first (step amplitudes confirmed, eight channels ported,
 the KCNL patch).
+
+## Worm W1 prerequisite Q2: nine channels adopted into the Nicoletti library (5 Nov 2026, 02:03 CST)
+
+On the pre-registered Q2 gate (W1_RIM_AFD.md; runs `port2` and `port2c`, figures viewed), CCA-1, EGL-2, EGL-36,
+IRK, KQT-3, KVS-1, SHK-1, UNC-103 and EXP-2 are adopted into `wormemu.nicoletti` (22 channels in
+`ALL_CHANNELS`). They are opt-in: `make_membrane(lib, channels=[...])` builds a membrane with only the listed
+channels and their gates, and the default (`lib.CHANNELS`, 13 channels) is bit-identical to before (R0: 0.0 mV).
+EXP-2 failed its must-differ bar at 1 nS in `port2b` and was not adopted from that run; `port2c` (10 nS, a
+guessed test density) passed. An amendment before any RIM or AFD data was opened put EXP-2 in the AFD model
+(it does have kinetics; the pre-registration had said otherwise). Q1 is done; Q3 (the KCNL / caintra1 patch) is
+the last prerequisite before `w1rim1` / `w1afd1`.
