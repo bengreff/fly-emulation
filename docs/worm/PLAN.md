@@ -167,7 +167,7 @@ Spend once; written down and seeded before the first fit of each stage; kept in 
   operationally mean +/- 2 SD (SD from SEM x sqrt(n) where only SEM is published), at >= 80% of the scored
   quantities of each type. This is the definition the spike uses. It is lenient where n is small (the spike's
   voltage-clamp test passed a barely fitted model; F-W0-6), so from W1 on each test also names a wrong model
-  that must fail it. DECISION NEEDED 2.
+  that must fail it (DECISION 2, decided).
 - **Many worms**: the model is also run as a population (parameters drawn inside their fitted spread,
   connectomes varied as across Witvliet's eight animals), and the population spread is compared with the
   measured spread, so variability itself becomes a scored output (ties to Ben's order item 3).
@@ -284,24 +284,27 @@ Each stage is pre-registered (objective, held-out split, falsifier) before it is
 | **W8 3D body cross-check** | Sibernetic on Windows OpenCL, or a GPU port | the rod and the 3D body agree on corpus 1-7 within the measured spread; where they disagree, the 3D body is the reference |
 | **W9 sealed scoreboard** | spend the sealed third of the corpus once, with mutants and ablations | the fraction of sealed items within real variability is the headline number |
 
-## DECISIONS NEEDED (Ben's calls; each has a recommendation, and work continues meanwhile)
+## DECISIONS (decided 2026-11-05 00:59 CST: the Director adopted all five recommendations as Ben's defaults; reversible; logged in `~/director/decisions/fly.md` and going to Ben in the morning report)
+
+Each item keeps its reasoning. The text marked *Decided (default)* was the recommendation and is now the decision
+in force until Ben changes it.
 
 1. **Morphology source.** The local morphologies are the Virtual Worm atlas (NeuroML), not EM tracings; true EM
    neurite geometry is available at best for the nerve ring (Witvliet 2021; coverage not yet checked).
-   *Recommendation:* use the Virtual Worm geometry now, labelled inferred; swap in EM skeletons where they exist
+   *Decided (default):* use the Virtual Worm geometry now, labelled inferred; swap in EM skeletons where they exist
    and test whether it changes any held-out prediction. If it never does, compartments can stay coarse.
-2. **The operational meaning of "within real variability".** *Recommendation:* mean +/- 2 SD of
+2. **The operational meaning of "within real variability".** *Decided (default):* mean +/- 2 SD of
    animal-to-animal spread, at >= 80% of the scored quantities of each type, as pre-registered in the spike,
    **plus a control that must fail**: each pre-registration names a deliberately wrong model (for example
    passive membrane only, or connectome-only weights) that has to land outside the band, or the test is
    declared uninformative. Reason (measured, FINDINGS F-W0-6): with n = 5-7 cells the 2 SD band is so wide that
    a 2-iteration fit and the published model both put 100% of AIY's voltage-clamp points inside it.
 3. **GPU time.** The GPU was shared tonight (another user at 65-99%), and small cells ran faster on one CPU core
-   than on the shared GPU (measured, SPIKE.md). *Recommendation:* single-cell and per-class fits on CPU cores;
+   than on the shared GPU (measured, SPIKE.md). *Decided (default):* single-cell and per-class fits on CPU cores;
    batched network fits on the GPU at night (22:00-06:00) and outside the 17:00-22:00 cap.
-4. **The 3D body.** *Recommendation:* spend about one session trying a Windows-native Sibernetic build with
+4. **The 3D body.** *Decided (default):* spend about one session trying a Windows-native Sibernetic build with
    NVIDIA OpenCL; if it fails, write the 3D body in JAX (gradients come free), validated against Sibernetic's
    published results.
 5. **CeNGEN threshold.** Threshold 2 (used tonight) gives AIY no SHL-1, although the published AIY model uses
-   it. *Recommendation:* treat channel presence near the threshold as a bounded density whose lower bound is
+   it. *Decided (default):* treat channel presence near the threshold as a bounded density whose lower bound is
    zero, so the data decide; record which classes' fits want a channel CeNGEN calls absent.
