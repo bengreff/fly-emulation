@@ -388,3 +388,27 @@ in `third_party/c302/generated/`.
   run has a step at 4.35 s (one muscle to full activation) that the on run lacks; not chased.
 - **Verdict:** `muscle_active` is implemented and correct as a port, stays off by default, and is not the missing
   rhythm. The rhythm question goes upstream to the motor neurons and their drive (section 7).
+
+## 6a. Range ends from the literature (RANGE_ENDS_LIT.md): what is adopted
+
+Written 2026-11-05 17:41 CST, before the ledger rebuild. Rule (Director 17:40): adopt only values the research file
+labels measured, pre-registered. Of its measured values, two bear on a row's range; the rest are gaps, derived, model
+choices, or measured in other units (Wen 2012's 0.62 is curvature per curvature, not current per curvature).
+
+- **Adopted: `syn_exc_erev` range -10 to +10 becomes -10 to +11 mV** (param_ranges B5, bound basis measured_this_class).
+  Measured: ACh-evoked current at body-wall muscle reverses at +11 mV (Richmond and Jorgensen 1999, Nat Neurosci
+  2:791, Fig. 4c, n = 4); glutamate synaptic current at AVA reverses at -7.0 +/- 3.2 mV (Lindsay, Thiele and Lockery
+  2011, Nat Commun 2:306, Fig. 6b). The research file calls +11 "inside the range"; it is 1 mV above it, so the upper
+  end moves. The lower end stays (-7.0 - 3.2 = -10.2, within rounding of -10). By the midpoint rule the guessed
+  template moves from 0 to +0.5 mV. Prediction (not a bar): D8's count of neurons above -20 mV moves by a few (the
+  S11-S12 sweep gives 131 neurons over 20 mV); rerun once as D8b, report-only.
+- **Not adopted, and why.** Chemical strength: 0.19 nS per quantum is derived (17.6 pA mEPSC over an assumed 91 mV
+  driving force), not measured; it sits inside 0.1-2 nS. Release threshold and slope: no measurement exists (two of
+  the papers say it could not be measured). Inhibitory reversal: +17 to +20 mV was measured under an imposed
+  chloride gradient, not native chloride; the file itself says it is not the physiological value.
+- **Consequence for the saturation question:** none of the four range ends that end saturation (chemical strength
+  0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV) has a
+  measured value behind it or against it. The question stays open in `ledger.json`.
+- **Result (D8b, `data/worm/brain_runs/bw_D8b/`, 6 s):** 105 neurons above -20 mV at 6 s (D8: 100); touch moves 46
+  neurons by 1 mV or more (D8: 44); 40 muscles above -20 mV (unchanged). As predicted, a few. D8b is the default
+  configuration from here on.

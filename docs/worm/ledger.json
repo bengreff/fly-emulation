@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:39 CST",
+ "generated_at": "2026-11-05 17:42 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -94,7 +94,7 @@
    "where": "docs/worm/BRAIN_PORT.md sections 4-4c",
    "question": "Why does the neural-only network settle into a fixed depolarised state? At the ledger defaults (wiring=cook, strengths at the range log-midpoint) 206 of 302 neurons sit above -20 mV at 6 s with transmitter signs (D7) and 100 with receptor_sign on (D8, Fenyves first). Localised to recurrent chemical excitation (isolated cells rest at -53 to -56 mV); receptor-level inhibition halves it but does not remove it.",
    "candidates": "per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
-   "status": "open; nothing tuned. The closed loop runs on D8's configuration, labelled"
+   "status": "open; nothing tuned. The closed loop runs on D8's configuration, labelled. Section 5: four single range ends each bring it under 30 (chemical strength 0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV); none has a measured value for or against it (RANGE_ENDS_LIT.md, section 6a). With the excitatory reversal range widened to +11 mV (measured) the template is +0.5 mV and the count is 105 (D8b)"
   }
  ],
  "by_grain": {
@@ -7225,12 +7225,12 @@
    "applies_to": "every exc synapse",
    "unit": "mV",
    "n_values": 1,
-   "value_template": 0.0,
-   "template_source": "BAAIWorm 30 clipped to the literature range; at a bound (10), so moved to the range's midpoint",
+   "value_template": 0.5,
+   "template_source": "BAAIWorm 30 clipped to the literature range; at a bound (11), so moved to the range's midpoint",
    "bio_min": -10.0,
-   "bio_max": 10.0,
-   "bound_basis": "measured_related",
-   "bound_source": "Generic nicotinic/cation-channel reversal, consistent with depolarizing EPSCs in Richmond & Jorgensen 1999 (param_ranges B5)",
+   "bio_max": 11.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Richmond & Jorgensen 1999 Nat Neurosci 2:791 Fig. 4c (ACh current at body-wall muscle reverses at +11 mV, n=4); Lindsay, Thiele & Lockery 2011 Nat Commun 2:306 Fig. 6b (glutamate synaptic current at AVA, -7.0 +/- 3.2 mV) (param_ranges B5)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",

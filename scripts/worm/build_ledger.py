@@ -70,7 +70,11 @@ OPEN_QUESTIONS = [
          candidates="per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded "
                     "release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); "
                     "missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
-         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled"),
+         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled. Section 5: four single "
+                "range ends each bring it under 30 (chemical strength 0.1 nS, excitatory reversal -10 mV, excitatory "
+                "release slope 2 mV, inhibitory release threshold -45 mV); none has a measured value for or against "
+                "it (RANGE_ENDS_LIT.md, section 6a). With the excitatory reversal range widened to +11 mV (measured) "
+                "the template is +0.5 mV and the count is 105 (D8b)"),
 ]
 
 rows: list[dict] = []
