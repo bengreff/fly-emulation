@@ -461,3 +461,13 @@ frequency are imposed by the drive, so they show transmission, not an emergent g
 speed f x lambda (0.195 L/s), not near 1 as I guessed beforehand. At a0 1.0 the body over-bends (25 /mm, about 3x)
 and shortens to 0.61 L, and goes slower (0.06 mm/s). Viewed: `runs/worm/media/agar_crawlf_a0.157_sheet.png` and
 the MP4 beside it: a flat sinuous body on the plate, about 1.5 waves along it, head first, no lift-off.
+
+## Closed loop on the agar film (2026-11-05 17:37 CST, measured, Mac; no bar, a demonstration run)
+
+`Brain(sample_worm(None), toggles=dict(receptor_sign="on"))` with `loop.Body(..., world=AGAR_FILM)` and the cone
+chemical field, 5 s (`cl_film_tmpl`, scratch script `/tmp/wb_q/cl_film.py`). Wall 21.1 s (4.2 s per biological
+second). Finite; highest vertex exactly at the film surface (0.0601 L); max activation 0.794, the same tonic
+co-contraction as in the published world. The loop's curvature readout reaches 14.6 /mm by 1 s and 16.5 /mm by
+5 s; the midline shortens to 0.67 L; the centroid drifts 0.05 L net in the plate plane (path 0.18 L). Viewed
+(`runs/worm/media/cl_film_tmpl_sheet.png` and the MP4): the body curls into a C within about 1.2 s and holds it on
+the plate, raster lit. No rhythm, no crawling: the brain side's open item (BRAIN_PORT section 6), not the body's.
