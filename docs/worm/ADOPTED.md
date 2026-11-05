@@ -23,7 +23,7 @@ recorded" means nobody has checked yet. Check before redistributing anything out
 | Source | What we use | Licence |
 |---|---|---|
 | **Cook et al. 2019** (Nature 571:63), wormwiring.org SI 5 | every chemical (3709 pairs, 20,965 synapses) and gap (1091 pairs) neuron pair, 956 neuron-to-muscle pairs, 96 muscle-muscle gap pairs; `wiring=cook` (default since 5 Nov) | "Emmons Lab Copyright (c) 2020"; no further terms stated |
-| **CeNGEN** (Taylor et al. 2021, Cell 184:4329), cengen.org thresholded expression | channel presence (`expression_map` toggle), receptor genes for `receptor_sign`, peptide and monoamine release and receptor matrices | not stated |
+| **CeNGEN** (Taylor et al. 2021, Cell 184:4329), cengen.org thresholded expression | channel presence (`expression_map` toggle), receptor genes for `receptor_sign`, innexin genes for `innexin_identity`, peptide and monoamine release and receptor matrices | not stated |
 | **Wang et al. 2024** (eLife 13:RP95402) neurotransmitter atlas, as tabulated by OpenWorm ConnectomeToolbox | transmitter identity of 282 neurons (sign rule) | not recorded |
 | **Ripoll-Sanchez et al. 2023** (Neuron 111:3570) neuropeptide connectome | peptide ligand-receptor pairs | MIT (Neuropeptide-Connectome repo) |
 | **Beets et al. 2023** (Cell Reports 42:113058) | peptide-receptor pairs at EC50 <= 500 nM (the pair list's inclusion rule); per-pair EC50 values not yet loaded (`pep_ec50_nM` guessed) | open access; licence not independently confirmed |

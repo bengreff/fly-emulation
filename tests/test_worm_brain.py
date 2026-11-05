@@ -63,7 +63,7 @@ def test_sample_worm():
 
 
 @pytest.mark.parametrize("toggles", [
-    dict(wiring="cook", receptor_sign="on", bwm_coupling="on"),
+    dict(wiring="cook", receptor_sign="on", bwm_coupling="on", innexin_identity="on"),
     dict(wiring="baaiworm", literature_overrides="off"),
 ])
 def test_small_brain(toggles):

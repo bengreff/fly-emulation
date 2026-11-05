@@ -540,10 +540,40 @@ def build_synapses(mods, st, conns):
         applies_to="neuron-neuron chemical pairs", n=len(t), tsrc="Fenyves 2020, else receptor rule (values table)",
         label="guessed", proj="ours", basis="physical_limit", bsrc="flag",
         prior=("bernoulli", round(float(t.value.mean()), 3), "", "fraction inhibitory under the rule"), table=t)
-    mech("innexin_identity", "Gap junction conductance and rectification by innexin pair", "gap", "absent",
-         "Bhattacharya et al. 2019 innexin atlas (not extracted)", absent_reason="per-pair innexin identity not mapped")
-    lo, hi, _, _, bsrc = lit("C1")
-    absent("gap_innexin_unitary", "innexin_identity", "pS", 1, "family", "each innexin", "C1 range", lo, hi, bsrc)
+    # innexin channels: per-EM gap conductance = open channels per EM contact x unitary conductance, and no junction
+    # where a partner expresses no innexin in CeNGEN. At the templates it equals gap_strength_per_pair (neutral)
+    INX = [g for g in st.genes if g in ("unc-7", "unc-9", "eat-5") or g.startswith("inx-")]
+    lo1, hi1, _, basis1, bsrc1 = lit("C1")
+    lo4, hi4 = lit("C4")[:2]
+    gu = float(np.sqrt(lo1 * hi1))
+    no = centre("C4") * 1000 / gu
+    mech("innexin_identity", "Gap junctions as innexin channels: conductance per EM contact = open channels x innexin "
+         "unitary conductance (one shared value; no per-innexin measurement found); no junction where a partner "
+         "expresses no innexin in CeNGEN. wiring=cook neuron-neuron gaps only. Rectification by innexin pair is not "
+         "modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out the "
+         "rectifying ones", "gap", "have", f"CeNGEN threshold 2 (Taylor et al. 2021), {len(INX)} innexin genes; "
+         "Bhattacharya et al. 2019 innexin atlas not yet used", toggle="innexin_identity",
+         neutral="off = gap_strength_per_pair for every pair", default="off")
+    row("gap_innexin_unitary", "innexin_identity", "pS", gu, lo1, hi1, grain="family",
+        applies_to="every innexin (one shared value)", tsrc="log-midpoint of range C1", label="guessed", proj="ours",
+        basis=basis1, bsrc=bsrc1, notes="Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value "
+        "found), so this value is ours")
+    row("gap_open_channels_per_em", "innexin_identity", "channels", no, lo4 * 1000 / hi1, hi4 * 1000 / lo1,
+        tsrc="C4 log-midpoint / C1 log-midpoint, so the toggle is neutral at the templates", label="guessed",
+        proj="ours", basis="guessed", bsrc="range C4 / range C1 (both guessed)",
+        notes="open innexin channels per EM-visible gap contact; no count found")
+    recs, cmap = [], {n: cengen_class(n, set(st.cengen_classes)) for p_ in gap_nn for n in p_[:2]}
+    for a, b, _ in gap_nn:
+        ea, eb = ([g for g in INX if st.expr(g, cmap[n]) > 0] if cmap[n] else None for n in (a, b))
+        ok = ea is None or eb is None or (bool(ea) and bool(eb))
+        recs.append(dict(element=f"{a}-{b}", value=int(ok), label="derived", source="CeNGEN threshold 2 (1 = both "
+                         "partners express an innexin, or a partner has no CeNGEN class)", source_project="literature",
+                         innexins_a=" ".join(ea or []), innexins_b=" ".join(eb or [])))
+    ti = pd.DataFrame(recs)
+    row("gap_innexin_pair", "innexin_identity", "flag", 1.0, 0, 1, grain="connection",
+        applies_to="neuron-neuron gap pairs (wiring=cook)", n=len(ti), tsrc="CeNGEN (values table)", label="derived",
+        proj="literature", basis="physical_limit", bsrc="flag", prior=("fixed", "", "", "derived from expression"),
+        notes=f"{int((ti.value == 0).sum())} of {len(ti)} pairs have a partner with no innexin detected", table=ti)
     return dict(neuron_chem_pairs=len(chem_nn), neuron_gap_pairs=len(gap_nn), nmj_pairs_cook=len(nmj),
                 nmj_pairs_baaiworm=len(b_nmj), bwm_gap_pairs=len(gap_bb),
                 chem_pairs_with_baaiworm_site=sum(1 for a, b, _ in chem_nn if sites.get((a, b))),

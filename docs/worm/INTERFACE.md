@@ -107,6 +107,7 @@ adopted (gate, battery run, viewed figure).
 | `wiring` | cook | `cook` = every Cook 2019 pair at per-EM strengths (adopted 5 Nov, port302c); `baaiworm` = BAAIWorm's construction as published |
 | `sign_rule` | transmitter | `allexc` = BAAIWorm's all-excitatory rule |
 | `receptor_sign` | off | on = sign per pair from Fenyves et al. 2020's published polarity where it is + or - (1705 of 3709 pairs), else our CeNGEN receptor rule (guessed), else the transmitter rule; flips 1039 pairs relative to the transmitter rule |
+| `innexin_identity` | off | on = per-EM gap conductance from open channels x innexin unitary conductance (both guessed; equal to `gap_strength_per_pair` at the templates, 1.7e-11 mV difference measured on a small brain) and no junction where a partner expresses no innexin in CeNGEN (7 of 1091 pairs); wiring=cook only |
 | `bwm_coupling` | off | on = Cook's 96 muscle-muscle gap pairs at 5 nS each (guessed) |
 | `expression_map` | off | on = CeNGEN gates channel presence |
 | `muscle_active` | off | on raises NotImplementedError (c302 muscle channels not in the NEURON build yet) |

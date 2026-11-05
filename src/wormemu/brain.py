@@ -451,10 +451,15 @@ class Brain:
             w = g * n_em["syn_strength_per_pair"][e] / len(sites) / (self._g_syn(inh) * 1000.0)
             for i, j in sites:
                 self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0], w, inh, "syn_nn")
+        inx = self.toggles.get("innexin_identity") == "on"
         for e, g in sv("gap_strength_per_pair").items():
             a, b = e.split("-")
             if a not in self.idx or b not in self.idx:
                 continue
+            if inx:                                      # innexin channels (ledger mechanism innexin_identity)
+                if not sv("gap_innexin_pair", e):
+                    continue                             # a partner expresses no innexin (CeNGEN)
+                g = sv("gap_open_channels_per_em") * sv("gap_innexin_unitary") / 1000.0     # pS -> nS
             key = tuple(sorted((a, b)))
             sites = sorted(gap_sites.get(key, ())) or [self._nearest(*key)]
             w = g * n_em["gap_strength_per_pair"][e] / len(sites) / 1000.0
