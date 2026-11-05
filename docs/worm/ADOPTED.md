@@ -13,7 +13,7 @@ recorded" means nobody has checked yet. Check before redistributing anything out
 | Source | What we use | How | Licence |
 |---|---|---|---|
 | **BAAIWorm** (Zhao, Wang, Jiang et al. 2024, Nature Computational Science 4:978; github.com/Jessie940611/BAAIWorm commit b99ca5a) | 23 NMODL channel, Ca pool, synapse and gap files; per-cell passive values and channel densities for 302 neurons and 96 muscles; NEURON morphologies; construction constants; its wiring construction (`wiring=baaiworm`) | vendored unchanged in `third_party/baaiworm/` (NOTICE.md lists the files); `brain.py` builds their cells and reproduces their own run to 0.0 mV (BRAIN_PORT.md section 3, R1). Their numbers are labelled `published_fit` | Apache 2.0 (`third_party/baaiworm/LICENSE`) |
-| **OpenWorm c302** 0.12.1 | parameters_C2 muscle channel set (28 values) | parsed into the ledger as `published_fit`, source c302; the `muscle_active` toggle (off; not yet wired into NEURON) | MIT (LICENSE in the installed dist-info) |
+| **OpenWorm c302** 0.12.1 | parameters_C2 muscle channel set (28 values) | parsed into the ledger as `published_fit`, source c302; the `muscle_active` toggle (off): c302's jNeuroML-generated muscle mods vendored in `third_party/c302/` (gate ODEs rewritten in exact form, originals kept; NOTICE.md) | MIT (`third_party/c302/LICENSE`) |
 | **pyNeuroML / jNeuroML** 1.3.22 / 0.14.0 | ran c302 as published (C2 IClamp config, `docs/worm/research/c302_port.md`) | run on backhouse only; nothing vendored | LGPL-3 |
 | **NEURON** 9.0.2 | the simulator `brain.py` runs on | pip install | BSD-3 (not re-checked here) |
 | **Nicoletti et al. 2024** (PLoS ONE 19:e0298105) channel library | 22 channel kinetics in `src/wormemu/nicoletti.py` (Jaxley track, W0/W1); literature ranges for densities and kinetics | transcribed from their .mod files | not recorded |
@@ -23,7 +23,7 @@ recorded" means nobody has checked yet. Check before redistributing anything out
 | Source | What we use | Licence |
 |---|---|---|
 | **Cook et al. 2019** (Nature 571:63), wormwiring.org SI 5 | every chemical (3709 pairs, 20,965 synapses) and gap (1091 pairs) neuron pair, 956 neuron-to-muscle pairs, 96 muscle-muscle gap pairs; `wiring=cook` (default since 5 Nov) | "Emmons Lab Copyright (c) 2020"; no further terms stated |
-| **CeNGEN** (Taylor et al. 2021, Cell 184:4329), cengen.org thresholded expression | channel presence (`expression_map` toggle), receptor genes for `receptor_sign`, peptide and monoamine release and receptor matrices | not stated |
+| **CeNGEN** (Taylor et al. 2021, Cell 184:4329), cengen.org thresholded expression | channel presence (`expression_map` toggle), receptor genes for `receptor_sign`, innexin genes for `innexin_identity`, peptide and monoamine release and receptor matrices | not stated |
 | **Wang et al. 2024** (eLife 13:RP95402) neurotransmitter atlas, as tabulated by OpenWorm ConnectomeToolbox | transmitter identity of 282 neurons (sign rule) | not recorded |
 | **Ripoll-Sanchez et al. 2023** (Neuron 111:3570) neuropeptide connectome | peptide ligand-receptor pairs | MIT (Neuropeptide-Connectome repo) |
 | **Beets et al. 2023** (Cell Reports 42:113058) | peptide-receptor pairs at EC50 <= 500 nM (the pair list's inclusion rule); per-pair EC50 values not yet loaded (`pep_ec50_nM` guessed) | open access; licence not independently confirmed |

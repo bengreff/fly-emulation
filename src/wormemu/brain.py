@@ -17,12 +17,17 @@ seed 1), MCVL24 dropped (the worm has no such muscle). wiring=cook: every Cook 2
 per-EM value x the pair's EM count, split over BAAIWorm's sites where it placed any, else one site on the nearest
 segment pair; Cook's 956 neuron-to-muscle pairs; no muscle-to-neuron synapses.
 
+muscle_active on = c302 C2's body-wall muscle membrane (third_party/c302, MIT; Boyle and Cohen 2008's leak, slow K,
+fast K and Ca currents with a Ca pool) in place of BAAIWorm's passive muscle, on the same 5 x 20 um cylinder, every
+value from the ledger's c302_* rows; the muscles start at c302's -28 mV with no Ca.
+
 NEURON is one simulator per process: build one Brain per process.
 """
 from __future__ import annotations
 
 import csv
 import glob
+import hashlib
 import json
 import os
 import re
@@ -44,10 +49,32 @@ from wormemu.interface import (BWM_NAMES, ENTERIC_MUSCLES, PHARYNX_MUSCLES, SEX_
 
 ROOT = Path(__file__).resolve().parents[2]
 BAAI = ROOT / "third_party" / "baaiworm"
+C302 = ROOT / "third_party" / "c302"
 MODEL = ROOT / "data" / "worm" / "model"
 PORT302A = ROOT / "data" / "worm" / "brain_runs" / "port302a" / "connections.csv"
 DT_MS = 0.5                     # BAAIWorm's step
 V_INIT = -65.0                  # BAAIWorm's v_init
+V_INIT_MUSCLE = -28.0           # c302 GenericMuscleCell initMembPotential (muscle_active on)
+MUSCLE_ACTIVE = {               # c302 mod: {range variable: ledger row}; the reversals are set after INITIAL
+    "Leak": {"gmax": "c302_muscle_leak_cond_density", "e": "c302_muscle_leak_erev"},
+    "k_slow_muscle": {"gmax": "c302_muscle_k_slow_cond_density", "n_timeCourse_tau": "c302_k_slow_gate_n_tau",
+                      "n_steadyState_scale": "c302_k_slow_gate_n_scale",
+                      "n_steadyState_midpoint": "c302_k_slow_gate_n_midpoint"},
+    "k_fast_muscle": {"gmax": "c302_muscle_k_fast_cond_density",
+                      **{f"{g}_{a}": f"c302_k_fast_gate_{g}_{b}" for g in "pq" for a, b in (
+                          ("timeCourse_tau", "tau"), ("steadyState_scale", "scale"),
+                          ("steadyState_midpoint", "midpoint"))}},
+    "ca_boyle_muscle": {"gmax": "c302_muscle_ca_boyle_cond_density",
+                        **{f"{g}_{a}": f"c302_ca_boyle_gate_{g}_{b}" for g in "ef" for a, b in (
+                            ("timeCourse_tau", "tau"), ("steadyState_scale", "scale"),
+                            ("steadyState_midpoint", "midpoint"))},
+                        "h_alpha": "c302_ca_boyle_gate_h_alpha", "h_ca_half": "c302_ca_boyle_gate_h_ca_half",
+                        "h_k": "c302_ca_boyle_gate_h_k"},
+    "CaPoolMuscle": {"decayConstant": "c302_ca_conc_decay_time_muscle", "rho": "c302_ca_conc_rho_muscle"},
+}
+MUSCLE_EREV = {"c302_muscle_k_slow_erev": -30.0, "c302_muscle_k_fast_erev": -30.0,   # fixed inside the c302 mods
+               "c302_muscle_ca_boyle_erev": 0.0}                                       # (INITIAL, not reachable)
+RHO_SI_TO_MOD = 1e-8            # mol / (m A s) -> umol / (cm nA ms), the mod's unit (derived)
 CHANNELS = ["slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "slo2_unc2", "irk", "egl36", "egl19",
             "cca1", "shk1", "slo2_egl19", "nca", "kcnl", "cainternm"]          # BAAIWorm's insert order
 GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2"}
@@ -63,7 +90,9 @@ def _neuron():
     if _h is not None:
         return _h
     from neuron import h
-    d = Path(os.environ.get("WORMEMU_NRNMECH", Path.home() / ".cache" / "wormemu" / "nrnmech"))
+    mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod"))
+    tag = hashlib.sha1(b"".join(m.name.encode() + m.read_bytes() for m in mods)).hexdigest()[:12]
+    d = Path(os.environ.get("WORMEMU_NRNMECH", Path.home() / ".cache" / "wormemu" / "nrnmech")) / tag
 
     def find():
         libs = glob.glob(str(d / "*" / "libnrnmech.*")) + glob.glob(str(d / "*" / ".libs" / "libnrnmech.so"))
@@ -72,8 +101,11 @@ def _neuron():
     if lib is None:
         d.mkdir(parents=True, exist_ok=True)
         exe = shutil.which("nrnivmodl") or str(Path(sys.executable).parent / "nrnivmodl")
+        (d / "src").mkdir(exist_ok=True)
+        for m in mods:
+            shutil.copy(m, d / "src" / m.name)
         with open(d / "build.log", "w") as log:
-            subprocess.run([exe, str(BAAI / "mod")], cwd=d, check=True, stdout=log, stderr=subprocess.STDOUT)
+            subprocess.run([exe, "src"], cwd=d, check=True, stdout=log, stderr=subprocess.STDOUT)
         lib = find()
     if not hasattr(h, "neuron_to_neuron_exc_syn"):
         h.nrn_load_dll(lib)
@@ -200,10 +232,11 @@ class Brain:
             assert k in self.toggles, f"unknown toggle {k}"
             self.toggles[k] = {True: "on", False: "off"}.get(v, v)
         tg = self.toggles
-        for k in ("muscle_active", "gap_rectification"):
+        for k in ("gap_rectification",):
             if tg[k] == "on":
                 raise NotImplementedError(f"{k}: not wired into the NEURON build yet")
         self.lit = tg["literature_overrides"] == "on"
+        self.mact = tg["muscle_active"] == "on"
         self.h = h = _neuron()
         st = self.st = load_structure()
         neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
@@ -256,6 +289,8 @@ class Brain:
             self._pv.pset(i, s(0.5)._ref_v)
             self._pc.pset(i, s(0.5)._ref_cai)
         self._buf = h.Vector(n)
+        # c302's muscle pool holds cai in mM (on c302's own scale: its rho is a blind guess); BAAIWorm's cells hold uM
+        self._ca_scale = np.where(self.is_muscle & self.mact, 1000.0, 1.0)
 
         on = {mid for tog, mid in _toggle_mechanisms(led).items() if tg.get(tog) == "on"}
         p = {s.id: self.spec.v(s.id) for s in brain_layers.SPECS if s.id in self.spec.values
@@ -313,6 +348,8 @@ class Brain:
         return v
 
     def _biophysics(self, name, obj):
+        if self.mact and name in BWM_NAMES:
+            return self._c302_muscle(obj)
         cp = self._cell_param(name)
         for sec in obj.all:
             part = "soma" if "Soma" in sec.name() else "neurite"
@@ -331,6 +368,23 @@ class Brain:
             for ion, pid, dflt in (("k_ion", "ion_ek", -77.0), ("na_ion", "ion_ena", 50.0)):
                 if sv(pid) != dflt and self.h.ismembrane(ion, sec=obj.Soma):
                     setattr(obj.Soma, "ek" if ion == "k_ion" else "ena", sv(pid))
+
+    def _c302_muscle(self, obj):
+        """muscle_active: c302 C2's GenericMuscleCell membrane (cm 1 uF/cm2 as BAAIWorm's; one compartment, so its
+        Ra does not act), every value from the ledger."""
+        sv = self.spec.v
+        for pid, e in MUSCLE_EREV.items():
+            if sv(pid) != e:
+                raise ValueError(f"{pid} = {sv(pid)}: the c302 mod fixes this reversal at {e} mV")
+        for sec in obj.all:
+            sec.cm = 1.0
+            for mod, pars in MUSCLE_ACTIVE.items():
+                sec.insert(mod)
+                for seg in sec:
+                    for name, pid in pars.items():
+                        setattr(getattr(seg, mod), name, sv(pid) * (RHO_SI_TO_MOD if name == "rho" else 1.0))
+            # the pool owns cai (c302's own units, starting at 0); the mods use their own E_Ca, not the ion's
+            self.h.ion_style("ca_ion", 3, 1, 0, 0, 0, sec=sec)
 
     def _kinetics(self):
         """Channel kinetics, nanodomain and Ca pool constants: mod GLOBALs (RANGE ones set on every soma)."""
@@ -354,10 +408,11 @@ class Brain:
                     continue
                 except (AttributeError, LookupError, TypeError):
                     pass
-                if self.soma and hasattr(getattr(self.soma[0](0.5), mod), name):
-                    for s in self.soma:
-                        for seg in s:
-                            setattr(getattr(seg, mod), name, v)
+                for s in self.soma:
+                    for seg in s:
+                        m = getattr(seg, mod, None)
+                        if m is not None and hasattr(m, name):
+                            setattr(m, name, v)
 
     # --- connections -------------------------------------------------------------------------------------------
     def _inhibitory(self, pre, post):
@@ -451,10 +506,15 @@ class Brain:
             w = g * n_em["syn_strength_per_pair"][e] / len(sites) / (self._g_syn(inh) * 1000.0)
             for i, j in sites:
                 self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0], w, inh, "syn_nn")
+        inx = self.toggles.get("innexin_identity") == "on"
         for e, g in sv("gap_strength_per_pair").items():
             a, b = e.split("-")
             if a not in self.idx or b not in self.idx:
                 continue
+            if inx:                                      # innexin channels (ledger mechanism innexin_identity)
+                if not sv("gap_innexin_pair", e):
+                    continue                             # a partner expresses no innexin (CeNGEN)
+                g = sv("gap_open_channels_per_em") * sv("gap_innexin_unitary") / 1000.0     # pS -> nS
             key = tuple(sorted((a, b)))
             sites = sorted(gap_sites.get(key, ())) or [self._nearest(*key)]
             w = g * n_em["gap_strength_per_pair"][e] / len(sites) / 1000.0
@@ -508,10 +568,19 @@ class Brain:
         for c in self.stim:
             c.amp = 0.0
         self._amp[:] = 0.0
+        if self.mact:
+            for s, m in zip(self.soma, self.is_muscle):
+                for seg in (s if m else ()):
+                    seg.cai = 0.0                        # c302's initial concentration
         self.h.finitialize(V_INIT)
+        if self.mact:
+            for s, m in zip(self.soma, self.is_muscle):
+                for seg in (s if m else ()):
+                    seg.v = V_INIT_MUSCLE
+            self.h.finitialize()                         # keeps each segment's v
         self.layers.reset()
         self.t = 0.0
-        return self._out(self._read(self._pv), self._read(self._pc), np.zeros(len(BWM_NAMES)), 0.0,
+        return self._out(self._read(self._pv), self._read(self._pc) * self._ca_scale, np.zeros(len(BWM_NAMES)), 0.0,
                          np.zeros(len(ENTERIC_MUSCLES)), 0.0)
 
     def step(self, obs=None, dt_ms: float = 1.0) -> BrainToBody:
@@ -529,7 +598,7 @@ class Brain:
         for _ in range(n_int):
             self.h.fadvance()
         self.t += dt_ms
-        v, ca = self._read(self._pv), self._read(self._pc)
+        v, ca = self._read(self._pv), self._read(self._pc) * self._ca_scale
         vb = np.array([v[i] if i >= 0 else np.nan for i in self.bwm])
         act = L.muscle_activation(np.nan_to_num(vb, nan=V_INIT), dt_ms)
         boost, ent, exps = L.defecation(dt_ms)

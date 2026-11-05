@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:11 CST",
+ "generated_at": "2026-11-05 17:42 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,38 +9,36 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 89020,
-  "rows": 366,
+  "numbers": 90112,
+  "rows": 368,
   "mechanisms": 59,
   "by_label": {
-   "absent": 1,
-   "derived": 66395,
-   "guessed": 8963,
+   "derived": 67486,
+   "guessed": 8965,
    "inferred": 11,
    "measured": 5865,
    "published_fit": 7785
   },
-  "known": 80056,
-  "placeholder": 8963,
-  "gap": 1,
-  "used_by_model": 89019,
-  "must_fill": 8964
+  "known": 81147,
+  "placeholder": 8965,
+  "gap": 0,
+  "used_by_model": 90112,
+  "must_fill": 8965
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 18033,
+  "numbers": 19125,
   "by_label": {
    "published_fit": 7058,
-   "guessed": 8963,
-   "derived": 1987,
+   "guessed": 8965,
+   "derived": 3078,
    "inferred": 11,
-   "absent": 1,
    "measured": 13
   },
-  "known": 9069,
-  "placeholder": 8963,
-  "gap": 1,
-  "must_fill": 8964
+  "known": 10160,
+  "placeholder": 8965,
+  "gap": 0,
+  "must_fill": 8965
  },
  "source_by_fill_kind": {
   "all": {
@@ -52,18 +50,15 @@
    "literature": {
     "guessed": 5469,
     "measured": 5865,
-    "derived": 1987,
+    "derived": 3078,
     "inferred (ours)": 6
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3490,
+    "guessed": 3492,
     "inferred (ours)": 5
-   },
-   "none": {
-    "absent": 1
    },
    "c302": {
     "published fit": 28
@@ -76,7 +71,7 @@
    },
    "literature": {
     "guessed": 5469,
-    "derived": 1987,
+    "derived": 3078,
     "inferred (ours)": 6,
     "measured": 13
    },
@@ -84,11 +79,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3490,
+    "guessed": 3492,
     "inferred (ours)": 5
-   },
-   "none": {
-    "absent": 1
    },
    "c302": {
     "published fit": 28
@@ -102,7 +94,7 @@
    "where": "docs/worm/BRAIN_PORT.md sections 4-4c",
    "question": "Why does the neural-only network settle into a fixed depolarised state? At the ledger defaults (wiring=cook, strengths at the range log-midpoint) 206 of 302 neurons sit above -20 mV at 6 s with transmitter signs (D7) and 100 with receptor_sign on (D8, Fenyves first). Localised to recurrent chemical excitation (isolated cells rest at -53 to -56 mV); receptor-level inhibition halves it but does not remove it.",
    "candidates": "per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
-   "status": "open; nothing tuned. The closed loop runs on D8's configuration, labelled"
+   "status": "open; nothing tuned. The closed loop runs on D8's configuration, labelled. Section 5: four single range ends each bring it under 30 (chemical strength 0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV); none has a measured value for or against it (RANGE_ENDS_LIT.md, section 6a). With the excitatory reversal range widened to +11 mV (measured) the template is +0.5 mV and the count is 105 (D8b)"
   }
  ],
  "by_grain": {
@@ -122,20 +114,19 @@
    "derived": 64408
   },
   "connection": {
-   "derived": 1705,
+   "derived": 2796,
    "guessed": 7856,
    "measured": 5852,
    "published_fit": 727
   },
   "family": {
-   "absent": 1,
-   "guessed": 53
+   "guessed": 54
   },
   "gene": {
    "guessed": 65
   },
   "global": {
-   "guessed": 67,
+   "guessed": 68,
    "inferred": 5,
    "measured": 13,
    "published_fit": 60
@@ -637,18 +628,19 @@
   },
   {
    "id": "innexin_identity",
-   "name": "Gap junction conductance and rectification by innexin pair",
+   "name": "Gap junctions as innexin channels: conductance per EM contact = open channels x innexin unitary conductance (one shared value; no per-innexin measurement found); no junction where a partner expresses no innexin in CeNGEN. wiring=cook neuron-neuron gaps only. Rectification by innexin pair is not modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out the rectifying ones",
    "layer": "gap",
-   "status": "absent",
-   "toggle": "",
-   "neutral": "",
-   "default": "",
-   "source": "Bhattacharya et al. 2019 innexin atlas (not extracted)",
+   "status": "have",
+   "toggle": "innexin_identity",
+   "neutral": "off = gap_strength_per_pair for every pair",
+   "default": "off",
+   "source": "CeNGEN threshold 2 (Taylor et al. 2021), 17 innexin genes; Bhattacharya et al. 2019 innexin atlas not yet used",
    "notes": "",
-   "absent_reason": "per-pair innexin identity not mapped",
-   "numbers": 1,
+   "absent_reason": "",
+   "numbers": 1093,
    "by_label": {
-    "absent": 1
+    "derived": 1091,
+    "guessed": 2
    }
   },
   {
@@ -671,12 +663,12 @@
    "id": "muscle_active",
    "name": "Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)",
    "layer": "muscle",
-   "status": "partial",
+   "status": "have",
    "toggle": "muscle_active",
    "neutral": "off",
    "default": "off",
-   "source": "c302 parameters_C2 (OpenWorm, MIT)",
-   "notes": "parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)",
+   "source": "c302 parameters_C2 (OpenWorm, MIT); third_party/c302",
+   "notes": "on: c302's generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, BRAIN_PORT section 6 M2) replace BAAIWorm's passive muscle membrane, values from these rows; reversals are fixed in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no repetitive spikes), unlike real body-wall muscle's Ca action potentials (Gao and Zhen 2011)",
    "absent_reason": "",
    "numbers": 28,
    "by_label": {
@@ -7167,7 +7159,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 0 (S14); 10 gives 108 (S15); swing 108",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7194,7 +7186,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 100 (S07); 0.2 gives 100 (S08); swing 0",
    "toggle": "",
    "notes": "ported value 0.5 kHz",
    "kind": "physiology"
@@ -7221,7 +7213,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 143 (S13); swing 43",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7233,12 +7225,12 @@
    "applies_to": "every exc synapse",
    "unit": "mV",
    "n_values": 1,
-   "value_template": 0.0,
-   "template_source": "BAAIWorm 30 clipped to the literature range; at a bound (10), so moved to the range's midpoint",
+   "value_template": 0.5,
+   "template_source": "BAAIWorm 30 clipped to the literature range; at a bound (11), so moved to the range's midpoint",
    "bio_min": -10.0,
-   "bio_max": 10.0,
-   "bound_basis": "measured_related",
-   "bound_source": "Generic nicotinic/cation-channel reversal, consistent with depolarizing EPSCs in Richmond & Jorgensen 1999 (param_ranges B5)",
+   "bio_max": 11.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Richmond & Jorgensen 1999 Nat Neurosci 2:791 Fig. 4c (ACh current at body-wall muscle reverses at +11 mV, n=4); Lindsay, Thiele & Lockery 2011 Nat Commun 2:306 Fig. 6b (glutamate synaptic current at AVA, -7.0 +/- 3.2 mV) (param_ranges B5)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -7248,7 +7240,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -10 gives 14 (S11); 10 gives 145 (S12); swing 131",
    "toggle": "",
    "notes": "ported value 30 mV",
    "kind": "physiology"
@@ -7302,7 +7294,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 105 (S17); 10 gives 93 (S18); swing 12",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7329,7 +7321,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 99 (S09); 0.2 gives 100 (S10); swing 1",
    "toggle": "",
    "notes": "ported value 0.015 kHz",
    "kind": "physiology"
@@ -7356,7 +7348,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 0 (S16); swing 100",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7383,7 +7375,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 141 (S19); swing 41",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -8085,7 +8077,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 0 (S01); 2 gives 136 (S02); swing 136",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
@@ -8121,7 +8113,7 @@
    "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.05 gives 110 (S03); 1 gives 93 (S04); swing 17",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
@@ -8157,7 +8149,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 100 (S05); 2 gives 100 (S06); swing 0",
    "toggle": "",
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",
@@ -8286,27 +8278,90 @@
    "param_id": "gap_innexin_unitary",
    "mechanism_id": "innexin_identity",
    "grain": "family",
-   "applies_to": "each innexin",
+   "applies_to": "every innexin (one shared value)",
    "unit": "pS",
    "n_values": 1,
-   "value_template": "",
-   "template_source": "",
+   "value_template": 122.47448713915892,
+   "template_source": "log-midpoint of range C1",
    "bio_min": 50.0,
    "bio_max": 300.0,
-   "bound_basis": "",
+   "bound_basis": "guessed",
    "bound_source": "no direct value found this session (param_ranges C1)",
-   "bound_verified": "",
-   "prior_dist": "",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
-   "prior_basis": "",
-   "label": "absent",
-   "fill_kind": "absent",
-   "source_project": "none",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "C1 range",
+   "notes": "Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value found), so this value is ours",
+   "kind": "physiology"
+  },
+  {
+   "param_id": "gap_open_channels_per_em",
+   "mechanism_id": "innexin_identity",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "channels",
+   "n_values": 1,
+   "value_template": 1.8257418583505536,
+   "template_source": "C4 log-midpoint / C1 log-midpoint, so the toggle is neutral at the templates",
+   "bio_min": 0.1666666666666666,
+   "bio_max": 20.0,
+   "bound_basis": "guessed",
+   "bound_source": "range C4 / range C1 (both guessed)",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "open innexin channels per EM-visible gap contact; no count found",
+   "kind": "physiology"
+  },
+  {
+   "param_id": "gap_innexin_pair",
+   "mechanism_id": "innexin_identity",
+   "grain": "connection",
+   "applies_to": "neuron-neuron gap pairs (wiring=cook)",
+   "unit": "flag",
+   "n_values": 1091,
+   "value_template": 1.0,
+   "template_source": "CeNGEN (values table)",
+   "bio_min": 0.0,
+   "bio_max": 1.0,
+   "bound_basis": "physical_limit",
+   "bound_source": "flag",
+   "bound_verified": "unverified",
+   "prior_dist": "fixed",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "derived from expression",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "7 of 1091 pairs have a partner with no innexin detected",
+   "values_file": "data/worm/model/values/gap_innexin_pair.csv",
+   "element_stats": {
+    "min": 0.0,
+    "median": 1.0,
+    "max": 1.0,
+    "by_label": {
+     "derived": 1091
+    }
+   },
    "kind": "physiology"
   },
   {

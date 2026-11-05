@@ -309,15 +309,17 @@
     rule. Fenyves calls 436 pairs complex (both signs; our rule used)
   absent_reason: ''
 - id: innexin_identity
-  name: Gap junction conductance and rectification by innexin pair
+  name: 'Gap junctions as innexin channels: conductance per EM contact = open channels x innexin unitary conductance (one shared value; no per-innexin measurement found); no junction where a partner expresses
+    no innexin in CeNGEN. wiring=cook neuron-neuron gaps only. Rectification by innexin pair is not modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out
+    the rectifying ones'
   layer: gap
-  status: absent
-  toggle: ''
-  neutral: ''
-  default: ''
-  source: Bhattacharya et al. 2019 innexin atlas (not extracted)
+  status: have
+  toggle: innexin_identity
+  neutral: off = gap_strength_per_pair for every pair
+  default: 'off'
+  source: CeNGEN threshold 2 (Taylor et al. 2021), 17 innexin genes; Bhattacharya et al. 2019 innexin atlas not yet used
   notes: ''
-  absent_reason: per-pair innexin identity not mapped
+  absent_reason: ''
 - id: morphology
   name: Cell morphologies (NEURON hoc, 3D points with diameters)
   layer: cell
@@ -331,12 +333,13 @@
 - id: muscle_active
   name: Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)
   layer: muscle
-  status: partial
+  status: have
   toggle: muscle_active
   neutral: 'off'
   default: 'off'
-  source: c302 parameters_C2 (OpenWorm, MIT)
-  notes: parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)
+  source: c302 parameters_C2 (OpenWorm, MIT); third_party/c302
+  notes: 'on: c302''s generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, BRAIN_PORT section 6 M2) replace BAAIWorm''s passive muscle membrane, values from these rows; reversals are fixed
+    in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no repetitive spikes), unlike real body-wall muscle''s Ca action potentials (Gao and Zhen 2011)'
   absent_reason: ''
 - id: sens_salt
   name: Salt sensing (ASEL ON, ASER OFF)

@@ -322,3 +322,93 @@ inhibitory release threshold (100), excitatory release threshold (43), inhibitor
 inhibitory slope (12); NMJ strength and both decay rates move it by 1 or less. These are the numbers whose precision
 matters first. Every run is still a fixed point (no ongoing activity; only S09 has 23 slowly moving neurons): the
 quiet ends are quiet, not rhythmic. Nothing is adopted; the ledger defaults stay at the range midpoints.
+
+## 6. muscle_active: c302 C2's body-wall muscle membrane (pre-registration)
+
+Pre-registered 2026-11-05 17:31 CST, before any run of the patched mods (Director 17:40 order: port a published
+body-wall muscle model, don't write one). Boyle and Cohen 2008 (Biosystems 94:170) has no code we can use; c302 C2's
+`GenericMuscleCell` is that channel set (leak, slow K, fast K, Ca with Ca-dependent inactivation, Ca pool) at c302's
+published fit, and jNeuroML already generated NEURON mods for it when c302 ran as published. Vendored in
+`third_party/c302/` (MIT). BAAIWorm's muscles are the same 5 x 20 um cylinder and are passive (every channel density
+0), so `muscle_active=on` replaces their membrane with c302's, every value from the ledger's `c302_*` rows.
+
+One change to the generated code, numerical only: jNeuroML writes each gate as `x' = rate_x` with the rate computed
+beforehand, so NEURON's cnexp steps it as forward Euler. The Ca activation gate's time constant is 0.1 ms; at
+BAAIWorm's 0.5 ms step that is unstable (the first test went NaN within 3 ms). The patched mods
+(`third_party/c302/mod/`) write `x' = (x_inf - x) / x_tau`, which cnexp integrates exactly; the unchanged files are
+in `third_party/c302/generated/`.
+
+- **M1 (implementation):** at the template, every value the brain sets in the muscle mods equals c302's (the mod
+  default, or for densities and the leak reversal the value in `c302_C2_Full.net.nml`), relative difference under
+  1e-9. Fail = a mapping bug, fixed before anything else runs.
+- **M2 (numerical port check):** one isolated c302 muscle (5 x 20 um, its membrane only), 1 s at 0 pA, then steps of
+  +1, +3, +10, +30 pA for 1 s each. Patched mods at dt 0.5 ms against the unchanged mods at dt 0.025 ms (finer than
+  c302's own 0.05 ms). Bar: the same number of upward crossings of -10 mV (c302's spike threshold) in every step, and
+  mean V over the last 200 ms at 0 pA within 0.5 mV. Reported: largest |dV| and spike-time differences. Falsifier:
+  any step's count differs; then the 0.5 ms step does not hold this muscle, and it needs a substep (reported, not
+  adopted).
+- **M3 (report-only):** resting V and whether the muscle fires all-or-none Ca spikes under the steps. Real body-wall
+  muscle fires Ca-dependent action potentials (Gao and Zhen 2011, PNAS 108:2557; seen literature, not held out).
+  Nothing is fitted to it.
+- **M4 (report-only):** the D8 configuration plus `muscle_active=on`, neural only, 6 s, with its no-stim control:
+  neurons and muscles above -20 mV at 6 s, muscle spikes, touch effect on muscles.
+- **C1 (report-only):** the body worker's 5 s closed loop (`sample_worm(None)`, receptor_sign on) with
+  `muscle_active` off and on: rhythm (activation power above the lowest bin), centroid travel. Not a crawling test;
+  no bar.
+
+### 6 results (5 Nov, 17:40 CST)
+
+- **M1 passes.** Every value the brain sets in the muscle mods equals c302's: densities, leak reversal and the
+  pool's two constants exactly as in `c302_C2_Full.net.nml` (the generated mod defaults round the pool's two to 6
+  significant figures, a 5e-7 relative difference); every gate constant equals the mod default exactly. Now a test
+  (`tests/test_worm_brain.py::test_muscle_active`).
+- **M2 passes** (`data/worm/brain_runs/muscle_m2/`, figure `m2.png`, viewed). Patched at 0.5 ms against unchanged at
+  0.025 ms: -10 mV crossings 0, 0, 1, 0, 0 in both for the 0, 1, 3, 10, 30 pA steps; the one crossing 0.8 ms apart
+  (2016.5 against 2015.7 ms); mean V over the last 200 ms of each step equal within 0.002 mV; largest voltage
+  difference 0.42 mV, at the onset of the 3 pA step. The patched files at 0.025 ms differ from the unchanged ones by
+  at most 0.007 mV, so the patch changes the integration, not the model. The unchanged files at 0.5 ms go NaN.
+- **M3: the published c302 muscle is graded, not spiking** (measured on the model). It rests at -28.6 mV; each step
+  gives a small onset overshoot and then a steady plateau (-18.9, -8.4, 0.0, +7.4 mV at 1, 3, 10, 30 pA). No
+  repetitive firing at any step. Real body-wall muscle fires all-or-none Ca action potentials (Gao and Zhen 2011),
+  so c302's C2 fit does not reproduce that; recorded in the mechanism's notes. Its Ca-dependent inactivation
+  saturates (h_ca_half 6.4e-8 mM, slope 1e-8 mM, in c302's own Ca scale), which is what NEURON's "exp out of
+  range" warnings under large steps are: harmless, h_inf goes to 0.
+- **M4: no change in any count** (`bw_M4`, `bw_M4_nostim` against `bw_D8`, `bw_D8_nostim`). Neurons above -20 mV at
+  6 s 100 in both; neuron voltages identical (largest difference 0.0000 mV, as expected: no muscle-to-neuron
+  synapses); muscles above -20 mV at 6 s 40 in both; 48 muscle -10 mV crossings in both, all in the first transient.
+  The muscle voltages do change (largest 18.7 mV, median per-muscle largest 2.5 mV). Touch reaches 11 neurons and
+  no muscle in either (stim minus no-stim, 2-4 s means). Reading: each muscle's NMJ synapses (0.447 nS per EM
+  synapse at the template, several synapses per muscle) outweigh its own channels (about 1 to 3 nS fully open), so
+  the muscle follows its tonic motor neurons whatever its membrane.
+- **C1: no rhythm either way** (`data/worm/brain_runs/c1_muscle/`, figure `c1.png`, viewed;
+  `scripts/worm/port/closed_loop_c1.py` runs the body worker's loop with this brain). 5 s, 18.4 s of wall each.
+  Neurons above -20 mV in the last frame 103 in both. Activation is tonic after a 0.3 s rise; over the last 3 s the
+  median muscle's activation SD is 0.003 (off) and 0.002 (on), and a few muscles wander slowly (largest SD 0.21 and
+  0.14), with no alternating dorsal-ventral pattern. The centroid moves under 0.001 body lengths in both. The off
+  run has a step at 4.35 s (one muscle to full activation) that the on run lacks; not chased.
+- **Verdict:** `muscle_active` is implemented and correct as a port, stays off by default, and is not the missing
+  rhythm. The rhythm question goes upstream to the motor neurons and their drive (section 7).
+
+## 6a. Range ends from the literature (RANGE_ENDS_LIT.md): what is adopted
+
+Written 2026-11-05 17:41 CST, before the ledger rebuild. Rule (Director 17:40): adopt only values the research file
+labels measured, pre-registered. Of its measured values, two bear on a row's range; the rest are gaps, derived, model
+choices, or measured in other units (Wen 2012's 0.62 is curvature per curvature, not current per curvature).
+
+- **Adopted: `syn_exc_erev` range -10 to +10 becomes -10 to +11 mV** (param_ranges B5, bound basis measured_this_class).
+  Measured: ACh-evoked current at body-wall muscle reverses at +11 mV (Richmond and Jorgensen 1999, Nat Neurosci
+  2:791, Fig. 4c, n = 4); glutamate synaptic current at AVA reverses at -7.0 +/- 3.2 mV (Lindsay, Thiele and Lockery
+  2011, Nat Commun 2:306, Fig. 6b). The research file calls +11 "inside the range"; it is 1 mV above it, so the upper
+  end moves. The lower end stays (-7.0 - 3.2 = -10.2, within rounding of -10). By the midpoint rule the guessed
+  template moves from 0 to +0.5 mV. Prediction (not a bar): D8's count of neurons above -20 mV moves by a few (the
+  S11-S12 sweep gives 131 neurons over 20 mV); rerun once as D8b, report-only.
+- **Not adopted, and why.** Chemical strength: 0.19 nS per quantum is derived (17.6 pA mEPSC over an assumed 91 mV
+  driving force), not measured; it sits inside 0.1-2 nS. Release threshold and slope: no measurement exists (two of
+  the papers say it could not be measured). Inhibitory reversal: +17 to +20 mV was measured under an imposed
+  chloride gradient, not native chloride; the file itself says it is not the physiological value.
+- **Consequence for the saturation question:** none of the four range ends that end saturation (chemical strength
+  0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV) has a
+  measured value behind it or against it. The question stays open in `ledger.json`.
+- **Result (D8b, `data/worm/brain_runs/bw_D8b/`, 6 s):** 105 neurons above -20 mV at 6 s (D8: 100); touch moves 46
+  neurons by 1 mV or more (D8: 44); 40 muscles above -20 mV (unchanged). As predicted, a few. D8b is the default
+  configuration from here on.

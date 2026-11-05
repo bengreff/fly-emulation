@@ -70,7 +70,11 @@ OPEN_QUESTIONS = [
          candidates="per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded "
                     "release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); "
                     "missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
-         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled"),
+         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled. Section 5: four single "
+                "range ends each bring it under 30 (chemical strength 0.1 nS, excitatory reversal -10 mV, excitatory "
+                "release slope 2 mV, inhibitory release threshold -45 mV); none has a measured value for or against "
+                "it (RANGE_ENDS_LIT.md, section 6a). With the excitatory reversal range widened to +11 mV (measured) "
+                "the template is +0.5 mV and the count is 105 (D8b)"),
 ]
 
 rows: list[dict] = []
@@ -540,10 +544,40 @@ def build_synapses(mods, st, conns):
         applies_to="neuron-neuron chemical pairs", n=len(t), tsrc="Fenyves 2020, else receptor rule (values table)",
         label="guessed", proj="ours", basis="physical_limit", bsrc="flag",
         prior=("bernoulli", round(float(t.value.mean()), 3), "", "fraction inhibitory under the rule"), table=t)
-    mech("innexin_identity", "Gap junction conductance and rectification by innexin pair", "gap", "absent",
-         "Bhattacharya et al. 2019 innexin atlas (not extracted)", absent_reason="per-pair innexin identity not mapped")
-    lo, hi, _, _, bsrc = lit("C1")
-    absent("gap_innexin_unitary", "innexin_identity", "pS", 1, "family", "each innexin", "C1 range", lo, hi, bsrc)
+    # innexin channels: per-EM gap conductance = open channels per EM contact x unitary conductance, and no junction
+    # where a partner expresses no innexin in CeNGEN. At the templates it equals gap_strength_per_pair (neutral)
+    INX = [g for g in st.genes if g in ("unc-7", "unc-9", "eat-5") or g.startswith("inx-")]
+    lo1, hi1, _, basis1, bsrc1 = lit("C1")
+    lo4, hi4 = lit("C4")[:2]
+    gu = float(np.sqrt(lo1 * hi1))
+    no = centre("C4") * 1000 / gu
+    mech("innexin_identity", "Gap junctions as innexin channels: conductance per EM contact = open channels x innexin "
+         "unitary conductance (one shared value; no per-innexin measurement found); no junction where a partner "
+         "expresses no innexin in CeNGEN. wiring=cook neuron-neuron gaps only. Rectification by innexin pair is not "
+         "modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out the "
+         "rectifying ones", "gap", "have", f"CeNGEN threshold 2 (Taylor et al. 2021), {len(INX)} innexin genes; "
+         "Bhattacharya et al. 2019 innexin atlas not yet used", toggle="innexin_identity",
+         neutral="off = gap_strength_per_pair for every pair", default="off")
+    row("gap_innexin_unitary", "innexin_identity", "pS", gu, lo1, hi1, grain="family",
+        applies_to="every innexin (one shared value)", tsrc="log-midpoint of range C1", label="guessed", proj="ours",
+        basis=basis1, bsrc=bsrc1, notes="Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value "
+        "found), so this value is ours")
+    row("gap_open_channels_per_em", "innexin_identity", "channels", no, lo4 * 1000 / hi1, hi4 * 1000 / lo1,
+        tsrc="C4 log-midpoint / C1 log-midpoint, so the toggle is neutral at the templates", label="guessed",
+        proj="ours", basis="guessed", bsrc="range C4 / range C1 (both guessed)",
+        notes="open innexin channels per EM-visible gap contact; no count found")
+    recs, cmap = [], {n: cengen_class(n, set(st.cengen_classes)) for p_ in gap_nn for n in p_[:2]}
+    for a, b, _ in gap_nn:
+        ea, eb = ([g for g in INX if st.expr(g, cmap[n]) > 0] if cmap[n] else None for n in (a, b))
+        ok = ea is None or eb is None or (bool(ea) and bool(eb))
+        recs.append(dict(element=f"{a}-{b}", value=int(ok), label="derived", source="CeNGEN threshold 2 (1 = both "
+                         "partners express an innexin, or a partner has no CeNGEN class)", source_project="literature",
+                         innexins_a=" ".join(ea or []), innexins_b=" ".join(eb or [])))
+    ti = pd.DataFrame(recs)
+    row("gap_innexin_pair", "innexin_identity", "flag", 1.0, 0, 1, grain="connection",
+        applies_to="neuron-neuron gap pairs (wiring=cook)", n=len(ti), tsrc="CeNGEN (values table)", label="derived",
+        proj="literature", basis="physical_limit", bsrc="flag", prior=("fixed", "", "", "derived from expression"),
+        notes=f"{int((ti.value == 0).sum())} of {len(ti)} pairs have a partner with no innexin detected", table=ti)
     return dict(neuron_chem_pairs=len(chem_nn), neuron_gap_pairs=len(gap_nn), nmj_pairs_cook=len(nmj),
                 nmj_pairs_baaiworm=len(b_nmj), bwm_gap_pairs=len(gap_bb),
                 chem_pairs_with_baaiworm_site=sum(1 for a, b, _ in chem_nn if sites.get((a, b))),
@@ -576,8 +610,11 @@ def build_morphology():
 
 def build_c302_muscle():
     mech("muscle_active", "Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)", "muscle",
-         "partial", "c302 parameters_C2 (OpenWorm, MIT)", toggle="muscle_active", neutral="off", default="off",
-         notes="parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)")
+         "have", "c302 parameters_C2 (OpenWorm, MIT); third_party/c302", toggle="muscle_active", neutral="off",
+         default="off", notes="on: c302's generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, "
+         "BRAIN_PORT section 6 M2) replace BAAIWorm's passive muscle membrane, values from these rows; reversals "
+         "are fixed in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no "
+         "repetitive spikes), unlike real body-wall muscle's Ca action potentials (Gao and Zhen 2011)")
     keep = re.compile(r"^(muscle_(leak|k_slow|k_fast|ca_boyle)_\w+|(k_slow|k_fast|ca_boyle)_gate_\w+|"
                       r"ca_conc_(decay_time|rho)_muscle)$")
     n = 0
@@ -632,6 +669,29 @@ def build_layers(st):
             notes=s.notes, table=tab)
     mech("other_cells", "Hypodermis, seam, excretory canal, coelomocytes, other glia", "organ", "absent",
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
+
+
+def sensitivity():
+    """The range-end runs (docs/worm/BRAIN_PORT.md section 5) into precision_method: what each end does to the count of
+    neurons above -20 mV (D8 base). A sensitivity, not a precision: there is no correctness target yet."""
+    f = ROOT / "data/worm/brain_runs/sens_summary.json"
+    if not f.exists():
+        return
+    runs = json.loads(f.read_text())
+    base = next(r["above"] for r in runs if r["run"] == "D8")
+    by = defaultdict(list)
+    for r in runs:
+        for kv in r["set"]:
+            k, v = kv.split("=")
+            by[k].append((float(v), r["above"], r["run"]))
+    for r in rows:
+        if r["param_id"] in by:
+            got = sorted(by[r["param_id"]])
+            n = [x[1] for x in got] + [base]
+            r["precision_method"] = ("range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): "
+                                     f"neurons above -20 mV at 6 s, {base} at the template; "
+                                     + "; ".join(f"{v:g} gives {k} ({run})" for v, k, run in got)
+                                     + f"; swing {max(n) - min(n)}")
 
 
 def export(led, extra):
@@ -708,6 +768,7 @@ def main():
     pts = build_morphology()
     n_c302 = build_c302_muscle()
     build_layers(st)
+    sensitivity()
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)

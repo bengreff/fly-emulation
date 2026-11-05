@@ -1,71 +1,101 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 2026-11-05 16:52 CST, end of the worm BRAIN + LEDGER
-worker's afternoon block (Director session director-20 relays Ben). A second worker, the BODY worker, owns body,
-viewer and video in worktree `.claude/worktrees/wormbody` (branch `worktree-wormbody`); its state is in its own
-commits, not here.
+**Rewritten each session; do not append.** State as of 2026-11-05 17:18 CST, end of the worm BRAIN + LEDGER
+worker's evening block (Director session director-20 relays Ben). A second worker, the BODY worker
+(fly-emulation-08), owns body, viewer, video and the closed-loop driver in worktree `.claude/worktrees/wormbody`
+(branch `worktree-wormbody`); its state is in its own commits, not here.
 
-- **Direction (Ben, 5 Nov; Director 15:05 and 16:25).** Port BAAIWorm and c302 wholesale and run them as published
-  first; extend to all 302 neurons; add every missing layer at guessed values with toggles for the uncertain ones;
-  build the ledger FROM the ported code; literature wins over ported values, labelled. **Thursday 12 Nov bar:
-  known values implemented, everything labelled, everything else guessed as a placeholder; physiology "absent"
-  goes to zero.** Day plan: `~/director/logs/day-2026-11-05/WEEK.md` (Fri 6 CeNGEN channels, synapses, gaps,
-  peptides, monoamines, closed loop; Sat 7 remaining layers; Sun 8 `sample_worm(seed)` draws and guardrails).
-- **Read first:** `docs/worm/STRATEGY.md`, `docs/worm/BRAIN_PORT.md` (sections 1-3: every port run and its bars),
-  `docs/worm/INTERFACE.md` (brain-body contract, cost, muscle map, toggles), `docs/worm/ADOPTED.md` (credits and
-  licences), `docs/worm/ledger.json` (the catalogue of numbers), `docs/worm/SCOREBOARD.md`.
+- **Direction (Ben, 5 Nov; Director 15:05, 16:25, 17:00, 17:15).** Port BAAIWorm and c302 wholesale and run them as
+  published first; extend to all 302 neurons; add every missing layer at guessed values with toggles for the
+  uncertain ones; build the ledger FROM the ported code; literature wins over ported values, labelled. **Thursday
+  12 Nov bar: known values implemented, everything labelled, everything else guessed as a placeholder.** Fixes must
+  be literature values or toggles, never tuning toward behaviour. Day plan: `~/director/logs/day-2026-11-05/WEEK.md`
+  (Fri 6 CeNGEN channels, synapses, gaps, peptides, monoamines, closed loop; Sat 7 remaining layers; Sun 8
+  `sample_worm(seed)` draws and guardrails).
+- **Read first:** `docs/worm/STRATEGY.md`, `docs/worm/BRAIN_PORT.md` (sections 1-5: every port and diagnosis run,
+  each pre-registered, with its bars), `docs/worm/INTERFACE.md` (brain-body contract, cost, muscle map, toggles,
+  settled questions), `docs/worm/ADOPTED.md` (credits and licences), `docs/worm/ledger.json` (the catalogue of
+  numbers, with `open_questions`), `docs/worm/SCOREBOARD.md`.
 - **The fly is paused.** Its HANDOFF is archived in `docs/archive/HANDOFF_fly_2026-11-04.md`; its register is carried
   below unchanged.
 - **The W1 track (Jaxley RIM/AFD fits) is parked** by the port direction; see "Parked" below.
 
-## Report for Ben (brain and ledger, 5 Nov afternoon)
+## Report for Ben (brain and ledger, 5 Nov evening)
 
-- **The ledger is built from the ported code and has one absent physiology number left** (measured counts, `docs/worm/ledger.json`):
-  89,020 numbers; physiology 18,033: published fit 7,058, guessed 10,668, derived 282, inferred 11, measured 13,
-  absent 1 (`gap_innexin_unitary`, mechanism `innexin_identity`, not implemented yet). Every row carries
-  `source_project` (BAAIWorm / c302 / ChannelWorm / Sibernetic / literature / ours) and `fill_kind` (measured /
-  published fit / derived / guessed). Every per-pair synapse and gap strength has a guessed placeholder inside a
-  cited range.
-- **`src/wormemu/brain.py` is the brain the closed loop will use:** `sample_worm(seed)` and `Brain(spec, toggles)`
-  with `reset()`, `step(obs, dt_ms=1.0)`, `cell_names` (302 neurons + 95 muscles). With literature overrides off it
-  reproduces BAAIWorm's own construction (port302a) to **0.0 mV** in every cell at every 1 ms sample (run `ref`).
-  Cost **3.75-4.10 s of wall per biological second**, one thread, about 0.2 GB (measured, backhouse).
-- **Ca units fix** (BAAIWorm reads uM as mM; E_Ca about +42 mV instead of about +130): fixed inside
-  `literature_overrides`, E_Ca +133.8 mV at rest (derived, measured in the smoke test).
-- **Wiring answer:** BAAIWorm's neuron-neuron counts are Cook 2019 exactly (not c302's deprecated sheet), but its
-  construction places sites on only 2306 of 3709 chemical and 599 of 1091 gap pairs, uses its own 552-pair NMJ
-  table (337 are Cook edges, Cook has 956) and adds 175 non-anatomical muscle-to-neuron synapses. `wiring=cook`
-  (every Cook pair, labelled with its source) passed its pre-registered bars and **is now the default**.
-- **Muscle map verified:** `MCDL01` -> `dBWML1` etc., `MCVL24` dropped (the worm has 95). 337 Cook edges under this
-  map against 309 / 278 / 26 for shifted or swapped maps (measured).
-- **The network still saturates.** Neurons above -20 mV at 6 s: 180 as published, 141 with literature overrides
-  (the pre-registered falsifier line was 150, so not triggered), 188 with Cook wiring. The touch input reaches at
-  most 9 other neurons by 1 mV and no muscle. Under Cook wiring it follows the anatomical path (PLM to PVC, LUA,
-  PVR, PDE). **G3 as first written passes by drift alone** (no-input controls "move" 146-180 neurons); the scores
-  stand under the stricter stim-minus-no-stim reading. Figures `data/worm/brain_runs/bw_*/traces.png` (viewed).
-- **Caveats:** the gap override is about 27x the ported per-EM value and rests on a guessed range (C4); the
-  receptor-sign rule (off) would flip 1125 of 3709 pairs; every `syn_strength_per_pair` template value sits at
-  the 0.1 nS lower bound, so lognormal draws clip about half the time; `muscle_active` and `gap_rectification`
-  raise NotImplementedError if switched on.
+- **The ledger has no absent physiology number left** (measured counts, `docs/worm/ledger.json`): 90,112 numbers in
+  368 rows and 59 mechanisms. Physiology (structure rows excluded) 19,125: published fit 7,058, guessed 8,965,
+  derived 3,078, inferred 11, measured 13, absent 0. Every row carries `source_project` and `fill_kind`. The last
+  absent one, the innexin unitary conductance, now has a guessed value (below).
+- **Guessed templates no longer sit on a range bound.** They sit at the range midpoint (log-midpoint for log-uniform
+  rows), so a draw is not clipped half the time: chemical and NMJ strength 0.447 nS per EM synapse (was 0.1), gap
+  0.224 nS per EM junction (was 0.05), synapse decay 8.6 ms, excitatory reversal 0 mV (all derived from the cited
+  ranges).
+- **Receptor signs now come from a published map first.** `receptor_sign=on` takes Fenyves et al. 2020 (PLoS Comput
+  Biol 16:e1007974, S1 Data, CC BY) wherever it says + or - (1705 of 3709 Cook pairs) and our own CeNGEN receptor
+  rule elsewhere (1584 pairs). The two disagree on 182 of the 1705; each disagreement is recorded in the values
+  table.
+- **Saturation is localised but open.** With every value at its ledger default (run D8: literature overrides on,
+  Cook wiring, Fenyves-first signs, every lumped layer off), 100 of 302 neurons sit above -20 mV at 6 s (206 with
+  transmitter-only signs, D7). Cutting chemical synapses removes it entirely (D0-D4), so recurrent chemical
+  excitation holds it up, not the cells. The range-end sweep (S01-S19, 19 runs) shows **it is not forced by the
+  model's structure: four single range ends each bring it under 30** (chemical strength 0.1 nS, excitatory reversal
+  -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV). Nothing was adopted; the defaults stay
+  at the midpoints, and the question is recorded in `ledger.json` `open_questions`.
+- **Which numbers matter most (measured swing in the count of neurons above -20 mV across each range):** chemical
+  strength 136, excitatory reversal 131, excitatory release slope 108, inhibitory release threshold 100, excitatory
+  release threshold 43, inhibitory reversal 41, gap strength 17, inhibitory release slope 12; NMJ strength and both
+  decay rates 1 or less. This is written into the ledger's `precision_method` column for those 11 rows. It is a
+  sensitivity, not yet a precision: there is no correctness target to say how close each needs to be.
+- **Every run is a fixed point.** In D8 only 3 neurons vary by more than 2 mV SD over 4-6 s, and the quiet range ends
+  are quiet, not rhythmic. Touch (stim minus no-stim) reaches 15 neurons in D8, led by LUA, PVN, PQR, PVR (the
+  anatomical posterior-touch path), and no muscle.
+- **Closed loop runs, but the worm does not crawl** (measured by the body worker, branch `worktree-wormbody` commit
+  48b6ac6, run `cl_brain_tmpl`): `Brain(sample_worm(None), toggles=dict(receptor_sign="on"))`, proprioception on, 5 s
+  in 19.5 s of wall on the Mac. Finite; 104-109 neurons above -20 mV after the first frame; largest muscle activation
+  0.794, dorsal mean 0.40, ventral 0.38; no rhythm (activation power all in the lowest frequency bin). The body
+  curls within about 1 s and then drifts between a coil and a V; the centroid moves 0.06 body lengths net. So the
+  tonic state survives proprioceptive feedback. This is the closed-loop test the Director named, and it fails on
+  locomotion.
+- **Proprioception direction fixed** (85080b4): B-type motor neurons now sense curvature anterior of the soma (Wen et
+  al. 2012), which is what lets a wave travel head to tail; before, they sampled posterior. Field read from the
+  body's own arclength samples. The gain (2 pA per 1/mm) is guessed with no cited range.
+- **`innexin_identity` implemented behind a toggle (off).** On, each EM gap junction's conductance is open channels
+  times unitary conductance (both guessed: 1.83 channels, 122 pS, chosen so the product equals the gap template), and
+  a pair where either partner expresses no innexin in CeNGEN gets no junction (7 of 1091). At the templates it is
+  neutral (largest voltage difference 1.7e-11 mV, measured).
+- **Caveats:** the gap template rests on a guessed range (C4) and is 22x the ported per-EM value; the CeNGEN receptor
+  rule for the 1584 pairs Fenyves leaves blank is our own guess; `muscle_active` and `gap_rectification` raise
+  NotImplementedError if switched on; `sample_worm(seed)` has no joint guardrail yet, so seed 0 draws a muscle that
+  never contracts (the body worker's first closed loop, max activation 4.4e-6). Use `sample_worm(None)` until
+  Sunday's guardrails.
 
 ## Running now
 
-Nothing of mine, on the Mac or backhouse (checked 16:51). Other projects' jobs on backhouse (crucible, a worm-data
-download): leave them alone.
+Nothing of mine, on the Mac or backhouse (checked 17:17). Other projects' jobs on backhouse: leave them alone.
 
 ## Next (this order)
 
-1. **Saturation is the brain's top open question before the closed loop.** Pre-register a diagnosis in
-   BRAIN_PORT.md section 4: which of synapse strength scale, graded-synapse thresholds (`syn_*_Vth`), missing slow
-   K+ / homeostasis, or the BAAIWorm densities drives about 190 neurons to a flat -20 to +10 mV. One factor at a
-   time, neural only, same 6 s protocol, matched no-stim controls. Measure the touch effect as stim minus no-stim,
-   not G3 as first written.
-2. **Implement `innexin_identity`** (gap rectification and innexin-specific unitary conductance) so the last
-   absent number gets a guessed value; wire `gap_rectification` and `muscle_active` (c302 C2 muscle channels) into
-   NEURON.
-3. Friday's list (WEEK.md): test `expression_map` on the full brain; peptides and monoamines on; the closed loop
-   with the body worker's body through `INTERFACE.md`.
-4. Sunday: `sample_worm(seed)` guardrails (draw many worms, reject non-physiological ones by a pre-registered rule).
+1. **Why there is no rhythm.** The closed loop is now the test, and it shows a tonic coil. Candidate causes, each
+   testable as a literature value or a toggle, not tuning: the four range ends that end saturation (which one, if
+   any, has literature support for being the true end); missing slow K+ or Ca-activated K+ adaptation in motor
+   neurons; `muscle_active` (c302 C2 muscle channels, plateau and spiking in body wall muscle). Pre-register in
+   BRAIN_PORT.md section 6 before any run. The body worker's `python /tmp/wb_q/cl_tmpl.py 5 <out>` in its worktree
+   reruns the closed loop in about 20 s of wall on the Mac.
+2. **Wire `muscle_active` and `gap_rectification` into NEURON** (they are in the ledger but raise
+   NotImplementedError).
+3. Friday's list (WEEK.md): test `expression_map` on the full brain; peptides and monoamines on.
+4. Sunday: `sample_worm(seed)` guardrails (draw many worms, reject non-physiological ones by a pre-registered rule;
+   seed 0's silent muscle is the first case).
+5. Ben's precision question: once a correctness target exists (a pre-registered behaviour or recording bar), turn
+   the sweep sensitivities into required precisions per row.
+
+## Commits this block (5 Nov, 16:53 on)
+
+a310af6 / c64fdd1 / 874faa9 saturation diagnosis D0-D4 (pre-registered, H-syn holds); 6f71379 D5 receptor_sign
+(H-inh holds); 5b6a717 Fenyves-first receptor_sign and templates at range midpoints; a5ae208 / 822bf1b D7, D8;
+c43bf0f saturation as an open question in the ledger; 74a2b1e / 39a95da range-end sweep S01-S19 (pre-registered,
+report-only) and INTERFACE answers to the body worker; 85080b4 proprioception field anterior; e53da02
+`innexin_identity` (absent 0); 178247f sweep sensitivity into `precision_method`.
 
 ## Parked: W1 (Jaxley RIM and AFD fits)
 
@@ -78,19 +108,22 @@ held-out sweeps are still unspent (register below).
 ## Where things are
 
 - **Brain code.** `src/wormemu/brain.py` (NEURON brain, sampling), `brain_layers.py` (specs and lumped dynamics of
-  every layer no project has), `brain_structure.py` (Cook, CeNGEN, transmitters, muscle names), `interface.py`
-  (the brain-body contract types). `src/bioemu/ledger.py` (organism-agnostic ledger: labels, priors, `draw`).
-  Tests `tests/test_worm_brain.py`, `tests/test_worm_ledger.py` (11 pass, 3.2 s).
+  every layer no project has, including `sens_proprio`), `brain_structure.py` (Cook, CeNGEN, transmitters, muscle
+  names), `interface.py` (the brain-body contract types). `src/bioemu/ledger.py` (organism-agnostic ledger: labels,
+  priors, `draw`). Tests `tests/test_worm_brain.py`, `tests/test_worm_ledger.py` (12 pass, about 4 s).
 - **Ledger.** `scripts/worm/build_ledger.py` writes `data/worm/model/{mechanisms.yaml, parameters.csv,
-  values/*.csv}` and `docs/worm/ledger.json`. Rebuild after any change to its sources.
-- **Runs.** `scripts/worm/port/brain_runs.py` (`--run ref|port302b|port302c [--no_stim]`) and
-  `plot_brain_runs.py`; summaries, figures and touch effects in `data/worm/brain_runs/bw_*/`. Traces (`run.npz`)
-  are git-ignored; copies on the Mac under `data/worm/brain_runs/` and on backhouse under `~/worm-port/runs/`.
+  values/*.csv}` and `docs/worm/ledger.json`; it reads Fenyves from `data/worm/structure/fenyves2020/` and the
+  sweep from `data/worm/brain_runs/sens_summary.json`. Rebuild after any change to its sources.
+- **Runs.** `scripts/worm/port/brain_runs.py` (`--run ref|port302b|port302c|port302c_rs [--no_stim]
+  [--set PARAM=VALUE]`) and `plot_brain_runs.py`; summaries, figures and touch effects in
+  `data/worm/brain_runs/bw_*/`. Traces (`run.npz`) are git-ignored; copies on the Mac under `data/worm/brain_runs/`
+  and on backhouse under `~/worm-port/runs/` (the sweep in `runs/bw_S01`..`bw_S19`).
 - **backhouse (WSL, user greff).** `~/worm-port/` (venv `.venv`: NEURON 9.0.2; `repo/` synced code, ship with
   `COPYFILE_DISABLE=1 tar czf - --no-xattrs <paths> | ssh backhouse "wsl -d Ubuntu -- tar xzf - -C
   /home/greff/worm-port/repo"`; `runs/`; `BAAIWorm/` and `c302/` clones; job scripts `brainruns_job.sh`,
-  `brainruns_nostim.sh`). Compiled mods at `~/.cache/wormemu/nrnmech/x86_64`. Launch detached with setsid nohup
-  and `sleep 5` before the SSH session closes, or the job dies. The Jaxley track lives in `~/worm-spike/`.
+  `brainruns_nostim.sh`, `sens_queue.sh`). Compiled mods at `~/.cache/wormemu/nrnmech/x86_64`. Launch detached with
+  setsid nohup and `sleep 5` before the SSH session closes, or the job dies. 17:00-22:00 is the cap window: keep it
+  to a few single-thread jobs. The Jaxley track lives in `~/worm-spike/`.
 
 ## Sealed and held-out data register
 
@@ -103,7 +136,8 @@ held-out sweeps are still unspent (register below).
 | Naudin 2022 AIY population voltage-clamp I-V (n 5-7; steady state and peak; `Fig1_IVcurves_AFD_RIM_AIY.xlsx`) | **spent** (W0 spike `fit1`; pipeline test before it). The table was read while writing the pre-registration (n per voltage, windows) | consistency only; the 2 SD band does not discriminate (F-W0-6) |
 | Naudin 2022 RIM and AFD current clamp and I-V (same deposit) | file headers and the voltage-clamp `n` columns viewed. **Training sweeps 0, 2, 4, 6, 8, 10 now in use** (5 Nov 02:14 on: `fit_w1.py` smoke test `w1smoke`, then M1 run `w1m1`; training RMSEs printed). The held-out sweeps are dropped at load (`Vd = Vd[TRAIN]`) and no held-out or voltage-clamp value has been printed, plotted or used. The AIY loader read the whole I-V sheet into memory but used only AIY columns | **held out for W1**, split and bars pre-registered in `docs/worm/W1_RIM_AFD.md` (5 Nov 01:13): train sweeps 0, 2, 4, 6, 8, 10; held out 1, 3, 5, 7, 9 and all voltage clamp. Score once, all models together (see Next) |
 | Nicoletti 2024 published AIY and RIM models (densities, kinetics, code) | seen; kinetics SET the channel library (22 channels); AIY densities SET one start of the spike fit and its baseline; RIM densities used as a port-check configuration (`port2`, 5 Nov) and, as registered, SET one start of `w1rim1` and its published-model baseline | can't validate the library |
-| Randi 2023 functional atlas; Atanas 2023 whole-brain data; Witvliet 2021; Cook 2019; CeNGEN; the neuropeptide connectome | downloaded (`~/worm-data`, MANIFEST); Cook 2019 used as structure (the brain's default wiring since 5 Nov, the ledger's pair counts) and CeNGEN as expression (channel presence, receptor signs, modulator matrices); no activity data read | seed the held-out split (PLAN c.4) before the first fit that uses them |
+| Randi 2023 functional atlas; Atanas 2023 whole-brain data; Witvliet 2021; Cook 2019; CeNGEN; the neuropeptide connectome | downloaded (`~/worm-data`, MANIFEST); Cook 2019 used as structure (the brain's default wiring since 5 Nov, the ledger's pair counts), CeNGEN as expression (channel presence, receptor signs, innexins, modulator matrices) and Fenyves 2020's sign predictions as structure (`receptor_sign`); no activity data read | seed the held-out split (PLAN c.4) before the first fit that uses them |
+| Closed-loop engineering runs (body worker, 5 Nov: seed 0 and `sample_worm(None)` + receptor_sign, 3-5 s) | engineering output only: posture and centroid seen, nothing compared to a recording or scored | not a behaviour test; a crawling check needs its own pre-registered bar |
 | Behaviour corpus (`docs/worm/STATE_OF_THE_ART.md`, about 90 items) | read as a list of items; no outcome scored | seal about a third by seed before any behaviour fit (PLAN c.4, W2) |
 
 ### Fly (paused; carried unchanged from `docs/archive/HANDOFF_fly_2026-11-04.md`)
