@@ -183,3 +183,30 @@ D4 is reported, not scored: if it stays below 30 the full network is bistable an
 in the start-up transient (from v_init -65 mV); if it climbs back to about 188 the depolarised state is the only
 stable one at these strengths. Also reported per run: median and 90th percentile neuron mean V over 1-2 s and the
 neurons sitting above -20 mV in D0 by name.
+
+### Result (runs 2026-11-05 16:56-16:58 CST on backhouse; all measured)
+
+| run | neurons above -20 mV at 6 s | median / 90th pct neuron mean V, 1-2 s (mV) | prediction |
+|---|---|---|---|
+| port302c (base) | 188 | -13.4 / 5.3 | |
+| D0 all x0 | **0** | -53.0 / -46.2 | P1 (< 30) **pass** |
+| D1 chemical x0 | **0** | -55.7 / -49.8 | P2 (< 30) **pass** |
+| D2 gap x0 | **173** | -15.3 / 5.6 | P3 (>= 150) **pass** |
+| D3 chemical x0.1 | 0 | -55.6 / -49.5 | reported |
+| D4 all off 0-1 s, then on | 188 | -13.0 / 4.2 | reported |
+
+**H-syn holds: recurrent chemical excitation holds the network up; the cells themselves rest low** (no isolated
+neuron sits above -20 mV). D4 climbs back to 188 from a settled state, so at these strengths the depolarised state
+is the only stable one, not an accident of the start-up transient. Cutting every chemical weight to a tenth removes
+it entirely. Next: whether the missing inhibition (glutamate-gated Cl and ACh-gated Cl receptors; the transmitter
+rule makes only GABA inhibitory) is the cause, section 4b.
+
+## 4b. Inhibition from receptor identity (pre-registration)
+
+Pre-registered 2026-11-05 16:55 CST, before the run. Base port302c. **D5**: receptor_sign on
+(each pair's sign from the postsynaptic cell's CeNGEN receptor genes for the presynaptic transmitter, a guessed rule
+already in the ledger: 3262 of 3709 pairs have a CeNGEN call, 1125 flip relative to the transmitter rule). Nothing
+else changes. Hypothesis H-inh: the missing receptor-level inhibition is the main cause. Falsifier: D5 has 150 or
+more neurons above -20 mV at 6 s. D5 also gets a matching no-stim run so its touch effect is measured as stim minus
+no-stim. If a published polarity map (Fenyves et al. 2020, PLoS Comput Biol 16:e1007974) proves usable, it is run
+as D6 under the same falsifier, pre-registered by a line here before the run.
