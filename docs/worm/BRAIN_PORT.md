@@ -322,3 +322,36 @@ inhibitory release threshold (100), excitatory release threshold (43), inhibitor
 inhibitory slope (12); NMJ strength and both decay rates move it by 1 or less. These are the numbers whose precision
 matters first. Every run is still a fixed point (no ongoing activity; only S09 has 23 slowly moving neurons): the
 quiet ends are quiet, not rhythmic. Nothing is adopted; the ledger defaults stay at the range midpoints.
+
+## 6. muscle_active: c302 C2's body-wall muscle membrane (pre-registration)
+
+Pre-registered 2026-11-05 17:31 CST, before any run of the patched mods (Director 17:40 order: port a published
+body-wall muscle model, don't write one). Boyle and Cohen 2008 (Biosystems 94:170) has no code we can use; c302 C2's
+`GenericMuscleCell` is that channel set (leak, slow K, fast K, Ca with Ca-dependent inactivation, Ca pool) at c302's
+published fit, and jNeuroML already generated NEURON mods for it when c302 ran as published. Vendored in
+`third_party/c302/` (MIT). BAAIWorm's muscles are the same 5 x 20 um cylinder and are passive (every channel density
+0), so `muscle_active=on` replaces their membrane with c302's, every value from the ledger's `c302_*` rows.
+
+One change to the generated code, numerical only: jNeuroML writes each gate as `x' = rate_x` with the rate computed
+beforehand, so NEURON's cnexp steps it as forward Euler. The Ca activation gate's time constant is 0.1 ms; at
+BAAIWorm's 0.5 ms step that is unstable (the first test went NaN within 3 ms). The patched mods
+(`third_party/c302/mod/`) write `x' = (x_inf - x) / x_tau`, which cnexp integrates exactly; the unchanged files are
+in `third_party/c302/generated/`.
+
+- **M1 (implementation):** at the template, every value the brain sets in the muscle mods equals c302's (the mod
+  default, or for densities and the leak reversal the value in `c302_C2_Full.net.nml`), relative difference under
+  1e-9. Fail = a mapping bug, fixed before anything else runs.
+- **M2 (numerical port check):** one isolated c302 muscle (5 x 20 um, its membrane only), 1 s at 0 pA, then steps of
+  +1, +3, +10, +30 pA for 1 s each. Patched mods at dt 0.5 ms against the unchanged mods at dt 0.025 ms (finer than
+  c302's own 0.05 ms). Bar: the same number of upward crossings of -10 mV (c302's spike threshold) in every step, and
+  mean V over the last 200 ms at 0 pA within 0.5 mV. Reported: largest |dV| and spike-time differences. Falsifier:
+  any step's count differs; then the 0.5 ms step does not hold this muscle, and it needs a substep (reported, not
+  adopted).
+- **M3 (report-only):** resting V and whether the muscle fires all-or-none Ca spikes under the steps. Real body-wall
+  muscle fires Ca-dependent action potentials (Gao and Zhen 2011, PNAS 108:2557; seen literature, not held out).
+  Nothing is fitted to it.
+- **M4 (report-only):** the D8 configuration plus `muscle_active=on`, neural only, 6 s, with its no-stim control:
+  neurons and muscles above -20 mV at 6 s, muscle spikes, touch effect on muscles.
+- **C1 (report-only):** the body worker's 5 s closed loop (`sample_worm(None)`, receptor_sign on) with
+  `muscle_active` off and on: rhythm (activation power above the lowest bin), centroid travel. Not a crawling test;
+  no bar.
