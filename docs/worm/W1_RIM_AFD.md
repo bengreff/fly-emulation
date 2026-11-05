@@ -146,4 +146,25 @@ Reported, not bars: the largest absolute difference per configuration; the resti
 Adoption: if all bars pass and the figure has been viewed, the eight channels become available for W1; nothing
 changes for existing models (R0).
 
+**Q2 result, port2 (scored 2026-11-05 01:57 CST): all bars pass; the eight channels are adopted for W1.**
+Measured, float64, single compartment (`data/worm/port2/score.json`; figure `docs/worm/media/port2.png`, viewed):
+
+| Bar | Result |
+|---|---|
+| B1, every sweep <= 0.01 mV RMS | pass. Each channel alone: 1e-13 to 3e-13 mV, except EGL-2 1.6e-8 and SHK-1 1.1e-7 mV (the same at both dt, so a rounding-level constant difference, not the time step). Published RIM model 2.8e-6 mV (max 1.9e-5 mV). All 21 on: 2.2e-3 mV at dt 0.4, 5.5e-4 at dt 0.1 (max 0.049 mV; the same Ca-pool residual as the earlier 13-channel test, which gives 0.009 mV) |
+| B2, each channel moves the trace >= 1 mV RMS | pass: 4.0 (EGL-36) to 9.6 mV (KQT-3) |
+| R0, default path unchanged <= 1e-9 mV | pass: 0.0 mV for both stored checks |
+
+The first scorer run crashed (it globbed its own `score.json` as a configuration); the scorer was fixed and rerun
+on the same saved traces, and no simulation was rerun.
+
+**Amendment, 2026-11-05 01:58 CST, before any RIM or AFD value was opened: EXP-2 joins the AFD model.** Section 3
+said EXP-2 has no kinetics in the library. That was wrong: Nicoletti 2024 ships `exp2.mod` (K current, m h^2).
+The registered rule ("CeNGEN genes with kinetics in the extended library") therefore puts EXP-2 in AFD (CeNGEN
+threshold 2: 129.8; RIM: 0, so RIM is unchanged), bounded [1e-7, UB] like the other threshold-2 genes. The
+sentence about the leak absorbing EXP-2 no longer applies. It is ported (`exp2` in `wormemu.nicoletti`) and checked
+by run `port2b`, pre-registered here with port2's bars: `iso_exp2` (leak 0.5 nS plus EXP-2 1.0 nS) and `all22`
+(all21 plus EXP-2 at 0.3 nS) must pass B1 at both dt; `iso_exp2` must pass B2 (>= 1 mV against `leak_only`);
+R0 must pass again.
+
 Q3: not started.
