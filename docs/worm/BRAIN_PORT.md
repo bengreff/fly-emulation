@@ -219,3 +219,23 @@ rule 2113 of 6301 placed chemical synapses are inhibitory (278 under the transmi
 moves 50 unstimulated neurons by >= 1 mV (3 by >= 5 mV) and 21 muscles (port302c: 9, 1, 0), still led by the
 posterior-touch path (LUA, PVR, PVC, ALN). G1 and G2 pass. Figure `data/worm/brain_runs/bw_D5/traces.png` (viewed).
 The rule is our own guess (receptor genes from CeNGEN, label guessed); a published polarity map is next.
+
+## 4c. The ledger's own defaults after the template fix, and the published sign map (pre-registration)
+
+Pre-registered 2026-11-05 17:04 CST, before the runs. Two ledger changes since D5 (commit 5b6a717): (a) guessed
+templates no longer sit on a range bound (the Director's sampling fix): per-pair strengths go to the range
+log-midpoint, 0.447 nS per EM synapse for chemical and NMJ (was 0.1, clipped), 0.224 nS per EM gap junction (was
+0.05, clipped), and the global synapse rows at a bound go to the midpoint (exc and inh rate k 0.117 per ms, i.e.
+8.6 ms decay, was 0.2 and 0.033; exc reversal 0 mV, was 10); (b) receptor_sign on now takes Fenyves et al. 2020's
+published polarity where it is + or - (1705 of 3709 pairs), our CeNGEN rule elsewhere. D6 (Fenyves on the old
+templates) is dropped: the old templates are no longer a ledger state. The sign effect is D7 vs D8 at equal
+strengths. Base port302c (the ledger defaults; every lumped layer off), no strength scaling.
+
+- **D7**: receptor_sign off (transmitter rule). Prediction P4 (H-strength: stronger synapses re-raise saturation):
+  150 or more neurons above -20 mV at 6 s.
+- **D8**: receptor_sign on (Fenyves first). Falsifier for H-inh at the new strengths: 150 or more above -20 mV.
+- Both get a matching no-stim run; the touch effect is stim minus no-stim.
+
+No strength is changed in response to these results (Thursday's bar is complete, not behaving). If D8 is saturated,
+the closed loop goes ahead on the least-saturated ledger-default configuration, labelled, and saturation goes in the
+ledger as an open question.
