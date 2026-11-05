@@ -527,7 +527,15 @@ included, with the pre-registered definitions unchanged.
   give the same phase. With seed 0 the template's first posterior contraction starts at 16.3 s (derived from the
   seeded draw and the 45 s period): 5 s and 10 s runs see none, and 20 s runs see it at 16.3-18.3 s and the anterior
   one at 19.3-20.3 s.
+- **Post hoc look at the saved voltages (descriptive, not a pre-registered test; mean over 1-5 s).** In the control
+  the forward and backward command interneurons are depolarised together: AVA -2.1 mV, AVB -4.3 mV, AVD -6.5 mV.
+  Real worms switch between the two states. Every motor class sits high as well (DA -11.6, AS -9.0, DD -8.6, VD
+  -10.8 mV), so excitatory and inhibitory motor neurons are on together and the body co-contracts. Only the B-type
+  motor neurons move with the body (median SD 1.2 mV DB, 1.5 mV VB; largest 3.5 mV), which is the proprioceptive
+  input arriving, but a few mV does not flip them. In S01 everything sits near -52 mV and the B-types move more
+  (VB median SD 4.3 mV, largest 8.1 mV), still with no alternation.
 - **Verdict:** neither the CeNGEN channel sets nor the four saturation-ending range ends give a rhythm in the closed
   loop. The question moves to the rhythm generator itself. Candidates for section 9, to be checked against the
   papers before pre-registration: the B-type proprioceptive coupling and its gain (Wen et al. 2012), A-type intrinsic
-  oscillation (Gao et al. 2018) and descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS).
+  oscillation (Gao et al. 2018), descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS), and what keeps AVA
+  and AVB from being on together (the post hoc look above).
