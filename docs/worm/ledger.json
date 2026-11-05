@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:03 CST",
+ "generated_at": "2026-11-05 17:07 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -95,6 +95,16 @@
    }
   }
  },
+ "open_questions": [
+  {
+   "id": "saturation",
+   "since": "2026-11-05",
+   "where": "docs/worm/BRAIN_PORT.md sections 4-4c",
+   "question": "Why does the neural-only network settle into a fixed depolarised state? At the ledger defaults (wiring=cook, strengths at the range log-midpoint) 206 of 302 neurons sit above -20 mV at 6 s with transmitter signs (D7) and 100 with receptor_sign on (D8, Fenyves first). Localised to recurrent chemical excitation (isolated cells rest at -53 to -56 mV); receptor-level inhibition halves it but does not remove it.",
+   "candidates": "per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
+   "status": "open; nothing tuned. The closed loop runs on D8's configuration, labelled"
+  }
+ ],
  "by_grain": {
   "cell": {
    "derived": 282,
@@ -565,7 +575,7 @@
    "neutral": "baaiworm = as published (port302a)",
    "default": "cook",
    "source": "Cook et al. 2019 SI 5 (data/worm/structure); BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) config2detailed",
-   "notes": "Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section 3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges, Cook has 956 pairs from 162 neurons) and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for all of it: BAAIWorm's sites where it placed any, else one site on the nearest segment pair",
+   "notes": "Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section 3; it saturated more than baaiworm on the old templates: 188 vs 141 neurons above -20 mV at 6 s; see open_questions: saturation). BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges, Cook has 956 pairs from 162 neurons) and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for all of it: BAAIWorm's sites where it placed any, else one site on the nearest segment pair",
    "absent_reason": "",
    "numbers": 11260,
    "by_label": {

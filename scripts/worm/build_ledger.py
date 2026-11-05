@@ -60,6 +60,18 @@ RECEPTORS = {
 NANODOMAIN = {"gsc", "r", "dca", "kb", "btot", "canci"}   # shared by the four slo mods: one row each
 CONSTANTS = {"FARADAY"}
 STRUCTURE_ROWS = ("morph_", "wire_")
+OPEN_QUESTIONS = [
+    dict(id="saturation", since="2026-11-05", where="docs/worm/BRAIN_PORT.md sections 4-4c",
+         question="Why does the neural-only network settle into a fixed depolarised state? At the ledger defaults "
+                  "(wiring=cook, strengths at the range log-midpoint) 206 of 302 neurons sit above -20 mV at 6 s with "
+                  "transmitter signs (D7) and 100 with receptor_sign on (D8, Fenyves first). Localised to recurrent "
+                  "chemical excitation (isolated cells rest at -53 to -56 mV); receptor-level inhibition halves it "
+                  "but does not remove it.",
+         candidates="per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded "
+                    "release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); "
+                    "missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
+         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled"),
+]
 
 rows: list[dict] = []
 mechs: list[dict] = []
@@ -355,7 +367,8 @@ def build_synapses(mods, st, conns):
          f"Cook et al. 2019 SI 5 (data/worm/structure); {BAAI_SRC} config2detailed", toggle="wiring",
          neutral="baaiworm = as published (port302a)", default="cook",
          notes="Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section "
-               "3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). "
+               "3; it saturated more than baaiworm on the old templates: 188 vs 141 neurons above -20 mV at 6 s; see "
+               "open_questions: saturation). "
                "BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 "
                "synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical "
                "and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within "
@@ -680,7 +693,7 @@ def export(led, extra):
                                placeholder=phys.get("guessed", 0), gap=phys.get("absent", 0),
                                must_fill=phys.get("guessed", 0) + phys.get("absent", 0)),
         source_by_fill_kind={k: {sp: dict(v) for sp, v in d.items()} for k, d in src_fill.items()},
-        by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
+        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
     (ROOT / "docs/worm/ledger.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
