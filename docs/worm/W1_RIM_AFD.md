@@ -184,4 +184,25 @@ is a test density only; AFD's EXP-2 density is fitted inside the registered boun
 nine channels (CCA-1, EGL-2, EGL-36, IRK, KQT-3, KVS-1, SHK-1, UNC-103, EXP-2) are available to W1 through
 `make_membrane(lib, channels=[...])`; the default 13-channel membrane is unchanged (R0).
 
-Q3: not started.
+**Q3, pre-registered 2026-11-05 02:09 CST (run `kcnl1`), before any check ran.** Patch: in the local copy of the
+mods (`scripts/worm/patch_nicoletti_mods.sh`), `caintra1`'s `calcium` becomes a RANGE variable and `kcnl` reads it
+through a POINTER set per segment (`h.setpointer(seg._ref_calcium_caintra1, "calcium_caintra1", seg.kcnl)`), as
+was done for the BK coupling. Check (`scripts/worm/check_kcnl.py`), NEURON 9.0.2 against Jaxley, float64, steps
+-15 to +35 pA from 1 to 6 s, 8 s runs, v_init -65 mV, eca pinned at 60, ek -80, dt 0.4 and 0.1 ms. Membrane: the
+published RIM densities (`rim_pub`, S/cm2) plus KCNL, SLO-1 coupled to EGL-19 and SLO-2 coupled to UNC-2, each at
+1e-3 S/cm2 (guessed test densities), with the `caintra1` pool given each segment's own surface and volume.
+Cells: `S`, one compartment with the RIM geometry; `M`, a 300 um x 0.3 um cable in 3 compartments, current
+injected in the first (thin, so the compartments' voltages and Ca differ); `M0`, `M` without KCNL. Bars, all must
+pass:
+
+- **K0, published model unchanged:** `S` on the patched mods equals `S` on the published mods, max absolute
+  difference <= 1e-9 mV, both dt.
+- **K1, match:** patched NEURON vs Jaxley, `S`, `M` and `M0`, every compartment and every sweep, RMS <= 0.01 mV,
+  both dt.
+- **K2, the check can see KCNL:** patched NEURON `M` vs `M0` at the injected compartment, mean RMS over sweeps
+  (dt 0.4) >= 1 mV.
+
+Reported, not a bar: the published (unpatched) mods on `M` against the patched ones, i.e. the size of the GLOBAL
+defect in this cell. If it is under 0.01 mV, this check shows the patch is harmless here but not that it was
+needed. Adoption: if all bars pass and the figure is viewed, Q3 passes and the patched mods are the NEURON
+reference for any multi-compartment RIM or AFD cross-check.
