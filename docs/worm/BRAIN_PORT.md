@@ -222,7 +222,7 @@ The rule is our own guess (receptor genes from CeNGEN, label guessed); a publish
 
 ## 4c. The ledger's own defaults after the template fix, and the published sign map (pre-registration)
 
-Pre-registered 2026-11-05 17:04 CST, before the runs. Two ledger changes since D5 (commit 5b6a717): (a) guessed
+Pre-registered 2026-11-05 17:03 CST, before the runs. Two ledger changes since D5 (commit 5b6a717): (a) guessed
 templates no longer sit on a range bound (the Director's sampling fix): per-pair strengths go to the range
 log-midpoint, 0.447 nS per EM synapse for chemical and NMJ (was 0.1, clipped), 0.224 nS per EM gap junction (was
 0.05, clipped), and the global synapse rows at a bound go to the midpoint (exc and inh rate k 0.117 per ms, i.e.
@@ -239,3 +239,25 @@ strengths. Base port302c (the ledger defaults; every lumped layer off), no stren
 No strength is changed in response to these results (Thursday's bar is complete, not behaving). If D8 is saturated,
 the closed loop goes ahead on the least-saturated ledger-default configuration, labelled, and saturation goes in the
 ledger as an open question.
+
+### Result D7, D8 (runs finished 2026-11-05 17:04 CST on backhouse, file times; all measured)
+
+| Run | neurons above -20 mV at 6 s | median / p90 neuron mean 1-2 s (mV) | inhibitory chemical synapses placed | touch moves (>= 1 mV / >= 5 mV / muscles) | bar |
+|---|---|---|---|---|---|
+| D5 (old templates, our CeNGEN signs) | 64 | -36.5 / -12.7 | 2113 of 6301 | 50 / 3 / 21 | reported earlier |
+| **D7** (new templates, transmitter signs) | **206** | -11.2 / -2.0 | 278 of 6301 | 7 / 0 / 0 | P4 (>= 150) **holds** |
+| **D8** (new templates, Fenyves first) | **100** | -26.9 / -8.1 | 1946 of 6301 | 15 / 3 / 0 | falsifier (>= 150) **not met: H-inh holds** |
+
+Moving the strengths off the bottom of their ranges (4.5x for most synapses) re-raises saturation, as predicted:
+the transmitter-sign network now has 206 neurons above -20 mV. Published receptor-level signs halve it (100), but
+the network is still far from a resting nervous system: in both runs it settles within 0.2 s into a fixed state
+(3 neurons in D8 and none in D7 vary by more than 2 mV SD over 4-6 s), and the muscles sit tonically depolarised
+(D8: 40 of 95 above -20 mV, the highest at the new 0 mV excitatory reversal). Touch reaches 15 neurons in D8, led by
+LUA, PVN, PQR and PVR; in D8 three of them (LUAL, PVNL, PQR) keep a slow oscillation of about 1 s period after the
+input ends. No muscle moves by 1 mV in either run. G1 and G2 pass in both. Figures `bw_D7/traces.png`,
+`bw_D8/traces.png` (viewed).
+
+**Where this leaves saturation (open):** with every value at its ledger default, the least-saturated configuration
+is D8 (receptor_sign on). Neither run is tuned and none is adopted. Saturation goes in the ledger as an open question:
+at literature-midpoint strengths, recurrent excitation through the Cook wiring holds a third of the neurons above
+-20 mV even with published inhibition.

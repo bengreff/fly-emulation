@@ -106,7 +106,7 @@ adopted (gate, battery run, viewed figure).
 | `literature_overrides` | on | off = BAAIWorm as published (the port302a reference) |
 | `wiring` | cook | `cook` = every Cook 2019 pair at per-EM strengths (adopted 5 Nov, port302c); `baaiworm` = BAAIWorm's construction as published |
 | `sign_rule` | transmitter | `allexc` = BAAIWorm's all-excitatory rule |
-| `receptor_sign` | off | on = sign per pair from CeNGEN receptor expression (guessed rule; flips 1125 of 3709 pairs) |
+| `receptor_sign` | off | on = sign per pair from Fenyves et al. 2020's published polarity where it is + or - (1705 of 3709 pairs), else our CeNGEN receptor rule (guessed), else the transmitter rule; flips 1039 pairs relative to the transmitter rule |
 | `bwm_coupling` | off | on = Cook's 96 muscle-muscle gap pairs at 5 nS each (guessed) |
 | `expression_map` | off | on = CeNGEN gates channel presence |
 | `muscle_active` | off | on raises NotImplementedError (c302 muscle channels not in the NEURON build yet) |
