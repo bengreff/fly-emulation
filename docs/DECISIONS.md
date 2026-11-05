@@ -6145,3 +6145,13 @@ EXP-2 failed its must-differ bar at 1 nS in `port2b` and was not adopted from th
 guessed test density) passed. An amendment before any RIM or AFD data was opened put EXP-2 in the AFD model
 (it does have kinetics; the pre-registration had said otherwise). Q1 is done; Q3 (the KCNL / caintra1 patch) is
 the last prerequisite before `w1rim1` / `w1afd1`.
+
+## Worm W1 Q3 not passed; only the passive M1 controls launched (5 Nov 2026, 02:27 CST)
+
+The pre-registered Q3 check `kcnl1` failed K0 and K1 (W1_RIM_AFD.md; F-W0-12; figure viewed), so the per-segment
+KCNL/caintra1 patch is not adopted and Q3 is open. Under the Director's rule for the night (if Q3 is not passing
+by about 02:50, launch only the fits that do not depend on it, or none), only M1 (passive: leak, Cm, Ra) was
+launched for RIM and AFD on backhouse (run `w1m1`, 16 starts, 300 iterations, 2 cores each). The full fits
+`w1rim1`/`w1afd1` and the M2/M3 controls contain KCNL and are held until `kcnl2` passes. M1 is not scored alone.
+An opt-in `make_membrane(..., ca_lag=True)` (NEURON's Ca-pool step order) is in the code, off by default and
+bit-identical when off; it is a candidate for `kcnl2`, not adopted.

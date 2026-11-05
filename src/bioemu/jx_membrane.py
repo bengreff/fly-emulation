@@ -6,12 +6,16 @@ Library interface (see wormemu.nicoletti): CHANNELS, STATES, all_rates(v, ca), c
 currents(v, st, g, e_leak, e_ca), ca_pool_step(ca, i_ca, sv, dt), CA_EQ_M. Optional: states_for(channels), so
 make_membrane(lib, channels=[...]) builds a mechanism with only those channels and the gates they need (the
 default, lib.CHANNELS, is unchanged).
+
+ca_lag=True (opt-in, run kcnl2) uses NEURON's step order for the Ca pool: the pool takes i_ca at the previous
+step's voltage (NEURON's nrn_state reads the ica stored by nrn_cur), and the Ca-gated gates (KCNL) see the
+updated pool (caintra1 runs before kcnl in nrn_state). Off: the order of the first port, bit-identical.
 """
 import jax.numpy as jnp
 from jaxley.channels import Channel
 
 
-def make_membrane(lib, name="Mem", channels=None):
+def make_membrane(lib, name="Mem", channels=None, ca_lag=False):
     chans = list(lib.CHANNELS if channels is None else channels)
     states = lib.STATES if channels is None else lib.states_for(chans)
     want = set(states)
@@ -28,6 +32,8 @@ def make_membrane(lib, name="Mem", channels=None):
             self.channel_params[f"{p}_eCa"] = lib.E_CA  # Ca reversal (mV)
             self.channel_states = {f"{p}_{s}": 0.0 for s in states}
             self.channel_states[f"{p}_ca"] = lib.CA_EQ_M
+            if ca_lag:
+                self.channel_states[f"{p}_vprev"] = -65.0
             self.current_name = f"i_{p}"
 
         def _st(self, states):
@@ -41,16 +47,21 @@ def make_membrane(lib, name="Mem", channels=None):
         def update_states(self, states, dt, v, params):
             p = self._name
             st = self._st(states)
-            r, e, u = lib.all_rates(v, st["ca"])
-            r.update(lib.coupled_rates(v, st, e, u, params[f"{p}_eCa"], want))
             new = {}
+            if ca_lag:
+                _, i_ca = lib.currents(states[f"{p}_vprev"], st, self._g(params), params[f"{p}_eL"], params[f"{p}_eCa"])
+                new[f"{p}_ca"] = lib.ca_pool_step(st["ca"], i_ca, params[f"{p}_sv"], dt)
+                new[f"{p}_vprev"] = v
+            r, e, u = lib.all_rates(v, new[f"{p}_ca"] if ca_lag else st["ca"])
+            r.update(lib.coupled_rates(v, st, e, u, params[f"{p}_eCa"], want))
             for s in states_:
                 if s == "ca":
                     continue
                 inf, tau = r[s]
                 new[f"{p}_{s}"] = inf + (st[s] - inf) * jnp.exp(-dt / tau)
-            _, i_ca = lib.currents(v, st, self._g(params), params[f"{p}_eL"], params[f"{p}_eCa"])
-            new[f"{p}_ca"] = lib.ca_pool_step(st["ca"], i_ca, params[f"{p}_sv"], dt)
+            if not ca_lag:
+                _, i_ca = lib.currents(v, st, self._g(params), params[f"{p}_eL"], params[f"{p}_eCa"])
+                new[f"{p}_ca"] = lib.ca_pool_step(st["ca"], i_ca, params[f"{p}_sv"], dt)
             return new
 
         def compute_current(self, states, v, params):
@@ -65,6 +76,9 @@ def make_membrane(lib, name="Mem", channels=None):
             st = {s: r[s][0] for s in r}
             st.update({"egl19_m": e[0], "unc2_m": u[0], "ca": ca})
             st.update({s: val[0] for s, val in lib.coupled_rates(v, st, e, u, params[f"{p}_eCa"], want).items()})
-            return {f"{p}_{s}": st[s] for s in states_}
+            out = {f"{p}_{s}": st[s] for s in states_}
+            if ca_lag:
+                out[f"{p}_vprev"] = v
+            return out
 
     return Membrane

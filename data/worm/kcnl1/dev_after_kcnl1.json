@@ -1,0 +1,19 @@
+{
+ "label": "development diagnostics after kcnl1 was scored; not a pre-registered run, no bar applies",
+ "date": "2026-11-05 02:17-02:25 CST",
+ "outputs_on_backhouse": "~/worm-spike/runs/kcnl1_dev/ (npz not copied; 7-280 MB each)",
+ "measured_mV": {
+  "ca_lag_jaxley_vs_patched_neuron_worst_rms": {"S_dt0.4": 0.00274, "M_dt0.4": 0.417, "M_dt0.1": 0.108},
+  "ca_lag_M_dt0.4_by_window_worst_rms": {"0-1000ms": 0.00018, "1000-1100ms": 0.033, "1100-6000ms": 0.531, "6000-8000ms": 0.047},
+  "ca_lag_M_dt0.4_largest_abs": {"mV": 1.77, "sweep": 7, "compartment": 2, "t_ms": 5949.6},
+  "default_jaxley_vs_patched_neuron_worst_rms_kcnl1": {"S_dt0.4": 0.0160, "M_dt0.4": 1.95, "M_dt0.1": 0.64},
+  "against_patched_neuron_dt0.01_M_worst_rms": {"neuron_dt0.4": 1.67, "jaxley_default_dt0.4": 2.16, "neuron_dt0.1": 0.46, "jaxley_default_dt0.1": 1.07},
+  "K0_with_calcium_reset_S_max_abs": {"dt0.4": 3.84e-06, "dt0.1": 2.56e-06},
+  "default_path_after_ca_lag_edit_vs_kcnl1_jx_max_abs": {"S_dt0.4": 0.0, "M_dt0.4": 0.0}
+ },
+ "notes": [
+  "ca_lag: Jaxley Ca pool takes i_ca at the previous step's v and KCNL sees the updated pool (NEURON's nrn_cur/nrn_state order; mechanisms register alphabetically, caintra1 before kcnl). Cuts the mismatch 4-6x but M stays 40x over the 0.01 mV bar; the residual grows during the step and peaks in the far compartment.",
+  "K0 is not a calcium carryover: resetting caintra1.calcium leaves it unchanged. Inferred cause: unc2 registers after slo1unc2/slo2unc2, so their INITIAL reads UNC-2 gates left from the previous run through the new per-segment pointer, while the published-mods harness resets the GLOBAL copies to 0. Sweep 0 is identical, later sweeps differ.",
+  "Both schemes at dt 0.4 ms are 1.7-2.2 mV RMS from the dt 0.01 ms solution on this thin cable with KCNL at 1e-3 S/cm2 (guessed test density), so the time step itself is a 2 mV-scale error here."
+ ]
+}

@@ -206,3 +206,43 @@ Reported, not a bar: the published (unpatched) mods on `M` against the patched o
 defect in this cell. If it is under 0.01 mV, this check shows the patch is harmless here but not that it was
 needed. Adoption: if all bars pass and the figure is viewed, Q3 passes and the patched mods are the NEURON
 reference for any multi-compartment RIM or AFD cross-check.
+
+**Q3 result, kcnl1 (scored 2026-11-05 02:11 CST): K0 and K1 fail, K2 passes, so Q3 does not pass and the patch is
+not adopted from this run.** Measured, float64 (`data/worm/kcnl1/score.json`; figure `docs/worm/media/kcnl1.png`,
+viewed):
+
+| Bar | Result |
+|---|---|
+| K0, patched = published on `S`, <= 1e-9 mV | fail: 3.8e-6 mV (dt 0.4), 2.6e-6 mV (dt 0.1); sweep 0 identical, later sweeps differ |
+| K1, Jaxley = patched NEURON, <= 0.01 mV RMS | fail: `S` 0.016 (dt 0.4) and 0.004 (dt 0.1); `M` 1.95 (max 5.2) and 0.64; `M0` 2.4e-4 and 1.8e-4 |
+| K2, KCNL moves `M` >= 1 mV | pass: 31.9 mV |
+
+Reported: the published (GLOBAL) mods differ from the patched ones on `M` by up to 6.55 mV RMS (max 15.1 mV) at the
+depolarising steps, so the patch is needed for any multi-compartment NEURON reference; this run does not show the
+patched NEURON and Jaxley agree. `M0` (no KCNL) matches, so the K1 failure sits in the Ca pool to KCNL link.
+
+Development after scoring (not a pre-registered run; `data/worm/kcnl1/dev_after_kcnl1.json`):
+
+- Jaxley's Ca pool took i_ca at the current step's voltage and KCNL read the pool before its update; NEURON's
+  `caintra1` reads the ica stored at the previous voltage, and `kcnl` (registered after `caintra1`) reads the
+  updated pool. An opt-in `make_membrane(..., ca_lag=True)` reproduces that order. It cuts the mismatch 4-6x (`S`
+  0.0027 mV, `M` 0.42 mV at dt 0.4, 0.11 at dt 0.1) but `M` stays 40x over the bar. The residual grows during the
+  step and peaks in the far compartment (1.77 mV at 5.95 s), so another difference remains, not yet found. Default
+  path unchanged (0.0 mV against kcnl1's Jaxley traces).
+- K0 is not calcium carryover (resetting `calcium` changes nothing). Inferred: `unc2` registers after
+  `slo1unc2`/`slo2unc2`, so their INITIAL reads the previous run's UNC-2 gates through the new pointer, while the
+  published-mods harness resets the GLOBAL copies to 0. A harness reset of the UNC-2 gates is the candidate fix.
+- Against NEURON at dt 0.01 ms, NEURON at dt 0.4 is 1.67 mV RMS off on `M` and Jaxley 2.16 mV (dt 0.1: 0.46 and
+  1.07). In this thin cable with KCNL at the guessed 1e-3 S/cm2, the 0.4 ms time step is itself a 2 mV-scale
+  error. The fits run at dt 0.4; whether that matters at fitted densities is open.
+
+**Launch, 2026-11-05 02:21 CST.** Q3 did not pass by the 02:50 cutoff, so only fits that cannot depend on it were
+launched: **M1 (passive) for RIM and AFD** (run `w1m1`), which has no Ca channel, Ca pool or KCNL. The full fits
+`w1rim1`/`w1afd1`, M2 and M3 all contain KCNL and are held until a new pre-registered check (`kcnl2`) passes.
+M1 alone is not scored: per section 5 it only serves to make the held-out bars informative, so it is scored once,
+together with the full fits.
+
+**Correction, 2026-11-05 02:25 CST:** the Q2 text above says EGL-36, KQT-3, KVS-1 and UNC-103 have no published
+density in any Nicoletti 2024 neuron. That is wrong for UNC-103: `AVAR_simulation.py` gives 0.0481669 nS (on
+1121.79e-8 cm2, about 4.3e-6 S/cm2). The other three stand. It changes nothing scored (the 1.0 nS was a test
+density) or the bounds (`fit_w1.py` gives every K channel the K-class UB, 1.52e-2 S/cm2, unchanged by this).

@@ -2801,5 +2801,27 @@ pre-registration and results in `docs/worm/SPIKE.md`.
 - **Mod-file quirks the port reproduces on purpose:** CCA-1's `hinf(m)` is called with m but reads the global v,
   so it is hinf(v); IRK labels its gbar nS/cm2 but uses it as S/cm2; UNC-103 and EXP-2 time constants are
   products of two sigmoids. CCA-1 current enters the Ca pool with EGL-19 and UNC-2 (`caintra1` reads total ica).
-- **No published density** for EGL-36, KQT-3, KVS-1 or UNC-103 in any Nicoletti 2024 neuron model; W1 fits them
-  inside its registered bounds.
+- **No published density** for EGL-36, KQT-3 or KVS-1 in any Nicoletti 2024 neuron model; W1 fits them inside its
+  registered bounds. (Corrected 5 Nov 02:25: UNC-103 does have one, in AVAR only, 0.0481669 nS on 1121.79e-8 cm2,
+  about 4.3e-6 S/cm2, derived.)
+
+### F-W0-12: the per-segment KCNL Ca link does not yet match NEURON; dt 0.4 ms is itself a 2 mV error there (5 Nov, 02:26 CST)
+- **Pre-registered check `kcnl1` fails** (W1_RIM_AFD.md, Q3; `data/worm/kcnl1/`; measured, float64). On a 300 um x
+  0.3 um cable in 3 compartments with KCNL, SLO-1(EGL-19) and SLO-2(UNC-2) at 1e-3 S/cm2 (guessed test densities)
+  on the published RIM membrane, Jaxley differs from NEURON on the patched mods by up to 1.95 mV RMS (max 5.2 mV)
+  at dt 0.4 and 0.64 mV at dt 0.1, against a 0.01 mV bar. Without KCNL the same cable matches (2.4e-4 mV), so the
+  gap is in the Ca pool to KCNL link. One compartment: 0.016 mV.
+- **The patch is needed:** the published GLOBAL `calcium_caintra1` changes the same cable by up to 6.55 mV RMS
+  (max 15.1 mV) at depolarising steps against the per-segment version (measured).
+- **Step order (development, measured):** Jaxley updated the pool with i_ca at the new voltage and fed KCNL the old
+  pool; NEURON's `caintra1` uses the ica stored at the previous voltage and `kcnl` (registered after it) reads the
+  updated pool. Matching that order (`ca_lag=True`, opt-in) cuts the gap 4-6x (cable 0.42 mV at dt 0.4) but not
+  to the bar; the rest grows during the step and peaks in the far compartment. Not yet explained.
+- **Time step (measured):** against NEURON at dt 0.01 ms, NEURON at dt 0.4 is 1.67 mV RMS off on that cable and
+  Jaxley 2.16 mV. With strong KCNL in thin neurites, 0.4 ms is too coarse for 0.01 mV agreement between any two
+  first-order schemes; the right comparison may be each code against its own converged solution.
+- **Run-to-run carryover in the patched NEURON harness (inferred):** `unc2` registers after `slo1unc2`/`slo2unc2`,
+  so their INITIAL reads UNC-2 gates left by the previous run (sweep 0 identical, later sweeps differ by 4e-6 mV).
+  Harmless in size, but it fails a 1e-9 mV equality bar.
+- **What it means:** W1's full RIM and AFD fits, which include KCNL, wait for a passing re-check (`kcnl2`). Only the
+  passive M1 controls were launched on 5 Nov.
