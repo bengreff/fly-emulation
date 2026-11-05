@@ -1,15 +1,15 @@
-element,value,label,source
-serotonin>ser-1,1000,guessed,template guess
-serotonin>ser-4,1000,guessed,template guess
-serotonin>ser-5,1000,guessed,template guess
-serotonin>ser-7,1000,guessed,template guess
-dopamine>dop-1,1000,guessed,template guess
-dopamine>dop-2,1000,guessed,template guess
-dopamine>dop-3,1000,guessed,template guess
-dopamine>dop-4,1000,guessed,template guess
-octopamine>octr-1,1000,guessed,template guess
-octopamine>ser-3,1000,guessed,template guess
-octopamine>ser-6,1000,guessed,template guess
-tyramine>ser-2,1000,guessed,template guess
-tyramine>tyra-2,1000,guessed,template guess
-tyramine>tyra-3,1000,guessed,template guess
+element,value,label,source,source_project
+serotonin>ser-1,1000,guessed,template guess,ours
+serotonin>ser-4,1000,guessed,template guess,ours
+serotonin>ser-5,1000,guessed,template guess,ours
+serotonin>ser-7,1000,guessed,template guess,ours
+dopamine>dop-1,1000,guessed,template guess,ours
+dopamine>dop-2,1000,guessed,template guess,ours
+dopamine>dop-3,1000,guessed,template guess,ours
+dopamine>dop-4,1000,guessed,template guess,ours
+octopamine>octr-1,1000,guessed,template guess,ours
+octopamine>ser-3,1000,guessed,template guess,ours
+octopamine>ser-6,1000,guessed,template guess,ours
+tyramine>ser-2,1000,guessed,template guess,ours
+tyramine>tyra-2,1000,guessed,template guess,ours
+tyramine>tyra-3,1000,guessed,template guess,ours

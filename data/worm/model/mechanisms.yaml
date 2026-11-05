@@ -6,7 +6,8 @@
   neutral: off = BAAIWorm values as published
   default: 'on'
   source: docs/worm/research/param_ranges.csv
-  notes: clips neuron cm (A1), leak reversal (A5), Ra (A6), muscle leak reversal (F1), excitatory synapse reversal (B5), synaptic decay (B3) and gap conductance (C4); clipped elements are labelled guessed
+  notes: clips neuron cm (A1), leak reversal (A5), Ra (A6), muscle leak reversal (F1), excitatory synapse reversal (B5), synaptic decay (B3), conductance per EM synapse (B4) and per EM gap junction (C4;
+    C4 itself is guessed, checked against the measured pair coupling C2); clipped elements are labelled guessed. Also fixes the Ca units bug (ca_pool notes) and sets celsius 20
   absent_reason: ''
 - id: passive
   name: Passive membrane (soma and neurite)
@@ -26,7 +27,8 @@
   neutral: ''
   default: 'on'
   source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
-  notes: 'BAAIWorm muscles are passive (all channel densities 0); 96 cells, the interface uses 95 (MCVL24 is dropped: the real worm has no VL24)'
+  notes: 'BAAIWorm muscles are passive (all channel densities 0). BAAIWorm builds 96 cells; the model uses 95 (MCVL24 dropped: the worm has no ventral-left 24). Element names are interface.BWM_NAMES (brain_structure.bwm_name:
+    MCDL01 -> dBWML1, checked against Cook 2019 NMJ edges)'
   absent_reason: ''
 - id: ch_shl1
   name: shl1 channel (shl-1)
@@ -216,11 +218,12 @@
   neutral: ''
   default: 'on'
   source: BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)
-  notes: 'cai is in uM in the mod but NEURON''s Nernst treats cai as mM, so eca sits near +44 mV at rest instead of about +130 mV (measured on backhouse: eca 41.2 mV at cai 0.065). Ported as is; the ions
-    row cao records the outside concentration'
+  notes: 'units bug as published: cai is in uM in the mod but NEURON''s Nernst reads it as mM against cao 2 mM, so eca sits near +41 mV at rest instead of about +130 mV (measured on backhouse: eca 41.2
+    mV at cai 0.065). Fixed under literature_overrides (known value, literature wins): the outside Ca is entered as 2000 (uM, the same units as cai), cai starts at caeq 0.05 uM, celsius 20; eca then follows
+    Nernst at about +130 mV at rest (derived). literature_overrides off = as published'
   absent_reason: ''
 - id: ions
-  name: Ion reversal potentials and outside Ca
+  name: Ion reversal potentials, outside Ca, temperature
   layer: cell
   status: have
   toggle: ''
@@ -260,13 +263,26 @@
   notes: ''
   absent_reason: ''
 - id: wiring
-  name: Connectome and BAAIWorm's construction (contact counts -> placed synapses on segments)
+  name: 'Connectome: Cook et al. 2019, every pair (wiring=cook), or BAAIWorm''s construction as published (wiring=baaiworm: tanh-compressed counts placed on segments in contact)'
   layer: synapse
   status: have
-  toggle: ''
-  neutral: ''
-  default: 'on'
-  source: Cook et al. 2019 SI 5 via BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) config2detailed
+  toggle: wiring
+  neutral: baaiworm = as published (port302a)
+  default: baaiworm
+  source: Cook et al. 2019 SI 5 (data/worm/structure); BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) config2detailed
+  notes: 'BAAIWorm''s neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical
+    and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within 1 um). Its neuron-muscle table is its own (552 binary pairs, 76 motor neurons; 337 are Cook edges,
+    Cook has 956 pairs from 162 neurons) and it adds 175 muscle-to-neuron feedback synapses that are not anatomical (Cook has none; the sens_proprio layer covers proprioception). wiring=cook uses Cook for
+    all of it: BAAIWorm''s sites where it placed any, else one site on the nearest segment pair'
+  absent_reason: ''
+- id: bwm_coupling
+  name: Gap junctions between neighbouring body-wall muscles (UNC-9), Cook 2019 pairs
+  layer: muscle
+  status: have
+  toggle: bwm_coupling
+  neutral: off (BAAIWorm and c302 have no muscle coupling)
+  default: 'off'
+  source: Cook et al. 2019 pairs; strength guessed inside Liu et al. 2013 (F11)
   notes: ''
   absent_reason: ''
 - id: syn_sign
@@ -280,15 +296,16 @@
   notes: ''
   absent_reason: ''
 - id: receptor_sign
-  name: Synapse sign by postsynaptic receptor (GluCl, ACC, LGC chloride channels inhibitory)
+  name: 'Synapse sign by postsynaptic receptor: inhibitory where the postsynaptic class expresses more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel
+    ones, in summed CeNGEN TPM (guessed rule); the transmitter rule where it expresses neither'
   layer: synapse
-  status: absent
+  status: have
   toggle: receptor_sign
-  neutral: 'off'
+  neutral: off = the presynaptic transmitter rule
   default: 'off'
-  source: 'planned: CeNGEN receptor expression per postsynaptic class'
-  notes: ''
-  absent_reason: needs a receptor-to-synapse map; next toggle after port302b
+  source: CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
+  notes: 3262 of 3709 pairs from receptor expression; 1125 differ from the transmitter rule
+  absent_reason: ''
 - id: innexin_identity
   name: Gap junction conductance and rectification by innexin pair
   layer: gap

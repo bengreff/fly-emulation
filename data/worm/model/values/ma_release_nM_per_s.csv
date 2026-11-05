@@ -1,5 +1,5 @@
-element,value,label,source
-dopamine,1,guessed,template guess
-octopamine,1,guessed,template guess
-serotonin,1,guessed,template guess
-tyramine,1,guessed,template guess
+element,value,label,source,source_project
+dopamine,1,guessed,template guess,ours
+octopamine,1,guessed,template guess,ours
+serotonin,1,guessed,template guess,ours
+tyramine,1,guessed,template guess,ours

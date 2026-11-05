@@ -11,6 +11,10 @@ label. Two additions the fly does not have:
 - `value_template` is the number the template organism runs on (the ported value, a literature value or a guess),
   `template_source` where it came from, and `precision_needed` how close to right it has to be (with the method;
   "not yet estimated" until a sensitivity run says otherwise).
+- `source_project` says whose number it is (BAAIWorm, c302, literature, ours, ...) and `fill_kind` is the label in
+  words (measured, published fit, derived, inferred (ours), guessed, absent). `published_fit` is a value another
+  project fitted or chose and published (BAAIWorm's tuned densities, c302's muscle channels); `inferred` is kept for
+  what this project inferred itself. A values table may carry its own `source_project` column per element.
 
 Layout under the model root (e.g. data/worm/model/):
     mechanisms.yaml   id, name, layer, status (have/partial/absent), toggle, neutral, source, notes
@@ -27,7 +31,10 @@ import pandas as pd
 import yaml
 
 STATUSES = {"have", "partial", "absent"}
-LABELS = {"measured", "derived", "inferred", "guessed", "absent"}
+LABELS = {"measured", "published_fit", "derived", "inferred", "guessed", "absent"}
+FILL_KIND = {"measured": "measured", "published_fit": "published fit", "derived": "derived",
+             "inferred": "inferred (ours)", "guessed": "guessed", "absent": "absent"}
+SOURCE_PROJECTS = {"BAAIWorm", "c302", "ChannelWorm", "Sibernetic", "NEURON", "literature", "ours", "none"}
 BOUND_BASES = {"measured_this_class", "measured_related", "organism_wide", "physical_limit", "guessed"}
 PRIOR_DISTS = {"uniform", "loguniform", "normal", "lognormal", "fixed", "bernoulli", "categorical"}
 GRAINS = {"global", "region", "class", "cell", "muscle", "connection", "synapse", "compartment", "gene",
@@ -35,7 +42,8 @@ GRAINS = {"global", "region", "class", "cell", "muscle", "connection", "synapse"
 PARAM_COLUMNS = [
     "param_id", "mechanism_id", "grain", "applies_to", "unit", "n_values",
     "value_template", "template_source", "bio_min", "bio_max", "bound_basis", "bound_source", "bound_verified",
-    "prior_dist", "prior_a", "prior_b", "prior_basis", "label", "precision_needed", "precision_method",
+    "prior_dist", "prior_a", "prior_b", "prior_basis", "label", "fill_kind", "source_project", "precision_needed",
+    "precision_method",
     "toggle", "notes",
 ]
 NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b")
@@ -99,6 +107,10 @@ def validate(led: Ledger) -> list[str]:
             bad.append(f"{w} n_values {r.n_values!r}")
         if r.label not in LABELS:
             bad.append(f"{w} label {r.label!r}")
+        elif r.fill_kind != FILL_KIND[r.label]:
+            bad.append(f"{w} fill_kind {r.fill_kind!r} does not match label {r.label!r}")
+        if r.source_project not in SOURCE_PROJECTS:
+            bad.append(f"{w} source_project {r.source_project!r}")
         if not r.precision_needed:
             bad.append(f"{w} no precision_needed (write 'not yet estimated')")
         elif r.precision_needed != "not yet estimated" and not r.precision_method:
@@ -138,6 +150,8 @@ def validate(led: Ledger) -> list[str]:
                 bad.append(f"{w} values table has {len(t)} rows, n_values {int(r.n_values)}")
             if (bl := set(t.label) - LABELS):
                 bad.append(f"{w} values table labels {sorted(bl)}")
+            if "source_project" in t and (bs := set(t.source_project) - SOURCE_PROJECTS):
+                bad.append(f"{w} values table source_project {sorted(bs)}")
             v = pd.to_numeric(t.value, errors="coerce")
             live = t.label != "absent"
             if v[live].isna().any():
@@ -175,16 +189,21 @@ def draw(rng: np.random.Generator, r, n: int = 1, n_try: int = 1000) -> np.ndarr
 
 
 def counts(led: Ledger) -> dict:
-    """The hard quantity: numbers (not rows) per label, per grain and per mechanism."""
+    """The hard quantity: numbers (not rows) per label, per grain, per mechanism and per source project."""
     rows = []
     for r in led.parameters.itertuples():
         t = led.values(r.param_id)
-        labs = t.label.value_counts().to_dict() if t is not None else {r.label: int(r.n_values)}
-        for lab, k in labs.items():
-            rows.append((r.param_id, r.mechanism_id, r.grain, lab, int(k)))
-    df = pd.DataFrame(rows, columns=["param_id", "mechanism_id", "grain", "label", "n"])
+        if t is None:
+            labs = {(r.label, r.source_project): int(r.n_values)}
+        else:
+            sp = t.source_project if "source_project" in t else pd.Series(r.source_project, index=t.index)
+            labs = pd.DataFrame(dict(l=t.label, s=sp)).value_counts().to_dict()
+        for (lab, src), k in labs.items():
+            rows.append((r.param_id, r.mechanism_id, r.grain, lab, src, int(k)))
+    df = pd.DataFrame(rows, columns=["param_id", "mechanism_id", "grain", "label", "source_project", "n"])
     piv = lambda by: {k: {lab: int(x) for lab, x in g.groupby("label").n.sum().items()}
                       for k, g in df.groupby(by)}
     return {"total_numbers": int(df.n.sum()), "rows": int(len(led.parameters)),
             "by_label": {k: int(v) for k, v in df.groupby("label").n.sum().items()},
-            "by_grain": piv("grain"), "by_mechanism": piv("mechanism_id")}
+            "by_grain": piv("grain"), "by_mechanism": piv("mechanism_id"), "by_source": piv("source_project"),
+            "by_param": piv("param_id")}
