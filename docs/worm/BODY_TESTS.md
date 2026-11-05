@@ -218,13 +218,35 @@ What the numbers say:
 - Bash `time` around the runs on backhouse disagreed with the loop's steady clock (one run 7.5 s outside against
   15.0 s inside), so wall-clock jumps happen in WSL; only `wall_s` is used.
 
-Ways to close the gap (none tried yet except the compiler flags below; all keep the physics unchanged except the
-last):
-- compiler flags (below);
-- the upstream local step already has an OpenMP `parallel for` written and commented out
-  (`World::EvaluateDVector`, `sim/fem/World.cpp:237`); the 3,341 tet and 96 muscle projections are independent,
-  so a few threads should help;
-- the GPU port (Ben: later);
-- fewer iterations or a looser threshold: a numerical change, needs its own check against P2 before adoption.
+**Where the time goes** (Mac, macOS `sample` over 6 s of a key run, 5,134 samples, measured): the local step
+(per-tet corotated projection plus muscles) 73%, of which Eigen's general 3x3 `JacobiSVD` alone is 68% of all
+time; the sparse global solve with the J d product 24%; drag 1%; the rest under 2%.
+
+**Speed-ups tried (backhouse, 16:28-16:36 CST, published key, 10 s each, measured).** Backhouse load rose from
+4 to 14 (other users) during these runs, so compare only within a block, not with the table above.
+
+| build | threads | wall per 10 s | RTF | max displacement |
+|---|---|---|---|---|
+| -O3 -std=gnu++14 | 1 | 16.52, 18.30, 17.68 s | 0.57 | 1.15622578 |
+| -O3 -march=native -std=gnu++14 | 1 | crashes at start (segfault) | - | - |
+| -O3 -march=native -std=gnu++17 | 1 | 18.25, 19.68, 18.61 s | 0.53 | 1.15622578 |
+| -O2 -fopenmp, upstream's own loop switched on | 1 | 18.90, 18.18 s | 0.54 | 1.15622578 |
+| same | 2 | 17.99, 16.47 s | 0.58 | 1.15622578 |
+| same | 4 | 12.53, 13.00 s | 0.78 | 1.15622578 |
+| same | 8 | 9.78, 10.32 s | **1.00** | 1.15622578 |
+
+- **Threads work and change nothing in the result**: the OpenMP loop over the local step is upstream's own line
+  (`sim/fem/World.cpp:237`, written and commented out; upstream's CMake links OpenMP), switched on in a copy of
+  the sources. 8 threads give 1.85x over 1 thread in the same block and reach real time (RTF 0.97-1.02) even
+  with the box loaded to 11-14. The result is identical to 9 digits at every thread count (each tet's projection
+  is independent, the sum order is unchanged). Scaling is below the 2.8x the 73% share would allow at 8 threads
+  (derived, Amdahl), most likely from the shared load (inferred).
+- **Compiler flags are not a lever.** -O3 and -O3 -march=native are no faster than -O2 here (confounded by the
+  rising load, but not faster within the noise). The C++14 native build crashes: Eigen fixed-size types need
+  32-byte alignment under AVX and C++14 `new` does not give it (inferred, the standard Eigen pitfall); C++17
+  fixes the crash.
+- Not tried: a closed-form 3x3 polar decomposition in place of the general SVD (68% of the time; same maths,
+  slightly different rounding, so it needs a P2 match check before use); the GPU port (Ben: later); fewer
+  iterations or a looser threshold (a numerical change, needs its own check).
 
 Not timed: the brain. The closed-loop budget is body plus brain per biological second.

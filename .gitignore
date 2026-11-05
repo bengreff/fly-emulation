@@ -44,5 +44,6 @@ viz/geometry.json
 MUJOCO_LOG.TXT
 
 # MetaWorm driver build products
-third_party/metaworm/driver/obj/
+third_party/metaworm/driver/obj*/
 third_party/metaworm/driver/run_body
+third_party/metaworm/driver/run_body_omp

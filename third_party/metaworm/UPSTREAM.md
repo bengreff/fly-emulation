@@ -4,7 +4,11 @@
   model simulating C. elegans brain, body and environment interactions"). Commit b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc.
 - Licence: Apache 2.0 (`LICENSE`, copied from the repo root; `Metaworm/LICENSE` is the same text). The body physics
   is SoftCon-derived (projective dynamics FEM), as credited upstream.
-- Copied, unchanged: `Metaworm/sim/` (all sources; the prebuilt `libsim.a` and `fem/libfem.a` removed),
+- Copied, unchanged except one line: `Metaworm/sim/` (all sources; the prebuilt `libsim.a` and `fem/libfem.a`
+  removed). The one line (2026-11-05): upstream's own `// #pragma omp parallel for` over the local step in
+  `sim/fem/World.cpp:237` is uncommented. It is inert unless built with `OMP=1 driver/build.sh` (-fopenmp); the
+  default build is the published single-thread code. With it on, the result matches to 9 digits at 1-8 threads
+  (BODY_TESTS.md).
   `Metaworm/data/` (mesh `worm_mesh_4.mesh`, muscle fibres `worm_nerve_cord_highResCord.obj`, `worm.meta`,
   `worm.sampling`, the muscle key files `worm_givenkey_*.csv`, `worm_empty_key.csv`), and
   `Metaworm/args/train_worm_swim_args.txt`.
@@ -12,6 +16,6 @@
   same stepping, muscle input at 30 Hz and 8 physics steps at 240 Hz) and `driver/build.sh`.
 - Build differences from upstream CMake: `-std=gnu++14` (Eigen 3.5 needs C++14; upstream gnu++11), `-O2` (upstream
   Release, -O3), `-include cassert -include cmath -include limits` (missing includes on clang), no Boost.Python,
-  PythonLibs or OpenMP (sim/ uses none of them). Build products `driver/obj/` and `driver/run_body` are gitignored.
+  PythonLibs, and OpenMP only with `OMP=1`. Build products `driver/obj/` and `driver/run_body` are gitignored.
 - Run: `third_party/metaworm/driver/build.sh` then `src/wormemu/body/metaworm.py: run(...)`; tests in
   `scripts/worm/metaworm_tests.py`, results in `docs/worm/BODY_TESTS.md`.

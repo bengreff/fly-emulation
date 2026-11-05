@@ -234,7 +234,7 @@ void World::EvaluateDVector(const Eigen::VectorXd& x,Eigen::VectorXd& d)
 {
 	d.resize(mConstraintDofs*3);
 	int n = mConstraints.size();
-// #pragma omp parallel for
+#pragma omp parallel for  // wormemu: upstream line, uncommented; inert unless built with OMP=1 (-fopenmp)
 	for(int i=0;i<n;i++)
 	{
 		mConstraints[i]->EvaluateDVector(x);

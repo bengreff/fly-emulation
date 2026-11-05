@@ -1,6 +1,6 @@
 # Worm body + viewer: handoff (body worker, worktree `wormbody`)
 
-**Rewritten each session; do not append.** State as of 2026-11-05 16:31 CST. The shared `docs/HANDOFF.md`
+**Rewritten each session; do not append.** State as of 2026-11-05 16:38 CST. The shared `docs/HANDOFF.md`
 belongs to main; this file is the body side until the Director merges it.
 
 Ben's direction (Director, 15:30): the 3D body only, the rod dropped entirely; the body is MetaWorm/BAAIWorm's
@@ -20,9 +20,12 @@ measurement the real-time factor on the Mac and backhouse; a GPU port later.
 - **Real-time factor (measured, BODY_TESTS.md last section):** one thread, published key (swimming): Mac M2 Pro
   0.60x real time, backhouse i7-14700K (WSL2) 0.69x; the gentle P3 wave 0.81 / 0.94; a dead body 3.1. Results are
   identical across the two machines to 9 digits. Profile (Mac): 73% of the time is the per-tet local step, 68% of
-  all time in Eigen's general 3x3 SVD; the sparse global solve 24%; drag 1%. Compiler flags: -O3 no faster;
-  -O3 -march=native crashes under C++14 (Eigen alignment). Thread scaling with upstream's own commented-out
-  OpenMP loop: running on backhouse (see Running processes).
+  all time in Eigen's general 3x3 SVD; the sparse global solve 24%; drag 1%. Compiler flags: -O3 and
+  -O3 -march=native no faster (the C++14 native build crashes, Eigen alignment). **Threads: upstream's own
+  OpenMP loop over the local step (commented out upstream) reaches real time on backhouse at 8 threads (RTF
+  0.97-1.02 with the box loaded to 11-14; 1.85x over 1 thread), same result to 9 digits at 1-8 threads.**
+  Build it with `OMP=1 driver/build.sh` -> `driver/run_body_omp`; the default build is unchanged (checked: same
+  result and speed on the Mac after the one-line edit). Not yet used by `metaworm.py`.
 - **Tests:** `scripts/worm/metaworm_tests.py` -> `data/worm/body_runs/metaworm_tests.json`; pre-registration and
   results in `docs/worm/BODY_TESTS.md`. P0 dead pass; P1 release fail (0.1008 vs 0.10); P2 published key moves
   1.95 L (pass) but the head-frequency readout fails; P3 prescribed wave fails speed (0.018 vs 0.29-0.45 L/s),
@@ -49,10 +52,11 @@ measurement the real-time factor on the Mac and backhouse; a GPU port later.
 
 ## Next (in order)
 
-1. Speed, CPU first (standing rule: a CPU reference before any GPU port): switch on upstream's OpenMP loop
-   behind a build flag if the thread test shows a gain, and try a closed-form 3x3 polar decomposition in place of
-   the general SVD (same maths, checked to match the published build on P2 before use). Target: at least 1x real
-   time on backhouse with the brain's cost added.
+1. Speed, CPU first (standing rule: a CPU reference before any GPU port): let `metaworm.py` pick
+   `run_body_omp` with a thread count; try a closed-form 3x3 polar decomposition in place of the general SVD
+   (68% of the time; same maths, checked to match the published build on P2 before use). Re-time at a quiet hour
+   (backhouse after 22:00) for a clean thread-scaling curve. Target: at least 1x real time with the brain's cost
+   added.
 2. Closed-loop driver mode: `run_body.cpp` reads 96 activations per physics step from a pipe and writes the
    49-sample midline back; `metaworm.py` wraps it as `Body.step(BrainToBody) -> BodyToBrain`. Test with a stand-in
    brain (the prescribed wave through the interface must reproduce P3).
@@ -73,6 +77,5 @@ same kind of calibration targets.
 
 - `viewer/worm/serve.py` on 127.0.0.1:8781, PID in `/tmp/wb_serve.pid` (left up so Ben can look; idle).
   Stop: `kill $(cat /tmp/wb_serve.pid)`.
-- backhouse (WSL, user greff), all under `/home/greff/worm-body/`: `flags_both.sh` (PID in `flags_both.pid`)
-  then `rtf_omp_job.sh` (PID in `rtf_omp_job.pid`), each writes a `done` file in its `rtf_*` folder. Short
-  (minutes). Outputs to read: `rtf_o3n17/`, `rtf_omp/`.
+- backhouse: nothing running. `/home/greff/worm-body/` (27 MB) holds the copied sources, Eigen headers, the
+  builds and the timing jsons (`rtf/`, `rtf_o3/`, `rtf_o3n17/`, `rtf_omp/`); keep for re-timing.
