@@ -261,3 +261,36 @@ input ends. No muscle moves by 1 mV in either run. G1 and G2 pass in both. Figur
 is D8 (receptor_sign on). Neither run is tuned and none is adopted. Saturation goes in the ledger as an open question:
 at literature-midpoint strengths, recurrent excitation through the Cook wiring holds a third of the neurons above
 -20 mV even with published inhibition.
+
+## 5. Range-end sensitivity at the D8 configuration (pre-registration, report-only)
+
+Pre-registered 2026-11-05 17:08 CST, before the runs (approved by the Director, report-only). Base D8 (port302c_rs:
+literature_overrides on, wiring cook, receptor_sign on, every lumped layer off, ledger defaults). One quantity at a
+time is set to an end of its literature range (`brain_runs.py --set PARAM=VALUE`, every element of that row), the
+rest at their defaults. Nothing found here is adopted or written into the ledger as a value; the point is which
+numbers the network's state depends on, and whether saturation survives everywhere inside the ranges.
+
+| Run | quantity (ledger row) | range (param_ranges) | ends run |
+|---|---|---|---|
+| S01, S02 | per-EM chemical strength (`syn_strength_per_pair`) | B4 0.1-2 nS | 0.1, 2 |
+| S03, S04 | per-EM gap strength (`gap_strength_per_pair`) | C4 0.05-1 nS | 0.05, 1 |
+| S05, S06 | per-EM NMJ strength (`nmj_strength_per_pair`) | B4 0.1-2 nS | 0.1, 2 |
+| S07, S08 | excitatory rate k (`syn_exc_k`) | B3 decay 5-30 ms | 1/30, 1/5 per ms |
+| S09, S10 | inhibitory rate k (`syn_inh_k`) | B3 | 1/30, 1/5 per ms |
+| S11, S12 | excitatory reversal (`syn_exc_erev`) | B5 -10 to 10 mV | -10, 10 |
+| S13 | excitatory release threshold (`syn_exc_Vth`, BAAIWorm fit -20 = top of range) | B1 -45 to -20 mV | -45 |
+| S14, S15 | excitatory release slope (`syn_exc_delta`) | B2 2-10 mV | 2, 10 |
+| S16 | inhibitory release threshold (`syn_inh_Vth`, fit -20) | B1 | -45 |
+| S17, S18 | inhibitory release slope (`syn_inh_delta`) | B2 | 2, 10 |
+| S19 | inhibitory reversal (`syn_inh_erev`, fit -70 = bottom of range) | B6-B8 -70 to -45 mV | -45 |
+
+Measured per run: neurons above -20 mV at 6 s, median neuron mean over 1-2 s, muscles above -20 mV at 6 s, neurons
+with SD > 2 mV over 4-6 s (whether anything moves). Predictions (guessed, written before the runs):
+- **P5**: the chemical strength row has the largest swing of the three strength rows, and at 0.1 nS fewer than 64
+  neurons sit above -20 mV (D5 had 64 at 0.1 nS with other differences).
+- **P6**: the release threshold matters in the direction that releases more at rest: the BAAIWorm value -20 mV is
+  already the least tonic end (release at a -55 mV rest is sigmoid(-7), about 0.1%), so S13 (exc at -45 mV, release
+  at rest about 12%) raises the count and S16 (inh at -45) lowers it.
+- **Q1** (reported either way): does any single range end bring the count under 30 (the level with chemical synapses
+  off)? A yes would say saturation depends on where inside the literature ranges the true values lie, not that the
+  model is wrong.
