@@ -81,3 +81,31 @@ starts to open at -20 mV, and 51 neurons have a leak reversal of -33 mV, so a ne
 drives its targets, which depolarise and drive it back. Every one of these numbers is outside the literature range
 (excitatory reversal -10 to +10 mV, B5; leak reversal -80 to -45 mV, A5). The next run (`port302b`) applies the
 literature overrides recorded in the ledger (`literature_overrides` toggle on) and nothing else.
+
+## 3. brain.py runs: reference, port302b, port302c (pre-registration)
+
+Pre-registered 2026-11-05 16:43 CST, before any of these runs. Model: `src/wormemu/brain.py` (the brain the
+closed loop uses), every number from the ledger. Script `scripts/worm/port/brain_runs.py`. All three: seed None
+(the template worm), dt 0.5 ms, v_init -65 mV, 6 s, every lumped layer toggle off (neural only), the same test
+input as port302a (+20 pA at the soma of ALML, ALMR, AVM, PLML, PLMR from 2 to 4 s), sign rule = transmitter.
+
+- **ref**: literature_overrides off, wiring=baaiworm, MCVL24 kept (96 muscles, as port302a). Checks that brain.py
+  builds the same network as BAAIWorm's own code did. Bar **R1**: every cell's soma voltage within 1 mV of
+  port302a at every 1 ms sample.
+- **port302b**: literature_overrides on (the ledger's literature clips: neuron cm A1, leak reversal A5, muscle leak
+  reversal F1, excitatory reversal B5, synapse decay B3, gap junction C4; the Ca units fix with celsius 20),
+  wiring=baaiworm, MCVL24 dropped (95 muscles). Nothing else changes.
+- **port302c**: port302b with wiring=cook (every Cook 2019 pair at the ledger's per-EM strengths, Cook's 956
+  neuron-to-muscle pairs, no muscle-to-neuron synapses).
+
+Bars on port302b and port302c, each pass/fail: G1, G2, G3 as defined for port302a.
+
+Hypothesis test (port302b): the cause inferred in section 2 is that values outside the literature ranges drive the
+saturation. Falsifier: if 150 or more of the 302 neurons sit above -20 mV at 6 s in port302b (port302a: 180), the
+overrides alone do not remove the saturation and the hypothesis is rejected as the main cause.
+
+Reported, not scored: placed connections by kind, wall time per biological second, peak memory, neurons above
+-20 mV at 6 s, the median and 90th percentile neuron mean voltage over 1-2 s, muscles moving >= 1 mV with the touch.
+
+Adoption: wiring=cook becomes the default only if port302c passes G1-G3 and its figure has been viewed. A pass
+says the Cook wiring runs and propagates; it says nothing about whether the dynamics are right.
