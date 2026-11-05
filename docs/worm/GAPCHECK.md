@@ -48,3 +48,59 @@ NEURON-only steady state against the analytic value for P, the cost per step aga
 **Adoption gate.** B1, B2 and B3 pass, F1 fails, and the comparison figure is viewed: then `ImplicitGap` becomes
 the gap-junction form for network fits, recorded in DECISIONS. Otherwise nothing is adopted and the failure is
 the result.
+
+## Runs before any score, and the scored run `gapcheck1` (written 2026-11-05 01:10 CST)
+
+Two harness defects were found and fixed before the first run that implements the cases as written above. Neither
+changed a case, a bar or a tolerance; both logs are kept in `data/worm/gapcheck/`.
+
+- **Run 0 (invalid reference).** The NEURON `LinearMechanism` was given absolute conductances (uS), but its rows at
+  segment nodes are current densities (mA/cm2), so it coupled area/100 of the intended conductance (65 pS instead
+  of 0.1 nS for the pair). Seen because every Jaxley form disagreed with NEURON equally at weak coupling and NEURON's
+  pair disagreed with the analytic solution. Fixed: each row gets g / (its segment's area), in S/cm2. After the fix
+  the converged NEURON pair matches the exact matrix-exponential solution to 1e-5 mV (measured; the script now
+  prints this, as the pre-registration asked).
+- **Run 1 (wrong Jaxley geometry).** Jaxley's `length` is per compartment, so the chain cells were 90 um long
+  instead of 30 um. Fixed to `L / ncomp`.
+- **Run 2 = `gapcheck1`, scored** (log `data/worm/gapcheck/gapcheck1.log`). Measured, float64, max over all
+  compartments and times:
+
+| Case | g (nS) | dt (ms) | a | ImplicitGap vs NEURON (mV) | ExplicitGap (mV) | Gap (mV) |
+|---|---|---|---|---|---|---|
+| P | 0.1 | 0.1 / 0.4 | 0.02 / 0.06 | 1.7e-13 / 2.3e-13 | 0.022 / 0.088 | 0.048 / 0.187 |
+| P | 1 | 0.1 / 0.4 | 0.16 / 0.64 | 1.7e-13 / 9.9e-14 | 0.029 / 0.168 | 0.430 / 1.406 |
+| P | 10 | 0.1 / 0.4 | 1.59 / 6.37 | 1.2e-12 / 9.5e-13 | 4.5e16 / 1.1e16 (blew up) | 2.68 / 4.99 |
+| C | 0 (B2) | 0.1 / 0.4 | 0 | **0.134 / 0.133** | - | - |
+| C | 1 | 0.1 / 0.4 | 0.10 / 0.40 | see log / 0.0075 | see log / 0.298 | 0.229 / 0.871 |
+| C | 20 | 0.1 / 0.4 | 1.99 / 7.96 | 0.00032 / 0.00032 | inf / inf (blew up) | 2.89 / 6.75 |
+
+  B3: gradient -1605.299 against finite difference -1605.300, relative difference under 1e-6: **pass**.
+  B1: **pass** (every gap case <= 0.0075 mV). F1: ExplicitGap fails in the strongest P and C cases, as required.
+  **B2: fail** (0.134 mV > 0.01 mV). By the rule above, the C results do not count as evidence, the gate is not met,
+  and `gapcheck1` adopts nothing.
+
+**Cause of the B2 failure (measured, diagnostic runs, not scored).** Passive cables match NEURON to 1e-12 mV
+(1 cell, 2 and 3 compartments), and the active AIY membrane matches in one compartment, but the active membrane
+differs over several compartments, more so the harder the cell is driven (2e-5 mV at 5 pA, 0.001 mV at 15 pA
+with 2 compartments, 0.13 mV with 3). The published Nicoletti 2024 mod files pass EGL-19's gates to the coupled
+BK channel through NEURON GLOBAL variables: `egl19.mod` declares `GLOBAL ... megl19, hegl19` and writes them in
+its BREAKPOINT; `slo1egl19.mod` (and `slo2egl19.mod`) read them as `EXTERNAL megl19_egl19, hegl19_egl19`. The same
+holds for UNC-2 (`unc2.mod` to `slo1unc2.mod`, `slo2unc2.mod`) and for the Ca pool that `kcnl.mod` reads
+(`calcium_caintra1`, GLOBAL in `caintra1.mod`). A GLOBAL is one number for the whole model, so in a cell with
+several segments every segment's BK channel sees the EGL-19 state of whichever segment wrote last. In a single
+compartment, which is how the published models are used, this is exact; across compartments the NEURON
+reference is wrong and the Jaxley port's per-compartment coupling is the intended model. So the B2 failure is a
+defect of the reference, not of the cable or of `ImplicitGap`, but that is a diagnosis, not a pass.
+
+## Pre-registration of `gapcheck2` (written 2026-11-05 01:10 CST, before the patched reference exists)
+
+Same method, cases (P, C, both step sizes), error measure, bars B1-B3, F1, F2 and adoption gate as above. One
+change, to the reference only: NEURON runs on a local copy of the Nicoletti mods
+(`~/worm-spike/ext/nicoletti2024_local/`, the patch is in `scripts/worm/patch_nicoletti_mods.sh`) in which
+`megl19, hegl19` (and `munc2, hunc2`) are RANGE variables of `egl19` (`unc2`) and the coupled BK mechanisms read
+them through a per-segment POINTER, set segment by segment. Nothing else in any mod file changes.
+
+**R0 (the patch must not change the published model):** a single-compartment AIY cell (the C membrane, 10 um,
+15 pA) run in NEURON with the original mods and with the patched mods must agree to <= 1e-9 mV at dt 0.1 and
+0.4 ms, and both must match Jaxley's single compartment to <= 0.01 mV. If R0 fails, `gapcheck2` is void.
+The `kcnl` / `caintra1` GLOBAL is not patched here (AIY's published set has no KCNL); it is recorded for W1.
