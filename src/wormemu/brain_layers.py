@@ -328,23 +328,23 @@ class Layers:
 
     # --- neuromodulators: well-mixed concentration per ligand, receptor current per cell -------------------------
     def modulator_current(self, v, dt) -> np.ndarray:
+        """pA per cell. self.peptide / self.monoamine = (release, receptor, (ec50, ligand_of_pair)): release is
+        cells x ligands in nM/s (the ledger's per-family rate on every expressing cell), receptor is cells x pairs
+        in pA (the per-receptor gain on every expressing cell), ec50 in nM per pair."""
         I = np.zeros(len(self.names))
         p = self.p
-        for key, on, conc, rel, vth, tau, gain in (
-                ("pep", "peptides", "pep_c", "pep_release_nM_per_s", "pep_release_vth_mV", "pep_clear_tau_s",
-                 "pep_gain_pA"),
-                ("ma", "monoamines", "ma_c", "ma_release_nM_per_s", "ma_release_vth_mV", "ma_clear_tau_s",
-                 "ma_gain_pA")):
+        for key, on, conc, vth, tau in (("pep", "peptides", "pep_c", "pep_release_vth_mV", "pep_clear_tau_s"),
+                                        ("ma", "monoamines", "ma_c", "ma_release_vth_mV", "ma_clear_tau_s")):
             data = self.peptide if key == "pep" else self.monoamine
             if on not in self.on or data is None:
                 continue
-            release, receptor, ec50 = data                 # (cells x ligands), (cells x pairs), pair -> ligand index
+            release, receptor, (ec50, lig) = data
             c = getattr(self, conc)
-            r = _sig((v - p[vth]) / 5.0) @ release * p[rel] * dt / 1000.0
+            r = _sig((v - p[vth]) / 5.0) @ release * dt / 1000.0
             c = c + r - c * dt / (1000.0 * p[tau])
             setattr(self, conc, c)
-            occ = c[ec50[1]] / (c[ec50[1]] + ec50[0])   # per pair, Hill 1
-            I += receptor @ occ * p[gain]
+            occ = c[lig] / (c[lig] + ec50)                # per pair, Hill 1
+            I += receptor @ occ
         return I
 
     # --- plasticity ----------------------------------------------------------------------------------------------
