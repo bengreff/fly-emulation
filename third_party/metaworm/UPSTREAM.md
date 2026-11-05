@@ -1,0 +1,17 @@
+# Vendored: MetaWorm body (BAAIWorm)
+
+- Upstream: https://github.com/Jessie940611/BAAIWorm (Zhao et al. 2024, Nat Comput Sci, "An integrative data-driven
+  model simulating C. elegans brain, body and environment interactions"). Commit b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc.
+- Licence: Apache 2.0 (`LICENSE`, copied from the repo root; `Metaworm/LICENSE` is the same text). The body physics
+  is SoftCon-derived (projective dynamics FEM), as credited upstream.
+- Copied, unchanged: `Metaworm/sim/` (all sources; the prebuilt `libsim.a` and `fem/libfem.a` removed),
+  `Metaworm/data/` (mesh `worm_mesh_4.mesh`, muscle fibres `worm_nerve_cord_highResCord.obj`, `worm.meta`,
+  `worm.sampling`, the muscle key files `worm_givenkey_*.csv`, `worm_empty_key.csv`), and
+  `Metaworm/args/train_worm_swim_args.txt`.
+- Ours (not upstream): `driver/run_body.cpp` (headless loop replacing the GLUT window and the Boost.Python bridge;
+  same stepping, muscle input at 30 Hz and 8 physics steps at 240 Hz) and `driver/build.sh`.
+- Build differences from upstream CMake: `-std=gnu++14` (Eigen 3.5 needs C++14; upstream gnu++11), `-O2` (upstream
+  Release, -O3), `-include cassert -include cmath -include limits` (missing includes on clang), no Boost.Python,
+  PythonLibs or OpenMP (sim/ uses none of them). Build products `driver/obj/` and `driver/run_body` are gitignored.
+- Run: `third_party/metaworm/driver/build.sh` then `src/wormemu/body/metaworm.py: run(...)`; tests in
+  `scripts/worm/metaworm_tests.py`, results in `docs/worm/BODY_TESTS.md`.

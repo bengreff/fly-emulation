@@ -16,6 +16,16 @@ external_code:
       file names are extraction dates, not dataset release versions; map each
       to the underlying connectome version before use.
     role: reference calculation (ROADMAP first session step 3); comparison fixture
+  - name: BAAIWorm_MetaWorm_body
+    url: https://github.com/Jessie940611/BAAIWorm (subdirectory Metaworm/)
+    commit: b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc
+    fetched: 2026-11-05
+    local_path: third_party/metaworm (in git, vendored; see third_party/metaworm/UPSTREAM.md)
+    license: Apache 2.0 (verified, LICENSE copied)
+    contents_of_note: >
+      MetaWorm 3D worm body (SoftCon-derived projective-dynamics FEM, 984 vertices, 3341 tets, 96 muscle
+      segments in 4 quadrants), its mesh, muscle fibres and published muscle keys. sim/ unchanged; driver/ is ours.
+    role: the worm body (Ben 2026-11-05 15:30, "the 3D body only"); tests docs/worm/BODY_TESTS.md
 
 datasets:
   - name: MANC leg motor neurons
