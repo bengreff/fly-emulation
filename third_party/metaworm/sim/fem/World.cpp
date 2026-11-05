@@ -181,6 +181,8 @@ Eigen::VectorXd World::ProjectiveDynamicsMethod()
 	Eigen::VectorXd d(3*mConstraintDofs);
 	d.setZero();
 	b= (1.0/(mTimeStep*mTimeStep))*mMassMatrix*mQn;
+	if(mHasDrag)  // wormemu extension: implicit drag, (M/h^2 + C/h + L) x = M/h^2 q + C/h x_n + J d
+		b += (1.0/mTimeStep)*(mDragMatrix*mX);
 
 	x_n1 =mQn;
 
@@ -201,8 +203,38 @@ void World::PreComputation()
 	EvaluateJMatrix(mJ);
 	EvaluateLMatrix(mL);
 	Eigen::SparseMatrix<double> H2ML = (1.0/(mTimeStep*mTimeStep))*mMassMatrix+mL;
+	if(mHasDrag)  // wormemu extension
+		H2ML += (1.0/mTimeStep)*mDragMatrix;
 	FactorizeLDLT(H2ML,mDynamicSolver);
 	FactorizeLDLT(mL,mQuasiStaticSolver);
+}
+
+// wormemu extension (not upstream), inert unless called.
+void World::SetUnitMass(double unit_mass)
+{
+	for(int i=0;i<3*mNumVertices;i++) {
+		mMassMatrix.coeffRef(i,i) = unit_mass;
+		mInvMassMatrix.coeffRef(i,i) = 1.0/unit_mass;
+	}
+	for(auto& m : mUnitMass) m = unit_mass;
+	mDragPatternDone = false;
+	PreComputation();
+}
+
+// wormemu extension (not upstream), inert unless called. Refactors numerically; the sparsity pattern of C must not
+// change between calls (the pattern is analysed on the first call).
+void World::SetDragMatrix(const Eigen::SparseMatrix<double>& C)
+{
+	mDragMatrix = C;
+	mHasDrag = true;
+	Eigen::SparseMatrix<double> H = (1.0/(mTimeStep*mTimeStep))*mMassMatrix + mL + (1.0/mTimeStep)*mDragMatrix;
+	if(!mDragPatternDone) {
+		mDynamicSolver.analyzePattern(H);
+		mDragPatternDone = true;
+	}
+	mDynamicSolver.factorize(H);
+	if(mDynamicSolver.info() != Eigen::Success)
+		std::cerr << "SetDragMatrix: factorization failed" << std::endl;
 }
 
 void World::EvaluateJMatrix(Eigen::SparseMatrix<double>& J) 

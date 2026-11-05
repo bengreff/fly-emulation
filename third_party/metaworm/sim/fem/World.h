@@ -48,7 +48,16 @@ public:
 	void 								SetPositions(Eigen::VectorXd& newX) { mX = newX; };
 	void 								SetVelocities(Eigen::VectorXd& newV) { mV = newV; };
 
+	// wormemu extension (2026-11-05, not upstream; inert unless called, see third_party/metaworm/UPSTREAM.md):
+	// SetUnitMass replaces the per-vertex mass; SetDragMatrix adds a linear drag force -C v_{n+1} (C symmetric,
+	// 3n x 3n) solved implicitly with the step, so stiff viscous or agar drag stays stable at any mass.
+	void								SetUnitMass(double unit_mass);
+	void								SetDragMatrix(const Eigen::SparseMatrix<double>& C);
+
 private:
+	bool								mHasDrag = false;
+	bool								mDragPatternDone = false;
+	Eigen::SparseMatrix<double>			mDragMatrix;
 	bool 								mIsInitialized;
 	bool								mIsCollision;
 

@@ -9,6 +9,11 @@
   `sim/fem/World.cpp:237` is uncommented. It is inert unless built with `OMP=1 driver/build.sh` (-fopenmp); the
   default build is the published single-thread code. With it on, the result matches to 9 digits at 1-8 threads
   (BODY_TESTS.md).
+  One extension (2026-11-05, ours, marked "wormemu extension" in the source): `World::SetUnitMass` and
+  `World::SetDragMatrix` in `sim/fem/World.h/.cpp`, plus two guarded lines in `ProjectiveDynamicsMethod` and
+  `PreComputation`. They add an implicit linear drag (M/h^2 + C/h + L) x = M/h^2 q + C/h x_n + J d, needed for
+  resistive-force drag on agar at the real mass. Inert unless called: with them uncalled, P2 (key) and P0 (dead)
+  frames are bit-identical to the runs before the edit (checked 2026-11-05).
   `Metaworm/data/` (mesh `worm_mesh_4.mesh`, muscle fibres `worm_nerve_cord_highResCord.obj`, `worm.meta`,
   `worm.sampling`, the muscle key files `worm_givenkey_*.csv`, `worm_empty_key.csv`), and
   `Metaworm/args/train_worm_swim_args.txt`.

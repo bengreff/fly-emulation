@@ -19,11 +19,13 @@ SRC=$(ls "$ROOT"/sim/*.cpp "$ROOT"/sim/util/*.cpp "$ROOT"/sim/util/json/*.cpp \
 OBJ="$HERE/obj"; BIN="$HERE/run_body"; EXTRA=""
 if [ "${OMP:-0}" = "1" ]; then OBJ="$HERE/obj_omp"; BIN="$HERE/run_body_omp"; EXTRA="-fopenmp"; fi
 mkdir -p "$OBJ"
+# Headers are not tracked per object: an object older than the newest sim/ header is rebuilt.
+NEWEST_H=$(ls -t $(find "$ROOT/sim" -name '*.h') | head -1)
 FLAGS="-O2 $EXTRA -std=gnu++14 -include cassert -include cmath -include limits -DHAVE_CSTDDEF -DNDEBUG -DSOFTCON_DIR=\"$ROOT\" -DOCTOCON_DIR=\"$ROOT\" -I$EIGEN -I$ROOT/sim -I$ROOT/sim/fem -w"
 objs=""
 for f in $SRC; do
   o="$OBJ/$(echo "${f#$ROOT/}" | tr '/' '_').o"
-  if [ ! -f "$o" ] || [ "$f" -nt "$o" ]; then c++ $FLAGS -c "$f" -o "$o"; fi
+  if [ ! -f "$o" ] || [ "$f" -nt "$o" ] || [ "$NEWEST_H" -nt "$o" ]; then c++ $FLAGS -c "$f" -o "$o"; fi
   objs="$objs $o"
 done
 c++ $FLAGS "$HERE/run_body.cpp" $objs -o "$BIN"
