@@ -22,7 +22,8 @@ from wormemu.brain_structure import bwm_name
 TOUCH = ["ALML", "ALMR", "AVM", "PLML", "PLMR"]
 RUNS = {"ref": dict(literature_overrides="off", wiring="baaiworm"),
         "port302b": dict(literature_overrides="on", wiring="baaiworm"),
-        "port302c": dict(literature_overrides="on", wiring="cook")}
+        "port302c": dict(literature_overrides="on", wiring="cook"),
+        "port302c_rs": dict(literature_overrides="on", wiring="cook", receptor_sign="on")}     # section 4b, D5
 
 
 def main():

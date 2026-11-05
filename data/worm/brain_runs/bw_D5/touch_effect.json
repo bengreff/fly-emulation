@@ -1,0 +1,70 @@
+{
+ "run": "bw_D5",
+ "n_neurons_moved_1mV": 50,
+ "n_neurons_moved_5mV": 3,
+ "n_muscles_moved_1mV": 21,
+ "top10": [
+  [
+   "LUAR",
+   6.78
+  ],
+  [
+   "LUAL",
+   6.6
+  ],
+  [
+   "PVR",
+   6.44
+  ],
+  [
+   "PVCR",
+   4.65
+  ],
+  [
+   "URADL",
+   4.27
+  ],
+  [
+   "ALNR",
+   4.09
+  ],
+  [
+   "IL1DL",
+   3.43
+  ],
+  [
+   "PVCL",
+   3.29
+  ],
+  [
+   "PVWR",
+   3.2
+  ],
+  [
+   "URADR",
+   3.19
+  ]
+ ],
+ "touch_cells": [
+  [
+   "ALML",
+   18.57
+  ],
+  [
+   "ALMR",
+   21.04
+  ],
+  [
+   "AVM",
+   14.43
+  ],
+  [
+   "PLML",
+   16.64
+  ],
+  [
+   "PLMR",
+   16.94
+  ]
+ ]
+}

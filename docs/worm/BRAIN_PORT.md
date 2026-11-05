@@ -210,3 +210,12 @@ else changes. Hypothesis H-inh: the missing receptor-level inhibition is the mai
 more neurons above -20 mV at 6 s. D5 also gets a matching no-stim run so its touch effect is measured as stim minus
 no-stim. If a published polarity map (Fenyves et al. 2020, PLoS Comput Biol 16:e1007974) proves usable, it is run
 as D6 under the same falsifier, pre-registered by a line here before the run.
+
+### Result D5 (run finished 2026-11-05 17:00 CST on backhouse; all measured)
+
+**H-inh holds: receptor-level inhibition cuts saturation from 188 to 64 neurons above -20 mV** (falsifier line 150).
+The median neuron mean over 1-2 s drops from -13.4 to -36.5 mV (90th percentile -12.7). Under the CeNGEN receptor
+rule 2113 of 6301 placed chemical synapses are inhibitory (278 under the transmitter rule). The touch input now
+moves 50 unstimulated neurons by >= 1 mV (3 by >= 5 mV) and 21 muscles (port302c: 9, 1, 0), still led by the
+posterior-touch path (LUA, PVR, PVC, ALN). G1 and G2 pass. Figure `data/worm/brain_runs/bw_D5/traces.png` (viewed).
+The rule is our own guess (receptor genes from CeNGEN, label guessed); a published polarity map is next.
