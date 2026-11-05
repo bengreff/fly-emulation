@@ -297,15 +297,16 @@
   notes: ''
   absent_reason: ''
 - id: receptor_sign
-  name: 'Synapse sign by postsynaptic receptor: inhibitory where the postsynaptic class expresses more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel
-    ones, in summed CeNGEN TPM (guessed rule); the transmitter rule where it expresses neither'
+  name: 'Synapse sign by postsynaptic receptor: Fenyves et al. 2020''s published prediction (NT+R) where it is + or -; else inhibitory where the postsynaptic class expresses more chloride-channel receptors
+    (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel ones, in summed CeNGEN TPM (our guessed rule); the transmitter rule where it expresses neither'
   layer: synapse
   status: have
   toggle: receptor_sign
   neutral: off = the presynaptic transmitter rule
   default: 'off'
-  source: CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
-  notes: 3262 of 3709 pairs from receptor expression; 1125 differ from the transmitter rule
+  source: Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
+  notes: 1705 of 3709 pairs from Fenyves (+ or -), 1584 from our CeNGEN rule, 420 from the transmitter rule; Fenyves and our rule disagree on 182 of the 1705 (Fenyves used); 1039 pairs differ from the transmitter
+    rule. Fenyves calls 436 pairs complex (both signs; our rule used)
   absent_reason: ''
 - id: innexin_identity
   name: Gap junction conductance and rectification by innexin pair

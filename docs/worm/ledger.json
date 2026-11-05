@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 16:50 CST",
+ "generated_at": "2026-11-05 17:03 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,33 +14,33 @@
   "mechanisms": 59,
   "by_label": {
    "absent": 1,
-   "derived": 64690,
-   "guessed": 10668,
+   "derived": 66395,
+   "guessed": 8963,
    "inferred": 11,
    "measured": 5865,
    "published_fit": 7785
   },
-  "known": 78351,
-  "placeholder": 10668,
+  "known": 80056,
+  "placeholder": 8963,
   "gap": 1,
   "used_by_model": 89019,
-  "must_fill": 10669
+  "must_fill": 8964
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 18033,
   "by_label": {
    "published_fit": 7058,
-   "guessed": 10668,
-   "derived": 282,
+   "guessed": 8963,
+   "derived": 1987,
    "inferred": 11,
    "absent": 1,
    "measured": 13
   },
-  "known": 7364,
-  "placeholder": 10668,
+  "known": 9069,
+  "placeholder": 8963,
   "gap": 1,
-  "must_fill": 10669
+  "must_fill": 8964
  },
  "source_by_fill_kind": {
   "all": {
@@ -50,16 +50,16 @@
     "derived": 64408
    },
    "literature": {
-    "guessed": 6561,
+    "guessed": 5469,
     "measured": 5865,
-    "derived": 282,
+    "derived": 1987,
     "inferred (ours)": 6
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 4103,
+    "guessed": 3490,
     "inferred (ours)": 5
    },
    "none": {
@@ -75,8 +75,8 @@
     "guessed": 1
    },
    "literature": {
-    "guessed": 6561,
-    "derived": 282,
+    "guessed": 5469,
+    "derived": 1987,
     "inferred (ours)": 6,
     "measured": 13
    },
@@ -84,7 +84,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 4103,
+    "guessed": 3490,
     "inferred (ours)": 5
    },
    "none": {
@@ -112,7 +112,8 @@
    "derived": 64408
   },
   "connection": {
-   "guessed": 9561,
+   "derived": 1705,
+   "guessed": 7856,
    "measured": 5852,
    "published_fit": 727
   },
@@ -609,18 +610,19 @@
   },
   {
    "id": "receptor_sign",
-   "name": "Synapse sign by postsynaptic receptor: inhibitory where the postsynaptic class expresses more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel ones, in summed CeNGEN TPM (guessed rule); the transmitter rule where it expresses neither",
+   "name": "Synapse sign by postsynaptic receptor: Fenyves et al. 2020's published prediction (NT+R) where it is + or -; else inhibitory where the postsynaptic class expresses more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel ones, in summed CeNGEN TPM (our guessed rule); the transmitter rule where it expresses neither",
    "layer": "synapse",
    "status": "have",
    "toggle": "receptor_sign",
    "neutral": "off = the presynaptic transmitter rule",
    "default": "off",
-   "source": "CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase",
-   "notes": "3262 of 3709 pairs from receptor expression; 1125 differ from the transmitter rule",
+   "source": "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase",
+   "notes": "1705 of 3709 pairs from Fenyves (+ or -), 1584 from our CeNGEN rule, 420 from the transmitter rule; Fenyves and our rule disagree on 182 of the 1705 (Fenyves used); 1039 pairs differ from the transmitter rule. Fenyves calls 436 pairs complex (both signs; our rule used)",
    "absent_reason": "",
    "numbers": 3709,
    "by_label": {
-    "guessed": 3709
+    "derived": 1705,
+    "guessed": 2004
    }
   },
   {
@@ -7167,8 +7169,8 @@
    "applies_to": "every exc synapse",
    "unit": "kHz",
    "n_values": 1,
-   "value_template": 0.2,
-   "template_source": "BAAIWorm 0.5 clipped to the literature range",
+   "value_template": 0.1166666666666666,
+   "template_source": "BAAIWorm 0.5 clipped to the literature range; at a bound (0.2), so moved to the range's midpoint",
    "bio_min": 0.0333333333333333,
    "bio_max": 0.2,
    "bound_basis": "measured_this_class",
@@ -7221,8 +7223,8 @@
    "applies_to": "every exc synapse",
    "unit": "mV",
    "n_values": 1,
-   "value_template": 10.0,
-   "template_source": "BAAIWorm 30 clipped to the literature range",
+   "value_template": 0.0,
+   "template_source": "BAAIWorm 30 clipped to the literature range; at a bound (10), so moved to the range's midpoint",
    "bio_min": -10.0,
    "bio_max": 10.0,
    "bound_basis": "measured_related",
@@ -7302,8 +7304,8 @@
    "applies_to": "every inh synapse",
    "unit": "kHz",
    "n_values": 1,
-   "value_template": 0.0333333333333333,
-   "template_source": "BAAIWorm 0.015 clipped to the literature range",
+   "value_template": 0.1166666666666666,
+   "template_source": "BAAIWorm 0.015 clipped to the literature range; at a bound (0.0333333), so moved to the range's midpoint",
    "bio_min": 0.0333333333333333,
    "bio_max": 0.2,
    "bound_basis": "measured_this_class",
@@ -7383,8 +7385,8 @@
    "applies_to": "every gap junction placed by wiring=baaiworm",
    "unit": "uS",
    "n_values": 1,
-   "value_template": 5e-05,
-   "template_source": "BAAIWorm 1e-5 uS (transform.py) clipped to the literature range",
+   "value_template": 0.0002236067977499,
+   "template_source": "BAAIWorm 1e-5 uS (transform.py) clipped to the literature range; at a bound (5e-05), so moved to the range's log-midpoint",
    "bio_min": 5e-05,
    "bio_max": 0.001,
    "bound_basis": "guessed",
@@ -7396,11 +7398,11 @@
    "prior_basis": "guessed: log-uniform over the range",
    "label": "guessed",
    "fill_kind": "guessed",
-   "source_project": "literature",
+   "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "ported value 1e-5 uS = 0.01 nS per placed junction",
+   "notes": "ported value 1e-5 uS = 0.01 nS per placed junction, below range C4; the template is 22x it. Range C4 is itself guessed (no measurement found), so the override is ours, not a cited value",
    "kind": "physiology"
   },
   {
@@ -8058,7 +8060,7 @@
    "applies_to": "neuron-neuron chemical pairs (wiring=cook)",
    "unit": "nS per EM synapse",
    "n_values": 3709,
-   "value_template": 0.1,
+   "value_template": 0.4472135954999579,
    "template_source": "shared default per pair (values table)",
    "bio_min": 0.1,
    "bio_max": 2.0,
@@ -8066,7 +8068,7 @@
    "bound_source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "bound_verified": "unverified",
    "prior_dist": "lognormal",
-   "prior_a": 0.1,
+   "prior_a": 0.4472135954999579,
    "prior_b": 0.5,
    "prior_basis": "guessed: a shared factor per row, log-normal sd 0.5 around the default, truncated (the spread across pairs is unknown)",
    "label": "guessed",
@@ -8078,9 +8080,9 @@
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
    "element_stats": {
-    "min": 0.1,
-    "median": 0.1,
-    "max": 0.1,
+    "min": 0.4472135954999579,
+    "median": 0.4472135954999579,
+    "max": 0.4472135954999579,
     "by_label": {
      "guessed": 3709
     }
@@ -8094,7 +8096,7 @@
    "applies_to": "neuron-neuron gap pairs (wiring=cook)",
    "unit": "nS per EM gap junction",
    "n_values": 1091,
-   "value_template": 0.05,
+   "value_template": 0.2236067977499789,
    "template_source": "shared default per pair (values table)",
    "bio_min": 0.05,
    "bio_max": 1.0,
@@ -8102,21 +8104,21 @@
    "bound_source": "no direct value found (param_ranges C4)",
    "bound_verified": "unverified",
    "prior_dist": "lognormal",
-   "prior_a": 0.05,
+   "prior_a": 0.2236067977499789,
    "prior_b": 0.5,
    "prior_basis": "guessed: a shared factor per row, log-normal sd 0.5 around the default, truncated (the spread across pairs is unknown)",
    "label": "guessed",
    "fill_kind": "guessed",
-   "source_project": "literature",
+   "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS",
+   "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
    "element_stats": {
-    "min": 0.05,
-    "median": 0.05,
-    "max": 0.05,
+    "min": 0.2236067977499789,
+    "median": 0.2236067977499789,
+    "max": 0.2236067977499789,
     "by_label": {
      "guessed": 1091
     }
@@ -8130,7 +8132,7 @@
    "applies_to": "neuron-to-muscle pairs (wiring=cook)",
    "unit": "nS per EM synapse",
    "n_values": 956,
-   "value_template": 0.1,
+   "value_template": 0.4472135954999579,
    "template_source": "shared default per pair (values table)",
    "bio_min": 0.1,
    "bio_max": 2.0,
@@ -8138,7 +8140,7 @@
    "bound_source": "Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
    "bound_verified": "unverified",
    "prior_dist": "lognormal",
-   "prior_a": 0.1,
+   "prior_a": 0.4472135954999579,
    "prior_b": 0.5,
    "prior_basis": "guessed: a shared factor per row, log-normal sd 0.5 around the default, truncated (the spread across pairs is unknown)",
    "label": "guessed",
@@ -8150,9 +8152,9 @@
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",
    "element_stats": {
-    "min": 0.1,
-    "median": 0.1,
-    "max": 0.1,
+    "min": 0.4472135954999579,
+    "median": 0.4472135954999579,
+    "max": 0.4472135954999579,
     "by_label": {
      "guessed": 956
     }
@@ -8241,14 +8243,14 @@
    "unit": "flag",
    "n_values": 3709,
    "value_template": 0.0,
-   "template_source": "receptor rule (values table)",
+   "template_source": "Fenyves 2020, else receptor rule (values table)",
    "bio_min": 0.0,
    "bio_max": 1.0,
    "bound_basis": "physical_limit",
    "bound_source": "flag",
    "bound_verified": "unverified",
    "prior_dist": "bernoulli",
-   "prior_a": 0.355,
+   "prior_a": 0.329,
    "prior_b": "",
    "prior_basis": "fraction inhibitory under the rule",
    "label": "guessed",
@@ -8264,7 +8266,8 @@
     "median": 0.0,
     "max": 1.0,
     "by_label": {
-     "guessed": 3709
+     "guessed": 2004,
+     "derived": 1705
     }
    },
    "kind": "physiology"
@@ -10706,8 +10709,8 @@
    "applies_to": "whole worm",
    "unit": "s",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "guessed (brain_layers.py)",
+   "value_template": 2.0,
+   "template_source": "guessed (brain_layers.py); at a bound (1), so moved to the range's midpoint",
    "bio_min": 1.0,
    "bio_max": 3.0,
    "bound_basis": "guessed",
@@ -11410,8 +11413,10 @@
   "bwm_gap_pairs": 96,
   "chem_pairs_with_baaiworm_site": 2306,
   "gap_pairs_with_baaiworm_site": 599,
-  "receptor_sign_from_cengen": 3262,
-  "receptor_sign_flips": 1125,
+  "receptor_sign_from_fenyves": 1705,
+  "receptor_sign_from_cengen": 1584,
+  "receptor_sign_flips": 1039,
+  "receptor_sign_fenyves_disagree": 182,
   "ported_nS_per_em": {
    "syn_exc": 0.057781748213304014,
    "syn_inh": 0.018723849372384936,
