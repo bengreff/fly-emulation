@@ -219,3 +219,31 @@ else in `ImplicitGap` is unchanged. The adopted dense solve stays the default un
 
 **Falsifier.** If GMRES does not converge within its iteration cap at a = 8 (the strongest chain case), B1 fails
 and the dense solve stays.
+
+## Result of `gapcheck4` (scored 2026-11-05 01:38 CST): fails B4 on the bench; the dense solve stays
+
+Logs `data/worm/gapcheck/gapcheck4*.log`, `gapbench4_*.log`. Measured.
+- **R0, B1, B2, B3, F1, F2 pass**, with numbers equal to `gapcheck3` (R0 0.0 mV; B1 max 1.2e-5 mV, pair <= 1.4e-12;
+  B3 relative 6.4e-7; ExplicitGap blows up in the strongest cases). The GMRES traces equal the dense ones to
+  9.5e-13 mV over every case.
+- **B4, branched cells (float64): pass**, GMRES against dense 1.5e-12 mV.
+- **B4, 446-cell bench: FAIL**, 0.00087 mV at 1.0x and 0.0018 mV at 1.5x against <= 1e-6 mV.
+- **B5: pass**, forward 698 us per step against 6123 us dense in the same session (8.8x faster); with gradient
+  3728 against 24938 us (6.7x). At 1.5x: 726 and 3819 us, every cell within -60 to +0.5 mV, gradient finite.
+- **Cause of the B4 failure (diagnosed from the code, not yet tested):** the bench runs in float32, where the
+  GMRES tolerance is 1e-6 relative to the norm of the junction voltages (about 60 mV x sqrt(434), so about 1e-3 mV
+  absolute), and the dense float32 solve has its own rounding. B4's 1e-6 mV bar was written for float64 and does
+  not fit a float32 run; that is an error in this pre-registration, and by its rule nothing is adopted.
+
+## Pre-registration of `gapcheck5` (written 2026-11-05 01:38 CST, before it runs)
+
+Same code as `gapcheck4` (`src/bioemu/jx_gap.py` md5 recorded in the log), so R0, B1-B3, F1, F2 and the branched
+B4 carry over from `gapcheck4` unchanged. Only the bench part of B4 is redone, with the precision stated:
+- **B4' (float64):** the 446-cell bench run with float64 (`BENCH_X64=1`), forward only, scale 1.0 and 1.5: the 8
+  recorded cells' voltages from GMRES (tolerance 1e-12) and dense differ by <= 1e-6 mV at every time point.
+- **B6 (float32, the fitting precision):** against the float64 dense run as truth, the float32 GMRES error is no
+  more than 2x the float32 dense error plus 0.005 mV, at both scales (max over the 8 cells and all times). This
+  asks whether GMRES at its float32 tolerance is as accurate as the adopted float32 path.
+- **B5** re-measured in the same runs (float32 GMRES forward below float32 dense).
+- Gate: B4', B5, B6 pass, plus the carried bars and the `gapcheck4` figure (to be rendered and viewed):
+  GMRES replaces dense as the default solve.
