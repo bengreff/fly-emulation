@@ -21,6 +21,13 @@ the brain worker's to add; this file starts with the body and viewer (body worke
 | Neuropeptide edges | Ripoll-Sanchez et al. 2023 Neuron (short-range network) | published data | wiring diagram layer (off by default) | none; inferred from expression |
 | Monoamine edges | Bentley et al. 2016 PLOS Comput Biol | published data | wiring diagram layer (off by default) | none; inferred from expression |
 
+## Surveyed, to port (body)
+
+- OpenWorm Sibernetic (https://github.com/openworm/sibernetic, MIT; Palyanov et al. 2018 Phil Trans R Soc B
+  373:20170376): mechanisms and numbers to port as toggles (internal pressure, a force-type muscle with a physical
+  maximum force, gravity and agar), listed in `docs/worm/research/SIBERNETIC_PORT.md`. Nothing taken yet; a row
+  goes in the Body table when the first one lands.
+
 ## Not adopted (body), and why
 
 - Our own planar rod (archived, `archive/worm/rod_own/`): written by us, not a port; dropped on Ben's direction

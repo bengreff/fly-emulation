@@ -8,3 +8,6 @@ Test results: docs/worm/BODY_TESTS.md. To rerun, copy rod.py back into src/worme
 Its ledger moved here too (body_parameters.csv, body_mechanisms.json, build_body_ledger.py; paths inside still
 point at data/worm/ledger/). The live body ledger is data/worm/ledger/metaworm_parameters.csv; it reuses this
 ledger's literature rows (water viscosity, agar drag, density, tissue moduli).
+Ben 15:30 (5 Nov): 3D body only, drop the rod entirely. muscles.py (the rod's muscle-over-joint coverage) moved
+here too; drive.py and gait.py were already here and their duplicates in src/wormemu/body/ were removed. To
+rerun the rod, copy rod.py, muscles.py, drive.py and gait.py back into src/wormemu/body/.

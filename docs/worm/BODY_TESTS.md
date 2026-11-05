@@ -179,3 +179,52 @@ Readout check (post hoc, measured): at 48 slices the curvature readout has a sta
 amplitudes subtract the time mean, so they barely move with slice count: P2 head 21.9 / 22.3 / 23.3 and P3 head
 4.9 / 5.5 / 5.0 at 48 / 24 / 16 slices; P3 wavelength 1.59 / 1.54 / 1.82 L (all inside the bar); frequencies
 unchanged. No verdict changes. Use 24 slices (rest RMS 1.9) for the next pre-registration.
+
+## Real-time factor of the ported body (2026-11-05 16:23-16:27 CST, measured)
+
+Ben 15:30: "Real time seems fast enough, especially with a GPU port." This is a cost measurement, not a model test,
+so no bar was pre-registered; the reference is 1.0 (real time). RTF = simulated seconds / wall seconds of the
+control loop (`wall_s` in each run's json, a steady clock around the loop only, excluding mesh load and matrix
+factorisation, about 0.2-0.3 s). 10 s simulated per run = 2,400 physics steps at 1/240 s, 50 projective-dynamics
+iterations at most per step, early exit at the convergence threshold. One thread, frames written every control
+step (30 Hz, as the viewer needs). Same sources (BAAIWorm b99ca5ab, unchanged) and driver on both machines, built
+with `driver/build.sh` at `-O2 -std=gnu++14`.
+
+| machine | build | run | wall per 10 s (mean, n) | RTF | ms per physics step |
+|---|---|---|---|---|---|
+| Mac, Apple M2 Pro, macOS 15.5 | Apple clang 17.0.0, -O2 | published key t0_fast (swimming) | 16.78 s (3; 16.58-17.05) | **0.60** | 7.0 |
+| Mac | same | prescribed wave, a0 0.157 (P3) | 12.33 s (1) | 0.81 | 5.1 |
+| Mac | same | dead (no drive) | 3.25 s (1) | 3.08 | 1.4 |
+| backhouse, i7-14700K, WSL2 Ubuntu, vCPU 4 | g++ 13.3.0, -O2 | key t0_fast | 14.50 s (3; 13.88-14.97) | **0.69** | 6.0 |
+| backhouse, vCPU 4 | same | wave a0 0.157 | 10.68 s (1) | 0.94 | 4.4 |
+| backhouse, vCPU 4 | same | dead | 3.20 s (1) | 3.12 | 1.3 |
+| backhouse, vCPU 20 | same | key t0_fast | 15.58 s (3; 15.01-15.91) | 0.64 | 6.5 |
+| backhouse, vCPU 20 | same | wave / dead | 11.26 / 3.38 s (1 each) | 0.89 / 2.96 | 4.7 / 1.4 |
+
+Verdict: **on one CPU thread the published body runs at 0.6-0.7x real time while swimming** (1.45-1.7x short of
+real time), and 3x faster than real time when nothing moves. Load at the time: Mac 2.3-4.0 (other sessions),
+backhouse 4.1-4.5 of 28 CPUs.
+
+What the numbers say:
+- **Cost follows the solver's iteration count, not the mesh.** Same mesh, same steps: dead 1.3 ms per step,
+  the gentle wave 4.4-5.1, the published key 6.0-7.0. The solver stops early when converged, so a body that
+  moves hard uses more of its 50 iterations. (Inferred from the code, `World::ProjectiveDynamicsMethod`; the
+  iteration count was not logged.)
+- **Same answer on both machines.** The max vertex displacement from rest is 1.15622578 (key) and 0.260600792
+  (wave) on the Mac and on backhouse, equal to 9 digits (measured): the port is reproducible across compilers.
+- **vCPU 4 against vCPU 20** is not a P-core against E-core comparison: inside WSL2 `taskset` pins to a virtual
+  CPU, and Windows schedules vCPUs on any core. The 17:00-22:00 throttle pins the whole WSL VM to E-cores; that
+  speed was not measured.
+- Bash `time` around the runs on backhouse disagreed with the loop's steady clock (one run 7.5 s outside against
+  15.0 s inside), so wall-clock jumps happen in WSL; only `wall_s` is used.
+
+Ways to close the gap (none tried yet except the compiler flags below; all keep the physics unchanged except the
+last):
+- compiler flags (below);
+- the upstream local step already has an OpenMP `parallel for` written and commented out
+  (`World::EvaluateDVector`, `sim/fem/World.cpp:237`); the 3,341 tet and 96 muscle projections are independent,
+  so a few threads should help;
+- the GPU port (Ben: later);
+- fewer iterations or a looser threshold: a numerical change, needs its own check against P2 before adoption.
+
+Not timed: the brain. The closed-loop budget is body plus brain per biological second.
