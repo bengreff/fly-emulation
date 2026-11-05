@@ -198,3 +198,24 @@ which is about 5 ms at a guessed 10 GFLOP/s on one core and matches the measured
 one junction compartment, that system is a diagonal plus the sparse junction graph (2684 entries), so a sparse or
 iterative solve should remove most of the cost. That change gets the same NEURON check before it replaces the
 dense solve.
+
+## Pre-registration of `gapcheck4`: an iterative junction solve (written 2026-11-05 01:31 CST, before its code exists)
+
+**Change under test.** `use_implicit_gaps(net, solve="gmres")` replaces the dense factorisation of the junction
+system (I + dt W O) y = x0 with restarted GMRES (`jax.scipy.sparse.linalg.gmres`, differentiated by JAX's implicit
+linear-solve rule), applying W block by block (per cell, by junction slot) and O as the sparse junction graph, so
+no nS x nS matrix is formed. Relative tolerance 1e-12 in float64 (1e-6 in float32), starting from x0. Everything
+else in `ImplicitGap` is unchanged. The adopted dense solve stays the default until this passes.
+
+**Bars (all must pass to replace the dense solve).**
+- **B1-B3, F1, F2, R0:** exactly as in `gapcheck3` (same harness `check_gap_neuron.py`, same patched NEURON
+  reference, same cases and tolerances), with the iterative solve selected by `GAP_SOLVE=gmres`.
+- **B4 (same answer as the adopted form):** on the 446-cell bench (T 200 ms, dt 0.1 ms, scale 1.0 and 1.5), the
+  8 recorded cells' voltages from the iterative and the dense solve differ by <= 1e-6 mV at every time point, and
+  on the branched-cell check by <= 1e-6 mV at dt 0.1 ms.
+- **B5 (the reason for the change):** forward cost per step on the 446-cell bench (one core, scale 1.0) below the
+  dense solve's measured 6377 us. A pass that is not faster is reported and not adopted.
+- **Figure:** `plot_gapcheck.py` on the new traces, viewed.
+
+**Falsifier.** If GMRES does not converge within its iteration cap at a = 8 (the strongest chain case), B1 fails
+and the dense solve stays.
