@@ -334,3 +334,45 @@ Seen in the viewer and the MP4 contact sheet: the body curls within about 1 s an
 (coil, then a V, then a coil); no rhythm and no crawling. The loop works end to end with real drive. That the
 posture is held rather than a gait is the brain's saturation (still open on the brain side), not a body fault,
 inferred from the tonic muscle cells. MP4: `runs/worm/media/cl_brain_tmpl.mp4`.
+
+## Agar plate: pre-registration (written 2026-11-05 17:20 CST, before the code exists or any agar run)
+
+Director 17:25 (for Ben): Boyle, Berri and Cohen's agar coefficients with their anisotropy as published; gates are a
+dead body settling onto the plate and P3 not blowing up; crawl speed, frequency and wavelength against literature
+agar values are report-only this week; the published world stays the other setting of the same toggles.
+
+Configuration (new driver flags, each neutral = the published world):
+- `body.scale = worm_1mm`. Keep the mesh; 1 length unit = 1.5934 mm, so the 0.6276-unit body is 1.0 mm (BBC's
+  model length, published). Mass unit chosen so stress, stiffness and drag per length are numerically SI, so the
+  published E and muscle stiffness carry over unchanged as Pa. Mass = density 1074 kg/m^3 (Reina et al. 2013,
+  measured) x mesh volume, about 2.13 ug (derived), spread evenly over the vertices.
+- `env.fluid = agar_rft`. Resistive-force drag, linear, in the implicit solve (`World::SetDragMatrix`):
+  per vertex w [c_t t t^T + c_n (I - t t^T)], t = local midline tangent from 24 slice centroids, w = slice length
+  per vertex. c_t = 3.2, c_n = 128 Pa s: BBC 2012's 3.2e-3 and 128e-3 kg/s for a 1 mm worm read per unit length
+  (inferred), K = 40 as published. The out-of-plane direction uses c_n. The drag matrix is rebuilt from the current
+  tangents every physics step (`--drag_every 1`) for the gates.
+- `env.substrate = agar_plate`. Gravity 9.81 m/s^2 toward the plate; right side down (guessed: worms crawl on
+  either side); the plate plane touches the rest body's lowest point; after each physics step, vertices below the
+  plate are put back on it and their velocity into the plate is zeroed (no bounce). No friction beyond the drag.
+- `env.fluid = viscous_rft_water` (c_t 0.00357, c_n 0.005675 Pa s, ledger rows mw_water_Ct/Cn) is built at the
+  same time but not scored here.
+
+Gates (L = rest length; frames at 30 Hz):
+- **A1 dead body on the plate**, all activations 0, 3 s. Pass if all positions stay finite; the body's lowest
+  point stays within 1e-3 L of the plate; the centroid moves less than 0.01 L in the plate plane; and no vertex
+  moves more than 0.02 L from rest. (Expectation, derived: gravity is about 1000x weaker than the elastic forces,
+  so the sag should be near 1e-3 L.)
+- **A2 P3 drive on agar**: wave mode at the P3 inputs (f 1.76 Hz, lambda 1.54 L, a0 0.157), 5 s. Pass if all
+  positions stay finite; at every frame no vertex is further than 0.6 L from the centroid; the midline length
+  stays within 0.8-1.2 L; and the centroid stays within one body diameter (0.08 L) of the plate.
+
+Numerics, reported with the gates: A2 with `--drag_every 8` against 1 (centroid speed change); A2 with
+`body.solver_exit = latest` against published; the cost of one drag refactorisation and the RTF.
+
+Report-only this week (no bar, no fitting): a crawl drive at the Fang-Yen 2010 crawl means (f 0.30 Hz,
+lambda 0.65 L, inputs) at a0 = 0.157 (the P3 value) and a0 = 1.0 (the maximum), 10 s, last 2 periods. Readouts
+against literature agar values: speed 0.08-0.30 mm/s (Rabets 2014; Sibernetic 2018 experimental 0.1-0.3), head
+first; body wavelength 0.46-0.84 L (Fang-Yen 2010); body frequency against the drive (transmission); head
+curvature against 8-9 /mm (BBC 2012 Fig. 3A, read from the figure). A2's readouts are reported the same way.
+Expectation (a guess, not a bar): with K = 40 the slip is small, so the crawl speed should be near the wave speed
+f x lambda = 0.195 L/s if the body carries the wave, head first.
