@@ -312,3 +312,21 @@ dedicated file. `cook2019/SI 4 Cell lists.xlsx` (section 1 above) already is a c
 both sexes from the same underlying anatomical source, and was judged to satisfy this item without a redundant
 second download. If a WormBase-specific canonical list (e.g. from the WormBase REST API or WormAtlas's own
 neuron-class table) is specifically needed later, it was not located/verified in this session.
+
+## 9. Brain structure tables in the repo (`data/worm/structure/`, added 2026-11-05)
+
+Small derived tables the brain reads directly (loader: `src/wormemu/brain_structure.py`). Raw sources stay on
+backhouse as above; these are reproducible from them.
+
+| file | rows | source | how made |
+|---|---|---|---|
+| `cells.csv`, `chem_edges.csv`, `gap_edges.csv` | 476 cells after the loader drops 3 SI 4 twins; 28,113 chemical synapses, 11,633 gap-junction contacts (hermaphrodite) | Cook 2019 SI 4 + SI 5 corrected July 2020 (section 1) | `scripts/worm/extract_structure.py` |
+| `cengen_t2.csv` | 855 genes x 128 neuron classes, TPM at threshold 2 | CeNGEN (section 3) | same script; gene families widened 5 Nov (gnrr, nmur, sprr, trhr-1, pdfr) |
+| `geometry.csv` | 302 neurons: soma x/y/z (um), soma diameter, membrane area (um2), neurite length, segment count | CElegansNeuroML `generatedNeuroML2/*.cell.nml` (section 7; Virtual Worm-derived morphologies) | `scripts/worm/extract_geometry.py` |
+| `transmitters_wang2024.csv` | 282 neurons x 8 transmitters (0/1) | Wang et al. 2024 eLife 13:RP95402 neurotransmitter atlas, as tabulated by OpenWorm ConnectomeToolbox `https://openworm.org/ConnectomeToolbox/Wang2024Herm_data/` (fetched 2026-11-05) | copied from the page table |
+| `peptide_gpcr_pairs.csv` | 92 ligand-receptor pairs | Ripoll-Sanchez et al. 2023 Neuron, pairs with EC50 <= 500 nM from Beets et al. 2023 (section 4) | copied from the Neuropeptide-Connectome repo |
+| `monoamine_receptor_pairs.csv` | 14 transmitter-receptor pairs | Bentley et al. 2016 PLoS Comput Biol, via Ripoll-Sanchez 2023 (section 4) | same |
+
+The 20 neurons Wang 2024 does not list take their transmitter from CeNGEN marker genes (unc-17, eat-4, unc-25,
+cat-2, tph-1, tdc-1, tbh-1) where expressed (5 neurons), else none (15 neurons: no fast chemical output in the
+model; recorded in the ledger).

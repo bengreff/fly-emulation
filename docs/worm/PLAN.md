@@ -270,6 +270,25 @@ fly-specific. Sorted by reading each module's header:
 4. The fly's ledger idea (`data/ontology/fly_information.yaml`, fill fraction) is reused for the worm ledger
    rows in section a.
 
+### d.1 What must carry over to the next organisms (added 2026-11-05, Ben's path: worm -> larva -> adult fly)
+
+The organism path is **worm (stage 1) -> Drosophila larva (stage 2: the Winding et al. 2023 Science 379:eadd9330
+whole-brain connectome, 3,016 neurons, plus the larval VNC and body) -> adult fly (stage 3, the existing
+male-cns v1.0 project)**. What the worm builds must carry over unchanged in form:
+- The ledger: `bioemu.ledger` (mechanisms.yaml, parameters.csv, the grain list, bound bases, evidence labels,
+  slot counts with source shares, precision_needed). Species data go in the species directory; the code does not
+  name an organism.
+- `sample_individual(seed)` -> a complete spec, and the lockstep brain <-> body contract (INTERFACE.md): body
+  drives the clock, the brain owns all biological delays, the world reaches the brain only through sensors.
+- Graded (non-spiking) and spiking cells in one engine: the larva has both, so neither can be a worm special case.
+- Class/type sharing of parameters (CeNGEN class in the worm; cell type in the larva; type in the adult) and
+  transcriptome-to-channel and receptor-share rules as toggles.
+- The CPU reference path for every mechanism, the GPU port only after it matches.
+
+**Speed bars (Ben, 5 Nov):** the full worm including the 3D body must never run slower than **100x real time**
+(hard: 1 biological second in at most 100 wall seconds). The fitting configuration must run under **10x**
+(1 biological second in at most 10 wall seconds). Every engine change reports its cost per biological second.
+
 ## e. Staged roadmap, with the first "done on evidence" targets
 
 Each stage is pre-registered (objective, held-out split, falsifier) before it is scored, as the spike was.
@@ -287,6 +306,7 @@ Each stage is pre-registered (objective, held-out split, falsifier) before it is
 | **W7 learning** | plasticity and the slow pathways of row 18 | salt-starvation learning and tap habituation curves (corpus 15-16, 61-63) |
 | **W8 3D body cross-check** | Sibernetic on Windows OpenCL, or a GPU port | the rod and the 3D body agree on corpus 1-7 within the measured spread; where they disagree, the 3D body is the reference |
 | **W9 sealed scoreboard** | spend the sealed third of the corpus once, with mutants and ablations | the fraction of sealed items within real variability is the headline number |
+| **Stage 2: larva** (after W9 or when Ben calls it) | Drosophila larva: Winding 2023 brain connectome (3,016 neurons) + VNC, the same ledger, engine and contract | first target written when stage 2 is pre-registered; the worm's framework must load it with no organism names in `bioemu` |
 
 ## DECISIONS (decided 2026-11-05 00:59 CST: the Director adopted all five recommendations as Ben's defaults; reversible; logged in `~/director/decisions/fly.md` and going to Ben in the morning report)
 

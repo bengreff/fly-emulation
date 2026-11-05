@@ -1,0 +1,476 @@
+name,category,sheet,note
+I1L,interneuron,pharynx,
+I1R,interneuron,pharynx,
+I2L,interneuron,pharynx,
+I2R,interneuron,pharynx,
+I3,interneuron,pharynx,
+I4,interneuron,pharynx,
+I5,interneuron,pharynx,
+I6,interneuron,pharynx,
+M1,motorneuron,pharynx,
+M2L,motorneuron,pharynx,
+M2R,motorneuron,pharynx,
+M3L,motorneuron,pharynx,
+M3R,motorneuron,pharynx,
+M4,motorneuron,pharynx,
+M5,motorneuron,pharynx,
+MCL,motorneuron,pharynx,
+MCR,motorneuron,pharynx,
+MI,motorneuron,pharynx,
+NSML,interneuron,pharynx,
+NSMR,interneuron,pharynx,
+pm1,muscle (myoepithelium),pharynx,
+pm2d,muscle (myoepithelium),pharynx,
+pm2vl,muscle (myoepithelium),pharynx,
+pm2vr,muscle (myoepithelium),pharynx,
+pm3d,muscle (myoepithelium),pharynx,
+pm3vl,muscle (myoepithelium),pharynx,
+pm3vr,muscle (myoepithelium),pharynx,
+pm4d,muscle (myoepithelium),pharynx,
+pm4vl,muscle (myoepithelium),pharynx,
+pm4vr,muscle (myoepithelium),pharynx,
+pm5d,muscle (myoepithelium),pharynx,
+pm5vl,muscle (myoepithelium),pharynx,
+pm5vr,muscle (myoepithelium),pharynx,
+pm6d,muscle (myoepithelium),pharynx,
+pm6vl,muscle (myoepithelium),pharynx,
+pm6vr,muscle (myoepithelium),pharynx,
+pm7d,muscle (myoepithelium),pharynx,
+pm7vl,muscle (myoepithelium),pharynx,
+pm7vr,muscle (myoepithelium),pharynx,
+pm8,muscle (myoepithelium),pharynx,
+mc1dl,marginal cell,pharynx,
+mc1dr,marginal cell,pharynx,
+mc1v,marginal cell,pharynx,
+mc2dl,marginal cell,pharynx,
+mc2dr,marginal cell,pharynx,
+mc2v,marginal cell,pharynx,
+mc3dl,marginal cell,pharynx,
+mc3dr,marginal cell,pharynx,
+mc3v,marginal cell,pharynx,
+e1D,epithelium,pharynx,
+e1VL,epithelium,pharynx,
+e1VR,epithelium,pharynx,
+e2DL,epithelium,pharynx,
+e2DR,epithelium,pharynx,
+e2V,epithelium,pharynx,
+e3D,epithelium,pharynx,
+e3VL,epithelium,pharynx,
+e3VR,epithelium,pharynx,
+g1P,glial cell,pharynx,
+g1AL,glial cell,pharynx,
+g1AR,glial cell,pharynx,
+g2L,glial cell,pharynx,
+g2R,glial cell,pharynx,
+bm,basement membrane,pharynx,
+ASJL,sensory,sex-shared,SN6; amphid
+ASJR,sensory,sex-shared,SN6; amphid
+ASKL,sensory,sex-shared,SN6; amphid
+ASKR,sensory,sex-shared,SN6; amphid
+ASGL,sensory,sex-shared,SN6; amphid
+ASGR,sensory,sex-shared,SN6; amphid
+ASIL,sensory,sex-shared,SN6; amphid
+ASIR,sensory,sex-shared,SN6; amphid
+AFDL,sensory,sex-shared,SN6; amphid
+AFDR,sensory,sex-shared,SN6; amphid
+AWAL,sensory,sex-shared,SN6; amphid
+AWAR,sensory,sex-shared,SN6; amphid
+AWBL,sensory,sex-shared,SN6; amphid
+AWBR,sensory,sex-shared,SN6; amphid
+AWCL,sensory,sex-shared,SN6; amphid
+AWCR,sensory,sex-shared,SN6; amphid
+ASEL,sensory,sex-shared,SN6; amphid
+ASER,sensory,sex-shared,SN6; amphid
+ADFL,sensory,sex-shared,SN6; amphid
+ADFR,sensory,sex-shared,SN6; amphid
+ASHL,sensory,sex-shared,"SN5; amphid, nociceptive"
+ASHR,sensory,sex-shared,"SN5; amphid, nociceptive"
+ADLL,sensory,sex-shared,"SN5; amphid, nociceptive"
+ADLR,sensory,sex-shared,"SN5; amphid, nociceptive"
+BAGL,sensory,sex-shared,"SN4; O2, CO2, social signals, touch"
+BAGR,sensory,sex-shared,"SN4; O2, CO2, social signals, touch"
+URXL,sensory,sex-shared,"SN4; O2, CO2, social signals, touch"
+URXR,sensory,sex-shared,"SN4; O2, CO2, social signals, touch"
+ALNL,sensory,sex-shared,SN4; touch
+ALNR,sensory,sex-shared,SN4; touch
+PLNL,sensory,sex-shared,SN4; touch
+PLNR,sensory,sex-shared,SN4; touch
+SDQL,sensory,sex-shared,"SN4; touch; interneuron in White et al., 1986"
+SDQR,sensory,sex-shared,"SN4; touch; interneuron in White et al., 1987"
+AQR,sensory,sex-shared,SN4; touch
+PQR,sensory,sex-shared,SN4; touch
+ADEL,sensory,sex-shared,SN3; mechanosensory
+ADER,sensory,sex-shared,SN3; mechanosensory
+PDEL,sensory,sex-shared,SN3; mechanosensory
+PDER,sensory,sex-shared,SN3; mechanosensory
+ALML,sensory,sex-shared,SN3; mechanosensory
+ALMR,sensory,sex-shared,SN3; mechanosensory
+AVM,sensory,sex-shared,SN3; mechanosensory
+PVM,sensory,sex-shared,SN3; mechanosensory
+PLML,sensory,sex-shared,SN3; mechanosensory
+PLMR,sensory,sex-shared,SN3; mechanosensory
+FLPL,sensory,sex-shared,SN3; mechanosensory
+FLPR,sensory,sex-shared,SN3; mechanosensory
+DVA,sensory,sex-shared,"SN3; mechanosensory; interneuron in White et al., 1986"
+PVDL,sensory,sex-shared,SN3; mechanosensory
+PVDR,sensory,sex-shared,SN3; mechanosensory
+PHAL,sensory,sex-shared,SN2; phasmid
+PHAR,sensory,sex-shared,SN2; phasmid
+PHBL,sensory,sex-shared,SN2; phasmid
+PHBR,sensory,sex-shared,SN2; phasmid
+PHCL,sensory,sex-shared,SN2; phasmid
+PHCR,sensory,sex-shared,SN2; phasmid
+IL2DL,sensory,sex-shared,SN1; cephalic
+IL2DR,sensory,sex-shared,SN1; cephalic
+IL2L,sensory,sex-shared,SN1; cephalic
+IL2R,sensory,sex-shared,SN1; cephalic
+IL2VL,sensory,sex-shared,SN1; cephalic
+IL2VR,sensory,sex-shared,SN1; cephalic
+CEPDL,sensory,sex-shared,SN1; cephalic
+CEPDR,sensory,sex-shared,SN1; cephalic
+CEPVL,sensory,sex-shared,SN1; cephalic
+CEPVR,sensory,sex-shared,SN1; cephalic
+OLQDL,sensory,sex-shared,SN1; cephalic
+OLQDR,sensory,sex-shared,SN1; cephalic
+OLQVL,sensory,sex-shared,SN1; cephalic
+OLQVR,sensory,sex-shared,SN1; cephalic
+URYDL,sensory,sex-shared,SN1; cephalic
+URYDR,sensory,sex-shared,SN1; cephalic
+URYVL,sensory,sex-shared,SN1; cephalic
+URYVR,sensory,sex-shared,SN1; cephalic
+OLLL,sensory,sex-shared,SN1; cephalic
+OLLR,sensory,sex-shared,SN1; cephalic
+IL1DL,sensory,sex-shared,SN1; cephalic
+IL1DR,sensory,sex-shared,SN1; cephalic
+IL1L,sensory,sex-shared,SN1; cephalic
+IL1R,sensory,sex-shared,SN1; cephalic
+IL1VL,sensory,sex-shared,SN1; cephalic
+IL1VR,sensory,sex-shared,SN1; cephalic
+AIML,interneuron,sex-shared,category 4 interneuron
+AIMR,interneuron,sex-shared,category 4 interneuron
+AINL,interneuron,sex-shared,category 4 interneuron
+AINR,interneuron,sex-shared,category 4 interneuron
+RIH,interneuron,sex-shared,category 4 interneuron
+URBL,interneuron,sex-shared,category 4 interneuron
+URBR,interneuron,sex-shared,category 4 interneuron
+RIR,interneuron,sex-shared,category 4 interneuron
+PVQL,interneuron,sex-shared,layer 3 interneuron
+PVQR,interneuron,sex-shared,layer 3 interneuron
+ALA,interneuron,sex-shared,layer 3 interneuron
+BDUL,interneuron,sex-shared,layer 3 interneuron
+BDUR,interneuron,sex-shared,layer 3 interneuron
+AIYL,interneuron,sex-shared,layer 3 interneuron
+AIYR,interneuron,sex-shared,layer 3 interneuron
+AIAL,interneuron,sex-shared,layer 3 interneuron
+AIAR,interneuron,sex-shared,layer 3 interneuron
+AUAL,interneuron,sex-shared,layer 3 interneuron
+AUAR,interneuron,sex-shared,layer 3 interneuron
+AIZL,interneuron,sex-shared,layer 3 interneuron
+AIZR,interneuron,sex-shared,layer 3 interneuron
+RIS,interneuron,sex-shared,layer 3 interneuron
+ADAL,interneuron,sex-shared,layer 3 interneuron
+ADAR,interneuron,sex-shared,layer 3 interneuron
+RIFL,interneuron,sex-shared,layer 3 interneuron
+RIFR,interneuron,sex-shared,layer 3 interneuron
+PVR,interneuron,sex-shared,layer 3 interneuron
+AVFL,interneuron,sex-shared,layer 3 interneuron
+AVFR,interneuron,sex-shared,layer 3 interneuron
+AVHL,interneuron,sex-shared,layer 3 interneuron
+AVHR,interneuron,sex-shared,layer 3 interneuron
+PVPL,interneuron,sex-shared,layer 3 interneuron
+PVPR,interneuron,sex-shared,layer 3 interneuron
+PVNL,interneuron,sex-shared,layer 3 interneuron
+PVNR,interneuron,sex-shared,layer 3 interneuron
+AVG,interneuron,sex-shared,layer 3 interneuron
+LUAL,interneuron,sex-shared,layer 3 interneuron
+LUAR,interneuron,sex-shared,layer 3 interneuron
+DVB,interneuron,sex-shared,layer 3 interneuron
+RIBL,interneuron,sex-shared,layer 2 interneuron
+RIBR,interneuron,sex-shared,layer 2 interneuron
+AIBL,interneuron,sex-shared,layer 2 interneuron
+AIBR,interneuron,sex-shared,layer 2 interneuron
+RIGL,interneuron,sex-shared,layer 2 interneuron
+RIGR,interneuron,sex-shared,layer 2 interneuron
+RMGL,interneuron,sex-shared,layer 2 interneuron
+RMGR,interneuron,sex-shared,layer 2 interneuron
+RICL,interneuron,sex-shared,layer 2 interneuron
+RICR,interneuron,sex-shared,layer 2 interneuron
+SAADR,interneuron,sex-shared,layer 2 interneuron
+SAAVL,interneuron,sex-shared,layer 2 interneuron
+SAADL,interneuron,sex-shared,layer 2 interneuron
+SAAVR,interneuron,sex-shared,layer 2 interneuron
+RMFL,interneuron,sex-shared,layer 2 interneuron
+RMFR,interneuron,sex-shared,layer 2 interneuron
+AVKL,interneuron,sex-shared,layer 2 interneuron
+AVKR,interneuron,sex-shared,layer 2 interneuron
+DVC,interneuron,sex-shared,layer 2 interneuron
+AVJR,interneuron,sex-shared,layer 2 interneuron
+AVJL,interneuron,sex-shared,layer 2 interneuron
+PVT,interneuron,sex-shared,layer 2 interneuron
+AVDL,interneuron,sex-shared,layer 2 interneuron
+AVDR,interneuron,sex-shared,layer 2 interneuron
+AVL,interneuron,sex-shared,layer 2 interneuron
+PVWL,interneuron,sex-shared,layer 2 interneuron
+PVWR,interneuron,sex-shared,layer 2 interneuron
+RIAL,interneuron,sex-shared,layer 1 interneuron
+RIAR,interneuron,sex-shared,layer 1 interneuron
+RIML,interneuron,sex-shared,"layer 1 interneuron; motorneuron in White et al., 1986"
+RIMR,interneuron,sex-shared,"layer 1 interneuron; motorneuron in White et al., 1986"
+AVEL,interneuron,sex-shared,layer 1 interneuron
+AVER,interneuron,sex-shared,layer 1 interneuron
+RID,interneuron,sex-shared,layer 1 interneuron
+AVBL,interneuron,sex-shared,layer 1 interneuron
+AVBR,interneuron,sex-shared,layer 1 interneuron
+AVAL,interneuron,sex-shared,layer 1 interneuron
+AVAR,interneuron,sex-shared,layer 1 interneuron
+PVCL,interneuron,sex-shared,layer 1 interneuron
+PVCR,interneuron,sex-shared,layer 1 interneuron
+RIPL,interneuron,sex-shared,linker to pharynx
+RIPR,interneuron,sex-shared,linker to pharynx
+RMEL,motorneuron,sex-shared,head motor neuron
+RMER,motorneuron,sex-shared,head motor neuron
+RMED,motorneuron,sex-shared,head motor neuron
+RMEV,motorneuron,sex-shared,head motor neuron
+URADL,motorneuron,sex-shared,head motor neuron
+URADR,motorneuron,sex-shared,head motor neuron
+URAVL,motorneuron,sex-shared,head motor neuron
+URAVR,motorneuron,sex-shared,head motor neuron
+RMDDL,motorneuron,sex-shared,head motor neuron
+RMDDR,motorneuron,sex-shared,head motor neuron
+RMDL,motorneuron,sex-shared,head motor neuron
+RMDR,motorneuron,sex-shared,head motor neuron
+RMDVL,motorneuron,sex-shared,head motor neuron
+RMDVR,motorneuron,sex-shared,head motor neuron
+RMHL,motorneuron,sex-shared,head motor neuron
+RMHR,motorneuron,sex-shared,head motor neuron
+RIVL,motorneuron,sex-shared,head motor neuron
+RIVR,motorneuron,sex-shared,head motor neuron
+SABD,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1986"
+SABVL,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1987"
+SABVR,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1988"
+SMDDL,motorneuron,sex-shared,sublateral motor neuron
+SMDDR,motorneuron,sex-shared,sublateral motor neuron
+SMDVL,motorneuron,sex-shared,sublateral motor neuron
+SMDVR,motorneuron,sex-shared,sublateral motor neuron
+SMBDL,motorneuron,sex-shared,sublateral motor neuron
+SMBDR,motorneuron,sex-shared,sublateral motor neuron
+SMBVL,motorneuron,sex-shared,sublateral motor neuron
+SMBVR,motorneuron,sex-shared,sublateral motor neuron
+SIBDL,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1986"
+SIBDR,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1987"
+SIBVL,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1988"
+SIBVR,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1989"
+SIADL,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1990"
+SIADR,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1991"
+SIAVL,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1992"
+SIAVR,motorneuron,sex-shared,"sublateral motor neuron; interneuron in White et al., 1993"
+DA01,motorneuron,sex-shared,ventral cord motor neuron
+DA02,motorneuron,sex-shared,ventral cord motor neuron
+DA03,motorneuron,sex-shared,ventral cord motor neuron
+DA04,motorneuron,sex-shared,ventral cord motor neuron
+DA05,motorneuron,sex-shared,ventral cord motor neuron
+DA06,motorneuron,sex-shared,ventral cord motor neuron
+DA07,motorneuron,sex-shared,ventral cord motor neuron
+DA08,motorneuron,sex-shared,ventral cord motor neuron
+DA09,motorneuron,sex-shared,ventral cord motor neuron
+PDA,motorneuron,sex-shared,ventral cord motor neuron
+DB01,motorneuron,sex-shared,ventral cord motor neuron
+DB02,motorneuron,sex-shared,ventral cord motor neuron
+DB03,motorneuron,sex-shared,ventral cord motor neuron
+DB04,motorneuron,sex-shared,ventral cord motor neuron
+DB05,motorneuron,sex-shared,ventral cord motor neuron
+DB06,motorneuron,sex-shared,ventral cord motor neuron
+DB07,motorneuron,sex-shared,ventral cord motor neuron
+AS01,motorneuron,sex-shared,ventral cord motor neuron
+AS02,motorneuron,sex-shared,ventral cord motor neuron
+AS03,motorneuron,sex-shared,ventral cord motor neuron
+AS04,motorneuron,sex-shared,ventral cord motor neuron
+AS05,motorneuron,sex-shared,ventral cord motor neuron
+AS06,motorneuron,sex-shared,ventral cord motor neuron
+AS07,motorneuron,sex-shared,ventral cord motor neuron
+AS08,motorneuron,sex-shared,ventral cord motor neuron
+AS09,motorneuron,sex-shared,ventral cord motor neuron
+AS10,motorneuron,sex-shared,ventral cord motor neuron
+AS11,motorneuron,sex-shared,ventral cord motor neuron
+PDB,motorneuron,sex-shared,ventral cord motor neuron
+DD01,motorneuron,sex-shared,ventral cord motor neuron
+DD02,motorneuron,sex-shared,ventral cord motor neuron
+DD03,motorneuron,sex-shared,ventral cord motor neuron
+DD04,motorneuron,sex-shared,ventral cord motor neuron
+DD05,motorneuron,sex-shared,ventral cord motor neuron
+DD06,motorneuron,sex-shared,ventral cord motor neuron
+VA01,motorneuron,sex-shared,ventral cord motor neuron
+VA02,motorneuron,sex-shared,ventral cord motor neuron
+VA03,motorneuron,sex-shared,ventral cord motor neuron
+VA04,motorneuron,sex-shared,ventral cord motor neuron
+VA05,motorneuron,sex-shared,ventral cord motor neuron
+VA06,motorneuron,sex-shared,ventral cord motor neuron
+VA07,motorneuron,sex-shared,ventral cord motor neuron
+VA08,motorneuron,sex-shared,ventral cord motor neuron
+VA09,motorneuron,sex-shared,ventral cord motor neuron
+VA10,motorneuron,sex-shared,ventral cord motor neuron
+VA11,motorneuron,sex-shared,ventral cord motor neuron
+VA12,motorneuron,sex-shared,ventral cord motor neuron
+VB01,motorneuron,sex-shared,ventral cord motor neuron
+VB02,motorneuron,sex-shared,ventral cord motor neuron
+VB03,motorneuron,sex-shared,ventral cord motor neuron
+VB04,motorneuron,sex-shared,ventral cord motor neuron
+VB05,motorneuron,sex-shared,ventral cord motor neuron
+VB06,motorneuron,sex-shared,ventral cord motor neuron
+VB07,motorneuron,sex-shared,ventral cord motor neuron
+VB08,motorneuron,sex-shared,ventral cord motor neuron
+VB09,motorneuron,sex-shared,ventral cord motor neuron
+VB10,motorneuron,sex-shared,ventral cord motor neuron
+VB11,motorneuron,sex-shared,ventral cord motor neuron
+VD01,motorneuron,sex-shared,ventral cord motor neuron
+VD02,motorneuron,sex-shared,ventral cord motor neuron
+VD03,motorneuron,sex-shared,ventral cord motor neuron
+VD04,motorneuron,sex-shared,ventral cord motor neuron
+VD05,motorneuron,sex-shared,ventral cord motor neuron
+VD06,motorneuron,sex-shared,ventral cord motor neuron
+VD07,motorneuron,sex-shared,ventral cord motor neuron
+VD08,motorneuron,sex-shared,ventral cord motor neuron
+VD09,motorneuron,sex-shared,ventral cord motor neuron
+VD10,motorneuron,sex-shared,ventral cord motor neuron
+VD11,motorneuron,sex-shared,ventral cord motor neuron
+VD12,motorneuron,sex-shared,ventral cord motor neuron
+VD13,motorneuron,sex-shared,ventral cord motor neuron
+dBWML1,muscle,sex-shared,endorgan
+dBWML2,muscle,sex-shared,endorgan
+dBWML3,muscle,sex-shared,endorgan
+dBWML4,muscle,sex-shared,endorgan
+dBWML5,muscle,sex-shared,endorgan
+dBWML6,muscle,sex-shared,endorgan
+dBWML7,muscle,sex-shared,endorgan
+dBWMR1,muscle,sex-shared,endorgan
+dBWMR2,muscle,sex-shared,endorgan
+dBWMR3,muscle,sex-shared,endorgan
+dBWMR4,muscle,sex-shared,endorgan
+dBWMR5,muscle,sex-shared,endorgan
+dBWMR6,muscle,sex-shared,endorgan
+dBWMR7,muscle,sex-shared,endorgan
+vBWML1,muscle,sex-shared,endorgan
+vBWML2,muscle,sex-shared,endorgan
+vBWML3,muscle,sex-shared,endorgan
+vBWML4,muscle,sex-shared,endorgan
+vBWML5,muscle,sex-shared,endorgan
+vBWML6,muscle,sex-shared,endorgan
+vBWML7,muscle,sex-shared,endorgan
+vBWMR1,muscle,sex-shared,endorgan
+vBWMR2,muscle,sex-shared,endorgan
+vBWMR3,muscle,sex-shared,endorgan
+vBWMR4,muscle,sex-shared,endorgan
+vBWMR5,muscle,sex-shared,endorgan
+vBWMR6,muscle,sex-shared,endorgan
+vBWMR7,muscle,sex-shared,endorgan
+dBWML8,muscle,sex-shared,endorgan
+dBWML9,muscle,sex-shared,endorgan
+dBWML10,muscle,sex-shared,endorgan
+dBWML11,muscle,sex-shared,endorgan
+dBWML12,muscle,sex-shared,endorgan
+dBWML13,muscle,sex-shared,endorgan
+dBWML14,muscle,sex-shared,endorgan
+dBWML15,muscle,sex-shared,endorgan
+dBWML16,muscle,sex-shared,endorgan
+dBWML17,muscle,sex-shared,endorgan
+dBWML18,muscle,sex-shared,endorgan
+dBWML19,muscle,sex-shared,endorgan
+dBWML20,muscle,sex-shared,endorgan
+dBWML21,muscle,sex-shared,endorgan
+dBWML22,muscle,sex-shared,endorgan
+dBWML23,muscle,sex-shared,endorgan
+dBWML24,muscle,sex-shared,endorgan
+dBWMR8,muscle,sex-shared,endorgan
+dBWMR9,muscle,sex-shared,endorgan
+dBWMR10,muscle,sex-shared,endorgan
+dBWMR11,muscle,sex-shared,endorgan
+dBWMR12,muscle,sex-shared,endorgan
+dBWMR13,muscle,sex-shared,endorgan
+dBWMR14,muscle,sex-shared,endorgan
+dBWMR15,muscle,sex-shared,endorgan
+dBWMR16,muscle,sex-shared,endorgan
+dBWMR17,muscle,sex-shared,endorgan
+dBWMR18,muscle,sex-shared,endorgan
+dBWMR19,muscle,sex-shared,endorgan
+dBWMR20,muscle,sex-shared,endorgan
+dBWMR21,muscle,sex-shared,endorgan
+dBWMR22,muscle,sex-shared,endorgan
+dBWMR23,muscle,sex-shared,endorgan
+dBWMR24,muscle,sex-shared,endorgan
+vBWML8,muscle,sex-shared,endorgan
+vBWML9,muscle,sex-shared,endorgan
+vBWML10,muscle,sex-shared,endorgan
+vBWML11,muscle,sex-shared,endorgan
+vBWML12,muscle,sex-shared,endorgan
+vBWML13,muscle,sex-shared,endorgan
+vBWML14,muscle,sex-shared,endorgan
+vBWML15,muscle,sex-shared,endorgan
+vBWML16,muscle,sex-shared,endorgan
+vBWML17,muscle,sex-shared,endorgan
+vBWML18,muscle,sex-shared,endorgan
+vBWML19,muscle,sex-shared,endorgan
+vBWML20,muscle,sex-shared,endorgan
+vBWML21,muscle,sex-shared,endorgan
+vBWML22,muscle,sex-shared,endorgan
+vBWML23,muscle,sex-shared,endorgan
+vBWMR8,muscle,sex-shared,endorgan
+vBWMR9,muscle,sex-shared,endorgan
+vBWMR10,muscle,sex-shared,endorgan
+vBWMR11,muscle,sex-shared,endorgan
+vBWMR12,muscle,sex-shared,endorgan
+vBWMR13,muscle,sex-shared,endorgan
+vBWMR14,muscle,sex-shared,endorgan
+vBWMR15,muscle,sex-shared,endorgan
+vBWMR16,muscle,sex-shared,endorgan
+vBWMR17,muscle,sex-shared,endorgan
+vBWMR18,muscle,sex-shared,endorgan
+vBWMR19,muscle,sex-shared,endorgan
+vBWMR20,muscle,sex-shared,endorgan
+vBWMR21,muscle,sex-shared,endorgan
+vBWMR22,muscle,sex-shared,endorgan
+vBWMR23,muscle,sex-shared,endorgan
+vBWMR24,muscle,sex-shared,endorgan
+CEPshDL,glial,sex-shared,endorgan
+CEPshDR,glial,sex-shared,endorgan
+CEPshVL,glial,sex-shared,endorgan
+CEPshVR,glial,sex-shared,endorgan
+GLRDL,glial,sex-shared,endorgan
+GLRDR,glial,sex-shared,endorgan
+GLRL,glial,sex-shared,endorgan
+GLRR,glial,sex-shared,endorgan
+GLRVL,glial,sex-shared,endorgan
+GLRVR,glial,sex-shared,endorgan
+CANL,neuron,sex-shared,endorgan
+CANR,neuron,sex-shared,endorgan
+exc_gl,excretory,sex-shared,endorgan
+hmc,head mesodermal cell,sex-shared,endorgan
+hyp,hypodermis,sex-shared,endorgan
+int,intestine,sex-shared,endorgan
+mu_intL,muscle,sex-shared,endorgan
+mu_intR,muscle,sex-shared,endorgan
+mu_anal,muscle,sex-shared,endorgan
+mu_sphincter,muscle,sex-shared,endorgan
+HSNL,motorneuron,hermaphrodite specific,sex-specific neuron
+HSNR,motorneuron,hermaphrodite specific,sex-specific neuron
+VC01,motorneuron,hermaphrodite specific,sex-specific neuron
+VC02,motorneuron,hermaphrodite specific,sex-specific neuron
+VC03,motorneuron,hermaphrodite specific,sex-specific neuron
+VC04,motorneuron,hermaphrodite specific,sex-specific neuron
+VC05,motorneuron,hermaphrodite specific,sex-specific neuron
+VC06,motorneuron,hermaphrodite specific,sex-specific neuron
+um2aL,sex muscle,hermaphrodite specific,endorgan
+um2aR,sex muscle,hermaphrodite specific,endorgan
+um1aL,sex muscle,hermaphrodite specific,endorgan
+um1aR,sex muscle,hermaphrodite specific,endorgan
+um1pL,sex muscle,hermaphrodite specific,endorgan
+um1pR,sex muscle,hermaphrodite specific,endorgan
+um2pL,sex muscle,hermaphrodite specific,endorgan
+um2pR,sex muscle,hermaphrodite specific,endorgan
+vm2aL,sex muscle,hermaphrodite specific,endorgan
+vm2aR,sex muscle,hermaphrodite specific,endorgan
+vm1aL,sex muscle,hermaphrodite specific,endorgan
+vm1aR,sex muscle,hermaphrodite specific,endorgan
+vm1pL,sex muscle,hermaphrodite specific,endorgan
+vm1pR,sex muscle,hermaphrodite specific,endorgan
+vm2pL,sex muscle,hermaphrodite specific,endorgan
+vm2pR,sex muscle,hermaphrodite specific,endorgan
