@@ -53,7 +53,7 @@ def muscle_map(names: list[str]) -> np.ndarray:
 
 class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
-                 solver_exit: str = "published"):
+                 solver_exit: str = "published", world: dict | None = None):
         if not mw.DRIVER.exists():
             subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
         self.out = str(Path(out).resolve())
@@ -63,7 +63,8 @@ class Body:
         s_r, s_w = os.pipe()  # state: driver -> us
         self._log = open(self.out + ".log", "w")
         self.proc = subprocess.Popen([str(mw.DRIVER), "--mode", "pipe", "--fd_in", str(c_r), "--fd_out", str(s_w),
-                                      "--out", self.out, "--solver_exit", solver_exit], cwd=mw.ROOT, pass_fds=(c_r, s_w),
+                                      "--out", self.out, "--solver_exit", solver_exit] + mw.world_flags(world),
+                                     cwd=mw.ROOT, pass_fds=(c_r, s_w),
                                      stdout=self._log, stderr=subprocess.STDOUT)
         os.close(c_r)
         os.close(s_w)

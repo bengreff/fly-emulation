@@ -1,4 +1,4 @@
-// Headless driver for the MetaWorm (BAAIWorm) body. Our code; the upstream sim/ sources are unchanged.
+// Headless driver for the MetaWorm (BAAIWorm) body. Our code; upstream sim/ is unchanged apart from the marked wormemu extension in sim/fem/World.h/.cpp (UPSTREAM.md).
 // It replaces only the interface: the GLUT window loop (render/SimulationWindow.cpp Timer) and the Boost.Python
 // bridge (interact/). The stepping matches the published loop: muscle input set at the control rate (30 Hz),
 // then SimulationHz/ControlHz = 8 physics steps (240 Hz), each Environment::Step() = drag forces + one
@@ -22,6 +22,19 @@
 //         iterate before the converged solve (upstream) or the converged solve itself (World extension).
 //   --release_at T (key, wave, dead): from time T on, all 96 activations are 0.
 //
+// Worm-scale world (our code; toggles body.scale, env.fluid, env.substrate; the defaults are the published world
+// and leave that code unused, so P0/P2 are unchanged):
+//   --scale published|worm_1mm   worm_1mm: 1 length unit = 1 mm / rest length (body 1.0 mm), mass unit chosen so
+//         stress and drag per length are numerically SI; mass = 1074 kg/m^3 x mesh volume, spread evenly.
+//   --fluid quadratic_published|agar_rft|viscous_rft_water   RFT: linear drag w [c_t t t^T + c_n (I - t t^T)] per
+//         vertex in the implicit solve (World::SetDragMatrix), t from 24 slice centroids, rebuilt every
+//         --drag_every physics steps; c_t, c_n in Pa s (agar 3.2 / 128, BBC 2012; water 0.00357 / 0.005675),
+//         overridable with --ct, --cn. RFT replaces the published quadratic drag (Environment::Step is bypassed).
+//   --substrate none_published|agar_plate|agar_film, --side_down right|left   gravity 9.81 m/s^2 toward the plate;
+//         the plate plane touches the rest body's lowest point; after each step, vertices below it are put back on
+//         it and their velocity into it zeroed. agar_film adds the water film's surface as a second wall at the
+//         rest body's thickness above the plate, same rule (the meniscus as a hard wall, BODY_TESTS.md).
+//
 // Output (prefix P): P.frames.f32 float32 [n_frames, n_vertices, 3] world positions, frame 0 = rest pose;
 //                    P.act.f32 float32 [n_frames, 96]; P.json metadata (surface triangles, muscle names, rest
 //                    segment endpoints, run parameters, wall time).
@@ -35,6 +48,8 @@
 #include <vector>
 #include <unistd.h>
 #include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include "Environment.h"
 
 static const char* arg(int argc, char** argv, const char* name, const char* dflt)
@@ -58,6 +73,13 @@ int main(int argc, char** argv)
 	std::string solver_exit = arg(argc, argv, "--solver_exit", "published");  // published | latest
 	int fd_in = std::atoi(arg(argc, argv, "--fd_in", "-1"));
 	int fd_out = std::atoi(arg(argc, argv, "--fd_out", "-1"));
+	std::string scale = arg(argc, argv, "--scale", "published");               // published | worm_1mm
+	std::string fluid = arg(argc, argv, "--fluid", "quadratic_published");     // | agar_rft | viscous_rft_water
+	std::string substrate = arg(argc, argv, "--substrate", "none_published");  // | agar_plate | agar_film
+	std::string side_down = arg(argc, argv, "--side_down", "right");           // right | left
+	double ct_arg = std::atof(arg(argc, argv, "--ct", "-1"));
+	double cn_arg = std::atof(arg(argc, argv, "--cn", "-1"));
+	int drag_every = std::max(1, std::atoi(arg(argc, argv, "--drag_every", "1")));
 
 	// Environment() reads args/train_worm_swim_args.txt relative to the cwd; the caller runs us from SOFTCON_DIR.
 	Environment env;
@@ -104,6 +126,97 @@ int main(int argc, char** argv)
 	dump(Eigen::VectorXd::Zero(n_act)); n_frames++;
 	const Eigen::VectorXd x_rest = world->GetPositions();
 	double max_disp = 0.0;  // max over control steps of max |x - x_rest| (double precision; frames are float32)
+
+	// Worm-scale world (header comment). Unused unless a non-published --scale/--fluid/--substrate is given.
+	const bool worm_scale = scale == "worm_1mm", film = substrate == "agar_film", plate = substrate == "agar_plate" || film;
+	const bool rft = fluid == "agar_rft" || fluid == "viscous_rft_water";
+	if ((scale != "published" && !worm_scale) || (fluid != "quadratic_published" && !rft) ||
+	    (substrate != "none_published" && !plate) || (side_down != "right" && side_down != "left")) {
+		std::cerr << "unknown --scale, --fluid, --substrate or --side_down value" << std::endl; return 1; }
+	if (worm_scale != rft) {
+		std::cerr << "--scale worm_1mm needs an RFT --fluid (the published quadratic drag is metre scale), and an RFT "
+		             "fluid needs --scale worm_1mm" << std::endl; return 1; }
+	if (plate && fluid != "agar_rft") { std::cerr << "--substrate agar_plate|agar_film needs --fluid agar_rft" << std::endl; return 1; }
+	const double density = 1074.0, length_m = 1e-3, g_si = 9.81;  // Reina 2013 (measured); BBC 2012 model length
+	double ct = fluid == "agar_rft" ? 3.2 : 0.00357, cn = fluid == "agar_rft" ? 128.0 : 0.005675;  // Pa s
+	if (ct_arg > 0) ct = ct_arg;
+	if (cn_arg > 0) cn = cn_arg;
+	const int n_slice = 24;
+	double zmin = 1e30, zmax = -1e30, ymin = 1e30, ymax = -1e30;
+	for (int i = 0; i < nv; i++) {
+		zmin = std::min(zmin, x_rest[3 * i + 2]); zmax = std::max(zmax, x_rest[3 * i + 2]);
+		ymin = std::min(ymin, x_rest[3 * i + 1]); ymax = std::max(ymax, x_rest[3 * i + 1]);
+	}
+	const double L_sim = zmax - zmin, u_m = length_m / L_sim;
+	double vol = 0.0;  // closed surface, divergence theorem
+	for (const auto& tr : worm->GetContours()) {
+		Eigen::Vector3d p0 = x_rest.segment<3>(3 * tr[0]), p1 = x_rest.segment<3>(3 * tr[1]), p2 = x_rest.segment<3>(3 * tr[2]);
+		vol += p0.dot(p1.cross(p2)) / 6.0;
+	}
+	vol = std::fabs(vol);
+	const double mass_sim = density * vol * u_m * u_m, g_sim = g_si / u_m;
+	std::vector<int> slice(nv), count(n_slice, 0);
+	for (int i = 0; i < nv; i++) {
+		slice[i] = std::min(n_slice - 1, (int)((x_rest[3 * i + 2] - zmin) / L_sim * n_slice));
+		count[slice[i]]++;
+	}
+	// Which way is right: the mean y of the right muscles' (MDR, MVR) segment starts against the left ones'.
+	double yr = 0, yl = 0; int nr = 0, nl = 0;
+	for (size_t mi = 0; mi < muscles.size(); mi++)
+		for (auto& p : muscles[mi]->GetStarts()) { if (names[mi][2] == 'R') { yr += p[1]; nr++; } else { yl += p[1]; nl++; } }
+	const double right_sign = (yr / nr < yl / nl) ? -1.0 : 1.0;           // +1 if the right side is +y
+	const double down = side_down == "right" ? right_sign : -right_sign;  // gravity along down * y
+	const double y_plate = down < 0 ? ymin : ymax;
+	const double y_film = down < 0 ? ymax : ymin;  // agar_film: the film surface at the rest thickness above the plate
+	Eigen::VectorXd fext = Eigen::VectorXd::Zero(3 * nv);
+	if (plate) for (int i = 0; i < nv; i++) fext[3 * i + 1] = down * (mass_sim / nv) * g_sim;
+	double t_drag = 0.0; long n_drag = 0, n_phys = 0;
+	auto update_drag = [&]() {
+		auto c0 = std::chrono::steady_clock::now();
+		const Eigen::VectorXd& x = world->GetPositions();
+		std::vector<Eigen::Vector3d> c(n_slice, Eigen::Vector3d::Zero()), t(n_slice);
+		for (int i = 0; i < nv; i++) c[slice[i]] += x.segment<3>(3 * i);
+		for (int k = 0; k < n_slice; k++) c[k] /= count[k];
+		for (int k = 0; k < n_slice; k++) t[k] = (c[std::min(k + 1, n_slice - 1)] - c[std::max(k - 1, 0)]).normalized();
+		std::vector<Eigen::Triplet<double>> trip;
+		trip.reserve(9 * nv);
+		for (int i = 0; i < nv; i++) {
+			const Eigen::Vector3d& ti = t[slice[i]];
+			Eigen::Matrix3d B = (L_sim / n_slice / count[slice[i]]) *
+			                    (ct * ti * ti.transpose() + cn * (Eigen::Matrix3d::Identity() - ti * ti.transpose()));
+			for (int a = 0; a < 3; a++) for (int b = 0; b < 3; b++) trip.emplace_back(3 * i + a, 3 * i + b, B(a, b));
+		}
+		Eigen::SparseMatrix<double> C(3 * nv, 3 * nv);
+		C.setFromTriplets(trip.begin(), trip.end());
+		world->SetDragMatrix(C);
+		t_drag += std::chrono::duration<double>(std::chrono::steady_clock::now() - c0).count();
+		n_drag++;
+	};
+	auto project = [&]() {
+		Eigen::VectorXd x = world->GetPositions(), v = world->GetVelocities();
+		bool hit = false;
+		for (int i = 0; i < nv; i++)
+			if (down * (x[3 * i + 1] - y_plate) > 0) {
+				x[3 * i + 1] = y_plate;
+				if (down * v[3 * i + 1] > 0) v[3 * i + 1] = 0.0;
+				hit = true;
+			} else if (film && down * (x[3 * i + 1] - y_film) < 0) {
+				x[3 * i + 1] = y_film;
+				if (down * v[3 * i + 1] < 0) v[3 * i + 1] = 0.0;
+				hit = true;
+			}
+		if (hit) { world->SetPositions(x); world->SetVelocities(v); }
+	};
+	auto step = [&]() {
+		if (!rft) { env.Step(); return; }
+		if (n_phys % drag_every == 0) update_drag();
+		world->SetExternalForce(fext);
+		world->TimeStepping();
+		if (plate) project();
+		n_phys++;
+	};
+	if (worm_scale) world->SetUnitMass(mass_sim / nv);
+
 	auto write_json = [&](double wall) {
 	std::ofstream js(out + ".json");
 	js.precision(9);
@@ -115,6 +228,15 @@ int main(int argc, char** argv)
 	   << ", \"frame_dt\": " << dt_ctrl * frame_every << ", \"n_frames\": " << n_frames
 	   << ", \"n_vertices\": " << nv << ", \"n_act\": " << n_act << ", \"wall_s\": " << wall << ",\n";
 	js << " \"max_disp_from_rest\": " << max_disp << ",\n";
+	js << " \"scale\": \"" << scale << "\", \"fluid\": \"" << fluid << "\", \"substrate\": \"" << substrate
+	   << "\", \"side_down\": \"" << side_down << "\",\n";
+	if (worm_scale)
+		js << " \"world\": {\"length_unit_m\": " << u_m << ", \"rest_length_units\": " << L_sim << ", \"volume_units\": "
+		   << vol << ", \"density_kg_m3\": " << density << ", \"mass_units\": " << mass_sim << ", \"mass_kg\": "
+		   << mass_sim * u_m << ", \"ct_Pa_s\": " << ct << ", \"cn_Pa_s\": " << cn << ", \"drag_every\": " << drag_every
+		   << ", \"n_drag_updates\": " << n_drag << ", \"drag_update_s_mean\": " << (n_drag ? t_drag / n_drag : 0.0)
+		   << ", \"gravity_units_s2\": " << (plate ? g_sim : 0.0) << ", \"plate_axis\": 1, \"plate_down\": " << down
+		   << ", \"plate_y\": " << y_plate << ", \"film_y\": " << (film ? y_film : 0.0) << "},\n";
 	js << " \"muscles\": [";
 	for (size_t i = 0; i < names.size(); i++) js << (i ? ", " : "") << "\"" << names[i] << "\"";
 	js << "],\n \"segment_starts\": [";
@@ -144,7 +266,7 @@ int main(int argc, char** argv)
 			if (!rd(msg, sizeof(msg)) || msg[0] <= 0) break;
 			if (!rd(a.data(), n_act * sizeof(double))) break;
 			worm->SetActivationLevelsDirectly(a);
-			for (int i = 0; i < msg[0]; i++) env.Step();
+			for (int i = 0; i < msg[0]; i++) step();
 			const Eigen::VectorXd& x = world->GetPositions();
 			max_disp = std::max(max_disp, (x - x_rest).cwiseAbs().maxCoeff());
 			if (msg[1] & 1) { dump(current_act()); n_frames++; }
@@ -176,7 +298,7 @@ int main(int argc, char** argv)
 			}
 			worm->SetActivationLevelsDirectly(a);
 		}
-		for (int i = 0; i < ratio; i++) env.Step();
+		for (int i = 0; i < ratio; i++) step();
 		max_disp = std::max(max_disp, (world->GetPositions() - x_rest).cwiseAbs().maxCoeff());
 		if ((c + 1) % frame_every == 0) { dump(current_act()); n_frames++; }
 	}

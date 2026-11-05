@@ -21,12 +21,22 @@ ROOT = Path(__file__).resolve().parents[3] / "third_party" / "metaworm"
 DRIVER = ROOT / "driver" / "run_body"
 MUSCLES = ("MDR", "MVR", "MDL", "MVL")  # upstream order (Worm::MakeMuscles reads the obj "o" lines)
 N_SEG = 24  # sampling segments per muscle string, head first
+# Worm-scale world toggles (driver flags --scale, --fluid, --substrate, --side_down, --drag_every, --ct, --cn).
+# None or {} = the published world. AGAR_PLATE = gravity only (fails A2: the body lifts off); AGAR_FILM adds the
+# water film's surface as a wall (docs/worm/BODY_TESTS.md, agar plate and agar film).
+AGAR_PLATE = {"scale": "worm_1mm", "fluid": "agar_rft", "substrate": "agar_plate"}
+AGAR_FILM = {"scale": "worm_1mm", "fluid": "agar_rft", "substrate": "agar_film"}
+
+
+def world_flags(world: dict | None) -> list[str]:
+    return [x for k, v in (world or {}).items() for x in (f"--{k}", str(v))]
 
 
 def run(out: str | Path, mode: str = "key", seconds: float = 10.0, key: str | None = None, f: float = 1.76,
         lam: float = 1.54, amp: float = 0.03, release_at: float | None = None, frame_every: int = 1,
-        solver_exit: str = "published") -> dict:
+        solver_exit: str = "published", world: dict | None = None) -> dict:
     """Run the driver (cwd = third_party/metaworm, as upstream expects) and return load(out)."""
+    out = Path(out).resolve()
     if not DRIVER.exists():
         subprocess.run([str(ROOT / "driver" / "build.sh")], check=True)
     cmd = [str(DRIVER), "--mode", mode, "--seconds", str(seconds), "--f", str(f), "--lam", str(lam),
@@ -35,6 +45,7 @@ def run(out: str | Path, mode: str = "key", seconds: float = 10.0, key: str | No
         cmd += ["--key", key]
     if release_at is not None:
         cmd += ["--release_at", str(release_at)]
+    cmd += world_flags(world)
     subprocess.run(cmd, cwd=ROOT, check=True, capture_output=True)
     return load(out)
 

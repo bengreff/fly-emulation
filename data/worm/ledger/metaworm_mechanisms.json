@@ -52,8 +52,8 @@
    "id": "MB4",
    "name": "inertia: mass 10 over the 0.63-unit body, numerical damping",
    "status": "partial",
-   "notes": "density 19x a worm if read as SI; metre-scale world",
-   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "notes": "density 19x a worm if read as SI; metre-scale world. worm_1mm (built, 5 Nov): 1 mm body, density 1074 kg/m^3, mass 2.13 ug; needs an RFT fluid",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); this repo",
    "switch": [
     {
      "name": "body.scale",
@@ -62,7 +62,8 @@
       "worm_1mm"
      ],
      "available": [
-      "published"
+      "published",
+      "worm_1mm"
      ],
      "neutral": "published"
     }
@@ -72,8 +73,8 @@
    "id": "MB5",
    "name": "fluid: quadratic drag and lift per surface triangle",
    "status": "partial",
-   "notes": "inertial regime (Re ~7,300) vs a worm's 0.1-0.5; viscous resistive-force drag is the literature replacement (needs implicit drag in the solver)",
-   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
+   "notes": "inertial regime (Re ~7,300) vs a worm's 0.1-0.5; viscous resistive-force drag is the literature replacement. Built 5 Nov: RFT drag in the implicit solve (World::SetDragMatrix), agar K 40 (BBC 2012) stable at the published step; water RFT built, not scored",
+   "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
    "switch": [
     {
      "name": "env.fluid",
@@ -83,7 +84,9 @@
       "agar_rft"
      ],
      "available": [
-      "quadratic_published"
+      "quadratic_published",
+      "viscous_rft_water",
+      "agar_rft"
      ],
      "neutral": "quadratic_published"
     }
@@ -92,18 +95,21 @@
   {
    "id": "MB6",
    "name": "gravity and substrate contact (agar plate)",
-   "status": "missing",
-   "notes": "the published world has neither",
-   "source": "",
+   "status": "partial",
+   "notes": "the published world has neither. agar_plate (gravity only) fails gate A2: the body lifts off. agar_film (the water film's surface as a wall) passes A1f and A2f; not adopted (BODY_TESTS.md)",
+   "source": "this repo; Gray & Lissmann 1964 J Exp Biol 41:135; Shen et al. 2012 Biophys J 102:2772 (arXiv 1112.1118)",
    "switch": [
     {
      "name": "env.substrate",
      "options": [
       "none_published",
-      "agar_plate"
+      "agar_plate",
+      "agar_film"
      ],
      "available": [
-      "none_published"
+      "none_published",
+      "agar_plate",
+      "agar_film"
      ],
      "neutral": "none_published"
     }
@@ -192,7 +198,7 @@
    "id": "MB11",
    "name": "chemical gradient scene (BAAIWorm chemotaxis)",
    "status": "partial",
-   "notes": "field sampled at the nose and tail (src/wormemu/body/scene.py); no plate physics yet (MB6); values in docs/worm/research/CHEMOTAXIS_PLATE.md",
+   "notes": "field sampled at the nose and tail (src/wormemu/body/scene.py); plate physics is the MB6 toggle (agar_film passes its gates, not adopted, not yet run with the field); values in docs/worm/research/CHEMOTAXIS_PLATE.md",
    "source": "BAAIWorm b99ca5ab; literature",
    "switch": [
     {

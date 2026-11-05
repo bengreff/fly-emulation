@@ -23,8 +23,11 @@
   `Metaworm/args/train_worm_swim_args.txt`.
 - Ours (not upstream): `driver/run_body.cpp` (headless loop replacing the GLUT window and the Boost.Python bridge;
   same stepping, muscle input at 30 Hz and 8 physics steps at 240 Hz; `--mode pipe` takes activations over a pipe
-  and returns vertex positions each exchange, for the closed loop in `src/wormemu/body/loop.py`) and
-  `driver/build.sh` (rebuilds an object when any `sim/` header is newer).
+  and returns vertex positions each exchange, for the closed loop in `src/wormemu/body/loop.py`; the worm-scale
+  world flags `--scale worm_1mm`, `--fluid agar_rft|viscous_rft_water`, `--substrate agar_plate|agar_film` replace
+  Environment::Step with RFT drag in the implicit solve, gravity and plate/film projection, all off by default:
+  P0 and P2 frames bit-identical, checked 2026-11-05 17:31) and `driver/build.sh` (rebuilds an object when any
+  `sim/` header is newer).
 - Build differences from upstream CMake: `-std=gnu++14` (Eigen 3.5 needs C++14; upstream gnu++11), `-O2` (upstream
   Release, -O3), `-include cassert -include cmath -include limits` (missing includes on clang), no Boost.Python,
   PythonLibs, and OpenMP only with `OMP=1`. Build products `driver/obj/` and `driver/run_body` are gitignored.

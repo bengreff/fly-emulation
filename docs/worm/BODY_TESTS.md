@@ -376,3 +376,88 @@ first; body wavelength 0.46-0.84 L (Fang-Yen 2010); body frequency against the d
 curvature against 8-9 /mm (BBC 2012 Fig. 3A, read from the figure). A2's readouts are reported the same way.
 Expectation (a guess, not a bar): with K = 40 the slip is small, so the crawl speed should be near the wave speed
 f x lambda = 0.195 L/s if the body carries the wave, head first.
+
+## Results: agar plate (2026-11-05 17:21-17:29 CST, measured, Mac)
+
+Smoke (measured): worm-scale numbers come out as derived (mesh volume 4.908e-4 units, mass 2.13 ug, g 6157
+units/s^2). One drag refactorisation (rebuild C, refactor the implicit system) costs 4.6 ms. RTF at
+`--drag_every 1`: 0.40 dead, 0.377 driven (published world, same wave on the Mac: 0.81, table above).
+
+| gate | result | numbers (measured) |
+|---|---|---|
+| A1 dead body, 3 s | **PASS** | finite; lowest point within 8.0e-10 L of the plate; centroid drift 7.7e-5 L in plane; max vertex displacement 4.8e-4 L |
+| A2 P3 drive, 5 s | **FAIL** (centroid height) | finite; spread max 0.520 L (bar 0.6); midline length 0.881-1.000 L (bar 0.8-1.2); **centroid height max 1.031 L** (bar 0.08 L); max vertex displacement 1.93 L; wall 13.27 s |
+
+Numerics (A2 inputs, measured): `--drag_every 8` gives RTF 0.58, centroid height max 0.907 L, speed 0.394 L/s
+(-3.6% against every step); `solver_exit = latest` gives RTF 0.38, height max 0.861 L, speed 0.380 L/s (-7%).
+Neither changes the verdict. The implicit solve stays stable at the published step with K = 40 (no blow-up in
+any run).
+
+A2 readouts (report-only, and not meaningful: the body is mostly off the plate): body frequency 1.76 Hz,
+wavelength 1.14 L, head amplitude kappa*L 5.2, tail/head 0.69, speed 0.41 L/s, wave head to tail.
+
+What happened (measured): the body leaves the plate plane by pitching. The head-to-tail axis tilts up out of
+the plate plane: 0 deg at 0.8 s, 10 deg at 1.7 s, 27 deg at 2.5 s, 48 deg at 3.3 s, 58 deg at 4.2 s; the head
+rises 0.83 units (1.3 L) by 5 s; the centroid climbs about 0.15 units/s while moving along the body axis. The
+dorsoventral axis rolls up to a median 33 deg out of the plate plane by 3 s. The published world does the same
+without a plate: in P2 (10 s, no gravity) the axis pitches to -55 deg and the centroid drifts -0.76 units across
+the plate axis. So the ported body's swimming path is not confined to its dorsoventral plane, and on the plate
+nothing holds it down: gravity is about 1000x weaker than the elastic forces (derived), so the head lifts off.
+The node-to-node alternating mean curvature profile in these runs (about +-25 kappa*L near the head) is not
+out-of-plane bending: it is already there in the rest mesh, frame 0, in both worlds, a slicing artifact of the
+midline estimate. The gait readouts subtract the mean, so they are unaffected.
+
+Why a real worm stays down (published, qualitative): it lies in a thin water film whose surface tension holds it
+against the agar (Gray and Lissmann 1964; Shen et al. 2012, Biophys J, "constrained to the surface of the plate by
+a thin water layer"). Order of size (derived, not cited as a measurement): water surface tension 0.072 N/m x 1 mm
+body is about 7e-5 N, against a weight of about 2.1e-8 N. The pre-registered plate has only gravity, so A2 fails
+as written. The A2 failure stands; the fix below is a new setting with its own pre-registration.
+
+## Agar film: pre-registration (written 2026-11-05 17:30 CST, before the code exists or any film run)
+
+New setting of the same toggle: `env.substrate = agar_film` (needs `env.fluid = agar_rft`; `agar_plate` stays as
+it is and keeps its A2 failure). Everything in `agar_plate`, plus the film surface: a second plane parallel to the
+plate at the rest body's thickness across the plate axis (0.0601 L, measured from the mesh; 60 um at 1 mm). After
+each physics step, vertices beyond it are put back on it and their velocity out of the film is zeroed, the same
+rule as the plate. This is the water film's meniscus treated as a hard wall (form guessed; the force it stands
+for is about 3000x the weight, derived above). Validity range: crawling on the surface only. No head lifting,
+nictation or burrowing; a real meniscus lets the head rise a little and the hard wall does not.
+
+Gates (bars as A1 and A2, unchanged):
+- **A1f dead body on the film**, 3 s: the A1 bars. Expectation: frames bit-identical to A1, since the film
+  surface is never reached at rest (report whether they are).
+- **A2f P3 drive on the film**, 5 s: the A2 bars. The centroid-height bar is met by construction under the film
+  (every vertex is within 0.0601 L of the plate), so the real tests are finite, spread and midline length. Added
+  implementation check: the highest vertex never exceeds the film surface by more than 1e-6 L.
+
+Report-only: share of vertices on the film surface and on the plate (mean over frames); the A2f readouts; the
+crawl drive (f 0.30, lambda 0.65 L, a0 0.157 and 1.0, 10 s) with the readouts and literature values listed in the
+agar plate pre-registration. Published world: P0 and P2 frames must stay bit-identical after the change.
+
+## Results: agar film (2026-11-05 17:31-17:35 CST, measured, Mac)
+
+| gate | result | numbers (measured) |
+|---|---|---|
+| A1f dead body, 3 s | **PASS** | as A1, and the frames are bit-identical to A1 (the film surface is never reached at rest) |
+| A2f P3 drive, 5 s | **PASS** | finite; spread max 0.520 L; midline length 0.879-1.000 L; centroid height max 0.034 L (met by construction); highest vertex 0.0601422 L = the film surface (check passes); wall 17.94 s (RTF 0.28) |
+
+P0 and P2 (published world) frames are bit-identical after the film change (checked 17:31). A2f report-only:
+4.4% of vertex-frames sit on the film surface and 3.3% on the plate; body frequency 1.76 Hz, wavelength 1.20 L,
+head amplitude kappa*L 3.8, tail/head 0.80, speed 0.31 L/s, wave head to tail. The RTF drops from 0.38 (plate) to
+0.28; the likely reason is more solver iterations after each projection (inferred, not measured).
+
+Crawl drive on the film (f 0.30 Hz, lambda 0.65 L, 10 s, readouts over the last 2 periods; report-only, no bar,
+nothing fitted; 1 mm body, so L/s = mm/s and kappa*L = curvature in /mm):
+
+| a0 | body f (Hz) | wavelength (L) | head curvature amplitude (/mm) | tail/head | speed (mm/s) | midline length (L) |
+|---|---|---|---|---|---|---|
+| 0.157 | 0.298 | 0.64 | 7.4 | 1.03 | 0.10, head first | 0.88-1.00 |
+| 1.0 | 0.298 | 0.63 | 25.2 | 1.07 | 0.06, head first | 0.61-1.00 |
+| literature (agar) | 0.30 (drive, Fang-Yen 2010 mean) | 0.46-0.84 (Fang-Yen 2010) | 8-9 (BBC 2012 Fig. 3A) | | 0.08-0.30 (Rabets 2014; Sibernetic 2018) | |
+
+Reading (report-only): at a0 0.157 every readout is inside or near the literature range: speed 0.10 mm/s inside
+0.08-0.30, wavelength 0.64 L inside 0.46-0.84, head curvature 7.4 /mm just under 8-9. The wavelength and
+frequency are imposed by the drive, so they show transmission, not an emergent gait. Speed is 0.53 of the wave
+speed f x lambda (0.195 L/s), not near 1 as I guessed beforehand. At a0 1.0 the body over-bends (25 /mm, about 3x)
+and shortens to 0.61 L, and goes slower (0.06 mm/s). Viewed: `runs/worm/media/agar_crawlf_a0.157_sheet.png` and
+the MP4 beside it: a flat sinuous body on the plate, about 1.5 waves along it, head first, no lift-off.

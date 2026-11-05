@@ -125,6 +125,10 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
                  "f": meta.get("f"), "lam": meta.get("lam"), "amp": meta.get("amp"),
                  "n_frames": meta["n_frames"], "frame_dt": meta["frame_dt"], "seconds": meta["seconds"],
                  "tests": summary(tests, rid), "label": "simulated (ported MetaWorm body, published parameters)"}
+        if meta.get("scale", "published") != "published":  # worm-scale world (BODY_TESTS.md, agar plate / film)
+            entry["world"] = {k: meta[k] for k in ("scale", "fluid", "substrate", "side_down")}
+            entry["label"] = (f"simulated (ported MetaWorm body, published parameters; world {meta['scale']}, "
+                              f"{meta['fluid']}, {meta['substrate']})")
         neural = SRC / f"{rid}.neural.f32"
         if neural.exists() and meta.get("cells"):  # closed loop: the brain's soma voltages at the body's frames
             V = np.fromfile(neural, np.float32).reshape(-1, len(meta["cells"]))[:meta["n_frames"]]

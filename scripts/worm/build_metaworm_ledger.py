@@ -31,6 +31,8 @@ RB = "Rabets, Backholm, Dalnoki-Veress & Ryu 2014 Biophys J 107:1980 (PMC4213666
 WA = "WormAtlas, Somatic muscle (hermaphrodite)"
 COOK = "Cook et al. 2019 Nature 571:63"
 FR24 = "Frontiers Bioeng Biotechnol 2024 (BODY.md s1)"
+RE = "Reina et al. 2013 PLOS ONE 8:e69651 (BODY.md s1, measured 1.07-1.08 g/cm^3)"
+GL = "Gray & Lissmann 1964 J Exp Biol 41:135; Shen et al. 2012 Biophys J 102:2772 (arXiv 1112.1118)"
 
 # measured in this repo from the vendored mesh (driver stdout and scripts/worm/build_viewer_data.py)
 VOLUME = 4.90778e-4  # sim units^3, upstream print at construction
@@ -130,6 +132,13 @@ row("mw_density", "MB4", "kg/m^3 if SI", round(MASS / VOLUME), 1070, 1080, "deri
     "(BODY.md s1, measured)")
 row("mw_damping_per_step", "MB4", "velocity factor per step", 0.9999, "", "", "published", MW + " Environment.cpp",
     "numerical", "equivalent decay rate -ln(0.9999) x 240 = 0.024 /s (derived)")
+row("mw_worm_length", "MB4", "mm", 1.0, 0.9, 1.2, "published", BBC + " (model worm length)", "inside",
+    "toggle body.scale = worm_1mm: 1 sim unit = 1 mm / 0.6276 = 1.593 mm (derived)", used=False)
+row("mw_worm_density", "MB4", "kg/m^3", 1074, 1070, 1080, "guessed", "placeholder inside the measured range",
+    "inside", "toggle body.scale = worm_1mm", used=False, bound_source=RE)
+row("mw_worm_mass", "MB4", "ug", 2.13, "", "", "derived", "density x mesh volume (4.908e-4 units^3 at 1.593 mm)",
+    "no literature value", "toggle body.scale = worm_1mm; spread evenly over the 984 vertices; the mass unit is "
+    "1.593e-3 kg so stress and drag per length stay numerically SI", used=False)
 
 # ---- MB5 fluid
 row("mw_fluid_density", "MB5", "kg/m^3", 1000, 997, 999, "published", MW + " Worm.cpp",
@@ -156,9 +165,21 @@ row("mw_agar_K_rabets", "MB5", "1", 1.4, 1.2, 1.6, "measured", RB, "absent in th
 
 # ---- MB6 gravity and substrate
 row("mw_gravity", "MB6", "m/s^2", 9.81, 9.78, 9.83, "measured", "standard", "absent in the port",
-    "no gravity in the published world (the body floats and tumbles in 3D)", used=False)
-row("mw_substrate_contact", "MB6", "model", "", "", "", "absent", "", "absent in the port",
-    "agar surface contact (meniscus/surface tension) not modelled; collision is off", used=False)
+    "no gravity in the published world (the body floats and tumbles in 3D); toggle env.substrate = agar_plate|"
+    "agar_film: toward the plate, about 1000x weaker than the elastic forces (derived)", used=False)
+row("mw_side_down", "MB6", "side", "right", "", "", "guessed", "worms crawl on either side", "no literature value",
+    "toggle env.substrate: which side lies on the plate (--side_down right|left)", used=False)
+row("mw_plate_contact", "MB6", "model", "one-sided plane at the rest body's lowest point; vertices put back on it, "
+    "velocity into it zeroed", "", "", "guessed", "this repo", "no literature value",
+    "toggle env.substrate = agar_plate; no friction beyond the agar drag. Alone it fails gate A2: the body pitches "
+    "up and lifts off (BODY_TESTS.md)", used=False)
+row("mw_film_surface", "MB6", "fraction of L", 0.0601, "", "", "derived", "rest mesh thickness across the plate",
+    "60 um at 1 mm; adult diameter about 50-80 um", "toggle env.substrate = agar_film: the water film's surface as a "
+    "hard wall at this height (form guessed); stands for the meniscus that holds a worm on agar", used=False,
+    bound_source=GL)
+row("mw_surface_tension", "MB6", "N/m", 0.072, 0.070, 0.073, "measured", "standard tables (water, 20-35 C)",
+    "no value in the port", "only sets the order of the hold-down force: 0.072 N/m x 1 mm is about 7e-5 N, about "
+    "3000x the weight (derived); the film wall treats it as infinite", used=False, bound_source=GL)
 
 # ---- MB9 numerics
 row("mw_dt", "MB9", "s", 1 / 240, "", "", "published", MW + " Environment.cpp", "numerical",
@@ -186,16 +207,22 @@ MECH = {
          "switch": [SW("muscle.force_model", ["linear_published", "force_length"], ["linear_published"],
                        "linear_published")]},
         {"id": "MB4", "name": "inertia: mass 10 over the 0.63-unit body, numerical damping", "status": "partial",
-         "notes": "density 19x a worm if read as SI; metre-scale world", "source": MW,
-         "switch": [SW("body.scale", ["published", "worm_1mm"], ["published"], "published")]},
+         "notes": "density 19x a worm if read as SI; metre-scale world. worm_1mm (built, 5 Nov): 1 mm body, "
+                  "density 1074 kg/m^3, mass 2.13 ug; needs an RFT fluid", "source": MW + "; this repo",
+         "switch": [SW("body.scale", ["published", "worm_1mm"], ["published", "worm_1mm"], "published")]},
         {"id": "MB5", "name": "fluid: quadratic drag and lift per surface triangle", "status": "partial",
          "notes": "inertial regime (Re ~7,300) vs a worm's 0.1-0.5; viscous resistive-force drag is the "
-                  "literature replacement (needs implicit drag in the solver)", "source": MW,
-         "switch": [SW("env.fluid", ["quadratic_published", "viscous_rft_water", "agar_rft"], ["quadratic_published"],
-                       "quadratic_published")]},
-        {"id": "MB6", "name": "gravity and substrate contact (agar plate)", "status": "missing",
-         "notes": "the published world has neither", "source": "",
-         "switch": [SW("env.substrate", ["none_published", "agar_plate"], ["none_published"], "none_published")]},
+                  "literature replacement. Built 5 Nov: RFT drag in the implicit solve (World::SetDragMatrix), "
+                  "agar K 40 (BBC 2012) stable at the published step; water RFT built, not scored",
+         "source": MW + "; " + BBC,
+         "switch": [SW("env.fluid", ["quadratic_published", "viscous_rft_water", "agar_rft"],
+                       ["quadratic_published", "viscous_rft_water", "agar_rft"], "quadratic_published")]},
+        {"id": "MB6", "name": "gravity and substrate contact (agar plate)", "status": "partial",
+         "notes": "the published world has neither. agar_plate (gravity only) fails gate A2: the body lifts off. "
+                  "agar_film (the water film's surface as a wall) passes A1f and A2f; not adopted (BODY_TESTS.md)",
+         "source": "this repo; " + GL,
+         "switch": [SW("env.substrate", ["none_published", "agar_plate", "agar_film"],
+                       ["none_published", "agar_plate", "agar_film"], "none_published")]},
         {"id": "MB7", "name": "drive source", "status": "have",
          "notes": "closed loop with brain.py runs (src/wormemu/body/loop.py, pipe mode; 5 Nov: 3 s, bounded, "
                   "drive 4.4e-6 so the body does not move)", "source": MW + "; this repo",
@@ -215,7 +242,8 @@ MECH = {
         {"id": "MB10", "name": "hydrostatic pressure", "status": "missing", "source": "",
          "switch": [SW("body.pressure", ["none_published", "pressurised"], ["none_published"], "none_published")]},
         {"id": "MB11", "name": "chemical gradient scene (BAAIWorm chemotaxis)", "status": "partial",
-         "notes": "field sampled at the nose and tail (src/wormemu/body/scene.py); no plate physics yet (MB6); "
+         "notes": "field sampled at the nose and tail (src/wormemu/body/scene.py); plate physics is the MB6 toggle "
+                  "(agar_film passes its gates, not adopted, not yet run with the field); "
                   "values in docs/worm/research/CHEMOTAXIS_PLATE.md", "source": "BAAIWorm b99ca5ab; literature",
          "switch": [SW("env.chemical_field", ["none", "cone_published", "exp_spot"],
                        ["none", "cone_published", "exp_spot"], "none"),
