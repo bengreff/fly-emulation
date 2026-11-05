@@ -113,9 +113,12 @@ SPECS: list[Spec] = [
     S("harsh_f0_uN", "sens_touch_harsh", "uN", 10, 0.5, 200),
     S("tap_gain_pA", "sens_tap", "pA", 30, 0, 200, applies_to="ALM, AVM, PLM, PVM"),
     S("tap_tau_ms", "sens_tap", "ms", 20, 2, 200),
-    S("proprio_gain_pA_mm", "sens_proprio", "pA per 1/mm", 2, 0, 50, applies_to="VB, DB, DVA, SMD"),
+    S("proprio_gain_pA_mm", "sens_proprio", "pA per 1/mm", 2, 0, 50, applies_to="VB, DB, DVA, SMD",
+      notes="no measured current per unit curvature found (param_ranges J13 DVA and J14 SMD not retrieved), so the "
+            "gain and its range are guessed, not cited"),
     S("proprio_field_frac", "sens_proprio", "body length", 0.4, 0.25, 0.5, lit="J12",
-      notes="a B-type neuron senses the mean curvature from its soma this far posterior"),
+      notes="a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: "
+            "anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12"),
     # muscle: V -> Ca (passive BAAIWorm muscles have no Ca channel; lumped sigmoid) and Ca -> activation
     S("mca_vhalf_mV", "muscle_ca", "mV", -20, -40, 0),
     S("mca_k_mV", "muscle_ca", "mV", 5, 1, 15),
@@ -312,11 +315,11 @@ class Layers:
             add({c: 1 for c in TOUCH_ANT + TOUCH_POST}, p["tap_gain_pA"] * k)
         if "sens_proprio" in self.on:
             kap = np.asarray(obs["curvature_per_mm"], float)
-            ks = np.linspace(0, 1, len(kap))
+            ks = np.asarray(obs["s"], float) if obs.get("s") is not None else np.linspace(0, 1, len(kap))
             for n, i in self.idx.items():
                 if n[:2] in ("VB", "DB") and np.isfinite(self.pos[i]):
                     sgn = 1 if n[0] == "V" else -1   # ventral B senses ventral bending
-                    sel = (ks >= self.pos[i]) & (ks <= self.pos[i] + p["proprio_field_frac"])
+                    sel = (ks >= self.pos[i] - p["proprio_field_frac"]) & (ks <= self.pos[i])   # anterior field
                     if sel.any():
                         I[i] += sgn * p["proprio_gain_pA_mm"] * -kap[sel].mean()
                 elif n in ("SMDDL", "SMDDR", "SMDVL", "SMDVR"):

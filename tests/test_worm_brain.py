@@ -81,3 +81,24 @@ def test_small_brain(toggles):
 def test_drawn_brain_runs():
     r = _run(dict(wiring="cook"), seed=3)
     assert r["finite"] and r["same"]
+
+
+def test_proprio_senses_anterior():
+    """B-type neurons sense curvature anterior of the soma (Wen et al. 2012; ledger J12): a ventral bend in the front
+    half excites VB and inhibits DB there, and a B neuron whose field lies wholly behind the bend gets nothing."""
+    code = """
+import json, numpy as np
+from wormemu.brain import Brain, sample_worm
+from wormemu.interface import BodyToBrain
+b = Brain(sample_worm(None), toggles=dict(wiring="cook", sens_proprio="on"), cells=["VB03", "DB02", "VB11"])
+o = BodyToBrain()
+o.curvature_per_mm = np.where(o.s < 0.3, -5.0, 0.0)
+I = b.layers.sensory_current(vars(o), 1.0)
+print(json.dumps({n: [float(I[b.idx[n]]), float(b.layers.pos[b.idx[n]])] for n in ["VB03", "DB02", "VB11"]}))
+"""
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, cwd=ROOT, timeout=600)
+    assert r.returncode == 0, r.stderr[-2000:]
+    x = json.loads(r.stdout.strip().splitlines()[-1])
+    assert x["VB03"][0] > 0 > x["DB02"][0]
+    assert x["VB11"][1] - 0.4 > 0.3 and x["VB11"][0] == 0.0       # field (0.4 long) starts behind the bend

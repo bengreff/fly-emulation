@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:07 CST",
+ "generated_at": "2026-11-05 17:11 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9953,7 +9953,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "no measured current per unit curvature found (param_ranges J13 DVA and J14 SMD not retrieved), so the gain and its range are guessed, not cited",
    "kind": "physiology"
   },
   {
@@ -9980,7 +9980,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "a B-type neuron senses the mean curvature from its soma this far posterior",
+   "notes": "a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12",
    "kind": "physiology"
   },
   {
