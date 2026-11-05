@@ -19,14 +19,15 @@ from jaxley.synapses import IonotropicSynapse
 from jaxley.connect import connectivity_matrix_connect
 from bioemu.morph import nml_to_swc
 from bioemu.jx_membrane import make_membrane
-from bioemu.jx_gap import Gap, ExplicitGap
+from bioemu.jx_gap import Gap, ExplicitGap, ImplicitGap, use_implicit_gaps
 from wormemu import nicoletti as lib
 
 T = float(sys.argv[1]) if len(sys.argv) > 1 else 200.0
 DT = float(sys.argv[2]) if len(sys.argv) > 2 else 0.1
 B = int(sys.argv[3]) if len(sys.argv) > 3 else 1
 SCALE = float(sys.argv[4]) if len(sys.argv) > 4 else 1.0  # batch 1 only: multiply every synaptic and gap conductance
-GAP = Gap if os.environ.get("BENCH_GAP") == "semi" else ExplicitGap  # default: the form the 4 Nov timings used
+# default: the form the 4 Nov timings used
+GAP = {"semi": Gap, "implicit": ImplicitGap}.get(os.environ.get("BENCH_GAP"), ExplicitGap)
 HOME = os.path.expanduser("~")
 COOK = f"{HOME}/worm-data/cook2019/SI 5 Connectome adjacency matrices, corrected July 2020.xlsx"
 MORPH = f"{HOME}/worm-data/morphologies/CElegansNeuroML/CElegans/generatedNeuroML2/AIYL.cell.nml"
@@ -75,6 +76,8 @@ t0 = time.time()
 connectivity_matrix_connect(net.cell("all"), net.cell("all"), IonotropicSynapse(), C)
 if G.any():
     connectivity_matrix_connect(net.cell("all"), net.cell("all"), GAP(), G)
+    if GAP is ImplicitGap:
+        use_implicit_gaps(net)
 t_build = time.time() - t0
 net.set("v", -60.0)
 net.init_states(delta_t=DT)
@@ -94,7 +97,9 @@ for k in range(8):
 nsteps = int(round(T / DT)) + 1
 ck = [int(math.ceil(nsteps ** 0.5))] * 2
 info = {"cells": N, "compartments": int(net.nodes.shape[0]), "chem_synapses": int(C.sum()), "gap_couplings": int(G.sum()),
-        "gap_junction_pairs": len(gpairs) // 2, "gap_form": GAP.__name__, "batch": B, "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
+        "gap_junction_pairs": len(gpairs) // 2, "gap_form": GAP.__name__,
+        "implicit_gap_sites": int(len(net._implicit_gap["S"])) if hasattr(net, "_implicit_gap") else None,
+        "implicit_gap_slots": len(net._implicit_gap["slot_nodes"]) if hasattr(net, "_implicit_gap") else None, "batch": B, "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
 print(json.dumps(info), flush=True)
 
 

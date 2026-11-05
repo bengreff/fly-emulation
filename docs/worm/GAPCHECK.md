@@ -104,3 +104,28 @@ them through a per-segment POINTER, set segment by segment. Nothing else in any 
 15 pA) run in NEURON with the original mods and with the patched mods must agree to <= 1e-9 mV at dt 0.1 and
 0.4 ms, and both must match Jaxley's single compartment to <= 0.01 mV. If R0 fails, `gapcheck2` is void.
 The `kcnl` / `caintra1` GLOBAL is not patched here (AIY's published set has no KCNL); it is recorded for W1.
+
+## Result of `gapcheck2` (scored 2026-11-05 01:18 CST): void by its own R0 rule
+
+Log `data/worm/gapcheck/gapcheck2.log`. With the patched reference every gap bar passed: B1 max 1.2e-5 mV over all
+P and C cases (P 1e-12 mV), B2 7.6e-6 / 1.2e-5 mV, B3 relative 6.4e-7, F1 ExplicitGap blows up in the strongest P
+and C cases, F2 Gap 0.05-6.7 mV. **R0 failed:** the single-compartment cell with the original and the patched
+mods differed by 2.7e-5 mV (dt 0.1) and 4.3e-5 mV (dt 0.4), against <= 1e-9. By the rule written above,
+`gapcheck2` is void and adopts nothing.
+
+**Cause of the R0 failure (measured, diagnostic, not scored).** The same GLOBAL carries state from one simulation
+to the next inside one NEURON process: `egl19.mod` writes `megl19` only in its BREAKPOINT, and `slo1egl19.mod`'s
+INITIAL reads it before anything has set it in the new run, so the BK gate starts from the previous run's final
+EGL-19 value (0.0011 here) instead of 0. The first run in a fresh process with the original mods equals the
+patched run exactly (0.0 mV, dt 0.1); the second and later runs differ by 2.7e-5 mV. With the patched mods every
+run is identical (0.0 mV). So the published mods are not reproducible run to run inside one process, at the
+1e-5 mV level, whenever SLO-1/EGL-19 is present.
+
+## Pre-registration of `gapcheck3` (written 2026-11-05 01:18 CST, before it runs)
+
+Identical to `gapcheck2` (cases, bars B1-B3, F1, F2, R0 at <= 1e-9 mV, gate) except one harness change: with the
+original mods, the GLOBALs `megl19_egl19`, `hegl19_egl19`, `munc2_unc2`, `hunc2_unc2` are set to 0 before every
+NEURON run, so each run starts as a fresh process does. Honest status: the R0 quantity this measures (fresh
+original against patched) was already seen in the diagnostic above (0.0 mV), and the gap bars were already seen
+in `gapcheck2` with the same `ImplicitGap` code, so `gapcheck3` is a confirmation run of a complete, consistent
+harness, not a blind test. `ImplicitGap` has not changed since the pre-registration at the top of this file.

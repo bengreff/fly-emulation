@@ -74,6 +74,9 @@ def nrn(case, g_nS, dt):
     for s in secs:
         for seg in s:
             r = h.Vector(); r.record(seg._ref_v); recs.append(r)
+    if not PATCHED and case != "P":  # published GLOBALs carry the last run's gates into INITIAL (GAPCHECK.md)
+        for X in ("megl19_egl19", "hegl19_egl19", "munc2_unc2", "hunc2_unc2"):
+            setattr(h, X, 0.0)
     h.dt, h.steps_per_ms, h.tstop, h.v_init = dt, 1.0 / dt, T, c["v0"]
     h.secondorder = 0
     h.run()
