@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:14 CST",
+ "generated_at": "2026-11-05 17:17 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -7159,7 +7159,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 0 (S14); 10 gives 108 (S15); swing 108",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7186,7 +7186,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 100 (S07); 0.2 gives 100 (S08); swing 0",
    "toggle": "",
    "notes": "ported value 0.5 kHz",
    "kind": "physiology"
@@ -7213,7 +7213,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 143 (S13); swing 43",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7240,7 +7240,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -10 gives 14 (S11); 10 gives 145 (S12); swing 131",
    "toggle": "",
    "notes": "ported value 30 mV",
    "kind": "physiology"
@@ -7294,7 +7294,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 105 (S17); 10 gives 93 (S18); swing 12",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7321,7 +7321,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 99 (S09); 0.2 gives 100 (S10); swing 1",
    "toggle": "",
    "notes": "ported value 0.015 kHz",
    "kind": "physiology"
@@ -7348,7 +7348,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 0 (S16); swing 100",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -7375,7 +7375,7 @@
    "fill_kind": "published fit",
    "source_project": "BAAIWorm",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 141 (S19); swing 41",
    "toggle": "",
    "notes": "",
    "kind": "physiology"
@@ -8077,7 +8077,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 0 (S01); 2 gives 136 (S02); swing 136",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
@@ -8113,7 +8113,7 @@
    "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.05 gives 110 (S03); 1 gives 93 (S04); swing 17",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
@@ -8149,7 +8149,7 @@
    "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
-   "precision_method": "",
+   "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 100 (S05); 2 gives 100 (S06); swing 0",
    "toggle": "",
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",

@@ -664,6 +664,29 @@ def build_layers(st):
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
 
 
+def sensitivity():
+    """The range-end runs (docs/worm/BRAIN_PORT.md section 5) into precision_method: what each end does to the count of
+    neurons above -20 mV (D8 base). A sensitivity, not a precision: there is no correctness target yet."""
+    f = ROOT / "data/worm/brain_runs/sens_summary.json"
+    if not f.exists():
+        return
+    runs = json.loads(f.read_text())
+    base = next(r["above"] for r in runs if r["run"] == "D8")
+    by = defaultdict(list)
+    for r in runs:
+        for kv in r["set"]:
+            k, v = kv.split("=")
+            by[k].append((float(v), r["above"], r["run"]))
+    for r in rows:
+        if r["param_id"] in by:
+            got = sorted(by[r["param_id"]])
+            n = [x[1] for x in got] + [base]
+            r["precision_method"] = ("range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): "
+                                     f"neurons above -20 mV at 6 s, {base} at the template; "
+                                     + "; ".join(f"{v:g} gives {k} ({run})" for v, k, run in got)
+                                     + f"; swing {max(n) - min(n)}")
+
+
 def export(led, extra):
     c = ledger.counts(led)
     by = c["by_label"]
@@ -738,6 +761,7 @@ def main():
     pts = build_morphology()
     n_c302 = build_c302_muscle()
     build_layers(st)
+    sensitivity()
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)
