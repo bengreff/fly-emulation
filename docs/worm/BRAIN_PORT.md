@@ -294,3 +294,31 @@ with SD > 2 mV over 4-6 s (whether anything moves). Predictions (guessed, writte
 - **Q1** (reported either way): does any single range end bring the count under 30 (the level with chemical synapses
   off)? A yes would say saturation depends on where inside the literature ranges the true values lie, not that the
   model is wrong.
+
+### Result S01-S19 (runs finished 2026-11-05 17:11 CST on backhouse; all measured; D8 = base)
+
+| Run | set | neurons above -20 mV at 6 s | median neuron mean 1-2 s (mV) | muscles above -20 mV | neurons with SD > 2 mV, 4-6 s |
+|---|---|---|---|---|---|
+| D8 | (ledger defaults) | 100 | -26.9 | 40 | 3 |
+| S01 / S02 | chemical strength 0.1 / 2 nS | **0** / 136 | -56.9 / -22.4 | 51 / 52 | 0 / 0 |
+| S03 / S04 | gap strength 0.05 / 1 nS | 110 / 93 | -27.7 / -26.9 | 44 / 34 | 0 / 0 |
+| S05 / S06 | NMJ strength 0.1 / 2 nS | 100 / 100 | -26.9 / -26.9 | 38 / 40 | 3 / 3 |
+| S07 / S08 | exc k 1/30 / 1/5 per ms | 100 / 100 | -26.9 / -26.9 | 40 / 40 | 3 / 3 |
+| S09 / S10 | inh k 1/30 / 1/5 per ms | 99 / 100 | -26.9 / -26.9 | 40 / 40 | 23 / 3 |
+| S11 / S12 | exc reversal -10 / +10 mV | **14** / 145 | -38.1 / -20.2 | 28 / 64 | 0 / 0 |
+| S13 | exc release threshold -45 mV | 143 | -20.4 | 77 | 0 |
+| S14 / S15 | exc release slope 2 / 10 mV | **0** / 108 | -57.7 / -26.2 | 0 / 42 | 0 / 0 |
+| S16 | inh release threshold -45 mV | **0** | -62.7 | 3 | 0 |
+| S17 / S18 | inh release slope 2 / 10 mV | 105 / 93 | -25.6 / -29.9 | 43 / 41 | 3 / 0 |
+| S19 | inh reversal -45 mV | 141 | -20.6 | 78 | 0 |
+
+G1 and G2 pass in all 19. **P5 holds** (chemical strength swings 0 to 136, gap 93 to 110, NMJ none; 0 at 0.1 nS).
+**P6 holds** (exc threshold at -45 raises the count to 143; inh threshold at -45 drops it to 0). **Q1: yes, four
+single range ends each bring saturation under 30**: chemical strength 0.1 nS (0), excitatory reversal -10 mV (14),
+excitatory release slope 2 mV (0), inhibitory release threshold -45 mV (0). So saturation is not forced by the
+model's structure: it depends on where the true values lie inside ranges the literature leaves wide. Ranked by the
+swing they cause in the count: chemical strength (136), excitatory reversal (131), excitatory release slope (108),
+inhibitory release threshold (100), excitatory release threshold (43), inhibitory reversal (41), gap strength (17),
+inhibitory slope (12); NMJ strength and both decay rates move it by 1 or less. These are the numbers whose precision
+matters first. Every run is still a fixed point (no ongoing activity; only S09 has 23 slowly moving neurons): the
+quiet ends are quiet, not rhythmic. Nothing is adopted; the ledger defaults stay at the range midpoints.

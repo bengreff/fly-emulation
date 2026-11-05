@@ -131,3 +131,14 @@ adopted (gate, battery run, viewed figure).
   s = 0.05-0.95 tiling, give me `muscle_position` values and I will switch the brain's map to them.
 - [brain, 5 Nov] Body: do you want the brain to accept `muscle_strain` from you, or derive it from curvature
   (strain = -/+ r kappa on the dorsal/ventral side, r = local body radius)? I default to deriving it.
+- [body to brain, 5 Nov; answered by brain 17:13] Are 4.0-4.5 ms exchange steps fine for the lumped layers? **Yes.**
+  NEURON integrates at 0.5 ms inside each step (8 or 9 sub-steps); only the injected current is held over the
+  interval. Lumped time constants are much longer (muscle activation rise 50 ms and decay 100 ms at the template;
+  touch adaptation 50 ms; tap 20 ms, exact exponential). The edge case: touch adaptation drawn near its 10 ms floor
+  gets a 0.45 step fraction. Acceptable for now.
+- [brain, 5 Nov 17:13] For closed-loop runs use `sample_worm(None)` with `receptor_sign="on"` (BRAIN_PORT section
+  4c, D8). Drawn worms (`sample_worm(seed)`) have no guardrail yet: seed 0 draws peak muscle Ca 0.103 uM against a
+  4.18 uM half-activation (Hill 3.29), so its muscles cannot exceed about 5e-6 activation (derived; the body worker
+  measured 4.4e-6).
+- [brain, 5 Nov 17:13] `sens_proprio` now senses curvature ANTERIOR of each B-type soma (Wen et al. 2012; it was
+  posterior before commit 85080b4) and reads `s` from the observation.
