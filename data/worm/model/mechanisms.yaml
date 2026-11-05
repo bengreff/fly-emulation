@@ -333,12 +333,13 @@
 - id: muscle_active
   name: Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)
   layer: muscle
-  status: partial
+  status: have
   toggle: muscle_active
   neutral: 'off'
   default: 'off'
-  source: c302 parameters_C2 (OpenWorm, MIT)
-  notes: parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)
+  source: c302 parameters_C2 (OpenWorm, MIT); third_party/c302
+  notes: 'on: c302''s generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, BRAIN_PORT section 6 M2) replace BAAIWorm''s passive muscle membrane, values from these rows; reversals are fixed
+    in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no repetitive spikes), unlike real body-wall muscle''s Ca action potentials (Gao and Zhen 2011)'
   absent_reason: ''
 - id: sens_salt
   name: Salt sensing (ASEL ON, ASER OFF)

@@ -1,0 +1,18 @@
+{
+ "toggles": {
+  "receptor_sign": "on",
+  "muscle_active": "on"
+ },
+ "seconds": 5.0,
+ "wall_s": 18.384257078170776,
+ "n_frames": 151,
+ "finite": true,
+ "neurons_above_m20_last": 103,
+ "muscles_above_m20_last": 40,
+ "act_max": 0.7936742901802063,
+ "act_mean_last_s": 0.38596487045288086,
+ "act_std_time_median": 0.07222753018140793,
+ "power_above_lowest_bin_median": 0.9002895355224609,
+ "centroid_net_body_lengths": 0.00015050009824335575,
+ "centroid_path_body_lengths": 0.00018503640603739768
+}

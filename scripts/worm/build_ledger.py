@@ -606,8 +606,11 @@ def build_morphology():
 
 def build_c302_muscle():
     mech("muscle_active", "Body-wall muscle K and Ca channels (c302 C2, Boyle and Cohen 2008 style)", "muscle",
-         "partial", "c302 parameters_C2 (OpenWorm, MIT)", toggle="muscle_active", neutral="off", default="off",
-         notes="parameters ported; not yet inserted into the NEURON muscles (BAAIWorm muscles are passive)")
+         "have", "c302 parameters_C2 (OpenWorm, MIT); third_party/c302", toggle="muscle_active", neutral="off",
+         default="off", notes="on: c302's generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, "
+         "BRAIN_PORT section 6 M2) replace BAAIWorm's passive muscle membrane, values from these rows; reversals "
+         "are fixed in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no "
+         "repetitive spikes), unlike real body-wall muscle's Ca action potentials (Gao and Zhen 2011)")
     keep = re.compile(r"^(muscle_(leak|k_slow|k_fast|ca_boyle)_\w+|(k_slow|k_fast|ca_boyle)_gate_\w+|"
                       r"ca_conc_(decay_time|rho)_muscle)$")
     n = 0

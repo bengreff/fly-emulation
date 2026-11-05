@@ -102,3 +102,31 @@ print(json.dumps({n: [float(I[b.idx[n]]), float(b.layers.pos[b.idx[n]])] for n i
     x = json.loads(r.stdout.strip().splitlines()[-1])
     assert x["VB03"][0] > 0 > x["DB02"][0]
     assert x["VB11"][1] - 0.4 > 0.3 and x["VB11"][0] == 0.0       # field (0.4 long) starts behind the bend
+
+
+def test_muscle_active():
+    """muscle_active on: c302's muscle membrane at c302's own values, finite and reproducible in a small brain."""
+    r = _run(dict(wiring="cook", muscle_active="on"))
+    assert r["finite"] and r["same"] and -100 < r["vmin"] and r["vmax"] < 60
+    code = """
+import json
+from neuron import h
+from wormemu.brain import Brain, sample_worm, MUSCLE_ACTIVE
+b = Brain(sample_worm(None), toggles=dict(wiring="cook", muscle_active="on"), cells=["DA01", "dBWML6"])
+seg, ref = b.soma[b.idx["dBWML6"]](0.5), h.Section(name="ref")
+nml = {("Leak", "gmax"): 2e-6, ("Leak", "e"): -20.0, ("k_slow_muscle", "gmax"): 4.5833751019872582e-4,
+       ("k_fast_muscle", "gmax"): 4.2711643917483308e-5, ("ca_boyle_muscle", "gmax"): 8.12775772264702e-4,
+       ("CaPoolMuscle", "decayConstant"): 60.811870945509265, ("CaPoolMuscle", "rho"): 0.002238919e-8}
+worst = 0.0
+for mod, pars in MUSCLE_ACTIVE.items():
+    ref.insert(mod)
+    for name in pars:
+        want = nml.get((mod, name), getattr(getattr(ref(0.5), mod), name))     # else the generated mod's default
+        worst = max(worst, abs(getattr(getattr(seg, mod), name) - want) / abs(want))
+print(json.dumps(dict(worst=worst, passive=hasattr(seg, "pas"))))
+"""
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    p = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, cwd=ROOT, timeout=600)
+    assert p.returncode == 0, p.stderr[-2000:]
+    x = json.loads(p.stdout.strip().splitlines()[-1])
+    assert x["worst"] < 1e-5 and not x["passive"]          # the generated mods round to 6 significant figures

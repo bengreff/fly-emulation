@@ -110,7 +110,7 @@ adopted (gate, battery run, viewed figure).
 | `innexin_identity` | off | on = per-EM gap conductance from open channels x innexin unitary conductance (both guessed; equal to `gap_strength_per_pair` at the templates, 1.7e-11 mV difference measured on a small brain) and no junction where a partner expresses no innexin in CeNGEN (7 of 1091 pairs); wiring=cook only |
 | `bwm_coupling` | off | on = Cook's 96 muscle-muscle gap pairs at 5 nS each (guessed) |
 | `expression_map` | off | on = CeNGEN gates channel presence |
-| `muscle_active` | off | on raises NotImplementedError (c302 muscle channels not in the NEURON build yet) |
+| `muscle_active` | off | on: c302 C2's body-wall muscle membrane (leak, slow K, fast K, Ca, Ca pool) in place of BAAIWorm's passive one; muscles start at -28 mV; muscle `ca_uM` is c302's pool x 1000 (c302's own scale, a blind guess). Changes muscle voltage only (median per-muscle largest change 2.5 mV in D8); no rhythm in the closed loop (BRAIN_PORT section 6) |
 | `gap_rectification` | off | on raises NotImplementedError (not wired yet) |
 | layers | see the ledger | `sens_*`, `muscle_ca`, `muscle_activation`, `pharynx`, `defecation`, `egg_laying`, `gcamp` on; `peptides`, `monoamines`, `glia`, `metabolism`, `homeostasis`, `slow_signalling` off |
 

@@ -355,3 +355,36 @@ in `third_party/c302/generated/`.
 - **C1 (report-only):** the body worker's 5 s closed loop (`sample_worm(None)`, receptor_sign on) with
   `muscle_active` off and on: rhythm (activation power above the lowest bin), centroid travel. Not a crawling test;
   no bar.
+
+### 6 results (5 Nov, 17:40 CST)
+
+- **M1 passes.** Every value the brain sets in the muscle mods equals c302's: densities, leak reversal and the
+  pool's two constants exactly as in `c302_C2_Full.net.nml` (the generated mod defaults round the pool's two to 6
+  significant figures, a 5e-7 relative difference); every gate constant equals the mod default exactly. Now a test
+  (`tests/test_worm_brain.py::test_muscle_active`).
+- **M2 passes** (`data/worm/brain_runs/muscle_m2/`, figure `m2.png`, viewed). Patched at 0.5 ms against unchanged at
+  0.025 ms: -10 mV crossings 0, 0, 1, 0, 0 in both for the 0, 1, 3, 10, 30 pA steps; the one crossing 0.8 ms apart
+  (2016.5 against 2015.7 ms); mean V over the last 200 ms of each step equal within 0.002 mV; largest voltage
+  difference 0.42 mV, at the onset of the 3 pA step. The patched files at 0.025 ms differ from the unchanged ones by
+  at most 0.007 mV, so the patch changes the integration, not the model. The unchanged files at 0.5 ms go NaN.
+- **M3: the published c302 muscle is graded, not spiking** (measured on the model). It rests at -28.6 mV; each step
+  gives a small onset overshoot and then a steady plateau (-18.9, -8.4, 0.0, +7.4 mV at 1, 3, 10, 30 pA). No
+  repetitive firing at any step. Real body-wall muscle fires all-or-none Ca action potentials (Gao and Zhen 2011),
+  so c302's C2 fit does not reproduce that; recorded in the mechanism's notes. Its Ca-dependent inactivation
+  saturates (h_ca_half 6.4e-8 mM, slope 1e-8 mM, in c302's own Ca scale), which is what NEURON's "exp out of
+  range" warnings under large steps are: harmless, h_inf goes to 0.
+- **M4: no change in any count** (`bw_M4`, `bw_M4_nostim` against `bw_D8`, `bw_D8_nostim`). Neurons above -20 mV at
+  6 s 100 in both; neuron voltages identical (largest difference 0.0000 mV, as expected: no muscle-to-neuron
+  synapses); muscles above -20 mV at 6 s 40 in both; 48 muscle -10 mV crossings in both, all in the first transient.
+  The muscle voltages do change (largest 18.7 mV, median per-muscle largest 2.5 mV). Touch reaches 11 neurons and
+  no muscle in either (stim minus no-stim, 2-4 s means). Reading: each muscle's NMJ synapses (0.447 nS per EM
+  synapse at the template, several synapses per muscle) outweigh its own channels (about 1 to 3 nS fully open), so
+  the muscle follows its tonic motor neurons whatever its membrane.
+- **C1: no rhythm either way** (`data/worm/brain_runs/c1_muscle/`, figure `c1.png`, viewed;
+  `scripts/worm/port/closed_loop_c1.py` runs the body worker's loop with this brain). 5 s, 18.4 s of wall each.
+  Neurons above -20 mV in the last frame 103 in both. Activation is tonic after a 0.3 s rise; over the last 3 s the
+  median muscle's activation SD is 0.003 (off) and 0.002 (on), and a few muscles wander slowly (largest SD 0.21 and
+  0.14), with no alternating dorsal-ventral pattern. The centroid moves under 0.001 body lengths in both. The off
+  run has a step at 4.35 s (one muscle to full activation) that the on run lacks; not chased.
+- **Verdict:** `muscle_active` is implemented and correct as a port, stays off by default, and is not the missing
+  rhythm. The rhythm question goes upstream to the motor neurons and their drive (section 7).

@@ -38,9 +38,11 @@ def main():
     ap.add_argument("--off_until_ms", type=int, default=0)      # every connection x0 before this time
     ap.add_argument("--set", action="append", default=[])         # sensitivity only (section 5): PARAM=VALUE, every
     #                                                               element of that ledger row set to VALUE
+    ap.add_argument("--toggle", action="append", default=[])      # MECH=STATE on top of the run's toggles (section 6)
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     toggles = dict(RUNS[a.run], sign_rule="transmitter", **{m[0]: "off" for m in brain_layers.MECHANISMS})
+    toggles.update(kv.split("=") for kv in a.toggle)
     t0 = time.time()
     spec = sample_worm(None)
     for kv in a.set:
@@ -91,6 +93,8 @@ def main():
              above_m20_at_6s=int((V[-1, neur] > -20).sum()),
              median_mean_1_2s=float(np.median(pre[neur])), p90_mean_1_2s=float(np.percentile(pre[neur], 90)),
              muscles_moved=int((d[b.is_muscle] >= 1.0).sum()),
+             muscle_up_crossings_m10=int(((V[1:, b.is_muscle] > -10) & (V[:-1, b.is_muscle] <= -10)).sum()),
+             muscles_above_m20_at_6s=int((V[-1, b.is_muscle] > -20).sum()),
              muscle_range_mV=[float(V[100:, b.is_muscle].min()), float(V[100:, b.is_muscle].max())])
     if a.ref_npz:
         r = np.load(a.ref_npz)
