@@ -19,7 +19,7 @@
   #left { display:grid; grid-template-rows: 1fr 150px; min-height:0; border-right:1px solid var(--line); }
   #body3d { position:relative; min-height:0; }
   #body3d canvas, #wire canvas { display:block; width:100%; height:100%; }
-  .overlay { position:absolute; left:8px; top:6px; pointer-events:none; color:var(--dim); font-size:12px; max-width:70%; }
+  .overlay { position:absolute; left:8px; top:6px; pointer-events:none; color:var(--dim); font-size:12px; max-width:70%; background:rgba(21,25,30,0.72); padding:3px 6px; border-radius:4px; }
   .overlay b { color:var(--text); }
   .legend { position:absolute; right:8px; top:6px; font-size:11px; color:var(--dim); text-align:right; }
   #kymo { position:relative; border-top:1px solid var(--line); }
@@ -145,6 +145,63 @@ ctl1.enableDamping = true;
 scene1.add(new THREE.HemisphereLight(0xdfe8ff, 0x302820, 1.6));
 const sun = new THREE.DirectionalLight(0xffffff, 1.6); sun.position.set(1, 2, 1.5); scene1.add(sun);
 const grid = new THREE.GridHelper(6, 24, 0x3a4250, 0x262c35); grid.position.y = -0.12; scene1.add(grid);
+// Agar plate and chemical field, for worm-scale runs (entry.world.plate_y_L, entry.chem; build_viewer_data.py).
+// A 9 cm dish (the assay plates in CHEMOTAXIS_PLATE.md), centred on the worm's start; 1 L = 1 mm under worm_1mm.
+// Colour = concentration from c_background (dark agar) to c_peak (teal), with a contour every 1/20 of that range,
+// computed per pixel with scene.py's formulas. Display only: the dish rim is not a wall in the physics.
+const PLATE_R = 45;
+const plateU = { field: { value: -1 }, target: { value: new THREE.Vector2() }, cPeak: { value: 1 }, slope: { value: 0 },
+  cBg: { value: 0 }, decay: { value: 1 }, mmPerL: { value: 1 }, step: { value: 0.1 }, R: { value: PLATE_R } };
+const plate = new THREE.Mesh(new THREE.CircleGeometry(PLATE_R, 256).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({
+  uniforms: plateU, side: THREE.DoubleSide,
+  vertexShader: `varying vec2 q; void main() { q = position.xz; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform float field, cPeak, slope, cBg, decay, mmPerL, step, R; uniform vec2 target; varying vec2 q;
+    void main() {
+      vec3 agar = vec3(0.11, 0.11, 0.09), teal = vec3(0.10, 0.38, 0.38), col = agar;
+      if (field >= 0.0) {
+        float r = length(q - target) * mmPerL;
+        float c = field < 0.5 ? max(cPeak - slope * r, cBg) : cBg + cPeak * exp(-r / decay);
+        col = mix(agar, teal, clamp((c - cBg) / max(cPeak, 1e-9), 0.0, 1.0));
+        float f = c / step, d = abs(fract(f + 0.5) - 0.5) / max(fwidth(f), 1e-6);
+        if (c > cBg + 0.5 * step) col = mix(col, vec3(0.55, 0.75, 0.72), 0.45 * (1.0 - min(d, 1.0)));
+      }
+      float e = R - length(q);
+      col = mix(vec3(0.35, 0.33, 0.28), col, smoothstep(0.0, 0.25, e));
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+}));
+plate.visible = false; scene1.add(plate);
+const spot = new THREE.Mesh(new THREE.RingGeometry(0.08, 0.12, 48), new THREE.MeshBasicMaterial({ color: 0xffe08a, side: THREE.DoubleSide }));
+spot.geometry.rotateX(-Math.PI / 2); spot.visible = false; scene1.add(spot);
+function setWorld(r) {
+  const w = r.world || {}, ch = r.chem;
+  plate.visible = w.plate_y_L != null;
+  grid.visible = !plate.visible || !ch; // on a plain plate the grid is the motion reference
+  grid.position.y = plate.visible ? w.plate_y_L : -0.12;
+  spot.visible = !!ch;
+  if (ch) spot.position.set(ch.target_L[0], plate.visible ? w.plate_y_L + 0.001 : ch.target_L[1], ch.target_L[2]);
+  if (!plate.visible) return;
+  if (ch) { // frame the worm (left) and the odour peak (right) together, looking steeply down
+    const m = new THREE.Vector3(ch.target_L[0] / 2, 0, ch.target_L[2] / 2);
+    const t = new THREE.Vector2(ch.target_L[0], ch.target_L[2]).normalize();
+    ctl1.target.copy(m); cam1.position.copy(m).add(new THREE.Vector3(-t.y * 0.6, 1.4, t.x * 0.6).multiplyScalar(4.0));
+  }
+  plate.position.y = w.plate_y_L - 0.002; // just under the body's lowest vertices, which sit on the plate
+  const p = ch ? ch.params : null;
+  plateU.field.value = !ch ? -1 : ch.field === 'cone_published' ? 0 : 1;
+  if (ch) {
+    plateU.target.value.set(ch.target_L[0], ch.target_L[2]);
+    plateU.cPeak.value = p.c_peak; plateU.cBg.value = p.c_background;
+    plateU.slope.value = p.slope_per_mm || 0; plateU.decay.value = p.decay_mm || 1;
+    plateU.mmPerL.value = p.mm_per_body_length; plateU.step.value = p.c_peak / 20;
+  }
+  const u = ch && ch.channel.endsWith('_mM') ? 'mM' : 'uM', step = ch ? +(p.c_peak / 20).toPrecision(2) : 0;
+  const ring = ch && ch.field === 'cone_published' ? `, ${(step / p.slope_per_mm).toPrecision(2)} mm apart` : '';
+  S.plateNote = ` Agar plate: a 9 cm dish (rim drawn; it is not a wall in the physics)` +
+    (w.film_y_L != null ? ', the water film\'s surface a wall' : '') +
+    (ch ? `. Plate colour: ${ch.channel} (${ch.field}) from ${p.c_background} (dark) to ${p.c_peak} ${u} (teal); ` +
+      `contours every ${step} ${u}${ring}; yellow ring = the odour peak.` : '.');
+}
 
 const geo = new THREE.BufferGeometry();
 const pos = new Float32Array(mesh.rest);
@@ -394,9 +451,10 @@ async function setRun(id) {
   if (r.cells) S.amax = 1; // closed loop: the brain's activation is a fraction of maximal force; show it on that scale
   cenPath = []; for (let f = 0; f < S.nF; f++) cenPath.push(centroid(f));
   lastCen.copy(cenPath[0]); cam1.position.set(0.0, 1.35, 0.75); ctl1.target.set(0, 0, 0);
-  S.acc = 0;
+  S.acc = 0; S.plateNote = '';
+  setWorld(r);
   buildKymo(); showFrame(0); runInfo(); mechView();
-  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. Grid 0.25 body lengths. White dot = nose. Colour: ${r.cells ? 'activation from the brain, 0 to 1 (fraction of maximal force)' : `activation as a fraction of this run's maximum (${S.amax.toFixed(3)})`}.`;
+  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. ${r.world && r.world.plate_y_L != null && r.chem ? '' : 'Grid 0.25 body lengths. '}White dot = nose. Colour: ${r.cells ? 'activation from the brain, 0 to 1 (fraction of maximal force)' : `activation as a fraction of this run's maximum (${S.amax.toFixed(3)})`}.${S.plateNote}`;
 }
 function fmt(x) { return typeof x === 'number' ? (Math.abs(x) >= 100 || Math.abs(x) < 0.01 && x !== 0 ? x.toExponential(2) : x.toFixed(3)) : String(x); }
 function runInfo() {

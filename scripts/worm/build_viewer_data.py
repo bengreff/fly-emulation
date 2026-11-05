@@ -18,6 +18,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from wormemu.body import metaworm as mw  # noqa: E402
+from wormemu.body.scene import ChemotaxisScene  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 SRC = REPO / "runs" / "worm" / "metaworm"
@@ -125,10 +126,21 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
                  "f": meta.get("f"), "lam": meta.get("lam"), "amp": meta.get("amp"),
                  "n_frames": meta["n_frames"], "frame_dt": meta["frame_dt"], "seconds": meta["seconds"],
                  "tests": summary(tests, rid), "label": "simulated (ported MetaWorm body, published parameters)"}
+        c0 = X[0].mean(0)  # viewer coordinates: (x - c0) / L, as the frames below
         if meta.get("scale", "published") != "published":  # worm-scale world (BODY_TESTS.md, agar plate / film)
             entry["world"] = {k: meta[k] for k in ("scale", "fluid", "substrate", "side_down")}
             entry["label"] = (f"simulated (ported MetaWorm body, published parameters; world {meta['scale']}, "
                               f"{meta['fluid']}, {meta['substrate']})")
+            w = meta["world"]
+            if meta["substrate"] != "none_published":  # the plate is normal to y (driver plate_axis 1)
+                entry["world"]["plate_y_L"] = float((w["plate_y"] - c0[1]) / fr.length)
+            if meta["substrate"] == "agar_film":
+                entry["world"]["film_y_L"] = float((w["film_y"] - c0[1]) / fr.length)
+        sc = meta.get("scene") or {}
+        if sc.get("field", "none") != "none":  # closed loop with a chemical field (scene.py, MB11)
+            scene = ChemotaxisScene(field=sc["field"], target=sc["target"], channel=sc["channel"], params=sc["params"])
+            entry["chem"] = {"field": sc["field"], "channel": sc["channel"], "params": scene.params,
+                             "target_L": ((scene.target_point(X[0]) - c0) / fr.length).tolist()}
         neural = SRC / f"{rid}.neural.f32"
         if neural.exists() and meta.get("cells"):  # closed loop: the brain's soma voltages at the body's frames
             V = np.fromfile(neural, np.float32).reshape(-1, len(meta["cells"]))[:meta["n_frames"]]
