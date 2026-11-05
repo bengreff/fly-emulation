@@ -158,10 +158,12 @@ def brain_dt_schedule(n_steps: int, dt_body_ms: float) -> np.ndarray:
     return np.diff(t)
 
 
-def run(brain, body: Body, seconds: float, record_every: int | None = None, log_every_s: float = 1.0) -> dict:
+def run(brain, body: Body, seconds: float, record_every: int | None = None, log_every_s: float = 1.0,
+        brain_config: dict | None = None) -> dict:
     """Closed loop for `seconds`. `brain` has reset() -> BrainToBody and step(obs, dt_ms) -> BrainToBody (brain.py
     or a stand-in). Records the cells' v_mV at the body's frames (every frame_every physics steps) into
-    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), and adds the run details to out.json."""
+    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), and adds the run details to out.json (`brain_config`:
+    how the brain was made, e.g. seed and toggles, recorded as given)."""
     n = int(round(seconds / body.dt_s))
     every = record_every or body.frame_every
     dts = brain_dt_schedule(n, body.dt_s * 1000.0)
@@ -193,7 +195,7 @@ def run(brain, body: Body, seconds: float, record_every: int | None = None, log_
     meta.update({"mode": "closed_loop", "brain": type(brain).__name__, "seconds": n * body.dt_s,
                  "frame_dt": body.dt_s * every, "loop_wall_s": wall, "exchange_ms": body.dt_s * 1000.0,
                  "brain_dt_ms_pattern": [float(x) for x in dts[:6]], "brain_t_end_ms": t_brain,
-                 "cells": names, "max_activation": act_max, "scene": {"field": body.scene.field,
+                 "brain_config": brain_config or {}, "cells": names, "max_activation": act_max, "scene": {"field": body.scene.field,
                  "target": body.scene.target, "channel": body.scene.channel, "params": body.scene.params}})
     json.dump(meta, open(body.out + ".json", "w"))
     return meta

@@ -1,7 +1,7 @@
 # Worm body + viewer: handoff (body worker, worktree `wormbody`)
 
-**Rewritten each session; do not append.** State as of 2026-11-05 17:15 CST, at commit 4f7ef4a and the handoff
-commit after it. The shared `docs/HANDOFF.md` belongs to main; this file is the body side until the Director
+**Rewritten each session; do not append.** State as of 2026-11-05 17:17 CST, after merging main (cf7779f) and the
+template-brain loop. The shared `docs/HANDOFF.md` belongs to main; this file is the body side until the Director
 merges it.
 
 Ben's direction (via the Director, 15:05-15:40):
@@ -31,8 +31,11 @@ The week's bar (WEEK.md, done Thu 12 Nov) is "complete, not behaving":
   - Measured (BODY_TESTS.md, last section):
     - pipe against the driver's own wave mode: the same to 1.9e-9;
     - stand-in loop: bounded, RTF 0.74;
-    - real brain.py (seed 0, defaults, 3 s): runs and stays finite in 10.65 s of wall, with 142 of 302 neurons above -20 mV;
-    - the largest muscle activation sent was 4.4e-6, so the body does not move.
+    - real brain.py, seed 0, defaults, 3 s: runs and stays finite (10.65 s of wall), but the largest muscle activation is 4.4e-6, so the body does not move. The cause is the seed-0 draw: (0.103/4.18)^3.29 ≈ 5e-6 (brain worker, derived). Drawn worms have no guardrail yet.
+    - **use instead `Brain(sample_worm(None), toggles=dict(receptor_sign="on"))`** (the brain worker's advice; brain at main 85080b4 or later). Its 5 s loop (`cl_brain_tmpl`) took 19.5 s of wall:
+      - activation reaches 0.79, and 39-42 of 95 muscle cells are tonically above -20 mV;
+      - 104-109 of 302 neurons are above -20 mV;
+      - the body curls within about 1 s, then its shape drifts slowly; there is no rhythm and no crawling (centroid net 0.06 L).
 - **Solver dead zone (found today, measured).** MetaWorm's solver returns the iterate from before its converged solve. A body at rest therefore ignores drive below about 0.05: a wave of amplitude 0.03 moves nothing, 0.06 does.
   - Toggle `body.solver_exit`, neutral `published`. `latest` (`World::SetReturnLatestIterate`) removes the dead zone.
   - On P2 the gait stays within 5% (1.5 Hz in both; wavelength 0.568 vs 0.560 L; speed 0.260 vs 0.273 L/s), but the paths drift apart.
@@ -60,8 +63,11 @@ The week's bar (WEEK.md, done Thu 12 Nov) is "complete, not behaving":
   - For closed-loop runs: a raster of all 302 neuron voltages under the kymograph, grouped by class, with a colour scale from -70 mV (dark blue) to +20 mV (pale yellow). The wiring diagram nodes are coloured by voltage.
   - Also: mechanisms with their toggles, the catalog, and a Run tab.
   - Run data: `scripts/worm/build_viewer_data.py` writes `viewer/worm/runs/` (gitignored); `cl_brain_s0` and `cl_reflex` are loaded.
-- **MP4s (gitignored):** `runs/worm/media/cl_brain_s0.mp4` (the real brain with the body, 3 s; contact sheet viewed: raster lit, body still), plus `p3_final.mp4` and `p2.mp4`. Recorder: `scripts/worm/record_viewer_mp4.py <run>`.
-- **Interface:** `docs/worm/INTERFACE.md` body side is current (exchange, lag, the first loop, the dead zone, head/tail from scene.py). The question sent to the brain worker at 17:12: are 4.0-4.5 ms steps fine for its lumped muscle and GCaMP layers, or does it need 1 ms? Not yet answered.
+- **MP4s (gitignored):**
+  - `runs/worm/media/cl_brain_tmpl.mp4`: the template brain with the body, 5 s, on guesses. This is the week's "MP4 on guesses" so far. Contact sheet and a frame viewed: the body curls, the raster is lit.
+  - `cl_brain_s0.mp4`: seed 0, body still.
+  - `p3_final.mp4` and `p2.mp4`. Recorder: `scripts/worm/record_viewer_mp4.py <run>`.
+- **Interface:** `docs/worm/INTERFACE.md` body side is current (exchange, lag, the first loop, the dead zone, head/tail from scene.py). Nothing is open between the workers. The brain worker settled the exchange at 17:13: one brain step per 4.0-4.5 ms exchange is fine (NEURON sub-steps at 0.5 ms inside).
 
 ## Next (in order)
 

@@ -311,3 +311,26 @@ t0_fast, 10 s, gait over 1.5-2.0 s):
 The gait is the same to within 5%, but the paths drift apart (largest vertex difference over 10 s 0.72 L), and
 wall was 15.49 s against about 16.8 s. Not adopted: it changes a published result, so it needs a pre-registered
 gate (does it keep P1-P3 inside their bars and remove the dead zone) before it can be on by default.
+
+**Template worm loop** (`cl_brain_tmpl`, 17:14-17:16 CST, Mac, measured). The brain worker's recommended closed-loop
+brain: `Brain(sample_worm(None), toggles=dict(receptor_sign="on"))` (every guessed number at its ledger default,
+Fenyves et al. 2020 synapse signs first; brain at main 85080b4 with proprioception anterior of the soma), the body
+with the published solver exit, the cone field on, 5 s. The seed-0 worm above cannot move because its own draw
+caps muscle activation near 5e-6 (brain worker, derived); drawn worms have no guardrail yet.
+
+| quantity | value |
+|---|---|
+| wall | 19.5 s for 5 s (3.9 s per biological second) |
+| state finite | yes; soma voltages -67.6 to +5.1 mV |
+| neurons above -20 mV | 9 at the first frame, then 104-109 of 302 |
+| muscle cells above -20 mV | 39-42 of 95 after the first second |
+| largest muscle activation | 0.794; 64 of 96 muscles average above 0.1 over 1-5 s; dorsal mean 0.40, ventral 0.38 |
+| activation rhythm | none: over 1-5 s the power is in the lowest bin (0.25 Hz for a 4 s window), a slow drift |
+| largest vertex displacement from rest | 0.436 (0.69 body lengths) |
+| centroid travel | 0.036 net (0.06 body lengths) |
+| largest midline curvature | 26 /mm in the first second, 13-19 /mm after |
+
+Seen in the viewer and the MP4 contact sheet: the body curls within about 1 s and its shape drifts slowly after
+(coil, then a V, then a coil); no rhythm and no crawling. The loop works end to end with real drive. That the
+posture is held rather than a gait is the brain's saturation (still open on the brain side), not a body fault,
+inferred from the tonic muscle cells. MP4: `runs/worm/media/cl_brain_tmpl.mp4`.

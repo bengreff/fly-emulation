@@ -139,7 +139,12 @@ The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_part
 - **First closed loop (5 Nov, measured, Mac).** brain.py `sample_worm(0)`, default toggles, with the body and the
   chemotaxis cone field: 3 s of biological time in 10.7 s of wall (3.6x slower than real time; brain and body in
   parallel), finite throughout. The brain's largest muscle activation was 4.4e-6, so the body did not move; 142 of
-  302 neurons ended above -20 mV. Run `runs/worm/metaworm/cl_brain_s0`, in the viewer and as an MP4.
+  302 neurons ended above -20 mV. Run `runs/worm/metaworm/cl_brain_s0`, in the viewer and as an MP4. The seed-0 draw
+  caps its muscles near 5e-6 (brain side, Settled below). With `sample_worm(None)` and `receptor_sign="on"`
+  (`cl_brain_tmpl`, 5 s, measured):
+  - activation reaches 0.79 and 39-42 of 95 muscle cells sit above -20 mV;
+  - the body curls within about 1 s and then drifts slowly, with no rhythm;
+  - wall is 3.9 s per biological second.
 - **Weak drive and the published solver.** MetaWorm's solver stops when one iterate changes by less than an
   absolute threshold (5e-7 per coordinate on average) and returns the iterate from before that last solve. For a
   body at rest under a weak load, that is the inertial prediction, so the muscles are ignored: a prescribed wave
