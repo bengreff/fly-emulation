@@ -32,6 +32,9 @@ def main():
     ap.add_argument("--ref_npz", default="")
     ap.add_argument("--tstop_ms", type=int, default=6000)
     ap.add_argument("--no_stim", action="store_true")
+    ap.add_argument("--scale_chem", type=float, default=1.0)    # diagnosis only (section 4): weight of every
+    ap.add_argument("--scale_gap", type=float, default=1.0)     # placed synapse / gap junction point process
+    ap.add_argument("--off_until_ms", type=int, default=0)      # every connection x0 before this time
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     toggles = dict(RUNS[a.run], sign_rule="transmitter", **{m[0]: "off" for m in brain_layers.MECHANISMS})
@@ -40,11 +43,19 @@ def main():
     t_build = time.time() - t0
     names = b.cell_names
     stim = np.array([b.idx[n] for n in TOUCH])
+    w0 = [(pp, pp.weight, "gapjunction" in pp.hname()) for pp in b.conn]
+
+    def scale(on):
+        for pp, w, gap in w0:
+            pp.weight = w * (a.scale_gap if gap else a.scale_chem) * on
+    scale(0.0 if a.off_until_ms else 1.0)
     b.reset()
     V = np.empty((a.tstop_ms, len(names)), np.float32)
     CA = np.empty_like(V)
     t1 = time.time()
     for k in range(a.tstop_ms):
+        if a.off_until_ms and k == a.off_until_ms:
+            scale(1.0)
         b.extra_pA[stim] = 20.0 if 2000 <= k < 4000 and not a.no_stim else 0.0
         o = b.step()
         V[k], CA[k] = o.v_mV, o.ca_uM
@@ -56,7 +67,10 @@ def main():
     other = neur & ~np.isin(names, TOUCH)
     pre, dur = V[1000:2000].mean(0), V[2000:4000].mean(0)
     d = np.abs(dur - pre)
-    s = dict(run=a.run, no_stim=a.no_stim, toggles=toggles, n_cells=len(names), n_neurons=int(neur.sum()), n_segments=b.n_segments,
+    s = dict(run=a.run, no_stim=a.no_stim, scale_chem=a.scale_chem, scale_gap=a.scale_gap,
+             off_until_ms=a.off_until_ms,
+             above_m20_names=[n for n, x, m in zip(names, V[-1], b.is_muscle) if x > -20 and not m],
+             toggles=toggles, n_cells=len(names), n_neurons=int(neur.sum()), n_segments=b.n_segments,
              placed=dict(b.placed), build_s=round(t_build, 1), sim_s=round(t_sim, 1),
              wall_s_per_bio_s=round(t_sim / (a.tstop_ms / 1000.0), 2),
              maxrss_MB=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss // 1024,

@@ -158,3 +158,28 @@ and graded synapses with no adaptation.
 **Adopted: wiring=cook is the default** (port302c passed G1-G3, figure viewed; `build_ledger.py` default flipped,
 ledger rebuilt). It saturates more than port302b (188 against 141 neurons above -20 mV), so the saturation problem
 is now the brain's top open question before the closed loop.
+
+## 4. Why the network saturates: diagnosis runs (pre-registration)
+
+Pre-registered 2026-11-05 16:54 CST, before any of these runs. Diagnosis only: nothing here is a model change or an
+adoption. Base: port302c (the current default: literature_overrides on, wiring=cook, every lumped layer off,
+template worm, 6 s, same touch input). The scale factors multiply the `weight` of every placed point process of one
+kind inside `scripts/worm/port/brain_runs.py`; `brain.py` and the ledger are untouched.
+
+- **D0** chemical x0, gap x0 (every cell isolated: intrinsic resting state).
+- **D1** chemical x0, gap x1.
+- **D2** chemical x1, gap x0.
+- **D3** chemical x0.1, gap x1.
+- **D4** every connection x0 from 0 to 1 s, then x1 (does the full network leave a settled resting state?).
+
+Hypothesis H-syn: recurrent chemical excitation holds the network in a depolarised state; the cells themselves rest
+low. The graded synapse turns on around Vth = -20 mV (slope 5 mV), so a neuron above -20 mV drives its targets.
+Predictions, each pass/fail, on neurons above -20 mV at 6 s (port302c: 188):
+- P1: D0 < 30 (if D0 >= 150, the cells' own channels hold them up and H-syn is rejected);
+- P2: D1 < 30;
+- P3: D2 >= 150.
+
+D4 is reported, not scored: if it stays below 30 the full network is bistable and the depolarised state is entered
+in the start-up transient (from v_init -65 mV); if it climbs back to about 188 the depolarised state is the only
+stable one at these strengths. Also reported per run: median and 90th percentile neuron mean V over 1-2 s and the
+neurons sitting above -20 mV in D0 by name.
