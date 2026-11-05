@@ -167,4 +167,13 @@ by run `port2b`, pre-registered here with port2's bars: `iso_exp2` (leak 0.5 nS 
 (all21 plus EXP-2 at 0.3 nS) must pass B1 at both dt; `iso_exp2` must pass B2 (>= 1 mV against `leak_only`);
 R0 must pass again.
 
+**port2b result (scored 2026-11-05 01:59 CST): B1 and R0 pass, B2 fails, so EXP-2 is not adopted from this run.**
+EXP-2 alone matches NEURON to 4.5e-13 mV (all22: 2.2e-3 mV at dt 0.4; R0 0.0 mV), but at 1.0 nS it changes the
+trace by only 0.52 mV RMS, under the 1 mV must-differ bar. That makes its match uninformative under the
+registered rule. The likely reason (inferred): EXP-2 inactivates almost fully above -50 mV (h^2, h half-point
+-50 mV, h time constant about 1-2 ms), so at 1 nS its window current is small.
+
+**port2c, pre-registered 2026-11-05 02:01 CST:** port2b's configurations and bars unchanged, except that
+`iso_exp2` carries EXP-2 at 10 nS (`ISO_NS=10`; a guessed test density).
+
 Q3: not started.
