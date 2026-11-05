@@ -2750,3 +2750,40 @@ pre-registration and results in `docs/worm/SPIKE.md`.
   class cannot reach 4 mV on this cell. The next fit should add bounded biology (gating shifts shared by gene,
   separate soma and neurite densities, a membrane-area check), pre-registered under a new name. Cost per fit:
   about 1.5 h on 2 CPU cores with backhouse heavily loaded (measured).
+
+### F-W0-9: gap junctions solved with the cable match NEURON to rounding, stay stable, and cost 13-23x (5 Nov, 01:28 CST)
+- `ImplicitGap` (`src/bioemu/jx_gap.py`) puts the junction conductances into the same backward-Euler solve as the
+  cable, using Jaxley's tree solver plus an exact low-rank correction. Pre-registered check `gapcheck3`
+  (GAPCHECK.md), measured against NEURON's fully implicit `LinearMechanism` at the same step: passive pair (a up
+  to 6.4) 1e-12 mV; 8-cell active AIY chain (a up to 8) 1.2e-5 mV, the same as the no-gap membrane residual; bar
+  0.01 mV. Gradient matches finite differences to 6.4e-7. The explicit form blows up in the strong cases.
+  Adopted (DECISIONS, 5 Nov).
+- On branched cells, implicit and explicit coupling converge to the same solution (differences 0.062, 0.031,
+  0.015 mV at dt 0.004, 0.002, 0.001 ms; three AIY cells), after fixing a node-label bug the 446-cell bench found.
+- On the 446-cell stand-in network at 1.5x conductance, every cell stays within -60 to +0.5 mV and the gradient
+  is finite; the explicit form reaches +48.6 mV and its gradient is not finite (measured).
+- **Cost, measured on one CPU core:** forward 5.8-6.4 ms per step against 0.23-0.28 ms explicit; with gradient
+  24.5-25.4 ms against 1.9-2.0 ms. Inferred cause: the 434-compartment junction system is solved densely every
+  step. It is sparse (one junction compartment per cell here), so a sparse or iterative solve is the next step.
+- **What it means.** The stability problem of F-W0-5 is solved without giving up accuracy; whole-worm fits with
+  gap junctions are possible but, at this cost, about 13x slower per gradient than the bench's 4 Nov extrapolation
+  assumed, until the junction solve is made sparse.
+
+### F-W0-10: the published Nicoletti 2024 NEURON mods couple channels through GLOBALs (5 Nov, 01:28 CST)
+- `egl19.mod` declares `GLOBAL megl19, hegl19` and writes them in its BREAKPOINT; `slo1egl19.mod` and
+  `slo2egl19.mod` read them as `EXTERNAL megl19_egl19, hegl19_egl19`. The same pattern links `unc2` to
+  `slo1unc2` / `slo2unc2`, and `kcnl` reads `calcium_caintra1`, a GLOBAL of `caintra1`.
+- **Across compartments** a GLOBAL is one number for the whole model, so every segment's BK channel sees the
+  EGL-19 gate of whichever segment was computed last. Measured effect on a 3-compartment AIY cell at 15 pA:
+  0.13 mV against the per-compartment model (2e-5 mV at 5 pA; grows with drive). Single-compartment use, as
+  published, is unaffected.
+- **Between runs in one NEURON process** the GLOBAL keeps the previous run's last value, and `slo1egl19`'s
+  INITIAL reads it before EGL-19 sets it, so the second and later runs differ from the first by 2.7e-5 mV
+  (dt 0.1 ms) and 4.3e-5 mV (dt 0.4 ms) on a single compartment (measured). Small, but it breaks bit-for-bit
+  reproducibility.
+- **Fix used here:** `scripts/worm/patch_nicoletti_mods.sh` (per-segment POINTERs; equal to the published model
+  in one compartment, 0.0 mV). The KCNL / caintra1 coupling is not patched yet.
+- **What it means.** Any multi-compartment model built on these mods without a patch couples its compartments in
+  a way the biology does not. Whether BAAIWorm / MetaWorm's `eworm` channel files inherit the pattern is not
+  checked (its checkout from the adoption tests was not found on backhouse tonight); check before porting any of
+  its channels.

@@ -1,0 +1,1 @@
+{"nodes": 12, "max_label": 13, "junction_sites": 6, "slots": 2, "implicit_dt0.1_vs_explicit_dt0.001_mV": 0.609388338938917, "implicit_vs_explicit_both_dt0.001_mV": 0.015350185002453998, "v_range_mV": [-60.0, 10.574504985285099]}

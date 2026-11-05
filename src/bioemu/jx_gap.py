@@ -85,7 +85,9 @@ def use_implicit_gaps(net, name="ImplicitGap"):
     _patch()
     e = net.edges[net.edges["type"] == name]
     pre, post = e["pre_index"].to_numpy(int), e["post_index"].to_numpy(int)
-    cell_of = net.nodes["global_cell_index"].to_numpy(int)
+    # Edge indices are `nodes` labels, which index the solver's voltage vector; with branch points they skip numbers,
+    # so look cells up by label, not by position.
+    cell_of = net.nodes["global_cell_index"].astype(int).to_dict()
     S = np.unique(np.concatenate([pre, post]))
     pos = {c: i for i, c in enumerate(S)}
     slot, seen = np.zeros(len(S), int), {}
@@ -95,7 +97,7 @@ def use_implicit_gaps(net, name="ImplicitGap"):
     net._implicit_gap = dict(
         name=name, post=post, S=S, slot=slot,
         slot_nodes=[S[slot == j] for j in range(slot.max() + 1)] if len(S) else [],
-        same_cell=(cell_of[S][:, None] == cell_of[S][None, :]).astype(float),
+        same_cell=(np.array([cell_of[c] for c in S])[:, None] == np.array([cell_of[c] for c in S])[None, :]).astype(float),
         pre_s=np.array([pos[c] for c in pre], int), post_s=np.array([pos[c] for c in post], int))
     return net
 

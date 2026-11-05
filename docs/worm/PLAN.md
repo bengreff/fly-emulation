@@ -99,7 +99,7 @@ details in `docs/worm/research/adoption_tests.md` and `SPIKE.md`.
 
 | Tool | Installs | Runs | Licence | Fidelity (evidence) | Speed (measured) | Verdict |
 |---|---|---|---|---|---|---|
-| **Jaxley 0.14.0** (JAX 0.12, CUDA 12) | yes | yes, CPU and GPU | Apache 2.0 (LICENSE file in the installed package) | Nicoletti 2024 AIY reproduced at 0.000 mV RMS vs NEURON; all 13 channels on: at most 0.009 mV RMS, 0.16 mV max (once E_Ca is pinned; see FINDINGS) | whole-worm-sized network (446 cells x 4 compartments, full 13-channel membrane, all chemical and gap connections), dt 0.1 ms: forward 2.36 s and forward+gradient 19.3 s wall per biological second on one CPU core; on the GPU 3.18 s and 21.2 s while another user held it at 65-99% utilisation; batched GPU: section c.5 | **Adopt** as the simulator and the fitting engine, with one fix before network fits: its synapse linearisation makes gap junctions fully explicit, unstable on highly coupled cells at dt 0.1 ms; a half-implicit patch is stable but inaccurate, so the coupling must be solved implicitly on both sides (F-W0-5) |
+| **Jaxley 0.14.0** (JAX 0.12, CUDA 12) | yes | yes, CPU and GPU | Apache 2.0 (LICENSE file in the installed package) | Nicoletti 2024 AIY reproduced at 0.000 mV RMS vs NEURON; all 13 channels on: at most 0.009 mV RMS, 0.16 mV max (once E_Ca is pinned; see FINDINGS) | whole-worm-sized network (446 cells x 4 compartments, full 13-channel membrane, all chemical and gap connections), dt 0.1 ms: forward 2.36 s and forward+gradient 19.3 s wall per biological second on one CPU core; on the GPU 3.18 s and 21.2 s while another user held it at 65-99% utilisation; batched GPU: section c.5 | **Adopt** as the simulator and the fitting engine, with one fix before network fits: its synapse linearisation makes gap junctions fully explicit, unstable on highly coupled cells at dt 0.1 ms; a half-implicit patch is stable but inaccurate, so the coupling must be solved implicitly on both sides (F-W0-5). Done 5 Nov: `ImplicitGap` matches NEURON to 1.2e-5 mV and stays stable, at 13-23x the explicit cost until its junction solve is made sparse (F-W0-9) |
 | **NEURON 9.0.2** | yes | yes | BSD-3 | the reference the published worm models were written in | about 25-70x slower than Arbor on toy cases (adoption_tests s1-2) | **Adopt as the CPU reference path** (standing rule); every new channel is checked Jaxley vs NEURON before use |
 | **Arbor 0.12.2** | yes | yes | BSD-3 | same cable equation as NEURON | 1 s of a 100-compartment cable in 0.0048 s wall (4 threads) | **Hold**. Not differentiable; worth it only if long forward runs (hours to days) outgrow Jaxley |
 | **OpenWorm c302** 0.12.1 (+ pyNeuroML, jNeuroML) | yes | yes | MIT (c302); LGPL-3 (pyNeuroML) | cells are leaky-integrator or simplified conductance models, not per-gene channels | 2 neurons + 1 muscle near real time | **Use as a structure source and baseline**, not as the neuron model (it is below answer 2's bar) |
@@ -197,8 +197,13 @@ is stable and its gradient finite (measured). The membrane gradients are finite 
 (`scripts/worm/check_grad_nan.py`). Consequence for the build: gap junctions need a coupling solved implicitly on
 both sides before network fits. A half-implicit patch (`bioemu.jx_gap.Gap`) was tested on 5 Nov: it never blows
 up but slows coupled cells' common relaxation by about 1 + a, a = dt g / C (measured on a pair, F-W0-5), so it is
-not adopted. Until the implicit coupling exists, runs keep every cell's summed a well below 1. The timings stand, since the
-work per step does not depend on the values.
+not adopted. **Solved on 5 Nov (decided):** `bioemu.jx_gap.ImplicitGap` puts the junctions into the same
+backward-Euler solve as the cable and matches NEURON's fully implicit coupling to 1.2e-5 mV in a strongly coupled
+active chain (pre-registered, GAPCHECK.md, F-W0-9); at 1.5x on this bench every cell stays within -60 to +0.5 mV
+and the gradient is finite (measured). It costs 5.8-6.4 ms per forward step and 24.5-25.4 ms per gradient step on
+one core (measured), about 23x and 13x the explicit form, because the 434-compartment junction system is solved
+densely each step (inferred); a sparse solve is the next engineering step. The explicit-form timings above stand
+as the cost of everything except the junction solve.
 
 Derived (arithmetic from the table; assumptions labelled):
 - **Running the worm.** At 4 compartments per cell and dt 0.1 ms, one biological hour costs 3600 x 2.36 =

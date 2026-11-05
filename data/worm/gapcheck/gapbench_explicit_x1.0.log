@@ -1,0 +1,4 @@
+{"cells": 446, "compartments": 1784, "chem_synapses": 4841, "gap_couplings": 2684, "gap_junction_pairs": 1342, "gap_form": "ExplicitGap", "implicit_gap_sites": null, "implicit_gap_slots": null, "batch": 1, "scale": 1.0, "T_ms": 200.0, "dt_ms": 0.1, "device": "cpu:0", "build_s": 1.2}
+{"v_min": -60.0, "v_max": 0.7}
+{"mode": "fwd", "compile_plus_run_s": 3.33, "run_s": 0.565, "wall_s_per_bio_s": 2.83, "bio_s_per_wall_s": 0.354, "us_per_step": 282.5, "finite": true}
+{"mode": "grad", "compile_plus_run_s": 20.15, "run_s": 3.897, "wall_s_per_bio_s": 19.49, "bio_s_per_wall_s": 0.051, "us_per_step": 1947.7, "finite": true}

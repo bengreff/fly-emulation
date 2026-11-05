@@ -98,8 +98,8 @@ nsteps = int(round(T / DT)) + 1
 ck = [int(math.ceil(nsteps ** 0.5))] * 2
 info = {"cells": N, "compartments": int(net.nodes.shape[0]), "chem_synapses": int(C.sum()), "gap_couplings": int(G.sum()),
         "gap_junction_pairs": len(gpairs) // 2, "gap_form": GAP.__name__,
-        "implicit_gap_sites": int(len(net._implicit_gap["S"])) if hasattr(net, "_implicit_gap") else None,
-        "implicit_gap_slots": len(net._implicit_gap["slot_nodes"]) if hasattr(net, "_implicit_gap") else None, "batch": B, "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
+        "implicit_gap_sites": int(len(net._implicit_gap["S"])) if GAP is ImplicitGap else None,
+        "implicit_gap_slots": len(net._implicit_gap["slot_nodes"]) if GAP is ImplicitGap else None, "batch": B, "scale": SCALE, "T_ms": T, "dt_ms": DT, "device": str(jax.devices()[0]), "build_s": round(t_build, 1)}
 print(json.dumps(info), flush=True)
 
 

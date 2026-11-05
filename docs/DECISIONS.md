@@ -6077,7 +6077,7 @@ fly is paused; moving its generic parts into `bioemu` is planned in PLAN.md (d) 
 (307/0) passing unchanged. Why a new package rather than renaming flyemu: nothing the fly depends on moves
 tonight, so the paused fly stays reproducible.
 
-**Engine.** Jaxley 0.14 (Apache 2.0) for differentiable multicompartment simulation, NEURON 8 as the CPU
+**Engine.** Jaxley 0.14 (Apache 2.0) for differentiable multicompartment simulation, NEURON (9.0.2; first written here as 8) as the CPU
 reference path (the port matches it to <= 0.009 mV RMS; F-W0-1). Verdicts and evidence in PLAN.md (b).
 
 **The spike ran on CPU, not the GPU.** The pre-registration said "gradients on the GPU". Before any fit was
@@ -6103,3 +6103,34 @@ NEURON, and adopt it on that gate.
 
 **Spike verdict recorded as failed.** `fit1` misses the pre-registered training bar (F-W0-8). Nothing is refitted
 under that name; the next AIY fit gets a new name and its own pre-registration.
+
+## Worm W0b: the five W0 decisions adopted; `ImplicitGap` adopted for gap junctions (5 Nov 2026, 01:24 CST)
+
+**The five W0 DECISIONS** (PLAN.md) were adopted as Ben's defaults by the Director (4-5 Nov night, reversible,
+logged in `~/director/decisions/fly.md`) and are marked decided in PLAN.md.
+
+**Gap junctions: `ImplicitGap` adopted** for network fits, on its pre-registered gate (GAPCHECK.md, run
+`gapcheck3`): against NEURON's fully implicit `LinearMechanism` at the same step, max error 1.2e-5 mV over a
+passive pair (a up to 6.4) and an 8-cell active AIY chain (a up to 8), at dt 0.1 and 0.4 ms (bar 0.01 mV); cable
+control 1.2e-5 mV; gradient matches finite differences to 6.4e-7; the explicit form blows up where required;
+figure viewed. Two runs before it did not count: `gapcheck1` failed its cable control and `gapcheck2` was void by
+its own R0 rule, both because the published Nicoletti mods couple channels through NEURON GLOBALs (F-W0-10).
+- **Scope.** Tested on single-branch cells with the AIY membrane, one junction per compartment pair, backward
+  Euler, Jaxley 0.14.0 (the patch asserts the version). Branched cells: a label-lookup bug was fixed after the
+  scored run, and a reported check on three branched AIY cells shows implicit and explicit coupling converging to
+  the same solution (difference halving with dt). Any other Jaxley version, solver or voltage solver raises.
+- **Not settled: cost.** On the 446-cell bench the junction system (434 junction compartments) is solved as a
+  dense matrix each step, measured at 6.4 ms per forward step against 0.28 ms for the explicit form on one CPU
+  core (F-W0-9). Accurate and stable, but about 23x slower at this size. Using a sparse or iterative solve for
+  that system is the next engineering step; it gets the same NEURON check before replacing the dense one.
+- `ExplicitGap` and `Gap` stay in `jx_gap.py` as controls; the bench still defaults to the explicit form so its
+  4 Nov timings stay reproducible (`BENCH_GAP=implicit` selects the adopted one).
+
+**NEURON reference uses patched mods for multi-compartment checks.** `scripts/worm/patch_nicoletti_mods.sh`
+builds a local copy of the Nicoletti 2024 mods with per-segment POINTERs in place of the GLOBAL coupling
+(EGL-19 and UNC-2 to the BK channels). The published single-compartment model is unchanged by it (R0: 0.0 mV).
+The `kcnl` / `caintra1` GLOBAL is not patched yet (needed for W1, RIM and AFD).
+
+**W1 pre-registered, not run:** RIM and AFD fits (`w1rim1`, `w1afd1`) with must-fail controls, in
+`docs/worm/W1_RIM_AFD.md`. Three prerequisites must pass first (step amplitudes confirmed, eight channels ported,
+the KCNL patch).
