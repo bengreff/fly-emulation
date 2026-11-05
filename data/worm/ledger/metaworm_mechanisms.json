@@ -113,7 +113,7 @@
    "id": "MB7",
    "name": "drive source",
    "status": "have",
-   "notes": "brain closed loop waits for sample_worm(seed) in main",
+   "notes": "closed loop with brain.py runs (src/wormemu/body/loop.py, pipe mode; 5 Nov: 3 s, bounded, drive 4.4e-6 so the body does not move)",
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim); this repo",
    "switch": [
     {
@@ -127,13 +127,15 @@
      "available": [
       "key_published",
       "prescribed_wave",
-      "dead"
+      "dead",
+      "brain_closed_loop"
      ],
      "neutral": "key_published",
      "current_by_mode": {
       "key": "key_published",
       "wave": "prescribed_wave",
-      "dead": "dead"
+      "dead": "dead",
+      "pipe": "brain_closed_loop"
      }
     }
    ]
@@ -142,7 +144,7 @@
    "id": "MB8",
    "name": "proprioceptive outputs to the brain (curvature, rate, strain)",
    "status": "partial",
-   "notes": "curvature readout exists (src/wormemu/body/metaworm.py); not yet streamed to a brain",
+   "notes": "curvature and its rate at 49 points streamed to the brain every exchange (loop.py); strain, contact and nose force sent as 0",
    "source": "this repo",
    "switch": []
   },
@@ -150,8 +152,22 @@
    "id": "MB9",
    "name": "numerics: projective dynamics, 240 Hz, 50 iterations",
    "status": "have",
+   "notes": "published exit returns the iterate before the converged solve: drive below ~0.05 does not move a body at rest (BODY_TESTS.md); 'latest' keeps the converged solve, not yet adopted",
    "source": "MetaWorm, BAAIWorm b99ca5ab (third_party/metaworm/sim)",
-   "switch": []
+   "switch": [
+    {
+     "name": "body.solver_exit",
+     "options": [
+      "published",
+      "latest"
+     ],
+     "available": [
+      "published",
+      "latest"
+     ],
+     "neutral": "published"
+    }
+   ]
   },
   {
    "id": "MB10",
@@ -175,10 +191,37 @@
   {
    "id": "MB11",
    "name": "chemical gradient scene (BAAIWorm chemotaxis)",
-   "status": "missing",
-   "notes": "needed for Ben's agar plate with a gradient",
-   "source": "BAAIWorm (to port)",
-   "switch": []
+   "status": "partial",
+   "notes": "field sampled at the nose and tail (src/wormemu/body/scene.py); no plate physics yet (MB6); values in docs/worm/research/CHEMOTAXIS_PLATE.md",
+   "source": "BAAIWorm b99ca5ab; literature",
+   "switch": [
+    {
+     "name": "env.chemical_field",
+     "options": [
+      "none",
+      "cone_published",
+      "exp_spot"
+     ],
+     "available": [
+      "none",
+      "cone_published",
+      "exp_spot"
+     ],
+     "neutral": "none"
+    },
+    {
+     "name": "env.chemical_target",
+     "options": [
+      "published_3d",
+      "plate_projected"
+     ],
+     "available": [
+      "published_3d",
+      "plate_projected"
+     ],
+     "neutral": "plate_projected"
+    }
+   ]
   },
   {
    "id": "MB12",

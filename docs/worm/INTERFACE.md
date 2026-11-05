@@ -128,10 +128,25 @@ adopted (gate, battery run, viewed figure).
 The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_party/metaworm`, driven by
 `src/wormemu/body/metaworm.py`). Its numbers and their labels: `data/worm/ledger/metaworm_parameters.csv`.
 
-- **Exchange interval: 4.0 ms (proposed).** MetaWorm's physics step is hard-coded at 1/240 s = 4.17 ms, which is
-  not a multiple of the brain's 0.1 ms step. The body will run at dt = 1/250 s (a 4% change to a published
-  numerical constant, labelled) and exchange every step. Before adopting it I re-run the published gait check
-  (P2) at 1/250 and report the difference. Until then the body can also exchange at 5.0 ms (dt 1/200).
+- **Exchange: every published physics step, 1/240 s = 4.167 ms** (implemented, `src/wormemu/body/loop.py`).
+  The brain's 0.5 ms step does not divide 4.167 ms, so the body asks the brain to advance to the 0.5 ms grid
+  point nearest its own time: `dt_ms` = 4.0, 4.5, 4.0, repeating (12.5 ms per 3 exchanges); the two clocks never
+  differ by more than 0.25 ms (derived). No published constant changes; dt = 1/250 s is no longer needed.
+- **Order in an exchange.** Body and brain run at the same time in separate processes: the body steps with the
+  command from the end of the previous interval while the brain steps with the observation from the start of
+  this one. A command therefore reaches the muscles one exchange (4.17 ms) after the brain computes it. That is
+  the loop's lag, not a filter; the body adds nothing else.
+- **First closed loop (5 Nov, measured, Mac).** brain.py `sample_worm(0)`, default toggles, with the body and the
+  chemotaxis cone field: 3 s of biological time in 10.7 s of wall (3.6x slower than real time; brain and body in
+  parallel), finite throughout. The brain's largest muscle activation was 4.4e-6, so the body did not move; 142 of
+  302 neurons ended above -20 mV. Run `runs/worm/metaworm/cl_brain_s0`, in the viewer and as an MP4.
+- **Weak drive and the published solver.** MetaWorm's solver stops when one iterate changes by less than an
+  absolute threshold (5e-7 per coordinate on average) and returns the iterate from before that last solve. For a
+  body at rest under a weak load, that is the inertial prediction, so the muscles are ignored: a prescribed wave
+  of amplitude 0.03 moves nothing (displacement exactly 0), 0.06 moves it (measured). Toggle `body.solver_exit`,
+  neutral `published`; `latest` returns the converged solve instead (amplitude 0.01 then moves 0.0099; the
+  published gait P2 keeps 1.5 Hz, its wavelength moves 1.4%, head amplitude 3.7% and speed 5%; measured). Until it
+  is adopted, brain drive below about 0.05 does not move the body.
 - **Activation -> force.** `muscle_activation` goes into MetaWorm's muscle input 1:1 (the published input range is
   [0, 1] after its key gain and clip; the mapping is **inferred**, not measured). The body updates it every
   physics step and adds no filter. No force-length or force-velocity in the published body (toggle
@@ -160,8 +175,12 @@ The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_part
 - `curvature_rate_per_mm_ms`: backward difference over one exchange interval.
 - `contact_force_uN`, `nose_force_uN`, `tap`: 0 (the published world has no objects, no substrate and no
   contact; MB6 in the body ledger).
-- `head` / `tail`: the default world until the BAAIWorm chemotaxis scene (agar plate with a gradient, MB11) is
-  ported; then the body samples the gradient at the nose and tail positions.
+- `head` / `tail`: the default plate (`HEAD_CHANNELS`, `TAIL_CHANNELS`) with the chemotaxis scene on top
+  (`src/wormemu/body/scene.py`, MB11, toggle `env.chemical_field`, neutral `none`). With a field on, the body
+  samples it at the nose (vertex 102) and, for `nacl_mM` / `sds_mM`, at the tail tip (vertex 173). Default
+  channel `diacetyl_uM`; numbers and sources in `docs/worm/research/CHEMOTAXIS_PLATE.md`. BAAIWorm's own transducer
+  (normalised change of minus the distance, one current into 15 sensory neurons) is described there; it is a
+  brain mechanism, so it is the brain worker's to port as a toggle if wanted.
 - `muscle_strain`: None in v1 (the brain derives it, as it defaults to). The body can report fibre strain from
   its muscle segment lengths later; it would come in as a toggle.
 - `pharynx`, `enteric`, `sex` activations: accepted and ignored (the body has none of those parts yet, MB12).
@@ -170,8 +189,10 @@ The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_part
 
 (Write questions here with a date and your side. Answered items move to a "Settled" list.)
 
-- [body, 5 Nov] Brain: is a 4.0 ms exchange interval acceptable (see Body side)? If you need 1 ms, the body
-  holds activation between its 4 ms steps and reports the same observation four times.
+- [body, 5 Nov 17:10] Brain: the body exchanges every 4.167 ms with `dt_ms` 4.0, 4.5, 4.0 (Body side). Your
+  lumped layers step once per exchange; is a 4-4.5 ms step fine for them (muscle Ca and activation time
+  constants, GCaMP)? If you need 1 ms, say so: the body would hold the command and send the same observation
+  for four brain steps of 1.0, 1.0, 1.0, 1.0-1.5 ms, at about 4x the Python call overhead.
 
 ### Settled
 

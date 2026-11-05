@@ -53,8 +53,11 @@ public:
 	// 3n x 3n) solved implicitly with the step, so stiff viscous or agar drag stays stable at any mass.
 	void								SetUnitMass(double unit_mass);
 	void								SetDragMatrix(const Eigen::SparseMatrix<double>& C);
+	// SetReturnLatestIterate(true): on convergence return the latest solve, not the one before it (see World.cpp).
+	void								SetReturnLatestIterate(bool on);
 
 private:
+	bool								mReturnLatest = false;
 	bool								mHasDrag = false;
 	bool								mDragPatternDone = false;
 	Eigen::SparseMatrix<double>			mDragMatrix;

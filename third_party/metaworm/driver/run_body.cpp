@@ -12,7 +12,15 @@
 //         segments, head first): dorsal a = amp (1 + sin phi)/2, ventral a = amp (1 - sin phi)/2,
 //         phi = 2 pi (f t - s / lam), s = (j + 0.5)/24, ramped in over the first period.
 //   dead  all 96 activations 0.
-//   --release_at T (any mode): from time T on, all 96 activations are 0.
+//   pipe  closed loop (our code): the caller sends, per exchange, int32 n_steps, int32 flags (bit 0: dump a frame
+//         after the steps), then 96 float64 activations (Worm::SetActivationLevelsDirectly order, held for the
+//         n_steps physics steps); the driver replies with 3 n_vertices float64 positions. n_steps <= 0 ends the
+//         run. Before the first exchange it writes int32 n_vertices, int32 n_act, float64 physics dt and the rest
+//         positions. Pipes: --fd_in, --fd_out (file descriptors passed by the caller; stdout carries upstream's
+//         log). P.json is written at the start too, so the caller can read the mesh metadata.
+//   --solver_exit published|latest (toggle body.solver_exit, neutral published): on convergence, return the
+//         iterate before the converged solve (upstream) or the converged solve itself (World extension).
+//   --release_at T (key, wave, dead): from time T on, all 96 activations are 0.
 //
 // Output (prefix P): P.frames.f32 float32 [n_frames, n_vertices, 3] world positions, frame 0 = rest pose;
 //                    P.act.f32 float32 [n_frames, 96]; P.json metadata (surface triangles, muscle names, rest
@@ -25,6 +33,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unistd.h>
 #include <Eigen/Core>
 #include "Environment.h"
 
@@ -46,16 +55,21 @@ int main(int argc, char** argv)
 	int frame_every = std::atoi(arg(argc, argv, "--frame_every", "1"));
 	double release_at = std::atof(arg(argc, argv, "--release_at", "1e30"));
 	std::string out = arg(argc, argv, "--out", "run");
+	std::string solver_exit = arg(argc, argv, "--solver_exit", "published");  // published | latest
+	int fd_in = std::atoi(arg(argc, argv, "--fd_in", "-1"));
+	int fd_out = std::atoi(arg(argc, argv, "--fd_out", "-1"));
 
 	// Environment() reads args/train_worm_swim_args.txt relative to the cwd; the caller runs us from SOFTCON_DIR.
 	Environment env;
 	Worm* worm = env.GetCreature();
 	FEM::World* world = env.GetSoftWorld();
+	if (solver_exit == "latest") world->SetReturnLatestIterate(true);
+	else if (solver_exit != "published") { std::cerr << "unknown --solver_exit " << solver_exit << std::endl; return 1; }
 	if (mode == "key" && !key.empty()) worm->SetKey(std::string(SOFTCON_DIR) + "/data/" + key);
 
 	const int ratio = env.GetSimulationHz() / env.GetControlHz();
 	const double dt_ctrl = 1.0 / env.GetControlHz();
-	const int n_ctrl = (int)std::lround(seconds * env.GetControlHz());
+	int n_ctrl = (int)std::lround(seconds * env.GetControlHz());
 	const auto& muscles = worm->GetMuscles();
 	const int n_act = worm->GetNumMuscleSegments();
 	const int nv = world->GetPositions().size() / 3;
@@ -90,7 +104,54 @@ int main(int argc, char** argv)
 	dump(Eigen::VectorXd::Zero(n_act)); n_frames++;
 	const Eigen::VectorXd x_rest = world->GetPositions();
 	double max_disp = 0.0;  // max over control steps of max |x - x_rest| (double precision; frames are float32)
+	auto write_json = [&](double wall) {
+	std::ofstream js(out + ".json");
+	js.precision(9);
+	js << "{\n \"source\": \"MetaWorm (BAAIWorm b99ca5ab) sim/, driver third_party/metaworm/driver/run_body.cpp\",\n";
+	js << " \"mode\": \"" << mode << "\", \"key\": \"" << key << "\", \"seconds\": " << seconds
+	   << ", \"f\": " << f << ", \"lam\": " << lam << ", \"amp\": " << amp << ", \"release_at\": " << release_at
+	   << ", \"solver_exit\": \"" << solver_exit << "\",\n";
+	js << " \"simulation_hz\": " << env.GetSimulationHz() << ", \"control_hz\": " << env.GetControlHz()
+	   << ", \"frame_dt\": " << dt_ctrl * frame_every << ", \"n_frames\": " << n_frames
+	   << ", \"n_vertices\": " << nv << ", \"n_act\": " << n_act << ", \"wall_s\": " << wall << ",\n";
+	js << " \"max_disp_from_rest\": " << max_disp << ",\n";
+	js << " \"muscles\": [";
+	for (size_t i = 0; i < names.size(); i++) js << (i ? ", " : "") << "\"" << names[i] << "\"";
+	js << "],\n \"segment_starts\": [";
+	bool first = true;
+	for (auto m : muscles) for (auto& p : m->GetStarts()) { js << (first ? "" : ", ") << "[" << p[0] << ", " << p[1] << ", " << p[2] << "]"; first = false; }
+	js << "],\n \"segment_ends\": [";
+	first = true;
+	for (auto m : muscles) for (auto& p : m->GetEnds()) { js << (first ? "" : ", ") << "[" << p[0] << ", " << p[1] << ", " << p[2] << "]"; first = false; }
+	js << "],\n \"triangles\": [";
+	const auto& tri = worm->GetContours();
+	for (size_t i = 0; i < tri.size(); i++) js << (i ? ", " : "") << "[" << tri[i][0] << ", " << tri[i][1] << ", " << tri[i][2] << "]";
+	js << "]\n}\n";
+	};
+
 	auto t0 = std::chrono::steady_clock::now();
+	if (mode == "pipe") {
+		auto rd = [&](void* p, size_t n) { char* c = (char*)p; while (n) { ssize_t k = read(fd_in, c, n); if (k <= 0) return false; c += k; n -= k; } return true; };
+		auto wr = [&](const void* p, size_t n) { const char* c = (const char*)p; while (n) { ssize_t k = write(fd_out, c, n); if (k <= 0) return false; c += k; n -= k; } return true; };
+		if (fd_in < 0 || fd_out < 0) { std::cerr << "pipe mode needs --fd_in and --fd_out" << std::endl; return 1; }
+		write_json(0.0);
+		int32_t hdr[2] = {nv, n_act};
+		double dt_phys = 1.0 / env.GetSimulationHz();
+		wr(hdr, sizeof(hdr)); wr(&dt_phys, sizeof(double)); wr(x_rest.data(), 3 * nv * sizeof(double));
+		Eigen::VectorXd a(n_act);
+		for (;;) {
+			int32_t msg[2];
+			if (!rd(msg, sizeof(msg)) || msg[0] <= 0) break;
+			if (!rd(a.data(), n_act * sizeof(double))) break;
+			worm->SetActivationLevelsDirectly(a);
+			for (int i = 0; i < msg[0]; i++) env.Step();
+			const Eigen::VectorXd& x = world->GetPositions();
+			max_disp = std::max(max_disp, (x - x_rest).cwiseAbs().maxCoeff());
+			if (msg[1] & 1) { dump(current_act()); n_frames++; }
+			if (!wr(x.data(), 3 * nv * sizeof(double))) break;
+		}
+		n_ctrl = 0;
+	}
 	for (int c = 0; c < n_ctrl; c++) {
 		double t = c * dt_ctrl;
 		if (t >= release_at - 1e-12) {
@@ -122,27 +183,7 @@ int main(int argc, char** argv)
 	double wall = std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count();
 	ff.close(); fa.close();
 
-	std::ofstream js(out + ".json");
-	js.precision(9);
-	js << "{\n \"source\": \"MetaWorm (BAAIWorm b99ca5ab) sim/, driver third_party/metaworm/driver/run_body.cpp\",\n";
-	js << " \"mode\": \"" << mode << "\", \"key\": \"" << key << "\", \"seconds\": " << seconds
-	   << ", \"f\": " << f << ", \"lam\": " << lam << ", \"amp\": " << amp << ", \"release_at\": " << release_at << ",\n";
-	js << " \"simulation_hz\": " << env.GetSimulationHz() << ", \"control_hz\": " << env.GetControlHz()
-	   << ", \"frame_dt\": " << dt_ctrl * frame_every << ", \"n_frames\": " << n_frames
-	   << ", \"n_vertices\": " << nv << ", \"n_act\": " << n_act << ", \"wall_s\": " << wall << ",\n";
-	js << " \"max_disp_from_rest\": " << max_disp << ",\n";
-	js << " \"muscles\": [";
-	for (size_t i = 0; i < names.size(); i++) js << (i ? ", " : "") << "\"" << names[i] << "\"";
-	js << "],\n \"segment_starts\": [";
-	bool first = true;
-	for (auto m : muscles) for (auto& p : m->GetStarts()) { js << (first ? "" : ", ") << "[" << p[0] << ", " << p[1] << ", " << p[2] << "]"; first = false; }
-	js << "],\n \"segment_ends\": [";
-	first = true;
-	for (auto m : muscles) for (auto& p : m->GetEnds()) { js << (first ? "" : ", ") << "[" << p[0] << ", " << p[1] << ", " << p[2] << "]"; first = false; }
-	js << "],\n \"triangles\": [";
-	const auto& tri = worm->GetContours();
-	for (size_t i = 0; i < tri.size(); i++) js << (i ? ", " : "") << "[" << tri[i][0] << ", " << tri[i][1] << ", " << tri[i][2] << "]";
-	js << "]\n}\n";
+	write_json(wall);
 	std::cout << "done " << n_frames << " frames, wall " << wall << " s" << std::endl;
 	return 0;
 }

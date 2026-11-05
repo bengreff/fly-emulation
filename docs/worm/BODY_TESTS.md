@@ -250,3 +250,64 @@ time; the sparse global solve with the J d product 24%; drag 1%; the rest under 
   iterations or a looser threshold (a numerical change, needs its own check).
 
 Not timed: the brain. The closed-loop budget is body plus brain per biological second.
+
+## Closed loop and the solver dead zone (2026-11-05 16:40-17:05 CST, measured, Mac)
+
+Director 17:00: "the bar is that it runs, stays bounded, and the viewer shows neurons lighting with the body.
+Behaviour isn't required." These are plumbing and numerics checks, not model tests, so no behaviour bar was set.
+
+**Pipe check.** The driver's `--mode pipe` (activations in, positions out, one exchange per physics step) against
+the driver's own `--mode wave` with the same wave sent from Python: amplitude 0.5, 1.5 s. Largest frame difference
+1.9e-9 (in units of the body's own coordinates; the body is 0.63 long), so the pipe does not change the physics
+(measured). The difference is most likely numpy's `sin` against libm's (inferred). The pipe adds about 1% wall.
+
+**Stand-in brain loop** (`cl_reflex`, 5 s, chemotaxis cone field on). A guessed test controller (head oscillator
+plus a curvature reflex down the body), not a worm model. Runs, stays finite and bounded, RTF 0.74 on the Mac. The
+body locks into a dorsal coil: the stand-in's reflex is positive feedback (inferred from its sign). Plumbing only.
+
+**Real brain loop** (`cl_brain_s0`): brain.py `sample_worm(0)`, default toggles (Cook wiring), 0.5 ms internal
+step, through INTERFACE.md with the body exchanging every 1/240 s and the brain stepping 4.0, 4.5, 4.0 ms.
+
+| quantity | value |
+|---|---|
+| biological time | 3.0 s |
+| wall (brain and body in parallel processes) | 10.65 s, 3.6 s per biological second |
+| state finite throughout | yes |
+| neurons above -20 mV at the end | 142 of 302 (the saturation the brain worker is diagnosing) |
+| largest muscle activation sent | 4.4e-6 (scale 0 to 1) |
+| largest vertex displacement from rest | 0 (exact) |
+
+It runs and is bounded; the viewer shows the 302 neurons' voltages as a raster beside the muscle kymograph and on
+the wiring diagram (checked by eye in screenshots and the MP4 contact sheet). The body does not move, for two
+reasons: the drive is tiny, and the published solver has a dead zone (below).
+
+**Solver dead zone.** MetaWorm's `World::ProjectiveDynamicsMethod` stops when one iteration changes the positions
+by less than 5e-7 per coordinate on average, and then returns the iterate from before that last solve (read in
+the code). For a body at rest under a weak load, the first solve already passes the test, so the step returns the
+inertial prediction and the muscles are ignored. Prescribed wave, 1.5 s each, largest displacement from rest:
+
+| wave amplitude | published exit | `latest` exit |
+|---|---|---|
+| 0.01 | 0 (exact) | 0.0099 |
+| 0.03 | 0 (exact) | 0.0239 |
+| 0.06 | 0.0299 | - |
+| 0.09 | 0.0411 | - |
+| 0.12 | 0.0501 | - |
+| 0.15 | 0.0598 | - |
+
+So with the published solver, drive below roughly 0.05 does nothing and drive above it moves the body (measured,
+threshold bracketed between 0.03 and 0.06). Toggle `body.solver_exit`, neutral `published`; `latest` keeps the
+converged solve (`World::SetReturnLatestIterate`, a wormemu extension). Its effect on the published gait P2 (key
+t0_fast, 10 s, gait over 1.5-2.0 s):
+
+| measure | published | latest |
+|---|---|---|
+| body frequency | 1.5 Hz | 1.5 Hz |
+| wavelength | 0.568 L | 0.560 L |
+| head curvature amplitude (kappa L) | 21.898 | 22.709 |
+| speed | 0.260 L/s | 0.273 L/s |
+| largest displacement from rest | 1.15622578 | 1.33096819 |
+
+The gait is the same to within 5%, but the paths drift apart (largest vertex difference over 10 s 0.72 L), and
+wall was 15.49 s against about 16.8 s. Not adopted: it changes a published result, so it needs a pre-registered
+gate (does it keep P1-P3 inside their bars and remove the dead zone) before it can be on by default.

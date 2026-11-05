@@ -1,4 +1,4 @@
-# What the worm model adopts from other projects and datasets (brain and ledger side)
+# What the worm model adopts from other projects and datasets
 
 Ben's order (5 Nov): mechanisms drawn heavily from existing projects, ported wholesale and run as published first.
 This file credits every outside source the brain (`src/wormemu/brain.py`, `brain_layers.py`) and the ledger

@@ -125,6 +125,13 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
                  "f": meta.get("f"), "lam": meta.get("lam"), "amp": meta.get("amp"),
                  "n_frames": meta["n_frames"], "frame_dt": meta["frame_dt"], "seconds": meta["seconds"],
                  "tests": summary(tests, rid), "label": "simulated (ported MetaWorm body, published parameters)"}
+        neural = SRC / f"{rid}.neural.f32"
+        if neural.exists() and meta.get("cells"):  # closed loop: the brain's soma voltages at the body's frames
+            V = np.fromfile(neural, np.float32).reshape(-1, len(meta["cells"]))[:meta["n_frames"]]
+            V.tofile(VIEW / "runs" / f"{rid}.neural.f32")
+            entry.update(cells=meta["cells"], brain=meta.get("brain"),
+                         label="simulated (closed loop: brain.py and the ported MetaWorm body, every number labelled "
+                               "in the ledgers)")
         index = [e for e in index if e["id"] != rid] + [entry]
         added.append(entry)
         print(rid, meta["n_frames"], "frames")

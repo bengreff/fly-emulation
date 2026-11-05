@@ -1,10 +1,10 @@
 """Serve the worm viewer on 127.0.0.1 and run new body drives on request.
 
-    uv run python viewer/worm/serve.py            # then open http://127.0.0.1:8781/viewer/worm/
+    uv run python viewer/worm/serve.py            # then open http://127.0.0.1:8781/
     (first time: third_party/metaworm/driver/build.sh; scripts/worm/metaworm_tests.py;
      scripts/worm/build_viewer_data.py)
 
-Serves the repo root read-only (localhost only). POST /api/run {mode: wave|key, f, lam, amp, key, seconds} runs the
+Serves viewer/worm/ only, read-only (localhost only). POST /api/run {mode: wave|key, f, lam, amp, key, seconds} runs the
 ported MetaWorm body once (about 1.5 s wall per simulated second, one at a time) and adds it to the run list.
 """
 from __future__ import annotations
@@ -88,6 +88,6 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    srv = ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(REPO)))
-    print(f"worm viewer: http://127.0.0.1:{PORT}/viewer/worm/", flush=True)
+    srv = ThreadingHTTPServer(("127.0.0.1", PORT), partial(Handler, directory=str(REPO / "viewer" / "worm")))
+    print(f"worm viewer: http://127.0.0.1:{PORT}/", flush=True)
     srv.serve_forever()

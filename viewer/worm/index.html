@@ -86,7 +86,7 @@
       <div class="overlay" id="bodyinfo"></div>
       <div class="legend" id="bodylegend"></div>
     </div>
-    <div id="kymo"><canvas id="kymocv"></canvas><div class="overlay" style="top:2px">muscle activation fed to the body (rows: dorsal L, dorsal R, ventral L, ventral R; head at top of each block)</div></div>
+    <div id="kymo"><canvas id="kymocv"></canvas><div class="overlay" id="kymolab" style="top:2px">muscle activation fed to the body (rows: dorsal L, dorsal R, ventral L, ventral R; head at top of each block)</div></div>
   </section>
   <section id="right">
     <nav>
@@ -226,9 +226,27 @@ function showFrame(f) {
 const kcv = $('kymocv'); const kctx = kcv.getContext('2d');
 let kimg = null;
 const KROWS = ['MDL', 'MDR', 'MVL', 'MVR'];
+function vcol(v) { // soma voltage: -70 mV dark blue, -25 mV red, +20 mV and above pale yellow
+  const a = Math.max(0, Math.min(1, (v + 70) / 90));
+  const lo = [0.08, 0.10, 0.28], mid = [0.85, 0.22, 0.30], hi = [1.0, 0.95, 0.62];
+  return a < 0.5 ? lo.map((x, k) => x + (mid[k] - x) * a * 2) : mid.map((x, k) => x + (hi[k] - x) * (a - 0.5) * 2);
+}
+let KH = 102, NBLOCKS = [];
 function buildKymo() {
-  const off = document.createElement('canvas'); off.width = S.nF; off.height = 96 + 6;
-  const c = off.getContext('2d'); const im = c.createImageData(S.nF, 96 + 6);
+  KH = 96 + 6 + (S.V ? 6 + S.nOrder.length : 0);
+  const off = document.createElement('canvas'); off.width = S.nF; off.height = KH;
+  const c = off.getContext('2d'); const im = c.createImageData(S.nF, KH);
+  NBLOCKS = [];
+  if (S.V) {
+    S.nOrder.forEach((ni, r) => {
+      const yy = 108 + r, col = S.cellCol[ni];
+      if (r === 0 || nodes[S.nOrder[r - 1]].group !== nodes[ni].group) NBLOCKS.push([nodes[ni].group, yy]);
+      for (let f = 0; f < S.nF; f++) {
+        const h = vcol(S.V[f * S.nC + col]); const p = 4 * (yy * S.nF + f);
+        im.data[p] = h[0] * 255; im.data[p + 1] = h[1] * 255; im.data[p + 2] = h[2] * 255; im.data[p + 3] = 255;
+      }
+    });
+  }
   const strIdx = KROWS.map(n => mesh.segments.findIndex(sg => sg.string === n && sg.seg === 0));
   for (let b = 0; b < 4; b++) for (let j = 0; j < 24; j++) {
     const yy = b * 24 + j + (b >= 2 ? 6 : 0);
@@ -241,15 +259,16 @@ function buildKymo() {
 }
 function drawKymo() {
   const w = kcv.clientWidth, h = kcv.clientHeight;
-  if (kcv.width !== w * devicePixelRatio) { kcv.width = w * devicePixelRatio; kcv.height = h * devicePixelRatio; }
+  if (kcv.width !== w * devicePixelRatio || kcv.height !== h * devicePixelRatio) { kcv.width = w * devicePixelRatio; kcv.height = h * devicePixelRatio; }
   kctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
   kctx.fillStyle = '#15191e'; kctx.fillRect(0, 0, w, h);
   if (!kimg) return;
   kctx.imageSmoothingEnabled = false;
-  const top = 18, hh = h - top - 4;
+  const top = S.V ? 34 : 18, hh = h - top - 4;
   kctx.drawImage(kimg, 0, top, w, hh);
   kctx.fillStyle = '#8a93a0'; kctx.font = '10px sans-serif';
-  [['DL', 0], ['DR', 24], ['VL', 54], ['VR', 78]].forEach(([t, r]) => kctx.fillText(t, 3, top + (r + 13) / 102 * hh));
+  [['DL', 0], ['DR', 24], ['VL', 54], ['VR', 78]].forEach(([t, r]) => kctx.fillText(t, 3, top + (r + 13) / KH * hh));
+  NBLOCKS.forEach(([g, r]) => kctx.fillText(g.toLowerCase(), 3, top + (r + 9) / KH * hh));
   const x = (S.f + 0.5) / S.nF * w;
   kctx.strokeStyle = '#7fb0ff'; kctx.lineWidth = 1.5; kctx.beginPath(); kctx.moveTo(x, top); kctx.lineTo(x, h); kctx.stroke();
 }
@@ -312,6 +331,13 @@ for (const [name, color, op, on, title] of LAYERS) {
 }
 function updateWireActivity() {
   if (!S.A) return;
+  if (S.V) { // closed loop: neurons light with their soma voltage, -70 mV dark to +20 mV hot (linear)
+    const o = S.f * S.nC;
+    nodes.forEach((n, i) => {
+      const c = S.cellCol[i]; if (c < 0) return;
+      const h = vcol(S.V[o + c]); pc[3 * i] = h[0]; pc[3 * i + 1] = h[1]; pc[3 * i + 2] = h[2];
+    });
+  }
   const o = S.f * 96;
   muscleNodes.forEach((m, j) => {
     const i = nodes.length + j; const a = m.seg === null ? 0 : Math.min(1, S.A[o + m.seg] / S.amax); const h = heat(a);
@@ -319,8 +345,8 @@ function updateWireActivity() {
   });
   ptsGeo.attributes.color.needsUpdate = true;
 }
-$('wirenote').innerHTML = 'Neuron positions: OpenWorm soma atlas (inferred). Muscle positions in this panel are schematic (arclength from the MetaWorm fibres, quadrant offsets). ' +
-  '<b>Activity:</b> muscles light with the drive fed to the body. Neurons stay unlit: these runs have no brain (prescribed drive). They will light from the brain worker\'s traces in the closed loop.';
+const WIRENOTE = 'Neuron positions: OpenWorm soma atlas (inferred). Muscle positions in this panel are schematic (arclength from the MetaWorm fibres, quadrant offsets). ';
+$('wirenote').innerHTML = WIRENOTE;
 const tip = $('tip');
 R2.domElement.addEventListener('mousemove', (e) => {
   const r = R2.domElement.getBoundingClientRect(); const mx = e.clientX - r.left, my = e.clientY - r.top;
@@ -328,7 +354,8 @@ R2.domElement.addEventListener('mousemove', (e) => {
   for (const n of allNodes) { const v = n.p.clone().project(cam2); const sx = (v.x + 1) / 2 * r.width, sy = (1 - v.y) / 2 * r.height; const d = (sx - mx) ** 2 + (sy - my) ** 2; if (d < bd && v.z < 1) { bd = d; best = n; } }
   if (!best) { tip.style.display = 'none'; return; }
   const dg = deg[best.name] || {};
-  tip.innerHTML = `<b>${best.name}</b> ${best.group.toLowerCase()}<br>` + Object.entries(dg).map(([k, v]) => `${k} ${v}`).join(', ');
+  const ci = S.V && S.run.cells ? S.run.cells.indexOf(best.name) : -1;
+  tip.innerHTML = `<b>${best.name}</b> ${best.group.toLowerCase()}${ci >= 0 ? ` &nbsp;${S.V[S.f * S.nC + ci].toFixed(1)} mV` : ''}<br>` + Object.entries(dg).map(([k, v]) => `${k} ${v}`).join(', ');
   tip.style.display = 'block'; tip.style.left = (mx + 12) + 'px'; tip.style.top = (my + 8) + 'px';
 });
 R2.domElement.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
@@ -345,13 +372,31 @@ async function setRun(id) {
   S.run = r; $('runsel').value = r.id;
   S.X = await getF32(`runs/${r.id}.frames.f32`);
   S.A = await getF32(`runs/${r.id}.act.f32`);
+  S.V = null;
+  if (r.cells) {
+    S.V = await getF32(`runs/${r.id}.neural.f32`); S.nC = r.cells.length;
+    S.cellCol = nodes.map(n => r.cells.indexOf(n.name));
+    const GORD = Object.keys(GCOL);
+    S.nOrder = nodes.map((n, i) => i).filter(i => S.cellCol[i] >= 0)
+      .sort((a, b) => (GORD.indexOf(nodes[a].group) - GORD.indexOf(nodes[b].group)) || (nodes[a].name < nodes[b].name ? -1 : 1));
+    pts.material.size = 0.22;
+  } else {
+    pts.material.size = 0.12;
+    nodes.forEach((n, i) => { const c = baseCol[i]; pc.set([c.r, c.g, c.b], 3 * i); });
+  }
+  $('left').style.gridTemplateRows = S.V ? '1fr 330px' : '1fr 150px';
+  $('kymolab').textContent = 'muscle activation fed to the body (rows: dorsal L, dorsal R, ventral L, ventral R; head at top of each block)' +
+    (S.V ? '; below: soma voltage of the 302 neurons by class, -70 mV dark blue, -25 mV red, +20 mV pale yellow' : '');
+  $('wirenote').innerHTML = WIRENOTE + (S.V ? '<b>Activity:</b> neurons light with their soma voltage from the brain (-70 mV dark blue, -25 mV red, +20 mV pale yellow); muscles light with the activation the body receives.'
+    : '<b>Activity:</b> muscles light with the drive fed to the body. Neurons keep their class colour: this run has no brain (prescribed drive).');
   S.nF = r.n_frames; $('slider').max = S.nF - 1;
   S.amax = 0; for (let i = 0; i < S.A.length; i++) if (S.A[i] > S.amax) S.amax = S.A[i]; if (!(S.amax > 0)) S.amax = 1;
+  if (r.cells) S.amax = 1; // closed loop: the brain's activation is a fraction of maximal force; show it on that scale
   cenPath = []; for (let f = 0; f < S.nF; f++) cenPath.push(centroid(f));
   lastCen.copy(cenPath[0]); cam1.position.set(0.0, 1.35, 0.75); ctl1.target.set(0, 0, 0);
   S.acc = 0;
   buildKymo(); showFrame(0); runInfo(); mechView();
-  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. Grid 0.25 body lengths. White dot = nose. Colour: activation as a fraction of this run's maximum (${S.amax.toFixed(3)}).`;
+  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. Grid 0.25 body lengths. White dot = nose. Colour: ${r.cells ? 'activation from the brain, 0 to 1 (fraction of maximal force)' : `activation as a fraction of this run's maximum (${S.amax.toFixed(3)})`}.`;
 }
 function fmt(x) { return typeof x === 'number' ? (Math.abs(x) >= 100 || Math.abs(x) < 0.01 && x !== 0 ? x.toExponential(2) : x.toFixed(3)) : String(x); }
 function runInfo() {

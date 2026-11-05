@@ -191,6 +191,7 @@ Eigen::VectorXd World::ProjectiveDynamicsMethod()
 		EvaluateDVector(x_n1,d);
 		x_n1_new = mDynamicSolver.solve(b+mJ*d);
 		if((x_n1_new - x_n1).norm()/x_n1.size() < EPS) {
+			if(mReturnLatest) x_n1 = x_n1_new;  // wormemu extension; upstream returns the iterate before this solve
 			break;
 		} 
 		x_n1 = x_n1_new;
@@ -220,6 +221,10 @@ void World::SetUnitMass(double unit_mass)
 	mDragPatternDone = false;
 	PreComputation();
 }
+
+// wormemu extension (not upstream), inert unless called. Upstream's early exit returns the iterate before the
+// converged solve; at rest under a weak load that is the inertial prediction, so the muscles are ignored.
+void World::SetReturnLatestIterate(bool on) { mReturnLatest = on; }
 
 // wormemu extension (not upstream), inert unless called. Refactors numerically; the sparsity pattern of C must not
 // change between calls (the pattern is analysed on the first call).

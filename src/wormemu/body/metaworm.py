@@ -24,12 +24,13 @@ N_SEG = 24  # sampling segments per muscle string, head first
 
 
 def run(out: str | Path, mode: str = "key", seconds: float = 10.0, key: str | None = None, f: float = 1.76,
-        lam: float = 1.54, amp: float = 0.03, release_at: float | None = None, frame_every: int = 1) -> dict:
+        lam: float = 1.54, amp: float = 0.03, release_at: float | None = None, frame_every: int = 1,
+        solver_exit: str = "published") -> dict:
     """Run the driver (cwd = third_party/metaworm, as upstream expects) and return load(out)."""
     if not DRIVER.exists():
         subprocess.run([str(ROOT / "driver" / "build.sh")], check=True)
     cmd = [str(DRIVER), "--mode", mode, "--seconds", str(seconds), "--f", str(f), "--lam", str(lam),
-           "--amp", str(amp), "--frame_every", str(frame_every), "--out", str(out)]
+           "--amp", str(amp), "--frame_every", str(frame_every), "--out", str(out), "--solver_exit", solver_exit]
     if key:
         cmd += ["--key", key]
     if release_at is not None:

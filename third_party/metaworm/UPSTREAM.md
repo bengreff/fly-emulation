@@ -13,12 +13,18 @@
   `World::SetDragMatrix` in `sim/fem/World.h/.cpp`, plus two guarded lines in `ProjectiveDynamicsMethod` and
   `PreComputation`. They add an implicit linear drag (M/h^2 + C/h + L) x = M/h^2 q + C/h x_n + J d, needed for
   resistive-force drag on agar at the real mass. Inert unless called: with them uncalled, P2 (key) and P0 (dead)
-  frames are bit-identical to the runs before the edit (checked 2026-11-05).
+  frames are bit-identical to the runs before the edit (checked 2026-11-05). A third, `World::SetReturnLatestIterate`
+  (toggle `body.solver_exit`, neutral `published`), makes the converged branch of the solver loop keep its last
+  solve; upstream breaks out and returns the iterate from before it, which at rest under a weak load is the
+  inertial prediction (the dead zone in BODY_TESTS.md). Off unless `--solver_exit latest` is passed; with it off,
+  P0 and P2 frames are bit-identical to the runs before any extension (checked 2026-11-05 17:12).
   `Metaworm/data/` (mesh `worm_mesh_4.mesh`, muscle fibres `worm_nerve_cord_highResCord.obj`, `worm.meta`,
   `worm.sampling`, the muscle key files `worm_givenkey_*.csv`, `worm_empty_key.csv`), and
   `Metaworm/args/train_worm_swim_args.txt`.
 - Ours (not upstream): `driver/run_body.cpp` (headless loop replacing the GLUT window and the Boost.Python bridge;
-  same stepping, muscle input at 30 Hz and 8 physics steps at 240 Hz) and `driver/build.sh`.
+  same stepping, muscle input at 30 Hz and 8 physics steps at 240 Hz; `--mode pipe` takes activations over a pipe
+  and returns vertex positions each exchange, for the closed loop in `src/wormemu/body/loop.py`) and
+  `driver/build.sh` (rebuilds an object when any `sim/` header is newer).
 - Build differences from upstream CMake: `-std=gnu++14` (Eigen 3.5 needs C++14; upstream gnu++11), `-O2` (upstream
   Release, -O3), `-include cassert -include cmath -include limits` (missing includes on clang), no Boost.Python,
   PythonLibs, and OpenMP only with `OMP=1`. Build products `driver/obj/` and `driver/run_body` are gitignored.

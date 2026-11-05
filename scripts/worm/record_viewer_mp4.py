@@ -20,7 +20,7 @@ out.mkdir(parents=True, exist_ok=True)
 with tempfile.TemporaryDirectory() as td, sync_playwright() as p:
     b = p.chromium.launch(channel="chrome", headless=True, args=["--use-angle=swiftshader", "--enable-unsafe-swiftshader"])
     pg = b.new_page(viewport={"width": 1600, "height": 900})
-    pg.goto(f"http://127.0.0.1:{port}/viewer/worm/?record=1&run={run}")
+    pg.goto(f"http://127.0.0.1:{port}/?record=1&run={run}")
     pg.wait_for_function("window.viewer && window.viewer.ready", timeout=30000)
     n = pg.evaluate("window.viewer.nFrames()")
     for f in range(n):
