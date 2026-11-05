@@ -184,7 +184,7 @@ in the start-up transient (from v_init -65 mV); if it climbs back to about 188 t
 stable one at these strengths. Also reported per run: median and 90th percentile neuron mean V over 1-2 s and the
 neurons sitting above -20 mV in D0 by name.
 
-### Result (runs 2026-11-05 16:56-16:58 CST on backhouse; all measured)
+### Result (runs finished 2026-11-05 16:55 CST on backhouse, file times; all measured)
 
 | run | neurons above -20 mV at 6 s | median / 90th pct neuron mean V, 1-2 s (mV) | prediction |
 |---|---|---|---|
