@@ -210,3 +210,115 @@ else changes. Hypothesis H-inh: the missing receptor-level inhibition is the mai
 more neurons above -20 mV at 6 s. D5 also gets a matching no-stim run so its touch effect is measured as stim minus
 no-stim. If a published polarity map (Fenyves et al. 2020, PLoS Comput Biol 16:e1007974) proves usable, it is run
 as D6 under the same falsifier, pre-registered by a line here before the run.
+
+### Result D5 (run finished 2026-11-05 17:00 CST on backhouse; all measured)
+
+**H-inh holds: receptor-level inhibition cuts saturation from 188 to 64 neurons above -20 mV** (falsifier line 150).
+The median neuron mean over 1-2 s drops from -13.4 to -36.5 mV (90th percentile -12.7). Under the CeNGEN receptor
+rule 2113 of 6301 placed chemical synapses are inhibitory (278 under the transmitter rule). The touch input now
+moves 50 unstimulated neurons by >= 1 mV (3 by >= 5 mV) and 21 muscles (port302c: 9, 1, 0), still led by the
+posterior-touch path (LUA, PVR, PVC, ALN). G1 and G2 pass. Figure `data/worm/brain_runs/bw_D5/traces.png` (viewed).
+The rule is our own guess (receptor genes from CeNGEN, label guessed); a published polarity map is next.
+
+## 4c. The ledger's own defaults after the template fix, and the published sign map (pre-registration)
+
+Pre-registered 2026-11-05 17:03 CST, before the runs. Two ledger changes since D5 (commit 5b6a717): (a) guessed
+templates no longer sit on a range bound (the Director's sampling fix): per-pair strengths go to the range
+log-midpoint, 0.447 nS per EM synapse for chemical and NMJ (was 0.1, clipped), 0.224 nS per EM gap junction (was
+0.05, clipped), and the global synapse rows at a bound go to the midpoint (exc and inh rate k 0.117 per ms, i.e.
+8.6 ms decay, was 0.2 and 0.033; exc reversal 0 mV, was 10); (b) receptor_sign on now takes Fenyves et al. 2020's
+published polarity where it is + or - (1705 of 3709 pairs), our CeNGEN rule elsewhere. D6 (Fenyves on the old
+templates) is dropped: the old templates are no longer a ledger state. The sign effect is D7 vs D8 at equal
+strengths. Base port302c (the ledger defaults; every lumped layer off), no strength scaling.
+
+- **D7**: receptor_sign off (transmitter rule). Prediction P4 (H-strength: stronger synapses re-raise saturation):
+  150 or more neurons above -20 mV at 6 s.
+- **D8**: receptor_sign on (Fenyves first). Falsifier for H-inh at the new strengths: 150 or more above -20 mV.
+- Both get a matching no-stim run; the touch effect is stim minus no-stim.
+
+No strength is changed in response to these results (Thursday's bar is complete, not behaving). If D8 is saturated,
+the closed loop goes ahead on the least-saturated ledger-default configuration, labelled, and saturation goes in the
+ledger as an open question.
+
+### Result D7, D8 (runs finished 2026-11-05 17:04 CST on backhouse, file times; all measured)
+
+| Run | neurons above -20 mV at 6 s | median / p90 neuron mean 1-2 s (mV) | inhibitory chemical synapses placed | touch moves (>= 1 mV / >= 5 mV / muscles) | bar |
+|---|---|---|---|---|---|
+| D5 (old templates, our CeNGEN signs) | 64 | -36.5 / -12.7 | 2113 of 6301 | 50 / 3 / 21 | reported earlier |
+| **D7** (new templates, transmitter signs) | **206** | -11.2 / -2.0 | 278 of 6301 | 7 / 0 / 0 | P4 (>= 150) **holds** |
+| **D8** (new templates, Fenyves first) | **100** | -26.9 / -8.1 | 1946 of 6301 | 15 / 3 / 0 | falsifier (>= 150) **not met: H-inh holds** |
+
+Moving the strengths off the bottom of their ranges (4.5x for most synapses) re-raises saturation, as predicted:
+the transmitter-sign network now has 206 neurons above -20 mV. Published receptor-level signs halve it (100), but
+the network is still far from a resting nervous system: in both runs it settles within 0.2 s into a fixed state
+(3 neurons in D8 and none in D7 vary by more than 2 mV SD over 4-6 s), and the muscles sit tonically depolarised
+(D8: 40 of 95 above -20 mV, the highest at the new 0 mV excitatory reversal). Touch reaches 15 neurons in D8, led by
+LUA, PVN, PQR and PVR; in D8 three of them (LUAL, PVNL, PQR) keep a slow oscillation of about 1 s period after the
+input ends. No muscle moves by 1 mV in either run. G1 and G2 pass in both. Figures `bw_D7/traces.png`,
+`bw_D8/traces.png` (viewed).
+
+**Where this leaves saturation (open):** with every value at its ledger default, the least-saturated configuration
+is D8 (receptor_sign on). Neither run is tuned and none is adopted. Saturation goes in the ledger as an open question:
+at literature-midpoint strengths, recurrent excitation through the Cook wiring holds a third of the neurons above
+-20 mV even with published inhibition.
+
+## 5. Range-end sensitivity at the D8 configuration (pre-registration, report-only)
+
+Pre-registered 2026-11-05 17:08 CST, before the runs (approved by the Director, report-only). Base D8 (port302c_rs:
+literature_overrides on, wiring cook, receptor_sign on, every lumped layer off, ledger defaults). One quantity at a
+time is set to an end of its literature range (`brain_runs.py --set PARAM=VALUE`, every element of that row), the
+rest at their defaults. Nothing found here is adopted or written into the ledger as a value; the point is which
+numbers the network's state depends on, and whether saturation survives everywhere inside the ranges.
+
+| Run | quantity (ledger row) | range (param_ranges) | ends run |
+|---|---|---|---|
+| S01, S02 | per-EM chemical strength (`syn_strength_per_pair`) | B4 0.1-2 nS | 0.1, 2 |
+| S03, S04 | per-EM gap strength (`gap_strength_per_pair`) | C4 0.05-1 nS | 0.05, 1 |
+| S05, S06 | per-EM NMJ strength (`nmj_strength_per_pair`) | B4 0.1-2 nS | 0.1, 2 |
+| S07, S08 | excitatory rate k (`syn_exc_k`) | B3 decay 5-30 ms | 1/30, 1/5 per ms |
+| S09, S10 | inhibitory rate k (`syn_inh_k`) | B3 | 1/30, 1/5 per ms |
+| S11, S12 | excitatory reversal (`syn_exc_erev`) | B5 -10 to 10 mV | -10, 10 |
+| S13 | excitatory release threshold (`syn_exc_Vth`, BAAIWorm fit -20 = top of range) | B1 -45 to -20 mV | -45 |
+| S14, S15 | excitatory release slope (`syn_exc_delta`) | B2 2-10 mV | 2, 10 |
+| S16 | inhibitory release threshold (`syn_inh_Vth`, fit -20) | B1 | -45 |
+| S17, S18 | inhibitory release slope (`syn_inh_delta`) | B2 | 2, 10 |
+| S19 | inhibitory reversal (`syn_inh_erev`, fit -70 = bottom of range) | B6-B8 -70 to -45 mV | -45 |
+
+Measured per run: neurons above -20 mV at 6 s, median neuron mean over 1-2 s, muscles above -20 mV at 6 s, neurons
+with SD > 2 mV over 4-6 s (whether anything moves). Predictions (guessed, written before the runs):
+- **P5**: the chemical strength row has the largest swing of the three strength rows, and at 0.1 nS fewer than 64
+  neurons sit above -20 mV (D5 had 64 at 0.1 nS with other differences).
+- **P6**: the release threshold matters in the direction that releases more at rest: the BAAIWorm value -20 mV is
+  already the least tonic end (release at a -55 mV rest is sigmoid(-7), about 0.1%), so S13 (exc at -45 mV, release
+  at rest about 12%) raises the count and S16 (inh at -45) lowers it.
+- **Q1** (reported either way): does any single range end bring the count under 30 (the level with chemical synapses
+  off)? A yes would say saturation depends on where inside the literature ranges the true values lie, not that the
+  model is wrong.
+
+### Result S01-S19 (runs finished 2026-11-05 17:11 CST on backhouse; all measured; D8 = base)
+
+| Run | set | neurons above -20 mV at 6 s | median neuron mean 1-2 s (mV) | muscles above -20 mV | neurons with SD > 2 mV, 4-6 s |
+|---|---|---|---|---|---|
+| D8 | (ledger defaults) | 100 | -26.9 | 40 | 3 |
+| S01 / S02 | chemical strength 0.1 / 2 nS | **0** / 136 | -56.9 / -22.4 | 51 / 52 | 0 / 0 |
+| S03 / S04 | gap strength 0.05 / 1 nS | 110 / 93 | -27.7 / -26.9 | 44 / 34 | 0 / 0 |
+| S05 / S06 | NMJ strength 0.1 / 2 nS | 100 / 100 | -26.9 / -26.9 | 38 / 40 | 3 / 3 |
+| S07 / S08 | exc k 1/30 / 1/5 per ms | 100 / 100 | -26.9 / -26.9 | 40 / 40 | 3 / 3 |
+| S09 / S10 | inh k 1/30 / 1/5 per ms | 99 / 100 | -26.9 / -26.9 | 40 / 40 | 23 / 3 |
+| S11 / S12 | exc reversal -10 / +10 mV | **14** / 145 | -38.1 / -20.2 | 28 / 64 | 0 / 0 |
+| S13 | exc release threshold -45 mV | 143 | -20.4 | 77 | 0 |
+| S14 / S15 | exc release slope 2 / 10 mV | **0** / 108 | -57.7 / -26.2 | 0 / 42 | 0 / 0 |
+| S16 | inh release threshold -45 mV | **0** | -62.7 | 3 | 0 |
+| S17 / S18 | inh release slope 2 / 10 mV | 105 / 93 | -25.6 / -29.9 | 43 / 41 | 3 / 0 |
+| S19 | inh reversal -45 mV | 141 | -20.6 | 78 | 0 |
+
+G1 and G2 pass in all 19. **P5 holds** (chemical strength swings 0 to 136, gap 93 to 110, NMJ none; 0 at 0.1 nS).
+**P6 holds** (exc threshold at -45 raises the count to 143; inh threshold at -45 drops it to 0). **Q1: yes, four
+single range ends each bring saturation under 30**: chemical strength 0.1 nS (0), excitatory reversal -10 mV (14),
+excitatory release slope 2 mV (0), inhibitory release threshold -45 mV (0). So saturation is not forced by the
+model's structure: it depends on where the true values lie inside ranges the literature leaves wide. Ranked by the
+swing they cause in the count: chemical strength (136), excitatory reversal (131), excitatory release slope (108),
+inhibitory release threshold (100), excitatory release threshold (43), inhibitory reversal (41), gap strength (17),
+inhibitory slope (12); NMJ strength and both decay rates move it by 1 or less. These are the numbers whose precision
+matters first. Every run is still a fixed point (no ongoing activity; only S09 has 23 slowly moving neurons): the
+quiet ends are quiet, not rhythmic. Nothing is adopted; the ledger defaults stay at the range midpoints.

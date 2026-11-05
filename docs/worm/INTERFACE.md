@@ -106,7 +106,7 @@ adopted (gate, battery run, viewed figure).
 | `literature_overrides` | on | off = BAAIWorm as published (the port302a reference) |
 | `wiring` | cook | `cook` = every Cook 2019 pair at per-EM strengths (adopted 5 Nov, port302c); `baaiworm` = BAAIWorm's construction as published |
 | `sign_rule` | transmitter | `allexc` = BAAIWorm's all-excitatory rule |
-| `receptor_sign` | off | on = sign per pair from CeNGEN receptor expression (guessed rule; flips 1125 of 3709 pairs) |
+| `receptor_sign` | off | on = sign per pair from Fenyves et al. 2020's published polarity where it is + or - (1705 of 3709 pairs), else our CeNGEN receptor rule (guessed), else the transmitter rule; flips 1039 pairs relative to the transmitter rule |
 | `bwm_coupling` | off | on = Cook's 96 muscle-muscle gap pairs at 5 nS each (guessed) |
 | `expression_map` | off | on = CeNGEN gates channel presence |
 | `muscle_active` | off | on raises NotImplementedError (c302 muscle channels not in the NEURON build yet) |
@@ -189,10 +189,7 @@ The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_part
 
 (Write questions here with a date and your side. Answered items move to a "Settled" list.)
 
-- [body, 5 Nov 17:10] Brain: the body exchanges every 4.167 ms with `dt_ms` 4.0, 4.5, 4.0 (Body side). Your
-  lumped layers step once per exchange; is a 4-4.5 ms step fine for them (muscle Ca and activation time
-  constants, GCaMP)? If you need 1 ms, say so: the body would hold the command and send the same observation
-  for four brain steps of 1.0, 1.0, 1.0, 1.0-1.5 ms, at about 4x the Python call overhead.
+(none open)
 
 ### Settled
 
@@ -200,3 +197,14 @@ The body is the ported MetaWorm body (BAAIWorm b99ca5ab, Apache 2.0; `third_part
   mesh). [body, 5 Nov]
 - [brain, 5 Nov] `muscle_strain`: the brain derives it in v1; the body may supply it later as a toggle.
   [body, 5 Nov]
+- [body to brain, 5 Nov; answered by brain 17:13] Are 4.0-4.5 ms exchange steps fine for the lumped layers? **Yes.**
+  NEURON integrates at 0.5 ms inside each step (8 or 9 sub-steps); only the injected current is held over the
+  interval. Lumped time constants are much longer (muscle activation rise 50 ms and decay 100 ms at the template;
+  touch adaptation 50 ms; tap 20 ms, exact exponential). The edge case: touch adaptation drawn near its 10 ms floor
+  gets a 0.45 step fraction. Acceptable for now.
+- [brain, 5 Nov 17:13] For closed-loop runs use `sample_worm(None)` with `receptor_sign="on"` (BRAIN_PORT section
+  4c, D8). Drawn worms (`sample_worm(seed)`) have no guardrail yet: seed 0 draws peak muscle Ca 0.103 uM against a
+  4.18 uM half-activation (Hill 3.29), so its muscles cannot exceed about 5e-6 activation (derived; the body worker
+  measured 4.4e-6).
+- [brain, 5 Nov 17:13] `sens_proprio` now senses curvature ANTERIOR of each B-type soma (Wen et al. 2012; it was
+  posterior before commit 85080b4) and reads `s` from the observation.

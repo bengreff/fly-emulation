@@ -27,6 +27,7 @@ recorded" means nobody has checked yet. Check before redistributing anything out
 | **Wang et al. 2024** (eLife 13:RP95402) neurotransmitter atlas, as tabulated by OpenWorm ConnectomeToolbox | transmitter identity of 282 neurons (sign rule) | not recorded |
 | **Ripoll-Sanchez et al. 2023** (Neuron 111:3570) neuropeptide connectome | peptide ligand-receptor pairs | MIT (Neuropeptide-Connectome repo) |
 | **Beets et al. 2023** (Cell Reports 42:113058) | peptide-receptor pairs at EC50 <= 500 nM (the pair list's inclusion rule); per-pair EC50 values not yet loaded (`pep_ec50_nM` guessed) | open access; licence not independently confirmed |
+| **Fenyves et al. 2020** (PLoS Comput Biol 16:e1007974), S1 Data sheet 5 | predicted polarity of every chemical synapse from transmitter and receptor expression; `receptor_sign=on` uses it where it says + or - (1705 of 3709 Cook pairs), our CeNGEN rule elsewhere; the two disagree on 182 of those 1705 | CC BY 4.0 (journal licence) |
 | **Bentley et al. 2016** (PLoS Comput Biol 12:e1005283) | monoamine connectome | CC BY 4.0 |
 | **OpenWorm CElegansNeuroML** (Virtual Worm geometry) | soma positions, diameters, membrane areas for 302 neurons (`data/worm/structure/geometry.csv`) | not stated |
 | **Literature ranges** (`docs/worm/research/param_ranges.csv`, one citation per row) | the bounds every ported value is checked against; literature wins inside `literature_overrides` | per paper |

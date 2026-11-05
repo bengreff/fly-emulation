@@ -22,7 +22,8 @@ from wormemu.brain_structure import bwm_name
 TOUCH = ["ALML", "ALMR", "AVM", "PLML", "PLMR"]
 RUNS = {"ref": dict(literature_overrides="off", wiring="baaiworm"),
         "port302b": dict(literature_overrides="on", wiring="baaiworm"),
-        "port302c": dict(literature_overrides="on", wiring="cook")}
+        "port302c": dict(literature_overrides="on", wiring="cook"),
+        "port302c_rs": dict(literature_overrides="on", wiring="cook", receptor_sign="on")}     # section 4b, D5
 
 
 def main():
@@ -35,11 +36,18 @@ def main():
     ap.add_argument("--scale_chem", type=float, default=1.0)    # diagnosis only (section 4): weight of every
     ap.add_argument("--scale_gap", type=float, default=1.0)     # placed synapse / gap junction point process
     ap.add_argument("--off_until_ms", type=int, default=0)      # every connection x0 before this time
+    ap.add_argument("--set", action="append", default=[])         # sensitivity only (section 5): PARAM=VALUE, every
+    #                                                               element of that ledger row set to VALUE
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     toggles = dict(RUNS[a.run], sign_rule="transmitter", **{m[0]: "off" for m in brain_layers.MECHANISMS})
     t0 = time.time()
-    b = Brain(sample_worm(None), toggles=toggles, keep_mcvl24=a.run == "ref")
+    spec = sample_worm(None)
+    for kv in a.set:
+        k, v = kv.split("=")
+        x = spec.values[k]
+        spec.values[k] = x * 0 + float(v) if hasattr(x, "index") else float(v)
+    b = Brain(spec, toggles=toggles, keep_mcvl24=a.run == "ref")
     t_build = time.time() - t0
     names = b.cell_names
     stim = np.array([b.idx[n] for n in TOUCH])
@@ -68,7 +76,7 @@ def main():
     pre, dur = V[1000:2000].mean(0), V[2000:4000].mean(0)
     d = np.abs(dur - pre)
     s = dict(run=a.run, no_stim=a.no_stim, scale_chem=a.scale_chem, scale_gap=a.scale_gap,
-             off_until_ms=a.off_until_ms,
+             off_until_ms=a.off_until_ms, set=a.set,
              above_m20_names=[n for n, x, m in zip(names, V[-1], b.is_muscle) if x > -20 and not m],
              toggles=toggles, n_cells=len(names), n_neurons=int(neur.sum()), n_segments=b.n_segments,
              placed=dict(b.placed), build_s=round(t_build, 1), sim_s=round(t_sim, 1),

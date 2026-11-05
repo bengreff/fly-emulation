@@ -6,7 +6,9 @@ Sources, each parsed here:
                           blocks), construction constants (config.json cnt_info), morphology (model/*.hoc pt3d points).
                           Their numbers are published fits: label published_fit, source_project BAAIWorm.
   data/worm/ported/c302/  c302 C2 muscle channels (Boyle and Cohen 2008 style; MIT), a toggle (off).
-  data/worm/structure/    Cook 2019 wiring counts, CeNGEN expression, transmitter identity, peptide/monoamine pairs.
+  data/worm/structure/    Cook 2019 wiring counts, CeNGEN expression, transmitter identity, peptide/monoamine pairs;
+                          fenyves2020/ synapse polarity predictions (Fenyves et al. 2020 S1 Data, CC BY; the xlsx
+                          as downloaded and sign_prediction.csv, sheet 5 columns pre, post, synapses, polarity).
   docs/worm/research/param_ranges.csv  literature ranges. Literature wins: a ported value outside its literature
                           range is clipped to the nearest bound and that element is relabelled guessed.
   src/wormemu/brain_layers.py  the specs of every layer no project has (sensory, organs, neuromodulation, ...).
@@ -35,6 +37,7 @@ from wormemu.brain_structure import bwm_name, cengen_class, load_structure
 
 ROOT = Path(__file__).resolve().parents[2]
 BAAI = ROOT / "third_party" / "baaiworm"
+FENYVES = ROOT / "data" / "worm" / "structure" / "fenyves2020" / "sign_prediction.csv"
 OUT = ROOT / "data" / "worm" / "model"
 BAAI_SRC = "BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci)"
 LIT = {r["quantity_id"]: r for r in csv.DictReader(open(ROOT / "docs/worm/research/param_ranges.csv"))}
@@ -57,6 +60,18 @@ RECEPTORS = {
 NANODOMAIN = {"gsc", "r", "dca", "kb", "btot", "canci"}   # shared by the four slo mods: one row each
 CONSTANTS = {"FARADAY"}
 STRUCTURE_ROWS = ("morph_", "wire_")
+OPEN_QUESTIONS = [
+    dict(id="saturation", since="2026-11-05", where="docs/worm/BRAIN_PORT.md sections 4-4c",
+         question="Why does the neural-only network settle into a fixed depolarised state? At the ledger defaults "
+                  "(wiring=cook, strengths at the range log-midpoint) 206 of 302 neurons sit above -20 mV at 6 s with "
+                  "transmitter signs (D7) and 100 with receptor_sign on (D8, Fenyves first). Localised to recurrent "
+                  "chemical excitation (isolated cells rest at -53 to -56 mV); receptor-level inhibition halves it "
+                  "but does not remove it.",
+         candidates="per-EM synapse strength (range B4 is inferred from circuit models, not measured); the graded "
+                    "release curve (Vth -20 mV, delta 5 mV, BAAIWorm's fit); per-EM gap strength (range C4 guessed); "
+                    "missing extrasynaptic and neuromodulatory inhibition (layers off in these runs)",
+         status="open; nothing tuned. The closed loop runs on D8's configuration, labelled"),
+]
 
 rows: list[dict] = []
 mechs: list[dict] = []
@@ -69,6 +84,12 @@ def lit(qid):
     if basis == "nematode_wide":                    # range across nematodes / generic, not this species
         basis = "guessed" if r["label"] == "guessed" else "measured_related"
     return float(r["bio_min"]), float(r["bio_max"]), r["label"], basis, f"{r['source']} (param_ranges {qid})"
+
+
+def centre(qid):
+    """The literature range's log-midpoint, sqrt(min x max): the template when a ported value is outside the range
+    and no source gives a value (Director, 5 Nov: a template at a bound is clipped by half its draws)."""
+    return float(np.sqrt(float(LIT[qid]["bio_min"]) * float(LIT[qid]["bio_max"])))
 
 
 def prior_for(t, lo, hi):
@@ -87,6 +108,9 @@ def mech(id, name, layer, status, source, toggle="", neutral="", default=None, n
 def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="whole worm", n=1, tsrc="",
         label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None):
     pd_, pa, pb, pbasis = prior or prior_for(template, lo, hi)
+    if label == "guessed" and unit != "flag" and hi > lo and (np.isclose(template, lo) or np.isclose(template, hi)):
+        was, template = template, float(np.sqrt(lo * hi) if pd_ == "loguniform" else (lo + hi) / 2)
+        tsrc += f"; at a bound ({was:g}), so moved to the range's {'log-' if pd_ == 'loguniform' else ''}midpoint"
     rows.append(dict(param_id=pid, mechanism_id=mid, grain=grain, applies_to=applies_to, unit=unit, n_values=n,
                      value_template=template, template_source=tsrc, bio_min=lo, bio_max=hi, bound_basis=basis,
                      bound_source=bsrc, bound_verified="unverified", prior_dist=pd_, prior_a=pa, prior_b=pb,
@@ -334,15 +358,17 @@ def build_synapses(mods, st, conns):
     mech("gap", "Gap junctions (ohmic, symmetric)", "gap", "have", BAAI_SRC)
     lo, hi, lab, basis, bsrc = lit("C4")
     row("gap_weight", "gap", "uS", float(np.clip(1e-5, lo / 1000, hi / 1000)), lo / 1000, hi / 1000,
-        tsrc="BAAIWorm 1e-5 uS (transform.py) clipped to the literature range", label="guessed", proj="literature",
+        tsrc="BAAIWorm 1e-5 uS (transform.py) clipped to the literature range", label="guessed", proj="ours",
         basis=basis, bsrc=bsrc, applies_to="every gap junction placed by wiring=baaiworm",
-        notes="ported value 1e-5 uS = 0.01 nS per placed junction")
+        notes="ported value 1e-5 uS = 0.01 nS per placed junction, below range C4; the template is 22x it. Range C4 "
+              "is itself guessed (no measurement found), so the override is ours, not a cited value")
     mech("wiring", "Connectome: Cook et al. 2019, every pair (wiring=cook), or BAAIWorm's construction as published "
          "(wiring=baaiworm: tanh-compressed counts placed on segments in contact)", "synapse", "have",
          f"Cook et al. 2019 SI 5 (data/worm/structure); {BAAI_SRC} config2detailed", toggle="wiring",
          neutral="baaiworm = as published (port302a)", default="cook",
          notes="Default cook since 5 Nov (port302c passed G1-G3 as pre-registered, docs/worm/BRAIN_PORT.md section "
-               "3; it saturates more than baaiworm: 188 vs 141 neurons above -20 mV at 6 s). "
+               "3; it saturated more than baaiworm on the old templates: 188 vs 141 neurons above -20 mV at 6 s; see "
+               "open_questions: saturation). "
                "BAAIWorm's neuron-neuron counts (SI5-302.xlsx) equal Cook 2019 exactly (3709 chemical pairs, 20965 "
                "synapses; 1091 gap pairs; checked 5 Nov), but its construction places a site on only 2306 chemical "
                "and 599 gap pairs (single-synapse pairs round to 0 sites; other pairs have no neurite contact within "
@@ -398,29 +424,36 @@ def build_synapses(mods, st, conns):
     tot = {"exc": nn_syn.weight[nn_syn.weight > 0].sum() * g_mod["exc"] * 1000,
            "inh": -nn_syn.weight[nn_syn.weight < 0].sum() * g_mod["inh"] * 1000}
     per_em = {s: tot[s] / em[s] for s in tot}
-    lo4, hi4, _, basis4, bsrc4 = lit("B4")
     lp = ("lognormal", None, 0.5, "guessed: a shared factor per row, log-normal sd 0.5 around the default, "
           "truncated (the spread across pairs is unknown)")
 
-    def pair_row(pid, mid, unit, pairs, ported_of, lo, hi, basis, bsrc, applies, notes, toggle="", extra=None):
+    def pair_row(pid, mid, unit, pairs, ported_of, qid, applies, notes, toggle="", extra=None):
+        """Ported value where it is inside the literature range, else the range's log-midpoint (not its bound,
+        so a shared draw is not clipped half the time). A range that is itself guessed makes the value ours."""
+        lo, hi, lab, basis, bsrc = lit(qid)
+        c, own = centre(qid), lab == "guessed"
         recs = []
         for i, (a, b, k) in enumerate(pairs):
             pv = ported_of(a, b)
-            v = float(np.clip(pv, lo, hi))
+            inside = lo <= pv <= hi
+            v = float(pv if inside else c)
             recs.append(dict(element=f"{a}>{b}" if mid != "gap" and "gap" not in pid else f"{a}-{b}", value=v,
-                             label="guessed", source=f"shared default: {pv:.3g} {unit}" +
-                             ("" if v == pv else f", clipped to [{lo:g}, {hi:g}]"),
-                             source_project="literature" if v != pv else "BAAIWorm", ported=pv, n_em=k,
-                             **(extra(a, b) if extra else {})))
+                             label="guessed", source=f"shared default: {pv:.3g} {unit}" if inside else
+                             f"shared default: log-midpoint {c:.3g} of range {qid} [{lo:g}, {hi:g}]; BAAIWorm's "
+                             f"ported {pv:.3g} is outside ({c / pv:.0f}x)",
+                             source_project="BAAIWorm" if inside else ("ours" if own else "literature"), ported=pv,
+                             n_em=k, **(extra(a, b) if extra else {})))
         t = pd.DataFrame(recs)
+        if own:
+            notes += f". Range {qid} is itself guessed (no measurement found), so this value is ours"
         row(pid, mid, unit, float(t.value.median()), lo, hi, grain="connection", applies_to=applies, n=len(t),
             tsrc="shared default per pair (values table)", label="guessed",
-            proj="literature" if (t.source_project == "literature").all() else "BAAIWorm", basis=basis, bsrc=bsrc,
+            proj=t.source_project.mode()[0], basis=basis, bsrc=bsrc,
             prior=(lp[0], float(t.value.median()), lp[2], lp[3]), notes=notes, toggle=toggle, table=t)
         return t
 
     pair_row("syn_strength_per_pair", "wiring", "nS per EM synapse", chem_nn,
-             lambda a, b: per_em["inh" if a in inh_pre else "exc"], lo4, hi4, basis4, bsrc4,
+             lambda a, b: per_em["inh" if a in inh_pre else "exc"], "B4",
              "neuron-neuron chemical pairs (wiring=cook)",
              f"ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: "
              f"{per_em['exc']:.3g} nS (excitatory), {per_em['inh']:.3g} nS (inhibitory) per EM synapse",
@@ -428,17 +461,16 @@ def build_synapses(mods, st, conns):
     gj = conns[(conns.category == "gj") & conns.pre.isin(nset) & conns.post.isin(nset)]
     gsites = Counter(tuple(sorted(p)) for p in zip(gj.pre, gj.post))
     g_per_em = (gj.weight.abs().sum() / 2) * 1000 / sum(k for _, _, k in gap_nn)   # two halves per junction, nS
-    lo, hi, _, basis, bsrc = lit("C4")
-    pair_row("gap_strength_per_pair", "gap", "nS per EM gap junction", gap_nn, lambda a, b: g_per_em, lo, hi, basis,
-             bsrc, "neuron-neuron gap pairs (wiring=cook)",
+    pair_row("gap_strength_per_pair", "gap", "nS per EM gap junction", gap_nn, lambda a, b: g_per_em, "C4",
+             "neuron-neuron gap pairs (wiring=cook)",
              f"ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = {g_per_em:.3g} nS",
              extra=lambda a, b: dict(baaiworm_sites=gsites.get(tuple(sorted((a, b))), 0) // 2))
     b_nmj_w = conns[conns.post.isin(mus) & ~conns.pre.isin(mus)]
     nmj_tot = (b_nmj_w.weight.clip(lower=0).sum() * g_mod["exc"] - b_nmj_w.weight.clip(upper=0).sum()
                * g_mod["inh"]) * 1000
     nmj_per_em = nmj_tot / sum(k for _, _, k in nmj)
-    pair_row("nmj_strength_per_pair", "wiring", "nS per EM synapse", nmj, lambda a, b: nmj_per_em, lo4, hi4, basis4,
-             bsrc4, "neuron-to-muscle pairs (wiring=cook)",
+    pair_row("nmj_strength_per_pair", "wiring", "nS per EM synapse", nmj, lambda a, b: nmj_per_em, "B4",
+             "neuron-to-muscle pairs (wiring=cook)",
              f"ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = {nmj_per_em:.3g} nS")
     lo, hi, _, basis, bsrc = lit("F11")
     mech("bwm_coupling", "Gap junctions between neighbouring body-wall muscles (UNC-9), Cook 2019 pairs", "muscle",
@@ -467,7 +499,10 @@ def build_synapses(mods, st, conns):
         n=302, tsrc="transmitter rule (values table)", label="derived", proj="literature", basis="physical_limit",
         bsrc="flag", prior=("bernoulli", round(float(t.value.mean()), 3), "", "fraction inhibitory under the rule; "
                             "only guessed elements are drawn"), table=t)
-    # sign per pair from the postsynaptic class's fast receptors (guessed rule), behind receptor_sign
+    # sign per pair, behind receptor_sign: Fenyves et al. 2020's published prediction where it gives + or -, else
+    # our rule from the postsynaptic class's fast receptors in CeNGEN (guessed), else the transmitter rule
+    fen = pd.read_csv(FENYVES)
+    fen = dict(zip(fen.pre + ">" + fen.post, fen.polarity))
     classes = set(st.cengen_classes)
     recs = []
     for a, b, k in chem_nn:
@@ -479,19 +514,31 @@ def build_synapses(mods, st, conns):
             v, src = int(ih > ex), f"CeNGEN {cls}: excitatory receptors {ex:.0f}, inhibitory {ih:.0f} TPM"
         else:
             v, src = int(st.transmitter.get(a, set()) == {"gaba"}), "transmitter rule (no receptor expression)"
-        recs.append(dict(element=f"{a}>{b}", value=v, label="guessed", source=src, source_project="ours",
-                         rule="cengen" if ex + ih > 0 else "transmitter", flips=v != int(a in inh_pre)))
+        f = fen.get(f"{a}>{b}", "not in Fenyves")
+        r = dict(element=f"{a}>{b}", value=v, label="guessed", source=src, source_project="ours",
+                 rule="cengen" if ex + ih > 0 else "transmitter", fenyves=f, ours=v)
+        if f in ("+", "-"):
+            r.update(value=int(f == "-"), label="derived", source=f"Fenyves et al. 2020 S1 Data (NT+R): {f}",
+                     source_project="literature", rule="fenyves")
+        r.update(disagree=int(f in ("+", "-") and int(f == "-") != v), flips=int(r["value"] != int(a in inh_pre)))
+        recs.append(r)
     t = pd.DataFrame(recs)
-    mech("receptor_sign", "Synapse sign by postsynaptic receptor: inhibitory where the postsynaptic class expresses "
-         "more chloride-channel receptors (GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel "
-         "ones, in summed CeNGEN TPM (guessed rule); the transmitter rule where it expresses neither", "synapse",
-         "have", "CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase", toggle="receptor_sign",
+    mech("receptor_sign", "Synapse sign by postsynaptic receptor: Fenyves et al. 2020's published prediction (NT+R) "
+         "where it is + or -; else inhibitory where the postsynaptic class expresses more chloride-channel receptors "
+         "(GluCl, ACC, UNC-49) for the presynaptic transmitter than cation-channel ones, in summed CeNGEN TPM (our "
+         "guessed rule); the transmitter rule where it expresses neither", "synapse",
+         "have", "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et "
+         "al. 2021), receptor families from WormBase", toggle="receptor_sign",
          neutral="off = the presynaptic transmitter rule", default="off",
-         notes=f"{int((t.rule == 'cengen').sum())} of {len(t)} pairs from receptor expression; "
-               f"{int(t.flips.sum())} differ from the transmitter rule")
+         notes=f"{int((t.rule == 'fenyves').sum())} of {len(t)} pairs from Fenyves (+ or -), "
+               f"{int((t.rule == 'cengen').sum())} from our CeNGEN rule, {int((t.rule == 'transmitter').sum())} from "
+               f"the transmitter rule; Fenyves and our rule disagree on {int(t.disagree.sum())} of the "
+               f"{int((t.rule == 'fenyves').sum())} (Fenyves used); {int(t.flips.sum())} pairs differ from the "
+               f"transmitter rule. Fenyves calls {sum(1 for x in t.fenyves if x == 'complex')} pairs complex "
+               f"(both signs; our rule used)")
     row("syn_sign_receptor", "receptor_sign", "flag", float(t.value.median()), 0, 1, grain="connection",
-        applies_to="neuron-neuron chemical pairs", n=len(t), tsrc="receptor rule (values table)", label="guessed",
-        proj="ours", basis="physical_limit", bsrc="flag",
+        applies_to="neuron-neuron chemical pairs", n=len(t), tsrc="Fenyves 2020, else receptor rule (values table)",
+        label="guessed", proj="ours", basis="physical_limit", bsrc="flag",
         prior=("bernoulli", round(float(t.value.mean()), 3), "", "fraction inhibitory under the rule"), table=t)
     mech("innexin_identity", "Gap junction conductance and rectification by innexin pair", "gap", "absent",
          "Bhattacharya et al. 2019 innexin atlas (not extracted)", absent_reason="per-pair innexin identity not mapped")
@@ -501,7 +548,9 @@ def build_synapses(mods, st, conns):
                 nmj_pairs_baaiworm=len(b_nmj), bwm_gap_pairs=len(gap_bb),
                 chem_pairs_with_baaiworm_site=sum(1 for a, b, _ in chem_nn if sites.get((a, b))),
                 gap_pairs_with_baaiworm_site=sum(1 for a, b, _ in gap_nn if gsites.get(tuple(sorted((a, b))))),
+                receptor_sign_from_fenyves=int((t.rule == "fenyves").sum()),
                 receptor_sign_from_cengen=int((t.rule == "cengen").sum()), receptor_sign_flips=int(t.flips.sum()),
+                receptor_sign_fenyves_disagree=int(t.disagree.sum()),
                 ported_nS_per_em=dict(syn_exc=per_em["exc"], syn_inh=per_em["inh"], gap=g_per_em, nmj=nmj_per_em))
 
 
@@ -644,7 +693,7 @@ def export(led, extra):
                                placeholder=phys.get("guessed", 0), gap=phys.get("absent", 0),
                                must_fill=phys.get("guessed", 0) + phys.get("absent", 0)),
         source_by_fill_kind={k: {sp: dict(v) for sp, v in d.items()} for k, d in src_fill.items()},
-        by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
+        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
     (ROOT / "docs/worm/ledger.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
