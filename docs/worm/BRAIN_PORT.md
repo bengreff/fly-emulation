@@ -589,3 +589,50 @@ deterministic (layers seeded since a87d51d), so the two runs differ only in the 
   Holds if the section 8 rhythm rule fails in s9_roberts. If the rule passes, that is a surprise, reported, and it
   goes to its own pre-registered test; nothing is claimed from it here.
 - Everything else is report-only.
+
+### 9 results (5 Nov, 18:25 CST; Mac; all measured unless labelled)
+
+Both runs finished and are finite (601 frames each; wall 79.2 s and 84.1 s). Readouts in
+`data/worm/brain_runs/s9_signs/` (`s9_ctrl.s9.json`, `s9_roberts.s9.json`), figure `s9.png`, script
+`scripts/worm/port/s9_readouts.py`. Raw frames stay in `/tmp/mine_c1/s9/` (not committed).
+
+| readout (1-20 s unless stated) | s9_ctrl | s9_roberts |
+|---|---|---|
+| AVA and AVB co-active fraction | 1.00 | 1.00 |
+| AVA mean / AVB mean (mV) | -2.11 / -4.35 | -3.48 / -4.89 |
+| AVA-AVB Pearson r | 0.986 | 0.990 |
+| neurons / muscles above -20 mV (last frame) | 108 / 40 | 101 / 44 |
+| B-type SD median / max (mV) | 0.84 / 2.27 | 0.91 / 2.37 |
+| B-type mean V (mV) | -28.2 | -29.0 |
+| max activation | 0.795 | 0.795 |
+| centroid net / path (body lengths) | 0.0007 / 0.0008 | 0.0012 / 0.0013 |
+| mid-body D-V zero crossings / peak-to-peak | 26 / 0.028 | 25 / 0.024 |
+| rhythm rule | fails | fails |
+
+**The control is the old ledger.** s9_ctrl's first 5 s match section 8's `c2_off` bit for bit (max |dV| 0.0 over 151
+frames; 109 neurons above -20 mV in both at 5 s), so the control ran on the old signs and the loop is deterministic.
+
+**P1 (AVA and AVB stop being co-active): falsified.** The control is co-active (1.00, so P1 is not void), and
+s9_roberts stays co-active at 1.00 (the bar was at most 0.2; 0.5 or more falsifies). The measured inhibition moves
+AVA down by 1.4 mV and AVB by 0.5 mV; their correlation does not change.
+
+**P2 (no rhythm): holds.** The rhythm rule fails in s9_roberts. The zero crossings are a 0.02-0.03 wobble round
+zero, not an alternation.
+
+**Figure (viewed).** In both runs AVA and AVB rise in the first 0.2 s and then sit flat between about -2 and -7 mV
+for the rest of the 20 s. The DB cells sit at about -10 to -25 mV and the VB cells at about -30 to -55 mV, with small
+wobble. Dorsal mean activation is about 0.5 and ventral about 0.3 throughout. The body holds a curl that changes
+shape slowly and never alternates. The two columns are hard to tell apart.
+
+**Why the signs don't separate them (post hoc, descriptive; Cook EM counts measured, fractions derived).** The 9
+changed pairs are a small share of each cell's chemical input: AVAL gets 19 of its 667 chemical EM contacts from
+the changed pairs (AVBL 9, AVBR 10), AVAR 28 of 685, AVBL 19 of 338 (AVAL 2, AVAR 3, ASHL 14), AVBR 10 of 333 (AVAR
+4, ASHR 6), so 3-6%. After the change, inhibitory input is 30/667, 45/685, 46/338 and 26/333 (4-14%). The four cells
+also have 230, 254, 132 and 134 gap EM contacts, only 3 of them between AVA and AVB. So the measured mutual
+inhibition is small next to a large common, mostly excitatory drive, which is the network-wide saturation of sections 4
+and 4c (D8: 100 neurons above -20 mV at 6 s; here 101-108 in the last frame). This is an explanation from the counts (inferred), not tested.
+
+**Verdict.** The sign correction stays adopted, because it is measured. It does not by itself make AVA and AVB
+exclusive: their co-activity comes from the common excitatory state, not mainly from the direct AVA-AVB sign. The
+next step is a strategy call (Director and Ben) on the rhythm and on the over-excited network, not another sign edit.
+Section 10 is free for the rhythm port if that is chosen.

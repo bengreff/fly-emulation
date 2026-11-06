@@ -70,3 +70,18 @@ def test_published_fits_labelled(led):
     assert p.loc["dens_shl1", "label"] == "published_fit" and p.loc["dens_shl1", "source_project"] == "BAAIWorm"
     assert (p[p.source_project == "c302"].label == "published_fit").all()
     assert p.loc["nano_gsc", "label"] == "guessed"
+
+
+def test_measured_signs(led):
+    """BRAIN_PORT 9: Roberts et al. 2016 measured AVA<->AVB and ASH->AVB inhibition; those 9 Cook pairs are inhibitory,
+    labelled measured, and win over Fenyves (ASH->AVB was + there); AVA->AVA and AVB->AVB are untouched."""
+    t = led.values("syn_sign_receptor").set_index("element")
+    pairs = [f"{a}>{b}" for a in ("AVAL", "AVAR", "AVBL", "AVBR") for b in ("AVAL", "AVAR", "AVBL", "AVBR")
+             if a[:3] != b[:3] and f"{a}>{b}" in t.index] + ["ASHL>AVBL", "ASHR>AVBR"]
+    assert len(pairs) == 9                                                    # Cook has no AVAL>AVBR
+    for p in pairs:
+        r = t.loc[p]
+        assert int(r.value) == 1 and r.label == "measured" and r.source_project == "literature", p
+        assert r.source.startswith("Roberts et al. 2016"), p
+    assert "overrides Fenyves" in t.loc["ASHL>AVBL"].source
+    assert (t.loc[[p for p in ("AVAL>AVAR", "AVAR>AVAL", "AVBL>AVBR", "AVBR>AVBL")]].label != "measured").all()

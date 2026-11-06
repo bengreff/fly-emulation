@@ -305,8 +305,8 @@
   neutral: off = the presynaptic transmitter rule
   default: 'off'
   source: Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
-  notes: 1705 of 3709 pairs from Fenyves (+ or -), 1584 from our CeNGEN rule, 420 from the transmitter rule; Fenyves and our rule disagree on 182 of the 1705 (Fenyves used); 1039 pairs differ from the transmitter
-    rule. Fenyves calls 436 pairs complex (both signs; our rule used)
+  notes: '9 of 3709 pairs carry a measured sign (Roberts et al. 2016: AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), 1703 from Fenyves (+ or -), 1577 from our CeNGEN rule, 420 from the transmitter rule;
+    Fenyves and our rule disagree on 182 of the 1703 (Fenyves used); 1048 pairs differ from the transmitter rule. Fenyves calls 436 pairs complex (both signs; our rule used)'
   absent_reason: ''
 - id: innexin_identity
   name: 'Gap junctions as innexin channels: conductance per EM contact = open channels x innexin unitary conductance (one shared value; no per-innexin measurement found); no junction where a partner expresses
