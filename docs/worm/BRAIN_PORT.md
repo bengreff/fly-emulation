@@ -539,3 +539,53 @@ included, with the pre-registered definitions unchanged.
   papers before pre-registration: the B-type proprioceptive coupling and its gain (Wen et al. 2012), A-type intrinsic
   oscillation (Gao et al. 2018), descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS), and what keeps AVA
   and AVB from being on together (the post hoc look above).
+
+## 9. AVA and AVB inhibit each other: the measured sign (Roberts et al. 2016) (pre-registration)
+
+Pre-registered 2026-11-05 18:18 CST, before the code change or any run. Source found by the Director's literature
+agent (`docs/worm/research/RHYTHM_LIT.md`, section 2) and checked by the Director in the PMC full text.
+
+**Evidence.** Roberts et al. 2016, eLife 5:e12572 (PMC4798983), photoactivated AVB while patching AVA, and AVA while
+patching AVB (Fig. 6B-D, n = 9 and 17 for the two directions). In both directions the evoked synaptic current
+reverses negative of the zero-current potential: AVA and AVB inhibit each other (**measured** sign). The authors
+call the connection "likely monosynaptic" (their inference, not measured). Their fitted model makes AVB to AVA about
+6-7x stronger than AVA to AVB (W_FR = -5.40, W_RF = -0.81, Table 2); that ratio is a model fit, not a measurement.
+Fig. 9C-D: ASH to AVB is also inhibitory (**measured** sign).
+
+**What our table says now.** In `syn_sign_receptor` (used when `receptor_sign` is on, as in every closed loop),
+every AVA-AVB pair is 0 (excitatory): Fenyves et al. 2020 call them "complex", so our CeNGEN rule decides (guessed).
+ASH to AVB is + from Fenyves (derived). So the model has mutual excitation where the measurement says mutual
+inhibition, which is the likeliest cause of AVA and AVB being depolarised together (section 8 post hoc look).
+
+**Change (a ledger correction: a measured value wins).** The 7 Cook chemical pairs between AVA and AVB (AVAL>AVBL,
+AVAR>AVBL, AVAR>AVBR, AVBL>AVAL, AVBL>AVAR, AVBR>AVAL, AVBR>AVAR; Cook has no AVAL>AVBR) and the 2 ASH to AVB pairs
+(ASHL>AVBL, ASHR>AVBR; Cook has no cross pairs) become inhibitory: label measured, source_project literature, rule
+`measured`, with Roberts 2016 and the figure in the source. On ASH to AVB this overrides Fenyves, and the row says
+so. The strength stays the symmetric template (EM count x 0.447 nS); the asymmetry is not copied. AVA to AVA and AVB
+to AVB are unchanged (not measured). With `receptor_sign` off the transmitter rule still applies (the toggle's
+neutral state is unchanged). Adopted on the evidence, whatever the run below shows; the run only reports the
+effect. A ledger test checks the 9 rows.
+
+**Runs** (Mac, 20 s each, `scripts/worm/port/closed_loop_c1.py`, `sample_worm(None)` at the template, `receptor_sign=on`,
+`defecation=off`, everything else at the ledger defaults; published body, diacetyl cone field). The loop is
+deterministic (layers seeded since a87d51d), so the two runs differ only in the 9 signs.
+- **s9_ctrl**: the ledger before the change (as built at adf5ba0).
+- **s9_roberts**: the ledger after the change.
+
+**Readouts, over 1-20 s** (after the first-second rise), from the saved frames:
+- AVA = mean soma voltage of AVAL and AVAR; AVB = mean of AVBL and AVBR. **Co-active fraction** = the fraction of
+  frames in which both are above -20 mV. Also their means and the AVA-AVB Pearson correlation.
+- Neurons and muscles above -20 mV in the last frame (as in section 8).
+- B-type SD: the SD over time of each B-type soma voltage (VB01-VB11, DB01-DB07, 18 cells), median and max.
+- Body: centroid net and path displacement (body lengths), maximum activation, and section 8's mid-body
+  dorsal-minus-ventral signal (zero crossings, peak-to-peak, rhythm rule).
+- A figure (AVA and AVB traces, B-type traces, the mid-body signal, body midlines), viewed before anything is said.
+
+**Predictions (the Director's), with bars:**
+- **P1, AVA and AVB stop being co-active.** Needs the control co-active (fraction at least 0.7; otherwise P1 is
+  void). Holds if the s9_roberts co-active fraction is at most 0.2. Falsified if it is 0.5 or more. Between the two:
+  partial, reported as such.
+- **P2, no rhythm.** A rhythm is NOT predicted: Xu et al. 2018 say the B-types must also cross a bifurcation.
+  Holds if the section 8 rhythm rule fails in s9_roberts. If the rule passes, that is a surprise, reported, and it
+  goes to its own pre-registered test; nothing is claimed from it here.
+- Everything else is report-only.
