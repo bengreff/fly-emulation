@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 2026-11-05 18:00 CST, end of the worm BRAIN + LEDGER
+**Rewritten each session; do not append.** State as of 2026-11-05 18:10 CST, end of the worm BRAIN + LEDGER
 worker's evening block (Director session director-20 relays Ben). A second worker, the BODY worker
 (fly-emulation-08, session now ended), owns body, viewer, video and the closed-loop driver in worktree
 `.claude/worktrees/wormbody` (branch `worktree-wormbody`); its state is in its own commits, not here.
@@ -47,7 +47,8 @@ worker's evening block (Director session director-20 relays Ben). A second worke
   peak-to-peak at least 0.1) is met by none. A look at the saved voltages (descriptive) shows why the body holds a
   bend: the forward and backward command neurons, AVB and AVA, are depolarised together (-4 and -2 mV), every motor
   class is high, and the B-type motor neurons, the ones that sense body curvature, move only 1-1.5 mV with the body.
-  So the model has no rhythm generator yet; the next step is to port one from the literature.
+  So the model has no rhythm generator yet. How to add one (port a published rhythm model, or fit inside the
+  ranges, per STRATEGY.md) is a strategy call for the Director and Ben.
 - **A bug found and fixed:** the template worm's lumped layers (defecation clock, egg-laying, GCaMP noise) used an
   unseeded random generator, so each run had its own defecation phase. Two of ten closed loops caught a posterior
   body contraction in their window, and one section 6 note had misread it as "one muscle". Now seeded (0 for the
@@ -57,6 +58,11 @@ worker's evening block (Director session director-20 relays Ben). A second worke
   published fit 7,058, guessed 8,965, derived 3,078, inferred 11, measured 13, absent 0. Mechanisms: 34 have, 24
   partial, 1 absent (`other_cells`: hypodermis, seam, excretory canal, coelomocytes, other glia; no interface needs
   them this week).
+- **Mechanisms audit** (`docs/worm/MECHANISMS_AUDIT.md`, 18:08, strict, one line per PLAN row 1-23): full 7 (cell
+  inventory for neurons and body-wall muscle, morphology, channel presence, kinetics, densities, calcium, gaps per
+  innexin), lumped 12, spec only 2 (glia is a constant gain; the metabolism store is read by nothing), missing 2
+  (other non-neural cells, gene expression). Eight rows have never been checked by any test or run, and five
+  (peptides, monoamines, glia, slow signalling, metabolism) have never been switched on.
 - **Caveats:** the c302 muscle is graded, not spiking; the proprioceptive gain (2 pA per 1/mm) is guessed with no
   cited range; the gap template rests on a guessed range (C4) and is 22x the ported per-EM value; the CeNGEN
   receptor rule for the 1584 pairs Fenyves leaves blank is our own guess; `sample_worm(seed)` has no joint guardrail
@@ -64,19 +70,22 @@ worker's evening block (Director session director-20 relays Ben). A second worke
 
 ## Running now
 
-Nothing of mine on the Mac or backhouse (checked 18:00; the section 8 screen finished 17:52). Saved closed-loop
+Nothing of mine on the Mac or backhouse (checked 18:10; the section 8 screen finished 17:52). Saved closed-loop
 runs (frames, activations, voltages) are in `/tmp/mine_c1/` on the Mac and will not survive a reboot; the readouts
 and figures are committed. Other projects' jobs on backhouse: leave them alone.
 
+**backhouse's repo copy is stale:** `~/worm-port/repo/` predates the vendored c302 muscle mods
+(`third_party/c302`) and our `src/wormemu/nmodl/rectgap.mod`. Resync (and recompile the mods) before any brain run
+there with `muscle_active` or `gap_rectification` on; sections 6-8 ran on the Mac.
+
 ## Next (this order)
 
-1. **Port a rhythm generator (BRAIN_PORT section 9, pre-register first).** Section 8 rules out the channel sets and
-   the saturation ends. Candidates to check against the papers first (a Sonnet literature agent could write
-   `docs/worm/research/RHYTHM_LIT.md`): B-type proprioceptive coupling and its gain (Wen et al. 2012, Neuron; the
-   gain needs a cited range); A-type intrinsic oscillation (Gao et al. 2018, eLife 7:e29915: which channels, at what
-   density); descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS); and what keeps AVA and AVB from being
-   on together (in real worms the forward and backward states alternate). Each as a toggle, each tested with
-   `scripts/worm/port/closed_loop_c1.py` with `defecation=off`, using the section 8 rhythm rule.
+1. **Rhythm: wait for the strategy call. Do not start a port.** The Director is getting the literature
+   (`docs/worm/research/RHYTHM_LIT.md`, Sonnet) and will decide with Ben before the next session whether to port a
+   published rhythm model or fit inside the ranges (STRATEGY.md). Whatever is chosen: pre-register it as BRAIN_PORT
+   section 9, make it a toggle, and test with `scripts/worm/port/closed_loop_c1.py` with `defecation=off` and the
+   section 8 rhythm rule. For Thursday's bar, work down `docs/worm/MECHANISMS_AUDIT.md`: the eight rows no test
+   has checked, starting with peptides and monoamines (item 2).
 2. Friday's list (WEEK.md): peptides and monoamines on in the full brain.
 3. Sunday: `sample_worm(seed)` guardrails (draw many worms, reject non-physiological ones by a pre-registered rule;
    seed 0's silent muscle is the first case).
@@ -90,7 +99,8 @@ and figures are committed. Other projects' jobs on backhouse: leave them alone.
 62e661a vendor c302 C2 muscle mods and pre-register section 6; ff87e75 `muscle_active` wired (M1-M4, C1);
 c602acc range-end literature committed and the excitatory reversal range adopted (6a, D8b); 82114c4
 `gap_rectification` wired (section 7, R1-R3, C2); a87d51d section 8 screen (no rhythm candidate), template layer
-seed fix, readouts in `c1_readouts.py`; 38ffb2d section 8 post hoc voltage look; this HANDOFF.
+seed fix, readouts in `c1_readouts.py`; 38ffb2d section 8 post hoc voltage look; ce5abe7 HANDOFF; 4b50952
+`MECHANISMS_AUDIT.md`; this HANDOFF.
 
 ## Parked: W1 (Jaxley RIM and AFD fits)
 
