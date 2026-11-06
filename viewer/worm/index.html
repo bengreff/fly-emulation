@@ -591,7 +591,7 @@ await loadRuns();
 await loadMech();
 await loadCatalog();
 resize();
-await setRun(params.get('run') || 'p3_final');
+await setRun(params.get('run') || S.runs[0].id);
 if (params.get('colour')) { S.colour = params.get('colour'); $('colour').value = S.colour; colourBody(); }
 requestAnimationFrame(loop);
 window.viewer = {
