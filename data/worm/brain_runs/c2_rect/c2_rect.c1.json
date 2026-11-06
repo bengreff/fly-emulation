@@ -1,0 +1,18 @@
+{
+ "toggles": {
+  "receptor_sign": "on",
+  "gap_rectification": "on"
+ },
+ "seconds": 5.0,
+ "wall_s": 19.099119186401367,
+ "n_frames": 151,
+ "finite": true,
+ "neurons_above_m20_last": 108,
+ "muscles_above_m20_last": 40,
+ "act_max": 0.7946337461471558,
+ "act_mean_last_s": 0.39935302734375,
+ "act_std_time_median": 0.0825057327747345,
+ "power_above_lowest_bin_median": 0.9253981113433838,
+ "centroid_net_body_lengths": 0.00024164225033018738,
+ "centroid_path_body_lengths": 0.00024545026826672256
+}

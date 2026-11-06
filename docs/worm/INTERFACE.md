@@ -111,7 +111,7 @@ adopted (gate, battery run, viewed figure).
 | `bwm_coupling` | off | on = Cook's 96 muscle-muscle gap pairs at 5 nS each (guessed) |
 | `expression_map` | off | on = CeNGEN gates channel presence |
 | `muscle_active` | off | on: c302 C2's body-wall muscle membrane (leak, slow K, fast K, Ca, Ca pool) in place of BAAIWorm's passive one; muscles start at -28 mV; muscle `ca_uM` is c302's pool x 1000 (c302's own scale, a blind guess). Changes muscle voltage only (median per-muscle largest change 2.5 mV in D8); no rhythm in the closed loop (BRAIN_PORT section 6) |
-| `gap_rectification` | off | on raises NotImplementedError (not wired yet) |
+| `gap_rectification` | off | on: the 86 gap junction pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template and the other way at template / `gap_rect_ratio` (4, inferred; direction measured, Liu et al. 2017). No change in the count above -20 mV (D8b 105); no rhythm in the closed loop (BRAIN_PORT section 7) |
 | layers | see the ledger | `sens_*`, `muscle_ca`, `muscle_activation`, `pharynx`, `defecation`, `egg_laying`, `gcamp` on; `peptides`, `monoamines`, `glia`, `metabolism`, `homeostasis`, `slow_signalling` off |
 
 ## Files the viewer can read (brain side)

@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 17:42 CST",
+ "generated_at": "2026-11-05 18:20 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 368,
   "mechanisms": 59,
   "by_label": {
-   "derived": 67486,
-   "guessed": 8965,
+   "derived": 67484,
+   "guessed": 8958,
    "inferred": 11,
-   "measured": 5865,
+   "measured": 5874,
    "published_fit": 7785
   },
-  "known": 81147,
-  "placeholder": 8965,
+  "known": 81154,
+  "placeholder": 8958,
   "gap": 0,
   "used_by_model": 90112,
-  "must_fill": 8965
+  "must_fill": 8958
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19125,
   "by_label": {
    "published_fit": 7058,
-   "guessed": 8965,
-   "derived": 3078,
+   "guessed": 8958,
+   "derived": 3076,
    "inferred": 11,
-   "measured": 13
+   "measured": 22
   },
-  "known": 10160,
-  "placeholder": 8965,
+  "known": 10167,
+  "placeholder": 8958,
   "gap": 0,
-  "must_fill": 8965
+  "must_fill": 8958
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,15 +49,15 @@
    },
    "literature": {
     "guessed": 5469,
-    "measured": 5865,
-    "derived": 3078,
+    "measured": 5874,
+    "derived": 3076,
     "inferred (ours)": 6
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3492,
+    "guessed": 3485,
     "inferred (ours)": 5
    },
    "c302": {
@@ -71,15 +71,15 @@
    },
    "literature": {
     "guessed": 5469,
-    "derived": 3078,
-    "inferred (ours)": 6,
-    "measured": 13
+    "derived": 3076,
+    "measured": 22,
+    "inferred (ours)": 6
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3492,
+    "guessed": 3485,
     "inferred (ours)": 5
    },
    "c302": {
@@ -114,9 +114,9 @@
    "derived": 64408
   },
   "connection": {
-   "derived": 2796,
-   "guessed": 7856,
-   "measured": 5852,
+   "derived": 2794,
+   "guessed": 7849,
+   "measured": 5861,
    "published_fit": 727
   },
   "family": {
@@ -618,12 +618,13 @@
    "neutral": "off = the presynaptic transmitter rule",
    "default": "off",
    "source": "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase",
-   "notes": "1705 of 3709 pairs from Fenyves (+ or -), 1584 from our CeNGEN rule, 420 from the transmitter rule; Fenyves and our rule disagree on 182 of the 1705 (Fenyves used); 1039 pairs differ from the transmitter rule. Fenyves calls 436 pairs complex (both signs; our rule used)",
+   "notes": "9 of 3709 pairs carry a measured sign (Roberts et al. 2016: AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), 1703 from Fenyves (+ or -), 1577 from our CeNGEN rule, 420 from the transmitter rule; Fenyves and our rule disagree on 182 of the 1703 (Fenyves used); 1048 pairs differ from the transmitter rule. Fenyves calls 436 pairs complex (both signs; our rule used)",
    "absent_reason": "",
    "numbers": 3709,
    "by_label": {
-    "derived": 1705,
-    "guessed": 2004
+    "derived": 1703,
+    "guessed": 1997,
+    "measured": 9
    }
   },
   {
@@ -1077,12 +1078,12 @@
    "id": "gap_rectification",
    "name": "Rectifying gap junctions (AVA-A class UNC-7/UNC-9)",
    "layer": "gap",
-   "status": "partial",
+   "status": "have",
    "toggle": "gap_rectification",
    "neutral": "off",
    "default": "off",
-   "source": "lumped model in src/wormemu/brain_layers.py",
-   "notes": "",
+   "source": "src/wormemu/nmodl/rectgap.mod (ours; BAAIWorm's junction with a direction)",
+   "notes": "on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template conductance and the other way at template / gap_rect_ratio. Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7",
    "absent_reason": "",
    "numbers": 1,
    "by_label": {
@@ -8245,14 +8246,14 @@
    "unit": "flag",
    "n_values": 3709,
    "value_template": 0.0,
-   "template_source": "Fenyves 2020, else receptor rule (values table)",
+   "template_source": "measured (Roberts 2016) first, else Fenyves 2020, else receptor rule (values table)",
    "bio_min": 0.0,
    "bio_max": 1.0,
    "bound_basis": "physical_limit",
    "bound_source": "flag",
    "bound_verified": "unverified",
    "prior_dist": "bernoulli",
-   "prior_a": 0.329,
+   "prior_a": 0.331,
    "prior_b": "",
    "prior_basis": "fraction inhibitory under the rule",
    "label": "guessed",
@@ -8268,8 +8269,9 @@
     "median": 0.0,
     "max": 1.0,
     "by_label": {
-     "guessed": 2004,
-     "derived": 1705
+     "guessed": 1997,
+     "derived": 1703,
+     "measured": 9
     }
    },
    "kind": "physiology"
@@ -11466,7 +11468,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)",
    "kind": "physiology"
   }
  ],
@@ -11478,9 +11480,9 @@
   "bwm_gap_pairs": 96,
   "chem_pairs_with_baaiworm_site": 2306,
   "gap_pairs_with_baaiworm_site": 599,
-  "receptor_sign_from_fenyves": 1705,
-  "receptor_sign_from_cengen": 1584,
-  "receptor_sign_flips": 1039,
+  "receptor_sign_from_fenyves": 1703,
+  "receptor_sign_from_cengen": 1577,
+  "receptor_sign_flips": 1048,
   "receptor_sign_fenyves_disagree": 182,
   "ported_nS_per_em": {
    "syn_exc": 0.057781748213304014,

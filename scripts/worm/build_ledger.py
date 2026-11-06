@@ -507,6 +507,15 @@ def build_synapses(mods, st, conns):
     # our rule from the postsynaptic class's fast receptors in CeNGEN (guessed), else the transmitter rule
     fen = pd.read_csv(FENYVES)
     fen = dict(zip(fen.pre + ">" + fen.post, fen.polarity))
+    # measured signs win over both (BRAIN_PORT 9): Roberts et al. 2016 photoactivated one cell while patching the
+    # other; the evoked current reverses negative of the zero-current potential. "Likely monosynaptic" is the
+    # authors' inference; their 6-7x AVB->AVA asymmetry is a model fit, so the strength template stays symmetric
+    rob = "Roberts et al. 2016 eLife 5:e12572 (PMC4798983)"
+    measured = {**{f"{a}>{b}": f"{rob} Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, "
+                               f"n = 9 and 17 for the two directions)"
+                   for a in ("AVAL", "AVAR", "AVBL", "AVBR") for b in ("AVAL", "AVAR", "AVBL", "AVBR")
+                   if a[:3] != b[:3]},
+                **{f"ASH{x}>AVB{y}": f"{rob} Fig. 9C-D: ASH to AVB inhibitory" for x in "LR" for y in "LR"}}
     classes = set(st.cengen_classes)
     recs = []
     for a, b, k in chem_nn:
@@ -524,6 +533,10 @@ def build_synapses(mods, st, conns):
         if f in ("+", "-"):
             r.update(value=int(f == "-"), label="derived", source=f"Fenyves et al. 2020 S1 Data (NT+R): {f}",
                      source_project="literature", rule="fenyves")
+        if f"{a}>{b}" in measured:
+            r.update(value=1, label="measured", source_project="literature", rule="measured",
+                     source=measured[f"{a}>{b}"] + (f"; overrides Fenyves 2020 ({f})" if f in ("+", "-") else
+                                                    f"; Fenyves 2020: {f}"))
         r.update(disagree=int(f in ("+", "-") and int(f == "-") != v), flips=int(r["value"] != int(a in inh_pre)))
         recs.append(r)
     t = pd.DataFrame(recs)
@@ -534,14 +547,17 @@ def build_synapses(mods, st, conns):
          "have", "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et "
          "al. 2021), receptor families from WormBase", toggle="receptor_sign",
          neutral="off = the presynaptic transmitter rule", default="off",
-         notes=f"{int((t.rule == 'fenyves').sum())} of {len(t)} pairs from Fenyves (+ or -), "
+         notes=f"{int((t.rule == 'measured').sum())} of {len(t)} pairs carry a measured sign (Roberts et al. 2016: "
+               f"AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), "
+               f"{int((t.rule == 'fenyves').sum())} from Fenyves (+ or -), "
                f"{int((t.rule == 'cengen').sum())} from our CeNGEN rule, {int((t.rule == 'transmitter').sum())} from "
                f"the transmitter rule; Fenyves and our rule disagree on {int(t.disagree.sum())} of the "
                f"{int((t.rule == 'fenyves').sum())} (Fenyves used); {int(t.flips.sum())} pairs differ from the "
                f"transmitter rule. Fenyves calls {sum(1 for x in t.fenyves if x == 'complex')} pairs complex "
                f"(both signs; our rule used)")
     row("syn_sign_receptor", "receptor_sign", "flag", float(t.value.median()), 0, 1, grain="connection",
-        applies_to="neuron-neuron chemical pairs", n=len(t), tsrc="Fenyves 2020, else receptor rule (values table)",
+        applies_to="neuron-neuron chemical pairs", n=len(t),
+        tsrc="measured (Roberts 2016) first, else Fenyves 2020, else receptor rule (values table)",
         label="guessed", proj="ours", basis="physical_limit", bsrc="flag",
         prior=("bernoulli", round(float(t.value.mean()), 3), "", "fraction inhibitory under the rule"), table=t)
     # innexin channels: per-EM gap conductance = open channels per EM contact x unitary conductance, and no junction
@@ -632,6 +648,14 @@ def build_c302_muscle():
 
 def build_layers(st):
     for mid, name, layer, default in brain_layers.MECHANISMS:
+        if mid == "gap_rectification":                   # in the NEURON build, not a lumped layer
+            mech(mid, name, layer, "have", "src/wormemu/nmodl/rectgap.mod (ours; BAAIWorm's junction with a "
+                 "direction)", toggle=mid, neutral="off", default=default,
+                 notes="on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from "
+                 "the motor neuron into the interneuron at the template conductance and the other way at template / "
+                 "gap_rect_ratio. Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired "
+                 "recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7")
+            continue
         mech(mid, name, layer, "partial", "lumped model in src/wormemu/brain_layers.py", toggle=mid,
              neutral="off", default=default)
     lig = sorted({a for a, _ in st.peptide_pairs})

@@ -185,7 +185,9 @@ SPECS: list[Spec] = [
     S("slow_gain_floor", "slow_signalling", "1", 0.3, 0, 1, notes="fraction of the odour gain left after full "
       "long-term adaptation"),
     S("gap_rect_ratio", "gap_rectification", "ratio", 4, 2, 10, lit="C3", grain="class",
-      applies_to="AVA, AVB, AVD, AVE, PVC to A- and B-type motor neurons"),
+      applies_to="AVA, AVB, AVD, AVE, PVC to A- and B-type motor neurons",
+      notes="preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current "
+      "passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)"),
 ]
 
 # Receptor neurons and sign per stimulus channel (structure, measured: WormAtlas / the papers named in INTERFACE).
@@ -225,16 +227,18 @@ def _sig(x):
 class Layers:
     """State and stepping of every lumped layer. `names` is the brain's cell list; `pos` the soma position along
     the body (0 nose, 1 tail) for neurons, NaN otherwise; `p` the parameter dict (template_params() or a draw);
-    `on` the set of mechanisms switched on; `rng` for the stochastic layers."""
+    `on` the set of mechanisms switched on; `seed` for the stochastic layers (defecation phase, egg-laying times,
+    GCaMP noise); the generator is rebuilt at every reset, so a reset replays the same draws."""
 
-    def __init__(self, names, pos, bwm_pos, p, on, rng, peptide=None, monoamine=None):
+    def __init__(self, names, pos, bwm_pos, p, on, seed, peptide=None, monoamine=None):
         self.names, self.idx = list(names), {n: i for i, n in enumerate(names)}
-        self.pos, self.bwm_pos, self.p, self.on, self.rng = np.asarray(pos), np.asarray(bwm_pos), p, set(on), rng
+        self.pos, self.bwm_pos, self.p, self.on, self.seed = np.asarray(pos), np.asarray(bwm_pos), p, set(on), seed
         self.peptide, self.monoamine = peptide, monoamine     # (release matrix, receptor matrix, ec50s) or None
         self.reset()
 
     def reset(self):
         n = len(self.names)
+        self.rng = np.random.default_rng(self.seed)
         self.slow = {}                                   # adaptation low-pass per (mechanism, channel)
         self.act = np.zeros(len(self.bwm_pos))
         self.gc = np.zeros(n)

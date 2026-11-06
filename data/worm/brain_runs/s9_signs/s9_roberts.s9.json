@@ -1,0 +1,30 @@
+{
+ "toggles": {
+  "receptor_sign": "on",
+  "defecation": "off"
+ },
+ "sets": "receptor_sign=on,defecation=off",
+ "seconds": 20.0,
+ "wall_s": 84.13880276679993,
+ "n_frames": 601,
+ "finite": true,
+ "neurons_above_m20_last": 101,
+ "muscles_above_m20_last": 44,
+ "act_max": 0.7946352362632751,
+ "act_mean_last_s": 0.4003641605377197,
+ "act_std_time_median": 0.04467667639255524,
+ "power_above_lowest_bin_median": 0.9784109592437744,
+ "centroid_net_body_lengths": 0.0012435801327228546,
+ "centroid_path_body_lengths": 0.0012764637358486652,
+ "muscles_sd_gt_0p05": 2,
+ "midbody_dv_zero_crossings": 25,
+ "midbody_dv_p2p": 0.0240861177444458,
+ "rhythm_candidate": false,
+ "co_active_fraction": 1.0,
+ "ava_mean_mV": -3.4835398197174072,
+ "avb_mean_mV": -4.8936309814453125,
+ "ava_avb_r": 0.9899635135931203,
+ "btype_sd_median_mV": 0.9148362278938293,
+ "btype_sd_max_mV": 2.36877179145813,
+ "btype_mean_mV": -29.008628845214844
+}

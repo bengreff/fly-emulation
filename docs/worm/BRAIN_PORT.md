@@ -385,7 +385,9 @@ in `third_party/c302/generated/`.
   Neurons above -20 mV in the last frame 103 in both. Activation is tonic after a 0.3 s rise; over the last 3 s the
   median muscle's activation SD is 0.003 (off) and 0.002 (on), and a few muscles wander slowly (largest SD 0.21 and
   0.14), with no alternating dorsal-ventral pattern. The centroid moves under 0.001 body lengths in both. The off
-  run has a step at 4.35 s (one muscle to full activation) that the on run lacks; not chased.
+  run has a step at about 4.35 s that the on run lacks. (Corrected 5 Nov 17:57 by section 8: the step is the
+  defecation clock's posterior body contraction, mean activation of rows 17-24 up 0.42 in one frame, not one
+  muscle. The template's defecation phase was unseeded, so only that run caught one in its window.)
 - **Verdict:** `muscle_active` is implemented and correct as a port, stays off by default, and is not the missing
   rhythm. The rhythm question goes upstream to the motor neurons and their drive (section 7).
 
@@ -412,3 +414,227 @@ choices, or measured in other units (Wen 2012's 0.62 is curvature per curvature,
 - **Result (D8b, `data/worm/brain_runs/bw_D8b/`, 6 s):** 105 neurons above -20 mV at 6 s (D8: 100); touch moves 46
   neurons by 1 mV or more (D8: 44); 40 muscles above -20 mV (unchanged). As predicted, a few. D8b is the default
   configuration from here on.
+
+## 7. gap_rectification (pre-registration)
+
+Pre-registered 2026-11-05 17:44 CST, before any run. The toggle (off by default) makes the 86 Cook gap junction
+pairs between AVA, AVB, AVD, AVE, PVC (38, 31, 1, 1, 15 pairs) and DA, VA, DB, VB rectify, in
+`src/wormemu/nmodl/rectgap.mod` (ours: BAAIWorm's junction equation with a direction). Direction is measured: in
+paired in-situ recordings of AVA and VA5, current passes only when VA5 is the more depolarised cell, from the motor
+neuron (UNC-9 side) into AVA (UNC-7 side) (Liu, Chen, Mailler and Wang 2017, Nat Commun 8:14818). Starich et al.
+2009 (oocytes) gives the same polarity and states it for AVB to B; extending it to AVD, AVE and PVC is the ledger's
+class rule, inferred. Magnitude: no paper gives a ratio, so `gap_rect_ratio` stays at its inferred template, 4
+(range 2-10). Choice (guessed): the preferred direction keeps the template conductance and the other direction gets
+template / ratio.
+
+- **R1 (neutral):** on with `gap_rect_ratio` = 1 is bit-identical to off on the test brain (largest |dV| = 0).
+- **R2 (direction):** AVAL with DA01 and VA01 only, chemical synapses removed (weights 0), 0.4 s steps of +20 pA into
+  one cell at a time. Coupling coefficient CC = (change in the other cell's V) / (change in the injected cell's V).
+  Bar: with the toggle on, CC from motor neuron to AVAL is at least 0.95 of its off value, and CC from AVAL to the
+  motor neuron is at most 0.6 of its off value. Falsifier: either fails.
+- **R3 (report-only):** D8b plus `gap_rectification=on`, 6 s, with no-stim control: neurons above -20 mV at 6 s,
+  touch effect.
+- **C2 (report-only):** the 5 s closed loop (`scripts/worm/port/closed_loop_c1.py`) with the toggle on; rhythm as in
+  C1. No bar.
+
+### 7 results (5 Nov, 17:48 CST)
+
+- **R1 misses its literal bar, and the miss is rounding.** With `gap_rect_ratio` = 1 the toggle-on brain differs
+  from off by at most 1.6e-12 mV, not exactly 0. The equation is the same, but NEURON sums the two mechanism types'
+  currents in a different order, so the last bits differ. The scale matches `innexin_identity`'s neutrality
+  (1.7e-11 mV). Read as neutral; recorded as a miss of the bar as written.
+- **R2 passes** (`data/worm/brain_runs/rect_r/summary.json`, `scripts/worm/port/rect_r.py`). AVAL, DA01 and VA01
+  with chemical synapses removed, CC on/off: DA01 to AVAL 0.995 and VA01 to AVAL 1.05 (bar at least 0.95); AVAL to
+  DA01 0.44 and AVAL to VA01 0.59 (bar at most 0.6; VA01 is close to the line). The DA01-VA01 coupling, which runs
+  through AVAL, also drops (0.53 and 0.41).
+- **R3: no change in the count** (`bw_R3`, `bw_R3_nostim` against `bw_D8b`, `bw_D8b_nostim`). Neurons above -20 mV at
+  6 s 105 in both. Individual neurons move by up to 10.9 mV (PVNL, PQR, VA07, AS06). Touch reaches 13 neurons
+  (D8b: 11), no muscle in either. 138 junction sites rectify.
+- **C2: no rhythm either way** (`data/worm/brain_runs/c2_rect/`, figure `c2.png`, viewed). Both runs are at the D8b
+  template (C1's off run predates the template change, so it was rerun as `c2_off`). Over the last 3 s the median
+  muscle's activation SD is 0.0011 (off) and 0.0013 (on); 4 muscles above 0.05 in each; the centroid moves under
+  0.001 body lengths.
+- **Verdict:** `gap_rectification` is implemented with the measured direction and stays off by default. It is not
+  the missing rhythm either.
+- A unit test (`test_gap_rectification`) checks the junction currents directly: at set voltages, motor neuron to
+  AVAL carries the full current, AVAL to motor neuron carries 1 / ratio of it, and the two halves conserve current.
+
+## 8. Why no rhythm: closed-loop screen (pre-registration)
+
+Pre-registered 2026-11-05 17:49 CST, before any run. All runs: the body worker's 5 s closed loop
+(`scripts/worm/port/closed_loop_c1.py`; `sample_worm(None)` at the D8b template, receptor_sign on, proprioception
+on), one run per row, report-only. Nothing is adopted from this section; a candidate that shows rhythm goes to its
+own pre-registered test with held-out criteria.
+
+Candidates, each literature-grounded:
+- **E1 `expression_map=on`.** CeNGEN decides which channels each class has. For the A, B, AS, D motor neurons it adds
+  UNC-2, KCNL (SK-type Ca-activated K), KVS-1, IRK and SLO-1 coupled to EGL-19, at the median ported density of
+  cells that have them, and removes SHK-1, EGL-36 and KQT-3, which CeNGEN does not detect there. This is the
+  "motor-neuron K+ adaptation" candidate. A-type motor neurons oscillate intrinsically (Gao et al. 2018, eLife
+  7:e29915), so their real channel set is a candidate for the missing rhythm.
+- **E2: every literature mechanism on:** E1 plus `muscle_active` and `gap_rectification`.
+- **S01, S11, S14, S16 range ends** (from section 5, the four single range ends that each end saturation): chemical
+  strength 0.1 nS, excitatory reversal -10 mV, excitatory release slope 2 mV, inhibitory release threshold -45 mV.
+  Diagnostic only: is the tonic state what blocks the rhythm? Section 6a found no measurement for or against any
+  of these ends, so none can be adopted from this.
+- **Control:** `c2_off` (section 7).
+
+Readouts over 1-5 s (after the first-second rise): neurons above -20 mV in the last frame; muscles whose activation
+SD exceeds 0.05; the dorsal-minus-ventral mean activation of the mid-body muscles (rows 9-16), demeaned: zero
+crossings and peak-to-peak. **A rhythm candidate** = at least 3 zero crossings with peak-to-peak at least 0.1 in
+that signal. Then the activation figure is viewed before anything is said about it.
+
+### 8 results (5 Nov, 17:57 CST; all measured unless labelled)
+
+Runs finished 17:52 CST (file times), Mac, 18.4-19.6 s of wall each; `data/worm/brain_runs/s8_screen/` (readouts
+`*.c1.json`, figure `s8.png`, viewed). The new readout lines in `closed_loop_c1.py` crashed after each run: they
+indexed the saved activations in `BWM_NAMES` order, but the body saves them in MetaWorm driver order (MDR, MVR,
+MDL, MVL, rows 1-24 each, MVL24 a copy of MVL23). The simulations were saved intact, so the readouts were computed
+afterwards from the saved files by `scripts/worm/port/c1_readouts.py` (which the run script now calls), the control
+included, with the pre-registered definitions unchanged.
+
+| run | neurons above -20 mV (last frame) | muscles above -20 mV | mean activation, last 1 s | muscles with SD > 0.05 (1-5 s) | mid-body D-V zero crossings | peak-to-peak | rhythm candidate | centroid net (body lengths) |
+|---|---|---|---|---|---|---|---|---|
+| control `c2_off` | 109 | 40 | 0.40 | 6 | 4 | 0.027 | no | 2.0e-4 |
+| E1 `expression_map` | 137 | 43 | 0.44 | 7 | 6 | 0.029 | no | 1.4e-4 |
+| E2 E1 + `muscle_active` + `gap_rectification` | 136 | 45 | 0.43 | 11 | 5 | 0.033 | no | 1.8e-4 |
+| S01 chemical strength 0.1 nS | 0 | 55 | 0.47 | 12 | 8 | 0.067 | no | 1.5e-4 |
+| S11 excitatory reversal -10 mV | 15 | 28 | 0.23 | 7 | 1 | 0.071 | no | 1.4e-4 |
+| S14 excitatory release slope 2 mV | 0 | 0 | 0.14 | 27 (defecation, below) | 2 | 0.0001 | no | 2.5e-5 |
+| S16 inhibitory release threshold -45 mV | 0 | 3 | 0.03 | 0 | 10 (noise around 0) | under 0.0001 | no | 1.1e-5 |
+
+- **No rhythm candidate.** No run meets the rule, and the figure agrees. The control, E1, E2 and S11 hold a fixed
+  dorsal bend in rows 12-19 (dorsal minus ventral at the colour limit, 0.5) from 0.3 s to the end, and the body sits
+  in a coil. S01, the only run with visible fluctuation, has a ventral bias with irregular ventral excursions in rows
+  15-21 at about 0.7, 1.5 and 3.8-4.3 s, not an alternation (peak-to-peak 0.067, under the 0.1 bar). S14 and S16 are
+  nearly silent: the muscles barely activate and the body stays almost straight.
+- **E1: the CeNGEN channel sets make the tonic state stronger, not rhythmic** (137 neurons above -20 mV against
+  109). At median ported densities, the motor neurons' CeNGEN channels do not reproduce the A-class intrinsic
+  oscillation Gao et al. 2018 recorded, at least not under the network's tonic drive. E2 changes nothing beyond E1.
+- **Ending saturation does not unmask a rhythm.** The four range ends take the network to 0-15 neurons above -20 mV
+  and the muscles to a weaker tonic bend (S11, S01) or near silence (S14, S16). Reading (inferred): no oscillator
+  is hidden under the saturation. The model lacks a rhythm generator, or the proprioceptive gain at which feedback
+  could make one (that gain is guessed with no cited range).
+- **A non-brain event, found while viewing the figure.** In S14, rows 18-24 of all four quadrants rise by exactly
+  0.5 at 3.4 s with no neuron changing. This is the defecation clock's posterior body contraction (pBoc,
+  `dmp_pboc_amp` 0.5 added to the posterior third; a lumped layer, on by default). It adds equally to dorsal and
+  ventral, so it cancels in the rhythm signal, but it accounts for 27 of S14's muscles above SD 0.05. Of the ten
+  closed-loop runs in sections 6-8, two caught one in their window (S14 at 3.4 s, `c1_off` at about 4.35 s; section 6
+  corrected above). Its phase was random: the template worm (`sample_worm(None)`) gave the lumped layers an unseeded
+  generator, so the defecation phase, egg-laying times and GCaMP noise differed from run to run, and a reset redrew
+  them. **Fixed in the same commit:** the layers keep a seed (0 for the template, the worm's own seed otherwise) and
+  rebuild the generator at every reset; `test_template_layers_fixed` checks that two template brains and a reset
+  give the same phase. With seed 0 the template's first posterior contraction starts at 16.3 s (derived from the
+  seeded draw and the 45 s period): 5 s and 10 s runs see none, and 20 s runs see it at 16.3-18.3 s and the anterior
+  one at 19.3-20.3 s.
+- **Post hoc look at the saved voltages (descriptive, not a pre-registered test; mean over 1-5 s).** In the control
+  the forward and backward command interneurons are depolarised together: AVA -2.1 mV, AVB -4.3 mV, AVD -6.5 mV.
+  Real worms switch between the two states. Every motor class sits high as well (DA -11.6, AS -9.0, DD -8.6, VD
+  -10.8 mV), so excitatory and inhibitory motor neurons are on together and the body co-contracts. Only the B-type
+  motor neurons move with the body (median SD 1.2 mV DB, 1.5 mV VB; largest 3.5 mV), which is the proprioceptive
+  input arriving, but a few mV does not flip them. In S01 everything sits near -52 mV and the B-types move more
+  (VB median SD 4.3 mV, largest 8.1 mV), still with no alternation.
+- **Verdict:** neither the CeNGEN channel sets nor the four saturation-ending range ends give a rhythm in the closed
+  loop. The question moves to the rhythm generator itself. Candidates for section 9, to be checked against the
+  papers before pre-registration: the B-type proprioceptive coupling and its gain (Wen et al. 2012), A-type intrinsic
+  oscillation (Gao et al. 2018), descending AVB-to-B gap-junction drive (Xu et al. 2018, PNAS), and what keeps AVA
+  and AVB from being on together (the post hoc look above).
+
+## 9. AVA and AVB inhibit each other: the measured sign (Roberts et al. 2016) (pre-registration)
+
+Pre-registered 2026-11-05 18:18 CST, before the code change or any run. Source found by the Director's literature
+agent (`docs/worm/research/RHYTHM_LIT.md`, section 2) and checked by the Director in the PMC full text.
+
+**Evidence.** Roberts et al. 2016, eLife 5:e12572 (PMC4798983), photoactivated AVB while patching AVA, and AVA while
+patching AVB (Fig. 6B-D, n = 9 and 17 for the two directions). In both directions the evoked synaptic current
+reverses negative of the zero-current potential: AVA and AVB inhibit each other (**measured** sign). The authors
+call the connection "likely monosynaptic" (their inference, not measured). Their fitted model makes AVB to AVA about
+6-7x stronger than AVA to AVB (W_FR = -5.40, W_RF = -0.81, Table 2); that ratio is a model fit, not a measurement.
+Fig. 9C-D: ASH to AVB is also inhibitory (**measured** sign).
+
+**What our table says now.** In `syn_sign_receptor` (used when `receptor_sign` is on, as in every closed loop),
+every AVA-AVB pair is 0 (excitatory): Fenyves et al. 2020 call them "complex", so our CeNGEN rule decides (guessed).
+ASH to AVB is + from Fenyves (derived). So the model has mutual excitation where the measurement says mutual
+inhibition, which is the likeliest cause of AVA and AVB being depolarised together (section 8 post hoc look).
+
+**Change (a ledger correction: a measured value wins).** The 7 Cook chemical pairs between AVA and AVB (AVAL>AVBL,
+AVAR>AVBL, AVAR>AVBR, AVBL>AVAL, AVBL>AVAR, AVBR>AVAL, AVBR>AVAR; Cook has no AVAL>AVBR) and the 2 ASH to AVB pairs
+(ASHL>AVBL, ASHR>AVBR; Cook has no cross pairs) become inhibitory: label measured, source_project literature, rule
+`measured`, with Roberts 2016 and the figure in the source. On ASH to AVB this overrides Fenyves, and the row says
+so. The strength stays the symmetric template (EM count x 0.447 nS); the asymmetry is not copied. AVA to AVA and AVB
+to AVB are unchanged (not measured). With `receptor_sign` off the transmitter rule still applies (the toggle's
+neutral state is unchanged). Adopted on the evidence, whatever the run below shows; the run only reports the
+effect. A ledger test checks the 9 rows.
+
+**Runs** (Mac, 20 s each, `scripts/worm/port/closed_loop_c1.py`, `sample_worm(None)` at the template, `receptor_sign=on`,
+`defecation=off`, everything else at the ledger defaults; published body, diacetyl cone field). The loop is
+deterministic (layers seeded since a87d51d), so the two runs differ only in the 9 signs.
+- **s9_ctrl**: the ledger before the change (as built at adf5ba0).
+- **s9_roberts**: the ledger after the change.
+
+**Readouts, over 1-20 s** (after the first-second rise), from the saved frames:
+- AVA = mean soma voltage of AVAL and AVAR; AVB = mean of AVBL and AVBR. **Co-active fraction** = the fraction of
+  frames in which both are above -20 mV. Also their means and the AVA-AVB Pearson correlation.
+- Neurons and muscles above -20 mV in the last frame (as in section 8).
+- B-type SD: the SD over time of each B-type soma voltage (VB01-VB11, DB01-DB07, 18 cells), median and max.
+- Body: centroid net and path displacement (body lengths), maximum activation, and section 8's mid-body
+  dorsal-minus-ventral signal (zero crossings, peak-to-peak, rhythm rule).
+- A figure (AVA and AVB traces, B-type traces, the mid-body signal, body midlines), viewed before anything is said.
+
+**Predictions (the Director's), with bars:**
+- **P1, AVA and AVB stop being co-active.** Needs the control co-active (fraction at least 0.7; otherwise P1 is
+  void). Holds if the s9_roberts co-active fraction is at most 0.2. Falsified if it is 0.5 or more. Between the two:
+  partial, reported as such.
+- **P2, no rhythm.** A rhythm is NOT predicted: Xu et al. 2018 say the B-types must also cross a bifurcation.
+  Holds if the section 8 rhythm rule fails in s9_roberts. If the rule passes, that is a surprise, reported, and it
+  goes to its own pre-registered test; nothing is claimed from it here.
+- Everything else is report-only.
+
+### 9 results (5 Nov, 18:25 CST; Mac; all measured unless labelled)
+
+Both runs finished and are finite (601 frames each; wall 79.2 s and 84.1 s). Readouts in
+`data/worm/brain_runs/s9_signs/` (`s9_ctrl.s9.json`, `s9_roberts.s9.json`), figure `s9.png`, script
+`scripts/worm/port/s9_readouts.py`. Raw frames stay in `/tmp/mine_c1/s9/` (not committed).
+
+| readout (1-20 s unless stated) | s9_ctrl | s9_roberts |
+|---|---|---|
+| AVA and AVB co-active fraction | 1.00 | 1.00 |
+| AVA mean / AVB mean (mV) | -2.11 / -4.35 | -3.48 / -4.89 |
+| AVA-AVB Pearson r | 0.986 | 0.990 |
+| neurons / muscles above -20 mV (last frame) | 108 / 40 | 101 / 44 |
+| B-type SD median / max (mV) | 0.84 / 2.27 | 0.91 / 2.37 |
+| B-type mean V (mV) | -28.2 | -29.0 |
+| max activation | 0.795 | 0.795 |
+| centroid net / path (body lengths) | 0.0007 / 0.0008 | 0.0012 / 0.0013 |
+| mid-body D-V zero crossings / peak-to-peak | 26 / 0.028 | 25 / 0.024 |
+| rhythm rule | fails | fails |
+
+**The control is the old ledger.** s9_ctrl's first 5 s match section 8's `c2_off` bit for bit (max |dV| 0.0 over 151
+frames; 109 neurons above -20 mV in both at 5 s), so the control ran on the old signs and the loop is deterministic. (s9_ctrl started at about 18:19 and the ledger
+was rebuilt at 18:20 while it ran; the signs are read once, when the network is built, so the rebuild did not reach
+it. s9_roberts started after the rebuild.)
+
+**P1 (AVA and AVB stop being co-active): falsified.** The control is co-active (1.00, so P1 is not void), and
+s9_roberts stays co-active at 1.00 (the bar was at most 0.2; 0.5 or more falsifies). The measured inhibition moves
+AVA down by 1.4 mV and AVB by 0.5 mV; their correlation does not change.
+
+**P2 (no rhythm): holds.** The rhythm rule fails in s9_roberts. The zero crossings are a 0.02-0.03 wobble round
+zero, not an alternation.
+
+**Figure (viewed).** In both runs AVA and AVB rise in the first 0.2 s and then sit flat between about -2 and -7 mV
+for the rest of the 20 s. The DB cells sit at about -10 to -25 mV and the VB cells at about -30 to -55 mV, with small
+wobble. Dorsal mean activation is about 0.5 and ventral about 0.3 throughout. The body holds a curl that changes
+shape slowly and never alternates. The two columns are hard to tell apart.
+
+**Why the signs don't separate them (post hoc, descriptive; Cook EM counts measured, fractions derived).** The 9
+changed pairs are a small share of each cell's chemical input: AVAL gets 19 of its 667 chemical EM contacts from
+the changed pairs (AVBL 9, AVBR 10), AVAR 28 of 685, AVBL 19 of 338 (AVAL 2, AVAR 3, ASHL 14), AVBR 10 of 333 (AVAR
+4, ASHR 6), so 3-6%. After the change, inhibitory input is 30/667, 45/685, 46/338 and 26/333 (4-14%). The four cells
+also have 230, 254, 132 and 134 gap EM contacts, only 3 of them between AVA and AVB. So the measured mutual
+inhibition is small next to a large common, mostly excitatory drive, which is the network-wide saturation of sections 4
+and 4c (D8: 100 neurons above -20 mV at 6 s; here 101-108 in the last frame). This is an explanation from the counts (inferred), not tested.
+
+**Verdict.** The sign correction stays adopted, because it is measured. It does not by itself make AVA and AVB
+exclusive: their co-activity comes from the common excitatory state, not mainly from the direct AVA-AVB sign. The
+next step is a strategy call (Director and Ben) on the rhythm and on the over-excited network, not another sign edit.
+Section 10 is free for the rhythm port if that is chosen.

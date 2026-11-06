@@ -23,18 +23,18 @@ cells, toggles, seed = json.loads(sys.argv[1]), json.loads(sys.argv[2]), json.lo
 b = Brain(sample_worm(seed), toggles=toggles, cells=cells)
 def run():
     b.reset()
-    eca = b.soma[0](0.5).eca
+    eca, dmp = b.soma[0](0.5).eca, b.layers.dmp_t
     V, A = [], []
     for k in range(400):
         b.extra_pA[:5] = 20.0 if 150 <= k < 300 else 0.0
         o = b.step()
         V.append(o.v_mV); A.append(o.muscle_activation)
-    return eca, np.array(V), np.array(A), o
-eca, V, A, o = run()
-_, V2, _, _ = run()
+    return eca, dmp, np.array(V), np.array(A), o
+eca, dmp, V, A, o = run()
+_, dmp2, V2, _, _ = run()
 print(json.dumps(dict(eca=eca, finite=bool(np.isfinite(V).all()), vmin=float(V.min()), vmax=float(V.max()),
     same=bool(np.array_equal(V, V2)), shift=float(np.abs(V[200:300, 5:].mean(0) - V[50:150, 5:].mean(0)).max()),
-    placed=dict(b.placed), n=len(b.cell_names), n_act=len(o.muscle_activation), amax=float(A.max()))))
+    placed=dict(b.placed), n=len(b.cell_names), n_act=len(o.muscle_activation), amax=float(A.max()), dmp=[dmp, dmp2])))
 """
 
 
@@ -81,6 +81,13 @@ def test_small_brain(toggles):
 def test_drawn_brain_runs():
     r = _run(dict(wiring="cook"), seed=3)
     assert r["finite"] and r["same"]
+
+
+def test_template_layers_fixed():
+    """The template worm's stochastic layers (defecation phase, egg-laying times, GCaMP noise) replay across brains
+    and resets; before 5 Nov an unseeded generator gave every template run its own defecation phase."""
+    a, b = _run(dict(wiring="cook")), _run(dict(wiring="cook"))
+    assert a["dmp"][0] == a["dmp"][1] == b["dmp"][0]
 
 
 def test_proprio_senses_anterior():
@@ -130,3 +137,37 @@ print(json.dumps(dict(worst=worst, passive=hasattr(seg, "pas"))))
     assert p.returncode == 0, p.stderr[-2000:]
     x = json.loads(p.stdout.strip().splitlines()[-1])
     assert x["worst"] < 1e-5 and not x["passive"]          # the generated mods round to 6 significant figures
+
+
+def test_gap_rectification():
+    """gap_rectification on: AVAL-DA01 junctions pass current from the motor neuron into AVAL at the full conductance
+    and back at 1 / gap_rect_ratio of it (Liu 2017), conserving current; off, symmetric."""
+    code = """
+import json
+from wormemu.brain import Brain, sample_worm
+out = {}
+for tg in ("off", "on"):
+    b = Brain(sample_worm(None), toggles=dict(wiring="cook", gap_rectification=tg), cells=["AVAL", "DA01"])
+    b.reset()
+    gaps = [pp for pp in b.conn if "gap" in pp.hname()]
+    ava, da = b.soma[b.idx["AVAL"]], b.soma[b.idx["DA01"]]
+    for name, va, vd in (("mn_high", -40.0, -30.0), ("ava_high", -30.0, -40.0)):
+        for sec, v in ((ava, va), (da, vd)):
+            for seg in (s for x in sec.wholetree() for s in x):
+                seg.v = v
+        b.h.fcurrent()
+        out[tg + name] = [abs(sum(pp.i for pp in gaps)), sum(abs(pp.i) for pp in gaps)]
+    out[tg + "placed"] = dict(b.placed)
+    out["ratio"] = sample_worm(None).v("gap_rect_ratio")
+print(json.dumps(out))
+"""
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    p = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, env=env, cwd=ROOT, timeout=600)
+    assert p.returncode == 0, p.stderr[-2000:]
+    x = json.loads(p.stdout.strip().splitlines()[-1])
+    assert x["onplaced"].get("gap_nn_rect", 0) > 0 and "gap_nn_rect" not in x["offplaced"]
+    for k in ("offmn_high", "offava_high", "onmn_high", "onava_high"):
+        assert x[k][0] < 1e-12 * x[k][1]                   # the two halves carry equal and opposite currents
+    assert x["offmn_high"][1] == pytest.approx(x["offava_high"][1])
+    assert x["onmn_high"][1] == pytest.approx(x["offmn_high"][1])                    # motor neuron -> AVAL: full
+    assert x["onava_high"][1] == pytest.approx(x["offava_high"][1] / x["ratio"])    # AVAL -> motor neuron

@@ -570,7 +570,7 @@ ASHL>AIZL,1,guessed,"CeNGEN AIZ: excitatory receptors 26, inhibitory 152 TPM",ou
 ASHL>ASKL,1,guessed,"CeNGEN ASK: excitatory receptors 0, inhibitory 87 TPM",ours,cengen,no pred,1,0,1
 ASHL>AVAL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHL>AVAR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
-ASHL>AVBL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,1,1,0
+ASHL>AVBL,1,measured,Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 9C-D: ASH to AVB inhibitory; overrides Fenyves 2020 (+),literature,measured,+,1,1,1
 ASHL>AVDL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHL>AVDR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHL>AVFL,0,guessed,"CeNGEN AVF: excitatory receptors 181, inhibitory 89 TPM",ours,cengen,no pred,0,0,0
@@ -588,7 +588,7 @@ ASHR>AIAR,1,guessed,"CeNGEN AIA: excitatory receptors 106, inhibitory 1333 TPM",
 ASHR>AIBR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHR>ASHR,1,guessed,"CeNGEN ASH: excitatory receptors 0, inhibitory 30 TPM",ours,cengen,no pred,1,0,1
 ASHR>AVAR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
-ASHR>AVBR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,1,1,0
+ASHR>AVBR,1,measured,Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 9C-D: ASH to AVB inhibitory; overrides Fenyves 2020 (+),literature,measured,+,1,1,1
 ASHR>AVDL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHR>AVDR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 ASHR>AVER,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
@@ -688,7 +688,7 @@ AVAL>AS08,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",
 AVAL>AS10,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVAL>AS11,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVAL>AVAR,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
-AVAL>AVBL,0,guessed,"CeNGEN AVB: excitatory receptors 387, inhibitory 378 TPM",ours,cengen,complex,0,0,0
+AVAL>AVBL,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
 AVAL>AVDL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVAL>AVDR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVAL>AVEL,1,derived,Fenyves et al. 2020 S1 Data (NT+R): -,literature,fenyves,-,1,0,1
@@ -733,8 +733,8 @@ AVAR>AS08,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",
 AVAR>AS09,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVAR>AS11,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVAR>AVAL,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
-AVAR>AVBL,0,guessed,"CeNGEN AVB: excitatory receptors 387, inhibitory 378 TPM",ours,cengen,complex,0,0,0
-AVAR>AVBR,0,guessed,"CeNGEN AVB: excitatory receptors 387, inhibitory 378 TPM",ours,cengen,complex,0,0,0
+AVAR>AVBL,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
+AVAR>AVBR,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
 AVAR>AVDL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVAR>AVDR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVAR>AVEL,1,guessed,"CeNGEN AVE: excitatory receptors 651, inhibitory 717 TPM",ours,cengen,not in Fenyves,1,0,1
@@ -774,8 +774,8 @@ AVAR>VA11,0,guessed,"CeNGEN VA: excitatory receptors 1326, inhibitory 346 TPM",o
 AVBL>AS04,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVBL>AS05,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVBL>AS10,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
-AVBL>AVAL,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
-AVBL>AVAR,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
+AVBL>AVAL,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
+AVBL>AVAR,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
 AVBL>AVBR,0,guessed,"CeNGEN AVB: excitatory receptors 387, inhibitory 378 TPM",ours,cengen,complex,0,0,0
 AVBL>AVDR,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVBL>AVEL,1,guessed,"CeNGEN AVE: excitatory receptors 651, inhibitory 717 TPM",ours,cengen,not in Fenyves,1,0,1
@@ -800,8 +800,8 @@ AVBR>AS03,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",
 AVBR>AS04,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
 AVBR>AS05,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,not in Fenyves,0,0,0
 AVBR>AS10,0,guessed,"CeNGEN AS: excitatory receptors 1906, inhibitory 1101 TPM",ours,cengen,complex,0,0,0
-AVBR>AVAL,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
-AVBR>AVAR,0,guessed,"CeNGEN AVA: excitatory receptors 2115, inhibitory 837 TPM",ours,cengen,complex,0,0,0
+AVBR>AVAL,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
+AVBR>AVAR,1,measured,"Roberts et al. 2016 eLife 5:e12572 (PMC4798983) Fig. 6B-D: AVA and AVB inhibit each other (photoactivation plus patch, n = 9 and 17 for the two directions); Fenyves 2020: complex",literature,measured,complex,0,0,1
 AVBR>AVBL,0,guessed,"CeNGEN AVB: excitatory receptors 387, inhibitory 378 TPM",ours,cengen,complex,0,0,0
 AVBR>AVDL,0,derived,Fenyves et al. 2020 S1 Data (NT+R): +,literature,fenyves,+,0,0,0
 AVBR>AVER,1,derived,Fenyves et al. 2020 S1 Data (NT+R): -,literature,fenyves,-,1,0,1
