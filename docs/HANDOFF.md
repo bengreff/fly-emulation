@@ -1,6 +1,6 @@
 # Handoff: current state
 
-**Rewritten each session; do not append.** State as of 2026-11-05 18:10 CST, end of the worm BRAIN + LEDGER
+**Rewritten each session; do not append.** State as of 2026-11-05 18:26 CST, end of the worm BRAIN + LEDGER
 worker's evening block (Director session director-20 relays Ben). A second worker, the BODY worker
 (fly-emulation-08, session now ended), owns body, viewer, video and the closed-loop driver in worktree
 `.claude/worktrees/wormbody` (branch `worktree-wormbody`); its state is in its own commits, not here.
@@ -12,7 +12,7 @@ worker's evening block (Director session director-20 relays Ben). A second worke
   be literature values or toggles, never tuning toward behaviour. Missing mechanisms are ported from published
   models, not written fresh. Day plan: `~/director/logs/day-2026-11-05/WEEK.md` (Fri 6 CeNGEN channels, synapses,
   gaps, peptides, monoamines, closed loop; Sat 7 remaining layers; Sun 8 `sample_worm(seed)` draws and guardrails).
-- **Read first:** `docs/worm/STRATEGY.md`, `docs/worm/BRAIN_PORT.md` (sections 1-8: every port, diagnosis and
+- **Read first:** `docs/worm/STRATEGY.md`, `docs/worm/BRAIN_PORT.md` (sections 1-9: every port, diagnosis and
   closed-loop run, each pre-registered, with its bars and results), `docs/worm/INTERFACE.md` (brain-body contract,
   cost, muscle map, toggles, settled questions), `docs/worm/ADOPTED.md` (credits and licences),
   `docs/worm/ledger.json` (the catalogue of numbers, with `open_questions`), `docs/worm/SCOREBOARD.md`.
@@ -49,30 +49,40 @@ worker's evening block (Director session director-20 relays Ben). A second worke
   class is high, and the B-type motor neurons, the ones that sense body curvature, move only 1-1.5 mV with the body.
   So the model has no rhythm generator yet. How to add one (port a published rhythm model, or fit inside the
   ranges, per STRATEGY.md) is a strategy call for the Director and Ben.
+- **AVA and AVB now inhibit each other, as measured, but they are still on together** (BRAIN_PORT section 9,
+  20 s closed loops on the Mac, figure `data/worm/brain_runs/s9_signs/s9.png`). Roberts et al. 2016 (eLife, PMC4798983,
+  Fig. 6B-D) recorded AVA and AVB inhibiting each other, and ASH inhibiting AVB (Fig. 9C-D); our table had them
+  excitatory. The 7 Cook AVA-AVB pairs and the 2 ASH-AVB pairs are now inhibitory, labelled measured, overriding
+  Fenyves on ASH to AVB; the strength stays the symmetric template (the paper's 6-7x asymmetry is a model fit).
+  Result: AVA and AVB are co-active in 100% of frames before and after (bar for success was at most 20%), correlation
+  0.99, AVA 1.4 mV lower; no rhythm, as predicted. The changed pairs are only 3-6% of each cell's chemical input
+  (Cook counts), so the common, mostly excitatory drive (the network-wide saturation, about 100 neurons above -20 mV)
+  holds them both up. The sign correction stays because it is measured; it is not the fix for co-activity.
 - **A bug found and fixed:** the template worm's lumped layers (defecation clock, egg-laying, GCaMP noise) used an
   unseeded random generator, so each run had its own defecation phase. Two of ten closed loops caught a posterior
   body contraction in their window, and one section 6 note had misread it as "one muscle". Now seeded (0 for the
   template) and rebuilt on reset, with a test. The template's first posterior contraction now comes at 16.3 s
   (derived), inside the body worker's 20 s runs; pass `defecation=off` for a clean rhythm test.
-- **Ledger** (`docs/worm/ledger.json`, built 17:47, measured counts): 90,112 numbers in 368 rows; physiology 19,125:
-  published fit 7,058, guessed 8,965, derived 3,078, inferred 11, measured 13, absent 0. Mechanisms: 34 have, 24
+- **Ledger** (`docs/worm/ledger.json`, rebuilt 18:20 for section 9, measured counts): 90,112 numbers in 368 rows;
+  physiology 19,125: published fit 7,058, guessed 8,958, derived 3,076, inferred 11, measured 22, absent 0. Mechanisms: 34 have, 24
   partial, 1 absent (`other_cells`: hypodermis, seam, excretory canal, coelomocytes, other glia; no interface needs
   them this week).
 - **Mechanisms audit** (`docs/worm/MECHANISMS_AUDIT.md`, 18:08, strict, one line per PLAN row 1-23): full 7 (cell
   inventory for neurons and body-wall muscle, morphology, channel presence, kinetics, densities, calcium, gaps per
   innexin), lumped 12, spec only 2 (glia is a constant gain; the metabolism store is read by nothing), missing 2
-  (other non-neural cells, gene expression). Eight rows have never been checked by any test or run, and five
+  (other non-neural cells, gene expression). Label splits are per element, as the ledger counts them (rows 5, 7
+  and 12 corrected 18:23). Eight rows have never been checked by any test or run, and five
   (peptides, monoamines, glia, slow signalling, metabolism) have never been switched on.
 - **Caveats:** the c302 muscle is graded, not spiking; the proprioceptive gain (2 pA per 1/mm) is guessed with no
   cited range; the gap template rests on a guessed range (C4) and is 22x the ported per-EM value; the CeNGEN
-  receptor rule for the 1584 pairs Fenyves leaves blank is our own guess; `sample_worm(seed)` has no joint guardrail
+  receptor rule for the 1577 pairs Fenyves leaves blank and nothing measured covers is our own guess; `sample_worm(seed)` has no joint guardrail
   yet (seed 0 draws a muscle that never contracts), so use `sample_worm(None)` until Sunday.
 
 ## Running now
 
-Nothing of mine on the Mac or backhouse (checked 18:10; the section 8 screen finished 17:52). Saved closed-loop
-runs (frames, activations, voltages) are in `/tmp/mine_c1/` on the Mac and will not survive a reboot; the readouts
-and figures are committed. Other projects' jobs on backhouse: leave them alone.
+Nothing of mine on the Mac or backhouse (checked 18:26; the section 9 runs finished 18:22). Saved closed-loop
+runs (frames, activations, voltages) are in `/tmp/mine_c1/` on the Mac (section 9 in `/tmp/mine_c1/s9/`) and will
+not survive a reboot; the readouts and figures are committed. Other projects' jobs on backhouse: leave them alone.
 
 **backhouse's repo copy is stale:** `~/worm-port/repo/` predates the vendored c302 muscle mods
 (`third_party/c302`) and our `src/wormemu/nmodl/rectgap.mod`. Resync (and recompile the mods) before any brain run
@@ -80,10 +90,12 @@ there with `muscle_active` or `gap_rectification` on; sections 6-8 ran on the Ma
 
 ## Next (this order)
 
-1. **Rhythm: wait for the strategy call. Do not start a port.** The Director is getting the literature
-   (`docs/worm/research/RHYTHM_LIT.md`, Sonnet) and will decide with Ben before the next session whether to port a
-   published rhythm model or fit inside the ranges (STRATEGY.md). Whatever is chosen: pre-register it as BRAIN_PORT
-   section 9, make it a toggle, and test with `scripts/worm/port/closed_loop_c1.py` with `defecation=off` and the
+1. **Rhythm: wait for the strategy call. Do not start a port.** The literature is in
+   `docs/worm/research/RHYTHM_LIT.md` (committed adf5ba0). The Director and Ben decide whether to port a published
+   rhythm model or fit inside the ranges (STRATEGY.md). Section 9 adds a fact for that call: AVA and AVB are held on
+   together by the common excitatory input, not by their direct signs, so a rhythm model has to work on a network
+   with about 100 neurons above -20 mV, or the saturation is dealt with first. Whatever is chosen: pre-register it
+   as BRAIN_PORT section 10 (section 9 is the measured signs), make it a toggle, and test with `scripts/worm/port/closed_loop_c1.py` with `defecation=off` and the
    section 8 rhythm rule. For Thursday's bar, work down `docs/worm/MECHANISMS_AUDIT.md`: the eight rows no test
    has checked, starting with peptides and monoamines (item 2).
 2. Friday's list (WEEK.md): peptides and monoamines on in the full brain.
@@ -100,7 +112,8 @@ there with `muscle_active` or `gap_rectification` on; sections 6-8 ran on the Ma
 c602acc range-end literature committed and the excitatory reversal range adopted (6a, D8b); 82114c4
 `gap_rectification` wired (section 7, R1-R3, C2); a87d51d section 8 screen (no rhythm candidate), template layer
 seed fix, readouts in `c1_readouts.py`; 38ffb2d section 8 post hoc voltage look; ce5abe7 HANDOFF; 4b50952
-`MECHANISMS_AUDIT.md`; this HANDOFF.
+`MECHANISMS_AUDIT.md`; 0ab24a7 HANDOFF; adf5ba0 `RHYTHM_LIT.md`; 8639151 section 9 pre-registered; d4320cd
+section 9 results, measured signs in the ledger, audit label fix; this HANDOFF.
 
 ## Parked: W1 (Jaxley RIM and AFD fits)
 
@@ -154,8 +167,9 @@ held-out sweeps are still unspent (register below).
 | Naudin 2022 RIM and AFD current clamp and I-V (same deposit) | file headers and the voltage-clamp `n` columns viewed. **Training sweeps 0, 2, 4, 6, 8, 10 now in use** (5 Nov 02:14 on: `fit_w1.py` smoke test `w1smoke`, then M1 run `w1m1`; training RMSEs printed). The held-out sweeps are dropped at load (`Vd = Vd[TRAIN]`) and no held-out or voltage-clamp value has been printed, plotted or used. The AIY loader read the whole I-V sheet into memory but used only AIY columns | **held out for W1**, split and bars pre-registered in `docs/worm/W1_RIM_AFD.md` (5 Nov 01:13): train sweeps 0, 2, 4, 6, 8, 10; held out 1, 3, 5, 7, 9 and all voltage clamp. Score once, all models together (see Next) |
 | Nicoletti 2024 published AIY and RIM models (densities, kinetics, code) | seen; kinetics SET the channel library (22 channels); AIY densities SET one start of the spike fit and its baseline; RIM densities used as a port-check configuration (`port2`, 5 Nov) and, as registered, SET one start of `w1rim1` and its published-model baseline | can't validate the library |
 | Randi 2023 functional atlas; Atanas 2023 whole-brain data; Witvliet 2021; Cook 2019; CeNGEN; the neuropeptide connectome | downloaded (`~/worm-data`, MANIFEST); Cook 2019 used as structure (the brain's default wiring since 5 Nov, the ledger's pair counts), CeNGEN as expression (channel presence, receptor signs, innexins, modulator matrices) and Fenyves 2020's sign predictions as structure (`receptor_sign`); no activity data read | seed the held-out split (PLAN c.4) before the first fit that uses them |
-| Closed-loop engineering runs (body worker, 5 Nov: seed 0 and `sample_worm(None)` + receptor_sign, 3-10 s; brain worker BRAIN_PORT C1, C2 and the section 8 screen, 10 runs of 5 s) | engineering output only: posture, centroid, activations and voltages seen; the section 8 rhythm rule is an internal screen, nothing compared to a recording or scored against behaviour | not a behaviour test; a crawling check needs its own pre-registered bar |
+| Closed-loop engineering runs (body worker, 5 Nov: seed 0 and `sample_worm(None)` + receptor_sign, 3-10 s; brain worker BRAIN_PORT C1, C2, the section 8 screen, 10 runs of 5 s, and section 9, 2 runs of 20 s) | engineering output only: posture, centroid, activations and voltages seen; the section 8 rhythm rule is an internal screen, nothing compared to a recording or scored against behaviour | not a behaviour test; a crawling check needs its own pre-registered bar |
 | Range-end literature (`docs/worm/research/RANGE_ENDS_LIT.md`: Richmond and Jorgensen 1999; Lindsay et al. 2011; and the sources it lists for the other range ends) | read as literature, not held-out data; Richmond and Jorgensen 1999 and Lindsay 2011 SET the excitatory reversal range (BRAIN_PORT 6a) | can't validate the excitatory reversal |
+| Roberts et al. 2016 eLife 5:e12572 (AVA-AVB and ASH-AVB photoactivation plus patch, Fig. 6B-D and 9C-D) | read as literature; SETS the 9 measured signs in `syn_sign_receptor` (BRAIN_PORT 9) | can't validate those signs; the section 9 runs are engineering output, nothing compared to a recording |
 | Liu, Chen, Mailler and Wang 2017 Nat Commun 8:14818 (VA5 to AVA junction rectification direction) | SET the `gap_rectification` direction | can't validate it |
 | c302 C2 muscle model (Gleeson et al.; `third_party/c302`) | SETS the `muscle_active` membrane (published fit) | can't validate the muscle |
 | Behaviour corpus (`docs/worm/STATE_OF_THE_ART.md`, about 90 items) | read as a list of items; no outcome scored | seal about a third by seed before any behaviour fit (PLAN c.4, W2) |

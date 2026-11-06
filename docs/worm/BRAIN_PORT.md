@@ -610,7 +610,9 @@ Both runs finished and are finite (601 frames each; wall 79.2 s and 84.1 s). Rea
 | rhythm rule | fails | fails |
 
 **The control is the old ledger.** s9_ctrl's first 5 s match section 8's `c2_off` bit for bit (max |dV| 0.0 over 151
-frames; 109 neurons above -20 mV in both at 5 s), so the control ran on the old signs and the loop is deterministic.
+frames; 109 neurons above -20 mV in both at 5 s), so the control ran on the old signs and the loop is deterministic. (s9_ctrl started at about 18:19 and the ledger
+was rebuilt at 18:20 while it ran; the signs are read once, when the network is built, so the rebuild did not reach
+it. s9_roberts started after the rebuild.)
 
 **P1 (AVA and AVB stop being co-active): falsified.** The control is co-active (1.00, so P1 is not void), and
 s9_roberts stays co-active at 1.00 (the bar was at most 0.2; 0.5 or more falsifies). The measured inhibition moves
