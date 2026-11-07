@@ -255,9 +255,9 @@ Verdicts:
     reading that as wiring.
 - **AVAL barely responds to its own actuator** (0.048 at all upper bounds). AVAL is not held out, but the big
   interneurons' columns will fit poorly.
-- **The readout's Ca pool is a workaround.** The brain's own Ca-gated channels still see the pinned pool; B1 is
-  asked for the cainternm units fix. If it lands before worm-v1, the readout switches to the brain's own Ca and
-  this line is updated before launch.
+- **The readout's Ca pool** (updated by Amendments 2 and 4, before launch). B1's units fix landed in merge 1, so
+  the readout reads the brain's own Ca, the pool its Ca-gated channels see; on worm-v1 each neuron's pool is
+  sized by its own volume. The pool is one well-mixed compartment per cell (mech/ca_volume's validity range).
 - **Levamisole** (Randi's immobiliser, an L-AChR agonist) is not modelled.
 - **Mini-batches** of 4 make the loss noisy between generations; the plateau rule uses 10-generation means for
   that reason.
@@ -390,7 +390,7 @@ re-scores identically (2 stimulations, 273 terms, no non-finite values).
    0.0002. Across all cells the change is RMS 2.3e-4, largest 0.0048. No cell is above -20 mV after warm-up.
 4. **Reach, measured** (30 s windows, readout at 2b row 3, reference integration). ASHL 0.385, AWAL 0.345,
    AVAL 0.0098; on merge 1 the same values gave 0.53, 0.75 and 0.043. The training median is 0.43, so the
-   readout's upper bounds no longer reach the median autoresponse. Risk 1 of section 8 (values pinned at a bound)
+   readout's upper bounds no longer reach the median autoresponse. The first risk in section 8 (values pinned at a bound)
    is now more likely. The plan does not change: the values stay inside their ranges, and pinned values are
    reported.
 5. **Integration re-checked on worm-v1** (measured 01:21-01:45, against h_dt 0.5 with mechanisms every 1 ms):
@@ -403,7 +403,6 @@ re-scores identically (2 stimulations, 273 terms, no non-finite values).
 
    h_dt 5 passes the bar (0.003) by 16x at all three value sets and stays the fit's step.
 6. **The wrong model on worm-v1** rewires exactly as on merge 1: 5,868 of 6,301 chemical sites and 1,388 of
-   1,390 non-rectifying gap junctions moved, 138 rectifying junctions kept; the run is finite. Gap junctions that
-   modules add after the wiring (208, to organs and the passive end organs) are not shuffled: the wrong model
-   shuffles the neuronal connectome only.
+   1,390 non-rectifying gap junctions moved, 138 rectifying junctions kept; the run is finite. The 208 gap junctions
+   that modules add after the wiring are not shuffled: the wrong model shuffles Cook's neuronal wiring only.
 
