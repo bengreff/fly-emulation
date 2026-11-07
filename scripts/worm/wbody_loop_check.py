@@ -1,7 +1,9 @@
 """Everything-on closed loop with wbody's modules registered (night of 6 Nov 2026, wbody).
 
 brain_loop_check.py (wbrain's) with the senses_* modules (and later wbody modules) appended to mech.REGISTRY in
-this process, since REGISTRY itself is wbrain's file. Same summary; output in runs/worm/night_wbody/LABEL.json.
+this process, since REGISTRY itself is wbrain's file. Same summary, in runs/worm/night_wbody/LABEL.summary.json
+(LABEL.json is the body's own run record, read by metaworm.load and the viewer; before 21:50 on 6 Nov the summary
+overwrote it).
 
 Usage: PYTHONPATH=src .venv/bin/python scripts/worm/wbody_loop_check.py SECONDS LABEL ['{"toggle": "value"}']
        [--modules=temperature,senses_chem,senses_touch,senses_proprio] [--env=standard|none]
@@ -86,7 +88,7 @@ def main():
     cols = ["t_ms", "tap", "contact_uN", "nose_uN"] + list(HEAD) + [f"po_{c}" for c in PO] + ["worm_T_C"]
     res["trace_cols"], res["trace_every_10"] = cols, tr[::10].round(5).tolist()
     np.save(out.parent / f"{label}.trace.npy", tr)
-    (out.parent / f"{label}.json").write_text(json.dumps(res, indent=1, default=float))
+    (out.parent / f"{label}.summary.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps({k: res[k] for k in ("label", "wall_per_bio_s", "finite", "max_abs_v_mV",
                                           "neurons_above_m20_last2s", "max_activation", "mechs")}, default=float))
 

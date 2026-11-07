@@ -177,12 +177,48 @@ def brain_dt_schedule(n_steps: int, dt_body_ms: float) -> np.ndarray:
     return np.diff(t)
 
 
+def _flat(prefix: str, x, out: dict, n_cells: int):
+    """Scalars of a mechanism output, flattened to 'key.sub' names. Per-cell arrays (length n_cells) are left out
+    (GCaMP is recorded on its own); other numeric arrays give their mean and max."""
+    if isinstance(x, dict):
+        for k, v in x.items():
+            _flat(f"{prefix}.{k}" if prefix else str(k), v, out, n_cells)
+        return
+    if isinstance(x, (str, bytes)) or x is None:
+        return
+    a = np.asarray(x)
+    if a.dtype.kind not in "fiub":
+        return
+    if a.ndim == 0:
+        out[prefix] = float(a)
+    elif a.size and a.size != n_cells:
+        if a.size <= 4:
+            out.update({f"{prefix}[{j}]": float(v) for j, v in enumerate(a.ravel())})
+        else:
+            out[prefix + ".mean"], out[prefix + ".max"] = float(np.nanmean(a)), float(np.nanmax(a))
+
+
+def state_row(brain, obs: BodyToBrain, n_cells: int) -> dict:
+    """One frame of mechanism state for the viewer: what the world sent (world.*) and every module's out."""
+    row = {"world.tap": float(obs.tap), "world.contact_uN": float(np.sum(obs.contact_force_uN)),
+           "world.nose_uN": float(obs.nose_force_uN)}
+    _flat("world.head", dict(obs.head), row, n_cells)
+    _flat("world.tail", dict(obs.tail), row, n_cells)
+    mo = getattr(brain, "mech_out", None)
+    if mo is None:
+        mo = getattr(getattr(brain, "b", None), "mech_out", None)
+    _flat("", mo or {}, row, n_cells)
+    return row
+
+
 def run(brain, body: Body, seconds: float, record_every: int | None = None, log_every_s: float = 1.0,
         brain_config: dict | None = None) -> dict:
     """Closed loop for `seconds`. `brain` has reset() -> BrainToBody and step(obs, dt_ms) -> BrainToBody (brain.py
     or a stand-in). Records the cells' v_mV at the body's frames (every frame_every physics steps) into
-    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), and adds the run details to out.json (`brain_config`:
-    how the brain was made, e.g. seed and toggles, recorded as given)."""
+    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), the brain's GCaMP dF/F into out.gcamp.f32 (same shape,
+    when the brain gives it), every module's scalar state into out.state.f32 [n_frames, n_state] (names in
+    out.json "state_names"; NaN where a module had not written the key yet), and adds the run details to out.json
+    (`brain_config`: how the brain was made, e.g. seed and toggles, recorded as given)."""
     n = int(round(seconds / body.dt_s))
     every = record_every or body.frame_every
     dts = brain_dt_schedule(n, body.dt_s * 1000.0)
@@ -190,8 +226,11 @@ def run(brain, body: Body, seconds: float, record_every: int | None = None, log_
     obs = body.obs
     names = list(getattr(brain, "cell_names", []))
     neural = open(body.out + ".neural.f32", "wb")
+    gc = []
+    states = [state_row(brain, obs, len(names))]
     if cmd.v_mV is not None:
         neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+    gc.append(None if cmd.gcamp_dff is None else np.asarray(cmd.gcamp_dff, np.float32))
     act_max = 0.0
     t0 = time.time()
     t_brain = 0.0
@@ -202,19 +241,29 @@ def run(brain, body: Body, seconds: float, record_every: int | None = None, log_
         t_brain += dts[i]
         obs = body.recv()
         act_max = max(act_max, float(np.max(cmd.muscle_activation)))
-        if (i + 1) % every == 0 and cmd.v_mV is not None:
-            neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+        if (i + 1) % every == 0:
+            if cmd.v_mV is not None:
+                neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+            gc.append(None if cmd.gcamp_dff is None else np.asarray(cmd.gcamp_dff, np.float32))
+            states.append(state_row(brain, obs, len(names)))
         if obs.t_ms / 1000.0 >= next_log:
             print(f"  t {obs.t_ms / 1000:.2f} s  wall {time.time() - t0:.1f} s  max act {act_max:.3f}  "
                   f"max |kappa| {np.abs(obs.curvature_per_mm).max():.2f} /mm", flush=True)
             next_log += log_every_s
     neural.close()
     wall = time.time() - t0
+    has_gc = any(g is not None for g in gc)
+    if has_gc:
+        nan = np.full(len(names), np.nan, np.float32)
+        np.array([nan if g is None else g for g in gc], np.float32).tofile(body.out + ".gcamp.f32")
+    state_names = sorted({k for r in states for k in r})
+    np.array([[r.get(k, np.nan) for k in state_names] for r in states], np.float32).tofile(body.out + ".state.f32")
     meta = body.close()
     meta.update({"mode": "closed_loop", "brain": type(brain).__name__, "seconds": n * body.dt_s,
                  "frame_dt": body.dt_s * every, "loop_wall_s": wall, "exchange_ms": body.dt_s * 1000.0,
                  "brain_dt_ms_pattern": [float(x) for x in dts[:6]], "brain_t_end_ms": t_brain,
-                 "brain_config": brain_config or {}, "cells": names, "max_activation": act_max, "scene": {"field": body.scene.field,
+                 "brain_config": brain_config or {}, "cells": names, "max_activation": act_max,
+                 "state_names": state_names, "gcamp": has_gc, "body_info": getattr(body, "body_info", {}), "scene": {"field": body.scene.field,
                  "target": body.scene.target, "channel": body.scene.channel, "params": body.scene.params}})
     json.dump(meta, open(body.out + ".json", "w"))
     return meta
