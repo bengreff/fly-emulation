@@ -724,6 +724,14 @@ class Brain:
             for s, m in zip(self.soma, self.is_muscle):
                 for seg in (s if m else ()):
                     seg.cai = 0.0                        # c302's initial concentration
+        for name, (cells, pv, base, cur) in self._gt.items():
+            cur[:] = 1.0
+            pv.scatter(self.h.Vector(base))
+        if self._sg is not None:                         # before finitialize: wsyn INITIAL reads relgain
+            _, _, _, rel, rec, crel, crec = self._sg
+            crel[:], crec[:] = 1.0, 1.0
+            rel.scatter(self.h.Vector(crel))
+            rec.scatter(self.h.Vector(crec))
         self.h.finitialize(V_INIT)
         if self.mact:
             for s, m in zip(self.soma, self.is_muscle):
@@ -731,9 +739,6 @@ class Brain:
                     seg.v = V_INIT_MUSCLE
             self.h.finitialize()                         # keeps each segment's v
         self.layers.reset()
-        for name, (cells, pv, base, cur) in self._gt.items():
-            cur[:] = 1.0
-            pv.scatter(self.h.Vector(base))
         for m in self.mechs:
             m.reset()
         self.mech_out = {}
