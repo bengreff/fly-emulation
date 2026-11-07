@@ -1,4 +1,4 @@
-# Worm mechanisms audit: rows 1-28 (7 Nov 2026, 01:20 CST, main at 5b7e141)
+# Worm mechanisms audit: rows 1-28 (7 Nov 2026, 01:14 CST, main at 5b7e141)
 
 One strict line per row: what the code on main does, not what a plan, a ledger row or a builder says. Rows 1-23
 are PLAN.md section a; rows 24-28 were added on 6 Nov (plasticity, temperature, noise, pumps, sleep). Written by
