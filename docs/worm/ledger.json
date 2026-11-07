@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:54 CST",
+ "generated_at": "2026-11-07 03:56 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 1693,
   "mechanisms": 88,
   "by_label": {
-   "derived": 67510,
-   "guessed": 9313,
+   "derived": 67509,
+   "guessed": 9314,
    "inferred": 328,
    "measured": 6183,
    "published_fit": 8103
   },
-  "known": 82124,
-  "placeholder": 9313,
+  "known": 82123,
+  "placeholder": 9314,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9313
+  "must_fill": 9314
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9313,
-   "derived": 3102,
+   "guessed": 9314,
+   "derived": 3101,
    "inferred": 328,
    "measured": 331
   },
-  "known": 11137,
-  "placeholder": 9313,
+  "known": 11136,
+  "placeholder": 9314,
   "gap": 0,
-  "must_fill": 9313
+  "must_fill": 9314
  },
  "source_by_fill_kind": {
   "all": {
@@ -48,9 +48,9 @@
     "derived": 64408
    },
    "literature": {
-    "guessed": 5473,
+    "guessed": 5474,
     "measured": 6182,
-    "derived": 3102,
+    "derived": 3101,
     "inferred (ours)": 28,
     "published fit": 318
    },
@@ -72,8 +72,8 @@
     "guessed": 1
    },
    "literature": {
-    "guessed": 5473,
-    "derived": 3102,
+    "guessed": 5474,
+    "derived": 3101,
     "measured": 330,
     "inferred (ours)": 28,
     "published fit": 318
@@ -137,8 +137,8 @@
    "guessed": 65
   },
   "global": {
-   "derived": 17,
-   "guessed": 141,
+   "derived": 16,
+   "guessed": 142,
    "inferred": 44,
    "measured": 30,
    "published_fit": 277
@@ -1548,8 +1548,8 @@
    "absent_reason": "",
    "numbers": 21,
    "by_label": {
-    "derived": 2,
-    "guessed": 3,
+    "derived": 1,
+    "guessed": 4,
     "inferred": 1,
     "published_fit": 15
    }
@@ -33665,11 +33665,11 @@
    "unit": "h",
    "n_values": 1,
    "value_template": 2.0,
-   "template_source": "GLR-1 transcription and trafficking; PMC4963118 (CMK-1 couples GLR-1 to its own transcription; time course not opened)",
+   "template_source": "Moss, Park, Dahlberg & Juo 2016 PLoS Genet 12:e1006180 (PMC4963118): CMK-1 couples GLR-1 to its own transcription; silencing GLR-1 cells raised the glr-1 reporter after one and after four hours (no time constant given)",
    "bio_min": 0.5,
    "bio_max": 8.0,
    "bound_basis": "guessed",
-   "bound_source": "GLR-1 transcription and trafficking; PMC4963118 (CMK-1 couples GLR-1 to its own transcription; time course not opened)",
+   "bound_source": "Moss, Park, Dahlberg & Juo 2016 PLoS Genet 12:e1006180 (PMC4963118): CMK-1 couples GLR-1 to its own transcription; silencing GLR-1 cells raised the glr-1 reporter after one and after four hours (no time constant given)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -33681,11 +33681,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Spec grain 'pathway' read as class",
+   "notes": "Spec grain 'pathway' read as class; source 6 Nov (catalog audit): was 2 h, label guessed, range [0.5, 8]; the module's 'time course not opened': the free text times the response (visible at 1 h and 4 h) but gives no time constant; label stays guessed; authors checked in Europe PMC",
    "plan_row": 18,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4963118/",
-   "source_quote": "",
+   "source_quote": "We found a small increase in GFP reporter fluorescence after both one and four hours of histamine treatment",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -55499,18 +55499,18 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "derived",
-   "fill_kind": "derived",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "DEB update interval in the closed loop (rates are per day; Euler at 1 s is exact to < 1e-6)",
+   "notes": "DEB update interval in the closed loop (rates are per day; Euler at 1 s is exact to < 1e-6); relabel 6 Nov (catalog audit): was 1 s, label derived, range [0.1, 10]; labelled derived with 'this model' as the source: the 1 s DEB update interval is a step-size choice with no arithmetic behind the value (the note's Euler error bound justifies it, it does not derive it); guessed, as pump_v0_ms (independent audit, 7 Nov)",
    "plan_row": 20,
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "labelled derived without a citation; no URL to open",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -56353,17 +56353,17 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 583,
+    "guessed": 584,
     "measured": 252,
     "inferred": 327,
-    "derived": 39,
+    "derived": 38,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9379,
+    "guessed": 9380,
     "measured": 6210,
-    "derived": 67520,
+    "derived": 67519,
     "inferred": 333,
     "absent": 1
    },
@@ -56372,17 +56372,17 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 583,
+   "guessed": 584,
    "measured": 252,
    "inferred": 327,
-   "derived": 39,
+   "derived": 38,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9379,
+   "guessed": 9380,
    "measured": 6210,
-   "derived": 67520,
+   "derived": 67519,
    "inferred": 333,
    "absent": 1
   },
@@ -56669,15 +56669,15 @@
    },
    "20": {
     "rows": {
-     "guessed": 5,
+     "guessed": 6,
      "published_fit": 16,
-     "derived": 2,
+     "derived": 1,
      "inferred": 3
     },
     "numbers": {
-     "guessed": 5,
+     "guessed": 6,
      "published_fit": 16,
-     "derived": 2,
+     "derived": 1,
      "inferred": 3
     },
     "n_rows": 26,
@@ -56899,18 +56899,18 @@
    "global": {
     "rows": {
      "published_fit": 357,
-     "guessed": 165,
+     "guessed": 166,
      "inferred": 49,
      "measured": 51,
-     "derived": 27,
+     "derived": 26,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
-     "guessed": 165,
+     "guessed": 166,
      "inferred": 49,
      "measured": 51,
-     "derived": 27,
+     "derived": 26,
      "absent": 1
     },
     "n_rows": 650,
@@ -57009,16 +57009,16 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 486,
+     "guessed": 487,
      "measured": 216,
      "inferred": 312,
-     "derived": 28
+     "derived": 27
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8951,
+     "guessed": 8952,
      "measured": 6073,
-     "derived": 67509,
+     "derived": 67508,
      "inferred": 317
     },
     "n_rows": 1608,
@@ -57151,14 +57151,14 @@
    "mech:metabolism": {
     "rows": {
      "published_fit": 15,
-     "derived": 2,
-     "guessed": 3,
+     "derived": 1,
+     "guessed": 4,
      "inferred": 3
     },
     "numbers": {
      "published_fit": 15,
-     "derived": 2,
-     "guessed": 3,
+     "derived": 1,
+     "guessed": 4,
      "inferred": 3
     },
     "n_rows": 23,
@@ -57440,13 +57440,11 @@
   "by_kind": {
    "numerics": {
     "rows": {
-     "guessed": 1,
-     "derived": 1,
+     "guessed": 2,
      "published_fit": 12
     },
     "numbers": {
-     "guessed": 1,
-     "derived": 1,
+     "guessed": 2,
      "published_fit": 12
     },
     "n_rows": 14,
@@ -58254,16 +58252,16 @@
    }
   ],
   "audit": {
-   "rows_ok": 1753,
-   "rows_with_problems": 103,
+   "rows_ok": 1754,
+   "rows_with_problems": 102,
    "by_status": {
-    "ok": 1753,
-    "finding": 103
+    "ok": 1754,
+    "finding": 102
    },
    "rows_read": 224,
    "quotes": {
-    "none": 1421,
-    "cited free text (scripted check)": 399,
+    "none": 1420,
+    "cited free text (scripted check)": 400,
     "research file (scripted check)": 28,
     "paper text (read audit, 6-7 Nov)": 8
    },
@@ -58280,7 +58278,7 @@
     "checked_at": "2026-11-07 02:30 CST"
    },
    "problem_kinds": {
-    "no URL to open": 30,
+    "no URL to open": 29,
     "source marked UNVERIFIED": 11,
     "no range": 11,
     "guessed template sits on a bound": 6,
@@ -58333,7 +58331,6 @@
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
     "inferred, no paper named": 1,
     "labelled measured, and the catalog's own # Nov source record called Weeks et al. # 'wild t": 1,
-    "labelled derived without a citation": 1,
     "labelled inferred with the source text 'non-selective cation channel (GUR# ...; Bhatla & H": 1,
     "# sim units against a range in metres (# sim unit = # mm by the mesh)": 1,
     "# sits below the cited soft-tissue range": 1,
@@ -64651,6 +64648,32 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6763176/"
    },
    {
+    "param_id": "glr1_tau_h",
+    "kind": "source",
+    "origin": "mech:slow_signalling",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "2 -> 2 h; guessed -> guessed; range [0.5, 8] -> [0.5, 8]",
+    "reason": "the module's 'time course not opened': the free text times the response (visible at 1 h and 4 h) but gives no time constant; label stays guessed; authors checked in Europe PMC",
+    "source": "Moss, Park, Dahlberg & Juo 2016 PLoS Genet 12:e1006180 (PMC4963118): CMK-1 couples GLR-1 to its own transcription; silencing GLR-1 cells raised the glr-1 reporter after one and after four hours (no time constant given)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4963118/"
+   },
+   {
+    "param_id": "met_step_s",
+    "kind": "relabel",
+    "origin": "mech:metabolism",
+    "n": 1,
+    "pattern": "",
+    "was_label": "derived",
+    "new_label": "guessed",
+    "change": "1 -> 1 s; derived -> guessed; range [0.1, 10] -> [0.1, 10]",
+    "reason": "labelled derived with 'this model' as the source: the 1 s DEB update interval is a step-size choice with no arithmetic behind the value (the note's Euler error bound justifies it, it does not derive it); guessed, as pump_v0_ms (independent audit, 7 Nov)",
+    "source": "this model",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -64795,7 +64818,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:51 CST",
+   "generated_at": "2026-11-07 03:54 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -65768,17 +65791,17 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 583,
+    "guessed": 584,
     "measured": 252,
     "inferred": 327,
-    "derived": 39,
+    "derived": 38,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9379,
+    "guessed": 9380,
     "measured": 6210,
-    "derived": 67520,
+    "derived": 67519,
     "inferred": 333,
     "absent": 1
    }
