@@ -33,6 +33,7 @@ import yaml
 
 import ledger_catalog as cat
 from bioemu import ledger
+from ranges import gates, hard
 from wormemu import brain_layers
 from wormemu.brain_structure import bwm_name, cengen_class, load_structure
 
@@ -167,10 +168,13 @@ def absent(pid, mid, unit, n, grain, applies_to, notes, lo="", hi="", bsrc=""):
                      source_quote="", audit="", origin="brain"))
 
 
-def kin_bounds(name, unit, t):
-    """Guessed bounds for a published kinetic constant: shifts of +-20 mV for half-activations (vh*, b*),
-    factor 2 for other mV quantities (slopes), factor 3 for everything else; sign kept."""
-    if unit == "mV" and (name.startswith("vh") or name.startswith("b")):
+def kin_bounds(name, unit, t, mod=None):
+    """Guessed bounds for a published kinetic constant: shifts of +-20 mV for midpoints, factor 2 for other mV
+    quantities (slopes), factor 3 for everything else; sign kept. A constant's role comes from its place in the
+    mod's formulas when the mod is given (wranges 7 Nov: `etm` is a midpoint in egl19 and a slope in shk1), else
+    from its name (vh*, b*)."""
+    role = gates.roles(mod).get(name) if mod else None
+    if unit == "mV" and (role == "midpoint" or (role is None and (name.startswith("vh") or name.startswith("b")))):
         return t - 20.0, t + 20.0, "guessed: +-20 mV around the published value"
     f = 2.0 if unit == "mV" else 3.0
     if t == 0:
@@ -316,7 +320,7 @@ def build_kinetics():
                 if base[partner][name] == val:
                     tied.append(f"{mod}.{name}")
                     continue
-            lo, hi, b = kin_bounds(name, unit, val)
+            lo, hi, b = kin_bounds(name, unit, val, mod)
             row(f"kin_{mod}_{name}", f"ch_{mod}", unit, val, lo, hi, grain="channel",
                 applies_to=f"every cell with {mod}", tsrc=f"published fit, {BAAI_SRC} mod/{mod}.mod",
                 label="published_fit", proj="BAAIWorm", basis="guessed", bsrc=b, prior=("normal", val, (hi - lo) / 4, "guessed: normal around the published "
@@ -1041,6 +1045,9 @@ def main():
     fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
     fill_log += mirror_lumped()
     fill_log += honest_row_labels()
+    hard_rep = hard.apply([*rows, *body, *slot_rows], values)      # hard bounds and the four bases (wranges, 7 Nov)
+    assert not (hard_rep["unmatched"] or hard_rep["errors"] or hard_rep["measured_outside_hard"]
+                or hard_rep["values_outside_hard"] or hard_rep["wide_no_reason"]), hard.report_text(hard_rep)[:3000]
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
     audit_of = {c["id"]: c["audit"] for c in crows}
     for r in rows:
@@ -1049,7 +1056,8 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)
     (OUT / "mechanisms.yaml").write_text(yaml.safe_dump(mechs, sort_keys=False, width=200))
-    pd.DataFrame(rows, columns=ledger.PARAM_COLUMNS).to_csv(OUT / "parameters.csv", index=False)
+    pd.DataFrame(rows, columns=ledger.PARAM_COLUMNS + ledger.HARD_COLUMNS).to_csv(OUT / "parameters.csv", index=False)
+    (OUT / "hard_bounds_report.txt").write_text(hard.report_text(hard_rep) + "\n")
     for pid, t in values.items():
         t.to_csv(OUT / "values" / f"{pid}.csv", index=False)
     led = ledger.load(OUT)

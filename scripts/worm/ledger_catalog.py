@@ -523,7 +523,7 @@ def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
         p.append(f"template {v:g} outside [{lo:g}, {hi:g}]")
     elif lo == hi and not str(r["unit"]).startswith(("count", "cells", "flag")):  # a cell count or a yes/no fact
         p.append("range is one point: the source's spread was not recorded")
-    if not np.isnan(lo) and r["bound_basis"] in ("measured_this_class", "measured_related") and \
+    if not np.isnan(lo) and r["bound_basis"] in ("measured_spread", "homology") and \
             not CITE.search(str(r["bound_source"])):
         p.append("range basis says measured but the range source names no citation")
     if lab in ("measured", "derived"):
@@ -597,7 +597,8 @@ CATALOG_COLUMNS = ["id", "plan_row", "plan_row_name", "mechanism", "mechanism_na
                    "template", "bio_min", "bio_max", "units", "label", "labels_by_element", "source", "source_url",
                    "source_quote", "source_project", "fill_kind", "used_by_code", "toggle", "precision_needed",
                    "audit", "audit_status", "audit_trail", "quote_checked", "link_status", "notes", "origin", "kind", "applies_to",
-                   "range_source", "range_basis", "values_file"]
+                   "range_source", "range_basis", "hard_min", "hard_max", "hard_class", "hard_basis", "hard_source",
+                   "range_basis_detail", "span_decades", "span_reason", "fit_role", "values_file"]
 
 
 def quote_sha(q: str) -> str:
@@ -705,6 +706,10 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
             quote_checked=quote_status(r.get("source_quote", ""), qc),
             link_status=link, notes=r.get("notes", ""), origin=r["origin"], kind=kind_of(r["param_id"]),
             applies_to=r["applies_to"], range_source=r.get("bound_source", ""), range_basis=r.get("bound_basis", ""),
+            hard_min=_round12(r.get("hard_min", "")), hard_max=_round12(r.get("hard_max", "")),
+            hard_class=r.get("hard_class", ""), hard_basis=r.get("hard_basis", ""), hard_source=r.get("hard_source", ""),
+            range_basis_detail=r.get("bound_basis_detail", ""), span_decades=r.get("span_decades", ""),
+            span_reason=r.get("span_reason", ""), fit_role=r.get("fit_role", ""),
             values_file=f"data/worm/model/values/{r['param_id']}.csv" if t is not None else "",
             _split=split, _probs=probs))
     return out

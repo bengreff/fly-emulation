@@ -39,7 +39,9 @@ LABELS = {"measured", "published_fit", "derived", "inferred", "guessed", "absent
 FILL_KIND = {"measured": "measured", "published_fit": "published fit", "derived": "derived",
              "inferred": "inferred (ours)", "guessed": "guessed", "absent": "absent"}
 SOURCE_PROJECTS = {"BAAIWorm", "c302", "ChannelWorm", "Sibernetic", "NEURON", "literature", "ours", "none"}
-BOUND_BASES = {"measured_this_class", "measured_related", "organism_wide", "physical_limit", "guessed"}
+BOUND_BASES = {"measured_this_class", "measured_related", "organism_wide", "physical_limit", "guessed",
+               # wranges, 7 Nov: the worm build maps the five above onto these four (scripts/worm/ranges/hard.py)
+               "physics", "measured_spread", "homology", "guessed_physical"}
 PRIOR_DISTS = {"uniform", "loguniform", "normal", "lognormal", "fixed", "bernoulli", "categorical"}
 GRAINS = {"global", "region", "class", "cell", "muscle", "connection", "synapse", "compartment", "gene",
           "family", "pairing", "channel"}
@@ -51,8 +53,12 @@ PARAM_COLUMNS = [
     "toggle", "notes",
     "plan_row", "used_by_code", "source_url", "source_quote", "audit",
 ]
+# the hard bounds (what physics and chemistry forbid; scripts/worm/ranges): optional columns, checked when present
+HARD_COLUMNS = ["hard_min", "hard_max", "hard_class", "hard_basis", "hard_source", "bound_basis_detail",
+                "span_decades", "span_reason", "fit_role"]
 USED_BY_CODE = {"yes", "slot only", "other form only"}
-NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b", "plan_row")
+NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b", "plan_row", "hard_min",
+           "hard_max", "span_decades")
 
 
 @dataclass
@@ -158,6 +164,11 @@ def validate(led: Ledger) -> list[str]:
             bad.append(f"{w} value_template {r.value_template} outside [{r.bio_min}, {r.bio_max}]")
         if not r.template_source:
             bad.append(f"{w} no template_source")
+        if "hard_min" in p.columns and getattr(r, "fit_role", "") != "fixed":
+            if pd.isna(r.hard_min) or pd.isna(r.hard_max):
+                bad.append(f"{w} no hard bounds")
+            elif not r.hard_min <= r.bio_min <= r.bio_max <= r.hard_max:
+                bad.append(f"{w} range [{r.bio_min}, {r.bio_max}] outside hard [{r.hard_min}, {r.hard_max}]")
         t = led.values(r.param_id)
         if t is not None:
             if len(t) != int(r.n_values):

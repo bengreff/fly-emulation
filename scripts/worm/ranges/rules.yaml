@@ -1,0 +1,463 @@
+# Hard bounds for every worm ledger row (wranges, 7 Nov 2026). Read by scripts/worm/ranges/hard.py, which
+# build_ledger.py calls at the end of the build. Hand-written; the build writes the resolved per-row result to
+# data/worm/model/parameters.csv (hard_min, hard_max, hard_class, hard_basis, hard_source, fit_role) and the joint
+# constraints to data/worm/model/constraints.yaml.
+#
+# HARD bounds are what physics and chemistry forbid for any animal cell, whatever the species. The BIOLOGICAL range
+# (bio_min, bio_max, with its prior) is what any C. elegans, or the nearest measured system, has been measured to do;
+# it must lie inside the hard bounds, and it is the box a fitter searches. hard_basis says whether a hard bound is
+# physics (a conservation law, a structure size, Nernst over the ion windows below, a definition) or
+# guessed_physical (a limit set by judgement where physics gives no sharp edge; the reason is written down).
+#
+# Units: class bounds are in the class's canonical unit (hard.py UNITS converts to the row's unit). A rule or row
+# entry with `hard_row_unit` gives the bounds directly in the row's own unit.
+# Sources marked [HB n] are items of docs/worm/research/HARD_BOUNDS_LIT.md (free sources, opened 7 Nov).
+
+env:
+  temperature_C: [0, 40]       # liquid water to the top of any C. elegans survival (dies within hours above ~30 C) [HB 12]
+  # ion windows, mM, any animal cell with a negative resting potential and an extracellular fluid of ordinary
+  # salinity (fresh-water to marine); guessed_physical, wider than every nematode value in [HB 9]
+  ions:
+    K:  {z: 1, inside: [80, 200], outside: [1, 30]}
+    Na: {z: 1, inside: [2, 50], outside: [50, 250]}
+    Ca: {z: 2, inside: [0.00001, 0.01], outside: [0.1, 20]}     # free Ca inside 10 nM to 10 uM (whole cell)
+    Cl: {z: -1, inside: [2, 100], outside: [20, 250]}
+
+classes:
+  # ---- electrical -------------------------------------------------------------------------------------------------
+  reversal_K:    {nernst: [K], why: "Nernst E_K over the K windows and 0-40 C"}
+  reversal_Na:   {nernst: [Na], why: "Nernst E_Na over the Na windows and 0-40 C"}
+  reversal_Ca:   {nernst: [Ca], why: "Nernst E_Ca over the Ca windows and 0-40 C"}
+  reversal_Cl:   {nernst: [Cl], why: "Nernst E_Cl over the Cl windows and 0-40 C"}
+  reversal_cation: {nernst: [K, Na, Ca], why: "a cation-permeable channel reverses between the most negative and the most positive Nernst potential of its ions (GHK)"}
+  reversal_leak: {nernst: [K, Na], why: "a resting leak (K, Na, Cl mix) reverses between E_K and E_Na (GHK)"}
+  reversal_inhibitory: {nernst: [K, Cl], why: "an inhibitory channel passes Cl or K: between their extreme Nernst potentials"}
+  membrane_potential: {nernst: [K, Na, Ca, Cl], why: "a membrane potential set by ion channels lies between the extreme Nernst potentials"}
+  rt_over_f: {dim: voltage, hard: [23.54, 26.98], basis: physics, why: "RT/F = k_B T / e at 0-40 C", source: "CODATA k_B/e = 8.617333e-5 V/K"}
+  voltage_midpoint: {dim: voltage, hard: [-200, 200], basis: guessed_physical,
+    why: "a gate or release midpoint beyond +-200 mV is past membrane breakdown (electroporation at a few hundred mV) and the gate would be fixed over the whole Nernst window; BK at nominal zero Ca, the most extreme measured, sits near +150 to +200 mV",
+    source: "[HB 6]; Weaver and Chizmadzhev 1996 (electroporation)"}
+  voltage_slope: {dim: voltage, hard: [1.5, 200], sign: template, basis: physics,
+    why: "Boltzmann slope k = RT/(zF): z at most about 16 e (Shaker's total gating charge 12-14 e) gives |k| >= 1.5 mV; above 200 mV (z < 0.13 e) the gate is voltage-independent over the window (guessed edge)",
+    source: "[HB 6]; Aggarwal and MacKinnon 1996 Neuron (Shaker 13 e)"}
+  voltage_sensitivity: {dim: inv_voltage, hard: [-0.7, 0.7], basis: physics,
+    why: "an exponential rate factor exp(w V) has |w| = z F/RT <= 16/23.5 per mV", source: "as voltage_slope"}
+  conductance_density: {dim: cond_density, packing: true, basis: physics,
+    why: "0 to (densest channel packing) x (the family's largest unitary conductance)", source: "[HB 1], [HB 2]"}
+  leak_density: {dim: cond_density, hard: [1.0e-8, 0.6], basis: physics,
+    why: "not below a pure lipid bilayer (specific resistance ~1e8 ohm cm2); at most the densest packing (2e4 per um2) of 300 pS channels, 600 S/cm2, capped here at 0.6 S/cm2, the node-of-Ranvier density, because a resting leak that dense would hold no potential (guessed edge)",
+    source: "[HB 1], [HB 4]"}
+  specific_resistance: {dim: spec_resistance, hard: [0.0017, 1.0e5], basis: physics, why: "inverse of leak_density's physical edges", source: "[HB 4]"}
+  unitary_conductance: {dim: conductance, hard: [0.0001, 0.3], basis: physics,
+    why: "0.1 pS (smallest resolved single channels) to 300 pS (BK, the largest ion-selective channel)", source: "[HB 2]"}
+  gap_unitary: {dim: conductance, hard: [0.001, 0.5], basis: physics,
+    why: "connexin and innexin channels, 1 to about 500 pS", source: "[HB 2]"}
+  conductance_cell: {dim: conductance, hard: [0, 10000], basis: guessed_physical,
+    why: "a whole-cell or per-contact conductance: at most the largest worm cell area (~2e3 um2 for a body-wall muscle, more for hyp7) times a node-of-Ranvier density (0.5 S/cm2): 1e4 nS", source: "[HB 1]"}
+  capacitance_specific: {dim: cap_specific, hard: [0.3, 3.0], basis: physics,
+    why: "a lipid bilayer is 0.3-1 uF/cm2 by thickness and dielectric constant; biological membranes measure 0.5-2; above 3 needs membrane folds the morphology would have to omit",
+    source: "[HB 3]"}
+  capacitance_cell: {dim: capacitance, hard: [0.05, 5000], basis: physics,
+    why: "specific capacitance limits times the smallest (~10 um2) and largest (~1.6e5 um2, hyp7) worm cell areas", source: "[HB 3]"}
+  axial_resistivity: {dim: resistivity, hard: [20, 1000], basis: guessed_physical,
+    why: "cytoplasm is at least as resistive as the saline it is made of (~50 ohm cm at 150 mM, 20 C; 20 allows 400 mM); above 1000 ohm cm no measured cytoplasm",
+    source: "[HB 4]"}
+  current_gain: {dim: current, hard: [-1000, 1000], basis: guessed_physical,
+    why: "a lumped current into one cell: 1 nA drives a 1 GOhm worm neuron past every reversal potential", source: "param_ranges A3 (input resistance 0.2-5 GOhm)"}
+  current_nonneg: {dim: current, hard: [0, 1000], basis: guessed_physical, why: "as current_gain, sign fixed by the mechanism", source: "param_ranges A3"}
+  # ---- time ------------------------------------------------------------------------------------------------------
+  tau_gate: {dim: time, hard: [0.01, 1.0e7], basis: physics,
+    why: "a channel gate: not faster than ~10 us (fastest measured gating) and not slower than ~3 h (no slow inactivation measured slower)",
+    source: "[HB 6]"}
+  tau_coefficient: {dim: time, hard: [1.0e-6, 1.0e7], sign: template, basis: guessed_physical,
+    why: "a coefficient inside a tau(V) formula: no physical meaning alone; magnitude at most the slowest gate. The binding limit is the joint constraint gate_window (tau(V) inside tau_gate over the voltage window)",
+    source: "constraints.yaml gate_window"}
+  tau_binding: {dim: time, hard: [0.01, 5.2e9], basis: physics,
+    why: "a receptor or sensor rise: diffusion-limited binding (1e9 /M/s) at a 1 mM peak is 1 us per binding; 10 us is the fastest measured ligand-gated rise; at most the lifespan",
+    source: "[HB 6]"}
+  tau_process: {dim: time, hard: [0.001, 5.2e9], basis: physics,
+    why: "any process inside a worm: above 1 us, below 60 days (adult lifespan 2-3 weeks; 60 d covers the longest-lived strains)",
+    source: "[HB 6], [HB 12]"}
+  duration: {dim: time, hard: [0, 5.2e9], basis: physics, why: "a duration or delay: >= 0 and within the lifespan", source: "definition"}
+  period: {dim: time, hard: [1.0, 5.2e9], basis: physics, why: "a cycle period: above 1 ms, within the lifespan", source: "definition"}
+  # ---- rates -----------------------------------------------------------------------------------------------------
+  rate_first: {dim: rate, hard: [0, 1.0e6], basis: physics, why: "a first-order rate: not faster than 1 per us (conformational change)", source: "[HB 6]"}
+  rate_second: {dim: rate2, hard: [0, 1.0e4], basis: physics, why: "a bimolecular association: at most the diffusion limit ~1e10 /M/s (Smoluchowski)", source: "[HB 6]"}
+  frequency_muscle: {dim: rate, hard: [0, 15], basis: physics, why: "a muscle pump or contraction cycle: at most 1 per pump duration (~80 ms)", source: "pump_duration_ms"}
+  frequency_any: {dim: rate, hard: [0, 1000], basis: guessed_physical, why: "a sampling or event rate", source: "definition"}
+  # ---- concentrations ----------------------------------------------------------------------------------------------
+  binding_constant: {dim: conc, hard: [1.0e-9, 1.0e6], basis: physics,
+    why: "a Kd, EC50, Km or half-activation: between 1 fM (tighter than streptavidin-biotin, 1e-14 M, the tightest non-covalent binding) and 1 M (no saturable binding above)",
+    source: "[HB 8]; Green 1990 Methods Enzymol 184:51"}
+  ca_free: {dim: conc, hard: [0, 1000], basis: guessed_physical,
+    why: "free intracellular Ca: >= 0; peaks at channel mouths reach ~100 uM; a whole cell above 1 mM is dead",
+    source: "[HB 9]"}
+  ca_outside: {dim: conc, hard: [100, 20000], basis: guessed_physical, why: "extracellular Ca, the env window (0.1-20 mM)", source: "env.ions.Ca"}
+  ion_inside: {dim: conc, hard: [0, 300000], basis: physics, why: "an inside ion: >= 0, below total osmolarity (~300 mOsm)", source: "[HB 9]"}
+  ion_outside: {dim: conc, hard: [0, 600000], basis: guessed_physical, why: "an outside ion: >= 0, below the osmolarity of any body fluid or bath a worm survives (~600 mOsm)", source: "[HB 9]"}
+  K_outside: {dim: conc, hard: [1000, 30000], basis: guessed_physical, why: "env K window outside", source: "env.ions.K"}
+  Na_outside: {dim: conc, hard: [50000, 250000], basis: guessed_physical, why: "env Na window outside", source: "env.ions.Na"}
+  Na_inside: {dim: conc, hard: [2000, 50000], basis: guessed_physical, why: "env Na window inside", source: "env.ions.Na"}
+  Cl_outside: {dim: conc, hard: [20000, 250000], basis: guessed_physical, why: "env Cl window outside", source: "env.ions.Cl"}
+  Mg: {dim: conc, hard: [0, 50000], basis: guessed_physical, why: "free Mg: >= 0, below 50 mM", source: "[HB 9]"}
+  molecule_conc: {dim: conc, hard: [0, 10000], basis: guessed_physical,
+    why: "one signalling species or protein in cytoplasm: >= 0, below 10 mM (total protein ~200-300 mg/ml)", source: "[HB 9]"}
+  transmitter_peak: {dim: conc, hard: [0, 500000], basis: physics, why: "a cleft peak cannot exceed the vesicle's content concentration (~0.1-0.5 M)", source: "[HB 14]"}
+  stimulus_conc: {dim: conc, hard: [0, 1.0e7], basis: physics, why: "a chemical in the environment: >= 0, below a neat liquid or saturated solution (~10 M)", source: "definition"}
+  ph: {dim: none, hard: [3, 10], basis: guessed_physical, why: "pH of a living compartment (cytosol 6.8-7.6; the worm's intestinal lumen 4-6)", source: "[HB 13]"}
+  gas_fraction: {dim: none, hard: [0, 100], basis: physics, why: "a gas percentage", source: "definition"}
+  osmolarity: {dim: none, hard: [0, 2000], basis: guessed_physical, why: "mOsm/L of any body fluid or bath a worm survives", source: "[HB 9]"}
+  optical_density: {dim: none, hard: [0, 200], basis: guessed_physical, why: "bacterial OD600: >= 0; a packed lawn ~100", source: "definition"}
+  light: {dim: none, hard: [0, 100], basis: guessed_physical, why: "mW/mm2: sunlight ~1; optogenetic illumination up to tens", source: "definition"}
+  # ---- dimensionless ----------------------------------------------------------------------------------------------
+  fraction: {dim: none, hard: [0, 1], basis: physics, why: "a fraction or probability", source: "definition"}
+  flag: {dim: none, hard: [0, 1], basis: physics, why: "a yes/no switch", source: "definition"}
+  effect_mult: {dim: none, hard: [-1, 100], basis: physics, why: "a fractional change x -> x (1 + e): e >= -1 keeps the quantity >= 0; above 100-fold is a guessed edge", source: "definition"}
+  gain_nonneg: {dim: none, hard: [0, 1000], basis: guessed_physical, why: "a non-negative multiplier or gain", source: "definition"}
+  hill_receptor: {dim: none, hard: [0.3, 5], basis: physics, why: "Hill coefficient at most the number of agonist sites: 5 in a homopentamer (2 in most heteropentamers)", source: "[HB 8]"}
+  hill_tetramer: {dim: none, hard: [0.3, 4], basis: physics, why: "Hill at most 4 sites (tetrameric glutamate receptor; calmodulin's 4 Ca sites in GCaMP)", source: "[HB 8]"}
+  hill_any: {dim: none, hard: [0.1, 20], basis: guessed_physical, why: "an effective Hill coefficient of a lumped response (several cooperating units); 20 is above any measured", source: "[HB 8]"}
+  q10: {dim: none, hard: [0.5, 70], basis: physics, why: "Q10 = exp(10 Ea / (R T^2)): Ea 0-300 kJ/mol gives 1-67; thermo-TRP channels reach ~20-30; below 1 needs a negative apparent activation energy (rare, allowed to 0.5)", source: "[HB 5]"}
+  cv: {dim: none, hard: [0, 3], basis: guessed_physical, why: "a coefficient of variation of a quantal size", source: "definition"}
+  ratio_ge1: {dim: none, hard: [1, 10000], basis: physics, why: "a ratio defined >= 1 (rectification)", source: "definition"}
+  hill_bk: {dim: none, hard: [0, 8], basis: physics, why: "a Ca exponent of a BK/SLO tetramer: at most its 8 Ca sites (2 per subunit, RCK1 and the Ca bowl); 0 allowed (no Ca dependence of that step)", source: "[HB 8]; Xia, Zeng and Lingle 2002 Nature 418:880"}
+  gate_factor: {dim: none, hard: [0, 100], basis: guessed_physical, why: "a factor of a product steady state (egl19 hinf = (a s1 + b)(c s2 + d)); each >= 0; the binding limit is the joint constraint gate_window (hinf in [0, 1])", source: "constraints.yaml gate_window"}
+  sigmoid_weight: {dim: none, hard: [0, 1000], basis: guessed_physical, why: "a weight or divisor inside a published activation curve (Luo-Rudy pump, Du muscle gates): >= 0; the binding limit is that the curve stays in [0, 1] (gate_window)", source: "constraints.yaml gate_window"}
+  speed: {dim: none, hard: [0, 10], basis: guessed_physical, why: "body lengths per second: the fastest crawling worms reach ~0.5 L/s", source: "WormAtlas"}
+  strain: {dim: none, hard: [0, 2], basis: physics, why: "a muscle or body strain: a fibre cannot shorten past 100% and does not survive more than doubling", source: "definition"}
+  curvature_strain: {dim: none, hard: [0, 1], basis: physics, why: "a body-wall strain from bending: at most body radius over the smallest bend radius (~1)", source: "definition"}
+  modulus_kPa: {dim: none, hard: [0.01, 2.0e7], basis: physics, why: "an elastic modulus of any tissue: brain ~0.1-1 kPa to bone ~20 GPa", source: "[HB 10]"}
+  modulus_Pa: {dim: none, hard: [10, 2.0e10], basis: physics, why: "as modulus_kPa, in Pa", source: "[HB 10]"}
+  poisson: {dim: none, hard: [0, 0.5], basis: physics, why: "Poisson ratio of an isotropic stable material with positive volume: -1 to 0.5; tissues 0.3-0.5 (0 allowed)", source: "definition"}
+  density_tissue: {dim: none, hard: [900, 2000], basis: physics, why: "kg/m3: fat 900 to bone 2000", source: "definition"}
+  density_water: {dim: none, hard: [990, 1030], basis: physics, why: "kg/m3: water to sea water, 0-40 C", source: "CRC Handbook"}
+  viscosity_mPa_s: {dim: none, hard: [0.6, 1.0e7], basis: physics, why: "water at 40 C (0.65 mPa s) to a stiff gel", source: "CRC Handbook"}
+  drag_Pa_s: {dim: none, hard: [0, 1.0e5], basis: guessed_physical, why: "a resistive-force coefficient: >= 0; agar values are ~10-1000 Pa s", source: "[HB 10]"}
+  gravity: {dim: none, hard: [9.78, 9.84], basis: physics, why: "g at Earth's surface", source: "definition"}
+  surface_tension: {dim: none, hard: [0.02, 0.076], basis: physics, why: "N/m: water 0-40 C (0.070-0.076), down to ~0.02 with surfactant", source: "CRC Handbook"}
+  mass_ug: {dim: none, hard: [0.01, 20], basis: physics, why: "a worm from L1 (~0.02 ug) to the largest adults (~10 ug)", source: "WormAtlas"}
+  length_mm: {dim: none, hard: [0.2, 2], basis: physics, why: "a worm from L1 (0.25 mm) to the largest adults (~1.5 mm)", source: "WormAtlas"}
+  permeability_um_s: {dim: none, hard: [0, 1000], basis: guessed_physical, why: "a membrane water permeability: >= 0; aquaporin-rich red cells ~ 50-200 um/s", source: "definition"}
+  thermo_gradient: {dim: none, hard: [0, 20], basis: guessed_physical, why: "C/cm on a plate", source: "definition"}
+  force_N: {dim: none, hard: [0, 10], basis: guessed_physical, why: "a tap on a plate, N", source: "definition"}
+  angle_deg: {dim: none, hard: [-180, 180], basis: physics, why: "an angle", source: "definition"}
+  # ---- energy, mechanics, space ----------------------------------------------------------------------------------
+  atp_free_energy: {dim: none, hard: [28, 75], basis: physics, why: "-dG of ATP hydrolysis in a cell, kJ/mol: at least the standard 30.5 less a little, at most ~70 at extreme ATP/ADP", source: "[HB 11]"}
+  oxycaloric: {dim: none, hard: [420, 490], basis: physics, why: "kJ per mol O2 burned: fat 437-451, protein ~440, carbohydrate ~473 (thermochemistry)", source: "Gnaiger 1983"}
+  gas_constant: {dim: none, hard: [8.314462618, 8.314462618], basis: physics, why: "R is a constant", source: "CODATA 2018"}
+  temperature_C: {dim: none, hard: [0, 40], basis: physics, why: "env temperature window", source: "env"}
+  temperature_K: {dim: none, hard: [273.15, 313.15], basis: physics, why: "env temperature window", source: "env"}
+  temperature_dC: {dim: none, hard: [0.01, 40], basis: physics, why: "a temperature difference inside the window", source: "env"}
+  arrhenius_K: {dim: none, hard: [1000, 40000], basis: physics, why: "Arrhenius temperature Ea/R for Ea 8-330 kJ/mol", source: "[HB 5]"}
+  energy_kT: {dim: none, hard: [0, 100], basis: guessed_physical, why: "a conformational free-energy difference of one protein (ATP hydrolysis ~20 kT)", source: "[HB 11]"}
+  diffusion_ion: {dim: diffusion, hard: [0, 1150], basis: physics, why: "Ca2+: at most its free diffusion in water (7.9e-6 cm2/s at 25 C, x1.45 at 40 C by Stokes-Einstein: 1.15e-5)", source: "[HB 7]; CRC Handbook"}
+  diffusion_small: {dim: diffusion, hard: [0, 3500], basis: physics, why: "a small molecule or peptide: at most free diffusion of the fastest small solute (O2, 2.1e-5 cm2/s at 25 C, ~3.5e-5 at 40 C) in water", source: "[HB 7]; CRC Handbook"}
+  dispersion: {dim: diffusion, hard: [0, 100000], basis: guessed_physical, why: "effective mixing by body movement, not molecular diffusion", source: "definition"}
+  length_body: {dim: length, hard: [0, 2000], basis: physics, why: "within an adult body length (~1-1.5 mm)", source: "WormAtlas"}
+  length_radius: {dim: length, hard: [0.1, 50], basis: physics, why: "within the body radius (~40 um)", source: "WormAtlas"}
+  length_nano: {dim: length, hard: [0.001, 1], basis: physics, why: "a channel-to-sensor distance: 1 nm to 1 um", source: "[HB 6]"}
+  position: {dim: length, hard: [-2000, 2000], basis: physics, why: "a body coordinate", source: "definition"}
+  body_fraction: {dim: none, hard: [0, 1], basis: physics, why: "a position as a fraction of body length", source: "definition"}
+  area_cell: {dim: area, hard: [1, 1.0e6], basis: physics, why: "a cell or tissue membrane area within the body surface (~1.6e5 um2) and its folds", source: "WormAtlas"}
+  area_cross: {dim: area, hard: [1, 10000], basis: physics, why: "within the body cross-section (pi 40^2 ~ 5000 um2)", source: "WormAtlas"}
+  volume: {dim: volume, hard: [1, 1.0e7], basis: physics, why: "within the adult body volume (~3-6e6 um3)", source: "WormAtlas"}
+  force: {dim: none, hard: [0, 1000], basis: guessed_physical, why: "uN on the worm: above ~1 mN it is crushed", source: "definition"}
+  pressure: {dim: none, hard: [0, 1000], basis: guessed_physical, why: "kPa: nematode body pressures measure ~2-30 kPa (Ascaris)", source: "[HB 10]"}
+  count_nonneg: {dim: none, hard: [0, 1.0e12], basis: physics, why: "a count is >= 0", source: "definition"}
+  molecules_per_dcv: {dim: none, hard: [0, 3.0e5], basis: physics, why: "a 100 nm dense-core vesicle at 1 M holds 3e5 molecules", source: "[HB 14]"}
+  molecules_per_neuron: {dim: none, hard: [0, 3.0e10], basis: physics, why: "a 50 um3 neuron at 1 M", source: "[HB 14]"}
+  channels_per_cell: {dim: none, hard: [0, 2.0e7], basis: physics, why: "1e3 um2 at the densest packing", source: "[HB 1]"}
+  eggs: {dim: none, hard: [0, 50], basis: guessed_physical, why: "the uterus holds about 10-20 eggs", source: "WormAtlas"}
+  egg_rate: {dim: none, hard: [0, 60], basis: guessed_physical, why: "eggs per h or per min within a 300-egg brood over 3-4 days and burst rates", source: "WormAtlas"}
+  model_units: {dim: none, model_units: true, basis: guessed_physical,
+    why: "a number in a published model's own units with no physical anchor: >= 0 and at most 100x its biological range; to be re-expressed in physical units (listed for wmodel)", source: "none"}
+  construction: {dim: none, model_units: true, basis: guessed_physical,
+    why: "a constant of BAAIWorm's connection-building algorithm, not physiology: >= 0 and at most 100x its range", source: "none"}
+  numerics: {dim: none, model_units: true, basis: guessed_physical, why: "a numerical step, not biology", source: "none"}
+  structure: {dim: none, structure: true, basis: physics, why: "structure (morphology, wiring, anatomy): fixed from data, not fitted", source: "data"}
+
+# family unitary conductances for conductance_density (pS, the largest measured for the family) [HB 2]
+packing_per_um2: 20000        # densest measured: nicotinic AChR at the endplate crest ~1e4-2e4 per um2 [HB 1]
+families:
+  slo1: 300     # BK
+  slo2: 200     # KNa (Slo2)
+  ca:   30      # Cav1/Cav2/Cav3 (egl19, unc2, cca1)
+  kv:   40      # Kv, KCNQ, EAG/ERG, Kir, SK (shk1, shl1, kvs1, egl36, egl2, kqt*, exp2, unc103, irk, kcnl)
+  nca:  40      # NALCN
+  leak: 300     # a mix (passive leak: any channel)
+family_of:
+  slo1: slo1
+  slo2: slo2
+  egl19: ca
+  unc2: ca
+  cca1: ca
+  nca: nca
+  default: kv
+
+# rules, first match wins. re = regex on param_id (re.search); unit = optional list of row units
+rules:
+  # structure and construction
+  - {re: "^(morph_|wire_)", cls: structure, role: fixed}
+  - {re: "^build_length_per_seg$", cls: numerics, role: fixed}
+  - {re: "^build_", cls: construction, role: fixed}
+  - {re: "^cc_count$", cls: structure, role: fixed}
+  - {re: "^int_posterior_rings$", hard_row_unit: [1, 9], basis: physics, why: "the intestine has 9 rings (int1-int9)", source: "WormAtlas", role: fixed}
+  - {re: "^(syn_sign_receptor|syn_inhibitory|ent_dvb_excitatory|gap_innexin_pair|wire_nmj_baaiworm|wire_mn_baaiworm|ph_m3_inhibitory|ph_ser7_on_muscle)$", cls: flag, role: fixed}
+  - {re: "^noise_hold_mV$|^met_vhold_mV$", cls: membrane_potential, role: fixed, why_role: "a recording condition"}
+  - {re: "^met_step_s$", cls: numerics, role: fixed}
+  - {re: "^obs_(volume_rate_hz)$", cls: frequency_any, role: fixed, why_role: "an instrument setting"}
+  # body (Sibernetic / MuJoCo worm) and other catalog-only rows
+  - {re: "^mw_(density|mesh_scale|n_vertices|n_tets|n_surface_triangles|n_muscle_segments|iterations|convergence_eps|dt|control_hz|damping_per_step|drag_model|drag_force_cap|lift_table_x|lift_table_y|side_down|plate_contact|key_gain|key_transport_alpha|mass|length|muscle_stiffness|muscle_attach_length|film_surface)$", cls: numerics, role: fixed}
+  - {re: "^mw_radius_over_length$", hard_row_unit: [0.01, 0.1], basis: physics, why: "radius over length of any C. elegans stage (L1 ~0.025, adult ~0.035)", source: "WormAtlas"}
+  - {re: "^mw_youngs_modulus$", cls: modulus_Pa}
+  - {re: "^mw_.*_modulus$", cls: modulus_kPa}
+  - {re: "^mw_poisson_ratio$", cls: poisson}
+  - {re: "^mw_internal_pressure$", cls: pressure}
+  - {re: "^mw_muscle_span_(start|end)$", cls: body_fraction, role: fixed}
+  - {re: "^mw_key_period$", hard_row_unit: [0.01, 15], basis: physics, why: "an undulation frequency, Hz", source: "as frequency_muscle"}
+  - {re: "^mw_force_length_width$", cls: strain}
+  - {re: "^mw_force_velocity$", cls: fraction}
+  - {re: "^mw_worm_density$", cls: density_tissue}
+  - {re: "^mw_fluid_density$", cls: density_water}
+  - {re: "^mw_worm_mass$", cls: mass_ug}
+  - {re: "^mw_worm_length$", cls: length_mm}
+  - {re: "^mw_water_viscosity$", cls: viscosity_mPa_s}
+  - {re: "^mw_(water|agar)_C[tn]$", cls: drag_Pa_s}
+  - {re: "^mw_agar_K_rabets$", cls: ratio_ge1}
+  - {re: "^mw_gravity$", cls: gravity, role: fixed}
+  - {re: "^mw_surface_tension$", cls: surface_tension}
+  - {re: "^cells_", cls: structure, role: fixed}
+  - {re: "^cengen_threshold$", hard_row_unit: [1, 4], basis: physics, why: "CeNGEN has four threshold levels", source: "Taylor et al. 2021 Cell", role: fixed}
+  - {re: "^rel_gain_afd_aiy$", hard_row_unit: [0, 1000], basis: guessed_physical, why: "a voltage gain >= 0", source: "definition"}
+  - {re: "^(ma_uptake_vmax_uM_s__.*|sleep_(flp11|ala)_release)$", hard_row_unit: [0, 1.0e6], basis: guessed_physical, why: "a release or uptake rate as a concentration rise, >= 0", source: "definition"}
+  - {re: "^(phar_.*_gain|sleep_ris_autoinhib_gain|proprio_gain_wen)$", cls: gain_nonneg}
+  - {re: "^egg_vm_egl19_g_S_cm2$", cls: conductance_density}
+  - {re: "^exc_aqp8_permeability_um_s$", cls: permeability_um_s}
+  - {re: "^homeo_unc2_per_synapse$", hard_row_unit: [0, 1.0e5], basis: physics, why: "channels at one active zone (~0.1 um2) at the densest packing: 2e3; 1e5 allows a whole bouton", source: "[HB 1]"}
+  - {re: "^env_o2_diffusion_cm2_s$", cls: diffusion_small}
+  - {re: "^env_nacl_diffusion_cm2_s$", cls: diffusion_small}
+  - {re: "^env_o2_consumption$", cls: model_units}
+  - {re: "^env_thermo_gradient_C_cm$", cls: thermo_gradient}
+  - {re: "^env_tap_force_N$", cls: force_N}
+  - {re: "^q10_muscle$", cls: q10}
+  - {re: "^env_default_temperature_C$", cls: temperature_C}
+  - {re: "^(pep|ma)_release_slope_mV$", cls: voltage_slope}
+  - {re: "^(init_v_neuron_mV|init_v_muscle_mV|init_bwm_du_v_mV)$", cls: membrane_potential}
+  - {re: "^init_bwm_du_[mhnp]$", cls: fraction}
+  - {re: "^baai_ena_nca_mV$", cls: reversal_cation}
+  - {re: "^baai_.*_scale$", cls: gain_nonneg}
+  - {re: "^baai_egl36_w_(fast|mid|slow)$", cls: fraction}
+  - {re: "^bwm_du_.*_vh_mV$", cls: voltage_midpoint}
+  - {re: "^bwm_du_(h_amp|h_floor)$", cls: fraction}
+  - {re: "^bwm_du_tp_a$", cls: sigmoid_weight}
+  - {re: "^pump_lr_(a|b|sigma_div)$", cls: sigmoid_weight}
+  - {re: "^pump_lr_vfrac$", cls: fraction}
+  - {re: "^scene_.*_(slope_per_mm)$", hard_row_unit: [0, 1.0e6], basis: physics, why: "a concentration gradient >= 0", source: "definition"}
+  - {re: "^scene_.*_decay_mm$", hard_row_unit: [0.01, 100], basis: physics, why: "a gradient's decay length within a plate (<= 10 cm)", source: "definition"}
+  - {re: "^scene_mm_per_body_length$", cls: length_mm}
+  - {re: "^scene_.*_c_(background|peak)$", cls: stimulus_conc}
+  - {re: "^repel_c0$", hard_row_unit: [0, 1.0e7], basis: physics, why: "a stimulus concentration >= 0, below a neat liquid (~10 M = 1e7 uM; the row's unit is mM or uM)", source: "definition"}
+  - {re: "^sens_ash_gly_K_mM$", cls: stimulus_conc, why_note: "an osmotic half-response (glycerol avoidance assays use up to 2 M), not a binding constant"}
+  - {re: "^pc_.*_y_um$", hard_row_unit: [-2000, 2000], basis: physics, why: "a body coordinate (soma y), um", source: "definition", role: fixed}
+  - {re: "^(dmp_pboc_amp|ent_exp_o(n|ff)|egg_vm_act_o(n|ff))$", cls: fraction}
+  - {re: "^rec_mg_k_per_mV$", cls: voltage_sensitivity}
+  - {re: "^proprio_eps_(half|slope)$", cls: curvature_strain}
+  - {re: "^glia_amsh_kcl_mM2$", hard_row_unit: [0, 90000], basis: physics, why: "[K]i x [Cl]i, each below 300 mM", source: "[HB 9]"}
+  - {re: "^obs_gait_pause_L_s$", cls: speed, role: fixed, why_role: "an analysis threshold"}
+  # specific rows ahead of the unit catch-alls
+  - {re: "^c302_ca_boyle_gate_h_k$", hard_row_unit: [-1.0, -1.0e-15], basis: physics, why: "a Ca slope (mM) in c302's h gate, sign kept", source: "c302 cell_C.xml"}
+  - {re: "^ph_sh_egl19_f(inf|tau)_dca$", hard_row_unit: [1.0e-12, 1.0], sign: template, basis: guessed_physical, why: "a Ca slope (M per e-fold), sign kept, at most 1 M", source: "Shimizu"}
+  - {re: "^ph_sh_exp2_hinf_dv$", hard_row_unit: [-200, -1.0], basis: guessed_physical, why: "Shimizu's EXP-2 inactivation slope is 1 mV, which needs about 26 e of gating charge, twice the largest measured (Shaker, 13 e); the physical floor 1.5 mV is relaxed to 1 mV for this one published row and listed as a question for wmodel", source: "[HB 6]"}
+  - {re: "^kin_egl19_(ahinf|bhinf|chinf|dhinf)$|^kin_slo[12]_egl19_(ahinf|bhinf|chinf|dhinf)$", cls: gate_factor}
+  - {re: "^kin_.*_(nyx|nxy)1?$", cls: hill_bk}
+  - {re: "^kin_", role_dispatch: true}
+  # physical constants and temperature
+  - {re: "^ph_sh_gas_R$", hard_row_unit: [8.314462618, 8.68815102], basis: physics, why: "R is 8.314462618; the published pharynx fit used 8.688 (sic) and is kept as published, so the row is fixed, not fitted", source: "CODATA 2018; Shimizu code", role: fixed}
+  - {re: "^(glia_rt_f_mV|pump_rt_f_mV)$", cls: rt_over_f, role: derived, why_role: "RT/F follows the temperature"}
+  - {re: "^(ion_celsius|temp_ref_C|thermo_Tstar_C|sens_afd_Tstar_C)$", cls: temperature_C}
+  - {re: "^sens_afd_dT_C$", cls: temperature_dC}
+  - {re: "^(ph_sh_temp_K|deb_t_ref_K)$", cls: temperature_K}
+  - {re: "^deb_t_a_K$", cls: arrhenius_K}
+  - {re: "^temp_q10_", cls: q10}
+  # reversal potentials
+  - {re: "(ion_ek|_ek_mV|ph_sh_v_k|awa_liu_vK$|k_slow_erev|k_fast_erev)$", cls: reversal_K}
+  - {re: "(ion_ena|_ena_mV|ph_sh_v_na)$", cls: reversal_Na}
+  - {re: "(awa_liu_vCa|_eca_mV|ca_boyle_erev)$", cls: reversal_cation, why_note: "Ca-channel reversals in these models are fitted effective values (c302's 0 mV, Du's 60 mV), so the cation window, not Nernst E_Ca"}
+  - {re: "^(rec_(acc|glucl|gabacl|mod1|lgc55|lgc53)_erev_mV)$", cls: reversal_Cl}
+  - {re: "^syn_inh_erev$", cls: reversal_inhibitory}
+  - {re: "(epas|_e_leak_mV|_el_mV|ph_sh_v_l|awa_liu_vL|leak_erev)$", cls: reversal_leak}
+  - {re: "(_erev_mV|_erev$|_E_mV$|^obs_opto_e_mV$|^usu_r6_VR_VGCC$)", cls: reversal_cation}
+  - {re: "^homeo_target_mV$", cls: membrane_potential}
+  # voltage midpoints, slopes, sensitivities
+  - {re: "^kin_.*_(w[xy][xy]1?)$", cls: voltage_sensitivity}
+  - {re: "^kin_kqt3_(ctms|ftms)$", cls: voltage_sensitivity}
+  - {re: "^ph_sh_exp2_mtau_dv$", hard_row_unit: [-1, -0.001], basis: guessed_physical, why: "Shimizu's power-law tau coefficient, 1/mV^pow, sign kept; bounded by gate_window", source: "constraints.yaml gate_window"}
+  - {re: "^kin_.*_(ka|ki|kiw|kis|ka_exp2|ki_exp2|s3|s6|p4tmkqt1|p4tskqt1)$", unit: [mV], cls: voltage_slope}
+  - {re: "^kin_.*_(tm3|th3)$", unit: [mV], cls: voltage_slope}
+  - {re: "^kin_exp2_(ptm3|pth3)_exp2$", hard_row_unit: [1.5, 200], sign: template, basis: physics, why: "a slope in mV (the mod gives no unit)", source: "as voltage_slope"}
+  - {re: "^kin_exp2_(ptm2|pth2)_exp2$", hard_row_unit: [-200, 200], basis: guessed_physical, why: "a midpoint in mV (the mod gives no unit)", source: "as voltage_midpoint"}
+  - {re: "^kin_exp2_(ptm1|pth1|ptm4|pth4)_exp2$", hard_row_unit: [0, 3162], basis: guessed_physical, why: "a factor of a product tau = (a/(1+e) + b)(a/(1+1/e) + b) in sqrt(ms) (the mod gives no unit); bounded by gate_window", source: "constraints.yaml gate_window"}
+  - {re: "^kin_.*", unit: [mV], cls: voltage_midpoint}
+  - {re: "(_dv|_scale|_k_mV|_delta|^awa_liu_dv.*|^usu_r6_K_VGCC|^slow_act_dv_mV)$", unit: ["mV", "mV/e", "mV (model)"], cls: voltage_slope}
+  - {re: "(_v0|_midpoint|_vhalf_mV|_Vth|_vth_mV|^awa_liu_v(c\\d|K\\d|Kr\\d|Ka\\d)$|^usu_r6_V50_VGCC)$", unit: ["mV", "mV (model)"], cls: voltage_midpoint}
+  - {re: "^awa_liu_(I0|beta)$", hard_row_unit: [0.5, 200], basis: guessed_physical, why: "Liu 2018 AWA model shape constants in mV; bounded as a slope", source: "Liu et al. 2018 Cell"}
+  # conductances
+  - {re: "^(pas_.*_gpas|mpas_gpas|c302_muscle_leak_cond_density|ph_sh_g_l)$", cls: leak_density}
+  - {re: "^(dens_|c302_.*_cond_density|ph_sh_g_)", cls: conductance_density}
+  - {re: "_rm_kohm_cm2$", cls: specific_resistance}
+  - {re: "^gap_innexin_unitary$", cls: gap_unitary}
+  - {re: "(_pS|_gamma_pS)$", cls: unitary_conductance}
+  - {re: "^nano_gsc$", cls: unitary_conductance}
+  - {re: "^gap_weight$", cls: conductance_cell}
+  - {re: "^syn_(exc|inh)_conductance$", cls: conductance_cell}
+  - {re: ".", unit: ["nS", "uS", "nS per pair", "nS per EM synapse", "nS per EM gap junction"], cls: conductance_cell}
+  # capacitance, resistivity
+  - {re: ".", unit: ["uF/cm2"], cls: capacitance_specific}
+  - {re: ".", unit: ["pF"], cls: capacitance_cell}
+  - {re: ".", unit: ["ohm cm"], cls: axial_resistivity}
+  # currents
+  - {re: "^(pep_gain_pA|ma_gain_pA)$", cls: current_gain}
+  - {re: ".", unit: ["pA"], cls: current_nonneg}
+  - {re: ".", unit: ["pA/%", "pA/C", "pA per mW/mm2", "pA per 1/mm", "pA/mV"], cls: model_units}
+  # time constants
+  - {re: "^kin_(egl36_atm[fms]|kcnl_a|shk1_ath|kqt3_ats)$", cls: tau_gate}
+  - {re: "^kin_", unit: ["ms"], cls: tau_coefficient}
+  - {re: "^(c302_.*_tau|awa_liu_t|bwm_du_tau_|ph_sh_.*_(a1|a2|deact|hdeinact))", unit: ["ms"], cls: tau_gate}
+  - {re: "^(capool_tca|c302_ca_conc_decay_time_muscle|ph_sh_ca_tau_ms|bwm_du_ca_tau_ms)$", cls: tau_process}
+  - {re: "_tau_rise_ms$|^gcamp_tau_rise_ms$|^obs_opto_tau_on_ms$", cls: tau_binding}
+  - {re: "(_dur_ms|_dur_s|_delay_s|_duration_ms|_active_min|_inactive_min)$", cls: duration}
+  - {re: "^dmp_period_s$", cls: period}
+  - {re: ".", unit: ["ms", "s", "min", "h", "d"], cls: tau_process}
+  # rates
+  - {re: "^(pump_rate_|met_pump_max_hz)", cls: frequency_muscle}
+  - {re: ".", unit: ["Hz"], cls: frequency_muscle}
+  - {re: ".", unit: ["1/(uM s)", "1/uM/s"], cls: rate_second}
+  - {re: "^kin_slo[12]iso_kxy1?$", hard_row_unit: [1.0e-9, 1.0e6], basis: physics, why: "a Ca half-activation (uM; the ledger unit '/ms' is the mod's mislabel)", source: "as binding_constant"}
+  - {re: "^usu_r[12]_Ks$", cls: model_units}
+  - {re: ".", unit: ["1/s", "1/ms", "/ms", "kHz", "1/d"], cls: rate_first}
+  - {re: "^bwm_du_slo2_alpha$", hard_row_unit: [0, 1.0e6], basis: physics, why: "a rate per (ms mM2); >= 0, below 1e6", source: "as rate_first"}
+  # concentrations
+  - {re: "^(ion_cao|ph_sh_ca_out_M)$", cls: ca_outside}
+  - {re: "^(pump_na_o_mM)$", cls: Na_outside}
+  - {re: "^(pump_na_rest_mM)$", cls: Na_inside}
+  - {re: "^(pump_k_o_mM|glia_k_bath_mM)$", cls: K_outside}
+  - {re: "^glia_cl_bath_mM$", cls: Cl_outside}
+  - {re: "^glia_kcc3_dcl_mM$", cls: ion_inside}
+  - {re: "^rec_mg(_c)?_mM$", cls: Mg}
+  - {re: "^rec_tmax_", cls: transmitter_peak}
+  - {re: "^(odor_c0_uM|salt_c0_mM|repel_c0|sens_(aser|awc|awb)_.*_ref_(mM|uM))$", cls: stimulus_conc}
+  - {re: "(gcamp_ca_rest_nM|obs_ca_rest_nM|ph_sh_ca_rest_M|usu_init_ca|bwm_du_ca0_mM|mca_max_uM)$", cls: ca_free}
+  - {re: "^(usu_init_|nano_btot|int_ip3_rest|int_lr_c0_uM|egg_uv1_tyr_uM_per_egg)", cls: molecule_conc}
+  - {re: "(_ec50|_kd_nM|_km_nM|_K_mM|_K_uM|_khalf|_k_uM|_kca|_ca05|_K_CaX|_kyx1?|_kxy|ec50_cng|_ic50_mM|_km_|_b_M|_ca_half|_d\\d_uM|_k3_uM)", cls: binding_constant}
+  - {re: ".", unit: ["nM", "uM", "mM", "M", "uM/um2", "uM/um3"], cls: binding_constant}
+  - {re: "^ph_sh_ca_diff_cm2_s$", cls: diffusion_ion}
+  - {re: "^nano_dca$", cls: diffusion_ion}
+  - {re: "^(ma_diffusion|pep_diffusion)", cls: diffusion_small}
+  - {re: "^pc_stirring", cls: dispersion}
+  - {re: "(_ph_rest|_ph50)$", cls: ph}
+  - {re: ".", unit: ["%", "% O2", "% CO2"], cls: gas_fraction}
+  - {re: ".", unit: ["mOsm/L"], cls: osmolarity}
+  - {re: ".", unit: ["OD600"], cls: optical_density}
+  - {re: ".", unit: ["mW/mm2"], cls: light}
+  # dimensionless
+  - {re: "^rec_(lacr|acr16|nachr|acc|glucl|gabacl|gabacat|mod1|lgc55|lgc53|acr23)_hill$", cls: hill_receptor}
+  - {re: "^rec_(glr|nmr)_hill$", cls: hill_tetramer}
+  - {re: "(gcamp.*_hill|gcamp_hill)$", cls: hill_tetramer}
+  - {re: "(_hill|_hill_nai|_n_CaX|_n_cng|_o2_(up|down)_n|_co2_n|_nxy1?|_nyx1?)$", cls: hill_any}
+  - {re: "_effect$", cls: effect_mult}
+  - {re: "(_frac|_share|_F1|^capool_f|^awa_liu_f|^deb_kap.*|^met_f_fixed|^sens_trpv_phi|^slow_gain_floor|^homeo_d_lo|^obs_neuropal_p_.*|^ph_pump_o(n|ff)|^touch_a[13]|^met_a|^bwm_du_input_scale|_minf_a2|_finf_a1|^c302_ca_boyle_gate_h_alpha|^kin_.*_(aw|bw|as|bs|s1|s4|ahinf|bhinf|chinf|dhinf))$", cls: fraction}
+  - {re: "^noise_amp_cv$", cls: cv}
+  - {re: "^gap_rect_ratio$", cls: ratio_ge1}
+  - {re: "^(met_b|met_d)$", hard_row_unit: [-1, 0], basis: guessed_physical, why: "MEC-4 model exponents, sign kept, magnitude at most 1 (Eastwood and Goodman 2012 form)", source: "senses_touch"}
+  - {re: "^kin_egl19_ath$", hard_row_unit: [1.0e-6, 1.0e7], basis: guessed_physical, why: "a ms scale factor of a tau sum (mod unit missing); bounded by gate_window", source: "constraints.yaml gate_window"}
+  - {re: "^ph_sh_exp2_mtau_pow$", hard_row_unit: [0.1, 4], basis: guessed_physical, why: "a power-law exponent in Shimizu's tau; bounded by gate_window", source: "Shimizu"}
+  - {re: "^obs_gcamp\\d+f?s?_range$|^gcamp_dff_max$", hard_row_unit: [0, 1000], basis: guessed_physical, why: "a sensor's dynamic range (Fmax/Fmin) or dF/F ceiling", source: "Chen et al. 2013"}
+  - {re: "^obs_neuropal_k_neighbours$", hard_row_unit: [1, 302], basis: physics, why: "a count of neurons", source: "definition"}
+  - {re: "(gcamp_noise_pct|obs_noise_dff)$", hard_row_unit: [0, 1000], basis: guessed_physical, why: "a noise level >= 0", source: "definition"}
+  - {re: "^(homeo_d_hi|osmo_canal_gain|glia_gain|sens_gc_gain|usu_vg_ef_vg|syn_weight_.*|bwm_du_phi_[mn]|bwm_du_slo2_phi|awa_liu_c0|touch_a2|deb_f_max_feeding|deb_del_m|int_lr_c1)$", cls: gain_nonneg}
+  - {re: "^(release_|nca_|irk_|egl19_)(gq|gs|gi)_gain$", cls: gain_nonneg}
+  - {re: "^gpcr_hill$", cls: hill_any}
+  - {re: "^gpcr_unknown_share$", cls: fraction}
+  # energy, mechanics, space
+  - {re: "^pump_atp_kJ_per_mol$", cls: atp_free_energy}
+  - {re: "^met_oxycal_kJ_per_mol$", cls: oxycaloric}
+  - {re: ".", unit: ["kT"], cls: energy_kT}
+  - {re: ".", unit: ["kT/um"], cls: model_units}
+  - {re: ".", unit: ["uN"], cls: force}
+  - {re: ".", unit: ["kPa"], cls: pressure}
+  - {re: "^nano_r$", cls: length_nano}
+  - {re: "^pc_.*_y_um$", cls: position, role: fixed}
+  - {re: "(_radius_um)$", cls: length_radius}
+  - {re: ".", unit: ["um"], cls: length_body}
+  - {re: ".", unit: ["body length"], cls: body_fraction}
+  - {re: "^pc_cross_section_um2$", cls: area_cross}
+  - {re: ".", unit: ["um2"], cls: area_cell}
+  - {re: ".", unit: ["um3"], cls: volume}
+  - {re: "^dcv_peptides_per_vesicle$", cls: molecules_per_dcv}
+  - {re: "^ma_store_molecules$", cls: molecules_per_neuron}
+  - {re: ".", unit: ["channels per cell"], cls: channels_per_cell}
+  - {re: "^gap_open_channels_per_em$", hard_row_unit: [0, 100000], basis: physics, why: "a gap-junction plaque of ~1 um2 holds at most ~1e4 connexons at 10 nm spacing", source: "[HB 1]"}
+  - {re: ".", unit: ["eggs"], cls: eggs}
+  - {re: ".", unit: ["eggs/h", "eggs/min"], cls: egg_rate}
+  - {re: ".", unit: ["molecules/s per cell", "molecules/s per neuron", "vesicles/s per neuron", "molecules"], cls: count_nonneg}
+  - {re: "^cc_pc_volume_um3$", cls: volume}
+  - {re: ".", unit: ["um3/s per cell"], cls: count_nonneg}
+  # metabolism (DEB)
+  - {re: "^deb_e_g_J_per_cm3$", hard_row_unit: [0, 40000], basis: physics, why: "energy per cm3 of structure: at most fat's 39 kJ/g at 1 g/cm3", source: "thermochemistry"}
+  - {re: "^deb_e_h[bjp]_J$", hard_row_unit: [0, 1], basis: guessed_physical, why: "a maturity threshold, J: an adult holds ~0.02 J of biomass; 1 J is far above any cumulative maturity", source: "WormAtlas mass"}
+  - {re: "^deb_p_am_", hard_row_unit: [0, 10000], basis: guessed_physical, why: "a surface-specific assimilation flux >= 0", source: "AmP"}
+  - {re: "^deb_p_m_", hard_row_unit: [0, 100000], basis: guessed_physical, why: "a volume-specific maintenance flux >= 0", source: "AmP"}
+  - {re: "^deb_v_cm_per_d$", hard_row_unit: [0, 10], basis: guessed_physical, why: "energy conductance >= 0", source: "AmP"}
+  - {re: "^deb_k_j_per_d$", hard_row_unit: [0, 10], basis: guessed_physical, why: "a maturity maintenance rate >= 0", source: "AmP"}
+  - {re: "^met_age_d$", hard_row_unit: [0, 60], basis: physics, why: "within the lifespan", source: "WormAtlas"}
+  # odd units
+  - {re: "^c302_ca_conc_rho_muscle$", cls: model_units}
+  - {re: "^bwm_du_ca_influx$", cls: model_units}
+  - {re: "^usu_", unit: ["model units", "uM/s per model unit", "uM/(s mV)", "uM/s"], cls: model_units}
+  - {re: "^(int_lr_v3_uM_per_s|int_plc_ca_uM_per_s)$", cls: model_units}
+  - {re: "^(int_gap_p_.*_um_s)$", hard_row_unit: [0, 1000], basis: guessed_physical, why: "a gap permeability for IP3/Ca, um/s, >= 0 (free diffusion over ~1 um gives ~100 um/s)", source: "[HB 7]"}
+  - {re: "^(osmo_e_vol_kPa|osmo_lp_per_kPa_s)$", cls: model_units}
+  - {re: "^(ph_sh_p_.*_ca)$", cls: model_units}
+  - {re: "^met_intake_per_pump$", cls: model_units}
+  - {re: "^(ma_release_nM_per_s|pep_release_nM_per_s|nlp40_release_nM_per_s|int_h_release_nM_per_s)$", hard_row_unit: [0, 1.0e6], basis: guessed_physical, why: "a release rate as a concentration rise, >= 0", source: "definition"}
+  - {re: "^ma_extrasyn_channels$", cls: channels_per_cell}
+  - {re: "^cc_clearance", cls: count_nonneg}
+  - {re: "^gpcr_", cls: gain_nonneg}
+  - {re: "^touch_n_channels$|^harsh_n_channels$", cls: channels_per_cell}
+  - {re: "^(release|nca|irk|egl19)_g[qsi]_gain$", cls: gain_nonneg}
+  - {re: ".", unit: ["1 per unit G"], cls: gain_nonneg}
+  - {re: ".", unit: ["J/(mol K)"], cls: gas_constant}
+
+# reasons for biological ranges wider than one decade (span_reason); first match wins. Rows wider than one decade
+# with no reason here or from a measured spread are listed in CATALOG.md "Ranges" as wide without a reason.
+span_reasons:
+  - {re: "^rec_.*_tau_rise_ms$", why: "ligand-gated rise times measured 0.1-2 ms across nicotinic, GABA-A and glutamate receptors under fast application; worm recordings are clamp-limited (PORT_SOURCES N1)"}
+  - {re: "^rec_.*_tau_des_ms$", why: "desensitisation time constants across Cys-loop receptors span 0.1 s to tens of s (Hernando et al. 2023 Biophys Rev); the worm receptors are described qualitatively only"}
+  - {re: "^rec_.*_tau_off_ms$", why: "deactivation across receptor families: a few ms (AMPA, nicotinic) to hundreds of ms (slow GABA, LGC channels)"}
+  - {re: "^rec_.*_ec50_uM$", why: "agonist EC50s across a receptor family span decades in heterologous recordings (Hernando et al. 2023; Hansen et al. 2021)"}
+  - {re: "^(rec_.*_gamma_pS|chnoise_.*_pS)$", why: "unitary conductances across the channel family span 5-90 pS [HB 2]"}
+  - {re: "^rec_tmax_", why: "cleft peak concentration: 0.1-5 mM for fast transmitters at vertebrate synapses, lower for graded and monoamine release; not measured in the worm"}
+  - {re: "^rec_.*_ss_frac$", why: "steady-state fraction after desensitisation: not retrieved; 1-50% across receptors"}
+  - {re: "^rec_mg_mM$", why: "external Mg2+: not measured in worm body fluid; salines hold 1-5 mM, NGM 1 mM"}
+  - {re: "^(stp_|hab_beta)", why: "short-term plasticity constants: tens to hundreds of ms in Dittman et al. 2000; worm NMJ trains (Liu et al. 2009) constrain the ACh grain only"}
+  - {re: "^(gq|gi|gs)_tau_ms$|^sens_trpv_tauG_ms$|^obs_opto_tau_o(n|ff)_ms$", why: "G-protein and opsin cascades: 100 ms to several s (PORT_SOURCES N4)"}
+  - {re: "(_g_nS|_g_b_nS|_g_dva_nS|_g_smd_nS|_gna_.*_nS|_g_leak_nS|_gleak_nS|_nS_per_contact|^sens_(cng|trpv)_g_nS)$", why: "a whole-cell conductance with no worm recording: bounded jointly by the cell's input resistance (0.2-5 GOhm, param_ranges A3; constraints.yaml input_resistance)"}
+  - {re: "^(pas_.*_gpas|mpas_gpas|egg_vm_egl19_g_S_cm2)$", why: "a membrane conductance density: bounded jointly by the measured input resistance per class (constraints.yaml input_resistance); per-cell ranges by size in step 3"}
+  - {re: "_Ra$", why: "cytoplasm resistivity measured 30-400 ohm cm across neurons [HB 4]"}
+  - {re: "(_rm_kohm_cm2)$", why: "specific membrane resistance across cell types: 1-50 kOhm cm2 [HB 4]"}
+  - {re: "(food_od0|_K_OD|_food_k_od)$", why: "bacterial density spans 0.01-5 OD600 across feeding assays"}
+  - {re: "^(touch|harsh)_f0_uN$", why: "behavioural thresholds: gentle touch about 1 uN, harsh touch above about 100 uN (Petzold et al. 2013)"}
+  - {re: "(_tau_adapt_s|^homeo_tau_s|_tau_g_h|^learn_.*_tau_(min|h)|^slow_set_s|^met_pump_tau_s|^exc_volume_tau_s|^egg_uv1_tyr_tau_s|^glia_kir_tau_s)$", why: "adaptation, homeostatic and learning time constants are measured only as behavioural half-times, seconds to hours across paradigms"}
+  - {re: "(_area_.*_um2|_area_um2|^pc_cross_section_um2|_volume_um3)$", why: "cell and compartment sizes differ across the cells this row covers (WormAtlas)"}
+  - {re: "^(touch|harsh)_n_channels$|^gap_open_channels_per_em$", why: "channel counts per cell or junction: not counted in the worm; the span covers one channel per punctum (Sanzeni et al. 2019) to dense packing"}
+  - {re: "^(sens_|touch_|harsh_|nose_|tap_|proprio_|mca_|mact_|bwm_act_|ent_act_|egg_act_)", why: "a sensory or excitation-contraction constant with no direct worm measurement; the span covers the stimulus or Ca range the behaviour responds to"}
+  - {re: "^(syn_weight_|gap_weight|gap_strength)", why: "a synaptic or gap weight per EM contact: unitary worm values are not measured; bounded jointly by the postsynaptic input resistance"}
+  - {re: "^(pump_|met_|osmo_|cc_|int_|aex2_|egg_|glia_|other_|endo_|ph_|pbo5_|exc_|phar_|sleep_|scene_|assoc_|pc_|gcamp_|obs_|usu_|bwm_|mw_|ion_)", why: "an organ, sensor or environment constant with no direct worm measurement; the span is the guessed range in its source and is a data target"}
+  - {re: "^pep_ec50_", why: "neuropeptide-GPCR EC50s measured across the family span pM to uM (Beets et al. 2023, 461 pairs); a pair without its own measurement keeps the family span"}
+  - {re: "^ma_ec50_", why: "monoamine GPCR EC50s measured across receptors span ~10 nM to ~100 uM (receptor-by-receptor heterologous assays)"}
+  - {re: "^dens_", why: "a per-cell conductance density: BAAIWorm fitted each cell's density to one recording or none; the range keeps zero (channel absent) and the span over cells of the same type"}
+  - {re: "^(assoc_.*_tau_min|hab_tau_s|homeo_.*_tau|slow_.*_tau_h|.*_tau_h)$", why: "learning, forgetting and homeostatic time constants are measured only as behavioural half-times spanning minutes to hours across paradigms"}
+  - {re: "^usu_init_", why: "Usuyama's initial state of the AWC cascade: published values x/10 to 10x, the model's own steady state is fitted, not measured"}
+  - {re: "^usu_r", why: "a rate constant of Usuyama's fitted AWC cascade: no single-step measurement exists; the factor 10 band is the fit's identifiability"}
+  - {re: "(_ref_uM|_ref_mM|_K_uM|_K_mM|_c0_uM|_c0_mM|repel_c0)$", why: "sensory dose-response midpoints span the tested concentration series (dilutions over decades in the chemotaxis literature)"}
+  - {re: "^(ma_|pep_|dcv_|nlp40_)", why: "extrasynaptic release, store and clearance numbers are not measured for any worm neuron; the span covers mammalian synaptic and volume-transmission measurements"}
