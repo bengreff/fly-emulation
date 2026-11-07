@@ -469,7 +469,9 @@ class Mech:
             pool = self.ma
             u = _sig((v - p["ma_vhalf_mV"]) / p["ma_k_mV"]) * self.neuron
             self.q_ma += (u - self.q_ma) * (1.0 - np.exp(-dt_ms / p["ma_tau_ms"]))
-            J = self.ma_rel * (p["ma_release_per_s"] * self.q_ma * R)[:, None] * self.store      # molecules/s
+            ms = ctx.outputs.get("ma_release_scale")         # per cell, from slow states (row 24 pathogen learning)
+            R_ma = R if ms is None else R * np.asarray(ms, float)
+            J = self.ma_rel * (p["ma_release_per_s"] * self.q_ma * R_ma)[:, None] * self.store   # molecules/s
             cap = p["ma_store_molecules"]
             c = pool.nM()
             sink = np.zeros_like(pool.N)
