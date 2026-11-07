@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:10 CST",
+ "generated_at": "2026-11-07 00:13 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67506,
-   "guessed": 9117,
-   "inferred": 114,
+   "guessed": 9116,
+   "inferred": 115,
    "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81833,
-  "placeholder": 9117,
+  "known": 81834,
+  "placeholder": 9116,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9117
+  "must_fill": 9116
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9117,
+   "guessed": 9116,
    "derived": 3098,
-   "inferred": 114,
+   "inferred": 115,
    "measured": 328
   },
-  "known": 10846,
-  "placeholder": 9117,
+  "known": 10847,
+  "placeholder": 9116,
   "gap": 0,
-  "must_fill": 9117
+  "must_fill": 9116
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6179,
     "derived": 3098,
-    "inferred (ours)": 20,
+    "inferred (ours)": 21,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3642,
+    "guessed": 3641,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3098,
     "measured": 327,
-    "inferred (ours)": 20,
+    "inferred (ours)": 21,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3642,
+    "guessed": 3641,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 3,
-   "guessed": 170,
-   "inferred": 64,
+   "guessed": 169,
+   "inferred": 65,
    "measured": 30,
    "published_fit": 87
   },
@@ -749,8 +749,8 @@
    "numbers": 115,
    "by_label": {
     "derived": 2,
-    "guessed": 60,
-    "inferred": 31,
+    "guessed": 59,
+    "inferred": 32,
     "measured": 20,
     "published_fit": 2
    }
@@ -14273,10 +14273,10 @@
    "n_values": 1,
    "value_template": 40.0,
    "template_source": "not reported for ACR-16; vertebrate alpha7 homomers 70-90 pS",
-   "bio_min": 20.0,
+   "bio_min": 5.0,
    "bio_max": 90.0,
    "bound_basis": "guessed",
-   "bound_source": "not reported for ACR-16; vertebrate alpha7 homomers 70-90 pS",
+   "bound_source": "Hernando, Turani, Rodriguez Araujo & Bouzat 2023 Biophys Rev 15:733 (PMC10480131), section on N-AChR (ACR-16)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -14288,11 +14288,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 40 pS, label guessed, range [20, 90]; no C. elegans ACR-16 single channel has been recorded, and one explanation the authors give is a very low conductance, so the lower end comes down from 20 to 5 pS (guessed: near the smallest unitary currents resolved in cell-attached patches). The upper end 90 pS stays for vertebrate alpha7 homomers. The template 40 pS stays, guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
+   "source_quote": "At the single-channel level, no channel activity elicited by nicotine has been detected from L1 muscle cells lacking L-AChRs (Rayes et al. 2007 ). The lack of detection of single N-AChR channels may be due to a very low channel conductance, very fast and stable desensitization, or very low expression at the L1 stage. Thus, the characterization of C. elegans single-ACR-16 channels is a pending issue.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -15455,28 +15455,28 @@
    "applies_to": "glutamate-gated chloride (GluCl) receptors at chemical synapses",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 3000.0,
-   "template_source": "not retrieved (PORT_SOURCES N1 gap)",
+   "value_template": 2100.0,
+   "template_source": "Castro, Turani, Faraoni, Gerbino & Bouzat 2020 Front Neurosci 14:879 (PMC7466757), Results 4 (GluCl\u03b11/\u03b2 in BOSC 23 cells)",
    "bio_min": 300.0,
    "bio_max": 30000.0,
    "bound_basis": "guessed",
-   "bound_source": "not retrieved (PORT_SOURCES N1 gap)",
+   "bound_source": "kept from before the value fill: not retrieved (PORT_SOURCES N1 gap)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 3000 ms, label guessed, range [300, 30000]; the desensitization time constant of C. elegans GluCl\u03b11/\u03b2 (GLC-1/GLC-2) at 3 mM glutamate, one exponential, as wsyn has; full recovery after 20 s agrees with one shared onset and recovery constant. Inferred, not measured: the class lumps six subunits and its EC50 comes from AVR-15B; GLC-3 is 'rapidly desensitizing' (Horoszok 2001), so the range [300, 30000] stays. Was 3000 ms, guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7466757/",
+   "source_quote": "A 6-s pulse of 3 mM glutamate in ECS elicited macroscopic currents that reached the peak with a rise time of 49.30 \u00b1 16.20 ms ( n = 9) and decayed in the presence of the agonist due to desensitization. ... The decay was fitted by a single component with a time constant of 2100 \u00b1 1040 ms ( n = 9). The application of another pulse of glutamate after a 20-s wash with ECS allowed full recovery of the peak current",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40704,18 +40704,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 450,
+    "guessed": 449,
     "measured": 279,
     "derived": 38,
-    "inferred": 115,
+    "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9254,
+    "guessed": 9253,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 121,
+    "inferred": 122,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40723,18 +40723,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 450,
+   "guessed": 449,
    "measured": 279,
    "derived": 38,
-   "inferred": 115,
+   "inferred": 116,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9254,
+   "guessed": 9253,
    "measured": 6235,
    "derived": 67518,
-   "inferred": 121,
+   "inferred": 122,
    "absent": 5
   },
   "by_plan_row": {
@@ -40805,17 +40805,17 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 104,
+     "guessed": 103,
      "measured": 46,
      "derived": 4,
-     "inferred": 33
+     "inferred": 34
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6778,
+     "guessed": 6777,
      "measured": 5903,
      "derived": 1988,
-     "inferred": 38
+     "inferred": 39
     },
     "n_rows": 214,
     "n_numbers": 15459
@@ -41179,17 +41179,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 65,
+     "inferred": 66,
      "measured": 34,
-     "guessed": 196,
+     "guessed": 195,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
-     "inferred": 65,
+     "inferred": 66,
      "measured": 34,
-     "guessed": 196,
+     "guessed": 195,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
@@ -41357,17 +41357,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 291,
+     "guessed": 290,
      "measured": 219,
      "derived": 26,
-     "inferred": 98
+     "inferred": 99
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8951,
+     "guessed": 8950,
      "measured": 6076,
      "derived": 67506,
-     "inferred": 103
+     "inferred": 104
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41634,15 +41634,15 @@
    "mech:receptors": {
     "rows": {
      "measured": 20,
-     "guessed": 60,
-     "inferred": 31,
+     "guessed": 59,
+     "inferred": 32,
      "derived": 2,
      "published_fit": 2
     },
     "numbers": {
      "measured": 20,
-     "guessed": 60,
-     "inferred": 31,
+     "guessed": 59,
+     "inferred": 32,
      "derived": 2,
      "published_fit": 2
     },
@@ -41776,17 +41776,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 450,
+     "guessed": 449,
      "derived": 34,
-     "inferred": 115,
+     "inferred": 116,
      "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9254,
+     "guessed": 9253,
      "derived": 3108,
-     "inferred": 121,
+     "inferred": 122,
      "measured": 383,
      "absent": 5
     },
@@ -42127,19 +42127,19 @@
    },
    "rows_read": 200,
    "quotes": {
-    "none": 1098,
-    "paper text (read audit, 6 Nov)": 240,
+    "none": 1096,
+    "paper text (read audit, 6 Nov)": 242,
     "research file (scripted check)": 145
    },
-   "with_url": 1102,
+   "with_url": 1104,
    "links": {
-    "distinct": 150,
+    "distinct": 151,
     "by_status": {
-     "200": 140,
+     "200": 141,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:08 CST"
+    "checked_at": "2026-11-07 00:13 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45467,6 +45467,32 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3955162/"
    },
    {
+    "param_id": "rec_glucl_tau_des_ms",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "3000 -> 2100 ms; guessed -> inferred; range [300, 30000] -> [300, 30000]",
+    "reason": "the desensitization time constant of C. elegans GluCl\u03b11/\u03b2 (GLC-1/GLC-2) at 3 mM glutamate, one exponential, as wsyn has; full recovery after 20 s agrees with one shared onset and recovery constant. Inferred, not measured: the class lumps six subunits and its EC50 comes from AVR-15B; GLC-3 is 'rapidly desensitizing' (Horoszok 2001), so the range [300, 30000] stays. Was 3000 ms, guessed",
+    "source": "Castro, Turani, Faraoni, Gerbino & Bouzat 2020 Front Neurosci 14:879 (PMC7466757), Results 4 (GluCl\u03b11/\u03b2 in BOSC 23 cells)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7466757/"
+   },
+   {
+    "param_id": "rec_acr16_gamma_pS",
+    "kind": "range",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "40 -> 40 pS; guessed -> guessed; range [20, 90] -> [5, 90]",
+    "reason": "no C. elegans ACR-16 single channel has been recorded, and one explanation the authors give is a very low conductance, so the lower end comes down from 20 to 5 pS (guessed: near the smallest unitary currents resolved in cell-attached patches). The upper end 90 pS stays for vertebrate alpha7 homomers. The template 40 pS stays, guessed",
+    "source": "Hernando, Turani, Rodriguez Araujo & Bouzat 2023 Biophys Rev 15:733 (PMC10480131), section on N-AChR (ACR-16)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46475,18 +46501,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 450,
+    "guessed": 449,
     "measured": 279,
     "derived": 38,
-    "inferred": 115,
+    "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9254,
+    "guessed": 9253,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 121,
+    "inferred": 122,
     "absent": 5
    }
   }
