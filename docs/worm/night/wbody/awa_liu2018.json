@@ -1,0 +1,45 @@
+{
+ "check": "AWA Liu 2018 isolated WT cell, 1 s steps from rest",
+ "rest_mV": -64.56,
+ "first_step_pA": 11,
+ "cpu_first": {
+  "threshold_mV": -29.46,
+  "peak_mV": 4.44,
+  "amplitude_mV": 33.9,
+  "half_width_ms": 16.35,
+  "t_peak_ms": 154.35,
+  "max_dvdt": 8.37
+ },
+ "cpu_double": {
+  "threshold_mV": -32.1,
+  "peak_mV": 14.65,
+  "amplitude_mV": 46.75,
+  "half_width_ms": 21.7,
+  "t_peak_ms": 108.55,
+  "max_dvdt": 15.44
+ },
+ "neuron_first": {
+  "threshold_mV": -29.42,
+  "peak_mV": 4.37,
+  "amplitude_mV": 33.79,
+  "half_width_ms": 16.45,
+  "t_peak_ms": 154.87,
+  "max_dvdt": 8.27
+ },
+ "neuron_double": {
+  "threshold_mV": -32.03,
+  "peak_mV": 14.61,
+  "amplitude_mV": 46.64,
+  "half_width_ms": 21.73,
+  "t_peak_ms": 108.6,
+  "max_dvdt": 15.31
+ },
+ "bars": {
+  "threshold": true,
+  "amplitude": false,
+  "half_width": true,
+  "all_or_none": false,
+  "neuron_matches_cpu": true
+ },
+ "verdict": "fail: amplitude, all_or_none"
+}

@@ -56,6 +56,11 @@
   fieldset button { background:#2d3540; color:var(--text); border:1px solid var(--line); border-radius:3px; padding:3px 10px; cursor:pointer; }
   .opt { display:inline-block; margin-right:8px; }
   .opt.na { color:#666; }
+  #statelist .grp { margin:8px 0 2px; font-weight:600; }
+  #statelist .grp a { font-weight:400; margin-left:8px; color:#7fb0ff; font-size:11px; }
+  #statelist .sr { display:grid; grid-template-columns: minmax(120px, 1fr) 80px 170px; gap:6px; align-items:center; font-size:12px; }
+  #statelist .sr .v { text-align:right; font-variant-numeric: tabular-nums; }
+  #statelist canvas { width:170px; height:18px; display:block; }
 </style>
 <script type="importmap">
 { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
@@ -91,6 +96,7 @@
   <section id="right">
     <nav>
       <button data-tab="wire" class="on">Wiring</button>
+      <button data-tab="state">State</button>
       <button data-tab="mech">Mechanisms</button>
       <button data-tab="cat">Catalog</button>
       <button data-tab="run">Run</button>
@@ -100,8 +106,14 @@
       <div id="wire"><div id="tip"></div></div>
       <div id="wirenote"></div>
     </div>
+    <div id="tab-state" class="tab">
+      <div class="row"><input type="search" id="stq" placeholder="filter, e.g. q10, sens_, world.head, gcamp">
+        <span class="muted" id="stn"></span></div>
+      <div id="statelist"></div>
+    </div>
     <div id="tab-mech" class="tab"></div>
     <div id="tab-cat" class="tab">
+      <div class="row"><a href="catalog.html" target="_blank" style="color:#7fb0ff">Open the full audited parameter catalog (every row, with sources and audit trail)</a></div>
       <div class="row counts" id="catcounts"></div>
       <div class="row" id="catsrc"></div>
       <div class="row">
@@ -125,7 +137,7 @@ const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const RECORD = params.has('record');
 const S = { runs: [], run: null, X: null, A: null, nF: 0, nV: 0, f: 0, playing: !RECORD, speed: 1, acc: 0,
-            colour: 'act', follow: true, trail: true, amax: 1 };
+            colour: 'act', follow: true, trail: true, amax: 1, ncol: 'v' };
 
 async function getJSON(url) { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }
 async function getF32(url) { const r = await fetch(url); if (!r.ok) throw new Error(url + ' ' + r.status); return new Float32Array(await r.arrayBuffer()); }
@@ -278,12 +290,18 @@ function showFrame(f) {
   $('tlabel').textContent = `t = ${t.toFixed(2)} s / ${(S.run.seconds).toFixed(1)} s`;
   drawKymo();
   updateWireActivity();
+  drawState();
 }
 
 // ---------------------------------------------------------------- kymograph
 const kcv = $('kymocv'); const kctx = kcv.getContext('2d');
 let kimg = null;
 const KROWS = ['MDL', 'MDR', 'MVL', 'MVR'];
+function gcol(d) { // GCaMP dF/F: 0 (and below) dark green-grey, 1 bright green, 3 and above near white
+  if (!isFinite(d)) return [0.2, 0.2, 0.2];
+  const a = Math.max(0, Math.min(1, d / 1)), b = Math.max(0, Math.min(1, (d - 1) / 2));
+  return [0.08 + 0.12 * a + 0.75 * b, 0.12 + 0.78 * a + 0.1 * b, 0.10 + 0.15 * a + 0.7 * b];
+}
 function vcol(v) { // soma voltage: -70 mV dark blue, -25 mV red, +20 mV and above pale yellow
   const a = Math.max(0, Math.min(1, (v + 70) / 90));
   const lo = [0.08, 0.10, 0.28], mid = [0.85, 0.22, 0.30], hi = [1.0, 0.95, 0.62];
@@ -389,11 +407,11 @@ for (const [name, color, op, on, title] of LAYERS) {
 }
 function updateWireActivity() {
   if (!S.A) return;
-  if (S.V) { // closed loop: neurons light with their soma voltage, -70 mV dark to +20 mV hot (linear)
-    const o = S.f * S.nC;
+  if (S.V) { // closed loop: neurons light with their soma voltage, -70 mV dark to +20 mV hot (linear), or GCaMP dF/F
+    const o = S.f * S.nC, useG = S.ncol === 'g' && S.G;
     nodes.forEach((n, i) => {
       const c = S.cellCol[i]; if (c < 0) return;
-      const h = vcol(S.V[o + c]); pc[3 * i] = h[0]; pc[3 * i + 1] = h[1]; pc[3 * i + 2] = h[2];
+      const h = useG ? gcol(S.G[o + c]) : vcol(S.V[o + c]); pc[3 * i] = h[0]; pc[3 * i + 1] = h[1]; pc[3 * i + 2] = h[2];
     });
   }
   const o = S.f * 96;
@@ -403,6 +421,14 @@ function updateWireActivity() {
   });
   ptsGeo.attributes.color.needsUpdate = true;
 }
+{
+  const sel = document.createElement('select'); sel.id = 'ncol'; sel.title = 'neuron colour (closed-loop runs)';
+  sel.innerHTML = '<option value="v">neurons: soma voltage</option><option value="g">neurons: GCaMP dF/F (row 23)</option>';
+  sel.onchange = () => { S.ncol = sel.value; updateWireActivity();
+    $('wirenote').innerHTML = WIRENOTE + (S.ncol === 'g' ? '<b>Activity:</b> neurons light with the GCaMP dF/F the observation model reports (0 dark, 1 green, 3 and above white; includes imaging noise). Muscles light with the activation the body receives.' : WIRENOTE_V); };
+  $('wirectl').appendChild(sel);
+}
+const WIRENOTE_V = '<b>Activity:</b> neurons light with their soma voltage from the brain (-70 mV dark blue, -25 mV red, +20 mV pale yellow); muscles light with the activation the body receives.';
 const WIRENOTE = 'Neuron positions: OpenWorm soma atlas (inferred). Muscle positions in this panel are schematic (arclength from the MetaWorm fibres, quadrant offsets). ';
 $('wirenote').innerHTML = WIRENOTE;
 const tip = $('tip');
@@ -413,7 +439,7 @@ R2.domElement.addEventListener('mousemove', (e) => {
   if (!best) { tip.style.display = 'none'; return; }
   const dg = deg[best.name] || {};
   const ci = S.V && S.run.cells ? S.run.cells.indexOf(best.name) : -1;
-  tip.innerHTML = `<b>${best.name}</b> ${best.group.toLowerCase()}${ci >= 0 ? ` &nbsp;${S.V[S.f * S.nC + ci].toFixed(1)} mV` : ''}<br>` + Object.entries(dg).map(([k, v]) => `${k} ${v}`).join(', ');
+  tip.innerHTML = `<b>${best.name}</b> ${best.group.toLowerCase()}${ci >= 0 ? ` &nbsp;${S.V[S.f * S.nC + ci].toFixed(1)} mV` : ''}${ci >= 0 && S.G ? ` &nbsp;dF/F ${S.G[S.f * S.nC + ci].toFixed(2)}` : ''}<br>` + Object.entries(dg).map(([k, v]) => `${k} ${v}`).join(', ');
   tip.style.display = 'block'; tip.style.left = (mx + 12) + 'px'; tip.style.top = (my + 8) + 'px';
 });
 R2.domElement.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
@@ -430,7 +456,9 @@ async function setRun(id) {
   S.run = r; $('runsel').value = r.id;
   S.X = await getF32(`runs/${r.id}.frames.f32`);
   S.A = await getF32(`runs/${r.id}.act.f32`);
-  S.V = null;
+  S.V = null; S.G = null; S.ST = null;
+  if (r.gcamp) S.G = await getF32(`runs/${r.id}.gcamp.f32`);
+  if (r.state_names) S.ST = await getF32(`runs/${r.id}.state.f32`);
   if (r.cells) {
     S.V = await getF32(`runs/${r.id}.neural.f32`); S.nC = r.cells.length;
     S.cellCol = nodes.map(n => r.cells.indexOf(n.name));
@@ -454,8 +482,9 @@ async function setRun(id) {
   lastCen.copy(cenPath[0]); cam1.position.set(0.0, 1.35, 0.75); ctl1.target.set(0, 0, 0);
   S.acc = 0; S.plateNote = '';
   setWorld(r);
-  buildKymo(); showFrame(0); runInfo(); mechView();
-  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), published parameters. ${r.world && r.world.plate_y_L != null && r.chem ? '' : 'Grid 0.25 body lengths. '}White dot = nose. Colour: ${r.cells ? 'activation from the brain, 0 to 1 (fraction of maximal force)' : `activation as a fraction of this run's maximum (${S.amax.toFixed(3)})`}.${S.plateNote}`;
+  buildKymo(); buildState(); showFrame(0); runInfo(); mechView();
+  $('ncol').style.display = S.G ? '' : 'none'; if (!S.G) S.ncol = 'v';
+  $('bodyinfo').innerHTML = `<b>${r.title}</b><br>${r.description}<br>Ported MetaWorm body (BAAIWorm, Apache 2.0), ${r.body_info && r.body_info.applied && r.body_info.body_layers === 'frontiers2024' ? `layered tissue (row 21: Frontiers 2024 moduli per tetrahedron, ${Math.round(r.body_info.E_min_kPa)}-${Math.round(r.body_info.E_max_kPa)} kPa${r.body_info.body_damping === 'backholm2013' ? ', Backholm 2013 internal damping' : ''})` : 'published parameters'}. ${r.world && r.world.plate_y_L != null && r.chem ? '' : 'Grid 0.25 body lengths. '}White dot = nose. Colour: ${r.cells ? 'activation from the brain, 0 to 1 (fraction of maximal force)' : `activation as a fraction of this run's maximum (${S.amax.toFixed(3)})`}.${S.plateNote}`;
 }
 function fmt(x) { return typeof x === 'number' ? (Math.abs(x) >= 100 || Math.abs(x) < 0.01 && x !== 0 ? x.toExponential(2) : x.toFixed(3)) : String(x); }
 function runInfo() {
@@ -501,6 +530,48 @@ function mechView() {
       <td>${(m.switch || []).map(sw => `<div><span class="muted">${sw.name}:</span> ${sw.options.map(o => `<span class="opt ${sw.available.includes(o) ? '' : 'na'}">${o === cur(sw) ? '&#9673;' : '&#9675;'} ${o}</span>`).join('')}</div>`).join('') || '<span class="muted">none</span>'}</td>
       <td class="muted">${m.source || ''}</td></tr>`).join('') + '</tbody></table>';
 }
+
+// ---------------------------------------------------------------- mechanism state (closed-loop runs)
+// Every module's scalar output each frame (loop.run's out.state.f32): grouped by the output key's first part, a
+// sparkline over the run with a cursor at the current frame, and a link to the catalog rows that mention the key.
+const ST = { rows: [], groups: [] };
+function stGroup(n) { const p = n.split('.'); return p[0] === 'world' ? p.slice(0, 2).join('.') : p[0]; }
+function buildState() {
+  const el = $('statelist'); ST.rows = [];
+  if (!S.ST) { el.innerHTML = '<p class="muted">This run has no recorded mechanism state (prescribed drive, or recorded before 6 Nov 2026).</p>'; $('stn').textContent = ''; return; }
+  const names = S.run.state_names, nS = names.length, q = $('stq').value.trim().toLowerCase();
+  const groups = {}; names.forEach((n, k) => { if (q && !n.toLowerCase().includes(q)) return; (groups[stGroup(n)] = groups[stGroup(n)] || []).push(k); });
+  let html = `<p class="muted">What each mechanism module reported during this closed-loop run (${nS} values; world.* = what the environment and body sent to the senses). Sparkline: the whole run scaled from its own min to max (hover for the range; small changes look large); cursor = now.</p>`;
+  for (const [g, ks] of Object.entries(groups)) {
+    const root = g.startsWith('world.') ? 'env_' : g;
+    html += `<div class="grp">${g} <a href="catalog.html#q=${encodeURIComponent(root)}" target="_blank">catalog rows</a></div>`;
+    for (const k of ks) html += `<div class="sr"><span title="${names[k]}">${names[k].slice(g.length + 1) || names[k]}</span><span class="v" id="stv${k}"></span><canvas id="stc${k}"></canvas></div>`;
+  }
+  el.innerHTML = html;
+  $('stn').textContent = `${Object.values(groups).reduce((a, b) => a + b.length, 0)} of ${nS} shown`;
+  for (const ks of Object.values(groups)) for (const k of ks) {
+    let lo = Infinity, hi = -Infinity;
+    for (let f = 0; f < S.nF; f++) { const v = S.ST[f * nS + k]; if (isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }
+    const cv = $('stc' + k); cv.width = 170 * devicePixelRatio; cv.height = 18 * devicePixelRatio; cv.title = `${sig(lo)} to ${sig(hi)}`;
+    const off = document.createElement('canvas'); off.width = cv.width; off.height = cv.height; const c = off.getContext('2d');
+    c.scale(devicePixelRatio, devicePixelRatio); c.strokeStyle = '#6fd08c'; c.lineWidth = 1; c.beginPath();
+    const span = hi > lo ? hi - lo : 1; let pen = false;
+    for (let f = 0; f < S.nF; f++) { const v = S.ST[f * nS + k]; if (!isFinite(v)) { pen = false; continue; }
+      const x = f / Math.max(1, S.nF - 1) * 170, y = 16 - (v - lo) / span * 14; if (pen) c.lineTo(x, y); else c.moveTo(x, y); pen = true; }
+    c.stroke();
+    ST.rows.push({ k, cv, off, lo, hi });
+  }
+}
+function drawState() {
+  if (!S.ST || !$('tab-state').classList.contains('on')) return;
+  const nS = S.run.state_names.length;
+  for (const r of ST.rows) {
+    const v = S.ST[S.f * nS + r.k]; $('stv' + r.k).textContent = isFinite(v) ? sig(v) : '';
+    const c = r.cv.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, r.cv.width, r.cv.height); c.drawImage(r.off, 0, 0);
+    const x = S.f / Math.max(1, S.nF - 1) * r.cv.width; c.fillStyle = '#7fb0ff'; c.fillRect(x - devicePixelRatio / 2, 0, devicePixelRatio, r.cv.height);
+  }
+}
+$('stq').oninput = () => { buildState(); drawState(); };
 
 // ---------------------------------------------------------------- catalog
 let CAT = [];
@@ -549,6 +620,7 @@ function drawCatalog() {
 document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
   document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x === b));
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('on', t.id === 'tab-' + b.dataset.tab));
+  if (b.dataset.tab === 'state') drawState();
   resize();
 });
 $('play').onclick = () => { S.playing = !S.playing; $('play').textContent = S.playing ? 'Pause' : 'Play'; };
@@ -593,6 +665,9 @@ await loadCatalog();
 resize();
 await setRun(params.get('run') || S.runs[0].id);
 if (params.get('colour')) { S.colour = params.get('colour'); $('colour').value = S.colour; colourBody(); }
+if (params.get('ncol') === 'g' && S.G) { $('ncol').value = 'g'; $('ncol').onchange(); }
+if (params.get('tab')) { const b = document.querySelector(`nav button[data-tab="${params.get('tab')}"]`); if (b) b.onclick(); }
+if (params.get('stq')) { $('stq').value = params.get('stq'); buildState(); drawState(); }
 requestAnimationFrame(loop);
 window.viewer = {
   ready: true,

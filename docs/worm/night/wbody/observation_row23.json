@@ -1,0 +1,66 @@
+{
+ "gcamp": {
+  "gcamp6s": {
+   "B_at_kd": 0.5,
+   "dff_peak": 15.783159156107263,
+   "t_half_ms": 526.0,
+   "t_half_spec_ms": 550.0,
+   "pass": true
+  },
+  "gcamp6f": {
+   "B_at_kd": 0.5,
+   "dff_peak": 33.086061123984955,
+   "t_half_ms": 148.5,
+   "t_half_spec_ms": 150.0,
+   "pass": true
+  },
+  "gcamp7f": {
+   "B_at_kd": 0.5,
+   "dff_peak": 17.80899567536473,
+   "t_half_ms": 264.5,
+   "t_half_spec_ms": 270.0,
+   "pass": true
+  }
+ },
+ "gait": {
+  "features": {
+   "speed_mean_L_s": 0.3986347327670712,
+   "speed_mean_um_s": 398.63473276707117,
+   "forward_frac": 1.0,
+   "backward_frac": 0.0,
+   "paused_frac": 0.0,
+   "bend_freq_hz": 1.8749999976562501,
+   "wavelength_L": 0.9591729638958871,
+   "path_curvature_per_L": 0.9522763527753852,
+   "max_abs_curvature_kL": 32.01450057468432,
+   "head_bend_mean_deg": 7.7001724495915695,
+   "midbody_bend_mean_deg": -11.434429313118079,
+   "tail_bend_mean_deg": 9.977371179367067,
+   "head_bend_rms_deg": 42.18106221557077,
+   "midbody_bend_rms_deg": 14.362920083591963,
+   "tail_bend_rms_deg": 24.883901793145217
+  },
+  "gait": {
+   "f_body_hz": 1.8744,
+   "wavelength_L": 1.0275222460852083,
+   "speed_L_s": 0.38800556187216756
+  },
+  "fft_bin_hz": 0.5357142850446429,
+  "pass": true
+ },
+ "wall_s_last": 94.12389874458313,
+ "brain": {
+  "opto_neutral_empty_max_dv": 0.0,
+  "opto_neutral_zero_max_dv": 0.0,
+  "opto_aval_dv_end_of_pulse_mV": 0.39242970789638676,
+  "opto_aval_g_peak_nS": 0.2979786159002743,
+  "gcamp6s_aval_dff_end_of_pulse": 0.02198582567502865,
+  "gcamp6s_aval_dff_pre": 0.043593301129378835,
+  "gcamp_lumped_vs_brain_layers_max_diff_shifted": null,
+  "opto_pass": false,
+  "neuropal_unlabelled_frac": 0.3145695364238411,
+  "neuropal_correct_frac_of_labelled": 0.8888888888888888,
+  "neuropal_pass": true,
+  "finite": true
+ }
+}

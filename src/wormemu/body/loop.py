@@ -13,8 +13,15 @@ computes it; that lag is the loop's, not a filter (INTERFACE.md: the body adds n
 
 Observation (INTERFACE.md body side): K = 49 midline samples; curvature from 24 material slices (slice centroids),
 signed dorsal-concave positive, interpolated to the 49 samples, per mm with L = mm_per_body_length (1.0 mm,
-measured); curvature rate by backward difference over the exchange; contact, nose force and tap 0 (no objects);
-head / tail from the chemotaxis scene (scene.py, MB11), over the default plate of interface.HEAD_CHANNELS.
+measured); curvature rate by backward difference over the exchange; head / tail from the chemotaxis scene
+(scene.py, MB11), over the default plate of interface.HEAD_CHANNELS. With env=None, contact, nose force and tap
+are 0 (no objects). With env=environment.Environment(...), the plate fields that are on (lawn, O2, CO2, salt plug,
+temperature gradient) override the scene's channels at the head and tail, sampled in plate coordinates (mm,
+forward = rest -z, dorsal = +x, origin the rest nose), and its event schedule supplies contact, nose force and tap.
+
+Body tissue (row 21, layers.py): at the SI scale (world scale worm_1mm) the FEM gets the Frontiers 2024 layered
+moduli per tetrahedron and Backholm 2013 shear-thinning internal damping by default; body={"body_layers":
+"published", "body_damping": "none"} is upstream MetaWorm.
 
 95 -> 96 muscles: segment j of MetaWorm's MDR / MVR / MDL / MVL string is Cook muscle j+1 of dBWMR / vBWMR / dBWML /
 vBWML; MVL segment 24 copies vBWML23 (guessed; vBWML24 does not exist). Activation goes 1:1 into the published
@@ -32,8 +39,9 @@ from pathlib import Path
 import numpy as np
 
 from wormemu.interface import BWM_NAMES, HEAD_CHANNELS, TAIL_CHANNELS, BodyToBrain, BrainToBody
+from wormemu.body import layers
 from wormemu.body import metaworm as mw
-from wormemu.body.scene import ChemotaxisScene
+from wormemu.body.scene import HEAD_VERTEX, TAIL_VERTEX, ChemotaxisScene
 
 K = 49
 N_SLICES = 24
@@ -53,11 +61,14 @@ def muscle_map(names: list[str]) -> np.ndarray:
 
 class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
-                 solver_exit: str = "published", world: dict | None = None):
+                 solver_exit: str = "published", world: dict | None = None, env=None, body: dict | None = None):
         if not mw.DRIVER.exists():
             subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
         self.out = str(Path(out).resolve())
         self.scene = scene or ChemotaxisScene()
+        self.env = env  # environment.Environment (row 22) or None = the INTERFACE.md default plate
+        # row 21: layered moduli and internal damping, on by default at the SI scale (layers.py; body = toggles)
+        world, self.body_info = layers.world_flags(body, self.out, world)
         self.frame_every = frame_every
         c_r, c_w = os.pipe()  # commands: us -> driver
         s_r, s_w = os.pipe()  # state: driver -> us
@@ -138,9 +149,16 @@ class Body:
         rate = np.zeros(K) if (dt_ms is None or self._kappa_prev is None) else (kappa - self._kappa_prev) / dt_ms
         self._kappa_prev = kappa
         h, t = self.scene.sample(self.X, self.X_rest)
+        F, nose, tap = np.zeros(K), 0.0, 0.0
+        if self.env is not None:   # plate coordinates (mm): a forward (rest -z), b dorsal (+x), origin the rest nose
+            ab = lambda v: np.array([-(self.X[v, 2] - self.X_rest[HEAD_VERTEX, 2]),
+                                     self.X[v, 0] - self.X_rest[HEAD_VERTEX, 0]]) * self.mm_per_unit
+            e = self.env.sample(self.t_ms, ab(HEAD_VERTEX), ab(TAIL_VERTEX), s)
+            h, t = {**h, **e["head"]}, {**t, **e["tail"]}
+            F, nose, tap = e["contact_force_uN"], e["nose_force_uN"], e["tap"]
         return BodyToBrain(t_ms=self.t_ms, s=s, curvature_per_mm=kappa, curvature_rate_per_mm_ms=rate,
-                           contact_force_uN=np.zeros(K), nose_force_uN=0.0, muscle_strain=None,
-                           head={**HEAD_CHANNELS, **h}, tail={**TAIL_CHANNELS, **t}, tap=0.0)
+                           contact_force_uN=F, nose_force_uN=nose, muscle_strain=None,
+                           head={**HEAD_CHANNELS, **h}, tail={**TAIL_CHANNELS, **t}, tap=tap)
 
     def close(self) -> dict:
         if self._pending:
@@ -159,12 +177,48 @@ def brain_dt_schedule(n_steps: int, dt_body_ms: float) -> np.ndarray:
     return np.diff(t)
 
 
+def _flat(prefix: str, x, out: dict, n_cells: int):
+    """Scalars of a mechanism output, flattened to 'key.sub' names. Per-cell arrays (length n_cells) are left out
+    (GCaMP is recorded on its own); other numeric arrays give their mean and max."""
+    if isinstance(x, dict):
+        for k, v in x.items():
+            _flat(f"{prefix}.{k}" if prefix else str(k), v, out, n_cells)
+        return
+    if isinstance(x, (str, bytes)) or x is None:
+        return
+    a = np.asarray(x)
+    if a.dtype.kind not in "fiub":
+        return
+    if a.ndim == 0:
+        out[prefix] = float(a)
+    elif a.size and a.size != n_cells:
+        if a.size <= 4:
+            out.update({f"{prefix}[{j}]": float(v) for j, v in enumerate(a.ravel())})
+        else:
+            out[prefix + ".mean"], out[prefix + ".max"] = float(np.nanmean(a)), float(np.nanmax(a))
+
+
+def state_row(brain, obs: BodyToBrain, n_cells: int) -> dict:
+    """One frame of mechanism state for the viewer: what the world sent (world.*) and every module's out."""
+    row = {"world.tap": float(obs.tap), "world.contact_uN": float(np.sum(obs.contact_force_uN)),
+           "world.nose_uN": float(obs.nose_force_uN)}
+    _flat("world.head", dict(obs.head), row, n_cells)
+    _flat("world.tail", dict(obs.tail), row, n_cells)
+    mo = getattr(brain, "mech_out", None)
+    if mo is None:
+        mo = getattr(getattr(brain, "b", None), "mech_out", None)
+    _flat("", mo or {}, row, n_cells)
+    return row
+
+
 def run(brain, body: Body, seconds: float, record_every: int | None = None, log_every_s: float = 1.0,
         brain_config: dict | None = None) -> dict:
     """Closed loop for `seconds`. `brain` has reset() -> BrainToBody and step(obs, dt_ms) -> BrainToBody (brain.py
     or a stand-in). Records the cells' v_mV at the body's frames (every frame_every physics steps) into
-    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), and adds the run details to out.json (`brain_config`:
-    how the brain was made, e.g. seed and toggles, recorded as given)."""
+    out.neural.f32 [n_frames, n_cells] (frame 0 = reset), the brain's GCaMP dF/F into out.gcamp.f32 (same shape,
+    when the brain gives it), every module's scalar state into out.state.f32 [n_frames, n_state] (names in
+    out.json "state_names"; NaN where a module had not written the key yet), and adds the run details to out.json
+    (`brain_config`: how the brain was made, e.g. seed and toggles, recorded as given)."""
     n = int(round(seconds / body.dt_s))
     every = record_every or body.frame_every
     dts = brain_dt_schedule(n, body.dt_s * 1000.0)
@@ -172,8 +226,11 @@ def run(brain, body: Body, seconds: float, record_every: int | None = None, log_
     obs = body.obs
     names = list(getattr(brain, "cell_names", []))
     neural = open(body.out + ".neural.f32", "wb")
+    gc = []
+    states = [state_row(brain, obs, len(names))]
     if cmd.v_mV is not None:
         neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+    gc.append(None if cmd.gcamp_dff is None else np.asarray(cmd.gcamp_dff, np.float32))
     act_max = 0.0
     t0 = time.time()
     t_brain = 0.0
@@ -184,19 +241,29 @@ def run(brain, body: Body, seconds: float, record_every: int | None = None, log_
         t_brain += dts[i]
         obs = body.recv()
         act_max = max(act_max, float(np.max(cmd.muscle_activation)))
-        if (i + 1) % every == 0 and cmd.v_mV is not None:
-            neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+        if (i + 1) % every == 0:
+            if cmd.v_mV is not None:
+                neural.write(np.asarray(cmd.v_mV, np.float32).tobytes())
+            gc.append(None if cmd.gcamp_dff is None else np.asarray(cmd.gcamp_dff, np.float32))
+            states.append(state_row(brain, obs, len(names)))
         if obs.t_ms / 1000.0 >= next_log:
             print(f"  t {obs.t_ms / 1000:.2f} s  wall {time.time() - t0:.1f} s  max act {act_max:.3f}  "
                   f"max |kappa| {np.abs(obs.curvature_per_mm).max():.2f} /mm", flush=True)
             next_log += log_every_s
     neural.close()
     wall = time.time() - t0
+    has_gc = any(g is not None for g in gc)
+    if has_gc:
+        nan = np.full(len(names), np.nan, np.float32)
+        np.array([nan if g is None else g for g in gc], np.float32).tofile(body.out + ".gcamp.f32")
+    state_names = sorted({k for r in states for k in r})
+    np.array([[r.get(k, np.nan) for k in state_names] for r in states], np.float32).tofile(body.out + ".state.f32")
     meta = body.close()
     meta.update({"mode": "closed_loop", "brain": type(brain).__name__, "seconds": n * body.dt_s,
                  "frame_dt": body.dt_s * every, "loop_wall_s": wall, "exchange_ms": body.dt_s * 1000.0,
                  "brain_dt_ms_pattern": [float(x) for x in dts[:6]], "brain_t_end_ms": t_brain,
-                 "brain_config": brain_config or {}, "cells": names, "max_activation": act_max, "scene": {"field": body.scene.field,
+                 "brain_config": brain_config or {}, "cells": names, "max_activation": act_max,
+                 "state_names": state_names, "gcamp": has_gc, "body_info": getattr(body, "body_info", {}), "scene": {"field": body.scene.field,
                  "target": body.scene.target, "channel": body.scene.channel, "params": body.scene.params}})
     json.dump(meta, open(body.out + ".json", "w"))
     return meta
