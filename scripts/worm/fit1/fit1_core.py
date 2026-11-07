@@ -6,9 +6,11 @@ One experiment = one worm (a parameter vector): the 302 neurons (no neuron-muscl
 neuronal responses are exact without the muscles), warmed up, then one forked child per stimulated neuron and one
 control child with no light, all continuing from the same state. A child switches on the GUR-3 actuator
 (mech.observation, B3's) in its target for the pulse and runs the response window. Readout: the soma Ca pool
-computed from each soma's own Ca current with Nicoletti 2019's equation in total current (cainternm.mod divides the
-density, mA/cm2, by the cell volume, so its pool rises 10 x area too little: night file, Open), then GCaMP6s binding
-(observation.binding_step) and F = 1 + (R - 1) B, sampled at Randi's 2 volumes/s. The statistic is Randi's: the mean
+(Nicoletti 2019 Eq. 28 in whole-soma current), then GCaMP6s binding (observation.binding_step) and
+F = 1 + (R - 1) B, sampled at Randi's 2 volumes/s. With mech.capool's units fix on (ca_pool_units total_current,
+main from 23:15 on 6 Nov) the pool is the brain's own cai, recorded. With it off (cainternm.mod as ported divides
+the density, mA/cm2, by the cell volume, so its pool rises 10 x area too little), the readout computes the same
+equation from each soma's recorded Ca current, as the fit did before the fix. The statistic is Randi's: the mean
 dF/F over the window after the onset, with F0 taken from the control child at the same times (removes the drift a
 30 s pre-stimulus baseline would remove in the data).
 
@@ -38,8 +40,8 @@ VOL_S = 0.5                           # Randi: 2 volumes/s
 # Not fitted, with reasons (FIT1.md): rec_lacr_gamma_pS (the per-contact strength's reference: it cancels),
 # lgc55 (6 sites, 0.55 nS in all), the monoamine and betaine tmax (degenerate with their classes' gamma at so few
 # sites), every kinetic constant, gap_innexin_unitary (only its product with the open-channel count enters),
-# capool_vcell (only f / vcell enters the pool). capool_f and capool_tca set the readout's Ca pool (and the brain's
-# own, which the units bug keeps near rest: night file).
+# capool_vcell (only f / vcell enters the pool). capool_f and capool_tca set the brain's Ca pool (cainternm GLOBALs),
+# which the readout reads.
 FIT = ([("syn_strength_per_pair", "log")]
        + [(f"rec_{c}_gamma_pS", "log") for c in ("acr16", "nachr", "acc", "glr", "nmr", "glucl", "gabacl",
                                                   "gabacat", "mod1", "lgc53", "acr23")]
@@ -226,17 +228,20 @@ class Experiment:
         self.build_s = time.time() - t0
         self.om = next(m for m in b.mechs if type(m).__module__ == obs.__name__)
         h = self.h = b.h
-        # Ca pool (Nicoletti 2019 in total current) from each soma's Ca current, recorded every integration step
+        # Ca pool (Nicoletti 2019 in total current), recorded every integration step: the brain's own cai when
+        # mech.capool's units fix is on, else each soma's Ca current, integrated in _readout
         self.f, self.tca, self.caeq = h.f_cainternm, h.tca_cainternm, h.caeq_cainternm
+        cp = next((m for m in b.mechs if type(m).__module__ == "wormemu.mech.capool"), None)
+        self.brain_ca = cp is not None and bool(cp.scale)
         area = np.array([sum(seg.area() for seg in s) for s in b.soma])
         vcell = np.array([s(0.5).vcell_cainternm if h.ismembrane("cainternm", sec=s) else np.nan for s in b.soma])
-        self.kca = self.f * area * 1e7 / (2.0 * FARADAY * vcell)             # uM/ms per mA/cm2
+        self.kca = self.f * area * 1e7 / (2.0 * FARADAY * vcell)             # uM/ms per mA/cm2 (fix off)
         self.has_ca = np.isfinite(self.kca)
         self.rec = []
         for i, s in enumerate(b.soma):
             v = h.Vector()
             if self.has_ca[i]:
-                v.record(s(0.5)._ref_ica)
+                v.record(s(0.5)._ref_cai if self.brain_ca else s(0.5)._ref_ica)
             self.rec.append(v)
         p = mech.params_for(obs, b.spec)
         self.kd, self.hn, self.R = p["obs_gcamp6s_kd_nM"], p["obs_gcamp6s_hill"], p["obs_gcamp6s_range"]
@@ -255,12 +260,16 @@ class Experiment:
         for i, v in enumerate(self.rec):
             if self.has_ca[i]:
                 I[i] = v.as_numpy()[:n]
-        from scipy.signal import lfilter
-        a = np.exp(-dt / self.tca)
-        k = np.where(self.has_ca, self.kca, 0.0)[:, None]
-        u = self.caeq - k * self.tca * I                  # the pool's steady state for the current held
-        c0 = np.full((len(self.rec), 1), self.caeq)
-        C, _ = lfilter([1 - a], [1, -a], u, axis=1, zi=c0 * a)
+        if self.brain_ca:
+            C = I
+            C[~self.has_ca] = self.caeq
+        else:
+            from scipy.signal import lfilter
+            a = np.exp(-dt / self.tca)
+            k = np.where(self.has_ca, self.kca, 0.0)[:, None]
+            u = self.caeq - k * self.tca * I              # the pool's steady state for the current held
+            c0 = np.full((len(self.rec), 1), self.caeq)
+            C, _ = lfilter([1 - a], [1, -a], u, axis=1, zi=c0 * a)
         # GCaMP6s on 1 ms samples, the Ca held over each sample
         stride = max(1, int(round(1.0 / dt)))
         Cs = C[:, ::stride] * 1000.0                      # uM -> nM

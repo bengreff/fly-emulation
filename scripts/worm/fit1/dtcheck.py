@@ -3,7 +3,8 @@
 responses are not all near zero), three stimulations and the control, 30 s windows. Writes LABEL.npz (stat matrix,
 cell names, wall times). No data is read.
 
-    python dtcheck.py h_dt mech_dt label ['{"obs_opto_g_nS": 2.0, ...}']   (optional value overrides)
+    python dtcheck.py h_dt mech_dt label ['{"obs_opto_g_nS": 2.0, ...}' ['{"quantal_noise": "off"}']]
+    (optional value overrides, then optional toggles)
 """
 import json
 import sys
@@ -16,15 +17,15 @@ import fit1_core as fc
 TARGETS = ["AVAL", "ASHL", "AWAL"]
 
 
-def main(h_dt, mech_dt, label, over="{}", window_s=30.0):
+def main(h_dt, mech_dt, label, over="{}", tog="{}", window_s=30.0):
     B = fc.bounds()
     vals = {pid: B[pid][0] for pid in fc.IDS}
     vals["obs_opto_g_nS"] = 1.0
     vals.update(json.loads(over))
     t0 = time.time()
-    E = fc.Experiment(vals, TARGETS, h_dt=float(h_dt), mech_dt=float(mech_dt))
+    E = fc.Experiment(vals, TARGETS, toggles=json.loads(tog), h_dt=float(h_dt), mech_dt=float(mech_dt))
     r = E.run(TARGETS, window_s=float(window_s))
-    info = dict(label=label, h_dt=float(h_dt), mech_dt=float(mech_dt), over=json.loads(over), build_s=E.build_s, warm_wall=E.warm_wall,
+    info = dict(label=label, h_dt=float(h_dt), mech_dt=float(mech_dt), over=json.loads(over), toggles=json.loads(tog), build_s=E.build_s, warm_wall=E.warm_wall,
                 walls=r["wall"], total=time.time() - t0)
     np.savez(label + ".npz", stat=r["stat"], names=np.array(E.b.cell_names), ctrl=r["ctrl"],
              F=np.stack([r["F"][t] for t in TARGETS]), info=json.dumps(info))
@@ -36,4 +37,4 @@ def main(h_dt, mech_dt, label, over="{}", window_s=30.0):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:5])
+    main(*sys.argv[1:6])
