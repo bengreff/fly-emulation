@@ -1,7 +1,9 @@
 """Fit 1 status, for the morning report: reads each fit's checkpoint (history.csv, mean.json, config.json, DONE)
 and prints, per fit, the generation reached, evaluations per hour (measured from the history's times), the
 training loss trend (10-generation means of the median, since each generation's batch differs), sigma, values
-within 5% of a range end, and the generations left before the deadline at the measured rate. Reads no sealed data.
+within 5% of a range end, and the generations left before the deadline at the measured rate. Also the zero
+predictor's loss on the same batches (zero_loss_10gen_means), the baseline to read the median against, since one
+batch's loss can be twice another's. Reads no sealed data. Needs only numpy and fit1_loss.py, so it runs from any copy.
 
     python fit1_status.py ~/worm-night/wfit/fit1
 """
@@ -12,6 +14,23 @@ import time
 from pathlib import Path
 
 import numpy as np
+
+import fit1_loss as fl
+
+
+def zero_losses(d, H):
+    """The zero predictor's loss on each generation's batch, on the terms the candidates were scored on (the batch's
+    stimulated neurons, responders that are model cells)."""
+    tp, ev = d.parent / "train.npz", sorted((d / "gen_0000").glob("eval_*.npz"))
+    if not tp.exists() or not ev:
+        return None
+    T, s_trial, s_floor = fl.load(tp)
+    names = np.load(ev[0])["names"].tolist()
+    z = []
+    for h in H:
+        k = np.isin(T["stim"], h["batch"].split()) & np.isin(T["resp"], names)
+        z.append(fl.chi2(T[k], np.zeros(int(k.sum())), s_trial, s_floor)[0])
+    return np.array(z)
 
 
 def status(d):
@@ -31,6 +50,9 @@ def status(d):
     out["evals_per_hour"] = round(cfg["pop"] * 3600.0 / float(wall[-10:].mean()), 1)
     out["median_loss_10gen_means"] = [round(float(med[k:k + 10].mean()), 4) for k in range(0, len(med), 10)]
     out["best_loss_10gen_means"] = [round(float(best[k:k + 10].mean()), 4) for k in range(0, len(best), 10)]
+    zero = zero_losses(d, H)
+    if zero is not None:
+        out["zero_loss_10gen_means"] = [round(float(zero[k:k + 10].mean()), 4) for k in range(0, len(zero), 10)]
     out["sigma"] = float(H[-1]["sigma"])
     m = json.load(open(d / "mean.json"))
     B = cfg["bounds"]
