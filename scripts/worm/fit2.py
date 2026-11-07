@@ -262,7 +262,9 @@ def fit_one(out, model, classes, data_feats, workers):
                                                      bounds={n: m.bounds[n] for n in X.NAMES}, x0=x0.tolist(),
                                                      pop=POP, sigma0=SIGMA0, started=time.ctime()), indent=1))
     ctx = mp.get_context("spawn")
-    with ctx.Pool(workers, initializer=_init, initargs=(model, classes)) as pool:
+    # maxtasksperchild (Director, 7 Nov 04:45): workers grew with each evaluation (one reached 5.7 GB and was
+    # OOM-killed at gen 32, which hung the pool); a fresh worker every 8 evaluations bounds memory. No effect on results.
+    with ctx.Pool(workers, initializer=_init, initargs=(model, classes), maxtasksperchild=8) as pool:
         while s["stop"] is None:
             t0 = time.time()
             X_ = cma_ask(s)
