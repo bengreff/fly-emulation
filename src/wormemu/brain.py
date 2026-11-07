@@ -47,6 +47,7 @@ import pandas as pd
 
 from bioemu import ledger
 from wormemu import brain_layers, excite_map, mech
+from wormemu.mech import structure_rules
 from wormemu.brain_structure import BAAIWORM_NO_SUCH_MUSCLE, bwm_name, cengen_class, load_structure
 from wormemu.interface import (BWM_NAMES, ENTERIC_MUSCLES, PHARYNX_MUSCLES, SEX_MUSCLES, BrainToBody,
                                default_observation, muscle_position)
@@ -252,9 +253,14 @@ class Brain:
             self.toggles[k] = {True: "on", False: "off"}.get(v, v)
         tg = self.toggles
         self.lit = tg["literature_overrides"] == "on"
+        # shared rules on measured structure (mech/structure_rules): synapse, gap, cm, leak and sign values
+        self.rules = structure_rules.on(tg)
+        self._rp = mech.params_for(structure_rules, self.spec)
         self.mact = tg["muscle_active"] == "on"
         self.h = h = _neuron()
         st = self.st = load_structure()
+        self._cengen = set(st.cengen_classes)
+        self._sign_by = dict(zip(*(led.values("syn_sign_receptor")[k] for k in ("element", "rule"))))
         neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
         muscles = list(BWM_NAMES) + ([BAAIWORM_NO_SUCH_MUSCLE] if keep_mcvl24 else [])
         want = set(cells) if cells is not None else None
@@ -356,10 +362,16 @@ class Brain:
             for q in ("Ra", "cm", "gpas", "epas"):
                 cp["soma"][q] = sv(f"mpas_{q}", name)
             return cp
+        unfit = cp["soma"]["epas"] > structure_rules.UNFIT_EPAS_ABOVE_MV     # BAAIWorm's -33 mV cells
         for part in ("soma", "neurite"):
             if part in cp:
                 for q in ("Ra", "cm", "gpas", "epas"):
                     cp[part][q] = sv(f"pas_{part}_{q}", name)
+                if self.rules:                           # one specific capacitance; one leak for the unfit cells
+                    res = lambda rid: structure_rules.residual(self.spec.values, rid, name)  # noqa: E731
+                    cp[part]["cm"] = self._rp["pas_cm_uF_cm2"] * np.exp(res("res_cm_cell"))
+                    if unfit:
+                        cp[part]["epas"] = self._rp["pas_epas_unfit_mV"] + res("res_epas_cell")
         for ch in CHANNELS[:-1]:
             cp["soma"][f"gb{ch}"] = self._density(ch, name)
         if self.toggles["expression_map"] == "fit2":         # FIT2's map also sets the leak (excite_map)
@@ -519,6 +531,12 @@ class Brain:
         if self.toggles["receptor_sign"] == "on":
             r = self.spec.values["syn_sign_receptor"]
             if f"{pre}>{post}" in r.index:
+                if self.rules and self._sign_by.get(f"{pre}>{post}") in ("cengen", "transmitter"):
+                    v, rule = structure_rules.receptor_sign(self.st, pre, cengen_class(post, self._cengen),
+                                                            float(self._rp["syn_sign_tpm_ratio"]))
+                    if rule == "transmitter" and not self.st.transmitter.get(pre):
+                        return bool(self.spec.v("syn_inhibitory", pre))    # transmitter unknown: the cell's gap
+                    return bool(v)
                 return bool(r[f"{pre}>{post}"])
         return bool(self.spec.v("syn_inhibitory", pre))
 
@@ -634,6 +652,9 @@ class Brain:
         n_em = {pid: led.values(pid).set_index("element").n_em for pid in
                 ("syn_strength_per_pair", "gap_strength_per_pair", "nmj_strength_per_pair")}
         rk = self.toggles["receptor_kinetics"] != "off" and self.toggles["sign_rule"] != "allexc"
+        rp, vals = self._rp, self.spec.values
+        res = structure_rules.residual
+        alpha = float(rp["rec_share_tpm_exponent"])
         if rk:                                           # receptor classes (mech.receptors, row 7)
             from wormemu.mech import receptors
             self._rk, self._rk_p = receptors, mech.params_for(receptors, self.spec)
@@ -648,17 +669,22 @@ class Brain:
                 continue
             inh = self._inhibitory(a, b)
             sites = syn_sites.get((a, b)) or [self._nearest(a, b)]
+            em = n_em["syn_strength_per_pair"][e] / len(sites) / 1000.0
+            if self.rules:                               # EM measure x unit conductance per class x residual
+                em *= np.exp(res(vals, "res_syn_pair", e))
             if rk:
-                g_uS = g * n_em["syn_strength_per_pair"][e] / len(sites) / 1000.0
                 cl = self._pair_classes(a, b, inh)
+                if self.rules:
+                    cl = structure_rules.reshare(cl, alpha)
                 for i, j in sites:
                     ps, qs = self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0]
                     for c, sh in cl or [(None, 1.0)]:
-                        self._wsyn(ps, qs, a, b, g_uS * sh * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0),
-                                   c, "syn_nn", inh)
+                        gc = (structure_rules.chem_g_per_em_nS(rp, self._rk_p, c) if self.rules else
+                              g * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0))
+                        self._wsyn(ps, qs, a, b, em * sh * gc, c, "syn_nn", inh)
                     self.placed["syn_nn" + ("_inh" if inh else "")] += 1
                 continue
-            w = g * n_em["syn_strength_per_pair"][e] / len(sites) / (self._g_syn(inh) * 1000.0)
+            w = (rp["syn_graded_g_per_em_nS"] if self.rules else g) * em / self._g_syn(inh)
             for i, j in sites:
                 self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0], w, inh, "syn_nn")
         inx = self.toggles.get("innexin_identity") == "on"
@@ -670,7 +696,12 @@ class Brain:
             if inx:                                      # innexin channels (ledger mechanism innexin_identity)
                 if not sv("gap_innexin_pair", e):
                     continue                             # a partner expresses no innexin (CeNGEN)
-                g = sv("gap_open_channels_per_em") * sv("gap_innexin_unitary") / 1000.0     # pS -> nS
+                if self.rules:                           # expression-weighted unitary per innexin pairing
+                    wa, wb = (structure_rules.innexin_weights(self.st, cengen_class(n, self._cengen)) for n in (a, b))
+                    g = structure_rules.gap_g_per_em_nS(rp, sv("gap_open_channels_per_em"), wa, wb) \
+                        * np.exp(res(vals, "res_gap_pair", e))
+                else:
+                    g = sv("gap_open_channels_per_em") * sv("gap_innexin_unitary") / 1000.0     # pS -> nS
             key = tuple(sorted((a, b)))
             sites = sorted(gap_sites.get(key, ())) or [self._nearest(*key)]
             w = g * n_em["gap_strength_per_pair"][e] / len(sites) / 1000.0
@@ -687,15 +718,18 @@ class Brain:
                 continue
             inh = self._inhibitory(a, b)
             i, _ = self._nearest(a, b)
+            em = n_em["nmj_strength_per_pair"][e] / 1000.0
+            if self.rules:
+                em *= np.exp(res(vals, "res_nmj_pair", e))
             if rk:
-                g_uS = g * n_em["nmj_strength_per_pair"][e] / 1000.0
                 ps, qs = self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][0][0]
                 for c, sh in self._pair_classes(a, b, inh, muscle=True) or [(None, 1.0)]:
-                    self._wsyn(ps, qs, a, b, g_uS * sh * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0), c,
-                               "syn_nmj", inh)
+                    gc = (structure_rules.chem_g_per_em_nS(rp, self._rk_p, c, nmj=True) if self.rules else
+                          g * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0))
+                    self._wsyn(ps, qs, a, b, em * sh * gc, c, "syn_nmj", inh)
                 self.placed["syn_nmj" + ("_inh" if inh else "")] += 1
                 continue
-            w = g * n_em["nmj_strength_per_pair"][e] / (self._g_syn(inh) * 1000.0)
+            w = (rp["nmj_graded_g_per_em_nS"] if self.rules else g) * em / self._g_syn(inh)
             self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][0][0], w, inh, "syn_nmj")
 
     # --- neuromodulators ---------------------------------------------------------------------------------------

@@ -33,6 +33,7 @@ soma's bulk cai (cainternm). The published current-clamp check is scripts/worm/c
 """
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 from statistics import median
@@ -210,6 +211,12 @@ def build_cell(brain, name, obj, params, toggles):
                 continue
         elif pid not in DENSITY:
             continue
+        elif getattr(brain, "rules", False) and DENSITY[pid].label == "guessed":
+            # structure_rules: FIT2's expression map from the published value the template uses, plus the residual
+            from wormemu.mech import structure_rules as sr
+            g = sr.nic_density(brain._rp, ch, DENSITY[pid].template, brain.st.expr(CHANNELS[ch], cls),
+                               sr.tpm_ref(brain.st, CHANNELS[ch])) \
+                * math.exp(sr.residual(brain.spec.values, "res_dens_class", f"{ch}_{cls}"))
         else:
             g = float(params[pid])
         obj.Soma.insert(ch)

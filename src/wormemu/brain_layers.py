@@ -45,6 +45,9 @@ class Spec:
     grain: str = "global"
     applies_to: str = "whole worm"
     notes: str = ""
+    # scan | rule | gap | residual (wormemu.params.ROLES); "" = from the label: measured, published_fit, derived and
+    # inferred are scan, guessed and absent are gap
+    role: str = ""
 
 
 # --- mechanisms: id, name, layer, toggle, default state, source ------------------------------------------------
