@@ -8,7 +8,8 @@ Writes data/worm/catalog/quote_check.csv (id, status, searched, found_in, missin
 searched for, piece by piece (pieces split at "..." or "[...]"; case, whitespace, format characters, dashes and quote
 marks aside), in: the free full text of each PMC id the row cites (Europe PMC, else the PMC page or NCBI efetch when
 Europe PMC serves only the front matter); a PubMed id's or DOI's PMC full text, else its abstract; a vendored model
-file the source names (published/NAME, with COPASI references written <name>); a saved excerpt
+file the source names (published/NAME, with COPASI references written <name>; BAAIWorm's mod/NAME, vendored in
+third_party/baaiworm/mod); a saved excerpt
 (data/worm/catalog/excerpts/) the source names or that names a cited PMC id. Status: found; not found (a full text was
 searched and a piece is missing: the build flags it); no free full text (only an abstract, or nothing, could be
 fetched). Research-file quotes are checked by the build itself. Complete fetches are cached in
@@ -148,6 +149,10 @@ def texts_for(r: dict) -> list[tuple[str, str, bool]]:
     for name in dict.fromkeys(re.findall(r"published/([\w.-]+\.\w+)", s)):
         for f in sorted((ROOT / "src").glob(f"**/published/{name}"))[:1]:
             out.append((f"published/{name}", model_file_text(f), True))
+    if "BAAIWorm" in s:
+        for name in dict.fromkeys(re.findall(r"\bmod/([\w.-]+\.mod)", s)):
+            for f in sorted((ROOT / "third_party/baaiworm/mod").glob(name))[:1]:
+                out.append((f"third_party/baaiworm/mod/{name}", f.read_text(errors="replace"), True))
     for f in sorted(EXCERPTS.glob("*.txt")):
         t = f.read_text()
         if f.name in s or any(p in t for p in pmcs):
