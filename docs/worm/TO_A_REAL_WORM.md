@@ -76,7 +76,7 @@ The first two items below need no lab: they are fits to data we already hold on 
 **6. Slow signalling, learning, homeostasis, glia (rows 11, 18, 19, 24b).** Cost B.
 - **Now:**
   - EGL-4, CMK-1 and the associative term act on release, standing in for their measured targets (AWC transduction, AFD's T*). DAF-7 and CREB have outputs nothing reads, and learning is 9 guessed numbers.
-  - Glia: the AMsh cell and the amphid K+ compartment are not linked. The Kir null is only 1.17x slower, from a guessed leak and ending volume.
+  - Glia: the AMsh cell and the amphid K+ compartment are not linked. The Kir null is only 1.07x slower on today's main (1.17x on 6 Nov), with a guessed leak and ending volume, and the check now fails 3 of 4.
 - **Would pin it:** published adaptation and learning time courses (L'Etoile 2002, Yu 2014; partly in) as held-out tests. Move the effects onto their real targets first (code, A to B).
 
 ## Then the body (it closes the loop, but brain function comes first)
