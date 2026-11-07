@@ -30,7 +30,8 @@ ctx (Ctx): t_ms (time at the start of this step), obs (the BodyToBrain fields as
 in brain.cell_names order, names, is_muscle, outputs. ctx.outputs holds every mechanism's `out` from the previous
 step, updated in place by each mechanism earlier in REGISTRY order this step, so a module reads another's output
 with at most one step of lag (e.g. outputs['coelomocyte_uptake_per_s'], outputs['temperature_C'],
-outputs['peptide_release'] = {peptide gene: release rate}).
+outputs['peptide_release'] = {peptide gene, or "gene@compartment" with a name from
+mech.neuromod.COMPARTMENTS: molecules/s}, read by neuromod).
 """
 from __future__ import annotations
 
@@ -40,7 +41,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = ["receptors"]
+REGISTRY: list[str] = ["receptors", "neuromod"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density
 # (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool) and the somatic leak
