@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:25 CST",
+ "generated_at": "2026-11-07 00:28 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67508,
-   "guessed": 9113,
+   "guessed": 9112,
    "inferred": 115,
-   "measured": 6181,
+   "measured": 6182,
    "published_fit": 8033
   },
-  "known": 81837,
-  "placeholder": 9113,
+  "known": 81838,
+  "placeholder": 9112,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9113
+  "must_fill": 9112
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9113,
+   "guessed": 9112,
    "derived": 3100,
    "inferred": 115,
-   "measured": 329
+   "measured": 330
   },
-  "known": 10850,
-  "placeholder": 9113,
+  "known": 10851,
+  "placeholder": 9112,
   "gap": 0,
-  "must_fill": 9113
+  "must_fill": 9112
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,7 +49,7 @@
    },
    "literature": {
     "guessed": 5471,
-    "measured": 6180,
+    "measured": 6181,
     "derived": 3100,
     "inferred (ours)": 21,
     "published fit": 248
@@ -58,7 +58,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3638,
+    "guessed": 3637,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -74,7 +74,7 @@
    "literature": {
     "guessed": 5471,
     "derived": 3100,
-    "measured": 328,
+    "measured": 329,
     "inferred (ours)": 21,
     "published fit": 248
    },
@@ -82,7 +82,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3638,
+    "guessed": 3637,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -109,8 +109,8 @@
    "published_fit": 6542
   },
   "channel": {
-   "guessed": 12,
-   "measured": 1,
+   "guessed": 11,
+   "measured": 2,
    "published_fit": 171
   },
   "class": {
@@ -907,8 +907,8 @@
    "absent_reason": "",
    "numbers": 13,
    "by_label": {
-    "guessed": 12,
-    "measured": 1
+    "guessed": 11,
+    "measured": 2
    }
   },
   {
@@ -25375,29 +25375,29 @@
    "applies_to": "every neuron with slo1",
    "unit": "pS",
    "n_values": 1,
-   "value_template": 150.0,
-   "template_source": "single-channel conductance, BK family; C. elegans SLO-1 single channels (Wang et al. 2001 Neuron 32:867); sets the channel count N = density x soma area / unit conductance (Linaro, Storace and Giugliano 2011 PLoS Comput Biol 7:e1001102)",
-   "bio_min": 50.0,
-   "bio_max": 300.0,
-   "bound_basis": "guessed",
-   "bound_source": "single-channel conductance, BK family; C. elegans SLO-1 single channels (Wang et al. 2001 Neuron 32:867); sets the channel count N = density x soma area / unit conductance (Linaro, Storace and Giugliano 2011 PLoS Comput Biol 7:e1001102)",
+   "value_template": 51.0,
+   "template_source": "Davies et al. 2003 Cell 115:655 (not free), as quoted in Hepburn, Hellemans, Taniguchi, Bourguignon & De Schutter 2026 Commun Biol 9:1349 (PMC13687065), Table 1 and Methods",
+   "bio_min": 37.9,
+   "bio_max": 51.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Davies et al. 2003 Cell 115:655 (not free), as quoted in Hepburn, Hellemans, Taniguchi, Bourguignon & De Schutter 2026 Commun Biol 9:1349 (PMC13687065), Table 1 and Methods",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 150 pS, label guessed, range [50, 300]; symmetrical-K value, the same condition as chnoise_slo2_pS (117 pS, Liu 2014); the range's lower end is the asymmetric 15 mM K out value, closer to the worm's 5 mM; read in a secondary source because Davies 2003 is not free; was 150 [50, 300] guessed, a mammalian-like BK value 3x the worm's",
    "plan_row": 26,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "ok",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13687065/",
+   "source_quote": "The report for C. elegans shows one example of this: unitary conductance was reported as 37.9 pS in asymmetrical 15 mMK out :173 mMK in saline and 51.0 pS in symmetrical 173 mMK out :173 mMK in saline 14 , and so we took the 51 pS value.",
+   "audit": "noise.py's 150 pS cites Wang et al. 2001 Neuron 32:867, whose abstract gives no unitary conductance (the paper is not free); the one C. elegans SLO-1 single-channel measurement found is Davies 2003's 51 pS symmetrical / 37.9 pS asymmetrical [owner: Director (noise.py; B1 retired): move the Spec to 51 pS and Davies 2003, or name where 150 comes from; the catalog now holds 51 (fills.csv)]",
    "kind": "physiology"
   },
   {
@@ -40704,16 +40704,16 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 446,
-    "measured": 280,
+    "guessed": 445,
+    "measured": 281,
     "derived": 40,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9250,
-    "measured": 6236,
+    "guessed": 9249,
+    "measured": 6237,
     "derived": 67520,
     "inferred": 122,
     "absent": 5
@@ -40723,16 +40723,16 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 446,
-   "measured": 280,
+   "guessed": 445,
+   "measured": 281,
    "derived": 40,
    "inferred": 116,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9250,
-   "measured": 6236,
+   "guessed": 9249,
+   "measured": 6237,
    "derived": 67520,
    "inferred": 122,
    "absent": 5
@@ -41110,12 +41110,12 @@
    },
    "26": {
     "rows": {
-     "measured": 5,
-     "guessed": 13
+     "measured": 6,
+     "guessed": 12
     },
     "numbers": {
-     "measured": 5,
-     "guessed": 13
+     "measured": 6,
+     "guessed": 12
     },
     "n_rows": 18,
     "n_numbers": 18
@@ -41166,13 +41166,13 @@
    "channel": {
     "rows": {
      "published_fit": 171,
-     "guessed": 12,
-     "measured": 1
+     "measured": 2,
+     "guessed": 11
     },
     "numbers": {
      "published_fit": 171,
-     "guessed": 12,
-     "measured": 1
+     "measured": 2,
+     "guessed": 11
     },
     "n_rows": 184,
     "n_numbers": 184
@@ -41357,15 +41357,15 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 287,
-     "measured": 220,
+     "guessed": 286,
+     "measured": 221,
      "derived": 28,
      "inferred": 99
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8947,
-     "measured": 6077,
+     "guessed": 8946,
+     "measured": 6078,
      "derived": 67508,
      "inferred": 104
     },
@@ -41515,12 +41515,12 @@
    },
    "mech:noise": {
     "rows": {
-     "measured": 4,
-     "guessed": 13
+     "measured": 5,
+     "guessed": 12
     },
     "numbers": {
-     "measured": 4,
-     "guessed": 13
+     "measured": 5,
+     "guessed": 12
     },
     "n_rows": 17,
     "n_numbers": 17
@@ -41776,18 +41776,18 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 446,
+     "guessed": 445,
      "derived": 36,
      "inferred": 116,
-     "measured": 276,
+     "measured": 277,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9250,
+     "guessed": 9249,
      "derived": 3110,
      "inferred": 122,
-     "measured": 384,
+     "measured": 385,
      "absent": 5
     },
     "n_rows": 1461,
@@ -42119,27 +42119,28 @@
    }
   ],
   "audit": {
-   "rows_ok": 1387,
-   "rows_with_problems": 96,
+   "rows_ok": 1386,
+   "rows_with_problems": 97,
    "by_status": {
-    "ok": 1387,
-    "finding": 96
+    "ok": 1386,
+    "finding": 97
    },
-   "rows_read": 203,
+   "rows_read": 204,
    "quotes": {
-    "none": 1091,
-    "paper text (read audit, 6 Nov)": 247,
+    "none": 1090,
+    "paper text (read audit, 6 Nov)": 248,
     "research file (scripted check)": 145
    },
-   "with_url": 1107,
+   "with_url": 1108,
    "links": {
-    "distinct": 155,
+    "distinct": 156,
     "by_status": {
      "200": 145,
+     "429": 1,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:25 CST"
+    "checked_at": "2026-11-07 00:28 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -42171,6 +42172,7 @@
     "inferred from a sibling class: the nAChR decay of the same family; the row names no paper ": 1,
     "Gerhardt and Adams # Anal Chem is paywalled; the tortuosity factor is not cited": 1,
     "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
+    "noise.py's # pS cites Wang et al. # Neuron #:#, whose abstract gives no unitary conductanc": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "inferred from mammalian neurons, no paper named": 1,
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
@@ -45560,6 +45562,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3458792/"
    },
    {
+    "param_id": "chnoise_slo1_pS",
+    "kind": "fill",
+    "origin": "mech:noise",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "150 -> 51 pS; guessed -> measured; range [50, 300] -> [37.9, 51]",
+    "reason": "symmetrical-K value, the same condition as chnoise_slo2_pS (117 pS, Liu 2014); the range's lower end is the asymmetric 15 mM K out value, closer to the worm's 5 mM; read in a secondary source because Davies 2003 is not free; was 150 [50, 300] guessed, a mammalian-like BK value 3x the worm's",
+    "source": "Davies et al. 2003 Cell 115:655 (not free), as quoted in Hepburn, Hellemans, Taniguchi, Bourguignon & De Schutter 2026 Commun Biol 9:1349 (PMC13687065), Table 1 and Methods",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13687065/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46568,16 +46583,16 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 446,
-    "measured": 280,
+    "guessed": 445,
+    "measured": 281,
     "derived": 40,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9250,
-    "measured": 6236,
+    "guessed": 9249,
+    "measured": 6237,
     "derived": 67520,
     "inferred": 122,
     "absent": 5
