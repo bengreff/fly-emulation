@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:26 CST",
+ "generated_at": "2026-11-07 03:35 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9310,
-   "inferred": 330,
+   "guessed": 9311,
+   "inferred": 329,
    "measured": 6184,
    "published_fit": 8103
   },
-  "known": 82127,
-  "placeholder": 9310,
+  "known": 82126,
+  "placeholder": 9311,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9310
+  "must_fill": 9311
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9310,
+   "guessed": 9311,
    "derived": 3102,
-   "inferred": 330,
+   "inferred": 329,
    "measured": 332
   },
-  "known": 11140,
-  "placeholder": 9310,
+  "known": 11139,
+  "placeholder": 9311,
   "gap": 0,
-  "must_fill": 9310
+  "must_fill": 9311
  },
  "source_by_fill_kind": {
   "all": {
@@ -48,10 +48,10 @@
     "derived": 64408
    },
    "literature": {
-    "guessed": 5472,
+    "guessed": 5473,
     "measured": 6183,
     "derived": 3102,
-    "inferred (ours)": 27,
+    "inferred (ours)": 26,
     "published fit": 318
    },
    "NEURON": {
@@ -72,10 +72,10 @@
     "guessed": 1
    },
    "literature": {
-    "guessed": 5472,
+    "guessed": 5473,
     "derived": 3102,
     "measured": 331,
-    "inferred (ours)": 27,
+    "inferred (ours)": 26,
     "published fit": 318
    },
    "NEURON": {
@@ -138,8 +138,8 @@
   },
   "global": {
    "derived": 17,
-   "guessed": 140,
-   "inferred": 44,
+   "guessed": 141,
+   "inferred": 43,
    "measured": 31,
    "published_fit": 277
   },
@@ -978,8 +978,7 @@
    "absent_reason": "",
    "numbers": 6,
    "by_label": {
-    "guessed": 5,
-    "inferred": 1
+    "guessed": 6
    }
   },
   {
@@ -11213,25 +11212,25 @@
    "template_source": "Suzuki et al. 2008 Nature 454:114; Luo et al. 2014 Neuron 82:1115 (param_ranges J1)",
    "bio_min": 1.0,
    "bio_max": 30.0,
-   "bound_basis": "measured_related",
+   "bound_basis": "guessed",
    "bound_source": "Suzuki et al. 2008 Nature 454:114; Luo et al. 2014 Neuron 82:1115 (param_ranges J1)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with a registry without mech/senses_chem (the old layer then runs); the default runs mech/senses_chem's rows",
+   "notes": "read only with a registry without mech/senses_chem (the old layer then runs); the default runs mech/senses_chem's rows; relabel 6 Nov (catalog audit): was 10 s, label inferred, range [1, 30]; param_ranges J1 records the 10 s as recalled, not read; neither cited free text gives an ASE adaptation time constant (Suzuki, Thiele, Faumont, Ezcurra, Lockery & Schafer 2008, PMC2984562: opposite ASEL/ASER responses across step durations of 10 to 60 s; Luo et al. 2014, PMC4082684: none); value and bounds unchanged",
    "plan_row": 17,
    "used_by_code": "other form only",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4082684/",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2984562/",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "labelled inferred, but param_ranges J1 says the 10 s was recalled from general familiarity; the free texts of Suzuki et al. 2008 (PMC2984562) and Luo et al. 2014 (PMC4082684) give no ASE adaptation time constant [owner B1: brain_layers.py:88 (lit=J1) and param_ranges J1 need a source or the guessed label (the catalog now says guessed; the row is read only by the old layer)]",
    "kind": "physiology"
   },
   {
@@ -46563,11 +46562,11 @@
    "unit": "1/ms",
    "n_values": 1,
    "value_template": 0.014388489208633094,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 (1/r_cs = 69.5 ms)",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_cs = 69.5 ms)",
    "bio_min": 0.005,
    "bio_max": 0.05,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 (1/r_cs = 69.5 ms)",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_cs = 69.5 ms)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46579,11 +46578,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.0143885 1/ms, label published_fit, range [0.005, 0.05]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46595,11 +46594,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": -0.75,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 46",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 46",
    "bio_min": -1.0,
    "bio_max": 0.0,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 46",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 46",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -46611,11 +46610,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was -0.75 1, label published_fit, range [-1, 0]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46627,11 +46626,11 @@
    "unit": "1/ms",
    "n_values": 1,
    "value_template": 0.05555555555555555,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 (1/r_so = 18 ms)",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_so = 18 ms)",
    "bio_min": 0.016666666666666666,
    "bio_max": 0.2,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 (1/r_so = 18 ms)",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_so = 18 ms)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46643,11 +46642,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.0555556 1/ms, label published_fit, range [0.0166667, 0.2]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46659,11 +46658,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": -0.56,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 47",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 47",
    "bio_min": -1.0,
    "bio_max": 0.0,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 47",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 47",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -46675,11 +46674,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "eq 47 printed R_so = r_so exp(d a beta dG); detailed balance with eq 10 would need (1+d) a: ported as printed",
+   "notes": "eq 47 printed R_so = r_so exp(d a beta dG); detailed balance with eq 10 would need (1+d) a: ported as printed; source 6 Nov (catalog audit): was -0.56 1, label published_fit, range [-1, 0]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46691,11 +46690,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.5,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 10 (S at fraction a of the C-O energy gap)",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 10 (S at fraction a of the C-O energy gap)",
    "bio_min": 0.2,
    "bio_max": 0.8,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 10 (S at fraction a of the C-O energy gap)",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 10 (S at fraction a of the C-O energy gap)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -46707,11 +46706,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.5 1, label published_fit, range [0.2, 0.8]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46723,11 +46722,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.71,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 (is/i0)",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (is/i0)",
    "bio_min": 0.5,
    "bio_max": 0.9,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 (is/i0)",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (is/i0)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -46739,11 +46738,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.71 1, label published_fit, range [0.5, 0.9]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46755,11 +46754,11 @@
    "unit": "ms",
    "n_values": 1,
    "value_template": 1.4,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 5 (filament relaxation)",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 5 (filament relaxation)",
    "bio_min": 0.5,
    "bio_max": 5.0,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 5 (filament relaxation)",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 5 (filament relaxation)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46771,11 +46770,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 1.4 ms, label published_fit, range [0.5, 5]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "Their means are \u03c4 = 1.4 ms; gh = 1.4 10\u22123; gs/gh = 0.09; rcs = 1/69.5 ms; b = \u22120.75; rso = 1/18 ms; d = \u22120.56; a = 0.50; is/i0 = 0.71",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46979,11 +46978,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.76,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bio_min": 0.6,
    "bio_max": 0.9,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -46995,11 +46994,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.76 1, label published_fit, range [0.6, 0.9]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "with \u03b11 = 0.76, \u03b12 = 2.1, and \u03b13 = 0.66, captures quantitatively the behavior of the force indentation relation",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -47011,11 +47010,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 2.1,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bio_min": 1.5,
    "bio_max": 2.7,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -47027,11 +47026,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 2.1 1, label published_fit, range [1.5, 2.7]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "with \u03b11 = 0.76, \u03b12 = 2.1, and \u03b13 = 0.66, captures quantitatively the behavior of the force indentation relation",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -47043,11 +47042,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.66,
-   "template_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "template_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bio_min": 0.4,
    "bio_max": 0.9,
    "bound_basis": "measured_related",
-   "bound_source": "Sanzeni et al. 2019 eLife 8:e43226 eq 12",
+   "bound_source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -47059,11 +47058,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.66 1, label published_fit, range [0.4, 0.9]; authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "with \u03b11 = 0.76, \u03b12 = 2.1, and \u03b13 = 0.66, captures quantitatively the behavior of the force indentation relation",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56355,18 +56354,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 580,
+    "guessed": 581,
     "measured": 253,
-    "inferred": 329,
+    "inferred": 328,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9376,
+    "guessed": 9377,
     "measured": 6211,
     "derived": 67520,
-    "inferred": 335,
+    "inferred": 334,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56374,18 +56373,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 580,
+   "guessed": 581,
    "measured": 253,
-   "inferred": 329,
+   "inferred": 328,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9376,
+   "guessed": 9377,
    "measured": 6211,
    "derived": 67520,
-   "inferred": 335,
+   "inferred": 334,
    "absent": 1
   },
   "by_plan_row": {
@@ -56623,15 +56622,15 @@
    },
    "17": {
     "rows": {
-     "guessed": 58,
-     "inferred": 25,
+     "guessed": 59,
+     "inferred": 24,
      "measured": 9,
      "derived": 3,
      "published_fit": 145
     },
     "numbers": {
-     "guessed": 58,
-     "inferred": 25,
+     "guessed": 59,
+     "inferred": 24,
      "measured": 9,
      "derived": 3,
      "published_fit": 145
@@ -56903,16 +56902,16 @@
    "global": {
     "rows": {
      "published_fit": 357,
-     "guessed": 164,
-     "inferred": 49,
+     "guessed": 165,
+     "inferred": 48,
      "measured": 52,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
-     "guessed": 164,
-     "inferred": 49,
+     "guessed": 165,
+     "inferred": 48,
      "measured": 52,
      "derived": 27,
      "absent": 1
@@ -56975,15 +56974,15 @@
    "other form only": {
     "rows": {
      "published_fit": 30,
-     "guessed": 62,
-     "inferred": 12,
+     "guessed": 63,
+     "inferred": 11,
      "measured": 14,
      "derived": 7
     },
     "numbers": {
      "published_fit": 218,
-     "guessed": 367,
-     "inferred": 13,
+     "guessed": 368,
+     "inferred": 12,
      "measured": 115,
      "derived": 7
     },
@@ -57084,14 +57083,14 @@
    },
    "layers": {
     "rows": {
-     "guessed": 57,
-     "inferred": 11,
+     "guessed": 58,
+     "inferred": 10,
      "measured": 9,
      "derived": 6
     },
     "numbers": {
-     "guessed": 173,
-     "inferred": 12,
+     "guessed": 174,
+     "inferred": 11,
      "measured": 110,
      "derived": 6
     },
@@ -57461,17 +57460,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 579,
-     "inferred": 329,
+     "guessed": 580,
+     "inferred": 328,
      "derived": 36,
      "measured": 249,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9375,
+     "guessed": 9376,
      "derived": 3111,
-     "inferred": 335,
+     "inferred": 334,
      "measured": 359,
      "absent": 1
     },
@@ -58260,16 +58259,16 @@
    }
   ],
   "audit": {
-   "rows_ok": 1757,
-   "rows_with_problems": 99,
+   "rows_ok": 1756,
+   "rows_with_problems": 100,
    "by_status": {
-    "ok": 1757,
-    "finding": 99
+    "ok": 1756,
+    "finding": 100
    },
-   "rows_read": 218,
+   "rows_read": 221,
    "quotes": {
-    "none": 1484,
-    "cited free text (scripted check)": 328,
+    "none": 1474,
+    "cited free text (scripted check)": 338,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
@@ -58300,6 +58299,7 @@
     "set on every soma (brain.py:#) but no current reads it: nca.mod:# declares READ ena and co": 1,
     "sets only NEURON's Nernst eca; every Ca current uses a fixed +# (unc#mod:#, egl#mod:#, cca": 1,
     "enters only NEURON's Nernst eca, which no current reads; the # Nicoletti mods (kqt#, slo#i": 1,
+    "labelled inferred, but param_ranges J# says the # s was recalled from general familiarity;": 1,
     "inferred from a sibling class: between the L-AChR (# uM, Boulin #) and ACR# (# uM) values;": 1,
     "inferred from a sibling class: the NMJ nAChR decay (param_ranges B#, Richmond & Jorgensen ": 1,
     "inferred from a sibling class: the L-AChR single-channel conductance (rec_lacr_gamma_pS); ": 1,
@@ -63158,6 +63158,149 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/"
    },
    {
+    "param_id": "met_tau_ms",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "1.4 -> 1.4 ms; published_fit -> published_fit; range [0.5, 5] -> [0.5, 5]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 5 (filament relaxation)",
+    "url": ""
+   },
+   {
+    "param_id": "met_rcs_per_ms",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.0143885 -> 0.0143885 1/ms; published_fit -> published_fit; range [0.005, 0.05] -> [0.005, 0.05]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_cs = 69.5 ms)",
+    "url": ""
+   },
+   {
+    "param_id": "met_b",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "-0.75 -> -0.75 1; published_fit -> published_fit; range [-1, 0] -> [-1, 0]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 46",
+    "url": ""
+   },
+   {
+    "param_id": "met_rso_per_ms",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.0555556 -> 0.0555556 1/ms; published_fit -> published_fit; range [0.0166667, 0.2] -> [0.0166667, 0.2]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (1/r_so = 18 ms)",
+    "url": ""
+   },
+   {
+    "param_id": "met_d",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "-0.56 -> -0.56 1; published_fit -> published_fit; range [-1, 0] -> [-1, 0]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 47",
+    "url": ""
+   },
+   {
+    "param_id": "met_a",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.5 -> 0.5 1; published_fit -> published_fit; range [0.2, 0.8] -> [0.2, 0.8]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 10 (S at fraction a of the C-O energy gap)",
+    "url": ""
+   },
+   {
+    "param_id": "met_is_frac",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.71 -> 0.71 1; published_fit -> published_fit; range [0.5, 0.9] -> [0.5, 0.9]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) (is/i0)",
+    "url": ""
+   },
+   {
+    "param_id": "touch_a1",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.76 -> 0.76 1; published_fit -> published_fit; range [0.6, 0.9] -> [0.6, 0.9]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
+    "url": ""
+   },
+   {
+    "param_id": "touch_a2",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "2.1 -> 2.1 1; published_fit -> published_fit; range [1.5, 2.7] -> [1.5, 2.7]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
+    "url": ""
+   },
+   {
+    "param_id": "touch_a3",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.66 -> 0.66 1; published_fit -> published_fit; range [0.4, 0.9] -> [0.4, 0.9]",
+    "reason": "authors named and the fitted mean quoted from the free text (the average of the best fits over channel placements); value and label published_fit unchanged",
+    "source": "Sanzeni, Katta, Petzold, Pruitt, Goodman & Vergassola 2019 eLife 8:e43226 (PMC6692131) eq 12",
+    "url": ""
+   },
+   {
+    "param_id": "salt_tau_adapt_s",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "10 -> 10 s; inferred -> guessed; range [1, 30] -> [1, 30]",
+    "reason": "param_ranges J1 records the 10 s as recalled, not read; neither cited free text gives an ASE adaptation time constant (Suzuki, Thiele, Faumont, Ezcurra, Lockery & Schafer 2008, PMC2984562: opposite ASEL/ASER responses across step durations of 10 to 60 s; Luo et al. 2014, PMC4082684: none); value and bounds unchanged",
+    "source": "Suzuki et al. 2008 Nature 454:114; Luo et al. 2014 Neuron 82:1115 (param_ranges J1)",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -63302,7 +63445,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:21 CST",
+   "generated_at": "2026-11-07 03:26 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -64275,18 +64418,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 580,
+    "guessed": 581,
     "measured": 253,
-    "inferred": 329,
+    "inferred": 328,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9376,
+    "guessed": 9377,
     "measured": 6211,
     "derived": 67520,
-    "inferred": 335,
+    "inferred": 334,
     "absent": 1
    }
   }
