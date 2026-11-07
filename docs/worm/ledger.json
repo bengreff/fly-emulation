@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 02:49 CST",
+ "generated_at": "2026-11-07 02:57 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9302,
-   "inferred": 338,
+   "guessed": 9303,
+   "inferred": 337,
    "measured": 6184,
    "published_fit": 8103
   },
-  "known": 82135,
-  "placeholder": 9302,
+  "known": 82134,
+  "placeholder": 9303,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9302
+  "must_fill": 9303
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9302,
+   "guessed": 9303,
    "derived": 3102,
-   "inferred": 338,
+   "inferred": 337,
    "measured": 332
   },
-  "known": 11148,
-  "placeholder": 9302,
+  "known": 11147,
+  "placeholder": 9303,
   "gap": 0,
-  "must_fill": 9302
+  "must_fill": 9303
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3826,
-    "inferred (ours)": 311,
+    "guessed": 3827,
+    "inferred (ours)": 310,
     "measured": 1
    },
    "c302": {
@@ -82,8 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3826,
-    "inferred (ours)": 311,
+    "guessed": 3827,
+    "inferred (ours)": 310,
     "measured": 1
    },
    "c302": {
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 8,
-   "guessed": 358,
-   "inferred": 285,
+   "guessed": 359,
+   "inferred": 284,
    "measured": 32,
    "published_fit": 101
   },
@@ -1269,8 +1269,8 @@
    "numbers": 76,
    "by_label": {
     "derived": 1,
-    "guessed": 5,
-    "inferred": 2,
+    "guessed": 6,
+    "inferred": 1,
     "measured": 6,
     "published_fit": 62
    }
@@ -29557,11 +29557,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 100 ms, label inferred, range [25, 400]; quote added (Hernando, Turani, Rodriguez Araujo & Bouzat 2023, citing Hernando et al. 2012)",
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
-   "source_quote": "",
+   "source_quote": "N-AChR currents decay 40-fold faster and show insignificant steady-state currents",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -32805,11 +32805,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.5,
-   "template_source": "share of the NMJ ACh conductance on L-AChR (the rest ACR-16): both carry the evoked current (Touroutine et al. 2005 JBC; Francis et al. 2005), split not retrieved",
+   "template_source": "share of the NMJ ACh conductance on L-AChR (the rest ACR-16); no paper gives it as a conductance split. Liu, Chen & Wang 2013 Nat Commun 4:1911 (PMC3683072), evoked cholinergic PSC bursts at the NMJ: the persistent current fell about 70% in unc-29 (L-AChR) mutants and was unchanged in acr-16; the initial transient fell about 80% in acr-16 mutants and was unchanged in unc-29 (also Touroutine et al. 2005 JBC; Francis et al. 2005 Neuron, not free)",
    "bio_min": 0.2,
-   "bio_max": 0.8,
-   "bound_basis": "guessed",
-   "bound_source": "share of the NMJ ACh conductance on L-AChR (the rest ACR-16): both carry the evoked current (Touroutine et al. 2005 JBC; Francis et al. 2005), split not retrieved",
+   "bio_max": 0.7,
+   "bound_basis": "measured_this_class",
+   "bound_source": "derived from Liu, Chen & Wang 2013 (PMC3683072): L-AChR carries about 0.2 of the initial transient (acr-16 loss about 80%) and about 0.7 of the persistent current (unc-29 loss about 70%)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -32821,11 +32821,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.5 1, label guessed, range [0.2, 0.8]; free measurement found; the value 0.5 stays guessed (a single conductance share between the two components); range 6 Nov (catalog audit): was 0.5 1, label guessed, range [0.2, 0.8]; range [0.2, 0.8] guessed -> [0.2, 0.7] from the two measured components at this synapse; one share for both components should lie between them",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3683072/",
+   "source_quote": "The persistent current was decreased by ~70% in the unc-29 mutant but unchanged in the acr-16 mutant ( Figure 5C ) whereas the initial transient was decreased by ~80% in the acr-16 mutant but unchanged in the unc-29 mutant ( Figure 5D )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -33829,11 +33829,11 @@
    "unit": "h",
    "n_values": 1,
    "value_template": 3.0,
-   "template_source": "PMC11363341, PNAS 2024 121:e2404969121 (UNC-2 abundance: no change after 1 h, a fall after > 2 h)",
+   "template_source": "Xiong, Richmond & Kim 2024 PNAS 121:e2404969121 (PMC11363341): UNC-2 abundance unchanged after 1 h of optogenetic stimulation, lower after more than 2 h",
    "bio_min": 1.0,
    "bio_max": 10.0,
    "bound_basis": "measured_related",
-   "bound_source": "PMC11363341, PNAS 2024 121:e2404969121 (UNC-2 abundance: no change after 1 h, a fall after > 2 h)",
+   "bound_source": "Xiong, Richmond & Kim 2024 PNAS 121:e2404969121 (PMC11363341): UNC-2 abundance unchanged after 1 h of optogenetic stimulation, lower after more than 2 h",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -33845,11 +33845,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "1 h: no change, > 2 h: a fall; 3 h is the integrator time at a 100% Ca error; Spec grain 'pathway' read as class",
+   "notes": "1 h: no change, > 2 h: a fall; 3 h is the integrator time at a 100% Ca error; Spec grain 'pathway' read as class; source 6 Nov (catalog audit): was 3 h, label inferred, range [1, 10]; quote added; the paper's authors named",
    "plan_row": 19,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11363341/",
-   "source_quote": "",
+   "source_quote": "While 1 h of optogenetic stimulation was not sufficient to impact UNC-2 levels, sessions exceeding 2 h led to a decrease in UNC-2 channel abundance",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46405,11 +46405,11 @@
    "unit": "mM",
    "n_values": 1,
    "value_template": 500.0,
-   "template_source": "ASH avoidance of ~1-2 M glycerol (Hilliard 2005)",
+   "template_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 1 M glycerol; avoidance of about 1-2 M glycerol",
    "bio_min": 100.0,
    "bio_max": 2000.0,
    "bound_basis": "measured_related",
-   "bound_source": "ASH avoidance of ~1-2 M glycerol (Hilliard 2005)",
+   "bound_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 1 M glycerol; avoidance of about 1-2 M glycerol",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46421,11 +46421,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 500 mM, label inferred, range [100, 2000]; quote added; authors named; the half-max is ours (inferred from the stimulus that drives a response)",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC544906/",
-   "source_quote": "",
+   "source_quote": "Shown are typical calcium transients in ASH evoked by the noxious stimuli 10 mM Cu 2+ , 1 M glycerol, 0.1% SDS, 10 mM quinine and 10 mM denatonium",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46437,11 +46437,11 @@
    "unit": "mM",
    "n_values": 1,
    "value_template": 1.0,
-   "template_source": "ASH Ca responses to 1-10 mM CuSO4 (Hilliard 2005)",
+   "template_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM Cu2+ (1-10 mM CuSO4 drive ASH)",
    "bio_min": 0.1,
    "bio_max": 10.0,
    "bound_basis": "measured_related",
-   "bound_source": "ASH Ca responses to 1-10 mM CuSO4 (Hilliard 2005)",
+   "bound_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM Cu2+ (1-10 mM CuSO4 drive ASH)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46453,11 +46453,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 1 mM, label inferred, range [0.1, 10]; quote added; authors named",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC544906/",
-   "source_quote": "",
+   "source_quote": "Shown are typical calcium transients in ASH evoked by the noxious stimuli 10 mM Cu 2+ , 1 M glycerol, 0.1% SDS, 10 mM quinine and 10 mM denatonium",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46469,11 +46469,11 @@
    "unit": "mM",
    "n_values": 1,
    "value_template": 5.0,
-   "template_source": "ASH responds to 10 mM quinine (Hilliard 2005)",
+   "template_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM quinine",
    "bio_min": 0.5,
    "bio_max": 50.0,
    "bound_basis": "measured_related",
-   "bound_source": "ASH responds to 10 mM quinine (Hilliard 2005)",
+   "bound_source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM quinine",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46485,11 +46485,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 5 mM, label inferred, range [0.5, 50]; quote added; authors named",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC544906/",
-   "source_quote": "",
+   "source_quote": "Shown are typical calcium transients in ASH evoked by the noxious stimuli 10 mM Cu 2+ , 1 M glycerol, 0.1% SDS, 10 mM quinine and 10 mM denatonium",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46965,11 +46965,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "radius of whatever touches the body; an eyelash is wider (unmeasured here)",
+   "notes": "radius of whatever touches the body; an eyelash is wider (unmeasured here); source 6 Nov (catalog audit): was 10 um, label inferred, range [3, 50]; quote added (Sanzeni et al. 2019, Fig. 1 text)",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "is indented by a spherical bead (with radius 10 \u03bcm unless stated otherwise)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -50885,28 +50885,28 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 1.0,
-   "template_source": "Hobson et al. 2006 Genetics 172:159 (ser-7 reporter in pharyngeal muscle)",
+   "template_source": "Hobson, Hapiak, Xiao, Buehrer, Komuniecki & Komuniecki 2006 Genetics 172:159 (PMC1456143): ser-7::gfp is in the pharyngeal neurons MC, M2, M3, M4 and M5 (and vulval muscle), not in pharyngeal muscle, whose 5-HT receptor is SER-1 (Tsalik et al. 2003); ser-7 mutants lose 5-HT-stimulated pumping and the MC-driven E1 transient. A switch for a direct serotonin>ser-7 term on the muscle, standing in for the MC route",
    "bio_min": 0.0,
    "bio_max": 1.0,
    "bound_basis": "measured_related",
-   "bound_source": "Hobson et al. 2006 Genetics 172:159 (ser-7 reporter in pharyngeal muscle)",
+   "bound_source": "Hobson, Hapiak, Xiao, Buehrer, Komuniecki & Komuniecki 2006 Genetics 172:159 (PMC1456143): ser-7::gfp is in the pharyngeal neurons MC, M2, M3, M4 and M5 (and vulval muscle), not in pharyngeal muscle, whose 5-HT receptor is SER-1 (Tsalik et al. 2003); ser-7 mutants lose 5-HT-stimulated pumping and the MC-driven E1 transient. A switch for a direct serotonin>ser-7 term on the muscle, standing in for the MC route",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the muscle takes the brain monoamine layer's serotonin>ser-7 occupancy times its ser-7 gain",
+   "notes": "the muscle takes the brain monoamine layer's serotonin>ser-7 occupancy times its ser-7 gain; source 6 Nov (catalog audit): was 1 1, label inferred, range [0, 1]; the source text said 'ser-7 reporter in pharyngeal muscle'; the cited paper puts ser-7 in pharyngeal neurons; relabel 6 Nov (catalog audit): was 1 1, label inferred, range [0, 1]; inferred -> guessed: SER-7 on pharyngeal muscle is contradicted by the cited paper; the switch is a modelling shortcut for the MC route (value 1 unchanged; owner B2)",
    "plan_row": 13,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1456143/",
-   "source_quote": "",
-   "audit": "ok",
+   "source_quote": "ser-7\u2237gfp is expressed in several pharyngeal neurons, including the MC, M2, M3, M4, and M5, and in vulval muscle ... a G\u03b1 q -coupled 5-HT receptor in pharyngeal muscle (SER-1; T salik et al . 2003 ) and SER-7 in the pharyngeal nervous system",
+   "audit": "guessed template sits on a bound; labelled inferred with the source text 'ser-7 reporter in pharyngeal muscle', but Hobson et al. 2006 (PMC1456143) find ser-7::gfp in the pharyngeal neurons MC, M2-M5 and vulval muscle; the pharyngeal-muscle 5-HT receptor is SER-1 (Tsalik et al. 2003). SER-7's effect on pumping runs through MC (ser-7 mutants lose the MC-driven E1 transient) [owner: B2 (organs_pharynx.py:151, the Spec says pharyngeal muscle). Route serotonin's SER-7 effect through MC, or put SER-1 on the muscle, or keep the switch as a stated shortcut; if the monoamine layer also gives MC ser-7, the muscle term may count it twice. Catalog: source and quote fixed, inferred -> guessed, value unchanged]",
    "kind": "physiology"
   },
   {
@@ -52341,11 +52341,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the BWM value",
+   "notes": "the BWM value; source 6 Nov (catalog audit): was 100 ms, label inferred, range [50, 200]; quote added (Boyle, Berri & Cohen 2012, body-wall muscle)",
    "plan_row": 12,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/",
-   "source_quote": "",
+   "source_quote": "Muscles respond as leaky integrators with a characteristic time scale of \u03c4 M = 100 ms",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -52853,11 +52853,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 100 ms, label inferred, range [50, 200]; quote added (Boyle, Berri & Cohen 2012, body-wall muscle)",
    "plan_row": 15,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/",
-   "source_quote": "",
+   "source_quote": "Muscles respond as leaky integrators with a characteristic time scale of \u03c4 M = 100 ms",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -54021,11 +54021,11 @@
    "unit": "uF/cm2",
    "n_values": 1,
    "value_template": 1.0,
-   "template_source": "Gentet, Stuart and Clements 2000 Biophys J 79:314 (0.9 uF/cm2, rat cortical neurons)",
+   "template_source": "Gentet, Stuart & Clements 2000 Biophys J 79:314 (PMC1300935): 0.9 uF/cm2 in rat cortical pyramidal, spinal cord and hippocampal neurons (nucleated patches)",
    "bio_min": 0.8,
    "bio_max": 1.2,
    "bound_basis": "measured_related",
-   "bound_source": "Gentet, Stuart and Clements 2000 Biophys J 79:314 (0.9 uF/cm2, rat cortical neurons)",
+   "bound_source": "Gentet, Stuart & Clements 2000 Biophys J 79:314 (PMC1300935): 0.9 uF/cm2 in rat cortical pyramidal, spinal cord and hippocampal neurons (nucleated patches)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -54037,11 +54037,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "specific membrane capacitance; cross-species; sets each isolated glia's area from its capacitance",
+   "notes": "specific membrane capacitance; cross-species; sets each isolated glia's area from its capacitance; source 6 Nov (catalog audit): was 1 uF/cm2, label inferred, range [0.8, 1.2]; quote added (abstract)",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1300935/",
-   "source_quote": "",
+   "source_quote": "C(m) was 0.9 microF/cm(2) for each class of neuron",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56357,18 +56357,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 572,
+    "guessed": 573,
     "measured": 254,
-    "inferred": 336,
+    "inferred": 335,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9368,
+    "guessed": 9369,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 342,
+    "inferred": 341,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56376,18 +56376,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 572,
+   "guessed": 573,
    "measured": 254,
-   "inferred": 336,
+   "inferred": 335,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9368,
+   "guessed": 9369,
    "measured": 6212,
    "derived": 67520,
-   "inferred": 342,
+   "inferred": 341,
    "absent": 1
   },
   "by_plan_row": {
@@ -56560,16 +56560,16 @@
    "13": {
     "rows": {
      "measured": 6,
-     "guessed": 7,
+     "guessed": 8,
      "published_fit": 62,
-     "inferred": 2,
+     "inferred": 1,
      "derived": 1
     },
     "numbers": {
      "measured": 6,
-     "guessed": 7,
+     "guessed": 8,
      "published_fit": 62,
-     "inferred": 2,
+     "inferred": 1,
      "derived": 1
     },
     "n_rows": 78,
@@ -56836,15 +56836,15 @@
    },
    "class": {
     "rows": {
-     "inferred": 285,
-     "guessed": 363,
+     "inferred": 284,
+     "guessed": 364,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
     "numbers": {
-     "inferred": 285,
-     "guessed": 363,
+     "inferred": 284,
+     "guessed": 364,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
@@ -57015,17 +57015,17 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 476,
+     "guessed": 477,
      "measured": 217,
-     "inferred": 321,
+     "inferred": 320,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8941,
+     "guessed": 8942,
      "measured": 6074,
      "derived": 67509,
-     "inferred": 326
+     "inferred": 325
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57278,16 +57278,16 @@
     "rows": {
      "published_fit": 62,
      "measured": 3,
-     "inferred": 2,
+     "inferred": 1,
      "derived": 1,
-     "guessed": 4
+     "guessed": 5
     },
     "numbers": {
      "published_fit": 62,
      "measured": 3,
-     "inferred": 2,
+     "inferred": 1,
      "derived": 1,
-     "guessed": 4
+     "guessed": 5
     },
     "n_rows": 72,
     "n_numbers": 72
@@ -57463,17 +57463,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 571,
-     "inferred": 336,
+     "guessed": 572,
+     "inferred": 335,
      "derived": 36,
      "measured": 250,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9367,
+     "guessed": 9368,
      "derived": 3111,
-     "inferred": 342,
+     "inferred": 341,
      "measured": 360,
      "absent": 1
     },
@@ -58262,26 +58262,27 @@
    }
   ],
   "audit": {
-   "rows_ok": 1763,
-   "rows_with_problems": 93,
+   "rows_ok": 1762,
+   "rows_with_problems": 94,
    "by_status": {
-    "ok": 1763,
-    "finding": 93
+    "ok": 1762,
+    "finding": 94
    },
-   "rows_read": 208,
+   "rows_read": 210,
    "quotes": {
-    "none": 1536,
-    "cited free text (scripted check)": 276,
+    "none": 1525,
+    "cited free text (scripted check)": 287,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
-   "with_url": 1507,
+   "with_url": 1508,
    "links": {
-    "distinct": 164,
+    "distinct": 165,
     "by_status": {
      "200": 154,
      "203": 1,
      "406": 4,
+     "unchecked": 1,
      "403": 5
     },
     "checked_at": "2026-11-07 02:30 CST"
@@ -58290,9 +58291,9 @@
     "no URL to open": 34,
     "source marked UNVERIFIED": 11,
     "no range": 11,
+    "guessed template sits on a bound": 6,
     "range is one point: the source's spread was not recorded": 6,
     "template # outside": 6,
-    "guessed template sits on a bound": 5,
     "inferred from the chloride reversal; no native C. elegans chloride reversal is measured; t": 5,
     "a cation-channel reversal carried over from the muscle ACh current (rec_lacr_erev_mV, Rich": 4,
     "inferred from a research-file summary (PORT_SOURCES N#) by homology; no paper with a URL": 3,
@@ -58325,6 +58326,7 @@
     "computed and published as out['q#']['dmp_clock'] each step, but no module reads it (grep o": 1,
     "replaced slot mec#_i#_pA (measured) has # pA, outside this row's range": 1,
     "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
+    "labelled inferred with the source text 'ser# reporter in pharyngeal muscle', but Hobson et": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "replaced slot glia_k_clear_tau_s (inferred) has # s, outside this row's range": 1,
     "inferred from mammalian astrocytes, no paper named (borrowed from glia_e_leak_mV, which ha": 1,
@@ -62294,6 +62296,175 @@
     "url": ""
    },
    {
+    "param_id": "rec_nmj_lacr_share",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0.5 -> 0.5 1; guessed -> guessed; range [0.2, 0.8] -> [0.2, 0.8]",
+    "reason": "free measurement found; the value 0.5 stays guessed (a single conductance share between the two components)",
+    "source": "share of the NMJ ACh conductance on L-AChR (the rest ACR-16); no paper gives it as a conductance split. Liu, Chen & Wang 2013 Nat Commun 4:1911 (PMC3683072), evoked cholinergic PSC bursts at the NMJ: the persistent current fell about 70% in unc-29 (L-AChR) mutants and was unchanged in acr-16; the initial transient fell about 80% in acr-16 mutants and was unchanged in unc-29 (also Touroutine et al. 2005 JBC; Francis et al. 2005 Neuron, not free)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3683072/"
+   },
+   {
+    "param_id": "rec_nmj_lacr_share",
+    "kind": "range",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0.5 -> 0.5 1; guessed -> guessed; range [0.2, 0.8] -> [0.2, 0.7]",
+    "reason": "range [0.2, 0.8] guessed -> [0.2, 0.7] from the two measured components at this synapse; one share for both components should lie between them",
+    "source": "derived from Liu, Chen & Wang 2013 (PMC3683072): L-AChR carries about 0.2 of the initial transient (acr-16 loss about 80%) and about 0.7 of the persistent current (unc-29 loss about 70%)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3683072/"
+   },
+   {
+    "param_id": "ph_ser7_on_muscle",
+    "kind": "source",
+    "origin": "mech:organs_pharynx",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "1 -> 1 1; inferred -> inferred; range [0, 1] -> [0, 1]",
+    "reason": "the source text said 'ser-7 reporter in pharyngeal muscle'; the cited paper puts ser-7 in pharyngeal neurons",
+    "source": "Hobson, Hapiak, Xiao, Buehrer, Komuniecki & Komuniecki 2006 Genetics 172:159 (PMC1456143): ser-7::gfp is in the pharyngeal neurons MC, M2, M3, M4 and M5 (and vulval muscle), not in pharyngeal muscle, whose 5-HT receptor is SER-1 (Tsalik et al. 2003); ser-7 mutants lose 5-HT-stimulated pumping and the MC-driven E1 transient. A switch for a direct serotonin>ser-7 term on the muscle, standing in for the MC route",
+    "url": ""
+   },
+   {
+    "param_id": "ph_ser7_on_muscle",
+    "kind": "relabel",
+    "origin": "mech:organs_pharynx",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "1 -> 1 1; inferred -> guessed; range [0, 1] -> [0, 1]",
+    "reason": "inferred -> guessed: SER-7 on pharyngeal muscle is contradicted by the cited paper; the switch is a modelling shortcut for the MC route (value 1 unchanged; owner B2)",
+    "source": "Hobson, Hapiak, Xiao, Buehrer, Komuniecki & Komuniecki 2006 Genetics 172:159 (PMC1456143): ser-7::gfp is in the pharyngeal neurons MC, M2, M3, M4 and M5 (and vulval muscle), not in pharyngeal muscle, whose 5-HT receptor is SER-1 (Tsalik et al. 2003); ser-7 mutants lose 5-HT-stimulated pumping and the MC-driven E1 transient. A switch for a direct serotonin>ser-7 term on the muscle, standing in for the MC route",
+    "url": ""
+   },
+   {
+    "param_id": "touch_probe_radius_um",
+    "kind": "source",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "10 -> 10 um; inferred -> inferred; range [3, 50] -> [3, 50]",
+    "reason": "quote added (Sanzeni et al. 2019, Fig. 1 text)",
+    "source": "Sanzeni et al. 2019 eLife 8:e43226 (standard 10 um bead)",
+    "url": ""
+   },
+   {
+    "param_id": "homeo_unc2_tau_h",
+    "kind": "source",
+    "origin": "mech:slow_signalling",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "3 -> 3 h; inferred -> inferred; range [1, 10] -> [1, 10]",
+    "reason": "quote added; the paper's authors named",
+    "source": "Xiong, Richmond & Kim 2024 PNAS 121:e2404969121 (PMC11363341): UNC-2 abundance unchanged after 1 h of optogenetic stimulation, lower after more than 2 h",
+    "url": ""
+   },
+   {
+    "param_id": "passive_cm_uF_cm2",
+    "kind": "source",
+    "origin": "mech:cells_passive",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "1 -> 1 uF/cm2; inferred -> inferred; range [0.8, 1.2] -> [0.8, 1.2]",
+    "reason": "quote added (abstract)",
+    "source": "Gentet, Stuart & Clements 2000 Biophys J 79:314 (PMC1300935): 0.9 uF/cm2 in rat cortical pyramidal, spinal cord and hippocampal neurons (nucleated patches)",
+    "url": ""
+   },
+   {
+    "param_id": "ent_act_tau_ms",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "100 -> 100 ms; inferred -> inferred; range [50, 200] -> [50, 200]",
+    "reason": "quote added (Boyle, Berri & Cohen 2012, body-wall muscle)",
+    "source": "Boyle, Berri & Cohen 2012 (tau_M = 100 ms, BWM)",
+    "url": ""
+   },
+   {
+    "param_id": "egg_act_tau_ms",
+    "kind": "source",
+    "origin": "mech:organs_egglaying",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "100 -> 100 ms; inferred -> inferred; range [50, 200] -> [50, 200]",
+    "reason": "quote added (Boyle, Berri & Cohen 2012, body-wall muscle)",
+    "source": "Boyle, Berri, Cohen 2012",
+    "url": ""
+   },
+   {
+    "param_id": "rec_acr16_tau_des_ms",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "100 -> 100 ms; inferred -> inferred; range [25, 400] -> [25, 400]",
+    "reason": "quote added (Hernando, Turani, Rodriguez Araujo & Bouzat 2023, citing Hernando et al. 2012)",
+    "source": "decays about 40x faster than L-AChR (Cys-loop review PMC10480131 (2023) Table 1): L-AChR's guessed 4000 ms / 40",
+    "url": ""
+   },
+   {
+    "param_id": "sens_ash_gly_K_mM",
+    "kind": "source",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "500 -> 500 mM; inferred -> inferred; range [100, 2000] -> [100, 2000]",
+    "reason": "quote added; authors named; the half-max is ours (inferred from the stimulus that drives a response)",
+    "source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 1 M glycerol; avoidance of about 1-2 M glycerol",
+    "url": ""
+   },
+   {
+    "param_id": "sens_ash_cu_K_mM",
+    "kind": "source",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "1 -> 1 mM; inferred -> inferred; range [0.1, 10] -> [0.1, 10]",
+    "reason": "quote added; authors named",
+    "source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM Cu2+ (1-10 mM CuSO4 drive ASH)",
+    "url": ""
+   },
+   {
+    "param_id": "sens_ash_qui_K_mM",
+    "kind": "source",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "5 -> 5 mM; inferred -> inferred; range [0.5, 50] -> [0.5, 50]",
+    "reason": "quote added; authors named",
+    "source": "Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005 EMBO J 24:63 (PMC544906): ASH Ca transients to 10 mM quinine",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -62438,7 +62609,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 02:45 CST",
+   "generated_at": "2026-11-07 02:49 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -63411,18 +63582,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 572,
+    "guessed": 573,
     "measured": 254,
-    "inferred": 336,
+    "inferred": 335,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9368,
+    "guessed": 9369,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 342,
+    "inferred": 341,
     "absent": 1
    }
   }
