@@ -390,12 +390,13 @@ S("slow_cmk1_fast_tau_min", 18, "slow_signalling", "min", 2.5, 2, 3, "measured",
   basis="measured_this_class", src="Yu et al. 2014 Neuron (doi 10.1016/j.neuron.2014.10.046), via N6",
   url="https://doi.org/10.1016/j.neuron.2014.10.046",
   quote=f"{N6}: Two explicit timescales in the same cell: **2-3 min** (fast, short-term threshold reset)",
-  notes="the slow 3-5 h component is slow_thermo_tau_h", match="slow_cmk1_fast")
-for pid, nm in (("slow_insulin_tau_h", "insulin/DAF-16"), ("slow_daf7_tau_h", "DAF-7 TGF-beta"),
-                ("slow_crh1_tau_h", "CRH-1/CREB"), ("slow_glr1_traffic_tau_h", "GLR-1 trafficking (CMK-1)")):
+  notes="the slow 3-5 h component is cmk1_slow_tau_h", match="slow_cmk1_fast cmk1_fast_tau_min")
+for pid, nm, code in (("slow_insulin_tau_h", "insulin/DAF-16", "daf16_tau_h"),
+                      ("slow_daf7_tau_h", "DAF-7 TGF-beta", "daf7_tau_h"), ("slow_crh1_tau_h", "CRH-1/CREB", "creb_tau_h"),
+                      ("slow_glr1_traffic_tau_h", "GLR-1 trafficking (CMK-1)", "glr1_tau_h")):
     S(pid, 18, "slow_signalling", "h", None, 0.01, 24, "guessed", grain="class", applies=nm,
       src="none: not retrieved; K1 class bound", quote=f"{N6}: otherwise bounded generically in the K1 cost class "
-      "PLAN.md row 18 already assigns (~1 s to hours", notes="bounds guessed (36 s to a day)", match=pid)
+      "PLAN.md row 18 already assigns (~1 s to hours", notes="bounds guessed (36 s to a day)", match=f"{pid} {code}")
 
 # --- row 19: homeostasis (N7) -----------------------------------------------------------------------------------------
 N7 = f"{NEURAL} N7"
@@ -408,6 +409,9 @@ S("homeo_unc2_tau_h", 19, "homeostasis", "h", 1.5, 1, 2, "derived", grain="globa
   applies="UNC-2-expressing presynaptic terminals", basis="measured_this_class", src="derived in N7 from PMC11363341 "
   "(1 h no change, >2 h decrease)", url=PMC("PMC11363341"),
   quote=f"{N7}: bounds tau between roughly 1-2 h, derived from the reported threshold", match="homeo_unc2")
+# mech/slow_signalling's O'Leary form integrates each cell's own Ca error per channel (homeo_<c>_tau_h, the 1/k_i of
+# the slot below) with no separate sensor filter stage, so its rows replace all three slots
+HOMEO_CODE = "homeo_unc2_tau_h homeo_egl19_tau_h homeo_shl1_tau_h homeo_tau_g_h"
 for pid, unit, lo, hi, nt in (("homeo_ca_sensor_fast_tau_s", "s", 0.01, 1, "fast Ca sensor filter"),
                               ("homeo_ca_sensor_slow_tau_s", "s", 10, 1000, "slow Ca sensor filter"),
                               ("homeo_density_rate_per_s", "1/s", 1e-6, 1e-2, "density regulation gain k_i")):
@@ -415,7 +419,7 @@ for pid, unit, lo, hi, nt in (("homeo_ca_sensor_fast_tau_s", "s", 0.01, 1, "fast
       src="O'Leary et al. 2013 PNAS (stomatogastric, not worm; values not extracted)",
       url="https://neurostatslab.org/assets/papers/OLeary_etal_2013.pdf",
       quote=f"{N7}: | O'Leary 2013 calcium-sensor filter time constants, regulation gains `k_i` | not extracted",
-      notes=nt, match="homeo_oleary")
+      notes=nt, match=f"homeo_oleary {HOMEO_CODE}")
 
 # --- row 20: metabolism (O7, AmP DEB) ---------------------------------------------------------------------------------
 O7 = f"{ORGANS} O7"
@@ -493,13 +497,16 @@ S("learn_rate_per_s", 24, "learning", "1/s", None, 1e-4, 1e-1, "guessed", grain=
   applies="every learning paradigm (one shared state)", src="none: no paradigm has measured kinetics",
   quote=f"{N3}: every paradigm in this list reduces to the same minimal ... \"slow associative state\" mechanism (one "
         "state variable, one learning-rate parameter, one decay",
-  notes="fit target (bounded), against held-out behaviour", match="learning")
+  notes="fit target (bounded), against held-out behaviour; mech/learning's per-paradigm assoc_*_learn_tau_min is "
+  "its inverse", match="learning assoc_salt_learn_tau_min")
 S("learn_fast_tau_min", 24, "learning", "min", None, 1, 60, "guessed", grain="global", applies="short-term trace",
   src="Kano et al. (Curr Biol): NMDA-independent short-term memory, minutes",
-  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning")
+  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning",
+  notes="kept: mech/learning runs one trace per paradigm (assoc_*_forget_tau_min); this is the two-trace form's")
 S("learn_slow_tau_h", 24, "learning", "h", None, 1, 24, "guessed", grain="global", applies="long-term trace (NMR-1)",
   src="Kano et al. (Curr Biol): NMDA-dependent long-term memory, hours",
-  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning")
+  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning",
+  notes="kept: mech/learning runs one trace per paradigm (assoc_*_forget_tau_min); this is the two-trace form's")
 
 # --- row 25: temperature (N8) -----------------------------------------------------------------------------------------
 N8 = f"{NEURAL} N8"
@@ -522,13 +529,16 @@ S("noise_mini_rate_per_s", 26, "noise", "1/s", 26.3, 10.2, 35.3, "measured", gra
   applies="cholinergic presynaptic terminals", basis="measured_this_class",
   src="Liu, Hollopeter & Jorgensen 2009", url=PMC("PMC2705609"),
   quote=f"{N9}: | Baseline spontaneous mEPSC (\"mini\") rate, NMJ ACh | 26.3+-5.4 events/s |",
-  notes="range = hyperpolarized (10.2) to rebound (35.3) rates, same paper", match="noise")
+  notes="range = hyperpolarized (10.2) to rebound (35.3) rates, same paper; kept as a check: mech/noise draws the "
+  "minis from each synapse's own graded release, so the model should reproduce this rate at rest rather than read it",
+  match="noise")
 S("noise_quantal_pA", 26, "noise", "pA", 17.6, 16.7, 18.5, "measured", grain="family",
   applies="cholinergic NMJ", basis="measured_this_class", src="Liu et al. 2009 Fig 3E", url=PMC("PMC2705609"),
-  quote=f"{N9}: | Single mEPSC (quantal) amplitude | 17.6+-0.9 pA |", notes="range = mean +- the reported error", match="noise")
+  quote=f"{N9}: | Single mEPSC (quantal) amplitude | 17.6+-0.9 pA |", notes="range = mean +- the reported error",
+  match="noise noise_quantal_pA")
 S("noise_quantal_cv", 26, "noise", "1", None, 0.1, 0.5, "guessed", grain="family", applies="every release site",
   src="none: per-event variance not reported",
-  quote=f"{N9}: treat the per-event amplitude variance itself as a gap", match="noise")
+  quote=f"{N9}: treat the per-event amplitude variance itself as a gap", match="noise noise_amp_cv")
 
 # --- row 27: pumps (no PORT_SOURCES section) --------------------------------------------------------------------------
 P27 = f"{PLAN} row 27"
@@ -614,3 +624,137 @@ H("init_v_muscle_mV", 12, "muscle_active", "mV", -28.0, -40.0, -15.0, "published
   src="c302 GenericMuscleCell initMembPotential (parameters_C2), as ported",
   used="src/wormemu/brain.py:62 (V_INIT_MUSCLE)",
   notes="initial condition: only the opening transient depends on it; range guessed")
+
+# --- BAAIWorm channel mods: literals in the current and rate equations (not PARAMETERs, so not kin_* rows; 6 Nov) ---
+# The mods compute each current against a fixed reversal, not NEURON's ek / eca / ena (those are commented out), so
+# ion_ek reaches kqt3 only and ion_ena, ion_cao and ion_celsius reach no current. mech/noise.py mirrors these values.
+BMOD = "third_party/baaiworm/mod/{}".format
+BSRC = "BAAIWorm b99ca5a mod files (Zhao et al. 2024 Nat Comput Sci), as ported"
+H("baai_ek_mV", 5, "ions", "mV", -80.0, -100.0, -60.0, "published_fit", basis="guessed",
+  applies="11 K channel mods: slo1_unc2, slo1_egl19, slo2_unc2, slo2_egl19, egl2, irk, shl1, kvs1, shk1, egl36, kcnl",
+  src=BSRC, used=f"{BMOD('egl2.mod')}:57 and the same (v + 80) in 10 more K mods",
+  notes="the K reversal those mods use; kqt3 alone reads ek (ion_ek, -77); range = ion_ek's (guessed)")
+H("baai_eca_mV", 5, "ions", "mV", 60.0, 30.0, 140.0, "published_fit", basis="guessed",
+  applies="unc2, egl19, cca1 currents; the SLO nanodomain Ca (slo1/slo2 x unc2/egl19); cainternm's v <= 60 branch",
+  src=BSRC, used=f"{BMOD('unc2.mod')}:67, {BMOD('egl19.mod')}:77, {BMOD('cca1.mod')}:64, "
+  f"{BMOD('slo1_unc2.mod')}:121, {BMOD('cainternm.mod')}:69",
+  notes="the Ca reversal every Ca current uses; NEURON's Nernst eca (set by ion_cao, ion_celsius) is read by no current; "
+        "range guessed, from an apparent channel reversal near +30 to the Nernst value near +130 (brain.py, derived)")
+H("baai_ena_nca_mV", 5, "ions", "mV", 30.0, 0.0, 70.0, "published_fit", basis="guessed",
+  applies="the NCA sodium leak in every cell that has it", src=BSRC, used=f"{BMOD('nca.mod')}:40",
+  notes="nca declares READ ena but computes gbnca * (v - 30), so ion_ena has no effect; range guessed (a mixed "
+        "cation leak's reversal sits between 0 and E_Na)")
+for pid, val, lo, hi, basis, ln, what in (
+        ("baai_shl1_hf_frac", 0.7, 0.0, 1.0, "physical_limit", 74, "fraction of SHL-1 current with fast inactivation "
+         "(the rest, 0.3, slow)"),
+        ("baai_shl1_tm_scale", 0.4, 0.2, 0.8, "guessed", 88, "factor on SHL-1's activation time constant"),
+        ("baai_shl1_thf_scale", 0.08, 0.04, 0.16, "guessed", 89, "factor on SHL-1's fast inactivation time constant"),
+        ("baai_shl1_ths_scale", 0.3, 0.15, 0.6, "guessed", 90, "factor on SHL-1's slow inactivation time constant")):
+    H(pid, 4, "ch_shl1", "1", val, lo, hi, "published_fit", basis=basis, applies="every cell with shl1", src=BSRC,
+      used=f"{BMOD('shl1.mod')}:{ln}", notes=what + ("" if basis != "guessed" else "; range guessed (x/2 to x2)"))
+H("baai_kqt3_mf_frac", 4, "ch_kqt3", "1", 0.3, 0.0, 1.0, "published_fit", basis="physical_limit",
+  applies="every cell with kqt3", src=BSRC, used=f"{BMOD('kqt3.mod')}:78",
+  notes="fraction of KQT-3 current with fast activation (the rest, 0.7, slow)")
+for pid, val, what in (("baai_egl36_w_fast", 0.33, "fast"), ("baai_egl36_w_mid", 0.36, "middle"),
+                       ("baai_egl36_w_slow", 0.39, "slow")):
+    H(pid, 4, "ch_egl36", "1", val, 0.0, 1.0, "published_fit", basis="physical_limit",
+      applies="every cell with egl36", src=BSRC, used=f"{BMOD('egl36.mod')}:65",
+      notes=f"weight of EGL-36's {what} activation component on gbegl36 (the three sum to 1.08, not 1)")
+
+
+# --- hidden constants in the night modules (merge 1 review, 6 Nov) -----------------------------------------------
+# Numbers printed inside a published model's equations, which the module writes as literals. Each gets a row so the
+# catalog lists every number in use; ranges follow build_ledger.kin_bounds (the kin_* rows' rule: +-20 mV for a half
+# point, a factor 2 for other mV quantities, a factor 3 for anything else; all guessed). Owners: B2 muscle_bwm,
+# pumps, organs_intestine; B3 senses_cgmp, senses_touch.
+def _kb(unit, t, half):
+    if unit.startswith("mV") and half:
+        return t - 20.0, t + 20.0, "+-20 mV around the published value"
+    f = 2.0 if unit.startswith("mV") else 3.0
+    lo, hi = sorted((t / f, t * f))
+    return lo, hi, f"a factor {f:g} either side of the published value"
+
+
+def HK(pid, row, mech, unit, val, *, half=False, src, url, used, notes, quote=""):
+    lo, hi, rule = _kb(unit, val, half)
+    H(pid, row, mech, unit, val, lo, hi, "published_fit", basis="guessed", src=src, url=url, quote=quote, used=used,
+      notes=f"{notes}; range guessed ({rule})")
+
+
+DU = "Du, Crodelle et al. 2025 PLOS Comput Biol 21:e1012318 (code: XuexingDu/C.elegans-Muscle, Muscle_cell_model)"
+DUF = "src/wormemu/mech/muscle_bwm.py"
+for pid, val, unit, half, ln, what in (
+        ("bwm_du_slo2_vh_mV", -33.4, "mV", True, 129, "SLO-2 gate sigmoid((V + 33.4) / 3.2)^3: half point (on V, "
+         "not shifted by bwm_du_vth_mV)"),
+        ("bwm_du_slo2_k_mV", 3.2, "mV", False, 129, "SLO-2 gate: slope"),
+        ("bwm_du_kr_vh_mV", -42.0, "mV", True, 131, "Kr gate 0.5 (1 + tanh((u + 42) / 5)), u = V - vth: half point "
+         "(the same constants in currents() and rates(), :146)"),
+        ("bwm_du_kr_k_mV", 5.0, "mV", False, 131, "Kr gate: tanh scale"),
+        ("bwm_du_m_vh_mV", -8.0, "mV", True, 140, "m_inf = sigmoid((u + 8) / 8.6): half point"),
+        ("bwm_du_m_k_mV", 8.6, "mV", False, 140, "m_inf: slope"),
+        ("bwm_du_tm_min_ms", 0.4, "ms", False, 139, "tau_m = (0.4 + 0.7 / (e^-(u+5)/15 + e^(u+5)/15)) / phi_m: floor"),
+        ("bwm_du_tm_amp_ms", 0.7, "ms", False, 139, "tau_m: bell amplitude"),
+        ("bwm_du_tm_vh_mV", -5.0, "mV", True, 139, "tau_m: bell centre"),
+        ("bwm_du_tm_k_mV", 15.0, "mV", False, 139, "tau_m: bell width"),
+        ("bwm_du_h_amp", 0.42, "1", False, 141, "h_inf = 0.42 sigmoid(-(u + 11) / 2) + 0.28: amplitude"),
+        ("bwm_du_h_floor", 0.28, "1", False, 141, "h_inf: floor (the non-inactivating EGL-19 fraction)"),
+        ("bwm_du_h_vh_mV", -11.0, "mV", True, 141, "h_inf: half point"),
+        ("bwm_du_h_k_mV", 2.0, "mV", False, 141, "h_inf: slope"),
+        ("bwm_du_n_vh_mV", -15.2, "mV", True, 142, "n_inf = 0.5 (tanh((u + 15.2) / 36.22) + 1): half point"),
+        ("bwm_du_n_k_mV", 36.22, "mV", False, 142, "n_inf: tanh scale"),
+        ("bwm_du_tn_min_ms", 1.18, "ms", False, 143, "tau_n = (1.18 + 511.78 / (1 + e^((u + 89.3) / 21.92))) / phi_n: "
+         "floor"),
+        ("bwm_du_tn_amp_ms", 511.78, "ms", False, 143, "tau_n: amplitude"),
+        ("bwm_du_tn_vh_mV", -89.3, "mV", True, 143, "tau_n: half point"),
+        ("bwm_du_tn_k_mV", 21.92, "mV", False, 143, "tau_n: slope"),
+        ("bwm_du_p_vh_mV", -45.0, "mV", True, 144, "p_inf = sigmoid((u + 45) / 10): half point"),
+        ("bwm_du_p_k_mV", 10.0, "mV", False, 144, "p_inf: slope"),
+        ("bwm_du_tp_num_ms", 4000.0, "ms", False, 145, "tau_p = 4000 / (3.38 e^((u+45)/20) + e^(-(u+45)/20)): "
+         "numerator"),
+        ("bwm_du_tp_a", 3.38, "1", False, 145, "tau_p: weight of the rising exponential"),
+        ("bwm_du_tp_vh_mV", -45.0, "mV", True, 145, "tau_p: centre"),
+        ("bwm_du_tp_k_mV", 20.0, "mV", False, 145, "tau_p: width")):
+    HK(pid, 12, "bwm_membrane", unit, val, half=half, src=DU, url=PMC("PMC11781704"), used=f"{DUF}:{ln}",
+       notes=f"{what}; owner B2: make it a Spec")
+for pid, val, what in (("init_bwm_du_m", 0.01, "m"), ("init_bwm_du_h", 0.6, "h"), ("init_bwm_du_n", 0.99, "n"),
+                       ("init_bwm_du_p", 0.2, "p")):
+    H(pid, 12, "bwm_membrane", "1", val, 0.0, 1.0, "published_fit", basis="physical_limit", src=DU,
+      url=PMC("PMC11781704"), used=f"{DUF}:118-119 (reset) and :181 (INIT)",
+      notes=f"starting value of the {what} gate in Du's code; a gate is a fraction (0 to 1); owner B2")
+H("init_bwm_du_v_mV", 12, "bwm_membrane", "mV", -30.0, -40.0, -20.0, "published_fit", basis="guessed", src=DU,
+  url=PMC("PMC11781704"), used=f"{DUF}:116 (reset v0), :181 (INIT), :316 (absent muscles)",
+  notes="Du's starting voltage (Muscle_cell_model: V -30 + N(0,1)); the cell has no stable rest, so the first "
+        "seconds depend on it; range guessed; owner B2")
+
+LR94 = "Luo & Rudy 1994 Circ Res 74:1071 (the Na/K pump's voltage factor f_NaK), as used by mech/pumps.py"
+for pid, val, ln, what in (
+        ("pump_lr_a", 0.1245, 98, "f_NaK = 1 / (1 + 0.1245 e^(-0.1 u) + 0.0365 sigma e^(-u)), u = VF/RT: first weight"),
+        ("pump_lr_vfrac", 0.1, 98, "f_NaK: the voltage fraction in the first exponential"),
+        ("pump_lr_b", 0.0365, 98, "f_NaK: second weight"),
+        ("pump_lr_na_scale_mM", 67.3, 91, "sigma = (e^([Na]o / 67.3) - 1) / 7: [Na]o scale"),
+        ("pump_lr_sigma_div", 7.0, 91, "sigma: divisor")):
+    HK(pid, 27, "na_k_pump", "mM" if pid.endswith("_mM") else "1", val, src=LR94,
+       url="https://doi.org/10.1161/01.res.74.6.1071", used=f"src/wormemu/mech/pumps.py:{ln}",
+       notes=f"{what}; fitted to guinea-pig ventricular myocytes, not a C. elegans measurement; owner B2: make it a "
+             "Spec")
+
+USU = "Usuyama et al. 2012 PLOS ONE 7:e42907, File S1 (the COPASI model vendored as published/usuyama2012_awc.cps)"
+USF = "src/wormemu/mech/senses_cgmp.py"
+HK("usu_cng_erev", 17, "sens_odor_attract", "mV (model)", 0.08, half=True, src=USU, url=PMC("PMC3426523"),
+   used=f"{USF}:205", quote="*(0.08-", notes="the reversal in the model file's I_CNG expression, (0.08 - V) in the "
+   "lumped membrane's units; owner B3: read it from the model file or make it a Spec")
+for pid, val, what in (("usu_vg_c3", 6e-5, "cubic"), ("usu_vg_c2", 8.1e-3, "quadratic"), ("usu_vg_c1", 0.49, "linear"),
+                       ("usu_vg_c0", 9.5, "constant")):
+    HK(pid, 17, "sens_odor_attract", "model units", val, src=USU, url=PMC("PMC3426523"), used=f"{USF}:213",
+       quote="(6e-5*V^3+8.1e-3*V^2+0.49*V+9.5)",
+       notes=f"{what} coefficient of the model file's voltage-gated current polynomial; owner B3: read it from the model "
+             "file or make it a Spec")
+
+H("int_ca_rest_uM", 14, "defecation", "uM", 0.1, 0.05, 0.2, "guessed",
+  src="guessed: 0.1 uM, the usual resting cytosolic Ca of Li-Rinzel models; no C. elegans intestine measurement opened",
+  used="src/wormemu/mech/organs_intestine.py:229 (starting Ca) and :249 (the Ca-dependent PLC drive is zero there)",
+  notes="owner B2: make it a Spec; the PLC term subtracts its value at this Ca, so it sets where the feedback is zero")
+H("nose_flp_channel_frac", 17, "sens_touch_harsh", "1", 0.5, 0.1, 1.0, "guessed",
+  src="guessed: FLP has a head-body field as well as its nose patch, so the nose patch gets half the channels",
+  used="src/wormemu/mech/senses_touch.py:222",
+  notes="fraction of harsh_n_channels in FLP's nose patch (the other nose cells get all of them); owner B3")

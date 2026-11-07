@@ -98,6 +98,8 @@ def centre(qid):
 
 
 def prior_for(t, lo, hi):
+    if lo == hi:                                    # one value, e.g. a recording condition (noise_hold_mV)
+        return "fixed", "", "", "one-point range: nothing to draw"
     if lo > 0 and hi / lo >= 10:
         return "loguniform", "", "", "guessed: log-uniform over the range"
     return "uniform", "", "", "guessed: uniform over the range"
@@ -316,13 +318,16 @@ def build_kinetics():
     mech("ions", "Ion reversal potentials, outside Ca, temperature", "cell", "have",
          "NEURON defaults (BAAIWorm never sets them)")
     for pid, unit, val, lo, hi, note in (
-            ("ion_ek", "mV", -77.0, -100.0, -60.0, "NEURON default; BAAIWorm never sets it"),
-            ("ion_ena", "mV", 50.0, 20.0, 70.0, "NEURON default, read by nca"),
+            ("ion_ek", "mV", -77.0, -100.0, -60.0, "NEURON default; BAAIWorm never sets it. Only kqt3 reads it: the other 11 "
+             "K mods compute against a fixed -80 (baai_ek_mV; checked 6 Nov)"),
+            ("ion_ena", "mV", 50.0, 20.0, 70.0, "NEURON default; set on every soma but no current reads it: nca declares "
+             "READ ena and computes (v - 30) (baai_ena_nca_mV; checked 6 Nov)"),
             ("ion_cao", "mM", 2.0, 1.0, 5.0, "NEURON default; worm salines use 1-5 mM (guessed). With "
-             "literature_overrides on it is entered as 2000 because cainternm keeps cai in uM"),
+             "literature_overrides on it is entered as 2000 because cainternm keeps cai in uM. It sets only NEURON's Nernst "
+             "eca, which no current reads (every Ca current uses a fixed +60, baai_eca_mV; checked 6 Nov)"),
             ("ion_celsius", "degC", 20.0, 15.0, 25.0, "NEURON default 6.3 as ported (literature_overrides off); 20 "
              "is a usual worm culture temperature (guessed). Here it only enters the Ca Nernst potential (no mod "
-             "reads celsius; checked 5 Nov)")):
+             "reads celsius; checked 5 Nov), and no current reads that eca (baai_eca_mV; checked 6 Nov)")):
         row(pid, "ions", unit, val, lo, hi, tsrc="NEURON default" if pid != "ion_celsius" else "guessed",
             label="guessed", proj="NEURON" if pid != "ion_celsius" else "ours", notes=note)
     return mods
@@ -714,14 +719,19 @@ def build_registry():
             if any(m["id"] == mid for m in mechs):
                 mechs[:] = [m for m in mechs if m["id"] != mid]
                 notes.append(f"{mid}: taken over by mech/{name}")
-                # brain.py switches a taken-over layer off; its rows run only if the module calls the old layer
-                # (neuromod's form "lumped" does), so they are not numbers the default model uses
-                assert "lumped" in getattr(mod, "FORMS", ()), f"{mid}: taken over and never run; drop its rows"
+                # brain.py switches a taken-over layer off while the module is registered; its rows run only if the
+                # module calls the old layer (a form "lumped", as neuromod's and homeostasis's) or a run leaves the
+                # module out of the registry, so they are not numbers the default model uses.
+                # FORMS is one tuple for the module or a dict per mechanism id
+                forms = getattr(mod, "FORMS", ())
+                forms = forms.get(mid, ()) if isinstance(forms, dict) else forms
+                when = (f"toggle {mid} = lumped, or a registry without mech/{name}" if "lumped" in forms else
+                        f"a registry without mech/{name} (the old layer then runs)")
                 for r in rows:
                     if r["mechanism_id"] == mid and r["origin"] == "layers":
                         r["used_by_code"] = "other form only"
                         r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
-                            f"read only when toggle {mid} = lumped; the default form runs mech/{name}'s rows")
+                            f"read only with {when}; the default runs mech/{name}'s rows")
             r_ = prow.get(mid) if isinstance(prow, dict) else prow
             cat.MECH_ROW[mid] = int(r_ or cat.guess_row(f"{name} {mid}") or 0)
             mech(mid, mname, layer, "have", f"src/wormemu/mech/{name}.py", toggle=mid,
