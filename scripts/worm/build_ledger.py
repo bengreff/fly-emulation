@@ -705,7 +705,7 @@ def build_layers(st):
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
 
 
-RANGE_GUESSED = re.compile(r"(?i)\b(bounds?|range)\b[^;.]{0,40}\bguessed\b")
+RANGE_GUESSED = re.compile(r"(?i)\b(bounds?|range)\b[^;.]{0,80}\bguessed\b")
 
 
 def build_registry():
@@ -778,13 +778,40 @@ def build_registry():
     return notes
 
 
+def honest_row_labels():
+    """A row with a values table is labelled no stronger than its weakest element (absent elements aside), in the
+    order cat.LABEL_RANK. The literature clip (pas_*, mpas_*) relabels the elements it moves guessed and the mirror
+    used the commonest element label, so a row could claim published_fit with every element guessed (pas_soma_cm,
+    found by the independent audit, 7 Nov). The split stays in labels_by_element. Returns fill-log entries, kind
+    element_labels."""
+    log = []
+    for r in rows:
+        t = values.get(r["param_id"])
+        if t is None or "label" not in t:
+            continue
+        labs = Counter(x for x in t.label if x != "absent")
+        weak = cat.weakest_label(labs)
+        if not weak or cat.LABEL_RANK.get(r["label"], 0) <= cat.LABEL_RANK[weak]:
+            continue
+        was, split = r["label"], ", ".join(f"{k} {v}" for k, v in labs.most_common())
+        why = (f"row label {was} was stronger than its elements ({split}): a row is labelled as its weakest element, "
+               f"the split is per element")
+        r["label"], r["fill_kind"] = weak, ledger.FILL_KIND[weak]
+        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + f"relabel 7 Nov (independent audit): {why}"
+        log.append(dict(param_id=r["param_id"], kind="element_labels", origin=r["origin"], n=1, pattern="",
+                        was_label=was, new_label=weak, change=f"row label {was} -> {weak}", reason=why,
+                        source="the row's own values table", url=""))
+    return log
+
+
 LUMPED_MIRROR = {"pep_ec50_nM": "pep_ec50", "ma_ec50_nM": "ma_ec50"}     # layer table -> mech/neuromod row prefix
 
 
 def mirror_lumped():
     """The lumped neuromodulation form (brain_layers' per-pair table) and mech/neuromod's one-row-per-pair Specs
     hold the same EC50s. After the fills, a guessed table element takes its pair row's value and label when that
-    row is not guessed. A mixed table's row takes its commonest element label (as pas_soma_epas does). Returns
+    row is not guessed. A mixed table's row takes its commonest element label; honest_row_labels then lowers it to
+    the weakest. Returns
     fill-log entries, kind mirror."""
     by = {r["param_id"]: r for r in rows}
     log = []
@@ -942,6 +969,7 @@ def main():
     before = cat.label_tally([*rows, *body, *slot_rows], values)
     fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
     fill_log += mirror_lumped()
+    fill_log += honest_row_labels()
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
     audit_of = {c["id"]: c["audit"] for c in crows}
     for r in rows:

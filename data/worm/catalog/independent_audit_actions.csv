@@ -1,0 +1,10 @@
+param_id,action
+pas_soma_cm,"systemic: every row with a values table is now labelled as its weakest element (build_ledger.honest_row_labels), and a scripted check (ledger_catalog.audit: row label stronger than its weakest element) makes a recurrence an open problem"
+pump_rate_nofood_hz,"filled from free measured sources: 0.3 -> 0.5 Hz, inferred -> measured, range [0, 1] -> [0.5, 2.5] Hz (Shappell et al. 2026 PMC13399524; Bonnard et al. 2022 PMC9462848)"
+pump_v0_ms,"relabelled derived -> guessed (a modelling choice); value unchanged"
+assoc_salt_forget_tau_min,"upper bound 2880 -> 720 min to match its own note (fade within hours); assoc_thermo_forget_tau_min had the same bound and got the same fix"
+harsh_pvd_s0,"range basis measured_related -> guessed (the paper has no fraction)"
+syn_inh_erev,"confirmed: erev = -70 mV at third_party/baaiworm/mod/neuron_to_neuron_inh_syn.mod:59"
+awa_liu_gK3,"confirmed: 0.1 nS in Liu 2018 Table S4 (docs/worm/research/liu2018_tableS4.jpg); its range note says x/2 and x2 around the fits (guessed), so its basis is now guessed, as for the other 7 awa_liu_g* rows"
+bwm_du_ca0_mM,"confirmed: the Du 2025 code relaxes Ca to 0.001 (HH_helper_bp.py:194); the code states no unit"
+gap_innexin_pair,"confirmed from the build: 7 of 1,091 pairs are 0, all with ALNL or ALNR (no innexin at CeNGEN threshold 2)"

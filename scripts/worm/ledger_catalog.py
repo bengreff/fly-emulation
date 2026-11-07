@@ -540,11 +540,23 @@ def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
         if not np.isnan(lo) and ((vv[live] < lo) | (vv[live] > hi)).any():
             p.append("element values outside the range")
         labs = t.label.value_counts()
-        if lab == "measured" and labs.get("measured", 0) < len(t) / 2:
-            p.append(f"row label measured but {labs.get('measured', 0)} of {len(t)} elements are")
+        weak = weakest_label({k: v for k, v in labs.items() if k != "absent"})
+        if weak and LABEL_RANK.get(lab, 0) > LABEL_RANK[weak]:
+            p.append(f"row label {lab} stronger than its weakest element ({labs.get(weak, 0)} of {len(t)} {weak})")
         if lab == "guessed" and labs.get("guessed", 0) == 0:
             p.append("row label guessed but no element is")
     return p
+
+
+# label strength, strongest first: a measurement, arithmetic on measurements, a published model's fit, our inference,
+# a guess. A row with a values table is labelled no stronger than its weakest element (independent audit, 7 Nov)
+LABEL_RANK = {"measured": 5, "derived": 4, "published_fit": 3, "inferred": 2, "guessed": 1}
+
+
+def weakest_label(counts) -> str:
+    """The weakest label among those with a nonzero count ('' if none)."""
+    live = [k for k, n in dict(counts).items() if n and k in LABEL_RANK]
+    return min(live, key=LABEL_RANK.get) if live else ""
 
 
 def label_split(r: dict, t: pd.DataFrame | None) -> dict:
@@ -728,6 +740,34 @@ def _labs(d):
     return " | ".join(f"{d.get(k, 0):,}" for k in LAB_ORDER)
 
 
+def independent_audit(s) -> list[str]:
+    """The independent audit (docs/worm/CATALOG_AUDIT_INDEPENDENT.md, 7 Nov): its verdict counts read from its own
+    tables, and what changed because of it (data/worm/catalog/independent_audit_actions.csv)."""
+    f, acts = ROOT / "docs/worm/CATALOG_AUDIT_INDEPENDENT.md", CAT / "independent_audit_actions.csv"
+    if not f.exists():
+        return []
+    verdict, label = {}, {}
+    for line in f.read_text().splitlines():
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(c) >= 6 and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]+", c[0]) and c[5] in ("OK", "MINOR", "WRONG", "UNVERIFIABLE"):
+            verdict[c[0]], label[c[0]] = c[5], c[1]
+    n, meas = Counter(verdict.values()), [k for k in verdict if label[k] == "measured"]
+    lowered = [x for x in s["fills"] if x.get("kind") == "element_labels"]
+    L = ["", "### Independent audit (7 Nov)", "",
+         f"A fresh-context auditor (`docs/worm/CATALOG_AUDIT_INDEPENDENT.md`) drew {len(verdict)} rows at random "
+         "(seed 7, stratified by label) and opened each source: "
+         + ", ".join(f"{k} {n.get(k, 0)}" for k in ("OK", "MINOR", "WRONG", "UNVERIFIABLE")) + f"; measured rows "
+         f"{sum(verdict[k] == 'OK' for k in meas)} of {len(meas)} OK. It also found, outside the sample, that rows "
+         f"clipped by a literature range kept a row label stronger than their elements. Because of it, {len(lowered)} rows were lowered to their "
+         "weakest element label ("
+         + ", ".join(f"`{x['param_id']}` {x['was_label']} -> {x['new_label']}" for x in lowered)
+         + ") and the audit now flags any row label stronger than its weakest element. Row by row:", "",
+         "| row | verdict | what changed |", "|---|---|---|"]
+    for a in (pd.read_csv(acts, keep_default_na=False).to_dict("records") if acts.exists() else []):
+        L.append(f"| `{a['param_id']}` | {verdict.get(a['param_id'], 'outside the sample')} | {a['action']} |")
+    return L
+
+
 def write_markdown(cat_rows, s):
     import subprocess
     now = subprocess.run(["date", "+%Y-%m-%d %H:%M %Z"], capture_output=True, text=True).stdout.strip()
@@ -806,6 +846,7 @@ def write_markdown(cat_rows, s):
         L += ["", "### Rows not ok", "", "| row | status | problems | read audit |", "|---|---|---|---|"]
         for r in sorted(flagged, key=lambda r: (r["audit_status"] != "problem", r["origin"], r["id"])):
             L.append(f"| `{r['id']}` | {r['audit_status']} | {r['audit']} | {r['audit_trail']} |")
+    L += independent_audit(s)
     notes = audit_notes()
     if notes:
         L += ["", "### Read-audit log", "", "| row | finding | action |", "|---|---|---|"]
@@ -814,7 +855,7 @@ def write_markdown(cat_rows, s):
     if s["fills"]:
         moved = Counter()
         for f in s["fills"]:
-            if "n" in f:
+            if "n" in f and f.get("kind") != "element_labels":   # a row-label lowering moves no numbers
                 moved[(f["was_label"], f["new_label"])] += f["n"]
         L.append("Numbers relabelled: " + "; ".join(f"{a_} -> {b_}: {n:,}" for (a_, b_), n in moved.items()) + ".")
         L += ["", "| row | change | source | why |", "|---|---|---|---|"]
