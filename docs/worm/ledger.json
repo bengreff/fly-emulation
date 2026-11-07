@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:06 CST",
+ "generated_at": "2026-11-07 00:08 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67506,
-   "guessed": 9119,
-   "inferred": 112,
+   "guessed": 9118,
+   "inferred": 113,
    "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81831,
-  "placeholder": 9119,
+  "known": 81832,
+  "placeholder": 9118,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9119
+  "must_fill": 9118
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9119,
+   "guessed": 9118,
    "derived": 3098,
-   "inferred": 112,
+   "inferred": 113,
    "measured": 328
   },
-  "known": 10844,
-  "placeholder": 9119,
+  "known": 10845,
+  "placeholder": 9118,
   "gap": 0,
-  "must_fill": 9119
+  "must_fill": 9118
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6179,
     "derived": 3098,
-    "inferred (ours)": 18,
+    "inferred (ours)": 19,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3644,
+    "guessed": 3643,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3098,
     "measured": 327,
-    "inferred (ours)": 18,
+    "inferred (ours)": 19,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3644,
+    "guessed": 3643,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 3,
-   "guessed": 172,
-   "inferred": 62,
+   "guessed": 171,
+   "inferred": 63,
    "measured": 30,
    "published_fit": 87
   },
@@ -749,8 +749,8 @@
    "numbers": 115,
    "by_label": {
     "derived": 2,
-    "guessed": 62,
-    "inferred": 29,
+    "guessed": 61,
+    "inferred": 30,
     "measured": 20,
     "published_fit": 2
    }
@@ -15359,28 +15359,28 @@
    "applies_to": "glutamate-gated chloride (GluCl) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "value_template": 1.5,
+   "template_source": "Horoszok, Raymond, Sattelle & Wolstenholme 2001 Br J Pharmacol 132:1247 (PMC1572670), Abstract",
    "bio_min": 0.8,
    "bio_max": 2.5,
    "bound_basis": "guessed",
-   "bound_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "bound_source": "kept from before the value fill: Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 1 1, label guessed, range [0.8, 2.5]; the GluCl class lumps GLC-1..4, AVR-14 and AVR-15; the first Hill coefficient read for a C. elegans GluCl is GLC-3's 1.5 (oocytes), so 1.5 replaces the n = 1 rule. Inferred, not measured: the class's EC50 comes from AVR-15B and no Hill for AVR-15 was found free. The range [0.8, 2.5] stays for the other subunits",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1572670/",
+   "source_quote": "Expression of glc-3 cRNA in Xenopus oocytes resulted in the formation of homo-oligomeric L-glutamate-gated chloride channels with robust and rapidly desensitizing currents, an EC 50 of 1.9\u00b10.03 m M and a Hill coefficient of 1.5\u00b10.1",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40704,18 +40704,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 452,
+    "guessed": 451,
     "measured": 279,
     "derived": 38,
-    "inferred": 113,
+    "inferred": 114,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9256,
+    "guessed": 9255,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 119,
+    "inferred": 120,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40723,18 +40723,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 452,
+   "guessed": 451,
    "measured": 279,
    "derived": 38,
-   "inferred": 113,
+   "inferred": 114,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9256,
+   "guessed": 9255,
    "measured": 6235,
    "derived": 67518,
-   "inferred": 119,
+   "inferred": 120,
    "absent": 5
   },
   "by_plan_row": {
@@ -40805,17 +40805,17 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 106,
+     "guessed": 105,
      "measured": 46,
      "derived": 4,
-     "inferred": 31
+     "inferred": 32
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6780,
+     "guessed": 6779,
      "measured": 5903,
      "derived": 1988,
-     "inferred": 36
+     "inferred": 37
     },
     "n_rows": 214,
     "n_numbers": 15459
@@ -41179,17 +41179,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 63,
+     "inferred": 64,
      "measured": 34,
-     "guessed": 198,
+     "guessed": 197,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
-     "inferred": 63,
+     "inferred": 64,
      "measured": 34,
-     "guessed": 198,
+     "guessed": 197,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
@@ -41357,17 +41357,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 293,
+     "guessed": 292,
      "measured": 219,
      "derived": 26,
-     "inferred": 96
+     "inferred": 97
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8953,
+     "guessed": 8952,
      "measured": 6076,
      "derived": 67506,
-     "inferred": 101
+     "inferred": 102
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41634,15 +41634,15 @@
    "mech:receptors": {
     "rows": {
      "measured": 20,
-     "guessed": 62,
-     "inferred": 29,
+     "guessed": 61,
+     "inferred": 30,
      "derived": 2,
      "published_fit": 2
     },
     "numbers": {
      "measured": 20,
-     "guessed": 62,
-     "inferred": 29,
+     "guessed": 61,
+     "inferred": 30,
      "derived": 2,
      "published_fit": 2
     },
@@ -41776,17 +41776,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 452,
+     "guessed": 451,
      "derived": 34,
-     "inferred": 113,
+     "inferred": 114,
      "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9256,
+     "guessed": 9255,
      "derived": 3108,
-     "inferred": 119,
+     "inferred": 120,
      "measured": 383,
      "absent": 5
     },
@@ -42127,19 +42127,19 @@
    },
    "rows_read": 200,
    "quotes": {
-    "none": 1100,
-    "paper text (read audit, 6 Nov)": 238,
+    "none": 1099,
+    "paper text (read audit, 6 Nov)": 239,
     "research file (scripted check)": 145
    },
-   "with_url": 1100,
+   "with_url": 1101,
    "links": {
-    "distinct": 149,
+    "distinct": 150,
     "by_status": {
-     "200": 139,
+     "200": 140,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:06 CST"
+    "checked_at": "2026-11-07 00:08 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45441,6 +45441,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9471462/"
    },
    {
+    "param_id": "rec_glucl_hill",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "1 -> 1.5 1; guessed -> inferred; range [0.8, 2.5] -> [0.8, 2.5]",
+    "reason": "the GluCl class lumps GLC-1..4, AVR-14 and AVR-15; the first Hill coefficient read for a C. elegans GluCl is GLC-3's 1.5 (oocytes), so 1.5 replaces the n = 1 rule. Inferred, not measured: the class's EC50 comes from AVR-15B and no Hill for AVR-15 was found free. The range [0.8, 2.5] stays for the other subunits",
+    "source": "Horoszok, Raymond, Sattelle & Wolstenholme 2001 Br J Pharmacol 132:1247 (PMC1572670), Abstract",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1572670/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46449,18 +46462,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 452,
+    "guessed": 451,
     "measured": 279,
     "derived": 38,
-    "inferred": 113,
+    "inferred": 114,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9256,
+    "guessed": 9255,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 119,
+    "inferred": 120,
     "absent": 5
    }
   }
