@@ -31,6 +31,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
+import ledger_catalog as cat
 from bioemu import ledger
 from wormemu import brain_layers
 from wormemu.brain_structure import bwm_name, cengen_class, load_structure
@@ -110,7 +111,8 @@ def mech(id, name, layer, status, source, toggle="", neutral="", default=None, n
 
 
 def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="whole worm", n=1, tsrc="",
-        label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None):
+        label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None, url="",
+        quote="", origin="brain"):
     pd_, pa, pb, pbasis = prior or prior_for(template, lo, hi)
     if label == "guessed" and unit != "flag" and hi > lo and (np.isclose(template, lo) or np.isclose(template, hi)):
         was, template = template, float(np.sqrt(lo * hi) if pd_ == "loguniform" else (lo + hi) / 2)
@@ -119,7 +121,9 @@ def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="w
                      value_template=template, template_source=tsrc, bio_min=lo, bio_max=hi, bound_basis=basis,
                      bound_source=bsrc, bound_verified="unverified", prior_dist=pd_, prior_a=pa, prior_b=pb,
                      prior_basis=pbasis, label=label, fill_kind=ledger.FILL_KIND[label], source_project=proj,
-                     precision_needed="not yet estimated", precision_method="", toggle=toggle, notes=notes))
+                     precision_needed="not yet estimated", precision_method="", toggle=toggle, notes=notes,
+                     plan_row=cat.plan_row(pid, mid), used_by_code="yes", source_url=url, source_quote=quote,
+                     audit="", origin=origin))
     if table is not None:
         assert len(table) == n, (pid, len(table), n)
         values[pid] = table
@@ -131,7 +135,8 @@ def absent(pid, mid, unit, n, grain, applies_to, notes, lo="", hi="", bsrc=""):
                      bound_source=bsrc, bound_verified="", prior_dist="", prior_a="", prior_b="", prior_basis="",
                      label="absent", fill_kind="absent", source_project="none",
                      precision_needed="not yet estimated", precision_method="", toggle="",
-                     notes=notes))
+                     notes=notes, plan_row=cat.plan_row(pid, mid), used_by_code="yes", source_url="",
+                     source_quote="", audit="", origin="brain"))
 
 
 def kin_bounds(name, unit, t):
@@ -262,7 +267,7 @@ def build_passive_and_channels(neurons, muscles, st):
                    "value, sd 0.5; zero stays zero unless expression_map adds it"), table=t)
     mech("expression_map", "CeNGEN expression gates channel presence (zero density where no gene is detected; "
          "a class-median density where the gene is detected but the ported density is 0)", "channel", "have",
-         "CeNGEN threshold 2 (Taylor et al. 2021)", toggle="expression_map", neutral="off", default="off")
+         "CeNGEN threshold 2 (Taylor et al. 2021)", toggle="expression_map", neutral="off", default="on")
 
 
 def build_kinetics():
@@ -546,7 +551,7 @@ def build_synapses(mods, st, conns):
          "guessed rule); the transmitter rule where it expresses neither", "synapse",
          "have", "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et "
          "al. 2021), receptor families from WormBase", toggle="receptor_sign",
-         neutral="off = the presynaptic transmitter rule", default="off",
+         neutral="off = the presynaptic transmitter rule", default="on",
          notes=f"{int((t.rule == 'measured').sum())} of {len(t)} pairs carry a measured sign (Roberts et al. 2016: "
                f"AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), "
                f"{int((t.rule == 'fenyves').sum())} from Fenyves (+ or -), "
@@ -573,7 +578,7 @@ def build_synapses(mods, st, conns):
          "modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out the "
          "rectifying ones", "gap", "have", f"CeNGEN threshold 2 (Taylor et al. 2021), {len(INX)} innexin genes; "
          "Bhattacharya et al. 2019 innexin atlas not yet used", toggle="innexin_identity",
-         neutral="off = gap_strength_per_pair for every pair", default="off")
+         neutral="off = gap_strength_per_pair for every pair", default="on")
     row("gap_innexin_unitary", "innexin_identity", "pS", gu, lo1, hi1, grain="family",
         applies_to="every innexin (one shared value)", tsrc="log-midpoint of range C1", label="guessed", proj="ours",
         basis=basis1, bsrc=bsrc1, notes="Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value "
@@ -613,12 +618,12 @@ def build_morphology():
     mech("morphology", "Cell morphologies (NEURON hoc, 3D points with diameters)", "cell", "have",
          f"{BAAI_SRC} model/*.hoc (from the OpenWorm / Virtual Worm NeuroML cells)")
     row("morph_xyz", "morphology", "um", 0.0, -1000.0, 1000.0, grain="compartment",
-        applies_to="every 3D point of every cell", n=3 * pts, tsrc="per point in third_party/baaiworm/model/*.hoc",
+        applies_to="every 3D point of every cell", n=3 * pts, tsrc="BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in third_party/baaiworm/model/*.hoc",
         label="derived", proj="BAAIWorm", basis="physical_limit", bsrc="body length about 1 mm",
         prior=("fixed", 0.0, "", "as ported"),
         notes="from the Virtual Worm 3D atlas, not an EM reconstruction of one animal")
     row("morph_diam", "morphology", "um", 0.5, 0.01, 20.0, grain="compartment", applies_to="every 3D point",
-        n=pts, tsrc="per point in model/*.hoc", label="derived", proj="BAAIWorm", basis="physical_limit",
+        n=pts, tsrc="BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in model/*.hoc", label="derived", proj="BAAIWorm", basis="physical_limit",
         bsrc="guessed",
         prior=("fixed", 0.5, "", "as ported"))
     return pts
@@ -690,9 +695,121 @@ def build_layers(st):
         row(s.id, s.mechanism, s.unit, s.template, lo, hi, grain=s.grain, applies_to=s.applies_to,
             n=len(el) if el else 1, tsrc=bsrc if s.lit and lab != "guessed" else "guessed (brain_layers.py)",
             label=lab, proj="literature" if s.lit and lab != "guessed" else "ours", basis=basis, bsrc=bsrc,
-            notes=s.notes, table=tab)
+            notes=s.notes, table=tab, origin="layers")
     mech("other_cells", "Hypodermis, seam, excretory canal, coelomocytes, other glia", "organ", "absent",
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
+
+
+def build_registry():
+    """Every registered mechanism module (src/wormemu/mech, B1's registry): its MECHANISMS and SPECS. A module
+    mechanism with a layer's id takes it over; a Spec with an existing row's id replaces that row. The Spec's own
+    label is the value's label (a `lit` code gives only the bounds); optional Spec fields: url, quote,
+    source_project, n and values (element -> value)."""
+    notes = []
+    for name, mod in cat.registry():
+        prow = getattr(mod, "PLAN_ROW", None)
+        neutral = getattr(mod, "NEUTRAL", {})
+        for t in getattr(mod, "MECHANISMS", []):
+            mid, mname, layer, default = t[:4]
+            if any(m["id"] == mid for m in mechs):
+                mechs[:] = [m for m in mechs if m["id"] != mid]
+                notes.append(f"{mid}: taken over by mech/{name}")
+                # brain.py switches a taken-over layer off; its rows run only if the module calls the old layer
+                # (neuromod's form "lumped" does), so they are not numbers the default model uses
+                assert "lumped" in getattr(mod, "FORMS", ()), f"{mid}: taken over and never run; drop its rows"
+                for r in rows:
+                    if r["mechanism_id"] == mid and r["origin"] == "layers":
+                        r["used_by_code"] = "other form only"
+                        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
+                            f"read only when toggle {mid} = lumped; the default form runs mech/{name}'s rows")
+            r_ = prow.get(mid) if isinstance(prow, dict) else prow
+            cat.MECH_ROW[mid] = int(r_ or cat.guess_row(f"{name} {mid}") or 0)
+            mech(mid, mname, layer, "have", f"src/wormemu/mech/{name}.py", toggle=mid,
+                 neutral=neutral.get(mid, "off") if isinstance(neutral, dict) else str(neutral), default=default,
+                 notes=f"registry module {name}" + ("" if r_ else "; PLAN row guessed from the name by the catalog"))
+        for s_ in getattr(mod, "SPECS", []):
+            if s_.lit:
+                lo, hi, _, basis, bsrc = lit(s_.lit)
+            else:
+                # the range basis is the Spec's own when it gives one; else measured_related only when the
+                # source names a citation, otherwise guessed (a range with no cited source is a guess)
+                basis = getattr(s_, "bound_basis", "") or (
+                    "measured_related" if s_.label != "guessed" and cat.CITE.search(s_.source) else "guessed")
+                lo, hi, bsrc = s_.lo, s_.hi, s_.source
+            lab = s_.label
+            proj = getattr(s_, "source_project", "") or ("ours" if lab in ("guessed", "inferred") else "literature")
+            el = getattr(s_, "values", None)
+            n = len(el) if el else int(getattr(s_, "n", 1) or 1)
+            tab = None if not el else pd.DataFrame(dict(element=list(el), value=[float(x) for x in el.values()],
+                                                        label=lab, source=s_.source, source_project=proj))
+            if any(r["param_id"] == s_.id for r in rows):
+                rows[:] = [r for r in rows if r["param_id"] != s_.id]
+                values.pop(s_.id, None)
+                notes.append(f"{s_.id}: row replaced by mech/{name}")
+            grain, snotes = s_.grain, s_.notes
+            if grain not in ledger.GRAINS:
+                # a grain outside the ledger's vocabulary (e.g. "transmitter (ach)", "touch cells") is a class of
+                # cells or synapses; applies_to already names which, the Spec's own word is kept in the notes
+                snotes = f"{snotes}; Spec grain {grain!r} read as class".lstrip("; ")
+                notes.append(f"{s_.id}: grain {grain!r} read as class")
+                grain = "class"
+            row(s_.id, s_.mechanism, s_.unit, float(s_.template), lo, hi, grain=grain, applies_to=s_.applies_to,
+                n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=snotes, table=tab,
+                url=getattr(s_, "url", ""), quote=getattr(s_, "quote", ""), origin=f"mech:{name}")
+    return notes
+
+
+LUMPED_MIRROR = {"pep_ec50_nM": "pep_ec50", "ma_ec50_nM": "ma_ec50"}     # layer table -> mech/neuromod row prefix
+
+
+def mirror_lumped():
+    """The lumped neuromodulation form (brain_layers' per-pair table) and mech/neuromod's one-row-per-pair Specs
+    hold the same EC50s. After the fills, a guessed table element takes its pair row's value and label when that
+    row is not guessed. A mixed table's row takes its commonest element label (as pas_soma_epas does). Returns
+    fill-log entries, kind mirror."""
+    by = {r["param_id"]: r for r in rows}
+    log = []
+    for pid, pre in LUMPED_MIRROR.items():
+        t, r = values.get(pid), by.get(pid)
+        if t is None or r is None:
+            continue
+        t["value"] = t["value"].astype(float)
+        moved = Counter()
+        for i, e in t.element.items():
+            src = by.get(f"{pre}_{e.replace('>', '_')}_nM")
+            if t.at[i, "label"] != "guessed" or src is None or src["label"] == "guessed":
+                continue
+            t.at[i, "value"] = float(src["value_template"])
+            t.at[i, "label"], t.at[i, "source_project"] = src["label"], src["source_project"]
+            t.at[i, "source"] = f"same pair as row {src['param_id']}: {src['template_source']}"
+            moved[src["label"]] += 1
+        if not moved:
+            continue
+        was = r["label"]
+        r["label"] = t.label.value_counts().idxmax()
+        r["fill_kind"] = ledger.FILL_KIND[r["label"]]
+        keys = [k for e, lab in zip(t.element, t.label)
+                if lab != "guessed" and (k := f"{pre}_{e.replace('>', '_')}_nM") in by]
+        url, nu = Counter(by[k].get("source_url", "") for k in keys).most_common(1)[0]
+        src = next(by[k]["template_source"] for k in keys if by[k].get("source_url", "") == url)
+        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + f"row source before the mirror: {r['template_source']}"
+        r["template_source"] = (f"per element: the mech/neuromod pair rows {pre}_<ligand>_<receptor>_nM, each with "
+                                f"its own source (values file); {nu} of {sum(moved.values())} cite the URL, e.g. {src}")
+        r["source_url"] = url
+        why = (f"the lumped form reads one EC50 per pair from this table; mech/neuromod's {pre}_<ligand>_<receptor>_nM "
+               "rows are the same pairs with the literature values, so a guessed element takes its pair row's value")
+        lo, hi = float(t.value.min()), float(t.value.max())
+        if lo < r["bio_min"] or hi > r["bio_max"]:            # the old guessed range did not cover the measurements
+            why += (f"; range [{r['bio_min']:g}, {r['bio_max']:g}] widened to [{min(lo, r['bio_min']):g}, "
+                    f"{max(hi, r['bio_max']):g}] to cover them")
+            r["bio_min"], r["bio_max"] = min(lo, r["bio_min"]), max(hi, r["bio_max"])
+            r["bound_source"] = f"{r['bound_source']}, widened to the mirrored values"
+        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + f"mirror 6 Nov (catalog audit): {why}"
+        for lab, n in moved.items():
+            log.append(dict(param_id=pid, kind="mirror", origin=r["origin"], n=n, pattern="", was_label="guessed",
+                            new_label=lab, change=f"{n} of {len(t)} elements guessed -> {lab}; row label {was} -> "
+                            f"{r['label']}", reason=why, source=f"mech/neuromod rows {pre}_*_nM", url=""))
+    return log
 
 
 def sensitivity():
@@ -718,7 +835,7 @@ def sensitivity():
                                      + f"; swing {max(n) - min(n)}")
 
 
-def export(led, extra):
+def export(led, extra, csum=None):
     c = ledger.counts(led)
     by = c["by_label"]
     known = sum(by.get(k, 0) for k in ("measured", "published_fit", "derived", "inferred"))
@@ -777,7 +894,10 @@ def export(led, extra):
                                placeholder=phys.get("guessed", 0), gap=phys.get("absent", 0),
                                must_fill=phys.get("guessed", 0) + phys.get("absent", 0)),
         source_by_fill_kind={k: {sp: dict(v) for sp, v in d.items()} for k, d in src_fill.items()},
-        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
+        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra,
+        catalog=dict(note="the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and "
+                          "the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are "
+                          "numbers (elements), not rows, unless the key says rows", **(csum or {})))
     (ROOT / "docs/worm/ledger.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
@@ -792,7 +912,21 @@ def main():
     pts = build_morphology()
     n_c302 = build_c302_muscle()
     build_layers(st)
+    reg_notes = build_registry()
     sensitivity()
+    body_mechs, body = cat.body_rows()
+    used = {r["param_id"] for r in rows} | {r["param_id"] for r in body if r["used_by_code"] == "yes"}
+    live = {m["id"] for m in mechs if m["status"] != "absent"}
+    slot_rows, replaced, slot_mechs = cat.slots(used, live, {m["id"] for m in [*mechs, *body_mechs]})
+    for r in [*body, *slot_rows]:
+        r["fill_kind"] = ledger.FILL_KIND.get(r["label"], r["label"])
+    before = cat.label_tally([*rows, *body, *slot_rows], values)
+    fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
+    fill_log += mirror_lumped()
+    crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
+    audit_of = {c["id"]: c["audit"] for c in crows}
+    for r in rows:
+        r["audit"] = audit_of[r["param_id"]]
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)
@@ -803,8 +937,14 @@ def main():
     led = ledger.load(OUT)
     bad = ledger.validate(led)
     assert not bad, "\n".join(bad[:30])
-    extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302)
-    out = export(led, extra)
+    extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302, registry=reg_notes)
+    hidden = cat.hidden_summary()
+    csum = cat.summary(crows, replaced, fill_log, hidden, before)
+    cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
+    out = export(led, extra, csum)
+    print(json.dumps(csum["totals"], indent=1))
+    print("audit:", json.dumps(csum["audit"]["rows_ok"]), "ok,", csum["audit"]["rows_with_problems"], "with problems;",
+          "orphan notes", csum["audit"]["orphan_notes"], "orphan fills", csum["audit"]["orphan_fills"])
     print(json.dumps(out["totals"], indent=1))
     print(json.dumps(out["totals_physiology"], indent=1))
     print(json.dumps(out["source_by_fill_kind"]["physiology"], indent=1))
