@@ -1,431 +1,475 @@
 id,status,searched,found_in,missing,quote_sha,checked_at
-bwm_gap,found,abstract 16434400,abstract 16434400,,d71ab2245e44,2026-11-07 04:01 CST
-gap_innexin_unitary,found,PMC6193117,PMC6193117,,db69fb76cfbf,2026-11-07 04:01 CST
-thermo_Tstar_C,found,PMC2587641,PMC2587641,,11270b4e4cb1,2026-11-07 04:01 CST
-thermo_tau_adapt_s,found,PMC2587641; PMC4258139,PMC2587641,,22f9fdc2fb2e,2026-11-07 04:01 CST
-o2_threshold_pct,found,PMC2760494,PMC2760494,,629e22043908,2026-11-07 04:01 CST
-co2_threshold_pct,found,PMC3115024,PMC3115024,,095ebb8420c1,2026-11-07 04:01 CST
-proprio_field_frac,found,PMC3508473,PMC3508473,,2174e8dc121a,2026-11-07 04:01 CST
-pump_rate_food_hz,found,PMC5296638; PMC7255876,PMC5296638; PMC7255876,,d86cbe8328ae,2026-11-07 04:01 CST
-pump_rate_nofood_hz,found,PMC13399524; PMC9462848,PMC13399524,,a38403979d85,2026-11-07 04:01 CST
-pump_duration_ms,found,PMC5296638,PMC5296638,,b825ec079d97,2026-11-07 04:01 CST
-dmp_period_s,found,PMC9120479,PMC9120479,,cc35e30e6444,2026-11-07 04:01 CST
-dmp_aboc_delay_s,found,PMC9120479,PMC9120479,,c1fe90bb343d,2026-11-07 04:01 CST
-dmp_exp_delay_s,found,PMC3784516,PMC3784516,,d527be950b7d,2026-11-07 04:01 CST
-egg_active_min,found,PMC5142809,PMC5142809,,30bcc4ba0574,2026-11-07 04:01 CST
-egg_inactive_min,found,PMC5142809,PMC5142809,,ba4a5a0101ca,2026-11-07 04:01 CST
-egg_rate_active_per_min,found,PMC5142809,PMC5142809,,98a57a1d86f8,2026-11-07 04:01 CST
-gcamp_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e71daefae349,2026-11-07 04:01 CST
-gcamp_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e71daefae349,2026-11-07 04:01 CST
-gcamp_tau_decay_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,c51f9b9e2695,2026-11-07 04:01 CST
-gcamp_dff_max,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e0989b9cf776,2026-11-07 04:01 CST
-slow_thermo_tau_h,found,PMC4258139,PMC4258139,,c37f918241a2,2026-11-07 04:01 CST
-gap_rect_ratio,found,PMC2694797,PMC2694797,,690da5af07d7,2026-11-07 04:01 CST
-rec_lacr_ec50_uM,found,PMC2587545,PMC2587545,,136bf5ab0553,2026-11-07 04:01 CST
-rec_lacr_hill,found,PMC2587545,PMC2587545,,136bf5ab0553,2026-11-07 04:01 CST
-rec_lacr_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:01 CST
-rec_lacr_ss_frac,found,PMC2587545,PMC2587545,,06ed20050ea9,2026-11-07 04:01 CST
-rec_lacr_erev_mV,found,PMC2585773,PMC2585773,,de251d083f6c,2026-11-07 04:01 CST
-rec_lacr_gamma_pS,found,PMC2518249; PMC10480131,PMC2518249,,f11aa3ecf943,2026-11-07 04:01 CST
-rec_acr16_ec50_uM,found,PMC2587545,PMC2587545,,5adb87999556,2026-11-07 04:01 CST
-rec_acr16_hill,found,PMC2587545,PMC2587545,,5adb87999556,2026-11-07 04:01 CST
-rec_acr16_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:01 CST
-rec_acr16_tau_des_ms,found,PMC10480131,PMC10480131,,4f413ef27555,2026-11-07 04:01 CST
-rec_acr16_ss_frac,found,PMC2587545,PMC2587545,,06ed20050ea9,2026-11-07 04:01 CST
-rec_acr16_gamma_pS,found,PMC10480131,PMC10480131,,d530c899f030,2026-11-07 04:01 CST
-rec_nachr_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:01 CST
-rec_glr_tau_off_ms,found,PMC8626789,PMC8626789,,7da7e9eb4ffc,2026-11-07 04:01 CST
-rec_glr_tau_des_ms,found,PMC3458792,PMC3458792,,603d550d2ad0,2026-11-07 04:01 CST
-rec_glr_erev_mV,found,PMC3935721,PMC3935721,,58e2b4169d16,2026-11-07 04:01 CST
-rec_glucl_ec50_uM,found,PMC10480131,PMC10480131,,89043d95b085,2026-11-07 04:01 CST
-rec_glucl_hill,found,PMC1572670,PMC1572670,,920e5daed1a7,2026-11-07 04:01 CST
-rec_glucl_tau_off_ms,found,PMC6368337,PMC6368337,,629001a1ff3a,2026-11-07 04:01 CST
-rec_glucl_tau_des_ms,found,PMC7466757,PMC7466757,,c8bed748c5ad,2026-11-07 04:01 CST
-rec_glucl_gamma_pS,found,PMC6368337,PMC6368337,,6f64d7c24796,2026-11-07 04:01 CST
-rec_gabacl_ec50_uM,found,PMC1576029; PMC10480131,PMC1576029,,f84a272d1c56,2026-11-07 04:01 CST
-rec_gabacl_hill,found,PMC1576029,PMC1576029,,f84a272d1c56,2026-11-07 04:01 CST
-rec_gabacl_tau_off_ms,found,PMC2705609,PMC2705609,,d37b477a0089,2026-11-07 04:01 CST
-rec_gabacl_tau_des_ms,found,PMC1576029,PMC1576029,,4140a6d1f84f,2026-11-07 04:01 CST
-rec_gabacl_erev_mV,found,PMC2585773,PMC2585773,,48724f64cd56,2026-11-07 04:01 CST
-rec_gabacl_gamma_pS,found,PMC6782323,PMC6782323,,ac866bfb0fff,2026-11-07 04:01 CST
-rec_gabacat_ec50_uM,found,PMC5386995,PMC5386995,,63ff36b6e5cb,2026-11-07 04:01 CST
-rec_gabacat_hill,found,PMC5386995,PMC5386995,,63ff36b6e5cb,2026-11-07 04:01 CST
-rec_mod1_ec50_uM,found,PMC9471462,PMC9471462,,e1939ce1f60e,2026-11-07 04:01 CST
-rec_mod1_tau_rise_ms,found,PMC9471462,PMC9471462,,171f81401a4e,2026-11-07 04:01 CST
-rec_mod1_tau_des_ms,found,PMC9471462,PMC9471462,,bddba63c58c1,2026-11-07 04:01 CST
-rec_mod1_ss_frac,found,PMC9471462,PMC9471462,,e37280fca03d,2026-11-07 04:01 CST
-rec_lgc55_ec50_uM,found,PMC2804440,PMC2804440,,6d8ed27ac292,2026-11-07 04:01 CST
-rec_lgc55_hill,found,PMC2804440,PMC2804440,,6d8ed27ac292,2026-11-07 04:01 CST
-rec_lgc53_ec50_uM,found,PMC2963310,PMC2963310,,49b54ff52d87,2026-11-07 04:01 CST
-rec_lgc53_hill,found,PMC2963310,PMC2963310,,914cadbfc4ea,2026-11-07 04:01 CST
-rec_acr23_ec50_uM,found,PMC3955162,PMC3955162,,f35ed4a2c770,2026-11-07 04:01 CST
-rec_acr23_hill,found,PMC3955162,PMC3955162,,f35ed4a2c770,2026-11-07 04:01 CST
-rec_acr23_ss_frac,found,PMC3955162,PMC3955162,,4b2400923240,2026-11-07 04:01 CST
-rec_nmj_lacr_share,found,PMC3683072,PMC3683072,,d668744d5563,2026-11-07 04:01 CST
-stp_ach_beta_per_ms,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:01 CST
-stp_ach_k0_per_s,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:01 CST
-stp_ach_kmax_per_s,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:01 CST
-stp_ach_tauD_ms,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:01 CST
-stp_ach_F1,found,PMC2705609,PMC2705609,,f56e64a86d0c,2026-11-07 04:01 CST
-cmk1_fast_tau_min,found,PMC4258139,PMC4258139,,1318153f73ce,2026-11-07 04:01 CST
-cmk1_slow_tau_h,found,PMC4258139,PMC4258139,,c37f918241a2,2026-11-07 04:01 CST
-glr1_tau_h,found,PMC4963118,PMC4963118,,fc5cd62438ea,2026-11-07 04:01 CST
-homeo_unc2_tau_h,found,PMC11363341,PMC11363341,,3cfbfd1ca1a4,2026-11-07 04:01 CST
-assoc_thermo_learn_tau_min,found,PMC1620028,PMC1620028,,df51aceb1b9b,2026-11-07 04:01 CST
-gpcr_hill,found,PMC7615250,PMC7615250,,686816e39f58,2026-11-07 04:01 CST
-pep_ec50_flp-1_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-1_dmsr-5_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-1_dmsr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-1_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-1_frpr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-1_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-10_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-10_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-10_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-10_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-11_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-11_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-11_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-11_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-12_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-12_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-12_dmsr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-12_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-12_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-13_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-13_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-13_frpr-4_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-13_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_dmsr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_frpr-19_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_npr-39_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-14_npr-40_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-15_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-15_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-15_npr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-16_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-16_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-16_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-17_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-17_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-17_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-17_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-18_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-18_npr-10_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-18_npr-13_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-18_npr-4_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-18_npr-5_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-19_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-19_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-19_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-19_frpr-9_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-2_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-2_frpr-18_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-2_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-20_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-20_frpr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-20_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-21_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-21_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-21_npr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-21_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-21_npr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-22_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-23_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-23_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-23_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-24_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-24_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-25_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-25_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-25_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-26_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-26_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-26_npr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-27_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-27_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-27_npr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-28_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-28_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-28_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-3_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-3_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-3_frpr-16_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-3_npr-10_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-32_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-32_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-32_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-33_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-33_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-33_frpr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-33_npr-12_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-34_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-4_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-4_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-4_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-4_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-5_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-5_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-5_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-6_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-6_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-6_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-6_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-7_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-7_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_frpr-15_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_frpr-19_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_npr-39_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_npr-40_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-8_ntr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-9_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-9_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-9_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_flp-9_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-10_npr-35_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-12_ckr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-12_ckr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-13_dmsr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-13_npr-41_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-17_npr-37_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-17_npr-43_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-2_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-2_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-22_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-22_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-23_frpr-16_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-23_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-23_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-3_npr-42_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-37_pdfr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-38_sprr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-40_aex-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-42_sprr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-44_nmur-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-44_nmur-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-47_gnrr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-49_seb-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-54_trhr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-58_tkr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-58_tkr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-62_npr-24_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-64_npr-32_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_nlp-72_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_ntc-1_ntr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-pep_ec50_pdf-1_pdfr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:01 CST
-ma_diffusion_um2_per_s,found,PMC12829992,PMC12829992,,f9e8f405e3f1,2026-11-07 04:01 CST
-mod5_km_nM,found,PMC6763176,PMC6763176,,d181fdff512f,2026-11-07 04:01 CST
-dat1_km_nM,found,abstract 9765501,abstract 9765501,,e0c65264d64d,2026-11-07 04:01 CST
-ma_ec50_serotonin_ser-7_nM,found,PMC1456143,PMC1456143,,7cff18e1d111,2026-11-07 04:01 CST
-ma_ec50_dopamine_dop-1_nM,found,PMC1271763,PMC1271763,,3c648d9e5ee6,2026-11-07 04:01 CST
-ma_ec50_dopamine_dop-2_nM,found,PMC12539964,PMC12539964,,3b620be89404,2026-11-07 04:01 CST
-ma_ec50_dopamine_dop-3_nM,found,PMC12539964,PMC12539964,,d56e05be4141,2026-11-07 04:01 CST
-ma_ec50_dopamine_dop-4_nM,found,PMC12539964,PMC12539964,,2259aa5c9457,2026-11-07 04:01 CST
-ma_ec50_octopamine_octr-1_nM,found,PMC3273394,PMC3273394,,7e8c64193174,2026-11-07 04:01 CST
-ma_ec50_octopamine_ser-3_nM,found,PMC3273394,PMC3273394,,e5319c72124e,2026-11-07 04:01 CST
-ma_ec50_octopamine_ser-6_nM,found,PMC3273394,PMC3273394,,fc4a4dbb4915,2026-11-07 04:01 CST
-ma_ec50_tyramine_ser-2_nM,found,abstract 12354282,abstract 12354282,,74b9d66a6063,2026-11-07 04:01 CST
-ma_ec50_tyramine_tyra-2_nM,found,abstract 15953361,abstract 15953361,,c9f116667f26,2026-11-07 04:01 CST
-ma_ec50_tyramine_tyra-3_nM,found,PMC6673087,PMC6673087,,d1a95affe0cc,2026-11-07 04:01 CST
-noise_quantal_pA,found,PMC2705609,PMC2705609,,8d6dab9df50b,2026-11-07 04:01 CST
-noise_hold_mV,found,PMC2705609,PMC2705609,,d4b428ee30fd,2026-11-07 04:01 CST
-noise_event_tau_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:01 CST
-chnoise_slo1_pS,found,PMC13687065,PMC13687065,,636bc54256ec,2026-11-07 04:01 CST
-chnoise_slo2_pS,found,PMC4197135,PMC4197135,,3206cb4edeab,2026-11-07 04:01 CST
-temp_tau_ms,found,PMC6692131,PMC6692131,,1db1e7f51c57,2026-11-07 04:01 CST
-temp_q10_dmp_clock,found,PMC40787,PMC40787,,c40646cece27,2026-11-07 04:01 CST
-usu_r1_Ks,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,28e8a692e763,2026-11-07 04:01 CST
-usu_r1_Kd,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,82e875ced0b6,2026-11-07 04:01 CST
-usu_r2_Ks,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,33400da34421,2026-11-07 04:01 CST
-usu_r2_Kd,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,c9ae5cb1a052,2026-11-07 04:01 CST
-usu_r3_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,2b12d1a98e04,2026-11-07 04:01 CST
-usu_r3_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,7915f2506646,2026-11-07 04:01 CST
-usu_r3_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,c2d318a83b9d,2026-11-07 04:01 CST
-usu_r3_1_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,1c696b9a11c0,2026-11-07 04:01 CST
-usu_r3_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,fa0b0b8bb574,2026-11-07 04:01 CST
-usu_r3_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,49a7147d7ca7,2026-11-07 04:01 CST
-usu_r3_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,97526c18f1fc,2026-11-07 04:01 CST
-usu_r3_2_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,60912ed1a4b9,2026-11-07 04:01 CST
-usu_r3_2_3_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,5dae581b0b2c,2026-11-07 04:01 CST
-usu_r3_2_3_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,9db4f0058ac8,2026-11-07 04:01 CST
-usu_r3_3_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,afffaabed8f2,2026-11-07 04:01 CST
-usu_r3_3_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,6d63ec12a968,2026-11-07 04:01 CST
-usu_r3_3_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ffa117ec414f,2026-11-07 04:01 CST
-usu_r3_3_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d14f345371b0,2026-11-07 04:01 CST
-usu_r4_1_1_v,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,87d3272bf9fa,2026-11-07 04:01 CST
-usu_r4_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,4552c245bb9c,2026-11-07 04:01 CST
-usu_r4_2_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,cce2aa17e796,2026-11-07 04:01 CST
-usu_r4_2_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d282198e683e,2026-11-07 04:01 CST
-usu_r4_2_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,48e00e826e69,2026-11-07 04:01 CST
-usu_r4_2_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,f900a64696a9,2026-11-07 04:01 CST
-usu_r4_2_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,9c21b1bac070,2026-11-07 04:01 CST
-usu_r4_2_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,fd8e3a49e309,2026-11-07 04:01 CST
-usu_r4_2_3_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,7e7243fd31bf,2026-11-07 04:01 CST
-usu_r4_2_3_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,8bb238fdac87,2026-11-07 04:01 CST
-usu_r4_2_3_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ffeca7472b62,2026-11-07 04:01 CST
-usu_r4_3_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,2229a8eb999e,2026-11-07 04:01 CST
-usu_r4_3_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ca2de158d622,2026-11-07 04:01 CST
-usu_r4_3_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e544c8515468,2026-11-07 04:01 CST
-usu_r4_3_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,639e649c514d,2026-11-07 04:01 CST
-usu_r4_3_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,cc094e030521,2026-11-07 04:01 CST
-usu_r4_3_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,210f1978046c,2026-11-07 04:01 CST
-usu_r5_Ef_CNG,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,6d3bc85eebbf,2026-11-07 04:01 CST
-usu_r6_Ef_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,99969983b4fb,2026-11-07 04:01 CST
-usu_r6_VR_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,747b03d3faa8,2026-11-07 04:01 CST
-usu_r6_V50_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,41d7d2aeff04,2026-11-07 04:01 CST
-usu_r6_K_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,917d4f462a3f,2026-11-07 04:01 CST
-usu_r7_Ef_Cax,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,0f53788d9667,2026-11-07 04:01 CST
-usu_r7_K_CaX,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,02f53316830b,2026-11-07 04:01 CST
-usu_r7_n_CaX,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,8286889e109e,2026-11-07 04:01 CST
-usu_r8_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,30bd4750451a,2026-11-07 04:01 CST
-usu_r8_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,f2451681aee5,2026-11-07 04:01 CST
-usu_r9_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d260c9778bdb,2026-11-07 04:01 CST
-usu_r9_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,b810fd5acb8c,2026-11-07 04:01 CST
-usu_r9_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,0252c8a9e2ad,2026-11-07 04:01 CST
-usu_r9_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,12580608b951,2026-11-07 04:01 CST
-sens_afd_Tstar_C,found,PMC2587641; PMC6674189,PMC2587641,,ce72ce94ecb1,2026-11-07 04:01 CST
-sens_o2_up_K_pct,found,PMC2760494,PMC2760494,,04e6739bb9f2,2026-11-07 04:01 CST
-sens_o2_down_K_pct,found,PMC2760494,PMC2760494,,33d22e5fa72e,2026-11-07 04:01 CST
-sens_co2_K_pct,found,PMC3115024,PMC3115024,,406a4477ef34,2026-11-07 04:01 CST
-sens_light_K_mWmm2,found,PMC2494560,PMC2494560,,8a23e1067f55,2026-11-07 04:01 CST
-sens_trpv_tauD_s,found,PMC544906; PMC5045890,PMC544906; PMC5045890,,0f0d31cdcb33,2026-11-07 04:01 CST
-sens_awa_dia_K_uM,found,PMC5045890,PMC5045890,,15c8ac411fdc,2026-11-07 04:01 CST
-sens_ash_gly_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:01 CST
-sens_ash_cu_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:01 CST
-sens_ash_qui_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:01 CST
-met_rcs_per_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_b,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_rso_per_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_d,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_a,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_is_frac,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_tau_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:01 CST
-met_i0_pA,found,PMC6692131,PMC6692131,,f14c5a97d42b,2026-11-07 04:01 CST
-met_vhold_mV,found,PMC6692131,PMC6692131,,28d4a86b6673,2026-11-07 04:01 CST
-touch_pressure_kPa,found,PMC6692131,PMC6692131,,d4443eba35cf,2026-11-07 04:01 CST
-touch_radius_um,found,PMC6692131,PMC6692131,,1f1893043574,2026-11-07 04:01 CST
-touch_probe_radius_um,found,PMC6692131,PMC6692131,,68c7deec5a95,2026-11-07 04:01 CST
-touch_a1,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:01 CST
-touch_a2,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:01 CST
-touch_a3,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:01 CST
-touch_n_channels,found,PMC6785734,PMC6785734,,18e8910a0d57,2026-11-07 04:01 CST
-harsh_pvd_s0,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:01 CST
-harsh_pvd_s1,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:01 CST
-harsh_flp_s1,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:01 CST
-proprio_radius_um,found,PMC6692131,PMC6692131,,1f1893043574,2026-11-07 04:01 CST
-proprio_E_mV,found,PMC2865900,PMC2865900,,370ec7e7e523,2026-11-07 04:01 CST
-proprio_bfield_frac,found,PMC3508473,PMC3508473,,2174e8dc121a,2026-11-07 04:01 CST
-proprio_smd_s1,found,PMC6010301,PMC6010301,,405ba74668e0,2026-11-07 04:01 CST
-bwm_gap_liu_nS,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:01 CST
-bwm_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:01 CST
-ph_sh_v_l,found,PMC10873627,PMC10873627,,8c3b2249d4f9,2026-11-07 04:01 CST
-ph_area_um2,found,PMC1351090,PMC1351090,,9146e7d93256,2026-11-07 04:01 CST
-ph_m3_inhibitory,found,PMC4460247,PMC4460247,,e5fbaf17e725,2026-11-07 04:01 CST
-ph_ser7_on_muscle,found,PMC1456143,PMC1456143,,320a9d7a163f,2026-11-07 04:01 CST
-int_lr_a2_per_uM_s,found,PMC2266627,PMC2266627,,ec9273160528,2026-11-07 04:01 CST
-int_ip3_rest_uM,found,PMC2266627,PMC2266627,,ec9273160528,2026-11-07 04:01 CST
-int_h_tau_s,found,PMC2258244,PMC2258244,,151aa8a02434,2026-11-07 04:01 CST
-pbo5_ph50,found,PMC2258244,PMC2258244,,abb4b1f12038,2026-11-07 04:01 CST
-pbo5_hill,found,PMC2258244,PMC2258244,,abb4b1f12038,2026-11-07 04:01 CST
-pbo5_erev_mV,found,PMC2258244,PMC2258244,,24c4b3381338,2026-11-07 04:01 CST
-pbo5_posterior_frac,found,PMC2258244,PMC2258244,,762886c8055c,2026-11-07 04:01 CST
-int_posterior_rings,found,PMC2258244,PMC2258244,,72209af82556,2026-11-07 04:01 CST
-ent_gap_nS_per_contact,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:01 CST
-ent_dvb_excitatory,found,PMC5386995,PMC5386995,,03396db6127a,2026-11-07 04:01 CST
-ent_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:01 CST
-egg_uterus_init,found,PMC13054943,PMC13054943,,5a7ba75f358c,2026-11-07 04:01 CST
-egg_unc103_gkr_nS,found,PMC3542984,PMC3542984,,ed75b6b812aa,2026-11-07 04:01 CST
-egg_gap_nS_per_contact,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:01 CST
-egg_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:01 CST
-egg_uv1_tyr_tau_s,found,PMC2887794,PMC2887794,,79d199095d41,2026-11-07 04:01 CST
-glia_k_bath_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:01 CST
-glia_kir_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:01 CST
-glia_k_diff_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:01 CST
-glia_cl_bath_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:01 CST
-glia_cl_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:01 CST
-glia_gcy8_cl_ic50_mM,found,PMC4860081,PMC4860081,,3e9d4ef6b869,2026-11-07 04:01 CST
-other_area_hyp_um2,found,PMC6692131,PMC6692131,,1db1e7f51c57,2026-11-07 04:01 CST
-osmo_p_set_kPa,found,PMC6692131; PMC2077264,PMC6692131; PMC2077264,,552ebbb57ef2,2026-11-07 04:01 CST
-cc_count,found,PMC1461804; PMC6667774,PMC6667774,,27b45a19edbe,2026-11-07 04:01 CST
-passive_cm_uF_cm2,found,PMC1300935,PMC1300935,,1b07d19a6ed0,2026-11-07 04:01 CST
-pump_na_o_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:01 CST
-pump_k_o_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:01 CST
-pump_vol_neuron_um3,no free full text,,,,2cbd5625fe4c,2026-11-07 04:01 CST
-deb_p_am_J_per_d_cm2,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,158b25212d9b,2026-11-07 04:01 CST
-deb_v_cm_per_d,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a9e6e6ae81c5,2026-11-07 04:01 CST
-deb_kap,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,0e9d70cac500,2026-11-07 04:01 CST
-deb_kap_r,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,686c9f35153a,2026-11-07 04:01 CST
-deb_kap_x,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,bcd24a3ca66b,2026-11-07 04:01 CST
-deb_kap_p,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,b2996284cb05,2026-11-07 04:01 CST
-deb_p_m_J_per_d_cm3,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a38febef6966,2026-11-07 04:01 CST
-deb_k_j_per_d,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,dad141e33566,2026-11-07 04:01 CST
-deb_e_g_J_per_cm3,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,edfcd6de9c38,2026-11-07 04:01 CST
-deb_e_hb_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,53ffc9faa35c,2026-11-07 04:01 CST
-deb_e_hj_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,208f266e02eb,2026-11-07 04:01 CST
-deb_e_hp_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,9ad440e095c2,2026-11-07 04:01 CST
-deb_t_a_K,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,8766793ad096,2026-11-07 04:01 CST
-deb_t_ref_K,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,05e051736d05,2026-11-07 04:01 CST
-deb_del_m,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a92a3013eb09,2026-11-07 04:01 CST
-deb_f_max_feeding,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,42cfd5baac1a,2026-11-07 04:01 CST
-met_pump_max_hz,found,PMC5296638; PMC7255876,PMC5296638; PMC7255876,,d86cbe8328ae,2026-11-07 04:01 CST
-met_f_fixed,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,fae4e5a8f1ef,2026-11-07 04:01 CST
-met_oxycal_kJ_per_mol,found,PMC3815370,PMC3815370,,947664ecd4b0,2026-11-07 04:01 CST
-obs_gcamp6s_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:01 CST
-obs_gcamp6s_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:01 CST
-obs_gcamp6s_range,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:01 CST
-obs_gcamp6s_thalf_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:01 CST
-obs_gcamp6f_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:01 CST
-obs_gcamp6f_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:01 CST
-obs_gcamp6f_range,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:01 CST
-obs_gcamp6f_thalf_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:01 CST
-obs_gcamp7f_hill,found,PMC10060165,PMC10060165,,77ab2935963e,2026-11-07 04:01 CST
-obs_gcamp7f_thalf_ms,no free full text,abstract PPR57683,,,2286736782a7,2026-11-07 04:01 CST
-obs_volume_rate_hz,found,PMC10836760,PMC10836760,,953cd2345ee0,2026-11-07 04:01 CST
-obs_opto_e_mV,found,PMC10632145; PMC4408612,PMC10632145,,36669c8ea52e,2026-11-07 04:01 CST
-obs_neuropal_p_unlabelled,found,PMC12912725; PMC10836760,PMC12912725,,5c2380514acd,2026-11-07 04:01 CST
-obs_neuropal_p_correct,found,PMC10494711,PMC10494711,,4e7d39da9888,2026-11-07 04:01 CST
-obs_gait_pause_L_s,found,PMC3962822,PMC3962822,,83a2416b809a,2026-11-07 04:01 CST
-mw_worm_length,found,PMC3296079,PMC3296079,,d1361e402a26,2026-11-07 04:01 CST
-mw_worm_mass,found,PMC3508473,PMC3508473,,af08075e0ac6,2026-11-07 04:01 CST
-mw_water_viscosity,found,PMC2820645,PMC2820645,,9c4305fff26a,2026-11-07 04:01 CST
-mw_water_Ct,found,PMC3296079,PMC3296079,,85d124e8e4e3,2026-11-07 04:01 CST
-mw_water_Cn,found,PMC3296079,PMC3296079,,e6ee2c917e75,2026-11-07 04:01 CST
-mw_agar_Ct,found,PMC3296079,PMC3296079,,5d25a60962ad,2026-11-07 04:01 CST
-mw_agar_Cn,found,PMC3296079,PMC3296079,,00239034a910,2026-11-07 04:01 CST
-mw_agar_K_rabets,found,PMC4213666,PMC4213666,,b56d273c2bf4,2026-11-07 04:01 CST
-mw_gravity,no free full text,,,,784027e1e293,2026-11-07 04:01 CST
-cells_glia,no free full text,,,,75ba17037fce,2026-11-07 04:01 CST
-cells_coelomocytes,no free full text,,,,7870a8ac7d3b,2026-11-07 04:01 CST
-cells_seam,no free full text,,,,b7d7b38ad74a,2026-11-07 04:01 CST
-rel_gain_afd_aiy,found,PMC3111291,PMC3111291,,8750ead4da37,2026-11-07 04:01 CST
-egg_hsn_isi_active_s,found,PMC5142809,PMC5142809,,869edf50f59a,2026-11-07 04:01 CST
-egg_hsn_isi_inactive_s,found,PMC5142809,PMC5142809,,869edf50f59a,2026-11-07 04:01 CST
-egg_vc_isi_s,found,PMC5142809,PMC5142809,,bcfa02ba3547,2026-11-07 04:01 CST
-proprio_gain_wen,found,PMC3508473,PMC3508473,,f6f918fc56ef,2026-11-07 04:01 CST
-proprio_delay_ms,found,PMC3508473,PMC3508473,,b85c65d277f4,2026-11-07 04:01 CST
-homeo_unc2_per_synapse,found,PMC11363341,PMC11363341,,104b1f895a23,2026-11-07 04:01 CST
-deb_kappa_G,found,excerpts/amp_celegans_res.txt,excerpts/amp_celegans_res.txt,,3a855af786ae,2026-11-07 04:01 CST
-env_o2_diffusion_cm2_s,found,PMC7202895,PMC7202895,,0f6bba8ad75c,2026-11-07 04:01 CST
-env_o2_penetration_per_s,found,PMC7202895,PMC7202895,,303a5a8a25be,2026-11-07 04:01 CST
-env_o2_consumption,found,PMC7202895,PMC7202895,,eb151b0b140c,2026-11-07 04:01 CST
-env_thermo_gradient_C_cm,found,PMC3787776,PMC3787776,,f9d2b5d36f7b,2026-11-07 04:01 CST
-env_touch_saturation_uN,found,PMC5438190; PMC3701114,PMC5438190,,919aa8c2a40a,2026-11-07 04:01 CST
-gcamp6f_rise_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,c57228797a88,2026-11-07 04:01 CST
-noise_mini_rate_per_s,found,PMC2705609,PMC2705609,,7f67977b5834,2026-11-07 04:01 CST
-env_default_o2_pct,no free full text,,,,80653afff25e,2026-11-07 04:01 CST
-env_default_co2_pct,no free full text,,,,fa8be10defde,2026-11-07 04:01 CST
-usu_cng_erev,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,4a966e7ccb6d,2026-11-07 04:01 CST
-usu_vg_c3,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:01 CST
-usu_vg_c2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:01 CST
-usu_vg_c1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:01 CST
-usu_vg_c0,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:01 CST
-scene_nacl_mM_c_background,found,excerpts/kunitomo2013_methods.txt,excerpts/kunitomo2013_methods.txt,,794ca68f94e7,2026-11-07 04:01 CST
-scene_nacl_mM_c_peak,found,excerpts/kunitomo2013_methods.txt,excerpts/kunitomo2013_methods.txt,,872d904c7f43,2026-11-07 04:01 CST
-scene_nacl_mM_slope_per_mm,found,PMC4082684,PMC4082684,,e4612fa1480a,2026-11-07 04:01 CST
+bwm_gap,found,abstract 16434400,abstract 16434400,,d71ab2245e44,2026-11-07 04:05 CST
+gap_innexin_unitary,found,PMC6193117,PMC6193117,,db69fb76cfbf,2026-11-07 04:05 CST
+thermo_Tstar_C,found,PMC2587641,PMC2587641,,11270b4e4cb1,2026-11-07 04:05 CST
+thermo_tau_adapt_s,found,PMC2587641; PMC4258139,PMC2587641,,22f9fdc2fb2e,2026-11-07 04:05 CST
+o2_threshold_pct,found,PMC2760494,PMC2760494,,629e22043908,2026-11-07 04:05 CST
+co2_threshold_pct,found,PMC3115024,PMC3115024,,095ebb8420c1,2026-11-07 04:05 CST
+proprio_field_frac,found,PMC3508473,PMC3508473,,2174e8dc121a,2026-11-07 04:05 CST
+pump_rate_food_hz,found,PMC5296638; PMC7255876,PMC5296638; PMC7255876,,d86cbe8328ae,2026-11-07 04:05 CST
+pump_rate_nofood_hz,found,PMC13399524; PMC9462848,PMC13399524,,a38403979d85,2026-11-07 04:05 CST
+pump_duration_ms,found,PMC5296638,PMC5296638,,b825ec079d97,2026-11-07 04:05 CST
+dmp_period_s,found,PMC9120479,PMC9120479,,cc35e30e6444,2026-11-07 04:05 CST
+dmp_aboc_delay_s,found,PMC9120479,PMC9120479,,c1fe90bb343d,2026-11-07 04:05 CST
+dmp_exp_delay_s,found,PMC3784516,PMC3784516,,d527be950b7d,2026-11-07 04:05 CST
+egg_active_min,found,PMC5142809,PMC5142809,,30bcc4ba0574,2026-11-07 04:05 CST
+egg_inactive_min,found,PMC5142809,PMC5142809,,ba4a5a0101ca,2026-11-07 04:05 CST
+egg_rate_active_per_min,found,PMC5142809,PMC5142809,,98a57a1d86f8,2026-11-07 04:05 CST
+gcamp_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e71daefae349,2026-11-07 04:05 CST
+gcamp_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e71daefae349,2026-11-07 04:05 CST
+gcamp_tau_decay_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,c51f9b9e2695,2026-11-07 04:05 CST
+gcamp_dff_max,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,e0989b9cf776,2026-11-07 04:05 CST
+slow_thermo_tau_h,found,PMC4258139,PMC4258139,,c37f918241a2,2026-11-07 04:05 CST
+gap_rect_ratio,found,PMC2694797,PMC2694797,,690da5af07d7,2026-11-07 04:05 CST
+rec_lacr_ec50_uM,found,PMC2587545,PMC2587545,,136bf5ab0553,2026-11-07 04:05 CST
+rec_lacr_hill,found,PMC2587545,PMC2587545,,136bf5ab0553,2026-11-07 04:05 CST
+rec_lacr_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:05 CST
+rec_lacr_ss_frac,found,PMC2587545,PMC2587545,,06ed20050ea9,2026-11-07 04:05 CST
+rec_lacr_erev_mV,found,PMC2585773,PMC2585773,,de251d083f6c,2026-11-07 04:05 CST
+rec_lacr_gamma_pS,found,PMC2518249; PMC10480131,PMC2518249,,f11aa3ecf943,2026-11-07 04:05 CST
+rec_acr16_ec50_uM,found,PMC2587545,PMC2587545,,5adb87999556,2026-11-07 04:05 CST
+rec_acr16_hill,found,PMC2587545,PMC2587545,,5adb87999556,2026-11-07 04:05 CST
+rec_acr16_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:05 CST
+rec_acr16_tau_des_ms,found,PMC10480131,PMC10480131,,4f413ef27555,2026-11-07 04:05 CST
+rec_acr16_ss_frac,found,PMC2587545,PMC2587545,,06ed20050ea9,2026-11-07 04:05 CST
+rec_acr16_gamma_pS,found,PMC10480131,PMC10480131,,d530c899f030,2026-11-07 04:05 CST
+rec_nachr_tau_off_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:05 CST
+rec_glr_tau_off_ms,found,PMC8626789,PMC8626789,,7da7e9eb4ffc,2026-11-07 04:05 CST
+rec_glr_tau_des_ms,found,PMC3458792,PMC3458792,,603d550d2ad0,2026-11-07 04:05 CST
+rec_glr_erev_mV,found,PMC3935721,PMC3935721,,58e2b4169d16,2026-11-07 04:05 CST
+rec_glucl_ec50_uM,found,PMC10480131,PMC10480131,,89043d95b085,2026-11-07 04:05 CST
+rec_glucl_hill,found,PMC1572670,PMC1572670,,920e5daed1a7,2026-11-07 04:05 CST
+rec_glucl_tau_off_ms,found,PMC6368337,PMC6368337,,629001a1ff3a,2026-11-07 04:05 CST
+rec_glucl_tau_des_ms,found,PMC7466757,PMC7466757,,c8bed748c5ad,2026-11-07 04:05 CST
+rec_glucl_gamma_pS,found,PMC6368337,PMC6368337,,6f64d7c24796,2026-11-07 04:05 CST
+rec_gabacl_ec50_uM,found,PMC1576029; PMC10480131,PMC1576029,,f84a272d1c56,2026-11-07 04:05 CST
+rec_gabacl_hill,found,PMC1576029,PMC1576029,,f84a272d1c56,2026-11-07 04:05 CST
+rec_gabacl_tau_off_ms,found,PMC2705609,PMC2705609,,d37b477a0089,2026-11-07 04:05 CST
+rec_gabacl_tau_des_ms,found,PMC1576029,PMC1576029,,4140a6d1f84f,2026-11-07 04:05 CST
+rec_gabacl_erev_mV,found,PMC2585773,PMC2585773,,48724f64cd56,2026-11-07 04:05 CST
+rec_gabacl_gamma_pS,found,PMC6782323,PMC6782323,,ac866bfb0fff,2026-11-07 04:05 CST
+rec_gabacat_ec50_uM,found,PMC5386995,PMC5386995,,63ff36b6e5cb,2026-11-07 04:05 CST
+rec_gabacat_hill,found,PMC5386995,PMC5386995,,63ff36b6e5cb,2026-11-07 04:05 CST
+rec_mod1_ec50_uM,found,PMC9471462,PMC9471462,,e1939ce1f60e,2026-11-07 04:05 CST
+rec_mod1_tau_rise_ms,found,PMC9471462,PMC9471462,,171f81401a4e,2026-11-07 04:05 CST
+rec_mod1_tau_des_ms,found,PMC9471462,PMC9471462,,bddba63c58c1,2026-11-07 04:05 CST
+rec_mod1_ss_frac,found,PMC9471462,PMC9471462,,e37280fca03d,2026-11-07 04:05 CST
+rec_lgc55_ec50_uM,found,PMC2804440,PMC2804440,,6d8ed27ac292,2026-11-07 04:05 CST
+rec_lgc55_hill,found,PMC2804440,PMC2804440,,6d8ed27ac292,2026-11-07 04:05 CST
+rec_lgc53_ec50_uM,found,PMC2963310,PMC2963310,,49b54ff52d87,2026-11-07 04:05 CST
+rec_lgc53_hill,found,PMC2963310,PMC2963310,,914cadbfc4ea,2026-11-07 04:05 CST
+rec_acr23_ec50_uM,found,PMC3955162,PMC3955162,,f35ed4a2c770,2026-11-07 04:05 CST
+rec_acr23_hill,found,PMC3955162,PMC3955162,,f35ed4a2c770,2026-11-07 04:05 CST
+rec_acr23_ss_frac,found,PMC3955162,PMC3955162,,4b2400923240,2026-11-07 04:05 CST
+rec_nmj_lacr_share,found,PMC3683072,PMC3683072,,d668744d5563,2026-11-07 04:05 CST
+stp_ach_beta_per_ms,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:05 CST
+stp_ach_k0_per_s,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:05 CST
+stp_ach_kmax_per_s,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:05 CST
+stp_ach_tauD_ms,found,PMC2705609,PMC2705609,,b491ede6badf,2026-11-07 04:05 CST
+stp_ach_F1,found,PMC2705609,PMC2705609,,f56e64a86d0c,2026-11-07 04:05 CST
+cmk1_fast_tau_min,found,PMC4258139,PMC4258139,,1318153f73ce,2026-11-07 04:05 CST
+cmk1_slow_tau_h,found,PMC4258139,PMC4258139,,c37f918241a2,2026-11-07 04:05 CST
+glr1_tau_h,found,PMC4963118,PMC4963118,,fc5cd62438ea,2026-11-07 04:05 CST
+homeo_unc2_tau_h,found,PMC11363341,PMC11363341,,3cfbfd1ca1a4,2026-11-07 04:05 CST
+assoc_thermo_learn_tau_min,found,PMC1620028,PMC1620028,,df51aceb1b9b,2026-11-07 04:05 CST
+gpcr_hill,found,PMC7615250,PMC7615250,,686816e39f58,2026-11-07 04:05 CST
+pep_ec50_flp-1_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-1_dmsr-5_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-1_dmsr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-1_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-1_frpr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-1_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-10_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-10_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-10_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-10_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-11_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-11_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-11_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-11_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-12_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-12_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-12_dmsr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-12_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-12_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-13_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-13_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-13_frpr-4_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-13_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_dmsr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_frpr-19_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_npr-39_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-14_npr-40_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-15_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-15_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-15_npr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-16_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-16_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-16_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-17_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-17_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-17_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-17_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-18_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-18_npr-10_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-18_npr-13_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-18_npr-4_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-18_npr-5_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-19_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-19_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-19_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-19_frpr-9_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-2_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-2_frpr-18_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-2_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-20_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-20_frpr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-20_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-21_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-21_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-21_npr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-21_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-21_npr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-22_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-23_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-23_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-23_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-24_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-24_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-25_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-25_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-25_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-26_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-26_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-26_npr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-27_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-27_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-27_npr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-28_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-28_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-28_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-3_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-3_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-3_frpr-16_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-3_npr-10_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-32_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-32_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-32_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-33_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-33_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-33_frpr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-33_npr-12_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-34_npr-11_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-4_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-4_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-4_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-4_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-5_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-5_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-5_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-6_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-6_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-6_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-6_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-7_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-7_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_frpr-15_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_frpr-19_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_npr-39_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_npr-40_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-8_ntr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-9_dmsr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-9_dmsr-7_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-9_egl-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_flp-9_frpr-8_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-10_npr-35_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-12_ckr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-12_ckr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-13_dmsr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-13_npr-41_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-17_npr-37_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-17_npr-43_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-2_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-2_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-22_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-22_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-23_frpr-16_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-23_gnrr-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-23_gnrr-6_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-3_npr-42_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-37_pdfr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-38_sprr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-40_aex-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-42_sprr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-44_nmur-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-44_nmur-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-47_gnrr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-49_seb-3_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-54_trhr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-58_tkr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-58_tkr-2_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-62_npr-24_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-64_npr-32_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_nlp-72_npr-22_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_ntc-1_ntr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+pep_ec50_pdf-1_pdfr-1_nM,found,PMC7615250,PMC7615250,,1a09b18506aa,2026-11-07 04:05 CST
+ma_diffusion_um2_per_s,found,PMC12829992,PMC12829992,,f9e8f405e3f1,2026-11-07 04:05 CST
+mod5_km_nM,found,PMC6763176,PMC6763176,,d181fdff512f,2026-11-07 04:05 CST
+dat1_km_nM,found,abstract 9765501,abstract 9765501,,e0c65264d64d,2026-11-07 04:05 CST
+ma_ec50_serotonin_ser-7_nM,found,PMC1456143,PMC1456143,,7cff18e1d111,2026-11-07 04:05 CST
+ma_ec50_dopamine_dop-1_nM,found,PMC1271763,PMC1271763,,3c648d9e5ee6,2026-11-07 04:05 CST
+ma_ec50_dopamine_dop-2_nM,found,PMC12539964,PMC12539964,,3b620be89404,2026-11-07 04:05 CST
+ma_ec50_dopamine_dop-3_nM,found,PMC12539964,PMC12539964,,d56e05be4141,2026-11-07 04:05 CST
+ma_ec50_dopamine_dop-4_nM,found,PMC12539964,PMC12539964,,2259aa5c9457,2026-11-07 04:05 CST
+ma_ec50_octopamine_octr-1_nM,found,PMC3273394,PMC3273394,,7e8c64193174,2026-11-07 04:05 CST
+ma_ec50_octopamine_ser-3_nM,found,PMC3273394,PMC3273394,,e5319c72124e,2026-11-07 04:05 CST
+ma_ec50_octopamine_ser-6_nM,found,PMC3273394,PMC3273394,,fc4a4dbb4915,2026-11-07 04:05 CST
+ma_ec50_tyramine_ser-2_nM,found,abstract 12354282,abstract 12354282,,74b9d66a6063,2026-11-07 04:05 CST
+ma_ec50_tyramine_tyra-2_nM,found,abstract 15953361,abstract 15953361,,c9f116667f26,2026-11-07 04:05 CST
+ma_ec50_tyramine_tyra-3_nM,found,PMC6673087,PMC6673087,,d1a95affe0cc,2026-11-07 04:05 CST
+noise_quantal_pA,found,PMC2705609,PMC2705609,,8d6dab9df50b,2026-11-07 04:05 CST
+noise_hold_mV,found,PMC2705609,PMC2705609,,d4b428ee30fd,2026-11-07 04:05 CST
+noise_event_tau_ms,found,PMC2705609,PMC2705609,,a7614effb41f,2026-11-07 04:05 CST
+chnoise_slo1_pS,found,PMC13687065,PMC13687065,,636bc54256ec,2026-11-07 04:05 CST
+chnoise_slo2_pS,found,PMC4197135,PMC4197135,,3206cb4edeab,2026-11-07 04:05 CST
+temp_tau_ms,found,PMC6692131,PMC6692131,,1db1e7f51c57,2026-11-07 04:05 CST
+temp_q10_dmp_clock,found,PMC40787,PMC40787,,c40646cece27,2026-11-07 04:05 CST
+awa_liu_C_pF,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,b6653c7282fd,2026-11-07 04:05 CST
+awa_liu_gCa,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,f9ade860355c,2026-11-07 04:05 CST
+awa_liu_vCa,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,7166f1d228f4,2026-11-07 04:05 CST
+awa_liu_f,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,05148ce5664f,2026-11-07 04:05 CST
+awa_liu_tc1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,76ca4dcc5c6d,2026-11-07 04:05 CST
+awa_liu_tc2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,f57ac7da8c2e,2026-11-07 04:05 CST
+awa_liu_vc1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,c29a2ae7bd11,2026-11-07 04:05 CST
+awa_liu_dvc1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,be41c413c3bc,2026-11-07 04:05 CST
+awa_liu_vc2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,058f695dca9d,2026-11-07 04:05 CST
+awa_liu_dvc2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,c4fc81409324,2026-11-07 04:05 CST
+awa_liu_vc3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,441b289775d4,2026-11-07 04:05 CST
+awa_liu_dvc3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,d3398bdf52ce,2026-11-07 04:05 CST
+awa_liu_c0,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,b12dff783836,2026-11-07 04:05 CST
+awa_liu_vK,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,62cda845a1c5,2026-11-07 04:05 CST
+awa_liu_gK1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,ca48027eca11,2026-11-07 04:05 CST
+awa_liu_vK1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,8e0e86b5f90c,2026-11-07 04:05 CST
+awa_liu_dvK1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,1f464ecefdcc,2026-11-07 04:05 CST
+awa_liu_tK1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,2933cb9410d9,2026-11-07 04:05 CST
+awa_liu_gK2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,7d3acd5f2f33,2026-11-07 04:05 CST
+awa_liu_vK2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,9dc07aa521de,2026-11-07 04:05 CST
+awa_liu_dvK2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,ef0d9cfdba6e,2026-11-07 04:05 CST
+awa_liu_tK2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,9727e1b6e3b9,2026-11-07 04:05 CST
+awa_liu_gK3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,469bb5842cd4,2026-11-07 04:05 CST
+awa_liu_vK3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,269ee6d9cd46,2026-11-07 04:05 CST
+awa_liu_dvK3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,a2e5658648b2,2026-11-07 04:05 CST
+awa_liu_tK3,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,0169375b8e69,2026-11-07 04:05 CST
+awa_liu_gKr,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,7f9940d477d1,2026-11-07 04:05 CST
+awa_liu_vKr1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,354305aa8178,2026-11-07 04:05 CST
+awa_liu_dvKr1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,fc931efa8198,2026-11-07 04:05 CST
+awa_liu_vKr2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,8097e73b57b7,2026-11-07 04:05 CST
+awa_liu_dvKr2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,44dbafcc098d,2026-11-07 04:05 CST
+awa_liu_tKr,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,57d914512a3b,2026-11-07 04:05 CST
+awa_liu_gKa,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,68f284013333,2026-11-07 04:05 CST
+awa_liu_vKa1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,53428d0998f5,2026-11-07 04:05 CST
+awa_liu_dvKa1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,5a96155d2cea,2026-11-07 04:05 CST
+awa_liu_vKa2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,02ed95120679,2026-11-07 04:05 CST
+awa_liu_dvKa2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,998cac8af4db,2026-11-07 04:05 CST
+awa_liu_tKa1,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,634f6859cddd,2026-11-07 04:05 CST
+awa_liu_tKa2,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,5947154206ba,2026-11-07 04:05 CST
+awa_liu_gKir,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,eff628d3cfc1,2026-11-07 04:05 CST
+awa_liu_I0,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,375264fe4401,2026-11-07 04:05 CST
+awa_liu_beta,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,119671ef8f76,2026-11-07 04:05 CST
+awa_liu_gL,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,edb822069ca5,2026-11-07 04:05 CST
+awa_liu_vL,found,abstract PPR7924; excerpts/liu2018_preprint_tableS4.txt,excerpts/liu2018_preprint_tableS4.txt,,32efd11ac8fd,2026-11-07 04:05 CST
+usu_r1_Ks,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,28e8a692e763,2026-11-07 04:05 CST
+usu_r1_Kd,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,82e875ced0b6,2026-11-07 04:05 CST
+usu_r2_Ks,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,33400da34421,2026-11-07 04:05 CST
+usu_r2_Kd,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,c9ae5cb1a052,2026-11-07 04:05 CST
+usu_r3_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,2b12d1a98e04,2026-11-07 04:05 CST
+usu_r3_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,7915f2506646,2026-11-07 04:05 CST
+usu_r3_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,c2d318a83b9d,2026-11-07 04:05 CST
+usu_r3_1_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,1c696b9a11c0,2026-11-07 04:05 CST
+usu_r3_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,fa0b0b8bb574,2026-11-07 04:05 CST
+usu_r3_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,49a7147d7ca7,2026-11-07 04:05 CST
+usu_r3_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,97526c18f1fc,2026-11-07 04:05 CST
+usu_r3_2_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,60912ed1a4b9,2026-11-07 04:05 CST
+usu_r3_2_3_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,5dae581b0b2c,2026-11-07 04:05 CST
+usu_r3_2_3_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,9db4f0058ac8,2026-11-07 04:05 CST
+usu_r3_3_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,afffaabed8f2,2026-11-07 04:05 CST
+usu_r3_3_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,6d63ec12a968,2026-11-07 04:05 CST
+usu_r3_3_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ffa117ec414f,2026-11-07 04:05 CST
+usu_r3_3_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d14f345371b0,2026-11-07 04:05 CST
+usu_r4_1_1_v,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,87d3272bf9fa,2026-11-07 04:05 CST
+usu_r4_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,4552c245bb9c,2026-11-07 04:05 CST
+usu_r4_2_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,cce2aa17e796,2026-11-07 04:05 CST
+usu_r4_2_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d282198e683e,2026-11-07 04:05 CST
+usu_r4_2_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,48e00e826e69,2026-11-07 04:05 CST
+usu_r4_2_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,f900a64696a9,2026-11-07 04:05 CST
+usu_r4_2_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,9c21b1bac070,2026-11-07 04:05 CST
+usu_r4_2_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,fd8e3a49e309,2026-11-07 04:05 CST
+usu_r4_2_3_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,7e7243fd31bf,2026-11-07 04:05 CST
+usu_r4_2_3_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,8bb238fdac87,2026-11-07 04:05 CST
+usu_r4_2_3_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ffeca7472b62,2026-11-07 04:05 CST
+usu_r4_3_1_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,2229a8eb999e,2026-11-07 04:05 CST
+usu_r4_3_1_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,ca2de158d622,2026-11-07 04:05 CST
+usu_r4_3_1_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e544c8515468,2026-11-07 04:05 CST
+usu_r4_3_2_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,639e649c514d,2026-11-07 04:05 CST
+usu_r4_3_2_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,cc094e030521,2026-11-07 04:05 CST
+usu_r4_3_2_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,210f1978046c,2026-11-07 04:05 CST
+usu_r5_Ef_CNG,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,6d3bc85eebbf,2026-11-07 04:05 CST
+usu_r6_Ef_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,99969983b4fb,2026-11-07 04:05 CST
+usu_r6_VR_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,747b03d3faa8,2026-11-07 04:05 CST
+usu_r6_V50_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,41d7d2aeff04,2026-11-07 04:05 CST
+usu_r6_K_VGCC,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,917d4f462a3f,2026-11-07 04:05 CST
+usu_r7_Ef_Cax,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,0f53788d9667,2026-11-07 04:05 CST
+usu_r7_K_CaX,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,02f53316830b,2026-11-07 04:05 CST
+usu_r7_n_CaX,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,8286889e109e,2026-11-07 04:05 CST
+usu_r8_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,30bd4750451a,2026-11-07 04:05 CST
+usu_r8_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,f2451681aee5,2026-11-07 04:05 CST
+usu_r9_1_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,d260c9778bdb,2026-11-07 04:05 CST
+usu_r9_1_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,b810fd5acb8c,2026-11-07 04:05 CST
+usu_r9_2_k1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,0252c8a9e2ad,2026-11-07 04:05 CST
+usu_r9_2_k2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,12580608b951,2026-11-07 04:05 CST
+sens_afd_Tstar_C,found,PMC2587641; PMC6674189,PMC2587641,,ce72ce94ecb1,2026-11-07 04:05 CST
+sens_o2_up_K_pct,found,PMC2760494,PMC2760494,,04e6739bb9f2,2026-11-07 04:05 CST
+sens_o2_down_K_pct,found,PMC2760494,PMC2760494,,33d22e5fa72e,2026-11-07 04:05 CST
+sens_co2_K_pct,found,PMC3115024,PMC3115024,,406a4477ef34,2026-11-07 04:05 CST
+sens_light_K_mWmm2,found,PMC2494560,PMC2494560,,8a23e1067f55,2026-11-07 04:05 CST
+sens_trpv_tauD_s,found,PMC544906; PMC5045890,PMC544906; PMC5045890,,0f0d31cdcb33,2026-11-07 04:05 CST
+sens_awa_dia_K_uM,found,PMC5045890,PMC5045890,,15c8ac411fdc,2026-11-07 04:05 CST
+sens_ash_gly_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:05 CST
+sens_ash_cu_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:05 CST
+sens_ash_qui_K_mM,found,PMC544906,PMC544906,,d44ba8488053,2026-11-07 04:05 CST
+met_rcs_per_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_b,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_rso_per_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_d,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_a,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_is_frac,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_tau_ms,found,PMC6692131,PMC6692131,,59379c61fcf7,2026-11-07 04:05 CST
+met_i0_pA,found,PMC6692131,PMC6692131,,f14c5a97d42b,2026-11-07 04:05 CST
+met_vhold_mV,found,PMC6692131,PMC6692131,,28d4a86b6673,2026-11-07 04:05 CST
+touch_pressure_kPa,found,PMC6692131,PMC6692131,,d4443eba35cf,2026-11-07 04:05 CST
+touch_radius_um,found,PMC6692131,PMC6692131,,1f1893043574,2026-11-07 04:05 CST
+touch_probe_radius_um,found,PMC6692131,PMC6692131,,68c7deec5a95,2026-11-07 04:05 CST
+touch_a1,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:05 CST
+touch_a2,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:05 CST
+touch_a3,found,PMC6692131,PMC6692131,,6ee257913584,2026-11-07 04:05 CST
+touch_n_channels,found,PMC6785734,PMC6785734,,18e8910a0d57,2026-11-07 04:05 CST
+harsh_pvd_s0,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:05 CST
+harsh_pvd_s1,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:05 CST
+harsh_flp_s1,found,PMC3018541,PMC3018541,,ebb3f2c7c54c,2026-11-07 04:05 CST
+proprio_radius_um,found,PMC6692131,PMC6692131,,1f1893043574,2026-11-07 04:05 CST
+proprio_E_mV,found,PMC2865900,PMC2865900,,370ec7e7e523,2026-11-07 04:05 CST
+proprio_bfield_frac,found,PMC3508473,PMC3508473,,2174e8dc121a,2026-11-07 04:05 CST
+proprio_smd_s1,found,PMC6010301,PMC6010301,,405ba74668e0,2026-11-07 04:05 CST
+bwm_gap_liu_nS,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:05 CST
+bwm_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:05 CST
+ph_sh_v_l,found,PMC10873627,PMC10873627,,8c3b2249d4f9,2026-11-07 04:05 CST
+ph_area_um2,found,PMC1351090,PMC1351090,,9146e7d93256,2026-11-07 04:05 CST
+ph_m3_inhibitory,found,PMC4460247,PMC4460247,,e5fbaf17e725,2026-11-07 04:05 CST
+ph_ser7_on_muscle,found,PMC1456143,PMC1456143,,320a9d7a163f,2026-11-07 04:05 CST
+int_lr_a2_per_uM_s,found,PMC2266627,PMC2266627,,ec9273160528,2026-11-07 04:05 CST
+int_ip3_rest_uM,found,PMC2266627,PMC2266627,,ec9273160528,2026-11-07 04:05 CST
+int_h_tau_s,found,PMC2258244,PMC2258244,,151aa8a02434,2026-11-07 04:05 CST
+pbo5_ph50,found,PMC2258244,PMC2258244,,abb4b1f12038,2026-11-07 04:05 CST
+pbo5_hill,found,PMC2258244,PMC2258244,,abb4b1f12038,2026-11-07 04:05 CST
+pbo5_erev_mV,found,PMC2258244,PMC2258244,,24c4b3381338,2026-11-07 04:05 CST
+pbo5_posterior_frac,found,PMC2258244,PMC2258244,,762886c8055c,2026-11-07 04:05 CST
+int_posterior_rings,found,PMC2258244,PMC2258244,,72209af82556,2026-11-07 04:05 CST
+ent_gap_nS_per_contact,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:05 CST
+ent_dvb_excitatory,found,PMC5386995,PMC5386995,,03396db6127a,2026-11-07 04:05 CST
+ent_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:05 CST
+egg_uterus_init,found,PMC13054943,PMC13054943,,5a7ba75f358c,2026-11-07 04:05 CST
+egg_unc103_gkr_nS,found,PMC3542984,PMC3542984,,ed75b6b812aa,2026-11-07 04:05 CST
+egg_gap_nS_per_contact,found,abstract 16434400; abstract 16434400,abstract 16434400; abstract 16434400,,d71ab2245e44,2026-11-07 04:05 CST
+egg_act_tau_ms,found,PMC3296079,PMC3296079,,8c35641949f2,2026-11-07 04:05 CST
+egg_uv1_tyr_tau_s,found,PMC2887794,PMC2887794,,79d199095d41,2026-11-07 04:05 CST
+glia_k_bath_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:05 CST
+glia_kir_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:05 CST
+glia_k_diff_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:05 CST
+glia_cl_bath_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:05 CST
+glia_cl_tau_s,found,PMC4380507,PMC4380507,,cd43fdaf0cf3,2026-11-07 04:05 CST
+glia_gcy8_cl_ic50_mM,found,PMC4860081,PMC4860081,,3e9d4ef6b869,2026-11-07 04:05 CST
+other_area_hyp_um2,found,PMC6692131,PMC6692131,,1db1e7f51c57,2026-11-07 04:05 CST
+osmo_p_set_kPa,found,PMC6692131; PMC2077264,PMC6692131; PMC2077264,,552ebbb57ef2,2026-11-07 04:05 CST
+cc_count,found,PMC1461804; PMC6667774,PMC6667774,,27b45a19edbe,2026-11-07 04:05 CST
+passive_cm_uF_cm2,found,PMC1300935,PMC1300935,,1b07d19a6ed0,2026-11-07 04:05 CST
+pump_na_o_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:05 CST
+pump_k_o_mM,found,PMC4444786,PMC4444786,,5959410cfaa5,2026-11-07 04:05 CST
+pump_vol_neuron_um3,no free full text,,,,2cbd5625fe4c,2026-11-07 04:05 CST
+deb_p_am_J_per_d_cm2,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,158b25212d9b,2026-11-07 04:05 CST
+deb_v_cm_per_d,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a9e6e6ae81c5,2026-11-07 04:05 CST
+deb_kap,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,0e9d70cac500,2026-11-07 04:05 CST
+deb_kap_r,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,686c9f35153a,2026-11-07 04:05 CST
+deb_kap_x,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,bcd24a3ca66b,2026-11-07 04:05 CST
+deb_kap_p,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,b2996284cb05,2026-11-07 04:05 CST
+deb_p_m_J_per_d_cm3,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a38febef6966,2026-11-07 04:05 CST
+deb_k_j_per_d,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,dad141e33566,2026-11-07 04:05 CST
+deb_e_g_J_per_cm3,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,edfcd6de9c38,2026-11-07 04:05 CST
+deb_e_hb_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,53ffc9faa35c,2026-11-07 04:05 CST
+deb_e_hj_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,208f266e02eb,2026-11-07 04:05 CST
+deb_e_hp_J,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,9ad440e095c2,2026-11-07 04:05 CST
+deb_t_a_K,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,8766793ad096,2026-11-07 04:05 CST
+deb_t_ref_K,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,05e051736d05,2026-11-07 04:05 CST
+deb_del_m,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,a92a3013eb09,2026-11-07 04:05 CST
+deb_f_max_feeding,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,42cfd5baac1a,2026-11-07 04:05 CST
+met_pump_max_hz,found,PMC5296638; PMC7255876,PMC5296638; PMC7255876,,d86cbe8328ae,2026-11-07 04:05 CST
+met_f_fixed,found,excerpts/amp_celegans_par.txt,excerpts/amp_celegans_par.txt,,fae4e5a8f1ef,2026-11-07 04:05 CST
+met_oxycal_kJ_per_mol,found,PMC3815370,PMC3815370,,947664ecd4b0,2026-11-07 04:05 CST
+obs_gcamp6s_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:05 CST
+obs_gcamp6s_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:05 CST
+obs_gcamp6s_range,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:05 CST
+obs_gcamp6s_thalf_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,553884e9a56f,2026-11-07 04:05 CST
+obs_gcamp6f_kd_nM,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:05 CST
+obs_gcamp6f_hill,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:05 CST
+obs_gcamp6f_range,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:05 CST
+obs_gcamp6f_thalf_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,774070e1c309,2026-11-07 04:05 CST
+obs_gcamp7f_hill,found,PMC10060165,PMC10060165,,77ab2935963e,2026-11-07 04:05 CST
+obs_gcamp7f_thalf_ms,no free full text,abstract PPR57683,,,2286736782a7,2026-11-07 04:05 CST
+obs_volume_rate_hz,found,PMC10836760,PMC10836760,,953cd2345ee0,2026-11-07 04:05 CST
+obs_opto_e_mV,found,PMC10632145; PMC4408612,PMC10632145,,36669c8ea52e,2026-11-07 04:05 CST
+obs_neuropal_p_unlabelled,found,PMC12912725; PMC10836760,PMC12912725,,5c2380514acd,2026-11-07 04:05 CST
+obs_neuropal_p_correct,found,PMC10494711,PMC10494711,,4e7d39da9888,2026-11-07 04:05 CST
+obs_gait_pause_L_s,found,PMC3962822,PMC3962822,,83a2416b809a,2026-11-07 04:05 CST
+mw_worm_length,found,PMC3296079,PMC3296079,,d1361e402a26,2026-11-07 04:05 CST
+mw_worm_mass,found,PMC3508473,PMC3508473,,af08075e0ac6,2026-11-07 04:05 CST
+mw_water_viscosity,found,PMC2820645,PMC2820645,,9c4305fff26a,2026-11-07 04:05 CST
+mw_water_Ct,found,PMC3296079,PMC3296079,,85d124e8e4e3,2026-11-07 04:05 CST
+mw_water_Cn,found,PMC3296079,PMC3296079,,e6ee2c917e75,2026-11-07 04:05 CST
+mw_agar_Ct,found,PMC3296079,PMC3296079,,5d25a60962ad,2026-11-07 04:05 CST
+mw_agar_Cn,found,PMC3296079,PMC3296079,,00239034a910,2026-11-07 04:05 CST
+mw_agar_K_rabets,found,PMC4213666,PMC4213666,,b56d273c2bf4,2026-11-07 04:05 CST
+mw_gravity,no free full text,,,,784027e1e293,2026-11-07 04:05 CST
+cells_glia,no free full text,,,,75ba17037fce,2026-11-07 04:05 CST
+cells_coelomocytes,no free full text,,,,7870a8ac7d3b,2026-11-07 04:05 CST
+cells_seam,no free full text,,,,b7d7b38ad74a,2026-11-07 04:05 CST
+rel_gain_afd_aiy,found,PMC3111291,PMC3111291,,8750ead4da37,2026-11-07 04:05 CST
+egg_hsn_isi_active_s,found,PMC5142809,PMC5142809,,869edf50f59a,2026-11-07 04:05 CST
+egg_hsn_isi_inactive_s,found,PMC5142809,PMC5142809,,869edf50f59a,2026-11-07 04:05 CST
+egg_vc_isi_s,found,PMC5142809,PMC5142809,,bcfa02ba3547,2026-11-07 04:05 CST
+proprio_gain_wen,found,PMC3508473,PMC3508473,,f6f918fc56ef,2026-11-07 04:05 CST
+proprio_delay_ms,found,PMC3508473,PMC3508473,,b85c65d277f4,2026-11-07 04:05 CST
+homeo_unc2_per_synapse,found,PMC11363341,PMC11363341,,104b1f895a23,2026-11-07 04:05 CST
+deb_kappa_G,found,excerpts/amp_celegans_res.txt,excerpts/amp_celegans_res.txt,,3a855af786ae,2026-11-07 04:05 CST
+env_o2_diffusion_cm2_s,found,PMC7202895,PMC7202895,,0f6bba8ad75c,2026-11-07 04:05 CST
+env_o2_penetration_per_s,found,PMC7202895,PMC7202895,,303a5a8a25be,2026-11-07 04:05 CST
+env_o2_consumption,found,PMC7202895,PMC7202895,,eb151b0b140c,2026-11-07 04:05 CST
+env_thermo_gradient_C_cm,found,PMC3787776,PMC3787776,,f9d2b5d36f7b,2026-11-07 04:05 CST
+env_touch_saturation_uN,found,PMC5438190; PMC3701114,PMC5438190,,919aa8c2a40a,2026-11-07 04:05 CST
+gcamp6f_rise_ms,found,PMC3777791; excerpts/chen2013_supp_tables.txt,excerpts/chen2013_supp_tables.txt,,c57228797a88,2026-11-07 04:05 CST
+noise_mini_rate_per_s,found,PMC2705609,PMC2705609,,7f67977b5834,2026-11-07 04:05 CST
+env_default_o2_pct,no free full text,,,,80653afff25e,2026-11-07 04:05 CST
+env_default_co2_pct,no free full text,,,,fa8be10defde,2026-11-07 04:05 CST
+usu_cng_erev,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,4a966e7ccb6d,2026-11-07 04:05 CST
+usu_vg_c3,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:05 CST
+usu_vg_c2,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:05 CST
+usu_vg_c1,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:05 CST
+usu_vg_c0,found,PMC3426523; published/usuyama2012_awc.cps,published/usuyama2012_awc.cps,,e652f9554337,2026-11-07 04:05 CST
+scene_nacl_mM_c_background,found,excerpts/kunitomo2013_methods.txt,excerpts/kunitomo2013_methods.txt,,794ca68f94e7,2026-11-07 04:05 CST
+scene_nacl_mM_c_peak,found,excerpts/kunitomo2013_methods.txt,excerpts/kunitomo2013_methods.txt,,872d904c7f43,2026-11-07 04:05 CST
+scene_nacl_mM_slope_per_mm,found,PMC4082684,PMC4082684,,e4612fa1480a,2026-11-07 04:05 CST

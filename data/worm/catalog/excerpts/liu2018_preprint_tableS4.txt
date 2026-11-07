@@ -1,0 +1,61 @@
+# Liu Q, Kidd PB, Dobosiewicz M & Bargmann CI 2018, bioRxiv 10.1101/359935 v1 (posted 30 Jun 2018, CC-BY 4.0),
+# preprint of Cell 175:57-70. Fetched 7 Nov 2026 from https://www.biorxiv.org/content/biorxiv/early/2018/06/30/359935.full.pdf
+# and converted with pdftotext -layout; lines verbatim, runs of spaces collapsed. Symbol subscripts come out as '!'
+# in the conversion. Sections: Methods, model (the capacitance sentence, the inward rectifier, the parameter table
+# note); Table S4.
+
+where C is the membrane capacitance, and the terms on the right represent leak current,
+
+slopes were modified slightly to give a better fit to the whole cell I-V curve (Fig 1C). Finally,
+we added an inwardly-rectifying potassium channel with a conductance tuned to match the
+resting potential in AWA (about -75 mV). This model predicts tonic spiking in a small range
+
+The parameter values used are in Table S4. In cases where a parameter is changed
+between the N2 and shk-1 versions of the model, both values are shown.
+
+Table S4. AWA Model Parameters
+Symbol Description Value (WT/shk-1)
+𝐶 Membrane capacitance 1.5 pF
+𝑔!" Calcium conductance 0.1/0.13 nS
+𝑣!" Calcium reversal potential 120 mV
+𝑓 Calcium inactivation factor 0.4
+𝜏𝑐! Calcium channel activation time scale 1.0 ms
+𝜏𝑐! Calcium channel inactivation time scale 160.0 ms
+𝑣𝑐! Calcium channel activation voltage -21.6 mV
+∆𝑣𝑐! Calcium channel activation slope 9.17 mV
+𝑣𝑐! Calcium channel inactivation voltage 16.2 mV
+∆𝑣𝑐! Calcium channel inactivation slope -16.1 mV
+𝑣𝑐! Calcium channel inactivation time voltage scale 23.0 mV
+∆𝑣𝑐! Calcium channel inactivation time voltage slope 24.0 mV
+𝑐! Calcium channel steady state normalization 0.55
+𝑣K Potassium reversal potential -84 mV
+𝑔K1 SHK-1 conductance 1.5/0.0 nS
+𝑣K1 SHK-1 activation voltage 2.0 mV
+∆𝑣K1 SHK-1 activation slope 10.0 mV
+𝜏K1 SHK-1 switching time 30.0 ms
+𝑔K2 First high-v potassium conductance 1.0/2.0 nS
+𝑣K2 First high-v potassium channel activation voltage 13.0 mV
+∆𝑣K2 First high-v potassium channel activation slope 20.0 mV
+𝜏K2 First high-v potassium channel switching time 1000 ms
+𝑔K3 Second high-v potassium conductance 0.1 nS
+𝑣K3 Second high-v potassium channel activation voltage -25.0 mV
+∆𝑣K3 Second high-v potassium channel activation slope 5.0 mV
+𝜏K3 Second high-v potassium channel switching time 1000 ms
+𝑔Kr Slowly inactivating (Kr) K conductance 0.39/0.77 nS
+𝑣Kr1 Slowly inactivating (Kr) K-channel activation voltage -42.0 mV
+∆𝑣Kr1 Slowly inactivating (Kr) K-channel activation slope 5.0 mV
+𝑣Kr2 Slowly inactivating (Kr) K-channel inactivation voltage -42.0 mV
+∆𝑣Kr2 Slowly inactivating (Kr) K-channel inactivation slope 5.0 mV
+𝜏Kr Slowly inactivating (Kr) K-channel inactivation time 1800 ms
+𝑔Ka Slowly activating (Kra) K-channel conductance 0.91/1.98 nS
+𝑣Ka1 Slowly activating (Kra) K-channel activation voltage -52.0 mV
+∆𝑣Ka1 Slowly activating (Kra) K-channel activation slope 20.0 mV
+𝑣Ka2 Slowly activating (Kra) K-channel time voltage scale -32.0 mV
+∆𝑣Ka2 Slowly activating (Kra) K-channel time voltage slope 4.0 mV
+𝜏Ka1 Slowly activating (Kra) K-channel fast activation time 27000 ms
+𝜏Ka2 Slowly activating (Kra) K-channel slow activation time 3000 ms
+𝑔Kir Inward rectifying potassium channel conductance 0.8 nS
+𝐼! Inward rectifying potassium channel saturated current 5.0 pA
+𝛽 Inward rectifying potassium channel smoothing factor 5.0
+𝑔L Leak current conductance 0.25 nS
+𝑣L Leak current reversal potential -65.0 mV
