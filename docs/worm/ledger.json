@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 02:18 CST",
+ "generated_at": "2026-11-07 02:37 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13381,11 +13381,11 @@
    "unit": "nM",
    "n_values": 1,
    "value_template": 144.0,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
+   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
    "bio_min": 140.0,
    "bio_max": 157.0,
    "bound_basis": "measured_this_class",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
+   "bound_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -13401,7 +13401,7 @@
    "plan_row": 23,
    "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "Sensor Dynamic range (Fmax/Fmin) Kd (nM) Hill coefficient koff (s-1) ... GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
+   "source_quote": "Supplementary Table 2 | Biophysical properties of purified GCaMP sensors. ... GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13413,11 +13413,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 2.9,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
+   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
    "bio_min": 2.73,
    "bio_max": 3.07,
    "bound_basis": "measured_this_class",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
+   "bound_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -13433,7 +13433,7 @@
    "plan_row": 23,
    "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "Sensor Dynamic range (Fmax/Fmin) Kd (nM) Hill coefficient koff (s-1) ... GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
+   "source_quote": "Supplementary Table 2 | Biophysical properties of purified GCaMP sensors. ... GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13509,7 +13509,7 @@
    "unit": "dF/F",
    "n_values": 1,
    "value_template": 16.8,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 1 (dissociated rat hippocampal neurons, 160 action potentials)",
+   "template_source": "Chen et al. 2013 Nature 499:295, Supplementary Table 1 (dissociated rat hippocampal neurons, 160 action potentials; columns: baseline F0 relative to GCaMP3, dynamic range dF/F0 at 160 AP, 10 AP decay and rise (ms)); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
    "bio_min": 2.0,
    "bio_max": 50.0,
    "bound_basis": "guessed",
@@ -13529,7 +13529,7 @@
    "plan_row": 23,
    "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "Sensor Baseline fluorescence F0, relative to GCaMP3 Dynamic range (\u0394F/F0 at 160 AP) ... GCaMP6s 74\u00b15% 1680\u00b148% 1796\u00b173 480\u00b124",
+   "source_quote": "Supplementary Table 1 | GCaMP sensor comparison in dissociated neuronal culture. ... GCaMP6s 74\u00b15% 1680\u00b148% 1796\u00b173 480\u00b124",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -31225,7 +31225,7 @@
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/",
-   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (uM) Efficacy Hill n EC 50 (uM) Efficacy Hill n GABA 21 +- 0.69 100 0.91 +- 0.06 15 17 +- 0.71 100 2.1 +- 0.10 12",
+   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (\u03bcM) Efficacy Hill n EC 50 (\u03bcM) Efficacy Hill n GABA 21 \u00b1 0.69 100 0.91 \u00b1 0.06 15 17 \u00b1 0.71 100 2.1 \u00b1 0.10 12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -31257,7 +31257,7 @@
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/",
-   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (uM) Efficacy Hill n EC 50 (uM) Efficacy Hill n GABA 21 +- 0.69 100 0.91 +- 0.06 15 17 +- 0.71 100 2.1 +- 0.10 12",
+   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (\u03bcM) Efficacy Hill n EC 50 (\u03bcM) Efficacy Hill n GABA 21 \u00b1 0.69 100 0.91 \u00b1 0.06 15 17 \u00b1 0.71 100 2.1 \u00b1 0.10 12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40281,7 +40281,7 @@
    "plan_row": 10,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1456143/",
-   "source_quote": "SER-7B and SER-7BI3GFP had nearly identical EC 50 s for the 5-HT- dependent stimulation of cAMP levels, when the receptors were transiently expressed in COS-7 cells (30 \u00b1 3 nm vs. 47 \u00b1 5 nm, respectively)",
+   "source_quote": "SER-7B and SER-7BI3GFP had nearly identical EC 50 s for the 5-HT- dependent stimulation of cAMP levels, when the receptors were transiently expressed in COS-7 cells (30 \u00b1 3 nm vs. 47 \u00b1 5 nm, respectively, Figure 2)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -58271,8 +58271,9 @@
    "rows_read": 205,
    "quotes": {
     "none": 1561,
-    "paper text (read audit, 6-7 Nov)": 259,
-    "research file (scripted check)": 36
+    "cited free text (scripted check)": 251,
+    "research file (scripted check)": 36,
+    "paper text (read audit, 6-7 Nov)": 8
    },
    "with_url": 1507,
    "links": {
@@ -58283,7 +58284,7 @@
      "406": 4,
      "403": 5
     },
-    "checked_at": "2026-11-07 02:18 CST"
+    "checked_at": "2026-11-07 02:30 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -58525,7 +58526,7 @@
     "new_label": "measured",
     "change": "157 -> 144 nM; measured -> measured; range [100, 200] -> [140, 157]",
     "reason": "closes the open problem: Chen 2013's supplement (free from Europe PMC's supplementary files for the NIH manuscript) has the table as text, GCaMP6s Kd 144 \u00b1 4 nM (purified protein, 30 mM MOPS pH 7.2, 100 mM KCl); the read value wins over Zhang 2023's 157 (an image, not read); range from Chen's mean - SD to Zhang's 157; was 157 [100, 200]",
-    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
+    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt; upper end Zhang et al. 2023 Nature 615:884 Extended Data Table 1 via PORT_SOURCES_ORGANS.md O10 (not read)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
    },
    {
@@ -58538,7 +58539,7 @@
     "new_label": "measured",
     "change": "2.5 -> 2.9 1; measured -> measured; range [2, 3] -> [2.73, 3.07]",
     "reason": "closes the open problem: GCaMP6s's own Hill coefficient is 2.90 \u00b1 0.17; range is mean \u00b1 SD; was 2.5 [2, 3], the midpoint of a range for GCaMP6 generally",
-    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
+    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6s; mean \u00b1 SD of 3 independently purified samples); columns: dynamic range Fmax/Fmin, Kd (nM), Hill coefficient, koff (s-1); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
    },
    {
@@ -58733,7 +58734,7 @@
     "new_label": "inferred",
     "change": "10 -> 16.8 dF/F; guessed -> inferred; range [2, 50] -> [2, 50]",
     "reason": "the model's ceiling is dF/F from rest to saturation; 160 action potentials in cultured neurons gave 16.8 \u00b1 0.5 for GCaMP6s; cross-check from the purified table (Fmax/Fmin 63.2, Kd 144 nM, n 2.9) with the model's 50 nM rest gives 15.8 (derived), so 160 AP is close to saturation; label inferred, not measured: the ceiling depends on the cell, on where the GCaMP sits (worm whole-brain lines are often nuclear) and on background, so a rat-culture number is related evidence; the range [2, 50] stays guessed; was 10 [2, 50] guessed",
-    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 1 (dissociated rat hippocampal neurons, 160 action potentials)",
+    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 1 (dissociated rat hippocampal neurons, 160 action potentials; columns: baseline F0 relative to GCaMP3, dynamic range dF/F0 at 160 AP, 10 AP decay and rise (ms)); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
    },
    {
@@ -62097,7 +62098,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 02:11 CST",
+   "generated_at": "2026-11-07 02:36 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",

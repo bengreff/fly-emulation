@@ -17,6 +17,7 @@ keeps only rows the code reads: brain, layers and registry rows. Body rows and s
 from __future__ import annotations
 
 import fnmatch
+import hashlib
 import importlib
 import json
 import re
@@ -599,10 +600,54 @@ CATALOG_COLUMNS = ["id", "plan_row", "plan_row_name", "mechanism", "mechanism_na
                    "range_source", "range_basis", "values_file"]
 
 
-def quote_status(q: str) -> str:
+def quote_sha(q: str) -> str:
+    """Ties a quote_check.csv line to the quote it checked (a quote edited since is unchecked until the next run)."""
+    return hashlib.sha1(str(q).strip().encode()).hexdigest()[:12]
+
+
+def quote_checks() -> dict:
+    """id -> line of data/worm/catalog/quote_check.csv (scripts/worm/catalog_links.py: each paper-text quote searched
+    for in its cited free text)."""
+    f = CAT / "quote_check.csv"
+    if not f.exists():
+        return {}
+    return {r["id"]: r for r in pd.read_csv(f, keep_default_na=False, dtype=str).to_dict("records")}
+
+
+def quote_check(r: dict, checks: dict) -> dict:
+    """The quote check for this row's current quote ({} if none, or the quote changed since the check)."""
+    q = str(r.get("source_quote", "")).strip()
+    c = checks.get(r["param_id"], {})
+    return c if q and c.get("quote_sha") == quote_sha(q) else {}
+
+
+def quote_status(q: str, check: dict) -> str:
     if not str(q).strip():
         return ""
-    return "research file (scripted check)" if QUOTE.match(str(q).strip()) else "paper text (read audit, 6-7 Nov)"
+    if QUOTE.match(str(q).strip()):
+        return "research file (scripted check)"
+    return {"found": "cited free text (scripted check)",
+            "not found": "not found in its cited free text (scripted check)"}.get(
+        check.get("status"), "paper text (read audit, 6-7 Nov)")
+
+
+def quote_check_text(cat_rows) -> str:
+    qc = quote_checks()
+    quoted = [r for r in cat_rows if (q := str(r["source_quote"]).strip()) and not QUOTE.match(q)]
+    cur = {r["id"]: qc[r["id"]] for r in quoted
+           if r["id"] in qc and qc[r["id"]].get("quote_sha") == quote_sha(r["source_quote"])}
+    st = Counter(c["status"] for c in cur.values())
+    where = Counter("a vendored model file" if "published/" in c["found_in"] else
+                    "a saved supplement excerpt" if "excerpts/" in c["found_in"] else
+                    "PMC full text" if "PMC" in c["found_in"] else "the abstract"
+                    for c in cur.values() if c["status"] == "found")
+    when = max((c["checked_at"] for c in cur.values()), default="never")
+    return (f"Quotes against their cited free text ({when}, `data/worm/catalog/quote_check.csv`): of {len(quoted)} "
+            f"paper-text quotes, {st.get('found', 0)} are found verbatim ("
+            + ", ".join(f"{k} {n}" for k, n in where.most_common()) + f"), {st.get('not found', 0)} are not found "
+            f"(a problem), {st.get('no free full text', 0)} have no free full text the script can fetch (a preprint, "
+            f"a web page, a repository, or a paywalled paper whose abstract lacks the words; these rest on the read "
+            f"audit), and {len(quoted) - len(cur)} are unchecked (new or edited since the last run).")
 
 
 def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fill_kind):
@@ -618,7 +663,7 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
                 open_[a["param_id"]].append(text)
         elif not act.startswith(("fixed", "read")):
             open_[a["param_id"]].append(text)
-    out, links = [], link_checks()
+    out, links, qchecks = [], link_checks(), quote_checks()
     for r in [*model_rows, *body, *slot_rows]:
         t = values.get(r["param_id"]) if r["origin"] not in CATALOG_ONLY else None
         if not str(r.get("source_url", "")).strip():
@@ -634,6 +679,9 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
         link = links.get(url, ("unchecked", ""))[0] if url else ""
         if link in DEAD_LINK:
             probs.append(f"source link answered {link}")
+        qc = quote_check(r, qchecks)
+        if qc.get("status") == "not found":
+            probs.append(f"quote not found verbatim in its cited free text ({qc['searched']}): {qc['missing'][:60]}")
         lc = str(r.get("body_lit_check", ""))
         if r["origin"] == "body" and lc and lc not in ("ok", "inside"):
             explained.add(r["param_id"])
@@ -653,7 +701,8 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
             precision_needed=r["precision_needed"] + (f" ({r['precision_method']})" if r.get("precision_method")
                                                       else ""),
             audit="ok" if not probs else "; ".join(probs), audit_status=status,
-            audit_trail="; ".join(trail.get(r["param_id"], [])), quote_checked=quote_status(r.get("source_quote", "")),
+            audit_trail="; ".join(trail.get(r["param_id"], [])),
+            quote_checked=quote_status(r.get("source_quote", ""), qc),
             link_status=link, notes=r.get("notes", ""), origin=r["origin"], kind=kind_of(r["param_id"]),
             applies_to=r["applies_to"], range_source=r.get("bound_source", ""), range_basis=r.get("bound_basis", ""),
             values_file=f"data/worm/model/values/{r['param_id']}.csv" if t is not None else "",
@@ -844,9 +893,11 @@ def write_markdown(cat_rows, s):
           "Scripted checks: label vs source (a measured or derived row must cite a source and link it; a guess "
           "cannot be labelled measured), range present and cited, template and every element inside the range, "
           "element labels add up to n_values, a row label no stronger than its weakest element, units present, "
-          "UNVERIFIED sources flagged, research-file quotes found verbatim, and a sourced slot that a code row "
-          "replaced must lie inside that row's range (same unit). The read audit (`data/worm/catalog/audit_notes.csv`, one line per finding with its action: "
-          "fixed / read / accepted / owner / kept / open) adds what a script cannot see: whether the paper says it.",
+          "UNVERIFIED sources flagged, research-file quotes found verbatim, paper-text quotes found verbatim in the "
+          "cited free text wherever one can be fetched (`scripts/worm/catalog_links.py`, below), and a sourced slot "
+          "that a code row replaced must lie inside that row's range (same unit). The read audit "
+          "(`data/worm/catalog/audit_notes.csv`, one line per finding with its action: fixed / read / accepted / "
+          "owner / kept / open) adds what a script cannot see: whether the paper says it.",
           "", f"Rows with a URL to open: {a.get('with_url', 0)} of {t['n_rows']} (every row not labelled guessed "
           f"has one unless listed below). Rows read against their source: {a.get('rows_read', 0)}. Quotes: "
           + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ". Audit notes on ids no row has: "
@@ -860,7 +911,7 @@ def write_markdown(cat_rows, s):
           f"{a.get('links', {}).get('checked_at', '') or 'never'} by `scripts/worm/catalog_links.py` (status: "
           + ", ".join(f"{k} {n}" for k, n in a.get("links", {}).get("by_status", {}).items()) + "; a 404, 410 or no "
           "answer is a problem; 401/403/406/429 are publisher pages that refuse scripted requests but open in a "
-          "browser).", "",
+          "browser).", "", quote_check_text(cat_rows), "",
           "| problem | rows |", "|---|---|"]
     for k, n in a["problem_kinds"].items():
         L.append(f"| {k} | {n} |")

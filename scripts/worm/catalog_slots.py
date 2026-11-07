@@ -815,12 +815,13 @@ for pid, val, ln, what in (
 USU = "Usuyama et al. 2012 PLOS ONE 7:e42907, File S1 (the COPASI model vendored as published/usuyama2012_awc.cps)"
 USF = "src/wormemu/mech/senses_cgmp.py"
 HK("usu_cng_erev", 17, "sens_odor_attract", "mV (model)", 0.08, half=True, src=USU, url=PMC("PMC3426523"),
-   used=f"{USF}:205", quote="*(0.08-", notes="the reversal in the model file's I_CNG expression, (0.08 - V) in the "
-   "lumped membrane's units; owner B3: read it from the model file or make it a Spec")
+   used=f"{USF}:205", quote="*(0.08-<V_Membrane>)",
+   notes="the reversal in the model file's I_CNG expression, (0.08 - V) in the lumped membrane's units; owner B3: read "
+         "it from the model file or make it a Spec")
 for pid, val, what in (("usu_vg_c3", 6e-5, "cubic"), ("usu_vg_c2", 8.1e-3, "quadratic"), ("usu_vg_c1", 0.49, "linear"),
                        ("usu_vg_c0", 9.5, "constant")):
     HK(pid, 17, "sens_odor_attract", "model units", val, src=USU, url=PMC("PMC3426523"), used=f"{USF}:213",
-       quote="(6e-5*V^3+8.1e-3*V^2+0.49*V+9.5)",
+       quote="(6e-5*<V_Membrane>^3+8.1e-3*<V_Membrane>^2+0.49*<V_Membrane>+9.5)",
        notes=f"{what} coefficient of the model file's voltage-gated current polynomial; owner B3: read it from the model "
              "file or make it a Spec")
 
