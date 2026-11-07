@@ -1,7 +1,11 @@
 """Fit 1 held-out scoring (docs/worm/FIT1.md section 7), run once after both fits are DONE.
 
-    python fit1_eval.py run   FITDIR OUT --set heldout|train|unc31 --cpus 0-7
-    python fit1_eval.py score FITDIR OUT
+    python fit1_eval.py dtcheck FITDIR OUT --cpus 0-1
+    python fit1_eval.py run     FITDIR OUT --set heldout|train|unc31 --cpus 0-7 [--limit N]
+    python fit1_eval.py score   FITDIR OUT
+
+dtcheck (first): main's fitted mean on three training stimulations (AVAL, ASHL, AWAL) at the fit's integration and
+at brain.py's own (0.5 ms, mechanisms every 1 ms); passes if the RMS difference is at most 0.003 for every target.
 
 run: simulates, for the chosen set of stimulated neurons, the fit (main's CMA mean, real wiring), shuf-fit (shuf's
 mean, shuffled wiring), the template (real wiring); for unc31, main's mean with the peptides toggle on and off at
@@ -45,12 +49,34 @@ def stims(fitdir, which):
     return sorted(sp["held_out"] if which == "heldout" else sp["train"])
 
 
+def dtcheck(a):
+    out = Path(a.out) / "dtcheck"
+    out.mkdir(parents=True, exist_ok=True)
+    log = Log(out / "eval.log")
+    cfg = json.load(open(Path(a.fitdir) / "main" / "config.json"))
+    mv = json.load(open(Path(a.fitdir) / "main" / "mean.json"))["mean_vals"]
+    tg = ["AVAL", "ASHL", "AWAL"]
+    jobs = []
+    for name, hd, md in (("fit", cfg["h_dt"], cfg["mech_dt"]), ("ref", 0.5, 1.0)):
+        jp, op = out / f"{name}.json", out / f"{name}.npz"
+        json.dump(dict(x=[0.0] * len(fc.IDS), fixed=mv, targets=tg, shuffle_seed=None, h_dt=hd, mech_dt=md,
+                       window_s=cfg["window_s"], warm_s=cfg["warm_s"], pulse_ms=cfg["pulse_ms"], toggles=cfg["toggles"],
+                       out=str(op)), open(jp, "w"))
+        jobs.append((jp, op))
+    run_jobs(jobs, cpus(a.cpus), out, log)
+    F, R = np.load(out / "fit.npz")["stat"], np.load(out / "ref.npz")["stat"]
+    rms = np.sqrt(np.mean((F - R) ** 2, axis=0))
+    res = dict(targets=tg, rms=rms.tolist(), max=np.abs(F - R).max(axis=0).tolist(), passed=bool((rms <= 0.003).all()))
+    json.dump(res, open(out / "dtcheck.json", "w"), indent=1)
+    log(json.dumps(res))
+
+
 def run(a):
     out = Path(a.out) / a.set
     out.mkdir(parents=True, exist_ok=True)
     log = Log(out / "eval.log")
     cfg = json.load(open(Path(a.fitdir) / "main" / "config.json"))
-    S = stims(a.fitdir, a.set)
+    S = stims(a.fitdir, a.set)[:a.limit or None]
     cl = cpus(a.cpus)
     jobs = []
     for name, (vals, seed, tog, pulse) in models(a.fitdir, a.set).items():
@@ -143,13 +169,14 @@ def score(a):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("phase", choices=["run", "score"])
+    ap.add_argument("phase", choices=["dtcheck", "run", "score"])
     ap.add_argument("fitdir")
     ap.add_argument("out")
     ap.add_argument("--set", default="heldout", choices=["heldout", "train", "unc31"])
     ap.add_argument("--cpus", default="0-7")
+    ap.add_argument("--limit", type=int, default=0, help="first N stimulated neurons only (plumbing tests)")
     a = ap.parse_args()
-    run(a) if a.phase == "run" else score(a)
+    {"dtcheck": dtcheck, "run": run, "score": score}[a.phase](a)
 
 
 if __name__ == "__main__":

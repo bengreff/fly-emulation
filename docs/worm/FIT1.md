@@ -1,6 +1,6 @@
 # FIT1: class-level synapse strengths against Randi et al. 2023 (pre-registration)
 
-Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended once at 22:50 before any scored run (the
+Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended once at 22:46 (commit a32642d) before any scored run (the
 amendment is listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
 first scored run; a changed rerun is a new, separately named fit (FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
 night of 6 Nov (`docs/worm/night/2026-11-06_wfit.md`).
@@ -73,13 +73,15 @@ Measured on backhouse, 302 neurons, one CPU each, 30 s windows:
 
 | Run | h_dt (ms) | mech_dt (ms) | Wall per window (s) | RMS difference from ref (per target) | r with ref |
 |---|---|---|---|---|---|
-| ref | 0.5 | 1 | (pending) | | |
-| a | 0.5 | 10 | 180 | | |
-| b | 1.0 | 10 | 93 | 1-2e-5 (largest 2.5e-4) from a | 0.9999 |
-| c | 2.0 | 10 | 53 | 4-5e-5 (largest 6.2e-4) from a | 0.999-0.9996 |
+| ref | 0.5 | 1 | 250 | | |
+| a | 0.5 | 10 | 180 | 0 (largest 3e-5) | 1.0 |
+| b | 1.0 | 10 | 93 | 1-2e-5 (largest 2.3e-4) | 0.9999 |
+| c | 2.0 | 10 | 53 | 4-5e-5 (largest 6.1e-4) | 0.999-0.9996 |
 
 Bar (set before the comparison was read): RMS difference at most 0.1 x s_floor (0.003) for every target. If c
-fails it, use the coarsest run that passes.
+fails it, use the coarsest run that passes. **c passes** by a factor of 60, so the fit uses h_dt 2 and mech_dt 10.
+That is 4.7x faster than ref (derived from the walls). The check was at the template, where responses are small.
+fit1_eval.py repeats it at main's fitted mean, with the same bar, before any held-out scoring.
 
 ## 3. The fitted values (23; everything else at the template)
 
@@ -261,7 +263,7 @@ compared with is 0.43.
 | the same, plus capool_f 0.003 and capool_tca 150 | 0.048 | 0.64 | 1.09 |
 | the same, plus syn_strength_per_pair 2 | 0.013 | 0.13 | 0.57 |
 
-## Amendment (22:50, before any scored run)
+## Amendment (22:46, commit a32642d, before any scored run)
 
 capool_f and capool_tca were added to the fitted values (21 to 23). Reason: the reach check (2b) showed that,
 with the actuator and GCaMP values alone, the model cannot reach the data's autoresponse magnitude inside their
