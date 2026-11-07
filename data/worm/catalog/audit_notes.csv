@@ -114,7 +114,7 @@ env_touch_saturation_uN,"range is one point: the paper gives 'about 2 μN, F sat
 neuropal_id_acc_head_pct,"range is one point: identification accuracy over the paper's test set, a dataset statistic","accepted: one number by nature, not a biological quantity with a natural spread"
 neuropal_id_acc_tail_pct,"range is one point: identification accuracy over the paper's test set, a dataset statistic","accepted: one number by nature, not a biological quantity with a natural spread"
 env_o2_diffusion_cm2_s,"labelled measured, but Demir 2020 lists D_O = 2E-5 cm2/s as a model parameter with no measurement or citation (PMC7202895, read 6 Nov); the range was one point","fixed: fills.csv (label inferred, range [1.8e-5, 2.4e-5] guessed, Han & Bartels 1996 named)"
-egg_vc_isi_s,"the range was one point; the paper gives the active-state rhythm peaks (~50, ~100, ~140 mHz)","fixed: fills.csv (range [7, 20] s)"
+egg_vc_isi_s,"the research file's ~10 s is the vulval muscle Ca2+ interval; Collins 2016 gives ~20 s for the VC rhythm (peaks at ~50, ~100, ~140 mHz); the range was one point","fixed: fills.csv (20 s, range [7, 20] s)"
 gcamp6f_kd_nM,364 nM is not in Chen 2013; its Supplementary Table 2 gives GCaMP6f 375 ± 14 nM; the range was one point,"fixed: fills.csv (375 nM, range [361, 389], quote from the supplement)"
 gcamp6f_rise_ms,2 ms is not in Chen 2013; its Supplementary Table 3 gives a 1-AP rise to peak of 45 ± 4 ms for GCaMP6f in mouse V1; the range was one point,"fixed: fills.csv (45 ms, range [41, 49])"
 gcamp_tau_decay_ms,guessed 500 ms; Chen 2013 Supplementary Table 2 gives GCaMP6s koff 1.12 /s (1/koff = 893 ms),"fixed: fills.csv (893 ms derived, range [600, 1500] guessed)"

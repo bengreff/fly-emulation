@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 21:51 CST",
+ "generated_at": "2026-11-06 21:53 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -18477,14 +18477,14 @@
    },
    {
     "param_id": "egg_vc_isi_s",
-    "kind": "range",
+    "kind": "fill",
     "origin": "slot",
     "n": 1,
     "was_label": "measured",
     "new_label": "measured",
-    "change": "10 -> 10 s; measured -> measured; range [10, 10] -> [7, 20]",
-    "reason": "the three rhythm peaks are 20, 10 and 7 s apart, so the range spans 7-20 s around the ~10 s template; was a point range",
-    "source": "Collins et al. 2016 eLife 5:e21126 (active-state rhythms)",
+    "change": "10 -> 20 s; measured -> measured; range [10, 10] -> [7, 20]",
+    "reason": "the research file's ~10 s is the vulval muscle interval, not the VC's: the VC's main rhythm is ~20 s (50 mHz); the range spans the VC's three spectral peaks (140, 100, 50 mHz = 7, 10, 20 s), so the template sits on the upper end because the main peak is the slowest; was 10 s, a point range",
+    "source": "Collins et al. 2016 eLife 5:e21126, Figure 2 (active-state Ca2+ rhythms, GCaMP5/mCherry ratio)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5142809/"
    }
   ],
