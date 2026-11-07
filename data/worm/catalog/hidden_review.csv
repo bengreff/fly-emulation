@@ -111,3 +111,183 @@ src/wormemu/mech/noise.py,26,seed,structure,,,RNG stream id (PLAN row 26)
 src/wormemu/mech/noise.py,0.5,brain.soma[i](0.5),structure,,,the soma's middle segment
 src/wormemu/mech/noise.py,1e-06,np.maximum(np.array(ts),numerics,,,floor on a gate time constant
 src/wormemu/mech/slow_signalling.py,1e-06,self.c0,numerics,,,floor on the Ca set point (no divide by zero)
+src/wormemu/mech/muscle_bwm.py,33.4,(V + 33.4) / 3.2,parameter (catalog row),bwm_du_slo2_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,3.2,(V + 33.4) / 3.2,parameter (catalog row),bwm_du_slo2_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,42,+ 42) / 5.0,parameter (catalog row),bwm_du_kr_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,5.0,+ 42) / 5.0,parameter (catalog row),bwm_du_kr_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,8,(u + 8) / 8.6,parameter (catalog row),bwm_du_m_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,8.6,(u + 8) / 8.6,parameter (catalog row),bwm_du_m_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,0.4,tm = (0.4 + 0.7,parameter (catalog row),bwm_du_tm_min_ms,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,0.7,tm = (0.4 + 0.7,parameter (catalog row),bwm_du_tm_amp_ms,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,5,(u + 5) / 15,parameter (catalog row),bwm_du_tm_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,15,(u + 5) / 15,parameter (catalog row),bwm_du_tm_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,0.42,hi = 0.42,parameter (catalog row),bwm_du_h_amp,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,0.28,hi = 0.42,parameter (catalog row),bwm_du_h_floor,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,11,(u + 11) / 2,parameter (catalog row),bwm_du_h_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,2,(u + 11) / 2,parameter (catalog row),bwm_du_h_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,15.2,(u + 15.2) / 36.22,parameter (catalog row),bwm_du_n_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,36.22,(u + 15.2) / 36.22,parameter (catalog row),bwm_du_n_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,1.18,tn = (1.18,parameter (catalog row),bwm_du_tn_min_ms,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,511.78,tn = (1.18,parameter (catalog row),bwm_du_tn_amp_ms,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,89.3,tn = (1.18,parameter (catalog row),bwm_du_tn_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,21.92,tn = (1.18,parameter (catalog row),bwm_du_tn_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,45,pi = _sig((u + 45) / 10),parameter (catalog row),bwm_du_p_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,10,pi = _sig((u + 45) / 10),parameter (catalog row),bwm_du_p_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,4000,tp = 4000,parameter (catalog row),bwm_du_tp_num_ms,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,3.38,tp = 4000,parameter (catalog row),bwm_du_tp_a,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,45,tp = 4000,parameter (catalog row),bwm_du_tp_vh_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,20,tp = 4000,parameter (catalog row),bwm_du_tp_k_mV,B2,"a constant of Du's gate functions as printed; the catalog row lists it, the code should read it"
+src/wormemu/mech/muscle_bwm.py,0.5,0.5 * (1 + np.tanh,structure,,B2,0.5 (1 + tanh x) is the logistic of 2x: the gate's form
+src/wormemu/mech/muscle_bwm.py,0.5,ni = 0.5 * (np.tanh,structure,,B2,0.5 (tanh x + 1): the gate's form
+src/wormemu/mech/muscle_bwm.py,4,nk ** 4,structure,,B2,the K gate's exponent in Du's form (n^4)
+src/wormemu/mech/muscle_bwm.py,0.0001,f(V + 1e-4),numerics,,B2,finite-difference step for the exponential-Euler Jacobian
+src/wormemu/mech/muscle_bwm.py,-30.0,"def reset(self, v0=-30.0)",initial condition (catalog row),init_bwm_du_v_mV,B2,Du's starting voltage
+src/wormemu/mech/muscle_bwm.py,-30.0,INIT = dict(,initial condition (catalog row),init_bwm_du_v_mV,B2,Du's starting state; reset() repeats it
+src/wormemu/mech/muscle_bwm.py,0.01,INIT = dict(,initial condition (catalog row),init_bwm_du_m,B2,Du's starting state; reset() repeats it
+src/wormemu/mech/muscle_bwm.py,0.6,INIT = dict(,initial condition (catalog row),init_bwm_du_h,B2,Du's starting state; reset() repeats it
+src/wormemu/mech/muscle_bwm.py,0.99,INIT = dict(,initial condition (catalog row),init_bwm_du_n,B2,Du's starting state; reset() repeats it
+src/wormemu/mech/muscle_bwm.py,0.2,INIT = dict(,initial condition (catalog row),init_bwm_du_p,B2,Du's starting state; reset() repeats it
+src/wormemu/mech/muscle_bwm.py,-30.0,vb = np.where(self.have,initial condition (catalog row),init_bwm_du_v_mV,B2,voltage given to muscles absent from a cell subset (their Ca then reads as at the start)
+src/wormemu/mech/muscle_bwm.py,-65.0,vb = np.where(self.have,structure,,B2,the old form's placeholder voltage for muscles absent from a cell subset; never a live cell
+src/wormemu/mech/muscle_bwm.py,0.1,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,57.8,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,257.8,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,500.0,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,30.0,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,25.0,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,20.0,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,15.0,def du_step_protocol(,analysis,,B2,"the paper's current-clamp check protocol (cell 2), not the model"
+src/wormemu/mech/muscle_bwm.py,5.0,_OLD,default shadowed by a catalog row,mca_k_mV,B2,"the old forms' values, equal to the rows; the ledger's params override them in a model run"
+src/wormemu/mech/muscle_bwm.py,0.5,_OLD,default shadowed by a catalog row,mact_khalf_uM,B2,"the old forms' values, equal to the rows; the ledger's params override them in a model run"
+src/wormemu/mech/muscle_bwm.py,-20.0,_OLD,default shadowed by a catalog row,mca_vhalf_mV,B2,"the old forms' values, equal to the rows; the ledger's params override them in a model run"
+src/wormemu/mech/muscle_bwm.py,50.0,_OLD,default shadowed by a catalog row,mact_tau_rise_ms,B2,"the old forms' values, equal to the rows; the ledger's params override them in a model run"
+src/wormemu/mech/muscle_bwm.py,100.0,_OLD,default shadowed by a catalog row,mact_tau_decay_ms,B2,"the old forms' values, equal to the rows; the ledger's params override them in a model run"
+src/wormemu/mech/muscle_bwm.py,100.0,"""mact_tau_rise_ms"": 50.0",default shadowed by a catalog row,mact_tau_decay_ms,B2,as above
+src/wormemu/mech/muscle_bwm.py,50.0,"""mact_tau_rise_ms"": 50.0",default shadowed by a catalog row,mact_tau_rise_ms,B2,as above
+src/wormemu/mech/muscle_bwm.py,2.0,_OLD,default shadowed by a catalog row,mact_hill,B2,as above (mca_max_uM's 1.0 is skipped by the scan)
+src/wormemu/mech/pumps.py,96485.0,F = 96485.0,physical constant,,,"Faraday constant, C/mol (CODATA 2018: 96485.33)"
+src/wormemu/mech/pumps.py,67.3,/ 67.3) - 1.0) / 7.0,parameter (catalog row),pump_lr_na_scale_mM,B2,Luo & Rudy 1994's sigma
+src/wormemu/mech/pumps.py,7.0,/ 67.3) - 1.0) / 7.0,parameter (catalog row),pump_lr_sigma_div,B2,Luo & Rudy 1994's sigma
+src/wormemu/mech/pumps.py,0.1245,0.1245 * np.exp(-0.1 * u),parameter (catalog row),pump_lr_a,B2,Luo & Rudy 1994's f_NaK
+src/wormemu/mech/pumps.py,-0.1,0.1245 * np.exp(-0.1 * u),parameter (catalog row),pump_lr_vfrac,B2,Luo & Rudy 1994's f_NaK (not a unit conversion)
+src/wormemu/mech/pumps.py,0.0365,0.1245 * np.exp(-0.1 * u),parameter (catalog row),pump_lr_b,B2,Luo & Rudy 1994's f_NaK
+src/wormemu/mech/glia.py,1000.0,GLIA_V0_MS = 1000.0,numerics,,B2,settling time before the glia take their reference voltage v0; needs a check that the K+ buffering result does not depend on it
+src/wormemu/mech/glia.py,96485.0,F_C_PER_MOL,physical constant,,,"Faraday constant, C/mol (CODATA 2018: 96485.33)"
+src/wormemu/mech/glia.py,10.0,"sec.L, sec.diam = 1, 10.0, 5.0",structure,,B2,"one-compartment cylinder: C and g_leak are per-cell rows divided by this area, so the size cancels"
+src/wormemu/mech/glia.py,5.0,"sec.L, sec.diam = 1, 10.0, 5.0",structure,,B2,as above
+src/wormemu/mech/organs_other.py,2.436,RT_KPA_PER_MOSM,physical constant,,B2,"R T at 20 C in kPa per mOsm/L (8.314 x 293.15 = 2437 J/mol, derived); fixed at 20 C, so about 3% off at 15 or 25 C"
+src/wormemu/mech/organs_other.py,10.0,"sec.nseg, sec.diam = 1, 10.0",structure,,B2,"one-compartment cylinder: L is set from the area row, so the diameter cancels"
+src/wormemu/mech/organs_egglaying.py,20.0,_OLD,default shadowed by a catalog row,egg_inactive_min,B2,the timer form's fallback; brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_egglaying.py,1000.0,_OLD,default shadowed by a catalog row,egg_vm_dur_ms,B2,as above
+src/wormemu/mech/organs_egglaying.py,2.0,_OLD,duplicate of a catalog row,egg_active_min egg_rate_active_per_min,B2,"fallback copies: egg_active_min agrees (2), egg_rate_active_per_min is stale (2.0 here, 2.5 in the row); read the rows"
+src/wormemu/mech/organs_egglaying.py,20.0,"sec.L, sec.diam = 1, 20.0, 5.0",structure,,B2,"BAAIWorm's one-compartment muscle cylinder: C and conductances are per-cell rows divided by its area, so the size cancels"
+src/wormemu/mech/organs_egglaying.py,5.0,"sec.L, sec.diam = 1, 20.0, 5.0",structure,,B2,as above
+src/wormemu/mech/organs_intestine.py,602.214,NA_PL,physical constant,,,Avogadro's number in molecules per pL per nM (6.02214e23 x 1e-12 L x 1e-9 M)
+src/wormemu/mech/organs_intestine.py,5.0,PRE_DT_MS,numerics,,B2,step of the pre-run that sets the cycle phase at reset
+src/wormemu/mech/organs_intestine.py,45.0,"_OLD = {""dmp_period_s"": 45.0",default shadowed by a catalog row,dmp_period_s,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,2.0,"_OLD = {""dmp_period_s"": 45.0",default shadowed by a catalog row,dmp_pboc_dur_s,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,4.0,"""dmp_exp_delay_s"": 4.0, ""dmp_exp_dur_s"": 0.3",default shadowed by a catalog row,dmp_exp_delay_s,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,0.3,"""dmp_exp_delay_s"": 4.0, ""dmp_exp_dur_s"": 0.3",default shadowed by a catalog row,dmp_exp_dur_s,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,0.5,"""dmp_exp_delay_s"": 4.0, ""dmp_exp_dur_s"": 0.3",default shadowed by a catalog row,dmp_pboc_amp,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,0.33,"""dmp_exp_delay_s"": 4.0, ""dmp_exp_dur_s"": 0.3",default shadowed by a catalog row,dmp_pboc_frac,B2,the 45 s timer form's fallback (equal to the row); brain.layers.p and the ledger's params override it
+src/wormemu/mech/organs_intestine.py,3.0,"_OLD = {""dmp_period_s"": 45.0",duplicate of a catalog row,dmp_aboc_delay_s dmp_aboc_dur_s,B2,"stale fallback copies: dmp_aboc_delay_s 3.0 here, 2.5 in the row; dmp_aboc_dur_s 1.0 here, 2 in the row (the scan skips 1.0); read the rows"
+src/wormemu/mech/organs_intestine.py,9,RING == 9,structure,,B2,int9 is the last (most posterior) of the nine intestinal rings (WormAtlas)
+src/wormemu/mech/organs_intestine.py,9,RING > 9 - q,structure,,B2,counts rings back from int9
+src/wormemu/mech/organs_intestine.py,0.1,"_hill(0.1,",parameter (catalog row),int_ca_rest_uM,B2,resting Ca: the PLC feedback is zero there
+src/wormemu/mech/organs_intestine.py,0.1,"np.full(len(INT_CELLS), 0.1)",initial condition (catalog row),int_ca_rest_uM,B2,starting Ca
+src/wormemu/mech/organs_intestine.py,10.0,10.0 **,arithmetic,,,pH = -log10 [H+]
+src/wormemu/mech/organs_intestine.py,0.5,def peaks(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,600.0,def run_isolated(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,0.5,def run_isolated(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,20,def run_isolated(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,600.0,def single_cell_period(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,0.005,def single_cell_period(,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,0.1,"c, h = 0.1, 0.7",analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,0.7,"c, h = 0.1, 0.7",analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,0.05,cs.max() - cs.min() < 0.05,analysis,,B2,"the isolated-intestine and single-cell period checks, not the model"
+src/wormemu/mech/organs_intestine.py,20.0,"sec.L, sec.diam = 1, 20.0, 5.0",structure,,B2,"BAAIWorm's one-compartment muscle cylinder: C and conductances are per-cell rows divided by its area, so the size cancels"
+src/wormemu/mech/organs_intestine.py,5.0,"sec.L, sec.diam = 1, 20.0, 5.0",structure,,B2,as above
+src/wormemu/mech/organs_intestine.py,0.5,"ent_dvb_excitatory""] > 0.5",structure,,B2,reads a yes/no row
+src/wormemu/mech/organs_pharynx.py,4.3,_OLD = {,default shadowed by a catalog row,pump_rate_food_hz,B2,the rate-table form's fallback (equal to the row); the ledger's params override it
+src/wormemu/mech/organs_pharynx.py,0.3,_OLD = {,default shadowed by a catalog row,pump_rate_nofood_hz,B2,the rate-table form's fallback (equal to the row); the ledger's params override it
+src/wormemu/mech/organs_pharynx.py,0.2,_OLD = {,default shadowed by a catalog row,pump_food_od0,B2,the rate-table form's fallback (equal to the row); the ledger's params override it
+src/wormemu/mech/organs_pharynx.py,170.0,_OLD = {,duplicate of a catalog row,pump_duration_ms,B2,"stale fallback copy: 170 ms here, 80 ms in the row (Lee 2017, measured); defaults() alone (tests, ap_protocol) uses 170; read the row"
+src/wormemu/mech/organs_pharynx.py,0.5,(f * r * 0.5 * r),structure,,B2,shell-to-core diffusion distance taken as half the radius (the source model's form)
+src/wormemu/mech/organs_pharynx.py,0.1,def ap_protocol(,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,50.0,def ap_protocol(,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,40.0,def ap_protocol(,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,600.0,def ap_protocol(,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,50.0,def ap_features(,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,20.0,t > t[k] + 20.0,analysis,,B2,"the action-potential check protocol and its feature reader, not the model"
+src/wormemu/mech/organs_pharynx.py,0.5,"ph_m3_inhibitory""] > 0.5",structure,,B2,reads a yes/no row
+src/wormemu/mech/metabolism.py,0.8086,KAP_G = 0.8086,duplicate of a catalog row,deb_kappa_G,B2,the same 0.8086 as the AmP row deb_kappa_G; read the row
+src/wormemu/mech/metabolism.py,20.0,"def tc(self, T_C=20.0)",duplicate of a catalog row,env_default_temperature_C,B2,default plate temperature; read the row
+src/wormemu/mech/metabolism.py,20.0,"head.get(""temperature_C"", 20.0)",duplicate of a catalog row,env_default_temperature_C,B2,default plate temperature; read the row
+src/wormemu/mech/metabolism.py,273.15,,unit conversion,,,degC to K
+src/wormemu/mech/metabolism.py,0.001,"min(1e-3, t_d / 50.0)",numerics,,B2,integration step cap
+src/wormemu/mech/metabolism.py,50.0,"min(1e-3, t_d / 50.0)",numerics,,B2,at least 50 steps per integration
+src/wormemu/mech/metabolism.py,0.5,0.5 * dt,arithmetic,,,RK4 half step
+src/wormemu/mech/metabolism.py,6.0,dt / 6.0,arithmetic,,,RK4 weights
+src/wormemu/mech/metabolism.py,0.5,m = 0.5 * (lo + hi),arithmetic,,,bisection midpoint
+src/wormemu/mech/metabolism.py,1e-06,"y0 = np.array([E_0, 1e-6",numerics,,B2,"the egg's starting structure: near zero, as in DEB's embryo"
+src/wormemu/mech/metabolism.py,2.0,"self.integrate(y0, 2.0, 0.0",numerics,,B2,cap on the embryo integration (d); hatching stops it first (~0.6 d)
+src/wormemu/mech/metabolism.py,0.0005,h=5e-4,numerics,,B2,embryo integration step (d)
+src/wormemu/mech/metabolism.py,0.001,"np.log(1e-7), np.log(1e-3)",numerics,,B2,bisection bracket for the egg's reserve E_0 (J)
+src/wormemu/mech/metabolism.py,1440.0,/ 1440.0,unit conversion,,,minutes per day
+src/wormemu/mech/metabolism.py,24.0,eggs_per_d(fl) / 24.0,unit conversion,,,hours per day
+src/wormemu/mech/metabolism.py,1e-05,met_intake_per_pump,default shadowed by a catalog row,met_intake_per_pump,B2,the store form's default; store_p carries the row
+src/wormemu/mech/metabolism.py,24.0,met_store_tau_h,default shadowed by a catalog row,met_store_tau_h,B2,the store form's default; store_p carries the row
+src/wormemu/mech/metabolism.py,86400000.0,/ 8.64e7,unit conversion,,,ms per day
+src/wormemu/mech/capool.py,10.0,MA_CM2_TO_PA_UM2,unit conversion,,,1 mA/cm2 = 10 pA/um2
+src/wormemu/mech/senses_cgmp.py,0.08,(0.08 - V),parameter (catalog row),usu_cng_erev,B3,from the model file's I_CNG expression; the catalog row lists it
+src/wormemu/mech/senses_cgmp.py,6e-05,6e-5 * V ** 3,parameter (catalog row),usu_vg_c3,B3,from the model file's I_VG polynomial; the catalog row lists it
+src/wormemu/mech/senses_cgmp.py,0.0081,6e-5 * V ** 3,parameter (catalog row),usu_vg_c2,B3,from the model file's I_VG polynomial; the catalog row lists it
+src/wormemu/mech/senses_cgmp.py,0.49,6e-5 * V ** 3,parameter (catalog row),usu_vg_c1,B3,from the model file's I_VG polynomial; the catalog row lists it
+src/wormemu/mech/senses_cgmp.py,9.5,6e-5 * V ** 3,parameter (catalog row),usu_vg_c0,B3,from the model file's I_VG polynomial; the catalog row lists it
+src/wormemu/mech/senses_cgmp.py,0.00025,h_s=2.5e-4,numerics,,B3,default Patankar step (s); the caller sets it
+src/wormemu/mech/senses_chem.py,20.0,"hd.get(""temperature_C"", 20.0)",duplicate of a catalog row,env_default_temperature_C,B3,default plate temperature; read the row
+src/wormemu/mech/senses_chem.py,21.0,"hd.get(""o2_pct"", 21.0)",duplicate of a catalog row,env_default_o2_pct,B3,default air O2; read the row
+src/wormemu/mech/senses_chem.py,0.04,"hd.get(""co2_pct"", 0.04)",duplicate of a catalog row,env_default_co2_pct,B3,default air CO2; read the row
+src/wormemu/mech/senses_chem.py,30.0,self.cas.advance(30.0,numerics,,B3,30 s pre-run of the cGMP cascade to steady state at the first step's stimulus
+src/wormemu/mech/senses_chem.py,0.001,self.cas.advance(30.0,numerics,,B3,pre-run step (s)
+src/wormemu/mech/senses_touch.py,4,k * k + 4 * k * q * F,arithmetic,,,the quadratic root's 4ac
+src/wormemu/mech/senses_touch.py,60.0,"np.clip(bdg, -60.0, 60.0)",numerics,,B3,overflow guard on the Boltzmann exponent (kT units)
+src/wormemu/mech/senses_touch.py,-60.0,"np.clip(bdg, -60.0, 60.0)",numerics,,B3,as above
+src/wormemu/mech/senses_touch.py,0.25,h_ms=0.25,numerics,,B3,default substep (ms)
+src/wormemu/mech/senses_touch.py,0.5,"0.5 if c.startswith(""FLP"")",parameter (catalog row),nose_flp_channel_frac,B3,FLP's share of the nose channels; the catalog row lists it
+src/wormemu/mech/observation.py,2311,default_rng(seed + 2311),numerics,,B3,random-stream offset (seed)
+src/wormemu/mech/observation.py,1000,default_rng(1000 +,numerics,,B3,random-stream offset (seed)
+src/wormemu/mech/observation.py,0.1,thirds = {,analysis,,B3,"body regions for the readout (head, midbody, tail windows)"
+src/wormemu/mech/observation.py,0.4,thirds = {,analysis,,B3,"body regions for the readout (head, midbody, tail windows)"
+src/wormemu/mech/observation.py,0.6,thirds = {,analysis,,B3,"body regions for the readout (head, midbody, tail windows)"
+src/wormemu/mech/observation.py,6,thirds = {,analysis,,B3,"body regions for the readout (head, midbody, tail windows)"
+src/wormemu/mech/observation.py,5,thirds = {,analysis,,B3,"body regions for the readout (head, midbody, tail windows)"
+src/wormemu/mech/observation.py,0.1,band = (s >= 0.1) & (s <= 0.9),analysis,,B3,the body band the readout averages over
+src/wormemu/mech/observation.py,0.9,band = (s >= 0.1) & (s <= 0.9),analysis,,B3,the body band the readout averages over
+src/wormemu/mech/senses_base.py,0.5,SensG(brain.soma[i](0.5)),structure,,,NEURON section midpoint
+src/wormemu/body/environment.py,0.00357,"WATER_CT, WATER_CN",mirrors a catalog row,mw_water_Ct,B3,the driver's RFT coefficients for water; the rows list them
+src/wormemu/body/environment.py,0.005675,"WATER_CT, WATER_CN",mirrors a catalog row,mw_water_Cn,B3,as above
+src/wormemu/body/environment.py,0.2,self.h = 0.2 * dx * dx,numerics,,B3,"explicit diffusion step, inside the 0.25 dx^2/D stability limit"
+src/wormemu/body/environment.py,4,- 4 * self.X,arithmetic,,,five-point Laplacian
+src/wormemu/body/environment.py,1.000001,self.n - 1.000001,numerics,,B3,keeps the interpolation index inside the grid
+src/wormemu/body/environment.py,0.05,dx_mm: float = 0.05,numerics,,B3,field grid spacing (mm); needs a convergence check
+src/wormemu/body/environment.py,0.1,dt_s: float = 0.1,numerics,,B3,field step (s)
+src/wormemu/body/environment.py,30.0,range(int(30.0 / dt_s)),numerics,,B3,30 s pre-run of the O2/CO2 fields to steady state
+src/wormemu/body/environment.py,4,"(4 * p[""salt_D_mm2_s""] * age)",arithmetic,,,the diffusion Gaussian's 4 D t
+src/wormemu/body/environment.py,5.0,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,5.3,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,0.25,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,7.0,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,7.3,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,0.8,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,8.5,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/environment.py,8.8,"(""eyelash"", ",analysis,,B3,"the everything-on check's stimulus schedule (times in s, touch sites as body fraction): a protocol, not the model"
+src/wormemu/body/layers.py,40,N_ZBINS = 40,numerics,,B3,bins along the body axis for the mesh lookup
+src/wormemu/body/layers.py,4,def _barycentric(n: int = 4),structure,,,a tetrahedron's four vertices
+src/wormemu/body/layers.py,6,)) / 6,arithmetic,,,tetrahedron volume = |det| / 6
+src/wormemu/body/loop.py,4,if a.size <= 4:,structure,,,output formatting: short vectors are written element by element
+src/wormemu/body/environment.py,2.0,"half = p[""lawn_radius_mm""] + 2.0",numerics,,B3,margin (mm) of the O2/CO2 field grid beyond the lawn edge; needs a check that the field near the lawn does not depend on it
+src/wormemu/body/environment.py,3.0,"(""tap"", 3.0",analysis,,B3,the everything-on check's stimulus schedule: tap at 3 s
+src/wormemu/mech/pumps.py,3.0,3.0 *,structure,,,"3 Na+ per pump cycle (the Na/K-ATPase's 3 Na+ out, 2 K+ in)"
+src/wormemu/mech/senses_cgmp.py,2,"return (v / 2, v * 2)",range rule (the rows show it),,B3,the guessed x/2 to x2 range the Usuyama rows carry
+src/wormemu/mech/senses_cgmp.py,10,"sorted((v / 10, v * 10))",range rule (the rows show it),,B3,the guessed x/10 to x10 range the Usuyama rows carry

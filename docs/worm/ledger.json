@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 23:27 CST",
+ "generated_at": "2026-11-06 23:42 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 1206,
   "mechanisms": 84,
   "by_label": {
-   "derived": 67501,
-   "guessed": 9127,
-   "inferred": 111,
+   "derived": 67504,
+   "guessed": 9126,
+   "inferred": 109,
    "measured": 6178,
    "published_fit": 8033
   },
-  "known": 81823,
-  "placeholder": 9127,
+  "known": 81824,
+  "placeholder": 9126,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9127
+  "must_fill": 9126
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9127,
-   "derived": 3093,
-   "inferred": 111,
+   "guessed": 9126,
+   "derived": 3096,
+   "inferred": 109,
    "measured": 326
   },
-  "known": 10836,
-  "placeholder": 9127,
+  "known": 10837,
+  "placeholder": 9126,
   "gap": 0,
-  "must_fill": 9127
+  "must_fill": 9126
  },
  "source_by_fill_kind": {
   "all": {
@@ -50,16 +50,16 @@
    "literature": {
     "guessed": 5471,
     "measured": 6177,
-    "derived": 3093,
-    "inferred (ours)": 14,
+    "derived": 3096,
+    "inferred (ours)": 15,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3652,
-    "inferred (ours)": 97,
+    "guessed": 3651,
+    "inferred (ours)": 94,
     "measured": 1
    },
    "c302": {
@@ -73,17 +73,17 @@
    },
    "literature": {
     "guessed": 5471,
-    "derived": 3093,
+    "derived": 3096,
     "measured": 325,
-    "inferred (ours)": 14,
+    "inferred (ours)": 15,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3652,
-    "inferred (ours)": 97,
+    "guessed": 3651,
+    "inferred (ours)": 94,
     "measured": 1
    },
    "c302": {
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 1,
-   "guessed": 175,
-   "inferred": 62,
+   "guessed": 176,
+   "inferred": 61,
    "measured": 29,
    "published_fit": 87
   },
@@ -136,9 +136,9 @@
    "guessed": 65
   },
   "global": {
-   "derived": 15,
-   "guessed": 145,
-   "inferred": 42,
+   "derived": 18,
+   "guessed": 143,
+   "inferred": 41,
    "measured": 29,
    "published_fit": 221
   },
@@ -1148,9 +1148,9 @@
    "absent_reason": "",
    "numbers": 12,
    "by_label": {
-    "derived": 1,
+    "derived": 2,
     "guessed": 7,
-    "inferred": 3,
+    "inferred": 2,
     "measured": 1
    }
   },
@@ -1305,8 +1305,8 @@
    "absent_reason": "",
    "numbers": 8,
    "by_label": {
-    "guessed": 3,
-    "inferred": 4,
+    "guessed": 4,
+    "inferred": 3,
     "measured": 1
    }
   },
@@ -1517,8 +1517,8 @@
    "absent_reason": "",
    "numbers": 22,
    "by_label": {
-    "derived": 1,
-    "guessed": 9,
+    "derived": 3,
+    "guessed": 7,
     "inferred": 2,
     "measured": 10
    }
@@ -30591,10 +30591,10 @@
    "n_values": 1,
    "value_template": 16.0,
    "template_source": "URX/AQR/PQR respond above ~15-17% O2 (Zimmer et al. 2009; Busch et al. 2012)",
-   "bio_min": 0.0,
+   "bio_min": 10.0,
    "bio_max": 21.0,
    "bound_basis": "measured_this_class",
-   "bound_source": "Zimmer et al. 2009 Neuron 61:865; Busch et al. 2012 Nat Neurosci 15:581 (param_ranges J9)",
+   "bound_source": "Zimmer, Gross, Chang, Yu, Ripley, Sundberg, Kay, Bertness & Bargmann 2009 Neuron 61:865 (PMC2760494), Results (Fig. 3): URX and BAG G-CaMP responses to shifts to 4, 10, 15 and 21% O2",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -30606,11 +30606,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 16 % O2, label inferred, range [0, 21]; URX is low after a 21 to 10% downshift and strongly on at 15% and 21%, so its half-activation lies between the tested 10% and 21%; the range came from research file J9, [0, 21], the whole O2 axis (the same error corrected on the layer row o2_threshold_pct). Template 16 is inside",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/",
-   "source_quote": "",
+   "source_quote": "Strong URX calcium signals were observed when animals were shifted to either 15% or 21% O 2 ( Figure 3A,B ). Responses were graded in magnitude, so that a large O 2 upshift resulted in larger calcium signals",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -30655,10 +30655,10 @@
    "n_values": 1,
    "value_template": 10.0,
    "template_source": "BAG responds below ~10% O2 (Zimmer et al. 2009)",
-   "bio_min": 0.0,
-   "bio_max": 21.0,
-   "bound_basis": "measured_this_class",
-   "bound_source": "Zimmer et al. 2009 Neuron 61:865; Busch et al. 2012 Nat Neurosci 15:581 (param_ranges J9)",
+   "bio_min": 4.0,
+   "bio_max": 15.0,
+   "bound_basis": "guessed",
+   "bound_source": "Zimmer, Gross, Chang, Yu, Ripley, Sundberg, Kay, Bertness & Bargmann 2009 Neuron 61:865 (PMC2760494), Results (Fig. 3): URX and BAG G-CaMP responses to shifts to 4, 10, 15 and 21% O2",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -30670,11 +30670,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 10 % O2, label inferred, range [0, 21]; BAG is strongly on at 4% and weakly on at 10%, so its half-activation is above 4% (measured end) and near or somewhat above 10%; the upper end 15 is the module's own (guessed). Was [0, 21] from research file J9, the whole axis. Template 10 is inside",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/",
-   "source_quote": "",
+   "source_quote": "Strong BAG calcium signals were observed when animals were shifted to 4% O 2 , and weaker responses were observed when animals were shifted to 10% O 2",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -30717,8 +30717,8 @@
    "applies_to": "BAGL, BAGR",
    "unit": "% CO2",
    "n_values": 1,
-   "value_template": 2.5,
-   "template_source": "BAG responds to 0.5-10% CO2 (Hallem et al. 2011; Bretscher et al. 2011)",
+   "value_template": 2.9,
+   "template_source": "Bretscher, Kodama-Namba, Busch, Murray, Lagnado & de Bono 2011 Neuron 69:1099 (PMC3115024), Results (Fig. 3D): BAG Cameleon ratio change against % CO2",
    "bio_min": 0.5,
    "bio_max": 10.0,
    "bound_basis": "guessed",
@@ -30730,15 +30730,15 @@
    "prior_basis": "guessed: log-uniform over the range",
    "label": "inferred",
    "fill_kind": "inferred (ours)",
-   "source_project": "ours",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 2.5 % CO2, label inferred, range [0.5, 10]; the module's K is the half-activation of BAG's CO2 drive (hill(co2, K, n)), and the paper's dose-response gives BAG's half-maximum at about 2.9% (was 2.5, from 'responds to 0.5-10%'). Inferred, not measured: the paper's half-maximum is of the calcium signal, and the model maps it onto the transduction step. Range kept [0.5, 10] (research file J10). Carries over the literature from the old layer row co2_threshold_pct, which the default no longer reads",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3115024/",
-   "source_quote": "",
+   "source_quote": "A plot of mean fluorescence ratio change against percent (%) CO 2 suggests that BAG reaches half-maximal activity at \u223c2.9% CO 2",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -32349,28 +32349,28 @@
    "applies_to": "VB, DB",
    "unit": "body length",
    "n_values": 1,
-   "value_template": 0.4,
-   "template_source": "Wen et al. 2012 (anterior bending drives the region behind it); as brain_layers' proprio_field_frac",
-   "bio_min": 0.25,
-   "bio_max": 0.5,
+   "value_template": 0.2,
+   "template_source": "Wen et al. 2012 Neuron 76:750 (PMC3508473)",
+   "bio_min": 0.15,
+   "bio_max": 0.25,
    "bound_basis": "measured_this_class",
-   "bound_source": "Wen et al. 2012 Neuron 76:750 (search summary) (param_ranges J12)",
+   "bound_source": "Wen et al. 2012 Neuron 76:750 (PMC3508473)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 0.4 body length, label inferred, range [0.25, 0.5]; the module copied the old layer value 0.4 [0.25, 0.5] (proprio_field_frac), which came from a search summary the paper does not support; Wen 2012 gives about 200 um, 0.2 of a 1 mm worm (derived); the range is 200 um over 0.8-1.3 mm worms. Same fill as proprio_field_frac, carried to the row the default reads",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/",
-   "source_quote": "",
+   "source_quote": "We can infer the spatial extent of this coupling l to be ~ 200 \u00b5m based on our direct measurements ( Figure 3D ). For a one millimeter-long worm",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -36897,20 +36897,20 @@
    "template_source": "Boyle, Berri & Cohen 2012 (form); row 12's value",
    "bio_min": 0.002,
    "bio_max": 0.05,
-   "bound_basis": "measured_related",
+   "bound_basis": "guessed",
    "bound_source": "Boyle, Berri & Cohen 2012 (form); row 12's value",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the BWM value (bwm_act_khalf_mM) used for enteric muscle",
+   "notes": "the BWM value (bwm_act_khalf_mM) used for enteric muscle; relabel 6 Nov (catalog audit): was 0.014 mM, label inferred, range [0.002, 0.05]; copied from bwm_act_khalf_mM (row 12), which is guessed: a value copied from a guessed row is guessed; was labelled inferred. Number unchanged; range 6 Nov (catalog audit): was 0.014 mM, label guessed, range [0.002, 0.05]; the range [0.002, 0.05] is row 12's (bwm_act_khalf_mM), whose basis is guessed; the catalog had called it measured_related only because the old label was inferred and the source named Boyle 2012 (for the form, not the number)",
    "plan_row": 12,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/",
@@ -39870,11 +39870,11 @@
    "unit": "nM",
    "n_values": 1,
    "value_template": 144.0,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 130.0,
    "bio_max": 160.0,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -39886,11 +39886,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 144 nM, label measured, range [130, 160]; the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -39902,11 +39902,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 2.9,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 2.5,
    "bio_max": 3.3,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -39918,11 +39918,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 2.9 1, label measured, range [2.5, 3.3]; the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -39934,11 +39934,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 63.2,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026): F_sat / F_apo",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 50.0,
    "bio_max": 70.0,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026): F_sat / F_apo",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -39950,11 +39950,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 63.2 1, label measured, range [50, 70]; the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -39965,28 +39965,28 @@
    "applies_to": "GCaMP6s",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 550.0,
-   "template_source": "recalled, not opened: ~0.5 s half-decay after one spike in mouse cortex; slower at 20 C and in nuclei",
+   "value_template": 619.0,
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 300.0,
    "bio_max": 2000.0,
    "bound_basis": "guessed",
-   "bound_source": "recalled, not opened: ~0.5 s half-decay after one spike in mouse cortex; slower at 20 C and in nuclei",
+   "bound_source": "kept from before the value fill: recalled, not opened: ~0.5 s half-decay after one spike in mouse cortex; slower at 20 C and in nuclei",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3 (culture, 1 AP)",
+   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3 (culture, 1 AP); fill 6 Nov (catalog audit): was 550 ms, label guessed, range [300, 2000]; the module's half-time is the sensor's own unbinding (binding_step: koff = ln 2 / thalf), which the stopped-flow koff measures: ln 2 / 1.12 per s = 619 ms (derived), at room temperature, near the worm's 20 C. Was 550, recalled: that is the in vivo half-decay after 1 AP in mouse V1 at 37 C (Supplementary Table 3: 550 \u00b1 52 ms), which also contains calcium clearance. Range kept [300, 2000]",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
+   "source_quote": "GCaMP6s 63.2\u00b13.1 144\u00b14 2.90\u00b10.17 1.12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -39998,11 +39998,11 @@
    "unit": "nM",
    "n_values": 1,
    "value_template": 375.0,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 340.0,
    "bio_max": 410.0,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -40014,11 +40014,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 375 nM, label measured, range [340, 410]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40030,11 +40030,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 2.27,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 2.0,
    "bio_max": 2.5,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -40046,11 +40046,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 2.27 1, label measured, range [2, 2.5]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40062,11 +40062,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 51.8,
-   "template_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026): F_sat / F_apo",
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 45.0,
    "bio_max": 60.0,
    "bound_basis": "measured_related",
-   "bound_source": "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026): F_sat / F_apo",
+   "bound_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -40078,11 +40078,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 51.8 1, label measured, range [45, 60]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
-   "source_quote": "",
+   "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40093,28 +40093,28 @@
    "applies_to": "GCaMP6f",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 150.0,
-   "template_source": "recalled, not opened: ~0.15 s half-decay after one spike in mouse cortex",
+   "value_template": 176.0,
+   "template_source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
    "bio_min": 80.0,
    "bio_max": 600.0,
    "bound_basis": "guessed",
-   "bound_source": "recalled, not opened: ~0.15 s half-decay after one spike in mouse cortex",
+   "bound_source": "kept from before the value fill: recalled, not opened: ~0.15 s half-decay after one spike in mouse cortex",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3",
+   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3; fill 6 Nov (catalog audit): was 150 ms, label guessed, range [80, 600]; as obs_gcamp6s_thalf_ms: ln 2 / 3.93 per s = 176 ms (derived, room temperature). Was 150, recalled; the in vivo 1 AP half-decay in mouse V1 is 142 \u00b1 11 ms (Supplementary Table 3), faster at 37 C. Range kept [80, 600]",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
+   "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40701,38 +40701,38 @@
   "note": "the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are numbers (elements), not rows, unless the key says rows",
   "totals": {
    "rows": {
-    "published_fit": 555,
-    "guessed": 458,
+    "published_fit": 596,
+    "guessed": 459,
     "measured": 277,
-    "derived": 33,
-    "inferred": 112,
+    "derived": 36,
+    "inferred": 110,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 8079,
-    "guessed": 9262,
+    "published_fit": 8120,
+    "guessed": 9263,
     "measured": 6233,
-    "derived": 67513,
-    "inferred": 118,
+    "derived": 67516,
+    "inferred": 116,
     "absent": 5
    },
-   "n_rows": 1440,
-   "n_numbers": 91210
+   "n_rows": 1483,
+   "n_numbers": 91253
   },
   "by_label_rows": {
-   "published_fit": 555,
-   "guessed": 458,
+   "published_fit": 596,
+   "guessed": 459,
    "measured": 277,
-   "derived": 33,
-   "inferred": 112,
+   "derived": 36,
+   "inferred": 110,
    "absent": 5
   },
   "by_label_numbers": {
-   "published_fit": 8079,
-   "guessed": 9262,
+   "published_fit": 8120,
+   "guessed": 9263,
    "measured": 6233,
-   "derived": 67513,
-   "inferred": 118,
+   "derived": 67516,
+   "inferred": 116,
    "absent": 5
   },
   "by_plan_row": {
@@ -40878,23 +40878,23 @@
    },
    "12": {
     "rows": {
-     "published_fit": 65,
-     "guessed": 14,
-     "inferred": 5,
+     "published_fit": 96,
+     "guessed": 15,
+     "inferred": 4,
      "measured": 1,
      "derived": 3,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 346,
-     "guessed": 204,
-     "inferred": 5,
+     "published_fit": 377,
+     "guessed": 205,
+     "inferred": 4,
      "measured": 1,
      "derived": 3,
      "absent": 1
     },
-    "n_rows": 89,
-    "n_numbers": 560
+    "n_rows": 120,
+    "n_numbers": 591
    },
    "13": {
     "rows": {
@@ -40917,18 +40917,18 @@
    "14": {
     "rows": {
      "measured": 4,
-     "guessed": 43,
+     "guessed": 44,
      "derived": 1,
      "inferred": 6
     },
     "numbers": {
      "measured": 4,
-     "guessed": 43,
+     "guessed": 44,
      "derived": 1,
      "inferred": 6
     },
-    "n_rows": 54,
-    "n_numbers": 54
+    "n_rows": 55,
+    "n_numbers": 55
    },
    "15": {
     "rows": {
@@ -40964,23 +40964,23 @@
    },
    "17": {
     "rows": {
-     "guessed": 61,
-     "inferred": 25,
+     "guessed": 62,
+     "inferred": 24,
      "measured": 10,
-     "derived": 3,
-     "published_fit": 140,
+     "derived": 4,
+     "published_fit": 145,
      "absent": 4
     },
     "numbers": {
-     "guessed": 61,
-     "inferred": 25,
+     "guessed": 62,
+     "inferred": 24,
      "measured": 10,
-     "derived": 3,
-     "published_fit": 140,
+     "derived": 4,
+     "published_fit": 145,
      "absent": 4
     },
-    "n_rows": 243,
-    "n_numbers": 243
+    "n_rows": 249,
+    "n_numbers": 249
    },
    "18": {
     "rows": {
@@ -41066,14 +41066,14 @@
     "rows": {
      "measured": 16,
      "inferred": 3,
-     "derived": 1,
-     "guessed": 16
+     "derived": 3,
+     "guessed": 14
     },
     "numbers": {
      "measured": 16,
      "inferred": 3,
-     "derived": 1,
-     "guessed": 16
+     "derived": 3,
+     "guessed": 14
     },
     "n_rows": 36,
     "n_numbers": 36
@@ -41121,18 +41121,18 @@
    "27": {
     "rows": {
      "guessed": 12,
-     "published_fit": 3,
+     "published_fit": 8,
      "inferred": 4,
      "derived": 2
     },
     "numbers": {
      "guessed": 12,
-     "published_fit": 3,
+     "published_fit": 8,
      "inferred": 4,
      "derived": 2
     },
-    "n_rows": 21,
-    "n_numbers": 21
+    "n_rows": 26,
+    "n_numbers": 26
    },
    "28": {
     "rows": {
@@ -41177,17 +41177,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 63,
+     "inferred": 62,
      "measured": 33,
-     "guessed": 201,
+     "guessed": 202,
      "published_fit": 89,
      "derived": 2,
      "absent": 4
     },
     "numbers": {
-     "inferred": 63,
+     "inferred": 62,
      "measured": 33,
-     "guessed": 201,
+     "guessed": 202,
      "published_fit": 89,
      "derived": 2,
      "absent": 4
@@ -41247,23 +41247,23 @@
    },
    "global": {
     "rows": {
-     "published_fit": 265,
+     "published_fit": 306,
      "guessed": 168,
-     "inferred": 46,
+     "inferred": 45,
      "measured": 55,
-     "derived": 25,
+     "derived": 28,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 265,
+     "published_fit": 306,
      "guessed": 168,
-     "inferred": 46,
+     "inferred": 45,
      "measured": 55,
-     "derived": 25,
+     "derived": 28,
      "absent": 1
     },
-    "n_rows": 560,
-    "n_numbers": 560
+    "n_rows": 603,
+    "n_numbers": 603
    },
    "muscle": {
     "rows": {
@@ -41304,17 +41304,17 @@
   "by_used": {
    "hard-coded": {
     "rows": {
-     "guessed": 4,
+     "guessed": 6,
      "measured": 2,
-     "published_fit": 13
+     "published_fit": 54
     },
     "numbers": {
-     "guessed": 4,
+     "guessed": 6,
      "measured": 2,
-     "published_fit": 13
+     "published_fit": 54
     },
-    "n_rows": 19,
-    "n_numbers": 19
+    "n_rows": 62,
+    "n_numbers": 62
    },
    "other form only": {
     "rows": {
@@ -41355,17 +41355,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 301,
+     "guessed": 300,
      "measured": 217,
-     "derived": 21,
-     "inferred": 95
+     "derived": 24,
+     "inferred": 93
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8961,
+     "guessed": 8960,
      "measured": 6074,
-     "derived": 67501,
-     "inferred": 100
+     "derived": 67504,
+     "inferred": 98
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41411,17 +41411,17 @@
    },
    "hidden": {
     "rows": {
-     "guessed": 4,
+     "guessed": 6,
      "measured": 2,
-     "published_fit": 13
+     "published_fit": 54
     },
     "numbers": {
-     "guessed": 4,
+     "guessed": 6,
      "measured": 2,
-     "published_fit": 13
+     "published_fit": 54
     },
-    "n_rows": 19,
-    "n_numbers": 19
+    "n_rows": 62,
+    "n_numbers": 62
    },
    "layers": {
     "rows": {
@@ -41526,12 +41526,14 @@
    "mech:observation": {
     "rows": {
      "measured": 8,
-     "guessed": 14,
+     "derived": 2,
+     "guessed": 12,
      "inferred": 1
     },
     "numbers": {
      "measured": 8,
-     "guessed": 14,
+     "derived": 2,
+     "guessed": 12,
      "inferred": 1
     },
     "n_rows": 23,
@@ -41551,13 +41553,13 @@
    },
    "mech:organs_intestine": {
     "rows": {
-     "guessed": 32,
-     "inferred": 9,
+     "guessed": 33,
+     "inferred": 8,
      "measured": 4
     },
     "numbers": {
-     "guessed": 32,
-     "inferred": 9,
+     "guessed": 33,
+     "inferred": 8,
      "measured": 4
     },
     "n_rows": 45,
@@ -41661,12 +41663,14 @@
     "rows": {
      "measured": 1,
      "guessed": 6,
-     "inferred": 3
+     "inferred": 2,
+     "derived": 1
     },
     "numbers": {
      "measured": 1,
      "guessed": 6,
-     "inferred": 3
+     "inferred": 2,
+     "derived": 1
     },
     "n_rows": 10,
     "n_numbers": 10
@@ -41765,23 +41769,23 @@
    },
    "physiology": {
     "rows": {
-     "published_fit": 541,
-     "guessed": 458,
-     "derived": 29,
-     "inferred": 112,
+     "published_fit": 582,
+     "guessed": 459,
+     "derived": 32,
+     "inferred": 110,
      "measured": 273,
      "absent": 5
     },
     "numbers": {
-     "published_fit": 7340,
-     "guessed": 9262,
-     "derived": 3103,
-     "inferred": 118,
+     "published_fit": 7381,
+     "guessed": 9263,
+     "derived": 3106,
+     "inferred": 116,
      "measured": 381,
      "absent": 5
     },
-    "n_rows": 1418,
-    "n_numbers": 20209
+    "n_rows": 1461,
+    "n_numbers": 20252
    },
    "structure": {
     "rows": {
@@ -42109,19 +42113,19 @@
    }
   ],
   "audit": {
-   "rows_ok": 1346,
+   "rows_ok": 1389,
    "rows_with_problems": 94,
    "by_status": {
-    "ok": 1346,
+    "ok": 1389,
     "finding": 94
    },
    "rows_read": 198,
    "quotes": {
-    "none": 1082,
-    "paper text (read audit, 6 Nov)": 213,
+    "none": 1108,
+    "paper text (read audit, 6 Nov)": 230,
     "research file (scripted check)": 145
    },
-   "with_url": 1051,
+   "with_url": 1094,
    "links": {
     "distinct": 145,
     "by_status": {
@@ -42129,7 +42133,7 @@
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-06 23:27 CST"
+    "checked_at": "2026-11-06 23:42 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45144,6 +45148,188 @@
     "url": ""
    },
    {
+    "param_id": "sens_co2_K_pct",
+    "kind": "fill",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "2.5 -> 2.9 % CO2; inferred -> inferred; range [0.5, 10] -> [0.5, 10]",
+    "reason": "the module's K is the half-activation of BAG's CO2 drive (hill(co2, K, n)), and the paper's dose-response gives BAG's half-maximum at about 2.9% (was 2.5, from 'responds to 0.5-10%'). Inferred, not measured: the paper's half-maximum is of the calcium signal, and the model maps it onto the transduction step. Range kept [0.5, 10] (research file J10). Carries over the literature from the old layer row co2_threshold_pct, which the default no longer reads",
+    "source": "Bretscher, Kodama-Namba, Busch, Murray, Lagnado & de Bono 2011 Neuron 69:1099 (PMC3115024), Results (Fig. 3D): BAG Cameleon ratio change against % CO2",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3115024/"
+   },
+   {
+    "param_id": "sens_o2_up_K_pct",
+    "kind": "range",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "16 -> 16 % O2; inferred -> inferred; range [0, 21] -> [10, 21]",
+    "reason": "URX is low after a 21 to 10% downshift and strongly on at 15% and 21%, so its half-activation lies between the tested 10% and 21%; the range came from research file J9, [0, 21], the whole O2 axis (the same error corrected on the layer row o2_threshold_pct). Template 16 is inside",
+    "source": "Zimmer, Gross, Chang, Yu, Ripley, Sundberg, Kay, Bertness & Bargmann 2009 Neuron 61:865 (PMC2760494), Results (Fig. 3): URX and BAG G-CaMP responses to shifts to 4, 10, 15 and 21% O2",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/"
+   },
+   {
+    "param_id": "sens_o2_down_K_pct",
+    "kind": "range",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "10 -> 10 % O2; inferred -> inferred; range [0, 21] -> [4, 15]",
+    "reason": "BAG is strongly on at 4% and weakly on at 10%, so its half-activation is above 4% (measured end) and near or somewhat above 10%; the upper end 15 is the module's own (guessed). Was [0, 21] from research file J9, the whole axis. Template 10 is inside",
+    "source": "Zimmer, Gross, Chang, Yu, Ripley, Sundberg, Kay, Bertness & Bargmann 2009 Neuron 61:865 (PMC2760494), Results (Fig. 3): URX and BAG G-CaMP responses to shifts to 4, 10, 15 and 21% O2",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/"
+   },
+   {
+    "param_id": "proprio_bfield_frac",
+    "kind": "fill",
+    "origin": "mech:senses_proprio",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "derived",
+    "change": "0.4 -> 0.2 body length; inferred -> derived; range [0.25, 0.5] -> [0.15, 0.25]",
+    "reason": "the module copied the old layer value 0.4 [0.25, 0.5] (proprio_field_frac), which came from a search summary the paper does not support; Wen 2012 gives about 200 um, 0.2 of a 1 mm worm (derived); the range is 200 um over 0.8-1.3 mm worms. Same fill as proprio_field_frac, carried to the row the default reads",
+    "source": "Wen et al. 2012 Neuron 76:750 (PMC3508473)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/"
+   },
+   {
+    "param_id": "obs_gcamp6s_thalf_ms",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "550 -> 619 ms; guessed -> derived; range [300, 2000] -> [300, 2000]",
+    "reason": "the module's half-time is the sensor's own unbinding (binding_step: koff = ln 2 / thalf), which the stopped-flow koff measures: ln 2 / 1.12 per s = 619 ms (derived), at room temperature, near the worm's 20 C. Was 550, recalled: that is the in vivo half-decay after 1 AP in mouse V1 at 37 C (Supplementary Table 3: 550 \u00b1 52 ms), which also contains calcium clearance. Range kept [300, 2000]",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6f_thalf_ms",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "150 -> 176 ms; guessed -> derived; range [80, 600] -> [80, 600]",
+    "reason": "as obs_gcamp6s_thalf_ms: ln 2 / 3.93 per s = 176 ms (derived, room temperature). Was 150, recalled; the in vivo 1 AP half-decay in mouse V1 is 142 \u00b1 11 ms (Supplementary Table 3), faster at 37 C. Range kept [80, 600]",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6s_hill",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6s_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "2.9 -> 2.9 1; measured -> measured; range [2.5, 3.3] -> [2.5, 3.3]",
+    "reason": "the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6s_kd_nM",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6s_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "144 -> 144 nM; measured -> measured; range [130, 160] -> [130, 160]",
+    "reason": "the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6s_range",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6s_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "63.2 -> 63.2 1; measured -> measured; range [50, 70] -> [50, 70]",
+    "reason": "the row read this table through a secondary source; checked against the supplement itself: Fmax/Fmin 63.2, Kd 144 nM, Hill 2.90, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6f_hill",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6f_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "2.27 -> 2.27 1; measured -> measured; range [2, 2.5] -> [2, 2.5]",
+    "reason": "checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6f_kd_nM",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6f_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "375 -> 375 nM; measured -> measured; range [340, 410] -> [340, 410]",
+    "reason": "checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "obs_gcamp6f_range",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "obs_gcamp6f_[khr]*",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "51.8 -> 51.8 1; measured -> measured; range [45, 60] -> [45, 60]",
+    "reason": "checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+    "source": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+   },
+   {
+    "param_id": "ent_act_khalf_mM",
+    "kind": "relabel",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "0.014 -> 0.014 mM; inferred -> guessed; range [0.002, 0.05] -> [0.002, 0.05]",
+    "reason": "copied from bwm_act_khalf_mM (row 12), which is guessed: a value copied from a guessed row is guessed; was labelled inferred. Number unchanged",
+    "source": "Boyle, Berri & Cohen 2012 (form); row 12's value",
+    "url": ""
+   },
+   {
+    "param_id": "ent_act_khalf_mM",
+    "kind": "range",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0.014 -> 0.014 mM; guessed -> guessed; range [0.002, 0.05] -> [0.002, 0.05]",
+    "reason": "the range [0.002, 0.05] is row 12's (bwm_act_khalf_mM), whose basis is guessed; the catalog had called it measured_related only because the old label was inferred and the source named Boyle 2012 (for the form, not the number)",
+    "source": "Boyle, Berri & Cohen 2012 (form); row 12's value",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -45184,18 +45370,37 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-06 23:00 CST",
+   "generated_at": "2026-11-06 23:41 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
+    "src/wormemu/mech/capool.py",
+    "src/wormemu/mech/glia.py",
     "src/wormemu/mech/learning.py",
+    "src/wormemu/mech/metabolism.py",
+    "src/wormemu/mech/muscle_bwm.py",
     "src/wormemu/mech/neuromod.py",
     "src/wormemu/mech/noise.py",
+    "src/wormemu/mech/observation.py",
+    "src/wormemu/mech/organs_egglaying.py",
+    "src/wormemu/mech/organs_intestine.py",
+    "src/wormemu/mech/organs_nrn.py",
+    "src/wormemu/mech/organs_other.py",
+    "src/wormemu/mech/organs_pharynx.py",
     "src/wormemu/mech/plasticity.py",
+    "src/wormemu/mech/pumps.py",
     "src/wormemu/mech/receptors.py",
+    "src/wormemu/mech/senses_base.py",
+    "src/wormemu/mech/senses_cgmp.py",
+    "src/wormemu/mech/senses_chem.py",
+    "src/wormemu/mech/senses_proprio.py",
+    "src/wormemu/mech/senses_touch.py",
     "src/wormemu/mech/slow_signalling.py",
+    "src/wormemu/mech/temperature.py",
     "src/wormemu/brain.py",
     "src/wormemu/brain_layers.py",
     "src/wormemu/body/__init__.py",
+    "src/wormemu/body/environment.py",
+    "src/wormemu/body/layers.py",
     "src/wormemu/body/ledger.py",
     "src/wormemu/body/loop.py",
     "src/wormemu/body/metaworm.py",
@@ -45205,57 +45410,121 @@
     "src/wormemu/nmodl/wgc.mod",
     "src/wormemu/nmodl/wsyn.mod"
    ],
-   "total": 352,
+   "total": 690,
    "by_file": {
-    "src/wormemu/mech/noise.py": 95,
-    "src/wormemu/brain.py": 43,
-    "third_party/metaworm/driver/run_body.cpp": 41,
-    "src/wormemu/body/loop.py": 37,
+    "src/wormemu/mech/noise.py": 94,
+    "src/wormemu/mech/muscle_bwm.py": 71,
+    "src/wormemu/mech/organs_intestine.py": 49,
+    "third_party/metaworm/driver/run_body.cpp": 44,
+    "src/wormemu/brain.py": 39,
+    "src/wormemu/mech/metabolism.py": 39,
+    "src/wormemu/body/loop.py": 38,
     "src/wormemu/body/metaworm.py": 34,
+    "src/wormemu/body/environment.py": 29,
     "src/wormemu/brain_layers.py": 29,
-    "src/wormemu/mech/neuromod.py": 20,
+    "src/wormemu/mech/organs_pharynx.py": 28,
+    "src/wormemu/mech/observation.py": 20,
+    "src/wormemu/mech/neuromod.py": 19,
+    "src/wormemu/mech/pumps.py": 17,
+    "src/wormemu/mech/organs_egglaying.py": 16,
+    "src/wormemu/mech/senses_cgmp.py": 16,
+    "src/wormemu/mech/glia.py": 15,
     "src/wormemu/nmodl/wsyn.mod": 15,
+    "src/wormemu/body/layers.py": 14,
     "src/wormemu/body/scene.py": 13,
     "src/wormemu/mech/slow_signalling.py": 12,
+    "src/wormemu/mech/senses_chem.py": 8,
+    "src/wormemu/mech/senses_touch.py": 8,
     "src/wormemu/mech/plasticity.py": 6,
+    "src/wormemu/mech/organs_other.py": 5,
     "src/wormemu/mech/receptors.py": 4,
     "src/wormemu/mech/learning.py": 2,
-    "src/wormemu/body/ledger.py": 1
+    "src/wormemu/body/ledger.py": 1,
+    "src/wormemu/mech/capool.py": 1,
+    "src/wormemu/mech/organs_nrn.py": 1,
+    "src/wormemu/mech/senses_base.py": 1,
+    "src/wormemu/mech/senses_proprio.py": 1,
+    "src/wormemu/mech/temperature.py": 1
    },
    "by_kind": {
-    "named constant": 94,
-    "unit conversion": 68,
-    "inline": 63,
-    "small integer": 60,
-    "shape or count": 33,
-    "numerical guard": 19,
-    "function default": 15
+    "inline": 175,
+    "unit conversion": 153,
+    "named constant": 126,
+    "small integer": 102,
+    "shape or count": 52,
+    "function default": 41,
+    "numerical guard": 41
    },
    "by_verdict": {
-    "unit conversion": 72,
-    "mirrors a catalog row": 68,
-    "structure": 58,
-    "arithmetic": 56,
-    "numerics": 23,
+    "unit conversion": 157,
+    "arithmetic": 96,
+    "structure": 92,
+    "mirrors a catalog row": 70,
+    "numerics": 70,
+    "analysis": 53,
+    "parameter (catalog row)": 50,
+    "default shadowed by a catalog row": 20,
+    "duplicate of a catalog row": 18,
     "test stand-in": 17,
     "mod default overwritten": 15,
     "ported-mode fallback": 14,
-    "analysis": 12,
-    "duplicate of a catalog row": 8,
-    "parameter (catalog row)": 6,
-    "initial condition (catalog row)": 2,
-    "default shadowed by a catalog row": 1
+    "initial condition (catalog row)": 10,
+    "physical constant": 4,
+    "range rule (the rows show it)": 4
    },
    "unreviewed": 0,
    "catalog_rows_added": [
+    "bwm_du_h_amp",
+    "bwm_du_h_floor",
+    "bwm_du_h_k_mV",
+    "bwm_du_h_vh_mV",
+    "bwm_du_kr_k_mV",
+    "bwm_du_kr_vh_mV",
+    "bwm_du_m_k_mV",
+    "bwm_du_m_vh_mV",
+    "bwm_du_n_k_mV",
+    "bwm_du_n_vh_mV",
+    "bwm_du_p_k_mV",
+    "bwm_du_p_vh_mV",
+    "bwm_du_slo2_k_mV",
+    "bwm_du_slo2_vh_mV",
+    "bwm_du_tm_amp_ms",
+    "bwm_du_tm_k_mV",
+    "bwm_du_tm_min_ms",
+    "bwm_du_tm_vh_mV",
+    "bwm_du_tn_amp_ms",
+    "bwm_du_tn_k_mV",
+    "bwm_du_tn_min_ms",
+    "bwm_du_tn_vh_mV",
+    "bwm_du_tp_a",
+    "bwm_du_tp_k_mV",
+    "bwm_du_tp_num_ms",
+    "bwm_du_tp_vh_mV",
     "env_default_co2_pct",
     "env_default_o2_pct",
     "env_default_temperature_C",
+    "init_bwm_du_h",
+    "init_bwm_du_m",
+    "init_bwm_du_n",
+    "init_bwm_du_p",
+    "init_bwm_du_v_mV",
     "init_v_muscle_mV",
     "init_v_neuron_mV",
+    "int_ca_rest_uM",
     "ma_release_slope_mV",
+    "nose_flp_channel_frac",
     "pep_release_slope_mV",
-    "touch_ap_split_frac"
+    "pump_lr_a",
+    "pump_lr_b",
+    "pump_lr_na_scale_mM",
+    "pump_lr_sigma_div",
+    "pump_lr_vfrac",
+    "touch_ap_split_frac",
+    "usu_cng_erev",
+    "usu_vg_c0",
+    "usu_vg_c1",
+    "usu_vg_c2",
+    "usu_vg_c3"
    ],
    "code_side": [
     {
@@ -45339,6 +45608,426 @@
      "code": "r = _sig((v - p[vth]) / 5.0) @ release * dt / 1000.0"
     },
     {
+     "file": "src/wormemu/mech/metabolism.py",
+     "line": 49,
+     "value": 0.8086,
+     "verdict": "duplicate of a catalog row",
+     "row": "deb_kappa_G",
+     "owner": "B2",
+     "note": "the same 0.8086 as the AmP row deb_kappa_G; read the row",
+     "code": "KAP_G = 0.8086                                  # AmP's implied growth efficiency mu_V d_V / (w_V E_G), derived"
+    },
+    {
+     "file": "src/wormemu/mech/metabolism.py",
+     "line": 110,
+     "value": 20.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "env_default_temperature_C",
+     "owner": "B2",
+     "note": "default plate temperature; read the row",
+     "code": "def tc(self, T_C=20.0):"
+    },
+    {
+     "file": "src/wormemu/mech/metabolism.py",
+     "line": 297,
+     "value": 20.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "env_default_temperature_C",
+     "owner": "B2",
+     "note": "default plate temperature; read the row",
+     "code": "TC = self.deb.tc(float(head.get(\"temperature_C\", 20.0)))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 116,
+     "value": -30.0,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_v_mV",
+     "owner": "B2",
+     "note": "Du's starting voltage",
+     "code": "def reset(self, v0=-30.0):"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 129,
+     "value": 3.2,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_slo2_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "islo2 = q[\"bwm_du_gslo2_nS\"] * _sig((V + 33.4) / 3.2) ** 3 * ps * (V - q[\"bwm_du_ek_mV\"])"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 129,
+     "value": 33.4,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_slo2_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "islo2 = q[\"bwm_du_gslo2_nS\"] * _sig((V + 33.4) / 3.2) ** 3 * ps * (V - q[\"bwm_du_ek_mV\"])"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 131,
+     "value": 5.0,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_kr_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "ikr = q[\"bwm_du_gkr_nS\"] * (1 - kr) * 0.5 * (1 + np.tanh((V - vt + 42) / 5.0)) * (V - q[\"bwm_du_ek_mV\"])"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 131,
+     "value": 42,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_kr_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "ikr = q[\"bwm_du_gkr_nS\"] * (1 - kr) * 0.5 * (1 + np.tanh((V - vt + 42) / 5.0)) * (V - q[\"bwm_du_ek_mV\"])"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 0.4,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_min_ms",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 0.7,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_amp_ms",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 15,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 15,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 5,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 139,
+     "value": 5,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tm_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tm = (0.4 + 0.7 / (np.exp(-(u + 5) / 15) + np.exp((u + 5) / 15))) / q[\"bwm_du_phi_m\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 140,
+     "value": 8.6,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_m_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "mi = _sig((u + 8) / 8.6)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 140,
+     "value": 8,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_m_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "mi = _sig((u + 8) / 8.6)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 141,
+     "value": 0.28,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_h_floor",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "hi = 0.42 * _sig(-(u + 11) / 2) + 0.28"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 141,
+     "value": 0.42,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_h_amp",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "hi = 0.42 * _sig(-(u + 11) / 2) + 0.28"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 141,
+     "value": 2,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_h_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "hi = 0.42 * _sig(-(u + 11) / 2) + 0.28"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 141,
+     "value": 11,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_h_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "hi = 0.42 * _sig(-(u + 11) / 2) + 0.28"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 142,
+     "value": 36.22,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_n_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "ni = 0.5 * (np.tanh((u + 15.2) / 36.22) + 1)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 142,
+     "value": 15.2,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_n_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "ni = 0.5 * (np.tanh((u + 15.2) / 36.22) + 1)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 143,
+     "value": 1.18,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tn_min_ms",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tn = (1.18 + 511.78 / (1 + np.exp((u + 89.3) / 21.92))) / q[\"bwm_du_phi_n\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 143,
+     "value": 511.78,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tn_amp_ms",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tn = (1.18 + 511.78 / (1 + np.exp((u + 89.3) / 21.92))) / q[\"bwm_du_phi_n\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 143,
+     "value": 21.92,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tn_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tn = (1.18 + 511.78 / (1 + np.exp((u + 89.3) / 21.92))) / q[\"bwm_du_phi_n\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 143,
+     "value": 89.3,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tn_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tn = (1.18 + 511.78 / (1 + np.exp((u + 89.3) / 21.92))) / q[\"bwm_du_phi_n\"]"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 144,
+     "value": 10,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_p_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "pi = _sig((u + 45) / 10)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 144,
+     "value": 45,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_p_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "pi = _sig((u + 45) / 10)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 4000,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_num_ms",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 3.38,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_a",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 20,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 20,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 45,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 145,
+     "value": 45,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_tp_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "tp = 4000 / (3.38 * np.exp((u + 45) / 20) + np.exp(-(u + 45) / 20))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 146,
+     "value": 5.0,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_kr_k_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "kri = 0.5 * (1 + np.tanh((u + 42) / 5.0))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 146,
+     "value": 42,
+     "verdict": "parameter (catalog row)",
+     "row": "bwm_du_kr_vh_mV",
+     "owner": "B2",
+     "note": "a constant of Du's gate functions as printed; the catalog row lists it, the code should read it",
+     "code": "kri = 0.5 * (1 + np.tanh((u + 42) / 5.0))"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 181,
+     "value": 0.01,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_m",
+     "owner": "B2",
+     "note": "Du's starting state; reset() repeats it",
+     "code": "INIT = dict(v=-30.0, m=0.01, h=0.6, n=0.99, p=0.2, kr=0.0, ps=0.0, cad=0.0)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 181,
+     "value": 0.6,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_h",
+     "owner": "B2",
+     "note": "Du's starting state; reset() repeats it",
+     "code": "INIT = dict(v=-30.0, m=0.01, h=0.6, n=0.99, p=0.2, kr=0.0, ps=0.0, cad=0.0)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 181,
+     "value": 0.99,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_n",
+     "owner": "B2",
+     "note": "Du's starting state; reset() repeats it",
+     "code": "INIT = dict(v=-30.0, m=0.01, h=0.6, n=0.99, p=0.2, kr=0.0, ps=0.0, cad=0.0)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 181,
+     "value": 0.2,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_p",
+     "owner": "B2",
+     "note": "Du's starting state; reset() repeats it",
+     "code": "INIT = dict(v=-30.0, m=0.01, h=0.6, n=0.99, p=0.2, kr=0.0, ps=0.0, cad=0.0)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 181,
+     "value": -30.0,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_v_mV",
+     "owner": "B2",
+     "note": "Du's starting state; reset() repeats it",
+     "code": "INIT = dict(v=-30.0, m=0.01, h=0.6, n=0.99, p=0.2, kr=0.0, ps=0.0, cad=0.0)"
+    },
+    {
+     "file": "src/wormemu/mech/muscle_bwm.py",
+     "line": 316,
+     "value": -30.0,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_bwm_du_v_mV",
+     "owner": "B2",
+     "note": "voltage given to muscles absent from a cell subset (their Ca then reads as at the start)",
+     "code": "vb = np.where(self.have, v[np.maximum(self.bwm, 0)], -30.0 if self.mem == \"du2025\" else -65.0)"
+    },
+    {
      "file": "src/wormemu/mech/neuromod.py",
      "line": 420,
      "value": 5.0,
@@ -45349,8 +46038,208 @@
      "code": "r = _sig((v - L.p[vth]) / 5.0) @ release * dt / 1000.0"
     },
     {
+     "file": "src/wormemu/mech/organs_egglaying.py",
+     "line": 103,
+     "value": 2.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "egg_active_min egg_rate_active_per_min",
+     "owner": "B2",
+     "note": "fallback copies: egg_active_min agrees (2), egg_rate_active_per_min is stale (2.0 here, 2.5 in the row); read the rows",
+     "code": "_OLD = {\"egg_active_min\": 2.0, \"egg_inactive_min\": 20.0, \"egg_rate_active_per_min\": 2.0, \"egg_vm_dur_ms\": 1000.0}"
+    },
+    {
+     "file": "src/wormemu/mech/organs_egglaying.py",
+     "line": 103,
+     "value": 2.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "egg_active_min egg_rate_active_per_min",
+     "owner": "B2",
+     "note": "fallback copies: egg_active_min agrees (2), egg_rate_active_per_min is stale (2.0 here, 2.5 in the row); read the rows",
+     "code": "_OLD = {\"egg_active_min\": 2.0, \"egg_inactive_min\": 20.0, \"egg_rate_active_per_min\": 2.0, \"egg_vm_dur_ms\": 1000.0}"
+    },
+    {
+     "file": "src/wormemu/mech/organs_intestine.py",
+     "line": 182,
+     "value": 3.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "dmp_aboc_delay_s dmp_aboc_dur_s",
+     "owner": "B2",
+     "note": "stale fallback copies: dmp_aboc_delay_s 3.0 here, 2.5 in the row; dmp_aboc_dur_s 1.0 here, 2 in the row (the scan skips 1.0); read the rows",
+     "code": "_OLD = {\"dmp_period_s\": 45.0, \"dmp_pboc_dur_s\": 2.0, \"dmp_aboc_delay_s\": 3.0, \"dmp_aboc_dur_s\": 1.0,"
+    },
+    {
+     "file": "src/wormemu/mech/organs_intestine.py",
+     "line": 229,
+     "value": 0.1,
+     "verdict": "initial condition (catalog row)",
+     "row": "int_ca_rest_uM",
+     "owner": "B2",
+     "note": "starting Ca",
+     "code": "self.c = np.full(len(INT_CELLS), 0.1)"
+    },
+    {
+     "file": "src/wormemu/mech/organs_intestine.py",
+     "line": 249,
+     "value": 0.1,
+     "verdict": "parameter (catalog row)",
+     "row": "int_ca_rest_uM",
+     "owner": "B2",
+     "note": "resting Ca: the PLC feedback is zero there",
+     "code": "- _hill(0.1, q[\"int_plc_ca_k_uM\"], q[\"int_plc_ca_hill\"]))"
+    },
+    {
+     "file": "src/wormemu/mech/organs_pharynx.py",
+     "line": 162,
+     "value": 170.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "pump_duration_ms",
+     "owner": "B2",
+     "note": "stale fallback copy: 170 ms here, 80 ms in the row (Lee 2017, measured); defaults() alone (tests, ap_protocol) uses 170; read the row",
+     "code": "_OLD = {\"pump_rate_food_hz\": 4.3, \"pump_rate_nofood_hz\": 0.3, \"pump_duration_ms\": 170.0, \"pump_food_od0\": 0.2}"
+    },
+    {
+     "file": "src/wormemu/mech/pumps.py",
+     "line": 91,
+     "value": 7.0,
+     "verdict": "parameter (catalog row)",
+     "row": "pump_lr_sigma_div",
+     "owner": "B2",
+     "note": "Luo & Rudy 1994's sigma",
+     "code": "sig = (np.exp(q[\"pump_na_o_mM\"] / 67.3) - 1.0) / 7.0"
+    },
+    {
+     "file": "src/wormemu/mech/pumps.py",
+     "line": 91,
+     "value": 67.3,
+     "verdict": "parameter (catalog row)",
+     "row": "pump_lr_na_scale_mM",
+     "owner": "B2",
+     "note": "Luo & Rudy 1994's sigma",
+     "code": "sig = (np.exp(q[\"pump_na_o_mM\"] / 67.3) - 1.0) / 7.0"
+    },
+    {
+     "file": "src/wormemu/mech/pumps.py",
+     "line": 98,
+     "value": 0.1245,
+     "verdict": "parameter (catalog row)",
+     "row": "pump_lr_a",
+     "owner": "B2",
+     "note": "Luo & Rudy 1994's f_NaK",
+     "code": "f = 1.0 / (1.0 + 0.1245 * np.exp(-0.1 * u) + 0.0365 * self.sig * np.exp(-u))"
+    },
+    {
+     "file": "src/wormemu/mech/pumps.py",
+     "line": 98,
+     "value": 0.0365,
+     "verdict": "parameter (catalog row)",
+     "row": "pump_lr_b",
+     "owner": "B2",
+     "note": "Luo & Rudy 1994's f_NaK",
+     "code": "f = 1.0 / (1.0 + 0.1245 * np.exp(-0.1 * u) + 0.0365 * self.sig * np.exp(-u))"
+    },
+    {
+     "file": "src/wormemu/mech/pumps.py",
+     "line": 98,
+     "value": -0.1,
+     "verdict": "parameter (catalog row)",
+     "row": "pump_lr_vfrac",
+     "owner": "B2",
+     "note": "Luo & Rudy 1994's f_NaK (not a unit conversion)",
+     "code": "f = 1.0 / (1.0 + 0.1245 * np.exp(-0.1 * u) + 0.0365 * self.sig * np.exp(-u))"
+    },
+    {
+     "file": "src/wormemu/mech/senses_cgmp.py",
+     "line": 205,
+     "value": 0.08,
+     "verdict": "parameter (catalog row)",
+     "row": "usu_cng_erev",
+     "owner": "B3",
+     "note": "from the model file's I_CNG expression; the catalog row lists it",
+     "code": "icng = self.imax * self.po(x[i[\"cGMP\"]]) * (0.08 - V)"
+    },
+    {
+     "file": "src/wormemu/mech/senses_cgmp.py",
+     "line": 213,
+     "value": 9.5,
+     "verdict": "parameter (catalog row)",
+     "row": "usu_vg_c0",
+     "owner": "B3",
+     "note": "from the model file's I_VG polynomial; the catalog row lists it",
+     "code": "ivg = -self.efvg * (6e-5 * V ** 3 + 8.1e-3 * V ** 2 + 0.49 * V + 9.5)"
+    },
+    {
+     "file": "src/wormemu/mech/senses_cgmp.py",
+     "line": 213,
+     "value": 0.49,
+     "verdict": "parameter (catalog row)",
+     "row": "usu_vg_c1",
+     "owner": "B3",
+     "note": "from the model file's I_VG polynomial; the catalog row lists it",
+     "code": "ivg = -self.efvg * (6e-5 * V ** 3 + 8.1e-3 * V ** 2 + 0.49 * V + 9.5)"
+    },
+    {
+     "file": "src/wormemu/mech/senses_cgmp.py",
+     "line": 213,
+     "value": 6e-05,
+     "verdict": "parameter (catalog row)",
+     "row": "usu_vg_c3",
+     "owner": "B3",
+     "note": "from the model file's I_VG polynomial; the catalog row lists it",
+     "code": "ivg = -self.efvg * (6e-5 * V ** 3 + 8.1e-3 * V ** 2 + 0.49 * V + 9.5)"
+    },
+    {
+     "file": "src/wormemu/mech/senses_cgmp.py",
+     "line": 213,
+     "value": 0.0081,
+     "verdict": "parameter (catalog row)",
+     "row": "usu_vg_c2",
+     "owner": "B3",
+     "note": "from the model file's I_VG polynomial; the catalog row lists it",
+     "code": "ivg = -self.efvg * (6e-5 * V ** 3 + 8.1e-3 * V ** 2 + 0.49 * V + 9.5)"
+    },
+    {
+     "file": "src/wormemu/mech/senses_chem.py",
+     "line": 319,
+     "value": 20.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "env_default_temperature_C",
+     "owner": "B3",
+     "note": "default plate temperature; read the row",
+     "code": "T = float(hd.get(\"temperature_C\", 20.0))"
+    },
+    {
+     "file": "src/wormemu/mech/senses_chem.py",
+     "line": 323,
+     "value": 21.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "env_default_o2_pct",
+     "owner": "B3",
+     "note": "default air O2; read the row",
+     "code": "o2 = float(hd.get(\"o2_pct\", 21.0))"
+    },
+    {
+     "file": "src/wormemu/mech/senses_chem.py",
+     "line": 330,
+     "value": 0.04,
+     "verdict": "duplicate of a catalog row",
+     "row": "env_default_co2_pct",
+     "owner": "B3",
+     "note": "default air CO2; read the row",
+     "code": "x = float(hill(hd.get(\"co2_pct\", 0.04), p[\"sens_co2_K_pct\"], p[\"sens_co2_n\"]))"
+    },
+    {
+     "file": "src/wormemu/mech/senses_touch.py",
+     "line": 222,
+     "value": 0.5,
+     "verdict": "parameter (catalog row)",
+     "row": "nose_flp_channel_frac",
+     "owner": "B3",
+     "note": "FLP's share of the nose channels; the catalog row lists it",
+     "code": "n.append(p[\"harsh_n_channels\"] * (0.5 if c.startswith(\"FLP\") else 1.0))"
+    },
+    {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 140,
+     "line": 162,
      "value": 1074.0,
      "verdict": "duplicate of a catalog row",
      "row": "mw_worm_density",
@@ -45360,7 +46249,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 140,
+     "line": 162,
      "value": 0.001,
      "verdict": "duplicate of a catalog row",
      "row": "mw_worm_length",
@@ -45370,7 +46259,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 140,
+     "line": 162,
      "value": 9.81,
      "verdict": "duplicate of a catalog row",
      "row": "mw_gravity",
@@ -45380,7 +46269,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 141,
+     "line": 163,
      "value": 3.2,
      "verdict": "duplicate of a catalog row",
      "row": "mw_agar_Ct",
@@ -45390,7 +46279,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 141,
+     "line": 163,
      "value": 0.00357,
      "verdict": "duplicate of a catalog row",
      "row": "mw_water_Ct",
@@ -45400,7 +46289,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 141,
+     "line": 163,
      "value": 128.0,
      "verdict": "duplicate of a catalog row",
      "row": "mw_agar_Cn",
@@ -45410,7 +46299,7 @@
     },
     {
      "file": "third_party/metaworm/driver/run_body.cpp",
-     "line": 141,
+     "line": 163,
      "value": 0.005675,
      "verdict": "duplicate of a catalog row",
      "row": "mw_water_Cn",
@@ -45420,25 +46309,26 @@
     }
    ],
    "skipped": {
-    "0, 1 or -1": 758,
-    "in a Spec (ledger)": 828,
-    "index or slice": 57,
+    "0, 1 or -1": 1288,
+    "in a Spec (ledger)": 1929,
+    "NEURON section position (sec(0.5), the midpoint)": 52,
+    "index or slice": 103,
     "in a scene Param (catalog rows scene_*)": 27,
     "NMODL PARAMETER set from a Spec": 3
    }
   },
   "before_fills": {
    "rows": {
-    "published_fit": 555,
-    "guessed": 481,
+    "published_fit": 596,
+    "guessed": 483,
     "measured": 263,
     "derived": 29,
     "inferred": 107,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 8079,
-    "guessed": 9385,
+    "published_fit": 8120,
+    "guessed": 9387,
     "measured": 6120,
     "derived": 67509,
     "inferred": 112,
@@ -45447,19 +46337,19 @@
   },
   "after_fills": {
    "rows": {
-    "published_fit": 555,
-    "guessed": 458,
+    "published_fit": 596,
+    "guessed": 459,
     "measured": 277,
-    "derived": 33,
-    "inferred": 112,
+    "derived": 36,
+    "inferred": 110,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 8079,
-    "guessed": 9262,
+    "published_fit": 8120,
+    "guessed": 9263,
     "measured": 6233,
-    "derived": 67513,
-    "inferred": 118,
+    "derived": 67516,
+    "inferred": 116,
     "absent": 5
    }
   }

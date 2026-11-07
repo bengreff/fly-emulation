@@ -660,3 +660,101 @@ for pid, val, what in (("baai_egl36_w_fast", 0.33, "fast"), ("baai_egl36_w_mid",
     H(pid, 4, "ch_egl36", "1", val, 0.0, 1.0, "published_fit", basis="physical_limit",
       applies="every cell with egl36", src=BSRC, used=f"{BMOD('egl36.mod')}:65",
       notes=f"weight of EGL-36's {what} activation component on gbegl36 (the three sum to 1.08, not 1)")
+
+
+# --- hidden constants in the night modules (merge 1 review, 6 Nov) -----------------------------------------------
+# Numbers printed inside a published model's equations, which the module writes as literals. Each gets a row so the
+# catalog lists every number in use; ranges follow build_ledger.kin_bounds (the kin_* rows' rule: +-20 mV for a half
+# point, a factor 2 for other mV quantities, a factor 3 for anything else; all guessed). Owners: B2 muscle_bwm,
+# pumps, organs_intestine; B3 senses_cgmp, senses_touch.
+def _kb(unit, t, half):
+    if unit.startswith("mV") and half:
+        return t - 20.0, t + 20.0, "+-20 mV around the published value"
+    f = 2.0 if unit.startswith("mV") else 3.0
+    lo, hi = sorted((t / f, t * f))
+    return lo, hi, f"a factor {f:g} either side of the published value"
+
+
+def HK(pid, row, mech, unit, val, *, half=False, src, url, used, notes, quote=""):
+    lo, hi, rule = _kb(unit, val, half)
+    H(pid, row, mech, unit, val, lo, hi, "published_fit", basis="guessed", src=src, url=url, quote=quote, used=used,
+      notes=f"{notes}; range guessed ({rule})")
+
+
+DU = "Du, Crodelle et al. 2025 PLOS Comput Biol 21:e1012318 (code: XuexingDu/C.elegans-Muscle, Muscle_cell_model)"
+DUF = "src/wormemu/mech/muscle_bwm.py"
+for pid, val, unit, half, ln, what in (
+        ("bwm_du_slo2_vh_mV", -33.4, "mV", True, 129, "SLO-2 gate sigmoid((V + 33.4) / 3.2)^3: half point (on V, "
+         "not shifted by bwm_du_vth_mV)"),
+        ("bwm_du_slo2_k_mV", 3.2, "mV", False, 129, "SLO-2 gate: slope"),
+        ("bwm_du_kr_vh_mV", -42.0, "mV", True, 131, "Kr gate 0.5 (1 + tanh((u + 42) / 5)), u = V - vth: half point "
+         "(the same constants in currents() and rates(), :146)"),
+        ("bwm_du_kr_k_mV", 5.0, "mV", False, 131, "Kr gate: tanh scale"),
+        ("bwm_du_m_vh_mV", -8.0, "mV", True, 140, "m_inf = sigmoid((u + 8) / 8.6): half point"),
+        ("bwm_du_m_k_mV", 8.6, "mV", False, 140, "m_inf: slope"),
+        ("bwm_du_tm_min_ms", 0.4, "ms", False, 139, "tau_m = (0.4 + 0.7 / (e^-(u+5)/15 + e^(u+5)/15)) / phi_m: floor"),
+        ("bwm_du_tm_amp_ms", 0.7, "ms", False, 139, "tau_m: bell amplitude"),
+        ("bwm_du_tm_vh_mV", -5.0, "mV", True, 139, "tau_m: bell centre"),
+        ("bwm_du_tm_k_mV", 15.0, "mV", False, 139, "tau_m: bell width"),
+        ("bwm_du_h_amp", 0.42, "1", False, 141, "h_inf = 0.42 sigmoid(-(u + 11) / 2) + 0.28: amplitude"),
+        ("bwm_du_h_floor", 0.28, "1", False, 141, "h_inf: floor (the non-inactivating EGL-19 fraction)"),
+        ("bwm_du_h_vh_mV", -11.0, "mV", True, 141, "h_inf: half point"),
+        ("bwm_du_h_k_mV", 2.0, "mV", False, 141, "h_inf: slope"),
+        ("bwm_du_n_vh_mV", -15.2, "mV", True, 142, "n_inf = 0.5 (tanh((u + 15.2) / 36.22) + 1): half point"),
+        ("bwm_du_n_k_mV", 36.22, "mV", False, 142, "n_inf: tanh scale"),
+        ("bwm_du_tn_min_ms", 1.18, "ms", False, 143, "tau_n = (1.18 + 511.78 / (1 + e^((u + 89.3) / 21.92))) / phi_n: "
+         "floor"),
+        ("bwm_du_tn_amp_ms", 511.78, "ms", False, 143, "tau_n: amplitude"),
+        ("bwm_du_tn_vh_mV", -89.3, "mV", True, 143, "tau_n: half point"),
+        ("bwm_du_tn_k_mV", 21.92, "mV", False, 143, "tau_n: slope"),
+        ("bwm_du_p_vh_mV", -45.0, "mV", True, 144, "p_inf = sigmoid((u + 45) / 10): half point"),
+        ("bwm_du_p_k_mV", 10.0, "mV", False, 144, "p_inf: slope"),
+        ("bwm_du_tp_num_ms", 4000.0, "ms", False, 145, "tau_p = 4000 / (3.38 e^((u+45)/20) + e^(-(u+45)/20)): "
+         "numerator"),
+        ("bwm_du_tp_a", 3.38, "1", False, 145, "tau_p: weight of the rising exponential"),
+        ("bwm_du_tp_vh_mV", -45.0, "mV", True, 145, "tau_p: centre"),
+        ("bwm_du_tp_k_mV", 20.0, "mV", False, 145, "tau_p: width")):
+    HK(pid, 12, "bwm_membrane", unit, val, half=half, src=DU, url=PMC("PMC11781704"), used=f"{DUF}:{ln}",
+       notes=f"{what}; owner B2: make it a Spec")
+for pid, val, what in (("init_bwm_du_m", 0.01, "m"), ("init_bwm_du_h", 0.6, "h"), ("init_bwm_du_n", 0.99, "n"),
+                       ("init_bwm_du_p", 0.2, "p")):
+    H(pid, 12, "bwm_membrane", "1", val, 0.0, 1.0, "published_fit", basis="physical_limit", src=DU,
+      url=PMC("PMC11781704"), used=f"{DUF}:118-119 (reset) and :181 (INIT)",
+      notes=f"starting value of the {what} gate in Du's code; a gate is a fraction (0 to 1); owner B2")
+H("init_bwm_du_v_mV", 12, "bwm_membrane", "mV", -30.0, -40.0, -20.0, "published_fit", basis="guessed", src=DU,
+  url=PMC("PMC11781704"), used=f"{DUF}:116 (reset v0), :181 (INIT), :316 (absent muscles)",
+  notes="Du's starting voltage (Muscle_cell_model: V -30 + N(0,1)); the cell has no stable rest, so the first "
+        "seconds depend on it; range guessed; owner B2")
+
+LR94 = "Luo & Rudy 1994 Circ Res 74:1071 (the Na/K pump's voltage factor f_NaK), as used by mech/pumps.py"
+for pid, val, ln, what in (
+        ("pump_lr_a", 0.1245, 98, "f_NaK = 1 / (1 + 0.1245 e^(-0.1 u) + 0.0365 sigma e^(-u)), u = VF/RT: first weight"),
+        ("pump_lr_vfrac", 0.1, 98, "f_NaK: the voltage fraction in the first exponential"),
+        ("pump_lr_b", 0.0365, 98, "f_NaK: second weight"),
+        ("pump_lr_na_scale_mM", 67.3, 91, "sigma = (e^([Na]o / 67.3) - 1) / 7: [Na]o scale"),
+        ("pump_lr_sigma_div", 7.0, 91, "sigma: divisor")):
+    HK(pid, 27, "na_k_pump", "mM" if pid.endswith("_mM") else "1", val, src=LR94,
+       url="https://doi.org/10.1161/01.res.74.6.1071", used=f"src/wormemu/mech/pumps.py:{ln}",
+       notes=f"{what}; fitted to guinea-pig ventricular myocytes, not a C. elegans measurement; owner B2: make it a "
+             "Spec")
+
+USU = "Usuyama et al. 2012 PLOS ONE 7:e42907, File S1 (the COPASI model vendored as published/usuyama2012_awc.cps)"
+USF = "src/wormemu/mech/senses_cgmp.py"
+HK("usu_cng_erev", 17, "sens_odor_attract", "mV (model)", 0.08, half=True, src=USU, url=PMC("PMC3426523"),
+   used=f"{USF}:205", quote="*(0.08-", notes="the reversal in the model file's I_CNG expression, (0.08 - V) in the "
+   "lumped membrane's units; owner B3: read it from the model file or make it a Spec")
+for pid, val, what in (("usu_vg_c3", 6e-5, "cubic"), ("usu_vg_c2", 8.1e-3, "quadratic"), ("usu_vg_c1", 0.49, "linear"),
+                       ("usu_vg_c0", 9.5, "constant")):
+    HK(pid, 17, "sens_odor_attract", "model units", val, src=USU, url=PMC("PMC3426523"), used=f"{USF}:213",
+       quote="(6e-5*V^3+8.1e-3*V^2+0.49*V+9.5)",
+       notes=f"{what} coefficient of the model file's voltage-gated current polynomial; owner B3: read it from the model "
+             "file or make it a Spec")
+
+H("int_ca_rest_uM", 14, "defecation", "uM", 0.1, 0.05, 0.2, "guessed",
+  src="guessed: 0.1 uM, the usual resting cytosolic Ca of Li-Rinzel models; no C. elegans intestine measurement opened",
+  used="src/wormemu/mech/organs_intestine.py:229 (starting Ca) and :249 (the Ca-dependent PLC drive is zero there)",
+  notes="owner B2: make it a Spec; the PLC term subtracts its value at this Ca, so it sets where the feedback is zero")
+H("nose_flp_channel_frac", 17, "sens_touch_harsh", "1", 0.5, 0.1, 1.0, "guessed",
+  src="guessed: FLP has a head-body field as well as its nose patch, so the nose patch gets half the channels",
+  used="src/wormemu/mech/senses_touch.py:222",
+  notes="fraction of harsh_n_channels in FLP's nose patch (the other nose cells get all of them); owner B3")
