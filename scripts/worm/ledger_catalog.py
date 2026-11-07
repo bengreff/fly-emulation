@@ -140,6 +140,13 @@ def _num(x):
         return np.nan
 
 
+def _round12(x):
+    """A range end for the catalog outputs, rounded to 12 significant figures (0.42 / 3 shows as 0.14, not
+    0.13999999999999999); parameters.csv keeps the exact value."""
+    v = _num(x)
+    return x if np.isnan(v) else float(f"{v:.12g}")
+
+
 # ----------------------------------------------------------------------------------------------------------- slots
 SLOT_COLUMNS = ["param_id", "plan_row", "mechanism_id", "mechanism_name", "grain", "applies_to", "n_values", "unit",
                 "value_template", "bio_min", "bio_max", "label", "bound_basis", "source", "source_url",
@@ -606,8 +613,8 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
         out.append(dict(
             id=r["param_id"], plan_row=int(r["plan_row"]), plan_row_name=PLAN_ROWS.get(int(r["plan_row"]), "?"),
             mechanism=r["mechanism_id"], mechanism_name=m.get("name", ""), grain=r["grain"],
-            n_elements=int(_num(r["n_values"])), template=template_text(r, t), bio_min=r["bio_min"],
-            bio_max=r["bio_max"], units=r["unit"], label=r["label"],
+            n_elements=int(_num(r["n_values"])), template=template_text(r, t), bio_min=_round12(r["bio_min"]),
+            bio_max=_round12(r["bio_max"]), units=r["unit"], label=r["label"],
             labels_by_element="; ".join(f"{k} {n}" for k, n in sorted(split.items(), key=lambda kv: -kv[1])),
             source=r["template_source"], source_url=r.get("source_url", ""), source_quote=r.get("source_quote", ""),
             source_project=r["source_project"], fill_kind=fill_kind.get(r["label"], r["label"]),
