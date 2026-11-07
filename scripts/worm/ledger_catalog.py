@@ -53,6 +53,9 @@ MECH_ROW = {
     "other_cells": 16,
     "MB1": 21, "MB2": 21, "MB3": 12, "MB4": 21, "MB5": 22, "MB6": 22, "MB7": 22, "MB8": 22, "MB9": 21, "MB10": 21,
     "MB11": 23, "MB12": 13,
+    # wneuron's night modules (7 Nov merge): channels.py (its kin_ rows are row 4 by prefix, its densities row 5),
+    # ca_volume.py, cells_passive.py
+    "channel_library": 5, "ca_pool_volume": 6, "glia_sensilla": 11, "endorgan_cells": 16,
 }
 PARAM_ROW = {"ion_celsius": 25}
 # for registry modules that do not say: keyword in the module or mechanism id -> row (first match wins)
@@ -266,6 +269,9 @@ PAPERS = [
     (r"Boyle, Berri.{0,6}Cohen 2012", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/"),
     (r"Fang-Yen.{0,20}2010", "https://pmc.ncbi.nlm.nih.gov/articles/PMC2996704/"),
     (r"Fenyves", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7785220/"),
+    # wneuron's channel library (7 Nov merge): before CeNGEN, whose name its density notes also carry
+    (r"Nicoletti et al\.? 2024", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10980225/"),
+    (r"Gentet, Stuart (and|&) Clements 2000", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1300935/"),
     (r"CeNGEN|Taylor et al\. 2021", "https://doi.org/10.1016/j.cell.2021.06.023"),
     (r"Cook et al\.? 2019|Cook 2019", "https://doi.org/10.1038/s41586-019-1352-7"),
     (r"Ripoll-Sanchez", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7615469/"),

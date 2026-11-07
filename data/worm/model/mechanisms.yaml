@@ -362,6 +362,16 @@
   notes: 'on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template conductance and the other way at template / gap_rect_ratio.
     Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7'
   absent_reason: ''
+- id: channel_library
+  name: 'Nicoletti 2024''s KQT-1, UNC-103, EXP-2 and bulk-Ca SLO-1/SLO-2 channels in every class whose CeNGEN profile detects the gene (nested: baaiworm = BAAIWorm''s 16 channels only)'
+  layer: channel
+  status: have
+  toggle: channel_library
+  neutral: 'off'
+  default: baaiworm_plus_nicoletti
+  source: src/wormemu/mech/channels.py
+  notes: registry module channels; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: ca_pool_units
   name: Neuron bulk Ca pool fed the whole-soma Ca current (Nicoletti 2019 Eq. 28) instead of the current density
   layer: channel
@@ -371,6 +381,16 @@
   default: total_current
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: ca_pool_volume
+  name: 'Each neuron''s bulk Ca pool sized by its own volume in the BAAIWorm morphology (Nicoletti 2024: per-cell volume) instead of one V_cell for all (nested: soma, fixed)'
+  layer: channel
+  status: have
+  toggle: ca_pool_volume
+  neutral: 'off'
+  default: whole_cell
+  source: src/wormemu/mech/ca_volume.py
+  notes: registry module ca_volume; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: receptor_kinetics
   name: 'Ionotropic receptor classes with kinetics: per-class dose-response, rise, decay, desensitization, reversal and unit conductance; classes per pair from CeNGEN, transmitter and Fenyves 2020 polarity'
@@ -410,7 +430,7 @@
   neutral: 'off'
   default: states
   source: src/wormemu/mech/slow_signalling.py
-  notes: registry module slow_signalling; PLAN row guessed from the name by the catalog
+  notes: registry module slow_signalling; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: homeostasis
   name: Activity-dependent channel density tuning (O'Leary integral control on a calcium error; UNC-2 self-tuning over hours)
@@ -420,7 +440,7 @@
   neutral: 'off'
   default: oleary
   source: src/wormemu/mech/slow_signalling.py
-  notes: registry module slow_signalling; PLAN row guessed from the name by the catalog
+  notes: registry module slow_signalling; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: associative
   name: 'Slow associative states: salt (ASER, starvation), thermotaxis (AFD, starvation), pathogen (ADF serotonin)'
@@ -440,7 +460,7 @@
   neutral: 'off'
   default: compartments
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: monoamines
   name: 'Monoamines (5-HT, DA, OA, TA): stores, release, MOD-5/DAT-1 reuptake, GPCRs -> G proteins, MOD-1/LGC-55/LGC-53 outside synapses; the same compartments'
@@ -450,7 +470,7 @@
   neutral: 'off'
   default: compartments
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: quantal_noise
   name: Quantal (vesicle) release noise at chemical synapses
@@ -630,7 +650,7 @@
   neutral: 'off'
   default: du2025
   source: src/wormemu/mech/muscle_bwm.py
-  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  notes: registry module muscle_bwm; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: muscle_activation
   name: 'BWM Ca -> activation: Boyle-Berri-Cohen 2012 leaky integrator (nested: rise/decay Hill)'
@@ -640,7 +660,7 @@
   neutral: 'off'
   default: bbc2012
   source: src/wormemu/mech/muscle_bwm.py
-  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  notes: registry module muscle_bwm; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: bwm_gap_liu
   name: BWM-BWM gap junctions (Cook 2019 contacts, Liu 2006 conductance)
@@ -660,7 +680,7 @@
   neutral: 'off'
   default: sherman2024
   source: src/wormemu/mech/organs_pharynx.py
-  notes: registry module organs_pharynx; PLAN row guessed from the name by the catalog
+  notes: registry module organs_pharynx; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: defecation
   name: 'Defecation: 20-cell intestinal IP3R (Li-Rinzel) Ca oscillator and INX-16 wave (nested: 45 s timer)'
@@ -670,7 +690,7 @@
   neutral: 'off'
   default: ip3r
   source: src/wormemu/mech/organs_intestine.py
-  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  notes: registry module organs_intestine; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: pboc_protons
   name: Intestinal H+ (PBO-4) -> PBO-5/6 cation current in the posterior body-wall muscles
@@ -710,7 +730,7 @@
   neutral: 'off'
   default: circuit
   source: src/wormemu/mech/organs_egglaying.py
-  notes: registry module organs_egglaying; PLAN row guessed from the name by the catalog
+  notes: registry module organs_egglaying; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: egg_unc103
   name: 'UNC-103 ERG K+ in the sex muscles at the vulval density (off: the unc-103 null)'
@@ -760,7 +780,7 @@
   neutral: 'off'
   default: 'on'
   source: src/wormemu/mech/organs_other.py
-  notes: registry module organs_other; PLAN row guessed from the name by the catalog
+  notes: registry module organs_other; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: excretory_osmo
   name: 'Body fluid volume and pressure: osmotic water influx against pressure, the excretory canal removing it at a setpoint; out[''pressure_kPa''] (nested: null = canal ablated, fixed = constant)'
@@ -782,6 +802,26 @@
   source: src/wormemu/mech/organs_other.py
   notes: registry module organs_other; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: glia_sensilla
+  name: The 46 sheath and socket glia that are not Cook nodes (amphid, phasmid, IL, OLQ, OLL, CEP socket, ADE, PDE) as isolated passive cells
+  layer: glia
+  status: have
+  toggle: glia_sensilla
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/cells_passive.py
+  notes: registry module cells_passive; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: endorgan_cells
+  name: Pharyngeal epithelium (e2, e3) and glands g1AL/R as passive cells on Cook's gaps to I2, I5, M2, M3, M4 and the pharyngeal muscles
+  layer: organ
+  status: have
+  toggle: endorgan_cells
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/cells_passive.py
+  notes: registry module cells_passive; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: na_k_pump
   name: 'Na/K-ATPase per neuron and muscle (Luo-Rudy 1994 form): activity-driven Na+ load, pump current from rest, ATP cost to metabolism (nested: rest, null = ouabain)'
   layer: membrane
@@ -801,7 +841,7 @@
   neutral: 'off'
   default: deb
   source: src/wormemu/mech/metabolism.py
-  notes: registry module metabolism; PLAN row guessed from the name by the catalog
+  notes: registry module metabolism; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: met_feeding
   name: 'DEB feeding: scaled functional response from pumps x food (nested: food only, fixed)'
@@ -821,7 +861,7 @@
   neutral: 'off'
   default: gcamp6s
   source: src/wormemu/mech/observation.py
-  notes: registry module observation; PLAN row guessed from the name by the catalog
+  notes: registry module observation; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: opto_gur3
   name: Optogenetic actuator GUR-3/PRDX-2 (Randi 2023), targeted light on a schedule

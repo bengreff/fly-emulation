@@ -705,6 +705,9 @@ def build_layers(st):
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
 
 
+RANGE_GUESSED = re.compile(r"(?i)\b(bounds?|range)\b[^;.]{0,40}\bguessed\b")
+
+
 def build_registry():
     """Every registered mechanism module (src/wormemu/mech, B1's registry): its MECHANISMS and SPECS. A module
     mechanism with a layer's id takes it over; a Spec with an existing row's id replaces that row. The Spec's own
@@ -733,17 +736,23 @@ def build_registry():
                         r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
                             f"read only with {when}; the default runs mech/{name}'s rows")
             r_ = prow.get(mid) if isinstance(prow, dict) else prow
-            cat.MECH_ROW[mid] = int(r_ or cat.guess_row(f"{name} {mid}") or 0)
+            # the module's PLAN_ROW, else the catalog's own MECH_ROW entry, else a guess from the name
+            mapped = cat.MECH_ROW.get(mid)
+            cat.MECH_ROW[mid] = int(r_ or mapped or cat.guess_row(f"{name} {mid}") or 0)
             mech(mid, mname, layer, "have", f"src/wormemu/mech/{name}.py", toggle=mid,
                  neutral=neutral.get(mid, "off") if isinstance(neutral, dict) else str(neutral), default=default,
-                 notes=f"registry module {name}" + ("" if r_ else "; PLAN row guessed from the name by the catalog"))
+                 notes=f"registry module {name}" + ("" if r_ else "; PLAN row set by the catalog (MECH_ROW)" if mapped
+                                                    else "; PLAN row guessed from the name by the catalog"))
         for s_ in getattr(mod, "SPECS", []):
             if s_.lit:
                 lo, hi, _, basis, bsrc = lit(s_.lit)
             else:
-                # the range basis is the Spec's own when it gives one; else measured_related only when the
-                # source names a citation, otherwise guessed (a range with no cited source is a guess)
+                # the range basis is the Spec's own when it gives one; else guessed when the Spec's notes say its
+                # range is ("range guessed", "bounds guessed: factor 3", "range x/2 to x2 (guessed)": a cited value
+                # with a made-up spread; 7 Nov, 256 rows); else measured_related only when the source names a
+                # citation, otherwise guessed (a range with no cited source is a guess)
                 basis = getattr(s_, "bound_basis", "") or (
+                    "guessed" if RANGE_GUESSED.search(s_.notes or "") else
                     "measured_related" if s_.label != "guessed" and cat.CITE.search(s_.source) else "guessed")
                 lo, hi, bsrc = s_.lo, s_.hi, s_.source
             lab = s_.label

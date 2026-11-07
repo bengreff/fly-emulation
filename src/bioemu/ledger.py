@@ -65,7 +65,7 @@ class Ledger:
         """The per-element table of a row (element, value, label, source), or None if every element takes
         value_template."""
         f = self.root / "values" / f"{param_id}.csv"
-        return pd.read_csv(f, keep_default_na=False) if f.exists() else None
+        return pd.read_csv(f, keep_default_na=False, float_precision="round_trip") if f.exists() else None
 
 
 def load(root: Path) -> Ledger:
@@ -74,8 +74,10 @@ def load(root: Path) -> Ledger:
     for col in ("toggle", "neutral", "source", "notes", "absent_reason"):
         if col not in mech:
             mech[col] = None
+    # round_trip: a value reads back exactly as written (pandas' default parser can miss by one unit in the last
+    # place, so a run would read a template 1e-16 off its Spec; 7 Nov)
     par = pd.read_csv(root / "parameters.csv", keep_default_na=False,
-                      na_values={c: [""] for c in NUMERIC})
+                      na_values={c: [""] for c in NUMERIC}, float_precision="round_trip")
     return Ledger(root, mech, par)
 
 
