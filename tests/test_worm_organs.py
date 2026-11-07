@@ -16,9 +16,11 @@ from wormemu.interface import BWM_NAMES
 from wormemu.mech import muscle_bwm as mb
 from wormemu.mech import organs_egglaying as ge
 from wormemu.mech import glia as gl
+from wormemu.mech import metabolism as me
 from wormemu.mech import organs_intestine as gi
 from wormemu.mech import organs_other as oo
 from wormemu.mech import organs_pharynx as ph
+from wormemu.mech import pumps as pu
 
 ROOT = Path(__file__).resolve().parents[1]
 DU_DATA = Path(os.environ.get("DU_MUSCLE_REPO", "/tmp/worgans/C.elegans-Muscle")) / "data" / "spikes.npy"
@@ -412,4 +414,126 @@ def test_coelomocyte_clearance_is_count_times_cell_clearance_over_volume():
 def test_other_specs_have_ranges_and_labels():
     from bioemu.ledger import LABELS
     for s in oo.SPECS:
+        assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id
+
+
+def _met(toggles=None, p=None):
+    lay = SimpleNamespace(p=p or {"met_intake_per_pump": 1e-5, "met_store_tau_h": 24.0})
+    return me.Mech(SimpleNamespace(layers=lay), {}, toggles or {})
+
+
+def _met_ctx(pumps=0, food=0.0, T=20.0, extra=0.0):
+    return SimpleNamespace(obs={"head": {"food_OD": food, "temperature_C": T}},
+                           outputs={"pumps": pumps, "pump_atp_excess_J_per_d": extra})
+
+
+def test_deb_std_is_abj_with_no_acceleration_interval():
+    q = me.defaults()
+    q2 = dict(q, deb_e_hj_J=q["deb_e_hb_J"])
+    a, b = me.Deb(q2, accel=True), me.Deb(q, accel=False)
+    for d in (a, b):
+        d.E_0 = None
+        d._E = d.solve_e0(1.0)
+    ya, _ = a.integrate(a._E[1], 4.0, 1.0)
+    yb, _ = b.integrate(b._E[1], 4.0, 1.0)
+    assert np.allclose(ya, yb, rtol=1e-9, atol=0.0) and a.E_0 == b.E_0
+
+
+def test_deb_reproduces_amp_predictions():
+    """The port gives AmP's own predicted a_b, t_p and R_i for the entry (scripts/worm/organs/check_metabolism.py)."""
+    q = me.defaults()
+    d = me.Deb(q)
+    E0, yb, ab = d.solve_e0(1.0)
+    _, tp = d.integrate(yb, 10.0, 1.0, until=lambda y: y[2] >= q["deb_e_hp_J"])
+    assert abs(ab / 0.3257 - 1) < 0.01 and abs(tp / 2.934 - 1) < 0.01
+    assert abs(yb[0] / yb[1] ** 3 / d.E_m - 1.0) < 1e-6                      # maternal effect: e_b = f = 1
+
+
+def test_store_form_is_brain_layers_metabolism():
+    p = {"met_intake_per_pump": 1e-5, "met_store_tau_h": 24.0}
+    m = _met({"metabolism": "store"}, p)
+    old = SimpleNamespace(p=p, on={"metabolism"}, store=0.0)
+    for k in range(5000):
+        pumps = k % 3 == 0
+        Layers.metabolism(old, pumps, 0.5)
+        r = m.step(_met_ctx(pumps=pumps), 0.5)
+        assert r["out"]["energy_store"] == old.store
+    assert _met({"metabolism": "off"}).step(_met_ctx(), 0.5) == {}
+
+
+def test_deb_closed_loop_starves_without_food_and_holds_when_fixed():
+    fed, hungry = _met({"met_feeding": "fixed"}), _met()
+    e0 = fed.last["energy_state"]
+    assert abs(e0 - 1.0) < 1e-6 and fed.last["egg_production_per_h"] > 0.0
+    for _ in range(20):
+        a = fed.step(_met_ctx(), 1000.0)["out"]
+        b = hungry.step(_met_ctx(), 1000.0)["out"]
+    assert abs(a["energy_state"] - 1.0) < 1e-6 and a["deb"]["f"] == 1.0
+    assert b["energy_state"] < 1.0 and b["deb"]["f"] == 0.0 and b["egg_production_per_h"] < a["egg_production_per_h"]
+    # f from pumps x food: 4.2 Hz on saturating food tends to the Holling response
+    m = _met()
+    m.rate_hz = 4.2
+    assert abs(m.feeding({"food_OD": 1e6}) - 1.0) < 1e-5 and m.feeding({"food_OD": 0.5}) == pytest.approx(0.5)
+    assert _met({"met_feeding": "food"}).feeding({"food_OD": 0.5}) == pytest.approx(0.5)
+
+
+def test_deb_temperature_and_pump_load():
+    d = me.Deb(me.defaults())
+    assert d.tc(20.0) == pytest.approx(1.0) and d.tc(25.0) > 1.0 > d.tc(15.0)
+    m = _met({"met_feeding": "fixed"})
+    y = m.y.copy()
+    base = m.deb.fluxes(y, 1.0, 1.0, 0.0)[1]
+    more = m.deb.fluxes(y, 1.0, 1.0, 1e-3)[1]
+    assert more["pS"] == pytest.approx(base["pS"] + 1e-3)
+    assert more["pA"] - more["pC"] < base["pA"] - base["pC"]                 # the reserve pays (kappa rule)
+
+
+def test_metabolism_specs_have_ranges_and_labels():
+    from bioemu.ledger import LABELS
+    for s in me.SPECS:
+        assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id
+
+
+def _pump_run(form, v_fn, t_end_ms, dt=5.0, mus=(False, True)):
+    m = pu.Mech(None, {}, {"na_k_pump": form})
+    rows, k = [], 0
+    while k * dt < t_end_ms:
+        r = m.step(SimpleNamespace(v=v_fn(k * dt), is_muscle=np.array(mus)), dt)
+        rows.append(r)
+        k += 1
+    return m, rows
+
+
+def test_pump_is_neutral_at_rest_and_rest_form_is_silent():
+    rest = lambda t: np.array([-60.0, -31.0])
+    m, rows = _pump_run("on", rest, 5000.0)
+    assert all(np.abs(r["out"]["pump_current_pA"]).max() < 1e-12 for r in rows)
+    assert np.allclose(rows[-1]["out"]["na_i_mM"], pu.defaults()["pump_na_rest_mM"])
+    step = lambda t: np.array([-60.0, -31.0]) + (20.0 if 2000 <= t < 4000 else 0.0)
+    m, rows = _pump_run("rest", step, 6000.0)
+    assert all(np.abs(r["out"]["pump_current_pA"]).max() == 0.0 for r in rows)
+    assert len({round(r["out"]["pump_atp_J_per_d"], 15) for r in rows[300:]}) == 1
+    assert pu.Mech(None, {}, {"na_k_pump": "off"}).step(SimpleNamespace(v=np.zeros(2)), 5.0) == {}
+
+
+def test_pump_na_recovers_at_the_linearised_rate_and_null_loses_the_resting_current():
+    q = pu.defaults()
+    p = pu.Pump(q, [False])
+    na0, v0 = q["pump_na_rest_mM"], -60.0
+    slope = float((p.i_p(np.array([na0 + 1e-4]), v0) - p.i_p(np.array([na0 - 1e-4]), v0))[0] / 2e-4)
+    tau_lin = q["pump_vol_neuron_um3"] / (3.0 * pu.NA_MM_PER_PA_S_UM3 * slope)
+    m, _ = _pump_run("on", lambda t: np.array([-60.0]), 1005.0, mus=(False,))
+    m.na = m.na + 0.01                                                 # a small Na load, then free recovery
+    ctx = SimpleNamespace(v=np.array([-60.0]), is_muscle=np.array([False]))
+    for _ in range(int(tau_lin * 1000 / 5.0)):
+        m.step(ctx, 5.0)
+    assert abs((m.na[0] - na0) / 0.01 - np.exp(-1.0)) < 0.01
+    m, rows = _pump_run("null", lambda t: np.array([-60.0, -31.0]), 3000.0)
+    ip_rest = pu.Pump(q, [False, True]).i_p(np.full(2, na0), np.array([-60.0, -31.0]))
+    assert np.allclose(rows[-1]["I_pA"], ip_rest) and (rows[-1]["out"]["na_i_mM"] > na0).all()
+
+
+def test_pump_specs_have_ranges_and_labels():
+    from bioemu.ledger import LABELS
+    for s in pu.SPECS:
         assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id

@@ -21,7 +21,8 @@ sys.path.insert(0, str(ROOT / "scripts" / "worm"))
 
 from wormemu import mech  # noqa: E402
 
-WORGANS = ["muscle_bwm", "organs_pharynx", "organs_intestine"]
+WORGANS = ["muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other", "pumps",
+           "metabolism"]
 for m in WORGANS:
     if m not in mech.REGISTRY:
         mech.REGISTRY.append(m)
@@ -42,7 +43,10 @@ class OrganRecorder(brain_loop_check.Recorder):
         o = super().step(obs, dt_ms)
         self.trace["t"].append(self.b.t)
         for k, x in self.b.mech_out.items():
-            if isinstance(x, dict):
+            if isinstance(x, dict):                              # dicts of scalars (deb, afd_gc_scale, ...): k.kk
+                for kk, xx in x.items():
+                    if np.isscalar(xx):
+                        self.trace[f"{k}.{kk}"].append(np.float32(xx))
                 continue
             a = np.asarray(x, float)
             if a.size <= 40:
