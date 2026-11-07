@@ -6,8 +6,10 @@ third_party/metaworm/driver/run_body.cpp) and, beyond that list, the NMODL files
 its summary into the catalog.
 
 What counts. Python (AST): every int or float literal except
-  - literals that feed a Spec (inside a Spec(...) call, or inside a module-level name the SPECS expression reads,
-    followed one level down): those are in the ledger already;
+  - literals that feed a Spec (inside a Spec(...) or spec(...) call, inside a module-level name the SPECS
+    expression reads, followed one level down, or inside a module-level function that returns a Spec, with the
+    tables it reads: a Spec builder's range rules): those are in the ledger already;
+  - 0.5 as the only argument of a NEURON section call (sec(0.5), soma[i](0.5)): the midpoint, a position;
   - literals inside a scene Param(...) (body/scene.py): each carries value, unit, label, range and source, and the
     catalog lists them as rows scene_*;
   - 0, 1, -1 (and 0.0, 1.0): arithmetic, not parameters;
@@ -27,8 +29,10 @@ Then the hand review (data/worm/catalog/hidden_review.csv: file, value, code sub
 owner, note; the most specific match wins) gives each literal a verdict: parameter or initial condition (the catalog
 now has a row for it, origin "hidden", and the owner's code should read it), duplicate of a catalog row (the code
 should read the row), mirrors a catalog row, ported-mode fallback (literature_overrides off only), mod default
-overwritten, default shadowed by a catalog row, test stand-in, analysis, structure, numerics, arithmetic or unit
-conversion. Literals the review does not cover take the verdict of their kind, or "unreviewed" for the named,
+overwritten, default shadowed by a catalog row, test stand-in, analysis, structure, numerics, arithmetic, unit
+conversion, physical constant or range rule (a Spec range helper the scan cannot see is one). A constant printed in
+a published model's equations (Du 2025's gate functions, Luo & Rudy's pump factor, Usuyama's I_CNG and I_VG) is a
+parameter: catalog_slots.py gives it a row. Literals the review does not cover take the verdict of their kind, or "unreviewed" for the named,
 default and inline kinds. "code_side" lists what the owners need to change.
 
     PYTHONPATH=src:scripts/worm python scripts/worm/hidden_constants.py
@@ -88,14 +92,17 @@ def _assigns(tree) -> dict:
 def _spec_aliases(tree) -> set[str]:
     """Spec, every module-level name bound to it (brain_layers: S = Spec) and every module-level function that returns
     a Spec call (neuromod: def S(...): return Spec(...))."""
-    names = {"Spec"}
+    names = {"Spec", "spec"}                     # spec: senses_base's builder, imported by the sense modules
     for k, v in _assigns(tree).items():
         if isinstance(v, (ast.Name, ast.Attribute)) and (getattr(v, "id", "") or getattr(v, "attr", "")) in names:
             names.add(k)
-    for f in tree.body:
-        if isinstance(f, ast.FunctionDef) and any(isinstance(r, ast.Return) and isinstance(r.value, ast.Call)
-                                                   and _call_name(r.value) in names for r in ast.walk(f)):
-            names.add(f.name)
+    n0 = 0
+    while n0 != len(names):                      # builders of builders (senses_chem: _liu_spec returns spec(...))
+        n0 = len(names)
+        for f in tree.body:
+            if isinstance(f, ast.FunctionDef) and any(isinstance(r, ast.Return) and isinstance(r.value, ast.Call)
+                                                       and _call_name(r.value) in names for r in ast.walk(f)):
+                names.add(f.name)
     return names
 
 
@@ -212,6 +219,10 @@ def scan_python(path: Path, templates: dict) -> tuple[list, Counter]:
     for stmt in tree.body:
         if _grows_specs(stmt):
             in_specs |= {id(x) for x in ast.walk(stmt)}
+        if isinstance(stmt, ast.FunctionDef) and stmt.name in aliases:    # a Spec builder: its range rules and the
+            in_specs |= {id(x) for x in ast.walk(stmt)}                   # tables it reads set ledger rows
+            for k in {n.id for n in ast.walk(stmt) if isinstance(n, ast.Name)} & set(assigns):
+                in_specs |= {id(x) for x in ast.walk(assigns[k])}
     in_param = set()
     for n in ast.walk(tree):
         if isinstance(n, ast.Call) and (_call_name(n) in aliases or _call_name(n).endswith("Spec")):
@@ -233,6 +244,10 @@ def scan_python(path: Path, templates: dict) -> tuple[list, Counter]:
             continue
         if v in (0, 1, -1):
             skipped["0, 1 or -1"] += 1
+            continue
+        if v == 0.5 and isinstance(p, ast.Call) and p.args == [node] and not p.keywords and (
+                isinstance(p.func, ast.Subscript) or getattr(p.func, "id", "") in ("sec", "s", "seg", "soma")):
+            skipped["NEURON section position (sec(0.5), the midpoint)"] += 1
             continue
         q, sub = node, False
         while q in par and not isinstance(q, ast.stmt):

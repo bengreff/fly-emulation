@@ -93,6 +93,8 @@ const LABELS = ["measured", "published_fit", "derived", "inferred", "guessed", "
 const COLOR = {measured:"#1f5f3a", published_fit:"#3d3d7a", derived:"#2b4f7a", inferred:"#5a4a1f", guessed:"#7a2b2b", absent:"#555"};
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"}[c]));
+// table cells show 4 significant figures, like the template column; the row detail shows the full value
+const n4 = x => (x === "" || x == null || isNaN(+x)) ? String(x ?? "") : String(+(+x).toPrecision(4));
 const fmt = n => Number(n).toLocaleString("en-US");
 const lab = l => `<span class="lab lab-${esc(l)}">${esc(l)}</span>`;
 let D, ROWS, sortKey = "plan_row", sortDir = 1, openId = null;
@@ -249,7 +251,7 @@ function render() {
   $("main").querySelector("tbody").innerHTML = rows.map(r =>
     `<tr class="r${r.id === openId ? " open" : ""}" data-id="${esc(r.id)}"><td class="id">${esc(r.id)}</td><td class="num">${r.plan_row}</td>` +
     `<td>${esc(r.mechanism)}</td><td>${esc(r.grain)}</td><td class="num">${fmt(r.n_elements)}</td><td>${esc(r.template)}</td>` +
-    `<td class="num">${r.bio_min !== "" ? `${esc(r.bio_min)} to ${esc(r.bio_max)}` : ""}</td><td>${esc(r.units)}</td>` +
+    `<td class="num">${r.bio_min !== "" ? `${esc(n4(r.bio_min))} to ${esc(n4(r.bio_max))}` : ""}</td><td>${esc(r.units)}</td>` +
     `<td>${splitCell(r)}</td><td class="small">${esc(r.precision_needed)}</td><td class="src">${sourceCell(r)}</td>` +
     `<td class="st-${esc(r.audit_status)}" title="${esc(r.audit)}">${esc(r.audit_status)}</td></tr>` + (r.id === openId ? detail(r) : "")).join("");
   const fh = $("filters").getBoundingClientRect().height;
