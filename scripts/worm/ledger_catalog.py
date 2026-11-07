@@ -355,8 +355,11 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
         if kind == "fill":
             r["source_project"] = "literature"
         if f["source"] and kind != "range":
-            if kind == "source" and f["bio_min"] == "" and r.get("bound_source") == r["template_source"]:
-                r["bound_source"] = f["source"]          # a corrected citation is the range's too when it was the same
+            if f["bio_min"] == "" and r.get("bound_source") == r["template_source"]:
+                if kind == "source":
+                    r["bound_source"] = f["source"]      # a corrected citation is the range's too when it was the same
+                elif kind == "fill":                     # the range did not come from the new value's paper
+                    r["bound_source"] = f"kept from before the value fill: {r['bound_source']}"
             r["template_source"] = f["source"]
         r["source_url"] = f["source_url"] or r.get("source_url", "")
         r["source_quote"] = f["source_quote"] or r.get("source_quote", "")

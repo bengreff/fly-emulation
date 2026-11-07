@@ -13,7 +13,7 @@ label. Two additions the fly does not have:
   "not yet estimated" until a sensitivity run says otherwise).
 - The catalog columns (worm, 6 Nov): `plan_row` (the PLAN.md section a row, 1-28, the number belongs to),
   `used_by_code` ("yes" = the code reads it; "slot only" = a number the row's published model needs that no code
-  uses yet), `source_url` and `source_quote` (where the number is, so an audit can open it) and `audit` ("ok" or
+  uses yet; "other form only" = read only when a toggle picks a non-default form, e.g. neuromod's lumped), `source_url` and `source_quote` (where the number is, so an audit can open it) and `audit` ("ok" or
   the problems the scripted and read audit found).
 - `source_project` says whose number it is (BAAIWorm, c302, literature, ours, ...) and `fill_kind` is the label in
   words (measured, published fit, derived, inferred (ours), guessed, absent). `published_fit` is a value another
@@ -51,7 +51,7 @@ PARAM_COLUMNS = [
     "toggle", "notes",
     "plan_row", "used_by_code", "source_url", "source_quote", "audit",
 ]
-USED_BY_CODE = {"yes", "slot only"}
+USED_BY_CODE = {"yes", "slot only", "other form only"}
 NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b", "plan_row")
 
 

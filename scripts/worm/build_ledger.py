@@ -714,6 +714,14 @@ def build_registry():
             if any(m["id"] == mid for m in mechs):
                 mechs[:] = [m for m in mechs if m["id"] != mid]
                 notes.append(f"{mid}: taken over by mech/{name}")
+                # brain.py switches a taken-over layer off; its rows run only if the module calls the old layer
+                # (neuromod's form "lumped" does), so they are not numbers the default model uses
+                assert "lumped" in getattr(mod, "FORMS", ()), f"{mid}: taken over and never run; drop its rows"
+                for r in rows:
+                    if r["mechanism_id"] == mid and r["origin"] == "layers":
+                        r["used_by_code"] = "other form only"
+                        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
+                            f"read only when toggle {mid} = lumped; the default form runs mech/{name}'s rows")
             r_ = prow.get(mid) if isinstance(prow, dict) else prow
             cat.MECH_ROW[mid] = int(r_ or cat.guess_row(f"{name} {mid}") or 0)
             mech(mid, mname, layer, "have", f"src/wormemu/mech/{name}.py", toggle=mid,
@@ -749,6 +757,59 @@ def build_registry():
                 n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=snotes, table=tab,
                 url=getattr(s_, "url", ""), quote=getattr(s_, "quote", ""), origin=f"mech:{name}")
     return notes
+
+
+LUMPED_MIRROR = {"pep_ec50_nM": "pep_ec50", "ma_ec50_nM": "ma_ec50"}     # layer table -> mech/neuromod row prefix
+
+
+def mirror_lumped():
+    """The lumped neuromodulation form (brain_layers' per-pair table) and mech/neuromod's one-row-per-pair Specs
+    hold the same EC50s. After the fills, a guessed table element takes its pair row's value and label when that
+    row is not guessed. A mixed table's row takes its commonest element label (as pas_soma_epas does). Returns
+    fill-log entries, kind mirror."""
+    by = {r["param_id"]: r for r in rows}
+    log = []
+    for pid, pre in LUMPED_MIRROR.items():
+        t, r = values.get(pid), by.get(pid)
+        if t is None or r is None:
+            continue
+        t["value"] = t["value"].astype(float)
+        moved = Counter()
+        for i, e in t.element.items():
+            src = by.get(f"{pre}_{e.replace('>', '_')}_nM")
+            if t.at[i, "label"] != "guessed" or src is None or src["label"] == "guessed":
+                continue
+            t.at[i, "value"] = float(src["value_template"])
+            t.at[i, "label"], t.at[i, "source_project"] = src["label"], src["source_project"]
+            t.at[i, "source"] = f"same pair as row {src['param_id']}: {src['template_source']}"
+            moved[src["label"]] += 1
+        if not moved:
+            continue
+        was = r["label"]
+        r["label"] = t.label.value_counts().idxmax()
+        r["fill_kind"] = ledger.FILL_KIND[r["label"]]
+        keys = [k for e, lab in zip(t.element, t.label)
+                if lab != "guessed" and (k := f"{pre}_{e.replace('>', '_')}_nM") in by]
+        url, nu = Counter(by[k].get("source_url", "") for k in keys).most_common(1)[0]
+        src = next(by[k]["template_source"] for k in keys if by[k].get("source_url", "") == url)
+        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + f"row source before the mirror: {r['template_source']}"
+        r["template_source"] = (f"per element: the mech/neuromod pair rows {pre}_<ligand>_<receptor>_nM, each with "
+                                f"its own source (values file); {nu} of {sum(moved.values())} cite the URL, e.g. {src}")
+        r["source_url"] = url
+        why = (f"the lumped form reads one EC50 per pair from this table; mech/neuromod's {pre}_<ligand>_<receptor>_nM "
+               "rows are the same pairs with the literature values, so a guessed element takes its pair row's value")
+        lo, hi = float(t.value.min()), float(t.value.max())
+        if lo < r["bio_min"] or hi > r["bio_max"]:            # the old guessed range did not cover the measurements
+            why += (f"; range [{r['bio_min']:g}, {r['bio_max']:g}] widened to [{min(lo, r['bio_min']):g}, "
+                    f"{max(hi, r['bio_max']):g}] to cover them")
+            r["bio_min"], r["bio_max"] = min(lo, r["bio_min"]), max(hi, r["bio_max"])
+            r["bound_source"] = f"{r['bound_source']}, widened to the mirrored values"
+        r["notes"] = (r["notes"] + "; " if r["notes"] else "") + f"mirror 6 Nov (catalog audit): {why}"
+        for lab, n in moved.items():
+            log.append(dict(param_id=pid, kind="mirror", origin=r["origin"], n=n, pattern="", was_label="guessed",
+                            new_label=lab, change=f"{n} of {len(t)} elements guessed -> {lab}; row label {was} -> "
+                            f"{r['label']}", reason=why, source=f"mech/neuromod rows {pre}_*_nM", url=""))
+    return log
 
 
 def sensitivity():
@@ -861,6 +922,7 @@ def main():
         r["fill_kind"] = ledger.FILL_KIND.get(r["label"], r["label"])
     before = cat.label_tally([*rows, *body, *slot_rows], values)
     fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
+    fill_log += mirror_lumped()
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
     audit_of = {c["id"]: c["audit"] for c in crows}
     for r in rows:

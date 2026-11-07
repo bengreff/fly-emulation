@@ -1,15 +1,15 @@
 element,value,label,source,source_project
-serotonin>ser-1,1000,guessed,template guess,ours
-serotonin>ser-4,1000,guessed,template guess,ours
-serotonin>ser-5,1000,guessed,template guess,ours
-serotonin>ser-7,1000,guessed,template guess,ours
-dopamine>dop-1,1000,guessed,template guess,ours
-dopamine>dop-2,1000,guessed,template guess,ours
-dopamine>dop-3,1000,guessed,template guess,ours
-dopamine>dop-4,1000,guessed,template guess,ours
-octopamine>octr-1,1000,guessed,template guess,ours
-octopamine>ser-3,1000,guessed,template guess,ours
-octopamine>ser-6,1000,guessed,template guess,ours
-tyramine>ser-2,1000,guessed,template guess,ours
-tyramine>tyra-2,1000,guessed,template guess,ours
-tyramine>tyra-3,1000,guessed,template guess,ours
+serotonin>ser-1,1000.0,guessed,template guess,ours
+serotonin>ser-4,1000.0,guessed,template guess,ours
+serotonin>ser-5,1000.0,guessed,template guess,ours
+serotonin>ser-7,30.0,measured,"same pair as row ma_ec50_serotonin_ser-7_nM: Hobson et al. 2006 Genetics 172:159 (PMC1456143), Results: 5-HT stimulation of cAMP in COS-7 cells, native SER-7B",literature
+dopamine>dop-1,20.0,measured,"same pair as row ma_ec50_dopamine_dop-1_nM: Sanyal et al. 2004 EMBO J 23:473 (PMC1271763), Results: dopamine-stimulated cAMP in COS-7 cells, DOP-1L",literature
+dopamine>dop-2,70.0,measured,"same pair as row ma_ec50_dopamine_dop-2_nM: Suo et al. 2003 J Neurochem 86:869 (PMID 12887685; cAMP inhibition in CHO cells), as tabled in Muralidhara & Hardege 2025 R Soc Open Sci Table 2 (PMC12539964)",literature
+dopamine>dop-3,30.0,measured,"same pair as row ma_ec50_dopamine_dop-3_nM: Sugiura et al. 2005 J Neurochem 94:1146 (PMID 16001968; cAMP inhibition in CHO cells), as tabled in Muralidhara & Hardege 2025 R Soc Open Sci Table 2 (PMC12539964)",literature
+dopamine>dop-4,10000.0,measured,"same pair as row ma_ec50_dopamine_dop-4_nM: Sugiura et al. 2005 J Neurochem 94:1146 (PMID 16001968; cAMP accumulation in HEK cells), as tabled in Muralidhara & Hardege 2025 R Soc Open Sci Table 2 (PMC12539964)",literature
+octopamine>octr-1,390.0,measured,"same pair as row ma_ec50_octopamine_octr-1_nM: Mills et al. 2012 EMBO J 31:667 (PMC3273394), Results: octopamine on OCTR-1 with GIRK1/2 in Xenopus oocytes",literature
+octopamine>ser-3,330.0,measured,"same pair as row ma_ec50_octopamine_ser-3_nM: Mills et al. 2012 EMBO J 31:667 (PMC3273394), Results: octopamine on SER-3 in Xenopus oocytes (endogenous Ca-gated Cl current)",literature
+octopamine>ser-6,2000.0,measured,"same pair as row ma_ec50_octopamine_ser-6_nM: Mills et al. 2012 EMBO J 31:667 (PMC3273394), Results: octopamine on SER-6 in Xenopus oocytes",literature
+tyramine>ser-2,360.0,measured,"same pair as row ma_ec50_tyramine_ser-2_nM: Rex & Komuniecki 2002 J Neurochem 82:1352 (PMID 12354282), abstract: tyramine inhibition of forskolin-stimulated cAMP in HEK293 cells",literature
+tyramine>tyra-2,50.0,measured,"same pair as row ma_ec50_tyramine_tyra-2_nM: Rex et al. 2005 J Neurochem 94:181 (PMID 15953361), abstract: tyramine-stimulated GTP-gamma-S binding, COS-7 membranes",literature
+tyramine>tyra-3,700.0,inferred,"same pair as row ma_ec50_tyramine_tyra-3_nM: Wragg et al. 2007 J Neurosci 27:13402 (PMC6673087), Results: tyramine inhibition of [3H]LSD binding, COS-7 membranes",literature
