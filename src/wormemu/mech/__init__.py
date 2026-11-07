@@ -43,7 +43,10 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = ["capool", "receptors", "plasticity", "slow_signalling", "learning", "neuromod", "noise"]
+REGISTRY: list[str] = ["capool", "receptors", "plasticity", "slow_signalling", "learning", "neuromod", "noise",
+                       "temperature", "senses_chem", "senses_touch", "senses_proprio",
+                       "muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other",
+                       "pumps", "metabolism", "observation"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density
 # (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool) and the somatic leak
