@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:39 CST",
+ "generated_at": "2026-11-07 00:44 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67508,
-   "guessed": 9109,
-   "inferred": 117,
+   "guessed": 9108,
+   "inferred": 118,
    "measured": 6183,
    "published_fit": 8033
   },
-  "known": 81841,
-  "placeholder": 9109,
+  "known": 81842,
+  "placeholder": 9108,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9109
+  "must_fill": 9108
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9109,
+   "guessed": 9108,
    "derived": 3100,
-   "inferred": 117,
+   "inferred": 118,
    "measured": 331
   },
-  "known": 10854,
-  "placeholder": 9109,
+  "known": 10855,
+  "placeholder": 9108,
   "gap": 0,
-  "must_fill": 9109
+  "must_fill": 9108
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6182,
     "derived": 3100,
-    "inferred (ours)": 23,
+    "inferred (ours)": 24,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3634,
+    "guessed": 3633,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3100,
     "measured": 330,
-    "inferred (ours)": 23,
+    "inferred (ours)": 24,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3634,
+    "guessed": 3633,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 5,
-   "guessed": 164,
-   "inferred": 66,
+   "guessed": 163,
+   "inferred": 67,
    "measured": 32,
    "published_fit": 87
   },
@@ -749,8 +749,8 @@
    "numbers": 115,
    "by_label": {
     "derived": 3,
-    "guessed": 57,
-    "inferred": 32,
+    "guessed": 56,
+    "inferred": 33,
     "measured": 21,
     "published_fit": 2
    }
@@ -15424,28 +15424,28 @@
    "applies_to": "glutamate-gated chloride (GluCl) receptors at chemical synapses",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 10.0,
-   "template_source": "not retrieved (PORT_SOURCES N1 gap)",
-   "bio_min": 3.0,
-   "bio_max": 50.0,
-   "bound_basis": "guessed",
-   "bound_source": "not retrieved (PORT_SOURCES N1 gap)",
+   "value_template": 17.0,
+   "template_source": "Atif, Smith, Estrada-Mondragon, Xiao, Salim, Capon, Lynch & Keramidas 2019 PLoS Pathog 15:e1007570 (PMC6368337), Results and Fig. 4F (IPSCs from H. contortus GluClRs expressed in HEK293 cells co-cultured with neurons, -70 mV)",
+   "bio_min": 15.0,
+   "bio_max": 42.0,
+   "bound_basis": "measured_related",
+   "bound_source": "Atif, Smith, Estrada-Mondragon, Xiao, Salim, Capon, Lynch & Keramidas 2019 PLoS Pathog 15:e1007570 (PMC6368337), Results and Fig. 4F (IPSCs from H. contortus GluClRs expressed in HEK293 cells co-cultured with neurons, -70 mV)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 10 ms, label guessed, range [3, 50]; inferred: the alpha-beta heteromer's IPSC decay time constant from a related nematode; the C. elegans class in this model groups GLC-1, GLC-2, GLC-3, GLC-4, AVR-14 and AVR-15, which assemble as heteromers in the cited expression studies, so the heteromer value is taken (assumption). Range = the two isoforms' means +- SEM (alpha homomer 40 +- 2 ms). The IPSC decay is this model's decay constant tau_off.",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6368337/",
+   "source_quote": "The group averages confirmed that only the decay times between the two receptor isoforms were significantly different, with those of the \u03b1 GluClRs decaying with a time constant of 40 \u00b1 2 ms (n = 17), whereas the decay time constant for the \u03b1\u03b2 GluClRs was 17 \u00b1 2 ms (n = 8).",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -15554,10 +15554,10 @@
    "n_values": 1,
    "value_template": 20.0,
    "template_source": "not retrieved (PORT_SOURCES N1 gap)",
-   "bio_min": 5.0,
-   "bio_max": 60.0,
-   "bound_basis": "guessed",
-   "bound_source": "not retrieved (PORT_SOURCES N1 gap)",
+   "bio_min": 5.1,
+   "bio_max": 22.9,
+   "bound_basis": "measured_related",
+   "bound_source": "Atif, Smith, Estrada-Mondragon, Xiao, Salim, Capon, Lynch & Keramidas 2019 PLoS Pathog 15:e1007570 (PMC6368337), Results and Fig. 6 (Haemonchus contortus GluClRs in HEK293 cells, excised patches, -70 mV clamp, 78.7 mV driving force)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -15569,11 +15569,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 20 pS, label guessed, range [5, 60]; range from a related nematode (H. contortus, the parasitic clade V relative): beta homomer 5.1 pS, alpha-beta heteromers 8.9 and 15.2 pS (90% of openings at 15.2), and the alpha homomer's 1.8 pA under the same conditions over the stated 78.7 mV driving force = 22.9 pS (derived). No C. elegans GluCl single channel found. Template 20 kept (guessed, inside). This bounds the fit worker's GluCl unit conductance.",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6368337/",
+   "source_quote": "The calculated conductance values for the corresponding amplitudes for \u03b1\u03b2 GluClRs was 15.2 pS and 8.9 pS and for the \u03b2 GluClRs was 5.1 pS.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40705,18 +40705,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 442,
+    "guessed": 441,
     "measured": 282,
     "derived": 40,
-    "inferred": 118,
+    "inferred": 119,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9246,
+    "guessed": 9245,
     "measured": 6238,
     "derived": 67520,
-    "inferred": 124,
+    "inferred": 125,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40724,18 +40724,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 442,
+   "guessed": 441,
    "measured": 282,
    "derived": 40,
-   "inferred": 118,
+   "inferred": 119,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9246,
+   "guessed": 9245,
    "measured": 6238,
    "derived": 67520,
-   "inferred": 124,
+   "inferred": 125,
    "absent": 5
   },
   "by_plan_row": {
@@ -40806,17 +40806,17 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 101,
+     "guessed": 100,
      "measured": 47,
      "derived": 5,
-     "inferred": 34
+     "inferred": 35
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6775,
+     "guessed": 6774,
      "measured": 5904,
      "derived": 1989,
-     "inferred": 39
+     "inferred": 40
     },
     "n_rows": 214,
     "n_numbers": 15459
@@ -41182,17 +41182,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 67,
+     "inferred": 68,
      "measured": 36,
-     "guessed": 190,
+     "guessed": 189,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
-     "inferred": 67,
+     "inferred": 68,
      "measured": 36,
-     "guessed": 190,
+     "guessed": 189,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
@@ -41360,17 +41360,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 283,
+     "guessed": 282,
      "measured": 222,
      "derived": 28,
-     "inferred": 101
+     "inferred": 102
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8943,
+     "guessed": 8942,
      "measured": 6079,
      "derived": 67508,
-     "inferred": 106
+     "inferred": 107
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41639,15 +41639,15 @@
    "mech:receptors": {
     "rows": {
      "measured": 21,
-     "guessed": 57,
-     "inferred": 32,
+     "guessed": 56,
+     "inferred": 33,
      "derived": 3,
      "published_fit": 2
     },
     "numbers": {
      "measured": 21,
-     "guessed": 57,
-     "inferred": 32,
+     "guessed": 56,
+     "inferred": 33,
      "derived": 3,
      "published_fit": 2
     },
@@ -41781,17 +41781,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 442,
+     "guessed": 441,
      "derived": 36,
-     "inferred": 118,
+     "inferred": 119,
      "measured": 278,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9246,
+     "guessed": 9245,
      "derived": 3110,
-     "inferred": 124,
+     "inferred": 125,
      "measured": 386,
      "absent": 5
     },
@@ -42132,19 +42132,19 @@
    },
    "rows_read": 207,
    "quotes": {
-    "none": 1087,
-    "paper text (read audit, 6 Nov)": 251,
+    "none": 1085,
+    "paper text (read audit, 6 Nov)": 253,
     "research file (scripted check)": 145
    },
-   "with_url": 1110,
+   "with_url": 1112,
    "links": {
-    "distinct": 159,
+    "distinct": 160,
     "by_status": {
-     "200": 149,
+     "200": 150,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:39 CST"
+    "checked_at": "2026-11-07 00:44 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45619,6 +45619,32 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4860081/"
    },
    {
+    "param_id": "rec_glucl_gamma_pS",
+    "kind": "range",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "20 -> 20 pS; guessed -> guessed; range [5, 60] -> [5.1, 22.9]",
+    "reason": "range from a related nematode (H. contortus, the parasitic clade V relative): beta homomer 5.1 pS, alpha-beta heteromers 8.9 and 15.2 pS (90% of openings at 15.2), and the alpha homomer's 1.8 pA under the same conditions over the stated 78.7 mV driving force = 22.9 pS (derived). No C. elegans GluCl single channel found. Template 20 kept (guessed, inside). This bounds the fit worker's GluCl unit conductance.",
+    "source": "Atif, Smith, Estrada-Mondragon, Xiao, Salim, Capon, Lynch & Keramidas 2019 PLoS Pathog 15:e1007570 (PMC6368337), Results and Fig. 6 (Haemonchus contortus GluClRs in HEK293 cells, excised patches, -70 mV clamp, 78.7 mV driving force)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6368337/"
+   },
+   {
+    "param_id": "rec_glucl_tau_off_ms",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "10 -> 17 ms; guessed -> inferred; range [3, 50] -> [15, 42]",
+    "reason": "inferred: the alpha-beta heteromer's IPSC decay time constant from a related nematode; the C. elegans class in this model groups GLC-1, GLC-2, GLC-3, GLC-4, AVR-14 and AVR-15, which assemble as heteromers in the cited expression studies, so the heteromer value is taken (assumption). Range = the two isoforms' means +- SEM (alpha homomer 40 +- 2 ms). The IPSC decay is this model's decay constant tau_off.",
+    "source": "Atif, Smith, Estrada-Mondragon, Xiao, Salim, Capon, Lynch & Keramidas 2019 PLoS Pathog 15:e1007570 (PMC6368337), Results and Fig. 4F (IPSCs from H. contortus GluClRs expressed in HEK293 cells co-cultured with neurons, -70 mV)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6368337/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46627,18 +46653,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 442,
+    "guessed": 441,
     "measured": 282,
     "derived": 40,
-    "inferred": 118,
+    "inferred": 119,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9246,
+    "guessed": 9245,
     "measured": 6238,
     "derived": 67520,
-    "inferred": 124,
+    "inferred": 125,
     "absent": 5
    }
   }
