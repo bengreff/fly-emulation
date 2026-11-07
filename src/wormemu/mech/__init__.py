@@ -30,7 +30,8 @@ ctx (Ctx): t_ms (time at the start of this step), obs (the BodyToBrain fields as
 in brain.cell_names order, names, is_muscle, outputs. ctx.outputs holds every mechanism's `out` from the previous
 step, updated in place by each mechanism earlier in REGISTRY order this step, so a module reads another's output
 with at most one step of lag (e.g. outputs['coelomocyte_uptake_per_s'], outputs['temperature_C'],
-outputs['peptide_release'] = {peptide gene: release rate}).
+outputs['peptide_release'] = {peptide gene, or "gene@compartment" with a name from
+mech.neuromod.COMPARTMENTS: molecules/s}, read by neuromod).
 """
 from __future__ import annotations
 
@@ -40,13 +41,20 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = []
+REGISTRY: list[str] = ["receptors", "neuromod"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density
 # (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool) and the somatic leak
 CHANNEL_NAMES = ("slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "slo2_unc2", "irk", "egl36",
                  "egl19", "cca1", "shk1", "slo2_egl19", "nca", "kcnl")
-G_SCALE_NAMES = tuple(f"dens_{c}" for c in CHANNEL_NAMES) + ("leak",)
+# the ionotropic receptor classes (wormemu.mech.receptors.CLASSES, row 7)
+RECEPTOR_CLASSES = ("lacr", "acr16", "nachr", "acc", "glr", "nmr", "glucl", "gabacl", "gabacat", "mod1", "lgc55",
+                    "lgc53", "acr23")
+# also: "release" (per presynaptic cell, multiplies the cleft transmitter of every synapse it makes) and
+# "rec_<class>" (per postsynaptic cell, multiplies that receptor class's conductance at its synapses); these act on
+# wsyn synapses only (receptor_kinetics not off)
+G_SCALE_NAMES = tuple(f"dens_{c}" for c in CHANNEL_NAMES) + ("leak", "release") + tuple(f"rec_{c}" for c in
+                                                                                       RECEPTOR_CLASSES)
 OVERRIDES = ("pumps", "eggs_laid", "expulsions", "pharynx_activation", "enteric_activation", "sex_muscle_activation",
              "gcamp_dff", "pressure_scale")
 

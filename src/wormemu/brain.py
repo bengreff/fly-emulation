@@ -278,6 +278,7 @@ class Brain:
         self.n_segments = sum(len(s) for s in self.segs)
         self._kinetics()
         self.conn = []                                   # hoc point processes (kept alive)
+        self.wsyn = []                                   # (wsyn, pre index, post index, class index or -1)
         self.placed = defaultdict(int)
         if tg["wiring"] == "baaiworm":
             self._wire_baaiworm()
@@ -441,6 +442,8 @@ class Brain:
         h = self.h
         self._gt = {}
         for name in mech.G_SCALE_NAMES:
+            if name == "release" or name.startswith("rec_"):
+                continue                                 # synapse gains (wsyn), below
             ch = name[5:] if name.startswith("dens_") else "pas"
             var = GB.get(ch, f"gb{ch}") if ch != "pas" else "g"
             cells = [i for i, s in enumerate(self.soma) if h.ismembrane(ch, sec=s)]
@@ -452,6 +455,16 @@ class Brain:
             buf = h.Vector(len(cells))
             pv.gather(buf)
             self._gt[name] = (np.array(cells), pv, buf.as_numpy().copy(), np.ones(len(cells)))
+        # wsyn synapses: release gain by presynaptic cell, receptor gain by (postsynaptic cell, class)
+        w = self.wsyn
+        self._sg = None
+        if w:
+            rel, rec = h.PtrVector(len(w)), h.PtrVector(len(w))
+            for k, (pp, _, _, _) in enumerate(w):
+                rel.pset(k, pp._ref_relgain)
+                rec.pset(k, pp._ref_recgain)
+            pre, post, cls = (np.array([x[i] for x in w]) for i in (1, 2, 3))
+            self._sg = (pre, post, cls, rel, rec, np.ones(len(w)), np.ones(len(w)))
 
     def _apply_g_scale(self, g):
         """Set each scalable conductance to base x this step's product of multipliers (1 where no mechanism returned
@@ -465,6 +478,21 @@ class Brain:
                 continue
             cur[:] = f
             pv.scatter(self.h.Vector(base * cur))
+        if self._sg is None:
+            return
+        pre, post, cls, rel, rec, crel, crec = self._sg
+        f = np.asarray(g["release"], float)[pre] if "release" in g else np.ones(len(pre))
+        if not np.array_equal(crel, f):
+            crel[:] = f
+            rel.scatter(self.h.Vector(f))
+        f = np.ones(len(post))
+        for k, c in enumerate(mech.RECEPTOR_CLASSES):
+            if f"rec_{c}" in g:
+                m = cls == k
+                f[m] = np.asarray(g[f"rec_{c}"], float)[post[m]]
+        if not np.array_equal(crec, f):
+            crec[:] = f
+            rec.scatter(self.h.Vector(f))
 
     # --- connections -------------------------------------------------------------------------------------------
     def _inhibitory(self, pre, post):
@@ -488,6 +516,39 @@ class Brain:
                 setattr(pp, q, self.spec.v(f"syn_{sk}_{q}"))
         self.conn.append(pp)
         self.placed[kind + ("_inh" if inh else "")] += 1
+
+    def _wsyn(self, pre_seg, post_seg, pre, post, g_uS, cls, kind, inh=False):
+        """One wsyn (receptor_kinetics): class `cls` (None = BAAIWorm's graded synapse of sign `inh`, mode 0)."""
+        h, sv = self.h, self.spec.v
+        pp = h.wsyn(post_seg)
+        h.setpointer(pre_seg._ref_v, "vpre", pp)
+        pp.gmax = g_uS
+        sk = "inh" if inh and cls is None else "exc"
+        for q in ("delta", "k", "Vth"):                  # release: BAAIWorm's (its two types share these values)
+            setattr(pp, q, sv(f"syn_{sk}_{q}") if self.lit else            # else the two mods' defaults
+                    {"delta": 5.0, "k": 0.015000001 if sk == "inh" else 0.5, "Vth": -20.0}[q])
+        if cls is None:
+            pp.mode = 0
+            pp.erev = sv(f"syn_{'inh' if inh else 'exc'}_erev") if self.lit else (-70.0 if inh else 30.0)
+        else:
+            for q, x in self._rk_par[cls].items():
+                setattr(pp, q, x)
+        self.conn.append(pp)
+        self.wsyn.append((pp, self.idx[pre], self.idx[post],
+                          -1 if cls is None else mech.RECEPTOR_CLASSES.index(cls)))
+        self.placed[f"wsyn_{cls or ('graded_inh' if inh else 'graded_exc')}"] += 1
+
+    def _pair_classes(self, a, b, inh, muscle=False):
+        """[(class, share)] for a chemical pair under receptor_kinetics ([] = BAAIWorm's graded synapse)."""
+        if self._rk_mode == 0:
+            return []
+        pol = None
+        if self.toggles["receptor_sign"] == "on":
+            r = self._rk_sign.get(f"{a}>{b}")
+            if r is not None and r[0] in ("fenyves", "measured"):
+                pol = "-" if r[1] else "+"
+        return self._rk.pair_classes(self.st, a, cengen_class(b, self._cengen), pol, inh, muscle,
+                                     float(self._rk_p["rec_nmj_lacr_share"]))
 
     def _gap(self, seg_a, seg_b, g_uS, kind, into=None, ratio=1.0):
         """One gap junction between two segments. `into` (seg_a or seg_b): a rectifying junction that passes
@@ -555,12 +616,31 @@ class Brain:
         sv, led = self.spec.v, self.spec.led
         n_em = {pid: led.values(pid).set_index("element").n_em for pid in
                 ("syn_strength_per_pair", "gap_strength_per_pair", "nmj_strength_per_pair")}
+        rk = self.toggles["receptor_kinetics"] != "off" and self.toggles["sign_rule"] != "allexc"
+        if rk:                                           # receptor classes (mech.receptors, row 7)
+            from wormemu.mech import receptors
+            self._rk, self._rk_p = receptors, mech.params_for(receptors, self.spec)
+            self._rk_mode = receptors.MODES[self.toggles["receptor_kinetics"]]
+            self._rk_par = {c: receptors.site_params(self._rk_p, c, self._rk_mode) for c in receptors.CLASSES}
+            self._cengen = set(self.st.cengen_classes)
+            t = led.values("syn_sign_receptor")
+            self._rk_sign = dict(zip(t.element, zip(t.rule, t.value.astype(int))))
         for e, g in sv("syn_strength_per_pair").items():
             a, b = e.split(">")
             if a not in self.idx or b not in self.idx:
                 continue
             inh = self._inhibitory(a, b)
             sites = syn_sites.get((a, b)) or [self._nearest(a, b)]
+            if rk:
+                g_uS = g * n_em["syn_strength_per_pair"][e] / len(sites) / 1000.0
+                cl = self._pair_classes(a, b, inh)
+                for i, j in sites:
+                    ps, qs = self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0]
+                    for c, sh in cl or [(None, 1.0)]:
+                        self._wsyn(ps, qs, a, b, g_uS * sh * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0),
+                                   c, "syn_nn", inh)
+                    self.placed["syn_nn" + ("_inh" if inh else "")] += 1
+                continue
             w = g * n_em["syn_strength_per_pair"][e] / len(sites) / (self._g_syn(inh) * 1000.0)
             for i, j in sites:
                 self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][j][0], w, inh, "syn_nn")
@@ -590,6 +670,14 @@ class Brain:
                 continue
             inh = self._inhibitory(a, b)
             i, _ = self._nearest(a, b)
+            if rk:
+                g_uS = g * n_em["nmj_strength_per_pair"][e] / 1000.0
+                ps, qs = self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][0][0]
+                for c, sh in self._pair_classes(a, b, inh, muscle=True) or [(None, 1.0)]:
+                    self._wsyn(ps, qs, a, b, g_uS * sh * (receptors.gamma_ratio(self._rk_p, c) if c else 1.0), c,
+                               "syn_nmj", inh)
+                self.placed["syn_nmj" + ("_inh" if inh else "")] += 1
+                continue
             w = g * n_em["nmj_strength_per_pair"][e] / (self._g_syn(inh) * 1000.0)
             self._syn(self.segs[self.idx[a]][i][0], self.segs[self.idx[b]][0][0], w, inh, "syn_nmj")
 
@@ -636,6 +724,14 @@ class Brain:
             for s, m in zip(self.soma, self.is_muscle):
                 for seg in (s if m else ()):
                     seg.cai = 0.0                        # c302's initial concentration
+        for name, (cells, pv, base, cur) in self._gt.items():
+            cur[:] = 1.0
+            pv.scatter(self.h.Vector(base))
+        if self._sg is not None:                         # before finitialize: wsyn INITIAL reads relgain
+            _, _, _, rel, rec, crel, crec = self._sg
+            crel[:], crec[:] = 1.0, 1.0
+            rel.scatter(self.h.Vector(crel))
+            rec.scatter(self.h.Vector(crec))
         self.h.finitialize(V_INIT)
         if self.mact:
             for s, m in zip(self.soma, self.is_muscle):
@@ -643,9 +739,6 @@ class Brain:
                     seg.v = V_INIT_MUSCLE
             self.h.finitialize()                         # keeps each segment's v
         self.layers.reset()
-        for name, (cells, pv, base, cur) in self._gt.items():
-            cur[:] = 1.0
-            pv.scatter(self.h.Vector(base))
         for m in self.mechs:
             m.reset()
         self.mech_out = {}
