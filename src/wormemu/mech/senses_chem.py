@@ -15,7 +15,9 @@ What each cell runs (the world reaches the brain only here, through BodyToBrain'
           and TAX-2/TAX-4; borrowing the published OFF branch is the inferred part).
     ASEL  NaCl up via the cyclase rate (GCY-14 class receptor guanylyl cyclase; Ortiz et al. 2009): ON cell.
     AFD   temperature via the cyclase rate (GCY-8/18/23), sigmoid around T* (Ramot et al. 2008, Takeishi 2016):
-          ON above T*. T* shifts by ctx.outputs['afd_Tstar_shift_C'] when a plasticity module writes it.
+          ON above T*. T* shifts by ctx.outputs['afd_Tstar_shift_C'] when a plasticity module writes it. Each AFD's
+          catalytic rate is also multiplied by ctx.outputs['afd_gc_scale'][cell] (mech/glia: amphid sheath KCC-3
+          sets the Cl- at AFD's ending, which inhibits GCY-8; Singhvi et al. 2016), 1 where absent.
     URX, AQR, PQR  O2 up via the cyclase rate (soluble GCY-35/36; Zimmer et al. 2009, Busch et al. 2012).
     BAG   O2 down (GCY-31/33) and CO2 up (receptor GC GCY-9; Hallem et al. 2011) via the cyclase rate.
     ASJ, ASK, ASH, AWB, ASI  light via LITE-1 -> G protein -> DAF-11/ODR-1 cyclases (Ward et al. 2008, Liu et al.
@@ -334,6 +336,9 @@ class Mech:
             for c in CELLS_LIGHT:
                 a(c, x)
         kcat = 1.0 + p["sens_gc_gain"] * np.clip(act, 0.0, 1.0)
+        for cell, sc in (ctx.outputs.get("afd_gc_scale") or {}).items():     # glia KCC-3 -> Cl- -> GCY-8
+            if cell in self.cgi:
+                kcat[self.cgi[cell]] *= float(sc)
         r = np.zeros(len(self.tc))
         for t, chans in TRPV_IN.items():
             if f[t] != CASCADE:
