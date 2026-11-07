@@ -18,8 +18,8 @@ Layers (mechanism ids; the toggle and its default are in MECHANISMS):
   egg_laying (two-state)                                 sex_muscle_activation, eggs_laid
   metabolism (lumped energy store)                       a state; feeds nothing yet
   gcamp (observation)                                    Ca -> GCaMP dF/F
-  homeostasis, slow_signalling (plasticity, toggles off) a slow bias current per neuron; hours-scale odour gain
-  gap_rectification (toggle off)                         applied by the brain to AVA-class gap junctions
+  homeostasis, slow_signalling (plasticity)              a slow bias current per neuron; hours-scale odour gain
+  gap_rectification                                      applied by the brain to AVA-class gap junctions
 The expression-to-physiology map (CeNGEN gating which channels a cell has) is the brain's `expression_map` toggle.
 """
 from __future__ import annotations
@@ -48,7 +48,8 @@ class Spec:
 
 
 # --- mechanisms: id, name, layer, toggle, default state, source ------------------------------------------------
-# default "on" = part of the template worm; "off" = neutral until adopted (project rule for uncertain mechanisms).
+# default "on" = part of the template worm; "off" = neutral until adopted. Ben, 6 Nov 2026: every mechanism on in the
+# template worm, the simpler nested forms as toggles; so the neuromodulator, plasticity and rectification layers are on.
 MECHANISMS = [
     ("sens_salt", "Salt sensing (ASEL ON, ASER OFF)", "sensory", "on"),
     ("sens_odor_attract", "Attractive odours (AWA ON; AWC OFF)", "sensory", "on"),
@@ -64,8 +65,8 @@ MECHANISMS = [
     ("sens_proprio", "Proprioception (B-type stretch, DVA, SMD)", "sensory", "on"),
     ("muscle_ca", "BWM membrane V -> Ca (lumped, passive muscles)", "muscle", "on"),
     ("muscle_activation", "BWM Ca -> activation (Hill, rise/decay)", "muscle", "on"),
-    ("peptides", "Neuropeptide signalling by ligand-GPCR pair (well mixed)", "neuromodulation", "off"),
-    ("monoamines", "Monoamine signalling (5-HT, DA, TA, OA; well mixed)", "neuromodulation", "off"),
+    ("peptides", "Neuropeptide signalling by ligand-GPCR pair (well mixed)", "neuromodulation", "on"),
+    ("monoamines", "Monoamine signalling (5-HT, DA, TA, OA; well mixed)", "neuromodulation", "on"),
     ("glia", "Amphid sheath glia, lumped as a sensory gain", "glia", "off"),
     ("pharynx", "Pharyngeal pumping oscillator (lumped)", "organ", "on"),
     ("defecation", "Defecation motor programme clock (intestine)", "organ", "on"),
@@ -73,10 +74,10 @@ MECHANISMS = [
     ("metabolism", "Energy store (lumped)", "organ", "off"),
     ("gcamp", "GCaMP observation model", "observation", "on"),
     ("homeostasis", "Homeostatic self-tuning: a slow bias current pulls each neuron's V toward a target", "plasticity",
-     "off"),
+     "on"),
     ("slow_signalling", "Hours-scale sensory adaptation (EGL-4, CMK-1), lumped as a slow gain drift", "plasticity",
-     "off"),
-    ("gap_rectification", "Rectifying gap junctions (AVA-A class UNC-7/UNC-9)", "gap", "off"),
+     "on"),
+    ("gap_rectification", "Rectifying gap junctions (AVA-A class UNC-7/UNC-9)", "gap", "on"),
 ]
 
 S = Spec
