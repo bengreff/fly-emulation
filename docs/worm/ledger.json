@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:08 CST",
+ "generated_at": "2026-11-07 00:10 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67506,
-   "guessed": 9118,
-   "inferred": 113,
+   "guessed": 9117,
+   "inferred": 114,
    "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81832,
-  "placeholder": 9118,
+  "known": 81833,
+  "placeholder": 9117,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9118
+  "must_fill": 9117
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9118,
+   "guessed": 9117,
    "derived": 3098,
-   "inferred": 113,
+   "inferred": 114,
    "measured": 328
   },
-  "known": 10845,
-  "placeholder": 9118,
+  "known": 10846,
+  "placeholder": 9117,
   "gap": 0,
-  "must_fill": 9118
+  "must_fill": 9117
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6179,
     "derived": 3098,
-    "inferred (ours)": 19,
+    "inferred (ours)": 20,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3643,
+    "guessed": 3642,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3098,
     "measured": 327,
-    "inferred (ours)": 19,
+    "inferred (ours)": 20,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3643,
+    "guessed": 3642,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 3,
-   "guessed": 171,
-   "inferred": 63,
+   "guessed": 170,
+   "inferred": 64,
    "measured": 30,
    "published_fit": 87
   },
@@ -749,8 +749,8 @@
    "numbers": 115,
    "by_label": {
     "derived": 2,
-    "guessed": 61,
-    "inferred": 30,
+    "guessed": 60,
+    "inferred": 31,
     "measured": 20,
     "published_fit": 2
    }
@@ -17023,28 +17023,28 @@
    "applies_to": "betaine-gated cation (ACR-23) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 0.3,
-   "template_source": "not retrieved",
-   "bio_min": 0.0,
-   "bio_max": 1.0,
+   "value_template": 0.19,
+   "template_source": "Peden et al. 2013 Nat Neurosci 16:1794 (PMC3955162), Results (monepantel on ACR-23 in oocytes)",
+   "bio_min": 0.05,
+   "bio_max": 0.23,
    "bound_basis": "guessed",
-   "bound_source": "not retrieved",
+   "bound_source": "Peden et al. 2013 Nat Neurosci 16:1794 (PMC3955162), Results (monepantel on ACR-23 in oocytes)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 0.3 1, label guessed, range [0, 1]; the current left after 60 s of betaine, as a fraction of the peak. If monepantel blocks desensitization fully, the 60 s current without it is 1 / 5.3 = 0.19 of the peak; upper end 1 / 4.4 = 0.23 (the ratio minus 1 SD). If the block is partial the fraction is lower, so the lower end 0.05 is guessed. Was 0.3 [0, 1], guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3955162/",
+   "source_quote": "At 300pM monepantel does not activate the ion channel, and has no effect on the size of the initial betaine-induced current, however, it blocks the desensitization of the ACR-23 receptor ( Fig. 4g ). Sixty seconds after the initial application of betaine, the current amplitude was 5.3 \u00b1 0.9 times larger in the presence of monepantel than in its absence.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40704,18 +40704,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 451,
+    "guessed": 450,
     "measured": 279,
     "derived": 38,
-    "inferred": 114,
+    "inferred": 115,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9255,
+    "guessed": 9254,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 120,
+    "inferred": 121,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40723,18 +40723,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 451,
+   "guessed": 450,
    "measured": 279,
    "derived": 38,
-   "inferred": 114,
+   "inferred": 115,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9255,
+   "guessed": 9254,
    "measured": 6235,
    "derived": 67518,
-   "inferred": 120,
+   "inferred": 121,
    "absent": 5
   },
   "by_plan_row": {
@@ -40805,17 +40805,17 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 105,
+     "guessed": 104,
      "measured": 46,
      "derived": 4,
-     "inferred": 32
+     "inferred": 33
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6779,
+     "guessed": 6778,
      "measured": 5903,
      "derived": 1988,
-     "inferred": 37
+     "inferred": 38
     },
     "n_rows": 214,
     "n_numbers": 15459
@@ -41179,17 +41179,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 64,
+     "inferred": 65,
      "measured": 34,
-     "guessed": 197,
+     "guessed": 196,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
-     "inferred": 64,
+     "inferred": 65,
      "measured": 34,
-     "guessed": 197,
+     "guessed": 196,
      "derived": 4,
      "published_fit": 89,
      "absent": 4
@@ -41357,17 +41357,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 292,
+     "guessed": 291,
      "measured": 219,
      "derived": 26,
-     "inferred": 97
+     "inferred": 98
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8952,
+     "guessed": 8951,
      "measured": 6076,
      "derived": 67506,
-     "inferred": 102
+     "inferred": 103
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41634,15 +41634,15 @@
    "mech:receptors": {
     "rows": {
      "measured": 20,
-     "guessed": 61,
-     "inferred": 30,
+     "guessed": 60,
+     "inferred": 31,
      "derived": 2,
      "published_fit": 2
     },
     "numbers": {
      "measured": 20,
-     "guessed": 61,
-     "inferred": 30,
+     "guessed": 60,
+     "inferred": 31,
      "derived": 2,
      "published_fit": 2
     },
@@ -41776,17 +41776,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 451,
+     "guessed": 450,
      "derived": 34,
-     "inferred": 114,
+     "inferred": 115,
      "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9255,
+     "guessed": 9254,
      "derived": 3108,
-     "inferred": 120,
+     "inferred": 121,
      "measured": 383,
      "absent": 5
     },
@@ -42127,11 +42127,11 @@
    },
    "rows_read": 200,
    "quotes": {
-    "none": 1099,
-    "paper text (read audit, 6 Nov)": 239,
+    "none": 1098,
+    "paper text (read audit, 6 Nov)": 240,
     "research file (scripted check)": 145
    },
-   "with_url": 1101,
+   "with_url": 1102,
    "links": {
     "distinct": 150,
     "by_status": {
@@ -45454,6 +45454,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1572670/"
    },
    {
+    "param_id": "rec_acr23_ss_frac",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "0.3 -> 0.19 1; guessed -> inferred; range [0, 1] -> [0.05, 0.23]",
+    "reason": "the current left after 60 s of betaine, as a fraction of the peak. If monepantel blocks desensitization fully, the 60 s current without it is 1 / 5.3 = 0.19 of the peak; upper end 1 / 4.4 = 0.23 (the ratio minus 1 SD). If the block is partial the fraction is lower, so the lower end 0.05 is guessed. Was 0.3 [0, 1], guessed",
+    "source": "Peden et al. 2013 Nat Neurosci 16:1794 (PMC3955162), Results (monepantel on ACR-23 in oocytes)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3955162/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46462,18 +46475,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 451,
+    "guessed": 450,
     "measured": 279,
     "derived": 38,
-    "inferred": 114,
+    "inferred": 115,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9255,
+    "guessed": 9254,
     "measured": 6235,
     "derived": 67518,
-    "inferred": 120,
+    "inferred": 121,
     "absent": 5
    }
   }
