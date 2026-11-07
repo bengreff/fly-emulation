@@ -86,7 +86,8 @@ RECT_INTO = re.compile(r"(AVA|AVB|AVD|AVE|PVC)[LR]")
 RECT_FROM = re.compile(r"(DA|VA|DB|VB)\d\d")
 CHANNELS = ["slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "slo2_unc2", "irk", "egl36", "egl19",
             "cca1", "shk1", "slo2_egl19", "nca", "kcnl", "cainternm"]          # BAAIWorm's insert order
-GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2"}
+GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2",
+      **{ch: "gbar" for ch in ("kqt1", "unc103", "exp2", "slo1iso", "slo2iso")}}   # + mech/channels (row 4)
 SLO = ("slo1_egl19", "slo1_unc2", "slo2_egl19", "slo2_unc2")
 KNOWN = {"measured", "published_fit", "derived", "inferred"}
 # Ben, 6 Nov 2026: every mechanism on in the template worm, the simpler forms as toggles. These defaults are written by
@@ -266,12 +267,17 @@ class Brain:
         assert all(bwm_name(self._baai[n]) == n for n in BWM_NAMES)
 
         self._ions()
+        # registered modules with a build_cell hook add membrane to each cell as it is built (mech/__init__)
+        hooks = [(m, mech.params_for(m, self.spec)) for m in self._mods if hasattr(m, "build_cell")
+                 and any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS)]
         self.cells, self.segs, self.soma = [], [], []
         for n in self.cell_names:
             b = self._baai[n]
             h.load_file(str(BAAI / "model" / f"{b}.hoc"))
             obj = getattr(h, b)()
             self._biophysics(n, obj)
+            for m, prm in hooks:
+                m.build_cell(self, n, obj, prm, tg)
             self.cells.append(obj)
             self.segs.append(_segments(obj))
             self.soma.append(obj.Soma)

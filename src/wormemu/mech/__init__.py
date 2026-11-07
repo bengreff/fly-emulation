@@ -8,6 +8,9 @@ Each module defines
                 "off" or a named form (e.g. "well_mixed"); any value other than "off" counts as on.
     SPECS       [brain_layers.Spec]: every number the module's code uses. build_ledger reads them (all_specs), so a
                 number exists in the ledger because the code uses it.
+    build_cell  optional, build_cell(brain, name, hoc_cell, params, toggles): called while the brain builds each
+                cell (after BAAIWorm's biophysics, before pointers and conductance targets exist), so a module can
+                insert density mechanisms (mech/channels)
     class Mech  __init__(self, brain, params, toggles): may add NEURON sections, point processes or synapses
                 reset(self)
                 step(self, ctx, dt_ms) -> dict with any of
@@ -43,15 +46,17 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = ["capool", "receptors", "plasticity", "slow_signalling", "learning", "neuromod", "noise",
+REGISTRY: list[str] = ["channels", "capool", "receptors", "plasticity", "slow_signalling", "learning", "neuromod",
+                       "noise",
                        "temperature", "senses_chem", "senses_touch", "senses_proprio",
                        "muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other",
                        "pumps", "metabolism", "observation"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density
-# (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool) and the somatic leak
+# (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool), mech/channels' added Nicoletti 2024 channels
+# (on the somas that have them) and the somatic leak
 CHANNEL_NAMES = ("slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "slo2_unc2", "irk", "egl36",
-                 "egl19", "cca1", "shk1", "slo2_egl19", "nca", "kcnl")
+                 "egl19", "cca1", "shk1", "slo2_egl19", "nca", "kcnl", "kqt1", "unc103", "exp2", "slo1iso", "slo2iso")
 # the ionotropic receptor classes (wormemu.mech.receptors.CLASSES, row 7)
 RECEPTOR_CLASSES = ("lacr", "acr16", "nachr", "acc", "glr", "nmr", "glucl", "gabacl", "gabacat", "mod1", "lgc55",
                     "lgc53", "acr23")
