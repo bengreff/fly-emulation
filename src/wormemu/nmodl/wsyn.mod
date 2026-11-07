@@ -179,8 +179,19 @@ DERIVATIVE states {
 }
 
 PROCEDURE rates() {
+    LOCAL x
     sinf = 1/(1 + exp((Vth - vpre)/delta))
     tau = (1 - sinf)/k
+    if (tau <= 0) {
+        : sinf rounds to 1 once vpre is above Vth + about 37 delta, and tau = 0 makes cnexp's (sinf/tau)/(1/tau)
+        : NaN. The same tau without the cancellation (exponent capped short of overflow); s then follows sinf
+        : within the step, as mech/plasticity.py's tau = 0 branch does. Unchanged wherever tau > 0.
+        x = (vpre - Vth)/delta
+        if (x > 700) {
+            x = 700
+        }
+        tau = 1/(k * (1 + exp(x)))
+    }
 }
 
 PROCEDURE act() {
