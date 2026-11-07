@@ -4,6 +4,9 @@
 #include "fem/Mesh/MeshHeaders.h"
 #include "Muscle.h"
 #include "util/ArgParser.h"
+// wormemu extension (2026-11-06, not upstream; inert unless filled): per-tetrahedron Young's modulus in mesh order.
+// Empty = upstream (every tetrahedron gets the constructor's youngs_modulus). Filled by the driver's --tet_youngs.
+extern std::vector<double> wormemu_tet_youngs;
 
 class Worm
 {

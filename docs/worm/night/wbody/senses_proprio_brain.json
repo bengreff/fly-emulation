@@ -1,0 +1,63 @@
+{
+ "check": "senses_proprio in the brain (stretch channels)",
+ "lumped_vs_no_module_max_dv_mV": 5.755396159656812e-13,
+ "lumped_equivalent": true,
+ "cascade_finite": true,
+ "wall_per_bio_s": {
+  "no_module": 3.43,
+  "lumped": 3.51,
+  "cascade": 3.5
+ },
+ "po": {
+  "VB03": {
+   "rest": 0.0344,
+   "ventral": 0.9656,
+   "dorsal": 0.0282,
+   "head_dorsal": 0.0283
+  },
+  "VB05": {
+   "rest": 0.0344,
+   "ventral": 0.9656,
+   "dorsal": 0.0282,
+   "head_dorsal": 0.0288
+  },
+  "DB03": {
+   "rest": 0.0344,
+   "ventral": 0.0282,
+   "dorsal": 0.9656,
+   "head_dorsal": 0.6971
+  },
+  "DB04": {
+   "rest": 0.0344,
+   "ventral": 0.0282,
+   "dorsal": 0.9656,
+   "head_dorsal": 0.2477
+  },
+  "DVA": {
+   "rest": 0.0344,
+   "ventral": 0.483,
+   "dorsal": 0.483,
+   "head_dorsal": 0.0658
+  },
+  "SMDDL": {
+   "rest": 0.0344,
+   "ventral": 0.0282,
+   "dorsal": 0.9656,
+   "head_dorsal": 0.9656
+  },
+  "SMDVL": {
+   "rest": 0.0344,
+   "ventral": 0.9656,
+   "dorsal": 0.0282,
+   "head_dorsal": 0.0282
+  }
+ },
+ "bars": {
+  "vb": true,
+  "db": true,
+  "dva": false,
+  "smd": true,
+  "finite": true
+ },
+ "verdict": "fail: dva"
+}

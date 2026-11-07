@@ -18,6 +18,17 @@
   solve; upstream breaks out and returns the iterate from before it, which at rest under a weak load is the
   inertial prediction (the dead zone in BODY_TESTS.md). Off unless `--solver_exit latest` is passed; with it off,
   P0 and P2 frames are bit-identical to the runs before any extension (checked 2026-11-05 17:12).
+  Row 21 (2026-11-06, ours, marked "wormemu extension"): `wormemu_tet_youngs` (a global in `sim/Worm.h/.cpp`; when
+  filled, `Worm::Initialize` gives tetrahedron k its own Young's modulus, mesh order, instead of the constructor's
+  one value), `World::GetLMatrix` (read access to the stiffness matrix L, `sim/fem/World.h`), and
+  `World::SetCorotDamping(tau_s)` with its private helpers `UpdateDampingStretch` / `DampingTargets` (a
+  corotational Kelvin-Voigt dashpot: adds (tau/h) L_fem to the drag matrix and (tau/h) J dd to the right-hand side,
+  dd = R S_n per tet, S_n the previous step's stretch; one guarded line each in `TimeStepping`,
+  `ProjectiveDynamicsMethod` and `SetDragMatrix`), which reads `CorotateFEMConstraint::GetRotationTarget` and
+  `GetDeformationGradient` (two public getters added to `sim/fem/Constraint/CorotateFEMConstraint.h`). Inert unless
+  the driver's `--tet_youngs FILE` or `--damping backholm2013` is passed (src/wormemu/body/layers.py writes both);
+  a uniform 2e5 Pa file and damping at tau 0 give frames bit-identical to upstream (checked 6 Nov 2026,
+  scripts/worm/body_layers_check.py).
   `Metaworm/data/` (mesh `worm_mesh_4.mesh`, muscle fibres `worm_nerve_cord_highResCord.obj`, `worm.meta`,
   `worm.sampling`, the muscle key files `worm_givenkey_*.csv`, `worm_empty_key.csv`), and
   `Metaworm/args/train_worm_swim_args.txt`.
