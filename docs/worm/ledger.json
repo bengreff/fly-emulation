@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 22:30 CST",
+ "generated_at": "2026-11-06 22:36 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 62,
   "by_label": {
    "derived": 67493,
-   "guessed": 8963,
-   "inferred": 54,
-   "measured": 6145,
+   "guessed": 8958,
+   "inferred": 56,
+   "measured": 6148,
    "published_fit": 7787
   },
-  "known": 81479,
-  "placeholder": 8963,
+  "known": 81484,
+  "placeholder": 8958,
   "gap": 0,
   "used_by_model": 90442,
-  "must_fill": 8963
+  "must_fill": 8958
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19455,
   "by_label": {
    "published_fit": 7060,
-   "guessed": 8963,
+   "guessed": 8958,
    "derived": 3085,
-   "inferred": 54,
-   "measured": 293
+   "inferred": 56,
+   "measured": 296
   },
-  "known": 10492,
-  "placeholder": 8963,
+  "known": 10497,
+  "placeholder": 8958,
   "gap": 0,
-  "must_fill": 8963
+  "must_fill": 8958
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,17 +49,17 @@
    },
    "literature": {
     "guessed": 5469,
-    "measured": 6144,
+    "measured": 6147,
     "derived": 3084,
-    "inferred (ours)": 12,
+    "inferred (ours)": 13,
     "published fit": 2
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3490,
-    "inferred (ours)": 42,
+    "guessed": 3485,
+    "inferred (ours)": 43,
     "derived": 1,
     "measured": 1
    },
@@ -75,16 +75,16 @@
    "literature": {
     "guessed": 5469,
     "derived": 3084,
-    "measured": 292,
-    "inferred (ours)": 12,
+    "measured": 295,
+    "inferred (ours)": 13,
     "published fit": 2
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3490,
-    "inferred (ours)": 42,
+    "guessed": 3485,
+    "inferred (ours)": 43,
     "derived": 1,
     "measured": 1
    },
@@ -114,9 +114,9 @@
    "published_fit": 171
   },
   "class": {
-   "guessed": 85,
-   "inferred": 35,
-   "measured": 17
+   "guessed": 80,
+   "inferred": 37,
+   "measured": 20
   },
   "compartment": {
    "derived": 64408
@@ -1101,9 +1101,9 @@
    "absent_reason": "",
    "numbers": 115,
    "by_label": {
-    "guessed": 70,
-    "inferred": 26,
-    "measured": 17,
+    "guessed": 65,
+    "inferred": 28,
+    "measured": 20,
     "published_fit": 2
    }
   },
@@ -13395,11 +13395,11 @@
    "unit": "uM",
    "n_values": 1,
    "value_template": 26.0,
-   "template_source": "Boulin et al. 2008 PNAS (oocyte, UNC-29/38/63/LEV-1/LEV-8), via Cys-loop review PMC10480131 (2023) Table 1",
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results: L-AChR in Xenopus oocytes, Fig. 3B",
    "bio_min": 10.0,
    "bio_max": 100.0,
    "bound_basis": "measured_related",
-   "bound_source": "Boulin et al. 2008 PNAS (oocyte, UNC-29/38/63/LEV-1/LEV-8), via Cys-loop review PMC10480131 (2023) Table 1",
+   "bound_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results: L-AChR in Xenopus oocytes, Fig. 3B",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -13411,11 +13411,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 26 uM, label measured, range [10, 100]; the primary paper (free on PMC) replaces the review table as the source; value 26 uM unchanged",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
+   "source_quote": "Acetylcholine EC 50 was found to be 26.0 \u00b1 3.2 \u03bcM ( n = 13) and the Hill coefficient 1.05 \u00b1 0.06",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13426,28 +13426,28 @@
    "applies_to": "levamisole-type nAChR (L-AChR) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "value_template": 1.05,
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results: L-AChR (UNC-29/38/63/LEV-1/LEV-8) in Xenopus oocytes, Fig. 3B",
    "bio_min": 0.8,
    "bio_max": 2.5,
    "bound_basis": "guessed",
-   "bound_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "bound_source": "kept from before the value fill: Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 1 1, label guessed, range [0.8, 2.5]; was 1 by the N1 rule (Hill not reported); the paper reports 1.05 +- 0.06 from the same fit as the row's 26 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
+   "source_quote": "Acetylcholine EC 50 was found to be 26.0 \u00b1 3.2 \u03bcM ( n = 13) and the Hill coefficient 1.05 \u00b1 0.06",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13554,28 +13554,28 @@
    "applies_to": "levamisole-type nAChR (L-AChR) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 0.8,
-   "template_source": "no decay during the pulse (Boulin et al. 2008, qualitative)",
+   "value_template": 1.0,
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Discussion: L-AChR in BAPTA-injected Xenopus oocytes",
    "bio_min": 0.5,
    "bio_max": 1.0,
    "bound_basis": "guessed",
-   "bound_source": "no decay during the pulse (Boulin et al. 2008, qualitative)",
+   "bound_source": "kept from before the value fill: no decay during the pulse (Boulin et al. 2008, qualitative)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 0.8 1, label guessed, range [0.5, 1]; was 0.8, which the row's own cited paper contradicts: no macroscopic desensitization over 40 s; 1.0 is the synapse's no-desensitization default, so rec_lacr_tau_des_ms has no effect while this holds; inferred because oocyte, qualitative 'fully active'; the guessed range [0.5, 1.0] stays",
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
-   "source_quote": "",
+   "source_quote": "L-AChRs remain fully active during our longest agonist application (40 s), whereas ACR-16 homopentamers desensitize rapidly and profoundly (>97% within 30 s)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13650,12 +13650,12 @@
    "applies_to": "ACR-16 homomeric nAChR (N-AChR) receptors at chemical synapses",
    "unit": "uM",
    "n_values": 1,
-   "value_template": 55.0,
-   "template_source": "Cys-loop review PMC10480131 (2023) Table 1 (oocyte, with RIC-3)",
+   "value_template": 31.0,
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results and SI Fig. S1: ACR-16 with RIC-3 in Xenopus oocytes",
    "bio_min": 20.0,
    "bio_max": 150.0,
    "bound_basis": "measured_related",
-   "bound_source": "Cys-loop review PMC10480131 (2023) Table 1 (oocyte, with RIC-3)",
+   "bound_source": "kept from before the value fill: Cys-loop review PMC10480131 (2023) Table 1 (oocyte, with RIC-3)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -13667,11 +13667,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 55 uM, label measured, range [20, 150]; was 55 uM from the Cys-loop review Table 1 (PMC10480131), which names no primary paper; Boulin 2008 gives 31 +- 0.5 uM (n = 6) from the same fit as the Hill coefficient 2.4, so EC50 and Hill now come from one dose-response; both values sit inside the range [20, 150], which stays",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
+   "source_quote": "This EC 50 value was very similar to that of N-AChRs [31 \u00b1 0.5 \u03bcM ( n = 6); supporting information (SI) Fig. S1 ], yet the Hill coefficient was estimated to be significantly higher for N-AChRs (2.4; Fig. S1 )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13682,28 +13682,28 @@
    "applies_to": "ACR-16 homomeric nAChR (N-AChR) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "value_template": 2.4,
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results and SI Fig. S1: ACR-16 with RIC-3 in Xenopus oocytes",
    "bio_min": 0.8,
    "bio_max": 2.5,
    "bound_basis": "guessed",
-   "bound_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "bound_source": "kept from before the value fill: Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 1 1, label guessed, range [0.8, 2.5]; was 1 by the N1 rule (Hill not reported); the paper reports 2.4 (no error given) from the same fit as the 31 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
+   "source_quote": "This EC 50 value was very similar to that of N-AChRs [31 \u00b1 0.5 \u03bcM ( n = 6); supporting information (SI) Fig. S1 ], yet the Hill coefficient was estimated to be significantly higher for N-AChRs (2.4; Fig. S1 )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13811,27 +13811,27 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.02,
-   "template_source": "'insignificant steady-state current' (Cys-loop review PMC10480131 (2023) Table 1, qualitative)",
+   "template_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Discussion: ACR-16 homopentamers in Xenopus oocytes",
    "bio_min": 0.0,
-   "bio_max": 0.1,
-   "bound_basis": "guessed",
-   "bound_source": "'insignificant steady-state current' (Cys-loop review PMC10480131 (2023) Table 1, qualitative)",
+   "bio_max": 0.03,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Discussion: ACR-16 homopentamers in Xenopus oocytes",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 0.02 1, label guessed, range [0, 0.1]; was guessed from a review's 'insignificant steady-state current'; Boulin 2008 bounds the residual current below 3% of peak after 30 s, so the range is [0, 0.03] and the value 0.02 (unchanged) sits inside it; inferred because the paper gives a bound, not a value",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/",
+   "source_quote": "L-AChRs remain fully active during our longest agonist application (40 s), whereas ACR-16 homopentamers desensitize rapidly and profoundly (>97% within 30 s)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -15954,8 +15954,8 @@
    "applies_to": "tyramine-gated chloride (LGC-55) receptors at chemical synapses",
    "unit": "uM",
    "n_values": 1,
-   "value_template": 6.0,
-   "template_source": "Pirri et al. 2009 Neuron 62:526 (search summary, param_ranges D7)",
+   "value_template": 12.1,
+   "template_source": "Pirri, McPherson, Donnelly, Francis & Alkema 2009 Neuron 62:526 Fig. 3B (Xenopus oocytes, tyramine)",
    "bio_min": 6.0,
    "bio_max": 13.3,
    "bound_basis": "measured_this_class",
@@ -15971,11 +15971,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "range 6 Nov (catalog audit): was 6 uM, label measured, range [3, 10]; the 6.0 uM template is Ringstad 2009 (\"LGC-55 was activated with the highest efficacy by tyramine with an EC50 of 6.0 \u03bc M\", PMC2963310), not Pirri 2009 as the Spec says; Pirri 2009 measured 12.1 +- 1.2 uM, outside the old range [3, 10]; the range now spans the two measurements",
+   "notes": "range 6 Nov (catalog audit): was 6 uM, label measured, range [3, 10]; the 6.0 uM template is Ringstad 2009 (\"LGC-55 was activated with the highest efficacy by tyramine with an EC50 of 6.0 \u03bc M\", PMC2963310), not Pirri 2009 as the Spec says; Pirri 2009 measured 12.1 +- 1.2 uM, outside the old range [3, 10]; the range now spans the two measurements; fill 6 Nov (catalog audit): was 6 uM, label measured, range [6, 13.3]; was 6.0 uM, Ringstad 2009's value under a Pirri 2009 citation; the sibling rec_lgc55_hill is Pirri's 1.0 from the same fit, so the EC50 is now Pirri's 12.1 +- 1.2 uM and EC50 and Hill come from one dose-response (Ringstad's pair is 6.0 uM with Hill 1.8); the range [6.0, 13.3] spanning both papers stays",
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2804440/",
-   "source_quote": "The EC 50 (effective concentration for half maximal response) for tyramine activation of LGC-55 receptors was 12.1 \u00b1 1.2 \u03bcM",
+   "source_quote": "EC 50 TA = 12.1 \u00b1 1.2 \u03bcM and Hill Coefficient = 1.0 \u00b1 0.17",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -16242,28 +16242,28 @@
    "applies_to": "dopamine-gated chloride (LGC-53) receptors at chemical synapses",
    "unit": "1",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "value_template": 1.9,
+   "template_source": "Ringstad, Abe & Horvitz 2009 Science 325:96 (PMC2963310), Fig. 1 legend (Xenopus oocytes, dopamine)",
    "bio_min": 0.8,
    "bio_max": 2.5,
    "bound_basis": "guessed",
-   "bound_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "bound_source": "kept from before the value fill: Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 1 1, label guessed, range [0.8, 2.5]; was 1 by the N1 rule (Hill not reported); the same fit as the row's 4.4 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2963310/",
+   "source_quote": "The half-effector concentration (EC50) of dopamine for LGC-53 was 4.4 \u03bc M, and the estimated Hill coefficient was 1.9",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -23996,18 +23996,18 @@
   "totals": {
    "rows": {
     "published_fit": 298,
-    "guessed": 303,
-    "measured": 246,
+    "guessed": 298,
+    "measured": 249,
     "derived": 26,
-    "inferred": 55,
+    "inferred": 57,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7822,
-    "guessed": 9107,
-    "measured": 6202,
+    "guessed": 9102,
+    "measured": 6205,
     "derived": 67506,
-    "inferred": 61,
+    "inferred": 63,
     "absent": 5
    },
    "n_rows": 933,
@@ -24015,18 +24015,18 @@
   },
   "by_label_rows": {
    "published_fit": 298,
-   "guessed": 303,
-   "measured": 246,
+   "guessed": 298,
+   "measured": 249,
    "derived": 26,
-   "inferred": 55,
+   "inferred": 57,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 7822,
-   "guessed": 9107,
-   "measured": 6202,
+   "guessed": 9102,
+   "measured": 6205,
    "derived": 67506,
-   "inferred": 61,
+   "inferred": 63,
    "absent": 5
   },
   "by_plan_row": {
@@ -24097,17 +24097,17 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 114,
-     "measured": 43,
+     "guessed": 109,
+     "measured": 46,
      "derived": 2,
-     "inferred": 28
+     "inferred": 30
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6788,
-     "measured": 5900,
+     "guessed": 6783,
+     "measured": 5903,
      "derived": 1986,
-     "inferred": 33
+     "inferred": 35
     },
     "n_rows": 214,
     "n_numbers": 15459
@@ -24431,17 +24431,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 36,
-     "measured": 22,
-     "guessed": 115,
+     "inferred": 38,
+     "measured": 25,
+     "guessed": 110,
      "published_fit": 2,
      "absent": 4,
      "derived": 1
     },
     "numbers": {
-     "inferred": 36,
-     "measured": 22,
-     "guessed": 115,
+     "inferred": 38,
+     "measured": 25,
+     "guessed": 110,
      "published_fit": 2,
      "absent": 4,
      "derived": 1
@@ -24606,17 +24606,17 @@
    "yes": {
     "rows": {
      "published_fit": 285,
-     "guessed": 183,
-     "measured": 192,
+     "guessed": 178,
+     "measured": 195,
      "derived": 19,
-     "inferred": 49
+     "inferred": 51
     },
     "numbers": {
      "published_fit": 7809,
-     "guessed": 8843,
-     "measured": 6049,
+     "guessed": 8838,
+     "measured": 6052,
      "derived": 67499,
-     "inferred": 54
+     "inferred": 56
     },
     "n_rows": 728,
     "n_numbers": 90254
@@ -24720,15 +24720,15 @@
    },
    "mech:receptors": {
     "rows": {
-     "measured": 17,
-     "guessed": 70,
-     "inferred": 26,
+     "measured": 20,
+     "guessed": 65,
+     "inferred": 28,
      "published_fit": 2
     },
     "numbers": {
-     "measured": 17,
-     "guessed": 70,
-     "inferred": 26,
+     "measured": 20,
+     "guessed": 65,
+     "inferred": 28,
      "published_fit": 2
     },
     "n_rows": 115,
@@ -24781,18 +24781,18 @@
    "physiology": {
     "rows": {
      "published_fit": 284,
-     "guessed": 303,
+     "guessed": 298,
      "derived": 24,
-     "inferred": 55,
-     "measured": 242,
+     "inferred": 57,
+     "measured": 245,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7083,
-     "guessed": 9107,
+     "guessed": 9102,
      "derived": 3098,
-     "inferred": 61,
-     "measured": 350,
+     "inferred": 63,
+     "measured": 353,
      "absent": 5
     },
     "n_rows": 913,
@@ -25082,13 +25082,13 @@
     "ok": 854,
     "finding": 79
    },
-   "rows_read": 171,
+   "rows_read": 180,
    "quotes": {
-    "none": 581,
-    "paper text (read audit, 6 Nov)": 195,
+    "none": 574,
+    "paper text (read audit, 6 Nov)": 202,
     "research file (scripted check)": 157
    },
-   "with_url": 678,
+   "with_url": 681,
    "links": {
     "distinct": 112,
     "by_status": {
@@ -25096,7 +25096,7 @@
      "406": 5,
      "403": 3
     },
-    "checked_at": "2026-11-06 22:30 CST"
+    "checked_at": "2026-11-06 22:36 CST"
    },
    "problem_kinds": {
     "no URL to open": 27,
@@ -27675,6 +27675,110 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3955162/"
    },
    {
+    "param_id": "rec_lacr_hill",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "1 -> 1.05 1; guessed -> measured; range [0.8, 2.5] -> [0.8, 2.5]",
+    "reason": "was 1 by the N1 rule (Hill not reported); the paper reports 1.05 +- 0.06 from the same fit as the row's 26 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results: L-AChR (UNC-29/38/63/LEV-1/LEV-8) in Xenopus oocytes, Fig. 3B",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_lacr_ec50_uM",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "26 -> 26 uM; measured -> measured; range [10, 100] -> [10, 100]",
+    "reason": "the primary paper (free on PMC) replaces the review table as the source; value 26 uM unchanged",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results: L-AChR in Xenopus oocytes, Fig. 3B",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_lacr_ss_frac",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "0.8 -> 1 1; guessed -> inferred; range [0.5, 1] -> [0.5, 1]",
+    "reason": "was 0.8, which the row's own cited paper contradicts: no macroscopic desensitization over 40 s; 1.0 is the synapse's no-desensitization default, so rec_lacr_tau_des_ms has no effect while this holds; inferred because oocyte, qualitative 'fully active'; the guessed range [0.5, 1.0] stays",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Discussion: L-AChR in BAPTA-injected Xenopus oocytes",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_acr16_ec50_uM",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "55 -> 31 uM; measured -> measured; range [20, 150] -> [20, 150]",
+    "reason": "was 55 uM from the Cys-loop review Table 1 (PMC10480131), which names no primary paper; Boulin 2008 gives 31 +- 0.5 uM (n = 6) from the same fit as the Hill coefficient 2.4, so EC50 and Hill now come from one dose-response; both values sit inside the range [20, 150], which stays",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results and SI Fig. S1: ACR-16 with RIC-3 in Xenopus oocytes",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_acr16_hill",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "1 -> 2.4 1; guessed -> measured; range [0.8, 2.5] -> [0.8, 2.5]",
+    "reason": "was 1 by the N1 rule (Hill not reported); the paper reports 2.4 (no error given) from the same fit as the 31 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Results and SI Fig. S1: ACR-16 with RIC-3 in Xenopus oocytes",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_acr16_ss_frac",
+    "kind": "relabel",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "0.02 -> 0.02 1; guessed -> inferred; range [0, 0.1] -> [0, 0.03]",
+    "reason": "was guessed from a review's 'insignificant steady-state current'; Boulin 2008 bounds the residual current below 3% of peak after 30 s, so the range is [0, 0.03] and the value 0.02 (unchanged) sits inside it; inferred because the paper gives a bound, not a value",
+    "source": "Boulin, Gielen, Richmond, Williams, Paoletti & Bessereau 2008 PNAS 105:18590 (PMC2587545), Discussion: ACR-16 homopentamers in Xenopus oocytes",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587545/"
+   },
+   {
+    "param_id": "rec_lgc53_hill",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "1 -> 1.9 1; guessed -> measured; range [0.8, 2.5] -> [0.8, 2.5]",
+    "reason": "was 1 by the N1 rule (Hill not reported); the same fit as the row's 4.4 uM EC50; inside the guessed [0.8, 2.5] range, which stays guessed",
+    "source": "Ringstad, Abe & Horvitz 2009 Science 325:96 (PMC2963310), Fig. 1 legend (Xenopus oocytes, dopamine)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2963310/"
+   },
+   {
+    "param_id": "rec_lgc55_ec50_uM",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "6 -> 12.1 uM; measured -> measured; range [6, 13.3] -> [6, 13.3]",
+    "reason": "was 6.0 uM, Ringstad 2009's value under a Pirri 2009 citation; the sibling rec_lgc55_hill is Pirri's 1.0 from the same fit, so the EC50 is now Pirri's 12.1 +- 1.2 uM and EC50 and Hill come from one dose-response (Ringstad's pair is 6.0 uM with Hill 1.8); the range [6.0, 13.3] spanning both papers stays",
+    "source": "Pirri, McPherson, Donnelly, Francis & Alkema 2009 Neuron 62:526 Fig. 3B (Xenopus oocytes, tyramine)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2804440/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -27973,18 +28077,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 298,
-    "guessed": 303,
-    "measured": 246,
+    "guessed": 298,
+    "measured": 249,
     "derived": 26,
-    "inferred": 55,
+    "inferred": 57,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7822,
-    "guessed": 9107,
-    "measured": 6202,
+    "guessed": 9102,
+    "measured": 6205,
     "derived": 67506,
-    "inferred": 61,
+    "inferred": 63,
     "absent": 5
    }
   }
