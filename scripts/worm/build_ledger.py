@@ -751,9 +751,10 @@ def off_by_default():
             r["used_by_code"] = "other form only"
             r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
                 f"read only with toggle {r['mechanism_id']} = on (default off)")
-        elif r["used_by_code"] == "yes" and r["param_id"] in OVERWRITTEN:
+        elif r["used_by_code"] == "yes" and (r["param_id"] in OVERWRITTEN or r["param_id"] in FORM_ONLY):
             r["used_by_code"] = "other form only"
-            r["notes"] = (r["notes"] + "; " if r["notes"] else "") + OVERWRITTEN[r["param_id"]]
+            r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (OVERWRITTEN.get(r["param_id"]) or
+                                                                       FORM_ONLY[r["param_id"]])
 
 
 # brain rows a default-on module overwrites before the first step, so the default model never uses their numbers
@@ -762,6 +763,14 @@ OVERWRITTEN = {
     "mpas_gpas": _DU + "sets every muscle's pas.g to 0 (Du's leak replaces it); acts only with bwm_membrane = off",
     "mpas_epas": _DU + "zeroes the leak it belongs to; acts only with bwm_membrane = off",
     "mpas_cm": _DU + "sets cm from bwm_du_c_pF over the area; acts only with bwm_membrane = off",
+}
+# module rows read only by a named form that is not the default (checked in the module code, 7 Nov)
+FORM_ONLY = {
+    "met_f_fixed": "read only with met_feeding = fixed (default pumps; mech/metabolism.py)",
+    "aex2_ec50_nM": "read only with nlp40_aex2 = direct (default release_only; mech/organs_intestine.py:465)",
+    "aex2_gain_pA": "read only with nlp40_aex2 = direct (default release_only; mech/organs_intestine.py:465)",
+    **{f"obs_{v}_{q}": f"read only with gcamp = {v} (default gcamp6s; mech/observation.py:145)"
+       for v in ("gcamp6f", "gcamp7f") for q in ("kd_nM", "hill", "range", "thalf_ms")},
 }
 
 

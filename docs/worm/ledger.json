@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 01:47 CST",
+ "generated_at": "2026-11-07 01:58 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -52115,9 +52115,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "guessed",
+   "notes": "guessed; read only with nlp40_aex2 = direct (default release_only; mech/organs_intestine.py:465)",
    "plan_row": 14,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "",
    "source_quote": "",
    "audit": "ok",
@@ -52147,9 +52147,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "depolarising current at full occupancy (synthetic NLP-40 depolarises the GABAergic neurons); guessed",
+   "notes": "depolarising current at full occupancy (synthetic NLP-40 depolarises the GABAergic neurons); guessed; read only with nlp40_aex2 = direct (default release_only; mech/organs_intestine.py:465)",
    "plan_row": 14,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "",
    "source_quote": "",
    "audit": "ok",
@@ -55443,9 +55443,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "f of the fixed feeding form",
+   "notes": "f of the fixed feeding form; read only with met_feeding = fixed (default pumps; mech/metabolism.py)",
    "plan_row": 20,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://www.bio.vu.nl/thb/deb/deblab/add_my_pet/entries_web/Caenorhabditis_elegans/Caenorhabditis_elegans_res.html",
    "source_quote": "",
    "audit": "ok",
@@ -55667,9 +55667,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "source 6 Nov (catalog audit): was 375 nM, label measured, range [340, 410]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+   "notes": "read only with gcamp = gcamp6f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 375 nM, label measured, range [340, 410]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
    "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
@@ -55699,9 +55699,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "source 6 Nov (catalog audit): was 2.27 1, label measured, range [2, 2.5]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+   "notes": "read only with gcamp = gcamp6f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 2.27 1, label measured, range [2, 2.5]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
    "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
@@ -55731,9 +55731,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "source 6 Nov (catalog audit): was 51.8 1, label measured, range [45, 60]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
+   "notes": "read only with gcamp = gcamp6f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 51.8 1, label measured, range [45, 60]; checked against the supplement itself: Fmax/Fmin 51.8, Kd 375 nM, Hill 2.27, as the row has",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
    "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
@@ -55763,9 +55763,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3; fill 6 Nov (catalog audit): was 150 ms, label guessed, range [80, 600]; as obs_gcamp6s_thalf_ms: ln 2 / 3.93 per s = 176 ms (derived, room temperature). Was 150, recalled; the in vivo 1 AP half-decay in mouse V1 is 142 \u00b1 11 ms (Supplementary Table 3), faster at 37 C. Range kept [80, 600]",
+   "notes": "the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3; read only with gcamp = gcamp6f (default gcamp6s; mech/observation.py:145); fill 6 Nov (catalog audit): was 150 ms, label guessed, range [80, 600]; as obs_gcamp6s_thalf_ms: ln 2 / 3.93 per s = 176 ms (derived, room temperature). Was 150, recalled; the in vivo 1 AP half-decay in mouse V1 is 142 \u00b1 11 ms (Supplementary Table 3), faster at 37 C. Range kept [80, 600]",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/",
    "source_quote": "GCaMP6f 51.8\u00b12.8 375\u00b114 2.27\u00b10.10 3.93",
    "audit": "ok",
@@ -55795,9 +55795,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
    "source_quote": "",
    "audit": "ok",
@@ -55811,11 +55811,11 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 3.1,
-   "template_source": "Zhang et al. 2023 Nature 615:884 (jGCaMP8; reports jGCaMP7f for comparison): Hill 3.1 (Dana 2019 lower)",
+   "template_source": "Zhang, R\u00f3zsa, Liang, Bushey, Wei, Zheng, Reep, Broussard, Tsang et al. 2023 Nature 615:884, Results and Extended Data Table 3 (purified protein; jGCaMP7f reported for comparison with jGCaMP8)",
    "bio_min": 2.3,
    "bio_max": 3.3,
    "bound_basis": "measured_related",
-   "bound_source": "Zhang et al. 2023 Nature 615:884 (jGCaMP8; reports jGCaMP7f for comparison): Hill 3.1 (Dana 2019 lower)",
+   "bound_source": "Zhang, R\u00f3zsa, Liang, Bushey, Wei, Zheng, Reep, Broussard, Tsang et al. 2023 Nature 615:884, Results and Extended Data Table 3 (purified protein; jGCaMP7f reported for comparison with jGCaMP8)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -55827,11 +55827,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 3.1 1, label measured, range [2.3, 3.3]; free quote added; the same table's Kd is an image and is not checked here; row is read only with gcamp = gcamp7f",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
-   "source_quote": "",
+   "source_quote": "In purified protein, Hill coefficients were lower for the jGCaMP8 variants (1.9\u20132.2) than jGCaMP7f (3.1) (Extended Data Table 3 )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -55859,9 +55859,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Dana 2019 Supplementary Table 1",
+   "notes": "the paper that would pin it: Dana 2019 Supplementary Table 1; read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "",
    "source_quote": "",
    "audit": "ok",
@@ -55891,9 +55891,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP); fill 6 Nov (catalog audit): was 270 ms, label guessed, range [100, 800]; inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
+   "notes": "the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP); read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); fill 6 Nov (catalog audit): was 270 ms, label guessed, range [100, 800]; inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
    "plan_row": 23,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://doi.org/10.1101/434589",
    "source_quote": "1-AP half decay time: GCaMP6f, 140\u00b120 ms; jGCaMP7f, 265\u00b120; GCaMP6s, 455\u00b140) (Supp. Table 2)",
    "audit": "ok",
@@ -56973,20 +56973,20 @@
    "other form only": {
     "rows": {
      "published_fit": 30,
-     "guessed": 59,
-     "inferred": 10,
-     "measured": 9,
-     "derived": 6
+     "guessed": 62,
+     "inferred": 12,
+     "measured": 14,
+     "derived": 7
     },
     "numbers": {
      "published_fit": 218,
-     "guessed": 364,
-     "inferred": 11,
-     "measured": 110,
-     "derived": 6
+     "guessed": 367,
+     "inferred": 13,
+     "measured": 115,
+     "derived": 7
     },
-    "n_rows": 114,
-    "n_numbers": 709
+    "n_rows": 125,
+    "n_numbers": 720
    },
    "slot only": {
     "rows": {
@@ -57011,20 +57011,20 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 482,
-     "measured": 222,
-     "derived": 29,
-     "inferred": 320
+     "guessed": 479,
+     "measured": 217,
+     "derived": 28,
+     "inferred": 318
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8947,
-     "measured": 6079,
-     "derived": 67510,
-     "inferred": 325
+     "guessed": 8944,
+     "measured": 6074,
+     "derived": 67509,
+     "inferred": 323
     },
-    "n_rows": 1619,
-    "n_numbers": 90768
+    "n_rows": 1608,
+    "n_numbers": 90757
    }
   },
   "by_origin": {
@@ -58265,21 +58265,21 @@
    },
    "rows_read": 203,
    "quotes": {
-    "none": 1566,
-    "paper text (read audit, 6 Nov)": 254,
+    "none": 1565,
+    "paper text (read audit, 6 Nov)": 255,
     "research file (scripted check)": 36
    },
    "with_url": 1505,
    "links": {
     "distinct": 162,
     "by_status": {
-     "200": 150,
-     "429": 2,
+     "200": 151,
+     "429": 1,
      "203": 1,
      "406": 4,
      "403": 5
     },
-    "checked_at": "2026-11-07 01:47 CST"
+    "checked_at": "2026-11-07 01:58 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -61883,6 +61883,19 @@
     "url": ""
    },
    {
+    "param_id": "obs_gcamp7f_hill",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "3.1 -> 3.1 1; measured -> measured; range [2.3, 3.3] -> [2.3, 3.3]",
+    "reason": "free quote added; the same table's Kd is an image and is not checked here; row is read only with gcamp = gcamp7f",
+    "source": "Zhang, R\u00f3zsa, Liang, Bushey, Wei, Zheng, Reep, Broussard, Tsang et al. 2023 Nature 615:884, Results and Extended Data Table 3 (purified protein; jGCaMP7f reported for comparison with jGCaMP8)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -62027,7 +62040,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 01:36 CST",
+   "generated_at": "2026-11-07 01:47 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",

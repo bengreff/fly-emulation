@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/hidden_constants.py",
- "generated_at": "2026-11-07 01:47 CST",
+ "generated_at": "2026-11-07 01:58 CST",
  "scanned": [
   "src/wormemu/mech/__init__.py",
   "src/wormemu/mech/ca_volume.py",
