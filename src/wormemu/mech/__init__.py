@@ -46,8 +46,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = ["channels", "capool", "receptors", "plasticity", "slow_signalling", "learning", "neuromod",
-                       "noise",
+REGISTRY: list[str] = ["channels", "capool", "ca_volume", "receptors", "plasticity", "slow_signalling", "learning",
+                       "neuromod", "noise",
                        "temperature", "senses_chem", "senses_touch", "senses_proprio",
                        "muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other",
                        "pumps", "metabolism", "observation"]
