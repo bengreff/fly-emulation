@@ -10,7 +10,8 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 not modelled (no glial receptor for them is identified).
   glia_kbuffer  extracellular K+ at the amphid sensory endings, one compartment per side inside the amphid sheath.
                 Each amphid neuron's depolarisation above its own resting level (the mean over the first
-                GLIA_V0_MS) is an extra K+ efflux g_K (v - v0) into it; glial Kir4.1-type uptake and diffusion to the
+                GLIA_V0_MS) changes its K+ leak current into it, g_K ((v - v0) - dE_K) (a raised E_K cuts the efflux:
+                the same leak current the module injects); glial Kir4.1-type uptake and diffusion to the
                 bulk clear it, the two time constants set from the mammalian Kir4.1 recovery (wild type 4.2 s,
                 glial knockout 6.3 s; inferred, cross-species); the K+ reversal shift (RT/F) ln(Ko / Ko_bath) drives
                 each amphid neuron on that side through its K+ leak g_K (pA).
@@ -190,12 +191,14 @@ class Mech:
                     self.v0 = self.v0_sum / self.v0_n
                 load = np.zeros(2)
             else:
-                ipa = q["glia_k_gleak_nS"] * np.maximum(v - self.v0, 0.0)              # pA of extra K+ efflux
+                dek0 = q["glia_rt_f_mV"] * np.log(self.ko / q["glia_k_bath_mM"])[self.amph_side]
+                ipa = q["glia_k_gleak_nS"] * ((v - self.v0) - dek0)                     # pA: K+ leak change from rest
                 load = np.bincount(self.amph_side, ipa, minlength=2) * 1e6 / F_C_PER_MOL / q["glia_k_volume_um3"]
             k = 1.0 / q["glia_k_diff_tau_s"] + (1.0 / q["glia_kir_tau_s"] if self.kb == "kir" else 0.0)
             e = np.exp(-k * dt)
             kb = q["glia_k_bath_mM"]
             self.ko = kb + (self.ko - kb) * e + load / k * (1.0 - e)                   # mM
+            self.ko = np.maximum(self.ko, 1e-3 * kb)
             dek = q["glia_rt_f_mV"] * np.log(self.ko / kb)                             # mV
             I = np.zeros(len(ctx.v))
             I[self.amph] = q["glia_k_gleak_nS"] * dek[self.amph_side]                  # nS x mV = pA

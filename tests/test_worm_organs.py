@@ -326,13 +326,11 @@ def test_glia_fixed_forms_are_silent():
         assert "I_pA" not in r and "afd_gc_scale" not in r["out"]
 
 
-def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
-    brain, names = _glia_brain()
-    left = [c for c in names if c.endswith("L") and c != "X1"]
-    q = gl.defaults()
-    taus = {}
+def _glia_taus(brain, names, left, params):
+    q = {**gl.defaults(), **params}
+    taus, peaks = {}, {}
     for form in ("kir", "null"):
-        m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": form, "glia_kcc3": "fixed"})
+        m = gl.Mech(brain, params, {"glia_cells": "off", "glia_kbuffer": form, "glia_kcc3": "fixed"})
         rows = _glia_run(m, names, left)
         k = np.array([r["out"]["amphid_k_mM"] for _, r in rows]) - q["glia_k_bath_mM"]
         t = np.array([x for x, _ in rows])
@@ -341,11 +339,24 @@ def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
         assert abs(t[i] - 2.0) < 0.01
         after = k[i:, 0] / k[i, 0]
         taus[form] = float(t[i + int(np.argmax(after < np.exp(-1.0)))] - t[i])
+        peaks[form] = float(k[i, 0])
         if form == "kir":
             I = rows[i][1]["I_pA"]
             assert (I[[names.index(c) for c in left]] > 0).all() and not I[names.index("X1")]
+    return taus, peaks, q
+
+
+def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
+    brain, names = _glia_brain()
+    left = [c for c in names if c.endswith("L") and c != "X1"]
+    # limit: a vanishing neuronal K+ leak leaves only the glial uptake and diffusion constants
+    taus, _, q = _glia_taus(brain, names, left, {"glia_k_gleak_nS": 1e-4})
     assert abs(taus["kir"] - 1.0 / (1 / q["glia_kir_tau_s"] + 1 / q["glia_k_diff_tau_s"])) < 0.05
     assert abs(taus["null"] - q["glia_k_diff_tau_s"]) < 0.05
+    # default leak: a raised E_K cuts the neurons' K+ efflux, which clears the ending faster than the glia alone
+    taus_d, peaks_d, _ = _glia_taus(brain, names, left, {})
+    assert taus_d["kir"] < taus["kir"] and taus_d["null"] < taus["null"] and taus_d["kir"] <= taus_d["null"]
+    assert 0.2 < peaks_d["kir"] < 12.0
 
 
 def test_glia_kcc3_scale_is_one_at_rest_rises_in_the_null_and_with_ending_k():
