@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 22:36 CST",
+ "generated_at": "2026-11-06 22:44 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 62,
   "by_label": {
    "derived": 67493,
-   "guessed": 8958,
-   "inferred": 56,
+   "guessed": 8957,
+   "inferred": 57,
    "measured": 6148,
    "published_fit": 7787
   },
-  "known": 81484,
-  "placeholder": 8958,
+  "known": 81485,
+  "placeholder": 8957,
   "gap": 0,
   "used_by_model": 90442,
-  "must_fill": 8958
+  "must_fill": 8957
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19455,
   "by_label": {
    "published_fit": 7060,
-   "guessed": 8958,
+   "guessed": 8957,
    "derived": 3085,
-   "inferred": 56,
+   "inferred": 57,
    "measured": 296
   },
-  "known": 10497,
-  "placeholder": 8958,
+  "known": 10498,
+  "placeholder": 8957,
   "gap": 0,
-  "must_fill": 8958
+  "must_fill": 8957
  },
  "source_by_fill_kind": {
   "all": {
@@ -50,7 +50,7 @@
    "literature": {
     "guessed": 5469,
     "measured": 6147,
-    "derived": 3084,
+    "derived": 3085,
     "inferred (ours)": 13,
     "published fit": 2
    },
@@ -58,9 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3485,
-    "inferred (ours)": 43,
-    "derived": 1,
+    "guessed": 3484,
+    "inferred (ours)": 44,
     "measured": 1
    },
    "c302": {
@@ -74,7 +73,7 @@
    },
    "literature": {
     "guessed": 5469,
-    "derived": 3084,
+    "derived": 3085,
     "measured": 295,
     "inferred (ours)": 13,
     "published fit": 2
@@ -83,9 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3485,
-    "inferred (ours)": 43,
-    "derived": 1,
+    "guessed": 3484,
+    "inferred (ours)": 44,
     "measured": 1
    },
    "c302": {
@@ -135,8 +133,8 @@
   },
   "global": {
    "derived": 9,
-   "guessed": 87,
-   "inferred": 12,
+   "guessed": 86,
+   "inferred": 13,
    "measured": 9,
    "published_fit": 62
   },
@@ -966,7 +964,8 @@
    "numbers": 8,
    "by_label": {
     "derived": 1,
-    "guessed": 6,
+    "guessed": 5,
+    "inferred": 1,
     "measured": 1
    }
   },
@@ -12530,8 +12529,8 @@
    "applies_to": "whole worm",
    "unit": "s",
    "n_values": 1,
-   "value_template": 3.0,
-   "template_source": "Jiang et al. 2022 Nat Commun 13:2783",
+   "value_template": 2.5,
+   "template_source": "Jiang et al. 2022 Nat Commun 13:2783 (PMC9120479), Results (Fig. S4c), freely moving wild type",
    "bio_min": 2.0,
    "bio_max": 4.5,
    "bound_basis": "guessed",
@@ -12543,11 +12542,11 @@
    "prior_basis": "guessed: uniform over the range",
    "label": "derived",
    "fill_kind": "derived",
-   "source_project": "ours",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "relabel 6 Nov (catalog audit): was 3 s, label guessed, range [2, 4.5]; the model's pBoc window is 0-2 s (peak 1 s) and its aBoc window starts here and lasts 1 s (peak 0.5 s later), so a 2.5 s peak-to-peak gap gives 1 + 2.5 - 0.5 = 3 s, the existing value; label guessed -> derived",
+   "notes": "relabel 6 Nov (catalog audit): was 3 s, label guessed, range [2, 4.5]; the model's pBoc window is 0-2 s (peak 1 s) and its aBoc window starts here and lasts 1 s (peak 0.5 s later), so a 2.5 s peak-to-peak gap gives 1 + 2.5 - 0.5 = 3 s, the existing value; label guessed -> derived; fill 6 Nov (catalog audit): was 3 s, label derived, range [2, 4.5]; corrects this row's earlier relabel, which assumed a 1 s aBoc window: the ledger's dmp_aboc_dur_s is 2 s (the Spec's 1 s sat at a bound and was moved to the midpoint), so the window centres are 1 s (pBoc, 0-2 s) and delay + 1 s; a 2.5 s centre-to-centre gap gives 1 + 2.5 - 1 = 2.5 s; re-derive if dmp_pboc_dur_s or dmp_aboc_dur_s changes",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/",
@@ -12595,7 +12594,7 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 4.0,
-   "template_source": "guessed (brain_layers.py)",
+   "template_source": "Wang & Sieburth 2013 PLoS Genet 9:e1003831 (PMC3784516), Results (Fig. 4A-C): DVB GCaMP3 spikes timed against the DMP steps",
    "bio_min": 3.0,
    "bio_max": 6.0,
    "bound_basis": "guessed",
@@ -12605,17 +12604,17 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 4 s, label guessed, range [3, 6]; Exp comes about 4 s after the pBoc step (3 s to the DVB spike onset plus 1 s to its peak, immediately before Exp); Jiang 2022 (PMC9120479) finds aBoc and Exp nearly concurrent, about 2.5 s after the pBoc peak, i.e. about 3.5 s after onset; the template 4 s sits between the two; inferred because the timing is read off neuron Ca2+ and stated as 'about'; the guessed range [3, 6] stays",
    "plan_row": 14,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3784516/",
+   "source_quote": "fluorescent spikes in DVB axons began about 3 seconds following the pBoc step, reached maximal intensity about 1 second later (immediately before each Exp step)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -23996,18 +23995,18 @@
   "totals": {
    "rows": {
     "published_fit": 298,
-    "guessed": 298,
+    "guessed": 297,
     "measured": 249,
     "derived": 26,
-    "inferred": 57,
+    "inferred": 58,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7822,
-    "guessed": 9102,
+    "guessed": 9101,
     "measured": 6205,
     "derived": 67506,
-    "inferred": 63,
+    "inferred": 64,
     "absent": 5
    },
    "n_rows": 933,
@@ -24015,18 +24014,18 @@
   },
   "by_label_rows": {
    "published_fit": 298,
-   "guessed": 298,
+   "guessed": 297,
    "measured": 249,
    "derived": 26,
-   "inferred": 57,
+   "inferred": 58,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 7822,
-   "guessed": 9102,
+   "guessed": 9101,
    "measured": 6205,
    "derived": 67506,
-   "inferred": 63,
+   "inferred": 64,
    "absent": 5
   },
   "by_plan_row": {
@@ -24201,13 +24200,15 @@
    "14": {
     "rows": {
      "measured": 1,
-     "guessed": 15,
-     "derived": 1
+     "guessed": 14,
+     "derived": 1,
+     "inferred": 1
     },
     "numbers": {
      "measured": 1,
-     "guessed": 15,
-     "derived": 1
+     "guessed": 14,
+     "derived": 1,
+     "inferred": 1
     },
     "n_rows": 17,
     "n_numbers": 17
@@ -24502,16 +24503,16 @@
    "global": {
     "rows": {
      "published_fit": 95,
-     "guessed": 114,
-     "inferred": 16,
+     "guessed": 113,
+     "inferred": 17,
      "measured": 35,
      "derived": 20,
      "absent": 1
     },
     "numbers": {
      "published_fit": 95,
-     "guessed": 114,
-     "inferred": 16,
+     "guessed": 113,
+     "inferred": 17,
      "measured": 35,
      "derived": 20,
      "absent": 1
@@ -24606,17 +24607,17 @@
    "yes": {
     "rows": {
      "published_fit": 285,
-     "guessed": 178,
+     "guessed": 177,
      "measured": 195,
      "derived": 19,
-     "inferred": 51
+     "inferred": 52
     },
     "numbers": {
      "published_fit": 7809,
-     "guessed": 8838,
+     "guessed": 8837,
      "measured": 6052,
      "derived": 67499,
-     "inferred": 56
+     "inferred": 57
     },
     "n_rows": 728,
     "n_numbers": 90254
@@ -24676,14 +24677,14 @@
    },
    "layers": {
     "rows": {
-     "guessed": 57,
-     "inferred": 10,
+     "guessed": 56,
+     "inferred": 11,
      "measured": 10,
      "derived": 6
     },
     "numbers": {
-     "guessed": 175,
-     "inferred": 11,
+     "guessed": 174,
+     "inferred": 12,
      "measured": 109,
      "derived": 6
     },
@@ -24781,17 +24782,17 @@
    "physiology": {
     "rows": {
      "published_fit": 284,
-     "guessed": 298,
+     "guessed": 297,
      "derived": 24,
-     "inferred": 57,
+     "inferred": 58,
      "measured": 245,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7083,
-     "guessed": 9102,
+     "guessed": 9101,
      "derived": 3098,
-     "inferred": 63,
+     "inferred": 64,
      "measured": 353,
      "absent": 5
     },
@@ -25082,21 +25083,21 @@
     "ok": 854,
     "finding": 79
    },
-   "rows_read": 180,
+   "rows_read": 182,
    "quotes": {
-    "none": 574,
-    "paper text (read audit, 6 Nov)": 202,
+    "none": 573,
+    "paper text (read audit, 6 Nov)": 203,
     "research file (scripted check)": 157
    },
-   "with_url": 681,
+   "with_url": 682,
    "links": {
-    "distinct": 112,
+    "distinct": 113,
     "by_status": {
-     "200": 104,
+     "200": 105,
      "406": 5,
      "403": 3
     },
-    "checked_at": "2026-11-06 22:36 CST"
+    "checked_at": "2026-11-06 22:44 CST"
    },
    "problem_kinds": {
     "no URL to open": 27,
@@ -27779,6 +27780,32 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2804440/"
    },
    {
+    "param_id": "dmp_aboc_delay_s",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "3 -> 2.5 s; derived -> derived; range [2, 4.5] -> [2, 4.5]",
+    "reason": "corrects this row's earlier relabel, which assumed a 1 s aBoc window: the ledger's dmp_aboc_dur_s is 2 s (the Spec's 1 s sat at a bound and was moved to the midpoint), so the window centres are 1 s (pBoc, 0-2 s) and delay + 1 s; a 2.5 s centre-to-centre gap gives 1 + 2.5 - 1 = 2.5 s; re-derive if dmp_pboc_dur_s or dmp_aboc_dur_s changes",
+    "source": "Jiang et al. 2022 Nat Commun 13:2783 (PMC9120479), Results (Fig. S4c), freely moving wild type",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/"
+   },
+   {
+    "param_id": "dmp_exp_delay_s",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "4 -> 4 s; guessed -> inferred; range [3, 6] -> [3, 6]",
+    "reason": "Exp comes about 4 s after the pBoc step (3 s to the DVB spike onset plus 1 s to its peak, immediately before Exp); Jiang 2022 (PMC9120479) finds aBoc and Exp nearly concurrent, about 2.5 s after the pBoc peak, i.e. about 3.5 s after onset; the template 4 s sits between the two; inferred because the timing is read off neuron Ca2+ and stated as 'about'; the guessed range [3, 6] stays",
+    "source": "Wang & Sieburth 2013 PLoS Genet 9:e1003831 (PMC3784516), Results (Fig. 4A-C): DVB GCaMP3 spikes timed against the DMP steps",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3784516/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -28077,18 +28104,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 298,
-    "guessed": 298,
+    "guessed": 297,
     "measured": 249,
     "derived": 26,
-    "inferred": 57,
+    "inferred": 58,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7822,
-    "guessed": 9102,
+    "guessed": 9101,
     "measured": 6205,
     "derived": 67506,
-    "inferred": 63,
+    "inferred": 64,
     "absent": 5
    }
   }
