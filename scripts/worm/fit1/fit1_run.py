@@ -53,8 +53,28 @@ class Log:
         self.f.flush()
 
 
+def _live_workers(out):
+    """Workers from an earlier driver of this fit that are still running: {job path: pid}."""
+    live = {}
+    if (out / "pids.txt").exists():
+        for line in open(out / "pids.txt"):
+            pid, _, jp = line.split(maxsplit=2)
+            try:
+                if "fit1_worker.py" in Path(f"/proc/{pid}/cmdline").read_text():
+                    live[jp.strip()] = int(pid)
+            except OSError:
+                pass
+    return live
+
+
 def run_jobs(jobs, cpu_list, out, log):
-    """jobs: [(job json path, result npz path)]; at most one per CPU at once; a failed job is retried once."""
+    """jobs: [(job json path, result npz path)]; at most one per CPU at once; a failed job is retried once. Jobs
+    still being run by a worker of an earlier driver (a resume after the driver died) are waited for, not rerun."""
+    live = {jp: pid for jp, pid in _live_workers(out).items() if any(str(j[0]) == jp for j in jobs)}
+    if live:
+        log(f"waiting for {len(live)} workers of the earlier driver: {sorted(live.values())}")
+        while any(Path(f"/proc/{pid}").exists() for pid in live.values()):
+            time.sleep(5)
     pending = [j for j in jobs if not Path(j[1]).exists()]
     free, running, tries = list(cpu_list), {}, {}
     env = {**os.environ, **CAP}
@@ -80,6 +100,13 @@ def run_jobs(jobs, cpu_list, out, log):
                 log(f"job {jp} exit {p.returncode} (try {tries[jp]})")
                 if tries[jp] <= 1:
                     pending.append((jp, op))
+
+
+def save(es, sp):
+    tmp = Path(str(sp) + ".tmp")
+    with open(tmp, "wb") as f:
+        pickle.dump(es, f)
+    os.replace(tmp, sp)
 
 
 def batch_for(train, g, k, seed):
@@ -149,6 +176,9 @@ def main():
         json.dump({**cfg, "ids": fc.IDS, "bounds": B, "commit": a.commit, "s_trial": s_trial, "s_floor": s_floor,
                    "n_train_stims": len(train), "started": time.strftime("%Y-%m-%d %H:%M:%S %Z")}, open(cp, "w"),
                   indent=1)
+    json.dump(dict(pid=os.getpid(), started=time.strftime("%Y-%m-%d %H:%M:%S %Z"), cpus=a.cpus, deadline=a.deadline,
+                   max_gens=a.max_gens, min_gens=a.min_gens, plateau=a.plateau, plateau_tol=a.plateau_tol,
+                   commit=a.commit), open(out / "run.json", "w"), indent=1)   # this start's stopping settings
     B = fc.bounds()
     sp = out / "state.pkl"
     if sp.exists():
@@ -176,6 +206,7 @@ def main():
         else:
             X = np.array(es.ask())
             np.save(ask, X)
+            save(es, sp)                             # the asked state: a resume tells these same candidates
         batch = batch_for(train, g, a.batch, a.seed)
         t0 = time.time()
         jobs = []
@@ -215,9 +246,7 @@ def main():
         json.dump(dict(generation=g + 1, mean_x=es.mean.tolist(), mean_vals=mean_vals, sigma=float(es.sigma),
                        at_bound=[pid for pid, xx in zip(fc.IDS, es.mean) if abs(xx) > 3.0]),
                   open(out / "mean.json", "w"), indent=1)
-        tmp = out / "state.pkl.tmp"
-        pickle.dump(es, open(tmp, "wb"))
-        os.replace(tmp, sp)
+        save(es, sp)
         row = dict(generation=g, time=time.strftime("%Y-%m-%d %H:%M:%S"), wall_s=round(time.time() - t0, 1),
                    best=round(float(L.min()), 5), median=round(float(np.median(L)), 5), sigma=round(float(es.sigma), 5),
                    evals=len(L) * (g + 1), batch=" ".join(batch))
