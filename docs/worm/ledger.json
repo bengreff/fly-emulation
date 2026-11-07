@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 23:54 CST",
+ "generated_at": "2026-11-07 00:02 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67504,
-   "guessed": 9123,
-   "inferred": 110,
+   "guessed": 9122,
+   "inferred": 111,
    "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81827,
-  "placeholder": 9123,
+  "known": 81828,
+  "placeholder": 9122,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9123
+  "must_fill": 9122
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9123,
+   "guessed": 9122,
    "derived": 3096,
-   "inferred": 110,
+   "inferred": 111,
    "measured": 328
   },
-  "known": 10840,
-  "placeholder": 9123,
+  "known": 10841,
+  "placeholder": 9122,
   "gap": 0,
-  "must_fill": 9123
+  "must_fill": 9122
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6179,
     "derived": 3096,
-    "inferred (ours)": 16,
+    "inferred (ours)": 17,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3648,
+    "guessed": 3647,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3096,
     "measured": 327,
-    "inferred (ours)": 16,
+    "inferred (ours)": 17,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3648,
+    "guessed": 3647,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -137,8 +137,8 @@
   },
   "global": {
    "derived": 18,
-   "guessed": 141,
-   "inferred": 42,
+   "guessed": 140,
+   "inferred": 43,
    "measured": 30,
    "published_fit": 221
   },
@@ -1570,7 +1570,7 @@
    "absent_reason": "",
    "numbers": 1,
    "by_label": {
-    "guessed": 1
+    "inferred": 1
    }
   }
  ],
@@ -40575,27 +40575,27 @@
    "unit": "L/s",
    "n_values": 1,
    "value_template": 0.05,
-   "template_source": "forward / backward / paused speed threshold (Yemini et al. 2013 Nat Methods motion-state rule, value recalled, not opened)",
-   "bio_min": 0.01,
-   "bio_max": 0.1,
-   "bound_basis": "guessed",
-   "bound_source": "forward / backward / paused speed threshold (Yemini et al. 2013 Nat Methods motion-state rule, value recalled, not opened)",
+   "template_source": "Yemini, Jucikas, Grundy, Brown & Schafer 2013 Nat Methods 10:877 (PMC3962822), Online Methods (Motion States)",
+   "bio_min": 0.025,
+   "bio_max": 0.05,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Yemini, Jucikas, Grundy, Brown & Schafer 2013 Nat Methods 10:877 (PMC3962822), Online Methods (Motion States)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "used by gait_features (offline)",
+   "notes": "used by gait_features (offline); fill 6 Nov (catalog audit): was 0.05 L/s, label guessed, range [0.01, 0.1]; the speed cut between forward / backward and paused in gait_features; was recalled, not opened, now read: Yemini's forward and backward states need at least 5% of length per second, the paused state at most 2.5%, and speeds in between are ambiguous (no state). The code uses one cut, so 0.05 keeps Yemini's forward / backward rule and counts the ambiguous band as paused. Inferred: the value is read in the paper, but the single-cut form is the model's. Range [0.025, 0.05]: Yemini's two cuts (was [0.01, 0.1], guessed). Offline readout only; no run changes",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3962822/",
+   "source_quote": "b) the worm's speed is at least 5% of its length, per second, in each frame. ... The worm is defined in a paused state when a period, more than half a second long, is observed wherein the worm's forward and backward speed do not exceed 2.5% of its length, per second, in each frame",
    "audit": "ok",
    "kind": "physiology"
   }
@@ -40703,18 +40703,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 456,
+    "guessed": 455,
     "measured": 279,
     "derived": 36,
-    "inferred": 111,
+    "inferred": 112,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9260,
+    "guessed": 9259,
     "measured": 6235,
     "derived": 67516,
-    "inferred": 117,
+    "inferred": 118,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40722,18 +40722,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 456,
+   "guessed": 455,
    "measured": 279,
    "derived": 36,
-   "inferred": 111,
+   "inferred": 112,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9260,
+   "guessed": 9259,
    "measured": 6235,
    "derived": 67516,
-   "inferred": 117,
+   "inferred": 118,
    "absent": 5
   },
   "by_plan_row": {
@@ -41066,15 +41066,15 @@
    "23": {
     "rows": {
      "measured": 17,
-     "inferred": 4,
+     "inferred": 5,
      "derived": 3,
-     "guessed": 12
+     "guessed": 11
     },
     "numbers": {
      "measured": 17,
-     "inferred": 4,
+     "inferred": 5,
      "derived": 3,
-     "guessed": 12
+     "guessed": 11
     },
     "n_rows": 36,
     "n_numbers": 36
@@ -41249,16 +41249,16 @@
    "global": {
     "rows": {
      "published_fit": 306,
-     "guessed": 166,
-     "inferred": 46,
+     "guessed": 165,
+     "inferred": 47,
      "measured": 56,
      "derived": 28,
      "absent": 1
     },
     "numbers": {
      "published_fit": 306,
-     "guessed": 166,
-     "inferred": 46,
+     "guessed": 165,
+     "inferred": 47,
      "measured": 56,
      "derived": 28,
      "absent": 1
@@ -41356,17 +41356,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 297,
+     "guessed": 296,
      "measured": 219,
      "derived": 24,
-     "inferred": 94
+     "inferred": 95
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8957,
+     "guessed": 8956,
      "measured": 6076,
      "derived": 67504,
-     "inferred": 99
+     "inferred": 100
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41528,14 +41528,14 @@
     "rows": {
      "measured": 9,
      "derived": 2,
-     "guessed": 10,
-     "inferred": 2
+     "guessed": 9,
+     "inferred": 3
     },
     "numbers": {
      "measured": 9,
      "derived": 2,
-     "guessed": 10,
-     "inferred": 2
+     "guessed": 9,
+     "inferred": 3
     },
     "n_rows": 23,
     "n_numbers": 23
@@ -41773,17 +41773,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 456,
+     "guessed": 455,
      "derived": 32,
-     "inferred": 111,
+     "inferred": 112,
      "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9260,
+     "guessed": 9259,
      "derived": 3106,
-     "inferred": 117,
+     "inferred": 118,
      "measured": 383,
      "absent": 5
     },
@@ -42122,21 +42122,21 @@
     "ok": 1389,
     "finding": 94
    },
-   "rows_read": 198,
+   "rows_read": 199,
    "quotes": {
-    "none": 1105,
-    "paper text (read audit, 6 Nov)": 233,
+    "none": 1104,
+    "paper text (read audit, 6 Nov)": 234,
     "research file (scripted check)": 145
    },
-   "with_url": 1097,
+   "with_url": 1098,
    "links": {
-    "distinct": 147,
+    "distinct": 148,
     "by_status": {
-     "200": 137,
+     "200": 138,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-06 23:54 CST"
+    "checked_at": "2026-11-07 00:02 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45372,6 +45372,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13054943/"
    },
    {
+    "param_id": "obs_gait_pause_L_s",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "0.05 -> 0.05 L/s; guessed -> inferred; range [0.01, 0.1] -> [0.025, 0.05]",
+    "reason": "the speed cut between forward / backward and paused in gait_features; was recalled, not opened, now read: Yemini's forward and backward states need at least 5% of length per second, the paused state at most 2.5%, and speeds in between are ambiguous (no state). The code uses one cut, so 0.05 keeps Yemini's forward / backward rule and counts the ambiguous band as paused. Inferred: the value is read in the paper, but the single-cut form is the model's. Range [0.025, 0.05]: Yemini's two cuts (was [0.01, 0.1], guessed). Offline readout only; no run changes",
+    "source": "Yemini, Jucikas, Grundy, Brown & Schafer 2013 Nat Methods 10:877 (PMC3962822), Online Methods (Motion States)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3962822/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46380,18 +46393,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 456,
+    "guessed": 455,
     "measured": 279,
     "derived": 36,
-    "inferred": 111,
+    "inferred": 112,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9260,
+    "guessed": 9259,
     "measured": 6235,
     "derived": 67516,
-    "inferred": 117,
+    "inferred": 118,
     "absent": 5
    }
   }

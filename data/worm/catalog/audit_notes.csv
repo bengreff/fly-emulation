@@ -177,3 +177,4 @@ glia_e_leak_mV,"inferred from mammalian astrocytes, no paper named","owner: B2 (
 pump_na_rest_mM,"inferred from mammalian neurons, no paper named","owner: B2 (pumps), told in the night file: cite a free source for cytosolic Na+ (5-15 mM), or relabel guessed"
 pump_atp_kJ_per_mol,"inferred, no paper named","owner: B2 (pumps), told in the night file: cite a free source for the free energy of ATP hydrolysis (50-60 kJ/mol), or relabel guessed"
 deb_t_ref_K,range is one point,"accepted: the DEB reference temperature (293.15 K, 20 C) is a convention that the AmP rates are quoted at, not a quantity with a spread"
+obs_gait_pause_L_s,gait_features uses one speed cut and no minimum duration; Yemini 2013 uses two cuts (5% and 2.5% of length per second) and a 0.5 s minimum,"accepted: offline readout; its paused fraction counts Yemini's ambiguous band (2.5-5% L/s) and sub-0.5 s pauses as paused, so compare paused fractions with Yemini's only with that in mind"
