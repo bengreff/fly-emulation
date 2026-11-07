@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:48 CST",
+ "generated_at": "2026-11-07 03:51 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9311,
-   "inferred": 331,
+   "guessed": 9313,
+   "inferred": 329,
    "measured": 6182,
    "published_fit": 8103
   },
-  "known": 82126,
-  "placeholder": 9311,
+  "known": 82124,
+  "placeholder": 9313,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9311
+  "must_fill": 9313
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9311,
+   "guessed": 9313,
    "derived": 3102,
-   "inferred": 331,
+   "inferred": 329,
    "measured": 330
   },
-  "known": 11139,
-  "placeholder": 9311,
+  "known": 11137,
+  "placeholder": 9313,
   "gap": 0,
-  "must_fill": 9311
+  "must_fill": 9313
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3834,
-    "inferred (ours)": 303,
+    "guessed": 3836,
+    "inferred (ours)": 301,
     "measured": 1
    },
    "c302": {
@@ -82,8 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3834,
-    "inferred (ours)": 303,
+    "guessed": 3836,
+    "inferred (ours)": 301,
     "measured": 1
    },
    "c302": {
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 8,
-   "guessed": 365,
-   "inferred": 278,
+   "guessed": 367,
+   "inferred": 276,
    "measured": 32,
    "published_fit": 101
   },
@@ -1306,8 +1306,8 @@
    "absent_reason": "",
    "numbers": 11,
    "by_label": {
-    "guessed": 5,
-    "inferred": 3,
+    "guessed": 7,
+    "inferred": 1,
     "measured": 3
    }
   },
@@ -51905,28 +51905,28 @@
    "unit": "body length",
    "n_values": 1,
    "value_template": 0.33,
-   "template_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)",
+   "template_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): the posterior body muscles respond; no extent along the body is given",
    "bio_min": 0.2,
    "bio_max": 0.5,
-   "bound_basis": "measured_related",
-   "bound_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)",
+   "bound_basis": "guessed",
+   "bound_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): the posterior body muscles respond; no extent along the body is given",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the BWM behind this fraction of the body length carry PBO-5/6 (posterior body muscles; pBoc is posterior)",
+   "notes": "the BWM behind this fraction of the body length carry PBO-5/6 (posterior body muscles; pBoc is posterior); source 6 Nov (catalog audit): was 0.33 body length, label inferred, range [0.2, 0.5]; 0.33 of the body length is not in the cited free text, which names the posterior body muscles but gives no extent; authors checked in Europe PMC; relabel 6 Nov (catalog audit): was 0.33 body length, label inferred, range [0.2, 0.5]; 0.33 of the body length is not in the cited free text, which names the posterior body muscles but gives no extent",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/",
-   "source_quote": "",
-   "audit": "ok",
+   "source_quote": "PBO-4 is a putative Na + /H + ion exchanger expressed on the basolateral membrane of the intestine, juxtaposed to the posterior body muscles",
+   "audit": "labelled inferred; Beg et al. 2008 (PMC2258244) names the posterior body muscles but gives no extent, so 0.33 of the body length is a guess [owner B2: organs_intestine.py:144 label inferred -> guessed, or a source for the extent of the pBoc muscles (the catalog now says guessed, value unchanged)]",
    "kind": "physiology"
   },
   {
@@ -51937,28 +51937,28 @@
    "unit": "rings",
    "n_values": 1,
    "value_template": 3.0,
-   "template_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)",
+   "template_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): PBO-4 sits only in the most posterior intestinal cells; no count",
    "bio_min": 2.0,
    "bio_max": 5.0,
-   "bound_basis": "measured_related",
-   "bound_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)",
+   "bound_basis": "guessed",
+   "bound_source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): PBO-4 sits only in the most posterior intestinal cells; no count",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the last n rings face the posterior muscles' cleft (int7-int9); guessed count",
+   "notes": "the last n rings face the posterior muscles' cleft (int7-int9); guessed count; source 6 Nov (catalog audit): was 3 rings, label inferred, range [2, 5]; the module's own note calls 3 rings a 'guessed count'; the paper gives no number; authors checked in Europe PMC; relabel 6 Nov (catalog audit): was 3 rings, label inferred, range [2, 5]; the module's own note calls 3 rings a 'guessed count'; the paper gives no number",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/",
-   "source_quote": "",
-   "audit": "ok",
+   "source_quote": "The fluorescently-tagged protein was expressed on the basolateral surface of the intestine, exclusively in the most posterior intestinal cells",
+   "audit": "labelled inferred, but organs_intestine.py:147's own note says 'guessed count'; Beg et al. 2008 (PMC2258244) says only 'the most posterior intestinal cells' [owner B2: organs_intestine.py:147 label inferred -> guessed (the catalog now says guessed, value unchanged)]",
    "kind": "physiology"
   },
   {
@@ -52993,11 +52993,11 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 60.0,
-   "template_source": "Zhang, Schafer, Breitling 2010 BMC Syst Biol 4:81",
+   "template_source": "Zhang, Schafer & Breitling 2010 BMC Syst Biol 4:81 (PMC2887794): the range ends are the two behavioural time constants; uv1 tyramine clearance itself is not measured",
    "bio_min": 20.0,
    "bio_max": 1200.0,
    "bound_basis": "guessed",
-   "bound_source": "Zhang, Schafer, Breitling 2010 BMC Syst Biol 4:81",
+   "bound_source": "Zhang, Schafer & Breitling 2010 BMC Syst Biol 4:81 (PMC2887794): the range ends are the two behavioural time constants; uv1 tyramine clearance itself is not measured",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -53009,11 +53009,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "uv1 tyramine clearance; Zhang 2010 makes uv1 the long (cluster-ending) inhibition; guessed",
+   "notes": "uv1 tyramine clearance; Zhang 2010 makes uv1 the long (cluster-ending) inhibition; guessed; source 6 Nov (catalog audit): was 60 s, label guessed, range [20, 1200]; quote for the range ends (20 s to 20 min); label stays guessed; authors checked in Europe PMC",
    "plan_row": 15,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2887794/",
+   "source_quote": "The onset of the active phase can be modeled as a Poisson process with a time constant of approximately 20 minutes, while egg-laying events within an active phase occur with a faster time constant of approximately 20 seconds",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56353,18 +56353,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 581,
+    "guessed": 583,
     "measured": 251,
-    "inferred": 330,
+    "inferred": 328,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9377,
+    "guessed": 9379,
     "measured": 6209,
     "derived": 67520,
-    "inferred": 336,
+    "inferred": 334,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56372,18 +56372,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 581,
+   "guessed": 583,
    "measured": 251,
-   "inferred": 330,
+   "inferred": 328,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9377,
+   "guessed": 9379,
    "measured": 6209,
    "derived": 67520,
-   "inferred": 336,
+   "inferred": 334,
    "absent": 1
   },
   "by_plan_row": {
@@ -56574,15 +56574,15 @@
    "14": {
     "rows": {
      "measured": 4,
-     "guessed": 35,
+     "guessed": 37,
      "derived": 1,
-     "inferred": 6
+     "inferred": 4
     },
     "numbers": {
      "measured": 4,
-     "guessed": 35,
+     "guessed": 37,
      "derived": 1,
-     "inferred": 6
+     "inferred": 4
     },
     "n_rows": 46,
     "n_numbers": 46
@@ -56830,15 +56830,15 @@
    },
    "class": {
     "rows": {
-     "inferred": 278,
-     "guessed": 370,
+     "inferred": 276,
+     "guessed": 372,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
     "numbers": {
-     "inferred": 278,
-     "guessed": 370,
+     "inferred": 276,
+     "guessed": 372,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
@@ -57009,17 +57009,17 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 484,
+     "guessed": 486,
      "measured": 215,
-     "inferred": 315,
+     "inferred": 313,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8949,
+     "guessed": 8951,
      "measured": 6072,
      "derived": 67509,
-     "inferred": 320
+     "inferred": 318
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57236,13 +57236,13 @@
    },
    "mech:organs_intestine": {
     "rows": {
-     "guessed": 33,
-     "inferred": 8,
+     "guessed": 35,
+     "inferred": 6,
      "measured": 4
     },
     "numbers": {
-     "guessed": 33,
-     "inferred": 8,
+     "guessed": 35,
+     "inferred": 6,
      "measured": 4
     },
     "n_rows": 45,
@@ -57455,17 +57455,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 580,
-     "inferred": 330,
+     "guessed": 582,
+     "inferred": 328,
      "derived": 36,
      "measured": 247,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9376,
+     "guessed": 9378,
      "derived": 3111,
-     "inferred": 336,
+     "inferred": 334,
      "measured": 357,
      "absent": 1
     },
@@ -58254,27 +58254,27 @@
    }
   ],
   "audit": {
-   "rows_ok": 1755,
-   "rows_with_problems": 101,
+   "rows_ok": 1753,
+   "rows_with_problems": 103,
    "by_status": {
-    "ok": 1755,
-    "finding": 101
+    "ok": 1753,
+    "finding": 103
    },
-   "rows_read": 222,
+   "rows_read": 224,
    "quotes": {
-    "none": 1425,
-    "cited free text (scripted check)": 395,
+    "none": 1422,
+    "cited free text (scripted check)": 398,
     "research file (scripted check)": 28,
     "paper text (read audit, 6-7 Nov)": 8
    },
-   "with_url": 1508,
+   "with_url": 1509,
    "links": {
-    "distinct": 162,
+    "distinct": 163,
     "by_status": {
      "200": 148,
      "203": 1,
      "406": 4,
-     "unchecked": 5,
+     "unchecked": 6,
      "403": 4
     },
     "checked_at": "2026-11-07 02:30 CST"
@@ -58322,6 +58322,8 @@
     "labelled inferred while its own note says the # nS is a guess inside Liu et al. #'s measur": 1,
     "the range": 1,
     "labelled inferred with the source text 'ser# reporter in pharyngeal muscle', but Hobson et": 1,
+    "labelled inferred; Beg et al. # (PMC#) names the posterior body muscles but gives no exten": 1,
+    "labelled inferred, but organs_intestine.py:#'s own note says 'guessed count'; Beg et al. #": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "the KIR source text (glia.py:#) reads 'wild type ~# s, glial Kir# knockout ~# s'; the cite": 1,
     "replaced slot glia_k_clear_tau_s (inferred) has # s, outside this row's range": 1,
@@ -64571,6 +64573,71 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5438190/"
    },
    {
+    "param_id": "int_posterior_rings",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "3 -> 3 rings; inferred -> inferred; range [2, 5] -> [2, 5]",
+    "reason": "the module's own note calls 3 rings a 'guessed count'; the paper gives no number; authors checked in Europe PMC",
+    "source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): PBO-4 sits only in the most posterior intestinal cells; no count",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/"
+   },
+   {
+    "param_id": "int_posterior_rings",
+    "kind": "relabel",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "3 -> 3 rings; inferred -> guessed; range [2, 5] -> [2, 5]",
+    "reason": "the module's own note calls 3 rings a 'guessed count'; the paper gives no number",
+    "source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): PBO-4 sits only in the most posterior intestinal cells; no count",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/"
+   },
+   {
+    "param_id": "pbo5_posterior_frac",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.33 -> 0.33 body length; inferred -> inferred; range [0.2, 0.5] -> [0.2, 0.5]",
+    "reason": "0.33 of the body length is not in the cited free text, which names the posterior body muscles but gives no extent; authors checked in Europe PMC",
+    "source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): the posterior body muscles respond; no extent along the body is given",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/"
+   },
+   {
+    "param_id": "pbo5_posterior_frac",
+    "kind": "relabel",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "0.33 -> 0.33 body length; inferred -> guessed; range [0.2, 0.5] -> [0.2, 0.5]",
+    "reason": "0.33 of the body length is not in the cited free text, which names the posterior body muscles but gives no extent",
+    "source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244): the posterior body muscles respond; no extent along the body is given",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/"
+   },
+   {
+    "param_id": "egg_uv1_tyr_tau_s",
+    "kind": "source",
+    "origin": "mech:organs_egglaying",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "60 -> 60 s; guessed -> guessed; range [20, 1200] -> [20, 1200]",
+    "reason": "quote for the range ends (20 s to 20 min); label stays guessed; authors checked in Europe PMC",
+    "source": "Zhang, Schafer & Breitling 2010 BMC Syst Biol 4:81 (PMC2887794): the range ends are the two behavioural time constants; uv1 tyramine clearance itself is not measured",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2887794/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -64715,7 +64782,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:43 CST",
+   "generated_at": "2026-11-07 03:48 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -65688,18 +65755,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 581,
+    "guessed": 583,
     "measured": 251,
-    "inferred": 330,
+    "inferred": 328,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9377,
+    "guessed": 9379,
     "measured": 6209,
     "derived": 67520,
-    "inferred": 336,
+    "inferred": 334,
     "absent": 1
    }
   }
