@@ -21,7 +21,7 @@ sys.path.insert(0, str(ROOT / "scripts" / "worm"))
 
 from wormemu import mech  # noqa: E402
 
-WORGANS = ["muscle_bwm", "organs_pharynx"]
+WORGANS = ["muscle_bwm", "organs_pharynx", "organs_intestine"]
 for m in WORGANS:
     if m not in mech.REGISTRY:
         mech.REGISTRY.append(m)

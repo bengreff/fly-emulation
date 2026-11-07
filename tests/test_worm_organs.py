@@ -14,6 +14,7 @@ import pytest
 from wormemu.brain_layers import Layers
 from wormemu.interface import BWM_NAMES
 from wormemu.mech import muscle_bwm as mb
+from wormemu.mech import organs_intestine as gi
 from wormemu.mech import organs_pharynx as ph
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -163,3 +164,71 @@ def test_pharynx_off_is_silent():
     m = ph.Mech(SimpleNamespace(), ph.defaults(), {"pharynx": "off"})
     r = m.step(SimpleNamespace(obs={}), 1.0)["out"]
     assert r["pumps"] == 0 and not r["pharynx_activation"].any()
+
+
+# --- row 14: intestine and defecation ---------------------------------------------------------------------------
+def _gut_brain(t0_ms=1234.0):
+    """Enough of a brain for the intestine Mech without NEURON: 302 neurons named n0.., AVL and DVB, then the BWM."""
+    names = [f"n{k}" for k in range(300)] + ["AVL", "DVB"] + list(BWM_NAMES)
+    bp = np.tile(np.linspace(0.0, 1.0, 24), 4)[:len(BWM_NAMES)]
+    q = gi.defaults()
+    layers = SimpleNamespace(bwm_pos=bp, dmp_t=t0_ms, p=dict(q))
+    return SimpleNamespace(cell_names=names, bwm=np.arange(302, 302 + len(BWM_NAMES)), layers=layers,
+                           idx={n: i for i, n in enumerate(names)}), q
+
+
+def test_intestine_wave_runs_posterior_to_anterior_and_itr1_null_is_flat():
+    """Coarse (dt 5 ms) version of check_intestine.py: period near 49 s, int9 first, the wave reaches int1-int2;
+    IP3R flux 0 leaves no transient (Dal Santo 1999)."""
+    t, C, _, _ = gi.run_isolated(None, 300.0, 5.0, every=2)
+    r9 = C[:, gi.RING == 9].mean(1)
+    r2 = C[:, gi.RING == 2].mean(1)
+    thr = r9.min() + 0.5 * (r9.max() - r9.min())
+    up9 = t[1:][(r9[1:] >= thr) & (r9[:-1] < thr)]
+    up2 = t[1:][(r2[1:] >= thr) & (r2[:-1] < thr)]
+    assert len(up9) >= 5 and 45.0 <= np.diff(up9[1:]).mean() <= 52.0
+    assert len(up2) >= 4 and 0.0 < up2[1] - up9[1] < 40.0
+    _, Cn, _, _ = gi.run_isolated(None, 300.0, 5.0, ip3r=0.0, every=2)
+    assert np.ptp(Cn[t > 20.0], axis=0).max() < 0.01 * np.ptp(r9)          # relaxes to rest, no transient
+
+
+def test_pbo5_half_open_at_ph50_and_cleft_rests_at_rest_ph():
+    q = gi.defaults()
+    cl = gi.Cleft(q)
+    assert abs(cl.ph - q["int_cleft_ph_rest"]) < 1e-12
+    cl.dh = 10.0 ** (-q["pbo5_ph50"]) * 1e9 - 10.0 ** (-q["int_cleft_ph_rest"]) * 1e9
+    assert abs(cl.ph - q["pbo5_ph50"]) < 1e-9 and abs(cl.p_open() - 0.5) < 1e-9
+
+
+def test_defecation_timer_form_is_brain_layers_defecation():
+    """defecation=timer reproduces brain_layers' clock exactly (boost, enteric activation, expulsions)."""
+    brain, q = _gut_brain()
+    m = gi.Mech(brain, q, {"defecation": "timer"})
+    old = SimpleNamespace(p=q, on={"defecation"}, dmp_t=brain.layers.dmp_t, bwm_pos=brain.layers.bwm_pos)
+    n_exp = 0
+    for _ in range(100000):
+        b0, e0, x0 = Layers.defecation(old, 1.0)
+        r = m.step(SimpleNamespace(), 1.0)
+        assert np.array_equal(r["act_add"], b0) and np.array_equal(r["out"]["enteric_activation"], e0)
+        assert r["out"]["expulsions"] == x0
+        n_exp += x0
+    assert n_exp == 3                                       # at 4, 49 and 94 s from t0 = 1.234 s
+
+
+def test_defecation_off_is_silent_and_ip3r_drives_posterior_bwm_and_avl_dvb():
+    brain, q = _gut_brain()
+    off = gi.Mech(brain, q, {"defecation": "off"})
+    r = off.step(SimpleNamespace(), 1.0)
+    assert "I_pA" not in r and r["out"]["expulsions"] == 0 and not r["out"]["enteric_activation"].any()
+    m = gi.Mech(brain, q, {"defecation": "ip3r", "enteric_muscle": "off"})
+    v = np.full(len(brain.cell_names), -30.0)
+    ctx = SimpleNamespace(v=v, outputs={})
+    i_post, i_aex = 0.0, 0.0
+    for _ in range(60000):                                    # 60 s at 1 ms: at least one wave
+        r = m.step(ctx, 1.0)
+        i_post = max(i_post, float(r["I_pA"][m.post_cells].max()))
+        i_aex = max(i_aex, float(r["I_pA"][m.aex2_cells].max()))
+        anterior = np.setdiff1d(m.bwm, m.post_cells)
+        assert not r["I_pA"][anterior].any()
+    assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9 and 0.0 < i_aex <= q["aex2_gain_pA"]
+    assert set(r["out"]["peptide_release"]) == {"nlp-40"}
