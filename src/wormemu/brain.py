@@ -2,7 +2,7 @@
 the connectome, and the lumped layers of brain_layers. Every number comes from the ledger (data/worm/model).
 
     spec = sample_worm(seed)              # seed None = the template worm (the ledger's values); an int = one draw
-    brain = Brain(spec, toggles={...})    # ledger toggles; defaults from mechanisms.yaml
+    brain = Brain(spec, toggles={...})    # toggles; defaults from the code (brain_layers, mech, TEMPLATE_ON)
     out = brain.reset()                   # BrainToBody at t = 0
     out = brain.step(obs, dt_ms=1.0)      # BodyToBrain in, BrainToBody out (internal step 0.5 ms, BAAIWorm's)
 
@@ -89,6 +89,9 @@ CHANNELS = ["slo1_unc2", "egl2", "shl1", "kqt3", "unc2", "kvs1", "slo1_egl19", "
 GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2"}
 SLO = ("slo1_egl19", "slo1_unc2", "slo2_egl19", "slo2_unc2")
 KNOWN = {"measured", "published_fit", "derived", "inferred"}
+# Ben, 6 Nov 2026: every mechanism on in the template worm, the simpler forms as toggles. These defaults are written by
+# scripts/worm/build_ledger.py (off there until the catalog worker rebuilds the ledger); the brain applies them here
+TEMPLATE_ON = {"receptor_sign": "on", "innexin_identity": "on", "expression_map": "on"}
 
 _h = None
 
@@ -239,8 +242,10 @@ class Brain:
         led = self.spec.led
         self.toggles = default_toggles(led)
         self._mods = mech.modules()
-        for mid, _, _, dflt in (t for m in self._mods for t in m.MECHANISMS):
-            self.toggles.setdefault(mid, dflt)            # a registered mechanism the ledger has no row for yet
+        # the code's defaults win over the ledger's copy of them (the ledger is rebuilt from the code)
+        for mid, _, _, dflt in brain_layers.MECHANISMS + [t for m in self._mods for t in m.MECHANISMS]:
+            self.toggles[mid] = dflt
+        self.toggles.update(TEMPLATE_ON)
         for k, v in (toggles or {}).items():
             assert k in self.toggles, f"unknown toggle {k}"
             self.toggles[k] = {True: "on", False: "off"}.get(v, v)
