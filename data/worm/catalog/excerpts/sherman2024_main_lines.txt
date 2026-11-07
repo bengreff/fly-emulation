@@ -1,0 +1,5 @@
+# DanaSherman/CelegansPharynx (code of Sherman & Harel 2024 PNAS 121:e2302660121), main.cc line 41 only, commit 8ecfae6
+# fetched 7 Nov 2026 from https://raw.githubusercontent.com/DanaSherman/CelegansPharynx/8ecfae6383e2b23420c63fb5b779cef79377b3b2/main.cc
+# GPL-3.0 (the repository's LICENSE); verbatim, line endings converted to LF
+
+	double g_l	= 0.057651;							//Leak current conductance [m Siemens/cm^2]
