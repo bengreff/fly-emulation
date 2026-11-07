@@ -14,6 +14,7 @@ import pytest
 from wormemu.brain_layers import Layers
 from wormemu.interface import BWM_NAMES
 from wormemu.mech import muscle_bwm as mb
+from wormemu.mech import organs_pharynx as ph
 
 ROOT = Path(__file__).resolve().parents[1]
 DU_DATA = Path(os.environ.get("DU_MUSCLE_REPO", "/tmp/worgans/C.elegans-Muscle")) / "data" / "spikes.npy"
@@ -107,3 +108,58 @@ def test_du_mod_matches_the_numpy_reference():
     ref = (np.flatnonzero((V[:-1, 0] < 0) & (V[1:, 0] >= 0)) + 1) * 0.01
     assert len(nrn) == len(ref) == 4
     assert np.abs(nrn - ref).max() < 1.0
+
+
+# --- row 13 ---------------------------------------------------------------------------------------------------
+PH_AP = """
+import json
+from neuron import h
+from wormemu.mech import organs_nrn, organs_pharynx as P
+organs_nrn.load_organ_mods(h)
+q = P.defaults()
+t, v, ca = P.ap_protocol(h, q, 42.0, dt=0.5)
+f = P.ap_features(t, v)
+f["ca"] = float(ca.max())
+t0, v0, _ = P.ap_protocol(h, q, 30.0, dt=0.5, t_end=400.0)
+f["sub_peak"] = float(v0.max())
+print(json.dumps(f))
+"""
+
+
+def test_pharynx_ap_matches_sherman_harel_table3():
+    """One isolated compartment, 40 ms step just above threshold, dt 0.5 ms: rest -73 +- 1 mV, peak 34 +- 3 mV, total
+    duration 100-250 ms, plateau 20-30 mV, undershoot below -67 mV (TB recordings, S&H Table 3); 30 pA does not fire."""
+    f = _run(PH_AP)
+    assert -74 <= f["rest"] <= -72 and 31 <= f["peak"] <= 37 and 100 <= f["duration"] <= 250
+    assert 20 <= f["plateau"] <= 30 and f["undershoot"] <= -67 and f["ca"] > 1e-5
+    assert f["sub_peak"] < -20
+
+
+def _ph_clock(q, on=True):
+    return SimpleNamespace(p=q, on={"pharynx"} if on else set(), pump_phase=0.0, pumps=0)
+
+
+def test_pharynx_clock_form_is_brain_layers_pharynx():
+    """pharynx=clock reproduces brain_layers' lumped oscillator exactly (activation and pumps, food on and off)."""
+    q = ph.defaults()
+    old = _ph_clock(q)
+    m = ph.Mech(SimpleNamespace(), q, {"pharynx": "clock"})
+    for k in range(6000):
+        od = 0.5 if k < 3000 else 0.0
+        a_old, n_old = Layers.pharynx(old, od, 1.0)
+        r = m.step(SimpleNamespace(obs={"head": {"food_OD": od}}), 1.0)["out"]
+        assert r["pumps"] == n_old and float(r["pharynx_activation"][0]) == a_old
+    assert m.pumps_total == old.pumps >= 9
+
+
+def test_pharynx_activation_limits():
+    q = ph.defaults()
+    assert ph.activation(np.array([0.0]), q)[0] == 0.0
+    assert abs(ph.activation(np.array([q["ph_sh_k1_b_M"]]), q)[0] - 0.5) < 1e-12
+    assert ph.activation(np.array([1.0]), q)[0] > 0.999
+
+
+def test_pharynx_off_is_silent():
+    m = ph.Mech(SimpleNamespace(), ph.defaults(), {"pharynx": "off"})
+    r = m.step(SimpleNamespace(obs={}), 1.0)["out"]
+    assert r["pumps"] == 0 and not r["pharynx_activation"].any()
