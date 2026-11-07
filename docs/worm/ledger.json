@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 20:42 CST",
+ "generated_at": "2026-11-06 21:11 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 368,
   "mechanisms": 59,
   "by_label": {
-   "derived": 67484,
-   "guessed": 8958,
-   "inferred": 11,
-   "measured": 5874,
+   "derived": 67489,
+   "guessed": 8955,
+   "inferred": 14,
+   "measured": 5869,
    "published_fit": 7785
   },
-  "known": 81154,
-  "placeholder": 8958,
+  "known": 81157,
+  "placeholder": 8955,
   "gap": 0,
   "used_by_model": 90112,
-  "must_fill": 8958
+  "must_fill": 8955
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19125,
   "by_label": {
    "published_fit": 7058,
-   "guessed": 8958,
-   "derived": 3076,
-   "inferred": 11,
-   "measured": 22
+   "guessed": 8955,
+   "derived": 3081,
+   "inferred": 14,
+   "measured": 17
   },
-  "known": 10167,
-  "placeholder": 8958,
+  "known": 10170,
+  "placeholder": 8955,
   "gap": 0,
-  "must_fill": 8958
+  "must_fill": 8955
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,16 +49,17 @@
    },
    "literature": {
     "guessed": 5469,
-    "measured": 5874,
-    "derived": 3076,
-    "inferred (ours)": 6
+    "measured": 5869,
+    "derived": 3080,
+    "inferred (ours)": 9
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3485,
-    "inferred (ours)": 5
+    "guessed": 3482,
+    "inferred (ours)": 5,
+    "derived": 1
    },
    "c302": {
     "published fit": 28
@@ -71,16 +72,17 @@
    },
    "literature": {
     "guessed": 5469,
-    "derived": 3076,
-    "measured": 22,
-    "inferred (ours)": 6
+    "derived": 3080,
+    "measured": 17,
+    "inferred (ours)": 9
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3485,
-    "inferred (ours)": 5
+    "guessed": 3482,
+    "inferred (ours)": 5,
+    "derived": 1
    },
    "c302": {
     "published fit": 28
@@ -126,9 +128,10 @@
    "guessed": 65
   },
   "global": {
-   "guessed": 68,
-   "inferred": 5,
-   "measured": 13,
+   "derived": 5,
+   "guessed": 65,
+   "inferred": 8,
+   "measured": 8,
    "published_fit": 60
   },
   "muscle": {
@@ -739,7 +742,8 @@
    "absent_reason": "",
    "numbers": 3,
    "by_label": {
-    "guessed": 2,
+    "derived": 1,
+    "guessed": 1,
     "measured": 1
    }
   },
@@ -757,7 +761,7 @@
    "numbers": 2,
    "by_label": {
     "guessed": 1,
-    "measured": 1
+    "inferred": 1
    }
   },
   {
@@ -870,8 +874,8 @@
    "absent_reason": "",
    "numbers": 2,
    "by_label": {
-    "guessed": 1,
-    "measured": 1
+    "derived": 1,
+    "guessed": 1
    }
   },
   {
@@ -985,7 +989,8 @@
    "absent_reason": "",
    "numbers": 8,
    "by_label": {
-    "guessed": 7,
+    "derived": 1,
+    "guessed": 6,
     "measured": 1
    }
   },
@@ -1002,7 +1007,8 @@
    "absent_reason": "",
    "numbers": 4,
    "by_label": {
-    "guessed": 2,
+    "derived": 1,
+    "guessed": 1,
     "measured": 2
    }
   },
@@ -1036,7 +1042,8 @@
    "numbers": 7,
    "by_label": {
     "guessed": 4,
-    "measured": 3
+    "inferred": 1,
+    "measured": 2
    }
   },
   {
@@ -1053,7 +1060,7 @@
    "numbers": 4,
    "by_label": {
     "guessed": 3,
-    "measured": 1
+    "inferred": 1
    }
   },
   {
@@ -1069,9 +1076,9 @@
    "absent_reason": "",
    "numbers": 3,
    "by_label": {
+    "derived": 1,
     "guessed": 1,
-    "inferred": 1,
-    "measured": 1
+    "inferred": 1
    }
   },
   {
@@ -1133,7 +1140,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_Ra.csv",
@@ -1174,7 +1181,7 @@
    "notes": "302 of 302 ported values outside the literature range, clipped",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_cm.csv",
@@ -1215,7 +1222,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_gpas.csv",
@@ -1256,7 +1263,7 @@
    "notes": "51 of 302 ported values outside the literature range, clipped",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_epas.csv",
@@ -1298,7 +1305,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_Ra.csv",
@@ -1339,7 +1346,7 @@
    "notes": "302 of 302 ported values outside the literature range, clipped",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_cm.csv",
@@ -1380,7 +1387,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_gpas.csv",
@@ -1421,7 +1428,7 @@
    "notes": "51 of 302 ported values outside the literature range, clipped",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_epas.csv",
@@ -1463,7 +1470,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/mpas_Ra.csv",
@@ -1504,7 +1511,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/mpas_cm.csv",
@@ -1545,7 +1552,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/mpas_gpas.csv",
@@ -1586,7 +1593,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/mpas_epas.csv",
@@ -1627,7 +1634,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_shl1.csv",
@@ -1668,7 +1675,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_shk1.csv",
@@ -1709,7 +1716,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_kvs1.csv",
@@ -1750,7 +1757,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl2.csv",
@@ -1791,7 +1798,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl36.csv",
@@ -1832,7 +1839,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_kqt3.csv",
@@ -1873,7 +1880,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl19.csv",
@@ -1914,7 +1921,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_unc2.csv",
@@ -1955,7 +1962,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_cca1.csv",
@@ -1996,7 +2003,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo1_egl19.csv",
@@ -2037,7 +2044,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo1_unc2.csv",
@@ -2078,7 +2085,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo2_egl19.csv",
@@ -2119,7 +2126,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo2_unc2.csv",
@@ -2160,7 +2167,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_kcnl.csv",
@@ -2201,7 +2208,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_nca.csv",
@@ -2242,7 +2249,7 @@
    "notes": "",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/dens_irk.csv",
@@ -2283,7 +2290,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2315,7 +2322,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2347,7 +2354,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2379,7 +2386,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2411,7 +2418,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2443,7 +2450,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2475,7 +2482,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2507,7 +2514,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2539,7 +2546,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2571,7 +2578,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2603,7 +2610,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2635,7 +2642,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cca1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2667,7 +2674,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2699,7 +2706,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2731,7 +2738,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2763,7 +2770,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2795,7 +2802,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2827,7 +2834,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2859,7 +2866,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2891,7 +2898,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2923,7 +2930,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2955,7 +2962,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -2987,7 +2994,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3019,7 +3026,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3051,7 +3058,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3083,7 +3090,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3115,7 +3122,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3147,7 +3154,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3179,7 +3186,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3211,7 +3218,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3243,7 +3250,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3275,7 +3282,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3307,7 +3314,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3339,7 +3346,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3371,7 +3378,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3403,7 +3410,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3435,7 +3442,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3467,7 +3474,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3499,7 +3506,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3531,7 +3538,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3563,7 +3570,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3595,7 +3602,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3627,7 +3634,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3659,7 +3666,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl36.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3691,7 +3698,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl36.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3723,7 +3730,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl36.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3755,7 +3762,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl36.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3787,7 +3794,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/egl36.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3819,7 +3826,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3851,7 +3858,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3883,7 +3890,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3915,7 +3922,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3947,7 +3954,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -3979,7 +3986,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4011,7 +4018,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4043,7 +4050,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/irk.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4075,7 +4082,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kcnl.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4107,7 +4114,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kcnl.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4139,7 +4146,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4171,7 +4178,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4203,7 +4210,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4235,7 +4242,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4267,7 +4274,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4299,7 +4306,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4331,7 +4338,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4363,7 +4370,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4395,7 +4402,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4427,7 +4434,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4459,7 +4466,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4491,7 +4498,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4523,7 +4530,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4555,7 +4562,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4587,7 +4594,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4619,7 +4626,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4651,7 +4658,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4683,7 +4690,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4715,7 +4722,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4747,7 +4754,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4779,7 +4786,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4811,7 +4818,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4843,7 +4850,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4875,7 +4882,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4907,7 +4914,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kqt3.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4939,7 +4946,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -4971,7 +4978,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5003,7 +5010,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5035,7 +5042,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5067,7 +5074,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5099,7 +5106,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5131,7 +5138,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5163,7 +5170,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5195,7 +5202,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5227,7 +5234,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5259,7 +5266,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5291,7 +5298,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/kvs1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5323,7 +5330,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5355,7 +5362,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5387,7 +5394,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5419,7 +5426,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5451,7 +5458,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5483,7 +5490,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5515,7 +5522,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5547,7 +5554,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5579,7 +5586,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5611,7 +5618,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5643,7 +5650,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shk1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5675,7 +5682,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5707,7 +5714,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5739,7 +5746,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5771,7 +5778,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5803,7 +5810,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5835,7 +5842,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5867,7 +5874,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5899,7 +5906,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5931,7 +5938,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5963,7 +5970,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -5995,7 +6002,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6027,7 +6034,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6059,7 +6066,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6091,7 +6098,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6123,7 +6130,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6155,7 +6162,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6187,7 +6194,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6219,7 +6226,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/shl1.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6251,7 +6258,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6283,7 +6290,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6315,7 +6322,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6347,7 +6354,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6379,7 +6386,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6411,7 +6418,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6443,7 +6450,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6475,7 +6482,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6507,7 +6514,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6539,7 +6546,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6571,7 +6578,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6603,7 +6610,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6635,7 +6642,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6667,7 +6674,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6699,7 +6706,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6731,7 +6738,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo1_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6763,7 +6770,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6795,7 +6802,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6827,7 +6834,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6859,7 +6866,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6891,7 +6898,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6923,7 +6930,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6955,7 +6962,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -6987,7 +6994,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_egl19.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7019,7 +7026,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7051,7 +7058,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7083,7 +7090,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7115,7 +7122,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7147,7 +7154,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7179,7 +7186,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7211,7 +7218,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7243,7 +7250,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/slo2_unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7275,7 +7282,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7307,7 +7314,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7339,7 +7346,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7371,7 +7378,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7403,7 +7410,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7435,7 +7442,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7467,7 +7474,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7499,7 +7506,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7531,7 +7538,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7563,7 +7570,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7595,7 +7602,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7627,7 +7634,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7659,7 +7666,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7691,7 +7698,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7723,7 +7730,7 @@
    "notes": "",
    "plan_row": 4,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7755,7 +7762,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7787,7 +7794,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7819,7 +7826,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7851,7 +7858,7 @@
    "notes": "the mod says 'assumed equal to 40 pS'",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7883,7 +7890,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7915,7 +7922,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7947,7 +7954,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -7979,7 +7986,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8011,7 +8018,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8043,7 +8050,7 @@
    "notes": "",
    "plan_row": 6,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8203,7 +8210,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8235,7 +8242,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8267,7 +8274,7 @@
    "notes": "ported value 0.5 kHz",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8299,7 +8306,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8331,7 +8338,7 @@
    "notes": "ported value 30 mV",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8363,7 +8370,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8395,7 +8402,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8427,7 +8434,7 @@
    "notes": "ported value 0.015 kHz",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8459,7 +8466,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8491,7 +8498,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8523,7 +8530,7 @@
    "notes": "ported value 1e-5 uS = 0.01 nS per placed junction, below range C4; the template is 22x it. Range C4 is itself guessed (no measurement found), so the override is ours, not a cited value",
    "plan_row": 8,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/transform.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8555,7 +8562,7 @@
    "notes": "every neuron-neuron synapse (transform.py); bounds = BAAIWorm's own weight_range",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/transform.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8587,7 +8594,7 @@
    "notes": "every neuron-to-muscle synapse",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/transform.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8619,7 +8626,7 @@
    "notes": "every muscle-to-neuron synapse",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/transform.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8651,7 +8658,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8683,7 +8690,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8715,7 +8722,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8747,7 +8754,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8779,7 +8786,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8811,7 +8818,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8843,7 +8850,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8875,7 +8882,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8907,7 +8914,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8939,7 +8946,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -8971,7 +8978,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9003,7 +9010,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9035,7 +9042,7 @@
    "notes": "construction constant; how BAAIWorm chose it is not checked",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/network/config.json",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9067,7 +9074,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_chem_contacts.csv",
@@ -9108,7 +9115,7 @@
    "notes": "BAAIWorm's sheet also has 14 self pairs (a cell to itself); not used",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_gap_contacts.csv",
@@ -9149,7 +9156,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_nmj_contacts.csv",
@@ -9190,7 +9197,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_bwm_gap_contacts.csv",
@@ -9231,7 +9238,7 @@
    "notes": "BAAIWorm muscle names; 6 pairs go to MCVL24, which the worm does not have",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/connection",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_nmj_baaiworm.csv",
@@ -9272,7 +9279,7 @@
    "notes": "BAAIWorm's proprioceptive feedback stand-in (its sheet cites Wen 2012, Krieg 2022); not anatomical",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/wire_mn_baaiworm.csv",
@@ -9313,7 +9320,7 @@
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
@@ -9354,7 +9361,7 @@
    "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
    "plan_row": 8,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
@@ -9395,7 +9402,7 @@
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",
@@ -9477,7 +9484,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.7554/eLife.95402",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/syn_inhibitory.csv",
@@ -9520,7 +9527,7 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7785220/",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/syn_sign_receptor.csv",
@@ -9627,7 +9634,7 @@
    "notes": "7 of 1091 pairs have a partner with no innexin detected",
    "plan_row": 8,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1016/j.cell.2021.06.023",
    "source_quote": "",
    "audit": "ok",
    "values_file": "data/worm/model/values/gap_innexin_pair.csv",
@@ -9649,7 +9656,7 @@
    "unit": "um",
    "n_values": 48306,
    "value_template": 0.0,
-   "template_source": "per point in third_party/baaiworm/model/*.hoc",
+   "template_source": "BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in third_party/baaiworm/model/*.hoc",
    "bio_min": -1000.0,
    "bio_max": 1000.0,
    "bound_basis": "physical_limit",
@@ -9668,9 +9675,9 @@
    "notes": "from the Virtual Worm 3D atlas, not an EM reconstruction of one animal",
    "plan_row": 2,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm_learn/components/model",
    "source_quote": "",
-   "audit": "labelled derived without a citation; no URL to open",
+   "audit": "ok",
    "kind": "structure"
   },
   {
@@ -9681,7 +9688,7 @@
    "unit": "um",
    "n_values": 16102,
    "value_template": 0.5,
-   "template_source": "per point in model/*.hoc",
+   "template_source": "BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in model/*.hoc",
    "bio_min": 0.01,
    "bio_max": 20.0,
    "bound_basis": "physical_limit",
@@ -9700,9 +9707,9 @@
    "notes": "",
    "plan_row": 2,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm_learn/components/model",
    "source_quote": "",
-   "audit": "labelled derived without a citation; no URL to open",
+   "audit": "ok",
    "kind": "structure"
   },
   {
@@ -9732,7 +9739,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9764,7 +9771,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9796,7 +9803,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9828,7 +9835,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9860,7 +9867,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9892,7 +9899,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9924,7 +9931,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9956,7 +9963,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -9988,7 +9995,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10020,7 +10027,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10052,7 +10059,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10084,7 +10091,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10116,7 +10123,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10148,7 +10155,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10180,7 +10187,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10212,7 +10219,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10244,7 +10251,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10276,7 +10283,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10308,7 +10315,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10340,7 +10347,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10372,7 +10379,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10404,7 +10411,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10436,7 +10443,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10468,7 +10475,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10500,7 +10507,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10532,7 +10539,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10564,7 +10571,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10596,7 +10603,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10692,7 +10699,7 @@
    "notes": "",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2984562/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -10820,7 +10827,7 @@
    "notes": "",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/nature06292",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -11025,7 +11032,7 @@
    "unit": "C",
    "n_values": 1,
    "value_template": 20.0,
-   "template_source": "Kimura, Miyawaki, Matsumoto & Mori 2004 J Neurosci 24:7752; Clark, Biron, Sengupta & Samuel 2006 J Neurosci; Ramot, MacInnis & Goodman 2008 PLoS ONE (param_ranges J5)",
+   "template_source": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908; Kimura, Miyawaki, Matsumoto & Mori 2004 Curr Biol 14:1291; Clark, Biron, Sengupta & Samuel 2006 J Neurosci 26:7444",
    "bio_min": 15.0,
    "bio_max": 25.0,
    "bound_basis": "measured_this_class",
@@ -11041,12 +11048,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "threshold, tracks cultivation",
+   "notes": "threshold, tracks cultivation; source 6 Nov (catalog audit): was 20 C, label measured, range [15, 25]; citation corrected (Kimura 2004 is Curr Biol 14:1291, not J Neurosci 24:7752; Ramot 2008 is Nat Neurosci, not PLoS ONE); T* follows the holding temperature, so the range is the usual 15-25 C cultivation range",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587641/",
+   "source_quote": "Consistent with rapid adaptation, we found that T* was tightly correlated with Thold, the temperature at which animals were maintained for \u223c15 min",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11056,28 +11063,28 @@
    "applies_to": "whole worm",
    "unit": "s",
    "n_values": 1,
-   "value_template": 30.0,
-   "template_source": "guessed (brain_layers.py)",
-   "bio_min": 1.0,
-   "bio_max": 600.0,
-   "bound_basis": "guessed",
-   "bound_source": "guessed (src/wormemu/brain_layers.py)",
+   "value_template": 356.0,
+   "template_source": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (AFD whole-cell, T* adaptation); Yu et al. 2014 Neuron 84:919 (PMC4258139)",
+   "bio_min": 120.0,
+   "bio_max": 574.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (AFD whole-cell, T* adaptation); Yu et al. 2014 Neuron 84:919 (PMC4258139)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 30 s, label guessed, range [1, 600]; the model has one constant for both directions, so the template is the geometric mean of 244 and 518 s; the range runs from Yu 2014's fast phase ('The initial, rapid phase of T* AFD adaptation had a time constant of ~2-3 minutes') to Ramot's cooling value plus one s.e.m.; was 30 s, a guess about 12x too fast",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587641/",
+   "source_quote": "time constants for adaptation to warmer and cooler temperatures of 244 \u00b1 11 s and 518 \u00b1 56 s (mean \u00b1 s.e.m., n = 5), respectively",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -11120,29 +11127,29 @@
    "applies_to": "whole worm",
    "unit": "%",
    "n_values": 1,
-   "value_template": 10.0,
-   "template_source": "Zimmer et al. 2009 Neuron 61:865; Busch et al. 2012 Nat Neurosci 15:581 (param_ranges J9)",
-   "bio_min": 0.0,
-   "bio_max": 21.0,
+   "value_template": 12.5,
+   "template_source": "Zimmer et al. 2009 Neuron 61:865",
+   "bio_min": 10.0,
+   "bio_max": 15.0,
    "bound_basis": "measured_this_class",
-   "bound_source": "Zimmer et al. 2009 Neuron 61:865; Busch et al. 2012 Nat Neurosci 15:581 (param_ranges J9)",
+   "bound_source": "Zimmer et al. 2009 Neuron 61:865",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 10 %, label measured, range [0, 21]; no paper measures one switch point: URX (on above the point) and BAG (on below it) share it in the model, so it sits between URX's 15-21% and BAG's 4-10%; label measured was wrong for a model boundary, and the old range [0, 21] was the whole O2 axis, not a bound",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/",
+   "source_quote": "URX exhibits calcium transients after an upshift to 15\u201321% O 2, suggesting that it is depolarized at aversive hyperoxic levels. BAG exhibits calcium transients after a downshift to 4\u201310% O 2",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11396,7 +11403,7 @@
    "notes": "",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1038/nn1362",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -11600,29 +11607,29 @@
    "applies_to": "whole worm",
    "unit": "body length",
    "n_values": 1,
-   "value_template": 0.4,
-   "template_source": "Wen et al. 2012 Neuron 76:750 (search summary) (param_ranges J12)",
-   "bio_min": 0.25,
-   "bio_max": 0.5,
+   "value_template": 0.2,
+   "template_source": "Wen et al. 2012 Neuron 76:750",
+   "bio_min": 0.15,
+   "bio_max": 0.25,
    "bound_basis": "measured_this_class",
-   "bound_source": "Wen et al. 2012 Neuron 76:750 (search summary) (param_ranges J12)",
+   "bound_source": "Wen et al. 2012 Neuron 76:750",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "derived",
+   "fill_kind": "derived",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12",
+   "notes": "a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12; fill 6 Nov (catalog audit): was 0.4 body length, label measured, range [0.25, 0.5]; 200 um over a 1 mm worm is 0.2 body lengths; the range is 200 um over 0.8-1.3 mm worms; was 0.4 [0.25, 0.5] from a search summary that the paper does not support",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/",
+   "source_quote": "We can infer the spatial extent of this coupling l to be ~ 200 \u00b5m based on our direct measurements ( Figure 3D ). For a one millimeter-long worm",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11812,7 +11819,7 @@
    "notes": "",
    "plan_row": 12,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2996704/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -12263,7 +12270,7 @@
    "unit": "Hz",
    "n_values": 1,
    "value_template": 4.3,
-   "template_source": "Per project STATE_OF_THE_ART.md behavior corpus #32 (~4-5Hz, ~250 pumps/min); Raizen & Avery 1994 J Neurosci (param_ranges G1)",
+   "template_source": "Weeks et al. 2016 microPublication Biology (microfluidic EPG, wild type on food); Raizen & Avery 1994 Neuron 12:483",
    "bio_min": 3.5,
    "bio_max": 5.0,
    "bound_basis": "measured_this_class",
@@ -12279,12 +12286,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 4.3 Hz, label measured, range [3.5, 5]; citation corrected (Raizen & Avery 1994 is Neuron 12:483, not J Neurosci) and a free quote added; Lee et al. 2017 (PMC5296638) gives a fast-pumping peak of 6 Hz, above the range, so the range is the fed average, not the burst rate",
    "plan_row": 13,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/",
+   "source_quote": "the normal modal pump frequency of ~4 Hz",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -12314,7 +12321,7 @@
    "notes": "",
    "plan_row": 13,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4460247/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -12326,12 +12333,12 @@
    "applies_to": "whole worm",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 170.0,
-   "template_source": "Per project STATE_OF_THE_ART.md behavior corpus #33 (~170ms) (param_ranges G3)",
-   "bio_min": 150.0,
-   "bio_max": 200.0,
+   "value_template": 80.0,
+   "template_source": "Lee et al. 2017 Nat Commun 8:14221 (video, contraction to relaxation of one pump)",
+   "bio_min": 80.0,
+   "bio_max": 170.0,
    "bound_basis": "measured_this_class",
-   "bound_source": "Per project STATE_OF_THE_ART.md behavior corpus #33 (~170ms) (param_ranges G3)",
+   "bound_source": "Lee et al. 2017 Nat Commun 8:14221 (video, contraction to relaxation of one pump)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -12343,12 +12350,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 170 ms, label measured, range [150, 200]; the model's pump is a half-sine from contraction to relaxation, which is the paper's pump duration ('the time between contraction and relaxation in a single pumping event'); the upper end is the ~170 ms WormBook figure (not re-read), the old template; was 170 [150, 200] with no citation",
    "plan_row": 13,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "range basis says measured but the range source names no citation; labelled measured without a citation; no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/",
+   "source_quote": "We found that these distributions were always sharply peaked around 80 ms in all food concentrations, except in the complete absence of food",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -12391,7 +12398,7 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 45.0,
-   "template_source": "Per project STATE_OF_THE_ART.md behavior corpus #49 (45s +/-<3s at 20C, temp-insensitive 19-30C); Thomas 1990 Genetics 124:855 (param_ranges H1)",
+   "template_source": "Jiang et al. 2022 Nat Commun 13:2783; Thomas 1990 Genetics 124:855",
    "bio_min": 42.0,
    "bio_max": 48.0,
    "bound_basis": "measured_this_class",
@@ -12407,12 +12414,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 45 s, label measured, range [42, 48]; free quote added; Thomas 1990 (PMC1203977) is a page scan only",
    "plan_row": 14,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/",
+   "source_quote": "the averaged cycle length was ~45 s with small variability",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -12455,7 +12462,7 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 3.0,
-   "template_source": "guessed (brain_layers.py)",
+   "template_source": "Jiang et al. 2022 Nat Commun 13:2783",
    "bio_min": 2.0,
    "bio_max": 4.5,
    "bound_basis": "guessed",
@@ -12465,17 +12472,17 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
+   "label": "derived",
+   "fill_kind": "derived",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 3 s, label guessed, range [2, 4.5]; the model's pBoc window is 0-2 s (peak 1 s) and its aBoc window starts here and lasts 1 s (peak 0.5 s later), so a 2.5 s peak-to-peak gap gives 1 + 2.5 - 0.5 = 3 s, the existing value; label guessed -> derived",
    "plan_row": 14,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/",
+   "source_quote": "The peak of posterior body muscle contractions preceded the peak of anterior body muscle contractions by ~2.5 s",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -12647,7 +12654,7 @@
    "unit": "min",
    "n_values": 1,
    "value_template": 2.0,
-   "template_source": "Waggoner, Zhou, Schafer & Schafer 1998 Neuron 21:203; Collins et al. 2016 eLife (param_ranges I1)",
+   "template_source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998 Neuron 21:203)",
    "bio_min": 1.0,
    "bio_max": 5.0,
    "bound_basis": "measured_this_class",
@@ -12663,12 +12670,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 2 min, label measured, range [1, 5]; free quote added; 'a few minutes' supports the template, the range ends [1, 5] are not checked (Waggoner 1998 is not free)",
    "plan_row": 15,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://doi.org/10.7554/eLife.21126",
+   "source_quote": "quiescent periods of about 20 min during which no egg laying occurs, and active states lasting a few minutes during which ~5 eggs are laid ( Waggoner et al., 1998 )",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -12679,7 +12686,7 @@
    "unit": "min",
    "n_values": 1,
    "value_template": 20.0,
-   "template_source": "Waggoner et al. 1998 Neuron; Collins et al. 2016 eLife (param_ranges I2)",
+   "template_source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998 Neuron 21:203)",
    "bio_min": 15.0,
    "bio_max": 30.0,
    "bound_basis": "measured_this_class",
@@ -12695,12 +12702,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 20 min, label measured, range [15, 30]; free quote added; the range ends [15, 30] are not checked (Waggoner 1998 is not free)",
    "plan_row": 15,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://doi.org/10.7554/eLife.21126",
+   "source_quote": "quiescent periods of about 20 min during which no egg laying occurs",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -12710,28 +12717,28 @@
    "applies_to": "whole worm",
    "unit": "eggs/min",
    "n_values": 1,
-   "value_template": 2.0,
-   "template_source": "guessed (brain_layers.py)",
-   "bio_min": 0.5,
-   "bio_max": 6.0,
-   "bound_basis": "guessed",
-   "bound_source": "guessed (src/wormemu/brain_layers.py)",
+   "value_template": 2.5,
+   "template_source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998)",
+   "bio_min": 1.0,
+   "bio_max": 5.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "in the active phase; with I1 and I2 gives the basal rate of param_ranges I3",
+   "notes": "in the active phase; with I1 and I2 gives the basal rate of param_ranges I3; fill 6 Nov (catalog audit): was 2 eggs/min, label guessed, range [0.5, 6]; ~5 eggs over an active state of egg_active_min (2 min, range 1-5) gives 2.5 eggs/min (range 1-5); was a guess, 2 [0.5, 6]",
    "plan_row": 15,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://doi.org/10.7554/eLife.21126",
+   "source_quote": "active states lasting a few minutes during which ~5 eggs are laid",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -12839,7 +12846,7 @@
    "unit": "nM",
    "n_values": 1,
    "value_template": 157.0,
-   "template_source": "Chen et al. 2013 Nature 499:295 (GCaMP6 series); search summary: Kd=157nM (param_ranges M1)",
+   "template_source": "Zhang et al. 2023 Nature 615:884 (Extended Data Table 1, GCaMP6s in purified protein), via PORT_SOURCES_ORGANS.md O10; Chen et al. 2013 Nature 499:295",
    "bio_min": 100.0,
    "bio_max": 200.0,
    "bound_basis": "measured_related",
@@ -12855,12 +12862,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "GCaMP6s",
+   "notes": "GCaMP6s; source 6 Nov (catalog audit): was 157 nM, label measured, range [100, 200]; the number sits in an Extended Data table (an image), not in the text; the research file cross-checked it over two searches; not read tonight",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
+   "source_quote": "PORT_SOURCES_ORGANS.md O10: | GCaMP6s Kd | 157 | - | nM |",
+   "audit": "157 nM is in an Extended Data table (image) of Zhang 2023 / Chen 2013, not machine-readable; not read tonight [open: a person reading Zhang 2023 Extended Data Table 1 would close it]",
    "kind": "physiology"
   },
   {
@@ -12871,7 +12878,7 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 2.5,
-   "template_source": "Chen et al. 2013 Nature 499:295, search summary (param_ranges M3)",
+   "template_source": "Zhang et al. 2023 Nature 615:884 (Extended Data Tables 1 and 3), via PORT_SOURCES_ORGANS.md O10",
    "bio_min": 2.0,
    "bio_max": 3.0,
    "bound_basis": "measured_related",
@@ -12887,12 +12894,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 2.5 1, label measured, range [2, 3]; the text gives neighbours only ('Hill coefficients were lower for the jGCaMP8 variants (1.9\u20132.2) than jGCaMP7f (3.1)'); GCaMP6s's own value is in an Extended Data table, not read",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
+   "source_quote": "PORT_SOURCES_ORGANS.md O10: | GCaMP6 Hill coefficient | 2-3 | - | dimensionless |",
+   "audit": "2-3 is a range for GCaMP6 generally; GCaMP6s's own value sits in an Extended Data table [open: a person reading Zhang 2023 Extended Data Table 1 would close it]",
    "kind": "physiology"
   },
   {
@@ -12903,28 +12910,28 @@
    "unit": "ms",
    "n_values": 1,
    "value_template": 50.0,
-   "template_source": "Chen et al. 2013 Nature 499:295, search summary: ~50ms (param_ranges M4)",
+   "template_source": "Chen et al. 2013 Nature 499:295, search summary ~50 ms (param_ranges M4); Zhang et al. 2023 stopped-flow response time 20 ms (PORT_SOURCES_ORGANS.md O10)",
    "bio_min": 30.0,
    "bio_max": 80.0,
-   "bound_basis": "measured_related",
+   "bound_basis": "guessed",
    "bound_source": "Chen et al. 2013 Nature 499:295, search summary: ~50ms (param_ranges M4)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 50 ms, label measured, range [30, 80]; no paper reports a first-order rise constant for GCaMP6s in a worm neuron: the 20 ms is purified protein, the ~50 ms a search summary; label measured -> inferred, range basis -> guessed",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
+   "source_quote": "PORT_SOURCES_ORGANS.md O10: | GCaMP6s response/rise time | 20 | - | ms |",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -13063,7 +13070,7 @@
    "unit": "mV",
    "n_values": 1,
    "value_template": -30.0,
-   "template_source": "Goodman, Hall, Avery & Lockery 1998 J Neurosci (ASER and other head neurons, whole-cell current clamp) (param_ranges A4)",
+   "template_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (resting potentials of head neurons, whole-cell), param_ranges A4",
    "bio_min": -45.0,
    "bio_max": -17.0,
    "bound_basis": "measured_this_class",
@@ -13073,18 +13080,18 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was -30 mV, label measured, range [-45, -17]; a homeostatic set point is not a measured quantity: the template is placed inside the measured resting-potential range; citation corrected (Neuron, not J Neurosci); the range is from memory (param_ranges A4) and the paper's PMC copy is a page scan, so it is not checked",
    "plan_row": 19,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/",
    "source_quote": "",
-   "audit": "no URL to open",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -13191,43 +13198,11 @@
    "unit": "h",
    "n_values": 1,
    "value_template": 2.0,
-   "template_source": "L'Etoile et al. 2002 Neuron 36:1079 (param_ranges K1)",
+   "template_source": "L'Etoile et al. 2002 Neuron 36:1079 (odour adaptation after about an hour of exposure), param_ranges K1",
    "bio_min": 1.0,
    "bio_max": 4.0,
-   "bound_basis": "measured_this_class",
-   "bound_source": "L'Etoile et al. 2002 Neuron 36:1079 (param_ranges K1)",
-   "bound_verified": "unverified",
-   "prior_dist": "uniform",
-   "prior_a": "",
-   "prior_b": "",
-   "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
-   "source_project": "literature",
-   "precision_needed": "not yet estimated",
-   "precision_method": "",
-   "toggle": "",
-   "notes": "",
-   "plan_row": 18,
-   "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open",
-   "kind": "physiology"
-  },
-  {
-   "param_id": "slow_thermo_tau_h",
-   "mechanism_id": "slow_signalling",
-   "grain": "global",
-   "applies_to": "AFD (T* drift)",
-   "unit": "h",
-   "n_values": 1,
-   "value_template": 3.0,
-   "template_source": "Yu, Tirman, Bargmann et al. 2014 eLife (CMK-1); Clark et al. 2006 (param_ranges K2)",
-   "bio_min": 1.0,
-   "bio_max": 6.0,
    "bound_basis": "measured_related",
-   "bound_source": "Yu, Tirman, Bargmann et al. 2014 eLife (CMK-1); Clark et al. 2006 (param_ranges K2)",
+   "bound_source": "L'Etoile et al. 2002 Neuron 36:1079 (param_ranges K1)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -13239,11 +13214,43 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "relabel 6 Nov (catalog audit): was 2 h, label measured, range [1, 4]; a model time constant, not a number the paper reports; param_ranges K1 records it as recalled, and the paper is not free, so not checked",
    "plan_row": 18,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1016/s0896-6273(02)01066-8",
    "source_quote": "",
+   "audit": "ok",
+   "kind": "physiology"
+  },
+  {
+   "param_id": "slow_thermo_tau_h",
+   "mechanism_id": "slow_signalling",
+   "grain": "global",
+   "applies_to": "AFD (T* drift)",
+   "unit": "h",
+   "n_values": 1,
+   "value_template": 3.5,
+   "template_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD T* adaptation)",
+   "bio_min": 3.0,
+   "bio_max": 5.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD T* adaptation)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "fill 6 Nov (catalog audit): was 3 h, label inferred, range [1, 6]; citation corrected (Yu et al. 2014 is Neuron 84:919, Sengupta lab, not eLife); downshifts gave ~3 h ('a time constant of ~3 hours'), upshifts 3-5 h, so one constant for both sits at 3.5 h in [3, 5]; was 3 [1, 6] inferred",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4258139/",
+   "source_quote": "a later, slower phase of adaptation occurred with a time constant of ~3-5 hours (\u03c42, Figure 2G )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -13287,7 +13294,7 @@
    "unit": "ratio",
    "n_values": 1,
    "value_template": 4.0,
-   "template_source": "Starich et al. 2009 J Neurosci; Kawano et al. 2011 Neuron (param_ranges C3)",
+   "template_source": "Starich et al. 2009 Neural Dev 4:16; Kawano et al. 2011 Neuron 72:572; Liu et al. 2017 (direction) (param_ranges C3)",
    "bio_min": 2.0,
    "bio_max": 10.0,
    "bound_basis": "measured_related",
@@ -13303,10 +13310,10 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)",
+   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md); source 6 Nov (catalog audit): was 4 ratio, label inferred, range [2, 10]; citation corrected (Starich 2009 is Neural Dev, not J Neurosci); the ratio stays inferred: no paper gives a number",
    "plan_row": 8,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2694797/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -13339,18 +13346,18 @@
   "totals": {
    "rows": {
     "published_fit": 294,
-    "guessed": 187,
-    "measured": 72,
-    "derived": 17,
-    "inferred": 13,
+    "guessed": 186,
+    "measured": 65,
+    "derived": 22,
+    "inferred": 16,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7818,
-    "guessed": 9091,
-    "measured": 5929,
-    "derived": 67497,
-    "inferred": 18,
+    "guessed": 9090,
+    "measured": 5922,
+    "derived": 67502,
+    "inferred": 21,
     "absent": 5
    },
    "n_rows": 588,
@@ -13358,18 +13365,18 @@
   },
   "by_label_rows": {
    "published_fit": 294,
-   "guessed": 187,
-   "measured": 72,
-   "derived": 17,
-   "inferred": 13,
+   "guessed": 186,
+   "measured": 65,
+   "derived": 22,
+   "inferred": 16,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 7818,
-   "guessed": 9091,
-   "measured": 5929,
-   "derived": 67497,
-   "inferred": 18,
+   "guessed": 9090,
+   "measured": 5922,
+   "derived": 67502,
+   "inferred": 21,
    "absent": 5
   },
   "by_plan_row": {
@@ -13534,11 +13541,13 @@
    "14": {
     "rows": {
      "measured": 1,
-     "guessed": 16
+     "guessed": 15,
+     "derived": 1
     },
     "numbers": {
      "measured": 1,
-     "guessed": 16
+     "guessed": 15,
+     "derived": 1
     },
     "n_rows": 17,
     "n_numbers": 17
@@ -13546,11 +13555,13 @@
    "15": {
     "rows": {
      "measured": 5,
-     "guessed": 5
+     "derived": 1,
+     "guessed": 4
     },
     "numbers": {
      "measured": 5,
-     "guessed": 5
+     "derived": 1,
+     "guessed": 4
     },
     "n_rows": 10,
     "n_numbers": 10
@@ -13567,45 +13578,49 @@
    },
    "17": {
     "rows": {
-     "guessed": 29,
-     "inferred": 3,
-     "measured": 6,
-     "absent": 4,
-     "derived": 1
+     "guessed": 28,
+     "inferred": 4,
+     "measured": 4,
+     "derived": 3,
+     "absent": 4
     },
     "numbers": {
-     "guessed": 29,
-     "inferred": 3,
-     "measured": 6,
-     "absent": 4,
-     "derived": 1
+     "guessed": 28,
+     "inferred": 4,
+     "measured": 4,
+     "derived": 3,
+     "absent": 4
     },
     "n_rows": 43,
     "n_numbers": 43
    },
    "18": {
     "rows": {
-     "measured": 2,
      "inferred": 1,
-     "guessed": 5
+     "derived": 1,
+     "guessed": 5,
+     "measured": 1
     },
     "numbers": {
-     "measured": 2,
      "inferred": 1,
-     "guessed": 5
+     "derived": 1,
+     "guessed": 5,
+     "measured": 1
     },
     "n_rows": 8,
     "n_numbers": 8
    },
    "19": {
     "rows": {
-     "measured": 2,
+     "inferred": 1,
      "guessed": 6,
+     "measured": 1,
      "derived": 1
     },
     "numbers": {
-     "measured": 2,
+     "inferred": 1,
      "guessed": 6,
+     "measured": 1,
      "derived": 1
     },
     "n_rows": 9,
@@ -13640,28 +13655,30 @@
    "22": {
     "rows": {
      "published_fit": 7,
-     "measured": 9,
+     "measured": 7,
      "derived": 3,
      "inferred": 2,
-     "guessed": 2
+     "guessed": 4
     },
     "numbers": {
      "published_fit": 7,
-     "measured": 9,
+     "measured": 7,
      "derived": 3,
      "inferred": 2,
-     "guessed": 2
+     "guessed": 4
     },
     "n_rows": 23,
     "n_numbers": 23
    },
    "23": {
     "rows": {
-     "measured": 9,
+     "measured": 8,
+     "inferred": 1,
      "guessed": 4
     },
     "numbers": {
-     "measured": 9,
+     "measured": 8,
+     "inferred": 1,
      "guessed": 4
     },
     "n_rows": 13,
@@ -13823,18 +13840,18 @@
    "global": {
     "rows": {
      "published_fit": 91,
-     "guessed": 84,
-     "inferred": 9,
-     "measured": 37,
-     "derived": 11,
+     "guessed": 83,
+     "inferred": 12,
+     "measured": 30,
+     "derived": 16,
      "absent": 1
     },
     "numbers": {
      "published_fit": 91,
-     "guessed": 84,
-     "inferred": 9,
-     "measured": 37,
-     "derived": 11,
+     "guessed": 83,
+     "inferred": 12,
+     "measured": 30,
+     "derived": 16,
      "absent": 1
     },
     "n_rows": 233,
@@ -13875,19 +13892,19 @@
   "by_used": {
    "slot only": {
     "rows": {
-     "guessed": 107,
+     "guessed": 109,
      "absent": 5,
      "published_fit": 11,
      "derived": 7,
-     "measured": 53,
+     "measured": 51,
      "inferred": 6
     },
     "numbers": {
-     "guessed": 133,
+     "guessed": 135,
      "absent": 5,
      "published_fit": 11,
      "derived": 7,
-     "measured": 53,
+     "measured": 51,
      "inferred": 6
     },
     "n_rows": 189,
@@ -13896,17 +13913,17 @@
    "yes": {
     "rows": {
      "published_fit": 283,
-     "guessed": 80,
-     "measured": 19,
-     "derived": 10,
-     "inferred": 7
+     "guessed": 77,
+     "measured": 14,
+     "derived": 15,
+     "inferred": 10
     },
     "numbers": {
      "published_fit": 7807,
-     "guessed": 8958,
-     "measured": 5876,
-     "derived": 67490,
-     "inferred": 12
+     "guessed": 8955,
+     "measured": 5871,
+     "derived": 67495,
+     "inferred": 15
     },
     "n_rows": 399,
     "n_numbers": 90143
@@ -13952,31 +13969,33 @@
    },
    "layers": {
     "rows": {
-     "guessed": 64,
-     "inferred": 6,
-     "measured": 13
+     "guessed": 61,
+     "inferred": 9,
+     "measured": 8,
+     "derived": 5
     },
     "numbers": {
-     "guessed": 282,
-     "inferred": 6,
-     "measured": 13
+     "guessed": 279,
+     "inferred": 9,
+     "measured": 8,
+     "derived": 5
     },
     "n_rows": 83,
     "n_numbers": 301
    },
    "slot": {
     "rows": {
-     "measured": 51,
+     "measured": 49,
      "inferred": 5,
-     "guessed": 99,
+     "guessed": 101,
      "derived": 3,
      "published_fit": 10,
      "absent": 4
     },
     "numbers": {
-     "measured": 51,
+     "measured": 49,
      "inferred": 5,
-     "guessed": 125,
+     "guessed": 127,
      "derived": 3,
      "published_fit": 10,
      "absent": 4
@@ -13986,25 +14005,35 @@
    }
   },
   "by_kind": {
+   "numerics": {
+    "rows": {
+     "published_fit": 12
+    },
+    "numbers": {
+     "published_fit": 12
+    },
+    "n_rows": 12,
+    "n_numbers": 12
+   },
    "physiology": {
     "rows": {
-     "published_fit": 292,
-     "guessed": 187,
-     "derived": 15,
-     "inferred": 13,
-     "measured": 68,
+     "published_fit": 280,
+     "guessed": 186,
+     "derived": 20,
+     "inferred": 16,
+     "measured": 61,
      "absent": 5
     },
     "numbers": {
-     "published_fit": 7091,
-     "guessed": 9091,
-     "derived": 3089,
-     "inferred": 18,
-     "measured": 77,
+     "published_fit": 7079,
+     "guessed": 9090,
+     "derived": 3094,
+     "inferred": 21,
+     "measured": 70,
      "absent": 5
     },
-    "n_rows": 580,
-    "n_numbers": 19371
+    "n_rows": 568,
+    "n_numbers": 19359
    },
    "structure": {
     "rows": {
@@ -14275,19 +14304,319 @@
   ],
   "slots_replaced": [],
   "audit": {
-   "rows_ok": 522,
-   "rows_with_problems": 66,
+   "rows_ok": 568,
+   "rows_with_problems": 20,
+   "by_status": {
+    "ok": 568,
+    "problem": 2,
+    "finding": 18
+   },
+   "rows_read": 76,
+   "quotes": {
+    "none": 405,
+    "paper text (read audit, 6 Nov)": 18,
+    "research file (scripted check)": 165
+   },
+   "with_url": 457,
    "problem_kinds": {
-    "no URL to open": 42,
-    "no range": 24,
-    "labelled measured without a citation": 9,
-    "range basis says measured but the range source names no citation": 8,
+    "no range": 11,
     "template # outside": 6,
-    "labelled derived without a citation": 3,
-    "gap without a named source that would fill it": 1
+    "# nM is in an Extended Data table (image) of Zhang # / Chen #, not machine-readable; not r": 1,
+    "# is a range for GCaMP# generally; GCaMP#s's own value sits in an Extended Data table": 1,
+    "gap without a named source that would fill it": 1,
+    "no URL to open": 1
    }
   },
-  "fills": [],
-  "hidden_constants": {}
+  "fills": [
+   {
+    "param_id": "thermo_Tstar_C",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "20 -> 20 C; measured -> measured; range [15, 25] -> [15, 25]",
+    "reason": "citation corrected (Kimura 2004 is Curr Biol 14:1291, not J Neurosci 24:7752; Ramot 2008 is Nat Neurosci, not PLoS ONE); T* follows the holding temperature, so the range is the usual 15-25 C cultivation range",
+    "source": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908; Kimura, Miyawaki, Matsumoto & Mori 2004 Curr Biol 14:1291; Clark, Biron, Sengupta & Samuel 2006 J Neurosci 26:7444",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587641/"
+   },
+   {
+    "param_id": "thermo_tau_adapt_s",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "30 -> 356 s; guessed -> derived; range [1, 600] -> [120, 574]",
+    "reason": "the model has one constant for both directions, so the template is the geometric mean of 244 and 518 s; the range runs from Yu 2014's fast phase ('The initial, rapid phase of T* AFD adaptation had a time constant of ~2-3 minutes') to Ramot's cooling value plus one s.e.m.; was 30 s, a guess about 12x too fast",
+    "source": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (AFD whole-cell, T* adaptation); Yu et al. 2014 Neuron 84:919 (PMC4258139)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587641/"
+   },
+   {
+    "param_id": "o2_threshold_pct",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "10 -> 12.5 %; measured -> inferred; range [0, 21] -> [10, 15]",
+    "reason": "no paper measures one switch point: URX (on above the point) and BAG (on below it) share it in the model, so it sits between URX's 15-21% and BAG's 4-10%; label measured was wrong for a model boundary, and the old range [0, 21] was the whole O2 axis, not a bound",
+    "source": "Zimmer et al. 2009 Neuron 61:865",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2760494/"
+   },
+   {
+    "param_id": "proprio_field_frac",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "derived",
+    "change": "0.4 -> 0.2 body length; measured -> derived; range [0.25, 0.5] -> [0.15, 0.25]",
+    "reason": "200 um over a 1 mm worm is 0.2 body lengths; the range is 200 um over 0.8-1.3 mm worms; was 0.4 [0.25, 0.5] from a search summary that the paper does not support",
+    "source": "Wen et al. 2012 Neuron 76:750",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/"
+   },
+   {
+    "param_id": "pump_rate_food_hz",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "4.3 -> 4.3 Hz; measured -> measured; range [3.5, 5] -> [3.5, 5]",
+    "reason": "citation corrected (Raizen & Avery 1994 is Neuron 12:483, not J Neurosci) and a free quote added; Lee et al. 2017 (PMC5296638) gives a fast-pumping peak of 6 Hz, above the range, so the range is the fed average, not the burst rate",
+    "source": "Weeks et al. 2016 microPublication Biology (microfluidic EPG, wild type on food); Raizen & Avery 1994 Neuron 12:483",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/"
+   },
+   {
+    "param_id": "pump_duration_ms",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "170 -> 80 ms; measured -> measured; range [150, 200] -> [80, 170]",
+    "reason": "the model's pump is a half-sine from contraction to relaxation, which is the paper's pump duration ('the time between contraction and relaxation in a single pumping event'); the upper end is the ~170 ms WormBook figure (not re-read), the old template; was 170 [150, 200] with no citation",
+    "source": "Lee et al. 2017 Nat Commun 8:14221 (video, contraction to relaxation of one pump)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
+   },
+   {
+    "param_id": "dmp_period_s",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "45 -> 45 s; measured -> measured; range [42, 48] -> [42, 48]",
+    "reason": "free quote added; Thomas 1990 (PMC1203977) is a page scan only",
+    "source": "Jiang et al. 2022 Nat Commun 13:2783; Thomas 1990 Genetics 124:855",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/"
+   },
+   {
+    "param_id": "dmp_aboc_delay_s",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "3 -> 3 s; guessed -> derived; range [2, 4.5] -> [2, 4.5]",
+    "reason": "the model's pBoc window is 0-2 s (peak 1 s) and its aBoc window starts here and lasts 1 s (peak 0.5 s later), so a 2.5 s peak-to-peak gap gives 1 + 2.5 - 0.5 = 3 s, the existing value; label guessed -> derived",
+    "source": "Jiang et al. 2022 Nat Commun 13:2783",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9120479/"
+   },
+   {
+    "param_id": "egg_active_min",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "2 -> 2 min; measured -> measured; range [1, 5] -> [1, 5]",
+    "reason": "free quote added; 'a few minutes' supports the template, the range ends [1, 5] are not checked (Waggoner 1998 is not free)",
+    "source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998 Neuron 21:203)",
+    "url": "https://doi.org/10.7554/eLife.21126"
+   },
+   {
+    "param_id": "egg_inactive_min",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "20 -> 20 min; measured -> measured; range [15, 30] -> [15, 30]",
+    "reason": "free quote added; the range ends [15, 30] are not checked (Waggoner 1998 is not free)",
+    "source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998 Neuron 21:203)",
+    "url": "https://doi.org/10.7554/eLife.21126"
+   },
+   {
+    "param_id": "egg_rate_active_per_min",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "2 -> 2.5 eggs/min; guessed -> derived; range [0.5, 6] -> [1, 5]",
+    "reason": "~5 eggs over an active state of egg_active_min (2 min, range 1-5) gives 2.5 eggs/min (range 1-5); was a guess, 2 [0.5, 6]",
+    "source": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998)",
+    "url": "https://doi.org/10.7554/eLife.21126"
+   },
+   {
+    "param_id": "gcamp_kd_nM",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "157 -> 157 nM; measured -> measured; range [100, 200] -> [100, 200]",
+    "reason": "the number sits in an Extended Data table (an image), not in the text; the research file cross-checked it over two searches; not read tonight",
+    "source": "Zhang et al. 2023 Nature 615:884 (Extended Data Table 1, GCaMP6s in purified protein), via PORT_SOURCES_ORGANS.md O10; Chen et al. 2013 Nature 499:295",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/"
+   },
+   {
+    "param_id": "gcamp_hill",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "2.5 -> 2.5 1; measured -> measured; range [2, 3] -> [2, 3]",
+    "reason": "the text gives neighbours only ('Hill coefficients were lower for the jGCaMP8 variants (1.9\u20132.2) than jGCaMP7f (3.1)'); GCaMP6s's own value is in an Extended Data table, not read",
+    "source": "Zhang et al. 2023 Nature 615:884 (Extended Data Tables 1 and 3), via PORT_SOURCES_ORGANS.md O10",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/"
+   },
+   {
+    "param_id": "gcamp_tau_rise_ms",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "50 -> 50 ms; measured -> inferred; range [30, 80] -> [30, 80]",
+    "reason": "no paper reports a first-order rise constant for GCaMP6s in a worm neuron: the 20 ms is purified protein, the ~50 ms a search summary; label measured -> inferred, range basis -> guessed",
+    "source": "Chen et al. 2013 Nature 499:295, search summary ~50 ms (param_ranges M4); Zhang et al. 2023 stopped-flow response time 20 ms (PORT_SOURCES_ORGANS.md O10)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/"
+   },
+   {
+    "param_id": "homeo_target_mV",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "-30 -> -30 mV; measured -> inferred; range [-45, -17] -> [-45, -17]",
+    "reason": "a homeostatic set point is not a measured quantity: the template is placed inside the measured resting-potential range; citation corrected (Neuron, not J Neurosci); the range is from memory (param_ranges A4) and the paper's PMC copy is a page scan, so it is not checked",
+    "source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (resting potentials of head neurons, whole-cell), param_ranges A4",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"
+   },
+   {
+    "param_id": "slow_olf_tau_h",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "2 -> 2 h; measured -> inferred; range [1, 4] -> [1, 4]",
+    "reason": "a model time constant, not a number the paper reports; param_ranges K1 records it as recalled, and the paper is not free, so not checked",
+    "source": "L'Etoile et al. 2002 Neuron 36:1079 (odour adaptation after about an hour of exposure), param_ranges K1",
+    "url": "https://doi.org/10.1016/s0896-6273(02)01066-8"
+   },
+   {
+    "param_id": "slow_thermo_tau_h",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "inferred",
+    "new_label": "derived",
+    "change": "3 -> 3.5 h; inferred -> derived; range [1, 6] -> [3, 5]",
+    "reason": "citation corrected (Yu et al. 2014 is Neuron 84:919, Sengupta lab, not eLife); downshifts gave ~3 h ('a time constant of ~3 hours'), upshifts 3-5 h, so one constant for both sits at 3.5 h in [3, 5]; was 3 [1, 6] inferred",
+    "source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD T* adaptation)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4258139/"
+   },
+   {
+    "param_id": "gap_rect_ratio",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "4 -> 4 ratio; inferred -> inferred; range [2, 10] -> [2, 10]",
+    "reason": "citation corrected (Starich 2009 is Neural Dev, not J Neurosci); the ratio stays inferred: no paper gives a number",
+    "source": "Starich et al. 2009 Neural Dev 4:16; Kawano et al. 2011 Neuron 72:572; Liu et al. 2017 (direction) (param_ranges C3)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2694797/"
+   },
+   {
+    "param_id": "mw_worm_mass",
+    "kind": "range",
+    "origin": "body",
+    "n": 1,
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "2.13 -> 2.13 ug; derived -> derived; range [nan, nan] -> [1.5, 3.4]",
+    "reason": "a cylinder 0.9-1.2 mm long and 50-58 um across at 1070-1080 kg/m3 holds 1.9-3.4 ug; the lower end allows about 20% less for the tapered ends (guessed); the body's 2.13 ug is inside",
+    "source": "Wen et al. 2012 Neuron 76:750 (diameter 54 \u00b1 4 um); WormAtlas length 0.9-1.2 mm; density 1070-1080 kg/m3 (BODY.md s1)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/"
+   },
+   {
+    "param_id": "mw_gravity",
+    "kind": "source",
+    "origin": "body",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "9.81 -> 9.81 m/s^2; measured -> measured; range [9.78, 9.83] -> [9.78, 9.83]",
+    "reason": "citation added; the range spans sea-level gravity from the equator to the poles",
+    "source": "CODATA conventional value of standard gravity (NIST)",
+    "url": "https://physics.nist.gov/cgi-bin/cuu/Value?gn"
+   },
+   {
+    "param_id": "mw_surface_tension",
+    "kind": "source",
+    "origin": "body",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "0.072 -> 0.072 N/m; measured -> measured; range [0.07, 0.073] -> [0.07, 0.073]",
+    "reason": "citation added for 'standard tables'",
+    "source": "IAPWS R1-76(2014), Revised Release on the Surface Tension of Ordinary Water Substance",
+    "url": "https://iapws.org/technical-guidance/release/Surf-H2O"
+   }
+  ],
+  "hidden_constants": {},
+  "before_fills": {
+   "rows": {
+    "published_fit": 294,
+    "guessed": 189,
+    "measured": 70,
+    "derived": 17,
+    "inferred": 13,
+    "absent": 5
+   },
+   "numbers": {
+    "published_fit": 7818,
+    "guessed": 9093,
+    "measured": 5927,
+    "derived": 67497,
+    "inferred": 18,
+    "absent": 5
+   }
+  },
+  "after_fills": {
+   "rows": {
+    "published_fit": 294,
+    "guessed": 186,
+    "measured": 65,
+    "derived": 22,
+    "inferred": 16,
+    "absent": 5
+   },
+   "numbers": {
+    "published_fit": 7818,
+    "guessed": 9090,
+    "measured": 5922,
+    "derived": 67502,
+    "inferred": 21,
+    "absent": 5
+   }
+  }
  }
 }

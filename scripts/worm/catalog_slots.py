@@ -17,6 +17,8 @@ import math
 NEURAL, ORGANS, PLAN = "PORT_SOURCES_NEURAL.md", "PORT_SOURCES_ORGANS.md", "PLAN.md"
 PMC = "https://pmc.ncbi.nlm.nih.gov/articles/{}/".format
 CYS_REVIEW = PMC("PMC10480131")
+WORMATLAS = "https://www.wormatlas.org/hermaphrodite/{}".format
+WEN, YEMINI = PMC("PMC3508473"), PMC("PMC10494711")
 
 MECH_NAMES = {
     "cells": "Cell inventory (counts by cell type)",
@@ -83,17 +85,28 @@ S("cells_bwm", 1, "cells", "count", 95, 95, 95, "measured", basis="measured_this
   quote=f"{ORGANS} O1: all 95 body-wall muscle cells (4 quadrants: DL, DR, VR 24 each, VL 23",
   notes="the brain builds these 95 muscles (BWM_NAMES)")
 S("cells_glia", 1, "cells", "count", 56, 56, 56, "measured", basis="measured_this_class",
-  src="STATE_OF_THE_ART count, via PORT_SOURCES_ORGANS.md O5",
-  quote=f"{ORGANS} O5: other 44 of the 56 total glia (per STATE_OF_THE_ART's count)")
+  src="WormAtlas, Neuronal support cells (hermaphrodite)", url=WORMATLAS("neuronalsupport/mainframe.htm"),
+  quote="The adult C. elegans hermaphrodite nervous system has 56 support cells that fall into three categories: "
+        "24 sheath cells, 26 socket cells, and 6 GLR cells",
+  notes="PORT_SOURCES_ORGANS.md O5 gives the same 56")
 S("cells_pharyngeal_neurons", 1, "cells", "count", 20, 20, 20, "measured", basis="measured_this_class",
-  src="WormAtlas pharynx, via PORT_SOURCES_ORGANS.md O2", quote=f"{ORGANS} O2: the 20 pharyngeal neurons")
+  src="WormAtlas pharynx, via PORT_SOURCES_ORGANS.md O2", url=WORMATLAS("pharynx/mainframe.htm"),
+  quote=f"{ORGANS} O2: the 20 pharyngeal neurons",
+  notes="WormAtlas: 'It contains 9 epithelial cells, 20 muscle cells, 9 marginal cells, 4 gland cells and 20 "
+        "neurons'")
 S("cells_intestine", 1, "cells", "count", 20, 20, 20, "measured", basis="measured_this_class",
   src="Cook 2019 node list cross-check, via PORT_SOURCES_ORGANS.md O3", url=COOK,
   quote=f"{ORGANS} O3: Intestinal cell count in the oscillator | 20")
 S("cells_coelomocytes", 1, "cells", "count", 6, 6, 6, "measured", basis="measured_this_class",
-  src="multiple sources, via PORT_SOURCES_ORGANS.md O6", quote=f"{ORGANS} O6: Coelomocyte count | 6")
-S("cells_seam", 1, "cells", "count", 16, 16, 16, "measured", basis="measured_this_class",
-  src="WormAtlas, via PORT_SOURCES_ORGANS.md O6", quote=f"{ORGANS} O6: 16 seam cells, 1 excretory canal cell")
+  src="WormAtlas, Coelomocytes (hermaphrodite)", url=WORMATLAS("coelomocyte/mainframe.htm"),
+  quote="The adult C. elegans hermaphrodite has six coelomocytes", notes="PORT_SOURCES_ORGANS.md O6 gives 6")
+S("cells_seam", 1, "cells", "count per side", 16, 16, 16, "measured", basis="measured_this_class",
+  applies="adult, each side (32 in all)", src="WormAtlas, Seam cells (hermaphrodite)",
+  url=WORMATLAS("seam%20cells/mainframe.htm"),
+  quote="In the adult animal, seam cells are arranged as longitudinal rows of 16 cells on the left and right sides "
+        "of the body",
+  notes="audit 6 Nov: PORT_SOURCES_ORGANS.md O6 says '16 seam cells'; WormAtlas gives 16 per side, so the unit is "
+        "per side")
 
 # --- row 3: channel presence ------------------------------------------------------------------------------------------
 S("cengen_threshold", 3, "expression_map", "CeNGEN threshold level (1-4)", 2, 1, 4, "inferred",
@@ -231,6 +244,7 @@ for k, gn in (("mod5", "MOD-5 (SERT), serotonin"), ("dat1", "DAT-1, dopamine")):
 O5 = f"{ORGANS} O5"
 S("glia_k_clear_tau_s", 11, "glia_clearance", "s", 2.1, 0.3, 6.3, "inferred", grain="class",
   applies="AMsh, CEPsh, GLR", basis="measured_related", src="mammalian Kir4.1 astrocyte literature (PLoS Comp Biol 2015 and others), via O5",
+  url="https://doi.org/10.1371/journal.pcbi.1004137",
   quote=f"{O5}: | Astrocyte K+ clearance tau (cross-species fallback) | 0.7-6.3 | 0.3-6.3 | s |",
   notes="cross-species; template = log-midpoint of 0.7-6.3", match="glia_clearance")
 S("glia_kcc3_cl_tau_s", 11, "glia_clearance", "s", None, 1, 100, "guessed", grain="class", applies="AMsh around AFD",
@@ -355,16 +369,19 @@ S("awc_usuyama_params", 17, "sens_awc_usuyama", "mixed", label="absent", grain="
   src="Usuyama et al. 2012 PLOS ONE ODE model (free): not read", quote=f"{N5}: Usuyama 2012",
   notes="placeholder for the ODE's parameter set; count unknown until read", match="sens_awc_usuyama")
 S("urx_o2_half_pct", 17, "sens_o2_tuning", "% O2", 16.5, 15, 19, "derived", grain="class", applies="URX, AQR, PQR",
-  basis="measured_this_class", src="Ca imaging tuning curve described in N5 (the paper is not named there; Zimmer et al. 2009 Neuron would be the one to check)",
+  basis="measured_this_class", src="Ca imaging tuning curve described in N5 (the paper is not named there; Zimmer et "
+  "al. 2009 Neuron 61:865, read 6 Nov, gives only that URX responds to shifts to 15-21% O2, consistent with this)",
   quote=f"{N5}: a sharp increase between 15-19% O2, approaching saturation near 21% O2",
   notes="half-max read from the described curve (~16-17%); Hill coefficient not retrieved", match="sens_o2_tuning")
 S("proprio_gain_wen", 17, "proprio_wen2012", "1", 0.62, 0.59, 0.65, "measured", grain="global",
   applies="B-type motor neurons (curvature to curvature)", basis="measured_this_class",
-  src="Wen et al. 2012 Neuron, via RHYTHM_LIT.md s1", quote=f"{N5}: curvature-to-curvature gain 0.62+-0.03",
-  notes="range = mean +- the reported error", match="proprio_wen2012")
+  src="Wen et al. 2012 Neuron 76:750, via RHYTHM_LIT.md s1", url=WEN, quote=f"{N5}: curvature-to-curvature gain 0.62+-0.03",
+  notes="range = mean +- the reported error; the paper: 'the curvature of the posterior region increased linearly "
+        "with the imposed curvature on the trapped middle region with slope 0.62 +- 0.03'", match="proprio_wen2012")
 S("proprio_delay_ms", 17, "proprio_wen2012", "ms", 300, 300, 1000, "measured", grain="global",
-  applies="B-type motor neurons", basis="measured_this_class", src="Wen et al. 2012 Neuron",
-  quote=f"{N5}: propagation delay ~300 ms at low viscosity rising to ~1 s at 300 mPa.s",
+  applies="B-type motor neurons", basis="measured_this_class", src="Wen et al. 2012 Neuron 76:750", url=WEN,
+  quote="We found that the bending delay was roughly constant, ~300 ms, in fluids ranging from 1 mPa·s (the "
+        "viscosity of water) to ~100 mPa·s",
   notes="range spans the viscosity series", match="proprio_wen2012")
 
 # --- row 18: slow signalling (N6) -------------------------------------------------------------------------------------
@@ -427,17 +444,23 @@ for pid, unit, v, lab, src, url, q in (
          "| O2 penetration rate (air to agar) | 0.65 | - | 1/s | Demir et al. 2020 | fitted |"),
         ("env_o2_consumption", "1/s per unit density", 7.3e-10, "published_fit", "Demir et al. 2020 eLife", DEMIR,
          "| O2 consumption rate coefficient (per worm/bacteria density) | 7.3e-10 |"),
-        ("env_nacl_diffusion_cm2_s", "cm2/s", 1.5e-5, "measured", "standard chemotaxis-assay value (attribution "
-         "unverified)", "", "| NaCl diffusion coefficient | 1.5e-5 | - | cm^2/s |"),
-        ("env_thermo_gradient_C_cm", "C/cm", 0.5, "measured", "thermotaxis assay literature (assay setting)", "",
-         "| Linear thermotaxis gradient | 0.5 | - | C/cm |"),
+        ("env_nacl_diffusion_cm2_s", "cm2/s", 1.5e-5, "guessed", "standard chemotaxis-assay value, attribution not "
+         "found (audit 6 Nov); a physical table of NaCl diffusion in water at 20-25 C would pin it", "",
+         "| NaCl diffusion coefficient | 1.5e-5 | - | cm^2/s |"),
+        ("env_thermo_gradient_C_cm", "C/cm", 0.5, "measured", "Wang, O'Halloran & Goodman 2013 J Gen Physiol 142:437 "
+         "(assay setting)", PMC("PMC3787776"), "| Linear thermotaxis gradient | 0.5 | - | C/cm |"),
         ("env_touch_saturation_uN", "uN", 2, "measured", "Krieg/Pruitt PLOS ONE 2017",
          "https://doi.org/10.1371/journal.pone.0178080", "| Gentle-touch behavioural saturation force | 2 | - | uN |"),
-        ("env_tap_force_N", "N", 1.5, "measured", "tap-withdrawal methods literature", "", "| Tap force | 1-2 | - | N |")):
-    lo, hi = (1, 2) if pid == "env_tap_force_N" else (v / 2, v * 2) if lab == "published_fit" else (v, v)
+        ("env_tap_force_N", "N", 1.5, "guessed", "tap-withdrawal methods literature, attribution not found (audit "
+         "6 Nov); the Rankin lab tap apparatus papers would pin it", "", "| Tap force | 1-2 | - | N |")):
+    lo, hi = {"env_tap_force_N": (1, 2), "env_nacl_diffusion_cm2_s": (1.3e-5, 1.7e-5),
+              "env_thermo_gradient_C_cm": (0.5, 1.5)}.get(pid, (v / 2, v * 2) if lab == "published_fit" else (v, v))
     S(pid, 22, "env_fields", unit, v, lo, hi, lab, grain="global", applies="plate",
-      basis="guessed" if lab == "published_fit" else "measured_related", src=src, url=url, quote=f"{O9}: {q}",
-      notes="range guessed (x/2 to x2)" if lab == "published_fit" else "", match="env_fields " + pid)
+      basis="guessed" if lab in ("published_fit", "guessed") else "measured_related", src=src, url=url,
+      quote=f"{O9}: {q}",
+      notes={"env_thermo_gradient_C_cm": "the paper: 'linear thermal gradients of 0.5, 1.0, and 1.5°C/cm'",
+             "env_nacl_diffusion_cm2_s": "range guessed (+-15%)"}.get(
+          pid, "range guessed (x/2 to x2)" if lab == "published_fit" else ""), match="env_fields " + pid)
 
 # --- row 23: observation (O10) ----------------------------------------------------------------------------------------
 O10 = f"{ORGANS} O10"
@@ -449,10 +472,10 @@ for pid, unit, v, lo, hi, src, url, q, nt in (
          "| GCaMP7f half-rise time (1 AP) | 26 | +/-2 | ms |", "half-rise time, not a tau"),
         ("gcamp7f_half_decay_ms", "ms", 270, 255, 285, "Dana et al. 2019", DANA,
          "| GCaMP7f half-decay time (1 AP, in vivo) | 270 | +/-15 | ms |", "half-decay time in vivo, not a tau"),
-        ("neuropal_id_acc_head_pct", "%", 86, 86, 86, "NeuroPAL pipeline (attribution unverified)", "",
-         "| NeuroPAL head ID accuracy | 86 | - | % |", ""),
-        ("neuropal_id_acc_tail_pct", "%", 94, 94, 94, "NeuroPAL pipeline (attribution unverified)", "",
-         "| NeuroPAL tail ID accuracy | 94 | - | % |", "")):
+        ("neuropal_id_acc_head_pct", "%", 86, 86, 86, "Yemini et al. 2021 Cell 184:272 (NeuroPAL)", YEMINI,
+         "| NeuroPAL head ID accuracy | 86 | - | % |", "the paper: 'Accuracy was 86% for the head and 94% for the tail'"),
+        ("neuropal_id_acc_tail_pct", "%", 94, 94, 94, "Yemini et al. 2021 Cell 184:272 (NeuroPAL)", YEMINI,
+         "| NeuroPAL tail ID accuracy | 94 | - | % |", "the paper: 'Accuracy was 86% for the head and 94% for the tail'")):
     S(pid, 23, "gcamp_variants", unit, v, lo, hi, "measured", grain="global", applies="imaging datasets",
       basis="measured_this_class", src=src, url=url, quote=f"{O10}: {q}", notes=nt, match=pid)
 
@@ -488,7 +511,8 @@ for pid, lo, hi, nm in (("q10_channel_kinetics", 1.5, 3, "ion channel gating rat
       quote=f"{N8}: bound each process class in the 1.5-3 range as guessed/inferred from the generic ectotherm "
             "literature", match="q10")
 S("q10_defecation_clock", 25, "q10", "1", 1.0, 0.9, 1.1, "measured", grain="family", applies="defecation clock",
-  basis="guessed", src="Thomas 1990 Genetics (period flat 19-30 C), via STATE_OF_THE_ART item 49",
+  basis="guessed", src="Thomas 1990 Genetics 124:855 (period flat 19-30 C), via STATE_OF_THE_ART item 49",
+  url=PMC("PMC1203977"),
   quote=f"{N8}: with the defecation clock's Q10~1 held as the one measured, explicit exception",
   notes="range guessed around 'flat'", match="q10")
 

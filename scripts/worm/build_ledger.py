@@ -618,12 +618,12 @@ def build_morphology():
     mech("morphology", "Cell morphologies (NEURON hoc, 3D points with diameters)", "cell", "have",
          f"{BAAI_SRC} model/*.hoc (from the OpenWorm / Virtual Worm NeuroML cells)")
     row("morph_xyz", "morphology", "um", 0.0, -1000.0, 1000.0, grain="compartment",
-        applies_to="every 3D point of every cell", n=3 * pts, tsrc="per point in third_party/baaiworm/model/*.hoc",
+        applies_to="every 3D point of every cell", n=3 * pts, tsrc="BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in third_party/baaiworm/model/*.hoc",
         label="derived", proj="BAAIWorm", basis="physical_limit", bsrc="body length about 1 mm",
         prior=("fixed", 0.0, "", "as ported"),
         notes="from the Virtual Worm 3D atlas, not an EM reconstruction of one animal")
     row("morph_diam", "morphology", "um", 0.5, 0.01, 20.0, grain="compartment", applies_to="every 3D point",
-        n=pts, tsrc="per point in model/*.hoc", label="derived", proj="BAAIWorm", basis="physical_limit",
+        n=pts, tsrc="BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci 4:978), per point in model/*.hoc", label="derived", proj="BAAIWorm", basis="physical_limit",
         bsrc="guessed",
         prior=("fixed", 0.5, "", "as ported"))
     return pts
@@ -843,13 +843,14 @@ def main():
     build_layers(st)
     reg_notes = build_registry()
     sensitivity()
-    fill_log = cat.apply_fills(rows, values, ledger.FILL_KIND)
     body_mechs, body = cat.body_rows()
     used = {r["param_id"] for r in rows} | {r["param_id"] for r in body if r["used_by_code"] == "yes"}
     live = {m["id"] for m in mechs if m["status"] != "absent"}
     slot_rows, replaced, slot_mechs = cat.slots(used, live, {m["id"] for m in [*mechs, *body_mechs]})
     for r in [*body, *slot_rows]:
         r["fill_kind"] = ledger.FILL_KIND.get(r["label"], r["label"])
+    before = cat.label_tally([*rows, *body, *slot_rows], values)
+    fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
     audit_of = {c["id"]: c["audit"] for c in crows}
     for r in rows:
@@ -866,7 +867,7 @@ def main():
     assert not bad, "\n".join(bad[:30])
     extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302, registry=reg_notes)
     hidden = cat.hidden_summary()
-    csum = cat.summary(crows, replaced, fill_log, hidden)
+    csum = cat.summary(crows, replaced, fill_log, hidden, before)
     cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
     out = export(led, extra, csum)
     print(json.dumps(csum["totals"], indent=1))

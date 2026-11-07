@@ -1,1 +1,53 @@
 param_id,finding,action
+thermo_Tstar_C,journals wrong in the citation (Kimura 2004 is Curr Biol; Ramot 2008 is Nat Neurosci); no URL,"fixed: fills.csv (source); Ramot 2008 read, quote recorded"
+thermo_tau_adapt_s,"guessed 30 s, but Ramot 2008 measured the same adaptation at 244 s (warming) and 518 s (cooling)","fixed: fills.csv (fill 356 s, derived); the brain reads the new value; Spec in brain_layers.py still says 30 (B1)"
+o2_threshold_pct,"labelled measured, but it is a model boundary between URX and BAG; range [0, 21] was the whole O2 axis","fixed: fills.csv (relabel inferred, 12.5 in [10, 15]); Zimmer 2009 read"
+proprio_field_frac,"0.4 [0.25, 0.5] came from a search summary; Wen 2012 gives ~200 um, 0.2 of a 1 mm worm","fixed: fills.csv (fill 0.2, derived); the brain reads the new value; Spec says 0.4 (B1)"
+pump_rate_food_hz,Raizen & Avery 1994 cited as J Neurosci (it is Neuron 12:483); main source was the project corpus,"fixed: fills.csv (source, Weeks 2016 quote)"
+pump_duration_ms,no citation: 'STATE_OF_THE_ART corpus #33' is our own file; Lee 2017 measured 80 ms for the same quantity,"fixed: fills.csv (fill 80 ms, measured); the brain reads the new value; Spec says 170 (B1)"
+dmp_period_s,no free quote,"fixed: fills.csv (source, Jiang 2022 quote)"
+dmp_aboc_delay_s,"guessed, but Jiang 2022 gives the pBoc-aBoc peak gap (2.5 s), which with the model's windows gives 3 s","fixed: fills.csv (relabel derived, value unchanged)"
+egg_active_min,"range ends [1, 5] rest on Waggoner 1998, not free",kept: template checked against Collins 2016; ends unchecked
+egg_inactive_min,"range ends [15, 30] rest on Waggoner 1998, not free",kept: template checked against Collins 2016; ends unchecked
+egg_rate_active_per_min,"guessed 2 [0.5, 6]; Collins 2016 gives ~5 eggs per active state of a few minutes","fixed: fills.csv (fill 2.5 [1, 5], derived)"
+gcamp_kd_nM,"157 nM is in an Extended Data table (image) of Zhang 2023 / Chen 2013, not machine-readable; not read tonight",open: a person reading Zhang 2023 Extended Data Table 1 would close it
+gcamp_hill,2-3 is a range for GCaMP6 generally; GCaMP6s's own value sits in an Extended Data table,open: a person reading Zhang 2023 Extended Data Table 1 would close it
+gcamp_tau_rise_ms,"labelled measured, but no paper gives a first-order rise constant; ~50 ms came from a search summary","fixed: fills.csv (relabel inferred, range basis guessed)"
+homeo_target_mV,"labelled measured, but a set point is a model quantity; Goodman 1998 is Neuron 20:763, not J Neurosci",fixed: fills.csv (relabel inferred)
+homeo_target_mV,"the resting-potential range [-45, -17] is recalled (param_ranges A4); the PMC copy of Goodman 1998 is a page scan",kept: range unchecked; a person reading Goodman 1998 would close it
+slow_olf_tau_h,"labelled measured, but param_ranges K1 records it as recalled; L'Etoile 2002 is not free",fixed: fills.csv (relabel inferred)
+slow_thermo_tau_h,"citation wrong ('Yu, Tirman, Bargmann 2014 eLife'): it is Yu et al. 2014 Neuron 84:919; the paper gives 3-5 h","fixed: fills.csv (fill 3.5 [3, 5], derived)"
+gap_rect_ratio,Starich 2009 cited as J Neurosci (it is Neural Dev 4:16),fixed: fills.csv (source)
+morph_xyz,derived without a citation,fixed: build_ledger.py cites BAAIWorm b99ca5a (Zhao et al. 2024)
+morph_diam,"derived without a citation; range [0.01, 20] um is our own guess",fixed: build_ledger.py cites BAAIWorm b99ca5a (Zhao et al. 2024); range basis stays physical_limit
+mw_worm_mass,no range,fixed: fills.csv (range 1.5-3.4 ug from measured size and density)
+mw_gravity,labelled measured without a citation,"fixed: fills.csv (source, NIST)"
+mw_surface_tension,'standard tables' is not a citation,"fixed: fills.csv (source, IAPWS)"
+mw_poisson_ratio,"0.4 sits below the cited soft-tissue range [0.45, 0.5]; that range is itself a guess","owner: B3 (body ledger), told in the night file"
+mw_n_muscle_segments,96 segments against 95 body-wall muscles (Cook 2019),"owner: B3 (body ledger), told in the night file"
+mw_key_period,the row is a frequency (Hz) named period; 1.5 Hz is 15% below the measured swim range 1.76-1.99 Hz,"owner: B3 (body ledger), told in the night file"
+mw_density,20376 in sim units; 19x water if read as SI,"owner: B3 (body ledger), told in the night file"
+mw_length,0.6276 sim units against a range in metres (1 sim unit = 1.593 mm by the mesh),owner: B3 (body ledger): units differ between template and range
+mw_fluid_density,1000 against 997-999 kg/m3,"accepted: 0.1-0.3% above pure water, no effect"
+mw_drag_model,MetaWorm's quadratic drag is the wrong regime at a worm's Reynolds number,owner: B3 (body ledger); resistive-force rows mw_water_Ct/Cn are the literature form
+mw_lift_table_x,"MetaWorm lift table, no measured counterpart","accepted: published MetaWorm table, no measurement exists"
+mw_lift_table_y,"MetaWorm lift table, no measured counterpart","accepted: published MetaWorm table, no measurement exists"
+mw_side_down,a modelling choice with no range,accepted: worms crawl on either side; not a quantity
+mw_plate_contact,a modelling choice with no range,"accepted: contact model, not a quantity"
+mw_force_velocity,absent with no named source,owner: B3 (body ledger); no C. elegans body-wall force-velocity curve is in the research files
+mw_water_Ct,"derived, no range","accepted: Lighthill drag coefficient from water viscosity, its range follows mw_water_viscosity"
+mw_water_Cn,"derived, no range","accepted: Lighthill drag coefficient from water viscosity, its range follows mw_water_viscosity"
+mw_film_surface,"derived, no range",accepted: rest-mesh geometry; Gray & Lissmann 1964 cited for the film
+urx_o2_half_pct,the research file describes the tuning curve without naming the paper; Zimmer 2009 (read) gives URX responses to 15-21% only,kept: consistent with Zimmer 2009; the curve's own paper is unnamed
+cells_seam,research file says '16 seam cells'; WormAtlas gives 16 per side,"fixed: catalog_slots.py unit 'count per side', WormAtlas quote"
+cells_glia,source was our STATE_OF_THE_ART count,"fixed: catalog_slots.py cites WormAtlas (56 support cells), quote"
+cells_pharyngeal_neurons,no URL,fixed: catalog_slots.py WormAtlas URL
+cells_coelomocytes,'multiple sources' is not a citation,"fixed: catalog_slots.py cites WormAtlas, quote"
+proprio_gain_wen,no URL,fixed: catalog_slots.py Wen 2012 URL; the paper's sentence is in notes
+proprio_delay_ms,no URL,fixed: catalog_slots.py Wen 2012 URL and quote
+neuropal_id_acc_head_pct,attribution unverified,fixed: Yemini et al. 2021 Cell (PMC10494711) read: 'Accuracy was 86% for the head and 94% for the tail'
+neuropal_id_acc_tail_pct,attribution unverified,"fixed: Yemini et al. 2021 Cell (PMC10494711) read, as for the head"
+env_thermo_gradient_C_cm,no citation,"fixed: Wang, O'Halloran & Goodman 2013 (PMC3787776): gradients of 0.5, 1.0 and 1.5 C/cm"
+env_nacl_diffusion_cm2_s,labelled measured with no citation found,"fixed: relabelled guessed, range +-15%"
+env_tap_force_N,labelled measured with no citation found,fixed: relabelled guessed
+q10_defecation_clock,no URL,fixed: Thomas 1990 PMC1203977 URL (page scan); value recorded in STATE_OF_THE_ART item 49
