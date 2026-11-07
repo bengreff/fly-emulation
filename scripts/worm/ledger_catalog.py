@@ -602,7 +602,7 @@ CATALOG_COLUMNS = ["id", "plan_row", "plan_row_name", "mechanism", "mechanism_na
 def quote_status(q: str) -> str:
     if not str(q).strip():
         return ""
-    return "research file (scripted check)" if QUOTE.match(str(q).strip()) else "paper text (read audit, 6 Nov)"
+    return "research file (scripted check)" if QUOTE.match(str(q).strip()) else "paper text (read audit, 6-7 Nov)"
 
 
 def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fill_kind):
