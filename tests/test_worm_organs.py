@@ -537,3 +537,38 @@ def test_pump_specs_have_ranges_and_labels():
     from bioemu.ledger import LABELS
     for s in pu.SPECS:
         assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id
+
+
+ALL_B2 = r"""
+import json, numpy as np
+from wormemu import mech
+B2 = ["muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other", "pumps",
+      "metabolism"]
+for m in B2:
+    if m not in mech.REGISTRY:
+        mech.REGISTRY.append(m)
+from wormemu.brain import Brain
+cells = ["AFDL", "AFDR", "AWCL", "ASEL", "RMEL", "RMER", "CEPDL", "PVDL", "CANL", "ALA", "HSNL", "HSNR", "VC03",
+         "VC04", "AVL", "DVB", "dBWML1", "dBWMR1", "vBWML1", "dBWML8", "dBWMR8"]
+b = Brain(cells=cells)
+b.reset()
+names = sorted(type(m).__module__.rsplit(".", 1)[1] for m in b.mechs)
+fin = True
+for _ in range(100):
+    o = b.step(None, 5.0)
+    fin = fin and bool(np.isfinite(o.v_mV).all())
+mo = b.mech_out
+keys = ["energy_state", "egg_production_per_h", "pressure_kPa", "coelomocyte_uptake_per_s", "afd_gc_scale",
+        "amphid_k_mM", "na_i_mM", "pump_atp_J_per_d", "o2_pmol_per_min", "eggs_laid", "pumps", "expulsions"]
+print(json.dumps({"mods": names, "finite": fin, "missing": [k for k in keys if k not in mo],
+                  "e": mo.get("energy_state"), "eggs_h": mo.get("egg_production_per_h"),
+                  "P": mo.get("pressure_kPa")}))
+"""
+
+
+def test_all_b2_modules_build_and_step_together_in_a_small_brain():
+    r = _run(ALL_B2)
+    assert r["finite"] and not r["missing"], r
+    for m in ("glia", "metabolism", "organs_egglaying", "organs_other", "pumps"):
+        assert m in r["mods"], r["mods"]
+    assert 0.99 < r["e"] <= 1.0 + 1e-9 and r["eggs_h"] > 0.0 and abs(r["P"] - 40.0) < 1e-6
