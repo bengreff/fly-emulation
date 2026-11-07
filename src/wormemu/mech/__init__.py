@@ -50,6 +50,7 @@ REGISTRY: list[str] = ["channels", "capool", "ca_volume", "receptors", "plastici
                        "neuromod", "noise",
                        "temperature", "senses_chem", "senses_touch", "senses_proprio",
                        "muscle_bwm", "organs_pharynx", "organs_intestine", "organs_egglaying", "glia", "organs_other",
+                       "cells_passive",
                        "pumps", "metabolism", "observation"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density

@@ -328,8 +328,10 @@ class Brain:
                                           peptide=self._modulators("pep"),
                                           monoamine=self._modulators("ma"))
         self._g_targets()
-        self.mechs = [m.Mech(self, mech.params_for(m, self.spec), tg) for m in self._mods
-                      if any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS)]
+        self.mechs = []                  # built in REGISTRY order: a module can wire to the cells of those before it
+        for m in self._mods:
+            if any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS):
+                self.mechs.append(m.Mech(self, mech.params_for(m, self.spec), tg))
         self.mech_out = {}
         self.t = 0.0
 
