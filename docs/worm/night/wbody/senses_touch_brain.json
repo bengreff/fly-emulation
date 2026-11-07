@@ -1,0 +1,106 @@
+{
+ "check": "senses_touch in the brain (Sanzeni 2019 channels)",
+ "lumped_vs_no_module_max_dv_mV": 1.3285372801874473e-11,
+ "lumped_equivalent": true,
+ "cascade_finite": true,
+ "wall_per_bio_s": {
+  "no_module": 3.52,
+  "lumped": 3.56,
+  "cascade": 3.64
+ },
+ "ALML_g_nS": {
+  "rest": 0.0042,
+  "on_peak": 0.042,
+  "at_0p5s": 0.0042,
+  "off_peak": 0.042
+ },
+ "ALML_v_mV": {
+  "rest": -54.58,
+  "on_max": -52.65
+ },
+ "peaks_g_nS": {
+  "ALML": {
+   "rest": 0.0042,
+   "gentle_ant": 0.042,
+   "gentle_post": 0.0042,
+   "harsh": 0.0042,
+   "nose": 0.0042,
+   "tap": 0.4314
+  },
+  "AVM": {
+   "rest": 0.0042,
+   "gentle_ant": 0.042,
+   "gentle_post": 0.0042,
+   "harsh": 0.0042,
+   "nose": 0.0042,
+   "tap": 0.4314
+  },
+  "PLML": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0405,
+   "harsh": 0.0396,
+   "nose": 0.0042,
+   "tap": 0.4314
+  },
+  "PVM": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0405,
+   "harsh": 0.0396,
+   "nose": 0.0042,
+   "tap": 0.4314
+  },
+  "PVDL": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0043,
+   "harsh": 0.0142,
+   "nose": 0.0042,
+   "tap": 0.0042
+  },
+  "FLPL": {
+   "rest": 0.0063,
+   "gentle_ant": 0.0063,
+   "gentle_post": 0.0063,
+   "harsh": 0.0063,
+   "nose": 0.0105,
+   "tap": 0.0063
+  },
+  "ASHL": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0042,
+   "harsh": 0.0042,
+   "nose": 0.0125,
+   "tap": 0.0042
+  },
+  "OLQDL": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0042,
+   "harsh": 0.0042,
+   "nose": 0.0125,
+   "tap": 0.0042
+  },
+  "IL1L": {
+   "rest": 0.0042,
+   "gentle_ant": 0.0042,
+   "gentle_post": 0.0042,
+   "harsh": 0.0042,
+   "nose": 0.0125,
+   "tap": 0.0042
+  }
+ },
+ "bars": {
+  "on": true,
+  "off": true,
+  "adapts": true,
+  "depolarises": true,
+  "harsh_pvd": true,
+  "nose_ash": true,
+  "tap_trn": true,
+  "finite": true
+ },
+ "verdict": "pass"
+}

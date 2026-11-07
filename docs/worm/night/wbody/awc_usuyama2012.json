@@ -1,0 +1,50 @@
+{
+ "check": "AWC Usuyama 2012 published protocol",
+ "pulses": [
+  {
+   "pulse_s": [
+    10.0,
+    70.0
+   ],
+   "pre_uM": 0.06001,
+   "min_during_uM": 0.04038,
+   "peak_uM": 0.11937,
+   "peak_after_off_s": 8.09,
+   "peak_lsoda_uM": 0.11931,
+   "peak_rel_diff": 0.00054
+  },
+  {
+   "pulse_s": [
+    280.0,
+    460.0
+   ],
+   "pre_uM": 0.06002,
+   "min_during_uM": 0.04039,
+   "peak_uM": 0.14777,
+   "peak_after_off_s": 7.01,
+   "peak_lsoda_uM": 0.14763,
+   "peak_rel_diff": 0.00098
+  },
+  {
+   "pulse_s": [
+    670.0,
+    970.0
+   ],
+   "pre_uM": 0.06004,
+   "min_during_uM": 0.0404,
+   "peak_uM": 0.15812,
+   "peak_after_off_s": 6.75,
+   "peak_lsoda_uM": 0.15789,
+   "peak_rel_diff": 0.00146
+  }
+ ],
+ "a_falls_during": true,
+ "b_peak_within_10s_above_pre": true,
+ "c_peak_300s_gt_60s": true,
+ "d_semi_implicit_vs_lsoda_2pct": true,
+ "verdict": "pass",
+ "wall_s": {
+  "semi_implicit": 138.8,
+  "lsoda": 0.9
+ }
+}
