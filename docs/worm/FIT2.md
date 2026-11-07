@@ -1,6 +1,6 @@
 # FIT2: the expression-to-excitability map (pre-registration)
 
-Worker wexcite, night of 6-7 Nov 2026. Written 7 Nov 01:51-02:10 CST, before any scored run. TO_A_REAL_WORM item 2;
+Worker wexcite, night of 6-7 Nov 2026. Written 7 Nov 01:46-01:51 CST, before any scored run (committed 01404ed). TO_A_REAL_WORM item 2;
 the structure follows `docs/worm/research/GENES_TO_PHYSIOLOGY.md` section 5 (gene family above selector battery above
 class; Bernaerts et al. 2025 found the map accurate at family level and weaker at cell-type level; leave whole
 classes out; CeNGEN is an L4 prior).
@@ -165,4 +165,12 @@ For every neuron class c and channel k (BAAIWorm's 16 somatic densities plus Nic
 
 ## 7. Split (drawn after this file was written)
 
-(filled in by the draw; nothing else in sections 1-6 changes after it)
+Drawn 7 Nov 01:51:50 CST, right after commit 01404ed:
+`numpy.random.default_rng(20261107).choice(["RIM", "AFD", "AWA"])` returned **RIM** (numpy 2.x on the Mac venv).
+
+- **Held out (sealed for FIT2): RIM**, its FIT2 sweeps (indices 0, 2, ..., 10). The fit code does not open
+  `Fig1A_RIM_CC.txt`. These sweeps are W1's training sweeps, so W1's own seal (odd sweeps, voltage clamp) is untouched.
+  The held-out evidence is weaker than an unseen recording: W1 fitted these sweeps per cell, and I printed the min and
+  max of sweeps 0 and 10 (section 6). Neither reaches FIT2's map.
+- **Training: AIY, AFD, AWA.** AWA is now training data, so its step timing is checked against its own traces
+  before the first fit, and recorded here.
