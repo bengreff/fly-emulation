@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:51 CST",
+ "generated_at": "2026-11-07 03:54 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -15,8 +15,8 @@
   "by_label": {
    "derived": 67510,
    "guessed": 9313,
-   "inferred": 329,
-   "measured": 6182,
+   "inferred": 328,
+   "measured": 6183,
    "published_fit": 8103
   },
   "known": 82124,
@@ -32,8 +32,8 @@
    "published_fit": 7376,
    "guessed": 9313,
    "derived": 3102,
-   "inferred": 329,
-   "measured": 330
+   "inferred": 328,
+   "measured": 331
   },
   "known": 11137,
   "placeholder": 9313,
@@ -49,7 +49,7 @@
    },
    "literature": {
     "guessed": 5473,
-    "measured": 6181,
+    "measured": 6182,
     "derived": 3102,
     "inferred (ours)": 28,
     "published fit": 318
@@ -59,7 +59,7 @@
    },
    "ours": {
     "guessed": 3836,
-    "inferred (ours)": 301,
+    "inferred (ours)": 300,
     "measured": 1
    },
    "c302": {
@@ -74,7 +74,7 @@
    "literature": {
     "guessed": 5473,
     "derived": 3102,
-    "measured": 329,
+    "measured": 330,
     "inferred (ours)": 28,
     "published fit": 318
    },
@@ -83,7 +83,7 @@
    },
    "ours": {
     "guessed": 3836,
-    "inferred (ours)": 301,
+    "inferred (ours)": 300,
     "measured": 1
    },
    "c302": {
@@ -139,8 +139,8 @@
   "global": {
    "derived": 17,
    "guessed": 141,
-   "inferred": 45,
-   "measured": 29,
+   "inferred": 44,
+   "measured": 30,
    "published_fit": 277
   },
   "muscle": {
@@ -908,8 +908,8 @@
    "numbers": 60,
    "by_label": {
     "guessed": 35,
-    "inferred": 4,
-    "measured": 21
+    "inferred": 3,
+    "measured": 22
    }
   },
   {
@@ -40064,29 +40064,29 @@
    "applies_to": "MOD-5 (SERT) cells",
    "unit": "nM",
    "n_values": 1,
-   "value_template": 500.0,
-   "template_source": "human SERT Km 0.3-1 uM (homology); Ranganathan et al. 2001 J Neurosci 21:5871 would pin MOD-5's",
-   "bio_min": 100.0,
-   "bio_max": 2000.0,
+   "value_template": 150.0,
+   "template_source": "Ranganathan, Sawin, Trent & Horvitz 2001 J Neurosci 21:5871 (PMC6763176): MOD-5 stably expressed in HEK293 cells, [3H]5-HT uptake, Km 150 +- 8 nM (mean +- SEM, at least six replicates); range from 150 - 8 nM to the top of the other SERTs the paper lists (280 to 630 nM)",
+   "bio_min": 142.0,
+   "bio_max": 630.0,
    "bound_basis": "measured_related",
-   "bound_source": "human SERT Km 0.3-1 uM (homology); Ranganathan et al. 2001 J Neurosci 21:5871 would pin MOD-5's",
+   "bound_source": "Ranganathan, Sawin, Trent & Horvitz 2001 J Neurosci 21:5871 (PMC6763176): MOD-5 stably expressed in HEK293 cells, [3H]5-HT uptake, Km 150 +- 8 nM (mean +- SEM, at least six replicates); range from 150 - 8 nM to the top of the other SERTs the paper lists (280 to 630 nM)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 500 nM, label inferred, range [100, 2000]; was 500 nM [100, 2000], inferred from human SERT; the MOD-5 paper's free full text (served to scripts on 7 Nov) gives MOD-5's own Km, the same assay as the measured sibling dat1_km_nM (DAT-1 in transfected cells); authors checked in Europe PMC",
    "plan_row": 10,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open; inferred from human SERT by homology, no URL; the MOD-5 paper (Ranganathan 2001, PMC6763176) abstract gives no Km and its full text is not served to scripts [owner B1: cite a free human SERT Km source; a person can check https://www.jneurosci.org/content/21/16/5871 for a MOD-5 Km]",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6763176/",
+   "source_quote": "with a Km of 150 \u00b1 8 nM, a value similar to those reported for other SERTs (Km range, 280\u2013630 nM",
+   "audit": "inferred from human SERT by homology (500 nM [100, 2000]); the MOD-5 paper (Ranganathan, Sawin, Trent & Horvitz 2001, PMC6763176), whose full text scripts now get, measured MOD-5's own Km in HEK293 cells: 150 +- 8 nM [owner B1: neuromod.py:247 says 500 nM, inferred; the catalog now says 150 nM, measured, range [142, 630] (MOD-5 to the other SERTs the paper lists); parameters.csv carries 150]",
    "kind": "physiology"
   },
   {
@@ -56354,17 +56354,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 583,
-    "measured": 251,
-    "inferred": 328,
+    "measured": 252,
+    "inferred": 327,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9379,
-    "measured": 6209,
+    "measured": 6210,
     "derived": 67520,
-    "inferred": 334,
+    "inferred": 333,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56373,17 +56373,17 @@
   "by_label_rows": {
    "published_fit": 654,
    "guessed": 583,
-   "measured": 251,
-   "inferred": 328,
+   "measured": 252,
+   "inferred": 327,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
    "guessed": 9379,
-   "measured": 6209,
+   "measured": 6210,
    "derived": 67520,
-   "inferred": 334,
+   "inferred": 333,
    "absent": 1
   },
   "by_plan_row": {
@@ -56506,13 +56506,13 @@
    "10": {
     "rows": {
      "guessed": 22,
-     "inferred": 3,
-     "measured": 11
+     "inferred": 2,
+     "measured": 12
     },
     "numbers": {
      "guessed": 40,
-     "measured": 21,
-     "inferred": 4
+     "measured": 22,
+     "inferred": 3
     },
     "n_rows": 36,
     "n_numbers": 65
@@ -56900,16 +56900,16 @@
     "rows": {
      "published_fit": 357,
      "guessed": 165,
-     "inferred": 50,
-     "measured": 50,
+     "inferred": 49,
+     "measured": 51,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
      "guessed": 165,
-     "inferred": 50,
-     "measured": 50,
+     "inferred": 49,
+     "measured": 51,
      "derived": 27,
      "absent": 1
     },
@@ -57010,16 +57010,16 @@
     "rows": {
      "published_fit": 566,
      "guessed": 486,
-     "measured": 215,
-     "inferred": 313,
+     "measured": 216,
+     "inferred": 312,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
      "guessed": 8951,
-     "measured": 6072,
+     "measured": 6073,
      "derived": 67509,
-     "inferred": 318
+     "inferred": 317
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57180,14 +57180,14 @@
     "rows": {
      "derived": 3,
      "guessed": 29,
-     "inferred": 7,
-     "measured": 158
+     "inferred": 6,
+     "measured": 159
     },
     "numbers": {
      "derived": 3,
      "guessed": 29,
-     "inferred": 7,
-     "measured": 158
+     "inferred": 6,
+     "measured": 159
     },
     "n_rows": 197,
     "n_numbers": 197
@@ -57456,17 +57456,17 @@
     "rows": {
      "published_fit": 640,
      "guessed": 582,
-     "inferred": 328,
+     "inferred": 327,
      "derived": 36,
-     "measured": 247,
+     "measured": 248,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
      "guessed": 9378,
      "derived": 3111,
-     "inferred": 334,
-     "measured": 357,
+     "inferred": 333,
+     "measured": 358,
      "absent": 1
     },
     "n_rows": 1834,
@@ -58262,25 +58262,25 @@
    },
    "rows_read": 224,
    "quotes": {
-    "none": 1422,
-    "cited free text (scripted check)": 398,
+    "none": 1421,
+    "cited free text (scripted check)": 399,
     "research file (scripted check)": 28,
     "paper text (read audit, 6-7 Nov)": 8
    },
-   "with_url": 1509,
+   "with_url": 1510,
    "links": {
-    "distinct": 163,
+    "distinct": 164,
     "by_status": {
      "200": 148,
      "203": 1,
      "406": 4,
-     "unchecked": 6,
+     "unchecked": 7,
      "403": 4
     },
     "checked_at": "2026-11-07 02:30 CST"
    },
    "problem_kinds": {
-    "no URL to open": 31,
+    "no URL to open": 30,
     "source marked UNVERIFIED": 11,
     "no range": 11,
     "guessed template sits on a bound": 6,
@@ -58312,7 +58312,7 @@
     "inferred from a sibling class: the nAChR decay of the same family; the row names no paper ": 1,
     "# um#/s, range": 1,
     "Gerhardt and Adams # Anal Chem is paywalled; the tortuosity factor is not cited": 1,
-    "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
+    "inferred from human SERT by homology (# nM": 1,
     "noise.py's # pS cites Wang et al. # Neuron #:#, whose abstract gives no unitary conductanc": 1,
     "computed and published as out['q#']['synapse'] each step, but no module reads it (grep of ": 1,
     "computed and published as out['q#']['pump'] each step, but no module reads it (grep of src": 1,
@@ -64638,6 +64638,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2887794/"
    },
    {
+    "param_id": "mod5_km_nM",
+    "kind": "fill",
+    "origin": "mech:neuromod",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "measured",
+    "change": "500 -> 150 nM; inferred -> measured; range [100, 2000] -> [142, 630]",
+    "reason": "was 500 nM [100, 2000], inferred from human SERT; the MOD-5 paper's free full text (served to scripts on 7 Nov) gives MOD-5's own Km, the same assay as the measured sibling dat1_km_nM (DAT-1 in transfected cells); authors checked in Europe PMC",
+    "source": "Ranganathan, Sawin, Trent & Horvitz 2001 J Neurosci 21:5871 (PMC6763176): MOD-5 stably expressed in HEK293 cells, [3H]5-HT uptake, Km 150 +- 8 nM (mean +- SEM, at least six replicates); range from 150 - 8 nM to the top of the other SERTs the paper lists (280 to 630 nM)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6763176/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -64782,7 +64795,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:48 CST",
+   "generated_at": "2026-11-07 03:51 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -65756,17 +65769,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 583,
-    "measured": 251,
-    "inferred": 328,
+    "measured": 252,
+    "inferred": 327,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9379,
-    "measured": 6209,
+    "measured": 6210,
     "derived": 67520,
-    "inferred": 334,
+    "inferred": 333,
     "absent": 1
    }
   }
