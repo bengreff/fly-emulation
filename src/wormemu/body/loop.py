@@ -13,8 +13,11 @@ computes it; that lag is the loop's, not a filter (INTERFACE.md: the body adds n
 
 Observation (INTERFACE.md body side): K = 49 midline samples; curvature from 24 material slices (slice centroids),
 signed dorsal-concave positive, interpolated to the 49 samples, per mm with L = mm_per_body_length (1.0 mm,
-measured); curvature rate by backward difference over the exchange; contact, nose force and tap 0 (no objects);
-head / tail from the chemotaxis scene (scene.py, MB11), over the default plate of interface.HEAD_CHANNELS.
+measured); curvature rate by backward difference over the exchange; head / tail from the chemotaxis scene
+(scene.py, MB11), over the default plate of interface.HEAD_CHANNELS. With env=None, contact, nose force and tap
+are 0 (no objects). With env=environment.Environment(...), the plate fields that are on (lawn, O2, CO2, salt plug,
+temperature gradient) override the scene's channels at the head and tail, sampled in plate coordinates (mm,
+forward = rest -z, dorsal = +x, origin the rest nose), and its event schedule supplies contact, nose force and tap.
 
 95 -> 96 muscles: segment j of MetaWorm's MDR / MVR / MDL / MVL string is Cook muscle j+1 of dBWMR / vBWMR / dBWML /
 vBWML; MVL segment 24 copies vBWML23 (guessed; vBWML24 does not exist). Activation goes 1:1 into the published
@@ -33,7 +36,7 @@ import numpy as np
 
 from wormemu.interface import BWM_NAMES, HEAD_CHANNELS, TAIL_CHANNELS, BodyToBrain, BrainToBody
 from wormemu.body import metaworm as mw
-from wormemu.body.scene import ChemotaxisScene
+from wormemu.body.scene import HEAD_VERTEX, TAIL_VERTEX, ChemotaxisScene
 
 K = 49
 N_SLICES = 24
@@ -53,11 +56,12 @@ def muscle_map(names: list[str]) -> np.ndarray:
 
 class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
-                 solver_exit: str = "published", world: dict | None = None):
+                 solver_exit: str = "published", world: dict | None = None, env=None):
         if not mw.DRIVER.exists():
             subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
         self.out = str(Path(out).resolve())
         self.scene = scene or ChemotaxisScene()
+        self.env = env  # environment.Environment (row 22) or None = the INTERFACE.md default plate
         self.frame_every = frame_every
         c_r, c_w = os.pipe()  # commands: us -> driver
         s_r, s_w = os.pipe()  # state: driver -> us
@@ -138,9 +142,16 @@ class Body:
         rate = np.zeros(K) if (dt_ms is None or self._kappa_prev is None) else (kappa - self._kappa_prev) / dt_ms
         self._kappa_prev = kappa
         h, t = self.scene.sample(self.X, self.X_rest)
+        F, nose, tap = np.zeros(K), 0.0, 0.0
+        if self.env is not None:   # plate coordinates (mm): a forward (rest -z), b dorsal (+x), origin the rest nose
+            ab = lambda v: np.array([-(self.X[v, 2] - self.X_rest[HEAD_VERTEX, 2]),
+                                     self.X[v, 0] - self.X_rest[HEAD_VERTEX, 0]]) * self.mm_per_unit
+            e = self.env.sample(self.t_ms, ab(HEAD_VERTEX), ab(TAIL_VERTEX), s)
+            h, t = {**h, **e["head"]}, {**t, **e["tail"]}
+            F, nose, tap = e["contact_force_uN"], e["nose_force_uN"], e["tap"]
         return BodyToBrain(t_ms=self.t_ms, s=s, curvature_per_mm=kappa, curvature_rate_per_mm_ms=rate,
-                           contact_force_uN=np.zeros(K), nose_force_uN=0.0, muscle_strain=None,
-                           head={**HEAD_CHANNELS, **h}, tail={**TAIL_CHANNELS, **t}, tap=0.0)
+                           contact_force_uN=F, nose_force_uN=nose, muscle_strain=None,
+                           head={**HEAD_CHANNELS, **h}, tail={**TAIL_CHANNELS, **t}, tap=tap)
 
     def close(self) -> dict:
         if self._pending:
