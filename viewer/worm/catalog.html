@@ -66,7 +66,7 @@
   <select id="f_plan"><option value="">all PLAN rows</option></select>
   <select id="f_label"><option value="">all labels</option></select>
   <select id="f_mech"><option value="">all mechanisms</option></select>
-  <select id="f_used"><option value="">used and slots</option><option value="yes">used by the code</option><option value="slot only">slots only (not yet used)</option></select>
+  <select id="f_used"><option value="">used and slots</option><option value="yes">used by the code (reads the row)</option><option value="hard-coded">hard-coded in the code (row lists it)</option><option value="slot only">slots only (not yet used)</option></select>
   <select id="f_origin"><option value="">all origins</option></select>
   <select id="f_status"><option value="">any audit status</option><option value="ok">audit ok</option><option value="finding">findings (explained)</option><option value="problem">open problems</option><option value="notok">not ok (findings + problems)</option></select>
   <select id="f_kind"><option value="">all kinds</option></select>
@@ -150,7 +150,15 @@ function overview() {
   if (h.total) {
     $("hidden").innerHTML = `<p>${fmt(h.total)} numeric constants in ${esc((h.scanned || []).join(", "))} are not read from the ledger ` +
       `(scanned ${esc(h.generated_at || "")}; list in data/worm/catalog/hidden_constants.json). By kind: ` +
-      Object.entries(h.by_kind || {}).map(([k, n]) => `${esc(k)} ${n}`).join(", ") + `.</p><table><tr><th>file</th><th class="num">constants</th></tr>` +
+      Object.entries(h.by_kind || {}).map(([k, n]) => `${esc(k)} ${n}`).join(", ") + `. Each has a verdict from the hand review ` +
+      `(data/worm/catalog/hidden_review.csv; ${fmt(h.unreviewed || 0)} unreviewed):</p>` +
+      `<table><tr><th>verdict</th><th class="num">constants</th></tr>` +
+      Object.entries(h.by_verdict || {}).map(([k, n]) => `<tr><td>${esc(k)}</td><td class="num">${n}</td></tr>`).join("") + `</table>` +
+      ((h.code_side || []).length ? `<p>Code side: the owner's code should read the catalog row instead of the literal.</p>` +
+        `<table><tr><th>file:line</th><th class="num">value</th><th>verdict</th><th>row</th><th>owner</th><th>note</th></tr>` +
+        h.code_side.map(x => `<tr><td class="id">${esc(x.file)}:${x.line}</td><td class="num">${esc(String(x.value))}</td><td>${esc(x.verdict)}</td>` +
+          `<td>${x.row.split(" ").map(r => `<a class="id" href="#id=${esc(r)}">${esc(r)}</a>`).join(" ")}</td><td>${esc(x.owner)}</td><td>${esc(x.note)}</td></tr>`).join("") + `</table>` : "") +
+      `<table><tr><th>file</th><th class="num">constants</th></tr>` +
       Object.entries(h.by_file || {}).sort((x, y) => y[1] - x[1]).map(([f, n]) => `<tr><td>${esc(f)}</td><td class="num">${n}</td></tr>`).join("") + `</table>`;
   } else {
     $("hidden").innerHTML = `<p class="muted">Not scanned yet.</p>`;
@@ -163,7 +171,7 @@ function options() {
   add($("f_label"), LABELS);
   const mech = {}; ROWS.forEach(r => mech[r.mechanism] = r.mechanism_name);
   add($("f_mech"), Object.keys(mech).sort(), k => mech[k] ? `${k}: ${mech[k]}`.slice(0, 70) : k);
-  add($("f_origin"), [...new Set(ROWS.map(r => r.origin))].sort(), o => ({brain: "brain (cells, channels, synapses)", layers: "brain layers (senses, organs, slow)", body: "body (MetaWorm)", slot: "slot (needed, not yet in the code)"}[o] || o));
+  add($("f_origin"), [...new Set(ROWS.map(r => r.origin))].sort(), o => ({brain: "brain (cells, channels, synapses)", layers: "brain layers (senses, organs, slow)", body: "body (MetaWorm)", slot: "slot (needed, not yet in the code)", hidden: "hidden (a literal in the code)", scene: "scene (plate field presets)"}[o] || o));
   add($("f_kind"), [...new Set(ROWS.map(r => r.kind))].sort());
 }
 
@@ -183,7 +191,7 @@ function filtered() {
     (!v("f_plan") || String(r.plan_row) === v("f_plan")) &&
     (!v("f_label") || r.label === v("f_label") || (r.split || {})[v("f_label")]) &&
     (!v("f_mech") || r.mechanism === v("f_mech")) &&
-    (!v("f_used") || r.used_by_code === v("f_used")) &&
+    (!v("f_used") || String(r.used_by_code).startsWith(v("f_used"))) &&
     (!v("f_origin") || r.origin === v("f_origin")) &&
     (!v("f_kind") || r.kind === v("f_kind")) &&
     (!v("f_status") || (v("f_status") === "notok" ? r.audit_status !== "ok" : r.audit_status === v("f_status"))) &&

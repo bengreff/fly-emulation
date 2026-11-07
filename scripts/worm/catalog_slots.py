@@ -557,3 +557,60 @@ S("sleep_ala_release", 28, "sleep_ris_ala", "nM/s", None, 0.01, 10, "guessed", g
   applies="ALA: FLP-13, FLP-24, NLP-8", src="none: release kinetics not searched",
   quote=f"{N10}: ALA's three peptides (FLP-13, FLP-24, NLP-8) have measured genetic requirement for quiescence",
   match="sleep_ris_ala")
+
+
+# --- hidden constants with a ledger meaning (scripts/worm/hidden_constants.py, review 6 Nov) -----------------------
+# Numbers the code uses as literals, not read from the ledger. Each gets a catalog row so the catalog lists every
+# number in use; `used` names the file:line. The row is replaced (like a slot) once the owner's code reads a Spec of
+# the same id. Owners: B1 brain.py / brain_layers.py.
+HIDDEN: list[dict] = []
+NASA_EARTH = "https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html"
+
+
+def H(pid, row, mech, unit, tmpl, lo, hi, label, *, used, basis=None, **kw):
+    n0 = len(SLOTS)
+    MECH_NAMES.setdefault(mech, mech)
+    S(pid, row, mech, unit, tmpl, lo, hi, label, basis=basis, used="hard-coded: " + used, **kw)
+    HIDDEN.append(SLOTS.pop(n0))
+
+
+H("env_default_temperature_C", 22, "sens_thermo", "degC", 20.0, 15.0, 25.0, "guessed",
+  applies="the plate, when the body's observation carries no temperature_C",
+  src="guessed: 20 C is the usual culture temperature (Brenner 1974 Genetics 77:71 kept worms at 20 C; not read); "
+      "range = the usual 15-25 C culture range", url=PMC("PMC1213120"),
+  used="src/wormemu/brain_layers.py:288 (default of obs['head'].get('temperature_C', 20.0))",
+  notes="owner B1: read this row instead of the literal")
+H("env_default_o2_pct", 22, "sens_o2", "%", 21.0, 20.9, 21.0, "measured", basis="measured_related",
+  applies="the air over the plate, when the observation carries no o2_pct",
+  src="NASA Earth Fact Sheet (NSSDCA): dry air is 20.95% O2 by volume", url=NASA_EARTH,
+  quote="Major : 78.08% Nitrogen (N 2 ), 20.95% Oxygen (O 2 )",
+  used="src/wormemu/brain_layers.py:292 (default of obs['head'].get('o2_pct', 21.0))",
+  notes="owner B1: read this row instead of the literal; 21 is the rounded 20.95")
+H("env_default_co2_pct", 22, "sens_co2", "%", 0.04, 0.040, 0.043, "measured", basis="measured_related",
+  applies="the air over the plate, when the observation carries no co2_pct",
+  src="NOAA GML global monthly mean CO2 (424.09 ppm July 2025, 426.10 ppm July 2026); NASA Earth Fact Sheet 420 ppm",
+  url="https://gml.noaa.gov/ccgg/trends/global.html", quote="July 2026: 426.10 ppm July 2025: 424.09 ppm",
+  used="src/wormemu/brain_layers.py:296 (default of obs['head'].get('co2_pct', 0.04))",
+  notes="owner B1: read this row instead of the literal; 0.04% is 400 ppm, about 6% under today's 426 ppm")
+H("touch_ap_split_frac", 17, "sens_touch_gentle", "body length fraction", 0.5, 0.4, 0.6, "guessed",
+  applies="where the anterior (ALM, AVM) and posterior (PLM) gentle-touch fields meet, from the head",
+  src="none read: Chalfie et al. 1985 J Neurosci 5:956 maps the touch-cell processes and would pin it (PMC has "
+      "page images only, not text)", url=PMC("PMC6565008"),
+  used="src/wormemu/brain_layers.py:310 (s < 0.5 drives TOUCH_ANT, s >= 0.5 TOUCH_POST)",
+  notes="owner B1: read this row; the fields overlap in the worm, the model splits them at one point")
+for _k, _row, _m in (("pep", 9, "peptides"), ("ma", 10, "monoamines")):
+    H(f"{_k}_release_slope_mV", _row, _m, "mV", 5.0, 1.0, 10.0, "guessed",
+      applies="every releasing cell (sigmoid of V - release threshold)",
+      src="guessed: the same slope as the graded synapse (syn_exc_delta, BAAIWorm published fit 5 mV); no worm "
+          "measurement of dense-core release against voltage found",
+      used="src/wormemu/brain_layers.py:351 (_sig((v - vth) / 5.0), shared by peptides and monoamines)",
+      notes="owner B1: read this row instead of the literal")
+H("init_v_neuron_mV", 5, "passive", "mV", -65.0, -80.0, -30.0, "published_fit", basis="guessed",
+  applies="every neuron at t = 0 (initial condition)", src="BAAIWorm v_init (b99ca5a), as ported",
+  used="src/wormemu/brain.py:61 (V_INIT)",
+  notes="initial condition: only the opening transient depends on it; range guessed")
+H("init_v_muscle_mV", 12, "muscle_active", "mV", -28.0, -40.0, -15.0, "published_fit", basis="guessed",
+  applies="every body-wall muscle at t = 0 (initial condition)",
+  src="c302 GenericMuscleCell initMembPotential (parameters_C2), as ported",
+  used="src/wormemu/brain.py:62 (V_INIT_MUSCLE)",
+  notes="initial condition: only the opening transient depends on it; range guessed")

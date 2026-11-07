@@ -87,3 +87,8 @@ rec_lgc55_ec50_uM,"the Spec credits the 6.0 uM template to Pirri 2009; Pirri 200
 rec_lgc55_hill,Spec says the Hill coefficient was not reported; Pirri 2009 Fig. 3B legend gives 1.0 +- 0.17,"fixed: fills.csv relabels it measured (value unchanged at 1.0, range 0.83-1.17)"
 rec_lgc53_ec50_uM,Spec says not retrieved; Ringstad 2009 (free in PMC) gives 4.4 uM for dopamine,"fixed: fills.csv 5 -> 4.4 uM, measured; range stays the guessed [0.5, 50]"
 rec_glr_erev_mV,"read Lindsay, Thiele & Lockery 2011 (PMC3935721): Fig. 6b linear fit gives -7.0 +- 3.2 mV in 10 AVA neurons",read: confirmed; quote and URL added in fills.csv
+scene_diacetyl_uM_c_background,guessed template 0 sits on the lower bound,accepted: 0 uM is the far-side background with no odour; the range runs from there to the lowest measured plate value 0.04 uM (Tanimoto 2017)
+scene_nacl_mM_c_background,guessed template 0 sits on the lower bound,accepted: 0 mM is the far side of the salt plate; the range runs from there
+scene_mm_per_body_length,"scene.py labels the 1 mm body length measured with the source ""ledger worm length""; the body ledger's mw_worm_length (same 1 mm) says published_fit and neither cites a paper",owner B3: agree one label for the two copies and cite a measured adult length (e.g. WormAtlas or a length survey); then scene.py can read mw_worm_length
+scene_nacl_mM_c_peak,"protocol value read in a secondary source, not in Kunitomo et al. 2013 itself",owner B3: confirm the 100 mM plug in Kunitomo et al. 2013 Nat Commun 4:2210 (open access) and add the quote
+scene_nacl_mM_slope_per_mm,"protocol value read in a secondary source, not in Luo et al. 2014 itself","fixed: fills.csv (source); Luo 2014 read and 2 mM/cm quoted; scene.py can drop the word secondary (B3)"

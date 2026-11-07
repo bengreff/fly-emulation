@@ -62,6 +62,7 @@ KEYWORD_ROW = [("sleep", 28), ("pump", 27), ("atpase", 27), ("noise", 26), ("tem
                ("senses", 17), ("sens_", 17), ("slow", 18), ("homeost", 19), ("gene", 19), ("metabol", 20),
                ("body", 21), ("environment", 22), ("observ", 23), ("gcamp", 23), ("receptor", 7), ("syn", 7),
                ("gap", 8), ("innexin", 8)]
+CATALOG_ONLY = ("body", "slot", "hidden", "scene")   # rows the model ledger does not carry
 LABEL_MAP = {"published": "published_fit"}           # the body ledger's word for a published fit
 
 
@@ -152,6 +153,7 @@ def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
     s = pd.DataFrame(catalog_slots.SLOTS, columns=SLOT_COLUMNS)
     CAT.mkdir(parents=True, exist_ok=True)
     s.to_csv(CAT / "slots.csv", index=False)
+    s = pd.DataFrame(catalog_slots.SLOTS + catalog_slots.HIDDEN + scene_slots(), columns=SLOT_COLUMNS)
     rows, replaced, mechs = [], [], {}
     for r in s.to_dict("records"):
         keys = {r["param_id"], *str(r["match"]).split()}
@@ -161,7 +163,12 @@ def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
             continue
         lab = r["label"] or "absent"
         v, lo, hi = _num(r["value_template"]), _num(r["bio_min"]), _num(r["bio_max"])
-        if r["mechanism_id"] not in known_mechs:
+        if r["mechanism_id"] == "scene_field":
+            mechs.setdefault("scene_field", dict(
+                id="scene_field", name=r["mechanism_name"], layer="body", status="have", toggle="", neutral="",
+                default="", source="src/wormemu/body/scene.py", notes="plate field presets the body's scene "
+                "computes; each Param carries value, unit, label, range and source", absent_reason=""))
+        elif r["mechanism_id"] not in known_mechs:
             mechs.setdefault(r["mechanism_id"], dict(
                 id=r["mechanism_id"], name=r["mechanism_name"], layer="slot", status="absent", toggle="", neutral="",
                 default="", source=r["source"].split(";")[0], notes="slot mechanism: the published model the PLAN "
@@ -176,8 +183,38 @@ def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
             source_project=r["source_project"] or ("none" if lab == "absent" else "literature"),
             precision_needed="not yet estimated", precision_method="", toggle="", notes=r["notes"],
             plan_row=int(r["plan_row"]), used_by_code=r["used"] or "slot only", source_url=r["source_url"],
-            source_quote=r["source_quote"], audit="", origin="slot"))
+            source_quote=r["source_quote"], audit="",
+            origin="hidden" if str(r["used"]).startswith("hard-coded") else "scene" if r["param_id"].startswith(
+                "scene_") else "slot"))
     return rows, replaced, list(mechs.values())
+
+
+SCENE_LABEL = {"published": "measured"}    # scene.py's "published" = a protocol value from a paper (assay setting)
+
+
+def scene_slots() -> list[dict]:
+    """The chemotaxis plate presets (src/wormemu/body/scene.py PRESETS, PARAMS): each Param carries its own value,
+    unit, label, range and source, chosen per run. Catalog rows scene_<preset>_<name>, used when that field runs."""
+    try:
+        from wormemu.body import scene
+    except Exception:  # noqa: BLE001 (no body code in this checkout: no scene rows)
+        return []
+    out = []
+    items = [(f"{k}_{n}", k, p) for k, d in scene.PRESETS.items() for n, p in d.items()]
+    items += [(n, "plate", p) for n, p in scene.PARAMS.items()]
+    for name, preset, p in items:
+        lab = SCENE_LABEL.get(p.label, p.label)
+        out.append(dict(
+            param_id=f"scene_{name}", plan_row=22, mechanism_id="scene_field",
+            mechanism_name="Chemotaxis plate field presets (src/wormemu/body/scene.py)", grain="global",
+            applies_to=f"{preset} field preset" if preset != "plate" else "the plate (all fields)", n_values=1,
+            unit=p.unit, value_template=p.value, bio_min="" if p.low is None else p.low,
+            bio_max="" if p.high is None else p.high, label=lab,
+            bound_basis="" if p.low is None else ("guessed" if lab == "guessed" else "measured_related"),
+            source=p.source, source_url="", source_quote="", source_project="ours" if lab == "guessed" else "literature",
+            notes=f"scene.py Param (label there: {p.label}); used when the run picks this preset", match="",
+            used="yes"))
+    return out
 
 
 # ----------------------------------------------------------------------------------------------------------- links
@@ -193,6 +230,9 @@ BAAI_FILES = [(r"mod/([a-z0-9_]+\.mod)", "eworm/components/mechanism/modfile/{}"
               (r"neuron_muscle|connection", "eworm/components/param/connection")]
 # papers the ledger cites without a link, resolved through Europe PMC (6 Nov, wcatalog); first match wins
 PAPERS = [
+    (r"Tanimoto et al\.? 2017", "https://elifesciences.org/articles/21629"),
+    (r"Kunitomo (and|&) Iino 2013", "https://doi.org/10.1038/ncomms3210"),
+    (r"Luo et al\.? 2014 Neuron", "https://pmc.ncbi.nlm.nih.gov/articles/PMC4082684/"),
     (r"Ramot.{0,40}2008", "https://pmc.ncbi.nlm.nih.gov/articles/PMC2587641/"),
     (r"Kimura.{0,40}2004", "https://doi.org/10.1016/j.cub.2004.06.060"),
     (r"Clark.{0,40}2006", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6674189/"),
@@ -313,7 +353,7 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
             f"[{was['lo']:g}, {was['hi']:g}]; {f['reason']}")
         if r["prior_dist"] in ("normal", "lognormal"):
             r["prior_a"] = r["value_template"]
-        t = values.get(r["param_id"]) if r.get("origin") not in ("body", "slot") else None
+        t = values.get(r["param_id"]) if r.get("origin") not in CATALOG_ONLY else None
         if t is not None and f["value_template"] != "":
             g = t.label == "guessed"
             t.loc[g, "value"] = r["value_template"]
@@ -333,7 +373,7 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
 
 # ----------------------------------------------------------------------------------------------------------- audit
 CITE = re.compile(r"((et al\.?|[A-Z][A-Za-z-]+ (and|&) [A-Z][A-Za-z-]+|[A-Z][A-Za-z-]+),? \(?(19|20)\d\d)|PMC\d+|"
-                  r"doi|https?://|WormAtlas|WormBook|CeNGEN|Cook et al|Fenyves|Wang et al|AmP|BAAIWorm|c302")
+                  r"doi|https?://|WormAtlas|WormBook|CeNGEN|Cook et al|Fenyves|Wang et al|AmP|BAAIWorm|c302|NASA|NOAA|NIST")
 NOT_A_CITATION = re.compile(r"guess|template guess|placeholder|assumed", re.I)
 STRUCTURE = ("morph_", "wire_")
 # solver and mesh settings and the keyframe driver's own constants: no biological range applies; what they need is a
@@ -458,7 +498,7 @@ def label_tally(rows: list[dict], values: dict) -> dict:
     rc, nc = Counter(), Counter()
     for r in rows:
         rc[r["label"]] += 1
-        for k, n in label_split(r, values.get(r["param_id"]) if r.get("origin") not in ("body", "slot") else None
+        for k, n in label_split(r, values.get(r["param_id"]) if r.get("origin") not in CATALOG_ONLY else None
                                 ).items():
             nc[k] += n
     return dict(rows=dict(rc), numbers=dict(nc))
@@ -499,7 +539,7 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
             open_[a["param_id"]].append(text)
     out, links = [], link_checks()
     for r in [*model_rows, *body, *slot_rows]:
-        t = values.get(r["param_id"]) if r["origin"] not in ("body", "slot") else None
+        t = values.get(r["param_id"]) if r["origin"] not in CATALOG_ONLY else None
         if not str(r.get("source_url", "")).strip():
             r["source_url"] = link_for(r, t)
         probs = audit(r, t) + open_.get(r["param_id"], [])
@@ -563,7 +603,7 @@ def summary(cat_rows, replaced, fill_log, hidden, before=None):
             probs[re.sub(r"-?\d[\d.e+-]*", "#", p.split(" [")[0])[:90]] += 1
     return dict(
         totals=all_, by_label_rows=all_["rows"], by_label_numbers=all_["numbers"],
-        by_plan_row=tally("plan_row"), by_grain=tally("grain"), by_used=tally("used_by_code"),
+        by_plan_row=tally("plan_row"), by_grain=tally("grain"), by_used=tally(lambda r: str(r["used_by_code"]).split(":")[0]),
         by_origin=tally("origin"), by_kind=tally("kind"),
         biggest_unknown_blocks=blocks[:25], slots_replaced=[dict(slot=a, by=b) for a, b in replaced],
         audit=dict(rows_ok=audit_ok, rows_with_problems=len(cat_rows) - audit_ok, by_status=dict(status),
@@ -585,7 +625,8 @@ def hidden_summary():
     if not f.exists():
         return {}
     d = json.loads(f.read_text())
-    return {k: d[k] for k in ("generated_at", "scanned", "total", "by_file", "by_kind") if k in d}
+    return {k: d[k] for k in ("generated_at", "scanned", "total", "by_file", "by_kind", "by_verdict", "unreviewed",
+                              "catalog_rows_added", "code_side", "skipped") if k in d}
 
 
 def _clean(v):
@@ -717,11 +758,21 @@ def write_markdown(cat_rows, s):
         L += ["", "## Slots replaced by code", "", "| slot | replaced by |", "|---|---|"]
         L += [f"| `{x['slot']}` | {x['by']} |" for x in s["slots_replaced"]]
     h = s.get("hidden_constants") or {}
-    L += ["", "## Hidden constants (numeric literals in mechanism code not tied to a Spec)", ""]
+    L += ["", "## Hidden constants (numeric literals in the model code not read from the ledger)", ""]
     if h:
         L.append(f"`scripts/worm/hidden_constants.py` ({h.get('generated_at', '')}): {h.get('total', 0)} literals "
-                 f"in {len(h.get('by_file', {}))} files. File list with line numbers in "
-                 "`data/worm/catalog/hidden_constants.json`.")
+                 f"in {len(h.get('by_file', {}))} files, each with a verdict from the hand review "
+                 f"(`data/worm/catalog/hidden_review.csv`; {h.get('unreviewed', 0)} unreviewed). File:line list in "
+                 "`data/worm/catalog/hidden_constants.json`. Not counted: "
+                 + ", ".join(f"{v} {k}" for k, v in (h.get("skipped") or {}).items()) + ".")
+        L += ["", "| verdict | literals |", "|---|---|"] + [f"| {k} | {v} |" for k, v in h.get("by_verdict", {}).items()]
+        if h.get("catalog_rows_added"):
+            L += ["", "Catalog rows added for them (origin `hidden`, `used_by_code` names the file:line): "
+                  + ", ".join(f"`{r}`" for r in h["catalog_rows_added"]) + "."]
+        if h.get("code_side"):
+            L += ["", "Code side (the owner's code should read the catalog row instead of the literal):", "",
+                  "| file:line | value | row | owner |", "|---|---|---|---|"]
+            L += [f"| `{x['file']}:{x['line']}` | {x['value']:g} | `{x['row']}` | {x['owner']} |" for x in h["code_side"]]
         L += ["", "| file | literals |", "|---|---|"] + [f"| `{k}` | {v} |" for k, v in h.get("by_file", {}).items()]
     else:
         L.append("Not scanned yet.")

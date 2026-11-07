@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 21:22 CST",
+ "generated_at": "2026-11-06 21:38 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -10724,7 +10724,7 @@
    "notes": "",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2984562/",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4082684/",
    "source_quote": "",
    "audit": "ok",
    "kind": "physiology"
@@ -17050,36 +17050,36 @@
   "note": "the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are numbers (elements), not rows, unless the key says rows",
   "totals": {
    "rows": {
-    "published_fit": 296,
-    "guessed": 258,
-    "measured": 80,
+    "published_fit": 298,
+    "guessed": 268,
+    "measured": 85,
     "derived": 22,
     "inferred": 42,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 7820,
-    "guessed": 9162,
-    "measured": 5937,
+    "published_fit": 7822,
+    "guessed": 9172,
+    "measured": 5942,
     "derived": 67502,
     "inferred": 47,
     "absent": 5
    },
-   "n_rows": 703,
-   "n_numbers": 90473
+   "n_rows": 720,
+   "n_numbers": 90490
   },
   "by_label_rows": {
-   "published_fit": 296,
-   "guessed": 258,
-   "measured": 80,
+   "published_fit": 298,
+   "guessed": 268,
+   "measured": 85,
    "derived": 22,
    "inferred": 42,
    "absent": 5
   },
   "by_label_numbers": {
-   "published_fit": 7820,
-   "guessed": 9162,
-   "measured": 5937,
+   "published_fit": 7822,
+   "guessed": 9172,
+   "measured": 5942,
    "derived": 67502,
    "inferred": 47,
    "absent": 5
@@ -17127,15 +17127,15 @@
    },
    "5": {
     "rows": {
-     "published_fit": 24,
+     "published_fit": 25,
      "guessed": 3
     },
     "numbers": {
-     "published_fit": 6542,
+     "published_fit": 6543,
      "guessed": 709
     },
-    "n_rows": 27,
-    "n_numbers": 7251
+    "n_rows": 28,
+    "n_numbers": 7252
    },
    "6": {
     "rows": {
@@ -17183,23 +17183,23 @@
    },
    "9": {
     "rows": {
-     "guessed": 9
+     "guessed": 10
     },
     "numbers": {
-     "guessed": 198
+     "guessed": 199
     },
-    "n_rows": 9,
-    "n_numbers": 198
+    "n_rows": 10,
+    "n_numbers": 199
    },
    "10": {
     "rows": {
-     "guessed": 9
+     "guessed": 10
     },
     "numbers": {
-     "guessed": 38
+     "guessed": 39
     },
-    "n_rows": 9,
-    "n_numbers": 38
+    "n_rows": 10,
+    "n_numbers": 39
    },
    "11": {
     "rows": {
@@ -17215,19 +17215,19 @@
    },
    "12": {
     "rows": {
-     "published_fit": 39,
+     "published_fit": 40,
      "guessed": 9,
      "derived": 3,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 320,
+     "published_fit": 321,
      "guessed": 199,
      "derived": 3,
      "absent": 1
     },
-    "n_rows": 52,
-    "n_numbers": 523
+    "n_rows": 53,
+    "n_numbers": 524
    },
    "13": {
     "rows": {
@@ -17283,21 +17283,21 @@
    },
    "17": {
     "rows": {
-     "guessed": 28,
+     "guessed": 29,
      "inferred": 4,
      "measured": 4,
      "derived": 3,
      "absent": 4
     },
     "numbers": {
-     "guessed": 28,
+     "guessed": 29,
      "inferred": 4,
      "measured": 4,
      "derived": 3,
      "absent": 4
     },
-    "n_rows": 43,
-    "n_numbers": 43
+    "n_rows": 44,
+    "n_numbers": 44
    },
    "18": {
     "rows": {
@@ -17360,20 +17360,20 @@
    "22": {
     "rows": {
      "published_fit": 7,
-     "measured": 7,
+     "measured": 12,
      "derived": 3,
      "inferred": 2,
-     "guessed": 4
+     "guessed": 11
     },
     "numbers": {
      "published_fit": 7,
-     "measured": 7,
+     "measured": 12,
      "derived": 3,
      "inferred": 2,
-     "guessed": 4
+     "guessed": 11
     },
-    "n_rows": 23,
-    "n_numbers": 23
+    "n_rows": 35,
+    "n_numbers": 35
    },
    "23": {
     "rows": {
@@ -17544,23 +17544,23 @@
    },
    "global": {
     "rows": {
-     "published_fit": 93,
-     "guessed": 92,
+     "published_fit": 95,
+     "guessed": 102,
      "inferred": 12,
-     "measured": 30,
+     "measured": 35,
      "derived": 16,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 93,
-     "guessed": 92,
+     "published_fit": 95,
+     "guessed": 102,
      "inferred": 12,
-     "measured": 30,
+     "measured": 35,
      "derived": 16,
      "absent": 1
     },
-    "n_rows": 244,
-    "n_numbers": 244
+    "n_rows": 261,
+    "n_numbers": 261
    },
    "muscle": {
     "rows": {
@@ -17595,6 +17595,20 @@
    }
   },
   "by_used": {
+   "hard-coded": {
+    "rows": {
+     "guessed": 4,
+     "measured": 2,
+     "published_fit": 2
+    },
+    "numbers": {
+     "guessed": 4,
+     "measured": 2,
+     "published_fit": 2
+    },
+    "n_rows": 8,
+    "n_numbers": 8
+   },
    "slot only": {
     "rows": {
      "guessed": 109,
@@ -17618,20 +17632,20 @@
    "yes": {
     "rows": {
      "published_fit": 285,
-     "guessed": 149,
-     "measured": 29,
+     "guessed": 155,
+     "measured": 32,
      "derived": 15,
      "inferred": 36
     },
     "numbers": {
      "published_fit": 7809,
-     "guessed": 9027,
-     "measured": 5886,
+     "guessed": 9033,
+     "measured": 5889,
      "derived": 67495,
      "inferred": 41
     },
-    "n_rows": 514,
-    "n_numbers": 90258
+    "n_rows": 523,
+    "n_numbers": 90267
    }
   },
   "by_origin": {
@@ -17672,6 +17686,20 @@
     "n_rows": 285,
     "n_numbers": 89811
    },
+   "hidden": {
+    "rows": {
+     "guessed": 4,
+     "measured": 2,
+     "published_fit": 2
+    },
+    "numbers": {
+     "guessed": 4,
+     "measured": 2,
+     "published_fit": 2
+    },
+    "n_rows": 8,
+    "n_numbers": 8
+   },
    "layers": {
     "rows": {
      "guessed": 61,
@@ -17703,6 +17731,18 @@
     },
     "n_rows": 115,
     "n_numbers": 115
+   },
+   "scene": {
+    "rows": {
+     "guessed": 6,
+     "measured": 3
+    },
+    "numbers": {
+     "guessed": 6,
+     "measured": 3
+    },
+    "n_rows": 9,
+    "n_numbers": 9
    },
    "slot": {
     "rows": {
@@ -17738,23 +17778,23 @@
    },
    "physiology": {
     "rows": {
-     "published_fit": 282,
-     "guessed": 258,
+     "published_fit": 284,
+     "guessed": 268,
      "derived": 20,
      "inferred": 42,
-     "measured": 76,
+     "measured": 81,
      "absent": 5
     },
     "numbers": {
-     "published_fit": 7081,
-     "guessed": 9162,
+     "published_fit": 7083,
+     "guessed": 9172,
      "derived": 3094,
      "inferred": 47,
-     "measured": 85,
+     "measured": 90,
      "absent": 5
     },
-    "n_rows": 683,
-    "n_numbers": 19474
+    "n_rows": 700,
+    "n_numbers": 19491
    },
    "structure": {
     "rows": {
@@ -18025,37 +18065,39 @@
   ],
   "slots_replaced": [],
   "audit": {
-   "rows_ok": 651,
-   "rows_with_problems": 52,
+   "rows_ok": 665,
+   "rows_with_problems": 55,
    "by_status": {
-    "ok": 651,
+    "ok": 665,
     "problem": 2,
-    "finding": 50
+    "finding": 53
    },
-   "rows_read": 112,
+   "rows_read": 117,
    "quotes": {
-    "none": 516,
-    "paper text (read audit, 6 Nov)": 22,
+    "none": 530,
+    "paper text (read audit, 6 Nov)": 25,
     "research file (scripted check)": 165
    },
-   "with_url": 489,
+   "with_url": 503,
    "links": {
-    "distinct": 93,
+    "distinct": 99,
     "by_status": {
-     "200": 79,
-     "406": 4,
-     "unchecked": 10
+     "200": 94,
+     "406": 5
     },
-    "checked_at": "2026-11-06 21:14 CST"
+    "checked_at": "2026-11-06 21:37 CST"
    },
    "problem_kinds": {
-    "no URL to open": 21,
+    "no URL to open": 22,
     "source marked UNVERIFIED": 12,
     "no range": 11,
     "template # outside": 6,
+    "guessed template sits on a bound": 2,
     "# nM is in an Extended Data table (image) of Zhang # / Chen #, not machine-readable; not r": 1,
     "# is a range for GCaMP# generally; GCaMP#s's own value sits in an Extended Data table": 1,
-    "gap without a named source that would fill it": 1
+    "gap without a named source that would fill it": 1,
+    "range basis says measured but the range source names no citation": 1,
+    "labelled measured without a citation": 1
    }
   },
   "fills": [
@@ -18358,22 +18400,256 @@
     "reason": "value confirmed in the free full text; quote and URL added",
     "source": "Lindsay, Thiele & Lockery 2011 Nat Commun 2:306 Fig. 6b: peak synaptic current in 10 AVA neurons on photostimulating sra-6-expressing neurons (ASH and others)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3935721/"
+   },
+   {
+    "param_id": "scene_nacl_mM_slope_per_mm",
+    "kind": "source",
+    "origin": "scene",
+    "n": 1,
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "0.2 -> 0.2 mM/mm; measured -> measured; range [0.1, 0.5] -> [0.1, 0.5]",
+    "reason": "protocol value confirmed in the free full text (was read in a secondary source)",
+    "source": "Luo et al. 2014 Neuron 82:1115, Results (linear salt gradients on agar, 2 mM/cm = 0.2 mM/mm)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4082684/"
    }
   ],
-  "hidden_constants": {},
+  "hidden_constants": {
+   "generated_at": "2026-11-06 21:34 CST",
+   "scanned": [
+    "src/wormemu/mech/__init__.py",
+    "src/wormemu/mech/receptors.py",
+    "src/wormemu/brain.py",
+    "src/wormemu/brain_layers.py",
+    "src/wormemu/body/__init__.py",
+    "src/wormemu/body/ledger.py",
+    "src/wormemu/body/loop.py",
+    "src/wormemu/body/metaworm.py",
+    "src/wormemu/body/scene.py",
+    "third_party/metaworm/driver/run_body.cpp",
+    "src/wormemu/nmodl/rectgap.mod",
+    "src/wormemu/nmodl/wsyn.mod"
+   ],
+   "total": 210,
+   "by_file": {
+    "src/wormemu/brain.py": 43,
+    "third_party/metaworm/driver/run_body.cpp": 41,
+    "src/wormemu/body/loop.py": 37,
+    "src/wormemu/body/metaworm.py": 34,
+    "src/wormemu/brain_layers.py": 29,
+    "src/wormemu/body/scene.py": 13,
+    "src/wormemu/nmodl/wsyn.mod": 8,
+    "src/wormemu/mech/receptors.py": 4,
+    "src/wormemu/body/ledger.py": 1
+   },
+   "by_kind": {
+    "inline": 47,
+    "small integer": 39,
+    "unit conversion": 37,
+    "named constant": 31,
+    "shape or count": 27,
+    "numerical guard": 15,
+    "function default": 14
+   },
+   "by_verdict": {
+    "structure": 47,
+    "unit conversion": 39,
+    "arithmetic": 37,
+    "numerics": 18,
+    "test stand-in": 16,
+    "ported-mode fallback": 14,
+    "analysis": 12,
+    "mod default overwritten": 8,
+    "duplicate of a catalog row": 7,
+    "parameter (catalog row)": 6,
+    "mirrors a catalog row": 3,
+    "initial condition (catalog row)": 2,
+    "default shadowed by a catalog row": 1
+   },
+   "unreviewed": 0,
+   "catalog_rows_added": [
+    "env_default_co2_pct",
+    "env_default_o2_pct",
+    "env_default_temperature_C",
+    "init_v_muscle_mV",
+    "init_v_neuron_mV",
+    "ma_release_slope_mV",
+    "pep_release_slope_mV",
+    "touch_ap_split_frac"
+   ],
+   "code_side": [
+    {
+     "file": "src/wormemu/brain.py",
+     "line": 61,
+     "value": -65.0,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_v_neuron_mV",
+     "owner": "B1",
+     "note": "start voltage of every neuron",
+     "code": "V_INIT = -65.0                  # BAAIWorm's v_init"
+    },
+    {
+     "file": "src/wormemu/brain.py",
+     "line": 62,
+     "value": -28.0,
+     "verdict": "initial condition (catalog row)",
+     "row": "init_v_muscle_mV",
+     "owner": "B1",
+     "note": "start voltage of every body-wall muscle",
+     "code": "V_INIT_MUSCLE = -28.0           # c302 GenericMuscleCell initMembPotential (muscle_active on)"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 288,
+     "value": 20.0,
+     "verdict": "parameter (catalog row)",
+     "row": "env_default_temperature_C",
+     "owner": "B1",
+     "note": "default ambient temperature when the observation has none",
+     "code": "u = obs[\"head\"].get(\"temperature_C\", 20.0) - p[\"thermo_Tstar_C\"]"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 292,
+     "value": 21.0,
+     "verdict": "parameter (catalog row)",
+     "row": "env_default_o2_pct",
+     "owner": "B1",
+     "note": "default ambient O2 when the observation has none",
+     "code": "u = obs[\"head\"].get(\"o2_pct\", 21.0) - p[\"o2_threshold_pct\"]"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 296,
+     "value": 0.04,
+     "verdict": "parameter (catalog row)",
+     "row": "env_default_co2_pct",
+     "owner": "B1",
+     "note": "default ambient CO2 when the observation has none",
+     "code": "u = obs[\"head\"].get(\"co2_pct\", 0.04) - p[\"co2_threshold_pct\"]"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 310,
+     "value": 0.5,
+     "verdict": "parameter (catalog row)",
+     "row": "touch_ap_split_frac",
+     "owner": "B1",
+     "note": "where the anterior and posterior touch fields meet",
+     "code": "for cells, sel in ((TOUCH_ANT, s < 0.5), (TOUCH_POST, s >= 0.5)):"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 310,
+     "value": 0.5,
+     "verdict": "parameter (catalog row)",
+     "row": "touch_ap_split_frac",
+     "owner": "B1",
+     "note": "where the anterior and posterior touch fields meet",
+     "code": "for cells, sel in ((TOUCH_ANT, s < 0.5), (TOUCH_POST, s >= 0.5)):"
+    },
+    {
+     "file": "src/wormemu/brain_layers.py",
+     "line": 351,
+     "value": 5.0,
+     "verdict": "parameter (catalog row)",
+     "row": "pep_release_slope_mV ma_release_slope_mV",
+     "owner": "B1",
+     "note": "release sigmoid slope for peptides and monoamines",
+     "code": "r = _sig((v - p[vth]) / 5.0) @ release * dt / 1000.0"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 140,
+     "value": 1074.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_worm_density",
+     "owner": "B3",
+     "note": "the driver should read the row (passed as a flag); worm_1mm scale only",
+     "code": "const double density = 1074.0, length_m = 1e-3, g_si = 9.81;  // Reina 2013 (measured); BBC 2012 model length"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 140,
+     "value": 0.001,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_worm_length",
+     "owner": "B3",
+     "note": "1 mm body length, not a unit conversion",
+     "code": "const double density = 1074.0, length_m = 1e-3, g_si = 9.81;  // Reina 2013 (measured); BBC 2012 model length"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 140,
+     "value": 9.81,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_gravity",
+     "owner": "B3",
+     "note": "the driver should read the row",
+     "code": "const double density = 1074.0, length_m = 1e-3, g_si = 9.81;  // Reina 2013 (measured); BBC 2012 model length"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 141,
+     "value": 3.2,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_agar_Ct",
+     "owner": "B3",
+     "note": "default unless --ct is passed",
+     "code": "double ct = fluid == \"agar_rft\" ? 3.2 : 0.00357, cn = fluid == \"agar_rft\" ? 128.0 : 0.005675;  // Pa s"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 141,
+     "value": 0.00357,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_water_Ct",
+     "owner": "B3",
+     "note": "default unless --ct is passed",
+     "code": "double ct = fluid == \"agar_rft\" ? 3.2 : 0.00357, cn = fluid == \"agar_rft\" ? 128.0 : 0.005675;  // Pa s"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 141,
+     "value": 128.0,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_agar_Cn",
+     "owner": "B3",
+     "note": "default unless --cn is passed",
+     "code": "double ct = fluid == \"agar_rft\" ? 3.2 : 0.00357, cn = fluid == \"agar_rft\" ? 128.0 : 0.005675;  // Pa s"
+    },
+    {
+     "file": "third_party/metaworm/driver/run_body.cpp",
+     "line": 141,
+     "value": 0.005675,
+     "verdict": "duplicate of a catalog row",
+     "row": "mw_water_Cn",
+     "owner": "B3",
+     "note": "default unless --cn is passed",
+     "code": "double ct = fluid == \"agar_rft\" ? 3.2 : 0.00357, cn = fluid == \"agar_rft\" ? 128.0 : 0.005675;  // Pa s"
+    }
+   ],
+   "skipped": {
+    "0, 1 or -1": 517,
+    "in a Spec (ledger)": 581,
+    "index or slice": 49,
+    "in a scene Param (catalog rows scene_*)": 27,
+    "NMODL PARAMETER set from a Spec": 3
+   }
+  },
   "before_fills": {
    "rows": {
-    "published_fit": 296,
-    "guessed": 263,
-    "measured": 83,
+    "published_fit": 298,
+    "guessed": 273,
+    "measured": 88,
     "derived": 17,
     "inferred": 39,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 7820,
-    "guessed": 9167,
-    "measured": 5940,
+    "published_fit": 7822,
+    "guessed": 9177,
+    "measured": 5945,
     "derived": 67497,
     "inferred": 44,
     "absent": 5
@@ -18381,17 +18657,17 @@
   },
   "after_fills": {
    "rows": {
-    "published_fit": 296,
-    "guessed": 258,
-    "measured": 80,
+    "published_fit": 298,
+    "guessed": 268,
+    "measured": 85,
     "derived": 22,
     "inferred": 42,
     "absent": 5
    },
    "numbers": {
-    "published_fit": 7820,
-    "guessed": 9162,
-    "measured": 5937,
+    "published_fit": 7822,
+    "guessed": 9172,
+    "measured": 5942,
     "derived": 67502,
     "inferred": 47,
     "absent": 5
