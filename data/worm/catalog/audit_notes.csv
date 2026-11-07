@@ -119,3 +119,14 @@ gcamp6f_kd_nM,364 nM is not in Chen 2013; its Supplementary Table 2 gives GCaMP6
 gcamp6f_rise_ms,2 ms is not in Chen 2013; its Supplementary Table 3 gives a 1-AP rise to peak of 45 ± 4 ms for GCaMP6f in mouse V1; the range was one point,"fixed: fills.csv (45 ms, range [41, 49])"
 gcamp_tau_decay_ms,guessed 500 ms; Chen 2013 Supplementary Table 2 gives GCaMP6s koff 1.12 /s (1/koff = 893 ms),"fixed: fills.csv (893 ms derived, range [600, 1500] guessed)"
 gcamp_dff_max,guessed 10; Chen 2013 Supplementary Table 1 gives GCaMP6s dF/F 16.8 ± 0.5 at 160 APs in rat hippocampal culture,"fixed: fills.csv (16.8 inferred: a rat-culture ceiling is related evidence for a worm readout; range [2, 50] kept as guessed)"
+pep_ec50_flp-1_dmsr-1_nM,Beets 2023 credited to Science; it is Cell Rep 42:113058; no URL (applies to all 147 pep_ec50_*_*_nM rows),"fixed: fills.csv pattern pep_ec50_*_*_nM (source, URL PMC7615250, quote); 6 random pairs match the preprint table; B1 to correct BEETS_SRC in neuromod.py"
+gpcr_hill,"credited to Beets 2023, which reports EC50s but no slopes","fixed: fills.csv (source and methods quote: 3- or 4-parameter fits); inferred kept, the 1.0 is the 3-parameter fit's fixed slope"
+pc_head_end_y_um,'the soma atlas' names no source,"fixed: fills.csv (Virtual Worm geometry.csv, positions checked)"
+pc_vulva_y_um,'the soma atlas' names no source,"fixed: fills.csv (Virtual Worm geometry.csv, HSN at y 61.05 checked)"
+pc_tail_start_y_um,'the soma atlas' names no source,"fixed: fills.csv (Virtual Worm geometry.csv, AS11 315.7 and PVPR 357 checked)"
+dat1_km_nM,no URL; range spread not in the source,"fixed: fills.csv (abstract URL and quote, Km = 1.2 uM matches; range basis set to guessed)"
+gq_tau_ms,inferred from a research-file summary (PORT_SOURCES N4) by homology; no paper with a URL,owner B1: cite a G-protein cascade time-course paper (free) or relabel guessed
+gi_tau_ms,inferred from a research-file summary (PORT_SOURCES N4) by homology; no paper with a URL,owner B1: cite a G-protein cascade time-course paper (free) or relabel guessed
+gs_tau_ms,inferred from a research-file summary (PORT_SOURCES N4) by homology; no paper with a URL,owner B1: cite a G-protein cascade time-course paper (free) or relabel guessed
+ma_diffusion_um2_per_s,Gerhardt and Adams 1982 Anal Chem is paywalled; the tortuosity factor is not cited,"owner B1: cite a free dopamine diffusion coefficient and tortuosity source, or relabel guessed"
+mod5_km_nM,"inferred from human SERT by homology, no URL; the MOD-5 paper (Ranganathan 2001, PMC6763176) abstract gives no Km and its full text is not served to scripts",owner B1: cite a free human SERT Km source; a person can check https://www.jneurosci.org/content/21/16/5871 for a MOD-5 Km

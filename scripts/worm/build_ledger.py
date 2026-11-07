@@ -738,8 +738,15 @@ def build_registry():
                 rows[:] = [r for r in rows if r["param_id"] != s_.id]
                 values.pop(s_.id, None)
                 notes.append(f"{s_.id}: row replaced by mech/{name}")
-            row(s_.id, s_.mechanism, s_.unit, float(s_.template), lo, hi, grain=s_.grain, applies_to=s_.applies_to,
-                n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=s_.notes, table=tab,
+            grain, snotes = s_.grain, s_.notes
+            if grain not in ledger.GRAINS:
+                # a grain outside the ledger's vocabulary (e.g. "transmitter (ach)", "touch cells") is a class of
+                # cells or synapses; applies_to already names which, the Spec's own word is kept in the notes
+                snotes = f"{snotes}; Spec grain {grain!r} read as class".lstrip("; ")
+                notes.append(f"{s_.id}: grain {grain!r} read as class")
+                grain = "class"
+            row(s_.id, s_.mechanism, s_.unit, float(s_.template), lo, hi, grain=grain, applies_to=s_.applies_to,
+                n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=snotes, table=tab,
                 url=getattr(s_, "url", ""), quote=getattr(s_, "quote", ""), origin=f"mech:{name}")
     return notes
 
@@ -874,7 +881,8 @@ def main():
     cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
     out = export(led, extra, csum)
     print(json.dumps(csum["totals"], indent=1))
-    print("audit:", json.dumps(csum["audit"]["rows_ok"]), "ok,", csum["audit"]["rows_with_problems"], "with problems")
+    print("audit:", json.dumps(csum["audit"]["rows_ok"]), "ok,", csum["audit"]["rows_with_problems"], "with problems;",
+          "orphan notes", csum["audit"]["orphan_notes"], "orphan fills", csum["audit"]["orphan_fills"])
     print(json.dumps(out["totals"], indent=1))
     print(json.dumps(out["totals_physiology"], indent=1))
     print(json.dumps(out["source_by_fill_kind"]["physiology"], indent=1))

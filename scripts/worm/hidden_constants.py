@@ -86,12 +86,29 @@ def _assigns(tree) -> dict:
 
 
 def _spec_aliases(tree) -> set[str]:
-    """Spec and every module-level name bound to it (brain_layers: S = Spec)."""
+    """Spec, every module-level name bound to it (brain_layers: S = Spec) and every module-level function that returns
+    a Spec call (neuromod: def S(...): return Spec(...))."""
     names = {"Spec"}
     for k, v in _assigns(tree).items():
         if isinstance(v, (ast.Name, ast.Attribute)) and (getattr(v, "id", "") or getattr(v, "attr", "")) in names:
             names.add(k)
+    for f in tree.body:
+        if isinstance(f, ast.FunctionDef) and any(isinstance(r, ast.Return) and isinstance(r.value, ast.Call)
+                                                   and _call_name(r.value) in names for r in ast.walk(f)):
+            names.add(f.name)
     return names
+
+
+def _grows_specs(stmt) -> bool:
+    """A module-level statement that adds to SPECS (SPECS += [...], or a loop calling SPECS.append / extend): every
+    literal in it feeds a Spec."""
+    for n in ast.walk(stmt):
+        if isinstance(n, ast.AugAssign) and getattr(n.target, "id", "") == "SPECS":
+            return True
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in ("append", "extend") \
+                and getattr(n.func.value, "id", "") == "SPECS":
+            return True
+    return False
 
 
 def _spec_names(tree) -> set[str]:
@@ -192,6 +209,9 @@ def scan_python(path: Path, templates: dict) -> tuple[list, Counter]:
     in_specs, assigns, aliases = set(), _assigns(tree), _spec_aliases(tree)
     for k in spec_names:
         in_specs |= {id(x) for x in ast.walk(assigns[k])}
+    for stmt in tree.body:
+        if _grows_specs(stmt):
+            in_specs |= {id(x) for x in ast.walk(stmt)}
     in_param = set()
     for n in ast.walk(tree):
         if isinstance(n, ast.Call) and (_call_name(n) in aliases or _call_name(n).endswith("Spec")):

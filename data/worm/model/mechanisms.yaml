@@ -481,26 +481,6 @@
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
-- id: peptides
-  name: Neuropeptide signalling by ligand-GPCR pair (well mixed)
-  layer: neuromodulation
-  status: partial
-  toggle: peptides
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: monoamines
-  name: Monoamine signalling (5-HT, DA, TA, OA; well mixed)
-  layer: neuromodulation
-  status: partial
-  toggle: monoamines
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
 - id: glia
   name: Amphid sheath glia, lumped as a sensory gain
   layer: glia
@@ -611,4 +591,44 @@
   default: kinetic
   source: src/wormemu/mech/receptors.py
   notes: registry module receptors; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: stp
+  name: Short-term synaptic depression and facilitation at every chemical synapse (graded Dittman-Regehr form; nests Tsodyks-Markram, depression only)
+  layer: synapse
+  status: have
+  toggle: stp
+  neutral: 'off'
+  default: dittman_regehr
+  source: src/wormemu/mech/plasticity.py
+  notes: registry module plasticity; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: habituation
+  name: 'Tap habituation: a slow release resource at the touch cells'' output synapses'
+  layer: synapse
+  status: have
+  toggle: habituation
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/plasticity.py
+  notes: registry module plasticity; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: peptides
+  name: 'Neuropeptides: UNC-31 dense-core release into four pseudocoelom compartments, every Beets 2023 EC50 pair, GPCR -> Gq/Gi/Gs -> release, NCA, IRK, EGL-19'
+  layer: neuromodulation
+  status: have
+  toggle: peptides
+  neutral: 'off'
+  default: compartments
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: monoamines
+  name: 'Monoamines (5-HT, DA, OA, TA): stores, release, MOD-5/DAT-1 reuptake, GPCRs -> G proteins, MOD-1/LGC-55/LGC-53 outside synapses; the same compartments'
+  layer: neuromodulation
+  status: have
+  toggle: monoamines
+  neutral: 'off'
+  default: compartments
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
   absent_reason: ''

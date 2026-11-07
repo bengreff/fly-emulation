@@ -74,3 +74,9 @@ src/wormemu/body/loop.py,60,timeout,numerics,,,seconds to wait for the driver to
 src/wormemu/body/metaworm.py,0.1,band,analysis,,,gait fit body band 0.1-0.9
 src/wormemu/body/metaworm.py,10,seconds,structure,,,default run length (s)
 src/wormemu/brain.py,1000,_ca_scale,unit conversion,,,muscle calcium readout scale (mM to uM) for the mact muscles
+src/wormemu/mech/neuromod.py,602.214,NA_PL = 602.214,unit conversion,,,"Avogadro: molecules per nM per pL (6.02214e23 x 1e-9 x 1e-12)"
+src/wormemu/mech/neuromod.py,10,10 ** float(x),unit conversion,,,log10 EC50 bounds to molar
+src/wormemu/mech/neuromod.py,0.5,brain.soma[c](0.5),structure,,,mid-soma segment for the extrasynaptic point process
+src/wormemu/mech/neuromod.py,5,_sig((v - L.p[vth]) / 5.0),duplicate of a catalog row,pep_release_slope_mV ma_release_slope_mV,B1,"the lumped form (nested, off by default) copies brain_layers' fixed 5 mV; it should read the row, as the compartment form reads dcv_k_mV / ma_k_mV"
+src/wormemu/mech/plasticity.py,-60,v0=-60.0,test stand-in,,,numpy_reference (CPU check path) start voltage; the NEURON path starts from finitialize
+src/wormemu/mech/plasticity.py,-40,pp.erev < -40,structure,,,"classification rule: a synapse with no receptor class is GABA when its reversal is below -40 mV (Cl about -70, cation about 0); any cut between -60 and -10 gives the same split"

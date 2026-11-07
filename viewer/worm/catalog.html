@@ -139,9 +139,11 @@ function overview() {
     $("beforeafter").innerHTML = `<table><tr><th></th>` + LABELS.map(l => `<th class="num">${lab(l)}</th>`).join("") +
       `</tr>${line("rows")}${line("numbers")}</table>`;
   }
+  const fl = (D.fills || []).filter((f, i, a) => !f.pattern || a.findIndex(g => g.pattern === f.pattern) === i);
   $("fills").innerHTML = `<table><tr><th>row</th><th>kind</th><th>change</th><th>why</th><th>source</th></tr>` +
-    (D.fills || []).map(f => `<tr><td class="id"><a href="#id=${esc(f.param_id)}">${esc(f.param_id)}</a></td><td>${esc(f.kind || "")}</td>` +
-      `<td>${esc(f.change)}</td><td>${esc(f.reason)}</td><td class="src">${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.source || f.url)}</a>` : esc(f.source || "")}</td></tr>`).join("") + `</table>`;
+    fl.map(f => { const n = f.pattern ? D.fills.filter(g => g.pattern === f.pattern).length : 0;
+      return `<tr><td class="id">${f.pattern ? `${esc(f.pattern)} (${n} rows, e.g. ` : ""}<a href="#id=${esc(f.param_id)}">${esc(f.param_id)}</a>${f.pattern ? ")" : ""}</td><td>${esc(f.kind || "")}</td>` +
+      `<td>${esc(f.change)}</td><td>${esc(f.reason)}</td><td class="src">${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.source || f.url)}</a>` : esc(f.source || "")}</td></tr>`; }).join("") + `</table>`;
   $("blocks").innerHTML = `<table><tr><th>row</th><th class="num">PLAN</th><th>mechanism</th><th>grain</th><th class="num">unknown</th><th class="num">of</th><th>used</th><th>fit target</th></tr>` +
     (s.biggest_unknown_blocks || []).map(x => `<tr><td class="id"><a href="#id=${esc(x.id)}">${esc(x.id)}</a></td><td class="num">${x.plan_row}</td>` +
       `<td>${esc(x.mechanism)}</td><td>${esc(x.grain)}</td><td class="num">${fmt(x.unknown)}</td><td class="num">${fmt(x.of)}</td>` +

@@ -16,6 +16,7 @@ keeps only rows the code reads: brain, layers and registry rows. Body rows and s
 """
 from __future__ import annotations
 
+import fnmatch
 import importlib
 import json
 import re
@@ -315,9 +316,18 @@ FILL_COLUMNS = ["param_id", "kind", "value_template", "bio_min", "bio_max", "lab
 # or its basis was wrong), source (citation, link or quote corrected; numbers unchanged). Blank cells: unchanged
 
 
-def fills():
+def fills(ids=None):
+    """The fill log, one record per row. A param_id with a * is a pattern (fnmatch) over `ids`: one cited fill for a
+    family of rows from the same table (e.g. pep_ec50_*_nM, one row per Beets 2023 pair); each match is logged."""
     f = CAT / "fills.csv"
-    return pd.read_csv(f, keep_default_na=False).to_dict("records") if f.exists() else []
+    out = []
+    for r in (pd.read_csv(f, keep_default_na=False).to_dict("records") if f.exists() else []):
+        if "*" in r["param_id"] and ids is not None:
+            hit = sorted(fnmatch.filter(ids, r["param_id"]))
+            out += [dict(r, param_id=i, pattern=r["param_id"]) for i in hit] or [r]
+        else:
+            out.append(r)
+    return out
 
 
 def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
@@ -326,7 +336,7 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
     body code reads its own numbers; tell its owner). Returns the change log."""
     by = {r["param_id"]: r for r in rows}
     log = []
-    for f in fills():
+    for f in fills(list(by)):
         r = by.get(f["param_id"])
         if r is None:
             log.append(dict(param_id=f["param_id"], change="fill not applied: no such row", reason=f["reason"]))
@@ -345,6 +355,8 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
         if kind == "fill":
             r["source_project"] = "literature"
         if f["source"] and kind != "range":
+            if kind == "source" and f["bio_min"] == "" and r.get("bound_source") == r["template_source"]:
+                r["bound_source"] = f["source"]          # a corrected citation is the range's too when it was the same
             r["template_source"] = f["source"]
         r["source_url"] = f["source_url"] or r.get("source_url", "")
         r["source_quote"] = f["source_quote"] or r.get("source_quote", "")
@@ -363,6 +375,7 @@ def apply_fills(rows: list[dict], values: dict, fill_kind: dict) -> list[dict]:
                 t.loc[g, "source_project"] = "literature"
         n_changed = int((t.label == r["label"]).sum()) if t is not None else int(_num(r["n_values"]))
         log.append(dict(param_id=r["param_id"], kind=kind, origin=r.get("origin", ""), n=n_changed,
+                        pattern=f.get("pattern", ""),
                         was_label=was["label"], new_label=r["label"],
                         change=f"{was['value']:g} -> {_num(r['value_template']):g} {r['unit']}; "
                         f"{was['label']} -> {r['label']}; range [{was['lo']:g}, {was['hi']:g}] -> "
@@ -616,7 +629,11 @@ def summary(cat_rows, replaced, fill_log, hidden, before=None):
                               by_status=dict(Counter(s for s in {r["source_url"]: r["link_status"]
                                                                   for r in cat_rows if r["source_url"]}.values())),
                               checked_at=max((v[1] for v in link_checks().values()), default="")),
-                   problem_kinds=dict(probs.most_common())),
+                   problem_kinds=dict(probs.most_common()),
+                   # a read-audit note or fill on an id no row has (a typo, or a row renamed by its owner)
+                   orphan_notes=sorted({a["param_id"] for a in audit_notes()} - {r["id"] for r in cat_rows}),
+                   orphan_fills=sorted({f["param_id"] for f in fill_log if f.get("change", "").startswith(
+                       "fill not applied")})),
         fills=fill_log, hidden_constants=hidden,
         before_fills=before or {}, after_fills=dict(rows=all_["rows"], numbers=all_["numbers"]))
 
@@ -726,7 +743,9 @@ def write_markdown(cat_rows, s):
           "fixed / read / accepted / owner / kept / open) adds what a script cannot see: whether the paper says it.",
           "", f"Rows with a URL to open: {a.get('with_url', 0)} of {t['n_rows']} (every row not labelled guessed "
           f"has one unless listed below). Rows read against their source: {a.get('rows_read', 0)}. Quotes: "
-          + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ".", "",
+          + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ". Audit notes on ids no row has: "
+          + (", ".join(f"`{x}`" for x in a.get("orphan_notes", [])) or "none") + "; fills on ids no row has: "
+          + (", ".join(f"`{x}`" for x in a.get("orphan_fills", [])) or "none") + ".", "",
           f"Links: {a.get('links', {}).get('distinct', 0)} distinct URLs, checked "
           f"{a.get('links', {}).get('checked_at', '') or 'never'} by `scripts/worm/catalog_links.py` (status: "
           + ", ".join(f"{k} {n}" for k, n in a.get("links", {}).get("by_status", {}).items()) + "; a 404, 410 or no "
@@ -752,8 +771,15 @@ def write_markdown(cat_rows, s):
                 moved[(f["was_label"], f["new_label"])] += f["n"]
         L.append("Numbers relabelled: " + "; ".join(f"{a_} -> {b_}: {n:,}" for (a_, b_), n in moved.items()) + ".")
         L += ["", "| row | change | source | why |", "|---|---|---|---|"]
+        seen = Counter(f.get("pattern", "") for f in s["fills"])
         for f in s["fills"]:
-            L.append(f"| `{f['param_id']}` | {f['change']} | {f.get('source', '')} | {f['reason']} |")
+            pat = f.get("pattern", "")
+            if not pat:
+                L.append(f"| `{f['param_id']}` | {f['change']} | {f.get('source', '')} | {f['reason']} |")
+            elif seen[pat]:
+                L.append(f"| `{pat}` ({seen[pat]} rows) | {f['kind']}: first match `{f['param_id']}` {f['change']} | "
+                         f"{f.get('source', '')} | {f['reason']} |")
+                seen[pat] = 0
     else:
         L.append("No fills yet.")
     if s["slots_replaced"]:
