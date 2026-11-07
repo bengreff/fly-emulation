@@ -16,7 +16,7 @@ daf7) at their steady state for the context when the set point is taken.
     daf16      every neuron, starved (insulin falls, DAF-16 enters the nucleus) -> outputs daf16_nuclear (read by
                mech.learning as the starvation signal)
     daf7       ASI, fed (DAF-7 TGF-beta expression follows food) -> outputs daf7 (its DAF-1 targets are not wired)
-    creb       every neuron, depol (CRH-1/CREB, activity-driven) -> outputs creb (read by mech.learning: consolidation)
+    creb       every neuron, depol (CRH-1/CREB, activity-driven) -> outputs creb (no reader yet)
 The release stand-ins for EGL-4 and CMK-1 are inferred: the measured effect is on the sensory neuron's transduction
 (AWC adaptation; AFD's threshold T*AFD), which lives in the sensory model; the module also exports the states
 (outputs slow_states) for it. Form: states (default) / off. The old lumped layer (brain_layers.slow_gain, a slow AWC
