@@ -46,7 +46,7 @@ import numpy as np
 import pandas as pd
 
 from bioemu import ledger
-from wormemu import brain_layers, mech
+from wormemu import brain_layers, excite_map, mech
 from wormemu.brain_structure import BAAIWORM_NO_SUCH_MUSCLE, bwm_name, cengen_class, load_structure
 from wormemu.interface import (BWM_NAMES, ENTERIC_MUSCLES, PHARYNX_MUSCLES, SEX_MUSCLES, BrainToBody,
                                default_observation, muscle_position)
@@ -362,10 +362,19 @@ class Brain:
                     cp[part][q] = sv(f"pas_{part}_{q}", name)
         for ch in CHANNELS[:-1]:
             cp["soma"][f"gb{ch}"] = self._density(ch, name)
+        if self.toggles["expression_map"] == "fit2":         # FIT2's map also sets the leak (excite_map)
+            m, prm = excite_map.for_brain(self)
+            d = m.cell(name, prm)
+            for part in ("soma", "neurite"):
+                if part in cp:
+                    cp[part]["gpas"], cp[part]["epas"] = d[f"gpas_{part}"], d["epas"]
         return cp
 
     def _density(self, ch, name):
         v = self.spec.v(f"dens_{ch}", name)
+        if self.toggles["expression_map"] == "fit2":
+            m, prm = excite_map.for_brain(self)
+            return m.cell(name, prm)[ch]
         if self.toggles["expression_map"] != "on":
             return v
         t = self.spec.led.values(f"dens_{ch}").set_index("element")

@@ -197,11 +197,21 @@ def build_cell(brain, name, obj, params, toggles):
         brain._cengen = set(brain.st.cengen_classes)
     cls = cengen_class(name, brain._cengen)
     put = {}
+    fit2 = toggles.get("expression_map") == "fit2"           # FIT2's map sets these densities too (excite_map)
+    if fit2:
+        from wormemu import excite_map
+        m, prm = excite_map.for_brain(brain)
+        d = m.cell(name, prm)
     for ch in CHANNELS:
         pid = f"dens_{ch}_{cls}"
-        if pid not in DENSITY:
+        if fit2:
+            g = d[ch]
+            if g <= 0 and not excite_map.INSERT_ALL:
+                continue
+        elif pid not in DENSITY:
             continue
-        g = float(params[pid])
+        else:
+            g = float(params[pid])
         obj.Soma.insert(ch)
         for seg in obj.Soma:
             getattr(seg, ch).gbar = g
