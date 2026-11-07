@@ -406,3 +406,17 @@ re-scores identically (2 stimulations, 273 terms, no non-finite values).
    1,390 non-rectifying gap junctions moved, 138 rectifying junctions kept; the run is finite. The 208 gap junctions
    that modules add after the wiring are not shuffled: the wrong model shuffles Cook's neuronal wiring only.
 
+
+## After the freeze (a record, not an amendment; nothing about the fit changes)
+
+Main moved after `worm-v1`, and this branch merged it at 02:01 (ec5a8a9) for the Director's merges. The fits keep
+running d174f16's tree in `repo_v1`. The merged branch differs from that tree in ways that would change FIT1's model:
+- the catalog merge (7b49648) changed 10 ledger rows' template values and wrote 508 module values into the
+  ledger as new rows, some with new values (counted 02:05). Examples outside the 23: GLR-1 desensitisation
+  (rec_glr_tau_des_ms 20 to 4 ms) and the neuron pump volume (pumps module value 100, now a ledger row of 72 um3);
+- the template's GCaMP6s half-decay is now a derived 619 ms, against a guessed 550 ms at the freeze (same range);
+- rec_acr16_gamma_pS's range is now [5, 90] pS, against [20, 90] at the freeze;
+- wsyn.mod no longer gives NaN at a release tau of 0 (5b7e141). That value is not reachable in worm-v1.
+Held-out scoring (section 7) therefore runs from `repo_v1`. `fit1_eval.py` on this branch now refuses to run
+unless its tree's COMMIT file matches the fits' config (`--any-tree` for plumbing tests only). A later fit
+(FIT2) would take the new values and ranges, with its own pre-registration.

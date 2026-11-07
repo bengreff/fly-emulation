@@ -4,6 +4,9 @@
     python fit1_eval.py run     FITDIR OUT --set heldout|train|unc31 --cpus 0-7 [--limit N]
     python fit1_eval.py score   FITDIR OUT
 
+Every phase first checks that this tree is the one the fits ran (its COMMIT file against the fits' config.json);
+--any-tree skips that, for plumbing tests only.
+
 dtcheck (first): main's fitted mean on three training stimulations (AVAL, ASHL, AWAL) at the fit's integration and
 at brain.py's own (0.5 ms, mechanisms every 1 ms); passes if the RMS difference is at most 0.003 for every target.
 Also reported, not a criterion: the same reference with channel noise on (the fit runs with it off), as the RMS
@@ -31,6 +34,18 @@ from fit1_run import cpus, run_jobs, Log
 
 SEED = 20261106
 NBOOT = 2000
+
+
+def check_tree(fitdir):
+    """Held-out scoring runs the fits' own frozen tree: the COMMIT file bh_sync.sh wrote next to src/ must match
+    the commit in the fits' config. A later tree scores a different model (the catalog merge after worm-v1 moved
+    values that are not fitted, and the template's GCaMP6s half-decay)."""
+    want = json.load(open(Path(fitdir) / "main" / "config.json"))["commit"]
+    f = Path(__file__).resolve().parents[3] / "COMMIT"
+    have = f.read_text().strip() if f.exists() else ""
+    if have != want:
+        sys.exit(f"this tree is {have or 'not a bh_sync.sh copy'}; the fits ran {want}. Run from the fits' tree "
+                 "(~/worm-night/wfit/repo_v1 for FIT1), or pass --any-tree for a plumbing test.")
 
 
 def models(fitdir, which):
@@ -193,7 +208,10 @@ def main():
     ap.add_argument("--set", default="heldout", choices=["heldout", "train", "unc31"])
     ap.add_argument("--cpus", default="0-7")
     ap.add_argument("--limit", type=int, default=0, help="first N stimulated neurons only (plumbing tests)")
+    ap.add_argument("--any-tree", action="store_true", help="skip the frozen-tree check (plumbing tests only)")
     a = ap.parse_args()
+    if not a.any_tree:
+        check_tree(a.fitdir)
     {"dtcheck": dtcheck, "run": run, "score": score}[a.phase](a)
 
 
