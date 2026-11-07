@@ -480,6 +480,7 @@ def test_deb_closed_loop_starves_without_food_and_holds_when_fixed():
         a = fed.step(_met_ctx(), 1000.0)["out"]
         b = hungry.step(_met_ctx(), 1000.0)["out"]
     assert abs(a["energy_state"] - 1.0) < 1e-6 and a["deb"]["f"] == 1.0
+    assert a["energy_fraction"] == min(a["energy_state"], 1.0) and b["energy_fraction"] == b["energy_state"]
     assert b["energy_state"] < 1.0 and b["deb"]["f"] == 0.0 and b["egg_production_per_h"] < a["egg_production_per_h"]
     # f from pumps x food: 4.2 Hz on saturating food tends to the Holling response
     m = _met()

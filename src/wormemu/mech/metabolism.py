@@ -18,8 +18,8 @@ Fed by the pharynx: f = min(1, mean pump rate / met_pump_max_hz) x X / (X + K), 
 rate a running mean of outputs['pumps'] (row 13). Activity-driven Na/K-ATPase cost (row 27's outputs
 ['pump_atp_excess_J_per_d']) is added to somatic maintenance (DEB's [p_M] already pays the resting pumps).
 
-Outputs: out['energy_state'] = e = [E] / [E_m] (scaled reserve density, 1 = fully fed; B1's insulin and DAF-7 read
-it), out['egg_production_per_h'] (row 15's uterus reads it), out['deb'] = {E_J, L_cm, E_H_J, E_R_J, f, age_d},
+Outputs: out['energy_state'] = e = [E] / [E_m] (scaled reserve density, 1 = fully fed), the same e clipped to 0-1
+as out['energy_fraction'] (the key B1's slow_signalling DAF-16/DAF-7 and learning read), out['egg_production_per_h'] (row 15's uterus reads it), out['deb'] = {E_J, L_cm, E_H_J, E_R_J, f, age_d},
 out['o2_pmol_per_min'] (dissipation heat at an oxycaloric 450 kJ/mol O2).
 
 Forms (nested): metabolism deb (default) | std (no acceleration: s_M = 1 throughout, the standard model, = deb with
@@ -271,7 +271,8 @@ class Mech:
         d = self.deb
         _, fl = d.fluxes(y, f, TC, extra)
         o2 = d.heat_J_per_d(fl) / (self.q["met_oxycal_kJ_per_mol"] * 1e3) * 1e12 / 1440.0
-        return {"energy_state": float(y[0] / y[1] ** 3 / d.E_m),
+        e = float(y[0] / y[1] ** 3 / d.E_m)
+        return {"energy_state": e, "energy_fraction": min(max(e, 0.0), 1.0),
                 "egg_production_per_h": float(d.eggs_per_d(fl) / 24.0),
                 "deb": {"E_J": float(y[0]), "L_cm": float(y[1]), "E_H_J": float(y[2]), "E_R_J": float(y[3]),
                         "f": float(f), "age_d": float(self.age_d)},
