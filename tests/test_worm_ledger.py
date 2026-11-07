@@ -68,7 +68,9 @@ def test_wiring_is_cook(led):
 def test_published_fits_labelled(led):
     p = led.parameters.set_index("param_id")
     assert p.loc["dens_shl1", "label"] == "published_fit" and p.loc["dens_shl1", "source_project"] == "BAAIWorm"
-    assert (p[p.source_project == "c302"].label == "published_fit").all()
+    c = p[p.source_project == "c302"]                 # c302's own BlindGuess tag wins (Director, 7 Nov): guessed
+    blind = c.source_quote.str.contains('"BlindGuess"')
+    assert (c[~blind].label == "published_fit").all() and (c[blind].label == "guessed").all() and blind.sum() == 10
     assert p.loc["nano_gsc", "label"] == "guessed"
 
 

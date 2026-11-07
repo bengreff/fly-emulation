@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 04:30 CST",
+ "generated_at": "2026-11-07 04:41 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67509,
-   "guessed": 9314,
+   "guessed": 9324,
    "inferred": 328,
    "measured": 6182,
-   "published_fit": 8104
+   "published_fit": 8094
   },
-  "known": 82123,
-  "placeholder": 9314,
+  "known": 82113,
+  "placeholder": 9324,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9314
+  "must_fill": 9324
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
-   "published_fit": 7377,
-   "guessed": 9314,
+   "published_fit": 7367,
+   "guessed": 9324,
    "derived": 3101,
    "inferred": 328,
    "measured": 330
   },
-  "known": 11136,
-  "placeholder": 9314,
+  "known": 11126,
+  "placeholder": 9324,
   "gap": 0,
-  "must_fill": 9314
+  "must_fill": 9324
  },
  "source_by_fill_kind": {
   "all": {
@@ -63,7 +63,8 @@
     "measured": 1
    },
    "c302": {
-    "published fit": 28
+    "guessed": 10,
+    "published fit": 18
    }
   },
   "physiology": {
@@ -87,7 +88,8 @@
     "measured": 1
    },
    "c302": {
-    "published fit": 28
+    "guessed": 10,
+    "published fit": 18
    }
   }
  },
@@ -138,10 +140,10 @@
   },
   "global": {
    "derived": 16,
-   "guessed": 142,
+   "guessed": 152,
    "inferred": 44,
    "measured": 29,
-   "published_fit": 278
+   "published_fit": 268
   },
   "muscle": {
    "guessed": 95,
@@ -688,7 +690,8 @@
    "absent_reason": "",
    "numbers": 28,
    "by_label": {
-    "published_fit": 28
+    "guessed": 10,
+    "published_fit": 18
    }
   },
   {
@@ -10257,13 +10260,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 2e-06 S/cm2, label published_fit, range [6.66667e-07, 6e-06]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.002 mS/cm2 = 2e-06 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 2e-06 S/cm2, label published_fit, range [6.66667e-07, 6e-06]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.002 mS/cm2 = 2e-06 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 2e-06 S/cm2, label published_fit, range [6.66667e-07, 6e-06]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10289,13 +10292,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -20 mV, label published_fit, range [-40, 0]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -20 mV, label published_fit, range [-40, 0]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was -20 mV, label published_fit, range [-40, 0]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10321,13 +10324,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.000458338 S/cm2, label published_fit, range [0.000152779, 0.00137501]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.45833751019872582 mS/cm2 = 0.000458338 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.000458338 S/cm2, label published_fit, range [0.000152779, 0.00137501]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.45833751019872582 mS/cm2 = 0.000458338 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 0.000458338 S/cm2, label published_fit, range [0.000152779, 0.00137501]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10353,13 +10356,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10481,13 +10484,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 4.27116e-05 S/cm2, label published_fit, range [1.42372e-05, 0.000128135]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.042711643917483308 mS/cm2 = 4.27116e-05 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 4.27116e-05 S/cm2, label published_fit, range [1.42372e-05, 0.000128135]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.042711643917483308 mS/cm2 = 4.27116e-05 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 4.27116e-05 S/cm2, label published_fit, range [1.42372e-05, 0.000128135]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10513,13 +10516,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was -30 mV, label published_fit, range [-50, -10]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10737,13 +10740,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.000812776 S/cm2, label published_fit, range [0.000270925, 0.00243833]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.812775772264702 mS/cm2 = 0.000812776 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.000812776 S/cm2, label published_fit, range [0.000270925, 0.00243833]; c302's own parameter line (not the commented-out lines above it); matches the running value (0.812775772264702 mS/cm2 = 0.000812776 S/cm2). c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 0.000812776 S/cm2, label published_fit, range [0.000270925, 0.00243833]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -10769,13 +10772,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0 mV, label published_fit, range [-20, 20]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0 mV, label published_fit, range [-20, 20]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 0 mV, label published_fit, range [-20, 20]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -11089,13 +11092,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 60.8119 ms, label published_fit, range [20.2706, 182.436]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 60.8119 ms, label published_fit, range [20.2706, 182.436]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 60.8119 ms, label published_fit, range [20.2706, 182.436]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -11121,13 +11124,13 @@
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "published_fit",
-   "fill_kind": "published fit",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "c302",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.00223892 mol_per_m_per_A_per_s, label published_fit, range [0.000746306, 0.00671676]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only",
+   "notes": "read only with toggle muscle_active = on (default off); source 6 Nov (catalog audit): was 0.00223892 mol_per_m_per_A_per_s, label published_fit, range [0.000746306, 0.00671676]; c302's own parameter line (not the commented-out lines above it); matches the running value. c302 tags it BlindGuess (certainty 0.1), as it tags every parameter in this block; the row stays published_fit (a value of a published model) and is held in another form only; relabel 6 Nov (catalog audit): was 0.00223892 mol_per_m_per_A_per_s, label published_fit, range [0.000746306, 0.00671676]; c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
    "plan_row": 12,
    "used_by_code": "other form only",
    "source_url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py",
@@ -56351,16 +56354,16 @@
   "note": "the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are numbers (elements), not rows, unless the key says rows",
   "totals": {
    "rows": {
-    "published_fit": 655,
-    "guessed": 584,
+    "published_fit": 645,
+    "guessed": 594,
     "measured": 251,
     "inferred": 327,
     "derived": 38,
     "absent": 1
    },
    "numbers": {
-    "published_fit": 8184,
-    "guessed": 9380,
+    "published_fit": 8174,
+    "guessed": 9390,
     "measured": 6209,
     "derived": 67519,
     "inferred": 333,
@@ -56370,16 +56373,16 @@
    "n_numbers": 91626
   },
   "by_label_rows": {
-   "published_fit": 655,
-   "guessed": 584,
+   "published_fit": 645,
+   "guessed": 594,
    "measured": 251,
    "inferred": 327,
    "derived": 38,
    "absent": 1
   },
   "by_label_numbers": {
-   "published_fit": 8184,
-   "guessed": 9380,
+   "published_fit": 8174,
+   "guessed": 9390,
    "measured": 6209,
    "derived": 67519,
    "inferred": 333,
@@ -56534,16 +56537,16 @@
    },
    "12": {
     "rows": {
-     "published_fit": 93,
-     "guessed": 17,
+     "published_fit": 83,
+     "guessed": 27,
      "inferred": 3,
      "measured": 1,
      "derived": 3,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 375,
-     "guessed": 206,
+     "published_fit": 365,
+     "guessed": 216,
      "inferred": 3,
      "measured": 1,
      "derived": 3,
@@ -56897,16 +56900,16 @@
    },
    "global": {
     "rows": {
-     "published_fit": 358,
-     "guessed": 166,
+     "published_fit": 348,
+     "guessed": 176,
      "inferred": 49,
      "measured": 50,
      "derived": 26,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 358,
-     "guessed": 166,
+     "published_fit": 348,
+     "guessed": 176,
      "inferred": 49,
      "measured": 50,
      "derived": 26,
@@ -56969,15 +56972,15 @@
    },
    "other form only": {
     "rows": {
-     "published_fit": 30,
-     "guessed": 63,
+     "published_fit": 20,
+     "guessed": 73,
      "inferred": 12,
      "measured": 13,
      "derived": 7
     },
     "numbers": {
-     "published_fit": 218,
-     "guessed": 368,
+     "published_fit": 208,
+     "guessed": 378,
      "inferred": 13,
      "measured": 114,
      "derived": 7
@@ -57047,15 +57050,15 @@
    },
    "brain": {
     "rows": {
-     "published_fit": 256,
-     "guessed": 21,
+     "published_fit": 246,
+     "guessed": 31,
      "measured": 4,
      "inferred": 1,
      "derived": 3
     },
     "numbers": {
-     "published_fit": 7785,
-     "guessed": 8675,
+     "published_fit": 7775,
+     "guessed": 8685,
      "measured": 5861,
      "derived": 67484,
      "inferred": 6
@@ -57451,16 +57454,16 @@
    },
    "physiology": {
     "rows": {
-     "published_fit": 641,
-     "guessed": 582,
+     "published_fit": 631,
+     "guessed": 592,
      "inferred": 327,
      "derived": 36,
      "measured": 247,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 7445,
-     "guessed": 9378,
+     "published_fit": 7435,
+     "guessed": 9388,
      "derived": 3111,
      "inferred": 333,
      "measured": 357,
@@ -58257,7 +58260,7 @@
     "ok": 1753,
     "finding": 103
    },
-   "rows_read": 227,
+   "rows_read": 245,
    "quotes": {
     "none": 1037,
     "cited free text (scripted check)": 786,
@@ -58274,7 +58277,7 @@
      "406": 3,
      "403": 4
     },
-    "checked_at": "2026-11-07 04:30 CST"
+    "checked_at": "2026-11-07 04:41 CST"
    },
    "problem_kinds": {
     "no URL to open": 29,
@@ -69705,6 +69708,136 @@
     "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod"
    },
    {
+    "param_id": "c302_muscle_leak_cond_density",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "2e-06 -> 2e-06 S/cm2; published_fit -> guessed; range [6.66667e-07, 6e-06] -> [6.66667e-07, 6e-06]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_leak_erev",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "-20 -> -20 mV; published_fit -> guessed; range [-40, 0] -> [-40, 0]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_k_slow_cond_density",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "0.000458338 -> 0.000458338 S/cm2; published_fit -> guessed; range [0.000152779, 0.00137501] -> [0.000152779, 0.00137501]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_k_slow_erev",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "-30 -> -30 mV; published_fit -> guessed; range [-50, -10] -> [-50, -10]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_k_fast_cond_density",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "4.27116e-05 -> 4.27116e-05 S/cm2; published_fit -> guessed; range [1.42372e-05, 0.000128135] -> [1.42372e-05, 0.000128135]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_k_fast_erev",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "-30 -> -30 mV; published_fit -> guessed; range [-50, -10] -> [-50, -10]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_ca_boyle_cond_density",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "0.000812776 -> 0.000812776 S/cm2; published_fit -> guessed; range [0.000270925, 0.00243833] -> [0.000270925, 0.00243833]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_muscle_ca_boyle_erev",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "0 -> 0 mV; published_fit -> guessed; range [-20, 20] -> [-20, 20]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_ca_conc_decay_time_muscle",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "60.8119 -> 60.8119 ms; published_fit -> guessed; range [20.2706, 182.436] -> [20.2706, 182.436]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
+    "param_id": "c302_ca_conc_rho_muscle",
+    "kind": "relabel",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "guessed",
+    "change": "0.00223892 -> 0.00223892 mol_per_m_per_A_per_s; published_fit -> guessed; range [0.000746306, 0.00671676] -> [0.000746306, 0.00671676]",
+    "reason": "c302 published this value as a blind guess: its parameters_C2.py line tags it \"BlindGuess\" with certainty 0.1 (the row's quote). Director's decision, 7 Nov 04:39: c302's own tag wins, so guessed. Value and range unchanged",
+    "source": "published fit, c302 parameters_C2 (openworm/c302, MIT); lines 54-160 at commit d542a44 in data/worm/catalog/excerpts/c302_parameters_C2_lines.txt",
+    "url": "https://github.com/openworm/c302/blob/master/c302/parameters_C2.py"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -69849,7 +69982,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 04:19 CST",
+   "generated_at": "2026-11-07 04:30 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -70821,16 +70954,16 @@
   },
   "after_fills": {
    "rows": {
-    "published_fit": 655,
-    "guessed": 584,
+    "published_fit": 645,
+    "guessed": 594,
     "measured": 251,
     "inferred": 327,
     "derived": 38,
     "absent": 1
    },
    "numbers": {
-    "published_fit": 8184,
-    "guessed": 9380,
+    "published_fit": 8174,
+    "guessed": 9390,
     "measured": 6209,
     "derived": 67519,
     "inferred": 333,
