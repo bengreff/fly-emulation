@@ -69,7 +69,7 @@ def test_dummy_mechanism_reaches_the_brain():
     assert on["out"] == 1 and on["rel"] == {"flp-11": 0.5}
     assert abs(on["leak_ratio"] - 2.0) < 1e-9          # g_scale doubled AVBL's somatic leak
     off = _run(dict(wiring="cook", dummy_inject="off"))
-    assert off["toggle"] == "off" and off["built"] == 0 and off["out"] is None     # off: the module is not built
+    assert off["toggle"] == "off" and off["built"] == on["built"] - 1 and off["out"] is None   # off: not built
     assert on["v250"] - off["v250"] > 2.0                # 30 pA into AVBL depolarises it
 
 
