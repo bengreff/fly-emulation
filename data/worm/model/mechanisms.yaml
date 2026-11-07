@@ -341,146 +341,6 @@
   notes: 'on: c302''s generated NEURON mods (gate ODEs in exact form for the 0.5 ms step, BRAIN_PORT section 6 M2) replace BAAIWorm''s passive muscle membrane, values from these rows; reversals are fixed
     in the mods. As published the muscle is graded (rests at -28.6 mV, plateaus under current, no repetitive spikes), unlike real body-wall muscle''s Ca action potentials (Gao and Zhen 2011)'
   absent_reason: ''
-- id: sens_salt
-  name: Salt sensing (ASEL ON, ASER OFF)
-  layer: sensory
-  status: partial
-  toggle: sens_salt
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_odor_attract
-  name: Attractive odours (AWA ON; AWC OFF)
-  layer: sensory
-  status: partial
-  toggle: sens_odor_attract
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_repellent
-  name: Repellents and nociception (ASH, ADL, AWB, PHA/PHB)
-  layer: sensory
-  status: partial
-  toggle: sens_repellent
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_thermo
-  name: Thermosensation (AFD around T*)
-  layer: sensory
-  status: partial
-  toggle: sens_thermo
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_o2
-  name: Oxygen (URX/AQR/PQR rise, BAG fall)
-  layer: sensory
-  status: partial
-  toggle: sens_o2
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_co2
-  name: Carbon dioxide (BAG)
-  layer: sensory
-  status: partial
-  toggle: sens_co2
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_light
-  name: Light (LITE-1 in ASJ, ASK, ASH, AWB, ASI)
-  layer: sensory
-  status: partial
-  toggle: sens_light
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_food
-  name: Food cue at the mouth (ADF, ASI, ASJ, NSM)
-  layer: sensory
-  status: partial
-  toggle: sens_food
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_touch_gentle
-  name: Gentle touch (MEC-4 in ALM, AVM, PLM, PVM)
-  layer: sensory
-  status: partial
-  toggle: sens_touch_gentle
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_touch_harsh
-  name: Harsh and nose touch (PVD, FLP, ASH, OLQ, IL1)
-  layer: sensory
-  status: partial
-  toggle: sens_touch_harsh
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_tap
-  name: Plate tap (all touch receptor neurons)
-  layer: sensory
-  status: partial
-  toggle: sens_tap
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: sens_proprio
-  name: Proprioception (B-type stretch, DVA, SMD)
-  layer: sensory
-  status: partial
-  toggle: sens_proprio
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: muscle_ca
-  name: BWM membrane V -> Ca (lumped, passive muscles)
-  layer: muscle
-  status: partial
-  toggle: muscle_ca
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: muscle_activation
-  name: BWM Ca -> activation (Hill, rise/decay)
-  layer: muscle
-  status: partial
-  toggle: muscle_activation
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
 - id: glia
   name: Amphid sheath glia, lumped as a sensory gain
   layer: glia
@@ -488,56 +348,6 @@
   toggle: glia
   neutral: 'off'
   default: 'off'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: pharynx
-  name: Pharyngeal pumping oscillator (lumped)
-  layer: organ
-  status: partial
-  toggle: pharynx
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: defecation
-  name: Defecation motor programme clock (intestine)
-  layer: organ
-  status: partial
-  toggle: defecation
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: egg_laying
-  name: Egg-laying two-state circuit (lumped HSN/VC/vulval muscles)
-  layer: organ
-  status: partial
-  toggle: egg_laying
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: metabolism
-  name: Energy store (lumped)
-  layer: organ
-  status: partial
-  toggle: metabolism
-  neutral: 'off'
-  default: 'off'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: gcamp
-  name: GCaMP observation model
-  layer: observation
-  status: partial
-  toggle: gcamp
-  neutral: 'off'
-  default: 'on'
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
@@ -552,16 +362,16 @@
   notes: 'on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template conductance and the other way at template / gap_rect_ratio.
     Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7'
   absent_reason: ''
-- id: other_cells
-  name: Hypodermis, seam, excretory canal, coelomocytes, other glia
-  layer: organ
-  status: absent
-  toggle: ''
-  neutral: ''
-  default: ''
-  source: none
-  notes: ''
-  absent_reason: no lumped model yet; no INTERFACE channel needs them this week
+- id: ca_pool_units
+  name: Neuron bulk Ca pool fed the whole-soma Ca current (Nicoletti 2019 Eq. 28) instead of the current density
+  layer: channel
+  status: have
+  toggle: ca_pool_units
+  neutral: 'off'
+  default: total_current
+  source: src/wormemu/mech/capool.py
+  notes: registry module capool; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: receptor_kinetics
   name: 'Ionotropic receptor classes with kinetics: per-class dose-response, rise, decay, desensitization, reversal and unit conductance; classes per pair from CeNGEN, transmitter and Fenyves 2020 polarity'
   layer: synapse
@@ -661,4 +471,385 @@
   default: diffusion
   source: src/wormemu/mech/noise.py
   notes: registry module noise; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: temperature
+  name: 'Temperature: the worm''s temperature from the world field, Q10 factors on rates'
+  layer: physics
+  status: have
+  toggle: temperature
+  neutral: 'off'
+  default: q10
+  source: src/wormemu/mech/temperature.py
+  notes: registry module temperature; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_salt
+  name: 'Salt: ASER salt-OFF and ASEL salt-ON cGMP cascades (Usuyama 2012 network)'
+  layer: sensory
+  status: have
+  toggle: sens_salt
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_odor_attract
+  name: 'Attractive odours: AWC cGMP cascade (Usuyama 2012), AWA ODR-10 -> OSM-9 front end'
+  layer: sensory
+  status: have
+  toggle: sens_odor_attract
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_repellent
+  name: 'Repellents: ASH/ADL/PHA/PHB TRPV template, AWB odour-OFF cGMP cascade'
+  layer: sensory
+  status: have
+  toggle: sens_repellent
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_thermo
+  name: 'Temperature: AFD GCY-8/18/23 cGMP cascade around T*'
+  layer: sensory
+  status: have
+  toggle: sens_thermo
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_o2
+  name: 'Oxygen: URX/AQR/PQR GCY-35/36 (O2 up), BAG GCY-31/33 (O2 down) cGMP cascades'
+  layer: sensory
+  status: have
+  toggle: sens_o2
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_co2
+  name: 'Carbon dioxide: BAG GCY-9 cGMP cascade'
+  layer: sensory
+  status: have
+  toggle: sens_co2
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_light
+  name: 'Light: LITE-1 -> DAF-11/ODR-1 cGMP cascade in ASJ, ASK, ASH, AWB, ASI'
+  layer: sensory
+  status: have
+  toggle: sens_light
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_food
+  name: 'Food: NSM DEL-3/7, ADF, ASI, ASJ receptor-channel template'
+  layer: sensory
+  status: have
+  toggle: sens_food
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: awa_membrane
+  name: 'AWA membrane: calcium action potentials (Liu et al. 2018)'
+  layer: sensory
+  status: have
+  toggle: awa_membrane
+  neutral: 'off'
+  default: liu2018
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_touch_gentle
+  name: 'Gentle touch: MEC-4/MEC-10 channels in ALM, AVM, PLM, PVM (Sanzeni et al. 2019)'
+  layer: sensory
+  status: have
+  toggle: sens_touch_gentle
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_touch.py
+  notes: registry module senses_touch; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_touch_harsh
+  name: 'Harsh and nose touch: PVD, FLP (body); ASH, FLP, OLQ, IL1 (nose); Sanzeni template'
+  layer: sensory
+  status: have
+  toggle: sens_touch_harsh
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_touch.py
+  notes: registry module senses_touch; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_tap
+  name: 'Plate tap: whole-body indentation pulse to the touch receptor neurons'
+  layer: sensory
+  status: have
+  toggle: sens_tap
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_touch.py
+  notes: registry module senses_touch; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: sens_proprio
+  name: 'Proprioception: stretch channels in VB/DB (Wen 2012), DVA (TRP-4), SMD (TRP-1/2)'
+  layer: sensory
+  status: have
+  toggle: sens_proprio
+  neutral: 'off'
+  default: cascade
+  source: src/wormemu/mech/senses_proprio.py
+  notes: registry module senses_proprio; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: bwm_membrane
+  name: 'Body-wall muscle membrane: Du/Crodelle 2025 spiking HH (EGL-19, SHK-1, SLO-2, Kr, NCA, leak)'
+  layer: muscle
+  status: have
+  toggle: bwm_membrane
+  neutral: 'off'
+  default: du2025
+  source: src/wormemu/mech/muscle_bwm.py
+  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: muscle_ca
+  name: 'BWM Ca: Du 2025 Ca shell (nested: lumped sigmoid of V)'
+  layer: muscle
+  status: have
+  toggle: muscle_ca
+  neutral: 'off'
+  default: du2025
+  source: src/wormemu/mech/muscle_bwm.py
+  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: muscle_activation
+  name: 'BWM Ca -> activation: Boyle-Berri-Cohen 2012 leaky integrator (nested: rise/decay Hill)'
+  layer: muscle
+  status: have
+  toggle: muscle_activation
+  neutral: 'off'
+  default: bbc2012
+  source: src/wormemu/mech/muscle_bwm.py
+  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: bwm_gap_liu
+  name: BWM-BWM gap junctions (Cook 2019 contacts, Liu 2006 conductance)
+  layer: muscle
+  status: have
+  toggle: bwm_gap_liu
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/muscle_bwm.py
+  notes: registry module muscle_bwm; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: pharynx
+  name: 'Pharynx: Sherman & Harel 2024 muscle cells on Cook wiring, pumps from Ca (nested: lumped clock)'
+  layer: organ
+  status: have
+  toggle: pharynx
+  neutral: 'off'
+  default: sherman2024
+  source: src/wormemu/mech/organs_pharynx.py
+  notes: registry module organs_pharynx; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: defecation
+  name: 'Defecation: 20-cell intestinal IP3R (Li-Rinzel) Ca oscillator and INX-16 wave (nested: 45 s timer)'
+  layer: organ
+  status: have
+  toggle: defecation
+  neutral: 'off'
+  default: ip3r
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: pboc_protons
+  name: Intestinal H+ (PBO-4) -> PBO-5/6 cation current in the posterior body-wall muscles
+  layer: organ
+  status: have
+  toggle: pboc_protons
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: nlp40_aex2
+  name: 'Intestinal NLP-40 release into neuromod''s pool (nested direct: an AEX-2 current in AVL and DVB here)'
+  layer: organ
+  status: have
+  toggle: nlp40_aex2
+  neutral: 'off'
+  default: release_only
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: enteric_muscle
+  name: 'Enteric muscles: Du 2025 membrane, Cook gaps, DVB EXP-1 synapses, Ca -> activation'
+  layer: muscle
+  status: have
+  toggle: enteric_muscle
+  neutral: 'off'
+  default: du2025
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: egg_laying
+  name: 'Egg-laying circuit: 16 sex muscles (Du membrane, UNC-103 as Kr), Cook HSN/VC/VA/VB/VD wiring, uterine stretch, 5-HT/NLP-3 from B1''s pools, uv1 tyramine -> HSN LGC-55 (nested: two-state timer)'
+  layer: organ
+  status: have
+  toggle: egg_laying
+  neutral: 'off'
+  default: circuit
+  source: src/wormemu/mech/organs_egglaying.py
+  notes: registry module organs_egglaying; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: egg_unc103
+  name: 'UNC-103 ERG K+ in the sex muscles at the vulval density (off: the unc-103 null)'
+  layer: organ
+  status: have
+  toggle: egg_unc103
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/organs_egglaying.py
+  notes: registry module organs_egglaying; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_cells
+  name: GLR (6) and CEPsh (4) glia as passive cells with Cook's gaps to RME, CEP, RIP, ADF, ASI and the head muscles
+  layer: glia
+  status: have
+  toggle: glia_cells
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/glia.py
+  notes: registry module glia; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_kbuffer
+  name: 'Extracellular K+ at each side''s amphid endings, cleared by glial Kir4.1-type uptake; the K+ reversal shift drives the amphid neurons (nested: null = no glial uptake, fixed = no compartment)'
+  layer: glia
+  status: have
+  toggle: glia_kbuffer
+  neutral: 'off'
+  default: kir
+  source: src/wormemu/mech/glia.py
+  notes: registry module glia; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_kcc3
+  name: 'Amphid sheath KCC-3 Cl- microdomain at AFD''s ending; Cl- inhibits GCY-8: out[''afd_gc_scale''] (nested: null = kcc-3, fixed = scale 1)'
+  layer: glia
+  status: have
+  toggle: glia_kcc3
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/glia.py
+  notes: registry module glia; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: other_cells
+  name: Hypodermis, head mesodermal cell, excretory cell and gland as passive cells with Cook's gaps
+  layer: organ
+  status: have
+  toggle: other_cells
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/organs_other.py
+  notes: registry module organs_other; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: excretory_osmo
+  name: 'Body fluid volume and pressure: osmotic water influx against pressure, the excretory canal removing it at a setpoint; out[''pressure_kPa''] (nested: null = canal ablated, fixed = constant)'
+  layer: organ
+  status: have
+  toggle: excretory_osmo
+  neutral: 'off'
+  default: canal
+  source: src/wormemu/mech/organs_other.py
+  notes: registry module organs_other; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: coelomocytes
+  name: 'Six coelomocytes'' fluid-phase uptake as the pseudocoelom''s clearance; out[''coelomocyte_uptake_per_s''] (nested: null = cup, off = neuromod''s placeholder)'
+  layer: organ
+  status: have
+  toggle: coelomocytes
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/organs_other.py
+  notes: registry module organs_other; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: na_k_pump
+  name: 'Na/K-ATPase per neuron and muscle (Luo-Rudy 1994 form): activity-driven Na+ load, pump current from rest, ATP cost to metabolism (nested: rest, null = ouabain)'
+  layer: membrane
+  status: have
+  toggle: na_k_pump
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/pumps.py
+  notes: registry module pumps; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: metabolism
+  name: 'Dynamic Energy Budget (AmP C. elegans abj: reserve, structure, maturity, reproduction buffer), fed by pharyngeal pumping; out[''energy_state''], out[''egg_production_per_h''] (nested: std, store
+    = the lumped layer)'
+  layer: organ
+  status: have
+  toggle: metabolism
+  neutral: 'off'
+  default: deb
+  source: src/wormemu/mech/metabolism.py
+  notes: registry module metabolism; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: met_feeding
+  name: 'DEB feeding: scaled functional response from pumps x food (nested: food only, fixed)'
+  layer: organ
+  status: have
+  toggle: met_feeding
+  neutral: 'off'
+  default: pumps
+  source: src/wormemu/mech/metabolism.py
+  notes: registry module metabolism; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: gcamp
+  name: 'GCaMP observation: cooperative Ca binding with first-order kinetics, per indicator variant'
+  layer: observation
+  status: have
+  toggle: gcamp
+  neutral: 'off'
+  default: gcamp6s
+  source: src/wormemu/mech/observation.py
+  notes: registry module observation; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: opto_gur3
+  name: Optogenetic actuator GUR-3/PRDX-2 (Randi 2023), targeted light on a schedule
+  layer: observation
+  status: have
+  toggle: opto_gur3
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/observation.py
+  notes: registry module observation; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: neuropal
+  name: NeuroPAL identity uncertainty (unlabelled, wrong-neighbour labels)
+  layer: observation
+  status: have
+  toggle: neuropal
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/observation.py
+  notes: registry module observation; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: gait_features
+  name: Tierpsy-style gait features of the recorded midline (offline readout, gait_features())
+  layer: observation
+  status: have
+  toggle: gait_features
+  neutral: 'off'
+  default: tierpsy
+  source: src/wormemu/mech/observation.py
+  notes: registry module observation; PLAN row guessed from the name by the catalog
   absent_reason: ''

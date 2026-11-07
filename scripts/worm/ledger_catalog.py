@@ -245,7 +245,7 @@ PAPERS = [
     (r"Thomas 1990", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1203977/"),
     (r"Collins.{0,20}2016", "https://pmc.ncbi.nlm.nih.gov/articles/PMC5142809/"),
     (r"Waggoner.{0,40}1998", "https://doi.org/10.1016/s0896-6273(00)80527-9"),
-    (r"Goodman, Hall, Avery & Lockery 1998", "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"),
+    (r"Goodman, Hall, Avery & Lockery 1998|Goodman( et al\.?)? 1998", "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"),
     (r"L'Etoile.{0,20}2002", "https://doi.org/10.1016/s0896-6273(02)01066-8"),
     (r"Chen et al\. 2013", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"),
     (r"Chalasani.{0,20}2007", "https://doi.org/10.1038/nature06292"),
@@ -256,7 +256,7 @@ PAPERS = [
     (r"Liu et al\. 2017", "https://pmc.ncbi.nlm.nih.gov/articles/PMC5364397/"),
     (r"Liu et al\. 2013", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3793928/"),
     (r"Wicks.{0,30}1996", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6578605/"),
-    (r"Boyle, Berri & Cohen 2012", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/"),
+    (r"Boyle, Berri.{0,6}Cohen 2012", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3296079/"),
     (r"Fang-Yen.{0,20}2010", "https://pmc.ncbi.nlm.nih.gov/articles/PMC2996704/"),
     (r"Fenyves", "https://pmc.ncbi.nlm.nih.gov/articles/PMC7785220/"),
     (r"CeNGEN|Taylor et al\. 2021", "https://doi.org/10.1016/j.cell.2021.06.023"),
@@ -277,6 +277,34 @@ PAPERS = [
     (r"Mellem et al\.? 2002", "https://doi.org/10.1016/s0896-6273(02)01088-7"),
     (r"Rayes et al\.? 2007", "https://doi.org/10.1124/mol.106.033514"),
     (r"surface tension|standard tables \(water, 20-35 C\)", "https://iapws.org/technical-guidance/release/Surf-H2O"),
+    # the night modules' citations (merge 1, 6 Nov): each checked on Europe PMC (PMC id or DOI) before adding
+    (r"Usuyama et al\.? 2012", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3426523/"),
+    (r"Sherman (and|&) Harel 2024", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10873627/"),
+    (r"Du, Crodelle", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11781704/"),
+    (r"Sanzeni et al\.? 2019", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/"),
+    (r"AmP (Caenorhabditis_elegans|C\. elegans)", "https://www.bio.vu.nl/thb/deb/deblab/add_my_pet/entries_web/"
+     "Caenorhabditis_elegans/Caenorhabditis_elegans_res.html"),
+    (r"Luo (and|&) Rudy 1994", "https://doi.org/10.1161/01.res.74.6.1071"),
+    (r"Iwasaki, Liu (and|&) Thomas 1995", "https://pmc.ncbi.nlm.nih.gov/articles/PMC40787/"),
+    (r"Komatsu et al\.? 1996", "https://doi.org/10.1016/s0896-6273(00)80202-0"),
+    (r"Bretscher et al\.? 2011", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3115024/"),
+    (r"Edwards et al\.? 2008", "https://pmc.ncbi.nlm.nih.gov/articles/PMC2494560/"),
+    (r"Hilliard( et al\.?)? 2005", "https://pmc.ncbi.nlm.nih.gov/articles/PMC544906/"),
+    (r"Larsch( et al\.?)? 2015", "https://pmc.ncbi.nlm.nih.gov/articles/PMC5045890/"),
+    (r"Hilliard et al\.? 2002", "https://doi.org/10.1016/s0960-9822(02)00813-8"),
+    (r"Chalfie (and|&) Sulston 1981", "https://doi.org/10.1016/0012-1606(81)90459-0"),
+    (r"Albeg et al\.? 2011", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3018541/"),
+    (r"TRP-4, Li et al\.? 2006", "https://pmc.ncbi.nlm.nih.gov/articles/PMC2865900/"),
+    (r"Yeon et al\.? 2018", "https://pmc.ncbi.nlm.nih.gov/articles/PMC6010301/"),
+    (r"281:7881", "https://doi.org/10.1074/jbc.m512382200"),
+    (r"Shtonda (and|&) Avery 2005 J Exp Biol 208:2177", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1351090/"),
+    (r"Dent et al\.? 1997", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1170218/"),
+    (r"Hobson et al\.? 2006", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1456143/"),
+    (r"Collins (and|&) Koelle 2013", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3542984/"),
+    (r"Fares (and|&) Greenwald 2001", "https://pmc.ncbi.nlm.nih.gov/articles/PMC1461804/"),
+    (r"Gnaiger 1983", "https://doi.org/10.1007/978-3-642-81863-9_30"),
+    (r"Zhang et al\.? 2023 Nature 615", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/"),
+    (r"Bhatla (and|&) Horvitz 2015", "https://pmc.ncbi.nlm.nih.gov/articles/PMC4408612/"),
 ]
 
 
@@ -392,11 +420,11 @@ CITE = re.compile(r"((et al\.?|[A-Z][A-Za-z-]+ (and|&) [A-Z][A-Za-z-]+|[A-Z][A-Z
                   r"doi|https?://|WormAtlas|WormBook|CeNGEN|Cook et al|Fenyves|Wang et al|AmP|BAAIWorm|c302|NASA|NOAA|NIST")
 NOT_A_CITATION = re.compile(r"guess|template guess|placeholder|assumed", re.I)
 STRUCTURE = ("morph_", "wire_")
-# solver and mesh settings and the keyframe driver's own constants: no biological range applies; what they need is a
-# convergence or sensitivity check, not a citation
+# solver and mesh settings, the keyframe driver's own constants and the modules' update windows: no biological range
+# applies; what they need is a convergence or sensitivity check, not a citation
 NUMERICS = {"mw_dt", "mw_iterations", "mw_convergence_eps", "mw_control_hz", "mw_n_vertices", "mw_n_tets",
             "mw_n_surface_triangles", "mw_mesh_scale", "mw_drag_force_cap", "mw_damping_per_step", "mw_key_gain",
-            "mw_key_transport_alpha"}
+            "mw_key_transport_alpha", "pump_v0_ms", "met_step_s"}
 # an audit note whose action starts with one of these explains the row's remaining problems: the row is a documented
 # finding (kept on purpose, or waiting for the code's owner), not an unexplained problem; an "owner" note makes the
 # row a finding even when the scripted checks pass. "fixed" and "read" (read against the source, nothing wrong) only
@@ -472,7 +500,7 @@ def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
             p.append("no range")
     elif not np.isnan(v) and not lo <= v <= hi:
         p.append(f"template {v:g} outside [{lo:g}, {hi:g}]")
-    elif lo == hi and not str(r["unit"]).startswith("count"):
+    elif lo == hi and not str(r["unit"]).startswith(("count", "cells", "flag")):  # a cell count or a yes/no fact
         p.append("range is one point: the source's spread was not recorded")
     if not np.isnan(lo) and r["bound_basis"] in ("measured_this_class", "measured_related") and \
             not CITE.search(str(r["bound_source"])):
