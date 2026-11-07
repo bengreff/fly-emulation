@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 02:57 CST",
+ "generated_at": "2026-11-07 03:04 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9303,
-   "inferred": 337,
+   "guessed": 9304,
+   "inferred": 336,
    "measured": 6184,
    "published_fit": 8103
   },
-  "known": 82134,
-  "placeholder": 9303,
+  "known": 82133,
+  "placeholder": 9304,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9303
+  "must_fill": 9304
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9303,
+   "guessed": 9304,
    "derived": 3102,
-   "inferred": 337,
+   "inferred": 336,
    "measured": 332
   },
-  "known": 11147,
-  "placeholder": 9303,
+  "known": 11146,
+  "placeholder": 9304,
   "gap": 0,
-  "must_fill": 9303
+  "must_fill": 9304
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3827,
-    "inferred (ours)": 310,
+    "guessed": 3828,
+    "inferred (ours)": 309,
     "measured": 1
    },
    "c302": {
@@ -82,8 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3827,
-    "inferred (ours)": 310,
+    "guessed": 3828,
+    "inferred (ours)": 309,
     "measured": 1
    },
    "c302": {
@@ -138,8 +138,8 @@
   },
   "global": {
    "derived": 17,
-   "guessed": 139,
-   "inferred": 45,
+   "guessed": 140,
+   "inferred": 44,
    "measured": 31,
    "published_fit": 277
   },
@@ -1606,8 +1606,7 @@
    "absent_reason": "",
    "numbers": 4,
    "by_label": {
-    "guessed": 3,
-    "inferred": 1
+    "guessed": 4
    }
   },
   {
@@ -41205,11 +41204,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 4.5 ms, label derived, range [1, 20]; quote added for the radius input (Sanzeni et al. 2019, Fig. 1 legend)",
    "plan_row": 25,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "a cylinder of length L \u2243 1 mm and radius R + t / 2 \u2243 25 \u03bcm",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -47589,11 +47588,11 @@
    "unit": "mV",
    "n_values": 1,
    "value_template": 0.0,
-   "template_source": "nonselective cation channel (TRP-4, Li et al. 2006)",
+   "template_source": "nonselective cation channel (TRP-4, a TRPN homolog; Li, Feng, Sternberg & Xu 2006 Nature 440:684, PMC2865900)",
    "bio_min": -10.0,
    "bio_max": 20.0,
    "bound_basis": "measured_related",
-   "bound_source": "nonselective cation channel (TRP-4, Li et al. 2006)",
+   "bound_source": "nonselective cation channel (TRP-4, a TRPN homolog; Li, Feng, Sternberg & Xu 2006 Nature 440:684, PMC2865900)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -47605,11 +47604,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0 mV, label inferred, range [-10, 20]; quote added; authors named",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2865900/",
-   "source_quote": "",
+   "source_quote": "Transient receptor potential (TRP) proteins represent a superfamily of cation channels that are conserved from worms to humans",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -51861,11 +51860,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "non-selective cation channel; reversal not given; inferred",
+   "notes": "non-selective cation channel; reversal not given; inferred; source 6 Nov (catalog audit): was 0 mV, label inferred, range [-10, 10]; quote added: a cation channel, so a reversal near 0 mV (inferred; the paper gives no reversal)",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2258244/",
-   "source_quote": "",
+   "source_quote": "The pbo-5 and pbo-6 genes encode subunits of a \u2018cys-loop\u2019 proton-gated cation channel required for muscles to respond to acidification",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -53557,11 +53556,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the syncytium's outer face only (apical and basal folds would add more); source 6 Nov (catalog audit): was 160000 um2, label derived, range [50000, 400000]; names the sources of the two lengths: 2 x pi x 25 um x 1000 um = 157,080 um2, about 1.6e5 (derived)",
+   "notes": "the syncytium's outer face only (apical and basal folds would add more); source 6 Nov (catalog audit): was 160000 um2, label derived, range [50000, 400000]; names the sources of the two lengths: 2 x pi x 25 um x 1000 um = 157,080 um2, about 1.6e5 (derived); source 6 Nov (catalog audit): was 160000 um2, label derived, range [50000, 400000]; quote added for the radius and length inputs (Sanzeni et al. 2019, Fig. 1 legend)",
    "plan_row": 16,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_quote": "a cylinder of length L \u2243 1 mm and radius R + t / 2 \u2243 25 \u03bcm",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -53925,11 +53924,11 @@
    "unit": "cells",
    "n_values": 1,
    "value_template": 6.0,
-   "template_source": "WormAtlas; Fares & Greenwald 2001 Genetics 159:133",
+   "template_source": "WormAtlas; Fares & Greenwald 2001 Genetics 159:133 (PMC1461804, whose free text is the abstract); the count as stated by Buis, Bellemin, Goudeau, Monnier, Loiseau, Guillou & Aguilaniu 2019 Cell Rep 28:1041 (PMC6667774)",
    "bio_min": 6.0,
    "bio_max": 6.0,
    "bound_basis": "measured_related",
-   "bound_source": "WormAtlas; Fares & Greenwald 2001 Genetics 159:133",
+   "bound_source": "WormAtlas; Fares & Greenwald 2001 Genetics 159:133 (PMC1461804, whose free text is the abstract); the count as stated by Buis, Bellemin, Goudeau, Monnier, Loiseau, Guillou & Aguilaniu 2019 Cell Rep 28:1041 (PMC6667774)",
    "bound_verified": "unverified",
    "prior_dist": "fixed",
    "prior_a": "",
@@ -53941,11 +53940,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 6 cells, label measured, range [6, 6]; quote added (a free paper that states the count and cites Fares & Greenwald 2001)",
    "plan_row": 16,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1461804/",
-   "source_quote": "",
+   "source_quote": "LIPL-5::tdTOMATO fluorescence was only detected in the six coelomocytes of C. elegans",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -55333,11 +55332,11 @@
    "unit": "Hz",
    "n_values": 1,
    "value_template": 4.2,
-   "template_source": "~250 pumps/min on food (Avery & Horvitz 1990; Raizen et al. 1995)",
+   "template_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995); modal pump frequency about 4 Hz in wild type on food by microfluidic EPG (Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology, PMC7255876)",
    "bio_min": 3.0,
    "bio_max": 5.0,
    "bound_basis": "measured_related",
-   "bound_source": "~250 pumps/min on food (Avery & Horvitz 1990; Raizen et al. 1995)",
+   "bound_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995); modal pump frequency about 4 Hz in wild type on food by microfluidic EPG (Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology, PMC7255876)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -55349,11 +55348,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "pump rate that gives f = 1 at saturating food",
+   "notes": "pump rate that gives f = 1 at saturating food; source 6 Nov (catalog audit): was 4.2 Hz, label measured, range [3, 5]; free source and quote; value unchanged (250/min = 4.17 Hz, derived)",
    "plan_row": 20,
    "used_by_code": "yes",
-   "source_url": "https://doi.org/10.1002/jez.1402530305",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/",
+   "source_quote": "the normal modal pump frequency of ~4 Hz",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56037,28 +56036,28 @@
    "unit": "mV",
    "n_values": 1,
    "value_template": 0.0,
-   "template_source": "non-selective cation channel (GUR-3, gustatory-receptor family; Bhatla & Horvitz 2015 Neuron 85:804)",
+   "template_source": "GUR-3/PRDX-2 is the pan-neuronal purple-light actuator of Randi, Sharma, Dvali & Leifer 2023 Nature 623:406 (PMC10632145); light raises Ca in the neurons that carry it (also Bhatla & Horvitz 2015 Neuron 85:804, PMC4408612, I2). Neither paper gives its ion selectivity or calls it a cation channel; 0 mV treats it as a non-selective cation conductance",
    "bio_min": -10.0,
    "bio_max": 10.0,
-   "bound_basis": "measured_related",
-   "bound_source": "non-selective cation channel (GUR-3, gustatory-receptor family; Bhatla & Horvitz 2015 Neuron 85:804)",
+   "bound_basis": "guessed",
+   "bound_source": "GUR-3/PRDX-2 is the pan-neuronal purple-light actuator of Randi, Sharma, Dvali & Leifer 2023 Nature 623:406 (PMC10632145); light raises Ca in the neurons that carry it (also Bhatla & Horvitz 2015 Neuron 85:804, PMC4408612, I2). Neither paper gives its ion selectivity or calls it a cation channel; 0 mV treats it as a non-selective cation conductance",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0 mV, label inferred, range [-10, 10]; the source text said 'non-selective cation channel' citing Bhatla & Horvitz 2015, which does not say so; relabel 6 Nov (catalog audit): was 0 mV, label inferred, range [-10, 10]; inferred -> guessed: the actuator excites neurons (measured), but its reversal potential rests on no measurement or stated selectivity (value 0 mV unchanged; owner B3); range 6 Nov (catalog audit): was 0 mV, label guessed, range [-10, 10]; the range [-10, 10] mV assumes a cation conductance; guessed",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4408612/",
-   "source_quote": "",
-   "audit": "ok",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10632145/",
+   "source_quote": "which expresses a purple-light actuator, GUR-3/PRDX-2 (refs. 24 , 25 ) and a nuclear-localized calcium indicator GCaMP6s",
+   "audit": "labelled inferred with the source text 'non-selective cation channel (GUR-3 ...; Bhatla & Horvitz 2015)', but neither Bhatla & Horvitz 2015 (PMC4408612) nor Randi et al. 2023 (PMC10632145) gives GUR-3/PRDX-2's ion selectivity; both show only that light excites the neurons that carry it [owner: B3 (observation.py:84, the Spec text names a selectivity no source gives; this row feeds the Randi 2023 fit). Catalog: source and quote fixed, inferred -> guessed, value 0 mV and range unchanged]",
    "kind": "physiology"
   },
   {
@@ -56357,18 +56356,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 573,
+    "guessed": 574,
     "measured": 254,
-    "inferred": 335,
+    "inferred": 334,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9369,
+    "guessed": 9370,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 341,
+    "inferred": 340,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56376,18 +56375,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 573,
+   "guessed": 574,
    "measured": 254,
-   "inferred": 335,
+   "inferred": 334,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9369,
+   "guessed": 9370,
    "measured": 6212,
    "derived": 67520,
-   "inferred": 341,
+   "inferred": 340,
    "absent": 1
   },
   "by_plan_row": {
@@ -56724,15 +56723,15 @@
    "23": {
     "rows": {
      "measured": 13,
-     "inferred": 7,
+     "inferred": 6,
      "derived": 3,
-     "guessed": 9
+     "guessed": 10
     },
     "numbers": {
      "measured": 13,
-     "inferred": 7,
+     "inferred": 6,
      "derived": 3,
-     "guessed": 9
+     "guessed": 10
     },
     "n_rows": 32,
     "n_numbers": 32
@@ -56905,16 +56904,16 @@
    "global": {
     "rows": {
      "published_fit": 357,
-     "guessed": 163,
-     "inferred": 49,
+     "guessed": 164,
+     "inferred": 48,
      "measured": 53,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
-     "guessed": 163,
-     "inferred": 49,
+     "guessed": 164,
+     "inferred": 48,
      "measured": 53,
      "derived": 27,
      "absent": 1
@@ -57015,17 +57014,17 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 477,
+     "guessed": 478,
      "measured": 217,
-     "inferred": 320,
+     "inferred": 319,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8942,
+     "guessed": 8943,
      "measured": 6074,
      "derived": 67509,
-     "inferred": 325
+     "inferred": 324
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57218,14 +57217,14 @@
     "rows": {
      "measured": 9,
      "derived": 2,
-     "guessed": 7,
-     "inferred": 5
+     "guessed": 8,
+     "inferred": 4
     },
     "numbers": {
      "measured": 9,
      "derived": 2,
-     "guessed": 7,
-     "inferred": 5
+     "guessed": 8,
+     "inferred": 4
     },
     "n_rows": 23,
     "n_numbers": 23
@@ -57463,17 +57462,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 572,
-     "inferred": 335,
+     "guessed": 573,
+     "inferred": 334,
      "derived": 36,
      "measured": 250,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9368,
+     "guessed": 9369,
      "derived": 3111,
-     "inferred": 341,
+     "inferred": 340,
      "measured": 360,
      "absent": 1
     },
@@ -58262,28 +58261,28 @@
    }
   ],
   "audit": {
-   "rows_ok": 1762,
-   "rows_with_problems": 94,
+   "rows_ok": 1761,
+   "rows_with_problems": 95,
    "by_status": {
-    "ok": 1762,
-    "finding": 94
+    "ok": 1761,
+    "finding": 95
    },
-   "rows_read": 210,
+   "rows_read": 211,
    "quotes": {
-    "none": 1525,
-    "cited free text (scripted check)": 287,
+    "none": 1516,
+    "cited free text (scripted check)": 296,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
    "with_url": 1508,
    "links": {
-    "distinct": 165,
+    "distinct": 164,
     "by_status": {
-     "200": 154,
+     "200": 153,
      "203": 1,
      "406": 4,
-     "unchecked": 1,
-     "403": 5
+     "unchecked": 2,
+     "403": 4
     },
     "checked_at": "2026-11-07 02:30 CST"
    },
@@ -58334,6 +58333,7 @@
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
     "inferred, no paper named": 1,
     "labelled derived without a citation": 1,
+    "labelled inferred with the source text 'non-selective cation channel (GUR# ...; Bhatla & H": 1,
     "# sim units against a range in metres (# sim unit = # mm by the mesh)": 1,
     "# sits below the cited soft-tissue range": 1,
     "# segments against # body-wall muscles (Cook #)": 1,
@@ -62465,6 +62465,149 @@
     "url": ""
    },
    {
+    "param_id": "met_pump_max_hz",
+    "kind": "source",
+    "origin": "mech:metabolism",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "4.2 -> 4.2 Hz; measured -> measured; range [3, 5] -> [3, 5]",
+    "reason": "free source and quote; value unchanged (250/min = 4.17 Hz, derived)",
+    "source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995); modal pump frequency about 4 Hz in wild type on food by microfluidic EPG (Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology, PMC7255876)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/"
+   },
+   {
+    "param_id": "cc_count",
+    "kind": "source",
+    "origin": "mech:organs_other",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "6 -> 6 cells; measured -> measured; range [6, 6] -> [6, 6]",
+    "reason": "quote added (a free paper that states the count and cites Fares & Greenwald 2001)",
+    "source": "WormAtlas; Fares & Greenwald 2001 Genetics 159:133 (PMC1461804, whose free text is the abstract); the count as stated by Buis, Bellemin, Goudeau, Monnier, Loiseau, Guillou & Aguilaniu 2019 Cell Rep 28:1041 (PMC6667774)",
+    "url": ""
+   },
+   {
+    "param_id": "temp_tau_ms",
+    "kind": "source",
+    "origin": "mech:temperature",
+    "n": 1,
+    "pattern": "",
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "4.5 -> 4.5 ms; derived -> derived; range [1, 20] -> [1, 20]",
+    "reason": "quote added for the radius input (Sanzeni et al. 2019, Fig. 1 legend)",
+    "source": "r^2 / alpha with r 25 um (Sanzeni et al. 2019 Fig 1) and alpha 0.14 mm^2/s (water)",
+    "url": ""
+   },
+   {
+    "param_id": "other_area_hyp_um2",
+    "kind": "source",
+    "origin": "mech:organs_other",
+    "n": 1,
+    "pattern": "",
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "160000 -> 160000 um2; derived -> derived; range [50000, 400000] -> [50000, 400000]",
+    "reason": "quote added for the radius and length inputs (Sanzeni et al. 2019, Fig. 1 legend)",
+    "source": "derived: 2 pi r L with r = 25 um (Sanzeni et al. 2019 eLife 8:e43226 Fig 1, adult radius) and L = 1 mm (adult hermaphrodite length, WormAtlas)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/"
+   },
+   {
+    "param_id": "mw_agar_Ct",
+    "kind": "source",
+    "origin": "body",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "3.2 -> 3.2 Pa s; inferred -> inferred; range [1, 10] -> [1, 10]",
+    "reason": "quote added; 3.2e-3 kg/s for a 1 mm worm is 3.2 Pa s per unit length (derived)",
+    "source": "Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
+    "url": ""
+   },
+   {
+    "param_id": "mw_agar_Cn",
+    "kind": "source",
+    "origin": "body",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "128 -> 128 Pa s; inferred -> inferred; range [14, 352] -> [14, 352]",
+    "reason": "quote added; 128e-3 kg/s for a 1 mm worm is 128 Pa s per unit length (derived)",
+    "source": "Boyle, Berri & Cohen 2012 Front Comput Neurosci 6:10 (PMC3296079)",
+    "url": ""
+   },
+   {
+    "param_id": "obs_opto_e_mV",
+    "kind": "source",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0 -> 0 mV; inferred -> inferred; range [-10, 10] -> [-10, 10]",
+    "reason": "the source text said 'non-selective cation channel' citing Bhatla & Horvitz 2015, which does not say so",
+    "source": "GUR-3/PRDX-2 is the pan-neuronal purple-light actuator of Randi, Sharma, Dvali & Leifer 2023 Nature 623:406 (PMC10632145); light raises Ca in the neurons that carry it (also Bhatla & Horvitz 2015 Neuron 85:804, PMC4408612, I2). Neither paper gives its ion selectivity or calls it a cation channel; 0 mV treats it as a non-selective cation conductance",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10632145/"
+   },
+   {
+    "param_id": "obs_opto_e_mV",
+    "kind": "relabel",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "0 -> 0 mV; inferred -> guessed; range [-10, 10] -> [-10, 10]",
+    "reason": "inferred -> guessed: the actuator excites neurons (measured), but its reversal potential rests on no measurement or stated selectivity (value 0 mV unchanged; owner B3)",
+    "source": "GUR-3/PRDX-2 is the pan-neuronal purple-light actuator of Randi, Sharma, Dvali & Leifer 2023 Nature 623:406 (PMC10632145); light raises Ca in the neurons that carry it (also Bhatla & Horvitz 2015 Neuron 85:804, PMC4408612, I2). Neither paper gives its ion selectivity or calls it a cation channel; 0 mV treats it as a non-selective cation conductance",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10632145/"
+   },
+   {
+    "param_id": "obs_opto_e_mV",
+    "kind": "range",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0 -> 0 mV; guessed -> guessed; range [-10, 10] -> [-10, 10]",
+    "reason": "the range [-10, 10] mV assumes a cation conductance; guessed",
+    "source": "GUR-3/PRDX-2 is the pan-neuronal purple-light actuator of Randi, Sharma, Dvali & Leifer 2023 Nature 623:406 (PMC10632145); light raises Ca in the neurons that carry it (also Bhatla & Horvitz 2015 Neuron 85:804, PMC4408612, I2). Neither paper gives its ion selectivity or calls it a cation channel; 0 mV treats it as a non-selective cation conductance",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10632145/"
+   },
+   {
+    "param_id": "pbo5_erev_mV",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0 -> 0 mV; inferred -> inferred; range [-10, 10] -> [-10, 10]",
+    "reason": "quote added: a cation channel, so a reversal near 0 mV (inferred; the paper gives no reversal)",
+    "source": "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)",
+    "url": ""
+   },
+   {
+    "param_id": "proprio_E_mV",
+    "kind": "source",
+    "origin": "mech:senses_proprio",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0 -> 0 mV; inferred -> inferred; range [-10, 20] -> [-10, 20]",
+    "reason": "quote added; authors named",
+    "source": "nonselective cation channel (TRP-4, a TRPN homolog; Li, Feng, Sternberg & Xu 2006 Nature 440:684, PMC2865900)",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -62609,7 +62752,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 02:49 CST",
+   "generated_at": "2026-11-07 02:57 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -63582,18 +63725,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 573,
+    "guessed": 574,
     "measured": 254,
-    "inferred": 335,
+    "inferred": 334,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9369,
+    "guessed": 9370,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 341,
+    "inferred": 340,
     "absent": 1
    }
   }
