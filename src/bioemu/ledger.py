@@ -55,10 +55,10 @@ PARAM_COLUMNS = [
 ]
 # the hard bounds (what physics and chemistry forbid; scripts/worm/ranges): optional columns, checked when present
 HARD_COLUMNS = ["hard_min", "hard_max", "hard_class", "hard_basis", "hard_source", "bound_basis_detail",
-                "span_decades", "span_reason", "fit_role"]
+                "span_decades", "span_reason", "fit_role", "n_unknown"]
 USED_BY_CODE = {"yes", "slot only", "other form only"}
 NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b", "plan_row", "hard_min",
-           "hard_max", "span_decades")
+           "hard_max", "span_decades", "n_unknown")
 
 
 @dataclass

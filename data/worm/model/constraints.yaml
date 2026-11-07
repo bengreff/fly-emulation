@@ -1,0 +1,3110 @@
+generated_by: scripts/worm/build_ledger.py via scripts/worm/ranges/joint.py (wranges, 7 Nov 2026)
+how_to_check: from joint import check; check(spec.values, led) -> [] when every constraint holds (spec = wormemu.brain.sample_worm(seed); run with scripts/worm/ranges on sys.path)
+strengths: 'hard: physics or definition, a fitter must never leave it; prior: a measured range, a fitter pays to leave it'
+n_constraints: 177
+constraints:
+- id: reversal_leak_between_EK_ENa
+  kind: between
+  lo:
+  - ion_ek
+  hi:
+  - ion_ena
+  x:
+  - pas_soma_epas
+  - pas_neurite_epas
+  - mpas_epas
+  - glia_e_leak_mV
+  - other_e_leak_mV
+  - sens_glia_e_leak_mV
+  - endo_e_leak_mV
+  statement: E_K < E_leak < E_Na in every neuron, muscle, glia and other cell
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14); the leak is K, Na and Cl (NCA, TWK, Cl leak), and E_Cl lies between E_K and E_Na'
+  check: 'elementwise: max(lo) < x < min(hi) for every element of every x row'
+  applies_when: always
+- id: reversal_cation_between_EK_ENa
+  kind: between
+  lo:
+  - ion_ek
+  hi:
+  - ion_ena
+  x:
+  - syn_exc_erev
+  - rec_lacr_erev_mV
+  - rec_acr16_erev_mV
+  - rec_nachr_erev_mV
+  - rec_glr_erev_mV
+  - rec_nmr_erev_mV
+  - rec_gabacat_erev_mV
+  - rec_acr23_erev_mV
+  - sens_cng_E_mV
+  - sens_trpv_E_mV
+  - met_E_mV
+  - proprio_E_mV
+  - pbo5_erev_mV
+  - egg_cation_erev_mV
+  - obs_opto_e_mV
+  statement: every non-selective cation channel (ACh, Glu, GABA-cation receptors, CNG, TRPV, MEC, opsin) reverses between E_K and E_Na
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14)'
+  check: max(lo) < x < min(hi)
+  applies_when: always
+- id: reversal_Cl_above_EK
+  kind: between
+  lo:
+  - ion_ek
+  hi:
+  - ion_ena
+  x:
+  - syn_inh_erev
+  - rec_acc_erev_mV
+  - rec_glucl_erev_mV
+  - rec_gabacl_erev_mV
+  - rec_mod1_erev_mV
+  - rec_lgc55_erev_mV
+  - rec_lgc53_erev_mV
+  statement: E_K <= E_Cl < E_Na for every Cl channel and the inhibitory synapse
+  strength: hard
+  basis: physics
+  source: Cl- is extruded by K-Cl cotransport (KCC-2 in C. elegans neurons, Tanis et al. 2009 J Neurosci 29:9943), which cannot push E_Cl below E_K (Payne et al. 2003 Trends Neurosci 26:199); no primary-active
+    Cl pump is known in C. elegans neurons
+  check: max(lo) <= x < min(hi)
+  inclusive_lo: true
+  applies_when: always
+- id: reversal_order_c302_muscle
+  kind: between
+  lo:
+  - c302_muscle_k_slow_erev
+  - c302_muscle_k_fast_erev
+  hi:
+  - c302_muscle_ca_boyle_erev
+  x:
+  - c302_muscle_leak_erev
+  statement: 'c302_muscle: E_K < E_leak < E_Ca within its own model'
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14)'
+  check: max(lo) < x < min(hi)
+  applies_when: always
+- id: reversal_order_bwm_du
+  kind: between
+  lo:
+  - bwm_du_ek_mV
+  hi:
+  - bwm_du_ena_mV
+  x:
+  - bwm_du_el_mV
+  statement: 'bwm_du: E_K < E_leak < E_Na within its own model'
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14)'
+  check: max(lo) < x < min(hi)
+  applies_when: always
+- id: reversal_order_ph_sh
+  kind: between
+  lo:
+  - ph_sh_v_k
+  hi:
+  - ph_sh_v_na
+  x:
+  - ph_sh_v_l
+  statement: 'ph_sh: E_K < E_leak < E_Na within its own model'
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14)'
+  check: max(lo) < x < min(hi)
+  applies_when: always
+- id: reversal_order_awa_liu
+  kind: between
+  lo:
+  - awa_liu_vK
+  hi:
+  - awa_liu_vCa
+  x:
+  - awa_liu_vL
+  statement: 'awa_liu: E_K < E_leak < E_Ca within its own model'
+  strength: hard
+  basis: physics
+  source: 'Goldman-Hodgkin-Katz: a current through channels permeable to several ions reverses between the most negative and the most positive reversal of the ions it carries (Hille 2001, Ion Channels of
+    Excitable Membranes, 3rd ed., ch. 14)'
+  check: max(lo) < x < min(hi)
+  applies_when: always
+- id: tau_rise_lt_decay_gcamp
+  kind: less
+  a: gcamp_tau_rise_ms
+  b: gcamp_tau_decay_ms
+  statement: gcamp_tau_rise_ms < gcamp_tau_decay_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_mact
+  kind: less
+  a: mact_tau_rise_ms
+  b: mact_tau_decay_ms
+  statement: mact_tau_rise_ms < mact_tau_decay_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_acc
+  kind: less
+  a: rec_acc_tau_rise_ms
+  b: rec_acc_tau_off_ms
+  statement: rec_acc_tau_rise_ms < rec_acc_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_acr16
+  kind: less
+  a: rec_acr16_tau_rise_ms
+  b: rec_acr16_tau_off_ms
+  statement: rec_acr16_tau_rise_ms < rec_acr16_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_acr23
+  kind: less
+  a: rec_acr23_tau_rise_ms
+  b: rec_acr23_tau_off_ms
+  statement: rec_acr23_tau_rise_ms < rec_acr23_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_gabacat
+  kind: less
+  a: rec_gabacat_tau_rise_ms
+  b: rec_gabacat_tau_off_ms
+  statement: rec_gabacat_tau_rise_ms < rec_gabacat_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_gabacl
+  kind: less
+  a: rec_gabacl_tau_rise_ms
+  b: rec_gabacl_tau_off_ms
+  statement: rec_gabacl_tau_rise_ms < rec_gabacl_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_glr
+  kind: less
+  a: rec_glr_tau_rise_ms
+  b: rec_glr_tau_off_ms
+  statement: rec_glr_tau_rise_ms < rec_glr_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_glucl
+  kind: less
+  a: rec_glucl_tau_rise_ms
+  b: rec_glucl_tau_off_ms
+  statement: rec_glucl_tau_rise_ms < rec_glucl_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_lacr
+  kind: less
+  a: rec_lacr_tau_rise_ms
+  b: rec_lacr_tau_off_ms
+  statement: rec_lacr_tau_rise_ms < rec_lacr_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_lgc53
+  kind: less
+  a: rec_lgc53_tau_rise_ms
+  b: rec_lgc53_tau_off_ms
+  statement: rec_lgc53_tau_rise_ms < rec_lgc53_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_lgc55
+  kind: less
+  a: rec_lgc55_tau_rise_ms
+  b: rec_lgc55_tau_off_ms
+  statement: rec_lgc55_tau_rise_ms < rec_lgc55_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_mod1
+  kind: less
+  a: rec_mod1_tau_rise_ms
+  b: rec_mod1_tau_off_ms
+  statement: rec_mod1_tau_rise_ms < rec_mod1_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_nachr
+  kind: less
+  a: rec_nachr_tau_rise_ms
+  b: rec_nachr_tau_off_ms
+  statement: rec_nachr_tau_rise_ms < rec_nachr_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: tau_rise_lt_decay_rec_nmr
+  kind: less
+  a: rec_nmr_tau_rise_ms
+  b: rec_nmr_tau_off_ms
+  statement: rec_nmr_tau_rise_ms < rec_nmr_tau_off_ms
+  strength: hard
+  basis: physics
+  source: a double-exponential's rise is by definition its faster time constant; swapping them describes the same curve with the labels exchanged (Roth and van Rossum 2009, in Computational Modeling Methods
+    for Neuroscientists, ch. 6)
+  check: a < b
+  applies_when: always
+- id: channel_packing_per_cell
+  kind: sum_le
+  x:
+  - dens_shl1
+  - dens_shk1
+  - dens_kvs1
+  - dens_egl2
+  - dens_egl36
+  - dens_kqt3
+  - dens_egl19
+  - dens_unc2
+  - dens_cca1
+  - dens_slo1_egl19
+  - dens_slo1_unc2
+  - dens_slo2_egl19
+  - dens_slo2_unc2
+  - dens_kcnl
+  - dens_nca
+  - dens_irk
+  weight:
+    dens_shl1: 25.0
+    dens_shk1: 25.0
+    dens_kvs1: 25.0
+    dens_egl2: 25.0
+    dens_egl36: 25.0
+    dens_kqt3: 25.0
+    dens_egl19: 33.333333333333336
+    dens_unc2: 33.333333333333336
+    dens_cca1: 33.333333333333336
+    dens_slo1_egl19: 3.3333333333333335
+    dens_slo1_unc2: 3.3333333333333335
+    dens_slo2_egl19: 5.0
+    dens_slo2_unc2: 5.0
+    dens_kcnl: 25.0
+    dens_nca: 25.0
+    dens_irk: 25.0
+  limit: 20000
+  statement: channels per um2 summed over every channel of a cell (g / unitary g) <= the packing limit
+  strength: hard
+  basis: physics
+  source: '20000 channels per um2 (HARD_BOUNDS_LIT section 1: the densest measured, Na channels at nodes of Ranvier; the closest packing of channel footprints); unitary g by family {''slo1'': 300, ''slo2'':
+    200, ''ca'': 30, ''kv'': 40, ''nca'': 40, ''leak'': 300}'
+  check: 'per element (cell): sum_i weight_i x_i <= limit; weight = 1000 / gamma_pS for nS/um2'
+  applies_when: always
+- id: channel_packing_class_5
+  kind: sum_le
+  x:
+  - dens_unc103_VC_4_5
+  - dens_exp2_VC_4_5
+  - dens_slo1iso_VC_4_5
+  - dens_slo2iso_VC_4_5
+  weight:
+    dens_unc103_VC_4_5: 250.0
+    dens_exp2_VC_4_5: 250.0
+    dens_slo1iso_VC_4_5: 33.333333333333336
+    dens_slo2iso_VC_4_5: 50.0
+  limit: 20000
+  statement: 'class 5: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ADA
+  kind: sum_le
+  x:
+  - dens_unc103_ADA
+  - dens_slo1iso_ADA
+  - dens_slo2iso_ADA
+  weight:
+    dens_unc103_ADA: 250.0
+    dens_slo1iso_ADA: 33.333333333333336
+    dens_slo2iso_ADA: 50.0
+  limit: 20000
+  statement: 'class ADA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ADE
+  kind: sum_le
+  x:
+  - dens_slo1iso_ADE
+  - dens_slo2iso_ADE
+  weight:
+    dens_slo1iso_ADE: 33.333333333333336
+    dens_slo2iso_ADE: 50.0
+  limit: 20000
+  statement: 'class ADE: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ADF
+  kind: sum_le
+  x:
+  - dens_kqt1_ADF
+  - dens_unc103_ADF
+  - dens_exp2_ADF
+  - dens_slo1iso_ADF
+  - dens_slo2iso_ADF
+  weight:
+    dens_kqt1_ADF: 250.0
+    dens_unc103_ADF: 250.0
+    dens_exp2_ADF: 250.0
+    dens_slo1iso_ADF: 33.333333333333336
+    dens_slo2iso_ADF: 50.0
+  limit: 20000
+  statement: 'class ADF: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ADL
+  kind: sum_le
+  x:
+  - dens_kqt1_ADL
+  - dens_unc103_ADL
+  - dens_exp2_ADL
+  - dens_slo1iso_ADL
+  - dens_slo2iso_ADL
+  weight:
+    dens_kqt1_ADL: 250.0
+    dens_unc103_ADL: 250.0
+    dens_exp2_ADL: 250.0
+    dens_slo1iso_ADL: 33.333333333333336
+    dens_slo2iso_ADL: 50.0
+  limit: 20000
+  statement: 'class ADL: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AFD
+  kind: sum_le
+  x:
+  - dens_kqt1_AFD
+  - dens_exp2_AFD
+  - dens_slo1iso_AFD
+  - dens_slo2iso_AFD
+  weight:
+    dens_kqt1_AFD: 250.0
+    dens_exp2_AFD: 250.0
+    dens_slo1iso_AFD: 33.333333333333336
+    dens_slo2iso_AFD: 50.0
+  limit: 20000
+  statement: 'class AFD: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIA
+  kind: sum_le
+  x:
+  - dens_unc103_AIA
+  - dens_slo1iso_AIA
+  - dens_slo2iso_AIA
+  weight:
+    dens_unc103_AIA: 250.0
+    dens_slo1iso_AIA: 33.333333333333336
+    dens_slo2iso_AIA: 50.0
+  limit: 20000
+  statement: 'class AIA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIB
+  kind: sum_le
+  x:
+  - dens_unc103_AIB
+  - dens_exp2_AIB
+  - dens_slo1iso_AIB
+  - dens_slo2iso_AIB
+  weight:
+    dens_unc103_AIB: 250.0
+    dens_exp2_AIB: 250.0
+    dens_slo1iso_AIB: 33.333333333333336
+    dens_slo2iso_AIB: 50.0
+  limit: 20000
+  statement: 'class AIB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIM
+  kind: sum_le
+  x:
+  - dens_unc103_AIM
+  - dens_slo1iso_AIM
+  - dens_slo2iso_AIM
+  weight:
+    dens_unc103_AIM: 250.0
+    dens_slo1iso_AIM: 33.333333333333336
+    dens_slo2iso_AIM: 50.0
+  limit: 20000
+  statement: 'class AIM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIN
+  kind: sum_le
+  x:
+  - dens_kqt1_AIN
+  - dens_unc103_AIN
+  - dens_exp2_AIN
+  - dens_slo1iso_AIN
+  - dens_slo2iso_AIN
+  weight:
+    dens_kqt1_AIN: 250.0
+    dens_unc103_AIN: 250.0
+    dens_exp2_AIN: 250.0
+    dens_slo1iso_AIN: 33.333333333333336
+    dens_slo2iso_AIN: 50.0
+  limit: 20000
+  statement: 'class AIN: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIY
+  kind: sum_le
+  x:
+  - dens_kqt1_AIY
+  - dens_slo1iso_AIY
+  - dens_slo2iso_AIY
+  weight:
+    dens_kqt1_AIY: 250.0
+    dens_slo1iso_AIY: 33.333333333333336
+    dens_slo2iso_AIY: 50.0
+  limit: 20000
+  statement: 'class AIY: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AIZ
+  kind: sum_le
+  x:
+  - dens_unc103_AIZ
+  - dens_slo1iso_AIZ
+  - dens_slo2iso_AIZ
+  weight:
+    dens_unc103_AIZ: 250.0
+    dens_slo1iso_AIZ: 33.333333333333336
+    dens_slo2iso_AIZ: 50.0
+  limit: 20000
+  statement: 'class AIZ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ALA
+  kind: sum_le
+  x:
+  - dens_kqt1_ALA
+  - dens_unc103_ALA
+  - dens_slo1iso_ALA
+  - dens_slo2iso_ALA
+  weight:
+    dens_kqt1_ALA: 250.0
+    dens_unc103_ALA: 250.0
+    dens_slo1iso_ALA: 33.333333333333336
+    dens_slo2iso_ALA: 50.0
+  limit: 20000
+  statement: 'class ALA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ALM
+  kind: sum_le
+  x:
+  - dens_kqt1_ALM
+  - dens_unc103_ALM
+  - dens_exp2_ALM
+  - dens_slo1iso_ALM
+  - dens_slo2iso_ALM
+  weight:
+    dens_kqt1_ALM: 250.0
+    dens_unc103_ALM: 250.0
+    dens_exp2_ALM: 250.0
+    dens_slo1iso_ALM: 33.333333333333336
+    dens_slo2iso_ALM: 50.0
+  limit: 20000
+  statement: 'class ALM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ALN
+  kind: sum_le
+  x:
+  - dens_unc103_ALN
+  - dens_exp2_ALN
+  - dens_slo1iso_ALN
+  - dens_slo2iso_ALN
+  weight:
+    dens_unc103_ALN: 250.0
+    dens_exp2_ALN: 250.0
+    dens_slo1iso_ALN: 33.333333333333336
+    dens_slo2iso_ALN: 50.0
+  limit: 20000
+  statement: 'class ALN: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AQR
+  kind: sum_le
+  x:
+  - dens_kqt1_AQR
+  - dens_exp2_AQR
+  - dens_slo1iso_AQR
+  - dens_slo2iso_AQR
+  weight:
+    dens_kqt1_AQR: 250.0
+    dens_exp2_AQR: 250.0
+    dens_slo1iso_AQR: 33.333333333333336
+    dens_slo2iso_AQR: 50.0
+  limit: 20000
+  statement: 'class AQR: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AS
+  kind: sum_le
+  x:
+  - dens_unc103_AS
+  - dens_slo1iso_AS
+  - dens_slo2iso_AS
+  weight:
+    dens_unc103_AS: 250.0
+    dens_slo1iso_AS: 33.333333333333336
+    dens_slo2iso_AS: 50.0
+  limit: 20000
+  statement: 'class AS: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASEL
+  kind: sum_le
+  x:
+  - dens_kqt1_ASEL
+  - dens_exp2_ASEL
+  - dens_slo1iso_ASEL
+  - dens_slo2iso_ASEL
+  weight:
+    dens_kqt1_ASEL: 250.0
+    dens_exp2_ASEL: 250.0
+    dens_slo1iso_ASEL: 33.333333333333336
+    dens_slo2iso_ASEL: 50.0
+  limit: 20000
+  statement: 'class ASEL: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASER
+  kind: sum_le
+  x:
+  - dens_kqt1_ASER
+  - dens_unc103_ASER
+  - dens_exp2_ASER
+  - dens_slo1iso_ASER
+  - dens_slo2iso_ASER
+  weight:
+    dens_kqt1_ASER: 250.0
+    dens_unc103_ASER: 250.0
+    dens_exp2_ASER: 250.0
+    dens_slo1iso_ASER: 33.333333333333336
+    dens_slo2iso_ASER: 50.0
+  limit: 20000
+  statement: 'class ASER: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASG
+  kind: sum_le
+  x:
+  - dens_kqt1_ASG
+  - dens_unc103_ASG
+  - dens_exp2_ASG
+  - dens_slo1iso_ASG
+  weight:
+    dens_kqt1_ASG: 250.0
+    dens_unc103_ASG: 250.0
+    dens_exp2_ASG: 250.0
+    dens_slo1iso_ASG: 33.333333333333336
+  limit: 20000
+  statement: 'class ASG: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASH
+  kind: sum_le
+  x:
+  - dens_kqt1_ASH
+  - dens_exp2_ASH
+  - dens_slo1iso_ASH
+  - dens_slo2iso_ASH
+  weight:
+    dens_kqt1_ASH: 250.0
+    dens_exp2_ASH: 250.0
+    dens_slo1iso_ASH: 33.333333333333336
+    dens_slo2iso_ASH: 50.0
+  limit: 20000
+  statement: 'class ASH: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASI
+  kind: sum_le
+  x:
+  - dens_kqt1_ASI
+  - dens_unc103_ASI
+  - dens_exp2_ASI
+  - dens_slo1iso_ASI
+  - dens_slo2iso_ASI
+  weight:
+    dens_kqt1_ASI: 250.0
+    dens_unc103_ASI: 250.0
+    dens_exp2_ASI: 250.0
+    dens_slo1iso_ASI: 33.333333333333336
+    dens_slo2iso_ASI: 50.0
+  limit: 20000
+  statement: 'class ASI: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASJ
+  kind: sum_le
+  x:
+  - dens_kqt1_ASJ
+  - dens_unc103_ASJ
+  - dens_exp2_ASJ
+  - dens_slo1iso_ASJ
+  - dens_slo2iso_ASJ
+  weight:
+    dens_kqt1_ASJ: 250.0
+    dens_unc103_ASJ: 250.0
+    dens_exp2_ASJ: 250.0
+    dens_slo1iso_ASJ: 33.333333333333336
+    dens_slo2iso_ASJ: 50.0
+  limit: 20000
+  statement: 'class ASJ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ASK
+  kind: sum_le
+  x:
+  - dens_unc103_ASK
+  - dens_exp2_ASK
+  - dens_slo1iso_ASK
+  - dens_slo2iso_ASK
+  weight:
+    dens_unc103_ASK: 250.0
+    dens_exp2_ASK: 250.0
+    dens_slo1iso_ASK: 33.333333333333336
+    dens_slo2iso_ASK: 50.0
+  limit: 20000
+  statement: 'class ASK: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AUA
+  kind: sum_le
+  x:
+  - dens_unc103_AUA
+  - dens_slo1iso_AUA
+  - dens_slo2iso_AUA
+  weight:
+    dens_unc103_AUA: 250.0
+    dens_slo1iso_AUA: 33.333333333333336
+    dens_slo2iso_AUA: 50.0
+  limit: 20000
+  statement: 'class AUA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVA
+  kind: sum_le
+  x:
+  - dens_unc103_AVA
+  - dens_slo1iso_AVA
+  - dens_slo2iso_AVA
+  weight:
+    dens_unc103_AVA: 250.0
+    dens_slo1iso_AVA: 33.333333333333336
+    dens_slo2iso_AVA: 50.0
+  limit: 20000
+  statement: 'class AVA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVB
+  kind: sum_le
+  x:
+  - dens_unc103_AVB
+  - dens_exp2_AVB
+  - dens_slo1iso_AVB
+  - dens_slo2iso_AVB
+  weight:
+    dens_unc103_AVB: 250.0
+    dens_exp2_AVB: 250.0
+    dens_slo1iso_AVB: 33.333333333333336
+    dens_slo2iso_AVB: 50.0
+  limit: 20000
+  statement: 'class AVB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVD
+  kind: sum_le
+  x:
+  - dens_unc103_AVD
+  - dens_slo1iso_AVD
+  - dens_slo2iso_AVD
+  weight:
+    dens_unc103_AVD: 250.0
+    dens_slo1iso_AVD: 33.333333333333336
+    dens_slo2iso_AVD: 50.0
+  limit: 20000
+  statement: 'class AVD: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVE
+  kind: sum_le
+  x:
+  - dens_unc103_AVE
+  - dens_exp2_AVE
+  - dens_slo1iso_AVE
+  - dens_slo2iso_AVE
+  weight:
+    dens_unc103_AVE: 250.0
+    dens_exp2_AVE: 250.0
+    dens_slo1iso_AVE: 33.333333333333336
+    dens_slo2iso_AVE: 50.0
+  limit: 20000
+  statement: 'class AVE: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVF
+  kind: sum_le
+  x:
+  - dens_kqt1_AVF
+  - dens_unc103_AVF
+  - dens_exp2_AVF
+  - dens_slo1iso_AVF
+  - dens_slo2iso_AVF
+  weight:
+    dens_kqt1_AVF: 250.0
+    dens_unc103_AVF: 250.0
+    dens_exp2_AVF: 250.0
+    dens_slo1iso_AVF: 33.333333333333336
+    dens_slo2iso_AVF: 50.0
+  limit: 20000
+  statement: 'class AVF: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVG
+  kind: sum_le
+  x:
+  - dens_unc103_AVG
+  - dens_slo1iso_AVG
+  - dens_slo2iso_AVG
+  weight:
+    dens_unc103_AVG: 250.0
+    dens_slo1iso_AVG: 33.333333333333336
+    dens_slo2iso_AVG: 50.0
+  limit: 20000
+  statement: 'class AVG: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVH
+  kind: sum_le
+  x:
+  - dens_unc103_AVH
+  - dens_slo1iso_AVH
+  - dens_slo2iso_AVH
+  weight:
+    dens_unc103_AVH: 250.0
+    dens_slo1iso_AVH: 33.333333333333336
+    dens_slo2iso_AVH: 50.0
+  limit: 20000
+  statement: 'class AVH: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVJ
+  kind: sum_le
+  x:
+  - dens_unc103_AVJ
+  - dens_slo1iso_AVJ
+  - dens_slo2iso_AVJ
+  weight:
+    dens_unc103_AVJ: 250.0
+    dens_slo1iso_AVJ: 33.333333333333336
+    dens_slo2iso_AVJ: 50.0
+  limit: 20000
+  statement: 'class AVJ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVK
+  kind: sum_le
+  x:
+  - dens_exp2_AVK
+  - dens_slo1iso_AVK
+  - dens_slo2iso_AVK
+  weight:
+    dens_exp2_AVK: 250.0
+    dens_slo1iso_AVK: 33.333333333333336
+    dens_slo2iso_AVK: 50.0
+  limit: 20000
+  statement: 'class AVK: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVL
+  kind: sum_le
+  x:
+  - dens_kqt1_AVL
+  - dens_unc103_AVL
+  - dens_slo1iso_AVL
+  weight:
+    dens_kqt1_AVL: 250.0
+    dens_unc103_AVL: 250.0
+    dens_slo1iso_AVL: 33.333333333333336
+  limit: 20000
+  statement: 'class AVL: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AVM
+  kind: sum_le
+  x:
+  - dens_unc103_AVM
+  - dens_slo1iso_AVM
+  - dens_slo2iso_AVM
+  weight:
+    dens_unc103_AVM: 250.0
+    dens_slo1iso_AVM: 33.333333333333336
+    dens_slo2iso_AVM: 50.0
+  limit: 20000
+  statement: 'class AVM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AWA
+  kind: sum_le
+  x:
+  - dens_kqt1_AWA
+  - dens_unc103_AWA
+  - dens_exp2_AWA
+  - dens_slo1iso_AWA
+  - dens_slo2iso_AWA
+  weight:
+    dens_kqt1_AWA: 250.0
+    dens_unc103_AWA: 250.0
+    dens_exp2_AWA: 250.0
+    dens_slo1iso_AWA: 33.333333333333336
+    dens_slo2iso_AWA: 50.0
+  limit: 20000
+  statement: 'class AWA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_AWB
+  kind: sum_le
+  x:
+  - dens_kqt1_AWB
+  - dens_exp2_AWB
+  - dens_slo1iso_AWB
+  - dens_slo2iso_AWB
+  weight:
+    dens_kqt1_AWB: 250.0
+    dens_exp2_AWB: 250.0
+    dens_slo1iso_AWB: 33.333333333333336
+    dens_slo2iso_AWB: 50.0
+  limit: 20000
+  statement: 'class AWB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_BAG
+  kind: sum_le
+  x:
+  - dens_exp2_BAG
+  - dens_slo2iso_BAG
+  weight:
+    dens_exp2_BAG: 250.0
+    dens_slo2iso_BAG: 50.0
+  limit: 20000
+  statement: 'class BAG: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_BDU
+  kind: sum_le
+  x:
+  - dens_slo1iso_BDU
+  - dens_slo2iso_BDU
+  weight:
+    dens_slo1iso_BDU: 33.333333333333336
+    dens_slo2iso_BDU: 50.0
+  limit: 20000
+  statement: 'class BDU: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_CEP
+  kind: sum_le
+  x:
+  - dens_kqt1_CEP
+  - dens_unc103_CEP
+  - dens_exp2_CEP
+  - dens_slo1iso_CEP
+  - dens_slo2iso_CEP
+  weight:
+    dens_kqt1_CEP: 250.0
+    dens_unc103_CEP: 250.0
+    dens_exp2_CEP: 250.0
+    dens_slo1iso_CEP: 33.333333333333336
+    dens_slo2iso_CEP: 50.0
+  limit: 20000
+  statement: 'class CEP: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DA
+  kind: sum_le
+  x:
+  - dens_slo1iso_DA
+  - dens_slo2iso_DA
+  weight:
+    dens_slo1iso_DA: 33.333333333333336
+    dens_slo2iso_DA: 50.0
+  limit: 20000
+  statement: 'class DA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DA9
+  kind: sum_le
+  x:
+  - dens_unc103_DA9
+  - dens_slo1iso_DA9
+  - dens_slo2iso_DA9
+  weight:
+    dens_unc103_DA9: 250.0
+    dens_slo1iso_DA9: 33.333333333333336
+    dens_slo2iso_DA9: 50.0
+  limit: 20000
+  statement: 'class DA9: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DB
+  kind: sum_le
+  x:
+  - dens_slo1iso_DB
+  - dens_slo2iso_DB
+  weight:
+    dens_slo1iso_DB: 33.333333333333336
+    dens_slo2iso_DB: 50.0
+  limit: 20000
+  statement: 'class DB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DB01
+  kind: sum_le
+  x:
+  - dens_slo1iso_DB01
+  - dens_slo2iso_DB01
+  weight:
+    dens_slo1iso_DB01: 33.333333333333336
+    dens_slo2iso_DB01: 50.0
+  limit: 20000
+  statement: 'class DB01: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DD
+  kind: sum_le
+  x:
+  - dens_unc103_VD_DD
+  - dens_slo1iso_VD_DD
+  - dens_slo2iso_VD_DD
+  weight:
+    dens_unc103_VD_DD: 250.0
+    dens_slo1iso_VD_DD: 33.333333333333336
+    dens_slo2iso_VD_DD: 50.0
+  limit: 20000
+  statement: 'class DD: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DV
+  kind: sum_le
+  x:
+  - dens_unc103_IL2_DV
+  - dens_unc103_RME_DV
+  - dens_exp2_RMD_DV
+  - dens_exp2_RME_DV
+  - dens_slo1iso_IL2_DV
+  - dens_slo1iso_RMD_DV
+  - dens_slo1iso_RME_DV
+  - dens_slo2iso_IL2_DV
+  - dens_slo2iso_RME_DV
+  weight:
+    dens_unc103_IL2_DV: 250.0
+    dens_unc103_RME_DV: 250.0
+    dens_exp2_RMD_DV: 250.0
+    dens_exp2_RME_DV: 250.0
+    dens_slo1iso_IL2_DV: 33.333333333333336
+    dens_slo1iso_RMD_DV: 33.333333333333336
+    dens_slo1iso_RME_DV: 33.333333333333336
+    dens_slo2iso_IL2_DV: 50.0
+    dens_slo2iso_RME_DV: 50.0
+  limit: 20000
+  statement: 'class DV: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DVA
+  kind: sum_le
+  x:
+  - dens_unc103_DVA
+  - dens_slo1iso_DVA
+  weight:
+    dens_unc103_DVA: 250.0
+    dens_slo1iso_DVA: 33.333333333333336
+  limit: 20000
+  statement: 'class DVA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DVB
+  kind: sum_le
+  x:
+  - dens_kqt1_DVB
+  - dens_unc103_DVB
+  - dens_slo1iso_DVB
+  - dens_slo2iso_DVB
+  weight:
+    dens_kqt1_DVB: 250.0
+    dens_unc103_DVB: 250.0
+    dens_slo1iso_DVB: 33.333333333333336
+    dens_slo2iso_DVB: 50.0
+  limit: 20000
+  statement: 'class DVB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_DVC
+  kind: sum_le
+  x:
+  - dens_unc103_DVC
+  - dens_slo1iso_DVC
+  - dens_slo2iso_DVC
+  weight:
+    dens_unc103_DVC: 250.0
+    dens_slo1iso_DVC: 33.333333333333336
+    dens_slo2iso_DVC: 50.0
+  limit: 20000
+  statement: 'class DVC: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_FLP
+  kind: sum_le
+  x:
+  - dens_unc103_FLP
+  - dens_slo1iso_FLP
+  - dens_slo2iso_FLP
+  weight:
+    dens_unc103_FLP: 250.0
+    dens_slo1iso_FLP: 33.333333333333336
+    dens_slo2iso_FLP: 50.0
+  limit: 20000
+  statement: 'class FLP: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_HSN
+  kind: sum_le
+  x:
+  - dens_unc103_HSN
+  - dens_exp2_HSN
+  - dens_slo1iso_HSN
+  - dens_slo2iso_HSN
+  weight:
+    dens_unc103_HSN: 250.0
+    dens_exp2_HSN: 250.0
+    dens_slo1iso_HSN: 33.333333333333336
+    dens_slo2iso_HSN: 50.0
+  limit: 20000
+  statement: 'class HSN: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I1
+  kind: sum_le
+  x:
+  - dens_unc103_I1
+  - dens_exp2_I1
+  - dens_slo1iso_I1
+  weight:
+    dens_unc103_I1: 250.0
+    dens_exp2_I1: 250.0
+    dens_slo1iso_I1: 33.333333333333336
+  limit: 20000
+  statement: 'class I1: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I2
+  kind: sum_le
+  x:
+  - dens_kqt1_I2
+  - dens_unc103_I2
+  weight:
+    dens_kqt1_I2: 250.0
+    dens_unc103_I2: 250.0
+  limit: 20000
+  statement: 'class I2: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I3
+  kind: sum_le
+  x:
+  - dens_kqt1_I3
+  - dens_unc103_I3
+  - dens_slo1iso_I3
+  - dens_slo2iso_I3
+  weight:
+    dens_kqt1_I3: 250.0
+    dens_unc103_I3: 250.0
+    dens_slo1iso_I3: 33.333333333333336
+    dens_slo2iso_I3: 50.0
+  limit: 20000
+  statement: 'class I3: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I4
+  kind: sum_le
+  x:
+  - dens_exp2_I4
+  - dens_slo1iso_I4
+  weight:
+    dens_exp2_I4: 250.0
+    dens_slo1iso_I4: 33.333333333333336
+  limit: 20000
+  statement: 'class I4: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I5
+  kind: sum_le
+  x:
+  - dens_unc103_I5
+  - dens_exp2_I5
+  - dens_slo1iso_I5
+  - dens_slo2iso_I5
+  weight:
+    dens_unc103_I5: 250.0
+    dens_exp2_I5: 250.0
+    dens_slo1iso_I5: 33.333333333333336
+    dens_slo2iso_I5: 50.0
+  limit: 20000
+  statement: 'class I5: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_I6
+  kind: sum_le
+  x:
+  - dens_unc103_I6
+  - dens_exp2_I6
+  weight:
+    dens_unc103_I6: 250.0
+    dens_exp2_I6: 250.0
+  limit: 20000
+  statement: 'class I6: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_IL1
+  kind: sum_le
+  x:
+  - dens_kqt1_IL1
+  - dens_unc103_IL1
+  weight:
+    dens_kqt1_IL1: 250.0
+    dens_unc103_IL1: 250.0
+  limit: 20000
+  statement: 'class IL1: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_LR
+  kind: sum_le
+  x:
+  - dens_kqt1_IL2_LR
+  - dens_unc103_IL2_LR
+  - dens_unc103_RMD_LR
+  - dens_unc103_RME_LR
+  - dens_slo1iso_IL2_LR
+  - dens_slo1iso_RMD_LR
+  - dens_slo1iso_RME_LR
+  - dens_slo2iso_IL2_LR
+  - dens_slo2iso_RMD_LR
+  weight:
+    dens_kqt1_IL2_LR: 250.0
+    dens_unc103_IL2_LR: 250.0
+    dens_unc103_RMD_LR: 250.0
+    dens_unc103_RME_LR: 250.0
+    dens_slo1iso_IL2_LR: 33.333333333333336
+    dens_slo1iso_RMD_LR: 33.333333333333336
+    dens_slo1iso_RME_LR: 33.333333333333336
+    dens_slo2iso_IL2_LR: 50.0
+    dens_slo2iso_RMD_LR: 50.0
+  limit: 20000
+  statement: 'class LR: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_LUA
+  kind: sum_le
+  x:
+  - dens_slo1iso_LUA
+  - dens_slo2iso_LUA
+  weight:
+    dens_slo1iso_LUA: 33.333333333333336
+    dens_slo2iso_LUA: 50.0
+  limit: 20000
+  statement: 'class LUA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_M1
+  kind: sum_le
+  x:
+  - dens_kqt1_M1
+  - dens_exp2_M1
+  - dens_slo1iso_M1
+  - dens_slo2iso_M1
+  weight:
+    dens_kqt1_M1: 250.0
+    dens_exp2_M1: 250.0
+    dens_slo1iso_M1: 33.333333333333336
+    dens_slo2iso_M1: 50.0
+  limit: 20000
+  statement: 'class M1: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_M3
+  kind: sum_le
+  x:
+  - dens_slo1iso_M3
+  - dens_slo2iso_M3
+  weight:
+    dens_slo1iso_M3: 33.333333333333336
+    dens_slo2iso_M3: 50.0
+  limit: 20000
+  statement: 'class M3: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_M4
+  kind: sum_le
+  x:
+  - dens_unc103_M4
+  - dens_exp2_M4
+  - dens_slo1iso_M4
+  weight:
+    dens_unc103_M4: 250.0
+    dens_exp2_M4: 250.0
+    dens_slo1iso_M4: 33.333333333333336
+  limit: 20000
+  statement: 'class M4: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_MI
+  kind: sum_le
+  x:
+  - dens_unc103_MI
+  - dens_slo1iso_MI
+  - dens_slo2iso_MI
+  weight:
+    dens_unc103_MI: 250.0
+    dens_slo1iso_MI: 33.333333333333336
+    dens_slo2iso_MI: 50.0
+  limit: 20000
+  statement: 'class MI: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_NSM
+  kind: sum_le
+  x:
+  - dens_unc103_NSM
+  - dens_exp2_NSM
+  - dens_slo1iso_NSM
+  - dens_slo2iso_NSM
+  weight:
+    dens_unc103_NSM: 250.0
+    dens_exp2_NSM: 250.0
+    dens_slo1iso_NSM: 33.333333333333336
+    dens_slo2iso_NSM: 50.0
+  limit: 20000
+  statement: 'class NSM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_OFF
+  kind: sum_le
+  x:
+  - dens_kqt1_AWC_OFF
+  - dens_unc103_AWC_OFF
+  - dens_exp2_AWC_OFF
+  - dens_slo1iso_AWC_OFF
+  - dens_slo2iso_AWC_OFF
+  weight:
+    dens_kqt1_AWC_OFF: 250.0
+    dens_unc103_AWC_OFF: 250.0
+    dens_exp2_AWC_OFF: 250.0
+    dens_slo1iso_AWC_OFF: 33.333333333333336
+    dens_slo2iso_AWC_OFF: 50.0
+  limit: 20000
+  statement: 'class OFF: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_OLL
+  kind: sum_le
+  x:
+  - dens_unc103_OLL
+  - dens_exp2_OLL
+  - dens_slo2iso_OLL
+  weight:
+    dens_unc103_OLL: 250.0
+    dens_exp2_OLL: 250.0
+    dens_slo2iso_OLL: 50.0
+  limit: 20000
+  statement: 'class OLL: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_OLQ
+  kind: sum_le
+  x:
+  - dens_exp2_OLQ
+  - dens_slo1iso_OLQ
+  - dens_slo2iso_OLQ
+  weight:
+    dens_exp2_OLQ: 250.0
+    dens_slo1iso_OLQ: 33.333333333333336
+    dens_slo2iso_OLQ: 50.0
+  limit: 20000
+  statement: 'class OLQ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_ON
+  kind: sum_le
+  x:
+  - dens_kqt1_AWC_ON
+  - dens_exp2_AWC_ON
+  - dens_slo1iso_AWC_ON
+  - dens_slo2iso_AWC_ON
+  weight:
+    dens_kqt1_AWC_ON: 250.0
+    dens_exp2_AWC_ON: 250.0
+    dens_slo1iso_AWC_ON: 33.333333333333336
+    dens_slo2iso_AWC_ON: 50.0
+  limit: 20000
+  statement: 'class ON: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PDA
+  kind: sum_le
+  x:
+  - dens_unc103_PDA
+  - dens_exp2_PDA
+  - dens_slo1iso_PDA
+  - dens_slo2iso_PDA
+  weight:
+    dens_unc103_PDA: 250.0
+    dens_exp2_PDA: 250.0
+    dens_slo1iso_PDA: 33.333333333333336
+    dens_slo2iso_PDA: 50.0
+  limit: 20000
+  statement: 'class PDA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PDB
+  kind: sum_le
+  x:
+  - dens_unc103_PDB
+  - dens_exp2_PDB
+  - dens_slo1iso_PDB
+  - dens_slo2iso_PDB
+  weight:
+    dens_unc103_PDB: 250.0
+    dens_exp2_PDB: 250.0
+    dens_slo1iso_PDB: 33.333333333333336
+    dens_slo2iso_PDB: 50.0
+  limit: 20000
+  statement: 'class PDB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PDE
+  kind: sum_le
+  x:
+  - dens_unc103_PDE
+  - dens_exp2_PDE
+  - dens_slo1iso_PDE
+  - dens_slo2iso_PDE
+  weight:
+    dens_unc103_PDE: 250.0
+    dens_exp2_PDE: 250.0
+    dens_slo1iso_PDE: 33.333333333333336
+    dens_slo2iso_PDE: 50.0
+  limit: 20000
+  statement: 'class PDE: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PHA
+  kind: sum_le
+  x:
+  - dens_exp2_PHA
+  - dens_slo2iso_PHA
+  weight:
+    dens_exp2_PHA: 250.0
+    dens_slo2iso_PHA: 50.0
+  limit: 20000
+  statement: 'class PHA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PHB
+  kind: sum_le
+  x:
+  - dens_kqt1_PHB
+  - dens_exp2_PHB
+  - dens_slo1iso_PHB
+  - dens_slo2iso_PHB
+  weight:
+    dens_kqt1_PHB: 250.0
+    dens_exp2_PHB: 250.0
+    dens_slo1iso_PHB: 33.333333333333336
+    dens_slo2iso_PHB: 50.0
+  limit: 20000
+  statement: 'class PHB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PHC
+  kind: sum_le
+  x:
+  - dens_kqt1_PHC
+  - dens_unc103_PHC
+  - dens_slo1iso_PHC
+  weight:
+    dens_kqt1_PHC: 250.0
+    dens_unc103_PHC: 250.0
+    dens_slo1iso_PHC: 33.333333333333336
+  limit: 20000
+  statement: 'class PHC: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PLM
+  kind: sum_le
+  x:
+  - dens_kqt1_PLM
+  - dens_unc103_PLM
+  - dens_exp2_PLM
+  - dens_slo1iso_PLM
+  - dens_slo2iso_PLM
+  weight:
+    dens_kqt1_PLM: 250.0
+    dens_unc103_PLM: 250.0
+    dens_exp2_PLM: 250.0
+    dens_slo1iso_PLM: 33.333333333333336
+    dens_slo2iso_PLM: 50.0
+  limit: 20000
+  statement: 'class PLM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PLN
+  kind: sum_le
+  x:
+  - dens_unc103_PLN
+  - dens_exp2_PLN
+  - dens_slo1iso_PLN
+  - dens_slo2iso_PLN
+  weight:
+    dens_unc103_PLN: 250.0
+    dens_exp2_PLN: 250.0
+    dens_slo1iso_PLN: 33.333333333333336
+    dens_slo2iso_PLN: 50.0
+  limit: 20000
+  statement: 'class PLN: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PQR
+  kind: sum_le
+  x:
+  - dens_exp2_PQR
+  - dens_slo1iso_PQR
+  - dens_slo2iso_PQR
+  weight:
+    dens_exp2_PQR: 250.0
+    dens_slo1iso_PQR: 33.333333333333336
+    dens_slo2iso_PQR: 50.0
+  limit: 20000
+  statement: 'class PQR: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVC
+  kind: sum_le
+  x:
+  - dens_kqt1_PVC
+  - dens_unc103_PVC
+  - dens_slo1iso_PVC
+  - dens_slo2iso_PVC
+  weight:
+    dens_kqt1_PVC: 250.0
+    dens_unc103_PVC: 250.0
+    dens_slo1iso_PVC: 33.333333333333336
+    dens_slo2iso_PVC: 50.0
+  limit: 20000
+  statement: 'class PVC: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVD
+  kind: sum_le
+  x:
+  - dens_kqt1_PVD
+  - dens_unc103_PVD
+  - dens_slo2iso_PVD
+  weight:
+    dens_kqt1_PVD: 250.0
+    dens_unc103_PVD: 250.0
+    dens_slo2iso_PVD: 50.0
+  limit: 20000
+  statement: 'class PVD: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVM
+  kind: sum_le
+  x:
+  - dens_kqt1_PVM
+  - dens_unc103_PVM
+  - dens_slo1iso_PVM
+  - dens_slo2iso_PVM
+  weight:
+    dens_kqt1_PVM: 250.0
+    dens_unc103_PVM: 250.0
+    dens_slo1iso_PVM: 33.333333333333336
+    dens_slo2iso_PVM: 50.0
+  limit: 20000
+  statement: 'class PVM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVP
+  kind: sum_le
+  x:
+  - dens_unc103_PVP
+  - dens_exp2_PVP
+  - dens_slo1iso_PVP
+  - dens_slo2iso_PVP
+  weight:
+    dens_unc103_PVP: 250.0
+    dens_exp2_PVP: 250.0
+    dens_slo1iso_PVP: 33.333333333333336
+    dens_slo2iso_PVP: 50.0
+  limit: 20000
+  statement: 'class PVP: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVQ
+  kind: sum_le
+  x:
+  - dens_kqt1_PVQ
+  - dens_unc103_PVQ
+  - dens_exp2_PVQ
+  - dens_slo1iso_PVQ
+  - dens_slo2iso_PVQ
+  weight:
+    dens_kqt1_PVQ: 250.0
+    dens_unc103_PVQ: 250.0
+    dens_exp2_PVQ: 250.0
+    dens_slo1iso_PVQ: 33.333333333333336
+    dens_slo2iso_PVQ: 50.0
+  limit: 20000
+  statement: 'class PVQ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVR
+  kind: sum_le
+  x:
+  - dens_unc103_PVR
+  - dens_slo1iso_PVR
+  - dens_slo2iso_PVR
+  weight:
+    dens_unc103_PVR: 250.0
+    dens_slo1iso_PVR: 33.333333333333336
+    dens_slo2iso_PVR: 50.0
+  limit: 20000
+  statement: 'class PVR: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVT
+  kind: sum_le
+  x:
+  - dens_kqt1_PVT
+  - dens_unc103_PVT
+  - dens_slo1iso_PVT
+  - dens_slo2iso_PVT
+  weight:
+    dens_kqt1_PVT: 250.0
+    dens_unc103_PVT: 250.0
+    dens_slo1iso_PVT: 33.333333333333336
+    dens_slo2iso_PVT: 50.0
+  limit: 20000
+  statement: 'class PVT: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_PVW
+  kind: sum_le
+  x:
+  - dens_unc103_PVW
+  - dens_slo1iso_PVW
+  - dens_slo2iso_PVW
+  weight:
+    dens_unc103_PVW: 250.0
+    dens_slo1iso_PVW: 33.333333333333336
+    dens_slo2iso_PVW: 50.0
+  limit: 20000
+  statement: 'class PVW: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIA
+  kind: sum_le
+  x:
+  - dens_unc103_RIA
+  - dens_exp2_RIA
+  - dens_slo1iso_RIA
+  - dens_slo2iso_RIA
+  weight:
+    dens_unc103_RIA: 250.0
+    dens_exp2_RIA: 250.0
+    dens_slo1iso_RIA: 33.333333333333336
+    dens_slo2iso_RIA: 50.0
+  limit: 20000
+  statement: 'class RIA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIB
+  kind: sum_le
+  x:
+  - dens_exp2_RIB
+  - dens_slo1iso_RIB
+  weight:
+    dens_exp2_RIB: 250.0
+    dens_slo1iso_RIB: 33.333333333333336
+  limit: 20000
+  statement: 'class RIB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIC
+  kind: sum_le
+  x:
+  - dens_unc103_RIC
+  - dens_exp2_RIC
+  - dens_slo1iso_RIC
+  - dens_slo2iso_RIC
+  weight:
+    dens_unc103_RIC: 250.0
+    dens_exp2_RIC: 250.0
+    dens_slo1iso_RIC: 33.333333333333336
+    dens_slo2iso_RIC: 50.0
+  limit: 20000
+  statement: 'class RIC: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RID
+  kind: sum_le
+  x:
+  - dens_unc103_RID
+  - dens_slo1iso_RID
+  - dens_slo2iso_RID
+  weight:
+    dens_unc103_RID: 250.0
+    dens_slo1iso_RID: 33.333333333333336
+    dens_slo2iso_RID: 50.0
+  limit: 20000
+  statement: 'class RID: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIF
+  kind: sum_le
+  x:
+  - dens_kqt1_RIF
+  - dens_unc103_RIF
+  - dens_slo1iso_RIF
+  - dens_slo2iso_RIF
+  weight:
+    dens_kqt1_RIF: 250.0
+    dens_unc103_RIF: 250.0
+    dens_slo1iso_RIF: 33.333333333333336
+    dens_slo2iso_RIF: 50.0
+  limit: 20000
+  statement: 'class RIF: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIG
+  kind: sum_le
+  x:
+  - dens_unc103_RIG
+  - dens_exp2_RIG
+  - dens_slo1iso_RIG
+  - dens_slo2iso_RIG
+  weight:
+    dens_unc103_RIG: 250.0
+    dens_exp2_RIG: 250.0
+    dens_slo1iso_RIG: 33.333333333333336
+    dens_slo2iso_RIG: 50.0
+  limit: 20000
+  statement: 'class RIG: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIH
+  kind: sum_le
+  x:
+  - dens_unc103_RIH
+  - dens_slo1iso_RIH
+  - dens_slo2iso_RIH
+  weight:
+    dens_unc103_RIH: 250.0
+    dens_slo1iso_RIH: 33.333333333333336
+    dens_slo2iso_RIH: 50.0
+  limit: 20000
+  statement: 'class RIH: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIM
+  kind: sum_le
+  x:
+  - dens_unc103_RIM
+  - dens_slo1iso_RIM
+  - dens_slo2iso_RIM
+  weight:
+    dens_unc103_RIM: 250.0
+    dens_slo1iso_RIM: 33.333333333333336
+    dens_slo2iso_RIM: 50.0
+  limit: 20000
+  statement: 'class RIM: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIP
+  kind: sum_le
+  x:
+  - dens_unc103_RIP
+  - dens_slo1iso_RIP
+  weight:
+    dens_unc103_RIP: 250.0
+    dens_slo1iso_RIP: 33.333333333333336
+  limit: 20000
+  statement: 'class RIP: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIR
+  kind: sum_le
+  x:
+  - dens_unc103_RIR
+  - dens_slo1iso_RIR
+  - dens_slo2iso_RIR
+  weight:
+    dens_unc103_RIR: 250.0
+    dens_slo1iso_RIR: 33.333333333333336
+    dens_slo2iso_RIR: 50.0
+  limit: 20000
+  statement: 'class RIR: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIS
+  kind: sum_le
+  x:
+  - dens_exp2_RIS
+  - dens_slo1iso_RIS
+  - dens_slo2iso_RIS
+  weight:
+    dens_exp2_RIS: 250.0
+    dens_slo1iso_RIS: 33.333333333333336
+    dens_slo2iso_RIS: 50.0
+  limit: 20000
+  statement: 'class RIS: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RIV
+  kind: sum_le
+  x:
+  - dens_unc103_RIV
+  - dens_slo1iso_RIV
+  - dens_slo2iso_RIV
+  weight:
+    dens_unc103_RIV: 250.0
+    dens_slo1iso_RIV: 33.333333333333336
+    dens_slo2iso_RIV: 50.0
+  limit: 20000
+  statement: 'class RIV: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RMF
+  kind: sum_le
+  x:
+  - dens_unc103_RMF
+  - dens_slo1iso_RMF
+  - dens_slo2iso_RMF
+  weight:
+    dens_unc103_RMF: 250.0
+    dens_slo1iso_RMF: 33.333333333333336
+    dens_slo2iso_RMF: 50.0
+  limit: 20000
+  statement: 'class RMF: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RMG
+  kind: sum_le
+  x:
+  - dens_unc103_RMG
+  - dens_slo1iso_RMG
+  - dens_slo2iso_RMG
+  weight:
+    dens_unc103_RMG: 250.0
+    dens_slo1iso_RMG: 33.333333333333336
+    dens_slo2iso_RMG: 50.0
+  limit: 20000
+  statement: 'class RMG: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_RMH
+  kind: sum_le
+  x:
+  - dens_exp2_RMH
+  - dens_slo1iso_RMH
+  - dens_slo2iso_RMH
+  weight:
+    dens_exp2_RMH: 250.0
+    dens_slo1iso_RMH: 33.333333333333336
+    dens_slo2iso_RMH: 50.0
+  limit: 20000
+  statement: 'class RMH: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SAA
+  kind: sum_le
+  x:
+  - dens_unc103_SAA
+  - dens_exp2_SAA
+  - dens_slo1iso_SAA
+  - dens_slo2iso_SAA
+  weight:
+    dens_unc103_SAA: 250.0
+    dens_exp2_SAA: 250.0
+    dens_slo1iso_SAA: 33.333333333333336
+    dens_slo2iso_SAA: 50.0
+  limit: 20000
+  statement: 'class SAA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SAB
+  kind: sum_le
+  x:
+  - dens_unc103_SAB
+  - dens_exp2_SAB
+  - dens_slo1iso_SAB
+  - dens_slo2iso_SAB
+  weight:
+    dens_unc103_SAB: 250.0
+    dens_exp2_SAB: 250.0
+    dens_slo1iso_SAB: 33.333333333333336
+    dens_slo2iso_SAB: 50.0
+  limit: 20000
+  statement: 'class SAB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SDQ
+  kind: sum_le
+  x:
+  - dens_unc103_SDQ
+  - dens_slo1iso_SDQ
+  - dens_slo2iso_SDQ
+  weight:
+    dens_unc103_SDQ: 250.0
+    dens_slo1iso_SDQ: 33.333333333333336
+    dens_slo2iso_SDQ: 50.0
+  limit: 20000
+  statement: 'class SDQ: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SIA
+  kind: sum_le
+  x:
+  - dens_unc103_SIA
+  - dens_slo1iso_SIA
+  - dens_slo2iso_SIA
+  weight:
+    dens_unc103_SIA: 250.0
+    dens_slo1iso_SIA: 33.333333333333336
+    dens_slo2iso_SIA: 50.0
+  limit: 20000
+  statement: 'class SIA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SIB
+  kind: sum_le
+  x:
+  - dens_exp2_SIB
+  - dens_slo1iso_SIB
+  - dens_slo2iso_SIB
+  weight:
+    dens_exp2_SIB: 250.0
+    dens_slo1iso_SIB: 33.333333333333336
+    dens_slo2iso_SIB: 50.0
+  limit: 20000
+  statement: 'class SIB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SMB
+  kind: sum_le
+  x:
+  - dens_unc103_SMB
+  - dens_exp2_SMB
+  - dens_slo1iso_SMB
+  - dens_slo2iso_SMB
+  weight:
+    dens_unc103_SMB: 250.0
+    dens_exp2_SMB: 250.0
+    dens_slo1iso_SMB: 33.333333333333336
+    dens_slo2iso_SMB: 50.0
+  limit: 20000
+  statement: 'class SMB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_SMD
+  kind: sum_le
+  x:
+  - dens_unc103_SMD
+  - dens_slo1iso_SMD
+  - dens_slo2iso_SMD
+  weight:
+    dens_unc103_SMD: 250.0
+    dens_slo1iso_SMD: 33.333333333333336
+    dens_slo2iso_SMD: 50.0
+  limit: 20000
+  statement: 'class SMD: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_URA
+  kind: sum_le
+  x:
+  - dens_unc103_URA
+  - dens_slo1iso_URA
+  - dens_slo2iso_URA
+  weight:
+    dens_unc103_URA: 250.0
+    dens_slo1iso_URA: 33.333333333333336
+    dens_slo2iso_URA: 50.0
+  limit: 20000
+  statement: 'class URA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_URB
+  kind: sum_le
+  x:
+  - dens_unc103_URB
+  - dens_slo1iso_URB
+  - dens_slo2iso_URB
+  weight:
+    dens_unc103_URB: 250.0
+    dens_slo1iso_URB: 33.333333333333336
+    dens_slo2iso_URB: 50.0
+  limit: 20000
+  statement: 'class URB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_URX
+  kind: sum_le
+  x:
+  - dens_kqt1_URX
+  - dens_exp2_URX
+  - dens_slo1iso_URX
+  - dens_slo2iso_URX
+  weight:
+    dens_kqt1_URX: 250.0
+    dens_exp2_URX: 250.0
+    dens_slo1iso_URX: 33.333333333333336
+    dens_slo2iso_URX: 50.0
+  limit: 20000
+  statement: 'class URX: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_URY
+  kind: sum_le
+  x:
+  - dens_unc103_URY
+  - dens_slo1iso_URY
+  - dens_slo2iso_URY
+  weight:
+    dens_unc103_URY: 250.0
+    dens_slo1iso_URY: 33.333333333333336
+    dens_slo2iso_URY: 50.0
+  limit: 20000
+  statement: 'class URY: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VA
+  kind: sum_le
+  x:
+  - dens_slo1iso_VA
+  - dens_slo2iso_VA
+  weight:
+    dens_slo1iso_VA: 33.333333333333336
+    dens_slo2iso_VA: 50.0
+  limit: 20000
+  statement: 'class VA: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VA12
+  kind: sum_le
+  x:
+  - dens_unc103_VA12
+  - dens_exp2_VA12
+  - dens_slo1iso_VA12
+  - dens_slo2iso_VA12
+  weight:
+    dens_unc103_VA12: 250.0
+    dens_exp2_VA12: 250.0
+    dens_slo1iso_VA12: 33.333333333333336
+    dens_slo2iso_VA12: 50.0
+  limit: 20000
+  statement: 'class VA12: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VB
+  kind: sum_le
+  x:
+  - dens_exp2_VB
+  - dens_slo1iso_VB
+  - dens_slo2iso_VB
+  weight:
+    dens_exp2_VB: 250.0
+    dens_slo1iso_VB: 33.333333333333336
+    dens_slo2iso_VB: 50.0
+  limit: 20000
+  statement: 'class VB: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VB01
+  kind: sum_le
+  x:
+  - dens_exp2_VB01
+  - dens_slo1iso_VB01
+  - dens_slo2iso_VB01
+  weight:
+    dens_exp2_VB01: 250.0
+    dens_slo1iso_VB01: 33.333333333333336
+    dens_slo2iso_VB01: 50.0
+  limit: 20000
+  statement: 'class VB01: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VB02
+  kind: sum_le
+  x:
+  - dens_exp2_VB02
+  - dens_slo1iso_VB02
+  - dens_slo2iso_VB02
+  weight:
+    dens_exp2_VB02: 250.0
+    dens_slo1iso_VB02: 33.333333333333336
+    dens_slo2iso_VB02: 50.0
+  limit: 20000
+  statement: 'class VB02: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: channel_packing_class_VC
+  kind: sum_le
+  x:
+  - dens_unc103_VC
+  - dens_exp2_VC
+  - dens_slo1iso_VC
+  - dens_slo2iso_VC
+  weight:
+    dens_unc103_VC: 250.0
+    dens_exp2_VC: 250.0
+    dens_slo1iso_VC: 33.333333333333336
+    dens_slo2iso_VC: 50.0
+  limit: 20000
+  statement: 'class VC: channels per um2 over its channel-library densities <= the packing limit'
+  strength: hard
+  basis: physics
+  source: as channel_packing_per_cell
+  check: sum_i weight_i x_i <= limit; weight = 1e4 / gamma_pS for S/cm2
+  applies_when: always
+- id: ca_pool_volume_le_cell
+  kind: pool_volume
+  x: capool_vcell
+  limit: 12.7144
+  smallest: RIBL
+  when:
+    ca_pool_volume:
+    - fixed
+    - 'off'
+  applies_when: toggle ca_pool_volume = fixed or off (one capool_vcell for every neuron)
+  statement: the one Ca pool volume <= the whole volume of the smallest neuron it is applied to
+  strength: hard
+  basis: physics
+  source: cell volumes from the BAAIWorm hoc 3D points (scripts/worm/ranges/cell_sizes.csv, derived; area matches NEURON's to 0.01%)
+  check: x <= limit
+- id: pump_vol_neuron_um3_inside_cells
+  kind: between
+  lo_value: 12.7144
+  hi_value: 856.1213
+  x:
+  - pump_vol_neuron_um3
+  statement: pump_vol_neuron_um3 (a typical neuron's volume) between the smallest and largest neuron volume
+  strength: hard
+  basis: physics
+  source: cell_sizes.csv (derived)
+  check: lo <= x <= hi
+  inclusive_lo: true
+  applies_when: always
+- id: passive_rin_neurons
+  kind: passive_rin
+  soma: pas_soma_gpas
+  neurite: pas_neurite_gpas
+  min_gohm: 0.2
+  max_gohm: 5.0
+  statement: each neuron's passive input resistance 1 / (g_pas,soma A_soma + g_pas,neurite A_neurite) >= 0.2 GOhm; its simulated input resistance at rest in [0.2, 5] GOhm
+  strength: prior
+  basis: measured_spread
+  source: docs/worm/research/param_ranges.csv A3 (Goodman et al. 1998 J Neurosci 18:2729; Mellem et al. 2008 Neuron; inferred, low confidence); areas from cell_sizes.csv
+  check: 'static: per neuron 1e8 / (gs As + gn An) / 1e9 >= min_gohm (g in S/cm2, A in um2); simulated: at rest, a -1 pA step for 300 ms, R_in = dV / dI in [min_gohm, max_gohm]'
+  applies_when: always
+- id: gate_window_cca1
+  kind: gate_window
+  mod: cca1
+  params: &id001
+    bth: kin_cca1_bth
+    ath: kin_cca1_ath
+    cth: kin_cca1_cth
+    ctm: kin_cca1_ctm
+    vhh: kin_cca1_vhh
+    dtm: kin_cca1_dtm
+    btm: kin_cca1_btm
+    dth: kin_cca1_dth
+    atm: kin_cca1_atm
+    ki: kin_cca1_ki
+    vhm: kin_cca1_vhm
+    ka: kin_cca1_ka
+  statement: 'cca1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_cca1
+  kind: vhalf_order
+  mod: cca1
+  params: *id001
+  act: minf
+  inact: hinf
+  statement: 'cca1: V1/2 of hinf below V1/2 of minf (published -58 < -43.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_egl19
+  kind: gate_window
+  mod: egl19
+  params:
+    dhinf: kin_egl19_dhinf
+    dtm: kin_egl19_dtm
+    ahinf: kin_egl19_ahinf
+    gth: kin_egl19_gth
+    atm: kin_egl19_atm
+    vhhb: kin_egl19_vhhb
+    kib: kin_egl19_kib
+    dth: kin_egl19_dth
+    bhinf: kin_egl19_bhinf
+    ki: kin_egl19_ki
+    hth: kin_egl19_hth
+    ka: kin_egl19_ka
+    ath: kin_egl19_ath
+    ftm: kin_egl19_ftm
+    gtm: kin_egl19_gtm
+    chinf: kin_egl19_chinf
+    etm: kin_egl19_etm
+    btm: kin_egl19_btm
+    vhm: kin_egl19_vhm
+    eth: kin_egl19_eth
+    cth: kin_egl19_cth
+    ctm: kin_egl19_ctm
+    fth: kin_egl19_fth
+    vhh: kin_egl19_vhh
+    bth: kin_egl19_bth
+  statement: 'egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_egl2
+  kind: gate_window
+  mod: egl2
+  params:
+    dtm: kin_egl2_dtm
+    atm: kin_egl2_atm
+    ka: kin_egl2_ka
+    btm: kin_egl2_btm
+    vhm: kin_egl2_vhm
+    ctm: kin_egl2_ctm
+  statement: 'egl2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_egl36
+  kind: gate_window
+  mod: egl36
+  params:
+    atmf: kin_egl36_atmf
+    atms: kin_egl36_atms
+    atmm: kin_egl36_atmm
+    vhm: kin_egl36_vhm
+    ka: kin_egl36_ka
+  statement: 'egl36: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_exp2
+  kind: gate_window
+  mod: exp2
+  params: &id002
+    pth1_exp2: kin_exp2_pth1_exp2
+    va_exp2: kin_exp2_va_exp2
+    ptm4_exp2: kin_exp2_ptm4_exp2
+    pth3_exp2: kin_exp2_pth3_exp2
+    pth4_exp2: kin_exp2_pth4_exp2
+    ka_exp2: kin_exp2_ka_exp2
+    ptm3_exp2: kin_exp2_ptm3_exp2
+    vi_exp2: kin_exp2_vi_exp2
+    ptm1_exp2: kin_exp2_ptm1_exp2
+    ptm2_exp2: kin_exp2_ptm2_exp2
+    ki_exp2: kin_exp2_ki_exp2
+    pth2_exp2: kin_exp2_pth2_exp2
+  statement: 'exp2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_exp2
+  kind: vhalf_order
+  mod: exp2
+  params: *id002
+  act: minf
+  inact: hinf
+  statement: 'exp2: V1/2 of hinf below V1/2 of minf (published -50 < -17.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_irk
+  kind: gate_window
+  mod: irk
+  params:
+    dtm: kin_irk_dtm
+    atm: kin_irk_atm
+    ftm: kin_irk_ftm
+    ka: kin_irk_ka
+    btm: kin_irk_btm
+    vhm: kin_irk_vhm
+    etm: kin_irk_etm
+    ctm: kin_irk_ctm
+  statement: 'irk: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_kcnl
+  kind: gate_window
+  mod: kcnl
+  params:
+    a: kin_kcnl_a
+    kca: kin_kcnl_kca
+  statement: 'kcnl: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_kqt1
+  kind: gate_window
+  mod: kqt1
+  params: &id003
+    p3tmkqt1: kin_kqt1_p3tmkqt1
+    s5: kin_kqt1_s5
+    p4tskqt1: kin_kqt1_p4tskqt1
+    s1: kin_kqt1_s1
+    s2: kin_kqt1_s2
+    p2tmkqt1: kin_kqt1_p2tmkqt1
+    p1tskqt1: kin_kqt1_p1tskqt1
+    p1tmkqt1: kin_kqt1_p1tmkqt1
+    p2tskqt1: kin_kqt1_p2tskqt1
+    s4: kin_kqt1_s4
+    va: kin_kqt1_va
+    s3: kin_kqt1_s3
+    s6: kin_kqt1_s6
+    p3tskqt1: kin_kqt1_p3tskqt1
+    p4tmkqt1: kin_kqt1_p4tmkqt1
+    ka: kin_kqt1_ka
+  statement: 'kqt1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_kqt1
+  kind: vhalf_order
+  mod: kqt1
+  params: *id003
+  act: minf
+  inact: sinf
+  statement: 'kqt1: V1/2 of sinf below V1/2 of minf (published -68 < -18 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_kqt3
+  kind: gate_window
+  mod: kqt3
+  params:
+    vhm: kin_kqt3_vhm
+    ftms: kin_kqt3_ftms
+    btw: kin_kqt3_btw
+    dtw: kin_kqt3_dtw
+    ctw: kin_kqt3_ctw
+    ctms: kin_kqt3_ctms
+    vhs: kin_kqt3_vhs
+    btms: kin_kqt3_btms
+    bs: kin_kqt3_bs
+    ats: kin_kqt3_ats
+    vhw: kin_kqt3_vhw
+    ctmf: kin_kqt3_ctmf
+    dtms: kin_kqt3_dtms
+    ka: kin_kqt3_ka
+    as: kin_kqt3_as
+    atmf: kin_kqt3_atmf
+    aw: kin_kqt3_aw
+    atms: kin_kqt3_atms
+    btmf: kin_kqt3_btmf
+    gtms: kin_kqt3_gtms
+    atw: kin_kqt3_atw
+    bw: kin_kqt3_bw
+    etms: kin_kqt3_etms
+    kis: kin_kqt3_kis
+    kiw: kin_kqt3_kiw
+  statement: 'kqt3: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_kvs1
+  kind: gate_window
+  mod: kvs1
+  params:
+    bth: kin_kvs1_bth
+    vhm: kin_kvs1_vhm
+    atm: kin_kvs1_atm
+    ka: kin_kvs1_ka
+    dtm: kin_kvs1_dtm
+    cth: kin_kvs1_cth
+    vhh: kin_kvs1_vhh
+    btm: kin_kvs1_btm
+    ath: kin_kvs1_ath
+    ki: kin_kvs1_ki
+    dth: kin_kvs1_dth
+    ctm: kin_kvs1_ctm
+  statement: 'kvs1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_shk1
+  kind: gate_window
+  mod: shk1
+  params: &id004
+    ki: kin_shk1_ki
+    dtm: kin_shk1_dtm
+    vhm: kin_shk1_vhm
+    etm: kin_shk1_etm
+    btm: kin_shk1_btm
+    ctm: kin_shk1_ctm
+    atm: kin_shk1_atm
+    ath: kin_shk1_ath
+    ftm: kin_shk1_ftm
+    vhh: kin_shk1_vhh
+    ka: kin_shk1_ka
+  statement: 'shk1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_shk1
+  kind: vhalf_order
+  mod: shk1
+  params: *id004
+  act: minf
+  inact: hinf
+  statement: 'shk1: V1/2 of hinf below V1/2 of minf (published -7.5 < 20 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_shl1
+  kind: gate_window
+  mod: shl1
+  params: &id005
+    aths: kin_shl1_aths
+    vhh: kin_shl1_vhh
+    ka: kin_shl1_ka
+    etm: kin_shl1_etm
+    dths: kin_shl1_dths
+    ki: kin_shl1_ki
+    bthf: kin_shl1_bthf
+    btm: kin_shl1_btm
+    ftm: kin_shl1_ftm
+    bths: kin_shl1_bths
+    cths: kin_shl1_cths
+    vhm: kin_shl1_vhm
+    dthf: kin_shl1_dthf
+    atm: kin_shl1_atm
+    athf: kin_shl1_athf
+    dtm: kin_shl1_dtm
+    cthf: kin_shl1_cthf
+    ctm: kin_shl1_ctm
+  statement: 'shl1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_shl1
+  kind: vhalf_order
+  mod: shl1
+  params: *id005
+  act: minf
+  inact: hfinf
+  statement: 'shl1: V1/2 of hfinf below V1/2 of minf (published -33.5 < 10 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_slo1_egl19
+  kind: gate_window
+  mod: slo1_egl19
+  params:
+    kxy: kin_slo1_egl19_kxy
+    nxy: kin_slo1_egl19_nxy
+    wom: kin_slo1_egl19_wom
+    wyx: kin_slo1_egl19_wyx
+    wxy: kin_slo1_egl19_wxy
+    wop: kin_slo1_egl19_wop
+    kyx: kin_slo1_egl19_kyx
+    nyx: kin_slo1_egl19_nyx
+  statement: 'slo1_egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_slo1_unc2
+  kind: gate_window
+  mod: slo1_unc2
+  params: &id006
+    nyx: kin_slo1_unc2_nyx
+    wyx: kin_slo1_unc2_wyx
+    nxy: kin_slo1_unc2_nxy
+    kxy: kin_slo1_unc2_kxy
+    kyx: kin_slo1_unc2_kyx
+    wom: kin_slo1_unc2_wom
+    wop: kin_slo1_unc2_wop
+    wxy: kin_slo1_unc2_wxy
+  statement: 'slo1_unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_slo1_unc2
+  kind: vhalf_order
+  mod: slo1_unc2
+  params: *id006
+  act: mcavinf
+  inact: hcavinf
+  statement: 'slo1_unc2: V1/2 of hcavinf below V1/2 of mcavinf (published -52.5 < -12.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_slo1iso
+  kind: gate_window
+  mod: slo1iso
+  params:
+    kyx: kin_slo1iso_kyx
+    wom: kin_slo1iso_wom
+    nyx: kin_slo1iso_nyx
+    wyx: kin_slo1iso_wyx
+    wxy: kin_slo1iso_wxy
+    kxy: kin_slo1iso_kxy
+    wop: kin_slo1iso_wop
+    nxy: kin_slo1iso_nxy
+  statement: 'slo1iso: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_slo2_egl19
+  kind: gate_window
+  mod: slo2_egl19
+  params:
+    kxy: kin_slo2_egl19_kxy
+    wxy: kin_slo2_egl19_wxy
+    kyx: kin_slo2_egl19_kyx
+    nyx: kin_slo2_egl19_nyx
+    wyx: kin_slo2_egl19_wyx
+    wom: kin_slo2_egl19_wom
+    nxy: kin_slo2_egl19_nxy
+    wop: kin_slo2_egl19_wop
+  statement: 'slo2_egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_slo2_unc2
+  kind: gate_window
+  mod: slo2_unc2
+  params: &id007
+    wxy: kin_slo2_unc2_wxy
+    wom: kin_slo2_unc2_wom
+    kyx: kin_slo2_unc2_kyx
+    kxy: kin_slo2_unc2_kxy
+    nxy: kin_slo2_unc2_nxy
+    nyx: kin_slo2_unc2_nyx
+    wop: kin_slo2_unc2_wop
+    wyx: kin_slo2_unc2_wyx
+  statement: 'slo2_unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_slo2_unc2
+  kind: vhalf_order
+  mod: slo2_unc2
+  params: *id007
+  act: mcavinf
+  inact: hcavinf
+  statement: 'slo2_unc2: V1/2 of hcavinf below V1/2 of mcavinf (published -52.5 < -12.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_slo2iso
+  kind: gate_window
+  mod: slo2iso
+  params:
+    kxy1: kin_slo2iso_kxy1
+    kyx1: kin_slo2iso_kyx1
+    nyx1: kin_slo2iso_nyx1
+    wyx1: kin_slo2iso_wyx1
+    wop1: kin_slo2iso_wop1
+    nxy1: kin_slo2iso_nxy1
+    wom1: kin_slo2iso_wom1
+    wxy1: kin_slo2iso_wxy1
+  statement: 'slo2iso: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: gate_window_unc103
+  kind: gate_window
+  mod: unc103
+  params: &id008
+    th1: kin_unc103_th1
+    tm1: kin_unc103_tm1
+    th3: kin_unc103_th3
+    th2: kin_unc103_th2
+    ki: kin_unc103_ki
+    tm2: kin_unc103_tm2
+    vi: kin_unc103_vi
+    tm4: kin_unc103_tm4
+    ka: kin_unc103_ka
+    th4: kin_unc103_th4
+    tm3: kin_unc103_tm3
+    va: kin_unc103_va
+  statement: 'unc103: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_unc103
+  kind: vhalf_order
+  mod: unc103
+  params: *id008
+  act: minf
+  inact: hinf
+  statement: 'unc103: V1/2 of hinf below V1/2 of minf (published -45.5 < -15.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_window_unc2
+  kind: gate_window
+  mod: unc2
+  params: &id009
+    dtm: kin_unc2_dtm
+    eth: kin_unc2_eth
+    fth: kin_unc2_fth
+    cth: kin_unc2_cth
+    bth: kin_unc2_bth
+    vhm: kin_unc2_vhm
+    btm: kin_unc2_btm
+    ath: kin_unc2_ath
+    ctm: kin_unc2_ctm
+    etm: kin_unc2_etm
+    ka: kin_unc2_ka
+    ki: kin_unc2_ki
+    atm: kin_unc2_atm
+    dth: kin_unc2_dth
+    vhh: kin_unc2_vhh
+  statement: 'unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
+  strength: hard
+  basis: physics
+  source: a gate is a probability; tau_gate hard bounds (rules.yaml); the mod's own formulas (gates.py)
+  check: 'gates.check(mod, {name: value}) == []'
+  applies_when: always
+- id: vhalf_order_unc2
+  kind: vhalf_order
+  mod: unc2
+  params: *id009
+  act: minf
+  inact: hinf
+  statement: 'unc2: V1/2 of hinf below V1/2 of minf (published -52.5 < -12.5 mV)'
+  strength: hard
+  basis: measured_spread
+  source: the order of the worm channel's own fit (BAAIWorm, from Nicoletti 2019 / Liu 2018 data); inactivation half points lie below activation for transient channels (Hille 2001 ch. 3)
+  check: 'half points from gates.gate_values at the middle Ca: V1/2(inact) < V1/2(act)'
+  applies_when: always
+- id: gate_sum_kqt3_aw_bw
+  kind: sum_le
+  x:
+  - kin_kqt3_aw
+  - kin_kqt3_bw
+  weight:
+    kin_kqt3_aw: 1.0
+    kin_kqt3_bw: 1.0
+  limit: 1.0
+  statement: 'kqt3: aw + bw <= 1 (the gate''s steady state reaches aw + bw)'
+  strength: hard
+  basis: physics
+  source: a gate is a probability (the mod formula)
+  check: x_a + x_b <= 1
+  applies_when: always
+- id: gate_sum_kqt3_as_bs
+  kind: sum_le
+  x:
+  - kin_kqt3_as
+  - kin_kqt3_bs
+  weight:
+    kin_kqt3_as: 1.0
+    kin_kqt3_bs: 1.0
+  limit: 1.0
+  statement: 'kqt3: as + bs <= 1 (the gate''s steady state reaches as + bs)'
+  strength: hard
+  basis: physics
+  source: a gate is a probability (the mod formula)
+  check: x_a + x_b <= 1
+  applies_when: always
+- id: gate_sum_kqt1_s1_s4
+  kind: sum_le
+  x:
+  - kin_kqt1_s1
+  - kin_kqt1_s4
+  weight:
+    kin_kqt1_s1: 1.0
+    kin_kqt1_s4: 1.0
+  limit: 1.0
+  statement: 'kqt1: s1 + s4 <= 1 (the gate''s steady state reaches s1 + s4)'
+  strength: hard
+  basis: physics
+  source: a gate is a probability (the mod formula)
+  check: x_a + x_b <= 1
+  applies_when: always

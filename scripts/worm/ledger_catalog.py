@@ -598,7 +598,7 @@ CATALOG_COLUMNS = ["id", "plan_row", "plan_row_name", "mechanism", "mechanism_na
                    "source_quote", "source_project", "fill_kind", "used_by_code", "toggle", "precision_needed",
                    "audit", "audit_status", "audit_trail", "quote_checked", "link_status", "notes", "origin", "kind", "applies_to",
                    "range_source", "range_basis", "hard_min", "hard_max", "hard_class", "hard_basis", "hard_source",
-                   "range_basis_detail", "span_decades", "span_reason", "fit_role", "values_file"]
+                   "range_basis_detail", "span_decades", "span_reason", "fit_role", "n_unknown", "values_file"]
 
 
 def quote_sha(q: str) -> str:
@@ -709,7 +709,7 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
             hard_min=_round12(r.get("hard_min", "")), hard_max=_round12(r.get("hard_max", "")),
             hard_class=r.get("hard_class", ""), hard_basis=r.get("hard_basis", ""), hard_source=r.get("hard_source", ""),
             range_basis_detail=r.get("bound_basis_detail", ""), span_decades=r.get("span_decades", ""),
-            span_reason=r.get("span_reason", ""), fit_role=r.get("fit_role", ""),
+            span_reason=r.get("span_reason", ""), fit_role=r.get("fit_role", ""), n_unknown=r.get("n_unknown", ""),
             values_file=f"data/worm/model/values/{r['param_id']}.csv" if t is not None else "",
             _split=split, _probs=probs))
     return out
@@ -840,6 +840,79 @@ def independent_audit(s) -> list[str]:
     return L
 
 
+def _g(x) -> str:
+    try:
+        return f"{float(x):.3g}"
+    except (TypeError, ValueError):
+        return str(x or "")
+
+
+def ranges_markdown(R) -> list[str]:
+    """The Ranges section (wranges, 7 Nov 2026; scripts/worm/ranges/)."""
+    L = ["", "## Ranges", "",
+         "Every row has hard bounds (`hard_min`, `hard_max`: what physics and chemistry allow any animal cell) and a "
+         "biological box (`bio_min`, `bio_max`: what a fitter may search) inside them; `bound_basis` says what the "
+         "box rests on (physics, measured_spread, homology, guessed_physical). `fit_role` (Ben, 7 Nov 12:42): "
+         "**static** rows hold only known numbers (measured, derived, published_fit, inferred) and are part of the "
+         "built worm, their hard bounds kept for residuals and debugging; **free** rows hold the unknown (guessed or "
+         "absent) numbers, the gaps to fill; **inactive** rows hold unknowns the default worm does not read (another "
+         "form, a catalog slot); **fixed** rows are structure, constants, flags and numerics. Rules: "
+         "`scripts/worm/ranges/rules.yaml`; per-row result in `data/worm/model/parameters.csv`; joint constraints in "
+         "`data/worm/model/constraints.yaml`.", "",
+         "### Rows and unknown numbers by role", "", "| role | model rows | unknown numbers | catalog rows | "
+         "catalog unknown numbers |", "|---|---|---|---|---|"]
+    for k in dict.fromkeys([*R["roles_model"], *R["roles_catalog"]]):
+        m, c = R["roles_model"].get(k, {}), R["roles_catalog"].get(k, {})
+        L.append(f"| {k} | {m.get('rows', 0):,} | {m.get('unknown', 0):,} | {c.get('rows', 0):,} | "
+                 f"{c.get('unknown', 0):,} |")
+    L += ["", f"### The unknowns the default worm reads (free model rows): {R['free_rows']} rows, "
+          f"{R['free_unknown']:,} numbers, by basis of their box", "", "| basis | rows | unknown numbers |",
+          "|---|---|---|"]
+    L += [f"| {k} | {v['rows']} | {v['unknown']:,} |" for k, v in R["free_by_basis"].items()]
+    sc = R["span_counts"]
+    L += ["", f"### Widest free boxes (decades = log10(bio_max / bio_min); {sc['>1']} free rows span more than 1 "
+          f"decade, {sc['>2']} more than 2, {sc['>3']} more than 3)", "",
+          "| row | decades | box | unknown | basis | why so wide |", "|---|---|---|---|---|---|"]
+    for w in R["widest"]:
+        L.append(f"| `{w['id']}` | {w['decades']:.2f} | {_g(w['lo'])} to {_g(w['hi'])} {w['unit']} | {w['unknown']:,} "
+                 f"| {w['basis']} | {str(w['why'])[:140]} |")
+    L += ["", f"### Narrowed by known numbers ({len(R['narrowed'])} moves; `data/worm/model/narrowed_by_constraints.csv`)",
+          "", "A hard joint constraint that always applies, paired with known numbers, shrinks an unknown row's box.",
+          "", "| row | before | after | by |", "|---|---|---|---|"]
+    L += [f"| `{m['param_id']}` | [{_g(m['old_min'])}, {_g(m['old_max'])}] | [{_g(m['new_min'])}, {_g(m['new_max'])}] "
+          f"| {m['by']} |" for m in R["narrowed"]]
+    L += ["", f"### Joint constraints: {R['n_constraints']} (" + ", ".join(f"{v} {k}" for k, v in
+                                                                         R["constraints"].items()) + ")", "",
+          "The template worm obeys all of them (the build asserts it)."]
+    L += ["", f"### Rule parameters proposed for the model (`data/worm/model/rule_params.csv`; not yet read by the code)",
+          "", "Each stands for many unknown per-element numbers through measured structure (EM sizes, reconstructed "
+          "areas, CeNGEN expression). Lognormal priors: median `prior_a`, sigma `prior_b` in ln units. "
+          f"Together they replace {R['from_free']:,} of the {R['free_unknown']:,} free unknown numbers (and the "
+          f"{R['replaced'].get('^syn_sign_receptor$', {}).get('unknown', 0):,} receptor-rule signs, a fixed row); with "
+          f"the {R['n_new_rules']} new rule parameters the free unknowns would be **{R['free_after_rules']:,}**.", "",
+          "| rule | value | box | hard | prior | label | basis | replaces unknowns |", "|---|---|---|---|---|---|---|---|"]
+    for r in R["rules"]:
+        pr = r["prior_dist"] + (f" {_g(r['prior_a'])}, {_g(r['prior_b'])}" if r["prior_dist"] in ("lognormal", "normal")
+                                else "")
+        L.append(f"| `{r['param_id']}` | {_g(r['value_template'])} {r['unit']} | {_g(r['bio_min'])} to "
+                 f"{_g(r['bio_max'])} | {_g(r['hard_min'])} to {_g(r['hard_max'])} | {pr} | {r['label']} | "
+                 f"{r['bound_basis']} | {int(r['replaces_unknowns']):,}: {r['replaces']} |")
+    a = R["after_span_counts"]
+    L += ["", f"### After the rules: {R['after_rows']} free parameters, {R['free_after_rules']:,} unknown numbers, by "
+          f"basis of their box ({a['>1']} span more than 1 decade, {a['>2']} more than 2, {a['>3']} more than 3)", "",
+          "The free rows the rules do not replace, plus one number per new rule parameter (the receptor-sign "
+          "threshold included: it replaces a fixed row's guessed signs).", "", "| basis | parameters | unknown numbers |",
+          "|---|---|---|"]
+    L += [f"| {k} | {v['rows']} | {v['unknown']:,} |" for k, v in R["after_by_basis"].items()]
+    sm = R.get("sampling")
+    L += ["", "### Sampling check (`scripts/worm/ranges/sample.py`)", ""]
+    if sm:
+        L += [sm["text"]]
+    else:
+        L.append("Not run yet.")
+    return L
+
+
 def write_markdown(cat_rows, s):
     import subprocess
     now = subprocess.run(["date", "+%Y-%m-%d %H:%M %Z"], capture_output=True, text=True).stdout.strip()
@@ -890,6 +963,8 @@ def write_markdown(cat_rows, s):
     for b in s["biggest_unknown_blocks"][:20]:
         L.append(f"| `{b['id']}` | {b['plan_row']} | {b['mechanism']} | {b['grain']} | {b['unknown']:,} | "
                  f"{b['of']:,} | {b['used_by_code']} | {'yes' if b['fit_target'] else ''} |")
+    if s.get("ranges"):
+        L += ranges_markdown(s["ranges"])
     a = s["audit"]
     st = a.get("by_status", {})
     L += ["", "## Audit", "", f"{a['rows_ok']} rows pass every check; {a['rows_with_problems']} carry at least one "

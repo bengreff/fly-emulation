@@ -16,8 +16,12 @@ Fields written on each row:
                        guessed) and any clip made here
   span_decades         log10(bio_max / bio_min) when both are positive, else blank
   span_reason          why a range is wider than one decade (blank when it is not, or when no reason is written)
-  fit_role             free (a fitter may move it inside the biological range) | fixed (structure, constants,
-                       recording conditions, numerics) | derived (follows from other rows)
+  fit_role             free (has unknown numbers: a fitter moves those inside the biological range) | static (every
+                       number known: measured, derived, published_fit or inferred; part of the built worm, its hard
+                       bounds kept only for residuals and debugging; Ben, 7 Nov 12:42) | fixed (structure, constants,
+                       recording conditions, numerics) | derived (follows from other rows) | inactive (has unknown
+                       numbers but the default worm does not read it: another form, or a catalog slot)
+  n_unknown            the row's guessed or absent numbers (its elements labelled so, or all n_values if the row is)
 """
 from __future__ import annotations
 
@@ -40,7 +44,7 @@ for _c in [*RULES["classes"].values(), *RULES["rules"]]:     # PyYAML reads 1.0e
             _c[_k] = [float(x) for x in _c[_k]]
 BASES = ("physics", "measured_spread", "homology", "guessed_physical")
 FIELDS = ["hard_min", "hard_max", "hard_class", "hard_basis", "hard_source", "bound_basis_detail", "span_decades",
-          "span_reason", "fit_role"]
+          "span_reason", "fit_role", "n_unknown"]
 
 # row unit -> (dimension, factor): value in the class's canonical unit = value in the row unit x factor
 UNITS = {
@@ -280,7 +284,25 @@ def apply(rows: list[dict], values: dict | None = None) -> dict:
             if not why:
                 rep["wide_no_reason"].append(f"{pid}: {sd:.2f} decades [{lo:g}, {hi:g}] {r['unit']}")
         r["span_reason"] = why
+        n_unk = _n_unknown(r, values)
+        r["n_unknown"] = n_unk
+        if r["fit_role"] == "free" and n_unk == 0:
+            r["fit_role"] = "static"
+        elif r["fit_role"] == "free" and not str(r.get("used_by_code", "yes")).startswith("yes"):
+            r["fit_role"] = "inactive"               # unknown, but only another form or a catalog slot reads it
     return rep
+
+
+UNKNOWN = ("guessed", "absent")
+
+
+def _n_unknown(r: dict, values: dict | None) -> int:
+    """Guessed or absent numbers in a row: its per-element labels if it has a values table, else the row label."""
+    t = values.get(r["param_id"]) if values else None
+    if t is not None and "label" in t:
+        return int(t.label.isin(UNKNOWN).sum())
+    n = _num(r.get("n_values"))
+    return int(n if not np.isnan(n) else 1) if r.get("label") in UNKNOWN else 0
 
 
 def _clip_prior(r: dict):

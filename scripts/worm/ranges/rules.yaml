@@ -197,6 +197,12 @@ family_of:
 # rules, first match wins. re = regex on param_id (re.search); unit = optional list of row units
 rules:
   # structure and construction
+  # rule parameters proposed for wmodel (scripts/worm/ranges/rule_params.csv; not yet rows of the ledger)
+  - {re: "^rule_syn_g_per_em_", hard_row_unit: [0, 90], basis: physics, why: "one EM section of an active zone (~1 um long x ~90 nm thick = 0.09 um2) packed at the densest measured receptor density (2e4 per um2, packing_per_um2) of 50 pS channels: 90 nS per section", source: "[HB 1], [HB 2]; RULE_PARAMS_LIT.md section 1"}
+  - {re: "^rule_cm_specific$", cls: capacitance_specific}
+  - {re: "^rule_pas_epas_", cls: reversal_leak}
+  - {re: "^rule_dens_", cls: conductance_density}
+  - {re: "^rule_cengen_threshold$", hard_row_unit: [1, 4], basis: physics, why: "CeNGEN publishes four expression thresholds", source: "Taylor et al. 2021 Cell"}
   - {re: "^(morph_|wire_)", cls: structure, role: fixed}
   - {re: "^build_length_per_seg$", cls: numerics, role: fixed}
   - {re: "^build_", cls: construction, role: fixed}
