@@ -15,7 +15,9 @@ from wormemu.brain_layers import Layers
 from wormemu.interface import BWM_NAMES
 from wormemu.mech import muscle_bwm as mb
 from wormemu.mech import organs_egglaying as ge
+from wormemu.mech import glia as gl
 from wormemu.mech import organs_intestine as gi
+from wormemu.mech import organs_other as oo
 from wormemu.mech import organs_pharynx as ph
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -221,18 +223,26 @@ def test_defecation_off_is_silent_and_ip3r_drives_posterior_bwm_and_avl_dvb():
     off = gi.Mech(brain, q, {"defecation": "off"})
     r = off.step(SimpleNamespace(), 1.0)
     assert "I_pA" not in r and r["out"]["expulsions"] == 0 and not r["out"]["enteric_activation"].any()
-    m = gi.Mech(brain, q, {"defecation": "ip3r", "enteric_muscle": "off"})
     v = np.full(len(brain.cell_names), -30.0)
-    ctx = SimpleNamespace(v=v, outputs={})
-    i_post, i_aex = 0.0, 0.0
-    for _ in range(60000):                                    # 60 s at 1 ms: at least one wave
-        r = m.step(ctx, 1.0)
-        i_post = max(i_post, float(r["I_pA"][m.post_cells].max()))
-        i_aex = max(i_aex, float(r["I_pA"][m.aex2_cells].max()))
-        anterior = np.setdiff1d(m.bwm, m.post_cells)
-        assert not r["I_pA"][anterior].any()
-    assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9 and 0.0 < i_aex <= q["aex2_gain_pA"]
-    assert set(r["out"]["peptide_release"]) == {"nlp-40"}
+    for form in ("release_only", "direct"):
+        m = gi.Mech(brain, q, {"defecation": "ip3r", "enteric_muscle": "off", "nlp40_aex2": form})
+        ctx = SimpleNamespace(v=v, outputs={})
+        i_post, i_aex, rel = 0.0, 0.0, 0.0
+        for _ in range(60000):                                # 60 s at 1 ms: at least one wave
+            r = m.step(ctx, 1.0)
+            i_post = max(i_post, float(r["I_pA"][m.post_cells].max()))
+            i_aex = max(i_aex, float(r["I_pA"][m.aex2_cells].max()))
+            rel = max(rel, r["out"]["peptide_release"]["nlp-40@posterior_body"])
+            anterior = np.setdiff1d(m.bwm, m.post_cells)
+            assert not r["I_pA"][anterior].any()
+        assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9
+        assert set(r["out"]["peptide_release"]) == {"nlp-40@posterior_body"}
+        # molecules/s = nM/s x neuromod's posterior-body volume (400 um2 x 269 um) x 0.602 molecules per um3 per nM
+        assert 0.0 < rel <= q["nlp40_release_nM_per_s"] * 400.0 * 269.0 * 0.602214 * (1 + 1e-9)
+        if form == "direct":
+            assert 0.0 < i_aex <= q["aex2_gain_pA"]
+        else:
+            assert i_aex == 0.0                               # neuromod applies AEX-2, not this module
 
 
 # --- row 15: egg-laying circuit (organs_egglaying) ------------------------------------------------------------------
@@ -286,3 +296,120 @@ def test_egg_specs_have_ranges_and_labels():
     assert len(ids) == len(set(ids))
     for s in ge.SPECS:
         assert s.lo <= s.template <= s.hi and s.label in LABELS, s.id
+
+
+# --- row 11: glia (glia) --------------------------------------------------------------------------------------------
+def _glia_brain():
+    from wormemu.brain_layers import AMPHID
+    names = sorted(AMPHID) + ["X1", "X2"]
+    return SimpleNamespace(idx={c: i for i, c in enumerate(names)}, cell_names=names, spec=None), names
+
+
+def _glia_run(m, names, drive_cells, t_drive=(1.0, 2.0), t_end=30.0, dt=5.0, v_rest=-60.0, v_on=-40.0):
+    rows, t = [], 0.0
+    while t < t_end * 1000.0:
+        v = np.full(len(names), v_rest)
+        if t_drive[0] * 1000.0 <= t < t_drive[1] * 1000.0:
+            v[[names.index(c) for c in drive_cells]] = v_on
+        r = m.step(SimpleNamespace(t_ms=t, v=v, outputs={}), dt)
+        t += dt
+        rows.append((t / 1000.0, r))
+    return rows
+
+
+def test_glia_fixed_forms_are_silent():
+    brain, names = _glia_brain()
+    m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": "fixed", "glia_kcc3": "fixed"})
+    for _, r in _glia_run(m, names, [c for c in names if c.endswith("L")], t_end=3.0):
+        assert "I_pA" not in r and "afd_gc_scale" not in r["out"]
+
+
+def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
+    brain, names = _glia_brain()
+    left = [c for c in names if c.endswith("L") and c != "X1"]
+    q = gl.defaults()
+    taus = {}
+    for form in ("kir", "null"):
+        m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": form, "glia_kcc3": "fixed"})
+        rows = _glia_run(m, names, left)
+        k = np.array([r["out"]["amphid_k_mM"] for _, r in rows]) - q["glia_k_bath_mM"]
+        t = np.array([x for x, _ in rows])
+        assert k[:, 1].max() == 0.0 and k[t <= 1.0].max() == 0.0          # right side untouched; no load in v0
+        i = int(np.argmax(k[:, 0]))
+        assert abs(t[i] - 2.0) < 0.01
+        after = k[i:, 0] / k[i, 0]
+        taus[form] = float(t[i + int(np.argmax(after < np.exp(-1.0)))] - t[i])
+        if form == "kir":
+            I = rows[i][1]["I_pA"]
+            assert (I[[names.index(c) for c in left]] > 0).all() and not I[names.index("X1")]
+    assert abs(taus["kir"] - 1.0 / (1 / q["glia_kir_tau_s"] + 1 / q["glia_k_diff_tau_s"])) < 0.05
+    assert abs(taus["null"] - q["glia_k_diff_tau_s"]) < 0.05
+
+
+def test_glia_kcc3_scale_is_one_at_rest_rises_in_the_null_and_with_ending_k():
+    brain, names = _glia_brain()
+    wt = gl.Mech(brain, {}, {"glia_cells": "off"})
+    rest = _glia_run(wt, names, [], t_end=20.0)
+    assert all(abs(r["out"]["afd_gc_scale"]["AFDL"] - 1.0) < 1e-9 for _, r in rest)
+    null = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kcc3": "null"})
+    s = _glia_run(null, names, [], t_end=30.0)[-1][1]["out"]["afd_gc_scale"]
+    q = gl.defaults()
+    want = (1 + (q["glia_cl_bath_mM"] + q["glia_kcc3_dcl_mM"]) / q["glia_gcy8_cl_ic50_mM"]) / \
+        (1 + q["glia_cl_bath_mM"] / q["glia_gcy8_cl_ic50_mM"])
+    assert want > 1.0 and abs(s["AFDL"] - want) < 1e-9 and abs(s["AFDR"] - want) < 1e-9
+    wt.reset()
+    left = [c for c in names if c.endswith("L") and c != "X1"]
+    rows = _glia_run(wt, names, left, t_drive=(1.0, 6.0), t_end=6.0)
+    s = rows[-1][1]["out"]["afd_gc_scale"]
+    assert s["AFDL"] > 1.0 and abs(s["AFDR"] - 1.0) < 1e-9             # K+ at the left ending slows KCC-3
+
+
+def test_glia_specs_have_ranges_and_labels():
+    from bioemu.ledger import LABELS
+    for s in gl.SPECS:
+        assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id
+
+
+def _other(**toggles):
+    return oo.Mech(SimpleNamespace(idx={}, spec=None), {}, dict(other_cells="off", **toggles))
+
+
+def _other_run(m, s, dt_s=1.0, obs=None):
+    ctx = SimpleNamespace(obs=obs, outputs={})
+    return [m.step(ctx, dt_s * 1000.0)["out"] for _ in range(int(s / dt_s))]
+
+
+def test_excretory_fixed_form_holds_the_setpoint_and_canal_holds_it_at_rest():
+    q = oo.defaults()
+    for form in ("fixed", "off", "canal", "on"):
+        o = _other_run(_other(excretory_osmo=form), 3600.0)[-1]
+        assert abs(o["pressure_kPa"] - q["osmo_p_set_kPa"]) < 1e-9 and abs(o["body_fluid_volume_rel"] - 1.0) < 1e-12
+
+
+def test_excretory_null_fills_at_the_analytic_rate_and_canal_corrects_a_hypertonic_shift():
+    q = oo.defaults()
+    lp, E, ps = q["osmo_lp_per_kPa_s"], q["osmo_e_vol_kPa"], q["osmo_p_set_kPa"]
+    dpi = oo.RT_KPA_PER_MOSM * q["osmo_dosm_mOsm"]
+    v_inf = 1.0 + (dpi - ps) / E
+    tau = 1.0 / (lp * E)
+    o = _other_run(_other(excretory_osmo="null"), tau, dt_s=10.0)[-1]
+    assert abs((o["body_fluid_volume_rel"] - 1.0) / (v_inf - 1.0) - (1.0 - np.exp(-1.0))) < 1e-3
+    # 30 mOsm extra outside: the body shrinks, the canal stops bailing (it cannot pump water in), no NaN
+    hyper = {"head": {"osmolarity_mOsm": 30.0}}
+    o = _other_run(_other(excretory_osmo="canal"), 3600.0, dt_s=10.0, obs=hyper)[-1]
+    assert o["body_fluid_volume_rel"] < 1.0 and o["pressure_kPa"] < ps and np.isfinite(o["pressure_kPa"])
+
+
+def test_coelomocyte_clearance_is_count_times_cell_clearance_over_volume():
+    q = oo.defaults()
+    k = q["cc_count"] * q["cc_clearance_um3_per_s"] / q["cc_pc_volume_um3"]
+    assert abs(k - 1.0e-3) < 1e-4
+    assert _other_run(_other(), 1.0)[-1]["coelomocyte_uptake_per_s"] == pytest.approx(k)
+    assert _other_run(_other(coelomocytes="null"), 1.0)[-1]["coelomocyte_uptake_per_s"] == 0.0
+    assert "coelomocyte_uptake_per_s" not in _other_run(_other(coelomocytes="off"), 1.0)[-1]
+
+
+def test_other_specs_have_ranges_and_labels():
+    from bioemu.ledger import LABELS
+    for s in oo.SPECS:
+        assert s.lo <= s.template <= s.hi and s.label in LABELS and s.source and s.unit, s.id

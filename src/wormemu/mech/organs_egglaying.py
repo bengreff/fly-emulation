@@ -17,9 +17,11 @@ lumped tyramine pool. HSN and VC are the brain's own cells.
 
 Loop. Eggs enter the uterus at the rate from metabolism (ctx.outputs['egg_production_per_h'], row 20) or this
 module's default; uterine stretch S = Hill(eggs) opens a cation conductance on vm1/vm2; 5-HT (SER-1, SER-7) and NLP-3
-from B1's well-mixed pools (brain.layers.ma_c, pep_c) open the same conductance. The vm Ca -> activation is row 12's
+from B1's pools (mech.neuromod's compartment of HSN, at the vulva; brain_layers' well-mixed pools when neuromod is
+absent) open the same conductance, at neuromod's SER-1, SER-7 and NPR-42 EC50s. The vm Ca -> activation is row 12's
 Boyle-Berri-Cohen integrator; an egg passes when the mean vm activation crosses egg_vm_act_on with an egg in the
-uterus. Each egg releases uv1 tyramine, which opens LGC-55 (a Cl channel) on HSN; vm activity feeds a depolarising
+uterus. Each egg releases uv1 tyramine, which opens LGC-55 (a Cl channel, row 7's rec_lgc55_* EC50, Hill and
+reversal) on HSN; vm activity feeds a depolarising
 current back to HSN. Nothing sets the active/inactive states: they come out of this loop or they do not.
 The nested form `timer` is brain_layers.Layers.egg_laying verbatim (two-state timer, Waggoner 1998 durations).
 The id egg_laying is brain_layers' id, so this module takes that toggle over. `egg_unc103=off` is the unc-103 null
@@ -67,10 +69,10 @@ SPECS = [
     _s("egg_cation_erev_mV", "egg_laying", "mV", 0.0, -10.0, 10.0, "nonselective cation channel", "inferred", _A),
     _s("egg_5ht_g_nS", "egg_laying", "nS", 1.0, 0.1, 3.0, "Carnell 2005; Hobson 2006 (SER-1, SER-7 on vm)",
        applies=_A, notes="5-HT-opened cation conductance at full occupancy (Gq/Gs excitability as a conductance); "
-       "occupancy = mean of SER-1 and SER-7 at B1's EC50s; guessed"),
+       "occupancy = mean of SER-1 and SER-7 at neuromod's EC50s; guessed"),
     _s("egg_nlp3_g_nS", "egg_laying", "nS", 0.5, 0.0, 2.0, "Brewer et al. 2019 PLOS Genet", applies=_A,
-       notes="NLP-3-opened cation conductance at full occupancy; NLP-3's vm receptor is unknown, B1's nlp-3 EC50 is "
-       "used; guessed"),
+       notes="NLP-3-opened cation conductance at full occupancy; NLP-3's vm receptor is unknown, neuromod's "
+       "NLP-3/NPR-42 EC50 (Beets 2023) is used; guessed"),
     _s("egg_unc103_gkr_nS", "egg_unc103", "nS", 9.6, 3.2, 32.0, CK13, "inferred", _A,
        notes="UNC-103 as Du's Kr current; fitted: 3x Du's body-wall value, the smallest multiple that keeps an "
        "undriven vm at rest (numpy, 4 s: 1x fires 17 spikes, 3x rests at -35 mV), as UNC-103 keeps vm "
@@ -92,12 +94,9 @@ SPECS = [
        notes="tyramine added near HSN by uv1 per egg passed; guessed"),
     _s("egg_uv1_tyr_tau_s", "egg_laying", "s", 60.0, 20.0, 1200.0, ZHANG, applies="uv1",
        notes="uv1 tyramine clearance; Zhang 2010 makes uv1 the long (cluster-ending) inhibition; guessed"),
-    _s("egg_lgc55_ec50_uM", "egg_laying", "uM", 12.0, 5.0, 30.0, "Pirri et al. 2009 Neuron", applies="HSN",
-       notes="LGC-55 tyramine EC50; ~12 uM from memory of Pirri 2009, not opened tonight, so guessed"),
     _s("egg_lgc55_g_nS", "egg_laying", "nS", 1.0, 0.1, 5.0, COLLINS, applies="HSN",
-       notes="LGC-55 Cl conductance on each HSN at full occupancy; guessed"),
-    _s("egg_lgc55_erev_mV", "egg_laying", "mV", -60.0, -80.0, -40.0, "Cl reversal", applies="HSN",
-       notes="guessed"),
+       notes="LGC-55 Cl conductance on each HSN at full occupancy (EC50, Hill and reversal: row 7's rec_lgc55_*); "
+       "guessed"),
 ]
 
 # the nested timer reuses brain_layers' own egg specs (read from brain.layers.p when present)
@@ -138,21 +137,26 @@ class Mech:
         self.reset()
 
     def _pools(self):
-        """Where 5-HT and NLP-3 sit in B1's well-mixed pools, and the EC50s B1 uses for them (nM)."""
+        """neuromod's 5-HT (SER-1, SER-7) and NLP-3 (NPR-42) EC50s (nM) and row 7's LGC-55 (EC50 uM, Hill, reversal),
+        from the brain's spec when it has one; where 5-HT and NLP-3 sit in brain_layers' pools (the fallback)."""
+        from wormemu import mech
+        from wormemu.mech import neuromod, receptors
         b = self.brain
-        sv = b.spec.v
+        p = {s.id: s.template for s in neuromod.SPECS + receptors.SPECS}
+        if getattr(b, "spec", None) is not None:
+            for m in (neuromod, receptors):
+                p.update({k: v for k, v in mech.params_for(m, b.spec).items() if np.isscalar(v)})
+        self.ec5 = np.array([float(p["ma_ec50_serotonin_ser-1_nM"]), float(p["ma_ec50_serotonin_ser-7_nM"])])
+        self.ec3 = float(p["pep_ec50_nlp-3_npr-42_nM"])
+        self.lgc = tuple(float(p[f"rec_lgc55_{k}"]) for k in ("ec50_uM", "hill", "erev_mV"))
+        self.nm = None                                     # the neuromod Mech, looked up at the first step
         self.i5 = self.i3 = None
-        try:
-            self.i5 = list(sv("ma_release_nM_per_s").index).index("serotonin")
-            e = sv("ma_ec50_nM")
-            self.ec5 = np.array([float(e["serotonin>ser-1"]), float(e["serotonin>ser-7"])])
-        except (KeyError, ValueError):
-            pass
-        try:
-            self.i3 = list(sv("pep_release_nM_per_s").index).index("nlp-3")
-            self.ec3 = float(sv("pep_ec50_nM")["nlp-3>npr-42"])
-        except (KeyError, ValueError):
-            pass
+        sv = getattr(getattr(b, "spec", None), "v", None)
+        for attr, sid, lig in (("i5", "ma_release_nM_per_s", "serotonin"), ("i3", "pep_release_nM_per_s", "nlp-3")):
+            try:
+                setattr(self, attr, list(sv(sid).index).index(lig))
+            except (KeyError, ValueError, TypeError, AttributeError):
+                pass
 
     def _build(self):
         from wormemu.mech import muscle_bwm as mb, organs_nrn
@@ -234,17 +238,28 @@ class Mech:
             laid, self.vm_t = 1, t_ms
         return (1.0 if t_ms - self.vm_t < q["egg_vm_dur_ms"] else 0.0), laid
 
-    def occupancy(self):
-        """(5-HT occupancy on vm, NLP-3 occupancy on vm) from B1's pools."""
+    def concentrations(self):
+        """(5-HT nM, NLP-3 nM) at the vulva: neuromod's compartment of HSN, else brain_layers' well-mixed pools."""
+        from wormemu.mech import neuromod as nmod
+        if self.nm is None:
+            self.nm = next((m for m in getattr(self.brain, "mechs", None) or [] if isinstance(m, nmod.Mech)), False)
+        nm, c5, c3 = self.nm, None, None
+        if nm and len(self.hsn):
+            if nm.on.get(nmod.A):
+                c5 = float(nm.ma.nM()[nmod.AMINES.index("serotonin"), nm.ma_comp[self.hsn[0]]])
+            if nm.on.get(nmod.P) and "nlp-3" in nmod.PRECURSORS:
+                c3 = float(nm.pep.nM()[nmod.PRECURSORS.index("nlp-3"), nm.pep_comp[self.hsn[0]]])
         L = self.brain.layers
-        o5 = o3 = 0.0
-        if self.i5 is not None and getattr(L, "ma_c", None) is not None:
-            c = float(L.ma_c[self.i5])
-            o5 = float(np.mean(c / (c + self.ec5)))
-        if self.i3 is not None and getattr(L, "pep_c", None) is not None:
-            c = float(L.pep_c[self.i3])
-            o3 = c / (c + self.ec3)
-        return o5, o3
+        if c5 is None and self.i5 is not None and getattr(L, "ma_c", None) is not None:
+            c5 = float(L.ma_c[self.i5])
+        if c3 is None and self.i3 is not None and getattr(L, "pep_c", None) is not None:
+            c3 = float(L.pep_c[self.i3])
+        return c5 or 0.0, c3 or 0.0
+
+    def occupancy(self):
+        """(5-HT occupancy on vm, NLP-3 occupancy on vm)."""
+        c5, c3 = self.concentrations()
+        return float(np.mean(c5 / (c5 + self.ec5))), c3 / (c3 + self.ec3)
 
     def step(self, ctx, dt_ms):
         k = len(SEX_MUSCLES)
@@ -277,9 +292,9 @@ class Mech:
         self.tyr -= self.tyr * min(1.0, dt_ms / (1000.0 * q["egg_uv1_tyr_tau_s"]))
         I = np.zeros(len(ctx.names))
         if len(self.hsn):
-            occ = self.tyr / (self.tyr + q["egg_lgc55_ec50_uM"])
-            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm + q["egg_lgc55_g_nS"] * occ * (q["egg_lgc55_erev_mV"]
-                                                                                     - ctx.v[self.hsn])
+            ec50, hl, erev = self.lgc
+            occ = float(_hill(self.tyr, ec50, hl))
+            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm + q["egg_lgc55_g_nS"] * occ * (erev - ctx.v[self.hsn])
         return {"I_pA": I, "out": {"eggs_laid": laid, "sex_muscle_activation": self.act.copy(),
                                    "eggs_total": self.eggs_total, "egg_uterus": self.U, "egg_stretch": S,
                                    "uv1_tyramine_uM": self.tyr, "egg_5ht_occ": o5, "egg_nlp3_occ": o3,

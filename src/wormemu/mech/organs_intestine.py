@@ -22,9 +22,10 @@
     NLP-40      Wang et al. 2013 (Curr Biol 23:746): Ca-dependent (SNT-2) release of NLP-40 from the intestine
                 activates the AEX-2 GPCR on AVL and DVB. Here release = rate x Hill(mean intestinal Ca), the
                 pseudocoelomic concentration cleared by its own decay plus the coelomocytes' uptake
-                (outputs['coelomocyte_uptake_per_s'], row 16). out['peptide_release'] = {'nlp-40': nM/s}. The
-                nested form `direct` (default) also puts the AEX-2 current (gain x occupancy) into AVL and DVB here,
-                until the brain's peptide layer reads peptide_release.
+                (outputs['coelomocyte_uptake_per_s'], row 16). out['peptide_release'] = {'nlp-40@posterior_body':
+                molecules/s} (the nM/s rate times neuromod's posterior-body compartment volume), which mech.neuromod
+                adds to its pool and reads at AEX-2 (default `release_only`). The nested form `direct` (the first
+                port) instead puts an AEX-2 current (gain x occupancy of the local pool) into AVL and DVB here.
     enteric     the 4 enteric muscles (mu_intL, mu_intR, mu_anal, mu_sph) as cells with the Du/Crodelle 2025 BWM
                 membrane (nmodl/organs/du_bwm.mod; inferred: the enteric muscle membrane is not recorded), Cook 2019's
                 gaps among them at Liu 2006's BWM gap (inferred), Cook's DVB synapses onto mu_intL/R as excitatory
@@ -36,7 +37,7 @@
 Nested simpler forms (toggle values):
     defecation       ip3r (default) | timer (brain_layers' 45 s clock, verbatim) | off
     pboc_protons     on (default) | off
-    nlp40_aex2       direct (default) | release_only (only out['peptide_release']) | off
+    nlp40_aex2       release_only (default: only out['peptide_release'], for neuromod) | direct | off
     enteric_muscle   du2025 (default) | off
 The id defecation is brain_layers' id, so this module takes that toggle over. At reset the intestine is run alone
 for brain_layers' random phase draw (dmp_t, 0-45 s), so a worm starts at a random point of its cycle as before.
@@ -47,6 +48,8 @@ import numpy as np
 
 from wormemu.brain_layers import Spec
 from wormemu.interface import BWM_NAMES, ENTERIC_MUSCLES
+
+NA_PL = 602.214                       # molecules per pL per nM (mech.neuromod's constant)
 
 LR = ("Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:9895 rates; values as in Ermentrout's "
       "LiRinzel.ode, opened)")
@@ -61,7 +64,8 @@ MECHANISMS = [
      "timer)", "organ", "ip3r"),
     ("pboc_protons", "Intestinal H+ (PBO-4) -> PBO-5/6 cation current in the posterior body-wall muscles", "organ",
      "on"),
-    ("nlp40_aex2", "Intestinal NLP-40 release -> AEX-2 current in AVL and DVB", "organ", "direct"),
+    ("nlp40_aex2", "Intestinal NLP-40 release into neuromod's pool (nested direct: an AEX-2 current in AVL and DVB "
+     "here)", "organ", "release_only"),
     ("enteric_muscle", "Enteric muscles: Du 2025 membrane, Cook gaps, DVB EXP-1 synapses, Ca -> activation", "muscle",
      "du2025"),
 ]
@@ -195,6 +199,16 @@ def neighbours():
     return [(i, j) for i in range(len(INT_CELLS)) for j in range(i + 1, len(INT_CELLS)) if abs(RING[i] - RING[j]) <= 1]
 
 
+
+def _posterior_volume_um3(brain):
+    """neuromod's posterior-body compartment volume (cross-section x vulva-to-tail length), um3."""
+    from wormemu import mech
+    from wormemu.mech import neuromod
+    p = {x.id: x.template for x in neuromod.SPECS}
+    if getattr(brain, "spec", None) is not None and getattr(brain.spec, "values", None) is not None:
+        p.update(mech.params_for(neuromod, brain.spec))
+    return float(p["pc_cross_section_um2"]) * (float(p["pc_tail_start_y_um"]) - float(p["pc_vulva_y_um"]))
+
 class Intestine:
     """The 20 Li-Rinzel cells with IP3, Ca -> PLC and INX-16 exchange (numpy; the CPU reference and the run path).
     Time in s, concentrations in uM. `ip3r` scales the ITR-1 flux (0 = itr-1 null)."""
@@ -327,7 +341,10 @@ class Mech:
         self.q = q
         self.form = toggles.get("defecation", "ip3r")
         self.pboc = toggles.get("pboc_protons", "on")
-        self.nlp = toggles.get("nlp40_aex2", "direct")
+        self.nlp = toggles.get("nlp40_aex2", "release_only")
+        if self.nlp == "on":
+            self.nlp = "release_only"
+        self.nlp_V_um3 = _posterior_volume_um3(brain)
         self.ent = toggles.get("enteric_muscle", "du2025")
         assert self.form in ("ip3r", "timer", "off") and self.pboc in ("on", "off")
         assert self.nlp in ("direct", "release_only", "off") and self.ent in ("du2025", "off")
@@ -442,7 +459,8 @@ class Mech:
                                                                      q["nlp40_release_hill"])))
             k_out = 1.0 / q["nlp40_tau_s"] + float(ctx.outputs.get("coelomocyte_uptake_per_s", 0.0))
             self.nlp40 += dt_s * (rel - k_out * self.nlp40)
-            out.update(peptide_release={"nlp-40": rel}, nlp40_nM=self.nlp40)
+            out.update(peptide_release={"nlp-40@posterior_body": rel * NA_PL * self.nlp_V_um3 / 1000.0},
+                       nlp40_nM=self.nlp40)
             if self.nlp == "direct" and len(self.aex2_cells):
                 I[self.aex2_cells] += q["aex2_gain_pA"] * self.nlp40 / (self.nlp40 + q["aex2_ec50_nM"])
         n_exp = 0
