@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 22:59 CST",
+ "generated_at": "2026-11-06 23:09 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 65,
   "by_label": {
    "derived": 67493,
-   "guessed": 8995,
-   "inferred": 59,
-   "measured": 6153,
+   "guessed": 8993,
+   "inferred": 60,
+   "measured": 6154,
    "published_fit": 7787
   },
-  "known": 81492,
-  "placeholder": 8995,
+  "known": 81494,
+  "placeholder": 8993,
   "gap": 0,
   "used_by_model": 90487,
-  "must_fill": 8995
+  "must_fill": 8993
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19500,
   "by_label": {
    "published_fit": 7060,
-   "guessed": 8995,
+   "guessed": 8993,
    "derived": 3085,
-   "inferred": 59,
-   "measured": 301
+   "inferred": 60,
+   "measured": 302
   },
-  "known": 10505,
-  "placeholder": 8995,
+  "known": 10507,
+  "placeholder": 8993,
   "gap": 0,
-  "must_fill": 8995
+  "must_fill": 8993
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,16 +49,16 @@
    },
    "literature": {
     "guessed": 5469,
-    "measured": 6152,
+    "measured": 6153,
     "derived": 3085,
-    "inferred (ours)": 13,
+    "inferred (ours)": 14,
     "published fit": 2
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3522,
+    "guessed": 3520,
     "inferred (ours)": 46,
     "measured": 1
    },
@@ -74,15 +74,15 @@
    "literature": {
     "guessed": 5469,
     "derived": 3085,
-    "measured": 300,
-    "inferred (ours)": 13,
+    "measured": 301,
+    "inferred (ours)": 14,
     "published fit": 2
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3522,
+    "guessed": 3520,
     "inferred (ours)": 46,
     "measured": 1
    },
@@ -109,7 +109,8 @@
    "published_fit": 6542
   },
   "channel": {
-   "guessed": 13,
+   "guessed": 12,
+   "measured": 1,
    "published_fit": 171
   },
   "class": {
@@ -134,8 +135,8 @@
   },
   "global": {
    "derived": 9,
-   "guessed": 87,
-   "inferred": 13,
+   "guessed": 86,
+   "inferred": 14,
    "measured": 12,
    "published_fit": 62
   },
@@ -784,7 +785,8 @@
    "absent_reason": "",
    "numbers": 2,
    "by_label": {
-    "guessed": 2
+    "guessed": 1,
+    "inferred": 1
    }
   },
   {
@@ -1224,7 +1226,8 @@
    "absent_reason": "",
    "numbers": 13,
    "by_label": {
-    "guessed": 13
+    "guessed": 12,
+    "measured": 1
    }
   }
  ],
@@ -11307,28 +11310,28 @@
    "applies_to": "whole worm",
    "unit": "%",
    "n_values": 1,
-   "value_template": 2.0,
-   "template_source": "guessed (brain_layers.py)",
-   "bio_min": 0.5,
-   "bio_max": 10.0,
-   "bound_basis": "guessed",
-   "bound_source": "not retrieved (param_ranges J10)",
+   "value_template": 0.25,
+   "template_source": "Bretscher, Kodama-Namba, Busch, Murray, Lagnado & de Bono 2011 Neuron 69:1099 (PMC3115024), Results and Fig. 3: BAG Cameleon responses to 0% to x% CO2 steps, x = 0.25, 1, 3, 5, 10%",
+   "bio_min": 0.04,
+   "bio_max": 0.25,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Bretscher, Kodama-Namba, Busch, Murray, Lagnado & de Bono 2011 Neuron 69:1099 (PMC3115024), Results and Fig. 3: BAG Cameleon responses to 0% to x% CO2 steps, x = 0.25, 1, 3, 5, 10%",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 2 %, label guessed, range [0.5, 10]; BAG responded to the lowest step tested (0 to 0.25%), so its threshold is at most 0.25%; the lower end, 0.04%, is ambient air (env_default_co2_pct), guessed: a lower threshold would drive BAG in still air, which the recordings (from 0%) do not test; the old guess of 2% [0.5, 10] was above the measured threshold. The template is the bound (inferred, not a measured point). The model's drive is linear above threshold with no saturation, so the paper's half-maximum (about 2.9%) has no row to go in; a saturating form would use it.",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3115024/",
+   "source_quote": "The excitability threshold of BAG was below 0.25% CO 2 . A plot of mean fluorescence ratio change against percent (%) CO 2 suggests that BAG reaches half-maximal activity at \u223c2.9% CO 2",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -25060,28 +25063,28 @@
    "applies_to": "every neuron with slo2",
    "unit": "pS",
    "n_values": 1,
-   "value_template": 100.0,
-   "template_source": "single-channel conductance, Slo2 family; C. elegans SLO-2 (Yuan et al. 2000 Nat Neurosci 3:771); sets the channel count N = density x soma area / unit conductance (Linaro, Storace and Giugliano 2011 PLoS Comput Biol 7:e1001102)",
+   "value_template": 117.0,
+   "template_source": "Liu, Chen, Mailler & Wang 2014 Nat Commun 5:5155 (PMC4197135), Results (Fig. 5B): SLO-2 single channels in inside-out patches from motor neurons, symmetrical K+ (150 mM K+ gluconate pipette, 150 mM K+ bath)",
    "bio_min": 40.0,
    "bio_max": 200.0,
    "bound_basis": "guessed",
-   "bound_source": "single-channel conductance, Slo2 family; C. elegans SLO-2 (Yuan et al. 2000 Nat Neurosci 3:771); sets the channel count N = density x soma area / unit conductance (Linaro, Storace and Giugliano 2011 PLoS Comput Biol 7:e1001102)",
+   "bound_source": "kept from before the value fill: single-channel conductance, Slo2 family; C. elegans SLO-2 (Yuan et al. 2000 Nat Neurosci 3:771); sets the channel count N = density x soma area / unit conductance (Linaro, Storace and Giugliano 2011 PLoS Comput Biol 7:e1001102)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 100 pS, label guessed, range [40, 200]; measured in C. elegans neurons (VA5; VB6 and VD5 within 6 pS; Xenopus oocytes 110 pS). Symmetrical K+ overstates the conductance at normal ion gradients, so the guessed range [40, 200] is kept to cover physiological conditions",
    "plan_row": 26,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4197135/",
+   "source_quote": "We determined SLO-2 single channel conductance from the slope of a linear fit to SLO-2 single channel current amplitudes at the various voltages, and found it to be 117 \u00b1 2 pS in VA5, 120 \u00b1 2 pS in VB6 and 111 \u00b1 2 pS in VD5",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -25516,18 +25519,18 @@
   "totals": {
    "rows": {
     "published_fit": 309,
-    "guessed": 326,
-    "measured": 252,
+    "guessed": 324,
+    "measured": 253,
     "derived": 25,
-    "inferred": 60,
+    "inferred": 61,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7833,
-    "guessed": 9130,
-    "measured": 6208,
+    "guessed": 9128,
+    "measured": 6209,
     "derived": 67505,
-    "inferred": 66,
+    "inferred": 67,
     "absent": 5
    },
    "n_rows": 977,
@@ -25535,18 +25538,18 @@
   },
   "by_label_rows": {
    "published_fit": 309,
-   "guessed": 326,
-   "measured": 252,
+   "guessed": 324,
+   "measured": 253,
    "derived": 25,
-   "inferred": 60,
+   "inferred": 61,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 7833,
-   "guessed": 9130,
-   "measured": 6208,
+   "guessed": 9128,
+   "measured": 6209,
    "derived": 67505,
-   "inferred": 66,
+   "inferred": 67,
    "absent": 5
   },
   "by_plan_row": {
@@ -25760,15 +25763,15 @@
    },
    "17": {
     "rows": {
-     "guessed": 29,
-     "inferred": 4,
+     "guessed": 28,
+     "inferred": 5,
      "measured": 4,
      "derived": 3,
      "absent": 4
     },
     "numbers": {
-     "guessed": 29,
-     "inferred": 4,
+     "guessed": 28,
+     "inferred": 5,
      "measured": 4,
      "derived": 3,
      "absent": 4
@@ -25892,12 +25895,12 @@
    },
    "26": {
     "rows": {
-     "measured": 4,
-     "guessed": 14
+     "measured": 5,
+     "guessed": 13
     },
     "numbers": {
-     "measured": 4,
-     "guessed": 14
+     "measured": 5,
+     "guessed": 13
     },
     "n_rows": 18,
     "n_numbers": 18
@@ -25942,11 +25945,13 @@
    "channel": {
     "rows": {
      "published_fit": 171,
-     "guessed": 13
+     "guessed": 12,
+     "measured": 1
     },
     "numbers": {
      "published_fit": 171,
-     "guessed": 13
+     "guessed": 12,
+     "measured": 1
     },
     "n_rows": 184,
     "n_numbers": 184
@@ -26024,16 +26029,16 @@
    "global": {
     "rows": {
      "published_fit": 106,
-     "guessed": 110,
-     "inferred": 17,
+     "guessed": 109,
+     "inferred": 18,
      "measured": 38,
      "derived": 19,
      "absent": 1
     },
     "numbers": {
      "published_fit": 106,
-     "guessed": 110,
-     "inferred": 17,
+     "guessed": 109,
+     "inferred": 18,
      "measured": 38,
      "derived": 19,
      "absent": 1
@@ -26131,17 +26136,17 @@
    "yes": {
     "rows": {
      "published_fit": 285,
-     "guessed": 211,
-     "measured": 200,
+     "guessed": 209,
+     "measured": 201,
      "derived": 18,
-     "inferred": 52
+     "inferred": 53
     },
     "numbers": {
      "published_fit": 7809,
-     "guessed": 8871,
-     "measured": 6057,
+     "guessed": 8869,
+     "measured": 6058,
      "derived": 67498,
-     "inferred": 57
+     "inferred": 58
     },
     "n_rows": 766,
     "n_numbers": 90292
@@ -26201,14 +26206,14 @@
    },
    "layers": {
     "rows": {
-     "guessed": 56,
-     "inferred": 11,
+     "guessed": 55,
+     "inferred": 12,
      "measured": 10,
      "derived": 6
     },
     "numbers": {
-     "guessed": 174,
-     "inferred": 12,
+     "guessed": 173,
+     "inferred": 13,
      "measured": 109,
      "derived": 6
     },
@@ -26243,12 +26248,12 @@
    },
    "mech:noise": {
     "rows": {
-     "measured": 3,
-     "guessed": 14
+     "measured": 4,
+     "guessed": 13
     },
     "numbers": {
-     "measured": 3,
-     "guessed": 14
+     "measured": 4,
+     "guessed": 13
     },
     "n_rows": 17,
     "n_numbers": 17
@@ -26342,18 +26347,18 @@
    "physiology": {
     "rows": {
      "published_fit": 295,
-     "guessed": 326,
+     "guessed": 324,
      "derived": 23,
-     "inferred": 60,
-     "measured": 248,
+     "inferred": 61,
+     "measured": 249,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7094,
-     "guessed": 9130,
+     "guessed": 9128,
      "derived": 3097,
-     "inferred": 66,
-     "measured": 356,
+     "inferred": 67,
+     "measured": 357,
      "absent": 5
     },
     "n_rows": 957,
@@ -26693,20 +26698,20 @@
    },
    "rows_read": 189,
    "quotes": {
-    "none": 627,
-    "paper text (read audit, 6 Nov)": 205,
+    "none": 625,
+    "paper text (read audit, 6 Nov)": 207,
     "research file (scripted check)": 145
    },
-   "with_url": 696,
+   "with_url": 698,
    "links": {
-    "distinct": 112,
+    "distinct": 114,
     "by_status": {
-     "200": 103,
+     "200": 105,
      "406": 5,
-     "429": 1,
-     "403": 3
+     "403": 3,
+     "429": 1
     },
-    "checked_at": "2026-11-06 22:51 CST"
+    "checked_at": "2026-11-06 23:09 CST"
    },
    "problem_kinds": {
     "no URL to open": 27,
@@ -29470,6 +29475,32 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4258139/"
    },
    {
+    "param_id": "co2_threshold_pct",
+    "kind": "fill",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "2 -> 0.25 %; guessed -> inferred; range [0.5, 10] -> [0.04, 0.25]",
+    "reason": "BAG responded to the lowest step tested (0 to 0.25%), so its threshold is at most 0.25%; the lower end, 0.04%, is ambient air (env_default_co2_pct), guessed: a lower threshold would drive BAG in still air, which the recordings (from 0%) do not test; the old guess of 2% [0.5, 10] was above the measured threshold. The template is the bound (inferred, not a measured point). The model's drive is linear above threshold with no saturation, so the paper's half-maximum (about 2.9%) has no row to go in; a saturating form would use it.",
+    "source": "Bretscher, Kodama-Namba, Busch, Murray, Lagnado & de Bono 2011 Neuron 69:1099 (PMC3115024), Results and Fig. 3: BAG Cameleon responses to 0% to x% CO2 steps, x = 0.25, 1, 3, 5, 10%",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3115024/"
+   },
+   {
+    "param_id": "chnoise_slo2_pS",
+    "kind": "fill",
+    "origin": "mech:noise",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "100 -> 117 pS; guessed -> measured; range [40, 200] -> [40, 200]",
+    "reason": "measured in C. elegans neurons (VA5; VB6 and VD5 within 6 pS; Xenopus oocytes 110 pS). Symmetrical K+ overstates the conductance at normal ion gradients, so the guessed range [40, 200] is kept to cover physiological conditions",
+    "source": "Liu, Chen, Mailler & Wang 2014 Nat Commun 5:5155 (PMC4197135), Results (Fig. 5B): SLO-2 single channels in inside-out patches from motor neurons, symmetrical K+ (150 mM K+ gluconate pipette, 150 mM K+ bath)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4197135/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -29510,7 +29541,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-06 22:55 CST",
+   "generated_at": "2026-11-06 23:00 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/learning.py",
@@ -29774,18 +29805,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 309,
-    "guessed": 326,
-    "measured": 252,
+    "guessed": 324,
+    "measured": 253,
     "derived": 25,
-    "inferred": 60,
+    "inferred": 61,
     "absent": 5
    },
    "numbers": {
     "published_fit": 7833,
-    "guessed": 9130,
-    "measured": 6208,
+    "guessed": 9128,
+    "measured": 6209,
     "derived": 67505,
-    "inferred": 66,
+    "inferred": 67,
     "absent": 5
    }
   }
