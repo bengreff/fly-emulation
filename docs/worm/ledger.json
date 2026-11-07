@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 04:19 CST",
+ "generated_at": "2026-11-07 04:30 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -8478,11 +8478,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 31.16 um3, label published_fit, range [10.3867, 93.48]; the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
    "plan_row": 6,
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
-   "source_quote": "",
+   "source_quote": "vcell = 31.16 (um3)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -8510,11 +8510,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.001 1, label published_fit, range [0.000333333, 0.003]; the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
    "plan_row": 6,
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
-   "source_quote": "",
+   "source_quote": "f = 0.001",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -8542,11 +8542,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 50 ms, label published_fit, range [16.6667, 150]; the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
    "plan_row": 6,
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
-   "source_quote": "",
+   "source_quote": "tca = 50 (ms)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -8574,11 +8574,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 0.05 uM/um2, label published_fit, range [0.0166667, 0.15]; the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
    "plan_row": 6,
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod",
-   "source_quote": "",
+   "source_quote": "caeq = 0.05 (uM/um2)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -58259,8 +58259,8 @@
    },
    "rows_read": 227,
    "quotes": {
-    "none": 1041,
-    "cited free text (scripted check)": 782,
+    "none": 1037,
+    "cited free text (scripted check)": 786,
     "research file (scripted check)": 25,
     "paper text (read audit, 6-7 Nov)": 8
    },
@@ -58268,13 +58268,13 @@
    "links": {
     "distinct": 164,
     "by_status": {
-     "200": 147,
+     "200": 155,
+     "429": 1,
      "203": 1,
      "406": 3,
-     "unchecked": 9,
      "403": 4
     },
-    "checked_at": "2026-11-07 02:30 CST"
+    "checked_at": "2026-11-07 04:30 CST"
    },
    "problem_kinds": {
     "no URL to open": 29,
@@ -69653,6 +69653,58 @@
     "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/unc2.mod"
    },
    {
+    "param_id": "capool_vcell",
+    "kind": "source",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "31.16 -> 31.16 um3; published_fit -> published_fit; range [10.3867, 93.48] -> [10.3867, 93.48]",
+    "reason": "the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
+    "source": "published fit, BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) mod/cainternm.mod",
+    "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod"
+   },
+   {
+    "param_id": "capool_f",
+    "kind": "source",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.001 -> 0.001 1; published_fit -> published_fit; range [0.000333333, 0.003] -> [0.000333333, 0.003]",
+    "reason": "the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
+    "source": "published fit, BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) mod/cainternm.mod",
+    "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod"
+   },
+   {
+    "param_id": "capool_tca",
+    "kind": "source",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "50 -> 50 ms; published_fit -> published_fit; range [16.6667, 150] -> [16.6667, 150]",
+    "reason": "the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
+    "source": "published fit, BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) mod/cainternm.mod",
+    "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod"
+   },
+   {
+    "param_id": "capool_caeq",
+    "kind": "source",
+    "origin": "brain",
+    "n": 1,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "published_fit",
+    "change": "0.05 -> 0.05 uM/um2; published_fit -> published_fit; range [0.0166667, 0.15] -> [0.0166667, 0.15]",
+    "reason": "the PARAMETER line of BAAIWorm's cainternm.mod (vendored unchanged at third_party/baaiworm/mod, Apache 2.0; the row is named capool_ for the module); matches the running value; label unchanged",
+    "source": "published fit, BAAIWorm b99ca5a (Zhao et al. 2024 Nat Comput Sci) mod/cainternm.mod",
+    "url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/mechanism/modfile/cainternm.mod"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -69797,7 +69849,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 04:18 CST",
+   "generated_at": "2026-11-07 04:19 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
