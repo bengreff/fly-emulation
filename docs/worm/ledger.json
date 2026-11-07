@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:15 CST",
+ "generated_at": "2026-11-07 03:20 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9307,
-   "inferred": 333,
+   "guessed": 9308,
+   "inferred": 332,
    "measured": 6184,
    "published_fit": 8103
   },
-  "known": 82130,
-  "placeholder": 9307,
+  "known": 82129,
+  "placeholder": 9308,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9307
+  "must_fill": 9308
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9307,
+   "guessed": 9308,
    "derived": 3102,
-   "inferred": 333,
+   "inferred": 332,
    "measured": 332
   },
-  "known": 11143,
-  "placeholder": 9307,
+  "known": 11142,
+  "placeholder": 9308,
   "gap": 0,
-  "must_fill": 9307
+  "must_fill": 9308
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3831,
-    "inferred (ours)": 306,
+    "guessed": 3832,
+    "inferred (ours)": 305,
     "measured": 1
    },
    "c302": {
@@ -82,8 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3831,
-    "inferred (ours)": 306,
+    "guessed": 3832,
+    "inferred (ours)": 305,
     "measured": 1
    },
    "c302": {
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 8,
-   "guessed": 362,
-   "inferred": 281,
+   "guessed": 363,
+   "inferred": 280,
    "measured": 32,
    "published_fit": 101
   },
@@ -1252,7 +1252,7 @@
    "absent_reason": "",
    "numbers": 1,
    "by_label": {
-    "inferred": 1
+    "guessed": 1
    }
   },
   {
@@ -13844,11 +13844,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md); source 6 Nov (catalog audit): was 4 ratio, label inferred, range [2, 10]; citation corrected (Starich 2009 is Neural Dev, not J Neurosci); the ratio stays inferred: no paper gives a number",
+   "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md); source 6 Nov (catalog audit): was 4 ratio, label inferred, range [2, 10]; citation corrected (Starich 2009 is Neural Dev, not J Neurosci); the ratio stays inferred: no paper gives a number; source 6 Nov (catalog audit): was 4 ratio, label inferred, range [2, 10]; quote added: Starich, Xu, Skerrett, Nicholson & Shaw 2009 show UNC-7:UNC-9 heterotypic channels rectify in oocytes; the text gives no single ratio, so 4 stays inferred inside the guessed range",
    "plan_row": 8,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2694797/",
-   "source_quote": "",
+   "source_quote": "The asymmetry of the V j response of these UNC-7:UNC-9 heterotypic channels was not restricted to the steady state response of these cells, but also was seen in the rectifying nature of the initial conductance that increases as the UNC-9 cell becomes more positive",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -31156,11 +31156,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was -58 mV, label inferred, range [-70, -45]; quote added: Richmond & Jorgensen 1999's +17 mV is under their imposed chloride gradient (pipette chloride high), so it is not the native reversal",
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2585773/",
-   "source_quote": "",
+   "source_quote": "Measurements of the current\u2013voltage relationship produced a linear fit with the reversal potential at +17 mV ( n = 4), close to the predicted chloride reversal potential of +24 mV for the solutions used",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -46276,11 +46276,11 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 5.0,
-   "template_source": "ASH and AWA responses decline over seconds during a sustained stimulus (Hilliard 2005; Larsch 2015)",
+   "template_source": "ASH and AWA responses decline over seconds during a sustained stimulus (Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005, PMC544906: ASH adapts to persistent stimuli; Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015, PMC5045890: AWA responses peak within 10 s, then fall during the pulse); the 5 s time constant is ours",
    "bio_min": 1.0,
    "bio_max": 60.0,
    "bound_basis": "measured_related",
-   "bound_source": "ASH and AWA responses decline over seconds during a sustained stimulus (Hilliard 2005; Larsch 2015)",
+   "bound_source": "ASH and AWA responses decline over seconds during a sustained stimulus (Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005, PMC544906: ASH adapts to persistent stimuli; Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015, PMC5045890: AWA responses peak within 10 s, then fall during the pulse); the 5 s time constant is ours",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -46292,11 +46292,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 5 s, label inferred, range [1, 60]; quote added; authors named; the time constant is not given in either paper",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC544906/",
-   "source_quote": "",
+   "source_quote": "ASH sensory neurons reversibly adapt to persistent stimuli ... peaked within ten seconds and then decreased during stimulation",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -48548,28 +48548,28 @@
    "unit": "nS",
    "n_values": 1,
    "value_template": 0.2,
-   "template_source": "Liu, Chen and Wang 2006 J Biol Chem 281:7881 (BWM gap junctions, Gj <= 350 pS)",
+   "template_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; 0.2 nS is our choice inside",
    "bio_min": 0.05,
    "bio_max": 0.35,
-   "bound_basis": "measured_related",
-   "bound_source": "Liu, Chen and Wang 2006 J Biol Chem 281:7881 (BWM gap junctions, Gj <= 350 pS)",
+   "bound_basis": "measured_this_class",
+   "bound_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; 0.2 nS is our choice inside",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "one conductance for every Cook BWM-BWM contact; Liu 2006 measured <= 350 pS (whole Gj per pair, voltage-independent at small Vj); template inside, guessed",
+   "notes": "one conductance for every Cook BWM-BWM contact; Liu 2006 measured <= 350 pS (whole Gj per pair, voltage-independent at small Vj); template inside, guessed; source 6 Nov (catalog audit): was 0.2 nS, label inferred, range [0.05, 0.35]; author list corrected (five authors, not 'Liu, Chen and Wang'); quote from the abstract (the full text is behind an Elsevier redirect); relabel 6 Nov (catalog audit): was 0.2 nS, label inferred, range [0.05, 0.35]; inferred -> guessed: the row's own note says the template is a guess inside the measured range, and brain's bwm_gap, the same 0.2 nS from the same paper, is guessed; range 6 Nov (catalog audit): was 0.2 nS, label guessed, range [0.05, 0.35]; the 350 pS bound was measured between body-wall muscle cells, this class; bounds unchanged",
    "plan_row": 12,
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1074/jbc.m512382200",
-   "source_quote": "",
-   "audit": "ok",
+   "source_quote": "The coupling was characterized by small (350 pS or less) junctional conductance (G(j))",
+   "audit": "labelled inferred while its own note says the 0.2 nS is a guess inside Liu et al. 2006's measured <= 350 pS (brain's bwm_gap, same value and paper, is guessed); the author list 'Liu, Chen and Wang' leaves out Gaier and Joshi (Europe PMC, PMID 16434400) [owner B2: muscle_bwm.py:32 LIU text and :82 label inferred -> guessed (the catalog now says guessed); organs_intestine.py:162 has the same short author list and organs_egglaying.py:81 none]",
    "kind": "physiology"
   },
   {
@@ -52196,11 +52196,11 @@
    "unit": "nS",
    "n_values": 1,
    "value_template": 0.35,
-   "template_source": "Liu, Chen & Wang 2006 J Biol Chem 281:7881 (BWM)",
+   "template_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the intestine row takes that upper end",
    "bio_min": 0.05,
    "bio_max": 0.35,
    "bound_basis": "measured_related",
-   "bound_source": "Liu, Chen & Wang 2006 J Biol Chem 281:7881 (BWM)",
+   "bound_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the intestine row takes that upper end",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -52212,11 +52212,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "BWM junctional conductance (<= 350 pS) per Cook contact",
+   "notes": "BWM junctional conductance (<= 350 pS) per Cook contact; source 6 Nov (catalog audit): was 0.35 nS, label inferred, range [0.05, 0.35]; author list corrected; quote from the abstract",
    "plan_row": 12,
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1074/jbc.m512382200",
-   "source_quote": "",
+   "source_quote": "The coupling was characterized by small (350 pS or less) junctional conductance (G(j))",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -52692,11 +52692,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "UNC-103 as Du's Kr current; fitted: 3x Du's body-wall value, the smallest multiple that keeps an undriven vm at rest (numpy, 4 s: 1x fires 17 spikes, 3x rests at -35 mV), as UNC-103 keeps vm subthreshold (Collins & Koelle 2013)",
+   "notes": "UNC-103 as Du's Kr current; fitted: 3x Du's body-wall value, the smallest multiple that keeps an undriven vm at rest (numpy, 4 s: 1x fires 17 spikes, 3x rests at -35 mV), as UNC-103 keeps vm subthreshold (Collins & Koelle 2013); source 6 Nov (catalog audit): was 9.6 nS, label inferred, range [3.2, 32]; quote added for the qualitative target of the fit (UNC-103 keeps the muscle below threshold); the 9.6 nS is our fit",
    "plan_row": 15,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3542984/",
-   "source_quote": "",
+   "source_quote": "We found that the conserved ERG [ether-a-go-go (EAG) related gene] potassium channel UNC-103 enables this two-state behavior by limiting excitability of the egg-laying muscles",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -52740,11 +52740,11 @@
    "unit": "nS",
    "n_values": 1,
    "value_template": 0.35,
-   "template_source": "Liu et al. 2006 JBC 281:7881",
+   "template_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the egg-laying muscle row takes that upper end",
    "bio_min": 0.05,
    "bio_max": 0.35,
    "bound_basis": "measured_related",
-   "bound_source": "Liu et al. 2006 JBC 281:7881",
+   "bound_source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the egg-laying muscle row takes that upper end",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -52756,11 +52756,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "per Cook contact, the body-wall muscle value",
+   "notes": "per Cook contact, the body-wall muscle value; source 6 Nov (catalog audit): was 0.35 nS, label inferred, range [0.05, 0.35]; author list corrected; quote from the abstract",
    "plan_row": 15,
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1074/jbc.m512382200",
-   "source_quote": "",
+   "source_quote": "The coupling was characterized by small (350 pS or less) junctional conductance (G(j))",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56356,18 +56356,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 577,
+    "guessed": 578,
     "measured": 253,
-    "inferred": 332,
+    "inferred": 331,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9373,
+    "guessed": 9374,
     "measured": 6211,
     "derived": 67520,
-    "inferred": 338,
+    "inferred": 337,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56375,18 +56375,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 577,
+   "guessed": 578,
    "measured": 253,
-   "inferred": 332,
+   "inferred": 331,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9373,
+   "guessed": 9374,
    "measured": 6211,
    "derived": 67520,
-   "inferred": 338,
+   "inferred": 337,
    "absent": 1
   },
   "by_plan_row": {
@@ -56539,16 +56539,16 @@
    "12": {
     "rows": {
      "published_fit": 93,
-     "guessed": 16,
-     "inferred": 4,
+     "guessed": 17,
+     "inferred": 3,
      "measured": 1,
      "derived": 3,
      "absent": 1
     },
     "numbers": {
      "published_fit": 375,
-     "guessed": 205,
-     "inferred": 4,
+     "guessed": 206,
+     "inferred": 3,
      "measured": 1,
      "derived": 3,
      "absent": 1
@@ -56835,15 +56835,15 @@
    },
    "class": {
     "rows": {
-     "inferred": 281,
-     "guessed": 367,
+     "inferred": 280,
+     "guessed": 368,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
     "numbers": {
-     "inferred": 281,
-     "guessed": 367,
+     "inferred": 280,
+     "guessed": 368,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
@@ -57014,17 +57014,17 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 481,
+     "guessed": 482,
      "measured": 216,
-     "inferred": 317,
+     "inferred": 316,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8946,
+     "guessed": 8947,
      "measured": 6073,
      "derived": 67509,
-     "inferred": 322
+     "inferred": 321
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57174,13 +57174,11 @@
    "mech:muscle_bwm": {
     "rows": {
      "published_fit": 25,
-     "inferred": 1,
-     "guessed": 2
+     "guessed": 3
     },
     "numbers": {
      "published_fit": 25,
-     "inferred": 1,
-     "guessed": 2
+     "guessed": 3
     },
     "n_rows": 28,
     "n_numbers": 28
@@ -57464,17 +57462,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 576,
-     "inferred": 332,
+     "guessed": 577,
+     "inferred": 331,
      "derived": 36,
      "measured": 249,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9372,
+     "guessed": 9373,
      "derived": 3111,
-     "inferred": 338,
+     "inferred": 337,
      "measured": 359,
      "absent": 1
     },
@@ -58263,16 +58261,16 @@
    }
   ],
   "audit": {
-   "rows_ok": 1759,
-   "rows_with_problems": 97,
+   "rows_ok": 1758,
+   "rows_with_problems": 98,
    "by_status": {
-    "ok": 1759,
-    "finding": 97
+    "ok": 1758,
+    "finding": 98
    },
-   "rows_read": 214,
+   "rows_read": 217,
    "quotes": {
-    "none": 1494,
-    "cited free text (scripted check)": 318,
+    "none": 1487,
+    "cited free text (scripted check)": 325,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
@@ -58327,6 +58325,7 @@
     "computed and published as out['q#']['dmp_clock'] each step, but no module reads it (grep o": 1,
     "replaced slot mec#_i#_pA (measured) has # pA, outside this row's range": 1,
     "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
+    "labelled inferred while its own note says the # nS is a guess inside Liu et al. #'s measur": 1,
     "the range": 1,
     "labelled inferred with the source text 'ser# reporter in pharyngeal muscle', but Hobson et": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
@@ -62964,6 +62963,123 @@
     "url": ""
    },
    {
+    "param_id": "gap_rect_ratio",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "4 -> 4 ratio; inferred -> inferred; range [2, 10] -> [2, 10]",
+    "reason": "quote added: Starich, Xu, Skerrett, Nicholson & Shaw 2009 show UNC-7:UNC-9 heterotypic channels rectify in oocytes; the text gives no single ratio, so 4 stays inferred inside the guessed range",
+    "source": "Starich et al. 2009 Neural Dev 4:16; Kawano et al. 2011 Neuron 72:572; Liu et al. 2017 (direction) (param_ranges C3)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2694797/"
+   },
+   {
+    "param_id": "rec_gabacl_erev_mV",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "-58 -> -58 mV; inferred -> inferred; range [-70, -45] -> [-70, -45]",
+    "reason": "quote added: Richmond & Jorgensen 1999's +17 mV is under their imposed chloride gradient (pipette chloride high), so it is not the native reversal",
+    "source": "near E_Cl; the native chloride reversal is unmeasured (RANGE_ENDS_LIT 4; param_ranges B6-B8); +17 to +20 mV only under an imposed Cl gradient (RJ99)",
+    "url": ""
+   },
+   {
+    "param_id": "sens_trpv_tauD_s",
+    "kind": "source",
+    "origin": "mech:senses_chem",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "5 -> 5 s; inferred -> inferred; range [1, 60] -> [1, 60]",
+    "reason": "quote added; authors named; the time constant is not given in either paper",
+    "source": "ASH and AWA responses decline over seconds during a sustained stimulus (Hilliard, Apicella, Kerr, Suzuki, Bazzicalupo & Schafer 2005, PMC544906: ASH adapts to persistent stimuli; Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015, PMC5045890: AWA responses peak within 10 s, then fall during the pulse); the 5 s time constant is ours",
+    "url": ""
+   },
+   {
+    "param_id": "egg_unc103_gkr_nS",
+    "kind": "source",
+    "origin": "mech:organs_egglaying",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "9.6 -> 9.6 nS; inferred -> inferred; range [3.2, 32] -> [3.2, 32]",
+    "reason": "quote added for the qualitative target of the fit (UNC-103 keeps the muscle below threshold); the 9.6 nS is our fit",
+    "source": "Collins & Koelle 2013 J Neurosci 33:761",
+    "url": ""
+   },
+   {
+    "param_id": "bwm_gap_liu_nS",
+    "kind": "source",
+    "origin": "mech:muscle_bwm",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.2 -> 0.2 nS; inferred -> inferred; range [0.05, 0.35] -> [0.05, 0.35]",
+    "reason": "author list corrected (five authors, not 'Liu, Chen and Wang'); quote from the abstract (the full text is behind an Elsevier redirect)",
+    "source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; 0.2 nS is our choice inside",
+    "url": ""
+   },
+   {
+    "param_id": "bwm_gap_liu_nS",
+    "kind": "relabel",
+    "origin": "mech:muscle_bwm",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "0.2 -> 0.2 nS; inferred -> guessed; range [0.05, 0.35] -> [0.05, 0.35]",
+    "reason": "inferred -> guessed: the row's own note says the template is a guess inside the measured range, and brain's bwm_gap, the same 0.2 nS from the same paper, is guessed",
+    "source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; 0.2 nS is our choice inside",
+    "url": ""
+   },
+   {
+    "param_id": "bwm_gap_liu_nS",
+    "kind": "range",
+    "origin": "mech:muscle_bwm",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0.2 -> 0.2 nS; guessed -> guessed; range [0.05, 0.35] -> [0.05, 0.35]",
+    "reason": "the 350 pS bound was measured between body-wall muscle cells, this class; bounds unchanged",
+    "source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; 0.2 nS is our choice inside",
+    "url": ""
+   },
+   {
+    "param_id": "ent_gap_nS_per_contact",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.35 -> 0.35 nS; inferred -> inferred; range [0.05, 0.35] -> [0.05, 0.35]",
+    "reason": "author list corrected; quote from the abstract",
+    "source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the intestine row takes that upper end",
+    "url": ""
+   },
+   {
+    "param_id": "egg_gap_nS_per_contact",
+    "kind": "source",
+    "origin": "mech:organs_egglaying",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.35 -> 0.35 nS; inferred -> inferred; range [0.05, 0.35] -> [0.05, 0.35]",
+    "reason": "author list corrected; quote from the abstract",
+    "source": "Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell voltage clamp of body-wall muscle pairs, junctional conductance 350 pS or less; the egg-laying muscle row takes that upper end",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -63108,7 +63224,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:11 CST",
+   "generated_at": "2026-11-07 03:15 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -64081,18 +64197,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 577,
+    "guessed": 578,
     "measured": 253,
-    "inferred": 332,
+    "inferred": 331,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9373,
+    "guessed": 9374,
     "measured": 6211,
     "derived": 67520,
-    "inferred": 338,
+    "inferred": 337,
     "absent": 1
    }
   }
