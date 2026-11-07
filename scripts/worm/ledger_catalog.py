@@ -19,6 +19,7 @@ from __future__ import annotations
 import importlib
 import json
 import re
+import time
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -342,6 +343,18 @@ def audit_notes():
     return pd.read_csv(f, keep_default_na=False).to_dict("records") if f.exists() else []
 
 
+DEAD_LINK = {"404", "410", "000"}
+
+
+def link_checks() -> dict:
+    """url -> (status, checked_at) from scripts/worm/catalog_links.py (data/worm/catalog/link_check.csv)."""
+    f = CAT / "link_check.csv"
+    if not f.exists():
+        return {}
+    return {r["url"]: (str(r["status"]), r["checked_at"]) for r in
+            pd.read_csv(f, keep_default_na=False, dtype=str).to_dict("records")}
+
+
 QUOTE = re.compile(r"^([A-Za-z0-9_.-]+\.(md|csv))\b[^:]*: (.+)$", re.S)
 _texts: dict[str, str] = {}
 
@@ -450,7 +463,7 @@ def template_text(r: dict, t: pd.DataFrame | None) -> str:
 CATALOG_COLUMNS = ["id", "plan_row", "plan_row_name", "mechanism", "mechanism_name", "grain", "n_elements",
                    "template", "bio_min", "bio_max", "units", "label", "labels_by_element", "source", "source_url",
                    "source_quote", "source_project", "fill_kind", "used_by_code", "toggle", "precision_needed",
-                   "audit", "audit_status", "audit_trail", "quote_checked", "notes", "origin", "kind", "applies_to",
+                   "audit", "audit_status", "audit_trail", "quote_checked", "link_status", "notes", "origin", "kind", "applies_to",
                    "range_source", "range_basis", "values_file"]
 
 
@@ -471,12 +484,16 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
             explained.add(a["param_id"])
         elif not act.startswith(("fixed", "read")):
             open_[a["param_id"]].append(text)
-    out = []
+    out, links = [], link_checks()
     for r in [*model_rows, *body, *slot_rows]:
         t = values.get(r["param_id"]) if r["origin"] not in ("body", "slot") else None
         if not str(r.get("source_url", "")).strip():
             r["source_url"] = link_for(r, t)
         probs = audit(r, t) + open_.get(r["param_id"], [])
+        url = str(r.get("source_url", "")).strip()
+        link = links.get(url, ("unchecked", ""))[0] if url else ""
+        if link in DEAD_LINK:
+            probs.append(f"source link answered {link}")
         lc = str(r.get("body_lit_check", ""))
         if r["origin"] == "body" and lc and lc not in ("ok", "inside"):
             explained.add(r["param_id"])
@@ -497,7 +514,7 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
                                                       else ""),
             audit="ok" if not probs else "; ".join(probs), audit_status=status,
             audit_trail="; ".join(trail.get(r["param_id"], [])), quote_checked=quote_status(r.get("source_quote", "")),
-            notes=r.get("notes", ""), origin=r["origin"], kind=kind_of(r["param_id"]),
+            link_status=link, notes=r.get("notes", ""), origin=r["origin"], kind=kind_of(r["param_id"]),
             applies_to=r["applies_to"], range_source=r.get("bound_source", ""), range_basis=r.get("bound_basis", ""),
             values_file=f"data/worm/model/values/{r['param_id']}.csv" if t is not None else "",
             _split=split, _probs=probs))
@@ -540,6 +557,10 @@ def summary(cat_rows, replaced, fill_log, hidden, before=None):
                    rows_read=sum(1 for r in cat_rows if r["audit_trail"]),
                    quotes=dict(Counter(r["quote_checked"] or "none" for r in cat_rows)),
                    with_url=sum(1 for r in cat_rows if r["source_url"]),
+                   links=dict(distinct=len({r["source_url"] for r in cat_rows if r["source_url"]}),
+                              by_status=dict(Counter(s for s in {r["source_url"]: r["link_status"]
+                                                                  for r in cat_rows if r["source_url"]}.values())),
+                              checked_at=max((v[1] for v in link_checks().values()), default="")),
                    problem_kinds=dict(probs.most_common())),
         fills=fill_log, hidden_constants=hidden,
         before_fills=before or {}, after_fills=dict(rows=all_["rows"], numbers=all_["numbers"]))
@@ -574,7 +595,7 @@ def write(cat_rows, summ, mechs):
     for m in mrows:
         m["plan_row"] = MECH_ROW.get(m["id"], 0)
     (ROOT / "viewer/worm/catalog_data.json").write_text(json.dumps(
-        dict(generated_by="scripts/worm/build_ledger.py", generated_at=summ.get("generated_at", ""),
+        dict(generated_by="scripts/worm/build_ledger.py", generated_at=summ.get("generated_at") or time.strftime("%Y-%m-%d %H:%M %Z"),
              plan_rows=PLAN_ROWS, summary={k: v for k, v in summ.items() if k != "fills"}, fills=summ["fills"],
              mechanisms=mrows, rows=rows), default=float))
     write_markdown(cat_rows, summ)
@@ -650,6 +671,11 @@ def write_markdown(cat_rows, s):
           "", f"Rows with a URL to open: {a.get('with_url', 0)} of {t['n_rows']} (every row not labelled guessed "
           f"has one unless listed below). Rows read against their source: {a.get('rows_read', 0)}. Quotes: "
           + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ".", "",
+          f"Links: {a.get('links', {}).get('distinct', 0)} distinct URLs, checked "
+          f"{a.get('links', {}).get('checked_at', '') or 'never'} by `scripts/worm/catalog_links.py` (status: "
+          + ", ".join(f"{k} {n}" for k, n in a.get("links", {}).get("by_status", {}).items()) + "; a 404, 410 or no "
+          "answer is a problem; 401/403/406/429 are publisher pages that refuse scripted requests but open in a "
+          "browser).", "",
           "| problem | rows |", "|---|---|"]
     for k, n in a["problem_kinds"].items():
         L.append(f"| {k} | {n} |")

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Worm parameter catalog</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --bg:#111418; --panel:#1a1e24; --line:#2c323b; --text:#d8dde4; --dim:#8a93a0; --acc:#ff8a3d; --link:#7fb4ff; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:var(--bg); color:var(--text); font:13px/1.4 -apple-system, Helvetica, Arial, sans-serif; }
+  a { color:var(--link); text-decoration:none; } a:hover { text-decoration:underline; }
+  header { padding:8px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:15px; margin:0 0 4px; font-weight:600; }
+  section { padding:6px 12px; }
+  details > summary { cursor:pointer; color:var(--dim); font-weight:600; padding:4px 0; }
+  .muted { color:var(--dim); }
+  .chips span { margin-right:14px; white-space:nowrap; }
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  th, td { border-bottom:1px solid var(--line); padding:3px 5px; text-align:left; vertical-align:top; }
+  th { background:var(--panel); color:var(--dim); font-weight:600; }
+  #main { table-layout:fixed; }
+  #main td { overflow-wrap:anywhere; }
+  #main td.id { white-space:normal; }
+  #main th { position:sticky; top:var(--fh, 0px); cursor:pointer; user-select:none; z-index:1; }
+  td.num, th.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .lab { padding:0 5px; border-radius:3px; font-size:11px; white-space:nowrap; display:inline-block; margin:1px 2px 1px 0; }
+  .lab-measured { background:#1f5f3a; } .lab-derived { background:#2b4f7a; } .lab-inferred { background:#5a4a1f; }
+  .lab-guessed { background:#7a2b2b; } .lab-absent { background:#444; } .lab-published_fit { background:#3d3d7a; }
+  .st-ok { color:#6fd08c; } .st-finding { color:#e0c050; } .st-problem { color:#ff6b6b; font-weight:600; }
+  .bar { display:flex; height:10px; width:180px; border-radius:2px; overflow:hidden; background:#222; }
+  .bar i { display:block; height:100%; }
+  #filters { position:sticky; top:0; z-index:2; background:var(--bg); border-bottom:1px solid var(--line); padding:6px 12px; display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; }
+  #filters select, #filters input, #filters button { background:#242a32; color:var(--text); border:1px solid var(--line); border-radius:4px; padding:3px 6px; font-size:12px; }
+  #filters button { cursor:pointer; }
+  #filters input[type=search] { width:240px; }
+  #shown { width:100%; color:var(--dim); }
+  tr.r { cursor:pointer; } tr.r:hover { background:#1c2129; } tr.r.open { background:#20262f; }
+  tr.d td { background:#161a20; padding:8px 12px 10px; }
+  .kv { display:grid; grid-template-columns:150px 1fr; gap:3px 10px; }
+  .kv b { color:var(--dim); font-weight:600; }
+  blockquote { margin:0; padding:3px 8px; border-left:3px solid var(--acc); background:#1d2128; white-space:pre-wrap; }
+  .vals { max-height:360px; overflow:auto; margin-top:6px; border:1px solid var(--line); }
+  .vals th { position:sticky; top:0; }
+  .src { overflow-wrap:anywhere; }
+  .id { font-family:ui-monospace, Menlo, monospace; font-size:12px; white-space:nowrap; }
+  .small { font-size:11px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Worm parameter catalog <span class="muted small" id="gen"></span></h1>
+  <div class="chips" id="totals"></div>
+  <div class="chips small muted" id="auditline"></div>
+</header>
+<section>
+  <details id="ov" open><summary>Overview: every number by PLAN row and label (click a row name to filter)</summary>
+    <div id="byplan"></div>
+    <p class="small muted" id="labelnote"></p>
+  </details>
+  <details><summary>Before and after tonight's literature fills</summary><div id="beforeafter"></div><div id="fills"></div></details>
+  <details><summary>Biggest blocks of unknown numbers (guessed or absent)</summary><div id="blocks"></div></details>
+  <details id="hiddenbox"><summary>Hidden constants in the code (numbers not yet in the ledger)</summary><div id="hidden"></div></details>
+</section>
+<div id="filters">
+  <input type="search" id="q" placeholder="search id, mechanism, source, quote, notes">
+  <select id="f_plan"><option value="">all PLAN rows</option></select>
+  <select id="f_label"><option value="">all labels</option></select>
+  <select id="f_mech"><option value="">all mechanisms</option></select>
+  <select id="f_used"><option value="">used and slots</option><option value="yes">used by the code</option><option value="slot only">slots only (not yet used)</option></select>
+  <select id="f_origin"><option value="">all origins</option></select>
+  <select id="f_status"><option value="">any audit status</option><option value="ok">audit ok</option><option value="finding">findings (explained)</option><option value="problem">open problems</option><option value="notok">not ok (findings + problems)</option></select>
+  <select id="f_kind"><option value="">all kinds</option></select>
+  <label class="small"><input type="checkbox" id="f_unk"> unknowns only (has guessed or absent numbers)</label>
+  <label class="small"><input type="checkbox" id="f_read"> read audit only</label>
+  <button id="reset">reset</button>
+  <button id="random" title="open a random row of the current selection (for spot audits)">random row</button>
+  <div id="shown"></div>
+</div>
+<table id="main">
+  <colgroup><col style="width:13%"><col style="width:3%"><col style="width:8%"><col style="width:5%"><col style="width:5%">
+    <col style="width:9%"><col style="width:8%"><col style="width:5%"><col style="width:9%"><col style="width:8%">
+    <col style="width:22%"><col style="width:5%"></colgroup>
+  <thead><tr>
+    <th data-k="id">id</th><th data-k="plan_row" class="num">PLAN</th><th data-k="mechanism">mechanism</th>
+    <th data-k="grain">grain</th><th data-k="n_elements" class="num">numbers</th><th data-k="template">template</th>
+    <th data-k="bio_min">range</th><th data-k="units">units</th><th data-k="label">label (numbers by label)</th>
+    <th data-k="precision_needed">precision needed</th><th data-k="source">source</th><th data-k="audit_status">audit</th>
+  </tr></thead>
+  <tbody></tbody>
+</table>
+<script>
+const LABELS = ["measured", "published_fit", "derived", "inferred", "guessed", "absent"];
+const COLOR = {measured:"#1f5f3a", published_fit:"#3d3d7a", derived:"#2b4f7a", inferred:"#5a4a1f", guessed:"#7a2b2b", absent:"#555"};
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;"}[c]));
+const fmt = n => Number(n).toLocaleString("en-US");
+const lab = l => `<span class="lab lab-${esc(l)}">${esc(l)}</span>`;
+let D, ROWS, sortKey = "plan_row", sortDir = 1, openId = null;
+
+function bar(numbers, total) {
+  return `<span class="bar">` + LABELS.filter(l => numbers[l]).map(l =>
+    `<i style="width:${100 * numbers[l] / total}%;background:${COLOR[l]}" title="${l} ${fmt(numbers[l])}"></i>`).join("") + `</span>`;
+}
+
+function labelTable(rows, key) {
+  return `<table><tr><th>${key}</th>` + LABELS.map(l => `<th class="num">${lab(l)}</th>`).join("") +
+    `<th class="num">rows</th><th class="num">numbers</th><th>split</th></tr>` + rows.join("") + `</table>`;
+}
+
+function overview() {
+  const s = D.summary, t = s.totals;
+  $("gen").textContent = `built ${D.generated_at || ""} by ${D.generated_by || ""}`;
+  $("totals").innerHTML = `<span><b>${fmt(t.n_rows)}</b> rows</span><span><b>${fmt(t.n_numbers)}</b> numbers</span>` +
+    LABELS.map(l => `<span>${lab(l)} ${fmt(t.numbers[l] || 0)} numbers, ${fmt(t.rows[l] || 0)} rows</span>`).join("");
+  const a = s.audit, st = a.by_status || {}, lk = a.links || {};
+  $("auditline").innerHTML = `Audit: <span class="st-ok">${st.ok || 0} ok</span>, <span class="st-finding">${st.finding || 0} findings</span> (explained, with an owner), <span class="st-problem">${st.problem || 0} open problems</span>. ` +
+    `${a.with_url} rows link a source; ${a.rows_read} rows read against their source; quotes: ` +
+    Object.entries(a.quotes || {}).map(([k, n]) => `${k} ${n}`).join(", ") +
+    `. Links: ${lk.distinct || 0} distinct URLs checked ${esc(lk.checked_at || "never")} (` +
+    Object.entries(lk.by_status || {}).map(([k, n]) => `${k}: ${n}`).join(", ") + `).`;
+  const plan = Object.entries(s.by_plan_row).sort((x, y) => +x[0] - +y[0]).map(([k, v]) =>
+    `<tr><td><a href="#" data-plan="${k}">${k}. ${esc(D.plan_rows[k] || "")}</a></td>` +
+    LABELS.map(l => `<td class="num">${v.numbers[l] ? fmt(v.numbers[l]) : ""}</td>`).join("") +
+    `<td class="num">${v.n_rows}</td><td class="num">${fmt(v.n_numbers)}</td><td>${bar(v.numbers, v.n_numbers)}</td></tr>`);
+  plan.push(`<tr><th>all</th>` + LABELS.map(l => `<th class="num">${fmt(t.numbers[l] || 0)}</th>`).join("") +
+    `<th class="num">${t.n_rows}</th><th class="num">${fmt(t.n_numbers)}</th><th>${bar(t.numbers, t.n_numbers)}</th></tr>`);
+  $("byplan").innerHTML = labelTable(plan, "PLAN row");
+  $("byplan").querySelectorAll("a[data-plan]").forEach(e => e.onclick = ev => {
+    ev.preventDefault(); $("f_plan").value = e.dataset.plan; apply(); $("filters").scrollIntoView(); });
+  $("labelnote").textContent = "measured: read off an experiment. published_fit: fitted by a published model (BAAIWorm, c302), " +
+    "not measured. derived: computed from measured numbers. inferred: our estimate from related measurements. guessed: " +
+    "a bounded guess (drawn per seed inside its range). absent: the code has no value yet. Counts are numbers (elements), " +
+    "so one per-connection row can hold thousands.";
+  const b = s.before_fills || {}, af = s.after_fills || {};
+  if (b.rows) {
+    const line = (kind) => `<tr><td>${kind}</td>` + LABELS.map(l => {
+      const x = (b[kind] || {})[l] || 0, y = (af[kind] || {})[l] || 0;
+      return `<td class="num">${fmt(x)} &rarr; ${fmt(y)}${x !== y ? ` <b>(${y > x ? "+" : ""}${fmt(y - x)})</b>` : ""}</td>`; }).join("") + `</tr>`;
+    $("beforeafter").innerHTML = `<table><tr><th></th>` + LABELS.map(l => `<th class="num">${lab(l)}</th>`).join("") +
+      `</tr>${line("rows")}${line("numbers")}</table>`;
+  }
+  $("fills").innerHTML = `<table><tr><th>row</th><th>kind</th><th>change</th><th>why</th><th>source</th></tr>` +
+    (D.fills || []).map(f => `<tr><td class="id"><a href="#id=${esc(f.param_id)}">${esc(f.param_id)}</a></td><td>${esc(f.kind || "")}</td>` +
+      `<td>${esc(f.change)}</td><td>${esc(f.reason)}</td><td class="src">${f.url ? `<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.source || f.url)}</a>` : esc(f.source || "")}</td></tr>`).join("") + `</table>`;
+  $("blocks").innerHTML = `<table><tr><th>row</th><th class="num">PLAN</th><th>mechanism</th><th>grain</th><th class="num">unknown</th><th class="num">of</th><th>used</th><th>fit target</th></tr>` +
+    (s.biggest_unknown_blocks || []).map(x => `<tr><td class="id"><a href="#id=${esc(x.id)}">${esc(x.id)}</a></td><td class="num">${x.plan_row}</td>` +
+      `<td>${esc(x.mechanism)}</td><td>${esc(x.grain)}</td><td class="num">${fmt(x.unknown)}</td><td class="num">${fmt(x.of)}</td>` +
+      `<td>${esc(x.used_by_code)}</td><td>${x.fit_target ? "yes (per-pair strength: a fit target, not a lookup)" : ""}</td></tr>`).join("") + `</table>`;
+  const h = s.hidden_constants || {};
+  if (h.total) {
+    $("hidden").innerHTML = `<p>${fmt(h.total)} numeric constants in ${esc((h.scanned || []).join(", "))} are not read from the ledger ` +
+      `(scanned ${esc(h.generated_at || "")}; list in data/worm/catalog/hidden_constants.json). By kind: ` +
+      Object.entries(h.by_kind || {}).map(([k, n]) => `${esc(k)} ${n}`).join(", ") + `.</p><table><tr><th>file</th><th class="num">constants</th></tr>` +
+      Object.entries(h.by_file || {}).sort((x, y) => y[1] - x[1]).map(([f, n]) => `<tr><td>${esc(f)}</td><td class="num">${n}</td></tr>`).join("") + `</table>`;
+  } else {
+    $("hidden").innerHTML = `<p class="muted">Not scanned yet.</p>`;
+  }
+}
+
+function options() {
+  const add = (sel, vals, name = v => v) => vals.forEach(v => sel.insertAdjacentHTML("beforeend", `<option value="${esc(v)}">${esc(name(v))}</option>`));
+  add($("f_plan"), Object.keys(D.plan_rows).sort((a, b) => a - b), k => `${k}. ${D.plan_rows[k]}`);
+  add($("f_label"), LABELS);
+  const mech = {}; ROWS.forEach(r => mech[r.mechanism] = r.mechanism_name);
+  add($("f_mech"), Object.keys(mech).sort(), k => mech[k] ? `${k}: ${mech[k]}`.slice(0, 70) : k);
+  add($("f_origin"), [...new Set(ROWS.map(r => r.origin))].sort(), o => ({brain: "brain (cells, channels, synapses)", layers: "brain layers (senses, organs, slow)", body: "body (MetaWorm)", slot: "slot (needed, not yet in the code)"}[o] || o));
+  add($("f_kind"), [...new Set(ROWS.map(r => r.kind))].sort());
+}
+
+const F = ["q", "f_plan", "f_label", "f_mech", "f_used", "f_origin", "f_status", "f_kind"];
+function state() {
+  const p = new URLSearchParams();
+  F.forEach(k => { if ($(k).value) p.set(k, $(k).value); });
+  if ($("f_unk").checked) p.set("unk", 1);
+  if ($("f_read").checked) p.set("read", 1);
+  if (openId) p.set("id", openId);
+  history.replaceState(null, "", "#" + p.toString());
+}
+
+function filtered() {
+  const q = $("q").value.trim().toLowerCase(), v = k => $(k).value;
+  return ROWS.filter(r =>
+    (!v("f_plan") || String(r.plan_row) === v("f_plan")) &&
+    (!v("f_label") || r.label === v("f_label") || (r.split || {})[v("f_label")]) &&
+    (!v("f_mech") || r.mechanism === v("f_mech")) &&
+    (!v("f_used") || r.used_by_code === v("f_used")) &&
+    (!v("f_origin") || r.origin === v("f_origin")) &&
+    (!v("f_kind") || r.kind === v("f_kind")) &&
+    (!v("f_status") || (v("f_status") === "notok" ? r.audit_status !== "ok" : r.audit_status === v("f_status"))) &&
+    (!$("f_unk").checked || (r.split || {}).guessed || (r.split || {}).absent) &&
+    (!$("f_read").checked || r.audit_trail) &&
+    (!q || r._text.includes(q)));
+}
+
+function cmp(a, b) {
+  let x = a[sortKey], y = b[sortKey];
+  if (sortKey === "bio_min" || sortKey === "n_elements" || sortKey === "plan_row") { x = +x; y = +y; }
+  if (x === y) return a.id < b.id ? -1 : 1;
+  return (x < y ? -1 : 1) * sortDir;
+}
+
+function sourceCell(r) {
+  const s = esc(String(r.source).slice(0, 110)) + (String(r.source).length > 110 ? "&hellip;" : "");
+  return r.source_url ? `<a href="${esc(r.source_url)}" target="_blank" rel="noopener" title="${esc(r.source_url)}">${s}</a>` : s;
+}
+
+function splitCell(r) {
+  const sp = Object.entries(r.split || {});
+  if (sp.length <= 1 && (sp[0] || [r.label])[0] === r.label) return lab(r.label);
+  return lab(r.label) + `<br><span class="small">` + sp.sort((a, b) => b[1] - a[1]).map(([l, n]) => `${lab(l)}${fmt(n)}`).join(" ") + `</span>`;
+}
+
+function detail(r) {
+  const kv = (k, v) => v === "" || v == null ? "" : `<b>${k}</b><div>${v}</div>`;
+  return `<tr class="d"><td colspan="12"><div class="kv">` +
+    kv("id", `<span class="id">${esc(r.id)}</span> <a href="#id=${esc(r.id)}" class="small">(link to this row)</a>`) +
+    kv("PLAN row", `${r.plan_row}. ${esc(r.plan_row_name)}`) +
+    kv("mechanism", `${esc(r.mechanism)}${r.mechanism_name ? ": " + esc(r.mechanism_name) : ""}`) +
+    kv("applies to", esc(r.applies_to)) + kv("template", esc(r.template)) +
+    kv("range", r.bio_min !== "" ? `[${esc(r.bio_min)}, ${esc(r.bio_max)}] ${esc(r.units)}` : `<span class="muted">none</span>`) +
+    kv("range source", esc(r.range_source) + (r.range_basis ? ` <span class="muted">(basis: ${esc(r.range_basis)})</span>` : "")) +
+    kv("label", splitCell(r) + ` <span class="muted">fill kind: ${esc(r.fill_kind)}; project: ${esc(r.source_project)}</span>`) +
+    kv("source", esc(r.source) + (r.source_url ? `<br><a href="${esc(r.source_url)}" target="_blank" rel="noopener">${esc(r.source_url)}</a>` +
+      (r.link_status ? ` <span class="muted small">(link check: ${esc(r.link_status)})</span>` : "") : "")) +
+    kv("quote", r.source_quote ? `<blockquote>${esc(r.source_quote)}</blockquote><span class="muted small">${esc(r.quote_checked)}</span>` : "") +
+    kv("used by code", esc(r.used_by_code) + (r.toggle ? `; toggle <span class="id">${esc(r.toggle)}</span>` : "")) +
+    kv("precision needed", esc(r.precision_needed)) +
+    kv("audit", `<span class="st-${esc(r.audit_status)}">${esc(r.audit_status)}</span>` + (r.audit !== "ok" ? `: ${esc(r.audit)}` : "")) +
+    kv("read audit", esc(r.audit_trail)) + kv("notes", esc(r.notes)) +
+    kv("values", r.values_file ? `<span class="id">${esc(r.values_file)}</span> <button data-vals="${esc(r.id)}">show every number</button><div id="vals-${esc(r.id)}"></div>` : "") +
+    `</div></td></tr>`;
+}
+
+function render() {
+  const rows = filtered().sort(cmp), sum = {}; let n = 0;
+  rows.forEach(r => { n += r.n_elements; Object.entries(r.split || {}).forEach(([l, k]) => sum[l] = (sum[l] || 0) + k); });
+  $("shown").innerHTML = `Showing <b>${rows.length}</b> of ${ROWS.length} rows, <b>${fmt(n)}</b> numbers: ` +
+    LABELS.filter(l => sum[l]).map(l => `${lab(l)}${fmt(sum[l])}`).join(" ") + ` ${n ? bar(sum, n) : ""}`;
+  $("main").querySelector("tbody").innerHTML = rows.map(r =>
+    `<tr class="r${r.id === openId ? " open" : ""}" data-id="${esc(r.id)}"><td class="id">${esc(r.id)}</td><td class="num">${r.plan_row}</td>` +
+    `<td>${esc(r.mechanism)}</td><td>${esc(r.grain)}</td><td class="num">${fmt(r.n_elements)}</td><td>${esc(r.template)}</td>` +
+    `<td class="num">${r.bio_min !== "" ? `${esc(r.bio_min)} to ${esc(r.bio_max)}` : ""}</td><td>${esc(r.units)}</td>` +
+    `<td>${splitCell(r)}</td><td class="small">${esc(r.precision_needed)}</td><td class="src">${sourceCell(r)}</td>` +
+    `<td class="st-${esc(r.audit_status)}" title="${esc(r.audit)}">${esc(r.audit_status)}</td></tr>` + (r.id === openId ? detail(r) : "")).join("");
+  const fh = $("filters").getBoundingClientRect().height;
+  document.documentElement.style.setProperty("--fh", fh + "px");
+  state();
+}
+
+async function showValues(id, box) {
+  box.innerHTML = `<span class="muted">loading&hellip;</span>`;
+  const res = await fetch(`catalog_values/${encodeURIComponent(id)}.csv`);
+  if (!res.ok) { box.innerHTML = `<span class="st-problem">could not load (${res.status})</span>`; return; }
+  const lines = (await res.text()).trim().split("\n"), head = splitCsv(lines[0]);
+  const body = lines.slice(1).map(splitCsv);
+  box.innerHTML = `<input type="search" placeholder="filter elements" class="vq" style="margin-top:6px"> <span class="muted small vn"></span><div class="vals"></div>`;
+  const draw = () => {
+    const q = box.querySelector(".vq").value.toLowerCase();
+    const keep = body.filter(r => !q || r.join(" ").toLowerCase().includes(q));
+    box.querySelector(".vn").textContent = `${fmt(keep.length)} of ${fmt(body.length)} elements` + (keep.length > 2000 ? " (first 2,000 shown)" : "");
+    box.querySelector(".vals").innerHTML = `<table><tr>${head.map(h => `<th>${esc(h)}</th>`).join("")}</tr>` +
+      keep.slice(0, 2000).map(r => `<tr>${r.map((c, i) => head[i] === "label" ? `<td>${lab(c)}</td>` : `<td>${esc(c)}</td>`).join("")}</tr>`).join("") + `</table>`;
+  };
+  box.querySelector(".vq").oninput = draw; draw();
+}
+
+function splitCsv(line) {
+  const out = []; let cur = "", q = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (q) { if (c === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (c === '"') q = false; else cur += c; }
+    else if (c === '"') q = true; else if (c === ",") { out.push(cur); cur = ""; } else cur += c;
+  }
+  out.push(cur); return out;
+}
+
+function fromHash() {
+  const p = new URLSearchParams(location.hash.slice(1));
+  F.forEach(k => $(k).value = p.get(k) || "");
+  $("f_unk").checked = !!p.get("unk"); $("f_read").checked = !!p.get("read");
+  openId = p.get("id");
+  if (openId && !filtered().some(r => r.id === openId)) {
+    F.forEach(k => $(k).value = ""); $("f_unk").checked = $("f_read").checked = false; }
+  render();
+  if (openId) { const e = document.querySelector(`tr.r[data-id="${CSS.escape(openId)}"]`); if (e) e.scrollIntoView({block: "center"}); }
+}
+
+async function main() {
+  D = await (await fetch("catalog_data.json", {cache: "no-store"})).json();
+  ROWS = D.rows;
+  ROWS.forEach(r => r._text = [r.id, r.mechanism, r.mechanism_name, r.source, r.source_url, r.source_quote, r.notes,
+    r.audit, r.audit_trail, r.applies_to, r.range_source, r.plan_row_name, r.units, r.grain].join(" ").toLowerCase());
+  overview(); options();
+  F.forEach(k => $(k).addEventListener("input", () => { openId = null; render(); }));
+  ["f_unk", "f_read"].forEach(k => $(k).addEventListener("change", () => { openId = null; render(); }));
+  $("reset").onclick = () => { F.forEach(k => $(k).value = ""); $("f_unk").checked = $("f_read").checked = false; openId = null; render(); };
+  $("random").onclick = () => { const rs = filtered(); if (!rs.length) return; openId = rs[Math.floor(Math.random() * rs.length)].id; render();
+    document.querySelector("tr.r.open")?.scrollIntoView({block: "center"}); };
+  $("main").querySelectorAll("th[data-k]").forEach(th => th.onclick = () => {
+    sortDir = sortKey === th.dataset.k ? -sortDir : 1; sortKey = th.dataset.k; render(); });
+  $("main").querySelector("tbody").addEventListener("click", ev => {
+    const b = ev.target.closest("button[data-vals]");
+    if (b) { showValues(b.dataset.vals, $("vals-" + b.dataset.vals)); return; }
+    if (ev.target.closest("a") || ev.target.closest("tr.d")) return;
+    const tr = ev.target.closest("tr.r"); if (!tr) return;
+    openId = openId === tr.dataset.id ? null : tr.dataset.id; render();
+  });
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
+}
+main();
+</script>
+</body>
+</html>
