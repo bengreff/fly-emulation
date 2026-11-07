@@ -133,6 +133,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     log = Log(out / "driver.log")
     (out / "driver.pid").write_text(str(os.getpid()))
+    if (out / "DONE").exists():                      # a resumed fit is running again: its old DONE is history
+        os.replace(out / "DONE", out / f"DONE.{int(time.time())}")
     T, s_trial, s_floor = fl.load(a.train)
     train = sorted(set(np.load(a.train)["train"].tolist()))
     cfg = {k: getattr(a, k) for k in KEYS}

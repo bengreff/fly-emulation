@@ -1,8 +1,8 @@
 # FIT1: class-level synapse strengths against Randi et al. 2023 (pre-registration)
 
-Status: pre-registered 2026-11-06 (time in the commit), before any scored run. Nothing above the line "RESULTS"
-(added when results exist) changes after the first scored run; a changed rerun is a new, separately named fit
-(FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
+Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended once at 22:50 before any scored run (the
+amendment is listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
+first scored run; a changed rerun is a new, separately named fit (FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
 night of 6 Nov (`docs/worm/night/2026-11-06_wfit.md`).
 
 **Question.** Can a small set of biological, class-shared synaptic and gap-junction strengths, each inside its
@@ -74,9 +74,9 @@ Measured on backhouse, 302 neurons, one CPU each, 30 s windows:
 | Run | h_dt (ms) | mech_dt (ms) | Wall per window (s) | RMS difference from ref (per target) | r with ref |
 |---|---|---|---|---|---|
 | ref | 0.5 | 1 | (pending) | | |
-| a | 0.5 | 10 | (pending) | | |
-| b | 1.0 | 10 | 93 | (pending) | |
-| c | 2.0 | 10 | 53 | (pending) | |
+| a | 0.5 | 10 | 180 | | |
+| b | 1.0 | 10 | 93 | 1-2e-5 (largest 2.5e-4) from a | 0.9999 |
+| c | 2.0 | 10 | 53 | 4-5e-5 (largest 6.2e-4) from a | 0.999-0.9996 |
 
 Bar (set before the comparison was read): RMS difference at most 0.1 x s_floor (0.003) for every target. If c
 fails it, use the coarsest run that passes.
@@ -111,6 +111,8 @@ labelled **fitted (FIT1)**, keep their ranges, and are never relabelled measured
 | obs_opto_g_nS | 0.3 | 0.05-2 | guessed | log |
 | obs_opto_tau_off_ms | 500 | 50-3000 | guessed | log |
 | obs_gcamp6s_thalf_ms | 550 | 300-2000 | guessed | log |
+| capool_f (free Ca fraction of the soma pool) | 0.001 | 0.00033-0.003 | published_fit; range guessed (factor 3) | log |
+| capool_tca (Ca removal time constant, ms) | 50 | 16.7-150 | published_fit; range guessed (factor 3) | log |
 
 How this maps onto the brief's list:
 - **Unit conductance per receptor class.** The 11 rec_*_gamma values. A synapse's conductance is g_em x
@@ -121,7 +123,9 @@ How this maps onto the brief's list:
 - **Gap-junction unit conductance.** gap_open_channels_per_em is the only free one. The code has one value for
   every junction (g = open channels per EM contact x innexin unitary conductance); no per-innexin-class value
   exists to fit.
-- **Actuator and GCaMP scale.** The three obs_ values.
+- **Actuator and GCaMP scale.** The three obs_ values, and the soma Ca pool's capool_f and capool_tca. These
+  two set the readout's Ca transient. They set the brain's own pool too, but the units bug keeps that pool at
+  rest for any value in range.
 
 Not fitted, with reasons:
 - rec_lacr_gamma_pS: it is the reference the others are relative to, so it cancels.
@@ -129,6 +133,7 @@ Not fitted, with reasons:
 - The monoamine and betaine tmax: too few sites; they are degenerate with their classes' gamma.
 - Every kinetic constant.
 - gap_innexin_unitary: only its product with the open-channel count enters.
+- capool_vcell: only f / vcell enters the pool.
 - GCaMP Kd, Hill and range: measured (Chen 2013), narrow ranges.
 - The peptide, slow-signalling and plasticity values: not identifiable from 30 s single-pulse responses with this
   budget.
@@ -227,11 +232,15 @@ Verdicts:
 
 ## 8. Known limits, declared before scoring
 
-- **The template's responses are short.** With the actuator at 1 nS, the autoresponse peaks at dF/F 0.24 (ASHL)
-  and 0.31 (AWAL), then decays within about 3 s. Its 30 s mean is 0.014-0.018, against a training median of
-  0.43. AVAL's is 0.001 (measured, dtcheck c). The fit can lengthen responses only through the actuator's off
-  time, GCaMP's decay and network gain, all inside their ranges. If these are pinned at bounds at the end, that
-  will be reported as a model or range limit, not hidden. Reach at the upper bounds: section 2b.
+- **The template's responses are short and small.** With the actuator at 1 nS, the autoresponse peaks at dF/F
+  0.24 (ASHL) and 0.31 (AWAL), then decays within about 3 s. Its 30 s mean is 0.014-0.018, against a training
+  median of 0.43 (measured, dtcheck c). The readout values (actuator, GCaMP, Ca pool) can reach the data inside
+  their ranges, but only near their upper bounds (2b). Two risks follow:
+  - Values pinned at bounds at the end will be reported as a model or range limit, not hidden.
+  - The synaptic values may absorb a readout deficit. The wrong-model comparison (P2) is the guard against
+    reading that as wiring.
+- **AVAL barely responds to its own actuator** (0.048 at all upper bounds). AVAL is not held out, but the big
+  interneurons' columns will fit poorly.
 - **The readout's Ca pool is a workaround.** The brain's own Ca-gated channels still see the pinned pool; B1 is
   asked for the cainternm units fix. If it lands before worm-v1, the readout switches to the brain's own Ca and
   this line is updated before launch.
@@ -242,4 +251,20 @@ Verdicts:
 
 ### 2b. Reach at the upper bounds (development check, no data scored)
 
-Template, except obs_opto_g_nS 2, obs_opto_tau_off_ms 3000, obs_gcamp6s_thalf_ms 2000, h_dt 2: (pending).
+h_dt 2, template values except those listed; the 30 s mean autoresponse (measured). The training median it is
+compared with is 0.43.
+
+| Values changed from the template | AVAL | ASHL | AWAL |
+|---|---|---|---|
+| obs_opto_g_nS 1 | 0.001 | 0.014 | 0.018 |
+| obs_opto_g_nS 2, obs_opto_tau_off_ms 3000, obs_gcamp6s_thalf_ms 2000 | 0.006 | 0.076 | 0.105 |
+| the same, plus capool_f 0.003 and capool_tca 150 | 0.048 | 0.64 | 1.09 |
+| the same, plus syn_strength_per_pair 2 | 0.013 | 0.13 | 0.57 |
+
+## Amendment (22:50, before any scored run)
+
+capool_f and capool_tca were added to the fitted values (21 to 23). Reason: the reach check (2b) showed that,
+with the actuator and GCaMP values alone, the model cannot reach the data's autoresponse magnitude inside their
+ranges. The Ca pool values can, inside theirs. The only data used was the aggregate training median (0.43).
+Before this, the only runs on training data were a plumbing test of the driver (2 s windows, 2 generations,
+population 4, `~/worm-night/wfit/smoke_run`). Its losses mean nothing and were not used.

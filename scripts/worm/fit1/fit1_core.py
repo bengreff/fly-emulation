@@ -37,13 +37,16 @@ VOL_S = 0.5                           # Randi: 2 volumes/s
 # the fitted values: (id, transform). Bounds and template come from the ledger row, else the module's Spec.
 # Not fitted, with reasons (FIT1.md): rec_lacr_gamma_pS (the per-contact strength's reference: it cancels),
 # lgc55 (6 sites, 0.55 nS in all), the monoamine and betaine tmax (degenerate with their classes' gamma at so few
-# sites), every kinetic constant, gap_innexin_unitary (only its product with the open-channel count enters).
+# sites), every kinetic constant, gap_innexin_unitary (only its product with the open-channel count enters),
+# capool_vcell (only f / vcell enters the pool). capool_f and capool_tca set the readout's Ca pool (and the brain's
+# own, which the units bug keeps near rest: night file).
 FIT = ([("syn_strength_per_pair", "log")]
        + [(f"rec_{c}_gamma_pS", "log") for c in ("acr16", "nachr", "acc", "glr", "nmr", "glucl", "gabacl",
                                                   "gabacat", "mod1", "lgc53", "acr23")]
        + [(f"rec_tmax_{lg}_uM", "log") for lg in ("acetylcholine", "glutamate", "gaba")]
        + [("syn_exc_Vth", "lin"), ("syn_exc_delta", "log"), ("gap_open_channels_per_em", "log"),
-          ("obs_opto_g_nS", "log"), ("obs_opto_tau_off_ms", "log"), ("obs_gcamp6s_thalf_ms", "log")])
+          ("obs_opto_g_nS", "log"), ("obs_opto_tau_off_ms", "log"), ("obs_gcamp6s_thalf_ms", "log"),
+          ("capool_f", "log"), ("capool_tca", "log")])
 IDS = [i for i, _ in FIT]
 
 
