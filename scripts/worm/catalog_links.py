@@ -5,14 +5,14 @@ flags rows whose link answered 404 or 410 or did not answer. Publisher pages tha
 406, 429) are recorded but not flagged, since a browser opens them.
 
 Writes data/worm/catalog/quote_check.csv (id, status, searched, found_in, missing, quote_sha, checked_at). A quote is
-searched for, piece by piece (pieces split at "..." or "[...]"; case, whitespace, dashes and quote marks aside), in:
-the free full text of each PMC id the row cites (Europe PMC, else the PMC page or NCBI efetch when Europe PMC serves
-only the front matter); a PubMed id's or DOI's PMC full text, else its abstract; a vendored model file the source
-names (published/NAME, with COPASI references written <name>); a saved excerpt (data/worm/catalog/excerpts/) the
-source names or that names a cited PMC id. Status: found; not found (a full text was searched and a piece is missing:
-the build flags it); no free full text (only an abstract, or nothing, could be fetched). Research-file quotes are
-checked by the build itself. Complete fetches are cached in ~/.cache/wormcatalog/fulltext. A bot check (captcha) is a
-stop, not something to get past.
+searched for, piece by piece (pieces split at "..." or "[...]"; case, whitespace, format characters, dashes and quote
+marks aside), in: the free full text of each PMC id the row cites (Europe PMC, else the PMC page or NCBI efetch when
+Europe PMC serves only the front matter); a PubMed id's or DOI's PMC full text, else its abstract; a vendored model
+file the source names (published/NAME, with COPASI references written <name>); a saved excerpt
+(data/worm/catalog/excerpts/) the source names or that names a cited PMC id. Status: found; not found (a full text was
+searched and a piece is missing: the build flags it); no free full text (only an abstract, or nothing, could be
+fetched). Research-file quotes are checked by the build itself. Complete fetches are cached in
+~/.cache/wormcatalog/fulltext. A bot check (captcha) is a stop, not something to get past.
 
     PYTHONPATH=src:scripts/worm python scripts/worm/catalog_links.py
 """
@@ -126,7 +126,8 @@ def model_file_text(f: Path) -> str:
 
 
 def norm(s: str) -> str:
-    s = unicodedata.normalize("NFKC", s)
+    # format characters (MathML's invisible times, soft hyphens) out; dashes, quote marks and micro signs unified
+    s = "".join(ch for ch in unicodedata.normalize("NFKC", s) if unicodedata.category(ch) != "Cf")
     for a in "−–—‐‑":
         s = s.replace(a, "-")
     s = s.replace("’", "'").replace("‘", "'").replace("“", '"').replace("”", '"').replace("µ", "μ")
