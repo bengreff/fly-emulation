@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:36 CST",
+ "generated_at": "2026-11-07 00:39 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67508,
-   "guessed": 9110,
+   "guessed": 9109,
    "inferred": 117,
-   "measured": 6182,
+   "measured": 6183,
    "published_fit": 8033
   },
-  "known": 81840,
-  "placeholder": 9110,
+  "known": 81841,
+  "placeholder": 9109,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9110
+  "must_fill": 9109
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9110,
+   "guessed": 9109,
    "derived": 3100,
    "inferred": 117,
-   "measured": 330
+   "measured": 331
   },
-  "known": 10853,
-  "placeholder": 9110,
+  "known": 10854,
+  "placeholder": 9109,
   "gap": 0,
-  "must_fill": 9110
+  "must_fill": 9109
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,7 +49,7 @@
    },
    "literature": {
     "guessed": 5471,
-    "measured": 6181,
+    "measured": 6182,
     "derived": 3100,
     "inferred (ours)": 23,
     "published fit": 248
@@ -58,7 +58,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3635,
+    "guessed": 3634,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -74,7 +74,7 @@
    "literature": {
     "guessed": 5471,
     "derived": 3100,
-    "measured": 329,
+    "measured": 330,
     "inferred (ours)": 23,
     "published fit": 248
    },
@@ -82,7 +82,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3635,
+    "guessed": 3634,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,9 +115,9 @@
   },
   "class": {
    "derived": 5,
-   "guessed": 165,
+   "guessed": 164,
    "inferred": 66,
-   "measured": 31,
+   "measured": 32,
    "published_fit": 87
   },
   "compartment": {
@@ -1394,8 +1394,9 @@
    "absent_reason": "",
    "numbers": 5,
    "by_label": {
-    "guessed": 3,
-    "inferred": 2
+    "guessed": 2,
+    "inferred": 2,
+    "measured": 1
    }
   },
   {
@@ -38143,28 +38144,28 @@
    "applies_to": "AFD GCY-8",
    "unit": "mM",
    "n_values": 1,
-   "value_template": 100.0,
-   "template_source": "Singhvi et al. 2016 Cell 165:936",
+   "value_template": 60.0,
+   "template_source": "Singhvi, Liu, Friedman, Fong, Lu, Huang & Shaham 2016 Cell 165:936 (PMC4860081), Results and Fig. 5D (GCY-8 guanylyl cyclase activity in membrane fractions of GCY-8-expressing HEK293T cells, NH4Cl titration, 30 C)",
    "bio_min": 10.0,
    "bio_max": 300.0,
    "bound_basis": "guessed",
-   "bound_source": "Singhvi et al. 2016 Cell 165:936",
+   "bound_source": "kept from before the value fill: Singhvi et al. 2016 Cell 165:936",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Cl- at half GCY-8 inhibition, Hill 1; Singhvi measured the inhibition, the number is not in the free summary; guessed",
+   "notes": "Cl- at half GCY-8 inhibition, Hill 1; Singhvi measured the inhibition, the number is not in the free summary; guessed; fill 6 Nov (catalog audit): was 100 mM, label guessed, range [10, 300]; measured: Cl- IC50 of GCY-8 cyclase activity, heterologous (HEK293T membrane fractions), reported as ~60 mM with no interval; the model's 1 / (1 + Cl / IC50) form takes it directly (Hill 1 kept). Range kept (guessed).",
    "plan_row": 11,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4860081/",
+   "source_quote": "Strikingly, we found that Cl\u2212 ions, but not K+ or other anions, are potent inhibitors of GCY-8 cyclase activity and cGMP production (Figures 5D, S5A), with an IC50 of ~60mM.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40704,16 +40705,16 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 443,
-    "measured": 281,
+    "guessed": 442,
+    "measured": 282,
     "derived": 40,
     "inferred": 118,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9247,
-    "measured": 6237,
+    "guessed": 9246,
+    "measured": 6238,
     "derived": 67520,
     "inferred": 124,
     "absent": 5
@@ -40723,16 +40724,16 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 443,
-   "measured": 281,
+   "guessed": 442,
+   "measured": 282,
    "derived": 40,
    "inferred": 118,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9247,
-   "measured": 6237,
+   "guessed": 9246,
+   "measured": 6238,
    "derived": 67520,
    "inferred": 124,
    "absent": 5
@@ -40866,14 +40867,16 @@
    },
    "11": {
     "rows": {
-     "guessed": 11,
+     "guessed": 10,
      "inferred": 7,
-     "derived": 1
+     "derived": 1,
+     "measured": 1
     },
     "numbers": {
-     "guessed": 11,
+     "guessed": 10,
      "inferred": 7,
-     "derived": 1
+     "derived": 1,
+     "measured": 1
     },
     "n_rows": 19,
     "n_numbers": 19
@@ -41180,16 +41183,16 @@
    "class": {
     "rows": {
      "inferred": 67,
-     "measured": 35,
-     "guessed": 191,
+     "measured": 36,
+     "guessed": 190,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
      "inferred": 67,
-     "measured": 35,
-     "guessed": 191,
+     "measured": 36,
+     "guessed": 190,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
@@ -41357,15 +41360,15 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 284,
-     "measured": 221,
+     "guessed": 283,
+     "measured": 222,
      "derived": 28,
      "inferred": 101
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8944,
-     "measured": 6078,
+     "guessed": 8943,
+     "measured": 6079,
      "derived": 67508,
      "inferred": 106
     },
@@ -41443,14 +41446,16 @@
    },
    "mech:glia": {
     "rows": {
-     "guessed": 8,
+     "guessed": 7,
      "inferred": 6,
-     "derived": 1
+     "derived": 1,
+     "measured": 1
     },
     "numbers": {
-     "guessed": 8,
+     "guessed": 7,
      "inferred": 6,
-     "derived": 1
+     "derived": 1,
+     "measured": 1
     },
     "n_rows": 15,
     "n_numbers": 15
@@ -41776,18 +41781,18 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 443,
+     "guessed": 442,
      "derived": 36,
      "inferred": 118,
-     "measured": 277,
+     "measured": 278,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9247,
+     "guessed": 9246,
      "derived": 3110,
      "inferred": 124,
-     "measured": 385,
+     "measured": 386,
      "absent": 5
     },
     "n_rows": 1461,
@@ -42127,19 +42132,19 @@
    },
    "rows_read": 207,
    "quotes": {
-    "none": 1088,
-    "paper text (read audit, 6 Nov)": 250,
+    "none": 1087,
+    "paper text (read audit, 6 Nov)": 251,
     "research file (scripted check)": 145
    },
-   "with_url": 1109,
+   "with_url": 1110,
    "links": {
-    "distinct": 158,
+    "distinct": 159,
     "by_status": {
-     "200": 148,
+     "200": 149,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:36 CST"
+    "checked_at": "2026-11-07 00:39 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45601,6 +45606,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6785734/"
    },
    {
+    "param_id": "glia_gcy8_cl_ic50_mM",
+    "kind": "fill",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "100 -> 60 mM; guessed -> measured; range [10, 300] -> [10, 300]",
+    "reason": "measured: Cl- IC50 of GCY-8 cyclase activity, heterologous (HEK293T membrane fractions), reported as ~60 mM with no interval; the model's 1 / (1 + Cl / IC50) form takes it directly (Hill 1 kept). Range kept (guessed).",
+    "source": "Singhvi, Liu, Friedman, Fong, Lu, Huang & Shaham 2016 Cell 165:936 (PMC4860081), Results and Fig. 5D (GCY-8 guanylyl cyclase activity in membrane fractions of GCY-8-expressing HEK293T cells, NH4Cl titration, 30 C)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4860081/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46609,16 +46627,16 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 443,
-    "measured": 281,
+    "guessed": 442,
+    "measured": 282,
     "derived": 40,
     "inferred": 118,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9247,
-    "measured": 6237,
+    "guessed": 9246,
+    "measured": 6238,
     "derived": 67520,
     "inferred": 124,
     "absent": 5
