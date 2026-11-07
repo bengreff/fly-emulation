@@ -31,7 +31,9 @@ in brain.cell_names order, names, is_muscle, outputs. ctx.outputs holds every me
 step, updated in place by each mechanism earlier in REGISTRY order this step, so a module reads another's output
 with at most one step of lag (e.g. outputs['coelomocyte_uptake_per_s'], outputs['temperature_C'],
 outputs['peptide_release'] = {peptide gene, or "gene@compartment" with a name from
-mech.neuromod.COMPARTMENTS: molecules/s}, read by neuromod).
+mech.neuromod.COMPARTMENTS: molecules/s}, read by neuromod; outputs['ma_release_scale'] = array (n_cells), a
+multiplier on each cell's amine release, read by neuromod; outputs['energy_fraction'] = the energy reserve as a
+fraction of a well-fed worm's (0 to 1; absent = fed), read by slow_signalling and learning).
 """
 from __future__ import annotations
 
@@ -41,7 +43,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-REGISTRY: list[str] = ["receptors", "neuromod"]
+REGISTRY: list[str] = ["receptors", "plasticity", "slow_signalling", "learning", "neuromod", "noise"]
 
 # the conductances the brain can scale per cell (g_scale names): each BAAIWorm channel's somatic density
 # (BAAIWorm's insert order, wormemu.brain.CHANNELS without the Ca pool) and the somatic leak
