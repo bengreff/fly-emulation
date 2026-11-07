@@ -34,6 +34,8 @@ Short-term plasticity (row 24; mech/plasticity.py, graded form of Dittman, Kreit
   q = x z F/F1/q0                                 quantal content relative to the INITIAL steady state (q0 there;
                                                   tonic release keeps x, z < 1 at rest); g = g * q in every mode
 The defaults (beta = 0, beta_h = 0, F1 = 1) keep x = z = q = 1 exactly: the synapse without plasticity.
+Quantal noise (row 26; mech/noise.py): gd = the deterministic conductance (before the Mg block), read by the
+module each step; qn = that step's vesicle shot noise over its mean, set by the module (default 1 = no noise).
 ENDCOMMENT
 
 NEURON {
@@ -42,7 +44,7 @@ NEURON {
     NONSPECIFIC_CURRENT i
     RANGE gmax, erev, delta, k, Vth, mode, tmax, ec50, hill, tau_rise, tau_off, tau_des, ss, mg, mgk, mgc
     RANGE relgain, recgain, i, g, T, a
-    RANGE F1, tauF, KF, beta, k0, kmax, KD, tauD, beta_h, tau_h, q
+    RANGE F1, tauF, KF, beta, k0, kmax, KD, tauD, beta_h, tau_h, q, qn, gd
 }
 
 UNITS {
@@ -71,6 +73,7 @@ PARAMETER {
     mgc = 3.57 (mM)
     relgain = 1
     recgain = 1
+    qn = 1
     F1 = 1
     tauF = 100 (ms)
     KF = 20 (ms)
@@ -100,6 +103,7 @@ ASSIGNED {
     krec (/ms)
     q
     q0
+    gd (uS)
 }
 
 STATE {
@@ -143,6 +147,8 @@ BREAKPOINT {
     }
     q = x * z * (F1 + (1 - F1) * cF / (cF + KF)) / F1 / q0
     g = g * q
+    gd = g
+    g = g * qn
     if (mg > 0) {
         g = g / (1 + exp(-mgk * v) * mg / mgc)
     }

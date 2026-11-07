@@ -43,6 +43,7 @@ class Recorder:
         self.b, self.cell_names = brain, brain.cell_names
         self.neur = ~brain.is_muscle
         self.k, self.above, self.vmax, self.finite, self.mo = 0, [], -1e9, True, []
+        self.ca, self.gc = [], None
 
     def reset(self):
         return self.b.reset()
@@ -55,6 +56,9 @@ class Recorder:
         self.k += 1
         if self.k % 20 == 0:
             self.above.append((self.b.t, int((v[self.neur] > -20).sum())))
+            self.ca.append((self.b.t, o.ca_uM[self.neur].copy()))
+        if o.gcamp_dff is not None:
+            self.gc = o.gcamp_dff[self.neur].copy()
         if self.k % 500 == 0:
             self.mo.append((self.b.t, _summ(self.b.mech_out)))
         return o
@@ -83,9 +87,16 @@ def main():
                toggles_on=sorted(k for k, v in brain.toggles.items() if v not in ("off", "none", False)),
                toggles_off=sorted(k for k, v in brain.toggles.items() if v in ("off", "none", False)),
                mech_out_trace=rec.mo[-3:], mech_out_end=_summ(brain.mech_out))
+    ca = np.array([c for t, c in rec.ca if t >= rec.ca[-1][0] - 2000.0])   # neuron Ca over the last 2 s
+    res["ca_last2s_uM"] = dict(median=float(np.median(ca)), max=float(ca.max()),
+                               neurons_above_0p1=int((ca.max(0) > 0.1).sum()),
+                               neurons_excess_above_1pct=int((ca.max(0) > 0.0505).sum()))
+    if rec.gc is not None:
+        res["gcamp_end"] = dict(min=float(rec.gc.min()), median=float(np.median(rec.gc)), max=float(rec.gc.max()))
     (out.parent / f"{label}.json").write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps({k: res[k] for k in ("label", "wall_per_bio_s", "finite", "max_abs_v_mV",
-                                          "neurons_above_m20_last2s", "max_activation", "mechs")}, default=float))
+                                          "neurons_above_m20_last2s", "max_activation", "mechs",
+                                          "ca_last2s_uM") if k in res}, default=float))
 
 
 if __name__ == "__main__":

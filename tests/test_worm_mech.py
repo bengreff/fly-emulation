@@ -66,7 +66,7 @@ def _run(toggles):
 def test_dummy_mechanism_reaches_the_brain():
     on = _run(dict(wiring="cook"))
     assert on["built"] >= 1 and on["toggle"] == "on" and on["finite"]
-    assert on["out"] == 1 and on["rel"] == {"flp-11": 0.5}
+    assert on["out"] == 1 and on["rel"]["flp-11"] == 0.5   # other registered modules (e.g. intestine NLP-40) may add keys
     assert abs(on["leak_ratio"] - 2.0) < 1e-9          # g_scale doubled AVBL's somatic leak
     off = _run(dict(wiring="cook", dummy_inject="off"))
     assert off["toggle"] == "off" and off["built"] == on["built"] - 1 and off["out"] is None   # off: not built

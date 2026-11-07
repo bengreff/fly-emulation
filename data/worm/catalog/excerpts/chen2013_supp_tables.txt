@@ -1,0 +1,71 @@
+# Chen et al. 2013 Nature 499:295, Supplementary Information (NIHMS489004-supplement-supp_info_2_revised_20130705.pdf)
+# fetched 6 Nov 2026 from https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3777791/supplementaryFiles (free); pdftotext -layout, lines 1675-1742
+
+Supplementary Table 1 | GCaMP sensor comparison in dissociated neuronal culture.
+
+  Sensor       Baseline         Dynamic      Decay !"     Rise !peak   SNR 1 AP    SNR 10
+             fluorescence         range     10 AP (ms)   10 AP (ms)      (fold    AP (fold
+             F0, relative to    (!F/F0 at                              GCaMP3)    GCaMP3)
+               GCaMP3           160 AP)
+GCaMP3          100±3%          565±6%         597±8       137±4        1.0±0.1   1.0±0.03
+GCaMP5G          72±3%         1085±66%       667±43      166±20        1.7±0.3    1.4±0.2
+GCaMP6s          74±5%         1680±48%      1796±73      480±24        11.2±2     4.6±0.8
+GCaMP6m          54±4%         1177±30%      1162±55      280±48       10.3±1.7    3.1±0.3
+GCaMP6f          67±5%         1314±56%       400±41       80±35         6.2±2     4.1±0.3
+Supplementary Table 2 | Biophysical properties of purified GCaMP sensors.
+
+Selected GCaMP variants were cloned into a pRSET bacterial expression construct and transformed into
+E. coli for analysis as purified proteins16. T7 Express bacteria (NEB) were grown in 100 mL of ZYM-
+5052 autoinduction media70 containing 100 µg/mL ampicillin at 30°C for 48 h. Bacterial pellets were
+resuspended in 10 mL of B-PER (ThermoScientific) and lysed with 1 mg/mL lysozyme and 15 U/mL
+DNase, and lysates were cleared by centrifugation. Supernatants were applied to 500 µL of Ni2+-charged
+Profinity IMAC resin (Bio-Rad) in gravity columns. The resin was washed with 80 column volumes of 20
+mM Tris, pH 8.0, 300 mM NaCl, 1 mM imidazole followed by 20 column volumes of 20 mM Tris, pH
+8.0, 500 mM NaCl, 10 mM imidazole, and GCaMP variants were eluted in 750 µL of 20 mM Tris, pH 8,
+100 mM NaCl, 100 mM imidazole.
+
+         Calcium titrations were done using EGTA-buffered Ca2+ solutions (Calcium Calibration Buffer
+Kit #1, Life Technologies). Purified GCaMP variants were diluted 1:50 in quadruplicate in 30 mM
+MOPS, pH 7.2, 100 mM KCl containing either 10 mM EGTA (zero free calcium) or 10 mM CaEGTA
+(~39 µM free calcium). These two stocks were mixed in various ratios to give 11 different free calcium
+concentrations. Green GCaMP fluorescence (excitation 485 nm, 5 nm bandpass; emission 510 nm, 5 nm
+bandpass) was measured using a Safire2 plate reader (Tecan). Dynamic range was determined from the 0
+and 39 #M free Ca2+ points. Sigmoidal binding functions were fit to the calcium titration fluorescence
+data to extract the Hill coefficient and Kd for Ca2+ for each GCaMP variant. koff was determined from a
+single exponential fit to the fluorescence decay following rapid mixing of the protein samples in 1 µM
+calcium with a solution of 10 mM BAPTA at room temperature, both buffered with 50 mM MOPS, 100
+mM KCl at pH 7.2, using a stopped-flow device (Applied Photophysics) coupled to a fluorometer
+(Varian). pH titrations were carried out by diluting concentrated purified proteins into pH buffers
+containing 50 mM citrate, 50 mM Tris, 50 mM glycine, 100 mM NaCl, and either 5 mM CaCl2 or 5 mM
+EGTA that were pre-adjusted to twelve different pH values between 4.5 and 10.5. pKa values were
+determined from the inflection point of a sigmoid fit to fluorescence versus pH. To determine
+chromophore extinction coefficients ($apo and $sat), absorbance of purified GCaMP variants in 50 mM
+MOPS, 100 mM KCl, pH 7.2 with either 5 mM CaCl2 or 10 mM EGTA was measured at 497 nm or 505
+nm, respectively. Chromophore concentration was then quantitated by denaturing the protein sample in
+0.1 M NaOH and using the extinction coefficient 44,000 M-1cm-1 at 447 nm for denatured GFP
+chromophore. Quantum yields (%sat) of calcium-saturated GCaMP variants in 50mM MOPS, 100mM
+KCl, 5mM CaCl2 were measured directly with an integrating-sphere spectrometer (Quantaurus-QY,
+Hamamatsu). Values are mean ± standard deviation for three independently purified protein samples. All
+variants have the same calcium-free and calcium-bound excitation/emission peaks of 505 nm/517 nm and
+497 nm/515 nm, respectively. Size exclusion chromatography was also performed with 20 #M protein,
+and the GCaMP3, GCaMP5G, and GCaMP6 variants all were >95% monomeric with or without calcium.
+   Sensor     Dynamic      Kd         Hill       koff     pKa, apo    pKa, sat      $apo       $sat        %sat
+               range      (nM)     coefficient   (s-1)                            (x1000)    (x1000)
+               (Fmax/                                                            (M-1cm-1)
+                Fmin)
+  GCaMP3      13.5±0.7   345±17    2.54±0.04     2.57    8.44±0.01   7.13±0.07    4.6±0.1    32.6±1.5    0.62±0.02
+ GCaMP5G      45.4±0.9   447±10    2.46±0.04     2.52    8.61±0.15   6.58±0.02    2.6±0.1    54.3±0.3    0.59±0.01
+ GCaMP6s      63.2±3.1    144±4    2.90±0.17     1.12    9.77±0.70   6.20±0.02   2.91±0.04   68.5±0.1   0.610±0.004
+ GCaMP6m      38.1±1.8    167±3    2.96±0.04     2.06    8.68±0.09   6.90±0.04   2.07±0.04   38.2±0.9    0.61±0.01
+ GCaMP6f      51.8±2.8   375±14    2.27±0.10     3.93    8.77±0.16   6.34±0.01   2.80±0.03   61.9±0.4   0.590±0.002
+Supplementary Table 3 | GCaMP comparison in mouse V1 in vivo (cell attached recording).
+
+     Sensor         !F/F0, 1 AP     Decay !1/2        Rise !peak          Detection
+                                    1 AP (ms)         1AP (ms)           efficiency
+                                                                        (at 1 % false
+                                                                          positive)
+   GCaMP5K           3.6±1.9 %        268±20            60±20             19±12%
+   GCaMP6s           23±3.2 %         550±52           179±23             99±0.2%
+   GCaMP6m           13±0.9 %         270±23             80±7             94±0.5%
+   GCaMP6f           19±2.8 %         142±11             45±4              84±6%
+Supplementary Table 4 | GCaMP comparison in Drosophila larval NMJ.

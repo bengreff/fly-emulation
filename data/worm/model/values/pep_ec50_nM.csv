@@ -1,93 +1,93 @@
 element,value,label,source,source_project
-nlp-40>aex-2,10,guessed,template guess,ours
-nlp-12>ckr-1,10,guessed,template guess,ours
-nlp-12>ckr-2,10,guessed,template guess,ours
-flp-10>dmsr-1,10,guessed,template guess,ours
-flp-11>dmsr-1,10,guessed,template guess,ours
-flp-12>dmsr-1,10,guessed,template guess,ours
-flp-13>dmsr-1,10,guessed,template guess,ours
-flp-16>dmsr-1,10,guessed,template guess,ours
-flp-17>dmsr-1,10,guessed,template guess,ours
-flp-25>dmsr-1,10,guessed,template guess,ours
-flp-28>dmsr-1,10,guessed,template guess,ours
-flp-33>dmsr-1,10,guessed,template guess,ours
-flp-4>dmsr-1,10,guessed,template guess,ours
-flp-9>dmsr-1,10,guessed,template guess,ours
-nlp-13>dmsr-2,10,guessed,template guess,ours
-flp-14>dmsr-3,10,guessed,template guess,ours
-flp-1>dmsr-5,10,guessed,template guess,ours
-flp-1>dmsr-6,10,guessed,template guess,ours
-flp-1>dmsr-7,10,guessed,template guess,ours
-flp-11>dmsr-7,10,guessed,template guess,ours
-flp-13>dmsr-7,10,guessed,template guess,ours
-flp-16>dmsr-7,10,guessed,template guess,ours
-flp-23>dmsr-7,10,guessed,template guess,ours
-flp-27>dmsr-7,10,guessed,template guess,ours
-flp-4>dmsr-7,10,guessed,template guess,ours
-flp-5>dmsr-7,10,guessed,template guess,ours
-flp-7>dmsr-7,10,guessed,template guess,ours
-flp-9>dmsr-7,10,guessed,template guess,ours
-flp-12>dmsr-8,10,guessed,template guess,ours
-flp-10>egl-6,10,guessed,template guess,ours
-flp-17>egl-6,10,guessed,template guess,ours
-flp-4>egl-6,10,guessed,template guess,ours
-flp-5>egl-6,10,guessed,template guess,ours
-flp-6>egl-6,10,guessed,template guess,ours
-flp-9>egl-6,10,guessed,template guess,ours
-flp-8>frpr-15,10,guessed,template guess,ours
-flp-3>frpr-16,10,guessed,template guess,ours
-flp-2>frpr-18,10,guessed,template guess,ours
-flp-14>frpr-19,10,guessed,template guess,ours
-flp-8>frpr-19,10,guessed,template guess,ours
-flp-20>frpr-3,10,guessed,template guess,ours
-flp-33>frpr-6,10,guessed,template guess,ours
-flp-1>frpr-7,10,guessed,template guess,ours
-flp-10>frpr-8,10,guessed,template guess,ours
-flp-11>frpr-8,10,guessed,template guess,ours
-flp-12>frpr-8,10,guessed,template guess,ours
-flp-13>frpr-8,10,guessed,template guess,ours
-flp-14>frpr-8,10,guessed,template guess,ours
-flp-16>frpr-8,10,guessed,template guess,ours
-flp-17>frpr-8,10,guessed,template guess,ours
-flp-25>frpr-8,10,guessed,template guess,ours
-flp-32>frpr-8,10,guessed,template guess,ours
-flp-4>frpr-8,10,guessed,template guess,ours
-flp-8>frpr-8,10,guessed,template guess,ours
-flp-9>frpr-8,10,guessed,template guess,ours
-flp-19>frpr-9,10,guessed,template guess,ours
-nlp-47>gnrr-1,10,guessed,template guess,ours
-nlp-23>gnrr-3,10,guessed,template guess,ours
-nlp-2>gnrr-6,10,guessed,template guess,ours
-nlp-22>gnrr-6,10,guessed,template guess,ours
-nlp-23>gnrr-6,10,guessed,template guess,ours
-nlp-44>nmur-1,10,guessed,template guess,ours
-nlp-44>nmur-2,10,guessed,template guess,ours
-flp-21>npr-1,10,guessed,template guess,ours
-flp-3>npr-10,10,guessed,template guess,ours
-flp-34>npr-11,10,guessed,template guess,ours
-flp-21>npr-2,10,guessed,template guess,ours
-nlp-72>npr-22,10,guessed,template guess,ours
-flp-15>npr-3,10,guessed,template guess,ours
-nlp-64>npr-32,10,guessed,template guess,ours
-snet-1>npr-34,10,guessed,template guess,ours
-nlp-10>npr-35,10,guessed,template guess,ours
-nlp-17>npr-37,10,guessed,template guess,ours
-flp-14>npr-39,10,guessed,template guess,ours
-flp-8>npr-39,10,guessed,template guess,ours
-flp-18>npr-4,10,guessed,template guess,ours
-flp-14>npr-40,10,guessed,template guess,ours
-flp-8>npr-40,10,guessed,template guess,ours
-nlp-13>npr-41,10,guessed,template guess,ours
-nlp-3>npr-42,10,guessed,template guess,ours
-nlp-17>npr-43,10,guessed,template guess,ours
-flp-18>npr-5,10,guessed,template guess,ours
-flp-27>npr-8,10,guessed,template guess,ours
-flp-8>ntr-1,10,guessed,template guess,ours
-ntc-1>ntr-1,10,guessed,template guess,ours
-nlp-37>pdfr-1,10,guessed,template guess,ours
-nlp-49>seb-3,10,guessed,template guess,ours
-nlp-42>sprr-1,10,guessed,template guess,ours
-nlp-38>sprr-2,10,guessed,template guess,ours
-nlp-58>tkr-1,10,guessed,template guess,ours
-nlp-58>tkr-2,10,guessed,template guess,ours
-nlp-54>trhr-1,10,guessed,template guess,ours
+nlp-40>aex-2,7.645,measured,"same pair as row pep_ec50_nlp-40_aex-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-12>ckr-1,1.733,measured,"same pair as row pep_ec50_nlp-12_ckr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-12>ckr-2,7.653,measured,"same pair as row pep_ec50_nlp-12_ckr-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-10>dmsr-1,402.5,measured,"same pair as row pep_ec50_flp-10_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-11>dmsr-1,0.7582,measured,"same pair as row pep_ec50_flp-11_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-12>dmsr-1,178.0,measured,"same pair as row pep_ec50_flp-12_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-13>dmsr-1,1.132,measured,"same pair as row pep_ec50_flp-13_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-16>dmsr-1,165.1,measured,"same pair as row pep_ec50_flp-16_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-17>dmsr-1,88.04,measured,"same pair as row pep_ec50_flp-17_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-25>dmsr-1,0.0006022,measured,"same pair as row pep_ec50_flp-25_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-28>dmsr-1,516.0,measured,"same pair as row pep_ec50_flp-28_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-33>dmsr-1,464.7,measured,"same pair as row pep_ec50_flp-33_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-4>dmsr-1,175.2,measured,"same pair as row pep_ec50_flp-4_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-9>dmsr-1,123.1,measured,"same pair as row pep_ec50_flp-9_dmsr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-13>dmsr-2,2.472,measured,"same pair as row pep_ec50_nlp-13_dmsr-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-14>dmsr-3,16.56,measured,"same pair as row pep_ec50_flp-14_dmsr-3_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-1>dmsr-5,5.663,measured,"same pair as row pep_ec50_flp-1_dmsr-5_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-1>dmsr-6,14.25,measured,"same pair as row pep_ec50_flp-1_dmsr-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-1>dmsr-7,0.0523,measured,"same pair as row pep_ec50_flp-1_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-11>dmsr-7,341.5,measured,"same pair as row pep_ec50_flp-11_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-13>dmsr-7,53.75,measured,"same pair as row pep_ec50_flp-13_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-16>dmsr-7,198.3,measured,"same pair as row pep_ec50_flp-16_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-23>dmsr-7,6.301,measured,"same pair as row pep_ec50_flp-23_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-27>dmsr-7,397.8,measured,"same pair as row pep_ec50_flp-27_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-4>dmsr-7,26.62,measured,"same pair as row pep_ec50_flp-4_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-5>dmsr-7,46.07,measured,"same pair as row pep_ec50_flp-5_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-7>dmsr-7,211.1,measured,"same pair as row pep_ec50_flp-7_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-9>dmsr-7,93.94,measured,"same pair as row pep_ec50_flp-9_dmsr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-12>dmsr-8,25.26,measured,"same pair as row pep_ec50_flp-12_dmsr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-10>egl-6,2.027,measured,"same pair as row pep_ec50_flp-10_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-17>egl-6,3.637,measured,"same pair as row pep_ec50_flp-17_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-4>egl-6,460.3,measured,"same pair as row pep_ec50_flp-4_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-5>egl-6,268.7,measured,"same pair as row pep_ec50_flp-5_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-6>egl-6,458.3,measured,"same pair as row pep_ec50_flp-6_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-9>egl-6,65.37,measured,"same pair as row pep_ec50_flp-9_egl-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>frpr-15,16.67,measured,"same pair as row pep_ec50_flp-8_frpr-15_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-3>frpr-16,7.394,measured,"same pair as row pep_ec50_flp-3_frpr-16_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-2>frpr-18,6.88,measured,"same pair as row pep_ec50_flp-2_frpr-18_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-14>frpr-19,37.08,measured,"same pair as row pep_ec50_flp-14_frpr-19_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>frpr-19,80.66,measured,"same pair as row pep_ec50_flp-8_frpr-19_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-20>frpr-3,0.8816,measured,"same pair as row pep_ec50_flp-20_frpr-3_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-33>frpr-6,101.2,measured,"same pair as row pep_ec50_flp-33_frpr-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-1>frpr-7,7.253,measured,"same pair as row pep_ec50_flp-1_frpr-7_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-10>frpr-8,438.0,measured,"same pair as row pep_ec50_flp-10_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-11>frpr-8,62.22,measured,"same pair as row pep_ec50_flp-11_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-12>frpr-8,24.41,measured,"same pair as row pep_ec50_flp-12_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-13>frpr-8,28.13,measured,"same pair as row pep_ec50_flp-13_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-14>frpr-8,247.5,measured,"same pair as row pep_ec50_flp-14_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-16>frpr-8,194.9,measured,"same pair as row pep_ec50_flp-16_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-17>frpr-8,28.18,measured,"same pair as row pep_ec50_flp-17_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-25>frpr-8,0.0001315,measured,"same pair as row pep_ec50_flp-25_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-32>frpr-8,169.2,measured,"same pair as row pep_ec50_flp-32_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-4>frpr-8,43.61,measured,"same pair as row pep_ec50_flp-4_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>frpr-8,80.29,measured,"same pair as row pep_ec50_flp-8_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-9>frpr-8,2.253,measured,"same pair as row pep_ec50_flp-9_frpr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-19>frpr-9,34.07,measured,"same pair as row pep_ec50_flp-19_frpr-9_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-47>gnrr-1,62.2,measured,"same pair as row pep_ec50_nlp-47_gnrr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-23>gnrr-3,157.6,measured,"same pair as row pep_ec50_nlp-23_gnrr-3_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-2>gnrr-6,135.3,measured,"same pair as row pep_ec50_nlp-2_gnrr-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-22>gnrr-6,4.052,measured,"same pair as row pep_ec50_nlp-22_gnrr-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-23>gnrr-6,6.048,measured,"same pair as row pep_ec50_nlp-23_gnrr-6_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-44>nmur-1,6.265,measured,"same pair as row pep_ec50_nlp-44_nmur-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-44>nmur-2,0.1763,measured,"same pair as row pep_ec50_nlp-44_nmur-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-21>npr-1,5.144,measured,"same pair as row pep_ec50_flp-21_npr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-3>npr-10,96.73,measured,"same pair as row pep_ec50_flp-3_npr-10_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-34>npr-11,13.17,measured,"same pair as row pep_ec50_flp-34_npr-11_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-21>npr-2,37.21,measured,"same pair as row pep_ec50_flp-21_npr-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-72>npr-22,4.404,measured,"same pair as row pep_ec50_nlp-72_npr-22_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-15>npr-3,11.52,measured,"same pair as row pep_ec50_flp-15_npr-3_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-64>npr-32,60.28,measured,"same pair as row pep_ec50_nlp-64_npr-32_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+snet-1>npr-34,10.0,guessed,template guess,ours
+nlp-10>npr-35,297.7,measured,"same pair as row pep_ec50_nlp-10_npr-35_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-17>npr-37,0.01059,measured,"same pair as row pep_ec50_nlp-17_npr-37_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-14>npr-39,48.45,measured,"same pair as row pep_ec50_flp-14_npr-39_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>npr-39,139.7,measured,"same pair as row pep_ec50_flp-8_npr-39_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-18>npr-4,19.9,measured,"same pair as row pep_ec50_flp-18_npr-4_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-14>npr-40,166.1,measured,"same pair as row pep_ec50_flp-14_npr-40_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>npr-40,199.6,measured,"same pair as row pep_ec50_flp-8_npr-40_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-13>npr-41,8.973,measured,"same pair as row pep_ec50_nlp-13_npr-41_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-3>npr-42,457.5,measured,"same pair as row pep_ec50_nlp-3_npr-42_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-17>npr-43,91.87,measured,"same pair as row pep_ec50_nlp-17_npr-43_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-18>npr-5,7.873,measured,"same pair as row pep_ec50_flp-18_npr-5_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-27>npr-8,6.373,measured,"same pair as row pep_ec50_flp-27_npr-8_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+flp-8>ntr-1,49.2,measured,"same pair as row pep_ec50_flp-8_ntr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+ntc-1>ntr-1,24.36,measured,"same pair as row pep_ec50_ntc-1_ntr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-37>pdfr-1,94.44,measured,"same pair as row pep_ec50_nlp-37_pdfr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-49>seb-3,62.21,measured,"same pair as row pep_ec50_nlp-49_seb-3_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-42>sprr-1,8.027,measured,"same pair as row pep_ec50_nlp-42_sprr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-38>sprr-2,6.265,measured,"same pair as row pep_ec50_nlp-38_sprr-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-58>tkr-1,0.7197,measured,"same pair as row pep_ec50_nlp-58_tkr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-58>tkr-2,145.9,measured,"same pair as row pep_ec50_nlp-58_tkr-2_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature
+nlp-54>trhr-1,0.4,measured,"same pair as row pep_ec50_nlp-54_trhr-1_nM: Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",literature

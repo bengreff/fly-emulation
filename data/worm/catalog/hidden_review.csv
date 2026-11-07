@@ -1,0 +1,82 @@
+file,value,match,verdict,row,owner,note
+src/wormemu/brain_layers.py,20,temperature_C,parameter (catalog row),env_default_temperature_C,B1,default ambient temperature when the observation has none
+src/wormemu/brain_layers.py,21,o2_pct,parameter (catalog row),env_default_o2_pct,B1,default ambient O2 when the observation has none
+src/wormemu/brain_layers.py,0.04,co2_pct,parameter (catalog row),env_default_co2_pct,B1,default ambient CO2 when the observation has none
+src/wormemu/brain_layers.py,0.5,TOUCH_ANT,parameter (catalog row),touch_ap_split_frac,B1,where the anterior and posterior touch fields meet
+src/wormemu/brain_layers.py,5,_sig((v - p[vth]) / 5.0),parameter (catalog row),pep_release_slope_mV ma_release_slope_mV,B1,release sigmoid slope for peptides and monoamines
+src/wormemu/brain.py,-65,V_INIT,initial condition (catalog row),init_v_neuron_mV,B1,start voltage of every neuron
+src/wormemu/brain.py,-28,V_INIT_MUSCLE,initial condition (catalog row),init_v_muscle_mV,B1,start voltage of every body-wall muscle
+src/wormemu/brain.py,-30,MUSCLE_EREV,mirrors a catalog row,c302_muscle_k_slow_erev c302_muscle_k_fast_erev,,the c302 mods fix these reversals; the dict tells the ledger the value
+src/wormemu/brain.py,0.5,DT_MS = 0.5,numerics,,,BAAIWorm's integration step
+src/wormemu/brain.py,1e-08,RHO_SI_TO_MOD,unit conversion,,,mol/(m A s) to umol/(cm nA ms)
+src/wormemu/brain.py,200,range(200),numerics,,,retry count for redrawing out-of-range samples
+src/wormemu/brain.py,0.5,(0.5),structure,,,segment midpoint (hoc section(0.5))
+src/wormemu/brain.py,2,length_per_seg,numerics,,,BAAIWorm's 2 um segment length (spatial discretization)
+src/wormemu/brain.py,,"6.3, 2.0, 5e-5",ported-mode fallback,ion_celsius ion_cao capool_caeq,,"literature_overrides off only (default on): NEURON's celsius, cao, cai defaults as ported"
+src/wormemu/brain.py,,"(""k_ion"", ""ion_ek"", -77.0)",ported-mode fallback,ion_ek ion_ena,,literature_overrides off only: NEURON's ek and ena defaults
+src/wormemu/brain.py,,"{""delta"": 5.0",ported-mode fallback,syn_exc_delta syn_exc_k syn_inh_k syn_exc_Vth syn_inh_Vth,,literature_overrides off only: the two BAAIWorm synapse mods' defaults
+src/wormemu/brain.py,,pp.erev = sv(,ported-mode fallback,syn_exc_erev syn_inh_erev,,literature_overrides off only: BAAIWorm's -70 / 30 mV
+src/wormemu/brain.py,,return 2e-4 if inh else 4.9e-4,ported-mode fallback,syn_exc_conductance syn_inh_conductance,,literature_overrides off only: the mods' default conductances
+src/wormemu/brain.py,1e-05,g_gap,ported-mode fallback,gap_weight,,literature_overrides off only: BAAIWorm's 1e-5 uS per gap junction
+src/wormemu/brain.py,1e+12,1e12,numerics,,,IClamp duration (forever)
+src/wormemu/brain.py,1e-09,dt_ms must be,numerics,,,float tolerance
+src/wormemu/brain_layers.py,-1000000000.0,-1e9,numerics,,,sentinel time (never)
+src/wormemu/brain_layers.py,3600000.0,3.6e6,unit conversion,,,h to ms
+src/wormemu/brain_layers.py,60000.0,60000.0,unit conversion,,,min to ms
+src/wormemu/brain_layers.py,4,np.zeros(4),structure,,,four enteric muscles
+src/wormemu/brain_layers.py,1e-09,max(rate,numerics,,,divide-by-zero guard
+src/wormemu/mech/receptors.py,0.5,lacr_share,default shadowed by a catalog row,rec_nmj_lacr_share,,the only caller (brain.py:550) passes the row
+src/wormemu/nmodl/wsyn.mod,,,mod default overwritten,rec_* syn_*,,"brain.py:528-535 sets every wsyn PARAMETER from the ledger (receptor_kinetics) before the run; mode 0 (graded) reads delta, k, Vth only"
+src/wormemu/body/ledger.py,1000,range(1000),numerics,,,retry count for redrawing out-of-range samples
+src/wormemu/body/loop.py,49,K = 49,structure,,,observation: 49 midline samples (INTERFACE.md)
+src/wormemu/body/loop.py,24,N_SLICES,structure,,,observation: 24 material slices
+src/wormemu/body/loop.py,0.5,BRAIN_DT_MS,numerics,,,the brain's step (same as brain.py DT_MS)
+src/wormemu/body/loop.py,23,"min(j + 1, 23)",structure,,,VL has 23 muscles
+src/wormemu/body/loop.py,8,frame_every,structure,,,output: write every 8th frame
+src/wormemu/body/loop.py,8,_read(8,structure,,,8 bytes per double in the pipe
+src/wormemu/body/loop.py,95,95,structure,cells_bwm,,95 body-wall muscles
+src/wormemu/body/loop.py,,"f=1.76, lam=1.54, amp=0.03",test stand-in,,,WaveStandIn: open-loop wave to check the pipe against the driver
+src/wormemu/body/loop.py,,np.zeros(4 * mw.N_SEG),structure,,,four muscle strings
+src/wormemu/body/loop.py,0.5,np.arange(mw.N_SEG) + 0.5,arithmetic,,,segment midpoint
+src/wormemu/body/loop.py,0.5,ramp * self.amp * 0.5,test stand-in,,,WaveStandIn
+src/wormemu/body/loop.py,,"f=0.5, amp=0.5, gain_mm=2.0, ds=0.08",test stand-in,,,"ReflexStandIn: guessed loop check, not a worm model (its docstring says so)"
+src/wormemu/body/loop.py,,muscle_index_along(n) - 0.5) / 24,structure,,,muscle midpoint along 24 rows
+src/wormemu/body/loop.py,,1 / 24,test stand-in,,,ReflexStandIn head muscles
+src/wormemu/body/loop.py,0.5,osc = 0.5,test stand-in,,,ReflexStandIn oscillator
+src/wormemu/body/metaworm.py,24,N_SEG = 24,structure,,,24 sampling segments per muscle string (driver)
+src/wormemu/body/metaworm.py,,"f: float = 1.76",test stand-in,mw_key_period,,"run() defaults for the driver's wave mode (open loop); key mode reads the upstream key file"
+src/wormemu/body/metaworm.py,,"lam: float = 1.54",test stand-in,,,run() wave-mode defaults
+src/wormemu/body/metaworm.py,48,n_slices,analysis,,,Frame default; loop.py passes 24
+src/wormemu/body/metaworm.py,0.5,,analysis,,,"midpoints in Frame, curvature and the gait fits (output measurement)"
+src/wormemu/body/metaworm.py,,fgrid,analysis,,,gait and zigzag frequency search grids
+src/wormemu/body/metaworm.py,0.9,band,analysis,,,gait fit body band 0.1-0.9
+src/wormemu/body/scene.py,102,HEAD_VERTEX,structure,,,mesh vertex index (upstream)
+src/wormemu/body/scene.py,173,TAIL_VERTEX,structure,,,mesh vertex index (upstream)
+src/wormemu/body/scene.py,0.6276,L_SIM,mirrors a catalog row,mw_length,,rest length measured from the mesh
+src/wormemu/body/scene.py,,"""start_global""",structure,,,"upstream demo scene geometry (reproduction check), sim units"
+src/wormemu/body/scene.py,,"""food_drawn_global""",structure,,,upstream demo scene geometry (reproduction check)
+src/wormemu/body/scene.py,11,history_len,structure,,,upstream demo scene: history length
+src/wormemu/body/scene.py,,TARGET_FROM_START_LOCAL,structure,,,upstream demo scene geometry (reproduction check)
+third_party/metaworm/driver/run_body.cpp,1074,density = 1074.0,duplicate of a catalog row,mw_worm_density,B3,the driver should read the row (passed as a flag); worm_1mm scale only
+third_party/metaworm/driver/run_body.cpp,9.81,g_si = 9.81,duplicate of a catalog row,mw_gravity,B3,the driver should read the row
+third_party/metaworm/driver/run_body.cpp,0.001,length_m = 1e-3,duplicate of a catalog row,mw_worm_length,B3,"1 mm body length, not a unit conversion"
+third_party/metaworm/driver/run_body.cpp,3.2,ct =,duplicate of a catalog row,mw_agar_Ct,B3,default unless --ct is passed
+third_party/metaworm/driver/run_body.cpp,128,ct =,duplicate of a catalog row,mw_agar_Cn,B3,default unless --cn is passed
+third_party/metaworm/driver/run_body.cpp,0.00357,ct =,duplicate of a catalog row,mw_water_Ct,B3,default unless --ct is passed
+third_party/metaworm/driver/run_body.cpp,0.005675,ct =,duplicate of a catalog row,mw_water_Cn,B3,default unless --cn is passed
+third_party/metaworm/driver/run_body.cpp,24,n_slice,structure,,,24 slices for drag (same as loop.py N_SLICES)
+third_party/metaworm/driver/run_body.cpp,,1e30,numerics,,,min/max sentinels
+third_party/metaworm/driver/run_body.cpp,6,/ 6.0,arithmetic,,,tetrahedron volume
+third_party/metaworm/driver/run_body.cpp,9,,structure,,,"3 x 3 blocks (reserve), output precision"
+third_party/metaworm/driver/run_body.cpp,0.5,,test stand-in,,,the driver's wave mode (open loop)
+third_party/metaworm/driver/run_body.cpp,1e-12,release_at,numerics,,,float tolerance
+src/wormemu/body/loop.py,60,timeout,numerics,,,seconds to wait for the driver to exit
+src/wormemu/body/metaworm.py,0.1,band,analysis,,,gait fit body band 0.1-0.9
+src/wormemu/body/metaworm.py,10,seconds,structure,,,default run length (s)
+src/wormemu/brain.py,1000,_ca_scale,unit conversion,,,muscle calcium readout scale (mM to uM) for the mact muscles
+src/wormemu/mech/neuromod.py,602.214,NA_PL = 602.214,unit conversion,,,"Avogadro: molecules per nM per pL (6.02214e23 x 1e-9 x 1e-12)"
+src/wormemu/mech/neuromod.py,10,10 ** float(x),unit conversion,,,log10 EC50 bounds to molar
+src/wormemu/mech/neuromod.py,0.5,brain.soma[c](0.5),structure,,,mid-soma segment for the extrasynaptic point process
+src/wormemu/mech/neuromod.py,5,_sig((v - L.p[vth]) / 5.0),duplicate of a catalog row,pep_release_slope_mV ma_release_slope_mV,B1,"the lumped form (nested, off by default) copies brain_layers' fixed 5 mV; it should read the row, as the compartment form reads dcv_k_mV / ma_k_mV"
+src/wormemu/mech/plasticity.py,-60,v0=-60.0,test stand-in,,,numpy_reference (CPU check path) start voltage; the NEURON path starts from finitialize
+src/wormemu/mech/plasticity.py,-40,pp.erev < -40,structure,,,"classification rule: a synapse with no receptor class is GABA when its reversal is below -40 mV (Cl about -70, cation about 0); any cut between -60 and -10 gives the same split"

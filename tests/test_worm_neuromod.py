@@ -30,7 +30,8 @@ V = []
 for k in range(300):
     V.append(b.step().v_mV)
 nm = b.mech_out.get("neuromod", {})
-print(json.dumps(dict(V=np.array(V).tolist(), mechs=[type(m).__module__ for m in b.mechs], neuromod=nm)))
+print(json.dumps(dict(V=np.array(V).tolist(), mechs=[type(m).__module__ for m in b.mechs], neuromod=nm,
+                 noise=b.mech_out.get("quantal_noise", {}), chnoise=b.mech_out.get("channel_noise", {}))))
 '''
 
 
