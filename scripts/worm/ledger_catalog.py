@@ -455,6 +455,8 @@ def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
             p.append("no range")
     elif not np.isnan(v) and not lo <= v <= hi:
         p.append(f"template {v:g} outside [{lo:g}, {hi:g}]")
+    elif lo == hi and not str(r["unit"]).startswith("count"):
+        p.append("range is one point: the source's spread was not recorded")
     if not np.isnan(lo) and r["bound_basis"] in ("measured_this_class", "measured_related") and \
             not CITE.search(str(r["bound_source"])):
         p.append("range basis says measured but the range source names no citation")
