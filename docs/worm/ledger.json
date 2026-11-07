@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 01:19 CST",
+ "generated_at": "2026-11-07 01:31 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -8710,7 +8710,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "enters only NEURON's Nernst eca, which no current reads; no mod reads celsius [owner: B1 (brain.py), told in the night file; no Q10 is built yet (row 25 is slots only), so the brain's channels are temperature-independent]",
+   "audit": "enters only NEURON's Nernst eca, which no current reads; the 5 Nicoletti mods (kqt1, slo1iso, slo2iso, exp2, unc103) declare celsius as a PARAMETER but no expression uses it, and no other mod reads it [owner: B1 (brain.py), told in the night file; temperature now reaches the brain through mech/temperature.py (Q10 on every channel density and the leak, through g_scale), so the channels' conductances follow T but their gating does not (checked 7 Nov)]",
    "kind": "physiology"
   },
   {
@@ -41336,7 +41336,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "computed and published as out['q10']['synapse'] each step, but no module reads it (grep of src/wormemu, 7 Nov: only 'gating' and 'enzyme' are read, plus 'conductance' inside temperature.py) [owner: wbody (temperature.py) and wbrain's receptors module; the value is right, it just has no effect yet]",
    "kind": "physiology"
   },
   {
@@ -41368,7 +41368,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "computed and published as out['q10']['pump'] each step, but no module reads it (grep of src/wormemu, 7 Nov: only 'gating' and 'enzyme' are read, plus 'conductance' inside temperature.py) [owner: wbody (temperature.py) and the pharynx module; the value is right, it just has no effect yet]",
    "kind": "physiology"
   },
   {
@@ -41400,7 +41400,7 @@
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC40787/",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "computed and published as out['q10']['dmp_clock'] each step, but no module reads it (grep of src/wormemu, 7 Nov: only 'gating' and 'enzyme' are read, plus 'conductance' inside temperature.py) [owner: wbody (temperature.py) and the defecation clock module; the value is right, it just has no effect yet]",
    "kind": "physiology"
   },
   {
@@ -46808,7 +46808,7 @@
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1038/nn1362",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "replaced slot mec4_i0_pA (measured) has -1.6 pA, outside this row's range [1.4, 1.8]",
    "kind": "physiology"
   },
   {
@@ -53336,7 +53336,7 @@
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1371/journal.pcbi.1004137",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "replaced slot glia_k_clear_tau_s (inferred) has 2.1 s, outside this row's range [3, 15]",
    "kind": "physiology"
   },
   {
@@ -56354,39 +56354,39 @@
   "note": "the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are numbers (elements), not rows, unless the key says rows",
   "totals": {
    "rows": {
-    "published_fit": 661,
-    "guessed": 608,
-    "measured": 260,
-    "derived": 41,
-    "inferred": 334,
-    "absent": 5
+    "published_fit": 654,
+    "guessed": 575,
+    "measured": 254,
+    "derived": 39,
+    "inferred": 333,
+    "absent": 1
    },
    "numbers": {
-    "published_fit": 8190,
-    "guessed": 9404,
-    "measured": 6218,
-    "derived": 67522,
-    "inferred": 340,
-    "absent": 5
+    "published_fit": 8183,
+    "guessed": 9371,
+    "measured": 6212,
+    "derived": 67520,
+    "inferred": 339,
+    "absent": 1
    },
-   "n_rows": 1909,
-   "n_numbers": 91679
+   "n_rows": 1856,
+   "n_numbers": 91626
   },
   "by_label_rows": {
-   "published_fit": 661,
-   "guessed": 608,
-   "measured": 260,
-   "derived": 41,
-   "inferred": 334,
-   "absent": 5
+   "published_fit": 654,
+   "guessed": 575,
+   "measured": 254,
+   "derived": 39,
+   "inferred": 333,
+   "absent": 1
   },
   "by_label_numbers": {
-   "published_fit": 8190,
-   "guessed": 9404,
-   "measured": 6218,
-   "derived": 67522,
-   "inferred": 340,
-   "absent": 5
+   "published_fit": 8183,
+   "guessed": 9371,
+   "measured": 6212,
+   "derived": 67520,
+   "inferred": 339,
+   "absent": 1
   },
   "by_plan_row": {
    "1": {
@@ -56463,17 +56463,17 @@
      "guessed": 63,
      "measured": 26,
      "inferred": 33,
-     "derived": 4
+     "derived": 3
     },
     "numbers": {
      "published_fit": 752,
      "guessed": 6736,
      "measured": 5883,
-     "derived": 1989,
+     "derived": 1988,
      "inferred": 38
     },
-    "n_rows": 153,
-    "n_numbers": 15398
+    "n_rows": 152,
+    "n_numbers": 15397
    },
    "8": {
     "rows": {
@@ -56491,19 +56491,19 @@
    },
    "9": {
     "rows": {
-     "guessed": 27,
+     "guessed": 23,
      "derived": 3,
      "inferred": 4,
      "measured": 147
     },
     "numbers": {
-     "guessed": 125,
+     "guessed": 121,
      "measured": 238,
      "derived": 3,
      "inferred": 4
     },
-    "n_rows": 181,
-    "n_numbers": 370
+    "n_rows": 177,
+    "n_numbers": 366
    },
    "10": {
     "rows": {
@@ -56521,23 +56521,23 @@
    },
    "11": {
     "rows": {
-     "guessed": 12,
-     "inferred": 9,
+     "guessed": 10,
+     "inferred": 8,
      "derived": 1,
      "measured": 1
     },
     "numbers": {
-     "guessed": 12,
-     "inferred": 9,
+     "guessed": 10,
+     "inferred": 8,
      "derived": 1,
      "measured": 1
     },
-    "n_rows": 23,
-    "n_numbers": 23
+    "n_rows": 20,
+    "n_numbers": 20
    },
    "12": {
     "rows": {
-     "published_fit": 95,
+     "published_fit": 93,
      "guessed": 16,
      "inferred": 4,
      "measured": 1,
@@ -56545,101 +56545,99 @@
      "absent": 1
     },
     "numbers": {
-     "published_fit": 377,
+     "published_fit": 375,
      "guessed": 205,
      "inferred": 4,
      "measured": 1,
      "derived": 3,
      "absent": 1
     },
-    "n_rows": 120,
-    "n_numbers": 591
+    "n_rows": 118,
+    "n_numbers": 589
    },
    "13": {
     "rows": {
      "measured": 6,
-     "guessed": 10,
+     "guessed": 7,
      "published_fit": 62,
      "inferred": 2,
      "derived": 1
     },
     "numbers": {
      "measured": 6,
-     "guessed": 10,
+     "guessed": 7,
      "published_fit": 62,
      "inferred": 2,
      "derived": 1
     },
-    "n_rows": 81,
-    "n_numbers": 81
+    "n_rows": 78,
+    "n_numbers": 78
    },
    "14": {
     "rows": {
      "measured": 4,
-     "guessed": 44,
+     "guessed": 35,
      "derived": 1,
      "inferred": 6
     },
     "numbers": {
      "measured": 4,
-     "guessed": 44,
+     "guessed": 35,
      "derived": 1,
      "inferred": 6
     },
-    "n_rows": 55,
-    "n_numbers": 55
+    "n_rows": 46,
+    "n_numbers": 46
    },
    "15": {
     "rows": {
      "measured": 6,
      "derived": 1,
-     "guessed": 18,
+     "guessed": 16,
      "inferred": 5
     },
     "numbers": {
      "measured": 6,
      "derived": 1,
-     "guessed": 18,
+     "guessed": 16,
      "inferred": 5
     },
-    "n_rows": 30,
-    "n_numbers": 30
+    "n_rows": 28,
+    "n_numbers": 28
    },
    "16": {
     "rows": {
      "derived": 1,
-     "guessed": 21,
+     "guessed": 19,
      "published_fit": 1,
      "measured": 1
     },
     "numbers": {
      "derived": 1,
-     "guessed": 21,
+     "guessed": 19,
      "published_fit": 1,
      "measured": 1
     },
-    "n_rows": 24,
-    "n_numbers": 24
+    "n_rows": 22,
+    "n_numbers": 22
    },
    "17": {
     "rows": {
-     "guessed": 61,
+     "guessed": 58,
      "inferred": 25,
-     "measured": 10,
-     "derived": 4,
-     "published_fit": 145,
-     "absent": 4
+     "measured": 9,
+     "derived": 3,
+     "published_fit": 145
     },
     "numbers": {
-     "guessed": 61,
+     "guessed": 58,
      "inferred": 25,
-     "measured": 10,
-     "derived": 4,
-     "published_fit": 145,
-     "absent": 4
+     "measured": 9,
+     "derived": 3,
+     "published_fit": 145
     },
-    "n_rows": 249,
-    "n_numbers": 249
+    "n_rows": 240,
+    "n_numbers": 240
    },
    "18": {
     "rows": {
@@ -56674,20 +56672,20 @@
    "20": {
     "rows": {
      "guessed": 5,
-     "published_fit": 21,
+     "published_fit": 16,
      "derived": 2,
      "measured": 1,
      "inferred": 2
     },
     "numbers": {
      "guessed": 5,
-     "published_fit": 21,
+     "published_fit": 16,
      "derived": 2,
      "measured": 1,
      "inferred": 2
     },
-    "n_rows": 31,
-    "n_numbers": 31
+    "n_rows": 26,
+    "n_numbers": 26
    },
    "21": {
     "rows": {
@@ -56723,19 +56721,19 @@
    },
    "23": {
     "rows": {
-     "measured": 17,
+     "measured": 13,
      "inferred": 6,
      "derived": 3,
      "guessed": 10
     },
     "numbers": {
-     "measured": 17,
+     "measured": 13,
      "inferred": 6,
      "derived": 3,
      "guessed": 10
     },
-    "n_rows": 36,
-    "n_numbers": 36
+    "n_rows": 32,
+    "n_numbers": 32
    },
    "24": {
     "rows": {
@@ -56751,19 +56749,19 @@
    },
    "25": {
     "rows": {
-     "guessed": 11,
+     "guessed": 7,
      "inferred": 1,
      "derived": 1,
-     "measured": 2
+     "measured": 1
     },
     "numbers": {
-     "guessed": 11,
+     "guessed": 7,
      "inferred": 1,
      "derived": 1,
-     "measured": 2
+     "measured": 1
     },
-    "n_rows": 15,
-    "n_numbers": 15
+    "n_rows": 10,
+    "n_numbers": 10
    },
    "26": {
     "rows": {
@@ -56779,19 +56777,19 @@
    },
    "27": {
     "rows": {
-     "guessed": 12,
+     "guessed": 8,
      "published_fit": 8,
      "inferred": 4,
      "derived": 2
     },
     "numbers": {
-     "guessed": 12,
+     "guessed": 8,
      "published_fit": 8,
      "inferred": 4,
      "derived": 2
     },
-    "n_rows": 26,
-    "n_numbers": 26
+    "n_rows": 22,
+    "n_numbers": 22
    },
    "28": {
     "rows": {
@@ -56836,23 +56834,21 @@
    },
    "class": {
     "rows": {
-     "inferred": 285,
-     "guessed": 385,
-     "published_fit": 103,
-     "derived": 9,
-     "measured": 36,
-     "absent": 4
+     "inferred": 284,
+     "guessed": 364,
+     "published_fit": 101,
+     "derived": 8,
+     "measured": 35
     },
     "numbers": {
-     "inferred": 285,
-     "guessed": 385,
-     "published_fit": 103,
-     "derived": 9,
-     "measured": 36,
-     "absent": 4
+     "inferred": 284,
+     "guessed": 364,
+     "published_fit": 101,
+     "derived": 8,
+     "measured": 35
     },
-    "n_rows": 822,
-    "n_numbers": 822
+    "n_rows": 792,
+    "n_numbers": 792
    },
    "compartment": {
     "rows": {
@@ -56868,29 +56864,29 @@
     "rows": {
      "measured": 5,
      "published_fit": 2,
-     "guessed": 9,
-     "derived": 2
+     "guessed": 5,
+     "derived": 1
     },
     "numbers": {
      "measured": 5862,
      "published_fit": 727,
-     "guessed": 7853,
-     "derived": 2795
+     "guessed": 7849,
+     "derived": 2794
     },
-    "n_rows": 18,
-    "n_numbers": 17237
+    "n_rows": 13,
+    "n_numbers": 17232
    },
    "family": {
     "rows": {
-     "guessed": 11,
-     "measured": 2
+     "guessed": 4,
+     "measured": 1
     },
     "numbers": {
-     "guessed": 62,
-     "measured": 2
+     "guessed": 55,
+     "measured": 1
     },
-    "n_rows": 13,
-    "n_numbers": 64
+    "n_rows": 5,
+    "n_numbers": 56
    },
    "gene": {
     "rows": {
@@ -56904,23 +56900,23 @@
    },
    "global": {
     "rows": {
-     "published_fit": 362,
-     "guessed": 165,
+     "published_fit": 357,
+     "guessed": 164,
      "inferred": 48,
-     "measured": 57,
+     "measured": 53,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
-     "published_fit": 362,
-     "guessed": 165,
+     "published_fit": 357,
+     "guessed": 164,
      "inferred": 48,
-     "measured": 57,
+     "measured": 53,
      "derived": 27,
      "absent": 1
     },
-    "n_rows": 660,
-    "n_numbers": 660
+    "n_rows": 650,
+    "n_numbers": 650
    },
    "muscle": {
     "rows": {
@@ -56962,17 +56958,17 @@
   "by_used": {
    "hard-coded": {
     "rows": {
+     "published_fit": 55,
      "guessed": 6,
-     "measured": 2,
-     "published_fit": 54
+     "measured": 2
     },
     "numbers": {
+     "published_fit": 55,
      "guessed": 6,
-     "measured": 2,
-     "published_fit": 54
+     "measured": 2
     },
-    "n_rows": 62,
-    "n_numbers": 62
+    "n_rows": 63,
+    "n_numbers": 63
    },
    "other form only": {
     "rows": {
@@ -56992,23 +56988,23 @@
    },
    "slot only": {
     "rows": {
-     "guessed": 61,
-     "absent": 5,
-     "published_fit": 11,
-     "derived": 6,
-     "measured": 27,
-     "inferred": 4
+     "guessed": 28,
+     "absent": 1,
+     "published_fit": 3,
+     "derived": 4,
+     "measured": 21,
+     "inferred": 3
     },
     "numbers": {
-     "guessed": 87,
-     "absent": 5,
-     "published_fit": 11,
-     "derived": 6,
-     "measured": 27,
-     "inferred": 4
+     "guessed": 54,
+     "absent": 1,
+     "published_fit": 3,
+     "derived": 4,
+     "measured": 21,
+     "inferred": 3
     },
-    "n_rows": 114,
-    "n_numbers": 140
+    "n_rows": 60,
+    "n_numbers": 86
    },
    "yes": {
     "rows": {
@@ -57069,17 +57065,17 @@
    },
    "hidden": {
     "rows": {
+     "published_fit": 55,
      "guessed": 6,
-     "measured": 2,
-     "published_fit": 54
+     "measured": 2
     },
     "numbers": {
+     "published_fit": 55,
      "guessed": 6,
-     "measured": 2,
-     "published_fit": 54
+     "measured": 2
     },
-    "n_rows": 62,
-    "n_numbers": 62
+    "n_rows": 63,
+    "n_numbers": 63
    },
    "layers": {
     "rows": {
@@ -57427,23 +57423,19 @@
    },
    "slot": {
     "rows": {
-     "measured": 25,
-     "inferred": 3,
-     "derived": 2,
-     "guessed": 53,
-     "published_fit": 10,
-     "absent": 4
+     "measured": 19,
+     "inferred": 2,
+     "guessed": 20,
+     "published_fit": 2
     },
     "numbers": {
-     "measured": 25,
-     "inferred": 3,
-     "derived": 2,
-     "guessed": 79,
-     "published_fit": 10,
-     "absent": 4
+     "measured": 19,
+     "inferred": 2,
+     "guessed": 46,
+     "published_fit": 2
     },
-    "n_rows": 97,
-    "n_numbers": 123
+    "n_rows": 43,
+    "n_numbers": 69
    }
   },
   "by_kind": {
@@ -57463,23 +57455,23 @@
    },
    "physiology": {
     "rows": {
-     "published_fit": 647,
-     "guessed": 607,
-     "derived": 38,
-     "inferred": 334,
-     "measured": 256,
-     "absent": 5
+     "published_fit": 640,
+     "guessed": 574,
+     "derived": 36,
+     "inferred": 333,
+     "measured": 250,
+     "absent": 1
     },
     "numbers": {
-     "published_fit": 7451,
-     "guessed": 9403,
-     "derived": 3113,
-     "inferred": 340,
-     "measured": 366,
-     "absent": 5
+     "published_fit": 7444,
+     "guessed": 9370,
+     "derived": 3111,
+     "inferred": 339,
+     "measured": 360,
+     "absent": 1
     },
-    "n_rows": 1887,
-    "n_numbers": 20678
+    "n_rows": 1834,
+    "n_numbers": 20625
    },
    "structure": {
     "rows": {
@@ -57994,6 +57986,146 @@
     "by": "rec_glucl_ec50_uM"
    },
    {
+    "slot": "nmj_quantal_g_nS",
+    "by": "noise_quantal_pA"
+   },
+   {
+    "slot": "pep_cascade_tau_s__gq",
+    "by": "gq_tau_ms"
+   },
+   {
+    "slot": "pep_cascade_tau_s__gio",
+    "by": "gi_tau_ms"
+   },
+   {
+    "slot": "pep_cascade_tau_s__gs",
+    "by": "gs_tau_ms"
+   },
+   {
+    "slot": "pep_diffusion_um2_s",
+    "by": "pep_diffusion_um2_per_s"
+   },
+   {
+    "slot": "glia_k_clear_tau_s",
+    "by": "glia_k_diff_tau_s glia_kir_tau_s"
+   },
+   {
+    "slot": "glia_kcc3_cl_tau_s",
+    "by": "glia_cl_tau_s"
+   },
+   {
+    "slot": "glia_glr_rme_gap_nS",
+    "by": "glia_gap_nS_per_contact"
+   },
+   {
+    "slot": "bwm_slo2_alpha",
+    "by": "bwm_du_slo2_alpha"
+   },
+   {
+    "slot": "bwm_slo2_beta",
+    "by": "bwm_du_slo2_beta"
+   },
+   {
+    "slot": "phar_fhn_eps",
+    "by": "pharynx"
+   },
+   {
+    "slot": "phar_fhn_a",
+    "by": "pharynx"
+   },
+   {
+    "slot": "phar_fhn_b",
+    "by": "pharynx"
+   },
+   {
+    "slot": "int_ip3r_d1_uM",
+    "by": "int_lr_d1_uM"
+   },
+   {
+    "slot": "int_ip3r_d5_uM",
+    "by": "int_lr_d5_uM"
+   },
+   {
+    "slot": "int_ip3r_a2",
+    "by": "int_lr_a2_per_uM_s"
+   },
+   {
+    "slot": "int_ip3r_v1_per_s",
+    "by": "int_lr_v1_per_s"
+   },
+   {
+    "slot": "int_serca_v3_uM_s",
+    "by": "int_lr_v3_uM_per_s"
+   },
+   {
+    "slot": "int_serca_k3_uM",
+    "by": "int_lr_k3_uM"
+   },
+   {
+    "slot": "int_inx16_gap_nS",
+    "by": "int_gap_p_ca_um_s int_gap_p_ip3_um_s"
+   },
+   {
+    "slot": "int_pbo_proton_dph",
+    "by": "int_h_release_nM_per_s"
+   },
+   {
+    "slot": "int_nlp40_ca_threshold_uM",
+    "by": "nlp40_release_k_uM"
+   },
+   {
+    "slot": "egg_vm_unc103_g_S_cm2",
+    "by": "egg_unc103_gkr_nS"
+   },
+   {
+    "slot": "egg_tyr_feedback_gain",
+    "by": "egg_lgc55_g_nS egg_uv1_tyr_uM_per_egg"
+   },
+   {
+    "slot": "hyp_gap_nS",
+    "by": "other_gap_nS_per_contact"
+   },
+   {
+    "slot": "coel_uptake_tau_min",
+    "by": "cc_clearance_um3_per_s"
+   },
+   {
+    "slot": "awa_egl19_g_S_cm2",
+    "by": "awa_membrane"
+   },
+   {
+    "slot": "awa_shk1_g_S_cm2",
+    "by": "awa_membrane"
+   },
+   {
+    "slot": "mec4_i0_pA",
+    "by": "met_i0_pA"
+   },
+   {
+    "slot": "mec4_g0",
+    "by": "touch_g0"
+   },
+   {
+    "slot": "mec4_g1",
+    "by": "touch_g1_per_um"
+   },
+   {
+    "slot": "mec4_tau_ms",
+    "by": "met_tau_ms"
+   },
+   {
+    "slot": "mec4_a",
+    "by": "met_a"
+   },
+   {
+    "slot": "awc_usuyama_params",
+    "by": "sens_odor_attract"
+   },
+   {
+    "slot": "urx_o2_half_pct",
+    "by": "sens_o2_up_K_pct"
+   },
+   {
     "slot": "slow_cmk1_fast_tau_min",
     "by": "cmk1_fast_tau_min"
    },
@@ -58030,6 +58162,42 @@
     "by": "homeo_egl19_tau_h homeo_shl1_tau_h homeo_tau_g_h homeo_unc2_tau_h"
    },
    {
+    "slot": "deb_v_cm_d",
+    "by": "deb_v_cm_per_d"
+   },
+   {
+    "slot": "deb_pM_J_d_cm3",
+    "by": "deb_p_m_J_per_d_cm3"
+   },
+   {
+    "slot": "deb_kJ_per_d",
+    "by": "deb_k_j_per_d"
+   },
+   {
+    "slot": "deb_kappa",
+    "by": "deb_kap"
+   },
+   {
+    "slot": "deb_kappa_R",
+    "by": "deb_kap_r"
+   },
+   {
+    "slot": "gcamp6f_kd_nM",
+    "by": "obs_gcamp6f_kd_nM"
+   },
+   {
+    "slot": "gcamp7f_half_decay_ms",
+    "by": "obs_gcamp7f_thalf_ms"
+   },
+   {
+    "slot": "neuropal_id_acc_head_pct",
+    "by": "obs_neuropal_p_correct"
+   },
+   {
+    "slot": "neuropal_id_acc_tail_pct",
+    "by": "obs_neuropal_p_correct"
+   },
+   {
     "slot": "stp_U",
     "by": "stp"
    },
@@ -58042,42 +58210,78 @@
     "by": "assoc_salt_learn_tau_min"
    },
    {
+    "slot": "q10_channel_kinetics",
+    "by": "temp_q10_gating"
+   },
+   {
+    "slot": "q10_synaptic_release",
+    "by": "temp_q10_synapse"
+   },
+   {
+    "slot": "q10_metabolic",
+    "by": "deb_t_a_K"
+   },
+   {
+    "slot": "q10_pumping",
+    "by": "temp_q10_pump"
+   },
+   {
+    "slot": "q10_defecation_clock",
+    "by": "temp_q10_dmp_clock"
+   },
+   {
     "slot": "noise_quantal_pA",
     "by": "noise_quantal_pA"
    },
    {
     "slot": "noise_quantal_cv",
     "by": "noise_amp_cv"
+   },
+   {
+    "slot": "pump_nak_imax_pA_pF",
+    "by": "pump_imax_muscle_pA pump_imax_neuron_pA"
+   },
+   {
+    "slot": "pump_nak_km_nai_mM",
+    "by": "pump_km_nai_mM"
+   },
+   {
+    "slot": "pump_nak_km_ko_mM",
+    "by": "pump_km_ko_mM"
+   },
+   {
+    "slot": "ion_na_in_mM",
+    "by": "pump_na_rest_mM"
    }
   ],
   "audit": {
-   "rows_ok": 1824,
-   "rows_with_problems": 85,
+   "rows_ok": 1768,
+   "rows_with_problems": 88,
    "by_status": {
-    "ok": 1824,
-    "finding": 85
+    "ok": 1768,
+    "finding": 88
    },
    "rows_read": 199,
    "quotes": {
-    "none": 1571,
-    "paper text (read audit, 6 Nov)": 254,
-    "research file (scripted check)": 84
+    "none": 1567,
+    "paper text (read audit, 6 Nov)": 253,
+    "research file (scripted check)": 36
    },
-   "with_url": 1530,
+   "with_url": 1504,
    "links": {
-    "distinct": 163,
+    "distinct": 160,
     "by_status": {
-     "200": 153,
-     "406": 5,
+     "200": 151,
+     "406": 4,
      "403": 5
     },
-    "checked_at": "2026-11-07 01:17 CST"
+    "checked_at": "2026-11-07 01:29 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
     "source marked UNVERIFIED": 11,
     "no range": 11,
-    "range is one point: the source's spread was not recorded": 8,
+    "range is one point: the source's spread was not recorded": 6,
     "template # outside": 6,
     "guessed template sits on a bound": 5,
     "inferred from the chloride reversal; no native C. elegans chloride reversal is measured; t": 5,
@@ -58086,7 +58290,7 @@
     "read by kqt# only (#); the other # K mods compute against a fixed #, so the K reversals di": 1,
     "set on every soma (brain.py:#) but no current reads it: nca.mod:# declares READ ena and co": 1,
     "sets only NEURON's Nernst eca; every Ca current uses a fixed +# (unc#mod:#, egl#mod:#, cca": 1,
-    "enters only NEURON's Nernst eca, which no current reads; no mod reads celsius": 1,
+    "enters only NEURON's Nernst eca, which no current reads; the # Nicoletti mods (kqt#, slo#i": 1,
     "inferred from a sibling class: between the L-AChR (# uM, Boulin #) and ACR# (# uM) values;": 1,
     "inferred from a sibling class: the NMJ nAChR decay (param_ranges B#, Richmond & Jorgensen ": 1,
     "inferred from a sibling class: the L-AChR single-channel conductance (rec_lacr_gamma_pS); ": 1,
@@ -58103,8 +58307,13 @@
     "Gerhardt and Adams # Anal Chem is paywalled; the tortuosity factor is not cited": 1,
     "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
     "noise.py's # pS cites Wang et al. # Neuron #:#, whose abstract gives no unitary conductanc": 1,
+    "computed and published as out['q#']['synapse'] each step, but no module reads it (grep of ": 1,
+    "computed and published as out['q#']['pump'] each step, but no module reads it (grep of src": 1,
+    "computed and published as out['q#']['dmp_clock'] each step, but no module reads it (grep o": 1,
+    "replaced slot mec#_i#_pA (measured) has # pA, outside this row's range": 1,
     "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
+    "replaced slot glia_k_clear_tau_s (inferred) has # s, outside this row's range": 1,
     "inferred from mammalian astrocytes, no paper named (borrowed from glia_e_leak_mV, which ha": 1,
     "inferred from mammalian neurons, no paper named": 1,
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
@@ -58125,6 +58334,10 @@
    },
    "orphan_notes": [],
    "notes_on_replaced_slots": [
+    "gcamp6f_kd_nM",
+    "neuropal_id_acc_head_pct",
+    "neuropal_id_acc_tail_pct",
+    "q10_defecation_clock",
     "rc_ec50__acr16",
     "rc_ec50__avr14b",
     "rc_ec50__avr15a",
@@ -58140,9 +58353,13 @@
     "rc_hill__unc49b",
     "rc_hill__unc49bc",
     "rc_pS__unc49b",
-    "rc_pS__unc49bc"
+    "rc_pS__unc49bc",
+    "urx_o2_half_pct"
    ],
-   "orphan_fills": []
+   "orphan_fills": [],
+   "fills_on_replaced_slots": [
+    "gcamp6f_kd_nM"
+   ]
   },
   "fills": [
    {
@@ -58524,16 +58741,8 @@
    },
    {
     "param_id": "gcamp6f_kd_nM",
-    "kind": "fill",
-    "origin": "slot",
-    "n": 1,
-    "pattern": "",
-    "was_label": "measured",
-    "new_label": "measured",
-    "change": "364 -> 375 nM; measured -> measured; range [364, 364] -> [361, 389]",
-    "reason": "the research file's 364 nM (PORT_SOURCES_ORGANS.md O10) is not in Chen 2013, whose table gives 375 \u00b1 14 nM; range mean \u00b1 SD (364 sits inside); was a point range",
-    "source": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (purified GCaMP6f, mean \u00b1 SD of 3 samples); excerpt in data/worm/catalog/excerpts/chen2013_supp_tables.txt",
-    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3777791/"
+    "change": "fill not applied: no such row",
+    "reason": "the research file's 364 nM (PORT_SOURCES_ORGANS.md O10) is not in Chen 2013, whose table gives 375 \u00b1 14 nM; range mean \u00b1 SD (364 sits inside); was a point range"
    },
    {
     "param_id": "gcamp6f_rise_ms",
@@ -61813,7 +62022,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 01:18 CST",
+   "generated_at": "2026-11-07 01:29 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -62767,38 +62976,38 @@
   },
   "before_fills": {
    "rows": {
-    "published_fit": 666,
-    "guessed": 640,
-    "measured": 242,
-    "derived": 32,
-    "inferred": 324,
-    "absent": 5
+    "published_fit": 659,
+    "guessed": 607,
+    "measured": 236,
+    "derived": 30,
+    "inferred": 323,
+    "absent": 1
    },
    "numbers": {
-    "published_fit": 8190,
-    "guessed": 9544,
-    "measured": 6099,
-    "derived": 67512,
-    "inferred": 329,
-    "absent": 5
+    "published_fit": 8183,
+    "guessed": 9511,
+    "measured": 6093,
+    "derived": 67510,
+    "inferred": 328,
+    "absent": 1
    }
   },
   "after_fills": {
    "rows": {
-    "published_fit": 661,
-    "guessed": 608,
-    "measured": 260,
-    "derived": 41,
-    "inferred": 334,
-    "absent": 5
+    "published_fit": 654,
+    "guessed": 575,
+    "measured": 254,
+    "derived": 39,
+    "inferred": 333,
+    "absent": 1
    },
    "numbers": {
-    "published_fit": 8190,
-    "guessed": 9404,
-    "measured": 6218,
-    "derived": 67522,
-    "inferred": 340,
-    "absent": 5
+    "published_fit": 8183,
+    "guessed": 9371,
+    "measured": 6212,
+    "derived": 67520,
+    "inferred": 339,
+    "absent": 1
    }
   }
  }

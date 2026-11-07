@@ -156,6 +156,9 @@ SLOT_COLUMNS = ["param_id", "plan_row", "mechanism_id", "mechanism_name", "grain
                 "source_quote", "source_project", "notes", "match", "used"]
 
 
+REPLACED_SLOTS: list[dict] = []   # sourced slots a code row replaced; build() checks each value against that row's range
+
+
 def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
     """Slot rows (scripts/worm/catalog_slots.py, copied to data/worm/catalog/slots.csv) not yet replaced by a row the
     code reads. A slot is replaced when a used row has its id, or one of the ids in its `match` column
@@ -166,11 +169,15 @@ def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
     s.to_csv(CAT / "slots.csv", index=False)
     s = pd.DataFrame(catalog_slots.SLOTS + catalog_slots.HIDDEN + scene_slots(), columns=SLOT_COLUMNS)
     rows, replaced, mechs = [], [], {}
+    REPLACED_SLOTS.clear()
     for r in s.to_dict("records"):
         keys = {r["param_id"], *str(r["match"]).split()}
         hit = sorted(k for k in keys if k in used_ids or k in live_mechs)
         if hit:
             replaced.append((r["param_id"], " ".join(hit)))
+            if r["label"] not in ("", "guessed", "absent") and not np.isnan(_num(r["value_template"])):
+                REPLACED_SLOTS.append(dict(slot=r["param_id"], by=hit, value=_num(r["value_template"]),
+                                           unit=str(r["unit"]).strip(), label=r["label"]))
             continue
         lab = r["label"] or "absent"
         v, lo, hi = _num(r["value_template"]), _num(r["bio_min"]), _num(r["bio_max"])
@@ -617,6 +624,12 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
         if not str(r.get("source_url", "")).strip():
             r["source_url"] = link_for(r, t)
         probs = audit(r, t) + open_.get(r["param_id"], [])
+        lo, hi = _num(r["bio_min"]), _num(r["bio_max"])
+        for x in REPLACED_SLOTS:          # a sourced number the code row stands for must fit inside the row's range
+            if r["param_id"] in x["by"] and x["unit"] == str(r["unit"]).strip() and not (
+                    np.isnan(lo) or np.isnan(hi)) and not lo <= x["value"] <= hi:
+                probs.append(f"replaced slot {x['slot']} ({x['label']}) has {x['value']:g} {x['unit']}, outside "
+                             f"this row's range [{lo:g}, {hi:g}]")
         url = str(r.get("source_url", "")).strip()
         link = links.get(url, ("unchecked", ""))[0] if url else ""
         if link in DEAD_LINK:
@@ -695,7 +708,9 @@ def summary(cat_rows, replaced, fill_log, hidden, before=None):
                                        - {a for a, _ in replaced}),
                    notes_on_replaced_slots=sorted({a["param_id"] for a in audit_notes()} & {a for a, _ in replaced}),
                    orphan_fills=sorted({f["param_id"] for f in fill_log if f.get("change", "").startswith(
-                       "fill not applied")})),
+                       "fill not applied")} - {a for a, _ in replaced}),
+                   fills_on_replaced_slots=sorted({f["param_id"] for f in fill_log if f.get("change", "").startswith(
+                       "fill not applied")} & {a for a, _ in replaced})),
         fills=fill_log, hidden_constants=hidden,
         before_fills=before or {}, after_fills=dict(rows=all_["rows"], numbers=all_["numbers"]))
 
@@ -828,15 +843,18 @@ def write_markdown(cat_rows, s):
           f"audit or the body ledger's lit_check, with an owner) and {st.get('problem', 0)} are open **problems**. "
           "Scripted checks: label vs source (a measured or derived row must cite a source and link it; a guess "
           "cannot be labelled measured), range present and cited, template and every element inside the range, "
-          "element labels add up to n_values, units present, UNVERIFIED sources flagged, research-file quotes found "
-          "verbatim. The read audit (`data/worm/catalog/audit_notes.csv`, one line per finding with its action: "
+          "element labels add up to n_values, a row label no stronger than its weakest element, units present, "
+          "UNVERIFIED sources flagged, research-file quotes found verbatim, and a sourced slot that a code row "
+          "replaced must lie inside that row's range (same unit). The read audit (`data/worm/catalog/audit_notes.csv`, one line per finding with its action: "
           "fixed / read / accepted / owner / kept / open) adds what a script cannot see: whether the paper says it.",
           "", f"Rows with a URL to open: {a.get('with_url', 0)} of {t['n_rows']} (every row not labelled guessed "
           f"has one unless listed below). Rows read against their source: {a.get('rows_read', 0)}. Quotes: "
           + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ". Audit notes on ids no row has: "
           + (", ".join(f"`{x}`" for x in a.get("orphan_notes", [])) or "none") + "; fills on ids no row has: "
           + (", ".join(f"`{x}`" for x in a.get("orphan_fills", [])) or "none") + ". Audit notes kept on slots a code "
-          f"row has since replaced (the trail; the slot's row is gone): {len(a.get('notes_on_replaced_slots', []))}.",
+          f"row has since replaced (the trail; the slot's row is gone): {len(a.get('notes_on_replaced_slots', []))}; "
+          "fills on such slots (not applied; the code row carries its own number): "
+          + (", ".join(f"`{x}`" for x in a.get("fills_on_replaced_slots", [])) or "none") + ".",
           "",
           f"Links: {a.get('links', {}).get('distinct', 0)} distinct URLs, checked "
           f"{a.get('links', {}).get('checked_at', '') or 'never'} by `scripts/worm/catalog_links.py` (status: "

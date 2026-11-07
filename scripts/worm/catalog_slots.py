@@ -577,6 +577,71 @@ S("sleep_ala_release", 28, "sleep_ris_ala", "nM/s", None, 0.01, 10, "guessed", g
   quote=f"{N10}: ALA's three peptides (FLP-13, FLP-24, NLP-8) have measured genetic requirement for quiescence",
   match="sleep_ris_ala")
 
+# --- slots the night modules now run (checked 7 Nov, wcatalog) ---------------------------------------------------------
+# Each slot below names the code row (or mechanism) that runs the same quantity, so the slot counts as replaced and
+# the number is counted once. Same quantity means the same biological constant in the code's form (units may differ:
+# a density for an absolute conductance, a clearance for a lifetime); a code row at the PLAN row's grain replaces
+# finer slots when its range spans them. The audit checks that a sourced slot value lies inside the code row's range
+# (same unit). Left as slots: outputs the model should reproduce (HSN and VC intervals, Wen 2012's gain and delay,
+# the mini rate, AFD -> AIY gain), quantities no code runs (GCaMP rise times, the two learning traces, muscle Q10,
+# transporter Km and Vmax, the excretory canal's AQP-8 and volume time constant, the vm EGL-19 density, the
+# environment fields, sleep, UNC-2 per synapse, per-innexin conductance, the CeNGEN threshold), and the cell counts.
+SLOT_CODE = {
+    "gcamp6f_kd_nM": ("obs_gcamp6f_kd_nM", ""),
+    "gcamp7f_half_decay_ms": ("obs_gcamp7f_thalf_ms", "the code row is the 1-AP half decay in culture (265 ms)"),
+    "neuropal_id_acc_head_pct": ("obs_neuropal_p_correct", "one accuracy for the labelled cells, from the same figure"),
+    "neuropal_id_acc_tail_pct": ("obs_neuropal_p_correct", "one accuracy for the labelled cells, from the same figure"),
+    "q10_channel_kinetics": ("temp_q10_gating", "applied to the transduction channels, not BAAIWorm's gating"),
+    "q10_synaptic_release": ("temp_q10_synapse", "computed, but no module applies it yet (owner note on the row)"),
+    "q10_pumping": ("temp_q10_pump", "computed, but no module applies it yet (owner note on the row)"),
+    "q10_defecation_clock": ("temp_q10_dmp_clock", "computed, but no module applies it yet (Q10 1, so no effect)"),
+    "q10_metabolic": ("deb_t_a_K", "Arrhenius form: T_A 13008 K is a Q10 of about 4.3 from 20 to 30 C (derived)"),
+    "deb_v_cm_d": ("deb_v_cm_per_d", ""), "deb_pM_J_d_cm3": ("deb_p_m_J_per_d_cm3", ""),
+    "deb_kJ_per_d": ("deb_k_j_per_d", ""), "deb_kappa": ("deb_kap", ""), "deb_kappa_R": ("deb_kap_r", ""),
+    "pump_nak_imax_pA_pF": ("pump_imax_neuron_pA pump_imax_muscle_pA", "the code takes an absolute current per class"),
+    "pump_nak_km_nai_mM": ("pump_km_nai_mM", ""), "pump_nak_km_ko_mM": ("pump_km_ko_mM", ""),
+    "ion_na_in_mM": ("pump_na_rest_mM", "resting [Na]i"),
+    "int_ip3r_d1_uM": ("int_lr_d1_uM", ""), "int_ip3r_d5_uM": ("int_lr_d5_uM", ""),
+    "int_ip3r_a2": ("int_lr_a2_per_uM_s", ""), "int_ip3r_v1_per_s": ("int_lr_v1_per_s", ""),
+    "int_serca_v3_uM_s": ("int_lr_v3_uM_per_s", ""), "int_serca_k3_uM": ("int_lr_k3_uM", ""),
+    "int_inx16_gap_nS": ("int_gap_p_ip3_um_s int_gap_p_ca_um_s", "the code couples the rings by IP3 and Ca "
+                         "permeabilities, the form the Ca wave needs"),
+    "int_pbo_proton_dph": ("int_h_release_nM_per_s", "the code computes the cleft pH drop from the proton release"),
+    "int_nlp40_ca_threshold_uM": ("nlp40_release_k_uM", "the Ca half-activation of NLP-40 release"),
+    "egg_vm_unc103_g_S_cm2": ("egg_unc103_gkr_nS", "absolute conductance per cell"),
+    "egg_tyr_feedback_gain": ("egg_lgc55_g_nS egg_uv1_tyr_uM_per_egg", "the code's form: uv1 tyramine onto HSN's LGC-55"),
+    "hyp_gap_nS": ("other_gap_nS_per_contact", ""),
+    "coel_uptake_tau_min": ("cc_clearance_um3_per_s", "lifetime 4e5 um3 / (6 cells x 67 um3/s) = 995 s, 16.6 min "
+                            "(derived)"),
+    "glia_k_clear_tau_s": ("glia_kir_tau_s glia_k_diff_tau_s", "the code splits it into Kir uptake (12.6 s) and "
+                           "diffusion (6.3 s); together 1 / (1/12.6 + 1/6.3) = 4.2 s (derived)"),
+    "glia_kcc3_cl_tau_s": ("glia_cl_tau_s", ""), "glia_glr_rme_gap_nS": ("glia_gap_nS_per_contact", ""),
+    "bwm_slo2_alpha": ("bwm_du_slo2_alpha", "the code's 43; the paper's text 58 (the code row's range spans both)"),
+    "bwm_slo2_beta": ("bwm_du_slo2_beta", ""),
+    "phar_fhn_eps": ("pharynx", "the code runs a conductance-based pharyngeal model (ph_sh_*), not FitzHugh-Nagumo"),
+    "phar_fhn_a": ("pharynx", "the code runs a conductance-based pharyngeal model (ph_sh_*), not FitzHugh-Nagumo"),
+    "phar_fhn_b": ("pharynx", "the code runs a conductance-based pharyngeal model (ph_sh_*), not FitzHugh-Nagumo"),
+    "mec4_i0_pA": ("met_i0_pA", "sign convention differs"), "mec4_tau_ms": ("met_tau_ms", ""),
+    "mec4_a": ("met_a", ""), "mec4_g0": ("touch_g0", ""),
+    "mec4_g1": ("touch_g1_per_um", "the code's g1 is per um of stretch, Sanzeni's per uN of force"),
+    "awc_usuyama_params": ("sens_odor_attract", "the code runs Usuyama 2012's AWC network (usu_* rows)"),
+    "awa_egl19_g_S_cm2": ("awa_membrane", "the code runs Liu et al. 2018's AWA model (awa_liu_* rows)"),
+    "awa_shk1_g_S_cm2": ("awa_membrane", "the code runs Liu et al. 2018's AWA model (awa_liu_* rows)"),
+    "urx_o2_half_pct": ("sens_o2_up_K_pct", ""),
+    "nmj_quantal_g_nS": ("noise_quantal_pA", "the same mEPSC as a current at -60 mV"),
+    "pep_cascade_tau_s__gq": ("gq_tau_ms", ""), "pep_cascade_tau_s__gio": ("gi_tau_ms", ""),
+    "pep_cascade_tau_s__gs": ("gs_tau_ms", ""), "pep_diffusion_um2_s": ("pep_diffusion_um2_per_s", ""),
+}
+for _r in SLOTS:
+    if _r["param_id"] in SLOT_CODE:
+        _ids, _why = SLOT_CODE.pop(_r["param_id"])
+        _r["match"] = f"{_r['match']} {_ids}".strip()
+        _r["notes"] = (_r["notes"] + "; " if _r["notes"] else "") + f"run by {_ids.replace(' ', ', ')} (7 Nov)" + (
+            f": {_why}" if _why else "")
+    elif _r["param_id"] == "deb_kappa_G":
+        _r["used"] = "hard-coded: src/wormemu/mech/metabolism.py:49 (KAP_G)"
+assert not SLOT_CODE, f"SLOT_CODE names slots that do not exist: {sorted(SLOT_CODE)}"
+
 
 # --- hidden constants with a ledger meaning (scripts/worm/hidden_constants.py, review 6 Nov) -----------------------
 # Numbers the code uses as literals, not read from the ledger. Each gets a catalog row so the catalog lists every
