@@ -1,7 +1,7 @@
 # FIT1: class-level synapse strengths against Randi et al. 2023 (pre-registration)
 
 Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended at 22:46 (commit a32642d) and on 7 Nov at 00:05
-(Amendment 2) and 00:27 (Amendment 3), all before any scored run (the amendments are listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
+(Amendment 2), 00:27 (Amendment 3) and 01:46 (Amendment 4, the freeze on worm-v1), all before any scored run (the amendments are listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
 first scored run; a changed rerun is a new, separately named fit (FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
 night of 6 Nov (`docs/worm/night/2026-11-06_wfit.md`).
 
@@ -370,3 +370,40 @@ The held-out scoring had the same gap: models were scored on their finite terms,
 first model's. Now every model must give a finite value for every term of the simulated stimulated neurons, or the
 verdict is VOID (section 7) and the counts are reported; the same applies to U. The training-data plumbing test
 re-scores identically (2 stimulations, 273 terms, no non-finite values).
+
+## Amendment 4 (2026-11-07 01:46, the freeze; before any scored run; no held-out or unc-31 data opened)
+
+1. **Code.** The Director tagged `worm-v1` = 602d21c at 00:49 (main at 00:41, before the catalog merge) as the
+   frozen template for this fit. It is merged into worktree-wormfit as d174f16. The model tree there (src,
+   data/worm, third_party, pyproject.toml) is identical to the tag; the fit scripts are this branch's. Both fits
+   run d174f16's tree, copied with `git archive` to `~/worm-night/wfit/repo_v1/` (its COMMIT file holds the hash).
+   100 worm tests pass on d174f16 (the pycma test is skipped on the Mac and passes on backhouse).
+2. **What changed for the fit since merge 1.** Three modules are new and on by default:
+   - `channels` (row 4): five Nicoletti 2024 channels (KQT-1, UNC-103, EXP-2, SLO-1 and SLO-2 iso) on the somas
+     that have them;
+   - `ca_volume` (row 6): each neuron's Ca pool sized by its own whole-cell volume in the BAAIWorm morphology
+     (derived), instead of one capool_vcell for every neuron. capool_vcell therefore no longer enters; capool_f
+     and capool_tca still do, and the readout still reads the brain's own Ca;
+   - `cells_passive` (row 1): 46 isolated sensillar glia and 8 pharyngeal end-organ cells on Cook's gaps.
+   The ranges of the 23 values are unchanged (checked, `freeze_check.py`).
+3. **Template, measured.** 10 s windows: ASHL's autoresponse fell from 0.0126 to 0.0078, AWAL's from 0.0004 to
+   0.0002. Across all cells the change is RMS 2.3e-4, largest 0.0048. No cell is above -20 mV after warm-up.
+4. **Reach, measured** (30 s windows, readout at 2b row 3, reference integration). ASHL 0.385, AWAL 0.345,
+   AVAL 0.0098; on merge 1 the same values gave 0.53, 0.75 and 0.043. The training median is 0.43, so the
+   readout's upper bounds no longer reach the median autoresponse. Risk 1 of section 8 (values pinned at a bound)
+   is now more likely. The plan does not change: the values stay inside their ranges, and pinned values are
+   reported.
+5. **Integration re-checked on worm-v1** (measured 01:21-01:45, against h_dt 0.5 with mechanisms every 1 ms):
+
+   | Run | Template RMS (largest) | Large RMS (largest) | Strong + large RMS (largest) | Wall per window (s) |
+   |---|---|---|---|---|
+   | reference | | | | 332-334 |
+   | h_dt 2, mech 10 | | 1.1-1.2e-4 (0.0018) | | 78 |
+   | **h_dt 5, mech 10** | 0-0 (3e-5) | 0.6-1.5e-4 (0.0014) | 0-1.9e-4 (0.0032) | 46-47 |
+
+   h_dt 5 passes the bar (0.003) by 16x at all three value sets and stays the fit's step.
+6. **The wrong model on worm-v1** rewires exactly as on merge 1: 5,868 of 6,301 chemical sites and 1,388 of
+   1,390 non-rectifying gap junctions moved, 138 rectifying junctions kept; the run is finite. Gap junctions that
+   modules add after the wiring (208, to organs and the passive end organs) are not shuffled: the wrong model
+   shuffles the neuronal connectome only.
+
