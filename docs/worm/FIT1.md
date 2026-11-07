@@ -232,6 +232,8 @@ Verdicts:
 - **PARTIAL** = P1 only: the fitted values improve the model, but the data does not show that the wiring carries
   the improvement.
 - **FAIL** = P1 fails.
+- **VOID** (Amendment 3) = any model gives a non-finite value for any term of the simulated stimulated neurons.
+  The counts are reported; models are never compared on different terms.
 - **Falsifier:** if P2 fails, then gain and readout values, not the wiring, explain the fit.
 
 **unc-31 test (sealed, once, after P1-P4).**
@@ -349,3 +351,8 @@ loss (unchanged), but scored a run with some non-finite values on its finite ter
 could then score well on fewer terms. Now any non-finite value on the batch's terms fails the evaluation
 (`fit1_run.score_one`, tested in `tests/test_worm_fit1.py`). No evaluation in trials 1 or 2 had a non-finite
 value; re-scoring trial 2's 80 finished evaluations with the new code gives the same losses (largest difference 0).
+
+The held-out scoring had the same gap: models were scored on their finite terms, and the zero predictor on the
+first model's. Now every model must give a finite value for every term of the simulated stimulated neurons, or the
+verdict is VOID (section 7) and the counts are reported; the same applies to U. The training-data plumbing test
+re-scores identically (2 stimulations, 273 terms, no non-finite values).

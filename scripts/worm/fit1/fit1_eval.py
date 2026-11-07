@@ -141,13 +141,18 @@ def score(a):
             continue
         T = np.load(path)["terms"]
         names = sorted({p.name.rsplit("_", 1)[0] for p in d.glob("*.npz")})
-        M = {}
+        M, stims = {}, None
         for nm in names:
             v = gather(d, nm)
             M[nm] = np.array([v.get((i, j), np.nan) for i, j in zip(T["resp"], T["stim"])])
-        sim = np.isfinite(M[names[0]])
+            sn = sorted({t for _, t in v})
+            assert stims is None or sn == stims, "models simulated different stimulated neurons"
+            stims, cells = sn, sorted({n for n, _ in v})
+        sim = np.isin(T["stim"], stims) & np.isin(T["resp"], cells)     # the terms every model must give
+        bad = {nm: int((sim & ~np.isfinite(m)).sum()) for nm, m in M.items()}
         M["zero"] = np.where(sim, 0.0, np.nan)
         res[st] = {nm: fl.scores(T, m, s_trial, s_floor) for nm, m in M.items()}
+        res[st]["non_finite_terms"] = bad            # any > 0 voids the verdict (FIT1.md Amendment 3)
         rng = np.random.default_rng(SEED)
         PS = {nm: per_stim(T, m, s_trial, s_floor) for nm, m in M.items()}
         assert all(v[0] == PS["zero"][0] for v in PS.values()), "models simulated different stimulated neurons"
@@ -167,11 +172,15 @@ def score(a):
         P3 = f.get("sign_agree_sig", 0) > 0.5 and f.get("sign_agree_sig", 0) > s.get("sign_agree_sig", 0)
         res["verdict"] = dict(P1=P1, P2=P2, P3=P3, P4=dict(r_fit=f.get("r_sig"), r_shuf=s.get("r_sig")),
                               result="PASS" if P1 and P2 and P3 else "PARTIAL" if P1 else "FAIL")
+        if any(h["non_finite_terms"].values()):
+            res["verdict"]["result"] = "VOID: non-finite values " + json.dumps(h["non_finite_terms"])
     u = res.get("unc31")
     if u:
         dd = u["U_diff_off_minus_on"]
         res["U"] = ("not tested by this data" if abs(u["fit_pep_off"]["chi2"] - u["fit_pep_on"]["chi2"]) < 0.01
                     else "PASS" if dd["hi"] < 0 else "FAIL")
+        if any(u["non_finite_terms"].values()):
+            res["U"] = "VOID: non-finite values " + json.dumps(u["non_finite_terms"])
     json.dump(res, open(out / "scores.json", "w"), indent=1)
     print(json.dumps(res, indent=1))
 
