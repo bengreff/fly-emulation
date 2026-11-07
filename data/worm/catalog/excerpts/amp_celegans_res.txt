@@ -1,0 +1,61 @@
+# Add-my-Pet (AmP) collection, Caenorhabditis elegans entry, predictions and data page (DEB model abj)
+# fetched 7 Nov 2026 04:00 CST from https://www.bio.vu.nl/thb/deb/deblab/add_my_pet/entries_web/Caenorhabditis_elegans/Caenorhabditis_elegans_res.html (free; curl --compressed);
+# HTML tags stripped, text otherwise verbatim
+
+Caenorhabditis_elegans
+Predictions & Data for this entry
+Model : abj
+climate: A , B , C , D
+migrate:
+phylum: Nematoda
+COMPLETE = 2.9
+ecozone: TH , TN , TP , TA
+food: biB , biD
+class: Secernentea
+MRE = 0.242
+habitat: 0iT
+gender: Hsmm
+order: Rhabditida
+SMSE = 0.109
+embryo: Ts
+reprod: O
+family: Rhabditidae
+Zero-variate data
+Data Observed Predicted (RE) Unit Description Reference
+ab 0.4583 0.3257 (0.2893) d age at birth ByerCassa1976
+tp 2.708 2.934 (0.08345) d time since birth at puberty ByerCassa1976
+am 21 14.15 (0.3263) d life span ByerCassa1976
+Lb 0.025 0.01272 (0.4913) cm total length at birth ByerCassa1976
+Lp 0.106 0.05601 (0.4716) cm total length at puberty ByerCassa1976
+Li 0.14 0.08323 (0.4055) cm ultimate total length ByerCassa1976
+Wwb 0.024 0.02369 (0.01308) mug wet weight at birth ByerCassa1976
+Wwp 1.8 2.023 (0.1241) mug wet weight at puberty ByerCassa1976
+Wwi 4.3 6.638 (0.5437) mug ultimate wet weight ByerCassa1976
+Ri 218 170.4 (0.2182) #/d maximum reprod rate ByerCassa1976
+Uni- and bivariate data
+Data Figure Independent variable Dependent variable (RE) Reference
+tL_25 time since birth length (0.1159) ByerCassa1976
+tL_20 time since birth length (0.07939) ByerCassa1976
+tL_16 time since birth length (0.1263) ByerCassa1976
+tR_25 time since birth reprod rate (65.36) ByerCassa1976
+tR_20 time since birth reprod rate (152.4) ByerCassa1976
+tR_16 time since birth reprod rate (84.1) ByerCassa1976
+tL time since birth length (0.09053) Gous2011
+tS time since birth fraction alive (0.2574) SutpKaeb2009
+Pseudo-data at T ref = 20°C
+Data Generalised animal Caenorhabditis elegans Unit Description
+v 0.02 0.03208 cm/d energy conductance
+p_M 18 3724 J/d.cm^3 vol-spec som maint
+k_J 0.002 0.002 1/d maturity maint rate coefficient
+k 0.3 0.0009726 - maintenance ratio
+kap 0.8 0.5056 - allocation fraction to soma
+kap_G 0.8 0.8086 - growth efficiency
+kap_R 0.95 0.95 - reproduction efficiency
+Discussion
+L^3/W varies over a factor 35
+puberty correcponds with start of female function
+Facts
+Hatched larvae develop through 4 stages or molts (Ref: Wiki)
+Males and hermaphrodites exist. Hermaphrodites first produce sperm in stage 4, then eggs only (Ref: Wiki)
+Bibliography
+Citation

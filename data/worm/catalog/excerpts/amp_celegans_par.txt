@@ -1,0 +1,52 @@
+# Add-my-Pet (AmP) collection, Caenorhabditis elegans entry, parameter values page (DEB model abj)
+# fetched 7 Nov 2026 04:00 CST from https://www.bio.vu.nl/thb/deb/deblab/add_my_pet/entries_web/Caenorhabditis_elegans/Caenorhabditis_elegans_par.html (free; curl --compressed);
+# HTML tags stripped, text otherwise verbatim
+
+Caenorhabditis_elegans
+Parameter values for this entry
+Model:  abj  
+Primary parameters at reference temperature (20 deg. C)
+symbol value units description
+T_A 13007.8 K Arrhenius temperature
+p_Am 36.8735 J/d.cm^2 {p_Am}, spec assimilation flux
+F_m 6.5 l/d.cm^2 {F_m}, max spec searching rate
+kap_X 0.8 - digestion efficiency of food to reserve
+kap_P 0.1 - faecation efficiency of food to faeces
+v 0.032076 cm/d energy conductance
+kap 0.5056 - allocation fraction to soma
+kap_R 0.95 - reproduction efficiency
+p_M 3724.1 J/d.cm^3 [p_M], vol-spec somatic maint
+p_T 0 J/d.cm^2 {p_T}, surf-spec somatic maint
+k_J 0.002 1/d maturity maint rate coefficient
+E_G 1811 J/cm^3 [E_G], spec cost for structure
+E_Hb 3.098e-05 J maturity at birth
+E_Hj 0.00165 J maturity at metam
+E_Hp 0.005589 J maturity at puberty
+h_a 0.0002349 1/d^2 Weibull aging acceleration
+s_G 0.0001 - Gompertz stress coefficient
+Parameters specific for this entry at reference temperature (20 deg. C)
+symbol value units description
+del_M 0.1887 - shape coefficient
+f 1 - scaled functional response for 0-var data
+f_16 1.7957 - scaled functional response for tL_16, tR_16 data
+f_20 1.7445 - scaled functional response for tL_20, tR_20 data
+f_25 1.151 - scaled functional response for tL_25, tR_25 data
+f_tL 1.398 - scaled functional response for tL data
+Temperature parameters
+symbol value units description
+T_A 13007.8 K Arrhenius temperature
+T_ref 293.15 K Reference temperature
+Chemical parameters
+Food Structure Reserve Faeces
+Chemical potentials (J/C-mol) 525000 500000 550000 480000
+Specific density for dry weight (g/cm^3) 0.07 0.07 0.07 0.07
+Food Structure Reserve Faeces
+Chemical indices for organics Carbon 1 1 1 1
+Hydrogen 1.8 1.8 1.8 1.8
+Oxygen 0.5 0.5 0.5 0.5
+Nitrogen 0.15 0.15 0.15 0.15
+CO 2 H 2 O O 2 N-waste
+Chemical indices for minerals Carbon 1 0 0 0
+Hydrogen 0 2 0 3
+Oxygen 2 1 2 0
+Nitrogen 0 0 0 1
