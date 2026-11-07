@@ -283,7 +283,7 @@
   toggle: bwm_coupling
   neutral: off (BAAIWorm and c302 have no muscle coupling)
   default: 'off'
-  source: Cook et al. 2019 pairs; strength guessed inside Liu et al. 2013 (F11)
+  source: Cook et al. 2019 pairs; strength guessed inside Liu et al. 2006's <= 350 pS
   notes: ''
   absent_reason: ''
 - id: syn_sign

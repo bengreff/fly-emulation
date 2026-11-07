@@ -486,16 +486,24 @@ def build_synapses(mods, st, conns):
     pair_row("nmj_strength_per_pair", "wiring", "nS per EM synapse", nmj, lambda a, b: nmj_per_em, "B4",
              "neuron-to-muscle pairs (wiring=cook)",
              f"ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = {nmj_per_em:.3g} nS")
-    lo, hi, _, basis, bsrc = lit("F11")
+    # Liu, Chen, Gaier, Joshi & Wang 2006 measured the pair's whole junctional conductance by dual whole-cell clamp;
+    # param_ranges F11 (1 to 20 nS) was a guess with no number retrieved, so it is not used (7 Nov, wcatalog)
+    lo, hi, basis = 0.05, 0.35, "measured_this_class"
+    bsrc = ("Liu, Chen, Gaier, Joshi & Wang 2006 J Biol Chem 281:7881 (PMID 16434400), abstract: dual whole-cell "
+            "clamp of neighbouring body-wall muscle cells; upper end measured (350 pS), lower end guessed")
     mech("bwm_coupling", "Gap junctions between neighbouring body-wall muscles (UNC-9), Cook 2019 pairs", "muscle",
-         "have", "Cook et al. 2019 pairs; strength guessed inside Liu et al. 2013 (F11)", toggle="bwm_coupling",
+         "have", "Cook et al. 2019 pairs; strength guessed inside Liu et al. 2006's <= 350 pS", toggle="bwm_coupling",
          neutral="off (BAAIWorm and c302 have no muscle coupling)", default="off")
-    t = pd.DataFrame([dict(element=f"{a}-{b}", value=5.0, label="guessed", source="guessed inside F11",
+    t = pd.DataFrame([dict(element=f"{a}-{b}", value=0.2, label="guessed", source="guessed inside Liu 2006",
                            source_project="ours", n_em=k) for a, b, k in gap_bb])
-    row("bwm_gap", "bwm_coupling", "nS per pair", 5.0, lo, hi, grain="connection",
-        applies_to="muscle-muscle gap pairs (Cook 2019)", n=len(t), tsrc="guessed, one value for every pair",
-        label="guessed", proj="ours", basis=basis, bsrc=bsrc, prior=("loguniform", "", "", "guessed: log-uniform"),
-        notes="macroscopic coupling per neighbouring pair; not scaled by the EM count", table=t)
+    row("bwm_gap", "bwm_coupling", "nS per pair", 0.2, lo, hi, grain="connection",
+        applies_to="muscle-muscle gap pairs (Cook 2019)", n=len(t), tsrc="guessed inside the measured range, one "
+        "value for every pair (the same 0.2 nS as muscle_bwm's bwm_gap_liu_nS, the default form)",
+        label="guessed", proj="ours", basis=basis, bsrc=bsrc, prior=("uniform", "", "", "guessed: uniform"),
+        url="https://pubmed.ncbi.nlm.nih.gov/16434400/",
+        quote="The coupling was characterized by small (350 pS or less) junctional conductance (G(j))",
+        notes="macroscopic coupling per neighbouring pair; not scaled by the EM count; was 5 nS in a guessed "
+        "[1, 20] nS (param_ranges F11, whose number was never retrieved) until 7 Nov", table=t)
 
     # sign per presynaptic neuron (transmitter rule)
     names = sorted(nset)
@@ -706,6 +714,29 @@ def build_layers(st):
 
 
 RANGE_GUESSED = re.compile(r"(?i)\b(bounds?|range)\b[^;.]{0,80}\bguessed\b")
+
+
+def off_by_default():
+    """A brain or layer row whose mechanism is off by default (bwm_coupling, muscle_active, the lumped glia gain) is
+    read only when a run turns that toggle on, so it is not a number the default model uses (7 Nov, wcatalog)."""
+    off = {m["id"] for m in mechs if str(m.get("default", "")).strip() == "off"}
+    for r in rows:
+        if r["used_by_code"] == "yes" and r["mechanism_id"] in off and r["origin"] in ("brain", "layers"):
+            r["used_by_code"] = "other form only"
+            r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
+                f"read only with toggle {r['mechanism_id']} = on (default off)")
+        elif r["used_by_code"] == "yes" and r["param_id"] in OVERWRITTEN:
+            r["used_by_code"] = "other form only"
+            r["notes"] = (r["notes"] + "; " if r["notes"] else "") + OVERWRITTEN[r["param_id"]]
+
+
+# brain rows a default-on module overwrites before the first step, so the default model never uses their numbers
+_DU = "mech/muscle_bwm.py (bwm_membrane = du2025, the default) "
+OVERWRITTEN = {
+    "mpas_gpas": _DU + "sets every muscle's pas.g to 0 (Du's leak replaces it); acts only with bwm_membrane = off",
+    "mpas_epas": _DU + "zeroes the leak it belongs to; acts only with bwm_membrane = off",
+    "mpas_cm": _DU + "sets cm from bwm_du_c_pF over the area; acts only with bwm_membrane = off",
+}
 
 
 def build_registry():
@@ -959,6 +990,7 @@ def main():
     n_c302 = build_c302_muscle()
     build_layers(st)
     reg_notes = build_registry()
+    off_by_default()
     sensitivity()
     body_mechs, body = cat.body_rows()
     used = {r["param_id"] for r in rows} | {r["param_id"] for r in body if r["used_by_code"] == "yes"}
