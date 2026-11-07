@@ -1,0 +1,84 @@
+{
+ "bar_unit_check": "section bending modulus inside 50-170 kPa (Backholm 2013 E = 110 +/- 30 kPa, 2 SD)",
+ "wave": {
+  "mode": "wave",
+  "seconds": 3.0,
+  "f": 1.76,
+  "lam": 1.54,
+  "amp": 0.157,
+  "frame_every": 8
+ },
+ "neutral_uniform_bit_identical": true,
+ "neutral_damp_tau0_max_dx": 0.0,
+ "neutral_pass": true,
+ "moduli": {
+  "n_tet": 3341,
+  "E_min_kPa": 150.0,
+  "E_max_kPa": 1200.0000000000002,
+  "E_volume_mean_kPa": 847.48299822036,
+  "E_bending_kPa": 856.3664090540831,
+  "E_bending_ideal_kPa": 794.2251401384842,
+  "mesh_radius_units": 4.663214933630851
+ },
+ "unit_check_value_kPa": 856.3664090540831,
+ "unit_check_pass": false,
+ "unit_check_ratio_to_110": 7.7851491732189375,
+ "default": {
+  "finite": true,
+  "wall_s": 9.504148960113525,
+  "wall_upstream_s": 10.057315826416016,
+  "damp_tau_ms_mean": 16.6981774,
+  "damp_w_mean": 1.09183366,
+  "flags": {
+   "tet_youngs": "/Users/ben/fly-emulation/.claude/worktrees/wormbody/runs/worm/night_wbody/layers_default.tet_youngs.f64",
+   "damping": "backholm2013",
+   "damp_tau_ms": 2.0,
+   "damp_w_ref": 10.0,
+   "damp_alpha": 1.0,
+   "damp_clip": 10.0
+  }
+ },
+ "damping_bar": "mean tau during the 1.76 Hz wave <= 5.3 ms (Fang-Yen 2010 bound)",
+ "damping_pass": false,
+ "gait": {
+  "upstream": {
+   "periods": 3.0,
+   "f_body_hz": 1.8744,
+   "wavelength_L": 1.0275222460852083,
+   "wave_dir": 1.0,
+   "head_amp_kL": 3.000911988891933,
+   "tail_amp_kL": 0.9480149004179232,
+   "tail_head_ratio": 0.31590893166046213,
+   "speed_L_s": 0.38800556187216756,
+   "amp_profile_kL": null,
+   "s": null,
+   "mean_kL_profile": null
+  },
+  "layers_only": {
+   "periods": 3.0,
+   "f_body_hz": 1.8744,
+   "wavelength_L": 1.2642448705667926,
+   "wave_dir": 1.0,
+   "head_amp_kL": 1.0650802780922348,
+   "tail_amp_kL": 0.4831614471561769,
+   "tail_head_ratio": 0.4536385257471979,
+   "speed_L_s": 0.21145693022669498,
+   "amp_profile_kL": null,
+   "s": null,
+   "mean_kL_profile": null
+  },
+  "layers_damping": {
+   "periods": 3.0,
+   "f_body_hz": 1.8744,
+   "wavelength_L": 1.0425559567805511,
+   "wave_dir": 1.0,
+   "head_amp_kL": 0.7981193933946923,
+   "tail_amp_kL": 3.560885772349573,
+   "tail_head_ratio": 4.461595347537954,
+   "speed_L_s": 0.14635328565053135,
+   "amp_profile_kL": null,
+   "s": null,
+   "mean_kL_profile": null
+  }
+ }
+}

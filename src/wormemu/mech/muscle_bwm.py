@@ -246,7 +246,7 @@ class Mech:
         if self.mem == "du2025":
             from wormemu.mech import organs_nrn
             organs_nrn.load_organ_mods(h)
-            self._pca = h.PtrVector(int(self.have.sum()))
+            self._pca = h.PtrVector(max(1, int(self.have.sum())))   # NEURON refuses a length-0 PtrVector (cell subsets with no BWM)
             k = 0
             for i in self.bwm[self.have]:
                 sec = brain.soma[i]
@@ -259,7 +259,7 @@ class Mech:
                 sec.cm = q["bwm_du_c_pF"] * 100.0 / area     # pF over um2 -> uF/cm2
                 self._pca.pset(k, sec(0.5).du_bwm._ref_cad)
                 k += 1
-            self._buf = h.Vector(int(self.have.sum()))
+            self._buf = h.Vector(max(1, int(self.have.sum())))
         if self.gaps == "on":
             g_uS = q["bwm_gap_liu_nS"] / 1000.0
             for e in brain.spec.values["bwm_gap"].index:
@@ -285,9 +285,10 @@ class Mech:
     def _read_ca(self, v_bwm):
         q = self.q
         if self.ca_form == "du2025":
-            self._pca.gather(self._buf)
             ca = np.zeros(len(BWM_NAMES))
-            ca[self.have] = self._buf.as_numpy()
+            if self.have.any():
+                self._pca.gather(self._buf)
+                ca[self.have] = self._buf.as_numpy()
             return ca                                       # mM (the Du shell)
         if self.ca_form == "sigmoid":
             return q["mca_max_uM"] * _sig((v_bwm - q["mca_vhalf_mV"]) / q["mca_k_mV"])     # uM

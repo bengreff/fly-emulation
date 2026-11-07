@@ -1,0 +1,31 @@
+{
+ "check": "temperature (row 25)",
+ "neutral_max_dv_mV": 0.0,
+ "neutral": true,
+ "factors_30C": {
+  "gating": 3.0,
+  "conductance": 1.5,
+  "enzyme": 2.5,
+  "synapse": 2.0,
+  "pump": 2.0,
+  "dmp_clock": 1.0
+ },
+ "arithmetic": true,
+ "finite": true,
+ "t_to_25C_ms": 28.0,
+ "cells_above_m20_mV": {
+  "at_20C": 234.896,
+  "at_25C": 266.56
+ },
+ "wall_per_bio_s": {
+  "without": 9.59,
+  "with_": 9.64
+ },
+ "bars": {
+  "neutral": true,
+  "arithmetic": true,
+  "finite": true,
+  "tracks": true
+ },
+ "verdict": "pass"
+}

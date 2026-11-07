@@ -5,8 +5,11 @@ Writes
                                     the 96 MetaWorm segments with their Cook 2019 muscle names (committed, small)
   viewer/worm/runs/<id>.frames.f32  [n_frames, n_vertices, 3] float32, in body lengths (runs/ is gitignored)
   viewer/worm/runs/<id>.act.f32     [n_frames, 96] float32 muscle activations as fed to the body
+  viewer/worm/runs/<id>.neural.f32  closed loop: [n_frames, n_cells] soma voltage (mV)
+  viewer/worm/runs/<id>.gcamp.f32   closed loop with GCaMP: [n_frames, n_cells] dF/F
+  viewer/worm/runs/<id>.state.f32   closed loop: [n_frames, n_state] every module's scalar state (names in the index)
   viewer/worm/runs/index.json       run list with titles, drive settings and test readouts
-Usage: build_viewer_data.py [run ...]   (default: the MetaWorm test runs in runs/worm/metaworm/)
+Usage: build_viewer_data.py [--src=DIR] [run ...]   (default: the MetaWorm test runs in runs/worm/metaworm/)
 """
 from __future__ import annotations
 
@@ -37,6 +40,12 @@ RUNS = {
                  "amplitude fitted to head kappa*L 4.5"),
     "p1_release": ("Release at 3 s", "key t0_fast for 3 s, then all muscles off"),
     "p0_dead": ("Dead worm", "all muscles off for 10 s"),
+    "everything_body2": ("Everything on, 6 Nov night (10 s)",
+                         "Closed loop, every mechanism on at its guessed or published template: brain.py with receptors, "
+                         "temperature (Q10), sensory transduction (chem cascades, touch, proprio) and the observation "
+                         "model (GCaMP6s, opto, NeuroPAL); the row 22 plate (lawn, O2, CO2, salt, temperature, tap at "
+                         "3 s, eyelash 5-7.3 s, nose 8.5 s); the row 21 layered body with internal damping on the agar "
+                         "film. No behaviour is expected: nothing is fitted to it (Ben, 5 Nov)."),
 }
 
 
@@ -104,8 +113,8 @@ def summary(tests: dict, rid: str) -> dict:
     return out
 
 
-def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
-    """Convert runs/worm/metaworm/<id> to viewer files and merge them into viewer/worm/runs/index.json."""
+def add_runs(ids: list[str], titles: dict | None = None, src: Path = SRC) -> list[dict]:
+    """Convert <src>/<id> (default runs/worm/metaworm/) to viewer files and merge them into viewer/worm/runs/index.json."""
     (VIEW / "data").mkdir(parents=True, exist_ok=True)
     (VIEW / "runs").mkdir(parents=True, exist_ok=True)
     tests = json.load(open(TESTS)) if TESTS.exists() else {}
@@ -114,7 +123,7 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
     titles = {**RUNS, **(titles or {})}
     added = []
     for rid in ids:
-        rec = mw.load(SRC / rid)
+        rec = mw.load(src / rid)
         meta, X = rec["meta"], rec["X"]
         fr = mw.Frame(meta, X[0])
         if not (VIEW / "data" / "body_mesh.json").exists() or rid == ids[0]:
@@ -141,13 +150,26 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
             scene = ChemotaxisScene(field=sc["field"], target=sc["target"], channel=sc["channel"], params=sc["params"])
             entry["chem"] = {"field": sc["field"], "channel": sc["channel"], "params": scene.params,
                              "target_L": ((scene.target_point(X[0]) - c0) / fr.length).tolist()}
-        neural = SRC / f"{rid}.neural.f32"
+        neural = src / f"{rid}.neural.f32"
         if neural.exists() and meta.get("cells"):  # closed loop: the brain's soma voltages at the body's frames
             V = np.fromfile(neural, np.float32).reshape(-1, len(meta["cells"]))[:meta["n_frames"]]
             V.tofile(VIEW / "runs" / f"{rid}.neural.f32")
             entry.update(cells=meta["cells"], brain=meta.get("brain"),
                          label="simulated (closed loop: brain.py and the ported MetaWorm body, every number labelled "
                                "in the ledgers)")
+            n = meta["n_frames"]
+            st = src / f"{rid}.state.f32"
+            if st.exists() and meta.get("state_names"):
+                ns = len(meta["state_names"])
+                np.fromfile(st, np.float32).reshape(-1, ns)[:n].tofile(VIEW / "runs" / f"{rid}.state.f32")
+                entry["state_names"] = meta["state_names"]
+            gc = src / f"{rid}.gcamp.f32"
+            if gc.exists() and meta.get("gcamp"):
+                np.fromfile(gc, np.float32).reshape(-1, len(meta["cells"]))[:n].tofile(VIEW / "runs" / f"{rid}.gcamp.f32")
+                entry["gcamp"] = True
+            entry["brain_config"] = meta.get("brain_config", {})
+            if meta.get("body_info"):
+                entry["body_info"] = meta["body_info"]
         index = [e for e in index if e["id"] != rid] + [entry]
         added.append(entry)
         print(rid, meta["n_frames"], "frames")
@@ -156,4 +178,6 @@ def add_runs(ids: list[str], titles: dict | None = None) -> list[dict]:
 
 
 if __name__ == "__main__":
-    add_runs(sys.argv[1:] or list(RUNS))
+    a = [x for x in sys.argv[1:] if not x.startswith("--src=")]
+    d = next((Path(x.split("=", 1)[1]) for x in sys.argv[1:] if x.startswith("--src=")), SRC)
+    add_runs(a or list(RUNS), src=d.resolve())

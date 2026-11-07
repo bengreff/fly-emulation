@@ -63,7 +63,7 @@ def test_sample_worm():
 
 
 @pytest.mark.parametrize("toggles", [
-    dict(wiring="cook", receptor_sign="on", bwm_coupling="on", innexin_identity="on"),
+    dict(wiring="cook", receptor_sign="on", bwm_coupling="on", bwm_gap_liu="off", innexin_identity="on"),
     dict(wiring="baaiworm", literature_overrides="off"),
 ])
 def test_small_brain(toggles):
@@ -95,6 +95,8 @@ def test_proprio_senses_anterior():
     half excites VB and inhibits DB there, and a B neuron whose field lies wholly behind the bend gets nothing."""
     code = """
 import json, numpy as np
+from wormemu import mech
+mech.REGISTRY[:] = []          # unit test of brain_layers' lumped proprio form (senses_proprio's nested "lumped")
 from wormemu.brain import Brain, sample_worm
 from wormemu.interface import BodyToBrain
 b = Brain(sample_worm(None), toggles=dict(wiring="cook", sens_proprio="on"), cells=["VB03", "DB02", "VB11"])
@@ -113,13 +115,13 @@ print(json.dumps({n: [float(I[b.idx[n]]), float(b.layers.pos[b.idx[n]])] for n i
 
 def test_muscle_active():
     """muscle_active on: c302's muscle membrane at c302's own values, finite and reproducible in a small brain."""
-    r = _run(dict(wiring="cook", muscle_active="on"))
+    r = _run(dict(wiring="cook", muscle_active="on", bwm_membrane="off", muscle_ca="sigmoid"))
     assert r["finite"] and r["same"] and -100 < r["vmin"] and r["vmax"] < 60
     code = """
 import json
 from neuron import h
 from wormemu.brain import Brain, sample_worm, MUSCLE_ACTIVE
-b = Brain(sample_worm(None), toggles=dict(wiring="cook", muscle_active="on"), cells=["DA01", "dBWML6"])
+b = Brain(sample_worm(None), toggles=dict(wiring="cook", muscle_active="on", bwm_membrane="off", muscle_ca="sigmoid"), cells=["DA01", "dBWML6"])
 seg, ref = b.soma[b.idx["dBWML6"]](0.5), h.Section(name="ref")
 nml = {("Leak", "gmax"): 2e-6, ("Leak", "e"): -20.0, ("k_slow_muscle", "gmax"): 4.5833751019872582e-4,
        ("k_fast_muscle", "gmax"): 4.2711643917483308e-5, ("ca_boyle_muscle", "gmax"): 8.12775772264702e-4,
@@ -144,6 +146,8 @@ def test_gap_rectification():
     and back at 1 / gap_rect_ratio of it (Liu 2017), conserving current; off, symmetric."""
     code = """
 import json
+from wormemu import mech
+mech.REGISTRY[:] = []          # the junction alone: registered mechanisms (pumps, Q10, receptors) would move the voltages
 from wormemu.brain import Brain, sample_worm
 out = {}
 for tg in ("off", "on"):
