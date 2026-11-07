@@ -135,11 +135,11 @@ class Channels:
         self.tau, self.isf = p["met_tau_ms"], p["met_is_frac"]
         self.reset()
 
-    def rates(self, bdg):
+    def rates(self, bdg, q=1.0):
         bdg = np.clip(bdg, -60.0, 60.0)
-        a, b, d = self.a, self.b, self.d
-        return (self.rcs * np.exp(b * (1 - a) * bdg), self.rcs * np.exp((1 + b) * (1 - a) * bdg),
-                self.rso * np.exp(d * a * bdg), self.rso * np.exp((1 + d) * bdg))   # R_cs, R_sc, R_so, R_os
+        a, b, d, rcs, rso = self.a, self.b, self.d, self.rcs * q, self.rso * q
+        return (rcs * np.exp(b * (1 - a) * bdg), rcs * np.exp((1 + b) * (1 - a) * bdg),
+                rso * np.exp(d * a * bdg), rso * np.exp((1 + d) * bdg))   # R_cs, R_sc, R_so, R_os
 
     def reset(self):
         rcs, rsc, rso, ros = self.rates(self.g0)
@@ -148,9 +148,10 @@ class Channels:
         self.pc, self.po, self.x = pc, pc * s_c * o_s, np.zeros_like(self.g0)
         self.gam = np.zeros_like(self.g0)
 
-    def step(self, gam_new, dt_ms, h_ms=0.25):
+    def step(self, gam_new, dt_ms, h_ms=0.25, q=1.0):
         """Advance dt with Gamma ramping linearly from its last value to gam_new (um); returns the conducting
-        fraction per patch, P_O + (is/i0) P_S, averaged over the step."""
+        fraction per patch, P_O + (is/i0) P_S, averaged over the step. q multiplies the gating rates (Q10, row 25;
+        the filament's relaxation is mechanical and is not scaled)."""
         nsub = max(1, int(np.ceil(dt_ms / h_ms - 1e-9)))
         h = dt_ms / nsub
         rate = (np.asarray(gam_new, float) - self.gam) / dt_ms
@@ -158,7 +159,7 @@ class Channels:
         x, pc, po, cond = self.x, self.pc, self.po, 0.0
         for _ in range(nsub):
             x = x * e + self.tau * rate * (1 - e)
-            rcs, rsc, rso, ros = self.rates(self.g0 - self.g1 * np.abs(x))
+            rcs, rsc, rso, ros = self.rates(self.g0 - self.g1 * np.abs(x), q)
             # implicit Euler on dPc = -Rcs Pc + Rsc Ps, dPo = -Ros Po + Rso Ps, Ps = 1 - Pc - Po
             m11, m12, m21, m22 = 1 + h * (rcs + rsc), h * rsc, h * rso, 1 + h * (ros + rso)
             r1, r2 = pc + h * rsc, po + h * rso
@@ -260,7 +261,7 @@ class Mech:
         if self.forms[T] == CASCADE:
             self.tap_k = self.tap_k * np.exp(-dt_ms / p["tap_tau_ring_ms"]) + float(obs.get("tap", 0.0))
             gam[trn] += indentation_um(self.tap_k, *eq)
-        frac = self.ch.step(gam, dt_ms)
+        frac = self.ch.step(gam, dt_ms, q=ctx.outputs.get("q10", {}).get("gating", 1.0))
         g = self.ch.per_cell(frac, len(self.cells)) * self.g_unit
         self.cond.set(g)
         gs = np.zeros(n_all)

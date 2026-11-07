@@ -357,8 +357,9 @@ class Mech:
         out = {}
         I = np.zeros(self.n)
         gs = np.zeros(self.n)
+        q = ctx.outputs.get("q10", {})                  # row 25 (mech/temperature.py), 1 without it
         if self.cas is not None:
-            po = self.cas.advance(dt_ms * 1e-3, odor, kcat)
+            po = self.cas.advance(dt_ms * 1e-3 * q.get("enzyme", 1.0), odor, kcat)
             g = p["sens_cng_g_nS"] * po
             if self.glia:
                 g = np.where(self.amph_cg, g * self.b.layers.p["glia_gain"], g)
@@ -374,8 +375,8 @@ class Mech:
                 out["afd_cgmp_uM"] = float(self.cas.x[self.cas.i["cGMP"], afd].mean())
                 out["afd_Tstar_C"] = self.Tstar
         if len(self.tc):
-            e1 = np.exp(-dt_ms / p["sens_trpv_tauG_ms"])
-            e2 = np.exp(-dt_ms / (1000.0 * p["sens_trpv_tauD_s"]))
+            e1 = np.exp(-dt_ms * q.get("gating", 1.0) / p["sens_trpv_tauG_ms"])
+            e2 = np.exp(-dt_ms * q.get("gating", 1.0) / (1000.0 * p["sens_trpv_tauD_s"]))
             self.G = r + (self.G - r) * e1
             self.D = self.G + (self.D - self.G) * e2
             po = np.clip(self.G * (1.0 - p["sens_trpv_phi"] * self.D), 0.0, 1.0)

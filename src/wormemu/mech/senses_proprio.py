@@ -105,7 +105,8 @@ class Mech:
             pinf = 1.0 / (1.0 + np.exp(-(eps - p["proprio_eps_half"]) / p["proprio_eps_slope"]))
             if self.po is None:
                 self.po = pinf
-            self.po = self.po + (pinf - self.po) * (1.0 - np.exp(-dt_ms / p["proprio_tau_ms"]))
+            q = ctx.outputs.get("q10", {}).get("gating", 1.0)       # row 25, 1 without it
+            self.po = self.po + (pinf - self.po) * (1.0 - np.exp(-dt_ms * q / p["proprio_tau_ms"]))
             self.cond.set(self.gmax * self.po)
             gs = np.zeros(n_all)
             np.add.at(gs, self.cond.idx, self.cond.g_nS)

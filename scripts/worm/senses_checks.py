@@ -260,18 +260,19 @@ def awa():
 
 
 # --- in the brain: the nested lumped form and the stimulus signs -------------------------------------------------
-def _brain_run(registry, toggles, seconds, stim=None, rec_cells=()):
+def _brain_run(registry, toggles, seconds, stim=None, rec_cells=(), rec_out=()):
     """One brain (open loop, default observation plus `stim` [(t0_s, t1_s, {side: {channel: value}})]); returns v
     of every cell each step and the mechanisms' outputs for rec_cells. Runs in its own process (NEURON)."""
     from wormemu import mech
     from wormemu.brain import Brain, sample_worm
     from wormemu.interface import default_observation
-    mech.REGISTRY[:] = registry
+    mine = {"temperature", "senses_chem", "senses_touch", "senses_proprio"}
+    mech.REGISTRY[:] = [m for m in mech.REGISTRY if m not in mine] + registry    # wbrain's modules stay (receptors)
     t0 = time.time()
     b = Brain(sample_worm(None), toggles=toggles)
     build = time.time() - t0
     b.reset()
-    V, po, g = [], [], []
+    V, po, g, outs = [], [], [], {k: [] for k in rec_out}
     t0 = time.time()
     n = int(seconds * 1000 / 4.0)
     for k in range(n):
@@ -290,7 +291,9 @@ def _brain_run(registry, toggles, seconds, stim=None, rec_cells=()):
         po.append({c: mo.get("sens_cng_po", {}).get(c, mo.get("sens_trpv_po", {}).get(
             c, mo.get("sens_touch_po", {}).get(c, mo.get("sens_proprio_po", {}).get(c, np.nan)))) for c in rec_cells})
         g.append(np.asarray(mo.get("sens_g_nS", np.zeros(len(b.cell_names)))).copy())
-    return dict(V=np.array(V), po=po, g=np.array(g), names=b.cell_names, build_s=build,
+        for k in rec_out:
+            outs[k].append(mo.get(k, np.nan))
+    return dict(V=np.array(V), po=po, g=np.array(g), outs=outs, names=b.cell_names, build_s=build,
                 wall_per_bio_s=(time.time() - t0) / seconds)
 
 
@@ -491,8 +494,40 @@ def proprio():
     _save("senses_proprio_brain", res, fig)
 
 
+def temp():
+    """Row 25. (1) Neutral: with the worm at T_ref (20 C) the temperature module changes nothing (registry with and
+    without it, the sensory modules on, max |dv| <= 1e-9 mV over 1 s). (2) Arithmetic: at 30 C the factors are the
+    Q10s themselves and the DMP clock factor is 1. (3) Sanity: 3 s with the plate stepping 20 -> 25 C at 1 s:
+    finite; the worm's temperature reaches 25 C within 50 ms; conductance factor 1.5 ** 0.5."""
+    from wormemu.mech import temperature as tm
+    sen = ["senses_chem", "senses_touch", "senses_proprio"]
+    a = _spawn(dict(registry=sen, toggles={}, seconds=1.0))
+    b = _spawn(dict(registry=["temperature"] + sen, toggles={}, seconds=1.0))
+    dv = float(np.nanmax(np.abs(a["V"] - b["V"])))
+    p = {s.id: s.template for s in tm.SPECS}
+    f30 = tm.factors(30.0, p)
+    arith = all(abs(f30[c] - p[f"temp_q10_{c}"]) < 1e-12 for c in tm.CLASSES) and f30["dmp_clock"] == 1.0
+    c = _spawn(dict(registry=["temperature"] + sen, toggles={}, seconds=3.0,
+                    stim=[(1.0, 3.0, {"head": {"temperature_C": 25.0}})], rec_cells=["AWCL", "AFDL", "ALML", "DVA"],
+                    rec_out=["temperature_C"]))
+    T = np.array(c["outs"]["temperature_C"], float)
+    t = (np.arange(len(T)) + 1) * 4.0
+    t25 = float(t[np.flatnonzero((t > 1000) & (T > 24.99))[0]] - 1000) if (T > 24.99).any() else None
+    names = c["names"]
+    above = lambda V, a_, z_: float(np.mean([(V[k][~np.isnan(V[k])] > -20).sum() for k in range(len(V))
+                                              if a_ < t[k] <= z_]))
+    res = dict(check="temperature (row 25)", neutral_max_dv_mV=dv, neutral=dv <= 1e-9, factors_30C=f30,
+               arithmetic=arith, finite=bool(np.isfinite(c["V"]).all()), t_to_25C_ms=t25,
+               cells_above_m20_mV=dict(at_20C=above(c["V"], 500, 1000), at_25C=above(c["V"], 2500, 3000)),
+               wall_per_bio_s=dict(without=round(a["wall_per_bio_s"], 2), with_=round(b["wall_per_bio_s"], 2)))
+    res["bars"] = dict(neutral=res["neutral"], arithmetic=arith, finite=res["finite"],
+                       tracks=t25 is not None and t25 <= 50)
+    res["verdict"] = "pass" if all(res["bars"].values()) else "fail: " + ", ".join(k for k, x in res["bars"].items() if not x)
+    _save("temperature_row25", res, None)
+
+
 if __name__ == "__main__":
     if sys.argv[1] == "_child":
         _child(json.loads(sys.argv[2]))
     else:
-        {"awc": awc, "awa": awa, "chem": chem, "touch": touch, "proprio": proprio}[sys.argv[1]]()
+        {"awc": awc, "awa": awa, "chem": chem, "touch": touch, "proprio": proprio, "temp": temp}[sys.argv[1]]()
