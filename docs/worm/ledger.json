@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:39 CST",
+ "generated_at": "2026-11-07 03:43 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -15,8 +15,8 @@
   "by_label": {
    "derived": 67510,
    "guessed": 9311,
-   "inferred": 329,
-   "measured": 6184,
+   "inferred": 331,
+   "measured": 6182,
    "published_fit": 8103
   },
   "known": 82126,
@@ -32,8 +32,8 @@
    "published_fit": 7376,
    "guessed": 9311,
    "derived": 3102,
-   "inferred": 329,
-   "measured": 332
+   "inferred": 331,
+   "measured": 330
   },
   "known": 11139,
   "placeholder": 9311,
@@ -49,9 +49,9 @@
    },
    "literature": {
     "guessed": 5473,
-    "measured": 6183,
+    "measured": 6181,
     "derived": 3102,
-    "inferred (ours)": 26,
+    "inferred (ours)": 28,
     "published fit": 318
    },
    "NEURON": {
@@ -74,8 +74,8 @@
    "literature": {
     "guessed": 5473,
     "derived": 3102,
-    "measured": 331,
-    "inferred (ours)": 26,
+    "measured": 329,
+    "inferred (ours)": 28,
     "published fit": 318
    },
    "NEURON": {
@@ -139,8 +139,8 @@
   "global": {
    "derived": 17,
    "guessed": 141,
-   "inferred": 43,
-   "measured": 31,
+   "inferred": 45,
+   "measured": 29,
    "published_fit": 277
   },
   "muscle": {
@@ -1269,8 +1269,8 @@
    "by_label": {
     "derived": 1,
     "guessed": 6,
-    "inferred": 1,
-    "measured": 6,
+    "inferred": 2,
+    "measured": 5,
     "published_fit": 62
    }
   },
@@ -1568,8 +1568,7 @@
    "numbers": 4,
    "by_label": {
     "guessed": 2,
-    "inferred": 1,
-    "measured": 1
+    "inferred": 2
    }
   },
   {
@@ -12802,27 +12801,27 @@
    "unit": "Hz",
    "n_values": 1,
    "value_template": 4.3,
-   "template_source": "Weeks et al. 2016 microPublication Biology (microfluidic EPG, wild type on food); Raizen & Avery 1994 Neuron 12:483",
+   "template_source": "Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz; Raizen & Avery 1994 Neuron 12:483 (not free)",
    "bio_min": 3.5,
    "bio_max": 5.0,
    "bound_basis": "measured_this_class",
-   "bound_source": "Weeks et al. 2016 microPublication Biology (microfluidic EPG, wild type on food); Raizen & Avery 1994 Neuron 12:483",
+   "bound_source": "Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz; Raizen & Avery 1994 Neuron 12:483 (not free)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with a registry without mech/organs_pharynx (the old layer then runs); the default runs mech/organs_pharynx's rows; source 6 Nov (catalog audit): was 4.3 Hz, label measured, range [3.5, 5]; citation corrected (Raizen & Avery 1994 is Neuron 12:483, not J Neurosci) and a free quote added; Lee et al. 2017 (PMC5296638) gives a fast-pumping peak of 6 Hz, above the range, so the range is the fed average, not the burst rate",
+   "notes": "read only with a registry without mech/organs_pharynx (the old layer then runs); the default runs mech/organs_pharynx's rows; source 6 Nov (catalog audit): was 4.3 Hz, label measured, range [3.5, 5]; citation corrected (Raizen & Avery 1994 is Neuron 12:483, not J Neurosci) and a free quote added; Lee et al. 2017 (PMC5296638) gives a fast-pumping peak of 6 Hz, above the range, so the range is the fed average, not the burst rate; source 6 Nov (catalog audit): was 4.3 Hz, label measured, range [3.5, 5]; the source text said Weeks 2016 recorded wild type on food; it recorded a control strain in M9 with 10 mM serotonin; Lee et al. 2017 is the free on-food measurement; relabel 6 Nov (catalog audit): was 4.3 Hz, label measured, range [3.5, 5]; 4.3 Hz is in neither free text: it lies between the serotonin-driven 4.14 Hz (Weeks 2016) and the food-saturated 4.5 Hz (Lee 2017); value and range [3.5, 5] unchanged",
    "plan_row": 13,
    "used_by_code": "other form only",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/",
-   "source_quote": "the normal modal pump frequency of ~4 Hz",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/",
+   "source_quote": "a maximal average rate of 270 pumps per min in densities above OD 600 =3 ... Recordings were made in M9 buffer with 10 mM serotonin ... CL802 , 4.14 \u00b1 0.11 Hz",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -55330,28 +55329,28 @@
    "unit": "Hz",
    "n_values": 1,
    "value_template": 4.2,
-   "template_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995); modal pump frequency about 4 Hz in wild type on food by microfluidic EPG (Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology, PMC7255876)",
+   "template_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995), 4.17 Hz; Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz",
    "bio_min": 3.0,
    "bio_max": 5.0,
    "bound_basis": "measured_related",
-   "bound_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995); modal pump frequency about 4 Hz in wild type on food by microfluidic EPG (Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology, PMC7255876)",
+   "bound_source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995), 4.17 Hz; Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "pump rate that gives f = 1 at saturating food; source 6 Nov (catalog audit): was 4.2 Hz, label measured, range [3, 5]; free source and quote; value unchanged (250/min = 4.17 Hz, derived)",
+   "notes": "pump rate that gives f = 1 at saturating food; source 6 Nov (catalog audit): was 4.2 Hz, label measured, range [3, 5]; free source and quote; value unchanged (250/min = 4.17 Hz, derived); source 6 Nov (catalog audit): was 4.2 Hz, label measured, range [3, 5]; the source text said Weeks 2016 recorded wild type on food; it recorded a control strain in M9 with 10 mM serotonin; Lee et al. 2017 is the free on-food measurement; relabel 6 Nov (catalog audit): was 4.2 Hz, label measured, range [3, 5]; 4.2 Hz (250/min) rests on Avery & Horvitz 1990, which is not free; the free on-food maximum is 4.5 Hz (Lee 2017); value and range [3, 5] unchanged",
    "plan_row": 20,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7255876/",
-   "source_quote": "the normal modal pump frequency of ~4 Hz",
-   "audit": "ok",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/",
+   "source_quote": "a maximal average rate of 270 pumps per min in densities above OD 600 =3 ... Recordings were made in M9 buffer with 10 mM serotonin ... CL802 , 4.14 \u00b1 0.11 Hz",
+   "audit": "labelled measured, and the catalog's own 6 Nov source record called Weeks et al. 2016 'wild type on food', but Weeks recorded control strain CL802 in M9 with 10 mM serotonin (4.14 +- 0.11 Hz); 4.2 Hz is 250/min from Avery & Horvitz 1990 (not free); Lee et al. 2017 (PMC5296638) measured N2 on food: maximum average 270 pumps/min (4.5 Hz) [owner B2: metabolism.py:81 (f = 1 at saturating food); 4.5 Hz (Lee 2017) is the free measured value if it matches the pharynx's food-saturated rate (the catalog now says inferred, value unchanged)]",
    "kind": "physiology"
   },
   {
@@ -56355,17 +56354,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 581,
-    "measured": 253,
-    "inferred": 328,
+    "measured": 251,
+    "inferred": 330,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9377,
-    "measured": 6211,
+    "measured": 6209,
     "derived": 67520,
-    "inferred": 334,
+    "inferred": 336,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56374,17 +56373,17 @@
   "by_label_rows": {
    "published_fit": 654,
    "guessed": 581,
-   "measured": 253,
-   "inferred": 328,
+   "measured": 251,
+   "inferred": 330,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
    "guessed": 9377,
-   "measured": 6211,
+   "measured": 6209,
    "derived": 67520,
-   "inferred": 334,
+   "inferred": 336,
    "absent": 1
   },
   "by_plan_row": {
@@ -56556,17 +56555,17 @@
    },
    "13": {
     "rows": {
-     "measured": 6,
+     "inferred": 2,
+     "measured": 5,
      "guessed": 8,
      "published_fit": 62,
-     "inferred": 1,
      "derived": 1
     },
     "numbers": {
-     "measured": 6,
+     "inferred": 2,
+     "measured": 5,
      "guessed": 8,
      "published_fit": 62,
-     "inferred": 1,
      "derived": 1
     },
     "n_rows": 78,
@@ -56673,15 +56672,13 @@
      "guessed": 5,
      "published_fit": 16,
      "derived": 2,
-     "measured": 1,
-     "inferred": 2
+     "inferred": 3
     },
     "numbers": {
      "guessed": 5,
      "published_fit": 16,
      "derived": 2,
-     "measured": 1,
-     "inferred": 2
+     "inferred": 3
     },
     "n_rows": 26,
     "n_numbers": 26
@@ -56903,16 +56900,16 @@
     "rows": {
      "published_fit": 357,
      "guessed": 165,
-     "inferred": 48,
-     "measured": 52,
+     "inferred": 50,
+     "measured": 50,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
      "guessed": 165,
-     "inferred": 48,
-     "measured": 52,
+     "inferred": 50,
+     "measured": 50,
      "derived": 27,
      "absent": 1
     },
@@ -56975,15 +56972,15 @@
     "rows": {
      "published_fit": 30,
      "guessed": 63,
-     "inferred": 11,
-     "measured": 14,
+     "inferred": 12,
+     "measured": 13,
      "derived": 7
     },
     "numbers": {
      "published_fit": 218,
      "guessed": 368,
-     "inferred": 12,
-     "measured": 115,
+     "inferred": 13,
+     "measured": 114,
      "derived": 7
     },
     "n_rows": 125,
@@ -57013,16 +57010,16 @@
     "rows": {
      "published_fit": 566,
      "guessed": 484,
-     "measured": 216,
-     "inferred": 314,
+     "measured": 215,
+     "inferred": 315,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
      "guessed": 8949,
-     "measured": 6073,
+     "measured": 6072,
      "derived": 67509,
-     "inferred": 319
+     "inferred": 320
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57084,14 +57081,14 @@
    "layers": {
     "rows": {
      "guessed": 58,
-     "inferred": 10,
-     "measured": 9,
+     "inferred": 11,
+     "measured": 8,
      "derived": 6
     },
     "numbers": {
      "guessed": 174,
-     "inferred": 11,
-     "measured": 110,
+     "inferred": 12,
+     "measured": 109,
      "derived": 6
     },
     "n_rows": 83,
@@ -57156,15 +57153,13 @@
      "published_fit": 15,
      "derived": 2,
      "guessed": 3,
-     "measured": 1,
-     "inferred": 2
+     "inferred": 3
     },
     "numbers": {
      "published_fit": 15,
      "derived": 2,
      "guessed": 3,
-     "measured": 1,
-     "inferred": 2
+     "inferred": 3
     },
     "n_rows": 23,
     "n_numbers": 23
@@ -57461,17 +57456,17 @@
     "rows": {
      "published_fit": 640,
      "guessed": 580,
-     "inferred": 328,
+     "inferred": 330,
      "derived": 36,
-     "measured": 249,
+     "measured": 247,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
      "guessed": 9376,
      "derived": 3111,
-     "inferred": 334,
-     "measured": 359,
+     "inferred": 336,
+     "measured": 357,
      "absent": 1
     },
     "n_rows": 1834,
@@ -58259,13 +58254,13 @@
    }
   ],
   "audit": {
-   "rows_ok": 1756,
-   "rows_with_problems": 100,
+   "rows_ok": 1755,
+   "rows_with_problems": 101,
    "by_status": {
-    "ok": 1756,
-    "finding": 100
+    "ok": 1755,
+    "finding": 101
    },
-   "rows_read": 221,
+   "rows_read": 222,
    "quotes": {
     "none": 1425,
     "cited free text (scripted check)": 387,
@@ -58274,9 +58269,9 @@
    },
    "with_url": 1508,
    "links": {
-    "distinct": 163,
+    "distinct": 162,
     "by_status": {
-     "200": 150,
+     "200": 149,
      "203": 1,
      "406": 4,
      "unchecked": 4,
@@ -58335,6 +58330,7 @@
     "inferred from mammalian neurons, no paper named": 1,
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
     "inferred, no paper named": 1,
+    "labelled measured, and the catalog's own # Nov source record called Weeks et al. # 'wild t": 1,
     "labelled derived without a citation": 1,
     "labelled inferred with the source text 'non-selective cation channel (GUR# ...; Bhatla & H": 1,
     "# sim units against a range in metres (# sim unit = # mm by the mesh)": 1,
@@ -64419,6 +64415,58 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3426523/"
    },
    {
+    "param_id": "pump_rate_food_hz",
+    "kind": "source",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "4.3 -> 4.3 Hz; measured -> measured; range [3.5, 5] -> [3.5, 5]",
+    "reason": "the source text said Weeks 2016 recorded wild type on food; it recorded a control strain in M9 with 10 mM serotonin; Lee et al. 2017 is the free on-food measurement",
+    "source": "Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz; Raizen & Avery 1994 Neuron 12:483 (not free)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
+   },
+   {
+    "param_id": "pump_rate_food_hz",
+    "kind": "relabel",
+    "origin": "layers",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "4.3 -> 4.3 Hz; measured -> inferred; range [3.5, 5] -> [3.5, 5]",
+    "reason": "4.3 Hz is in neither free text: it lies between the serotonin-driven 4.14 Hz (Weeks 2016) and the food-saturated 4.5 Hz (Lee 2017); value and range [3.5, 5] unchanged",
+    "source": "Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz; Raizen & Avery 1994 Neuron 12:483 (not free)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
+   },
+   {
+    "param_id": "met_pump_max_hz",
+    "kind": "source",
+    "origin": "mech:metabolism",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "4.2 -> 4.2 Hz; measured -> measured; range [3, 5] -> [3, 5]",
+    "reason": "the source text said Weeks 2016 recorded wild type on food; it recorded a control strain in M9 with 10 mM serotonin; Lee et al. 2017 is the free on-food measurement",
+    "source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995), 4.17 Hz; Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
+   },
+   {
+    "param_id": "met_pump_max_hz",
+    "kind": "relabel",
+    "origin": "mech:metabolism",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "4.2 -> 4.2 Hz; measured -> inferred; range [3, 5] -> [3, 5]",
+    "reason": "4.2 Hz (250/min) rests on Avery & Horvitz 1990, which is not free; the free on-food maximum is 4.5 Hz (Lee 2017); value and range [3, 5] unchanged",
+    "source": "~250 pumps/min on food (Avery & Horvitz 1990 J Exp Zool 253:263, not free; Raizen et al. 1995), 4.17 Hz; Lee, Iwanir, Kopito, Scholz, Calarco, Biron & Levine 2017 Nat Commun 8:14221 (PMC5296638): N2 in liquid with bacteria at OD600 0 to 8, the average rate rising to a maximum of 270 pumps/min (4.5 Hz) above OD600 3; Weeks, Robinson, Wanjeri, Copenhaver & Roberts 2016 microPublication Biology (PMC7255876): control strain CL802 in M9 with 10 mM serotonin (no food), 4.14 +- 0.11 Hz (mean +- SEM), modal about 4 Hz",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -64563,7 +64611,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:38 CST",
+   "generated_at": "2026-11-07 03:39 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -65537,17 +65585,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 581,
-    "measured": 253,
-    "inferred": 328,
+    "measured": 251,
+    "inferred": 330,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9377,
-    "measured": 6211,
+    "measured": 6209,
     "derived": 67520,
-    "inferred": 334,
+    "inferred": 336,
     "absent": 1
    }
   }
