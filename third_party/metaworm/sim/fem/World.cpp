@@ -159,6 +159,7 @@ void World::TimeStepping(bool isIntegrated)
 
 	UpdatePositionsAndVelocities(x_n1);
 	mV *= mDampingCoefficient;
+	if(mDampTau > 0) UpdateDampingStretch();  // wormemu extension
 
 	if(isIntegrated)
 	{	
@@ -187,8 +188,13 @@ Eigen::VectorXd World::ProjectiveDynamicsMethod()
 	x_n1 =mQn;
 
 	int i;
+	Eigen::VectorXd dd;  // wormemu extension: corotational damping targets R S_n
 	for(i=0; i<mMaxIteration; i++) {
 		EvaluateDVector(x_n1,d);
+		if(mDampTau > 0) {
+			DampingTargets(dd);
+			x_n1_new = mDynamicSolver.solve(b+mJ*(d+(mDampTau/mTimeStep)*dd));
+		} else
 		x_n1_new = mDynamicSolver.solve(b+mJ*d);
 		if((x_n1_new - x_n1).norm()/x_n1.size() < EPS) {
 			if(mReturnLatest) x_n1 = x_n1_new;  // wormemu extension; upstream returns the iterate before this solve
@@ -233,6 +239,7 @@ void World::SetDragMatrix(const Eigen::SparseMatrix<double>& C)
 	mDragMatrix = C;
 	mHasDrag = true;
 	Eigen::SparseMatrix<double> H = (1.0/(mTimeStep*mTimeStep))*mMassMatrix + mL + (1.0/mTimeStep)*mDragMatrix;
+	if(mDampTau > 0) H += (mDampTau/mTimeStep)*mLfem;  // wormemu extension (pattern inside L's)
 	if(!mDragPatternDone) {
 		mDynamicSolver.analyzePattern(H);
 		mDragPatternDone = true;
@@ -240,6 +247,48 @@ void World::SetDragMatrix(const Eigen::SparseMatrix<double>& C)
 	mDynamicSolver.factorize(H);
 	if(mDynamicSolver.info() != Eigen::Success)
 		std::cerr << "SetDragMatrix: factorization failed" << std::endl;
+}
+
+// wormemu extension (not upstream), inert unless called with tau > 0.
+void World::SetCorotDamping(double tau_s)
+{
+	if(mLfem.rows() == 0) {
+		std::vector<Eigen::Triplet<double>> t;
+		for(auto c : mConstraints)
+			if(c->GetType() == ConstraintType::COROTATE) c->EvaluateLMatrix(t);
+		mLfem.resize(3*mNumVertices,3*mNumVertices);
+		mLfem.setFromTriplets(t.cbegin(), t.cend());
+	}
+	if(mDampS.empty()) UpdateDampingStretch();
+	mDampTau = tau_s;
+}
+
+void World::UpdateDampingStretch()
+{
+	mDampS.resize(mConstraints.size());
+	for(size_t i=0;i<mConstraints.size();i++) {
+		if(mConstraints[i]->GetType() != ConstraintType::COROTATE) continue;
+		mConstraints[i]->EvaluateDVector(mX);  // virtual: F and R at the new positions
+		auto c = static_cast<CorotateFEMConstraint*>(mConstraints[i]);
+		mDampS[i] = c->GetRotationTarget().transpose()*c->GetDeformationGradient();
+	}
+}
+
+// Targets R S_n in the d layout (both of a tet's 3-column groups; zero for other constraints), after EvaluateDVector.
+void World::DampingTargets(Eigen::VectorXd& dd)
+{
+	dd.setZero(3*mConstraintDofs);
+	int index = 0;
+	for(size_t i=0;i<mConstraints.size();i++) {
+		auto c0 = mConstraints[i];
+		if(c0->GetType() == ConstraintType::COROTATE) {
+			auto c = static_cast<CorotateFEMConstraint*>(c0);
+			Eigen::Matrix3d T = c->GetRotationTarget()*mDampS[i];
+			for(int g=0; g<2; g++)
+				for(int j=0; j<3; j++) dd.block<3,1>(3*(index+3*g+j),0) = T.col(j);
+		}
+		index += c0->GetDof();
+	}
 }
 
 void World::EvaluateJMatrix(Eigen::SparseMatrix<double>& J) 

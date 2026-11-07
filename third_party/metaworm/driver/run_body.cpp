@@ -80,6 +80,23 @@ int main(int argc, char** argv)
 	double ct_arg = std::atof(arg(argc, argv, "--ct", "-1"));
 	double cn_arg = std::atof(arg(argc, argv, "--cn", "-1"));
 	int drag_every = std::max(1, std::atoi(arg(argc, argv, "--drag_every", "1")));
+	// Row 21 (wormemu, 2026-11-06; each inert unless given): per-tetrahedron Young's modulus (Pa, float64 per tet in
+	// mesh order, written by wormemu.body.layers), and internal stiffness-proportional damping C_int = tau(w) L with
+	// the shear-thinning time constant tau(w) = tau_ref * clip((w / w_ref)^-alpha, 1/clip, clip) (Backholm et al.
+	// 2013: damping coefficient ~ bending speed^-1), w = RMS rate of the slice tangents (rad/s).
+	std::string tet_youngs = arg(argc, argv, "--tet_youngs", "");
+	std::string damping = arg(argc, argv, "--damping", "none");                 // none | backholm2013
+	double damp_tau_s = std::atof(arg(argc, argv, "--damp_tau_ms", "2")) * 1e-3;
+	double damp_w_ref = std::atof(arg(argc, argv, "--damp_w_ref", "10"));
+	double damp_alpha = std::atof(arg(argc, argv, "--damp_alpha", "1"));
+	double damp_clip = std::atof(arg(argc, argv, "--damp_clip", "10"));
+	if (!tet_youngs.empty()) {
+		std::ifstream fy(tet_youngs, std::ios::binary | std::ios::ate);
+		if (!fy) { std::cerr << "cannot read --tet_youngs " << tet_youngs << std::endl; return 1; }
+		size_t nb = fy.tellg(); fy.seekg(0);
+		wormemu_tet_youngs.resize(nb / sizeof(double));
+		fy.read((char*)wormemu_tet_youngs.data(), nb);
+	}
 
 	// Environment() reads args/train_worm_swim_args.txt relative to the cwd; the caller runs us from SOFTCON_DIR.
 	Environment env;
@@ -93,6 +110,9 @@ int main(int argc, char** argv)
 	const double dt_ctrl = 1.0 / env.GetControlHz();
 	int n_ctrl = (int)std::lround(seconds * env.GetControlHz());
 	const auto& muscles = worm->GetMuscles();
+	if (!wormemu_tet_youngs.empty() && wormemu_tet_youngs.size() != worm->GetTets().size()) {
+		std::cerr << "--tet_youngs has " << wormemu_tet_youngs.size() << " values for " << worm->GetTets().size()
+		          << " tetrahedra" << std::endl; return 1; }
 	const int n_act = worm->GetNumMuscleSegments();
 	const int nv = world->GetPositions().size() / 3;
 
@@ -137,6 +157,8 @@ int main(int argc, char** argv)
 		std::cerr << "--scale worm_1mm needs an RFT --fluid (the published quadratic drag is metre scale), and an RFT "
 		             "fluid needs --scale worm_1mm" << std::endl; return 1; }
 	if (plate && fluid != "agar_rft") { std::cerr << "--substrate agar_plate|agar_film needs --fluid agar_rft" << std::endl; return 1; }
+	if (damping != "none" && (damping != "backholm2013" || !rft)) {
+		std::cerr << "--damping backholm2013 needs an RFT --fluid (it rides on the implicit drag)" << std::endl; return 1; }
 	const double density = 1074.0, length_m = 1e-3, g_si = 9.81;  // Reina 2013 (measured); BBC 2012 model length
 	double ct = fluid == "agar_rft" ? 3.2 : 0.00357, cn = fluid == "agar_rft" ? 128.0 : 0.005675;  // Pa s
 	if (ct_arg > 0) ct = ct_arg;
@@ -171,6 +193,8 @@ int main(int argc, char** argv)
 	Eigen::VectorXd fext = Eigen::VectorXd::Zero(3 * nv);
 	if (plate) for (int i = 0; i < nv; i++) fext[3 * i + 1] = down * (mass_sim / nv) * g_sim;
 	double t_drag = 0.0; long n_drag = 0, n_phys = 0;
+	std::vector<Eigen::Vector3d> t_prev;  // slice tangents at the last drag update (damping's bending rate)
+	double damp_tau_now = 0.0, damp_tau_sum = 0.0, damp_w_sum = 0.0;
 	auto update_drag = [&]() {
 		auto c0 = std::chrono::steady_clock::now();
 		const Eigen::VectorXd& x = world->GetPositions();
@@ -188,6 +212,18 @@ int main(int argc, char** argv)
 		}
 		Eigen::SparseMatrix<double> C(3 * nv, 3 * nv);
 		C.setFromTriplets(trip.begin(), trip.end());
+		if (damping == "backholm2013") {
+			double w = 0.0;
+			if (!t_prev.empty()) {
+				for (int k = 0; k < n_slice; k++) w += (t[k] - t_prev[k]).squaredNorm();
+				w = std::sqrt(w / n_slice) / (drag_every * world->GetTimeStep());
+			}
+			t_prev = t;
+			double r = w > 0 ? std::pow(w / damp_w_ref, -damp_alpha) : damp_clip;
+			damp_tau_now = damp_tau_s * std::min(damp_clip, std::max(1.0 / damp_clip, r));
+			damp_tau_sum += damp_tau_now; damp_w_sum += w;
+			world->SetCorotDamping(damp_tau_now);
+		}
 		world->SetDragMatrix(C);
 		t_drag += std::chrono::duration<double>(std::chrono::steady_clock::now() - c0).count();
 		n_drag++;
@@ -234,6 +270,10 @@ int main(int argc, char** argv)
 		js << " \"world\": {\"length_unit_m\": " << u_m << ", \"rest_length_units\": " << L_sim << ", \"volume_units\": "
 		   << vol << ", \"density_kg_m3\": " << density << ", \"mass_units\": " << mass_sim << ", \"mass_kg\": "
 		   << mass_sim * u_m << ", \"ct_Pa_s\": " << ct << ", \"cn_Pa_s\": " << cn << ", \"drag_every\": " << drag_every
+		   << ", \"tet_youngs\": \"" << tet_youngs << "\", \"damping\": \"" << damping << "\", \"damp_tau_ms\": "
+		   << damp_tau_s * 1e3 << ", \"damp_w_ref\": " << damp_w_ref << ", \"damp_alpha\": " << damp_alpha
+		   << ", \"damp_clip\": " << damp_clip << ", \"damp_tau_ms_mean\": " << (n_drag ? 1e3 * damp_tau_sum / n_drag : 0.0)
+		   << ", \"damp_w_mean\": " << (n_drag ? damp_w_sum / n_drag : 0.0)
 		   << ", \"n_drag_updates\": " << n_drag << ", \"drag_update_s_mean\": " << (n_drag ? t_drag / n_drag : 0.0)
 		   << ", \"gravity_units_s2\": " << (plate ? g_sim : 0.0) << ", \"plate_axis\": 1, \"plate_down\": " << down
 		   << ", \"plate_y\": " << y_plate << ", \"film_y\": " << (film ? y_film : 0.0) << "},\n";

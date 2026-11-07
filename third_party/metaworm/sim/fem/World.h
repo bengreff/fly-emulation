@@ -55,9 +55,21 @@ public:
 	void								SetDragMatrix(const Eigen::SparseMatrix<double>& C);
 	// SetReturnLatestIterate(true): on convergence return the latest solve, not the one before it (see World.cpp).
 	void								SetReturnLatestIterate(bool on);
+	// wormemu extension (2026-11-06): the global stiffness matrix L of the step.
+	const Eigen::SparseMatrix<double>&	GetLMatrix() const { return mL; }
+	// wormemu extension (2026-11-06, inert unless called with tau > 0): corotational Kelvin-Voigt damping of the
+	// tetrahedra, time constant tau (s). Each tet's energy gains (tau/h) w |F - R S_n|^2 (w its FEM weight, R the
+	// current rotation, S_n = R_n^T F_n its stretch at the last step), so the stretch rate is damped and rotation
+	// (rigid or bending) is not. Takes effect at the next SetDragMatrix (it rides on the drag factorisation).
+	void								SetCorotDamping(double tau_s);
 
 private:
 	bool								mReturnLatest = false;
+	double								mDampTau = 0.0;          // wormemu: corotational damping (s), 0 = off
+	Eigen::SparseMatrix<double>			mLfem;                   // wormemu: L of the tetrahedra only
+	std::vector<Eigen::Matrix3d>		mDampS;                  // wormemu: per-tet stretch S_n at the last step
+	void								DampingTargets(Eigen::VectorXd& dd);
+	void								UpdateDampingStretch();
 	bool								mHasDrag = false;
 	bool								mDragPatternDone = false;
 	Eigen::SparseMatrix<double>			mDragMatrix;

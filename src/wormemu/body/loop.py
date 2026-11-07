@@ -19,6 +19,10 @@ are 0 (no objects). With env=environment.Environment(...), the plate fields that
 temperature gradient) override the scene's channels at the head and tail, sampled in plate coordinates (mm,
 forward = rest -z, dorsal = +x, origin the rest nose), and its event schedule supplies contact, nose force and tap.
 
+Body tissue (row 21, layers.py): at the SI scale (world scale worm_1mm) the FEM gets the Frontiers 2024 layered
+moduli per tetrahedron and Backholm 2013 shear-thinning internal damping by default; body={"body_layers":
+"published", "body_damping": "none"} is upstream MetaWorm.
+
 95 -> 96 muscles: segment j of MetaWorm's MDR / MVR / MDL / MVL string is Cook muscle j+1 of dBWMR / vBWMR / dBWML /
 vBWML; MVL segment 24 copies vBWML23 (guessed; vBWML24 does not exist). Activation goes 1:1 into the published
 muscle input (inferred).
@@ -35,6 +39,7 @@ from pathlib import Path
 import numpy as np
 
 from wormemu.interface import BWM_NAMES, HEAD_CHANNELS, TAIL_CHANNELS, BodyToBrain, BrainToBody
+from wormemu.body import layers
 from wormemu.body import metaworm as mw
 from wormemu.body.scene import HEAD_VERTEX, TAIL_VERTEX, ChemotaxisScene
 
@@ -56,12 +61,14 @@ def muscle_map(names: list[str]) -> np.ndarray:
 
 class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
-                 solver_exit: str = "published", world: dict | None = None, env=None):
+                 solver_exit: str = "published", world: dict | None = None, env=None, body: dict | None = None):
         if not mw.DRIVER.exists():
             subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
         self.out = str(Path(out).resolve())
         self.scene = scene or ChemotaxisScene()
         self.env = env  # environment.Environment (row 22) or None = the INTERFACE.md default plate
+        # row 21: layered moduli and internal damping, on by default at the SI scale (layers.py; body = toggles)
+        world, self.body_info = layers.world_flags(body, self.out, world)
         self.frame_every = frame_every
         c_r, c_w = os.pipe()  # commands: us -> driver
         s_r, s_w = os.pipe()  # state: driver -> us
