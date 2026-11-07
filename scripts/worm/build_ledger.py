@@ -31,6 +31,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
+import ledger_catalog as cat
 from bioemu import ledger
 from wormemu import brain_layers
 from wormemu.brain_structure import bwm_name, cengen_class, load_structure
@@ -110,7 +111,8 @@ def mech(id, name, layer, status, source, toggle="", neutral="", default=None, n
 
 
 def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="whole worm", n=1, tsrc="",
-        label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None):
+        label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None, url="",
+        quote="", origin="brain"):
     pd_, pa, pb, pbasis = prior or prior_for(template, lo, hi)
     if label == "guessed" and unit != "flag" and hi > lo and (np.isclose(template, lo) or np.isclose(template, hi)):
         was, template = template, float(np.sqrt(lo * hi) if pd_ == "loguniform" else (lo + hi) / 2)
@@ -119,7 +121,9 @@ def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="w
                      value_template=template, template_source=tsrc, bio_min=lo, bio_max=hi, bound_basis=basis,
                      bound_source=bsrc, bound_verified="unverified", prior_dist=pd_, prior_a=pa, prior_b=pb,
                      prior_basis=pbasis, label=label, fill_kind=ledger.FILL_KIND[label], source_project=proj,
-                     precision_needed="not yet estimated", precision_method="", toggle=toggle, notes=notes))
+                     precision_needed="not yet estimated", precision_method="", toggle=toggle, notes=notes,
+                     plan_row=cat.plan_row(pid, mid), used_by_code="yes", source_url=url, source_quote=quote,
+                     audit="", origin=origin))
     if table is not None:
         assert len(table) == n, (pid, len(table), n)
         values[pid] = table
@@ -131,7 +135,8 @@ def absent(pid, mid, unit, n, grain, applies_to, notes, lo="", hi="", bsrc=""):
                      bound_source=bsrc, bound_verified="", prior_dist="", prior_a="", prior_b="", prior_basis="",
                      label="absent", fill_kind="absent", source_project="none",
                      precision_needed="not yet estimated", precision_method="", toggle="",
-                     notes=notes))
+                     notes=notes, plan_row=cat.plan_row(pid, mid), used_by_code="yes", source_url="",
+                     source_quote="", audit="", origin="brain"))
 
 
 def kin_bounds(name, unit, t):
@@ -690,9 +695,50 @@ def build_layers(st):
         row(s.id, s.mechanism, s.unit, s.template, lo, hi, grain=s.grain, applies_to=s.applies_to,
             n=len(el) if el else 1, tsrc=bsrc if s.lit and lab != "guessed" else "guessed (brain_layers.py)",
             label=lab, proj="literature" if s.lit and lab != "guessed" else "ours", basis=basis, bsrc=bsrc,
-            notes=s.notes, table=tab)
+            notes=s.notes, table=tab, origin="layers")
     mech("other_cells", "Hypodermis, seam, excretory canal, coelomocytes, other glia", "organ", "absent",
          "none", absent_reason="no lumped model yet; no INTERFACE channel needs them this week")
+
+
+def build_registry():
+    """Every registered mechanism module (src/wormemu/mech, B1's registry): its MECHANISMS and SPECS. A module
+    mechanism with a layer's id takes it over; a Spec with an existing row's id replaces that row. The Spec's own
+    label is the value's label (a `lit` code gives only the bounds); optional Spec fields: url, quote,
+    source_project, n and values (element -> value)."""
+    notes = []
+    for name, mod in cat.registry():
+        prow = getattr(mod, "PLAN_ROW", None)
+        neutral = getattr(mod, "NEUTRAL", {})
+        for t in getattr(mod, "MECHANISMS", []):
+            mid, mname, layer, default = t[:4]
+            if any(m["id"] == mid for m in mechs):
+                mechs[:] = [m for m in mechs if m["id"] != mid]
+                notes.append(f"{mid}: taken over by mech/{name}")
+            r_ = prow.get(mid) if isinstance(prow, dict) else prow
+            cat.MECH_ROW[mid] = int(r_ or cat.guess_row(f"{name} {mid}") or 0)
+            mech(mid, mname, layer, "have", f"src/wormemu/mech/{name}.py", toggle=mid,
+                 neutral=neutral.get(mid, "off") if isinstance(neutral, dict) else str(neutral), default=default,
+                 notes=f"registry module {name}" + ("" if r_ else "; PLAN row guessed from the name by the catalog"))
+        for s_ in getattr(mod, "SPECS", []):
+            if s_.lit:
+                lo, hi, _, basis, bsrc = lit(s_.lit)
+            else:
+                lo, hi, basis, bsrc = s_.lo, s_.hi, "guessed" if s_.label == "guessed" else "measured_related", \
+                    s_.source
+            lab = s_.label
+            proj = getattr(s_, "source_project", "") or ("ours" if lab in ("guessed", "inferred") else "literature")
+            el = getattr(s_, "values", None)
+            n = len(el) if el else int(getattr(s_, "n", 1) or 1)
+            tab = None if not el else pd.DataFrame(dict(element=list(el), value=[float(x) for x in el.values()],
+                                                        label=lab, source=s_.source, source_project=proj))
+            if any(r["param_id"] == s_.id for r in rows):
+                rows[:] = [r for r in rows if r["param_id"] != s_.id]
+                values.pop(s_.id, None)
+                notes.append(f"{s_.id}: row replaced by mech/{name}")
+            row(s_.id, s_.mechanism, s_.unit, float(s_.template), lo, hi, grain=s_.grain, applies_to=s_.applies_to,
+                n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=s_.notes, table=tab,
+                url=getattr(s_, "url", ""), quote=getattr(s_, "quote", ""), origin=f"mech:{name}")
+    return notes
 
 
 def sensitivity():
@@ -718,7 +764,7 @@ def sensitivity():
                                      + f"; swing {max(n) - min(n)}")
 
 
-def export(led, extra):
+def export(led, extra, csum=None):
     c = ledger.counts(led)
     by = c["by_label"]
     known = sum(by.get(k, 0) for k in ("measured", "published_fit", "derived", "inferred"))
@@ -777,7 +823,10 @@ def export(led, extra):
                                placeholder=phys.get("guessed", 0), gap=phys.get("absent", 0),
                                must_fill=phys.get("guessed", 0) + phys.get("absent", 0)),
         source_by_fill_kind={k: {sp: dict(v) for sp, v in d.items()} for k, d in src_fill.items()},
-        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra)
+        open_questions=OPEN_QUESTIONS, by_grain=c["by_grain"], mechanisms=mrows, parameters=prow, build_notes=extra,
+        catalog=dict(note="the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and "
+                          "the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are "
+                          "numbers (elements), not rows, unless the key says rows", **(csum or {})))
     (ROOT / "docs/worm/ledger.json").write_text(json.dumps(out, indent=1, default=float))
     return out
 
@@ -792,7 +841,18 @@ def main():
     pts = build_morphology()
     n_c302 = build_c302_muscle()
     build_layers(st)
+    reg_notes = build_registry()
     sensitivity()
+    fill_log = cat.apply_fills(rows, values, ledger.FILL_KIND)
+    body_mechs, body = cat.body_rows()
+    used = {r["param_id"] for r in rows} | {r["param_id"] for r in body if r["used_by_code"] == "yes"}
+    slot_rows, replaced, slot_mechs = cat.slots(used, {m["id"] for m in mechs})
+    for r in [*body, *slot_rows]:
+        r["fill_kind"] = ledger.FILL_KIND.get(r["label"], r["label"])
+    crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
+    audit_of = {c["id"]: c["audit"] for c in crows}
+    for r in rows:
+        r["audit"] = audit_of[r["param_id"]]
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)
@@ -803,8 +863,13 @@ def main():
     led = ledger.load(OUT)
     bad = ledger.validate(led)
     assert not bad, "\n".join(bad[:30])
-    extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302)
-    out = export(led, extra)
+    extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302, registry=reg_notes)
+    hidden = cat.hidden_summary()
+    csum = cat.summary(crows, replaced, fill_log, hidden)
+    cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
+    out = export(led, extra, csum)
+    print(json.dumps(csum["totals"], indent=1))
+    print("audit:", json.dumps(csum["audit"]["rows_ok"]), "ok,", csum["audit"]["rows_with_problems"], "with problems")
     print(json.dumps(out["totals"], indent=1))
     print(json.dumps(out["totals_physiology"], indent=1))
     print(json.dumps(out["source_by_fill_kind"]["physiology"], indent=1))

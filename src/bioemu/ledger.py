@@ -11,6 +11,10 @@ label. Two additions the fly does not have:
 - `value_template` is the number the template organism runs on (the ported value, a literature value or a guess),
   `template_source` where it came from, and `precision_needed` how close to right it has to be (with the method;
   "not yet estimated" until a sensitivity run says otherwise).
+- The catalog columns (worm, 6 Nov): `plan_row` (the PLAN.md section a row, 1-28, the number belongs to),
+  `used_by_code` ("yes" = the code reads it; "slot only" = a number the row's published model needs that no code
+  uses yet), `source_url` and `source_quote` (where the number is, so an audit can open it) and `audit` ("ok" or
+  the problems the scripted and read audit found).
 - `source_project` says whose number it is (BAAIWorm, c302, literature, ours, ...) and `fill_kind` is the label in
   words (measured, published fit, derived, inferred (ours), guessed, absent). `published_fit` is a value another
   project fitted or chose and published (BAAIWorm's tuned densities, c302's muscle channels); `inferred` is kept for
@@ -45,8 +49,10 @@ PARAM_COLUMNS = [
     "prior_dist", "prior_a", "prior_b", "prior_basis", "label", "fill_kind", "source_project", "precision_needed",
     "precision_method",
     "toggle", "notes",
+    "plan_row", "used_by_code", "source_url", "source_quote", "audit",
 ]
-NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b")
+USED_BY_CODE = {"yes", "slot only"}
+NUMERIC = ("n_values", "value_template", "bio_min", "bio_max", "prior_a", "prior_b", "plan_row")
 
 
 @dataclass
@@ -111,6 +117,12 @@ def validate(led: Ledger) -> list[str]:
             bad.append(f"{w} fill_kind {r.fill_kind!r} does not match label {r.label!r}")
         if r.source_project not in SOURCE_PROJECTS:
             bad.append(f"{w} source_project {r.source_project!r}")
+        if pd.isna(r.plan_row) or not 1 <= int(r.plan_row) <= 28:
+            bad.append(f"{w} plan_row {r.plan_row!r}")
+        if r.used_by_code not in USED_BY_CODE:
+            bad.append(f"{w} used_by_code {r.used_by_code!r}")
+        if not r.audit:
+            bad.append(f"{w} no audit")
         if not r.precision_needed:
             bad.append(f"{w} no precision_needed (write 'not yet estimated')")
         elif r.precision_needed != "not yet estimated" and not r.precision_method:

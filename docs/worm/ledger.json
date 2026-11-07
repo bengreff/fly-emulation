@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-05 18:20 CST",
+ "generated_at": "2026-11-06 20:29 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -1131,6 +1131,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_Ra.csv",
    "element_stats": {
     "min": 150.0,
@@ -1167,6 +1172,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "302 of 302 ported values outside the literature range, clipped",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_cm.csv",
    "element_stats": {
     "min": 1.5,
@@ -1203,6 +1213,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_gpas.csv",
    "element_stats": {
     "min": 1.4e-05,
@@ -1239,6 +1254,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "51 of 302 ported values outside the literature range, clipped",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_soma_epas.csv",
    "element_stats": {
     "min": -75.0,
@@ -1276,6 +1296,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_Ra.csv",
    "element_stats": {
     "min": 150.0,
@@ -1312,6 +1337,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "302 of 302 ported values outside the literature range, clipped",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_cm.csv",
    "element_stats": {
     "min": 1.5,
@@ -1348,6 +1378,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_gpas.csv",
    "element_stats": {
     "min": 1.4e-05,
@@ -1384,6 +1419,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "51 of 302 ported values outside the literature range, clipped",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pas_neurite_epas.csv",
    "element_stats": {
     "min": -75.0,
@@ -1421,6 +1461,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/mpas_Ra.csv",
    "element_stats": {
     "min": 300.0,
@@ -1457,6 +1502,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/mpas_cm.csv",
    "element_stats": {
     "min": 1.0,
@@ -1493,6 +1543,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/mpas_gpas.csv",
    "element_stats": {
     "min": 1e-05,
@@ -1529,6 +1584,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/mpas_epas.csv",
    "element_stats": {
     "min": -40.0,
@@ -1565,6 +1625,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_shl1.csv",
    "element_stats": {
     "min": 0.0004,
@@ -1601,6 +1666,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_shk1.csv",
    "element_stats": {
     "min": 0.0,
@@ -1637,6 +1707,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_kvs1.csv",
    "element_stats": {
     "min": 0.0,
@@ -1673,6 +1748,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl2.csv",
    "element_stats": {
     "min": 0.0,
@@ -1709,6 +1789,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl36.csv",
    "element_stats": {
     "min": 0.0,
@@ -1745,6 +1830,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_kqt3.csv",
    "element_stats": {
     "min": 0.0,
@@ -1781,6 +1871,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_egl19.csv",
    "element_stats": {
     "min": 0.0,
@@ -1817,6 +1912,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_unc2.csv",
    "element_stats": {
     "min": 0.0,
@@ -1853,6 +1953,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_cca1.csv",
    "element_stats": {
     "min": 0.0,
@@ -1889,6 +1994,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo1_egl19.csv",
    "element_stats": {
     "min": 0.0,
@@ -1925,6 +2035,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo1_unc2.csv",
    "element_stats": {
     "min": 0.0,
@@ -1961,6 +2076,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo2_egl19.csv",
    "element_stats": {
     "min": 0.0,
@@ -1997,6 +2117,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_slo2_unc2.csv",
    "element_stats": {
     "min": 0.0,
@@ -2033,6 +2158,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_kcnl.csv",
    "element_stats": {
     "min": 0.0,
@@ -2069,6 +2199,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_nca.csv",
    "element_stats": {
     "min": 0.0,
@@ -2105,6 +2240,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/dens_irk.csv",
    "element_stats": {
     "min": 0.0,
@@ -2141,6 +2281,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2168,6 +2313,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2195,6 +2345,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2222,6 +2377,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2249,6 +2409,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2276,6 +2441,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2303,6 +2473,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2330,6 +2505,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2357,6 +2537,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2384,6 +2569,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2411,6 +2601,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2438,6 +2633,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2465,6 +2665,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2492,6 +2697,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2519,6 +2729,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2546,6 +2761,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2573,6 +2793,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2600,6 +2825,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2627,6 +2857,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2654,6 +2889,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2681,6 +2921,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2708,6 +2953,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2735,6 +2985,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2762,6 +3017,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2789,6 +3049,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2816,6 +3081,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2843,6 +3113,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2870,6 +3145,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2897,6 +3177,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2924,6 +3209,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2951,6 +3241,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -2978,6 +3273,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3005,6 +3305,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3032,6 +3337,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3059,6 +3369,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3086,6 +3401,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3113,6 +3433,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3140,6 +3465,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3167,6 +3497,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3194,6 +3529,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3221,6 +3561,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3248,6 +3593,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3275,6 +3625,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3302,6 +3657,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3329,6 +3689,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3356,6 +3721,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3383,6 +3753,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3410,6 +3785,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3437,6 +3817,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3464,6 +3849,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3491,6 +3881,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3518,6 +3913,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3545,6 +3945,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3572,6 +3977,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3599,6 +4009,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3626,6 +4041,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3653,6 +4073,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3680,6 +4105,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3707,6 +4137,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3734,6 +4169,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3761,6 +4201,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3788,6 +4233,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3815,6 +4265,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3842,6 +4297,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3869,6 +4329,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3896,6 +4361,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3923,6 +4393,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3950,6 +4425,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -3977,6 +4457,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4004,6 +4489,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4031,6 +4521,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4058,6 +4553,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4085,6 +4585,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4112,6 +4617,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4139,6 +4649,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4166,6 +4681,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4193,6 +4713,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4220,6 +4745,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4247,6 +4777,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4274,6 +4809,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4301,6 +4841,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4328,6 +4873,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4355,6 +4905,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4382,6 +4937,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4409,6 +4969,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4436,6 +5001,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4463,6 +5033,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4490,6 +5065,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4517,6 +5097,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4544,6 +5129,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4571,6 +5161,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4598,6 +5193,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4625,6 +5225,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4652,6 +5257,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4679,6 +5289,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4706,6 +5321,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4733,6 +5353,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4760,6 +5385,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4787,6 +5417,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4814,6 +5449,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4841,6 +5481,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4868,6 +5513,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4895,6 +5545,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4922,6 +5577,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4949,6 +5609,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -4976,6 +5641,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5003,6 +5673,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5030,6 +5705,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5057,6 +5737,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5084,6 +5769,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5111,6 +5801,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5138,6 +5833,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5165,6 +5865,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5192,6 +5897,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5219,6 +5929,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5246,6 +5961,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5273,6 +5993,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5300,6 +6025,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5327,6 +6057,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5354,6 +6089,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5381,6 +6121,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5408,6 +6153,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5435,6 +6185,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5462,6 +6217,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5489,6 +6249,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5516,6 +6281,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5543,6 +6313,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5570,6 +6345,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5597,6 +6377,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5624,6 +6409,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5651,6 +6441,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5678,6 +6473,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5705,6 +6505,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5732,6 +6537,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5759,6 +6569,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5786,6 +6601,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5813,6 +6633,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5840,6 +6665,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5867,6 +6697,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5894,6 +6729,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5921,6 +6761,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5948,6 +6793,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -5975,6 +6825,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6002,6 +6857,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6029,6 +6889,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6056,6 +6921,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6083,6 +6953,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6110,6 +6985,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6137,6 +7017,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6164,6 +7049,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6191,6 +7081,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6218,6 +7113,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6245,6 +7145,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6272,6 +7177,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6299,6 +7209,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6326,6 +7241,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6353,6 +7273,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6380,6 +7305,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6407,6 +7337,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6434,6 +7369,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6461,6 +7401,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6488,6 +7433,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6515,6 +7465,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6542,6 +7497,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6569,6 +7529,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6596,6 +7561,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6623,6 +7593,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6650,6 +7625,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6677,6 +7657,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6704,6 +7689,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6731,6 +7721,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 4,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6758,6 +7753,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6785,6 +7785,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6812,6 +7817,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6839,6 +7849,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "the mod says 'assumed equal to 40 pS'",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6866,6 +7881,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6893,6 +7913,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6920,6 +7945,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6947,6 +7977,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -6974,6 +8009,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7001,6 +8041,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 6,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7028,6 +8073,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "NEURON default; BAAIWorm never sets it",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7055,6 +8105,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "NEURON default, read by nca",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7082,6 +8137,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "NEURON default; worm salines use 1-5 mM (guessed). With literature_overrides on it is entered as 2000 because cainternm keeps cai in uM",
+   "plan_row": 5,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7109,6 +8169,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "NEURON default 6.3 as ported (literature_overrides off); 20 is a usual worm culture temperature (guessed). Here it only enters the Ca Nernst potential (no mod reads celsius; checked 5 Nov)",
+   "plan_row": 25,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7136,6 +8201,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7163,6 +8233,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 0 (S14); 10 gives 108 (S15); swing 108",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7190,6 +8265,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 100 (S07); 0.2 gives 100 (S08); swing 0",
    "toggle": "",
    "notes": "ported value 0.5 kHz",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7217,6 +8297,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 143 (S13); swing 43",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7244,6 +8329,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -10 gives 14 (S11); 10 gives 145 (S12); swing 131",
    "toggle": "",
    "notes": "ported value 30 mV",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7271,6 +8361,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7298,6 +8393,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 2 gives 105 (S17); 10 gives 93 (S18); swing 12",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7325,6 +8425,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.0333333 gives 99 (S09); 0.2 gives 100 (S10); swing 1",
    "toggle": "",
    "notes": "ported value 0.015 kHz",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7352,6 +8457,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 0 (S16); swing 100",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7379,6 +8489,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; -45 gives 141 (S19); swing 41",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7406,6 +8521,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "ported value 1e-5 uS = 0.01 nS per placed junction, below range C4; the template is 22x it. Range C4 is itself guessed (no measurement found), so the override is ours, not a cited value",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7433,6 +8553,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "every neuron-neuron synapse (transform.py); bounds = BAAIWorm's own weight_range",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7460,6 +8585,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "every neuron-to-muscle synapse",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7487,6 +8617,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "every muscle-to-neuron synapse",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7514,6 +8649,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7541,6 +8681,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7568,6 +8713,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7595,6 +8745,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7622,6 +8777,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7649,6 +8809,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7676,6 +8841,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7703,6 +8873,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7730,6 +8905,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7757,6 +8937,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7784,6 +8969,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7811,6 +9001,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7838,6 +9033,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "construction constant; how BAAIWorm chose it is not checked",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -7865,6 +9065,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_chem_contacts.csv",
    "element_stats": {
     "min": 1.0,
@@ -7901,6 +9106,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "BAAIWorm's sheet also has 14 self pairs (a cell to itself); not used",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_gap_contacts.csv",
    "element_stats": {
     "min": 1.0,
@@ -7937,6 +9147,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_nmj_contacts.csv",
    "element_stats": {
     "min": 1.0,
@@ -7973,6 +9188,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_bwm_gap_contacts.csv",
    "element_stats": {
     "min": 2.0,
@@ -8009,6 +9229,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "BAAIWorm muscle names; 6 pairs go to MCVL24, which the worm does not have",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_nmj_baaiworm.csv",
    "element_stats": {
     "min": 1.0,
@@ -8045,6 +9270,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "BAAIWorm's proprioceptive feedback stand-in (its sheet cites Wen 2012, Krieg 2022); not anatomical",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/wire_mn_baaiworm.csv",
    "element_stats": {
     "min": 1.0,
@@ -8081,6 +9311,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 0 (S01); 2 gives 136 (S02); swing 136",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed |weight| x conductance / Cook count: 0.0578 nS (excitatory), 0.0187 nS (inhibitory) per EM synapse",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
    "element_stats": {
     "min": 0.4472135954999579,
@@ -8117,6 +9352,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.05 gives 110 (S03); 1 gives 93 (S04); swing 17",
    "toggle": "",
    "notes": "ported = BAAIWorm's network average, placed junctions x 0.01 nS / Cook count = 0.00182 nS. Range C4 is itself guessed (no measurement found), so this value is ours",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
    "element_stats": {
     "min": 0.2236067977499789,
@@ -8153,6 +9393,11 @@
    "precision_method": "range-end sensitivity at D8, BRAIN_PORT.md section 5 (measured, report-only): neurons above -20 mV at 6 s, 100 at the template; 0.1 gives 100 (S05); 2 gives 100 (S06); swing 0",
    "toggle": "",
    "notes": "ported = BAAIWorm's total neuron-to-muscle conductance / Cook's NMJ count = 0.0405 nS",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",
    "element_stats": {
     "min": 0.4472135954999579,
@@ -8189,6 +9434,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "macroscopic coupling per neighbouring pair; not scaled by the EM count",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/bwm_gap.csv",
    "element_stats": {
     "min": 5.0,
@@ -8225,6 +9475,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/syn_inhibitory.csv",
    "element_stats": {
     "min": 0.0,
@@ -8263,6 +9518,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/syn_sign_receptor.csv",
    "element_stats": {
     "min": 0.0,
@@ -8301,6 +9561,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value found), so this value is ours",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8328,6 +9593,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "open innexin channels per EM-visible gap contact; no count found",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8355,6 +9625,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "7 of 1091 pairs have a partner with no innexin detected",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/gap_innexin_pair.csv",
    "element_stats": {
     "min": 0.0,
@@ -8391,6 +9666,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "from the Virtual Worm 3D atlas, not an EM reconstruction of one animal",
+   "plan_row": 2,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "labelled derived without a citation; no URL to open",
    "kind": "structure"
   },
   {
@@ -8418,6 +9698,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 2,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "labelled derived without a citation; no URL to open",
    "kind": "structure"
   },
   {
@@ -8445,6 +9730,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8472,6 +9762,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8499,6 +9794,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8526,6 +9826,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8553,6 +9858,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8580,6 +9890,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8607,6 +9922,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8634,6 +9954,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8661,6 +9986,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8688,6 +10018,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8715,6 +10050,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8742,6 +10082,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8769,6 +10114,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8796,6 +10146,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8823,6 +10178,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8850,6 +10210,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8877,6 +10242,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8904,6 +10274,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8931,6 +10306,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8958,6 +10338,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -8985,6 +10370,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9012,6 +10402,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9039,6 +10434,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9066,6 +10466,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9093,6 +10498,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9120,6 +10530,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9147,6 +10562,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9174,6 +10594,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9201,6 +10626,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9228,6 +10658,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "u = log(1 + c/c0)",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9255,6 +10690,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9282,6 +10722,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9309,6 +10754,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9336,6 +10786,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9363,6 +10818,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9390,6 +10850,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9417,6 +10882,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9444,6 +10914,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "one half-saturation for every repellent channel (mM for glycerol, copper, quinine, SDS; uM for octanol, nonanone)",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9471,6 +10946,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9498,6 +10978,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9525,6 +11010,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9552,6 +11042,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "threshold, tracks cultivation",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -9579,6 +11074,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9606,6 +11106,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9633,6 +11138,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -9660,6 +11170,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9687,6 +11202,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9714,6 +11234,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9741,6 +11266,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9768,6 +11298,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9795,6 +11330,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9822,6 +11362,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9849,6 +11394,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9876,6 +11426,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9903,6 +11458,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9930,6 +11490,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9957,6 +11522,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -9984,6 +11554,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10011,6 +11586,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "no measured current per unit curvature found (param_ranges J13 DVA and J14 SMD not retrieved), so the gain and its range are guessed, not cited",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10038,6 +11618,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "a B-type neuron senses the mean curvature over this length ANTERIOR of its soma (Wen et al. 2012: anterior bending drives the region posterior to it); posterior until 5 Nov, which contradicted J12",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -10065,6 +11650,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10092,6 +11682,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10119,6 +11714,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10146,6 +11746,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10173,6 +11778,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10200,6 +11810,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10227,6 +11842,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 12,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10254,6 +11874,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "released at rate x sigmoid((V - Vth_release)/5 mV)",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pep_release_nM_per_s.csv",
    "element_stats": {
     "min": 0.05,
@@ -10290,6 +11915,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10317,6 +11947,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10344,6 +11979,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "measured per pair in Beets et al. 2023 (all <= 500 nM by the pair list's inclusion rule); the per-pair values are not yet in the repo, so the template uses one guessed value",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pep_ec50_nM.csv",
    "element_stats": {
     "min": 10.0,
@@ -10380,6 +12020,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "current at full receptor activation; sign (G-protein class) unknown, template +",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/pep_gain_pA.csv",
    "element_stats": {
     "min": 2.0,
@@ -10416,6 +12061,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 10,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/ma_release_nM_per_s.csv",
    "element_stats": {
     "min": 1.0,
@@ -10452,6 +12102,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 10,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10479,6 +12134,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 10,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10506,6 +12166,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "MOD-1 and LGC-55 EC50 measured (param_ranges D6, D7); others guessed",
+   "plan_row": 10,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/ma_ec50_nM.csv",
    "element_stats": {
     "min": 1000.0,
@@ -10542,6 +12207,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 10,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "values_file": "data/worm/model/values/ma_gain_pA.csv",
    "element_stats": {
     "min": 2.0,
@@ -10578,6 +12248,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "multiplies amphid sensory currents; 1 = no effect",
+   "plan_row": 11,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10605,6 +12280,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 13,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -10632,6 +12312,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 13,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10659,6 +12344,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 13,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "range basis says measured but the range source names no citation; labelled measured without a citation; no URL to open",
    "kind": "physiology"
   },
   {
@@ -10686,6 +12376,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 13,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10713,6 +12408,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -10740,6 +12440,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10767,6 +12472,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10794,6 +12504,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10821,6 +12536,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10848,6 +12568,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10875,6 +12600,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "added to the posterior 1/3 of BWM",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10902,6 +12632,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -10929,6 +12664,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 15,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -10956,6 +12696,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 15,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -10983,6 +12728,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "in the active phase; with I1 and I2 gives the basal rate of param_ranges I3",
+   "plan_row": 15,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11010,6 +12760,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "vulval muscle contraction per egg",
+   "plan_row": 15,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11037,6 +12792,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 20,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11064,6 +12824,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 20,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11091,6 +12856,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "GCaMP6s",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -11118,6 +12888,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -11145,6 +12920,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -11172,6 +12952,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11199,6 +12984,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11226,6 +13016,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11253,6 +13048,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 23,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11280,6 +13080,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 19,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -11307,6 +13112,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 19,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11334,6 +13144,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 19,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11361,6 +13176,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 19,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11388,6 +13208,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
    "kind": "physiology"
   },
   {
@@ -11415,6 +13240,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11442,6 +13272,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "fraction of the odour gain left after full long-term adaptation",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   },
   {
@@ -11469,6 +13304,11 @@
    "precision_method": "",
    "toggle": "",
    "notes": "preferred conductance / reverse conductance. The direction is measured (Liu et al. 2017: current passes from VA5 into AVA, not back); no paper gives a number for the ratio (GAP_RECT_DIRECTION.md)",
+   "plan_row": 8,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
    "kind": "physiology"
   }
  ],
@@ -11491,6 +13331,831 @@
    "nmj": 0.04052583862194016
   },
   "morph_points": 16102,
-  "c302_muscle_rows": 28
+  "c302_muscle_rows": 28,
+  "registry": []
+ },
+ "catalog": {
+  "note": "the one catalog (data/worm/model/catalog.csv): model rows above plus the body ledger and the slots (numbers a PLAN row's published model needs that no code reads yet). Counts are numbers (elements), not rows, unless the key says rows",
+  "totals": {
+   "rows": {
+    "published_fit": 284,
+    "guessed": 88,
+    "measured": 21,
+    "derived": 14,
+    "inferred": 8,
+    "absent": 1
+   },
+   "numbers": {
+    "published_fit": 7808,
+    "guessed": 8966,
+    "measured": 5878,
+    "derived": 67494,
+    "inferred": 13,
+    "absent": 1
+   },
+   "n_rows": 416,
+   "n_numbers": 90160
+  },
+  "by_label_rows": {
+   "published_fit": 284,
+   "guessed": 88,
+   "measured": 21,
+   "derived": 14,
+   "inferred": 8,
+   "absent": 1
+  },
+  "by_label_numbers": {
+   "published_fit": 7808,
+   "guessed": 8966,
+   "measured": 5878,
+   "derived": 67494,
+   "inferred": 13,
+   "absent": 1
+  },
+  "by_plan_row": {
+   "2": {
+    "rows": {
+     "derived": 2
+    },
+    "numbers": {
+     "derived": 64408
+    },
+    "n_rows": 2,
+    "n_numbers": 64408
+   },
+   "4": {
+    "rows": {
+     "published_fit": 171
+    },
+    "numbers": {
+     "published_fit": 171
+    },
+    "n_rows": 171,
+    "n_numbers": 171
+   },
+   "5": {
+    "rows": {
+     "published_fit": 24,
+     "guessed": 3
+    },
+    "numbers": {
+     "published_fit": 6542,
+     "guessed": 709
+    },
+    "n_rows": 27,
+    "n_numbers": 7251
+   },
+   "6": {
+    "rows": {
+     "published_fit": 9,
+     "guessed": 1
+    },
+    "numbers": {
+     "published_fit": 9,
+     "guessed": 1
+    },
+    "n_rows": 10,
+    "n_numbers": 10
+   },
+   "7": {
+    "rows": {
+     "published_fit": 25,
+     "guessed": 6,
+     "measured": 4,
+     "derived": 1
+    },
+    "numbers": {
+     "published_fit": 750,
+     "guessed": 6680,
+     "measured": 5861,
+     "derived": 1985,
+     "inferred": 5
+    },
+    "n_rows": 36,
+    "n_numbers": 15281
+   },
+   "8": {
+    "rows": {
+     "guessed": 4,
+     "derived": 1,
+     "inferred": 1
+    },
+    "numbers": {
+     "guessed": 1094,
+     "derived": 1091,
+     "inferred": 1
+    },
+    "n_rows": 6,
+    "n_numbers": 2186
+   },
+   "9": {
+    "rows": {
+     "guessed": 5
+    },
+    "numbers": {
+     "guessed": 194
+    },
+    "n_rows": 5,
+    "n_numbers": 194
+   },
+   "10": {
+    "rows": {
+     "guessed": 5
+    },
+    "numbers": {
+     "guessed": 34
+    },
+    "n_rows": 5,
+    "n_numbers": 34
+   },
+   "11": {
+    "rows": {
+     "guessed": 1
+    },
+    "numbers": {
+     "guessed": 1
+    },
+    "n_rows": 1,
+    "n_numbers": 1
+   },
+   "12": {
+    "rows": {
+     "published_fit": 37,
+     "guessed": 9,
+     "derived": 3,
+     "absent": 1
+    },
+    "numbers": {
+     "published_fit": 318,
+     "guessed": 199,
+     "derived": 3,
+     "absent": 1
+    },
+    "n_rows": 50,
+    "n_numbers": 521
+   },
+   "13": {
+    "rows": {
+     "measured": 2,
+     "inferred": 1,
+     "guessed": 1
+    },
+    "numbers": {
+     "measured": 2,
+     "inferred": 1,
+     "guessed": 1
+    },
+    "n_rows": 4,
+    "n_numbers": 4
+   },
+   "14": {
+    "rows": {
+     "measured": 1,
+     "guessed": 7
+    },
+    "numbers": {
+     "measured": 1,
+     "guessed": 7
+    },
+    "n_rows": 8,
+    "n_numbers": 8
+   },
+   "15": {
+    "rows": {
+     "measured": 2,
+     "guessed": 2
+    },
+    "numbers": {
+     "measured": 2,
+     "guessed": 2
+    },
+    "n_rows": 4,
+    "n_numbers": 4
+   },
+   "17": {
+    "rows": {
+     "guessed": 26,
+     "inferred": 3,
+     "measured": 3
+    },
+    "numbers": {
+     "guessed": 26,
+     "inferred": 3,
+     "measured": 3
+    },
+    "n_rows": 32,
+    "n_numbers": 32
+   },
+   "18": {
+    "rows": {
+     "measured": 1,
+     "inferred": 1,
+     "guessed": 1
+    },
+    "numbers": {
+     "measured": 1,
+     "inferred": 1,
+     "guessed": 1
+    },
+    "n_rows": 3,
+    "n_numbers": 3
+   },
+   "19": {
+    "rows": {
+     "measured": 1,
+     "guessed": 3
+    },
+    "numbers": {
+     "measured": 1,
+     "guessed": 3
+    },
+    "n_rows": 4,
+    "n_numbers": 4
+   },
+   "20": {
+    "rows": {
+     "guessed": 2
+    },
+    "numbers": {
+     "guessed": 2
+    },
+    "n_rows": 2,
+    "n_numbers": 2
+   },
+   "21": {
+    "rows": {
+     "published_fit": 13,
+     "derived": 4,
+     "guessed": 5
+    },
+    "numbers": {
+     "published_fit": 13,
+     "derived": 4,
+     "guessed": 5
+    },
+    "n_rows": 22,
+    "n_numbers": 22
+   },
+   "22": {
+    "rows": {
+     "published_fit": 5,
+     "measured": 4,
+     "derived": 3,
+     "inferred": 2,
+     "guessed": 2
+    },
+    "numbers": {
+     "published_fit": 5,
+     "measured": 4,
+     "derived": 3,
+     "inferred": 2,
+     "guessed": 2
+    },
+    "n_rows": 16,
+    "n_numbers": 16
+   },
+   "23": {
+    "rows": {
+     "measured": 3,
+     "guessed": 4
+    },
+    "numbers": {
+     "measured": 3,
+     "guessed": 4
+    },
+    "n_rows": 7,
+    "n_numbers": 7
+   },
+   "25": {
+    "rows": {
+     "guessed": 1
+    },
+    "numbers": {
+     "guessed": 1
+    },
+    "n_rows": 1,
+    "n_numbers": 1
+   }
+  },
+  "by_grain": {
+   "cell": {
+    "rows": {
+     "published_fit": 24,
+     "derived": 1
+    },
+    "numbers": {
+     "published_fit": 6542,
+     "guessed": 721,
+     "derived": 282,
+     "inferred": 5
+    },
+    "n_rows": 25,
+    "n_numbers": 7550
+   },
+   "channel": {
+    "rows": {
+     "published_fit": 171
+    },
+    "numbers": {
+     "published_fit": 171
+    },
+    "n_rows": 171,
+    "n_numbers": 171
+   },
+   "class": {
+    "rows": {
+     "inferred": 1
+    },
+    "numbers": {
+     "inferred": 1
+    },
+    "n_rows": 1,
+    "n_numbers": 1
+   },
+   "compartment": {
+    "rows": {
+     "derived": 2
+    },
+    "numbers": {
+     "derived": 64408
+    },
+    "n_rows": 2,
+    "n_numbers": 64408
+   },
+   "connection": {
+    "rows": {
+     "measured": 4,
+     "published_fit": 2,
+     "guessed": 5,
+     "derived": 1
+    },
+    "numbers": {
+     "measured": 5861,
+     "published_fit": 727,
+     "guessed": 7849,
+     "derived": 2794
+    },
+    "n_rows": 12,
+    "n_numbers": 17231
+   },
+   "family": {
+    "rows": {
+     "guessed": 3
+    },
+    "numbers": {
+     "guessed": 54
+    },
+    "n_rows": 3,
+    "n_numbers": 54
+   },
+   "gene": {
+    "rows": {
+     "guessed": 2
+    },
+    "numbers": {
+     "guessed": 65
+    },
+    "n_rows": 2,
+    "n_numbers": 65
+   },
+   "global": {
+    "rows": {
+     "published_fit": 83,
+     "guessed": 76,
+     "inferred": 7,
+     "measured": 17,
+     "derived": 10,
+     "absent": 1
+    },
+    "numbers": {
+     "published_fit": 83,
+     "guessed": 76,
+     "inferred": 7,
+     "measured": 17,
+     "derived": 10,
+     "absent": 1
+    },
+    "n_rows": 194,
+    "n_numbers": 194
+   },
+   "muscle": {
+    "rows": {
+     "published_fit": 4
+    },
+    "numbers": {
+     "published_fit": 285,
+     "guessed": 95
+    },
+    "n_rows": 4,
+    "n_numbers": 380
+   },
+   "pairing": {
+    "rows": {
+     "guessed": 2
+    },
+    "numbers": {
+     "guessed": 106
+    },
+    "n_rows": 2,
+    "n_numbers": 106
+   }
+  },
+  "by_used": {
+   "slot only": {
+    "rows": {
+     "guessed": 8,
+     "absent": 1,
+     "published_fit": 1,
+     "derived": 4,
+     "measured": 4,
+     "inferred": 2
+    },
+    "numbers": {
+     "guessed": 8,
+     "absent": 1,
+     "published_fit": 1,
+     "derived": 4,
+     "measured": 4,
+     "inferred": 2
+    },
+    "n_rows": 20,
+    "n_numbers": 20
+   },
+   "yes": {
+    "rows": {
+     "published_fit": 283,
+     "guessed": 80,
+     "measured": 17,
+     "derived": 10,
+     "inferred": 6
+    },
+    "numbers": {
+     "published_fit": 7807,
+     "guessed": 8958,
+     "measured": 5874,
+     "derived": 67490,
+     "inferred": 11
+    },
+    "n_rows": 396,
+    "n_numbers": 90140
+   }
+  },
+  "by_origin": {
+   "body": {
+    "rows": {
+     "published_fit": 23,
+     "derived": 10,
+     "guessed": 8,
+     "absent": 1,
+     "measured": 4,
+     "inferred": 2
+    },
+    "numbers": {
+     "published_fit": 23,
+     "derived": 10,
+     "guessed": 8,
+     "absent": 1,
+     "measured": 4,
+     "inferred": 2
+    },
+    "n_rows": 48,
+    "n_numbers": 48
+   },
+   "brain": {
+    "rows": {
+     "published_fit": 261,
+     "guessed": 16,
+     "measured": 4,
+     "derived": 4
+    },
+    "numbers": {
+     "published_fit": 7785,
+     "guessed": 8676,
+     "measured": 5861,
+     "derived": 67484,
+     "inferred": 5
+    },
+    "n_rows": 285,
+    "n_numbers": 89811
+   },
+   "layers": {
+    "rows": {
+     "guessed": 64,
+     "inferred": 6,
+     "measured": 13
+    },
+    "numbers": {
+     "guessed": 282,
+     "inferred": 6,
+     "measured": 13
+    },
+    "n_rows": 83,
+    "n_numbers": 301
+   }
+  },
+  "by_kind": {
+   "physiology": {
+    "rows": {
+     "published_fit": 282,
+     "guessed": 88,
+     "derived": 12,
+     "inferred": 8,
+     "measured": 17,
+     "absent": 1
+    },
+    "numbers": {
+     "published_fit": 7081,
+     "guessed": 8966,
+     "derived": 3086,
+     "inferred": 13,
+     "measured": 26,
+     "absent": 1
+    },
+    "n_rows": 408,
+    "n_numbers": 19173
+   },
+   "structure": {
+    "rows": {
+     "measured": 4,
+     "published_fit": 2,
+     "derived": 2
+    },
+    "numbers": {
+     "measured": 5852,
+     "published_fit": 727,
+     "derived": 64408
+    },
+    "n_rows": 8,
+    "n_numbers": 70987
+   }
+  },
+  "biggest_unknown_blocks": [
+   {
+    "id": "syn_strength_per_pair",
+    "plan_row": 7,
+    "mechanism": "wiring",
+    "grain": "connection",
+    "unknown": 3709,
+    "of": 3709,
+    "used_by_code": "yes",
+    "fit_target": 1
+   },
+   {
+    "id": "syn_sign_receptor",
+    "plan_row": 7,
+    "mechanism": "receptor_sign",
+    "grain": "connection",
+    "unknown": 1997,
+    "of": 3709,
+    "used_by_code": "yes",
+    "fit_target": 1
+   },
+   {
+    "id": "gap_strength_per_pair",
+    "plan_row": 8,
+    "mechanism": "gap",
+    "grain": "connection",
+    "unknown": 1091,
+    "of": 1091,
+    "used_by_code": "yes",
+    "fit_target": 1
+   },
+   {
+    "id": "nmj_strength_per_pair",
+    "plan_row": 7,
+    "mechanism": "wiring",
+    "grain": "connection",
+    "unknown": 956,
+    "of": 956,
+    "used_by_code": "yes",
+    "fit_target": 1
+   },
+   {
+    "id": "pas_soma_cm",
+    "plan_row": 5,
+    "mechanism": "passive",
+    "grain": "cell",
+    "unknown": 302,
+    "of": 302,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pas_neurite_cm",
+    "plan_row": 5,
+    "mechanism": "passive",
+    "grain": "cell",
+    "unknown": 302,
+    "of": 302,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "bwm_gap",
+    "plan_row": 12,
+    "mechanism": "bwm_coupling",
+    "grain": "connection",
+    "unknown": 96,
+    "of": 96,
+    "used_by_code": "yes",
+    "fit_target": 1
+   },
+   {
+    "id": "mpas_epas",
+    "plan_row": 12,
+    "mechanism": "muscle_passive",
+    "grain": "muscle",
+    "unknown": 95,
+    "of": 95,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pep_ec50_nM",
+    "plan_row": 9,
+    "mechanism": "peptides",
+    "grain": "pairing",
+    "unknown": 92,
+    "of": 92,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pas_soma_epas",
+    "plan_row": 5,
+    "mechanism": "passive",
+    "grain": "cell",
+    "unknown": 51,
+    "of": 302,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pas_neurite_epas",
+    "plan_row": 5,
+    "mechanism": "passive",
+    "grain": "cell",
+    "unknown": 51,
+    "of": 302,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pep_gain_pA",
+    "plan_row": 9,
+    "mechanism": "peptides",
+    "grain": "gene",
+    "unknown": 51,
+    "of": 51,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "pep_release_nM_per_s",
+    "plan_row": 9,
+    "mechanism": "peptides",
+    "grain": "family",
+    "unknown": 49,
+    "of": 49,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "syn_inhibitory",
+    "plan_row": 7,
+    "mechanism": "syn_sign",
+    "grain": "cell",
+    "unknown": 15,
+    "of": 302,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ma_ec50_nM",
+    "plan_row": 10,
+    "mechanism": "monoamines",
+    "grain": "pairing",
+    "unknown": 14,
+    "of": 14,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ma_gain_pA",
+    "plan_row": 10,
+    "mechanism": "monoamines",
+    "grain": "gene",
+    "unknown": 14,
+    "of": 14,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ma_release_nM_per_s",
+    "plan_row": 10,
+    "mechanism": "monoamines",
+    "grain": "family",
+    "unknown": 4,
+    "of": 4,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "nano_gsc",
+    "plan_row": 6,
+    "mechanism": "ca_nanodomain",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ion_ek",
+    "plan_row": 5,
+    "mechanism": "ions",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ion_ena",
+    "plan_row": 5,
+    "mechanism": "ions",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ion_cao",
+    "plan_row": 5,
+    "mechanism": "ions",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "ion_celsius",
+    "plan_row": 25,
+    "mechanism": "ions",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "syn_exc_k",
+    "plan_row": 7,
+    "mechanism": "syn_exc",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "syn_exc_erev",
+    "plan_row": 7,
+    "mechanism": "syn_exc",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "syn_inh_k",
+    "plan_row": 7,
+    "mechanism": "syn_inh",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   }
+  ],
+  "slots_replaced": [],
+  "audit": {
+   "rows_ok": 363,
+   "rows_with_problems": 53,
+   "problem_kinds": {
+    "no URL to open": 29,
+    "no range": 24,
+    "template # outside": 6,
+    "labelled derived without a citation": 3,
+    "labelled measured without a citation": 2,
+    "range basis says measured but the range source names no citation": 1,
+    "gap without a named source that would fill it": 1
+   }
+  },
+  "fills": [],
+  "hidden_constants": {}
  }
 }
