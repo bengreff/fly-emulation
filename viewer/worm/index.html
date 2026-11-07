@@ -46,7 +46,22 @@
   .lab-measured { background:#1f5f3a; } .lab-derived { background:#2b4f7a; } .lab-inferred { background:#5a4a1f; }
   .lab-guessed { background:#7a2b2b; } .lab-absent { background:#444; } .lab-published { background:#3d3d7a; }
   .st-have { color:#6fd08c; } .st-partial { color:#e0c050; } .st-missing { color:#e06060; }
+  .st-full { color:#6fd08c; } .st-simplified { color:#e0c050; }
   .pass { color:#6fd08c; } .fail { color:#e06060; }
+  .mechgrp { margin:14px 0 4px; font-weight:600; font-size:13px; color:var(--text); border-bottom:1px solid var(--line); padding-bottom:2px; }
+  .mechrow { margin:8px 0; padding:6px 8px; background:#1d2127; border-radius:4px; }
+  .mechrow .mhead { display:flex; gap:8px; align-items:baseline; flex-wrap:wrap; margin-bottom:3px; }
+  .mechrow .mid { color:var(--dim); font-variant-numeric:tabular-nums; }
+  .mechrow .mname { font-weight:600; }
+  .mechrow .mtext { color:var(--text); }
+  .chip { padding:0 6px; border-radius:3px; font-size:11px; }
+  .chip-full { background:#1f5f3a; } .chip-simplified { background:#5a4a1f; }
+  .chip-pass { background:#1f5f3a; } .chip-fail { background:#7a2b2b; } .chip-notchecked { background:#444; }
+  .guide { background:#1a1e24; border:1px solid var(--line); border-radius:5px; padding:8px 10px; margin-bottom:10px; }
+  .guide h3 { margin:10px 0 4px; font-size:13px; }
+  .guide h3:first-child { margin-top:0; }
+  .guide table { margin:4px 0; }
+  .guide .ex { color:var(--dim); font-size:11px; }
   .counts span { margin-right:12px; }
   .muted { color:var(--dim); }
   input[type=search] { width:220px; }
@@ -113,6 +128,7 @@
     </div>
     <div id="tab-mech" class="tab"></div>
     <div id="tab-cat" class="tab">
+      <div class="row" id="catguide"></div>
       <div class="row"><a href="catalog.html" target="_blank" style="color:#7fb0ff">Open the full audited parameter catalog (every row, with sources and audit trail)</a></div>
       <div class="row counts" id="catcounts"></div>
       <div class="row" id="catsrc"></div>
@@ -515,20 +531,40 @@ function runInfo() {
 }
 
 // ---------------------------------------------------------------- mechanisms
-let MECH = null;
+let MECH = null, MECHSUM = null;
 async function loadMech() { try { MECH = await getJSON('data/mechanisms.json'); } catch (e) { MECH = null; } }
+async function loadMechSum() { try { MECHSUM = await getJSON('mechanisms_summary.json'); } catch (e) { MECHSUM = null; } }
+const CHIP_CHECK = { pass: 'pass', fail: 'fail', 'not checked': 'notchecked' };
 function mechView() {
   const el = $('tab-mech');
-  if (!MECH) { el.innerHTML = '<p class="muted">data/mechanisms.json not built yet.</p>'; return; }
+  let html = '';
+  if (!MECHSUM) {
+    html += '<p class="muted">mechanisms_summary.json not built yet.</p>';
+  } else {
+    html += `<p class="muted">${MECHSUM.note}</p>` +
+      MECHSUM.groups.map(g => `<div class="mechgrp">${g.name}</div>` +
+        g.rows.map(m => `<div class="mechrow"><div class="mhead">
+            <span class="mid">#${m.id}</span><span class="mname">${m.name}</span>
+            <span class="chip chip-${m.status}">${m.status}</span>
+            <span class="chip chip-${CHIP_CHECK[m.check] || 'notchecked'}">check: ${m.check}</span>
+          </div><div class="mtext">${m.text}</div></div>`).join('')).join('') +
+      `<p class="muted" style="margin-top:10px">Source: ${MECHSUM.as_of}. ${MECHSUM.source}</p>`;
+  }
   const r = S.run;
   const cur = (sw) => sw.current_by_mode ? (sw.current_by_mode[r.mode] ?? sw.neutral) : sw.neutral;
-  el.innerHTML = `<p class="muted">${MECH.title}. Status: <span class="st-have">have</span> = present in the running body;
-    <span class="st-partial">partial</span> = present but differs from the worm literature (see the catalog); <span class="st-missing">missing</span> = not in the body yet.
-    Toggles show the setting in this run; greyed options are not built yet. Neutral = the published body.</p>
-   <table><thead><tr><th>id</th><th>mechanism</th><th>status</th><th>toggle (this run)</th><th>source</th></tr></thead><tbody>` +
-    MECH.mechanisms.map(m => `<tr><td>${m.id}</td><td>${m.name}${m.notes ? `<div class="muted">${m.notes}</div>` : ''}</td><td class="st-${m.status}">${m.status}</td>
-      <td>${(m.switch || []).map(sw => `<div><span class="muted">${sw.name}:</span> ${sw.options.map(o => `<span class="opt ${sw.available.includes(o) ? '' : 'na'}">${o === cur(sw) ? '&#9673;' : '&#9675;'} ${o}</span>`).join('')}</div>`).join('') || '<span class="muted">none</span>'}</td>
-      <td class="muted">${m.source || ''}</td></tr>`).join('') + '</tbody></table>';
+  html += '<div class="mechgrp">Body-mechanism toggles in this run (3D soft-body driver, MB1-12)</div>';
+  if (!MECH) {
+    html += '<p class="muted">data/mechanisms.json not built yet.</p>';
+  } else {
+    html += `<p class="muted">${MECH.title}. Status: <span class="st-have">have</span> = present in the running body;
+      <span class="st-partial">partial</span> = present but differs from the worm literature (see the catalog); <span class="st-missing">missing</span> = not in the body yet.
+      Toggles show the setting in this run; greyed options are not built yet. Neutral = the published body.</p>
+     <table><thead><tr><th>id</th><th>mechanism</th><th>status</th><th>toggle (this run)</th><th>source</th></tr></thead><tbody>` +
+      MECH.mechanisms.map(m => `<tr><td>${m.id}</td><td>${m.name}${m.notes ? `<div class="muted">${m.notes}</div>` : ''}</td><td class="st-${m.status}">${m.status}</td>
+        <td>${(m.switch || []).map(sw => `<div><span class="muted">${sw.name}:</span> ${sw.options.map(o => `<span class="opt ${sw.available.includes(o) ? '' : 'na'}">${o === cur(sw) ? '&#9673;' : '&#9675;'} ${o}</span>`).join('')}</div>`).join('') || '<span class="muted">none</span>'}</td>
+        <td class="muted">${m.source || ''}</td></tr>`).join('') + '</tbody></table>';
+  }
+  el.innerHTML = html;
 }
 
 // ---------------------------------------------------------------- mechanism state (closed-loop runs)
@@ -573,9 +609,44 @@ function drawState() {
 }
 $('stq').oninput = () => { buildState(); drawState(); };
 
+// ---------------------------------------------------------------- catalog guide (labels, "derived from", unknowns)
+function fmtN(n) { return (n ?? 0).toLocaleString(); }
+function renderCatalogGuide(g) {
+  const el = $('catguide');
+  if (!g) { el.innerHTML = '<p class="muted">catalog_guide.json not built yet (run viewer/worm/build_catalog_guide.py).</p>'; return; }
+  const labTitle = { measured: 'measured', published_fit: 'published fit', derived: 'derived', inferred: 'inferred', guessed: 'guessed' };
+  const exOf = (ex) => ex && ex.param_id ? `<span class="ex">e.g. <b>${ex.param_id}</b>${ex.applies_to ? ' (' + ex.applies_to + ')' : ''}: ${ex.n_values > 1 ? ex.n_values.toLocaleString() + ' values, one shown ' : ''}${ex.value} ${ex.unit || ''} &mdash; ${ex.source || ''}</span>` : '';
+  const labelsHtml = g.labels.map(l => `<tr><td><span class="lab lab-${l.key === 'published_fit' ? 'published' : l.key}">${labTitle[l.key]}</span></td>
+      <td class="num">${fmtN(l.rows)} rows<br><span class="muted">${fmtN(l.numbers)} numbers</span></td>
+      <td>${l.meaning}<br>${exOf(l.example)}</td></tr>`).join('');
+  const df = g.derived_from;
+  const otherRows = df.other_rows.slice(0, 30).map(r => `<li><b>${r.param_id}</b> (row ${r.plan_row}, ${r.unit || ''}): ${r.arithmetic}</li>`).join('');
+  const bef = g.unknowns.before;
+  const befHtml = bef.map(b => `<li><b>${fmtN(b.guessed_numbers)}</b> guessed${b.inferred_numbers ? ` (+ ${fmtN(b.inferred_numbers)} inferred)` : ''} &mdash; ${b.rule}. <span class="muted">${b.note}</span></li>`).join('');
+  el.innerHTML = `<div class="guide">
+    <h3>The scan and the gaps</h3>
+    <p>${g.framing}</p>
+    <h3>What each label means, and why we trust it</h3>
+    <table><tbody>${labelsHtml}</tbody></table>
+    <h3>What "derived" is derived from</h3>
+    <p>Almost all of it (<b>${fmtN(df.reconstruction.numbers)}</b> of the ${fmtN(g.counts.numbers.derived)} derived numbers, over ${df.reconstruction.rows} catalog rows) is ${df.reconstruction.note}</p>
+    <p>The rest, <b>${fmtN(df.other_rows_count)}</b> rows holding ${fmtN(df.other_rows_numbers)} numbers, is one-line arithmetic on a measured value, shown in each row's source note. The full list:</p>
+    <ul>${otherRows}</ul>
+    <h3>How many of today's unknowns could be derived likewise</h3>
+    <p>${g.unknowns.intro}</p>
+    <ul>${befHtml}</ul>
+    <p><b>${fmtN(g.unknowns.before_total_guessed)}</b> guessed numbers sit behind these five rules today (before). ${g.unknowns.after_note}</p>
+    <p class="muted">Generated by viewer/worm/build_catalog_guide.py from docs/worm/ledger.json at ${g.generated_at}. Re-run that script after the ledger is rebuilt to refresh these numbers.</p>
+  </div>`;
+}
+async function loadCatalogGuide() {
+  try { renderCatalogGuide(await getJSON('catalog_guide.json')); } catch (e) { renderCatalogGuide(null); }
+}
+
 // ---------------------------------------------------------------- catalog
 let CAT = [];
 async function loadCatalog() {
+  await loadCatalogGuide();
   let SRC = null;
   try { const c = await getJSON('data/catalog.json'); CAT = c.rows; SRC = c.source_by_fill_kind; } catch (e) { CAT = []; }
   const labs = [...new Set(CAT.map(r => r.label))].sort();
@@ -661,6 +732,7 @@ function loop(now) {
 
 await loadRuns();
 await loadMech();
+await loadMechSum();
 await loadCatalog();
 resize();
 await setRun(params.get('run') || S.runs[0].id);

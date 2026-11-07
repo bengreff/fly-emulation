@@ -1,0 +1,384 @@
+{
+ "generated_by": "viewer/worm/build_catalog_guide.py",
+ "generated_at": "2026-11-07T19:03:48+00:00",
+ "ledger_source": "docs/worm/ledger.json",
+ "framing": "All the mechanisms, and all the parameters except the guessed ones, are the full realisation of a scan of a real C. elegans worm: its cells, their 3D shapes and wiring (from electron-microscopy reconstructions), and published measurements of how its channels, synapses and muscles behave. The guessed parameters are the gaps in that scan that still have to be filled in.",
+ "labels": [
+  {
+   "key": "measured",
+   "title": "measured",
+   "meaning": "Read straight off a cited experiment, scan or electron-micrograph count. We trust these as far as we trust the one paper or dataset, with no extra step in between.",
+   "rows": 251,
+   "numbers": 6209,
+   "example": {
+    "param_id": "wire_chem_contacts",
+    "plan_row": 7,
+    "applies_to": "neuron-neuron chemical pairs",
+    "n_values": 3709,
+    "value": 3.0,
+    "unit": "EM synapses",
+    "source": "per pair (values table)"
+   }
+  },
+  {
+   "key": "published_fit",
+   "title": "published fit",
+   "meaning": "Another project already fitted or chose this value and published it (BAAIWorm, Nicoletti et al., MetaWorm, c302...). We trust it as far as we trust that published model; it was fit to someone else's data, not ours, and not refit here.",
+   "rows": 645,
+   "numbers": 8174,
+   "example": {
+    "param_id": "pas_soma_Ra",
+    "plan_row": 5,
+    "applies_to": "every neuron, soma",
+    "n_values": 302,
+    "value": 269.0,
+    "unit": "ohm cm",
+    "source": "median of the per-cell values (values table)"
+   }
+  },
+  {
+   "key": "derived",
+   "title": "derived",
+   "meaning": "Plain arithmetic on a measured value, with the arithmetic shown in the row's source note. Mostly this is the 3D cell-reconstruction points and diameters (coordinates and widths digitized from BAAIWorm's EM-based cell shapes); a smaller set is one-line arithmetic on a measured quantity (a physical constant, a membrane area from a measured capacitance, an innexin assignment from measured gene expression). We trust these as far as we trust the measurement plus the arithmetic, which anyone can check.",
+   "rows": 38,
+   "numbers": 67519,
+   "example": {
+    "param_id": "ph_area_um2",
+    "plan_row": 13,
+    "applies_to": "pharyngeal muscle",
+    "n_values": 1,
+    "value": 1810.0,
+    "unit": "um2",
+    "source": "Shtonda & Avery 2005 J Exp Biol 208:2177 (PMC1351090), Results: whole-pharynx electrical parameters (opened 6 Nov 2026)"
+   }
+  },
+  {
+   "key": "inferred",
+   "title": "inferred",
+   "meaning": "Reasoned from a source by this project, not a straight measurement or arithmetic, and not a guess either: for example assigning a channel to a cell because its gene is reported expressed there, or picking a receptor's coupling from a homologue. Trust these less than measured or published fit; they are our best reasoned call, not data.",
+   "rows": 327,
+   "numbers": 333,
+   "example": {
+    "param_id": "gap_innexin_unitary",
+    "plan_row": 8,
+    "applies_to": "every innexin (one shared value)",
+    "n_values": 1,
+    "value": 122.0,
+    "unit": "pS",
+    "source": "G\u00fciza, Barr\u00eda, S\u00e1ez & Vega 2018 Front Physiol 9:1414 (PMC6193117), section on innexons, citing Bao, Samuels, Locovei, Macagno, Muller & Dahl 2007 FEBS Lett 581:5703 (leech innexins in Xenopus oocytes; checked in the reference list)"
+   }
+  },
+  {
+   "key": "guessed",
+   "title": "guessed",
+   "meaning": "A bounded placeholder, picked to sit inside a plausible biological range so the model runs, not read off anything. These are the real gaps: the parts of the scan we have not filled in yet.",
+   "rows": 594,
+   "numbers": 9390,
+   "example": {
+    "param_id": "syn_strength_per_pair",
+    "plan_row": 7,
+    "applies_to": "neuron-neuron chemical pairs (wiring=cook)",
+    "n_values": 3709,
+    "value": 0.447,
+    "unit": "nS per EM synapse",
+    "source": "shared default per pair (values table)"
+   }
+  }
+ ],
+ "counts": {
+  "rows": {
+   "published_fit": 645,
+   "guessed": 594,
+   "measured": 251,
+   "inferred": 327,
+   "derived": 38,
+   "absent": 1
+  },
+  "numbers": {
+   "published_fit": 8174,
+   "guessed": 9390,
+   "measured": 6209,
+   "derived": 67519,
+   "inferred": 333,
+   "absent": 1
+  },
+  "total_rows": 1856,
+  "total_numbers": 91626
+ },
+ "derived_from": {
+  "reconstruction": {
+   "rows": 2,
+   "numbers": 64408,
+   "param_ids": [
+    "morph_xyz",
+    "morph_diam"
+   ],
+   "note": "BAAIWorm's 3D reconstruction of each of the 302 neurons: the (x, y, z) position and diameter recorded at every point along the cell, digitized from microscopy. This is almost all of the 'derived' total."
+  },
+  "other_rows": [
+   {
+    "param_id": "gap_innexin_pair",
+    "plan_row": 8,
+    "n_values": 1091,
+    "unit": "flag",
+    "value": 1.0,
+    "arithmetic": "CeNGEN (values table)"
+   },
+   {
+    "param_id": "thermo_tau_adapt_s",
+    "plan_row": 17,
+    "n_values": 1,
+    "unit": "s",
+    "value": 356.0,
+    "arithmetic": "Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (AFD whole-cell, T* adaptation); Yu et al. 2014 Neuron 84:919 (PMC4258139)"
+   },
+   {
+    "param_id": "proprio_field_frac",
+    "plan_row": 17,
+    "n_values": 1,
+    "unit": "body length",
+    "value": 0.2,
+    "arithmetic": "Wen et al. 2012 Neuron 76:750"
+   },
+   {
+    "param_id": "dmp_aboc_delay_s",
+    "plan_row": 14,
+    "n_values": 1,
+    "unit": "s",
+    "value": 2.5,
+    "arithmetic": "Jiang et al. 2022 Nat Commun 13:2783 (PMC9120479), Results (Fig. S4c), freely moving wild type"
+   },
+   {
+    "param_id": "egg_rate_active_per_min",
+    "plan_row": 15,
+    "n_values": 1,
+    "unit": "eggs/min",
+    "value": 2.5,
+    "arithmetic": "Collins et al. 2016 eLife 5:e21126 (citing Waggoner et al. 1998)"
+   },
+   {
+    "param_id": "gcamp_tau_decay_ms",
+    "plan_row": 23,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 893.0,
+    "arithmetic": "Chen et al. 2013 Nature 499:295, Supplementary Table 2 (koff of purified GCaMP6s, stopped flow, room temperature) and Supplementary Table 3 (mouse V1 in vivo, 1 AP)"
+   },
+   {
+    "param_id": "slow_thermo_tau_h",
+    "plan_row": 18,
+    "n_values": 1,
+    "unit": "h",
+    "value": 3.5,
+    "arithmetic": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD T* adaptation)"
+   },
+   {
+    "param_id": "dens_unc103_AVA",
+    "plan_row": 5,
+    "n_values": 1,
+    "unit": "S/cm2",
+    "value": 2.15e-06,
+    "arithmetic": "Nicoletti et al. 2024 PLoS ONE 19:e0298105 (github.com/martinanicoletti92/CelegansInterMotorNeuronsModels @ 84726a72)"
+   },
+   {
+    "param_id": "dens_slo1iso_AVA",
+    "plan_row": 5,
+    "n_values": 1,
+    "unit": "S/cm2",
+    "value": 0.0,
+    "arithmetic": "Nicoletti et al. 2024 PLoS ONE 19:e0298105 (github.com/martinanicoletti92/CelegansInterMotorNeuronsModels @ 84726a72)"
+   },
+   {
+    "param_id": "dens_slo2iso_AVA",
+    "plan_row": 5,
+    "n_values": 1,
+    "unit": "S/cm2",
+    "value": 0.0,
+    "arithmetic": "Nicoletti et al. 2024 PLoS ONE 19:e0298105 (github.com/martinanicoletti92/CelegansInterMotorNeuronsModels @ 84726a72)"
+   },
+   {
+    "param_id": "rec_gabacat_ec50_uM",
+    "plan_row": 7,
+    "n_values": 1,
+    "unit": "uM",
+    "value": 19.0,
+    "arithmetic": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)"
+   },
+   {
+    "param_id": "rec_mod1_tau_rise_ms",
+    "plan_row": 7,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 5.64,
+    "arithmetic": "Rodriguez Araujo, Hernando, Corradi & Bouzat 2022 J Biol Chem 298:102356 (PMC9471462), Results (Activation and desensitization properties of MOD-1)"
+   },
+   {
+    "param_id": "rec_mod1_tau_des_ms",
+    "plan_row": 7,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 413.0,
+    "arithmetic": "Rodriguez Araujo, Hernando, Corradi & Bouzat 2022 J Biol Chem 298:102356 (PMC9471462), Results (Activation and desensitization properties of MOD-1)"
+   },
+   {
+    "param_id": "pc_head_end_y_um",
+    "plan_row": 9,
+    "n_values": 1,
+    "unit": "um (soma y)",
+    "value": -200.0,
+    "arithmetic": "OpenWorm CElegansNeuroML (Virtual Worm) soma positions, data/worm/structure/geometry.csv (brain_structure.soma_y_um): retrovesicular ganglion somas at y -233 to -240 (AVG -237.1, RIFL -239.8, SABD -234.8, RIGL -233.3)"
+   },
+   {
+    "param_id": "pc_vulva_y_um",
+    "plan_row": 9,
+    "n_values": 1,
+    "unit": "um (soma y)",
+    "value": 61.0,
+    "arithmetic": "OpenWorm CElegansNeuroML (Virtual Worm) soma positions, data/worm/structure/geometry.csv (brain_structure.soma_y_um): HSNL and HSNR somas at y 61.05"
+   },
+   {
+    "param_id": "pc_tail_start_y_um",
+    "plan_row": 9,
+    "n_values": 1,
+    "unit": "um (soma y)",
+    "value": 330.0,
+    "arithmetic": "OpenWorm CElegansNeuroML (Virtual Worm) soma positions, data/worm/structure/geometry.csv (brain_structure.soma_y_um): AS11 at y 315.7; the pre-anal ganglion starts at y 357-359 (PVPR 357, PVT 359, VA12 362)"
+   },
+   {
+    "param_id": "temp_tau_ms",
+    "plan_row": 25,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 4.5,
+    "arithmetic": "r^2 / alpha with r 25 um (Sanzeni et al. 2019 Fig 1) and alpha 0.14 mm^2/s (water)"
+   },
+   {
+    "param_id": "proprio_bfield_frac",
+    "plan_row": 17,
+    "n_values": 1,
+    "unit": "body length",
+    "value": 0.2,
+    "arithmetic": "Wen et al. 2012 Neuron 76:750 (PMC3508473)"
+   },
+   {
+    "param_id": "ph_area_um2",
+    "plan_row": 13,
+    "n_values": 1,
+    "unit": "um2",
+    "value": 1810.0,
+    "arithmetic": "Shtonda & Avery 2005 J Exp Biol 208:2177 (PMC1351090), Results: whole-pharynx electrical parameters (opened 6 Nov 2026)"
+   },
+   {
+    "param_id": "glia_rt_f_mV",
+    "plan_row": 11,
+    "n_values": 1,
+    "unit": "mV",
+    "value": 25.3,
+    "arithmetic": "R T / F at 20 C (293.15 K) with R = 8.314462618 J/(mol K) and F = 96485.33212 C/mol (CODATA 2018, NIST)"
+   },
+   {
+    "param_id": "other_area_hyp_um2",
+    "plan_row": 16,
+    "n_values": 1,
+    "unit": "um2",
+    "value": 160000.0,
+    "arithmetic": "derived: 2 pi r L with r = 25 um (Sanzeni et al. 2019 eLife 8:e43226 Fig 1, adult radius) and L = 1 mm (adult hermaphrodite length, WormAtlas)"
+   },
+   {
+    "param_id": "pump_vol_neuron_um3",
+    "plan_row": 27,
+    "n_values": 1,
+    "unit": "um3",
+    "value": 72.0,
+    "arithmetic": "BAAIWorm b99ca5a hoc morphologies (Zhao et al. 2024 Nat Comput Sci 4:978), third_party/baaiworm/model/*.hoc, the 302 neurons: whole-cell volume as the sum over sections of frustum volumes pi/12 L (d1^2 + d1 d2 + d2^2) between pt3d points"
+   },
+   {
+    "param_id": "pump_rt_f_mV",
+    "plan_row": 27,
+    "n_values": 1,
+    "unit": "mV",
+    "value": 25.3,
+    "arithmetic": "R T / F at 20 C (293.15 K) with R = 8.314462618 J/(mol K) and F = 96485.33212 C/mol (CODATA 2018, NIST)"
+   },
+   {
+    "param_id": "deb_t_ref_K",
+    "plan_row": 20,
+    "n_values": 1,
+    "unit": "K",
+    "value": 293.0,
+    "arithmetic": "AmP Caenorhabditis_elegans entry (abj; opened 6 Nov 2026), parameter values page; excerpt in data/worm/catalog/excerpts/amp_celegans_par.txt"
+   },
+   {
+    "param_id": "obs_gcamp6s_thalf_ms",
+    "plan_row": 23,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 619.0,
+    "arithmetic": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)"
+   },
+   {
+    "param_id": "obs_gcamp6f_thalf_ms",
+    "plan_row": 23,
+    "n_values": 1,
+    "unit": "ms",
+    "value": 176.0,
+    "arithmetic": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)"
+   }
+  ],
+  "other_rows_count": 26,
+  "other_rows_numbers": 1116
+ },
+ "unknowns": {
+  "intro": "The big guessed blocks are per-pair (one guessed number for every connected neuron pair) or per-cell (one guessed number for every neuron). The plan today is to re-express each of those blocks as a rule applied to measured structure, the same way 'derived' already works for the cell shapes, rather than leaving them as flat placeholders.",
+  "before": [
+   {
+    "rule": "synapse strength = EM contact count x a unit conductance per receptor class",
+    "param_ids": [
+     "syn_strength_per_pair",
+     "nmj_strength_per_pair"
+    ],
+    "guessed_numbers": 4665,
+    "note": "today one shared per-contact value times Cook 2019's measured EM contact count, for every chemical synapse and neuromuscular junction pair."
+   },
+   {
+    "rule": "gap-junction strength = EM gap-junction measure x an innexin unitary conductance",
+    "param_ids": [
+     "gap_strength_per_pair"
+    ],
+    "guessed_numbers": 1091,
+    "note": "today one shared per-contact value times Cook 2019's measured EM gap count."
+   },
+   {
+    "rule": "receptor identity from measured gene expression (CeNGEN)",
+    "param_ids": [
+     "syn_sign_receptor"
+    ],
+    "guessed_numbers": 1997,
+    "note": "today which receptor class carries a given chemical synapse is guessed for most pairs."
+   },
+   {
+    "rule": "capacitance = specific capacitance x membrane area (from the cell reconstruction)",
+    "param_ids": [
+     "pas_soma_cm",
+     "pas_neurite_cm"
+    ],
+    "guessed_numbers": 604,
+    "note": "today one shared capacitance per compartment type, not each cell's own reconstructed area."
+   },
+   {
+    "rule": "channel density from a gene-expression map (CeNGEN, by selector battery)",
+    "param_ids": [
+     "dens_* (channel density rows)"
+    ],
+    "guessed_numbers": 189,
+    "inferred_numbers": 216,
+    "note": "today 189 of 438 channel-density numbers are guessed and 216 more are inferred, per (gene, cell class), not yet read off an expression map the way row 3's channel presence already is."
+   }
+  ],
+  "before_total_guessed": 8546,
+  "after_count_source": "docs/worm/UNKNOWNS.md",
+  "after_count_exists": false,
+  "after_count": null,
+  "after_note": "docs/worm/UNKNOWNS.md does not exist yet. When the modelling agent writes it, this script will read the exact after-count from it; until then, the before-count above is all we can show."
+ }
+}

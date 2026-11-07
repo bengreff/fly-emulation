@@ -1,0 +1,268 @@
+{
+ "title": "Mechanisms in the worm model, plain English (rows 1-28)",
+ "note": "One entry per row of docs/worm/MECHANISMS_AUDIT.md, written for a reader who isn't a biologist. 'full' means the mechanism runs as a real published mechanistic model (the quality of the numbers that feed it is a separate question, answered by the Catalog tab); 'simplified' means the real worm's mechanism is simpler here than the real thing (a shared value where every cell differs, a mechanism built from scratch because no published model exists, or a piece that is missing outright). 'check: pass/fail' is whether a written-down test (a unit check) came out right; 'not checked' means no such test has been run yet.",
+ "as_of": "docs/worm/MECHANISMS_AUDIT.md, 7 Nov 2026, main at 5b7e141",
+ "source": "docs/worm/MECHANISMS_AUDIT.md (full table), docs/worm/TO_A_REAL_WORM.md (what would close each gap)",
+ "regenerate": "Hand-written from docs/worm/MECHANISMS_AUDIT.md rows 1-28. When that audit changes materially, re-read it and update this file's 28 entries by hand (no generator script yet; the audit itself is prose, not structured data, so there is nothing mechanical to parse).",
+ "groups": [
+  {
+   "name": "Neurons",
+   "rows": [
+    {
+     "id": 1,
+     "name": "Cell inventory",
+     "group": "Neurons",
+     "status": "full",
+     "check": "pass",
+     "text": "C. elegans has a fixed, fully catalogued set of cells: 302 neurons, 95 body-wall muscles, support cells (glia) and organ cells, each individually named by past researchers. The model builds all 302 neurons and 95 muscles from Cook et al. 2019's wiring diagram, plus 46 glia and 8 \"end organ\" cells from the cell atlas, and the gland/organ cells for the gut, pharynx and reproductive system. This cell list is the skeleton everything else (channels, synapses, muscles) attaches to. Status: full, and it checks out: the glia names and basic properties match WormAtlas, and all 16 gap junctions tested matched Cook's data; a handful of rare cells (6 end organs, the seam skin cells) are missing because the source wiring diagram has nothing to attach them to."
+    },
+    {
+     "id": 2,
+     "name": "Morphology and compartments",
+     "group": "Neurons",
+     "status": "full",
+     "check": "pass",
+     "text": "Each neuron is not a point: it has a real 3D shape, a cell body plus thin branches (\"neurites\"), built of a tube of varying width that a 3D microscopy reconstruction recorded as a string of points and diameters. The model loads one digitized reconstruction per cell from the BAAIWorm project (one real worm's imaged shape, chopped into 2-micrometre segments called compartments). This geometry sets the electrical compartments that channel densities, calcium pools and synapse placement all depend on. Status: full, and it matches the reference run it was ported from to within rounding error; one planned check (whether finer compartment spacing changes the answer) was never run, and the branches themselves carry no channels, only the cell body does."
+    },
+    {
+     "id": 3,
+     "name": "Channel presence per class (CeNGEN)",
+     "group": "Neurons",
+     "status": "full",
+     "check": "not checked",
+     "text": "Which of the worm's roughly 80 ion-channel genes each neuron actually turns on (its \"channel complement\") was mapped gene by gene across every neuron type by the CeNGEN single-cell gene-expression atlas. The model reads that atlas directly, with a presence/absence cutoff (\"threshold 2\") to decide whether a gene counts as expressed in a cell type, and lets a handful of specific channel genes be switched using Nicoletti et al. 2024's models. This decides which channel models (row 4) get built into each neuron. Status: full as a readout of the atlas, but never checked against any independent measurement, and the on/off cutoff is a judgement call, not a measured fact; most CeNGEN genes still have no working channel model to plug into."
+    },
+    {
+     "id": 4,
+     "name": "Channel kinetics",
+     "group": "Neurons",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Each type of ion channel has its own measured voltage- and time-dependent behaviour (\"kinetics\"), usually from patch-clamp electrophysiology on cells expressing just that one channel. The model ports exact published kinetic models for 16 channel types: 14 genes from BAAIWorm and 4 more from Nicoletti et al. 2024 (including the calcium-activated potassium channels slo-1 and slo-2). Multiplied by row 5's densities, this sets how each neuron actually fires. Status: full for those 16 channels, but missing for many other channel gene families (potassium leak channels, stretch and TRP channels, cyclic-nucleotide-gated channels) because no one has published their kinetics yet; one check passed exactly, a second (testing the same cell's kinetics inside the full brain model) came out eight times too strong, and that mismatch is unresolved."
+    },
+    {
+     "id": 5,
+     "name": "Channel densities, membrane capacitance, leak, axial resistance",
+     "group": "Neurons",
+     "status": "full",
+     "check": "not checked",
+     "text": "How many copies of each channel sit in a neuron's membrane (density), plus passive electrical properties like membrane capacitance (how much charge the membrane can store, which sets how fast its voltage can change) and internal resistance. The model uses BAAIWorm's per-cell fitted values as published, clipping any value that strayed outside a literature-sane range. These numbers set how excitable each neuron is and feed directly into every spike and the calcium that follows (row 6). Status: full in the sense of using the published numbers as given, but never refit against our own electrical recordings, and about one in ten of these values is a guess (the clipped-range placeholder) rather than a published or measured number."
+    },
+    {
+     "id": 6,
+     "name": "Calcium handling",
+     "group": "Neurons",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Calcium ions entering a neuron through channels get buffered, pumped and used to signal downstream events; real neurons mix fast, local (\"nanodomain\") calcium pools right next to channels with slower whole-cell pools. The model uses Nicoletti 2019's equation for a calcium pool sized to each neuron's real cell volume, plus BAAIWorm's fast nanodomain pools for the slo-1/slo-2 channels. This calcium drives the fluorescent indicator used for observation (row 23) and the channels it feeds back on. Status: full for the pools it models, missing entirely for calcium released from internal stores and for calcium in the thin branches; the equation itself checks out exactly, but the modelled cell volumes are up to 3x off from measured neuron volumes, and calcium barely moves in a 10-second run, so the simulated calcium-imaging signal stays nearly flat."
+    }
+   ]
+  },
+  {
+   "name": "Synapses and gap junctions",
+   "rows": [
+    {
+     "id": 7,
+     "name": "Chemical synapses",
+     "group": "Synapses and gap junctions",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Neurons talk across a synapse by releasing a neurotransmitter (a signalling chemical) that opens receptor channels on the other side; which transmitter, which receptor, and how strong the connection is differ synapse by synapse. The model wires every synapse from Cook et al. 2019's microscopy-based connectome (count and polarity) and builds 13 receptor types with realistic opening, closing and desensitisation kinetics. Each synapse takes the sending neuron's voltage and turns it into current in the receiving neuron. Status: simplified in two important ways: one shared release curve stands in for every neuron type instead of one per type, and the actual strength of each individual connection is a guessed placeholder scaled only by how many contact points microscopy counted. One receptor-specific check passed; a composite test on a neuromuscular junction failed (modelled inhibitory current decays in 29 milliseconds against a measured 25)."
+    },
+    {
+     "id": 8,
+     "name": "Gap junctions per innexin",
+     "group": "Synapses and gap junctions",
+     "status": "full",
+     "check": "not checked",
+     "text": "Some neuron pairs are connected directly by gap junctions: physical pores, built from proteins called innexins, that let electrical current flow straight between cells with no chemical step. The model wires every gap junction from Cook's connectome, assigns which innexin gene it is built from, and gives a handful of pairs voltage-dependent \"rectification\" (current flows more easily one way than the other). This directly couples the voltage of connected neuron pairs. Status: full as a wiring diagram, but the actual conductance of each junction is the product of two guessed numbers (channel count and unitary conductance), not fitted to any data, and this has never been checked against a bar."
+    },
+    {
+     "id": 24,
+     "name": "Synaptic plasticity and learning substrates",
+     "group": "Synapses and gap junctions",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Real synapses change strength with use: short-term plasticity makes them facilitate or depress over milliseconds to seconds as the supply of ready-to-release neurotransmitter packets runs low, some circuits habituate (weaken) with repeated taps, and some circuits store longer memories, such as pairing salt with no food. The model runs a full published short-term-plasticity model (Dittman and Regehr) at every synapse, plus a tap-habituation model; associative learning for salt, temperature and pathogen avoidance is one simplified internal number per behaviour, since no published whole-circuit model for those exists. This modulates row 7's synapse strength over time, and associative learning reads the worm's feeding state (row 20). Status: full for short-term plasticity and habituation, both of which pass their checks; simplified (\"one placeholder number\") for associative learning; a check on GABA synapses fails, and GABA synapses currently borrow numbers tuned for acetylcholine."
+    },
+    {
+     "id": 26,
+     "name": "Noise",
+     "group": "Synapses and gap junctions",
+     "status": "full",
+     "check": "pass",
+     "text": "Real synapses and channels are noisy: neurotransmitter is released in discrete random packets (\"quanta\"), and channels flicker open and shut one molecule at a time, both adding randomness around the average signal. The model runs full quantal-release noise at every chemical synapse and full stochastic channel noise (using a diffusion approximation) at every neuron's cell body. This adds realistic trial-to-trial variability on top of the synapses (row 7), gap junctions (row 8) and neuron channels. Status: full, and every one of its own checks passes, but it only covers BAAIWorm's original 15 channel types, not the 5 extra Nicoletti channels added in row 4, and it does not yet reach the muscles."
+    }
+   ]
+  },
+  {
+   "name": "Neuromodulation and slow states",
+   "rows": [
+    {
+     "id": 9,
+     "name": "Neuropeptides",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "pass",
+     "text": "Beyond fast synapses, neurons release small protein signals (\"neuropeptides\") into the fluid around them (the body's internal fluid cavity) that drift and bind distant receptors minutes later, a slow broadcast layered on top of the fast wiring. No published whole-worm model of this exists, so this is a from-scratch model of 4 body-fluid compartments, vesicle release, diffusion and clearance, and receptor occupancy feeding 3 G-protein signalling families. It reads every neuron's activity and slowly changes release rates and channel gains elsewhere in the brain. Status: simplified (built here, not ported); the internal arithmetic checks out, but a third of its roughly 69 receptors have a guessed G-protein coupling, one coupling type (\"Gi\") ends up dominating almost everything, and this has never been checked against real pharmacology."
+    },
+    {
+     "id": 10,
+     "name": "Monoamines",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "not checked",
+     "text": "Dopamine, serotonin, octopamine and tyramine are chemical signals (monoamines) that are released and cleared more like classic neurotransmitters, but act broadly like slow modulators. The model gives them vesicle stores, two measured reuptake transporters (MOD-5 for serotonin, DAT-1 for dopamine), and amine-gated chloride channels, built on the same framework as row 9. These feed egg-laying (row 15) and amine-sensitive receptors across the brain. Status: simplified, since store size and release rate are guessed, two of the four amines (octopamine, tyramine) have no real clearance mechanism (only a generic decay), and no amine concentration or effect has yet been checked against data."
+    },
+    {
+     "id": 11,
+     "name": "Glia",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Glia are the worm's support cells; its amphid sheath glia, for example, buffer the potassium ion concentration around sensory neuron endings, shaping how those neurons respond. The model builds 10 glial cells wired on Cook's gap junctions, with one shared potassium pool per side standing in for the sheath cell's buffering (using a generic \"Kir4.1-type\" channel borrowed from mammalian glia, since no worm-specific model exists), plus a chloride-buffering effect near one sensory neuron (AFD). This shifts the reversal potential (the voltage ion channels pull toward) of the sensory neurons it wraps. Status: simplified, since there is no published C. elegans glia model to build from, and the potassium pool is not even linked to the actual sheath cell built in row 1; its check fails on 3 of 4 measures, including the recovery time and the left/right asymmetry it should show."
+    },
+    {
+     "id": 18,
+     "name": "Slow intracellular signalling",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "pass",
+     "text": "Inside cells, slower biochemical cascades (seconds to tens of minutes) adapt a cell's sensitivity: proteins such as EGL-4 (a kinase, an enzyme that tags other proteins) or CMK-1 build up slowly and dial down a sensory neuron's response after sustained stimulation. The model represents each such pathway, in each cell, as one bounded number that rises and decays, standing in for the real cascade's effect, for example by scaling how much a sensory neuron releases rather than modelling the biochemistry itself. This feeds back onto the senses (row 17) and onto learning (row 20's feeding state reaches it). Status: simplified for every pathway it covers; two pathways (DAF-7, CREB) exist only as unused numbers that nothing in the model reads yet. Its own maths checks out, and the one directly measured time constant (CMK-1) matches data."
+    },
+    {
+     "id": 19,
+     "name": "Activity-dependent expression and homeostatic tuning",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "pass",
+     "text": "Neurons can slowly adjust their own channel numbers to keep their long-run activity near a target level, a real, measured phenomenon called homeostasis. The model ports a published integral-control model (O'Leary, Williams, Franci and Marder 2014) for three specific channels (UNC-2, EGL-19, SHL-1). This slowly rewrites row 5's channel densities based on each neuron's own calcium level (row 6). Status: full for those three channels and its check passes, but the \"target\" the model holds a neuron to is simply wherever that neuron happened to start, not a measured biological set point, and every other channel has no such tuning at all."
+    },
+    {
+     "id": 25,
+     "name": "Temperature dependence of rates",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "pass",
+     "text": "Nearly every biochemical and channel rate speeds up with temperature, usually described by a \"Q10\" factor (how much the rate multiplies per 10 degrees Celsius), and the worm senses and follows temperature gradients. The model applies one shared Q10 multiplier per rate class, driven by a single thermal time constant tracking the sensed head temperature. This is read by the sensory modules (row 17) and by the sodium pump and defecation clock (rows 27, 14); it does not reach the channel-opening maths itself, because the underlying published channel models have no built-in temperature term. Status: simplified; its own sanity checks pass, but no whole-worm temperature measurement exists to check it against, and because it never reaches channel gating, a large share of real temperature sensitivity is simply missing."
+    },
+    {
+     "id": 27,
+     "name": "Ion pumps and concentration homeostasis",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "pass",
+     "text": "After a neuron fires, molecular pumps push sodium back out and potassium back in to restore the resting ion balance; real cells use several pump types (the sodium/potassium pump, plus calcium pumps PMCA and SERCA, and a sodium-calcium exchanger NCX). The model includes only the sodium/potassium pump, using a published mammalian heart-cell kinetic form (Luo-Rudy 1994), tracking one sodium concentration per neuron and muscle. It reads each cell's activity-driven sodium load, and its energy use feeds the metabolism model (row 20). Status: simplified (the calcium pumps are entirely missing); its check passes (sodium recovers in 13.5 seconds, inside the 5-60 second measured range), but the pump's maximum rate is a guess, and it borrows mammalian heart-cell binding affinities because no worm-specific pump data exists."
+    },
+    {
+     "id": 28,
+     "name": "Sleep neurons",
+     "group": "Neuromodulation and slow states",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Two neuron types, RIS and ALA, release sleep-promoting neuropeptides that quiet the rest of the network during sleep-like states (\"lethargus\"). The model routes this entirely through the neuropeptide system of row 9 (their own peptides and receptors), with no separate sleep-specific mechanism. RIS's own peptide also feeds back on itself through an autoreceptor, damping its own output. Status: simplified, and nothing yet drives these neurons to fire at the right times (no developmental or stress trigger for sleep); a self-limiting check fails, and whether the model actually goes quiet has never been checked."
+    }
+   ]
+  },
+  {
+   "name": "Senses",
+   "rows": [
+    {
+     "id": 17,
+     "name": "Sensory transduction",
+     "group": "Senses",
+     "status": "simplified",
+     "check": "fail",
+     "text": "The worm's sensory neurons turn a physical or chemical stimulus, an odour, a touch, a temperature change, into an electrical signal through specific molecular cascades: odour receptors trigger a cGMP cascade (a second-messenger signalling chain), touch opens mechanically-gated channels directly. The model has full published cascade models for the odour-sensing neuron AWC (Usuyama 2012), the AWA neuron's membrane (Liu 2018), and touch channels (Sanzeni 2019); every other sense (salt-sensing ASE, temperature-sensing AFD, oxygen/CO2 sensors, light) reuses AWC's cascade with its own guessed gain, and body-bend sensing (proprioception) is one shared, averaged signal rather than many local ones. This feeds directly into channel currents (rows 4, 5) and, through the cascades, into calcium (row 6). Status: simplified overall, full only for the three ported cells. AWC and touch checks pass; AWA and proprioception checks fail (AWA doesn't switch cleanly on and off the way real recordings show, and the body-bend sensor underestimates how often it should register \"on\"). Most of the reused senses move only about 10% as much as the real cell does, and none have been checked against a real stimulus-response curve."
+    }
+   ]
+  },
+  {
+   "name": "Muscles and organs",
+   "rows": [
+    {
+     "id": 12,
+     "name": "Body-wall muscle and excitation-contraction",
+     "group": "Muscles and organs",
+     "status": "full",
+     "check": "pass",
+     "text": "The worm's 95 crawling muscles (\"body-wall muscles\") convert a nerve signal into calcium entry and then physical contraction. The model uses a full published membrane model (Du, Crodelle et al. 2025), a published calcium-to-contraction curve (Boyle, Berri and Cohen 2012), and published gap-junction coupling between muscles (Liu 2006). It receives neuromuscular synapse input (row 7), and its contraction is what the body model (row 21) actually moves. Status: full, and most checks pass closely, including spike timing matching a real recording within 2.4 milliseconds; one limitation inherited from the source paper is that the muscle model has no stable resting voltage and fires on its own at rest under this model's current running conditions."
+    },
+    {
+     "id": 13,
+     "name": "Pharynx",
+     "group": "Muscles and organs",
+     "status": "full",
+     "check": "pass",
+     "text": "The pharynx is the worm's feeding organ: a separate small neuromuscular pump with its own 20 muscles and dedicated neurons that rhythmically contracts to swallow bacteria. The model uses a full published pump model (Sherman and Harel 2024) for the 20 muscles and 9 marginal cells, wired by Cook's connectome, with calcium driving a published contraction pathway. It is driven by the pharyngeal neurons (part of row 1's cell set), and its pumping rate feeds metabolism (row 20). Status: full, and its timing checks pass; in practice the pharynx never actually pumps in a full closed-loop run, because the surrounding network pushes its muscles into a non-firing (\"depolarisation block\") state, so metabolism in this model can only fall, never rise from eating."
+    },
+    {
+     "id": 14,
+     "name": "Intestine and defecation",
+     "group": "Muscles and organs",
+     "status": "simplified",
+     "check": "pass",
+     "text": "The worm periodically expels gut contents through a rhythmic defecation cycle driven by calcium oscillations and acid release in the intestine. The model uses a full published calcium-oscillator model (20 cells using the Li-Rinzel equations, coupled by gap junctions) for the rhythm itself; the proton release and the NLP-40 peptide signal that trigger the actual muscle contraction are simplified stand-ins. The calcium wave reflects intestinal cell state, and the trigger signal reaches two neurons (AVL, DVB) and the enteric muscles. Status: full for the oscillator, simplified for the trigger pathway. After two attempts at fitting, the calcium fall time now matches a published measurement; the enteric muscles fire spontaneously rather than only on the trigger, and expulsion is decided by a simple activity threshold rather than real muscle mechanics."
+    },
+    {
+     "id": 15,
+     "name": "Egg-laying",
+     "group": "Muscles and organs",
+     "status": "simplified",
+     "check": "fail",
+     "text": "Egg-laying is driven by a dedicated circuit (the HSN and VC neurons, plus vulval and sex muscles) gated by serotonin and by stretch-sensing of a full uterus. The model builds the 16 sex muscles as individual cells with Cook's wiring and a published membrane model, with uterine stretch and serotonin/peptide modulation. It receives serotonin and the NLP-3 peptide from row 10's monoamine system. Status: simplified, and the one paper with the detailed governing equations (Zhang 2010) was never consulted, so this module's numbers are its own rather than literature-sourced; its check fails on every measure tried, with no model worm laying an egg in a 3-hour simulated run, mutant or wild type alike."
+    },
+    {
+     "id": 16,
+     "name": "Other non-neural cells",
+     "group": "Muscles and organs",
+     "status": "simplified",
+     "check": "fail",
+     "text": "The worm has several non-neural support structures: the skin-like hypodermis, gland cells, the excretory (\"canal\") cell that handles fluid and salt balance, and coelomocytes, cells that scavenge molecules from the body fluid. The model builds these as simple passive cells wired on Cook's gap junctions, with the excretory cell as a single fluid-volume and pressure controller and coelomocytes as a simple first-order clearance of molecules. The coelomocyte clearance is read by the intestine's defecation signal (row 14); the excretory cell's output currently goes nowhere else. Status: simplified, since no published model exists for any of these cells; the excretory cell's check fails (its recovery takes 10.7 hours against a measured 12-24 hours), and the worm's seam cells, a type of skin cell, are not modelled at all."
+    }
+   ]
+  },
+  {
+   "name": "Body and world",
+   "rows": [
+    {
+     "id": 20,
+     "name": "Metabolism",
+     "group": "Body and world",
+     "status": "simplified",
+     "check": "pass",
+     "text": "The worm's whole-body energy budget (feeding, growth, reproduction) follows patterns captured by general, cross-species \"Dynamic Energy Budget\" growth models. The model uses a full published DEB model (the \"AmP\" C. elegans parameter set) tracking one whole-animal reserve, structure, maturity and reproduction state, fed by how much the pharynx pumps (row 13). Its \"fed\" versus \"starved\" signal reaches the DAF-16 learning pathway (row 18) and egg production (row 15). Status: simplified (one animal-wide budget rather than separate tissues), and its own check passes; because the pharynx never actually pumps in a closed loop (row 13), the energy reserve in practice can only fall, never rise from eating."
+    },
+    {
+     "id": 21,
+     "name": "Body (3D soft body)",
+     "group": "Body and world",
+     "status": "simplified",
+     "check": "fail",
+     "text": "The worm's body is a soft hydrostatic cylinder: fluid-filled, under internal pressure, wrapped in a stiff but flexible cuticle (skin), with muscle contraction bending it against that resistance. The model is a 3D finite-element simulation (from the MetaWorm project, built on a published body mesh) representing the tissue as one uniform elastic material; internal fluid pressure is set once at start-up and never changes during a run. It receives row 12's muscle contraction and sends shape and curvature both to the screen and back to the brain as a sense (proprioception, part of row 17). Status: simplified, using one blended material instead of separate skin, muscle and fluid layers, and both of its checks fail: the body bends about 8 times stiffer than measured, and it loses motion energy (damps) about 3 times slower than measured."
+    },
+    {
+     "id": 22,
+     "name": "Environment",
+     "group": "Body and world",
+     "status": "simplified",
+     "check": "pass",
+     "text": "The worm lives on or in a real physical medium (agar gel, water, soil) with real chemical gradients: food, oxygen, salt, temperature, that it crawls or swims through. The model has 2D fields for food, oxygen, carbon dioxide, salt and temperature across a flat surface, with a published oxygen-diffusion solution behind the oxygen field, and a resistive-drag approximation standing in for a true viscoelastic (part-solid, part-liquid) medium. These fields are read by the sensory modules (row 17); the worm itself does not disturb the fields it moves through. Status: simplified; the one field directly checked (oxygen near a bacterial lawn edge) matches a known exact solution closely, but the lawn's oxygen-absorption strength is itself a guess, and no field other than oxygen has been checked."
+    }
+   ]
+  },
+  {
+   "name": "Observation",
+   "rows": [
+    {
+     "id": 23,
+     "name": "Observation models",
+     "group": "Observation",
+     "status": "simplified",
+     "check": "fail",
+     "text": "The readouts scientists actually use to watch a worm's brain and behaviour, calcium imaging (GCaMP, a fluorescent calcium sensor), optogenetics (light-activated channels such as GUR-3), colour-coded neuron identification (NeuroPAL), and body-shape tracking (\"gait\"), each have their own known physical and chemical properties and distortions. The model has one shared calcium-sensor binding model (switchable between GCaMP6 and GCaMP7 variants) applied identically to every neuron, one light-gated conductance standing in for the real GUR-3/PRDX-2 light-sensing proteins, random colour-labelling noise for NeuroPAL, and a Tierpsy-style subset of standard body-shape features. It reads calcium (row 6) and voltage or light input, producing the numbers a real imaging experiment would record, for comparison. Status: simplified for every piece; most checks pass as basic sanity tests, but the optogenetic sign check fails (light should excite a neuron strongly and it barely does), and none of it has yet been compared to an actual recorded calcium movie, which is the real test it needs."
+    }
+   ]
+  }
+ ]
+}
