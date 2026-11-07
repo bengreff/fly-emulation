@@ -1,7 +1,7 @@
 # FIT1: class-level synapse strengths against Randi et al. 2023 (pre-registration)
 
-Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended once at 22:46 (commit a32642d) before any scored run (the
-amendment is listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
+Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended at 22:46 (commit a32642d) and on 7 Nov at 00:05
+(Amendment 2), both before any scored run (the amendments are listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
 first scored run; a changed rerun is a new, separately named fit (FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
 night of 6 Nov (`docs/worm/night/2026-11-06_wfit.md`).
 
@@ -51,21 +51,22 @@ training data has been opened: the noise model (s_trial, s_floor), and the train
 - **The brain.** The 302 neurons, built once per worm. No neuron-muscle gap junction or chemical pair exists,
   so the neurons' responses are exact without the muscles.
   - Toggles at the template, except `neuropal` and `gcamp` off. The fit has its own readout, and NeuroPAL's
-    expression is not modelled as a load.
+    expression is not modelled as a load. (Amendment 2: also `quantal_noise` and `channel_noise` off.)
   - Warm-up 5 s. Then one forked child per stimulated neuron, plus a no-light control child, all continuing from
     the same state.
 - **The stimulus.** A child lights B3's GUR-3 actuator (`mech.observation`) in its target only, for 500 ms (wt)
   or 300 ms (unc-31).
 - **The readout.**
   1. Soma Ca pool from each soma's own Ca current, using Nicoletti 2019's equation in total current
-     (cainternm.mod's units bug: night file, Open).
+     (cainternm.mod's units bug: night file, Open). (Amendment 2: the brain's own pool, recorded, now that the
+     units fix is on main.)
   2. GCaMP6s binding (`observation.binding_step`).
   3. F = 1 + (R - 1) B, sampled at 2 volumes/s.
 - **The statistic.** Mean over the volumes in (0, 30 s] of (F_stim - F_ctrl) / F_ctrl. This is Randi's mean
   dF/F0, with F0 taken from the control twin at the same times (it removes the drift that a pre-stimulus
   baseline removes in the data).
 - **Integration.** h_dt = 2.0 ms, mechanisms every 10 ms. This was chosen in section 2a from the measured match
-  to brain.py's own step (0.5 ms, mechanisms every 1 ms).
+  to brain.py's own step (0.5 ms, mechanisms every 1 ms). (Amendment 2: rechecked on the merged code, 2c.)
 
 ### 2a. Integration check (`dtcheck.py`, `dtcompare.py`; template values, actuator 1 nS; AVAL, ASHL, AWAL)
 
@@ -82,6 +83,10 @@ Bar (set before the comparison was read): RMS difference at most 0.1 x s_floor (
 fails it, use the coarsest run that passes. **c passes** by a factor of 60, so the fit uses h_dt 2 and mech_dt 10.
 That is 4.7x faster than ref (derived from the walls). The check was at the template, where responses are small.
 fit1_eval.py repeats it at main's fitted mean, with the same bar, before any held-out scoring.
+
+Later the same night, still on the old code, at the large-response values of 2b row 3 (refbig, 23:34): h_dt 2 RMS
+at most 0.0006 and h_dt 5 at most 0.0015 from the reference (measured). Both pass. Section 2c redoes the check on
+the merged code.
 
 ## 3. The fitted values (23; everything else at the template)
 
@@ -281,3 +286,55 @@ under full load, and to catch failures before the real launch. It is stopped at 
 are seen. Its answer is never scored on held-out data. Any change made because of it is listed here, with the
 reason, before the real launch. The real fits start from the template on the worm-v1 code, in
 `~/worm-night/wfit/fit1/{main,shuf}`.
+
+## Amendment 2 (2026-11-07 00:05, before any scored run; no held-out or unc-31 data opened)
+
+Main changed at 23:15 (Director merge 1, d892794). It was merged into this branch at 23:26 (8aea58b). The real fits
+run on worm-v1, the 02:30 freeze. Changes made because of merge 1, each with its reason:
+
+1. **The readout reads the brain's own Ca pool.** B1's units fix landed (`mech/capool.py`, `ca_pool_units`
+   total_current, on by default). With vcell set to V_cell / (10 A_soma), cainternm.mod computes, term for term,
+   the equation the readout computed before. The readout now records each soma's cai. capool_f and capool_tca now
+   set the pool the brain's Ca-gated channels see, not only the readout. Section 8's third limit is resolved. The old
+   computed path remains for `ca_pool_units` off.
+2. **Both noise forms are off in the fit (`quantal_noise` off, `channel_noise` off).** Both are on by default after
+   merge 1. Reasons:
+   - **Twin desync (measured on the template, 10 s windows, h_dt 2).** With quantal noise on, the light changes the
+     voltage-graded vesicle rates in the stimulated child, which shifts the Poisson draws for the rest of the run.
+     The stimulated child and its control twin then carry different noise. Spontaneously active cells show large
+     spurious responses (IL2DL 1.31 and 0.56, SDQR 0.23, SDQL -0.12), against s_floor 0.03. With quantal noise
+     off these vanish, and what remains is wired (ASHL to ASKL, ASHR, RMGL). Two control twins with no light
+     are identical in every form (largest difference 0), so the fork itself is exact.
+   - **Validity range.** Both noise forms state one: brain steps up to about 1 ms. The fit's mechanism step is 10 ms.
+   - **The mean is kept.** Quantal off is qn = 1, the deterministic synapse, with E[qn] = 1. Channel noise is
+     zero-mean. The data's statistic is a trial mean.
+   - **Channel noise's measured effect at the template** (10 s windows): ASHL autoresponse 0.0121 with it on,
+     0.0125 with both off.
+   - fit1_eval's dtcheck adds a run of the fitted mean with channel noise on, at brain.py's own step. Its RMS
+     difference from the noise-off reference is reported, not used as a criterion.
+   - The toggles are recorded in each fit's config.json. Held-out scoring uses the same toggles.
+3. **Integration rechecked on the merged code (2c): h_dt 5 ms, mechanisms every 10 ms, replaces h_dt 2.** It passes
+   the same bar by 14x at both value sets and costs 1.6x less than h_dt 2 at the same load (measured). h_dt 10 also
+   passes, but only by 1.6x, and its largest single-cell error (0.031) equals s_floor. The fitted-mean recheck in
+   fit1_eval would void the fit if it failed, so the margin matters.
+4. **Reach on the merged code** (h_dt 2, both noise forms off, 30 s means of the autoresponse; 2c):
+   - template, actuator 1 nS: AVAL 0.0007, ASHL 0.012, AWAL 0.0023;
+   - 2b row-3 values: AVAL 0.043, ASHL 0.53, AWAL 0.75.
+   The data's training median is 0.43, so the readout values can still reach it inside their ranges.
+5. **Trials.** Trial 1 (old code) was stopped at 23:28, by PID, during generation 1. Trial 2 runs on the merged
+   code with the settings above, from 23:41 (`~/worm-night/wfit/trial2/`), under the same rules as trial 1
+   (development, training data only, never scored on held-out data).
+
+### 2c. Integration check on merge 1 (both noise forms off; AVAL, ASHL, AWAL; 30 s windows)
+
+Measured on backhouse at 23:34-00:05, ten runs in parallel (one CPU each), so the walls are at partial load.
+"Template" is the template with the actuator at 1 nS. "Large" is 2b row 3. RMS difference per target from the
+reference (h_dt 0.5, mechanisms every 1 ms) with the same values:
+
+| Run | h_dt (ms) | mech_dt (ms) | Template RMS (largest) | Large RMS (largest) | Wall per window (s) |
+|---|---|---|---|---|---|
+| reference | 0.5 | 1 | | | 465 |
+| c2 | 2 | 10 | 0-1e-5 (2e-5) | 1.0-2.9e-4 (0.005) | 80 |
+| **c5 (chosen)** | 5 | 10 | 0-1e-5 (4e-5) | 1.2-2.2e-4 (0.003) | 50 |
+| c5m20 | 5 | 20 | | 1.2-2.4e-4 (0.003) | 44 |
+| c10 | 10 | 10 | | 4.2e-4-1.9e-3 (0.031) | 38 |
