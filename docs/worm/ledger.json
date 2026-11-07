@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:43 CST",
+ "generated_at": "2026-11-07 03:48 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -58263,18 +58263,18 @@
    "rows_read": 222,
    "quotes": {
     "none": 1425,
-    "cited free text (scripted check)": 387,
-    "research file (scripted check)": 36,
+    "cited free text (scripted check)": 395,
+    "research file (scripted check)": 28,
     "paper text (read audit, 6-7 Nov)": 8
    },
    "with_url": 1508,
    "links": {
     "distinct": 162,
     "by_status": {
-     "200": 149,
+     "200": 148,
      "203": 1,
      "406": 4,
-     "unchecked": 4,
+     "unchecked": 5,
      "403": 4
     },
     "checked_at": "2026-11-07 02:30 CST"
@@ -64467,6 +64467,110 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5296638/"
    },
    {
+    "param_id": "proprio_gain_wen",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "0.62 -> 0.62 1; measured -> measured; range [0.59, 0.65] -> [0.59, 0.65]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Wen et al. 2012 Neuron 76:750 (PMC3508473; 17 authors, Wen to Samuel), via RHYTHM_LIT.md s1",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508473/"
+   },
+   {
+    "param_id": "env_thermo_gradient_C_cm",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "0.5 -> 0.5 C/cm; measured -> measured; range [0.5, 1.5] -> [0.5, 1.5]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Wang, O'Halloran & Goodman 2013 J Gen Physiol 142:437 (PMC3787776; assay setting)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3787776/"
+   },
+   {
+    "param_id": "noise_mini_rate_per_s",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "26.3 -> 26.3 1/s; measured -> measured; range [10.2, 35.3] -> [10.2, 35.3]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609): mini rate at the NMJ before, during and after halorhodopsin hyperpolarization of the motor neurons, n = 5",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/"
+   },
+   {
+    "param_id": "rel_gain_afd_aiy",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "0.056 -> 0.056 mV/mV; measured -> measured; range [0.056, 0.056] -> [0.056, 0.056]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Narayan, Laurent & Sternberg 2011 PNAS 108:9667 (PMC3111291), Fig. 4B: static gain of the AFD to AIY synapse over its linear range",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3111291/"
+   },
+   {
+    "param_id": "homeo_unc2_per_synapse",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "100 -> 100 channels; measured -> measured; range [100, 100] -> [100, 100]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Xiong, Richmond & Kim 2024 PNAS 121:e2404969121 (PMC11363341): estimated from GFP::UNC-2 puncta intensity (Fig. 1)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11363341/"
+   },
+   {
+    "param_id": "egg_hsn_isi_active_s",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "17 -> 17 s; measured -> measured; range [15, 19] -> [15, 19]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Collins, Bode, Fernandez, Tanis, Brewer, Creamer & Koelle 2016 eLife 5:e21126 (PMC5142809): wild-type HSN Ca2+ transients, mean +- SEM",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5142809/"
+   },
+   {
+    "param_id": "egg_hsn_isi_inactive_s",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "41 -> 41 s; measured -> measured; range [36, 46] -> [36, 46]",
+    "reason": "verbatim quote from the free full text; authors checked in Europe PMC",
+    "source": "Collins, Bode, Fernandez, Tanis, Brewer, Creamer & Koelle 2016 eLife 5:e21126 (PMC5142809): wild-type HSN Ca2+ transients, mean +- SEM",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5142809/"
+   },
+   {
+    "param_id": "env_touch_saturation_uN",
+    "kind": "source",
+    "origin": "slot",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "2 -> 2 uN; measured -> measured; range [2, 2] -> [2, 2]",
+    "reason": "source was 'Krieg/Pruitt PLOS ONE 2017': the DOI's paper is Nekimken, Mazzochette, Goodman & Pruitt 2017; the 2 uN is their cited value from Petzold et al. 2013 (whose text gives no 2 uN figure); quote verbatim",
+    "source": "Nekimken, Mazzochette, Goodman & Pruitt 2017 PLOS ONE 12:e0178080 (PMC5438190), citing the force-clamp measurement of Petzold, Park, Mazzochette, Goodman & Pruitt 2013 Integr Biol 5:853 (PMC3701114)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5438190/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -64611,7 +64715,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:39 CST",
+   "generated_at": "2026-11-07 03:43 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
