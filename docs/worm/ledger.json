@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 23:09 CST",
+ "generated_at": "2026-11-06 23:14 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -18376,11 +18376,11 @@
    "unit": "min",
    "n_values": 1,
    "value_template": 60.0,
-   "template_source": "starvation-conditioning protocols of hours (Mohri 2005); the state reaches most of its value within the training time",
+   "template_source": "Kodama, Kuhara, Mohri-Shiomi, Kimura, Okumura, Tomioka, Iino & Mori 2006 Genes Dev 20:2955 (PMC1620028), Results (Fig. 1D, H, K, L; time course Fig. 3C): wild type starved at the cultivation temperature",
    "bio_min": 5.0,
    "bio_max": 600.0,
    "bound_basis": "guessed",
-   "bound_source": "starvation-conditioning protocols of hours (Mohri 2005); the state reaches most of its value within the training time",
+   "bound_source": "Kodama, Kuhara, Mohri-Shiomi, Kimura, Okumura, Tomioka, Iino & Mori 2006 Genes Dev 20:2955 (PMC1620028), Results (Fig. 1D, H, K, L; time course Fig. 3C): wild type starved at the cultivation temperature",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -18392,11 +18392,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Spec grain 'paradigm' read as class",
+   "notes": "Spec grain 'paradigm' read as class; source 6 Nov (catalog audit): was 60 min, label guessed, range [5, 600]; free source for the time scale: most animals switch within 1 h (25 C) to 3 h (17 C) of starvation; the 60 min template is consistent. Stays guessed: the model's rise also contains the starvation signal's own time constant (daf16_tau_h) and the behaviour-to-state mapping, so the paper does not pin tau_learn alone",
    "plan_row": 24,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1620028/",
+   "source_quote": "most of the wild-type animals cultivated at 17\u00b0C for 3 h in food-deprived conditions avoided their cultivation temperature ( Fig. 1D,K ). Similarly, wild-type animals cultivated at 25\u00b0C with food migrated to their cultivation temperature ( Fig. 1G,L ), whereas most avoided their cultivation temperature after being cultivated at 25\u00b0C without food for 1 h",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -26698,20 +26698,19 @@
    },
    "rows_read": 189,
    "quotes": {
-    "none": 625,
-    "paper text (read audit, 6 Nov)": 207,
+    "none": 624,
+    "paper text (read audit, 6 Nov)": 208,
     "research file (scripted check)": 145
    },
-   "with_url": 698,
+   "with_url": 699,
    "links": {
-    "distinct": 114,
+    "distinct": 115,
     "by_status": {
-     "200": 105,
+     "200": 107,
      "406": 5,
-     "403": 3,
-     "429": 1
+     "403": 3
     },
-    "checked_at": "2026-11-06 23:09 CST"
+    "checked_at": "2026-11-06 23:14 CST"
    },
    "problem_kinds": {
     "no URL to open": 27,
@@ -29499,6 +29498,19 @@
     "reason": "measured in C. elegans neurons (VA5; VB6 and VD5 within 6 pS; Xenopus oocytes 110 pS). Symmetrical K+ overstates the conductance at normal ion gradients, so the guessed range [40, 200] is kept to cover physiological conditions",
     "source": "Liu, Chen, Mailler & Wang 2014 Nat Commun 5:5155 (PMC4197135), Results (Fig. 5B): SLO-2 single channels in inside-out patches from motor neurons, symmetrical K+ (150 mM K+ gluconate pipette, 150 mM K+ bath)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4197135/"
+   },
+   {
+    "param_id": "assoc_thermo_learn_tau_min",
+    "kind": "source",
+    "origin": "mech:learning",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "60 -> 60 min; guessed -> guessed; range [5, 600] -> [5, 600]",
+    "reason": "free source for the time scale: most animals switch within 1 h (25 C) to 3 h (17 C) of starvation; the 60 min template is consistent. Stays guessed: the model's rise also contains the starvation signal's own time constant (daf16_tau_h) and the behaviour-to-state mapping, so the paper does not pin tau_learn alone",
+    "source": "Kodama, Kuhara, Mohri-Shiomi, Kimura, Okumura, Tomioka, Iino & Mori 2006 Genes Dev 20:2955 (PMC1620028), Results (Fig. 1D, H, K, L; time course Fig. 3C): wild type starved at the cultivation temperature",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1620028/"
    },
    {
     "param_id": "pep_ec50_nM",
