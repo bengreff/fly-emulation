@@ -28,6 +28,10 @@ public:
 
 	int GetDof() override;
 	ConstraintType GetType() override;
+	// wormemu extension (2026-11-06, read access for corotational damping in World): the projection target md
+	// (the rotation of F, reflection-corrected) and F, both as of the last EvaluateDVector.
+	const Eigen::Matrix3d& GetRotationTarget() const { return md; }
+	const Eigen::Matrix3d& GetDeformationGradient() const { return mF; }
 
 private:
 	void	ComputeF(const Eigen::VectorXd& x);

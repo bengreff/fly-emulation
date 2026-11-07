@@ -1,0 +1,130 @@
+{
+ "check": "senses_chem in the brain",
+ "lumped_vs_no_module_max_dv_mV": 1.3379519714362686e-11,
+ "lumped_equivalent": true,
+ "cascade_finite": true,
+ "wall_per_bio_s": {
+  "no_module": 3.44,
+  "lumped": 3.41,
+  "cascade": 4.6
+ },
+ "signs": {
+  "AWCL": {
+   "po_pre": 0.0655,
+   "po_during_max": 0.0655,
+   "po_during_min": 0.0565,
+   "po_after_max": 0.0565,
+   "v_pre": -40.1,
+   "v_during_max": -37.5,
+   "v_during_min": -39.7
+  },
+  "AWBL": {
+   "po_pre": 0.0655,
+   "po_during_max": 0.0659,
+   "po_during_min": 0.0605,
+   "po_after_max": 0.0605,
+   "v_pre": -22.1,
+   "v_during_max": -21.9,
+   "v_during_min": -22.2
+  },
+  "ASEL": {
+   "po_pre": 0.0765,
+   "po_during_max": 0.0765,
+   "po_during_min": 0.0703,
+   "po_after_max": 0.0725,
+   "v_pre": -39.0,
+   "v_during_max": -36.0,
+   "v_during_min": -38.6
+  },
+  "ASER": {
+   "po_pre": 0.0573,
+   "po_during_max": 0.0761,
+   "po_during_min": 0.0574,
+   "po_after_max": 0.0788,
+   "v_pre": -40.3,
+   "v_during_max": -38.3,
+   "v_during_min": -40.1
+  },
+  "AFDL": {
+   "po_pre": 0.0742,
+   "po_during_max": 0.0778,
+   "po_during_min": 0.0742,
+   "po_after_max": 0.0778,
+   "v_pre": -26.8,
+   "v_during_max": -25.1,
+   "v_during_min": -26.5
+  },
+  "URXL": {
+   "po_pre": 0.0793,
+   "po_during_max": 0.0793,
+   "po_during_min": 0.0714,
+   "po_after_max": 0.0743,
+   "v_pre": -57.0,
+   "v_during_max": -53.4,
+   "v_during_min": -56.5
+  },
+  "BAGL": {
+   "po_pre": 0.0665,
+   "po_during_max": 0.0743,
+   "po_during_min": 0.0666,
+   "po_after_max": 0.0743,
+   "v_pre": -26.4,
+   "v_during_max": -21.7,
+   "v_during_min": -25.8
+  },
+  "ASJL": {
+   "po_pre": 0.0655,
+   "po_during_max": 0.0716,
+   "po_during_min": 0.0655,
+   "po_after_max": 0.0716,
+   "v_pre": -48.9,
+   "v_during_max": -36.3,
+   "v_during_min": -47.9
+  },
+  "ASHL": {
+   "po_pre": 0.0655,
+   "po_during_max": 0.0716,
+   "po_during_min": 0.0655,
+   "po_after_max": 0.0716,
+   "v_pre": -47.0,
+   "v_during_max": -40.7,
+   "v_during_min": -46.4
+  },
+  "ADLL": {
+   "po_pre": 0.0,
+   "po_during_max": 0.4832,
+   "po_during_min": 0.0196,
+   "po_after_max": 0.4271,
+   "v_pre": -48.5,
+   "v_during_max": -40.0,
+   "v_during_min": -47.7
+  },
+  "PHAL": {
+   "po_pre": 0.0,
+   "po_during_max": 0.6385,
+   "po_during_min": 0.0261,
+   "po_after_max": 0.5458,
+   "v_pre": -37.9,
+   "v_during_max": -26.3,
+   "v_during_min": -37.1
+  },
+  "AWAL": {
+   "po_pre": 0.0,
+   "po_during_max": 0.8601,
+   "po_during_min": 0.0356,
+   "po_after_max": 0.6974,
+   "v_pre": -61.5,
+   "v_during_max": -41.0,
+   "v_during_min": -60.0
+  },
+  "NSML": {
+   "po_pre": 0.0,
+   "po_during_max": 0.6385,
+   "po_during_min": 0.0261,
+   "po_after_max": 0.5458,
+   "v_pre": -17.5,
+   "v_during_max": -15.5,
+   "v_during_min": -17.3
+  }
+ }
+}

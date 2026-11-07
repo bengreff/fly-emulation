@@ -9,6 +9,7 @@
 #define LOCAL 0
 #define GLOBAL 1
 using namespace FEM;
+std::vector<double> wormemu_tet_youngs;  // wormemu extension (Worm.h)
 
 Worm::Worm(const double &muscle_stiffness, const double &youngs_modulus, const double &poisson_ratio)
 	: mMesh(), mMuscleStiffness(muscle_stiffness), mYoungsModulus(youngs_modulus), mPoissonRatio(poisson_ratio)
@@ -201,8 +202,11 @@ void Worm::Initialize(FEM::World *world)
 
 	double total_volume = 0;
 	double volume = 0;
+	size_t k_tet = 0;  // wormemu extension: index into wormemu_tet_youngs
 	for (const auto &tet : tetrahedras)
 	{
+		const double E_tet = wormemu_tet_youngs.empty() ? mYoungsModulus : wormemu_tet_youngs[k_tet];
+		k_tet++;
 		int i0, i1, i2, i3;
 		Eigen::Vector3d p0, p1, p2, p3;
 
@@ -236,7 +240,7 @@ void Worm::Initialize(FEM::World *world)
 		}
 		volume = 1.0 / 6.0 * (Dm.determinant());
 		total_volume += volume;
-		mConstraints.push_back(new CorotateFEMConstraint(mYoungsModulus, mPoissonRatio, i0, i1, i2, i3, volume, Dm.inverse()));
+		mConstraints.push_back(new CorotateFEMConstraint(E_tet, mPoissonRatio, i0, i1, i2, i3, volume, Dm.inverse()));
 		int sorted_idx[4] = {i0, i1, i2, i3};
 		std::sort(sorted_idx, sorted_idx + 4);
 		triangles.push_back(Eigen::Vector3i(sorted_idx[0], sorted_idx[1], sorted_idx[2]));
