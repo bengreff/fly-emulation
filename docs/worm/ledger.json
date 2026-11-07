@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 01:38 CST",
+ "generated_at": "2026-11-07 01:47 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -2107,8 +2107,8 @@
    "template_source": "median of the per-muscle values",
    "bio_min": -40.0,
    "bio_max": -20.0,
-   "bound_basis": "measured_related",
-   "bound_source": "Gao & Zhen 2011 PNAS 108:2557 (search summary); Liu et al. 2011 J Physiol 589:101 (param_ranges F1)",
+   "bound_basis": "guessed",
+   "bound_source": "Gao & Zhen 2011 PNAS 108:2557 (search summary); Liu et al. 2011 J Physiol 589:101 (param_ranges F1); range basis guessed: the research file says its number was not read",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -8788,8 +8788,8 @@
    "template_source": "BAAIWorm 0.5 clipped to the literature range; at a bound (0.2), so moved to the range's midpoint",
    "bio_min": 0.03333333333333333,
    "bio_max": 0.2,
-   "bound_basis": "measured_this_class",
-   "bound_source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3)",
+   "bound_basis": "guessed",
+   "bound_source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3); range basis guessed: the research file says its number was not read",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -8948,8 +8948,8 @@
    "template_source": "BAAIWorm 0.015 clipped to the literature range; at a bound (0.0333333), so moved to the range's midpoint",
    "bio_min": 0.03333333333333333,
    "bio_max": 0.2,
-   "bound_basis": "measured_this_class",
-   "bound_source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3)",
+   "bound_basis": "guessed",
+   "bound_source": "1/decay, decay 5-30 ms: Richmond & Jorgensen 1999 Nat Neurosci 2:791 (read from search summary: 5.6-7.4ms decay) (param_ranges B3); range basis guessed: the research file says its number was not read",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -13830,7 +13830,7 @@
    "template_source": "Starich et al. 2009 Neural Dev 4:16; Kawano et al. 2011 Neuron 72:572; Liu et al. 2017 (direction) (param_ranges C3)",
    "bio_min": 2.0,
    "bio_max": 10.0,
-   "bound_basis": "measured_related",
+   "bound_basis": "guessed",
    "bound_source": "Starich et al. 2009 Neural Dev 4:16; Kawano et al. 2011 Neuron 72:572; Liu et al. 2017 (direction) (param_ranges C3)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
@@ -29254,8 +29254,8 @@
    "template_source": "NMJ EPSC decay 5.6 ms (electrical) to 7.4 ms (light), Richmond and Jorgensen 1999 Nat Neurosci 2:791 (search summary, param_ranges B11); a compound L-AChR + ACR-16 current, so per class inferred",
    "bio_min": 5.0,
    "bio_max": 8.0,
-   "bound_basis": "measured_related",
-   "bound_source": "NMJ EPSC decay 5.6 ms (electrical) to 7.4 ms (light), Richmond and Jorgensen 1999 Nat Neurosci 2:791 (search summary, param_ranges B11); a compound L-AChR + ACR-16 current, so per class inferred",
+   "bound_basis": "guessed",
+   "bound_source": "NMJ EPSC decay 5.6 ms (electrical) to 7.4 ms (light), Richmond and Jorgensen 1999 Nat Neurosci 2:791 (search summary, param_ranges B11); a compound L-AChR + ACR-16 current, so per class inferred; range basis guessed: the search summary credits Richmond & Jorgensen 1999 with a light-evoked decay, but light-evoked worm NMJ currents came about ten years later (Liewald et al. 2008 Nat Methods), so the attribution is wrong; free papers give the evoked decay only in figures (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232), and an evoked decay also includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife, PMC5102579), so it bounds a receptor's off-rate from above (7 Nov)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -29270,9 +29270,9 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2585773/",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3743133/",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "its range [5, 8] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837) [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec; an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
    "kind": "physiology"
   },
   {
@@ -29510,8 +29510,8 @@
    "template_source": "NMJ EPSC decay (compound current), Richmond and Jorgensen 1999 Nat Neurosci 2:791 via param_ranges B11",
    "bio_min": 3.0,
    "bio_max": 10.0,
-   "bound_basis": "measured_related",
-   "bound_source": "NMJ EPSC decay (compound current), Richmond and Jorgensen 1999 Nat Neurosci 2:791 via param_ranges B11",
+   "bound_basis": "guessed",
+   "bound_source": "NMJ EPSC decay (compound current), Richmond and Jorgensen 1999 Nat Neurosci 2:791 via param_ranges B11; range basis guessed: the search summary credits Richmond & Jorgensen 1999 with a light-evoked decay, but light-evoked worm NMJ currents came about ten years later (Liewald et al. 2008 Nat Methods), so the attribution is wrong; free papers give the evoked decay only in figures (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232), and an evoked decay also includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife, PMC5102579), so it bounds a receptor's off-rate from above (7 Nov)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -29526,9 +29526,9 @@
    "notes": "",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2585773/",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3743133/",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "its range [3, 10] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837) [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec; an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
    "kind": "physiology"
   },
   {
@@ -58257,13 +58257,13 @@
    }
   ],
   "audit": {
-   "rows_ok": 1768,
-   "rows_with_problems": 88,
+   "rows_ok": 1766,
+   "rows_with_problems": 90,
    "by_status": {
-    "ok": 1768,
-    "finding": 88
+    "ok": 1766,
+    "finding": 90
    },
-   "rows_read": 201,
+   "rows_read": 203,
    "quotes": {
     "none": 1566,
     "paper text (read audit, 6 Nov)": 254,
@@ -58271,14 +58271,15 @@
    },
    "with_url": 1505,
    "links": {
-    "distinct": 161,
+    "distinct": 162,
     "by_status": {
-     "200": 151,
+     "200": 150,
+     "429": 2,
      "203": 1,
      "406": 4,
      "403": 5
     },
-    "checked_at": "2026-11-07 01:36 CST"
+    "checked_at": "2026-11-07 01:47 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -58290,6 +58291,7 @@
     "inferred from the chloride reversal; no native C. elegans chloride reversal is measured; t": 5,
     "a cation-channel reversal carried over from the muscle ACh current (rec_lacr_erev_mV, Rich": 4,
     "inferred from a research-file summary (PORT_SOURCES N#) by homology; no paper with a URL": 3,
+    "its range": 2,
     "read by kqt# only (#); the other # K mods compute against a fixed #, so the K reversals di": 1,
     "set on every soma (brain.py:#) but no current reads it: nca.mod:# declares READ ena and co": 1,
     "sets only NEURON's Nernst eca; every Ca current uses a fixed +# (unc#mod:#, egl#mod:#, cca": 1,

@@ -83,12 +83,38 @@ mechs: list[dict] = []
 values: dict[str, pd.DataFrame] = {}
 
 
+# a research-file range whose own note says the number was not read (not retrieved, not explicit in the snippet,
+# widened past the data to cover what was not measured) is a guess, whatever its bound_basis column says (7 Nov)
+WEAK_LIT = re.compile(r"(?i)not retrieved|not explicit|not present in the retrieved|needs primary|widened to [^.]* to cover")
+
+WEAK_QID = {
+    "B11": "the search summary credits Richmond & Jorgensen 1999 with a light-evoked decay, but light-evoked worm NMJ "
+           "currents came about ten years later (Liewald et al. 2008 Nat Methods), so the attribution is wrong; free "
+           "papers give the evoked decay only in figures (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et "
+           "al. 2014 PLoS Genet, PMC4148232), and an evoked decay also includes release duration (Takayanagi-Kiya, "
+           "Zhou & Jin 2016 eLife, PMC5102579), so it bounds a receptor's off-rate from above (7 Nov)",
+}
+
+
 def lit(qid):
     r = LIT[qid]
     basis = r["bound_basis"]
     if basis == "nematode_wide":                    # range across nematodes / generic, not this species
         basis = "guessed" if r["label"] == "guessed" else "measured_related"
-    return float(r["bio_min"]), float(r["bio_max"]), r["label"], basis, f"{r['source']} (param_ranges {qid})"
+    src = f"{r['source']} (param_ranges {qid})"
+    if basis != "guessed" and weak_lit(qid):
+        basis, src = "guessed", src + "; range basis guessed: " + weak_lit(qid)
+    return float(r["bio_min"]), float(r["bio_max"]), r["label"], basis, src
+
+
+def weak_lit(qid):
+    """Why a research-file range is a guess, or "" when it is not weak (see WEAK_LIT, WEAK_QID)."""
+    r = LIT.get(qid)
+    if r is None:
+        return ""
+    if WEAK_LIT.search(f"{r['source']} {r['note']}"):
+        return "the research file says its number was not read"
+    return WEAK_QID.get(qid, "")
 
 
 def centre(qid):
@@ -786,6 +812,10 @@ def build_registry():
                     "guessed" if RANGE_GUESSED.search(s_.notes or "") else
                     "measured_related" if s_.label != "guessed" and cat.CITE.search(s_.source) else "guessed")
                 lo, hi, bsrc = s_.lo, s_.hi, s_.source
+                # a Spec that cites a weak research-file range in its source text inherits the weakness
+                weak = [w for w in map(weak_lit, re.findall(r"param_ranges ([A-Z]\d+)", s_.source)) if w]
+                if weak and basis != "guessed":
+                    basis, bsrc = "guessed", f"{bsrc}; range basis guessed: {weak[0]}"
             lab = s_.label
             proj = getattr(s_, "source_project", "") or ("ours" if lab in ("guessed", "inferred") else "literature")
             el = getattr(s_, "values", None)
