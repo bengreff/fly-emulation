@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:04 CST",
+ "generated_at": "2026-11-07 03:08 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 88,
   "by_label": {
    "derived": 67510,
-   "guessed": 9304,
-   "inferred": 336,
+   "guessed": 9307,
+   "inferred": 333,
    "measured": 6184,
    "published_fit": 8103
   },
-  "known": 82133,
-  "placeholder": 9304,
+  "known": 82130,
+  "placeholder": 9307,
   "gap": 0,
   "used_by_model": 91437,
-  "must_fill": 9304
+  "must_fill": 9307
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 20450,
   "by_label": {
    "published_fit": 7376,
-   "guessed": 9304,
+   "guessed": 9307,
    "derived": 3102,
-   "inferred": 336,
+   "inferred": 333,
    "measured": 332
   },
-  "known": 11146,
-  "placeholder": 9304,
+  "known": 11143,
+  "placeholder": 9307,
   "gap": 0,
-  "must_fill": 9304
+  "must_fill": 9307
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3828,
-    "inferred (ours)": 309,
+    "guessed": 3831,
+    "inferred (ours)": 306,
     "measured": 1
    },
    "c302": {
@@ -82,8 +82,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3828,
-    "inferred (ours)": 309,
+    "guessed": 3831,
+    "inferred (ours)": 306,
     "measured": 1
    },
    "c302": {
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 8,
-   "guessed": 359,
-   "inferred": 284,
+   "guessed": 362,
+   "inferred": 281,
    "measured": 32,
    "published_fit": 101
   },
@@ -1412,8 +1412,8 @@
    "numbers": 6,
    "by_label": {
     "derived": 1,
-    "guessed": 2,
-    "inferred": 3
+    "guessed": 4,
+    "inferred": 1
    }
   },
   {
@@ -1429,8 +1429,8 @@
    "absent_reason": "",
    "numbers": 5,
    "by_label": {
-    "guessed": 2,
-    "inferred": 2,
+    "guessed": 3,
+    "inferred": 1,
     "measured": 1
    }
   },
@@ -29252,7 +29252,7 @@
    "unit": "ms",
    "n_values": 1,
    "value_template": 6.5,
-   "template_source": "NMJ EPSC decay 5.6 ms (electrical) to 7.4 ms (light), Richmond and Jorgensen 1999 Nat Neurosci 2:791 (search summary, param_ranges B11); a compound L-AChR + ACR-16 current, so per class inferred",
+   "template_source": "NMJ evoked current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C; a compound L-AChR + ACR-16 current, so per class inferred (the search summary behind param_ranges B11 credited Richmond & Jorgensen 1999)",
    "bio_min": 5.0,
    "bio_max": 8.0,
    "bound_basis": "guessed",
@@ -29268,12 +29268,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 6.5 ms, label inferred, range [5, 8]; source corrected: the 5.6 and 7.4 ms are Liu, Hollopeter & Jorgensen 2009, not Richmond & Jorgensen 1999",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3743133/",
-   "source_quote": "",
-   "audit": "its range [5, 8] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837) [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec; an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
+   "source_quote": "(Electrical: 2.01 nA \u00b1 0.11, \u03c4 decay = 5.6 ms \u00b1 0.4; light: 1.96 nA \u00b1 0.18, \u03c4 decay = 7.4 ms \u00b1 0.5",
+   "audit": "its range [5, 8] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837). The 5.6 ms (electrical) and 7.4 ms (light) decays are Liu, Hollopeter & Jorgensen 2009 PNAS (PMC2705609, Fig. 2C), now cited and quoted in the catalog [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec (at least name Liu, Hollopeter & Jorgensen 2009 in place of RJ99 at receptors.py:95 and :104); an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
    "kind": "physiology"
   },
   {
@@ -29508,7 +29508,7 @@
    "unit": "ms",
    "n_values": 1,
    "value_template": 6.5,
-   "template_source": "NMJ EPSC decay (compound current), Richmond and Jorgensen 1999 Nat Neurosci 2:791 via param_ranges B11",
+   "template_source": "NMJ evoked current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C; a compound current, so per class inferred",
    "bio_min": 3.0,
    "bio_max": 10.0,
    "bound_basis": "guessed",
@@ -29524,12 +29524,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 6.5 ms, label inferred, range [3, 10]; source corrected (as rec_lacr_tau_off_ms)",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3743133/",
-   "source_quote": "",
-   "audit": "its range [3, 10] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837) [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec; an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
+   "source_quote": "(Electrical: 2.01 nA \u00b1 0.11, \u03c4 decay = 5.6 ms \u00b1 0.4; light: 1.96 nA \u00b1 0.18, \u03c4 decay = 7.4 ms \u00b1 0.5",
+   "audit": "its range [3, 10] ms rests on a search summary (param_ranges B11) that credits Richmond & Jorgensen 1999 with a light-evoked decay; light-evoked worm NMJ currents came about ten years later, so the attribution is wrong. Both L-AChR and ACR-16 carry 6.5 ms, but free text says ACR-16 currents decay fast and L-AChR currents slowly (Li et al. 2022 PLoS Genet, PMC9632837). The 5.6 ms (electrical) and 7.4 ms (light) decays are Liu, Hollopeter & Jorgensen 2009 PNAS (PMC2705609, Fig. 2C), now cited and quoted in the catalog [owner B1: read a wild-type evoked or miniature EPSC decay from a free figure or source-data file (Hu, Tong & Kaplan 2013 eLife, PMC3743133; Bhattacharya et al. 2014 PLoS Genet, PMC4148232, L-AChR-isolated evoked decay) and cite it in the Spec (at least name Liu, Hollopeter & Jorgensen 2009 in place of RJ99 at receptors.py:95 and :104); an evoked decay includes release duration (Takayanagi-Kiya, Zhou & Jin 2016 eLife), so it is an upper bound on the receptor off-time; range basis now guessed]",
    "kind": "physiology"
   },
   {
@@ -29764,11 +29764,11 @@
    "unit": "ms",
    "n_values": 1,
    "value_template": 6.5,
-   "template_source": "the NMJ nAChR decay (param_ranges B11)",
+   "template_source": "the NMJ nAChR decay, borrowed: evoked NMJ current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C",
    "bio_min": 3.0,
    "bio_max": 15.0,
    "bound_basis": "guessed",
-   "bound_source": "the NMJ nAChR decay (param_ranges B11)",
+   "bound_source": "the NMJ nAChR decay, borrowed: evoked NMJ current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -29780,12 +29780,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "source 6 Nov (catalog audit): was 6.5 ms, label inferred, range [3, 15]; the sibling rows' paper named and quoted",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "no URL to open; inferred from a sibling class: the NMJ nAChR decay (param_ranges B11, Richmond & Jorgensen 1999); the row names no paper of its own [owner B1: cite the sibling row's paper in the Spec (the catalog then links it)]",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
+   "source_quote": "(Electrical: 2.01 nA \u00b1 0.11, \u03c4 decay = 5.6 ms \u00b1 0.4; light: 1.96 nA \u00b1 0.18, \u03c4 decay = 7.4 ms \u00b1 0.5",
+   "audit": "inferred from a sibling class: the NMJ nAChR decay (param_ranges B11, Richmond & Jorgensen 1999); the row names no paper of its own [owner B1: cite the sibling row's paper in the Spec (the catalog then links it)]",
    "kind": "physiology"
   },
   {
@@ -32852,11 +32852,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "vesicle depletion rate at full release; fit residuals in runs/worm/night_wbrain/row24_fit.json; Spec grain 'transmitter (ach)' read as class",
+   "notes": "vesicle depletion rate at full release; fit residuals in runs/worm/night_wbrain/row24_fit.json; Spec grain 'transmitter (ach)' read as class; source 6 Nov (catalog audit): was 0.09384 1/ms, label inferred, range [0.005, 1]; quote added: the fit targets (1 Hz and 5 Hz depression time constants)",
    "plan_row": 24,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
-   "source_quote": "",
+   "source_quote": "At low-stimuli frequencies such as 0.2, 1, and 5 Hz, acetylcholine responses depressed following a single exponential decay (\u03c4 = 4.71 s \u00b1 1.24, n = 7; 0.58 s \u00b1 0.11, n = 9; and 0.09 s \u00b1 0.02, n = 9, respectively)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -32884,11 +32884,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "resting recovery rate; the 1 and 5 Hz fit does not identify it (normalised amplitudes) and leaves it on the lower bound; it sets the resting occupancy (x 0.30 at -60 mV, 0.10 at -40 mV), which q normalises at the initial voltage; Liu 2009's 0.2 Hz train (held out) is the constraint; Spec grain 'transmitter (ach)' read as class",
+   "notes": "resting recovery rate; the 1 and 5 Hz fit does not identify it (normalised amplitudes) and leaves it on the lower bound; it sets the resting occupancy (x 0.30 at -60 mV, 0.10 at -40 mV), which q normalises at the initial voltage; Liu 2009's 0.2 Hz train (held out) is the constraint; Spec grain 'transmitter (ach)' read as class; source 6 Nov (catalog audit): was 0.01 1/s, label inferred, range [0.01, 2]; quote added: the fit targets",
    "plan_row": 24,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
-   "source_quote": "",
+   "source_quote": "At low-stimuli frequencies such as 0.2, 1, and 5 Hz, acetylcholine responses depressed following a single exponential decay (\u03c4 = 4.71 s \u00b1 1.24, n = 7; 0.58 s \u00b1 0.11, n = 9; and 0.09 s \u00b1 0.02, n = 9, respectively)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -32916,11 +32916,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Ca-accelerated recovery rate; Spec grain 'transmitter (ach)' read as class",
+   "notes": "Ca-accelerated recovery rate; Spec grain 'transmitter (ach)' read as class; source 6 Nov (catalog audit): was 2.812 1/s, label inferred, range [0.2, 50]; quote added: the fit targets",
    "plan_row": 24,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
-   "source_quote": "",
+   "source_quote": "At low-stimuli frequencies such as 0.2, 1, and 5 Hz, acetylcholine responses depressed following a single exponential decay (\u03c4 = 4.71 s \u00b1 1.24, n = 7; 0.58 s \u00b1 0.11, n = 9; and 0.09 s \u00b1 0.02, n = 9, respectively)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -32948,11 +32948,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "decay of the recovery Ca trace; Spec grain 'transmitter (ach)' read as class",
+   "notes": "decay of the recovery Ca trace; Spec grain 'transmitter (ach)' read as class; source 6 Nov (catalog audit): was 79.67 ms, label inferred, range [20, 5000]; quote added: the fit targets",
    "plan_row": 24,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
-   "source_quote": "",
+   "source_quote": "At low-stimuli frequencies such as 0.2, 1, and 5 Hz, acetylcholine responses depressed following a single exponential decay (\u03c4 = 4.71 s \u00b1 1.24, n = 7; 0.58 s \u00b1 0.11, n = 9; and 0.09 s \u00b1 0.02, n = 9, respectively)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -33012,11 +33012,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "resting release probability relative to its maximum; 1 = no facilitation; Spec grain 'transmitter (ach)' read as class",
+   "notes": "resting release probability relative to its maximum; 1 = no facilitation; Spec grain 'transmitter (ach)' read as class; source 6 Nov (catalog audit): was 1 1, label inferred, range [0.3, 1]; quote added (abstract; 'nicotine-sensitve' is the paper's spelling)",
    "plan_row": 24,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
-   "source_quote": "",
+   "source_quote": "Acetylcholine synapses are depressed by high-frequency stimulation, in part due to desensitization of the nicotine-sensitve ACR-16 receptor. By contrast, GABA synapses facilitate before becoming depressed",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -51316,11 +51316,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "IP3R recovery from Ca inactivation; fitted with int_ip3_rest_uM on the coupled isolated intestine to Espelt 2005's period 49 s and wave velocity 33 um/s (dt 5 ms grid: 50.1 s, 33.3 um/s); Li-Rinzel's 0.2 gives a ~12 s period; range guessed. (Attempt 1, fitted on the lone int9 cell: 0.023.)",
+   "notes": "IP3R recovery from Ca inactivation; fitted with int_ip3_rest_uM on the coupled isolated intestine to Espelt 2005's period 49 s and wave velocity 33 um/s (dt 5 ms grid: 50.1 s, 33.3 um/s); Li-Rinzel's 0.2 gives a ~12 s period; range guessed. (Attempt 1, fitted on the lone int9 cell: 0.023.); source 6 Nov (catalog audit): was 0.034 1/(uM s), label inferred, range [0.01, 0.2]; quote added: the fit targets (period and wave velocity)",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2266627/",
-   "source_quote": "",
+   "source_quote": "spontaneous rhythmic Ca 2+ oscillations with a period of \u223c50 s ... Mean Ca 2+ wave velocity was 33 \u03bcm/s ( Table II )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -51380,11 +51380,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "basal PLC-gamma rate x tau: the resting IP3 of the non-pacemaker cells, kept below Li-Rinzel's oscillation onset (~0.355 uM) so they are excitable, not oscillating; fitted with a2 to Espelt 2005's period and velocity (attempt 1 guess: 0.30)",
+   "notes": "basal PLC-gamma rate x tau: the resting IP3 of the non-pacemaker cells, kept below Li-Rinzel's oscillation onset (~0.355 uM) so they are excitable, not oscillating; fitted with a2 to Espelt 2005's period and velocity (attempt 1 guess: 0.30); source 6 Nov (catalog audit): was 0.348 uM, label inferred, range [0.2, 0.355]; quote added: the fit targets (period and wave velocity)",
    "plan_row": 14,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2266627/",
-   "source_quote": "",
+   "source_quote": "spontaneous rhythmic Ca 2+ oscillations with a period of \u223c50 s ... Mean Ca 2+ wave velocity was 33 \u03bcm/s ( Table II )",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -53284,28 +53284,28 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 12.6,
-   "template_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "template_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
    "bio_min": 2.0,
    "bio_max": 30.0,
    "bound_basis": "guessed",
-   "bound_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "bound_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "glial uptake alone: 1 / (1/4.2 - 1/6.3) s from the wild-type and knockout recoveries (derived from cross-species numbers)",
+   "notes": "glial uptake alone: 1 / (1/4.2 - 1/6.3) s from the wild-type and knockout recoveries (derived from cross-species numbers); source 6 Nov (catalog audit): was 12.6 s, label inferred, range [2, 30]; source corrected: the row read 4.2 s as the wild type and 6.3 s as the knockout; the paper's 4.2 s is the Kir4.1-inhibited single-stimulation value, and all four are model outputs; relabel 6 Nov (catalog audit): was 12.6 s, label inferred, range [2, 30]; inferred -> guessed: a mouse model's simulation output, not a measurement, and not a worm value (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
-   "source_url": "https://doi.org/10.1371/journal.pcbi.1004137",
-   "source_quote": "",
-   "audit": "ok",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
+   "source_quote": "single stimulation, control: rise time 136 ms, decay time 3.4 s; K ir 4.1 inhibition: rise time 232 ms, decay time 4.2 s; tetanic stimulation, control: rise time 638 ms, decay time 4 s; K ir 4.1 inhibition: rise time 753 ms, decay time 6 s",
+   "audit": "the KIR source text (glia.py:53) reads 'wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s'; the cited paper, Sibille, Dao Duc, Holcman & Rouach 2015 (PMC4380507), gives model simulations of mouse hippocampus: single stimulation 3.4 s control and 4.2 s Kir4.1 inhibited, tetanic 4 s and 6 s. No 6.3 s, and 4.2 s is the inhibited value. Uptake alone from the paper's numbers is 12.0 to 17.9 s (derived); the template 12.6 s is inside [owner: B2 (glia.py:53 KIR text and the three Specs at :80, :83, :92). Correct the numbers and say they are mouse model outputs. Catalog: source and quote fixed on all three rows, inferred -> guessed, values and ranges unchanged]",
    "kind": "physiology"
   },
   {
@@ -53316,27 +53316,27 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 6.3,
-   "template_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "template_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
    "bio_min": 3.0,
    "bio_max": 15.0,
    "bound_basis": "guessed",
-   "bound_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "bound_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "clearance without glial uptake (the Kir4.1 knockout's recovery), cross-species",
+   "notes": "clearance without glial uptake (the Kir4.1 knockout's recovery), cross-species; source 6 Nov (catalog audit): was 6.3 s, label inferred, range [3, 15]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 6.3 s, label inferred, range [3, 15]; inferred -> guessed: a mouse model's simulation output (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
-   "source_url": "https://doi.org/10.1371/journal.pcbi.1004137",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
+   "source_quote": "single stimulation, control: rise time 136 ms, decay time 3.4 s; K ir 4.1 inhibition: rise time 232 ms, decay time 4.2 s; tetanic stimulation, control: rise time 638 ms, decay time 4 s; K ir 4.1 inhibition: rise time 753 ms, decay time 6 s",
    "audit": "replaced slot glia_k_clear_tau_s (inferred) has 2.1 s, outside this row's range [3, 15]",
    "kind": "physiology"
   },
@@ -53444,27 +53444,27 @@
    "unit": "s",
    "n_values": 1,
    "value_template": 4.2,
-   "template_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "template_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
    "bio_min": 0.7,
    "bio_max": 6.3,
    "bound_basis": "guessed",
-   "bound_source": "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)",
+   "bound_source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "guessed",
+   "fill_kind": "guessed",
    "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "microdomain clearance, taken as the K+ recovery (O5's suggestion)",
+   "notes": "microdomain clearance, taken as the K+ recovery (O5's suggestion); source 6 Nov (catalog audit): was 4.2 s, label inferred, range [0.7, 6.3]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 4.2 s, label inferred, range [0.7, 6.3]; inferred -> guessed: a mouse model's K+ recovery used for a worm Cl- microdomain (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
-   "source_url": "https://doi.org/10.1371/journal.pcbi.1004137",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
+   "source_quote": "single stimulation, control: rise time 136 ms, decay time 3.4 s; K ir 4.1 inhibition: rise time 232 ms, decay time 4.2 s; tetanic stimulation, control: rise time 638 ms, decay time 4 s; K ir 4.1 inhibition: rise time 753 ms, decay time 6 s",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -56356,18 +56356,18 @@
   "totals": {
    "rows": {
     "published_fit": 654,
-    "guessed": 574,
+    "guessed": 577,
     "measured": 254,
-    "inferred": 334,
+    "inferred": 331,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9370,
+    "guessed": 9373,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 340,
+    "inferred": 337,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56375,18 +56375,18 @@
   },
   "by_label_rows": {
    "published_fit": 654,
-   "guessed": 574,
+   "guessed": 577,
    "measured": 254,
-   "inferred": 334,
+   "inferred": 331,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
-   "guessed": 9370,
+   "guessed": 9373,
    "measured": 6212,
    "derived": 67520,
-   "inferred": 340,
+   "inferred": 337,
    "absent": 1
   },
   "by_plan_row": {
@@ -56522,14 +56522,14 @@
    },
    "11": {
     "rows": {
-     "guessed": 10,
-     "inferred": 8,
+     "guessed": 13,
+     "inferred": 5,
      "derived": 1,
      "measured": 1
     },
     "numbers": {
-     "guessed": 10,
-     "inferred": 8,
+     "guessed": 13,
+     "inferred": 5,
      "derived": 1,
      "measured": 1
     },
@@ -56835,15 +56835,15 @@
    },
    "class": {
     "rows": {
-     "inferred": 284,
-     "guessed": 364,
+     "inferred": 281,
+     "guessed": 367,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
     "numbers": {
-     "inferred": 284,
-     "guessed": 364,
+     "inferred": 281,
+     "guessed": 367,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
@@ -57014,17 +57014,17 @@
    "yes": {
     "rows": {
      "published_fit": 566,
-     "guessed": 478,
+     "guessed": 481,
      "measured": 217,
-     "inferred": 319,
+     "inferred": 316,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
-     "guessed": 8943,
+     "guessed": 8946,
      "measured": 6074,
      "derived": 67509,
-     "inferred": 324
+     "inferred": 321
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57129,14 +57129,14 @@
    },
    "mech:glia": {
     "rows": {
-     "guessed": 7,
-     "inferred": 6,
+     "guessed": 10,
+     "inferred": 3,
      "derived": 1,
      "measured": 1
     },
     "numbers": {
-     "guessed": 7,
-     "inferred": 6,
+     "guessed": 10,
+     "inferred": 3,
      "derived": 1,
      "measured": 1
     },
@@ -57462,17 +57462,17 @@
    "physiology": {
     "rows": {
      "published_fit": 640,
-     "guessed": 573,
-     "inferred": 334,
+     "guessed": 576,
+     "inferred": 331,
      "derived": 36,
      "measured": 250,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
-     "guessed": 9369,
+     "guessed": 9372,
      "derived": 3111,
-     "inferred": 340,
+     "inferred": 337,
      "measured": 360,
      "absent": 1
     },
@@ -58261,33 +58261,33 @@
    }
   ],
   "audit": {
-   "rows_ok": 1761,
-   "rows_with_problems": 95,
+   "rows_ok": 1760,
+   "rows_with_problems": 96,
    "by_status": {
-    "ok": 1761,
-    "finding": 95
+    "ok": 1760,
+    "finding": 96
    },
-   "rows_read": 211,
+   "rows_read": 213,
    "quotes": {
-    "none": 1516,
-    "cited free text (scripted check)": 296,
+    "none": 1503,
+    "cited free text (scripted check)": 309,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
-   "with_url": 1508,
+   "with_url": 1509,
    "links": {
-    "distinct": 164,
+    "distinct": 163,
     "by_status": {
-     "200": 153,
+     "200": 151,
      "203": 1,
      "406": 4,
-     "unchecked": 2,
+     "unchecked": 3,
      "403": 4
     },
     "checked_at": "2026-11-07 02:30 CST"
    },
    "problem_kinds": {
-    "no URL to open": 34,
+    "no URL to open": 33,
     "source marked UNVERIFIED": 11,
     "no range": 11,
     "guessed template sits on a bound": 6,
@@ -58327,6 +58327,7 @@
     "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
     "labelled inferred with the source text 'ser# reporter in pharyngeal muscle', but Hobson et": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
+    "the KIR source text (glia.py:#) reads 'wild type ~# s, glial Kir# knockout ~# s'; the cite": 1,
     "replaced slot glia_k_clear_tau_s (inferred) has # s, outside this row's range": 1,
     "inferred from mammalian astrocytes, no paper named (borrowed from glia_e_leak_mV, which ha": 1,
     "inferred from mammalian neurons, no paper named": 1,
@@ -62608,6 +62609,214 @@
     "url": ""
    },
    {
+    "param_id": "rec_lacr_tau_off_ms",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "6.5 -> 6.5 ms; inferred -> inferred; range [5, 8] -> [5, 8]",
+    "reason": "source corrected: the 5.6 and 7.4 ms are Liu, Hollopeter & Jorgensen 2009, not Richmond & Jorgensen 1999",
+    "source": "NMJ evoked current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C; a compound L-AChR + ACR-16 current, so per class inferred (the search summary behind param_ranges B11 credited Richmond & Jorgensen 1999)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/"
+   },
+   {
+    "param_id": "rec_acr16_tau_off_ms",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "6.5 -> 6.5 ms; inferred -> inferred; range [3, 10] -> [3, 10]",
+    "reason": "source corrected (as rec_lacr_tau_off_ms)",
+    "source": "NMJ evoked current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C; a compound current, so per class inferred",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/"
+   },
+   {
+    "param_id": "rec_nachr_tau_off_ms",
+    "kind": "source",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "6.5 -> 6.5 ms; inferred -> inferred; range [3, 15] -> [3, 15]",
+    "reason": "the sibling rows' paper named and quoted",
+    "source": "the NMJ nAChR decay, borrowed: evoked NMJ current decay 5.6 ms (electrical) and 7.4 ms (light-evoked), Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609), Fig. 2C",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/"
+   },
+   {
+    "param_id": "stp_ach_beta_per_ms",
+    "kind": "source",
+    "origin": "mech:plasticity",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.09384 -> 0.09384 1/ms; inferred -> inferred; range [0.005, 1] -> [0.005, 1]",
+    "reason": "quote added: the fit targets (1 Hz and 5 Hz depression time constants)",
+    "source": "fitted by us (scripts/worm/stp_fit.py, 6 Nov 2026) to Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609) 1 Hz and 5 Hz ACh trains (tau 0.58, 0.09 s; steady state about 50%); 0.2, 10 and 20 Hz held out",
+    "url": ""
+   },
+   {
+    "param_id": "stp_ach_k0_per_s",
+    "kind": "source",
+    "origin": "mech:plasticity",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.01 -> 0.01 1/s; inferred -> inferred; range [0.01, 2] -> [0.01, 2]",
+    "reason": "quote added: the fit targets",
+    "source": "fitted by us (scripts/worm/stp_fit.py, 6 Nov 2026) to Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609) 1 Hz and 5 Hz ACh trains (tau 0.58, 0.09 s; steady state about 50%); 0.2, 10 and 20 Hz held out",
+    "url": ""
+   },
+   {
+    "param_id": "stp_ach_kmax_per_s",
+    "kind": "source",
+    "origin": "mech:plasticity",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "2.812 -> 2.812 1/s; inferred -> inferred; range [0.2, 50] -> [0.2, 50]",
+    "reason": "quote added: the fit targets",
+    "source": "fitted by us (scripts/worm/stp_fit.py, 6 Nov 2026) to Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609) 1 Hz and 5 Hz ACh trains (tau 0.58, 0.09 s; steady state about 50%); 0.2, 10 and 20 Hz held out",
+    "url": ""
+   },
+   {
+    "param_id": "stp_ach_tauD_ms",
+    "kind": "source",
+    "origin": "mech:plasticity",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "79.67 -> 79.67 ms; inferred -> inferred; range [20, 5000] -> [20, 5000]",
+    "reason": "quote added: the fit targets",
+    "source": "fitted by us (scripts/worm/stp_fit.py, 6 Nov 2026) to Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609) 1 Hz and 5 Hz ACh trains (tau 0.58, 0.09 s; steady state about 50%); 0.2, 10 and 20 Hz held out",
+    "url": ""
+   },
+   {
+    "param_id": "stp_ach_F1",
+    "kind": "source",
+    "origin": "mech:plasticity",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "1 -> 1 1; inferred -> inferred; range [0.3, 1] -> [0.3, 1]",
+    "reason": "quote added (abstract; 'nicotine-sensitve' is the paper's spelling)",
+    "source": "Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609): ACh NMJ trains show no facilitation",
+    "url": ""
+   },
+   {
+    "param_id": "int_lr_a2_per_uM_s",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.034 -> 0.034 1/(uM s); inferred -> inferred; range [0.01, 0.2] -> [0.01, 0.2]",
+    "reason": "quote added: the fit targets (period and wave velocity)",
+    "source": "Espelt, Estevez, Yin & Strange 2005 J Gen Physiol 126:379 (PMC2266627: period, wave velocity, rise/fall); Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:9895 rates; values as in Ermentrout's LiRinzel.ode, opened)",
+    "url": ""
+   },
+   {
+    "param_id": "int_ip3_rest_uM",
+    "kind": "source",
+    "origin": "mech:organs_intestine",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "0.348 -> 0.348 uM; inferred -> inferred; range [0.2, 0.355] -> [0.2, 0.355]",
+    "reason": "quote added: the fit targets (period and wave velocity)",
+    "source": "Espelt, Estevez, Yin & Strange 2005 J Gen Physiol 126:379 (PMC2266627: period, wave velocity, rise/fall); Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:9895 rates; values as in Ermentrout's LiRinzel.ode, opened)",
+    "url": ""
+   },
+   {
+    "param_id": "glia_kir_tau_s",
+    "kind": "source",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "12.6 -> 12.6 s; inferred -> inferred; range [2, 30] -> [2, 30]",
+    "reason": "source corrected: the row read 4.2 s as the wild type and 6.3 s as the knockout; the paper's 4.2 s is the Kir4.1-inhibited single-stimulation value, and all four are model outputs",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
+    "param_id": "glia_kir_tau_s",
+    "kind": "relabel",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "12.6 -> 12.6 s; inferred -> guessed; range [2, 30] -> [2, 30]",
+    "reason": "inferred -> guessed: a mouse model's simulation output, not a measurement, and not a worm value (value unchanged)",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
+    "param_id": "glia_k_diff_tau_s",
+    "kind": "source",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "6.3 -> 6.3 s; inferred -> inferred; range [3, 15] -> [3, 15]",
+    "reason": "source corrected (as glia_kir_tau_s)",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
+    "param_id": "glia_k_diff_tau_s",
+    "kind": "relabel",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "6.3 -> 6.3 s; inferred -> guessed; range [3, 15] -> [3, 15]",
+    "reason": "inferred -> guessed: a mouse model's simulation output (value unchanged)",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
+    "param_id": "glia_cl_tau_s",
+    "kind": "source",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "4.2 -> 4.2 s; inferred -> inferred; range [0.7, 6.3] -> [0.7, 6.3]",
+    "reason": "source corrected (as glia_kir_tau_s)",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
+    "param_id": "glia_cl_tau_s",
+    "kind": "relabel",
+    "origin": "mech:glia",
+    "n": 1,
+    "pattern": "",
+    "was_label": "inferred",
+    "new_label": "guessed",
+    "change": "4.2 -> 4.2 s; inferred -> guessed; range [0.7, 6.3] -> [0.7, 6.3]",
+    "reason": "inferred -> guessed: a mouse model's K+ recovery used for a worm Cl- microdomain (value unchanged)",
+    "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -62752,7 +62961,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 02:57 CST",
+   "generated_at": "2026-11-07 03:04 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -63725,18 +63934,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 654,
-    "guessed": 574,
+    "guessed": 577,
     "measured": 254,
-    "inferred": 334,
+    "inferred": 331,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9370,
+    "guessed": 9373,
     "measured": 6212,
     "derived": 67520,
-    "inferred": 340,
+    "inferred": 337,
     "absent": 1
    }
   }
