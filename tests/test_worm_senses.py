@@ -1,14 +1,15 @@
 """wbody's sensory modules without NEURON: specs, the touch indentation readout and channel kinetics, the cascade's
 resting state, the proprio sign convention, temperature's Q10 arithmetic, the environment's neutral form and
-its O2 field against the equation's analytic solution."""
+its O2 field against the equation's analytic solution, the body layers' moduli and neutral flags, and the
+observation module's indicator kinetics."""
 import numpy as np
 import pytest
 
 from wormemu.brain_layers import SPECS as LAYER_SPECS
-from wormemu.body import environment
-from wormemu.mech import senses_chem, senses_proprio, senses_touch, temperature
+from wormemu.body import environment, layers
+from wormemu.mech import observation, senses_chem, senses_proprio, senses_touch, temperature
 
-MODS = (senses_chem, senses_touch, senses_proprio, temperature, environment)
+MODS = (senses_chem, senses_touch, senses_proprio, temperature, environment, layers, observation)
 LABELS = {"measured", "derived", "inferred", "guessed", "published_fit"}
 
 
@@ -97,3 +98,38 @@ def test_environment_o2_edge_matches_analytic():
                    p["o2_ambient_pct"] - drop * np.exp(d / lam) / 2)
     assert np.max(np.abs(O - ana)) <= 0.1 * drop
     assert abs(e.o2_at(np.array([[10.0, 0.0]]))[0] - (p["o2_ambient_pct"] - drop)) <= 0.01 * drop
+
+
+def test_layers_profile_and_moduli():
+    p = layers.P
+    E = layers.profile(np.array([0.0, 0.5, 0.92, 0.99]), p)
+    assert np.allclose(E, [p["body_E_core_kPa"], p["body_E_core_kPa"], p["body_E_muscle_kPa"], p["body_E_cuticle_kPa"]])
+    q = {**p, "body_pressure_kPa": 0.0}
+    assert layers.profile(np.array([0.0]), q)[0] == p["body_E_core_depressurised_kPa"]
+    Et, s = layers.tet_moduli()
+    assert len(Et) == s["n_tet"] and np.isfinite(Et).all()
+    assert p["body_E_cuticle_kPa"] * 1e3 - 1e-6 <= Et.min() and Et.max() <= p["body_E_muscle_kPa"] * 1e3 + 1e-6
+
+
+def test_layers_nested_and_upstream_scale_pass_no_flags(tmp_path):
+    film = {"scale": "worm_1mm", "fluid": "agar_rft", "substrate": "agar_film"}
+    w, info = layers.world_flags({"body_layers": "published", "body_damping": "none"}, tmp_path / "x", film)
+    assert w == film and info["applied"]
+    w, info = layers.world_flags(None, tmp_path / "x", {})
+    assert w == {} and not info["applied"]
+    w, info = layers.world_flags(None, tmp_path / "x", film)
+    assert w["damping"] == "backholm2013" and (tmp_path / "x.tet_youngs.f64").exists()
+
+
+@pytest.mark.parametrize("v", observation.VARIANTS)
+def test_gcamp_binding_hill_and_halftime(v):
+    P = observation.P
+    kd, n, R, th = (P[f"obs_{v}_{k}"] for k in ("kd_nM", "hill", "range", "thalf_ms"))
+    assert abs(observation.binding_step(0.0, kd, kd, n, th, 1e7) - 0.5) < 1e-12
+    B0 = observation.hill(P["obs_ca_rest_nM"], kd, n)
+    assert observation.dff(B0, B0, R) == 0.0
+    assert abs(observation.binding_step(B0, P["obs_ca_rest_nM"], kd, n, th, 4.0) - B0) < 1e-15
+    # from saturation to rest: B - B0 halves in ln2 / (k_off + k_on c_rest^n), within 5 % of t_half
+    k_rest = np.log(2) / th * (1 + (P["obs_ca_rest_nM"] / kd) ** n)
+    B = observation.binding_step(1.0, P["obs_ca_rest_nM"], kd, n, th, np.log(2) / k_rest)
+    assert abs((B - B0) / (1 - B0) - 0.5) < 1e-9 and abs(np.log(2) / k_rest / th - 1) < 0.05
