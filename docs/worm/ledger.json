@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:18 CST",
+ "generated_at": "2026-11-07 00:25 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 1206,
   "mechanisms": 84,
   "by_label": {
-   "derived": 67507,
-   "guessed": 9115,
+   "derived": 67508,
+   "guessed": 9113,
    "inferred": 115,
-   "measured": 6180,
+   "measured": 6181,
    "published_fit": 8033
   },
-  "known": 81835,
-  "placeholder": 9115,
+  "known": 81837,
+  "placeholder": 9113,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9115
+  "must_fill": 9113
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9115,
-   "derived": 3099,
+   "guessed": 9113,
+   "derived": 3100,
    "inferred": 115,
-   "measured": 328
+   "measured": 329
   },
-  "known": 10848,
-  "placeholder": 9115,
+  "known": 10850,
+  "placeholder": 9113,
   "gap": 0,
-  "must_fill": 9115
+  "must_fill": 9113
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,8 +49,8 @@
    },
    "literature": {
     "guessed": 5471,
-    "measured": 6179,
-    "derived": 3099,
+    "measured": 6180,
+    "derived": 3100,
     "inferred (ours)": 21,
     "published fit": 248
    },
@@ -58,7 +58,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3640,
+    "guessed": 3638,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -73,8 +73,8 @@
    },
    "literature": {
     "guessed": 5471,
-    "derived": 3099,
-    "measured": 327,
+    "derived": 3100,
+    "measured": 328,
     "inferred (ours)": 21,
     "published fit": 248
    },
@@ -82,7 +82,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3640,
+    "guessed": 3638,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -114,10 +114,10 @@
    "published_fit": 171
   },
   "class": {
-   "derived": 4,
-   "guessed": 168,
+   "derived": 5,
+   "guessed": 166,
    "inferred": 65,
-   "measured": 30,
+   "measured": 31,
    "published_fit": 87
   },
   "compartment": {
@@ -748,10 +748,10 @@
    "absent_reason": "",
    "numbers": 115,
    "by_label": {
-    "derived": 2,
-    "guessed": 59,
+    "derived": 3,
+    "guessed": 57,
     "inferred": 32,
-    "measured": 20,
+    "measured": 21,
     "published_fit": 2
    }
   },
@@ -14943,29 +14943,29 @@
    "applies_to": "non-NMDA glutamate receptor (GLR-1/2 AMPA-like) receptors at chemical synapses",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 20.0,
-   "template_source": "fast desensitization, slowed and limited by SOL-1 (Walker et al. 2006, qualitative)",
-   "bio_min": 3.0,
-   "bio_max": 200.0,
+   "value_template": 4.0,
+   "template_source": "Wang, Mellem, Jensen, Brockie, Walker, Hoerndli, Hauth, Madsen & Maricq 2012 Neuron 75:838 (PMC3458792), Results and Fig. 6F (outside-out patches from wild-type AVA, rapid application of 3 mM glutamate, -60 mV)",
+   "bio_min": 2.0,
+   "bio_max": 8.0,
    "bound_basis": "guessed",
-   "bound_source": "fast desensitization, slowed and limited by SOL-1 (Walker et al. 2006, qualitative)",
+   "bound_source": "Wang, Mellem, Jensen, Brockie, Walker, Hoerndli, Hauth, Madsen & Maricq 2012 Neuron 75:838 (PMC3458792), Results and Fig. 6F (outside-out patches from wild-type AVA, rapid application of 3 mM glutamate, -60 mV)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 20 ms, label guessed, range [3, 200]; native GLR-1 current in the cell class the row stands for (AVA's fast glutamate current needs GLR-1, SOL-1 and SOL-2); the paper gives no spread, so the range is a factor 2 around 4 ms (guessed basis); was 20 [3, 200] guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "ok",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3458792/",
+   "source_quote": "When voltage-clamped at -60 mV, the rapid application of glutamate evoked inward currents that desensitized in the continued presence of glutamate (Figure 6F). In wild type, the average tau of desensitization was approximately 4 ms (n=11). In contrast, we found that the current desensitized in less than 0.4 ms in sol-2 mutants (n=6)",
+   "audit": "wsyn.mod's tau_des sets both the onset of and the recovery from desensitization; GLR-1 desensitizes in about 4 ms (Wang 2012) but recovers more slowly than many vertebrate AMPA receptors (Walker et al. 2006 PNAS, PMC1347967, Fig. 3C), so with the measured onset the model recovers too fast [owner: N (nmodl/wsyn.mod): a separate recovery time constant would let both be measured values; the catalog holds the onset]",
    "kind": "physiology"
   },
   {
@@ -15839,28 +15839,28 @@
    "applies_to": "GABA-gated cation (EXP-1, LGC-35) receptors at chemical synapses",
    "unit": "uM",
    "n_values": 1,
-   "value_template": 10.0,
-   "template_source": "not retrieved; Beg and Jorgensen 2003 Nat Neurosci 6:1145 would pin it",
-   "bio_min": 1.0,
-   "bio_max": 200.0,
-   "bound_basis": "guessed",
-   "bound_source": "not retrieved; Beg and Jorgensen 2003 Nat Neurosci 6:1145 would pin it",
+   "value_template": 19.0,
+   "template_source": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)",
+   "bio_min": 14.5,
+   "bio_max": 23.7,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 10 uM, label guessed, range [1, 200]; the class stands for EXP-1 and LGC-35 (receptors.py); template is the mean of their GABA EC50s (21 and 17 uM); range is mean +- SD (SD = SEM x sqrt n: EXP-1 2.7, LGC-35 2.5); oocyte values, no native recording; was 10 [1, 200] guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://doi.org/10.1038/nn1136",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/",
+   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (uM) Efficacy Hill n EC 50 (uM) Efficacy Hill n GABA 21 +- 0.69 100 0.91 +- 0.06 15 17 +- 0.71 100 2.1 +- 0.10 12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -15873,10 +15873,10 @@
    "n_values": 1,
    "value_template": 1.0,
    "template_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
-   "bio_min": 0.8,
-   "bio_max": 2.5,
-   "bound_basis": "guessed",
-   "bound_source": "Hill coefficient not reported; n = 1 (PORT_SOURCES N1 rule)",
+   "bio_min": 0.68,
+   "bio_max": 2.45,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -15888,11 +15888,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 1 1, label guessed, range [0.8, 2.5]; EXP-1's Hill is 0.91 and LGC-35's 2.1, so one class value cannot be both; range spans their mean +- SD (SD = SEM x sqrt n); template 1 kept, guessed",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/",
+   "source_quote": "Table 1. EC50, Hill slope and maximal current response efficacy for agonists at EXP-1 and LGC-35 receptors Compound EXP-1 LGC-35 EC 50 (uM) Efficacy Hill n EC 50 (uM) Efficacy Hill n GABA 21 +- 0.69 100 0.91 +- 0.06 15 17 +- 0.71 100 2.1 +- 0.10 12",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -16117,7 +16117,7 @@
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9471462/",
    "source_quote": "The resulting EC 50 (half maximal effective concentration) for 5-HT was 0.96 \u00b1 0.40 \u03bcM",
-   "audit": "receptors.py credits its 4.4 uM to the Cys-loop review PMC10480131 Table 1, which lists 1 uM for serotonin at MOD-1 [owner: Director (receptors.py; B1 retired): correct the Spec's citation or template; the catalog now uses Rodriguez Araujo 2022's 0.96 uM (fills.csv)]",
+   "audit": "receptors.py's 4.4 uM is Ranganathan, Cannon & Horvitz 2000 Nature 408:470 read through a search summary (param_ranges D6; the paper is not free), and the Spec itself notes that the Cys-loop review PMC10480131 Table 1 gives 1 uM [owner: Director (receptors.py; B1 retired): move the Spec template to the measured 0.96 uM or say why 4.4 is kept; the catalog now uses Rodriguez Araujo 2022's 0.96 uM (fills.csv)]",
    "kind": "physiology"
   },
   {
@@ -40704,17 +40704,17 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 448,
-    "measured": 279,
-    "derived": 39,
+    "guessed": 446,
+    "measured": 280,
+    "derived": 40,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9252,
-    "measured": 6235,
-    "derived": 67519,
+    "guessed": 9250,
+    "measured": 6236,
+    "derived": 67520,
     "inferred": 122,
     "absent": 5
    },
@@ -40723,17 +40723,17 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 448,
-   "measured": 279,
-   "derived": 39,
+   "guessed": 446,
+   "measured": 280,
+   "derived": 40,
    "inferred": 116,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9252,
-   "measured": 6235,
-   "derived": 67519,
+   "guessed": 9250,
+   "measured": 6236,
+   "derived": 67520,
    "inferred": 122,
    "absent": 5
   },
@@ -40805,16 +40805,16 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 103,
-     "measured": 46,
-     "derived": 4,
+     "guessed": 101,
+     "measured": 47,
+     "derived": 5,
      "inferred": 34
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6777,
-     "measured": 5903,
-     "derived": 1988,
+     "guessed": 6775,
+     "measured": 5904,
+     "derived": 1989,
      "inferred": 39
     },
     "n_rows": 214,
@@ -41180,17 +41180,17 @@
    "class": {
     "rows": {
      "inferred": 66,
-     "measured": 34,
-     "guessed": 194,
-     "derived": 5,
+     "measured": 35,
+     "guessed": 192,
+     "derived": 6,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
      "inferred": 66,
-     "measured": 34,
-     "guessed": 194,
-     "derived": 5,
+     "measured": 35,
+     "guessed": 192,
+     "derived": 6,
      "published_fit": 89,
      "absent": 4
     },
@@ -41357,16 +41357,16 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 289,
-     "measured": 219,
-     "derived": 27,
+     "guessed": 287,
+     "measured": 220,
+     "derived": 28,
      "inferred": 99
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8949,
-     "measured": 6076,
-     "derived": 67507,
+     "guessed": 8947,
+     "measured": 6077,
+     "derived": 67508,
      "inferred": 104
     },
     "n_rows": 1165,
@@ -41633,17 +41633,17 @@
    },
    "mech:receptors": {
     "rows": {
-     "measured": 20,
-     "guessed": 59,
+     "measured": 21,
+     "guessed": 57,
      "inferred": 32,
-     "derived": 2,
+     "derived": 3,
      "published_fit": 2
     },
     "numbers": {
-     "measured": 20,
-     "guessed": 59,
+     "measured": 21,
+     "guessed": 57,
      "inferred": 32,
-     "derived": 2,
+     "derived": 3,
      "published_fit": 2
     },
     "n_rows": 115,
@@ -41776,18 +41776,18 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 448,
-     "derived": 35,
+     "guessed": 446,
+     "derived": 36,
      "inferred": 116,
-     "measured": 275,
+     "measured": 276,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9252,
-     "derived": 3109,
+     "guessed": 9250,
+     "derived": 3110,
      "inferred": 122,
-     "measured": 383,
+     "measured": 384,
      "absent": 5
     },
     "n_rows": 1461,
@@ -42119,28 +42119,27 @@
    }
   ],
   "audit": {
-   "rows_ok": 1388,
-   "rows_with_problems": 95,
+   "rows_ok": 1387,
+   "rows_with_problems": 96,
    "by_status": {
-    "ok": 1388,
-    "finding": 95
+    "ok": 1387,
+    "finding": 96
    },
-   "rows_read": 202,
+   "rows_read": 203,
    "quotes": {
-    "none": 1094,
-    "paper text (read audit, 6 Nov)": 244,
+    "none": 1091,
+    "paper text (read audit, 6 Nov)": 247,
     "research file (scripted check)": 145
    },
-   "with_url": 1105,
+   "with_url": 1107,
    "links": {
-    "distinct": 153,
+    "distinct": 155,
     "by_status": {
-     "200": 142,
+     "200": 145,
      "406": 5,
-     "403": 5,
-     "429": 1
+     "403": 5
     },
-    "checked_at": "2026-11-07 00:18 CST"
+    "checked_at": "2026-11-07 00:25 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -42162,12 +42161,13 @@
     "inferred from a sibling class: the L-AChR single-channel conductance (rec_lacr_gamma_pS); ": 1,
     "inferred from vertebrate receptors (vertebrate AMPA receptors # mM (GLR# not retrieved)) w": 1,
     "inferred from vertebrate receptors (vertebrate AMPA #) with no paper named, so there is no": 1,
+    "wsyn.mod's tau_des sets both the onset of and the recovery from desensitization; GLR# dese": 1,
     "inferred from vertebrate receptors (vertebrate AMPA # pS) with no paper named, so there is": 1,
     "inferred from vertebrate receptors (vertebrate NMDA # uM (NMR# not retrieved)) with no pap": 1,
     "inferred from vertebrate receptors (vertebrate NMDA) with no paper named, so there is no U": 1,
     "inferred from vertebrate receptors (vertebrate NMDA rise # ms) with no paper named, so the": 1,
     "inferred from vertebrate receptors (vertebrate NMDA about # pS) with no paper named, so th": 1,
-    "receptors.py credits its # uM to the Cys-loop review PMC# Table #, which lists # uM for se": 1,
+    "receptors.py's # uM is Ranganathan, Cannon & Horvitz # Nature #:# read through a search su": 1,
     "inferred from a sibling class: the nAChR decay of the same family; the row names no paper ": 1,
     "Gerhardt and Adams # Anal Chem is paywalled; the tortuosity factor is not cited": 1,
     "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
@@ -45521,6 +45521,45 @@
     "url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5a/eworm_learn/components/model"
    },
    {
+    "param_id": "rec_gabacat_ec50_uM",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "10 -> 19 uM; guessed -> derived; range [1, 200] -> [14.5, 23.7]",
+    "reason": "the class stands for EXP-1 and LGC-35 (receptors.py); template is the mean of their GABA EC50s (21 and 17 uM); range is mean +- SD (SD = SEM x sqrt n: EXP-1 2.7, LGC-35 2.5); oocyte values, no native recording; was 10 [1, 200] guessed",
+    "source": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/"
+   },
+   {
+    "param_id": "rec_gabacat_hill",
+    "kind": "range",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "1 -> 1 1; guessed -> guessed; range [0.8, 2.5] -> [0.68, 2.45]",
+    "reason": "EXP-1's Hill is 0.91 and LGC-35's 2.1, so one class value cannot be both; range spans their mean +- SD (SD = SEM x sqrt n); template 1 kept, guessed",
+    "source": "Nicholl, Jawad, Weymouth, Zhang & Beg 2017 Br J Pharmacol 174:781 (PMC5386995), Table 1 (Xenopus oocytes, two-electrode voltage clamp at -60 mV; mean +- SEM, n oocytes)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5386995/"
+   },
+   {
+    "param_id": "rec_glr_tau_des_ms",
+    "kind": "fill",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "20 -> 4 ms; guessed -> measured; range [3, 200] -> [2, 8]",
+    "reason": "native GLR-1 current in the cell class the row stands for (AVA's fast glutamate current needs GLR-1, SOL-1 and SOL-2); the paper gives no spread, so the range is a factor 2 around 4 ms (guessed basis); was 20 [3, 200] guessed",
+    "source": "Wang, Mellem, Jensen, Brockie, Walker, Hoerndli, Hauth, Madsen & Maricq 2012 Neuron 75:838 (PMC3458792), Results and Fig. 6F (outside-out patches from wild-type AVA, rapid application of 3 mM glutamate, -60 mV)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3458792/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46529,17 +46568,17 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 448,
-    "measured": 279,
-    "derived": 39,
+    "guessed": 446,
+    "measured": 280,
+    "derived": 40,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9252,
-    "measured": 6235,
-    "derived": 67519,
+    "guessed": 9250,
+    "measured": 6236,
+    "derived": 67520,
     "inferred": 122,
     "absent": 5
    }
