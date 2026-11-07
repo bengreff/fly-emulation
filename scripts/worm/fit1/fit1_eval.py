@@ -6,6 +6,8 @@
 
 dtcheck (first): main's fitted mean on three training stimulations (AVAL, ASHL, AWAL) at the fit's integration and
 at brain.py's own (0.5 ms, mechanisms every 1 ms); passes if the RMS difference is at most 0.003 for every target.
+Also reported, not a criterion: the same reference with channel noise on (the fit runs with it off), as the RMS
+difference from the reference.
 
 run: simulates, for the chosen set of stimulated neurons, the fit (main's CMA mean, real wiring), shuf-fit (shuf's
 mean, shuffled wiring), the template (real wiring); for unc31, main's mean with the peptides toggle on and off at
@@ -57,16 +59,19 @@ def dtcheck(a):
     mv = json.load(open(Path(a.fitdir) / "main" / "mean.json"))["mean_vals"]
     tg = ["AVAL", "ASHL", "AWAL"]
     jobs = []
-    for name, hd, md in (("fit", cfg["h_dt"], cfg["mech_dt"]), ("ref", 0.5, 1.0)):
+    for name, hd, md, tog in (("fit", cfg["h_dt"], cfg["mech_dt"], {}), ("ref", 0.5, 1.0, {}),
+                              ("ref_chnoise", 0.5, 1.0, {"channel_noise": "diffusion"})):
         jp, op = out / f"{name}.json", out / f"{name}.npz"
         json.dump(dict(x=[0.0] * len(fc.IDS), fixed=mv, targets=tg, shuffle_seed=None, h_dt=hd, mech_dt=md,
-                       window_s=cfg["window_s"], warm_s=cfg["warm_s"], pulse_ms=cfg["pulse_ms"], toggles=cfg["toggles"],
-                       out=str(op)), open(jp, "w"))
+                       window_s=cfg["window_s"], warm_s=cfg["warm_s"], pulse_ms=cfg["pulse_ms"],
+                       toggles={**cfg["toggles"], **tog}, out=str(op)), open(jp, "w"))
         jobs.append((jp, op))
     run_jobs(jobs, cpus(a.cpus), out, log)
     F, R = np.load(out / "fit.npz")["stat"], np.load(out / "ref.npz")["stat"]
+    N = np.load(out / "ref_chnoise.npz")["stat"]
     rms = np.sqrt(np.mean((F - R) ** 2, axis=0))
-    res = dict(targets=tg, rms=rms.tolist(), max=np.abs(F - R).max(axis=0).tolist(), passed=bool((rms <= 0.003).all()))
+    res = dict(targets=tg, rms=rms.tolist(), max=np.abs(F - R).max(axis=0).tolist(), passed=bool((rms <= 0.003).all()),
+               chnoise_rms=np.sqrt(np.mean((N - R) ** 2, axis=0)).tolist())
     json.dump(res, open(out / "dtcheck.json", "w"), indent=1)
     log(json.dumps(res))
 
@@ -107,10 +112,11 @@ def gather(d, name):
 def per_stim(T, m, s_trial, s_floor):
     """Per stimulated neuron: sum of squared normalised residuals and term count (for the bootstrap)."""
     r2 = ((m - T["y"]) / fl.sigma(T, s_trial, s_floor)) ** 2
-    u = sorted(set(T["stim"].tolist()))
-    ix = {s: k for k, s in enumerate(u)}
-    k = np.array([ix[s] for s in T["stim"]])
     ok = np.isfinite(r2)
+    u = sorted(set(T["stim"][ok].tolist()))                 # only stimulated neurons that were simulated
+    ix = {s: k for k, s in enumerate(u)}
+    k = np.array([ix.get(s, -1) for s in T["stim"]])
+    ok &= k >= 0
     return u, np.bincount(k[ok], r2[ok], len(u)), np.bincount(k[ok], None, len(u))
 
 
@@ -143,7 +149,10 @@ def score(a):
         M["zero"] = np.where(sim, 0.0, np.nan)
         res[st] = {nm: fl.scores(T, m, s_trial, s_floor) for nm, m in M.items()}
         rng = np.random.default_rng(SEED)
-        P = {nm: per_stim(T, m, s_trial, s_floor)[1:] for nm, m in M.items()}
+        PS = {nm: per_stim(T, m, s_trial, s_floor) for nm, m in M.items()}
+        assert all(v[0] == PS["zero"][0] for v in PS.values()), "models simulated different stimulated neurons"
+        P = {nm: v[1:] for nm, v in PS.items()}
+        res[st]["n_stim"] = len(PS["zero"][0])
         if st == "unc31":
             res[st]["U_diff_off_minus_on"] = boot_diff(P["fit_pep_off"], P["fit_pep_on"], rng)
         else:
