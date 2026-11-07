@@ -3,7 +3,8 @@ and prints, per fit, the generation reached, evaluations per hour (measured from
 training loss trend (10-generation means of the median, since each generation's batch differs), sigma, values
 within 5% of a range end, and the generations left before the deadline at the measured rate. Also the zero
 predictor's loss on the same batches (zero_loss_10gen_means), the baseline to read the median against, since one
-batch's loss can be twice another's. Reads no sealed data. Needs only numpy and fit1_loss.py, so it runs from any copy.
+batch's loss can be twice another's. The same split into off-diagonal terms (responses of other neurons, where
+the wiring matters) and autoresponses (the stimulated neuron itself). Reads no sealed data. Needs only numpy and fit1_loss.py, so it runs from any copy.
 
     python fit1_status.py ~/worm-night/wfit/fit1
 """
@@ -19,8 +20,8 @@ import fit1_loss as fl
 
 
 def zero_losses(d, H):
-    """The zero predictor's loss on each generation's batch, on the terms the candidates were scored on (the batch's
-    stimulated neurons, responders that are model cells)."""
+    """The zero predictor's loss (all, off-diagonal, autoresponse) on each generation's batch, on the terms the
+    candidates were scored on (the batch's stimulated neurons, responders that are model cells)."""
     tp, ev = d.parent / "train.npz", sorted((d / "gen_0000").glob("eval_*.npz"))
     if not tp.exists() or not ev:
         return None
@@ -29,8 +30,13 @@ def zero_losses(d, H):
     z = []
     for h in H:
         k = np.isin(T["stim"], h["batch"].split()) & np.isin(T["resp"], names)
-        z.append(fl.chi2(T[k], np.zeros(int(k.sum())), s_trial, s_floor)[0])
+        sc = fl.scores(T[k], np.zeros(int(k.sum())), s_trial, s_floor)
+        z.append((sc["chi2"], sc["chi2_off"], sc["chi2_self"]))
     return np.array(z)
+
+
+def means10(a):
+    return [round(float(np.mean(a[k:k + 10])), 4) for k in range(0, len(a), 10)]
 
 
 def status(d):
@@ -52,7 +58,19 @@ def status(d):
     out["best_loss_10gen_means"] = [round(float(best[k:k + 10].mean()), 4) for k in range(0, len(best), 10)]
     zero = zero_losses(d, H)
     if zero is not None:
-        out["zero_loss_10gen_means"] = [round(float(zero[k:k + 10].mean()), 4) for k in range(0, len(zero), 10)]
+        out["zero_loss_10gen_means"] = means10(zero[:, 0])
+    parts = []
+    for h in H:
+        r = d / f"gen_{int(h['generation']):04d}" / "result.json"
+        sc = json.load(open(r))["scores"] if r.exists() else []
+        parts.append([np.nanmedian([c.get(key, np.nan) for c in sc]) if sc else np.nan for key in ("chi2_off", "chi2_self")])
+    parts = np.array(parts)
+    out["median_off_diagonal_10gen_means"] = means10(parts[:, 0])
+    if zero is not None:
+        out["zero_off_diagonal_10gen_means"] = means10(zero[:, 1])
+    out["median_autoresponse_10gen_means"] = means10(parts[:, 1])
+    if zero is not None:
+        out["zero_autoresponse_10gen_means"] = means10(zero[:, 2])
     out["sigma"] = float(H[-1]["sigma"])
     m = json.load(open(d / "mean.json"))
     B = cfg["bounds"]
