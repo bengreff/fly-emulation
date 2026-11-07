@@ -183,7 +183,9 @@ Not fitted, with reasons:
 
 Each fit stops at the first of:
 1. a file STOP in its directory (Ben or the Director);
-2. the deadline, 2026-11-07 17:00 CST (when backhouse's evening cap starts);
+2. the deadline, 2026-11-07 17:00 CST (when backhouse's evening cap starts). Ben or the Director may extend it
+   before it is reached, for both fits alike (resume with a later `--deadline`). Each extension is recorded here
+   with its time; none may depend on held-out data;
 3. 200 generations;
 4. pycma's own termination criteria;
 5. a plateau: after at least 40 generations, the mean of the median loss over the last 10 generations is not 1%
@@ -270,3 +272,12 @@ with the actuator and GCaMP values alone, the model cannot reach the data's auto
 ranges. The Ca pool values can, inside theirs. The only data used was the aggregate training median (0.43).
 Before this, the only runs on training data were a plumbing test of the driver (2 s windows, 2 generations,
 population 4, `~/worm-night/wfit/smoke_run`). Its losses mean nothing and were not used.
+
+## Trial before the freeze (development, training data only)
+
+From 22:47 a trial of both fits runs on backhouse (`~/worm-night/wfit/trial/`, commit a32642d code), with exactly
+the settings above. It exists to check that full-size generations finish and checkpoint, to measure throughput
+under full load, and to catch failures before the real launch. It is stopped at the freeze. Its training losses
+are seen. Its answer is never scored on held-out data. Any change made because of it is listed here, with the
+reason, before the real launch. The real fits start from the template on the worm-v1 code, in
+`~/worm-night/wfit/fit1/{main,shuf}`.
