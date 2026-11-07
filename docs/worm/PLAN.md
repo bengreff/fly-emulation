@@ -1,3 +1,5 @@
+> **Status (7 Nov): the layer table (section a) and the fitting ideas remain reference. The staged roadmap (W0-W9) and the circuit-by-circuit order are superseded: every mechanism was built first (6-7 Nov, `MECHANISMS_AUDIT.md`), and Ben (7 Nov) wants ONE general fitting algorithm on the whole worm (`STRATEGY.md`, `~/director/goals.md`). Routing: `KNOWLEDGE_INDEX.md`.**
+
 # C. elegans whole-animal emulation: the plan
 
 Written 2026-11-04 23:20 CST (from `date`), from Ben's ten binding answers (`~/director/goals.md`, fly-emulation

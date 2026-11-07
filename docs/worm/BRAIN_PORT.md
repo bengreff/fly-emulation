@@ -1,3 +1,5 @@
+> **Status (7 Nov): history of the 5 Nov port and diagnosis, still correct as history. Its "current default" values and toggle states are stale: current values live in `docs/worm/CATALOG.md` / `ledger.json`, current mechanisms in `MECHANISMS_AUDIT.md`; routing in `KNOWLEDGE_INDEX.md`.**
+
 # Brain port: BAAIWorm and c302 run as published, then extended to the whole worm
 
 Order (Ben via Director, 5 Nov 15:05): port the brain wholesale, run it as published first, extend to all 302
