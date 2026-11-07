@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:28 CST",
+ "generated_at": "2026-11-07 00:31 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67508,
-   "guessed": 9112,
-   "inferred": 115,
+   "guessed": 9111,
+   "inferred": 116,
    "measured": 6182,
    "published_fit": 8033
   },
-  "known": 81838,
-  "placeholder": 9112,
+  "known": 81839,
+  "placeholder": 9111,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9112
+  "must_fill": 9111
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9112,
+   "guessed": 9111,
    "derived": 3100,
-   "inferred": 115,
+   "inferred": 116,
    "measured": 330
   },
-  "known": 10851,
-  "placeholder": 9112,
+  "known": 10852,
+  "placeholder": 9111,
   "gap": 0,
-  "must_fill": 9112
+  "must_fill": 9111
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6181,
     "derived": 3100,
-    "inferred (ours)": 21,
+    "inferred (ours)": 22,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3637,
+    "guessed": 3636,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3100,
     "measured": 329,
-    "inferred (ours)": 21,
+    "inferred (ours)": 22,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3637,
+    "guessed": 3636,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -137,8 +137,8 @@
   },
   "global": {
    "derived": 18,
-   "guessed": 140,
-   "inferred": 43,
+   "guessed": 139,
+   "inferred": 44,
    "measured": 30,
    "published_fit": 221
   },
@@ -1519,8 +1519,8 @@
    "numbers": 22,
    "by_label": {
     "derived": 3,
-    "guessed": 6,
-    "inferred": 2,
+    "guessed": 5,
+    "inferred": 3,
     "measured": 11
    }
   },
@@ -40223,28 +40223,28 @@
    "applies_to": "jGCaMP7f",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 270.0,
-   "template_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): half-decay not opened",
+   "value_template": 265.0,
+   "template_source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Results (cultured rat hippocampal neurons, 1 action potential by field stimulation; median +- s.e.m.)",
    "bio_min": 100.0,
    "bio_max": 800.0,
    "bound_basis": "guessed",
-   "bound_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): half-decay not opened",
+   "bound_source": "kept from before the value fill: Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): half-decay not opened",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP)",
+   "notes": "the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP); fill 6 Nov (catalog audit): was 270 ms, label guessed, range [100, 800]; inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://doi.org/10.1101/434589",
+   "source_quote": "1-AP half decay time: GCaMP6f, 140\u00b120 ms; jGCaMP7f, 265\u00b120; GCaMP6s, 455\u00b140) (Supp. Table 2)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40704,18 +40704,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 445,
+    "guessed": 444,
     "measured": 281,
     "derived": 40,
-    "inferred": 116,
+    "inferred": 117,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9249,
+    "guessed": 9248,
     "measured": 6237,
     "derived": 67520,
-    "inferred": 122,
+    "inferred": 123,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40723,18 +40723,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 445,
+   "guessed": 444,
    "measured": 281,
    "derived": 40,
-   "inferred": 116,
+   "inferred": 117,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9249,
+   "guessed": 9248,
    "measured": 6237,
    "derived": 67520,
-   "inferred": 122,
+   "inferred": 123,
    "absent": 5
   },
   "by_plan_row": {
@@ -41067,15 +41067,15 @@
    "23": {
     "rows": {
      "measured": 17,
-     "inferred": 5,
+     "inferred": 6,
      "derived": 3,
-     "guessed": 11
+     "guessed": 10
     },
     "numbers": {
      "measured": 17,
-     "inferred": 5,
+     "inferred": 6,
      "derived": 3,
-     "guessed": 11
+     "guessed": 10
     },
     "n_rows": 36,
     "n_numbers": 36
@@ -41250,16 +41250,16 @@
    "global": {
     "rows": {
      "published_fit": 306,
-     "guessed": 165,
-     "inferred": 47,
+     "guessed": 164,
+     "inferred": 48,
      "measured": 56,
      "derived": 28,
      "absent": 1
     },
     "numbers": {
      "published_fit": 306,
-     "guessed": 165,
-     "inferred": 47,
+     "guessed": 164,
+     "inferred": 48,
      "measured": 56,
      "derived": 28,
      "absent": 1
@@ -41357,17 +41357,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 286,
+     "guessed": 285,
      "measured": 221,
      "derived": 28,
-     "inferred": 99
+     "inferred": 100
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8946,
+     "guessed": 8945,
      "measured": 6078,
      "derived": 67508,
-     "inferred": 104
+     "inferred": 105
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41529,14 +41529,14 @@
     "rows": {
      "measured": 9,
      "derived": 2,
-     "guessed": 9,
-     "inferred": 3
+     "guessed": 8,
+     "inferred": 4
     },
     "numbers": {
      "measured": 9,
      "derived": 2,
-     "guessed": 9,
-     "inferred": 3
+     "guessed": 8,
+     "inferred": 4
     },
     "n_rows": 23,
     "n_numbers": 23
@@ -41776,17 +41776,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 445,
+     "guessed": 444,
      "derived": 36,
-     "inferred": 116,
+     "inferred": 117,
      "measured": 277,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9249,
+     "guessed": 9248,
      "derived": 3110,
-     "inferred": 122,
+     "inferred": 123,
      "measured": 385,
      "absent": 5
     },
@@ -42127,20 +42127,19 @@
    },
    "rows_read": 204,
    "quotes": {
-    "none": 1090,
-    "paper text (read audit, 6 Nov)": 248,
+    "none": 1089,
+    "paper text (read audit, 6 Nov)": 249,
     "research file (scripted check)": 145
    },
-   "with_url": 1108,
+   "with_url": 1109,
    "links": {
-    "distinct": 156,
+    "distinct": 157,
     "by_status": {
-     "200": 145,
-     "429": 1,
+     "200": 147,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:28 CST"
+    "checked_at": "2026-11-07 00:31 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45575,6 +45574,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13687065/"
    },
    {
+    "param_id": "obs_gcamp7f_thalf_ms",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "270 -> 265 ms; guessed -> inferred; range [100, 800] -> [100, 800]",
+    "reason": "inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
+    "source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Results (cultured rat hippocampal neurons, 1 action potential by field stimulation; median +- s.e.m.)",
+    "url": "https://doi.org/10.1101/434589"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46583,18 +46595,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 445,
+    "guessed": 444,
     "measured": 281,
     "derived": 40,
-    "inferred": 116,
+    "inferred": 117,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9249,
+    "guessed": 9248,
     "measured": 6237,
     "derived": 67520,
-    "inferred": 122,
+    "inferred": 123,
     "absent": 5
    }
   }
