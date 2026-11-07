@@ -602,3 +602,13 @@
   source: none
   notes: ''
   absent_reason: no lumped model yet; no INTERFACE channel needs them this week
+- id: receptor_kinetics
+  name: 'Ionotropic receptor classes with kinetics: per-class dose-response, rise, decay, desensitization, reversal and unit conductance; classes per pair from CeNGEN, transmitter and Fenyves 2020 polarity'
+  layer: synapse
+  status: have
+  toggle: receptor_kinetics
+  neutral: 'off'
+  default: kinetic
+  source: src/wormemu/mech/receptors.py
+  notes: registry module receptors; PLAN row guessed from the name by the catalog
+  absent_reason: ''

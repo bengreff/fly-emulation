@@ -723,8 +723,11 @@ def build_registry():
             if s_.lit:
                 lo, hi, _, basis, bsrc = lit(s_.lit)
             else:
-                lo, hi, basis, bsrc = s_.lo, s_.hi, "guessed" if s_.label == "guessed" else "measured_related", \
-                    s_.source
+                # the range basis is the Spec's own when it gives one; else measured_related only when the
+                # source names a citation, otherwise guessed (a range with no cited source is a guess)
+                basis = getattr(s_, "bound_basis", "") or (
+                    "measured_related" if s_.label != "guessed" and cat.CITE.search(s_.source) else "guessed")
+                lo, hi, bsrc = s_.lo, s_.hi, s_.source
             lab = s_.label
             proj = getattr(s_, "source_project", "") or ("ours" if lab in ("guessed", "inferred") else "literature")
             el = getattr(s_, "values", None)
