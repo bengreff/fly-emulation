@@ -390,12 +390,13 @@ S("slow_cmk1_fast_tau_min", 18, "slow_signalling", "min", 2.5, 2, 3, "measured",
   basis="measured_this_class", src="Yu et al. 2014 Neuron (doi 10.1016/j.neuron.2014.10.046), via N6",
   url="https://doi.org/10.1016/j.neuron.2014.10.046",
   quote=f"{N6}: Two explicit timescales in the same cell: **2-3 min** (fast, short-term threshold reset)",
-  notes="the slow 3-5 h component is slow_thermo_tau_h", match="slow_cmk1_fast")
-for pid, nm in (("slow_insulin_tau_h", "insulin/DAF-16"), ("slow_daf7_tau_h", "DAF-7 TGF-beta"),
-                ("slow_crh1_tau_h", "CRH-1/CREB"), ("slow_glr1_traffic_tau_h", "GLR-1 trafficking (CMK-1)")):
+  notes="the slow 3-5 h component is cmk1_slow_tau_h", match="slow_cmk1_fast cmk1_fast_tau_min")
+for pid, nm, code in (("slow_insulin_tau_h", "insulin/DAF-16", "daf16_tau_h"),
+                      ("slow_daf7_tau_h", "DAF-7 TGF-beta", "daf7_tau_h"), ("slow_crh1_tau_h", "CRH-1/CREB", "creb_tau_h"),
+                      ("slow_glr1_traffic_tau_h", "GLR-1 trafficking (CMK-1)", "glr1_tau_h")):
     S(pid, 18, "slow_signalling", "h", None, 0.01, 24, "guessed", grain="class", applies=nm,
       src="none: not retrieved; K1 class bound", quote=f"{N6}: otherwise bounded generically in the K1 cost class "
-      "PLAN.md row 18 already assigns (~1 s to hours", notes="bounds guessed (36 s to a day)", match=pid)
+      "PLAN.md row 18 already assigns (~1 s to hours", notes="bounds guessed (36 s to a day)", match=f"{pid} {code}")
 
 # --- row 19: homeostasis (N7) -----------------------------------------------------------------------------------------
 N7 = f"{NEURAL} N7"
@@ -408,6 +409,9 @@ S("homeo_unc2_tau_h", 19, "homeostasis", "h", 1.5, 1, 2, "derived", grain="globa
   applies="UNC-2-expressing presynaptic terminals", basis="measured_this_class", src="derived in N7 from PMC11363341 "
   "(1 h no change, >2 h decrease)", url=PMC("PMC11363341"),
   quote=f"{N7}: bounds tau between roughly 1-2 h, derived from the reported threshold", match="homeo_unc2")
+# mech/slow_signalling's O'Leary form integrates each cell's own Ca error per channel (homeo_<c>_tau_h, the 1/k_i of
+# the slot below) with no separate sensor filter stage, so its rows replace all three slots
+HOMEO_CODE = "homeo_unc2_tau_h homeo_egl19_tau_h homeo_shl1_tau_h homeo_tau_g_h"
 for pid, unit, lo, hi, nt in (("homeo_ca_sensor_fast_tau_s", "s", 0.01, 1, "fast Ca sensor filter"),
                               ("homeo_ca_sensor_slow_tau_s", "s", 10, 1000, "slow Ca sensor filter"),
                               ("homeo_density_rate_per_s", "1/s", 1e-6, 1e-2, "density regulation gain k_i")):
@@ -415,7 +419,7 @@ for pid, unit, lo, hi, nt in (("homeo_ca_sensor_fast_tau_s", "s", 0.01, 1, "fast
       src="O'Leary et al. 2013 PNAS (stomatogastric, not worm; values not extracted)",
       url="https://neurostatslab.org/assets/papers/OLeary_etal_2013.pdf",
       quote=f"{N7}: | O'Leary 2013 calcium-sensor filter time constants, regulation gains `k_i` | not extracted",
-      notes=nt, match="homeo_oleary")
+      notes=nt, match=f"homeo_oleary {HOMEO_CODE}")
 
 # --- row 20: metabolism (O7, AmP DEB) ---------------------------------------------------------------------------------
 O7 = f"{ORGANS} O7"
@@ -493,13 +497,16 @@ S("learn_rate_per_s", 24, "learning", "1/s", None, 1e-4, 1e-1, "guessed", grain=
   applies="every learning paradigm (one shared state)", src="none: no paradigm has measured kinetics",
   quote=f"{N3}: every paradigm in this list reduces to the same minimal ... \"slow associative state\" mechanism (one "
         "state variable, one learning-rate parameter, one decay",
-  notes="fit target (bounded), against held-out behaviour", match="learning")
+  notes="fit target (bounded), against held-out behaviour; mech/learning's per-paradigm assoc_*_learn_tau_min is "
+  "its inverse", match="learning assoc_salt_learn_tau_min")
 S("learn_fast_tau_min", 24, "learning", "min", None, 1, 60, "guessed", grain="global", applies="short-term trace",
   src="Kano et al. (Curr Biol): NMDA-independent short-term memory, minutes",
-  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning")
+  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning",
+  notes="kept: mech/learning runs one trace per paradigm (assoc_*_forget_tau_min); this is the two-trace form's")
 S("learn_slow_tau_h", 24, "learning", "h", None, 1, 24, "guessed", grain="global", applies="long-term trace (NMR-1)",
   src="Kano et al. (Curr Biol): NMDA-dependent long-term memory, hours",
-  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning")
+  quote=f"{N3}: fast trace (minutes, NMDA-independent) + slow trace (hours, NMDA-depend", match="learning",
+  notes="kept: mech/learning runs one trace per paradigm (assoc_*_forget_tau_min); this is the two-trace form's")
 
 # --- row 25: temperature (N8) -----------------------------------------------------------------------------------------
 N8 = f"{NEURAL} N8"
@@ -522,13 +529,16 @@ S("noise_mini_rate_per_s", 26, "noise", "1/s", 26.3, 10.2, 35.3, "measured", gra
   applies="cholinergic presynaptic terminals", basis="measured_this_class",
   src="Liu, Hollopeter & Jorgensen 2009", url=PMC("PMC2705609"),
   quote=f"{N9}: | Baseline spontaneous mEPSC (\"mini\") rate, NMJ ACh | 26.3+-5.4 events/s |",
-  notes="range = hyperpolarized (10.2) to rebound (35.3) rates, same paper", match="noise")
+  notes="range = hyperpolarized (10.2) to rebound (35.3) rates, same paper; kept as a check: mech/noise draws the "
+  "minis from each synapse's own graded release, so the model should reproduce this rate at rest rather than read it",
+  match="noise")
 S("noise_quantal_pA", 26, "noise", "pA", 17.6, 16.7, 18.5, "measured", grain="family",
   applies="cholinergic NMJ", basis="measured_this_class", src="Liu et al. 2009 Fig 3E", url=PMC("PMC2705609"),
-  quote=f"{N9}: | Single mEPSC (quantal) amplitude | 17.6+-0.9 pA |", notes="range = mean +- the reported error", match="noise")
+  quote=f"{N9}: | Single mEPSC (quantal) amplitude | 17.6+-0.9 pA |", notes="range = mean +- the reported error",
+  match="noise noise_quantal_pA")
 S("noise_quantal_cv", 26, "noise", "1", None, 0.1, 0.5, "guessed", grain="family", applies="every release site",
   src="none: per-event variance not reported",
-  quote=f"{N9}: treat the per-event amplitude variance itself as a gap", match="noise")
+  quote=f"{N9}: treat the per-event amplitude variance itself as a gap", match="noise noise_amp_cv")
 
 # --- row 27: pumps (no PORT_SOURCES section) --------------------------------------------------------------------------
 P27 = f"{PLAN} row 27"
@@ -614,3 +624,39 @@ H("init_v_muscle_mV", 12, "muscle_active", "mV", -28.0, -40.0, -15.0, "published
   src="c302 GenericMuscleCell initMembPotential (parameters_C2), as ported",
   used="src/wormemu/brain.py:62 (V_INIT_MUSCLE)",
   notes="initial condition: only the opening transient depends on it; range guessed")
+
+# --- BAAIWorm channel mods: literals in the current and rate equations (not PARAMETERs, so not kin_* rows; 6 Nov) ---
+# The mods compute each current against a fixed reversal, not NEURON's ek / eca / ena (those are commented out), so
+# ion_ek reaches kqt3 only and ion_ena, ion_cao and ion_celsius reach no current. mech/noise.py mirrors these values.
+BMOD = "third_party/baaiworm/mod/{}".format
+BSRC = "BAAIWorm b99ca5a mod files (Zhao et al. 2024 Nat Comput Sci), as ported"
+H("baai_ek_mV", 5, "ions", "mV", -80.0, -100.0, -60.0, "published_fit", basis="guessed",
+  applies="11 K channel mods: slo1_unc2, slo1_egl19, slo2_unc2, slo2_egl19, egl2, irk, shl1, kvs1, shk1, egl36, kcnl",
+  src=BSRC, used=f"{BMOD('egl2.mod')}:57 and the same (v + 80) in 10 more K mods",
+  notes="the K reversal those mods use; kqt3 alone reads ek (ion_ek, -77); range = ion_ek's (guessed)")
+H("baai_eca_mV", 5, "ions", "mV", 60.0, 30.0, 140.0, "published_fit", basis="guessed",
+  applies="unc2, egl19, cca1 currents; the SLO nanodomain Ca (slo1/slo2 x unc2/egl19); cainternm's v <= 60 branch",
+  src=BSRC, used=f"{BMOD('unc2.mod')}:67, {BMOD('egl19.mod')}:77, {BMOD('cca1.mod')}:64, "
+  f"{BMOD('slo1_unc2.mod')}:121, {BMOD('cainternm.mod')}:69",
+  notes="the Ca reversal every Ca current uses; NEURON's Nernst eca (set by ion_cao, ion_celsius) is read by no current; "
+        "range guessed, from an apparent channel reversal near +30 to the Nernst value near +130 (brain.py, derived)")
+H("baai_ena_nca_mV", 5, "ions", "mV", 30.0, 0.0, 70.0, "published_fit", basis="guessed",
+  applies="the NCA sodium leak in every cell that has it", src=BSRC, used=f"{BMOD('nca.mod')}:40",
+  notes="nca declares READ ena but computes gbnca * (v - 30), so ion_ena has no effect; range guessed (a mixed "
+        "cation leak's reversal sits between 0 and E_Na)")
+for pid, val, lo, hi, basis, ln, what in (
+        ("baai_shl1_hf_frac", 0.7, 0.0, 1.0, "physical_limit", 74, "fraction of SHL-1 current with fast inactivation "
+         "(the rest, 0.3, slow)"),
+        ("baai_shl1_tm_scale", 0.4, 0.2, 0.8, "guessed", 88, "factor on SHL-1's activation time constant"),
+        ("baai_shl1_thf_scale", 0.08, 0.04, 0.16, "guessed", 89, "factor on SHL-1's fast inactivation time constant"),
+        ("baai_shl1_ths_scale", 0.3, 0.15, 0.6, "guessed", 90, "factor on SHL-1's slow inactivation time constant")):
+    H(pid, 4, "ch_shl1", "1", val, lo, hi, "published_fit", basis=basis, applies="every cell with shl1", src=BSRC,
+      used=f"{BMOD('shl1.mod')}:{ln}", notes=what + ("" if basis != "guessed" else "; range guessed (x/2 to x2)"))
+H("baai_kqt3_mf_frac", 4, "ch_kqt3", "1", 0.3, 0.0, 1.0, "published_fit", basis="physical_limit",
+  applies="every cell with kqt3", src=BSRC, used=f"{BMOD('kqt3.mod')}:78",
+  notes="fraction of KQT-3 current with fast activation (the rest, 0.7, slow)")
+for pid, val, what in (("baai_egl36_w_fast", 0.33, "fast"), ("baai_egl36_w_mid", 0.36, "middle"),
+                       ("baai_egl36_w_slow", 0.39, "slow")):
+    H(pid, 4, "ch_egl36", "1", val, 0.0, 1.0, "published_fit", basis="physical_limit",
+      applies="every cell with egl36", src=BSRC, used=f"{BMOD('egl36.mod')}:65",
+      notes=f"weight of EGL-36's {what} activation component on gbegl36 (the three sum to 1.08, not 1)")

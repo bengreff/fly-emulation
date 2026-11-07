@@ -80,3 +80,34 @@ src/wormemu/mech/neuromod.py,0.5,brain.soma[c](0.5),structure,,,mid-soma segment
 src/wormemu/mech/neuromod.py,5,_sig((v - L.p[vth]) / 5.0),duplicate of a catalog row,pep_release_slope_mV ma_release_slope_mV,B1,"the lumped form (nested, off by default) copies brain_layers' fixed 5 mV; it should read the row, as the compartment form reads dcv_k_mV / ma_k_mV"
 src/wormemu/mech/plasticity.py,-60,v0=-60.0,test stand-in,,,numpy_reference (CPU check path) start voltage; the NEURON path starts from finitialize
 src/wormemu/mech/plasticity.py,-40,pp.erev < -40,structure,,,"classification rule: a synapse with no receptor class is GABA when its reversal is below -40 mV (Cl about -70, cation about 0); any cut between -60 and -10 gives the same split"
+src/wormemu/mech/noise.py,,"""slo1"": (",mirrors a catalog row,chnoise_slo1_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""slo2"": (",mirrors a catalog row,chnoise_slo2_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""egl2"": (",mirrors a catalog row,chnoise_egl2_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""shl1"": (",mirrors a catalog row,chnoise_shl1_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""kqt3"": (",mirrors a catalog row,chnoise_kqt3_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""kvs1"": (",mirrors a catalog row,chnoise_kvs1_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""irk"": (",mirrors a catalog row,chnoise_irk_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""egl36"": (",mirrors a catalog row,chnoise_egl36_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""shk1"": (",mirrors a catalog row,chnoise_shk1_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""kcnl"": (",mirrors a catalog row,chnoise_kcnl_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""egl19"": (",mirrors a catalog row,chnoise_egl19_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""unc2"": (",mirrors a catalog row,chnoise_unc2_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,,"""cca1"": (",mirrors a catalog row,chnoise_cca1_pS,,"the UNIT table is the Spec source (template, lo, hi) of this row, built in a loop; the run reads params[chnoise_*_pS]"
+src/wormemu/mech/noise.py,-80.0,-80.0),mirrors a catalog row,baai_ek_mV,B1,"the reversal the K mods hard-code (v + 80); mirrored, so a mod change would leave it stale"
+src/wormemu/mech/noise.py,60.0,60.0),mirrors a catalog row,baai_eca_mV,B1,the reversal the Ca mods hard-code (v - 60); mirrored
+src/wormemu/mech/noise.py,0.7,"""shl1"": (""shl1""",mirrors a catalog row,baai_shl1_hf_frac,B1,shl1.mod:74 fast-inactivation fraction
+src/wormemu/mech/noise.py,0.3,"""shl1"": (""shl1""",mirrors a catalog row,baai_shl1_hf_frac,B1,shl1.mod:74 slow-inactivation fraction (1 - 0.7)
+src/wormemu/mech/noise.py,0.4,"(""minf"", ""tm"", 3, 0.4), (""hfinf""",mirrors a catalog row,baai_shl1_tm_scale baai_shl1_thf_scale,B1,shl1.mod:88-89 tau factors
+src/wormemu/mech/noise.py,0.08,"(""hfinf"", ""thf"", 1, 0.08)",mirrors a catalog row,baai_shl1_thf_scale,B1,shl1.mod:89
+src/wormemu/mech/noise.py,0.4,"(""minf"", ""tm"", 3, 0.4), (""hsinf""",mirrors a catalog row,baai_shl1_tm_scale baai_shl1_ths_scale,B1,"shl1.mod:88, 90"
+src/wormemu/mech/noise.py,0.3,"(""minf"", ""tm"", 3, 0.4), (""hsinf""",mirrors a catalog row,baai_shl1_hf_frac baai_shl1_ths_scale,B1,shl1.mod:74 slow fraction and :90 tau factor
+src/wormemu/mech/noise.py,0.3,"(0.3, [(""minf"", ""tmf""",mirrors a catalog row,baai_kqt3_mf_frac,B1,kqt3.mod:78
+src/wormemu/mech/noise.py,0.7,"(0.7, [(""minf"", ""tms""",mirrors a catalog row,baai_kqt3_mf_frac,B1,kqt3.mod:78 slow fraction (1 - 0.3)
+src/wormemu/mech/noise.py,0.33,mfinf,mirrors a catalog row,baai_egl36_w_fast,B1,egl36.mod:65
+src/wormemu/mech/noise.py,0.36,mminf,mirrors a catalog row,baai_egl36_w_mid,B1,egl36.mod:65
+src/wormemu/mech/noise.py,0.39,msinf,mirrors a catalog row,baai_egl36_w_slow,B1,egl36.mod:65
+src/wormemu/mech/noise.py,,u ** 3 - 0.5 * u ** 4,arithmetic,,,exact series of 2u - 3 + 4e^-u - e^-2u for small u (checked 6 Nov) and its switch point
+src/wormemu/mech/noise.py,26,seed,structure,,,RNG stream id (PLAN row 26)
+src/wormemu/mech/noise.py,0.5,brain.soma[i](0.5),structure,,,the soma's middle segment
+src/wormemu/mech/noise.py,1e-06,np.maximum(np.array(ts),numerics,,,floor on a gate time constant
+src/wormemu/mech/slow_signalling.py,1e-06,self.c0,numerics,,,floor on the Ca set point (no divide by zero)

@@ -541,26 +541,6 @@
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
-- id: homeostasis
-  name: 'Homeostatic self-tuning: a slow bias current pulls each neuron''s V toward a target'
-  layer: plasticity
-  status: partial
-  toggle: homeostasis
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
-- id: slow_signalling
-  name: Hours-scale sensory adaptation (EGL-4, CMK-1), lumped as a slow gain drift
-  layer: plasticity
-  status: partial
-  toggle: slow_signalling
-  neutral: 'off'
-  default: 'on'
-  source: lumped model in src/wormemu/brain_layers.py
-  notes: ''
-  absent_reason: ''
 - id: gap_rectification
   name: Rectifying gap junctions (AVA-A class UNC-7/UNC-9)
   layer: gap
@@ -612,6 +592,36 @@
   source: src/wormemu/mech/plasticity.py
   notes: registry module plasticity; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: slow_signalling
+  name: Slow intracellular states (EGL-4/PKG, CMK-1 fast and slow, GLR-1 trafficking, insulin/DAF-16, DAF-7, CRH-1/CREB), first-order and bounded, scaling release and receptor densities
+  layer: plasticity
+  status: have
+  toggle: slow_signalling
+  neutral: 'off'
+  default: states
+  source: src/wormemu/mech/slow_signalling.py
+  notes: registry module slow_signalling; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: homeostasis
+  name: Activity-dependent channel density tuning (O'Leary integral control on a calcium error; UNC-2 self-tuning over hours)
+  layer: plasticity
+  status: have
+  toggle: homeostasis
+  neutral: 'off'
+  default: oleary
+  source: src/wormemu/mech/slow_signalling.py
+  notes: registry module slow_signalling; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: associative
+  name: 'Slow associative states: salt (ASER, starvation), thermotaxis (AFD, starvation), pathogen (ADF serotonin)'
+  layer: plasticity
+  status: have
+  toggle: associative
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/learning.py
+  notes: registry module learning; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: peptides
   name: 'Neuropeptides: UNC-31 dense-core release into four pseudocoelom compartments, every Beets 2023 EC50 pair, GPCR -> Gq/Gi/Gs -> release, NCA, IRK, EGL-19'
   layer: neuromodulation
@@ -631,4 +641,24 @@
   default: compartments
   source: src/wormemu/mech/neuromod.py
   notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: quantal_noise
+  name: Quantal (vesicle) release noise at chemical synapses
+  layer: synapse
+  status: have
+  toggle: quantal_noise
+  neutral: 'off'
+  default: quantal
+  source: src/wormemu/mech/noise.py
+  notes: registry module noise; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: channel_noise
+  name: Ion channel noise at each neuron's soma (diffusion approximation, Linaro 2011)
+  layer: channel
+  status: have
+  toggle: channel_noise
+  neutral: 'off'
+  default: diffusion
+  source: src/wormemu/mech/noise.py
+  notes: registry module noise; PLAN row guessed from the name by the catalog
   absent_reason: ''

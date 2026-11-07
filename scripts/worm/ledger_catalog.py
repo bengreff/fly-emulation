@@ -398,8 +398,9 @@ NUMERICS = {"mw_dt", "mw_iterations", "mw_convergence_eps", "mw_control_hz", "mw
             "mw_n_surface_triangles", "mw_mesh_scale", "mw_drag_force_cap", "mw_damping_per_step", "mw_key_gain",
             "mw_key_transport_alpha"}
 # an audit note whose action starts with one of these explains the row's remaining problems: the row is a documented
-# finding (kept on purpose, or waiting for the code's owner), not an unexplained problem. "fixed" and "read" (read
-# against the source, nothing wrong) only add to the trail; any other action ("open") is a problem until resolved
+# finding (kept on purpose, or waiting for the code's owner), not an unexplained problem; an "owner" note makes the
+# row a finding even when the scripted checks pass. "fixed" and "read" (read against the source, nothing wrong) only
+# add to the trail; any other action ("open") is a problem until resolved
 EXPLAINED = ("accepted", "owner", "kept")
 
 
@@ -553,6 +554,8 @@ def build(model_rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, fi
         trail[a["param_id"]].append(text)
         if act.startswith(EXPLAINED):
             explained.add(a["param_id"])
+            if act.startswith("owner"):                  # waiting on the code's owner: a finding even on a clean row
+                open_[a["param_id"]].append(text)
         elif not act.startswith(("fixed", "read")):
             open_[a["param_id"]].append(text)
     out, links = [], link_checks()
