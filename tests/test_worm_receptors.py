@@ -40,7 +40,8 @@ def _run(toggles):
 
 
 def test_graded_mode_is_baaiworm():
-    nm = dict(peptides="off", monoamines="off", stp="off", habituation="off", quantal_noise="off")   # wsyn only
+    nm = dict(peptides="off", monoamines="off", stp="off", habituation="off", quantal_noise="off",
+              channel_noise="off")   # wsyn only
     off = _run(dict(wiring="cook", receptor_kinetics="off", **nm))
     gr = _run(dict(wiring="cook", receptor_kinetics="graded", **nm))
     assert off["n_wsyn"] == 0 and gr["n_wsyn"] > 0
