@@ -23,6 +23,17 @@ conductance and BAAIWorm's erev this is neuron_to_neuron_exc_syn / _inh_syn exac
 Mg block (NMDA-like classes; mg = 0 means none): B(v) = 1 / (1 + exp(-mgk * v) * mg / mgc) (Jahr and Stevens
 1990 J Neurosci 10:3178). i = gmax * recgain * open * B(v) * (v - erev); recgain is the postsynaptic receptor
 multiplier from mechanisms' g_scale "rec_<class>" (1 = neutral).
+
+Short-term plasticity (row 24; mech/plasticity.py, graded form of Dittman, Kreitzer and Regehr 2000 J Neurosci
+20:1374), driven by the release fraction s taken at the start of the step:
+  cF' = s - cF/tauF, cD' = s - cD/tauD           residual-Ca traces (ms of full release)
+  F = F1 + (1 - F1) cF/(cF + KF)                  release probability, F1 at rest
+  krec = k0 + (kmax - k0) cD/(cD + KD)            Ca-accelerated recovery
+  x' = (1 - x) krec - beta F s x                  vesicle resource
+  z' = (1 - z)/tau_h - beta_h s z                 slow resource (tap habituation; beta_h = 0 except touch cells)
+  q = x z F/F1/q0                                 quantal content relative to the INITIAL steady state (q0 there;
+                                                  tonic release keeps x, z < 1 at rest); g = g * q in every mode
+The defaults (beta = 0, beta_h = 0, F1 = 1) keep x = z = q = 1 exactly: the synapse without plasticity.
 ENDCOMMENT
 
 NEURON {
@@ -31,6 +42,7 @@ NEURON {
     NONSPECIFIC_CURRENT i
     RANGE gmax, erev, delta, k, Vth, mode, tmax, ec50, hill, tau_rise, tau_off, tau_des, ss, mg, mgk, mgc
     RANGE relgain, recgain, i, g, T, a
+    RANGE F1, tauF, KF, beta, k0, kmax, KD, tauD, beta_h, tau_h, q
 }
 
 UNITS {
@@ -59,6 +71,16 @@ PARAMETER {
     mgc = 3.57 (mM)
     relgain = 1
     recgain = 1
+    F1 = 1
+    tauF = 100 (ms)
+    KF = 20 (ms)
+    beta = 0 (/ms)
+    k0 = 0.0002 (/ms)
+    kmax = 0.005 (/ms)
+    KD = 20 (ms)
+    tauD = 500 (ms)
+    beta_h = 0 (/ms)
+    tau_h = 600000 (ms)
 }
 
 ASSIGNED {
@@ -73,12 +95,21 @@ ASSIGNED {
     tau_r (ms)
     tau_d (ms)
     dinf
+    srel
+    F
+    krec (/ms)
+    q
+    q0
 }
 
 STATE {
     s
     r
     d
+    x
+    z
+    cF (ms)
+    cD (ms)
 }
 
 INITIAL {
@@ -91,6 +122,13 @@ INITIAL {
         dinf = r * (1 - ss)
     }
     d = dinf
+    cF = s * tauF                                   : plasticity starts at its steady state for the initial vpre
+    cD = s * tauD                                   : (tonic graded release at rest depletes and habituates)
+    F = F1 + (1 - F1) * cF / (cF + KF)
+    krec = k0 + (kmax - k0) * cD / (cD + KD)
+    x = krec / (krec + beta * F * s)
+    z = 1 / (1 + beta_h * s * tau_h)
+    q0 = x * z * F / F1                             : q is relative to this resting state
 }
 
 BREAKPOINT {
@@ -103,6 +141,8 @@ BREAKPOINT {
     } else {
         g = gmax * recgain * r * (1 - d)
     }
+    q = x * z * (F1 + (1 - F1) * cF / (cF + KF)) / F1 / q0
+    g = g * q
     if (mg > 0) {
         g = g / (1 + exp(-mgk * v) * mg / mgc)
     }
@@ -120,9 +160,16 @@ DERIVATIVE states {
         tau_d = 1e9
         dinf = 0
     }
+    srel = s
+    F = F1 + (1 - F1) * cF / (cF + KF)
+    krec = k0 + (kmax - k0) * cD / (cD + KD)
     s' = (sinf - s)/tau
     r' = (a - r)/tau_r
     d' = (dinf - d)/tau_d
+    x' = (1 - x) * krec - beta * F * srel * x
+    z' = (1 - z)/tau_h - beta_h * srel * z
+    cF' = srel - cF/tauF
+    cD' = srel - cD/tauD
 }
 
 PROCEDURE rates() {
