@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:31 CST",
+ "generated_at": "2026-11-07 00:36 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67508,
-   "guessed": 9111,
-   "inferred": 116,
+   "guessed": 9110,
+   "inferred": 117,
    "measured": 6182,
    "published_fit": 8033
   },
-  "known": 81839,
-  "placeholder": 9111,
+  "known": 81840,
+  "placeholder": 9110,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9111
+  "must_fill": 9110
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9111,
+   "guessed": 9110,
    "derived": 3100,
-   "inferred": 116,
+   "inferred": 117,
    "measured": 330
   },
-  "known": 10852,
-  "placeholder": 9111,
+  "known": 10853,
+  "placeholder": 9110,
   "gap": 0,
-  "must_fill": 9111
+  "must_fill": 9110
  },
  "source_by_fill_kind": {
   "all": {
@@ -51,14 +51,14 @@
     "guessed": 5471,
     "measured": 6181,
     "derived": 3100,
-    "inferred (ours)": 22,
+    "inferred (ours)": 23,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3636,
+    "guessed": 3635,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -75,14 +75,14 @@
     "guessed": 5471,
     "derived": 3100,
     "measured": 329,
-    "inferred (ours)": 22,
+    "inferred (ours)": 23,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3636,
+    "guessed": 3635,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,8 +115,8 @@
   },
   "class": {
    "derived": 5,
-   "guessed": 166,
-   "inferred": 65,
+   "guessed": 165,
+   "inferred": 66,
    "measured": 31,
    "published_fit": 87
   },
@@ -1097,8 +1097,8 @@
    "absent_reason": "",
    "numbers": 24,
    "by_label": {
-    "guessed": 7,
-    "inferred": 3,
+    "guessed": 6,
+    "inferred": 4,
     "measured": 3,
     "published_fit": 11
    }
@@ -31711,28 +31711,28 @@
    "applies_to": "ALML/R, AVM, PLML/R, PVM",
    "unit": "channels per cell",
    "n_values": 1,
-   "value_template": 50.0,
-   "template_source": "none opened: one channel per punctum (Sanzeni et al. 2019 eLife 8:e43226); Cueva et al. 2007 puncta counts would pin it",
+   "value_template": 113.0,
+   "template_source": "Katta, Sanzeni, Das, Vergassola & Goodman 2019 J Gen Physiol 151:1213 (PMC6785734), Results and Fig. 2 (mNeonGreen::MEC-4 puncta in full-length ALM neurites, n = 51 neurons) and Methods (one functional channel per punctum, after Cueva et al. 2007)",
    "bio_min": 10.0,
    "bio_max": 500.0,
    "bound_basis": "guessed",
-   "bound_source": "none opened: one channel per punctum (Sanzeni et al. 2019 eLife 8:e43226); Cueva et al. 2007 puncta counts would pin it",
+   "bound_source": "kept from before the value fill: none opened: one channel per punctum (Sanzeni et al. 2019 eLife 8:e43226); Cueva et al. 2007 puncta counts would pin it",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Spec grain 'per type' read as class",
+   "notes": "Spec grain 'per type' read as class; fill 6 Nov (catalog audit): was 50 channels per cell, label guessed, range [10, 500]; inferred: 113 MEC-4 puncta per ALM neuron is measured; channels per cell = puncta x 1 assumes one functional channel per punctum, the assumption Sanzeni et al. 2019 and Katta et al. 2019 both use (Katta note that more than one per punctum is possible). Measured in ALM only; the row is shared by ALM, AVM, PLM and PVM, and AVM and PVM have shorter neurites. Range kept (guessed).",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6785734/",
+   "source_quote": "With this approach, we estimate that a single ALM neuron harbors 113 puncta (5,783 puncta detected in 51 neurons), on average.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -31765,7 +31765,7 @@
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6692131/",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "Sanzeni et al. 2019 eq 8 (beta dG_oc = g0 - g1 F) has the same zero-stretch closed-open free energy in kT as this row; Katta et al. 2019 J Gen Physiol 151:1213 (PMC6785734) Table 1 publishes the fitted g0: 9.17 at the 1.4 um interpunctum interval, 8.70 to 9.71 across 1.4 to 4 um. The row's 10 kT sits just above that range [owner (senses_touch, via Director): consider g0 9.17 (published fit) and re-set touch_g1_per_um so the 1, 3 and 10 um step calibration still holds; not filled here because g0 and g1 were set together]",
    "kind": "physiology"
   },
   {
@@ -40704,18 +40704,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 444,
+    "guessed": 443,
     "measured": 281,
     "derived": 40,
-    "inferred": 117,
+    "inferred": 118,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9248,
+    "guessed": 9247,
     "measured": 6237,
     "derived": 67520,
-    "inferred": 123,
+    "inferred": 124,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40723,18 +40723,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 444,
+   "guessed": 443,
    "measured": 281,
    "derived": 40,
-   "inferred": 117,
+   "inferred": 118,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9248,
+   "guessed": 9247,
    "measured": 6237,
    "derived": 67520,
-   "inferred": 123,
+   "inferred": 124,
    "absent": 5
   },
   "by_plan_row": {
@@ -40966,16 +40966,16 @@
    },
    "17": {
     "rows": {
-     "guessed": 62,
-     "inferred": 24,
+     "guessed": 61,
+     "inferred": 25,
      "measured": 10,
      "derived": 4,
      "published_fit": 145,
      "absent": 4
     },
     "numbers": {
-     "guessed": 62,
-     "inferred": 24,
+     "guessed": 61,
+     "inferred": 25,
      "measured": 10,
      "derived": 4,
      "published_fit": 145,
@@ -41179,17 +41179,17 @@
    },
    "class": {
     "rows": {
-     "inferred": 66,
+     "inferred": 67,
      "measured": 35,
-     "guessed": 192,
+     "guessed": 191,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
-     "inferred": 66,
+     "inferred": 67,
      "measured": 35,
-     "guessed": 192,
+     "guessed": 191,
      "derived": 6,
      "published_fit": 89,
      "absent": 4
@@ -41357,17 +41357,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 285,
+     "guessed": 284,
      "measured": 221,
      "derived": 28,
-     "inferred": 100
+     "inferred": 101
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8945,
+     "guessed": 8944,
      "measured": 6078,
      "derived": 67508,
-     "inferred": 105
+     "inferred": 106
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41685,14 +41685,14 @@
     "rows": {
      "published_fit": 11,
      "measured": 3,
-     "guessed": 9,
-     "inferred": 5
+     "guessed": 8,
+     "inferred": 6
     },
     "numbers": {
      "published_fit": 11,
      "measured": 3,
-     "guessed": 9,
-     "inferred": 5
+     "guessed": 8,
+     "inferred": 6
     },
     "n_rows": 28,
     "n_numbers": 28
@@ -41776,17 +41776,17 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 444,
+     "guessed": 443,
      "derived": 36,
-     "inferred": 117,
+     "inferred": 118,
      "measured": 277,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9248,
+     "guessed": 9247,
      "derived": 3110,
-     "inferred": 123,
+     "inferred": 124,
      "measured": 385,
      "absent": 5
     },
@@ -42119,27 +42119,27 @@
    }
   ],
   "audit": {
-   "rows_ok": 1386,
-   "rows_with_problems": 97,
+   "rows_ok": 1385,
+   "rows_with_problems": 98,
    "by_status": {
-    "ok": 1386,
-    "finding": 97
+    "ok": 1385,
+    "finding": 98
    },
-   "rows_read": 204,
+   "rows_read": 207,
    "quotes": {
-    "none": 1089,
-    "paper text (read audit, 6 Nov)": 249,
+    "none": 1088,
+    "paper text (read audit, 6 Nov)": 250,
     "research file (scripted check)": 145
    },
    "with_url": 1109,
    "links": {
-    "distinct": 157,
+    "distinct": 158,
     "by_status": {
-     "200": 147,
+     "200": 148,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:31 CST"
+    "checked_at": "2026-11-07 00:36 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -42172,6 +42172,7 @@
     "Gerhardt and Adams # Anal Chem is paywalled; the tortuosity factor is not cited": 1,
     "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
     "noise.py's # pS cites Wang et al. # Neuron #:#, whose abstract gives no unitary conductanc": 1,
+    "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "inferred from mammalian neurons, no paper named": 1,
     "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
@@ -45587,6 +45588,19 @@
     "url": "https://doi.org/10.1101/434589"
    },
    {
+    "param_id": "touch_n_channels",
+    "kind": "fill",
+    "origin": "mech:senses_touch",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "50 -> 113 channels per cell; guessed -> inferred; range [10, 500] -> [10, 500]",
+    "reason": "inferred: 113 MEC-4 puncta per ALM neuron is measured; channels per cell = puncta x 1 assumes one functional channel per punctum, the assumption Sanzeni et al. 2019 and Katta et al. 2019 both use (Katta note that more than one per punctum is possible). Measured in ALM only; the row is shared by ALM, AVM, PLM and PVM, and AVM and PVM have shorter neurites. Range kept (guessed).",
+    "source": "Katta, Sanzeni, Das, Vergassola & Goodman 2019 J Gen Physiol 151:1213 (PMC6785734), Results and Fig. 2 (mNeonGreen::MEC-4 puncta in full-length ALM neurites, n = 51 neurons) and Methods (one functional channel per punctum, after Cueva et al. 2007)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6785734/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46595,18 +46609,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 444,
+    "guessed": 443,
     "measured": 281,
     "derived": 40,
-    "inferred": 117,
+    "inferred": 118,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9248,
+    "guessed": 9247,
     "measured": 6237,
     "derived": 67520,
-    "inferred": 123,
+    "inferred": 124,
     "absent": 5
    }
   }
