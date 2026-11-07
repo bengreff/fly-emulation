@@ -14,6 +14,7 @@ import pytest
 from wormemu.brain_layers import Layers
 from wormemu.interface import BWM_NAMES
 from wormemu.mech import muscle_bwm as mb
+from wormemu.mech import organs_egglaying as ge
 from wormemu.mech import organs_intestine as gi
 from wormemu.mech import organs_pharynx as ph
 
@@ -232,3 +233,56 @@ def test_defecation_off_is_silent_and_ip3r_drives_posterior_bwm_and_avl_dvb():
         assert not r["I_pA"][anterior].any()
     assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9 and 0.0 < i_aex <= q["aex2_gain_pA"]
     assert set(r["out"]["peptide_release"]) == {"nlp-40"}
+
+
+# --- row 15: egg-laying circuit (organs_egglaying) ------------------------------------------------------------------
+def _egg_brain(seed=7):
+    names = ["HSNL", "HSNR"] + [f"n{k}" for k in range(10)]
+    p = dict(ge._OLD)
+    layers = SimpleNamespace(p=p, rng=np.random.default_rng(seed))
+    return SimpleNamespace(cell_names=names, idx={n: i for i, n in enumerate(names)}, layers=layers), p
+
+
+def test_egg_laying_timer_form_is_brain_layers_egg_laying():
+    """egg_laying=timer draws the same states and eggs as brain_layers' two-state timer from the same generator."""
+    brain, p = _egg_brain()
+    m = ge.Mech(brain, {}, {"egg_laying": "timer"})
+    old = SimpleNamespace(p=p, on={"egg_laying"}, rng=np.random.default_rng(7), egg_active=False, egg_t_next=0.0,
+                          egg_vm_t=-1e9)
+    t, laid = 0.0, 0
+    for _ in range(200000):                                    # 200 min at 60 ms
+        r = m.step(SimpleNamespace(t_ms=t), 60.0)
+        a0, e0 = Layers.egg_laying(old, t + 60.0, 60.0)
+        assert r["out"]["eggs_laid"] == e0 and np.all(r["out"]["sex_muscle_activation"] == a0)
+        laid += e0
+        t += 60.0
+    assert laid > 0
+
+
+def test_egg_laying_off_is_silent():
+    brain, _ = _egg_brain()
+    r = ge.Mech(brain, {}, {"egg_laying": "off"}).step(SimpleNamespace(t_ms=0.0), 1.0)
+    assert "I_pA" not in r and r["out"]["eggs_laid"] == 0 and not r["out"]["sex_muscle_activation"].any()
+
+
+def test_unc103_density_keeps_an_undriven_vulval_muscle_at_rest():
+    """The fitted UNC-103 (Kr) density holds the Du membrane at rest with no input; without it the cell fires on its
+    own (the gate Collins & Koelle 2013 describe)."""
+    q = ge.defaults()
+    counts = {}
+    for gkr in (q["egg_unc103_gkr_nS"], 0.0):
+        mu = mb.DuMuscle(1, {"bwm_du_gkr_nS": gkr})
+        v = np.empty(20000)
+        for k in range(20000):                                 # 4 s at 0.2 ms
+            mu.step(np.zeros(1), 0.2)
+            v[k] = mu.V[0]
+        counts[gkr] = mb.upcrossings(v[5000:])
+    assert counts[q["egg_unc103_gkr_nS"]] == 0 and counts[0.0] >= 5
+
+
+def test_egg_specs_have_ranges_and_labels():
+    from bioemu.ledger import LABELS
+    ids = [s.id for s in ge.SPECS]
+    assert len(ids) == len(set(ids))
+    for s in ge.SPECS:
+        assert s.lo <= s.template <= s.hi and s.label in LABELS, s.id
