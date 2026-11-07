@@ -4,7 +4,8 @@ The unit checks (receptor_unit_check.py, stp_unit_check.py, neuromod_unit_check.
 read each Spec's code template, while the brain runs the ledger value (mech.params_for). After the catalog merge
 (7b49648) 42 Specs differ, so the checks as written score values the model no longer runs. This swaps each Spec's
 template for its ledger value (data/worm/model/parameters.csv, value_template) before the script runs; the script
-itself is unchanged.
+itself is unchanged. Scripts that run their brains in a child process (senses_checks.py, observation_checks.py) are
+not reached: the child starts fresh at the code templates.
 
 Usage: PYTHONPATH=src .venv/bin/python scripts/worm/at_ledger.py scripts/worm/receptor_unit_check.py [args ...]
 """
