@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/hidden_constants.py",
- "generated_at": "2026-11-07 01:10 CST",
+ "generated_at": "2026-11-07 01:18 CST",
  "scanned": [
   "src/wormemu/mech/__init__.py",
   "src/wormemu/mech/ca_volume.py",
@@ -43,8 +43,8 @@
   "src/wormemu/nmodl/wgc.mod",
   "src/wormemu/nmodl/wsyn.mod"
  ],
- "total": 753,
- "needs_ledger_row": 391,
+ "total": 755,
+ "needs_ledger_row": 393,
  "duplicates_ledger": 10,
  "by_file": {
   "src/wormemu/mech/noise.py": 94,
@@ -62,10 +62,10 @@
   "src/wormemu/mech/observation.py": 20,
   "src/wormemu/mech/neuromod.py": 19,
   "src/wormemu/mech/pumps.py": 17,
+  "src/wormemu/nmodl/wsyn.mod": 17,
   "src/wormemu/mech/organs_egglaying.py": 16,
   "src/wormemu/mech/senses_cgmp.py": 16,
   "src/wormemu/mech/glia.py": 15,
-  "src/wormemu/nmodl/wsyn.mod": 15,
   "src/wormemu/body/layers.py": 14,
   "src/wormemu/body/scene.py": 13,
   "src/wormemu/mech/slow_signalling.py": 12,
@@ -84,7 +84,7 @@
   "src/wormemu/mech/temperature.py": 1
  },
  "by_kind": {
-  "inline": 178,
+  "inline": 180,
   "named constant": 172,
   "unit conversion": 157,
   "small integer": 110,
@@ -102,11 +102,11 @@
   "src/wormemu/mech/metabolism.py": 19,
   "src/wormemu/body/environment.py": 17,
   "src/wormemu/body/scene.py": 13,
+  "src/wormemu/nmodl/wsyn.mod": 13,
   "third_party/metaworm/driver/run_body.cpp": 13,
   "src/wormemu/mech/organs_pharynx.py": 12,
   "src/wormemu/body/metaworm.py": 11,
   "src/wormemu/mech/observation.py": 11,
-  "src/wormemu/nmodl/wsyn.mod": 11,
   "src/wormemu/brain_layers.py": 6,
   "src/wormemu/mech/senses_cgmp.py": 6,
   "src/wormemu/mech/pumps.py": 5,
@@ -127,7 +127,7 @@
   "mirrors a catalog row": 120,
   "arithmetic": 101,
   "structure": 93,
-  "numerics": 71,
+  "numerics": 73,
   "analysis": 53,
   "parameter (catalog row)": 50,
   "default shadowed by a catalog row": 20,
@@ -976,7 +976,7 @@
   }
  ],
  "skipped": {
-  "0, 1 or -1": 1321,
+  "0, 1 or -1": 1324,
   "in a Spec (ledger)": 1957,
   "NEURON section position (sec(0.5), the midpoint)": 55,
   "index or slice": 103,
@@ -10214,6 +10214,32 @@
    "row": "rec_* syn_*",
    "owner": "",
    "note": "brain.py:528-535 sets every wsyn PARAMETER from the ledger (receptor_kinetics) before the run; mode 0 (graded) reads delta, k, Vth only"
+  },
+  {
+   "file": "src/wormemu/nmodl/wsyn.mod",
+   "line": 190,
+   "value": 700.0,
+   "kind": "inline",
+   "name": "",
+   "code": "if (x > 700) {",
+   "duplicates": [],
+   "verdict": "numerics",
+   "row": "",
+   "owner": "wfinal",
+   "note": "overflow guard on exp((vpre - Vth)/delta) in the tau = 0 branch (exp(700) is about 1e304, just under the largest double); wfinal's 7 Nov fix, unchanged wherever tau > 0"
+  },
+  {
+   "file": "src/wormemu/nmodl/wsyn.mod",
+   "line": 191,
+   "value": 700.0,
+   "kind": "inline",
+   "name": "x",
+   "code": "x = 700",
+   "duplicates": [],
+   "verdict": "numerics",
+   "row": "",
+   "owner": "wfinal",
+   "note": "overflow guard on exp((vpre - Vth)/delta) in the tau = 0 branch (exp(700) is about 1e304, just under the largest double); wfinal's 7 Nov fix, unchanged wherever tau > 0"
   },
   {
    "file": "third_party/metaworm/driver/run_body.cpp",

@@ -131,7 +131,8 @@ RC = [  # key, name, ligand-gated ion, row prefix in the N1 table (for quotes)
      "| GluCl (glutamate-gated Cl): AVR-14, AVR-15, GLC-1/2/3 |"),
     ("unc49b", "UNC-49B homomeric GABA-A receptor", "anion", "| UNC-49 GABA-A |"),
     ("unc49bc", "UNC-49B/C heteromeric GABA-A receptor", "anion", "| UNC-49 GABA-A |"),
-    ("lgc35", "LGC-35", "anion", "| LGC-35 |"),
+    ("lgc35", "LGC-35 GABA-gated cation channel (excitatory; Nicholl, Jawad, Weymouth, Zhang & Beg 2017, PMC5386995)",
+     "cation", "| LGC-35 |"),
     ("mod1", "MOD-1 serotonin-gated chloride channel", "anion", "| MOD-1 serotonin-gated Cl |"),
     ("exp1", "EXP-1 GABA-gated cation channel", "cation", "| EXP-1 GABA-gated cation (excitatory) |"),
 ]
@@ -170,6 +171,14 @@ RC_GUESS = {  # param -> (unit, lo, hi, note)
     "pS": ("pS", 5, 50, "measured unitary conductances in N1: 26-37 pS"),
     "decay": ("ms", 1, 1000, "current decay or desensitization time constant"),
 }
+# the receptors module (rec_* rows) now runs every class above: slot class -> code class, slot quantity -> code row
+# suffix. "decay" is the desensitization time constant (the slot's measured decays are Bamber 2005's slow
+# desensitization components, the source of rec_gabacl_tau_des_ms). UNC-49B and B/C are one code class (gabacl, range
+# spans both); EXP-1 and LGC-35 are one (gabacat); the GluCl subtypes share rec_glucl_ec50_uM (range spans them).
+RC_CODE = {"lachr": "lacr", "acr16": "acr16", "acc": "acc", "glr1": "glr", "nmr1": "nmr", "glucl": "glucl",
+           "unc49b": "gabacl", "unc49bc": "gabacl", "lgc35": "gabacat", "mod1": "mod1", "exp1": "gabacat"}
+RC_PAR = {"ec50": "ec50_uM", "hill": "hill", "pS": "gamma_pS", "decay": "tau_des_ms", "erev": "erev_mV"}
+RC_MATCH = lambda key, par: f"receptor_classes rec_{RC_CODE.get(key, 'glucl')}_{RC_PAR[par]}"
 for key, name, ion, prefix in RC:
     for par, unit in (("ec50", "uM"), ("hill", "1"), ("pS", "pS"), ("decay", "ms"), ("erev", "mV")):
         if key == "glucl" and par == "ec50":
@@ -181,7 +190,7 @@ for key, name, ion, prefix in RC:
             S(pid, 7, "receptor_classes", unit, t, lo, hi, lab, grain="family", applies=name,
               basis="measured_this_class" if lab == "measured" else "guessed", src=RC_SRC.get((key, par),
               "PMC10480131 (Cys-loop review) Table 1 and the papers it cites, via PORT_SOURCES_NEURAL.md N1"), url=PMC("PMC3935721") if key == "glr1" else CYS_REVIEW,
-              quote=q, notes=nt, match="receptor_classes")
+              quote=q, notes=nt, match=RC_MATCH(key, par))
         else:
             if par == "erev":
                 lo, hi = CL_REV if ion == "anion" else CAT_REV
@@ -193,7 +202,7 @@ for key, name, ion, prefix in RC:
               src="guessed; the N1 table has no value for this class", url=CYS_REVIEW,
               quote=f"{N1}: {prefix}", notes=nt + "; would be pinned by heterologous recordings of this class "
               "(e.g. Putrenko 2005 for ACC, Beg & Jorgensen 2003 for EXP-1, Brockie 2001 for NMR-1)",
-              match="receptor_classes")
+              match=RC_MATCH(key, par))
 GLUCL = [("avr14b", "AVR-14B", 10000), ("avr15a", "AVR-15A", 2000), ("avr15b", "AVR-15B", 208),
          ("avr15b_glc2", "AVR-15B/GLC-2", 62), ("glc2", "GLC-2", 380), ("glc1_glc2", "GLC-1/GLC-2", 1360),
          ("glc3", "GLC-3", 1900)]
@@ -202,7 +211,7 @@ for k, nm, v in GLUCL:
       applies=f"glutamate-gated chloride channel {nm} (glutamate)", basis="measured_this_class",
       src="PMC10480131 Table 1 (oocyte), via PORT_SOURCES_NEURAL.md N1", url=CYS_REVIEW,
       quote=f"{N1}: {nm} {v} uM (glu)" if k != "glc2" else f"{N1}: GLC-2 380 uM (glu)",
-      notes="heterologous (oocyte) EC50 for glutamate", match="receptor_classes")
+      notes="heterologous (oocyte) EC50 for glutamate", match=RC_MATCH("glucl", "ec50"))
 S("rel_gain_afd_aiy", 7, "graded_release", "mV/mV", 0.056, 0.056, 0.056, "measured", grain="connection",
   applies="AFD -> AIY", basis="measured_this_class", src="Narayan et al. 2011 PNAS, Fig. 4B", url=PMC("PMC3111291"),
   quote=f"{N1}: 0.056 mV postsynaptic per mV presynaptic (linear, R^2=0.69)", match="graded_release")

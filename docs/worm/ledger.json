@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 01:11 CST",
+ "generated_at": "2026-11-07 01:19 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -56355,37 +56355,37 @@
   "totals": {
    "rows": {
     "published_fit": 661,
-    "guessed": 646,
-    "measured": 281,
+    "guessed": 608,
+    "measured": 260,
     "derived": 41,
-    "inferred": 336,
+    "inferred": 334,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8190,
-    "guessed": 9442,
-    "measured": 6239,
+    "guessed": 9404,
+    "measured": 6218,
     "derived": 67522,
-    "inferred": 342,
+    "inferred": 340,
     "absent": 5
    },
-   "n_rows": 1970,
-   "n_numbers": 91740
+   "n_rows": 1909,
+   "n_numbers": 91679
   },
   "by_label_rows": {
    "published_fit": 661,
-   "guessed": 646,
-   "measured": 281,
+   "guessed": 608,
+   "measured": 260,
    "derived": 41,
-   "inferred": 336,
+   "inferred": 334,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8190,
-   "guessed": 9442,
-   "measured": 6239,
+   "guessed": 9404,
+   "measured": 6218,
    "derived": 67522,
-   "inferred": 342,
+   "inferred": 340,
    "absent": 5
   },
   "by_plan_row": {
@@ -56460,20 +56460,20 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 101,
-     "measured": 47,
-     "inferred": 35,
+     "guessed": 63,
+     "measured": 26,
+     "inferred": 33,
      "derived": 4
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6774,
-     "measured": 5904,
+     "guessed": 6736,
+     "measured": 5883,
      "derived": 1989,
-     "inferred": 40
+     "inferred": 38
     },
-    "n_rows": 214,
-    "n_numbers": 15459
+    "n_rows": 153,
+    "n_numbers": 15398
    },
    "8": {
     "rows": {
@@ -56882,17 +56882,15 @@
    },
    "family": {
     "rows": {
-     "guessed": 49,
-     "measured": 23,
-     "inferred": 2
+     "guessed": 11,
+     "measured": 2
     },
     "numbers": {
-     "guessed": 100,
-     "measured": 23,
-     "inferred": 2
+     "guessed": 62,
+     "measured": 2
     },
-    "n_rows": 74,
-    "n_numbers": 125
+    "n_rows": 13,
+    "n_numbers": 64
    },
    "gene": {
     "rows": {
@@ -56994,23 +56992,23 @@
    },
    "slot only": {
     "rows": {
-     "guessed": 99,
+     "guessed": 61,
      "absent": 5,
      "published_fit": 11,
      "derived": 6,
-     "measured": 48,
-     "inferred": 6
+     "measured": 27,
+     "inferred": 4
     },
     "numbers": {
-     "guessed": 125,
+     "guessed": 87,
      "absent": 5,
      "published_fit": 11,
      "derived": 6,
-     "measured": 48,
-     "inferred": 6
+     "measured": 27,
+     "inferred": 4
     },
-    "n_rows": 175,
-    "n_numbers": 201
+    "n_rows": 114,
+    "n_numbers": 140
    },
    "yes": {
     "rows": {
@@ -57429,23 +57427,23 @@
    },
    "slot": {
     "rows": {
-     "measured": 46,
-     "inferred": 5,
-     "guessed": 91,
+     "measured": 25,
+     "inferred": 3,
      "derived": 2,
+     "guessed": 53,
      "published_fit": 10,
      "absent": 4
     },
     "numbers": {
-     "measured": 46,
-     "inferred": 5,
-     "guessed": 117,
+     "measured": 25,
+     "inferred": 3,
      "derived": 2,
+     "guessed": 79,
      "published_fit": 10,
      "absent": 4
     },
-    "n_rows": 158,
-    "n_numbers": 184
+    "n_rows": 97,
+    "n_numbers": 123
    }
   },
   "by_kind": {
@@ -57466,22 +57464,22 @@
    "physiology": {
     "rows": {
      "published_fit": 647,
-     "guessed": 645,
+     "guessed": 607,
      "derived": 38,
-     "inferred": 336,
-     "measured": 277,
+     "inferred": 334,
+     "measured": 256,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7451,
-     "guessed": 9441,
+     "guessed": 9403,
      "derived": 3113,
-     "inferred": 342,
-     "measured": 387,
+     "inferred": 340,
+     "measured": 366,
      "absent": 5
     },
-    "n_rows": 1948,
-    "n_numbers": 20739
+    "n_rows": 1887,
+    "n_numbers": 20678
    },
    "structure": {
     "rows": {
@@ -57752,6 +57750,250 @@
   ],
   "slots_replaced": [
    {
+    "slot": "rc_ec50__lachr",
+    "by": "rec_lacr_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__lachr",
+    "by": "rec_lacr_hill"
+   },
+   {
+    "slot": "rc_pS__lachr",
+    "by": "rec_lacr_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__lachr",
+    "by": "rec_lacr_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__lachr",
+    "by": "rec_lacr_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__acr16",
+    "by": "rec_acr16_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__acr16",
+    "by": "rec_acr16_hill"
+   },
+   {
+    "slot": "rc_pS__acr16",
+    "by": "rec_acr16_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__acr16",
+    "by": "rec_acr16_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__acr16",
+    "by": "rec_acr16_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__acc",
+    "by": "rec_acc_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__acc",
+    "by": "rec_acc_hill"
+   },
+   {
+    "slot": "rc_pS__acc",
+    "by": "rec_acc_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__acc",
+    "by": "rec_acc_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__acc",
+    "by": "rec_acc_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__glr1",
+    "by": "rec_glr_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__glr1",
+    "by": "rec_glr_hill"
+   },
+   {
+    "slot": "rc_pS__glr1",
+    "by": "rec_glr_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__glr1",
+    "by": "rec_glr_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__glr1",
+    "by": "rec_glr_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__nmr1",
+    "by": "rec_nmr_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__nmr1",
+    "by": "rec_nmr_hill"
+   },
+   {
+    "slot": "rc_pS__nmr1",
+    "by": "rec_nmr_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__nmr1",
+    "by": "rec_nmr_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__nmr1",
+    "by": "rec_nmr_erev_mV"
+   },
+   {
+    "slot": "rc_hill__glucl",
+    "by": "rec_glucl_hill"
+   },
+   {
+    "slot": "rc_pS__glucl",
+    "by": "rec_glucl_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__glucl",
+    "by": "rec_glucl_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__glucl",
+    "by": "rec_glucl_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__unc49b",
+    "by": "rec_gabacl_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__unc49b",
+    "by": "rec_gabacl_hill"
+   },
+   {
+    "slot": "rc_pS__unc49b",
+    "by": "rec_gabacl_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__unc49b",
+    "by": "rec_gabacl_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__unc49b",
+    "by": "rec_gabacl_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__unc49bc",
+    "by": "rec_gabacl_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__unc49bc",
+    "by": "rec_gabacl_hill"
+   },
+   {
+    "slot": "rc_pS__unc49bc",
+    "by": "rec_gabacl_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__unc49bc",
+    "by": "rec_gabacl_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__unc49bc",
+    "by": "rec_gabacl_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__lgc35",
+    "by": "rec_gabacat_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__lgc35",
+    "by": "rec_gabacat_hill"
+   },
+   {
+    "slot": "rc_pS__lgc35",
+    "by": "rec_gabacat_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__lgc35",
+    "by": "rec_gabacat_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__lgc35",
+    "by": "rec_gabacat_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__mod1",
+    "by": "rec_mod1_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__mod1",
+    "by": "rec_mod1_hill"
+   },
+   {
+    "slot": "rc_pS__mod1",
+    "by": "rec_mod1_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__mod1",
+    "by": "rec_mod1_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__mod1",
+    "by": "rec_mod1_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__exp1",
+    "by": "rec_gabacat_ec50_uM"
+   },
+   {
+    "slot": "rc_hill__exp1",
+    "by": "rec_gabacat_hill"
+   },
+   {
+    "slot": "rc_pS__exp1",
+    "by": "rec_gabacat_gamma_pS"
+   },
+   {
+    "slot": "rc_decay__exp1",
+    "by": "rec_gabacat_tau_des_ms"
+   },
+   {
+    "slot": "rc_erev__exp1",
+    "by": "rec_gabacat_erev_mV"
+   },
+   {
+    "slot": "rc_ec50__avr14b",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__avr15a",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__avr15b",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__avr15b_glc2",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__glc2",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__glc1_glc2",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
+    "slot": "rc_ec50__glc3",
+    "by": "rec_glucl_ec50_uM"
+   },
+   {
     "slot": "slow_cmk1_fast_tau_min",
     "by": "cmk1_fast_tau_min"
    },
@@ -57809,19 +58051,19 @@
    }
   ],
   "audit": {
-   "rows_ok": 1869,
-   "rows_with_problems": 101,
+   "rows_ok": 1824,
+   "rows_with_problems": 85,
    "by_status": {
-    "ok": 1869,
-    "finding": 101
+    "ok": 1824,
+    "finding": 85
    },
-   "rows_read": 215,
+   "rows_read": 199,
    "quotes": {
     "none": 1571,
     "paper text (read audit, 6 Nov)": 254,
-    "research file (scripted check)": 145
+    "research file (scripted check)": 84
    },
-   "with_url": 1591,
+   "with_url": 1530,
    "links": {
     "distinct": 163,
     "by_status": {
@@ -57829,13 +58071,13 @@
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 01:10 CST"
+    "checked_at": "2026-11-07 01:17 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
-    "range is one point: the source's spread was not recorded": 24,
     "source marked UNVERIFIED": 11,
     "no range": 11,
+    "range is one point: the source's spread was not recorded": 8,
     "template # outside": 6,
     "guessed template sits on a bound": 5,
     "inferred from the chloride reversal; no native C. elegans chloride reversal is measured; t": 5,
@@ -57882,6 +58124,24 @@
     "scene.py labels the # mm body length measured with the source \"ledger worm length\"; the bo": 1
    },
    "orphan_notes": [],
+   "notes_on_replaced_slots": [
+    "rc_ec50__acr16",
+    "rc_ec50__avr14b",
+    "rc_ec50__avr15a",
+    "rc_ec50__avr15b",
+    "rc_ec50__avr15b_glc2",
+    "rc_ec50__glc1_glc2",
+    "rc_ec50__glc2",
+    "rc_ec50__glc3",
+    "rc_ec50__lachr",
+    "rc_ec50__mod1",
+    "rc_erev__acr16",
+    "rc_erev__lachr",
+    "rc_hill__unc49b",
+    "rc_hill__unc49bc",
+    "rc_pS__unc49b",
+    "rc_pS__unc49bc"
+   ],
    "orphan_fills": []
   },
   "fills": [
@@ -61553,7 +61813,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 01:10 CST",
+   "generated_at": "2026-11-07 01:18 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -61596,7 +61856,7 @@
     "src/wormemu/nmodl/wgc.mod",
     "src/wormemu/nmodl/wsyn.mod"
    ],
-   "total": 753,
+   "total": 755,
    "by_file": {
     "src/wormemu/mech/noise.py": 94,
     "src/wormemu/mech/muscle_bwm.py": 71,
@@ -61613,10 +61873,10 @@
     "src/wormemu/mech/observation.py": 20,
     "src/wormemu/mech/neuromod.py": 19,
     "src/wormemu/mech/pumps.py": 17,
+    "src/wormemu/nmodl/wsyn.mod": 17,
     "src/wormemu/mech/organs_egglaying.py": 16,
     "src/wormemu/mech/senses_cgmp.py": 16,
     "src/wormemu/mech/glia.py": 15,
-    "src/wormemu/nmodl/wsyn.mod": 15,
     "src/wormemu/body/layers.py": 14,
     "src/wormemu/body/scene.py": 13,
     "src/wormemu/mech/slow_signalling.py": 12,
@@ -61635,7 +61895,7 @@
     "src/wormemu/mech/temperature.py": 1
    },
    "by_kind": {
-    "inline": 178,
+    "inline": 180,
     "named constant": 172,
     "unit conversion": 157,
     "small integer": 110,
@@ -61648,7 +61908,7 @@
     "mirrors a catalog row": 120,
     "arithmetic": 101,
     "structure": 93,
-    "numerics": 71,
+    "numerics": 73,
     "analysis": 53,
     "parameter (catalog row)": 50,
     "default shadowed by a catalog row": 20,
@@ -62497,7 +62757,7 @@
     }
    ],
    "skipped": {
-    "0, 1 or -1": 1321,
+    "0, 1 or -1": 1324,
     "in a Spec (ledger)": 1957,
     "NEURON section position (sec(0.5), the midpoint)": 55,
     "index or slice": 103,
@@ -62508,36 +62768,36 @@
   "before_fills": {
    "rows": {
     "published_fit": 666,
-    "guessed": 678,
-    "measured": 263,
+    "guessed": 640,
+    "measured": 242,
     "derived": 32,
-    "inferred": 326,
+    "inferred": 324,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8190,
-    "guessed": 9582,
-    "measured": 6120,
+    "guessed": 9544,
+    "measured": 6099,
     "derived": 67512,
-    "inferred": 331,
+    "inferred": 329,
     "absent": 5
    }
   },
   "after_fills": {
    "rows": {
     "published_fit": 661,
-    "guessed": 646,
-    "measured": 281,
+    "guessed": 608,
+    "measured": 260,
     "derived": 41,
-    "inferred": 336,
+    "inferred": 334,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8190,
-    "guessed": 9442,
-    "measured": 6239,
+    "guessed": 9404,
+    "measured": 6218,
     "derived": 67522,
-    "inferred": 342,
+    "inferred": 340,
     "absent": 5
    }
   }

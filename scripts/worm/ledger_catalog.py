@@ -689,8 +689,11 @@ def summary(cat_rows, replaced, fill_log, hidden, before=None):
                                                                   for r in cat_rows if r["source_url"]}.values())),
                               checked_at=max((v[1] for v in link_checks().values()), default="")),
                    problem_kinds=dict(probs.most_common()),
-                   # a read-audit note or fill on an id no row has (a typo, or a row renamed by its owner)
-                   orphan_notes=sorted({a["param_id"] for a in audit_notes()} - {r["id"] for r in cat_rows}),
+                   # a read-audit note or fill on an id no row has (a typo, or a row renamed by its owner); a note
+                   # on a slot that a code row has since replaced is kept as the trail, and listed apart
+                   orphan_notes=sorted({a["param_id"] for a in audit_notes()} - {r["id"] for r in cat_rows}
+                                       - {a for a, _ in replaced}),
+                   notes_on_replaced_slots=sorted({a["param_id"] for a in audit_notes()} & {a for a, _ in replaced}),
                    orphan_fills=sorted({f["param_id"] for f in fill_log if f.get("change", "").startswith(
                        "fill not applied")})),
         fills=fill_log, hidden_constants=hidden,
@@ -832,7 +835,9 @@ def write_markdown(cat_rows, s):
           f"has one unless listed below). Rows read against their source: {a.get('rows_read', 0)}. Quotes: "
           + ", ".join(f"{k} {n}" for k, n in a.get("quotes", {}).items()) + ". Audit notes on ids no row has: "
           + (", ".join(f"`{x}`" for x in a.get("orphan_notes", [])) or "none") + "; fills on ids no row has: "
-          + (", ".join(f"`{x}`" for x in a.get("orphan_fills", [])) or "none") + ".", "",
+          + (", ".join(f"`{x}`" for x in a.get("orphan_fills", [])) or "none") + ". Audit notes kept on slots a code "
+          f"row has since replaced (the trail; the slot's row is gone): {len(a.get('notes_on_replaced_slots', []))}.",
+          "",
           f"Links: {a.get('links', {}).get('distinct', 0)} distinct URLs, checked "
           f"{a.get('links', {}).get('checked_at', '') or 'never'} by `scripts/worm/catalog_links.py` (status: "
           + ", ".join(f"{k} {n}" for k, n in a.get("links", {}).get("by_status", {}).items()) + "; a 404, 410 or no "
