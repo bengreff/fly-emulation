@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:13 CST",
+ "generated_at": "2026-11-07 00:14 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14017,10 +14017,10 @@
    "n_values": 1,
    "value_template": 33.0,
    "template_source": "single-channel 30-35 pS, Rayes et al. 2007 / Hernando et al. 2012, via Cys-loop review PMC10480131 (2023) Table 1",
-   "bio_min": 30.0,
-   "bio_max": 35.0,
-   "bound_basis": "measured_related",
-   "bound_source": "single-channel 30-35 pS, Rayes et al. 2007 / Hernando et al. 2012, via Cys-loop review PMC10480131 (2023) Table 1",
+   "bio_min": 26.0,
+   "bio_max": 37.0,
+   "bound_basis": "measured_this_class",
+   "bound_source": "Qian, Robertson, Powell-Coffman & Martin 2008 FASEB J 22:3247 (PMC2518249), Results and Discussion (adult body-wall muscle, cell-attached)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
@@ -14032,11 +14032,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "range 6 Nov (catalog audit): was 33 pS, label measured, range [30, 35]; adult L-AChR single channels span 26 to 36 pS (mean 30.3) and embryonic ones average 37 pS, so the range [30, 35] (L1 cells) was narrower than the measured spread; now [26, 37]. The template 33 pS stays (L1 muscle, Rayes 2007 / Hernando 2012). This row is the reference that every other class's unit conductance is scaled against (receptors.gamma_ratio)",
    "plan_row": 7,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2518249/",
+   "source_quote": "We found that the channels had a conductance of 30.3 \u00b1 0.4 ( n =33), ranging between 26 and 36 pS ... A similar population of levamisole channels has been reported in embryonic muscle, although the mean conductance of the channel in high potassium (37 pS) is slightly greater",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -42127,19 +42127,19 @@
    },
    "rows_read": 200,
    "quotes": {
-    "none": 1096,
-    "paper text (read audit, 6 Nov)": 242,
+    "none": 1095,
+    "paper text (read audit, 6 Nov)": 243,
     "research file (scripted check)": 145
    },
    "with_url": 1104,
    "links": {
-    "distinct": 151,
+    "distinct": 152,
     "by_status": {
-     "200": 141,
+     "200": 142,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-07 00:13 CST"
+    "checked_at": "2026-11-07 00:14 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45491,6 +45491,19 @@
     "reason": "no C. elegans ACR-16 single channel has been recorded, and one explanation the authors give is a very low conductance, so the lower end comes down from 20 to 5 pS (guessed: near the smallest unitary currents resolved in cell-attached patches). The upper end 90 pS stays for vertebrate alpha7 homomers. The template 40 pS stays, guessed",
     "source": "Hernando, Turani, Rodriguez Araujo & Bouzat 2023 Biophys Rev 15:733 (PMC10480131), section on N-AChR (ACR-16)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10480131/"
+   },
+   {
+    "param_id": "rec_lacr_gamma_pS",
+    "kind": "range",
+    "origin": "mech:receptors",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "33 -> 33 pS; measured -> measured; range [30, 35] -> [26, 37]",
+    "reason": "adult L-AChR single channels span 26 to 36 pS (mean 30.3) and embryonic ones average 37 pS, so the range [30, 35] (L1 cells) was narrower than the measured spread; now [26, 37]. The template 33 pS stays (L1 muscle, Rayes 2007 / Hernando 2012). This row is the reference that every other class's unit conductance is scaled against (receptors.gamma_ratio)",
+    "source": "Qian, Robertson, Powell-Coffman & Martin 2008 FASEB J 22:3247 (PMC2518249), Results and Discussion (adult body-wall muscle, cell-attached)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2518249/"
    },
    {
     "param_id": "pep_ec50_nM",
