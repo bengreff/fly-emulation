@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -33,6 +34,7 @@ import yaml
 
 import ledger_catalog as cat
 from bioemu import ledger
+from ranges import gates, hard, joint
 from wormemu import brain_layers
 from wormemu.brain_structure import bwm_name, cengen_class, load_structure
 
@@ -167,10 +169,13 @@ def absent(pid, mid, unit, n, grain, applies_to, notes, lo="", hi="", bsrc=""):
                      source_quote="", audit="", origin="brain"))
 
 
-def kin_bounds(name, unit, t):
-    """Guessed bounds for a published kinetic constant: shifts of +-20 mV for half-activations (vh*, b*),
-    factor 2 for other mV quantities (slopes), factor 3 for everything else; sign kept."""
-    if unit == "mV" and (name.startswith("vh") or name.startswith("b")):
+def kin_bounds(name, unit, t, mod=None):
+    """Guessed bounds for a published kinetic constant: shifts of +-20 mV for midpoints, factor 2 for other mV
+    quantities (slopes), factor 3 for everything else; sign kept. A constant's role comes from its place in the
+    mod's formulas when the mod is given (wranges 7 Nov: `etm` is a midpoint in egl19 and a slope in shk1), else
+    from its name (vh*, b*)."""
+    role = gates.roles(mod).get(name) if mod else None
+    if unit == "mV" and (role == "midpoint" or (role is None and (name.startswith("vh") or name.startswith("b")))):
         return t - 20.0, t + 20.0, "guessed: +-20 mV around the published value"
     f = 2.0 if unit == "mV" else 3.0
     if t == 0:
@@ -316,7 +321,7 @@ def build_kinetics():
                 if base[partner][name] == val:
                     tied.append(f"{mod}.{name}")
                     continue
-            lo, hi, b = kin_bounds(name, unit, val)
+            lo, hi, b = kin_bounds(name, unit, val, mod)
             row(f"kin_{mod}_{name}", f"ch_{mod}", unit, val, lo, hi, grain="channel",
                 applies_to=f"every cell with {mod}", tsrc=f"published fit, {BAAI_SRC} mod/{mod}.mod",
                 label="published_fit", proj="BAAIWorm", basis="guessed", bsrc=b, prior=("normal", val, (hi - lo) / 4, "guessed: normal around the published "
@@ -1018,6 +1023,56 @@ def export(led, extra, csum=None):
     return out
 
 
+def ranges_summary(rows, crows, narrowed, rule_rows, cons):
+    """The catalog's Ranges section (wranges, 7 Nov): unknown numbers by role and basis, the widest free ranges, the
+    narrowing, the rule parameters and what they replace, the sampling check (scripts/worm/ranges/sampling_check.json)."""
+    def tally(rs, key):
+        t = {}
+        for r in rs:
+            d = t.setdefault(str(r.get(key) or ""), dict(rows=0, unknown=0))
+            d["rows"] += 1
+            d["unknown"] += int(r.get("n_unknown") or 0)
+        return dict(sorted(t.items(), key=lambda kv: -kv[1]["unknown"]))
+    free = [r for r in rows if r["fit_role"] == "free"]
+    sd = lambda r: float(r["span_decades"]) if r.get("span_decades") not in ("", None) and \
+        not math.isnan(float(r["span_decades"])) else -1.0
+    widest = sorted(free, key=sd, reverse=True)
+    by_id = {r["param_id"]: r for r in rows}
+    groups = {}
+    for r in rule_rows:
+        groups.setdefault(r["replaces_re"], []).append(r)
+    replaced = {}
+    for rx, rs in groups.items():
+        hit = [p for p in by_id if re.search(rx, p) and int(by_id[p].get("n_unknown") or 0)]
+        n = sum(int(by_id[p]["n_unknown"]) for p in hit)
+        claim = sum(int(r["replaces_unknowns"]) for r in rs)
+        assert n == claim, f"rule_params.csv: {rx} claims {claim} unknowns, the ledger has {n}"
+        replaced[rx] = dict(rows=hit, unknown=n, roles=sorted({by_id[p]["fit_role"] for p in hit}))
+    gone = {p for v in replaced.values() for p in v["rows"]}
+    from_free = sum(int(by_id[p]["n_unknown"]) for p in gone if by_id[p]["fit_role"] == "free")
+    new_rules = [r for r in rule_rows if r["param_id"] not in by_id]
+    n_free = sum(int(r.get("n_unknown") or 0) for r in free)
+    after = [r for r in free if r["param_id"] not in gone] + \
+        [dict(r, n_unknown=1) for r in rule_rows if r["param_id"] not in by_id]
+    sc = ROOT / "scripts" / "worm" / "ranges" / "sampling_check.json"
+    kinds = Counter(c["kind"] for c in cons)
+    return dict(
+        roles_model=tally(rows, "fit_role"), roles_catalog=tally(crows, "fit_role"),
+        free_by_basis=tally(free, "bound_basis"), free_unknown=n_free, free_rows=len(free),
+        span_counts={f">{k}": sum(sd(r) > k for r in free) for k in (1, 2, 3)},
+        widest=[dict(id=r["param_id"], decades=sd(r), lo=r["bio_min"], hi=r["bio_max"], unit=r["unit"],
+                     unknown=int(r.get("n_unknown") or 0), basis=r["bound_basis"], why=r.get("span_reason", ""))
+                for r in widest[:15]],
+        narrowed=narrowed, constraints=dict(kinds), n_constraints=len(cons),
+        rules=[{k: r.get(k) for k in ("param_id", "unit", "value_template", "bio_min", "bio_max", "prior_dist",
+                                      "prior_a", "prior_b", "label", "bound_basis", "hard_min", "hard_max",
+                                      "span_decades", "replaces_unknowns", "replaces")} for r in rule_rows],
+        replaced=replaced, from_free=from_free, n_new_rules=len(new_rules),
+        free_after_rules=n_free - from_free + len(new_rules), after_by_basis=tally(after, "bound_basis"),
+        after_span_counts={f">{k}": sum(sd(r) > k for r in after) for k in (1, 2, 3)}, after_rows=len(after),
+        sampling=json.loads(sc.read_text()) if sc.exists() else None)
+
+
 def main():
     st = load_structure()
     conns = pd.read_csv(ROOT / "data/worm/brain_runs/port302a/connections.csv")
@@ -1041,6 +1096,17 @@ def main():
     fill_log = cat.apply_fills([*rows, *body, *slot_rows], values, ledger.FILL_KIND)
     fill_log += mirror_lumped()
     fill_log += honest_row_labels()
+    hard_rep = hard.apply([*rows, *body, *slot_rows], values)      # hard bounds and the four bases (wranges, 7 Nov)
+    assert not (hard_rep["unmatched"] or hard_rep["errors"] or hard_rep["measured_outside_hard"]
+                or hard_rep["values_outside_hard"] or hard_rep["wide_no_reason"]), hard.report_text(hard_rep)[:3000]
+    narrowed = joint.narrow(rows, values, mechs)                     # known numbers narrow the unknowns' boxes
+    rule_rows = pd.read_csv(ROOT / "scripts" / "worm" / "ranges" / "rule_params.csv").to_dict("records")
+    role_of = {r["param_id"]: r["fit_role"] for r in rule_rows}      # free: each stands for many unknown elements
+    rule_rep = hard.apply(rule_rows)                                 # rule parameters proposed for wmodel
+    assert not any(rule_rep[k] for k in rule_rep if k != "wide_no_reason") and not rule_rep["wide_no_reason"], \
+        hard.report_text(rule_rep)
+    for r in rule_rows:
+        r["fit_role"] = role_of[r["param_id"]]
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)
     audit_of = {c["id"]: c["audit"] for c in crows}
     for r in rows:
@@ -1049,15 +1115,23 @@ def main():
         shutil.rmtree(OUT)
     (OUT / "values").mkdir(parents=True)
     (OUT / "mechanisms.yaml").write_text(yaml.safe_dump(mechs, sort_keys=False, width=200))
-    pd.DataFrame(rows, columns=ledger.PARAM_COLUMNS).to_csv(OUT / "parameters.csv", index=False)
+    pd.DataFrame(rows, columns=ledger.PARAM_COLUMNS + ledger.HARD_COLUMNS).to_csv(OUT / "parameters.csv", index=False)
+    (OUT / "hard_bounds_report.txt").write_text(hard.report_text(hard_rep) + "\n")
     for pid, t in values.items():
         t.to_csv(OUT / "values" / f"{pid}.csv", index=False)
     led = ledger.load(OUT)
     bad = ledger.validate(led)
     assert not bad, "\n".join(bad[:30])
+    cons = joint.constraints(led)
+    broken = joint.check(joint._template_values(led), led, cons)
+    assert not broken, "template worm breaks joint constraints:\n" + "\n".join(map(str, broken[:30]))
+    (OUT / "constraints.yaml").write_text(joint.to_yaml(cons))
+    (OUT / "narrowed_by_constraints.csv").write_text(pd.DataFrame(narrowed).to_csv(index=False))
+    pd.DataFrame(rule_rows).to_csv(OUT / "rule_params.csv", index=False)
     extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302, registry=reg_notes)
     hidden = cat.hidden_summary()
     csum = cat.summary(crows, replaced, fill_log, hidden, before)
+    csum["ranges"] = ranges_summary(rows, crows, narrowed, rule_rows, cons)
     cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
     out = export(led, extra, csum)
     print(json.dumps(csum["totals"], indent=1))

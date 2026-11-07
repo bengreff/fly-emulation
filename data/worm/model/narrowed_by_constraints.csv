@@ -1,0 +1,3 @@
+param_id,old_min,old_max,new_min,new_max,by
+ion_ek,-100.0,-60.0,-100.0,-75.0,reversal_leak_between_EK_ENa (below the lowest known x -75.0 and known hi None)
+rec_mod1_tau_off_ms,5.0,200.0,5.64,200.0,tau_rise_lt_decay_rec_mod1 (rec_mod1_tau_rise_ms known 5.64)
