@@ -9,7 +9,8 @@ Writes
   viewer/worm/runs/<id>.gcamp.f32   closed loop with GCaMP: [n_frames, n_cells] dF/F
   viewer/worm/runs/<id>.state.f32   closed loop: [n_frames, n_state] every module's scalar state (names in the index)
   viewer/worm/runs/index.json       run list with titles, drive settings and test readouts
-Usage: build_viewer_data.py [--src=DIR] [run ...]   (default: the MetaWorm test runs in runs/worm/metaworm/)
+Usage: build_viewer_data.py [--src=DIR] [--first] [run ...]   (default: the MetaWorm test runs in runs/worm/metaworm/;
+       --first lists the given runs first, the one the viewer opens)
 """
 from __future__ import annotations
 
@@ -46,6 +47,12 @@ RUNS = {
                          "model (GCaMP6s, opto, NeuroPAL); the row 22 plate (lawn, O2, CO2, salt, temperature, tap at "
                          "3 s, eyelash 5-7.3 s, nose 8.5 s); the row 21 layered body with internal damping on the agar "
                          "film. No behaviour is expected: nothing is fitted to it (Ben, 5 Nov)."),
+    "v1_everything": ("Everything on, v1 (7 Nov, 20 s)",
+                      "Closed loop on main at the end of the 6-7 Nov push, every one of the 23 mechanism modules on "
+                      "at its catalog value (published, measured or guessed): Nicoletti channels, receptors, STP, "
+                      "slow signalling, learning, peptides and amines, noise, Q10, sensory cascades, Du body-wall "
+                      "muscle, pharynx, intestine, egg-laying, glia, other cells, pumps, DEB metabolism, GCaMP; the row "
+                      "22 plate with its events; the layered body on the agar film. Nothing is fitted to behaviour."),
 }
 
 
@@ -113,8 +120,9 @@ def summary(tests: dict, rid: str) -> dict:
     return out
 
 
-def add_runs(ids: list[str], titles: dict | None = None, src: Path = SRC) -> list[dict]:
-    """Convert <src>/<id> (default runs/worm/metaworm/) to viewer files and merge them into viewer/worm/runs/index.json."""
+def add_runs(ids: list[str], titles: dict | None = None, src: Path = SRC, first: bool = False) -> list[dict]:
+    """Convert <src>/<id> (default runs/worm/metaworm/) to viewer files and merge them into viewer/worm/runs/index.json
+    (appended; first=True puts these runs at the top, where the viewer opens)."""
     (VIEW / "data").mkdir(parents=True, exist_ok=True)
     (VIEW / "runs").mkdir(parents=True, exist_ok=True)
     tests = json.load(open(TESTS)) if TESTS.exists() else {}
@@ -173,11 +181,13 @@ def add_runs(ids: list[str], titles: dict | None = None, src: Path = SRC) -> lis
         index = [e for e in index if e["id"] != rid] + [entry]
         added.append(entry)
         print(rid, meta["n_frames"], "frames")
+    if first:  # the viewer opens the first run in the list
+        index = [e for e in index if e["id"] in ids] + [e for e in index if e["id"] not in ids]
     json.dump({"runs": index}, open(idx_path, "w"), indent=1)
     return added
 
 
 if __name__ == "__main__":
-    a = [x for x in sys.argv[1:] if not x.startswith("--src=")]
+    a = [x for x in sys.argv[1:] if not x.startswith("--")]
     d = next((Path(x.split("=", 1)[1]) for x in sys.argv[1:] if x.startswith("--src=")), SRC)
-    add_runs(a or list(RUNS), src=d.resolve())
+    add_runs(a or list(RUNS), src=d.resolve(), first="--first" in sys.argv[1:])
