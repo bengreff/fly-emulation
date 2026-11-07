@@ -1,0 +1,53 @@
+# XuexingDu/C.elegans-Muscle (code of Du, Crodelle et al. 2025 PLOS Comput Biol 21:e1012318), Muscle_cell_model.ipynb,
+# commit 312c203; fetched 7 Nov 2026 from https://raw.githubusercontent.com/XuexingDu/C.elegans-Muscle/312c20388c31f440535bc0afb20c18486e711601/Muscle_cell_model.ipynb
+# The repository has no license file, so only the lines the catalog quotes are reproduced here, verbatim, each
+# preceded by its notebook cell (counting all cells from 0) and line (from 0) in a comment line.
+
+# cell 1, line 1
+    def __init__(self, size, ECa= 60., gCa= 15.6, EK=-40., gK=34., EL=-24, gL=0.1,
+# cell 1, line 2
+                 V_th= 10., C= 22, p_max = 0.1, phi=1., phi_m = 1.2, gkr = 10., g_slo2 = 10. , g_Na = 0.01, ENa = 30, phi_n = 1.2, noise_factor = 0.01, **kwargs):
+# cell 1, line 21
+        self.alpha  = 43.
+# cell 1, line 22
+        self.beta   = 0.09
+# cell 1, line 28
+        self.V = bm.Variable(bm.random.randn(self.num) - 30.)
+# cell 1, line 29
+        self.m = bm.Variable(0.01 * bm.ones(self.num))
+# cell 1, line 30
+        self.h = bm.Variable(0.6 * bm.ones(self.num))
+# cell 1, line 31
+        self.n = bm.Variable(0.99 * bm.ones(self.num))
+# cell 1, line 32
+        self.p = bm.Variable(0.2 * bm.ones(self.num))
+# cell 1, line 64
+    krinf  = lambda self, V: 0.5 *(1+bm.tanh((V -  self.V_th + 42)/ 5.0))
+# cell 1, line 65
+    m_slo2inf = lambda self, V: 1/(1+bm.exp(-(V - (-33.4)) / 3.2))
+# cell 1, line 69
+        taumkr= 62
+# cell 1, line 80
+        return -0.15 * ICa * 1e-4 - 0.075 * (Ca - 0.001)
+# cell 1, line 83
+        ninf = 0.5 * (bm.tanh((V - self.V_th +15.2)/36.22)+1)
+# cell 1, line 84
+        tau_n = 1.18+511.78/(1+bm.exp((V - self.V_th + 89.3)/21.92))
+# cell 1, line 95
+        tau_m = 0.4 + .7 / (bm.exp(-(V + 5. - self.V_th) / 15.) +
+# cell 1, line 97
+        minf = 1. / (1 + bm.exp(-(V + 8. - self.V_th) / 8.6))
+# cell 1, line 103
+        hinf   = 0.42 / (1. + bm.exp((V + 11. - self.V_th) / 2.)) + 0.28
+# cell 1, line 105
+        tau_h = 24
+# cell 1, line 110
+        pinf = 1/(1+bm.exp(-(V- self.V_th +45)/10))
+# cell 1, line 111
+        tau_p = 4000/(3.38*bm.exp((V- self.V_th+45)/20)+bm.exp(-(V- self.V_th +45)/20))
+# cell 1, line 119
+        V = self.int_V(self.V, _t, self.m, self.h, self.n, self.p, self.p_slo2, self.kr, self.input/0.75, dt=_dt)
+# cell 3, line 4
+    neuron = Body_Wall_muscle(size=1, gCa=params[0], gK=params[1], p_max=params[2], ECa= params[3], ENa= 15, g_Na= 0.1, g_slo2 = 3.6, gkr= 3.2, phi = 0.04)
+# cell 5, line 23
+    aike,_, _, _, _ = HHsimulator(duration, syn_current[:,i], dt = 0.1, params= [19.8, 37., 0., 60])
