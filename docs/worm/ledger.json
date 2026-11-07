@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-06 23:51 CST",
+ "generated_at": "2026-11-06 23:54 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -14,31 +14,31 @@
   "mechanisms": 84,
   "by_label": {
    "derived": 67504,
-   "guessed": 9126,
-   "inferred": 109,
-   "measured": 6178,
+   "guessed": 9123,
+   "inferred": 110,
+   "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81824,
-  "placeholder": 9126,
+  "known": 81827,
+  "placeholder": 9123,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9126
+  "must_fill": 9123
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9126,
+   "guessed": 9123,
    "derived": 3096,
-   "inferred": 109,
-   "measured": 326
+   "inferred": 110,
+   "measured": 328
   },
-  "known": 10837,
-  "placeholder": 9126,
+  "known": 10840,
+  "placeholder": 9123,
   "gap": 0,
-  "must_fill": 9126
+  "must_fill": 9123
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,16 +49,16 @@
    },
    "literature": {
     "guessed": 5471,
-    "measured": 6177,
+    "measured": 6179,
     "derived": 3096,
-    "inferred (ours)": 15,
+    "inferred (ours)": 16,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3651,
+    "guessed": 3648,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -74,15 +74,15 @@
    "literature": {
     "guessed": 5471,
     "derived": 3096,
-    "measured": 325,
-    "inferred (ours)": 15,
+    "measured": 327,
+    "inferred (ours)": 16,
     "published fit": 248
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3651,
+    "guessed": 3648,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -115,9 +115,9 @@
   },
   "class": {
    "derived": 1,
-   "guessed": 176,
+   "guessed": 175,
    "inferred": 61,
-   "measured": 29,
+   "measured": 30,
    "published_fit": 87
   },
   "compartment": {
@@ -137,9 +137,9 @@
   },
   "global": {
    "derived": 18,
-   "guessed": 143,
-   "inferred": 41,
-   "measured": 29,
+   "guessed": 141,
+   "inferred": 42,
+   "measured": 30,
    "published_fit": 221
   },
   "muscle": {
@@ -1324,9 +1324,9 @@
    "numbers": 23,
    "by_label": {
     "derived": 1,
-    "guessed": 16,
+    "guessed": 15,
     "inferred": 4,
-    "measured": 2
+    "measured": 3
    }
   },
   {
@@ -1518,9 +1518,9 @@
    "numbers": 22,
    "by_label": {
     "derived": 3,
-    "guessed": 7,
+    "guessed": 6,
     "inferred": 2,
-    "measured": 10
+    "measured": 11
    }
   },
   {
@@ -1553,7 +1553,8 @@
    "absent_reason": "",
    "numbers": 3,
    "by_label": {
-    "guessed": 3
+    "guessed": 2,
+    "inferred": 1
    }
   },
   {
@@ -37085,28 +37086,28 @@
    "applies_to": "uterus",
    "unit": "eggs",
    "n_values": 1,
-   "value_template": 12.0,
-   "template_source": "general knowledge",
+   "value_template": 15.0,
+   "template_source": "Wang, Gao & Pocock 2026 Biol Open 15:bio062520 (PMC13054943), Results (egg retention)",
    "bio_min": 5.0,
    "bio_max": 20.0,
    "bound_basis": "guessed",
-   "bound_source": "general knowledge",
+   "bound_source": "kept from before the value fill: general knowledge",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "eggs in utero at the start; a young adult holds ~10-15 (not opened tonight)",
+   "notes": "eggs in utero at the start; a young adult holds ~10-15 (not opened tonight); fill 6 Nov (catalog audit): was 12 eggs, label guessed, range [5, 20]; eggs in the uterus at the start of a run; was 12 from general knowledge. Wang 2026 states young adults typically hold about 15 and counted about 18 in wild-type 1-day adults (36 h after mid-L4); 15 is the typical value. The range [5, 20] stays: it holds both, and a run can start in a younger adult",
    "plan_row": 15,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13054943/",
+   "source_quote": "Young adult hermaphrodites typically retain \u223c15 fertilised eggs in their uterus. ... sms-1(ok2399) 1-day-old adult hermaphrodites retained more eggs (\u223c35) than wild-type animals (\u223c18)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40318,27 +40319,27 @@
    "unit": "Hz",
    "n_values": 1,
    "value_template": 1.7,
-   "template_source": "recalled, not opened: Atanas 2023 whole-brain volume rate; sample_volumes() uses it",
+   "template_source": "Atanas, Kim, Wang, ... Cohen, Mansinghka & Flavell 2023 Cell 186:4134 (PMC10836760), STAR Methods (confocal imaging)",
    "bio_min": 1.0,
    "bio_max": 10.0,
    "bound_basis": "guessed",
-   "bound_source": "recalled, not opened: Atanas 2023 whole-brain volume rate; sample_volumes() uses it",
+   "bound_source": "kept from before the value fill: recalled, not opened: Atanas 2023 whole-brain volume rate; sample_volumes() uses it",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "readout only: gcamp_dff is published every step, sampling is offline",
+   "notes": "readout only: gcamp_dff is published every step, sampling is offline; fill 6 Nov (catalog audit): was 1.7 Hz, label guessed, range [1, 10]; the acquisition rate of the whole-brain recordings that sample_volumes() mimics, now read in the paper (was recalled, not opened); same value. A reported instrument setting, labelled measured. The range [1, 10] stays: their other piezo ran at 1.4 Hz and other whole-brain setups image faster",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10836760/",
+   "source_quote": "with 80 z planes collected at a spacing of 0.54 um. This resulted in a volume rate of 1.7 Hz (1.4 Hz for the datasets acquired with the Newport piezo)",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40510,27 +40511,27 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 0.9,
-   "template_source": "Yemini et al. 2021 Cell 184:272: accuracy of labelled IDs, not opened",
+   "template_source": "Yemini, Lin, Nejatbakhsh, Varol, Sun, Mena, Samuel, Paninski, Venkatachalam & Hobert 2021 Cell 184:272 (PMC10494711), Fig. 7 legend",
    "bio_min": 0.7,
    "bio_max": 0.99,
    "bound_basis": "guessed",
-   "bound_source": "Yemini et al. 2021 Cell 184:272: accuracy of labelled IDs, not opened",
+   "bound_source": "kept from before the value fill: Yemini et al. 2021 Cell 184:272: accuracy of labelled IDs, not opened",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 0.9 1, label guessed, range [0.7, 0.99]; the chance that a labelled head neuron's ID is right; Yemini measured the semi-automated head accuracy at 86%, above 90% after eight manual IDs, so 0.9 stays. Inferred, not measured: the hand labelling of moving whole-brain recordings the model mimics (Atanas 2023) has no accuracy number. The range [0.7, 0.99] stays; it holds 0.86 to 0.94",
    "plan_row": 23,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10494711/",
+   "source_quote": "Semi-automated neuronal identification accuracy begins at 86% for the head and 94% for the tail. Manually identifying eight neurons raises the head accuracy above 90%.",
    "audit": "ok",
    "kind": "physiology"
   },
@@ -40702,18 +40703,18 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 459,
-    "measured": 277,
+    "guessed": 456,
+    "measured": 279,
     "derived": 36,
-    "inferred": 110,
+    "inferred": 111,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9263,
-    "measured": 6233,
+    "guessed": 9260,
+    "measured": 6235,
     "derived": 67516,
-    "inferred": 116,
+    "inferred": 117,
     "absent": 5
    },
    "n_rows": 1483,
@@ -40721,18 +40722,18 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 459,
-   "measured": 277,
+   "guessed": 456,
+   "measured": 279,
    "derived": 36,
-   "inferred": 110,
+   "inferred": 111,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9263,
-   "measured": 6233,
+   "guessed": 9260,
+   "measured": 6235,
    "derived": 67516,
-   "inferred": 116,
+   "inferred": 117,
    "absent": 5
   },
   "by_plan_row": {
@@ -40932,15 +40933,15 @@
    },
    "15": {
     "rows": {
-     "measured": 5,
+     "measured": 6,
      "derived": 1,
-     "guessed": 19,
+     "guessed": 18,
      "inferred": 5
     },
     "numbers": {
-     "measured": 5,
+     "measured": 6,
      "derived": 1,
-     "guessed": 19,
+     "guessed": 18,
      "inferred": 5
     },
     "n_rows": 30,
@@ -41064,16 +41065,16 @@
    },
    "23": {
     "rows": {
-     "measured": 16,
-     "inferred": 3,
+     "measured": 17,
+     "inferred": 4,
      "derived": 3,
-     "guessed": 14
+     "guessed": 12
     },
     "numbers": {
-     "measured": 16,
-     "inferred": 3,
+     "measured": 17,
+     "inferred": 4,
      "derived": 3,
-     "guessed": 14
+     "guessed": 12
     },
     "n_rows": 36,
     "n_numbers": 36
@@ -41178,16 +41179,16 @@
    "class": {
     "rows": {
      "inferred": 62,
-     "measured": 33,
-     "guessed": 202,
+     "measured": 34,
+     "guessed": 201,
      "published_fit": 89,
      "derived": 2,
      "absent": 4
     },
     "numbers": {
      "inferred": 62,
-     "measured": 33,
-     "guessed": 202,
+     "measured": 34,
+     "guessed": 201,
      "published_fit": 89,
      "derived": 2,
      "absent": 4
@@ -41248,17 +41249,17 @@
    "global": {
     "rows": {
      "published_fit": 306,
-     "guessed": 168,
-     "inferred": 45,
-     "measured": 55,
+     "guessed": 166,
+     "inferred": 46,
+     "measured": 56,
      "derived": 28,
      "absent": 1
     },
     "numbers": {
      "published_fit": 306,
-     "guessed": 168,
-     "inferred": 45,
-     "measured": 55,
+     "guessed": 166,
+     "inferred": 46,
+     "measured": 56,
      "derived": 28,
      "absent": 1
     },
@@ -41355,17 +41356,17 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 300,
-     "measured": 217,
+     "guessed": 297,
+     "measured": 219,
      "derived": 24,
-     "inferred": 93
+     "inferred": 94
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8960,
-     "measured": 6074,
+     "guessed": 8957,
+     "measured": 6076,
      "derived": 67504,
-     "inferred": 98
+     "inferred": 99
     },
     "n_rows": 1165,
     "n_numbers": 90691
@@ -41525,27 +41526,29 @@
    },
    "mech:observation": {
     "rows": {
-     "measured": 8,
+     "measured": 9,
      "derived": 2,
-     "guessed": 12,
-     "inferred": 1
+     "guessed": 10,
+     "inferred": 2
     },
     "numbers": {
-     "measured": 8,
+     "measured": 9,
      "derived": 2,
-     "guessed": 12,
-     "inferred": 1
+     "guessed": 10,
+     "inferred": 2
     },
     "n_rows": 23,
     "n_numbers": 23
    },
    "mech:organs_egglaying": {
     "rows": {
-     "guessed": 15,
+     "guessed": 14,
+     "measured": 1,
      "inferred": 5
     },
     "numbers": {
-     "guessed": 15,
+     "guessed": 14,
+     "measured": 1,
      "inferred": 5
     },
     "n_rows": 20,
@@ -41770,18 +41773,18 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 459,
+     "guessed": 456,
      "derived": 32,
-     "inferred": 110,
-     "measured": 273,
+     "inferred": 111,
+     "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9263,
+     "guessed": 9260,
      "derived": 3106,
-     "inferred": 116,
-     "measured": 381,
+     "inferred": 117,
+     "measured": 383,
      "absent": 5
     },
     "n_rows": 1461,
@@ -42121,19 +42124,19 @@
    },
    "rows_read": 198,
    "quotes": {
-    "none": 1108,
-    "paper text (read audit, 6 Nov)": 230,
+    "none": 1105,
+    "paper text (read audit, 6 Nov)": 233,
     "research file (scripted check)": 145
    },
-   "with_url": 1094,
+   "with_url": 1097,
    "links": {
-    "distinct": 145,
+    "distinct": 147,
     "by_status": {
-     "200": 135,
+     "200": 137,
      "406": 5,
      "403": 5
     },
-    "checked_at": "2026-11-06 23:42 CST"
+    "checked_at": "2026-11-06 23:54 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -45330,6 +45333,45 @@
     "url": ""
    },
    {
+    "param_id": "obs_volume_rate_hz",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "1.7 -> 1.7 Hz; guessed -> measured; range [1, 10] -> [1, 10]",
+    "reason": "the acquisition rate of the whole-brain recordings that sample_volumes() mimics, now read in the paper (was recalled, not opened); same value. A reported instrument setting, labelled measured. The range [1, 10] stays: their other piezo ran at 1.4 Hz and other whole-brain setups image faster",
+    "source": "Atanas, Kim, Wang, ... Cohen, Mansinghka & Flavell 2023 Cell 186:4134 (PMC10836760), STAR Methods (confocal imaging)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10836760/"
+   },
+   {
+    "param_id": "obs_neuropal_p_correct",
+    "kind": "fill",
+    "origin": "mech:observation",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "inferred",
+    "change": "0.9 -> 0.9 1; guessed -> inferred; range [0.7, 0.99] -> [0.7, 0.99]",
+    "reason": "the chance that a labelled head neuron's ID is right; Yemini measured the semi-automated head accuracy at 86%, above 90% after eight manual IDs, so 0.9 stays. Inferred, not measured: the hand labelling of moving whole-brain recordings the model mimics (Atanas 2023) has no accuracy number. The range [0.7, 0.99] stays; it holds 0.86 to 0.94",
+    "source": "Yemini, Lin, Nejatbakhsh, Varol, Sun, Mena, Samuel, Paninski, Venkatachalam & Hobert 2021 Cell 184:272 (PMC10494711), Fig. 7 legend",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10494711/"
+   },
+   {
+    "param_id": "egg_uterus_init",
+    "kind": "fill",
+    "origin": "mech:organs_egglaying",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "measured",
+    "change": "12 -> 15 eggs; guessed -> measured; range [5, 20] -> [5, 20]",
+    "reason": "eggs in the uterus at the start of a run; was 12 from general knowledge. Wang 2026 states young adults typically hold about 15 and counted about 18 in wild-type 1-day adults (36 h after mid-L4); 15 is the typical value. The range [5, 20] stays: it holds both, and a run can start in a younger adult",
+    "source": "Wang, Gao & Pocock 2026 Biol Open 15:bio062520 (PMC13054943), Results (egg retention)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13054943/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46338,18 +46380,18 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 459,
-    "measured": 277,
+    "guessed": 456,
+    "measured": 279,
     "derived": 36,
-    "inferred": 110,
+    "inferred": 111,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9263,
-    "measured": 6233,
+    "guessed": 9260,
+    "measured": 6235,
     "derived": 67516,
-    "inferred": 116,
+    "inferred": 117,
     "absent": 5
    }
   }
