@@ -1,0 +1,114 @@
+{
+  "locked_on": "2026-11-07",
+  "seed": 20261107,
+  "note": "Locked before any fitting, per Ben's 7 Nov decision ('all data, lock now'). Drawn from identifiers only (animal/recording/strain/neuron/corpus-item names and counts), never from measured traces, kinematics or scores. Two existing seals (Randi 2023 stimulated-neuron split + all unc-31 animals, from FIT1.md; RIM held out as a whole ephys class, from FIT2.md) are kept exactly as drawn, not re-drawn. Everything else here is a new draw with numpy.random.default_rng(20261107), done once, in the fixed order recorded in each dataset's 'procedure' field.",
+  "datasets": {
+    "randi2023": {
+      "unit": "stimulated neuron (wild-type, strain AML462, matched to a model cell); animal and strain (unc-31, strain AML508, held out as a whole genotype)",
+      "n_units": "171 wild-type stimulated neurons (137 training + 34 held out); 18 unc-31 animals / 108 unc-31 stimulated neurons, all held out",
+      "locked": [
+        "ADAR", "ADER", "ADLL", "AFDR", "AINL", "ASJR", "AVBL", "AVBR", "AVHL", "AVJR",
+        "BAGL", "CEPDL", "CEPVR", "I2L", "I2R", "IL2DR", "M3R", "NSMR", "OLLR", "OLQDL",
+        "OLQDR", "OLQVR", "RIGR", "RIML", "RIMR", "RIPL", "RMED", "SAAVL", "SAAVR", "SIBVR",
+        "URADR", "URAVL", "URXR", "VA01",
+        "ALL_UNC31_ANIMALS (strain AML508, 18 animals, 108 stimulated neurons, 9011 terms, source funatlas.h5)"
+      ],
+      "existing_seal": "docs/worm/FIT1.md section 1 (seed 20261106, run 22:30 7 Nov pre-registration); unc-31 sealed separately for the peptide-layer test, FIT1.md section 7",
+      "procedure": "Kept exactly as sealed on 2026-11-06/07. Not re-drawn. The wild-type 34/171 split is by stimulated neuron (20%, seed 20261106). Every unc-31 term is sealed in full (not a fraction) because it is reserved for the UNC-31/CAPS peptide-release test, which needs the whole mutant cohort, not a sample of it."
+    },
+    "ephys_single_cell": {
+      "unit": "neuron class (one current/voltage-clamp recording series per class)",
+      "n_units": 4,
+      "locked": ["RIM"],
+      "existing_seal": "docs/worm/FIT2.md section 7 (numpy.random.default_rng(20261107).choice(['RIM','AFD','AWA']) returned RIM, drawn 2026-11-07 01:51:50 CST)",
+      "procedure": "Kept exactly as sealed. The 4 classes with ephys on backhouse are AIY, RIM, AFD (ephys/naudin2022_liu_aiy_rim_afd/) and AWA (liu2018_awa_ephys/). AIY is never a held-out candidate (its data are already spent or training-only, FIT2.md section 2). RIM is held out as a whole class: its FIT2 sweeps, odd sweeps, and all voltage-clamp data stay sealed. AFD and AWA remain available (AFD partially, AWA fully) for training; this is unchanged, not a new lock."
+    },
+    "atanas2023": {
+      "unit": "animal recording, grouped by condition (source study: atanas2023_main, dag2023, pradhan2025, all freely-moving whole-brain NeuroPAL+GCaMP recordings, found together as a family on backhouse)",
+      "n_units": 103,
+      "locked": {
+        "atanas2023_main": {
+          "n": 80, "n_locked": 20, "pct": "25%",
+          "ids": [
+            "2021-06-11-01", "2021-08-17-05", "2021-09-22-05", "2021-09-23-01", "2021-10-26-01",
+            "2021-11-12-01", "2022-01-26-01", "2022-02-16-01", "2022-04-18-04", "2022-06-14-13",
+            "2022-07-15-06", "2022-08-02-01", "2022-12-21-06", "2023-01-05-01", "2023-01-09-22",
+            "2023-01-09-28", "2023-01-13-07", "2023-01-17-14", "2023-01-18-01", "2023-01-19-08"
+          ]
+        },
+        "pradhan2025": {
+          "n": 8, "n_locked": 8, "pct": "100% (whole condition)",
+          "ids": [
+            "2023-03-08-03", "2023-03-16-01", "2023-04-06-01", "2023-04-07-22",
+            "2023-04-20-02", "2023-04-25-04", "2023-05-05-22", "2023-05-10-16"
+          ]
+        },
+        "dag2023": {
+          "n": 15, "n_locked": 4, "pct": "27%",
+          "ids": ["2022-03-17-01", "2022-05-02-01", "2022-07-27-38", "2022-08-02-31"]
+        }
+      },
+      "excluded_from_pool": "atanas2023/processed_h5/scrambled-2022-10-03-01/ (11 files): a derived shuffled-neuron-identity copy of 11 of the atanas2023_main animals, not independent data. Not counted as a unit and not eligible for locking either way.",
+      "existing_seal": null,
+      "procedure": "Decided before drawing: atanas2023_main is the primary whole-brain fitting corpus (docs/worm/SCOREBOARD.md item 75, loss L3), so it was fixed in advance to get the standard 25%-of-animals treatment rather than risk being the whole-condition pick. The whole-condition lock was then drawn with numpy.random.default_rng(20261107) only between the two newer, smaller secondary collections (dag2023, pradhan2025, found alongside atanas2023 under worm-data/wormwideweb_extra/, not yet described in MANIFEST.md). The draw order was: (1) 25% of atanas2023_main's 80 animals (ceil=20) by rng.choice; (2) rng.choice(['dag2023','pradhan2025']) to pick which one is locked whole -> pradhan2025; (3) 25% of dag2023's 15 animals (ceil=4) by rng.choice."
+    },
+    "owmd_javer2018": {
+      "unit": "strain / genotype (Open Worm Movement Database subset curated for this project: N2 wild-type plus 16 named mutant strains, Tierpsy/WCON tracks)",
+      "n_units": 17,
+      "locked": ["egl-2", "flp-1", "unc-17", "unc-29", "unc-31", "unc-38"],
+      "existing_seal": null,
+      "procedure": "25% of the 17 strains (ceil=5) drawn by numpy.random.default_rng(20261107).choice: unc-29, unc-31, unc-38, egl-2, flp-1. Unioned with any strain whose gene is also locked in this file's perturbation_corpus draw below (egl-2, flp-1, unc-17), so a gene's real tracking data is never left open for fitting while that same gene's own no-refit mutant test is sealed elsewhere. That union added unc-17, for a final 6 of 17 (35%). N2 and the other 11 mutant strains (cat-2, egl-19, mod-1, npr-1, tdc-1, tph-1, unc-103, unc-2, unc-7, unc-9) are not locked and stay available for the first fitting loss."
+    },
+    "yemini2013": {
+      "unit": "strain (one row per genotype/strain in the 305-strain phenome supplement; 304 data rows after the header)",
+      "n_units": 304,
+      "locked": [
+        "Axenic Liquid Culture LSJ1 (Bristol, UK)", "C11D2.2(ok1565)IV", "CGC N2 (Bristol, UK)",
+        "acr-3(ok2049)X", "asic-1(ok415)I", "del-9(ok2353)X", "dop-2(vs105)V",
+        "dop-2(vs105)V; dop-1(vs100)X", "dop-3(vs106)X", "egl-13(n483)X", "egl-15(n484)X",
+        "egl-17(e1313)X", "egl-2(n693)V", "egl-21(n611)IV", "egl-24(n572)III", "egl-30(ep271)I",
+        "egl-33(n151)I", "egl-36(n728)X", "egl-46(n1127)V", "egl-50(n1086)II", "egl-6(n592)X",
+        "egl-7(n575)III", "egl-8(n488)V", "ets-10(gk596)X", "flp-12(ok2409)X", "flp-21(ok889)V",
+        "flp-6(ok3056)V", "flr-1(ut11)X", "gar-2(ok520)III", "gly-2(gk204)I", "gpa-13(pk1270)V",
+        "gpa-16(ok2349)I", "gpa-2(pk16)V", "gpa-5(pk376)X", "gpa-6(pk480)X", "gpa-7(pk610)IV",
+        "gpa-9(pk438)V", "lin-39(n709)III", "lon-2(e678)X",
+        "mec-10(tm1552)X; bzIs17[pmec-4::YC2.12; lin-15(+)]", "mec-10(u20)X",
+        "mec-7(u448)X; bzIs17[pmec-4::YC2.12; lin-15(+)]", "nlp-8(ok1799)I", "npr-10(tm1568)X",
+        "npr-12(tm1498)IV", "npr-4(tm1782)X", "npr-7(ok527)X", "npr-9(tm1652)X", "ocr-3(ok1559)X",
+        "ocr-4(vs137)ocr-2(ak47)IV", "pkg-1(n478)IV", "rab-3(y250)II", "ser-1(ok345)X",
+        "ser-5(tm2654)I", "ser-7(tm1325)X", "snf-10(hc194)V", "snf-5(ok447)II", "snf-9(ok957)IV",
+        "srp-8(ok291)V", "tom-1(ok285)I", "trp-1(sy690)III", "trp-2(sy691)III", "trpa-2(ok3189)I",
+        "trpa-2(tm3085)I", "trpa-2(tm3092)I", "unc-1(e1598)X", "unc-1(e94)X", "unc-101(m1)I",
+        "unc-104(e1265)II", "unc-105(ok1432)II", "unc-108(n777)I", "unc-115(mn481)X",
+        "unc-122(e2520)I", "unc-2(gk366)X", "unc-3(e151)X", "unc-55(e402)I"
+      ],
+      "existing_seal": null,
+      "procedure": "25% of the 304 strains (ceil=76) drawn by numpy.random.default_rng(20261107).choice over the strain list read from nmeth2560_MOESM84_SuppTable1.xlsx (sheet 'sigs.csv', columns Genotype/Strain/Outcrossed only; no feature data opened)."
+    },
+    "neuropal2021": {
+      "unit": "animal recording (one microfluidic NeuroPAL+GCaMP imaging session, strain OH16230; each session has a paired Heads and Tails volume)",
+      "n_units": 21,
+      "locked": ["20190928_01", "20190928_11", "20190929_06", "20191030_03", "20191030_07", "20191104_10"],
+      "existing_seal": null,
+      "procedure": "Only one strain/condition (OH16230) is on backhouse for this dataset (neuropal2021/microfluidic_gcamp/). 25% of its 21 recording sessions (ceil=6) drawn by numpy.random.default_rng(20261107).choice. Per docs/worm/SCOREBOARD.md section 17, NeuroPAL data is not itself scored as a blind behavioural prediction (it is the identity/colour ground truth for the observation model); this lock reserves a slice of it anyway, consistent with Ben's 7 Nov instruction to lock across every dataset held, for the same pipeline-consistency check once scoring starts. neuropal2021/manuals_and_images/ and neuropal2021/plasmids/ contain protocol documents and construct maps, not animal recordings, and are not split."
+    },
+    "perturbation_corpus": {
+      "unit": "corpus item: a named gene mutant, neuron ablation, or pharmacological-stimulus assay proposed in docs/worm/research/PERTURBATION_CORPUS.md section 4 or docs/worm/SCOREBOARD.md section 15/18 as a future no-refit test",
+      "n_units": 22,
+      "locked": ["ava_avb_pvc_avd_ablation", "egl-2", "flp-1", "glr-1", "slo-1", "unc-17", "unc-36"],
+      "existing_seal": null,
+      "procedure": "The 22 in-scope items are the 20 genes/gene-pairs in PERTURBATION_CORPUS.md section 4's numbered list, plus tdc-1 (SCOREBOARD.md item 97, not in that list), plus the AVA/AVB/PVC/AVD neuron ablation (SCOREBOARD.md item 73, the only ablation item identified; no chemical/optogenetic-stimulus-only item or second ablation dataset was found on backhouse, so the 'stimuli' stratum is read as the items whose primary readout is a pharmacological dose-response assay: slo-1 ethanol, unc-49 aldicarb/levamisole, unc-29/unc-38 levamisole, unc-17 aldicarb). Stratified draw with numpy.random.default_rng(20261107): the single ablation item is locked outright (nothing to draw); 2 of the 4 stimulus items drawn -> slo-1, unc-17; 4 of the remaining 17 mutant items drawn -> egl-2, flp-1, glr-1, unc-36. Total 7 of 22 (32%). No raw ablation or drug-dose-response trace data for these items was found on backhouse (checked); this lock reserves the identifiers so that if such data (or a cited literature phenotype call) is used later, these are the items withheld from informing any fitted value, per SCOREBOARD.md section 15's rule that mutant/ablation predictions are never used to tune the model."
+    },
+    "wormbase_phenotype": {
+      "unit": "gene (genome-wide WormBase Phenotype Ontology association)",
+      "n_units": "~20,000 genes genome-wide (not counted exactly; reference lookup, see procedure)",
+      "locked": [],
+      "existing_seal": null,
+      "procedure": "Not split. wormbase_phenotype/ (phenotype_association.WS298.wb.gz, phenotype_ontology.WS298.obo.gz) is a genome-wide categorical gene-to-phenotype-term lookup table, used only to check whether a gene in the model's scope has a citable phenotype call; it carries no per-animal measured value and is never itself fit against. The genes actually tested against measured data are the perturbation_corpus items above, which is where the lock applies."
+    }
+  },
+  "not_split_unchanged": {
+    "note": "Checked against MANIFEST.md and the disk; kept as pure fitting priors (structural/connectome/expression reference tables, not repeated-measurement corpora), per their existing FIT designation in docs/worm/SCOREBOARD.md (items 76-78, 90) and docs/worm/MANIFEST.md. Not reopened.",
+    "datasets": ["cook2019", "witvliet2021", "cengen", "peptide_connectome", "morphologies", "misc", "brittin2021"]
+  }
+}
