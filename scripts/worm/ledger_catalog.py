@@ -90,10 +90,8 @@ def registry():
         reg = importlib.import_module("wormemu.mech")
     except ImportError:
         return []
-    out = []
-    for name in getattr(reg, "REGISTRY", []):
-        out.append((name, importlib.import_module(f"wormemu.mech.{name}")))
-    return out
+    names = list(getattr(reg, "REGISTRY", []))
+    return [(n.rsplit(".", 1)[-1], m) for n, m in zip(names, reg.modules(names))]
 
 
 # ---------------------------------------------------------------------------------------------------------- the body
@@ -142,39 +140,41 @@ def _num(x):
 # ----------------------------------------------------------------------------------------------------------- slots
 SLOT_COLUMNS = ["param_id", "plan_row", "mechanism_id", "mechanism_name", "grain", "applies_to", "n_values", "unit",
                 "value_template", "bio_min", "bio_max", "label", "bound_basis", "source", "source_url",
-                "source_quote", "source_project", "notes", "match"]
+                "source_quote", "source_project", "notes", "match", "used"]
 
 
-def slots(used_ids: set[str], used_mechs: set[str]):
-    """Slot rows not yet replaced by a row the code reads. A slot is replaced when a used row has its id, or one of
-    the ids in its `match` column (space-separated; a mechanism id there matches any row of that mechanism)."""
-    f = CAT / "slots.csv"
-    if not f.exists():
-        return [], [], []
-    s = pd.read_csv(f, keep_default_na=False)
+def slots(used_ids: set[str], live_mechs: set[str], known_mechs: set[str]):
+    """Slot rows (scripts/worm/catalog_slots.py, copied to data/worm/catalog/slots.csv) not yet replaced by a row the
+    code reads. A slot is replaced when a used row has its id, or one of the ids in its `match` column
+    (space-separated; a mechanism id there matches any row of a mechanism that has code)."""
+    import catalog_slots
+    s = pd.DataFrame(catalog_slots.SLOTS, columns=SLOT_COLUMNS)
+    CAT.mkdir(parents=True, exist_ok=True)
+    s.to_csv(CAT / "slots.csv", index=False)
     rows, replaced, mechs = [], [], {}
     for r in s.to_dict("records"):
-        keys = {r["param_id"], *r["match"].split()}
-        hit = sorted(k for k in keys if k in used_ids or k in used_mechs)
+        keys = {r["param_id"], *str(r["match"]).split()}
+        hit = sorted(k for k in keys if k in used_ids or k in live_mechs)
         if hit:
             replaced.append((r["param_id"], " ".join(hit)))
             continue
         lab = r["label"] or "absent"
         v, lo, hi = _num(r["value_template"]), _num(r["bio_min"]), _num(r["bio_max"])
-        mechs.setdefault(r["mechanism_id"], dict(
-            id=r["mechanism_id"], name=r["mechanism_name"], layer="slot", status="absent", toggle="", neutral="",
-            default="", source=r["source"].split(";")[0], notes="slot mechanism: the published model the PLAN row "
-            "needs; no code yet", absent_reason="not built yet (slot)"))
+        if r["mechanism_id"] not in known_mechs:
+            mechs.setdefault(r["mechanism_id"], dict(
+                id=r["mechanism_id"], name=r["mechanism_name"], layer="slot", status="absent", toggle="", neutral="",
+                default="", source=r["source"].split(";")[0], notes="slot mechanism: the published model the PLAN "
+                "row needs; no code yet", absent_reason="not built yet (slot)"))
         rows.append(dict(
             param_id=r["param_id"], mechanism_id=r["mechanism_id"], grain=r["grain"] or "global",
             applies_to=r["applies_to"], unit=r["unit"], n_values=int(r["n_values"] or 1), value_template=v,
-            template_source=r["source"] if not np.isnan(v) else "", bio_min=lo, bio_max=hi,
+            template_source=r["source"], bio_min=lo, bio_max=hi,
             bound_basis=r["bound_basis"] or ("guessed" if lab == "guessed" else ""),
             bound_source=r["source"] if not np.isnan(lo) else "", bound_verified="unverified", prior_dist="",
             prior_a="", prior_b="", prior_basis="", label=lab,
             source_project=r["source_project"] or ("none" if lab == "absent" else "literature"),
             precision_needed="not yet estimated", precision_method="", toggle="", notes=r["notes"],
-            plan_row=int(r["plan_row"]), used_by_code="slot only", source_url=r["source_url"],
+            plan_row=int(r["plan_row"]), used_by_code=r["used"] or "slot only", source_url=r["source_url"],
             source_quote=r["source_quote"], audit="", origin="slot"))
     return rows, replaced, list(mechs.values())
 
@@ -243,6 +243,30 @@ def audit_notes():
     return pd.read_csv(f, keep_default_na=False).to_dict("records") if f.exists() else []
 
 
+QUOTE = re.compile(r"^([A-Za-z0-9_.-]+\.(md|csv))\b[^:]*: (.+)$", re.S)
+_texts: dict[str, str] = {}
+
+
+def _norm(x: str) -> str:
+    return re.sub(r"\s+", " ", x).strip()
+
+
+def quote_problem(q: str) -> str:
+    """A quote "FILE SECTION: text" must have its text (parts joined by ' ... ') verbatim in FILE (docs/worm/research
+    or docs/worm), whitespace aside. Quotes in other forms are not checked here."""
+    m = QUOTE.match(q.strip())
+    if not m:
+        return ""
+    name = m.group(1)
+    if name not in _texts:
+        f = next((d / name for d in (ROOT / "docs/worm/research", ROOT / "docs/worm") if (d / name).exists()), None)
+        _texts[name] = _norm(f.read_text()) if f else ""
+    if not _texts[name]:
+        return f"quoted file {name} not found"
+    missing = [part for part in m.group(3).split(" ... ") if _norm(part) not in _texts[name]]
+    return f"quote not found verbatim in {name}: {missing[0][:60]}" if missing else ""
+
+
 def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
     """The scripted checks for one catalog row (the read audit is added from audit_notes.csv)."""
     p = []
@@ -252,6 +276,9 @@ def audit(r: dict, t: pd.DataFrame | None) -> list[str]:
         p.append("no unit")
     if "UNVERIFIED" in srcs + str(r.get("notes", "")):
         p.append("source marked UNVERIFIED")
+    qp = quote_problem(str(r.get("source_quote", "")))
+    if qp:
+        p.append(qp)
     if lab == "absent":
         if r["used_by_code"] == "yes":
             p.append("labelled absent but the code reads it")

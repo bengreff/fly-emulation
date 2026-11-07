@@ -267,7 +267,7 @@ def build_passive_and_channels(neurons, muscles, st):
                    "value, sd 0.5; zero stays zero unless expression_map adds it"), table=t)
     mech("expression_map", "CeNGEN expression gates channel presence (zero density where no gene is detected; "
          "a class-median density where the gene is detected but the ported density is 0)", "channel", "have",
-         "CeNGEN threshold 2 (Taylor et al. 2021)", toggle="expression_map", neutral="off", default="off")
+         "CeNGEN threshold 2 (Taylor et al. 2021)", toggle="expression_map", neutral="off", default="on")
 
 
 def build_kinetics():
@@ -551,7 +551,7 @@ def build_synapses(mods, st, conns):
          "guessed rule); the transmitter rule where it expresses neither", "synapse",
          "have", "Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et "
          "al. 2021), receptor families from WormBase", toggle="receptor_sign",
-         neutral="off = the presynaptic transmitter rule", default="off",
+         neutral="off = the presynaptic transmitter rule", default="on",
          notes=f"{int((t.rule == 'measured').sum())} of {len(t)} pairs carry a measured sign (Roberts et al. 2016: "
                f"AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), "
                f"{int((t.rule == 'fenyves').sum())} from Fenyves (+ or -), "
@@ -578,7 +578,7 @@ def build_synapses(mods, st, conns):
          "modelled: 923 of 1091 pairs could pair UNC-7 with UNC-9 by expression, so expression does not pick out the "
          "rectifying ones", "gap", "have", f"CeNGEN threshold 2 (Taylor et al. 2021), {len(INX)} innexin genes; "
          "Bhattacharya et al. 2019 innexin atlas not yet used", toggle="innexin_identity",
-         neutral="off = gap_strength_per_pair for every pair", default="off")
+         neutral="off = gap_strength_per_pair for every pair", default="on")
     row("gap_innexin_unitary", "innexin_identity", "pS", gu, lo1, hi1, grain="family",
         applies_to="every innexin (one shared value)", tsrc="log-midpoint of range C1", label="guessed", proj="ours",
         basis=basis1, bsrc=bsrc1, notes="Range C1 is itself guessed (no direct UNC-7/UNC-9 single-channel value "
@@ -846,7 +846,8 @@ def main():
     fill_log = cat.apply_fills(rows, values, ledger.FILL_KIND)
     body_mechs, body = cat.body_rows()
     used = {r["param_id"] for r in rows} | {r["param_id"] for r in body if r["used_by_code"] == "yes"}
-    slot_rows, replaced, slot_mechs = cat.slots(used, {m["id"] for m in mechs})
+    live = {m["id"] for m in mechs if m["status"] != "absent"}
+    slot_rows, replaced, slot_mechs = cat.slots(used, live, {m["id"] for m in [*mechs, *body_mechs]})
     for r in [*body, *slot_rows]:
         r["fill_kind"] = ledger.FILL_KIND.get(r["label"], r["label"])
     crows = cat.build(rows, values, mechs, body_mechs, body, slot_rows, slot_mechs, ledger.FILL_KIND)

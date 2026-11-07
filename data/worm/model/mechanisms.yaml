@@ -196,7 +196,7 @@
   status: have
   toggle: expression_map
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: CeNGEN threshold 2 (Taylor et al. 2021)
   notes: ''
   absent_reason: ''
@@ -303,7 +303,7 @@
   status: have
   toggle: receptor_sign
   neutral: off = the presynaptic transmitter rule
-  default: 'off'
+  default: 'on'
   source: Fenyves et al. 2020 PLoS Comput Biol 16:e1007974 S1 Data (CC BY); CeNGEN threshold 2 (Taylor et al. 2021), receptor families from WormBase
   notes: '9 of 3709 pairs carry a measured sign (Roberts et al. 2016: AVA<->AVB and ASH->AVB inhibitory; BRAIN_PORT 9), 1703 from Fenyves (+ or -), 1577 from our CeNGEN rule, 420 from the transmitter rule;
     Fenyves and our rule disagree on 182 of the 1703 (Fenyves used); 1048 pairs differ from the transmitter rule. Fenyves calls 436 pairs complex (both signs; our rule used)'
@@ -316,7 +316,7 @@
   status: have
   toggle: innexin_identity
   neutral: off = gap_strength_per_pair for every pair
-  default: 'off'
+  default: 'on'
   source: CeNGEN threshold 2 (Taylor et al. 2021), 17 innexin genes; Bhattacharya et al. 2019 innexin atlas not yet used
   notes: ''
   absent_reason: ''
@@ -487,7 +487,7 @@
   status: partial
   toggle: peptides
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
@@ -497,7 +497,7 @@
   status: partial
   toggle: monoamines
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
@@ -567,7 +567,7 @@
   status: partial
   toggle: homeostasis
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
@@ -577,7 +577,7 @@
   status: partial
   toggle: slow_signalling
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: lumped model in src/wormemu/brain_layers.py
   notes: ''
   absent_reason: ''
@@ -587,7 +587,7 @@
   status: have
   toggle: gap_rectification
   neutral: 'off'
-  default: 'off'
+  default: 'on'
   source: src/wormemu/nmodl/rectgap.mod (ours; BAAIWorm's junction with a direction)
   notes: 'on: the 86 Cook pairs between AVA, AVB, AVD, AVE, PVC and DA, VA, DB, VB pass current from the motor neuron into the interneuron at the template conductance and the other way at template / gap_rect_ratio.
     Direction measured for AVA-VA5 (Liu et al. 2017 Nat Commun 8:14818, paired recording); the other classes by the class rule, inferred. Checks: BRAIN_PORT section 7'
