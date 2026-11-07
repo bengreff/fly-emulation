@@ -1,7 +1,7 @@
 # FIT1: class-level synapse strengths against Randi et al. 2023 (pre-registration)
 
 Status: pre-registered 2026-11-06 (commit 44d3088, 22:39), amended at 22:46 (commit a32642d) and on 7 Nov at 00:05
-(Amendment 2), both before any scored run (the amendments are listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
+(Amendment 2) and 00:27 (Amendment 3), all before any scored run (the amendments are listed at the end). Nothing above the line "RESULTS" (added when results exist) changes after the
 first scored run; a changed rerun is a new, separately named fit (FIT1b, ...). Code: `scripts/worm/fit1/` (fit1_core, fit1_targets, fit1_loss, fit1_worker, fit1_run). Worker wfit,
 night of 6 Nov (`docs/worm/night/2026-11-06_wfit.md`).
 
@@ -183,6 +183,9 @@ Not fitted, with reasons:
   - DONE, with the reason, when it stops.
 - **Resuming.** Rerun the same command. A generation in progress keeps its candidates and its finished
   evaluations.
+- **Failed evaluations** (Amendment 3). An evaluation fails if its worker leaves no result after one retry, or if
+  any of the model's values for the batch's terms is not finite. A failed evaluation is told to CMA as 10 times
+  the worst loss of its generation; if every evaluation of a generation fails, the fit stops.
 
 ## 6. Stopping rule
 
@@ -338,3 +341,11 @@ reference (h_dt 0.5, mechanisms every 1 ms) with the same values:
 | **c5 (chosen)** | 5 | 10 | 0-1e-5 (4e-5) | 1.2-2.2e-4 (0.003) | 50 |
 | c5m20 | 5 | 20 | | 1.2-2.4e-4 (0.003) | 44 |
 | c10 | 10 | 10 | | 4.2e-4-1.9e-3 (0.031) | 38 |
+
+## Amendment 3 (2026-11-07 00:27, before any scored run; no held-out or unc-31 data opened)
+
+Failed evaluations are now defined in section 5. Before this, the driver gave a missing result 10 times the worst
+loss (unchanged), but scored a run with some non-finite values on its finite terms only. A partly blown-up run
+could then score well on fewer terms. Now any non-finite value on the batch's terms fails the evaluation
+(`fit1_run.score_one`, tested in `tests/test_worm_fit1.py`). No evaluation in trials 1 or 2 had a non-finite
+value; re-scoring trial 2's 80 finished evaluations with the new code gives the same losses (largest difference 0).

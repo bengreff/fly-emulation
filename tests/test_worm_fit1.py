@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts" / "worm" / "fit1"))
@@ -47,3 +48,17 @@ def test_make_spec_puts_one_value_per_row():
         got = np.unique(np.asarray(cur, float)) if cur is not None else None
         if got is not None:
             assert got.size == 1 and np.isclose(got[0], val), pid
+
+
+def test_partly_non_finite_evaluation_fails():
+    pytest.importorskip("cma")
+    import fit1_run as fr
+    dt = [("resp", "U8"), ("stim", "U8"), ("y", "f8"), ("q", "f8"), ("n", "i4"), ("var", "f8"), ("ntr", "i4")]
+    T = np.array([(r, s, 0.1, 0.01, 3, 0.0, 3) for s in ("A", "B", "C") for r in ("A", "B", "C", "D")], dtype=dt)
+    names, targets = ["A", "B", "C"], ["A", "B"]          # D is not a model cell; C is not in the batch
+    stat = np.full((3, 2), 0.1)
+    s = fr.score_one(T, stat, names, targets, ["A", "B"], 0.068, 0.03)
+    assert "failed" not in s and s["n"] == 6 and np.isclose(s["chi2"], 0.0)
+    stat[2, 1] = np.nan
+    s = fr.score_one(T, stat, names, targets, ["A", "B"], 0.068, 0.03)
+    assert s["failed"] and np.isnan(s["chi2"])

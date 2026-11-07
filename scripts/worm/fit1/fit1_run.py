@@ -67,6 +67,18 @@ def _live_workers(out):
     return live
 
 
+def score_one(T, stat, names, targets, batch, s_trial, s_floor):
+    """One evaluation's scores. Failed (chi2 NaN) if any of the model's values for the batch's terms is not
+    finite: a partly blown-up run is a failed evaluation, not one scored on fewer terms (FIT1.md Amendment 3)."""
+    m = fl.model_values(T, stat, names, targets)
+    s = fl.scores(T, m, s_trial, s_floor)
+    want = int((np.isin(T["stim"], batch) & np.isin(T["resp"], names)).sum())
+    if s["n"] < want:
+        s["failed"] = f"{want - s['n']} of {want} values not finite"
+        s["chi2"] = float("nan")
+    return s
+
+
 def run_jobs(jobs, cpu_list, out, log):
     """jobs: [(job json path, result npz path)]; at most one per CPU at once; a failed job is retried once. Jobs
     still being run by a worker of an earlier driver (a resume after the driver died) are waited for, not rerun."""
@@ -224,8 +236,9 @@ def main():
                 sc.append(None)
                 continue
             z = np.load(op)
-            m = fl.model_values(T, z["stat"], z["names"].tolist(), z["targets"].tolist())
-            s = fl.scores(T, m, s_trial, s_floor)
+            s = score_one(T, z["stat"], z["names"].tolist(), z["targets"].tolist(), batch, s_trial, s_floor)
+            if "failed" in s:
+                log(f"generation {g}: {op.name} failed: {s['failed']}")
             losses.append(s["chi2"])
             sc.append(s)
         L = np.array(losses, float)
