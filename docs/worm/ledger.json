@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 03:11 CST",
+ "generated_at": "2026-11-07 03:15 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -48871,7 +48871,7 @@
    "template_source": "Sherman & Harel 2024 PNAS 121:e2302660121 (code: DanaSherman/CelegansPharynx, gene.cc / Params.h / main.cc)",
    "bio_min": -76.0,
    "bio_max": -70.0,
-   "bound_basis": "measured_related",
+   "bound_basis": "measured_this_class",
    "bound_source": "Sherman & Harel 2024 PNAS 121:e2302660121 (code: DanaSherman/CelegansPharynx, gene.cc / Params.h / main.cc)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
@@ -48884,12 +48884,12 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "leak reversal = the TB interpump potential, -73 +- 1 mV (Table 3)",
+   "notes": "leak reversal = the TB interpump potential, -73 +- 1 mV (Table 3); source 6 Nov (catalog audit): was -73 mV, label measured, range [-76, -70]; quote added (Table 3, row 8); the paper also gives an alternative measured value, -45 +- 1 mV; range 6 Nov (catalog audit): was -73 mV, label measured, range [-76, -70]; the -73 +- 1 mV is from intracellular recordings of terminal-bulb (pharyngeal) muscle, this class; bounds unchanged",
    "plan_row": 13,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10873627/",
-   "source_quote": "",
-   "audit": "ok",
+   "source_quote": "Average interpump potential [mV] \u221273 \u00b1 1 (\u221245 \u00b1 1) \u221273 ... Experimental data for parameters 7 and 8 suggest two possible values, where the nonchosen, alternative value is written in brackets",
+   "audit": "the range [-76, -70] mV holds the chosen measured value, -73 +- 1 mV (Sherman & Harel 2024 Table 3, TB muscle recordings); the paper gives a second measured interpump potential, -45 +- 1 mV, which lies outside [owner B2: organs_pharynx.py:72 keeps only the chosen value's spread; say whether the range should also take the alternative -45 mV recordings (value and label measured unchanged)]",
    "kind": "physiology"
   },
   {
@@ -56357,17 +56357,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 577,
-    "measured": 254,
-    "inferred": 331,
+    "measured": 253,
+    "inferred": 332,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9373,
-    "measured": 6212,
+    "measured": 6211,
     "derived": 67520,
-    "inferred": 337,
+    "inferred": 338,
     "absent": 1
    },
    "n_rows": 1856,
@@ -56376,17 +56376,17 @@
   "by_label_rows": {
    "published_fit": 654,
    "guessed": 577,
-   "measured": 254,
-   "inferred": 331,
+   "measured": 253,
+   "inferred": 332,
    "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8183,
    "guessed": 9373,
-   "measured": 6212,
+   "measured": 6211,
    "derived": 67520,
-   "inferred": 337,
+   "inferred": 338,
    "absent": 1
   },
   "by_plan_row": {
@@ -56705,16 +56705,16 @@
    "22": {
     "rows": {
      "published_fit": 7,
-     "measured": 11,
+     "measured": 10,
      "derived": 3,
-     "inferred": 3,
+     "inferred": 4,
      "guessed": 11
     },
     "numbers": {
      "published_fit": 7,
-     "measured": 11,
+     "measured": 10,
      "derived": 3,
-     "inferred": 3,
+     "inferred": 4,
      "guessed": 11
     },
     "n_rows": 35,
@@ -56905,16 +56905,16 @@
     "rows": {
      "published_fit": 357,
      "guessed": 164,
-     "inferred": 48,
-     "measured": 53,
+     "inferred": 49,
+     "measured": 52,
      "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 357,
      "guessed": 164,
-     "inferred": 48,
-     "measured": 53,
+     "inferred": 49,
+     "measured": 52,
      "derived": 27,
      "absent": 1
     },
@@ -57015,16 +57015,16 @@
     "rows": {
      "published_fit": 566,
      "guessed": 481,
-     "measured": 217,
-     "inferred": 316,
+     "measured": 216,
+     "inferred": 317,
      "derived": 28
     },
     "numbers": {
      "published_fit": 7907,
      "guessed": 8946,
-     "measured": 6074,
+     "measured": 6073,
      "derived": 67509,
-     "inferred": 321
+     "inferred": 322
     },
     "n_rows": 1608,
     "n_numbers": 90757
@@ -57418,11 +57418,13 @@
    "scene": {
     "rows": {
      "guessed": 6,
-     "measured": 3
+     "inferred": 1,
+     "measured": 2
     },
     "numbers": {
      "guessed": 6,
-     "measured": 3
+     "inferred": 1,
+     "measured": 2
     },
     "n_rows": 9,
     "n_numbers": 9
@@ -57463,17 +57465,17 @@
     "rows": {
      "published_fit": 640,
      "guessed": 576,
-     "inferred": 331,
+     "inferred": 332,
      "derived": 36,
-     "measured": 250,
+     "measured": 249,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7444,
      "guessed": 9372,
      "derived": 3111,
-     "inferred": 337,
-     "measured": 360,
+     "inferred": 338,
+     "measured": 359,
      "absent": 1
     },
     "n_rows": 1834,
@@ -58261,24 +58263,24 @@
    }
   ],
   "audit": {
-   "rows_ok": 1760,
-   "rows_with_problems": 96,
+   "rows_ok": 1759,
+   "rows_with_problems": 97,
    "by_status": {
-    "ok": 1760,
-    "finding": 96
+    "ok": 1759,
+    "finding": 97
    },
-   "rows_read": 213,
+   "rows_read": 214,
    "quotes": {
-    "none": 1497,
-    "cited free text (scripted check)": 315,
+    "none": 1494,
+    "cited free text (scripted check)": 318,
     "research file (scripted check)": 36,
     "paper text (read audit, 6-7 Nov)": 8
    },
-   "with_url": 1509,
+   "with_url": 1507,
    "links": {
-    "distinct": 163,
+    "distinct": 162,
     "by_status": {
-     "200": 151,
+     "200": 150,
      "203": 1,
      "406": 4,
      "unchecked": 3,
@@ -58287,7 +58289,7 @@
     "checked_at": "2026-11-07 02:30 CST"
    },
    "problem_kinds": {
-    "no URL to open": 33,
+    "no URL to open": 34,
     "source marked UNVERIFIED": 11,
     "no range": 11,
     "guessed template sits on a bound": 6,
@@ -58325,6 +58327,7 @@
     "computed and published as out['q#']['dmp_clock'] each step, but no module reads it (grep o": 1,
     "replaced slot mec#_i#_pA (measured) has # pA, outside this row's range": 1,
     "Sanzeni et al. # eq # (beta dG_oc = g# - g# F) has the same zero-stretch closed-open free ": 1,
+    "the range": 1,
     "labelled inferred with the source text 'ser# reporter in pharyngeal muscle', but Hobson et": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "the KIR source text (glia.py:#) reads 'wild type ~# s, glial Kir# knockout ~# s'; the cite": 1,
@@ -58343,7 +58346,8 @@
     "absent with no named source": 1,
     "# in sim units; #x water if read as SI": 1,
     "MetaWorm's quadratic drag is the wrong regime at a worm's Reynolds number": 1,
-    "protocol value read in a secondary source, not in Kunitomo et al. # itself": 1,
+    "guessed template # sits on the lower bound; the cited plate (Kunitomo et al. #, read # Nov": 1,
+    "the cited '# mM NaCl plug' is a # mM agar block in Kunitomo et al. # (read # Nov, free tex": 1,
     "range basis says measured but the range source names no citation": 1,
     "labelled measured without a citation": 1,
     "scene.py labels the # mm body length measured with the source \"ledger worm length\"; the bo": 1
@@ -62895,6 +62899,71 @@
     "url": ""
    },
    {
+    "param_id": "scene_nacl_mM_c_peak",
+    "kind": "source",
+    "origin": "scene",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "100 -> 100 mM; measured -> measured; range [50, 100] -> [50, 100]",
+    "reason": "primary read: the cited '100 mM NaCl plug' (secondary) is a 150 mM block; the gradient tops at about 95 mM",
+    "source": "Kunitomo, Sato, Iwata, Satoh, Ohno, Yamada & Iino 2013 Nat Commun 4:2210 (free text at nature.com; excerpts/kunitomo2013_methods.txt): the high-salt agar block holds 150 mM NaCl on a 50 mM background, and the gradient typically spans 35 to 95 mM; 100 mM is that measured top rounded up, not the block",
+    "url": ""
+   },
+   {
+    "param_id": "scene_nacl_mM_c_peak",
+    "kind": "relabel",
+    "origin": "scene",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "inferred",
+    "change": "100 -> 100 mM; measured -> inferred; range [50, 100] -> [50, 100]",
+    "reason": "measured -> inferred: 100 mM is the measured top of the gradient (about 95 mM) rounded up, not a value the paper gives",
+    "source": "Kunitomo, Sato, Iwata, Satoh, Ohno, Yamada & Iino 2013 Nat Commun 4:2210 (free text at nature.com; excerpts/kunitomo2013_methods.txt): the high-salt agar block holds 150 mM NaCl on a 50 mM background, and the gradient typically spans 35 to 95 mM; 100 mM is that measured top rounded up, not the block",
+    "url": ""
+   },
+   {
+    "param_id": "scene_nacl_mM_c_background",
+    "kind": "source",
+    "origin": "scene",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "0 -> 0 mM; guessed -> guessed; range [0, 50] -> [0, 50]",
+    "reason": "primary read: the source text said the far side is ~0 mM; the paper's plate never goes below about 35 mM",
+    "source": "Kunitomo, Sato, Iwata, Satoh, Ohno, Yamada & Iino 2013 Nat Commun 4:2210 (free text at nature.com; excerpts/kunitomo2013_methods.txt): the low agar block holds 0 mM NaCl on a 50 mM background (measured 55-56 mM), and the gradient typically spans 35 to 95 mM, so the cited plate's far side is about 35 mM; 0 mM is the low block's content",
+    "url": ""
+   },
+   {
+    "param_id": "ph_sh_v_l",
+    "kind": "source",
+    "origin": "mech:organs_pharynx",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "-73 -> -73 mV; measured -> measured; range [-76, -70] -> [-76, -70]",
+    "reason": "quote added (Table 3, row 8); the paper also gives an alternative measured value, -45 +- 1 mV",
+    "source": "Sherman & Harel 2024 PNAS 121:e2302660121 (code: DanaSherman/CelegansPharynx, gene.cc / Params.h / main.cc)",
+    "url": ""
+   },
+   {
+    "param_id": "ph_sh_v_l",
+    "kind": "range",
+    "origin": "mech:organs_pharynx",
+    "n": 1,
+    "pattern": "",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "-73 -> -73 mV; measured -> measured; range [-76, -70] -> [-76, -70]",
+    "reason": "the -73 +- 1 mV is from intracellular recordings of terminal-bulb (pharyngeal) muscle, this class; bounds unchanged",
+    "source": "Sherman & Harel 2024 PNAS 121:e2302660121 (code: DanaSherman/CelegansPharynx, gene.cc / Params.h / main.cc)",
+    "url": ""
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -63039,7 +63108,7 @@
    }
   ],
   "hidden_constants": {
-   "generated_at": "2026-11-07 03:08 CST",
+   "generated_at": "2026-11-07 03:11 CST",
    "scanned": [
     "src/wormemu/mech/__init__.py",
     "src/wormemu/mech/ca_volume.py",
@@ -64013,17 +64082,17 @@
    "rows": {
     "published_fit": 654,
     "guessed": 577,
-    "measured": 254,
-    "inferred": 331,
+    "measured": 253,
+    "inferred": 332,
     "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
     "guessed": 9373,
-    "measured": 6212,
+    "measured": 6211,
     "derived": 67520,
-    "inferred": 337,
+    "inferred": 338,
     "absent": 1
    }
   }

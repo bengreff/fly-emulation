@@ -1,0 +1,9 @@
+# Kunitomo, Sato, Iwata, Satoh, Ohno, Yamada & Iino 2013 Nat Commun 4:2210 (doi 10.1038/ncomms3210)
+# fetched 7 Nov 2026 from https://www.nature.com/articles/ncomms3210 (free to read; no PMC copy); verbatim sentences
+# from Results (first) and Methods, Behavioural tests (second and third), HTML tags stripped
+
+we developed a behavioural assay in which adult animals are cultivated under defined concentrations of NaCl and their behaviour is subsequently examined on a NaCl gradient over a broad concentration range, typically spanning from 35 to 95 mM
+
+The background agar was 8.5 cm in diameter and 1.76 mm in thickness (10 ml solution was poured) and included 50 mM NaCl and 2% agar in chemotaxis buffer. On top of the plate, two cylindrical agar blocks (each 14.5 mm in diameter and 5.3 mm in thickness, including either 0 mM (lower side) or 150 mM (higher side) of NaCl and 2% agar in chemotaxis buffer and excised from an agar plate using a cork borer) were placed at the positions 3 cm from the centre of the plate in the opposite directions for 18 h at 20 °C and removed just before assay.
+
+The actual concentrations of chloride ion were measured using a chloride electrode (Horiba). The background was typically 55–56 mM, 3–4 mM higher than calculated
