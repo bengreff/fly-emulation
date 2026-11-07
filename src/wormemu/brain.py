@@ -46,7 +46,7 @@ import numpy as np
 import pandas as pd
 
 from bioemu import ledger
-from wormemu import brain_layers
+from wormemu import brain_layers, mech
 from wormemu.brain_structure import BAAIWORM_NO_SUCH_MUSCLE, bwm_name, cengen_class, load_structure
 from wormemu.interface import (BWM_NAMES, ENTERIC_MUSCLES, PHARYNX_MUSCLES, SEX_MUSCLES, BrainToBody,
                                default_observation, muscle_position)
@@ -99,7 +99,8 @@ def _neuron():
     if _h is not None:
         return _h
     from neuron import h
-    mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) + sorted(OWN_MODS.glob("*.mod"))
+    mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) \
+        + sorted(OWN_MODS.rglob("*.mod"))                # ours, including the organ workers' nmodl/organs/
     tag = hashlib.sha1(b"".join(m.name.encode() + m.read_bytes() for m in mods)).hexdigest()[:12]
     d = Path(os.environ.get("WORMEMU_NRNMECH", Path.home() / ".cache" / "wormemu" / "nrnmech")) / tag
 
@@ -237,6 +238,9 @@ class Brain:
         self.spec = spec or sample_worm(None)
         led = self.spec.led
         self.toggles = default_toggles(led)
+        self._mods = mech.modules()
+        for mid, _, _, dflt in (t for m in self._mods for t in m.MECHANISMS):
+            self.toggles.setdefault(mid, dflt)            # a registered mechanism the ledger has no row for yet
         for k, v in (toggles or {}).items():
             assert k in self.toggles, f"unknown toggle {k}"
             self.toggles[k] = {True: "on", False: "off"}.get(v, v)
@@ -298,7 +302,8 @@ class Brain:
         # c302's muscle pool holds cai in mM (on c302's own scale: its rho is a blind guess); BAAIWorm's cells hold uM
         self._ca_scale = np.where(self.is_muscle & self.mact, 1000.0, 1.0)
 
-        on = {mid for tog, mid in _toggle_mechanisms(led).items() if tg.get(tog) == "on"}
+        claimed = {t[0] for m in self._mods for t in m.MECHANISMS}   # taken over by a registered mechanism
+        on = {mid for tog, mid in _toggle_mechanisms(led).items() if tg.get(tog) == "on"} - claimed
         p = {s.id: self.spec.v(s.id) for s in brain_layers.SPECS if s.id in self.spec.values
              and not isinstance(self.spec.values[s.id], pd.Series)}
         y = np.array([st.soma_y_um[st.index[c]] if not m else np.nan for c, m in zip(self.cell_names,
@@ -310,6 +315,10 @@ class Brain:
                                           0 if self.spec.seed is None else self.spec.seed,   # template: fixed
                                           peptide=self._modulators("pep"),
                                           monoamine=self._modulators("ma"))
+        self._g_targets()
+        self.mechs = [m.Mech(self, mech.params_for(m, self.spec), tg) for m in self._mods
+                      if any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS)]
+        self.mech_out = {}
         self.t = 0.0
 
     # --- biophysics --------------------------------------------------------------------------------------------
@@ -420,6 +429,37 @@ class Brain:
                         m = getattr(seg, mod, None)
                         if m is not None and hasattr(m, name):
                             setattr(m, name, v)
+
+    def _g_targets(self):
+        """The conductances a mechanism can scale per cell (mech.G_SCALE_NAMES): a PtrVector over every soma that
+        has the channel (BAAIWorm cells; c302 muscles have none), with its base values."""
+        h = self.h
+        self._gt = {}
+        for name in mech.G_SCALE_NAMES:
+            ch = name[5:] if name.startswith("dens_") else "pas"
+            var = GB.get(ch, f"gb{ch}") if ch != "pas" else "g"
+            cells = [i for i, s in enumerate(self.soma) if h.ismembrane(ch, sec=s)]
+            if not cells:
+                continue
+            pv = h.PtrVector(len(cells))
+            for k, i in enumerate(cells):
+                pv.pset(k, getattr(self.soma[i](0.5), f"_ref_{var}_{ch}"))
+            buf = h.Vector(len(cells))
+            pv.gather(buf)
+            self._gt[name] = (np.array(cells), pv, buf.as_numpy().copy(), np.ones(len(cells)))
+
+    def _apply_g_scale(self, g):
+        """Set each scalable conductance to base x this step's product of multipliers (1 where no mechanism returned
+        one this step); a NEURON write only where the multiplier changed."""
+        bad = set(g) - set(mech.G_SCALE_NAMES)
+        if bad:
+            raise KeyError(f"g_scale {sorted(bad)} not conductances the brain knows (mech.G_SCALE_NAMES)")
+        for name, (cells, pv, base, cur) in self._gt.items():
+            f = np.asarray(g[name], float)[cells] if name in g else 1.0
+            if np.array_equal(cur, np.broadcast_to(f, cur.shape)):
+                continue
+            cur[:] = f
+            pv.scatter(self.h.Vector(base * cur))
 
     # --- connections -------------------------------------------------------------------------------------------
     def _inhibitory(self, pre, post):
@@ -598,6 +638,12 @@ class Brain:
                     seg.v = V_INIT_MUSCLE
             self.h.finitialize()                         # keeps each segment's v
         self.layers.reset()
+        for name, (cells, pv, base, cur) in self._gt.items():
+            cur[:] = 1.0
+            pv.scatter(self.h.Vector(base))
+        for m in self.mechs:
+            m.reset()
+        self.mech_out = {}
         self.t = 0.0
         return self._out(self._read(self._pv), self._read(self._pc) * self._ca_scale, np.zeros(len(BWM_NAMES)), 0.0,
                          np.zeros(len(ENTERIC_MUSCLES)), 0.0)
@@ -610,6 +656,25 @@ class Brain:
         v = self._read(self._pv)
         I = L.sensory_current(o, dt_ms) + L.modulator_current(v, dt_ms) + L.homeostatic_current(v, dt_ms) \
             + self.extra_pA
+        act_add, ovr = 0.0, {}
+        if self.mechs:
+            ctx = mech.Ctx(t_ms=self.t, obs=o, v=v, ca=self._read(self._pc) * self._ca_scale, names=self.cell_names,
+                           is_muscle=self.is_muscle, outputs=dict(self.mech_out))
+            g, outs = {}, {}
+            for m in self.mechs:
+                r = m.step(ctx, dt_ms)
+                if "I_pA" in r:
+                    I = I + r["I_pA"]
+                if "act_add" in r:
+                    act_add = act_add + r["act_add"]
+                for k, x in r.get("g_scale", {}).items():
+                    g[k] = g[k] * x if k in g else np.asarray(x, float)
+                if "out" in r:
+                    mech.merge(outs, r["out"])
+                    ctx.outputs.update(r["out"])
+            self._apply_g_scale(g)
+            self.mech_out = outs
+            ovr = {k: outs[k] for k in mech.OVERRIDES if k in outs}
         ch = np.flatnonzero(I != self._amp)
         for k in ch:
             self.stim[k].amp = I[k] / 1000.0             # pA -> nA
@@ -621,8 +686,11 @@ class Brain:
         vb = np.array([v[i] if i >= 0 else np.nan for i in self.bwm])
         act = L.muscle_activation(np.nan_to_num(vb, nan=V_INIT), dt_ms)
         boost, ent, exps = L.defecation(dt_ms)
-        act = np.clip(act + boost, 0.0, 1.0)
+        act = np.clip(act + boost + act_add, 0.0, 1.0)
         pha, pumps = L.pharynx(o["head"].get("food_OD", 0.0), dt_ms)
         sex, eggs = L.egg_laying(self.t, dt_ms)
         L.metabolism(pumps, dt_ms)
-        return self._out(v, ca, act, pha, ent, sex, eggs, exps, pumps, L.gcamp(ca, dt_ms))
+        out = self._out(v, ca, act, pha, ent, sex, eggs, exps, pumps, L.gcamp(ca, dt_ms))
+        for k, x in ovr.items():                         # a registered mechanism's output replaces the lumped one
+            setattr(out, k, x)
+        return out
