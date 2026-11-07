@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 00:14 CST",
+ "generated_at": "2026-11-07 00:18 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -13,32 +13,32 @@
   "rows": 1206,
   "mechanisms": 84,
   "by_label": {
-   "derived": 67506,
-   "guessed": 9116,
+   "derived": 67507,
+   "guessed": 9115,
    "inferred": 115,
    "measured": 6180,
    "published_fit": 8033
   },
-  "known": 81834,
-  "placeholder": 9116,
+  "known": 81835,
+  "placeholder": 9115,
   "gap": 0,
   "used_by_model": 90950,
-  "must_fill": 9116
+  "must_fill": 9115
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
   "numbers": 19963,
   "by_label": {
    "published_fit": 7306,
-   "guessed": 9116,
-   "derived": 3098,
+   "guessed": 9115,
+   "derived": 3099,
    "inferred": 115,
    "measured": 328
   },
-  "known": 10847,
-  "placeholder": 9116,
+  "known": 10848,
+  "placeholder": 9115,
   "gap": 0,
-  "must_fill": 9116
+  "must_fill": 9115
  },
  "source_by_fill_kind": {
   "all": {
@@ -50,7 +50,7 @@
    "literature": {
     "guessed": 5471,
     "measured": 6179,
-    "derived": 3098,
+    "derived": 3099,
     "inferred (ours)": 21,
     "published fit": 248
    },
@@ -58,7 +58,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3641,
+    "guessed": 3640,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -73,7 +73,7 @@
    },
    "literature": {
     "guessed": 5471,
-    "derived": 3098,
+    "derived": 3099,
     "measured": 327,
     "inferred (ours)": 21,
     "published fit": 248
@@ -82,7 +82,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3641,
+    "guessed": 3640,
     "inferred (ours)": 94,
     "measured": 1
    },
@@ -114,8 +114,8 @@
    "published_fit": 171
   },
   "class": {
-   "derived": 3,
-   "guessed": 169,
+   "derived": 4,
+   "guessed": 168,
    "inferred": 65,
    "measured": 30,
    "published_fit": 87
@@ -1462,8 +1462,8 @@
    "absent_reason": "",
    "numbers": 15,
    "by_label": {
-    "derived": 2,
-    "guessed": 6,
+    "derived": 3,
+    "guessed": 5,
     "inferred": 4,
     "published_fit": 3
    }
@@ -38911,29 +38911,29 @@
    "applies_to": "neurons",
    "unit": "um3",
    "n_values": 1,
-   "value_template": 100.0,
-   "template_source": "soma 2-3 um across plus neurite (WormAtlas)",
-   "bio_min": 20.0,
-   "bio_max": 500.0,
-   "bound_basis": "guessed",
-   "bound_source": "soma 2-3 um across plus neurite (WormAtlas)",
+   "value_template": 72.0,
+   "template_source": "BAAIWorm b99ca5a hoc morphologies (Zhao et al. 2024 Nat Comput Sci 4:978), third_party/baaiworm/model/*.hoc, the 302 neurons: whole-cell volume as the sum over sections of frustum volumes pi/12 L (d1^2 + d1 d2 + d2^2) between pt3d points",
+   "bio_min": 12.7,
+   "bio_max": 856.0,
+   "bound_basis": "organism_wide",
+   "bound_source": "BAAIWorm b99ca5a hoc morphologies (Zhao et al. 2024 Nat Comput Sci 4:978), third_party/baaiworm/model/*.hoc, the 302 neurons: whole-cell volume as the sum over sections of frustum volumes pi/12 L (d1^2 + d1 d2 + d2^2) between pt3d points",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: log-uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "volume [Na]i fills; guessed",
+   "notes": "volume [Na]i fills; guessed; fill 6 Nov (catalog audit): was 100 um3, label guessed, range [20, 500]; the old 100 um3 was a guess from soma size; the pump fills whole-cell [Na]i, so the model's own whole-cell geometry (same files as morph_xyz, morph_diam) is the right source; range is the spread over the 302 neurons",
    "plan_row": 27,
    "used_by_code": "yes",
-   "source_url": "",
-   "source_quote": "",
-   "audit": "ok",
+   "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5a/eworm_learn/components/model",
+   "source_quote": "computed here: median 72.4 um3 (p10 21.7, p25 34.3, p75 120.7, p90 159.5; min 12.7 RIBL, max 856 CANR); soma alone median 20.6 um3",
+   "audit": "one shared volume for all neurons, but the model's own 302 neuron morphologies span 12.7 to 856 um3 (67x), so the [Na]i time constant of the smallest and largest cells is off by up to about 6x and 12x against the 72 um3 median [owner: worgans (pumps.py): read each cell's volume from its hoc morphology instead of one class value; catalog now holds the median 72 um3 (fills.csv)]",
    "kind": "physiology"
   },
   {
@@ -40704,17 +40704,17 @@
   "totals": {
    "rows": {
     "published_fit": 596,
-    "guessed": 449,
+    "guessed": 448,
     "measured": 279,
-    "derived": 38,
+    "derived": 39,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9253,
+    "guessed": 9252,
     "measured": 6235,
-    "derived": 67518,
+    "derived": 67519,
     "inferred": 122,
     "absent": 5
    },
@@ -40723,17 +40723,17 @@
   },
   "by_label_rows": {
    "published_fit": 596,
-   "guessed": 449,
+   "guessed": 448,
    "measured": 279,
-   "derived": 38,
+   "derived": 39,
    "inferred": 116,
    "absent": 5
   },
   "by_label_numbers": {
    "published_fit": 8120,
-   "guessed": 9253,
+   "guessed": 9252,
    "measured": 6235,
-   "derived": 67518,
+   "derived": 67519,
    "inferred": 122,
    "absent": 5
   },
@@ -41122,16 +41122,16 @@
    },
    "27": {
     "rows": {
-     "guessed": 12,
+     "guessed": 11,
      "published_fit": 8,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "numbers": {
-     "guessed": 12,
+     "guessed": 11,
      "published_fit": 8,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "n_rows": 26,
     "n_numbers": 26
@@ -41181,16 +41181,16 @@
     "rows": {
      "inferred": 66,
      "measured": 34,
-     "guessed": 195,
-     "derived": 4,
+     "guessed": 194,
+     "derived": 5,
      "published_fit": 89,
      "absent": 4
     },
     "numbers": {
      "inferred": 66,
      "measured": 34,
-     "guessed": 195,
-     "derived": 4,
+     "guessed": 194,
+     "derived": 5,
      "published_fit": 89,
      "absent": 4
     },
@@ -41357,16 +41357,16 @@
    "yes": {
     "rows": {
      "published_fit": 531,
-     "guessed": 290,
+     "guessed": 289,
      "measured": 219,
-     "derived": 26,
+     "derived": 27,
      "inferred": 99
     },
     "numbers": {
      "published_fit": 8055,
-     "guessed": 8950,
+     "guessed": 8949,
      "measured": 6076,
-     "derived": 67506,
+     "derived": 67507,
      "inferred": 104
     },
     "n_rows": 1165,
@@ -41617,16 +41617,16 @@
    },
    "mech:pumps": {
     "rows": {
-     "guessed": 6,
+     "guessed": 5,
      "published_fit": 3,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "numbers": {
-     "guessed": 6,
+     "guessed": 5,
      "published_fit": 3,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "n_rows": 15,
     "n_numbers": 15
@@ -41776,16 +41776,16 @@
    "physiology": {
     "rows": {
      "published_fit": 582,
-     "guessed": 449,
-     "derived": 34,
+     "guessed": 448,
+     "derived": 35,
      "inferred": 116,
      "measured": 275,
      "absent": 5
     },
     "numbers": {
      "published_fit": 7381,
-     "guessed": 9253,
-     "derived": 3108,
+     "guessed": 9252,
+     "derived": 3109,
      "inferred": 122,
      "measured": 383,
      "absent": 5
@@ -42119,27 +42119,28 @@
    }
   ],
   "audit": {
-   "rows_ok": 1389,
-   "rows_with_problems": 94,
+   "rows_ok": 1388,
+   "rows_with_problems": 95,
    "by_status": {
-    "ok": 1389,
-    "finding": 94
+    "ok": 1388,
+    "finding": 95
    },
-   "rows_read": 200,
+   "rows_read": 202,
    "quotes": {
-    "none": 1095,
-    "paper text (read audit, 6 Nov)": 243,
+    "none": 1094,
+    "paper text (read audit, 6 Nov)": 244,
     "research file (scripted check)": 145
    },
-   "with_url": 1104,
+   "with_url": 1105,
    "links": {
-    "distinct": 152,
+    "distinct": 153,
     "by_status": {
      "200": 142,
      "406": 5,
-     "403": 5
+     "403": 5,
+     "429": 1
     },
-    "checked_at": "2026-11-07 00:14 CST"
+    "checked_at": "2026-11-07 00:18 CST"
    },
    "problem_kinds": {
     "no URL to open": 34,
@@ -42172,6 +42173,7 @@
     "inferred from human SERT by homology, no URL; the MOD# paper (Ranganathan #, PMC#) abstrac": 1,
     "inferred from mammalian astrocytes, no paper named": 1,
     "inferred from mammalian neurons, no paper named": 1,
+    "one shared volume for all neurons, but the model's own # neuron morphologies span # to # u": 1,
     "inferred, no paper named": 1,
     "# sim units against a range in metres (# sim unit = # mm by the mesh)": 1,
     "# sits below the cited soft-tissue range": 1,
@@ -45506,6 +45508,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2518249/"
    },
    {
+    "param_id": "pump_vol_neuron_um3",
+    "kind": "fill",
+    "origin": "mech:pumps",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "100 -> 72 um3; guessed -> derived; range [20, 500] -> [12.7, 856]",
+    "reason": "the old 100 um3 was a guess from soma size; the pump fills whole-cell [Na]i, so the model's own whole-cell geometry (same files as morph_xyz, morph_diam) is the right source; range is the spread over the 302 neurons",
+    "source": "BAAIWorm b99ca5a hoc morphologies (Zhao et al. 2024 Nat Comput Sci 4:978), third_party/baaiworm/model/*.hoc, the 302 neurons: whole-cell volume as the sum over sections of frustum volumes pi/12 L (d1^2 + d1 d2 + d2^2) between pt3d points",
+    "url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5a/eworm_learn/components/model"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -46514,17 +46529,17 @@
   "after_fills": {
    "rows": {
     "published_fit": 596,
-    "guessed": 449,
+    "guessed": 448,
     "measured": 279,
-    "derived": 38,
+    "derived": 39,
     "inferred": 116,
     "absent": 5
    },
    "numbers": {
     "published_fit": 8120,
-    "guessed": 9253,
+    "guessed": 9252,
     "measured": 6235,
-    "derived": 67518,
+    "derived": 67519,
     "inferred": 122,
     "absent": 5
    }
