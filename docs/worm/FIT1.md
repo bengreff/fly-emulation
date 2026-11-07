@@ -344,6 +344,20 @@ reference (h_dt 0.5, mechanisms every 1 ms) with the same values:
 | c5m20 | 5 | 20 | | 1.2-2.4e-4 (0.003) | 44 |
 | c10 | 10 | 10 | | 4.2e-4-1.9e-3 (0.031) | 38 |
 
+The strong-coupling corner (measured 00:29-01:08, development, no data scored), because a large step can go
+unstable when gap junctions and synapses are strong. All 16 coupling values (syn_strength_per_pair, the 11 gamma,
+the 3 tmax, gap_open_channels_per_em) sit at 95% of their log range. "Strong" keeps the readout at the template;
+"strong + large" also puts the readout at 2b row 3. The reference is again h_dt 0.5, mechanisms every 1 ms:
+
+| Run | h_dt (ms) | mech_dt (ms) | Strong RMS (largest) | Strong + large RMS (largest) | Wall per window (s) |
+|---|---|---|---|---|---|
+| reference | 0.5 | 1 | | | 455-489 |
+| s2 | 2 | 10 | | 0-3.2e-4 (0.0047) | 108 |
+| **s5 (chosen)** | 5 | 10 | 0-0 (7e-5) | 0-4.1e-4 (0.0071) | 61-77 |
+
+h_dt 5 passes the bar at the corner by 7x. Strong gap coupling shunts the stimulated cell, so the strong-only
+autoresponses are small (ASHL 0.003, AWAL 0.002); with the large readout, AWAL reaches 0.36.
+
 ## Amendment 3 (2026-11-07 00:27, before any scored run; no held-out or unc-31 data opened)
 
 Failed evaluations are now defined in section 5. Before this, the driver gave a missing result 10 times the worst
