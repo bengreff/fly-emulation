@@ -174,3 +174,40 @@ Drawn 7 Nov 01:51:50 CST, right after commit 01404ed:
   max of sweeps 0 and 10 (section 6). Neither reaches FIT2's map.
 - **Training: AIY, AFD, AWA.** AWA is now training data, so its step timing is checked against its own traces
   before the first fit, and recorded here.
+
+## 8. Implementation details fixed before the first scored run (7 Nov 01:53-01:58 CST)
+
+Code: `src/wormemu/excite_map.py` (the map); `expression_map=fit2` in `brain._density` and `_cell_param` and in
+`mech/channels.build_cell`, neutral (the default stays `on`); `scripts/worm/fit2.py` (data, objective, CMA-ES,
+checkpoints, status).
+
+- **Optimiser.** CMA-ES is a numpy implementation of Hansen's tutorial algorithm (arXiv:1604.00772, Table 1 defaults)
+  inside `fit2.py`, because the `cma` package is installed on neither machine. Points outside the unit cube are
+  evaluated at the clipped point plus 100 mV per unit squared distance. The CMA seed is 20261107 + the model's index
+  (true 0, shuffles 1-4, generic 5).
+- **Published ranges.** For BAAIWorm's channels, [lo_k, hi_k] and the a_f bounds pool BAAIWorm's 302 per-cell fits
+  with Nicoletti 2024's fits of the same channel (shl1, shk1, egl2, egl19, unc2, cca1, irk, nca and the four SLO
+  nanodomain variants). m_k stays BAAIWorm's median as registered.
+  - Without the pooling, a_irk would be pinned to [-0.02, 0]: BAAIWorm's irk values barely vary.
+  - The resulting bounds (log10 decades): cca1 [-1.72, 0], egl19 [-1.24, 1.78], egl2 [-2, 0], egl36 [-0.39, 0.58],
+    exp2 [-1, 1], irk [-2, 0], kcnl [0, 0.90], kqt [-1, 1.64], kvs1 [-0.70, 0], nca [-1.52, 0.92], shk1 [-1.26, 1.07],
+    shl1 [-0.40, 1.41], slo1 [-1.36, 1.18], slo2 [-0.59, 0.56], unc103 [-1, 1], unc2 [-1.72, 0], leak [-1.5, 1.5];
+    b [0, 1.5]; e_leak [-80, -45] mV.
+  - Families with fewer than two published values (exp2, unc103) take [-1, +1] (guessed).
+- **Leak.**
+  - TWKref is the median summed TWK TPM over all 128 classes: 713.9 TPM (derived). The training and held-out classes'
+    sums are AIY 3.0, AFD 83.4, AWA 192.1 and RIM 487.2 (derived).
+  - gpas is clipped to the ledger's pas_soma_gpas range [1e-6, 1e-3] S/cm2.
+- **Sampling.**
+  - The model's V is the brain's step output at 1 ms; the data are at 0.4 ms.
+  - Both are smoothed with a 2 ms moving mean before the features.
+- **AWA protocol, checked on its own traces (training data since the draw, 7 Nov 01:57):**
+  - The step starts at 1.0 s and ends at 6.0 s (measured, to within 2 ms).
+  - Sweep index 3 has no step: steady state minus baseline is -0.1 mV.
+  - The steady-state shift rises monotonically with sweep index.
+  - So -15 to +35 pA by 5 pA (index 3 = 0 pA) is consistent. The amplitudes themselves are still inferred.
+- **Check of the fit path.** Setting densities on a built brain (`fit2.apply`) gives traces identical to building a
+  fresh brain with the same parameters: max difference 0.0 mV over 3 cells and one 9 s sweep at random parameters
+  (measured, Mac, 01:56).
+- **Cost.** One evaluation (3 cells, 6 sweeps of 2 s settle plus 7 s) takes 11.4 s wall on the Mac (measured, load
+  1.6).
