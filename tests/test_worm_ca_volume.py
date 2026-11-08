@@ -62,3 +62,9 @@ def test_whole_cell_and_soma_forms():
     k = w["names"].index("AVAL")
     ex = {n: np.array(r["CA"])[:, k].max() - 0.05 for n, r in (("w", w), ("s", s), ("f", f))}
     assert np.isfinite(np.array(w["CA"])).all() and ex["s"] > ex["w"] > 0 and not np.isclose(ex["w"], ex["f"])
+
+
+def test_neuromorpho_form():
+    """The alternative reconstruction: AVAL's pool takes Nicoletti 2024's NeuroMorpho volume (129.6 um3)."""
+    n = _run(False, dict(ca_pool_volume="neuromorpho"))
+    assert np.isclose(n["v_eff"], 129.6)

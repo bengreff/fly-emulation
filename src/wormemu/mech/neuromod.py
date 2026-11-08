@@ -497,6 +497,11 @@ class Mech:
             bath = ctx.outputs.get("bath_amine_nM")        # mech/drugs: exogenous amine, uniform along the body
             if bath:
                 c = c + np.array([bath.get(lg, 0.0) for lg in AMINES])[:, None]
+            glia5 = ctx.outputs.get("glia_amine_nM")       # mech/glia_release: AMsh 5-HT, in the head compartment
+            if glia5:
+                c = c.copy()
+                for lg, x in glia5.items():
+                    c[AMINES.index(lg), 0] += x
             m = ~self.e_pep
             occ[m] = _hill(c[self.e_lig[m], self.ma_comp[self.e_cell[m]]], self.e_ec50[m], h)
             for k, (row, cells, ec50, hh, erev, gam) in enumerate(self.extrasyn):

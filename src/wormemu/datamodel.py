@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from wormemu import heldout, mech
-from wormemu.mech import drugs, receptors, slow_signalling
+from wormemu.mech import drugs, pathogen, receptors, slow_signalling
 
 # channel genes -> the densities they carry (BAAIWorm's composite SLO channels need both genes)
 _CH = {"egl-19": ("egl19", "slo1_egl19", "slo2_egl19"), "unc-2": ("unc2", "slo1_unc2", "slo2_unc2"),
@@ -120,6 +120,7 @@ class Experiment:
     genotype: list = field(default_factory=list)  # [Allele]
     ablations: list = field(default_factory=list)  # cell names removed with every synapse and gap they make
     drugs: list = field(default_factory=list)    # [(name, bath uM, t_on_ms)] (DRUGS)
+    infection_h: float = 0.0         # hours on P. aeruginosa PA14 before the run (mech/pathogen; pathogen_sickness on)
     sources: list = field(default_factory=list)  # [(dataset, identifier)] the data this experiment reproduces
     heldout: bool = False            # True only in the pre-registered scoring run: locked identifiers allowed
     body_out: str | None = None      # body on: the FEM run's files (None = a temporary directory)
@@ -218,6 +219,8 @@ def simulate(theta, experiment: Experiment) -> dict:
         if d[0] in drugs.AMINES and ex.toggles.get("monoamines", "compartments") not in ("compartments", "on",
                                                                                           "well_mixed"):
             raise ValueError(f"drug {d[0]}: a bath amine acts through the monoamine compartments (toggle off)")
+    if ex.infection_h > 0 and ex.toggles.get("pathogen_sickness", "off") != "on":
+        raise ValueError("infection_h: the infection state needs toggle pathogen_sickness on (off by default)")
     spec = _theta(sample_worm(ex.seed), theta)
     vals = dict(spec.values)
     vals["ion_celsius"] = float(ex.temperature_C)                # linked (params.LINKED)
@@ -254,6 +257,7 @@ def simulate(theta, experiment: Experiment) -> dict:
             [m for m in BWM_NAMES if m not in gone]
     sched, observation.SCHEDULE[:] = list(observation.SCHEDULE), [tuple(o) for o in ex.opto]
     dsched, drugs.SCHEDULE[:] = list(drugs.SCHEDULE), [tuple(d) for d in ex.drugs]
+    inf, pathogen.INFECTION_H = pathogen.INFECTION_H, float(ex.infection_h)
     orig, patched = B.load_structure, []
     try:
         if st is not None:                       # every module holding the loader sees the edited structure
@@ -267,6 +271,7 @@ def simulate(theta, experiment: Experiment) -> dict:
             m.load_structure = orig
         observation.SCHEDULE[:] = sched
         drugs.SCHEDULE[:] = dsched
+        pathogen.INFECTION_H = inf
     set_ms = 1000.0 * float(mech.params_for(slow_signalling, spec)["slow_set_s"])
     g = []
     for a, eff in alleles:

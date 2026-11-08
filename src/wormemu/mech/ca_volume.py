@@ -14,6 +14,11 @@ Forms (nested): ca_pool_volume
   soma                  V_cell = the soma alone, the compartment the Ca enters (Ca diffuses about 1 um in
                         tau_Ca = 50 ms at a buffered D near 13 um2/s, Allbritton et al. 1992 Science 258:1812,
                         less than a soma's width); not Nicoletti's choice
+  neuromorpho           the alternative reconstruction ("possible worms", pending Ben): the cells Nicoletti 2024
+                        reconstructed take their NeuroMorpho whole-cell volume (NEUROMORPHO_UM3; AIY and RIM for
+                        both sides, inferred), every other neuron its BAAIWorm whole-cell volume. The two
+                        reconstructions disagree by up to 3.05x (AIYL; ca_volume_check.py), and neither is wrong
+                        for some worm, so this is a switch, not a fitted number
   fixed                 the ledger's one capool_vcell for every neuron (BAAIWorm as ported); "off" is the same
 Validity: one well-mixed pool per cell; no Ca in the neurites; f, tau_Ca, [Ca]eq stay the ledger's ca_pool values.
 Muscles are excluded (their pool is B2's).
@@ -26,7 +31,11 @@ MECHANISMS = [
     ("ca_pool_volume", "Each neuron's bulk Ca pool sized by its own volume in the BAAIWorm morphology (Nicoletti "
      "2024: per-cell volume) instead of one V_cell for all (nested: soma, fixed)", "channel", "whole_cell"),
 ]
-FORMS = ("whole_cell", "soma", "fixed", "off")
+FORMS = ("whole_cell", "soma", "neuromorpho", "fixed", "off")
+# Nicoletti et al. 2024 PLoS ONE 19:e0298105: NeuroMorpho whole-cell volumes (um3) in their fitted cells' scripts
+# (measured, from the reconstructions); scripts/worm/ca_volume_check.py compares them with the BAAIWorm morphology
+NEUROMORPHO_UM3 = {"AIYL": 7.42, "AIYR": 7.42, "RIML": 10.94, "RIMR": 10.94, "AVAL": 129.6, "AVAR": 129.08,
+                   "VA05": 48.07, "VB06": 58.54, "VD05": 51.3}
 SPECS: list = []
 
 
@@ -52,7 +61,9 @@ class Mech:
             if brain.is_muscle[i]:
                 continue
             whole, soma = volumes(brain, i)
-            v = whole if form == "whole_cell" else soma
+            v = soma if form == "soma" else whole
+            if form == "neuromorpho":
+                v = NEUROMORPHO_UM3.get(brain.cell_names[i], whole)
             area = sum(seg.area() for seg in sec)
             for seg in sec:
                 m = getattr(seg, "cainternm", None)

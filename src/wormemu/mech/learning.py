@@ -14,8 +14,8 @@ read out as a factor 1 + e A on the identified cell's output:
     pathogen  pathogen exposure             -> ADF serotonin release up (Zhang, Lu and Bargmann 2005 Nature 438:179:
               training on PA14 raises tph-1 expression in ADF; MOD-1 in AIY/AIZ/RIA reads it, row 7's mod1 class).
 Context signals: starvation = mech.slow_signalling's DAF-16 nuclear state (insulin) when that module runs, else
-1 - energy_fraction (B2; absent = fed); pathogen = outputs['pathogen_exposure'] (0 to 1; nothing provides it yet,
-so the pathogen state stays 0 until the body or intestine does). Activity = the cell's depolarisation from its own
+1 - energy_fraction (B2; absent = fed); pathogen = outputs['pathogen_exposure'] (0 to 1; mech/pathogen provides it, off by default,
+so the pathogen state stays 0 unless an experiment sets hours on PA14). Activity = the cell's depolarisation from its own
 set point (slow_signalling's set-point rule and template values), as a fraction of slow_act_dv_mV. A fed worm with no pathogen keeps
 every state at 0: neutral. Every number is guessed except where noted. Form: on (default) / off.
 """
