@@ -15,6 +15,10 @@ Pre-registered (8 Nov 13:47 CST, before the first run):
   cutoff   points not finished by 16:50 CST are reported as not run; the pass fraction is over finished points.
   verdict  any point passing both stages -> D; none -> not D (the class then rests on the structural evidence).
 Each point writes runs/worm/triage/probe_egg/NNN.json as it finishes (the laptop may sleep; backhouse keeps going).
+Stopped 8 Nov 14:10 CST with no point finished: 525 s wall per 10 bio-min on backhouse (about 2.6 h a point, 17 h for
+64 at 10 workers). Row 15 is classed on the structural evidence; this probe is the phase-2 spec, unchanged.
+Stopped 8 Nov 14:10 CST with no point finished: 525 s wall per 10 bio-min on backhouse (about 2.6 h a point, 17 h for
+64 at 10 workers). Row 15 is classed on the structural evidence; this probe is the phase-2 spec, unchanged.
 
 Usage (backhouse): python probe_egg.py [--workers=W] [--stage2]
 """
