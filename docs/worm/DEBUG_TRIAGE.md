@@ -113,12 +113,30 @@ VERDICT
 The viewer marks a split row "simplified" when any part is lumped or missing; the audit files it under its main
 category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in the viewer, so 13 - 5 = 8.
 
+## Backhouse speed (question 3, report only, 14:46-14:50)
+
+Verdict: the build and the WSL configuration match the Mac; the slowdown is contention on a shared machine.
+Nothing on Windows or the throttle was changed.
+
+- NEURON 9.0.2 in both venvs. The mod compile flags are the same: `nrnmech_makefile` lines 62 and 67 give
+  `CXXFLAGS = -O2 -std=c++17` and `CFLAGS = -O2 -std=c17` in `~/worm-port/.venv` and in the Mac's `.venv`.
+- `.wslconfig`: memory 48GB, vmIdleTimeout -1, no `processors` line; `nproc` in WSL is 28.
+- vmmemWSL: ProcessorAffinity 0xFFFFFFF (all 28 logical CPUs), priority Normal (outside the 17:00-22:00 window).
+  Power plan High performance; i7-14700K, 20 cores and 28 threads (8 P-cores with hyperthreads, 12 E-cores).
+- The same point (hsn_5ht_point.py, 40 pA, 8 bio-s, identical outputs): Mac 3.85 s, backhouse 8.38 s at load
+  11.8 (2.2x, measured). The probe_5ht template point (62 bio-s, one process, load about 16) took about 3.7 min
+  from process start to the pool start (derived from ps etimes), about 7x the Mac rate.
+- At 14:49 Windows reported 99% CPU load, with Roblox running and another project's job (crucible, 3 days old) in
+  WSL beside mine. Past 8 busy processes, extra ones share a P-core's hyperthread or land on an E-core.
+- For phase 5's EKI cost: plan on 2-7x the Mac's single-process time per process on backhouse when it is shared
+  (measured range today). An idle-machine figure was not measured today.
+
 ## Open
 
 - AWA amplitude after the Kir fix (39.8 mV vs 25.8): Liu 2018's Ca gating forms are images in the preprint;
   Table S4 matches the port value for value.
 - AFD under FIT2's map; FIT2's true map losing to shuffled maps.
-- Why backhouse ran the egg-laying check 4-7x slower than the Mac did on 7 Nov (525 s wall per 10 bio-min).
+- Backhouse's 4-7x slowdown: contention, not configuration (section above).
 - The 13 BAAIWorm cells at 5.6-7.8 GOhm (challenge v, settled 14:41, a few minutes): not a units slip in our port.
   Upstream applies the JSON's gpas as `seg.pas.g = params[2]  # Passive conductance in S/cm2` on every section
   (BAAIWorm clone on backhouse, `eworm/single_nrn_tune/neuron_model.py:76-79`); brain.py:445-447 does the same, on
@@ -129,16 +147,15 @@ category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in t
   were made with the nanodomain pool, the Ca-activated K channels at rest saw a different Ca than they see in the
   network. Relevant to line 19's build; not checked further today.
 
-## Questions for Ben
+## Questions for Ben (answered by the Director from Ben's standing direction, 14:45)
 
-1. Egg-laying (line 5, B, large): how to give HSN its rhythm. (a) Port Zhang, Schafer & Breitling 2010's HSN
-   two-state model from its Additional Files: quick, but it is a state machine for the behaviour, close to grafting.
-   (b) Make HSN burst from its own channels and the circuit already built, with Zhang's and Collins's patterns as the
-   check, not the mechanism. Recommendation: (b).
-2. Nicoletti 2024's code has no LICENSE (line 1 needs its EGL-19 and SHL-1 forms as the toggle). (a) Write the mods
-   from the paper's published equations (PLOS ONE, CC-BY). (b) Ask the authors for a licence (a message from you).
-   Recommendation: (a), and (b) only if the equations turn out incomplete.
-3. The egg-laying feasibility probe ran at 2.6 h of wall per point on backhouse (measured), so 64 points is about 17 h
-   at 10 workers. (a) Spend 10 minutes finding why backhouse is 4-7x slower than the Mac was on 7 Nov, then run it
-   overnight if it fits one night. (b) Skip it: line 5 is already B on structure. Recommendation: (a); a pass would
-   turn B into D and save the large fix.
+1. Egg-laying (line 5): (b). Phase-2 spec: port HSN's published biophysics from free sources (its channels, at
+   CeNGEN expression, with its Ca and the feedback the circuit already has: VC cholinergic input, uv1 tyramine and
+   NLP-7/FLP-11, uterine stretch). Zhang 2010 and Collins 2016 are the check, never the mechanism; no state machine.
+2. Nicoletti 2024's forms (line 1): (a). Phase-2: write the EGL-19 and SHL-1 mods from the CC-BY paper's equations,
+   with a check that the mods reproduce one of the paper's figures. Contacting the authors stays Ben's call.
+3. backhouse speed: (a), done in under 10 minutes (section above): contention, not configuration. The egg probe is
+   set up as a detached backhouse job (PID 82978, `~/worm-night/wtriage/runs/egg_night.sh`): it sleeps until 22:00,
+   then 16 single-thread workers over 64 points with the 20 ids (line vi's 5-HT gaps added), a 16 h timeout, and
+   `runs/egg_night.done`. Expected about 10.5 h (4 rounds of about 2.6 h, derived from the 14:10 rate), so it ends
+   Monday morning; the timeout stops it by 14:00 Monday, before the 17:00 cap.

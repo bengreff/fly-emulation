@@ -17,6 +17,11 @@ Pre-registered (8 Nov 13:47 CST, before the first run):
 Each point writes runs/worm/triage/probe_egg/NNN.json as it finishes (the laptop may sleep; backhouse keeps going).
 Stopped 8 Nov 14:10 CST with no point finished: 525 s wall per 10 bio-min on backhouse (about 2.6 h a point, 17 h for
 64 at 10 workers). Row 15 is classed on the structural evidence; this probe is the phase-2 spec, unchanged.
+Amended 8 Nov 14:51 CST, before any point finished (the Director's answer 3): the three other 5-HT path gaps from
+line vi join the ids (ma_store_molecules, ma_synth_tau_s, ma_tau_ms; 20 ids, so the Sobol design changes). The run
+is overnight on backhouse: it sleeps until 22:00, 16 single-thread workers, a 16 h timeout, a done-file. The 16:50
+cutoff becomes the timeout: points not finished when it fires are reported as not run. Bars, stages and verdict
+unchanged. Caveat as in line vi: this brain has no MOD-5 cells, so no 5-HT reuptake.
 
 Usage (backhouse): python probe_egg.py [--workers=W] [--stage2]
 """
@@ -34,7 +39,7 @@ from probe_lib import OUT, Box, joint_bad, save
 IDS = ["egg_stretch_half", "egg_stretch_hill", "egg_stretch_g_nS", "egg_5ht_g_nS", "egg_nlp3_g_nS",
        "egg_act_khalf_mM", "egg_act_hill", "egg_vm_act_on", "egg_vm_act_off", "egg_ret_gain_pA",
        "egg_uv1_tyr_uM_per_egg", "egg_uv1_tyr_tau_s", "egg_lgc55_g_nS", "egg_production_per_h", "ma_release_per_s",
-       "ma_degrade_tau_s", "ma_ec50_serotonin_ser-1_nM"]
+       "ma_degrade_tau_s", "ma_ec50_serotonin_ser-1_nM", "ma_store_molecules", "ma_synth_tau_s", "ma_tau_ms"]
 HOURS = 3.0
 DIR = OUT / "probe_egg"
 
