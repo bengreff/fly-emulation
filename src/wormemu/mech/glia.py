@@ -14,7 +14,11 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 the same leak current the module injects); glial Kir4.1-type uptake and diffusion to the
                 bulk clear it, the two time constants set from the mammalian Kir4.1 recovery (wild type 4.2 s,
                 glial knockout 6.3 s; inferred, cross-species); the K+ reversal shift (RT/F) ln(Ko / Ko_bath) drives
-                each amphid neuron on that side through its K+ leak g_K (pA).
+                each amphid neuron on that side through its K+ leak g_K (pA). g_K is the K+ share
+                (glia_k_leak_frac) of the neuron's own passive leak, so the shift moves a cell by at most that
+                share of dE_K and the loop cannot run away (7 Nov: a separate 0.2 nS, larger than the amphid
+                neurons' whole 0.07-0.09 nS leak, drove a cell to -384 mV); Ko is floored at 1 mM, the hard K+
+                window's floor. A brain without morphology (the unit tests) uses glia_k_gleak_nS per neuron.
   glia_kcc3     Singhvi et al. 2016 Cell 165:936: amphid sheath KCC-3 sits only in the microdomain around AFD's
                 receptive ending and sets its Cl-; Cl- inhibits AFD's receptor guanylyl cyclase GCY-8. Here one Cl-
                 excess compartment per AFD: KCC-3 adds Cl- at a rate scaled by its thermodynamic drive
@@ -54,6 +58,7 @@ KIR = "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 1
       "related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)"
 MENG = "Meng et al. 2016 eLife (PMC5083064)"
 F_C_PER_MOL = 96485.0
+KO_FLOOR_MM = 1.0           # the hard K+ window's floor (scripts/worm/ranges/rules.yaml, 1-30 mM)
 
 
 def _s(pid, mech, unit, v, lo, hi, src, label="guessed", applies="amphid endings", grain="class", notes=""):
@@ -76,7 +81,10 @@ SPECS = [
        "1986), not measured as a volume", notes="extracellular volume around one side's 12 amphid endings inside "
        "the sheath; guessed (a 20 nm cleft over ~100 um2 is 2 um3; the open amphid channel is much larger)"),
     _s("glia_k_gleak_nS", "glia_kbuffer", "nS", 0.2, 0.05, 1.0, "this model", applies="amphid neurons",
-       notes="K+ leak per amphid neuron: sets the activity K+ load and the reversal-shift current; guessed"),
+       notes="K+ leak per amphid neuron when the brain has no morphology (unit tests only); guessed"),
+    _s("glia_k_leak_frac", "glia_kbuffer", "1", 0.5, 0.1, 1.0, "this model", applies="amphid neurons",
+       notes="K+ share of each amphid neuron's own passive leak: sets the activity K+ load and the reversal-shift "
+       "current; guessed (neuronal leak is mostly K+ through K2P channels, share not measured in the worm)"),
     _s("glia_kir_tau_s", "glia_kbuffer", "s", 12.6, 2.0, 30.0, KIR, "inferred", "amphid sheath",
        notes="glial uptake alone: 1 / (1/4.2 - 1/6.3) s from the wild-type and knockout recoveries (derived from "
        "cross-species numbers)"),
@@ -130,6 +138,12 @@ class Mech:
         self.amph = np.array([brain.idx[c] for c in amph], int)
         self.amph_side = np.array([_side(c) for c in amph], int)
         self.afd = [(c, brain.idx[c]) for c in ("AFDL", "AFDR") if c in brain.idx]
+        cells = getattr(brain, "cells", None)
+        if cells:   # nS: g_pas (S/cm2) x area (um2) x 1e-8 cm2/um2 x 1e9 nS/S
+            g = [10.0 * sum(seg.pas.g * seg.area() for sec in cells[i].all for seg in sec) for i in self.amph]
+            self.gk = q["glia_k_leak_frac"] * np.array(g, float)
+        else:
+            self.gk = np.full(len(self.amph), q["glia_k_gleak_nS"])
         self.sec, self.n_gap = {}, 0
         if self.cells_on:
             self._build()
@@ -192,16 +206,16 @@ class Mech:
                 load = np.zeros(2)
             else:
                 dek0 = q["glia_rt_f_mV"] * np.log(self.ko / q["glia_k_bath_mM"])[self.amph_side]
-                ipa = q["glia_k_gleak_nS"] * ((v - self.v0) - dek0)                     # pA: K+ leak change from rest
+                ipa = self.gk * ((v - self.v0) - dek0)                                  # pA: K+ leak change from rest
                 load = np.bincount(self.amph_side, ipa, minlength=2) * 1e6 / F_C_PER_MOL / q["glia_k_volume_um3"]
             k = 1.0 / q["glia_k_diff_tau_s"] + (1.0 / q["glia_kir_tau_s"] if self.kb == "kir" else 0.0)
             e = np.exp(-k * dt)
             kb = q["glia_k_bath_mM"]
             self.ko = kb + (self.ko - kb) * e + load / k * (1.0 - e)                   # mM
-            self.ko = np.maximum(self.ko, 1e-3 * kb)
+            self.ko = np.maximum(self.ko, KO_FLOOR_MM)
             dek = q["glia_rt_f_mV"] * np.log(self.ko / kb)                             # mV
             I = np.zeros(len(ctx.v))
-            I[self.amph] = q["glia_k_gleak_nS"] * dek[self.amph_side]                  # nS x mV = pA
+            I[self.amph] = self.gk * dek[self.amph_side]                               # nS x mV = pA
             out.update(amphid_k_mM=self.ko.copy(), amphid_ek_shift_mV=dek)
         if self.kcc not in ("fixed", "off"):
             if self.kcc == "on":

@@ -74,7 +74,8 @@ LINKED["ion_celsius"] = "the experiment's temperature (NEURON celsius)"
 # rows the catalog marks read that no current reads (brain.EK_MODS: the Ca and NCA currents use effective reversals)
 NOT_READ = {"ion_ena": "nca, the only Na current, uses its own +30 mV (baai_ena_nca_mV)",
             "ion_cao": "sets only NEURON's Nernst eca; every Ca current uses +60 mV (baai_eca_mV)",
-            "pump_vol_neuron_um3": "a brain's neurons take their hoc morphology's volume (scan; mech/pumps)"}
+            "pump_vol_neuron_um3": "a brain's neurons take their hoc morphology's volume (scan; mech/pumps)",
+            "glia_k_gleak_nS": "a brain's amphid neurons take glia_k_leak_frac of their own leak (mech/glia)"}
 
 
 def _code_why(s):
