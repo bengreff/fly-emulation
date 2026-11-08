@@ -28,7 +28,7 @@ disagree (both become toggles); D a gap value fixes it, found by a probe inside 
 | 13 | GABA short-term plasticity | 24 | plateaus > 0.8 at 1 and 5 Hz, 20 Hz second/first > 1 (Liu et al. 2009) | fails at the ledger | D | 8 guessed stp_gaba gaps | 24/256 (9%), 10 off edges; best 1.13 / 1.75 / 1.25. The bar accepts 5 Hz facilitation Liu did not report | brain | small |
 | 14 | RIS Gi without DMSR-1 | 28 | Gi == 0 with dmsr-1 removed | 0.062 | E | 25 other peptide GPCRs CeNGEN puts on RIS (largest nlp-13, Gi) still see peptides. Rossi et al. 2025 (PMC7617803) does not say DMSR-1 is RIS's only Gi route. Fix: bar on the DMSR-1 share | | brain | small |
 | 15 | Own ephys, AIY / AFD / AWA (item 3) | 5 | FIT2 features on the training sweeps (Naudin 2022, Liu 2018); RMSE, FIT2 best 16.6 / 10.5 / 13.7 mV | AIYL 113.8, AFDL 26.8, AWAL 16.3 mV | A | brain.py:427-433: the CeNGEN mask deletes 8 of BAAIWorm's fitted AIYL channels (egl2, shl1, kqt3, kvs1, irk, egl36, cca1, shk1). Mask off: AIYL 9.3 mV. Fix: leave BAAIWorm-fitted cells unmasked until FIT2's map or a refit replaces them | | brain | medium |
-| 16 | 121 unphysical single cells (4a) | 3, 5 | upper/lower voltage bars at +-20 pA (wexcite) | 74 upper, 47 below -150 mV | A | 61 of the 74 come from the same mask (13 with it off, all BAAIWorm's own cells at 5.6-7.8 GOhm). The bars are not laws: recorded AIY reaches -125.6 mV at -15 pA, RIM +75 mV at +35 pA | | brain | medium |
+| 16 | 121 unphysical single cells (4a) | 3, 5 | upper/lower voltage bars at +-20 pA (wexcite) | 74 upper, 47 below -150 mV | A | 61 of the 74 come from the same mask (13 with it off, all BAAIWorm's own cells at 5.6-7.8 GOhm; their leak is ported exactly, challenge v). The bars are not laws: recorded AIY reaches -125.6 mV at -15 pA, RIM +75 mV at +35 pA | | brain | medium |
 | 17 | ~30x deficit vs Randi (4b) | 23 | autoresponse 30 s mean dF/F, training median 0.43 (Randi 2023) | 0.014-0.018 | B (was C; challenge ii) | follows from line 19. The response peaks (0.24-0.31) but decays in ~3 s: the readout's decay (line 19), not excitability. Gaps at their tops give 0.08-0.11; adding capool tca 150 and f 0.003 gives 0.64-1.09. AVAL stays 0.048 (1.19 pA Ca current into 129 um3) | | body | small |
 | 18 | Saturated vs silent network (4c) | 2, 8 | no published bar for a fraction of neurons above -20 mV | open loop 0%, median -50.3 mV; synapses x4: 7% | E | the "swing" (197, 94, 0, 16% of 302) compared different builds and drives. Same build, every synapse x0.5 / x2 / x4 gives 0 / 0 / 7%: not a knife edge | | brain | small |
 | 19 | GCaMP decay (4d) | 23 | GCaMP6s half-fall 8.4 +- 5.0 s in vivo (Ding et al. 2023 G3, PMC10542313, Table 1) | 0.64 s (13x fast; 2.06 s at both range tops) | B (was C; challenge ii) | GCaMP reads the only Ca pool there is, Nicoletti 2019 Eq. 28 (opened): "[Ca]_micro", the microdomain around the SK channels, tau_Ca 33 ms with no source (BAAIWorm's cainternm.mod: 50 ms). Ding measures bulk cytosolic Ca through GCaMP. Different compartments, both can be true, so not C. Missing: a bulk cytosolic compartment (shell-to-core exchange, buffering, extrusion) for the indicator; the shell-plus-core form already exists in our port of Sherman & Harel 2024 (sh_pharynx.mod) | | body | medium |
@@ -119,8 +119,15 @@ category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in t
   Table S4 matches the port value for value.
 - AFD under FIT2's map; FIT2's true map losing to shuffled maps.
 - Why backhouse ran the egg-laying check 4-7x slower than the Mac did on 7 Nov (525 s wall per 10 bio-min).
-- The 13 BAAIWorm cells at 5.6-7.8 GOhm: BAAIWorm's own fits or a unit issue in its leak (AIYL leak 0.012 nS vs
-  Nicoletti's 0.14 nS).
+- The 13 BAAIWorm cells at 5.6-7.8 GOhm (challenge v, settled 14:49, ~10 min): not a units slip in our port.
+  Upstream applies the JSON's gpas as `seg.pas.g = params[2]  # Passive conductance in S/cm2` on every section
+  (BAAIWorm clone on backhouse, `eworm/single_nrn_tune/neuron_model.py:76-79`); brain.py:445-447 does the same, on
+  byte-identical morphologies (NOTICE.md). AIYL's gpas is 1.4e-5 S/cm2 in BAAIWorm's own file. So their high input
+  resistance is BAAIWorm's fit, and line 16's remainder stays E (bar not a law), not A. Side finding, open: the same
+  upstream tuner inserts `cainternn` (Nicoletti's nanodomain Ca, `neuron_model.py:84`; `cainternm` commented out),
+  while upstream's network (`eworm/network/detailed_circuit.py:262`) and our port run `cainternm`. If the cell fits
+  were made with the nanodomain pool, the Ca-activated K channels at rest saw a different Ca than they see in the
+  network. Relevant to line 19's build; not checked further today.
 
 ## Questions for Ben
 
