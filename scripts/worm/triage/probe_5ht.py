@@ -55,15 +55,16 @@ def main():
     workers = int(sys.argv[1]) if len(sys.argv) > 1 else 16
     box = Box(IDS)
     X = box.design(64, which="bio", seed=0)
-    base = run_points(SCRIPT, IDS, [[r["template"] for r in box.rows]], workers=1, args=["40", "62"])[0]
-    rows = run_points(SCRIPT, IDS, X, workers=workers, args=["40", "62"])
+    rows = run_points(SCRIPT, IDS, [[r["template"] for r in box.rows]] + list(X), workers=workers, args=["40", "62"])
+    save("probe_5ht_raw", dict(ids=IDS, X=X.tolist(), rows=rows))       # kept before scoring
+    base, rows = rows[0], rows[1:]
     sc = [score(r) for r in rows]
     jb = np.array([len(joint_bad(dict(zip(IDS, x)))) for x in X])
     ok = np.array([p for _, p in sc]) & (jb == 0)
     m = np.array([d.get("c5_max", -1.0) for d, _ in sc])
     k = int(np.argmax(m))
     kp = [i for i in np.flatnonzero(ok)]
-    away = [int(i) for i in kp if not any(box.at_edge(X[i]).values())]
+    away = [int(i) for i in kp if not box.at_edge(X[i])]
     res = dict(check="line vi: vulval 5-HT vs SER-7 EC50 at full HSN drive", bar_nM=BAR_NM, at_template=score(base)[0],
                n=len(X), n_pass=int(ok.sum()), pass_fraction=float(ok.mean()), n_pass_off_edges=len(away),
                joint_bad=int((jb > 0).sum()), errors=int(sum("error" in d for d, _ in sc)),
