@@ -106,4 +106,14 @@ category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in t
 
 ## Questions for Ben
 
-(see the night file's last entry and the final reply)
+1. Egg-laying (line 5, B, large): how to give HSN its rhythm. (a) Port Zhang, Schafer & Breitling 2010's HSN
+   two-state model from its Additional Files: quick, but it is a state machine for the behaviour, close to grafting.
+   (b) Make HSN burst from its own channels and the circuit already built, with Zhang's and Collins's patterns as the
+   check, not the mechanism. Recommendation: (b).
+2. Nicoletti 2024's code has no LICENSE (line 1 needs its EGL-19 and SHL-1 forms as the toggle). (a) Write the mods
+   from the paper's published equations (PLOS ONE, CC-BY). (b) Ask the authors for a licence (a message from you).
+   Recommendation: (a), and (b) only if the equations turn out incomplete.
+3. The egg-laying feasibility probe ran at 2.6 h of wall per point on backhouse (measured), so 64 points is about 17 h
+   at 10 workers. (a) Spend 10 minutes finding why backhouse is 4-7x slower than the Mac was on 7 Nov, then run it
+   overnight if it fits one night. (b) Skip it: line 5 is already B on structure. Recommendation: (a); a pass would
+   turn B into D and save the large fix.
