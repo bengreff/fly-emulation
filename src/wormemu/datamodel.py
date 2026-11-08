@@ -23,8 +23,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from wormemu import mech
-from wormemu.mech import receptors, slow_signalling
+from wormemu import heldout, mech
+from wormemu.mech import drugs, receptors, slow_signalling
 
 # channel genes -> the densities they carry (BAAIWorm's composite SLO channels need both genes)
 _CH = {"egl-19": ("egl19", "slo1_egl19", "slo2_egl19"), "unc-2": ("unc2", "slo1_unc2", "slo2_unc2"),
@@ -68,14 +68,13 @@ NOT_YET = {
     "npr-1": "a GPCR null needs neuromod's receptor table edited (not wired yet)",
     "egl-1": "no cell death", "unc-77": "no NALCN auxiliary subunit", "unc-80": "as unc-77",
 }
-DRUGS = {   # name: what the model would need (none is representable yet; simulate raises)
-    "levamisole": "a tonic agonist conductance on L-AChR (rec_lacr) without release",
-    "aldicarb": "an ACh clearance step in the cleft (wsyn models receptor unbinding, not AChE)",
-    "ivermectin": "a tonic agonist conductance on GluCl", "muscimol": "a tonic agonist on UNC-49",
-    "nicotine": "a tonic agonist on lacr, acr16 and nachr",
-    "serotonin": "a bath source in neuromod's amine compartments (cuticle permeation unmodelled)",
-    "dopamine": "as serotonin", "octopamine": "as serotonin", "tyramine": "as serotonin",
-}
+# drugs: name -> what it acts on (mech/drugs.py); NOT_YET_DRUGS raise with what the model would need
+DRUGS = {"levamisole": "tonic agonist conductance on L-AChR (lacr)", "ivermectin": "tonic agonist on GluCl (glucl)",
+         "aldicarb": "AChE inhibition: the cholinergic cleft ACh multiplier (ache_clear_frac)",
+         "serotonin": "bath source into neuromod's amine compartments", "dopamine": "as serotonin",
+         "octopamine": "as serotonin", "tyramine": "as serotonin"}
+NOT_YET_DRUGS = {"muscimol": "a tonic agonist on UNC-49 (the drugs table has no row yet)",
+                 "nicotine": "a tonic agonist on lacr, acr16 and nachr (no row yet)"}
 
 
 @dataclass
@@ -120,7 +119,10 @@ class Experiment:
     body: str = "immobilised"        # off | immobilised (straight, untouched: open loop) | on (FEM body, closed loop)
     genotype: list = field(default_factory=list)  # [Allele]
     ablations: list = field(default_factory=list)  # cell names removed with every synapse and gap they make
-    drugs: list = field(default_factory=list)    # [(name, uM, t_on_ms)]
+    drugs: list = field(default_factory=list)    # [(name, bath uM, t_on_ms)] (DRUGS)
+    sources: list = field(default_factory=list)  # [(dataset, identifier)] the data this experiment reproduces
+    heldout: bool = False            # True only in the pre-registered scoring run: locked identifiers allowed
+    body_out: str | None = None      # body on: the FEM run's files (None = a temporary directory)
     observe: tuple = ("v_mV",)       # see OBSERVABLES; "out:<key>" for any module output
     cells: list | None = None        # cells reported for per-cell channels (None = all)
     every_ms: float = 1.0
@@ -206,8 +208,16 @@ def simulate(theta, experiment: Experiment) -> dict:
     from wormemu.mech import observation
     ex = experiment
     notes = []
+    hits = heldout.experiment_locks([a.gene for a in ex.genotype], ex.ablations, ex.sources)
+    if hits and not ex.heldout:
+        raise heldout.HeldOut(f"locked identifiers {hits} (docs/worm/HELDOUT.md): only the pre-registered scoring "
+                              "run sets Experiment.heldout")
     for d in ex.drugs:
-        raise NotImplementedError(f"drug {d[0]}: needs {DRUGS.get(d[0], 'a mechanism (unknown drug)')}")
+        if d[0] not in DRUGS:
+            raise NotImplementedError(f"drug {d[0]}: needs {NOT_YET_DRUGS.get(d[0], 'a mechanism (unknown drug)')}")
+        if d[0] in drugs.AMINES and ex.toggles.get("monoamines", "compartments") not in ("compartments", "on",
+                                                                                          "well_mixed"):
+            raise ValueError(f"drug {d[0]}: a bath amine acts through the monoamine compartments (toggle off)")
     spec = _theta(sample_worm(ex.seed), theta)
     vals = dict(spec.values)
     vals["ion_celsius"] = float(ex.temperature_C)                # linked (params.LINKED)
@@ -243,6 +253,7 @@ def simulate(theta, experiment: Experiment) -> dict:
         names = [n for n, k in zip(s0.names, s0.kind) if k == "neuron" and n not in gone] + \
             [m for m in BWM_NAMES if m not in gone]
     sched, observation.SCHEDULE[:] = list(observation.SCHEDULE), [tuple(o) for o in ex.opto]
+    dsched, drugs.SCHEDULE[:] = list(drugs.SCHEDULE), [tuple(d) for d in ex.drugs]
     orig, patched = B.load_structure, []
     try:
         if st is not None:                       # every module holding the loader sees the edited structure
@@ -255,6 +266,7 @@ def simulate(theta, experiment: Experiment) -> dict:
         for m in patched:
             m.load_structure = orig
         observation.SCHEDULE[:] = sched
+        drugs.SCHEDULE[:] = dsched
     set_ms = 1000.0 * float(mech.params_for(slow_signalling, spec)["slow_set_s"])
     g = []
     for a, eff in alleles:
@@ -276,25 +288,44 @@ def simulate(theta, experiment: Experiment) -> dict:
             vcl.append((c, k))
         elif c.kind != "current":
             raise ValueError(c.kind)
-    b.reset()
+    cmd = b.reset()
     cells = list(b.cell_names) if ex.cells is None else list(ex.cells)
     ci = np.array([b.idx[c] for c in cells])
     neuron_ix = {n: k for k, n in enumerate(c for c, m in zip(b.cell_names, b.is_muscle) if not m)}
-    if ex.body == "on":
-        raise NotImplementedError("body on: body.loop.run(brain, Body(out, params=body.layers.params_for(spec, "
-                                  "extra_mosm=...)), seconds) is the route; not wired into simulate yet")
-    if ex.body not in ("off", "immobilised"):
+    if ex.body not in ("off", "immobilised", "on"):
         raise ValueError(ex.body)
     head = {**default_observation().head, "temperature_C": float(ex.temperature_C), **ex.head}
     tail = {**default_observation().tail, **ex.tail}
     rec = {k: [] for k in ex.observe}
     ts, ev = [], {"pumps": 0, "eggs_laid": 0, "expulsions": 0}
-    n = int(round(ex.duration_ms / ex.dt_ms))
-    every = max(1, int(round(ex.every_ms / ex.dt_ms)))
+    body = None
+    if ex.body == "on":   # the FEM body in closed loop (body/loop.py's exchange; the body sets the step)
+        import tempfile
+        from wormemu.body import layers as BL
+        from wormemu.body.loop import Body, brain_dt_schedule
+        out_dir = ex.body_out or tempfile.mkdtemp(prefix="wormemu_body_")
+        mosm = float(ex.tail.get("osmolarity_mOsm", 0.0))
+        osmo = ex.toggles.get("excretory_osmo", "canal")
+        body = Body(f"{out_dir}/body", params=BL.params_for(spec, osmo, extra_mosm=mosm),
+                    body={k: v for k, v in ex.toggles.items() if k.startswith("body_")} or None)
+        n = int(round(ex.duration_ms / (body.dt_s * 1000.0)))
+        dts = brain_dt_schedule(n, body.dt_s * 1000.0)
+        every = max(1, int(round(ex.every_ms / (body.dt_s * 1000.0))))
+        notes.append(f"body on: exchange {body.dt_s * 1000.0:.3f} ms (the body's), files {out_dir}")
+    else:
+        n = int(round(ex.duration_ms / ex.dt_ms))
+        dts = np.full(n, float(ex.dt_ms))
+        every = max(1, int(round(ex.every_ms / ex.dt_ms)))
+    t = 0.0
     for k in range(n):
-        t = k * ex.dt_ms
-        o = default_observation(t)
-        o.head, o.tail = dict(head), dict(tail)
+        if body is None:
+            o = default_observation(t)
+            o.head, o.tail = dict(head), dict(tail)
+        else:
+            body.send(cmd, 1, dump=False)
+            o = copy.copy(body.obs)
+            o.head = {**body.obs.head, "temperature_C": float(ex.temperature_C), **ex.head}   # the scene's plate
+            o.tail = {**body.obs.tail, **ex.tail}
         for s in ex.stimuli:
             if s.t_on_ms <= t < s.t_on_ms + s.dur_ms:
                 if s.channel == "contact_force_uN":
@@ -306,12 +337,15 @@ def simulate(theta, experiment: Experiment) -> dict:
                     getattr(o, s.where)[s.channel] = s.value
         for c, kc in vcl:
             kc.rs = 0.01 if c.t_on_ms <= t < c.t_on_ms + c.dur_ms else 1e9
-        out = b.step(o, ex.dt_ms)
+        out = cmd = b.step(o, float(dts[k]))
+        if body is not None:
+            body.recv()
+        t += float(dts[k])
         for e in ev:
             ev[e] += int(getattr(out, e) or 0)
         if (k + 1) % every:
             continue
-        ts.append(t + ex.dt_ms)
+        ts.append(t)
         for ch in ex.observe:
             if ch in ("v_mV", "ca_uM"):
                 rec[ch].append(np.asarray(getattr(out, ch))[ci])
@@ -326,10 +360,16 @@ def simulate(theta, experiment: Experiment) -> dict:
                 rec[ch].append([1000.0 * kc.i for _, kc in vcl])
             elif ch.startswith("out:"):
                 rec[ch].append(b.mech_out.get(ch[4:]))
-            elif ch in OBSERVABLES and ch != "posture":
+            elif ch == "posture":
+                if body is None:
+                    raise KeyError("posture: body on only")
+                rec[ch].append(np.asarray(body.obs.curvature_per_mm, float))
+            elif ch in OBSERVABLES:
                 rec[ch].append(np.asarray(getattr(out, ch)))
             else:
                 raise KeyError(f"observable {ch}")
+    if body is not None:
+        body.close()
     res = {"t_ms": np.array(ts), "cells": cells, "notes": notes}
     for ch, x in rec.items():
         try:

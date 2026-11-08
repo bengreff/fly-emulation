@@ -494,6 +494,9 @@ class Mech:
             pool.N = np.maximum(pool.N + (J.T @ self.ma_onehot - sink) * dt, 0.0) * np.exp(-dt / p["ma_degrade_tau_s"])
             pool.mix(dt)
             c = pool.nM()
+            bath = ctx.outputs.get("bath_amine_nM")        # mech/drugs: exogenous amine, uniform along the body
+            if bath:
+                c = c + np.array([bath.get(lg, 0.0) for lg in AMINES])[:, None]
             m = ~self.e_pep
             occ[m] = _hill(c[self.e_lig[m], self.ma_comp[self.e_cell[m]]], self.e_ec50[m], h)
             for k, (row, cells, ec50, hh, erev, gam) in enumerate(self.extrasyn):

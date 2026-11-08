@@ -63,12 +63,12 @@ def test_interventions_land():
 
 
 def test_unrepresentable_inputs_raise():
-    with pytest.raises(NotImplementedError, match="ACh clearance"):
-        D.simulate(None, D.Experiment(drugs=[("aldicarb", 1000.0, 0.0)]))
+    with pytest.raises(NotImplementedError, match="UNC-49"):
+        D.simulate(None, D.Experiment(drugs=[("muscimol", 1000.0, 0.0)]))
     with pytest.raises(NotImplementedError, match="cell"):
         D.simulate(None, D.Experiment(genotype=[D.Allele("tax-4")]))
-    with pytest.raises(ValueError, match="developmental"):
-        D.simulate(None, D.Experiment(genotype=[D.Allele("unc-31", timing="acute")]))
+    with pytest.raises(ValueError, match="developmental"):    # unc-31 is locked (HELDOUT.md): the check needs heldout
+        D.simulate(None, D.Experiment(genotype=[D.Allele("unc-31", timing="acute")], heldout=True))
     with pytest.raises(KeyError):
         D.simulate(None, D.Experiment(genotype=[D.Allele("no-such-gene")]))
 
@@ -101,3 +101,70 @@ print(json.dumps(dict(left=left, glu=sum("glutamate" in s for s in st.transmitte
                       glu0=sum("glutamate" in s for s in load_structure().transmitter.values()))))
 """)
     assert r["glu"] == 0 and r["glu0"] > 50 and "AIBL" in r["left"]
+
+
+DRUG = """
+import json, numpy as np
+from wormemu import datamodel as D
+r = D.simulate({th}, D.Experiment(duration_ms=100, drugs={dr}, every_ms=50,
+                                 observe=("v_mV", "muscle_activation", "out:drugs", "out:neuromod")))
+bwm = [i for i, c in enumerate(r["cells"]) if "BWM" in c]
+d = r["out:drugs"][-1]
+print(json.dumps(dict(v=float(np.mean(r["v_mV"][-1][bwm])), act=float(np.mean(r["muscle_activation"][-1])),
+                      drugs=d if isinstance(d, dict) else {{}}, ser=r["out:neuromod"][-1]["ma_serotonin_max_nM"])))
+"""
+
+
+def test_drugs_act_through_their_targets():
+    """Bath 1 mM, uptake at its fastest bound: levamisole depolarises the body-wall muscle through L-AChR, aldicarb
+    raises the cholinergic cleft ACh and with it muscle activation, bath serotonin reaches neuromod's compartments.
+    Without a drug the module is silent (the template test holds the run bit-identical)."""
+    fast = lambda d, frac=1.0: {f"drug_{d}_uptake_tau_s": 30.0, f"drug_{d}_cuticle_frac": frac}
+    base = _run(DRUG.format(th=None, dr=[]))
+    lev = _run(DRUG.format(th=fast("levamisole"), dr=[("levamisole", 1000.0, 0.0)]))
+    ald = _run(DRUG.format(th={**fast("aldicarb"), "drug_aldicarb_ic50_uM": 0.1}, dr=[("aldicarb", 1000.0, 0.0)]))
+    ser = _run(DRUG.format(th=fast("serotonin", 0.1), dr=[("serotonin", 1000.0, 0.0)]))
+    assert base["drugs"] == {}
+    assert lev["drugs"]["drug_levamisole_max_nS"] > 1 and lev["v"] > base["v"] + 10
+    assert ald["drugs"]["ach_cleft_factor"] > 2 and ald["act"] > base["act"]
+    assert ser["ser"] > 100 * base["ser"]
+
+
+def test_heldout_identifiers_are_excluded_by_default():
+    """docs/worm/HELDOUT.md: loaders drop locked identifiers unless asked; simulate refuses an experiment that
+    reproduces a locked corpus item or names a locked source, before it builds anything."""
+    from wormemu import heldout as H
+    assert H.exclude("ephys_single_cell", ["AIY", "RIM", "AFD", "AWA"]) == ["AIY", "AFD", "AWA"]
+    assert H.exclude("ephys_single_cell", ["RIM"], allow_heldout=True) == ["RIM"]
+    assert {"unc-31", "AML508", "RIML"} <= H.locked("randi2023")
+    assert "2023-03-08-03" in H.locked("atanas2023")                     # pradhan2025, locked whole
+    assert {"unc-29", "glr-1"} <= H.locked("owmd_javer2018")             # its own draw and the corpus's genes
+    with pytest.raises(H.HeldOut):
+        H.check("yemini2013", ["egl-2(n693)V"])
+    with pytest.raises(H.HeldOut):
+        D.simulate(None, D.Experiment(genotype=[D.Allele("slo-1")]))
+    with pytest.raises(H.HeldOut):
+        D.simulate(None, D.Experiment(ablations=["AVAL", "AVAR", "AVBL", "AVBR", "PVCL", "PVCR", "AVDL", "AVDR"]))
+    with pytest.raises(H.HeldOut):
+        D.simulate(None, D.Experiment(sources=[("atanas2023", "2021-06-11-01")]))
+    assert H.experiment_locks(["egl-19"], ["AVAR"], [("atanas2023", "2021-06-11-02")]) == []
+    lock = H.load()["datasets"]
+    for name, ds in lock.items():                                         # every dataset's list is reachable
+        L = ds["locked"]
+        assert len(H.locked(name)) >= (sum(len(c["ids"]) for c in L.values()) if isinstance(L, dict) else len(L))
+
+
+def test_body_on_closes_the_loop():
+    """body='on': the FEM body steps with the brain at its own exchange (1/240 s) and posture comes back."""
+    r = _run("""
+import json, tempfile, numpy as np
+from wormemu import datamodel as D
+r = D.simulate(None, D.Experiment(duration_ms=50, body="on", observe=("posture", "muscle_activation"), every_ms=25,
+                                  body_out=tempfile.mkdtemp()))
+a = np.array(r["muscle_activation"])
+print(json.dumps(dict(t=r["t_ms"].tolist(), p=np.array(r["posture"]).tolist(), a=a.tolist())))
+""")
+    p = np.array(r["p"])
+    assert p.shape == (2, 49) and np.isfinite(p).all()
+    assert np.allclose(r["t"], [25.0, 50.0], atol=0.3)                    # the body's 4.167 ms exchange
+    assert np.array(r["a"]).shape == (2, 95)

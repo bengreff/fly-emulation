@@ -45,6 +45,8 @@ LINKS = [
     ("ma_release_scale", "learning", ("neuromod",), "1 (per cell)", "pathogen-learning amine release factor", True),
     ("ma_release_scale_slow", "slow_signalling", ("neuromod",), "1 (per cell)",
      "DAF-7 on RIM/RIC amine release (daf7_effect)", True),
+    ("bath_amine_nM", "drugs", ("neuromod",), "nM (dict by amine)",
+     "exogenous 5-HT, DA, OA, TA in the body fluid (an experiment's bath drug)", True),
     ("afd_Tstar_shift_C", "slow_signalling", ("senses_chem",), "C", "AFD threshold reset (afd_tstar_*_frac)", True),
 ]
 # reads with no producer yet: what the default uses instead
