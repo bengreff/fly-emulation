@@ -133,7 +133,7 @@ Verdict: the entire worm has no vital signs that match yet, and food changes not
 - The intestine's Ca cycles irregularly at about 20 s, with the same peak times in every run, and it never
   completes an expulsion.
 - Food reaches the head and the four food sensors (about 3.4 pA into ADF, ASI, ASJ and NSM, derived from
-  `brain_layers.py:310`), but leaves every sign within 0.7 mV and 0.13 Hz.
+  `brain_layers.py:310`), but leaves every sign within 0.8 mV and 0.13 Hz (BWM -30.2 vs -30.9 mV).
 
 Inferred, not traced: the likely route for the missing pumps is a silent MC. The pump needs MC to drive pm4
 through the marginal cells (organs_pharynx), and the network sits at 0.1% of neurons above -20 mV (line 18).
