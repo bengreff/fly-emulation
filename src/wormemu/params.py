@@ -71,6 +71,7 @@ def _linked():
 LINKED = _linked()
 LINKED["env_default_temperature_C"] = "the experiment's temperature (BodyToBrain head temperature_C)"
 LINKED["ion_celsius"] = "the experiment's temperature (NEURON celsius)"
+LINKED["ph_sh_temp_K"] = "the worm's temperature (mech/temperature out['temperature_C'] + 273.15, the pharynx GHK)"
 # rows the catalog marks read that no current reads (brain.EK_MODS: the Ca and NCA currents use effective reversals)
 NOT_READ = {"ion_ena": "nca, the only Na current, uses its own +30 mV (baai_ena_nca_mV)",
             "ion_cao": "sets only NEURON's Nernst eca; every Ca current uses +60 mV (baai_eca_mV)",

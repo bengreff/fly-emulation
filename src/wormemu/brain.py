@@ -104,7 +104,8 @@ RATE_SUFFIX = {}                                         # mod suffix -> tempera
 # ek); kqt3 and the 5 Nicoletti mods read ek. Built here with (v - ek), so ion_ek reaches every K current (set on every
 # section, Brain._ions). The Ca (+60) and NCA (+30) literals stay: they are effective reversals, not Nernst potentials
 # (Ca currents rectify, GHK; NCA is a mixed cation leak), scan values of the port (baai_eca_mV, baai_ena_nca_mV), so
-# ion_cao, ion_ena and ion_celsius reach no current (params.NOT_READ).
+# ion_cao and ion_ena reach no current (params.NOT_READ); ion_celsius reaches only the c302 muscle mods (the others
+# take temperature as tadj, mech/temperature).
 EK_MODS = ("egl2", "egl36", "irk", "kcnl", "kvs1", "shk1", "shl1", "slo1_egl19", "slo1_unc2", "slo2_egl19", "slo2_unc2")
 EK_AS_PUBLISHED = -80.0                                  # literature_overrides off: the 11 mods' literal
 

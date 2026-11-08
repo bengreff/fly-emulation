@@ -350,7 +350,7 @@ class Mech:
     def reset(self):
         self.pumps_total, self.in_pump = 0, False
         self.phase, self.act = 0.0, np.zeros(self.n_pm)
-        self.v_prev = None
+        self.v_prev = self.T = None
         if self.form == "sherman2024":
             for s in self.sec.values():
                 s(0.5).v = self.q["ph_sh_v_l"]
@@ -384,6 +384,11 @@ class Mech:
             return {"out": {"pumps": done, "pharynx_activation": np.full(self.n_pm, a),
                             "pharynx_pumps_total": self.pumps_total}}
         q = self.q
+        T = ctx.outputs.get("temperature_C") if hasattr(ctx, "outputs") else None
+        if T is not None and T != self.T:   # the GHK Ca fluxes at the worm's temperature (row 25; else 295.65 K)
+            for n in PHARYNX_MUSCLES:
+                self.sec[n](0.5).sh_pharynx.temp_k = T + 273.15
+            self.T = T
         if self._ser is not None and getattr(self.brain.layers, "ma_c", None) is not None:
             k, ec50, gain = self._ser
             c = float(self.brain.layers.ma_c[k])
