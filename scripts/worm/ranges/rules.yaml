@@ -211,6 +211,7 @@ rules:
   - {re: "^dens_map_log10_", hard_row_unit: [-2, 2], basis: guessed_physical, why: "log10 scale on the published density: two decades either side keeps the three Nicoletti densities (4.3e-6 to 3.0e-4 S/cm2) below 0.03 S/cm2, far under the packing ceiling, and above a channel per cell (guessed edge)", source: "structure_rules.py; Nicoletti et al. 2024"}
   - {re: "^dens_map_tpm_slope$", hard_row_unit: [0, 2], basis: guessed_physical, why: "density proportional to (TPM + C)^b; b = 1 is protein in proportion to mRNA, and mRNA-to-protein slopes are not far above 1 (guessed edge 2)", source: "structure_rules.py"}
   - {re: "^dens_map_tpm_pseudocount$", hard_row_unit: [0.1, 1000], basis: guessed_physical, why: "a pseudo-count in TPM: from below CeNGEN's lowest threshold to above the TPM of most channel genes (guessed edges)", source: "structure_rules.py; Taylor et al. 2021 Cell"}
+  - {re: "^rec_des_recover_ratio$", hard_row_unit: [0.01, 1000], basis: guessed_physical, why: "recovery over onset time constant of desensitization; recovery 100x faster than onset or 1000x slower (minutes for a ms onset) is outside any receptor kinetics reported (guessed)", source: "wmodel Spec (mech/receptors.py)"}
   - {re: "^(morph_|wire_)", cls: structure, role: fixed}
   - {re: "^build_length_per_seg$", cls: numerics, role: fixed}
   - {re: "^build_", cls: construction, role: fixed}

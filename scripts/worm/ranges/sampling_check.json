@@ -1,240 +1,454 @@
 {
- "generated": "7 Nov 2026 13:20 CST (wranges)",
+ "generated": "7 Nov 2026 18:55 CST (wranges, merged main 0ef21b7: wmodel's glia K+ buffer fix and structure rules)",
  "joint": {
   "mode": "joint",
   "draws": 200,
-  "draws_breaking_any": 127,
-  "draws_breaking_default_worm": 85,
+  "draws_breaking_any": 116,
+  "draws_breaking_default_worm": 74,
   "by_constraint": {
-   "reversal_cation_between_EK_ENa": 65,
    "reversal_order_c302_muscle": 60,
-   "reversal_leak_between_EK_ENa": 31,
-   "tau_rise_lt_decay_mact": 24
+   "reversal_cation_between_EK_ENa": 57,
+   "reversal_leak_between_EK_ENa": 24,
+   "tau_rise_lt_decay_mact": 20
   },
   "default_worm_by_row": {
-   "reversal_cation_between_EK_ENa:met_E_mV": 65,
-   "reversal_leak_between_EK_ENa:glia_e_leak_mV": 17,
-   "reversal_leak_between_EK_ENa:sens_glia_e_leak_mV": 10,
-   "reversal_leak_between_EK_ENa:endo_e_leak_mV": 3,
+   "reversal_cation_between_EK_ENa:met_E_mV": 57,
+   "reversal_leak_between_EK_ENa:glia_e_leak_mV": 12,
+   "reversal_leak_between_EK_ENa:sens_glia_e_leak_mV": 11,
    "reversal_leak_between_EK_ENa:other_e_leak_mV": 1
   }
  },
  "run": {
+  "mode": "run",
   "seconds": 2.0,
   "envelope_mV": [
    -143.0,
    196.0
   ],
-  "passed": 17,
-  "failed": [
-   2,
-   4,
-   13
-  ],
-  "draws_rejected": 13,
+  "passed": 20,
+  "draws_rejected": 24,
   "worms": [
    {
     "seed": 1,
-    "used_seed": 1001,
-    "v_min": -75.65,
-    "v_max": 35.49,
-    "fail": {
-     "negative:gcamp_dff": 1
-    },
-    "wall_s": 40.3
+    "used_seed": 1,
+    "wall_s": 41.6,
+    "v_min": -76.4,
+    "v_max": 36.03,
+    "ok": true,
+    "fail": {},
+    "n_rejected": 0
    },
    {
     "seed": 2,
     "used_seed": 2,
-    "v_min": -384.46,
-    "v_max": 34.99,
-    "fail": {
-     "v_outside_reversal_envelope": 1,
-     "negative:gcamp_dff": 1
-    },
-    "wall_s": 39.9
+    "wall_s": 41.6,
+    "v_min": -81.96,
+    "v_max": 33.07,
+    "ok": true,
+    "fail": {},
+    "n_rejected": 0
    },
    {
     "seed": 3,
-    "used_seed": 2003,
-    "v_min": -76.07,
-    "v_max": 35.99,
+    "used_seed": 3003,
+    "wall_s": 43.7,
+    "v_min": -87.14,
+    "v_max": 45.8,
+    "ok": true,
     "fail": {},
-    "wall_s": 41.2
+    "n_rejected": 3
    },
    {
     "seed": 4,
     "used_seed": 4,
-    "v_min": -207.29,
-    "v_max": 44.34,
-    "fail": {
-     "v_outside_reversal_envelope": 1
-    },
-    "wall_s": 41.5
+    "wall_s": 41.8,
+    "v_min": -82.2,
+    "v_max": 40.84,
+    "ok": true,
+    "fail": {},
+    "n_rejected": 0
    },
    {
     "seed": 5,
-    "used_seed": 1005,
-    "v_min": -76.38,
-    "v_max": 36.12,
+    "used_seed": 5,
+    "wall_s": 41.7,
+    "v_min": -79.75,
+    "v_max": 32.41,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.4
+    "n_rejected": 0
    },
    {
     "seed": 6,
-    "used_seed": 6,
-    "v_min": -77.28,
-    "v_max": 35.34,
+    "used_seed": 4006,
+    "wall_s": 42.6,
+    "v_min": -81.85,
+    "v_max": 34.58,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.2
+    "n_rejected": 4
    },
    {
     "seed": 7,
     "used_seed": 7,
-    "v_min": -109.88,
-    "v_max": 46.05,
+    "wall_s": 42.0,
+    "v_min": -87.1,
+    "v_max": 44.93,
+    "ok": true,
     "fail": {},
-    "wall_s": 39.5
+    "n_rejected": 0
    },
    {
     "seed": 8,
-    "used_seed": 8,
-    "v_min": -88.53,
-    "v_max": 34.87,
+    "used_seed": 1008,
+    "wall_s": 42.2,
+    "v_min": -69.85,
+    "v_max": 35.82,
+    "ok": true,
     "fail": {},
-    "wall_s": 41.6
+    "n_rejected": 1
    },
    {
     "seed": 9,
     "used_seed": 9,
-    "v_min": -76.13,
-    "v_max": 35.69,
+    "wall_s": 43.0,
+    "v_min": -79.97,
+    "v_max": 36.38,
+    "ok": true,
     "fail": {},
-    "wall_s": 42.0
+    "n_rejected": 0
    },
    {
     "seed": 10,
     "used_seed": 10,
-    "v_min": -76.31,
-    "v_max": 35.7,
+    "wall_s": 42.7,
+    "v_min": -78.25,
+    "v_max": 35.53,
+    "ok": true,
     "fail": {},
-    "wall_s": 41.9
+    "n_rejected": 0
    },
    {
     "seed": 11,
-    "used_seed": 2011,
-    "v_min": -75.69,
-    "v_max": 35.65,
+    "used_seed": 5011,
+    "wall_s": 41.0,
+    "v_min": -82.09,
+    "v_max": 48.24,
+    "ok": true,
     "fail": {},
-    "wall_s": 43.9
+    "n_rejected": 5
    },
    {
     "seed": 12,
-    "used_seed": 2012,
-    "v_min": -75.19,
-    "v_max": 36.08,
+    "used_seed": 1012,
+    "wall_s": 40.8,
+    "v_min": -76.22,
+    "v_max": 36.07,
+    "ok": true,
     "fail": {},
-    "wall_s": 44.7
+    "n_rejected": 1
    },
    {
     "seed": 13,
     "used_seed": 13,
-    "v_min": -207.72,
-    "v_max": 37.98,
-    "fail": {
-     "v_outside_reversal_envelope": 1
-    },
-    "wall_s": 41.8
+    "wall_s": 40.8,
+    "v_min": -79.86,
+    "v_max": 35.03,
+    "ok": true,
+    "fail": {},
+    "n_rejected": 0
    },
    {
     "seed": 14,
-    "used_seed": 1014,
-    "v_min": -78.84,
-    "v_max": 48.76,
+    "used_seed": 2014,
+    "wall_s": 41.1,
+    "v_min": -78.31,
+    "v_max": 46.57,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.8
+    "n_rejected": 2
    },
    {
     "seed": 15,
-    "used_seed": 2015,
-    "v_min": -76.7,
-    "v_max": 35.31,
+    "used_seed": 15,
+    "wall_s": 42.3,
+    "v_min": -77.49,
+    "v_max": 37.7,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.5
+    "n_rejected": 0
    },
    {
     "seed": 16,
-    "used_seed": 16,
-    "v_min": -77.24,
-    "v_max": 41.87,
+    "used_seed": 1016,
+    "wall_s": 40.6,
+    "v_min": -96.63,
+    "v_max": 33.9,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.7
+    "n_rejected": 1
    },
    {
     "seed": 17,
-    "used_seed": 17,
-    "v_min": -76.44,
-    "v_max": 35.54,
+    "used_seed": 2017,
+    "wall_s": 43.9,
+    "v_min": -85.1,
+    "v_max": 36.42,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.2
+    "n_rejected": 2
    },
    {
     "seed": 18,
     "used_seed": 2018,
-    "v_min": -91.2,
-    "v_max": 41.87,
+    "wall_s": 41.9,
+    "v_min": -83.0,
+    "v_max": 47.25,
+    "ok": true,
     "fail": {},
-    "wall_s": 40.8
+    "n_rejected": 2
    },
    {
     "seed": 19,
-    "used_seed": 19,
-    "v_min": -69.54,
-    "v_max": 35.11,
+    "used_seed": 2019,
+    "wall_s": 43.1,
+    "v_min": -77.27,
+    "v_max": 36.43,
+    "ok": true,
     "fail": {},
-    "wall_s": 41.9
+    "n_rejected": 2
    },
    {
     "seed": 20,
-    "used_seed": 20,
-    "v_min": -76.57,
+    "used_seed": 1020,
+    "wall_s": 41.9,
+    "v_min": -77.14,
     "v_max": 35.69,
+    "ok": true,
     "fail": {},
-    "wall_s": 39.9
+    "n_rejected": 1
    }
   ]
  },
- "glia_fixed": [
-  {
-   "seed": 2,
-   "used_seed": 2,
-   "v_min": -77.38,
-   "v_max": 34.99,
-   "ok": true,
-   "toggles": {
-    "glia_kbuffer": "fixed"
-   }
+ "text": "**Joint constraints, 200 draws** (`sample.py joint 200`, no simulation, 18:44 CST): 74 of 200 break a constraint the default worm reads, each a guessed reversal outside [E_K, E_Na]: met_E_mV 57, glia_e_leak_mV 12, sens_glia_e_leak_mV 11, other_e_leak_mV 1; 42 more break only constraints on rows of other forms (c302 muscle, mact). The sampler redraws (seed + 1000 k) until a worm obeys them. **20 worms x 2 s** (`sample.py run 20 2`, Mac, one thread, 7 Nov 18:41-18:55 CST, 41-44 s wall each, on merged main 0ef21b7): 24 draws rejected on the way to 20; code-default forms (everything on, the structure rules included), no injected current, no body. Checks at every 1 ms read: voltages and Ca finite; voltages inside the hard reversal envelope [-143, 196] mV; Ca >= 0; activations in [0, 1]; concentration, store and count outputs >= 0. **20 of 20 pass.** Lowest voltage per worm -96.63 to -69.85 mV, highest 32.41 to 48.24 mV. At 13:12, before wmodel's glia K+ buffer fix (96c4541), 17 of 20 passed: seeds 2, 4 and 13 ran away to -384, -207 and -208 mV through that buffer; the same three seeds now reach -81.96, -82.2, -79.86 mV.",
+ "earlier_13_12": {
+  "run": {
+   "seconds": 2.0,
+   "envelope_mV": [
+    -143.0,
+    196.0
+   ],
+   "passed": 17,
+   "failed": [
+    2,
+    4,
+    13
+   ],
+   "draws_rejected": 13,
+   "worms": [
+    {
+     "seed": 1,
+     "used_seed": 1001,
+     "v_min": -75.65,
+     "v_max": 35.49,
+     "fail": {
+      "negative:gcamp_dff": 1
+     },
+     "wall_s": 40.3
+    },
+    {
+     "seed": 2,
+     "used_seed": 2,
+     "v_min": -384.46,
+     "v_max": 34.99,
+     "fail": {
+      "v_outside_reversal_envelope": 1,
+      "negative:gcamp_dff": 1
+     },
+     "wall_s": 39.9
+    },
+    {
+     "seed": 3,
+     "used_seed": 2003,
+     "v_min": -76.07,
+     "v_max": 35.99,
+     "fail": {},
+     "wall_s": 41.2
+    },
+    {
+     "seed": 4,
+     "used_seed": 4,
+     "v_min": -207.29,
+     "v_max": 44.34,
+     "fail": {
+      "v_outside_reversal_envelope": 1
+     },
+     "wall_s": 41.5
+    },
+    {
+     "seed": 5,
+     "used_seed": 1005,
+     "v_min": -76.38,
+     "v_max": 36.12,
+     "fail": {},
+     "wall_s": 40.4
+    },
+    {
+     "seed": 6,
+     "used_seed": 6,
+     "v_min": -77.28,
+     "v_max": 35.34,
+     "fail": {},
+     "wall_s": 40.2
+    },
+    {
+     "seed": 7,
+     "used_seed": 7,
+     "v_min": -109.88,
+     "v_max": 46.05,
+     "fail": {},
+     "wall_s": 39.5
+    },
+    {
+     "seed": 8,
+     "used_seed": 8,
+     "v_min": -88.53,
+     "v_max": 34.87,
+     "fail": {},
+     "wall_s": 41.6
+    },
+    {
+     "seed": 9,
+     "used_seed": 9,
+     "v_min": -76.13,
+     "v_max": 35.69,
+     "fail": {},
+     "wall_s": 42.0
+    },
+    {
+     "seed": 10,
+     "used_seed": 10,
+     "v_min": -76.31,
+     "v_max": 35.7,
+     "fail": {},
+     "wall_s": 41.9
+    },
+    {
+     "seed": 11,
+     "used_seed": 2011,
+     "v_min": -75.69,
+     "v_max": 35.65,
+     "fail": {},
+     "wall_s": 43.9
+    },
+    {
+     "seed": 12,
+     "used_seed": 2012,
+     "v_min": -75.19,
+     "v_max": 36.08,
+     "fail": {},
+     "wall_s": 44.7
+    },
+    {
+     "seed": 13,
+     "used_seed": 13,
+     "v_min": -207.72,
+     "v_max": 37.98,
+     "fail": {
+      "v_outside_reversal_envelope": 1
+     },
+     "wall_s": 41.8
+    },
+    {
+     "seed": 14,
+     "used_seed": 1014,
+     "v_min": -78.84,
+     "v_max": 48.76,
+     "fail": {},
+     "wall_s": 40.8
+    },
+    {
+     "seed": 15,
+     "used_seed": 2015,
+     "v_min": -76.7,
+     "v_max": 35.31,
+     "fail": {},
+     "wall_s": 40.5
+    },
+    {
+     "seed": 16,
+     "used_seed": 16,
+     "v_min": -77.24,
+     "v_max": 41.87,
+     "fail": {},
+     "wall_s": 40.7
+    },
+    {
+     "seed": 17,
+     "used_seed": 17,
+     "v_min": -76.44,
+     "v_max": 35.54,
+     "fail": {},
+     "wall_s": 40.2
+    },
+    {
+     "seed": 18,
+     "used_seed": 2018,
+     "v_min": -91.2,
+     "v_max": 41.87,
+     "fail": {},
+     "wall_s": 40.8
+    },
+    {
+     "seed": 19,
+     "used_seed": 19,
+     "v_min": -69.54,
+     "v_max": 35.11,
+     "fail": {},
+     "wall_s": 41.9
+    },
+    {
+     "seed": 20,
+     "used_seed": 20,
+     "v_min": -76.57,
+     "v_max": 35.69,
+     "fail": {},
+     "wall_s": 39.9
+    }
+   ]
   },
-  {
-   "seed": 4,
-   "used_seed": 4,
-   "v_min": -88.96,
-   "v_max": 44.34,
-   "ok": true,
-   "toggles": {
-    "glia_kbuffer": "fixed"
+  "glia_fixed": [
+   {
+    "seed": 2,
+    "used_seed": 2,
+    "v_min": -77.38,
+    "v_max": 34.99,
+    "ok": true,
+    "toggles": {
+     "glia_kbuffer": "fixed"
+    }
+   },
+   {
+    "seed": 4,
+    "used_seed": 4,
+    "v_min": -88.96,
+    "v_max": 44.34,
+    "ok": true,
+    "toggles": {
+     "glia_kbuffer": "fixed"
+    }
+   },
+   {
+    "seed": 13,
+    "used_seed": 13,
+    "v_min": -78.45,
+    "v_max": 37.98,
+    "ok": true,
+    "toggles": {
+     "glia_kbuffer": "fixed"
+    }
    }
-  },
-  {
-   "seed": 13,
-   "used_seed": 13,
-   "v_min": -78.45,
-   "v_max": 37.98,
-   "ok": true,
-   "toggles": {
-    "glia_kbuffer": "fixed"
-   }
-  }
- ],
- "text": "**Joint constraints, 200 draws** (`sample.py joint 200`, no simulation): 85 of 200 break a constraint the default worm reads, every one guessed against guessed: met_E_mV 65, glia_e_leak_mV 17, sens_glia_e_leak_mV 10, endo_e_leak_mV 3, other_e_leak_mV 1 (outside [E_K, E_Na]); 42 more break only constraints on rows of other forms (c302 muscle, mact). The sampler redraws (seed + 1000 k) until a worm obeys them. **20 worms x 2 s** (`sample.py run 20 2`, Mac via slot.py, 7 Nov 12:58-13:12 CST, about 41 s wall each): 13 draws rejected on the way to 20; code-default forms (everything on), no injected current, no body. Checks at every 1 ms read: voltages and Ca finite; voltages inside the hard reversal envelope [-143, 196] mV; Ca >= 0; activations in [0, 1]; concentration, store and count outputs >= 0. **17 of 20 pass.** (Seed 1 was first scored failing on gcamp_dff below 0, a false positive of the check: dF/F falls below rest; the check was corrected during the run.) Seeds 2, 4, 13 fall to -384, -207, -208 mV. The source is the glia K+ buffer (`glia_kbuffer = kir`, src/wormemu/mech/glia.py; `sample.py diag 2 2`: ADLR at -384 mV takes -146 pA from it). It drives each amphid neuron with a fixed current g_K x dE_K, not a conductance, so a hyperpolarisation lowers ending K+ and deepens itself; ending K+ may fall to 0.001 x bath, below the hard K+ window (1-30 mM). It runs away where glia_k_gleak_nS / (glia_k_volume_um3 x clearance rate) is large: 0.19-0.24 in the three, at most 0.06 in the other 17. With `glia_kbuffer = fixed` the same three draws stay inside (v_min -77, -89, -78 mV). A code form, listed for wmodel (docs/worm/night/2026-11-07_wranges.md); no range was changed for it."
+  ],
+  "text": "**Joint constraints, 200 draws** (`sample.py joint 200`, no simulation): 85 of 200 break a constraint the default worm reads, every one guessed against guessed: met_E_mV 65, glia_e_leak_mV 17, sens_glia_e_leak_mV 10, endo_e_leak_mV 3, other_e_leak_mV 1 (outside [E_K, E_Na]); 42 more break only constraints on rows of other forms (c302 muscle, mact). The sampler redraws (seed + 1000 k) until a worm obeys them. **20 worms x 2 s** (`sample.py run 20 2`, Mac via slot.py, 7 Nov 12:58-13:12 CST, about 41 s wall each): 13 draws rejected on the way to 20; code-default forms (everything on), no injected current, no body. Checks at every 1 ms read: voltages and Ca finite; voltages inside the hard reversal envelope [-143, 196] mV; Ca >= 0; activations in [0, 1]; concentration, store and count outputs >= 0. **17 of 20 pass.** (Seed 1 was first scored failing on gcamp_dff below 0, a false positive of the check: dF/F falls below rest; the check was corrected during the run.) Seeds 2, 4, 13 fall to -384, -207, -208 mV. The source is the glia K+ buffer (`glia_kbuffer = kir`, src/wormemu/mech/glia.py; `sample.py diag 2 2`: ADLR at -384 mV takes -146 pA from it). It drives each amphid neuron with a fixed current g_K x dE_K, not a conductance, so a hyperpolarisation lowers ending K+ and deepens itself; ending K+ may fall to 0.001 x bath, below the hard K+ window (1-30 mM). It runs away where glia_k_gleak_nS / (glia_k_volume_um3 x clearance rate) is large: 0.19-0.24 in the three, at most 0.06 in the other 17. With `glia_kbuffer = fixed` the same three draws stay inside (v_min -77, -89, -78 mV). A code form, listed for wmodel (docs/worm/night/2026-11-07_wranges.md); no range was changed for it."
+ }
 }

@@ -1,6 +1,6 @@
 unmatched: 0
 errors: 0
-clipped: 20
+clipped: 18
   kin_kqt3_aw: [0.163333, 1.47] -> [0.163333, 1] 1 (fraction)
   kin_kqt3_bw: [0.17, 1.53] -> [0.17, 1] 1 (fraction)
   kin_kqt3_as: [0.113333, 1.02] -> [0.113333, 1] 1 (fraction)
@@ -17,8 +17,6 @@ clipped: 20
   bwm_du_ek_mV: [-60, -20] -> [-60, -23] mV (reversal_K)
   ph_sh_exp2_hinf_dv: [-2, -0.5] -> [-2, -1] mV/e (row)
   ph_sh_gas_R: [8.314, 8.7] -> [8.31446, 8.68815] J/(mol K) (row)
-  pep_release_slope_mV: [1, 10] -> [1.5, 10] mV (voltage_slope)
-  ma_release_slope_mV: [1, 10] -> [1.5, 10] mV (voltage_slope)
   bwm_du_h_amp: [0.14, 1.26] -> [0.14, 1] 1 (fraction)
   bwm_du_h_k_mV: [1, 4] -> [1.5, 4] mV (voltage_slope)
 measured_outside_hard: 0
