@@ -19,8 +19,11 @@ the section's second moment averaged over bending directions).
 Pressure: the pseudocoelom's stiffness is mostly turgor (BODY.md: the bulk response is pressure-dominated, Worms
 under Pressure 2015). The hyperosmotic-shock fit of the same paper (core 76 kPa) is the depressurised end, so the
 core modulus is E_core(P) = E_depr + (E_ctrl - E_depr) * P / P_ctrl (inferred structure, linear between the two
-measured states). P is the constant body_pressure_kPa until B2's out['pressure_kPa'] can be passed at start-up;
-the driver's FEM is factorised once, so a pressure that changes during a run needs a refactorisation (Open).
+measured states). The worm has one pressure: pressure_link sets P to organs_other's body-fluid pressure at
+start-up (osmo_p_set_kPa in the template medium; the steady state in another medium) and P_ctrl to its set point,
+so body_pressure_kPa and body_pressure_ctrl_kPa are derived (params.LINKED) and E_core = body_E_core_kPa in the
+template medium (the same as the two old 100 kPa constants: only the ratio enters). The driver's FEM is
+factorised once, so a pressure that changes during a run needs a refactorisation (Open).
 
 Damping (body_damping = "backholm2013", the default): the worm is viscoelastic with a damping coefficient that
 falls as bending speed^-1 over two decades (Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528, measured). Here the
@@ -157,6 +160,27 @@ def ideal_bending_modulus(p: dict) -> float:
     c, h, m = p["body_frac_cuticle"], p["body_frac_hypodermis"], p["body_frac_muscle"]
     rho = np.linspace(0, 1, 200001)
     return float(np.trapezoid(profile(rho, p) * rho ** 3, rho) / np.trapezoid(rho ** 3, rho))
+
+
+LINKED = {"body_pressure_kPa": "organs_other's start-up pressure (osmo_p_set_kPa and the medium)",
+          "body_pressure_ctrl_kPa": "osmo_p_set_kPa (the control worm's pressure is the set point)"}
+
+
+def pressure_link(spec=None, osmo_form="canal", extra_mosm=0.0) -> dict:
+    """body_pressure_kPa and body_pressure_ctrl_kPa from organs_other's body fluid, for world_flags' p. The linear
+    volume-pressure law is valid while P >= 0 (the depressurised end is E_depr); below that P is held at 0."""
+    from wormemu import mech
+    from wormemu.mech import organs_other
+    q = mech.params_for(organs_other, spec) if spec is not None else {s.id: s.template for s in organs_other.SPECS}
+    return {"body_pressure_kPa": max(0.0, organs_other.steady_pressure_kPa(q, osmo_form, extra_mosm)),
+            "body_pressure_ctrl_kPa": float(q["osmo_p_set_kPa"])}
+
+
+def params_for(spec=None, osmo_form="canal", extra_mosm=0.0) -> dict:
+    """This worm's body-tissue numbers: its values over the templates, with the pressures linked."""
+    v = {} if spec is None else spec.values
+    return {**{s.id: float(v.get(s.id, s.template)) for s in SPECS},
+            **pressure_link(spec, osmo_form, extra_mosm)}
 
 
 def world_flags(toggles: dict | None, out_prefix: str, world: dict | None, p: dict | None = None) -> tuple[dict, dict]:

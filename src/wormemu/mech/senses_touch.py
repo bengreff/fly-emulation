@@ -96,6 +96,8 @@ SPECS = [
     # harsh and nose touch
     spec("harsh_n_channels", H, "channels per cell", 50, 10, 500, "guessed", "none opened",
          grain="per type", applies_to="PVD, FLP, ASH, OLQ, IL1"),
+    spec("nose_flp_channel_frac", H, "1", 0.5, 0.2, 1.0, "guessed", "FLP also has its head-body field, so its nose "
+         "patch carries this share of harsh_n_channels (the other nose cells all of them)", applies_to="FLPL, FLPR"),
     spec("harsh_g0", H, "kT", 10, 5, 20, "guessed", "as touch_g0", applies_to="PVD, FLP, ASH, OLQ, IL1"),
     spec("harsh_g1_per_um", H, "kT/um", 1.0, 0.1, 10, "guessed",
          "a tenth of touch_g1: harsh touch needs forces about ten times larger (Way & Chalfie 1989; "
@@ -219,7 +221,7 @@ class Mech:
                 if c in b.idx:
                     ci = add_cell(c)
                     patch_cell.append(ci); patch_sample.append(-1)
-                    n.append(p["harsh_n_channels"] * (0.5 if c.startswith("FLP") else 1.0))
+                    n.append(p["harsh_n_channels"] * (p["nose_flp_channel_frac"] if c.startswith("FLP") else 1.0))
                     g0.append(p["harsh_g0"]); g1.append(p["nose_g1_per_um"]); self.kind.append("nose")
         self.cells = cells
         self.kind = np.array(self.kind)

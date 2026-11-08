@@ -15,6 +15,7 @@ ENDCOMMENT
 
 NEURON {
     SUFFIX sh_pharynx
+    GLOBAL tadj
     NONSPECIFIC_CURRENT i
     RANGE g_l, v_l, v_na, v_k, g_cca1_na, p_cca1_ca, g_egl19_na, p_egl19_ca, g_exp2
     RANGE cm_A2, cm_v0, cm_dv, cmt_A1, cmt_A2, cmt_v0, cmt_dv, cmt_deact
@@ -33,6 +34,7 @@ UNITS {
 }
 
 PARAMETER {
+    tadj = 1                         : mech/temperature.py's pump factor on the gates (1 = T_ref)
     g_l = 0.057651      : mS/cm2
     v_l = -73           : mV
     v_na = 69           : mV
@@ -162,8 +164,8 @@ FUNCTION sig(x, A1, A2, x0, dx) {
 
 FUNCTION cn(g, ginf, tau) { LOCAL a, b
     : the code's Crank-Nicolson gate step (calcGateOpeningProb)
-    a = dt * ginf / tau
-    b = dt * (1 - ginf) / tau
+    a = dt * tadj * ginf / tau
+    b = dt * tadj * (1 - ginf) / tau
     cn = (a + (1 - 0.5 * (a + b)) * g) / (1 + 0.5 * (a + b))
 }
 

@@ -128,6 +128,15 @@ class Osmo:
         self.v = v_inf + (self.v - v_inf) * np.exp(-a * dt_s)
 
 
+def steady_pressure_kPa(q, form="canal", extra_mosm=0.0):
+    """Body pressure after equilibrating to a medium extra_mosm above the template's (the data model's start-up
+    state, passed to the FEM body; osmo_p_set_kPa exactly in the template medium)."""
+    o = Osmo(q, form)
+    for _ in range(200):                                   # 1 h steps; the slowest relaxation is about 5 h
+        o.step(3600.0, extra_mosm)
+    return float(o.P)
+
+
 class Mech:
     """Builds the passive non-neural cells and steps body fluid pressure and coelomocyte clearance."""
 

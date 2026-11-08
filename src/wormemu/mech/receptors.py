@@ -205,6 +205,11 @@ SPECS = [s for c in CLASSES for s in _class_specs(c, TABLE[c])] + [
          notes="worm NMR-1 Mg block unmeasured; the conserved pore asparagine makes it inferred by homology"),
     Spec("rec_mg_c_mM", M, "mM", 3.57, 2.0, 6.0, "Jahr and Stevens 1990 J Neurosci 10:3178 (vertebrate)",
          "published_fit", applies_to="NMDA-like (nmr) synapses"),
+    Spec("rec_des_recover_ratio", M, "1", 1.0, 0.5, 50.0, "recovery from desensitization is slower than its onset "
+         "for GLR-1 (SOL-1 slows it; Walker et al. 2006 PNAS, qualitative, not opened) and vertebrate AMPA and "
+         "nicotinic receptors (guessed); 1 = one time constant both ways", "guessed", grain="global",
+         applies_to="every desensitizing class (tau_des > 0)",
+         notes="tau of recovery = rec_<c>_tau_des_ms x this; one shared ratio, not one per class"),
     Spec("rec_nmj_lacr_share", M, "1", 0.5, 0.2, 0.8, "share of the NMJ ACh conductance on L-AChR (the rest ACR-16): "
          "both carry the evoked current (Touroutine et al. 2005 JBC; Francis et al. 2005), split not retrieved",
          "guessed", applies_to="neuromuscular junctions"),
@@ -250,7 +255,7 @@ def site_params(p, c, mode):
     q = {k: float(p[f"rec_{c}_{k}"]) for k in QUANTITIES}
     out = dict(mode=float(mode), tmax=float(p[f"rec_tmax_{lg}_uM"]) / 1000.0, ec50=q["ec50_uM"] / 1000.0,
                hill=q["hill"], tau_rise=q["tau_rise_ms"], tau_off=q["tau_off_ms"], tau_des=q["tau_des_ms"],
-               ss=q["ss_frac"], erev=q["erev_mV"], mg=0.0)
+               ss=q["ss_frac"], erev=q["erev_mV"], mg=0.0, des_rec_ratio=float(p.get("rec_des_recover_ratio", 1.0)))
     if c == "nmr":
         out.update(mg=float(p["rec_mg_mM"]), mgk=float(p["rec_mg_k_per_mV"]), mgc=float(p["rec_mg_c_mM"]))
     return out

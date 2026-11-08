@@ -361,11 +361,12 @@ class Mech:
         pv.gather(self._buf)
         return self._buf.as_numpy().copy()
 
-    def clock(self, food_od, dt):
-        """brain_layers.Layers.pharynx, verbatim: (activation, pumps completed this step)."""
+    def clock(self, food_od, dt, q10=1.0):
+        """brain_layers.Layers.pharynx, verbatim (the rate x temperature's pump factor, row 25): (activation, pumps
+        completed this step)."""
         p = self.q
         f = food_od / (food_od + p["pump_food_od0"])
-        rate = p["pump_rate_nofood_hz"] + (p["pump_rate_food_hz"] - p["pump_rate_nofood_hz"]) * f
+        rate = (p["pump_rate_nofood_hz"] + (p["pump_rate_food_hz"] - p["pump_rate_nofood_hz"]) * f) * q10
         self.phase += rate * dt / 1000.0
         done = int(self.phase)
         self.phase -= done
@@ -378,7 +379,8 @@ class Mech:
         if self.form == "off":
             return {"out": {"pumps": 0, "pharynx_activation": np.zeros(self.n_pm)}}
         if self.form == "clock":
-            a, done = self.clock(ctx.obs.get("head", {}).get("food_OD", 0.0), dt_ms)
+            a, done = self.clock(ctx.obs.get("head", {}).get("food_OD", 0.0), dt_ms,
+                                 ctx.outputs.get("q10", {}).get("pump", 1.0))
             return {"out": {"pumps": done, "pharynx_activation": np.full(self.n_pm, a),
                             "pharynx_pumps_total": self.pumps_total}}
         q = self.q

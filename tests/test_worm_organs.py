@@ -153,7 +153,7 @@ def test_pharynx_clock_form_is_brain_layers_pharynx():
     for k in range(6000):
         od = 0.5 if k < 3000 else 0.0
         a_old, n_old = Layers.pharynx(old, od, 1.0)
-        r = m.step(SimpleNamespace(obs={"head": {"food_OD": od}}), 1.0)["out"]
+        r = m.step(SimpleNamespace(obs={"head": {"food_OD": od}}, outputs={}), 1.0)["out"]
         assert r["pumps"] == n_old and float(r["pharynx_activation"][0]) == a_old
     assert m.pumps_total == old.pumps >= 9
 
@@ -213,7 +213,7 @@ def test_defecation_timer_form_is_brain_layers_defecation():
     n_exp = 0
     for _ in range(100000):
         b0, e0, x0 = Layers.defecation(old, 1.0)
-        r = m.step(SimpleNamespace(), 1.0)
+        r = m.step(SimpleNamespace(outputs={}), 1.0)
         assert np.array_equal(r["act_add"], b0) and np.array_equal(r["out"]["enteric_activation"], e0)
         assert r["out"]["expulsions"] == x0
         n_exp += x0

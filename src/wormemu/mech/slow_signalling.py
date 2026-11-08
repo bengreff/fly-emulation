@@ -15,8 +15,19 @@ daf7) at their steady state for the context when the set point is taken.
                                                                                    -> rec_glr down
     daf16      every neuron, starved (insulin falls, DAF-16 enters the nucleus) -> outputs daf16_nuclear (read by
                mech.learning as the starvation signal)
-    daf7       ASI, fed (DAF-7 TGF-beta expression follows food) -> outputs daf7 (its DAF-1 targets are not wired)
-    creb       every neuron, depol (CRH-1/CREB, activity-driven) -> outputs creb (no reader yet)
+    daf7       ASI, fed (DAF-7 TGF-beta expression follows food) -> outputs daf7, and through DAF-1 on RIM and RIC
+               their amine release x (1 + daf7_effect * mean ASI daf7) (outputs ma_release_scale_slow, read by
+               neuromod; daf7_effect 0 by default, neutral)
+    creb       every neuron, depol (CRH-1/CREB, activity-driven) -> outputs creb, and the gain of AFD's slow threshold
+               component below (creb_effect 0 by default, neutral)
+AFD threshold (the measured effect the CMK-1 stand-ins approximate): T*AFD resets toward the worm's temperature
+(outputs temperature_C, row 25) with Yu et al. 2014's two components, tau cmk1_fast_tau_min and cmk1_slow_tau_h:
+    X_c' = ((T - T*_0) - X_c)/tau_c,   outputs afd_Tstar_shift_C = f_fast X_fast + f_slow (1 + creb_effect creb_AFD)
+    X_slow, read by senses_chem (T* = sens_afd_Tstar_C + shift). T*_0 is sens_afd_Tstar_C (the cultivation
+    temperature; the data model sets it from the experiment's history). f_fast, f_slow are 0 by default (neutral:
+    the release stand-ins act instead); a fit that adopts them should drop the stand-ins (cmk1_*_effect 0).
+Every relaxation, the homeostatic integrators and the T* components run on temperature's enzyme time axis
+(dt x outputs q10 enzyme, row 25; 1 at T_ref).
 The release stand-ins for EGL-4 and CMK-1 are inferred: the measured effect is on the sensory neuron's transduction
 (AWC adaptation; AFD's threshold T*AFD), which lives in the sensory model; the module also exports the states
 (outputs slow_states) for it. Form: states (default) / off. The old lumped layer (brain_layers.slow_gain, a slow AWC
@@ -99,6 +110,16 @@ SPECS = [
     _s("daf7_tau_h", M, "h", 6.0, 1.0, 24.0, "daf-7 expression in ASI follows food over hours (Ren et al. 1996 "
        "Science 274:1389, qualitative)", "guessed", "ASIL, ASIR"),
     _s("creb_tau_h", M, "h", 2.0, 0.5, 8.0, "CRH-1/CREB activation by sustained activity", "guessed", "every neuron"),
+    _s("daf7_effect", M, "1", 0.0, -0.9, 0.0, "RIM and RIC amine release change at full ASI DAF-7 (DAF-1 acts in RIM "
+       "and RIC; daf-7 loss raises tyramine and octopamine signalling: Greer et al. 2008 Cell Metab 8:118, not "
+       "opened); 0 = neutral", "guessed", "RIML, RIMR, RICL, RICR", role="gap"),
+    _s("creb_effect", M, "1", 0.0, -1.0, 1.0, "gain of AFD's slow T* component at full CRH-1/CREB (CREB acts in AFD "
+       "for thermotaxis: Nishida et al. 2011 EMBO Rep 12:855, not opened); 0 = neutral", "guessed", "AFDL, AFDR",
+       role="gap"),
+    _s("afd_tstar_fast_frac", M, "1", 0.0, 0.0, 1.0, f"{YU}: fraction of a temperature step the fast component "
+       "moves T*AFD; 0 = neutral (the release stand-in acts)", "guessed", "AFDL, AFDR", role="gap"),
+    _s("afd_tstar_slow_frac", M, "1", 0.0, 0.0, 1.0, f"{YU}: the slow component's fraction (fast + slow about 1 for "
+       "a full reset); 0 = neutral", "guessed", "AFDL, AFDR", role="gap"),
     _s("homeo_unc2_tau_h", H, "h", 3.0, 1.0, 10.0, U2, "inferred", "every neuron",
        notes="1 h: no change, > 2 h: a fall; 3 h is the integrator time at a 100% Ca error"),
     _s("homeo_egl19_tau_h", H, "h", 6.0, 1.0, 24.0, f"{OL}: channels differ in tau_i; guessed", "guessed",
@@ -131,6 +152,14 @@ class Mech:
             k = mech.RECEPTOR_CLASSES.index("glr")
             for _, _, post, c in brain.wsyn:
                 glr[post] |= c == k
+        self.dafr = np.zeros(self.n, bool)               # DAF-1's amine cells (DAF-7 targets)
+        self.dafr[[idx[c] for c in ("RIML", "RIMR", "RICL", "RICR") if c in idx]] = True
+        self.afd = np.zeros(self.n, bool)
+        self.afd[[idx[c] for c in ("AFDL", "AFDR") if c in idx]] = True
+        from wormemu import mech
+        from wormemu.mech import senses_chem
+        self.tstar0 = float(mech.params_for(senses_chem, brain.spec)["sens_afd_Tstar_C"]) \
+            if getattr(brain, "spec", None) is not None else 20.0
         self.mask = {}
         for pid, cells, _, _ in PATHWAYS:
             if cells is None:
@@ -152,6 +181,7 @@ class Mech:
         self.m = {c: np.zeros(self.n) for c in HOMEO_CHANNELS}
         self.d = {c: np.ones(self.n) for c in HOMEO_CHANNELS}
         self.ih = np.zeros(self.n)
+        self.X = {"fast": 0.0, "slow": 0.0}             # T*AFD components, C
 
     def _setpoint(self, v, ca, dt):
         if self.v0 is not None:
@@ -176,6 +206,7 @@ class Mech:
         ready = self._setpoint(v, ca, dt_ms)
         if not ready:
             return res
+        dte = dt_ms * ctx.outputs.get("q10", {}).get("enzyme", 1.0)        # row 25's enzyme time axis
         if self.f == "states":
             e = ctx.outputs.get("energy_fraction")
             fed = 1.0 if e is None else float(np.clip(e, 0.0, 1.0))
@@ -193,19 +224,31 @@ class Mech:
                 S = self.S[pid]
                 if first and kind in ("starved", "fed"):     # context states start at their steady state
                     S[m] = inp[kind][m]
-                S[m] = relax(S[m], inp[kind][m], tau[pid], dt_ms)
+                S[m] = relax(S[m], inp[kind][m], tau[pid], dte)
                 if target is not None:
                     g[target] = g.get(target, 1.0) * (1.0 + p[f"{pid}_effect"] * S)
             out["daf16_nuclear"] = self.S["daf16"].copy()
             out["creb"] = self.S["creb"].copy()
             out["daf7"] = self.S["daf7"].copy()
+            asi = self.mask["daf7"]
+            d7 = float(self.S["daf7"][asi].mean()) if asi.any() else 0.0
+            if p["daf7_effect"] != 0.0:
+                out["ma_release_scale_slow"] = np.where(self.dafr, 1.0 + p["daf7_effect"] * d7, 1.0)
+            T = float(ctx.outputs.get("temperature_C", self.tstar0))
+            for c, tc in (("fast", tau["cmk1_fast"]), ("slow", tau["cmk1_slow"])):
+                self.X[c] = float(relax(self.X[c], T - self.tstar0, tc, dte))
+            cr = float(self.S["creb"][self.afd].mean()) if self.afd.any() else 0.0
+            shift = p["afd_tstar_fast_frac"] * self.X["fast"] + \
+                p["afd_tstar_slow_frac"] * (1.0 + p["creb_effect"] * cr) * self.X["slow"]
+            if shift != 0.0:
+                out["afd_Tstar_shift_C"] = shift
             out["slow_states"] = {pid: float(self.S[pid][self.mask[pid]].max()) if self.mask[pid].any() else 0.0
                                   for pid, *_ in PATHWAYS}
         if self.fh == "oleary":
             err = (self.c0 - ca) / self.c0 * self.neuron
             for c in HOMEO_CHANNELS:
-                self.m[c] += err * dt_ms / (3.6e6 * p[f"homeo_{c}_tau_h"])
-                self.d[c] = np.clip(relax(self.d[c], 1.0 + self.m[c], 3.6e6 * p["homeo_tau_g_h"], dt_ms),
+                self.m[c] += err * dte / (3.6e6 * p[f"homeo_{c}_tau_h"])
+                self.d[c] = np.clip(relax(self.d[c], 1.0 + self.m[c], 3.6e6 * p["homeo_tau_g_h"], dte),
                                     p["homeo_d_lo"], p["homeo_d_hi"])
                 g[f"dens_{c}"] = self.d[c].copy()
             out["homeo"] = {f"d_{c}_{k}": float(f(self.d[c][self.neuron])) for c in HOMEO_CHANNELS

@@ -113,6 +113,9 @@ SPECS: list[Spec] = [
     S("touch_f0_uN", "sens_touch_gentle", "uN", 1, 0.05, 20),
     S("touch_tau_adapt_ms", "sens_touch_gentle", "ms", 50, 10, 200, lit="J7"),
     S("touch_adapt_frac", "sens_touch_gentle", "1", 0.9, 0, 1),
+    S("touch_ap_split_frac", "sens_touch_gentle", "body length", 0.5, 0.4, 0.6, applies_to="ALM, AVM | PLM, PVM",
+      notes="force ahead of this point drives the anterior touch cells, behind it the posterior ones (their fields "
+            "meet near mid-body; guessed)"),
     S("harsh_gain_pA", "sens_touch_harsh", "pA", 30, 0, 200, applies_to="PVD, FLP, ASH, OLQ, IL1"),
     S("harsh_f0_uN", "sens_touch_harsh", "uN", 10, 0.5, 200),
     S("tap_gain_pA", "sens_tap", "pA", 30, 0, 200, applies_to="ALM, AVM, PLM, PVM"),
@@ -133,8 +136,9 @@ SPECS: list[Spec] = [
     S("mact_tau_decay_ms", "muscle_activation", "ms", 100, 50, 200, lit="F9"),
     # neuromodulation (well mixed: one pseudocoelomic concentration per ligand)
     S("pep_release_nM_per_s", "peptides", "nM/s per releasing neuron", 0.05, 0.0001, 10, grain="family",
-      applies_to="each ligand gene", notes="released at rate x sigmoid((V - Vth_release)/5 mV)"),
+      applies_to="each ligand gene", notes="released at rate x sigmoid((V - Vth_release)/slope)"),
     S("pep_release_vth_mV", "peptides", "mV", -30, -50, 0),
+    S("pep_release_slope_mV", "peptides", "mV", 5, 2, 10, notes="the release sigmoid's slope"),
     S("pep_clear_tau_s", "peptides", "s", 100, 10, 600, lit="D4"),
     S("pep_ec50_nM", "peptides", "nM", 10, 0.0001, 500, grain="pairing", applies_to="each ligand-GPCR pair",
       notes="measured per pair in Beets et al. 2023 (all <= 500 nM by the pair list's inclusion rule); the per-pair "
@@ -144,6 +148,7 @@ SPECS: list[Spec] = [
     S("ma_release_nM_per_s", "monoamines", "nM/s per releasing neuron", 1, 0.001, 100, grain="family",
       applies_to="5-HT, DA, TA, OA"),
     S("ma_release_vth_mV", "monoamines", "mV", -30, -50, 0),
+    S("ma_release_slope_mV", "monoamines", "mV", 5, 2, 10, notes="the release sigmoid's slope"),
     S("ma_clear_tau_s", "monoamines", "s", 1, 0.1, 10, lit="D5"),
     S("ma_ec50_nM", "monoamines", "nM", 1000, 10, 100000, grain="pairing", applies_to="each transmitter-receptor pair",
       notes="MOD-1 and LGC-55 EC50 measured (param_ranges D6, D7); others guessed"),
@@ -310,7 +315,8 @@ class Layers:
         f = np.asarray(obs["contact_force_uN"], float)
         s = np.linspace(0, 1, len(f))
         if "sens_touch_gentle" in self.on and f.size:
-            for cells, sel in ((TOUCH_ANT, s < 0.5), (TOUCH_POST, s >= 0.5)):
+            ap = p["touch_ap_split_frac"]
+            for cells, sel in ((TOUCH_ANT, s < ap), (TOUCH_POST, s >= ap)):
                 u = f[sel].max() / p["touch_f0_uN"] if sel.any() else 0.0
                 y = self._adapt(("touch", cells[0]), u, p["touch_tau_adapt_ms"], p["touch_adapt_frac"], dt)
                 add({c: 1 for c in cells}, p["touch_gain_pA"] * y)
@@ -351,7 +357,7 @@ class Layers:
                 continue
             release, receptor, (ec50, lig) = data
             c = getattr(self, conc)
-            r = _sig((v - p[vth]) / 5.0) @ release * dt / 1000.0
+            r = _sig((v - p[vth]) / p[f"{key}_release_slope_mV"]) @ release * dt / 1000.0
             c = c + r - c * dt / (1000.0 * p[tau])
             setattr(self, conc, c)
             occ = c[lig] / (c[lig] + ec50)                # per pair, Hill 1

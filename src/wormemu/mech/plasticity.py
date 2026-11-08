@@ -154,6 +154,8 @@ def numpy_reference(vpre, dt, w, rel, rec, v0=-60.0):
         tau_r = rec["tau_off"] + (rec["tau_rise"] - rec["tau_off"]) * a
         if rec["tau_des"] > 0:
             tau_d, dinf = rec["tau_des"], r * (1 - rec["ss"])
+            if dinf < d:
+                tau_d = rec["tau_des"] * rec.get("des_rec_ratio", 1.0)
         else:
             tau_d, dinf = 1e9, 0.0
         F = w["F1"] + (1 - w["F1"]) * cF / (cF + w["KF"])

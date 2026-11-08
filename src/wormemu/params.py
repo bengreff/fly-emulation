@@ -50,7 +50,8 @@ def role_of(label: str, explicit: str = "") -> str:
 
 def _code_specs():
     from wormemu import brain_layers, mech
-    return {s.id: s for s in list(brain_layers.SPECS) + mech.all_specs()}
+    from wormemu.body import layers
+    return {s.id: s for s in list(brain_layers.SPECS) + mech.all_specs() + list(layers.SPECS)}
 
 
 def _transform(lo, hi, prior):
@@ -59,6 +60,32 @@ def _transform(lo, hi, prior):
     if not (np.isfinite(lo) and np.isfinite(hi)) or hi <= lo:
         return "fixed"
     return "log" if lo > 0 else "logit"
+
+
+def _linked():
+    """Numbers another mechanism's state sets (interconnect links; not free)."""
+    from wormemu.body import layers
+    return dict(layers.LINKED)
+
+
+LINKED = _linked()
+LINKED["env_default_temperature_C"] = "the experiment's temperature (BodyToBrain head temperature_C)"
+LINKED["ion_celsius"] = "the experiment's temperature (NEURON celsius)"
+# rows the catalog marks read that no current reads (brain.EK_MODS: the Ca and NCA currents use effective reversals)
+NOT_READ = {"ion_ena": "nca, the only Na current, uses its own +30 mV (baai_ena_nca_mV)",
+            "ion_cao": "sets only NEURON's Nernst eca; every Ca current uses +60 mV (baai_eca_mV)",
+            "pump_vol_neuron_um3": "a brain's neurons take their hoc morphology's volume (scan; mech/pumps)"}
+
+
+def _code_why(s):
+    """'' when the default model reads this code Spec, else why not."""
+    from wormemu import brain_layers, mech
+    if s in brain_layers.SPECS:
+        on = {t[0]: t[3] for m in mech.modules() for t in m.MECHANISMS}
+        form = on.get(s.mechanism, "on")
+        return "" if form == "on" else f"other form only ({s.mechanism} is {form} by default)"
+    on = {t[0]: t[3] for m in mech.modules() for t in m.MECHANISMS}
+    return "" if mech.is_on(on.get(s.mechanism, "on")) else f"toggle {s.mechanism} off by default"
 
 
 @lru_cache(maxsize=4)
@@ -89,10 +116,16 @@ def catalog(rules: bool = True) -> pd.DataFrame:
                     n_elements=int(c.n_elements) if pd.notna(c.n_elements) else 1, lo=lo, hi=hi,
                     transform=_transform(lo, hi, prior), origin=c.origin, used_by_code=str(c.used_by_code))
         why = ("" if base["used_by_code"] == "yes" else base["used_by_code"].split(":")[0])
+        if why == "hard-coded" and s is not None:     # a hidden constant made a Spec since the catalog was built
+            why = _code_why(s)
+        if c.id in NOT_READ:
+            why = f"not read: {NOT_READ[c.id]}"
         if c.id in replaced:
             why = "replaced by structure_rules"
         elif rules and c.id in sr.ABSORBED and c.label not in SCAN_LABELS:
             why = f"absorbed into {sr.ABSORBED[c.id]} (only the product enters)"
+        elif c.id in LINKED:
+            why = f"linked: {LINKED[c.id]}"
         t = led.values(c.id) if c.id in par.index else None
         if t is not None and base["n_elements"] > 1 and why == "":
             gl = t[~t.label.isin(SCAN_LABELS)]
@@ -121,6 +154,10 @@ def catalog(rules: bool = True) -> pd.DataFrame:
         why = "" if mech.is_on(on.get(s.mechanism, "on")) else f"toggle {s.mechanism} off by default"
         if not rules and s.mechanism == sr.M:
             why = "structure_rules off"
+        if s.id in LINKED:
+            why = f"linked: {LINKED[s.id]}"
+        if s.id in NOT_READ:
+            why = f"not read: {NOT_READ[s.id]}"
         add(id=s.id, pid=s.id, element=None, role=role, active=role in ("rule", "gap") and why == "",
             inactive_why=why, mechanism=s.mechanism, plan_row=np.nan, unit=s.unit, grain=s.grain, n_elements=1,
             template=float(s.template), lo=float(s.lo), hi=float(s.hi), transform=_transform(s.lo, s.hi, ""),

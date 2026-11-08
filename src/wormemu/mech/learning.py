@@ -26,7 +26,8 @@ import numpy as np
 from wormemu.brain_layers import Spec
 from wormemu.mech import slow_signalling as SS
 
-SET = {s.id: s.template for s in SS.SPECS if s.id in ("slow_set_s", "slow_act_dv_mV")}   # shared rule
+SET = {s.id: s.template for s in SS.SPECS if s.id in ("slow_set_s", "slow_act_dv_mV")}   # shared rule (templates;
+# a Mech reads this worm's values of the two, so the shared numbers stay one number)
 
 MECHANISMS = [
     ("associative", "Slow associative states: salt (ASER, starvation), thermotaxis (AFD, starvation), pathogen "
@@ -71,6 +72,9 @@ class Mech:
         self.p, self.brain = params, brain
         self.n = len(brain.cell_names)
         self.cells = {pid: [brain.idx[c] for c in cells if c in brain.idx] for pid, cells, _, _ in PARADIGMS}
+        from wormemu import mech
+        sp = getattr(brain, "spec", None)
+        self.set = SET if sp is None else {k: float(mech.params_for(SS, sp)[k]) for k in SET}
         self.reset()
 
     def reset(self):
@@ -82,7 +86,7 @@ class Mech:
         self.t += dt_ms
         if self.v0 is None:
             self.vsum += ctx.v * dt_ms
-            if self.t >= 1000.0 * SET["slow_set_s"]:
+            if self.t >= 1000.0 * self.set["slow_set_s"]:
                 self.v0 = self.vsum / self.t
             return {}
         o = ctx.outputs
@@ -92,7 +96,7 @@ class Mech:
             e = o.get("energy_fraction")
             starved = 0.0 if e is None else float(np.clip(1.0 - e, 0.0, 1.0))
         ctxs = {"starved": starved, "pathogen": float(np.clip(o.get("pathogen_exposure", 0.0), 0.0, 1.0))}
-        a = np.clip((ctx.v - self.v0) / SET["slow_act_dv_mV"], 0.0, 1.0)
+        a = np.clip((ctx.v - self.v0) / self.set["slow_act_dv_mV"], 0.0, 1.0)
         g = {"release": np.ones(self.n)}
         ms = np.ones(self.n)
         for pid, _, c, target in PARADIGMS:
@@ -100,8 +104,9 @@ class Mech:
             act = float(a[ix].mean()) if ix and c == "starved" else 1.0
             drive = act * ctxs[c]
             A = self.A[pid]
-            A += dt_ms / 6e4 * (drive * (1 - A) / p[f"assoc_{pid}_learn_tau_min"]
-                                - A / p[f"assoc_{pid}_forget_tau_min"])
+            phi = ctx.outputs.get("q10", {}).get("enzyme", 1.0)
+            A += dt_ms * phi / 6e4 * (drive * (1 - A) / p[f"assoc_{pid}_learn_tau_min"]
+                                      - A / p[f"assoc_{pid}_forget_tau_min"])
             self.A[pid] = A = float(np.clip(A, 0.0, 1.0))
             f = 1.0 + p[f"assoc_{pid}_effect"] * A
             if target == "release":

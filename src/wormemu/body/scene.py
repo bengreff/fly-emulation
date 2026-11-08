@@ -35,6 +35,8 @@ from dataclasses import dataclass, field as dc_field
 
 import numpy as np
 
+BODY_LENGTH_MM = 1.0             # the FEM body at --scale worm_1mm (run_body.cpp: 1 length unit = 1 mm / rest length)
+
 HEAD_VERTEX = 102  # Worm::mLocalContourIndex[0] (data/worm.meta line 6), the point upstream's gradient samples
 TAIL_VERTEX = 173  # Worm::mEndEffectorIndex[1] (data/worm.meta line 5), the tail tip (s = 1.000 at rest)
 L_SIM = 0.6276  # rest length in sim units (measured from the mesh, metaworm.Frame)
@@ -91,7 +93,9 @@ PRESETS: dict[str, dict[str, Param]] = {
     },
 }
 PARAMS: dict[str, Param] = {
-    "mm_per_body_length": Param(1.0, "mm", "measured", 0.9, 1.2, "ledger worm length (adult hermaphrodite)"),
+    # one body length: the FEM body's own (run_body.cpp --scale worm_1mm: the body is 1.0 mm; mw_worm_length)
+    "mm_per_body_length": Param(BODY_LENGTH_MM, "mm", "derived", 0.9, 1.2, "the FEM body's length at the worm_1mm "
+                                "scale (third_party/metaworm/driver/run_body.cpp; ledger mw_worm_length)"),
 }
 
 

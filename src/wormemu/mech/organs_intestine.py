@@ -107,6 +107,8 @@ SPECS = [
              "gives a ~12 s period; range guessed. (Attempt 1, fitted on the lone int9 cell: 0.023.)"),
     # IP3 production and degradation
     _s("int_ip3_tau_s", "s", 7.14, 2.0, 20.0, "Ermentrout LiRinzel.ode tau_ip3 (astrocyte); worm value guessed"),
+    _s("int_ca_rest_uM", "uM", 0.1, 0.05, 0.2, LR, notes="resting cytosolic Ca: the start value and the PLC "
+       "baseline (Ca-stimulated PLC adds only above it); guessed, a usual resting level", applies=_C),
     _s("int_ip3_rest_uM", "uM", 0.348, 0.2, 0.355, ESP + "; " + LR, label="inferred", notes="basal PLC-gamma rate x "
        "tau: the resting IP3 of the non-pacemaker cells, kept below Li-Rinzel's oscillation onset (~0.355 uM) so they "
        "are excitable, not oscillating; fitted with a2 to Espelt 2005's period and velocity (attempt 1 guess: 0.30)"),
@@ -226,7 +228,7 @@ class Intestine:
 
     def reset(self):
         q = self.q
-        self.c = np.full(len(INT_CELLS), 0.1)
+        self.c = np.full(len(INT_CELLS), q["int_ca_rest_uM"])
         self.p = self.p_rest.copy()
         self.h = q["int_lr_d2_uM"] * (self.p + q["int_lr_d1_uM"]) / (self.p + q["int_lr_d3_uM"])
         self.h = self.h / (self.h + self.c)                   # h at steady state for c
@@ -245,8 +247,8 @@ class Intestine:
         a2 = q["int_lr_a2_per_uM_s"]
         q2 = q["int_lr_d2_uM"] * (p + q["int_lr_d1_uM"]) / (p + q["int_lr_d3_uM"])
         tau = q["int_ip3_tau_s"]
-        plc = self.p_rest / tau + q["int_plc_ca_uM_per_s"] * (_hill(c, q["int_plc_ca_k_uM"], q["int_plc_ca_hill"])
-                                                            - _hill(0.1, q["int_plc_ca_k_uM"], q["int_plc_ca_hill"]))
+        k, n = q["int_plc_ca_k_uM"], q["int_plc_ca_hill"]
+        plc = self.p_rest / tau + q["int_plc_ca_uM_per_s"] * (_hill(c, k, n) - _hill(q["int_ca_rest_uM"], k, n))
         dc = -j_chan - j_pump - j_leak + k_ca * (self.L @ c)
         dh = a2 * q2 * (1.0 - h) - a2 * c * h
         dp = plc - p / tau + k_ip3 * (self.L @ p)
@@ -439,13 +441,14 @@ class Mech:
     def step(self, ctx, dt_ms):
         if self.form == "off":
             return {"out": {"expulsions": 0, "enteric_activation": np.zeros(len(ENTERIC_MUSCLES))}}
+        qd = ctx.outputs.get("q10", {}).get("dmp_clock", 1.0)     # row 25: the clock on temperature's time axis
         if self.form == "timer":
-            boost, ent, n_exp = self.timer(dt_ms)
+            boost, ent, n_exp = self.timer(dt_ms * qd)
             self.exp_total += n_exp
             return {"act_add": boost, "out": {"expulsions": n_exp, "enteric_activation": ent,
                                               "expulsions_total": self.exp_total}}
         q, dt_s = self.q, dt_ms / 1000.0
-        c = self.gut.step(dt_s)
+        c = self.gut.step(dt_s * qd)
         I = np.zeros(self.n)
         out = {"intestine_ca_uM": c.copy(), "intestine_ip3_uM": self.gut.p.copy()}
         if self.pboc == "on":

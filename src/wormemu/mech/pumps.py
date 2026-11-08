@@ -6,13 +6,16 @@ Ported: the Luo & Rudy 1994 (Circ Res 74:1071) Na/K pump, the standard form reus
 one net outward charge and one ATP per cycle (3 Na out, 2 K in). C. elegans has the pump (EAT-6 alpha subunit,
 Davis et al. 1995), but no per-cell density is published: I_max per neuron and per muscle are guessed.
 
-Lumped per cell (every cell of ctx.v: the neurons and the brain's muscles), one [Na]i state in a guessed volume:
+Lumped per cell (every cell of ctx.v: the neurons and the brain's muscles), one [Na]i state in the cell's volume:
   d[Na]i/dt = (3 I_p,rest + g_Na (V - V0)^+ - 3 I_p) / (F vol),
 V0 the cell's mean voltage over the first pump_v0_ms of a run (its rest in this network), I_p,rest = I_p at
 ([Na]rest, V0). The resting influx is set to balance the resting pump, so at rest nothing changes; C. elegans
 neurons have no voltage-gated Na+ channels, so the activity load is a guessed Na-carrying conductance (cation
 channels, nAChRs) per mV above rest. Injected current: -(I_p - I_p,rest), the change of the pump current from rest
 (the fitted leaks already contain the resting pump), so a load gives a pump after-hyperpolarisation.
+A neuron's volume is its hoc morphology's (scan; 13 to 856 um3), and its I_max and g_Na scale with its membrane area,
+the templates being the median neuron's (a density x area rule); the muscles keep the per-cell values (the brain's
+muscle is a stand-in cylinder).
 Outputs: out['na_i_mM'], out['pump_current_pA'] (injected), out['pump_atp_J_per_d'] (all cells),
 out['pump_atp_excess_J_per_d'] (above rest; mech.metabolism adds it to somatic maintenance).
 
@@ -44,7 +47,8 @@ def _s(pid, unit, v, lo, hi, src, label="guessed", applies="neurons and muscles"
 
 SPECS = [
     _s("pump_imax_neuron_pA", "pA", 10.0, 1.0, 50.0, "no C. elegans pump density published (EAT-6, Davis et al. "
-       "1995)", applies="neurons", notes="maximal pump current per neuron; guessed so [Na]i recovers in ~10-20 s"),
+       "1995)", applies="neurons", notes="maximal pump current of the median-area neuron (others scale with area); "
+       "guessed so [Na]i recovers in ~10-20 s"),
     _s("pump_imax_muscle_pA", "pA", 100.0, 10.0, 500.0, "no C. elegans pump density published", applies="muscles",
        notes="maximal pump current per muscle cell; guessed (volume ratio x the neuron's density)"),
     _s("pump_km_nai_mM", "mM", 10.0, 5.0, 20.0, LR94, "published_fit", grain="global",
@@ -59,11 +63,12 @@ SPECS = [
     _s("pump_na_rest_mM", "mM", 10.0, 5.0, 20.0, "typical cytosolic Na+ (mammalian neurons 5-15 mM)", "inferred",
        grain="global", notes="resting [Na]i; no C. elegans measurement found"),
     _s("pump_vol_neuron_um3", "um3", 100.0, 20.0, 500.0, "soma 2-3 um across plus neurite (WormAtlas)",
-       applies="neurons", notes="volume [Na]i fills; guessed"),
+       applies="neurons", notes="volume [Na]i fills; guessed. Used only without a brain's morphology (the numpy "
+       "reference); a brain's neurons take their own hoc volume"),
     _s("pump_vol_muscle_um3", "um3", 3000.0, 1000.0, 10000.0, "body-wall muscle cell ~100 x 10 x 3 um (WormAtlas)",
        applies="muscles", notes="guessed"),
-    _s("pump_gna_neuron_nS", "nS", 0.2, 0.02, 2.0, "this model", applies="neurons", notes="Na-carrying conductance "
-       "per mV of depolarisation above rest; guessed"),
+    _s("pump_gna_neuron_nS", "nS", 0.2, 0.02, 2.0, "this model", applies="neurons",
+       notes="the median-area neuron's Na-carrying conductance per mV of depolarisation above rest; guessed"),
     _s("pump_gna_muscle_nS", "nS", 2.0, 0.2, 20.0, "this model (nAChR and leak Na entry)", applies="muscles",
        notes="guessed"),
     _s("pump_atp_kJ_per_mol", "kJ/mol", 55.0, 45.0, 65.0, "cytosolic free energy of ATP hydrolysis, ~50-60 kJ/mol",
@@ -81,13 +86,19 @@ def defaults():
 class Pump:
     """Luo-Rudy pump current and the lumped [Na]i per cell (numpy reference)."""
 
-    def __init__(self, q, muscle):
+    def __init__(self, q, muscle, geom=None):
+        """geom: (volume um3, membrane area um2) per cell from the morphology, or None (the per-cell templates)."""
         self.q = q
         mus = np.asarray(muscle, bool)
         pick = lambda a, b: np.where(mus, q[b], q[a])
         self.imax = pick("pump_imax_neuron_pA", "pump_imax_muscle_pA")
         self.vol = pick("pump_vol_neuron_um3", "pump_vol_muscle_um3")
         self.gna = pick("pump_gna_neuron_nS", "pump_gna_muscle_nS")
+        if geom is not None and (~mus).any():
+            vol, area = (np.asarray(x, float) for x in geom)
+            rel = np.where(mus, 1.0, area / np.median(area[~mus]))
+            self.vol = np.where(mus, self.vol, vol)
+            self.imax, self.gna = self.imax * rel, self.gna * rel
         sig = (np.exp(q["pump_na_o_mM"] / 67.3) - 1.0) / 7.0
         self.sig = sig
         self.kf = q["pump_k_o_mM"] / (q["pump_k_o_mM"] + q["pump_km_ko_mM"])
@@ -110,6 +121,10 @@ class Mech:
         q = defaults()
         q.update({k: float(v) for k, v in (params or {}).items() if np.isscalar(v)})
         self.q = q
+        cells = getattr(brain, "cells", None)
+        self.geom = None if not cells else (
+            [sum(seg.volume() for sec in c.all for seg in sec) for c in cells],
+            [sum(seg.area() for sec in c.all for seg in sec) for c in cells])
         self.reset()
 
     def reset(self):
@@ -123,7 +138,8 @@ class Mech:
         v = np.asarray(ctx.v, float)
         if self.pump is None:
             mus = getattr(ctx, "is_muscle", None)
-            self.pump = Pump(q, np.zeros(len(v), bool) if mus is None else mus)
+            self.pump = Pump(q, np.zeros(len(v), bool) if mus is None else mus,
+                             self.geom if self.geom is not None and len(self.geom[0]) == len(v) else None)
             self.na = np.full(len(v), q["pump_na_rest_mM"])
             self.vsum = np.zeros(len(v))
         p, n = self.pump, len(v)

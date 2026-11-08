@@ -98,15 +98,43 @@ TEMPLATE_ON = {"receptor_sign": "on", "innexin_identity": "on", "expression_map"
 _h = None
 
 
+RATE_SUFFIX = {}                                         # mod suffix -> temperature rate class (filled by _neuron)
+
+# One E_K per cell. BAAIWorm's 11 K mods compute ik against a literal -80 mV (the commented line above each reads
+# ek); kqt3 and the 5 Nicoletti mods read ek. Built here with (v - ek), so ion_ek reaches every K current (set on every
+# section, Brain._ions). The Ca (+60) and NCA (+30) literals stay: they are effective reversals, not Nernst potentials
+# (Ca currents rectify, GHK; NCA is a mixed cation leak), scan values of the port (baai_eca_mV, baai_ena_nca_mV), so
+# ion_cao, ion_ena and ion_celsius reach no current (params.NOT_READ).
+EK_MODS = ("egl2", "egl36", "irk", "kcnl", "kvs1", "shk1", "shl1", "slo1_egl19", "slo1_unc2", "slo2_egl19", "slo2_unc2")
+EK_AS_PUBLISHED = -80.0                                  # literature_overrides off: the 11 mods' literal
+
+
+def patch_ek(stem, text):
+    if stem not in EK_MODS:
+        return text
+    out, n = re.subn(r"^(\s*ik\s*=.*)\(v \+ 80\)", r"\1(v - ek)", text, flags=re.M)
+    if n != 1:
+        raise ValueError(f"{stem}.mod: {n} ik lines against -80 (expected 1)")
+    return out
+
+
 def _neuron():
     """NEURON with the vendored mods loaded (compiled once into $WORMEMU_NRNMECH or ~/.cache/wormemu/nrnmech)."""
     global _h
     if _h is not None:
         return _h
     from neuron import h
+
+    from wormemu.mech import temperature
     mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) \
         + sorted(OWN_MODS.rglob("*.mod"))                # ours, including the organ workers' nmodl/organs/
-    tag = hashlib.sha1(b"".join(m.name.encode() + m.read_bytes() for m in mods)).hexdigest()[:12]
+    # the built text: temperature's rate factor (tadj, 1 by default) patched into the rate-class mods (row 25), and
+    # the K mods' ik against ek (EK_MODS)
+    text = {m: temperature.patch_mod(m.stem, patch_ek(m.stem, m.read_text()) if m.parent == BAAI / "mod" else
+                                     m.read_text()) for m in mods}
+    tag = hashlib.sha1(b"".join(m.name.encode() + text[m].encode() for m in mods)).hexdigest()[:12]
+    RATE_SUFFIX.update({temperature.mod_suffix(text[m]): temperature.RATE_MODS[m.stem][0] for m in mods
+                        if m.stem in temperature.RATE_MODS})
     d = Path(os.environ.get("WORMEMU_NRNMECH", Path.home() / ".cache" / "wormemu" / "nrnmech")) / tag
 
     def find():
@@ -118,7 +146,7 @@ def _neuron():
         exe = shutil.which("nrnivmodl") or str(Path(sys.executable).parent / "nrnivmodl")
         (d / "src").mkdir(exist_ok=True)
         for m in mods:
-            shutil.copy(m, d / "src" / m.name)
+            (d / "src" / m.name).write_text(text[m])
         with open(d / "build.log", "w") as log:
             subprocess.run([exe, "src"], cwd=d, check=True, stdout=log, stderr=subprocess.STDOUT)
         lib = find()
@@ -258,6 +286,7 @@ class Brain:
         self._rp = mech.params_for(structure_rules, self.spec)
         self.mact = tg["muscle_active"] == "on"
         self.h = h = _neuron()
+        self.rate_mods = dict(RATE_SUFFIX)
         st = self.st = load_structure()
         self._cengen = set(st.cengen_classes)
         self._sign_by = dict(zip(*(led.values("syn_sign_receptor")[k] for k in ("element", "rule"))))
@@ -288,6 +317,7 @@ class Brain:
             self.segs.append(_segments(obj))
             self.soma.append(obj.Soma)
         self.n_segments = sum(len(s) for s in self.segs)
+        self._ions()                                     # E_K on the sections just built
         self._kinetics()
         self.conn = []                                   # hoc point processes (kept alive)
         self.wsyn = []                                   # (wsyn, pre index, post index, class index or -1)
@@ -322,8 +352,9 @@ class Brain:
 
         claimed = {t[0] for m in self._mods for t in m.MECHANISMS}   # taken over by a registered mechanism
         on = {mid for tog, mid in _toggle_mechanisms(led).items() if tg.get(tog) == "on"} - claimed
-        p = {s.id: self.spec.v(s.id) for s in brain_layers.SPECS if s.id in self.spec.values
-             and not isinstance(self.spec.values[s.id], pd.Series)}
+        # the ledger value where the ledger has the row, else the template (as mech.params_for)
+        p = {s.id: self.spec.v(s.id) if s.id in self.spec.values else s.template for s in brain_layers.SPECS
+             if not isinstance(self.spec.values.get(s.id), pd.Series)}
         y = np.array([st.soma_y_um[st.index[c]] if not m else np.nan for c, m in zip(self.cell_names,
                                                                                     self.is_muscle)])
         yall = np.array([st.soma_y_um[st.index[c]] for c in neurons])
@@ -351,6 +382,10 @@ class Brain:
             h.cai0_ca_ion = sv("capool_caeq")
         else:
             h.celsius, h.cao0_ca_ion, h.cai0_ca_ion = 6.3, 2.0, 5e-5
+        ek = sv("ion_ek") if self.lit else EK_AS_PUBLISHED   # one E_K for every K current (EK_MODS)
+        for sec in h.allsec():
+            if h.ismembrane("k_ion", sec=sec):
+                sec.ek = ek
 
     def _cell_param(self, name):
         b = self._baai[name]
@@ -416,9 +451,8 @@ class Brain:
                 setattr(getattr(seg, ch), GB.get(ch, f"gb{ch}"), cp["soma"][f"gb{ch}"])
         if self.lit:
             sv = self.spec.v
-            for ion, pid, dflt in (("k_ion", "ion_ek", -77.0), ("na_ion", "ion_ena", 50.0)):
-                if sv(pid) != dflt and self.h.ismembrane(ion, sec=obj.Soma):
-                    setattr(obj.Soma, "ek" if ion == "k_ion" else "ena", sv(pid))
+            if sv("ion_ena") != 50.0 and self.h.ismembrane("na_ion", sec=obj.Soma):   # read by no current (NOT_READ)
+                obj.Soma.ena = sv("ion_ena")
 
     def _c302_muscle(self, obj):
         """muscle_active: c302 C2's GenericMuscleCell membrane (cm 1 uF/cm2 as BAAIWorm's; one compartment, so its

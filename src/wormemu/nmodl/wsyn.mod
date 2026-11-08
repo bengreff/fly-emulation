@@ -13,8 +13,10 @@ Receptor (postsynaptic), mode 2 (kinetic):
   r' = (a - r)/tau_r, tau_r = tau_off + (tau_rise - tau_off) * a
                                                    opens with tau_rise at saturating transmitter, closes with
                                                    tau_off when transmitter is gone; steady state r = a exactly
-  d' = (r * (1 - ss) - d)/tau_des                   desensitization: under a saturating step the open fraction
-                                                   falls from 1 to ss with tau_des; tau_des = 0 means none
+  d' = (r * (1 - ss) - d)/tau_d                     desensitization: under a saturating step the open fraction
+                                                   falls from 1 to ss with tau_d = tau_des; it recovers (d above
+                                                   its target) with tau_d = tau_des * des_rec_ratio (1 = one
+                                                   time constant both ways, as before); tau_des = 0 means none
   open = r * (1 - d)
 mode 1 (instantaneous, the nested form in PORT_SOURCES N1 (f)): open = a, no desensitization.
 mode 0 (graded, BAAIWorm's form): open = s (relgain and recgain multiply the conductance); with gmax = weight *
@@ -42,7 +44,7 @@ NEURON {
     POINT_PROCESS wsyn
     POINTER vpre
     NONSPECIFIC_CURRENT i
-    RANGE gmax, erev, delta, k, Vth, mode, tmax, ec50, hill, tau_rise, tau_off, tau_des, ss, mg, mgk, mgc
+    RANGE gmax, erev, delta, k, Vth, mode, tmax, ec50, hill, tau_rise, tau_off, tau_des, ss, des_rec_ratio, mg, mgk, mgc
     RANGE relgain, recgain, i, g, T, a
     RANGE F1, tauF, KF, beta, k0, kmax, KD, tauD, beta_h, tau_h, q, qn, gd
 }
@@ -68,6 +70,7 @@ PARAMETER {
     tau_off = 6.5 (ms)
     tau_des = 0 (ms)
     ss = 1
+    des_rec_ratio = 1 (1)
     mg = 0 (mM)
     mgk = 0.062 (/mV)
     mgc = 3.57 (mM)
@@ -162,6 +165,9 @@ DERIVATIVE states {
     if (tau_des > 0) {
         tau_d = tau_des
         dinf = r * (1 - ss)
+        if (dinf < d) {
+            tau_d = tau_des * des_rec_ratio
+        }
     } else {
         tau_d = 1e9
         dinf = 0

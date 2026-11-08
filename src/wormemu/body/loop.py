@@ -61,14 +61,16 @@ def muscle_map(names: list[str]) -> np.ndarray:
 
 class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
-                 solver_exit: str = "published", world: dict | None = None, env=None, body: dict | None = None):
+                 solver_exit: str = "published", world: dict | None = None, env=None, body: dict | None = None,
+                 params: dict | None = None):
         if not mw.DRIVER.exists():
             subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
         self.out = str(Path(out).resolve())
         self.scene = scene or ChemotaxisScene()
         self.env = env  # environment.Environment (row 22) or None = the INTERFACE.md default plate
         # row 21: layered moduli and internal damping, on by default at the SI scale (layers.py; body = toggles)
-        world, self.body_info = layers.world_flags(body, self.out, world)
+        # params: this worm's body numbers over the templates (the data model passes layers.pressure_link's)
+        world, self.body_info = layers.world_flags(body, self.out, world, params)
         self.frame_every = frame_every
         c_r, c_w = os.pipe()  # commands: us -> driver
         s_r, s_w = os.pipe()  # state: driver -> us
