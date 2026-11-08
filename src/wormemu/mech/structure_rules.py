@@ -7,6 +7,10 @@
         gamma_c    the class's single-channel conductance (rec_<c>_gamma_pS, mech/receptors; scan or gap by label)
         share_c    TPM_c^alpha / sum TPM^alpha over the classes the pair gets (rec_share_tpm_exponent alpha)
         no fast transmitter (BAAIWorm's graded synapse): g = EM x syn_graded_g_per_em_nS x exp(r_pair)
+        EM measure slot: today the serial-section count (Cook 2019). A per-pair synapse size or contact area
+        (Witvliet et al. 2021 Nature 596:257 volumes; Brittin et al. 2021 Nature 591:105 contact areas, the copy on
+        backhouse /home/greff/worm-data/brittin2021/ unchecked, backhouse unreachable 7 Nov) would replace the count
+        as the EM measure in every rule above, with N_c re-read per unit size; no code reads a size yet
     neuromuscular junction: the same with nmj_nchan_per_em_<c> (L-AChR, ACR-16, UNC-49) and nmj_graded_g_per_em_nS
     gap junction: g = EM x gap_open_channels_per_em x gamma_ab x exp(r_pair), with
         sqrt(gamma_ab) = (sum_i w_a,i sqrt(gamma_i) / sum_i w_a,i) (same for b): each channel pairs a hemichannel

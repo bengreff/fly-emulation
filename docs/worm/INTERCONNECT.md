@@ -3,8 +3,10 @@
 Status 7 Nov 2026 (wmodel). Authority for the module-to-module links; generated from the running code by
 `src/wormemu/iograph.py` and held by `tests/test_worm_iograph.py`.
 
-**Verdict.** In the default model every module-to-module read now has a producer, a unit and a test. One read is
-still open: `pathogen_exposure` (no gut-infection model). Temperature now reaches every rate class it was meant
+**Verdict.** In the default model every module-to-module read now has a producer, a unit and a test. The last open
+read, `pathogen_exposure`, has a producer since 7 Nov evening (`mech/pathogen`, off by default: the naive 0 stays the
+default). Three new links, each written only away from neutral: `bath_amine_nM` (drugs to neuromod),
+`glia_amine_nM` (glia_release to neuromod) and `pathogen_exposure` (pathogen to learning). Temperature now reaches every rate class it was meant
 to reach, including the compiled channel, synapse and pharynx mods. The body and the organs now share one internal
 pressure. DAF-7 and CREB now act on something, and the AFD threshold reset has a producer. Every new effect is
 neutral at its template (checked below), so nothing the scoreboard measured has moved.
@@ -43,12 +45,17 @@ ran in REGISTRY order (measured).
 | ma_release_scale | learning | neuromod | 1 per cell | pathogen learning on ADF serotonin (written once the state is away from 1) |
 | ma_release_scale_slow | slow_signalling | neuromod | 1 per cell | **new**: DAF-7 on RIM/RIC amine release |
 | afd_Tstar_shift_C | slow_signalling | senses_chem | C | **new**: AFD threshold reset |
+| bath_amine_nM | drugs | neuromod | nM, dict by amine | **new (7 Nov evening)**: exogenous 5-HT, DA, OA, TA in the body fluid, added to every compartment (only while a bath amine is scheduled) |
+| glia_amine_nM | glia_release | neuromod | nM, dict by amine | **new**: AMsh glial serotonin, added to the head compartment (glia_serotonin on; read one step late, as glia_release runs after neuromod) |
+| pathogen_exposure | pathogen | learning | 0 to 1 | **new**: PA14 infection load from Experiment.infection_h (pathogen_sickness on) |
 
 Three other kinds of link do not go through outputs:
 
 - **g_scale** (per cell multipliers, product over modules): temperature (every density, the leak, rec_*,
   release), senses_chem, neuromod (Gq/Gs/Gi on release, EGL-19, IRK, NCA), slow_signalling (release, rec_glr,
-  homeostatic densities), learning (release).
+  homeostatic densities), learning (release), drugs (release of cholinergic cells: aldicarb's cleft factor).
+- **Implicit conductances** (NEURON point processes the modules set): drugs (levamisole, ivermectin), glia_release
+  (AMsh GABA onto ASH), senses_proprio (DVA TWK-16 in the split form), k2p_leak (UNC-58).
 - **Drive** (I_pA, act_add): noise, the organs, senses.
 - **To the body**: BrainToBody (`mech.OVERRIDES`: pumps, eggs_laid, expulsions, pharynx/enteric/sex muscle
   activation, gcamp_dff, pressure_scale). The FEM body reads only `muscle_activation`
@@ -136,8 +143,10 @@ Three of these were suspected breaks and are not:
 
 ## Open
 
-- `pathogen_exposure`: no producer (no gut-infection model). The data model sets the learned state from the
-  experiment's history instead.
+- The PA14 sickness pathways (ALA feeding cut, ASI DAF-7 quiescence, FLP-13 through DMSR-1): `pathogen_exposure`
+  feeds only learning so far (`mech/pathogen` docstring).
+- New out keys written only in non-default forms, read by nobody yet: glia_amsh_act, dva_twk16_po, k2p (diagnostics),
+  drugs (per-drug body-fluid uM, agonist nS, ach_cleft_factor).
 - Pressure changes during a run (FEM factorised once).
 - The Q10 gaps listed above.
 - The metaworm driver's own constants (`mw_*` slot rows: force-length width, density, plate contact). They are

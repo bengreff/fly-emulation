@@ -4,9 +4,10 @@ Status 7 Nov 2026 (wmodel). Code: `src/wormemu/datamodel.py`. Tests: `tests/test
 
 **Verdict.** The fit can now call one function on the whole worm. It takes the parameter vector and a declarative
 experiment, and it returns the observation channels. With no intervention it reproduces a plain brain run exactly.
-Genotype, ablation, clamps, optogenetics, fields and temperature all act through the model's own quantities. Not yet
-covered: drugs (none representable), the body-on closed loop (route named, not wired) and 21 corpus genes (listed in
-`NOT_YET`, each with the reason).
+Genotype, ablation, clamps, optogenetics, fields, temperature, seven bath drugs and hours on PA14 all act through the
+model's own quantities, and `body="on"` closes the loop through the FEM body. Locked held-out identifiers are refused
+unless the run is the pre-registered scoring run. Not yet covered: muscimol and nicotine (`NOT_YET_DRUGS`) and 21
+corpus genes (`NOT_YET`, each with the reason).
 
 ## Call
 
@@ -34,10 +35,12 @@ One NEURON per process: run each experiment in a fresh process.
 | `stimuli` | a schedule of field values, `contact_force_uN` over a midline span, `nose_force_uN`, `tap` | BodyToBrain each step; every stimulus reaches the brain through its sensory model |
 | `opto` | GUR-3/PRDX-2 light per cell, (cell, t_on, dur, intensity) | `mech/observation.SCHEDULE` (Randi 2023's actuator) |
 | `clamps` | current clamp (pA) or voltage clamp (mV) of a soma in a window | current: an `I_pA` term; voltage: a NEURON SEClamp, off (1e9 MOhm) outside the window |
-| `body` | off, immobilised, on | off and immobilised: open loop, straight and untouched (the brain's inputs are the same in both). on: `NotImplementedError`; the route is `body.loop.run` with `Body(params=body.layers.params_for(spec, extra_mosm=...))` |
+| `body` | off, immobilised, on | off and immobilised: open loop, straight and untouched (the brain's inputs are the same in both). on: the FEM body (`body.loop.Body(params=body.layers.params_for(spec, osmo, extra_mosm=tail osmolarity))`), stepped at the body's exchange step (1/240 s) with `brain_dt_schedule`; each step the brain reads the body's observation plus the experiment's head and tail fields and the body reads the brain's muscle activation. `body_out` names the FEM files (else a temporary directory). Observable `posture` = the body's curvature per mm |
 | `genotype` | `Allele(gene, null / reduction, factor, developmental / acute, t_on_ms)` | `GENES` below |
 | `ablations` | cells removed | `Brain(cells=...)`: the cell and every synapse and gap it makes |
-| `drugs` | (name, uM, t_on) | `DRUGS`: none is representable yet; `simulate` raises with what is missing |
+| `drugs` | (name, bath uM, t_on_ms) | `mech/drugs.SCHEDULE`. Seven drugs: levamisole (tonic L-AChR conductance), ivermectin (GluCl), aldicarb (AChE inhibition: the cleft ACh factor on cholinergic release), serotonin, dopamine, octopamine, tyramine (into neuromod's compartments; needs monoamines on). Uptake is first order from the bath; every drug number is guessed (21 gaps). Muscimol and nicotine raise with what is missing |
+| `infection_h` | hours on P. aeruginosa PA14 before the run | `mech/pathogen.INFECTION_H` -> `pathogen_exposure` (needs pathogen_sickness on; raises otherwise) |
+| `sources`, `heldout` | the (dataset, identifier) pairs the experiment reproduces; the scoring-run flag | `wormemu.heldout.experiment_locks(genes, ablations, sources)`: a locked gene, corpus ablation or source raises `HeldOut` unless `heldout=True` (docs/worm/HELDOUT.md). Loaders use `heldout.exclude(dataset, items, key)` |
 | `toggles` | mechanism forms | over the defaults |
 | `observe`, `cells`, `every_ms` | the channels, the cells reported, the sampling | below |
 
@@ -98,7 +101,17 @@ INTERCONNECT.md (for example `out:afd_Tstar_C`, `out:intestine_ca_uM`, `out:phar
 - A gene's effect stops at what the model represents. A receptor null removes the ionotropic class at synapses.
   Whether the extrasynaptic amine channel (neuromod's mod-1 route) follows is not checked.
 - The tpm route reaches only code that reads `Brain.st`. Ledger tables precomputed from CeNGEN do not move.
-- Drugs need agonist conductances, a cleft ACh clearance step and bath sources in neuromod.
-- Body on: wire `body.loop.run` and read posture and gait from its outputs.
-- `pathogen_exposure` has no producer. The learned state has to come from the experiment's history (a training
-  schedule), which is not a field yet.
+- Drugs: the body-fluid fraction and uptake time of each drug are guessed (the cuticle's permeability is
+  unmeasured); a bath amine is uniform along the body; aldicarb's ACh that escapes the cleft is not modelled.
+- Body on: 100 ms of biology took 10.4 s wall on the Mac (measured, 7 Nov), so long closed-loop runs belong on
+  backhouse. The brain's proprioceptive and touch inputs come from the FEM; head and tail fields from the experiment.
+- `pathogen_exposure` drives learning's pathogen context only; the sickness pathways are slots.
+
+## Checks added 7 Nov evening (tests/test_worm_datamodel.py, test_worm_sectionc.py)
+
+- Drugs (200 ms probes, bath 1 mM, fast uptake set through theta): levamisole moves the body-wall muscles' mean
+  voltage from -37.2 to -10.2 mV and activation from 0.040 to 0.221 (agonist up to 12.05 nS per cell); ivermectin
+  cuts activation to 0.022; bath serotonin (body-fluid fraction 0.1) raises the 5-HT maximum over compartments from 0.105 to 664.5 nM and mean Gq from
+  0.0033 to 0.0126; aldicarb at the template IC50 gives a cleft factor of 1.06 (measured).
+- Body on: 50 ms closes the loop (posture 2 x 49 samples, activation 2 x 95); 100 ms gave max |kappa| 3.21 /mm.
+- Held out: a locked gene, ablation or source raises `HeldOut` by default; `heldout=True` passes.
