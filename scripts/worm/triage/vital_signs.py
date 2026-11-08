@@ -10,6 +10,8 @@ step(None), dt 1 ms), 120 bio s from reset. Recorded and reported against the pu
   body wall      the 95 BWM somata: median voltage over the run, and spikes (upward crossings of -10 mV, the
                  threshold Gao & Zhen 2011 give) per muscle per s. Dissected muscle: rest -25.0 +- 1.0 mV, spontaneous
                  APs 0.73 +- 0.14 Hz in about half the recordings (Gao & Zhen 2011 PNAS 108:2557).
+                 [corrected 14:38, the bar unchanged: rest n = 27; spontaneous APs in ~80% of preparations, not half
+                 (PMC3038695, opened 14:37)]
   egg-laying     eggs laid (needs hours; row 15 says HSN is silent, so 0 is expected in 2 min).
   neurons        the fraction of the 302 above -20 mV and the median voltage, every 50 ms (no published bar).
 Conditions: default, and mask_off (expression_map off) as the item-3 cause diagnostic.
