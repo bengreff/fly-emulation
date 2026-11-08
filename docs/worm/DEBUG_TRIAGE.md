@@ -119,7 +119,7 @@ category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in t
   Table S4 matches the port value for value.
 - AFD under FIT2's map; FIT2's true map losing to shuffled maps.
 - Why backhouse ran the egg-laying check 4-7x slower than the Mac did on 7 Nov (525 s wall per 10 bio-min).
-- The 13 BAAIWorm cells at 5.6-7.8 GOhm (challenge v, settled 14:49, ~10 min): not a units slip in our port.
+- The 13 BAAIWorm cells at 5.6-7.8 GOhm (challenge v, settled 14:41, a few minutes): not a units slip in our port.
   Upstream applies the JSON's gpas as `seg.pas.g = params[2]  # Passive conductance in S/cm2` on every section
   (BAAIWorm clone on backhouse, `eworm/single_nrn_tune/neuron_model.py:76-79`); brain.py:445-447 does the same, on
   byte-identical morphologies (NOTICE.md). AIYL's gpas is 1.4e-5 S/cm2 in BAAIWorm's own file. So their high input
