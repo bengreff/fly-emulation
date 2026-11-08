@@ -113,6 +113,26 @@ VERDICT
 The viewer marks a split row "simplified" when any part is lumped or missing; the audit files it under its main
 category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in the viewer, so 13 - 5 = 8.
 
+## The Director's challenges (14:45)
+
+- ii. Lines 17 and 19: reclassified B (was C). There is no bulk Ca compartment for the indicator (line 19 evidence).
+- iii. Neuron state, the phase-2 bar. HELDOUT.md read first. Statistic: the fraction of variance in the first three
+  principal components of the z-scored GCaMP traces of the identified neurons, one value per animal over the whole
+  recording. Ours goes through `mech/observation` (the same readout lines 17 and 19 test), on the cells the
+  recording identified. Source and range:
+  - Kato et al. 2015 is scoreboard entry 95, marked HELD-OUT, so its numbers were not opened.
+  - Uzel, Kato & Zimmer 2022 (Curr Biol 32:3443, CC BY) is not locked. A literature pass (Sonnet, 14:52-14:58)
+    found it free (Cell Press OA, Vienna repository, data on OSF 3vkxn), but every fetch was blocked (403 or a
+    JavaScript gate), so it read no numbers. Whether its recordings reuse Kato 2015's animals is also not known.
+  - Atanas et al. 2023's own aggregates include the 20 locked animals of atanas2023_main.
+
+  So the range is not filled today. Phase-2 bar: the 5th to 95th percentile of this statistic over the 60 open
+  atanas2023_main animals (CC BY 3.0 US, Zenodo 8185377, on backhouse, not yet extracted). A committed script
+  computes it before any model run is scored, and `heldout.exclude` drops the locked ids. Atanas is freely moving,
+  so the comparison needs the closed-loop worm (challenge i), not the brain-only run.
+  Uzel 2022 (immobilised) is the brain-only cross-check, if Ben or a browser can fetch it, once it is confirmed
+  not to reuse Kato's animals.
+
 ## Backhouse speed (question 3, report only, 14:46-14:50)
 
 Verdict: the build and the WSL configuration match the Mac; the slowdown is contention on a shared machine.
