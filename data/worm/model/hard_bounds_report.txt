@@ -1,6 +1,6 @@
 unmatched: 0
 errors: 0
-clipped: 18
+clipped: 19
   kin_kqt3_aw: [0.163333, 1.47] -> [0.163333, 1] 1 (fraction)
   kin_kqt3_bw: [0.17, 1.53] -> [0.17, 1] 1 (fraction)
   kin_kqt3_as: [0.113333, 1.02] -> [0.113333, 1] 1 (fraction)
@@ -11,6 +11,7 @@ clipped: 18
   kin_kqt1_s1: [0.136667, 1.23] -> [0.136667, 1] 1 (fraction)
   kin_kqt1_s4: [0.196667, 1.77] -> [0.196667, 1] 1 (fraction)
   kin_exp2_pth2_exp2: [-267.053, -29.6725] -> [-200, -29.6725] 1 (voltage_midpoint)
+  unc58_g_S_cm2: [0, 2e-05] -> [1e-08, 2e-05] S/cm2 (leak_density)
   usu_r6_VR_VGCC: [3, 300] -> [3, 196] mV (model) (reversal_cation)
   usu_r6_K_VGCC: [0.4, 40] -> [1.5, 40] mV (model) (voltage_slope)
   usu_r7_n_CaX: [0.01, 1] -> [0.1, 1] 1 (hill_any)

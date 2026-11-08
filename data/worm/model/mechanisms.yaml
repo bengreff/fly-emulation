@@ -403,6 +403,16 @@
   source: src/wormemu/mech/ca_volume.py
   notes: registry module ca_volume; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
+- id: unc58_na_leak
+  name: UNC-58 K2P leak with a constitutive Na+ permeability (PNAS 2024) in its CeNGEN classes and body-wall muscle
+  layer: channel
+  status: have
+  toggle: unc58_na_leak
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/k2p_leak.py
+  notes: registry module k2p_leak; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: receptor_kinetics
   name: 'Ionotropic receptor classes with kinetics: per-class dose-response, rise, decay, desensitization, reversal and unit conductance; classes per pair from CeNGEN, transmitter and Fenyves 2020 polarity'
   layer: synapse
@@ -412,6 +422,17 @@
   default: kinetic
   source: src/wormemu/mech/receptors.py
   notes: registry module receptors; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: drugs
+  name: 'Drugs in the bath: first-order uptake; levamisole (L-AChR) and ivermectin (GluCl) as tonic agonist conductances, aldicarb as the ACh clearance step, exogenous 5-HT, DA, OA and TA into neuromod''s
+    compartments'
+  layer: pharmacology
+  status: have
+  toggle: drugs
+  neutral: 'off'
+  default: 'on'
+  source: src/wormemu/mech/drugs.py
+  notes: registry module drugs; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: stp
   name: Short-term synaptic depression and facilitation at every chemical synapse (graded Dittman-Regehr form; nests Tsodyks-Markram, depression only)
@@ -452,6 +473,16 @@
   default: oleary
   source: src/wormemu/mech/slow_signalling.py
   notes: registry module slow_signalling; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: pathogen_sickness
+  name: PA14 infection load from the hours on the pathogen (Pradhan et al. 2025) -> pathogen_exposure
+  layer: learning
+  status: have
+  toggle: pathogen_sickness
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/pathogen.py
+  notes: registry module pathogen; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: associative
   name: 'Slow associative states: salt (ASER, starvation), thermotaxis (AFD, starvation), pathogen (ADF serotonin)'
@@ -643,6 +674,16 @@
   source: src/wormemu/mech/senses_proprio.py
   notes: registry module senses_proprio; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: dva_strain_split
+  name: 'DVA: compression opens TRP-4, tension opens the K2P channel TWK-16 (sign split instead of |kappa|)'
+  layer: sensory
+  status: have
+  toggle: dva_strain_split
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/senses_proprio.py
+  notes: registry module senses_proprio; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: bwm_membrane
   name: 'Body-wall muscle membrane: Du/Crodelle 2025 spiking HH (EGL-19, SHK-1, SLO-2, Kr, NCA, leak)'
   layer: muscle
@@ -783,6 +824,26 @@
   source: src/wormemu/mech/glia.py
   notes: registry module glia; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: glia_gaba
+  name: 'AMsh glia GABA onto ASH (LGC-37/LGC-38) after nose touch, gated by glial KCNQ (nested: kcnq_null)'
+  layer: glia
+  status: have
+  toggle: glia_gaba
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/glia_release.py
+  notes: registry module glia_release; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_serotonin
+  name: AMsh glia serotonin after nose touch onto SER-5 (Logan et al. 2026), into neuromod's head compartment
+  layer: glia
+  status: have
+  toggle: glia_serotonin
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/glia_release.py
+  notes: registry module glia_release; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: other_cells
   name: Hypodermis, head mesodermal cell, excretory cell and gland as passive cells with Cook's gaps
   layer: organ
@@ -903,4 +964,24 @@
   default: tierpsy
   source: src/wormemu/mech/observation.py
   notes: registry module observation; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: body_layers
+  name: 'Body: cuticle / hypodermis / muscle / pressurised core moduli per tetrahedron (Frontiers 2024)'
+  layer: body
+  status: have
+  toggle: body_layers
+  neutral: published
+  default: frontiers2024
+  source: src/wormemu/body/layers.py
+  notes: body layer (wbody's FEM driver reads it); forms frontiers2024/published
+  absent_reason: ''
+- id: body_damping
+  name: 'Body: shear-thinning internal damping (Backholm 2013), corotational Kelvin-Voigt'
+  layer: body
+  status: have
+  toggle: body_damping
+  neutral: none
+  default: backholm2013
+  source: src/wormemu/body/layers.py
+  notes: body layer (wbody's FEM driver reads it); forms backholm2013/none
   absent_reason: ''

@@ -760,6 +760,12 @@ def off_by_default():
             r["used_by_code"] = "other form only"
             r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
                 f"read only with toggle {r['mechanism_id']} = on (default off)")
+        elif r["used_by_code"] == "yes" and r["mechanism_id"] in off and r["origin"].startswith("mech:"):
+            # a registry module's switch that is off by default (wmodel's section C, 7 Nov evening): its numbers
+            # enter only when a run turns it on (bioemu.ledger's USED_BY_CODE has no "switch off" value)
+            r["used_by_code"] = "other form only"
+            r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (
+                f"switch off by default: read only with toggle {r['mechanism_id']} = on")
         elif r["used_by_code"] == "yes" and (r["param_id"] in OVERWRITTEN or r["param_id"] in FORM_ONLY):
             r["used_by_code"] = "other form only"
             r["notes"] = (r["notes"] + "; " if r["notes"] else "") + (OVERWRITTEN.get(r["param_id"]) or
@@ -855,6 +861,28 @@ def build_registry():
                 n=n, tsrc=s_.source, label=lab, proj=proj, basis=basis, bsrc=bsrc, notes=snotes, table=tab,
                 url=getattr(s_, "url", ""), quote=getattr(s_, "quote", ""), origin=f"mech:{name}")
     return notes
+
+
+def build_body_layers():
+    """The body's own code numbers (src/wormemu/body/layers.py SPECS: layer moduli and fractions, pressure, internal
+    damping), so every number wormemu.params counts has a catalog row (Director, 7 Nov 19:07). Templates and ranges
+    are the Specs'; the body code reads its Specs, the rows record them."""
+    from wormemu.body import layers as bl
+    for mid, mname, layer, default in (t[:4] for t in bl.MECHANISMS):
+        if not any(m["id"] == mid for m in mechs):
+            cat.MECH_ROW.setdefault(mid, 21)
+            mech(mid, mname, layer, "have", "src/wormemu/body/layers.py", toggle=mid, default=default,
+                 neutral=bl.NESTED.get(mid, ""), notes="body layer (wbody's FEM driver reads it); forms "
+                 + "/".join(bl.FORMS.get(mid, ())))
+    have = {r["param_id"] for r in rows}
+    for s in bl.SPECS:
+        if s.id in have:
+            continue
+        basis = ("guessed" if s.label == "guessed" or RANGE_GUESSED.search(s.notes or "") else
+                 "measured_related" if cat.CITE.search(s.source) else "guessed")
+        row(s.id, s.mechanism, s.unit, float(s.template), float(s.lo), float(s.hi), grain=s.grain,
+            applies_to=s.applies_to, tsrc=s.source, label=s.label, proj="ours" if s.label == "guessed" else "literature",
+            basis=basis, bsrc=s.source, notes=s.notes or "", origin="mech:body_layers")
 
 
 def honest_row_labels():
@@ -1121,6 +1149,7 @@ def main():
     n_c302 = build_c302_muscle()
     build_layers(st)
     reg_notes = build_registry()
+    build_body_layers()
     off_by_default()
     sensitivity()
     body_mechs, body = cat.body_rows()

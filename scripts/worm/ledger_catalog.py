@@ -57,6 +57,7 @@ MECH_ROW = {
     # wneuron's night modules (7 Nov merge): channels.py (its kin_ rows are row 4 by prefix, its densities row 5),
     # ca_volume.py, cells_passive.py
     "channel_library": 5, "ca_pool_volume": 6, "glia_sensilla": 11, "endorgan_cells": 16,
+    "unc58_na_leak": 5, "drugs": 22, "pathogen_sickness": 22,                 # wmodel, 7 Nov evening
 }
 PARAM_ROW = {"ion_celsius": 25}
 # wmodel's structure_rules (7 Nov): each rule sits in the row of the per-element values it generates

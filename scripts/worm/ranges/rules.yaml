@@ -212,6 +212,17 @@ rules:
   - {re: "^dens_map_tpm_slope$", hard_row_unit: [0, 2], basis: guessed_physical, why: "density proportional to (TPM + C)^b; b = 1 is protein in proportion to mRNA, and mRNA-to-protein slopes are not far above 1 (guessed edge 2)", source: "structure_rules.py"}
   - {re: "^dens_map_tpm_pseudocount$", hard_row_unit: [0.1, 1000], basis: guessed_physical, why: "a pseudo-count in TPM: from below CeNGEN's lowest threshold to above the TPM of most channel genes (guessed edges)", source: "structure_rules.py; Taylor et al. 2021 Cell"}
   - {re: "^rec_des_recover_ratio$", hard_row_unit: [0.01, 1000], basis: guessed_physical, why: "recovery over onset time constant of desensitization; recovery 100x faster than onset or 1000x slower (minutes for a ms onset) is outside any receptor kinetics reported (guessed)", source: "wmodel Spec (mech/receptors.py)"}
+  # wmodel 7 Nov evening (2be7c76, drugs, glia_release, k2p_leak, senses_proprio)
+  - {re: "^unc58_g_S_cm2$", cls: leak_density}
+  - {re: "^proprio_ek_twk16_mV$", cls: reversal_K}
+  - {re: "^drug_receptor_pool_ratio$", hard_row_unit: [0.1, 100], basis: guessed_physical, why: "extrasynaptic over synaptic receptors a bath agonist reaches; below 0.1 the synaptic pool alone would exceed the whole membrane's, above 100 the extrasynaptic receptors would outnumber synaptic ones 100-fold on a 1-3 um soma (guessed)", source: "wmodel Spec (mech/drugs.py)"}
+  - {re: "^glia_kcnq_null_factor$", hard_row_unit: [0, 20], basis: guessed_physical, why: "release in the glial kcnq null over wild type; 0 = abolished, 20x is past any release change reported for a single glial channel null (guessed)", source: "wmodel Spec (mech/glia_release.py)"}
+  # the body layer code numbers (src/wormemu/body/layers.py), catalogued 7 Nov evening
+  - {re: "^body_frac_(cuticle|hypodermis|muscle)$", cls: fraction}
+  - {re: "^body_damp_clip$", cls: ratio_ge1}
+  - {re: "^body_E_[a-z_]*_kPa$", cls: modulus_kPa}
+  - {re: "^body_damp_alpha$", hard_row_unit: [0, 3], basis: guessed_physical, why: "shear-thinning exponent of damping on bending speed; 0 = Newtonian, above 3 the damping force would fall steeply with speed, unlike any biological soft tissue reported (guessed)", source: "Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528 (alpha ~1)"}
+  - {re: "^body_damp_w_ref_rad_s$", hard_row_unit: [0.01, 1000], basis: guessed_physical, why: "a reference bending rate; 1000 rad/s (about 160 Hz) is past any worm undulation (0.3-2 Hz) by two orders, 0.01 rad/s is a bend per 10 min (guessed)", source: "wmodel Spec (body/layers.py)"}
   - {re: "^(morph_|wire_)", cls: structure, role: fixed}
   - {re: "^build_length_per_seg$", cls: numerics, role: fixed}
   - {re: "^build_", cls: construction, role: fixed}
