@@ -30,7 +30,7 @@ ran in REGISTRY order (measured).
 | key | producer | consumers | unit | what |
 |---|---|---|---|---|
 | q10 | temperature | senses_chem, senses_touch, senses_proprio, slow_signalling, learning, organs_intestine, organs_pharynx (clock form) | 1, dict by rate class | Q10 factor per rate class at the worm's temperature |
-| temperature_C | temperature | slow_signalling | C | the worm's temperature (AFD T* components) |
+| temperature_C | temperature | slow_signalling, organs_pharynx | C | the worm's temperature (AFD T* components; the pharynx GHK temperature) |
 | afd_gc_scale | glia | senses_chem | 1 per AFD | AMsh glia's scale on AFD guanylyl cyclase |
 | coelomocyte_uptake_per_s | organs_other | organs_intestine, neuromod | 1/s | pseudocoelomic clearance |
 | pressure_kPa | organs_other | senses_touch; the FEM body at start-up | kPa | body-fluid pressure |
