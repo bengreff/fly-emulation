@@ -100,7 +100,7 @@ being set; whether each one actually emerges is the current value.
 Two runs, both pre-registered in their scripts:
 - Preliminary, brain only (`vital_signs.py`, backhouse, 14:27-15:06): no body, food or odour; default toggles;
   120 bio s from reset. mask_off is the item-3 diagnostic.
-- The entire worm (challenge i, `vital_loop.py`, backhouse, 15:19): closed loop with the MetaWorm body, wbody's
+- The entire worm (challenge i, `vital_loop.py`, backhouse, from 15:05): closed loop with the MetaWorm body, wbody's
   sense modules and every plate field, food on and off. Its numbers are below the table.
 
 All values are measured.
