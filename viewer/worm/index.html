@@ -54,6 +54,7 @@
   .mechrow .mid { color:var(--dim); font-variant-numeric:tabular-nums; }
   .mechrow .mname { font-weight:600; }
   .mechrow .mtext { color:var(--text); }
+  .mechrow .mswitch { margin:6px 0 0 14px; padding-left:8px; border-left:2px solid var(--line); }
   .chip { padding:0 6px; border-radius:3px; font-size:11px; }
   .chip-full { background:#1f5f3a; } .chip-simplified { background:#5a4a1f; }
   .chip-pass { background:#1f5f3a; } .chip-fail { background:#7a2b2b; } .chip-notchecked { background:#444; }
@@ -547,7 +548,8 @@ function mechView() {
             <span class="mid">#${m.id}</span><span class="mname">${m.name}</span>
             <span class="chip chip-${m.status}">${m.status}</span>
             <span class="chip chip-${CHIP_CHECK[m.check] || 'notchecked'}">check: ${m.check}</span>
-          </div><div class="mtext">${m.text}</div></div>`).join('')).join('') +
+          </div><div class="mtext">${m.text}</div>${(m.switches || []).map(w =>
+            `<div class="mtext mswitch"><b>${w.name}.</b> ${w.text}</div>`).join('')}</div>`).join('')).join('') +
       `<p class="muted" style="margin-top:10px">Source: ${MECHSUM.as_of}. ${MECHSUM.source}</p>`;
   }
   const r = S.run;

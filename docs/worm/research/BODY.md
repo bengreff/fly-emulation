@@ -52,6 +52,13 @@ by which layer and loading geometry each technique probes, not by inconsistent b
   A related 2023 in-silico study varies internal pressure and neuromuscular agents over the same kind of
   multi-compartment model (measured/derived,
   [bioRxiv 2023.11.09.566289](https://www.biorxiv.org/content/10.1101/2023.11.09.566289v1.full)).
+  *Correction (7 Nov 2026, 19:13, wranges):* a 6 Nov night note (wbody) said the model counts muscle stiffness
+  twice, once in this muscle modulus and again in MetaWorm's muscle fibre constraints. wmodel's 7 Nov audit of the
+  code found it does not: the fibre constraints add active force, not passive stiffness. The model's body is 7.8x
+  stiffer in bending than Backholm 2013's whole-worm 110 +/- 30 kPa because of these published layer moduli
+  themselves: their area-weighted section modulus is 856 kPa (derived; 856/110 = 7.8), the core (840 kPa, set by
+  pressure) carries about 65% of it, and the FEM's own effective bending modulus is 676 kPa (derived), 6.1x the
+  middle of the measured 50-170 kPa.
 - **Direct bulk pressurization**: applying isotropic pressure directly shows the bulk mechanical response is
   largely **independent of the cuticle** -- i.e. the worm behaves as a pressurized hydrostatic skeleton, and
   cuticle stiffness is a minor contributor to whole-body stiffness (measured,

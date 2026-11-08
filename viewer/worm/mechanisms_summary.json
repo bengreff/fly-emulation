@@ -46,7 +46,14 @@
      "group": "Neurons",
      "status": "full",
      "check": "not checked",
-     "text": "How many copies of each channel sit in a neuron's membrane (density), plus passive electrical properties like membrane capacitance (how much charge the membrane can store, which sets how fast its voltage can change) and internal resistance. The model uses BAAIWorm's per-cell fitted values as published, clipping any value that strayed outside a literature-sane range. These numbers set how excitable each neuron is and feed directly into every spike and the calcium that follows (row 6). Status: full in the sense of using the published numbers as given, but never refit against our own electrical recordings, and about one in ten of these values is a guess (the clipped-range placeholder) rather than a published or measured number."
+     "text": "How many copies of each channel sit in a neuron's membrane (density), plus passive electrical properties like membrane capacitance (how much charge the membrane can store, which sets how fast its voltage can change) and internal resistance. The model uses BAAIWorm's per-cell fitted values as published, clipping any value that strayed outside a literature-sane range. These numbers set how excitable each neuron is and feed directly into every spike and the calcium that follows (row 6). Status: full in the sense of using the published numbers as given, but never refit against our own electrical recordings, and about one in ten of these values is a guess (the clipped-range placeholder) rather than a published or measured number.",
+     "switches": [
+      {
+       "id": "unc58_na_leak",
+       "name": "UNC-58 sodium leak (switch, off by default)",
+       "text": "UNC-58 is a 'leak' potassium channel with an odd filter that also lets sodium through, so instead of pulling a cell's voltage down it pulls it toward about -15 mV (measured in frog eggs, Xenopus oocytes, for a mutant form; carried over to the worm, so inferred). When on, every neuron class whose gene-expression data (CeNGEN) shows unc-58, and every body-wall muscle, gets this small steady leak. How much of the channel each cell has is a guess, kept small because the normal channel's current was too small to detect. Off by default, and identical to the model without it when off."
+      }
+     ]
     },
     {
      "id": 6,
@@ -120,7 +127,19 @@
      "group": "Neuromodulation and slow states",
      "status": "simplified",
      "check": "fail",
-     "text": "Glia are the worm's support cells; its amphid sheath glia, for example, buffer the potassium ion concentration around sensory neuron endings, shaping how those neurons respond. The model builds 10 glial cells wired on Cook's gap junctions, with one shared potassium pool per side standing in for the sheath cell's buffering (using a generic \"Kir4.1-type\" channel borrowed from mammalian glia, since no worm-specific model exists), plus a chloride-buffering effect near one sensory neuron (AFD). This shifts the reversal potential (the voltage ion channels pull toward) of the sensory neurons it wraps. Status: simplified, since there is no published C. elegans glia model to build from, and the potassium pool is not even linked to the actual sheath cell built in row 1; its check fails on 3 of 4 measures, including the recovery time and the left/right asymmetry it should show."
+     "text": "Glia are the worm's support cells; its amphid sheath glia, for example, buffer the potassium ion concentration around sensory neuron endings, shaping how those neurons respond. The model builds 10 glial cells wired on Cook's gap junctions, with one shared potassium pool per side standing in for the sheath cell's buffering (using a generic \"Kir4.1-type\" channel borrowed from mammalian glia, since no worm-specific model exists), plus a chloride-buffering effect near one sensory neuron (AFD). This shifts the reversal potential (the voltage ion channels pull toward) of the sensory neurons it wraps. Status: simplified, since there is no published C. elegans glia model to build from, and the potassium pool is not even linked to the actual sheath cell built in row 1; its check fails on 3 of 4 measures, including the recovery time and the left/right asymmetry it should show.",
+     "switches": [
+      {
+       "id": "glia_gaba",
+       "name": "AMsh glia GABA onto ASH (switch, off by default)",
+       "text": "The amphid sheath glia (AMsh, support cells wrapped around the nose's sensory endings) sense nose touch and send the inhibitory transmitter GABA back onto ASH, the nose-touch escape neuron, which shortens the escape. When on, one activity level per side follows the nose force and opens a chloride conductance on ASH. A second form makes the glia's KCNQ potassium channel missing (a mutant), which changes how much GABA is released. Every number here is a guess: the papers report the effect, not the currents. Off by default, and identical to the model without it when off."
+      },
+      {
+       "id": "glia_serotonin",
+       "name": "AMsh glia serotonin (switch, off by default)",
+       "text": "The same sheath glia also release serotonin after nose touch, and ASH needs it (through its SER-5 receptor) to respond to touch fully (Logan et al. 2026). When on, the glia's touch activity adds serotonin to the head's shared amine pool, which every serotonin receptor there reads. The maximum concentration is a guess. Off by default, and identical to the model without it when off."
+      }
+     ]
     },
     {
      "id": 18,
@@ -173,7 +192,14 @@
      "group": "Senses",
      "status": "simplified",
      "check": "fail",
-     "text": "The worm's sensory neurons turn a physical or chemical stimulus, an odour, a touch, a temperature change, into an electrical signal through specific molecular cascades: odour receptors trigger a cGMP cascade (a second-messenger signalling chain), touch opens mechanically-gated channels directly. The model has full published cascade models for the odour-sensing neuron AWC (Usuyama 2012), the AWA neuron's membrane (Liu 2018), and touch channels (Sanzeni 2019); every other sense (salt-sensing ASE, temperature-sensing AFD, oxygen/CO2 sensors, light) reuses AWC's cascade with its own guessed gain, and body-bend sensing (proprioception) is one shared, averaged signal rather than many local ones. This feeds directly into channel currents (rows 4, 5) and, through the cascades, into calcium (row 6). Status: simplified overall, full only for the three ported cells. AWC and touch checks pass; AWA and proprioception checks fail (AWA doesn't switch cleanly on and off the way real recordings show, and the body-bend sensor underestimates how often it should register \"on\"). Most of the reused senses move only about 10% as much as the real cell does, and none have been checked against a real stimulus-response curve."
+     "text": "The worm's sensory neurons turn a physical or chemical stimulus, an odour, a touch, a temperature change, into an electrical signal through specific molecular cascades: odour receptors trigger a cGMP cascade (a second-messenger signalling chain), touch opens mechanically-gated channels directly. The model has full published cascade models for the odour-sensing neuron AWC (Usuyama 2012), the AWA neuron's membrane (Liu 2018), and touch channels (Sanzeni 2019); every other sense (salt-sensing ASE, temperature-sensing AFD, oxygen/CO2 sensors, light) reuses AWC's cascade with its own guessed gain, and body-bend sensing (proprioception) is one shared, averaged signal rather than many local ones. This feeds directly into channel currents (rows 4, 5) and, through the cascades, into calcium (row 6). Status: simplified overall, full only for the three ported cells. AWC and touch checks pass; AWA and proprioception checks fail (AWA doesn't switch cleanly on and off the way real recordings show, and the body-bend sensor underestimates how often it should register \"on\"). Most of the reused senses move only about 10% as much as the real cell does, and none have been checked against a real stimulus-response curve.",
+     "switches": [
+      {
+       "id": "dva_strain_split",
+       "name": "DVA compression versus stretch (switch, off by default)",
+       "text": "DVA is a body-bend sensing neuron. The default model gives it one stretch-opened channel that responds to the size of the bend. Published work says the sign matters: squeezing its process opens TRP-4 (which excites it), stretching opens TWK-16 (a potassium channel, which quiets it). When on, DVA gets both, each driven by its own sign of the local strain. The TWK-16 strength is a guess; its reversal near -80 mV is inferred from potassium physiology. Off by default, and identical to the model without it when off."
+      }
+     ]
     }
    ]
   },
@@ -247,7 +273,19 @@
      "group": "Body and world",
      "status": "simplified",
      "check": "pass",
-     "text": "The worm lives on or in a real physical medium (agar gel, water, soil) with real chemical gradients: food, oxygen, salt, temperature, that it crawls or swims through. The model has 2D fields for food, oxygen, carbon dioxide, salt and temperature across a flat surface, with a published oxygen-diffusion solution behind the oxygen field, and a resistive-drag approximation standing in for a true viscoelastic (part-solid, part-liquid) medium. These fields are read by the sensory modules (row 17); the worm itself does not disturb the fields it moves through. Status: simplified; the one field directly checked (oxygen near a bacterial lawn edge) matches a known exact solution closely, but the lawn's oxygen-absorption strength is itself a guess, and no field other than oxygen has been checked."
+     "text": "The worm lives on or in a real physical medium (agar gel, water, soil) with real chemical gradients: food, oxygen, salt, temperature, that it crawls or swims through. The model has 2D fields for food, oxygen, carbon dioxide, salt and temperature across a flat surface, with a published oxygen-diffusion solution behind the oxygen field, and a resistive-drag approximation standing in for a true viscoelastic (part-solid, part-liquid) medium. These fields are read by the sensory modules (row 17); the worm itself does not disturb the fields it moves through. Status: simplified; the one field directly checked (oxygen near a bacterial lawn edge) matches a known exact solution closely, but the lawn's oxygen-absorption strength is itself a guess, and no field other than oxygen has been checked.",
+     "switches": [
+      {
+       "id": "pathogen_sickness",
+       "name": "PA14 infection (switch, off by default)",
+       "text": "Feeding worms the pathogenic bacterium Pseudomonas aeruginosa PA14 makes them sick over hours: they eat less over the first 20 hours and start resting bouts after about two days (Pradhan et al. 2025). When on, one number, the infection load, rises with the hours the experiment says the worm has spent on PA14 (time constant guessed at 10 h), and it feeds the existing 'pathogen' learning context. The feeding and resting circuits the paper names are not wired to it yet. Off by default; on with zero hours of infection it also changes nothing."
+      },
+      {
+       "id": "drugs",
+       "name": "Drugs in the data model",
+       "text": "An experiment can put a drug in the bath at a set concentration from a set time. Each drug crosses the worm's skin and gut into its body fluid in one step (how much gets in and how fast are guesses per drug, because the cuticle's permeability is unmeasured). Levamisole acts like acetylcholine on the levamisole-type receptor and ivermectin opens glutamate-gated chloride channels, each as a steady conductance on the cells that carry that receptor; aldicarb blocks the enzyme that clears acetylcholine, so every acetylcholine synapse gets stronger; bath serotonin, dopamine, octopamine and tyramine are added to the model's amine pools. The 21 numbers behind this (uptake, potency, steepness) are all guessed and are part of the 368 unknowns a fit would set. With no drug in the experiment, nothing changes."
+      }
+     ]
     }
    ]
   },
@@ -264,5 +302,6 @@
     }
    ]
   }
- ]
+ ],
+ "switches_note": "Each row's 'switches' list (added 7 Nov 2026, from wmodel's section C and data-model drugs, src/wormemu/mech/*.py docstrings) names an alternative or extra mechanism a run can turn on; the default worm runs without it."
 }

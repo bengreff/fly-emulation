@@ -728,6 +728,14 @@ cylindrical shell model) is the direct answer to "internal hydrostatic pressure 
 found span **50-100 kPa (older estimates) to 150-200 kPa (newer FE-based estimates)**, flagged in BODY.md as
 **measured but unreconciled across sources** - a genuine open conflict, not a simple gap.
 
+*Correction (7 Nov 2026, 19:13, wranges):* a 6 Nov night note (wbody) said the model counts muscle stiffness
+twice, once in this muscle modulus and again in MetaWorm's muscle fibre constraints. wmodel's 7 Nov audit of the
+code found it does not: the fibre constraints add active force, not passive stiffness. The model's body is 7.8x
+stiffer in bending than Backholm 2013's whole-worm 110 +/- 30 kPa because of these published layer moduli
+themselves: their area-weighted section modulus is 856 kPa (derived; 856/110 = 7.8), the core (840 kPa, set by
+pressure) carries about 65% of it, and the FEM's own effective bending modulus is 676 kPa (derived), 6.1x the
+middle of the measured 50-170 kPa.
+
 **Viscoelasticity: Backholm, Ryu and Dalnoki-Veress 2013**, PNAS 110(10):4528-4533 (already cited and opened
 in BODY.md): whole-body bending gives an effective modulus of **110 +/- 30 kPa**, with damping that **falls
 as a power law over two decades of bending speed** (shear-thinning, non-Newtonian), **better fit by a Maxwell

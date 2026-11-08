@@ -216,9 +216,18 @@ def main() -> None:
         # Look for a line this script can parse mechanically: "after: N guessed numbers" (any case,
         # with or without a comma in N). If the file exists but has no such line, say so rather than guess.
         m = re.search(r"after[^\n]*?([\d][\d,]*)\s*guessed", text, re.IGNORECASE)
+        # UNKNOWNS.md's own verdict line (wmodel, 7 Nov): "**Verdict.** N numbers are genuinely unknown ...
+        # N1 shared rules plus N2 gaps"; that N is the fit vector once the rules replace the per-pair blocks.
+        v = re.search(r"([\d][\d,]*) numbers are genuinely unknown(?:.*?(\d+) shared rules plus\s+(\d+) gaps)?",
+                      text, re.DOTALL)
         if m:
             after_count = int(m.group(1).replace(",", ""))
             after_note = f"from docs/worm/UNKNOWNS.md: {after_count:,} guessed numbers remain after the re-expression."
+        elif v:
+            after_count = int(v.group(1).replace(",", ""))
+            split = f" ({v.group(2)} shared rules + {v.group(3)} gaps)" if v.group(2) else ""
+            after_note = (f"from docs/worm/UNKNOWNS.md's verdict: {after_count:,} numbers remain unknown{split}, "
+                          "the whole fit vector once the rules stand in for the per-pair and per-cell blocks.")
         else:
             after_note = ("docs/worm/UNKNOWNS.md exists but this script found no parseable "
                           "'after: N guessed' line in it yet; read the file directly for its count.")

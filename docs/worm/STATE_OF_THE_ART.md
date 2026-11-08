@@ -228,6 +228,14 @@ hydrostatic pressure. [Biophysical Journal 2015, "Worms under pressure"](https:/
 directly measures bulk mechanical response under isotropic pressure and finds bulk mechanics are
 largely **independent of the cuticle** (i.e. hydrostatic-pressure-dominated, hydroskeleton-like).
 
+*Correction (7 Nov 2026, 19:13, wranges):* a 6 Nov night note (wbody) said the model counts muscle stiffness
+twice, once in this muscle modulus and again in MetaWorm's muscle fibre constraints. wmodel's 7 Nov audit of the
+code found it does not: the fibre constraints add active force, not passive stiffness. The model's body is 7.8x
+stiffer in bending than Backholm 2013's whole-worm 110 +/- 30 kPa because of these published layer moduli
+themselves: their area-weighted section modulus is 856 kPa (derived; 856/110 = 7.8), the core (840 kPa, set by
+pressure) carries about 65% of it, and the FEM's own effective bending modulus is 676 kPa (derived), 6.1x the
+middle of the measured 50-170 kPa.
+
 **Behaviour databases.** [Open Worm Movement Database](http://movement.openworm.org/) —
 **14,874** single-worm tracking records (videos, skeletons, features), via Zenodo community.
 [Yemini et al. 2013, Nature Methods](https://doi.org/10.1038/nmeth.2560) — Worm Tracker 2.0:
@@ -352,7 +360,7 @@ are uncharacterised (Section 4).
 | 79 | Body-wall muscle whole-cell dynamics | preferred oscillation frequency matching locomotor band | [Du, Crodelle et al. 2024](https://journals.plos.org/ploscompbiol/article?id=10.1371%2Fjournal.pcbi.1012318) | muscle channel biophysics |
 | 80 | AWCon/RMD single-neuron current traces | voltage/current-clamp traces reproduced by HH model | [Nicoletti et al. 2019](https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0218738) | single-neuron channel biophysics |
 | 81 | Bulk body mechanical response under hydrostatic pressure | bulk modulus independent of cuticle | [Biophysical Journal 2015](https://www.cell.com/article/S0006-3495(15)00281-7/fulltext) | hydrostatic skeleton; pseudocoelom pressure |
-| 82 | Body Young's modulus (cuticle/muscle/pseudocoelom) | cuticle 75–140 kPa; muscle 600–2,100 kPa; pseudocoelom 42–275 kPa | [Frontiers Bioeng. 2024](https://www.frontiersin.org/journals/bioengineering-and-biotechnology/articles/10.3389/fbioe.2024.1335788/xml/nlm) | whole-body soft tissue mechanics |
+| 82 | Body Young's modulus (cuticle/muscle/pseudocoelom) | cuticle 75–140 kPa; muscle 600–2,100 kPa; pseudocoelom 42–275 kPa | [Frontiers Bioeng. 2024](https://www.frontiersin.org/journals/bioengineering-and-biotechnology/articles/10.3389/fbioe.2024.1335788/xml/nlm) | whole-body soft tissue mechanics. *Correction (7 Nov 2026):* the model does not count muscle twice (its fibre constraints add active force, not passive stiffness); the 7.8x over Backholm 2013's whole-worm value is in these published moduli (see Body mechanics above) |
 | 83 | Metabolic flux landscape (whole organism) | semi-quantitative flux map validated by isotope tracing | [Nature 2025](https://www.nature.com/articles/s41586-025-08635-6) | genome-scale metabolic network |
 | 84 | Tissue-resolved metabolic predictions | muscle/intestine/hypodermis-specific flux differences | [MERGE, Mol Syst Biol 2020](https://link.springer.com/article/10.15252/msb.20209649) | tissue-specific gene expression + metabolic network |
 | 85 | Gene-essentiality prediction from metabolic model | iCEL1273 predicts lethal/viable gene knockouts | [Yilmaz & Walhout 2016](https://doi.org/10.1016/j.cels.2016.04.012) | genome-scale metabolic network |

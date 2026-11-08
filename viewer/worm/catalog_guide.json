@@ -1,6 +1,6 @@
 {
  "generated_by": "viewer/worm/build_catalog_guide.py",
- "generated_at": "2026-11-07T19:03:48+00:00",
+ "generated_at": "2026-11-08T01:22:05+00:00",
  "ledger_source": "docs/worm/ledger.json",
  "framing": "All the mechanisms, and all the parameters except the guessed ones, are the full realisation of a scan of a real C. elegans worm: its cells, their 3D shapes and wiring (from electron-microscopy reconstructions), and published measurements of how its channels, synapses and muscles behave. The guessed parameters are the gaps in that scan that still have to be filled in.",
  "labels": [
@@ -24,8 +24,8 @@
    "key": "published_fit",
    "title": "published fit",
    "meaning": "Another project already fitted or chose this value and published it (BAAIWorm, Nicoletti et al., MetaWorm, c302...). We trust it as far as we trust that published model; it was fit to someone else's data, not ours, and not refit here.",
-   "rows": 645,
-   "numbers": 8174,
+   "rows": 649,
+   "numbers": 8178,
    "example": {
     "param_id": "pas_soma_Ra",
     "plan_row": 5,
@@ -40,8 +40,8 @@
    "key": "derived",
    "title": "derived",
    "meaning": "Plain arithmetic on a measured value, with the arithmetic shown in the row's source note. Mostly this is the 3D cell-reconstruction points and diameters (coordinates and widths digitized from BAAIWorm's EM-based cell shapes); a smaller set is one-line arithmetic on a measured quantity (a physical constant, a membrane area from a measured capacitance, an innexin assignment from measured gene expression). We trust these as far as we trust the measurement plus the arithmetic, which anyone can check.",
-   "rows": 38,
-   "numbers": 67519,
+   "rows": 42,
+   "numbers": 67523,
    "example": {
     "param_id": "ph_area_um2",
     "plan_row": 13,
@@ -56,8 +56,8 @@
    "key": "inferred",
    "title": "inferred",
    "meaning": "Reasoned from a source by this project, not a straight measurement or arithmetic, and not a guess either: for example assigning a channel to a cell because its gene is reported expressed there, or picking a receptor's coupling from a homologue. Trust these less than measured or published fit; they are our best reasoned call, not data.",
-   "rows": 327,
-   "numbers": 333,
+   "rows": 329,
+   "numbers": 335,
    "example": {
     "param_id": "gap_innexin_unitary",
     "plan_row": 8,
@@ -72,8 +72,8 @@
    "key": "guessed",
    "title": "guessed",
    "meaning": "A bounded placeholder, picked to sit inside a plausible biological range so the model runs, not read off anything. These are the real gaps: the parts of the scan we have not filled in yet.",
-   "rows": 594,
-   "numbers": 9390,
+   "rows": 678,
+   "numbers": 9474,
    "example": {
     "param_id": "syn_strength_per_pair",
     "plan_row": 7,
@@ -87,23 +87,23 @@
  ],
  "counts": {
   "rows": {
-   "published_fit": 645,
-   "guessed": 594,
+   "published_fit": 649,
+   "guessed": 678,
    "measured": 251,
-   "inferred": 327,
-   "derived": 38,
+   "inferred": 329,
+   "derived": 42,
    "absent": 1
   },
   "numbers": {
-   "published_fit": 8174,
-   "guessed": 9390,
+   "published_fit": 8178,
+   "guessed": 9474,
    "measured": 6209,
-   "derived": 67519,
-   "inferred": 333,
+   "derived": 67523,
+   "inferred": 335,
    "absent": 1
   },
-  "total_rows": 1856,
-  "total_numbers": 91626
+  "total_rows": 1950,
+  "total_numbers": 91720
  },
  "derived_from": {
   "reconstruction": {
@@ -323,10 +323,34 @@
     "unit": "ms",
     "value": 176.0,
     "arithmetic": "Chen et al. 2013 Nature 499:295 (PMC3777791), Supplementary Table 2 (purified protein: Fmax/Fmin, Kd, Hill, koff by stopped flow at room temperature)"
+   },
+   {
+    "param_id": "body_frac_cuticle",
+    "plan_row": 21,
+    "n_values": 1,
+    "unit": "1",
+    "value": 0.0404,
+    "arithmetic": "Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026): cuticle 0.6 um of a 14.85 um radius"
+   },
+   {
+    "param_id": "body_frac_hypodermis",
+    "plan_row": 21,
+    "n_values": 1,
+    "unit": "1",
+    "value": 0.00673,
+    "arithmetic": "Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026): hypodermis 0.1 um of 14.85 um"
+   },
+   {
+    "param_id": "body_frac_muscle",
+    "plan_row": 21,
+    "n_values": 1,
+    "unit": "1",
+    "value": 0.0673,
+    "arithmetic": "Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026): muscle 1.0 um of 14.85 um"
    }
   ],
-  "other_rows_count": 26,
-  "other_rows_numbers": 1116
+  "other_rows_count": 29,
+  "other_rows_numbers": 1119
  },
  "unknowns": {
   "intro": "The big guessed blocks are per-pair (one guessed number for every connected neuron pair) or per-cell (one guessed number for every neuron). The plan today is to re-express each of those blocks as a rule applied to measured structure, the same way 'derived' already works for the cell shapes, rather than leaving them as flat placeholders.",
@@ -370,15 +394,15 @@
     "param_ids": [
      "dens_* (channel density rows)"
     ],
-    "guessed_numbers": 189,
+    "guessed_numbers": 194,
     "inferred_numbers": 216,
     "note": "today 189 of 438 channel-density numbers are guessed and 216 more are inferred, per (gene, cell class), not yet read off an expression map the way row 3's channel presence already is."
    }
   ],
-  "before_total_guessed": 8546,
+  "before_total_guessed": 8551,
   "after_count_source": "docs/worm/UNKNOWNS.md",
-  "after_count_exists": false,
-  "after_count": null,
-  "after_note": "docs/worm/UNKNOWNS.md does not exist yet. When the modelling agent writes it, this script will read the exact after-count from it; until then, the before-count above is all we can show."
+  "after_count_exists": true,
+  "after_count": 368,
+  "after_note": "from docs/worm/UNKNOWNS.md's verdict: 368 numbers remain unknown (43 shared rules + 325 gaps), the whole fit vector once the rules stand in for the per-pair and per-cell blocks."
  }
 }

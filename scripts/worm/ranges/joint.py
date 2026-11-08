@@ -60,7 +60,7 @@ def _kin_map(ids: frozenset) -> dict:
     """mod -> {PARAMETER name: param_id} for the kin_<mod>_<name> rows."""
     mods = sorted({p.stem for d in gates.DIRS for p in d.glob("*.mod")}, key=len, reverse=True)
     out: dict = {}
-    for pid in ids:
+    for pid in sorted(ids):                 # sorted: constraints.yaml comes out in the same order every build
         if not pid.startswith("kin_"):
             continue
         rest = pid[4:]
