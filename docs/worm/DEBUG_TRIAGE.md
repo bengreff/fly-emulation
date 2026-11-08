@@ -114,7 +114,37 @@ All values are measured.
 | Neuron state | no published voltage bar (line 18); phase-2 bar under challenge iii | the whole network | EMERGES | 0.10% of neurons above -20 mV on average, peak 23%; median -51.0 mV (0.01%, 18%, -54.0 mV) |
 | Quiescence | 48% nose immobility in L4 lethargus (Turek et al. 2016, PMC4805538) | needs an L4 state | not modelled (development, Ben's step 2) | n/a |
 
-ENTIRE_WORM
+The entire worm (challenge i), measured. Closed loop on backhouse, 150 bio s per condition, 15:05-15:34, about
+11.4 s of wall per bio-s. 64 toggles on; finite; the body moved up to 0.11 mm from rest.
+
+| Sign | Food on (food_OD 1.02 at the head) | Food off |
+|---|---|---|
+| Pharyngeal pumping | 0 pumps (published 3.46 +- 0.19 Hz) | 0 pumps |
+| Defecation | 0 expulsions; intestinal Ca peaks at 34.9, 47.4, 86.9, 98.7, 115.0, 136.7 s (mean interval 20.4 s; published 45-50 s) | identical peak times |
+| Egg-laying | 0 eggs (150 s is too short; lines 5 and 22) | 0 |
+| Body-wall muscle | median -30.2 mV, 1.96 Hz per muscle, 82% fire | -30.9 mV, 1.83 Hz, 81% |
+| Neuron state | 0.15% above -20 mV on average, peak 25% | 0.12%, peak 20% |
+
+Verdict: the entire worm has no vital signs that match yet, and food changes nothing.
+- Nothing is SET, so no sign is B for being set.
+- Of the four rhythms, only the body-wall muscle runs, and it runs 2.7x fast and 5 mV low against a dissected
+  preparation.
+- The pharynx never pumps: 0 pumps on and off food, in the brain-only and the entire-worm runs alike.
+- The intestine's Ca cycles irregularly at about 20 s, with the same peak times in every run, and it never
+  completes an expulsion.
+- Food reaches the head and the four food sensors (about 3.4 pA into ADF, ASI, ASJ and NSM, derived from
+  `brain_layers.py:310`), but leaves every sign within 0.7 mV and 0.13 Hz.
+
+Inferred, not traced: the likely route for the missing pumps is a silent MC. The pump needs MC to drive pm4
+through the marginal cells (organs_pharynx), and the network sits at 0.1% of neurons above -20 mV (line 18).
+
+Phase 2 (spec, not run today):
+- Trace MC, then the marginal cells, then pm4 voltage in this loop (about 2 min of wall per 10 bio-s).
+- Find why the intestinal Ca peaks fall at the same times with and without food, and why no expulsion follows.
+- Run the loop for 1 bio-h overnight for eggs, after line 5's HSN build.
+
+Behaviour was not fitted or grafted. The brain-only numbers above are the preliminary and agree with these within
+1 mV and 0.15 Hz.
 
 ## Item 6: viewer vs audit
 
@@ -127,6 +157,8 @@ category. Rows 4, 6, 14, 19 and 24 are split: full in the audit, simplified in t
 - v. The 13 cells at 5.6-7.8 GOhm: not a units slip (Open has the source lines), so line 16's remainder is not A.
 - vi. Line 5's second cause is now line 22: D, 13/64 inside the bio box (probe_5ht.py, pre-registered).
 - iv. Stiffness: the approved fitted rule parameter does not exist, so it is a phase-2 build item; line 10 stays C.
+- i. Item 5 is now the entire worm: one everything-on closed loop with the body on backhouse, food on and off
+  (item 5 section). The brain-only runs are kept as the preliminary.
 - iii. Neuron state, the phase-2 bar. HELDOUT.md read first. Statistic: the fraction of variance in the first three
   principal components of the z-scored GCaMP traces of the identified neurons, one value per animal over the whole
   recording. Ours goes through `mech/observation` (the same readout lines 17 and 19 test), on the cells the
