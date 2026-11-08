@@ -203,6 +203,14 @@ rules:
   - {re: "^rule_pas_epas_", cls: reversal_leak}
   - {re: "^rule_dens_", cls: conductance_density}
   - {re: "^rule_cengen_threshold$", hard_row_unit: [1, 4], basis: physics, why: "CeNGEN publishes four expression thresholds", source: "Taylor et al. 2021 Cell"}
+  # wmodel's rule rows (src/wormemu/mech/structure_rules.py, 631acfd)
+  - {re: "^(syn|nmj)_nchan_per_em_", hard_row_unit: [0, 1800], basis: physics, why: "one EM section of an active zone (~0.09 um2) packed at the densest measured receptor density (2e4 per um2): 1,800 channels", source: "[HB 1], [HB 2]; RULE_PARAMS_LIT.md section 1"}
+  - {re: "^pas_epas_unfit_mV$", cls: reversal_leak}
+  - {re: "^rec_share_tpm_exponent$", hard_row_unit: [0, 3], basis: guessed_physical, why: "0 gives equal class shares; at 3 a class with twice another's TPM already takes 8 of every 9 receptors, so a larger exponent would stop reading expression at all (guessed edge)", source: "structure_rules.py"}
+  - {re: "^syn_sign_tpm_ratio$", hard_row_unit: [0.1, 10], basis: guessed_physical, why: "a chloride-to-cation TPM ratio threshold; beyond 10x either way the CeNGEN sign rule would sign nearly every pair the same (guessed edge)", source: "structure_rules.py"}
+  - {re: "^dens_map_log10_", hard_row_unit: [-2, 2], basis: guessed_physical, why: "log10 scale on the published density: two decades either side keeps the three Nicoletti densities (4.3e-6 to 3.0e-4 S/cm2) below 0.03 S/cm2, far under the packing ceiling, and above a channel per cell (guessed edge)", source: "structure_rules.py; Nicoletti et al. 2024"}
+  - {re: "^dens_map_tpm_slope$", hard_row_unit: [0, 2], basis: guessed_physical, why: "density proportional to (TPM + C)^b; b = 1 is protein in proportion to mRNA, and mRNA-to-protein slopes are not far above 1 (guessed edge 2)", source: "structure_rules.py"}
+  - {re: "^dens_map_tpm_pseudocount$", hard_row_unit: [0.1, 1000], basis: guessed_physical, why: "a pseudo-count in TPM: from below CeNGEN's lowest threshold to above the TPM of most channel genes (guessed edges)", source: "structure_rules.py; Taylor et al. 2021 Cell"}
   - {re: "^(morph_|wire_)", cls: structure, role: fixed}
   - {re: "^build_length_per_seg$", cls: numerics, role: fixed}
   - {re: "^build_", cls: construction, role: fixed}

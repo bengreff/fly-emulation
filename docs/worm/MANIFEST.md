@@ -1,11 +1,15 @@
 # worm-data manifest
 
 All data lives on backhouse under `~/worm-data/`. This file is mirrored there as `~/worm-data/MANIFEST.md`.
-Fetched 2026-11-04 (date run on backhouse before writing this line: `Wed Nov 4 22:36 CST 2026`).
+Fetched 2026-11-04 (date run on backhouse before writing this line: `Wed Nov 4 22:36 CST 2026`); more datasets
+were added on 2026-11-05 (section 10).
 
-Budget: up to 150 GB. Actual total: 2.5 GB (see summary table). `~/worm-data/ephys/` is another assistant's
-folder (`naudin2022_liu_aiy_rim_afd`, 36 MB) and was left untouched; it is listed here only so nothing is lost.
-All downloads finished; no download/fetch processes are left running on backhouse.
+**What backhouse holds, listed 2026-11-07** (`Sat Nov 7 13:29 CST 2026` on backhouse; `du` in 1 MiB blocks, file names
+and sizes only; no data file was opened): **18.2 GB** in `/home/greff/worm-data/`, 17 folders. Budget: up to 150 GB.
+Parts of neuropal2021, owmd_javer2018, yemini2013, randi2023, atanas2023 (with dag2023 and pradhan2025) and the
+single-cell ephys are locked as held-out test data: see `docs/worm/HELDOUT.md` and `data/worm/heldout/lock.json`
+before opening any of them. `~/worm-data/ephys/` is another assistant's folder (`naudin2022_liu_aiy_rim_afd`, 36 MB);
+it is listed here only so nothing is lost.
 
 ## Summary table
 
@@ -13,13 +17,20 @@ All downloads finished; no download/fetch processes are left running on backhous
 |---|---|---|---|
 | cook2019 | 12 MB | "Emmons Lab Copyright (c) 2020" (wormwiring.org footer); no further terms stated | complete |
 | witvliet2021 | 91 MB | GPL-3.0 (NemaNode repo licence field; data files inherit the repo's declared licence, not independently re-licensed by the authors) | complete |
-| cengen | 426 MB | not stated (checked cengen.org/downloads/ page text; no licence or terms found) | partial (thresholds + bulk tsvs + one neuron-only single-cell object; big Seurat objects and raw GEO reads skipped) |
-| peptide_connectome | 1.0 GB | Neuropeptide-Connectome repo: MIT. Beets 2023 supplement: Cell Reports (open access), licence not independently confirmed (cell.com blocked fetch; PMC copy used). Bentley 2016 supplement: PLOS CC BY 4.0 (journal-wide licence) | complete |
-| randi2023 | 637 MB | OSF project e2syt: no node_license set (checked OSF API `node_license` field = null) i.e. not stated. wormneuroatlas package: GPL-3.0 | complete (core processed exports; pre_review/full duplicate variants skipped) |
-| atanas2023 | 714 MB | CC BY 3.0 US (Zenodo record 8185377 metadata) | complete (large model-fit files skipped, see below) |
+| cengen | 713 MB (426 MB on 4 Nov; the 301 MB all-cells `070220_L4_all_cells_monocle3_final.rds` added 5 Nov) | not stated (checked cengen.org/downloads/ page text; no licence or terms found) | partial (thresholds + bulk tsvs + one neuron-only single-cell object; big Seurat objects and raw GEO reads skipped) |
+| peptide_connectome | 502 MB (measured 7 Nov; the 4 Nov line said 1.0 GB) | Neuropeptide-Connectome repo: MIT. Beets 2023 supplement: Cell Reports (open access), licence not independently confirmed (cell.com blocked fetch; PMC copy used). Bentley 2016 supplement: PLOS CC BY 4.0 (journal-wide licence) | complete |
+| randi2023 | 718 MB (637 MB on 4 Nov; `exported_data_unc31.tar.gz`, 85 MB, added 5 Nov) | OSF project e2syt: no node_license set (checked OSF API `node_license` field = null) i.e. not stated. wormneuroatlas package: GPL-3.0 | complete (core processed exports; pre_review/full duplicate variants skipped) |
+| atanas2023 | 927 MB (714 MB on 4 Nov; `zenodo19388374_additions/`, 10 files, 222 MB, added 5 Nov) | CC BY 3.0 US (Zenodo record 8185377 metadata) | complete (large model-fit files skipped, see below) |
 | morphologies | 121 MB | not stated (GitHub API licence field = null for openworm/CElegansNeuroML; no LICENSE file in repo root) | complete |
-| misc | 168 KB | Cell (Elsevier) copyright, not open access; supplement fetched via PMC post-embargo public access copy | complete (Bhattacharya 2019 innexin mmc1 only; monoamine connectome covered under peptide_connectome instead) |
+| misc | 168 KB (plus an empty `wormbase_celllist/` folder) | Cell (Elsevier) copyright, not open access; supplement fetched via PMC post-embargo public access copy | complete (Bhattacharya 2019 innexin mmc1 only; monoamine connectome covered under peptide_connectome instead) |
 | ephys (not mine) | 36 MB | n/a, another assistant's folder, untouched | n/a |
+| neuropal2021 | 7.7 GB | `plasmids/LICENSE.md`: MIT, Hobert Lab 2020 (in the plasmids folder; there is no licence file beside the two big zips, whose contents were not opened) | on disk 5 Nov; section 10 |
+| owmd_javer2018 | 6.4 GB | Zenodo records (one per recording, listed in `owmd_subset_manifest.tsv`); licence not recorded at fetch | on disk 5 Nov; section 10 |
+| yemini2013 | 9 MB | Nature Methods supplement; licence not recorded at fetch | on disk 5 Nov; section 10 |
+| wormbase_phenotype | 4 MB | WormBase release WS298; licence not recorded at fetch | on disk 5 Nov; section 10 |
+| brittin2021 | 124 MB | `README.txt`: MIT-style permission notice, copyright 2020 C. Brittin, S. Emmons and N. Cohen | partial (7 archives plus the README; of the 11 archives the README lists, adjacency, brainmap, databases, population_spatial_models and reference_graphs are on disk and the TrakEM2 mipmaps, segmentations and process structures are not; adult_volumes and l4_volumes are on disk but not in the README's list) |
+| wormwideweb_extra | 105 MB | not recorded at fetch | on disk 5 Nov: dag2023 (72 MB), pradhan2025 (34 MB); section 10 |
+| liu2018_awa_ephys | 772 MB | not recorded at fetch | on disk 5 Nov; section 10 |
 
 ## 1. cook2019
 
@@ -330,3 +341,43 @@ backhouse as above; these are reproducible from them.
 The 20 neurons Wang 2024 does not list take their transmitter from CeNGEN marker genes (unc-17, eat-4, unc-25,
 cat-2, tph-1, tdc-1, tbh-1) where expressed (5 neurons), else none (15 neurons: no fast chemical output in the
 model; recorded in the ledger).
+
+## 10. Datasets added 2026-11-05 (listed 2026-11-07 from file names and sizes only)
+
+These were fetched on 5 Nov by another session and were not written up here then. Citations below are the
+datasets' usual papers, given from the file names and folder layout, not re-checked against a source page this
+session. Sizes are bytes as listed by `find -printf %s` on 7 Nov. Several are partly locked: read
+`docs/worm/HELDOUT.md` before opening anything.
+
+- **neuropal2021** (7.7 GB, 6 files). Yemini et al. 2021 Cell 184:272 (NeuroPAL). `manuals_and_images/NeuroPAL Manuals
+  and their Image Volumes.zip` (2,753,444,086), `microfluidic_gcamp/NeuroPAL Microfluidic Experiments.zip`
+  (5,292,770,427; strain OH16230, 21 recording sessions, 6 locked), `plasmids/` (`LICENSE.md`, `Landmarks.zip`,
+  `Metabotropic-Receptors.zip`, `Panneuronal.zip`).
+- **owmd_javer2018** (6.4 GB, 407 files). Javer et al. 2018 Nat Methods 15:645 (Open Worm Movement Database), a
+  subset chosen for this project: N2 (160 files, 2.6 GB) and 16 mutant strains of 16 files each except cat-2 (6):
+  cat-2, egl-19, egl-2, flp-1, mod-1, npr-1, tdc-1, tph-1, unc-103, unc-17, unc-2, unc-29, unc-31, unc-38, unc-7,
+  unc-9. Tierpsy `*_features.hdf5` plus `.wcon.zip` per recording; `owmd_subset_manifest.tsv` (115,360 bytes) lists
+  tag, Zenodo record, strain, gene, allele, timestamp, file, url, size and md5 for each. 6 of the 17 strains locked.
+- **yemini2013** (9 MB, 6 files). Yemini et al. 2013 Nat Methods 10:877 (behavioural phenotype database):
+  `nmeth2560_MOESM83_SuppText_Figs1-6_Note.pdf` and Supplementary Tables 1-5 (`nmeth2560_MOESM84` to `MOESM88`,
+  `.xlsx`; Table 5 is 7.0 MB). 304 strains, 76 locked.
+- **wormbase_phenotype** (4 MB, 2 files). WormBase WS298: `phenotype_association.WS298.wb.gz` (3,236,946),
+  `phenotype_ontology.WS298.obo.gz` (180,232). Not split (a categorical lookup).
+- **brittin2021** (124 MB, 8 files). Brittin, Cook, Hall, Emmons and Cohen 2021 Nature (multiscale brain map,
+  per the README): `README.txt`, `adjacency.tar.bz2`, `adult_volumes.tar.bz2` (61.6 MB), `brainmap.tar.bz2`,
+  `databases.tar.bz2` (18.5 MB), `l4_volumes.tar.bz2` (43.3 MB), `population_spatial_models.tar.bz2`,
+  `reference_graphs.tar.bz2`. Not split (structural prior).
+- **wormwideweb_extra** (105 MB, 7 files), the same NeuroPAL+GCaMP freely-moving format as atanas2023 (section 6):
+  `dag2023/` (Dag et al. 2023 Cell, serotonergic system: `processed_h5.tar.bz2` 74,555,688, `NeuroPAL_labels_dict.jld2.bz2`,
+  `neuropal_label.json.bz2`; 15 animals, 4 locked) and `pradhan2025/` (Pradhan et al. 2025: `processed_h5.tar.bz2`
+  34,369,614, `neuropal_label.jld2.bz2`, `neuropal_label.json.bz2`, `restructure_script.jl`; 8 animals, all locked).
+- **liu2018_awa_ephys** (772 MB, 15 files). Liu et al. 2018 Cell (AWA action potentials): `AWA Calcium Imaging Raw
+  Data.zip` (219 MB) and the figure archives `Liu et al Figure 1.zip` to `Figure 7.zip` and `Figure S1.zip` to
+  `Figure S7.zip` (S6 is 390 MB). Used by `docs/worm/FIT2.md` (AWA); the RIM class is locked there.
+- **atanas2023/zenodo19388374_additions/** (222 MB, 10 files): `analysis_dict.jld2.bz2` (114 MB),
+  `processed_h5_scrambled.tar.bz2` (97 MB, a shuffled-identity copy, excluded from fitting and from the lock),
+  `tuning_strength.h5.bz2`, `relative_encoding_strength_median.h5.bz2`, `sampled_tau_vals_median.h5.bz2`,
+  `neuron_categorization.h5.bz2`, `encoding_changes_corrected.h5.bz2`, `fit_ranges.h5.bz2`, `neuropal_label.jld2.bz2`,
+  `neuropal_label.json.bz2`.
+- **cengen** gained `070220_L4_all_cells_monocle3_final.rds` (300,638,910) and **randi2023** gained
+  `exported_data_unc31.tar.gz` (84,924,311; the unc-31 strain, locked whole).

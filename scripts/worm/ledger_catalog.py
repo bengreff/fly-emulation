@@ -59,6 +59,8 @@ MECH_ROW = {
     "channel_library": 5, "ca_pool_volume": 6, "glia_sensilla": 11, "endorgan_cells": 16,
 }
 PARAM_ROW = {"ion_celsius": 25}
+# wmodel's structure_rules (7 Nov): each rule sits in the row of the per-element values it generates
+RULE_ROW = [(("syn_", "nmj_", "rec_share_"), 7), (("gap_",), 8), (("pas_", "dens_map_"), 5)]
 # for registry modules that do not say: keyword in the module or mechanism id -> row (first match wins)
 KEYWORD_ROW = [("sleep", 28), ("pump", 27), ("atpase", 27), ("noise", 26), ("temperature", 25), ("q10", 25),
                ("plastic", 24), ("stp", 24), ("habituat", 24), ("learn", 24), ("peptide", 9), ("monoamine", 10),
@@ -76,6 +78,8 @@ def plan_row(pid: str, mid: str) -> int:
         return PARAM_ROW[pid]
     if pid.startswith("kin_"):
         return 4
+    if mid == "structure_rules":
+        return next((r for pre, r in RULE_ROW if pid.startswith(pre)), 0)
     if mid in MECH_ROW:
         return MECH_ROW[mid]
     if mid.startswith(("ch_",)):

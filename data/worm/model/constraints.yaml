@@ -2532,18 +2532,18 @@ constraints:
   kind: gate_window
   mod: cca1
   params: &id001
+    vhm: kin_cca1_vhm
+    vhh: kin_cca1_vhh
+    btm: kin_cca1_btm
+    atm: kin_cca1_atm
+    ka: kin_cca1_ka
     bth: kin_cca1_bth
-    ath: kin_cca1_ath
+    dtm: kin_cca1_dtm
+    dth: kin_cca1_dth
     cth: kin_cca1_cth
     ctm: kin_cca1_ctm
-    vhh: kin_cca1_vhh
-    dtm: kin_cca1_dtm
-    btm: kin_cca1_btm
-    dth: kin_cca1_dth
-    atm: kin_cca1_atm
     ki: kin_cca1_ki
-    vhm: kin_cca1_vhm
-    ka: kin_cca1_ka
+    ath: kin_cca1_ath
   statement: 'cca1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2567,30 +2567,30 @@ constraints:
   mod: egl19
   params:
     dhinf: kin_egl19_dhinf
-    dtm: kin_egl19_dtm
-    ahinf: kin_egl19_ahinf
-    gth: kin_egl19_gth
-    atm: kin_egl19_atm
-    vhhb: kin_egl19_vhhb
-    kib: kin_egl19_kib
-    dth: kin_egl19_dth
-    bhinf: kin_egl19_bhinf
-    ki: kin_egl19_ki
-    hth: kin_egl19_hth
-    ka: kin_egl19_ka
-    ath: kin_egl19_ath
-    ftm: kin_egl19_ftm
     gtm: kin_egl19_gtm
-    chinf: kin_egl19_chinf
-    etm: kin_egl19_etm
+    gth: kin_egl19_gth
+    ftm: kin_egl19_ftm
+    dtm: kin_egl19_dtm
+    atm: kin_egl19_atm
+    bhinf: kin_egl19_bhinf
+    kib: kin_egl19_kib
+    vhhb: kin_egl19_vhhb
+    ctm: kin_egl19_ctm
     btm: kin_egl19_btm
     vhm: kin_egl19_vhm
-    eth: kin_egl19_eth
-    cth: kin_egl19_cth
-    ctm: kin_egl19_ctm
-    fth: kin_egl19_fth
+    chinf: kin_egl19_chinf
     vhh: kin_egl19_vhh
+    eth: kin_egl19_eth
+    etm: kin_egl19_etm
+    hth: kin_egl19_hth
+    ahinf: kin_egl19_ahinf
+    ka: kin_egl19_ka
+    dth: kin_egl19_dth
     bth: kin_egl19_bth
+    fth: kin_egl19_fth
+    cth: kin_egl19_cth
+    ath: kin_egl19_ath
+    ki: kin_egl19_ki
   statement: 'egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2601,12 +2601,12 @@ constraints:
   kind: gate_window
   mod: egl2
   params:
-    dtm: kin_egl2_dtm
-    atm: kin_egl2_atm
-    ka: kin_egl2_ka
-    btm: kin_egl2_btm
-    vhm: kin_egl2_vhm
     ctm: kin_egl2_ctm
+    ka: kin_egl2_ka
+    vhm: kin_egl2_vhm
+    dtm: kin_egl2_dtm
+    btm: kin_egl2_btm
+    atm: kin_egl2_atm
   statement: 'egl2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2617,11 +2617,11 @@ constraints:
   kind: gate_window
   mod: egl36
   params:
-    atmf: kin_egl36_atmf
-    atms: kin_egl36_atms
     atmm: kin_egl36_atmm
     vhm: kin_egl36_vhm
     ka: kin_egl36_ka
+    atmf: kin_egl36_atmf
+    atms: kin_egl36_atms
   statement: 'egl36: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2632,18 +2632,18 @@ constraints:
   kind: gate_window
   mod: exp2
   params: &id002
-    pth1_exp2: kin_exp2_pth1_exp2
-    va_exp2: kin_exp2_va_exp2
-    ptm4_exp2: kin_exp2_ptm4_exp2
-    pth3_exp2: kin_exp2_pth3_exp2
-    pth4_exp2: kin_exp2_pth4_exp2
+    pth2_exp2: kin_exp2_pth2_exp2
     ka_exp2: kin_exp2_ka_exp2
-    ptm3_exp2: kin_exp2_ptm3_exp2
     vi_exp2: kin_exp2_vi_exp2
     ptm1_exp2: kin_exp2_ptm1_exp2
-    ptm2_exp2: kin_exp2_ptm2_exp2
     ki_exp2: kin_exp2_ki_exp2
-    pth2_exp2: kin_exp2_pth2_exp2
+    ptm2_exp2: kin_exp2_ptm2_exp2
+    pth1_exp2: kin_exp2_pth1_exp2
+    pth4_exp2: kin_exp2_pth4_exp2
+    va_exp2: kin_exp2_va_exp2
+    ptm4_exp2: kin_exp2_ptm4_exp2
+    ptm3_exp2: kin_exp2_ptm3_exp2
+    pth3_exp2: kin_exp2_pth3_exp2
   statement: 'exp2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2666,14 +2666,14 @@ constraints:
   kind: gate_window
   mod: irk
   params:
-    dtm: kin_irk_dtm
-    atm: kin_irk_atm
-    ftm: kin_irk_ftm
-    ka: kin_irk_ka
-    btm: kin_irk_btm
-    vhm: kin_irk_vhm
     etm: kin_irk_etm
     ctm: kin_irk_ctm
+    btm: kin_irk_btm
+    vhm: kin_irk_vhm
+    ka: kin_irk_ka
+    dtm: kin_irk_dtm
+    ftm: kin_irk_ftm
+    atm: kin_irk_atm
   statement: 'irk: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2684,8 +2684,8 @@ constraints:
   kind: gate_window
   mod: kcnl
   params:
-    a: kin_kcnl_a
     kca: kin_kcnl_kca
+    a: kin_kcnl_a
   statement: 'kcnl: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2697,21 +2697,21 @@ constraints:
   mod: kqt1
   params: &id003
     p3tmkqt1: kin_kqt1_p3tmkqt1
-    s5: kin_kqt1_s5
-    p4tskqt1: kin_kqt1_p4tskqt1
-    s1: kin_kqt1_s1
-    s2: kin_kqt1_s2
-    p2tmkqt1: kin_kqt1_p2tmkqt1
-    p1tskqt1: kin_kqt1_p1tskqt1
-    p1tmkqt1: kin_kqt1_p1tmkqt1
-    p2tskqt1: kin_kqt1_p2tskqt1
-    s4: kin_kqt1_s4
-    va: kin_kqt1_va
-    s3: kin_kqt1_s3
-    s6: kin_kqt1_s6
     p3tskqt1: kin_kqt1_p3tskqt1
+    va: kin_kqt1_va
+    p4tskqt1: kin_kqt1_p4tskqt1
+    s2: kin_kqt1_s2
+    p1tmkqt1: kin_kqt1_p1tmkqt1
+    p1tskqt1: kin_kqt1_p1tskqt1
     p4tmkqt1: kin_kqt1_p4tmkqt1
+    s4: kin_kqt1_s4
     ka: kin_kqt1_ka
+    s5: kin_kqt1_s5
+    p2tskqt1: kin_kqt1_p2tskqt1
+    s6: kin_kqt1_s6
+    p2tmkqt1: kin_kqt1_p2tmkqt1
+    s3: kin_kqt1_s3
+    s1: kin_kqt1_s1
   statement: 'kqt1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2734,30 +2734,30 @@ constraints:
   kind: gate_window
   mod: kqt3
   params:
-    vhm: kin_kqt3_vhm
-    ftms: kin_kqt3_ftms
-    btw: kin_kqt3_btw
-    dtw: kin_kqt3_dtw
-    ctw: kin_kqt3_ctw
-    ctms: kin_kqt3_ctms
-    vhs: kin_kqt3_vhs
-    btms: kin_kqt3_btms
-    bs: kin_kqt3_bs
-    ats: kin_kqt3_ats
-    vhw: kin_kqt3_vhw
-    ctmf: kin_kqt3_ctmf
-    dtms: kin_kqt3_dtms
-    ka: kin_kqt3_ka
-    as: kin_kqt3_as
     atmf: kin_kqt3_atmf
-    aw: kin_kqt3_aw
+    btw: kin_kqt3_btw
+    dtms: kin_kqt3_dtms
+    bs: kin_kqt3_bs
+    ctw: kin_kqt3_ctw
+    kis: kin_kqt3_kis
+    etms: kin_kqt3_etms
+    bw: kin_kqt3_bw
+    ka: kin_kqt3_ka
+    ats: kin_kqt3_ats
+    vhs: kin_kqt3_vhs
+    ftms: kin_kqt3_ftms
+    ctmf: kin_kqt3_ctmf
     atms: kin_kqt3_atms
+    dtw: kin_kqt3_dtw
+    as: kin_kqt3_as
     btmf: kin_kqt3_btmf
+    vhm: kin_kqt3_vhm
+    aw: kin_kqt3_aw
     gtms: kin_kqt3_gtms
     atw: kin_kqt3_atw
-    bw: kin_kqt3_bw
-    etms: kin_kqt3_etms
-    kis: kin_kqt3_kis
+    ctms: kin_kqt3_ctms
+    btms: kin_kqt3_btms
+    vhw: kin_kqt3_vhw
     kiw: kin_kqt3_kiw
   statement: 'kqt3: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
@@ -2769,18 +2769,18 @@ constraints:
   kind: gate_window
   mod: kvs1
   params:
-    bth: kin_kvs1_bth
-    vhm: kin_kvs1_vhm
-    atm: kin_kvs1_atm
-    ka: kin_kvs1_ka
-    dtm: kin_kvs1_dtm
     cth: kin_kvs1_cth
-    vhh: kin_kvs1_vhh
+    bth: kin_kvs1_bth
     btm: kin_kvs1_btm
+    ka: kin_kvs1_ka
     ath: kin_kvs1_ath
-    ki: kin_kvs1_ki
-    dth: kin_kvs1_dth
+    atm: kin_kvs1_atm
     ctm: kin_kvs1_ctm
+    ki: kin_kvs1_ki
+    vhm: kin_kvs1_vhm
+    vhh: kin_kvs1_vhh
+    dth: kin_kvs1_dth
+    dtm: kin_kvs1_dtm
   statement: 'kvs1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2791,17 +2791,17 @@ constraints:
   kind: gate_window
   mod: shk1
   params: &id004
-    ki: kin_shk1_ki
-    dtm: kin_shk1_dtm
-    vhm: kin_shk1_vhm
-    etm: kin_shk1_etm
-    btm: kin_shk1_btm
-    ctm: kin_shk1_ctm
-    atm: kin_shk1_atm
-    ath: kin_shk1_ath
-    ftm: kin_shk1_ftm
-    vhh: kin_shk1_vhh
     ka: kin_shk1_ka
+    etm: kin_shk1_etm
+    vhh: kin_shk1_vhh
+    btm: kin_shk1_btm
+    vhm: kin_shk1_vhm
+    ftm: kin_shk1_ftm
+    ath: kin_shk1_ath
+    dtm: kin_shk1_dtm
+    atm: kin_shk1_atm
+    ctm: kin_shk1_ctm
+    ki: kin_shk1_ki
   statement: 'shk1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2824,24 +2824,24 @@ constraints:
   kind: gate_window
   mod: shl1
   params: &id005
-    aths: kin_shl1_aths
-    vhh: kin_shl1_vhh
-    ka: kin_shl1_ka
-    etm: kin_shl1_etm
-    dths: kin_shl1_dths
-    ki: kin_shl1_ki
-    bthf: kin_shl1_bthf
-    btm: kin_shl1_btm
-    ftm: kin_shl1_ftm
-    bths: kin_shl1_bths
-    cths: kin_shl1_cths
     vhm: kin_shl1_vhm
-    dthf: kin_shl1_dthf
-    atm: kin_shl1_atm
-    athf: kin_shl1_athf
-    dtm: kin_shl1_dtm
     cthf: kin_shl1_cthf
+    bths: kin_shl1_bths
+    atm: kin_shl1_atm
     ctm: kin_shl1_ctm
+    cths: kin_shl1_cths
+    ftm: kin_shl1_ftm
+    vhh: kin_shl1_vhh
+    bthf: kin_shl1_bthf
+    ka: kin_shl1_ka
+    dthf: kin_shl1_dthf
+    btm: kin_shl1_btm
+    dths: kin_shl1_dths
+    aths: kin_shl1_aths
+    ki: kin_shl1_ki
+    dtm: kin_shl1_dtm
+    etm: kin_shl1_etm
+    athf: kin_shl1_athf
   statement: 'shl1: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2864,14 +2864,14 @@ constraints:
   kind: gate_window
   mod: slo1_egl19
   params:
+    nyx: kin_slo1_egl19_nyx
+    wyx: kin_slo1_egl19_wyx
     kxy: kin_slo1_egl19_kxy
+    wop: kin_slo1_egl19_wop
     nxy: kin_slo1_egl19_nxy
     wom: kin_slo1_egl19_wom
-    wyx: kin_slo1_egl19_wyx
     wxy: kin_slo1_egl19_wxy
-    wop: kin_slo1_egl19_wop
     kyx: kin_slo1_egl19_kyx
-    nyx: kin_slo1_egl19_nyx
   statement: 'slo1_egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2882,14 +2882,14 @@ constraints:
   kind: gate_window
   mod: slo1_unc2
   params: &id006
-    nyx: kin_slo1_unc2_nyx
-    wyx: kin_slo1_unc2_wyx
-    nxy: kin_slo1_unc2_nxy
-    kxy: kin_slo1_unc2_kxy
-    kyx: kin_slo1_unc2_kyx
-    wom: kin_slo1_unc2_wom
-    wop: kin_slo1_unc2_wop
     wxy: kin_slo1_unc2_wxy
+    kyx: kin_slo1_unc2_kyx
+    wop: kin_slo1_unc2_wop
+    nyx: kin_slo1_unc2_nyx
+    kxy: kin_slo1_unc2_kxy
+    nxy: kin_slo1_unc2_nxy
+    wyx: kin_slo1_unc2_wyx
+    wom: kin_slo1_unc2_wom
   statement: 'slo1_unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2912,14 +2912,14 @@ constraints:
   kind: gate_window
   mod: slo1iso
   params:
-    kyx: kin_slo1iso_kyx
-    wom: kin_slo1iso_wom
-    nyx: kin_slo1iso_nyx
     wyx: kin_slo1iso_wyx
-    wxy: kin_slo1iso_wxy
+    kyx: kin_slo1iso_kyx
     kxy: kin_slo1iso_kxy
-    wop: kin_slo1iso_wop
+    wxy: kin_slo1iso_wxy
+    nyx: kin_slo1iso_nyx
     nxy: kin_slo1iso_nxy
+    wom: kin_slo1iso_wom
+    wop: kin_slo1iso_wop
   statement: 'slo1iso: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2930,14 +2930,14 @@ constraints:
   kind: gate_window
   mod: slo2_egl19
   params:
-    kxy: kin_slo2_egl19_kxy
-    wxy: kin_slo2_egl19_wxy
     kyx: kin_slo2_egl19_kyx
-    nyx: kin_slo2_egl19_nyx
-    wyx: kin_slo2_egl19_wyx
-    wom: kin_slo2_egl19_wom
-    nxy: kin_slo2_egl19_nxy
     wop: kin_slo2_egl19_wop
+    wxy: kin_slo2_egl19_wxy
+    nxy: kin_slo2_egl19_nxy
+    nyx: kin_slo2_egl19_nyx
+    wom: kin_slo2_egl19_wom
+    wyx: kin_slo2_egl19_wyx
+    kxy: kin_slo2_egl19_kxy
   statement: 'slo2_egl19: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2949,13 +2949,13 @@ constraints:
   mod: slo2_unc2
   params: &id007
     wxy: kin_slo2_unc2_wxy
-    wom: kin_slo2_unc2_wom
-    kyx: kin_slo2_unc2_kyx
+    wyx: kin_slo2_unc2_wyx
+    nyx: kin_slo2_unc2_nyx
     kxy: kin_slo2_unc2_kxy
     nxy: kin_slo2_unc2_nxy
-    nyx: kin_slo2_unc2_nyx
+    wom: kin_slo2_unc2_wom
+    kyx: kin_slo2_unc2_kyx
     wop: kin_slo2_unc2_wop
-    wyx: kin_slo2_unc2_wyx
   statement: 'slo2_unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2978,14 +2978,14 @@ constraints:
   kind: gate_window
   mod: slo2iso
   params:
-    kxy1: kin_slo2iso_kxy1
-    kyx1: kin_slo2iso_kyx1
-    nyx1: kin_slo2iso_nyx1
-    wyx1: kin_slo2iso_wyx1
     wop1: kin_slo2iso_wop1
-    nxy1: kin_slo2iso_nxy1
-    wom1: kin_slo2iso_wom1
+    wyx1: kin_slo2iso_wyx1
     wxy1: kin_slo2iso_wxy1
+    nxy1: kin_slo2iso_nxy1
+    kyx1: kin_slo2iso_kyx1
+    wom1: kin_slo2iso_wom1
+    nyx1: kin_slo2iso_nyx1
+    kxy1: kin_slo2iso_kxy1
   statement: 'slo2iso: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -2996,18 +2996,18 @@ constraints:
   kind: gate_window
   mod: unc103
   params: &id008
-    th1: kin_unc103_th1
-    tm1: kin_unc103_tm1
-    th3: kin_unc103_th3
-    th2: kin_unc103_th2
-    ki: kin_unc103_ki
     tm2: kin_unc103_tm2
-    vi: kin_unc103_vi
-    tm4: kin_unc103_tm4
-    ka: kin_unc103_ka
-    th4: kin_unc103_th4
-    tm3: kin_unc103_tm3
+    th1: kin_unc103_th1
     va: kin_unc103_va
+    vi: kin_unc103_vi
+    th2: kin_unc103_th2
+    tm4: kin_unc103_tm4
+    th4: kin_unc103_th4
+    ka: kin_unc103_ka
+    th3: kin_unc103_th3
+    tm1: kin_unc103_tm1
+    tm3: kin_unc103_tm3
+    ki: kin_unc103_ki
   statement: 'unc103: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
@@ -3030,21 +3030,21 @@ constraints:
   kind: gate_window
   mod: unc2
   params: &id009
-    dtm: kin_unc2_dtm
-    eth: kin_unc2_eth
-    fth: kin_unc2_fth
     cth: kin_unc2_cth
-    bth: kin_unc2_bth
-    vhm: kin_unc2_vhm
-    btm: kin_unc2_btm
-    ath: kin_unc2_ath
-    ctm: kin_unc2_ctm
-    etm: kin_unc2_etm
-    ka: kin_unc2_ka
-    ki: kin_unc2_ki
-    atm: kin_unc2_atm
     dth: kin_unc2_dth
+    vhm: kin_unc2_vhm
+    ka: kin_unc2_ka
+    fth: kin_unc2_fth
     vhh: kin_unc2_vhh
+    eth: kin_unc2_eth
+    ath: kin_unc2_ath
+    ki: kin_unc2_ki
+    dtm: kin_unc2_dtm
+    btm: kin_unc2_btm
+    bth: kin_unc2_bth
+    ctm: kin_unc2_ctm
+    atm: kin_unc2_atm
+    etm: kin_unc2_etm
   statement: 'unc2: every steady state in [0, 1] and every time constant in [0.01, 1e+07] ms over V -120..60 mV and Ca 0.01..100 uM'
   strength: hard
   basis: physics
