@@ -29,14 +29,15 @@ disagree (both become toggles); D a gap value fixes it, found by a probe inside 
 | 14 | RIS Gi without DMSR-1 | 28 | Gi == 0 with dmsr-1 removed | 0.062 | E | 25 other peptide GPCRs CeNGEN puts on RIS (largest nlp-13, Gi) still see peptides. Rossi et al. 2025 (PMC7617803) does not say DMSR-1 is RIS's only Gi route. Fix: bar on the DMSR-1 share | | brain | small |
 | 15 | Own ephys, AIY / AFD / AWA (item 3) | 5 | FIT2 features on the training sweeps (Naudin 2022, Liu 2018); RMSE, FIT2 best 16.6 / 10.5 / 13.7 mV | AIYL 113.8, AFDL 26.8, AWAL 16.3 mV | A | brain.py:427-433: the CeNGEN mask deletes 8 of BAAIWorm's fitted AIYL channels (egl2, shl1, kqt3, kvs1, irk, egl36, cca1, shk1). Mask off: AIYL 9.3 mV. Fix: leave BAAIWorm-fitted cells unmasked until FIT2's map or a refit replaces them | | brain | medium |
 | 16 | 121 unphysical single cells (4a) | 3, 5 | upper/lower voltage bars at +-20 pA (wexcite) | 74 upper, 47 below -150 mV | A | 61 of the 74 come from the same mask (13 with it off, all BAAIWorm's own cells at 5.6-7.8 GOhm). The bars are not laws: recorded AIY reaches -125.6 mV at -15 pA, RIM +75 mV at +35 pA | | brain | medium |
-| 17 | ~30x deficit vs Randi (4b) | 23 | autoresponse 30 s mean dF/F, training median 0.43 (Randi 2023) | 0.014-0.018 | C | the response peaks (0.24-0.31) but decays in ~3 s: the readout's decay (line 19), not excitability. Gaps at their tops give 0.08-0.11; adding capool tca 150 and f 0.003 gives 0.64-1.09. AVAL stays 0.048 (1.19 pA Ca current into 129 um3) | | body | small |
+| 17 | ~30x deficit vs Randi (4b) | 23 | autoresponse 30 s mean dF/F, training median 0.43 (Randi 2023) | 0.014-0.018 | B (was C; challenge ii) | follows from line 19. The response peaks (0.24-0.31) but decays in ~3 s: the readout's decay (line 19), not excitability. Gaps at their tops give 0.08-0.11; adding capool tca 150 and f 0.003 gives 0.64-1.09. AVAL stays 0.048 (1.19 pA Ca current into 129 um3) | | body | small |
 | 18 | Saturated vs silent network (4c) | 2, 8 | no published bar for a fraction of neurons above -20 mV | open loop 0%, median -50.3 mV; synapses x4: 7% | E | the "swing" (197, 94, 0, 16% of 302) compared different builds and drives. Same build, every synapse x0.5 / x2 / x4 gives 0 / 0 / 7%: not a knife edge | | brain | small |
-| 19 | GCaMP decay (4d) | 23 | GCaMP6s half-fall 8.4 +- 5.0 s in vivo (Ding et al. 2023 G3, PMC10542313, Table 1) | 0.64 s (13x fast; 2.06 s at both range tops) | C | Nicoletti 2019's tau_Ca 50 ms is a submembrane pool fitted to AWC currents; Ding's is in-vivo bulk decay. Both inputs are scan values; not reachable in range. Toggle: a slow bulk pool the indicator reads | | body | medium |
+| 19 | GCaMP decay (4d) | 23 | GCaMP6s half-fall 8.4 +- 5.0 s in vivo (Ding et al. 2023 G3, PMC10542313, Table 1) | 0.64 s (13x fast; 2.06 s at both range tops) | B (was C; challenge ii) | GCaMP reads the only Ca pool there is, Nicoletti 2019 Eq. 28 (opened): "[Ca]_micro", the microdomain around the SK channels, tau_Ca 33 ms with no source (BAAIWorm's cainternm.mod: 50 ms). Ding measures bulk cytosolic Ca through GCaMP. Different compartments, both can be true, so not C. Missing: a bulk cytosolic compartment (shell-to-core exchange, buffering, extrusion) for the indicator; the shell-plus-core form already exists in our port of Sherman & Harel 2024 (sh_pharynx.mod) | | body | medium |
 | 20 | Compartment convergence | 3 | segments <= 0.1 lambda_AC at 100 Hz (NEURON d_lambda rule) | 97 of 2,253 sections short, none in neurons | B | hypodermis one 5,093 um compartment (needs 35, 34x), excretory cell (needs 5), BWM somata 1.45x | | body | small |
 | 21 | Viewer 8/20 vs audit 13/15 (item 6) | 4, 6, 14, 19, 24 | the two counts | 8 vs 13 full | E | the viewer calls a split row "simplified" if any part is lumped; the audit files it under its main category. The 5 split rows explain 13 - 5 = 8 | | brain | small |
 
-Class counts (table lines 1-21): A 5 (lines 3, 7, 11, 15, 16); B 2 (5, 20); C 5 (1, 2, 10, 17, 19); D 5 (6, 8, 9,
-12, 13); E 4 (4, 14, 18, 21). Lines 15 and 16 share one cause (the mask). Only line 5 (HSN) is large.
+Class counts (table lines 1-21): A 5 (lines 3, 7, 11, 15, 16); B 4 (5, 17, 19, 20); C 3 (1, 2, 10); D 5 (6, 8, 9,
+12, 13); E 4 (4, 14, 18, 21). Lines 15 and 16 share one cause (the mask); 17 follows from 19. Only line 5 (HSN) is
+large.
 
 ## Never-checked items (item 2): measurement, bar, and what was done
 
@@ -84,11 +85,28 @@ not explained today (Open).
   factor (mean 0.34) and neuromod's (0.51-1.80) each multiplied every synapse, and v1 is closed loop with the body.
   The network's absolute level is what FIT1 (Randi) and then Atanas set; there is no voltage bar for it.
 - (d) GCaMP decay: 0.64 s half-fall at the ledger (derived from `binding_step`, a 1 uM, 3 s Ca step), 13x faster
-  than Ding's 8.4 +- 5.0 s, not 4x. The best inside the ranges is 2.06 s, below Ding's -1 SD (3.4 s). C.
+  than Ding's 8.4 +- 5.0 s, not 4x. The best inside the ranges is 2.06 s, below Ding's -1 SD (3.4 s). B (challenge
+  ii, Director 14:45, accepted): the indicator reads Nicoletti's channel microdomain pool because no bulk cytosolic
+  compartment exists. Phase-2 build: a bulk compartment fed from the shell (exchange, buffer, extrusion), with the
+  indicator reading it and the Ca-dependent channels keeping the shell; Ding 2023 is the check, not the fit target.
 
 ## Item 5: vital signs
 
-(filled after the two 120 s runs; see below)
+Every default form is a mechanism; the clocks and timers survive only as nested, non-default toggle values
+(pharynx `clock`, defecation `timer`, egg_laying `timer`). So nothing is SET by default and no sign is class B for
+being set; whether each one actually emerges is the current value. Run: `vital_signs.py`, backhouse, brain only
+(no body, food or odour), default toggles, 120 bio s from reset; mask_off as the item-3 diagnostic.
+
+| Sign | Published range (opened) | Mechanisms that must produce it | EMERGES / SET | Current value, default (mask off) |
+|---|---|---|---|---|
+| Pharyngeal pumping | 3.46 +- 0.19 Hz on food after a 2 h fast (Hiebert et al. 2017, PMC7255878); no food here, so lower is expected | MC and the pharyngeal neurons on Cook's wiring -> Sherman & Harel 2024 muscle APs -> Ca -> pm4 activation crossings | EMERGES | PUMPS |
+| Defecation cycle | 45-50 s at 20 C on food (Kwan et al. 2008, PMC2409367; controls 46.4 s) | Li-Rinzel IP3R Ca oscillator in 20 intestinal cells, int9 pacemaker, INX-16 wave -> pBoc protons and NLP-40/AEX-2 -> enteric muscles -> expulsion | EMERGES, but its period was fitted to Espelt 2005's 49 s on the isolated intestine, so the period is not an independent test | DMP |
+| Egg-laying | clustered, intercluster 10-60 min (Collins et al. 2016; Zhang et al. 2010) | HSN membrane -> 5-HT/NLP-3 -> vulval muscles, uv1 tyramine feedback, uterine stretch | EMERGES in form; does not occur (line 5, B) | EGGS |
+| Body-wall muscle | dissected: rest -25.0 +- 1.0 mV (n = 27), spontaneous APs 0.73 +- 0.14 Hz in ~80% of preparations (Gao & Zhen 2011, PMC3038695) | Du/Crodelle 2025 BWM membrane, Cook NMJ drive, Liu 2006 BWM gaps | EMERGES | BWM |
+| Neuron state | no published voltage bar (line 18) | the whole network | EMERGES | NEUR |
+| Quiescence | 48% nose immobility in L4 lethargus (Turek et al. 2016, PMC4805538) | needs an L4 state | not modelled (development, Ben's step 2) | n/a |
+
+VERDICT
 
 ## Item 6: viewer vs audit
 
