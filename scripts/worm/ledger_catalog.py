@@ -793,9 +793,14 @@ def _clean(v):
     return v
 
 
-def write(cat_rows, summ, mechs):
+def write_csv(cat_rows):
     rows = [{k: _clean(r[k]) for k in CATALOG_COLUMNS} for r in cat_rows]
     pd.DataFrame(rows, columns=CATALOG_COLUMNS).to_csv(ROOT / "data/worm/model/catalog.csv", index=False)
+    return rows
+
+
+def write(cat_rows, summ, mechs):
+    rows = write_csv(cat_rows)
     for r, c in zip(rows, cat_rows):
         r["split"] = c["_split"]
     mrows = [{k: _clean(m.get(k, "")) for k in ("id", "name", "layer", "status", "toggle", "default", "source")}
@@ -859,20 +864,33 @@ def ranges_markdown(R) -> list[str]:
          "box rests on (physics, measured_spread, homology, guessed_physical). `fit_role` (Ben, 7 Nov 12:42): "
          "**static** rows hold only known numbers (measured, derived, published_fit, inferred) and are part of the "
          "built worm, their hard bounds kept for residuals and debugging; **free** rows hold the unknown (guessed or "
-         "absent) numbers, the gaps to fill; **inactive** rows hold unknowns the default worm does not read (another "
-         "form, a catalog slot); **fixed** rows are structure, constants, flags and numerics. Rules: "
+         "absent) numbers the fit vector holds; **inactive** rows hold unknowns outside it (replaced by a structure "
+         "rule, absorbed into a rule's product, another form, a catalog slot); **fixed** rows are structure, constants, flags and numerics. Rules: "
          "`scripts/worm/ranges/rules.yaml`; per-row result in `data/worm/model/parameters.csv`; joint constraints in "
          "`data/worm/model/constraints.yaml`.", "",
          "### Rows and unknown numbers by role", "", "| role | model rows | unknown numbers | catalog rows | "
-         "catalog unknown numbers |", "|---|---|---|---|---|"]
+         "catalog unknown numbers | fit-vector numbers |", "|---|---|---|---|---|---|"]
     for k in dict.fromkeys([*R["roles_model"], *R["roles_catalog"]]):
         m, c = R["roles_model"].get(k, {}), R["roles_catalog"].get(k, {})
         L.append(f"| {k} | {m.get('rows', 0):,} | {m.get('unknown', 0):,} | {c.get('rows', 0):,} | "
-                 f"{c.get('unknown', 0):,} |")
-    L += ["", f"### The unknowns the default worm reads (free model rows): {R['free_rows']} rows, "
-          f"{R['free_unknown']:,} numbers, by basis of their box", "", "| basis | rows | unknown numbers |",
+                 f"{c.get('unknown', 0):,} | {c.get('vector', 0):,} |")
+    V = R["vector"]
+    vc = V["counts"]
+    L += ["", f"### The fit vector: **{vc['vector']}** numbers ({vc['rule']} rule, {vc['gap']} gap, {vc['gap_discrete']} "
+          "of the gaps 0/1)", "",
+          "The one count: `wormemu.params.Theta` read back from this build's files, the same number as "
+          "`docs/worm/UNKNOWNS.md`. A rule is one shared number that sets many per-element values from measured "
+          "structure (`mech/structure_rules`); a gap is a guessed or absent number the default worm reads (a "
+          "table mixing scan and guessed elements gives one gap per guessed element). Everything else is scan (" f"{vc['scan_rows']:,} rows, {vc['scan_elements']:,} "
+          f"elements, fixed) or out of the vector; the {vc['residual_slots']:,} per-element residuals are frozen at 0. "
+          f"Of the {vc['vector']}: " + ", ".join(f"{n} in {k} rows" for k, n in V["by_row_role"].items()) +
+          (f" (the fixed rows' guessed elements: {', '.join(f'`{x}`' for x in V['in_fixed'])})" if V["in_fixed"] else "") +
+          (f"; not in the catalog yet: {', '.join(f'`{x}`' for x in V['not_in_catalog'])}" if V["not_in_catalog"] else "")
+          + ".", "", "| basis of the box | fit-vector numbers |", "|---|---|"]
+    L += [f"| {k} | {n} |" for k, n in V["by_basis"].items()]
+    L += ["", "Free rows the vector leaves out (now inactive):", "", "| reason | catalog rows | unknown numbers |",
           "|---|---|---|"]
-    L += [f"| {k} | {v['rows']} | {v['unknown']:,} |" for k, v in R["free_by_basis"].items()]
+    L += [f"| {k} | {v['rows']} | {v['unknown']:,} |" for k, v in V["out"].items()]
     sc = R["span_counts"]
     L += ["", f"### Widest free boxes (decades = log10(bio_max / bio_min); {sc['>1']} free rows span more than 1 "
           f"decade, {sc['>2']} more than 2, {sc['>3']} more than 3)", "",
@@ -888,12 +906,10 @@ def ranges_markdown(R) -> list[str]:
     L += ["", f"### Joint constraints: {R['n_constraints']} (" + ", ".join(f"{v} {k}" for k, v in
                                                                          R["constraints"].items()) + ")", "",
           "The template worm obeys all of them (the build asserts it)."]
-    L += ["", f"### Rule parameters proposed for the model (`data/worm/model/rule_params.csv`; not yet read by the code)",
-          "", "Each stands for many unknown per-element numbers through measured structure (EM sizes, reconstructed "
-          "areas, CeNGEN expression). Lognormal priors: median `prior_a`, sigma `prior_b` in ln units. "
-          f"Together they replace {R['from_free']:,} of the {R['free_unknown']:,} free unknown numbers (and the "
-          f"{R['replaced'].get('^syn_sign_receptor$', {}).get('unknown', 0):,} receptor-rule signs, a fixed row); with "
-          f"the {R['n_new_rules']} new rule parameters the free unknowns would be **{R['free_after_rules']:,}**.", "",
+    L += ["", "### Rule parameters wranges proposed (`data/worm/model/rule_params.csv`, 7 Nov 13:00)",
+          "", "wmodel implemented them as `mech/structure_rules`, whose rule rows are in the fit vector above; this "
+          "table is the proposal and its cited ranges, kept for the record. Lognormal priors: median `prior_a`, "
+          "sigma `prior_b` in ln units.", "",
           "| rule | value | box | hard | prior | label | basis | replaces unknowns |", "|---|---|---|---|---|---|---|---|"]
     for r in R["rules"]:
         pr = r["prior_dist"] + (f" {_g(r['prior_a'])}, {_g(r['prior_b'])}" if r["prior_dist"] in ("lognormal", "normal")
@@ -901,13 +917,6 @@ def ranges_markdown(R) -> list[str]:
         L.append(f"| `{r['param_id']}` | {_g(r['value_template'])} {r['unit']} | {_g(r['bio_min'])} to "
                  f"{_g(r['bio_max'])} | {_g(r['hard_min'])} to {_g(r['hard_max'])} | {pr} | {r['label']} | "
                  f"{r['bound_basis']} | {int(r['replaces_unknowns']):,}: {r['replaces']} |")
-    a = R["after_span_counts"]
-    L += ["", f"### After the rules: {R['after_rows']} free parameters, {R['free_after_rules']:,} unknown numbers, by "
-          f"basis of their box ({a['>1']} span more than 1 decade, {a['>2']} more than 2, {a['>3']} more than 3)", "",
-          "The free rows the rules do not replace, plus one number per new rule parameter (the receptor-sign "
-          "threshold included: it replaces a fixed row's guessed signs).", "", "| basis | parameters | unknown numbers |",
-          "|---|---|---|"]
-    L += [f"| {k} | {v['rows']} | {v['unknown']:,} |" for k, v in R["after_by_basis"].items()]
     sm = R.get("sampling")
     L += ["", "### Sampling check (`scripts/worm/ranges/sample.py`)", ""]
     if sm:

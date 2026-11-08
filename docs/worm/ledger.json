@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 14:10 CST",
+ "generated_at": "2026-11-07 18:40 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,36 +9,36 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 91481,
-  "rows": 1737,
+  "numbers": 91492,
+  "rows": 1748,
   "mechanisms": 89,
   "by_label": {
    "derived": 67509,
-   "guessed": 9368,
+   "guessed": 9379,
    "inferred": 328,
    "measured": 6182,
    "published_fit": 8094
   },
   "known": 82113,
-  "placeholder": 9368,
+  "placeholder": 9379,
   "gap": 0,
-  "used_by_model": 91481,
-  "must_fill": 9368
+  "used_by_model": 91492,
+  "must_fill": 9379
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 20494,
+  "numbers": 20505,
   "by_label": {
    "published_fit": 7367,
-   "guessed": 9368,
+   "guessed": 9379,
    "derived": 3101,
    "inferred": 328,
    "measured": 330
   },
   "known": 11126,
-  "placeholder": 9368,
+  "placeholder": 9379,
   "gap": 0,
-  "must_fill": 9368
+  "must_fill": 9379
  },
  "source_by_fill_kind": {
   "all": {
@@ -58,7 +58,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3880,
+    "guessed": 3891,
     "inferred (ours)": 300,
     "measured": 1
    },
@@ -83,7 +83,7 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3880,
+    "guessed": 3891,
     "inferred (ours)": 300,
     "measured": 1
    },
@@ -117,7 +117,7 @@
   },
   "class": {
    "derived": 8,
-   "guessed": 383,
+   "guessed": 389,
    "inferred": 276,
    "measured": 32,
    "published_fit": 101
@@ -140,7 +140,7 @@
   },
   "global": {
    "derived": 16,
-   "guessed": 160,
+   "guessed": 165,
    "inferred": 44,
    "measured": 29,
    "published_fit": 268
@@ -800,10 +800,10 @@
    "source": "src/wormemu/mech/receptors.py",
    "notes": "registry module receptors; PLAN row guessed from the name by the catalog",
    "absent_reason": "",
-   "numbers": 115,
+   "numbers": 116,
    "by_label": {
     "derived": 3,
-    "guessed": 55,
+    "guessed": 56,
     "inferred": 34,
     "measured": 21,
     "published_fit": 2
@@ -853,10 +853,10 @@
    "source": "src/wormemu/mech/slow_signalling.py",
    "notes": "registry module slow_signalling; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 16,
+   "numbers": 20,
    "by_label": {
     "derived": 1,
-    "guessed": 11,
+    "guessed": 15,
     "inferred": 2,
     "measured": 2
    }
@@ -905,10 +905,10 @@
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 365,
+   "numbers": 366,
    "by_label": {
     "derived": 3,
-    "guessed": 120,
+    "guessed": 121,
     "inferred": 4,
     "measured": 238
    }
@@ -924,9 +924,9 @@
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 60,
+   "numbers": 61,
    "by_label": {
-    "guessed": 35,
+    "guessed": 36,
     "inferred": 3,
     "measured": 22
    }
@@ -1147,9 +1147,9 @@
    "source": "src/wormemu/mech/senses_touch.py",
    "notes": "registry module senses_touch; PLAN row guessed from the name by the catalog",
    "absent_reason": "",
-   "numbers": 24,
+   "numbers": 25,
    "by_label": {
-    "guessed": 6,
+    "guessed": 7,
     "inferred": 4,
     "measured": 3,
     "published_fit": 11
@@ -1166,9 +1166,9 @@
    "source": "src/wormemu/mech/senses_touch.py",
    "notes": "registry module senses_touch; PLAN row guessed from the name by the catalog",
    "absent_reason": "",
-   "numbers": 9,
+   "numbers": 10,
    "by_label": {
-    "guessed": 6,
+    "guessed": 7,
     "inferred": 3
    }
   },
@@ -1303,10 +1303,10 @@
    "source": "src/wormemu/mech/organs_intestine.py",
    "notes": "registry module organs_intestine; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 28,
+   "numbers": 29,
    "by_label": {
     "derived": 1,
-    "guessed": 23,
+    "guessed": 24,
     "inferred": 3,
     "measured": 1
    }
@@ -1425,10 +1425,10 @@
    "source": "src/wormemu/mech/glia.py",
    "notes": "registry module glia; PLAN row guessed from the name by the catalog",
    "absent_reason": "",
-   "numbers": 6,
+   "numbers": 7,
    "by_label": {
     "derived": 1,
-    "guessed": 4,
+    "guessed": 5,
     "inferred": 1
    }
   },
@@ -1748,7 +1748,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": 0.273,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 302,
    "values_file": "data/worm/model/values/pas_soma_cm.csv",
    "element_stats": {
@@ -1850,7 +1850,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 51,
    "values_file": "data/worm/model/values/pas_soma_epas.csv",
    "element_stats": {
@@ -1953,7 +1953,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": 0.273,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 302,
    "values_file": "data/worm/model/values/pas_neurite_cm.csv",
    "element_stats": {
@@ -2055,7 +2055,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 51,
    "values_file": "data/worm/model/values/pas_neurite_epas.csv",
    "element_stats": {
@@ -10771,7 +10771,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -10813,7 +10813,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 0.699,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -10855,7 +10855,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -12337,7 +12337,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": 1.301,
    "span_reason": "measured spread: Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 3709,
    "values_file": "data/worm/model/values/syn_strength_per_pair.csv",
    "element_stats": {
@@ -12388,7 +12388,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.301,
    "span_reason": "a synaptic or gap weight per EM contact: unitary worm values are not measured; bounded jointly by the postsynaptic input resistance",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1091,
    "values_file": "data/worm/model/values/gap_strength_per_pair.csv",
    "element_stats": {
@@ -12439,7 +12439,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": 1.301,
    "span_reason": "measured spread: Kunert, Shlizerman & Kutz 2014 PLoS ONE; Wicks et al. 1996 (circuit-model fitted unitary weights) (param_ranges B4)",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 956,
    "values_file": "data/worm/model/values/nmj_strength_per_pair.csv",
    "element_stats": {
@@ -15097,6 +15097,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "touch_ap_split_frac",
+   "mechanism_id": "sens_touch_gentle",
+   "grain": "global",
+   "applies_to": "ALM, AVM | PLM, PVM",
+   "unit": "body length",
+   "n_values": 1,
+   "value_template": 0.5,
+   "template_source": "guessed (brain_layers.py)",
+   "bio_min": 0.4,
+   "bio_max": 0.6,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed (src/wormemu/brain_layers.py)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "force ahead of this point drives the anterior touch cells, behind it the posterior ones (their fields meet near mid-body; guessed); read only with a registry without mech/senses_touch (the old layer then runs); the default runs mech/senses_touch's rows",
+   "plan_row": 17,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.176,
+   "span_reason": "",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
    "param_id": "harsh_gain_pA",
    "mechanism_id": "sens_touch_harsh",
    "grain": "global",
@@ -15666,7 +15708,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "released at rate x sigmoid((V - Vth_release)/5 mV); read only with toggle peptides = lumped, or a registry without mech/neuromod; the default runs mech/neuromod's rows",
+   "notes": "released at rate x sigmoid((V - Vth_release)/slope); read only with toggle peptides = lumped, or a registry without mech/neuromod; the default runs mech/neuromod's rows",
    "plan_row": 9,
    "used_by_code": "other form only",
    "source_url": "",
@@ -15728,6 +15770,48 @@
    "hard_class": "voltage_midpoint",
    "hard_basis": "guessed_physical",
    "hard_source": "a gate or release midpoint beyond +-200 mV is past membrane breakdown (electroporation at a few hundred mV) and the gate would be fixed over the whole Nernst window; BK at nominal zero Ca, the most extreme measured, sits near +150 to +200 mV; [HB 6]; Weaver and Chizmadzhev 1996 (electroporation)",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "pep_release_slope_mV",
+   "mechanism_id": "peptides",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "mV",
+   "n_values": 1,
+   "value_template": 5.0,
+   "template_source": "guessed (brain_layers.py)",
+   "bio_min": 2.0,
+   "bio_max": 10.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed (src/wormemu/brain_layers.py)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "the release sigmoid's slope; read only with toggle peptides = lumped, or a registry without mech/neuromod; the default runs mech/neuromod's rows",
+   "plan_row": 9,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 1.5,
+   "hard_max": 200.0,
+   "hard_class": "voltage_slope",
+   "hard_basis": "physics",
+   "hard_source": "Boltzmann slope k = RT/(zF): z at most about 16 e (Shaker's total gating charge 12-14 e) gives |k| >= 1.5 mV; above 200 mV (z < 0.13 e) the gate is voltage-independent over the window (guessed edge); [HB 6]; Aggarwal and MacKinnon 1996 Neuron (Shaker 13 e)",
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
@@ -15966,6 +16050,48 @@
    "hard_class": "voltage_midpoint",
    "hard_basis": "guessed_physical",
    "hard_source": "a gate or release midpoint beyond +-200 mV is past membrane breakdown (electroporation at a few hundred mV) and the gate would be fixed over the whole Nernst window; BK at nominal zero Ca, the most extreme measured, sits near +150 to +200 mV; [HB 6]; Weaver and Chizmadzhev 1996 (electroporation)",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "ma_release_slope_mV",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "mV",
+   "n_values": 1,
+   "value_template": 5.0,
+   "template_source": "guessed (brain_layers.py)",
+   "bio_min": 2.0,
+   "bio_max": 10.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed (src/wormemu/brain_layers.py)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "the release sigmoid's slope; read only with toggle monoamines = lumped, or a registry without mech/neuromod; the default runs mech/neuromod's rows",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 1.5,
+   "hard_max": 200.0,
+   "hard_class": "voltage_slope",
+   "hard_basis": "physics",
+   "hard_source": "Boltzmann slope k = RT/(zF): z at most about 16 e (Shaker's total gating charge 12-14 e) gives |k| >= 1.5 mV; above 200 mV (z < 0.13 e) the gate is voltage-independent over the window (guessed edge); [HB 6]; Aggarwal and MacKinnon 1996 Neuron (Shaker 13 e)",
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
@@ -19108,8 +19234,8 @@
    "applies_to": "every neuron, soma and neurite",
    "unit": "uF/cm2",
    "n_values": 1,
-   "value_template": 1.15,
-   "template_source": "pas_soma_cm and pas_neurite_cm: every neuron at 1.5 (BAAIWorm's per-cell 2-8 clipped to range A1 [0.8, 1.5]), so one specific capacitance reproduces them; at a bound (1.5), so moved to the range's midpoint",
+   "value_template": 1.5,
+   "template_source": "pas_soma_cm and pas_neurite_cm: every neuron at 1.5 (BAAIWorm's per-cell 2-8 clipped to range A1 [0.8, 1.5]), so one specific capacitance reproduces them",
    "bio_min": 0.8,
    "bio_max": 1.5,
    "bound_basis": "guessed_physical",
@@ -19130,7 +19256,7 @@
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "guessed template sits on a bound",
    "hard_min": 0.3,
    "hard_max": 3.0,
    "hard_class": "capacitance_specific",
@@ -19150,8 +19276,8 @@
    "applies_to": "the cells whose published leak reversal is outside the range",
    "unit": "mV",
    "n_values": 1,
-   "value_template": -62.5,
-   "template_source": "the 51 cells whose BAAIWorm leak reversal (-33 mV) lies outside the literature range sit at its -45 mV end (pas_soma_epas, pas_neurite_epas guessed elements); at a bound (-45), so moved to the range's midpoint",
+   "value_template": -45.0,
+   "template_source": "the 51 cells whose BAAIWorm leak reversal (-33 mV) lies outside the literature range sit at its -45 mV end (pas_soma_epas, pas_neurite_epas guessed elements)",
    "bio_min": -80.0,
    "bio_max": -45.0,
    "bound_basis": "guessed_physical",
@@ -19172,7 +19298,7 @@
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "guessed template sits on a bound",
    "hard_min": -143.0,
    "hard_max": 131.0,
    "hard_class": "reversal_leak",
@@ -19318,8 +19444,8 @@
    "applies_to": "the guessed Nicoletti class densities",
    "unit": "1",
    "n_values": 1,
-   "value_template": 0.75,
-   "template_source": "FIT2's expression slope b; 0 = one density per gene (neutral); FIT2 bounds; at a bound (0), so moved to the range's midpoint",
+   "value_template": 0.0,
+   "template_source": "FIT2's expression slope b; 0 = one density per gene (neutral); FIT2 bounds",
    "bio_min": 0.0,
    "bio_max": 1.5,
    "bound_basis": "guessed_physical",
@@ -19340,7 +19466,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "guessed template sits on a bound",
    "hard_min": 0.0,
    "hard_max": 2.0,
    "hard_class": "row",
@@ -21785,7 +21911,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -21827,7 +21953,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -21869,7 +21995,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -21911,7 +22037,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -21995,7 +22121,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22037,7 +22163,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22079,7 +22205,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22121,7 +22247,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22163,7 +22289,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22205,7 +22331,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22247,7 +22373,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22289,7 +22415,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22331,7 +22457,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22373,7 +22499,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22415,7 +22541,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22457,7 +22583,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22499,7 +22625,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22541,7 +22667,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22583,7 +22709,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22625,7 +22751,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22667,7 +22793,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22709,7 +22835,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22751,7 +22877,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22793,7 +22919,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22835,7 +22961,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22877,7 +23003,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22919,7 +23045,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -22961,7 +23087,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23003,7 +23129,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23045,7 +23171,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23087,7 +23213,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23129,7 +23255,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23171,7 +23297,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23213,7 +23339,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23255,7 +23381,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23297,7 +23423,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23339,7 +23465,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23381,7 +23507,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23423,7 +23549,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23465,7 +23591,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23507,7 +23633,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23549,7 +23675,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23591,7 +23717,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23633,7 +23759,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23675,7 +23801,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23717,7 +23843,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23759,7 +23885,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23801,7 +23927,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23843,7 +23969,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23885,7 +24011,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23927,7 +24053,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -23969,7 +24095,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24011,7 +24137,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24053,7 +24179,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24095,7 +24221,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24179,7 +24305,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24221,7 +24347,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24263,7 +24389,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24305,7 +24431,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24347,7 +24473,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24389,7 +24515,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24431,7 +24557,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24473,7 +24599,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24515,7 +24641,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24557,7 +24683,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24599,7 +24725,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24641,7 +24767,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24683,7 +24809,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24725,7 +24851,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24767,7 +24893,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24809,7 +24935,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24851,7 +24977,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24893,7 +25019,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24935,7 +25061,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -24977,7 +25103,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25019,7 +25145,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25061,7 +25187,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25103,7 +25229,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25145,7 +25271,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25187,7 +25313,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25229,7 +25355,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25271,7 +25397,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25313,7 +25439,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25355,7 +25481,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25397,7 +25523,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25439,7 +25565,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25481,7 +25607,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25523,7 +25649,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25565,7 +25691,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25607,7 +25733,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25649,7 +25775,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25691,7 +25817,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25733,7 +25859,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25775,7 +25901,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25817,7 +25943,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25859,7 +25985,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25901,7 +26027,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25943,7 +26069,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -25985,7 +26111,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26027,7 +26153,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26069,7 +26195,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26111,7 +26237,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26153,7 +26279,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26195,7 +26321,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26237,7 +26363,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26321,7 +26447,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26363,7 +26489,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26405,7 +26531,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26447,7 +26573,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26489,7 +26615,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26531,7 +26657,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26573,7 +26699,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26615,7 +26741,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26657,7 +26783,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26699,7 +26825,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26741,7 +26867,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26783,7 +26909,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26825,7 +26951,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26867,7 +26993,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26909,7 +27035,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26951,7 +27077,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -26993,7 +27119,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27035,7 +27161,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27077,7 +27203,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27119,7 +27245,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27203,7 +27329,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27245,7 +27371,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27287,7 +27413,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27329,7 +27455,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27371,7 +27497,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27413,7 +27539,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27455,7 +27581,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27497,7 +27623,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27539,7 +27665,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27581,7 +27707,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27623,7 +27749,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27665,7 +27791,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27707,7 +27833,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27749,7 +27875,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27791,7 +27917,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27833,7 +27959,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27875,7 +28001,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27917,7 +28043,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -27959,7 +28085,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28001,7 +28127,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28043,7 +28169,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28085,7 +28211,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28127,7 +28253,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28169,7 +28295,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28211,7 +28337,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28253,7 +28379,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28295,7 +28421,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28337,7 +28463,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28379,7 +28505,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28421,7 +28547,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28463,7 +28589,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28505,7 +28631,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28547,7 +28673,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28589,7 +28715,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28631,7 +28757,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28673,7 +28799,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28715,7 +28841,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28757,7 +28883,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28799,7 +28925,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28841,7 +28967,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28883,7 +29009,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28925,7 +29051,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -28967,7 +29093,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29009,7 +29135,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29051,7 +29177,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29093,7 +29219,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29135,7 +29261,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29177,7 +29303,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29219,7 +29345,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29261,7 +29387,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29303,7 +29429,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29345,7 +29471,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29387,7 +29513,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29429,7 +29555,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29471,7 +29597,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29513,7 +29639,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29555,7 +29681,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29597,7 +29723,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29639,7 +29765,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29681,7 +29807,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29765,7 +29891,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29807,7 +29933,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29849,7 +29975,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -29891,7 +30017,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": "",
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -40139,7 +40265,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.255,
    "span_reason": "unitary conductances across the channel family span 5-90 pS [HB 2]",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -40811,7 +40937,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 0.903,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -41819,7 +41945,7 @@
    "bound_basis_detail": "measured_related",
    "span_decades": 0.652,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -42491,7 +42617,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.079,
    "span_reason": "unitary conductances across the channel family span 5-90 pS [HB 2]",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -42827,7 +42953,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.079,
    "span_reason": "unitary conductances across the channel family span 5-90 pS [HB 2]",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -43163,7 +43289,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.079,
    "span_reason": "unitary conductances across the channel family span 5-90 pS [HB 2]",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -43499,7 +43625,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.079,
    "span_reason": "unitary conductances across the channel family span 5-90 pS [HB 2]",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -43835,7 +43961,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 0.778,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -44257,6 +44383,48 @@
    "span_reason": "",
    "fit_role": "static",
    "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "rec_des_recover_ratio",
+   "mechanism_id": "receptor_kinetics",
+   "grain": "global",
+   "applies_to": "every desensitizing class (tau_des > 0)",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 1.0,
+   "template_source": "recovery from desensitization is slower than its onset for GLR-1 (SOL-1 slows it; Walker et al. 2006 PNAS, qualitative, not opened) and vertebrate AMPA and nicotinic receptors (guessed); 1 = one time constant both ways",
+   "bio_min": 0.5,
+   "bio_max": 50.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "recovery from desensitization is slower than its onset for GLR-1 (SOL-1 slows it; Walker et al. 2006 PNAS, qualitative, not opened) and vertebrate AMPA and nicotinic receptors (guessed); 1 = one time constant both ways",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "tau of recovery = rec_<c>_tau_des_ms x this; one shared ratio, not one per class",
+   "plan_row": 7,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.01,
+   "hard_max": 1000.0,
+   "hard_class": "row",
+   "hard_basis": "guessed_physical",
+   "hard_source": "recovery over onset time constant of desensitization; recovery 100x faster than onset or 1000x slower (minutes for a ms onset) is outside any receptor kinetics reported (guessed); wmodel Spec (mech/receptors.py)",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: recovery from desensitization is slower than its onset for GLR-1 (SOL-1 slows it; Walker et al. 2006 PNAS, qualitative, not opened) and vertebrate AMPA and nico",
+   "fit_role": "free",
+   "n_unknown": 1,
    "kind": "physiology"
   },
   {
@@ -44686,8 +44854,8 @@
    "applies_to": "presynaptic release of GABA wsyn synapses",
    "unit": "1/s",
    "n_values": 1,
-   "value_template": 0.1414213562373095,
-   "template_source": "the ACh grain's fitted value (shared release machinery); at a bound (0.01), so moved to the range's log-midpoint",
+   "value_template": 0.01,
+   "template_source": "the ACh grain's fitted value (shared release machinery)",
    "bio_min": 0.01,
    "bio_max": 2.0,
    "bound_basis": "guessed_physical",
@@ -44708,7 +44876,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "guessed template sits on a bound",
    "hard_min": 0.0,
    "hard_max": 1000000.0,
    "hard_class": "rate_first",
@@ -45604,6 +45772,174 @@
    "kind": "physiology"
   },
   {
+   "param_id": "daf7_effect",
+   "mechanism_id": "slow_signalling",
+   "grain": "class",
+   "applies_to": "RIML, RIMR, RICL, RICR",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.0,
+   "template_source": "RIM and RIC amine release change at full ASI DAF-7 (DAF-1 acts in RIM and RIC; daf-7 loss raises tyramine and octopamine signalling: Greer et al. 2008 Cell Metab 8:118, not opened); 0 = neutral",
+   "bio_min": -0.9,
+   "bio_max": 0.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "RIM and RIC amine release change at full ASI DAF-7 (DAF-1 acts in RIM and RIC; daf-7 loss raises tyramine and octopamine signalling: Greer et al. 2008 Cell Metab 8:118, not opened); 0 = neutral",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Spec grain 'pathway' read as class",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "guessed template sits on a bound",
+   "hard_min": -1.0,
+   "hard_max": 100.0,
+   "hard_class": "effect_mult",
+   "hard_basis": "physics",
+   "hard_source": "a fractional change x -> x (1 + e): e >= -1 keeps the quantity >= 0; above 100-fold is a guessed edge; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "creb_effect",
+   "mechanism_id": "slow_signalling",
+   "grain": "class",
+   "applies_to": "AFDL, AFDR",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.0,
+   "template_source": "gain of AFD's slow T* component at full CRH-1/CREB (CREB acts in AFD for thermotaxis: Nishida et al. 2011 EMBO Rep 12:855, not opened); 0 = neutral",
+   "bio_min": -1.0,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "gain of AFD's slow T* component at full CRH-1/CREB (CREB acts in AFD for thermotaxis: Nishida et al. 2011 EMBO Rep 12:855, not opened); 0 = neutral",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Spec grain 'pathway' read as class",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": -1.0,
+   "hard_max": 100.0,
+   "hard_class": "effect_mult",
+   "hard_basis": "physics",
+   "hard_source": "a fractional change x -> x (1 + e): e >= -1 keeps the quantity >= 0; above 100-fold is a guessed edge; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "afd_tstar_fast_frac",
+   "mechanism_id": "slow_signalling",
+   "grain": "class",
+   "applies_to": "AFDL, AFDR",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.0,
+   "template_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD threshold reset: 2-3 min and 3-5 h components, 15 to 25 C shift): fraction of a temperature step the fast component moves T*AFD; 0 = neutral (the release stand-in acts)",
+   "bio_min": 0.0,
+   "bio_max": 1.0,
+   "bound_basis": "physics",
+   "bound_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD threshold reset: 2-3 min and 3-5 h components, 15 to 25 C shift): fraction of a temperature step the fast component moves T*AFD; 0 = neutral (the release stand-in acts)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Spec grain 'pathway' read as class",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "guessed template sits on a bound",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "afd_tstar_slow_frac",
+   "mechanism_id": "slow_signalling",
+   "grain": "class",
+   "applies_to": "AFDL, AFDR",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.0,
+   "template_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD threshold reset: 2-3 min and 3-5 h components, 15 to 25 C shift): the slow component's fraction (fast + slow about 1 for a full reset); 0 = neutral",
+   "bio_min": 0.0,
+   "bio_max": 1.0,
+   "bound_basis": "physics",
+   "bound_source": "Yu et al. 2014 Neuron 84:919 (CMK-1, AFD threshold reset: 2-3 min and 3-5 h components, 15 to 25 C shift): the slow component's fraction (fast + slow about 1 for a full reset); 0 = neutral",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Spec grain 'pathway' read as class",
+   "plan_row": 18,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "guessed template sits on a bound",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
    "param_id": "homeo_unc2_tau_h",
    "mechanism_id": "homeostasis",
    "grain": "class",
@@ -46408,8 +46744,8 @@
    "applies_to": "peptides and monoamines (shared)",
    "unit": "um2/s",
    "n_values": 1,
-   "value_template": 500.0,
-   "template_source": "guessed; at a bound (0), so moved to the range's midpoint",
+   "value_template": 0.0,
+   "template_source": "guessed",
    "bio_min": 0.0,
    "bio_max": 1000.0,
    "bound_basis": "guessed_physical",
@@ -46430,7 +46766,7 @@
    "used_by_code": "yes",
    "source_url": "",
    "source_quote": "",
-   "audit": "ok",
+   "audit": "guessed template sits on a bound",
    "hard_min": 0.0,
    "hard_max": 100000.0,
    "hard_class": "dispersion",
@@ -63202,6 +63538,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "nose_flp_channel_frac",
+   "mechanism_id": "sens_touch_harsh",
+   "grain": "global",
+   "applies_to": "FLPL, FLPR",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.5,
+   "template_source": "FLP also has its head-body field, so its nose patch carries this share of harsh_n_channels (the other nose cells all of them)",
+   "bio_min": 0.2,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "FLP also has its head-body field, so its nose patch carries this share of harsh_n_channels (the other nose cells all of them)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "",
+   "plan_row": 17,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.699,
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
    "param_id": "harsh_g0",
    "mechanism_id": "sens_touch_harsh",
    "grain": "global",
@@ -68620,6 +68998,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "int_ca_rest_uM",
+   "mechanism_id": "defecation",
+   "grain": "class",
+   "applies_to": "intestinal cell",
+   "unit": "uM",
+   "n_values": 1,
+   "value_template": 0.1,
+   "template_source": "Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:9895 rates; values as in Ermentrout's LiRinzel.ode, opened)",
+   "bio_min": 0.05,
+   "bio_max": 0.2,
+   "bound_basis": "guessed_physical",
+   "bound_source": "Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:9895 rates; values as in Ermentrout's LiRinzel.ode, opened)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "resting cytosolic Ca: the start value and the PLC baseline (Ca-stimulated PLC adds only above it); guessed, a usual resting level",
+   "plan_row": 14,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 1e-09,
+   "hard_max": 1000000.0,
+   "hard_class": "binding_constant",
+   "hard_basis": "physics",
+   "hard_source": "a Kd, EC50, Km or half-activation: between 1 fM (tighter than streptavidin-biotin, 1e-14 M, the tightest non-covalent binding) and 1 M (no saturable binding above); [HB 8]; Green 1990 Methods Enzymol 184:51",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.602,
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
    "param_id": "int_ip3_rest_uM",
    "mechanism_id": "defecation",
    "grain": "class",
@@ -71121,7 +71541,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "K+ leak per amphid neuron: sets the activity K+ load and the reversal-shift current; guessed",
+   "notes": "K+ leak per amphid neuron when the brain has no morphology (unit tests only); guessed",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "",
@@ -71135,6 +71555,48 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.301,
    "span_reason": "a whole-cell conductance with no worm recording: bounded jointly by the cell's input resistance (0.2-5 GOhm, param_ranges A3; constraints.yaml input_resistance)",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "glia_k_leak_frac",
+   "mechanism_id": "glia_kbuffer",
+   "grain": "class",
+   "applies_to": "amphid neurons",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 0.5,
+   "template_source": "this model",
+   "bio_min": 0.1,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "this model",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "K+ share of each amphid neuron's own passive leak: sets the activity K+ load and the reversal-shift current; guessed (neuronal leak is mostly K+ through K2P channels, share not measured in the worm)",
+   "plan_row": 11,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.0,
+   "span_reason": "",
    "fit_role": "free",
    "n_unknown": 1,
    "kind": "physiology"
@@ -72507,7 +72969,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "maximal pump current per neuron; guessed so [Na]i recovers in ~10-20 s",
+   "notes": "maximal pump current of the median-area neuron (others scale with area); guessed so [Na]i recovers in ~10-20 s",
    "plan_row": 27,
    "used_by_code": "yes",
    "source_url": "",
@@ -72843,7 +73305,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "volume [Na]i fills; guessed; fill 6 Nov (catalog audit): was 100 um3, label guessed, range [20, 500]; the old 100 um3 was a guess from soma size; the pump fills whole-cell [Na]i, so the model's own whole-cell geometry (same files as morph_xyz, morph_diam) is the right source; range is the spread over the 302 neurons",
+   "notes": "volume [Na]i fills; guessed. Used only without a brain's morphology (the numpy reference); a brain's neurons take their own hoc volume; fill 6 Nov (catalog audit): was 100 um3, label guessed, range [20, 500]; the old 100 um3 was a guess from soma size; the pump fills whole-cell [Na]i, so the model's own whole-cell geometry (same files as morph_xyz, morph_diam) is the right source; range is the spread over the 302 neurons",
    "plan_row": 27,
    "used_by_code": "yes",
    "source_url": "https://github.com/Jessie940611/BAAIWorm/tree/b99ca5a/eworm_learn/components/model",
@@ -72927,7 +73389,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Na-carrying conductance per mV of depolarisation above rest; guessed",
+   "notes": "the median-area neuron's Na-carrying conductance per mV of depolarisation above rest; guessed",
    "plan_row": 27,
    "used_by_code": "yes",
    "source_url": "",
@@ -75100,6 +75562,10 @@
    "daf16_tau_h: grain 'pathway' read as class",
    "daf7_tau_h: grain 'pathway' read as class",
    "creb_tau_h: grain 'pathway' read as class",
+   "daf7_effect: grain 'pathway' read as class",
+   "creb_effect: grain 'pathway' read as class",
+   "afd_tstar_fast_frac: grain 'pathway' read as class",
+   "afd_tstar_slow_frac: grain 'pathway' read as class",
    "homeo_unc2_tau_h: grain 'pathway' read as class",
    "homeo_egl19_tau_h: grain 'pathway' read as class",
    "homeo_shl1_tau_h: grain 'pathway' read as class",
@@ -75149,36 +75615,36 @@
   "totals": {
    "rows": {
     "published_fit": 645,
-    "guessed": 638,
-    "measured": 251,
+    "guessed": 644,
+    "measured": 250,
     "inferred": 327,
-    "derived": 38,
+    "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8174,
-    "guessed": 9434,
-    "measured": 6209,
-    "derived": 67519,
+    "guessed": 9440,
+    "measured": 6208,
+    "derived": 67520,
     "inferred": 333,
     "absent": 1
    },
-   "n_rows": 1900,
-   "n_numbers": 91670
+   "n_rows": 1906,
+   "n_numbers": 91676
   },
   "by_label_rows": {
    "published_fit": 645,
-   "guessed": 638,
-   "measured": 251,
+   "guessed": 644,
+   "measured": 250,
    "inferred": 327,
-   "derived": 38,
+   "derived": 39,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8174,
-   "guessed": 9434,
-   "measured": 6209,
-   "derived": 67519,
+   "guessed": 9440,
+   "measured": 6208,
+   "derived": 67520,
    "inferred": 333,
    "absent": 1
   },
@@ -75254,20 +75720,20 @@
    "7": {
     "rows": {
      "published_fit": 27,
-     "guessed": 82,
+     "guessed": 83,
      "measured": 26,
      "inferred": 34,
      "derived": 3
     },
     "numbers": {
      "published_fit": 752,
-     "guessed": 6755,
+     "guessed": 6756,
      "measured": 5883,
      "derived": 1988,
      "inferred": 39
     },
-    "n_rows": 172,
-    "n_numbers": 15417
+    "n_rows": 173,
+    "n_numbers": 15418
    },
    "8": {
     "rows": {
@@ -75315,19 +75781,19 @@
    },
    "11": {
     "rows": {
-     "guessed": 15,
+     "guessed": 16,
      "inferred": 3,
      "derived": 1,
      "measured": 1
     },
     "numbers": {
-     "guessed": 15,
+     "guessed": 16,
      "inferred": 3,
      "derived": 1,
      "measured": 1
     },
-    "n_rows": 20,
-    "n_numbers": 20
+    "n_rows": 21,
+    "n_numbers": 21
    },
    "12": {
     "rows": {
@@ -75437,17 +75903,17 @@
     "rows": {
      "inferred": 2,
      "derived": 1,
-     "guessed": 11,
+     "guessed": 15,
      "measured": 2
     },
     "numbers": {
      "inferred": 2,
      "derived": 1,
-     "guessed": 11,
+     "guessed": 15,
      "measured": 2
     },
-    "n_rows": 16,
-    "n_numbers": 16
+    "n_rows": 20,
+    "n_numbers": 20
    },
    "19": {
     "rows": {
@@ -75496,15 +75962,15 @@
    "22": {
     "rows": {
      "published_fit": 7,
-     "measured": 10,
-     "derived": 3,
+     "measured": 9,
+     "derived": 4,
      "inferred": 4,
      "guessed": 11
     },
     "numbers": {
      "published_fit": 7,
-     "measured": 10,
-     "derived": 3,
+     "measured": 9,
+     "derived": 4,
      "inferred": 4,
      "guessed": 11
     },
@@ -75627,20 +76093,20 @@
    "class": {
     "rows": {
      "inferred": 276,
-     "guessed": 388,
+     "guessed": 394,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
     "numbers": {
      "inferred": 276,
-     "guessed": 388,
+     "guessed": 394,
      "published_fit": 101,
      "derived": 8,
      "measured": 35
     },
-    "n_rows": 808,
-    "n_numbers": 808
+    "n_rows": 814,
+    "n_numbers": 814
    },
    "compartment": {
     "rows": {
@@ -75697,16 +76163,16 @@
      "published_fit": 348,
      "guessed": 184,
      "inferred": 49,
-     "measured": 50,
-     "derived": 26,
+     "measured": 49,
+     "derived": 27,
      "absent": 1
     },
     "numbers": {
      "published_fit": 348,
      "guessed": 184,
      "inferred": 49,
-     "measured": 50,
-     "derived": 26,
+     "measured": 49,
+     "derived": 27,
      "absent": 1
     },
     "n_rows": 658,
@@ -75753,34 +76219,34 @@
    "hard-coded": {
     "rows": {
      "published_fit": 55,
-     "guessed": 6,
+     "guessed": 1,
      "measured": 2
     },
     "numbers": {
      "published_fit": 55,
-     "guessed": 6,
+     "guessed": 1,
      "measured": 2
     },
-    "n_rows": 63,
-    "n_numbers": 63
+    "n_rows": 58,
+    "n_numbers": 58
    },
    "other form only": {
     "rows": {
      "published_fit": 20,
-     "guessed": 73,
+     "guessed": 76,
      "inferred": 12,
      "measured": 13,
      "derived": 7
     },
     "numbers": {
      "published_fit": 208,
-     "guessed": 378,
+     "guessed": 381,
      "inferred": 13,
      "measured": 114,
      "derived": 7
     },
-    "n_rows": 125,
-    "n_numbers": 720
+    "n_rows": 128,
+    "n_numbers": 723
    },
    "slot only": {
     "rows": {
@@ -75805,20 +76271,20 @@
    "yes": {
     "rows": {
      "published_fit": 567,
-     "guessed": 531,
-     "measured": 215,
+     "guessed": 539,
+     "measured": 214,
      "inferred": 312,
-     "derived": 27
+     "derived": 28
     },
     "numbers": {
      "published_fit": 7908,
-     "guessed": 8996,
-     "measured": 6072,
-     "derived": 67508,
+     "guessed": 9004,
+     "measured": 6071,
+     "derived": 67509,
      "inferred": 317
     },
-    "n_rows": 1652,
-    "n_numbers": 90801
+    "n_rows": 1660,
+    "n_numbers": 90809
    }
   },
   "by_origin": {
@@ -75863,32 +76329,32 @@
    "hidden": {
     "rows": {
      "published_fit": 55,
-     "guessed": 6,
+     "guessed": 1,
      "measured": 2
     },
     "numbers": {
      "published_fit": 55,
-     "guessed": 6,
+     "guessed": 1,
      "measured": 2
     },
-    "n_rows": 63,
-    "n_numbers": 63
+    "n_rows": 58,
+    "n_numbers": 58
    },
    "layers": {
     "rows": {
-     "guessed": 58,
+     "guessed": 61,
      "inferred": 11,
      "measured": 8,
      "derived": 6
     },
     "numbers": {
-     "guessed": 174,
+     "guessed": 177,
      "inferred": 12,
      "measured": 109,
      "derived": 6
     },
-    "n_rows": 83,
-    "n_numbers": 301
+    "n_rows": 86,
+    "n_numbers": 304
    },
    "mech:cells_passive": {
     "rows": {
@@ -75920,19 +76386,19 @@
    },
    "mech:glia": {
     "rows": {
-     "guessed": 11,
+     "guessed": 12,
      "inferred": 2,
      "derived": 1,
      "measured": 1
     },
     "numbers": {
-     "guessed": 11,
+     "guessed": 12,
      "inferred": 2,
      "derived": 1,
      "measured": 1
     },
-    "n_rows": 15,
-    "n_numbers": 15
+    "n_rows": 16,
+    "n_numbers": 16
    },
    "mech:learning": {
     "rows": {
@@ -76032,17 +76498,17 @@
    },
    "mech:organs_intestine": {
     "rows": {
-     "guessed": 35,
+     "guessed": 36,
      "inferred": 6,
      "measured": 4
     },
     "numbers": {
-     "guessed": 35,
+     "guessed": 36,
      "inferred": 6,
      "measured": 4
     },
-    "n_rows": 45,
-    "n_numbers": 45
+    "n_rows": 46,
+    "n_numbers": 46
    },
    "mech:organs_other": {
     "rows": {
@@ -76109,20 +76575,20 @@
    "mech:receptors": {
     "rows": {
      "measured": 21,
-     "guessed": 55,
+     "guessed": 56,
      "inferred": 34,
      "derived": 3,
      "published_fit": 2
     },
     "numbers": {
      "measured": 21,
-     "guessed": 55,
+     "guessed": 56,
      "inferred": 34,
      "derived": 3,
      "published_fit": 2
     },
-    "n_rows": 115,
-    "n_numbers": 115
+    "n_rows": 116,
+    "n_numbers": 116
    },
    "mech:senses_chem": {
     "rows": {
@@ -76160,31 +76626,31 @@
     "rows": {
      "published_fit": 11,
      "measured": 3,
-     "guessed": 8,
+     "guessed": 9,
      "inferred": 6
     },
     "numbers": {
      "published_fit": 11,
      "measured": 3,
-     "guessed": 8,
+     "guessed": 9,
      "inferred": 6
     },
-    "n_rows": 28,
-    "n_numbers": 28
+    "n_rows": 29,
+    "n_numbers": 29
    },
    "mech:slow_signalling": {
     "rows": {
-     "guessed": 15,
+     "guessed": 19,
      "inferred": 2,
      "measured": 2
     },
     "numbers": {
-     "guessed": 15,
+     "guessed": 19,
      "inferred": 2,
      "measured": 2
     },
-    "n_rows": 19,
-    "n_numbers": 19
+    "n_rows": 23,
+    "n_numbers": 23
    },
    "mech:structure_rules": {
     "rows": {
@@ -76216,12 +76682,14 @@
     "rows": {
      "guessed": 6,
      "inferred": 1,
-     "measured": 2
+     "measured": 1,
+     "derived": 1
     },
     "numbers": {
      "guessed": 6,
      "inferred": 1,
-     "measured": 2
+     "measured": 1,
+     "derived": 1
     },
     "n_rows": 9,
     "n_numbers": 9
@@ -76259,22 +76727,22 @@
    "physiology": {
     "rows": {
      "published_fit": 631,
-     "guessed": 636,
+     "guessed": 642,
      "inferred": 327,
-     "derived": 36,
-     "measured": 247,
+     "derived": 37,
+     "measured": 246,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7435,
-     "guessed": 9432,
-     "derived": 3111,
+     "guessed": 9438,
+     "derived": 3112,
      "inferred": 333,
-     "measured": 357,
+     "measured": 356,
      "absent": 1
     },
-    "n_rows": 1878,
-    "n_numbers": 20669
+    "n_rows": 1884,
+    "n_numbers": 20675
    },
    "structure": {
     "rows": {
@@ -77055,27 +77523,48 @@
    {
     "slot": "ion_na_in_mM",
     "by": "pump_na_rest_mM"
+   },
+   {
+    "slot": "touch_ap_split_frac",
+    "by": "touch_ap_split_frac"
+   },
+   {
+    "slot": "pep_release_slope_mV",
+    "by": "pep_release_slope_mV"
+   },
+   {
+    "slot": "ma_release_slope_mV",
+    "by": "ma_release_slope_mV"
+   },
+   {
+    "slot": "int_ca_rest_uM",
+    "by": "int_ca_rest_uM"
+   },
+   {
+    "slot": "nose_flp_channel_frac",
+    "by": "nose_flp_channel_frac"
    }
   ],
   "audit": {
-   "rows_ok": 1797,
-   "rows_with_problems": 103,
+   "rows_ok": 1795,
+   "rows_with_problems": 111,
    "by_status": {
-    "ok": 1797,
-    "finding": 103
+    "ok": 1795,
+    "finding": 103,
+    "problem": 8
    },
    "rows_read": 245,
    "quotes": {
-    "none": 1079,
+    "none": 1085,
     "cited free text (scripted check)": 786,
     "research file (scripted check)": 25,
     "paper text (read audit, 6-7 Nov)": 10
    },
-   "with_url": 1514,
+   "with_url": 1511,
    "links": {
-    "distinct": 165,
+    "distinct": 164,
     "by_status": {
-     "200": 155,
+     "200": 154,
      "429": 1,
      "203": 1,
      "406": 3,
@@ -77086,9 +77575,9 @@
    },
    "problem_kinds": {
     "no URL to open": 29,
+    "guessed template sits on a bound": 14,
     "source marked UNVERIFIED": 11,
     "no range": 11,
-    "guessed template sits on a bound": 6,
     "range is one point: the source's spread was not recorded": 6,
     "template # outside": 6,
     "inferred from the chloride reversal; no native C. elegans chloride reversal is measured; t": 5,
@@ -77151,7 +77640,7 @@
     "guessed template # sits on the lower bound; the cited plate (Kunitomo et al. #, read # Nov": 1,
     "the cited '# mM NaCl plug' is a # mM agar block in Kunitomo et al. # (read # Nov, free tex": 1,
     "range basis says measured but the range source names no citation": 1,
-    "labelled measured without a citation": 1,
+    "labelled derived without a citation": 1,
     "scene.py labels the # mm body length measured with the source \"ledger worm length\"; the bo": 1
    },
    "orphan_notes": [],
@@ -89781,17 +90270,17 @@
   "before_fills": {
    "rows": {
     "published_fit": 659,
-    "guessed": 651,
-    "measured": 236,
-    "derived": 30,
+    "guessed": 657,
+    "measured": 235,
+    "derived": 31,
     "inferred": 323,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8183,
-    "guessed": 9555,
-    "measured": 6093,
-    "derived": 67510,
+    "guessed": 9561,
+    "measured": 6092,
+    "derived": 67511,
     "inferred": 328,
     "absent": 1
    }
@@ -89799,88 +90288,97 @@
   "after_fills": {
    "rows": {
     "published_fit": 645,
-    "guessed": 638,
-    "measured": 251,
+    "guessed": 644,
+    "measured": 250,
     "inferred": 327,
-    "derived": 38,
+    "derived": 39,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8174,
-    "guessed": 9434,
-    "measured": 6209,
-    "derived": 67519,
+    "guessed": 9440,
+    "measured": 6208,
+    "derived": 67520,
     "inferred": 333,
     "absent": 1
    }
   },
   "ranges": {
    "roles_model": {
-    "free": {
-     "rows": 520,
-     "unknown": 6975
+    "inactive": {
+     "rows": 284,
+     "unknown": 7044,
+     "vector": 0
     },
     "fixed": {
      "rows": 38,
-     "unknown": 2015
+     "unknown": 2015,
+     "vector": 18
     },
-    "inactive": {
-     "rows": 73,
-     "unknown": 378
+    "free": {
+     "rows": 320,
+     "unknown": 320,
+     "vector": 320
     },
     "static": {
      "rows": 1104,
-     "unknown": 0
+     "unknown": 0,
+     "vector": 0
     },
     "derived": {
      "rows": 2,
-     "unknown": 0
+     "unknown": 0,
+     "vector": 0
     }
    },
    "roles_catalog": {
-    "free": {
-     "rows": 526,
-     "unknown": 6981
+    "inactive": {
+     "rows": 312,
+     "unknown": 7098,
+     "vector": 0
     },
     "fixed": {
      "rows": 73,
-     "unknown": 2017
+     "unknown": 2017,
+     "vector": 18
     },
-    "inactive": {
-     "rows": 106,
-     "unknown": 437
+    "free": {
+     "rows": 326,
+     "unknown": 326,
+     "vector": 326
     },
     "static": {
      "rows": 1193,
-     "unknown": 0
+     "unknown": 0,
+     "vector": 0
     },
     "derived": {
      "rows": 2,
-     "unknown": 0
+     "unknown": 0,
+     "vector": 0
     }
    },
    "free_by_basis": {
-    "measured_spread": {
-     "rows": 9,
-     "unknown": 4772
-    },
     "guessed_physical": {
-     "rows": 500,
-     "unknown": 1590
-    },
-    "homology": {
-     "rows": 2,
-     "unknown": 604
+     "rows": 305,
+     "unknown": 305,
+     "vector": 305
     },
     "physics": {
-     "rows": 9,
-     "unknown": 9
+     "rows": 11,
+     "unknown": 11,
+     "vector": 11
+    },
+    "measured_spread": {
+     "rows": 4,
+     "unknown": 4,
+     "vector": 4
     }
    },
-   "free_unknown": 6975,
-   "free_rows": 520,
+   "free_unknown": 320,
+   "free_rows": 320,
    "span_counts": {
-    ">1": 177,
+    ">1": 169,
     ">2": 26,
     ">3": 4
    },
@@ -90260,7 +90758,7 @@
      ],
      "unknown": 3709,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^nmj_strength_per_pair$": {
@@ -90269,7 +90767,7 @@
      ],
      "unknown": 956,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^gap_strength_per_pair$": {
@@ -90278,7 +90776,7 @@
      ],
      "unknown": 1091,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^pas_(soma|neurite)_cm$": {
@@ -90288,7 +90786,7 @@
      ],
      "unknown": 604,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^pas_(soma|neurite)_epas$": {
@@ -90298,7 +90796,7 @@
      ],
      "unknown": 102,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^dens_exp2_": {
@@ -90370,7 +90868,7 @@
      ],
      "unknown": 64,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^dens_kqt1_": {
@@ -90415,7 +90913,7 @@
      ],
      "unknown": 37,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^dens_unc103_": {
@@ -90511,7 +91009,7 @@
      ],
      "unknown": 88,
      "roles": [
-      "free"
+      "inactive"
      ]
     },
     "^syn_sign_receptor$": {
@@ -90524,29 +91022,32 @@
      ]
     }
    },
-   "from_free": 6651,
+   "from_free": 0,
    "n_new_rules": 10,
-   "free_after_rules": 334,
+   "free_after_rules": 330,
    "after_by_basis": {
     "guessed_physical": {
-     "rows": 310,
-     "unknown": 310
+     "rows": 305,
+     "unknown": 305,
+     "vector": 305
     },
     "measured_spread": {
-     "rows": 14,
-     "unknown": 14
+     "rows": 13,
+     "unknown": 13,
+     "vector": 4
     },
     "physics": {
-     "rows": 10,
-     "unknown": 10
+     "rows": 12,
+     "unknown": 12,
+     "vector": 11
     }
    },
    "after_span_counts": {
-    ">1": 179,
+    ">1": 174,
     ">2": 26,
     ">3": 4
    },
-   "after_rows": 334,
+   "after_rows": 330,
    "sampling": {
     "generated": "7 Nov 2026 13:20 CST (wranges)",
     "joint": {
@@ -90786,6 +91287,66 @@
      }
     ],
     "text": "**Joint constraints, 200 draws** (`sample.py joint 200`, no simulation): 85 of 200 break a constraint the default worm reads, every one guessed against guessed: met_E_mV 65, glia_e_leak_mV 17, sens_glia_e_leak_mV 10, endo_e_leak_mV 3, other_e_leak_mV 1 (outside [E_K, E_Na]); 42 more break only constraints on rows of other forms (c302 muscle, mact). The sampler redraws (seed + 1000 k) until a worm obeys them. **20 worms x 2 s** (`sample.py run 20 2`, Mac via slot.py, 7 Nov 12:58-13:12 CST, about 41 s wall each): 13 draws rejected on the way to 20; code-default forms (everything on), no injected current, no body. Checks at every 1 ms read: voltages and Ca finite; voltages inside the hard reversal envelope [-143, 196] mV; Ca >= 0; activations in [0, 1]; concentration, store and count outputs >= 0. **17 of 20 pass.** (Seed 1 was first scored failing on gcamp_dff below 0, a false positive of the check: dF/F falls below rest; the check was corrected during the run.) Seeds 2, 4, 13 fall to -384, -207, -208 mV. The source is the glia K+ buffer (`glia_kbuffer = kir`, src/wormemu/mech/glia.py; `sample.py diag 2 2`: ADLR at -384 mV takes -146 pA from it). It drives each amphid neuron with a fixed current g_K x dE_K, not a conductance, so a hyperpolarisation lowers ending K+ and deepens itself; ending K+ may fall to 0.001 x bath, below the hard K+ window (1-30 mM). It runs away where glia_k_gleak_nS / (glia_k_volume_um3 x clearance rate) is large: 0.19-0.24 in the three, at most 0.06 in the other 17. With `glia_kbuffer = fixed` the same three draws stay inside (v_min -77, -89, -78 mV). A code form, listed for wmodel (docs/worm/night/2026-11-07_wranges.md); no range was changed for it."
+   },
+   "vector": {
+    "counts": {
+     "vector": 347,
+     "rule": 43,
+     "gap": 304,
+     "gap_discrete": 15,
+     "scan_rows": 1270,
+     "scan_elements": 79942,
+     "residual_slots": 6298,
+     "unknown_inactive": 317
+    },
+    "out": {
+     "replaced by structure_rules": {
+      "rows": 196,
+      "unknown": 6651
+     },
+     "absorbed": {
+      "rows": 8,
+      "unknown": 8
+     },
+     "not read": {
+      "rows": 3,
+      "unknown": 3
+     },
+     "linked": {
+      "rows": 1,
+      "unknown": 1
+     }
+    },
+    "by_row_role": {
+     "free": 326,
+     "fixed": 18,
+     "not in the catalog": 3
+    },
+    "by_grain": {
+     "class": 189,
+     "global": 105,
+     "gene": 20,
+     "cell": 19,
+     "channel": 11,
+     "pairing": 3
+    },
+    "by_basis": {
+     "guessed_physical": 313,
+     "physics": 26,
+     "measured_spread": 5,
+     "none": 3
+    },
+    "in_fixed": [
+     "int_posterior_rings",
+     "met_step_s",
+     "ph_ser7_on_muscle",
+     "syn_inhibitory"
+    ],
+    "not_in_catalog": [
+     "body_damp_tau_ms",
+     "body_damp_w_ref_rad_s",
+     "body_damp_clip"
+    ]
    }
   }
  }

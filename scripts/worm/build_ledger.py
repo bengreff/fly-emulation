@@ -144,7 +144,11 @@ def row(pid, mid, unit, template, lo, hi, *, proj, grain="global", applies_to="w
         label="guessed", basis="guessed", bsrc="guessed", prior=None, notes="", toggle="", table=None, url="",
         quote="", origin="brain"):
     pd_, pa, pb, pbasis = prior or prior_for(template, lo, hi)
-    if label == "guessed" and unit != "flag" and hi > lo and (np.isclose(template, lo) or np.isclose(template, hi)):
+    # only a ported value is moved off a bound: a code Spec's template (origin mech:) is the code's default, neutral
+    # until adopted (a structure rule's reproduces the scan exactly; daf7_effect 0 is off), so it stays (Director,
+    # 7 Nov 18:34)
+    if (label == "guessed" and unit != "flag" and hi > lo and not origin.startswith("mech:")
+            and (np.isclose(template, lo) or np.isclose(template, hi))):
         was, template = template, float(np.sqrt(lo * hi) if pd_ == "loguniform" else (lo + hi) / 2)
         tsrc += f"; at a bound ({was:g}), so moved to the range's {'log-' if pd_ == 'loguniform' else ''}midpoint"
     rows.append(dict(param_id=pid, mechanism_id=mid, grain=grain, applies_to=applies_to, unit=unit, n_values=n,
@@ -1023,15 +1027,48 @@ def export(led, extra, csum=None):
     return out
 
 
-def ranges_summary(rows, crows, narrowed, rule_rows, cons):
+def vector(rows, crows):
+    """wmodel's fit vector (wormemu.params.Theta: the active rule and gap numbers), read back from the catalog and
+    ledger just written, so the catalog reports the one count (Director, 7 Nov 18:34; docs/worm/UNKNOWNS.md). A row
+    is free when the vector holds one of its numbers; a free row it leaves out (replaced by a structure rule,
+    absorbed into a rule's product, linked, not read) becomes inactive, its reason counted here."""
+    from wormemu import params
+    params.catalog.cache_clear()
+    full = params.catalog()
+    t = params.Theta(table=full).table
+    n_in = t.pid.value_counts().to_dict()
+    why = full.drop_duplicates("pid").set_index("pid").inactive_why.to_dict()
+    out = {}
+    for rs, key in ((rows, "param_id"), (crows, "id")):
+        for r in rs:
+            r["n_vector"] = n_in.get(r[key], 0)
+            if r["fit_role"] == "free" and not r["n_vector"]:
+                r["fit_role"] = "inactive"
+                if key == "id":
+                    k = re.split(r" \(|:| into ", str(why.get(r[key]) or "not read"))[0]
+                    d = out.setdefault(k, dict(rows=0, unknown=0))
+                    d["rows"] += 1
+                    d["unknown"] += int(r.get("n_unknown") or 0)
+    role = {c["id"]: c["fit_role"] for c in crows}
+    basis = {c["id"]: c.get("range_basis") or c.get("bound_basis") or "" for c in crows}
+    t = t.assign(row_role=t.pid.map(role).fillna("not in the catalog"), basis=t.pid.map(basis).fillna(""))
+    return dict(counts=params.counts(), out=dict(sorted(out.items(), key=lambda kv: -kv[1]["unknown"])),
+                by_row_role=t.row_role.value_counts().to_dict(), by_grain=t.grain.value_counts().to_dict(),
+                by_basis=t.basis.replace("", "none").value_counts().to_dict(),
+                in_fixed=sorted(t.pid[t.row_role == "fixed"].unique()),
+                not_in_catalog=list(t.id[t.row_role == "not in the catalog"]))
+
+
+def ranges_summary(rows, crows, narrowed, rule_rows, cons, vec):
     """The catalog's Ranges section (wranges, 7 Nov): unknown numbers by role and basis, the widest free ranges, the
     narrowing, the rule parameters and what they replace, the sampling check (scripts/worm/ranges/sampling_check.json)."""
     def tally(rs, key):
         t = {}
         for r in rs:
-            d = t.setdefault(str(r.get(key) or ""), dict(rows=0, unknown=0))
+            d = t.setdefault(str(r.get(key) or ""), dict(rows=0, unknown=0, vector=0))
             d["rows"] += 1
             d["unknown"] += int(r.get("n_unknown") or 0)
+            d["vector"] += int(r.get("n_vector") or 0)
         return dict(sorted(t.items(), key=lambda kv: -kv[1]["unknown"]))
     free = [r for r in rows if r["fit_role"] == "free"]
     sd = lambda r: float(r["span_decades"]) if r.get("span_decades") not in ("", None) and \
@@ -1070,7 +1107,7 @@ def ranges_summary(rows, crows, narrowed, rule_rows, cons):
         replaced=replaced, from_free=from_free, n_new_rules=len(new_rules),
         free_after_rules=n_free - from_free + len(new_rules), after_by_basis=tally(after, "bound_basis"),
         after_span_counts={f">{k}": sum(sd(r) > k for r in after) for k in (1, 2, 3)}, after_rows=len(after),
-        sampling=json.loads(sc.read_text()) if sc.exists() else None)
+        sampling=json.loads(sc.read_text()) if sc.exists() else None, vector=vec)
 
 
 def main():
@@ -1128,10 +1165,14 @@ def main():
     (OUT / "constraints.yaml").write_text(joint.to_yaml(cons))
     (OUT / "narrowed_by_constraints.csv").write_text(pd.DataFrame(narrowed).to_csv(index=False))
     pd.DataFrame(rule_rows).to_csv(OUT / "rule_params.csv", index=False)
+    cat.write_csv(crows)
+    vec = vector(rows, crows)                                        # wmodel's fit vector; free follows it
+    pd.DataFrame(rows, columns=ledger.PARAM_COLUMNS + ledger.HARD_COLUMNS).to_csv(OUT / "parameters.csv", index=False)
+    led = ledger.load(OUT)
     extra = dict(**wiring, morph_points=pts, c302_muscle_rows=n_c302, registry=reg_notes)
     hidden = cat.hidden_summary()
     csum = cat.summary(crows, replaced, fill_log, hidden, before)
-    csum["ranges"] = ranges_summary(rows, crows, narrowed, rule_rows, cons)
+    csum["ranges"] = ranges_summary(rows, crows, narrowed, rule_rows, cons, vec)
     cat.write(crows, csum, [*mechs, *body_mechs, *slot_mechs])
     out = export(led, extra, csum)
     print(json.dumps(csum["totals"], indent=1))
