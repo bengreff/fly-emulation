@@ -1,6 +1,6 @@
 """Probe, row 7: NMJ GABA IPSC decay (receptor_unit_check.py item 3) against Liu et al. 2009 (24.8 +/- 2.7 ms).
 
-Pre-registered (8 Nov 13:40, before the first run):
+Pre-registered (8 Nov, before the first run; written 13:09-13:14 CST, committed 0b63769 at 13:18):
   bar      decay tau of the single-exponential fit from the peak, 22.1-27.5 ms (the check's own bar, unchanged)
   ids      the gaps the check reads (traced: mech/receptors.site_params for class gabacl, wsyn.mod):
            rec_tmax_gaba_uM, rec_gabacl_tau_rise_ms, rec_gabacl_ss_frac, rec_des_recover_ratio

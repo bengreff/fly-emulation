@@ -1,6 +1,6 @@
 """Feasibility probes for failing checks whose inputs include gaps (wtriage, 8 Nov 2026). Never adopted.
 
-Pre-registered here before any of these ran (8 Nov 14:00 CST). Each probe: the ids the check reads (traced in the
+Pre-registered here before any of these ran (8 Nov, before 13:18 CST, commit 0b63769). Each probe: the ids the check reads (traced in the
 code), the box (bio = the params API's bounds; hard = hard_min/hard_max where wider), the sample count, the bar
 (the check's own, unchanged), and the companion checks re-run at the best point.
 

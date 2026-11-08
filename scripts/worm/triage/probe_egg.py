@@ -1,6 +1,6 @@
 """Probe, row 15: the egg-laying circuit's active/inactive pattern (scripts/worm/organs/check_egglaying.py, unchanged).
 
-Pre-registered (8 Nov 14:05 CST, before the first run):
+Pre-registered (8 Nov 13:47 CST, before the first run):
   cause    traced first (egg_5ht.py, 10 s): HSN rests at -53.6 mV (0.65 % of the time above -30 mV), vulval 5-HT
            0.33 nM against EC50s of 30 (SER-7) and 1000 nM (SER-1); 15 nM even at full drive at the ledger release.
   ids      the 17 gap numbers the check reads between HSN and an egg (traced in mech/organs_egglaying and

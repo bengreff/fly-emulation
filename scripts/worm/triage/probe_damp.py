@@ -1,6 +1,6 @@
 """Probe, row 21 damping: mean internal-damping time constant during the 1.76 Hz wave (wtriage, 8 Nov 2026).
 
-Pre-registered (8 Nov 13:40, before running):
+Pre-registered (8 Nov, before running; launched 13:39 CST):
   bar      the check's own (scripts/worm/body_layers_check.py item 3): mean tau during the 3 s wave on the agar film
            <= 5.3 ms (derived from Fang-Yen et al. 2010 PNAS 107:20323), and the run finite
   ids      the gaps the bar reads (traced: body/layers.world_flags, driver/run_body.cpp update_drag):

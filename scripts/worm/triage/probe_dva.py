@@ -1,6 +1,6 @@
 """Probe, row 17 proprio: DVA stretch-channel Po in the senses_checks.proprio protocol (wtriage, 8 Nov 2026).
 
-Pre-registered (8 Nov 13:45, before running):
+Pre-registered (8 Nov, before running; the run wrote its result at 13:26 CST):
   bar      the check's own sanity bars, unchanged: VB03 and SMDDL Po > 0.5 in their bend and < 0.1 in the opposite;
            DB03 the mirror; DVA Po > 0.5 in both the ventral and the dorsal bend (max over each 1 s window)
   ids      gaps the Po depends on (traced: mech/senses_proprio.strain and step): proprio_eps_half, proprio_eps_slope,
