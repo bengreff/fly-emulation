@@ -8,8 +8,9 @@ whose voltage moves less than 1 mV over those 2 s (pinned). Conditions, one proc
   mask_off      expression_map off (BAAIWorm's per-cell densities without the CeNGEN mask, brain.py:427-433)
   isolated      default, no synapses and no gaps (single_cell_sanity's wiring patch): the cells' own resting state
   isolated_mask isolated with expression_map off
-  syn_x0.5      every chemical pair's strength (syn_strength_per_pair) times 0.5
-  syn_x2        times 2
+  syn_x0.5      every chemical pair's strength times 0.5 (syn_strength_per_pair and, since the class rule
+                replaces it by default, every syn_nchan_per_em_*; amended 14:24 before the rerun)
+  syn_x2, syn_x4  times 2 and 4 (x4 added 14:24 with the amendment)
 No published bar exists for "fraction above -20 mV" (C. elegans neurons are mostly graded; see DEBUG_TRIAGE item 4c),
 so this scores nothing. It asks two questions: how many of the default network's depolarised cells are depolarised on
 their own (isolated), and how far the fraction moves for a 2x change in one shared guessed strength.
@@ -48,6 +49,13 @@ def main():
         f = float(cond[5:])
         spec.values = dict(spec.values)
         spec.values["syn_strength_per_pair"] = spec.values["syn_strength_per_pair"] * f
+        # with structure_rules on (the default) the per-pair value is replaced by the class rule (brain.py:717-718):
+        # scale every class's syn_nchan_per_em_* too (the first syn_x runs, 14:17, scaled only the per-pair value
+        # and matched default to every printed digit, so they were void)
+        from wormemu.mech import structure_rules as SR
+        for sp in SR.SPECS:
+            if sp.id.startswith("syn_nchan_per_em_"):
+                spec.values[sp.id] = f * float(spec.values.get(sp.id, sp.template))
     t0 = time.time()
     b = B.Brain(spec, toggles=tog)
     t_build = time.time() - t0
