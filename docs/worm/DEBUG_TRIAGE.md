@@ -95,19 +95,26 @@ not explained today (Open).
 
 Every default form is a mechanism; the clocks and timers survive only as nested, non-default toggle values
 (pharynx `clock`, defecation `timer`, egg_laying `timer`). So nothing is SET by default and no sign is class B for
-being set; whether each one actually emerges is the current value. Run: `vital_signs.py`, backhouse, brain only
-(no body, food or odour), default toggles, 120 bio s from reset; mask_off as the item-3 diagnostic.
+being set; whether each one actually emerges is the current value.
 
-| Sign | Published range (opened) | Mechanisms that must produce it | EMERGES / SET | Current value, default (mask off) |
+Two runs, both pre-registered in their scripts:
+- Preliminary, brain only (`vital_signs.py`, backhouse, 14:27-15:06): no body, food or odour; default toggles;
+  120 bio s from reset. mask_off is the item-3 diagnostic.
+- The entire worm (challenge i, `vital_loop.py`, backhouse, 15:19): closed loop with the MetaWorm body, wbody's
+  sense modules and every plate field, food on and off. Its numbers are below the table.
+
+All values are measured.
+
+| Sign | Published range (opened) | Mechanisms that must produce it | EMERGES / SET | Brain only, default (mask off) |
 |---|---|---|---|---|
-| Pharyngeal pumping | 3.46 +- 0.19 Hz on food after a 2 h fast (Hiebert et al. 2017, PMC7255878); no food here, so lower is expected | MC and the pharyngeal neurons on Cook's wiring -> Sherman & Harel 2024 muscle APs -> Ca -> pm4 activation crossings | EMERGES | PUMPS |
-| Defecation cycle | 45-50 s at 20 C on food (Kwan et al. 2008, PMC2409367; controls 46.4 s) | Li-Rinzel IP3R Ca oscillator in 20 intestinal cells, int9 pacemaker, INX-16 wave -> pBoc protons and NLP-40/AEX-2 -> enteric muscles -> expulsion | EMERGES, but its period was fitted to Espelt 2005's 49 s on the isolated intestine, so the period is not an independent test | DMP |
-| Egg-laying | clustered, intercluster 10-60 min (Collins et al. 2016; Zhang et al. 2010) | HSN membrane -> 5-HT/NLP-3 -> vulval muscles, uv1 tyramine feedback, uterine stretch | EMERGES in form; does not occur (line 5, B) | EGGS |
-| Body-wall muscle | dissected: rest -25.0 +- 1.0 mV (n = 27), spontaneous APs 0.73 +- 0.14 Hz in ~80% of preparations (Gao & Zhen 2011, PMC3038695) | Du/Crodelle 2025 BWM membrane, Cook NMJ drive, Liu 2006 BWM gaps | EMERGES | BWM |
-| Neuron state | no published voltage bar (line 18) | the whole network | EMERGES | NEUR |
+| Pharyngeal pumping | 3.46 +- 0.19 Hz on food after a 2 h fast (Hiebert et al. 2017, PMC7255878); no food here, so lower is expected | MC and the pharyngeal neurons on Cook's wiring -> Sherman & Harel 2024 muscle APs -> Ca -> pm4 activation crossings | EMERGES | 0 pumps in 120 s (0) |
+| Defecation cycle | 45-50 s at 20 C on food (Kwan et al. 2008, PMC2409367; controls 46.4 s) | Li-Rinzel IP3R Ca oscillator in 20 intestinal cells, int9 pacemaker, INX-16 wave -> pBoc protons and NLP-40/AEX-2 -> enteric muscles -> expulsion | EMERGES, but its period was fitted to Espelt 2005's 49 s on the isolated intestine, so the period is not an independent test | 0 expulsions. Intestinal Ca peaks (0.67 uM max) at 34.8, 47.4, 86.9, 98.7, 114.9 s: intervals 12.6-39.5 s, mean 20.0 s, irregular (identical with mask off) |
+| Egg-laying | clustered, intercluster 10-60 min (Collins et al. 2016; Zhang et al. 2010) | HSN membrane -> 5-HT/NLP-3 -> vulval muscles, uv1 tyramine feedback, uterine stretch | EMERGES in form; does not occur (lines 5 B, 22 D) | 0 eggs (0); 2 min is too short to judge |
+| Body-wall muscle | dissected: rest -25.0 +- 1.0 mV (n = 27), spontaneous APs 0.73 +- 0.14 Hz in ~80% of preparations (Gao & Zhen 2011, PMC3038695) | Du/Crodelle 2025 BWM membrane, Cook NMJ drive, Liu 2006 BWM gaps | EMERGES | median -30.8 mV (-30.3); 1.83 Hz per muscle (1.97), 81% of the 95 muscles fire (82%). Rest is 5.8 mV below Gao & Zhen's mean and the rate is 2.5x theirs, though their preparation is dissected and ours is driven by the network |
+| Neuron state | no published voltage bar (line 18); phase-2 bar under challenge iii | the whole network | EMERGES | 0.10% of neurons above -20 mV on average, peak 23%; median -51.0 mV (0.01%, 18%, -54.0 mV) |
 | Quiescence | 48% nose immobility in L4 lethargus (Turek et al. 2016, PMC4805538) | needs an L4 state | not modelled (development, Ben's step 2) | n/a |
 
-VERDICT
+ENTIRE_WORM
 
 ## Item 6: viewer vs audit
 
