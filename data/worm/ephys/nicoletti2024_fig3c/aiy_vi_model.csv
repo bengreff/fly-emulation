@@ -1,0 +1,18 @@
+# Nicoletti M, Chiodo L, Loppini A, et al. 2024, PLoS ONE 19:e0298105 (CC-BY 4.0), Fig 3C: AIY steady-state V-I,
+# the model's points (red squares), as plotted in the paper. Digitised by wbrain2 on 8 Nov 2026 from the journal's
+# figure image (journal.pone.0298105.g003.png, panel C cropped to fig3c_crop.png here) by reading the pixel centre of
+# each square. Calibration from the axis ticks: V = 0 mV at row 1056.5, 3.593 px per mV; I = 0 pA at column 302,
+# 11.32 px per pA. Label: measured (off the figure); reading error about +-0.6 mV (derived: 2 px at 3.593 px per mV).
+# The figure's own model is the authors' published code (scripts/worm/channels_unit_check.py's ref mode).
+i_pA,v_mV
+-15,-128.6
+-10,-103.5
+-5,-78.8
+0,-55.1
+5,-33.4
+10,-17.5
+15,-5.3
+20,5.0
+25,13.1
+30,19.5
+35,24.4

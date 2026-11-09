@@ -384,6 +384,26 @@
   source: src/wormemu/mech/channels.py
   notes: registry module channels; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
+- id: egl19_kinetics
+  name: 'EGL-19 (L-type Ca) gating: BAAIWorm (Nicoletti 2019, off) or Nicoletti 2024, as printed in its S1 File or as in the authors'' code'
+  layer: channel
+  status: have
+  toggle: egl19_kinetics
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/channel_forms.py
+  notes: registry module channel_forms; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: shl1_kinetics
+  name: 'SHL-1 (Kv4, A-type K) gating: BAAIWorm (Nicoletti 2019, off) or Nicoletti 2024, as printed in its S1 File or as in the authors'' code'
+  layer: channel
+  status: have
+  toggle: shl1_kinetics
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/channel_forms.py
+  notes: registry module channel_forms; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: ca_pool_units
   name: Neuron bulk Ca pool fed the whole-soma Ca current (Nicoletti 2019 Eq. 28) instead of the current density
   layer: channel

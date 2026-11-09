@@ -138,6 +138,30 @@ def patch_slo_gsc(stem, text):
     return out
 
 
+def patch_shl1_form(stem, text):
+    """SHL-1's HH exponent, inactivation weights and BAAIWorm's three hard-coded time-constant factors as GLOBALs
+    (defaults the literals, the arithmetic order kept, so the default build is the vendored mod bit for bit), for
+    mech/channel_forms' Nicoletti 2024 forms (DEBUG_TRIAGE line 1)."""
+    if stem != "shl1":
+        return text
+    from wormemu.mech.channel_forms import SHL1_FORM
+    subs = [(r"^([ \t]*)ik = gbshl1 \* m \* m \* m \* \(0\.7 \* hf \+ 0\.3 \* hs\) \* \(v - ek\).*$",
+             "\\1if (mexp == 3) {\n\\1    ik = gbshl1 * m * m * m * (wf * hf + ws * hs) * (v - ek)\n\\1} else {\n"
+             "\\1    ik = gbshl1 * m^mexp * (wf * hf + ws * hs) * (v - ek)\n\\1}"),
+            (r"\(tm\*0\.4\)", "(tm*tmsc)"), (r"\(thf\*0\.08\)", "(thf*thfsc)"), (r"\(ths\*0\.3\)", "(ths*thssc)"),
+            (r"^(PARAMETER\s*\{)", "\\1\n" + "\n".join(f"    {k} = {v}" for k, v in SHL1_FORM.items()))]
+    for pat, rep in subs:
+        text, n = re.subn(pat, rep, text, count=1, flags=re.M)
+        if n != 1:
+            raise ValueError(f"shl1.mod: {pat!r} not found")
+    return text
+
+
+def patch_baai(stem, text):
+    """Every build-time edit to a vendored BAAIWorm mod except temperature's tadj (applied after)."""
+    return patch_shl1_form(stem, patch_slo_gsc(stem, patch_ek(stem, text)))
+
+
 def _neuron():
     """NEURON with the vendored mods loaded (compiled once into $WORMEMU_NRNMECH or ~/.cache/wormemu/nrnmech)."""
     global _h
@@ -149,9 +173,9 @@ def _neuron():
     mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) \
         + sorted(OWN_MODS.rglob("*.mod"))                # ours, including the organ workers' nmodl/organs/
     # the built text: temperature's rate factor (tadj, 1 by default) patched into the rate-class mods (row 25), and
-    # the K mods' ik against ek (EK_MODS), the SLO mods' gsc as RANGE
-    text = {m: temperature.patch_mod(m.stem, patch_slo_gsc(m.stem, patch_ek(m.stem, m.read_text()))
-                                     if m.parent == BAAI / "mod" else m.read_text()) for m in mods}
+    # the K mods' ik against ek (EK_MODS), the SLO mods' gsc as RANGE, SHL-1's form constants as GLOBALs
+    text = {m: temperature.patch_mod(m.stem, patch_baai(m.stem, m.read_text()))
+            if m.parent == BAAI / "mod" else m.read_text() for m in mods}
     tag = hashlib.sha1(b"".join(m.name.encode() + text[m].encode() for m in mods)).hexdigest()[:12]
     RATE_SUFFIX.update({temperature.mod_suffix(text[m]): temperature.RATE_MODS[m.stem][0] for m in mods
                         if m.stem in temperature.RATE_MODS})
@@ -496,6 +520,8 @@ class Brain:
 
     def _kinetics(self):
         """Channel kinetics, nanodomain and Ca pool constants: mod GLOBALs (RANGE ones set on every soma)."""
+        from wormemu.mech import channel_forms
+        channel_forms.restore(self.h)                       # GLOBALs a form may have set in an earlier Brain
         if not self.lit:
             return
         h, p = self.h, self.spec.led.parameters
