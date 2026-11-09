@@ -279,6 +279,15 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   all six FIT2 sweeps (was five); V identical everywhere; cab identical wherever ica stayed inward (23 of 24 sweeps);
   the port's mass balance and decay unchanged (measured). Detail: docs/worm/night/2026-11-08_wbrain2.md, "cabulk.mod
   stops a matured AIY".
+- Row 2's never-done check and the specific capacitance (wbrain2, A, a literature fill of a guess): whole-cell
+  capacitance of AFD, AWA and AWC against Ramot et al. 2008 (Goodman 1998's 10 ms, 20 mV pulse in NEURON) failed
+  high in all six cells at cm 1.5 (3.91-4.05 pF; bands 1.4-3.0, 2.0-3.6, 2.3-3.9). The cells are compact (passive
+  C_in 0.94-0.98 of area x cm), so the guessed `pas_cm_uF_cm2` (BAAIWorm's 2-8 clipped to 1.5) was the cause.
+  Filled 1.07, derived (Goodman 1998: ASER C_in = area x 1.07 uF/cm2), range 0.88-1.13 (where all three classes
+  hold), on the rule and the 604 per-cell values; the check then passes in all six (2.79-2.89 pF). Every neuron's
+  membrane time constant 29% shorter (derived); FIT2 RMSE AIY 9.28 -> 9.79, AFD 43.36 -> 43.53, AWA 19.03 -> 15.96
+  mV (measured). The drug test's unsourced 10 mV levamisole bar is pinned at its cm 1.5 (Request to wmodel).
+  Detail: docs/worm/night/2026-11-08_wbrain2.md, "whole-cell capacitance" and "The cm fill, amended".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.

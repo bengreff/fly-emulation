@@ -57,9 +57,10 @@ def test_sample_worm():
     lo, hi = a.led.parameters.set_index("param_id").loc["syn_strength_per_pair", ["bio_min", "bio_max"]]
     free = (s > lo) & (s < hi)
     assert free.any() and np.allclose((s / s0)[free], (s / s0)[free].iloc[0])
-    cm = a.v("pas_soma_cm")                                                        # guessed elements, per element
-    lo, hi = a.led.parameters.set_index("param_id").loc["pas_soma_cm", ["bio_min", "bio_max"]]
-    assert cm.nunique() > 1 and cm.between(lo, hi).all()
+    e = a.v("mpas_epas")                                                           # guessed elements, per element
+    lo, hi = a.led.parameters.set_index("param_id").loc["mpas_epas", ["bio_min", "bio_max"]]
+    assert e.nunique() > 1 and e.between(lo, hi).all()
+    assert (a.v("pas_soma_cm") == t.v("pas_soma_cm")).all()                       # derived (9 Nov fill): fixed
 
 
 @pytest.mark.parametrize("toggles", [

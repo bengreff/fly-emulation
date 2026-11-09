@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-09 03:54 CST",
+ "generated_at": "2026-11-09 05:15 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,36 +9,36 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 91753,
-  "rows": 2009,
+  "numbers": 91754,
+  "rows": 2010,
   "mechanisms": 119,
   "by_label": {
-   "derived": 67519,
-   "guessed": 9417,
-   "inferred": 345,
-   "measured": 6193,
+   "derived": 68125,
+   "guessed": 8812,
+   "inferred": 346,
+   "measured": 6192,
    "published_fit": 8279
   },
-  "known": 82336,
-  "placeholder": 9417,
+  "known": 82942,
+  "placeholder": 8812,
   "gap": 0,
-  "used_by_model": 91753,
-  "must_fill": 9417
+  "used_by_model": 91754,
+  "must_fill": 8812
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 20766,
+  "numbers": 20767,
   "by_label": {
    "published_fit": 7552,
-   "guessed": 9417,
-   "derived": 3111,
-   "inferred": 345,
-   "measured": 341
+   "derived": 3717,
+   "guessed": 8812,
+   "inferred": 346,
+   "measured": 340
   },
-  "known": 11349,
-  "placeholder": 9417,
+  "known": 11955,
+  "placeholder": 8812,
   "gap": 0,
-  "must_fill": 9417
+  "must_fill": 8812
  },
  "source_by_fill_kind": {
   "all": {
@@ -48,9 +48,9 @@
     "derived": 64408
    },
    "literature": {
-    "guessed": 5474,
-    "measured": 6192,
-    "derived": 3111,
+    "derived": 3717,
+    "guessed": 4870,
+    "measured": 6191,
     "inferred (ours)": 27,
     "published fit": 504
    },
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3929,
-    "inferred (ours)": 318,
+    "guessed": 3928,
+    "inferred (ours)": 319,
     "measured": 1
    },
    "c302": {
@@ -73,9 +73,9 @@
     "guessed": 1
    },
    "literature": {
-    "guessed": 5474,
-    "derived": 3111,
-    "measured": 340,
+    "derived": 3717,
+    "guessed": 4870,
+    "measured": 339,
     "inferred (ours)": 27,
     "published fit": 504
    },
@@ -83,8 +83,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3929,
-    "inferred (ours)": 318,
+    "guessed": 3928,
+    "inferred (ours)": 319,
     "measured": 1
    },
    "c302": {
@@ -105,8 +105,8 @@
  ],
  "by_grain": {
   "cell": {
-   "derived": 283,
-   "guessed": 725,
+   "derived": 887,
+   "guessed": 121,
    "inferred": 13,
    "published_fit": 6550
   },
@@ -139,10 +139,10 @@
    "guessed": 85
   },
   "global": {
-   "derived": 23,
-   "guessed": 203,
-   "inferred": 53,
-   "measured": 34,
+   "derived": 25,
+   "guessed": 202,
+   "inferred": 54,
+   "measured": 33,
    "published_fit": 426
   },
   "muscle": {
@@ -183,7 +183,8 @@
    "absent_reason": "",
    "numbers": 2416,
    "by_label": {
-    "guessed": 706,
+    "derived": 604,
+    "guessed": 102,
     "published_fit": 1710
    }
   },
@@ -739,7 +740,8 @@
    "absent_reason": "",
    "numbers": 44,
    "by_label": {
-    "guessed": 44
+    "derived": 1,
+    "guessed": 43
    }
   },
   {
@@ -1255,8 +1257,7 @@
    "by_label": {
     "derived": 1,
     "guessed": 5,
-    "inferred": 1,
-    "measured": 1
+    "inferred": 2
    }
   },
   {
@@ -1969,9 +1970,9 @@
    "source": "src/wormemu/mech/pumps.py",
    "notes": "registry module pumps; PLAN row guessed from the name by the catalog",
    "absent_reason": "",
-   "numbers": 15,
+   "numbers": 16,
    "by_label": {
-    "derived": 2,
+    "derived": 3,
     "guessed": 6,
     "inferred": 4,
     "published_fit": 3
@@ -2177,46 +2178,46 @@
    "applies_to": "every neuron, soma",
    "unit": "uF/cm2",
    "n_values": 302,
-   "value_template": 1.5,
-   "template_source": "median of the per-cell values (values table)",
-   "bio_min": 0.8,
-   "bio_max": 1.5,
-   "bound_basis": "homology",
-   "bound_source": "Gentet, Stuart & Spruston 2000 Biophys J (generic neuronal membrane); used as default in published C. elegans single-cell models (Nicoletti 2019/2024) (param_ranges A1)",
+   "value_template": 1.07,
+   "template_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+   "bio_min": 0.88,
+   "bio_max": 1.13,
+   "bound_basis": "measured_spread",
+   "bound_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
    "bound_verified": "unverified",
    "prior_dist": "lognormal",
-   "prior_a": 1.5,
+   "prior_a": 1.07,
    "prior_b": 0.35,
    "prior_basis": "guessed: each element log-normal around its own value, sd 0.35 (factor 1.4), truncated",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "BAAIWorm",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "302 of 302 ported values outside the literature range, clipped; relabel 7 Nov (independent audit): row label published_fit was stronger than its elements (guessed 302): a row is labelled as its weakest element, the split is per element",
+   "notes": "302 of 302 ported values outside the literature range, clipped; fill 6 Nov (catalog audit): was 1.5 uF/cm2, label published_fit, range [0.8, 1.5]; 9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF). Same fill on the per-element row pas_soma_cm (every neuron's soma cm, the rules-off path), which held the same clip, so the rule's template reproduces it (wbrain2, 9 Nov, the amended fill).",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
-   "source_quote": "",
-   "audit": "guessed template sits on a bound",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/",
+   "source_quote": "The best-fit line had a slope of 1.07 \u00b1 0.08 (slope \u00b1 95% confidence interval).",
+   "audit": "ok",
    "hard_min": 0.3,
    "hard_max": 3.0,
    "hard_class": "capacitance_specific",
    "hard_basis": "physics",
    "hard_source": "a lipid bilayer is 0.3-1 uF/cm2 by thickness and dielectric constant; biological membranes measure 0.5-2; above 3 needs membrane folds the morphology would have to omit; [HB 3]",
-   "bound_basis_detail": "measured_related",
-   "span_decades": 0.273,
+   "bound_basis_detail": "measured_spread",
+   "span_decades": 0.109,
    "span_reason": "",
-   "fit_role": "inactive",
-   "n_unknown": 302,
+   "fit_role": "static",
+   "n_unknown": 0,
    "values_file": "data/worm/model/values/pas_soma_cm.csv",
    "element_stats": {
-    "min": 1.5,
-    "median": 1.5,
-    "max": 1.5,
+    "min": 1.07,
+    "median": 1.07,
+    "max": 1.07,
     "by_label": {
-     "guessed": 302
+     "derived": 302
     }
    },
    "kind": "physiology"
@@ -2382,46 +2383,46 @@
    "applies_to": "every neuron, neurite",
    "unit": "uF/cm2",
    "n_values": 302,
-   "value_template": 1.5,
-   "template_source": "median of the per-cell values (values table)",
-   "bio_min": 0.8,
-   "bio_max": 1.5,
-   "bound_basis": "homology",
-   "bound_source": "Gentet, Stuart & Spruston 2000 Biophys J (generic neuronal membrane); used as default in published C. elegans single-cell models (Nicoletti 2019/2024) (param_ranges A1)",
+   "value_template": 1.07,
+   "template_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+   "bio_min": 0.88,
+   "bio_max": 1.13,
+   "bound_basis": "measured_spread",
+   "bound_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
    "bound_verified": "unverified",
    "prior_dist": "lognormal",
-   "prior_a": 1.5,
+   "prior_a": 1.07,
    "prior_b": 0.35,
    "prior_basis": "guessed: each element log-normal around its own value, sd 0.35 (factor 1.4), truncated",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "BAAIWorm",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "302 of 302 ported values outside the literature range, clipped; relabel 7 Nov (independent audit): row label published_fit was stronger than its elements (guessed 302): a row is labelled as its weakest element, the split is per element",
+   "notes": "302 of 302 ported values outside the literature range, clipped; fill 6 Nov (catalog audit): was 1.5 uF/cm2, label published_fit, range [0.8, 1.5]; 9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF). Same fill on the per-element row pas_neurite_cm (every neuron's neurite cm, the rules-off path), which held the same clip, so the rule's template reproduces it (wbrain2, 9 Nov, the amended fill).",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
-   "source_quote": "",
-   "audit": "guessed template sits on a bound",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/",
+   "source_quote": "The best-fit line had a slope of 1.07 \u00b1 0.08 (slope \u00b1 95% confidence interval).",
+   "audit": "ok",
    "hard_min": 0.3,
    "hard_max": 3.0,
    "hard_class": "capacitance_specific",
    "hard_basis": "physics",
    "hard_source": "a lipid bilayer is 0.3-1 uF/cm2 by thickness and dielectric constant; biological membranes measure 0.5-2; above 3 needs membrane folds the morphology would have to omit; [HB 3]",
-   "bound_basis_detail": "measured_related",
-   "span_decades": 0.273,
+   "bound_basis_detail": "measured_spread",
+   "span_decades": 0.109,
    "span_reason": "",
-   "fit_role": "inactive",
-   "n_unknown": 302,
+   "fit_role": "static",
+   "n_unknown": 0,
    "values_file": "data/worm/model/values/pas_neurite_cm.csv",
    "element_stats": {
-    "min": 1.5,
-    "median": 1.5,
-    "max": 1.5,
+    "min": 1.07,
+    "median": 1.07,
+    "max": 1.07,
     "by_label": {
-     "guessed": 302
+     "derived": 302
     }
    },
    "kind": "physiology"
@@ -19694,39 +19695,39 @@
    "applies_to": "every neuron, soma and neurite",
    "unit": "uF/cm2",
    "n_values": 1,
-   "value_template": 1.5,
-   "template_source": "pas_soma_cm and pas_neurite_cm: every neuron at 1.5 (BAAIWorm's per-cell 2-8 clipped to range A1 [0.8, 1.5]), so one specific capacitance reproduces them",
-   "bio_min": 0.8,
-   "bio_max": 1.5,
-   "bound_basis": "guessed_physical",
-   "bound_source": "pas_soma_cm and pas_neurite_cm: every neuron at 1.5 (BAAIWorm's per-cell 2-8 clipped to range A1 [0.8, 1.5]), so one specific capacitance reproduces them",
+   "value_template": 1.07,
+   "template_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+   "bio_min": 0.88,
+   "bio_max": 1.13,
+   "bound_basis": "measured_spread",
+   "bound_source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "",
+   "notes": "fill 6 Nov (catalog audit): was 1.5 uF/cm2, label guessed, range [0.8, 1.5]; 9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF)",
    "plan_row": 5,
    "used_by_code": "yes",
-   "source_url": "https://github.com/Jessie940611/BAAIWorm/blob/b99ca5ab9c00aef739fceb1cf007bc50b06f2ccc/eworm/components/param/cell",
-   "source_quote": "",
-   "audit": "guessed template sits on a bound",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/",
+   "source_quote": "The best-fit line had a slope of 1.07 \u00b1 0.08 (slope \u00b1 95% confidence interval).",
+   "audit": "ok",
    "hard_min": 0.3,
    "hard_max": 3.0,
    "hard_class": "capacitance_specific",
    "hard_basis": "physics",
    "hard_source": "a lipid bilayer is 0.3-1 uF/cm2 by thickness and dielectric constant; biological membranes measure 0.5-2; above 3 needs membrane folds the morphology would have to omit; [HB 3]",
-   "bound_basis_detail": "guessed",
-   "span_decades": 0.273,
+   "bound_basis_detail": "measured_spread",
+   "span_decades": 0.109,
    "span_reason": "",
-   "fit_role": "free",
-   "n_unknown": 1,
+   "fit_role": "static",
+   "n_unknown": 0,
    "kind": "physiology"
   },
   {
@@ -66231,23 +66232,23 @@
    "unit": "1",
    "n_values": 1,
    "value_template": 1.0,
-   "template_source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (a temperature-compensated ultradian clock)",
+   "template_source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (PMC40787, abstract): 'activated every 45 sec, and this rhythm is temperature compensated'",
    "bio_min": 0.9,
    "bio_max": 1.2,
    "bound_basis": "measured_spread",
-   "bound_source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (a temperature-compensated ultradian clock)",
+   "bound_source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (PMC40787, abstract): 'activated every 45 sec, and this rhythm is temperature compensated'",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
-   "source_project": "literature",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "period about constant over the cultivation range; the exact Q10 was not opened; source 6 Nov (catalog audit): was 1 1, label measured, range [0.9, 1.2]; quote added (abstract; the free text is a scan, so the paper's Q10 was not read; Iwasaki, Liu & Thomas 1995)",
+   "notes": "9 Nov 2026: was labelled measured; the opened text is one qualitative line, with no Q10 and no temperatures (the full texts of Iwasaki 1995 and Liu & Thomas 1994 are scans), so Q10 about 1 is inferred and the range 0.9-1.2 guessed. Simpler than published: worms grown at 20 C and shifted to a new temperature change their cycle length (Branicky, Shibata, Feng & Hekimi 2001 Genetics, PMC1461884, abstract; direction and size not read), while this factor applies at once and for good; source 6 Nov (catalog audit): was 1 1, label inferred, range [0.9, 1.2]; quote added (abstract; the free text is a scan, so the paper's Q10 was not read; Iwasaki, Liu & Thomas 1995)",
    "plan_row": 25,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC40787/",
@@ -81997,7 +81998,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the brain's per-EM-contact neuronal gap (read from the ledger when present): glial innexins unresolved; relabel 6 Nov (catalog audit): was 0.2236 nS, label inferred, range [0.05, 0.5]; copied from the brain's gap_strength_per_pair, which is guessed (range C4 has no measurement): a value copied from (or computed with) a guessed row is guessed, whatever the tissue; was labelled inferred. Number unchanged",
+   "notes": "the template copies the median of the brain's per-EM-contact neuronal gap (gap_strength_per_pair); the row is its own; glial innexins unresolved. 9 Nov 2026: a branch that replaced it with the brain's median when params lacked it never ran (mech.params_for always passes it) and is removed; relabel 6 Nov (catalog audit): was 0.2236 nS, label inferred, range [0.05, 0.5]; copied from the brain's gap_strength_per_pair, which is guessed (range C4 has no measurement): a value copied from (or computed with) a guessed row is guessed, whatever the tissue; was labelled inferred. Number unchanged",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "",
@@ -83005,7 +83006,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the brain's per-contact neuronal gap, read from the ledger when present; O6: bounded by row 8's range; relabel 6 Nov (catalog audit): was 0.2236 nS, label inferred, range [0.05, 0.5]; copied from the brain's gap_strength_per_pair, which is guessed (range C4 has no measurement): a value copied from (or computed with) a guessed row is guessed, whatever the tissue; was labelled inferred. Number unchanged",
+   "notes": "the template copies the median of the brain's per-contact neuronal gap (gap_strength_per_pair); the row is its own (a worm's hypodermal gaps are not tied to its neuronal ones); O6: bounded by row 8's range. 9 Nov 2026: a branch that replaced it with the brain's median when params lacked it never ran (mech.params_for always passes it) and is removed; relabel 6 Nov (catalog audit): was 0.2236 nS, label inferred, range [0.05, 0.5]; copied from the brain's gap_strength_per_pair, which is guessed (range C4 has no measurement): a value copied from (or computed with) a guessed row is guessed, whatever the tissue; was labelled inferred. Number unchanged",
    "plan_row": 16,
    "used_by_code": "yes",
    "source_url": "",
@@ -84365,6 +84366,48 @@
    "span_reason": "an organ, sensor or environment constant with no direct worm measurement; the span is the guessed range in its source and is a data target",
    "fit_role": "free",
    "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "pump_area_median_um2",
+   "mechanism_id": "na_k_pump",
+   "grain": "global",
+   "applies_to": "neurons",
+   "unit": "um2",
+   "n_values": 1,
+   "value_template": 271.2578077213618,
+   "template_source": "the median whole-cell membrane area over the default brain's 302 neurons, their hoc morphologies (the sum of seg.area() over every section; scripts/worm/wbody2/pump_area_ref.py, 9 Nov 2026)",
+   "bio_min": 66.7,
+   "bio_max": 5164.4,
+   "bound_basis": "measured_spread",
+   "bound_source": "the median whole-cell membrane area over the default brain's 302 neurons, their hoc morphologies (the sum of seg.area() over every section; scripts/worm/wbody2/pump_area_ref.py, 9 Nov 2026)",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "the reference area of pump_imax_neuron_pA and pump_gna_neuron_nS; the range is the smallest and largest neuron's area. Fixed, so a cell's pump does not depend on which cells are built; recompute if the morphology changes",
+   "plan_row": 27,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 1.0,
+   "hard_max": 1000000.0,
+   "hard_class": "area_cell",
+   "hard_basis": "physics",
+   "hard_source": "a cell or tissue membrane area within the body surface (~1.6e5 um2) and its folds; WormAtlas",
+   "bound_basis_detail": "measured_related",
+   "span_decades": 1.889,
+   "span_reason": "cell and compartment sizes differ across the cells this row covers (WormAtlas)",
+   "fit_role": "static",
+   "n_unknown": 0,
    "kind": "physiology"
   },
   {
@@ -87040,37 +87083,37 @@
   "totals": {
    "rows": {
     "published_fit": 830,
-    "guessed": 683,
-    "measured": 260,
-    "inferred": 344,
-    "derived": 49,
+    "derived": 53,
+    "guessed": 680,
+    "measured": 259,
+    "inferred": 345,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
-    "guessed": 9478,
-    "measured": 6219,
-    "derived": 67530,
-    "inferred": 350,
+    "derived": 68136,
+    "guessed": 8873,
+    "measured": 6218,
+    "inferred": 351,
     "absent": 1
    },
-   "n_rows": 2167,
-   "n_numbers": 91937
+   "n_rows": 2168,
+   "n_numbers": 91938
   },
   "by_label_rows": {
    "published_fit": 830,
-   "guessed": 683,
-   "measured": 260,
-   "inferred": 344,
-   "derived": 49,
+   "derived": 53,
+   "guessed": 680,
+   "measured": 259,
+   "inferred": 345,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8359,
-   "guessed": 9478,
-   "measured": 6219,
-   "derived": 67530,
-   "inferred": 350,
+   "derived": 68136,
+   "guessed": 8873,
+   "measured": 6218,
+   "inferred": 351,
    "absent": 1
   },
   "by_plan_row": {
@@ -87117,14 +87160,14 @@
    "5": {
     "rows": {
      "published_fit": 162,
-     "guessed": 204,
-     "derived": 3,
+     "derived": 6,
+     "guessed": 201,
      "inferred": 225
     },
     "numbers": {
      "published_fit": 6684,
-     "guessed": 906,
-     "derived": 3,
+     "derived": 608,
+     "guessed": 301,
      "inferred": 225
     },
     "n_rows": 594,
@@ -87441,15 +87484,13 @@
    "25": {
     "rows": {
      "guessed": 7,
-     "inferred": 1,
-     "derived": 1,
-     "measured": 1
+     "inferred": 2,
+     "derived": 1
     },
     "numbers": {
      "guessed": 7,
-     "inferred": 1,
-     "derived": 1,
-     "measured": 1
+     "inferred": 2,
+     "derived": 1
     },
     "n_rows": 10,
     "n_numbers": 10
@@ -87471,16 +87512,16 @@
      "guessed": 8,
      "published_fit": 8,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "numbers": {
      "guessed": 8,
      "published_fit": 8,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
-    "n_rows": 22,
-    "n_numbers": 22
+    "n_rows": 23,
+    "n_numbers": 23
    },
    "28": {
     "rows": {
@@ -87497,14 +87538,14 @@
    "cell": {
     "rows": {
      "published_fit": 28,
-     "guessed": 13,
-     "inferred": 8,
-     "derived": 1
+     "derived": 3,
+     "guessed": 11,
+     "inferred": 8
     },
     "numbers": {
      "published_fit": 6550,
-     "guessed": 729,
-     "derived": 283,
+     "derived": 887,
+     "guessed": 125,
      "inferred": 13
     },
     "n_rows": 50,
@@ -87595,22 +87636,22 @@
    "global": {
     "rows": {
      "published_fit": 506,
-     "guessed": 222,
-     "inferred": 58,
-     "measured": 54,
-     "derived": 34,
+     "guessed": 221,
+     "inferred": 59,
+     "measured": 53,
+     "derived": 36,
      "absent": 1
     },
     "numbers": {
      "published_fit": 506,
-     "guessed": 222,
-     "inferred": 58,
-     "measured": 54,
-     "derived": 34,
+     "guessed": 221,
+     "inferred": 59,
+     "measured": 53,
+     "derived": 36,
      "absent": 1
     },
-    "n_rows": 875,
-    "n_numbers": 875
+    "n_rows": 876,
+    "n_numbers": 876
    },
    "muscle": {
     "rows": {
@@ -87705,20 +87746,20 @@
    "yes": {
     "rows": {
      "published_fit": 695,
-     "guessed": 568,
-     "measured": 221,
-     "inferred": 321,
-     "derived": 35
+     "derived": 39,
+     "guessed": 565,
+     "measured": 220,
+     "inferred": 322
     },
     "numbers": {
      "published_fit": 8036,
-     "guessed": 9033,
-     "measured": 6078,
-     "derived": 67516,
-     "inferred": 326
+     "derived": 68122,
+     "guessed": 8428,
+     "measured": 6077,
+     "inferred": 327
     },
-    "n_rows": 1840,
-    "n_numbers": 90989
+    "n_rows": 1841,
+    "n_numbers": 90990
    }
   },
   "by_origin": {
@@ -87745,16 +87786,16 @@
    "brain": {
     "rows": {
      "published_fit": 246,
-     "guessed": 31,
+     "derived": 5,
+     "guessed": 29,
      "measured": 4,
-     "inferred": 1,
-     "derived": 3
+     "inferred": 1
     },
     "numbers": {
      "published_fit": 7775,
-     "guessed": 8685,
+     "derived": 68088,
+     "guessed": 8081,
      "measured": 5861,
-     "derived": 67484,
      "inferred": 6
     },
     "n_rows": 285,
@@ -88087,16 +88128,16 @@
      "guessed": 6,
      "published_fit": 3,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
     "numbers": {
      "guessed": 6,
      "published_fit": 3,
      "inferred": 4,
-     "derived": 2
+     "derived": 3
     },
-    "n_rows": 15,
-    "n_numbers": 15
+    "n_rows": 16,
+    "n_numbers": 16
    },
    "mech:receptors": {
     "rows": {
@@ -88180,26 +88221,26 @@
    },
    "mech:structure_rules": {
     "rows": {
-     "guessed": 44
+     "guessed": 43,
+     "derived": 1
     },
     "numbers": {
-     "guessed": 44
+     "guessed": 43,
+     "derived": 1
     },
     "n_rows": 44,
     "n_numbers": 44
    },
    "mech:temperature": {
     "rows": {
-     "inferred": 1,
+     "inferred": 2,
      "derived": 1,
-     "guessed": 5,
-     "measured": 1
+     "guessed": 5
     },
     "numbers": {
-     "inferred": 1,
+     "inferred": 2,
      "derived": 1,
-     "guessed": 5,
-     "measured": 1
+     "guessed": 5
     },
     "n_rows": 8,
     "n_numbers": 8
@@ -88253,22 +88294,22 @@
    "physiology": {
     "rows": {
      "published_fit": 816,
-     "guessed": 681,
-     "inferred": 344,
-     "derived": 47,
-     "measured": 256,
+     "derived": 51,
+     "guessed": 678,
+     "inferred": 345,
+     "measured": 255,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7620,
-     "guessed": 9476,
-     "derived": 3122,
-     "inferred": 350,
-     "measured": 367,
+     "derived": 3728,
+     "guessed": 8871,
+     "inferred": 351,
+     "measured": 366,
      "absent": 1
     },
-    "n_rows": 2145,
-    "n_numbers": 20936
+    "n_rows": 2146,
+    "n_numbers": 20937
    },
    "structure": {
     "rows": {
@@ -88325,26 +88366,6 @@
     "of": 956,
     "used_by_code": "yes",
     "fit_target": 1
-   },
-   {
-    "id": "pas_soma_cm",
-    "plan_row": 5,
-    "mechanism": "passive",
-    "grain": "cell",
-    "unknown": 302,
-    "of": 302,
-    "used_by_code": "yes",
-    "fit_target": 0
-   },
-   {
-    "id": "pas_neurite_cm",
-    "plan_row": 5,
-    "mechanism": "passive",
-    "grain": "cell",
-    "unknown": 302,
-    "of": 302,
-    "used_by_code": "yes",
-    "fit_target": 0
    },
    {
     "id": "bwm_gap",
@@ -88530,6 +88551,26 @@
     "id": "syn_exc_erev",
     "plan_row": 7,
     "mechanism": "syn_exc",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "syn_inh_k",
+    "plan_row": 7,
+    "mechanism": "syn_inh",
+    "grain": "global",
+    "unknown": 1,
+    "of": 1,
+    "used_by_code": "yes",
+    "fit_target": 0
+   },
+   {
+    "id": "gap_weight",
+    "plan_row": 8,
+    "mechanism": "gap",
     "grain": "global",
     "unknown": 1,
     "of": 1,
@@ -89072,19 +89113,19 @@
    }
   ],
   "audit": {
-   "rows_ok": 2036,
-   "rows_with_problems": 131,
+   "rows_ok": 2039,
+   "rows_with_problems": 129,
    "by_status": {
-    "ok": 2036,
-    "finding": 103,
+    "ok": 2039,
+    "finding": 101,
     "problem": 28
    },
    "rows_read": 245,
    "quotes": {
-    "none": 1344,
+    "none": 1342,
+    "paper text (read audit, 6-7 Nov)": 16,
     "cited free text (scripted check)": 785,
-    "research file (scripted check)": 25,
-    "paper text (read audit, 6-7 Nov)": 13
+    "research file (scripted check)": 25
    },
    "with_url": 1725,
    "links": {
@@ -89100,8 +89141,8 @@
     "checked_at": "2026-11-07 04:41 CST"
    },
    "problem_kinds": {
-    "no URL to open": 48,
-    "guessed template sits on a bound": 15,
+    "no URL to open": 49,
+    "guessed template sits on a bound": 12,
     "source marked UNVERIFIED": 11,
     "no range": 11,
     "range is one point: the source's spread was not recorded": 6,
@@ -93045,11 +93086,11 @@
     "origin": "mech:temperature",
     "n": 1,
     "pattern": "",
-    "was_label": "measured",
-    "new_label": "measured",
-    "change": "1 -> 1 1; measured -> measured; range [0.9, 1.2] -> [0.9, 1.2]",
+    "was_label": "inferred",
+    "new_label": "inferred",
+    "change": "1 -> 1 1; inferred -> inferred; range [0.9, 1.2] -> [0.9, 1.2]",
     "reason": "quote added (abstract; the free text is a scan, so the paper's Q10 was not read; Iwasaki, Liu & Thomas 1995)",
-    "source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (a temperature-compensated ultradian clock)",
+    "source": "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (PMC40787, abstract): 'activated every 45 sec, and this rhythm is temperature compensated'",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC40787/"
    },
    {
@@ -100723,6 +100764,45 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9962794/"
    },
    {
+    "param_id": "pas_cm_uF_cm2",
+    "kind": "fill",
+    "origin": "mech:structure_rules",
+    "n": 1,
+    "pattern": "",
+    "was_label": "guessed",
+    "new_label": "derived",
+    "change": "1.5 -> 1.07 uF/cm2; guessed -> derived; range [0.8, 1.5] -> [0.88, 1.13]",
+    "reason": "9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF)",
+    "source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"
+   },
+   {
+    "param_id": "pas_soma_cm",
+    "kind": "fill",
+    "origin": "brain",
+    "n": 302,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "derived",
+    "change": "1.5 -> 1.07 uF/cm2; published_fit -> derived; range [0.8, 1.5] -> [0.88, 1.13]",
+    "reason": "9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF). Same fill on the per-element row pas_soma_cm (every neuron's soma cm, the rules-off path), which held the same clip, so the rule's template reproduces it (wbrain2, 9 Nov, the amended fill).",
+    "source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"
+   },
+   {
+    "param_id": "pas_neurite_cm",
+    "kind": "fill",
+    "origin": "brain",
+    "n": 302,
+    "pattern": "",
+    "was_label": "published_fit",
+    "new_label": "derived",
+    "change": "1.5 -> 1.07 uF/cm2; published_fit -> derived; range [0.8, 1.5] -> [0.88, 1.13]",
+    "reason": "9 Nov (wbrain2): was 1.5, guessed (BAAIWorm's per-cell 2-8 clipped to range A1), range 0.8-1.5. Goodman 1998: ASER's whole-cell capacitance equals its area x 1 uF/cm2 with slope 1.07, so the specific capacitance is 1.07 uF/cm2 at their area estimate (derived). Range: the global values at which the model's AFD, AWA and AWC (BAAIWorm areas 262-270 um2, measured in NEURON) all lie inside Ramot 2008's mean \u00b1 2 SD: AFD 0.53-1.13, AWA 0.74-1.34, AWC 0.88-1.49, intersection 0.88-1.13 (derived; scripts/worm/debug2/cell_capacitance.py). At 1.5 all six cells sat above their bands (3.91-4.05 pF). Same fill on the per-element row pas_neurite_cm (every neuron's neurite cm, the rules-off path), which held the same clip, so the rule's template reproduces it (wbrain2, 9 Nov, the amended fill).",
+    "source": "Goodman, Hall, Avery & Lockery 1998 Neuron 20:763 (PMC4444786), Fig 2B (ASER input capacitance against area x 1 uF/cm2, n = 23, L1 to adult); range from Ramot, MacInnis & Goodman 2008 Nat Neurosci 11:908 (PMC2587641), Methods (input capacitance, mean \u00b1 SD, young adults: AFD 2.2 \u00b1 0.4 pF, n = 56; AWA 2.8 \u00b1 0.4, n = 8; AWC 3.1 \u00b1 0.4, n = 5)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4444786/"
+   },
+   {
     "param_id": "pep_ec50_nM",
     "kind": "mirror",
     "origin": "layers",
@@ -100762,19 +100842,6 @@
     "url": ""
    },
    {
-    "param_id": "pas_soma_cm",
-    "kind": "element_labels",
-    "origin": "brain",
-    "n": 1,
-    "pattern": "",
-    "was_label": "published_fit",
-    "new_label": "guessed",
-    "change": "row label published_fit -> guessed",
-    "reason": "row label published_fit was stronger than its elements (guessed 302): a row is labelled as its weakest element, the split is per element",
-    "source": "the row's own values table",
-    "url": ""
-   },
-   {
     "param_id": "pas_soma_epas",
     "kind": "element_labels",
     "origin": "brain",
@@ -100784,19 +100851,6 @@
     "new_label": "guessed",
     "change": "row label published_fit -> guessed",
     "reason": "row label published_fit was stronger than its elements (published_fit 251, guessed 51): a row is labelled as its weakest element, the split is per element",
-    "source": "the row's own values table",
-    "url": ""
-   },
-   {
-    "param_id": "pas_neurite_cm",
-    "kind": "element_labels",
-    "origin": "brain",
-    "n": 1,
-    "pattern": "",
-    "was_label": "published_fit",
-    "new_label": "guessed",
-    "change": "row label published_fit -> guessed",
-    "reason": "row label published_fit was stronger than its elements (guessed 302): a row is labelled as its weakest element, the split is per element",
     "source": "the row's own values table",
     "url": ""
    },
@@ -101823,43 +101877,43 @@
    "rows": {
     "published_fit": 844,
     "guessed": 685,
-    "measured": 258,
-    "derived": 41,
-    "inferred": 338,
+    "measured": 257,
+    "derived": 42,
+    "inferred": 339,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8368,
     "guessed": 9589,
-    "measured": 6115,
-    "derived": 67521,
-    "inferred": 343,
+    "measured": 6114,
+    "derived": 67522,
+    "inferred": 344,
     "absent": 1
    }
   },
   "after_fills": {
    "rows": {
     "published_fit": 830,
-    "guessed": 683,
-    "measured": 260,
-    "inferred": 344,
-    "derived": 49,
+    "derived": 53,
+    "guessed": 680,
+    "measured": 259,
+    "inferred": 345,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
-    "guessed": 9478,
-    "measured": 6219,
-    "derived": 67530,
-    "inferred": 350,
+    "derived": 68136,
+    "guessed": 8873,
+    "measured": 6218,
+    "inferred": 351,
     "absent": 1
    }
   },
   "ranges": {
    "roles_model": {
     "inactive": {
-     "rows": 297,
-     "unknown": 7056,
+     "rows": 295,
+     "unknown": 6452,
      "vector": 0
     },
     "fixed": {
@@ -101868,14 +101922,14 @@
      "vector": 18
     },
     "free": {
-     "rows": 346,
-     "unknown": 346,
-     "vector": 346
+     "rows": 345,
+     "unknown": 345,
+     "vector": 345
     },
     "static": {
-     "rows": 1326,
+     "rows": 1330,
      "unknown": 0,
-     "vector": 0
+     "vector": 1
     },
     "derived": {
      "rows": 2,
@@ -101885,8 +101939,8 @@
    },
    "roles_catalog": {
     "inactive": {
-     "rows": 331,
-     "unknown": 7116,
+     "rows": 329,
+     "unknown": 6512,
      "vector": 0
     },
     "fixed": {
@@ -101895,14 +101949,14 @@
      "vector": 18
     },
     "free": {
-     "rows": 346,
-     "unknown": 346,
-     "vector": 346
+     "rows": 345,
+     "unknown": 345,
+     "vector": 345
     },
     "static": {
-     "rows": 1415,
+     "rows": 1419,
      "unknown": 0,
-     "vector": 0
+     "vector": 1
     },
     "derived": {
      "rows": 2,
@@ -101912,9 +101966,9 @@
    },
    "free_by_basis": {
     "guessed_physical": {
-     "rows": 331,
-     "unknown": 331,
-     "vector": 331
+     "rows": 330,
+     "unknown": 330,
+     "vector": 330
     },
     "physics": {
      "rows": 11,
@@ -101927,8 +101981,8 @@
      "vector": 4
     }
    },
-   "free_unknown": 346,
-   "free_rows": 346,
+   "free_unknown": 345,
+   "free_rows": 345,
    "span_counts": {
     ">1": 191,
     ">2": 39,
@@ -102203,18 +102257,18 @@
     {
      "param_id": "rule_cm_specific",
      "unit": "uF/cm2",
-     "value_template": 1.0,
-     "bio_min": 0.8,
-     "bio_max": 1.5,
+     "value_template": 1.07,
+     "bio_min": 0.88,
+     "bio_max": 1.13,
      "prior_dist": "lognormal",
-     "prior_a": 1.0,
+     "prior_a": 1.07,
      "prior_b": 0.2,
-     "label": "inferred",
+     "label": "derived",
      "bound_basis": "measured_spread",
      "hard_min": 0.3,
      "hard_max": 3.0,
-     "span_decades": 0.273,
-     "replaces_unknowns": 604,
+     "span_decades": 0.109,
+     "replaces_unknowns": 0,
      "replaces": "pas_soma_cm and pas_neurite_cm (302 + 302 guessed per-cell values)"
     },
     {
@@ -102332,14 +102386,9 @@
      ]
     },
     "^pas_(soma|neurite)_cm$": {
-     "rows": [
-      "pas_soma_cm",
-      "pas_neurite_cm"
-     ],
-     "unknown": 604,
-     "roles": [
-      "inactive"
-     ]
+     "rows": [],
+     "unknown": 0,
+     "roles": []
     },
     "^pas_(soma|neurite)_epas$": {
      "rows": [
@@ -102576,12 +102625,12 @@
    },
    "from_free": 0,
    "n_new_rules": 10,
-   "free_after_rules": 356,
+   "free_after_rules": 355,
    "after_by_basis": {
     "guessed_physical": {
-     "rows": 331,
-     "unknown": 331,
-     "vector": 331
+     "rows": 330,
+     "unknown": 330,
+     "vector": 330
     },
     "measured_spread": {
      "rows": 13,
@@ -102599,7 +102648,7 @@
     ">2": 39,
     ">3": 12
    },
-   "after_rows": 356,
+   "after_rows": 355,
    "sampling": {
     "generated": "7 Nov 2026 18:55 CST (wranges, merged main 0ef21b7: wmodel's glia K+ buffer fix and structure rules)",
     "joint": {
@@ -103060,15 +103109,15 @@
      "rule": 43,
      "gap": 321,
      "gap_discrete": 15,
-     "scan_rows": 1484,
-     "scan_elements": 80156,
+     "scan_rows": 1487,
+     "scan_elements": 80761,
      "residual_slots": 6298,
-     "unknown_inactive": 334
+     "unknown_inactive": 332
     },
     "out": {
      "replaced by structure_rules": {
-      "rows": 196,
-      "unknown": 6651
+      "rows": 194,
+      "unknown": 6047
      },
      "absorbed": {
       "rows": 8,
@@ -103088,8 +103137,9 @@
      }
     },
     "by_row_role": {
-     "free": 346,
-     "fixed": 18
+     "free": 345,
+     "fixed": 18,
+     "static": 1
     },
     "by_grain": {
      "class": 190,
@@ -103100,9 +103150,9 @@
      "pairing": 2
     },
     "by_basis": {
-     "guessed_physical": 333,
+     "guessed_physical": 332,
      "physics": 26,
-     "measured_spread": 5
+     "measured_spread": 6
     },
     "in_fixed": [
      "int_posterior_rings",

@@ -65,11 +65,14 @@ def test_templates_match_the_ledger():
     assert math.isclose(P.loc["gap_innexin_unitary", "value_template"], R.GAP_UNITARY_PS)
     # each per-element row the rules replace holds one value today (the rule's template) on its guessed elements
     for pid, x in (("syn_strength_per_pair", R.G_CONTACT_NS), ("nmj_strength_per_pair", R.G_CONTACT_NS),
-                   ("pas_soma_cm", 1.5), ("pas_neurite_cm", 1.5), ("pas_soma_epas", -45.0),
-                   ("pas_neurite_epas", -45.0)):
+                   ("pas_soma_epas", -45.0), ("pas_neurite_epas", -45.0)):
         t = led.values(pid)
         g = t[t.label == "guessed"]
         assert len(g) and np.allclose(g.value, x), pid
+    # the specific capacitance is a literature fill (fills.csv, 9 Nov) on the rule and on every element of both rows
+    for pid in ("pas_soma_cm", "pas_neurite_cm"):
+        t = led.values(pid)
+        assert len(t) == 302 and np.allclose(t.value, P.loc["pas_cm_uF_cm2", "value_template"]), pid
     # the unfit-leak cells are exactly BAAIWorm's cells above the range (the table's guessed elements)
     t = led.values("pas_soma_epas")
     st = load_structure()
@@ -158,4 +161,5 @@ def test_rules_and_residuals_act():
     r = r[np.isfinite(r)]
     assert np.isclose(r, 3.0).sum() >= 2 and np.isclose(r, 1.0).sum() > 100    # one gap pair (both halves)
     cm0, cm1 = _num(base["sec"], 1), _num(moved["sec"], 1)
-    assert np.isclose(cm1[np.isclose(cm0, 1.5)], 1.0).all()
+    at_template = np.isclose(cm0, led.parameters.set_index("param_id").loc["pas_cm_uF_cm2", "value_template"])
+    assert at_template.sum() > 100 and np.isclose(cm1[at_template], 1.0).all()
