@@ -19,13 +19,13 @@ One `wormemu.simulate(theta, Experiment)` call per condition:
 | World | the agar film (`metaworm.AGAR_FILM`), the plate fields of `body/environment.py` at their defaults (lawn, O2, CO2, salt plug, 20 C at 0.5 C/cm), no events; wtriage's `ChemotaxisScene("cone_published")` |
 | Conditions | `food` = env_food lawn (the worm starts 2 mm inside the edge); `nofood` = env_food off |
 | Instrument | GCaMP read as GCaMP7f, the indicator Atanas 2023 imaged (methods, PMC10836760, opened), with Atanas's own per-frame imaging noise, obs_noise_dff = 0.0417 F / mean F (derived from the 60 open animals, `scripts/worm/fit/atanas_noise.py`; from 8 Nov 23:25, before that the worm's own guessed 0.03). The gcamp module is readout only, so neither changes the worm |
-| Temperature | 20 C (`Experiment.temperature_C`; see limitation 2) |
+| Temperature | 20 C (`Experiment.temperature_C`: the worm, and the plate at the start; the head reads the plate's gradient from main 27f7276, limitation 2) |
 | Recording | every exchange (4.167 ms), every cell; settle 5 s dropped from every readout |
 | Lengths | core: 200 bio-s per condition; eggs tier: at least 1800 bio-s (egg signs report "too short" below that) |
 
-`simulate()` builds its Body with no world or environment, so `vitals.plate()` subclasses `body.loop.Body` for the
-call to add them, exactly as `scripts/worm/triage/vital_loop.py` does. Nothing else in simulate changes. Request to
-wbrain2 (night file): put the world and environment on `Experiment`.
+The plate goes in on `Experiment` (world, env, scene; wbrain2 added them, main 27f7276, merged 9 Nov 01:36), exactly
+as `scripts/worm/triage/vital_loop.py` sets it up. Before that `vitals.plate()` subclassed `body.loop.Body` for the
+call; batteries up to 910f6f8 ran that way.
 
 ## Physicality, per run (pre-registered)
 
@@ -178,10 +178,11 @@ Measured unless marked. From `/tmp/weki/battery_f8e7699/{food,nofood}.npz` (50 m
 
 ## Limitations
 
-1. The plate goes in through a subclass of `body.loop.Body` (above), until `Experiment` carries it.
-2. `simulate()` sets the head's temperature to `Experiment.temperature_C`, overwriting the env_temp gradient's value.
-   On the default plate (20 C at 0.5 C/cm) a 200 s run moves under about 1 mm, so the lost gradient is under about
-   0.05 C (derived); thermotaxis is not a vital sign. Requested as a fix to wbrain2.
+1. (Closed 9 Nov 01:36.) The plate went in through a subclass of `body.loop.Body` until `Experiment` carried it.
+2. (Closed by main 27f7276.) Up to 910f6f8, `simulate()` set the head's temperature to `Experiment.temperature_C`,
+   overwriting the env_temp gradient's value. On the default plate (20 C at 0.5 C/cm) a 200 s run moves under about
+   1 mm, so the lost gradient was under about 0.05 C (derived). Since the merge the head reads the plate (simulate
+   notes it), so batteries before and after differ by that much in the head's temperature.
 3. Atanas's neurons are head neurons found by segmentation; the model's 135 are drawn from all 302.
 4. AIY and AFD have points with no spread: reported, not scored, until a recorded population is opened.
 5. The BWM bars come from dissected muscle; ours is driven by the intact network.

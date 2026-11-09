@@ -18,9 +18,9 @@ def v():
 def test_mask(v):
     T = v.T
     out = set(T.ids) - set(v.ids)
-    assert v.p == T.n - 15 - 6 - 1                                   # FIT_GENERAL section 1
+    assert v.p == T.n - 15                                           # FIT_GENERAL section 1: less the bernoulli rows
     assert all(T.kind[T.ids.index(i)] in ("log", "logit") for i in v.ids)
-    assert "obs_noise_dff" in out and not any(i.startswith("scene_") for i in v.ids)
+    assert len(out) == 15 and "obs_noise_dff" not in v.ids and not any(i.startswith("scene_") for i in v.ids)
     assert not any("[" in i for i in v.ids)                          # the element rows are the bernoulli ones
 
 
@@ -42,8 +42,8 @@ def test_dict_builds_the_same_worm(v):
     b = datamodel._theta(sample_worm(None), v.theta(z)).values
     for i, pid in zip(v.ids, v.T.table.pid.iloc[v.keep]):
         assert a[pid] == pytest.approx(b[pid], rel=1e-12), i
-    with pytest.raises(ValueError):
-        vitals.battery_theta({"syn_inhibitory[AVFL]": 1.0})
+    el = next(i for i in v.T.ids if "[" in i)                       # an element row now passes (main 27f7276)
+    assert vitals.battery_theta({el: 1.0})[el] == 1.0
 
 
 def test_template_admissible_and_prior(v):

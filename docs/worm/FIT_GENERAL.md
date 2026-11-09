@@ -24,7 +24,10 @@ Grains: global 126, class 189, gene 20, cell 19, channel 11, pairing 3. Mechanis
 So the EKI vector has **347** continuous numbers on f8e7699 (derived: 368 - 15 - 6) and **347** on main dfe027d
 (derived: 369 - 15 - 6 - 1; main added wbody2's `rule_body_modulus_scale`, and obs_noise_dff leaves). On weki's
 1198812 (main cea4d49) Theta has 370 (wneuro's `unc2_gs_gain` added) and the vector **348** (measured 9 Nov 00:08,
-`fit/vector.py`, which builds the mask from these rules and counts it, so the number tracks main).
+`fit/vector.py`, which builds the mask from these rules and counts it, so the number tracks main). After merging main
+f7b75e7 (9 Nov 01:36) Theta has 362 and the vector **347** (measured): wbrain2 made the 7 settings above
+`params.SETTINGS` (Theta leaves them out; the vector keeps a guard), and the ledger rebuild made wneuro's SER-1 EC50
+(`ma_ec50_serotonin_ser-1_nM`, 1340 nM) measured, so it left the vector.
 
 **Why the imaging noise leaves the vector (8 Nov 23:25, measured unless marked).** On the f8e7699 template the
 GCaMP traces are imaging noise: per-neuron SD 0.029, noise 0.029, signal 0.003 F / mean F (median over neurons;

@@ -5,6 +5,7 @@ values). The experiment is declarative: environment and fields, a stimulus sched
 (off / immobilised / on), the genotype and other interventions (ablations, drugs), the duration and what to observe.
 Interventions act through the model's own quantities (GENES), never through a free knob:
     ("g", name)       a per-cell conductance multiplier (mech.G_SCALE_NAMES): a channel density or a receptor class
+                      (mech.AWA_G_SCALE_NAMES: Liu's conductances in AWA; no gene maps to them yet)
     ("tx", transmitter) a vesicular or synthesis marker: the transmitter leaves every cell's identity (null only); a
                       cell left with none gets fast release 0
     ("tpm", gene)     the gene's CeNGEN expression, wherever the model reads it (receptor shares, innexin weights,
@@ -109,7 +110,8 @@ class Clamp:
 class Experiment:
     duration_ms: float = 100.0
     dt_ms: float = 1.0               # exchange step, a multiple of 0.5 ms
-    temperature_C: float = 20.0      # the worm and the bath (NEURON celsius, the head field, every Q10)
+    temperature_C: float = 20.0      # the worm and the bath (NEURON celsius, every Q10; the head field unless the
+    #                                  plate has an env_temp gradient, which then sets the head value; see simulate)
     cultivation_C: float | None = None   # sets AFD's T* (sens_afd_Tstar_C); None = this worm's value
     head: dict = field(default_factory=dict)     # constant fields over interface.HEAD_CHANNELS
     tail: dict = field(default_factory=dict)     # (osmolarity_mOsm: external excess, organs_other and the body)
@@ -117,6 +119,12 @@ class Experiment:
     opto: list = field(default_factory=list)     # [(cell, t_on_ms, dur_ms, intensity 0-1)], GUR-3/PRDX-2
     clamps: list = field(default_factory=list)   # [Clamp]
     body: str = "immobilised"        # off | immobilised (straight, untouched: open loop) | on (FEM body, closed loop)
+    world: dict | None = None        # body on: the driver's world flags (body.metaworm, e.g. AGAR_FILM); None = Body's
+    env: dict | None = None          # body on: environment.Environment toggles (row 22); None = the default plate
+    env_params: dict = field(default_factory=dict)   # body on: environment.P overrides (the plate's protocol)
+    env_events: list = field(default_factory=list)   # body on: environment events (tap, eyelash, o2_ambient)
+    scene: dict | None = None        # body on: body.scene.ChemotaxisScene kwargs (field, target, channel, params:
+    #                                  the scene_* numbers, experiment settings); None = ChemotaxisScene()
     genotype: list = field(default_factory=list)  # [Allele]
     ablations: list = field(default_factory=list)  # cell names removed with every synapse and gap they make
     drugs: list = field(default_factory=list)    # [(name, bath uM, t_on_ms)] (DRUGS)
@@ -172,7 +180,8 @@ def _theta(spec, theta):
         return spec
     if isinstance(theta, dict):
         for k, x in theta.items():
-            spec = params.set_value(spec, k, x)
+            pid, el = (k[:-1].split("[", 1) if k.endswith("]") and "[" in k else (k, None))
+            spec = params.set_value(spec, pid, x, element=el)    # "pid[element]": one element of a table
         return spec
     return params.Theta().set(spec, np.asarray(theta, float))
 
@@ -219,6 +228,11 @@ def simulate(theta, experiment: Experiment) -> dict:
         if d[0] in drugs.AMINES and ex.toggles.get("monoamines", "compartments") not in ("compartments", "on",
                                                                                           "well_mixed"):
             raise ValueError(f"drug {d[0]}: a bath amine acts through the monoamine compartments (toggle off)")
+    if ex.body != "on" and (ex.world is not None or ex.env is not None or ex.scene is not None or ex.env_params
+                            or ex.env_events):
+        raise ValueError("world, env, env_params, env_events and scene act through the body: body='on' only")
+    if ex.env is None and (ex.env_params or ex.env_events):
+        raise ValueError("env_params and env_events need env (the environment's toggles)")
     if ex.infection_h > 0 and ex.toggles.get("pathogen_sickness", "off") != "on":
         raise ValueError("infection_h: the infection state needs toggle pathogen_sickness on (off by default)")
     spec = _theta(sample_worm(ex.seed), theta)
@@ -311,8 +325,23 @@ def simulate(theta, experiment: Experiment) -> dict:
         out_dir = ex.body_out or tempfile.mkdtemp(prefix="wormemu_body_")
         mosm = float(ex.tail.get("osmolarity_mOsm", 0.0))
         osmo = ex.toggles.get("excretory_osmo", "canal")
+        kw = {}                          # only what the experiment sets, so Body's defaults (and patches) stand
+        if ex.world is not None:
+            kw["world"] = dict(ex.world)
+        if ex.env is not None:
+            from wormemu.body import environment
+            ep = dict(ex.env_params)
+            ep.setdefault("temp_T0_C", float(ex.temperature_C))    # the plate is at the run's temperature at the start
+            kw["env"] = environment.Environment(toggles=dict(ex.env), params=ep, events=list(ex.env_events))
+        if ex.scene is not None:
+            from wormemu.body.scene import ChemotaxisScene
+            kw["scene"] = ChemotaxisScene(**ex.scene)
         body = Body(f"{out_dir}/body", params=BL.params_for(spec, osmo, extra_mosm=mosm),
-                    body={k: v for k, v in ex.toggles.items() if k.startswith("body_")} or None)
+                    body={k: v for k, v in ex.toggles.items() if k.startswith("body_")} or None, **kw)
+        grad = body.env is not None and body.env.tog["env_temp"] == "gradient"
+        if grad:
+            notes.append("env_temp gradient: the head reads the plate's temperature; the worm's own (NEURON celsius, "
+                         "the Q10s) stays at temperature_C")
         n = int(round(ex.duration_ms / (body.dt_s * 1000.0)))
         dts = brain_dt_schedule(n, body.dt_s * 1000.0)
         every = max(1, int(round(ex.every_ms / (body.dt_s * 1000.0))))
@@ -329,7 +358,7 @@ def simulate(theta, experiment: Experiment) -> dict:
         else:
             body.send(cmd, 1, dump=False)
             o = copy.copy(body.obs)
-            o.head = {**body.obs.head, "temperature_C": float(ex.temperature_C), **ex.head}   # the scene's plate
+            o.head = {**body.obs.head, **({} if grad else {"temperature_C": float(ex.temperature_C)}), **ex.head}
             o.tail = {**body.obs.tail, **ex.tail}
         for s in ex.stimuli:
             if s.t_on_ms <= t < s.t_on_ms + s.dur_ms:

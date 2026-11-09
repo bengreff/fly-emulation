@@ -2,14 +2,15 @@
 params.Theta's numbers and the z coordinates eki.EKI and fit.driver move, the joint-constraint check, the prior
 ensemble, and the battery forward a member runs. Nothing here runs until the gate passes and Ben says go.
 
-    v = Vector()                       # Theta's log and logit numbers less scene_* and obs_noise_dff (section 1)
+    v = Vector()                       # Theta's log and logit numbers (section 1)
     z0, rate = v.prior(128, seed=20261109)
     spec = v.spec(z0[0])               # the template worm with the member's numbers set
     g, ok = battery_forward(z0[0], k, obs)
 
 The member is the template worm (sample_worm(None)) with its vector numbers set; every number outside the vector
-stays at its template: the 15 bernoulli syn_inhibitory[cell] rows (section 6), the scene_* plume shapes and the imaging
-noise (fixed per experiment), and everything params.Theta leaves out. Prior draws take the vector's numbers from
+stays at its template: the 15 bernoulli syn_inhibitory[cell] rows (section 6) and everything params.Theta leaves out,
+which since main 27f7276 includes the experiment settings (params.SETTINGS: the scene_* plume shapes and the imaging
+noise, fixed per experiment). Prior draws take the vector's numbers from
 sample_worm(s), which draws each from its ledger prior in natural units (uniform or log-uniform on [bio_min, bio_max]),
 and map them to z; a draw is checked as the member it builds (template base plus its numbers), not as sample_worm(s).
 
@@ -33,8 +34,6 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
 RANGES = ROOT / "scripts" / "worm" / "ranges"
-FIXED_IDS = ("obs_noise_dff",)                      # instrument numbers set per experiment (section 1)
-FIXED_PREFIX = ("scene_",)                          # the world of an experiment (section 1)
 # signs with a bar that a 200 bio-s template run produces (FIT_GENERAL section 3, Ben to confirm item 5): dmp_period_s
 # (no defecation on the template), egg_inactive_min and egg_intra_s (1800 bio-s each) are left out
 BATTERY_IDS = ("rest_AWA", "pc3_frac", "gcamp_range", "pump_hz", "pump_hz_off", "bwm_rest_mV", "bwm_spike_hz")
@@ -68,7 +67,7 @@ class Vector:
         from wormemu.brain import sample_worm
         self.T = T = params.Theta() if theta is None else theta
         names = [(str(i), str(p)) for i, p in zip(T.ids, T.table.pid)]
-        fixed = np.array([any(n in FIXED_IDS or n.startswith(FIXED_PREFIX) for n in ip) for ip in names])
+        fixed = np.array([any(params.setting(n) for n in ip) for ip in names])   # Theta drops them; kept as a guard
         out = ~np.isin(T.kind, ("log", "logit")) | fixed
         self.keep = np.flatnonzero(~out)
         self.ids = [T.ids[i] for i in self.keep]

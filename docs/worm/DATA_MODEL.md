@@ -21,7 +21,7 @@ ex = D.Experiment(duration_ms=2000, temperature_C=22, cultivation_C=20,
 r = D.simulate(theta, ex)      # r["t_ms"], r["cells"], r[channel], r["notes"]
 ```
 
-`theta` is the vector in `params.Theta` order (natural units), a `{id: value}` dict (via `params.set_value`, so a
+`theta` is the vector in `params.Theta` order (natural units), a `{id: value}` dict (via `params.set_value`; an id `pid[element]` sets that element of a table; so a
 scan number raises), or None (this worm's values). `Experiment.seed` picks the worm drawn; theta applies over it.
 One NEURON per process: run each experiment in a fresh process.
 
@@ -29,13 +29,16 @@ One NEURON per process: run each experiment in a fresh process.
 
 | field | what it sets | route in the model |
 |---|---|---|
-| `temperature_C` | the worm's temperature | `ion_celsius` (linked) and the head field `temperature_C`, so every Q10 class and the compiled `tadj` (INTERCONNECT.md) |
+| `temperature_C` | the worm's temperature | `ion_celsius` (linked) and the head field `temperature_C`, so every Q10 class and the compiled `tadj` (INTERCONNECT.md). With the body on and an env_temp gradient the head field is the plate's (the gradient starts at `temperature_C` unless `env_params` sets `temp_T0_C`); the worm's own temperature stays `temperature_C` (9 Nov) |
 | `cultivation_C` | AFD's T* | `sens_afd_Tstar_C` (an experimental condition, scan) |
 | `head`, `tail` | constant fields | `interface.HEAD_CHANNELS` / `TAIL_CHANNELS` (odours, salt, O2, CO2, light, food_OD, osmolarity_mOsm) |
 | `stimuli` | a schedule of field values, `contact_force_uN` over a midline span, `nose_force_uN`, `tap` | BodyToBrain each step; every stimulus reaches the brain through its sensory model |
 | `opto` | GUR-3/PRDX-2 light per cell, (cell, t_on, dur, intensity) | `mech/observation.SCHEDULE` (Randi 2023's actuator) |
 | `clamps` | current clamp (pA) or voltage clamp (mV) of a soma in a window | current: an `I_pA` term; voltage: a NEURON SEClamp, off (1e9 MOhm) outside the window |
 | `body` | off, immobilised, on | off and immobilised: open loop, straight and untouched (the brain's inputs are the same in both). on: the FEM body (`body.loop.Body(params=body.layers.params_for(spec, osmo, extra_mosm=tail osmolarity))`), stepped at the body's exchange step (1/240 s) with `brain_dt_schedule`; each step the brain reads the body's observation plus the experiment's head and tail fields and the body reads the brain's muscle activation. `body_out` names the FEM files (else a temporary directory). Observable `posture` = the body's curvature per mm |
+| `world` | body on: the driver's world flags (`body.metaworm`, e.g. `AGAR_FILM`) | `Body(world=...)`; None = Body's default |
+| `env`, `env_params`, `env_events` | body on: the plate (row 22): the environment's toggles, its numbers (the protocol's, e.g. `temp_grad_C_per_cm`), its events (tap, eyelash, o2_ambient) | `Body(env=body.environment.Environment(toggles, params, events))`; None = the INTERFACE.md default plate. Either raises with the body off or immobilised |
+| `scene` | body on: the chemotaxis field, as `ChemotaxisScene` kwargs (`field`, `target`, `channel`, `params`) | `Body(scene=...)`; its numbers (catalog `scene_*`) are experiment settings, outside the vector (`params.setting`) |
 | `genotype` | `Allele(gene, null / reduction, factor, developmental / acute, t_on_ms)` | `GENES` below |
 | `ablations` | cells removed | `Brain(cells=...)`: the cell and every synapse and gap it makes |
 | `drugs` | (name, bath uM, t_on_ms) | `mech/drugs.SCHEDULE`. Seven drugs: levamisole (tonic L-AChR conductance), ivermectin (GluCl), aldicarb (AChE inhibition: the cleft ACh factor on cholinergic release), serotonin, dopamine, octopamine, tyramine (into neuromod's compartments; needs monoamines on). Uptake is first order from the bath; every drug number is guessed (21 gaps). Muscimol and nicotine raise with what is missing |

@@ -9,10 +9,9 @@ Nothing here writes an observable: a sign the worm does not produce is a miss, n
 battery sets is the instrument's: GCaMP is read as GCaMP7f, the indicator Atanas 2023 imaged (BATTERY_TOGGLES;
 observation.py's gcamp is readout only, so the worm is unchanged).
 
-The plate: datamodel.simulate builds its Body with no environment, the published world and the default scene
-(Requests, night file 2026-11-08_weki). Until that changes, `plate()` hands simulate's Body the agar film, the
-environment and wtriage's scene (vital_loop.py's exact setup) by subclassing body.loop.Body for the call. Nothing else
-in simulate changes.
+The plate goes in on the Experiment (world, env, scene; wbrain2, main 27f7276): the agar film, the environment
+with this condition's food and wtriage's scene, vital_loop.py's setup. Until 9 Nov a subclass of body.loop.Body did
+this; since the merge the head also reads the plate's temperature gradient (simulate no longer overwrites it).
 
 Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
     finite      every recorded voltage, Ca and module concentration is finite
@@ -34,7 +33,6 @@ Usage:
 """
 from __future__ import annotations
 
-import contextlib
 import json
 import math
 import sys
@@ -174,31 +172,13 @@ def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None
     from wormemu.datamodel import Experiment
     if cond not in PLATES:
         raise ValueError(f"{cond}: one of {sorted(PLATES)}")
+    from wormemu.body.metaworm import AGAR_FILM
+    # the plate (vital_loop.py's setup) on the Experiment (wbrain2, main 27f7276): the agar film, the plate's fields
+    # at their defaults with this condition's food, wtriage's cone scene. The plate starts at temperature_C.
     return Experiment(duration_ms=1000.0 * seconds, body="on", temperature_C=20.0, observe=OBSERVE,
                       every_ms=EXCHANGE_MS, toggles={**BATTERY_TOGGLES, **(toggles or {})}, seed=seed,
-                      body_out=body_out)
-
-
-@contextlib.contextmanager
-def plate(env_toggles: dict, events=()):
-    """simulate's Body on the agar film with the plate's fields (vital_loop.py's setup), for the duration."""
-    from wormemu.body import environment, loop
-    from wormemu.body.metaworm import AGAR_FILM
-    from wormemu.body.scene import ChemotaxisScene
-    orig = loop.Body
-
-    class PlateBody(orig):
-        def __init__(self, out, **kw):
-            kw.setdefault("world", dict(AGAR_FILM))
-            kw.setdefault("env", environment.Environment(toggles=dict(env_toggles), events=list(events)))
-            kw.setdefault("scene", ChemotaxisScene(field="cone_published"))
-            super().__init__(out, **kw)
-
-    loop.Body = PlateBody
-    try:
-        yield
-    finally:
-        loop.Body = orig
+                      body_out=body_out, world=dict(AGAR_FILM), env=dict(PLATES[cond]),
+                      scene={"field": "cone_published"})
 
 
 def reversal_bounds(spec) -> tuple[float, float]:
@@ -478,22 +458,13 @@ def observations(results: dict, ids=None):
 
 def battery_theta(theta):
     """theta (None, a dict of id -> value, or a params.Theta vector) as a dict with BATTERY_VALUES on top.
-    An element id ("pid[cell]", the 15 bernoulli syn_inhibitory rows) raises unless a vector holds its template:
-    datamodel._theta sets a dict through params.set_value(spec, id, x), which writes such an id as a new key and leaves
-    the element unchanged (measured 9 Nov 00:06; request in the night file)."""
+    Element ids ("pid[cell]", the 15 bernoulli syn_inhibitory rows) pass: datamodel._theta sets one element of a
+    table by them (main 27f7276)."""
     if theta is None:
         theta = {}
     elif not isinstance(theta, dict):
         from wormemu import params
-        T = params.Theta()
-        x = np.asarray(theta, float)
-        el = np.array(["[" in i for i in T.ids])
-        if not np.array_equal(x[el], T.x0[el]):
-            raise ValueError("a vector moves an element row (pid[cell]); datamodel._theta cannot set it by id")
-        theta = {i: v for i, v, e in zip(T.ids, x, el) if not e}
-    bad = [k for k in theta if "[" in k]
-    if bad:
-        raise ValueError(f"element ids {bad[:3]}: datamodel._theta would write them as new keys, not set the element")
+        theta = dict(zip(params.Theta().ids, map(float, np.asarray(theta, float))))
     return {**theta, **BATTERY_VALUES}
 
 
@@ -508,8 +479,7 @@ def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> di
     theta = battery_theta(theta)
     spec = datamodel._theta(sample_worm(seed), theta)
     t0 = time.time()
-    with plate(PLATES[cond]):
-        res = datamodel.simulate(theta, ex)
+    res = datamodel.simulate(theta, ex)
     wall = time.time() - t0
     bio_s = float(res["t_ms"][-1]) / 1000.0 if len(res["t_ms"]) else 0.0
     r = readouts(res, cond, bio_s)

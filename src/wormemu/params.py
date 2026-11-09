@@ -77,6 +77,18 @@ NOT_READ = {"ion_ena": "nca, the only Na current, uses its own +30 mV (baai_ena_
             "ion_cao": "sets only NEURON's Nernst eca; every Ca current uses +60 mV (baai_eca_mV)",
             "pump_vol_neuron_um3": "a brain's neurons take their hoc morphology's volume (scan; mech/pumps)",
             "glia_k_gleak_nS": "a brain's amphid neurons take glia_k_leak_frac of their own leak (mech/glia)"}
+# experiment settings (wbrain2, 9 Nov 2026, weki's requests): numbers of the experiment's world or instrument, not of
+# the worm. FIT_GENERAL.md fixes each per experiment from its protocol or dataset; they stay out of the vector.
+SETTING_PREFIX = {"scene_": "the chemotaxis plate's field (body/scene.py PRESETS, PARAMS): datamodel.Experiment.scene "
+                            "params, from the run's protocol"}
+SETTINGS = {"obs_noise_dff": "the imaging noise of the dataset scored (FIT_GENERAL section 1; Atanas 2023 measured)"}
+
+
+def setting(pid: str) -> str:
+    """Why a number is an experiment setting, or ''."""
+    if pid in SETTINGS:
+        return SETTINGS[pid]
+    return next((w for k, w in SETTING_PREFIX.items() if pid.startswith(k)), "")
 
 
 def _code_why(s):
@@ -128,6 +140,8 @@ def catalog(rules: bool = True) -> pd.DataFrame:
             why = f"absorbed into {sr.ABSORBED[c.id]} (only the product enters)"
         elif c.id in LINKED:
             why = f"linked: {LINKED[c.id]}"
+        elif setting(c.id):
+            why = f"experiment setting: {setting(c.id)}"
         t = led.values(c.id) if c.id in par.index else None
         if t is not None and base["n_elements"] > 1 and why == "":
             gl = t[~t.label.isin(SCAN_LABELS)]
@@ -160,6 +174,8 @@ def catalog(rules: bool = True) -> pd.DataFrame:
             why = f"linked: {LINKED[s.id]}"
         if s.id in NOT_READ:
             why = f"not read: {NOT_READ[s.id]}"
+        if setting(s.id):
+            why = f"experiment setting: {setting(s.id)}"
         add(id=s.id, pid=s.id, element=None, role=role, active=role in ("rule", "gap") and why == "",
             inactive_why=why, mechanism=s.mechanism, plan_row=np.nan, unit=s.unit, grain=s.grain, n_elements=1,
             template=float(s.template), lo=float(s.lo), hi=float(s.hi), transform=_transform(s.lo, s.hi, ""),

@@ -125,12 +125,11 @@ def test_score_statuses():
         sg.mean, sg.sd, sg.lo, sg.hi = old
 
 
-def test_plate_patches_and_restores():
-    from wormemu.body import loop
-    orig = loop.Body
-    with V.plate({"env_food": "off"}):
-        assert loop.Body is not orig and issubclass(loop.Body, orig)
-    assert loop.Body is orig
+def test_plate_is_on_the_experiment():
+    from wormemu.body.metaworm import AGAR_FILM
+    for cond, env in V.PLATES.items():
+        ex = V.experiment(cond, 2.0)
+        assert ex.world == dict(AGAR_FILM) and ex.env == env and ex.scene == {"field": "cone_published"}
 
 
 def test_experiment_is_entire_worm():

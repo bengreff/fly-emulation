@@ -1,41 +1,44 @@
 # The worm's unknown numbers
 
-Status 7 Nov 2026 (wmodel). Source: `wormemu.params` (`counts()`, `Theta().table`, `catalog()`), all measured
+Status 7 Nov 2026 (wmodel), counts updated 9 Nov 01:10 (wbrain2). Source: `wormemu.params` (`counts()`, `Theta().table`, `catalog()`), all measured
 from the code today.
 
-**Verdict.** 368 numbers are genuinely unknown (measured 19:00). That is the whole fit vector: 43 shared rules plus
-325 gaps (15 of them discrete). It is well under Ben's 1,000-2,000 target. Everything else is fixed and labelled with
-its origin (1,329 scan rows covering 80,001 elements), or taken out of the vector for a stated reason (325 rows). The
+**Verdict.** 362 numbers are genuinely unknown (measured 9 Nov 01:10; 368 on 7 Nov 19:00). That is the whole fit
+vector: 43 shared rules plus 319 gaps (15 of them discrete). It is well under Ben's 1,000-2,000 target. Everything else is fixed and labelled with
+its origin (1,475 scan rows covering 80,147 elements), or taken out of the vector for a stated reason (331 rows). The
 per-element residuals (6,298 slots) are frozen at 0. The count went from 340 at 13:00 to 347 at 18:10 (wiring) and to
 368 at 19:00: the 21 drug numbers (mech/drugs, all guessed; read whenever an experiment schedules a drug). The
 KNOWLEDGE_GAPS section C mechanisms added 10 numbers, all outside the vector because their switches are off by
 default (8 guessed, 2 inferred). Fitting has not started.
 8 Nov 22:08 (wbrain2): scan rows 1,272 to 1,329 and elements 79,944 to 80,001 (measured), the 57 constants of mech/channel_forms (Nicoletti 2024's EGL-19 and SHL-1 forms, published fits, both toggles off by default); the vector is unchanged at 368.
 8 Nov 23:43 (wbrain2, after the wbody2, weki and wneuro merges): the vector is 370 (43 rules, 327 gaps, 15 discrete; measured): +1 `rule_body_modulus_scale` (wbody2, guessed) and +1 `unc2_gs_gain` (wneuro, guessed). Scan rows 1,329 to 1,339 and elements 80,001 to 80,011: the 7 `cabulk_*` numbers of the bulk Ca readout pool (mech/capool `ca_bulk`, off by default; 6 inferred, 1 derived), `pep_ec50_nlp-40_aex-2_wang2013_nM` (wneuro, measured, its toggle off), `body_E_bending_kPa` (wbody2, measured) and `obs_gcamp7f_range` (guessed -> measured, Dana 2019's preprint, so it leaves the inactive unknowns: 325 -> 324).
+9 Nov 00:39 (wbrain2): scan rows 1,339 to 1,452 and elements 80,011 to 80,124 (measured), the 113 constants of mech/cell_models (Jiang et al. 2022's AVL model as the avl_membrane toggle and its DVB borrow, dvb_membrane jiang22_noexp2; 105 published fits, 8 inferred DVB conductances; every toggle off by default); the vector is unchanged at 370 and the inactive unknowns at 324.
+9 Nov 01:00 (wbrain2, after the 3300581 wneuro merge): the vector is 369 (43 rules, 326 gaps, 15 discrete; measured): -1 `ma_ec50_serotonin_ser-1_nM` (wneuro: guessed -> measured, 1340 nM, Xie 2005 via Dernovici 2006), which moves to the scan. Scan rows 1,452 to 1,475 and elements 80,124 to 80,147: that row, wneuro's `ma_store_molecules_serotonin` and `_dopamine` (derived) and `pep_ec50_flp-25_dmsr-1_isoA_nM` (measured, its toggle off), and the 19 `n22_*` constants of Naudin et al. 2022's AFD model (mech/cell_models, `afd_membrane` naudin22, off by default; published fits). Inactive unknowns unchanged at 324.
+9 Nov 01:10 (wbrain2, inbox item 6): the vector is 362 (43 rules, 319 gaps, 15 discrete; measured): -7 numbers that describe the experiment, not the worm, now marked experiment settings in `params` (SETTING_PREFIX `scene_`, SETTINGS `obs_noise_dff`): the 6 guessed `scene_*` plate-field numbers (body/scene.py; set through `Experiment.scene`) and `obs_noise_dff` (the imaging noise of the dataset scored). Inactive unknowns 324 -> 331 (those 7). Scan unchanged at 1,475 rows and 80,147 elements.
 
 ## What the roles mean
 
 | role | n | in the fit? | what it is |
 |---|---|---|---|
 | rule | 43 | yes | a shared rule on structure (`structure_rules`): a few numbers that set many per-cell values from CeNGEN, EM counts and transmitter identity |
-| gap | 325 | yes | a guessed or absent value the code reads, with a cited range (`lo`, `hi`) where wranges has one |
-| scan | 1,329 rows, 80,001 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
+| gap | 319 | yes | a guessed or absent value the code reads, with a cited range (`lo`, `hi`) where wranges has one |
+| scan | 1,475 rows, 80,147 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
 | residual | 6,298 slots | no, frozen at 0 | a per-element correction on top of a rule; frozen until the rules alone fail held-out data |
-| inactive unknown | 325 | no | guessed or absent, but out of the vector for the reason below |
+| inactive unknown | 331 | no | guessed or absent, but out of the vector for the reason below |
 
-## Why 325 unknowns are out of the vector
+## Why 331 unknowns are out of the vector (measured 9 Nov 01:10)
 
 | reason | n | meaning |
 |---|---|---|
 | replaced by structure_rules | 197 | per-cell or per-class values now set by a rule. The rule's numbers are in the vector instead |
-| other form only | 76 | read only by a mechanism form that is off by default (for example muscle_active's 10, peptides' 5). It enters if that form is adopted |
-| switch off by default | 8 | the section C mechanisms (7 Nov): glia_gaba 4, glia_serotonin 1, dva_strain_split 1, unc58_na_leak 1, pathogen_sickness 1 |
+| other form only | 83 | read only by a mechanism form or switch that is off by default (for example c302's 10, muscle_active's 4, the section C switches glia_gaba, unc58_na_leak, pathogen_sickness). It enters if that form is adopted |
+| experiment setting | 7 | a number about the experiment, not the worm (`params.SETTINGS`, `SETTING_PREFIX`): the 6 guessed `scene_*` plate-field numbers, set by `Experiment.scene`, and `obs_noise_dff`, the imaging noise of the dataset scored |
 | slot only | 29 | a ledger slot with no code reading it yet (monoamine uptake 4, sleep_ris_ala 3, ...) |
 | absorbed | 8 | the receptor unitary conductances: only gamma x syn_nchan_per_em_* enters, so the product is the gap |
 | linked | 4 | set by another quantity: `ion_celsius` and `env_default_temperature_C` (the experiment's temperature), `body_pressure_kPa` and `body_pressure_ctrl_kPa` (organs_other's steady pressure) |
 | not read | 3 | `ion_ena` (nca uses its own +30 mV), `ion_cao` (sets only NEURON's Nernst eca; every Ca current uses +60 mV), `glia_k_gleak_nS` (replaced by `glia_k_leak_frac`, the K+ share of each amphid neuron's own leak) |
 
-## The 368 by grain
+## The 368 by grain (7 Nov 19:00, not re-measured since)
 
 | grain | n |
 |---|---|
@@ -49,7 +52,7 @@ default (8 guessed, 2 inferred). Fitting has not started.
 The 19 per-cell numbers are the 15 discrete synapse signs (`syn_inhibitory[cell]`, the cells whose sign CeNGEN
 cannot settle), three cell areas in other_cells and `osmo_canal_gain`. Nothing in the vector is per synapse.
 
-## The 368 by PLAN row
+## The 368 by PLAN row (7 Nov 19:00, not re-measured since)
 
 | row | | n | row | | n |
 |---|---|---|---|---|---|

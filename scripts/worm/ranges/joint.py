@@ -102,7 +102,8 @@ def constraints(led) -> list[dict]:
         source=GHK + "; the leak is K, Na and Cl (NCA, TWK, Cl leak), and E_Cl lies between E_K and E_Na",
         check="elementwise: max(lo) < x < min(hi) for every element of every x row")
     cation = [x for x in p.param_id[p.hard_class == "reversal_cation"]
-              if not re.search(r"(_ca_|eca|vCa|VGCC|_boyle_)", x) and not x.startswith(("c302_", "bwm_du_", "awa_liu"))]
+              if not re.search(r"(_ca_|eca|vCa|VGCC|_boyle_)", x)
+              and not x.startswith(("c302_", "bwm_du_", "awa_liu", "n22_"))]   # n22_e_Ca: Naudin's fitted Ca reversal
     add(id="reversal_cation_between_EK_ENa", kind="between", lo=["ion_ek"], hi=["ion_ena"], x=cation,
         statement="every non-selective cation channel (ACh, Glu, GABA-cation receptors, CNG, TRPV, MEC, opsin) "
                   "reverses between E_K and E_Na", strength="hard", basis="physics", source=GHK,
