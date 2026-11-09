@@ -234,3 +234,9 @@ Nothing on Windows or the throttle was changed.
   nicotinic synapse (McKay et al. 2004), and the muscle's CCA-1 does not recover between events at its in-situ rest.
   Fixed on the way (A): the muscle read 5-HT from a pool that is 0 under neuromod. Off-food bar: about 50 pumps per
   minute in the first 2 h off food (Dallière et al. 2016, PMC4714553).
+- Defecation (vital sign; wbody2 item 3), 21:26 8 Nov. "~20 s, irregular, same with and without food": the loop's
+  int9 is the max over 20 cells (E, request to wtriage), and the oscillator has no food input (B; published: off food
+  the program is "rarely activated", Liu & Thomas 1994). check_intestine scored the first wave only (E, fixed); at the
+  defaults 1 of 11 waves reaches int2 (D: 1 of 1000 in-range sets passes, not adopted). No expulsion: NLP-40 tonic at
+  DVB and AEX-2 with no Ca route (neuromod, request to wbrain2); the enteric muscles fire at about 4 Hz on the Du BWM
+  membrane, so no AVL/DVB drive makes an expulsion (B, 0 of 16 drives). Q10 per-temperature data not free (row 25).
