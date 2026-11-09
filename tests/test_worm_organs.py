@@ -584,3 +584,32 @@ def test_all_b2_modules_build_and_step_together_in_a_small_brain():
     for m in ("glia", "metabolism", "organs_egglaying", "organs_other", "pumps"):
         assert m in r["mods"], r["mods"]
     assert 0.99 < r["e"] <= 1.0 + 1e-9 and r["eggs_h"] > 0.0 and abs(r["P"] - 40.0) < 1e-6
+
+
+_PH_5HT = """
+import json, sys
+import numpy as np
+from wormemu import brain as B
+from wormemu.mech import neuromod as nm, organs_pharynx as ph
+out = {}
+for form in ("compartments", "lumped"):
+    b = B.Brain(B.sample_worm(None), toggles={"monoamines": form}, cells=["NSML", "NSMR", "MCL", "MCR"])
+    b.reset()
+    p = next(m for m in b.mechs if isinstance(m, ph.Mech))
+    n = next((m for m in b.mechs if isinstance(m, nm.Mech)), None)
+    b.extra_pA[[b.idx["NSML"], b.idx["NSMR"]]] = 40.0
+    for _ in range(300):
+        b.step(None, 1.0)
+    ref = float(n.ma.nM()[nm.AMINES.index("serotonin"), n.ma_comp[b.idx["NSML"]]]) if n is not None and n.on[nm.A] else None
+    out[form] = dict(src=p._ser[0], c=p.serotonin_nM(), ref=ref, out=b.mech_out.get("pharynx_5ht_nM"))
+print(json.dumps(out))
+"""
+
+
+def test_pharynx_reads_serotonin_from_neuromod_and_falls_back_to_the_layer():
+    """wbody2 item 2 (A): with neuromod's monoamines on, the pharyngeal muscle's 5-HT is neuromod's pool at NSM
+    (the layer's pool stays 0 then); with monoamines lumped it is brain_layers' pool."""
+    r = _run(_PH_5HT)
+    assert r["compartments"]["src"] == "neuromod" and r["compartments"]["c"] > 0
+    assert r["compartments"]["c"] == r["compartments"]["ref"] == r["compartments"]["out"]
+    assert r["lumped"]["src"] == "layer"
