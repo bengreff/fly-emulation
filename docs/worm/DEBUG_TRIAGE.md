@@ -339,3 +339,10 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   HSN's source (measured, pre-registered). Live, the vulval 5-HT read rises 3.2x (0.38 -> 1.20 nM off food) and MC's
   SER-7 Gs 1.7x on food; still 0.04 of SER-7's EC50 at the vulva. Default four until the Director adopts. HSN's
   synaptic near field onto vm2 is B blocked on geometry sources (Nicholson's form exists; derived bound in the night file).
+- Session 5 (wneuro, 9 Nov): `pc_grid=bins` is the default (Director 01:40). Every amine pair is still near off at rest
+  and on food on bins (best SER-7 0.083 on food, measured). HSN onto vm2 near field built as an off toggle
+  (`amine_synaptic`, B, Nicholson point source) with seven bounded-gap Specs; probe: SER-7 at the vulva feasible in
+  the interior of the ranges (10.5 nM at the template geometry and release, 1.25 from the pool alone, measured), D, not
+  adopted; SER-1 only with release >= 1e6. Item 6 classified on bins: pool A fixed; release rate D is the main open
+  value (every systemic pass needs >= 9.4e5); OA receptors, SER-2, TYRA-3 and the amine-gated channels cannot be
+  reached systemically anywhere in the box.
