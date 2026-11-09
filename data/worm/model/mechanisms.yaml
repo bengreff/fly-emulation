@@ -603,7 +603,7 @@
   neutral: 'off'
   default: membrane
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: gs_ca_channels
   name: 'Gs-PKA raises EGL-19 and UNC-2 densities (Wang and Sieburth 2013; nested: EGL-19 only)'
@@ -613,7 +613,7 @@
   neutral: 'off'
   default: egl19_unc2
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: aex2_ec50_source
   name: 'Which measured NLP-40 potency AEX-2 reads: Beets et al. 2023 (NLP-40-2, 7.645 nM) or Wang et al. 2013 (P3-1, 3.39 nM)'
@@ -623,7 +623,7 @@
   neutral: 'off'
   default: beets2023
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: dmsr1_isoform
   name: 'Which DMSR-1 isoform FLP-25 reads: the most potent Table S6 row (DMSR-1-2, B, 0.6 pM) or DMSR-1-1 (A, 1.6 uM); other DMSR-1 ligands differ by at most 4x between the isoforms'
@@ -633,7 +633,17 @@
   neutral: 'off'
   default: most_potent
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: pc_grid
+  name: 'Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um inside each (the same 1D diffusion, resolved below its length constant)'
+  layer: neuromodulation
+  status: have
+  toggle: pc_grid
+  neutral: 'off'
+  default: four
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: quantal_noise
   name: Quantal (vesicle) release noise at chemical synapses

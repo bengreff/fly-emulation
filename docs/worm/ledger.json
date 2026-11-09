@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-09 01:09 CST",
+ "generated_at": "2026-11-09 01:41 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,33 +9,33 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 91739,
-  "rows": 1995,
-  "mechanisms": 110,
+  "numbers": 91740,
+  "rows": 1996,
+  "mechanisms": 111,
   "by_label": {
-   "derived": 67517,
+   "derived": 67518,
    "guessed": 9412,
    "inferred": 343,
    "measured": 6188,
    "published_fit": 8279
   },
-  "known": 82327,
+  "known": 82328,
   "placeholder": 9412,
   "gap": 0,
-  "used_by_model": 91739,
+  "used_by_model": 91740,
   "must_fill": 9412
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 20752,
+  "numbers": 20753,
   "by_label": {
    "published_fit": 7552,
    "guessed": 9412,
-   "derived": 3109,
+   "derived": 3110,
    "inferred": 343,
    "measured": 336
   },
-  "known": 11340,
+  "known": 11341,
   "placeholder": 9412,
   "gap": 0,
   "must_fill": 9412
@@ -50,7 +50,7 @@
    "literature": {
     "guessed": 5474,
     "measured": 6187,
-    "derived": 3109,
+    "derived": 3110,
     "inferred (ours)": 27,
     "published fit": 504
    },
@@ -74,7 +74,7 @@
    },
    "literature": {
     "guessed": 5474,
-    "derived": 3109,
+    "derived": 3110,
     "measured": 335,
     "inferred (ours)": 27,
     "published fit": 504
@@ -139,7 +139,7 @@
    "guessed": 85
   },
   "global": {
-   "derived": 21,
+   "derived": 22,
    "guessed": 198,
    "inferred": 51,
    "measured": 32,
@@ -1081,9 +1081,9 @@
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 369,
+   "numbers": 370,
    "by_label": {
-    "derived": 3,
+    "derived": 4,
     "guessed": 122,
     "inferred": 4,
     "measured": 240
@@ -1117,7 +1117,7 @@
    "neutral": "off",
    "default": "membrane",
    "source": "src/wormemu/mech/neuromod.py",
-   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
    "numbers": 0,
    "by_label": {}
@@ -1131,7 +1131,7 @@
    "neutral": "off",
    "default": "egl19_unc2",
    "source": "src/wormemu/mech/neuromod.py",
-   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
    "numbers": 0,
    "by_label": {}
@@ -1145,7 +1145,7 @@
    "neutral": "off",
    "default": "beets2023",
    "source": "src/wormemu/mech/neuromod.py",
-   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
    "numbers": 0,
    "by_label": {}
@@ -1159,7 +1159,21 @@
    "neutral": "off",
    "default": "most_potent",
    "source": "src/wormemu/mech/neuromod.py",
-   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
+  },
+  {
+   "id": "pc_grid",
+   "name": "Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um inside each (the same 1D diffusion, resolved below its length constant)",
+   "layer": "neuromodulation",
+   "status": "have",
+   "toggle": "pc_grid",
+   "neutral": "off",
+   "default": "four",
+   "source": "src/wormemu/mech/neuromod.py",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
    "numbers": 0,
    "by_label": {}
@@ -56310,6 +56324,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "pc_bin_um",
+   "mechanism_id": "peptides",
+   "grain": "global",
+   "applies_to": "peptides and monoamines (shared)",
+   "unit": "um",
+   "n_values": 1,
+   "value_template": 8.0,
+   "template_source": "convergence check (scripts/worm/wneuro/grid_check.py --conv, 9 Nov 2026): the largest of 15, 8, 4, 2 um at which the bins grid is within 5% of the exact 1D solution in every bin holding at least 1% of the peak, for 5-HT at the vulva (lambda 55 um), 5-HT in the head with MOD-5 (32 um) and a peptide at DVB (67 um); worst 3.7% at 8 um, 7.6% at 15 um (measured)",
+   "bio_min": 2.0,
+   "bio_max": 15.0,
+   "bound_basis": "measured_spread",
+   "bound_source": "convergence check (scripts/worm/wneuro/grid_check.py --conv, 9 Nov 2026): the largest of 15, 8, 4, 2 um at which the bins grid is within 5% of the exact 1D solution in every bin holding at least 1% of the peak, for 5-HT at the vulva (lambda 55 um), 5-HT in the head with MOD-5 (32 um) and a peptide at DVB (67 um); worst 3.7% at 8 um, 7.6% at 15 um (measured)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "numerical resolution of pc_grid=bins, not a biological quantity; the error sits in the source bin and is first order in bin / lambda (a source spread over one well-mixed bin)",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 2000.0,
+   "hard_class": "length_body",
+   "hard_basis": "physics",
+   "hard_source": "within an adult body length (~1-1.5 mm); WormAtlas",
+   "bound_basis_detail": "measured_related",
+   "span_decades": 0.875,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
    "param_id": "pc_stirring_um2_per_s",
    "mechanism_id": "peptides",
    "grain": "global",
@@ -86327,33 +86383,33 @@
     "guessed": 678,
     "measured": 255,
     "inferred": 342,
-    "derived": 47,
+    "derived": 48,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
     "guessed": 9473,
     "measured": 6214,
-    "derived": 67528,
+    "derived": 67529,
     "inferred": 348,
     "absent": 1
    },
-   "n_rows": 2153,
-   "n_numbers": 91923
+   "n_rows": 2154,
+   "n_numbers": 91924
   },
   "by_label_rows": {
    "published_fit": 830,
    "guessed": 678,
    "measured": 255,
    "inferred": 342,
-   "derived": 47,
+   "derived": 48,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8359,
    "guessed": 9473,
    "measured": 6214,
-   "derived": 67528,
+   "derived": 67529,
    "inferred": 348,
    "absent": 1
   },
@@ -86465,18 +86521,18 @@
    "9": {
     "rows": {
      "guessed": 24,
-     "derived": 3,
+     "derived": 4,
      "inferred": 4,
      "measured": 149
     },
     "numbers": {
      "guessed": 122,
      "measured": 240,
-     "derived": 3,
+     "derived": 4,
      "inferred": 4
     },
-    "n_rows": 180,
-    "n_numbers": 369
+    "n_rows": 181,
+    "n_numbers": 370
    },
    "10": {
     "rows": {
@@ -86882,7 +86938,7 @@
      "guessed": 217,
      "inferred": 56,
      "measured": 52,
-     "derived": 32,
+     "derived": 33,
      "absent": 1
     },
     "numbers": {
@@ -86890,11 +86946,11 @@
      "guessed": 217,
      "inferred": 56,
      "measured": 52,
-     "derived": 32,
+     "derived": 33,
      "absent": 1
     },
-    "n_rows": 864,
-    "n_numbers": 864
+    "n_rows": 865,
+    "n_numbers": 865
    },
    "muscle": {
     "rows": {
@@ -86992,17 +87048,17 @@
      "guessed": 566,
      "measured": 218,
      "inferred": 320,
-     "derived": 34
+     "derived": 35
     },
     "numbers": {
      "published_fit": 8036,
      "guessed": 9031,
      "measured": 6075,
-     "derived": 67515,
+     "derived": 67516,
      "inferred": 325
     },
-    "n_rows": 1833,
-    "n_numbers": 90982
+    "n_rows": 1834,
+    "n_numbers": 90983
    }
   },
   "by_origin": {
@@ -87240,19 +87296,19 @@
    },
    "mech:neuromod": {
     "rows": {
-     "derived": 5,
+     "derived": 6,
      "guessed": 29,
      "inferred": 6,
      "measured": 162
     },
     "numbers": {
-     "derived": 5,
+     "derived": 6,
      "guessed": 29,
      "inferred": 6,
      "measured": 162
     },
-    "n_rows": 202,
-    "n_numbers": 202
+    "n_rows": 203,
+    "n_numbers": 203
    },
    "mech:noise": {
     "rows": {
@@ -87539,20 +87595,20 @@
      "published_fit": 816,
      "guessed": 676,
      "inferred": 342,
-     "derived": 45,
+     "derived": 46,
      "measured": 251,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7620,
      "guessed": 9471,
-     "derived": 3120,
+     "derived": 3121,
      "inferred": 348,
      "measured": 362,
      "absent": 1
     },
-    "n_rows": 2131,
-    "n_numbers": 20922
+    "n_rows": 2132,
+    "n_numbers": 20923
    },
    "structure": {
     "rows": {
@@ -88357,15 +88413,15 @@
   ],
   "audit": {
    "rows_ok": 2025,
-   "rows_with_problems": 128,
+   "rows_with_problems": 129,
    "by_status": {
     "ok": 2025,
     "finding": 103,
-    "problem": 25
+    "problem": 26
    },
    "rows_read": 245,
    "quotes": {
-    "none": 1330,
+    "none": 1331,
     "cited free text (scripted check)": 786,
     "research file (scripted check)": 25,
     "paper text (read audit, 6-7 Nov)": 12
@@ -88384,7 +88440,7 @@
     "checked_at": "2026-11-07 04:41 CST"
    },
    "problem_kinds": {
-    "no URL to open": 46,
+    "no URL to open": 47,
     "guessed template sits on a bound": 14,
     "source marked UNVERIFIED": 11,
     "no range": 11,
@@ -101108,7 +101164,7 @@
     "published_fit": 844,
     "guessed": 680,
     "measured": 253,
-    "derived": 39,
+    "derived": 40,
     "inferred": 336,
     "absent": 1
    },
@@ -101116,7 +101172,7 @@
     "published_fit": 8368,
     "guessed": 9584,
     "measured": 6110,
-    "derived": 67519,
+    "derived": 67520,
     "inferred": 341,
     "absent": 1
    }
@@ -101127,14 +101183,14 @@
     "guessed": 678,
     "measured": 255,
     "inferred": 342,
-    "derived": 47,
+    "derived": 48,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
     "guessed": 9473,
     "measured": 6214,
-    "derived": 67528,
+    "derived": 67529,
     "inferred": 348,
     "absent": 1
    }
@@ -101157,7 +101213,7 @@
      "vector": 344
     },
     "static": {
-     "rows": 1317,
+     "rows": 1318,
      "unknown": 0,
      "vector": 0
     },
@@ -101184,7 +101240,7 @@
      "vector": 344
     },
     "static": {
-     "rows": 1406,
+     "rows": 1407,
      "unknown": 0,
      "vector": 0
     },
@@ -102344,8 +102400,8 @@
      "rule": 43,
      "gap": 319,
      "gap_discrete": 15,
-     "scan_rows": 1475,
-     "scan_elements": 80147,
+     "scan_rows": 1476,
+     "scan_elements": 80148,
      "residual_slots": 6298,
      "unknown_inactive": 331
     },
