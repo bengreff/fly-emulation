@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-08 22:08 CST",
+ "generated_at": "2026-11-08 23:36 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,36 +9,36 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 91593,
-  "rows": 1849,
-  "mechanisms": 101,
+  "numbers": 91604,
+  "rows": 1860,
+  "mechanisms": 105,
   "by_label": {
-   "derived": 67513,
-   "guessed": 9413,
-   "inferred": 330,
-   "measured": 6182,
+   "derived": 67515,
+   "guessed": 9414,
+   "inferred": 335,
+   "measured": 6185,
    "published_fit": 8155
   },
-  "known": 82180,
-  "placeholder": 9413,
+  "known": 82190,
+  "placeholder": 9414,
   "gap": 0,
-  "used_by_model": 91593,
-  "must_fill": 9413
+  "used_by_model": 91604,
+  "must_fill": 9414
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 20606,
+  "numbers": 20617,
   "by_label": {
    "published_fit": 7428,
-   "guessed": 9413,
-   "derived": 3105,
-   "inferred": 330,
-   "measured": 330
+   "guessed": 9414,
+   "derived": 3107,
+   "inferred": 335,
+   "measured": 333
   },
-  "known": 11193,
-  "placeholder": 9413,
+  "known": 11203,
+  "placeholder": 9414,
   "gap": 0,
-  "must_fill": 9413
+  "must_fill": 9414
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,17 +49,17 @@
    },
    "literature": {
     "guessed": 5474,
-    "measured": 6181,
-    "derived": 3105,
-    "inferred (ours)": 28,
+    "measured": 6184,
+    "derived": 3107,
+    "inferred (ours)": 27,
     "published fit": 380
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3925,
-    "inferred (ours)": 302,
+    "guessed": 3926,
+    "inferred (ours)": 308,
     "measured": 1
    },
    "c302": {
@@ -74,17 +74,17 @@
    },
    "literature": {
     "guessed": 5474,
-    "derived": 3105,
-    "measured": 329,
-    "inferred (ours)": 28,
+    "derived": 3107,
+    "measured": 332,
+    "inferred (ours)": 27,
     "published fit": 380
    },
    "NEURON": {
     "guessed": 3
    },
    "ours": {
-    "guessed": 3925,
-    "inferred (ours)": 302,
+    "guessed": 3926,
+    "inferred (ours)": 308,
     "measured": 1
    },
    "c302": {
@@ -117,7 +117,7 @@
   },
   "class": {
    "derived": 9,
-   "guessed": 390,
+   "guessed": 391,
    "inferred": 276,
    "measured": 31,
    "published_fit": 101
@@ -139,10 +139,10 @@
    "guessed": 85
   },
   "global": {
-   "derived": 19,
+   "derived": 21,
    "guessed": 198,
-   "inferred": 46,
-   "measured": 30,
+   "inferred": 51,
+   "measured": 32,
    "published_fit": 329
   },
   "muscle": {
@@ -152,7 +152,7 @@
   "pairing": {
    "guessed": 7,
    "inferred": 2,
-   "measured": 258
+   "measured": 259
   }
  },
  "mechanisms": [
@@ -822,6 +822,23 @@
    "by_label": {}
   },
   {
+   "id": "ca_bulk",
+   "name": "Bulk cytosolic Ca for the indicator (NEURON's cadifpmp: radial diffusion, fixed-ratio buffer, membrane pump), fed by the soma's Ca current; a readout, the channels keep Eq. 28",
+   "layer": "channel",
+   "status": "have",
+   "toggle": "ca_bulk",
+   "neutral": "off",
+   "default": "off",
+   "source": "src/wormemu/mech/capool.py",
+   "notes": "registry module capool; PLAN row set by the catalog (MECH_ROW)",
+   "absent_reason": "",
+   "numbers": 7,
+   "by_label": {
+    "derived": 1,
+    "inferred": 6
+   }
+  },
+  {
    "id": "ca_pool_volume",
    "name": "Each neuron's bulk Ca pool sized by its own volume in the BAAIWorm morphology (Nicoletti 2024: per-cell volume) instead of one V_cell for all (nested: soma, fixed)",
    "layer": "channel",
@@ -1000,12 +1017,12 @@
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 366,
+   "numbers": 368,
    "by_label": {
     "derived": 3,
-    "guessed": 121,
+    "guessed": 122,
     "inferred": 4,
-    "measured": 238
+    "measured": 239
    }
   },
   {
@@ -1025,6 +1042,48 @@
     "inferred": 3,
     "measured": 22
    }
+  },
+  {
+   "id": "neuromod_site",
+   "name": "Where a cell reads peptides and amines (receptors, transporters): over its membrane by area per compartment (nested: its soma's compartment); release stays at the soma",
+   "layer": "neuromodulation",
+   "status": "have",
+   "toggle": "neuromod_site",
+   "neutral": "off",
+   "default": "membrane",
+   "source": "src/wormemu/mech/neuromod.py",
+   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
+  },
+  {
+   "id": "gs_ca_channels",
+   "name": "Gs-PKA raises EGL-19 and UNC-2 densities (Wang and Sieburth 2013; nested: EGL-19 only)",
+   "layer": "neuromodulation",
+   "status": "have",
+   "toggle": "gs_ca_channels",
+   "neutral": "off",
+   "default": "egl19_unc2",
+   "source": "src/wormemu/mech/neuromod.py",
+   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
+  },
+  {
+   "id": "aex2_ec50_source",
+   "name": "Which measured NLP-40 potency AEX-2 reads: Beets et al. 2023 (NLP-40-2, 7.645 nM) or Wang et al. 2013 (P3-1, 3.39 nM)",
+   "layer": "neuromodulation",
+   "status": "have",
+   "toggle": "aex2_ec50_source",
+   "neutral": "off",
+   "default": "beets2023",
+   "source": "src/wormemu/mech/neuromod.py",
+   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
   },
   {
    "id": "quantal_noise",
@@ -1760,10 +1819,10 @@
    "absent_reason": "",
    "numbers": 22,
    "by_label": {
-    "derived": 3,
-    "guessed": 5,
-    "inferred": 3,
-    "measured": 11
+    "derived": 4,
+    "guessed": 4,
+    "inferred": 2,
+    "measured": 12
    }
   },
   {
@@ -1824,12 +1883,13 @@
    "neutral": "published",
    "default": "frontiers2024",
    "source": "src/wormemu/body/layers.py",
-   "notes": "body layer (wbody's FEM driver reads it); forms frontiers2024/published",
+   "notes": "body layer (wbody's FEM driver reads it); forms frontiers2024/published/backholm2013",
    "absent_reason": "",
-   "numbers": 9,
+   "numbers": 11,
    "by_label": {
     "derived": 3,
-    "guessed": 2,
+    "guessed": 3,
+    "measured": 1,
     "published_fit": 4
    }
   },
@@ -42185,6 +42245,300 @@
    "kind": "physiology"
   },
   {
+   "param_id": "cabulk_dfree_um2_ms",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "um2/ms",
+   "n_values": 1,
+   "value_template": 0.6,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 0.2,
+   "bio_max": 0.8,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "free Ca diffusion; bounds guessed (aqueous Ca2+ about 0.8 um2/ms, cytosolic free Ca lower); switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "row",
+   "hard_basis": "guessed_physical",
+   "hard_source": "free Ca diffusion: >= 0 and not faster than Ca2+ in water (about 0.8 um2/ms at 25 C, textbook value, not opened); 1 um2/ms leaves room for 40 C; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.602,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_beta",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 50.0,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 20.0,
+   "bio_max": 2000.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "fixed bound/free ratio (kappa_S); bounds guessed from neuronal kappa_S as relayed, not opened: Maravall 2000 44-80, Helmchen 1996 100-200, Purkinje cells near 2000; switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 10000.0,
+   "hard_class": "row",
+   "hard_basis": "guessed_physical",
+   "hard_source": "a fixed-ratio buffer, bound over free Ca (kappa): >= 0; neurons are reported at about 20-2000 (relayed, see the Spec); 1e4 is a guessed edge; mech/capool.py Spec",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuro",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_k1_per_mM_s",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "1/(mM s)",
+   "n_values": 1,
+   "value_template": 10000000.0,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 1000000.0,
+   "bio_max": 10000000.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Ca + pump -> pumpca. cadifpmp's 5e8 /(mM s) = 5e11 /(M s) is 50x the diffusion limit (~1e10 /M/s, the hard bound): the template is the limit, and k2 is lowered with it so cadifpmp's Km stays 0.50 uM; the pool's clearance (k3 pump0/Km) and capacity (k3 pump0) are unchanged and the binding still relaxes in 0.2 ms (derived); lower bound guessed (10x); switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 10000000.0,
+   "hard_class": "row",
+   "hard_basis": "physics",
+   "hard_source": "a bimolecular association of Ca with a site: at most the diffusion limit ~1e10 /M/s = 1e7 /(mM s) (rate_second in this unit). cadifpmp's k1 (5e8) is above it: a demo value that keeps the pump at quasi-equilibrium; only Km = (k2 + k3)/k1 and k3 pump0 shape the pool; [HB 6]",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.0,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_k2_per_s",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "1/s",
+   "n_values": 1,
+   "value_template": 4500.0,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 450.0,
+   "bio_max": 45000.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "pumpca -> Ca + pump: Km k1 - k3, with cadifpmp's Km = (k2 + k3)/k1 = 0.50 uM and k1 at the diffusion limit (cadifpmp: 0.25e6 with k1 5e8); bounds guessed (10x); switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 1000000.0,
+   "hard_class": "rate_first",
+   "hard_basis": "physics",
+   "hard_source": "a first-order rate: not faster than 1 per us (conformational change); [HB 6]",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuro",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_k3_per_s",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "1/s",
+   "n_values": 1,
+   "value_template": 500.0,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 50.0,
+   "bio_max": 5000.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "pumpca -> pump + Ca out (the turnover); bounds guessed (10x); switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 1000000.0,
+   "hard_class": "rate_first",
+   "hard_basis": "physics",
+   "hard_source": "a first-order rate: not faster than 1 per us (conformational change); [HB 6]",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuro",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_k4_per_mM_s",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "1/(mM s)",
+   "n_values": 1,
+   "value_template": 5.0,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 0.5,
+   "bio_max": 50.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "reverse transport; sets the pump's floor cao k2 k4/(k1 k3) = 9 nM at the ledger's k1, k2 (cadifpmp's own 10 nM; derived); bounds guessed; switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 10000000.0,
+   "hard_class": "row",
+   "hard_basis": "physics",
+   "hard_source": "a bimolecular association of Ca with a site: at most the diffusion limit ~1e10 /M/s = 1e7 /(mM s) (rate_second in this unit). cadifpmp's k1 (5e8) is above it: a demo value that keeps the pump at quasi-equilibrium; only Km = (k2 + k3)/k1 and k3 pump0 shape the pool; [HB 6]",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuro",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "cabulk_pump0_mol_cm2",
+   "mechanism_id": "ca_bulk",
+   "grain": "global",
+   "applies_to": "whole worm",
+   "unit": "mol/cm2",
+   "n_values": 1,
+   "value_template": 3e-14,
+   "template_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bio_min": 3e-15,
+   "bio_max": 3e-13,
+   "bound_basis": "guessed_physical",
+   "bound_source": "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "pump sites per membrane area; capacity k3 pump0 2F = 0.029 pA/um2 (derived); bounds guessed (10x); switch off by default: read only with toggle ca_bulk = on",
+   "plan_row": 6,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.0,
+   "hard_max": 3.3e-12,
+   "hard_class": "row",
+   "hard_basis": "physics",
+   "hard_source": "pump sites per membrane area: at most the densest membrane-protein packing, 2e4 per um2 = 3.3e-12 mol/cm2 (cadifpmp's 3e-14 is 181 per um2); [HB 1]",
+   "bound_basis_detail": "guessed",
+   "span_decades": 2.0,
+   "span_reason": "range source: NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026); borrowed from the nearest system (a generic vertebrate neuro",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
    "param_id": "unc58_erev_mV",
    "mechanism_id": "unc58_na_leak",
    "grain": "global",
@@ -51173,6 +51527,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "unc2_gs_gain",
+   "mechanism_id": "peptides",
+   "grain": "class",
+   "applies_to": "peptides and monoamines (shared)",
+   "unit": "1 per unit G",
+   "n_values": 1,
+   "value_template": 0.5,
+   "template_source": "guessed",
+   "bio_min": 0.0,
+   "bio_max": 2.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "Gs raises the UNC-2 density (Wang and Sieburth 2013: UNC-2 and EGL-19 act downstream of PKA in DVB); the direction is from the genetics in the module docstring, the size is guessed",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1000.0,
+   "hard_class": "gain_nonneg",
+   "hard_basis": "guessed_physical",
+   "hard_source": "a non-negative multiplier or gain; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": "",
+   "span_reason": "",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
    "param_id": "pep_ec50_flp-1_dmsr-1_nM",
    "mechanism_id": "peptides",
    "grain": "pairing",
@@ -57347,6 +57743,48 @@
    "kind": "physiology"
   },
   {
+   "param_id": "pep_ec50_nlp-40_aex-2_wang2013_nM",
+   "mechanism_id": "peptides",
+   "grain": "pairing",
+   "applies_to": "nlp-40 peptides on aex-2",
+   "unit": "nM",
+   "n_values": 1,
+   "value_template": 3.39,
+   "template_source": "Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",
+   "bio_min": 2.22,
+   "bio_max": 4.56,
+   "bound_basis": "measured_spread",
+   "bound_source": "Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "read only under aex2_ec50_source=wang2013 (class C: Beets 2023 gives 7.645 nM, 95% CI 5.73-10.2, for its one NLP-40 peptide on AEX-2); bounds 3.39 +- 1.17 nM, the paper's +- (statistic not stated in that sentence); source 6 Nov (catalog audit): was 3.39 nM, label measured, range [2.22, 4.56]; citation corrected (Cell Reports, not Science); 6 random pairs checked against peptide_gpcr_ec50.csv (template = the most potent peptide's EC50; range = its lower 95% CI to the larger of its upper CI and the weakest peptide's EC50): 6 of 6 match; the published Table S6 is not in PMC's supplement, so the preprint's table is the free copy",
+   "plan_row": 9,
+   "used_by_code": "yes",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7615250/",
+   "source_quote": "EC 50 values, as calculated from concentration-response curves, range between 0.1 pM and 22 \u03bcM but are in the sub-micromolar range for 73% of the couples",
+   "audit": "ok",
+   "hard_min": 1e-06,
+   "hard_max": 1000000000.0,
+   "hard_class": "binding_constant",
+   "hard_basis": "physics",
+   "hard_source": "a Kd, EC50, Km or half-activation: between 1 fM (tighter than streptavidin-biotin, 1e-14 M, the tightest non-covalent binding) and 1 M (no saturable binding above); [HB 8]; Green 1990 Methods Enzymol 184:51",
+   "bound_basis_detail": "measured_related",
+   "span_decades": 0.313,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
    "param_id": "ma_diffusion_um2_per_s",
    "mechanism_id": "monoamines",
    "grain": "global",
@@ -57738,17 +58176,17 @@
    "bound_basis": "homology",
    "bound_source": "Ranganathan, Sawin, Trent & Horvitz 2001 J Neurosci 21:5871 (PMC6763176): MOD-5 stably expressed in HEK293 cells, [3H]5-HT uptake, Km 150 +- 8 nM (mean +- SEM, at least six replicates); range from 150 - 8 nM to the top of the other SERTs the paper lists (280 to 630 nM)",
    "bound_verified": "unverified",
-   "prior_dist": "loguniform",
+   "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
-   "prior_basis": "guessed: log-uniform over the range",
+   "prior_basis": "guessed: uniform over the range",
    "label": "measured",
    "fill_kind": "measured",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "fill 6 Nov (catalog audit): was 500 nM, label inferred, range [100, 2000]; was 500 nM [100, 2000], inferred from human SERT; the MOD-5 paper's free full text (served to scripts on 7 Nov) gives MOD-5's own Km, the same assay as the measured sibling dat1_km_nM (DAT-1 in transfected cells); authors checked in Europe PMC",
+   "notes": "the ledger's row (catalog audit 6 Nov): bounds from 150 - 8 nM to the top of the other SERTs the paper lists (280-630 nM); the code said 500 nM inferred until 8 Nov. The paper's Vmax (8.31e-9 nmol per cell per min) is per HEK cell and 'cannot be compared' across expression levels, so ma_uptake_vmax_per_s stays guessed; fill 6 Nov (catalog audit): was 150 nM, label measured, range [142, 630]; was 500 nM [100, 2000], inferred from human SERT; the MOD-5 paper's free full text (served to scripts on 7 Nov) gives MOD-5's own Km, the same assay as the measured sibling dat1_km_nM (DAT-1 in transfected cells); authors checked in Europe PMC",
    "plan_row": 10,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6763176/",
@@ -75304,7 +75742,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "glial uptake alone: 1 / (1/4.2 - 1/6.3) s from the wild-type and knockout recoveries (derived from cross-species numbers); source 6 Nov (catalog audit): was 12.6 s, label inferred, range [2, 30]; source corrected: the row read 4.2 s as the wild type and 6.3 s as the knockout; the paper's 4.2 s is the Kir4.1-inhibited single-stimulation value, and all four are model outputs; relabel 6 Nov (catalog audit): was 12.6 s, label inferred, range [2, 30]; inferred -> guessed: a mouse model's simulation output, not a measurement, and not a worm value (value unchanged)",
+   "notes": "glial uptake alone; the source's pairs give 1 / (1/control - 1/inhibited) = 17.9 s (single) and 12.0 s (tetanus), the template 12.6 s inside (it came from a misread 4.2 / 6.3 s pair, value kept: catalog audit 6 Nov); with glia_k_diff_tau_s the constants alone clear in 4.2 s, the source's inhibited single-stimulus decay, not its 3.4-4 s control; source 6 Nov (catalog audit): was 12.6 s, label guessed, range [2, 30]; source corrected: the row read 4.2 s as the wild type and 6.3 s as the knockout; the paper's 4.2 s is the Kir4.1-inhibited single-stimulation value, and all four are model outputs; relabel 6 Nov (catalog audit): was 12.6 s, label guessed, range [2, 30]; inferred -> guessed: a mouse model's simulation output, not a measurement, and not a worm value (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
@@ -75346,7 +75784,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "clearance without glial uptake (the Kir4.1 knockout's recovery), cross-species; source 6 Nov (catalog audit): was 6.3 s, label inferred, range [3, 15]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 6.3 s, label inferred, range [3, 15]; inferred -> guessed: a mouse model's simulation output (value unchanged)",
+   "notes": "clearance without glial uptake, at least the source's Kir4.1-inhibited decay (4.2-6 s); template 6.3 s kept (catalog audit 6 Nov); source 6 Nov (catalog audit): was 6.3 s, label guessed, range [3, 15]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 6.3 s, label guessed, range [3, 15]; inferred -> guessed: a mouse model's simulation output (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
@@ -75514,7 +75952,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "microdomain clearance, taken as the K+ recovery (O5's suggestion); source 6 Nov (catalog audit): was 4.2 s, label inferred, range [0.7, 6.3]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 4.2 s, label inferred, range [0.7, 6.3]; inferred -> guessed: a mouse model's K+ recovery used for a worm Cl- microdomain (value unchanged)",
+   "notes": "microdomain clearance, taken as the K+ recovery (O5's suggestion; the source's control is 3.4-4 s, the template 4.2 s kept, catalog audit 6 Nov); source 6 Nov (catalog audit): was 4.2 s, label guessed, range [0.7, 6.3]; source corrected (as glia_kir_tau_s); relabel 6 Nov (catalog audit): was 4.2 s, label guessed, range [0.7, 6.3]; inferred -> guessed: a mouse model's K+ recovery used for a worm Cl- microdomain (value unchanged)",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/",
@@ -75586,7 +76024,7 @@
    "bio_min": 10.0,
    "bio_max": 300.0,
    "bound_basis": "guessed_physical",
-   "bound_source": "kept from before the value fill: Singhvi et al. 2016 Cell 165:936",
+   "bound_source": "kept from before the value fill: Singhvi et al. 2016 Cell 165:936 (PMC4860081, opened), Results and Fig. 5D: GCY-8 cyclase activity in HEK293T membrane fractions, NH4Cl titration, 30 C",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -75598,7 +76036,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "Cl- at half GCY-8 inhibition, Hill 1; Singhvi measured the inhibition, the number is not in the free summary; guessed; fill 6 Nov (catalog audit): was 100 mM, label guessed, range [10, 300]; measured: Cl- IC50 of GCY-8 cyclase activity, heterologous (HEK293T membrane fractions), reported as ~60 mM with no interval; the model's 1 / (1 + Cl / IC50) form takes it directly (Hill 1 kept). Range kept (guessed).",
+   "notes": "Cl- at half GCY-8 inhibition, Hill 1: 'Cl- ions ... are potent inhibitors of GCY-8 cyclase activity ... with an IC50 of ~60mM' (heterologous, no interval); was 100 guessed, filled to 60 by the catalog audit 6 Nov, module aligned 8 Nov (wbody2); range kept (guessed); fill 6 Nov (catalog audit): was 60 mM, label measured, range [10, 300]; measured: Cl- IC50 of GCY-8 cyclase activity, heterologous (HEK293T membrane fractions), reported as ~60 mM with no interval; the model's 1 / (1 + Cl / IC50) form takes it directly (Hill 1 kept). Range kept (guessed).",
    "plan_row": 11,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4860081/",
@@ -78790,10 +79228,10 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
+   "notes": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 (8 Nov 2026; not checked against the journal version) Supp Table 1: 174 +/- 5 nM (purified protein); read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
    "plan_row": 23,
    "used_by_code": "other form only",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
+   "source_url": "https://doi.org/10.1101/434589v1",
    "source_quote": "",
    "audit": "ok",
    "hard_min": 1e-06,
@@ -78832,7 +79270,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 3.1 1, label measured, range [2.3, 3.3]; free quote added; the same table's Kd is an image and is not checked here; row is read only with gcamp = gcamp7f",
+   "notes": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 (8 Nov 2026; not checked against the journal version) Supp Table 1: 2.3 +/- 0.12, the lower bound; read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); source 6 Nov (catalog audit): was 3.1 1, label measured, range [2.3, 3.3]; free quote added; the same table's Kd is an image and is not checked here; row is read only with gcamp = gcamp7f",
    "plan_row": 23,
    "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10060165/",
@@ -78857,27 +79295,27 @@
    "applies_to": "jGCaMP7f",
    "unit": "1",
    "n_values": 1,
-   "value_template": 30.0,
-   "template_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): dynamic range not opened",
-   "bio_min": 15.0,
-   "bio_max": 60.0,
+   "value_template": 30.19,
+   "template_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 (8 Nov 2026; not checked against the journal version), Supp Table 1 (purified protein, Fmax/Fmin): 30.19 +/- 0.36 (mean +/- s.e.m.)",
+   "bio_min": 27.0,
+   "bio_max": 33.0,
    "bound_basis": "guessed_physical",
-   "bound_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): dynamic range not opened",
+   "bound_source": "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 (8 Nov 2026; not checked against the journal version), Supp Table 1 (purified protein, Fmax/Fmin): 30.19 +/- 0.36 (mean +/- s.e.m.)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "guessed",
-   "fill_kind": "guessed",
-   "source_project": "ours",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Dana 2019 Supplementary Table 1; read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
+   "notes": "bounds guessed (+-10%, as the 6s and 6f ranges); read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145)",
    "plan_row": 23,
    "used_by_code": "other form only",
-   "source_url": "",
+   "source_url": "https://doi.org/10.1101/434589v1",
    "source_quote": "",
    "audit": "ok",
    "hard_min": 0.0,
@@ -78886,10 +79324,10 @@
    "hard_basis": "guessed_physical",
    "hard_source": "a sensor's dynamic range (Fmax/Fmin) or dF/F ceiling; Chen et al. 2013",
    "bound_basis_detail": "guessed",
-   "span_decades": 0.602,
+   "span_decades": 0.087,
    "span_reason": "",
-   "fit_role": "inactive",
-   "n_unknown": 1,
+   "fit_role": "static",
+   "n_unknown": 0,
    "kind": "physiology"
   },
   {
@@ -78899,28 +79337,28 @@
    "applies_to": "jGCaMP7f",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 265.0,
-   "template_source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Results (cultured rat hippocampal neurons, 1 action potential by field stimulation; median +- s.e.m.)",
+   "value_template": 118.0,
+   "template_source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Supplementary Table 1 (purified protein: Fmax/Fmin, Kd, Hill, kon, koff)",
    "bio_min": 100.0,
    "bio_max": 800.0,
    "bound_basis": "guessed_physical",
-   "bound_source": "kept from before the value fill: Dana et al. 2019 Nat Methods 16:649 (jGCaMP7): half-decay not opened",
+   "bound_source": "kept from before the value fill: Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 (8 Nov 2026; not checked against the journal version), Supp Table 1 (purified protein, stopped flow): koff 5.86 +/- 0.01 /s; ln 2 / 5.86 = 118 ms",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "inferred",
-   "fill_kind": "inferred (ours)",
+   "label": "derived",
+   "fill_kind": "derived",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP); read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); fill 6 Nov (catalog audit): was 270 ms, label guessed, range [100, 800]; inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
+   "notes": "as the GCaMP6 rows: binding_step's koff is the sensor's own unbinding, which the stopped-flow koff measures (temperature not stated); the 1-AP half-decay in culture is 265 +- 20 ms (Results), slower than koff predicts, unlike 6s and 6f; bounds guessed; read only with gcamp = gcamp7f (default gcamp6s; mech/observation.py:145); fill 6 Nov (catalog audit): was 118 ms, label derived, range [100, 800]; as obs_gcamp6s_thalf_ms: ln 2 / 5.86 per s = 118 ms (derived; stopped-flow koff, temperature not stated). 8 Nov (wbrain2): the supplement is reachable (the bioRxiv docx above, opened 8 Nov 2026), so the row moves from 265 inferred (the in-neuron 1-AP half-decay, 265 \u00b1 20 ms, Results; it includes Ca clearance and is slower than koff predicts, unlike 6s and 6f) to the koff the GCaMP6 rows use; range [100, 800] kept",
    "plan_row": 23,
    "used_by_code": "other form only",
-   "source_url": "https://doi.org/10.1101/434589",
-   "source_quote": "1-AP half decay time: GCaMP6f, 140\u00b120 ms; jGCaMP7f, 265\u00b120; GCaMP6s, 455\u00b140) (Supp. Table 2)",
+   "source_url": "https://www.biorxiv.org/highwire/filestream/130321/field_highwire_adjunct_files/0/434589-1.docx",
+   "source_quote": "jGCaMP7f | 30.19 \u00b1 0.36 | 1.53 \u00b1 0.07 | 174 \u00b1 5 | 2.3 \u00b1 0.12 | 13.4 \u00b1 0.41 | 5.86 \u00b1 0.01",
    "audit": "ok",
    "hard_min": 0.001,
    "hard_max": 5200000000.0,
@@ -79029,8 +79467,8 @@
    "template_source": "Atanas, Kim, Wang, ... Cohen, Mansinghka & Flavell 2023 Cell 186:4134 (PMC10836760), STAR Methods (confocal imaging)",
    "bio_min": 1.0,
    "bio_max": 10.0,
-   "bound_basis": "guessed_physical",
-   "bound_source": "kept from before the value fill: recalled, not opened: Atanas 2023 whole-brain volume rate; sample_volumes() uses it",
+   "bound_basis": "measured_spread",
+   "bound_source": "kept from before the value fill: Atanas et al. 2023 Cell 186:4134 STAR Methods (PMC10836760): 'a volume rate of 1.7 Hz (1.4 Hz for the datasets acquired with the Newport piezo)'; Randi 2023 imaged at 2 vol/s (arXiv 2208.04790v3 Methods, as relayed); sample_volumes() uses it",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -79042,7 +79480,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "readout only: gcamp_dff is published every step, sampling is offline; fill 6 Nov (catalog audit): was 1.7 Hz, label guessed, range [1, 10]; the acquisition rate of the whole-brain recordings that sample_volumes() mimics, now read in the paper (was recalled, not opened); same value. A reported instrument setting, labelled measured. The range [1, 10] stays: their other piezo ran at 1.4 Hz and other whole-brain setups image faster",
+   "notes": "readout only: gcamp_dff is published every step, sampling is offline; fill 6 Nov (catalog audit): was 1.7 Hz, label measured, range [1, 10]; the acquisition rate of the whole-brain recordings that sample_volumes() mimics, now read in the paper (was recalled, not opened); same value. A reported instrument setting, labelled measured. The range [1, 10] stays: their other piezo ran at 1.4 Hz and other whole-brain setups image faster",
    "plan_row": 23,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10836760/",
@@ -79053,7 +79491,7 @@
    "hard_class": "frequency_any",
    "hard_basis": "guessed_physical",
    "hard_source": "a sampling or event rate; definition",
-   "bound_basis_detail": "guessed",
+   "bound_basis_detail": "measured_related",
    "span_decades": 1.0,
    "span_reason": "",
    "fit_role": "fixed",
@@ -79775,6 +80213,90 @@
    "kind": "physiology"
   },
   {
+   "param_id": "rule_body_modulus_scale",
+   "mechanism_id": "body_layers",
+   "grain": "global",
+   "applies_to": "every layer modulus",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 1.0,
+   "template_source": "Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026) (upper: every layer at its published high end, 1199 kPa over the template's 791, mesh); Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528 (lower: 50 kPa, the 2 sd low edge of 110 +- 30, over 791)",
+   "bio_min": 0.0632,
+   "bio_max": 1.515,
+   "bound_basis": "guessed_physical",
+   "bound_source": "Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026) (upper: every layer at its published high end, 1199 kPa over the template's 791, mesh); Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528 (lower: 50 kPa, the 2 sd low edge of 110 +- 30, over 791)",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "the fittable rule parameter (Ben, 8 Nov); template 1 = the Frontiers moduli as published (neutral); the sources' own bands do not overlap: Frontiers 0.71-1.52, Backholm 0.063-0.215 (derived after the 8 Nov quadrature fix; were 0.058-1.35 on the old quadrature)",
+   "plan_row": 21,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1000.0,
+   "hard_class": "gain_nonneg",
+   "hard_basis": "guessed_physical",
+   "hard_source": "a non-negative multiplier or gain; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.38,
+   "span_reason": "range source: Frontiers Bioeng Biotechnol 2024 12:1335788 (three-compartment FE fit to AFM indentation, young adults; read 6 Nov 2026) (upper: every layer at its published hi",
+   "fit_role": "free",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "body_E_bending_kPa",
+   "mechanism_id": "body_layers",
+   "grain": "global",
+   "applies_to": "whole body (backholm2013 form)",
+   "unit": "kPa",
+   "n_values": 1,
+   "value_template": 110.0,
+   "template_source": "Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528: whole-worm bending modulus 110 +- 30 kPa (range 2 sd)",
+   "bio_min": 50.0,
+   "bio_max": 170.0,
+   "bound_basis": "measured_spread",
+   "bound_source": "Backholm, Ryu & Dalnoki-Veress 2013 PNAS 110:4528: whole-worm bending modulus 110 +- 30 kPa (range 2 sd)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "body_layers = backholm2013 scales the Frontiers profile so the mesh section modulus equals this",
+   "plan_row": 21,
+   "used_by_code": "yes",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "no URL to open",
+   "hard_min": 0.01,
+   "hard_max": 20000000.0,
+   "hard_class": "modulus_kPa",
+   "hard_basis": "physics",
+   "hard_source": "an elastic modulus of any tissue: brain ~0.1-1 kPa to bone ~20 GPa; [HB 10]",
+   "bound_basis_detail": "measured_related",
+   "span_decades": 0.531,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
    "param_id": "body_damp_tau_ms",
    "mechanism_id": "body_damping",
    "grain": "global",
@@ -80051,37 +80573,37 @@
   "totals": {
    "rows": {
     "published_fit": 706,
-    "guessed": 678,
-    "measured": 250,
-    "inferred": 329,
-    "derived": 43,
+    "guessed": 679,
+    "measured": 253,
+    "inferred": 334,
+    "derived": 45,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8235,
-    "guessed": 9474,
-    "measured": 6208,
-    "derived": 67524,
-    "inferred": 335,
+    "guessed": 9475,
+    "measured": 6211,
+    "derived": 67526,
+    "inferred": 340,
     "absent": 1
    },
-   "n_rows": 2007,
-   "n_numbers": 91777
+   "n_rows": 2018,
+   "n_numbers": 91788
   },
   "by_label_rows": {
    "published_fit": 706,
-   "guessed": 678,
-   "measured": 250,
-   "inferred": 329,
-   "derived": 43,
+   "guessed": 679,
+   "measured": 253,
+   "inferred": 334,
+   "derived": 45,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8235,
-   "guessed": 9474,
-   "measured": 6208,
-   "derived": 67524,
-   "inferred": 335,
+   "guessed": 9475,
+   "measured": 6211,
+   "derived": 67526,
+   "inferred": 340,
    "absent": 1
   },
   "by_plan_row": {
@@ -80144,14 +80666,18 @@
    "6": {
     "rows": {
      "published_fit": 9,
-     "guessed": 1
+     "guessed": 1,
+     "inferred": 6,
+     "derived": 1
     },
     "numbers": {
      "published_fit": 9,
-     "guessed": 1
+     "guessed": 1,
+     "inferred": 6,
+     "derived": 1
     },
-    "n_rows": 10,
-    "n_numbers": 10
+    "n_rows": 17,
+    "n_numbers": 17
    },
    "7": {
     "rows": {
@@ -80187,19 +80713,19 @@
    },
    "9": {
     "rows": {
-     "guessed": 23,
+     "guessed": 24,
      "derived": 3,
      "inferred": 4,
-     "measured": 147
+     "measured": 148
     },
     "numbers": {
-     "guessed": 121,
-     "measured": 238,
+     "guessed": 122,
+     "measured": 239,
      "derived": 3,
      "inferred": 4
     },
-    "n_rows": 177,
-    "n_numbers": 366
+    "n_rows": 179,
+    "n_numbers": 368
    },
    "10": {
     "rows": {
@@ -80385,17 +80911,17 @@
     "rows": {
      "published_fit": 17,
      "derived": 7,
-     "guessed": 10,
-     "measured": 1
+     "guessed": 11,
+     "measured": 2
     },
     "numbers": {
      "published_fit": 17,
      "derived": 7,
-     "guessed": 10,
-     "measured": 1
+     "guessed": 11,
+     "measured": 2
     },
-    "n_rows": 35,
-    "n_numbers": 35
+    "n_rows": 37,
+    "n_numbers": 37
    },
    "22": {
     "rows": {
@@ -80417,16 +80943,16 @@
    },
    "23": {
     "rows": {
-     "measured": 13,
-     "inferred": 6,
-     "derived": 3,
-     "guessed": 10
+     "measured": 14,
+     "inferred": 5,
+     "derived": 4,
+     "guessed": 9
     },
     "numbers": {
-     "measured": 13,
-     "inferred": 6,
-     "derived": 3,
-     "guessed": 10
+     "measured": 14,
+     "inferred": 5,
+     "derived": 4,
+     "guessed": 9
     },
     "n_rows": 32,
     "n_numbers": 32
@@ -80531,20 +81057,20 @@
    "class": {
     "rows": {
      "inferred": 276,
-     "guessed": 395,
+     "guessed": 396,
      "published_fit": 101,
      "derived": 9,
      "measured": 34
     },
     "numbers": {
      "inferred": 276,
-     "guessed": 395,
+     "guessed": 396,
      "published_fit": 101,
      "derived": 9,
      "measured": 34
     },
-    "n_rows": 815,
-    "n_numbers": 815
+    "n_rows": 816,
+    "n_numbers": 816
    },
    "compartment": {
     "rows": {
@@ -80600,21 +81126,21 @@
     "rows": {
      "published_fit": 409,
      "guessed": 217,
-     "inferred": 51,
-     "measured": 50,
-     "derived": 30,
+     "inferred": 56,
+     "measured": 52,
+     "derived": 32,
      "absent": 1
     },
     "numbers": {
      "published_fit": 409,
      "guessed": 217,
-     "inferred": 51,
-     "measured": 50,
-     "derived": 30,
+     "inferred": 56,
+     "measured": 52,
+     "derived": 32,
      "absent": 1
     },
-    "n_rows": 758,
-    "n_numbers": 758
+    "n_rows": 767,
+    "n_numbers": 767
    },
    "muscle": {
     "rows": {
@@ -80631,16 +81157,16 @@
    "pairing": {
     "rows": {
      "guessed": 5,
-     "measured": 157,
+     "measured": 158,
      "inferred": 1
     },
     "numbers": {
-     "measured": 258,
+     "measured": 259,
      "guessed": 7,
      "inferred": 2
     },
-    "n_rows": 163,
-    "n_numbers": 267
+    "n_rows": 164,
+    "n_numbers": 268
    },
    "synapse": {
     "rows": {
@@ -80671,20 +81197,20 @@
    "other form only": {
     "rows": {
      "published_fit": 77,
-     "guessed": 84,
-     "inferred": 14,
-     "measured": 13,
-     "derived": 7
+     "guessed": 83,
+     "inferred": 19,
+     "measured": 14,
+     "derived": 9
     },
     "numbers": {
      "published_fit": 265,
-     "guessed": 389,
-     "inferred": 15,
-     "measured": 114,
-     "derived": 7
+     "guessed": 388,
+     "inferred": 20,
+     "measured": 115,
+     "derived": 9
     },
-    "n_rows": 195,
-    "n_numbers": 790
+    "n_rows": 202,
+    "n_numbers": 797
    },
    "slot only": {
     "rows": {
@@ -80709,20 +81235,20 @@
    "yes": {
     "rows": {
      "published_fit": 571,
-     "guessed": 565,
-     "measured": 214,
+     "guessed": 567,
+     "measured": 216,
      "inferred": 312,
      "derived": 32
     },
     "numbers": {
      "published_fit": 7912,
-     "guessed": 9030,
-     "measured": 6071,
+     "guessed": 9032,
+     "measured": 6073,
      "derived": 67513,
      "inferred": 317
     },
-    "n_rows": 1694,
-    "n_numbers": 90843
+    "n_rows": 1698,
+    "n_numbers": 90847
    }
   },
   "by_origin": {
@@ -80798,17 +81324,29 @@
     "rows": {
      "published_fit": 4,
      "derived": 3,
-     "guessed": 5,
-     "measured": 1
+     "guessed": 6,
+     "measured": 2
     },
     "numbers": {
      "published_fit": 4,
      "derived": 3,
-     "guessed": 5,
-     "measured": 1
+     "guessed": 6,
+     "measured": 2
     },
-    "n_rows": 13,
-    "n_numbers": 13
+    "n_rows": 15,
+    "n_numbers": 15
+   },
+   "mech:capool": {
+    "rows": {
+     "inferred": 6,
+     "derived": 1
+    },
+    "numbers": {
+     "inferred": 6,
+     "derived": 1
+    },
+    "n_rows": 7,
+    "n_numbers": 7
    },
    "mech:cells_passive": {
     "rows": {
@@ -80937,18 +81475,18 @@
    "mech:neuromod": {
     "rows": {
      "derived": 3,
-     "guessed": 29,
+     "guessed": 30,
      "inferred": 6,
-     "measured": 159
+     "measured": 160
     },
     "numbers": {
      "derived": 3,
-     "guessed": 29,
+     "guessed": 30,
      "inferred": 6,
-     "measured": 159
+     "measured": 160
     },
-    "n_rows": 197,
-    "n_numbers": 197
+    "n_rows": 199,
+    "n_numbers": 199
    },
    "mech:noise": {
     "rows": {
@@ -80964,16 +81502,16 @@
    },
    "mech:observation": {
     "rows": {
-     "measured": 9,
-     "derived": 2,
-     "guessed": 8,
-     "inferred": 4
+     "measured": 10,
+     "derived": 3,
+     "guessed": 7,
+     "inferred": 3
     },
     "numbers": {
-     "measured": 9,
-     "derived": 2,
-     "guessed": 8,
-     "inferred": 4
+     "measured": 10,
+     "derived": 3,
+     "guessed": 7,
+     "inferred": 3
     },
     "n_rows": 23,
     "n_numbers": 23
@@ -81233,22 +81771,22 @@
    "physiology": {
     "rows": {
      "published_fit": 692,
-     "guessed": 676,
-     "inferred": 329,
-     "derived": 41,
-     "measured": 246,
+     "guessed": 677,
+     "inferred": 334,
+     "derived": 43,
+     "measured": 249,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7496,
-     "guessed": 9472,
-     "derived": 3116,
-     "inferred": 335,
-     "measured": 356,
+     "guessed": 9473,
+     "derived": 3118,
+     "inferred": 340,
+     "measured": 359,
      "absent": 1
     },
-    "n_rows": 1985,
-    "n_numbers": 20776
+    "n_rows": 1996,
+    "n_numbers": 20787
    },
    "structure": {
     "rows": {
@@ -82052,35 +82590,35 @@
    }
   ],
   "audit": {
-   "rows_ok": 1887,
-   "rows_with_problems": 120,
+   "rows_ok": 1890,
+   "rows_with_problems": 128,
    "by_status": {
-    "ok": 1887,
+    "ok": 1890,
     "finding": 103,
-    "problem": 17
+    "problem": 25
    },
    "rows_read": 245,
    "quotes": {
-    "none": 1186,
+    "none": 1196,
     "cited free text (scripted check)": 786,
     "research file (scripted check)": 25,
-    "paper text (read audit, 6-7 Nov)": 10
+    "paper text (read audit, 6-7 Nov)": 11
    },
-   "with_url": 1576,
+   "with_url": 1578,
    "links": {
-    "distinct": 166,
+    "distinct": 167,
     "by_status": {
-     "200": 154,
+     "200": 153,
      "429": 1,
      "203": 1,
      "406": 3,
-     "unchecked": 3,
+     "unchecked": 5,
      "403": 4
     },
     "checked_at": "2026-11-07 04:41 CST"
    },
    "problem_kinds": {
-    "no URL to open": 38,
+    "no URL to open": 46,
     "guessed template sits on a bound": 14,
     "source marked UNVERIFIED": 11,
     "no range": 11,
@@ -84330,6 +84868,19 @@
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7615250/"
    },
    {
+    "param_id": "pep_ec50_nlp-40_aex-2_wang2013_nM",
+    "kind": "source",
+    "origin": "mech:neuromod",
+    "n": 1,
+    "pattern": "pep_ec50_*_*_nM",
+    "was_label": "measured",
+    "new_label": "measured",
+    "change": "3.39 -> 3.39 nM; measured -> measured; range [2.22, 4.56] -> [2.22, 4.56]",
+    "reason": "citation corrected (Cell Reports, not Science); 6 random pairs checked against peptide_gpcr_ec50.csv (template = the most potent peptide's EC50; range = its lower 95% CI to the larger of its upper CI and the weakest peptide's EC50): 6 of 6 match; the published Table S6 is not in PMC's supplement, so the preprint's table is the free copy",
+    "source": "Beets et al. 2023 Cell Rep 42:113058 (PMC7615250); values from its free preprint's Table S6 (bioRxiv 2022.10.30.514428 v1 media-6: aequorin Ca reporter in CHO cells, log EC50 with 95% CI), kept in data/worm/structure/beets2023",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7615250/"
+   },
+   {
     "param_id": "pep_ec50_nlp-42_sprr-1_nM",
     "kind": "source",
     "origin": "mech:neuromod",
@@ -85323,9 +85874,9 @@
     "origin": "mech:observation",
     "n": 1,
     "pattern": "",
-    "was_label": "guessed",
+    "was_label": "measured",
     "new_label": "measured",
-    "change": "1.7 -> 1.7 Hz; guessed -> measured; range [1, 10] -> [1, 10]",
+    "change": "1.7 -> 1.7 Hz; measured -> measured; range [1, 10] -> [1, 10]",
     "reason": "the acquisition rate of the whole-brain recordings that sample_volumes() mimics, now read in the paper (was recalled, not opened); same value. A reported instrument setting, labelled measured. The range [1, 10] stays: their other piezo ran at 1.4 Hz and other whole-brain setups image faster",
     "source": "Atanas, Kim, Wang, ... Cohen, Mansinghka & Flavell 2023 Cell 186:4134 (PMC10836760), STAR Methods (confocal imaging)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10836760/"
@@ -85557,12 +86108,12 @@
     "origin": "mech:observation",
     "n": 1,
     "pattern": "",
-    "was_label": "guessed",
-    "new_label": "inferred",
-    "change": "270 -> 265 ms; guessed -> inferred; range [100, 800] -> [100, 800]",
-    "reason": "inferred, not derived like the GCaMP6 rows: the purified-protein koff is in the preprint's Supplementary Table 1, which was not reachable (the PDF has no supplement; the supplement URL answers 404); this is the in-neuron 1-AP decay, which includes Ca clearance (for GCaMP6f it is 140 ms against 176 ms from koff); range [100, 800] kept; was 270 guessed",
-    "source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Results (cultured rat hippocampal neurons, 1 action potential by field stimulation; median +- s.e.m.)",
-    "url": "https://doi.org/10.1101/434589"
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "118 -> 118 ms; derived -> derived; range [100, 800] -> [100, 800]",
+    "reason": "as obs_gcamp6s_thalf_ms: ln 2 / 5.86 per s = 118 ms (derived; stopped-flow koff, temperature not stated). 8 Nov (wbrain2): the supplement is reachable (the bioRxiv docx above, opened 8 Nov 2026), so the row moves from 265 inferred (the in-neuron 1-AP half-decay, 265 \u00b1 20 ms, Results; it includes Ca clearance and is slower than koff predicts, unlike 6s and 6f) to the koff the GCaMP6 rows use; range [100, 800] kept",
+    "source": "Dana, Sun, Mohar, Hulse, Hasseman, Tsegaye, Tsang, Wong, Patel, Macklin, Chen, Konnerth, Jayaraman, Looger, Schreiter, Svoboda & Kim 2018 bioRxiv 434589 (preprint of Nat Methods 16:649), Supplementary Table 1 (purified protein: Fmax/Fmin, Kd, Hill, kon, koff)",
+    "url": "https://www.biorxiv.org/highwire/filestream/130321/field_highwire_adjunct_files/0/434589-1.docx"
    },
    {
     "param_id": "touch_n_channels",
@@ -85583,9 +86134,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "guessed",
+    "was_label": "measured",
     "new_label": "measured",
-    "change": "100 -> 60 mM; guessed -> measured; range [10, 300] -> [10, 300]",
+    "change": "60 -> 60 mM; measured -> measured; range [10, 300] -> [10, 300]",
     "reason": "measured: Cl- IC50 of GCY-8 cyclase activity, heterologous (HEK293T membrane fractions), reported as ~60 mM with no interval; the model's 1 / (1 + Cl / IC50) form takes it directly (Hill 1 kept). Range kept (guessed).",
     "source": "Singhvi, Liu, Friedman, Fong, Lu, Huang & Shaham 2016 Cell 165:936 (PMC4860081), Results and Fig. 5D (GCY-8 guanylyl cyclase activity in membrane fractions of GCY-8-expressing HEK293T cells, NH4Cl titration, 30 C)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4860081/"
@@ -86545,9 +87096,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
-    "new_label": "inferred",
-    "change": "12.6 -> 12.6 s; inferred -> inferred; range [2, 30] -> [2, 30]",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "12.6 -> 12.6 s; guessed -> guessed; range [2, 30] -> [2, 30]",
     "reason": "source corrected: the row read 4.2 s as the wild type and 6.3 s as the knockout; the paper's 4.2 s is the Kir4.1-inhibited single-stimulation value, and all four are model outputs",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -86558,9 +87109,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
+    "was_label": "guessed",
     "new_label": "guessed",
-    "change": "12.6 -> 12.6 s; inferred -> guessed; range [2, 30] -> [2, 30]",
+    "change": "12.6 -> 12.6 s; guessed -> guessed; range [2, 30] -> [2, 30]",
     "reason": "inferred -> guessed: a mouse model's simulation output, not a measurement, and not a worm value (value unchanged)",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Glial uptake alone, 1/(1/control - 1/inhibited): 17.9 s (single) and 12.0 s (tetanic), derived; the template 12.6 s inside",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -86571,9 +87122,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
-    "new_label": "inferred",
-    "change": "6.3 -> 6.3 s; inferred -> inferred; range [3, 15] -> [3, 15]",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "6.3 -> 6.3 s; guessed -> guessed; range [3, 15] -> [3, 15]",
     "reason": "source corrected (as glia_kir_tau_s)",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -86584,9 +87135,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
+    "was_label": "guessed",
     "new_label": "guessed",
-    "change": "6.3 -> 6.3 s; inferred -> guessed; range [3, 15] -> [3, 15]",
+    "change": "6.3 -> 6.3 s; guessed -> guessed; range [3, 15] -> [3, 15]",
     "reason": "inferred -> guessed: a mouse model's simulation output (value unchanged)",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Clearance without glial uptake is at least the inhibited decay, 4.2 to 6 s; the template 6.3 s",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -86597,9 +87148,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
-    "new_label": "inferred",
-    "change": "4.2 -> 4.2 s; inferred -> inferred; range [0.7, 6.3] -> [0.7, 6.3]",
+    "was_label": "guessed",
+    "new_label": "guessed",
+    "change": "4.2 -> 4.2 s; guessed -> guessed; range [0.7, 6.3] -> [0.7, 6.3]",
     "reason": "source corrected (as glia_kir_tau_s)",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -86610,9 +87161,9 @@
     "origin": "mech:glia",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
+    "was_label": "guessed",
     "new_label": "guessed",
-    "change": "4.2 -> 4.2 s; inferred -> guessed; range [0.7, 6.3] -> [0.7, 6.3]",
+    "change": "4.2 -> 4.2 s; guessed -> guessed; range [0.7, 6.3] -> [0.7, 6.3]",
     "reason": "inferred -> guessed: a mouse model's K+ recovery used for a worm Cl- microdomain (value unchanged)",
     "source": "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507), numerical simulations of a mouse hippocampal neuron-astrocyte model: [K+]o decay after a single stimulation 3.4 s (control) and 4.2 s (Kir4.1 inhibited), after tetanic stimulation 4 s and 6 s. Taken as the control K+ recovery, 3.4 to 4 s; the template 4.2 s",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4380507/"
@@ -88443,9 +88994,9 @@
     "origin": "mech:neuromod",
     "n": 1,
     "pattern": "",
-    "was_label": "inferred",
+    "was_label": "measured",
     "new_label": "measured",
-    "change": "500 -> 150 nM; inferred -> measured; range [100, 2000] -> [142, 630]",
+    "change": "150 -> 150 nM; measured -> measured; range [142, 630] -> [142, 630]",
     "reason": "was 500 nM [100, 2000], inferred from human SERT; the MOD-5 paper's free full text (served to scripts on 7 Nov) gives MOD-5's own Km, the same assay as the measured sibling dat1_km_nM (DAT-1 in transfected cells); authors checked in Europe PMC",
     "source": "Ranganathan, Sawin, Trent & Horvitz 2001 J Neurosci 21:5871 (PMC6763176): MOD-5 stably expressed in HEK293 cells, [3H]5-HT uptake, Km 150 +- 8 nM (mean +- SEM, at least six replicates); range from 150 - 8 nM to the top of the other SERTs the paper lists (280 to 630 nM)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6763176/"
@@ -94776,44 +95327,44 @@
   "before_fills": {
    "rows": {
     "published_fit": 720,
-    "guessed": 691,
-    "measured": 235,
-    "derived": 35,
-    "inferred": 325,
+    "guessed": 692,
+    "measured": 241,
+    "derived": 37,
+    "inferred": 327,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8244,
-    "guessed": 9595,
-    "measured": 6092,
-    "derived": 67515,
-    "inferred": 330,
+    "guessed": 9596,
+    "measured": 6098,
+    "derived": 67517,
+    "inferred": 332,
     "absent": 1
    }
   },
   "after_fills": {
    "rows": {
     "published_fit": 706,
-    "guessed": 678,
-    "measured": 250,
-    "inferred": 329,
-    "derived": 43,
+    "guessed": 679,
+    "measured": 253,
+    "inferred": 334,
+    "derived": 45,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8235,
-    "guessed": 9474,
-    "measured": 6208,
-    "derived": 67524,
-    "inferred": 335,
+    "guessed": 9475,
+    "measured": 6211,
+    "derived": 67526,
+    "inferred": 340,
     "absent": 1
    }
   },
   "ranges": {
    "roles_model": {
     "inactive": {
-     "rows": 294,
-     "unknown": 7054,
+     "rows": 293,
+     "unknown": 7053,
      "vector": 0
     },
     "fixed": {
@@ -94822,12 +95373,12 @@
      "vector": 18
     },
     "free": {
-     "rows": 344,
-     "unknown": 344,
-     "vector": 344
+     "rows": 346,
+     "unknown": 346,
+     "vector": 346
     },
     "static": {
-     "rows": 1171,
+     "rows": 1181,
      "unknown": 0,
      "vector": 0
     },
@@ -94839,8 +95390,8 @@
    },
    "roles_catalog": {
     "inactive": {
-     "rows": 322,
-     "unknown": 7108,
+     "rows": 321,
+     "unknown": 7107,
      "vector": 0
     },
     "fixed": {
@@ -94849,12 +95400,12 @@
      "vector": 18
     },
     "free": {
-     "rows": 350,
-     "unknown": 350,
-     "vector": 350
+     "rows": 352,
+     "unknown": 352,
+     "vector": 352
     },
     "static": {
-     "rows": 1260,
+     "rows": 1270,
      "unknown": 0,
      "vector": 0
     },
@@ -94866,9 +95417,9 @@
    },
    "free_by_basis": {
     "guessed_physical": {
-     "rows": 329,
-     "unknown": 329,
-     "vector": 329
+     "rows": 331,
+     "unknown": 331,
+     "vector": 331
     },
     "physics": {
      "rows": 11,
@@ -94881,10 +95432,10 @@
      "vector": 4
     }
    },
-   "free_unknown": 344,
-   "free_rows": 344,
+   "free_unknown": 346,
+   "free_rows": 346,
    "span_counts": {
-    ">1": 190,
+    ">1": 191,
     ">2": 40,
     ">3": 13
    },
@@ -95530,12 +96081,12 @@
    },
    "from_free": 0,
    "n_new_rules": 10,
-   "free_after_rules": 354,
+   "free_after_rules": 356,
    "after_by_basis": {
     "guessed_physical": {
-     "rows": 329,
-     "unknown": 329,
-     "vector": 329
+     "rows": 331,
+     "unknown": 331,
+     "vector": 331
     },
     "measured_spread": {
      "rows": 13,
@@ -95549,11 +96100,11 @@
     }
    },
    "after_span_counts": {
-    ">1": 195,
+    ">1": 196,
     ">2": 40,
     ">3": 13
    },
-   "after_rows": 354,
+   "after_rows": 356,
    "sampling": {
     "generated": "7 Nov 2026 18:55 CST (wranges, merged main 0ef21b7: wmodel's glia K+ buffer fix and structure rules)",
     "joint": {
@@ -96010,14 +96561,14 @@
    },
    "vector": {
     "counts": {
-     "vector": 368,
+     "vector": 370,
      "rule": 43,
-     "gap": 325,
+     "gap": 327,
      "gap_discrete": 15,
-     "scan_rows": 1329,
-     "scan_elements": 80001,
+     "scan_rows": 1339,
+     "scan_elements": 80011,
      "residual_slots": 6298,
-     "unknown_inactive": 325
+     "unknown_inactive": 324
     },
     "out": {
      "replaced by structure_rules": {
@@ -96038,19 +96589,19 @@
      }
     },
     "by_row_role": {
-     "free": 350,
+     "free": 352,
      "fixed": 18
     },
     "by_grain": {
-     "class": 189,
-     "global": 126,
+     "class": 190,
+     "global": 127,
      "gene": 20,
      "cell": 19,
      "channel": 11,
      "pairing": 3
     },
     "by_basis": {
-     "guessed_physical": 337,
+     "guessed_physical": 339,
      "physics": 26,
      "measured_spread": 5
     },

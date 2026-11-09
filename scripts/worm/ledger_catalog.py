@@ -59,6 +59,7 @@ MECH_ROW = {
     "channel_library": 5, "ca_pool_volume": 6, "glia_sensilla": 11, "endorgan_cells": 16,
     "unc58_na_leak": 5, "drugs": 22, "pathogen_sickness": 22,                 # wmodel, 7 Nov evening
     "egl19_kinetics": 4, "shl1_kinetics": 4,              # channel_forms (wbrain2, 8 Nov): gating, as the kin_ rows
+    "ca_bulk": 6,                                         # capool's bulk readout pool (wbrain2, 8 Nov)
 }
 PARAM_ROW = {"ion_celsius": 25}
 # wmodel's structure_rules (7 Nov): each rule sits in the row of the per-element values it generates

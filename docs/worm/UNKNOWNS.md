@@ -11,6 +11,7 @@ per-element residuals (6,298 slots) are frozen at 0. The count went from 340 at 
 KNOWLEDGE_GAPS section C mechanisms added 10 numbers, all outside the vector because their switches are off by
 default (8 guessed, 2 inferred). Fitting has not started.
 8 Nov 22:08 (wbrain2): scan rows 1,272 to 1,329 and elements 79,944 to 80,001 (measured), the 57 constants of mech/channel_forms (Nicoletti 2024's EGL-19 and SHL-1 forms, published fits, both toggles off by default); the vector is unchanged at 368.
+8 Nov 23:43 (wbrain2, after the wbody2, weki and wneuro merges): the vector is 370 (43 rules, 327 gaps, 15 discrete; measured): +1 `rule_body_modulus_scale` (wbody2, guessed) and +1 `unc2_gs_gain` (wneuro, guessed). Scan rows 1,329 to 1,339 and elements 80,001 to 80,011: the 7 `cabulk_*` numbers of the bulk Ca readout pool (mech/capool `ca_bulk`, off by default; 6 inferred, 1 derived), `pep_ec50_nlp-40_aex-2_wang2013_nM` (wneuro, measured, its toggle off), `body_E_bending_kPa` (wbody2, measured) and `obs_gcamp7f_range` (guessed -> measured, Dana 2019's preprint, so it leaves the inactive unknowns: 325 -> 324).
 
 ## What the roles mean
 
