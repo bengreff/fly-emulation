@@ -18,6 +18,20 @@ Pre-registered (8 Nov 21:12 CST, written before the first maturation run on a NE
             maturation stays off (neutral) until a battery run and Ben's go; this is a diagnostic, not an adoption.
   flags     s at a bound, not converged, target outside the range: each reported per cell.
 
+Result (8 Nov 21:27, code f8e7699, measured; runs/worm/fit/maturation_f8e7699/): FALSIFIED, helps in 0 of 3.
+  rmse18 default -> matured (mV): AIY 10.60 -> 23.92, AFD 49.89 -> 49.83, AWA 21.96 -> 21.96; mask on and off identical
+  (brain.py _density: "on" keeps a published fit's channel set, and all three are published fits). Neutral |diff| 0.0.
+  s* AIYL 0.627, AFDL 0.358 (converged, inside), AWAL 4.0 (at the bound); 105 bio-s, 123 s wall for the three.
+  Why, per cell (inferred from the traces):
+  - AIY: the target is Ca at -53 mV, but one multiplier scales the Ca channels too, so the cell meets that Ca at a
+    different voltage: rest moved -51.3 -> -43.8 mV (data -53.5) and every step response grew. A Ca set point does not
+    pin the voltage when the rule scales the Ca conductance itself.
+  - AFD: the error is the hyperpolarising branch (steady -227 mV at -15 pA, data -91): a missing conductance near
+    -90 mV, which no uniform multiplier supplies.
+  - AWA: the default membrane is Liu 2018's (senses_chem inserts its own channels and zeroes BAAIWorm's), which no
+    dens_* multiplier reaches, so the rule ran to its bound with no effect. Needs the Liu 2018 densities exposed as
+    g_scale names (request in the night file).
+
 Usage (backhouse): python scripts/worm/fit/maturation_ephys.py OUT.json [FEATURES.npz]
 """
 from __future__ import annotations
