@@ -35,7 +35,8 @@ data/worm/structure/beets2023/), one Spec per gene pair at the precursor's most 
 and the least potent peptide; occupancy c^h / (c^h + EC50^h).
 
 Monoamines (row 10). Release cells from the transmitter atlas (5-HT, DA, OA, TA). Each releasing cell's vesicular
-store S (fraction of ma_store_molecules) refills with ma_synth_tau_s and empties by release J = ma_release_per_s x q x
+store S (fraction of its amine's store: ma_store_molecules_serotonin and _dopamine from measured whole-worm content,
+Weishaupt et al. 2023; ma_store_molecules, guessed, for OA and TA) refills with ma_synth_tau_s and empties by release J = ma_release_per_s x q x
 S x R (q the cell's drive with the ma_ voltage specs, R its release factor). Reuptake is Michaelis-Menten by MOD-5
 (SERT) and DAT-1 (DAT) cells and refills the uptaking cell's store if it releases that amine; residual loss
 ma_degrade_tau_s. OA and TA have no known plasma-membrane transporter, so only the residual loss clears them.
@@ -270,7 +271,24 @@ SPECS += [
     S("ma_tau_ms", A, "ms", 100, 10, 1000, notes="small clear and dense-core vesicles: faster than peptide DCVs"),
     S("ma_release_per_s", A, "molecules/s per neuron", 1e5, 1e3, 1e7, notes="at full drive and a full store",
       grain="class", applies_to="5-HT, DA, OA, TA release cells"),
-    S("ma_store_molecules", A, "molecules per neuron", 1e6, 1e4, 1e8, grain="class", applies_to="each release cell"),
+    S("ma_store_molecules", A, "molecules per neuron", 1e6, 1e4, 1e8, grain="class", applies_to="each OA and TA "
+      "release cell (no measured content); 5-HT and DA cells read their own rows below"),
+    S("ma_store_molecules_serotonin", A, "molecules per neuron", 1.1e7, 5.4e6, 1.9e7, "Weishaupt et al. 2023 Molecules "
+      "28:5373 (PMC10385323, LC-MS/MS, opened 8 Nov 2026): '0.067 +- 0.012 ng SRT per mg protein in wildtype worms'; "
+      "the extract of '3000 L4 stage worms in 150 uL extraction buffer' held '2.2 nM SRT', losses 'balanced by the "
+      "respective deuterated standards'", "derived", grain="type", applies_to="5-HT release cells (NSM, ADF, HSN)",
+      notes="2.2 nM x 150 uL x NA / 3000 = 6.6e7 molecules per L4 worm, over its 6 TPH-1 cells = 1.1e7 (derived; all "
+            "5-HT taken as neuronal, split evenly). Bounds: content - 1 SEM over 10 cells (the MOD-5 cells also hold "
+            "5-HT) to content + 1 SEM over 4 (L4 HSNs holding little). L4, fed. The template 1e6 (guessed) was 11x "
+            "below it (wneuro item 6, 9 Nov 2026)"),
+    S("ma_store_molecules_dopamine", A, "molecules per neuron", 4.3e7, 3.5e7, 5.0e7, "Weishaupt et al. 2023 Molecules "
+      "28:5373 (PMC10385323, LC-MS/MS, opened 8 Nov 2026): '2.18 +- 0.19 ng DA per mg protein in wildtype worms', "
+      "cat-2 deletion '0.11 +- 0.04'; the extract of '3000 L4 stage worms in 150 uL extraction buffer' held '11.9 nM' "
+      "DA, losses balanced by deuterated standards", "derived", grain="type",
+      applies_to="DA release cells (CEP, ADE, PDE)",
+      notes="11.9 nM x 150 uL x NA / 3000 = 3.6e8 molecules per L4 worm; the CAT-2-dependent 95% (cat-2: 0.11 / 2.18) "
+            "over the 8 DA neurons = 4.3e7 (derived). Bounds: +- 2 SEM (8.7% each). L4, fed. The template 1e6 "
+            "(guessed) was 43x below it (wneuro item 6, 9 Nov 2026)"),
     S("ma_synth_tau_s", A, "s", 60, 5, 600, notes="refill time of an empty store (TPH-1, CAT-2, TDC-1/TBH-1 synthesis "
       "and CAT-1 loading)", grain="class"),
     S("ma_uptake_vmax_per_s", A, "molecules/s per cell", 2e5, 1e4, 1e7, grain="class",
@@ -381,6 +399,7 @@ class Mech:
                         self.entries.append((c, li[pg], float(p[sid]), self._w(rg), P))
         if self.on[A]:
             self.ma_comp, self.ma = self._pool(self.form[A] == "well_mixed", len(AMINES), p["ma_diffusion_um2_per_s"])
+            self.ma_cap = np.array([float(p.get(f"ma_store_molecules_{lg}", p["ma_store_molecules"])) for lg in AMINES])
             self.ma_rel = np.array([[float(self.neuron[c] and lg in (st.transmitter.get(names[c]) or set()))
                                      for lg in AMINES] for c in range(n)])
             self.ma_Wr = np.eye(self.ma.N.shape[1])[self.ma_comp]
@@ -551,7 +570,7 @@ class Mech:
                 if ms is not None:
                     R_ma = R_ma * np.asarray(ms, float)
             J = self.ma_rel * (p["ma_release_per_s"] * self.q_ma * R_ma)[:, None] * self.store   # molecules/s
-            cap = p["ma_store_molecules"]
+            cap = self.ma_cap
             c = pool.nM()
             sink = np.zeros_like(pool.N)
             back = np.zeros_like(self.store)

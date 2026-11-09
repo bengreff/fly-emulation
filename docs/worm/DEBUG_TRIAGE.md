@@ -306,3 +306,11 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   basal Ca, derived) and follows the 20-cell mean, not int9: a request to wbody2. Wang 2013's bar (one DVB spike per
   cycle) still fails: 0 spikes. Line 13 (E): the GABA bar now rejects 5 Hz facilitation (Liu 2009); the D proof
   stands (2 of 256 triage points pass the corrected bar, measured). Night file `docs/worm/night/2026-11-08_wneuro.md`.
+- Item 6, amines against receptor potency (wneuro): every amine pair is near off at rest and on food (highest
+  occupancy SER-7's 0.028 on food, measured). Store: the template's shared 1e6 molecules per cell was 11x (5-HT) and
+  43x (DA) below whole-worm LC-MS/MS content (Weishaupt 2023, derived); ported per amine (B), which leaves rest levels
+  within 5% (measured). Release rate per cell (guessed 1e5 per s): D, a probe finds MC's SER-7 at EC50 at 8 of 256
+  in-range points, all with release >= 1.35e6 per s; not adopted. SER-1, SER-4 and SER-5 EC50s are guessed (1000 nM)
+  and no probed point reaches SER-1 at the vulva (at most 160 nM, derived), so egg-laying cannot answer 5-HT through
+  SER-1 from the pool. Pool geometry is outside its well-mixed range (compartments 2-5 length constants long) but a
+  1D bound puts the near-source excess at 1.9-2.5x, not the 35x gap: A, open. SER-7's EC50 (30 vs 32 nM) is not C.
