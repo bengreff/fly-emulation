@@ -19,8 +19,23 @@ Grains: global 126, class 189, gene 20, cell 19, channel 11, pairing 3. Mechanis
 | logit (lo <= 0) | 50 | in the EKI vector: z = logit of the linear position |
 | bernoulli | 15 | outside EKI (section 6): `syn_inhibitory[cell]` for AVF, AVH, AVK, BDU, CAN, PVW, RMG (L and R) and PVT |
 | of which scene_* | 6 (4 log, 2 logit) | **not the worm**: the diacetyl and NaCl plume shapes of an experiment's world. Fixed per experiment at its protocol's value, out of the vector. **Ben to confirm** (default: fixed) |
+| of which obs_noise_dff | 1 (log) | **not the worm**: the microscope's per-frame imaging noise. Fixed per experiment at the dataset's own measured noise (Atanas 2023: 0.0417 F / mean F, derived, `scripts/worm/fit/atanas_noise.py`; `vitals.BATTERY_VALUES`), out of the vector. Added 8 Nov 23:25; same Ben-to-confirm item as scene_* |
 
-So the EKI vector has **347** continuous numbers (derived: 368 - 15 - 6). Every member lives inside the hard bounds by
+So the EKI vector has **347** continuous numbers on f8e7699 (derived: 368 - 15 - 6) and **347** on main dfe027d
+(derived: 369 - 15 - 6 - 1; main added wbody2's `rule_body_modulus_scale`, and obs_noise_dff leaves).
+
+**Why the imaging noise leaves the vector (8 Nov 23:25, measured unless marked).** On the f8e7699 template the
+GCaMP traces are imaging noise: per-neuron SD 0.029, noise 0.029, signal 0.003 F / mean F (median over neurons;
+Atanas's open animals: SD 0.293, noise 0.037-0.042). White noise of SD s alone gives a per-neuron P95 - P5 of 3.29 s
+(derived), which is 0.66 at obs_noise_dff's upper bound 0.2, inside the gcamp_range bar (0.567-0.983). The signal's
+response to every brain number is near zero while the noise's is 3.29 per unit, so the update would move the noise
+first: it passes a brain-activity sign with no brain activity. Prior draw 1 (admissible) has obs_noise_dff 0.176 and
+a noise-only range of 0.579 (derived). The rule, for every observation: **an instrument number that the statistic
+reads directly is set per experiment from that dataset, never fitted** (the scene_* numbers are the world's version
+of the same rule). The other obs_* numbers stay in: obs_ca_rest_nM cancels out of the Atanas readout (F / mean F,
+`vitals.f_over_fmean`; Randi's dF/F0 is FIT1's statistic and should take F0 from each trace's own pre-stimulus
+baseline the same way, request to wfit), and the opto and NeuroPAL numbers act only in the Randi and NeuroPAL
+experiments, through the stimulated neuron's response or the identity draw, not through a statistic's noise floor. Every member lives inside the hard bounds by
 construction: `Theta.from_z` maps any real z inside the box.
 
 Priors (ledger `parameters.prior_dist`, measured): uniform 134, log-uniform 213, bernoulli 15, 6 without a ledger row
@@ -220,4 +235,5 @@ gate (refinement 10). Ben's call; not decided here.
 2. Discrete alternatives are compared on a validation split of the open data; the locked set scores only the winner,
    once. [yes]
 3. The open mutant strains (OWMD 11, Yemini's open mutant rows) stay out of the loss, per SCOREBOARD 15. [yes]
-4. The 6 scene_* numbers are fixed per experiment, not fitted. [yes]
+4. The 6 scene_* numbers, and the imaging noise obs_noise_dff (at each dataset's measured noise), are fixed per
+   experiment, not fitted. [yes]
