@@ -14,8 +14,16 @@ calcium-mediated all-or-none action potentials. Cell 175:57-70 (bioRxiv 10.1101/
   I_Kr  = gKr kr kinf_r1(v)(v - vK), kr' = (kinf_r2(v) - kr)/tKr
   I_Kslow = gKs ks (v - vK), ks' = (kinf_s(v) - ks)/tKs(v), tKs(v) = tKs1 + 0.5(tKs2 - tKs1)(tanh((v - vKs2)/dvKs2) + 1)
             (the paper's "Ka", slowly activating; renamed here to keep it apart from the K1-K3 index)
-  I_Kir = -gKir(beta log[1 + exp(-(v - vK + I0)/beta)] + I0)      (as printed)
+  I_Kir = gKir(I0 - beta log[1 + exp(-(v - vK - I0)/beta)])        (kir_form 0, default)
+  I_Kir = -gKir(beta log[1 + exp(-(v - vK + I0)/beta)] + I0)      (kir_form 1, as printed)
   I_L   = gL (v - vL)
+
+The inward rectifier as printed is inward at every voltage (-4.0 pA at -50 mV, above E_K), which no K+ current can
+be, and puts the AWA rest at -64.6 mV against the recorded -75.3 +- 4.7 mV (DEBUG_TRIAGE line 7). The default is the
+form in the authors' code (github.com/wormwhisperer/CElegansAWAActionPotentialAnalysis, qiangstoch3c.py, 2018; the
+equation is re-written here, not copied): gKir times the smooth minimum of (v - vK) and I0, ohmic below E_K and
+saturating at gKir I0 (4 pA) above it. Table S4 calls I0 a 5.0 pA saturated current; the code uses it in mV. The
+printed form stays as kir_form 1 for attribution.
 
 Liu's conductances are whole-cell (nS, C = 1.5 pF); the module (wormemu.mech.senses_odor) converts each to a
 density g_nS * cm / (1000 * C_pF) S/cm2, which keeps every g/C ratio, so an isopotential cell of any area follows the
@@ -32,7 +40,7 @@ NEURON {
     RANGE vK, gK1, vK1, dvK1, tK1, gK2, vK2, dvK2, tK2, gK3, vK3, dvK3, tK3
     RANGE gKr, vKr1, dvKr1, vKr2, dvKr2, tKr
     RANGE gKs, vKs1, dvKs1, vKs2, dvKs2, tKs1, tKs2
-    RANGE gKir, I0, beta, gL, vL
+    RANGE gKir, I0, beta, kir_form, gL, vL
     RANGE iCa, iK, iKir
 }
 
@@ -86,6 +94,7 @@ PARAMETER {
     gKir = 5.333e-04 (S/cm2)
     I0 = 5.0 (mV)
     beta = 5.0 (mV)
+    kir_form = 0
     gL = 1.667e-04 (S/cm2)
     vL = -65.0 (mV)
 }
@@ -105,7 +114,11 @@ STATE { c1 c2 k1 k2 k3 kr ks }
 BREAKPOINT {
     SOLVE states METHOD derivimplicit
     iCa = gCa * (c1 + f * c2) * (v - vCa)
-    iKir = -gKir * (beta * log(1 + exp(-(v - vK + I0) / beta)) + I0)
+    if (kir_form > 0.5) {
+        iKir = -gKir * (beta * log(1 + exp(-(v - vK + I0) / beta)) + I0)
+    } else {
+        iKir = gKir * (I0 - beta * softplus(-(v - vK - I0) / beta))
+    }
     iK = (gK1 * k1 + gK2 * k2 + gK3 * k3 + gKr * kr * hinf(v, vKr1, dvKr1) + gKs * ks) * (v - vK)
     ica = iCa
     ik = iK + iKir
@@ -145,4 +158,13 @@ FUNCTION cinfa(v (mV)) {
 
 FUNCTION cinfi(v (mV)) {
     cinfi = (tanh((v - vc2) / dvc2) + 1) / c0
+}
+
+FUNCTION softplus(z) {
+    : log(1 + exp(z)), exact to double precision above z = 30
+    if (z > 30) {
+        softplus = z
+    } else {
+        softplus = log(1 + exp(z))
+    }
 }

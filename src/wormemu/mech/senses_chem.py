@@ -2,7 +2,8 @@
 
 Takes over brain_layers' sens_salt, sens_odor_attract, sens_repellent, sens_thermo, sens_o2, sens_co2, sens_light and
 sens_food toggles (forms: "cascade" default, "lumped" = the old one-transform layer exactly, "off"), and adds
-awa_membrane ("liu2018" default, "baaiworm" = BAAIWorm's AWA channels as before).
+awa_membrane ("liu2018" default, "baaiworm" = BAAIWorm's AWA channels as before) and awa_kir (Liu's inward rectifier:
+"smooth_min" default, "as_printed" = the equation as printed, inward at every voltage; DEBUG_TRIAGE line 7).
 
 What each cell runs (the world reaches the brain only here, through BodyToBrain's head/tail channels):
 
@@ -61,7 +62,10 @@ MECHANISMS = [
     ("sens_light", "Light: LITE-1 -> DAF-11/ODR-1 cGMP cascade in ASJ, ASK, ASH, AWB, ASI", "sensory", CASCADE),
     ("sens_food", "Food: NSM DEL-3/7, ADF, ASI, ASJ receptor-channel template", "sensory", CASCADE),
     ("awa_membrane", "AWA membrane: calcium action potentials (Liu et al. 2018)", "sensory", "liu2018"),
+    ("awa_kir", "AWA inward rectifier: gKir times the smooth minimum of (v - vK) and I0, as in the authors' code "
+     "(Liu et al. 2018; as printed it is inward at every voltage)", "sensory", "smooth_min"),
 ]
+AWA_KIR = ("smooth_min", "as_printed")
 
 LIU_SRC = ("Liu Q, Kidd PB, Dobosiewicz M, Bargmann CI 2018 Cell 175:57, Table S4 WT (bioRxiv 10.1101/359935, CC-BY; "
            "docs/worm/research/liu2018_tableS4.jpg)")
@@ -101,6 +105,9 @@ def _liu_spec(sfx, val, unit, kind):
                     notes="AWA whole-cell capacitance in the fit (Liu 2018 recordings); range guessed")
     else:
         lo, hi, note = val / 2, val * 2, "range x/2 to x2 (guessed)"
+        if sfx == "I0":
+            note += ("; Table S4 lists I0 as a 5.0 pA saturated current, but the authors' code (github.com/wormwhisperer/"
+                     "CElegansAWAActionPotentialAnalysis, gKI) adds it to v in mV: the Kir saturates at gKir I0 = 4 pA")
     return spec(f"awa_liu_{sfx}", "awa_membrane", unit, val, lo, hi, "published_fit", LIU_SRC, "AWAL, AWAR",
                 notes=note)
 
@@ -214,6 +221,9 @@ class Mech:
         self.b, self.p = brain, params
         self.forms = {t: form(toggles, t) for t in TOGGLES}
         self.awa = toggles.get("awa_membrane", "liu2018")
+        self.awa_kir = toggles.get("awa_kir", "smooth_min")
+        if self.awa_kir not in AWA_KIR:
+            raise ValueError(f"awa_kir: {self.awa_kir!r} not in {AWA_KIR}")
         p = params
         names = brain.cell_names
         self.n = len(names)
@@ -273,6 +283,7 @@ class Mech:
             i = b.idx[c]
             for s in b.cells[i].all:
                 s.insert("awa_liu")
+                s.kir_form_awa_liu = AWA_KIR.index(self.awa_kir)
                 for sfx, mod, _, _, kind in LIU:
                     if mod is None:
                         continue

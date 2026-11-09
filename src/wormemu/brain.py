@@ -94,6 +94,14 @@ KNOWN = {"measured", "published_fit", "derived", "inferred"}
 # Ben, 6 Nov 2026: every mechanism on in the template worm, the simpler forms as toggles. These defaults are written by
 # scripts/worm/build_ledger.py (off there until the catalog worker rebuilds the ledger); the brain applies them here
 TEMPLATE_ON = {"receptor_sign": "on", "innexin_identity": "on", "expression_map": "on"}
+# expression_map (CeNGEN presence at threshold 2): "on" gates only densities that are not a published fit. BAAIWorm's
+# densities are 5 co-tuned sets, fitted to the recorded cells in upstream's electrophysiology_data (AIYL, RIML, AVAL,
+# AWAL current clamp; AWCL, VD05 voltage clamp; AWAL and AWCL share one set) and assigned to every other cell by
+# BAAIWorm. Zeroing a fitted K channel without refitting left Ca currents with no outward balance: 61 of 74 single
+# cells above E_Ca and AIYL's training RMSE 113.8 mV (DEBUG_TRIAGE lines 15-16, class A). "cengen_all" is that old
+# form (every cell masked), kept for attribution; FIT2's map (form fit2) is the replacement that refits from expression.
+EXPRESSION_MASK = ("on", "cengen_all")
+FITTED = {"published_fit", "measured"}
 
 _h = None
 
@@ -119,6 +127,41 @@ def patch_ek(stem, text):
     return out
 
 
+def patch_slo_gsc(stem, text):
+    """The SLO mods' nanodomain gsc as a RANGE variable (default 0.04 nS unchanged), so mech/capool's slo_ca_source
+    can set it per cell (the tuner's form, DEBUG_TRIAGE item 4)."""
+    if stem not in SLO:
+        return text
+    out, n = re.subn(r"^(\s*RANGE gbslo[12]),", r"\1, gsc,", text, flags=re.M)
+    if n != 1:
+        raise ValueError(f"{stem}.mod: {n} RANGE lines (expected 1)")
+    return out
+
+
+def patch_shl1_form(stem, text):
+    """SHL-1's HH exponent, inactivation weights and BAAIWorm's three hard-coded time-constant factors as GLOBALs
+    (defaults the literals, the arithmetic order kept, so the default build is the vendored mod bit for bit), for
+    mech/channel_forms' Nicoletti 2024 forms (DEBUG_TRIAGE line 1)."""
+    if stem != "shl1":
+        return text
+    from wormemu.mech.channel_forms import SHL1_FORM
+    subs = [(r"^([ \t]*)ik = gbshl1 \* m \* m \* m \* \(0\.7 \* hf \+ 0\.3 \* hs\) \* \(v - ek\).*$",
+             "\\1if (mexp == 3) {\n\\1    ik = gbshl1 * m * m * m * (wf * hf + ws * hs) * (v - ek)\n\\1} else {\n"
+             "\\1    ik = gbshl1 * m^mexp * (wf * hf + ws * hs) * (v - ek)\n\\1}"),
+            (r"\(tm\*0\.4\)", "(tm*tmsc)"), (r"\(thf\*0\.08\)", "(thf*thfsc)"), (r"\(ths\*0\.3\)", "(ths*thssc)"),
+            (r"^(PARAMETER\s*\{)", "\\1\n" + "\n".join(f"    {k} = {v}" for k, v in SHL1_FORM.items()))]
+    for pat, rep in subs:
+        text, n = re.subn(pat, rep, text, count=1, flags=re.M)
+        if n != 1:
+            raise ValueError(f"shl1.mod: {pat!r} not found")
+    return text
+
+
+def patch_baai(stem, text):
+    """Every build-time edit to a vendored BAAIWorm mod except temperature's tadj (applied after)."""
+    return patch_shl1_form(stem, patch_slo_gsc(stem, patch_ek(stem, text)))
+
+
 def _neuron():
     """NEURON with the vendored mods loaded (compiled once into $WORMEMU_NRNMECH or ~/.cache/wormemu/nrnmech)."""
     global _h
@@ -130,9 +173,9 @@ def _neuron():
     mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) \
         + sorted(OWN_MODS.rglob("*.mod"))                # ours, including the organ workers' nmodl/organs/
     # the built text: temperature's rate factor (tadj, 1 by default) patched into the rate-class mods (row 25), and
-    # the K mods' ik against ek (EK_MODS)
-    text = {m: temperature.patch_mod(m.stem, patch_ek(m.stem, m.read_text()) if m.parent == BAAI / "mod" else
-                                     m.read_text()) for m in mods}
+    # the K mods' ik against ek (EK_MODS), the SLO mods' gsc as RANGE, SHL-1's form constants as GLOBALs
+    text = {m: temperature.patch_mod(m.stem, patch_baai(m.stem, m.read_text()))
+            if m.parent == BAAI / "mod" else m.read_text() for m in mods}
     tag = hashlib.sha1(b"".join(m.name.encode() + text[m].encode() for m in mods)).hexdigest()[:12]
     RATE_SUFFIX.update({temperature.mod_suffix(text[m]): temperature.RATE_MODS[m.stem][0] for m in mods
                         if m.stem in temperature.RATE_MODS})
@@ -420,12 +463,15 @@ class Brain:
 
     def _density(self, ch, name):
         v = self.spec.v(f"dens_{ch}", name)
-        if self.toggles["expression_map"] == "fit2":
+        form = self.toggles["expression_map"]
+        if form == "fit2":
             m, prm = excite_map.for_brain(self)
             return m.cell(name, prm)[ch]
-        if self.toggles["expression_map"] != "on":
+        if form not in EXPRESSION_MASK:
             return v
         t = self.spec.led.values(f"dens_{ch}").set_index("element")
+        if form == "on" and t.label[name] in FITTED:
+            return v                                     # a published fit keeps its co-tuned channel set (row 5)
         tpm, cls = float(t.cengen_tpm[name]), t.cengen_class[name]
         if isinstance(cls, str) and cls and tpm == 0:
             return 0.0
@@ -474,6 +520,8 @@ class Brain:
 
     def _kinetics(self):
         """Channel kinetics, nanodomain and Ca pool constants: mod GLOBALs (RANGE ones set on every soma)."""
+        from wormemu.mech import channel_forms
+        channel_forms.restore(self.h)                       # GLOBALs a form may have set in an earlier Brain
         if not self.lit:
             return
         h, p = self.h, self.spec.led.parameters

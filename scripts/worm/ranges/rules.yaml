@@ -196,6 +196,18 @@ family_of:
 
 # rules, first match wins. re = regex on param_id (re.search); unit = optional list of row units
 rules:
+  # mech/channel_forms (wbrain2, 8 Nov 2026, DEBUG_TRIAGE line 1): Nicoletti 2024's EGL-19 and SHL-1 constants, the
+  # same quantities as the kin_egl19_* / kin_shl1_* rows they stand in for, each by its place in BAAIWorm's egl19.mod
+  # and shl1.mod formulas (setparames); first so no generic rule takes them
+  - {re: "^n24[pc]_egl19_(vhm|vhh|vhhb|btm|etm|cth|fth)$", unit: [mV], cls: voltage_midpoint}
+  - {re: "^n24[pc]_egl19_(ka|ki|kib|ctm|ftm|dth|gth)$", unit: [mV], cls: voltage_slope}
+  - {re: "^n24[pc]_egl19_(ahinf|bhinf|chinf|dhinf)$", cls: gate_factor}
+  - {re: "^n24[pc]_shl1_(vhm|vhh|btm|dtm|bthf|bths)$", unit: [mV], cls: voltage_midpoint}
+  - {re: "^n24[pc]_shl1_(ka|ki|ctm|etm|cthf|cths)$", unit: [mV], cls: voltage_slope}
+  - {re: "^n24[pc]_(egl19|shl1)_", unit: ["ms"], cls: tau_coefficient}
+  - {re: "^n24[pc]_shl1_(wf|ws)$", cls: fraction}
+  - {re: "^n24[pc]_shl1_(tmsc|thfsc|thssc)$", cls: gain_nonneg}
+  - {re: "^n24[pc]_shl1_mexp$", hard_row_unit: [1, 4], basis: guessed_physical, why: "the Hodgkin-Huxley exponent of SHL-1's activation gate: 1 to 4 independent particles (a Kv4 channel has four voltage sensors)", source: "Hodgkin and Huxley 1952; Nicoletti 2019 (m^3) and the 2024 code (m^1)"}
   # structure and construction
   # rule parameters proposed for wmodel (scripts/worm/ranges/rule_params.csv; not yet rows of the ledger)
   - {re: "^rule_syn_g_per_em_", hard_row_unit: [0, 90], basis: physics, why: "one EM section of an active zone (~1 um long x ~90 nm thick = 0.09 um2) packed at the densest measured receptor density (2e4 per um2, packing_per_um2) of 50 pS channels: 90 nS per section", source: "[HB 1], [HB 2]; RULE_PARAMS_LIT.md section 1"}

@@ -191,7 +191,8 @@
   notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 8 neurons have a ported density but no detected irk-1/irk-2/irk-3; 130 express it with ported density 0'
   absent_reason: ''
 - id: expression_map
-  name: CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0)
+  name: 'CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0) for densities that are not a published
+    fit; BAAIWorm''s co-tuned fitted sets are kept whole (8 Nov, DEBUG_TRIAGE lines 15-16). Forms: cengen_all masks every cell (the old form), fit2 is FIT2''s expression map'
   layer: channel
   status: have
   toggle: expression_map
@@ -383,6 +384,26 @@
   source: src/wormemu/mech/channels.py
   notes: registry module channels; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
+- id: egl19_kinetics
+  name: 'EGL-19 (L-type Ca) gating: BAAIWorm (Nicoletti 2019, off) or Nicoletti 2024, as printed in its S1 File or as in the authors'' code'
+  layer: channel
+  status: have
+  toggle: egl19_kinetics
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/channel_forms.py
+  notes: registry module channel_forms; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: shl1_kinetics
+  name: 'SHL-1 (Kv4, A-type K) gating: BAAIWorm (Nicoletti 2019, off) or Nicoletti 2024, as printed in its S1 File or as in the authors'' code'
+  layer: channel
+  status: have
+  toggle: shl1_kinetics
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/channel_forms.py
+  notes: registry module channel_forms; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: ca_pool_units
   name: Neuron bulk Ca pool fed the whole-soma Ca current (Nicoletti 2019 Eq. 28) instead of the current density
   layer: channel
@@ -390,6 +411,16 @@
   toggle: ca_pool_units
   neutral: 'off'
   default: total_current
+  source: src/wormemu/mech/capool.py
+  notes: registry module capool; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: slo_ca_source
+  name: 'Ca seen by the SLO channels: one open channel''s nanodomain (gsc 40 pS, BAAIWorm''s network and Nicoletti 2019) or the tuner''s cainternn (gsc = the cell''s summed SLO density)'
+  layer: channel
+  status: have
+  toggle: slo_ca_source
+  neutral: 'off'
+  default: single_channel
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row guessed from the name by the catalog
   absent_reason: ''
@@ -631,6 +662,16 @@
   toggle: awa_membrane
   neutral: 'off'
   default: liu2018
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: awa_kir
+  name: 'AWA inward rectifier: gKir times the smooth minimum of (v - vK) and I0, as in the authors'' code (Liu et al. 2018; as printed it is inward at every voltage)'
+  layer: sensory
+  status: have
+  toggle: awa_kir
+  neutral: 'off'
+  default: smooth_min
   source: src/wormemu/mech/senses_chem.py
   notes: registry module senses_chem; PLAN row guessed from the name by the catalog
   absent_reason: ''

@@ -5,11 +5,12 @@ from the code today.
 
 **Verdict.** 368 numbers are genuinely unknown (measured 19:00). That is the whole fit vector: 43 shared rules plus
 325 gaps (15 of them discrete). It is well under Ben's 1,000-2,000 target. Everything else is fixed and labelled with
-its origin (1,272 scan rows covering 79,944 elements), or taken out of the vector for a stated reason (325 rows). The
+its origin (1,329 scan rows covering 80,001 elements), or taken out of the vector for a stated reason (325 rows). The
 per-element residuals (6,298 slots) are frozen at 0. The count went from 340 at 13:00 to 347 at 18:10 (wiring) and to
 368 at 19:00: the 21 drug numbers (mech/drugs, all guessed; read whenever an experiment schedules a drug). The
 KNOWLEDGE_GAPS section C mechanisms added 10 numbers, all outside the vector because their switches are off by
 default (8 guessed, 2 inferred). Fitting has not started.
+8 Nov 22:08 (wbrain2): scan rows 1,272 to 1,329 and elements 79,944 to 80,001 (measured), the 57 constants of mech/channel_forms (Nicoletti 2024's EGL-19 and SHL-1 forms, published fits, both toggles off by default); the vector is unchanged at 368.
 
 ## What the roles mean
 
@@ -17,7 +18,7 @@ default (8 guessed, 2 inferred). Fitting has not started.
 |---|---|---|---|
 | rule | 43 | yes | a shared rule on structure (`structure_rules`): a few numbers that set many per-cell values from CeNGEN, EM counts and transmitter identity |
 | gap | 325 | yes | a guessed or absent value the code reads, with a cited range (`lo`, `hi`) where wranges has one |
-| scan | 1,272 rows, 79,944 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
+| scan | 1,329 rows, 80,001 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
 | residual | 6,298 slots | no, frozen at 0 | a per-element correction on top of a rule; frozen until the rules alone fail held-out data |
 | inactive unknown | 325 | no | guessed or absent, but out of the vector for the reason below |
 
@@ -102,7 +103,7 @@ two ways). None is a code bug.
 | 24 | GABA | plateaus 0.76, 0.57 against > 0.8 | gap value: GABA short-term plasticity borrows ACh's numbers |
 | 4 | channel W | 3.8 mV against 2 | scan: two published kinetic models differ (BAAIWorm's mods at Nicoletti's AIY densities); the Nicoletti form of egl19, slo1_egl19, nca, shl1 is a switch still to build (mods not on the Mac) |
 | 6 | Ca volume | AIYL 3.05x, RIML 2.21x, VA05 2.05x | scan: BAAIWorm's hoc morphology against Nicoletti's NeuroMorpho cells, two reconstructions; the alternative is now a switch (`ca_pool_volume neuromorpho`) |
-| 17 | AWA | 33.9 mV against 25.8 +/- 6 | published fit: the NEURON mod matches the scipy Table S4 reference within 0.07 mV (measured); the Table S4 transcription is not re-checked; the alternative is a switch (`awa_membrane baaiworm`) |
+| 17 | AWA | 39.8 mV against 25.8 +/- 6 (8 Nov: rest -76.2 mV after the Kir fix, was 33.9 mV at rest -64.6) | published fit: the transcription matches the printed equations and Table S4, but the authors' code differs from them in five places (the Kir now follows the code, `awa_kir`); the code's own form does not spike in Liu's 2-12 pA window (wbrain2 night file, 8 Nov); the alternative is a switch (`awa_membrane baaiworm`) |
 | 21 | body bending | 856 kPa, 7.8x the measurement | scan: the layer moduli are a published fit (frontiers2024). Audited 7 Nov: no error in how the layers combine (the core carries about 65%; the FEM's effective modulus is 676 kPa, 6.1x); muscle stiffness is not counted twice |
 | 28 | RIS Gi | 0.034 against 0 | the bar is probably wrong: it assumes DMSR-1 is RIS's only Gi input, and CeNGEN gives RIS others. Rossi et al. 2025 Curr Biol 35:2183 (the EXPR_ADD source) is the held-out source for a better bar (quiescence) |
 
