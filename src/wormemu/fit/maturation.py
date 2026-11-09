@@ -32,6 +32,12 @@ outside is reported, not clipped.
 Measured precondition (8 Nov, single cells AIYL / AFDL / AWAL as single_cell_sanity builds them): Ca is 50.00 to
 50.15 nM from -78 to -35 mV, i.e. within 0.3% of the Ca pool's floor. The sensor's error at rest is that small, so
 the fixed point is set by sub-nanomolar differences (see the night file and FIT_GENERAL.md).
+
+Which Ca the rule senses (`ca_read`): "eq28" (default) is the brain's Ca, Nicoletti 2019's Eq. 28 submembrane pool
+(ctx.ca), the one above. "bulk" is mech/capool's bulk cytosolic pool (ctx.outputs['ca_bulk_uM'], present only with the
+toggle ca_bulk on; NEURON's cadifpmp, wbrain2), the Ca a cytosolic sensor would see. wbrain2 measured (8 Nov, AIYL,
+AFDL, AWAL alone under DC steps) that the same soma Ca current moves the bulk pool about 65x as far as Eq. 28, with a
+floor at its pump's 10 nM. Reading "bulk" without the pool raises, so a missing toggle cannot pass silently.
 """
 from __future__ import annotations
 
@@ -45,6 +51,8 @@ from wormemu.mech import CHANNEL_NAMES
 M = "maturation"
 STATIC = ("nca",)                                  # NCA is a voltage-independent leak: static, like pas (O'Leary)
 REGULATED = tuple(c for c in CHANNEL_NAMES if c not in STATIC)
+CA_READ = ("eq28", "bulk")
+BULK_KEY = "ca_bulk_uM"                            # mech/capool's output name for the bulk pool's free Ca
 OL = "O'Leary, Williams, Franci & Marder 2014 Neuron 82:809 and their code (marderlab/oleary_et_al_2014)"
 
 
@@ -80,6 +88,17 @@ def relax(x, target, tau_ms, dt):
     return target + (x - target) * np.exp(-dt / tau_ms)
 
 
+def sensed_ca(ca, outputs, ca_read):
+    """The Ca the rule senses, per cell (uM): the brain's Eq. 28 Ca, or the bulk pool's from the mech outputs."""
+    if ca_read not in CA_READ:
+        raise ValueError(f"ca_read {ca_read!r} not in {CA_READ}")
+    if ca_read == "eq28":
+        return np.asarray(ca, float)
+    if BULK_KEY not in (outputs or {}):
+        raise KeyError(f"ca_read 'bulk' needs mech/capool's {BULK_KEY} output (toggle ca_bulk on)")
+    return np.asarray(outputs[BULK_KEY], float)
+
+
 def g_scale(n, cells, s, channels=REGULATED):
     """{dens_<c>: per-cell multiplier}: s on the matured cells, 1 elsewhere (the brain ignores channels a cell lacks)"""
     f = np.ones(n)
@@ -91,8 +110,10 @@ class Maturation:
     """The rule as a mech: append to brain.mechs, step the brain, read .s. reset() restarts from `start`."""
 
     def __init__(self, brain, targets: dict, ca_start: dict | None = None, params: dict | None = None,
-                 start: float = 1.0, channels=REGULATED):
+                 start: float = 1.0, channels=REGULATED, ca_read: str = "eq28"):
         self.p = {**P, **(params or {})}
+        sensed_ca([], {BULK_KEY: []}, ca_read)            # validates the name
+        self.ca_read = ca_read
         self.n = len(brain.cell_names)
         self.names = list(targets)
         self.cells = np.array([brain.cell_names.index(c) for c in self.names])
@@ -112,7 +133,7 @@ class Maturation:
         p = self.p
         self.t += dt_ms
         if self.t > 1000.0 * p["mat_settle_s"]:
-            ca = np.asarray(ctx.ca, float)[self.cells]
+            ca = sensed_ca(ctx.ca, getattr(ctx, "outputs", None), self.ca_read)[self.cells]
             dmu = self.k * (self.tgt - ca) * dt_ms / (1000.0 * p["mat_tau_m_ratio"] * p["mat_tau_g_s"])
             tau = 1000.0 * p["mat_tau_g_s"]
             s = relax(self.s, self.mu + dmu, tau, dt_ms)
@@ -155,8 +176,9 @@ class Frozen:
         return {"g_scale": self.g}
 
 
-def clamp_ca(brain, cell: str, v_mV: float, seconds: float = 3.0, avg_s: float = 1.0) -> float:
-    """Mean Ca (uM) of `cell` over the last avg_s of a somatic voltage clamp at v_mV from reset (NEURON SEClamp)."""
+def clamp_ca(brain, cell: str, v_mV: float, seconds: float = 3.0, avg_s: float = 1.0, ca_read: str = "eq28") -> float:
+    """Mean sensed Ca (uM) of `cell` over the last avg_s of a somatic voltage clamp at v_mV from reset (NEURON
+    SEClamp)."""
     i = brain.cell_names.index(cell)
     cl = brain.h.SEClamp(brain.soma[i](0.5))
     cl.dur1, cl.amp1, cl.rs = 1e9, float(v_mV), 0.01
@@ -165,14 +187,14 @@ def clamp_ca(brain, cell: str, v_mV: float, seconds: float = 3.0, avg_s: float =
     for k in range(n):
         o = brain.step(None, 1.0)
         if k >= n - na:
-            acc.append(float(o.ca_uM[i]))
+            acc.append(float(sensed_ca(o.ca_uM, brain.mech_out, ca_read)[i]))
     del cl
     brain.reset()
     return float(np.mean(acc))
 
 
 def mature(brain, targets: dict, max_s: float = 300.0, start: float = 1.0, params: dict | None = None,
-           check_s: float = 1.0) -> dict:
+           check_s: float = 1.0, ca_read: str = "eq28") -> dict:
     """Run the rule on `brain` (from reset, 0 pA) until every matured cell converges or max_s; returns the result and
     leaves a Frozen copy of the multipliers attached (brain.mechs[-1])."""
     pp = {**P, **(params or {})}
@@ -180,8 +202,9 @@ def mature(brain, targets: dict, max_s: float = 300.0, start: float = 1.0, param
     i = [brain.cell_names.index(c) for c in targets]
     for _ in range(int(1000 * pp["mat_settle_s"])):  # the built cell's Ca after the settle sets the gain k
         o = brain.step(None, 1.0)
-    m = Maturation(brain, targets, ca_start={c: float(o.ca_uM[j]) for c, j in zip(targets, i)}, params=params,
-                   start=start)
+    ca0 = sensed_ca(o.ca_uM, brain.mech_out, ca_read)
+    m = Maturation(brain, targets, ca_start={c: float(ca0[j]) for c, j in zip(targets, i)}, params=params,
+                   start=start, ca_read=ca_read)
     brain.mechs.append(m)
     try:
         brain.reset()
@@ -198,7 +221,7 @@ def mature(brain, targets: dict, max_s: float = 300.0, start: float = 1.0, param
     brain.mechs.append(fz)
     brain.reset()
     last = m.hist[-1] if m.hist else (m.t, m.s, np.full(len(m.cells), np.nan))
-    return {"bio_s": m.t / 1000.0, "cells": m.names, "target_uM": m.tgt.tolist(), "s": m.s.tolist(),
+    return {"bio_s": m.t / 1000.0, "ca_read": ca_read, "cells": m.names, "target_uM": m.tgt.tolist(), "s": m.s.tolist(),
             "ca_end_uM": np.asarray(last[2]).tolist(), "converged": conv.tolist(),
             "at_bound": ((m.s <= m.p["mat_s_lo"]) | (m.s >= m.p["mat_s_hi"])).tolist(),
             "trace": [(h[0] / 1000.0, h[1].tolist(), h[2].tolist()) for h in m.hist[::100]]}
