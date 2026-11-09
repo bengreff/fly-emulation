@@ -263,6 +263,16 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   hand-written. Viewer 8 full of 28 -> 13 (measured), equal to the audit over rows 1-28 (the script asserts it);
   rows 4, 6, 14, 19, 24 full with parts named; render viewed in headless Chrome. Rerun the script after any audit
   change. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 21".
+- Line 2 (wbrain2, C, already in place): the two reconstructions are both switches. `ca_pool_volume` whole_cell
+  (default: each neuron's own volume in the BAAIWorm morphology) and neuromorpho (Nicoletti 2024's NeuroMorpho
+  volumes for the 9 cells they fitted, AIY 7.42 um3 against our 22.6). Neither is wrong for some worm, so no code
+  change and no fitted number; the choice between them is Ben's ("possible worms"). tests/test_worm_ca_volume.py:
+  3 passed (9 Nov, measured).
+- Line 8 (wbrain2, D): no code change. Re-run on main 9 Nov (`scripts/worm/triage/probe_dva.py`, measured): DVA Po
+  0.483 at the template against the sanity bar 0.5 (no source), with VB, DB and SMD passing; 23 of 128 Sobol draws
+  in the bio box pass, all with `proprio_eps_half` below 0.0972 (guessed, 0.02-0.3). DVA reads the whole body's
+  mean strain (0.098 at a half-body bend), so the template's eps_half 0.1 sits at the edge. A gap value for the
+  fit, not a bug. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Lines 2 and 8".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.

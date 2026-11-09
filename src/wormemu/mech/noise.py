@@ -207,8 +207,14 @@ class Quantal:
     def __init__(self, brain, params, toggles):
         self.p, self.brain = params, brain
         self.on = form(toggles.get(M, "off")) == "quantal"
+        self.shot, self._bound = None, False
+
+    def _bind(self):
+        """Every wsyn synapse, the organ modules' too: they append theirs to brain.wsyn after noise is built (REGISTRY
+        order), so the list is read at the first reset, when every module exists (Brain.step refuses to run before)."""
+        self._bound = True
+        brain, params = self.brain, self.p
         w = getattr(brain, "wsyn", None) or []
-        self.shot = None
         if not (w and self.on):
             return
         from wormemu.mech import receptors
@@ -225,11 +231,12 @@ class Quantal:
             self.qn.pset(i, pp._ref_qn)
         self.buf = h.Vector(len(w))
         post = np.array([j for _, _, j, _ in w])
-        self.to_muscle = np.asarray(brain.is_muscle)[post]
+        self.to_muscle = (post >= 0) & np.asarray(brain.is_muscle)[np.maximum(post, 0)]   # post -1: an organ cell
         self.n_muscle = max(1, int(np.asarray(brain.is_muscle).sum()))
-        self.reset()
 
     def reset(self):
+        if not self._bound:
+            self._bind()
         if self.shot is not None:
             self.shot.reset()
             self.qn.scatter(self.brain.h.Vector(np.ones(len(self.shot.gq))))

@@ -45,6 +45,7 @@ constraints:
   - met_E_mV
   - proprio_E_mV
   - pbo5_erev_mV
+  - exp1_erev_mV
   - egg_cation_erev_mV
   - obs_opto_e_mV
   statement: every non-selective cation channel (ACh, Glu, GABA-cation receptors, CNG, TRPV, MEC, opsin) reverses between E_K and E_Na

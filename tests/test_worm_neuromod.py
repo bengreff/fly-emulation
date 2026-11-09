@@ -285,6 +285,42 @@ def test_amine_synaptic():
     assert np.isclose(two, want2, rtol=1e-9)
 
 
+
+def test_amine_synaptic_routes():
+    """near_nM with post: a Cook route's sites (n_p synapses, syn_site_spacing_um apart, each syn_release_share x J /
+    N_out) against the closed form; 0 onto a cell the pre cell does not synapse on; the largest pre cluster wins;
+    N_out is Cook's output count (HSNL 125, the file). Off returns 0."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "off", "monoamines": "compartments"}
+    T1 = {**T, "ecs_alpha": 1.0, "ecs_tortuosity": 1.0, "syn_half_space": 1.0, "syn_release_share": 0.5}
+    on = N.Mech(brain, T1, {**tg, "amine_synaptic": "nicholson"})
+    off = N.Mech(brain, T1, tg)
+    cn, out = on.cook_counts()
+    ix = {c: k for k, c in enumerate(neurons)}
+    assert out[ix["HSNL"]] == 125
+    rim, rimr = ix["RIML"], ix["RIMR"]
+    post = int(np.argmax(cn[rim]))
+    k = int(cn[rim, post])
+    assert k >= 2
+    D, tau = T["ma_diffusion_um2_per_s"], T["ma_degrade_tau_s"]
+    r, s_, ell = T["syn_site_receptor_um"], T["syn_site_spacing_um"], np.sqrt(D * T["ma_degrade_tau_s"])
+    x = (np.arange(k) - (k - 1) // 2) * s_
+    d = np.hypot(r, x)
+    want = 0.5 * 1e4 / out[rim] / (4 * np.pi * D) * np.sum(np.exp(-d / ell) / d) / 0.602214
+    assert np.isclose(on.near_nM("tyramine", [rim], J=[1e4], post=post), want, rtol=1e-9)
+    assert off.near_nM("tyramine", [rim], J=[1e4], post=post) == 0.0
+    nos = int(np.flatnonzero((cn[rim] == 0) & (cn[rimr] == 0))[0])
+    assert on.near_nM("tyramine", [rim, rimr], J=[1e4, 1e4], post=nos) == 0.0
+    both = on.near_nM("tyramine", [rim, rimr], J=[1e4, 1e5], post=post)
+    alone = [on.near_nM("tyramine", [c], J=[j], post=post) for c, j in ((rim, 1e4), (rimr, 1e5))]
+    assert np.isclose(both, max(alone), rtol=1e-12)
+    assert np.isclose(on.near_nM("tyramine", [rim], J=[2e4], post=post), 2 * want, rtol=1e-9)
+
 def test_no_neuron_brain():
     """An organ-only brain (no neuron; wbody2, 9 Nov 2026) steps without raising and reports finite, neutral
     neuron summaries (G means 0, release factor 1)."""

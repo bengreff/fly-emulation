@@ -59,3 +59,30 @@ def test_targets_match_the_battery_order():
     assert len(names) == len(y) == len(sig) == 10 and np.all(sig > 0)
     assert names[0].startswith("food:") and names[-1].startswith("nofood:")
     assert not any(n.split(":")[1] in ("dmp_period_s", "egg_inactive_min", "egg_intra_s") for n in names)
+
+
+def test_noise_seed_per_experiment_and_iteration():
+    assert V.noise_seed("battery_food", None) is None
+    seeds = {(e, k): V.noise_seed(e, k) for e in ("battery_food", "battery_nofood") for k in range(50)}
+    assert len(set(seeds.values())) == len(seeds)                       # one per experiment per iteration
+    assert all(1 <= s < 2 ** 31 for s in seeds.values())
+    assert V.noise_seed("battery_food", 3) == seeds[("battery_food", 3)] == V.noise_seed("battery_food", np.int64(3))
+
+
+def test_forward_passes_the_iterations_noise_seed(v, monkeypatch, tmp_path):
+    seen = []
+
+    class Failed:
+        returncode = 1
+
+    def fake(cmd, **kw):
+        seen.append(cmd)
+        return Failed()
+    monkeypatch.setattr(V.subprocess, "run", fake)
+    for k in (None, 5):
+        g, ok = V.battery_forward(v.z(v.base), k, None, seconds=1.0, workdir=str(tmp_path))
+        assert not ok and np.isnan(g).all()                             # a failed run fails the member
+    flags = [[a for a in c if a.startswith("--noise-seed=")] for c in seen]
+    assert flags[:2] == [[], []]
+    assert flags[2:] == [[f"--noise-seed={V.noise_seed('battery_' + c, 5)}"] for c in V.CONDS]
+

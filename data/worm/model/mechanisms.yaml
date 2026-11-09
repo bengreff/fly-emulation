@@ -419,7 +419,7 @@
   layer: channel
   status: have
   toggle: slo_ca_source
-  neutral: 'off'
+  neutral: single_channel
   default: single_channel
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row guessed from the name by the catalog
@@ -431,6 +431,16 @@
   toggle: ca_bulk
   neutral: 'off'
   default: 'off'
+  source: src/wormemu/mech/capool.py
+  notes: registry module capool; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: kcnl_density
+  name: KCNL (SK-type K) as the network's cell_param gives it (88 neurons) or none, as BAAIWorm's single-cell tuner fitted every cell
+  layer: channel
+  status: have
+  toggle: kcnl_density
+  neutral: network
+  default: network
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
@@ -646,7 +656,7 @@
   notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: amine_synaptic
-  name: 'Amine near field at a release site (Nicholson point source; a read, moves no molecules): off (the pool only) or nicholson (near_nM, HSN onto vm2)'
+  name: 'Amine near field at a release site (Nicholson point source; a read, moves no molecules): off (the pool only) or nicholson (near_nM: HSN onto vm2, and any Cook route onto a cell)'
   layer: neuromodulation
   status: have
   toggle: amine_synaptic
@@ -885,6 +895,16 @@
   source: src/wormemu/mech/organs_pharynx.py
   notes: registry module organs_pharynx; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
+- id: ph_mc_route
+  name: 'Pharynx MC synapses: onto the mc2 marginal cells (cook), as EAT-2 synapses on the pm5 cells they border (eat2), or half each (both)'
+  layer: organ
+  status: have
+  toggle: ph_mc_route
+  neutral: 'off'
+  default: cook
+  source: src/wormemu/mech/organs_pharynx.py
+  notes: registry module organs_pharynx; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: defecation
   name: 'Defecation: 20-cell intestinal IP3R (Li-Rinzel) Ca oscillator and INX-16 wave (nested: 45 s timer)'
   layer: organ
@@ -902,6 +922,16 @@
   toggle: pboc_protons
   neutral: 'off'
   default: 'on'
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: pboc_g_solver
+  name: 'PBO-5/6 conductance as NEURON point processes, implicit (nested explicit: g (E - V) from the step''s start V as a current)'
+  layer: organ
+  status: have
+  toggle: pboc_g_solver
+  neutral: 'off'
+  default: implicit
   source: src/wormemu/mech/organs_intestine.py
   notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
   absent_reason: ''
@@ -925,6 +955,16 @@
   source: src/wormemu/mech/organs_intestine.py
   notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: enteric_exp1
+  name: 'Enteric GABA-cation sites as EXP-1 (Beg & Jorgensen 2003 EC50, Hill, reversal; nested brain: the brain''s gabacat class)'
+  layer: muscle
+  status: have
+  toggle: enteric_exp1
+  neutral: 'off'
+  default: brain
+  source: src/wormemu/mech/organs_intestine.py
+  notes: registry module organs_intestine; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: egg_laying
   name: 'Egg-laying circuit: 16 sex muscles (Du membrane, UNC-103 as Kr), Cook HSN/VC/VA/VB/VD wiring, uterine stretch, 5-HT/NLP-3 from B1''s pools, uv1 tyramine -> HSN LGC-55 (nested: two-state timer)'
   layer: organ
@@ -945,6 +985,16 @@
   source: src/wormemu/mech/organs_egglaying.py
   notes: registry module organs_egglaying; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: egg_g_solver
+  name: 'Egg-laying conductances (vm cation, HSN LGC-55) as NEURON point processes, implicit (nested explicit: g (E - V) from the step''s start V as a current)'
+  layer: organ
+  status: have
+  toggle: egg_g_solver
+  neutral: 'off'
+  default: implicit
+  source: src/wormemu/mech/organs_egglaying.py
+  notes: registry module organs_egglaying; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: glia_cells
   name: GLR (6) and CEPsh (4) glia as passive cells with Cook's gaps to RME, CEP, RIP, ADF, ASI and the head muscles
   layer: glia
@@ -962,6 +1012,27 @@
   toggle: glia_kbuffer
   neutral: 'off'
   default: kir
+  source: src/wormemu/mech/glia.py
+  notes: registry module glia; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_k_load
+  name: 'The amphid neurons'' K+ load into their ending: a linear leak estimate with the E_K shift injected (leak), or their own gated K+ currents from rest with E_K on their K+ channels following the ending''s
+    K+ (channels: Sibille et al. 2015 eq. 25)'
+  layer: glia
+  status: have
+  toggle: glia_k_load
+  neutral: 'off'
+  default: leak
+  source: src/wormemu/mech/glia.py
+  notes: registry module glia; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: glia_v0_window
+  name: 'The amphid neurons'' resting reference window: the first second (first) or 1-2 s, after the start-up (settled)'
+  layer: glia
+  status: have
+  toggle: glia_v0_window
+  neutral: 'off'
+  default: settled
   source: src/wormemu/mech/glia.py
   notes: registry module glia; PLAN row guessed from the name by the catalog
   absent_reason: ''

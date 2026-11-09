@@ -60,6 +60,7 @@ MECH_ROW = {
     "unc58_na_leak": 5, "drugs": 22, "pathogen_sickness": 22,                 # wmodel, 7 Nov evening
     "egl19_kinetics": 4, "shl1_kinetics": 4,              # channel_forms (wbrain2, 8 Nov): gating, as the kin_ rows
     "ca_bulk": 6,                                         # capool's bulk readout pool (wbrain2, 8 Nov)
+    "kcnl_density": 5,                                    # capool's KCNL network | tuner, a density (wbrain2, 9 Nov)
     "avl_membrane": 5, "dvb_membrane": 5, "jiang22_egl36_weights": 5, "afd_membrane": 5,   # cell_models, Jiang 2022 and Naudin 2022 (wbrain2, 9 Nov)
     "neuromod_site": 9, "gs_ca_channels": 9, "aex2_ec50_source": 9, "dmsr1_isoform": 9, "pc_grid": 9,   # neuromod (wneuro, 8-9 Nov)
     "amine_synaptic": 10,                                 # neuromod's amine near field (wneuro, 9 Nov): monoamines

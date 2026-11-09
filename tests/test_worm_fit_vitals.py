@@ -69,6 +69,11 @@ def test_dmp_needs_two_intervals():
     assert r["expulsions"] == 2 and r["dmp_period_s"] is None
 
 
+def test_readouts_refuse_a_run_inside_the_settle():
+    with pytest.raises(ValueError, match="settle"):
+        V.readouts(synthetic(seconds=V.SETTLE_S - 1.0), "food", V.SETTLE_S - 1.0)
+
+
 def test_pc_frac_independent_vs_lowrank():
     rng = np.random.default_rng(1)
     x = rng.normal(size=(2000, 50))
@@ -137,6 +142,11 @@ def test_experiment_is_entire_worm():
     assert ex.body == "on" and ex.toggles == V.BATTERY_TOGGLES and ex.every_ms == pytest.approx(V.EXCHANGE_MS)
     with pytest.raises(ValueError):
         V.experiment("lawn", 2.0)
+
+
+def test_experiment_carries_the_noise_seed():
+    assert V.experiment("food", 2.0).noise_seed is None                 # the worm seed's noise, as before
+    assert V.experiment("food", 2.0, seed=4, noise_seed=7).noise_seed == 7
 
 
 def test_f_over_fmean_cancels_f0():

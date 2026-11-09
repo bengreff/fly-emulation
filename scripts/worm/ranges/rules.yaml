@@ -518,6 +518,7 @@ span_reasons:
   - {re: "^rec_.*_ss_frac$", why: "steady-state fraction after desensitisation: not retrieved; 1-50% across receptors"}
   - {re: "^ecs_alpha$", why: "no nematode value; the Spec's span runs from the cephalopod brain's 0.09 (relayed in its notes) to open fluid (1)"}
   - {re: "^hsn_vm2_site_receptor_um$", why: "release site to receptor on vm2 not measured; the Spec's span runs from a generic 20 nm cleft to 1 um, above the 0.5-0.83 um site spacing (its notes)"}
+  - {re: "^syn_site_receptor_um$", why: "release site to a metabotropic amine receptor not measured for any Cook route; the same unknown as hsn_vm2_site_receptor_um, with its span (a generic 20 nm cleft to 1 um, the Spec's notes)"}
   - {re: "^rec_mg_mM$", why: "external Mg2+: not measured in worm body fluid; salines hold 1-5 mM, NGM 1 mM"}
   - {re: "^(stp_|hab_beta)", why: "short-term plasticity constants: tens to hundreds of ms in Dittman et al. 2000; worm NMJ trains (Liu et al. 2009) constrain the ACh grain only"}
   - {re: "^(gq|gi|gs)_tau_ms$|^sens_trpv_tauG_ms$|^obs_opto_tau_o(n|ff)_ms$", why: "G-protein and opsin cascades: 100 ms to several s (PORT_SOURCES N4)"}
