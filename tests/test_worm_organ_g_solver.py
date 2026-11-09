@@ -22,7 +22,7 @@ from wormemu.brain import Brain
 from wormemu.fit import vitals
 from wormemu.mech import organs_egglaying as ge, organs_intestine as gi
 term, form, g = sys.argv[1], sys.argv[2], float(sys.argv[3])
-cells = ["HSNL", "HSNR"] if term == "lgc55" else ["HSNL", "dBWML22", "vBWMR22"]
+cells = ["HSNL", "HSNR"] if term == "lgc55" else ["dBWML22", "vBWMR22"]
 tname = "egg_g_solver" if term == "lgc55" else "pboc_g_solver"
 b = Brain(cells=cells, toggles={"quantal_noise": "off", "channel_noise": "off", tname: form})
 b.reset()
