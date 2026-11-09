@@ -48,7 +48,27 @@ Prediction (inferred from wbrain2's floor table and the 21:27 traces, written be
 conductance on the hyperpolarising branch); AIY may move. So the falsifier (fewer than 2 of 3) is likely met again;
 the retry's value is whether a Ca set point on a sensor with range pins AIY's voltage. Either way maturation stays off.
 
-Usage (backhouse): python scripts/worm/fit/maturation_ephys.py OUT.json [FEATURES.npz] [--ca-read=bulk]
+Deviation (9 Nov 00:17 CST, written after the first bulk run crashed and before the rerun). Run 1 (1198812, Mac,
+00:14, measured): default_mask_on with the pool on gave rmse18 AIY 10.60, AFD 49.89, AWA 21.96 mV (the 21:27 values);
+the matured arm's sensing finished (s AIYL 0.627, AFDL 0.358, AWAL 4.0 at the bound; bulk targets 62.6, 10.7, 9.1 nM,
+AFD and AWA below the [20, 150] nM range at the pump floor, as predicted); then its scoring sweeps stopped inside
+cabulk.mod's KINETIC block ("scopmath library error: Convergence not achieved"). The pool writes neither cai nor ica,
+so it cannot move a feature; the readout-check arm measures that (bar 0.0 mV). So, with --score-pool=off, the matured
+arm senses and matures on a brain with the pool on (unchanged), then scores the same multipliers (a Frozen copy) on a
+fresh build without the pool. The sensing brain stays in NEURON, unstimulated, as earlier arms' cells already do.
+Everything else as pre-registered. The crash itself goes to wbrain2 (night file, Requests).
+
+Result of the retry (9 Nov 00:16-00:23, 1198812, Mac, --score-pool=off, measured; runs/worm/fit/maturation_bulk_1198812/):
+FALSIFIED again, helps in 0 of 3 (mask on and off identical). rmse18 default -> matured: AIY 10.60 -> 23.92, AFD
+49.89 -> 49.83, AWA 21.96 -> 21.96 mV. Readout check (the default with and without the pool) max |diff| 0.0 mV, so the
+deviation changes no feature; neutral 0.0 mV. s* AIYL 0.627, AFDL 0.358, AWAL 4.0 (bound): the same as the Eq. 28 run
+to 3 digits. Why (derived): at a steady resting set point, the rule stops where the sensed Ca equals the Ca the cell had
+when clamped at the measured rest; any sensor that is a steady monotone function of the soma Ca current then stops at
+the same s, so moving the sensor from Eq. 28 to the bulk pool could not change the answer. The bulk pool's 65x range
+matters for how fast the rule moves, not where it ends. Bulk targets 62.6, 10.7, 9.1 nM (AFD and AWA at the pump floor,
+outside [20, 150] nM). Maturation stays off; it stops here until a worm source gives per-channel rates (21:27 note).
+
+Usage (backhouse): python scripts/worm/fit/maturation_ephys.py OUT.json [FEATURES.npz] [--ca-read=bulk] [--score-pool=off]
 """
 from __future__ import annotations
 
@@ -61,7 +81,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
 CA_READ = "bulk" if "--ca-read=bulk" in sys.argv else "eq28"
-sys.argv = [a for a in sys.argv if not a.startswith("--ca-read")]
+SCORE_NOPOOL = "--score-pool=off" in sys.argv
+sys.argv = [a for a in sys.argv if not a.startswith(("--ca-read", "--score-pool"))]
 OUT = Path(sys.argv[1])
 FEATS = sys.argv[2:3]
 sys.argv = [sys.argv[0]] + FEATS                      # ephys_score reads its features path from argv
@@ -96,6 +117,14 @@ def matured_build(mode, key):
         res["wall_s"] = time.time() - t0
         LOG[key] = res
         print(key, json.dumps({k: v for k, v in res.items() if k != "trace"}), flush=True)
+        if SCORE_NOPOOL and POOL:                     # the deviation above: score the multipliers without the pool
+            fz, names = br.mechs[-1], list(br.cell_names)
+            assert isinstance(fz, MT.Frozen)
+            ex = {k: v for k, v in (kw.get("extra") or {}).items() if k not in POOL}
+            br = ORIG(**{**kw, "extra": ex})
+            assert list(br.cell_names) == names, "the scoring build has other cells"
+            br.mechs.append(MT.Frozen(fz.n, fz.cells, fz.s.copy(), fz.channels))
+            res["scored_without_pool"] = True
         return br
     return build
 

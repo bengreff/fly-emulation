@@ -22,7 +22,9 @@ Grains: global 126, class 189, gene 20, cell 19, channel 11, pairing 3. Mechanis
 | of which obs_noise_dff | 1 (log) | **not the worm**: the microscope's per-frame imaging noise. Fixed per experiment at the dataset's own measured noise (Atanas 2023: 0.0417 F / mean F, derived, `scripts/worm/fit/atanas_noise.py`; `vitals.BATTERY_VALUES`), out of the vector. Added 8 Nov 23:25; same Ben-to-confirm item as scene_* |
 
 So the EKI vector has **347** continuous numbers on f8e7699 (derived: 368 - 15 - 6) and **347** on main dfe027d
-(derived: 369 - 15 - 6 - 1; main added wbody2's `rule_body_modulus_scale`, and obs_noise_dff leaves).
+(derived: 369 - 15 - 6 - 1; main added wbody2's `rule_body_modulus_scale`, and obs_noise_dff leaves). On weki's
+1198812 (main cea4d49) Theta has 370 (wneuro's `unc2_gs_gain` added) and the vector **348** (measured 9 Nov 00:08,
+`fit/vector.py`, which builds the mask from these rules and counts it, so the number tracks main).
 
 **Why the imaging noise leaves the vector (8 Nov 23:25, measured unless marked).** On the f8e7699 template the
 GCaMP traces are imaging noise: per-neuron SD 0.029, noise 0.029, signal 0.003 F / mean F (median over neurons;
@@ -52,7 +54,11 @@ less 15, vhalf_order 9, between 8, passive_rin 1, pool_volume 1. Checked on a me
 `joint.check(values, led)`.
 
 - Prior draw: reject and redraw until admissible, up to 1000 draws per member. The acceptance rate is reported; under
-  1 % means the box and the constraints disagree, and the fit stops and reports.
+  1 % means the box and the constraints disagree, and the fit stops and reports. Code: `vector.Vector.prior`, which
+  checks each draw as the member it builds (the template worm with the vector's numbers set). Measured 9 Nov 00:08 on
+  1198812: acceptance 68-72 % over the 3 seeds' 128-member ensembles (41 % for full `sample_worm` draws, whose numbers
+  outside the vector are drawn too), 30 s per ensemble. Median per-coordinate z SD 1.78-1.80, about the logistic's 1.81
+  (derived).
 - After each update: a member that breaks a hard constraint is redrawn from N(mean, cov) of the updated admissible
   members (up to 100 draws), else it keeps its last admissible z (`eki.EKI.update(admissible=...)`). Reject and redraw,
   not projection: the admissible set is not convex, so a nearest point is not defined cheaply.
@@ -98,8 +104,11 @@ Every member runs the battery (`VITAL_SIGNS.md`: one `wormemu.simulate` per cond
 The plan runs maturation before scoring each member once it reproduces the recorded cells. It does not: the single-cell
 test (pre-registered 21:12, `scripts/worm/fit/maturation_ephys.py`, measured 21:27) helped in 0 of 3 classes (AIY
 10.60 -> 23.92 mV, AFD 49.89 -> 49.83, AWA unchanged because its Liu 2018 membrane is out of the rule's reach). So each
-member is scored as built. Maturation enters only through a new pre-registered single-cell test that passes and a gate
-re-sign. If it does, its rule numbers join the vector as rule parameters, and its per-class targets need a shared rule
+member is scored as built. The retry with wbrain2's bulk Ca pool as the sensor (pre-registered 23:33, measured 9 Nov
+00:23 on 1198812) is falsified the same way, 0 of 3, with the same multipliers to 3 digits. At a steady resting set
+point the rule stops where the sensed Ca equals the clamped-at-rest Ca, so any sensor that is a steady monotone function
+of the soma Ca current gives the same answer (derived). Maturation enters only through a new pre-registered
+single-cell test that passes and a gate re-sign. If it does, its rule numbers join the vector as rule parameters, and its per-class targets need a shared rule
 (today they exist only for the recorded classes).
 
 ## 5. Ensembles, inflation and localisation (refinement 5)
@@ -136,7 +145,8 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
     1.15 without). With the cut on, inflation 1.1 fails (8 / 20), so the two are chosen together on the twin.
   - Tested: a parameter no observation can see keeps its prior draws exactly; without localisation it collapses.
 - **Seed agreement** (part of convergence): for every data-informed coordinate (posterior SD below half the prior SD
-  in z), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
+  in z, the prior SD being the prior ensemble's own per-coordinate SD, about 1.8 for these priors, not 1; section 2's
+  measurement), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
   fit reports non-identifiability, not a converged worm.
 
 ## 6. Discrete alternatives (refinement 6)

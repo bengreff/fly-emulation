@@ -172,7 +172,7 @@ class Driver:
 
 def seed_agreement(finals, prior_sd=1.0, informed=0.5, within=1.0, need=0.9):
     """FIT_GENERAL section 5: over the coordinates the data inform (pooled posterior SD under `informed` x the prior SD,
-    in z), the ensembles' means must agree within `within` pooled SD (largest pairwise gap) for at least `need` of them
+    in z; pass the prior ensemble's per-coordinate SD, about 1.8 for the worm's priors, not the default 1), the ensembles' means must agree within `within` pooled SD (largest pairwise gap) for at least `need` of them
     (all three thresholds guessed there). finals: the final z ensembles (J x p each) of the independently seeded runs."""
     finals = [np.asarray(f, float) for f in finals]
     means = np.array([f.mean(0) for f in finals])
