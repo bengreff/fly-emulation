@@ -224,6 +224,38 @@ noise alone gives 0.579 (and seed 1 is not physical).
   (ps); seed 4 profiled on the Mac costs the template's time (FIT_GENERAL section 10), so the spread is the machine's
   load, not the draws.
 
+### 9 Nov 2026: battery on 5e3c87a (main 58246cf's default worm), 200 bio-s per condition, backhouse, one core
+
+Measured unless marked. Same battery as the f8e7699 run above, on main 58246cf's default worm. Since f8e7699: the
+head reads the plate's temperature gradient (ad37628), neuromodulator sites use 8 um bins (wneuro, 58246cf), and the
+GCaMP signs read F / mean F under Atanas's measured imaging noise, 0.0417 (23:25). Table: `vitals table`.
+
+| Sign | Bar | 5e3c87a food | 5e3c87a nofood | f8e7699 food | f8e7699 nofood |
+|---|---|---|---|---|---|
+| AIY rest (mV) | none | -52.5 | -53.7 | -52.5 | -53.8 |
+| AFD rest (mV) | none | -56.5 | -57.6 | -56.5 | -57.7 |
+| AWA rest (mV) | -84.7 to -65.9 | -58.5 miss | -59.3 miss | -58.5 miss | -59.3 miss |
+| pc3_frac | 0.353 to 0.506 | 0.0559 miss | | 0.0559 miss | |
+| gcamp_range | 0.567 to 0.983 | 0.133 miss | | 0.0976 miss | |
+| soma Ca (uM) | none | 0.0504 | 0.0503 | 0.0504 | 0.0503 |
+| pumping on / off food (Hz) | 4.24-5.28 / 0.03-1.73 | 0 miss | 0 miss | 0 miss | 0 miss |
+| defecation period | 39 to 51 s | not produced | | not produced | |
+| egg signs | | too short | | too short | |
+| BWM rest (mV) | -35.4 to -14.6 | -30.5 in | -30.4 in | -30.4 in | -30.8 in |
+| BWM spikes (Hz) | 0 to 2.19 | 2.97 miss | 2.92 miss | 2.89 miss | 2.83 miss |
+| physical | | yes | yes | yes | yes |
+| wall per bio-s (s) | | 16.8 | 17.1 | 12.1 | 11.9 |
+
+- **No verdict changes.** 1 of the 10 barred signs is in (BWM rest, both conditions), 6 miss, 3 are not produced or
+  too short, as on f8e7699. Rest voltages move by 0.1 mV or less.
+- gcamp_range 0.133 is the noise floor under Atanas's noise (3.29 x 0.0417 = 0.137, derived), not the brain: the
+  change from 0.0976 is the readout's noise (0.03 before), not the worm.
+- Noise alone, one pair (food, noise seed 1 against this run's default; the pre-registered spread, night file 03:03,
+  has 1 of 14 runs in): BWM spikes 2.75 against 2.97 Hz, a 0.22 Hz difference; rest voltages within 0.02 mV;
+  pc3_frac 0.0564 against 0.0559. So the 0.08 Hz rise in BWM spikes since f8e7699 is inside the noise (inferred from
+  one pair; the full spread will say). Wall 16.8-17.1 s per bio-s with one noise run beside the two (load 8-10 of
+  28).
+
 ## Limitations
 
 1. (Closed 9 Nov 01:36.) The plate went in through a subclass of `body.loop.Body` until `Experiment` carried it.
