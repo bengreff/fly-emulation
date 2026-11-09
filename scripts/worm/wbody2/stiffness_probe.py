@@ -29,23 +29,13 @@ LAYER = ("body_E_cuticle_kPa", "body_E_muscle_kPa", "body_E_core_kPa", "body_E_c
 
 
 def mesh_outer_share(p):
-    """Share of the mesh's r^2 weight at rho above the core edge, against the ideal concentric shells."""
-    V, T = L.read_mesh()
-    z = V[:, 2]
-    edges = np.linspace(z.min(), z.max(), L.N_ZBINS + 1)
-    vb = np.clip(np.digitize(z, edges) - 1, 0, L.N_ZBINS - 1)
-    cen = np.array([V[vb == b, :2].mean(0) for b in range(L.N_ZBINS)])
-    R = np.array([np.linalg.norm(V[vb == b, :2] - cen[b], axis=1).max() for b in range(L.N_ZBINS)])
-    pts = np.einsum("sk,tkd->tsd", L._barycentric(), V[T])
-    pb = np.clip(np.digitize(pts[..., 2], edges) - 1, 0, L.N_ZBINS - 1)
-    r = np.linalg.norm(pts[..., :2] - cen[pb], axis=-1)
-    rho = np.clip(r / R[pb], 0, 1)
-    vol = np.abs(np.einsum("tij,tij->t", np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])[:, None, :],
-                           (V[T[:, 3]] - V[T[:, 0]])[:, None, :])) / 6
-    w = vol[:, None] * r ** 2
+    """Share of the mesh's r^2 weight at rho above the core edge, against the ideal concentric shells (8 Nov: on
+    layers.mesh_geometry, the tet_moduli quadrature, after its fix)."""
+    g = L.mesh_geometry()
+    w = g["vol"][:, None] * g["r"] ** 2
     edge = 1 - p["body_frac_cuticle"] - p["body_frac_hypodermis"] - p["body_frac_muscle"]
-    return dict(mesh=float(w[rho > edge].sum() / w.sum()), ideal=float(1 - edge ** 4), core_edge_rho=float(edge),
-                rho_p99=float(np.quantile(rho, 0.99)), n_tet=int(len(T)))
+    return dict(mesh=float(w[g["rho"] > edge].sum() / w.sum()), ideal=float(1 - edge ** 4), core_edge_rho=float(edge),
+                rho_p99=float(np.quantile(g["rho"], 0.99)), n_tet=int(g["n_tet"]))
 
 
 def main():

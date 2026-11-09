@@ -266,4 +266,10 @@ Nothing on Windows or the throttle was changed.
   Cause: glia.py's rest reference v0 (first 1 s) lets the drifting network make a steady false K+ sink, 0.36 mM below
   the bath by 24 s (A, wbody2, open); the post-release undershoot to -66.7 mV speeds the fall. D not decidable until
   the A is fixed. wtriage's 64 points under the new bars: 0 pass (from-bath taus).
-
+- 8 Nov 22:50 (wbody2, line 10, A fixed): layers.tet_moduli's quadrature now carries the outer layers. The layer
+  coordinate is r / R(z, theta) with R ray cast from the body axis to the mesh surface, and each tet is sampled at its
+  512 equal-volume sub-tet centroids (was 4 points per tet and R the slice's largest vertex radius). Bar (mesh section
+  modulus within 5 % of the ideal shells): 791.1 vs 794.2 kPa at the template, 323.6 vs 324.4 depressurised (was +7.8 %
+  and -60.7 %): pass (measured). The default body is 7.6 % softer in bending. Frontiers 561-1199 kPa vs Backholm 50-170:
+  still no overlap (C stays); rule range re-derived 0.0632-1.515; 0.067-0.214 reaches Backholm (D, not adopted).
+  Line 9 damping re-run on the fixed body: 16.46 ms vs <= 5.3 (still D).

@@ -12,9 +12,17 @@ section's bending stiffness, derived). The muscle layer is a full annulus, as in
 leave the lateral cords out (inferred validity: bending stiffness to a few %).
 
 Each tetrahedron gets the modulus that keeps its share of the bending stiffness, E_tet = int E(r) r^2 dV /
-int r^2 dV over the tet (35 interior sample points), r the distance from the slice centroid and r / R(z) the
-layer coordinate, R(z) the largest vertex radius of the tet's z-slice (40 slices) (inferred: the r^2 weight is
-the section's second moment averaged over bending directions).
+int r^2 dV over the tet (inferred: the r^2 weight is the section's second moment averaged over bending
+directions). r is the distance from the body axis (the centroid of the surface vertices of each of 40 slices,
+interpolated in z) and the layer coordinate is r / R(z, theta), R the distance from the axis to the mesh surface
+along the same radial ray (ray cast onto a 400 x 144 table, bilinear), so for any star-shaped section the layers
+get the concentric shells' share of the second moment (derived). The integral is the midpoint rule on the 512
+equal-volume sub-tetrahedra of 3 levels of red refinement (Bey 1995). Check (8 Nov 2026,
+scripts/worm/wbody2/layers_quadrature_check.py): the mesh section modulus is within 0.4 % of the ideal shells'
+at the template and depressurised (bar 5 %); 4 levels move it 0.1 %. Fixed that day (class A): the old rule (4
+interior points per tet, though this text said 35, and R(z) the largest vertex radius of the slice) put 4.6 % of
+the r^2 weight outside the core edge against the shells' 38.5 % (mesh 856 vs ideal 794 kPa at the template, 128
+vs 324 kPa depressurised).
 
 Pressure: the pseudocoelom's stiffness is mostly turgor (BODY.md: the bulk response is pressure-dominated, Worms
 under Pressure 2015). The hyperosmotic-shock fit of the same paper (core 76 kPa) is the depressurised end, so the
@@ -39,9 +47,9 @@ Needs an RFT fluid (worm_1mm scale).
 
 Stiffness rule (8 Nov 2026, Ben's approved fittable rule parameter; DEBUG_TRIAGE line 10): rule_body_modulus_scale
 multiplies every layer modulus (template 1 = the Frontiers values as published, so neutral). Its range is bounded
-by the two sources, which do not overlap: the Frontiers layer ranges give a mesh section modulus of 776-1157 kPa for
-the pressurised worm (scale 0.91-1.35), Backholm 2013's whole-worm bending 110 +- 30 kPa (2 sd 50-170) gives scale
-0.058-0.199 (all derived on worm_mesh_4). body_layers = "backholm2013" is the second alternative: the Frontiers
+by the two sources, which do not overlap: the Frontiers layer ranges give a mesh section modulus of 561-1199 kPa for
+the pressurised worm (scale 0.71-1.52), Backholm 2013's whole-worm bending 110 +- 30 kPa (2 sd 50-170) gives scale
+0.063-0.215 (all derived on worm_mesh_4 after the 8 Nov quadrature fix; before it 776-1157 kPa and 0.058-0.199). body_layers = "backholm2013" is the second alternative: the Frontiers
 profile scaled so the mesh section modulus is body_E_bending_kPa (Backholm's measured whole-worm value; the rule
 parameter is then unused). The fit runs both ways.
 
@@ -51,6 +59,7 @@ bit-identical frames, scripts/worm/body_layers_check.py). The upstream (non-SI) 
 """
 from __future__ import annotations
 
+from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
@@ -92,11 +101,12 @@ SPECS = [
     spec("body_pressure_kPa", "body_layers", "kPa", 100.0, 0.0, 200.0, "guessed",
          "the run's body pressure; template = the control's, so E_core = body_E_core_kPa",
          notes="to be read from B2's out['pressure_kPa'] at start-up when it lands"),
-    spec("rule_body_modulus_scale", "body_layers", "1", 1.0, 0.058, 1.35, "guessed",
-         FR + " (upper: every layer at its published high end, 1157 kPa over the template's 856, mesh); " + BH +
-         " (lower: 50 kPa, the 2 sd low edge of 110 +- 30, over 856)", applies_to="every layer modulus",
+    spec("rule_body_modulus_scale", "body_layers", "1", 1.0, 0.0632, 1.515, "guessed",
+         FR + " (upper: every layer at its published high end, 1199 kPa over the template's 791, mesh); " + BH +
+         " (lower: 50 kPa, the 2 sd low edge of 110 +- 30, over 791)", applies_to="every layer modulus",
          notes="the fittable rule parameter (Ben, 8 Nov); template 1 = the Frontiers moduli as published (neutral); "
-               "the sources' own bands do not overlap: Frontiers 0.91-1.35, Backholm 0.058-0.199 (derived)"),
+               "the sources' own bands do not overlap: Frontiers 0.71-1.52, Backholm 0.063-0.215 (derived after "
+               "the 8 Nov quadrature fix; were 0.058-1.35 on the old quadrature)"),
     spec("body_E_bending_kPa", "body_layers", "kPa", 110.0, 50.0, 170.0, "measured",
          BH + ": whole-worm bending modulus 110 +- 30 kPa (range 2 sd)", applies_to="whole body (backholm2013 form)",
          notes="body_layers = backholm2013 scales the Frontiers profile so the mesh section modulus equals this"),
@@ -113,7 +123,9 @@ SPECS = [
 P = {s.id: s.template for s in SPECS}
 
 MESH = Path(__file__).resolve().parents[3] / "third_party" / "metaworm" / "data" / "worm_mesh_4.mesh"
-N_ZBINS = 40
+N_ZBINS = 40          # slices for the body axis (centroid of the surface vertices, interpolated in z)
+N_REFINE = 3          # red-refinement levels: 8^3 = 512 equal-volume sub-tetrahedra, one sample point each
+RAY_TABLE = (400, 144)  # R(z, theta) table: z rows over the body length, theta columns over 2 pi
 
 
 def read_mesh(path: Path = MESH) -> tuple[np.ndarray, np.ndarray]:
@@ -128,11 +140,91 @@ def read_mesh(path: Path = MESH) -> tuple[np.ndarray, np.ndarray]:
     return V, T
 
 
-def _barycentric(n: int = 4) -> np.ndarray:
-    """Interior sample points of a tetrahedron: the (n+1)(n+2)(n+3)/6 lattice of step 1/(n+1), interior only."""
-    pts = [(a, b, c, n + 1 - a - b - c) for a in range(1, n + 1) for b in range(1, n + 1) for c in range(1, n + 1)
-           if n + 1 - a - b - c >= 1]
-    return np.array(pts, float) / (n + 1)
+def _subtet_points(k: int = N_REFINE) -> np.ndarray:
+    """Barycentric centroids of the 8^k equal-volume sub-tetrahedra of the red refinement (Bey 1995, Computing
+    55:355: corners plus the octahedron cut on its x02-x13 diagonal), so equal weights are the midpoint rule."""
+    tets = np.eye(4)[None]
+    for _ in range(k):
+        x0, x1, x2, x3 = (tets[:, i] for i in range(4))
+        a, b, c, d, e, f = (x0 + x1) / 2, (x0 + x2) / 2, (x0 + x3) / 2, (x1 + x2) / 2, (x1 + x3) / 2, (x2 + x3) / 2
+        kids = [(x0, a, b, c), (a, x1, d, e), (b, d, x2, f), (c, e, f, x3),
+                (a, b, c, e), (a, b, d, e), (b, c, e, f), (b, d, e, f)]
+        tets = np.concatenate([np.stack(t, 1) for t in kids])
+    return tets.mean(1)
+
+
+def _surface(V: np.ndarray, T: np.ndarray) -> np.ndarray:
+    """The boundary triangles (faces on one tetrahedron only), as vertex coordinates (n_face, 3, 3)."""
+    F = np.sort(np.concatenate([T[:, [0, 1, 2]], T[:, [0, 1, 3]], T[:, [0, 2, 3]], T[:, [1, 2, 3]]]), 1)
+    u, c = np.unique(F, axis=0, return_counts=True)
+    return V[u[c == 1]]
+
+
+def _ray_radius(S: np.ndarray, o: np.ndarray, th: np.ndarray, chunk: int = 500) -> np.ndarray:
+    """Distance from each origin o (n, 3) along the horizontal direction th (n,) to the nearest surface triangle
+    (Moller-Trumbore); NaN where the ray misses."""
+    v0, e1, e2 = S[:, 0], S[:, 1] - S[:, 0], S[:, 2] - S[:, 0]
+    out = np.full(len(o), np.nan)
+    for i in range(0, len(o), chunk):
+        a = th[i:i + chunk]
+        oo, dd = o[i:i + chunk, None, :], np.stack([np.cos(a), np.sin(a), np.zeros(len(a))], 1)[:, None, :]
+        pv = np.cross(dd, e2[None])
+        det = np.einsum("ijk,jk->ij", pv, e1)
+        inv = 1.0 / np.where(np.abs(det) > 1e-12, det, np.inf)
+        tv = oo - v0[None]
+        u = np.einsum("ijk,ijk->ij", tv, pv) * inv
+        qv = np.cross(tv, e1[None])
+        v = np.einsum("ijk,ijk->ij", dd, qv) * inv
+        t = np.einsum("ijk,jk->ij", qv, e2) * inv
+        t = np.where((inv != 0) & (u >= 0) & (v >= 0) & (u + v <= 1) & (t > 0), t, np.inf).min(1)
+        out[i:i + chunk] = np.where(np.isfinite(t), t, np.nan)
+    return out
+
+
+@lru_cache(maxsize=8)
+def _geometry(mesh: str, refine: int) -> dict:
+    V, T = read_mesh(Path(mesh))
+    S = _surface(V, T)
+    sv = S.reshape(-1, 3)
+    edges = np.linspace(V[:, 2].min(), V[:, 2].max(), N_ZBINS + 1)
+    sb = np.clip(np.digitize(sv[:, 2], edges) - 1, 0, N_ZBINS - 1)
+    zc = (edges[:-1] + edges[1:]) / 2
+    cen = np.array([sv[sb == b, :2].mean(0) for b in range(N_ZBINS)])
+
+    def axis(z):
+        return np.stack([np.interp(z, zc, cen[:, 0]), np.interp(z, zc, cen[:, 1])], -1)
+
+    nz, nth = RAY_TABLE
+    zg = edges[0] + (np.arange(nz) + 0.5) * (edges[-1] - edges[0]) / nz
+    thg = np.arange(nth) * 2 * np.pi / nth
+    Z, TH = np.meshgrid(zg, thg, indexing="ij")
+    o = np.concatenate([axis(Z.ravel()), Z.ravel()[:, None]], 1)
+    Rt = _ray_radius(S, o, TH.ravel()).reshape(nz, nth)
+    miss = float(np.isnan(Rt).mean())
+    rows = np.flatnonzero(~np.isnan(Rt).any(1))                    # tip rows that miss take the nearest full row
+    Rt = Rt[rows[np.abs(np.arange(nz)[:, None] - rows[None]).argmin(1)]]
+    Rt = np.concatenate([Rt, Rt[:, :1]], 1)                         # periodic in theta
+
+    lam = _subtet_points(refine)
+    pts = np.einsum("sk,tkd->tsd", lam, V[T])                       # (n_tet, n_sample, 3)
+    d = pts[..., :2] - axis(pts[..., 2])
+    r = np.linalg.norm(d, axis=-1)
+    fz = np.clip((pts[..., 2] - zg[0]) / (zg[1] - zg[0]), 0, nz - 1)
+    fth = np.mod(np.arctan2(d[..., 1], d[..., 0]), 2 * np.pi) / (2 * np.pi / nth)
+    iz, ith = np.minimum(fz.astype(int), nz - 2), np.minimum(fth.astype(int), nth - 1)
+    az, ath = fz - iz, fth - ith
+    R = ((1 - az) * ((1 - ath) * Rt[iz, ith] + ath * Rt[iz, ith + 1])
+         + az * ((1 - ath) * Rt[iz + 1, ith] + ath * Rt[iz + 1, ith + 1]))
+    vol = np.abs(np.einsum("ti,ti->t", np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]]),
+                           V[T[:, 3]] - V[T[:, 0]])) / 6
+    return {"r": r, "rho": np.clip(r / R, 0, 1), "vol": vol, "R_median": float(np.median(Rt)),
+            "ray_miss_frac": miss, "n_tet": len(T)}
+
+
+def mesh_geometry(mesh: Path = MESH, refine: int = N_REFINE) -> dict:
+    """Per sample point: r (distance from the body axis), rho = r / R(z, theta) (the layer coordinate); per tet:
+    vol. Cached per mesh; read only."""
+    return _geometry(str(mesh), refine)
 
 
 def profile(rho: np.ndarray, p: dict) -> np.ndarray:
@@ -144,31 +236,20 @@ def profile(rho: np.ndarray, p: dict) -> np.ndarray:
     return E * p.get("rule_body_modulus_scale", 1.0)
 
 
-def tet_moduli(p: dict | None = None, mesh: Path = MESH) -> tuple[np.ndarray, dict]:
+def tet_moduli(p: dict | None = None, mesh: Path = MESH, refine: int = N_REFINE) -> tuple[np.ndarray, dict]:
     """Young's modulus per tetrahedron (Pa, mesh order) and a summary."""
     p = {**P, **(p or {})}
-    V, T = read_mesh(mesh)
-    z = V[:, 2]
-    edges = np.linspace(z.min(), z.max(), N_ZBINS + 1)
-    vb = np.clip(np.digitize(z, edges) - 1, 0, N_ZBINS - 1)
-    cen = np.array([V[vb == b, :2].mean(0) for b in range(N_ZBINS)])
-    R = np.array([np.linalg.norm(V[vb == b, :2] - cen[b], axis=1).max() for b in range(N_ZBINS)])
-    lam = _barycentric()
-    pts = np.einsum("sk,tkd->tsd", lam, V[T])                       # (n_tet, n_sample, 3)
-    pb = np.clip(np.digitize(pts[..., 2], edges) - 1, 0, N_ZBINS - 1)
-    r = np.linalg.norm(pts[..., :2] - cen[pb], axis=-1)
-    rho = np.clip(r / R[pb], 0, 1)
+    g = mesh_geometry(mesh, refine)
+    r, rho, vol = g["r"], g["rho"], g["vol"]
     w = r ** 2 + 1e-12
     E = (profile(rho, p) * w).sum(1) / w.sum(1) * 1e3              # Pa
-    vol = np.abs(np.einsum("tij,tij->t", np.cross(V[T[:, 1]] - V[T[:, 0]], V[T[:, 2]] - V[T[:, 0]])[:, None, :],
-                           (V[T[:, 3]] - V[T[:, 0]])[:, None, :])) / 6
     # section bending modulus of the mesh: sum E_tet int r^2 dV / sum int r^2 dV (derived)
     I = vol * (r ** 2).mean(1)
-    summary = {"n_tet": len(T), "E_min_kPa": float(E.min() / 1e3), "E_max_kPa": float(E.max() / 1e3),
+    summary = {"n_tet": g["n_tet"], "E_min_kPa": float(E.min() / 1e3), "E_max_kPa": float(E.max() / 1e3),
                "E_volume_mean_kPa": float((E * vol).sum() / vol.sum() / 1e3),
                "E_bending_kPa": float((E * I).sum() / I.sum() / 1e3),
                "E_bending_ideal_kPa": float(ideal_bending_modulus(p)),
-               "mesh_radius_units": float(np.median(R))}
+               "mesh_radius_units": g["R_median"]}
     return E, summary
 
 
