@@ -16,9 +16,9 @@ double-count the mean. Per wsyn synapse i, each step:
 Each vesicle's arrival is averaged over the step (the (tau/dt)(1 - e) factor), which keeps E[qn] = 1 exactly at any
 step; the variance is within 1% of Campbell's continuous lambda g_q^2 (1 + CV^2) tau/2 for dt <= tau/5. Validity:
 brain steps up to about tau/3 (1 ms against tau 5-25 ms); postsynaptic factors (recgain, desensitization) count as
-fewer quanta rather than smaller ones; the Mg block is outside gd. Draws come from the worm's seed (the template
-worm: 0), rebuilt at reset, so a reset replays the same noise. Forms: quantal (default) / off (qn = 1, the
-deterministic synapse).
+fewer quanta rather than smaller ones; the Mg block is outside gd. Draws come from the brain's noise seed
+(Experiment.noise_seed; None = the worm's seed, the template worm: 0), rebuilt at reset, so a reset replays the same
+noise. Forms: quantal (default) / off (qn = 1, the deterministic synapse).
 
 Channel noise (row 26's other half): port of Linaro, Storace and Giugliano 2011 (PLoS Comput Biol 7:e1001102), the
 diffusion approximation in its conductance form. The gating variables stay deterministic; each channel population's
@@ -216,7 +216,7 @@ class Quantal:
         cls = [None if c < 0 else mech.RECEPTOR_CLASSES[c] for _, _, _, c in w]
         gq = [quantal_g_uS(params, rp, c) for c in cls]
         tau = [float(pp.tau_off) if pp.mode >= 1 else params["noise_event_tau_ms"] for pp, *_ in w]
-        seed = getattr(getattr(brain, "spec", None), "seed", None)
+        seed = getattr(brain, "noise_seed", getattr(getattr(brain, "spec", None), "seed", None))
         self.shot = Shot(gq, tau, params["noise_amp_cv"], [0 if seed is None else int(seed), 26])
         h = brain.h
         self.gd, self.qn = h.PtrVector(len(w)), h.PtrVector(len(w))
@@ -257,7 +257,7 @@ class Channel:
         h = brain.h
         musc = np.asarray(brain.is_muscle, bool)
         self.n = len(brain.soma)
-        seed = getattr(getattr(brain, "spec", None), "seed", None)
+        seed = getattr(brain, "noise_seed", getattr(getattr(brain, "spec", None), "seed", None))
         self.seed = [0 if seed is None else int(seed), 26, 1]
         self.n_channels = np.zeros(self.n)
         for ch, (fam, subs, E) in CHANNEL_GATES.items():

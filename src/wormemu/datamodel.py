@@ -137,6 +137,7 @@ class Experiment:
     every_ms: float = 1.0
     toggles: dict = field(default_factory=dict)  # mechanism forms over the defaults
     seed: int | None = None          # the worm drawn (None = the template worm); theta applies over it
+    noise_seed: int | None = None    # the run's noise (quantal, channel, brain_layers, observation); None = seed
 
 
 OBSERVABLES = {
@@ -279,7 +280,7 @@ def simulate(theta, experiment: Experiment) -> dict:
                 if getattr(m, "__name__", "").startswith("wormemu") and getattr(m, "load_structure", None) is orig:
                     m.load_structure = lambda st=st: st
                     patched.append(m)
-        b = Brain(spec, toggles=ex.toggles, cells=names)
+        b = Brain(spec, toggles=ex.toggles, cells=names, noise_seed=ex.noise_seed)
     finally:
         for m in patched:
             m.load_structure = orig

@@ -100,13 +100,13 @@ b.reset()
 b.extra_pA[b.idx[cells[0]]] = 30.0
 V = [b.step().v_mV for k in range(200)]
 print(json.dumps(dict(W=nm.pep_W.tolist(), Wa=nm.ma_W.tolist(), comp=nm.pep_comp.tolist(), V=np.array(V).tolist(),
-                 names=list(b.cell_names))))
+                 names=list(b.cell_names), named=nm.pep.named.tolist())))
 '''
 
 
-def _site(cells, site):
+def _site(cells, site, grid="four"):
     env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
-    tg = dict(peptides="compartments", monoamines="compartments", neuromod_site=site)
+    tg = dict(peptides="compartments", monoamines="compartments", neuromod_site=site, pc_grid=grid)
     r = subprocess.run([sys.executable, "-c", SITE, json.dumps(cells), json.dumps(tg)], capture_output=True, text=True,
                        env=env, cwd=ROOT, timeout=600)
     assert r.returncode == 0, r.stderr[-2000:]
@@ -115,7 +115,9 @@ def _site(cells, site):
 
 def test_site_weights():
     """neuromod_site: the soma form is one-hot on the soma's compartment; the membrane form's rows are area shares
-    (sum 1); a brain whose cells each lie inside one compartment is the same under both (limit test)."""
+    (sum 1); a brain whose cells each lie inside one compartment is the same under both (limit test). On the four
+    named compartments (the limit test needs them); under pc_grid=bins (the default) the bin weights regrouped by named
+    compartment are the four's."""
     cells = ["AVL", "DVB", "ASHL", "CEPDL", "RIML", "ADFL"]
     soma, memb = _site(cells, "soma"), _site(cells, "membrane")
     Ws, Wm = np.array(soma["W"]), np.array(memb["W"])
@@ -129,6 +131,10 @@ def test_site_weights():
     assert all(Wm[names.index(c), 0] == 1.0 for c in head)
     a, b = _site(head, "soma"), _site(head, "membrane")
     assert np.array_equal(np.array(a["V"]), np.array(b["V"]))
+    fine = _site(cells, "membrane", "bins")
+    Wb = np.array(fine["W"])
+    assert Wb.shape[1] > 50 and np.allclose(Wb.sum(1), 1.0) and fine["names"] == names
+    assert np.allclose(Wb @ np.eye(4)[fine["named"]], Wm, atol=1e-12)
 
 
 def test_aex2_ec50_source():
@@ -209,7 +215,8 @@ def test_pc_grid():
                             spec=SimpleNamespace(values={}), layers=None)
     T = {s.id: s.template for s in N.SPECS}
     tg = {"peptides": "compartments", "monoamines": "compartments"}
-    four = N.Mech(brain, T, tg)
+    four = N.Mech(brain, T, {**tg, "pc_grid": "four"})
+    assert N.Mech(brain, T, tg).grid == "bins"           # the default (Director, 9 Nov 2026)
     wide = N.Mech(brain, {**T, "pc_bin_um": 1e4}, {**tg, "pc_grid": "bins"})
     fine = N.Mech(brain, T, {**tg, "pc_grid": "bins"})
     assert np.array_equal(four.edges, wide.edges) and np.array_equal(four.edges, four.cuts)
@@ -237,3 +244,65 @@ def test_pc_grid():
     assert one.pep.N[row, ~sel].max() < one.pep.N[row, sel].min()
     assert np.isclose(one.pep.N[row].sum() / np.exp(-0.01 / T["pep_degrade_tau_s"] - 0.01 * T["pc_coelomocyte_uptake_per_s"]),
                       1e4 * 0.01, rtol=1e-12)
+
+
+def test_amine_synaptic():
+    """amine_synaptic: off (default) returns 0 and nicholson moves no molecules (a read: both step bit-identically);
+    limit tests against the closed form: one site in free volume, C = J share / (4 pi D r) exp(-r / l); two sites add
+    the second at sqrt(r^2 + s^2)."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "off", "monoamines": "compartments"}
+    off, on = N.Mech(brain, T, tg), N.Mech(brain, T, {**tg, "amine_synaptic": "nicholson"})
+    assert off.synaptic == "off"
+    hsn = [neurons.index("HSNL"), neurons.index("HSNR")]
+    v = np.full(len(neurons), -80.0)
+    v[hsn] = -20.0
+    ctx = SimpleNamespace(v=v, outputs={})
+    for _ in range(300):
+        off.step(ctx, 10.0)
+        on.step(ctx, 10.0)
+    assert np.array_equal(off.ma.N, on.ma.N) and np.array_equal(off.G, on.G)
+    assert off.near_nM("serotonin", hsn) == 0.0 and on.near_nM("serotonin", hsn) > 0.0
+    J = on.ma_J[hsn, N.AMINES.index("serotonin")]
+    assert (J > 0).all()
+    r, D, tau, share = 0.05, T["ma_diffusion_um2_per_s"], T["ma_degrade_tau_s"], 0.5
+    one = N.Mech(brain, {**T, "hsn_vm2_sites": 1, "ecs_alpha": 1.0, "ecs_tortuosity": 1.0, "syn_half_space": 1.0,
+                         "hsn_vm2_site_receptor_um": r, "hsn_vm2_release_share": share},
+                 {**tg, "amine_synaptic": "nicholson"})
+    want = share * 1e4 / (4 * np.pi * D * r) * np.exp(-r / np.sqrt(D * tau)) / 0.602214
+    assert np.isclose(one.near_nM("serotonin", [hsn[0]], J=[1e4]), want, rtol=1e-9)
+    L = 3.0                                                       # two pre cells, one site each: spacing L / 2
+    d2 = np.hypot(r, L / 2)
+    one.p = {**one.p, "hsn_vm2_region_um": L}
+    two = one.near_nM("serotonin", hsn, J=[1e4, 1e4])
+    want2 = share * 1e4 / (4 * np.pi * D) * (np.exp(-r / np.sqrt(D * tau)) / r + np.exp(-d2 / np.sqrt(D * tau)) / d2) \
+        / 0.602214
+    assert np.isclose(two, want2, rtol=1e-9)
+
+
+def test_no_neuron_brain():
+    """An organ-only brain (no neuron; wbody2, 9 Nov 2026) steps without raising and reports finite, neutral
+    neuron summaries (G means 0, release factor 1)."""
+    import warnings
+    from types import SimpleNamespace
+    st = load_structure()
+    cells = ["dBWML22", "vBWMR22"]
+    brain = SimpleNamespace(st=st, cell_names=cells, is_muscle=np.ones(2, bool), spec=SimpleNamespace(values={}),
+                            layers=None)
+    m = N.Mech(brain, {s.id: s.template for s in N.SPECS}, {"peptides": "compartments", "monoamines": "compartments"})
+    m.reset()
+    ctx = SimpleNamespace(v=np.full(2, -30.0), outputs={})
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        for _ in range(100):
+            r = m.step(ctx, 10.0)
+    o = r["out"]["neuromod"]
+    assert all(np.isfinite(v) for v in o.values() if isinstance(v, float))
+    assert (o["gq_mean"], o["gi_mean"], o["gs_mean"]) == (0.0, 0.0, 0.0)
+    assert o["release_factor_min"] == o["release_factor_max"] == 1.0
+    assert np.isfinite(r["I_pA"]).all() and all(np.isfinite(np.asarray(g)).all() for g in r["g_scale"].values())

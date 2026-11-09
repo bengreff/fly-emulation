@@ -14,7 +14,12 @@ Each module defines
     class Mech  __init__(self, brain, params, toggles): may add NEURON sections, point processes or synapses
                 reset(self)
                 step(self, ctx, dt_ms) -> dict with any of
-                    I_pA     array (n_cells), pA into each soma; summed over mechanisms
+                    I_pA     array (n_cells), pA into each soma; summed over mechanisms. Held over the exchange
+                             step: a current computed from ctx.v is explicit (unstable once g dt / C passes about 1-2;
+                             weki measured 0.8-1.9 nS at 4-4.5 ms steps on neuron somata), so a conductance goes in
+                    G_nS     array (n_cells), nS onto each soma (signed), with
+                    GE_pA    array (n_cells), the sum of g x E (nS x mV = pA): the cell gets g (E - V) at the present
+                             V, integrated by NEURON (one SensG per soma at e 0 carries G); both summed over mechanisms
                     act_add  array (95, BWM_NAMES order), added to body-wall muscle activation, then clipped to [0, 1];
                              summed over mechanisms
                     g_scale  {name: array (n_cells)}, conductance multipliers, multiplied over mechanisms and applied
