@@ -319,3 +319,8 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   the deciding unknown. Open 5 as a C toggle `dmsr1_isoform` (FLP-25 on DMSR-1: isoform B 0.6 pM, the default, or A
   1.6 uM): line 14 passes under both, but under the default DMSR-1 is saturated in every head cell that expresses it
   (head FLP-25 30x B's EC50), and the choice moves resting Gi by more than 0.1 in 198 cells (measured). Not adopted.
+- Session 4 (wneuro, 9 Nov): Open 7 far field as an A toggle `pc_grid=bins` (pool bins of 8 um inside each named
+  compartment, chosen by convergence): within 3.7% of the exact 1D solution where the four compartments read 0.39x at
+  HSN's source (measured, pre-registered). Live, the vulval 5-HT read rises 3.2x (0.38 -> 1.20 nM off food) and MC's
+  SER-7 Gs 1.7x on food; still 0.04 of SER-7's EC50 at the vulva. Default four until the Director adopts. HSN's
+  synaptic near field onto vm2 is B blocked on geometry sources (Nicholson's form exists; derived bound in the night file).
