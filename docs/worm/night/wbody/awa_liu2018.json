@@ -1,7 +1,18 @@
 {
- "check": "AWA Liu 2018 isolated WT cell, 1 s steps from rest",
+ "check": "AWA Liu 2018 isolated WT cell, 5 s steps from rest",
  "rest_mV": -76.16,
  "first_step_pA": 13,
+ "spiking_steps_pA": [
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20
+ ],
+ "first_latency_ms": 58.45,
  "cpu_first": {
   "threshold_mV": -30.9,
   "peak_mV": 8.9,

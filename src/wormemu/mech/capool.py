@@ -30,11 +30,12 @@ indicator. Eq. 28's pool is Nicoletti's submembrane microdomain (tau_Ca 50 ms), 
 bulk cytosolic Ca. No C. elegans neuron form with a bulk pool was found (night file, Open), so the nearest system's
 published form is borrowed (Director's rule, 6 Nov): NEURON's cadifpmp (Hines and Carnevale, NEURON 9.0.2
 share/nrn/demo/release/cabpump.mod), radial diffusion in 10 annuli of the soma cylinder, a fixed-ratio buffer and a
-saturable membrane pump, as nmodl/cabulk.mod. A readout only: it reads the soma's total ica and writes neither cai
-nor ica, so every channel keeps Eq. 28 and the membrane is unchanged; GCaMP (mech/observation) reads its mean free Ca.
-Form cadifpmp; off (default) inserts nothing. Validity: soma Ca only (BAAIWorm's Ca channels are all somatic), end caps
-ignored as cadifpmp, and the pump is the only extrusion: a Ca current above its capacity (k3 pump0 2F = 0.029 pA/um2,
-derived) accumulates without bound.
+saturable membrane pump, as nmodl/cabulk.mod. A readout only: it reads the soma's inward ica (as cainternm, no
+channel efflux above the channels' fixed reversal) and writes neither cai nor ica, so every channel keeps Eq. 28 and
+the membrane is unchanged; GCaMP (mech/observation) reads its mean free Ca. Form cadifpmp; off (default) inserts
+nothing. Validity: soma Ca only (BAAIWorm's Ca channels are all somatic), end caps ignored as cadifpmp, and the pump
+is the only extrusion: a Ca current above its capacity (k3 pump0 2F = 0.029 pA/um2, derived) accumulates without
+bound.
 """
 from __future__ import annotations
 

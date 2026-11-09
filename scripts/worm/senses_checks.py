@@ -190,6 +190,9 @@ def spike_features(t, v, detect=5.0):
                 max_dvdt=round(float(dv[k0:k + 1].max()), 2))
 
 
+LIU_STEP_MS = 5000.0      # Liu 2018 (bioRxiv 359935) Fig 2G: "under 5 s of current injection steps"
+
+
 def awa_cpu(steps, P=LIU, T=1000.0, t_on=100.0):
     from scipy.integrate import solve_ivp
     v0 = liu_rest(P)
@@ -231,21 +234,24 @@ def awa_neuron(steps, T=1000.0, t_on=100.0, v0=-70.0, kir="smooth_min"):
 
 
 def awa(kir="smooth_min"):
-    """Liu 2018's isolated AWA. kir: the inward rectifier's form ("as_printed" saves as awa_liu2018_as_printed)."""
+    """Liu 2018's isolated AWA on its 5 s steps. kir: the inward rectifier's form ("as_printed" saves as
+    awa_liu2018_as_printed). Reported beside the bars: the first spike's latency (Liu: "a peak time to first spike of
+    one second") and the steps that spike (Liu: "only ... between 2 pA and 12 pA")."""
     P = dict(LIU, kir=kir)
     name = "awa_liu2018" + ("" if kir == "smooth_min" else f"_{kir}")
-    steps = list(range(1, 21))
-    v0, cpu, tr = awa_cpu(steps, P)
+    steps, T, t_on = list(range(1, 21)), LIU_STEP_MS, 100.0
+    v0, cpu, tr = awa_cpu(steps, P, T=T, t_on=t_on)
     first = next((I for I in steps if cpu[I]), None)
-    res = dict(check="AWA Liu 2018 isolated WT cell, 1 s steps from rest", rest_mV=round(v0, 2),
-               first_step_pA=first)
+    res = dict(check="AWA Liu 2018 isolated WT cell, 5 s steps from rest", rest_mV=round(v0, 2),
+               first_step_pA=first, spiking_steps_pA=[I for I in steps if cpu[I]],
+               first_latency_ms=None if first is None else round(cpu[first]["t_peak_ms"] - t_on, 2))
     if first is None:
         res["verdict"] = "fail (no spike for 1-20 pA)"
         _save(name, res)
         return
     f1 = cpu[first]
-    f2 = cpu.get(2 * first) or awa_cpu([2 * first], P)[1][2 * first]
-    nrn, ntr = awa_neuron([first, 2 * first], v0=v0, kir=kir)
+    f2 = cpu.get(2 * first) or awa_cpu([2 * first], P, T=T, t_on=t_on)[1][2 * first]
+    nrn, ntr = awa_neuron([first, 2 * first], T=T, t_on=t_on, v0=v0, kir=kir)
     res.update(cpu_first=f1, cpu_double=f2, neuron_first=nrn[first], neuron_double=nrn[2 * first])
     ok = dict(threshold=abs(f1["threshold_mV"] + 34.0) <= 5, amplitude=abs(f1["amplitude_mV"] - 25.8) <= 6,
               half_width=abs(f1["half_width_ms"] - 18.0) <= 6,

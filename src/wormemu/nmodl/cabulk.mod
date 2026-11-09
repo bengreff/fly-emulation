@@ -45,8 +45,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Wormemu changes (wbrain2, 8 Nov 2026; mech/capool's ca_bulk toggle), each to keep the pool a readout beside
 Nicoletti 2019's Eq. 28 pool (cainternm), which every Ca-dependent channel keeps reading:
   - SUFFIX cabulk; USEION ca READ ica with no WRITE: cai stays cainternm's, and the pump's current is not added to
-    the membrane (cadifpmp writes it to ica). The influx is the soma's whole ica; cadifpmp's influx is ica minus the
+    the membrane (cadifpmp writes it to ica). The influx is the soma's ica; cadifpmp's influx is ica minus the
     pump's own last current, the same thing when the pump writes none.
+  - only inward Ca enters, influx max(0, -ica) (wbrain2, 9 Nov 2026): BAAIWorm's Ca channels have a fixed 60 mV
+    reversal, so above +60 mV their ica turns outward, and cainternm.mod drops the channel flux there (setparames,
+    v <= 60). Fed the outward ica, ca[0] drained to zero, where the sparse solver's clamp of negative states stops
+    Newton converging (weki's AIY with maturation s 0.627 at +35 pA, 13 ms above +60 mV). With BAAIWorm's channels
+    this is cainternm's test exactly; it also holds for the swapped membranes' own fixed reversals.
   - external Ca is the GLOBAL caom (mM), set by mech/capool from the ledger's ion_cao, instead of the ion's cao: the
     brain holds the Ca ion in uM (cao0 = ion_cao x 1000), cadifpmp's rates are per mM.
   - the state is ca[] in mM as cadifpmp; ca0 (uM, RANGE) is the initial free Ca in every annulus (cadifpmp starts
@@ -102,6 +107,7 @@ ASSIGNED {
 	cab	(uM)
 	cabmem	(uM)
 	jpump	(mA/cm2)
+	iin	(mA/cm2)
 }
 
 STATE {
@@ -152,7 +158,9 @@ KINETIC state {
 	COMPARTMENT (1e10)*area1 {pump pumpca}
 	~ pumpca <-> pump + caom		(c3, c4)
 	jpump = (1e-4)*2*FARADAY*(f_flux - b_flux)/area1
-	~ ca[0] << (-ica*PI*diam*1(um)*(1e4)*frat[0]/(2*FARADAY))
+	iin = -ica
+	if (iin < 0) { iin = 0 }
+	~ ca[0] << (iin*PI*diam*1(um)*(1e4)*frat[0]/(2*FARADAY))
 	FROM i=0 TO NANN-2 {
 		~ ca[i] <-> ca[i+1] (DFree*frat[i+1]*1(um), DFree*frat[i+1]*1(um))
 	}
