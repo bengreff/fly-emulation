@@ -394,6 +394,16 @@
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: slo_ca_source
+  name: 'Ca seen by the SLO channels: one open channel''s nanodomain (gsc 40 pS, BAAIWorm''s network and Nicoletti 2019) or the tuner''s cainternn (gsc = the cell''s summed SLO density)'
+  layer: channel
+  status: have
+  toggle: slo_ca_source
+  neutral: 'off'
+  default: single_channel
+  source: src/wormemu/mech/capool.py
+  notes: registry module capool; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: ca_pool_volume
   name: 'Each neuron''s bulk Ca pool sized by its own volume in the BAAIWorm morphology (Nicoletti 2024: per-cell volume) instead of one V_cell for all (nested: soma, fixed)'
   layer: channel

@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-08 21:01 CST",
+ "generated_at": "2026-11-08 21:24 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -11,7 +11,7 @@
  "totals": {
   "numbers": 91536,
   "rows": 1792,
-  "mechanisms": 98,
+  "mechanisms": 99,
   "by_label": {
    "derived": 67513,
    "guessed": 9413,
@@ -769,6 +769,20 @@
    "toggle": "ca_pool_units",
    "neutral": "off",
    "default": "total_current",
+   "source": "src/wormemu/mech/capool.py",
+   "notes": "registry module capool; PLAN row guessed from the name by the catalog",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
+  },
+  {
+   "id": "slo_ca_source",
+   "name": "Ca seen by the SLO channels: one open channel's nanodomain (gsc 40 pS, BAAIWorm's network and Nicoletti 2019) or the tuner's cainternn (gsc = the cell's summed SLO density)",
+   "layer": "channel",
+   "status": "have",
+   "toggle": "slo_ca_source",
+   "neutral": "off",
+   "default": "single_channel",
    "source": "src/wormemu/mech/capool.py",
    "notes": "registry module capool; PLAN row guessed from the name by the catalog",
    "absent_reason": "",

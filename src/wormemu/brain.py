@@ -127,6 +127,17 @@ def patch_ek(stem, text):
     return out
 
 
+def patch_slo_gsc(stem, text):
+    """The SLO mods' nanodomain gsc as a RANGE variable (default 0.04 nS unchanged), so mech/capool's slo_ca_source
+    can set it per cell (the tuner's form, DEBUG_TRIAGE item 4)."""
+    if stem not in SLO:
+        return text
+    out, n = re.subn(r"^(\s*RANGE gbslo[12]),", r"\1, gsc,", text, flags=re.M)
+    if n != 1:
+        raise ValueError(f"{stem}.mod: {n} RANGE lines (expected 1)")
+    return out
+
+
 def _neuron():
     """NEURON with the vendored mods loaded (compiled once into $WORMEMU_NRNMECH or ~/.cache/wormemu/nrnmech)."""
     global _h
@@ -138,9 +149,9 @@ def _neuron():
     mods = sorted((BAAI / "mod").glob("*.mod")) + sorted((C302 / "mod").glob("*.mod")) \
         + sorted(OWN_MODS.rglob("*.mod"))                # ours, including the organ workers' nmodl/organs/
     # the built text: temperature's rate factor (tadj, 1 by default) patched into the rate-class mods (row 25), and
-    # the K mods' ik against ek (EK_MODS)
-    text = {m: temperature.patch_mod(m.stem, patch_ek(m.stem, m.read_text()) if m.parent == BAAI / "mod" else
-                                     m.read_text()) for m in mods}
+    # the K mods' ik against ek (EK_MODS), the SLO mods' gsc as RANGE
+    text = {m: temperature.patch_mod(m.stem, patch_slo_gsc(m.stem, patch_ek(m.stem, m.read_text()))
+                                     if m.parent == BAAI / "mod" else m.read_text()) for m in mods}
     tag = hashlib.sha1(b"".join(m.name.encode() + text[m].encode() for m in mods)).hexdigest()[:12]
     RATE_SUFFIX.update({temperature.mod_suffix(text[m]): temperature.RATE_MODS[m.stem][0] for m in mods
                         if m.stem in temperature.RATE_MODS})
