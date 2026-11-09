@@ -389,6 +389,24 @@ def _other(**toggles):
     return oo.Mech(SimpleNamespace(idx={}, spec=None), {}, dict(other_cells="off", **toggles))
 
 
+def test_gap_per_contact_is_its_own_row():
+    """wbrain2's Request (9 Nov 2026): organs_other's and glia's per-contact gaps are their own ledger rows; a removed
+    branch would have replaced them with the brain's median gap_strength_per_pair when params lacked them."""
+    def never(pid):
+        raise AssertionError(f"read {pid}")
+    sp = SimpleNamespace(led=object(), v=never)
+    m = oo.Mech(SimpleNamespace(idx={}, spec=sp), {}, dict(other_cells="off"))
+    assert m.q["other_gap_nS_per_contact"] == oo.defaults()["other_gap_nS_per_contact"]
+    assert oo.Mech(SimpleNamespace(idx={}, spec=sp), {"other_gap_nS_per_contact": 0.4},
+                   dict(other_cells="off")).q["other_gap_nS_per_contact"] == 0.4
+    brain, _ = _glia_brain()
+    brain.spec = sp
+    g = gl.Mech(brain, {"glia_gap_nS_per_contact": 0.3}, {"glia_cells": "off", "glia_v0_window": "first"})
+    assert g.q["glia_gap_nS_per_contact"] == 0.3
+    assert gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first"}).q["glia_gap_nS_per_contact"] == \
+        gl.defaults()["glia_gap_nS_per_contact"]
+
+
 def _other_run(m, s, dt_s=1.0, obs=None):
     ctx = SimpleNamespace(obs=obs, outputs={})
     return [m.step(ctx, dt_s * 1000.0)["out"] for _ in range(int(s / dt_s))]

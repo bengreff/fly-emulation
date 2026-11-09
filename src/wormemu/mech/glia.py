@@ -94,8 +94,10 @@ SPECS = [
     _s("glia_e_leak_mV", "glia_cells", "mV", -70.0, -85.0, -50.0, "glia rest near E_K (mammalian astrocytes -80 to "
        "-90 mV)", "inferred", "GLR, CEPsh", notes="no C. elegans glial recording; cross-species, bounded"),
     _s("glia_gap_nS_per_contact", "glia_cells", "nS", 0.2236, 0.05, 0.5, "the brain's gap_strength_per_pair",
-       "inferred", "GLR, CEPsh gaps", notes="the brain's per-EM-contact neuronal gap (read from the ledger when "
-       "present): glial innexins unresolved"),
+       "inferred", "GLR, CEPsh gaps", notes="the template copies the median of the brain's per-EM-contact "
+       "neuronal gap (gap_strength_per_pair); the row is its own; glial innexins unresolved. 9 Nov 2026: a branch "
+       "that replaced it with the brain's median when params lacked it never ran (mech.params_for always passes "
+       "it) and is removed"),
     _s("glia_k_bath_mM", "glia_kbuffer", "mM", 5.0, 2.5, 10.0, "C. elegans recording saline (5 mM KCl, Goodman et "
        "al. 1998)", "inferred", notes="resting Ko at the endings; the pseudocoelomic K+ is unmeasured"),
     _s("glia_k_volume_um3", "glia_kbuffer", "um3", 100.0, 10.0, 1000.0, "amphid ultrastructure (Perkins et al. "
@@ -157,12 +159,6 @@ class Mech:
         assert self.kload in ("leak", "channels")
         q = defaults()
         q.update({k: float(v) for k, v in (params or {}).items() if np.isscalar(v)})
-        sp = getattr(brain, "spec", None)
-        if sp is not None and getattr(sp, "led", None) is not None and "glia_gap_nS_per_contact" not in (params or {}):
-            try:
-                q["glia_gap_nS_per_contact"] = float(np.median(sp.v("gap_strength_per_pair").to_numpy(float)))
-            except (KeyError, ValueError):
-                pass
         self.q = q
         amph = [c for c in sorted(AMPHID) if c in brain.idx]
         self.amph = np.array([brain.idx[c] for c in amph], int)
