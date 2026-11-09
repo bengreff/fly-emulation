@@ -51,8 +51,13 @@ MECHANISMS = [
 DEMIR = "Demir et al. 2020 eLife 9:e52781, Methods eq 2 (read 6 Nov 2026)"
 SPECS = [
     spec("lawn_radius_mm", "env_food", "mm", 5.0, 2.0, 15.0, "guessed",
-         "none opened: a 20-50 uL OP50 spot spreads to ~1 cm"),
-    spec("lawn_od", "env_food", "OD600", 1.0, 0.1, 10.0, "guessed", "none opened: lawn interior bacterial density"),
+         "none opened: a 20-50 uL OP50 spot spreads to ~1 cm",
+         notes="opened 9 Nov 2026: '40 uL drops, which spread to a diameter of 11.2 mm on average' (Madirolas et "
+               "al. 2023 Commun Biol, PMC10425387, methods): radius 5.6 mm (derived), inside the range. The template "
+               "stays 5.0 until a battery runs on 5.6 (the vitals plate uses this lawn)"),
+    spec("lawn_od", "env_food", "OD600", 1.0, 0.1, 10.0, "guessed", "none opened: lawn interior bacterial density",
+         notes="the seeded culture, not the grown lawn, is what papers give: OD 0.5 (Madirolas et al. 2023 Commun "
+               "Biol, PMC10425387, methods, opened 9 Nov 2026); no lawn density after growth found"),
     spec("lawn_rim_ratio", "env_food", "1", 2.0, 1.0, 5.0, "guessed",
          "Gray et al. 2004 Nature 430:317 (bacteria thicker at the border; ratio not read)"),
     spec("lawn_rim_width_mm", "env_food", "mm", 0.5, 0.1, 1.0, "guessed", "none opened"),
@@ -98,8 +103,15 @@ SPECS = [
                "1975 and Luo et al. 2014, neither opened (re-sourced 9 Nov 2026)"),
     spec("eyelash_halfwidth", "env_events", "body length", 0.03, 0.01, 0.1, "inferred",
          "an eyelash tip is ~50 um wide (half width 0.025-0.03 of a 1 mm body)"),
-    spec("eyelash_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed",
-         "none opened (Chalfie et al. 1985 eyelash assay; force not measured there)"),
+    spec("eyelash_force_uN", "env_events", "uN", 26.0, 3.8, 177.0, "measured",
+         "the force people deliver in the classical touch assay: 'the median force from all trials was 26 uN', mean "
+         "61 uN, log-normal, coefficient of variation 1.7 (Nekimken, Mazzochette, Goodman & Pruitt 2017 PLoS ONE, "
+         "PMC5438190, results, opened 9 Nov 2026; volunteers with eyebrow hairs on a calibrated cantilever)",
+         notes="range 3.8-177 uN: the 5-95 % of one log-normal with median 26 and CV 1.7 (sigma 1.166, derived; it "
+               "implies a mean of 51 uN against the reported 61, so one log-normal is approximate). "
+               "The response saturates near 2 uN (catalog env_touch_saturation_uN); the assay force is over ten "
+               "times that (the paper's point). Was 2 (0.1-10, guessed). No default run uses it: the vitals "
+               "battery has no events; standard_events (wbody_loop_check --env=standard) does"),
     spec("tap_uN", "env_events", "uN", 5.0, 0.5, 50.0, "guessed", "none opened (Rankin et al. 1990 tapper)"),
     spec("nose_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed", "none opened (Kaplan and Horvitz 1993)"),
     spec("viscosity_mPa_s", "env_medium", "mPa s", 1.0, 0.9, 28000.0, "measured",
