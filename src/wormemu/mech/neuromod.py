@@ -315,7 +315,12 @@ SPECS += [
     S("ma_vhalf_mV", A, "mV", -30, -50, 0, notes="the old lumped layer's ma_release_vth_mV"),
     S("ma_k_mV", A, "mV", 5, 2, 15),
     S("ma_tau_ms", A, "ms", 100, 10, 1000, notes="small clear and dense-core vesicles: faster than peptide DCVs"),
-    S("ma_release_per_s", A, "molecules/s per neuron", 1e5, 1e3, 1e7, notes="at full drive and a full store",
+    S("ma_release_per_s", A, "molecules/s per neuron", 1e5, 1e3, 1e7, notes="at full drive and a full store. No C. "
+      "elegans source (none free: Zhou et al. 2007 Neuron's amperometry is paywalled). Cross-species check only: "
+      "Drosophila larval VNC under maximal optogenetic drive releases at least about 1e3-1.5e3 molecules/s per "
+      "activated varicosity (derived from Borue et al. 2009 J Neurosci Methods, PMC2691387: 1 vesicle of 4,700 per "
+      "varicosity gives 450 nM, 2 s gives 280 nM, uptake Vmax 170 nM/s at the plateau; their caveat: a lower bound). "
+      "The template at full drive is about 1.6e3 per HSN site at the vulva (0.26 x 1e5 / 16, derived)",
       grain="class", applies_to="5-HT, DA, OA, TA release cells"),
     S("ma_store_molecules", A, "molecules per neuron", 1e6, 1e4, 1e8, grain="class", applies_to="each OA and TA "
       "release cell (no measured content); 5-HT and DA cells read their own rows below"),
