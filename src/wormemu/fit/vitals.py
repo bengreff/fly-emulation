@@ -5,7 +5,9 @@ Ben (8 Nov): "Vital signs is a good direction as a check, as long as all the sig
 entire worm." So every sign is read from the same everything-on run through wormemu.simulate(theta, experiment):
 the body on (MetaWorm FEM in closed loop on the agar film), every registered mechanism at its default form, the plate
 fields of body/environment.py at their defaults (lawn, O2, CO2, salt plug, temperature gradient), food on or off.
-Nothing here writes an observable: a sign the worm does not produce is a miss, never patched.
+Nothing here writes an observable: a sign the worm does not produce is a miss, never patched. The one toggle the
+battery sets is the instrument's: GCaMP is read as GCaMP7f, the indicator Atanas 2023 imaged (BATTERY_TOGGLES;
+observation.py's gcamp is readout only, so the worm is unchanged).
 
 The plate: datamodel.simulate builds its Body with no environment, the published world and the default scene
 (Requests, night file 2026-11-08_weki). Until that changes, `plate()` hands simulate's Body the agar film, the
@@ -44,8 +46,10 @@ CA_PEAK_UM, CA_PEAK_GAP_S = 0.3, 10.0  # intestinal Ca peaks: > 0.3 uM, >= 10 s 
 EGG_BOUT_GAP_S = 300.0                # eggs closer than this belong to one active phase (inferred, VITAL_SIGNS.md)
 EGG_MIN_BIO_S = 1800.0                # bout statistics need at least one inactive phase (~20 min, VITAL_SIGNS.md)
 DMP_MIN_INTERVALS = 2                 # a defecation period needs at least 2 expulsion-to-expulsion intervals
-ATANAS_DT_S = 1.0 / 1.7               # resample GCaMP to Atanas 2023's volume rate before the PC statistic
+ATANAS_DT_S = 0.600                   # Atanas 2023's frame interval, the median over the 60 open animals (measured)
 PC_K = 3
+PC_NEURONS, PC_REPS = 135, 50         # the median open animal's ROI count (measured); random subsets, median over 50
+BATTERY_TOGGLES = {"gcamp": "gcamp7f"}  # read GCaMP as the dataset scored against imaged it (Atanas 2023: GCaMP7f)
 PLATES = {"food": {"env_food": "lawn"}, "nofood": {"env_food": "off"}}
 CLASSES = {"AIY": ("AIYL", "AIYR"), "AFD": ("AFDL", "AFDR"), "AWA": ("AWAL", "AWAR")}   # RIM: its clamp is sealed
 CONC = ("out:intestine_ca_uM", "out:intestine_ip3_uM", "out:pharynx_ca_core_uM", "out:bwm_ca_mM",
@@ -89,22 +93,58 @@ class Sign:
 
 
 # The ranges. Each source was opened (who and when in VITAL_SIGNS.md); None = no opened measurement yet.
+ZHOU15 = "Zhou et al. 2015 J Lipid Res 56:2110, PMC4617398 (results, Fig 1C; opened 8 Nov 2026)"
 SIGNS = [
-    Sign("rest_AIY", "AIY soma, median voltage", ("food", "nofood"), "mV"),
-    Sign("rest_AFD", "AFD soma, median voltage", ("food", "nofood"), "mV"),
-    Sign("rest_AWA", "AWA soma, median voltage", ("food", "nofood"), "mV"),
-    Sign("pc3_frac", "whole-brain GCaMP: variance fraction in the top 3 PCs (z-scored traces, run-length windows)",
-         ("food", "nofood"), "1"),
-    Sign("gcamp_range", "GCaMP per-neuron range, median over neurons", ("food", "nofood"), "dF/F"),
-    Sign("ca_rest_uM", "neuron soma Ca, median over neurons of each one's median", ("food", "nofood"), "uM"),
-    Sign("pump_hz", "pharyngeal pumping rate on food", ("food",), "Hz"),
-    Sign("pump_hz_off", "pharyngeal pumping rate off food", ("nofood",), "Hz"),
-    Sign("dmp_period_s", "defecation period (expulsion to expulsion) on food", ("food",), "s", min_bio_s=150.0),
-    Sign("egg_inactive_min", "egg-laying: inactive phase duration", ("food",), "min", min_bio_s=EGG_MIN_BIO_S),
-    Sign("egg_intra_s", "egg-laying: interval between eggs inside an active phase", ("food",), "s",
-         min_bio_s=EGG_MIN_BIO_S),
-    Sign("bwm_rest_mV", "body-wall muscle, median voltage", ("food", "nofood"), "mV"),
-    Sign("bwm_spike_hz", "body-wall muscle action potentials per firing muscle", ("food", "nofood"), "Hz"),
+    Sign("rest_AIY", "AIY soma, median voltage", ("food", "nofood"), "mV", mean=-53.0,
+         source="Naudin et al. 2022 PLoS ONE 17:e0268380 (V0 = -53 mV, cited from their ref 23; opened 8 Nov 2026)",
+         notes="a point with no spread or n: reported, not scored"),
+    Sign("rest_AFD", "AFD soma, median voltage", ("food", "nofood"), "mV", mean=-78.0,
+         source="Naudin et al. 2022 (V0 = -78 mV, cited from their ref 23; opened 8 Nov 2026)",
+         notes="a point with no spread or n: reported, not scored"),
+    Sign("rest_AWA", "AWA soma, median voltage", ("food", "nofood"), "mV", mean=-75.3, sd=4.7, n=27,
+         source="Liu, Kidd, Dobosiewicz & Bargmann 2018 bioRxiv 359935v1, Fig 2E (opened 8 Nov 2026)",
+         notes="'Mean = -75.3 mV, SEM = 4.7 mV, R-Square = 0.90', a Gaussian fit over 27 traces; the band takes 4.7 mV "
+               "as the spread (the strict reading); SEM x sqrt(27) = 24 mV would give -124 to -27 mV"),
+    Sign("pc3_frac", "whole-brain GCaMP: variance fraction in the top 3 PCs (z-scored, 195 s windows, 135 neurons)",
+         ("food",), "1", mean=0.440, sd=0.057, n=60, lo=0.353, hi=0.506, label="measured (computed from the data)",
+         source="Atanas et al. 2023 Cell 186:4134 (Zenodo 8185377), the 60 open atanas2023_main animals, "
+                "scripts/worm/fit/atanas_pc3.py; band = their 5th to 95th percentile",
+         notes="Atanas imaged NLS-GCaMP7f at 1.7 Hz on food (methods, PMC10836760, opened 8 Nov 2026)"),
+    Sign("gcamp_range", "GCaMP per-neuron range (P95 - P5 of dF/F), median over neurons, 195 s windows", ("food",),
+         "dF/F", mean=0.718, sd=0.161, n=60, lo=0.567, hi=0.983, label="measured (computed from the data)",
+         source="Atanas et al. 2023 (as pc3_frac), traces F / mean F, scripts/worm/fit/atanas_pc3.py; band = the "
+                "5th to 95th percentile over the 60 open animals"),
+    Sign("ca_rest_uM", "neuron soma Ca, median over neurons of each one's median", ("food", "nofood"), "uM",
+         notes="no opened measurement of absolute resting Ca in C. elegans neurons: reported, not scored"),
+    Sign("pump_hz", "pharyngeal pumping rate on food", ("food",), "Hz", mean=4.76, sd=0.26, n=24, source=ZHOU15,
+         notes="285.7 +- 15.5 (mean +- SD) contractions/min, N2 on a lawn, 20 C; n 'at least eight animals per "
+               "trial, at least in triplicate' (24 is that floor). Hiebert et al. 2017 (PMC7255878): 3.46 +- 0.19 Hz "
+               "SEM, n = 90, refed in liquid after a 2 h fast, a different assay (reported, not the bar)"),
+    Sign("pump_hz_off", "pharyngeal pumping rate off food", ("nofood",), "Hz", lo=0.03, hi=1.73, label="inferred band",
+         source=ZHOU15 + "; Hiebert et al. 2020 microPubl Biol, PMC7255870 (opened 8 Nov 2026)",
+         notes="upper: Zhou 2015, 82.2 +- 11.0 (SD) /min after 90 min off food = 1.37 + 2 x 0.18 Hz; lower: Hiebert "
+               "2020, N2 in M9 0.09 +- 0.03 Hz (n = 31, spread type not stated, read as SD) less 2 x 0.03. Neither "
+               "is 0-200 s off food, our condition"),
+    Sign("dmp_period_s", "defecation period (expulsion to expulsion) on food", ("food",), "s", mean=45.0, sd=3.0,
+         min_bio_s=150.0, source="Liu & Thomas 1994 J Neurosci 14:1953, PMC6577142, abstract (opened 8 Nov 2026)",
+         notes="'every 45 sec ... with an SD of about 3 sec' (within an individual; n not in the abstract). Kwan et "
+               "al. 2008 (PMC2409367): 46.4 s, mean CV 5.5%, L4 at 20 C, > 25 worms x 15 cycles: inside the band"),
+    Sign("egg_inactive_min", "egg-laying: inactive phase duration, mean", ("food",), "min", mean=20.0, lo=10.0,
+         hi=40.0, min_bio_s=EGG_MIN_BIO_S, label="inferred band",
+         source="Zhang, Schafer & Breitling 2010 BMC Syst Biol, PMC2887794 (opened 8 Nov 2026)",
+         notes="inter-cluster intervals exponential with tau2 ~ 20 min; no spread or n published: the band is a "
+               "factor 2 around tau2 (guessed width)"),
+    Sign("egg_intra_s", "egg-laying: interval between eggs inside an active phase, mean", ("food",), "s", mean=20.0,
+         lo=10.0, hi=40.0, min_bio_s=EGG_MIN_BIO_S, label="inferred band",
+         source="Zhang, Schafer & Breitling 2010, PMC2887794 (opened 8 Nov 2026)",
+         notes="intra-cluster intervals exponential with tau1 ~ 20 s; band a factor 2 around it (guessed width)"),
+    Sign("bwm_rest_mV", "body-wall muscle, median voltage", ("food", "nofood"), "mV", mean=-25.0, sd=5.2, n=27,
+         source="Gao & Zhen 2011 PNAS 108:2557, PMC3038695 (opened 8 Nov 2026)",
+         notes="-25.0 +- 1.0 mV SEM, n = 27, dissected muscle; SD = 1.0 x sqrt(27) = 5.2 mV (derived)"),
+    Sign("bwm_spike_hz", "body-wall muscle action potentials per firing muscle", ("food", "nofood"), "Hz",
+         mean=0.73, sd=0.73, n=27, source="Gao & Zhen 2011, PMC3038695 (opened 8 Nov 2026)",
+         notes="0.73 +- 0.14 Hz SEM; n not attached to the rate, 27 assumed (the rest n): SD = 0.14 x sqrt(27) = "
+               "0.73 Hz (derived); dissected, about 80% of preparations fire"),
 ]
 SIGN = {s.id: s for s in SIGNS}
 
@@ -120,7 +160,8 @@ def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None
     if cond not in PLATES:
         raise ValueError(f"{cond}: one of {sorted(PLATES)}")
     return Experiment(duration_ms=1000.0 * seconds, body="on", temperature_C=20.0, observe=OBSERVE,
-                      every_ms=EXCHANGE_MS, toggles=dict(toggles or {}), seed=seed, body_out=body_out)
+                      every_ms=EXCHANGE_MS, toggles={**BATTERY_TOGGLES, **(toggles or {})}, seed=seed,
+                      body_out=body_out)
 
 
 @contextlib.contextmanager
@@ -233,8 +274,12 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
         out[f"rest_{cls}_cells"] = med
     g = np.asarray(res["gcamp_dff"], float)[:, neur]
     tt, gr = resample(t[w], g[w], ATANAS_DT_S)
-    out["pc3_frac"], out["pc3_n_neurons"] = pc_frac(gr)
-    out["gcamp_range"] = gcamp_range(g[w])
+    rng = np.random.default_rng(0)
+    m = min(PC_NEURONS, gr.shape[1])
+    out["pc3_frac"] = float(np.nanmedian([pc_frac(gr[:, rng.choice(gr.shape[1], m, replace=False)])[0]
+                                          for _ in range(PC_REPS)]))
+    out["pc3_frac_all"], out["pc3_n_neurons"] = pc_frac(gr)
+    out["gcamp_range"] = gcamp_range(gr)
     ca = np.asarray(res["ca_uM"], float)[:, neur]
     out["ca_rest_uM"] = float(np.median(np.median(ca[w], axis=0)))
     out["ca_range_uM"] = float(np.median(np.percentile(ca[w], 95, axis=0) - np.percentile(ca[w], 5, axis=0)))
@@ -254,8 +299,8 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     eggs = event_times(t, res["eggs_laid"])
     bouts, intra, inactive = egg_bouts(eggs)
     out.update(eggs=len(eggs), egg_s=eggs, egg_bouts=len(bouts),
-               egg_intra_s=float(np.median(intra)) if intra else None,
-               egg_inactive_min=float(np.median(inactive)) / 60.0 if inactive else None)
+               egg_intra_s=float(np.mean(intra)) if intra else None,
+               egg_inactive_min=float(np.mean(inactive)) / 60.0 if inactive else None)
     vb = V[:, bwm]
     out["bwm_rest_mV"] = float(np.median(np.median(vb[w], axis=0)))
     sp = upcrossings(vb[w], SPIKE_MV)

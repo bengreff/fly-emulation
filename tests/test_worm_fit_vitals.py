@@ -122,6 +122,6 @@ def test_plate_patches_and_restores():
 
 def test_experiment_is_entire_worm():
     ex = V.experiment("food", 2.0)
-    assert ex.body == "on" and ex.toggles == {} and ex.every_ms == pytest.approx(V.EXCHANGE_MS)
+    assert ex.body == "on" and ex.toggles == V.BATTERY_TOGGLES and ex.every_ms == pytest.approx(V.EXCHANGE_MS)
     with pytest.raises(ValueError):
         V.experiment("lawn", 2.0)
