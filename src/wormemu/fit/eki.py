@@ -113,14 +113,22 @@ class EKI:
     def done(self):
         return self.t >= self.T - 1e-12
 
-    def update(self, g, ok=None, admissible=None, dt=None):
+    def update(self, g, ok=None, admissible=None, dt=None, obs=None):
+        """obs: the observation indices g's columns hold (a stochastic batch, FIT_GENERAL section 8); None = all."""
         g = np.asarray(g, float)
         J, M = g.shape
+        y, gamma, rho = self.y, self.gamma, self.rho
+        if obs is not None:
+            obs = np.asarray(obs, int)
+            y, gamma = y[obs], gamma[np.ix_(obs, obs)]
+            rho = rho[:, obs] if np.ndim(rho) == 2 else rho
+        if M != len(y):
+            raise ValueError(f"g has {M} columns for {len(y)} observations")
         ok = np.ones(J, bool) if ok is None else np.asarray(ok, bool) & np.isfinite(g).all(1)
         if ok.sum() < 2:
             raise RuntimeError("fewer than 2 admissible members: no covariance")
         z, gk = self.z[ok], g[ok]
-        phi = misfit(gk, self.y, self.gamma)
+        phi = misfit(gk, y, gamma)
         dt = dmc_step(phi, M, self.t, self.T) if dt is None else dt
         zm, gm = z.mean(0), gk.mean(0)
         if self.inflation != 1.0:                         # neutral exactly at 1 (no round-off on the members)
@@ -129,15 +137,14 @@ class EKI:
         n = len(z)
         czg = Z.T @ (gk - gm) / n
         cgg = (gk - gm).T @ (gk - gm) / n
-        rho = self.rho
         if self.localise == "corr":
             rho = corr_rho(z, gk) * (1.0 if rho is None else rho)
         if rho is not None:
             czg = czg * rho
-        gam = self.gamma / dt
+        gam = gamma / dt
         eta = self.rng.multivariate_normal(np.zeros(M), gam, size=n)
         A = cgg + gam + S["jitter"] * np.eye(M)
-        znew = z + np.linalg.solve(A, (self.y + eta - gk).T).T @ czg.T
+        znew = z + np.linalg.solve(A, (y + eta - gk).T).T @ czg.T
         out = self.z.copy()
         out[ok] = znew
         bad = ~ok

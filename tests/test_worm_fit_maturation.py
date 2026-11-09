@@ -87,3 +87,22 @@ def test_frozen_keeps_multipliers_across_reset():
     g2 = fz.step(None, 1.0)["g_scale"]
     assert set(g1) == {f"dens_{c}" for c in MT.REGULATED} and "dens_nca" not in g1
     assert g2["dens_shl1"].tolist() == [0.5, 1.0, 2.0] == g1["dens_shl1"].tolist()
+
+
+def test_bulk_read_follows_the_pool_not_eq28():
+    """ca_read 'bulk' senses mech/capool's ca_bulk_uM output and ignores ctx.ca (held flat at the Eq. 28 floor here,
+    as the built cells hold it); without that output it raises instead of sensing nothing."""
+    toy = Toy([0.02, 0.01])
+    tgt = {"A": FLOOR + 0.02 * 1.6, "B": FLOOR + 0.01 * 0.6}
+    m = MT.Maturation(toy, tgt, ca_start={"A": FLOOR + 0.02, "B": FLOOR + 0.01}, ca_read="bulk")
+    flat = np.full(3, FLOOR)
+    for _ in range(300000):
+        g = m.step(SimpleNamespace(ca=flat, outputs={MT.BULK_KEY: toy.ca}), 1.0)["g_scale"]["dens_unc2"]
+        toy.ca = MT.relax(toy.ca, FLOOR + toy.a * g, TAU_CA_MS, 1.0)
+    assert m.s == pytest.approx([1.6, 0.6], rel=2e-3)
+    m2 = MT.Maturation(toy, tgt, ca_read="bulk", params={"mat_settle_s": 0.5})
+    with pytest.raises(KeyError):
+        for _ in range(1000):
+            m2.step(SimpleNamespace(ca=flat, outputs={}), 1.0)
+    with pytest.raises(ValueError):
+        MT.Maturation(toy, tgt, ca_read="cytosol")

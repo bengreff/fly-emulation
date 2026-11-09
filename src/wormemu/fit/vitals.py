@@ -9,10 +9,9 @@ Nothing here writes an observable: a sign the worm does not produce is a miss, n
 battery sets is the instrument's: GCaMP is read as GCaMP7f, the indicator Atanas 2023 imaged (BATTERY_TOGGLES;
 observation.py's gcamp is readout only, so the worm is unchanged).
 
-The plate: datamodel.simulate builds its Body with no environment, the published world and the default scene
-(Requests, night file 2026-11-08_weki). Until that changes, `plate()` hands simulate's Body the agar film, the
-environment and wtriage's scene (vital_loop.py's exact setup) by subclassing body.loop.Body for the call. Nothing else
-in simulate changes.
+The plate goes in on the Experiment (world, env, scene; wbrain2, main 27f7276): the agar film, the environment
+with this condition's food and wtriage's scene, vital_loop.py's setup. Until 9 Nov a subclass of body.loop.Body did
+this; since the merge the head also reads the plate's temperature gradient (simulate no longer overwrites it).
 
 Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
     finite      every recorded voltage, Ca and module concentration is finite
@@ -21,15 +20,19 @@ Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
                 reversals); a membrane made only of conductances cannot leave that interval, so a departure means a
                 module injects current past it (the 1 mV is integrator overshoot, guessed)
     conc >= 0   every recorded concentration (ca_uM and each out:*_uM / _mM / _nM) >= -1e-9
+    no step alternation (9 Nov 00:55) no soma voltage reverses direction at every recorded step for ALT_STEPS steps
+                in a row, each step larger than ALT_MV: brain.step holds module currents (I_pA) fixed over the body
+                exchange step from V at its start, and an explicit conductance that is large against the capacitance
+                it charges in one step makes V alternate every step (VITAL_SIGNS.md). The record must be sampled at
+                every exchange step (experiment's every_ms = EXCHANGE_MS); a decimated record hides it
 Activity (the fraction of neurons above -20 mV) is reported with no bar: none is published (DEBUG_TRIAGE line 18).
 
 Usage:
-    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N]     COND food | nofood
+    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N] [--theta=FILE.json]   COND food | nofood
     python -m wormemu.fit.vitals table OUTDIR [OUTDIR ...]               the markdown table of every COND.json
 """
 from __future__ import annotations
 
-import contextlib
 import json
 import math
 import sys
@@ -50,6 +53,12 @@ ATANAS_DT_S = 0.600                   # Atanas 2023's frame interval, the median
 PC_K = 3
 PC_NEURONS, PC_REPS = 135, 50         # the median open animal's ROI count (measured); random subsets, median over 50
 BATTERY_TOGGLES = {"gcamp": "gcamp7f"}  # read GCaMP as the dataset scored against imaged it (Atanas 2023: GCaMP7f)
+# The instrument's per-frame noise, also Atanas's: the median over the 60 open animals of each animal's median neuron
+# noise SD in F / mean F, 2 D1 - D2 from frame differences (scripts/worm/fit/atanas_noise.py, 8 Nov 2026; derived,
+# P5-P95 0.026-0.068, upper bound D1 0.080). Set per experiment, never fitted: noise alone moves gcamp_range
+# (P95 - P5 of white noise is 3.29 SD, 0.66 at obs_noise_dff's bound 0.2, inside the bar). Readout only.
+ATANAS_NOISE_DFF = 0.0417
+BATTERY_VALUES = {"obs_noise_dff": ATANAS_NOISE_DFF}
 PLATES = {"food": {"env_food": "lawn"}, "nofood": {"env_food": "off"}}
 CLASSES = {"AIY": ("AIYL", "AIYR"), "AFD": ("AFDL", "AFDR"), "AWA": ("AWAL", "AWAR")}   # RIM: its clamp is sealed
 CONC = ("out:intestine_ca_uM", "out:intestine_ip3_uM", "out:pharynx_ca_core_uM", "out:bwm_ca_mM",
@@ -83,6 +92,7 @@ class Sign:
     label: str = "measured"           # of the range
     min_bio_s: float = 0.0            # shorter runs report "too short"
     notes: str = ""
+    percentile: bool = False          # lo / hi are the population's 5th and 95th percentiles (observations' sigma)
 
     def band(self):
         if self.lo is not None and self.hi is not None:
@@ -107,11 +117,13 @@ SIGNS = [
                "as the spread (the strict reading); SEM x sqrt(27) = 24 mV would give -124 to -27 mV"),
     Sign("pc3_frac", "whole-brain GCaMP: variance fraction in the top 3 PCs (z-scored, 195 s windows, 135 neurons)",
          ("food",), "1", mean=0.440, sd=0.057, n=60, lo=0.353, hi=0.506, label="measured (computed from the data)",
+         percentile=True,
          source="Atanas et al. 2023 Cell 186:4134 (Zenodo 8185377), the 60 open atanas2023_main animals, "
                 "scripts/worm/fit/atanas_pc3.py; band = their 5th to 95th percentile",
          notes="Atanas imaged NLS-GCaMP7f at 1.7 Hz on food (methods, PMC10836760, opened 8 Nov 2026)"),
-    Sign("gcamp_range", "GCaMP per-neuron range (P95 - P5 of dF/F), median over neurons, 195 s windows", ("food",),
+    Sign("gcamp_range", "GCaMP per-neuron range (P95 - P5 of F / mean F), median over neurons, 195 s windows", ("food",),
          "dF/F", mean=0.718, sd=0.161, n=60, lo=0.567, hi=0.983, label="measured (computed from the data)",
+         percentile=True,
          source="Atanas et al. 2023 (as pc3_frac), traces F / mean F, scripts/worm/fit/atanas_pc3.py; band = the "
                 "5th to 95th percentile over the 60 open animals"),
     Sign("ca_rest_uM", "neuron soma Ca, median over neurons of each one's median", ("food", "nofood"), "uM",
@@ -160,31 +172,13 @@ def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None
     from wormemu.datamodel import Experiment
     if cond not in PLATES:
         raise ValueError(f"{cond}: one of {sorted(PLATES)}")
+    from wormemu.body.metaworm import AGAR_FILM
+    # the plate (vital_loop.py's setup) on the Experiment (wbrain2, main 27f7276): the agar film, the plate's fields
+    # at their defaults with this condition's food, wtriage's cone scene. The plate starts at temperature_C.
     return Experiment(duration_ms=1000.0 * seconds, body="on", temperature_C=20.0, observe=OBSERVE,
                       every_ms=EXCHANGE_MS, toggles={**BATTERY_TOGGLES, **(toggles or {})}, seed=seed,
-                      body_out=body_out)
-
-
-@contextlib.contextmanager
-def plate(env_toggles: dict, events=()):
-    """simulate's Body on the agar film with the plate's fields (vital_loop.py's setup), for the duration."""
-    from wormemu.body import environment, loop
-    from wormemu.body.metaworm import AGAR_FILM
-    from wormemu.body.scene import ChemotaxisScene
-    orig = loop.Body
-
-    class PlateBody(orig):
-        def __init__(self, out, **kw):
-            kw.setdefault("world", dict(AGAR_FILM))
-            kw.setdefault("env", environment.Environment(toggles=dict(env_toggles), events=list(events)))
-            kw.setdefault("scene", ChemotaxisScene(field="cone_published"))
-            super().__init__(out, **kw)
-
-    loop.Body = PlateBody
-    try:
-        yield
-    finally:
-        loop.Body = orig
+                      body_out=body_out, world=dict(AGAR_FILM), env=dict(PLATES[cond]),
+                      scene={"field": "cone_published"})
 
 
 def reversal_bounds(spec) -> tuple[float, float]:
@@ -234,6 +228,26 @@ def pc_frac(x, k=PC_K):
     return float(ev[:k].sum() / ev.sum()), int(keep.sum())
 
 
+def f_over_fmean(dff):
+    """F / mean F per neuron (Atanas 2023's traces_array_F_Fmean) from dF/F0 = F / F0 - 1: F0 cancels, so the
+    readout does not depend on observation's reference Ca (obs_ca_rest_nM)."""
+    f = 1.0 + np.asarray(dff, float)
+    return f / f.mean(axis=0)
+
+
+def noise_sd(x):
+    """Per column of x [frames, neurons]: (total SD, white-noise SD, signal SD). Noise from frame differences,
+    s^2 = 2 D1 - D2 with D_k = var(x[t+k] - x[t]) / 2 (white noise on a signal whose autocovariance falls linearly
+    over two frames; atanas_noise.py's estimate), clipped at 0; signal SD = sqrt(total^2 - s^2), clipped at 0. For an
+    exponential signal of SD S and frame-to-frame correlation a it reads s^2 + S^2 (1 - a)^2 (derived; the test)."""
+    x = np.asarray(x, float)
+    d1 = np.var(np.diff(x, axis=0), axis=0) / 2.0
+    d2 = np.var(x[2:] - x[:-2], axis=0) / 2.0
+    tot = x.std(axis=0)
+    s2 = np.clip(2.0 * d1 - d2, 0.0, None)
+    return tot, np.sqrt(s2), np.sqrt(np.clip(tot ** 2 - s2, 0.0, None))
+
+
 def gcamp_range(dff):
     """Per neuron (P95 - P5) of dF/F, the median over neurons with a finite trace."""
     d = np.asarray(dff, float)
@@ -275,12 +289,15 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
         out[f"rest_{cls}_cells"] = med
     g = np.asarray(res["gcamp_dff"], float)[:, neur]
     tt, gr = resample(t[w], g[w], ATANAS_DT_S)
+    gr = f_over_fmean(gr)                     # Atanas's normalisation over the scored window (8 Nov 23:30; was dF/F0)
     rng = np.random.default_rng(0)
     m = min(PC_NEURONS, gr.shape[1])
     out["pc3_frac"] = float(np.nanmedian([pc_frac(gr[:, rng.choice(gr.shape[1], m, replace=False)])[0]
                                           for _ in range(PC_REPS)]))
     out["pc3_frac_all"], out["pc3_n_neurons"] = pc_frac(gr)
     out["gcamp_range"] = gcamp_range(gr)
+    tot, nse, sig = noise_sd(gr)              # reported, not scored: how much of the trace is the brain
+    out["gcamp_sd"], out["gcamp_noise_sd"], out["gcamp_signal_sd"] = (float(np.median(a)) for a in (tot, nse, sig))
     ca = np.asarray(res["ca_uM"], float)[:, neur]
     out["ca_rest_uM"] = float(np.median(np.median(ca[w], axis=0)))
     out["ca_range_uM"] = float(np.median(np.percentile(ca[w], 95, axis=0) - np.percentile(ca[w], 5, axis=0)))
@@ -324,6 +341,21 @@ def int9_columns() -> list[int]:
     return [INT_CELLS.index(n) for n in ("int9L", "int9R")]
 
 
+ALT_STEPS, ALT_MV = 25, 2.0            # 100 ms of reversals at every 4 ms step, each over 2 mV (guessed; VITAL_SIGNS)
+
+
+def alternation(V, mv=ALT_MV):
+    """Per column of V [samples, cells]: the longest run of samples at which V reverses direction with both
+    neighbouring steps larger than mv (a period-2 oscillation at the sampling step)."""
+    d = np.diff(np.asarray(V, float), axis=0)
+    f = (d[1:] * d[:-1] < 0) & (np.abs(d[1:]) > mv) & (np.abs(d[:-1]) > mv)
+    best, cur = np.zeros(f.shape[1], int), np.zeros(f.shape[1], int)
+    for row in f:
+        cur = np.where(row, cur + 1, 0)
+        best = np.maximum(best, cur)
+    return best
+
+
 def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> dict:
     """The per-run physicality check (module docstring). Returns the verdict and what failed."""
     V = np.asarray(res["v_mV"], float)
@@ -355,7 +387,11 @@ def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> 
                v_out_worst=[(cells[k], float(per[k]), float(V[:, k].min()), float(V[:, k].max()))
                             for k in worst if per[k] > 0],
                v_min=float(np.nanmin(V)), v_max=float(np.nanmax(V)))
-    out["physical"] = bool(out["finite"] and not neg and out["v_out_cells"] == 0)
+    alt = alternation(Vf)
+    bad_alt = np.flatnonzero(alt >= ALT_STEPS)
+    out.update(alt_cells=int(len(bad_alt)),
+               alt_worst=[(cells[k], int(alt[k])) for k in bad_alt[np.argsort(-alt[bad_alt])][:8]])
+    out["physical"] = bool(out["finite"] and not neg and out["v_out_cells"] == 0 and out["alt_cells"] == 0)
     return out
 
 
@@ -380,6 +416,58 @@ def score(r: dict, cond: str) -> dict:
     return res
 
 
+# --- the battery as EKI observations (FIT_GENERAL.md section 3; whether they enter the loss is Ben's to confirm) ------
+def obs_target(s: Sign):
+    """(y, sigma, basis) of one sign as an observation, None when it has no bar. sigma: the published SD for mean +- 2 SD
+    bands; (P95 - P5) / 3.29 for percentile bands (a normal's 5th to 95th span is 3.29 SD); a quarter of the width (half
+    the half-width) for inferred bands. y: the published mean, else the band's midpoint (derived)."""
+    band = s.band()
+    if band is None:
+        return None
+    lo, hi = band
+    y = s.mean if s.mean is not None else 0.5 * (lo + hi)
+    if s.label.startswith("inferred"):
+        return y, (hi - lo) / 4.0, "inferred band: a quarter of its width"
+    if s.percentile:
+        return y, (hi - lo) / 3.29, "percentile band: (P95 - P5) / 3.29"
+    return y, s.sd, "the published SD"
+
+
+def observations(results: dict, ids=None):
+    """The battery's part of the EKI observation vector from {cond: run() output, or its readouts}: names ("cond:sign"),
+    g (the model's values), y and sigma, over the signs with a bar in each condition given (ids limits them). A sign
+    not produced, or a run too short for it, gives g = NaN, which the driver treats as a failed member: such a sign is
+    left out of a fit's vector (ids) or given a pre-registered censored readout before any run."""
+    names, g, y, sig = [], [], [], []
+    for cond, out in results.items():
+        r = out.get("readouts", out)
+        for s in SIGNS:
+            if cond not in s.cond or (ids is not None and s.id not in ids):
+                continue
+            t = obs_target(s)
+            if t is None:
+                continue
+            x = r.get(s.id)
+            bad = x is None or r.get("bio_s", math.inf) < s.min_bio_s or (isinstance(x, float) and math.isnan(x))
+            names.append(f"{cond}:{s.id}")
+            g.append(math.nan if bad else float(x))
+            y.append(t[0])
+            sig.append(t[1])
+    return names, np.array(g, float), np.array(y, float), np.array(sig, float)
+
+
+def battery_theta(theta):
+    """theta (None, a dict of id -> value, or a params.Theta vector) as a dict with BATTERY_VALUES on top.
+    Element ids ("pid[cell]", the 15 bernoulli syn_inhibitory rows) pass: datamodel._theta sets one element of a
+    table by them (main 27f7276)."""
+    if theta is None:
+        theta = {}
+    elif not isinstance(theta, dict):
+        from wormemu import params
+        theta = dict(zip(params.Theta().ids, map(float, np.asarray(theta, float))))
+    return {**theta, **BATTERY_VALUES}
+
+
 def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> dict:
     """One battery condition through simulate(); writes OUTDIR/COND.json and the compact traces OUTDIR/COND.npz."""
     from wormemu import datamodel
@@ -388,14 +476,16 @@ def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> di
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / f"{cond}_body").mkdir(exist_ok=True)              # simulate writes the FEM files under it
     ex = experiment(cond, seconds, seed=seed, toggles=toggles, body_out=str(outdir / f"{cond}_body"))
+    theta = battery_theta(theta)
     spec = datamodel._theta(sample_worm(seed), theta)
     t0 = time.time()
-    with plate(PLATES[cond]):
-        res = datamodel.simulate(theta, ex)
+    res = datamodel.simulate(theta, ex)
     wall = time.time() - t0
     bio_s = float(res["t_ms"][-1]) / 1000.0 if len(res["t_ms"]) else 0.0
     r = readouts(res, cond, bio_s)
-    out = {"cond": cond, "seed": seed, "theta": None if theta is None else "given", "toggles": dict(toggles or {}),
+    given = sorted(set(theta) - set(BATTERY_VALUES))
+    out = {"cond": cond, "seed": seed, "theta": "given" if given else None, "values": dict(BATTERY_VALUES),
+           "toggles": dict(toggles or {}),
            "plate": PLATES[cond], "wall_s": wall, "wall_per_bio_s": wall / bio_s if bio_s else None,
            "readouts": r, "physicality": physicality(res, reversal_bounds(spec)), "score": score(r, cond),
            "notes": res.get("notes", [])}
@@ -443,7 +533,9 @@ def _main(argv):
     if argv[0] == "run":
         cond, secs, outdir = argv[1], float(argv[2]), argv[3]
         seed = next((int(a.split("=", 1)[1]) for a in argv[4:] if a.startswith("--seed=")), None)
-        out = run(None, cond, secs, outdir, seed=seed)
+        tf = next((a.split("=", 1)[1] for a in argv[4:] if a.startswith("--theta=")), None)
+        theta = json.loads(Path(tf).read_text()) if tf else None          # {id: value} (fit.vector's forward)
+        out = run(theta, cond, secs, outdir, seed=seed)
         print(json.dumps({k: out[k] for k in ("cond", "wall_s", "wall_per_bio_s")}), flush=True)
         print(table([out]))
     elif argv[0] == "table":

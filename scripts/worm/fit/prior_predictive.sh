@@ -19,6 +19,16 @@
 #   3 admissible seeds, 7, 9, 10 (the fit runs only admissible members), launched after the first two waves:
 #   `$PY -m wormemu.fit.vitals run food 200 OUTDIR/seed$k --seed=$k` for k in 7 9 10. The question is then read on the
 #   5 admissible draws (1, 4, 7, 9, 10) as well as on all 9.
+# Added 8 Nov 23:24 CST (date), before any run result was read (wave 1 still running, no seed output opened): the
+#   imaging noise obs_noise_dff is one of the drawn numbers (0.035-0.176 over these 9 draws, measured from
+#   sample_worm on f8e7699), and white noise of SD s alone gives a per-neuron P95 - P5 of 3.29 s: seed 1's 0.176 gives
+#   0.579, inside the gcamp_range bar (0.567-0.983), with no brain activity. So the table also reports per draw:
+#   obs_noise_dff; the noise-only range 3.29 x obs_noise_dff; the GCaMP signal SD (vitals.noise_sd's signal part, on F /
+#   mean F of the stored 50 ms traces resampled at 0.600 s, median over neurons); and the range the same signal would
+#   give under Atanas's own noise (0.0417, atanas_noise.py), 3.29 x sqrt(signal^2 + 0.0417^2) (Gaussian approximation,
+#   derived). Reading: a draw "reaches gcamp_range from the brain" only if it is in band AND its noise-only range is
+#   below the band's low end; an in-band draw whose noise alone reaches the band is reported as "noise-reached" and
+#   does not count. pc3_frac is read as registered (white noise only lowers it).
 # Usage (backhouse, after sourcing env.sh): bash scripts/worm/fit/prior_predictive.sh OUTDIR
 set -u
 OUT=$1
