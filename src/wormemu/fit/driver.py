@@ -6,6 +6,7 @@ backhouse reboots and the Mac sleeps, so every step is on disk and a run resumes
 
     root/state_<k>.npz    the EKI before iteration k's forward runs: z, t, steps, the generator state, the per-iteration
                           log (written atomically: a stall mid-write leaves the previous state)
+    root/it<k>/obs.json   the observation indices iteration k scores (its stochastic batch; null = all), before any run
     root/it<k>/m<j>.json  member j's forward result {"g": [...], "ok": bool}, written atomically by the member's process
     root/STOP             why the run ended (one of the stops below), written last
 
@@ -17,9 +18,16 @@ guessed there); (c) a plateau: the mean misfit per observation over the admissib
 over the last 5 iterations, after at least 10; (d) rejection (section 3): more than half the members failed in each of
 the last 3 iterations. (b) or (c) with t < 1 is reported as model error, never patched.
 
-    d = Driver(root, z0, y, gamma, forward, processes=3)   # forward(z_row) -> (g, ok); a top-level function
+    d = Driver(root, z0, y, gamma, forward, processes=3, batch=None)
     d.run()
     Z, G = d.pairs()                                         # every (z, G(z)) for ces.Emulator
+
+forward(z_row, k, obs) -> (g, ok) is a top-level function (a process pool pickles it). k is the iteration: the forward
+derives its noise seeds from (experiment id, k), one per experiment per iteration shared by every member (common
+random numbers, FIT_GENERAL section 7). obs is the iteration's batch, `batch(k)` (section 8: drawn by
+default_rng(seed + k)); g holds those observations in that order. batch None scores every observation each iteration.
+
+`seed_agreement` is section 5's convergence check across the 3 independently seeded ensembles.
 """
 from __future__ import annotations
 
@@ -43,17 +51,17 @@ def _atomic_write(path: Path, text: str):
     os.replace(tmp, path)
 
 
-def run_member(forward, z, path):
+def run_member(forward, z, k, obs, path):
     """One member's forward run, its result written atomically (the unit a process pool runs)."""
-    g, ok = forward(np.asarray(z, float))
+    g, ok = forward(np.asarray(z, float), k, obs)
     _atomic_write(Path(path), json.dumps({"g": [float(x) for x in np.ravel(g)], "ok": bool(ok)}))
 
 
 class Driver:
-    def __init__(self, root, z0, y, gamma, forward, processes=1, admissible=None, stops=None, **eki_kw):
+    def __init__(self, root, z0, y, gamma, forward, processes=1, admissible=None, stops=None, batch=None, **eki_kw):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
-        self.forward, self.processes, self.admissible = forward, int(processes), admissible
+        self.forward, self.processes, self.admissible, self.batch = forward, int(processes), admissible, batch
         self.stops = {**STOPS, **(stops or {})}
         self.e = EKI(z0, y, gamma, **eki_kw)
         self.log = []                                    # per iteration: t, dt, phi per observation, n_ok
@@ -80,20 +88,31 @@ class Driver:
         self.e.rng.bit_generator.state = json.loads(str(s["rng"]))
         self.log = json.loads(str(s["log"]))
 
-    def forward_all(self):
-        """Run every member of the current iteration that has no result yet; return (G, ok) for all members."""
-        d = self.root / f"it{self.k}"
+    def obs(self, k):
+        """Iteration k's observation indices (None = all), fixed on disk before its first run."""
+        d = self.root / f"it{k}"
         d.mkdir(exist_ok=True)
+        f = d / "obs.json"
+        if not f.exists():
+            b = None if self.batch is None else [int(i) for i in self.batch(k)]
+            _atomic_write(f, json.dumps(b))
+        b = json.loads(f.read_text())
+        return None if b is None else np.array(b, int)
+
+    def forward_all(self):
+        """Run every member of the current iteration that has no result yet; return (G, ok, obs) for all members."""
+        k, obs = self.k, self.obs(self.k)
+        d = self.root / f"it{k}"
         todo = [j for j in range(len(self.e.z)) if not (d / f"m{j}.json").exists()]
         if self.processes > 1 and len(todo) > 1:
             with ProcessPoolExecutor(self.processes) as ex:
-                for f in [ex.submit(run_member, self.forward, self.e.z[j], d / f"m{j}.json") for j in todo]:
+                for f in [ex.submit(run_member, self.forward, self.e.z[j], k, obs, d / f"m{j}.json") for j in todo]:
                     f.result()
         else:
             for j in todo:
-                run_member(self.forward, self.e.z[j], d / f"m{j}.json")
+                run_member(self.forward, self.e.z[j], k, obs, d / f"m{j}.json")
         res = [json.loads((d / f"m{j}.json").read_text()) for j in range(len(self.e.z))]
-        return np.array([r["g"] for r in res], float), np.array([r["ok"] for r in res], bool)
+        return np.array([r["g"] for r in res], float), np.array([r["ok"] for r in res], bool), obs
 
     def stop_reason(self):
         s, lg = self.stops, self.log
@@ -114,11 +133,11 @@ class Driver:
 
     def run(self):
         while (why := self.stop_reason()) is None:
-            G, ok = self.forward_all()
+            G, ok, obs = self.forward_all()
             if (ok & np.isfinite(G).all(1)).sum() < 2:
                 why = f"fewer than 2 of {len(G)} members ran in iteration {self.k}: no covariance"
                 break
-            self.e.update(G, ok, admissible=self.admissible)
+            self.e.update(G, ok, admissible=self.admissible, obs=obs)
             h = self.e.history[-1]
             self.log.append({"k": self.k, "t": self.e.t, "dt": h["dt"], "phi_per_obs": h["phi_mean"] / G.shape[1],
                              "n_ok": h["n_ok"], "J": len(G), "n_redrawn": h["n_redrawn"]})
@@ -129,14 +148,40 @@ class Driver:
         _atomic_write(self.root / "STOP", why + "\n")
         return why
 
-    def pairs(self):
-        """Every (z, G(z)) the run made, failed members left out (ces.pairs)."""
-        hist = []
+    def pairs(self, cols=None):
+        """Every (z, G(z)) the run made on the observations `cols`, failed members left out (ces.pairs). cols None:
+        the observations every finished iteration scored (with batches, those in every batch, e.g. the battery)."""
+        M, done = len(self.e.y), []
         for k in range(self.k + 1):
             d = self.root / f"it{k}"
             z = np.load(self.root / f"state_{k}.npz")["z"]
             if not d.exists() or not all((d / f"m{j}.json").exists() for j in range(len(z))):
                 continue
             res = [json.loads((d / f"m{j}.json").read_text()) for j in range(len(z))]
-            hist.append((z, np.array([r["g"] for r in res], float), np.array([r["ok"] for r in res], bool)))
+            obs = self.obs(k)
+            obs = np.arange(M) if obs is None else obs
+            G = np.full((len(z), M), np.nan)
+            G[:, obs] = np.array([r["g"] for r in res], float)
+            done.append((z, G, np.array([r["ok"] for r in res], bool), set(obs.tolist())))
+        if cols is None:
+            cols = sorted(set.intersection(*(o for *_, o in done))) if done else []
+        cols = np.asarray(cols, int)
+        hist = [(z, G[:, cols], ok) for z, G, ok, o in done if set(cols.tolist()) <= o]
         return ces.pairs(hist)
+
+
+def seed_agreement(finals, prior_sd=1.0, informed=0.5, within=1.0, need=0.9):
+    """FIT_GENERAL section 5: over the coordinates the data inform (pooled posterior SD under `informed` x the prior SD,
+    in z), the ensembles' means must agree within `within` pooled SD (largest pairwise gap) for at least `need` of them
+    (all three thresholds guessed there). finals: the final z ensembles (J x p each) of the independently seeded runs."""
+    finals = [np.asarray(f, float) for f in finals]
+    means = np.array([f.mean(0) for f in finals])
+    sd = np.sqrt(np.mean([f.var(0, ddof=1) for f in finals], axis=0))
+    inf = sd < informed * np.broadcast_to(np.asarray(prior_sd, float), sd.shape)
+    gap = means.max(0) - means.min(0)
+    agree = gap <= within * sd
+    n = int(inf.sum())
+    frac = float(agree[inf].mean()) if n else None
+    return {"n_informed": n, "frac_agree": frac, "passed": None if n == 0 else bool(frac >= need),
+            "informed": np.flatnonzero(inf).tolist(), "disagree": np.flatnonzero(inf & ~agree).tolist(),
+            "gap_over_sd": (gap / np.where(sd > 0, sd, np.inf)).tolist()}

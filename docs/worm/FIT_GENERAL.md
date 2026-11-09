@@ -209,6 +209,12 @@ behavioural statistic. M in the step controller is the batch's observation count
   ends bit-identical to one that never stopped (measured, `tests/test_worm_fit_driver.py`). The loop applies stops
   (a) to (d) above. It also stops when fewer than 2 members run, since no covariance exists then, and when the data on
   disk differ from the data given. It hands every (z, G(z)) pair to the CES step.
+  - The forward gets the iteration number, so it draws one noise seed per experiment per iteration (section 7). On a
+    noisy toy, a 2-process pool ends identical to one process (measured).
+  - The loop takes section 8's stochastic batch. The batch is fixed on disk before the iteration's first run, and the
+    EKI update scores only the batch's observations. With batches, the CES pairs default to the observations that
+    every batch holds.
+  - `driver.seed_agreement` is section 5's 3-seed check, toy-tested.
 
 ## 10. Compute and cost (refinement 10)
 
