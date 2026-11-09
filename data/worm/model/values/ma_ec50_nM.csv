@@ -1,5 +1,5 @@
 element,value,label,source,source_project
-serotonin>ser-1,1000.0,guessed,template guess,ours
+serotonin>ser-1,1340.0,measured,"same pair as row ma_ec50_serotonin_ser-1_nM: Xie et al. 2005 as cited by Dernovici et al. 2006 J Neurobiol (doi 10.1002/neu.20340; free PDF mcgill.ca/parasitology Ribeiro3.pdf, p. 7, opened 9 Nov 2026): 'SER-1 expressed transiently in COS-7 is activated by 5HT in a dose-dependent manner (EC50 = 1.34 +- 0.84 uM)', a Ca readout (Gq)",literature
 serotonin>ser-4,1000.0,guessed,template guess,ours
 serotonin>ser-5,1000.0,guessed,template guess,ours
 serotonin>ser-7,30.0,measured,"same pair as row ma_ec50_serotonin_ser-7_nM: Hobson et al. 2006 Genetics 172:159 (PMC1456143), Results: 5-HT stimulation of cAMP in COS-7 cells, native SER-7B",literature

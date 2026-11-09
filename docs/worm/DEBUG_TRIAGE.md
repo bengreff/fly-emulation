@@ -331,3 +331,21 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   basal Ca, derived) and follows the 20-cell mean, not int9: a request to wbody2. Wang 2013's bar (one DVB spike per
   cycle) still fails: 0 spikes. Line 13 (E): the GABA bar now rejects 5 Hz facilitation (Liu 2009); the D proof
   stands (2 of 256 triage points pass the corrected bar, measured). Night file `docs/worm/night/2026-11-08_wneuro.md`.
+- Item 6, amines against receptor potency (wneuro): every amine pair is near off at rest and on food (highest
+  occupancy SER-7's 0.028 on food, measured). Store: the template's shared 1e6 molecules per cell was 11x (5-HT) and
+  43x (DA) below whole-worm LC-MS/MS content (Weishaupt 2023, derived); ported per amine (B), which leaves rest levels
+  within 5% (measured). Release rate per cell (guessed 1e5 per s): D, a probe finds MC's SER-7 at EC50 at 8 of 256
+  in-range points, all with release >= 1.35e6 per s; not adopted. SER-1, SER-4 and SER-5 EC50s are guessed (1000 nM)
+  and no probed point reaches SER-1 at the vulva (at most 160 nM, derived), so egg-laying cannot answer 5-HT through
+  SER-1 from the pool. Pool geometry is outside its well-mixed range (compartments 2-5 length constants long) but a
+  1D bound puts the near-source excess at 1.9-2.5x, not the 35x gap: A, open. SER-7's EC50 (30 vs 32 nM) is not C.
+- Session 3 (wneuro, 9 Nov): SER-1's EC50 found and ported, 1340 nM measured (Xie 2005 via Dernovici 2006), so it is
+  no longer a gap value; the vulval pool's box maximum is 0.12 of it (derived) and HSN's synaptic release onto vm2 is
+  the deciding unknown. Open 5 as a C toggle `dmsr1_isoform` (FLP-25 on DMSR-1: isoform B 0.6 pM, the default, or A
+  1.6 uM): line 14 passes under both, but under the default DMSR-1 is saturated in every head cell that expresses it
+  (head FLP-25 30x B's EC50), and the choice moves resting Gi by more than 0.1 in 198 cells (measured). Not adopted.
+- Session 4 (wneuro, 9 Nov): Open 7 far field as an A toggle `pc_grid=bins` (pool bins of 8 um inside each named
+  compartment, chosen by convergence): within 3.7% of the exact 1D solution where the four compartments read 0.39x at
+  HSN's source (measured, pre-registered). Live, the vulval 5-HT read rises 3.2x (0.38 -> 1.20 nM off food) and MC's
+  SER-7 Gs 1.7x on food; still 0.04 of SER-7's EC50 at the vulva. Default four until the Director adopts. HSN's
+  synaptic near field onto vm2 is B blocked on geometry sources (Nicholson's form exists; derived bound in the night file).

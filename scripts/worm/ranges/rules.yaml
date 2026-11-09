@@ -216,6 +216,32 @@ rules:
   - {re: "^cabulk_pump0_mol_cm2$", hard_row_unit: [0, 3.3e-12], basis: physics, why: "pump sites per membrane area: at most the densest membrane-protein packing, 2e4 per um2 = 3.3e-12 mol/cm2 (cadifpmp's 3e-14 is 181 per um2)", source: "[HB 1]"}
   # body/layers (wbody2's stiffness rule, merged 8718898; rule added by wbrain2 so the build runs, for wbody2 to review)
   - {re: "^rule_body_modulus_scale$", cls: gain_nonneg}
+  # mech/cell_models (wbrain2, 9 Nov 2026): Jiang et al. 2022's AVL model (nmodl/cells/jiang22_avl.mod), AVL and the DVB borrow
+  - {re: "^j22_v_K$", cls: reversal_K}
+  - {re: "^j22_v_Ca$", cls: reversal_Ca}
+  - {re: "^j22_v_Na$", cls: reversal_Na}
+  - {re: "^j22_v_L$", cls: reversal_leak}
+  - {re: "^j22_(m_b|m_e|h_b|h_e|s_2|s_5|s_10|s_13|q_1|q_4|q_8|c_1|c_4|d_1|d_4|v_1|v_3|b_m|d_m|b_hf|b_hs|e_1)$", unit: [mV], cls: voltage_midpoint}
+  - {re: "^j22_(m_c|m_f|h_c|h_f|s_3|s_6|s_11|s_14|q_2|q_5|q_9|c_2|c_5|d_2|d_5|v_2|v_4|c_m|e_m|c_hf|c_hs|e_2)$", unit: [mV], cls: voltage_slope}
+  - {re: "^j22_t_[fms]$", unit: [ms], cls: tau_gate}
+  - {re: "^j22_", unit: [ms], cls: tau_coefficient}
+  - {re: "^j22_(m_d|h_a|h_d|p_1|p_3|p_5|p_6|p_7|p_9|p_11|p_13|p_15)$", unit: ["1/ms"], cls: rate_first}
+  - {re: "^j22_p_(2|4|8|10|12|14|16)$", unit: ["1/mV"], cls: voltage_sensitivity}
+  - {re: "^j22_m_a$", hard_row_unit: [0, 667], basis: physics, why: "the slope factor of an alpha rate a (V - b)/(1 - exp(-(V - b)/c)), in /(ms mV): the rate a c at V = b is at most rate_first's 1e3 /ms and c at least voltage_slope's 1.5 mV", source: "as rate_first, voltage_slope"}
+  - {re: "^j22_(q_3|q_6|q_7|q_10)$", cls: gate_factor}
+  - {re: "^j22_s_8$", cls: gain_nonneg}
+  - {re: "^j22_w36_", cls: fraction}
+  - {re: "^j22_C_pF$", cls: capacitance_cell}
+  - {re: "^j22_(AVL|DVB)_g_", unit: [nS], cls: conductance_cell}
+  # mech/cell_models (wbrain2, 9 Nov 2026): Naudin et al. 2022's AFD model (nmodl/cells/naudin22_afd.mod), AFDL and AFDR
+  - {re: "^n22_e_K$", cls: reversal_K}
+  - {re: "^n22_e_Ca$", cls: reversal_cation, why_note: "Naudin's E_Ca is a fitted apparent reversal of the whole Ca current (23.61 mV, S2 Table), below any Nernst E_Ca, so the cation window, as for awa_liu_vCa"}
+  - {re: "^n22_e_L$", cls: reversal_leak}
+  - {re: "^n22_vh_", unit: [mV], cls: voltage_midpoint}
+  - {re: "^n22_k_", unit: [mV], cls: voltage_slope}
+  - {re: "^n22_tau_", unit: [ms], cls: tau_gate}
+  - {re: "^n22_g_", unit: [nS], cls: conductance_cell}
+  - {re: "^n22_C_pF$", cls: capacitance_cell}
   # structure and construction
   # rule parameters proposed for wmodel (scripts/worm/ranges/rule_params.csv; not yet rows of the ledger)
   - {re: "^rule_syn_g_per_em_", hard_row_unit: [0, 90], basis: physics, why: "one EM section of an active zone (~1 um long x ~90 nm thick = 0.09 um2) packed at the densest measured receptor density (2e4 per um2, packing_per_um2) of 50 pS channels: 90 nS per section", source: "[HB 1], [HB 2]; RULE_PARAMS_LIT.md section 1"}
@@ -440,7 +466,7 @@ rules:
   - {re: ".", unit: ["um2"], cls: area_cell}
   - {re: ".", unit: ["um3"], cls: volume}
   - {re: "^dcv_peptides_per_vesicle$", cls: molecules_per_dcv}
-  - {re: "^ma_store_molecules$", cls: molecules_per_neuron}
+  - {re: "^ma_store_molecules(_serotonin|_dopamine)?$", cls: molecules_per_neuron}   # per-amine rows (wneuro, 9 Nov; rule edited by wbrain2 so the build runs)
   - {re: ".", unit: ["channels per cell"], cls: channels_per_cell}
   - {re: "^gap_open_channels_per_em$", hard_row_unit: [0, 100000], basis: physics, why: "a gap-junction plaque of ~1 um2 holds at most ~1e4 connexons at 10 nm spacing", source: "[HB 1]"}
   - {re: ".", unit: ["eggs"], cls: eggs}

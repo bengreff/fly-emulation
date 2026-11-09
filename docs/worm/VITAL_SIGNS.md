@@ -18,14 +18,14 @@ One `wormemu.simulate(theta, Experiment)` call per condition:
 | Body | `body="on"`: the MetaWorm FEM body in closed loop, exchange 1/240 s (4.167 ms), the brain on its 0.5 ms grid |
 | World | the agar film (`metaworm.AGAR_FILM`), the plate fields of `body/environment.py` at their defaults (lawn, O2, CO2, salt plug, 20 C at 0.5 C/cm), no events; wtriage's `ChemotaxisScene("cone_published")` |
 | Conditions | `food` = env_food lawn (the worm starts 2 mm inside the edge); `nofood` = env_food off |
-| Instrument | GCaMP read as GCaMP7f, the indicator Atanas 2023 imaged (methods, PMC10836760, opened). The gcamp module is readout only, so this does not change the worm |
-| Temperature | 20 C (`Experiment.temperature_C`; see limitation 2) |
+| Instrument | GCaMP read as GCaMP7f, the indicator Atanas 2023 imaged (methods, PMC10836760, opened), with Atanas's own per-frame imaging noise, obs_noise_dff = 0.0417 F / mean F (derived from the 60 open animals, `scripts/worm/fit/atanas_noise.py`; from 8 Nov 23:25, before that the worm's own guessed 0.03). The gcamp module is readout only, so neither changes the worm |
+| Temperature | 20 C (`Experiment.temperature_C`: the worm, and the plate at the start; the head reads the plate's gradient from main 27f7276, limitation 2) |
 | Recording | every exchange (4.167 ms), every cell; settle 5 s dropped from every readout |
 | Lengths | core: 200 bio-s per condition; eggs tier: at least 1800 bio-s (egg signs report "too short" below that) |
 
-`simulate()` builds its Body with no world or environment, so `vitals.plate()` subclasses `body.loop.Body` for the
-call to add them, exactly as `scripts/worm/triage/vital_loop.py` does. Nothing else in simulate changes. Request to
-wbrain2 (night file): put the world and environment on `Experiment`.
+The plate goes in on `Experiment` (world, env, scene; wbrain2 added them, main 27f7276, merged 9 Nov 01:36), exactly
+as `scripts/worm/triage/vital_loop.py` sets it up. Before that `vitals.plate()` subclassed `body.loop.Body` for the
+call; batteries up to 910f6f8 ran that way.
 
 ## Physicality, per run (pre-registered)
 
@@ -34,7 +34,32 @@ wbrain2 (night file): put the world and environment on `Experiment`.
   potential in this worm's values (34 reversal Specs plus BAAIWorm's literal -80 / +60 mV). A membrane made only of
   conductances cannot leave that interval, so leaving it means a module injects current past it. The 1 mV allows
   integrator overshoot (guessed);
-- concentrations >= 0: `ca_uM` and every `out:*_uM / _mM / _nM` recorded.
+- concentrations >= 0: `ca_uM` and every `out:*_uM / _mM / _nM` recorded;
+- no step alternation (added 9 Nov 00:55, pre-registered before its two validation runs): no soma voltage reverses
+  direction at every body exchange step for 25 steps in a row (100 ms at 4 ms) with every step larger than 2 mV.
+  brain.step holds each module's `I_pA` fixed over the step, from V at the step's start. In the NEURON brain three
+  modules put a conductance g (E - V) through that path (read from the code, 9 Nov 01:23): egg_laying (LGC-55 on
+  HSN, and the vulval-muscle cation term on its own clamps), intestine (PBO-5 on the posterior body-wall muscles)
+  and noise (the zero-mean conductance fluctuation). drugs, k2p_leak and neuromod do it only on the stand-in brain
+  of the unit tests and use NEURON point processes otherwise; senses_chem, senses_proprio and senses_touch use
+  SensG point processes (implicit); glia, pumps and slow_signalling feed V back through slow states (K+, Na+, a
+  homeostatic integral), not a per-step conductance. (The 01:04 entry here listed ten modules; that came from a
+  search for modules that read V, and was wrong for seven of them.) Such an explicit conductance makes V alternate
+  every step once it is large against the capacitance it charges in one step (derived: explicit Euler). The
+  threshold, measured on the template's intrinsic membrane by `scripts/worm/fit/explicit_gcrit.py` (E -41 mV, from
+  rest, 4.0 / 4.5 ms steps): HSNL 1.31 / 1.22 nS, AWAL 1.87 / 1.79, ASHL 1.39 / 1.27, AFDL 1.46 / 1.34, AVAL
+  1.94 / 1.84, RIS 0.87 / 0.79, ALA 20.2 / 19.8. The soma clamp sits on a soma of 0.15-0.72 pF against 2-24 pF
+  for the whole cell, so no single capacitance predicts these (g dt / C on the whole cell runs 0.46-3.7). A
+  posterior body-wall muscle (one 22 pF compartment, E 0 mV for PBO-5) goes at 13.8 / 12.2 nS, above
+  pbo5_g_nS's top of 10, so PBO-5 stays stable inside its range at rest; the vulval muscles were not measured. A 125 Hz sustained oscillation is not a C. elegans
+  behaviour, so it is read as numerical (thresholds guessed). Validation, written before either run: on the template
+  (food, 16 bio-s, Mac) the check flags no cell; on prior draw seed 1 (food, 16 bio-s), which leaves the bounds after
+  its first egg at 12.6 s, it flags HSNL and HSNR. If the template flags any cell, the thresholds are wrong or the
+  template alternates; either way it is not adopted until explained.
+  Result (9 Nov 01:04, Mac, `scripts/worm/fit/physicality_recheck.py`, measured): the template on this branch
+  flags no cell (alt_cells 0, physical); seed 1 on f8e7699 flags HSNL and HSNR (811 steps in a row, from 12.62 bio-s
+  to the end), the two cells the bounds already caught. Adopted. Its use is the case the bounds miss: an alternation
+  that stays inside them.
 
 A run that fails physicality is rejected in the fit (FIT_GENERAL.md). The fraction of neurons above -20 mV is
 reported with no bar (none is published; DEBUG_TRIAGE line 18).
@@ -48,8 +73,8 @@ Band = mean +- 2 SD unless a range is given. SD derived from SEM as SEM x sqrt(n
 | rest_AIY | median V of AIYL/R after 5 s, mean of the pair | both | -53 mV, no spread, no n | none: reported only | measured (point) | Naudin et al. 2022 PLoS ONE e0268380 (V0, cited from their ref 23) |
 | rest_AFD | as AIY | both | -78 mV, no spread, no n | none: reported only | measured (point) | Naudin et al. 2022 |
 | rest_AWA | as AIY | both | -75.3 mV, "SEM = 4.7 mV", Gaussian fit, n = 27 traces | -84.7 to -65.9 mV | measured; band reading inferred | Liu, Kidd, Dobosiewicz & Bargmann 2018 bioRxiv 359935v1 Fig 2E |
-| pc3_frac | GCaMP7f dF/F of the 302 neurons resampled at 0.600 s, z-scored, top-3-PC variance fraction on random 135-neuron subsets (median of 50) | food | 0.440 +- 0.057 (SD), n = 60 animals | 0.353 to 0.506 (P5-P95) | measured (computed) | Atanas et al. 2023 Cell 186:4134, Zenodo 8185377, the 60 open atanas2023_main animals |
-| gcamp_range | per neuron P95 - P5 of dF/F (resampled), median over neurons | food | 0.718 +- 0.161 (SD), n = 60 | 0.567 to 0.983 (P5-P95) | measured (computed) | Atanas 2023, F / mean F |
+| pc3_frac | GCaMP7f F / mean F of the 302 neurons resampled at 0.600 s, z-scored, top-3-PC variance fraction on random 135-neuron subsets (median of 50) | food | 0.440 +- 0.057 (SD), n = 60 animals | 0.353 to 0.506 (P5-P95) | measured (computed) | Atanas et al. 2023 Cell 186:4134, Zenodo 8185377, the 60 open atanas2023_main animals |
+| gcamp_range | per neuron P95 - P5 of F / mean F (resampled; from 8 Nov 23:25, was dF/F0), median over neurons | food | 0.718 +- 0.161 (SD), n = 60 | 0.567 to 0.983 (P5-P95) | measured (computed) | Atanas 2023, F / mean F |
 | ca_rest_uM | median over neurons of each one's median Ca | both | none opened | none: reported only | | |
 | pump_hz | completed pumps (organs_pharynx's count) per s after 5 s | food | 4.76 +- 0.26 Hz (SD), n >= 24 | 4.24 to 5.28 Hz | measured | Zhou et al. 2015 J Lipid Res, PMC4617398 (285.7 +- 15.5 /min, N2 on a lawn, 20 C) |
 | pump_hz_off | as pump_hz | nofood | 1.37 +- 0.18 Hz after 90 min off food (SD); 0.09 +- 0.03 Hz in M9 (spread type not stated, n = 31) | 0.03 to 1.73 Hz | inferred band (two sources, neither at 0-200 s off food) | Zhou 2015; Hiebert et al. 2020 microPubl Biol, PMC7255870 |
@@ -59,7 +84,9 @@ Band = mean +- 2 SD unless a range is given. SD derived from SEM as SEM x sqrt(n
 | bwm_rest_mV | median over the 95 BWM somata of each one's median V | both | -25.0 +- 1.0 mV SEM, n = 27 (dissected) | -35.4 to -14.6 mV | measured (SD derived) | Gao & Zhen 2011 PNAS 108:2557, PMC3038695 |
 | bwm_spike_hz | upward crossings of -10 mV per firing muscle per s | both | 0.73 +- 0.14 Hz SEM, n not attached (27 assumed) | 0 to 2.19 Hz | measured (SD derived, n inferred) | Gao & Zhen 2011 (threshold about -10 mV; about 80% of preparations fire) |
 
-Also reported, not scored: intestinal Ca peaks and their period (> 0.3 uM, >= 10 s apart, on the mean of int9L and
+Also reported, not scored: the GCaMP per-neuron SD and its split into white imaging noise and signal
+(`vitals.noise_sd`: noise^2 = 2 D1 - D2 from frame differences, the estimate atanas_noise.py made on the data; it reads
+high by S^2 (1 - a)^2 for an exponential signal, test_noise_sd_on_slow_signal), intestinal Ca peaks and their period (> 0.3 uM, >= 10 s apart, on the mean of int9L and
 int9R, the pacemaker ring, as wbody2's `dmp_trace.py`; until 8 Nov 23:06 the max over all 20 cells, which peaks
 whenever any ring peaks), the
 BWM fraction firing, the neuron fraction above -20 mV, the median neuron voltage, mean |curvature|.
@@ -124,12 +151,38 @@ clock runs near the right period and the step from int9 Ca to the expulsion neve
 is wbody2's, reported to them).
 
 
+### 8 Nov 2026 23:25: the GCaMP signs read imaging noise (template f8e7699, stored traces, no new run)
+
+Measured unless marked. From `/tmp/weki/battery_f8e7699/{food,nofood}.npz` (50 ms samples, after the 5 s settle):
+
+- Every neuron's GCaMP range is about 0.10, including RMFR, whose Ca does not move at all (range 0.000 nM). The
+  per-neuron GCaMP SD is 0.0301 against the module's added noise of 0.03; with the noise subtracted the signal SD
+  is 0.0018 dF/F (median; P95 0.0068; largest IL2DL 0.039). Lag-1 autocorrelation at 50 ms 0.005: white. So both
+  GCaMP signs of the template are the noise floor: P95 - P5 of white noise is 3.29 SD = 0.099 (derived; measured
+  0.098), and the top-3-PC fraction of 135 white columns over 325 frames is about 0.058 (Marchenko-Pastur edge,
+  derived; measured 0.056).
+- Ca barely follows voltage: the neurons that swing 14-15 mV (AS07-AS09) raise Ca by 4 nM over the 50 nM floor
+  (max 59 nM); the largest neuron Ca anywhere is 112.6 nM (IL2DL, the one neuron reaching +5 mV). So the quiet GCaMP
+  is three stacked shortfalls: small voltage swings (median range 2.5 mV), a Ca chain that converts 15 mV into 4 nM,
+  and an indicator whose dF/F from 4 nM at 50 nM is under the imaging noise. The second is the Ca-chain problem
+  wbrain2's bulk Ca pool addresses (inferred).
+- Atanas's open animals for comparison (atanas_noise.py): per-neuron SD 0.293 F / mean F (P5-P95 0.215-0.411),
+  imaging noise 0.0417 (2 D1 - D2; 0.0257-0.0682) or 0.0371 (AR(1)-exact; 0.0222-0.0656). Their signal SD is
+  about 0.29 (derived from the medians), about 100 times the template's 0.003 (F / mean F, rescored below).
+- Rescored with the new readout (F / mean F, the run's own 0.03 noise): gcamp_range 0.0947 / 0.0952, pc3_frac
+  0.0561 / 0.0560 (food / nofood), signal SD 0.0032 / 0.0031. Both still miss; the verdicts do not change.
+- Hazard closed: obs_noise_dff is one of the fit numbers (bounds 0 to 0.2) and noise alone reaches the gcamp_range bar
+  at 0.172 (derived, 0.567 / 3.29). It is now set per experiment at the dataset's measured noise (FIT_GENERAL section
+  1). Prior draws carry it too: seed 1's 0.176 gives 0.579 from noise alone, so the prior-predictive table reports
+  each draw's noise and signal SD (amendment of 23:24, before any result was read).
+
 ## Limitations
 
-1. The plate goes in through a subclass of `body.loop.Body` (above), until `Experiment` carries it.
-2. `simulate()` sets the head's temperature to `Experiment.temperature_C`, overwriting the env_temp gradient's value.
-   On the default plate (20 C at 0.5 C/cm) a 200 s run moves under about 1 mm, so the lost gradient is under about
-   0.05 C (derived); thermotaxis is not a vital sign. Requested as a fix to wbrain2.
+1. (Closed 9 Nov 01:36.) The plate went in through a subclass of `body.loop.Body` until `Experiment` carried it.
+2. (Closed by main 27f7276.) Up to 910f6f8, `simulate()` set the head's temperature to `Experiment.temperature_C`,
+   overwriting the env_temp gradient's value. On the default plate (20 C at 0.5 C/cm) a 200 s run moves under about
+   1 mm, so the lost gradient was under about 0.05 C (derived). Since the merge the head reads the plate (simulate
+   notes it), so batteries before and after differ by that much in the head's temperature.
 3. Atanas's neurons are head neurons found by segmentation; the model's 135 are drawn from all 302.
 4. AIY and AFD have points with no spread: reported, not scored, until a recorded population is opened.
 5. The BWM bars come from dissected muscle; ours is driven by the intact network.

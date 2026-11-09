@@ -72,3 +72,69 @@ def test_mod_matches_cpu_both_forms():
     out = json.loads(r.stdout.strip().splitlines()[-1])
     for form, k in (("smooth_min", "0"), ("as_printed", "1")):
         assert np.allclose(out[k], S.liu_kir(V, dict(S.LIU, kir=form)), rtol=2e-3, atol=2e-3), (form, out[k])
+
+
+def test_awa_gscale_spares_synapses():
+    """Liu's membrane replaces AWA's channels and leak only: _awa_gscale zeroes every dens_* and the leak for AWA and
+    leaves "release" and "rec_<class>" to the brain (wbrain2, 9 Nov 2026: they were 0, silencing AWA's synapses)."""
+    from wormemu.mech import G_SCALE_NAMES
+    m = senses_chem.Mech.__new__(senses_chem.Mech)
+    m.n, m.awa_idx = 4, np.array([1])
+    g = m._awa_gscale()
+    assert not any(k == "release" or k.startswith("rec_") for k in g)
+    chans = [k for k in G_SCALE_NAMES if k.startswith("dens_")] + ["leak"]
+    assert sorted(g) == sorted(chans)
+    for k in chans:
+        assert g[k].tolist() == [1.0, 0.0, 1.0, 1.0]
+
+
+def test_awa_g_scale_names_are_liu_conductances():
+    """Inbox item 8 (weki, 9 Nov 2026): Liu's conductances reachable as g_scale dens_awa_<c>. The names are exactly
+    the mod's g parameters, kept out of G_SCALE_NAMES (temperature scales every name there) and out of the BAAIWorm
+    channels _awa_gscale zeroes."""
+    from wormemu.mech import AWA_G_SCALE, AWA_G_SCALE_NAMES, G_SCALE_NAMES
+    assert sorted(AWA_G_SCALE.values()) == sorted(mod for _, mod, _, _, k in senses_chem.LIU if k == "g")
+    assert not set(AWA_G_SCALE_NAMES) & set(G_SCALE_NAMES)
+    m = senses_chem.Mech.__new__(senses_chem.Mech)
+    m.n, m.awa_idx = 4, np.array([1])
+    assert not set(m._awa_gscale()) & set(AWA_G_SCALE_NAMES)
+
+
+GSC = """
+import json
+import numpy as np
+from wormemu import brain as B
+from wormemu.mech import AWA_G_SCALE
+def run(drop):
+    b = B.Brain(cells=["AWAL", "AIYL"])
+    if drop:
+        for c in AWA_G_SCALE:
+            del b._gt[f"dens_awa_{c}"]
+    b.reset()
+    b.extra_pA[b.idx["AWAL"]] = 8.0
+    return b, np.array([b.step().v_mV for _ in range(300)])
+_, v0 = run(True)
+b, v1 = run(False)
+a = b.idx["AWAL"]
+segs = [seg for s in b.cells[a].all for seg in s]
+reg = {c: bool(set(b._gt[f"dens_awa_{c}"][0].tolist()) == {a} and len(b._gt[f"dens_awa_{c}"][0]) == len(segs))
+       for c in AWA_G_SCALE}
+base = [seg.awa_liu.gKir for seg in segs]
+f = np.ones(len(b.idx))
+f[a] = 0.5
+b._apply_g_scale({"dens_awa_kir": f})
+half = max(abs(seg.awa_liu.gKir / x - 0.5) for seg, x in zip(segs, base))
+b.reset()
+back = max(abs(seg.awa_liu.gKir - x) for seg, x in zip(segs, base))
+print(json.dumps(dict(dv=float(np.abs(v1 - v0).max()), reg=reg, half=half, back=back, n=len(segs))))
+"""
+
+
+def test_awa_g_scale_reaches_every_awa_segment():
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    r = subprocess.run([sys.executable, "-c", GSC], capture_output=True, text=True, env=env, cwd=ROOT, timeout=900)
+    assert r.returncode == 0, r.stderr[-2000:]
+    out = json.loads(r.stdout.strip().splitlines()[-1])
+    assert out["dv"] == 0.0                            # registering the names changes nothing
+    assert all(out["reg"].values()) and out["n"] > 1
+    assert out["half"] < 1e-12 and out["back"] == 0.0  # a multiplier reaches every segment; reset restores the base
