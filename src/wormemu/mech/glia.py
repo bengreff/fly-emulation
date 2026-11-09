@@ -27,9 +27,11 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 those sections' ek (nothing injected). The source balances rest with tuned leaks and pumps; here
                 that balance is the subtracted resting ik (the fitted leaks already hold the resting pump, as in
                 pumps.py), and the activity-dependent pump uptake is in the clearance constants.
-  glia_v0_window  first (default, 0-1 s) | settled (1-2 s, after the start-up from V_INIT): the window the resting
-                v0 (leak) or resting ik (channels) is the mean over. 9 Nov 2026 (wbody2, glia_v0_probe): the network
-                drifts 3 mV (median) off the 0-1 s mean by 19-20 s and 0.2-0.3 mV off the 1-2 s mean.
+  glia_v0_window  settled (default since 9 Nov 2026, 1-2 s, after the start-up from V_INIT) | first (0-1 s, the code
+                before): the window the resting v0 (leak) or resting ik (channels) is the mean over. 9 Nov 2026
+                (wbody2, glia_v0_probe): the network drifts 3 mV (median) off the 0-1 s mean by 19-20 s and 0.2-0.3 mV
+                off the 1-2 s mean. Adopted on glia_port_check's zero-input bar (leak/settled 0.038 mM against 0.05;
+                first 0.316) and a 150 s battery (food and nofood: BWM median V stays in, physical stays yes).
   glia_kcc3     Singhvi et al. 2016 Cell 165:936: amphid sheath KCC-3 sits only in the microdomain around AFD's
                 receptive ending and sets its Cl-; Cl- inhibits AFD's receptor guanylyl cyclase GCY-8. Here one Cl-
                 excess compartment per AFD: KCC-3 adds Cl- at a rate scaled by its thermodynamic drive
@@ -41,7 +43,7 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
 
 Forms (nested): glia_cells on | off; glia_kbuffer kir (default) | null (no glial uptake, diffusion only: the Kir4.1
 null) | fixed (no compartment: Ko stays at the bath, no current); glia_k_load leak (default) | channels;
-glia_v0_window first (default) | settled; glia_kcc3 on | null (no KCC-3 flux) | fixed (no state, scale 1). brain_layers' lumped `glia` gain (off) stays as the simplest form and is not claimed here.
+glia_v0_window settled (default) | first; glia_kcc3 on | null (no KCC-3 flux) | fixed (no state, scale 1). brain_layers' lumped `glia` gain (off) stays as the simplest form and is not claimed here.
 Validity: K+ and Cl- are well mixed within each ending compartment; no osmotic or volume change; the amphid neurons'
 K+ load is a linear leak estimate (leak) or their channels' own K+ currents (channels), from the whole cell into its
 side's ending in both forms; AFD-AWC cross-talk through one sheath (Ray et
@@ -63,7 +65,7 @@ MECHANISMS = [
      "(leak), or their own gated K+ currents from rest with E_K on their K+ channels following the ending's K+ "
      "(channels: Sibille et al. 2015 eq. 25)", "glia", "leak"),
     ("glia_v0_window", "The amphid neurons' resting reference window: the first second (first) or 1-2 s, after the "
-     "start-up (settled)", "glia", "first"),
+     "start-up (settled)", "glia", "settled"),
     ("glia_kcc3", "Amphid sheath KCC-3 Cl- microdomain at AFD's ending; Cl- inhibits GCY-8: out['afd_gc_scale'] "
      "(nested: null = kcc-3, fixed = scale 1)", "glia", "on"),
 ]
@@ -151,7 +153,7 @@ class Mech:
         self.kb = "kir" if self.kb == "on" else self.kb
         assert self.kb in ("kir", "null", "fixed", "off") and self.kcc in ("on", "null", "fixed", "off")
         self.kload = toggles.get("glia_k_load", "leak")
-        self.win = GLIA_V0_WINDOWS[toggles.get("glia_v0_window", "first")]
+        self.win = GLIA_V0_WINDOWS[toggles.get("glia_v0_window", "settled")]
         assert self.kload in ("leak", "channels")
         q = defaults()
         q.update({k: float(v) for k, v in (params or {}).items() if np.isscalar(v)})

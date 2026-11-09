@@ -26,10 +26,10 @@ def _run_mech(toggles, v_of_t, t_end):
     return m, rows
 
 
-def test_defaults_are_the_leak_form_over_the_first_second():
-    v = lambda t: -65.0 + 5.0 * (t >= 1500.0)
+def test_defaults_are_the_leak_form_over_the_settled_window():
+    v = lambda t: -65.0 + 5.0 * (t >= 2500.0)
     _, a = _run_mech({}, v, 4000.0)
-    _, b = _run_mech({"glia_k_load": "leak", "glia_v0_window": "first"}, v, 4000.0)
+    _, b = _run_mech({"glia_k_load": "leak", "glia_v0_window": "settled"}, v, 4000.0)
     for x, y in zip(a, b):
         assert np.array_equal(x["out"]["amphid_k_mM"], y["out"]["amphid_k_mM"])
         assert np.array_equal(x["I_pA"], y["I_pA"])

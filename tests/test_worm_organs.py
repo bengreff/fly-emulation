@@ -323,7 +323,7 @@ def _glia_run(m, names, drive_cells, t_drive=(1.0, 2.0), t_end=30.0, dt=5.0, v_r
 
 def test_glia_fixed_forms_are_silent():
     brain, names = _glia_brain()
-    m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": "fixed", "glia_kcc3": "fixed"})
+    m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first", "glia_kbuffer": "fixed", "glia_kcc3": "fixed"})
     for _, r in _glia_run(m, names, [c for c in names if c.endswith("L")], t_end=3.0):
         assert "I_pA" not in r and "afd_gc_scale" not in r["out"]
 
@@ -332,7 +332,7 @@ def _glia_taus(brain, names, left, params):
     q = {**gl.defaults(), **params}
     taus, peaks = {}, {}
     for form in ("kir", "null"):
-        m = gl.Mech(brain, params, {"glia_cells": "off", "glia_kbuffer": form, "glia_kcc3": "fixed"})
+        m = gl.Mech(brain, params, {"glia_cells": "off", "glia_v0_window": "first", "glia_kbuffer": form, "glia_kcc3": "fixed"})
         rows = _glia_run(m, names, left)
         k = np.array([r["out"]["amphid_k_mM"] for _, r in rows]) - q["glia_k_bath_mM"]
         t = np.array([x for x, _ in rows])
@@ -363,10 +363,10 @@ def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
 
 def test_glia_kcc3_scale_is_one_at_rest_rises_in_the_null_and_with_ending_k():
     brain, names = _glia_brain()
-    wt = gl.Mech(brain, {}, {"glia_cells": "off"})
+    wt = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first"})
     rest = _glia_run(wt, names, [], t_end=20.0)
     assert all(abs(r["out"]["afd_gc_scale"]["AFDL"] - 1.0) < 1e-9 for _, r in rest)
-    null = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kcc3": "null"})
+    null = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first", "glia_kcc3": "null"})
     s = _glia_run(null, names, [], t_end=30.0)[-1][1]["out"]["afd_gc_scale"]
     q = gl.defaults()
     want = (1 + (q["glia_cl_bath_mM"] + q["glia_kcc3_dcl_mM"]) / q["glia_gcy8_cl_ic50_mM"]) / \
