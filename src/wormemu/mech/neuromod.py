@@ -71,6 +71,19 @@ or wang2013 (P3-1, 3.39 nM, Wang et al. 2013 Curr Biol, PMC3651789).
 DMSR-1 has two isoforms in Table S6 that differ by 2.65e6-fold for FLP-25 (DMSR-1-2, B: 0.6 pM; DMSR-1-1, A: 1.6 uM)
 and at most 4x for every other ligand; which one each cell makes is not known (toggle dmsr1_isoform, class C):
 most_potent (default, the per-pair rule, so FLP-25 reads B) or dmsr-1a (FLP-25 reads A's 1.6 uM).
+Synaptic near field (toggle amine_synaptic: off, the default and neutral; nicholson). The pool is the far field; at a
+release site the concentration is higher. near_nM(amine, pre) is the time-averaged excess at a receptor next to the
+pre cells' release sites onto one target (built for HSN onto vm2: Open 7, wneuro 9 Nov 2026), from Nicholson's point
+source in a volume with loss (Sykova and Nicholson 2008 Physiol Rev 88:1277, PMC2785730, Eq 13; its t -> infinity
+limit, derived): C(d) = h Q / (4 pi D* alpha d) exp(-d / l), D* = D / lambda^2, l = sqrt(D* tau). Q per site = the
+share of the cells' release J (molecules/s, this module's) made at those sites / the number of sites; the sites of all
+pre cells sit evenly over the synaptic region and the receptor is r from the middle one, summed over every site. It is
+a read only (no molecules are moved; the pool keeps all of J), so it changes nothing unless a reader adds it to the
+pool's value (organs_egglaying, on request). The steady form averages over vesicle pulses; with Hill 1 or first-order
+binding the mean occupancy is at most the occupancy at the mean concentration (concavity), so it bounds the
+time-averaged effect from above. Validity: d above the extracellular channel scale (tens of nm) and r below the site
+spacing's range of influence; inside a cleft between two membranes the field is about 2-3x the half-space value at
+the cleft centre (derived), inside the alpha, lambda and h bounds. Every geometry value is a bounded gap.
 The gains are guessed; which family moves which effector, and which way, is from the genetics cited.
 
 Sleep (row 28) runs through the same machinery: RIS releases FLP-11 (CeNGEN), read by DMSR-1 (Gi/o) on its targets and
@@ -115,6 +128,8 @@ MECHANISMS = [
      "most_potent"),
     ("pc_grid", "Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um "
      "inside each (the same 1D diffusion, resolved below its length constant)", "neuromodulation", "bins"),
+    ("amine_synaptic", "Amine near field at a release site (Nicholson point source; a read, moves no molecules): off "
+     "(the pool only) or nicholson (near_nM, HSN onto vm2)", "neuromodulation", "off"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
@@ -122,6 +137,7 @@ GS_CA = ("egl19_unc2", "egl19")
 EC50_SRC = ("beets2023", "wang2013")
 DMSR1_ISO = ("most_potent", "dmsr-1a")
 GRIDS = ("four", "bins")
+SYNAPTIC = ("off", "nicholson")
 COMPARTMENTS = ("head", "anterior_body", "posterior_body", "tail")
 AMINES = ("serotonin", "dopamine", "octopamine", "tyramine")
 TRANSPORTERS = {"serotonin": "mod-5", "dopamine": "dat-1"}
@@ -333,6 +349,34 @@ SPECS += [
       "measured", applies_to="DAT-1 cells"),
     S("ma_extrasyn_channels", A, "channels per cell", 200, 10, 2000, notes="MOD-1, LGC-55 or LGC-53 channels outside "
       "synapses on each expressing cell", grain="class"),
+    # near field, HSN onto vm2 (toggle amine_synaptic); sources opened 9 Nov 2026 (wneuro, runs/worm/wneuro/lit_hsn_vm2.md)
+    S("hsn_vm2_sites", A, "release sites per HSN", 16, 12, 24, "Patel et al. 2006 Nat Neurosci 9:1488 (PMC3917495, "
+      "opened): HSNL 'forms 12-20 en passant synapses onto vulval muscles and the VC4 and VC5 neurons'; Cook et al. "
+      "2019 SI 5 (corrected July 2020): 6 onto each of vm2AL/AR/PL/PR per HSN, 24 (both measured)", "measured",
+      applies_to="HSNL, HSNR", notes="template the middle of Patel's 12-20 (derived); the two counts use different "
+      "rules (Cook's equal 6 on all eight pairs looks like a pooled count split evenly)"),
+    S("hsn_vm2_region_um", A, "um", 10, 5, 15, "Patel et al. 2006 (PMC3917495, opened): 'These HSNL synapses reside "
+      "within a short stretch of the axon (~10 um) near the vulval opening'", "measured", applies_to="HSNL, HSNR",
+      notes="bounds +-50% guessed (the paper gives '~10 um' only)"),
+    S("hsn_vm2_release_share", A, "fraction", 0.26, 0.1, 1.0, "Cook et al. 2019 SI 5: vulval targets (vm2, VC04, "
+      "VC05) take 33 of HSNL's 125 output synapses and 27 of HSNR's 101 (0.264, 0.267, derived from measured counts)",
+      "inferred", applies_to="HSNL, HSNR", notes="release taken as proportional to synapse count (inferred); bounds "
+      "guessed: 0.1 (more 5-HT from the soma and dense-core vesicles off the synapses) to 1 (all at the vulva)"),
+    S("hsn_vm2_site_receptor_um", A, "um", 0.1, 0.02, 1.0, notes="release site to SER-1 / SER-7 on vm2: no free "
+      "source (vm2 muscle arms are spine-like postsynaptic structures, Li et al. 2013 eLife 2:e00378, qualitative; "
+      "the reporters do not resolve receptor placement, Fernandez et al. 2020 PMC7511189). Bounds: 20 nm, a generic "
+      "chemical cleft (Cowan and Kandel 2001 as cited in PMC4925697, not C. elegans) to 1 um, above the site spacing "
+      "of 10 um / 12-20 = 0.5-0.83 um (derived)", applies_to="HSN onto vm2"),
+    S("ecs_alpha", A, "fraction", 0.2, 0.09, 1.0, notes="extracellular volume fraction at the release site. No "
+      "nematode value (Sykova and Nicholson 2008, PMC2785730: too small to measure); bounds from cephalopod brain "
+      "0.09-0.29 (their Table 4B, via lit_hsn_vm2.md) to 1 (open fluid); template the brain's typical 0.2",
+      applies_to="amine near field"),
+    S("ecs_tortuosity", A, "1", 1.6, 1.0, 1.86, notes="lambda, D* = D / lambda^2. No nematode value; 1 (free) to "
+      "1.86 (cephalopod brain, Sykova and Nicholson 2008 Table 4B); template the brain's typical 1.6",
+      applies_to="amine near field"),
+    S("syn_half_space", A, "1", 2.0, 1.0, 2.0, "a source on a reflecting plane doubles the free-space field (method "
+      "of images, derived)", "derived", applies_to="amine near field", notes="1: a site in open volume; 2: a site on "
+      "a flat membrane"),
 ]
 AMINE_PAIRS = (("serotonin", "ser-1"), ("serotonin", "ser-4"), ("serotonin", "ser-5"), ("serotonin", "ser-7"),
                ("dopamine", "dop-1"), ("dopamine", "dop-2"), ("dopamine", "dop-3"), ("dopamine", "dop-4"),
@@ -453,6 +497,8 @@ class Mech:
                               yall.max()], float)
         self.grid = toggles.get("pc_grid", "bins")
         assert self.grid in GRIDS, f"pc_grid {self.grid!r} not one of {GRIDS}"
+        self.synaptic = toggles.get("amine_synaptic", "off")
+        assert self.synaptic in SYNAPTIC, f"amine_synaptic {self.synaptic!r} not one of {SYNAPTIC}"
         if self.grid == "bins":
             nb = np.maximum(1, np.ceil(np.diff(self.cuts) / float(p["pc_bin_um"]) - 1e-9).astype(int))
             self.edges = np.concatenate([np.linspace(a, b, k + 1)[:-1] for a, b, k in
@@ -573,6 +619,24 @@ class Mech:
                 W[c] = w / w.sum()
         return W
 
+    def near_nM(self, amine, pre, J=None):
+        """Time-averaged near-field excess (nM) of `amine` at a receptor next to the release sites of cells `pre`
+        (indices) onto one target, Nicholson's steady point source (module docstring). 0 under amine_synaptic=off.
+        J: the cells' release (molecules/s, shape (len(pre),)); default this step's ma_J."""
+        if self.synaptic == "off" or not self.on[A]:
+            return 0.0
+        p, row = self.p, AMINES.index(amine)
+        Jc = np.asarray(self.ma_J[pre, row] if J is None else J, float)
+        n = max(1, int(round(p["hsn_vm2_sites"]))) * len(Jc)
+        q = p["hsn_vm2_release_share"] * Jc.sum() / n          # molecules/s per site
+        s = p["hsn_vm2_region_um"] / n                          # site spacing, um
+        x = (np.arange(n) - (n - 1) // 2) * s                   # receptor r from the middle site
+        d = np.sqrt(p["hsn_vm2_site_receptor_um"] ** 2 + x ** 2)
+        Ds = p["ma_diffusion_um2_per_s"] / p["ecs_tortuosity"] ** 2
+        ell = np.sqrt(Ds * p["ma_degrade_tau_s"])
+        c = p["syn_half_space"] * q / (4.0 * np.pi * Ds * p["ecs_alpha"]) * np.sum(np.exp(-d / ell) / d)
+        return float(c / (NA_PL / 1000.0))                      # molecules/um3 -> nM
+
     def cell_nM(self, kind, ligand, cell):
         """The concentration cell `cell` reads (nM, area-weighted over its compartments): kind P (ligand a
         precursor gene) or A (an amine)."""
@@ -600,6 +664,7 @@ class Mech:
         if self.on[A]:
             self.ma.N[:] = 0.0
             self.store = self.ma_rel.copy()                # full stores at t = 0
+            self.ma_J = np.zeros_like(self.ma_rel)
             for pps, _ in getattr(self, "wgc", None) or ():
                 for pp in pps:
                     pp.g = 0.0
@@ -680,6 +745,7 @@ class Mech:
                 if ms is not None:
                     R_ma = R_ma * np.asarray(ms, float)
             J = self.ma_rel * (p["ma_release_per_s"] * self.q_ma * R_ma)[:, None] * self.store   # molecules/s
+            self.ma_J = J                                  # the near field's source (near_nM)
             cap = self.ma_cap
             c = pool.nM()
             sink = np.zeros_like(pool.N)

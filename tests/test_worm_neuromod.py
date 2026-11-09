@@ -244,3 +244,42 @@ def test_pc_grid():
     assert one.pep.N[row, ~sel].max() < one.pep.N[row, sel].min()
     assert np.isclose(one.pep.N[row].sum() / np.exp(-0.01 / T["pep_degrade_tau_s"] - 0.01 * T["pc_coelomocyte_uptake_per_s"]),
                       1e4 * 0.01, rtol=1e-12)
+
+
+def test_amine_synaptic():
+    """amine_synaptic: off (default) returns 0 and nicholson moves no molecules (a read: both step bit-identically);
+    limit tests against the closed form: one site in free volume, C = J share / (4 pi D r) exp(-r / l); two sites add
+    the second at sqrt(r^2 + s^2)."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "off", "monoamines": "compartments"}
+    off, on = N.Mech(brain, T, tg), N.Mech(brain, T, {**tg, "amine_synaptic": "nicholson"})
+    assert off.synaptic == "off"
+    hsn = [neurons.index("HSNL"), neurons.index("HSNR")]
+    v = np.full(len(neurons), -80.0)
+    v[hsn] = -20.0
+    ctx = SimpleNamespace(v=v, outputs={})
+    for _ in range(300):
+        off.step(ctx, 10.0)
+        on.step(ctx, 10.0)
+    assert np.array_equal(off.ma.N, on.ma.N) and np.array_equal(off.G, on.G)
+    assert off.near_nM("serotonin", hsn) == 0.0 and on.near_nM("serotonin", hsn) > 0.0
+    J = on.ma_J[hsn, N.AMINES.index("serotonin")]
+    assert (J > 0).all()
+    r, D, tau, share = 0.05, T["ma_diffusion_um2_per_s"], T["ma_degrade_tau_s"], 0.5
+    one = N.Mech(brain, {**T, "hsn_vm2_sites": 1, "ecs_alpha": 1.0, "ecs_tortuosity": 1.0, "syn_half_space": 1.0,
+                         "hsn_vm2_site_receptor_um": r, "hsn_vm2_release_share": share},
+                 {**tg, "amine_synaptic": "nicholson"})
+    want = share * 1e4 / (4 * np.pi * D * r) * np.exp(-r / np.sqrt(D * tau)) / 0.602214
+    assert np.isclose(one.near_nM("serotonin", [hsn[0]], J=[1e4]), want, rtol=1e-9)
+    L = 3.0                                                       # two pre cells, one site each: spacing L / 2
+    d2 = np.hypot(r, L / 2)
+    one.p = {**one.p, "hsn_vm2_region_um": L}
+    two = one.near_nM("serotonin", hsn, J=[1e4, 1e4])
+    want2 = share * 1e4 / (4 * np.pi * D) * (np.exp(-r / np.sqrt(D * tau)) / r + np.exp(-d2 / np.sqrt(D * tau)) / d2) \
+        / 0.602214
+    assert np.isclose(two, want2, rtol=1e-9)
