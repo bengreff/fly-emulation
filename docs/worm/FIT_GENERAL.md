@@ -72,8 +72,14 @@ A member that breaks a hard constraint is never run, so it never enters an updat
 Every member runs the battery (`VITAL_SIGNS.md`: one `wormemu.simulate` per condition, the whole worm, closed loop).
 
 - **Rejection** (`vitals.physical`, per run): every voltage, Ca and module concentration finite; every soma voltage
-  inside [E_lo - 1, E_hi + 1] mV; every concentration >= 0. Plus activity, added before the fit and reported only
-  until then:
+  inside [E_lo - 1, E_hi + 1] mV; every concentration >= 0; no soma voltage alternating at every exchange step for 25
+  steps (added 9 Nov 01:04, validated: VITAL_SIGNS.md). The last one matters for the prior. Ten modules hold an
+  explicit conductance over the 4 ms step, so some members inside the box go numerically unstable. Prior draw seed 1
+  (f8e7699) did: egg_lgc55_g_nS 4.15, inside its 0.1-5 range, sends HSN into a -137 / +20 mV alternation after the
+  first egg (measured). Such members are rejected, not scored, and the rejection rate under the prior is measured by
+  the prior predictive before any fit. A boundary that is numerical, not biological, is a fault for the module's
+  owner to fix (night file request, 9 Nov 01:04); the fit must not learn to avoid it. Plus activity, added before
+  the fit and reported only until then:
   - saturated: the run's mean fraction of neurons above -20 mV over 0.5 (guessed; the 7 Nov triage saw 197 of 302 in
     the saturated state);
   - silent: fewer than 10 % of neurons with a voltage range (P95 - P5 after the settle) above 2 mV (guessed).
