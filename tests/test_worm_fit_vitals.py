@@ -160,3 +160,20 @@ def test_battery_values_set_per_experiment():
     assert V.battery_theta(None) == V.BATTERY_VALUES
     assert V.battery_theta({"obs_noise_dff": 0.2, "x": 1.0}) == {"x": 1.0, **V.BATTERY_VALUES}
     assert 0.026 <= V.ATANAS_NOISE_DFF <= 0.068
+
+
+def test_observations_sigma_rules_and_missing_signs():
+    r = {"bio_s": 200.0, "rest_AWA": -60.0, "pc3_frac": 0.1, "gcamp_range": 0.6, "pump_hz": 0.0, "dmp_period_s": None,
+         "egg_inactive_min": None, "egg_intra_s": None, "bwm_rest_mV": -30.0, "bwm_spike_hz": 2.9, "rest_AIY": -50.0}
+    off = {"bio_s": 200.0, "rest_AWA": -61.0, "pump_hz_off": 0.0, "bwm_rest_mV": -31.0, "bwm_spike_hz": 2.8}
+    names, g, y, sig = V.observations({"food": {"readouts": r}, "nofood": off})
+    d = {n: (a, b, c) for n, a, b, c in zip(names, g, y, sig)}
+    assert "food:rest_AIY" not in d and "food:ca_rest_uM" not in d          # no bar, no observation
+    assert d["food:rest_AWA"][1:] == (-75.3, 4.7)                           # the published SD
+    assert d["food:pc3_frac"][2] == pytest.approx((0.506 - 0.353) / 3.29)   # percentile band
+    assert d["nofood:pump_hz_off"][1:] == pytest.approx((0.88, 0.425))      # inferred band: midpoint, quarter width
+    assert d["food:bwm_spike_hz"][1:] == (0.73, 0.73)
+    assert np.isnan(d["food:dmp_period_s"][0]) and np.isnan(d["food:egg_intra_s"][0])   # not produced / too short
+    assert d["nofood:bwm_rest_mV"][0] == -31.0 and "nofood:pc3_frac" not in d
+    n2, g2, *_ = V.observations({"food": r}, ids={"rest_AWA", "pc3_frac"})
+    assert n2 == ["food:rest_AWA", "food:pc3_frac"] and np.isfinite(g2).all()

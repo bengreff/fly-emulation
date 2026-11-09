@@ -77,6 +77,21 @@ Every member runs the battery (`VITAL_SIGNS.md`: one `wormemu.simulate` per cond
   sign enters with sigma from its published spread: SD for mean +- 2 SD bands, (P95 - P5) / 3.29 for the Atanas
   percentile bands, half the half-width for the inferred bands (egg timing, off-food pumping; guessed). Unscored signs (AIY and
   AFD rest, no spread) stay out. The simulation's own noise variance is added (section 7).
+  - Code: `vitals.observations` and `vitals.obs_target` (toy-tested). y is the published mean, else the band's
+    midpoint (derived; the off-food pumping band has no mean).
+  - **Signs the worm does not produce**: the defecation period with fewer than 2 expulsions, and the egg statistics
+    in runs under 1800 bio-s. Each gives g = NaN, and the driver counts a NaN member as failed. If every member lacks
+    the sign, every member fails and the run stops at once. **Default: such a sign is left out of the fit's vector**
+    (it stays in the battery and the gate) until the worm produces it. A censored readout (for example, the period
+    read as the run length when no interval closes) enters only by an amendment written before any run.
+    **Ben to confirm.**
+  - On the f8e7699 template (stored battery, measured 9 Nov 00:01), the observations' z, (g - y) / sigma, are:
+    - food: pumping -18.3, PC3 -8.3, GCaMP range -4.9, AWA rest +3.6, BWM spikes +3.0, BWM rest -1.0;
+    - off food: AWA rest +3.4, BWM spikes +2.9, pumping -2.1, BWM rest -1.1.
+
+    The mean misfit Phi per observation is 23.8. So the controller's first step would be at least about 1 / (2 x 23.8) = 0.02
+    (derived, if the ensemble starts near the template). Pumping carries 71 % of the summed z^2 (339 of 475, derived),
+    and the silent pharynx is a mechanism fault, so the fit must not run before it is fixed (the gate).
 
 ## 4. Maturation before scoring (refinement 4): off
 

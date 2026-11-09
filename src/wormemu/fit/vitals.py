@@ -89,6 +89,7 @@ class Sign:
     label: str = "measured"           # of the range
     min_bio_s: float = 0.0            # shorter runs report "too short"
     notes: str = ""
+    percentile: bool = False          # lo / hi are the population's 5th and 95th percentiles (observations' sigma)
 
     def band(self):
         if self.lo is not None and self.hi is not None:
@@ -113,11 +114,13 @@ SIGNS = [
                "as the spread (the strict reading); SEM x sqrt(27) = 24 mV would give -124 to -27 mV"),
     Sign("pc3_frac", "whole-brain GCaMP: variance fraction in the top 3 PCs (z-scored, 195 s windows, 135 neurons)",
          ("food",), "1", mean=0.440, sd=0.057, n=60, lo=0.353, hi=0.506, label="measured (computed from the data)",
+         percentile=True,
          source="Atanas et al. 2023 Cell 186:4134 (Zenodo 8185377), the 60 open atanas2023_main animals, "
                 "scripts/worm/fit/atanas_pc3.py; band = their 5th to 95th percentile",
          notes="Atanas imaged NLS-GCaMP7f at 1.7 Hz on food (methods, PMC10836760, opened 8 Nov 2026)"),
     Sign("gcamp_range", "GCaMP per-neuron range (P95 - P5 of F / mean F), median over neurons, 195 s windows", ("food",),
          "dF/F", mean=0.718, sd=0.161, n=60, lo=0.567, hi=0.983, label="measured (computed from the data)",
+         percentile=True,
          source="Atanas et al. 2023 (as pc3_frac), traces F / mean F, scripts/worm/fit/atanas_pc3.py; band = the "
                 "5th to 95th percentile over the 60 open animals"),
     Sign("ca_rest_uM", "neuron soma Ca, median over neurons of each one's median", ("food", "nofood"), "uM",
@@ -407,6 +410,46 @@ def score(r: dict, cond: str) -> dict:
         z = (x - s.mean) / s.sd if (st in ("in", "miss") and s.mean is not None and s.sd) else None
         res[s.id] = {"value": x, "status": st, "band": band, "z": z}
     return res
+
+
+# --- the battery as EKI observations (FIT_GENERAL.md section 3; whether they enter the loss is Ben's to confirm) ------
+def obs_target(s: Sign):
+    """(y, sigma, basis) of one sign as an observation, None when it has no bar. sigma: the published SD for mean +- 2 SD
+    bands; (P95 - P5) / 3.29 for percentile bands (a normal's 5th to 95th span is 3.29 SD); a quarter of the width (half
+    the half-width) for inferred bands. y: the published mean, else the band's midpoint (derived)."""
+    band = s.band()
+    if band is None:
+        return None
+    lo, hi = band
+    y = s.mean if s.mean is not None else 0.5 * (lo + hi)
+    if s.label.startswith("inferred"):
+        return y, (hi - lo) / 4.0, "inferred band: a quarter of its width"
+    if s.percentile:
+        return y, (hi - lo) / 3.29, "percentile band: (P95 - P5) / 3.29"
+    return y, s.sd, "the published SD"
+
+
+def observations(results: dict, ids=None):
+    """The battery's part of the EKI observation vector from {cond: run() output, or its readouts}: names ("cond:sign"),
+    g (the model's values), y and sigma, over the signs with a bar in each condition given (ids limits them). A sign
+    not produced, or a run too short for it, gives g = NaN, which the driver treats as a failed member: such a sign is
+    left out of a fit's vector (ids) or given a pre-registered censored readout before any run."""
+    names, g, y, sig = [], [], [], []
+    for cond, out in results.items():
+        r = out.get("readouts", out)
+        for s in SIGNS:
+            if cond not in s.cond or (ids is not None and s.id not in ids):
+                continue
+            t = obs_target(s)
+            if t is None:
+                continue
+            x = r.get(s.id)
+            bad = x is None or r.get("bio_s", math.inf) < s.min_bio_s or (isinstance(x, float) and math.isnan(x))
+            names.append(f"{cond}:{s.id}")
+            g.append(math.nan if bad else float(x))
+            y.append(t[0])
+            sig.append(t[1])
+    return names, np.array(g, float), np.array(y, float), np.array(sig, float)
 
 
 def battery_theta(theta):
