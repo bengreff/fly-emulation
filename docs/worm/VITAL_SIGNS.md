@@ -37,10 +37,20 @@ wbrain2 (night file): put the world and environment on `Experiment`.
 - concentrations >= 0: `ca_uM` and every `out:*_uM / _mM / _nM` recorded;
 - no step alternation (added 9 Nov 00:55, pre-registered before its two validation runs): no soma voltage reverses
   direction at every body exchange step for 25 steps in a row (100 ms at 4 ms) with every step larger than 2 mV.
-  brain.step holds each module's `I_pA` fixed over the step, from V at the step's start; ten modules compute a
-  conductance that way (drugs, egg_laying, glia, intestine, k2p_leak, neuromod, noise, pumps, senses_chem,
-  slow_signalling). Such an explicit conductance makes V alternate every step once it is large against the
-  capacitance it charges in one step (derived: explicit Euler). A 125 Hz sustained oscillation is not a C. elegans
+  brain.step holds each module's `I_pA` fixed over the step, from V at the step's start. In the NEURON brain three
+  modules put a conductance g (E - V) through that path (read from the code, 9 Nov 01:23): egg_laying (LGC-55 on
+  HSN, and the vulval-muscle cation term on its own clamps), intestine (PBO-5 on the posterior body-wall muscles)
+  and noise (the zero-mean conductance fluctuation). drugs, k2p_leak and neuromod do it only on the stand-in brain
+  of the unit tests and use NEURON point processes otherwise; senses_chem, senses_proprio and senses_touch use
+  SensG point processes (implicit); glia, pumps and slow_signalling feed V back through slow states (K+, Na+, a
+  homeostatic integral), not a per-step conductance. (The 01:04 entry here listed ten modules; that came from a
+  search for modules that read V, and was wrong for seven of them.) Such an explicit conductance makes V alternate
+  every step once it is large against the capacitance it charges in one step (derived: explicit Euler). The
+  threshold, measured on the template's intrinsic membrane by `scripts/worm/fit/explicit_gcrit.py` (E -41 mV, from
+  rest, 4.0 / 4.5 ms steps): HSNL 1.31 / 1.22 nS, AWAL 1.87 / 1.79, ASHL 1.39 / 1.27, AFDL 1.46 / 1.34, AVAL
+  1.94 / 1.84, RIS 0.87 / 0.79, ALA 20.2 / 19.8. The soma clamp sits on a soma of 0.15-0.72 pF against 2-24 pF
+  for the whole cell, so no single capacitance predicts these (g dt / C on the whole cell runs 0.46-3.7). The
+  body-wall muscles (PBO-5) and vulval muscles were not measured. A 125 Hz sustained oscillation is not a C. elegans
   behaviour, so it is read as numerical (thresholds guessed). Validation, written before either run: on the template
   (food, 16 bio-s, Mac) the check flags no cell; on prior draw seed 1 (food, 16 bio-s), which leaves the bounds after
   its first egg at 12.6 s, it flags HSNL and HSNR. If the template flags any cell, the thresholds are wrong or the
