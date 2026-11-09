@@ -80,8 +80,12 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
   the data-misfit controller (Iglesias & Yang 2021, arXiv 2006.14980). The steps sum to 1, so in the linear-Gaussian
   limit the ensemble goes from the prior to the posterior (tested against the closed form).
 - **Inflation**: 1.0 (off). Chosen by the twin rule (smallest of 1.0, 1.02, 1.05, 1.1 with coverage >= 0.90 over 20
-  hidden draws): on the excretory-canal twin, protocol B, 1.0 gives coverage 0.925 (measured 21:27). The rule is re-run
-  on a second, larger twin (a neural mechanism, more than 4 numbers) before the fit; whatever it picks is fixed then.
+  hidden draws): on the excretory-canal twin, protocol B, 1.0 gives coverage 0.925 (measured 21:27). Re-run on a
+  second, larger twin (`scripts/worm/fit/twin_neuron.py`, 8 Nov 22:34-23:04, pre-registered, measured): the published
+  Nicoletti AIY point neuron with its 7 densities hidden, FIT2's clamp features, J = 100, correlation localisation on.
+  Coverage 0.979 at 1.0 (0.943 without localisation), so **1.0 is fixed**. That twin also shows what one cell's clamp
+  can fix: leak, nca and kqt1 in at least 19 of 20 draws; shl1, egl19 and slo1iso stay wide (95 % ranges a factor
+  3.4-8 of a box of 9).
 - **Localisation**: rho = rho_graph x rho_corr on C_zg.
   - rho_graph (`eki.graph_rho`): structural zeros. A parameter's module (its mechanism's module in `mech.modules()`) can
     move an observation only if a directed path in `iograph.edges(iograph.record())` leads to a module the observation is

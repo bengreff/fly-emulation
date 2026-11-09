@@ -28,6 +28,18 @@ needs a remedy first (larger J, wider inflation, repeated starts); nothing is pa
 (recovered in >= 18 of 20) is reported with no bar; expectation written now (guessed, not a bar): at least 3 of the 7
 identified, and slo1egl19 and slo1iso (two Ca/voltage-gated K) the least.
 
+Result (22:34-23:04, Mac, one core; measured; outputs runs/worm/fit/twin_neuron/, gitignored). Coverage over the 140
+pairs: corr 0.979 / 0.971 / 0.986 / 1.000 and none 0.943 / 0.964 / 0.971 / 0.986 at inflation 1.0 / 1.02 / 1.05 / 1.1,
+so the rule picks 1.0 under corr (and under none). No member failed; every run reached t = 1 (median 8 iterations
+under corr at 1.0, at most 11). Identified (median within 1.25 in >= 18 of 20, corr at 1.0): leak 20, nca 20, kqt1 19;
+not: slo1egl19 15, egl19 11, shl1 8, slo1iso 4 (median 95 % width, a factor: leak 1.09, nca 1.05, kqt1 1.56,
+slo1egl19 1.63, egl19 3.36, shl1 5.26, slo1iso 7.95 of the box's 9). Without localisation the ranges are narrower
+(egl19 2.53, shl1 4.00) and still cover (0.943; nca alone 0.85). So the cut costs precision, not calibration, here.
+Expectation against outcome: 3 of 7 identified (expected at least 3); slo1iso the least, as expected, but slo1egl19 is
+the 4th best and shl1 the 2nd least, not as expected. All 7 within 1.25 in only 1 of 20 draws (the canal's bar, not
+this twin's): FIT2's clamp features at 1 mV fix 3 of the published AIY model's 7 densities. Integrator check: dt 0.5
+and 0.1 ms agree within 0.0002 mV on every feature at the published densities (measured).
+
 Usage: python scripts/worm/fit/twin_neuron.py smoke
        python scripts/worm/fit/twin_neuron.py run OUT.json fixed|corr INFLATION [DRAWS]
 """
