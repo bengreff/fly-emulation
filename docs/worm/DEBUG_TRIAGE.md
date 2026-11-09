@@ -363,6 +363,15 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   to -29.6 mV, below threshold (all measured). Mechanism written down: DVB's synapse here is Cook's 3 + 1 contacts at
   the ledger's median NMJ strength (0.81 and 0.27 nS), too weak to fire a silent muscle, and the BWM membrane stands
   in for an unrecorded enteric one. Both are values or missing data (D), not a port; stopped after the attempt.
+- 9 Nov 03:40-04:05 (wbody2, line 3 intestine wave). E: check_intestine took its speed band (20-60 um/s) from the
+  dissected gut (Espelt et al. 2005: 33 +- 3 um/s; waves stop at 80 +- 3 % of its length) and its every-wave and 1:1
+  bars from the intact worm. The model has no dissection term, so the band is now the behaving worm's 200-480 um/s
+  (Peters et al. 2007: 340 +- 140 um/s, n 10; both opened; bar written before re-running). Defaults: FAIL (33.3 um/s,
+  0 of 11 waves). In range (the same 1000 draws): 0 pass. Diagnostics outside the ranges: only IP3 coupling of 300 um/s
+  passes (3 of 200 draws, confirmed at 0.5 ms: period 46.9-48.0 s, 12 of 12 waves, 225-337 um/s), and the gut is then
+  near-synchronous (figure viewed). Cytosolic diffusion between 60-100 um cell centres allows about 2.8-4.7 um/s for
+  IP3 (Allbritton et al. 1992, D 283 um2/s; derived), 60-100x less. No published model or intact-worm mechanism to
+  port (lit_int_wave.md). Stopped after attempt 2; mechanism written down (night file log 03:40-04:05).
 
 ## Phase 2 status (wneuro)
 
