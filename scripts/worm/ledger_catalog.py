@@ -60,6 +60,7 @@ MECH_ROW = {
     "unc58_na_leak": 5, "drugs": 22, "pathogen_sickness": 22,                 # wmodel, 7 Nov evening
     "egl19_kinetics": 4, "shl1_kinetics": 4,              # channel_forms (wbrain2, 8 Nov): gating, as the kin_ rows
     "ca_bulk": 6,                                         # capool's bulk readout pool (wbrain2, 8 Nov)
+    "avl_membrane": 5, "dvb_membrane": 5, "jiang22_egl36_weights": 5, "afd_membrane": 5,   # cell_models, Jiang 2022 and Naudin 2022 (wbrain2, 9 Nov)
 }
 PARAM_ROW = {"ion_celsius": 25}
 # wmodel's structure_rules (7 Nov): each rule sits in the row of the per-element values it generates

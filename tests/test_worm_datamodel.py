@@ -168,3 +168,67 @@ print(json.dumps(dict(t=r["t_ms"].tolist(), p=np.array(r["posture"]).tolist(), a
     assert p.shape == (2, 49) and np.isfinite(p).all()
     assert np.allclose(r["t"], [25.0, 50.0], atol=0.3)                    # the body's 4.167 ms exchange
     assert np.array(r["a"]).shape == (2, 95)
+
+
+def test_theta_dict_sets_table_elements():
+    """'pid[element]' in a theta dict sets that element of the table (weki, 9 Nov: it used to land as a new key)."""
+    from wormemu.brain import sample_worm
+    s0 = sample_worm(None)
+    s1 = D._theta(s0, {"syn_inhibitory[AVFL]": 1.0})
+    assert "syn_inhibitory[AVFL]" not in s1.values
+    assert float(s1.values["syn_inhibitory"]["AVFL"]) == 1.0
+    other = [e for e in s1.values["syn_inhibitory"].index if e != "AVFL"]
+    assert (s1.values["syn_inhibitory"][other] == s0.values["syn_inhibitory"][other]).all()
+
+
+def test_body_fields_need_the_body():
+    with pytest.raises(ValueError, match="body='on'"):
+        D.simulate(None, D.Experiment(env={"env_temp": "gradient"}))
+    with pytest.raises(ValueError, match="body='on'"):
+        D.simulate(None, D.Experiment(scene={"field": "cone_published"}))
+    with pytest.raises(ValueError, match="need env"):
+        D.simulate(None, D.Experiment(body="on", env_params={"temp_T0_C": 20.0}))
+
+
+def test_scene_numbers_are_experiment_settings():
+    from wormemu import params
+    c = params.catalog()
+    s = c[c.id.str.startswith("scene_") | (c.id == "obs_noise_dff")]
+    assert len(s) and not s.active.any()
+    g = s[s.role == "gap"]
+    assert len(g) == 7 and g.inactive_why.str.startswith("experiment setting").all()
+
+
+def test_body_on_passes_world_env_scene_and_keeps_the_gradient_head():
+    """body on: world, env and scene reach the Body; with an env_temp gradient the head temperature is the plate's,
+    not temperature_C (weki, 8 Nov). A stub Body stands in for the FEM driver (the real loop is checked above)."""
+    r = _run("""
+import json
+from wormemu import brain as B, datamodel as D
+from wormemu.body import loop
+from wormemu.body.metaworm import AGAR_FILM
+from wormemu.interface import default_observation
+seen, orig = [], B.Brain.step
+def step(self, o, dt):
+    seen.append(float(o.head["temperature_C"]))
+    return orig(self, o, dt)
+B.Brain.step = step
+class Stub:
+    dt_s = 1 / 240.0
+    def __init__(self, out, **kw):
+        Stub.kw, self.env = kw, kw.get("env")
+        self.obs = default_observation(0.0)
+        self.obs.head = dict(self.obs.head, temperature_C=25.5)       # as the plate's gradient would report it
+    def send(self, cmd, n, dump=False): pass
+    def recv(self): pass
+    def close(self): pass
+loop.Body = Stub
+r = D.simulate(None, D.Experiment(duration_ms=10, body="on", temperature_C=22.0, world=dict(AGAR_FILM),
+                                  env={"env_temp": "gradient"}, scene={"field": "cone_published"}))
+k = Stub.kw
+print(json.dumps(dict(seen=seen, world=k.get("world") == dict(AGAR_FILM), tog=k["env"].tog["env_temp"],
+                      T0=k["env"].p["temp_T0_C"], field=k["scene"].field, notes=r["notes"])))
+""")
+    assert r["seen"] and all(x == 25.5 for x in r["seen"])
+    assert r["world"] and r["tog"] == "gradient" and r["T0"] == 22.0 and r["field"] == "cone_published"
+    assert any("gradient" in n for n in r["notes"])

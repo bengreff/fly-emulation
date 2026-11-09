@@ -444,6 +444,46 @@
   source: src/wormemu/mech/ca_volume.py
   notes: registry module ca_volume; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
+- id: avl_membrane
+  name: 'AVL membrane: Jiang et al. 2022''s AVL model (UNC-2, EGL-19, CCA-1, SHL-1, EGL-36, EXP-2, NCA, leak) instead of BAAIWorm''s set fitted to AIYL'
+  layer: channel
+  status: have
+  toggle: avl_membrane
+  neutral: 'off'
+  default: baaiworm
+  source: src/wormemu/mech/cell_models.py
+  notes: registry module cell_models; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: dvb_membrane
+  name: 'DVB membrane: Jiang et al. 2022''s AVL model without EXP-2 (none detected in DVB), the nearest published system, instead of BAAIWorm''s set fitted to AIYL'
+  layer: channel
+  status: have
+  toggle: dvb_membrane
+  neutral: 'off'
+  default: baaiworm
+  source: src/wormemu/mech/cell_models.py
+  notes: registry module cell_models; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: jiang22_egl36_weights
+  name: 'Jiang 2022 EGL-36 fast-component weight: 0.33 as printed (Eq. 50) or 0.31 as in the authors'' code'
+  layer: channel
+  status: have
+  toggle: jiang22_egl36_weights
+  neutral: 'off'
+  default: printed
+  source: src/wormemu/mech/cell_models.py
+  notes: registry module cell_models; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: afd_membrane
+  name: 'AFD membrane: Naudin et al. 2022''s AFD model (Ca, inward rectifier K, transient K, leak; multi-objective fit) instead of BAAIWorm''s AFD fit, which has no inward rectifier'
+  layer: channel
+  status: have
+  toggle: afd_membrane
+  neutral: 'off'
+  default: baaiworm
+  source: src/wormemu/mech/cell_models.py
+  notes: registry module cell_models; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: unc58_na_leak
   name: UNC-58 K2P leak with a constitutive Na+ permeability (PNAS 2024) in its CeNGEN classes and body-wall muscle
   layer: channel
@@ -582,6 +622,16 @@
   toggle: aex2_ec50_source
   neutral: 'off'
   default: beets2023
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: dmsr1_isoform
+  name: 'Which DMSR-1 isoform FLP-25 reads: the most potent Table S6 row (DMSR-1-2, B, 0.6 pM) or DMSR-1-1 (A, 1.6 uM); other DMSR-1 ligands differ by at most 4x between the isoforms'
+  layer: neuromodulation
+  status: have
+  toggle: dmsr1_isoform
+  neutral: 'off'
+  default: most_potent
   source: src/wormemu/mech/neuromod.py
   notes: registry module neuromod; PLAN row guessed from the name by the catalog
   absent_reason: ''

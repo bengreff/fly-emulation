@@ -1,4 +1,6 @@
 """DVB's action potential at the ledger, alone and embedded (wneuro's request, Director inbox 23:36, wbrain2, 8 Nov 2026).
+--cell AVL (9 Nov) scores AVL against Jiang's AVL recordings (Fig 1c, n 17; bars in the night file's "Jiang 2022's
+AVL model as a B toggle", written before running).
 
 Check and bars: docs/worm/night/2026-11-08_wbrain2.md, "DVB cannot fire" (written before running). Jiang et al. 2022
 Nat Commun 13:2783 (PMC9120479, Fig 1): 5 s current steps at 1 pA increments; rest -49.0 +- 3.6, threshold -23.4 +- 1.6,
@@ -10,8 +12,8 @@ partners), whole (the whole brain). Diagnostics (never adopted): cut=gap zeroes 
 DVB (both halves), cut=syn zeroes every chemical synapse onto DVB. Also records the gap and synaptic current into DVB
 (nA, + = into the cell) over the last 1 s of each step.
 
-  python scripts/worm/debug2/probe_dvb.py alone|dmp|whole [--amps 1,2,...] [--cut gap|syn|gap,syn] [--toggles '{}']
-      [--trace] [--out file.json]
+  python scripts/worm/debug2/probe_dvb.py alone|dmp|whole [--cell DVB|AVL] [--amps 1,2,...] [--cut gap|syn|gap,syn]
+      [--toggles '{}'] [--trace] [--out file.json]
 """
 from __future__ import annotations
 
@@ -26,6 +28,9 @@ DMP = ["AVL", "DVB", "PVR", "AVAL", "AVAR", "PHAL", "PHAR", "PDA", "DA09", "VA12
 SEM5 = 5 ** 0.5
 JIANG = dict(rest=(-49.0, 3.6), threshold=(-23.4, 1.6), peak=(26.3, 2.6), half_width_ms=(358.8, 59.5))
 BARS = {k: (m - 2 * s * SEM5, m + 2 * s * SEM5) for k, (m, s) in JIANG.items()}
+JIANG_AVL = dict(rest=(-45.7, 1.1), threshold=(-23.3, 0.8), peak=(9.8, 0.8), ahp=(-64.8, 1.2),
+                 half_width_ms=(394.2, 40.0))                         # n = 17, mean +- s.e.m.
+BARS_AVL = {k: (m - 2 * s * 17 ** 0.5, m + 2 * s * 17 ** 0.5) for k, (m, s) in JIANG_AVL.items()}
 GAPS = ("gapjunction", "rectgap")
 
 
@@ -75,6 +80,7 @@ def event(x, dv_frac=0.1, fall_mV=10.0):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("context", choices=("alone", "dmp", "whole"))
+    ap.add_argument("--cell", default="DVB", choices=("DVB", "AVL"))
     ap.add_argument("--amps", default="")
     ap.add_argument("--on_ms", type=int, default=5000)
     ap.add_argument("--off_ms", type=int, default=1000)
@@ -96,10 +102,11 @@ def main():
         pairs.append((self.conn[n0], self.conn[n0 + 1], seg_a.sec, seg_b.sec))
     B.Brain._gap = rec_gap
     t0 = time.time()
-    cells = {"alone": ["DVB"], "dmp": DMP, "whole": None}[a.context]
+    cells = {"alone": [a.cell], "dmp": DMP, "whole": None}[a.context]
+    bars = BARS if a.cell == "DVB" else BARS_AVL
     b = B.Brain(toggles=tg, cells=cells)
     B.Brain._gap = orig
-    dvb = b.idx["DVB"]
+    dvb = b.idx[a.cell]                                    # the probed cell (DVB unless --cell)
     own = {s.name() for s in b.soma[dvb].wholetree()}
     gp = [(p, q) for p, q, sa, sb in pairs if sa.name() in own or sb.name() in own]
     g_in = [p if p.get_segment().sec.name() in own else q for p, q in gp]   # the half on DVB
@@ -139,9 +146,10 @@ def main():
     score = dict(rest=rest, rheobase_pA=first["pA"] if first else None)
     if first:
         score.update({k: first["event"][k] for k in ("peak", "threshold", "half_width_ms", "ahp")})
-    passes = {k: (score.get(k) is not None and lo <= score[k] <= hi) for k, (lo, hi) in BARS.items()}
+    passes = {k: (score.get(k) is not None and lo <= score[k] <= hi) for k, (lo, hi) in bars.items()}
     passes["spike_by_20pA"] = bool(first and first["pA"] <= 20.0)
-    res = dict(context=a.context, cut=a.cut, toggles=tg, cells=len(b.idx), wall_s=time.time() - t0, bars=BARS,
+    res = dict(context=a.context, cell=a.cell, cut=a.cut, toggles=tg, cells=len(b.idx), wall_s=time.time() - t0,
+               bars=bars,
                load=load, score=score, passes=passes, all_pass=all(passes.values()), steps=rows)
     print(json.dumps(dict(score=score, passes=passes, load=load, wall_s=res["wall_s"]), indent=1))
     for r in rows:
