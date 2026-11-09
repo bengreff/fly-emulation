@@ -414,10 +414,14 @@ class Mech:
         return res
 
     def _awa_gscale(self):
+        """AWA's BAAIWorm channels and somatic leak scaled to 0 (Liu's membrane replaces them); its synapses
+        ("release", "rec_<class>") stay at 1."""
         from wormemu.mech import G_SCALE_NAMES
         if not hasattr(self, "_gsc"):
             self._gsc = {}
             for nm in G_SCALE_NAMES:
+                if nm == "release" or nm.startswith("rec_"):
+                    continue
                 x = np.ones(self.n)
                 x[self.awa_idx] = 0.0
                 self._gsc[nm] = x
