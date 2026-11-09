@@ -242,6 +242,11 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   finitialize overwrites the script's eca = 60) and BAAIWorm's SLO-1 nanodomain hard-codes 60 mV; with E_Ca held at
   60 in both, n24_code plus the authors' unrounded SLO-1 constants reproduces their AIY model to 0.004 mV. Default
   unchanged. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 1".
+- Line 18 (wbrain2, E): no code passes or fails on the fraction of neurons above -20 mV (seven scripts and the ledger's
+  sensitivity text all report it). The network-state sign is weki's GCaMP pair in `fit/vitals.py`: pc3_frac (bar
+  0.353-0.506 from Atanas et al. 2023's 60 animals, PMC10836760, opened: "the first three PCs explained 42% of the
+  variance") and gcamp_range (0.567-0.983). The voltage fraction stays a report with no bar. Template: 0.056 and
+  0.095, both miss (weki, measured): a quiet brain. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 18".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.
