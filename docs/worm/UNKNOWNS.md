@@ -5,11 +5,12 @@ from the code today.
 
 **Verdict.** 368 numbers are genuinely unknown (measured 19:00). That is the whole fit vector: 43 shared rules plus
 325 gaps (15 of them discrete). It is well under Ben's 1,000-2,000 target. Everything else is fixed and labelled with
-its origin (1,272 scan rows covering 79,944 elements), or taken out of the vector for a stated reason (325 rows). The
+its origin (1,329 scan rows covering 80,001 elements), or taken out of the vector for a stated reason (325 rows). The
 per-element residuals (6,298 slots) are frozen at 0. The count went from 340 at 13:00 to 347 at 18:10 (wiring) and to
 368 at 19:00: the 21 drug numbers (mech/drugs, all guessed; read whenever an experiment schedules a drug). The
 KNOWLEDGE_GAPS section C mechanisms added 10 numbers, all outside the vector because their switches are off by
 default (8 guessed, 2 inferred). Fitting has not started.
+8 Nov 22:08 (wbrain2): scan rows 1,272 to 1,329 and elements 79,944 to 80,001 (measured), the 57 constants of mech/channel_forms (Nicoletti 2024's EGL-19 and SHL-1 forms, published fits, both toggles off by default); the vector is unchanged at 368.
 
 ## What the roles mean
 
@@ -17,7 +18,7 @@ default (8 guessed, 2 inferred). Fitting has not started.
 |---|---|---|---|
 | rule | 43 | yes | a shared rule on structure (`structure_rules`): a few numbers that set many per-cell values from CeNGEN, EM counts and transmitter identity |
 | gap | 325 | yes | a guessed or absent value the code reads, with a cited range (`lo`, `hi`) where wranges has one |
-| scan | 1,272 rows, 79,944 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
+| scan | 1,329 rows, 80,001 elements | no, fixed | measured, published fit, derived or inferred; labelled with its origin for debugging |
 | residual | 6,298 slots | no, frozen at 0 | a per-element correction on top of a rule; frozen until the rules alone fail held-out data |
 | inactive unknown | 325 | no | guessed or absent, but out of the vector for the reason below |
 
