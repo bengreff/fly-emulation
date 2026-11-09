@@ -240,3 +240,8 @@ Nothing on Windows or the throttle was changed.
   defaults 1 of 11 waves reaches int2 (D: 1 of 1000 in-range sets passes, not adopted). No expulsion: NLP-40 tonic at
   DVB and AEX-2 with no Ca route (neuromod, request to wbrain2); the enteric muscles fire at about 4 Hz on the Du BWM
   membrane, so no AVL/DVB drive makes an expulsion (B, 0 of 16 drives). Q10 per-temperature data not free (row 25).
+- Food changes nothing (wbody2 item 4), 21:35 8 Nov. Traced on the pharyngeal sub-brain (20 s, food_OD 1.02 vs 0):
+  NSM depolarises 25 mV, the head 5-HT rises 70-fold to 1.05 nM, MC's SER-7 Gs 0.0005 -> 0.033 (the published route,
+  Song & Avery 2012), pumps 0 -> 0 because MC is silent (item 2). NSM's soma Ca does not rise (brain, request). Basal
+  slowing (dopamine, a mechanical attribute of bacteria, Sawin 2000): the lawn has none, B. DMP has no food input, B.
+  No class A of mine. Food enters by senses_chem's TRPV conductance, not brain_layers:310's current (text above).
