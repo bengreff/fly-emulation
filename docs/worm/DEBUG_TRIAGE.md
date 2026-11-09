@@ -389,6 +389,12 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   cannot run; temp_q10_dmp_clock relabelled measured -> inferred (the only opened text is a qualitative abstract
   line), template and range unchanged (c84ba39). Branicky et al. 2001 (abstract) reports that wild type shifted from
   20 C changes its cycle length; a fixed Q10 cannot, so that is written down as simpler than published.
+- 9 Nov 04:30-04:58 (wbody2, three of wbrain2's Requests, all A). Pumps: a neuron's pump scale used the median
+  area of the cells built, so a sub-brain changed it (AIYL alone 3.07x); now a fixed Spec, the full brain's median
+  271.26 um2 (derived); full brain bit-identical (0c84f8d). Temperature: the conductance Q10 now reaches AWA's Liu
+  conductances (30 C 1.5x; 20 C, the default, bit-identical; 73954ff); 8 of the 28 rate mods, wsyn among them, get no
+  tadj because brain._neuron patches BAAIWorm's mods only (measured; Request to wbrain2). organs_other and glia: a
+  gap override that never ran is removed (ed133a2). Suites 242 and 243 passed, 1 skipped.
 
 ## Phase 2 status (wneuro)
 
