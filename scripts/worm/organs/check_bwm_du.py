@@ -1,5 +1,12 @@
 """Row 12 unit check: the Du/Crodelle muscle (numpy reference, and the NEURON mod when --neuron) on the paper's
-current-clamp protocol against the recording in the Du repo (data/spikes.npy: columns 30, 25, 20, 15 pA)."""
+current-clamp protocol against the recording in the Du repo (data/spikes.npy: columns 30, 25, 20, 15 pA).
+
+8 Nov 2026 (wbody2 item 5, E): the step protocol holds the cell at rest for 57 ms only, so a cell that fires on its
+own passes it. Added, bar written before re-running: with zero input for 20 s from the code's initial state, at most
+1 AP in the last 15 s (<= 0.067 Hz; muscle without synaptic release fires at 0.04 +- 0.01 Hz, unc-13(lf), Gao & Zhen
+2011 PNAS 108:2557, PMC3038695) and mean V over the last 5 s within -36 to -20 mV (Du's 8 wild-type cells at 0 pA,
+-25.5 to -29.1 mV, data/WT_exp_rest.npy; Gao & Zhen rest -25.0 +- 1.0 mV). Reported as bar_pass_zero_input;
+bar_pass_numpy stays the step bar; bar_pass_all needs both."""
 import argparse
 import json
 import sys
@@ -33,6 +40,16 @@ for i, A in enumerate(amps):
 ok = all(abs(res["model"][A]["spikes"] - res["recording"][A]["spikes"]) <= 1 for A in amps) and \
     all(abs(res["model"][A]["rest"] + 31) <= 5 for A in amps) and all(res["model"][A]["peak"] > 20 for A in amps)
 res["bar_pass_numpy"] = bool(ok)
+zm = mb.DuMuscle(1)
+zt = np.arange(int(round(20000 / 0.1))) * 0.1e-3
+zv = np.array([zm.step(0.0, 0.1)[0] for _ in zt])
+late = zv[zt >= 5.0]
+z_spk = mb.upcrossings(late)
+z_mean = float(zv[zt >= 15.0].mean())
+res["zero_input"] = dict(aps_last_15s=z_spk, rate_hz=z_spk / 15.0, mean_v_last_5s=z_mean,
+                         first_ap_s=float(zt[1:][(zv[:-1] < 0) & (zv[1:] >= 0)][0]) if (zv >= 0).any() else None)
+res["bar_pass_zero_input"] = bool(z_spk <= 1 and -36 <= z_mean <= -20)
+res["bar_pass_all"] = bool(ok and res["bar_pass_zero_input"])
 print(json.dumps(res, indent=1))
 if a.out:
     np.savez(a.out, V=V, ca=ca, t=t, rec=rec)

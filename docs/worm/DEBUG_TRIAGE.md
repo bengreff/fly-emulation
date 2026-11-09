@@ -245,3 +245,8 @@ Nothing on Windows or the throttle was changed.
   Song & Avery 2012), pumps 0 -> 0 because MC is silent (item 2). NSM's soma Ca does not rise (brain, request). Basal
   slowing (dopamine, a mechanical attribute of bacteria, Sawin 2000): the lawn has none, B. DMP has no food input, B.
   No class A of mine. Food enters by senses_chem's TRPV conductance, not brain_layers:310's current (text above).
+- BWM rate and rest (wbody2 item 5), 21:45 8 Nov. The loop's 1.96 Hz against Gao & Zhen's dissected 0.73 +- 0.14 Hz
+  is not like for like: those APs are mostly driven by the kept cord (ACh block removes about 88 %; unc-13(lf) 0.04 Hz).
+  Scored at the cell instead (E): the row 12 check held the cell at rest for only 57 ms; with 20 s of zero input the
+  default Du cell fires 4.27 Hz at -21.5 mV (fail). 68 of 4000 in-range sets pass the steps and stay silent, at fixed
+  points of -35.6 to -24.4 mV (20 saved): D, not adopted. Rest -30.2 vs -25.0 mV is inside that span (no separate fail).
