@@ -19,7 +19,13 @@ Protocol B, pre-registered 8 Nov 21:26 CST (date), before its first run: the sam
 form, medium 100 mOsm below the template for 2 h, then back, every 15 min), where the canal works hardest; the
 equations give a swollen steady state 1 + RT 100 / ((1 + gain) E_vol) (derived), so the gain should be seen. Same bar.
 
-Usage: python scripts/worm/fit/twin_coverage.py OUT.json [A|B]
+Protocol B with correlation localisation, pre-registered 8 Nov 22:28 CST (date), before its first run (FIT_GENERAL
+section 5: rho_corr does all the localising in the closed-loop worm, so the twin must pass with it on): protocol B,
+`localise="corr"` (eki.corr_rho at its default k = 3, J = 100, cut |corr| > 0.30, derived), everything else as B. Same
+bar (18 of 20 recovered at inflation 1.0; the inflation rule as above). Falsifier: fewer than 18 of 20, or coverage at
+1.0 below 0.90 where B without it reached 0.925, means the cut drops pairs the data need and the fit cannot use it as is.
+
+Usage: python scripts/worm/fit/twin_coverage.py OUT.json [A|B] [corr]
 """
 from __future__ import annotations
 
@@ -51,14 +57,15 @@ def forward(x, protocol):
     return g if protocol == "A" else np.hstack([g, T.osmo_forward(x, extra=-100.0, null=False)])
 
 
-def one(k, infl, protocol):
+def one(k, infl, protocol, localise="fixed"):
     rng = np.random.default_rng(20261108 + k)
     u = rng.uniform(0.1, 0.9, 4)
     x_true = to_x(np.log(u / (1 - u)))
     y0 = forward(x_true, protocol)[0]
     y = y0 + rng.normal(0, T.NOISE_V, len(y0))
     u0 = rng.uniform(size=(100, 4))
-    e = T.run(E.EKI(np.log(u0 / (1 - u0)), y, np.full(len(y), T.NOISE_V ** 2), seed=11 + k, inflation=infl),
+    e = T.run(E.EKI(np.log(u0 / (1 - u0)), y, np.full(len(y), T.NOISE_V ** 2), seed=11 + k, inflation=infl,
+                      localise=localise),
               lambda z: (forward(to_x(z), protocol), None), max_iter=40)
     xs = to_x(e.z)
     med = np.median(xs, 0)
@@ -71,10 +78,11 @@ def one(k, infl, protocol):
 
 def main():
     protocol = sys.argv[2] if len(sys.argv) > 2 else "A"
-    out = {"protocol": protocol}
+    localise = "corr" if sys.argv[3:4] == ["corr"] else "fixed"
+    out = {"protocol": protocol, "localise": localise}
     for infl in INFL:
         t0 = time.time()
-        rs = [one(k, infl, protocol) for k in range(20)]
+        rs = [one(k, infl, protocol, localise) for k in range(20)]
         out[str(infl)] = dict(runs=rs, recovered=sum(r["recovered"] for r in rs),
                               coverage=float(np.mean([v for r in rs for v in r["inside"]])),
                               coverage_by_value=dict(zip(T.TWIN, np.mean([r["inside"] for r in rs], 0).tolist())),
