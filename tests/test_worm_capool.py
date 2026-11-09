@@ -1,7 +1,8 @@
-"""mech/capool.py: ca_pool_units=off is the brain without the module (not built), and total_current sets each neuron
-soma's vcell to V_cell / (10 A_soma), leaves muscles alone and makes the Ca pool move. The steady-state check against
-Nicoletti 2019 Eq. 28 is scripts/worm/capool_unit_check.py. NEURON is one simulator per process: each brain runs in a
-subprocess."""
+"""mech/capool.py: ca_pool_units=off is the brain without the module's effect, and total_current sets each neuron
+soma's vcell to V_cell / (10 A_soma), leaves muscles alone and makes the Ca pool move. slo_ca_source: single_channel
+(the default) is neutral; tuner_gbar sets each SLO cell's gsc to its summed SLO density (DEBUG_TRIAGE item 4). The
+steady-state check against Nicoletti 2019 Eq. 28 is scripts/worm/capool_unit_check.py. NEURON is one simulator per
+process: each brain runs in a subprocess."""
 import json
 import os
 import subprocess
@@ -27,7 +28,10 @@ for k in range(300):
     V.append(o.v_mV); CA.append(o.ca_uM)
 vc = [[float(sg.cainternm.vcell) if hasattr(sg, "cainternm") else None for sg in s] for s in b.soma]
 ar = [float(sum(sg.area() for sg in s)) for s in b.soma]
-print(json.dumps(dict(V=np.array(V).tolist(), CA=np.array(CA).tolist(), vcell=vc, area=ar,
+SLO = ("slo1_egl19", "slo1_unc2", "slo2_egl19", "slo2_unc2")
+gsc = [[float(getattr(s(0.5), m).gsc) for m in SLO if hasattr(s(0.5), m)] for s in b.soma]
+gb = [sum(float(getattr(getattr(s(0.5), m), "gbslo" + m[3])) for m in SLO if hasattr(s(0.5), m)) for s in b.soma]
+print(json.dumps(dict(V=np.array(V).tolist(), CA=np.array(CA).tolist(), vcell=vc, area=ar, gsc=gsc, gb=gb,
                  muscle=b.is_muscle.tolist(), mechs=[type(m).__module__ for m in b.mechs])))
 '''
 
@@ -45,7 +49,7 @@ def test_off_is_without_module_and_total_scales():
     off = _run(dict(ca_pool_units="off"), reg=("capool", "receptors"))
     on = _run(dict(), reg=("capool", "receptors"))
     assert np.abs(np.array(none["V"]) - np.array(off["V"])).max() < 1e-12
-    assert "wormemu.mech.capool" not in off["mechs"] and "wormemu.mech.capool" in on["mechs"]
+    assert "wormemu.mech.capool" in on["mechs"]           # off is built too (slo_ca_source is on) but inert
     for v0, v1, a, m in zip(off["vcell"], on["vcell"], on["area"], on["muscle"]):
         for x0, x1 in zip(v0, v1):
             if x0 is None:
@@ -56,3 +60,14 @@ def test_off_is_without_module_and_total_scales():
     V1 = np.array(on["V"])
     assert np.isfinite(V1).all() and np.abs(V1).max() < 200
     assert ex1.max() > 10 * ex0.max() > 0
+
+
+def test_slo_ca_source_neutral_and_tuner():
+    d = _run(dict(), reg=("capool", "receptors"))
+    sc = _run(dict(slo_ca_source="single_channel"), reg=("capool", "receptors"))
+    tu = _run(dict(slo_ca_source="tuner_gbar"), reg=("capool", "receptors"))
+    assert np.array_equal(np.array(d["V"]), np.array(sc["V"]))
+    assert all(x == 0.04 for g in d["gsc"] for x in g)
+    has = [i for i, g in enumerate(tu["gsc"]) if g and tu["gb"][i] > 0]
+    assert has and all(np.allclose(tu["gsc"][i], tu["gb"][i]) for i in has)
+    assert not np.allclose(np.array(tu["V"])[:, has], np.array(d["V"])[:, has])
