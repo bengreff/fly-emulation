@@ -24,7 +24,7 @@ exactly env=None):
 - salt (env_salt "plug" | "uniform"): NGM background 50 mM plus a plug spread by 2D diffusion for plug_age_h,
   C = bg + A exp(-r^2 / (4 D t)) (point source; inferred geometry), D(NaCl) 1.6e-3 mm^2/s (water, measured).
 - temperature (env_temp "gradient" | "uniform"): linear, T = T0 + g a along the forward axis (thermotaxis plates use
-  ~0.5 C/cm; Hedgecock and Russell 1975, Luo et al. 2014; protocol value).
+  0.5 C/cm, 0.18-1.5 in published protocols; Wang et al. 2013, Yeon et al. 2023, opened; protocol value).
 - events (the experimenter, `events` list): ("tap", t_s, uN) one-exchange impulse on obs.tap; ("eyelash", t0_s,
   t1_s, s_centre, uN) a normal force spread over the midline samples within eyelash_halfwidth of s_centre;
   ("nose", t0_s, t1_s, uN) axial force on the nose; ("o2_ambient", t_s, pct) a step in O_am.
@@ -79,8 +79,16 @@ SPECS = [
     spec("salt_plug_age_h", "env_salt", "h", 12.0, 1.0, 24.0, "guessed", "overnight plug (protocol, secondary)"),
     spec("salt_plug_ahead_mm", "env_salt", "mm", 10.0, 0.0, 40.0, "guessed", "placement: plug centre ahead of nose"),
     spec("temp_T0_C", "env_temp", "C", 20.0, 15.0, 25.0, "measured", "protocol: cultivation temperature at start"),
-    spec("temp_grad_C_per_cm", "env_temp", "C/cm", 0.5, 0.1, 2.0, "measured",
-         "protocol: thermotaxis gradient plates ~0.5 C/cm (Hedgecock and Russell 1975; Luo et al. 2014)"),
+    spec("temp_grad_C_per_cm", "env_temp", "C/cm", 0.5, 0.18, 1.5, "measured",
+         "protocol: 'linear thermal gradients of 0.5, 1.0, and 1.5 [deg]C/cm' (Wang, O'Halloran, Goodman & Arshavsky "
+         "2013 J Gen Physiol 142:437, PMC3787776, methods, opened; the catalog's source); 23-28 C at 0.5 C/cm on 10 cm "
+         "plates (Yeon et al. 2023 G3, PMC10542565, methods, opened)",
+         notes="range: 0.18 C/cm low edge from 19-23 C on a 22.5 cm plate (Chen, Harris & Sengupta 2024 microPubl "
+               "Biol, PMC11603155, methods, opened; derived, if linear), 1.5 high edge Wang 2013's steepest. Not "
+               "used for the range: a radial 17-25 C over a 9 cm plate's 4.5 cm radius, mean 1.78 C/cm (Mohri et "
+               "al. 2005 Genetics, PMC1449549, opened; derived, not linear). Yeon 2023's figure legends say 0.05 "
+               "C/cm, which their methods' 5 C over 10 cm contradicts. Was 0.1-2.0 citing Hedgecock and Russell "
+               "1975 and Luo et al. 2014, neither opened (re-sourced 9 Nov 2026)"),
     spec("eyelash_halfwidth", "env_events", "body length", 0.03, 0.01, 0.1, "inferred",
          "an eyelash tip is ~50 um wide (half width 0.025-0.03 of a 1 mm body)"),
     spec("eyelash_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed",
