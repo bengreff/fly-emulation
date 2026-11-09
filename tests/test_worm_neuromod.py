@@ -100,13 +100,13 @@ b.reset()
 b.extra_pA[b.idx[cells[0]]] = 30.0
 V = [b.step().v_mV for k in range(200)]
 print(json.dumps(dict(W=nm.pep_W.tolist(), Wa=nm.ma_W.tolist(), comp=nm.pep_comp.tolist(), V=np.array(V).tolist(),
-                 names=list(b.cell_names))))
+                 names=list(b.cell_names), named=nm.pep.named.tolist())))
 '''
 
 
-def _site(cells, site):
+def _site(cells, site, grid="four"):
     env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
-    tg = dict(peptides="compartments", monoamines="compartments", neuromod_site=site)
+    tg = dict(peptides="compartments", monoamines="compartments", neuromod_site=site, pc_grid=grid)
     r = subprocess.run([sys.executable, "-c", SITE, json.dumps(cells), json.dumps(tg)], capture_output=True, text=True,
                        env=env, cwd=ROOT, timeout=600)
     assert r.returncode == 0, r.stderr[-2000:]
@@ -115,7 +115,9 @@ def _site(cells, site):
 
 def test_site_weights():
     """neuromod_site: the soma form is one-hot on the soma's compartment; the membrane form's rows are area shares
-    (sum 1); a brain whose cells each lie inside one compartment is the same under both (limit test)."""
+    (sum 1); a brain whose cells each lie inside one compartment is the same under both (limit test). On the four
+    named compartments (the limit test needs them); under pc_grid=bins (the default) the bin weights regrouped by named
+    compartment are the four's."""
     cells = ["AVL", "DVB", "ASHL", "CEPDL", "RIML", "ADFL"]
     soma, memb = _site(cells, "soma"), _site(cells, "membrane")
     Ws, Wm = np.array(soma["W"]), np.array(memb["W"])
@@ -129,6 +131,10 @@ def test_site_weights():
     assert all(Wm[names.index(c), 0] == 1.0 for c in head)
     a, b = _site(head, "soma"), _site(head, "membrane")
     assert np.array_equal(np.array(a["V"]), np.array(b["V"]))
+    fine = _site(cells, "membrane", "bins")
+    Wb = np.array(fine["W"])
+    assert Wb.shape[1] > 50 and np.allclose(Wb.sum(1), 1.0) and fine["names"] == names
+    assert np.allclose(Wb @ np.eye(4)[fine["named"]], Wm, atol=1e-12)
 
 
 def test_aex2_ec50_source():
@@ -209,7 +215,8 @@ def test_pc_grid():
                             spec=SimpleNamespace(values={}), layers=None)
     T = {s.id: s.template for s in N.SPECS}
     tg = {"peptides": "compartments", "monoamines": "compartments"}
-    four = N.Mech(brain, T, tg)
+    four = N.Mech(brain, T, {**tg, "pc_grid": "four"})
+    assert N.Mech(brain, T, tg).grid == "bins"           # the default (Director, 9 Nov 2026)
     wide = N.Mech(brain, {**T, "pc_bin_um": 1e4}, {**tg, "pc_grid": "bins"})
     fine = N.Mech(brain, T, {**tg, "pc_grid": "bins"})
     assert np.array_equal(four.edges, wide.edges) and np.array_equal(four.edges, four.cuts)

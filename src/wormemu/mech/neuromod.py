@@ -11,8 +11,9 @@ pc_cross_section_um2 (guessed). Neighbours exchange by diffusion through the sha
 dN_k/dt = A D (c_j - c_k) / d_kj, d_kj the distance between compartment centres, so total molecules are conserved;
 D is the molecular diffusion coefficient plus pc_stirring_um2_per_s (body movement stirring the fluid; template 0).
 The linear exchange is integrated exactly (matrix exponential). Concentration (nM) = molecules / (602.214 x volume
-in pL). Grid (toggle pc_grid): `four` (default, nested) is one well-mixed compartment per named compartment; `bins`
-splits each named compartment into ceil(L / pc_bin_um) equal bins (8 um at the template), the same finite-volume form of 1D diffusion with
+in pL). Grid (toggle pc_grid): `bins` (default since 9 Nov 2026, Director) splits each named compartment into
+ceil(L / pc_bin_um) equal bins (8 um at the template); `four` (nested) is one well-mixed compartment per named
+compartment. Bins are the same finite-volume form of 1D diffusion with
 loss, dc/dt = D d2c/dy2 - k c + sources / A, at a resolution finer than the length constant sqrt(D / k) (32-55 um for
 amines, 71 um for peptides at the template, derived), which the four compartments (80-269 um long) are not: near a
 source they dilute it by up to (L / 2 lambda) coth(L / 2 lambda), 1.9-2.5x (derived; wneuro 9 Nov 2026, Open 7). Validity
@@ -113,7 +114,7 @@ MECHANISMS = [
      "DMSR-1-1 (A, 1.6 uM); other DMSR-1 ligands differ by at most 4x between the isoforms", "neuromodulation",
      "most_potent"),
     ("pc_grid", "Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um "
-     "inside each (the same 1D diffusion, resolved below its length constant)", "neuromodulation", "four"),
+     "inside each (the same 1D diffusion, resolved below its length constant)", "neuromodulation", "bins"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
@@ -450,7 +451,7 @@ class Mech:
         yall = np.array([st.soma_y_um[st.index[x]] for x in neurons])
         self.cuts = np.array([yall.min(), p["pc_head_end_y_um"], p["pc_vulva_y_um"], p["pc_tail_start_y_um"],
                               yall.max()], float)
-        self.grid = toggles.get("pc_grid", "four")
+        self.grid = toggles.get("pc_grid", "bins")
         assert self.grid in GRIDS, f"pc_grid {self.grid!r} not one of {GRIDS}"
         if self.grid == "bins":
             nb = np.maximum(1, np.ceil(np.diff(self.cuts) / float(p["pc_bin_um"]) - 1e-9).astype(int))
