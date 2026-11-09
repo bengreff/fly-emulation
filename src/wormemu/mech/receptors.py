@@ -150,8 +150,12 @@ TABLE = {
                 "identifies at the NMJ; the range spans the B homomer (8.6 uM) and the review"),
                (1.3, 1.3, 2.0, "measured", f"{BAMBER}: B/C 1.3, B homomer 2.0"),
                (1.0, 0.1, 2.0, "guessed", GUESS_RISE),
-               (24.8, 22.1, 27.5, "measured", "Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 Fig. 2B: NMJ evoked "
-                "GABA current decay 24.8 +- 2.7 ms (n = 13)"),
+               (19.16, 15.45, 22.69, "derived", "the receptor's own deactivation, solved so that the model's evoked "
+                "NMJ IPSC (BAAIWorm's graded release state, 1/k = 8.6 ms after a 2 ms presynaptic step, then this "
+                "receptor) decays with Liu, Hollopeter and Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B's "
+                "light-evoked 24.8 +- 2.7 ms (n = 12), a composite of release and closing; bounds give the "
+                "composite 22.1 and 27.5 ms, the other values at their templates "
+                "(scripts/worm/debug2/derive_gaba_tau_off.py; DEBUG_TRIAGE line 3)"),
                (149.0, 139.0, 232.0, "measured", f"{BAMBER}: slow desensitization component 149 +- 10 ms (B/C), 206 "
                 "+- 26 ms (B homomer); 91-95% of the weighted tau"),
                (0.1, 0.01, 0.4, "guessed", "steady-state fraction not retrieved"),

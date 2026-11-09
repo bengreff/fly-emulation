@@ -222,3 +222,10 @@ Nothing on Windows or the throttle was changed.
    then 16 single-thread workers over 64 points with the 20 ids (line vi's 5-HT gaps added), a 16 h timeout, and
    `runs/egg_night.done`. Expected about 10.5 h (4 rounds of about 2.6 h, derived from the 14:10 rate), so it ends
    Monday morning; the timeout stops it by 14:00 Monday, before the 17:00 cap.
+
+## Phase 2 status
+
+One line per triage line, by the worker that owns it. Night files hold the detail.
+
+- Line 15 and 16 (wbrain2, A): `expression_map=on` keeps published-fit densities whole (old form `cengen_all`). AIYL training RMSE 113.8 -> 9.28 mV (bar < 16.6: pass); cells above the highest reversal 70 -> 16 (bar 13: missed by 3, AUAL, AUAR, ADAL at +40 pA only, E like the 13); rest above -30 mV 8 -> 0. AFDL 26.8 -> 43.4 mV (FIT2's job).
+- Line 3 (wbrain2, A): UNC-49's own closing time derived, 19.16 ms (was the composite 24.8). Composite IPSC 29.2 -> 24.8 ms (bar 22.1-27.5: pass). New, open: the NMJ ACh current decays in 12.2 / 17.6 ms (ACR-16 / L-AChR) against 5.6-7.4 ms, 9.3 / 15.3 ms even with a 0.5 ms receptor: the shared release state is too slow there.

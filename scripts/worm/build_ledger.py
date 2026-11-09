@@ -303,7 +303,9 @@ def build_passive_and_channels(neurons, muscles, st):
             prior=("lognormal", float(np.median(v)), 0.5, "guessed: each nonzero element log-normal around its own "
                    "value, sd 0.5; zero stays zero unless expression_map adds it"), table=t)
     mech("expression_map", "CeNGEN expression gates channel presence (zero density where no gene is detected; "
-         "a class-median density where the gene is detected but the ported density is 0)", "channel", "have",
+         "a class-median density where the gene is detected but the ported density is 0) for densities that are not "
+         "a published fit; BAAIWorm's co-tuned fitted sets are kept whole (8 Nov, DEBUG_TRIAGE lines 15-16). Forms: "
+         "cengen_all masks every cell (the old form), fit2 is FIT2's expression map", "channel", "have",
          "CeNGEN threshold 2 (Taylor et al. 2021)", toggle="expression_map", neutral="off", default="on")
 
 

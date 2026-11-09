@@ -191,7 +191,8 @@
   notes: 'soma only (BAAIWorm neurites are passive). CeNGEN: 8 neurons have a ported density but no detected irk-1/irk-2/irk-3; 130 express it with ported density 0'
   absent_reason: ''
 - id: expression_map
-  name: CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0)
+  name: 'CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0) for densities that are not a published
+    fit; BAAIWorm''s co-tuned fitted sets are kept whole (8 Nov, DEBUG_TRIAGE lines 15-16). Forms: cengen_all masks every cell (the old form), fit2 is FIT2''s expression map'
   layer: channel
   status: have
   toggle: expression_map
