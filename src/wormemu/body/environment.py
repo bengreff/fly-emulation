@@ -74,9 +74,16 @@ SPECS = [
          "of an atmosphere into the CO2 rise for the same moles"),
     spec("salt_bg_mM", "env_salt", "mM", 50.0, 0.0, 100.0, "measured", "NGM recipe (~51 mM NaCl)"),
     spec("salt_plug_excess_mM", "env_salt", "mM", 50.0, 0.0, 100.0, "guessed",
-         "Kunitomo and Iino 2013 (secondary): 100 mM plug; the excess at the centre after spreading not read"),
+         "Kunitomo and Iino 2013 (secondary): 100 mM plug; the excess at the centre after spreading not read",
+         notes="opened protocols (9 Nov 2026), not this geometry: a 9 cm plate with a gradient of ~35 to ~95 mM "
+               "(Suwazono et al. 2025 Genes Cells, PMC12120540, methods, citing Kunitomo et al. 2013); two 14.5 mm "
+               "agar blocks of 0 and 150 mM on an NaCl-free 8.5 cm plate (Park et al. 2021 eLife, PMC7834019, "
+               "methods). Kunitomo's 60 mM span fits inside this range; Park's 150 mM block is above its 100 mM top at the "
+               "block itself (the spread profile after 18-20 h is not reported)"),
     spec("salt_D_mm2_s", "env_salt", "mm^2/s", 1.6e-3, 1.2e-3, 1.6e-3, "measured", "NaCl in water at 25 C"),
-    spec("salt_plug_age_h", "env_salt", "h", 12.0, 1.0, 24.0, "guessed", "overnight plug (protocol, secondary)"),
+    spec("salt_plug_age_h", "env_salt", "h", 12.0, 1.0, 24.0, "guessed", "overnight plug (protocol, secondary)",
+         notes="opened: the blocks 'were removed after 18 to 20 hr, just before assay' (Park et al. 2021 eLife, "
+               "PMC7834019, methods; two-block geometry), inside this range (9 Nov 2026)"),
     spec("salt_plug_ahead_mm", "env_salt", "mm", 10.0, 0.0, 40.0, "guessed", "placement: plug centre ahead of nose"),
     spec("temp_T0_C", "env_temp", "C", 20.0, 15.0, 25.0, "measured", "protocol: cultivation temperature at start"),
     spec("temp_grad_C_per_cm", "env_temp", "C/cm", 0.5, 0.18, 1.5, "measured",
