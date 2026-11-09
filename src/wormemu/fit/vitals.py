@@ -21,6 +21,11 @@ Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
                 reversals); a membrane made only of conductances cannot leave that interval, so a departure means a
                 module injects current past it (the 1 mV is integrator overshoot, guessed)
     conc >= 0   every recorded concentration (ca_uM and each out:*_uM / _mM / _nM) >= -1e-9
+    no step alternation (9 Nov 00:55) no soma voltage reverses direction at every recorded step for ALT_STEPS steps
+                in a row, each step larger than ALT_MV: brain.step holds module currents (I_pA) fixed over the body
+                exchange step from V at its start, and an explicit conductance that is large against the capacitance
+                it charges in one step makes V alternate every step (VITAL_SIGNS.md). The record must be sampled at
+                every exchange step (experiment's every_ms = EXCHANGE_MS); a decimated record hides it
 Activity (the fraction of neurons above -20 mV) is reported with no bar: none is published (DEBUG_TRIAGE line 18).
 
 Usage:
@@ -356,6 +361,21 @@ def int9_columns() -> list[int]:
     return [INT_CELLS.index(n) for n in ("int9L", "int9R")]
 
 
+ALT_STEPS, ALT_MV = 25, 2.0            # 100 ms of reversals at every 4 ms step, each over 2 mV (guessed; VITAL_SIGNS)
+
+
+def alternation(V, mv=ALT_MV):
+    """Per column of V [samples, cells]: the longest run of samples at which V reverses direction with both
+    neighbouring steps larger than mv (a period-2 oscillation at the sampling step)."""
+    d = np.diff(np.asarray(V, float), axis=0)
+    f = (d[1:] * d[:-1] < 0) & (np.abs(d[1:]) > mv) & (np.abs(d[:-1]) > mv)
+    best, cur = np.zeros(f.shape[1], int), np.zeros(f.shape[1], int)
+    for row in f:
+        cur = np.where(row, cur + 1, 0)
+        best = np.maximum(best, cur)
+    return best
+
+
 def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> dict:
     """The per-run physicality check (module docstring). Returns the verdict and what failed."""
     V = np.asarray(res["v_mV"], float)
@@ -387,7 +407,11 @@ def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> 
                v_out_worst=[(cells[k], float(per[k]), float(V[:, k].min()), float(V[:, k].max()))
                             for k in worst if per[k] > 0],
                v_min=float(np.nanmin(V)), v_max=float(np.nanmax(V)))
-    out["physical"] = bool(out["finite"] and not neg and out["v_out_cells"] == 0)
+    alt = alternation(Vf)
+    bad_alt = np.flatnonzero(alt >= ALT_STEPS)
+    out.update(alt_cells=int(len(bad_alt)),
+               alt_worst=[(cells[k], int(alt[k])) for k in bad_alt[np.argsort(-alt[bad_alt])][:8]])
+    out["physical"] = bool(out["finite"] and not neg and out["v_out_cells"] == 0 and out["alt_cells"] == 0)
     return out
 
 

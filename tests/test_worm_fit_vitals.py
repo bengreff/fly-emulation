@@ -95,6 +95,18 @@ def test_physicality_flags():
     assert not V.physicality(res, (-80.0, 60.0))["finite"]
 
 
+def test_physicality_flags_step_alternation():
+    res = synthetic(seconds=10.0)
+    v = res["v_mV"]
+    L = V.ALT_STEPS                                       # -50 surround: a block of L samples gives L reversals
+    v[200:200 + L, 4] = -50.0 + 10.0 * (-1.0) ** np.arange(L)
+    v[600:600 + L - 1, 6] = -50.0 + 10.0 * (-1.0) ** np.arange(L - 1)                     # one short
+    v[900:903, 7] = (-40.0, 20.0, -40.0)                                                   # one fast spike
+    p = V.physicality(res, (-80.0, 60.0))
+    assert not p["physical"] and p["v_out_cells"] == 0
+    assert p["alt_cells"] == 1 and p["alt_worst"] == [(res["cells"][4], V.ALT_STEPS)]
+
+
 def test_score_statuses():
     r = V.readouts(synthetic(seconds=160.0, pump_hz=3.4), "food", 160.0)
     s = V.score(r, "food")

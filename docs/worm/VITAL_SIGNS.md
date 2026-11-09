@@ -34,7 +34,21 @@ wbrain2 (night file): put the world and environment on `Experiment`.
   potential in this worm's values (34 reversal Specs plus BAAIWorm's literal -80 / +60 mV). A membrane made only of
   conductances cannot leave that interval, so leaving it means a module injects current past it. The 1 mV allows
   integrator overshoot (guessed);
-- concentrations >= 0: `ca_uM` and every `out:*_uM / _mM / _nM` recorded.
+- concentrations >= 0: `ca_uM` and every `out:*_uM / _mM / _nM` recorded;
+- no step alternation (added 9 Nov 00:55, pre-registered before its two validation runs): no soma voltage reverses
+  direction at every body exchange step for 25 steps in a row (100 ms at 4 ms) with every step larger than 2 mV.
+  brain.step holds each module's `I_pA` fixed over the step, from V at the step's start; ten modules compute a
+  conductance that way (drugs, egg_laying, glia, intestine, k2p_leak, neuromod, noise, pumps, senses_chem,
+  slow_signalling). Such an explicit conductance makes V alternate every step once it is large against the
+  capacitance it charges in one step (derived: explicit Euler). A 125 Hz sustained oscillation is not a C. elegans
+  behaviour, so it is read as numerical (thresholds guessed). Validation, written before either run: on the template
+  (food, 16 bio-s, Mac) the check flags no cell; on prior draw seed 1 (food, 16 bio-s), which leaves the bounds after
+  its first egg at 12.6 s, it flags HSNL and HSNR. If the template flags any cell, the thresholds are wrong or the
+  template alternates; either way it is not adopted until explained.
+  Result (9 Nov 01:04, Mac, `scripts/worm/fit/physicality_recheck.py`, measured): the template on this branch
+  flags no cell (alt_cells 0, physical); seed 1 on f8e7699 flags HSNL and HSNR (811 steps in a row, from 12.62 bio-s
+  to the end), the two cells the bounds already caught. Adopted. Its use is the case the bounds miss: an alternation
+  that stays inside them.
 
 A run that fails physicality is rejected in the fit (FIT_GENERAL.md). The fraction of neurons above -20 mV is
 reported with no bar (none is published; DEBUG_TRIAGE line 18).
