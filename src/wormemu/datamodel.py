@@ -5,6 +5,7 @@ values). The experiment is declarative: environment and fields, a stimulus sched
 (off / immobilised / on), the genotype and other interventions (ablations, drugs), the duration and what to observe.
 Interventions act through the model's own quantities (GENES), never through a free knob:
     ("g", name)       a per-cell conductance multiplier (mech.G_SCALE_NAMES): a channel density or a receptor class
+                      (mech.AWA_G_SCALE_NAMES: Liu's conductances in AWA; no gene maps to them yet)
     ("tx", transmitter) a vesicular or synthesis marker: the transmitter leaves every cell's identity (null only); a
                       cell left with none gets fast release 0
     ("tpm", gene)     the gene's CeNGEN expression, wherever the model reads it (receptor shares, innexin weights,

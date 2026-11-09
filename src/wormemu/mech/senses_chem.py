@@ -295,6 +295,19 @@ class Mech:
                     s.g_pas = 0.0                            # Liu's leak replaces the passive neurite leak
                 self.awa_secs.append(s)
         self.awa_idx = np.array([b.idx[c] for c in ("AWAL", "AWAR") if c in b.idx], int)
+        # Liu's conductances as g_scale names dens_awa_<c> (mech.AWA_G_SCALE): one pointer per AWA segment, its cell
+        # index repeated, so the brain's _apply_g_scale and reset treat them like the somatic channels
+        from wormemu.mech import AWA_G_SCALE
+        segs = [(b.idx[c], seg) for c in ("AWAL", "AWAR") if c in b.idx for s in b.cells[b.idx[c]].all for seg in s]
+        if not segs:
+            return
+        for c, var in AWA_G_SCALE.items():
+            pv = b.h.PtrVector(len(segs))
+            for k, (_, seg) in enumerate(segs):
+                pv.pset(k, getattr(seg, f"_ref_{var}_awa_liu"))
+            buf = b.h.Vector(len(segs))
+            pv.gather(buf)
+            b._gt[f"dens_awa_{c}"] = (np.array([i for i, _ in segs]), pv, buf.as_numpy().copy(), np.ones(len(segs)))
 
     # --- state -----------------------------------------------------------------------------------------------
     def reset(self):

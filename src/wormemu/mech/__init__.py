@@ -68,6 +68,13 @@ RECEPTOR_CLASSES = ("lacr", "acr16", "nachr", "acc", "glr", "nmr", "glucl", "gab
 # wsyn synapses only (receptor_kinetics not off)
 G_SCALE_NAMES = tuple(f"dens_{c}" for c in CHANNEL_NAMES) + ("leak", "release") + tuple(f"rec_{c}" for c in
                                                                                        RECEPTOR_CLASSES)
+# AWA's Liu et al. 2018 membrane (senses_chem, awa_membrane liu2018): dens_awa_<c> multiplies Liu's conductance <c>
+# (the mod's RANGE name) in every AWA segment; senses_chem registers them when it inserts the mod. Not in
+# G_SCALE_NAMES, so the mechanisms that scale every listed name (temperature's Q10) leave them alone; a rule that
+# means AWA names them
+AWA_G_SCALE = {"ca": "gCa", "k1": "gK1", "k2": "gK2", "k3": "gK3", "kr": "gKr", "ka": "gKs", "kir": "gKir",
+               "leak": "gL"}
+AWA_G_SCALE_NAMES = tuple(f"dens_awa_{c}" for c in AWA_G_SCALE)
 OVERRIDES = ("pumps", "eggs_laid", "expulsions", "pharynx_activation", "enteric_activation", "sex_muscle_activation",
              "gcamp_dff", "pressure_scale")
 

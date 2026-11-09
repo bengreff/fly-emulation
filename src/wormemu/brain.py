@@ -581,9 +581,10 @@ class Brain:
     def _apply_g_scale(self, g):
         """Set each scalable conductance to base x this step's product of multipliers (1 where no mechanism returned
         one this step); a NEURON write only where the multiplier changed."""
-        bad = set(g) - set(mech.G_SCALE_NAMES)
+        bad = set(g) - set(mech.G_SCALE_NAMES) - set(mech.AWA_G_SCALE_NAMES)
         if bad:
-            raise KeyError(f"g_scale {sorted(bad)} not conductances the brain knows (mech.G_SCALE_NAMES)")
+            raise KeyError(f"g_scale {sorted(bad)} not conductances the brain knows (mech.G_SCALE_NAMES, "
+                           f"AWA_G_SCALE_NAMES)")
         for name, (cells, pv, base, cur) in self._gt.items():
             f = np.asarray(g[name], float)[cells] if name in g else 1.0
             if np.array_equal(cur, np.broadcast_to(f, cur.shape)):
