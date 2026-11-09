@@ -200,6 +200,15 @@ behavioural statistic. M in the step controller is the batch's observation count
   an output reduction first. CES.jl has three: variance-truncated decorrelation, canonical correlation and a
   likelihood-informed subspace (`Utilities/`). None is ported, and a 347-dimension random walk mixes slowly. Which to
   port is decided after the EKI, from how many directions its ensemble shows the data inform.
+- **Run loop** (`fit/driver.py`; toy-tested only, no worm forward is written). The loop keeps every step on disk,
+  because backhouse reboots and the Mac sleeps:
+  - the EKI state before each iteration, including the generator's state;
+  - each member's result as its own file, written atomically.
+
+  A resume re-runs only the members with no result. On the linear toy, a run killed during iteration 2 and resumed
+  ends bit-identical to one that never stopped (measured, `tests/test_worm_fit_driver.py`). The loop applies stops
+  (a) to (d) above. It also stops when fewer than 2 members run, since no covariance exists then, and when the data on
+  disk differ from the data given. It hands every (z, G(z)) pair to the CES step.
 
 ## 10. Compute and cost (refinement 10)
 
