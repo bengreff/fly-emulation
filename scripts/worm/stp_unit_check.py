@@ -4,6 +4,12 @@ at -60 mV; the response is the synapse's peak current per pulse (the leak's offs
 
 2. Held out (Liu et al. 2009): 0.2 Hz tau in 2.23-7.19 s; second/first in 0.25-0.45 at 10 and 20 Hz (L-AChR).
 3. GABA sanity: UNC-49 plateau above 0.8 at 1 and 5 Hz; second/first above 1 at 20 Hz.
+   Corrected 8 Nov 2026 (wneuro, line 13, class E): Liu, Hollopeter and Jorgensen 2009 PNAS (PMC2705609, opened 8
+   Nov) report no facilitation at 1 or 5 Hz: "Stimuli at 1 Hz did not cause depression", "Depression caused by 5 Hz
+   light stimuli was best fit by a single-exponential function (tau = 1.13 s +- 0.47, n = 8)", and "significant
+   facilitation for the first few responses at 10 Hz and 20 Hz stimulation, and ... no or only slight depression at 1
+   Hz and 5 Hz". So the plateaus must also be at most 1 (the old bar passed 5 Hz facilitation), and second/first
+   above 1 at 10 Hz as well as 20 Hz. The 0.8 floor ("slight") is the old bar's, unchanged.
 4. Code check: NEURON per-pulse amplitudes within 2% of mech.plasticity.numpy_reference (1 and 5 Hz).
 5. Habituation sanity: touch-cell synapse, 10 x 20 ms steps at 10 s and 60 s intervals; 10th smaller at 10 s;
    above 90% of the first after 30 min of rest.
@@ -68,6 +74,16 @@ def per_pulse(i, per):
     return np.abs(i[:len(i) // per * per]).reshape(-1, per).max(1)
 
 
+def gaba_score(g):
+    """{Hz: per-pulse amplitudes / the first} -> the GABA sanity result (bar 3, corrected 8 Nov: Liu et al. 2009)."""
+    p1, p5 = float(g[1.0][-5:].mean()), float(g[5.0][-5:].mean())
+    r10, r20 = float(g[10.0][1]), float(g[20.0][1])
+    return dict(plateau_1Hz=p1, plateau_5Hz=p5, second_over_first_10Hz=r10, second_over_first_20Hz=r20,
+                bar="plateaus 0.8-1 at 1 and 5 Hz; second/first > 1 at 10 and 20 Hz (Liu et al. 2009, PMC2705609)",
+                old_bar_passed=bool(p1 > 0.8 and p5 > 0.8 and r20 > 1),
+                passed=bool(0.8 < p1 <= 1.0 and 0.8 < p5 <= 1.0 and r10 > 1 and r20 > 1))
+
+
 def main():
     res = {}
     amp = {}
@@ -84,13 +100,11 @@ def main():
                            passed=dict(tau=bool(2.23 <= tau02 <= 7.19), r10=bool(0.25 <= r10 <= 0.45),
                                        r20=bool(0.25 <= r20 <= 0.45)))
     g = {}
-    for hz in (1.0, 5.0, 20.0):
+    for hz in (1.0, 5.0, 10.0, 20.0):
         v, per = F.train(hz)
         a = per_pulse(run(v, "gabacl"), per)
         g[hz] = (a / a[0])
-    res["gaba"] = dict(plateau_1Hz=float(g[1.0][-5:].mean()), plateau_5Hz=float(g[5.0][-5:].mean()),
-                       second_over_first_20Hz=float(g[20.0][1]), bar="plateaus > 0.8; 20 Hz second/first > 1",
-                       passed=bool(g[1.0][-5:].mean() > 0.8 and g[5.0][-5:].mean() > 0.8 and g[20.0][1] > 1))
+    res["gaba"] = gaba_score(g)
     err = 0.0
     for hz in (1.0, 5.0):
         v, per = F.train(hz)
