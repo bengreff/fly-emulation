@@ -73,7 +73,12 @@ SPECS = [
          notes="the paper that would pin it: an O2 microsensor profile across an OP50 lawn on NGM"),
     spec("co2_D_cm2_s", "env_co2", "cm^2/s", 1.9e-5, 1.6e-5, 2.0e-5, "measured", "CO2 in water at 25 C"),
     spec("co2_ambient_pct", "env_co2", "%", 0.04, 0.03, 0.05, "measured", "air"),
-    spec("co2_rq", "env_co2", "1", 1.0, 0.7, 1.2, "guessed", "respiratory quotient of aerobic E. coli (none opened)"),
+    spec("co2_rq", "env_co2", "1", 1.0, 0.7, 1.2, "guessed", "respiratory quotient of aerobic E. coli (none opened)",
+         notes="searched 9 Nov 2026, none measured free for E. coli on peptone or in a lawn. Proxy only: in a glucose "
+               "chemostat 'the RQ decreased from 1.5 to 0.7 during the first 50 s of the feast phase, and increased "
+               "back to the initial value after approximately 200 s' (Vasilakou, van Loosdrecht & Wahl 2020 Microb "
+               "Cell Fact, PMC7260802, results), a transient, not a steady RQ. Andersen & von Meyenburg 1980 (J "
+               "Bacteriol, PMC294601) is a scan; no RQ read from it"),
     spec("co2_o2_solubility_ratio", "env_co2", "1", 0.039, 0.035, 0.045, "derived",
          "Henry's law at 25 C: O2 1.3 mM/atm over CO2 33.4 mM/atm (measured constants); converts the O2 drop in % "
          "of an atmosphere into the CO2 rise for the same moles"),
@@ -113,7 +118,13 @@ SPECS = [
                "times that (the paper's point). Was 2 (0.1-10, guessed). No default run uses it: the vitals "
                "battery has no events; standard_events (wbody_loop_check --env=standard) does"),
     spec("tap_uN", "env_events", "uN", 5.0, 0.5, 50.0, "guessed", "none opened (Rankin et al. 1990 tapper)"),
-    spec("nose_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed", "none opened (Kaplan and Horvitz 1993)"),
+    spec("nose_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed", "none opened (Kaplan and Horvitz 1993)",
+         notes="searched 9 Nov 2026, no nose-touch force measured free. Kaplan & Horvitz 1993 (PMC46059) is a scan; "
+               "the behavioural assay is the worm moving 'forward into an eyelash in the path of the worm' and the "
+               "imaging stimulus is a displacement: a probe 'moved toward the worm so that it could probe ~8 um into "
+               "the side of the worm's nose' for 1 s (Chatzigeorgiou & Schafer 2011 Neuron, PMC3145979, methods). "
+               "A force from it needs the head's indentation stiffness (Park, Goodman & Pruitt 2007 PNAS, "
+               "PMC2077264: force-displacement linear; full text not in PMC's XML, no number read)"),
     spec("viscosity_mPa_s", "env_medium", "mPa s", 1.0, 0.9, 28000.0, "measured",
          "water at 20 C; Fang-Yen et al. 2010 PNAS 107:20323 used up to ~28 Pa s"),
 ]
