@@ -29,7 +29,8 @@
     enteric     the 4 enteric muscles (mu_intL, mu_intR, mu_anal, mu_sph) as cells with the Du/Crodelle 2025 BWM
                 membrane (nmodl/organs/du_bwm.mod; inferred: the enteric muscle membrane is not recorded), Cook 2019's
                 gaps among them at Liu 2006's BWM gap (inferred), Cook's DVB synapses onto mu_intL/R as excitatory
-                (the EXP-1 GABA-gated cation channel: Beg & Jorgensen 2003 Nat Neurosci 6:1145). Ca -> activation is
+                (the EXP-1 GABA-gated cation channel: Beg & Jorgensen 2003 Nat Neurosci 6:1145; organs_nrn.chem_synapse,
+                the brain's gabacat class when receptor kinetics run). Ca -> activation is
                 row 12's Boyle-Berri-Cohen integrator. One expulsion = the mean intestinal-muscle and anal-depressor
                 activation rising above ent_exp_on and falling below ent_exp_off. Cook's hypodermis gaps to these
                 muscles wait for row 16's hypodermis.
@@ -387,12 +388,12 @@ class Mech:
                 b._gap(self.sec[nm[i]](0.5), self.sec[nm[j]](0.5), n * g, "gap_enteric")
                 self.n_gap += 1
         g_nmj = float(np.median(b.spec.v("nmj_strength_per_pair").to_numpy(float)))
+        self.wsyn = []
         for i, j, n in st.chem:
             a, c = nm[i], nm[j]
             if c in mine and a in b.idx:
                 inh = False if q["ent_dvb_excitatory"] > 0.5 else b._inhibitory(a, c)
-                b._syn(b.soma[b.idx[a]](0.5), self.sec[c](0.5), g_nmj * n / (b._g_syn(inh) * 1000.0), inh,
-                       "syn_enteric")
+                self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_enteric")
                 self.n_syn += 1
         k = len(ENTERIC_MUSCLES)
         self._pca, self._pv = h.PtrVector(k), h.PtrVector(k)

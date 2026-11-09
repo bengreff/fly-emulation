@@ -13,7 +13,8 @@
                Starich 1996: eat-5 desynchronises corpus and terminal bulb; value guessed), neuron-pm at the ledger's
                shared neuron gap per contact.
     synapses   Cook 2019's chemical synapses onto pm and marginal cells, at the ledger's shared NMJ conductance per
-               contact on the brain's graded synapse; sign from the brain's sign rule, except M3 (glutamate onto the
+               contact (organs_nrn.chem_synapse: the brain's receptor form, as for a cell with no CeNGEN profile; the
+               graded synapse when receptor_kinetics is off); sign from the brain's sign rule, except M3 (glutamate onto the
                AVR-15 GluCl: inhibitory; Dent et al. 1997, Raizen & Avery 1994). MC reaches the muscle through the
                marginal cells it synapses on (Cook) and their gaps. NSM's release sites are not fast synapses: its 5-HT
                reaches the muscle on SER-7 (pharyngeal muscle expression: Hobson et al. 2006) from mech/neuromod's
@@ -305,6 +306,7 @@ class Mech:
         sv = b.spec.v
         g_nn = float(np.median(sv("gap_strength_per_pair").to_numpy(float))) / 1000.0
         g_nmj = float(np.median(sv("nmj_strength_per_pair").to_numpy(float)))
+        self.wsyn = []
         for i, j, n in st.gap:
             a, c = nm[i], nm[j]
             if a in mine and c in mine:
@@ -321,8 +323,7 @@ class Mech:
             if c not in mine or a not in b.idx or a in NSM:
                 continue
             inh = (a in M3 and q["ph_m3_inhibitory"] > 0.5) or b._inhibitory(a, c)
-            w = g_nmj * n / (b._g_syn(inh) * 1000.0)
-            b._syn(b.soma[b.idx[a]](0.5), self.sec[c](0.5), w, inh, "syn_pharynx")
+            self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_pharynx")
             self.n_syn += 1
         self.stim = []
         for n in PHARYNX_MUSCLES:

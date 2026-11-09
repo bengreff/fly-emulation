@@ -12,7 +12,8 @@ Cells. The 16 sex muscles (vm1, vm2, um1, um2 x A/P x L/R; Cook 2019 nodes, not 
 each with the Du, Crodelle et al. 2025 body-wall muscle membrane (inferred: vulval muscles also run on EGL-19 Ca
 spikes) and the UNC-103 ERG current as Du's own Kr current at a vulval density (fitted, see egg_unc103_gkr_nS).
 Cook's gaps join them (and VC03 to vm2), Cook's synapses reach them from HSN, VC, VA, VB, VD (GABA inhibitory, the
-rest excitatory: VC and HSN are cholinergic in the project's transmitter map). uv1 is not a Cook node: it is one
+rest excitatory: VC and HSN are cholinergic in the project's transmitter map; organs_nrn.chem_synapse with the
+body-wall NMJ's receptor classes when receptor kinetics run). uv1 is not a Cook node: it is one
 lumped tyramine pool. HSN and VC are the brain's own cells.
 
 Loop. Eggs enter the uterus at the rate from metabolism (ctx.outputs['egg_production_per_h'], row 20) or this
@@ -191,11 +192,12 @@ class Mech:
                 continue
             self.n_gap += 1
         g_nmj = float(np.median(b.spec.v("nmj_strength_per_pair").to_numpy(float)))
+        self.wsyn = []
         for i, j, n in st.chem:
             a, c = nm[i], nm[j]
             if c in mine and a in b.idx:
                 inh = "gaba" in st.transmitter.get(a, set())
-                b._syn(b.soma[b.idx[a]](0.5), self.sec[c](0.5), g_nmj * n / (b._g_syn(inh) * 1000.0), inh, "syn_sex")
+                self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_sex", muscle=True)
                 self.n_syn += 1
         k = len(SEX_MUSCLES)
         self._pca, self._pv = h.PtrVector(k), h.PtrVector(k)
