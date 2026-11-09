@@ -18,7 +18,10 @@
     pBoc        Beg et al. 2008: Ca drives the PBO-4 Na/H exchanger on the basolateral intestine; the protons in the
                 cleft open PBO-5/PBO-6 (pH50 6.83, Hill 5, measured in oocytes) on the posterior body-wall muscles.
                 Here one posterior cleft: H+ release = rate x Hill(posterior ring Ca), cleared with Beg's 2.9 s
-                decay; the PBO-5/6 cation current (E_rev 0 mV) goes into the posterior third of the BWM as I_pA.
+                decay; the PBO-5/6 cation conductance (E_rev 0 mV) sits on the posterior third of the BWM, one wgc
+                point process per muscle (nmodl/wgc.mod), its g set each exchange step and solved implicitly by
+                NEURON (wbody2, 9 Nov, A, inbox 01:45; nested `pboc_g_solver=explicit`: the code before,
+                g (E - V) from the step's start V into I_pA, which alternates at 12-14 nS on these muscles, weki).
     NLP-40      Wang et al. 2013 (Curr Biol 23:746): Ca-dependent (SNT-2) release of NLP-40 from the intestine
                 activates the AEX-2 GPCR on AVL and DVB. Here each cell releases at rate x Hill(its Ca) / 20 (the
                 total is rate x the mean Hill), into the pseudocoelom compartment its ring lies in
@@ -42,6 +45,7 @@
 Nested simpler forms (toggle values):
     defecation       ip3r (default) | timer (brain_layers' 45 s clock, verbatim) | off
     pboc_protons     on (default) | off
+    pboc_g_solver    implicit (default) | explicit
     nlp40_aex2       release_only (default: only out['peptide_release'], for neuromod) | direct | off
     enteric_muscle   du2025 (default) | off
 The id defecation is brain_layers' id, so this module takes that toggle over. At reset the intestine is run alone
@@ -69,6 +73,8 @@ MECHANISMS = [
      "timer)", "organ", "ip3r"),
     ("pboc_protons", "Intestinal H+ (PBO-4) -> PBO-5/6 cation current in the posterior body-wall muscles", "organ",
      "on"),
+    ("pboc_g_solver", "PBO-5/6 conductance as NEURON point processes, implicit (nested explicit: g (E - V) from the "
+     "step's start V as a current)", "organ", "implicit"),
     ("nlp40_aex2", "Intestinal NLP-40 release into neuromod's pool (nested direct: an AEX-2 current in AVL and DVB "
      "here)", "organ", "release_only"),
     ("enteric_muscle", "Enteric muscles: Du 2025 membrane, Cook gaps, DVB EXP-1 synapses, Ca -> activation", "muscle",
@@ -372,6 +378,7 @@ class Mech:
         self.q = q
         self.form = toggles.get("defecation", "ip3r")
         self.pboc = toggles.get("pboc_protons", "on")
+        self.solver = toggles.get("pboc_g_solver", "implicit")
         self.nlp = toggles.get("nlp40_aex2", "release_only")
         if self.nlp == "on":
             self.nlp = "release_only"
@@ -381,6 +388,7 @@ class Mech:
         self.nlp_keys = [(k, f"nlp-40@{cp}") for k, cp in enumerate(COMPARTMENTS) if self.nlp_W[:, k].any()]
         self.ent = toggles.get("enteric_muscle", "du2025")
         assert self.form in ("ip3r", "timer", "off") and self.pboc in ("on", "off")
+        assert self.solver in ("implicit", "explicit"), self.solver
         assert self.nlp in ("direct", "release_only", "off") and self.ent in ("du2025", "off")
         self.n = len(brain.cell_names)
         self.bwm = np.asarray(brain.bwm)
@@ -392,6 +400,14 @@ class Mech:
         self.aex2_cells = np.array([brain.idx[c] for c in ("AVL", "DVB") if c in brain.idx], int)
         self.gut, self.cleft = Intestine(q), Cleft(q)
         self.n_syn = self.n_gap = 0
+        self.gpb = None                           # the PBO-5/6 wgc conductances (implicit form, NEURON brain only)
+        if self.pboc == "on" and self.solver == "implicit" and getattr(brain, "soma", None) is not None:
+            h = brain.h
+            self.gpb = [h.wgc(brain.soma[i](0.5)) for i in self.post_cells]
+            self._pgb = h.PtrVector(max(1, len(self.gpb)))
+            for k, pp in enumerate(self.gpb):
+                pp.e, pp.g = q["pbo5_erev_mV"], 0.0
+                self._pgb.pset(k, pp._ref_g)
         if self.ent == "du2025" and self.form == "ip3r":
             self._build_enteric()
         self.reset()
@@ -450,6 +466,8 @@ class Mech:
             for k, x in INIT.items():
                 if k != "v":
                     setattr(seg.du_bwm, k, x)
+        for pp in self.gpb or []:
+            pp.g = 0.0
 
     def timer(self, dt):
         """brain_layers.Layers.defecation, verbatim: (posterior/anterior BWM boost, enteric activation, expulsions)."""
@@ -486,8 +504,11 @@ class Mech:
         if self.pboc == "on":
             self.cleft.step(c[self.post_rings], dt_s)
             po = self.cleft.p_open()
-            v = np.asarray(ctx.v)[self.post_cells]
-            I[self.post_cells] += q["pbo5_g_nS"] * po * (q["pbo5_erev_mV"] - v)      # nS x mV = pA
+            if self.gpb is None:
+                v = np.asarray(ctx.v)[self.post_cells]
+                I[self.post_cells] += q["pbo5_g_nS"] * po * (q["pbo5_erev_mV"] - v)      # nS x mV = pA
+            elif self.gpb:
+                self._pgb.scatter(self.brain.h.Vector(np.full(len(self.gpb), q["pbo5_g_nS"] * po * 1e-3)))   # uS
             out.update(cleft_pH=self.cleft.ph, pbo5_open=po)
         if self.nlp != "off":
             hc = _hill(c, q["nlp40_release_k_uM"], q["nlp40_release_hill"])

@@ -27,6 +27,12 @@ current back to HSN. Nothing sets the active/inactive states: they come out of t
 The nested form `timer` is brain_layers.Layers.egg_laying verbatim (two-state timer, Waggoner 1998 durations).
 The id egg_laying is brain_layers' id, so this module takes that toggle over. `egg_unc103=off` is the unc-103 null
 (no Kr in the sex muscles).
+Solver (`egg_g_solver`; wbody2, 9 Nov, A, inbox 01:45). implicit (default): the vm cation conductance and HSN's
+LGC-55 conductance are wgc point processes (nmodl/wgc.mod) whose g is set each exchange step, so NEURON solves them
+implicitly at its 0.5 ms step. Nested `explicit`: the code before, g (E - V) from V at the step's start held as a
+current over the exchange step; it alternates above about 1.2 nS on HSN at 4-4.5 ms steps (weki, 01:13), inside
+egg_lgc55_g_nS's range. The conductances' gating (stretch, occupancies, tyramine) updates once per exchange step in
+both forms.
 """
 from __future__ import annotations
 
@@ -40,6 +46,8 @@ MECHANISMS = [
      "uterine stretch, 5-HT/NLP-3 from B1's pools, uv1 tyramine -> HSN LGC-55 (nested: two-state timer)",
      "organ", "circuit"),
     ("egg_unc103", "UNC-103 ERG K+ in the sex muscles at the vulval density (off: the unc-103 null)", "organ", "on"),
+    ("egg_g_solver", "Egg-laying conductances (vm cation, HSN LGC-55) as NEURON point processes, implicit (nested "
+     "explicit: g (E - V) from the step's start V as a current)", "organ", "implicit"),
 ]
 
 ZHANG = "Zhang, Schafer, Breitling 2010 BMC Syst Biol 4:81"
@@ -124,6 +132,8 @@ class Mech:
             self.form = "circuit"
         assert self.form in FORMS, self.form
         self.unc103 = toggles.get("egg_unc103", "on") != "off"
+        self.solver = toggles.get("egg_g_solver", "implicit")
+        assert self.solver in ("implicit", "explicit"), self.solver
         q = defaults()
         q.update(_OLD)
         q.update({k: v for k, v in (getattr(brain.layers, "p", {}) or {}).items() if k in _OLD})
@@ -166,7 +176,7 @@ class Mech:
         organs_nrn.load_organ_mods(h)
         vals = getattr(b.spec, "values", {}) or {}
         qb = {s.id: (float(vals[s.id]) if s.id in vals and np.isscalar(vals[s.id]) else s.template) for s in mb.SPECS}
-        self.sec, self.clamp = {}, []
+        self.sec, self.clamp, self.gvm, self.glgc = {}, [], [], []
         for n in SEX_MUSCLES:
             sec = h.Section(name=f"sex_{n}")
             sec.nseg, sec.L, sec.diam = 1, 20.0, 5.0              # BAAIWorm's muscle cylinder
@@ -175,10 +185,20 @@ class Mech:
             mb.configure(sec, qb, area)
             sec.cm = q["egg_c_pF"] * 100.0 / area
             sec(0.5).du_bwm.gkr = q["egg_unc103_gkr_nS"] if self.unc103 else 0.0
-            c = h.IClamp(sec(0.5))
-            c.delay, c.dur, c.amp = 0.0, 1e12, 0.0
+            if self.solver == "explicit":
+                c = h.IClamp(sec(0.5))
+                c.delay, c.dur, c.amp = 0.0, 1e12, 0.0
+                self.clamp.append(c)
+            elif n in VM:
+                pp = h.wgc(sec(0.5))
+                pp.e, pp.g = q["egg_cation_erev_mV"], 0.0
+                self.gvm.append(pp)
             self.sec[n] = sec
-            self.clamp.append(c)
+        if self.solver == "implicit":
+            for i in self.hsn:
+                pp = h.wgc(b.soma[i](0.5))
+                pp.e, pp.g = self.lgc[2], 0.0
+                self.glgc.append(pp)
         st, nm, mine = b.st, b.st.names, set(SEX_MUSCLES)
         g = q["egg_gap_nS_per_contact"] / 1000.0
         for i, j, n in st.gap:
@@ -223,6 +243,8 @@ class Mech:
                     setattr(seg.du_bwm, k, x)
         for c in getattr(self, "clamp", []):
             c.amp = 0.0
+        for pp in getattr(self, "gvm", []) + getattr(self, "glgc", []):
+            pp.g = 0.0
 
     def _read(self, pv):
         pv.gather(self._buf)
@@ -277,9 +299,13 @@ class Mech:
         S = float(_hill(self.U, q["egg_stretch_half"], q["egg_stretch_hill"]))
         o5, o3 = self.occupancy()
         g = q["egg_stretch_g_nS"] * S + q["egg_5ht_g_nS"] * o5 + q["egg_nlp3_g_nS"] * o3
-        i_vm = np.where(self.is_vm, g * (q["egg_cation_erev_mV"] - v), 0.0)        # pA
-        for c, x in zip(self.clamp, i_vm):
-            c.amp = x / 1000.0                                                     # pA -> nA
+        if self.solver == "explicit":
+            i_vm = np.where(self.is_vm, g * (q["egg_cation_erev_mV"] - v), 0.0)        # pA
+            for c, x in zip(self.clamp, i_vm):
+                c.amp = x / 1000.0                                                     # pA -> nA
+        else:
+            for pp in self.gvm:
+                pp.g = g / 1000.0                                                      # nS -> uS
         target = _hill(ca, q["egg_act_khalf_mM"], q["egg_act_hill"])
         self.act += (target - self.act) * min(1.0, dt_ms / q["egg_act_tau_ms"])
         a_vm = float(np.mean(self.act[self.is_vm]))
@@ -296,7 +322,12 @@ class Mech:
         if len(self.hsn):
             ec50, hl, erev = self.lgc
             occ = float(_hill(self.tyr, ec50, hl))
-            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm + q["egg_lgc55_g_nS"] * occ * (erev - ctx.v[self.hsn])
+            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm
+            if self.solver == "explicit":
+                I[self.hsn] += q["egg_lgc55_g_nS"] * occ * (erev - ctx.v[self.hsn])
+            else:
+                for pp in self.glgc:
+                    pp.g = q["egg_lgc55_g_nS"] * occ / 1000.0
         return {"I_pA": I, "out": {"eggs_laid": laid, "sex_muscle_activation": self.act.copy(),
                                    "eggs_total": self.eggs_total, "egg_uterus": self.U, "egg_stretch": S,
                                    "uv1_tyramine_uM": self.tyr, "egg_5ht_occ": o5, "egg_nlp3_occ": o3,

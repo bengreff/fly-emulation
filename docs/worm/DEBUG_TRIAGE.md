@@ -317,6 +317,15 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   check_glia fails in every form (tau 1.24-1.76 s vs 3.4-4.0, null 1.11-1.23x vs 1.24, channels peak 12.4-13 mM vs
   10.2; all measured). Stopped and written down: the clamped neurons take K+ back after release, so recovery runs
   2-3x faster than the guessed clearance constants; the passing value is a fit after the gate. Defaults unchanged.
+- 9 Nov 01:47 (wbody2) the vitals battery on 7daea89 (organ synapses and NLP-40 site in): food / nofood pumps 0 / 0,
+  expulsions 0 / 0 (int9 every 50.9 s), eggs 0 / 0, BWM -30.5 / -31.1 mV at 1.90 / 1.84 Hz over all muscles,
+  physical yes; against the fbf1c91 loop no vital sign moved (all measured).
+- 9 Nov 01:47-02:01 (wbody2, inbox 01:45 from weki, A numerical). egg_laying's LGC-55 on HSN and vm cation term, and
+  intestine's PBO-5/6, were g (E - V_start) held as a current over the 4-4.5 ms exchange step (explicit in V). Each is
+  now a wgc point process solved implicitly by NEURON (toggles `egg_g_solver`, `pboc_g_solver`: implicit default,
+  explicit nested). `implicit_g_check.py`: explicit identical to the code before; at 0.1-0.5 nS implicit is closer to
+  a 0.5 ms reference than explicit (6 of 6); at each range's top and 2x implicit is stable, explicit goes to NaN on
+  HSN at 5 nS and alternates at vm cation 14 and PBO-5 20 nS (all measured). Battery on the new default next.
 
 ## Phase 2 status (wneuro)
 
