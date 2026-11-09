@@ -1,9 +1,9 @@
 {
  "title": "Mechanisms in the worm model, plain English (rows 1-28)",
- "note": "One entry per row of docs/worm/MECHANISMS_AUDIT.md, written for a reader who isn't a biologist. 'full' means the mechanism runs as a real published mechanistic model (the quality of the numbers that feed it is a separate question, answered by the Catalog tab); 'simplified' means the real worm's mechanism is simpler here than the real thing (a shared value where every cell differs, a mechanism built from scratch because no published model exists, or a piece that is missing outright). 'check: pass/fail' is whether a written-down test (a unit check) came out right; 'not checked' means no such test has been run yet.",
- "as_of": "docs/worm/MECHANISMS_AUDIT.md, 7 Nov 2026, main at 5b7e141",
+ "note": "One entry per row of docs/worm/MECHANISMS_AUDIT.md, written for a reader who isn't a biologist. 'full' means the mechanism runs as a real published mechanistic model (the quality of the numbers that feed it is a separate question, answered by the Catalog tab); 'simplified' means the real worm's mechanism is simpler here than the real thing (a shared value where every cell differs, a mechanism built from scratch because no published model exists, or a piece that is missing outright). 'check: pass/fail' is whether a written-down test (a unit check) came out right; 'not checked' means no such test has been run yet. Each row is counted under the audit's main category, as MECHANISMS_AUDIT.md counts it ('simplified' = lumped, spec only or missing); where a row has parts in another category, they are named under its title.",
+ "as_of": "docs/worm/MECHANISMS_AUDIT.md (Worm mechanisms audit: rows 1-30 (7 Nov 2026, 01:14 CST, main at 5b7e141)); statuses set by viewer/worm/build_mechanisms_summary.py",
  "source": "docs/worm/MECHANISMS_AUDIT.md (full table), docs/worm/TO_A_REAL_WORM.md (what would close each gap)",
- "regenerate": "Hand-written from docs/worm/MECHANISMS_AUDIT.md rows 1-28. When that audit changes materially, re-read it and update this file's 28 entries by hand (no generator script yet; the audit itself is prose, not structured data, so there is nothing mechanical to parse).",
+ "regenerate": "Statuses and parts: run viewer/worm/build_mechanisms_summary.py after the audit changes (it reads each row's main category). The plain-English text is hand-written from the audit rows.",
  "groups": [
   {
    "name": "Neurons",
@@ -36,9 +36,10 @@
      "id": 4,
      "name": "Channel kinetics",
      "group": "Neurons",
-     "status": "simplified",
+     "status": "full",
      "check": "fail",
-     "text": "Each type of ion channel has its own measured voltage- and time-dependent behaviour (\"kinetics\"), usually from patch-clamp electrophysiology on cells expressing just that one channel. The model ports exact published kinetic models for 16 channel types: 14 genes from BAAIWorm and 4 more from Nicoletti et al. 2024 (including the calcium-activated potassium channels slo-1 and slo-2). Multiplied by row 5's densities, this sets how each neuron actually fires. Status: full for those 16 channels, but missing for many other channel gene families (potassium leak channels, stretch and TRP channels, cyclic-nucleotide-gated channels) because no one has published their kinetics yet; one check passed exactly, a second (testing the same cell's kinetics inside the full brain model) came out eight times too strong, and that mismatch is unresolved."
+     "text": "Each type of ion channel has its own measured voltage- and time-dependent behaviour (\"kinetics\"), usually from patch-clamp electrophysiology on cells expressing just that one channel. The model ports exact published kinetic models for 16 channel types: 14 genes from BAAIWorm and 4 more from Nicoletti et al. 2024 (including the calcium-activated potassium channels slo-1 and slo-2). Multiplied by row 5's densities, this sets how each neuron actually fires. Status: full for those 16 channels, but missing for many other channel gene families (potassium leak channels, stretch and TRP channels, cyclic-nucleotide-gated channels) because no one has published their kinetics yet; one check passed exactly, a second (testing the same cell's kinetics inside the full brain model) came out eight times too strong, and that mismatch is unresolved.",
+     "parts": "full for BAAIWorm's 16 models (14 genes) and Nicoletti 2024's kqt-1, unc-103, exp-2 and bulk-Ca slo-1, slo-2; missing for every gene in docs/worm/CHANNEL_SLOTS.md"
     },
     {
      "id": 5,
@@ -59,9 +60,10 @@
      "id": 6,
      "name": "Calcium handling",
      "group": "Neurons",
-     "status": "simplified",
+     "status": "full",
      "check": "fail",
-     "text": "Calcium ions entering a neuron through channels get buffered, pumped and used to signal downstream events; real neurons mix fast, local (\"nanodomain\") calcium pools right next to channels with slower whole-cell pools. The model uses Nicoletti 2019's equation for a calcium pool sized to each neuron's real cell volume, plus BAAIWorm's fast nanodomain pools for the slo-1/slo-2 channels. This calcium drives the fluorescent indicator used for observation (row 23) and the channels it feeds back on. Status: full for the pools it models, missing entirely for calcium released from internal stores and for calcium in the thin branches; the equation itself checks out exactly, but the modelled cell volumes are up to 3x off from measured neuron volumes, and calcium barely moves in a 10-second run, so the simulated calcium-imaging signal stays nearly flat."
+     "text": "Calcium ions entering a neuron through channels get buffered, pumped and used to signal downstream events; real neurons mix fast, local (\"nanodomain\") calcium pools right next to channels with slower whole-cell pools. The model uses Nicoletti 2019's equation for a calcium pool sized to each neuron's real cell volume, plus BAAIWorm's fast nanodomain pools for the slo-1/slo-2 channels. This calcium drives the fluorescent indicator used for observation (row 23) and the channels it feeds back on. Status: full for the pools it models, missing entirely for calcium released from internal stores and for calcium in the thin branches; the equation itself checks out exactly, but the modelled cell volumes are up to 3x off from measured neuron volumes, and calcium barely moves in a 10-second run, so the simulated calcium-imaging signal stays nearly flat.",
+     "parts": "full for Nicoletti 2019 Eq. 28 bulk pool sized by each neuron's whole-cell volume, BAAIWorm's nanodomain SLO-1/2 and the bulk-Ca SLO-1/2; borrowed (inferred), a readout, off by default for a bulk cytosolic pool for the indicator (NEURON's cadifpmp); missing for ER release and uptake, buffers as separate species, neurite Ca"
     }
    ]
   },
@@ -74,7 +76,8 @@
      "group": "Synapses and gap junctions",
      "status": "simplified",
      "check": "fail",
-     "text": "Neurons talk across a synapse by releasing a neurotransmitter (a signalling chemical) that opens receptor channels on the other side; which transmitter, which receptor, and how strong the connection is differ synapse by synapse. The model wires every synapse from Cook et al. 2019's microscopy-based connectome (count and polarity) and builds 13 receptor types with realistic opening, closing and desensitisation kinetics. Each synapse takes the sending neuron's voltage and turns it into current in the receiving neuron. Status: simplified in two important ways: one shared release curve stands in for every neuron type instead of one per type, and the actual strength of each individual connection is a guessed placeholder scaled only by how many contact points microscopy counted. One receptor-specific check passed; a composite test on a neuromuscular junction failed (modelled inhibitory current decays in 29 milliseconds against a measured 25)."
+     "text": "Neurons talk across a synapse by releasing a neurotransmitter (a signalling chemical) that opens receptor channels on the other side; which transmitter, which receptor, and how strong the connection is differ synapse by synapse. The model wires every synapse from Cook et al. 2019's microscopy-based connectome (count and polarity) and builds 13 receptor types with realistic opening, closing and desensitisation kinetics. Each synapse takes the sending neuron's voltage and turns it into current in the receiving neuron. Status: simplified in two important ways: one shared release curve stands in for every neuron type instead of one per type, and the actual strength of each individual connection is a guessed placeholder scaled only by how many contact points microscopy counted. One receptor-specific check passed; a composite test on a neuromuscular junction failed (modelled inhibitory current decays in 29 milliseconds against a measured 25).",
+     "parts": "lumped: full for EM count, sign and 13 receptor classes with kinetics and desensitisation; lumped for release and strength"
     },
     {
      "id": 8,
@@ -88,9 +91,10 @@
      "id": 24,
      "name": "Synaptic plasticity and learning substrates",
      "group": "Synapses and gap junctions",
-     "status": "simplified",
+     "status": "full",
      "check": "fail",
-     "text": "Real synapses change strength with use: short-term plasticity makes them facilitate or depress over milliseconds to seconds as the supply of ready-to-release neurotransmitter packets runs low, some circuits habituate (weaken) with repeated taps, and some circuits store longer memories, such as pairing salt with no food. The model runs a full published short-term-plasticity model (Dittman and Regehr) at every synapse, plus a tap-habituation model; associative learning for salt, temperature and pathogen avoidance is one simplified internal number per behaviour, since no published whole-circuit model for those exists. This modulates row 7's synapse strength over time, and associative learning reads the worm's feeding state (row 20). Status: full for short-term plasticity and habituation, both of which pass their checks; simplified (\"one placeholder number\") for associative learning; a check on GABA synapses fails, and GABA synapses currently borrow numbers tuned for acetylcholine."
+     "text": "Real synapses change strength with use: short-term plasticity makes them facilitate or depress over milliseconds to seconds as the supply of ready-to-release neurotransmitter packets runs low, some circuits habituate (weaken) with repeated taps, and some circuits store longer memories, such as pairing salt with no food. The model runs a full published short-term-plasticity model (Dittman and Regehr) at every synapse, plus a tap-habituation model; associative learning for salt, temperature and pathogen avoidance is one simplified internal number per behaviour, since no published whole-circuit model for those exists. This modulates row 7's synapse strength over time, and associative learning reads the worm's feeding state (row 20). Status: full for short-term plasticity and habituation, both of which pass their checks; simplified (\"one placeholder number\") for associative learning; a check on GABA synapses fails, and GABA synapses currently borrow numbers tuned for acetylcholine.",
+     "parts": "full for short-term plasticity at every wsyn synapse and tap habituation; lumped for associative learning (salt, thermotaxis, pathogen)"
     },
     {
      "id": 26,
@@ -147,15 +151,17 @@
      "group": "Neuromodulation and slow states",
      "status": "simplified",
      "check": "pass",
-     "text": "Inside cells, slower biochemical cascades (seconds to tens of minutes) adapt a cell's sensitivity: proteins such as EGL-4 (a kinase, an enzyme that tags other proteins) or CMK-1 build up slowly and dial down a sensory neuron's response after sustained stimulation. The model represents each such pathway, in each cell, as one bounded number that rises and decays, standing in for the real cascade's effect, for example by scaling how much a sensory neuron releases rather than modelling the biochemistry itself. This feeds back onto the senses (row 17) and onto learning (row 20's feeding state reaches it). Status: simplified for every pathway it covers; two pathways (DAF-7, CREB) exist only as unused numbers that nothing in the model reads yet. Its own maths checks out, and the one directly measured time constant (CMK-1) matches data."
+     "text": "Inside cells, slower biochemical cascades (seconds to tens of minutes) adapt a cell's sensitivity: proteins such as EGL-4 (a kinase, an enzyme that tags other proteins) or CMK-1 build up slowly and dial down a sensory neuron's response after sustained stimulation. The model represents each such pathway, in each cell, as one bounded number that rises and decays, standing in for the real cascade's effect, for example by scaling how much a sensory neuron releases rather than modelling the biochemistry itself. This feeds back onto the senses (row 17) and onto learning (row 20's feeding state reaches it). Status: simplified for every pathway it covers; two pathways (DAF-7, CREB) exist only as unused numbers that nothing in the model reads yet. Its own maths checks out, and the one directly measured time constant (CMK-1) matches data.",
+     "parts": "lumped for EGL-4, CMK-1 (fast, slow), GLR-1, DAF-16, DAF-7 and CREB"
     },
     {
      "id": 19,
      "name": "Activity-dependent expression and homeostatic tuning",
      "group": "Neuromodulation and slow states",
-     "status": "simplified",
+     "status": "full",
      "check": "pass",
-     "text": "Neurons can slowly adjust their own channel numbers to keep their long-run activity near a target level, a real, measured phenomenon called homeostasis. The model ports a published integral-control model (O'Leary, Williams, Franci and Marder 2014) for three specific channels (UNC-2, EGL-19, SHL-1). This slowly rewrites row 5's channel densities based on each neuron's own calcium level (row 6). Status: full for those three channels and its check passes, but the \"target\" the model holds a neuron to is simply wherever that neuron happened to start, not a measured biological set point, and every other channel has no such tuning at all."
+     "text": "Neurons can slowly adjust their own channel numbers to keep their long-run activity near a target level, a real, measured phenomenon called homeostasis. The model ports a published integral-control model (O'Leary, Williams, Franci and Marder 2014) for three specific channels (UNC-2, EGL-19, SHL-1). This slowly rewrites row 5's channel densities based on each neuron's own calcium level (row 6). Status: full for those three channels and its check passes, but the \"target\" the model holds a neuron to is simply wherever that neuron happened to start, not a measured biological set point, and every other channel has no such tuning at all.",
+     "parts": "full for UNC-2, EGL-19 and SHL-1; missing for the other channels and the receptors"
     },
     {
      "id": 25,
@@ -171,7 +177,8 @@
      "group": "Neuromodulation and slow states",
      "status": "simplified",
      "check": "pass",
-     "text": "After a neuron fires, molecular pumps push sodium back out and potassium back in to restore the resting ion balance; real cells use several pump types (the sodium/potassium pump, plus calcium pumps PMCA and SERCA, and a sodium-calcium exchanger NCX). The model includes only the sodium/potassium pump, using a published mammalian heart-cell kinetic form (Luo-Rudy 1994), tracking one sodium concentration per neuron and muscle. It reads each cell's activity-driven sodium load, and its energy use feeds the metabolism model (row 20). Status: simplified (the calcium pumps are entirely missing); its check passes (sodium recovers in 13.5 seconds, inside the 5-60 second measured range), but the pump's maximum rate is a guess, and it borrows mammalian heart-cell binding affinities because no worm-specific pump data exists."
+     "text": "After a neuron fires, molecular pumps push sodium back out and potassium back in to restore the resting ion balance; real cells use several pump types (the sodium/potassium pump, plus calcium pumps PMCA and SERCA, and a sodium-calcium exchanger NCX). The model includes only the sodium/potassium pump, using a published mammalian heart-cell kinetic form (Luo-Rudy 1994), tracking one sodium concentration per neuron and muscle. It reads each cell's activity-driven sodium load, and its energy use feeds the metabolism model (row 20). Status: simplified (the calcium pumps are entirely missing); its check passes (sodium recovers in 13.5 seconds, inside the 5-60 second measured range), but the pump's maximum rate is a guess, and it borrows mammalian heart-cell binding affinities because no worm-specific pump data exists.",
+     "parts": "lumped (Na/K-ATPase only); missing: PMCA, SERCA, NCX"
     },
     {
      "id": 28,
@@ -199,7 +206,8 @@
        "name": "DVA compression versus stretch (switch, off by default)",
        "text": "DVA is a body-bend sensing neuron. The default model gives it one stretch-opened channel that responds to the size of the bend. Published work says the sign matters: squeezing its process opens TRP-4 (which excites it), stretching opens TWK-16 (a potassium channel, which quiets it). When on, DVA gets both, each driven by its own sign of the local strain. The TWK-16 strength is a guess; its reversal near -80 mV is inferred from potassium physiology. Off by default, and identical to the model without it when off."
       }
-     ]
+     ],
+     "parts": "lumped: full for AWC odour (Usuyama 2012 cGMP cascade), the AWA membrane (Liu 2018) and the touch channels (Sanzeni 2019); lumped for the other cGMP cells, the TRPV cells and proprioception"
     }
    ]
   },
@@ -226,9 +234,10 @@
      "id": 14,
      "name": "Intestine and defecation",
      "group": "Muscles and organs",
-     "status": "simplified",
+     "status": "full",
      "check": "pass",
-     "text": "The worm periodically expels gut contents through a rhythmic defecation cycle driven by calcium oscillations and acid release in the intestine. The model uses a full published calcium-oscillator model (20 cells using the Li-Rinzel equations, coupled by gap junctions) for the rhythm itself; the proton release and the NLP-40 peptide signal that trigger the actual muscle contraction are simplified stand-ins. The calcium wave reflects intestinal cell state, and the trigger signal reaches two neurons (AVL, DVB) and the enteric muscles. Status: full for the oscillator, simplified for the trigger pathway. After two attempts at fitting, the calcium fall time now matches a published measurement; the enteric muscles fire spontaneously rather than only on the trigger, and expulsion is decided by a simple activity threshold rather than real muscle mechanics."
+     "text": "The worm periodically expels gut contents through a rhythmic defecation cycle driven by calcium oscillations and acid release in the intestine. The model uses a full published calcium-oscillator model (20 cells using the Li-Rinzel equations, coupled by gap junctions) for the rhythm itself; the proton release and the NLP-40 peptide signal that trigger the actual muscle contraction are simplified stand-ins. The calcium wave reflects intestinal cell state, and the trigger signal reaches two neurons (AVL, DVB) and the enteric muscles. Status: full for the oscillator, simplified for the trigger pathway. After two attempts at fitting, the calcium fall time now matches a published measurement; the enteric muscles fire spontaneously rather than only on the trigger, and expulsion is decided by a simple activity threshold rather than real muscle mechanics.",
+     "parts": "full for the Ca oscillator and wave; lumped for protons and NLP-40"
     },
     {
      "id": 15,
@@ -285,7 +294,8 @@
        "name": "Drugs in the data model",
        "text": "An experiment can put a drug in the bath at a set concentration from a set time. Each drug crosses the worm's skin and gut into its body fluid in one step (how much gets in and how fast are guesses per drug, because the cuticle's permeability is unmeasured). Levamisole acts like acetylcholine on the levamisole-type receptor and ivermectin opens glutamate-gated chloride channels, each as a steady conductance on the cells that carry that receptor; aldicarb blocks the enzyme that clears acetylcholine, so every acetylcholine synapse gets stronger; bath serotonin, dopamine, octopamine and tyramine are added to the model's amine pools. The 21 numbers behind this (uptake, potency, steepness) are all guessed and are part of the 368 unknowns a fit would set. With no drug in the experiment, nothing changes."
       }
-     ]
+     ],
+     "parts": "lumped; missing: viscoelastic medium"
     }
    ]
   },
