@@ -63,8 +63,7 @@ class Body:
     def __init__(self, out: str | Path, scene: ChemotaxisScene | None = None, frame_every: int = 8,
                  solver_exit: str = "published", world: dict | None = None, env=None, body: dict | None = None,
                  params: dict | None = None):
-        if not mw.DRIVER.exists():
-            subprocess.run([str(mw.ROOT / "driver" / "build.sh")], check=True)
+        driver = mw.ensure_driver()  # builds a missing driver, refuses a stale one (triage line 11)
         self.out = str(Path(out).resolve())
         self.scene = scene or ChemotaxisScene()
         self.env = env  # environment.Environment (row 22) or None = the INTERFACE.md default plate
@@ -75,7 +74,7 @@ class Body:
         c_r, c_w = os.pipe()  # commands: us -> driver
         s_r, s_w = os.pipe()  # state: driver -> us
         self._log = open(self.out + ".log", "w")
-        self.proc = subprocess.Popen([str(mw.DRIVER), "--mode", "pipe", "--fd_in", str(c_r), "--fd_out", str(s_w),
+        self.proc = subprocess.Popen([str(driver), "--mode", "pipe", "--fd_in", str(c_r), "--fd_out", str(s_w),
                                       "--out", self.out, "--solver_exit", solver_exit] + mw.world_flags(world),
                                      cwd=mw.ROOT, pass_fds=(c_r, s_w),
                                      stdout=self._log, stderr=subprocess.STDOUT)
