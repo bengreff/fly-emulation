@@ -16,8 +16,11 @@
                contact on the brain's graded synapse; sign from the brain's sign rule, except M3 (glutamate onto the
                AVR-15 GluCl: inhibitory; Dent et al. 1997, Raizen & Avery 1994). MC reaches the muscle through the
                marginal cells it synapses on (Cook) and their gaps. NSM's release sites are not fast synapses: its 5-HT
-               reaches the muscle through the brain's well-mixed monoamine layer, on SER-7 (pharyngeal muscle
-               expression: Hobson et al. 2006), with the layer's ec50 and gain for that receptor.
+               reaches the muscle on SER-7 (pharyngeal muscle expression: Hobson et al. 2006) from mech/neuromod's
+               pseudocoelom compartment that holds NSM (the head; validity: the pharynx's basement membrane is not a
+               barrier here), with neuromod's SER-7 EC50; brain_layers' well-mixed layer and its ec50 only when
+               neuromod's monoamines are not running (wbody2, 8 Nov: the pharynx read the layer's pool, which stays 0
+               when neuromod owns the amines). The current per unit occupancy is the layer's ser-7 gain (guessed).
     force      Sherman & Harel's MLCK rate K1 = K1_A Ca^4 / (K1_B^4 + Ca^4) on the core Ca, normalised by K1_A: the
                nested reduced form of their cross-bridge model (their actin-myosin cycle is not ported).
     pumps      one pump = the metacorpus (pm4) mean activation rising above pump_on and then falling below pump_off;
@@ -335,17 +338,45 @@ class Mech:
         self._buf = h.Vector(k)
 
     def _serotonin_on_muscle(self):
-        """(index of serotonin in the monoamine layer's concentrations, ec50 nM, gain pA) or None."""
+        """(source, index, ec50 nM, gain pA) or None. source "neuromod": index = the compartment holding NSM (else the
+        first pharyngeal neuron built) in mech/neuromod's monoamine pools; "layer": index of serotonin in brain_layers'
+        well-mixed concentrations (the fallback when neuromod's monoamines are off or absent)."""
+        from wormemu import mech
+        from wormemu.mech import neuromod as nmod
         b = self.brain
-        if self.q["ph_ser7_on_muscle"] <= 0 or getattr(b, "layers", None) is None:
+        if self.q["ph_ser7_on_muscle"] <= 0:
+            return None
+        try:
+            gain = float(b.spec.v("ma_gain_pA")["ser-7"])
+        except (KeyError, AttributeError):
+            return None
+        nm = next((m for m in getattr(b, "mechs", None) or [] if isinstance(m, nmod.Mech)), None)
+        if nm is not None and nm.on.get(nmod.A):
+            near = [n for n in NSM + ("MCL", "MCR", "M3L", "M3R", "I1L", "I1R") if n in b.idx]
+            if near:
+                p = {s.id: s.template for s in nmod.SPECS}
+                p.update({k: v for k, v in mech.params_for(nmod, b.spec).items() if np.isscalar(v)})
+                self._nm = nm
+                return "neuromod", int(nm.ma_comp[b.idx[near[0]]]), float(p["ma_ec50_serotonin_ser-7_nM"]), gain
+        if getattr(b, "layers", None) is None:
             return None
         try:
             ligs = list(b.spec.v("ma_release_nM_per_s").index)
             ec50 = float(b.spec.v("ma_ec50_nM")["serotonin>ser-7"])
-            gain = float(b.spec.v("ma_gain_pA")["ser-7"])
         except KeyError:
             return None
-        return ligs.index("serotonin"), ec50, gain
+        return "layer", ligs.index("serotonin"), ec50, gain
+
+    def serotonin_nM(self):
+        """5-HT (nM) the pharyngeal muscle sees now (0 without a source)."""
+        if self._ser is None:
+            return 0.0
+        src, k = self._ser[:2]
+        if src == "neuromod":
+            from wormemu.mech import neuromod as nmod
+            return float(self._nm.ma.nM()[nmod.AMINES.index("serotonin"), k])
+        c = getattr(self.brain.layers, "ma_c", None)
+        return 0.0 if c is None else float(c[k])
 
     def reset(self):
         self.pumps_total, self.in_pump = 0, False
@@ -389,9 +420,9 @@ class Mech:
             for n in PHARYNX_MUSCLES:
                 self.sec[n](0.5).sh_pharynx.temp_k = T + 273.15
             self.T = T
-        if self._ser is not None and getattr(self.brain.layers, "ma_c", None) is not None:
-            k, ec50, gain = self._ser
-            c = float(self.brain.layers.ma_c[k])
+        if self._ser is not None:
+            ec50, gain = self._ser[2:]
+            c = self.serotonin_nM()
             amp = gain * c / (c + ec50) / 1000.0                 # pA -> nA
             if amp != self.stim[0].amp:
                 for s in self.stim:
@@ -410,4 +441,5 @@ class Mech:
             self.pumps_total += 1
         return {"out": {"pumps": done, "pharynx_activation": self.act.copy(), "pharynx_v_mV": v,
                         "pharynx_ca_core_uM": ca * 1e6, "pharynx_epg_mV_per_ms": epg,
+                        "pharynx_5ht_nM": self.serotonin_nM() if self._ser is not None else 0.0,
                         "pharynx_pumps_total": self.pumps_total}}

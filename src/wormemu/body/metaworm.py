@@ -28,6 +28,25 @@ AGAR_PLATE = {"scale": "worm_1mm", "fluid": "agar_rft", "substrate": "agar_plate
 AGAR_FILM = {"scale": "worm_1mm", "fluid": "agar_rft", "substrate": "agar_film"}
 
 
+def stale_sources(driver: Path | None = None) -> list[Path]:
+    """Driver sources newer than the built binary (run_body.cpp and everything under sim/ that build.sh compiles)."""
+    t = (driver or DRIVER).stat().st_mtime
+    srcs = [ROOT / "driver" / "run_body.cpp"] + [p for p in (ROOT / "sim").rglob("*") if p.suffix in (".cpp", ".h")]
+    return [p for p in srcs if p.stat().st_mtime > t]
+
+
+def ensure_driver() -> Path:
+    """Build the driver if it is missing; refuse one older than its sources (triage line 11: a binary built before
+    the damping commit a6f75cf ignored --damping silently, so every damped run on that machine ran undamped)."""
+    if not DRIVER.exists():
+        subprocess.run([str(ROOT / "driver" / "build.sh")], check=True)
+    stale = stale_sources()
+    if stale:
+        raise RuntimeError(f"{DRIVER} is older than {len(stale)} of its sources (e.g. {stale[0].relative_to(ROOT)}); "
+                           f"rebuild it: DEVELOPER_DIR=/Library/Developer/CommandLineTools {ROOT}/driver/build.sh")
+    return DRIVER
+
+
 def world_flags(world: dict | None) -> list[str]:
     return [x for k, v in (world or {}).items() for x in (f"--{k}", str(v))]
 
@@ -37,9 +56,7 @@ def run(out: str | Path, mode: str = "key", seconds: float = 10.0, key: str | No
         solver_exit: str = "published", world: dict | None = None) -> dict:
     """Run the driver (cwd = third_party/metaworm, as upstream expects) and return load(out)."""
     out = Path(out).resolve()
-    if not DRIVER.exists():
-        subprocess.run([str(ROOT / "driver" / "build.sh")], check=True)
-    cmd = [str(DRIVER), "--mode", mode, "--seconds", str(seconds), "--f", str(f), "--lam", str(lam),
+    cmd = [str(ensure_driver()), "--mode", mode, "--seconds", str(seconds), "--f", str(f), "--lam", str(lam),
            "--amp", str(amp), "--frame_every", str(frame_every), "--out", str(out), "--solver_exit", solver_exit]
     if key:
         cmd += ["--key", key]
