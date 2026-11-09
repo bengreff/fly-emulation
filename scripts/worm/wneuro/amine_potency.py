@@ -28,6 +28,9 @@ a synaptic or perisynaptic target read from the bulk pool), clearance (as releas
 measured values disagree), or a gap value (D). Where a free source measures endogenous amine content, the model's
 store (molecules per release cell) is checked against it; that is the only measurement-based check here.
 
+9 Nov 2026 (session 5): re-run on pc_grid=bins, the new default (tag=_bins); "compartments" in the output are then
+the 92 bins, and named_mean_nM holds the four named views. Same rule, no new bar.
+
 Usage: python amine_potency.py [SECONDS] [food=0|1.02] [ceil=CEIL_S] [tag=T] -> runs/worm/wneuro/amine_potency_food<f><T>.json
 (the 20 s runs of 23:4x used the old shared 1e6 store; `tag=_ceil_newstore` reruns part B with the item 6 stores)
 """
@@ -153,6 +156,9 @@ def main():
     res = dict(bio_s=secs, food_OD=food, compartments=list(N.COMPARTMENTS),
                pool_mean_nM={lg: C[:, k, :].mean(0).tolist() for k, lg in enumerate(N.AMINES)},
                pool_max_nM={lg: C[:, k, :].max(0).tolist() for k, lg in enumerate(N.AMINES)},
+               grid=nm.grid, named_mean_nM={lg: (C[:, k, :].mean(0) @ (np.eye(4)[nm.ma.named] * nm.ma.V[:, None])
+                                                  / (np.eye(4)[nm.ma.named] * nm.ma.V[:, None]).sum(0)).tolist()
+                                            for k, lg in enumerate(N.AMINES)},
                release_drive=rel_q, rest=read_table(nm, C, plist), factors=factors(nm), ceiling={})
     print("part A done", round(time.time() - t0), "s", flush=True)
     for k, lg in enumerate(N.AMINES):
