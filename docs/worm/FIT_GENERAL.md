@@ -86,10 +86,17 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
   - rho_graph (`eki.graph_rho`): structural zeros. A parameter's module (its mechanism's module in `mech.modules()`) can
     move an observation only if a directed path in `iograph.edges(iograph.record())` leads to a module the observation is
     read from, with the membrane as one hub node (writers of g_scale, I_pA or act_add; every module reads it). Because
-    the membrane joins nearly everything, this is expected to cut few pairs (inferred). It is measured on the real graph
-    before the fit (cost run), and the fraction of zero pairs is reported.
+    the membrane joins nearly everything, this is expected to cut few pairs (inferred). Measured on the real graph
+    (`scripts/worm/fit/cost_graph.py`, f8e7699, 8 Nov; 362 numbers x 13 signs): the raw 20 ms trace gives 52.5 % zero
+    pairs, but those zeros are false (build-time modules such as cells_passive, receptors and structure_rules write
+    nothing at run time; reads of ctx.v and ctx.ca are not traced; touch and stretch drive nothing at rest). Closed so
+    that no zero is false (every module with numbers writes the membrane, the membrane drives the body, the body feeds
+    every ctx.obs reader), **0.74 % of pairs are zero** (35 of 4,706: the 2 GCaMP readout numbers on the 11 signs
+    that do not read GCaMP, and the NeuroPAL number on all 13). In the closed-loop worm the graph localises almost
+    nothing, so rho_graph is kept only for the readout split.
   - rho_corr (`eki.corr_rho`): keep a pair only where |corr| > 3 / sqrt(J), 0.265 at J = 128 (derived), recomputed each
-    iteration. This does most of the work if the graph is dense.
+    iteration. With the graph this dense (measured above), it does all of the work. It is a statistical cut, not a
+    structural one, so the twin test of refinement 5 must run with it on.
   - Tested: a parameter no observation can see keeps its prior draws exactly; without localisation it collapses.
 - **Seed agreement** (part of convergence): for every data-informed coordinate (posterior SD below half the prior SD
   in z), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
