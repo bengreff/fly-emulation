@@ -59,7 +59,9 @@ Band = mean +- 2 SD unless a range is given. SD derived from SEM as SEM x sqrt(n
 | bwm_rest_mV | median over the 95 BWM somata of each one's median V | both | -25.0 +- 1.0 mV SEM, n = 27 (dissected) | -35.4 to -14.6 mV | measured (SD derived) | Gao & Zhen 2011 PNAS 108:2557, PMC3038695 |
 | bwm_spike_hz | upward crossings of -10 mV per firing muscle per s | both | 0.73 +- 0.14 Hz SEM, n not attached (27 assumed) | 0 to 2.19 Hz | measured (SD derived, n inferred) | Gao & Zhen 2011 (threshold about -10 mV; about 80% of preparations fire) |
 
-Also reported, not scored: intestinal Ca peaks and their period (> 0.3 uM, >= 10 s apart, wtriage's readout), the
+Also reported, not scored: intestinal Ca peaks and their period (> 0.3 uM, >= 10 s apart, on the mean of int9L and
+int9R, the pacemaker ring, as wbody2's `dmp_trace.py`; until 8 Nov 23:06 the max over all 20 cells, which peaks
+whenever any ring peaks), the
 BWM fraction firing, the neuron fraction above -20 mV, the median neuron voltage, mean |curvature|.
 
 Not reachable through free sources (agent search, 8 Nov): Raizen, Lee & Avery 1995 pumping, Thomas 1990 defecation
@@ -113,6 +115,13 @@ traces, after the 5 s settle): per-neuron V range (P95 - P5) median 2.5 / 2.4 mV
 none above 20 mV; no neuron's GCaMP range above 0.2 dF/F. The brain sits within a few mV of rest, so the PC3 and
 GCaMP misses are a quiet brain, not a readout fault (inferred). Against the first pass (103ece3): AWA rest moved from
 -53.1 to -58.5 mV (the AWA Kir merge), toward the bar but still 7.4 mV short of it.
+
+Intestinal Ca, re-read from the stored f8e7699 traces after the int9 fix (8 Nov 23:06, measured, no new run): the
+old max-over-cells readout's 16.8 s was the artefact the Director flagged (10 peaks from different rings). The
+int9L/R mean peaks 4 times, intervals 52.1, 49.8, 49.0 s (mean 50.3 s), in both conditions, inside the published
+39-51 s. The scored sign is unchanged (expulsion to expulsion, as registered): still 0 expulsions. So the intestinal
+clock runs near the right period and the step from int9 Ca to the expulsion never fires (inferred; the DMP motor chain
+is wbody2's, reported to them).
 
 
 ## Limitations

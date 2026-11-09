@@ -42,7 +42,8 @@ def synthetic(seconds=60.0, pump_hz=3.0, dmp_s=50.0, bwm_hz=0.5, eggs=(), seed=0
         eg[np.searchsorted(t, x)] += 1
     ic = np.full((n, 20), 0.1)
     for x in np.arange(dmp_s / 2, seconds, dmp_s):
-        ic[:, 9] += 0.8 * np.exp(-((t - x + 3.0) / 1.0) ** 2)
+        ic[:, 18:20] += 0.8 * np.exp(-((t - x + 3.0) / 1.0) ** 2)[:, None]      # int9L, int9R (the pacemaker)
+        ic[:, 9] += 0.8 * np.exp(-((t - x + 20.0) / 1.0) ** 2)                 # int4R peaking apart: must not count
     return {"t_ms": 1000.0 * t, "cells": cells, "v_mV": v, "ca_uM": ca, "gcamp_dff": gc, "pumps": pumps,
             "expulsions": ex, "eggs_laid": eg, "out:intestine_ca_uM": ic}
 

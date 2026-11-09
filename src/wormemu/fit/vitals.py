@@ -292,7 +292,9 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     iv = np.diff(ex)
     out["dmp_period_s"] = float(np.mean(iv)) if len(iv) >= DMP_MIN_INTERVALS else None
     ic = np.asarray(res["out:intestine_ca_uM"] if res.get("out:intestine_ca_uM") is not None else [np.nan], float)
-    icm = ic.max(axis=1) if ic.ndim == 2 else ic
+    # int9L and int9R, the pacemaker ring (wbody2's dmp_trace.py): a max over the 20 cells peaks whenever any ring
+    # peaks (Director, 8 Nov 21:55; isolated intestine, max-over-cells intervals 12-60 s, int9L 49-60 s)
+    icm = ic[:, int9_columns()].mean(axis=1) if ic.ndim == 2 else ic
     pk = peaks(t, icm, CA_PEAK_UM, CA_PEAK_GAP_S)
     out["int_ca_peaks_s"] = pk
     out["int_ca_period_s"] = float(np.mean(np.diff(pk))) if len(pk) > 1 else None
@@ -315,6 +317,11 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     if post is not None and np.ndim(post) == 2:
         out["curvature_abs_mean_per_mm"] = float(np.mean(np.abs(np.asarray(post, float)[w])))
     return out
+
+
+def int9_columns() -> list[int]:
+    from wormemu.mech.organs_intestine import INT_CELLS
+    return [INT_CELLS.index(n) for n in ("int9L", "int9R")]
 
 
 def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> dict:
