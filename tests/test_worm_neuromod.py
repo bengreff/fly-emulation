@@ -86,3 +86,46 @@ def test_unit_checks():
         assert res[k]["passed"], (k, res[k])
     w = res["ris_self_limit"]                              # reported; the feedback itself is asserted
     assert w["with"]["flp11_head_nM_end"] < w["without"]["flp11_head_nM_end"] and w["with"]["ris_gi"] > 0.1
+
+
+SITE = '''
+import json, sys, numpy as np
+from wormemu import mech
+cells, toggles = json.loads(sys.argv[1]), json.loads(sys.argv[2])
+mech.REGISTRY[:] = ["receptors", "neuromod"]
+from wormemu.brain import Brain
+b = Brain(toggles=toggles, cells=cells)
+nm = next(m for m in b.mechs if type(m).__module__ == "wormemu.mech.neuromod")
+b.reset()
+b.extra_pA[b.idx[cells[0]]] = 30.0
+V = [b.step().v_mV for k in range(200)]
+print(json.dumps(dict(W=nm.pep_W.tolist(), Wa=nm.ma_W.tolist(), comp=nm.pep_comp.tolist(), V=np.array(V).tolist(),
+                 names=list(b.cell_names))))
+'''
+
+
+def _site(cells, site):
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    tg = dict(peptides="compartments", monoamines="compartments", neuromod_site=site)
+    r = subprocess.run([sys.executable, "-c", SITE, json.dumps(cells), json.dumps(tg)], capture_output=True, text=True,
+                       env=env, cwd=ROOT, timeout=600)
+    assert r.returncode == 0, r.stderr[-2000:]
+    return json.loads(r.stdout.strip().splitlines()[-1])
+
+
+def test_site_weights():
+    """neuromod_site: the soma form is one-hot on the soma's compartment; the membrane form's rows are area shares
+    (sum 1); a brain whose cells each lie inside one compartment is the same under both (limit test)."""
+    cells = ["AVL", "DVB", "ASHL", "CEPDL", "RIML", "ADFL"]
+    soma, memb = _site(cells, "soma"), _site(cells, "membrane")
+    Ws, Wm = np.array(soma["W"]), np.array(memb["W"])
+    assert (Ws == np.eye(4)[soma["comp"]]).all() and (np.array(soma["Wa"]) == Ws).all()
+    assert np.allclose(Wm.sum(1), 1.0) and (Wm >= 0).all() and np.allclose(memb["Wa"], Wm)
+    names = memb["names"]                                          # the brain's own cell order
+    avl, dvb = names.index("AVL"), names.index("DVB")
+    assert soma["comp"][avl] == 0 and Wm[avl, 0] < 0.5              # AVL: head soma, most membrane behind it
+    assert soma["comp"][dvb] == 3 and Wm[dvb, 2] > 0.5              # DVB: tail soma, most membrane in the body
+    head = [c for c in cells if c not in ("AVL", "DVB")]
+    assert all(Wm[names.index(c), 0] == 1.0 for c in head)
+    a, b = _site(head, "soma"), _site(head, "membrane")
+    assert np.array_equal(np.array(a["V"]), np.array(b["V"]))

@@ -10,9 +10,17 @@ Pseudocoelom. Four named compartments along the body (COMPARTMENTS), cut at land
 pc_cross_section_um2 (guessed). Neighbours exchange by diffusion through the shared cross-section A:
 dN_k/dt = A D (c_j - c_k) / d_kj, d_kj the distance between compartment centres, so total molecules are conserved;
 D is the molecular diffusion coefficient plus pc_stirring_um2_per_s (body movement stirring the fluid; template 0).
-The linear exchange is integrated exactly (matrix exponential). Each cell releases into and reads the compartment of
-its soma (validity: a cell's processes elsewhere, e.g. along the ventral cord, count at its soma). Concentration
-(nM) = molecules / (602.214 x volume in pL).
+The linear exchange is integrated exactly (matrix exponential). Concentration (nM) = molecules / (602.214 x volume
+in pL). Site (toggle neuromod_site): `membrane` (default) reads each receptor, transporter and extrasynaptic channel
+as the area-weighted mean over the compartments the cell's membrane lies in (BAAIWorm's 3D segments; uniform density
+over the membrane, inferred); `soma` (nested) reads everything in the soma's compartment. Release stays in the
+soma's compartment in both. Why (wneuro, 8 Nov 2026, item 1c): the soma rule's validity is a cell whose membrane lies
+in one compartment; AVL's soma is in the head but 79% of its membrane is behind it, DVB's soma is in the tail but 71%
+of its membrane is in the posterior body (measured, scripts/worm/wneuro/geom.py), and Wang et al. 2013 (PMC3651789)
+record the NLP-40 Ca response in DVB's synaptic region. Release is not split by area because no per-cell release-site
+source is in hand and area misplaces the known case: 65% of HSN's membrane is in the anterior body (its ventral cord
+axon) while its 5-HT acts on the vulval muscles, and BAAIWorm's placed presynaptic sites for HSNL are all in the head
+(23 of 23; measured, geom.py). A cell without 3D segments (the unit checks' stand-in brain) uses its soma.
 
 Peptides (row 9). Dense-core vesicle release through UNC-31/CAPS (Speese et al. 2007 J Neurosci 27:6150; UNC-31 taken
 as pan-neuronal, so no expression gate): a slow drive q' = (sigmoid((V - dcv_vhalf)/dcv_k) - q)/dcv_tau, times
@@ -44,7 +52,10 @@ G = 0):
              et al. 2006 Genetics 173:111); multiplies the cell's synapses (wsyn relgain), its DCV and amine release
   dens_nca   1 + bq Gq (Gq-TRIO-RHO-1 raises the NCA leak; Topalidou et al. 2017 Genetics 206:1231)
   dens_irk   1 + bi Gi (G beta-gamma opening an inward rectifier, by homology to GIRK)
-  dens_egl19 1 + bs Gs (PKA raising L-type Ca current, by homology)
+  dens_egl19 1 + bs Gs (Gs-PKA raises Ca influx through EGL-19)
+  dens_unc2  1 + bu Gs (and through UNC-2): "the voltage-gated calcium channels UNC-2 and EGL-19, but not CCA-1
+             function downstream of PKA" in DVB (Wang and Sieburth 2013 PLoS Genet 9:e1003831, opened 8 Nov 2026).
+             Toggle gs_ca_channels: egl19_unc2 (default) / egl19 (nested: EGL-19 only, the earlier form)
 The gains are guessed; which family moves which effector, and which way, is from the genetics cited.
 
 Sleep (row 28) runs through the same machinery: RIS releases FLP-11 (CeNGEN), read by DMSR-1 (Gi/o) on its targets and
@@ -78,8 +89,14 @@ MECHANISMS = [
      "EC50 pair, GPCR -> Gq/Gi/Gs -> release, NCA, IRK, EGL-19", "neuromodulation", "compartments"),
     ("monoamines", "Monoamines (5-HT, DA, OA, TA): stores, release, MOD-5/DAT-1 reuptake, GPCRs -> G proteins, "
      "MOD-1/LGC-55/LGC-53 outside synapses; the same compartments", "neuromodulation", "compartments"),
+    ("neuromod_site", "Where a cell reads peptides and amines (receptors, transporters): over its membrane by area per "
+     "compartment (nested: its soma's compartment); release stays at the soma", "neuromodulation", "membrane"),
+    ("gs_ca_channels", "Gs-PKA raises EGL-19 and UNC-2 densities (Wang and Sieburth 2013; nested: EGL-19 only)",
+     "neuromodulation", "egl19_unc2"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
+SITES = ("membrane", "soma")
+GS_CA = ("egl19_unc2", "egl19")
 COMPARTMENTS = ("head", "anterior_body", "posterior_body", "tail")
 AMINES = ("serotonin", "dopamine", "octopamine", "tyramine")
 TRANSPORTERS = {"serotonin": "mod-5", "dopamine": "dat-1"}
@@ -223,7 +240,9 @@ for sid, t, hi, what in (("release_gq_gain", 1.0, 3.0, "Gq raises release (DAG, 
                          ("release_gi_gain", 1.0, 3.0, "Go/i lowers release (DGK-1)"),
                          ("nca_gq_gain", 1.0, 4.0, "Gq raises the NCA leak density"),
                          ("irk_gi_gain", 1.0, 4.0, "Gi/o raises the IRK density"),
-                         ("egl19_gs_gain", 0.5, 2.0, "Gs raises the EGL-19 density")):
+                         ("egl19_gs_gain", 0.5, 2.0, "Gs raises the EGL-19 density"),
+                         ("unc2_gs_gain", 0.5, 2.0, "Gs raises the UNC-2 density (Wang and Sieburth 2013: UNC-2 and "
+                          "EGL-19 act downstream of PKA in DVB)")):
     SPECS.append(S(sid, P, "1 per unit G", t, 0.0, hi, notes=what + "; the direction is from the genetics in the "
                    "module docstring, the size is guessed", grain="class", applies_to=BOTH))
 for (pg, rg), (t, lo, hi, k) in PAIRS.items():
@@ -244,8 +263,12 @@ SPECS += [
       "and CAT-1 loading)", grain="class"),
     S("ma_uptake_vmax_per_s", A, "molecules/s per cell", 2e5, 1e4, 1e7, grain="class",
       applies_to="MOD-5 and DAT-1 cells"),
-    S("mod5_km_nM", A, "nM", 500, 100, 2000, "human SERT Km 0.3-1 uM (homology); Ranganathan et al. 2001 J Neurosci "
-      "21:5871 would pin MOD-5's", "inferred", applies_to="MOD-5 (SERT) cells"),
+    S("mod5_km_nM", A, "nM", 150, 142, 630, "Ranganathan et al. 2001 J Neurosci 21:5871 (PMC6763176, Fig. 4C, opened 8 "
+      "Nov 2026): 'Km, 150 +- 8 nm' (mean +- SEM) for MOD-5 in HEK293 cells, [3H]5-HT uptake at 37 C", "measured",
+      applies_to="MOD-5 (SERT) cells", notes="the ledger's row (catalog audit 6 Nov): bounds from 150 - 8 nM to the "
+      "top of the other SERTs the paper lists (280-630 nM); the code said 500 nM inferred until 8 Nov. The paper's "
+      "Vmax (8.31e-9 nmol per cell per min) is per HEK cell and 'cannot be compared' across expression levels, so "
+      "ma_uptake_vmax_per_s stays guessed"),
     S("dat1_km_nM", A, "nM", 1200, 500, 3000, "Jayanthi et al. 1998 Mol Pharmacol 54:601 (DAT-1 in transfected cells)",
       "measured", applies_to="DAT-1 cells"),
     S("ma_extrasyn_channels", A, "channels per cell", 200, 10, 2000, notes="MOD-1, LGC-55 or LGC-53 channels outside "
@@ -301,6 +324,10 @@ class Mech:
         self.p = p = params
         self.brain = brain
         self.form = {k: form(toggles.get(k, "off")) for k in (P, A)}
+        self.site = toggles.get("neuromod_site", "membrane")
+        self.gs_ca = toggles.get("gs_ca_channels", "egl19_unc2")
+        assert self.site in SITES, f"neuromod_site {self.site!r} not one of {SITES}"
+        assert self.gs_ca in GS_CA, f"gs_ca_channels {self.gs_ca!r} not one of {GS_CA}"
         st = brain.st
         names, musc = list(brain.cell_names), np.asarray(brain.is_muscle, bool)
         n = self.n = len(names)
@@ -328,7 +355,8 @@ class Mech:
             tpm = np.array([[expr(g, c) if self.neuron[c] else 0.0 for g in PRECURSORS] for c in range(n)])
             tot = tpm.sum(1, keepdims=True)
             self.pep_share = np.divide(tpm, tot, out=np.zeros_like(tpm), where=tot > 0)
-            self.pep_onehot = np.eye(self.pep.N.shape[1])[self.pep_comp]
+            self.pep_Wr = np.eye(self.pep.N.shape[1])[self.pep_comp]          # release: the soma's compartment
+            self.pep_W = self._site_weights(self.pep_comp, self.pep.N.shape[1])   # reading
             li = {g: k for k, g in enumerate(PRECURSORS)}
             for (pg, rg) in PAIRS:
                 for c in range(n):
@@ -338,7 +366,8 @@ class Mech:
             self.ma_comp, self.ma = self._pool(self.form[A] == "well_mixed", len(AMINES), p["ma_diffusion_um2_per_s"])
             self.ma_rel = np.array([[float(self.neuron[c] and lg in (st.transmitter.get(names[c]) or set()))
                                      for lg in AMINES] for c in range(n)])
-            self.ma_onehot = np.eye(self.ma.N.shape[1])[self.ma_comp]
+            self.ma_Wr = np.eye(self.ma.N.shape[1])[self.ma_comp]
+            self.ma_W = self._site_weights(self.ma_comp, self.ma.N.shape[1])
             self.uptake = {}                               # amine row: (cells, Km nM)
             for lg, gene in TRANSPORTERS.items():
                 cells = np.array([c for c in range(n) if self.neuron[c] and expr(gene, c) > 0], int)
@@ -373,11 +402,41 @@ class Mech:
         self.e_ec50 = np.array([x[2] for x in e], float)
         self.e_w = np.array([x[3] for x in e], float).reshape(-1, 3)
         self.e_pep = np.array([x[4] == P for x in e], bool)
+        if self.on[P]:
+            self.e_Wp = self.pep_W[self.e_cell[self.e_pep]]
+        if self.on[A]:
+            self.e_Wa = self.ma_W[self.e_cell[~self.e_pep]]
         self.reset()
 
     def _w(self, rg):
         f = GPCR_COUPLING[rg][0]
         return FAMILY.get(f, (self.p["gpcr_unknown_share"],) * 3)
+
+    def _site_weights(self, comp, m):
+        """(cells, compartments): each cell's share of its reading in each compartment. Soma form, one compartment,
+        or no 3D segments: the soma's compartment. Membrane form: segment area per compartment."""
+        W = np.eye(m)[comp]
+        segs = getattr(self.brain, "segs", None)
+        if self.site == "soma" or m == 1 or not segs:
+            return W
+        e = self.edges
+        for c in np.flatnonzero(self.neuron):
+            if not segs[c]:
+                continue
+            y = np.array([xyz[1] for _, xyz in segs[c]], float)
+            a = np.array([seg.area() for seg, _ in segs[c]], float)
+            k = np.clip(np.searchsorted(e, y, side="right") - 1, 0, m - 1)
+            w = np.bincount(k, a, minlength=m)
+            if w.sum() > 0:
+                W[c] = w / w.sum()
+        return W
+
+    def cell_nM(self, kind, ligand, cell):
+        """The concentration cell `cell` reads (nM, area-weighted over its compartments): kind P (ligand a
+        precursor gene) or A (an amine)."""
+        if kind == P:
+            return float(self.pep_W[cell] @ self.pep.nM()[PRECURSORS.index(ligand)])
+        return float(self.ma_W[cell] @ self.ma.nM()[AMINES.index(ligand)])
 
     def _pool(self, one, n_lig, D):
         e = self.edges[[0, -1]] if one else self.edges
@@ -441,7 +500,7 @@ class Mech:
             u = _sig((v - p["dcv_vhalf_mV"]) / p["dcv_k_mV"]) * self.neuron
             self.q_pep += (u - self.q_pep) * (1.0 - np.exp(-dt_ms / p["dcv_tau_ms"]))
             rate = p["dcv_rate_per_s"] * p["dcv_peptides_per_vesicle"] * self.q_pep * R
-            src = (self.pep_share * rate[:, None]).T @ self.pep_onehot
+            src = (self.pep_share * rate[:, None]).T @ self.pep_Wr
             ext = 0.0
             for key, x in (ctx.outputs.get("peptide_release") or {}).items():
                 g, _, cp = key.partition("@")
@@ -458,7 +517,7 @@ class Mech:
             pool.mix(dt)
             c = pool.nM()
             m = self.e_pep
-            occ[m] = _hill(c[self.e_lig[m], self.pep_comp[self.e_cell[m]]], self.e_ec50[m], h)
+            occ[m] = (_hill(c[self.e_lig[m]], self.e_ec50[m][:, None], h) * self.e_Wp).sum(1)
             out.update(pep_release_molecules_per_s=float(rate.sum()), pep_external_molecules_per_s=float(ext),
                        pep_total_molecules=float(pool.N.sum()), pep_max_nM=float(c.max()),
                        pep_n_receptor_sites=int(m.sum()))
@@ -482,16 +541,15 @@ class Mech:
             for row, (cells, km) in self.uptake.items():
                 if not len(cells):
                     continue
-                comp = self.ma_comp[cells]
-                U = p["ma_uptake_vmax_per_s"] * c[row, comp] / (km + c[row, comp])
-                tot = np.bincount(comp, U, minlength=pool.N.shape[1])
+                U = p["ma_uptake_vmax_per_s"] * self.ma_W[cells] * (c[row] / (km + c[row]))[None, :]
+                tot = U.sum(0)
                 scale = np.minimum(1.0, np.divide(pool.N[row], tot * dt, out=np.ones_like(tot), where=tot > 0))
-                U = U * scale[comp]
-                sink[row] = np.bincount(comp, U, minlength=pool.N.shape[1])
-                back[cells, row] = U
+                U = U * scale[None, :]
+                sink[row] = U.sum(0)
+                back[cells, row] = U.sum(1)
             self.store = np.clip(self.store + dt * ((1.0 - self.store) / p["ma_synth_tau_s"] - J / cap
                                                     + back * self.ma_rel / cap), 0.0, 1.0) * self.ma_rel
-            pool.N = np.maximum(pool.N + (J.T @ self.ma_onehot - sink) * dt, 0.0) * np.exp(-dt / p["ma_degrade_tau_s"])
+            pool.N = np.maximum(pool.N + (J.T @ self.ma_Wr - sink) * dt, 0.0) * np.exp(-dt / p["ma_degrade_tau_s"])
             pool.mix(dt)
             c = pool.nM()
             bath = ctx.outputs.get("bath_amine_nM")        # mech/drugs: exogenous amine, uniform along the body
@@ -503,10 +561,11 @@ class Mech:
                 for lg, x in glia5.items():
                     c[AMINES.index(lg), 0] += x
             m = ~self.e_pep
-            occ[m] = _hill(c[self.e_lig[m], self.ma_comp[self.e_cell[m]]], self.e_ec50[m], h)
+            occ[m] = (_hill(c[self.e_lig[m]], self.e_ec50[m][:, None], h) * self.e_Wa).sum(1)
             for k, (row, cells, ec50, hh, erev, gam) in enumerate(self.extrasyn):
                 if len(cells):
-                    g_nS = p["ma_extrasyn_channels"] * gam * 1e-3 * _hill(c[row, self.ma_comp[cells]], ec50, hh)
+                    occ_x = self.ma_W[cells] @ _hill(c[row], ec50, hh)
+                    g_nS = p["ma_extrasyn_channels"] * gam * 1e-3 * occ_x
                     if self.wgc is None:
                         I[cells] += g_nS * (erev - v[cells])                      # nS x mV = pA
                     else:
@@ -528,6 +587,8 @@ class Mech:
                    release_factor_min=float(R[nr].min()), release_factor_max=float(R[nr].max()))
         if "RIS" in self.names:
             out["ris_gi"] = float(G[self.names.index("RIS"), 1])
-        return {"I_pA": I, "out": {"neuromod": out},
-                "g_scale": {"release": self.release_factor(), "dens_nca": 1 + p["nca_gq_gain"] * G[:, 0],
-                            "dens_irk": 1 + p["irk_gi_gain"] * G[:, 1], "dens_egl19": 1 + p["egl19_gs_gain"] * G[:, 2]}}
+        gs = {"release": self.release_factor(), "dens_nca": 1 + p["nca_gq_gain"] * G[:, 0],
+              "dens_irk": 1 + p["irk_gi_gain"] * G[:, 1], "dens_egl19": 1 + p["egl19_gs_gain"] * G[:, 2]}
+        if self.gs_ca == "egl19_unc2":
+            gs["dens_unc2"] = 1 + p["unc2_gs_gain"] * G[:, 2]
+        return {"I_pA": I, "out": {"neuromod": out}, "g_scale": gs}
