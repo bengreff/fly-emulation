@@ -259,3 +259,11 @@ Nothing on Windows or the throttle was changed.
   overlap (Frontiers 776-1157 kPa vs Backholm 50-170), so C stays for the template; the fit runs both ways
   (body_layers frontiers2024 / backholm2013). Found: the mesh quadrature misses the outer layers (4.6 % vs 38.5 % of
   the bending weight), A, mine, open.
+- 8 Nov 22:21 (wbody2, line 4, E done + A found): check_glia's bars re-cited from opened sources (ceiling 10.2 mM
+  absolute, Heinemann & Lux 1977 abstract; tau 3.4-4.0 s and null >= 1.24x, Sibille et al. 2015 Fig. 4B, F, simulated
+  mouse [K+]o; sides dropped, no source, replaced by tests/test_worm_glia_sides.py). No C. elegans K+ measurement
+  exists (Ray et al. 2024 Cell Rep, PMC11296322). Defaults: ceiling pass, tau 1.25 s and null 1.11x fail (measured).
+  Cause: glia.py's rest reference v0 (first 1 s) lets the drifting network make a steady false K+ sink, 0.36 mM below
+  the bath by 24 s (A, wbody2, open); the post-release undershoot to -66.7 mV speeds the fall. D not decidable until
+  the A is fixed. wtriage's 64 points under the new bars: 0 pass (from-bath taus).
+
