@@ -257,6 +257,12 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   change nothing. Every gap range at its floor still leaves 0.58-0.67 GOhm, so no value inside the ranges passes (not
   D) and it is not a units or placement error (not A). Requests to weki (held-out R_in for the shared gap scale) and
   wbody2 (hypodermis gaps). Detail: docs/worm/night/2026-11-08_wbrain2.md, "Item 8".
+- Line 21 (wbrain2, E): the viewer's statuses now come from the audit. `viewer/worm/build_mechanisms_summary.py`
+  files each entry under its row's main category (the first bold category of the Category cell, as the audit's
+  Counts table does) and names a split row's other parts under its title; the plain-English text stays
+  hand-written. Viewer 8 full of 28 -> 13 (measured), equal to the audit over rows 1-28 (the script asserts it);
+  rows 4, 6, 14, 19, 24 full with parts named; render viewed in headless Chrome. Rerun the script after any audit
+  change. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 21".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.

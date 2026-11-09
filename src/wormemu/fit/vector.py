@@ -14,13 +14,14 @@ noise, fixed per experiment). Prior draws take the vector's numbers from
 sample_worm(s), which draws each from its ledger prior in natural units (uniform or log-uniform on [bio_min, bio_max]),
 and map them to z; a draw is checked as the member it builds (template base plus its numbers), not as sample_worm(s).
 
-The forward runs each battery condition as `python -m wormemu.fit.vitals run COND SECONDS DIR --theta=FILE` in its
-own process (NEURON keeps every cell it builds). Its noise is the template's (seed None) for every iteration until
-datamodel.Experiment carries a noise seed apart from the worm seed (requested 8 Nov 22:25): a deviation from section 7's
-one noise seed per experiment per iteration, recorded there.
+The forward runs each battery condition as `python -m wormemu.fit.vitals run COND SECONDS DIR --theta=FILE
+--noise-seed=N` in its own process (NEURON keeps every cell it builds). N = noise_seed("battery_" + COND, k): one noise
+seed per experiment per iteration, shared by every member (section 7's common random numbers), through wbrain2's
+Experiment.noise_seed (main 1d1206b, 9 Nov). k None keeps the template's noise (the worm seed's, as before).
 """
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -131,10 +132,18 @@ def targets(ids=BATTERY_IDS, conds=CONDS):
     return names, y, sig
 
 
+def noise_seed(exp_id: str, k) -> int | None:
+    """The run's noise seed for experiment exp_id at iteration k (section 7): a stable hash (Python's hash() of a str
+    changes per process), in [1, 2**31 - 1] so it never meets the template's 0. None for k None."""
+    if k is None:
+        return None
+    return int(hashlib.sha256(f"{exp_id}/{int(k)}".encode()).hexdigest()[:8], 16) % (2 ** 31 - 2) + 1
+
+
 def battery_forward(z, k, obs, seconds: float = 200.0, ids=BATTERY_IDS, conds=CONDS, workdir=None, python=None):
     """One member's battery (FIT_GENERAL section 3): each condition a fresh `vitals run` process on the member's worm.
     Returns (g, ok): g the observations `obs` (indices into targets(); None = all), NaN where a sign is not produced;
-    ok False if any run is unphysical or fails. k (the iteration) does not reach the noise yet (module docstring)."""
+    ok False if any run is unphysical or fails. k (the iteration) sets each condition's noise seed (noise_seed)."""
     from wormemu.fit import vitals
     v = _vector()
     py = python or sys.executable
@@ -144,8 +153,10 @@ def battery_forward(z, k, obs, seconds: float = 200.0, ids=BATTERY_IDS, conds=CO
         (d / "theta.json").write_text(json.dumps(v.theta(z)))
         results, ok = {}, True
         for c in conds:
-            p = subprocess.run([py, "-m", "wormemu.fit.vitals", "run", c, str(seconds), str(d), f"--theta={d / 'theta.json'}"],
-                               env=env, capture_output=True, text=True)
+            ns = noise_seed(f"battery_{c}", k)
+            cmd = [py, "-m", "wormemu.fit.vitals", "run", c, str(seconds), str(d), f"--theta={d / 'theta.json'}"]
+            p = subprocess.run(cmd + ([] if ns is None else [f"--noise-seed={ns}"]), env=env, capture_output=True,
+                               text=True)
             f = d / f"{c}.json"
             if p.returncode != 0 or not f.exists():
                 ok, results[c] = False, {}

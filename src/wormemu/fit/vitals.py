@@ -28,7 +28,8 @@ Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
 Activity (the fraction of neurons above -20 mV) is reported with no bar: none is published (DEBUG_TRIAGE line 18).
 
 Usage:
-    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N] [--theta=FILE.json]   COND food | nofood
+    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N] [--noise-seed=N] [--theta=FILE.json]
+                                                                         COND food | nofood; noise seed None = seed
     python -m wormemu.fit.vitals table OUTDIR [OUTDIR ...]               the markdown table of every COND.json
 """
 from __future__ import annotations
@@ -168,7 +169,7 @@ def set_range(sid, **kw):
 
 
 # --- the experiment -------------------------------------------------------------------------------------------------
-def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None):
+def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None, noise_seed=None):
     from wormemu.datamodel import Experiment
     if cond not in PLATES:
         raise ValueError(f"{cond}: one of {sorted(PLATES)}")
@@ -177,7 +178,7 @@ def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None
     # at their defaults with this condition's food, wtriage's cone scene. The plate starts at temperature_C.
     return Experiment(duration_ms=1000.0 * seconds, body="on", temperature_C=20.0, observe=OBSERVE,
                       every_ms=EXCHANGE_MS, toggles={**BATTERY_TOGGLES, **(toggles or {})}, seed=seed,
-                      body_out=body_out, world=dict(AGAR_FILM), env=dict(PLATES[cond]),
+                      noise_seed=noise_seed, body_out=body_out, world=dict(AGAR_FILM), env=dict(PLATES[cond]),
                       scene={"field": "cone_published"})
 
 
@@ -278,7 +279,9 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     cells = list(res["cells"])
     t = np.asarray(res["t_ms"], float) / 1000.0
     w = t >= SETTLE_S
-    dur = float(t[w][-1] - t[w][0]) if w.sum() > 1 else 0.0
+    if w.sum() < 2:
+        raise ValueError(f"a {bio_s:g} bio-s run leaves no window after the {SETTLE_S:g} s settle; run longer")
+    dur = float(t[w][-1] - t[w][0])
     V = np.asarray(res["v_mV"], float)
     bwm = [k for k, c in enumerate(cells) if c in set(BWM_NAMES)]
     neur = [k for k, c in enumerate(cells) if c not in set(BWM_NAMES)]
@@ -468,14 +471,15 @@ def battery_theta(theta):
     return {**theta, **BATTERY_VALUES}
 
 
-def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> dict:
+def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None, noise_seed=None) -> dict:
     """One battery condition through simulate(); writes OUTDIR/COND.json and the compact traces OUTDIR/COND.npz."""
     from wormemu import datamodel
     from wormemu.brain import sample_worm
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / f"{cond}_body").mkdir(exist_ok=True)              # simulate writes the FEM files under it
-    ex = experiment(cond, seconds, seed=seed, toggles=toggles, body_out=str(outdir / f"{cond}_body"))
+    ex = experiment(cond, seconds, seed=seed, toggles=toggles, body_out=str(outdir / f"{cond}_body"),
+                    noise_seed=noise_seed)
     theta = battery_theta(theta)
     spec = datamodel._theta(sample_worm(seed), theta)
     t0 = time.time()
@@ -484,8 +488,8 @@ def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> di
     bio_s = float(res["t_ms"][-1]) / 1000.0 if len(res["t_ms"]) else 0.0
     r = readouts(res, cond, bio_s)
     given = sorted(set(theta) - set(BATTERY_VALUES))
-    out = {"cond": cond, "seed": seed, "theta": "given" if given else None, "values": dict(BATTERY_VALUES),
-           "toggles": dict(toggles or {}),
+    out = {"cond": cond, "seed": seed, "noise_seed": noise_seed, "theta": "given" if given else None,
+           "values": dict(BATTERY_VALUES), "toggles": dict(toggles or {}),
            "plate": PLATES[cond], "wall_s": wall, "wall_per_bio_s": wall / bio_s if bio_s else None,
            "readouts": r, "physicality": physicality(res, reversal_bounds(spec)), "score": score(r, cond),
            "notes": res.get("notes", [])}
@@ -533,9 +537,10 @@ def _main(argv):
     if argv[0] == "run":
         cond, secs, outdir = argv[1], float(argv[2]), argv[3]
         seed = next((int(a.split("=", 1)[1]) for a in argv[4:] if a.startswith("--seed=")), None)
+        ns = next((int(a.split("=", 1)[1]) for a in argv[4:] if a.startswith("--noise-seed=")), None)
         tf = next((a.split("=", 1)[1] for a in argv[4:] if a.startswith("--theta=")), None)
         theta = json.loads(Path(tf).read_text()) if tf else None          # {id: value} (fit.vector's forward)
-        out = run(theta, cond, secs, outdir, seed=seed)
+        out = run(theta, cond, secs, outdir, seed=seed, noise_seed=ns)
         print(json.dumps({k: out[k] for k in ("cond", "wall_s", "wall_per_bio_s")}), flush=True)
         print(table([out]))
     elif argv[0] == "table":

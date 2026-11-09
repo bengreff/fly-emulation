@@ -788,6 +788,10 @@ FORM_ONLY = {
     "aex2_gain_pA": "read only with nlp40_aex2 = direct (default release_only; mech/organs_intestine.py:465)",
     **{f"obs_{v}_{q}": f"read only with gcamp = {v} (default gcamp6s; mech/observation.py:145)"
        for v in ("gcamp6f", "gcamp7f") for q in ("kd_nM", "hill", "range", "thalf_ms")},
+    # wneuro's near field (merged 58246cf), filed by wbrain2 at the 9 Nov ledger pass: Mech.near_nM returns 0 first
+    **{p: "read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)"
+       for p in ("hsn_vm2_sites", "hsn_vm2_region_um", "hsn_vm2_release_share", "hsn_vm2_site_receptor_um",
+                 "ecs_alpha", "ecs_tortuosity", "syn_half_space")},
 }
 
 

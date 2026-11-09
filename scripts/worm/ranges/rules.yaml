@@ -216,6 +216,12 @@ rules:
   - {re: "^cabulk_pump0_mol_cm2$", hard_row_unit: [0, 3.3e-12], basis: physics, why: "pump sites per membrane area: at most the densest membrane-protein packing, 2e4 per um2 = 3.3e-12 mol/cm2 (cadifpmp's 3e-14 is 181 per um2)", source: "[HB 1]"}
   # body/layers (wbody2's stiffness rule, merged 8718898; rule added by wbrain2 so the build runs, for wbody2 to review)
   - {re: "^rule_body_modulus_scale$", cls: gain_nonneg}
+  # mech/neuromod amine near field (wneuro's Specs, merged 58246cf; rules added by wbrain2 so the build runs, 9 Nov
+  # 2026, for wneuro to review)
+  - {re: "^hsn_vm2_sites$", cls: count_nonneg}
+  - {re: "^ecs_alpha$", cls: fraction}
+  - {re: "^ecs_tortuosity$", hard_row_unit: [1, 10], basis: guessed_physical, why: "lambda = sqrt(D / D*): >= 1 by definition (obstacles cannot speed diffusion); 10 (D* a hundredth of D) is a guessed edge far above the 1.4-2.2 the Spec's notes relay for brain tissue", source: "definition"}
+  - {re: "^syn_half_space$", hard_row_unit: [1, 8], basis: physics, why: "method of images for a point source by reflecting walls: 1 in open volume, 2 on one plane, 4 in a right-angle edge, 8 in a corner of three planes", source: "definition"}
   # mech/cell_models (wbrain2, 9 Nov 2026): Jiang et al. 2022's AVL model (nmodl/cells/jiang22_avl.mod), AVL and the DVB borrow
   - {re: "^j22_v_K$", cls: reversal_K}
   - {re: "^j22_v_Ca$", cls: reversal_Ca}
@@ -510,6 +516,8 @@ span_reasons:
   - {re: "^(rec_.*_gamma_pS|chnoise_.*_pS)$", why: "unitary conductances across the channel family span 5-90 pS [HB 2]"}
   - {re: "^rec_tmax_", why: "cleft peak concentration: 0.1-5 mM for fast transmitters at vertebrate synapses, lower for graded and monoamine release; not measured in the worm"}
   - {re: "^rec_.*_ss_frac$", why: "steady-state fraction after desensitisation: not retrieved; 1-50% across receptors"}
+  - {re: "^ecs_alpha$", why: "no nematode value; the Spec's span runs from the cephalopod brain's 0.09 (relayed in its notes) to open fluid (1)"}
+  - {re: "^hsn_vm2_site_receptor_um$", why: "release site to receptor on vm2 not measured; the Spec's span runs from a generic 20 nm cleft to 1 um, above the 0.5-0.83 um site spacing (its notes)"}
   - {re: "^rec_mg_mM$", why: "external Mg2+: not measured in worm body fluid; salines hold 1-5 mM, NGM 1 mM"}
   - {re: "^(stp_|hab_beta)", why: "short-term plasticity constants: tens to hundreds of ms in Dittman et al. 2000; worm NMJ trains (Liu et al. 2009) constrain the ACh grain only"}
   - {re: "^(gq|gi|gs)_tau_ms$|^sens_trpv_tauG_ms$|^obs_opto_tau_o(n|ff)_ms$", why: "G-protein and opsin cascades: 100 ms to several s (PORT_SOURCES N4)"}
