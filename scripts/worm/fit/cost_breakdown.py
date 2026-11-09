@@ -1,6 +1,7 @@
 """Where the battery's wall time goes (FIT_GENERAL section 10's cost table): one short food run under cProfile.
 
-Usage: cost_breakdown.py SECONDS OUTDIR
+Usage: cost_breakdown.py SECONDS OUTDIR [SEED]   (SEED: a sample_worm draw, as the prior predictive runs; default the
+template)
 
 Runs the battery's food condition (vitals.experiment, body on) for SECONDS bio-s and prints the wall per bio-s and
 the cumulative time in: the brain's exchange step (Brain.step), NEURON's integration inside it (fadvance /
@@ -15,9 +16,10 @@ from wormemu import datamodel
 from wormemu.fit import vitals
 
 seconds, outdir = float(sys.argv[1]), Path(sys.argv[2])
+seed = int(sys.argv[3]) if len(sys.argv) > 3 else None
 outdir.mkdir(parents=True, exist_ok=True)
 (outdir / "food_body").mkdir(exist_ok=True)
-ex = vitals.experiment("food", seconds, body_out=str(outdir / "food_body"))
+ex = vitals.experiment("food", seconds, seed=seed, body_out=str(outdir / "food_body"))
 theta = vitals.battery_theta({})
 pr = cProfile.Profile()
 t0 = time.time()

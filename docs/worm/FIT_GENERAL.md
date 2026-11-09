@@ -299,6 +299,14 @@ about 1.4 s per bio-s (derived by difference). The brain is 48,356 NEURON segmen
 channels on the 397 somas only (the rest `pas`), at dt 0.5 ms: 5.3 ms per step, 0.11 us per segment-step (derived).
 The segment count is BAAIWorm's 2 um rule (`brain._segments`), which also indexes its synapse table.
 
+**The machine under load (backhouse, f8e7699 prior predictive, 3 at once, measured unless marked).** Draws 1-3 (22:23
+to 00:40, beside the egg probe's 16 workers) ran at 38.6-41.1 wall s per bio-s; draws 4-6 (00:40-02:19, load 7-12 of
+28) at 27.2-29.6, and each used about 61 CPU-min for its 200 bio-s (`ps` time sampled each minute to the end), 18
+CPU-s per bio-s, 1.5x the cost run's rate even in CPU time. The draw is not the cause: seed 4 costs the template's
+time over its first 4 bio-s on the Mac (68.7 vs 70.9 s profiled; NEURON 41.2 vs 42.4 s). So slower or shared cores
+under load cost 1.5x in CPU and 2.2-3.3x in wall (inferred), and option B's 12 % slowdown is optimistic by about that
+factor. At the night's measured rate, option A is 400-580 h per base-set iteration, not 175 (derived).
+
 **The options, per iteration (each member 2 x 200 bio-s unless marked; derived from the rates above).**
 
 | Option | One ensemble (J = 128) | Base set (384) | 30 base-set iterations | What it costs |
