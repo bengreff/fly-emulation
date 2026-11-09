@@ -51,7 +51,7 @@ large.
 | 10 | amine levels | whole-worm octopamine 5 +- 2, tyramine 0.3 +- 0.1 pmol/mg (Alkema et al. 2005; snippet only, the free PDF failed to load) | no opened measurement; and whole-worm tissue content is not our free pseudocoelomic nM without a free fraction we do not have. Explained, not run |
 | 17 | dose-response by modality | AWA Ca EC50 to diacetyl 30 nM in one experiment, per-animal EC50s over two orders of magnitude; EGL-19 block (nemadipine) moves it ~100x to 2.5 uM (Larsch et al. 2013 PNAS, PMC3831453, opened) | spec, after the AWA Kir fix: our AWA Ca dose-response (front-end K 1 uM, inferred) vs that spread, with the EGL-19-block shift as the held-out mechanism test |
 | 18 | DAF-7 / CREB | no quantitative fold change found; Myers & Rothman 2012 (PMC3394784, opened) is qualitative | no measurement exists in free sources; nothing to run |
-| 22 | food / salt / temperature fields | thermotaxis plates 17-25 C radially on a 9 cm plate (PMC1449549, opened; 0.9-1.8 C/cm derived, if linear); salt plate 35-95 mM (Kunitomo et al. 2013, snippet only) | read: our 0.5 C/cm (0.1-2.0) and 50 mM background plus a 50 mM plug are consistent. The 0.5 C/cm is labelled measured but cites secondary sources: a label fix |
+| 22 | food / salt / temperature fields | thermotaxis plates 17-25 C radially on a 9 cm plate (PMC1449549, opened; 0.9-1.8 C/cm derived, if linear); salt plate 35-95 mM (Kunitomo et al. 2013, snippet only) | read: our 0.5 C/cm (0.1-2.0) and 50 mM background plus a 50 mM plug are consistent. The 0.5 C/cm is labelled measured but cites secondary sources: a label fix. 9 Nov 02:21 (wbody2): re-sourced to opened methods (Wang et al. 2013 PMC3787776 0.5/1.0/1.5 C/cm linear; Yeon et al. 2023 PMC10542565 0.5 C/cm), range 0.1-2.0 -> 0.18-1.5 (Chen et al. 2024 PMC11603155, 0.18 derived); template unchanged. Mohri 2005's radial plate is a mean 1.78 C/cm over the 4.5 cm radius (derived), not 0.9-1.8 |
 | 23 | GCaMP vs recorded traces | Ding et al. 2023 Table 1 | measured: table row 19 (C) |
 | 25 | Q10 | defecation period temperature-compensated 19-30 C (Liu & Thomas 1994, snippet only: the journal PDF sat behind a bot check) | no opened Q10; spec: open Liu & Thomas 1994 and check our dmp_clock factor (temperature.py) keeps the period within its SD across 19-30 C |
 | 28 | quiescence | nose immobility 48% in wild-type lethargus, < 14% in flp-11 (Turek et al. 2016 eLife, PMC4805538, opened and spot-checked) | not runnable: lethargus is an L4 state and the model is an adult. Goes with Ben's step 2 (development) |
@@ -323,6 +323,56 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   and -60.7 %): pass (measured). The default body is 7.6 % softer in bending. Frontiers 561-1199 kPa vs Backholm 50-170:
   still no overlap (C stays); rule range re-derived 0.0632-1.515; 0.067-0.214 reaches Backholm (D, not adopted).
   Line 9 damping re-run on the fixed body: 16.46 ms vs <= 5.3 (still D).
+- 8-9 Nov 23:52-00:39 (wbody2, items 2, 3, 15). Organ chemical synapses (A, 9a67a6f): the pharynx, enteric and
+  egg-laying synapses from brain neurons were always BAAIWorm's graded synapse, so no wsyn gain reached them; they now
+  take the brain's receptor form and are listed in brain.wsyn (off bit-identical, graded within 3.3e-10 mV; release
+  gains reach them only once the brain builds its synapse gains after the mechanisms: request to wbrain2). NLP-40
+  site (A, 7daea89, wneuro's request): each intestinal ring releases into the neuromod compartment it lies in (was all
+  20 cells next to DVB); total unchanged to 8.9e-16; the tonic part and nlp40_tau_s are D. DMP trace on the merged
+  code (150 s, backhouse): int9 peaks 34.82 / 86.85 / 136.62 s, AVL / DVB max -33.4 / -32.2 mV, 0 expulsions,
+  enteric activation max 0.272 vs the 0.5 detector (measured; unchanged from before the merge). Item 3 chain stays B.
+- 9 Nov 00:30-00:56 (wbody2, item 2 stage 2, MC -> muscle). Ported EAT-2 as the toggle `ph_mc_route` (cook default =
+  Cook's MC -> mc2 synapses; eat2 = those contacts on the pm5 cells each mc2 borders, nicotinic at the ledger NMJ;
+  both). Not adopted: `pharynx_stage2_check.py` (bars written before the port) passes neutral (max dV 0) and muscle
+  alone (400 pA x 40 ms per pm5 cell, 1 pm4 AP per input), fails effect (0 of 10 MC pulses pump; pm5 EPSP 13-17 mV
+  from -65 mV), latency (9.0 ms vs 5.0-8.4, no AP) and the eat-2 null (1.62 mV vs 1 mV, through MC's partner
+  neurons); whole brain 1 of 10 (all measured). No NMJ in range passes: 1 and 2 nS raise the rest to -37 and +4 mV
+  before any pulse. The coupled pharynx rests at -65 mV (measured -73, Steger 2005) because MC's plateau on main
+  (-42 mV, wbrain2: D) and M4 and M2 release onto it all the time; with the old mask (MC at -67.5 mV, a
+  counterfactual) the EPSP is still subthreshold. Stopped and written down: the MC -> muscle strength has no
+  published conductance, so it is a fit after the gate.
+- 9 Nov 01:09-01:42 (wbody2, item 8 / line 4, the glia K+ load port). Ported Sibille et al. 2015 eq. 25 as the
+  toggle `glia_k_load` (leak default | channels: the amphid neurons' gated K+ currents load the ending, E_K follows
+  its K+ on their K+ channels) and `glia_v0_window` (first default | settled, 1-2 s). `glia_port_check.py`: neutral
+  and identity exact; zero-input drift over 20 s 0.316 / 0.038 / 1.03 / 0.223 mM (only leak/settled inside 0.05);
+  check_glia fails in every form (tau 1.24-1.76 s vs 3.4-4.0, null 1.11-1.23x vs 1.24, channels peak 12.4-13 mM vs
+  10.2; all measured). Stopped and written down: the clamped neurons take K+ back after release, so recovery runs
+  2-3x faster than the guessed clearance constants; the passing value is a fit after the gate. Defaults unchanged.
+- 9 Nov 01:47 (wbody2) the vitals battery on 7daea89 (organ synapses and NLP-40 site in): food / nofood pumps 0 / 0,
+  expulsions 0 / 0 (int9 every 50.9 s), eggs 0 / 0, BWM -30.5 / -31.1 mV at 1.90 / 1.84 Hz over all muscles,
+  physical yes; against the fbf1c91 loop no vital sign moved (all measured).
+- 9 Nov 01:47-02:01 (wbody2, inbox 01:45 from weki, A numerical). egg_laying's LGC-55 on HSN and vm cation term, and
+  intestine's PBO-5/6, were g (E - V_start) held as a current over the 4-4.5 ms exchange step (explicit in V). Each is
+  now a wgc point process solved implicitly by NEURON (toggles `egg_g_solver`, `pboc_g_solver`: implicit default,
+  explicit nested). `implicit_g_check.py`: explicit identical to the code before; at 0.1-0.5 nS implicit is closer to
+  a 0.5 ms reference than explicit (6 of 6); at each range's top and 2x implicit is stable, explicit goes to NaN on
+  HSN at 5 nS and alternates at vm cation 14 and PBO-5 20 nS (all measured). Battery on the new default next.
+- 9 Nov 02:26-02:57 (wbody2, line 4 glia, adoption). The 150 s battery under glia_v0_window=settled (73f1e54 +
+  settled) against 7daea89, bar written 01:46 before either battery ended (every passing sign still passes; physical
+  stays yes): BWM median V -30.5 / -31.2 mV food / nofood (in), physical yes / yes: pass. BWM APs per firing muscle
+  2.81 -> 2.91 Hz and 2.69 -> 2.79 (still misses; all measured). Adopted (5834790): settled is the default, first
+  nested. check_glia still fails (tau 1.73 s vs 3.4-4.0).
+- 9 Nov 02:58-03:18 (wbody2, line 3 expulsion chain, inbox 02:35 item 1). Ported EXP-1's measured dose-response and
+  reversal (Beg & Jorgensen 2003, oocytes: EC50 26.4 uM, Hill 1.8, E_rev -5.54 mV) onto the enteric muscles' GABA
+  sites as the toggle `enteric_exp1` (brain default = the brain's gabacat class; beg2003 nested, not adopted); no time
+  constants and no enteric muscle recording are published. `exp1_check.py` (spec and bars written first,
+  `night/wbody2/exp1_port_spec.md`), DMP sub-brain, 150 s, DVB clamped to Jiang 2022's spike 3 s after each int9 peak:
+  neutral bit-identical (pass); one expulsion per wave: 0 of 3 under both forms (fail); control 0. Detector input peaks
+  0.32 (brain) and 0.27-0.31 (beg2003) at the DVB spikes against 0.5; the muscles fire on their own at 4.0-4.1 Hz and
+  reach 0.26 without DVB. On the in-range Du set that is silent at rest (du=0), the DVB spike moves mu_intL from -34.2
+  to -29.6 mV, below threshold (all measured). Mechanism written down: DVB's synapse here is Cook's 3 + 1 contacts at
+  the ledger's median NMJ strength (0.81 and 0.27 nS), too weak to fire a silent muscle, and the BWM membrane stands
+  in for an unrecorded enteric one. Both are values or missing data (D), not a port; stopped after the attempt.
 
 ## Phase 2 status (wneuro)
 

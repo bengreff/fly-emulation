@@ -24,7 +24,7 @@ exactly env=None):
 - salt (env_salt "plug" | "uniform"): NGM background 50 mM plus a plug spread by 2D diffusion for plug_age_h,
   C = bg + A exp(-r^2 / (4 D t)) (point source; inferred geometry), D(NaCl) 1.6e-3 mm^2/s (water, measured).
 - temperature (env_temp "gradient" | "uniform"): linear, T = T0 + g a along the forward axis (thermotaxis plates use
-  ~0.5 C/cm; Hedgecock and Russell 1975, Luo et al. 2014; protocol value).
+  0.5 C/cm, 0.18-1.5 in published protocols; Wang et al. 2013, Yeon et al. 2023, opened; protocol value).
 - events (the experimenter, `events` list): ("tap", t_s, uN) one-exchange impulse on obs.tap; ("eyelash", t0_s,
   t1_s, s_centre, uN) a normal force spread over the midline samples within eyelash_halfwidth of s_centre;
   ("nose", t0_s, t1_s, uN) axial force on the nose; ("o2_ambient", t_s, pct) a step in O_am.
@@ -51,8 +51,13 @@ MECHANISMS = [
 DEMIR = "Demir et al. 2020 eLife 9:e52781, Methods eq 2 (read 6 Nov 2026)"
 SPECS = [
     spec("lawn_radius_mm", "env_food", "mm", 5.0, 2.0, 15.0, "guessed",
-         "none opened: a 20-50 uL OP50 spot spreads to ~1 cm"),
-    spec("lawn_od", "env_food", "OD600", 1.0, 0.1, 10.0, "guessed", "none opened: lawn interior bacterial density"),
+         "none opened: a 20-50 uL OP50 spot spreads to ~1 cm",
+         notes="opened 9 Nov 2026: '40 uL drops, which spread to a diameter of 11.2 mm on average' (Madirolas et "
+               "al. 2023 Commun Biol, PMC10425387, methods): radius 5.6 mm (derived), inside the range. The template "
+               "stays 5.0 until a battery runs on 5.6 (the vitals plate uses this lawn)"),
+    spec("lawn_od", "env_food", "OD600", 1.0, 0.1, 10.0, "guessed", "none opened: lawn interior bacterial density",
+         notes="the seeded culture, not the grown lawn, is what papers give: OD 0.5 (Madirolas et al. 2023 Commun "
+               "Biol, PMC10425387, methods, opened 9 Nov 2026); no lawn density after growth found"),
     spec("lawn_rim_ratio", "env_food", "1", 2.0, 1.0, 5.0, "guessed",
          "Gray et al. 2004 Nature 430:317 (bacteria thicker at the border; ratio not read)"),
     spec("lawn_rim_width_mm", "env_food", "mm", 0.5, 0.1, 1.0, "guessed", "none opened"),
@@ -74,17 +79,39 @@ SPECS = [
          "of an atmosphere into the CO2 rise for the same moles"),
     spec("salt_bg_mM", "env_salt", "mM", 50.0, 0.0, 100.0, "measured", "NGM recipe (~51 mM NaCl)"),
     spec("salt_plug_excess_mM", "env_salt", "mM", 50.0, 0.0, 100.0, "guessed",
-         "Kunitomo and Iino 2013 (secondary): 100 mM plug; the excess at the centre after spreading not read"),
+         "Kunitomo and Iino 2013 (secondary): 100 mM plug; the excess at the centre after spreading not read",
+         notes="opened protocols (9 Nov 2026), not this geometry: a 9 cm plate with a gradient of ~35 to ~95 mM "
+               "(Suwazono et al. 2025 Genes Cells, PMC12120540, methods, citing Kunitomo et al. 2013); two 14.5 mm "
+               "agar blocks of 0 and 150 mM on an NaCl-free 8.5 cm plate (Park et al. 2021 eLife, PMC7834019, "
+               "methods). Kunitomo's 60 mM span fits inside this range; Park's 150 mM block is above its 100 mM top at the "
+               "block itself (the spread profile after 18-20 h is not reported)"),
     spec("salt_D_mm2_s", "env_salt", "mm^2/s", 1.6e-3, 1.2e-3, 1.6e-3, "measured", "NaCl in water at 25 C"),
-    spec("salt_plug_age_h", "env_salt", "h", 12.0, 1.0, 24.0, "guessed", "overnight plug (protocol, secondary)"),
+    spec("salt_plug_age_h", "env_salt", "h", 12.0, 1.0, 24.0, "guessed", "overnight plug (protocol, secondary)",
+         notes="opened: the blocks 'were removed after 18 to 20 hr, just before assay' (Park et al. 2021 eLife, "
+               "PMC7834019, methods; two-block geometry), inside this range (9 Nov 2026)"),
     spec("salt_plug_ahead_mm", "env_salt", "mm", 10.0, 0.0, 40.0, "guessed", "placement: plug centre ahead of nose"),
     spec("temp_T0_C", "env_temp", "C", 20.0, 15.0, 25.0, "measured", "protocol: cultivation temperature at start"),
-    spec("temp_grad_C_per_cm", "env_temp", "C/cm", 0.5, 0.1, 2.0, "measured",
-         "protocol: thermotaxis gradient plates ~0.5 C/cm (Hedgecock and Russell 1975; Luo et al. 2014)"),
+    spec("temp_grad_C_per_cm", "env_temp", "C/cm", 0.5, 0.18, 1.5, "measured",
+         "protocol: 'linear thermal gradients of 0.5, 1.0, and 1.5 [deg]C/cm' (Wang, O'Halloran, Goodman & Arshavsky "
+         "2013 J Gen Physiol 142:437, PMC3787776, methods, opened; the catalog's source); 23-28 C at 0.5 C/cm on 10 cm "
+         "plates (Yeon et al. 2023 G3, PMC10542565, methods, opened)",
+         notes="range: 0.18 C/cm low edge from 19-23 C on a 22.5 cm plate (Chen, Harris & Sengupta 2024 microPubl "
+               "Biol, PMC11603155, methods, opened; derived, if linear), 1.5 high edge Wang 2013's steepest. Not "
+               "used for the range: a radial 17-25 C over a 9 cm plate's 4.5 cm radius, mean 1.78 C/cm (Mohri et "
+               "al. 2005 Genetics, PMC1449549, opened; derived, not linear). Yeon 2023's figure legends say 0.05 "
+               "C/cm, which their methods' 5 C over 10 cm contradicts. Was 0.1-2.0 citing Hedgecock and Russell "
+               "1975 and Luo et al. 2014, neither opened (re-sourced 9 Nov 2026)"),
     spec("eyelash_halfwidth", "env_events", "body length", 0.03, 0.01, 0.1, "inferred",
          "an eyelash tip is ~50 um wide (half width 0.025-0.03 of a 1 mm body)"),
-    spec("eyelash_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed",
-         "none opened (Chalfie et al. 1985 eyelash assay; force not measured there)"),
+    spec("eyelash_force_uN", "env_events", "uN", 26.0, 3.8, 177.0, "measured",
+         "the force people deliver in the classical touch assay: 'the median force from all trials was 26 uN', mean "
+         "61 uN, log-normal, coefficient of variation 1.7 (Nekimken, Mazzochette, Goodman & Pruitt 2017 PLoS ONE, "
+         "PMC5438190, results, opened 9 Nov 2026; volunteers with eyebrow hairs on a calibrated cantilever)",
+         notes="range 3.8-177 uN: the 5-95 % of one log-normal with median 26 and CV 1.7 (sigma 1.166, derived; it "
+               "implies a mean of 51 uN against the reported 61, so one log-normal is approximate). "
+               "The response saturates near 2 uN (catalog env_touch_saturation_uN); the assay force is over ten "
+               "times that (the paper's point). Was 2 (0.1-10, guessed). No default run uses it: the vitals "
+               "battery has no events; standard_events (wbody_loop_check --env=standard) does"),
     spec("tap_uN", "env_events", "uN", 5.0, 0.5, 50.0, "guessed", "none opened (Rankin et al. 1990 tapper)"),
     spec("nose_force_uN", "env_events", "uN", 2.0, 0.1, 10.0, "guessed", "none opened (Kaplan and Horvitz 1993)"),
     spec("viscosity_mPa_s", "env_medium", "mPa s", 1.0, 0.9, 28000.0, "measured",

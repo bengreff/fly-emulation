@@ -18,27 +18,42 @@
     pBoc        Beg et al. 2008: Ca drives the PBO-4 Na/H exchanger on the basolateral intestine; the protons in the
                 cleft open PBO-5/PBO-6 (pH50 6.83, Hill 5, measured in oocytes) on the posterior body-wall muscles.
                 Here one posterior cleft: H+ release = rate x Hill(posterior ring Ca), cleared with Beg's 2.9 s
-                decay; the PBO-5/6 cation current (E_rev 0 mV) goes into the posterior third of the BWM as I_pA.
+                decay; the PBO-5/6 cation conductance (E_rev 0 mV) sits on the posterior third of the BWM, one wgc
+                point process per muscle (nmodl/wgc.mod), its g set each exchange step and solved implicitly by
+                NEURON (wbody2, 9 Nov, A, inbox 01:45; nested `pboc_g_solver=explicit`: the code before,
+                g (E - V) from the step's start V into I_pA, which alternates at 12-14 nS on these muscles, weki).
     NLP-40      Wang et al. 2013 (Curr Biol 23:746): Ca-dependent (SNT-2) release of NLP-40 from the intestine
-                activates the AEX-2 GPCR on AVL and DVB. Here release = rate x Hill(mean intestinal Ca), the
-                pseudocoelomic concentration cleared by its own decay plus the coelomocytes' uptake
-                (outputs['coelomocyte_uptake_per_s'], row 16). out['peptide_release'] = {'nlp-40@posterior_body':
-                molecules/s} (the nM/s rate times neuromod's posterior-body compartment volume), which mech.neuromod
-                adds to its pool and reads at AEX-2 (default `release_only`). The nested form `direct` (the first
+                activates the AEX-2 GPCR on AVL and DVB. Here each cell releases at rate x Hill(its Ca) / 20 (the
+                total is rate x the mean Hill), into the pseudocoelom compartment its ring lies in
+                (_ring_compartment_shares: rings 1-4 and part of 5 in the anterior body, the rest in the posterior
+                body; wbody2, 8 Nov, A: all 20 cells used to release next to DVB, so the anterior rings' release,
+                seconds after int9's on Espelt 2005's 20-60 um/s wave, smeared the cycle at DVB).
+                out['peptide_release'] = {'nlp-40@<compartment>': molecules/s} (the nM/s rate times neuromod's
+                posterior-body compartment volume, split by ring), which mech.neuromod adds to its pool and reads at
+                AEX-2 (default `release_only`); the local concentration (own decay plus the coelomocytes' uptake,
+                outputs['coelomocyte_uptake_per_s'], row 16) is read only by the nested `direct` form. The nested form `direct` (the first
                 port) instead puts an AEX-2 current (gain x occupancy of the local pool) into AVL and DVB here.
     enteric     the 4 enteric muscles (mu_intL, mu_intR, mu_anal, mu_sph) as cells with the Du/Crodelle 2025 BWM
                 membrane (nmodl/organs/du_bwm.mod; inferred: the enteric muscle membrane is not recorded), Cook 2019's
                 gaps among them at Liu 2006's BWM gap (inferred), Cook's DVB synapses onto mu_intL/R as excitatory
-                (the EXP-1 GABA-gated cation channel: Beg & Jorgensen 2003 Nat Neurosci 6:1145). Ca -> activation is
-                row 12's Boyle-Berri-Cohen integrator. One expulsion = the mean intestinal-muscle and anal-depressor
+                (the EXP-1 GABA-gated cation channel: Beg & Jorgensen 2003 Nat Neurosci 6:1145; organs_nrn.chem_synapse,
+                the brain's gabacat class when receptor kinetics run). `enteric_exp1=beg2003` (nested, off by
+                default) gives those sites EXP-1's own dose-response and reversal, measured in Xenopus oocytes by
+                Beg & Jorgensen 2003 (EC50 26.4 uM, Hill 1.8, E_rev -5.54 mV; no time constants were reported, so
+                the gabacat class's stay); a GABAergic input onto mu_sph, which expresses the inhibitory UNC-49B
+                and not EXP-1 (Beg & Jorgensen 2003), would be inhibitory (Cook 2019 gives none). Valid under
+                receptor_kinetics instantaneous or kinetic; under graded or off there is no dose-response and it
+                changes nothing. Ca -> activation is row 12's Boyle-Berri-Cohen integrator. One expulsion = the mean intestinal-muscle and anal-depressor
                 activation rising above ent_exp_on and falling below ent_exp_off. Cook's hypodermis gaps to these
                 muscles wait for row 16's hypodermis.
 
 Nested simpler forms (toggle values):
     defecation       ip3r (default) | timer (brain_layers' 45 s clock, verbatim) | off
     pboc_protons     on (default) | off
+    pboc_g_solver    implicit (default) | explicit
     nlp40_aex2       release_only (default: only out['peptide_release'], for neuromod) | direct | off
     enteric_muscle   du2025 (default) | off
+    enteric_exp1     brain (default: the brain's gabacat class values) | beg2003
 The id defecation is brain_layers' id, so this module takes that toggle over. At reset the intestine is run alone
 for brain_layers' random phase draw (dmp_t, 0-45 s), so a worm starts at a random point of its cycle as before.
 """
@@ -55,6 +70,7 @@ LR = ("Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:989
       "LiRinzel.ode, opened)")
 ESP = "Espelt, Estevez, Yin & Strange 2005 J Gen Physiol 126:379 (PMC2266627: period, wave velocity, rise/fall)"
 TI = "Teramoto & Iwasaki 2006 Cell Calcium 40:319 (Ca -> PLC feedback; not opened)"
+BJ03 = "Beg & Jorgensen 2003 Nat Neurosci 6:1145 (EXP-1 in Xenopus oocytes, full text opened)"
 BEG = "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)"
 WANG = "Wang et al. 2013 Curr Biol 23:746 (NLP-40 -> AEX-2 on AVL/DVB; full text not opened)"
 OLD = "brain_layers lumped defecation clock (the nested simpler form)"
@@ -64,10 +80,14 @@ MECHANISMS = [
      "timer)", "organ", "ip3r"),
     ("pboc_protons", "Intestinal H+ (PBO-4) -> PBO-5/6 cation current in the posterior body-wall muscles", "organ",
      "on"),
+    ("pboc_g_solver", "PBO-5/6 conductance as NEURON point processes, implicit (nested explicit: g (E - V) from the "
+     "step's start V as a current)", "organ", "implicit"),
     ("nlp40_aex2", "Intestinal NLP-40 release into neuromod's pool (nested direct: an AEX-2 current in AVL and DVB "
      "here)", "organ", "release_only"),
     ("enteric_muscle", "Enteric muscles: Du 2025 membrane, Cook gaps, DVB EXP-1 synapses, Ca -> activation", "muscle",
      "du2025"),
+    ("enteric_exp1", "Enteric GABA-cation sites as EXP-1 (Beg & Jorgensen 2003 EC50, Hill, reversal; nested brain: "
+     "the brain's gabacat class)", "muscle", "brain"),
 ]
 
 PRE_DT_MS = 5.0          # step of the intestine's pre-run at reset (the cycle phase), ms
@@ -167,6 +187,14 @@ SPECS = [
     _s("ent_dvb_excitatory", "flag", 1.0, 1.0, 1.0, "Beg & Jorgensen 2003 Nat Neurosci 6:1145 (EXP-1)",
        label="measured", notes="GABA onto the enteric muscles opens the EXP-1 cation channel: excitatory",
        mech="enteric_muscle", applies="enteric muscle"),
+    _s("exp1_ec50_uM", "uM", 26.4, 24.24, 28.56, BJ03, label="measured",
+       notes="GABA EC50 26.4 +- 1.08 uM (n 19), two-electrode clamp at -60 mV; range mean +- 2 SD (derived); oocyte "
+       "value stands for the enteric muscle (inferred)", mech="enteric_exp1", applies="enteric muscle"),
+    _s("exp1_hill", "1", 1.8, 1.32, 2.28, BJ03, label="measured", notes="Hill coefficient 1.8 +- 0.24 (n 19); range "
+       "mean +- 2 SD (derived)", mech="enteric_exp1", applies="enteric muscle"),
+    _s("exp1_erev_mV", "mV", -5.54, -9.94, -1.14, BJ03, label="measured",
+       notes="reversal -5.54 +- 2.20 mV in Ringer's (n 24; PK/PNa 1.1, Cl-free -5.05 mV); range mean +- 2 SD "
+       "(derived)", mech="enteric_exp1", applies="enteric muscle"),
     _s("ent_act_khalf_mM", "mM", 0.014, 0.002, 0.05, "Boyle, Berri & Cohen 2012 (form); row 12's value",
        label="inferred", notes="the BWM value (bwm_act_khalf_mM) used for enteric muscle", mech="enteric_muscle",
        applies="enteric muscle"),
@@ -202,14 +230,38 @@ def neighbours():
 
 
 
-def _posterior_volume_um3(brain):
-    """neuromod's posterior-body compartment volume (cross-section x vulva-to-tail length), um3."""
+def _pc_params(brain):
+    """mech.neuromod's pseudocoelom parameters (templates, or this worm's spec values)."""
     from wormemu import mech
     from wormemu.mech import neuromod
     p = {x.id: x.template for x in neuromod.SPECS}
     if getattr(brain, "spec", None) is not None and getattr(brain.spec, "values", None) is not None:
         p.update(mech.params_for(neuromod, brain.spec))
+    return p
+
+
+def _posterior_volume_um3(brain):
+    """neuromod's posterior-body compartment volume (cross-section x vulva-to-tail length), um3."""
+    p = _pc_params(brain)
     return float(p["pc_cross_section_um2"]) * (float(p["pc_tail_start_y_um"]) - float(p["pc_vulva_y_um"]))
+
+
+def _ring_compartment_shares(brain):
+    """(20 cells, neuromod.COMPARTMENTS): each intestinal cell's share of its NLP-40 release in each pseudocoelom
+    compartment. Ring k spans fraction (k-1)/9 to k/9 of the intestine, which runs from neuromod's head cut (just
+    behind the retrovesicular ganglion, about the pharynx's end) to its tail cut (the pre-anal ganglion, about the
+    rectum); rings of equal length (WormAtlas: 9 rings over about 720 um; inferred), release uniform along a ring
+    (inferred); split by length overlap. Rows sum to 1."""
+    from wormemu.mech import neuromod
+    p = _pc_params(brain)
+    y0, yv, y1 = (float(p[k]) for k in ("pc_head_end_y_um", "pc_vulva_y_um", "pc_tail_start_y_um"))
+    edges = [-np.inf, y0, yv, y1, np.inf]
+    W = np.zeros((len(INT_CELLS), len(neuromod.COMPARTMENTS)))
+    for i, r in enumerate(RING):
+        a, b = y0 + (r - 1) / 9.0 * (y1 - y0), y0 + r / 9.0 * (y1 - y0)
+        for c in range(len(neuromod.COMPARTMENTS)):
+            W[i, c] = max(0.0, min(b, edges[c + 1]) - max(a, edges[c])) / (b - a)
+    return W
 
 class Intestine:
     """The 20 Li-Rinzel cells with IP3, Ca -> PLC and INX-16 exchange (numpy; the CPU reference and the run path).
@@ -343,12 +395,19 @@ class Mech:
         self.q = q
         self.form = toggles.get("defecation", "ip3r")
         self.pboc = toggles.get("pboc_protons", "on")
+        self.solver = toggles.get("pboc_g_solver", "implicit")
         self.nlp = toggles.get("nlp40_aex2", "release_only")
         if self.nlp == "on":
             self.nlp = "release_only"
         self.nlp_V_um3 = _posterior_volume_um3(brain)
+        from wormemu.mech.neuromod import COMPARTMENTS
+        self.nlp_W = _ring_compartment_shares(brain)
+        self.nlp_keys = [(k, f"nlp-40@{cp}") for k, cp in enumerate(COMPARTMENTS) if self.nlp_W[:, k].any()]
         self.ent = toggles.get("enteric_muscle", "du2025")
+        self.exp1 = toggles.get("enteric_exp1", "brain")
+        assert self.exp1 in ("brain", "beg2003"), self.exp1
         assert self.form in ("ip3r", "timer", "off") and self.pboc in ("on", "off")
+        assert self.solver in ("implicit", "explicit"), self.solver
         assert self.nlp in ("direct", "release_only", "off") and self.ent in ("du2025", "off")
         self.n = len(brain.cell_names)
         self.bwm = np.asarray(brain.bwm)
@@ -360,6 +419,14 @@ class Mech:
         self.aex2_cells = np.array([brain.idx[c] for c in ("AVL", "DVB") if c in brain.idx], int)
         self.gut, self.cleft = Intestine(q), Cleft(q)
         self.n_syn = self.n_gap = 0
+        self.gpb = None                           # the PBO-5/6 wgc conductances (implicit form, NEURON brain only)
+        if self.pboc == "on" and self.solver == "implicit" and getattr(brain, "soma", None) is not None:
+            h = brain.h
+            self.gpb = [h.wgc(brain.soma[i](0.5)) for i in self.post_cells]
+            self._pgb = h.PtrVector(max(1, len(self.gpb)))
+            for k, pp in enumerate(self.gpb):
+                pp.e, pp.g = q["pbo5_erev_mV"], 0.0
+                self._pgb.pset(k, pp._ref_g)
         if self.ent == "du2025" and self.form == "ip3r":
             self._build_enteric()
         self.reset()
@@ -387,12 +454,22 @@ class Mech:
                 b._gap(self.sec[nm[i]](0.5), self.sec[nm[j]](0.5), n * g, "gap_enteric")
                 self.n_gap += 1
         g_nmj = float(np.median(b.spec.v("nmj_strength_per_pair").to_numpy(float)))
+        self.wsyn = []
+        from wormemu import mech
+        gabacat = mech.RECEPTOR_CLASSES.index("gabacat")
         for i, j, n in st.chem:
             a, c = nm[i], nm[j]
             if c in mine and a in b.idx:
-                inh = False if q["ent_dvb_excitatory"] > 0.5 else b._inhibitory(a, c)
-                b._syn(b.soma[b.idx[a]](0.5), self.sec[c](0.5), g_nmj * n / (b._g_syn(inh) * 1000.0), inh,
-                       "syn_enteric")
+                if self.exp1 == "beg2003" and c == "mu_sph" and "gaba" in b.st.transmitter.get(a, set()):
+                    inh = True                    # UNC-49B, not EXP-1, in the sphincter (Beg & Jorgensen 2003)
+                else:
+                    inh = False if q["ent_dvb_excitatory"] > 0.5 else b._inhibitory(a, c)
+                placed = organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_enteric")
+                if self.exp1 == "beg2003":
+                    for pp, _, _, k in b.wsyn[len(b.wsyn) - len(placed):]:
+                        if k == gabacat:          # EXP-1's measured dose-response and reversal
+                            pp.ec50, pp.hill, pp.erev = q["exp1_ec50_uM"] / 1000.0, q["exp1_hill"], q["exp1_erev_mV"]
+                self.wsyn += placed
                 self.n_syn += 1
         k = len(ENTERIC_MUSCLES)
         self._pca, self._pv = h.PtrVector(k), h.PtrVector(k)
@@ -418,6 +495,8 @@ class Mech:
             for k, x in INIT.items():
                 if k != "v":
                     setattr(seg.du_bwm, k, x)
+        for pp in self.gpb or []:
+            pp.g = 0.0
 
     def timer(self, dt):
         """brain_layers.Layers.defecation, verbatim: (posterior/anterior BWM boost, enteric activation, expulsions)."""
@@ -454,16 +533,19 @@ class Mech:
         if self.pboc == "on":
             self.cleft.step(c[self.post_rings], dt_s)
             po = self.cleft.p_open()
-            v = np.asarray(ctx.v)[self.post_cells]
-            I[self.post_cells] += q["pbo5_g_nS"] * po * (q["pbo5_erev_mV"] - v)      # nS x mV = pA
+            if self.gpb is None:
+                v = np.asarray(ctx.v)[self.post_cells]
+                I[self.post_cells] += q["pbo5_g_nS"] * po * (q["pbo5_erev_mV"] - v)      # nS x mV = pA
+            elif self.gpb:
+                self._pgb.scatter(self.brain.h.Vector(np.full(len(self.gpb), q["pbo5_g_nS"] * po * 1e-3)))   # uS
             out.update(cleft_pH=self.cleft.ph, pbo5_open=po)
         if self.nlp != "off":
-            rel = q["nlp40_release_nM_per_s"] * float(np.mean(_hill(c, q["nlp40_release_k_uM"],
-                                                                     q["nlp40_release_hill"])))
+            hc = _hill(c, q["nlp40_release_k_uM"], q["nlp40_release_hill"])
+            rel = q["nlp40_release_nM_per_s"] * float(np.mean(hc))
             k_out = 1.0 / q["nlp40_tau_s"] + float(ctx.outputs.get("coelomocyte_uptake_per_s", 0.0))
             self.nlp40 += dt_s * (rel - k_out * self.nlp40)
-            out.update(peptide_release={"nlp-40@posterior_body": rel * NA_PL * self.nlp_V_um3 / 1000.0},
-                       nlp40_nM=self.nlp40)
+            mol = q["nlp40_release_nM_per_s"] * NA_PL * self.nlp_V_um3 / 1000.0 * (hc @ self.nlp_W) / len(hc)
+            out.update(peptide_release={key: float(mol[k]) for k, key in self.nlp_keys}, nlp40_nM=self.nlp40)
             if self.nlp == "direct" and len(self.aex2_cells):
                 I[self.aex2_cells] += q["aex2_gain_pA"] * self.nlp40 / (self.nlp40 + q["aex2_ec50_nM"])
         n_exp = 0
