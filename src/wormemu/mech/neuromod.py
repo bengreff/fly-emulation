@@ -11,7 +11,15 @@ pc_cross_section_um2 (guessed). Neighbours exchange by diffusion through the sha
 dN_k/dt = A D (c_j - c_k) / d_kj, d_kj the distance between compartment centres, so total molecules are conserved;
 D is the molecular diffusion coefficient plus pc_stirring_um2_per_s (body movement stirring the fluid; template 0).
 The linear exchange is integrated exactly (matrix exponential). Concentration (nM) = molecules / (602.214 x volume
-in pL). Site (toggle neuromod_site): `membrane` (default) reads each receptor, transporter and extrasynaptic channel
+in pL). Grid (toggle pc_grid): `four` (default, nested) is one well-mixed compartment per named compartment; `bins`
+splits each named compartment into ceil(L / pc_bin_um) equal bins (8 um at the template), the same finite-volume form of 1D diffusion with
+loss, dc/dt = D d2c/dy2 - k c + sources / A, at a resolution finer than the length constant sqrt(D / k) (32-55 um for
+amines, 71 um for peptides at the template, derived), which the four compartments (80-269 um long) are not: near a
+source they dilute it by up to (L / 2 lambda) coth(L / 2 lambda), 1.9-2.5x (derived; wneuro 9 Nov 2026, Open 7). Validity
+of the 1D form: scales above the pseudocoelom's radius, sqrt(pc_cross_section_um2 / pi), 11 um at the template
+(derived), over which the cross-section mixes in R^2 / D, 0.2 s for amines (derived); bins below that do not resolve
+anything the 1D form holds. Named compartments stay as views (the volume-weighted mean of their bins) for other
+modules' `gene@compartment` release (spread over the compartment's bins by volume) and the head read-outs. Site (toggle neuromod_site): `membrane` (default) reads each receptor, transporter and extrasynaptic channel
 as the area-weighted mean over the compartments the cell's membrane lies in (BAAIWorm's 3D segments; uniform density
 over the membrane, inferred); `soma` (nested) reads everything in the soma's compartment. Release stays in the
 soma's compartment in both. Why (wneuro, 8 Nov 2026, item 1c): the soma rule's validity is a cell whose membrane lies
@@ -104,12 +112,15 @@ MECHANISMS = [
     ("dmsr1_isoform", "Which DMSR-1 isoform FLP-25 reads: the most potent Table S6 row (DMSR-1-2, B, 0.6 pM) or "
      "DMSR-1-1 (A, 1.6 uM); other DMSR-1 ligands differ by at most 4x between the isoforms", "neuromodulation",
      "most_potent"),
+    ("pc_grid", "Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um "
+     "inside each (the same 1D diffusion, resolved below its length constant)", "neuromodulation", "four"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
 GS_CA = ("egl19_unc2", "egl19")
 EC50_SRC = ("beets2023", "wang2013")
 DMSR1_ISO = ("most_potent", "dmsr-1a")
+GRIDS = ("four", "bins")
 COMPARTMENTS = ("head", "anterior_body", "posterior_body", "tail")
 AMINES = ("serotonin", "dopamine", "octopamine", "tyramine")
 TRANSPORTERS = {"serotonin": "mod-5", "dopamine": "dat-1"}
@@ -227,6 +238,12 @@ SPECS = [
       "ganglion (y 359-385)", "derived", applies_to=BOTH),
     S("pc_cross_section_um2", P, "um2", 400, 100, 1500, notes="pseudocoelom cross-section; the body's is about "
       "1600-2000 um2 at 45-50 um diameter, most of it intestine, gonad and muscle", applies_to=BOTH),
+    S("pc_bin_um", P, "um", 8, 2, 15, "convergence check (scripts/worm/wneuro/grid_check.py --conv, 9 Nov 2026): the "
+      "largest of 15, 8, 4, 2 um at which the bins grid is within 5% of the exact 1D solution in every bin holding at "
+      "least 1% of the peak, for 5-HT at the vulva (lambda 55 um), 5-HT in the head with MOD-5 (32 um) and a peptide "
+      "at DVB (67 um); worst 3.7% at 8 um, 7.6% at 15 um (measured)", "derived", applies_to=BOTH,
+      notes="numerical resolution of pc_grid=bins, not a biological quantity; the error sits in the source bin and is "
+      "first order in bin / lambda (a source spread over one well-mixed bin)"),
     S("pc_stirring_um2_per_s", P, "um2/s", 0.0, 0.0, 1000.0, notes="effective dispersion added by body movement "
       "stirring the pseudocoelomic fluid; unmeasured; 0 = diffusion only", applies_to=BOTH),
     S("pc_coelomocyte_uptake_per_s", P, "1/s", 0.001, 0.0001, 0.01, notes="placeholder until row 16 (B2) writes "
@@ -382,6 +399,7 @@ class _Pool:
             K[k + 1, k + 1] -= g / self.V[k + 1]
             K[k, k + 1] += g / self.V[k + 1]
         self.K, self._E = K, {}
+        self.named = np.arange(m)                          # named compartment of each bin (set by Mech._pool)
 
     def mix(self, dt_s):
         E = self._E.get(dt_s)
@@ -391,6 +409,11 @@ class _Pool:
 
     def nM(self):
         return self.N / (NA_PL * self.V / 1000.0)
+
+    def named_nM(self):
+        """(ligands, named compartments): the volume-weighted mean over each named compartment's bins."""
+        W = np.eye(self.named.max() + 1)[self.named]
+        return (self.N @ W) / (NA_PL * (self.V @ W) / 1000.0)
 
 
 def _hill(c, ec50, h):
@@ -425,8 +448,17 @@ class Mech:
         self.neuron = ~musc
         neurons = [x for x, k in zip(st.names, st.kind) if k == "neuron"]
         yall = np.array([st.soma_y_um[st.index[x]] for x in neurons])
-        self.edges = np.array([yall.min(), p["pc_head_end_y_um"], p["pc_vulva_y_um"], p["pc_tail_start_y_um"],
-                               yall.max()], float)
+        self.cuts = np.array([yall.min(), p["pc_head_end_y_um"], p["pc_vulva_y_um"], p["pc_tail_start_y_um"],
+                              yall.max()], float)
+        self.grid = toggles.get("pc_grid", "four")
+        assert self.grid in GRIDS, f"pc_grid {self.grid!r} not one of {GRIDS}"
+        if self.grid == "bins":
+            nb = np.maximum(1, np.ceil(np.diff(self.cuts) / float(p["pc_bin_um"]) - 1e-9).astype(int))
+            self.edges = np.concatenate([np.linspace(a, b, k + 1)[:-1] for a, b, k in
+                                         zip(self.cuts[:-1], self.cuts[1:], nb)] + [self.cuts[-1:]])
+            self.named = np.repeat(np.arange(len(nb)), nb)
+        else:
+            self.edges, self.named = self.cuts, np.arange(len(self.cuts) - 1)
         self.y = np.array([st.soma_y_um[st.index[c]] if not m else np.nan for c, m in zip(names, musc)])
         self.gate = np.array([[expr(g, c) > 0 for g in G_ALPHA] for c in range(n)], float)
         self.lumped = {k: v == "lumped" for k, v in self.form.items()}
@@ -495,7 +527,27 @@ class Mech:
             self.e_Wp = self.pep_W[self.e_cell[self.e_pep]]
         if self.on[A]:
             self.e_Wa = self.ma_W[self.e_cell[~self.e_pep]]
+        # bins: Hill once per (ligand, EC50) pair and bin, then each entry's membrane weights (the same sum as the
+        # four grid's per-entry form, regrouped; the four grid keeps that form, so it stays bit-identical)
+        self.pairs = {}
+        if self.grid == "bins":
+            for k, m_ in ((P, self.e_pep), (A, ~self.e_pep)):
+                if self.on[k] and m_.any():
+                    key = np.stack([self.e_lig[m_], self.e_ec50[m_]], 1)
+                    u, inv = np.unique(key, axis=0, return_inverse=True)
+                    self.pairs[k] = (u[:, 0].astype(int), u[:, 1], inv.ravel(), self.e_cell[m_])
         self.reset()
+
+    def _occ(self, k, c, h):
+        """Occupancy of each entry of kind k (P or A) over its cell's membrane weights, concentrations c (lig, bins)."""
+        m = self.e_pep if k == P else ~self.e_pep
+        if k not in self.pairs:
+            W = self.e_Wp if k == P else self.e_Wa
+            return (_hill(c[self.e_lig[m]], self.e_ec50[m][:, None], h) * W).sum(1)
+        lig, ec50, inv, cells = self.pairs[k]
+        Wc = self.pep_W if k == P else self.ma_W
+        M = Wc @ _hill(c[lig], ec50[:, None], h).T                 # (cells, pairs)
+        return M[cells, inv]
 
     def _w(self, rg):
         f = GPCR_COUPLING[rg][0]
@@ -534,7 +586,9 @@ class Mech:
         mid = (e[:-1] + e[1:]) / 2.0
         comp = np.clip(np.searchsorted(e, np.nan_to_num(self.y, nan=e[0]), side="right") - 1, 0, len(L) - 1)
         A_ = float(self.p["pc_cross_section_um2"])
-        return comp, _Pool(n_lig, L * A_, np.diff(mid), A_, float(D) + float(self.p["pc_stirring_um2_per_s"]))
+        pool = _Pool(n_lig, L * A_, np.diff(mid), A_, float(D) + float(self.p["pc_stirring_um2_per_s"]))
+        pool.named = np.zeros(1, int) if one else self.named
+        return comp, pool
 
     def reset(self):
         n = self.n
@@ -596,7 +650,8 @@ class Mech:
                 if g in PRECURSORS:
                     row = PRECURSORS.index(g)
                     if cp and pool.N.shape[1] > 1:
-                        src[row, COMPARTMENTS.index(cp)] += x
+                        k = pool.named == COMPARTMENTS.index(cp)
+                        src[row, k] += x * pool.V[k] / pool.V[k].sum()
                     else:
                         src[row] += x * pool.V / pool.V.sum()
                     ext += x
@@ -606,13 +661,14 @@ class Mech:
             pool.mix(dt)
             c = pool.nM()
             m = self.e_pep
-            occ[m] = (_hill(c[self.e_lig[m]], self.e_ec50[m][:, None], h) * self.e_Wp).sum(1)
+            occ[m] = self._occ(P, c, h)
             out.update(pep_release_molecules_per_s=float(rate.sum()), pep_external_molecules_per_s=float(ext),
                        pep_total_molecules=float(pool.N.sum()), pep_max_nM=float(c.max()),
                        pep_n_receptor_sites=int(m.sum()))
+            cn = pool.named_nM()
             for g in ("flp-11", "flp-13", "flp-24", "pdf-1", "nlp-12"):
                 if g in PRECURSORS:
-                    out[f"{g.replace('-', '')}_head_nM"] = float(c[PRECURSORS.index(g), 0])
+                    out[f"{g.replace('-', '')}_head_nM"] = float(cn[PRECURSORS.index(g), 0])
         if self.on[A]:
             pool = self.ma
             u = _sig((v - p["ma_vhalf_mV"]) / p["ma_k_mV"]) * self.neuron
@@ -648,9 +704,9 @@ class Mech:
             if glia5:
                 c = c.copy()
                 for lg, x in glia5.items():
-                    c[AMINES.index(lg), 0] += x
+                    c[AMINES.index(lg), pool.named == 0] += x
             m = ~self.e_pep
-            occ[m] = (_hill(c[self.e_lig[m]], self.e_ec50[m][:, None], h) * self.e_Wa).sum(1)
+            occ[m] = self._occ(A, c, h)
             for k, (row, cells, ec50, hh, erev, gam) in enumerate(self.extrasyn):
                 if len(cells):
                     occ_x = self.ma_W[cells] @ _hill(c[row], ec50, hh)

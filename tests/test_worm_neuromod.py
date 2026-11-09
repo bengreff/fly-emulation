@@ -196,3 +196,44 @@ def test_dmsr1_isoform():
     assert T["pep_ec50_flp-25_dmsr-1_isoA_nM"] / T["pep_ec50_flp-25_dmsr-1_nM"] > 1e5
     assert np.all(b.e_ec50[hit] == T["pep_ec50_flp-25_dmsr-1_isoA_nM"])
     assert np.array_equal(a.e_ec50[~hit], b.e_ec50[~hit])
+
+
+def test_pc_grid():
+    """pc_grid: bins as wide as the widest compartment are the four compartments (limit test: same edges, same pool,
+    the regrouped occupancy within 1e-12); at the template bin size every cell's bin lies inside its named compartment,
+    `gene@compartment` release is conserved and spread by volume, and the named views are the volume-weighted means."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "compartments", "monoamines": "compartments"}
+    four = N.Mech(brain, T, tg)
+    wide = N.Mech(brain, {**T, "pc_bin_um": 1e4}, {**tg, "pc_grid": "bins"})
+    fine = N.Mech(brain, T, {**tg, "pc_grid": "bins"})
+    assert np.array_equal(four.edges, wide.edges) and np.array_equal(four.edges, four.cuts)
+    assert len(fine.edges) - 1 > 50 and np.diff(fine.edges).max() <= T["pc_bin_um"] + 1e-9
+    assert np.array_equal(fine.ma.named[fine.ma_comp], four.ma_comp)
+    assert np.array_equal(fine.pep.named[fine.pep_comp], four.pep_comp)
+    rng = np.random.default_rng(0)
+    v = rng.uniform(-60.0, -10.0, len(neurons))
+    ext = {"nlp-40@posterior_body": 1e4, "flp-11": 2e3}
+    ctx = SimpleNamespace(v=v, outputs={"peptide_release": ext})
+    for m in (four, wide, fine):
+        for _ in range(200):
+            m.step(ctx, 10.0)
+    for x, y in ((four.pep.N, wide.pep.N), (four.ma.N, wide.ma.N), (four.G, wide.G)):
+        assert np.allclose(x, y, rtol=1e-12, atol=1e-300)
+    assert np.allclose(fine.pep.named_nM(), fine.pep.N @ np.eye(4)[fine.pep.named] /
+                       (N.NA_PL * fine.pep.V @ np.eye(4)[fine.pep.named] / 1000.0))
+    assert np.array_equal(four.pep.named_nM(), four.pep.nM())
+    one = N.Mech(brain, {**T, "dcv_rate_per_s": 0.0}, {"peptides": "compartments", "monoamines": "off",
+                                                       "pc_grid": "bins"})       # the external release alone
+    zero = SimpleNamespace(v=np.full(len(neurons), -90.0), outputs={"peptide_release": {"nlp-40@posterior_body": 1e4}})
+    one.step(zero, 10.0)
+    row, pb = N.PRECURSORS.index("nlp-40"), N.COMPARTMENTS.index("posterior_body")
+    sel = one.pep.named == pb
+    assert one.pep.N[row, ~sel].max() < one.pep.N[row, sel].min()
+    assert np.isclose(one.pep.N[row].sum() / np.exp(-0.01 / T["pep_degrade_tau_s"] - 0.01 * T["pc_coelomocyte_uptake_per_s"]),
+                      1e4 * 0.01, rtol=1e-12)
