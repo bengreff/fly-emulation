@@ -25,6 +25,11 @@ section 5: rho_corr does all the localising in the closed-loop worm, so the twin
 bar (18 of 20 recovered at inflation 1.0; the inflation rule as above). Falsifier: fewer than 18 of 20, or coverage at
 1.0 below 0.90 where B without it reached 0.925, means the cut drops pairs the data need and the fit cannot use it as is.
 
+Result of that run (22:28, measured): passes. Inflation 1.0 recovered 20 / 20, coverage 0.925 (gain 0.90; without the
+cut 0.80), median 95 % width a factor 1.04 for dosm, e_vol, lp and 1.19 for the gain (1.03 and 1.15 without). The cut
+keeps 51-59 % of the 160 pairs on the starting ensembles (5 draws), so it was live. Inflation 1.1 with the cut fails
+(8 / 20, runs reach the 40-iteration cap); the rule picks 1.0.
+
 Usage: python scripts/worm/fit/twin_coverage.py OUT.json [A|B] [corr]
 """
 from __future__ import annotations

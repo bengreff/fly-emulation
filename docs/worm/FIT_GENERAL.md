@@ -96,7 +96,10 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
     nothing, so rho_graph is kept only for the readout split.
   - rho_corr (`eki.corr_rho`): keep a pair only where |corr| > 3 / sqrt(J), 0.265 at J = 128 (derived), recomputed each
     iteration. With the graph this dense (measured above), it does all of the work. It is a statistical cut, not a
-    structural one, so the twin test of refinement 5 must run with it on.
+    structural one, so the twin test of refinement 5 must run with it on. Run on the excretory-canal twin (protocol
+    B, 8 Nov 22:28, pre-registered, measured): passes, 20 / 20 recovered and coverage 0.925 at inflation 1.0, the
+    cut keeping 51-59 % of pairs at the start; widths grow a little (the gain's 95 % range a factor 1.19, against
+    1.15 without). With the cut on, inflation 1.1 fails (8 / 20), so the two are chosen together on the twin.
   - Tested: a parameter no observation can see keeps its prior draws exactly; without localisation it collapses.
 - **Seed agreement** (part of convergence): for every data-informed coordinate (posterior SD below half the prior SD
   in z), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
