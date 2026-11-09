@@ -409,10 +409,12 @@ class Brain:
                                           peptide=self._modulators("pep"),
                                           monoamine=self._modulators("ma"))
         self._g_targets()
+        self._sg = None
         self.mechs = []                  # built in REGISTRY order: a module can wire to the cells of those before it
         for m in self._mods:
             if any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS):
                 self.mechs.append(m.Mech(self, mech.params_for(m, self.spec), tg))
+        self._syn_gains()                # after the mechanisms: the organ modules append their wsyn to self.wsyn
         self.mech_out = {}
         self.t = 0.0
 
@@ -555,7 +557,7 @@ class Brain:
         self._gt = {}
         for name in mech.G_SCALE_NAMES:
             if name == "release" or name.startswith("rec_"):
-                continue                                 # synapse gains (wsyn), below
+                continue                                 # synapse gains (wsyn): _syn_gains
             ch = name[5:] if name.startswith("dens_") else "pas"
             var = GB.get(ch, f"gb{ch}") if ch != "pas" else "g"
             cells = [i for i, s in enumerate(self.soma) if h.ismembrane(ch, sec=s)]
@@ -567,8 +569,12 @@ class Brain:
             buf = h.Vector(len(cells))
             pv.gather(buf)
             self._gt[name] = (np.array(cells), pv, buf.as_numpy().copy(), np.ones(len(cells)))
-        # wsyn synapses: release gain by presynaptic cell, receptor gain by (postsynaptic cell, class)
-        w = self.wsyn
+
+    def _syn_gains(self):
+        """The wsyn synapses' gains: release by presynaptic cell, receptor by (postsynaptic cell, class). Built after
+        the mechanisms, so the synapses organ modules place (post -1: not a brain cell) get the release gain of their
+        presynaptic neuron; no per-cell receptor gain applies to them."""
+        h, w = self.h, self.wsyn
         self._sg = None
         if w:
             rel, rec = h.PtrVector(len(w)), h.PtrVector(len(w))
@@ -601,7 +607,7 @@ class Brain:
         f = np.ones(len(post))
         for k, c in enumerate(mech.RECEPTOR_CLASSES):
             if f"rec_{c}" in g:
-                m = cls == k
+                m = (cls == k) & (post >= 0)              # post -1: an organ cell, no brain receptor gain
                 f[m] = np.asarray(g[f"rec_{c}"], float)[post[m]]
         if not np.array_equal(crec, f):
             crec[:] = f
