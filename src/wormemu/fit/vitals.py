@@ -120,8 +120,7 @@ def experiment(cond: str, seconds: float, seed=None, toggles=None, body_out=None
     if cond not in PLATES:
         raise ValueError(f"{cond}: one of {sorted(PLATES)}")
     return Experiment(duration_ms=1000.0 * seconds, body="on", temperature_C=20.0, observe=OBSERVE,
-                      every_ms=EXCHANGE_MS, toggles=dict(toggles or {}), seed=seed, body_out=body_out,
-                      sources=[("vital_signs", cond)])
+                      every_ms=EXCHANGE_MS, toggles=dict(toggles or {}), seed=seed, body_out=body_out)
 
 
 @contextlib.contextmanager
@@ -246,7 +245,7 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     out["expulsions"], out["expulsion_s"] = len(ex), ex
     iv = np.diff(ex)
     out["dmp_period_s"] = float(np.mean(iv)) if len(iv) >= DMP_MIN_INTERVALS else None
-    ic = np.asarray(res["out:intestine_ca_uM"], float)
+    ic = np.asarray(res["out:intestine_ca_uM"] if res.get("out:intestine_ca_uM") is not None else [np.nan], float)
     icm = ic.max(axis=1) if ic.ndim == 2 else ic
     pk = peaks(t, icm, CA_PEAK_UM, CA_PEAK_GAP_S)
     out["int_ca_peaks_s"] = pk
@@ -281,7 +280,8 @@ def physicality(res: dict, bounds: tuple[float, float], tol_mV: float = 1.0) -> 
     neg = {}
     for ch in ("ca_uM",) + CONC:
         x = res.get(ch)
-        if x is None:
+        if x is None or (isinstance(x, list) and all(e is None for e in x)):
+            out.setdefault("absent", []).append(ch)              # the module did not publish this output
             continue
         try:
             a = np.asarray(x, float)
@@ -333,6 +333,7 @@ def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> di
     from wormemu.brain import sample_worm
     outdir = Path(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
+    (outdir / f"{cond}_body").mkdir(exist_ok=True)              # simulate writes the FEM files under it
     ex = experiment(cond, seconds, seed=seed, toggles=toggles, body_out=str(outdir / f"{cond}_body"))
     spec = datamodel._theta(sample_worm(seed), theta)
     t0 = time.time()
