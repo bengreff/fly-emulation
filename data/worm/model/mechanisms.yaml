@@ -635,6 +635,16 @@
   source: src/wormemu/mech/senses_chem.py
   notes: registry module senses_chem; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: awa_kir
+  name: 'AWA inward rectifier: gKir times the smooth minimum of (v - vK) and I0, as in the authors'' code (Liu et al. 2018; as printed it is inward at every voltage)'
+  layer: sensory
+  status: have
+  toggle: awa_kir
+  neutral: 'off'
+  default: smooth_min
+  source: src/wormemu/mech/senses_chem.py
+  notes: registry module senses_chem; PLAN row guessed from the name by the catalog
+  absent_reason: ''
 - id: sens_touch_gentle
   name: 'Gentle touch: MEC-4/MEC-10 channels in ALM, AVM, PLM, PVM (Sanzeni et al. 2019)'
   layer: sensory

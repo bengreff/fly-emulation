@@ -1,38 +1,38 @@
 {
  "check": "AWA Liu 2018 isolated WT cell, 1 s steps from rest",
- "rest_mV": -64.56,
- "first_step_pA": 11,
+ "rest_mV": -76.16,
+ "first_step_pA": 13,
  "cpu_first": {
-  "threshold_mV": -29.46,
-  "peak_mV": 4.44,
-  "amplitude_mV": 33.9,
-  "half_width_ms": 16.35,
-  "t_peak_ms": 154.35,
-  "max_dvdt": 8.37
+  "threshold_mV": -30.9,
+  "peak_mV": 8.9,
+  "amplitude_mV": 39.8,
+  "half_width_ms": 16.55,
+  "t_peak_ms": 158.45,
+  "max_dvdt": 10.62
  },
  "cpu_double": {
-  "threshold_mV": -32.1,
-  "peak_mV": 14.65,
-  "amplitude_mV": 46.75,
-  "half_width_ms": 21.7,
-  "t_peak_ms": 108.55,
-  "max_dvdt": 15.44
+  "threshold_mV": -32.93,
+  "peak_mV": 20.04,
+  "amplitude_mV": 52.97,
+  "half_width_ms": 21.1,
+  "t_peak_ms": 108.65,
+  "max_dvdt": 18.42
  },
  "neuron_first": {
-  "threshold_mV": -29.42,
-  "peak_mV": 4.37,
-  "amplitude_mV": 33.79,
-  "half_width_ms": 16.45,
-  "t_peak_ms": 154.87,
-  "max_dvdt": 8.27
+  "threshold_mV": -30.88,
+  "peak_mV": 8.84,
+  "amplitude_mV": 39.72,
+  "half_width_ms": 16.62,
+  "t_peak_ms": 158.85,
+  "max_dvdt": 10.52
  },
  "neuron_double": {
-  "threshold_mV": -32.03,
-  "peak_mV": 14.61,
-  "amplitude_mV": 46.64,
-  "half_width_ms": 21.73,
-  "t_peak_ms": 108.6,
-  "max_dvdt": 15.31
+  "threshold_mV": -33.02,
+  "peak_mV": 20.01,
+  "amplitude_mV": 53.03,
+  "half_width_ms": 21.25,
+  "t_peak_ms": 108.7,
+  "max_dvdt": 18.28
  },
  "bars": {
   "threshold": true,

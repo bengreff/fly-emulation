@@ -108,11 +108,21 @@ def _hinf(v, vh, dv):
     return 0.5 * (np.tanh((v - vh) / dv) + 1.0)
 
 
+def liu_kir(v, P=LIU):
+    """Liu's inward rectifier (pA). Default (P["kir"] absent or "smooth_min"): gKir times the smooth minimum of
+    (v - vK) and I0 (mV), scale beta (mV), as in the authors' code (qiangstoch3c.py: ohmic below E_K, saturating at
+    gKir I0 = 4 pA above it); "as_printed": the equation as printed, inward at every voltage (DEBUG_TRIAGE line 7).
+    mech/senses_chem's awa_kir toggle, same forms."""
+    if P.get("kir", "smooth_min") == "as_printed":
+        return -P["gKir"] * (P["beta"] * np.log1p(np.exp(-(v - P["vK"] + P["I0"]) / P["beta"])) + P["I0"])
+    return P["gKir"] * (P["I0"] - P["beta"] * np.logaddexp(0.0, -(v - P["vK"] - P["I0"]) / P["beta"]))
+
+
 def liu_currents(v, s, P=LIU):
     """Total membrane current (pA, outward positive) and the gate steady states / rates at v; s = gates."""
     c1, c2, k1, k2, k3, kr, ks = s
     iCa = P["gCa"] * (c1 + P["f"] * c2) * (v - P["vCa"])
-    iKir = -P["gKir"] * (P["beta"] * np.log1p(np.exp(-(v - P["vK"] + P["I0"]) / P["beta"])) + P["I0"])
+    iKir = liu_kir(v, P)
     iK = (P["gK1"] * k1 + P["gK2"] * k2 + P["gK3"] * k3 + P["gKr"] * kr * _hinf(v, P["vKr1"], P["dvKr1"])
           + P["gKs"] * ks) * (v - P["vK"])
     iL = P["gL"] * (v - P["vL"])
@@ -196,13 +206,14 @@ def awa_cpu(steps, P=LIU, T=1000.0, t_on=100.0):
     return v0, out, traces
 
 
-def awa_neuron(steps, T=1000.0, t_on=100.0, v0=-70.0):
+def awa_neuron(steps, T=1000.0, t_on=100.0, v0=-70.0, kir="smooth_min"):
     from wormemu.brain import _neuron
     h = _neuron()
     s = h.Section(name="awa")
     s.L = s.diam = float(np.sqrt(150.0 / np.pi))        # area 150 um2 -> C = 1.5 pF at cm 1
     s.cm, s.nseg = 1.0, 1
     s.insert("awa_liu")
+    s.kir_form_awa_liu = 1 if kir == "as_printed" else 0
     stim = h.IClamp(s(0.5))
     stim.delay, stim.dur = t_on, T
     vv, tt = h.Vector().record(s(0.5)._ref_v), h.Vector().record(h._ref_t)
@@ -219,19 +230,22 @@ def awa_neuron(steps, T=1000.0, t_on=100.0, v0=-70.0):
     return out, traces
 
 
-def awa():
+def awa(kir="smooth_min"):
+    """Liu 2018's isolated AWA. kir: the inward rectifier's form ("as_printed" saves as awa_liu2018_as_printed)."""
+    P = dict(LIU, kir=kir)
+    name = "awa_liu2018" + ("" if kir == "smooth_min" else f"_{kir}")
     steps = list(range(1, 21))
-    v0, cpu, tr = awa_cpu(steps)
+    v0, cpu, tr = awa_cpu(steps, P)
     first = next((I for I in steps if cpu[I]), None)
     res = dict(check="AWA Liu 2018 isolated WT cell, 1 s steps from rest", rest_mV=round(v0, 2),
                first_step_pA=first)
     if first is None:
         res["verdict"] = "fail (no spike for 1-20 pA)"
-        _save("awa_liu2018", res)
+        _save(name, res)
         return
     f1 = cpu[first]
-    f2 = cpu.get(2 * first) or awa_cpu([2 * first])[1][2 * first]
-    nrn, ntr = awa_neuron([first, 2 * first], v0=v0)
+    f2 = cpu.get(2 * first) or awa_cpu([2 * first], P)[1][2 * first]
+    nrn, ntr = awa_neuron([first, 2 * first], v0=v0, kir=kir)
     res.update(cpu_first=f1, cpu_double=f2, neuron_first=nrn[first], neuron_double=nrn[2 * first])
     ok = dict(threshold=abs(f1["threshold_mV"] + 34.0) <= 5, amplitude=abs(f1["amplitude_mV"] - 25.8) <= 6,
               half_width=abs(f1["half_width_ms"] - 18.0) <= 6,
@@ -250,13 +264,13 @@ def awa():
         tn, vn = ntr[I]
         ax[0].plot(tn, vn, lw=1, ls="--", label=f"NEURON {I} pA")
     ax[0].set_xlabel("ms"); ax[0].set_ylabel("mV"); ax[0].legend(fontsize=8)
-    ax[0].set_title(f"AWA (Liu 2018 Table S4 WT): {res['verdict']}", fontsize=9)
+    ax[0].set_title(f"AWA (Liu 2018 Table S4 WT, Kir {kir}): {res['verdict']}", fontsize=9)
     t, v = tr[first]
     sel = (t > f1["t_peak_ms"] - 80) & (t < f1["t_peak_ms"] + 80)
     ax[1].plot(t[sel], v[sel]); ax[1].axhline(f1["threshold_mV"], ls=":", c="k")
     ax[1].set_title("first spike, threshold dotted", fontsize=9); ax[1].set_xlabel("ms")
     fig.tight_layout()
-    _save("awa_liu2018", res, fig)
+    _save(name, res, fig)
 
 
 # --- in the brain: the nested lumped form and the stimulus signs -------------------------------------------------
@@ -530,4 +544,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "_child":
         _child(json.loads(sys.argv[2]))
     else:
-        {"awc": awc, "awa": awa, "chem": chem, "touch": touch, "proprio": proprio, "temp": temp}[sys.argv[1]]()
+        {"awc": awc, "awa": awa, "chem": chem, "touch": touch, "proprio": proprio, "temp": temp}[sys.argv[1]](*sys.argv[2:])
