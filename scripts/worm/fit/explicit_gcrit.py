@@ -14,10 +14,12 @@ the toy's HSNL threshold at rest is above 1.99 nS the toy misses what set that o
 channels, the neighbours) and its numbers are not used for other cells.
 
 Usage: python scripts/worm/fit/explicit_gcrit.py CELL [E_mV]   (a body-wall muscle by its BWM name, e.g. dBWML22; PBO-5's
-E is 0 mV)
+E is 0 mV). SEED=<int> builds that sample_worm draw instead of the template. On older code without
+vitals.alternation (f8e7699), the 9 Nov 01:40 run used a copy with the function inlined.
 """
 from __future__ import annotations
 
+import os
 import sys
 
 import numpy as np
@@ -28,7 +30,7 @@ from wormemu.fit import vitals
 STEPS, SETTLE_MS = 300, 1000.0
 cells = sys.argv[1:2]
 E_MV = float(sys.argv[2]) if len(sys.argv) > 2 else -41.0
-b = Brain(sample_worm(None), cells=cells)
+b = Brain(sample_worm(int(os.environ["SEED"]) if os.environ.get("SEED") else None), cells=cells)
 h = b.h
 b.reset()
 idx = [list(b.cell_names).index(c) for c in cells]
