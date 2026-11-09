@@ -189,6 +189,17 @@ behavioural statistic. M in the step controller is the batch's observation count
   - sample: MCMC on the emulated posterior.
   The emulator is a search tool only: every point reported from the posterior region is re-run on the real model
   first. The output is the precision-needed column (each value's posterior width against its prior width).
+- **Code** (`fit/ces.py`, 857784b; ported from CalibrateEmulateSample.jl @ bffeb42, its GP path with the Sinusoid
+  example's settings; toy-tested only). On a nonlinear 2-value toy, EKI (40 members, 4 iterations, 200 pairs) then CES
+  gave a posterior within 0.05 SD of MCMC on the true map, with SDs 0.92-0.93 of the true ones; EKI's own final
+  ensemble had SDs 0.96 and 0.79 of the true ones (measured, `tests/test_worm_fit_ces.py`).
+- **Worm-scale cost, before any use** (one Mac core, 347 inputs, measured 8 Nov 23:45): one marginal-likelihood
+  evaluation with gradient takes 0.67 s at 1000 pairs and 2.9 s at 2000 pairs; one prediction 1.1 and 6.9 ms. At 3000
+  pairs that is about 7 s per evaluation (derived, n^2 scaling) and, at 100-300 optimiser steps (guessed), 12-35 min per
+  emulated output. The ported path fits one GP per output, and Randi alone has 18,835 terms. So CES on the worm needs
+  an output reduction first. CES.jl has three: variance-truncated decorrelation, canonical correlation and a
+  likelihood-informed subspace (`Utilities/`). None is ported, and a 347-dimension random walk mixes slowly. Which to
+  port is decided after the EKI, from how many directions its ensemble shows the data inform.
 
 ## 10. Compute and cost (refinement 10)
 
