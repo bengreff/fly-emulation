@@ -37,6 +37,14 @@ w_ref = 10 rad/s (guessed, under the 5.3 ms bound derived from Fang-Yen et al. 2
 viscosity < 5e-16 N m^2 s over bending stiffness 9.5e-14 N m^2). Backholm gives the exponent, not the prefactor.
 Needs an RFT fluid (worm_1mm scale).
 
+Stiffness rule (8 Nov 2026, Ben's approved fittable rule parameter; DEBUG_TRIAGE line 10): rule_body_modulus_scale
+multiplies every layer modulus (template 1 = the Frontiers values as published, so neutral). Its range is bounded
+by the two sources, which do not overlap: the Frontiers layer ranges give a mesh section modulus of 776-1157 kPa for
+the pressurised worm (scale 0.91-1.35), Backholm 2013's whole-worm bending 110 +- 30 kPa (2 sd 50-170) gives scale
+0.058-0.199 (all derived on worm_mesh_4). body_layers = "backholm2013" is the second alternative: the Frontiers
+profile scaled so the mesh section modulus is body_E_bending_kPa (Backholm's measured whole-worm value; the rule
+parameter is then unused). The fit runs both ways.
+
 Nested forms: body_layers = "published" (every tetrahedron the constructor's 2e5 Pa, upstream MetaWorm) and
 body_damping = "none" (upstream). Both nested together pass no flag, so the driver runs as upstream (test:
 bit-identical frames, scripts/worm/body_layers_check.py). The upstream (non-SI) scale gets neither.
@@ -55,7 +63,7 @@ MECHANISMS = [
     ("body_damping", "Body: shear-thinning internal damping (Backholm 2013), corotational Kelvin-Voigt", "body",
      "backholm2013"),
 ]
-FORMS = {"body_layers": ("frontiers2024", "published"), "body_damping": ("backholm2013", "none")}
+FORMS = {"body_layers": ("frontiers2024", "published", "backholm2013"), "body_damping": ("backholm2013", "none")}
 DEFAULTS = {k: v[0] for k, v in FORMS.items()}
 NESTED = {k: v[1] for k, v in FORMS.items()}
 
@@ -84,6 +92,14 @@ SPECS = [
     spec("body_pressure_kPa", "body_layers", "kPa", 100.0, 0.0, 200.0, "guessed",
          "the run's body pressure; template = the control's, so E_core = body_E_core_kPa",
          notes="to be read from B2's out['pressure_kPa'] at start-up when it lands"),
+    spec("rule_body_modulus_scale", "body_layers", "1", 1.0, 0.058, 1.35, "guessed",
+         FR + " (upper: every layer at its published high end, 1157 kPa over the template's 856, mesh); " + BH +
+         " (lower: 50 kPa, the 2 sd low edge of 110 +- 30, over 856)", applies_to="every layer modulus",
+         notes="the fittable rule parameter (Ben, 8 Nov); template 1 = the Frontiers moduli as published (neutral); "
+               "the sources' own bands do not overlap: Frontiers 0.91-1.35, Backholm 0.058-0.199 (derived)"),
+    spec("body_E_bending_kPa", "body_layers", "kPa", 110.0, 50.0, 170.0, "measured",
+         BH + ": whole-worm bending modulus 110 +- 30 kPa (range 2 sd)", applies_to="whole body (backholm2013 form)",
+         notes="body_layers = backholm2013 scales the Frontiers profile so the mesh section modulus equals this"),
     spec("body_damp_tau_ms", "body_damping", "ms", 2.0, 0.2, 5.3, "guessed",
          "upper bound derived from Fang-Yen et al. 2010 PNAS 107:20323 (internal viscosity < 5e-16 N m^2 s over "
          "bending stiffness 9.5e-14 N m^2 = 5.3 ms)", notes="Backholm 2013 gives no prefactor in this form"),
@@ -124,7 +140,8 @@ def profile(rho: np.ndarray, p: dict) -> np.ndarray:
     P_ratio = p["body_pressure_kPa"] / p["body_pressure_ctrl_kPa"]
     E_core = p["body_E_core_depressurised_kPa"] + (p["body_E_core_kPa"] - p["body_E_core_depressurised_kPa"]) * P_ratio
     c, h, m = p["body_frac_cuticle"], p["body_frac_hypodermis"], p["body_frac_muscle"]
-    return np.where(rho > 1 - c - h, p["body_E_cuticle_kPa"], np.where(rho > 1 - c - h - m, p["body_E_muscle_kPa"], E_core))
+    E = np.where(rho > 1 - c - h, p["body_E_cuticle_kPa"], np.where(rho > 1 - c - h - m, p["body_E_muscle_kPa"], E_core))
+    return E * p.get("rule_body_modulus_scale", 1.0)
 
 
 def tet_moduli(p: dict | None = None, mesh: Path = MESH) -> tuple[np.ndarray, dict]:
@@ -193,8 +210,12 @@ def world_flags(toggles: dict | None, out_prefix: str, world: dict | None, p: di
         return world, {"applied": False}
     p = {**P, **(p or {})}
     info = {"applied": True, **t}
-    if t["body_layers"] == "frontiers2024":
+    if t["body_layers"] == "backholm2013":
+        _, s0 = tet_moduli({**p, "rule_body_modulus_scale": 1.0})
+        p = {**p, "rule_body_modulus_scale": p["body_E_bending_kPa"] / s0["E_bending_kPa"]}
+    if t["body_layers"] in ("frontiers2024", "backholm2013"):
         E, s = tet_moduli(p)
+        s["rule_body_modulus_scale"] = float(p.get("rule_body_modulus_scale", 1.0))
         path = str(out_prefix) + ".tet_youngs.f64"
         E.astype(np.float64).tofile(path)
         world["tet_youngs"] = path

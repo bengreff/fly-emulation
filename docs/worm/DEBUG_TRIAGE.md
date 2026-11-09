@@ -254,3 +254,8 @@ Nothing on Windows or the throttle was changed.
   exc_cell 5). DC neutral: 69 gap partners move at most 0.32 mV, organ cells 0.02 mV (bar 0.5 mV); hyp's input
   resistance rises 1.29x as derived, swamped by its own 160 nS. BWM somata (brain.py's sections, nseg 1): nseg 3
   moves no Du spike by more than 0.1 ms, so the 1.45x shortfall has no effect; optional request to wbrain2.
+- Line 10 stiffness (wbody2 item 7), 21:59 8 Nov. The approved rule parameter exists: rule_body_modulus_scale
+  (template 1, neutral; range 0.058-1.35). 0.061-0.194 gives 50-170 kPa (D, not adopted). The sources alone do not
+  overlap (Frontiers 776-1157 kPa vs Backholm 50-170), so C stays for the template; the fit runs both ways
+  (body_layers frontiers2024 / backholm2013). Found: the mesh quadrature misses the outer layers (4.6 % vs 38.5 % of
+  the bending weight), A, mine, open.
