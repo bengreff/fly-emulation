@@ -16,8 +16,8 @@ read this step's value):
     synapse      transmitter release, receptor and short-term plasticity kinetics (RATE_MODS: wsyn, BAAIWorm's
                  synapses)
     pump         pharyngeal pumping: the pharyngeal muscle gates (RATE_MODS: sh_pharynx), the lumped clock's rate
-    dmp_clock    the defecation motor program period (temperature compensated, Iwasaki et al. 1995; Q10 1): the
-                 intestine's IP3R oscillator and the nested timer run on a time axis scaled by phi
+    dmp_clock    the defecation motor program period (temperature compensated, Iwasaki et al. 1995; Q10 1,
+                 inferred): the intestine's IP3R oscillator and the nested timer run on a time axis scaled by phi
 Compiled mods get the factor through a GLOBAL tadj (1 by default) that multiplies the listed state equations of
 their DERIVATIVE block. patch_mod adds it while brain._neuron copies the mods to the build, so the vendored files
 stay verbatim and at tadj = 1 the build is the unpatched one; this module sets tadj_<suffix> whenever T moves.
@@ -53,9 +53,14 @@ SPECS = [
     spec("temp_q10_synapse", TM, "1", 2.0, 1.5, 3.0, "guessed", "none opened"),
     spec("temp_q10_pump", TM, "1", 2.0, 1.5, 3.0, "guessed",
          "none opened: pharyngeal pumping rises with temperature (Q10 not found in a free source)"),
-    spec("temp_q10_dmp_clock", TM, "1", 1.0, 0.9, 1.2, "measured",
-         "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (a temperature-compensated ultradian clock)",
-         notes="period about constant over the cultivation range; the exact Q10 was not opened"),
+    spec("temp_q10_dmp_clock", TM, "1", 1.0, 0.9, 1.2, "inferred",
+         "Iwasaki, Liu & Thomas 1995 PNAS 92:10317 (PMC40787, abstract): 'activated every 45 sec, and this rhythm "
+         "is temperature compensated'",
+         notes="9 Nov 2026: was labelled measured; the opened text is one qualitative line, with no Q10 and no "
+               "temperatures (the full texts of Iwasaki 1995 and Liu & Thomas 1994 are scans), so Q10 about 1 is "
+               "inferred and the range 0.9-1.2 guessed. Simpler than published: worms grown at 20 C and shifted to "
+               "a new temperature change their cycle length (Branicky, Shibata, Feng & Hekimi 2001 Genetics, "
+               "PMC1461884, abstract; direction and size not read), while this factor applies at once and for good"),
 ]
 
 
