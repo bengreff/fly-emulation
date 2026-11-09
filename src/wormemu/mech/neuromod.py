@@ -56,6 +56,8 @@ G = 0):
   dens_unc2  1 + bu Gs (and through UNC-2): "the voltage-gated calcium channels UNC-2 and EGL-19, but not CCA-1
              function downstream of PKA" in DVB (Wang and Sieburth 2013 PLoS Genet 9:e1003831, opened 8 Nov 2026).
              Toggle gs_ca_channels: egl19_unc2 (default) / egl19 (nested: EGL-19 only, the earlier form)
+NLP-40 on AEX-2 has two measured potencies (toggle aex2_ec50_source, class C): beets2023 (default, Table S6, 7.645 nM)
+or wang2013 (P3-1, 3.39 nM, Wang et al. 2013 Curr Biol, PMC3651789).
 The gains are guessed; which family moves which effector, and which way, is from the genetics cited.
 
 Sleep (row 28) runs through the same machinery: RIS releases FLP-11 (CeNGEN), read by DMSR-1 (Gi/o) on its targets and
@@ -93,10 +95,13 @@ MECHANISMS = [
      "compartment (nested: its soma's compartment); release stays at the soma", "neuromodulation", "membrane"),
     ("gs_ca_channels", "Gs-PKA raises EGL-19 and UNC-2 densities (Wang and Sieburth 2013; nested: EGL-19 only)",
      "neuromodulation", "egl19_unc2"),
+    ("aex2_ec50_source", "Which measured NLP-40 potency AEX-2 reads: Beets et al. 2023 (NLP-40-2, 7.645 nM) or Wang "
+     "et al. 2013 (P3-1, 3.39 nM)", "neuromodulation", "beets2023"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
 GS_CA = ("egl19_unc2", "egl19")
+EC50_SRC = ("beets2023", "wang2013")
 COMPARTMENTS = ("head", "anterior_body", "posterior_body", "tail")
 AMINES = ("serotonin", "dopamine", "octopamine", "tyramine")
 TRANSPORTERS = {"serotonin": "mod-5", "dopamine": "dat-1"}
@@ -249,6 +254,13 @@ for (pg, rg), (t, lo, hi, k) in PAIRS.items():
     SPECS.append(S(f"pep_ec50_{pg}_{rg}_nM", P, "nM", t, lo, hi, BEETS_SRC, "measured", grain="pairing",
                    applies_to=f"{pg} peptides on {rg}",
                    notes=f"most potent of {k} {pg} peptide(s); bounds: lowest 95% CI and least potent peptide"))
+SPECS.append(S("pep_ec50_nlp-40_aex-2_wang2013_nM", P, "nM", 3.39, 2.22, 4.56, "Wang et al. 2013 Curr Biol (PMC3651789, "
+               "opened 8 Nov 2026): 'The NLP-40 P3-1 peptide (EC 50 =3.39 nM+-1.17 nM) was a more potent ligand for "
+               "AEX-2/GPCR, compared to the NLP-40 P3-2 peptide (EC 50 =26.73 nM+-1.18 nM)', aequorin assay",
+               "measured", grain="pairing", applies_to="nlp-40 peptides on aex-2",
+               notes="read only under aex2_ec50_source=wang2013 (class C: Beets 2023 gives 7.645 nM, 95% CI 5.73-10.2, "
+                     "for its one NLP-40 peptide on AEX-2); bounds 3.39 +- 1.17 nM, the paper's +- (statistic not "
+                     "stated in that sentence)"))
 SPECS += [
     S("ma_diffusion_um2_per_s", A, "um2/s", 600, 200, 1000, "free aqueous dopamine about 6e-6 cm2/s (Gerhardt and "
       "Adams 1982 Anal Chem 54:2618), slowed by tortuosity", "inferred"),
@@ -328,6 +340,8 @@ class Mech:
         self.gs_ca = toggles.get("gs_ca_channels", "egl19_unc2")
         assert self.site in SITES, f"neuromod_site {self.site!r} not one of {SITES}"
         assert self.gs_ca in GS_CA, f"gs_ca_channels {self.gs_ca!r} not one of {GS_CA}"
+        self.ec50_src = toggles.get("aex2_ec50_source", "beets2023")
+        assert self.ec50_src in EC50_SRC, f"aex2_ec50_source {self.ec50_src!r} not one of {EC50_SRC}"
         st = brain.st
         names, musc = list(brain.cell_names), np.asarray(brain.is_muscle, bool)
         n = self.n = len(names)
@@ -361,7 +375,10 @@ class Mech:
             for (pg, rg) in PAIRS:
                 for c in range(n):
                     if self.neuron[c] and expr(rg, c) > 0:
-                        self.entries.append((c, li[pg], float(p[f"pep_ec50_{pg}_{rg}_nM"]), self._w(rg), P))
+                        sid = f"pep_ec50_{pg}_{rg}_nM"
+                        if (pg, rg) == ("nlp-40", "aex-2") and self.ec50_src == "wang2013":
+                            sid = "pep_ec50_nlp-40_aex-2_wang2013_nM"
+                        self.entries.append((c, li[pg], float(p[sid]), self._w(rg), P))
         if self.on[A]:
             self.ma_comp, self.ma = self._pool(self.form[A] == "well_mixed", len(AMINES), p["ma_diffusion_um2_per_s"])
             self.ma_rel = np.array([[float(self.neuron[c] and lg in (st.transmitter.get(names[c]) or set()))

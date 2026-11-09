@@ -129,3 +129,22 @@ def test_site_weights():
     assert all(Wm[names.index(c), 0] == 1.0 for c in head)
     a, b = _site(head, "soma"), _site(head, "membrane")
     assert np.array_equal(np.array(a["V"]), np.array(b["V"]))
+
+
+def test_aex2_ec50_source():
+    """aex2_ec50_source: the default reads Beets 2023's NLP-40 EC50 on AEX-2; wang2013 changes only those entries."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "compartments", "monoamines": "off"}
+    a = N.Mech(brain, T, tg)
+    b = N.Mech(brain, T, {**tg, "aex2_ec50_source": "wang2013"})
+    row = N.PRECURSORS.index("nlp-40")
+    aex2 = np.array([e[1] == row and e[2] == T["pep_ec50_nlp-40_aex-2_nM"] for e in a.entries])
+    assert aex2.any() and np.array_equal(a.e_cell, b.e_cell)
+    assert np.all(a.e_ec50[aex2] == T["pep_ec50_nlp-40_aex-2_nM"])
+    assert np.all(b.e_ec50[aex2] == T["pep_ec50_nlp-40_aex-2_wang2013_nM"])
+    assert np.array_equal(a.e_ec50[~aex2], b.e_ec50[~aex2])

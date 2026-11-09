@@ -20,7 +20,11 @@ point means neuromod's clearance is a D gap (a passing value exists in range; no
 is upstream (the intestine's release timing and tonic part, wbody2's). Peak Gs is reported, no bar (the Gs-to-spike
 link is item 1 (b), not identified).
 
-Usage: python probe_a2.py [template_run.json] -> runs/worm/wneuro/probe_a2.json
+Addendum (23:27 CST, before running it): `aex2_ec50_source=wang2013` as an argument runs the same grid with Wang
+2013's 3.39 nM instead of Beets' 7.645 nM (class C toggle). Same bar; report only. Expectation: the lower EC50
+saturates AEX-2 more, so modulation can only fall.
+
+Usage: python probe_a2.py [template_run.json] [aex2_ec50_source=wang2013] -> runs/worm/wneuro/probe_a2[_wang2013].json
 """
 from __future__ import annotations
 
@@ -46,10 +50,10 @@ SHAPES = {"template": (15.0, 0.3, 2.0), "corner": (100.0, 1.0, 4.0)}
 TAUS = (10.0, 30.0, 100.0, 300.0, 600.0)
 
 
-def run(t, ca, tau, shape):
+def run(t, ca, tau, shape, extra=None):
     R, k, n = SHAPES[shape]
     T = {s.id: s.template for s in N.SPECS}
-    m = N.Mech(U.BRAIN, {**T, "pep_degrade_tau_s": tau}, {"peptides": "compartments", "monoamines": "off"})
+    m = N.Mech(U.BRAIN, {**T, "pep_degrade_tau_s": tau}, {"peptides": "compartments", "monoamines": "off", **(extra or {})})
     j = U.NEURONS.index("DVB")
     m.pep_W[j] = DVB_W
     m.e_Wp = m.pep_W[m.e_cell[m.e_pep]]
@@ -74,14 +78,16 @@ def run(t, ca, tau, shape):
 
 
 def main():
-    src = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "runs/worm/wneuro/dmp_trace_cells-dmp_150s.json")
+    args = [a for a in sys.argv[1:] if "=" not in a]
+    extra = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
+    src = args[0] if args else str(ROOT / "runs/worm/wneuro/dmp_trace_cells-dmp_150s.json")
     r = json.load(open(src))
     t, ca = np.array(r["trace"]["t"]), np.array(r["trace"]["int9"])
     pk = r["int9_peaks_s"]
     rows = []
     for shape in SHAPES:
         for tau in TAUS:
-            occ, gs, read, n_aex2 = run(t, ca, tau, shape)
+            occ, gs, read, n_aex2 = run(t, ca, tau, shape, extra)
             mo, mg = modulation(t, occ, pk), modulation(t, gs, pk)
             ok = bool(mo and mg and all(x["mod"] >= 0.5 for x in mo) and all(x["mod"] >= 0.5 for x in mg))
             rows.append(dict(shape=shape, tau_s=tau, phasic=ok, occ_mod=[round(x["mod"], 3) for x in mo],
@@ -89,9 +95,10 @@ def main():
                              gs_trough=[round(x["trough"], 3) for x in mg], read_max_nM=round(float(read.max()), 2),
                              aex2_entries_at_dvb=n_aex2))
             print(json.dumps(rows[-1]))
-    out = dict(source_run=src, int9_peaks_s=pk, dvb_weights=DVB_W.tolist(), shapes=SHAPES, rows=rows,
+    out = dict(source_run=src, toggles=extra, int9_peaks_s=pk, dvb_weights=DVB_W.tolist(), shapes=SHAPES, rows=rows,
                any_pass=any(x["phasic"] for x in rows))
-    (ROOT / "runs/worm/wneuro/probe_a2.json").write_text(json.dumps(out, indent=1))
+    tag = "".join(f"_{v}" for v in extra.values())
+    (ROOT / f"runs/worm/wneuro/probe_a2{tag}.json").write_text(json.dumps(out, indent=1))
     print("any_pass", out["any_pass"])
 
 
