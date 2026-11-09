@@ -547,6 +547,18 @@ def test_pump_na_recovers_at_the_linearised_rate_and_null_loses_the_resting_curr
     assert np.allclose(rows[-1]["I_pA"], ip_rest) and (rows[-1]["out"]["na_i_mM"] > na0).all()
 
 
+def test_pump_scale_does_not_depend_on_the_build():
+    """A neuron's I_max and g_Na scale by its area over pump_area_median_um2 (the full brain's median), not over the
+    median of the cells built (9 Nov 2026; wbrain2's Request): one cell's pump is the same alone and with others."""
+    q = pu.defaults()
+    vol, area = [80.0, 300.0, 1200.0, 500.0], [88.4, 267.2, 1133.4, 900.0]
+    many = pu.Pump(q, [False, False, False, True], (vol, area))
+    alone = pu.Pump(q, [False], (vol[:1], area[:1]))
+    assert alone.imax[0] == many.imax[0] == q["pump_imax_neuron_pA"] * area[0] / q["pump_area_median_um2"]
+    assert alone.gna[0] == many.gna[0] and alone.vol[0] == many.vol[0] == vol[0]
+    assert many.imax[3] == q["pump_imax_muscle_pA"] and many.vol[3] == q["pump_vol_muscle_um3"]
+
+
 def test_pump_specs_have_ranges_and_labels():
     from bioemu.ledger import LABELS
     for s in pu.SPECS:

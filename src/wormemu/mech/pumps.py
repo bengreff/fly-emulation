@@ -15,7 +15,8 @@ channels, nAChRs) per mV above rest. Injected current: -(I_p - I_p,rest), the ch
 (the fitted leaks already contain the resting pump), so a load gives a pump after-hyperpolarisation.
 A neuron's volume is its hoc morphology's (scan; 13 to 856 um3), and its I_max and g_Na scale with its membrane area,
 the templates being the median neuron's (a density x area rule); the muscles keep the per-cell values (the brain's
-muscle is a stand-in cylinder).
+muscle is a stand-in cylinder). The median is a fixed number, pump_area_median_um2, the full default brain's (9 Nov
+2026: it was the median over the cells a Brain built, so a sub-brain gave a cell a different pump; wbrain2, b000d1a).
 Outputs: out['na_i_mM'], out['pump_current_pA'] (injected), out['pump_atp_J_per_d'] (all cells),
 out['pump_atp_excess_J_per_d'] (above rest; mech.metabolism adds it to somatic maintenance).
 
@@ -76,6 +77,13 @@ SPECS = [
     _s("pump_rt_f_mV", "mV", 25.26, 24.0, 26.7, "R T / F at 20 C", "derived", grain="global"),
     _s("pump_v0_ms", "ms", 1000.0, 100.0, 5000.0, "this model", "derived", grain="global",
        notes="window over which each cell's resting voltage V0 is averaged; no load or current in it"),
+    _s("pump_area_median_um2", "um2", 271.2578077213618, 66.7, 5164.4,
+       "the median whole-cell membrane area over the default brain's 302 neurons, their hoc morphologies (the sum "
+       "of seg.area() over every section; scripts/worm/wbody2/pump_area_ref.py, 9 Nov 2026)", "derived",
+       grain="global", applies="neurons",
+       notes="the reference area of pump_imax_neuron_pA and pump_gna_neuron_nS; the range is the smallest and "
+             "largest neuron's area. Fixed, so a cell's pump does not depend on which cells are built; recompute "
+             "if the morphology changes"),
 ]
 
 
@@ -96,7 +104,7 @@ class Pump:
         self.gna = pick("pump_gna_neuron_nS", "pump_gna_muscle_nS")
         if geom is not None and (~mus).any():
             vol, area = (np.asarray(x, float) for x in geom)
-            rel = np.where(mus, 1.0, area / np.median(area[~mus]))
+            rel = np.where(mus, 1.0, area / q["pump_area_median_um2"])
             self.vol = np.where(mus, self.vol, vol)
             self.imax, self.gna = self.imax * rel, self.gna * rel
         sig = (np.exp(q["pump_na_o_mM"] / 67.3) - 1.0) / 7.0
