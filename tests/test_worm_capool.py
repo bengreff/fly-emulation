@@ -1,7 +1,8 @@
 """mech/capool.py: ca_pool_units=off is the brain without the module's effect, and total_current sets each neuron
 soma's vcell to V_cell / (10 A_soma), leaves muscles alone and makes the Ca pool move. slo_ca_source: single_channel
 (the default) is neutral; tuner_gbar sets each SLO cell's gsc to its summed SLO density (DEBUG_TRIAGE item 4). The
-steady-state check against Nicoletti 2019 Eq. 28 is scripts/worm/capool_unit_check.py. NEURON is one simulator per
+steady-state check against Nicoletti 2019 Eq. 28 is scripts/worm/capool_unit_check.py. kcnl_density: network (the
+default) keeps cell_param's gbkcnl, tuner zeroes it (night file 8 Nov, KCNL). NEURON is one simulator per
 process: each brain runs in a subprocess."""
 import json
 import os
@@ -71,3 +72,32 @@ def test_slo_ca_source_neutral_and_tuner():
     has = [i for i, g in enumerate(tu["gsc"]) if g and tu["gb"][i] > 0]
     assert has and all(np.allclose(tu["gsc"][i], tu["gb"][i]) for i in has)
     assert not np.allclose(np.array(tu["V"])[:, has], np.array(d["V"])[:, has])
+
+
+KCNL = '''
+import json, sys, re
+from wormemu import mech
+mech.REGISTRY[:] = ["capool"]
+from wormemu.brain import Brain
+b = Brain(toggles=json.loads(sys.argv[1]), cells=["AVAL", "AIYL", "AFDL"])
+h = b.h
+g = {c: [float(sg.kcnl.gbkcnl) for sec in o.all if h.ismembrane("kcnl", sec=sec) for sg in sec]
+     for c, o in zip(b.cell_names, b.cells)}
+print(json.dumps(g))
+'''
+
+
+def test_kcnl_density_network_and_tuner():
+    """network (the default) keeps cell_param's gbkcnl (AVAL 0.005, AIYL 0.00063, AFDL 0); tuner zeroes it."""
+    env = dict(os.environ, PYTHONPATH=str(ROOT / "src"))
+    out = {}
+    for form in ("network", "tuner"):
+        r = subprocess.run([sys.executable, "-c", KCNL, json.dumps(dict(kcnl_density=form))],
+                           capture_output=True, text=True, env=env, cwd=ROOT, timeout=600)
+        assert r.returncode == 0, r.stderr[-2000:]
+        out[form] = json.loads(r.stdout.strip().splitlines()[-1])
+    net, tun = out["network"], out["tuner"]
+    assert net["AVAL"] and all(x == 0.005 for x in net["AVAL"])
+    assert net["AIYL"] and all(x == 0.00063 for x in net["AIYL"])
+    assert all(x == 0.0 for x in net["AFDL"])
+    assert all(x == 0.0 for c in tun for x in tun[c]) and tun["AVAL"]

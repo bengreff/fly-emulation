@@ -19,6 +19,12 @@ nS/um2 where the single-channel conductance in nS belongs) and SLO mods that rea
 `tuner_gbar` sets each cell's SLO gsc to that sum read as nS, which reproduces cainternn's Ca (same constants).
 No new numbers: the sum is the cell's own published densities.
 
+kcnl_density (wbrain2, 9 Nov 2026; night file, "KCNL: the network's density or the tuner's none"): the same tuner
+never inserted KCNL ("Delete: gbkcnl"), while the network's cell_param gives 88 neurons KCNL (80 at 0.00063
+nS/um2, AIYL's set 2 among them; AVA, AVB, AVE, PVC at 0.005), so the fitted densities were found without it.
+`network` (default) keeps the cell_param values; `tuner` sets gbkcnl 0 in every section of every neuron at build,
+before the brain gathers its conductance targets, so no g_scale brings it back. No new numbers.
+
 ca_bulk (DEBUG_TRIAGE lines 19 and 17, inbox item 3, wbrain2, 8 Nov 2026): a bulk cytosolic Ca pool for the
 indicator. Eq. 28's pool is Nicoletti's submembrane microdomain (tau_Ca 50 ms), the Ca the channels see; GCaMP reads
 bulk cytosolic Ca. No C. elegans neuron form with a bulk pool was found (night file, Open), so the nearest system's
@@ -43,11 +49,16 @@ MECHANISMS = [
      "Nicoletti 2019) or the tuner's cainternn (gsc = the cell's summed SLO density)", "channel", "single_channel"),
     ("ca_bulk", "Bulk cytosolic Ca for the indicator (NEURON's cadifpmp: radial diffusion, fixed-ratio buffer, "
      "membrane pump), fed by the soma's Ca current; a readout, the channels keep Eq. 28", "channel", "off"),
+    ("kcnl_density", "KCNL (SK-type K) as the network's cell_param gives it (88 neurons) or none, as BAAIWorm's "
+     "single-cell tuner fitted every cell", "channel", "network"),
 ]
+# the form that is the code without each switch (the ledger's neutral column)
+NEUTRAL = {"ca_pool_units": "off", "slo_ca_source": "single_channel", "ca_bulk": "off", "kcnl_density": "network"}
 FORMS = ("total_current", "off")
 SLO_CA = ("single_channel", "tuner_gbar")
 SLO_GB = {"slo1_egl19": "gbslo1", "slo1_unc2": "gbslo1", "slo2_egl19": "gbslo2", "slo2_unc2": "gbslo2"}
 BULK = ("off", "cadifpmp")
+KCNL = ("network", "tuner")
 CADIF = "NEURON 9.0.2 cadifpmp (Hines and Carnevale; share/nrn/demo/release/cabpump.mod, opened 8 Nov 2026)"
 BORROW = "borrowed from the nearest system (a generic vertebrate neuron demo); no C. elegans value found"
 SPECS = [
@@ -85,11 +96,25 @@ def _bulk(toggles):
     return b
 
 
+def _kcnl(toggles):
+    k = toggles.get("kcnl_density", "network")
+    if k not in KCNL:
+        raise ValueError(f"kcnl_density form {k!r} not in {KCNL}")
+    return k
+
+
 def build_cell(brain, name, obj, params, toggles):
-    """ca_bulk: insert the bulk pool (nmodl/cabulk.mod) in each neuron's soma, where every Ca channel sits."""
-    if _bulk(toggles) == "off" or name not in brain.st.index or brain.st.kind[brain.st.index[name]] != "neuron":
+    """ca_bulk: insert the bulk pool (nmodl/cabulk.mod) in each neuron's soma, where every Ca channel sits.
+    kcnl_density tuner: gbkcnl 0 in every section of the neuron."""
+    if name not in brain.st.index or brain.st.kind[brain.st.index[name]] != "neuron":
         return
-    obj.Soma.insert("cabulk")
+    if _kcnl(toggles) == "tuner":
+        for sec in obj.all:
+            if brain.h.ismembrane("kcnl", sec=sec):
+                for seg in sec:
+                    seg.kcnl.gbkcnl = 0.0
+    if _bulk(toggles) != "off":
+        obj.Soma.insert("cabulk")
 
 
 class Mech:
