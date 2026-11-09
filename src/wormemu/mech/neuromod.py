@@ -84,6 +84,14 @@ binding the mean occupancy is at most the occupancy at the mean concentration (c
 time-averaged effect from above. Validity: d above the extracellular channel scale (tens of nm) and r below the site
 spacing's range of influence; inside a cleft between two membranes the field is about 2-3x the half-space value at
 the cleft centre (derived), inside the alpha, lambda and h bounds. Every geometry value is a bounded gap.
+Other routes (wneuro 9 Nov 2026, Director's item 2): the same form, near_nM(amine, pre, J, post=cell), with the route's
+geometry from Cook et al. 2019's counts: each pre cell p with n_p > 0 synapses onto `post` has n_p sites spaced
+syn_site_spacing_um apart, each releasing syn_release_share x J_p / N_p (N_p = p's Cook output synapses: release split
+by synapse count, the rule behind hsn_vm2_release_share), the receptor syn_site_receptor_um from the middle site; the
+read is the largest over the pre cells' clusters (each pre cell's synapses onto a target sit in their own place; the
+others are left to the pool). Metabotropic receptors only: the amine-gated channels at synapses (MOD-1, LGC-55,
+LGC-53) are already the brain's synapse layer (receptors.py, cleft rec_tmax_<amine>_uM), so a near-field read for them
+would count the synapse twice.
 The gains are guessed; which family moves which effector, and which way, is from the genetics cited.
 
 Sleep (row 28) runs through the same machinery: RIS releases FLP-11 (CeNGEN), read by DMSR-1 (Gi/o) on its targets and
@@ -129,7 +137,7 @@ MECHANISMS = [
     ("pc_grid", "Pseudocoelom grid along the body: the four named compartments (nested) or bins of at most pc_bin_um "
      "inside each (the same 1D diffusion, resolved below its length constant)", "neuromodulation", "bins"),
     ("amine_synaptic", "Amine near field at a release site (Nicholson point source; a read, moves no molecules): off "
-     "(the pool only) or nicholson (near_nM, HSN onto vm2)", "neuromodulation", "off"),
+     "(the pool only) or nicholson (near_nM: HSN onto vm2, and any Cook route onto a cell)", "neuromodulation", "off"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
@@ -382,6 +390,20 @@ SPECS += [
     S("syn_half_space", A, "1", 2.0, 1.0, 2.0, "a source on a reflecting plane doubles the free-space field (method "
       "of images, derived)", "derived", applies_to="amine near field", notes="1: a site in open volume; 2: a site on "
       "a flat membrane"),
+    # near field, every other route (near_nM with post; wneuro 9 Nov 2026): shared values, no route-specific source
+    S("syn_site_receptor_um", A, "um", 0.1, 0.02, 1.0, notes="release site to a metabotropic amine receptor on the "
+      "target, for every Cook route: the same unknown as hsn_vm2_site_receptor_um, with its bounds (20 nm, a generic "
+      "cleft, Cowan and Kandel 2001 as cited in PMC4925697, to 1 um); no free source places a worm amine GPCR at a "
+      "synapse", applies_to="amine near field, Cook routes"),
+    S("syn_site_spacing_um", A, "um", 0.625, 0.5, 20.0, "Patel et al. 2006 (PMC3917495, opened): HSNL's 12-20 "
+      "synapses lie 'within a short stretch of the axon (~10 um)', 0.5-0.83 um apart, template 10 / 16 (derived)",
+      "inferred", applies_to="amine near field, Cook routes", notes="HSN's spacing taken for every route (inferred: "
+      "en passant synapses of one cell onto one target clustered as HSN's); upper bound guessed: spread along a "
+      "nerve-ring process, where at 20 um a neighbour adds 1/200 of the nearest site's field at 0.1 um (derived)"),
+    S("syn_release_share", A, "fraction", 1.0, 0.1, 1.0, notes="share of a cell's amine release made at its chemical "
+      "synapses, split evenly over its Cook output synapses (the rule behind hsn_vm2_release_share, whose 0.26 is "
+      "this at 1 times HSN's vulval share of synapses); 0.1 = most release from the soma and dense-core vesicles off "
+      "the synapses (guessed)", applies_to="amine near field, Cook routes"),
 ]
 AMINE_PAIRS = (("serotonin", "ser-1"), ("serotonin", "ser-4"), ("serotonin", "ser-5"), ("serotonin", "ser-7"),
                ("dopamine", "dop-1"), ("dopamine", "dop-2"), ("dopamine", "dop-3"), ("dopamine", "dop-4"),
@@ -624,23 +646,57 @@ class Mech:
                 W[c] = w / w.sum()
         return W
 
-    def near_nM(self, amine, pre, J=None):
-        """Time-averaged near-field excess (nM) of `amine` at a receptor next to the release sites of cells `pre`
-        (indices) onto one target, Nicholson's steady point source (module docstring). 0 under amine_synaptic=off.
-        J: the cells' release (molecules/s, shape (len(pre),)); default this step's ma_J."""
-        if self.synaptic == "off" or not self.on[A]:
-            return 0.0
-        p, row = self.p, AMINES.index(amine)
-        Jc = np.asarray(self.ma_J[pre, row] if J is None else J, float)
-        n = max(1, int(round(p["hsn_vm2_sites"]))) * len(Jc)
-        q = p["hsn_vm2_release_share"] * Jc.sum() / n          # molecules/s per site
-        s = p["hsn_vm2_region_um"] / n                          # site spacing, um
-        x = (np.arange(n) - (n - 1) // 2) * s                   # receptor r from the middle site
-        d = np.sqrt(p["hsn_vm2_site_receptor_um"] ** 2 + x ** 2)
+    def _field_nM(self, q, n, s, r):
+        """Nicholson's steady field (nM) at a receptor r um from the middle of n sites s um apart, each releasing q
+        molecules/s (the module docstring's form; the one form every route uses)."""
+        p = self.p
+        x = (np.arange(n) - (n - 1) // 2) * s
+        d = np.sqrt(r ** 2 + x ** 2)
         Ds = p["ma_diffusion_um2_per_s"] / p["ecs_tortuosity"] ** 2
         ell = np.sqrt(Ds * p["ma_degrade_tau_s"])
         c = p["syn_half_space"] * q / (4.0 * np.pi * Ds * p["ecs_alpha"]) * np.sum(np.exp(-d / ell) / d)
         return float(c / (NA_PL / 1000.0))                      # molecules/um3 -> nM
+
+    def cook_counts(self):
+        """(n[pre, post], N_out[pre]) over this brain's cells from Cook et al. 2019 (brain_structure's chem list)."""
+        if getattr(self, "_cook", None) is None:
+            st, ix = self.brain.st, {c: k for k, c in enumerate(self.names)}
+            n = np.zeros((self.n, self.n))
+            out = np.zeros(self.n)
+            for a, b, k in st.chem:
+                pa = ix.get(st.names[a])
+                if pa is None:
+                    continue
+                out[pa] += k
+                pb = ix.get(st.names[b])
+                if pb is not None:
+                    n[pa, pb] += k
+            self._cook = (n, out)
+        return self._cook
+
+    def near_nM(self, amine, pre, J=None, post=None):
+        """Time-averaged near-field excess (nM) of `amine` at a receptor next to the release sites of cells `pre`
+        (indices) onto one target, Nicholson's steady point source (module docstring). 0 under amine_synaptic=off.
+        J: the cells' release (molecules/s, shape (len(pre),)); default this step's ma_J.
+        post None: HSN onto vm2 (hsn_vm2_* Specs; every pre cell's sites interleaved over the region). post a cell
+        index: the Cook route onto it (syn_* Specs; the largest over the pre cells' own clusters; 0 if none synapse)."""
+        if self.synaptic == "off" or not self.on[A]:
+            return 0.0
+        p, row = self.p, AMINES.index(amine)
+        pre = np.atleast_1d(np.asarray(pre, int))
+        Jc = np.asarray(self.ma_J[pre, row] if J is None else J, float)
+        if post is None:
+            n = max(1, int(round(p["hsn_vm2_sites"]))) * len(Jc)
+            return self._field_nM(p["hsn_vm2_release_share"] * Jc.sum() / n, n, p["hsn_vm2_region_um"] / n,
+                                  p["hsn_vm2_site_receptor_um"])
+        cn, out = self.cook_counts()
+        best = 0.0
+        for c, j in zip(pre, Jc):
+            k = int(cn[c, post])
+            if k > 0:
+                best = max(best, self._field_nM(p["syn_release_share"] * j / out[c], k, p["syn_site_spacing_um"],
+                                                p["syn_site_receptor_um"]))
+        return best
 
     def cell_nM(self, kind, ligand, cell):
         """The concentration cell `cell` reads (nM, area-weighted over its compartments): kind P (ligand a
