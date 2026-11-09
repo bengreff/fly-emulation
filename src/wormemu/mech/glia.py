@@ -12,8 +12,8 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 Each amphid neuron's depolarisation above its own resting level (the mean over the first
                 GLIA_V0_MS) changes its K+ leak current into it, g_K ((v - v0) - dE_K) (a raised E_K cuts the efflux:
                 the same leak current the module injects); glial Kir4.1-type uptake and diffusion to the
-                bulk clear it, the two time constants set from the mammalian Kir4.1 recovery (wild type 4.2 s,
-                glial knockout 6.3 s; inferred, cross-species); the K+ reversal shift (RT/F) ln(Ko / Ko_bath) drives
+                bulk clear it, the two time constants guessed from a mouse model's [K+]o decay (control 3.4-4 s,
+                Kir4.1 inhibited 4.2-6 s; KIR below: simulated, cross-species); the K+ reversal shift (RT/F) ln(Ko / Ko_bath) drives
                 each amphid neuron on that side through its K+ leak g_K (pA). g_K is the K+ share
                 (glia_k_leak_frac) of the neuron's own passive leak, so the shift moves a cell by at most that
                 share of dE_K and the loop cannot run away (7 Nov: a separate 0.2 nS, larger than the amphid
@@ -54,8 +54,9 @@ MECHANISMS = [
 GLIA_CELLS = ["GLRDL", "GLRDR", "GLRL", "GLRR", "GLRVL", "GLRVR", "CEPshDL", "CEPshDR", "CEPshVL", "CEPshVR"]
 GLIA_V0_MS = 1000.0
 SINGHVI = "Singhvi et al. 2016 Cell 165:936"
-KIR = "mammalian Kir4.1 K+ clearance (PORT_SOURCES_ORGANS O5: PLoS Comput Biol 10.1371/journal.pcbi.1004137 and " \
-      "related; wild type ~4.2 s, glial Kir4.1 knockout ~6.3 s)"
+KIR = "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507, opened), simulations of a " \
+      "mouse hippocampal neuron-astrocyte model: [K+]o decay 3.4 s (single stimulus) and 4 s (tetanus), Kir4.1 " \
+      "inhibited 4.2 s and 6 s (Fig. 4B, F)"
 MENG = "Meng et al. 2016 eLife (PMC5083064)"
 F_C_PER_MOL = 96485.0
 KO_FLOOR_MM = 1.0           # the hard K+ window's floor (scripts/worm/ranges/rules.yaml, 1-30 mM)
@@ -85,11 +86,14 @@ SPECS = [
     _s("glia_k_leak_frac", "glia_kbuffer", "1", 0.5, 0.1, 1.0, "this model", applies="amphid neurons",
        notes="K+ share of each amphid neuron's own passive leak: sets the activity K+ load and the reversal-shift "
        "current; guessed (neuronal leak is mostly K+ through K2P channels, share not measured in the worm)"),
-    _s("glia_kir_tau_s", "glia_kbuffer", "s", 12.6, 2.0, 30.0, KIR, "inferred", "amphid sheath",
-       notes="glial uptake alone: 1 / (1/4.2 - 1/6.3) s from the wild-type and knockout recoveries (derived from "
-       "cross-species numbers)"),
-    _s("glia_k_diff_tau_s", "glia_kbuffer", "s", 6.3, 3.0, 15.0, KIR, "inferred", "amphid endings",
-       notes="clearance without glial uptake (the Kir4.1 knockout's recovery), cross-species"),
+    _s("glia_kir_tau_s", "glia_kbuffer", "s", 12.6, 2.0, 30.0, KIR, "guessed", "amphid sheath",
+       notes="glial uptake alone; the source's pairs give 1 / (1/control - 1/inhibited) = 17.9 s (single) and 12.0 s "
+       "(tetanus), the template 12.6 s inside (it came from a misread 4.2 / 6.3 s pair, value kept: catalog audit "
+       "6 Nov); with glia_k_diff_tau_s the constants alone clear in 4.2 s, the source's inhibited single-stimulus "
+       "decay, not its 3.4-4 s control"),
+    _s("glia_k_diff_tau_s", "glia_kbuffer", "s", 6.3, 3.0, 15.0, KIR, "guessed", "amphid endings",
+       notes="clearance without glial uptake, at least the source's Kir4.1-inhibited decay (4.2-6 s); template 6.3 s "
+       "kept (catalog audit 6 Nov)"),
     _s("glia_rt_f_mV", "glia_kbuffer", "mV", 25.26, 24.4, 26.1, "RT/F at 20 C (15-30 C range)", "derived",
        grain="global", applies="whole worm"),
     _s("glia_cl_bath_mM", "glia_kcc3", "mM", 150.0, 50.0, 160.0, "C. elegans recording saline (~150 mM Cl-)",
@@ -97,13 +101,16 @@ SPECS = [
     _s("glia_kcc3_dcl_mM", "glia_kcc3", "mM", 20.0, 2.0, 60.0, SINGHVI, applies="AFD ending",
        notes="Cl- excess KCC-3 holds in AFD's microdomain at rest; no measurement (the paper's Cl- levels are not in "
        "the free summary); guessed"),
-    _s("glia_cl_tau_s", "glia_kcc3", "s", 4.2, 0.7, 6.3, KIR, "inferred", "AFD ending",
-       notes="microdomain clearance, taken as the K+ recovery (O5's suggestion)"),
+    _s("glia_cl_tau_s", "glia_kcc3", "s", 4.2, 0.7, 6.3, KIR, "guessed", "AFD ending",
+       notes="microdomain clearance, taken as the K+ recovery (O5's suggestion; the source's control is 3.4-4 s, the "
+       "template 4.2 s kept, catalog audit 6 Nov)"),
     _s("glia_amsh_kcl_mM2", "glia_kcc3", "mM2", 2800.0, 1000.0, 6000.0, "KCC thermodynamics (K x Cl in = out at "
        "equilibrium)", applies="AMsh", notes="[K+]i x [Cl-]i in the sheath (e.g. 140 x 20); guessed"),
-    _s("glia_gcy8_cl_ic50_mM", "glia_kcc3", "mM", 100.0, 10.0, 300.0, SINGHVI, applies="AFD GCY-8",
-       notes="Cl- at half GCY-8 inhibition, Hill 1; Singhvi measured the inhibition, the number is not in the free "
-       "summary; guessed"),
+    _s("glia_gcy8_cl_ic50_mM", "glia_kcc3", "mM", 60.0, 10.0, 300.0, SINGHVI + " (PMC4860081, opened), Results and "
+       "Fig. 5D: GCY-8 cyclase activity in HEK293T membrane fractions, NH4Cl titration, 30 C", "measured",
+       applies="AFD GCY-8", notes="Cl- at half GCY-8 inhibition, Hill 1: 'Cl- ions ... are potent inhibitors of GCY-8 "
+       "cyclase activity ... with an IC50 of ~60mM' (heterologous, no interval); was 100 guessed, filled to 60 by "
+       "the catalog audit 6 Nov, module aligned 8 Nov (wbody2); range kept (guessed)"),
 ]
 
 

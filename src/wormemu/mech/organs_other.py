@@ -22,6 +22,8 @@ No published model covers these (PORT_SOURCES_ORGANS O6); every rate is a bounde
 Forms (nested): other_cells on | off; excretory_osmo canal (default) | null (canal ablated: Nelson & Riddle 1984) |
 fixed (no state: P = the setpoint, v = 1); coelomocytes on | null (cup: no uptake, key written as 0) | off (no key:
 neuromod's own placeholder).
+Geometry: each cell is a 10 um cylinder of its area (an area equivalent, not its shape), segmented by NEURON's
+d_lambda rule at 100 Hz (hyp 35, exc_cell 5); Cook's gaps carry no position, so all attach at the midpoint.
 Validity: one well-mixed fluid volume (no local swelling); linear body-wall elasticity and water permeability; no
 glycerol or other osmolyte synthesis (hours-long volume recovery in hypertonic media is absent, Lamitina 2004); the
 canal's ion transport is not resolved; coelomocyte uptake is not saturable.
@@ -31,6 +33,7 @@ from __future__ import annotations
 import numpy as np
 
 from wormemu.brain_layers import Spec
+from wormemu.mech import organs_nrn
 
 MECHANISMS = [
     ("other_cells", "Hypodermis, head mesodermal cell, excretory cell and gland as passive cells with Cook's gaps",
@@ -173,6 +176,7 @@ class Mech:
             sec.nseg, sec.diam = 1, 10.0
             sec.L = q[f"other_area_{n}_um2"] / (np.pi * sec.diam)
             sec.cm = 1.0
+            sec.nseg = organs_nrn.d_lambda_nseg(sec)       # 8 Nov: was 1 (hyp needs 35, exc_cell 5; DEBUG_TRIAGE line 20)
             sec.insert("pas")
             sec.g_pas = 1.0 / (q["other_rm_kohm_cm2"] * 1000.0)                    # S/cm2
             sec.e_pas = q["other_e_leak_mV"]
@@ -195,7 +199,8 @@ class Mech:
     def reset(self):
         self.osmo.v = 1.0
         for sec in self.sec.values():
-            sec(0.5).v = self.q["other_e_leak_mV"]
+            for seg in sec:
+                seg.v = self.q["other_e_leak_mV"]
 
     def uptake_per_s(self):
         q = self.q

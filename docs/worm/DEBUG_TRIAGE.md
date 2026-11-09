@@ -242,3 +242,53 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   finitialize overwrites the script's eca = 60) and BAAIWorm's SLO-1 nanodomain hard-codes 60 mV; with E_Ca held at
   60 in both, n24_code plus the authors' unrounded SLO-1 constants reproduces their AIY model to 0.004 mV. Default
   unchanged. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 1".
+## Phase 2 status (wbody2)
+
+- Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.
+  Line 9's damping re-run on the Mac: 16.70 ms (bar <= 5.3; unchanged from backhouse, line 9 stays D).
+- Pumping (vital sign; wbody2 item 2), 20:53 8 Nov: two stops in series. (1) MC never fires (MCL -70.1 mV median
+  over 3 bio s, whole brain; brain-owned, request to wbrain2). (2) Downstream is B: brief MC events (4 Hz) make no
+  pump at any in-range value of the marginal gap, marginal area or NMJ per-contact conductance (probe, 24 points);
+  the model's MC step is a generic graded synapse onto passive marginal cells where the published step is the EAT-2
+  nicotinic synapse (McKay et al. 2004), and the muscle's CCA-1 does not recover between events at its in-situ rest.
+  Fixed on the way (A): the muscle read 5-HT from a pool that is 0 under neuromod. Off-food bar: about 50 pumps per
+  minute in the first 2 h off food (Dallière et al. 2016, PMC4714553).
+- Defecation (vital sign; wbody2 item 3), 21:26 8 Nov. "~20 s, irregular, same with and without food": the loop's
+  int9 is the max over 20 cells (E, request to wtriage), and the oscillator has no food input (B; published: off food
+  the program is "rarely activated", Liu & Thomas 1994). check_intestine scored the first wave only (E, fixed); at the
+  defaults 1 of 11 waves reaches int2 (D: 1 of 1000 in-range sets passes, not adopted). No expulsion: NLP-40 tonic at
+  DVB and AEX-2 with no Ca route (neuromod, request to wbrain2); the enteric muscles fire at about 4 Hz on the Du BWM
+  membrane, so no AVL/DVB drive makes an expulsion (B, 0 of 16 drives). Q10 per-temperature data not free (row 25).
+- Food changes nothing (wbody2 item 4), 21:35 8 Nov. Traced on the pharyngeal sub-brain (20 s, food_OD 1.02 vs 0):
+  NSM depolarises 25 mV, the head 5-HT rises 70-fold to 1.05 nM, MC's SER-7 Gs 0.0005 -> 0.033 (the published route,
+  Song & Avery 2012), pumps 0 -> 0 because MC is silent (item 2). NSM's soma Ca does not rise (brain, request). Basal
+  slowing (dopamine, a mechanical attribute of bacteria, Sawin 2000): the lawn has none, B. DMP has no food input, B.
+  No class A of mine. Food enters by senses_chem's TRPV conductance, not brain_layers:310's current (text above).
+- BWM rate and rest (wbody2 item 5), 21:45 8 Nov. The loop's 1.96 Hz against Gao & Zhen's dissected 0.73 +- 0.14 Hz
+  is not like for like: those APs are mostly driven by the kept cord (ACh block removes about 88 %; unc-13(lf) 0.04 Hz).
+  Scored at the cell instead (E): the row 12 check held the cell at rest for only 57 ms; with 20 s of zero input the
+  default Du cell fires 4.27 Hz at -21.5 mV (fail). 68 of 4000 in-range sets pass the steps and stay silent, at fixed
+  points of -35.6 to -24.4 mV (20 saved): D, not adopted. Rest -30.2 vs -25.0 mV is inside that span (no separate fail).
+- Line 20 compartments (wbody2 item 6), 21:54 8 Nov. organs_other now segments by NEURON's d_lambda rule (hyp 35,
+  exc_cell 5). DC neutral: 69 gap partners move at most 0.32 mV, organ cells 0.02 mV (bar 0.5 mV); hyp's input
+  resistance rises 1.29x as derived, swamped by its own 160 nS. BWM somata (brain.py's sections, nseg 1): nseg 3
+  moves no Du spike by more than 0.1 ms, so the 1.45x shortfall has no effect; optional request to wbrain2.
+- Line 10 stiffness (wbody2 item 7), 21:59 8 Nov. The approved rule parameter exists: rule_body_modulus_scale
+  (template 1, neutral; range 0.058-1.35). 0.061-0.194 gives 50-170 kPa (D, not adopted). The sources alone do not
+  overlap (Frontiers 776-1157 kPa vs Backholm 50-170), so C stays for the template; the fit runs both ways
+  (body_layers frontiers2024 / backholm2013). Found: the mesh quadrature misses the outer layers (4.6 % vs 38.5 % of
+  the bending weight), A, mine, open.
+- 8 Nov 22:21 (wbody2, line 4, E done + A found): check_glia's bars re-cited from opened sources (ceiling 10.2 mM
+  absolute, Heinemann & Lux 1977 abstract; tau 3.4-4.0 s and null >= 1.24x, Sibille et al. 2015 Fig. 4B, F, simulated
+  mouse [K+]o; sides dropped, no source, replaced by tests/test_worm_glia_sides.py). No C. elegans K+ measurement
+  exists (Ray et al. 2024 Cell Rep, PMC11296322). Defaults: ceiling pass, tau 1.25 s and null 1.11x fail (measured).
+  Cause: glia.py's rest reference v0 (first 1 s) lets the drifting network make a steady false K+ sink, 0.36 mM below
+  the bath by 24 s (A, wbody2, open); the post-release undershoot to -66.7 mV speeds the fall. D not decidable until
+  the A is fixed. wtriage's 64 points under the new bars: 0 pass (from-bath taus).
+- 8 Nov 22:50 (wbody2, line 10, A fixed): layers.tet_moduli's quadrature now carries the outer layers. The layer
+  coordinate is r / R(z, theta) with R ray cast from the body axis to the mesh surface, and each tet is sampled at its
+  512 equal-volume sub-tet centroids (was 4 points per tet and R the slice's largest vertex radius). Bar (mesh section
+  modulus within 5 % of the ideal shells): 791.1 vs 794.2 kPa at the template, 323.6 vs 324.4 depressurised (was +7.8 %
+  and -60.7 %): pass (measured). The default body is 7.6 % softer in bending. Frontiers 561-1199 kPa vs Backholm 50-170:
+  still no overlap (C stays); rule range re-derived 0.0632-1.515; 0.067-0.214 reaches Backholm (D, not adopted).
+  Line 9 damping re-run on the fixed body: 16.46 ms vs <= 5.3 (still D).
