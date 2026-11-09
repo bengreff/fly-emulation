@@ -193,9 +193,12 @@ SPECS = [_liu_spec(s, v, u, k) for s, _, v, u, k in LIU] + senses_cgmp.network_s
          "ASH, ADL, PHA, PHB, AWA front end, food cells"),
     spec("sens_trpv_phi", "sens_repellent", "1", 0.7, 0.0, 1.0, G, "fraction of the response that adapts",
          "ASH, ADL, PHA, PHB, AWA front end, food cells"),
-    spec("sens_awa_dia_K_uM", "sens_odor_attract", "uM", 1.0, 0.01, 100.0, INF,
-         "AWA responds to diacetyl from ~1e-9 to 1e-5 dilutions, half-max near 1e-7 (~1 uM; Larsch et al. 2015)",
-         "AWAL, AWAR"),
+    spec("sens_awa_dia_K_uM", "sens_odor_attract", "uM", 2.25, 0.01, 100.0, INF,
+         "ODR-10 in HEK293 cells (fura-2): EC50 2.25 +- 0.53 uM, Hill 1.12, saturating near 100 uM (Zhang, Chou, "
+         "Bradley, Bargmann and Zinn 1997, PNAS 94:12162, PMC23737); the heterologous EC50, which carries HEK293's own "
+         "cascade, read as the worm receptor's half occupancy", "AWAL, AWAR",
+         notes="was 1.0, citing a half-max near 1e-7 in Larsch et al. 2015, which states none (opened 9 Nov 2026). "
+               "AWA's whole-cell GCaMP EC50 (Larsch et al. 2013, median 30.6 nM) is a check, not K"),
     spec("sens_ash_oct_K_uM", "sens_repellent", "uM", 6300.0, 63.0, 63000.0, G,
          "30% octanol on a hair drives ASH (Hilliard 2005); half-max guessed at a 1e-3 dilution",
          "ASH, ADL"),

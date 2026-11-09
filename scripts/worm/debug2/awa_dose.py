@@ -6,7 +6,8 @@ Nemadipine-A: Liu's gCa (dens_awa_ca, the AWA model's Ca current) scaled by 1 - 
 Peak = max dF/F0 during the pulse minus max in the 10 s before it (Larsch's methods); the four-parameter sigmoid
 F = Fmin + (Fmax - Fmin) / (1 + (EC50 / C)^beta) fitted to the six concentrations by least squares.
 Usage: python awa_dose.py <full|alone> [f]     -> runs/worm/wbrain2/awa_dose/<build>_f<f>.json
-       python awa_dose.py score                  (the night file's bars 1 to 3)
+       python awa_dose.py score [subdir]         (the night file's bars 1 to 3; K1/ holds the runs at the old
+                                                  sens_awa_dia_K_uM 1.0, before the 9 Nov provenance fix)
 """
 from __future__ import annotations
 
@@ -59,7 +60,7 @@ def run(build, f):
         ca.append(np.asarray(out.ca_uM)[ix].tolist())
         gc.append(np.asarray(out.gcamp_dff)[ix].tolist())
         stim.append(c)
-    return dict(t=t, v=v, ca=ca, gc=gc, stim=stim)
+    return dict(t=t, v=v, ca=ca, gc=gc, stim=stim, K_uM=float(spec.values["sens_awa_dia_K_uM"]))
 
 
 def peaks(t, y):
@@ -130,11 +131,11 @@ def analyse(r):
     return res
 
 
-def score():
-    R = {p.stem: json.loads(p.read_text()) for p in sorted(OUT.glob("*.json"))}
+def score(sub=""):
+    R = {p.stem: json.loads(p.read_text()) for p in sorted((OUT / sub).glob("*.json"))}
     for name, r in R.items():
         a = r["analysis"]
-        print(f"{name} ({r['wall_s']} s wall)")
+        print(f"{name} (K {r.get('K_uM', 1.0)} uM, {r['wall_s']} s wall)")
         for cell in AWA:
             for k in ("gcamp6s", "ca", "gcamp6f_offline"):
                 x = a[cell][k]
@@ -172,11 +173,11 @@ def score():
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a[0] == "score":
-        score()
+        score(a[1] if len(a) > 1 else "")
     else:
         t0, build, f = time.time(), a[0], (float(a[1]) if len(a) > 1 else 0.0)
         r = run(build, f)
-        res = dict(build=build, f=f, conc_uM=CONC_UM, analysis=analyse(r),
+        res = dict(build=build, f=f, K_uM=r["K_uM"], conc_uM=CONC_UM, analysis=analyse(r),
                    t=r["t"][::KEEP], v=r["v"][::KEEP], ca=r["ca"][::KEEP], gc=r["gc"][::KEEP], stim=r["stim"][::KEEP])
         res["wall_s"] = round(time.time() - t0, 1)
         OUT.mkdir(parents=True, exist_ok=True)

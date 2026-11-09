@@ -641,9 +641,19 @@
   status: have
   toggle: pc_grid
   neutral: 'off'
-  default: four
+  default: bins
   source: src/wormemu/mech/neuromod.py
   notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: amine_synaptic
+  name: 'Amine near field at a release site (Nicholson point source; a read, moves no molecules): off (the pool only) or nicholson (near_nM, HSN onto vm2)'
+  layer: neuromodulation
+  status: have
+  toggle: amine_synaptic
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
   absent_reason: ''
 - id: quantal_noise
   name: Quantal (vesicle) release noise at chemical synapses
