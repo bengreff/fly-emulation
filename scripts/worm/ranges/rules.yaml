@@ -208,6 +208,14 @@ rules:
   - {re: "^n24[pc]_shl1_(wf|ws)$", cls: fraction}
   - {re: "^n24[pc]_shl1_(tmsc|thfsc|thssc)$", cls: gain_nonneg}
   - {re: "^n24[pc]_shl1_mexp$", hard_row_unit: [1, 4], basis: guessed_physical, why: "the Hodgkin-Huxley exponent of SHL-1's activation gate: 1 to 4 independent particles (a Kv4 channel has four voltage sensors)", source: "Hodgkin and Huxley 1952; Nicoletti 2019 (m^3) and the 2024 code (m^1)"}
+  # mech/capool ca_bulk (wbrain2, 8 Nov 2026, inbox item 3): NEURON's cadifpmp as nmodl/cabulk.mod, a readout pool
+  - {re: "^cabulk_dfree_um2_ms$", hard_row_unit: [0, 1], basis: guessed_physical, why: "free Ca diffusion: >= 0 and not faster than Ca2+ in water (about 0.8 um2/ms at 25 C, textbook value, not opened); 1 um2/ms leaves room for 40 C", source: "definition"}
+  - {re: "^cabulk_beta$", hard_row_unit: [0, 10000], basis: guessed_physical, why: "a fixed-ratio buffer, bound over free Ca (kappa): >= 0; neurons are reported at about 20-2000 (relayed, see the Spec); 1e4 is a guessed edge", source: "mech/capool.py Spec"}
+  - {re: "^cabulk_k[14]_per_mM_s$", hard_row_unit: [0, 1.0e7], basis: physics, why: "a bimolecular association of Ca with a site: at most the diffusion limit ~1e10 /M/s = 1e7 /(mM s) (rate_second in this unit). cadifpmp's k1 (5e8) is above it: a demo value that keeps the pump at quasi-equilibrium; only Km = (k2 + k3)/k1 and k3 pump0 shape the pool", source: "[HB 6]"}
+  - {re: "^cabulk_k[23]_per_s$", cls: rate_first}
+  - {re: "^cabulk_pump0_mol_cm2$", hard_row_unit: [0, 3.3e-12], basis: physics, why: "pump sites per membrane area: at most the densest membrane-protein packing, 2e4 per um2 = 3.3e-12 mol/cm2 (cadifpmp's 3e-14 is 181 per um2)", source: "[HB 1]"}
+  # body/layers (wbody2's stiffness rule, merged 8718898; rule added by wbrain2 so the build runs, for wbody2 to review)
+  - {re: "^rule_body_modulus_scale$", cls: gain_nonneg}
   # structure and construction
   # rule parameters proposed for wmodel (scripts/worm/ranges/rule_params.csv; not yet rows of the ledger)
   - {re: "^rule_syn_g_per_em_", hard_row_unit: [0, 90], basis: physics, why: "one EM section of an active zone (~1 um long x ~90 nm thick = 0.09 um2) packed at the densest measured receptor density (2e4 per um2, packing_per_um2) of 50 pS channels: 90 nS per section", source: "[HB 1], [HB 2]; RULE_PARAMS_LIT.md section 1"}
