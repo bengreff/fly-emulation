@@ -71,7 +71,10 @@ SPECS = [
        "exc_gl", grain="class", notes="resting level; guessed"),
     _s("other_gap_nS_per_contact", "other_cells", "nS", 0.2236, 0.05, 0.5, "the brain's gap_strength_per_pair",
        "inferred", "Cook gaps of hyp, hmc, exc_cell, exc_gl", "class",
-       notes="the brain's per-contact neuronal gap, read from the ledger when present; O6: bounded by row 8's range"),
+       notes="the template copies the median of the brain's per-contact neuronal gap (gap_strength_per_pair); the "
+             "row is its own (a worm's hypodermal gaps are not tied to its neuronal ones); O6: bounded by row 8's "
+             "range. 9 Nov 2026: a branch that replaced it with the brain's median when params lacked it never ran "
+             "(mech.params_for always passes it) and is removed"),
     _s("osmo_p_set_kPa", "excretory_osmo", "kPa", 40.0, 20.0, 200.0, "Sanzeni et al. 2019 (B3's "
        "touch_pressure_kPa, p/E = 0.01 at E 4 MPa); Park et al. 2007 PNAS measured 50-200 kPa", "published_fit",
        notes="internal hydrostatic pressure the canal holds; B3's value so the body sees no change at rest"),
@@ -152,12 +155,6 @@ class Mech:
         assert self.osmo_form in ("canal", "null", "fixed") and self.cc in ("on", "null", "off")
         q = defaults()
         q.update({k: float(v) for k, v in (params or {}).items() if np.isscalar(v)})
-        sp = getattr(brain, "spec", None)
-        if sp is not None and getattr(sp, "led", None) is not None and "other_gap_nS_per_contact" not in (params or {}):
-            try:
-                q["other_gap_nS_per_contact"] = float(np.median(sp.v("gap_strength_per_pair").to_numpy(float)))
-            except (KeyError, ValueError):
-                pass
         self.q = q
         self.osmo = Osmo(q, self.osmo_form)
         self.sec, self.n_gap = {}, 0

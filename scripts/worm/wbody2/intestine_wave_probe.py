@@ -13,7 +13,14 @@ many transients as ring 9. Each value drawn uniformly (log-uniform for the rates
 organs_intestine.SPECS. Screen at dt 5 ms (the original fit's grid; the defaults give 50.1 s there vs 49.3 s at
 0.5 ms), confirm passing sets at 0.5 ms with check_intestine's own scoring.
 
-Usage: python intestine_wave_probe.py [N=400] [seed=0]  -> runs/worm/wbody2/intestine_wave_probe.json
+9 Nov 2026 03:53 CST: check_intestine's velocity bar is now the intact worm's 200-480 um/s (Peters et al. 2007; class
+E, see its docstring). Bar for this probe from now on, written before running: the same as above with the
+velocity band check_intestine.VEL_UM_S (band=intact, the default) or the old 20-60 um/s (band=dissected, which
+reproduces the 8 Nov run). Same seeded draws. Reported per set: median velocity over its waves and the number of
+waves reaching ring 2 in order at any velocity.
+
+Usage: python intestine_wave_probe.py [N=400] [seed=0] [band=intact|dissected]
+       -> runs/worm/wbody2/intestine_wave_probe[_s<seed>][_intact].json (the 8 Nov file is band=dissected)
 """
 from __future__ import annotations
 
@@ -28,11 +35,13 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts" / "worm" / "organs"))
 from wormemu.mech import organs_intestine as I  # noqa: E402
+import check_intestine as CI  # noqa: E402
 
 FREE = ["int_lr_a2_per_uM_s", "int_ip3_rest_uM", "int_ip3_rest_pacemaker_uM", "int_ip3_tau_s", "int_plc_ca_uM_per_s",
         "int_plc_ca_k_uM", "int_gap_p_ip3_um_s", "int_gap_p_ca_um_s", "int_ring_length_um"]
 LOG = {"int_lr_a2_per_uM_s", "int_ip3_tau_s", "int_gap_p_ip3_um_s"}
 T_S, REC_S = 600.0, 0.1
+BANDS = dict(intact=CI.VEL_UM_S, dissected=CI.VEL_DISSECTED_UM_S)
 
 
 def ranges():
@@ -92,8 +101,8 @@ def crossings(t, x, thr):
     return t[k]
 
 
-def score(t, R, ring_len):
-    """check_intestine.py's scoring (8 Nov form) on one set's ring means R (t, 9)."""
+def score(t, R, ring_len, band=BANDS["intact"]):
+    """check_intestine.py's scoring on one set's ring means R (t, 9), velocity band `band` (um/s)."""
     amp = float(R[:, 8].max() - R[:, 8].min())
     if not np.isfinite(amp) or amp < 0.05:
         return dict(ok=False, why="no int9 transient", period_s=float("nan"))
@@ -101,7 +110,7 @@ def score(t, R, ring_len):
     up9 = crossings(t, R[:, 8], thr)
     period = float(np.diff(up9[1:]).mean()) if len(up9) > 2 else float("nan")
     n_ring = [int(len(crossings(t, R[:, r], thr))) for r in range(9)]
-    each = []
+    each, vel, order = [], [], []
     for t0 in up9[1:]:
         w = []
         for r in range(9):
@@ -111,21 +120,26 @@ def score(t, R, ring_len):
         w = np.array(w)
         sk = int(np.sum(w[:-1] > w[1:]))
         vk = 7 * ring_len / (w[1] - w[8]) if np.isfinite(w[1]) and w[1] > w[8] else float("nan")
-        each.append(bool(np.isfinite(w[1]) and sk >= 7 and 20 <= vk <= 60))
+        vel.append(vk)
+        order.append(bool(np.isfinite(w[1]) and sk >= 7))
+        each.append(bool(np.isfinite(w[1]) and sk >= 7 and band[0] <= vk <= band[1]))
     ok = dict(period=45 <= period <= 52, every_wave=len(each) > 0 and all(each), one_to_one=n_ring[1] == n_ring[8])
     return dict(ok=all(ok.values()), period_s=period, waves_ok=int(sum(each)), n_waves=len(each),
-                transients_per_ring=n_ring, parts=ok)
+                transients_per_ring=n_ring, parts=ok, waves_in_order=int(sum(order)),
+                velocity_median_um_s=float(np.nanmedian(vel)) if np.isfinite(vel).any() else float("nan"))
 
 
 def main():
     kw = dict(a.split("=", 1) for a in sys.argv[1:])
     n, seed = int(kw.get("N", 400)), int(kw.get("seed", 0))
+    bname = kw.get("band", "intact")
+    band = BANDS[bname]
     P, t0 = draw(n, seed), time.time()
     R = run_batch(P, 0.005)
     t = (np.arange(R.shape[0]) + 1) * REC_S
     rows = []
     for i in range(n):
-        s = score(t, R[:, i, :].astype(float), float(P["int_ring_length_um"][i]))
+        s = score(t, R[:, i, :].astype(float), float(P["int_ring_length_um"][i]), band)
         rows.append(dict(values={k: float(P[k][i]) for k in FREE}, **s))
     screen_s = time.time() - t0
     passing = [r for r in rows if r["ok"]]
@@ -135,16 +149,18 @@ def main():
         q.update(r["values"])
         tt, C, _, _ = I.run_isolated(q, T_S, 0.5)
         Rr = np.stack([C[:, I.RING == k].mean(1) for k in range(1, 10)], 1)
-        confirmed.append(dict(values=r["values"], **score(tt, Rr, r["values"]["int_ring_length_um"])))
+        confirmed.append(dict(values=r["values"], **score(tt, Rr, r["values"]["int_ring_length_um"], band)))
     best = sorted(rows, key=lambda r: (-(r.get("waves_ok", 0) / max(r.get("n_waves", 1), 1)),
                                        abs((r["period_s"] if np.isfinite(r["period_s"]) else 1e9) - 48.5)))[:15]
     res = dict(bar=__doc__.split("Bar (written before running; the 8 Nov check bar): ")[1].split("\n\nUsage")[0],
-               N=n, seed=seed, ranges=ranges(), dt_screen_ms=5.0, defaults=rows[0], n_pass_screen=len(passing),
+               band=bname, band_um_s=list(band), N=n, seed=seed, ranges=ranges(), dt_screen_ms=5.0, defaults=rows[0],
+               n_pass_screen=len(passing),
                confirmed_0p5ms=confirmed, n_confirmed=sum(c["ok"] for c in confirmed),
                verdict=("D: an in-range set passes at 0.5 ms" if any(c["ok"] for c in confirmed)
                         else "no in-range set passes"), best=best, screen_wall_s=screen_s, wall_s=time.time() - t0,
                all_rows=rows)
-    out = ROOT / f"runs/worm/wbody2/intestine_wave_probe{'_s' + str(seed) if seed else ''}.json"
+    tag = ("_s" + str(seed) if seed else "") + ("_" + bname if bname != "dissected" else "")
+    out = ROOT / f"runs/worm/wbody2/intestine_wave_probe{tag}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(res, indent=1, default=float))
     print(json.dumps({k: v for k, v in res.items() if k not in ("all_rows", "best", "ranges", "bar")}, indent=1,

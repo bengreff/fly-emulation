@@ -1,4 +1,5 @@
-"""Row 14 unit check: the isolated intestine (20 Li-Rinzel cells, IP3, INX-16), against Espelt et al. 2005.
+"""Row 14 unit check: the isolated intestine (20 Li-Rinzel cells, IP3, INX-16), against Espelt et al. 2005 and (since
+9 Nov 2026, the velocity and 1:1 bars) Peters et al. 2007.
 
 Bar (night file, written before the run): period 45-52 s (consistency: a2 is fitted on the int9 cell); the wave
 starts in int9 and ring peak times run posterior to anterior in >= 7 of 8 ring steps; velocity int9 -> int2 within
@@ -11,6 +12,18 @@ transient after the first) must reach int2 with >= 7 of 8 ordered ring steps and
 must have the same number of transients as ring 9 (1:1 propagation). Wild type is regular: defecation cycle CV 5.5 %
 (Kwan et al. 2008, PMC2409367), and the wave is the cycle's trigger, so a skipped wave would be a skipped cycle.
 
+9 Nov 2026 03:53 CST (wbody2; class E, the check mixed two preparations): the 20-60 um/s band came from Espelt et al.
+2005's dissected intestine (33 +- 3 um/s, Table II, imaged at 1 Hz, 2 of 30 waves too fast to quantify), where waves
+stop at 80 +- 3 % of the intestine's length (Results, n 10), while the every-wave and 1:1 bars ask for the intact
+worm's reliability. The model has no dissection term; its intestine stands for the intact worm's. Bar now, written
+before re-running: velocity int9 -> int2 (first wave and every wave) in VEL_UM_S = 200-480 um/s, the behaving worm's
+340 +- 140 um/s (n 10; Peters et al. 2007 Curr Biol 17:1601, Results "Gap Junctions Shape the Calcium Wave", full
+text from the Jorgensen lab; band mean +- the reported spread, derived; inx-16 mutants 108 +- 29 and 39 +- 14 um/s
+fall outside it). The 1:1 bar's source is now Peters et al. 2007's intact worms too: anterior body contraction in
+99.1 +- 3.0 % of cycles and enteric contraction in 98.2 +- 4.0 % (mean +- SD, Fig 3D-E), both needing the wave in the
+anterior intestine. Period 45-52 s, order and falsifier unchanged (Peters 2007's intact per-worm medians 43-49 s).
+Espelt's dissected velocity is reported (velocity_dissected_band_ok), not barred.
+
     python scripts/worm/organs/check_intestine.py [out.json]
 """
 import json
@@ -21,6 +34,8 @@ import numpy as np
 from wormemu.mech import organs_intestine as I
 
 T_S, DT_MS = 600.0, 0.5
+VEL_UM_S = (200.0, 480.0)          # intact worm, Peters et al. 2007 (9 Nov bar)
+VEL_DISSECTED_UM_S = (20.0, 60.0)  # dissected intestine, Espelt et al. 2005 (reported only since 9 Nov)
 
 
 def ring_mean(C):
@@ -58,7 +73,7 @@ def main(out=None):
         sk = int(np.sum(wk[:-1] > wk[1:]))
         vk = (7 * q["int_ring_length_um"]) / (wk[1] - wk[8]) if np.isfinite(wk[1]) and wk[1] > wk[8] else float("nan")
         each.append(dict(steps=sk, velocity_um_s=float(vk), reaches_int2=bool(np.isfinite(wk[1])),
-                         ok=bool(np.isfinite(wk[1]) and sk >= 7 and 20 <= vk <= 60)))
+                         ok=bool(np.isfinite(wk[1]) and sk >= 7 and VEL_UM_S[0] <= vk <= VEL_UM_S[1])))
     n_ring = [int(len(crossings(t, R[:, r], thr))) for r in range(9)]
     # rise and fall of int9 around its second transient
     x9 = R[:, 8]
@@ -86,7 +101,12 @@ def main(out=None):
                null_frac=null_amp / amp if amp > 0 else float("nan"),
                all_waves=waves.tolist(), each_wave=each, transients_per_ring=n_ring,
                waves_ok=int(sum(e["ok"] for e in each)), n_waves=len(each))
-    ok = dict(period=45 <= period <= 52, order=steps >= 7 and np.nanargmin(w) == 8, velocity=20 <= vel <= 60,
+    vk_all = [e["velocity_um_s"] for e in each]
+    res.update(velocity_band_um_s=list(VEL_UM_S),
+               velocity_dissected_band_ok=bool(VEL_DISSECTED_UM_S[0] <= vel <= VEL_DISSECTED_UM_S[1]),
+               velocity_each_median_um_s=float(np.nanmedian(vk_all)) if np.isfinite(vk_all).any() else float("nan"))
+    ok = dict(period=45 <= period <= 52, order=steps >= 7 and np.nanargmin(w) == 8,
+              velocity=VEL_UM_S[0] <= vel <= VEL_UM_S[1],
               falsifier=res["null_frac"] < 0.1, every_wave=len(each) > 0 and all(e["ok"] for e in each),
               one_to_one=n_ring[1] == n_ring[8])
     res["pass"] = {k: bool(v) for k, v in ok.items()}

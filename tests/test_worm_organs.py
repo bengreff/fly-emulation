@@ -389,6 +389,24 @@ def _other(**toggles):
     return oo.Mech(SimpleNamespace(idx={}, spec=None), {}, dict(other_cells="off", **toggles))
 
 
+def test_gap_per_contact_is_its_own_row():
+    """wbrain2's Request (9 Nov 2026): organs_other's and glia's per-contact gaps are their own ledger rows; a removed
+    branch would have replaced them with the brain's median gap_strength_per_pair when params lacked them."""
+    def never(pid):
+        raise AssertionError(f"read {pid}")
+    sp = SimpleNamespace(led=object(), v=never)
+    m = oo.Mech(SimpleNamespace(idx={}, spec=sp), {}, dict(other_cells="off"))
+    assert m.q["other_gap_nS_per_contact"] == oo.defaults()["other_gap_nS_per_contact"]
+    assert oo.Mech(SimpleNamespace(idx={}, spec=sp), {"other_gap_nS_per_contact": 0.4},
+                   dict(other_cells="off")).q["other_gap_nS_per_contact"] == 0.4
+    brain, _ = _glia_brain()
+    brain.spec = sp
+    g = gl.Mech(brain, {"glia_gap_nS_per_contact": 0.3}, {"glia_cells": "off", "glia_v0_window": "first"})
+    assert g.q["glia_gap_nS_per_contact"] == 0.3
+    assert gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first"}).q["glia_gap_nS_per_contact"] == \
+        gl.defaults()["glia_gap_nS_per_contact"]
+
+
 def _other_run(m, s, dt_s=1.0, obs=None):
     ctx = SimpleNamespace(obs=obs, outputs={})
     return [m.step(ctx, dt_s * 1000.0)["out"] for _ in range(int(s / dt_s))]
@@ -545,6 +563,32 @@ def test_pump_na_recovers_at_the_linearised_rate_and_null_loses_the_resting_curr
     m, rows = _pump_run("null", lambda t: np.array([-60.0, -31.0]), 3000.0)
     ip_rest = pu.Pump(q, [False, True]).i_p(np.full(2, na0), np.array([-60.0, -31.0]))
     assert np.allclose(rows[-1]["I_pA"], ip_rest) and (rows[-1]["out"]["na_i_mM"] > na0).all()
+
+
+def test_temperature_conductance_reaches_awa():
+    """wbrain2's Request (9 Nov 2026): the conductance Q10 also multiplies AWA's Liu conductances (dens_awa_<c>);
+    at T_ref every factor is exactly 1, so the default experiment (20 C) is unchanged."""
+    from wormemu.mech import AWA_G_SCALE_NAMES, G_SCALE_NAMES
+    from wormemu.mech import temperature as tm
+    p = {s.id: s.template for s in tm.SPECS}
+    m = tm.Mech(SimpleNamespace(cell_names=["A", "B", "C"]), p, {})
+    for T, phi in ((p["temp_ref_C"], 1.0), (p["temp_ref_C"] + 10.0, p["temp_q10_conductance"])):
+        m.reset()
+        g = m.step(SimpleNamespace(obs={"head": {"temperature_C": T}}), 1.0)["g_scale"]
+        assert set(g) == set(G_SCALE_NAMES) | set(AWA_G_SCALE_NAMES)
+        assert all(np.array_equal(x, np.full(3, phi)) for x in g.values())
+
+
+def test_pump_scale_does_not_depend_on_the_build():
+    """A neuron's I_max and g_Na scale by its area over pump_area_median_um2 (the full brain's median), not over the
+    median of the cells built (9 Nov 2026; wbrain2's Request): one cell's pump is the same alone and with others."""
+    q = pu.defaults()
+    vol, area = [80.0, 300.0, 1200.0, 500.0], [88.4, 267.2, 1133.4, 900.0]
+    many = pu.Pump(q, [False, False, False, True], (vol, area))
+    alone = pu.Pump(q, [False], (vol[:1], area[:1]))
+    assert alone.imax[0] == many.imax[0] == q["pump_imax_neuron_pA"] * area[0] / q["pump_area_median_um2"]
+    assert alone.gna[0] == many.gna[0] and alone.vol[0] == many.vol[0] == vol[0]
+    assert many.imax[3] == q["pump_imax_muscle_pA"] and many.vol[3] == q["pump_vol_muscle_um3"]
 
 
 def test_pump_specs_have_ranges_and_labels():
