@@ -18,6 +18,8 @@ from wormemu.mech import muscle_bwm as mb
 ap = argparse.ArgumentParser()
 ap.add_argument("--data", default="/tmp/worgans/C.elegans-Muscle/data/spikes.npy")
 ap.add_argument("--neuron", action="store_true")
+ap.add_argument("--nseg", type=int, default=1, help="NEURON path only: segments of the 20 x 5 um cylinder "
+                "(8 Nov, line 20: the d_lambda rule asks 3 at the Du cm)")
 ap.add_argument("--out", default="")
 a = ap.parse_args()
 
@@ -64,11 +66,12 @@ if a.neuron:
     for dt in (0.1, 0.5):
         h.dt, h.secondorder = dt, 0
         sec = h.Section(name="m")
-        sec.L, sec.diam, sec.nseg = 20.0, 5.0, 1
+        sec.L, sec.diam, sec.nseg = 20.0, 5.0, a.nseg
         sec.insert("du_bwm")
         ar = organs_nrn.area_um2(sec)
         mb.configure(sec, q, ar)
-        sec(0.5).du_bwm.published_init = 1
+        for seg in sec:
+            seg.du_bwm.published_init = 1           # every segment (was only 0.5; same at nseg 1)
         sec.cm = q["bwm_du_c_pF"] * 100.0 / ar
         stim = h.IClamp(sec(0.5))
         Vs = []

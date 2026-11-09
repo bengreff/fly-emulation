@@ -250,3 +250,7 @@ Nothing on Windows or the throttle was changed.
   Scored at the cell instead (E): the row 12 check held the cell at rest for only 57 ms; with 20 s of zero input the
   default Du cell fires 4.27 Hz at -21.5 mV (fail). 68 of 4000 in-range sets pass the steps and stay silent, at fixed
   points of -35.6 to -24.4 mV (20 saved): D, not adopted. Rest -30.2 vs -25.0 mV is inside that span (no separate fail).
+- Line 20 compartments (wbody2 item 6), 21:54 8 Nov. organs_other now segments by NEURON's d_lambda rule (hyp 35,
+  exc_cell 5). DC neutral: 69 gap partners move at most 0.32 mV, organ cells 0.02 mV (bar 0.5 mV); hyp's input
+  resistance rises 1.29x as derived, swamped by its own 160 nS. BWM somata (brain.py's sections, nseg 1): nseg 3
+  moves no Du spike by more than 0.1 ms, so the 1.45x shortfall has no effect; optional request to wbrain2.

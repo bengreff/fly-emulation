@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import glob
 import hashlib
+import math
 import os
 import shutil
 import subprocess
@@ -62,3 +63,11 @@ def _suffix(mod: Path) -> str:
 
 def area_um2(sec) -> float:
     return float(sum(seg.area() for seg in sec))
+
+
+def d_lambda_nseg(sec, f_hz: float = 100.0, frac: float = 0.1) -> int:
+    """NEURON's d_lambda rule (neuronsimulator.org, "Using the d_lambda rule"): the odd nseg that keeps every segment
+    within frac x the AC length constant at f_hz, lambda_f = 1e5 sqrt(diam / (4 pi f Ra cm)) um (diam um, Ra ohm cm,
+    cm uF/cm2). Set L, diam, Ra and cm first; uniform cylinders only (reads segment 0.5)."""
+    lam = 1e5 * math.sqrt(sec(0.5).diam / (4.0 * math.pi * f_hz * sec.Ra * sec(0.5).cm))
+    return int((sec.L / (frac * lam) + 0.9) / 2) * 2 + 1
