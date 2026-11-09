@@ -322,6 +322,14 @@ time over its first 4 bio-s on the Mac (68.7 vs 70.9 s profiled; NEURON 41.2 vs 
 under load cost 1.5x in CPU and 2.2-3.3x in wall (inferred), and option B's 12 % slowdown is optimistic by about that
 factor. At the night's measured rate, option A is 400-580 h per base-set iteration, not 175 (derived).
 
+Draws 7, 9, 10 (02:19-03:27, load 8-11 of 28, no other heavy job) ran at 19.2-19.9 wall s per bio-s and about 60
+CPU-min each (measured): wall fell with the load, but CPU time stayed at about 18 CPU-s per bio-s, 1.5x the cost
+run's. So the 1.5x in CPU is not contention. It is not the 17:00-22:00 throttle either: the WSL VM's affinity is all
+28 logical processors at 03:3x (0xFFFFFFF, measured). Which cores the host gives the vCPUs (8 P-cores, 12 E-cores)
+or their clock with several busy is the likely cause (guessed, not measured). For planning, a quiet night gives about
+20 wall s per bio-s per process, so option A is about 280 h per base-set iteration (derived: 384 x 400 bio-s x 20 s
+/ 3 processes / 3600), and the 12.34 of the cost run is a best case.
+
 **The options, per iteration (each member 2 x 200 bio-s unless marked; derived from the rates above).**
 
 | Option | One ensemble (J = 128) | Base set (384) | 30 base-set iterations | What it costs |

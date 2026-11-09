@@ -176,6 +176,86 @@ Measured unless marked. From `/tmp/weki/battery_f8e7699/{food,nofood}.npz` (50 m
   1). Prior draws carry it too: seed 1's 0.176 gives 0.579 from noise alone, so the prior-predictive table reports
   each draw's noise and signal SD (amendment of 23:24, before any result was read).
 
+### 9 Nov 2026: prior predictive (f8e7699, 9 draws)
+
+Measured unless marked. Nine draws of the prior (`sample_worm(s)`, s = 1-7, 9, 10; seed 8 was not drawn), food, 200
+bio-s each, f8e7699's code, backhouse, one core each; the registered script `scripts/worm/fit/prior_predictive_table.py`
+against the template battery above. The registered question: does any draw reach PC3 (0.353-0.506) and the GCaMP
+range (0.567-0.983) from the brain? A pass that the drawn imaging noise reaches alone does not count. Admissible
+draws (joint.check passes): 1, 4, 7, 9, 10.
+
+**Answer: no.** pc3_frac is in its bar in 0 of 9 (0 of 5 admissible); every value is 0.0561-0.0570, the white-noise
+floor (template 0.0559). gcamp_range from the brain: 0 of 9 (0 of 5). Seed 1's 0.571 is inside the bar, but its drawn
+noise alone gives 0.579 (and seed 1 is not physical).
+
+| Sign | Bar | template | 1 | 2 (x) | 3 (x) | 4 | 5 (x) | 6 (x) | 7 | 9 | 10 | in: all | admissible |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| rest_AWA (mV) | -84.7 to -65.9 | -58.5 | -51.2 | -66.8 | -35.2 | -61.4 | -41.4 | -38.8 | -35.5 | -54.9 | -59.5 | 1 of 9 | 0 of 5 |
+| pc3_frac | 0.353 to 0.506 | 0.0559 | 0.0564 | 0.0561 | 0.0562 | 0.0564 | 0.0567 | 0.0565 | 0.057 | 0.0563 | 0.0567 | 0 of 9 | 0 of 5 |
+| gcamp_range | 0.567 to 0.983 | 0.0976 | 0.571 | 0.241 | 0.209 | 0.449 | 0.114 | 0.421 | 0.348 | 0.214 | 0.516 | 0 of 9 from the brain | 0 of 5 |
+| pump_hz | 4.24 to 5.28 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 of 9 | 0 of 5 |
+| dmp_period_s, egg signs | | none | none in all 9 | | | | | | | | | 0 of 9 | 0 of 5 |
+| bwm_rest_mV | -35.4 to -14.6 | -30.4 | -30 | -31.5 | -25.9 | -36.9 | -28.8 | -33.2 | -35.5 | -25.4 | -25.3 | 6 of 9 | 2 of 5 |
+| bwm_spike_hz | 0 to 2.19 | 2.89 | 1.47 | 2.11 | 2.31 | 0.236 | 3.9 | 0.262 | 1.69 | 5.74 | 13.8 | 4 of 9 | 2 of 5 |
+| physical | | yes | no | yes | yes | yes | yes | yes | yes | yes | yes | 8 of 9 | |
+| obs_noise_dff (drawn) | | 0.03 | 0.176 | 0.0736 | 0.0641 | 0.138 | 0.0348 | 0.13 | 0.106 | 0.0661 | 0.158 | | |
+| noise-only range, 3.29 x noise (derived) | | 0.0987 | 0.579 | 0.242 | 0.211 | 0.453 | 0.114 | 0.426 | 0.349 | 0.217 | 0.52 | | |
+| GCaMP signal SD (F / mean F) | | 0.0032 | 0 | 0.0063 | 0.0057 | 0 | 0.0079 | 0.0155 | 0 | 0.0125 | 0.0484 | | |
+| range under Atanas's noise, 3.29 sqrt(sig^2 + 0.0417^2) (derived) | | 0.138 | 0.137 | 0.139 | 0.138 | 0.137 | 0.14 | 0.146 | 0.137 | 0.143 | 0.21 | | |
+| neurons with V range > 5 mV (of 302) | | 45 | 57 | 35 | 103 | 136 | 156 | 15 | 88 | 5 | 65 | | |
+| wall per bio-s (s) | | 12.1 | 38.6 | 41.1 | 40.9 | 29.6 | 27.2 | 29.4 | 19.2 | 19.6 | 19.9 | | |
+
+(x): not admissible. No draw laid an egg, so the LGC-55 explicit-step condition (night file 01:40) never arose.
+
+- **Why (stored records, 50 ms samples after the settle).** Soma Ca sits at its 50 nM floor in every draw (median
+  50.1-51.0 nM). Its P95 - P5 range is 0.50-2.11 nM (median over the neurons whose V range exceeds 5 mV), and at most
+  2-15 nM over all 302, even in seed 5, where 82 neurons reach a V P95 above -30 mV. Across neurons the GCaMP range
+  tracks the Ca range only in seed 7 (r 0.58; 0.00-0.19 in seeds 1-6, 0.04 in seed 9, -0.01 in seed 10). So the
+  link that fails across the prior is V to soma Ca, under the default Ca chain (Nicoletti's microdomain pool,
+  cainternm): the box of the prior does not escape it. wbrain2 has the cause (the `ca_bulk` toggle, default off).
+- Seed 10's signal SD (0.048, the largest) does not follow its Ca (r -0.01; max Ca range 2.2 nM) and is not the
+  volume rate (1.7 Hz in every draw). Its source is not identified. It is far below the bar either way: under
+  Atanas's noise it gives a range of 0.21 (derived).
+- What does move across the prior: the BWM signs (bwm_rest_mV 6 of 9 in, bwm_spike_hz 4 of 9; the template misses
+  spikes at 2.89 Hz) and AWA's rest (-66.8 to -35.2 mV; in only in seed 2). Pumping, defecation and eggs are absent
+  in every draw, as on the template.
+- Cost: wall 19.2-41.1 s per bio-s against the template's 12.1. Wave 1 (seeds 1-3) ran at 38.6-41.1, wave 2 (4-6) at
+  27.2-29.6, wave 3 (7, 9, 10) at 19.2-19.9, with backhouse's load falling from wave to wave. About 61 CPU-min per run
+  (ps); seed 4 profiled on the Mac costs the template's time (FIT_GENERAL section 10), so the spread is the machine's
+  load, not the draws.
+
+### 9 Nov 2026: battery on 5e3c87a (main 58246cf's default worm), 200 bio-s per condition, backhouse, one core
+
+Measured unless marked. Same battery as the f8e7699 run above, on main 58246cf's default worm. Since f8e7699: the
+head reads the plate's temperature gradient (ad37628), neuromodulator sites use 8 um bins (wneuro, 58246cf), and the
+GCaMP signs read F / mean F under Atanas's measured imaging noise, 0.0417 (23:25). Table: `vitals table`.
+
+| Sign | Bar | 5e3c87a food | 5e3c87a nofood | f8e7699 food | f8e7699 nofood |
+|---|---|---|---|---|---|
+| AIY rest (mV) | none | -52.5 | -53.7 | -52.5 | -53.8 |
+| AFD rest (mV) | none | -56.5 | -57.6 | -56.5 | -57.7 |
+| AWA rest (mV) | -84.7 to -65.9 | -58.5 miss | -59.3 miss | -58.5 miss | -59.3 miss |
+| pc3_frac | 0.353 to 0.506 | 0.0559 miss | | 0.0559 miss | |
+| gcamp_range | 0.567 to 0.983 | 0.133 miss | | 0.0976 miss | |
+| soma Ca (uM) | none | 0.0504 | 0.0503 | 0.0504 | 0.0503 |
+| pumping on / off food (Hz) | 4.24-5.28 / 0.03-1.73 | 0 miss | 0 miss | 0 miss | 0 miss |
+| defecation period | 39 to 51 s | not produced | | not produced | |
+| egg signs | | too short | | too short | |
+| BWM rest (mV) | -35.4 to -14.6 | -30.5 in | -30.4 in | -30.4 in | -30.8 in |
+| BWM spikes (Hz) | 0 to 2.19 | 2.97 miss | 2.92 miss | 2.89 miss | 2.83 miss |
+| physical | | yes | yes | yes | yes |
+| wall per bio-s (s) | | 16.8 | 17.1 | 12.1 | 11.9 |
+
+- **No verdict changes.** 1 of the 10 barred signs is in (BWM rest, both conditions), 6 miss, 3 are not produced or
+  too short, as on f8e7699. Rest voltages move by 0.1 mV or less.
+- gcamp_range 0.133 is the noise floor under Atanas's noise (3.29 x 0.0417 = 0.137, derived), not the brain: the
+  change from 0.0976 is the readout's noise (0.03 before), not the worm.
+- Noise alone, one pair (food, noise seed 1 against this run's default; the pre-registered spread, night file 03:03,
+  has 1 of 14 runs in): BWM spikes 2.75 against 2.97 Hz, a 0.22 Hz difference; rest voltages within 0.02 mV;
+  pc3_frac 0.0564 against 0.0559. So the 0.08 Hz rise in BWM spikes since f8e7699 is inside the noise (inferred from
+  one pair; the full spread will say). Wall 16.8-17.1 s per bio-s with one noise run beside the two (load 8-10 of
+  28).
+
 ## Limitations
 
 1. (Closed 9 Nov 01:36.) The plate went in through a subclass of `body.loop.Body` until `Experiment` carried it.
