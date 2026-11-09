@@ -94,6 +94,14 @@ KNOWN = {"measured", "published_fit", "derived", "inferred"}
 # Ben, 6 Nov 2026: every mechanism on in the template worm, the simpler forms as toggles. These defaults are written by
 # scripts/worm/build_ledger.py (off there until the catalog worker rebuilds the ledger); the brain applies them here
 TEMPLATE_ON = {"receptor_sign": "on", "innexin_identity": "on", "expression_map": "on"}
+# expression_map (CeNGEN presence at threshold 2): "on" gates only densities that are not a published fit. BAAIWorm's
+# densities are 5 co-tuned sets, fitted to the recorded cells in upstream's electrophysiology_data (AIYL, RIML, AVAL,
+# AWAL current clamp; AWCL, VD05 voltage clamp; AWAL and AWCL share one set) and assigned to every other cell by
+# BAAIWorm. Zeroing a fitted K channel without refitting left Ca currents with no outward balance: 61 of 74 single
+# cells above E_Ca and AIYL's training RMSE 113.8 mV (DEBUG_TRIAGE lines 15-16, class A). "cengen_all" is that old
+# form (every cell masked), kept for attribution; FIT2's map (form fit2) is the replacement that refits from expression.
+EXPRESSION_MASK = ("on", "cengen_all")
+FITTED = {"published_fit", "measured"}
 
 _h = None
 
@@ -420,12 +428,15 @@ class Brain:
 
     def _density(self, ch, name):
         v = self.spec.v(f"dens_{ch}", name)
-        if self.toggles["expression_map"] == "fit2":
+        form = self.toggles["expression_map"]
+        if form == "fit2":
             m, prm = excite_map.for_brain(self)
             return m.cell(name, prm)[ch]
-        if self.toggles["expression_map"] != "on":
+        if form not in EXPRESSION_MASK:
             return v
         t = self.spec.led.values(f"dens_{ch}").set_index("element")
+        if form == "on" and t.label[name] in FITTED:
+            return v                                     # a published fit keeps its co-tuned channel set (row 5)
         tpm, cls = float(t.cengen_tpm[name]), t.cengen_class[name]
         if isinstance(cls, str) and cls and tpm == 0:
             return 0.0

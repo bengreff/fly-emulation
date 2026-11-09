@@ -104,5 +104,8 @@ def test_unc58_leak_depolarises_its_cells():
     d, on = _run({}, {"unc58_g_S_cm2": 2e-5}), _run({"unc58_na_leak": "on"}, {"unc58_g_S_cm2": 2e-5})
     assert on["out"]["k2p"]["unc58_cells"] > 0 and on["out"]["k2p"]["unc58_g_max_nS"] > 0
     v0, v1 = np.array(d["V"])[40], np.array(on["V"])[40]
-    moved = np.abs(v1 - v0) > 1e-3
+    # Only cells below the reversal: one within a mV or two above it carries almost no leak current of its own, and its
+    # depolarised neighbours (the leak's other cells) can push it further up (VA05 at -14.0 mV, 8 Nov, after the
+    # expression-mask fix; -20.8 mV under the old mask, where it moved toward -15).
+    moved = (np.abs(v1 - v0) > 1e-3) & (v0 < -17.0)
     assert moved.any() and np.all(np.abs(v1[moved] + 15.0) < np.abs(v0[moved] + 15.0))

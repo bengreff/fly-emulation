@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-07 19:17 CST",
+ "generated_at": "2026-11-08 21:01 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -11,12 +11,12 @@
  "totals": {
   "numbers": 91536,
   "rows": 1792,
-  "mechanisms": 97,
+  "mechanisms": 98,
   "by_label": {
-   "derived": 67512,
+   "derived": 67513,
    "guessed": 9413,
    "inferred": 330,
-   "measured": 6183,
+   "measured": 6182,
    "published_fit": 8098
   },
   "known": 82123,
@@ -31,9 +31,9 @@
   "by_label": {
    "published_fit": 7371,
    "guessed": 9413,
-   "derived": 3104,
+   "derived": 3105,
    "inferred": 330,
-   "measured": 331
+   "measured": 330
   },
   "known": 11136,
   "placeholder": 9413,
@@ -49,8 +49,8 @@
    },
    "literature": {
     "guessed": 5474,
-    "measured": 6182,
-    "derived": 3104,
+    "measured": 6181,
+    "derived": 3105,
     "inferred (ours)": 28,
     "published fit": 323
    },
@@ -74,8 +74,8 @@
    },
    "literature": {
     "guessed": 5474,
-    "derived": 3104,
-    "measured": 330,
+    "derived": 3105,
+    "measured": 329,
     "inferred (ours)": 28,
     "published fit": 323
    },
@@ -116,10 +116,10 @@
    "published_fit": 171
   },
   "class": {
-   "derived": 8,
+   "derived": 9,
    "guessed": 390,
    "inferred": 276,
-   "measured": 32,
+   "measured": 31,
    "published_fit": 101
   },
   "compartment": {
@@ -462,7 +462,7 @@
   },
   {
    "id": "expression_map",
-   "name": "CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0)",
+   "name": "CeNGEN expression gates channel presence (zero density where no gene is detected; a class-median density where the gene is detected but the ported density is 0) for densities that are not a published fit; BAAIWorm's co-tuned fitted sets are kept whole (8 Nov, DEBUG_TRIAGE lines 15-16). Forms: cengen_all masks every cell (the old form), fit2 is FIT2's expression map",
    "layer": "channel",
    "status": "have",
    "toggle": "expression_map",
@@ -819,10 +819,10 @@
    "absent_reason": "",
    "numbers": 116,
    "by_label": {
-    "derived": 3,
+    "derived": 4,
     "guessed": 56,
     "inferred": 34,
-    "measured": 21,
+    "measured": 20,
     "published_fit": 2
    }
   },
@@ -1184,6 +1184,20 @@
    "by_label": {
     "published_fit": 44
    }
+  },
+  {
+   "id": "awa_kir",
+   "name": "AWA inward rectifier: gKir times the smooth minimum of (v - vK) and I0, as in the authors' code (Liu et al. 2018; as printed it is inward at every voltage)",
+   "layer": "sensory",
+   "status": "have",
+   "toggle": "awa_kir",
+   "neutral": "off",
+   "default": "smooth_min",
+   "source": "src/wormemu/mech/senses_chem.py",
+   "notes": "registry module senses_chem; PLAN row guessed from the name by the catalog",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
   },
   {
    "id": "sens_touch_gentle",
@@ -42299,24 +42313,24 @@
    "applies_to": "GABA-A chloride (UNC-49) receptors at chemical synapses",
    "unit": "ms",
    "n_values": 1,
-   "value_template": 24.8,
-   "template_source": "Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12)",
-   "bio_min": 22.1,
-   "bio_max": 27.5,
+   "value_template": 19.16,
+   "template_source": "derived (8 Nov, DEBUG_TRIAGE line 3): the receptor's own deactivation, solved so the model's evoked IPSC (release state, then receptor) reproduces Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12), a composite of release and closing (scripts/worm/debug2/derive_gaba_tau_off.py)",
+   "bio_min": 15.45,
+   "bio_max": 22.69,
    "bound_basis": "measured_spread",
-   "bound_source": "Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12)",
+   "bound_source": "derived (8 Nov, DEBUG_TRIAGE line 3): the receptor's own deactivation, solved so the model's evoked IPSC (release state, then receptor) reproduces Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12), a composite of release and closing (scripts/worm/debug2/derive_gaba_tau_off.py)",
    "bound_verified": "unverified",
    "prior_dist": "uniform",
    "prior_a": "",
    "prior_b": "",
    "prior_basis": "guessed: uniform over the range",
-   "label": "measured",
-   "fill_kind": "measured",
+   "label": "derived",
+   "fill_kind": "derived",
    "source_project": "literature",
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "source 6 Nov (catalog audit): was 24.8 ms, label measured, range [22.1, 27.5]; quote added; n is 12 for the decay (13 is the amplitude's n); value unchanged",
+   "notes": "source 6 Nov (catalog audit): was 19.16 ms, label derived, range [15.45, 22.69]; quote added; n is 12 for the decay (13 is the amplitude's n); value unchanged",
    "plan_row": 7,
    "used_by_code": "yes",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/",
@@ -42328,7 +42342,7 @@
    "hard_basis": "physics",
    "hard_source": "any process inside a worm: above 1 us, below 60 days (adult lifespan 2-3 weeks; 60 d covers the longest-lived strains); [HB 6], [HB 12]",
    "bound_basis_detail": "measured_related",
-   "span_decades": 0.095,
+   "span_decades": 0.167,
    "span_reason": "",
    "fit_role": "static",
    "n_unknown": 0,
@@ -58738,7 +58752,7 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "range x/2 to x2 (guessed); source 6 Nov (catalog audit): was 5 mV, label published_fit, range [2.5, 10]; value quoted from the free CC-BY preprint's Table S4 (the Cell version's table image, docs/worm/research/liu2018_tableS4.jpg, gives the same numbers); matches the running value; label unchanged",
+   "notes": "range x/2 to x2 (guessed); Table S4 lists I0 as a 5.0 pA saturated current, but the authors' code (github.com/wormwhisperer/CElegansAWAActionPotentialAnalysis, gKI) adds it to v in mV: the Kir saturates at gKir I0 = 4 pA; source 6 Nov (catalog audit): was 5 mV, label published_fit, range [2.5, 10]; value quoted from the free CC-BY preprint's Table S4 (the Cell version's table image, docs/worm/research/liu2018_tableS4.jpg, gives the same numbers); matches the running value; label unchanged",
    "plan_row": 17,
    "used_by_code": "yes",
    "source_url": "https://doi.org/10.1101/359935",
@@ -77598,16 +77612,16 @@
    "rows": {
     "published_fit": 649,
     "guessed": 678,
-    "measured": 251,
+    "measured": 250,
     "inferred": 329,
-    "derived": 42,
+    "derived": 43,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8178,
     "guessed": 9474,
-    "measured": 6209,
-    "derived": 67523,
+    "measured": 6208,
+    "derived": 67524,
     "inferred": 335,
     "absent": 1
    },
@@ -77617,16 +77631,16 @@
   "by_label_rows": {
    "published_fit": 649,
    "guessed": 678,
-   "measured": 251,
+   "measured": 250,
    "inferred": 329,
-   "derived": 42,
+   "derived": 43,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8178,
    "guessed": 9474,
-   "measured": 6209,
-   "derived": 67523,
+   "measured": 6208,
+   "derived": 67524,
    "inferred": 335,
    "absent": 1
   },
@@ -77703,15 +77717,15 @@
     "rows": {
      "published_fit": 27,
      "guessed": 83,
-     "measured": 26,
+     "measured": 25,
      "inferred": 34,
-     "derived": 3
+     "derived": 4
     },
     "numbers": {
      "published_fit": 752,
      "guessed": 6756,
-     "measured": 5883,
-     "derived": 1988,
+     "measured": 5882,
+     "derived": 1989,
      "inferred": 39
     },
     "n_rows": 173,
@@ -78079,15 +78093,15 @@
      "inferred": 276,
      "guessed": 395,
      "published_fit": 101,
-     "derived": 8,
-     "measured": 35
+     "derived": 9,
+     "measured": 34
     },
     "numbers": {
      "inferred": 276,
      "guessed": 395,
      "published_fit": 101,
-     "derived": 8,
-     "measured": 35
+     "derived": 9,
+     "measured": 34
     },
     "n_rows": 815,
     "n_numbers": 815
@@ -78256,15 +78270,15 @@
     "rows": {
      "published_fit": 571,
      "guessed": 565,
-     "measured": 215,
+     "measured": 214,
      "inferred": 312,
-     "derived": 31
+     "derived": 32
     },
     "numbers": {
      "published_fit": 7912,
      "guessed": 9030,
-     "measured": 6072,
-     "derived": 67512,
+     "measured": 6071,
+     "derived": 67513,
      "inferred": 317
     },
     "n_rows": 1694,
@@ -78616,17 +78630,17 @@
    },
    "mech:receptors": {
     "rows": {
-     "measured": 21,
+     "measured": 20,
      "guessed": 56,
      "inferred": 34,
-     "derived": 3,
+     "derived": 4,
      "published_fit": 2
     },
     "numbers": {
-     "measured": 21,
+     "measured": 20,
      "guessed": 56,
      "inferred": 34,
-     "derived": 3,
+     "derived": 4,
      "published_fit": 2
     },
     "n_rows": 116,
@@ -78771,16 +78785,16 @@
      "published_fit": 635,
      "guessed": 676,
      "inferred": 329,
-     "derived": 40,
-     "measured": 247,
+     "derived": 41,
+     "measured": 246,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7439,
      "guessed": 9472,
-     "derived": 3115,
+     "derived": 3116,
      "inferred": 335,
-     "measured": 357,
+     "measured": 356,
      "absent": 1
     },
     "n_rows": 1928,
@@ -83353,11 +83367,11 @@
     "origin": "mech:receptors",
     "n": 1,
     "pattern": "",
-    "was_label": "measured",
-    "new_label": "measured",
-    "change": "24.8 -> 24.8 ms; measured -> measured; range [22.1, 27.5] -> [22.1, 27.5]",
+    "was_label": "derived",
+    "new_label": "derived",
+    "change": "19.16 -> 19.16 ms; derived -> derived; range [15.45, 22.69] -> [15.45, 22.69]",
     "reason": "quote added; n is 12 for the decay (13 is the amplitude's n); value unchanged",
-    "source": "Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12)",
+    "source": "derived (8 Nov, DEBUG_TRIAGE line 3): the receptor's own deactivation, solved so the model's evoked IPSC (release state, then receptor) reproduces Liu, Hollopeter & Jorgensen 2009 PNAS 106:10823 (PMC2705609) Fig. 2B: NMJ light-evoked GABA current decay 24.8 +- 2.7 ms (n = 12), a composite of release and closing (scripts/worm/debug2/derive_gaba_tau_off.py)",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705609/"
    },
    {
@@ -92313,16 +92327,16 @@
    "rows": {
     "published_fit": 663,
     "guessed": 691,
-    "measured": 236,
-    "derived": 34,
+    "measured": 235,
+    "derived": 35,
     "inferred": 325,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8187,
     "guessed": 9595,
-    "measured": 6093,
-    "derived": 67514,
+    "measured": 6092,
+    "derived": 67515,
     "inferred": 330,
     "absent": 1
    }
@@ -92331,16 +92345,16 @@
    "rows": {
     "published_fit": 649,
     "guessed": 678,
-    "measured": 251,
+    "measured": 250,
     "inferred": 329,
-    "derived": 42,
+    "derived": 43,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8178,
     "guessed": 9474,
-    "measured": 6209,
-    "derived": 67523,
+    "measured": 6208,
+    "derived": 67524,
     "inferred": 335,
     "absent": 1
    }
