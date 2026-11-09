@@ -5,7 +5,7 @@ values). The experiment is declarative: environment and fields, a stimulus sched
 (off / immobilised / on), the genotype and other interventions (ablations, drugs), the duration and what to observe.
 Interventions act through the model's own quantities (GENES), never through a free knob:
     ("g", name)       a per-cell conductance multiplier (mech.G_SCALE_NAMES): a channel density or a receptor class
-                      (mech.AWA_G_SCALE_NAMES: Liu's conductances in AWA; no gene maps to them yet)
+                      (mech.AWA_G_SCALE_NAMES: Liu's conductances in AWA; egl-19 and shk-1 reach theirs)
     ("tx", transmitter) a vesicular or synthesis marker: the transmitter leaves every cell's identity (null only); a
                       cell left with none gets fast release 0
     ("tpm", gene)     the gene's CeNGEN expression, wherever the model reads it (receptor shares, innexin weights,
@@ -27,11 +27,13 @@ import numpy as np
 from wormemu import heldout, mech
 from wormemu.mech import drugs, pathogen, receptors, slow_signalling
 
-# channel genes -> the densities they carry (BAAIWorm's composite SLO channels need both genes)
-_CH = {"egl-19": ("egl19", "slo1_egl19", "slo2_egl19"), "unc-2": ("unc2", "slo1_unc2", "slo2_unc2"),
+# channel genes -> the densities they carry (BAAIWorm's composite SLO channels need both genes); in AWA under Liu 2018's
+# membrane, egl-19 is its Ca current and shk-1 its K1 (Liu et al. 2018: egl-19 rf mutants lose AWA's spikes, the
+# methods' SHK-1 current, Table S4's shk-1 fit sets gK1 to 0); Liu names no gene for the other six
+_CH = {"egl-19": ("egl19", "slo1_egl19", "slo2_egl19", "awa_ca"), "unc-2": ("unc2", "slo1_unc2", "slo2_unc2"),
        "slo-1": ("slo1_unc2", "slo1_egl19", "slo1iso"), "slo-2": ("slo2_unc2", "slo2_egl19", "slo2iso"),
        "egl-2": ("egl2",), "shl-1": ("shl1",), "kqt-1": ("kqt1",), "kqt-3": ("kqt3",), "kvs-1": ("kvs1",),
-       "egl-36": ("egl36",), "cca-1": ("cca1",), "shk-1": ("shk1",), "unc-103": ("unc103",), "exp-2": ("exp2",),
+       "egl-36": ("egl36",), "cca-1": ("cca1",), "shk-1": ("shk1", "awa_k1"), "unc-103": ("unc103",), "exp-2": ("exp2",),
        "nca-1;nca-2": ("nca",)}       # NCA is one current for both genes (nicoletti.GENE): the double null only
 _TX = {"unc-17": "acetylcholine", "eat-4": "glutamate", "unc-25": "gaba", "cat-2": "dopamine",
        "tph-1": "serotonin", "tdc-1": "tyramine", "tbh-1": "octopamine"}      # brain_structure.MARKERS
