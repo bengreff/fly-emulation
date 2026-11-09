@@ -14,6 +14,11 @@
 #             risk: the update moves inside the ensemble's span), and the fit needs a different start or a mechanism
 #             fix first. The noise seed is the worm seed (mech/noise.py), so draws differ in values and noise both.
 #   threshold "at least 1 of 6" guessed. A draw that fails physicality counts as outside every band.
+# Added 8 Nov 22:25 CST (date), before any run result was read: joint.check passes only seeds 1 and 4 of the 6 (2, 3, 5,
+#   6 break a reversal-order constraint; 230 of 560 prior draws admissible, 41 %, measured). A third wave runs the next
+#   3 admissible seeds, 7, 9, 10 (the fit runs only admissible members), launched after the first two waves:
+#   `$PY -m wormemu.fit.vitals run food 200 OUTDIR/seed$k --seed=$k` for k in 7 9 10. The question is then read on the
+#   5 admissible draws (1, 4, 7, 9, 10) as well as on all 9.
 # Usage (backhouse, after sourcing env.sh): bash scripts/worm/fit/prior_predictive.sh OUTDIR
 set -u
 OUT=$1
