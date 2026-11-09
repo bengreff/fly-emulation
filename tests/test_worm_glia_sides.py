@@ -12,7 +12,7 @@ from wormemu.mech import glia
 def _mech(kb="kir"):
     names = sorted(AMPHID)
     brain = SimpleNamespace(idx={n: i for i, n in enumerate(names)}, spec=None)
-    return glia.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": kb}), names
+    return glia.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": kb, "glia_v0_window": "first"}), names
 
 
 def test_left_load_leaves_right_at_bath():

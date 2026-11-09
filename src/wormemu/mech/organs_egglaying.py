@@ -12,13 +12,17 @@ Cells. The 16 sex muscles (vm1, vm2, um1, um2 x A/P x L/R; Cook 2019 nodes, not 
 each with the Du, Crodelle et al. 2025 body-wall muscle membrane (inferred: vulval muscles also run on EGL-19 Ca
 spikes) and the UNC-103 ERG current as Du's own Kr current at a vulval density (fitted, see egg_unc103_gkr_nS).
 Cook's gaps join them (and VC03 to vm2), Cook's synapses reach them from HSN, VC, VA, VB, VD (GABA inhibitory, the
-rest excitatory: VC and HSN are cholinergic in the project's transmitter map). uv1 is not a Cook node: it is one
+rest excitatory: VC and HSN are cholinergic in the project's transmitter map; organs_nrn.chem_synapse with the
+body-wall NMJ's receptor classes when receptor kinetics run). uv1 is not a Cook node: it is one
 lumped tyramine pool. HSN and VC are the brain's own cells.
 
 Loop. Eggs enter the uterus at the rate from metabolism (ctx.outputs['egg_production_per_h'], row 20) or this
 module's default; uterine stretch S = Hill(eggs) opens a cation conductance on vm1/vm2; 5-HT (SER-1, SER-7) and NLP-3
 from B1's pools (mech.neuromod's compartment of HSN, at the vulva; brain_layers' well-mixed pools when neuromod is
-absent) open the same conductance, at neuromod's SER-1, SER-7 and NPR-42 EC50s. The vm Ca -> activation is row 12's
+absent) open the same conductance, at neuromod's SER-1, SER-7 and NPR-42 EC50s. With neuromod's amine_synaptic on
+(nicholson; wneuro's toggle, off by default), vm2's 5-HT read adds the near-field excess at HSN's release sites onto
+vm2 (neuromod.near_nM('serotonin', HSN); wbody2, 9 Nov, inbox 02:45) and vm1 keeps the pool alone; with it off
+nothing changes. The vm Ca -> activation is row 12's
 Boyle-Berri-Cohen integrator; an egg passes when the mean vm activation crosses egg_vm_act_on with an egg in the
 uterus. Each egg releases uv1 tyramine, which opens LGC-55 (a Cl channel, row 7's rec_lgc55_* EC50, Hill and
 reversal) on HSN; vm activity feeds a depolarising
@@ -26,6 +30,12 @@ current back to HSN. Nothing sets the active/inactive states: they come out of t
 The nested form `timer` is brain_layers.Layers.egg_laying verbatim (two-state timer, Waggoner 1998 durations).
 The id egg_laying is brain_layers' id, so this module takes that toggle over. `egg_unc103=off` is the unc-103 null
 (no Kr in the sex muscles).
+Solver (`egg_g_solver`; wbody2, 9 Nov, A, inbox 01:45). implicit (default): the vm cation conductance and HSN's
+LGC-55 conductance are wgc point processes (nmodl/wgc.mod) whose g is set each exchange step, so NEURON solves them
+implicitly at its 0.5 ms step. Nested `explicit`: the code before, g (E - V) from V at the step's start held as a
+current over the exchange step; it alternates above about 1.2 nS on HSN at 4-4.5 ms steps (weki, 01:13), inside
+egg_lgc55_g_nS's range. The conductances' gating (stretch, occupancies, tyramine) updates once per exchange step in
+both forms.
 """
 from __future__ import annotations
 
@@ -39,6 +49,8 @@ MECHANISMS = [
      "uterine stretch, 5-HT/NLP-3 from B1's pools, uv1 tyramine -> HSN LGC-55 (nested: two-state timer)",
      "organ", "circuit"),
     ("egg_unc103", "UNC-103 ERG K+ in the sex muscles at the vulval density (off: the unc-103 null)", "organ", "on"),
+    ("egg_g_solver", "Egg-laying conductances (vm cation, HSN LGC-55) as NEURON point processes, implicit (nested "
+     "explicit: g (E - V) from the step's start V as a current)", "organ", "implicit"),
 ]
 
 ZHANG = "Zhang, Schafer, Breitling 2010 BMC Syst Biol 4:81"
@@ -123,6 +135,8 @@ class Mech:
             self.form = "circuit"
         assert self.form in FORMS, self.form
         self.unc103 = toggles.get("egg_unc103", "on") != "off"
+        self.solver = toggles.get("egg_g_solver", "implicit")
+        assert self.solver in ("implicit", "explicit"), self.solver
         q = defaults()
         q.update(_OLD)
         q.update({k: v for k, v in (getattr(brain.layers, "p", {}) or {}).items() if k in _OLD})
@@ -165,7 +179,7 @@ class Mech:
         organs_nrn.load_organ_mods(h)
         vals = getattr(b.spec, "values", {}) or {}
         qb = {s.id: (float(vals[s.id]) if s.id in vals and np.isscalar(vals[s.id]) else s.template) for s in mb.SPECS}
-        self.sec, self.clamp = {}, []
+        self.sec, self.clamp, self.gvm, self.glgc = {}, [], [], []
         for n in SEX_MUSCLES:
             sec = h.Section(name=f"sex_{n}")
             sec.nseg, sec.L, sec.diam = 1, 20.0, 5.0              # BAAIWorm's muscle cylinder
@@ -174,10 +188,20 @@ class Mech:
             mb.configure(sec, qb, area)
             sec.cm = q["egg_c_pF"] * 100.0 / area
             sec(0.5).du_bwm.gkr = q["egg_unc103_gkr_nS"] if self.unc103 else 0.0
-            c = h.IClamp(sec(0.5))
-            c.delay, c.dur, c.amp = 0.0, 1e12, 0.0
+            if self.solver == "explicit":
+                c = h.IClamp(sec(0.5))
+                c.delay, c.dur, c.amp = 0.0, 1e12, 0.0
+                self.clamp.append(c)
+            elif n in VM:
+                pp = h.wgc(sec(0.5))
+                pp.e, pp.g = q["egg_cation_erev_mV"], 0.0
+                self.gvm.append(pp)
             self.sec[n] = sec
-            self.clamp.append(c)
+        if self.solver == "implicit":
+            for i in self.hsn:
+                pp = h.wgc(b.soma[i](0.5))
+                pp.e, pp.g = self.lgc[2], 0.0
+                self.glgc.append(pp)
         st, nm, mine = b.st, b.st.names, set(SEX_MUSCLES)
         g = q["egg_gap_nS_per_contact"] / 1000.0
         for i, j, n in st.gap:
@@ -191,11 +215,12 @@ class Mech:
                 continue
             self.n_gap += 1
         g_nmj = float(np.median(b.spec.v("nmj_strength_per_pair").to_numpy(float)))
+        self.wsyn = []
         for i, j, n in st.chem:
             a, c = nm[i], nm[j]
             if c in mine and a in b.idx:
                 inh = "gaba" in st.transmitter.get(a, set())
-                b._syn(b.soma[b.idx[a]](0.5), self.sec[c](0.5), g_nmj * n / (b._g_syn(inh) * 1000.0), inh, "syn_sex")
+                self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_sex", muscle=True)
                 self.n_syn += 1
         k = len(SEX_MUSCLES)
         self._pca, self._pv = h.PtrVector(k), h.PtrVector(k)
@@ -204,6 +229,8 @@ class Mech:
             self._pv.pset(x, self.sec[n](0.5)._ref_v)
         self._buf = h.Vector(k)
         self.is_vm = np.array([n in VM for n in SEX_MUSCLES])
+        self.is_vm2 = np.array([n.startswith("vm2") for n in SEX_MUSCLES])
+        self.gvm_is_vm2 = [n.startswith("vm2") for n in SEX_MUSCLES if n in VM]          # self.gvm order (implicit)
 
     def reset(self):
         from wormemu.mech.muscle_bwm import INIT
@@ -221,6 +248,8 @@ class Mech:
                     setattr(seg.du_bwm, k, x)
         for c in getattr(self, "clamp", []):
             c.amp = 0.0
+        for pp in getattr(self, "gvm", []) + getattr(self, "glgc", []):
+            pp.g = 0.0
 
     def _read(self, pv):
         pv.gather(self._buf)
@@ -261,6 +290,14 @@ class Mech:
         c5, c3 = self.concentrations()
         return float(np.mean(c5 / (c5 + self.ec5))), c3 / (c3 + self.ec3)
 
+    def near_5ht(self):
+        """neuromod's near-field 5-HT excess (nM) at vm2 from HSN's release sites; None under amine_synaptic off (or
+        with no neuromod or no HSN). Call after concentrations(), which finds the neuromod Mech."""
+        nm = self.nm
+        if not nm or not len(self.hsn) or getattr(nm, "synaptic", "off") == "off":
+            return None
+        return nm.near_nM("serotonin", self.hsn)
+
     def step(self, ctx, dt_ms):
         k = len(SEX_MUSCLES)
         if self.form == "off":
@@ -275,9 +312,21 @@ class Mech:
         S = float(_hill(self.U, q["egg_stretch_half"], q["egg_stretch_hill"]))
         o5, o3 = self.occupancy()
         g = q["egg_stretch_g_nS"] * S + q["egg_5ht_g_nS"] * o5 + q["egg_nlp3_g_nS"] * o3
-        i_vm = np.where(self.is_vm, g * (q["egg_cation_erev_mV"] - v), 0.0)        # pA
-        for c, x in zip(self.clamp, i_vm):
-            c.amp = x / 1000.0                                                     # pA -> nA
+        near = self.near_5ht()
+        if near is None:                          # amine_synaptic off: every vm reads the pool (the code before)
+            o5_vm2, g2, gv = o5, g, g
+        else:                                     # vm2 reads the pool plus HSN's near field; vm1 the pool
+            c5 = self.concentrations()[0] + near
+            o5_vm2 = float(np.mean(c5 / (c5 + self.ec5)))
+            g2 = q["egg_stretch_g_nS"] * S + q["egg_5ht_g_nS"] * o5_vm2 + q["egg_nlp3_g_nS"] * o3
+            gv = np.where(self.is_vm2, g2, g)
+        if self.solver == "explicit":
+            i_vm = np.where(self.is_vm, gv * (q["egg_cation_erev_mV"] - v), 0.0)       # pA
+            for c, x in zip(self.clamp, i_vm):
+                c.amp = x / 1000.0                                                     # pA -> nA
+        else:
+            for pp, x in zip(self.gvm, self.gvm_is_vm2):
+                pp.g = (g2 if x else g) / 1000.0                                       # nS -> uS
         target = _hill(ca, q["egg_act_khalf_mM"], q["egg_act_hill"])
         self.act += (target - self.act) * min(1.0, dt_ms / q["egg_act_tau_ms"])
         a_vm = float(np.mean(self.act[self.is_vm]))
@@ -294,9 +343,15 @@ class Mech:
         if len(self.hsn):
             ec50, hl, erev = self.lgc
             occ = float(_hill(self.tyr, ec50, hl))
-            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm + q["egg_lgc55_g_nS"] * occ * (erev - ctx.v[self.hsn])
+            I[self.hsn] = q["egg_ret_gain_pA"] * a_vm
+            if self.solver == "explicit":
+                I[self.hsn] += q["egg_lgc55_g_nS"] * occ * (erev - ctx.v[self.hsn])
+            else:
+                for pp in self.glgc:
+                    pp.g = q["egg_lgc55_g_nS"] * occ / 1000.0
         return {"I_pA": I, "out": {"eggs_laid": laid, "sex_muscle_activation": self.act.copy(),
                                    "eggs_total": self.eggs_total, "egg_uterus": self.U, "egg_stretch": S,
                                    "uv1_tyramine_uM": self.tyr, "egg_5ht_occ": o5, "egg_nlp3_occ": o3,
+                                   "egg_5ht_occ_vm2": o5_vm2, "egg_5ht_near_nM": 0.0 if near is None else near,
                                    "egg_vm_v_mV": v[self.is_vm], "egg_vm_ca_mM": ca[self.is_vm],
                                    "egg_vm_act": a_vm}}

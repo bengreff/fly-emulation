@@ -234,12 +234,14 @@ def test_defecation_off_is_silent_and_ip3r_drives_posterior_bwm_and_avl_dvb():
             r = m.step(ctx, 1.0)
             i_post = max(i_post, float(r["I_pA"][m.post_cells].max()))
             i_aex = max(i_aex, float(r["I_pA"][m.aex2_cells].max()))
-            rel = max(rel, r["out"]["peptide_release"]["nlp-40@posterior_body"])
+            rel = max(rel, sum(r["out"]["peptide_release"].values()))
             anterior = np.setdiff1d(m.bwm, m.post_cells)
             assert not r["I_pA"][anterior].any()
         assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9
-        assert set(r["out"]["peptide_release"]) == {"nlp-40@posterior_body"}
-        # molecules/s = nM/s x neuromod's posterior-body volume (400 um2 x 269 um) x 0.602 molecules per um3 per nM
+        assert set(r["out"]["peptide_release"]) == {"nlp-40@anterior_body", "nlp-40@posterior_body"}
+        assert np.allclose(m.nlp_W.sum(1), 1.0) and not m.nlp_W[gi.RING <= 4, 2:].any()
+        assert not m.nlp_W[gi.RING >= 6, :2].any()           # rings by length overlap: 1-4 anterior, 6-9 posterior
+        # total molecules/s = nM/s x neuromod's posterior-body volume (400 um2 x 269 um) x 0.602 per um3 per nM
         assert 0.0 < rel <= q["nlp40_release_nM_per_s"] * 400.0 * 269.0 * 0.602214 * (1 + 1e-9)
         if form == "direct":
             assert 0.0 < i_aex <= q["aex2_gain_pA"]
@@ -321,7 +323,7 @@ def _glia_run(m, names, drive_cells, t_drive=(1.0, 2.0), t_end=30.0, dt=5.0, v_r
 
 def test_glia_fixed_forms_are_silent():
     brain, names = _glia_brain()
-    m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kbuffer": "fixed", "glia_kcc3": "fixed"})
+    m = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first", "glia_kbuffer": "fixed", "glia_kcc3": "fixed"})
     for _, r in _glia_run(m, names, [c for c in names if c.endswith("L")], t_end=3.0):
         assert "I_pA" not in r and "afd_gc_scale" not in r["out"]
 
@@ -330,7 +332,7 @@ def _glia_taus(brain, names, left, params):
     q = {**gl.defaults(), **params}
     taus, peaks = {}, {}
     for form in ("kir", "null"):
-        m = gl.Mech(brain, params, {"glia_cells": "off", "glia_kbuffer": form, "glia_kcc3": "fixed"})
+        m = gl.Mech(brain, params, {"glia_cells": "off", "glia_v0_window": "first", "glia_kbuffer": form, "glia_kcc3": "fixed"})
         rows = _glia_run(m, names, left)
         k = np.array([r["out"]["amphid_k_mM"] for _, r in rows]) - q["glia_k_bath_mM"]
         t = np.array([x for x, _ in rows])
@@ -361,10 +363,10 @@ def test_glia_k_buffer_recovers_at_the_kir41_constants_and_keeps_sides_apart():
 
 def test_glia_kcc3_scale_is_one_at_rest_rises_in_the_null_and_with_ending_k():
     brain, names = _glia_brain()
-    wt = gl.Mech(brain, {}, {"glia_cells": "off"})
+    wt = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first"})
     rest = _glia_run(wt, names, [], t_end=20.0)
     assert all(abs(r["out"]["afd_gc_scale"]["AFDL"] - 1.0) < 1e-9 for _, r in rest)
-    null = gl.Mech(brain, {}, {"glia_cells": "off", "glia_kcc3": "null"})
+    null = gl.Mech(brain, {}, {"glia_cells": "off", "glia_v0_window": "first", "glia_kcc3": "null"})
     s = _glia_run(null, names, [], t_end=30.0)[-1][1]["out"]["afd_gc_scale"]
     q = gl.defaults()
     want = (1 + (q["glia_cl_bath_mM"] + q["glia_kcc3_dcl_mM"]) / q["glia_gcy8_cl_ic50_mM"]) / \
@@ -613,3 +615,34 @@ def test_pharynx_reads_serotonin_from_neuromod_and_falls_back_to_the_layer():
     assert r["compartments"]["src"] == "neuromod" and r["compartments"]["c"] > 0
     assert r["compartments"]["c"] == r["compartments"]["ref"] == r["compartments"]["out"]
     assert r["lumped"]["src"] == "layer"
+
+
+_PH_ROUTE = """
+import json
+from wormemu import brain as B
+from wormemu.mech import organs_pharynx as ph
+out = {}
+for route in ("cook", "eat2", "both"):
+    b = B.Brain(B.sample_worm(None), toggles={"ph_mc_route": route}, cells=["MCL", "MCR"])
+    p = next(m for m in b.mechs if isinstance(m, ph.Mech))
+    mc, seg, own = {b.idx["MCL"], b.idx["MCR"]}, {}, {id(x) for x in p.wsyn}
+    for pp, pre, post, c in b.wsyn:
+        if id(pp) in own and pre in mc:
+            n = pp.get_segment().sec.name().replace("pharynx_", "")
+            seg[n] = seg.get(n, 0.0) + pp.gmax
+    out[route] = dict(seg=seg, n_eat2=len(p.eat2_syn))
+print(json.dumps(out))
+"""
+
+
+def test_pharynx_mc_route_moves_mc_contacts_to_the_bordering_pm5():
+    """ph_mc_route (wbody2, item 2 stage 2 port): cook puts MC's synapses on the mc2 marginal cells only; eat2 puts the
+    same total conductance on pm5 cells only (each mc2 cell's share over its pm5 gap partners); both half each way."""
+    r = _run(_PH_ROUTE)
+    cook, eat2, both = (r[k]["seg"] for k in ("cook", "eat2", "both"))
+    tot = sum(cook.values())
+    assert tot > 0 and all(n.startswith("mc2") for n in cook) and r["cook"]["n_eat2"] == 0
+    assert all(n.startswith("pm5") for n in eat2) and r["eat2"]["n_eat2"] > 0
+    assert abs(sum(eat2.values()) - tot) < 1e-9 * tot
+    for g in ("mc2", "pm5"):
+        assert abs(sum(v for n, v in both.items() if n.startswith(g)) - tot / 2) < 1e-9 * tot
