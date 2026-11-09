@@ -56,7 +56,7 @@ CONC = ("out:intestine_ca_uM", "out:intestine_ip3_uM", "out:pharynx_ca_core_uM",
         "out:enteric_ca_mM", "out:egg_vm_ca_mM", "out:afd_cascade_ca_uM", "out:afd_cgmp_uM", "out:nlp40_nM",
         "out:uv1_tyramine_uM", "out:amphid_k_mM", "out:na_i_mM")
 OBSERVE = ("v_mV", "ca_uM", "gcamp_dff", "pumps", "eggs_laid", "expulsions", "posture") + CONC
-REVERSAL_IDS = ("ion_ek", "syn_exc_erev", "syn_inh_erev", "c302_muscle_leak_erev", "c302_muscle_k_slow_erev",
+REVERSAL_IDS = ("ion_ek", "ion_ena", "syn_exc_erev", "syn_inh_erev", "c302_muscle_leak_erev", "c302_muscle_k_slow_erev",
                 "c302_muscle_k_fast_erev", "c302_muscle_ca_boyle_erev", "unc58_erev_mV", "rec_lacr_erev_mV",
                 "rec_acr16_erev_mV", "rec_nachr_erev_mV", "rec_acc_erev_mV", "rec_glr_erev_mV", "rec_nmr_erev_mV",
                 "rec_glucl_erev_mV", "rec_gabacl_erev_mV", "rec_gabacat_erev_mV", "rec_mod1_erev_mV",
@@ -397,6 +397,7 @@ def run(theta, cond: str, seconds: float, outdir, seed=None, toggles=None) -> di
     neur = [j for j, c in enumerate(res["cells"]) if not c.startswith(("dBWM", "vBWM"))]
     np.savez_compressed(outdir / f"{cond}.npz", t=t[k], v=np.asarray(res["v_mV"], np.float32)[k],
                         gcamp=np.asarray(res["gcamp_dff"], np.float32)[k][:, neur],
+                        ca=np.asarray(res["ca_uM"], np.float32)[k],
                         int_ca=np.asarray(res["out:intestine_ca_uM"], np.float32)[k],
                         cells=np.array(res["cells"]))
     return out
