@@ -227,3 +227,10 @@ Nothing on Windows or the throttle was changed.
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.
   Line 9's damping re-run on the Mac: 16.70 ms (bar <= 5.3; unchanged from backhouse, line 9 stays D).
+- Pumping (vital sign; wbody2 item 2), 20:53 8 Nov: two stops in series. (1) MC never fires (MCL -70.1 mV median
+  over 3 bio s, whole brain; brain-owned, request to wbrain2). (2) Downstream is B: brief MC events (4 Hz) make no
+  pump at any in-range value of the marginal gap, marginal area or NMJ per-contact conductance (probe, 24 points);
+  the model's MC step is a generic graded synapse onto passive marginal cells where the published step is the EAT-2
+  nicotinic synapse (McKay et al. 2004), and the muscle's CCA-1 does not recover between events at its in-situ rest.
+  Fixed on the way (A): the muscle read 5-HT from a pool that is 0 under neuromod. Off-food bar: about 50 pumps per
+  minute in the first 2 h off food (Dallière et al. 2016, PMC4714553).
