@@ -1,11 +1,11 @@
 # The worm's unknown numbers
 
-Status 7 Nov 2026 (wmodel), counts updated 9 Nov 01:10 (wbrain2). Source: `wormemu.params` (`counts()`, `Theta().table`, `catalog()`), all measured
+Status 7 Nov 2026 (wmodel), counts updated 9 Nov 03:23 (wbrain2). Source: `wormemu.params` (`counts()`, `Theta().table`, `catalog()`), all measured
 from the code today.
 
-**Verdict.** 362 numbers are genuinely unknown (measured 9 Nov 01:10; 368 on 7 Nov 19:00). That is the whole fit
+**Verdict.** 362 numbers are genuinely unknown (measured 9 Nov 03:23; 368 on 7 Nov 19:00). That is the whole fit
 vector: 43 shared rules plus 319 gaps (15 of them discrete). It is well under Ben's 1,000-2,000 target. Everything else is fixed and labelled with
-its origin (1,475 scan rows covering 80,147 elements), or taken out of the vector for a stated reason (331 rows). The
+its origin (1,480 scan rows covering 80,152 elements), or taken out of the vector for a stated reason (334 rows). The
 per-element residuals (6,298 slots) are frozen at 0. The count went from 340 at 13:00 to 347 at 18:10 (wiring) and to
 368 at 19:00: the 21 drug numbers (mech/drugs, all guessed; read whenever an experiment schedules a drug). The
 KNOWLEDGE_GAPS section C mechanisms added 10 numbers, all outside the vector because their switches are off by
@@ -15,6 +15,7 @@ default (8 guessed, 2 inferred). Fitting has not started.
 9 Nov 00:39 (wbrain2): scan rows 1,339 to 1,452 and elements 80,011 to 80,124 (measured), the 113 constants of mech/cell_models (Jiang et al. 2022's AVL model as the avl_membrane toggle and its DVB borrow, dvb_membrane jiang22_noexp2; 105 published fits, 8 inferred DVB conductances; every toggle off by default); the vector is unchanged at 370 and the inactive unknowns at 324.
 9 Nov 01:00 (wbrain2, after the 3300581 wneuro merge): the vector is 369 (43 rules, 326 gaps, 15 discrete; measured): -1 `ma_ec50_serotonin_ser-1_nM` (wneuro: guessed -> measured, 1340 nM, Xie 2005 via Dernovici 2006), which moves to the scan. Scan rows 1,452 to 1,475 and elements 80,124 to 80,147: that row, wneuro's `ma_store_molecules_serotonin` and `_dopamine` (derived) and `pep_ec50_flp-25_dmsr-1_isoA_nM` (measured, its toggle off), and the 19 `n22_*` constants of Naudin et al. 2022's AFD model (mech/cell_models, `afd_membrane` naudin22, off by default; published fits). Inactive unknowns unchanged at 324.
 9 Nov 01:10 (wbrain2, inbox item 6): the vector is 362 (43 rules, 319 gaps, 15 discrete; measured): -7 numbers that describe the experiment, not the worm, now marked experiment settings in `params` (SETTING_PREFIX `scene_`, SETTINGS `obs_noise_dff`): the 6 guessed `scene_*` plate-field numbers (body/scene.py; set through `Experiment.scene`) and `obs_noise_dff` (the imaging noise of the dataset scored). Inactive unknowns 324 -> 331 (those 7). Scan unchanged at 1,475 rows and 80,147 elements.
+9 Nov 03:23 (wbrain2, after the 58246cf wneuro merge): the vector stays 362 (measured). wneuro's amine near field (`amine_synaptic`, off by default) adds 7 Specs: 4 measured, inferred or derived go to the scan (rows 1,475 to 1,480, elements 80,147 to 80,152, with the `pc_bin_um` row), and the 3 guessed ones (`hsn_vm2_site_receptor_um`, `ecs_alpha`, `ecs_tortuosity`) are out of the vector as "other form only" (build_ledger FORM_ONLY; `Mech.near_nM` returns 0 unless the toggle is nicholson): inactive unknowns 331 to 334. Before that filing they counted as 3 active gaps (365).
 
 ## What the roles mean
 

@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-09 03:05 CST",
+ "generated_at": "2026-11-09 03:23 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -1187,7 +1187,7 @@
    "neutral": "off",
    "default": "off",
    "source": "src/wormemu/mech/neuromod.py",
-   "notes": "registry module neuromod; PLAN row guessed from the name by the catalog",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
    "numbers": 0,
    "by_label": {}
@@ -64131,9 +64131,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "template the middle of Patel's 12-20 (derived); the two counts use different rules (Cook's equal 6 on all eight pairs looks like a pooled count split evenly)",
+   "notes": "template the middle of Patel's 12-20 (derived); the two counts use different rules (Cook's equal 6 on all eight pairs looks like a pooled count split evenly); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3917495/",
    "source_quote": "",
    "audit": "ok",
@@ -64173,9 +64173,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "bounds +-50% guessed (the paper gives '~10 um' only)",
+   "notes": "bounds +-50% guessed (the paper gives '~10 um' only); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3917495/",
    "source_quote": "",
    "audit": "ok",
@@ -64215,9 +64215,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "release taken as proportional to synapse count (inferred); bounds guessed: 0.1 (more 5-HT from the soma and dense-core vesicles off the synapses) to 1 (all at the vulva)",
+   "notes": "release taken as proportional to synapse count (inferred); bounds guessed: 0.1 (more 5-HT from the soma and dense-core vesicles off the synapses) to 1 (all at the vulva); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
    "source_quote": "",
    "audit": "ok",
@@ -64257,9 +64257,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "release site to SER-1 / SER-7 on vm2: no free source (vm2 muscle arms are spine-like postsynaptic structures, Li et al. 2013 eLife 2:e00378, qualitative; the reporters do not resolve receptor placement, Fernandez et al. 2020 PMC7511189). Bounds: 20 nm, a generic chemical cleft (Cowan and Kandel 2001 as cited in PMC4925697, not C. elegans) to 1 um, above the site spacing of 10 um / 12-20 = 0.5-0.83 um (derived)",
+   "notes": "release site to SER-1 / SER-7 on vm2: no free source (vm2 muscle arms are spine-like postsynaptic structures, Li et al. 2013 eLife 2:e00378, qualitative; the reporters do not resolve receptor placement, Fernandez et al. 2020 PMC7511189). Bounds: 20 nm, a generic chemical cleft (Cowan and Kandel 2001 as cited in PMC4925697, not C. elegans) to 1 um, above the site spacing of 10 um / 12-20 = 0.5-0.83 um (derived); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7511189/",
    "source_quote": "",
    "audit": "ok",
@@ -64271,7 +64271,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.699,
    "span_reason": "release site to receptor on vm2 not measured; the Spec's span runs from a generic 20 nm cleft to 1 um, above the 0.5-0.83 um site spacing (its notes)",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -64299,9 +64299,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "extracellular volume fraction at the release site. No nematode value (Sykova and Nicholson 2008, PMC2785730: too small to measure); bounds from cephalopod brain 0.09-0.29 (their Table 4B, via lit_hsn_vm2.md) to 1 (open fluid); template the brain's typical 0.2",
+   "notes": "extracellular volume fraction at the release site. No nematode value (Sykova and Nicholson 2008, PMC2785730: too small to measure); bounds from cephalopod brain 0.09-0.29 (their Table 4B, via lit_hsn_vm2.md) to 1 (open fluid); template the brain's typical 0.2; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2785730/",
    "source_quote": "",
    "audit": "ok",
@@ -64313,7 +64313,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 1.046,
    "span_reason": "no nematode value; the Spec's span runs from the cephalopod brain's 0.09 (relayed in its notes) to open fluid (1)",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -64341,9 +64341,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "lambda, D* = D / lambda^2. No nematode value; 1 (free) to 1.86 (cephalopod brain, Sykova and Nicholson 2008 Table 4B); template the brain's typical 1.6",
+   "notes": "lambda, D* = D / lambda^2. No nematode value; 1 (free) to 1.86 (cephalopod brain, Sykova and Nicholson 2008 Table 4B); template the brain's typical 1.6; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "",
    "source_quote": "",
    "audit": "ok",
@@ -64355,7 +64355,7 @@
    "bound_basis_detail": "guessed",
    "span_decades": 0.27,
    "span_reason": "",
-   "fit_role": "free",
+   "fit_role": "inactive",
    "n_unknown": 1,
    "kind": "physiology"
   },
@@ -64383,9 +64383,9 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "1: a site in open volume; 2: a site on a flat membrane",
+   "notes": "1: a site in open volume; 2: a site on a flat membrane; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
    "plan_row": 10,
-   "used_by_code": "yes",
+   "used_by_code": "other form only",
    "source_url": "",
    "source_quote": "",
    "audit": "labelled derived without a citation; no URL to open",
@@ -87315,20 +87315,20 @@
    "other form only": {
     "rows": {
      "published_fit": 77,
-     "guessed": 83,
-     "inferred": 19,
-     "measured": 14,
-     "derived": 9
+     "guessed": 86,
+     "inferred": 20,
+     "measured": 16,
+     "derived": 10
     },
     "numbers": {
      "published_fit": 265,
-     "guessed": 387,
-     "inferred": 20,
-     "measured": 116,
-     "derived": 9
+     "guessed": 390,
+     "inferred": 21,
+     "measured": 118,
+     "derived": 10
     },
-    "n_rows": 202,
-    "n_numbers": 797
+    "n_rows": 209,
+    "n_numbers": 804
    },
    "slot only": {
     "rows": {
@@ -87353,20 +87353,20 @@
    "yes": {
     "rows": {
      "published_fit": 695,
-     "guessed": 569,
-     "measured": 220,
-     "inferred": 321,
-     "derived": 36
+     "guessed": 566,
+     "measured": 218,
+     "inferred": 320,
+     "derived": 35
     },
     "numbers": {
      "published_fit": 8036,
-     "guessed": 9034,
-     "measured": 6077,
-     "derived": 67517,
-     "inferred": 326
+     "guessed": 9031,
+     "measured": 6075,
+     "derived": 67516,
+     "inferred": 325
     },
-    "n_rows": 1841,
-    "n_numbers": 90990
+    "n_rows": 1834,
+    "n_numbers": 90983
    }
   },
   "by_origin": {
@@ -101506,8 +101506,8 @@
   "ranges": {
    "roles_model": {
     "inactive": {
-     "rows": 294,
-     "unknown": 7053,
+     "rows": 297,
+     "unknown": 7056,
      "vector": 0
     },
     "fixed": {
@@ -101516,9 +101516,9 @@
      "vector": 18
     },
     "free": {
-     "rows": 347,
-     "unknown": 347,
-     "vector": 347
+     "rows": 344,
+     "unknown": 344,
+     "vector": 344
     },
     "static": {
      "rows": 1322,
@@ -101533,8 +101533,8 @@
    },
    "roles_catalog": {
     "inactive": {
-     "rows": 328,
-     "unknown": 7113,
+     "rows": 331,
+     "unknown": 7116,
      "vector": 0
     },
     "fixed": {
@@ -101543,9 +101543,9 @@
      "vector": 18
     },
     "free": {
-     "rows": 347,
-     "unknown": 347,
-     "vector": 347
+     "rows": 344,
+     "unknown": 344,
+     "vector": 344
     },
     "static": {
      "rows": 1411,
@@ -101560,9 +101560,9 @@
    },
    "free_by_basis": {
     "guessed_physical": {
-     "rows": 332,
-     "unknown": 332,
-     "vector": 332
+     "rows": 329,
+     "unknown": 329,
+     "vector": 329
     },
     "physics": {
      "rows": 11,
@@ -101575,10 +101575,10 @@
      "vector": 4
     }
    },
-   "free_unknown": 347,
-   "free_rows": 347,
+   "free_unknown": 344,
+   "free_rows": 344,
    "span_counts": {
-    ">1": 192,
+    ">1": 190,
     ">2": 39,
     ">3": 12
    },
@@ -102224,12 +102224,12 @@
    },
    "from_free": 0,
    "n_new_rules": 10,
-   "free_after_rules": 357,
+   "free_after_rules": 354,
    "after_by_basis": {
     "guessed_physical": {
-     "rows": 332,
-     "unknown": 332,
-     "vector": 332
+     "rows": 329,
+     "unknown": 329,
+     "vector": 329
     },
     "measured_spread": {
      "rows": 13,
@@ -102243,11 +102243,11 @@
     }
    },
    "after_span_counts": {
-    ">1": 197,
+    ">1": 195,
     ">2": 39,
     ">3": 12
    },
-   "after_rows": 357,
+   "after_rows": 354,
    "sampling": {
     "generated": "7 Nov 2026 18:55 CST (wranges, merged main 0ef21b7: wmodel's glia K+ buffer fix and structure rules)",
     "joint": {
@@ -102704,14 +102704,14 @@
    },
    "vector": {
     "counts": {
-     "vector": 365,
+     "vector": 362,
      "rule": 43,
-     "gap": 322,
+     "gap": 319,
      "gap_discrete": 15,
      "scan_rows": 1480,
      "scan_elements": 80152,
      "residual_slots": 6298,
-     "unknown_inactive": 331
+     "unknown_inactive": 334
     },
     "out": {
      "replaced by structure_rules": {
@@ -102736,19 +102736,19 @@
      }
     },
     "by_row_role": {
-     "free": 347,
+     "free": 344,
      "fixed": 18
     },
     "by_grain": {
      "class": 190,
-     "global": 123,
+     "global": 120,
      "gene": 20,
      "cell": 19,
      "channel": 11,
      "pairing": 2
     },
     "by_basis": {
-     "guessed_physical": 334,
+     "guessed_physical": 331,
      "physics": 26,
      "measured_spread": 5
     },

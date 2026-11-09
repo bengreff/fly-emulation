@@ -653,7 +653,7 @@
   neutral: 'off'
   default: 'off'
   source: src/wormemu/mech/neuromod.py
-  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
   absent_reason: ''
 - id: quantal_noise
   name: Quantal (vesicle) release noise at chemical synapses
