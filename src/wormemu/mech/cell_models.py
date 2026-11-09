@@ -31,7 +31,10 @@ The single-objective column is not ported (the authors reject it for AFD). Toggl
 (default) | naudin22, for AFDL and AFDR together (one class-level set). Same swap and g/C transfer as Jiang's; the
 cGMP thermosensory cascade (mech/senses_chem) is added after this module and is untouched. Validity: as Jiang's;
 Naudin's taus and C are converted from their decisecond units (x 100), and the fit absorbed whatever thermosensory
-current was open at the recording's bath temperature, so with sens_thermo on that current may count twice.
+current was open at the recording's bath temperature, which was T* (Liu 2018's worms kept and recorded at 22-23 C).
+With sens_thermo on, that current counts twice: the cascade at T* adds 0.0743 nS and AFDL alone rests at -31.4 mV
+instead of -79.3 (recorded -78.3 to -80.1; measured 9 Nov, scripts/worm/debug2/naudin22_afd_thermo.py). Naudin's
+whole leak in our AFDL is 0.0024 nS, so no re-split of it can make room (night file, "AFD under naudin22").
 """
 from __future__ import annotations
 
