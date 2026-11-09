@@ -8,9 +8,13 @@ Each class of rate gets a factor phi = Q10 ** ((T - T_ref) / 10), published as o
 out['temperature_C'] for every module to read (ctx.outputs, updated in place, so modules after this one in REGISTRY
 read this step's value):
     gating       channel gating and transduction-channel rates (senses_touch, senses_chem TRPV, senses_proprio), and
-                 every compiled channel's gates (RATE_MODS: BAAIWorm's, Nicoletti's, du_bwm's, AWA's)
+                 every compiled channel's gates (RATE_MODS: BAAIWorm's, Nicoletti's, du_bwm's, AWA's, Jiang's AVL
+                 and Naudin's AFD cell mods; 9 Nov 2026: brain._neuron patches BAAIWorm's mods only, so the others
+                 load with no tadj and keep their T_ref rates, wsyn included; Request to brain.py's owner)
     conductance  single-channel conductance: applied here to every BAAIWorm channel density and the leak, per cell,
-                 through g_scale
+                 and to AWA's eight Liu conductances (AWA_G_SCALE_NAMES; 9 Nov 2026, they were left at their T_ref
+                 values), through g_scale. Not reached: Jiang's AVL/DVB and Naudin's AFD conductances (mod GLOBALs,
+                 no g_scale route)
     enzyme       biochemical cascades (senses_chem's Usuyama cGMP network runs on a time axis scaled by phi; the slow
                  states, homeostasis and learning integrate on the same scaled time)
     synapse      transmitter release, receptor and short-term plasticity kinetics (RATE_MODS: wsyn, BAAIWorm's
@@ -32,7 +36,7 @@ import re
 
 import numpy as np
 
-from wormemu.mech import G_SCALE_NAMES
+from wormemu.mech import AWA_G_SCALE_NAMES, G_SCALE_NAMES
 from wormemu.mech.senses_base import spec
 
 MECHANISMS = [("temperature", "Temperature: the worm's temperature from the world field, Q10 factors on rates",
@@ -66,7 +70,8 @@ SPECS = [
 
 # mod file stem -> (rate class, the states to scale; None = every state equation; "own" = the mod declares tadj)
 _GATES = ("cca1", "egl19", "egl2", "egl36", "irk", "kcnl", "kqt3", "kvs1", "shk1", "shl1", "slo1_egl19", "slo1_unc2",
-          "slo2_egl19", "slo2_unc2", "unc2", "exp2", "kqt1", "slo1iso", "slo2iso", "unc103", "awa_liu2018")
+          "slo2_egl19", "slo2_unc2", "unc2", "exp2", "kqt1", "slo1iso", "slo2iso", "unc103", "awa_liu2018",
+          "jiang22_avl", "naudin22_afd")              # the two cell mods' states are all gates (no Ca pool state)
 _SYNS = ("wsyn", "neuron_to_neuron_exc_syn", "neuron_to_neuron_inh_syn", "exc_syn_advance", "inh_syn_advance")
 RATE_MODS = {**{m: ("gating", None) for m in _GATES}, **{m: ("synapse", None) for m in _SYNS},
              "du_bwm": ("gating", ("m", "h", "n", "p", "kr", "ps")), "sh_pharynx": ("pump", "own")}
@@ -133,5 +138,5 @@ class Mech:
         if q["conductance"] != self._phi_g:                 # rebuild the multipliers only when T moves
             self._phi_g = q["conductance"]
             x = np.full(self.n, self._phi_g)
-            self._gs = {nm: x for nm in G_SCALE_NAMES}
+            self._gs = {nm: x for nm in G_SCALE_NAMES + AWA_G_SCALE_NAMES}
         return dict(g_scale=self._gs, out={"temperature_C": self.T, "q10": q})

@@ -547,6 +547,20 @@ def test_pump_na_recovers_at_the_linearised_rate_and_null_loses_the_resting_curr
     assert np.allclose(rows[-1]["I_pA"], ip_rest) and (rows[-1]["out"]["na_i_mM"] > na0).all()
 
 
+def test_temperature_conductance_reaches_awa():
+    """wbrain2's Request (9 Nov 2026): the conductance Q10 also multiplies AWA's Liu conductances (dens_awa_<c>);
+    at T_ref every factor is exactly 1, so the default experiment (20 C) is unchanged."""
+    from wormemu.mech import AWA_G_SCALE_NAMES, G_SCALE_NAMES
+    from wormemu.mech import temperature as tm
+    p = {s.id: s.template for s in tm.SPECS}
+    m = tm.Mech(SimpleNamespace(cell_names=["A", "B", "C"]), p, {})
+    for T, phi in ((p["temp_ref_C"], 1.0), (p["temp_ref_C"] + 10.0, p["temp_q10_conductance"])):
+        m.reset()
+        g = m.step(SimpleNamespace(obs={"head": {"temperature_C": T}}), 1.0)["g_scale"]
+        assert set(g) == set(G_SCALE_NAMES) | set(AWA_G_SCALE_NAMES)
+        assert all(np.array_equal(x, np.full(3, phi)) for x in g.values())
+
+
 def test_pump_scale_does_not_depend_on_the_build():
     """A neuron's I_max and g_Na scale by its area over pump_area_median_um2 (the full brain's median), not over the
     median of the cells built (9 Nov 2026; wbrain2's Request): one cell's pump is the same alone and with others."""
