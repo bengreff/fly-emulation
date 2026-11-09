@@ -16,6 +16,10 @@ Pre-registered (8 Nov 21:38 CST, date; before the first run):
              at or above the true map's 13.72 mV.
   Each loss is FIT2's (mean absolute feature error over the training classes, mV), per class reported. Thresholds
   (2 mV, half, 2 of 3) guessed.
+Added 8 Nov 21:59 CST (date), after the reproduce check failed on f8e7699 (true 14.36 vs stored 13.72 mV) and before
+any shuffle result was read: the same tests, same thresholds, rerun under FIT2's own code (FIT2_CODE=~/worm-night/
+wexcite/code, its nrnmech; read-only, PYTHONDONTWRITEBYTECODE=1). That run answers the puzzle as FIT2 met it; the
+f8e7699 run says whether it still holds on today's brain. In both, H_leak's rise is taken from the reproduced loss.
 
 Usage (backhouse): python scripts/worm/fit/fit2_puzzle.py OUT_DIR [FIT2_DIR]   (one process per model, in turn: a
 NEURON process builds one brain; then OUT_DIR/puzzle.json with the verdict)
@@ -23,6 +27,7 @@ NEURON process builds one brain; then OUT_DIR/puzzle.json with the verdict)
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import time
@@ -30,7 +35,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(os.environ.get("FIT2_CODE") or Path(__file__).resolve().parents[3])   # whose fit2.py and brain
 OUT = Path(sys.argv[1])
 FIT2_DIR = Path(sys.argv[2] if len(sys.argv) > 2 else Path.home() / "worm-night" / "wexcite" / "fit2")
 ONE = sys.argv[3] if len(sys.argv) > 3 else None          # internal: the model this process evaluates
@@ -93,7 +98,7 @@ def one(model):
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    res = {"fit2_dir": str(FIT2_DIR), "started": time.ctime()}
+    res = {"fit2_dir": str(FIT2_DIR), "code": str(ROOT), "started": time.ctime()}
     for model in F.MODELS:
         subprocess.run([sys.executable, __file__, str(OUT), str(FIT2_DIR), model], check=True)
         res[model] = json.loads((OUT / f"{model}.json").read_text())
