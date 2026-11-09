@@ -429,6 +429,7 @@ class Brain:
         self._syn_gains()                # after the mechanisms: the organ modules append their wsyn to self.wsyn
         self.mech_out = {}
         self.t = 0.0
+        self._ready = False              # reset() runs finitialize; step() before it would integrate unset states
 
     # --- biophysics --------------------------------------------------------------------------------------------
     def _ions(self):
@@ -899,10 +900,14 @@ class Brain:
             m.reset()
         self.mech_out = {}
         self.t = 0.0
+        self._ready = True
         return self._out(self._read(self._pv), self._read(self._pc) * self._ca_scale, np.zeros(len(BWM_NAMES)), 0.0,
                          np.zeros(len(ENTERIC_MUSCLES)), 0.0)
 
     def step(self, obs=None, dt_ms: float = 1.0) -> BrainToBody:
+        if not self._ready:
+            raise RuntimeError("Brain.step() before Brain.reset(): call reset() first (it runs finitialize and seeds "
+                               "the mechanisms)")
         n_int = int(round(dt_ms / DT_MS))
         assert n_int >= 1 and abs(n_int * DT_MS - dt_ms) < 1e-9, "dt_ms must be a multiple of 0.5 ms"
         o = vars(obs) if obs is not None else vars(default_observation(self.t))
