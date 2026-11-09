@@ -142,9 +142,10 @@ SIGNS = [
          source="Gao & Zhen 2011 PNAS 108:2557, PMC3038695 (opened 8 Nov 2026)",
          notes="-25.0 +- 1.0 mV SEM, n = 27, dissected muscle; SD = 1.0 x sqrt(27) = 5.2 mV (derived)"),
     Sign("bwm_spike_hz", "body-wall muscle action potentials per firing muscle", ("food", "nofood"), "Hz",
-         mean=0.73, sd=0.73, n=27, source="Gao & Zhen 2011, PMC3038695 (opened 8 Nov 2026)",
+         mean=0.73, sd=0.73, n=27, lo=0.0, hi=2.19, source="Gao & Zhen 2011, PMC3038695 (opened 8 Nov 2026)",
          notes="0.73 +- 0.14 Hz SEM; n not attached to the rate, 27 assumed (the rest n): SD = 0.14 x sqrt(27) = "
-               "0.73 Hz (derived); dissected, about 80% of preparations fire"),
+               "0.73 Hz (derived); band 0 to mean + 2 SD (a rate is not negative); dissected, about 80% of "
+               "preparations fire"),
 ]
 SIGN = {s.id: s for s in SIGNS}
 
@@ -408,12 +409,13 @@ def table(results: list[dict]) -> str:
     hdr = "| Sign | Unit | Published band (mean +- 2 SD, or range) | " + " | ".join(
         f"{r['cond']} ({r['readouts']['bio_s']:.0f} s)" for r in results) + " |"
     lines = [hdr, "|" + "---|" * (3 + len(results))]
+    scores = [score(r["readouts"], r["cond"]) for r in results]      # today's bars on the stored readouts
     for s in SIGNS:
         b = s.band()
         bt = f"{b[0]:.3g} to {b[1]:.3g}" if b else "no opened measurement"
         cells = []
-        for r in results:
-            sc = r["score"].get(s.id)
+        for sr in scores:
+            sc = sr.get(s.id)
             if sc is None:
                 cells.append("")
                 continue
