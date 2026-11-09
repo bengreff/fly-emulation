@@ -24,7 +24,7 @@ Physicality, per run (DEBUG_PASS_PLAN refinement 3), pre-registered:
 Activity (the fraction of neurons above -20 mV) is reported with no bar: none is published (DEBUG_TRIAGE line 18).
 
 Usage:
-    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N]     COND food | nofood
+    python -m wormemu.fit.vitals run COND SECONDS OUTDIR [--seed=N] [--theta=FILE.json]   COND food | nofood
     python -m wormemu.fit.vitals table OUTDIR [OUTDIR ...]               the markdown table of every COND.json
 """
 from __future__ import annotations
@@ -453,12 +453,23 @@ def observations(results: dict, ids=None):
 
 
 def battery_theta(theta):
-    """theta (None, a dict of id -> value, or a params.Theta vector) as a dict with BATTERY_VALUES on top."""
+    """theta (None, a dict of id -> value, or a params.Theta vector) as a dict with BATTERY_VALUES on top.
+    An element id ("pid[cell]", the 15 bernoulli syn_inhibitory rows) raises unless a vector holds its template:
+    datamodel._theta sets a dict through params.set_value(spec, id, x), which writes such an id as a new key and leaves
+    the element unchanged (measured 9 Nov 00:06; request in the night file)."""
     if theta is None:
         theta = {}
     elif not isinstance(theta, dict):
         from wormemu import params
-        theta = dict(zip(params.Theta().ids, np.asarray(theta, float)))
+        T = params.Theta()
+        x = np.asarray(theta, float)
+        el = np.array(["[" in i for i in T.ids])
+        if not np.array_equal(x[el], T.x0[el]):
+            raise ValueError("a vector moves an element row (pid[cell]); datamodel._theta cannot set it by id")
+        theta = {i: v for i, v, e in zip(T.ids, x, el) if not e}
+    bad = [k for k in theta if "[" in k]
+    if bad:
+        raise ValueError(f"element ids {bad[:3]}: datamodel._theta would write them as new keys, not set the element")
     return {**theta, **BATTERY_VALUES}
 
 
@@ -528,7 +539,9 @@ def _main(argv):
     if argv[0] == "run":
         cond, secs, outdir = argv[1], float(argv[2]), argv[3]
         seed = next((int(a.split("=", 1)[1]) for a in argv[4:] if a.startswith("--seed=")), None)
-        out = run(None, cond, secs, outdir, seed=seed)
+        tf = next((a.split("=", 1)[1] for a in argv[4:] if a.startswith("--theta=")), None)
+        theta = json.loads(Path(tf).read_text()) if tf else None          # {id: value} (fit.vector's forward)
+        out = run(theta, cond, secs, outdir, seed=seed)
         print(json.dumps({k: out[k] for k in ("cond", "wall_s", "wall_per_bio_s")}), flush=True)
         print(table([out]))
     elif argv[0] == "table":
