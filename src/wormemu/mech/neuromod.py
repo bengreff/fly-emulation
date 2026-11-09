@@ -59,6 +59,9 @@ G = 0):
              Toggle gs_ca_channels: egl19_unc2 (default) / egl19 (nested: EGL-19 only, the earlier form)
 NLP-40 on AEX-2 has two measured potencies (toggle aex2_ec50_source, class C): beets2023 (default, Table S6, 7.645 nM)
 or wang2013 (P3-1, 3.39 nM, Wang et al. 2013 Curr Biol, PMC3651789).
+DMSR-1 has two isoforms in Table S6 that differ by 2.65e6-fold for FLP-25 (DMSR-1-2, B: 0.6 pM; DMSR-1-1, A: 1.6 uM)
+and at most 4x for every other ligand; which one each cell makes is not known (toggle dmsr1_isoform, class C):
+most_potent (default, the per-pair rule, so FLP-25 reads B) or dmsr-1a (FLP-25 reads A's 1.6 uM).
 The gains are guessed; which family moves which effector, and which way, is from the genetics cited.
 
 Sleep (row 28) runs through the same machinery: RIS releases FLP-11 (CeNGEN), read by DMSR-1 (Gi/o) on its targets and
@@ -98,11 +101,15 @@ MECHANISMS = [
      "neuromodulation", "egl19_unc2"),
     ("aex2_ec50_source", "Which measured NLP-40 potency AEX-2 reads: Beets et al. 2023 (NLP-40-2, 7.645 nM) or Wang "
      "et al. 2013 (P3-1, 3.39 nM)", "neuromodulation", "beets2023"),
+    ("dmsr1_isoform", "Which DMSR-1 isoform FLP-25 reads: the most potent Table S6 row (DMSR-1-2, B, 0.6 pM) or "
+     "DMSR-1-1 (A, 1.6 uM); other DMSR-1 ligands differ by at most 4x between the isoforms", "neuromodulation",
+     "most_potent"),
 ]
 FORMS = ("compartments", "well_mixed", "lumped", "off")
 SITES = ("membrane", "soma")
 GS_CA = ("egl19_unc2", "egl19")
 EC50_SRC = ("beets2023", "wang2013")
+DMSR1_ISO = ("most_potent", "dmsr-1a")
 COMPARTMENTS = ("head", "anterior_body", "posterior_body", "tail")
 AMINES = ("serotonin", "dopamine", "octopamine", "tyramine")
 TRANSPORTERS = {"serotonin": "mod-5", "dopamine": "dat-1"}
@@ -262,6 +269,11 @@ SPECS.append(S("pep_ec50_nlp-40_aex-2_wang2013_nM", P, "nM", 3.39, 2.22, 4.56, "
                notes="read only under aex2_ec50_source=wang2013 (class C: Beets 2023 gives 7.645 nM, 95% CI 5.73-10.2, "
                      "for its one NLP-40 peptide on AEX-2); bounds 3.39 +- 1.17 nM, the paper's +- (statistic not "
                      "stated in that sentence)"))
+SPECS.append(S("pep_ec50_flp-25_dmsr-1_isoA_nM", P, "nM", 1596.0, 339.0, 7499.0, BEETS_SRC + ": DMSR-1-1 (isoform "
+               "A) rows FLP-25-1 1.596e-6 M (95% CI -6.470 to -5.125 log M) and FLP-25-2 2.398e-6 M", "measured",
+               grain="pairing", applies_to="flp-25 peptides on dmsr-1",
+               notes="read only under dmsr1_isoform=dmsr-1a (class C: the default most-potent rule reads DMSR-1-2's "
+                     "FLP-25-2, 6.0e-13 M); bounds: FLP-25-1's 95% CI (wneuro Open 5, 9 Nov 2026)"))
 SPECS += [
     S("ma_diffusion_um2_per_s", A, "um2/s", 600, 200, 1000, "free aqueous dopamine about 6e-6 cm2/s (Gerhardt and "
       "Adams 1982 Anal Chem 54:2618), slowed by tortuosity", "inferred"),
@@ -308,13 +320,50 @@ AMINE_PAIRS = (("serotonin", "ser-1"), ("serotonin", "ser-4"), ("serotonin", "se
                ("dopamine", "dop-1"), ("dopamine", "dop-2"), ("dopamine", "dop-3"), ("dopamine", "dop-4"),
                ("octopamine", "octr-1"), ("octopamine", "ser-3"), ("octopamine", "ser-6"), ("tyramine", "ser-2"),
                ("tyramine", "tyra-2"), ("tyramine", "tyra-3"))                  # Bentley et al. 2016
+# Measured amine EC50s: the ledger's catalog-audit fill (6 Nov; quotes and URLs in its rows), copied here so a Mech
+# built from these Specs reads what the brain reads; SER-1 added by wneuro item 6 (9 Nov). One assay each, so the
+# guessed ranges stay, as in the fill. (template nM, source, label)
+_ONE = "one assay, so the guessed range stays (as the ledger's 6 Nov fill)"
+AMINE_EC50 = {
+    ("serotonin", "ser-1"): (1340.0, "Xie et al. 2005 as cited by Dernovici et al. 2006 J Neurobiol (doi 10.1002/neu.20340"
+                             "; free PDF mcgill.ca/parasitology Ribeiro3.pdf, p. 7, opened 9 Nov 2026): 'SER-1 expressed "
+                             "transiently in COS-7 is activated by 5HT in a dose-dependent manner (EC50 = 1.34 +- 0.84 "
+                             "uM)', a Ca readout (Gq)", "measured"),
+    ("serotonin", "ser-7"): (30.0, "Hobson et al. 2006 Genetics 172:159 (PMC1456143): cAMP in COS-7 cells, SER-7B, "
+                             "30 +- 3 nM; Hobson et al. 2003 J Neurochem 87:22 (abstract): SER-7b pEC50 7.5 +- 0.5 "
+                             "(about 32 nM), the same", "measured"),
+    ("dopamine", "dop-1"): (20.0, "Sanyal et al. 2004 EMBO J 23:473 (PMC1271763): cAMP in COS-7 cells, DOP-1L "
+                            "20 +- 10 nM", "measured"),
+    ("dopamine", "dop-2"): (70.0, "Suo et al. 2003 J Neurochem 86:869, as tabled in Muralidhara and Hardege 2025 "
+                            "(PMC12539964) Table 2: cAMP inhibition in CHO cells", "measured"),
+    ("dopamine", "dop-3"): (30.0, "Sugiura et al. 2005 J Neurochem 94:1146, as tabled in Muralidhara and Hardege 2025 "
+                            "(PMC12539964) Table 2: cAMP inhibition in CHO cells", "measured"),
+    ("dopamine", "dop-4"): (10000.0, "Sugiura et al. 2005 J Neurochem 94:1146, as tabled in Muralidhara and Hardege 2025 "
+                            "(PMC12539964) Table 2: cAMP accumulation in HEK cells", "measured"),
+    ("octopamine", "octr-1"): (390.0, "Mills et al. 2012 EMBO J 31:667 (PMC3273394): OCTR-1 with GIRK1/2 in Xenopus "
+                               "oocytes, 0.39 uM", "measured"),
+    ("octopamine", "ser-3"): (330.0, "Mills et al. 2012 EMBO J 31:667 (PMC3273394): SER-3 in Xenopus oocytes, 0.33 uM",
+                              "measured"),
+    ("octopamine", "ser-6"): (2000.0, "Mills et al. 2012 EMBO J 31:667 (PMC3273394): SER-6 in Xenopus oocytes, about "
+                              "2 uM", "measured"),
+    ("tyramine", "ser-2"): (360.0, "Rex and Komuniecki 2002 J Neurochem 82:1352 (abstract): cAMP inhibition in HEK293 "
+                            "cells, IC50 about 360 nM", "measured"),
+    ("tyramine", "tyra-2"): (50.0, "Rex et al. 2005 J Neurochem 94:181 (abstract): GTP-gamma-S binding, COS-7 "
+                             "membranes, 50 +- 13 nM", "measured"),
+    ("tyramine", "tyra-3"): (700.0, "Wragg et al. 2007 J Neurosci 27:13402 (PMC6673087): [3H]LSD binding IC50 0.7 uM "
+                             "in COS-7 membranes, a binding IC50 taken as the EC50", "inferred"),
+}
 for lg, rg in AMINE_PAIRS:
-    t, lo, hi, src = 1000.0, 10.0, 1e5, "no EC50 retrieved"
+    t, lo, hi, src, lab, nt = 1000.0, 10.0, 1e5, "no EC50 retrieved", "guessed", ""
     if rg == "ser-4":
         t, lo, hi, src = 1000.0, 100.0, 10000.0, "param_ranges D8 (guessed, typical GPCR)"
     elif rg == "dop-1":
-        t, lo, hi, src = 500.0, 10.0, 5000.0, "param_ranges D9 (guessed)"
-    SPECS.append(S(f"ma_ec50_{lg}_{rg}_nM", A, "nM", t, lo, hi, src, grain="pairing", applies_to=f"{lg} on {rg}"))
+        lo, hi = 10.0, 5000.0
+    if (lg, rg) in AMINE_EC50:
+        t, src, lab = AMINE_EC50[lg, rg]
+        nt = _ONE
+    SPECS.append(S(f"ma_ec50_{lg}_{rg}_nM", A, "nM", t, lo, hi, src, lab, grain="pairing", applies_to=f"{lg} on {rg}",
+                   notes=nt))
 assert len({s.id for s in SPECS}) == len(SPECS)
 assert set(GPCR_COUPLING) >= {r for _, r in PAIRS} | {r for _, r in AMINE_PAIRS}
 
@@ -360,6 +409,8 @@ class Mech:
         assert self.gs_ca in GS_CA, f"gs_ca_channels {self.gs_ca!r} not one of {GS_CA}"
         self.ec50_src = toggles.get("aex2_ec50_source", "beets2023")
         assert self.ec50_src in EC50_SRC, f"aex2_ec50_source {self.ec50_src!r} not one of {EC50_SRC}"
+        self.dmsr1_iso = toggles.get("dmsr1_isoform", "most_potent")
+        assert self.dmsr1_iso in DMSR1_ISO, f"dmsr1_isoform {self.dmsr1_iso!r} not one of {DMSR1_ISO}"
         st = brain.st
         names, musc = list(brain.cell_names), np.asarray(brain.is_muscle, bool)
         n = self.n = len(names)
@@ -396,6 +447,8 @@ class Mech:
                         sid = f"pep_ec50_{pg}_{rg}_nM"
                         if (pg, rg) == ("nlp-40", "aex-2") and self.ec50_src == "wang2013":
                             sid = "pep_ec50_nlp-40_aex-2_wang2013_nM"
+                        if (pg, rg) == ("flp-25", "dmsr-1") and self.dmsr1_iso == "dmsr-1a":
+                            sid = "pep_ec50_flp-25_dmsr-1_isoA_nM"
                         self.entries.append((c, li[pg], float(p[sid]), self._w(rg), P))
         if self.on[A]:
             self.ma_comp, self.ma = self._pool(self.form[A] == "well_mixed", len(AMINES), p["ma_diffusion_um2_per_s"])
