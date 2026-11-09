@@ -86,6 +86,35 @@ Cost (the EKI forward cost, measured): see the results section.
 
 (filled by each battery run; the night file carries the table for each Director merge)
 
+### 8 Nov 2026, f8e7699 (main 41ea9aa merged), default worm, seed default, 200 bio-s per condition, backhouse, one core
+
+All measured. `python -m wormemu.fit.vitals table` on the two result directories:
+
+| Sign | Unit | Published band (mean +- 2 SD, or range) | food (200 s) | nofood (200 s) |
+|---|---|---|---|---|
+| AIY soma, median voltage | mV | no opened measurement | -52.5 (no bar) | -53.8 (no bar) |
+| AFD soma, median voltage | mV | no opened measurement | -56.5 (no bar) | -57.7 (no bar) |
+| AWA soma, median voltage | mV | -84.7 to -65.9 | -58.5 (miss) | -59.3 (miss) |
+| whole-brain GCaMP: variance fraction in the top 3 PCs (z-scored, 195 s windows, 135 neurons) | 1 | 0.353 to 0.506 | 0.0559 (miss) |  |
+| GCaMP per-neuron range (P95 - P5 of dF/F), median over neurons, 195 s windows | dF/F | 0.567 to 0.983 | 0.0976 (miss) |  |
+| neuron soma Ca, median over neurons of each one's median | uM | no opened measurement | 0.0504 (no bar) | 0.0503 (no bar) |
+| pharyngeal pumping rate on food | Hz | 4.24 to 5.28 | 0 (miss) |  |
+| pharyngeal pumping rate off food | Hz | 0.03 to 1.73 |  | 0 (miss) |
+| defecation period (expulsion to expulsion) on food | s | 39 to 51 | none (not produced) |  |
+| egg-laying: inactive phase duration, mean | min | 10 to 40 | none (too short) |  |
+| egg-laying: interval between eggs inside an active phase, mean | s | 10 to 40 | none (too short) |  |
+| body-wall muscle, median voltage | mV | -35.4 to -14.6 | -30.4 (in) | -30.8 (in) |
+| body-wall muscle action potentials per firing muscle | Hz | 0 to 2.19 | 2.89 (miss) | 2.83 (miss) |
+| physical (finite, V in reversal bounds, conc >= 0) | | | yes | yes |
+| wall per bio-s | s | | 12.1 | 11.9 |
+
+1 of 10 signs with a bar in (BWM rest), 6 miss, 3 not produced or too short; physical in both. Activity (from the stored
+traces, after the 5 s settle): per-neuron V range (P95 - P5) median 2.5 / 2.4 mV, 45 / 42 of 302 neurons above 5 mV,
+none above 20 mV; no neuron's GCaMP range above 0.2 dF/F. The brain sits within a few mV of rest, so the PC3 and
+GCaMP misses are a quiet brain, not a readout fault (inferred). Against the first pass (103ece3): AWA rest moved from
+-53.1 to -58.5 mV (the AWA Kir merge), toward the bar but still 7.4 mV short of it.
+
+
 ## Limitations
 
 1. The plate goes in through a subclass of `body.loop.Body` (above), until `Experiment` carries it.

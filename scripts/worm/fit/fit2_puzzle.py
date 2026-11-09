@@ -21,6 +21,13 @@ any shuffle result was read: the same tests, same thresholds, rerun under FIT2's
 wexcite/code, its nrnmech; read-only, PYTHONDONTWRITEBYTECODE=1). That run answers the puzzle as FIT2 met it; the
 f8e7699 run says whether it still holds on today's brain. In both, H_leak's rise is taken from the reproduced loss.
 
+Result (8 Nov 22:09, measured; both runs agree): reproduce fails as written (true 13.617 vs 13.722) only by FIT2's
+boundary penalty, which fit2.py adds to the stored best_f while storing best_x clipped; every per-class loss reproduces
+to 0.01 mV, so no bug. H_leak not supported (b = 0.5: +4.86 mV registered, +3.06 channels only, +1.06 leak only).
+H_level supported (b = 0 at the shuffles' best points: 17.89, 18.30, 34.09 mV), as a perturbation, not a refit.
+Inferred cause: at b > 0, 13 of AWA's 16 expressed channels fall below the cross-class median and AFD's K channels
+rise 2-3x, and one family scale per channel cannot suit both. Night file 8 Nov 22:09.
+
 Usage (backhouse): python scripts/worm/fit/fit2_puzzle.py OUT_DIR [FIT2_DIR]   (one process per model, in turn: a
 NEURON process builds one brain; then OUT_DIR/puzzle.json with the verdict)
 """
