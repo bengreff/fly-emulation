@@ -20,11 +20,15 @@
                 Here one posterior cleft: H+ release = rate x Hill(posterior ring Ca), cleared with Beg's 2.9 s
                 decay; the PBO-5/6 cation current (E_rev 0 mV) goes into the posterior third of the BWM as I_pA.
     NLP-40      Wang et al. 2013 (Curr Biol 23:746): Ca-dependent (SNT-2) release of NLP-40 from the intestine
-                activates the AEX-2 GPCR on AVL and DVB. Here release = rate x Hill(mean intestinal Ca), the
-                pseudocoelomic concentration cleared by its own decay plus the coelomocytes' uptake
-                (outputs['coelomocyte_uptake_per_s'], row 16). out['peptide_release'] = {'nlp-40@posterior_body':
-                molecules/s} (the nM/s rate times neuromod's posterior-body compartment volume), which mech.neuromod
-                adds to its pool and reads at AEX-2 (default `release_only`). The nested form `direct` (the first
+                activates the AEX-2 GPCR on AVL and DVB. Here each cell releases at rate x Hill(its Ca) / 20 (the
+                total is rate x the mean Hill), into the pseudocoelom compartment its ring lies in
+                (_ring_compartment_shares: rings 1-4 and part of 5 in the anterior body, the rest in the posterior
+                body; wbody2, 8 Nov, A: all 20 cells used to release next to DVB, so the anterior rings' release,
+                seconds after int9's on Espelt 2005's 20-60 um/s wave, smeared the cycle at DVB).
+                out['peptide_release'] = {'nlp-40@<compartment>': molecules/s} (the nM/s rate times neuromod's
+                posterior-body compartment volume, split by ring), which mech.neuromod adds to its pool and reads at
+                AEX-2 (default `release_only`); the local concentration (own decay plus the coelomocytes' uptake,
+                outputs['coelomocyte_uptake_per_s'], row 16) is read only by the nested `direct` form. The nested form `direct` (the first
                 port) instead puts an AEX-2 current (gain x occupancy of the local pool) into AVL and DVB here.
     enteric     the 4 enteric muscles (mu_intL, mu_intR, mu_anal, mu_sph) as cells with the Du/Crodelle 2025 BWM
                 membrane (nmodl/organs/du_bwm.mod; inferred: the enteric muscle membrane is not recorded), Cook 2019's
@@ -203,14 +207,38 @@ def neighbours():
 
 
 
-def _posterior_volume_um3(brain):
-    """neuromod's posterior-body compartment volume (cross-section x vulva-to-tail length), um3."""
+def _pc_params(brain):
+    """mech.neuromod's pseudocoelom parameters (templates, or this worm's spec values)."""
     from wormemu import mech
     from wormemu.mech import neuromod
     p = {x.id: x.template for x in neuromod.SPECS}
     if getattr(brain, "spec", None) is not None and getattr(brain.spec, "values", None) is not None:
         p.update(mech.params_for(neuromod, brain.spec))
+    return p
+
+
+def _posterior_volume_um3(brain):
+    """neuromod's posterior-body compartment volume (cross-section x vulva-to-tail length), um3."""
+    p = _pc_params(brain)
     return float(p["pc_cross_section_um2"]) * (float(p["pc_tail_start_y_um"]) - float(p["pc_vulva_y_um"]))
+
+
+def _ring_compartment_shares(brain):
+    """(20 cells, neuromod.COMPARTMENTS): each intestinal cell's share of its NLP-40 release in each pseudocoelom
+    compartment. Ring k spans fraction (k-1)/9 to k/9 of the intestine, which runs from neuromod's head cut (just
+    behind the retrovesicular ganglion, about the pharynx's end) to its tail cut (the pre-anal ganglion, about the
+    rectum); rings of equal length (WormAtlas: 9 rings over about 720 um; inferred), release uniform along a ring
+    (inferred); split by length overlap. Rows sum to 1."""
+    from wormemu.mech import neuromod
+    p = _pc_params(brain)
+    y0, yv, y1 = (float(p[k]) for k in ("pc_head_end_y_um", "pc_vulva_y_um", "pc_tail_start_y_um"))
+    edges = [-np.inf, y0, yv, y1, np.inf]
+    W = np.zeros((len(INT_CELLS), len(neuromod.COMPARTMENTS)))
+    for i, r in enumerate(RING):
+        a, b = y0 + (r - 1) / 9.0 * (y1 - y0), y0 + r / 9.0 * (y1 - y0)
+        for c in range(len(neuromod.COMPARTMENTS)):
+            W[i, c] = max(0.0, min(b, edges[c + 1]) - max(a, edges[c])) / (b - a)
+    return W
 
 class Intestine:
     """The 20 Li-Rinzel cells with IP3, Ca -> PLC and INX-16 exchange (numpy; the CPU reference and the run path).
@@ -348,6 +376,9 @@ class Mech:
         if self.nlp == "on":
             self.nlp = "release_only"
         self.nlp_V_um3 = _posterior_volume_um3(brain)
+        from wormemu.mech.neuromod import COMPARTMENTS
+        self.nlp_W = _ring_compartment_shares(brain)
+        self.nlp_keys = [(k, f"nlp-40@{cp}") for k, cp in enumerate(COMPARTMENTS) if self.nlp_W[:, k].any()]
         self.ent = toggles.get("enteric_muscle", "du2025")
         assert self.form in ("ip3r", "timer", "off") and self.pboc in ("on", "off")
         assert self.nlp in ("direct", "release_only", "off") and self.ent in ("du2025", "off")
@@ -459,12 +490,12 @@ class Mech:
             I[self.post_cells] += q["pbo5_g_nS"] * po * (q["pbo5_erev_mV"] - v)      # nS x mV = pA
             out.update(cleft_pH=self.cleft.ph, pbo5_open=po)
         if self.nlp != "off":
-            rel = q["nlp40_release_nM_per_s"] * float(np.mean(_hill(c, q["nlp40_release_k_uM"],
-                                                                     q["nlp40_release_hill"])))
+            hc = _hill(c, q["nlp40_release_k_uM"], q["nlp40_release_hill"])
+            rel = q["nlp40_release_nM_per_s"] * float(np.mean(hc))
             k_out = 1.0 / q["nlp40_tau_s"] + float(ctx.outputs.get("coelomocyte_uptake_per_s", 0.0))
             self.nlp40 += dt_s * (rel - k_out * self.nlp40)
-            out.update(peptide_release={"nlp-40@posterior_body": rel * NA_PL * self.nlp_V_um3 / 1000.0},
-                       nlp40_nM=self.nlp40)
+            mol = q["nlp40_release_nM_per_s"] * NA_PL * self.nlp_V_um3 / 1000.0 * (hc @ self.nlp_W) / len(hc)
+            out.update(peptide_release={key: float(mol[k]) for k, key in self.nlp_keys}, nlp40_nM=self.nlp40)
             if self.nlp == "direct" and len(self.aex2_cells):
                 I[self.aex2_cells] += q["aex2_gain_pA"] * self.nlp40 / (self.nlp40 + q["aex2_ec50_nM"])
         n_exp = 0

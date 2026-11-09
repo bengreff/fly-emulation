@@ -234,12 +234,14 @@ def test_defecation_off_is_silent_and_ip3r_drives_posterior_bwm_and_avl_dvb():
             r = m.step(ctx, 1.0)
             i_post = max(i_post, float(r["I_pA"][m.post_cells].max()))
             i_aex = max(i_aex, float(r["I_pA"][m.aex2_cells].max()))
-            rel = max(rel, r["out"]["peptide_release"]["nlp-40@posterior_body"])
+            rel = max(rel, sum(r["out"]["peptide_release"].values()))
             anterior = np.setdiff1d(m.bwm, m.post_cells)
             assert not r["I_pA"][anterior].any()
         assert 0.0 < i_post <= q["pbo5_g_nS"] * 30.0 + 1e-9
-        assert set(r["out"]["peptide_release"]) == {"nlp-40@posterior_body"}
-        # molecules/s = nM/s x neuromod's posterior-body volume (400 um2 x 269 um) x 0.602 molecules per um3 per nM
+        assert set(r["out"]["peptide_release"]) == {"nlp-40@anterior_body", "nlp-40@posterior_body"}
+        assert np.allclose(m.nlp_W.sum(1), 1.0) and not m.nlp_W[gi.RING <= 4, 2:].any()
+        assert not m.nlp_W[gi.RING >= 6, :2].any()           # rings by length overlap: 1-4 anterior, 6-9 posterior
+        # total molecules/s = nM/s x neuromod's posterior-body volume (400 um2 x 269 um) x 0.602 per um3 per nM
         assert 0.0 < rel <= q["nlp40_release_nM_per_s"] * 400.0 * 269.0 * 0.602214 * (1 + 1e-9)
         if form == "direct":
             assert 0.0 < i_aex <= q["aex2_gain_pA"]
