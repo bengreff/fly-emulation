@@ -144,6 +144,11 @@ def test_experiment_is_entire_worm():
         V.experiment("lawn", 2.0)
 
 
+def test_experiment_carries_the_noise_seed():
+    assert V.experiment("food", 2.0).noise_seed is None                 # the worm seed's noise, as before
+    assert V.experiment("food", 2.0, seed=4, noise_seed=7).noise_seed == 7
+
+
 def test_f_over_fmean_cancels_f0():
     """The GCaMP signs read F / mean F (Atanas's normalisation), so the reference F0 drops out: the same F read
     against two different F0 gives the same pc3 and range."""

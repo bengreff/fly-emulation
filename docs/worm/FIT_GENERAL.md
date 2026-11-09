@@ -27,7 +27,12 @@ So the EKI vector has **347** continuous numbers on f8e7699 (derived: 368 - 15 -
 `fit/vector.py`, which builds the mask from these rules and counts it, so the number tracks main). After merging main
 f7b75e7 (9 Nov 01:36) Theta has 362 and the vector **347** (measured): wbrain2 made the 7 settings above
 `params.SETTINGS` (Theta leaves them out; the vector keeps a guard), and the ledger rebuild made wneuro's SER-1 EC50
-(`ma_ec50_serotonin_ser-1_nM`, 1340 nM) measured, so it left the vector.
+(`ma_ec50_serotonin_ser-1_nM`, 1340 nM) measured, so it left the vector. After merging main 58246cf (9 Nov 02:45)
+Theta has 365 and the vector **350** (measured): wneuro's near-field numbers `ecs_alpha`, `ecs_tortuosity` and
+`hsn_vm2_site_receptor_um` (guessed). They act only under the `amine_synaptic` toggle, which is off, so in today's
+worm no observation reads them. They stay in the vector: rho_corr (section 5) cuts their chance correlations, and a
+number no observation sees keeps its prior draws (tested there). If the toggle stays off at the gate, they can leave
+the vector the way maturation's numbers did; that is the gate's call, not a rule here.
 
 **Why the imaging noise leaves the vector (8 Nov 23:25, measured unless marked).** On the f8e7699 template the
 GCaMP traces are imaging noise: per-neuron SD 0.029, noise 0.029, signal 0.003 F / mean F (median over neurons;
@@ -183,6 +188,16 @@ The stochastic modules (quantal release, channel noise, `mech.noise`) run with o
 `hash(experiment id, iteration)`, shared by every member of the iteration (common random numbers: members differ by
 their values, not their noise). The simulation-noise variance per observation is measured on the template worm at 8
 seeds per experiment before the fit and added to Gamma; re-measured on the final ensemble mean and reported.
+
+Built (9 Nov, from wbrain2's `Experiment.noise_seed`, main 1d1206b, which seeds quantal and channel noise,
+brain_layers and the observation noise apart from the worm seed). `vector.noise_seed(exp_id, k)` is a stable hash
+(sha256; Python's `hash()` of a string changes per process) into [1, 2^31 - 1], so it never meets the template's 0;
+`battery_forward` passes `--noise-seed=noise_seed("battery_" + cond, k)` to each `vitals run`, and k None keeps the
+template's noise as before. Checked on the Mac (5.5 bio-s food, the template worm; measured): seed 7 against the
+default moves V in all 397 cells (max 65 mV), and seed 7 twice is bit-identical (V, Ca and GCaMP difference 0;
+readouts equal). Tests: `test_noise_seed_per_experiment_and_iteration`, `test_forward_passes_the_iterations_noise_seed`,
+`test_experiment_carries_the_noise_seed`. The 8-seed template measurement is not run yet: 8 seeds x 2 conditions x
+200 bio-s is 16 runs, about 16 CPU-h at the night's 61 CPU-min per run, about 5.5 h on 3 processes (derived).
 
 ## 8. Data, statistics and weights (refinement 8)
 
