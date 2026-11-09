@@ -292,3 +292,17 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   and -60.7 %): pass (measured). The default body is 7.6 % softer in bending. Frontiers 561-1199 kPa vs Backholm 50-170:
   still no overlap (C stays); rule range re-derived 0.0632-1.515; 0.067-0.214 reaches Backholm (D, not adopted).
   Line 9 damping re-run on the fixed body: 16.46 ms vs <= 5.3 (still D).
+
+## Phase 2 status (wneuro)
+
+- Item 1, the defecation chain (wneuro): (c) A, fixed: `neuromod_site=membrane` reads receptors over each cell's
+  membrane by area per compartment (AVL has 79% of its membrane behind its head soma, DVB 71% in the posterior body;
+  measured), release stays at the soma; AVL's NLP-40 read rose from 0.86 to 104.4 nM (max) and its AEX-2 occupancy
+  from 0.10 to 0.63 (measured, 150 s). (b) B: Gs now also raises UNC-2 (Wang and Sieburth 2013), `gs_ca_channels`
+  with `egl19` nested; the rest is blocked: the third PKA target is unnamed in the source, and DVB's membrane cannot
+  fire (Gs clamped at 1: no spike; 20 pA: plateau at -19 mV against Jiang 2022's +26.3 mV peak), a request to
+  wbrain2. (a) D at the bottom of the clearance range only (tau 10 s, with a release shape at the corner of wbody2's
+  ranges); in the brain it fails at every probed point because the intestine's release is tonic (8% of maximum at
+  basal Ca, derived) and follows the 20-cell mean, not int9: a request to wbody2. Wang 2013's bar (one DVB spike per
+  cycle) still fails: 0 spikes. Line 13 (E): the GABA bar now rejects 5 Hz facilitation (Liu 2009); the D proof
+  stands (2 of 256 triage points pass the corrected bar, measured). Night file `docs/worm/night/2026-11-08_wneuro.md`.
