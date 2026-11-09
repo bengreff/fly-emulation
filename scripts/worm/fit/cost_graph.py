@@ -57,7 +57,7 @@ def main():
     readers = sorted(m for m, r in g["reads"].items() if r["obs"])
     t = params.Theta().table
     t = t[t.active] if "active" in t.columns else t
-    t = t[(t.transform != "bernoulli") & ~t.pid.astype(str).str.startswith("scene_")]
+    t = t[(t["transform"] != "bernoulli") & ~t.pid.astype(str).str.startswith("scene_")]
     mod = {x[0]: m.__name__.rsplit(".", 1)[-1] for m in mech.modules() for x in m.MECHANISMS}
     pm = [mod.get(k) or ("body" if str(k).startswith("body") else "membrane") for k in t.mechanism]
     signs = [s.id for s in vitals.SIGNS]

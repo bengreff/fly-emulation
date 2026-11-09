@@ -87,11 +87,11 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
     move an observation only if a directed path in `iograph.edges(iograph.record())` leads to a module the observation is
     read from, with the membrane as one hub node (writers of g_scale, I_pA or act_add; every module reads it). Because
     the membrane joins nearly everything, this is expected to cut few pairs (inferred). Measured on the real graph
-    (`scripts/worm/fit/cost_graph.py`, f8e7699, 8 Nov; 362 numbers x 13 signs): the raw 20 ms trace gives 52.5 % zero
+    (`scripts/worm/fit/cost_graph.py`, f8e7699, 8 Nov; the 347 numbers x 13 signs): the raw 20 ms trace gives 54.8 % zero
     pairs, but those zeros are false (build-time modules such as cells_passive, receptors and structure_rules write
     nothing at run time; reads of ctx.v and ctx.ca are not traced; touch and stretch drive nothing at rest). Closed so
     that no zero is false (every module with numbers writes the membrane, the membrane drives the body, the body feeds
-    every ctx.obs reader), **0.74 % of pairs are zero** (35 of 4,706: the 2 GCaMP readout numbers on the 11 signs
+    every ctx.obs reader), **0.78 % of pairs are zero** (35 of 4,511: the 2 GCaMP readout numbers on the 11 signs
     that do not read GCaMP, and the NeuroPAL number on all 13). In the closed-loop worm the graph localises almost
     nothing, so rho_graph is kept only for the readout split.
   - rho_corr (`eki.corr_rho`): keep a pair only where |corr| > 3 / sqrt(J), 0.265 at J = 128 (derived), recomputed each
@@ -183,8 +183,29 @@ one core (derived).
 At 20 cores fully used (backhouse's i7-14700K; E-cores slower, and the share limits apply), the base set alone needs
 about 25 h per iteration, and 30 iterations about a month (derived). **The full design does not fit the NEURON path at
 the measured cost.** Options, to decide at the gate: a shorter battery per iteration (the batch draws from the signs
-too), fewer members once localisation is measured, or the JAX port (refinement 10: only after the gate). The cost run
-(brief item 4: one member through the battery, 100 members at 1, 2 and 3 concurrent processes) refines these numbers.
+too), fewer members once localisation is measured, or the JAX port (refinement 10: only after the gate).
+
+**Cost run (8 Nov 2026, backhouse, f8e7699, one thread per process; measured unless marked).**
+
+- One member through the core battery: food 2,429 s + nofood 2,374 s = 4,803 s, 80 min of one process (12.1 and
+  11.9 s per bio-s, run with one or two other jobs of mine beside it).
+- Concurrency (`scripts/worm/fit/cost_concurrency.sh`, N copies of food 20 bio-s at once, nothing else of mine
+  running, load 2.4-4.5 from other users). Wall of the simulate call per bio-s: N = 1: 10.98 s; N = 2: 11.76, 11.76 s;
+  N = 3: 12.46, 12.16, 12.39 s (mean 12.34). Slowdown per process 7 % at 2, 12 % at 3. Process wall adds 0.6-0.8 s
+  (startup). All six runs physical.
+- 100 members (2 x 200 bio-s each), derived from those rates: 1 process 122 h; 2 processes 65 h; **3 processes (the
+  share after 22:00) 46 h**. One base-set iteration (3 seeds x 128 = 384 members) at 3 processes: 175 h, about 7
+  days, so 30 iterations is about 7 months.
+- Beyond 3 processes nothing was measured (the egg probe holds 16 cores from 22:00). WSL sees 28 logical CPUs
+  (8 P-cores with hyper-threading plus 12 E-cores). If the per-process slowdown stayed at 12 % at 20 processes (a
+  guess; E-cores and shared cache make it worse), 100 members would take about 7 h and a base-set iteration about
+  26 h (guessed extrapolation).
+- Localisation does not cut the cost: the graph leaves 99.2 % of parameter-sign pairs connected (section 5), so
+  fewer members cannot be justified by structure.
+
+So the NEURON path supports the twin tests and small pilots (tens of members) at the current share, not the full fit.
+The full fit needs one of: most of backhouse for weeks, a shorter battery per iteration, or the JAX port after the
+gate (refinement 10). Ben's call; not decided here.
 
 ## Ben to confirm (defaults in brackets)
 
