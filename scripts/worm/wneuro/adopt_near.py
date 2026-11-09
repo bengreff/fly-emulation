@@ -27,9 +27,19 @@ Gate (the rule's "a gate"): the read's limit test (test_amine_synaptic: off retu
 unchanged; nicholson matches Nicholson's closed form) green on that tree. Figure: the vulval 5-HT and SER-7 occupancy
 against time, both toggles, both conditions, viewed before recommending.
 
+Addendum (Mon 9 Nov 03:43 CST, before any 150 s run, no bar changed): wbody2's wiring (d3c2129) adds the near
+field inside Mech.step, for vm2 only (vm1 keeps the pool), and concentrations() still returns the pool. So the record
+moves to step's own outputs: at every step, the pool (concentrations()) and egg_5ht_near_nM; vm2's 5-HT is their sum
+and the occupancies above are vm2's (vm1's are the pool's, reported beside them). The sidecar files move to
+OUTDIR/vulva/, because `vitals table` reads every *.json in OUTDIR. A `bars` mode applies bars 1 and 2 to the stored
+battery JSONs (the statuses `vitals table` prints, today's bars on the stored readouts; the battery calls a passing
+sign "in", so bar 2 reads: no sign "in" under off is "miss" under nicholson; a move to "not produced" counts as
+turning too, and is named).
+
 Usage (backhouse, one process per condition and toggle):
     python adopt_near.py COND SECONDS OUTDIR TOGGLE     COND food | nofood, TOGGLE off | nicholson
-writes OUTDIR/COND.json and COND.npz (the battery's) and OUTDIR/COND_vulva5ht.npz and COND_vulva5ht.json.
+writes OUTDIR/COND.json and COND.npz (the battery's) and OUTDIR/vulva/COND_vulva5ht.npz and COND_vulva5ht.json.
+    python adopt_near.py bars OFF_DIR NICHOLSON_DIR     bars 1 and 2 per condition, and the verdict
 """
 from __future__ import annotations
 
@@ -47,46 +57,65 @@ from wormemu.mech import organs_egglaying as egg
 def main(cond, seconds, outdir, toggle):
     assert toggle in nmod.SYNAPTIC, toggle
     rec, ec = [], {}
-    orig = egg.Mech.concentrations
-
-    def wrapped(self):
-        c5, c3 = orig(self)
-        nm, pool = self.nm, None
-        if nm and len(self.hsn) and nm.on.get(nmod.A):
-            pool = float(nm.ma.nM()[nmod.AMINES.index("serotonin"), nm.ma_comp[self.hsn[0]]])
-        t = getattr(self, "_t_ms", None)
-        rec.append((np.nan if t is None else t, c5, np.nan if pool is None else pool))
-        ec.update(ser1=float(self.ec5[0]), ser7=float(self.ec5[1]))      # the EC50s the module itself reads
-        return c5, c3
-
     orig_step = egg.Mech.step
 
     def step(self, ctx, dt_ms):
-        self._t_ms = float(ctx.t_ms)
-        return orig_step(self, ctx, dt_ms)
+        r = orig_step(self, ctx, dt_ms)
+        o = r.get("out", {})
+        if "egg_5ht_near_nM" in o:                                   # the circuit form (timer and off record nothing)
+            rec.append((float(ctx.t_ms), self.concentrations()[0], float(o["egg_5ht_near_nM"])))
+            ec.update(ser1=float(self.ec5[0]), ser7=float(self.ec5[1]))   # the EC50s the module itself reads
+        return r
 
-    egg.Mech.concentrations, egg.Mech.step = wrapped, step
+    egg.Mech.step = step
     out = vitals.run(None, cond, float(seconds), outdir, toggles={"amine_synaptic": toggle})
     a = np.array(rec, float).reshape(-1, 3)
-    outdir = Path(outdir)
-    np.savez_compressed(outdir / f"{cond}_vulva5ht.npz", t_ms=a[:, 0], c5_nM=a[:, 1], pool_nM=a[:, 2])
+    vd = Path(outdir) / "vulva"
+    vd.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(vd / f"{cond}_vulva5ht.npz", t_ms=a[:, 0], c5_nM=a[:, 1] + a[:, 2], pool_nM=a[:, 1],
+                        near_nM=a[:, 2])
     e7, e1 = ec.get("ser7"), ec.get("ser1")
     keep = a[:, 0] >= 1000.0 * vitals.SETTLE_S
-    c = a[keep, 1]
-    summ = dict(cond=cond, toggle=toggle, n_calls=int(len(a)), n_kept=int(keep.sum()),
-                c5_mean_nM=float(np.mean(c)) if len(c) else None,
-                c5_p5_p95_nM=[float(x) for x in np.percentile(c, [5, 95])] if len(c) else None,
-                pool_mean_nM=float(np.nanmean(a[keep, 2])) if len(c) else None, ec50_ser7_nM=e7, ec50_ser1_nM=e1)
+    pool, near = a[keep, 1], a[keep, 2]
+    c = pool + near
+    pct = lambda x: [float(y) for y in np.percentile(x, [5, 95])]
+    summ = dict(cond=cond, toggle=toggle, n_steps=int(len(a)), n_kept=int(keep.sum()), ec50_ser7_nM=e7,
+                ec50_ser1_nM=e1)
+    if len(c):
+        summ.update(c5_vm2_mean_nM=float(c.mean()), c5_vm2_p5_p95_nM=pct(c), pool_mean_nM=float(pool.mean()),
+                    near_mean_nM=float(near.mean()), near_share=float(near.mean() / c.mean()) if c.mean() else None)
     if len(c) and e7:
         for lab, k in (("ser7", e7), ("ser1", e1)):
-            occ = c / (c + k)
-            summ[f"occ_{lab}_mean"] = float(occ.mean())
-            summ[f"occ_{lab}_p5_p95"] = [float(x) for x in np.percentile(occ, [5, 95])]
+            for where, x in (("vm2", c), ("vm1", pool)):
+                occ = x / (x + k)
+                summ[f"occ_{lab}_{where}_mean"] = float(occ.mean())
+                summ[f"occ_{lab}_{where}_p5_p95"] = pct(occ)
     summ["physical"] = out["physicality"]["physical"]
     summ["eggs"] = out["readouts"].get("eggs")
-    (outdir / f"{cond}_vulva5ht.json").write_text(json.dumps(summ, indent=1, default=float))
+    (vd / f"{cond}_vulva5ht.json").write_text(json.dumps(summ, indent=1, default=float))
     print(json.dumps(summ, default=float), flush=True)
 
 
+def bars(off_dir, nich_dir):
+    """Bars 1 and 2 (docstring) from the stored battery JSONs; prints per condition and the verdict."""
+    ok = True
+    for cond in ("food", "nofood"):
+        r0, r1 = (json.loads((Path(d) / f"{cond}.json").read_text()) for d in (off_dir, nich_dir))
+        s0, s1 = vitals.score(r0["readouts"], cond), vitals.score(r1["readouts"], cond)
+        phys = bool(r1["physicality"]["physical"])
+        turned = [f"{k} -> {(s1.get(k) or {}).get('status')}" for k, v in s0.items()
+                  if v["status"] == "in" and (s1.get(k) or {}).get("status") != "in"]
+        moved = [f"{k} {v['status']} -> {(s1.get(k) or {}).get('status')}" for k, v in s0.items()
+                 if v["status"] != "in" and (s1.get(k) or {}).get("status") != v["status"]]
+        print(f"{cond}: bar 1 physical under nicholson {'yes' if phys else 'NO'}; bar 2 passing signs under off "
+              f"{sum(1 for v in s0.values() if v['status'] == 'in')}, turned {turned or 'none'}; "
+              f"other status changes {moved or 'none'}")
+        ok = ok and phys and not turned
+    print("verdict:", "both bars hold: recommend nicholson as the default" if ok else "a bar fails: keep off")
+
+
 if __name__ == "__main__":
-    main(*sys.argv[1:5])
+    if sys.argv[1] == "bars":
+        bars(*sys.argv[2:4])
+    else:
+        main(*sys.argv[1:5])

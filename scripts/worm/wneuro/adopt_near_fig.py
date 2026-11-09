@@ -1,4 +1,4 @@
-"""wneuro item 1: the adoption check's figure (adopt_near.py's docstring). The vulval 5-HT organs_egglaying reads and
+"""wneuro item 1: the adoption check's figure (adopt_near.py's docstring). vm2's 5-HT (pool plus near field) and
 its SER-7 occupancy against time, off and nicholson, food and nofood; the pool part dashed.
 
 Usage: python adopt_near_fig.py OFF_DIR NICHOLSON_DIR OUT.png
@@ -19,7 +19,7 @@ def main(off, nich, png):
     fig, ax = plt.subplots(2, 2, figsize=(11, 6), sharex=True)
     for j, cond in enumerate(("food", "nofood")):
         for d, lab, col in ((off, "off", "0.4"), (nich, "nicholson", "C3")):
-            f = Path(d) / f"{cond}_vulva5ht.npz"
+            f = Path(d) / "vulva" / f"{cond}_vulva5ht.npz"
             if not f.exists():
                 continue
             z = np.load(f)
@@ -28,7 +28,7 @@ def main(off, nich, png):
             ax[0, j].plot(t, pool, color=col, lw=0.8, ls="--", label=f"{lab}: pool part")
             ax[1, j].plot(t, c / (c + 30.0), color=col, lw=0.8, label=lab)
         ax[0, j].set_title(cond)
-        ax[0, j].set_ylabel("vulval 5-HT read (nM)")
+        ax[0, j].set_ylabel("vm2 5-HT (nM)")
         ax[1, j].set_ylabel("SER-7 occupancy (EC50 30 nM, Hill 1)")
         ax[1, j].set_xlabel("bio s")
         ax[1, j].axvline(5.0, color="k", lw=0.5, ls=":")
