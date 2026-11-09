@@ -310,6 +310,13 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   (-42 mV, wbrain2: D) and M4 and M2 release onto it all the time; with the old mask (MC at -67.5 mV, a
   counterfactual) the EPSP is still subthreshold. Stopped and written down: the MC -> muscle strength has no
   published conductance, so it is a fit after the gate.
+- 9 Nov 01:09-01:42 (wbody2, item 8 / line 4, the glia K+ load port). Ported Sibille et al. 2015 eq. 25 as the
+  toggle `glia_k_load` (leak default | channels: the amphid neurons' gated K+ currents load the ending, E_K follows
+  its K+ on their K+ channels) and `glia_v0_window` (first default | settled, 1-2 s). `glia_port_check.py`: neutral
+  and identity exact; zero-input drift over 20 s 0.316 / 0.038 / 1.03 / 0.223 mM (only leak/settled inside 0.05);
+  check_glia fails in every form (tau 1.24-1.76 s vs 3.4-4.0, null 1.11-1.23x vs 1.24, channels peak 12.4-13 mM vs
+  10.2; all measured). Stopped and written down: the clamped neurons take K+ back after release, so recovery runs
+  2-3x faster than the guessed clearance constants; the passing value is a fit after the gate. Defaults unchanged.
 
 ## Phase 2 status (wneuro)
 

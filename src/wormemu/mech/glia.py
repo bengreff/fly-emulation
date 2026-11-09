@@ -19,6 +19,17 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 share of dE_K and the loop cannot run away (7 Nov: a separate 0.2 nS, larger than the amphid
                 neurons' whole 0.07-0.09 nS leak, drove a cell to -384 mV); Ko is floored at 1 mM, the hard K+
                 window's floor. A brain without morphology (the unit tests) uses glia_k_gleak_nS per neuron.
+  glia_k_load   leak (default, the form above) | channels: Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol
+                11:e1004137 (PMC4380507, full text; docs/worm/night/wbody2/lit_glia_port.md), d K0 / dt = iK - 2
+                ipumpN - 2 ipumpA + iKir (eq. 25): the neuron's gated K+ current, not its leak, loads K0, and its E_K
+                follows K0 (eq. 8). Here each amphid neuron's load is the sum of ik x area over its K+ sections (every
+                K+ mod reads ek and writes ik) minus its mean over the reference window, and the E_K shift is set on
+                those sections' ek (nothing injected). The source balances rest with tuned leaks and pumps; here
+                that balance is the subtracted resting ik (the fitted leaks already hold the resting pump, as in
+                pumps.py), and the activity-dependent pump uptake is in the clearance constants.
+  glia_v0_window  first (default, 0-1 s) | settled (1-2 s, after the start-up from V_INIT): the window the resting
+                v0 (leak) or resting ik (channels) is the mean over. 9 Nov 2026 (wbody2, glia_v0_probe): the network
+                drifts 3 mV (median) off the 0-1 s mean by 19-20 s and 0.2-0.3 mV off the 1-2 s mean.
   glia_kcc3     Singhvi et al. 2016 Cell 165:936: amphid sheath KCC-3 sits only in the microdomain around AFD's
                 receptive ending and sets its Cl-; Cl- inhibits AFD's receptor guanylyl cyclase GCY-8. Here one Cl-
                 excess compartment per AFD: KCC-3 adds Cl- at a rate scaled by its thermodynamic drive
@@ -29,10 +40,11 @@ papers below and the clearance numbers are borrowed from mammalian Kir4.1 work, 
                 arm changes no current.
 
 Forms (nested): glia_cells on | off; glia_kbuffer kir (default) | null (no glial uptake, diffusion only: the Kir4.1
-null) | fixed (no compartment: Ko stays at the bath, no current); glia_kcc3 on | null (no KCC-3 flux) | fixed (no
-state, scale 1). brain_layers' lumped `glia` gain (off) stays as the simplest form and is not claimed here.
+null) | fixed (no compartment: Ko stays at the bath, no current); glia_k_load leak (default) | channels;
+glia_v0_window first (default) | settled; glia_kcc3 on | null (no KCC-3 flux) | fixed (no state, scale 1). brain_layers' lumped `glia` gain (off) stays as the simplest form and is not claimed here.
 Validity: K+ and Cl- are well mixed within each ending compartment; no osmotic or volume change; the amphid neurons'
-K+ load is a linear leak estimate, not their channels' own K+ currents; AFD-AWC cross-talk through one sheath (Ray et
+K+ load is a linear leak estimate (leak) or their channels' own K+ currents (channels), from the whole cell into its
+side's ending in both forms; AFD-AWC cross-talk through one sheath (Ray et
 al. 2024 Cell Rep) is not modelled.
 """
 from __future__ import annotations
@@ -47,12 +59,18 @@ MECHANISMS = [
     ("glia_kbuffer", "Extracellular K+ at each side's amphid endings, cleared by glial Kir4.1-type uptake; the K+ "
      "reversal shift drives the amphid neurons (nested: null = no glial uptake, fixed = no compartment)", "glia",
      "kir"),
+    ("glia_k_load", "The amphid neurons' K+ load into their ending: a linear leak estimate with the E_K shift injected "
+     "(leak), or their own gated K+ currents from rest with E_K on their K+ channels following the ending's K+ "
+     "(channels: Sibille et al. 2015 eq. 25)", "glia", "leak"),
+    ("glia_v0_window", "The amphid neurons' resting reference window: the first second (first) or 1-2 s, after the "
+     "start-up (settled)", "glia", "first"),
     ("glia_kcc3", "Amphid sheath KCC-3 Cl- microdomain at AFD's ending; Cl- inhibits GCY-8: out['afd_gc_scale'] "
      "(nested: null = kcc-3, fixed = scale 1)", "glia", "on"),
 ]
 
 GLIA_CELLS = ["GLRDL", "GLRDR", "GLRL", "GLRR", "GLRVL", "GLRVR", "CEPshDL", "CEPshDR", "CEPshVL", "CEPshVR"]
 GLIA_V0_MS = 1000.0
+GLIA_V0_WINDOWS = {"first": (0.0, GLIA_V0_MS), "settled": (GLIA_V0_MS, 2.0 * GLIA_V0_MS)}
 SINGHVI = "Singhvi et al. 2016 Cell 165:936"
 KIR = "Sibille, Dao Duc, Holcman & Rouach 2015 PLoS Comput Biol 11:e1004137 (PMC4380507, opened), simulations of a " \
       "mouse hippocampal neuron-astrocyte model: [K+]o decay 3.4 s (single stimulus) and 4 s (tetanus), Kir4.1 " \
@@ -132,6 +150,9 @@ class Mech:
         self.kcc = toggles.get("glia_kcc3", "on")
         self.kb = "kir" if self.kb == "on" else self.kb
         assert self.kb in ("kir", "null", "fixed", "off") and self.kcc in ("on", "null", "fixed", "off")
+        self.kload = toggles.get("glia_k_load", "leak")
+        self.win = GLIA_V0_WINDOWS[toggles.get("glia_v0_window", "first")]
+        assert self.kload in ("leak", "channels")
         q = defaults()
         q.update({k: float(v) for k, v in (params or {}).items() if np.isscalar(v)})
         sp = getattr(brain, "spec", None)
@@ -151,6 +172,11 @@ class Mech:
             self.gk = q["glia_k_leak_frac"] * np.array(g, float)
         else:
             self.gk = np.full(len(self.amph), q["glia_k_gleak_nS"])
+        self.ksec, self.ek0 = [], None
+        if self.kload == "channels":
+            assert cells, "glia_k_load=channels needs the cells' sections"
+            self.ksec = [[s for s in cells[i].all if brain.h.ismembrane("k_ion", sec=s)] for i in self.amph]
+            self.kseg = [[(seg, seg.area()) for s in ss for seg in s] for ss in self.ksec]
         self.sec, self.n_gap = {}, 0
         if self.cells_on:
             self._build()
@@ -191,6 +217,11 @@ class Mech:
         self.v0_sum = np.zeros(len(self.amph))
         self.v0_n = 0
         self.v0 = None
+        self.load_last = np.zeros(2)
+        if self.ek0 is not None:
+            for ss, e0 in zip(self.ksec, self.ek0):
+                for s, e in zip(ss, e0):
+                    s.ek = e
         for sec in self.sec.values():
             sec(0.5).v = q["glia_e_leak_mV"]
 
@@ -204,16 +235,26 @@ class Mech:
         I = None
         dt = dt_ms / 1000.0
         if self.kb not in ("fixed", "off") and len(self.amph):
-            v = np.asarray(ctx.v, float)[self.amph]
+            if self.kload == "leak":
+                x = np.asarray(ctx.v, float)[self.amph]
+            else:   # pA: each cell's gated K+ current, mA/cm2 x um2 x 10
+                if self.ek0 is None:
+                    self.ek0 = [[s.ek for s in ss] for ss in self.ksec]
+                x = np.array([10.0 * sum(seg.ik * a for seg, a in sg) for sg in self.kseg])
+            t0, t1 = self.win
             if self.v0 is None:
-                self.v0_sum += v
-                self.v0_n += 1
-                if ctx.t_ms + dt_ms >= GLIA_V0_MS:
+                if ctx.t_ms + 0.5 * dt_ms >= t0:
+                    self.v0_sum += x
+                    self.v0_n += 1
+                if ctx.t_ms + dt_ms >= t1:
                     self.v0 = self.v0_sum / self.v0_n
                 load = np.zeros(2)
             else:
-                dek0 = q["glia_rt_f_mV"] * np.log(self.ko / q["glia_k_bath_mM"])[self.amph_side]
-                ipa = self.gk * ((v - self.v0) - dek0)                                  # pA: K+ leak change from rest
+                if self.kload == "leak":
+                    dek0 = q["glia_rt_f_mV"] * np.log(self.ko / q["glia_k_bath_mM"])[self.amph_side]
+                    ipa = self.gk * ((x - self.v0) - dek0)                              # pA: K+ leak change from rest
+                else:
+                    ipa = x - self.v0                                                   # pA: K+ current change from rest
                 load = np.bincount(self.amph_side, ipa, minlength=2) * 1e6 / F_C_PER_MOL / q["glia_k_volume_um3"]
             k = 1.0 / q["glia_k_diff_tau_s"] + (1.0 / q["glia_kir_tau_s"] if self.kb == "kir" else 0.0)
             e = np.exp(-k * dt)
@@ -221,8 +262,14 @@ class Mech:
             self.ko = kb + (self.ko - kb) * e + load / k * (1.0 - e)                   # mM
             self.ko = np.maximum(self.ko, KO_FLOOR_MM)
             dek = q["glia_rt_f_mV"] * np.log(self.ko / kb)                             # mV
-            I = np.zeros(len(ctx.v))
-            I[self.amph] = self.gk * dek[self.amph_side]                               # nS x mV = pA
+            self.load_last = load
+            if self.kload == "leak":
+                I = np.zeros(len(ctx.v))
+                I[self.amph] = self.gk * dek[self.amph_side]                           # nS x mV = pA
+            else:
+                for ss, e0, sd in zip(self.ksec, self.ek0, self.amph_side):
+                    for s, e in zip(ss, e0):
+                        s.ek = e + dek[sd]
             out.update(amphid_k_mM=self.ko.copy(), amphid_ek_shift_mV=dek)
         if self.kcc not in ("fixed", "off"):
             if self.kcc == "on":
