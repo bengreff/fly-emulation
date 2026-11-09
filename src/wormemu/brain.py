@@ -3,6 +3,7 @@ the connectome, and the lumped layers of brain_layers. Every number comes from t
 
     spec = sample_worm(seed)              # seed None = the template worm (the ledger's values); an int = one draw
     brain = Brain(spec, toggles={...})    # toggles; defaults from the code (brain_layers, mech, TEMPLATE_ON)
+                                          # noise_seed= the run's noise (None = the worm's seed)
     out = brain.reset()                   # BrainToBody at t = 0
     out = brain.step(obs, dt_ms=1.0)      # BodyToBrain in, BrainToBody out (internal step 0.5 ms, BAAIWorm's)
 
@@ -311,8 +312,10 @@ class Brain:
     if `cells` is given (for tests). `extra_pA` (cell order) is a test-input current added every step."""
 
     def __init__(self, spec: WormSpec | None = None, toggles: dict | None = None, cells=None,
-                 keep_mcvl24: bool = False):
+                 keep_mcvl24: bool = False, noise_seed: int | None = None):
         self.spec = spec or sample_worm(None)
+        # the draws made while the worm runs (noise, brain_layers, the observation noise); None = the worm's seed
+        self.noise_seed = self.spec.seed if noise_seed is None else int(noise_seed)
         led = self.spec.led
         self.toggles = default_toggles(led)
         self._mods = mech.modules()
@@ -386,6 +389,15 @@ class Brain:
             self.stim.append(c)
         self._amp = np.zeros(n)
         self.extra_pA = np.zeros(n)
+        # a module's conductance onto a soma (step keys G_nS, GE_pA): G on one SensG at e 0 mV, integrated implicitly
+        # by NEURON at every internal step, and G x E added to the soma current, so the cell gets g (E - V) at the
+        # present V instead of the step's start
+        self._gs = [h.SensG(s(0.5)) for s in self.soma]
+        self._gpv = h.PtrVector(n)
+        for i, pp in enumerate(self._gs):
+            pp.e, pp.g = 0.0, 0.0
+            self._gpv.pset(i, pp._ref_g)
+        self._G = np.zeros(n)
         self._pv, self._pc = h.PtrVector(n), h.PtrVector(n)
         for i, s in enumerate(self.soma):
             self._pv.pset(i, s(0.5)._ref_v)
@@ -405,14 +417,16 @@ class Brain:
         pos = (y - np.nanmin(yall)) / (np.nanmax(yall) - np.nanmin(yall))
         self.bwm = np.array([self.idx.get(m, -1) for m in BWM_NAMES])
         self.layers = brain_layers.Layers(self.cell_names, pos, [muscle_position(m) for m in BWM_NAMES], p, on,
-                                          0 if self.spec.seed is None else self.spec.seed,   # template: fixed
+                                          0 if self.noise_seed is None else self.noise_seed,   # template: fixed
                                           peptide=self._modulators("pep"),
                                           monoamine=self._modulators("ma"))
         self._g_targets()
+        self._sg = None
         self.mechs = []                  # built in REGISTRY order: a module can wire to the cells of those before it
         for m in self._mods:
             if any(mech.is_on(tg[t[0]]) for t in m.MECHANISMS):
                 self.mechs.append(m.Mech(self, mech.params_for(m, self.spec), tg))
+        self._syn_gains()                # after the mechanisms: the organ modules append their wsyn to self.wsyn
         self.mech_out = {}
         self.t = 0.0
 
@@ -555,7 +569,7 @@ class Brain:
         self._gt = {}
         for name in mech.G_SCALE_NAMES:
             if name == "release" or name.startswith("rec_"):
-                continue                                 # synapse gains (wsyn), below
+                continue                                 # synapse gains (wsyn): _syn_gains
             ch = name[5:] if name.startswith("dens_") else "pas"
             var = GB.get(ch, f"gb{ch}") if ch != "pas" else "g"
             cells = [i for i, s in enumerate(self.soma) if h.ismembrane(ch, sec=s)]
@@ -567,8 +581,12 @@ class Brain:
             buf = h.Vector(len(cells))
             pv.gather(buf)
             self._gt[name] = (np.array(cells), pv, buf.as_numpy().copy(), np.ones(len(cells)))
-        # wsyn synapses: release gain by presynaptic cell, receptor gain by (postsynaptic cell, class)
-        w = self.wsyn
+
+    def _syn_gains(self):
+        """The wsyn synapses' gains: release by presynaptic cell, receptor by (postsynaptic cell, class). Built after
+        the mechanisms, so the synapses organ modules place (post -1: not a brain cell) get the release gain of their
+        presynaptic neuron; no per-cell receptor gain applies to them."""
+        h, w = self.h, self.wsyn
         self._sg = None
         if w:
             rel, rec = h.PtrVector(len(w)), h.PtrVector(len(w))
@@ -601,7 +619,7 @@ class Brain:
         f = np.ones(len(post))
         for k, c in enumerate(mech.RECEPTOR_CLASSES):
             if f"rec_{c}" in g:
-                m = cls == k
+                m = (cls == k) & (post >= 0)              # post -1: an organ cell, no brain receptor gain
                 f[m] = np.asarray(g[f"rec_{c}"], float)[post[m]]
         if not np.array_equal(crec, f):
             crec[:] = f
@@ -855,6 +873,9 @@ class Brain:
         for c in self.stim:
             c.amp = 0.0
         self._amp[:] = 0.0
+        if self._G.any():
+            self._G[:] = 0.0
+            self._gpv.scatter(self.h.Vector(self._G))
         if self.mact:
             for s, m in zip(self.soma, self.is_muscle):
                 for seg in (s if m else ()):
@@ -894,10 +915,14 @@ class Brain:
             ctx = mech.Ctx(t_ms=self.t, obs=o, v=v, ca=self._read(self._pc) * self._ca_scale, names=self.cell_names,
                            is_muscle=self.is_muscle, outputs=dict(self.mech_out))
             g, outs = {}, {}
+            G = np.zeros(len(I))
             for m in self.mechs:
                 r = m.step(ctx, dt_ms)
                 if "I_pA" in r:
                     I = I + r["I_pA"]
+                if "G_nS" in r:
+                    G = G + r["G_nS"]
+                    I = I + r["GE_pA"]
                 if "act_add" in r:
                     act_add = act_add + r["act_add"]
                 for k, x in r.get("g_scale", {}).items():
@@ -906,6 +931,9 @@ class Brain:
                     mech.merge(outs, r["out"])
                     ctx.outputs.update(r["out"])
             self._apply_g_scale(g)
+            if not np.array_equal(G, self._G):
+                self._gpv.scatter(self.h.Vector(G * 1e-3))   # nS -> uS
+                self._G = G
             self.mech_out = outs
             ovr = {k: outs[k] for k in mech.OVERRIDES if k in outs}
         ch = np.flatnonzero(I != self._amp)

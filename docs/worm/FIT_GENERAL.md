@@ -19,8 +19,28 @@ Grains: global 126, class 189, gene 20, cell 19, channel 11, pairing 3. Mechanis
 | logit (lo <= 0) | 50 | in the EKI vector: z = logit of the linear position |
 | bernoulli | 15 | outside EKI (section 6): `syn_inhibitory[cell]` for AVF, AVH, AVK, BDU, CAN, PVW, RMG (L and R) and PVT |
 | of which scene_* | 6 (4 log, 2 logit) | **not the worm**: the diacetyl and NaCl plume shapes of an experiment's world. Fixed per experiment at its protocol's value, out of the vector. **Ben to confirm** (default: fixed) |
+| of which obs_noise_dff | 1 (log) | **not the worm**: the microscope's per-frame imaging noise. Fixed per experiment at the dataset's own measured noise (Atanas 2023: 0.0417 F / mean F, derived, `scripts/worm/fit/atanas_noise.py`; `vitals.BATTERY_VALUES`), out of the vector. Added 8 Nov 23:25; same Ben-to-confirm item as scene_* |
 
-So the EKI vector has **347** continuous numbers (derived: 368 - 15 - 6). Every member lives inside the hard bounds by
+So the EKI vector has **347** continuous numbers on f8e7699 (derived: 368 - 15 - 6) and **347** on main dfe027d
+(derived: 369 - 15 - 6 - 1; main added wbody2's `rule_body_modulus_scale`, and obs_noise_dff leaves). On weki's
+1198812 (main cea4d49) Theta has 370 (wneuro's `unc2_gs_gain` added) and the vector **348** (measured 9 Nov 00:08,
+`fit/vector.py`, which builds the mask from these rules and counts it, so the number tracks main). After merging main
+f7b75e7 (9 Nov 01:36) Theta has 362 and the vector **347** (measured): wbrain2 made the 7 settings above
+`params.SETTINGS` (Theta leaves them out; the vector keeps a guard), and the ledger rebuild made wneuro's SER-1 EC50
+(`ma_ec50_serotonin_ser-1_nM`, 1340 nM) measured, so it left the vector.
+
+**Why the imaging noise leaves the vector (8 Nov 23:25, measured unless marked).** On the f8e7699 template the
+GCaMP traces are imaging noise: per-neuron SD 0.029, noise 0.029, signal 0.003 F / mean F (median over neurons;
+Atanas's open animals: SD 0.293, noise 0.037-0.042). White noise of SD s alone gives a per-neuron P95 - P5 of 3.29 s
+(derived), which is 0.66 at obs_noise_dff's upper bound 0.2, inside the gcamp_range bar (0.567-0.983). The signal's
+response to every brain number is near zero while the noise's is 3.29 per unit, so the update would move the noise
+first: it passes a brain-activity sign with no brain activity. Prior draw 1 (admissible) has obs_noise_dff 0.176 and
+a noise-only range of 0.579 (derived). The rule, for every observation: **an instrument number that the statistic
+reads directly is set per experiment from that dataset, never fitted** (the scene_* numbers are the world's version
+of the same rule). The other obs_* numbers stay in: obs_ca_rest_nM cancels out of the Atanas readout (F / mean F,
+`vitals.f_over_fmean`; Randi's dF/F0 is FIT1's statistic and should take F0 from each trace's own pre-stimulus
+baseline the same way, request to wfit), and the opto and NeuroPAL numbers act only in the Randi and NeuroPAL
+experiments, through the stimulated neuron's response or the identity draw, not through a statistic's noise floor. Every member lives inside the hard bounds by
 construction: `Theta.from_z` maps any real z inside the box.
 
 Priors (ledger `parameters.prior_dist`, measured): uniform 134, log-uniform 213, bernoulli 15, 6 without a ledger row
@@ -37,7 +57,11 @@ less 15, vhalf_order 9, between 8, passive_rin 1, pool_volume 1. Checked on a me
 `joint.check(values, led)`.
 
 - Prior draw: reject and redraw until admissible, up to 1000 draws per member. The acceptance rate is reported; under
-  1 % means the box and the constraints disagree, and the fit stops and reports.
+  1 % means the box and the constraints disagree, and the fit stops and reports. Code: `vector.Vector.prior`, which
+  checks each draw as the member it builds (the template worm with the vector's numbers set). Measured 9 Nov 00:08 on
+  1198812: acceptance 68-72 % over the 3 seeds' 128-member ensembles (41 % for full `sample_worm` draws, whose numbers
+  outside the vector are drawn too), 30 s per ensemble. Median per-coordinate z SD 1.78-1.80, about the logistic's 1.81
+  (derived).
 - After each update: a member that breaks a hard constraint is redrawn from N(mean, cov) of the updated admissible
   members (up to 100 draws), else it keeps its last admissible z (`eki.EKI.update(admissible=...)`). Reject and redraw,
   not projection: the admissible set is not convex, so a nearest point is not defined cheaply.
@@ -51,8 +75,16 @@ A member that breaks a hard constraint is never run, so it never enters an updat
 Every member runs the battery (`VITAL_SIGNS.md`: one `wormemu.simulate` per condition, the whole worm, closed loop).
 
 - **Rejection** (`vitals.physical`, per run): every voltage, Ca and module concentration finite; every soma voltage
-  inside [E_lo - 1, E_hi + 1] mV; every concentration >= 0. Plus activity, added before the fit and reported only
-  until then:
+  inside [E_lo - 1, E_hi + 1] mV; every concentration >= 0; no soma voltage alternating at every exchange step for 25
+  steps (added 9 Nov 01:04, validated: VITAL_SIGNS.md). The last one matters for the prior. Three modules (egg_laying,
+  intestine, noise) hold an explicit conductance over the 4 ms step (corrected 9 Nov 01:23 from "ten"), so some
+  members inside the box go numerically unstable. Prior draw seed 1 (f8e7699) did: egg_lgc55_g_nS 4.15, inside its
+  0.1-5 range, sends HSN into a -137 / +20 mV alternation after the first egg (measured). On this branch's prior,
+  4.5-5.8 % of draws cross HSN's threshold (1.22-1.31 nS, measured on the template) at the first egg and up to 38 %
+  once tyramine saturates LGC-55 (derived, 400 draws, `scripts/worm/fit/lgc55_prior_fraction.py`). Such members are
+  rejected, not scored, and the rejection rate under the prior is measured by the prior predictive before any fit. A boundary that is numerical, not biological, is a fault for the module's
+  owner to fix (night file request, 9 Nov 01:04); the fit must not learn to avoid it. Plus activity, added before
+  the fit and reported only until then:
   - saturated: the run's mean fraction of neurons above -20 mV over 0.5 (guessed; the 7 Nov triage saw 197 of 302 in
     the saturated state);
   - silent: fewer than 10 % of neurons with a voltage range (P95 - P5 after the settle) above 2 mV (guessed).
@@ -62,14 +94,32 @@ Every member runs the battery (`VITAL_SIGNS.md`: one `wormemu.simulate` per cond
   sign enters with sigma from its published spread: SD for mean +- 2 SD bands, (P95 - P5) / 3.29 for the Atanas
   percentile bands, half the half-width for the inferred bands (egg timing, off-food pumping; guessed). Unscored signs (AIY and
   AFD rest, no spread) stay out. The simulation's own noise variance is added (section 7).
+  - Code: `vitals.observations` and `vitals.obs_target` (toy-tested). y is the published mean, else the band's
+    midpoint (derived; the off-food pumping band has no mean).
+  - **Signs the worm does not produce**: the defecation period with fewer than 2 expulsions, and the egg statistics
+    in runs under 1800 bio-s. Each gives g = NaN, and the driver counts a NaN member as failed. If every member lacks
+    the sign, every member fails and the run stops at once. **Default: such a sign is left out of the fit's vector**
+    (it stays in the battery and the gate) until the worm produces it. A censored readout (for example, the period
+    read as the run length when no interval closes) enters only by an amendment written before any run.
+    **Ben to confirm.**
+  - On the f8e7699 template (stored battery, measured 9 Nov 00:01), the observations' z, (g - y) / sigma, are:
+    - food: pumping -18.3, PC3 -8.3, GCaMP range -4.9, AWA rest +3.6, BWM spikes +3.0, BWM rest -1.0;
+    - off food: AWA rest +3.4, BWM spikes +2.9, pumping -2.1, BWM rest -1.1.
+
+    The mean misfit Phi per observation is 23.8. So the controller's first step would be at least about 1 / (2 x 23.8) = 0.02
+    (derived, if the ensemble starts near the template). Pumping carries 71 % of the summed z^2 (339 of 475, derived),
+    and the silent pharynx is a mechanism fault, so the fit must not run before it is fixed (the gate).
 
 ## 4. Maturation before scoring (refinement 4): off
 
 The plan runs maturation before scoring each member once it reproduces the recorded cells. It does not: the single-cell
 test (pre-registered 21:12, `scripts/worm/fit/maturation_ephys.py`, measured 21:27) helped in 0 of 3 classes (AIY
 10.60 -> 23.92 mV, AFD 49.89 -> 49.83, AWA unchanged because its Liu 2018 membrane is out of the rule's reach). So each
-member is scored as built. Maturation enters only through a new pre-registered single-cell test that passes and a gate
-re-sign. If it does, its rule numbers join the vector as rule parameters, and its per-class targets need a shared rule
+member is scored as built. The retry with wbrain2's bulk Ca pool as the sensor (pre-registered 23:33, measured 9 Nov
+00:23 on 1198812) is falsified the same way, 0 of 3, with the same multipliers to 3 digits. At a steady resting set
+point the rule stops where the sensed Ca equals the clamped-at-rest Ca, so any sensor that is a steady monotone function
+of the soma Ca current gives the same answer (derived). Maturation enters only through a new pre-registered
+single-cell test that passes and a gate re-sign. If it does, its rule numbers join the vector as rule parameters, and its per-class targets need a shared rule
 (today they exist only for the recorded classes).
 
 ## 5. Ensembles, inflation and localisation (refinement 5)
@@ -106,7 +156,8 @@ re-sign. If it does, its rule numbers join the vector as rule parameters, and it
     1.15 without). With the cut on, inflation 1.1 fails (8 / 20), so the two are chosen together on the twin.
   - Tested: a parameter no observation can see keeps its prior draws exactly; without localisation it collapses.
 - **Seed agreement** (part of convergence): for every data-informed coordinate (posterior SD below half the prior SD
-  in z), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
+  in z, the prior SD being the prior ensemble's own per-coordinate SD, about 1.8 for these priors, not 1; section 2's
+  measurement), the 3 ensemble means agree within 1 pooled SD, for at least 90 % of those coordinates (guessed). Otherwise the
   fit reports non-identifiability, not a converged worm.
 
 ## 6. Discrete alternatives (refinement 6)
@@ -174,6 +225,32 @@ behavioural statistic. M in the step controller is the batch's observation count
   - sample: MCMC on the emulated posterior.
   The emulator is a search tool only: every point reported from the posterior region is re-run on the real model
   first. The output is the precision-needed column (each value's posterior width against its prior width).
+- **Code** (`fit/ces.py`, 857784b; ported from CalibrateEmulateSample.jl @ bffeb42, its GP path with the Sinusoid
+  example's settings; toy-tested only). On a nonlinear 2-value toy, EKI (40 members, 4 iterations, 200 pairs) then CES
+  gave a posterior within 0.05 SD of MCMC on the true map, with SDs 0.92-0.93 of the true ones; EKI's own final
+  ensemble had SDs 0.96 and 0.79 of the true ones (measured, `tests/test_worm_fit_ces.py`).
+- **Worm-scale cost, before any use** (one Mac core, 347 inputs, measured 8 Nov 23:45): one marginal-likelihood
+  evaluation with gradient takes 0.67 s at 1000 pairs and 2.9 s at 2000 pairs; one prediction 1.1 and 6.9 ms. At 3000
+  pairs that is about 7 s per evaluation (derived, n^2 scaling) and, at 100-300 optimiser steps (guessed), 12-35 min per
+  emulated output. The ported path fits one GP per output, and Randi alone has 18,835 terms. So CES on the worm needs
+  an output reduction first. CES.jl has three: variance-truncated decorrelation, canonical correlation and a
+  likelihood-informed subspace (`Utilities/`). None is ported, and a 347-dimension random walk mixes slowly. Which to
+  port is decided after the EKI, from how many directions its ensemble shows the data inform.
+- **Run loop** (`fit/driver.py`; toy-tested only, no worm forward is written). The loop keeps every step on disk,
+  because backhouse reboots and the Mac sleeps:
+  - the EKI state before each iteration, including the generator's state;
+  - each member's result as its own file, written atomically.
+
+  A resume re-runs only the members with no result. On the linear toy, a run killed during iteration 2 and resumed
+  ends bit-identical to one that never stopped (measured, `tests/test_worm_fit_driver.py`). The loop applies stops
+  (a) to (d) above. It also stops when fewer than 2 members run, since no covariance exists then, and when the data on
+  disk differ from the data given. It hands every (z, G(z)) pair to the CES step.
+  - The forward gets the iteration number, so it draws one noise seed per experiment per iteration (section 7). On a
+    noisy toy, a 2-process pool ends identical to one process (measured).
+  - The loop takes section 8's stochastic batch. The batch is fixed on disk before the iteration's first run, and the
+    EKI update scores only the batch's observations. With batches, the CES pairs default to the observations that
+    every batch holds.
+  - `driver.seed_agreement` is section 5's 3-seed check, toy-tested.
 
 ## 10. Compute and cost (refinement 10)
 
@@ -220,4 +297,9 @@ gate (refinement 10). Ben's call; not decided here.
 2. Discrete alternatives are compared on a validation split of the open data; the locked set scores only the winner,
    once. [yes]
 3. The open mutant strains (OWMD 11, Yemini's open mutant rows) stay out of the loss, per SCOREBOARD 15. [yes]
-4. The 6 scene_* numbers are fixed per experiment, not fitted. [yes]
+4. The 6 scene_* numbers, and the imaging noise obs_noise_dff (at each dataset's measured noise), are fixed per
+   experiment, not fitted. [yes]
+5. A vital sign the worm does not produce yet (the defecation period with no closed interval; the egg statistics in
+   runs under 1800 bio-s) is left out of the fit's vector until it is produced. It stays in the battery and the
+   gate. A censored readout enters only by an amendment written before any run. [left out] (Added 9 Nov 00:01,
+   section 3.)
