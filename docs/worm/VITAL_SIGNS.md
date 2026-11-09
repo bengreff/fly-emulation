@@ -49,8 +49,9 @@ wbrain2 (night file): put the world and environment on `Experiment`.
   threshold, measured on the template's intrinsic membrane by `scripts/worm/fit/explicit_gcrit.py` (E -41 mV, from
   rest, 4.0 / 4.5 ms steps): HSNL 1.31 / 1.22 nS, AWAL 1.87 / 1.79, ASHL 1.39 / 1.27, AFDL 1.46 / 1.34, AVAL
   1.94 / 1.84, RIS 0.87 / 0.79, ALA 20.2 / 19.8. The soma clamp sits on a soma of 0.15-0.72 pF against 2-24 pF
-  for the whole cell, so no single capacitance predicts these (g dt / C on the whole cell runs 0.46-3.7). The
-  body-wall muscles (PBO-5) and vulval muscles were not measured. A 125 Hz sustained oscillation is not a C. elegans
+  for the whole cell, so no single capacitance predicts these (g dt / C on the whole cell runs 0.46-3.7). A
+  posterior body-wall muscle (one 22 pF compartment, E 0 mV for PBO-5) goes at 13.8 / 12.2 nS, above
+  pbo5_g_nS's top of 10, so PBO-5 stays stable inside its range at rest; the vulval muscles were not measured. A 125 Hz sustained oscillation is not a C. elegans
   behaviour, so it is read as numerical (thresholds guessed). Validation, written before either run: on the template
   (food, 16 bio-s, Mac) the check flags no cell; on prior draw seed 1 (food, 16 bio-s), which leaves the bounds after
   its first egg at 12.6 s, it flags HSNL and HSNR. If the template flags any cell, the thresholds are wrong or the

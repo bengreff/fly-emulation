@@ -13,7 +13,8 @@ Falsifier (written before the first run): the full model went unstable at 1.99 n
 the toy's HSNL threshold at rest is above 1.99 nS the toy misses what set that onset (the depolarised state's
 channels, the neighbours) and its numbers are not used for other cells.
 
-Usage: python scripts/worm/fit/explicit_gcrit.py CELL
+Usage: python scripts/worm/fit/explicit_gcrit.py CELL [E_mV]   (a body-wall muscle by its BWM name, e.g. dBWML22; PBO-5's
+E is 0 mV)
 """
 from __future__ import annotations
 
@@ -24,8 +25,9 @@ import numpy as np
 from wormemu.brain import DT_MS, Brain, sample_worm
 from wormemu.fit import vitals
 
-E_MV, STEPS, SETTLE_MS = -41.0, 300, 1000.0
+STEPS, SETTLE_MS = 300, 1000.0
 cells = sys.argv[1:2]
+E_MV = float(sys.argv[2]) if len(sys.argv) > 2 else -41.0
 b = Brain(sample_worm(None), cells=cells)
 h = b.h
 b.reset()
@@ -33,7 +35,8 @@ idx = [list(b.cell_names).index(c) for c in cells]
 
 
 def cap_pF(c):
-    return sum(seg.area() * seg.cm * 1e-2 for sec in h.allsec() if sec.name().startswith(c) for seg in sec)
+    hoc = b._baai[c]                                                # a muscle's sections carry BAAIWorm's name
+    return sum(seg.area() * seg.cm * 1e-2 for sec in h.allsec() if sec.name().startswith(hoc + "[") for seg in sec)
 
 
 def soma_pF(k):
