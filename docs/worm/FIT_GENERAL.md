@@ -118,7 +118,10 @@ test (pre-registered 21:12, `scripts/worm/fit/maturation_ephys.py`, measured 21:
 member is scored as built. The retry with wbrain2's bulk Ca pool as the sensor (pre-registered 23:33, measured 9 Nov
 00:23 on 1198812) is falsified the same way, 0 of 3, with the same multipliers to 3 digits. At a steady resting set
 point the rule stops where the sensed Ca equals the clamped-at-rest Ca, so any sensor that is a steady monotone function
-of the soma Ca current gives the same answer (derived). Maturation enters only through a new pre-registered
+of the soma Ca current gives the same answer (derived). wneuro's code trace (599ce4b, session 3; a reading of the
+code, not a run) gives the premise directly: the bulk pool (`nmodl/cabulk.mod`) reads the soma's total ica and writes
+neither cai nor ica, so it changes neither the soma Ca nor the Ca current, and a further retry on it cannot differ.
+Closed there (Director, 9 Nov 01:45); no more retries on this sensor. Maturation enters only through a new pre-registered
 single-cell test that passes and a gate re-sign. If it does, its rule numbers join the vector as rule parameters, and its per-class targets need a shared rule
 (today they exist only for the recorded classes).
 
@@ -287,9 +290,43 @@ too), fewer members once localisation is measured, or the JAX port (refinement 1
 - Localisation does not cut the cost: the graph leaves 99.2 % of parameter-sign pairs connected (section 5), so
   fewer members cannot be justified by structure.
 
-So the NEURON path supports the twin tests and small pilots (tens of members) at the current share, not the full fit.
-The full fit needs one of: most of backhouse for weeks, a shorter battery per iteration, or the JAX port after the
-gate (refinement 10). Ben's call; not decided here.
+**Where the time goes (9 Nov 01:47-01:53, Mac, ad37628 plus the readouts guard, `scripts/worm/fit/cost_breakdown.py`,
+food, measured unless marked).** Profiled 4 bio-s run: the exchange loop 52.7 s, of which NEURON's own integration
+(the `fadvance` calls inside `Brain.step`) 42.4 s, 10.6 s per bio-s; waiting on the body's pipe 0.9 s (the FEM body
+steps in its own process while the brain steps, so it is hidden); construction 15.4 s, once per run. The same run
+unprofiled, 6 bio-s: 87.5 s, so the loop is about 12.0 s per bio-s and NEURON about 88 % of it, the Python modules
+about 1.4 s per bio-s (derived by difference). The brain is 48,356 NEURON segments in 2,253 sections, active
+channels on the 397 somas only (the rest `pas`), at dt 0.5 ms: 5.3 ms per step, 0.11 us per segment-step (derived).
+The segment count is BAAIWorm's 2 um rule (`brain._segments`), which also indexes its synapse table.
+
+**The options, per iteration (each member 2 x 200 bio-s unless marked; derived from the rates above).**
+
+| Option | One ensemble (J = 128) | Base set (384) | 30 base-set iterations | What it costs |
+|---|---|---|---|---|
+| A. NEURON, the share after 22:00 (3 processes, 12.34 s per bio-s, measured) | 58 h | 175 h | about 7 months | nothing in the design |
+| B. NEURON on all of backhouse (20 processes, the 12 % slowdown at 3 assumed to hold: guessed, optimistic) | 8.8 h | 26 h | about 33 days | all of backhouse for a month, through the 17:00-22:00 cap; E-cores are slower, and each member's body process takes about 12 % of another core (derived: 1.5 / 12) |
+| C. Reduced battery: food 200 s only, 3 processes | 29 h | 88 h | about 3.6 months | drops off-food pumping, 1 of the 10 signs with a bar (its band is the weakest one, limitation 6); every other sign needs the 200 s food run (the PC3 and GCaMP bands are built on 195 s windows, the defecation period needs 2 intervals at about 45 s) |
+| C on 20 processes | 4.4 h | 13 h | about 16 days | as B and C |
+| D. JAX brain on the GPU, modules and body on CPU (guessed range from measured anchors, below) | GPU 5-46 h, CPU side 14 h at 3 processes | GPU 16-137 h, CPU side 41 h at 3 processes or 6 h at 20 | GPU 20-171 days | the port of every brain mechanism and its CPU-path check before the gate: weeks (guessed) |
+
+How D is estimated (no Jaxley run of this brain exists; a cheap micro-benchmark does not, because the 48,356-segment
+morphology would have to be ported first). Measured anchors (PLAN.md section c.5, backhouse, 4-5 Nov): the Jaxley
+stand-in, 446 cells x 4 compartments with 13 channels each, cost 0.13 us per compartment-step on one CPU core (0.39 with
+the implicit gap solve), and 6.4 ns per compartment-step on the shared GPU at batch 128. Guessed factors: implicit gaps
+x 2-2.6 (measured on CPU, assumed on GPU), passive compartments x 0.3-1, branched trees x 1-2. Result: 3.8-33 ns per
+compartment-step, so 0.4-3.2 s per member per bio-s at 48,356 compartments and 2,000 steps per bio-s (derived). The CPU
+side is the Python modules (1.4 s per bio-s, above) and the body (1.4-1.7 s per bio-s on one thread while swimming,
+BODY_TESTS.md, measured 5 Nov), 2.9 core-s per member per bio-s.
+
+**Verdict (derived; guesses as labelled).** Per core, NEURON is already about as fast as Jaxley here (0.11 against
+0.13-0.39 us per compartment-step), so the GPU pays only by batching, and 48,356 compartments per member fill it after a
+few members. One GPU does the brain of about 3 to 29 NEURON cores (10.6 s per bio-s / 0.4-3.2 s); at the middle of that
+range (about 10) it adds about half of backhouse's CPUs. So the JAX port is worth about 1.5x on backhouse, not the 20-25x
+the 4-compartment stand-in showed. The two cheap levers are design choices: the reduced battery (C, 2x) and B's machine
+share (6.7x over A). A, B and C need no new code. A coarser cable would cut both paths, but that is the brain owner's
+port (BAAIWorm's 2 um rule, which its synapse table is indexed by) and needs a convergence check; it is not costed
+here. So the NEURON path supports the twin tests and pilots of tens of members at the current share; the full fit
+needs B, B with C, or a smaller design. Ben's call; not decided here.
 
 ## Ben to confirm (defaults in brackets)
 

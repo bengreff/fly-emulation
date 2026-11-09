@@ -69,6 +69,11 @@ def test_dmp_needs_two_intervals():
     assert r["expulsions"] == 2 and r["dmp_period_s"] is None
 
 
+def test_readouts_refuse_a_run_inside_the_settle():
+    with pytest.raises(ValueError, match="settle"):
+        V.readouts(synthetic(seconds=V.SETTLE_S - 1.0), "food", V.SETTLE_S - 1.0)
+
+
 def test_pc_frac_independent_vs_lowrank():
     rng = np.random.default_rng(1)
     x = rng.normal(size=(2000, 50))

@@ -278,7 +278,9 @@ def readouts(res: dict, cond: str, bio_s: float) -> dict:
     cells = list(res["cells"])
     t = np.asarray(res["t_ms"], float) / 1000.0
     w = t >= SETTLE_S
-    dur = float(t[w][-1] - t[w][0]) if w.sum() > 1 else 0.0
+    if w.sum() < 2:
+        raise ValueError(f"a {bio_s:g} bio-s run leaves no window after the {SETTLE_S:g} s settle; run longer")
+    dur = float(t[w][-1] - t[w][0])
     V = np.asarray(res["v_mV"], float)
     bwm = [k for k, c in enumerate(cells) if c in set(BWM_NAMES)]
     neur = [k for k, c in enumerate(cells) if c not in set(BWM_NAMES)]
