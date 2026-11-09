@@ -8,7 +8,7 @@ construction, refinement 1):
     C_zg, C_gg   ensemble covariances (1/J, uncorrected, as EKP), C_zg optionally localised (Schur product with rho)
     z_j <- z_j + C_zg (C_gg + Gamma/dt)^-1 (y + eta_j - g_j),   eta_j ~ N(0, Gamma/dt)
 
-Step dt from the data-misfit controller (Iglesias & Yang 2021 Inverse Problems 37:025008, as EKP's
+Step dt from the data-misfit controller (Iglesias & Yang 2021, arXiv 2006.14980, as EKP's
 LearningRateSchedulers.jl DataMisfitController runs it, opened 8 Nov 2026):
 
     Phi_j = 0.5 |Gamma^-1/2 (g_j - y)|^2,  q = max(M / (2 mean Phi), sqrt(M / (2 var Phi))),  dt = min(q, T - t)
