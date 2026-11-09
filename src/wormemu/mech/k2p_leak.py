@@ -12,6 +12,8 @@ not the oocyte's), density unc58_g_S_cm2 (guessed: the wild-type channel's curre
 limit, so the template is small). One wgc conductance per cell (implicit in NEURON); the stand-in brain injects the
 explicit current. Off by default (neutral). Validity: one lumped open probability, no voltage, pH or
 temperature dependence; the 34 other TWK genes stay a slot (docs/worm/CHANNEL_SLOTS.md).
+Cells whose whole membrane is a published model fitted to wild-type recordings (mech/cell_models: Jiang's AVL and
+DVB, Naudin's AFD; senses_chem: Liu's AWA) get no UNC-58: that model's leak already holds the cell's own (9 Nov).
 """
 from __future__ import annotations
 
@@ -33,15 +35,26 @@ SPECS = [
 ]
 
 
-def cells_expressing(brain):
-    """Indices of the brain's cells that carry unc-58: CeNGEN-detecting neuron classes and body-wall muscles."""
+def swapped_cells(toggles):
+    """Cells whose whole membrane is a published model under these toggles (their leak is the model's own)."""
+    from wormemu.mech import cell_models
+    out = set(cell_models.jiang_cells(toggles)) | set(cell_models.naudin_cells(toggles))
+    if toggles.get("awa_membrane", "liu2018") not in ("off", "baaiworm"):        # senses_chem's default
+        out |= {"AWAL", "AWAR"}
+    return out
+
+
+def cells_expressing(brain, toggles=None):
+    """Indices of the brain's cells that carry unc-58: CeNGEN-detecting neuron classes and body-wall muscles, less
+    the cells whose membrane is swapped for a published model."""
     from wormemu.brain_structure import cengen_class
     st = brain.st
     row = st.tpm[st.gene_index["unc-58"]] if "unc-58" in st.gene_index else None
     det = {c for k, c in enumerate(st.cengen_classes) if row is not None and row[k] > 0}
     classes = set(st.cengen_classes)
+    skip = swapped_cells(toggles if toggles is not None else getattr(brain, "toggles", {}))
     return [i for i, n in enumerate(brain.cell_names)
-            if brain.is_muscle[i] or cengen_class(n, classes) in det]
+            if (brain.is_muscle[i] or cengen_class(n, classes) in det) and n not in skip]
 
 
 class Mech:
@@ -51,7 +64,7 @@ class Mech:
         if not self.on:
             return
         self.e = float(params["unc58_erev_mV"])
-        self.idx = np.array(cells_expressing(brain), int)
+        self.idx = np.array(cells_expressing(brain, toggles), int)
         soma = getattr(brain, "soma", None)
         if soma is not None:
             area = np.array([sum(seg.area() for seg in soma[i]) for i in self.idx])     # um2

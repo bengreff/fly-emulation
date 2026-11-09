@@ -247,6 +247,16 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   0.353-0.506 from Atanas et al. 2023's 60 animals, PMC10836760, opened: "the first three PCs explained 42% of the
   variance") and gcamp_range (0.567-0.983). The voltage fraction stays a report with no bar. Template: 0.056 and
   0.095, both miss (weki, measured): a quiet brain. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 18".
+- Never-checked row 8, gap conductances (wbrain2, written down, no fix): Liu, Chen, Mailler & Wang 2017 Fig 6
+  (PMC5364397, CC-BY, digitised) against AVAR-VA05 in the full brain. Somatic clamp currents pass (AVA held, VA5 to
+  +50: -6.48 pA, bar -12.7 to -2.5; VA5 held, AVA to -110: +5.10, bar 0 to 10.1). The coupling coefficients come out
+  the wrong way round (into VA5 1.34 %, bar 3.3-21.1; into AVA 10.2 %, bar 0-9.7) and the clamp currents lose the
+  direction the junction itself has (its own current is 30 vs 16 pA, into AVA larger). Cause (measured): AVA's
+  in-situ input resistance is 0.14-0.18 GOhm against Liu's 2.50 +- 0.19 (n 9); its membrane alone is 1.86 (inside),
+  the network's gaps (Cook: 254 EM contacts, 51 partners, 56.8 nS at the template) take it down; synapses onto AVA
+  change nothing. Every gap range at its floor still leaves 0.58-0.67 GOhm, so no value inside the ranges passes (not
+  D) and it is not a units or placement error (not A). Requests to weki (held-out R_in for the shared gap scale) and
+  wbody2 (hypodermis gaps). Detail: docs/worm/night/2026-11-08_wbrain2.md, "Item 8".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.

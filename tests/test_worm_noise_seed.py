@@ -63,3 +63,23 @@ def test_noise_seed_default_is_the_worm_seed_and_changes_only_the_noise():
 def test_experiment_passes_the_noise_seed():
     seen = _run(EXP)
     assert seen["None"] is None and seen["11"] == 11
+
+
+GUARD = """
+import json
+from wormemu.brain import Brain
+b = Brain(cells=["AWAL", "AIYL"])
+try:
+    b.step()
+    msg = "no error"
+except RuntimeError as e:
+    msg = str(e)
+b.reset()
+b.step()
+print(json.dumps(dict(msg=msg, t=b.t)))
+"""
+
+
+def test_step_before_reset_is_a_clear_error():
+    r = _run(GUARD)                       # was: noise's Poisson draw failed on the unset states ("lam value too large")
+    assert "before Brain.reset()" in r["msg"] and r["t"] == 1.0
