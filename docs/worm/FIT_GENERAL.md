@@ -278,3 +278,7 @@ gate (refinement 10). Ben's call; not decided here.
 3. The open mutant strains (OWMD 11, Yemini's open mutant rows) stay out of the loss, per SCOREBOARD 15. [yes]
 4. The 6 scene_* numbers, and the imaging noise obs_noise_dff (at each dataset's measured noise), are fixed per
    experiment, not fitted. [yes]
+5. A vital sign the worm does not produce yet (the defecation period with no closed interval; the egg statistics in
+   runs under 1800 bio-s) is left out of the fit's vector until it is produced. It stays in the battery and the
+   gate. A censored readout enters only by an amendment written before any run. [left out] (Added 9 Nov 00:01,
+   section 3.)
