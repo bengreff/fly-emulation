@@ -372,6 +372,13 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   near-synchronous (figure viewed). Cytosolic diffusion between 60-100 um cell centres allows about 2.8-4.7 um/s for
   IP3 (Allbritton et al. 1992, D 283 um2/s; derived), 60-100x less. No published model or intact-worm mechanism to
   port (lit_int_wave.md). Stopped after attempt 2; mechanism written down (night file log 03:40-04:05).
+- 9 Nov 04:09-04:31 (wbody2, never-checked rows 22 and 25). Row 22's last two guessed values, co2_rq and
+  nose_force_uN: nothing measured free (an E. coli RQ is only a glucose-chemostat transient, PMC7260802; the nose
+  stimulus in PMC3145979 is an ~8 um displacement, not a force), so neither moves; the searches are in the Specs'
+  notes (998ca20). Row 25: Liu & Thomas 1994 and Iwasaki et al. 1995 are still scans, so the per-temperature check
+  cannot run; temp_q10_dmp_clock relabelled measured -> inferred (the only opened text is a qualitative abstract
+  line), template and range unchanged (c84ba39). Branicky et al. 2001 (abstract) reports that wild type shifted from
+  20 C changes its cycle length; a fixed Q10 cannot, so that is written down as simpler than published.
 
 ## Phase 2 status (wneuro)
 
