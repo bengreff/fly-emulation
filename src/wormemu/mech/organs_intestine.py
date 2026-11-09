@@ -37,8 +37,13 @@
                 membrane (nmodl/organs/du_bwm.mod; inferred: the enteric muscle membrane is not recorded), Cook 2019's
                 gaps among them at Liu 2006's BWM gap (inferred), Cook's DVB synapses onto mu_intL/R as excitatory
                 (the EXP-1 GABA-gated cation channel: Beg & Jorgensen 2003 Nat Neurosci 6:1145; organs_nrn.chem_synapse,
-                the brain's gabacat class when receptor kinetics run). Ca -> activation is
-                row 12's Boyle-Berri-Cohen integrator. One expulsion = the mean intestinal-muscle and anal-depressor
+                the brain's gabacat class when receptor kinetics run). `enteric_exp1=beg2003` (nested, off by
+                default) gives those sites EXP-1's own dose-response and reversal, measured in Xenopus oocytes by
+                Beg & Jorgensen 2003 (EC50 26.4 uM, Hill 1.8, E_rev -5.54 mV; no time constants were reported, so
+                the gabacat class's stay); a GABAergic input onto mu_sph, which expresses the inhibitory UNC-49B
+                and not EXP-1 (Beg & Jorgensen 2003), would be inhibitory (Cook 2019 gives none). Valid under
+                receptor_kinetics instantaneous or kinetic; under graded or off there is no dose-response and it
+                changes nothing. Ca -> activation is row 12's Boyle-Berri-Cohen integrator. One expulsion = the mean intestinal-muscle and anal-depressor
                 activation rising above ent_exp_on and falling below ent_exp_off. Cook's hypodermis gaps to these
                 muscles wait for row 16's hypodermis.
 
@@ -48,6 +53,7 @@ Nested simpler forms (toggle values):
     pboc_g_solver    implicit (default) | explicit
     nlp40_aex2       release_only (default: only out['peptide_release'], for neuromod) | direct | off
     enteric_muscle   du2025 (default) | off
+    enteric_exp1     brain (default: the brain's gabacat class values) | beg2003
 The id defecation is brain_layers' id, so this module takes that toggle over. At reset the intestine is run alone
 for brain_layers' random phase draw (dmp_t, 0-45 s), so a worm starts at a random point of its cycle as before.
 """
@@ -64,6 +70,7 @@ LR = ("Li & Rinzel 1994 J Theor Biol 166:461 (De Young & Keizer 1992 PNAS 89:989
       "LiRinzel.ode, opened)")
 ESP = "Espelt, Estevez, Yin & Strange 2005 J Gen Physiol 126:379 (PMC2266627: period, wave velocity, rise/fall)"
 TI = "Teramoto & Iwasaki 2006 Cell Calcium 40:319 (Ca -> PLC feedback; not opened)"
+BJ03 = "Beg & Jorgensen 2003 Nat Neurosci 6:1145 (EXP-1 in Xenopus oocytes, full text opened)"
 BEG = "Beg, Ernstrom, Nix, Davis & Jorgensen 2008 Cell 132:149 (PMC2258244: PBO-5/6 pH50, Hill, cleft pH kinetics)"
 WANG = "Wang et al. 2013 Curr Biol 23:746 (NLP-40 -> AEX-2 on AVL/DVB; full text not opened)"
 OLD = "brain_layers lumped defecation clock (the nested simpler form)"
@@ -79,6 +86,8 @@ MECHANISMS = [
      "here)", "organ", "release_only"),
     ("enteric_muscle", "Enteric muscles: Du 2025 membrane, Cook gaps, DVB EXP-1 synapses, Ca -> activation", "muscle",
      "du2025"),
+    ("enteric_exp1", "Enteric GABA-cation sites as EXP-1 (Beg & Jorgensen 2003 EC50, Hill, reversal; nested brain: "
+     "the brain's gabacat class)", "muscle", "brain"),
 ]
 
 PRE_DT_MS = 5.0          # step of the intestine's pre-run at reset (the cycle phase), ms
@@ -178,6 +187,14 @@ SPECS = [
     _s("ent_dvb_excitatory", "flag", 1.0, 1.0, 1.0, "Beg & Jorgensen 2003 Nat Neurosci 6:1145 (EXP-1)",
        label="measured", notes="GABA onto the enteric muscles opens the EXP-1 cation channel: excitatory",
        mech="enteric_muscle", applies="enteric muscle"),
+    _s("exp1_ec50_uM", "uM", 26.4, 24.24, 28.56, BJ03, label="measured",
+       notes="GABA EC50 26.4 +- 1.08 uM (n 19), two-electrode clamp at -60 mV; range mean +- 2 SD (derived); oocyte "
+       "value stands for the enteric muscle (inferred)", mech="enteric_exp1", applies="enteric muscle"),
+    _s("exp1_hill", "1", 1.8, 1.32, 2.28, BJ03, label="measured", notes="Hill coefficient 1.8 +- 0.24 (n 19); range "
+       "mean +- 2 SD (derived)", mech="enteric_exp1", applies="enteric muscle"),
+    _s("exp1_erev_mV", "mV", -5.54, -9.94, -1.14, BJ03, label="measured",
+       notes="reversal -5.54 +- 2.20 mV in Ringer's (n 24; PK/PNa 1.1, Cl-free -5.05 mV); range mean +- 2 SD "
+       "(derived)", mech="enteric_exp1", applies="enteric muscle"),
     _s("ent_act_khalf_mM", "mM", 0.014, 0.002, 0.05, "Boyle, Berri & Cohen 2012 (form); row 12's value",
        label="inferred", notes="the BWM value (bwm_act_khalf_mM) used for enteric muscle", mech="enteric_muscle",
        applies="enteric muscle"),
@@ -387,6 +404,8 @@ class Mech:
         self.nlp_W = _ring_compartment_shares(brain)
         self.nlp_keys = [(k, f"nlp-40@{cp}") for k, cp in enumerate(COMPARTMENTS) if self.nlp_W[:, k].any()]
         self.ent = toggles.get("enteric_muscle", "du2025")
+        self.exp1 = toggles.get("enteric_exp1", "brain")
+        assert self.exp1 in ("brain", "beg2003"), self.exp1
         assert self.form in ("ip3r", "timer", "off") and self.pboc in ("on", "off")
         assert self.solver in ("implicit", "explicit"), self.solver
         assert self.nlp in ("direct", "release_only", "off") and self.ent in ("du2025", "off")
@@ -436,11 +455,21 @@ class Mech:
                 self.n_gap += 1
         g_nmj = float(np.median(b.spec.v("nmj_strength_per_pair").to_numpy(float)))
         self.wsyn = []
+        from wormemu import mech
+        gabacat = mech.RECEPTOR_CLASSES.index("gabacat")
         for i, j, n in st.chem:
             a, c = nm[i], nm[j]
             if c in mine and a in b.idx:
-                inh = False if q["ent_dvb_excitatory"] > 0.5 else b._inhibitory(a, c)
-                self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_enteric")
+                if self.exp1 == "beg2003" and c == "mu_sph" and "gaba" in b.st.transmitter.get(a, set()):
+                    inh = True                    # UNC-49B, not EXP-1, in the sphincter (Beg & Jorgensen 2003)
+                else:
+                    inh = False if q["ent_dvb_excitatory"] > 0.5 else b._inhibitory(a, c)
+                placed = organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_enteric")
+                if self.exp1 == "beg2003":
+                    for pp, _, _, k in b.wsyn[len(b.wsyn) - len(placed):]:
+                        if k == gabacat:          # EXP-1's measured dose-response and reversal
+                            pp.ec50, pp.hill, pp.erev = q["exp1_ec50_uM"] / 1000.0, q["exp1_hill"], q["exp1_erev_mV"]
+                self.wsyn += placed
                 self.n_syn += 1
         k = len(ENTERIC_MUSCLES)
         self._pca, self._pv = h.PtrVector(k), h.PtrVector(k)

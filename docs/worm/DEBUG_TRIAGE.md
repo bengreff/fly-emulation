@@ -326,6 +326,22 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   explicit nested). `implicit_g_check.py`: explicit identical to the code before; at 0.1-0.5 nS implicit is closer to
   a 0.5 ms reference than explicit (6 of 6); at each range's top and 2x implicit is stable, explicit goes to NaN on
   HSN at 5 nS and alternates at vm cation 14 and PBO-5 20 nS (all measured). Battery on the new default next.
+- 9 Nov 02:26-02:57 (wbody2, line 4 glia, adoption). The 150 s battery under glia_v0_window=settled (73f1e54 +
+  settled) against 7daea89, bar written 01:46 before either battery ended (every passing sign still passes; physical
+  stays yes): BWM median V -30.5 / -31.2 mV food / nofood (in), physical yes / yes: pass. BWM APs per firing muscle
+  2.81 -> 2.91 Hz and 2.69 -> 2.79 (still misses; all measured). Adopted (5834790): settled is the default, first
+  nested. check_glia still fails (tau 1.73 s vs 3.4-4.0).
+- 9 Nov 02:58-03:18 (wbody2, line 3 expulsion chain, inbox 02:35 item 1). Ported EXP-1's measured dose-response and
+  reversal (Beg & Jorgensen 2003, oocytes: EC50 26.4 uM, Hill 1.8, E_rev -5.54 mV) onto the enteric muscles' GABA
+  sites as the toggle `enteric_exp1` (brain default = the brain's gabacat class; beg2003 nested, not adopted); no time
+  constants and no enteric muscle recording are published. `exp1_check.py` (spec and bars written first,
+  `night/wbody2/exp1_port_spec.md`), DMP sub-brain, 150 s, DVB clamped to Jiang 2022's spike 3 s after each int9 peak:
+  neutral bit-identical (pass); one expulsion per wave: 0 of 3 under both forms (fail); control 0. Detector input peaks
+  0.32 (brain) and 0.27-0.31 (beg2003) at the DVB spikes against 0.5; the muscles fire on their own at 4.0-4.1 Hz and
+  reach 0.26 without DVB. On the in-range Du set that is silent at rest (du=0), the DVB spike moves mu_intL from -34.2
+  to -29.6 mV, below threshold (all measured). Mechanism written down: DVB's synapse here is Cook's 3 + 1 contacts at
+  the ledger's median NMJ strength (0.81 and 0.27 nS), too weak to fire a silent muscle, and the BWM membrane stands
+  in for an unrecorded enteric one. Both are values or missing data (D), not a port; stopped after the attempt.
 
 ## Phase 2 status (wneuro)
 
