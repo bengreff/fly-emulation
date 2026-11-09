@@ -615,3 +615,34 @@ def test_pharynx_reads_serotonin_from_neuromod_and_falls_back_to_the_layer():
     assert r["compartments"]["src"] == "neuromod" and r["compartments"]["c"] > 0
     assert r["compartments"]["c"] == r["compartments"]["ref"] == r["compartments"]["out"]
     assert r["lumped"]["src"] == "layer"
+
+
+_PH_ROUTE = """
+import json
+from wormemu import brain as B
+from wormemu.mech import organs_pharynx as ph
+out = {}
+for route in ("cook", "eat2", "both"):
+    b = B.Brain(B.sample_worm(None), toggles={"ph_mc_route": route}, cells=["MCL", "MCR"])
+    p = next(m for m in b.mechs if isinstance(m, ph.Mech))
+    mc, seg, own = {b.idx["MCL"], b.idx["MCR"]}, {}, {id(x) for x in p.wsyn}
+    for pp, pre, post, c in b.wsyn:
+        if id(pp) in own and pre in mc:
+            n = pp.get_segment().sec.name().replace("pharynx_", "")
+            seg[n] = seg.get(n, 0.0) + pp.gmax
+    out[route] = dict(seg=seg, n_eat2=len(p.eat2_syn))
+print(json.dumps(out))
+"""
+
+
+def test_pharynx_mc_route_moves_mc_contacts_to_the_bordering_pm5():
+    """ph_mc_route (wbody2, item 2 stage 2 port): cook puts MC's synapses on the mc2 marginal cells only; eat2 puts the
+    same total conductance on pm5 cells only (each mc2 cell's share over its pm5 gap partners); both half each way."""
+    r = _run(_PH_ROUTE)
+    cook, eat2, both = (r[k]["seg"] for k in ("cook", "eat2", "both"))
+    tot = sum(cook.values())
+    assert tot > 0 and all(n.startswith("mc2") for n in cook) and r["cook"]["n_eat2"] == 0
+    assert all(n.startswith("pm5") for n in eat2) and r["eat2"]["n_eat2"] > 0
+    assert abs(sum(eat2.values()) - tot) < 1e-9 * tot
+    for g in ("mc2", "pm5"):
+        assert abs(sum(v for n, v in both.items() if n.startswith(g)) - tot / 2) < 1e-9 * tot

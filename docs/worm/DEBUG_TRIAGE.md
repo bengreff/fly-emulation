@@ -292,6 +292,24 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   and -60.7 %): pass (measured). The default body is 7.6 % softer in bending. Frontiers 561-1199 kPa vs Backholm 50-170:
   still no overlap (C stays); rule range re-derived 0.0632-1.515; 0.067-0.214 reaches Backholm (D, not adopted).
   Line 9 damping re-run on the fixed body: 16.46 ms vs <= 5.3 (still D).
+- 8-9 Nov 23:52-00:39 (wbody2, items 2, 3, 15). Organ chemical synapses (A, 9a67a6f): the pharynx, enteric and
+  egg-laying synapses from brain neurons were always BAAIWorm's graded synapse, so no wsyn gain reached them; they now
+  take the brain's receptor form and are listed in brain.wsyn (off bit-identical, graded within 3.3e-10 mV; release
+  gains reach them only once the brain builds its synapse gains after the mechanisms: request to wbrain2). NLP-40
+  site (A, 7daea89, wneuro's request): each intestinal ring releases into the neuromod compartment it lies in (was all
+  20 cells next to DVB); total unchanged to 8.9e-16; the tonic part and nlp40_tau_s are D. DMP trace on the merged
+  code (150 s, backhouse): int9 peaks 34.82 / 86.85 / 136.62 s, AVL / DVB max -33.4 / -32.2 mV, 0 expulsions,
+  enteric activation max 0.272 vs the 0.5 detector (measured; unchanged from before the merge). Item 3 chain stays B.
+- 9 Nov 00:30-00:56 (wbody2, item 2 stage 2, MC -> muscle). Ported EAT-2 as the toggle `ph_mc_route` (cook default =
+  Cook's MC -> mc2 synapses; eat2 = those contacts on the pm5 cells each mc2 borders, nicotinic at the ledger NMJ;
+  both). Not adopted: `pharynx_stage2_check.py` (bars written before the port) passes neutral (max dV 0) and muscle
+  alone (400 pA x 40 ms per pm5 cell, 1 pm4 AP per input), fails effect (0 of 10 MC pulses pump; pm5 EPSP 13-17 mV
+  from -65 mV), latency (9.0 ms vs 5.0-8.4, no AP) and the eat-2 null (1.62 mV vs 1 mV, through MC's partner
+  neurons); whole brain 1 of 10 (all measured). No NMJ in range passes: 1 and 2 nS raise the rest to -37 and +4 mV
+  before any pulse. The coupled pharynx rests at -65 mV (measured -73, Steger 2005) because MC's plateau on main
+  (-42 mV, wbrain2: D) and M4 and M2 release onto it all the time; with the old mask (MC at -67.5 mV, a
+  counterfactual) the EPSP is still subthreshold. Stopped and written down: the MC -> muscle strength has no
+  published conductance, so it is a fit after the gate.
 
 ## Phase 2 status (wneuro)
 

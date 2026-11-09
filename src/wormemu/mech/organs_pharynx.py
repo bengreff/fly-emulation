@@ -15,8 +15,20 @@
     synapses   Cook 2019's chemical synapses onto pm and marginal cells, at the ledger's shared NMJ conductance per
                contact (organs_nrn.chem_synapse: the brain's receptor form, as for a cell with no CeNGEN profile; the
                graded synapse when receptor_kinetics is off); sign from the brain's sign rule, except M3 (glutamate onto the
-               AVR-15 GluCl: inhibitory; Dent et al. 1997, Raizen & Avery 1994). MC reaches the muscle through the
-               marginal cells it synapses on (Cook) and their gaps. NSM's release sites are not fast synapses: its 5-HT
+               AVR-15 GluCl: inhibitory; Dent et al. 1997, Raizen & Avery 1994). MC's synapses, by ph_mc_route:
+                 cook (nested, the default): onto the mc2 marginal cells Cook names, so MC reaches the muscle only
+                   through their gaps
+                 eat2: MC's contacts onto each mc2 cell are placed instead on the pm5 cells it borders (its Cook gap
+                   partners, in proportion to the gap contacts; WormAtlas pm5 page: the three pm5 cells are "separated
+                   from each other by the mc2 marginal cells"), as nicotinic synapses (the brain's nachr class: EAT-2's
+                   own kinetics are not published) at the same conductance. EAT-2 "functions in the pharyngeal muscle",
+                   is "localized to the synapse between pharyngeal muscle and ... MC" and "is required for MC
+                   stimulation of pharyngeal muscle" (McKay et al. 2004, abstract). Validity: MC's EM synapses lie where
+                   mc2 and pm5 meet, and Cook's partner assignment there does not say which side carries the receptor.
+                   Not adopted: scripts/worm/wbody2/pharynx_stage2_check.py fails (9 Nov: 0 of 10 MC pulses pump)
+                 both: half the contacts each way
+               (lit_mc_nmj.md, lit_mc_site.md; the unpublished "MC's also synapse onto pm4", L. Avery pers. comm. on
+               WormAtlas, is not used). NSM's release sites are not fast synapses: its 5-HT
                reaches the muscle on SER-7 (pharyngeal muscle expression: Hobson et al. 2006) from mech/neuromod's
                pseudocoelom compartment that holds NSM (the head; validity: the pharynx's basement membrane is not a
                barrier here), with neuromod's SER-7 EC50; brain_layers' well-mixed layer and its ec50 only when
@@ -28,7 +40,8 @@
                no clock. The EPG is reported as the mean dV/dt over the muscles (Raizen & Avery 1994: the EPG is
                dominated by the capacitive current; E spike positive, R spike negative).
 
-Nested simpler forms: pharynx = sherman2024 (default) | clock (brain_layers' lumped pump oscillator, verbatim) | off.
+Nested simpler forms: pharynx = sherman2024 (default) | clock (brain_layers' lumped pump oscillator, verbatim) | off;
+ph_mc_route = cook (default) | eat2 | both.
 The id pharynx is brain_layers' id, so this module takes that toggle over.
 """
 from __future__ import annotations
@@ -46,10 +59,13 @@ OLD = "brain_layers lumped pump oscillator (the nested simpler form)"
 MECHANISMS = [
     ("pharynx", "Pharynx: Sherman & Harel 2024 muscle cells on Cook wiring, pumps from Ca (nested: lumped clock)",
      "organ", "sherman2024"),
+    ("ph_mc_route", "Pharynx MC synapses: onto the mc2 marginal cells (cook), as EAT-2 synapses on the pm5 cells they "
+     "border (eat2), or half each (both)", "organ", "cook"),
 ]
 
 MARGINAL = ["mc1DL", "mc1DR", "mc1V", "mc2DL", "mc2DR", "mc2V", "mc3DL", "mc3DR", "mc3V"]
 M3 = ("M3L", "M3R")
+MC = ("MCL", "MCR")
 NSM = ("NSML", "NSMR")
 METACORPUS = [i for i, n in enumerate(PHARYNX_MUSCLES) if n.startswith("pm4")]
 
@@ -278,8 +294,11 @@ class Mech:
         self.q = q
         self.form = toggles.get("pharynx", "sherman2024")
         assert self.form in ("sherman2024", "clock", "off")
+        self.route = toggles.get("ph_mc_route", "cook")
+        assert self.route in ("cook", "eat2", "both")
         self.n_pm = len(PHARYNX_MUSCLES)
         self.n_syn = self.n_gap = 0
+        self.eat2_syn = []
         if self.form == "sherman2024":
             self._build()
         self.reset()
@@ -306,7 +325,14 @@ class Mech:
         sv = b.spec.v
         g_nn = float(np.median(sv("gap_strength_per_pair").to_numpy(float))) / 1000.0
         g_nmj = float(np.median(sv("nmj_strength_per_pair").to_numpy(float)))
-        self.wsyn = []
+        self.wsyn, self.eat2_syn = [], []
+        border = {}                                      # marginal cell -> [(pm, share of its pm gap contacts)]
+        for i, j, n in st.gap:
+            a, c = nm[i], nm[j]
+            for x, y in ((a, c), (c, a)):
+                if x in MARGINAL and y in PHARYNX_MUSCLES:
+                    border.setdefault(x, []).append((y, float(n)))
+        border = {x: [(y, n / sum(w for _, w in v)) for y, n in v] for x, v in border.items()}
         for i, j, n in st.gap:
             a, c = nm[i], nm[j]
             if a in mine and c in mine:
@@ -323,8 +349,18 @@ class Mech:
             if c not in mine or a not in b.idx or a in NSM:
                 continue
             inh = (a in M3 and q["ph_m3_inhibitory"] > 0.5) or b._inhibitory(a, c)
-            self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n, inh, "syn_pharynx")
-            self.n_syn += 1
+            f = 1.0
+            if a in MC and c in MARGINAL and self.route != "cook":
+                f = 0.5 if self.route == "both" else 0.0
+                for p, w in border[c]:
+                    s = organs_nrn.chem_synapse(b, a, self.sec[p](0.5), g_nmj * n * (1.0 - f) * w, inh,
+                                                "syn_pharynx_eat2")
+                    self.wsyn += s
+                    self.eat2_syn += s
+                    self.n_syn += 1
+            if f > 0.0:
+                self.wsyn += organs_nrn.chem_synapse(b, a, self.sec[c](0.5), g_nmj * n * f, inh, "syn_pharynx")
+                self.n_syn += 1
         self.stim = []
         for n in PHARYNX_MUSCLES:
             c = h.IClamp(self.sec[n](0.5))
