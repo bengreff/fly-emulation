@@ -222,3 +222,8 @@ Nothing on Windows or the throttle was changed.
    then 16 single-thread workers over 64 points with the 20 ids (line vi's 5-HT gaps added), a 16 h timeout, and
    `runs/egg_night.done`. Expected about 10.5 h (4 rounds of about 2.6 h, derived from the 14:10 rate), so it ends
    Monday morning; the timeout stops it by 14:00 Monday, before the 17:00 cap.
+
+## Phase 2 status (wbody2)
+
+- Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.
+  Line 9's damping re-run on the Mac: 16.70 ms (bar <= 5.3; unchanged from backhouse, line 9 stays D).
