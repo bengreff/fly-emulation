@@ -72,3 +72,17 @@ def test_mod_matches_cpu_both_forms():
     out = json.loads(r.stdout.strip().splitlines()[-1])
     for form, k in (("smooth_min", "0"), ("as_printed", "1")):
         assert np.allclose(out[k], S.liu_kir(V, dict(S.LIU, kir=form)), rtol=2e-3, atol=2e-3), (form, out[k])
+
+
+def test_awa_gscale_spares_synapses():
+    """Liu's membrane replaces AWA's channels and leak only: _awa_gscale zeroes every dens_* and the leak for AWA and
+    leaves "release" and "rec_<class>" to the brain (wbrain2, 9 Nov 2026: they were 0, silencing AWA's synapses)."""
+    from wormemu.mech import G_SCALE_NAMES
+    m = senses_chem.Mech.__new__(senses_chem.Mech)
+    m.n, m.awa_idx = 4, np.array([1])
+    g = m._awa_gscale()
+    assert not any(k == "release" or k.startswith("rec_") for k in g)
+    chans = [k for k in G_SCALE_NAMES if k.startswith("dens_")] + ["leak"]
+    assert sorted(g) == sorted(chans)
+    for k in chans:
+        assert g[k].tolist() == [1.0, 0.0, 1.0, 1.0]
