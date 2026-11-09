@@ -424,6 +424,16 @@
   source: src/wormemu/mech/capool.py
   notes: registry module capool; PLAN row guessed from the name by the catalog
   absent_reason: ''
+- id: ca_bulk
+  name: 'Bulk cytosolic Ca for the indicator (NEURON''s cadifpmp: radial diffusion, fixed-ratio buffer, membrane pump), fed by the soma''s Ca current; a readout, the channels keep Eq. 28'
+  layer: channel
+  status: have
+  toggle: ca_bulk
+  neutral: 'off'
+  default: 'off'
+  source: src/wormemu/mech/capool.py
+  notes: registry module capool; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
 - id: ca_pool_volume
   name: 'Each neuron''s bulk Ca pool sized by its own volume in the BAAIWorm morphology (Nicoletti 2024: per-cell volume) instead of one V_cell for all (nested: soma, fixed)'
   layer: channel
@@ -544,6 +554,36 @@
   default: compartments
   source: src/wormemu/mech/neuromod.py
   notes: registry module neuromod; PLAN row set by the catalog (MECH_ROW)
+  absent_reason: ''
+- id: neuromod_site
+  name: 'Where a cell reads peptides and amines (receptors, transporters): over its membrane by area per compartment (nested: its soma''s compartment); release stays at the soma'
+  layer: neuromodulation
+  status: have
+  toggle: neuromod_site
+  neutral: 'off'
+  default: membrane
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: gs_ca_channels
+  name: 'Gs-PKA raises EGL-19 and UNC-2 densities (Wang and Sieburth 2013; nested: EGL-19 only)'
+  layer: neuromodulation
+  status: have
+  toggle: gs_ca_channels
+  neutral: 'off'
+  default: egl19_unc2
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
+  absent_reason: ''
+- id: aex2_ec50_source
+  name: 'Which measured NLP-40 potency AEX-2 reads: Beets et al. 2023 (NLP-40-2, 7.645 nM) or Wang et al. 2013 (P3-1, 3.39 nM)'
+  layer: neuromodulation
+  status: have
+  toggle: aex2_ec50_source
+  neutral: 'off'
+  default: beets2023
+  source: src/wormemu/mech/neuromod.py
+  notes: registry module neuromod; PLAN row guessed from the name by the catalog
   absent_reason: ''
 - id: quantal_noise
   name: Quantal (vesicle) release noise at chemical synapses
@@ -1014,7 +1054,7 @@
   neutral: published
   default: frontiers2024
   source: src/wormemu/body/layers.py
-  notes: body layer (wbody's FEM driver reads it); forms frontiers2024/published
+  notes: body layer (wbody's FEM driver reads it); forms frontiers2024/published/backholm2013
   absent_reason: ''
 - id: body_damping
   name: 'Body: shear-thinning internal damping (Backholm 2013), corotational Kelvin-Voigt'

@@ -7,9 +7,12 @@ Hill curve B = c^n / (c^n + Kd^n) and the indicator's own decay has the measured
 (structure inferred: the PLAN.md row 23 form, the binding scheme used by indicator-kinetics models; values
 measured per variant). Fluorescence F = F_min (1 + (R_f - 1) B), R_f = F_sat / F_apo the dynamic range, and
 dF/F0 = (F - F0) / F0 against F0 at the resting Ca (Atanas 2023 / Kato 2015 style baseline). Solved exactly for
-Ca held over the step. Forms: gcamp6s (default; Randi 2023 and Atanas 2023 imaged GCaMP6s), gcamp6f, gcamp7f,
+Ca held over the step. Forms: gcamp6s (default; Randi 2023 imaged nuclear GCaMP6s, strain AML462, 2 volumes/s),
+gcamp6f, gcamp7f (Atanas 2023 imaged NLS-GCaMP7f, strain SWF415, at 1.7 Hz; STAR Methods, PMC10836760),
 lumped (brain_layers' first-order layer, one step later, as nested), off. Additive imaging noise per sample
-(obs_noise_dff, guessed), drawn from a generator seeded at reset.
+(obs_noise_dff, guessed), drawn from a generator seeded at reset. The Ca it reads: the brain's Eq. 28 pool (ctx.ca,
+Nicoletti's submembrane microdomain), or, with mech/capool's ca_bulk on, the bulk cytosolic pool
+(outputs['ca_bulk_uM'], NEURON's cadifpmp; cells without one keep ctx.ca). F0 stays at obs_ca_rest_nM either way.
 
 Optogenetics (toggle "opto_gur3", on; no light = no current): GUR-3/PRDX-2, the purple-light-gated system Randi et
 al. 2023 (Nature 623:406, arXiv 2208.04790) expressed pan-neuronally and drove with two-photon targeted, temporally
@@ -45,7 +48,8 @@ MECHANISMS = [
 ]
 VARIANTS = ("gcamp6s", "gcamp6f", "gcamp7f")
 CHEN = "Chen et al. 2013 Nature 499:295, Supp Table 1 (purified protein; read via a secondary summary, 6 Nov 2026)"
-DANA = "Dana et al. 2019 Nat Methods 16:649 (jGCaMP7)"
+DANA = ("Dana et al. 2019 Nat Methods 16:649 (jGCaMP7), read in the free bioRxiv preprint 10.1101/434589v1 "
+        "(8 Nov 2026; not checked against the journal version)")
 ZHANG = "Zhang et al. 2023 Nature 615:884 (jGCaMP8; reports jGCaMP7f for comparison)"
 RANDI = "Randi et al. 2023 Nature 623:406 / arXiv 2208.04790 (methods read 6 Nov 2026)"
 SPECS = [
@@ -64,19 +68,26 @@ SPECS = [
          "recalled, not opened: ~0.15 s half-decay after one spike in mouse cortex", applies_to="GCaMP6f",
          notes="the paper that would pin it: Chen 2013 Fig 1 / Supp Table 3"),
     spec("obs_gcamp7f_kd_nM", "gcamp", "nM", 174.0, 156.0, 192.0, "measured", ZHANG + ": 174 +/- 9 nM",
-         applies_to="jGCaMP7f"),
-    spec("obs_gcamp7f_hill", "gcamp", "1", 3.1, 2.3, 3.3, "measured", ZHANG + ": Hill 3.1 (Dana 2019 lower)",
-         applies_to="jGCaMP7f"),
-    spec("obs_gcamp7f_range", "gcamp", "1", 30.0, 15.0, 60.0, "guessed", DANA + ": dynamic range not opened",
-         applies_to="jGCaMP7f", notes="the paper that would pin it: Dana 2019 Supplementary Table 1"),
-    spec("obs_gcamp7f_thalf_ms", "gcamp", "ms", 270.0, 100.0, 800.0, "guessed", DANA + ": half-decay not opened",
-         applies_to="jGCaMP7f", notes="the paper that would pin it: Dana 2019 Fig 1 (culture, 1 AP)"),
+         applies_to="jGCaMP7f", notes=DANA + " Supp Table 1: 174 +/- 5 nM (purified protein)"),
+    spec("obs_gcamp7f_hill", "gcamp", "1", 3.1, 2.3, 3.3, "measured", ZHANG + ": Hill 3.1",
+         applies_to="jGCaMP7f", notes=DANA + " Supp Table 1: 2.3 +/- 0.12, the lower bound"),
+    spec("obs_gcamp7f_range", "gcamp", "1", 30.19, 27.0, 33.0, "measured",
+         DANA + ", Supp Table 1 (purified protein, Fmax/Fmin): 30.19 +/- 0.36 (mean +/- s.e.m.)",
+         applies_to="jGCaMP7f", notes="bounds guessed (+-10%, as the 6s and 6f ranges)"),
+    spec("obs_gcamp7f_thalf_ms", "gcamp", "ms", 118.0, 100.0, 800.0, "derived",
+         DANA + ", Supp Table 1 (purified protein, stopped flow): koff 5.86 +/- 0.01 /s; ln 2 / 5.86 = 118 ms",
+         applies_to="jGCaMP7f",
+         notes="as the GCaMP6 rows: binding_step's koff is the sensor's own unbinding, which the stopped-flow koff "
+               "measures (temperature not stated); the 1-AP half-decay in culture is 265 +- 20 ms (Results), slower "
+               "than koff predicts, unlike 6s and 6f; bounds guessed"),
     spec("obs_ca_rest_nM", "gcamp", "nM", 50.0, 20.0, 150.0, "guessed",
          "typical neuronal resting Ca (the F0 reference; brain_layers gcamp_ca_rest_nM)"),
     spec("obs_noise_dff", "gcamp", "dF/F", 0.03, 0.0, 0.2, "guessed",
          "per-sample imaging noise, brain_layers' gcamp_noise_pct (3 %); nuclear GCaMP6s whole-brain SNR"),
-    spec("obs_volume_rate_hz", "gcamp", "Hz", 1.7, 1.0, 10.0, "guessed",
-         "recalled, not opened: Atanas 2023 whole-brain volume rate; sample_volumes() uses it",
+    spec("obs_volume_rate_hz", "gcamp", "Hz", 1.7, 1.0, 10.0, "measured",
+         "Atanas et al. 2023 Cell 186:4134 STAR Methods (PMC10836760): 'a volume rate of 1.7 Hz (1.4 Hz for the "
+         "datasets acquired with the Newport piezo)'; Randi 2023 imaged at 2 vol/s (arXiv 2208.04790v3 Methods, as "
+         "relayed); sample_volumes() uses it",
          notes="readout only: gcamp_dff is published every step, sampling is offline"),
     spec("obs_opto_g_nS", "opto_gur3", "nS", 0.3, 0.05, 2.0, "guessed",
          RANDI + ": pulses chosen to evoke modest Ca responses; no conductance reported",
@@ -126,6 +137,7 @@ class Mech:
             self.form = "gcamp6s"
         self.opto_on = toggles.get("opto_gur3", "on") not in ("off", False, None)
         self.pal_on = toggles.get("neuropal", "on") not in ("off", False, None)
+        self.bulk = toggles.get("ca_bulk", "off") not in ("off", False, None)
         self.n = len(brain.cell_names)
         self.neuron = ~np.asarray(brain.is_muscle)
         self.sched = [s for s in SCHEDULE if s[0] in brain.idx] if self.opto_on else []
@@ -175,7 +187,11 @@ class Mech:
     def step(self, ctx, dt_ms):
         p, out = self.p, {}
         if self.form in VARIANTS:
-            c = np.asarray(ctx.ca, float) * 1000.0             # uM -> nM
+            c = np.asarray(ctx.ca, float)
+            if self.bulk:                                      # mech/capool's bulk pool, this step's start
+                cb = ctx.outputs.get("ca_bulk_uM")
+                c = np.where(np.isfinite(cb), cb, c)
+            c = c * 1000.0                                     # uM -> nM
             self.B = binding_step(self.B, c, self.kd, self.hn, self.th, dt_ms)
             out["gcamp_dff"] = dff(self.B, self.B0, self.R) + self.rng.normal(0.0, p["obs_noise_dff"], self.n)
         elif self.form == "lumped":
