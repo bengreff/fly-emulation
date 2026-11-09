@@ -148,3 +148,51 @@ def test_aex2_ec50_source():
     assert np.all(a.e_ec50[aex2] == T["pep_ec50_nlp-40_aex-2_nM"])
     assert np.all(b.e_ec50[aex2] == T["pep_ec50_nlp-40_aex-2_wang2013_nM"])
     assert np.array_equal(a.e_ec50[~aex2], b.e_ec50[~aex2])
+
+
+def test_amine_stores():
+    """5-HT and DA cells read their own store rows (derived from Weishaupt et al. 2023), OA and TA the shared guessed
+    one; with every row equal to the shared value the stores run exactly as the one shared store did (neutral
+    equivalence)."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "off", "monoamines": "compartments"}
+    a = N.Mech(brain, T, tg)
+    assert list(a.ma_cap) == [T["ma_store_molecules_serotonin"], T["ma_store_molecules_dopamine"],
+                              T["ma_store_molecules"], T["ma_store_molecules"]]
+    same = {**T, "ma_store_molecules_serotonin": T["ma_store_molecules"],
+            "ma_store_molecules_dopamine": T["ma_store_molecules"]}
+    old = {k: v for k, v in same.items() if not k.startswith("ma_store_molecules_")}
+    b, c = N.Mech(brain, same, tg), N.Mech(brain, old, tg)
+    v = np.where(b.ma_rel.sum(1) > 0, 0.0, -80.0)
+    ctx = SimpleNamespace(v=v, outputs={})
+    for m in (a, b, c):
+        for _ in range(500):
+            m.step(ctx, 10.0)
+    assert np.array_equal(b.store, c.store) and np.array_equal(b.ma.N, c.ma.N)
+    s5 = N.AMINES.index("serotonin")
+    assert a.store[a.ma_rel[:, s5] > 0, s5].min() > b.store[b.ma_rel[:, s5] > 0, s5].max()   # bigger store drains less
+
+
+def test_dmsr1_isoform():
+    """dmsr1_isoform: the default reads the most potent Table S6 row (DMSR-1B for FLP-25); dmsr-1a changes only the
+    FLP-25 on DMSR-1 entries, to isoform A's measured 1.6 uM."""
+    from types import SimpleNamespace
+    st = load_structure()
+    neurons = [n for n, k in zip(st.names, st.kind) if k == "neuron"]
+    brain = SimpleNamespace(st=st, cell_names=neurons, is_muscle=np.zeros(len(neurons), bool),
+                            spec=SimpleNamespace(values={}), layers=None)
+    T = {s.id: s.template for s in N.SPECS}
+    tg = {"peptides": "compartments", "monoamines": "off"}
+    a = N.Mech(brain, T, tg)
+    b = N.Mech(brain, T, {**tg, "dmsr1_isoform": "dmsr-1a"})
+    row = N.PRECURSORS.index("flp-25")
+    hit = np.array([e[1] == row and e[2] == T["pep_ec50_flp-25_dmsr-1_nM"] for e in a.entries])
+    assert hit.any() and np.array_equal(a.e_cell, b.e_cell)
+    assert T["pep_ec50_flp-25_dmsr-1_isoA_nM"] / T["pep_ec50_flp-25_dmsr-1_nM"] > 1e5
+    assert np.all(b.e_ec50[hit] == T["pep_ec50_flp-25_dmsr-1_isoA_nM"])
+    assert np.array_equal(a.e_ec50[~hit], b.e_ec50[~hit])
