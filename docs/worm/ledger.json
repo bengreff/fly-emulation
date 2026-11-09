@@ -1,6 +1,6 @@
 {
  "generated_by": "scripts/worm/build_ledger.py",
- "generated_at": "2026-11-09 01:41 CST",
+ "generated_at": "2026-11-09 03:23 CST",
  "definitions": {
   "known": "measured + published_fit + derived + inferred (published_fit: a value another project fitted or chose and published, e.g. BAAIWorm's densities; inferred: inferred by this project)",
   "placeholder": "guessed: a number the model runs on, inside a stated range, not from data",
@@ -9,36 +9,36 @@
   "precision_needed": "'not yet estimated' everywhere until a sensitivity run gives a value with its method"
  },
  "totals": {
-  "numbers": 91740,
-  "rows": 1996,
-  "mechanisms": 111,
+  "numbers": 91747,
+  "rows": 2003,
+  "mechanisms": 112,
   "by_label": {
-   "derived": 67518,
-   "guessed": 9412,
-   "inferred": 343,
-   "measured": 6188,
+   "derived": 67519,
+   "guessed": 9415,
+   "inferred": 344,
+   "measured": 6190,
    "published_fit": 8279
   },
-  "known": 82328,
-  "placeholder": 9412,
+  "known": 82332,
+  "placeholder": 9415,
   "gap": 0,
-  "used_by_model": 91740,
-  "must_fill": 9412
+  "used_by_model": 91747,
+  "must_fill": 9415
  },
  "totals_physiology": {
   "note": "excluding structure rows (morphology points, connectome counts and pair lists)",
-  "numbers": 20753,
+  "numbers": 20760,
   "by_label": {
    "published_fit": 7552,
-   "guessed": 9412,
-   "derived": 3110,
-   "inferred": 343,
-   "measured": 336
+   "guessed": 9415,
+   "derived": 3111,
+   "inferred": 344,
+   "measured": 338
   },
-  "known": 11341,
-  "placeholder": 9412,
+  "known": 11345,
+  "placeholder": 9415,
   "gap": 0,
-  "must_fill": 9412
+  "must_fill": 9415
  },
  "source_by_fill_kind": {
   "all": {
@@ -49,8 +49,8 @@
    },
    "literature": {
     "guessed": 5474,
-    "measured": 6187,
-    "derived": 3110,
+    "measured": 6189,
+    "derived": 3111,
     "inferred (ours)": 27,
     "published fit": 504
    },
@@ -58,8 +58,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3924,
-    "inferred (ours)": 316,
+    "guessed": 3927,
+    "inferred (ours)": 317,
     "measured": 1
    },
    "c302": {
@@ -74,8 +74,8 @@
    },
    "literature": {
     "guessed": 5474,
-    "derived": 3110,
-    "measured": 335,
+    "derived": 3111,
+    "measured": 337,
     "inferred (ours)": 27,
     "published fit": 504
    },
@@ -83,8 +83,8 @@
     "guessed": 3
    },
    "ours": {
-    "guessed": 3924,
-    "inferred (ours)": 316,
+    "guessed": 3927,
+    "inferred (ours)": 317,
     "measured": 1
    },
    "c302": {
@@ -139,10 +139,10 @@
    "guessed": 85
   },
   "global": {
-   "derived": 22,
-   "guessed": 198,
-   "inferred": 51,
-   "measured": 32,
+   "derived": 23,
+   "guessed": 201,
+   "inferred": 52,
+   "measured": 34,
    "published_fit": 426
   },
   "muscle": {
@@ -1100,12 +1100,12 @@
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
-   "numbers": 63,
+   "numbers": 70,
    "by_label": {
-    "derived": 2,
-    "guessed": 34,
-    "inferred": 3,
-    "measured": 24
+    "derived": 3,
+    "guessed": 37,
+    "inferred": 4,
+    "measured": 26
    }
   },
   {
@@ -1171,7 +1171,21 @@
    "status": "have",
    "toggle": "pc_grid",
    "neutral": "off",
-   "default": "four",
+   "default": "bins",
+   "source": "src/wormemu/mech/neuromod.py",
+   "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
+   "absent_reason": "",
+   "numbers": 0,
+   "by_label": {}
+  },
+  {
+   "id": "amine_synaptic",
+   "name": "Amine near field at a release site (Nicholson point source; a read, moves no molecules): off (the pool only) or nicholson (near_nM, HSN onto vm2)",
+   "layer": "neuromodulation",
+   "status": "have",
+   "toggle": "amine_synaptic",
+   "neutral": "off",
+   "default": "off",
    "source": "src/wormemu/mech/neuromod.py",
    "notes": "registry module neuromod; PLAN row set by the catalog (MECH_ROW)",
    "absent_reason": "",
@@ -63739,10 +63753,10 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "at full drive and a full store",
+   "notes": "at full drive and a full store. No C. elegans source (none free: Zhou et al. 2007 Neuron's amperometry is paywalled). Cross-species check only: Drosophila larval VNC under maximal optogenetic drive releases at least about 1e3-1.5e3 molecules/s per activated varicosity (derived from Borue et al. 2009 J Neurosci Methods, PMC2691387: 1 vesicle of 4,700 per varicosity gives 450 nM, 2 s gives 280 nM, uptake Vmax 170 nM/s at the plateau; their caveat: a lower bound). The template at full drive is about 1.6e3 per HSN site at the vulva (0.26 x 1e5 / 16, derived)",
    "plan_row": 10,
    "used_by_code": "yes",
-   "source_url": "",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2691387/",
    "source_quote": "",
    "audit": "ok",
    "hard_min": 0.0,
@@ -64091,6 +64105,300 @@
    "span_reason": "extrasynaptic release, store and clearance numbers are not measured for any worm neuron; the span covers mammalian synaptic and volume-transmission measurements",
    "fit_role": "free",
    "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "hsn_vm2_sites",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "HSNL, HSNR",
+   "unit": "release sites per HSN",
+   "n_values": 1,
+   "value_template": 16.0,
+   "template_source": "Patel et al. 2006 Nat Neurosci 9:1488 (PMC3917495, opened): HSNL 'forms 12-20 en passant synapses onto vulval muscles and the VC4 and VC5 neurons'; Cook et al. 2019 SI 5 (corrected July 2020): 6 onto each of vm2AL/AR/PL/PR per HSN, 24 (both measured)",
+   "bio_min": 12.0,
+   "bio_max": 24.0,
+   "bound_basis": "measured_spread",
+   "bound_source": "Patel et al. 2006 Nat Neurosci 9:1488 (PMC3917495, opened): HSNL 'forms 12-20 en passant synapses onto vulval muscles and the VC4 and VC5 neurons'; Cook et al. 2019 SI 5 (corrected July 2020): 6 onto each of vm2AL/AR/PL/PR per HSN, 24 (both measured)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "template the middle of Patel's 12-20 (derived); the two counts use different rules (Cook's equal 6 on all eight pairs looks like a pooled count split evenly); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3917495/",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1000000000000.0,
+   "hard_class": "count_nonneg",
+   "hard_basis": "physics",
+   "hard_source": "a count is >= 0; definition",
+   "bound_basis_detail": "measured_related",
+   "span_decades": 0.301,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "hsn_vm2_region_um",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "HSNL, HSNR",
+   "unit": "um",
+   "n_values": 1,
+   "value_template": 10.0,
+   "template_source": "Patel et al. 2006 (PMC3917495, opened): 'These HSNL synapses reside within a short stretch of the axon (~10 um) near the vulval opening'",
+   "bio_min": 5.0,
+   "bio_max": 15.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "Patel et al. 2006 (PMC3917495, opened): 'These HSNL synapses reside within a short stretch of the axon (~10 um) near the vulval opening'",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "measured",
+   "fill_kind": "measured",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "bounds +-50% guessed (the paper gives '~10 um' only); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3917495/",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 2000.0,
+   "hard_class": "length_body",
+   "hard_basis": "physics",
+   "hard_source": "within an adult body length (~1-1.5 mm); WormAtlas",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.477,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "hsn_vm2_release_share",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "HSNL, HSNR",
+   "unit": "fraction",
+   "n_values": 1,
+   "value_template": 0.26,
+   "template_source": "Cook et al. 2019 SI 5: vulval targets (vm2, VC04, VC05) take 33 of HSNL's 125 output synapses and 27 of HSNR's 101 (0.264, 0.267, derived from measured counts)",
+   "bio_min": 0.1,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "Cook et al. 2019 SI 5: vulval targets (vm2, VC04, VC05) take 33 of HSNL's 125 output synapses and 27 of HSNR's 101 (0.264, 0.267, derived from measured counts)",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "inferred",
+   "fill_kind": "inferred (ours)",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "release taken as proportional to synapse count (inferred); bounds guessed: 0.1 (more 5-HT from the soma and dense-core vesicles off the synapses) to 1 (all at the vulva); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "https://doi.org/10.1038/s41586-019-1352-7",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.0,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "hsn_vm2_site_receptor_um",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "HSN onto vm2",
+   "unit": "um",
+   "n_values": 1,
+   "value_template": 0.1,
+   "template_source": "guessed",
+   "bio_min": 0.02,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "release site to SER-1 / SER-7 on vm2: no free source (vm2 muscle arms are spine-like postsynaptic structures, Li et al. 2013 eLife 2:e00378, qualitative; the reporters do not resolve receptor placement, Fernandez et al. 2020 PMC7511189). Bounds: 20 nm, a generic chemical cleft (Cowan and Kandel 2001 as cited in PMC4925697, not C. elegans) to 1 um, above the site spacing of 10 um / 12-20 = 0.5-0.83 um (derived); read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7511189/",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 2000.0,
+   "hard_class": "length_body",
+   "hard_basis": "physics",
+   "hard_source": "within an adult body length (~1-1.5 mm); WormAtlas",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.699,
+   "span_reason": "release site to receptor on vm2 not measured; the Spec's span runs from a generic 20 nm cleft to 1 um, above the 0.5-0.83 um site spacing (its notes)",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "ecs_alpha",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "amine near field",
+   "unit": "fraction",
+   "n_values": 1,
+   "value_template": 0.2,
+   "template_source": "guessed",
+   "bio_min": 0.09,
+   "bio_max": 1.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed",
+   "bound_verified": "unverified",
+   "prior_dist": "loguniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: log-uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "extracellular volume fraction at the release site. No nematode value (Sykova and Nicholson 2008, PMC2785730: too small to measure); bounds from cephalopod brain 0.09-0.29 (their Table 4B, via lit_hsn_vm2.md) to 1 (open fluid); template the brain's typical 0.2; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2785730/",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 0.0,
+   "hard_max": 1.0,
+   "hard_class": "fraction",
+   "hard_basis": "physics",
+   "hard_source": "a fraction or probability; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 1.046,
+   "span_reason": "no nematode value; the Spec's span runs from the cephalopod brain's 0.09 (relayed in its notes) to open fluid (1)",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "ecs_tortuosity",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "amine near field",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 1.6,
+   "template_source": "guessed",
+   "bio_min": 1.0,
+   "bio_max": 1.86,
+   "bound_basis": "guessed_physical",
+   "bound_source": "guessed",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "guessed",
+   "fill_kind": "guessed",
+   "source_project": "ours",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "lambda, D* = D / lambda^2. No nematode value; 1 (free) to 1.86 (cephalopod brain, Sykova and Nicholson 2008 Table 4B); template the brain's typical 1.6; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "ok",
+   "hard_min": 1.0,
+   "hard_max": 10.0,
+   "hard_class": "row",
+   "hard_basis": "guessed_physical",
+   "hard_source": "lambda = sqrt(D / D*): >= 1 by definition (obstacles cannot speed diffusion); 10 (D* a hundredth of D) is a guessed edge far above the 1.4-2.2 the Spec's notes relay for brain tissue; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.27,
+   "span_reason": "",
+   "fit_role": "inactive",
+   "n_unknown": 1,
+   "kind": "physiology"
+  },
+  {
+   "param_id": "syn_half_space",
+   "mechanism_id": "monoamines",
+   "grain": "global",
+   "applies_to": "amine near field",
+   "unit": "1",
+   "n_values": 1,
+   "value_template": 2.0,
+   "template_source": "a source on a reflecting plane doubles the free-space field (method of images, derived)",
+   "bio_min": 1.0,
+   "bio_max": 2.0,
+   "bound_basis": "guessed_physical",
+   "bound_source": "a source on a reflecting plane doubles the free-space field (method of images, derived)",
+   "bound_verified": "unverified",
+   "prior_dist": "uniform",
+   "prior_a": "",
+   "prior_b": "",
+   "prior_basis": "guessed: uniform over the range",
+   "label": "derived",
+   "fill_kind": "derived",
+   "source_project": "literature",
+   "precision_needed": "not yet estimated",
+   "precision_method": "",
+   "toggle": "",
+   "notes": "1: a site in open volume; 2: a site on a flat membrane; read only with amine_synaptic = nicholson (default off; mech/neuromod.py near_nM)",
+   "plan_row": 10,
+   "used_by_code": "other form only",
+   "source_url": "",
+   "source_quote": "",
+   "audit": "labelled derived without a citation; no URL to open",
+   "hard_min": 1.0,
+   "hard_max": 8.0,
+   "hard_class": "row",
+   "hard_basis": "physics",
+   "hard_source": "method of images for a point source by reflecting walls: 1 in open volume, 2 on one plane, 4 in a right-angle edge, 8 in a corner of three planes; definition",
+   "bound_basis_detail": "guessed",
+   "span_decades": 0.301,
+   "span_reason": "",
+   "fit_role": "static",
+   "n_unknown": 0,
    "kind": "physiology"
   },
   {
@@ -72206,12 +72514,12 @@
    "applies_to": "AWAL, AWAR",
    "unit": "uM",
    "n_values": 1,
-   "value_template": 1.0,
-   "template_source": "Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015 Cell Rep 12:1748 (PMC5045890): AWA Ca responses to diacetyl pulses from 1 nM to 100 uM, weak at 1-10 nM, peaking and adapting at 100 nM-10 uM; no half-max is given, 1 uM is ours inside that span",
+   "value_template": 2.25,
+   "template_source": "Zhang, Chou, Bradley, Bargmann & Zinn 1997 PNAS 94:12162 (PMC23737): ODR-10 in HEK293 cells, fura-2; EC50 2.25 +- 0.53 uM, Hill 1.12, saturating near 100 uM; the heterologous EC50 read as the worm receptor's half occupancy",
    "bio_min": 0.01,
    "bio_max": 100.0,
-   "bound_basis": "measured_spread",
-   "bound_source": "Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015 Cell Rep 12:1748 (PMC5045890): AWA Ca responses to diacetyl pulses from 1 nM to 100 uM, weak at 1-10 nM, peaking and adapting at 100 nM-10 uM; no half-max is given, 1 uM is ours inside that span",
+   "bound_basis": "homology",
+   "bound_source": "Zhang, Chou, Bradley, Bargmann & Zinn 1997 PNAS 94:12162 (PMC23737): ODR-10 in HEK293 cells, fura-2; EC50 2.25 +- 0.53 uM, Hill 1.12, saturating near 100 uM; the heterologous EC50 read as the worm receptor's half occupancy",
    "bound_verified": "unverified",
    "prior_dist": "loguniform",
    "prior_a": "",
@@ -72223,11 +72531,11 @@
    "precision_needed": "not yet estimated",
    "precision_method": "",
    "toggle": "",
-   "notes": "source 6 Nov (catalog audit): was 1 uM, label inferred, range [0.01, 100]; quote added; the source text said dilutions and a stated half-max, the paper gives concentrations and no half-max ('Reponses' is the paper's spelling)",
+   "notes": "was 1.0, citing a half-max near 1e-7 in Larsch et al. 2015, which states none (opened 9 Nov 2026). AWA's whole-cell GCaMP EC50 (Larsch et al. 2013, median 30.6 nM) is a check, not K; source 6 Nov (catalog audit): was 2.25 uM, label inferred, range [0.01, 100]; 9 Nov (wbrain2): value 1.0 -> 2.25 in the Spec (senses_chem), source Zhang 1997 (opened); Larsch 2015 gives no half-max (6 Nov audit, confirmed), and Larsch 2013's whole-cell EC50 is row 17's check, not K",
    "plan_row": 17,
    "used_by_code": "yes",
-   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5045890/",
-   "source_quote": "Diacetyl pulses from 1 nM \u2013 100 \u00b5M elicited transient, dose-dependent calcium increases in AWA sensory neurons ... Reponses to a 30 s pulse of 1\u201310 nM diacetyl were weak",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC23737/",
+   "source_quote": "The calculated EC 50 value from the Hill equation is 2.25 \u00b1 0.53 \u03bcM, and the Hill coefficient is 1.12.",
    "audit": "ok",
    "hard_min": 1e-09,
    "hard_max": 1000000.0,
@@ -86380,37 +86688,37 @@
   "totals": {
    "rows": {
     "published_fit": 830,
-    "guessed": 678,
-    "measured": 255,
-    "inferred": 342,
-    "derived": 48,
+    "guessed": 681,
+    "measured": 257,
+    "inferred": 343,
+    "derived": 49,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
-    "guessed": 9473,
-    "measured": 6214,
-    "derived": 67529,
-    "inferred": 348,
+    "guessed": 9476,
+    "measured": 6216,
+    "derived": 67530,
+    "inferred": 349,
     "absent": 1
    },
-   "n_rows": 2154,
-   "n_numbers": 91924
+   "n_rows": 2161,
+   "n_numbers": 91931
   },
   "by_label_rows": {
    "published_fit": 830,
-   "guessed": 678,
-   "measured": 255,
-   "inferred": 342,
-   "derived": 48,
+   "guessed": 681,
+   "measured": 257,
+   "inferred": 343,
+   "derived": 49,
    "absent": 1
   },
   "by_label_numbers": {
    "published_fit": 8359,
-   "guessed": 9473,
-   "measured": 6214,
-   "derived": 67529,
-   "inferred": 348,
+   "guessed": 9476,
+   "measured": 6216,
+   "derived": 67530,
+   "inferred": 349,
    "absent": 1
   },
   "by_plan_row": {
@@ -86536,19 +86844,19 @@
    },
    "10": {
     "rows": {
-     "guessed": 21,
-     "inferred": 2,
-     "derived": 2,
-     "measured": 13
+     "guessed": 24,
+     "inferred": 3,
+     "derived": 3,
+     "measured": 15
     },
     "numbers": {
-     "guessed": 38,
-     "measured": 24,
-     "inferred": 3,
-     "derived": 2
+     "guessed": 41,
+     "measured": 26,
+     "inferred": 4,
+     "derived": 3
     },
-    "n_rows": 38,
-    "n_numbers": 67
+    "n_rows": 45,
+    "n_numbers": 74
    },
    "11": {
     "rows": {
@@ -86935,22 +87243,22 @@
    "global": {
     "rows": {
      "published_fit": 506,
-     "guessed": 217,
-     "inferred": 56,
-     "measured": 52,
-     "derived": 33,
+     "guessed": 220,
+     "inferred": 57,
+     "measured": 54,
+     "derived": 34,
      "absent": 1
     },
     "numbers": {
      "published_fit": 506,
-     "guessed": 217,
-     "inferred": 56,
-     "measured": 52,
-     "derived": 33,
+     "guessed": 220,
+     "inferred": 57,
+     "measured": 54,
+     "derived": 34,
      "absent": 1
     },
-    "n_rows": 865,
-    "n_numbers": 865
+    "n_rows": 872,
+    "n_numbers": 872
    },
    "muscle": {
     "rows": {
@@ -87007,20 +87315,20 @@
    "other form only": {
     "rows": {
      "published_fit": 77,
-     "guessed": 83,
-     "inferred": 19,
-     "measured": 14,
-     "derived": 9
+     "guessed": 86,
+     "inferred": 20,
+     "measured": 16,
+     "derived": 10
     },
     "numbers": {
      "published_fit": 265,
-     "guessed": 387,
-     "inferred": 20,
-     "measured": 116,
-     "derived": 9
+     "guessed": 390,
+     "inferred": 21,
+     "measured": 118,
+     "derived": 10
     },
-    "n_rows": 202,
-    "n_numbers": 797
+    "n_rows": 209,
+    "n_numbers": 804
    },
    "slot only": {
     "rows": {
@@ -87296,19 +87604,19 @@
    },
    "mech:neuromod": {
     "rows": {
-     "derived": 6,
-     "guessed": 29,
-     "inferred": 6,
-     "measured": 162
+     "derived": 7,
+     "guessed": 32,
+     "inferred": 7,
+     "measured": 164
     },
     "numbers": {
-     "derived": 6,
-     "guessed": 29,
-     "inferred": 6,
-     "measured": 162
+     "derived": 7,
+     "guessed": 32,
+     "inferred": 7,
+     "measured": 164
     },
-    "n_rows": 203,
-    "n_numbers": 203
+    "n_rows": 210,
+    "n_numbers": 210
    },
    "mech:noise": {
     "rows": {
@@ -87593,22 +87901,22 @@
    "physiology": {
     "rows": {
      "published_fit": 816,
-     "guessed": 676,
-     "inferred": 342,
-     "derived": 46,
-     "measured": 251,
+     "guessed": 679,
+     "inferred": 343,
+     "derived": 47,
+     "measured": 253,
      "absent": 1
     },
     "numbers": {
      "published_fit": 7620,
-     "guessed": 9471,
-     "derived": 3121,
-     "inferred": 348,
-     "measured": 362,
+     "guessed": 9474,
+     "derived": 3122,
+     "inferred": 349,
+     "measured": 364,
      "absent": 1
     },
-    "n_rows": 2132,
-    "n_numbers": 20923
+    "n_rows": 2139,
+    "n_numbers": 20930
    },
    "structure": {
     "rows": {
@@ -88412,35 +88720,35 @@
    }
   ],
   "audit": {
-   "rows_ok": 2025,
-   "rows_with_problems": 129,
+   "rows_ok": 2031,
+   "rows_with_problems": 130,
    "by_status": {
-    "ok": 2025,
+    "ok": 2031,
     "finding": 103,
-    "problem": 26
+    "problem": 27
    },
    "rows_read": 245,
    "quotes": {
-    "none": 1331,
-    "cited free text (scripted check)": 786,
+    "none": 1338,
+    "cited free text (scripted check)": 785,
     "research file (scripted check)": 25,
-    "paper text (read audit, 6-7 Nov)": 12
+    "paper text (read audit, 6-7 Nov)": 13
    },
-   "with_url": 1714,
+   "with_url": 1720,
    "links": {
-    "distinct": 170,
+    "distinct": 174,
     "by_status": {
-     "200": 153,
+     "200": 152,
      "429": 1,
      "203": 1,
      "406": 3,
-     "unchecked": 8,
+     "unchecked": 13,
      "403": 4
     },
     "checked_at": "2026-11-07 04:41 CST"
    },
    "problem_kinds": {
-    "no URL to open": 47,
+    "no URL to open": 48,
     "guessed template sits on a bound": 14,
     "source marked UNVERIFIED": 11,
     "no range": 11,
@@ -88450,6 +88758,7 @@
     "a cation-channel reversal carried over from the muscle ACh current (rec_lacr_erev_mV, Rich": 4,
     "inferred from a research-file summary (PORT_SOURCES N#) by homology; no paper with a URL": 3,
     "its range": 2,
+    "labelled derived without a citation": 2,
     "read by kqt# only (#); the other # K mods compute against a fixed #, so the K reversals di": 1,
     "set on every soma (brain.py:#) but no current reads it: nca.mod:# declares READ ena and co": 1,
     "sets only NEURON's Nernst eca; every Ca current uses a fixed +# (unc#mod:#, egl#mod:#, cca": 1,
@@ -88506,7 +88815,6 @@
     "guessed template # sits on the lower bound; the cited plate (Kunitomo et al. #, read # Nov": 1,
     "the cited '# mM NaCl plug' is a # mM agar block in Kunitomo et al. # (read # Nov, free tex": 1,
     "range basis says measured but the range source names no citation": 1,
-    "labelled derived without a citation": 1,
     "scene.py labels the # mm body length measured with the source \"ledger worm length\"; the bo": 1
    },
    "orphan_notes": [],
@@ -93011,10 +93319,10 @@
     "pattern": "",
     "was_label": "inferred",
     "new_label": "inferred",
-    "change": "1 -> 1 uM; inferred -> inferred; range [0.01, 100] -> [0.01, 100]",
-    "reason": "quote added; the source text said dilutions and a stated half-max, the paper gives concentrations and no half-max ('Reponses' is the paper's spelling)",
-    "source": "Larsch, Flavell, Liu, Gordus, Albrecht & Bargmann 2015 Cell Rep 12:1748 (PMC5045890): AWA Ca responses to diacetyl pulses from 1 nM to 100 uM, weak at 1-10 nM, peaking and adapting at 100 nM-10 uM; no half-max is given, 1 uM is ours inside that span",
-    "url": ""
+    "change": "2.25 -> 2.25 uM; inferred -> inferred; range [0.01, 100] -> [0.01, 100]",
+    "reason": "9 Nov (wbrain2): value 1.0 -> 2.25 in the Spec (senses_chem), source Zhang 1997 (opened); Larsch 2015 gives no half-max (6 Nov audit, confirmed), and Larsch 2013's whole-cell EC50 is row 17's check, not K",
+    "source": "Zhang, Chou, Bradley, Bargmann & Zinn 1997 PNAS 94:12162 (PMC23737): ODR-10 in HEK293 cells, fura-2; EC50 2.25 +- 0.53 uM, Hill 1.12, saturating near 100 uM; the heterologous EC50 read as the worm receptor's half occupancy",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC23737/"
    },
    {
     "param_id": "proprio_smd_s1",
@@ -101162,44 +101470,44 @@
   "before_fills": {
    "rows": {
     "published_fit": 844,
-    "guessed": 680,
-    "measured": 253,
-    "derived": 40,
-    "inferred": 336,
+    "guessed": 683,
+    "measured": 255,
+    "derived": 41,
+    "inferred": 337,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8368,
-    "guessed": 9584,
-    "measured": 6110,
-    "derived": 67520,
-    "inferred": 341,
+    "guessed": 9587,
+    "measured": 6112,
+    "derived": 67521,
+    "inferred": 342,
     "absent": 1
    }
   },
   "after_fills": {
    "rows": {
     "published_fit": 830,
-    "guessed": 678,
-    "measured": 255,
-    "inferred": 342,
-    "derived": 48,
+    "guessed": 681,
+    "measured": 257,
+    "inferred": 343,
+    "derived": 49,
     "absent": 1
    },
    "numbers": {
     "published_fit": 8359,
-    "guessed": 9473,
-    "measured": 6214,
-    "derived": 67529,
-    "inferred": 348,
+    "guessed": 9476,
+    "measured": 6216,
+    "derived": 67530,
+    "inferred": 349,
     "absent": 1
    }
   },
   "ranges": {
    "roles_model": {
     "inactive": {
-     "rows": 294,
-     "unknown": 7053,
+     "rows": 297,
+     "unknown": 7056,
      "vector": 0
     },
     "fixed": {
@@ -101213,7 +101521,7 @@
      "vector": 344
     },
     "static": {
-     "rows": 1318,
+     "rows": 1322,
      "unknown": 0,
      "vector": 0
     },
@@ -101225,8 +101533,8 @@
    },
    "roles_catalog": {
     "inactive": {
-     "rows": 328,
-     "unknown": 7113,
+     "rows": 331,
+     "unknown": 7116,
      "vector": 0
     },
     "fixed": {
@@ -101240,7 +101548,7 @@
      "vector": 344
     },
     "static": {
-     "rows": 1407,
+     "rows": 1411,
      "unknown": 0,
      "vector": 0
     },
@@ -102400,10 +102708,10 @@
      "rule": 43,
      "gap": 319,
      "gap_discrete": 15,
-     "scan_rows": 1476,
-     "scan_elements": 80148,
+     "scan_rows": 1480,
+     "scan_elements": 80152,
      "residual_slots": 6298,
-     "unknown_inactive": 331
+     "unknown_inactive": 334
     },
     "out": {
      "replaced by structure_rules": {

@@ -548,7 +548,7 @@ function mechView() {
             <span class="mid">#${m.id}</span><span class="mname">${m.name}</span>
             <span class="chip chip-${m.status}">${m.status}</span>
             <span class="chip chip-${CHIP_CHECK[m.check] || 'notchecked'}">check: ${m.check}</span>
-          </div><div class="mtext">${m.text}</div>${(m.switches || []).map(w =>
+          </div>${m.parts ? `<div class="mtext muted">Audit category: ${m.parts}</div>` : ''}<div class="mtext">${m.text}</div>${(m.switches || []).map(w =>
             `<div class="mtext mswitch"><b>${w.name}.</b> ${w.text}</div>`).join('')}</div>`).join('')).join('') +
       `<p class="muted" style="margin-top:10px">Source: ${MECHSUM.as_of}. ${MECHSUM.source}</p>`;
   }

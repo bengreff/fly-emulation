@@ -84,7 +84,7 @@ def main():
     tau_meas = float(-1.0 / slope)
     cons = float(abs(tot[-1] - 1e6) / 1e6)
     spread = float(np.abs(c / mean - 1).max())
-    res["bolus"] = dict(compartments=dict(zip(N.COMPARTMENTS, m.pep.V.tolist())), tau_slow_derived_s=round(tau_slow, 1),
+    res["bolus"] = dict(grid=m.grid, n_bins=int(m.pep.V.size), volume_pL=float(m.pep.V.sum()), tau_slow_derived_s=round(tau_slow, 1),
                         tau_measured_s=round(tau_meas, 1), conservation_rel_err=cons, end_spread=spread,
                         bar="conserved 1e-9; tau within 5%; end spread < 1%",
                         passed=bool(cons < 1e-9 and abs(tau_meas / tau_slow - 1) < 0.05 and spread < 0.01))
@@ -115,7 +115,7 @@ def main():
         tr = []
         for k in range(6000):
             m.step(ctx(v, k * 100.0), 100.0)
-            tr.append(float(m.pep.nM()[row, 0]))
+            tr.append(float(m.pep.named_nM()[row, 0]))       # the head's named view (bins or four)
         tr = np.array(tr)
         r4[name] = dict(flp11_head_nM_end=tr[-1], flp11_head_nM_60s=tr[599], change_last_60s=float(abs(tr[-1] / tr[-601]
                         - 1)), ris_gi=float(m.G[ris, 1]), ris_release_factor=float(m.release_factor()[ris]))

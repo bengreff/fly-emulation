@@ -242,6 +242,27 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   finitialize overwrites the script's eca = 60) and BAAIWorm's SLO-1 nanodomain hard-codes 60 mV; with E_Ca held at
   60 in both, n24_code plus the authors' unrounded SLO-1 constants reproduces their AIY model to 0.004 mV. Default
   unchanged. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 1".
+- Line 18 (wbrain2, E): no code passes or fails on the fraction of neurons above -20 mV (seven scripts and the ledger's
+  sensitivity text all report it). The network-state sign is weki's GCaMP pair in `fit/vitals.py`: pc3_frac (bar
+  0.353-0.506 from Atanas et al. 2023's 60 animals, PMC10836760, opened: "the first three PCs explained 42% of the
+  variance") and gcamp_range (0.567-0.983). The voltage fraction stays a report with no bar. Template: 0.056 and
+  0.095, both miss (weki, measured): a quiet brain. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 18".
+- Never-checked row 8, gap conductances (wbrain2, written down, no fix): Liu, Chen, Mailler & Wang 2017 Fig 6
+  (PMC5364397, CC-BY, digitised) against AVAR-VA05 in the full brain. Somatic clamp currents pass (AVA held, VA5 to
+  +50: -6.48 pA, bar -12.7 to -2.5; VA5 held, AVA to -110: +5.10, bar 0 to 10.1). The coupling coefficients come out
+  the wrong way round (into VA5 1.34 %, bar 3.3-21.1; into AVA 10.2 %, bar 0-9.7) and the clamp currents lose the
+  direction the junction itself has (its own current is 30 vs 16 pA, into AVA larger). Cause (measured): AVA's
+  in-situ input resistance is 0.14-0.18 GOhm against Liu's 2.50 +- 0.19 (n 9); its membrane alone is 1.86 (inside),
+  the network's gaps (Cook: 254 EM contacts, 51 partners, 56.8 nS at the template) take it down; synapses onto AVA
+  change nothing. Every gap range at its floor still leaves 0.58-0.67 GOhm, so no value inside the ranges passes (not
+  D) and it is not a units or placement error (not A). Requests to weki (held-out R_in for the shared gap scale) and
+  wbody2 (hypodermis gaps). Detail: docs/worm/night/2026-11-08_wbrain2.md, "Item 8".
+- Line 21 (wbrain2, E): the viewer's statuses now come from the audit. `viewer/worm/build_mechanisms_summary.py`
+  files each entry under its row's main category (the first bold category of the Category cell, as the audit's
+  Counts table does) and names a split row's other parts under its title; the plain-English text stays
+  hand-written. Viewer 8 full of 28 -> 13 (measured), equal to the audit over rows 1-28 (the script asserts it);
+  rows 4, 6, 14, 19, 24 full with parts named; render viewed in headless Chrome. Rerun the script after any audit
+  change. Detail: docs/worm/night/2026-11-08_wbrain2.md, "Line 21".
 ## Phase 2 status (wbody2)
 
 - Line 11 (A), fixed 20:22 8 Nov: driver rebuilt; `metaworm.ensure_driver` refuses a binary older than its sources.
@@ -374,3 +395,10 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   HSN's source (measured, pre-registered). Live, the vulval 5-HT read rises 3.2x (0.38 -> 1.20 nM off food) and MC's
   SER-7 Gs 1.7x on food; still 0.04 of SER-7's EC50 at the vulva. Default four until the Director adopts. HSN's
   synaptic near field onto vm2 is B blocked on geometry sources (Nicholson's form exists; derived bound in the night file).
+- Session 5 (wneuro, 9 Nov): `pc_grid=bins` is the default (Director 01:40). Every amine pair is still near off at rest
+  and on food on bins (best SER-7 0.083 on food, measured). HSN onto vm2 near field built as an off toggle
+  (`amine_synaptic`, B, Nicholson point source) with seven bounded-gap Specs; probe: SER-7 at the vulva feasible in
+  the interior of the ranges (10.5 nM at the template geometry and release, 1.25 from the pool alone, measured), D, not
+  adopted; SER-1 only with release >= 1e6. Item 6 classified on bins: pool A fixed; release rate D is the main open
+  value (every systemic pass needs >= 9.4e5); OA receptors, SER-2, TYRA-3 and the amine-gated channels cannot be
+  reached systemically anywhere in the box.

@@ -27,7 +27,14 @@ al. 2023, item 6); the template point uses them; a box or single point's ma_stor
 so the box still spans the guessed 1e4-1e8. The drive file was recorded with the old 1e6 store (stores stayed above
 0.95 of full at rest, so the drive is the same to that precision).
 
-Usage: python probe_amine.py [N_POINTS] -> runs/worm/wneuro/probe_amine.json
+Addendum (Mon 9 Nov 2026 01:55 CST, session 5, before running): re-run on pc_grid=bins, the new default (Director
+01:40). Two reads were written for the four compartments and are now taken as neuromod reads them: MC's SER-7 is MCL's
+membrane read (ma_W, all in the head under four, so the same number there), and the vulva is HSNL's bin (nm.ma_comp,
+what organs_egglaying reads). SER-1's EC50 is now 1340 nM measured (code Spec, session 3). The drive file is unchanged
+(recorded under four with the old store; bins moves what HSN reads by under 0.2 nM, about 1e-4 of its 5-HT receptors'
+occupancy, derived). Same box, seed, rule and LAST window. Output tag=_bins.
+
+Usage: python probe_amine.py [N_POINTS] [tag=T] -> runs/worm/wneuro/probe_amine<T>.json
 """
 from __future__ import annotations
 
@@ -100,14 +107,16 @@ def score(nm, C, plist, hsn):
             r = nm.ma_W[cells] @ C[row]
             out[lab] = float(r.max() / ec)
     s5 = N.AMINES.index("serotonin")
-    out["MC ser-7 (head)"] = float(C[s5, 0] / float(nm.p["ma_ec50_serotonin_ser-7_nM"]))
+    mc = nm.names.index("MCL")
+    out["MC ser-7 (head)"] = float(nm.ma_W[mc] @ C[s5] / float(nm.p["ma_ec50_serotonin_ser-7_nM"]))
     out["vulva ser-7"] = float(C[s5, nm.ma_comp[hsn]] / float(nm.p["ma_ec50_serotonin_ser-7_nM"]))
     out["vulva ser-1"] = float(C[s5, nm.ma_comp[hsn]] / float(nm.p["ma_ec50_serotonin_ser-1_nM"]))
     return out                                             # read / EC50; >= 1 reaches
 
 
 def main():
-    npts = int(sys.argv[1]) if len(sys.argv) > 1 else 256
+    npts = int(sys.argv[1]) if len(sys.argv) > 1 and "=" not in sys.argv[1] else 256
+    tag = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("tag=")), "")
     t0 = time.time()
     b, nm, p0, v, drive = setup()
     plist = pairs(b, nm)
@@ -139,7 +148,8 @@ def main():
                          single_reach=[s for s, d in res["single"].items() if d[lab] >= 1.0])
     res["summary"] = summ
     res["wall_s"] = time.time() - t0
-    (ROOT / "runs/worm/wneuro/probe_amine.json").write_text(json.dumps(res, indent=1))
+    res["grid"] = nm.grid
+    (ROOT / f"runs/worm/wneuro/probe_amine{tag}.json").write_text(json.dumps(res, indent=1))
     for lab, s in summ.items():
         print(f"{lab:32s} template {s['template']:.4f} reach {s['box_reach']}/{s['box_n']} max {s['box_max']:.2f} "
               f"edge {s['reach_near_edge']} single {s['single_reach']}")

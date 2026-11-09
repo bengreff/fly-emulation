@@ -150,8 +150,8 @@ class Mech:
 
     def reset(self):
         p = self.p
-        seed = 0 if getattr(self.brain.spec, "seed", None) is None else int(self.brain.spec.seed)
-        self.rng = np.random.default_rng(seed + 2311)
+        seed = getattr(self.brain, "noise_seed", getattr(self.brain.spec, "seed", None))   # NeuroPAL: the worm's
+        self.rng = np.random.default_rng((0 if seed is None else int(seed)) + 2311)
         if self.form in VARIANTS:
             v = self.form
             self.kd, self.hn = p[f"obs_{v}_kd_nM"], p[f"obs_{v}_hill"]

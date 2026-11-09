@@ -81,12 +81,51 @@ def test_gene_table_targets_exist():
         for kind, x in eff:
             assert kind in ("g", "tx", "tpm", "spec"), gene
             if kind == "g":
-                assert x in mech.G_SCALE_NAMES, (gene, x)
+                assert x in mech.G_SCALE_NAMES or x in mech.AWA_G_SCALE_NAMES, (gene, x)
             if kind == "tx":
                 assert x in MARKERS, (gene, x)
     assert not set(D.GENES) & set(D.NOT_YET)
     import wormemu
     assert callable(wormemu.simulate)
+
+
+AWA_G = """
+import json
+from wormemu import brain, datamodel as D
+seen = []
+class Kept(brain.Brain):
+    def __init__(self, *a, **k):
+        super().__init__(*a, **k)
+        seen.append(self)
+brain.Brain = Kept
+D.simulate(None, D.Experiment(duration_ms=5, genotype={gt}, toggles={tg}))
+b = seen[0]
+segs = [s for s, _ in b.segs[b.idx["AWAL"]] if hasattr(s, "awa_liu")]
+cells, pv, base, _ = b._gt["dens_egl19"]
+buf = b.h.Vector(len(cells))
+pv.gather(buf)
+out = dict(n=len(segs), gca=[s.gCa_awa_liu for s in segs], gk1=[s.gK1_awa_liu for s in segs],
+           egl19=[x for i, x in zip(cells, buf) if b.cell_names[i] not in ("AWAL", "AWAR")],
+           egl19_base=[x for i, x in zip(cells, base) if b.cell_names[i] not in ("AWAL", "AWAR")])
+if "dens_awa_ca" in b._gt:
+    out["gca_built"] = b._gt["dens_awa_ca"][2][[i == b.idx["AWAL"] for i in b._gt["dens_awa_ca"][0]]].tolist()
+    out["gk1_built"] = b._gt["dens_awa_k1"][2][[i == b.idx["AWAL"] for i in b._gt["dens_awa_k1"][0]]].tolist()
+print(json.dumps(out))
+"""
+
+
+def test_awa_liu_conductances_follow_their_genes():
+    """Liu et al. 2018's AWA: egl-19 carries gCa, shk-1 gK1 (the night file's bars, 9 Nov 2026)."""
+    none = _run(AWA_G.format(gt="[]", tg="{}"))
+    egl = _run(AWA_G.format(gt="[D.Allele('egl-19')]", tg="{}"))
+    shk = _run(AWA_G.format(gt="[D.Allele('shk-1')]", tg="{}"))
+    old = _run(AWA_G.format(gt="[D.Allele('egl-19')]", tg="{'awa_membrane': 'baaiworm'}"))
+    assert none["n"] > 0 and min(none["gca_built"]) > 0 and min(none["gk1_built"]) > 0
+    assert none["gca"] == none["gca_built"] and none["gk1"] == none["gk1_built"]       # no allele: as built
+    assert max(egl["gca"]) == 0.0 and egl["gk1"] == egl["gk1_built"]                  # every AWAL segment
+    assert max(egl["egl19"]) == 0.0 and max(egl["egl19_base"]) > 0                    # and BAAIWorm's egl19 elsewhere
+    assert max(shk["gk1"]) == 0.0 and shk["gca"] == shk["gca_built"]
+    assert old["n"] == 0 and max(old["egl19"]) == 0.0                                 # no Liu names: no error
 
 
 def test_marker_null_silences_fast_release():
