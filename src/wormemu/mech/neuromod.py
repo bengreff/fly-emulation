@@ -800,8 +800,11 @@ class Mech:
         self.G += (target - self.G) * (1.0 - np.exp(-dt_ms / tau))
         G = self.G
         nr = self.neuron
-        out.update(gq_mean=float(G[nr, 0].mean()), gi_mean=float(G[nr, 1].mean()), gs_mean=float(G[nr, 2].mean()),
-                   release_factor_min=float(R[nr].min()), release_factor_max=float(R[nr].max()))
+        if nr.any():
+            out.update(gq_mean=float(G[nr, 0].mean()), gi_mean=float(G[nr, 1].mean()), gs_mean=float(G[nr, 2].mean()),
+                       release_factor_min=float(R[nr].min()), release_factor_max=float(R[nr].max()))
+        else:                                   # organ-only brain: neutral, as store_min with no releasing cell
+            out.update(gq_mean=0.0, gi_mean=0.0, gs_mean=0.0, release_factor_min=1.0, release_factor_max=1.0)
         if "RIS" in self.names:
             out["ris_gi"] = float(G[self.names.index("RIS"), 1])
         gs = {"release": self.release_factor(), "dens_nca": 1 + p["nca_gq_gain"] * G[:, 0],

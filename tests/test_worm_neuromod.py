@@ -283,3 +283,26 @@ def test_amine_synaptic():
     want2 = share * 1e4 / (4 * np.pi * D) * (np.exp(-r / np.sqrt(D * tau)) / r + np.exp(-d2 / np.sqrt(D * tau)) / d2) \
         / 0.602214
     assert np.isclose(two, want2, rtol=1e-9)
+
+
+def test_no_neuron_brain():
+    """An organ-only brain (no neuron; wbody2, 9 Nov 2026) steps without raising and reports finite, neutral
+    neuron summaries (G means 0, release factor 1)."""
+    import warnings
+    from types import SimpleNamespace
+    st = load_structure()
+    cells = ["dBWML22", "vBWMR22"]
+    brain = SimpleNamespace(st=st, cell_names=cells, is_muscle=np.ones(2, bool), spec=SimpleNamespace(values={}),
+                            layers=None)
+    m = N.Mech(brain, {s.id: s.template for s in N.SPECS}, {"peptides": "compartments", "monoamines": "compartments"})
+    m.reset()
+    ctx = SimpleNamespace(v=np.full(2, -30.0), outputs={})
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", RuntimeWarning)
+        for _ in range(100):
+            r = m.step(ctx, 10.0)
+    o = r["out"]["neuromod"]
+    assert all(np.isfinite(v) for v in o.values() if isinstance(v, float))
+    assert (o["gq_mean"], o["gi_mean"], o["gs_mean"]) == (0.0, 0.0, 0.0)
+    assert o["release_factor_min"] == o["release_factor_max"] == 1.0
+    assert np.isfinite(r["I_pA"]).all() and all(np.isfinite(np.asarray(g)).all() for g in r["g_scale"].values())
