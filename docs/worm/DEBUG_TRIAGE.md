@@ -314,3 +314,8 @@ One line per triage line, by the worker that owns it. Night files hold the detai
   and no probed point reaches SER-1 at the vulva (at most 160 nM, derived), so egg-laying cannot answer 5-HT through
   SER-1 from the pool. Pool geometry is outside its well-mixed range (compartments 2-5 length constants long) but a
   1D bound puts the near-source excess at 1.9-2.5x, not the 35x gap: A, open. SER-7's EC50 (30 vs 32 nM) is not C.
+- Session 3 (wneuro, 9 Nov): SER-1's EC50 found and ported, 1340 nM measured (Xie 2005 via Dernovici 2006), so it is
+  no longer a gap value; the vulval pool's box maximum is 0.12 of it (derived) and HSN's synaptic release onto vm2 is
+  the deciding unknown. Open 5 as a C toggle `dmsr1_isoform` (FLP-25 on DMSR-1: isoform B 0.6 pM, the default, or A
+  1.6 uM): line 14 passes under both, but under the default DMSR-1 is saturated in every head cell that expresses it
+  (head FLP-25 30x B's EC50), and the choice moves resting Gi by more than 0.1 in 198 cells (measured). Not adopted.
