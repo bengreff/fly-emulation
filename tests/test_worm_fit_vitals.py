@@ -26,7 +26,7 @@ def synthetic(seconds=60.0, pump_hz=3.0, dmp_s=50.0, bwm_hz=0.5, eggs=(), seed=0
         vb[on, j] = 10.0
     v[:, len(neur):] = vb
     lat = rng.normal(size=(n, 2))                                # 2 latent signals drive every neuron's GCaMP
-    lat = np.cumsum(lat, axis=0) * 0.01
+    lat = np.cumsum(lat, axis=0) * 0.001                       # dF/F stays above -1 (F > 0), as a real trace does
     g = lat @ rng.normal(size=(2, len(neur))) + rng.normal(0, 0.01, (n, len(neur)))
     gc = np.full((n, len(cells)), np.nan)
     gc[:, :len(neur)] = g
@@ -126,3 +126,37 @@ def test_experiment_is_entire_worm():
     assert ex.body == "on" and ex.toggles == V.BATTERY_TOGGLES and ex.every_ms == pytest.approx(V.EXCHANGE_MS)
     with pytest.raises(ValueError):
         V.experiment("lawn", 2.0)
+
+
+def test_f_over_fmean_cancels_f0():
+    """The GCaMP signs read F / mean F (Atanas's normalisation), so the reference F0 drops out: the same F read
+    against two different F0 gives the same pc3 and range."""
+    rng = np.random.default_rng(3)
+    f = 1.0 + 0.3 * np.abs(rng.normal(size=(400, 20)))           # F in units of some F0
+    a, b = f - 1.0, f / 1.7 - 1.0                                # dF/F0 against F0 and against 1.7 F0
+    assert np.allclose(V.f_over_fmean(a), V.f_over_fmean(b))
+    assert np.allclose(V.f_over_fmean(a).mean(axis=0), 1.0)
+
+
+def test_noise_sd_on_slow_signal():
+    """White noise of SD 0.04 under an exponentially correlated signal of SD S = 0.3 (frames 0.6 s, tau 5 s, so
+    a = exp(-0.12)), as Atanas's traces are read. 2 D1 - D2 is exact for a signal whose autocovariance falls linearly
+    over two frames; for an exponential it reads s^2 + S^2 (1 - a)^2 (derived), 0.052 here, still well under D1."""
+    rng = np.random.default_rng(4)
+    n, m, a, S, sd = 20000, 8, np.exp(-0.6 / 5.0), 0.3, 0.04
+    s = np.zeros((n, m))
+    for k in range(1, n):
+        s[k] = a * s[k - 1] + rng.normal(0, S * np.sqrt(1 - a * a), m)
+    x = s + rng.normal(0, sd, (n, m))
+    tot, nse, sig = V.noise_sd(x)
+    assert np.median(nse) == pytest.approx(np.sqrt(sd ** 2 + S ** 2 * (1 - a) ** 2), rel=0.1)
+    assert np.median(sig) == pytest.approx(S, rel=0.05)
+    d1 = np.sqrt(np.var(np.diff(x, axis=0), axis=0) / 2)
+    assert np.median(d1) > 1.5 * np.median(nse)
+
+
+def test_battery_values_set_per_experiment():
+    """The battery's instrument noise (Atanas's, measured) sits on top of whatever theta the caller gives."""
+    assert V.battery_theta(None) == V.BATTERY_VALUES
+    assert V.battery_theta({"obs_noise_dff": 0.2, "x": 1.0}) == {"x": 1.0, **V.BATTERY_VALUES}
+    assert 0.026 <= V.ATANAS_NOISE_DFF <= 0.068

@@ -23,6 +23,14 @@ Pre-registered (8 Nov 23:16 CST, before the script ran):
   falsifier if the linear estimate is negative or above D1 for most animals, the white-plus-smooth reading is wrong
             and the number is not proposed.
 
+Result (8 Nov 23:17, measured / derived): linear median 0.0417 (P5-P95 0.0257-0.0682), upper 0.0797 (0.0571-0.1098),
+total SD 0.293 (0.215-0.411); falsifier not met (0 of 60 animals negative or above the upper bound).
+
+Amendment (8 Nov 23:23 CST, after the result, so a sensitivity only, not the registered number): the vitals test
+(test_noise_sd_on_slow_signal) shows 2 D1 - D2 reads s^2 + S^2 (1 - a)^2 for an exponential signal of SD S with
+frame-to-frame correlation a (derived), an overestimate. The "ar1" column adds the estimate that is exact for an
+exponential signal plus white noise, s^2 = C(0) - C(1)^2 / C(2) from the autocovariances C(k), per neuron, median.
+
 Usage: python scripts/worm/fit/atanas_noise.py H5_DIR OUT.json [IDS]
 """
 from __future__ import annotations
@@ -47,6 +55,15 @@ def noise(x):
     return np.sqrt(d1), np.sqrt(np.clip(lin, 0.0, None)), float(np.mean(lin < 0))
 
 
+def noise_ar1(x):
+    """Per-neuron noise SD exact for an exponential signal plus white noise: C(0) - C(1)^2 / C(2), clipped at 0."""
+    z = x - x.mean(axis=0)
+    c0, c1, c2 = (np.mean(z * z, axis=0), np.mean(z[1:] * z[:-1], axis=0), np.mean(z[2:] * z[:-2], axis=0))
+    with np.errstate(divide="ignore", invalid="ignore"):
+        s2 = np.where(c2 > 0, c0 - c1 * c1 / c2, np.nan)
+    return np.sqrt(np.clip(s2, 0.0, None))
+
+
 def animal(path: Path) -> dict:
     with h5py.File(path, "r") as f:
         x = np.asarray(f["gcamp/traces_array_F_Fmean"], float)
@@ -54,6 +71,7 @@ def animal(path: Path) -> dict:
     up, lin, neg = noise(x)
     return {"id": path.name.replace("-data.h5", ""), "n_neurons": int(x.shape[1]),
             "upper": float(np.median(up)), "linear": float(np.median(lin)), "frac_negative": neg,
+            "ar1": float(np.nanmedian(noise_ar1(x))),
             "sd_total": float(np.median(x.std(axis=0)))}
 
 
@@ -65,7 +83,7 @@ def main(h5_dir, out, ids_file=None):
     open_ids = heldout.exclude("atanas2023", ids)
     rows = [animal(Path(h5_dir) / f"{i}-data.h5") for i in open_ids]
     summ = {}
-    for k in ("upper", "linear", "sd_total", "frac_negative"):
+    for k in ("upper", "linear", "ar1", "sd_total", "frac_negative"):
         a = np.array([r[k] for r in rows])
         summ[k] = {"p5": float(np.percentile(a, 5)), "median": float(np.median(a)), "p95": float(np.percentile(a, 95))}
     summ["n_animals"] = len(rows)
